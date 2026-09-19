@@ -27,14 +27,17 @@ LEGACY_SUITE_FILES = tuple(sorted(
 SUITE_FILES = tuple(sorted(LEGACY_SUITE_FILES + (
     "story-codex-analyze/references/deep-reading.md",
     "story-codex-analyze/references/examples.md")))
+TAGGED_SUITE_FILES = tuple(sorted(SUITE_FILES + (
+    "story-codex-plan/references/fanqie-tags.md",)))
 
 
 def suite_files(version):
     """Keep published layouts fixed while reviewing each supported version family."""
     if re.fullmatch(r"0\.4\.(?:0|[1-9][0-9]*)", version) or version == "0.5.0":
         return LEGACY_SUITE_FILES
-    if re.fullmatch(r"0\.5\.[1-9][0-9]*", version):
-        return SUITE_FILES
+    patch = re.fullmatch(r"0\.5\.([1-9][0-9]*)", version)
+    if patch:
+        return TAGGED_SUITE_FILES if int(patch.group(1)) >= 7 else SUITE_FILES
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 

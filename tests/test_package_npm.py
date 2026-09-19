@@ -336,11 +336,12 @@ class NpmSuiteTests(NpmPackageTests):
             npm.payload_files("0.6.0")
 
     def test_new_analysis_references_roundtrip_in_current_patch_only(self):
-        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.12"):
+        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.6", "0.5.7", "0.5.12"):
             with self.subTest(version=version):
                 self.version = version
                 self.archive = self.root / f"story-codex-{version}.zip"
-                self.payload = {name: ("完整技能字节：" + name + "\r\n").encode() for name in npm.SUITE_FILES}
+                files = npm.payload_files(version)
+                self.payload = {name: ("完整技能字节：" + name + "\r\n").encode() for name in files}
                 self.payload["story-codex/scripts/story.py"] = f'VERSION = "{version}"\n'.encode()
                 self.write_zip()
                 with patch.object(npm, "npm_pack", side_effect=self.fake_pack):
@@ -349,17 +350,17 @@ class NpmSuiteTests(NpmPackageTests):
                 self.assertEqual(result["name"], "@ningcui29/story-codex")
                 self.assertEqual(result["package_manifest"]["repository"]["url"],
                                  "https://github.com/NingCui29/story-skill.git")
-                self.assertEqual(len(result["payload_manifest"]), 33)
-                self.assertEqual(set(result["payload_manifest"]), set(npm.SUITE_FILES))
+                self.assertEqual(len(result["payload_manifest"]), len(files))
+                self.assertEqual(set(result["payload_manifest"]), set(files))
                 self.assertIn(f"固定使用 v{version}", npm.wrapper_files(version)[1]["README.md"].decode())
 
     def test_current_patch_wrappers_preserve_the_reviewed_platform_scope(self):
-        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6"):
+        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7"):
             with self.subTest(version=version):
                 manifest, files = npm.wrapper_files(version)
                 readme = files["README.md"].decode("utf-8")
                 self.assertEqual(manifest["version"], version)
-                self.assertEqual(manifest["files"], list(npm.SUITE_FILES))
+                self.assertEqual(manifest["files"], list(npm.payload_files(version)))
                 self.assertIn("For macOS/Linux, in Codex, ask:", readme)
                 self.assertIn(f"Platform scope: v{version} is released for macOS/Linux.", readme)
                 self.assertIn("WinError 32", readme)
@@ -372,6 +373,8 @@ class NpmSuiteTests(NpmPackageTests):
                                ("0.5.0", npm.SUITE_FILES), ("0.5.1", npm.LEGACY_SUITE_FILES),
                                ("0.5.2", npm.LEGACY_SUITE_FILES), ("0.5.3", npm.LEGACY_SUITE_FILES),
                                ("0.5.4", npm.LEGACY_SUITE_FILES),
+                               ("0.5.6", npm.TAGGED_SUITE_FILES),
+                               ("0.5.7", npm.SUITE_FILES),
                                ("0.5.12", npm.LEGACY_SUITE_FILES)):
             with self.subTest(version=version):
                 self.archive = self.root / f"story-codex-{version}.zip"
@@ -391,10 +394,12 @@ class NpmSuiteTests(NpmPackageTests):
         zip_package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(zip_package)
         self.assertEqual(npm.SUITE_FILES, zip_package.SUITE_FILES)
+        self.assertEqual(npm.TAGGED_SUITE_FILES, zip_package.TAGGED_SUITE_FILES)
         self.assertEqual(npm.LEGACY_SUITE_FILES, zip_package.LEGACY_SUITE_FILES)
         self.assertEqual(len(npm.SUITE_FILES), 33)
+        self.assertEqual(len(npm.TAGGED_SUITE_FILES), 34)
         self.assertEqual(len(npm.LEGACY_SUITE_FILES), 31)
-        for version in ("0.4.0", "0.4.12", "0.5.0", "0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.12"):
+        for version in ("0.4.0", "0.4.12", "0.5.0", "0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.6", "0.5.7", "0.5.12"):
             self.assertEqual(npm.payload_files(version), zip_package.suite_files(version))
         self.assertEqual({name.split("/", 1)[0] for name in npm.SUITE_FILES}, set(npm.SKILL_NAMES))
         self.assertIn("all seven", npm.wrapper_files(self.version)[1]["README.md"].decode())

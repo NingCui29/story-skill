@@ -40,6 +40,8 @@ LEGACY_SUITE_FILES = tuple(sorted(
 SUITE_FILES = tuple(sorted(LEGACY_SUITE_FILES + (
     "story-codex-analyze/references/deep-reading.md",
     "story-codex-analyze/references/examples.md")))
+TAGGED_SUITE_FILES = tuple(sorted(SUITE_FILES + (
+    "story-codex-plan/references/fanqie-tags.md",)))
 MAX_BYTES = 256 * 1024 * 1024
 
 
@@ -48,8 +50,9 @@ def payload_files(version):
         return PAYLOAD_FILES
     if re.fullmatch(r"0\.4\.(?:0|[1-9][0-9]*)", version) or version == "0.5.0":
         return LEGACY_SUITE_FILES
-    if re.fullmatch(r"0\.5\.[1-9][0-9]*", version):
-        return SUITE_FILES
+    patch = re.fullmatch(r"0\.5\.([1-9][0-9]*)", version)
+    if patch:
+        return TAGGED_SUITE_FILES if int(patch.group(1)) >= 7 else SUITE_FILES
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -92,7 +95,8 @@ def read_release(archive, sha256_file):
     with zipfile.ZipFile(io.BytesIO(raw)) as bundle:
         members = bundle.infolist()
         names = [member.filename for member in members]
-        layouts = (set(PAYLOAD_FILES), set(LEGACY_SUITE_FILES), set(SUITE_FILES))
+        layouts = (set(PAYLOAD_FILES), set(LEGACY_SUITE_FILES), set(SUITE_FILES),
+                   set(TAGGED_SUITE_FILES))
         if len(names) != len(set(names)) or set(names) not in layouts:
             raise ValueError("Release ZIP must contain exactly a reviewed skill file list, without duplicates")
         if sum(member.file_size for member in members) > MAX_BYTES:
@@ -166,7 +170,7 @@ def wrapper_files(version):
         readme = readme.replace(previous_request,
             "$skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md "
             f"安装或升级 Story Codex，固定使用 v{version}。")
-    if version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6"):
+    if re.fullmatch(r"0\.5\.([1-9][0-9]*)", version):
         readme = readme.replace("In Codex, ask:", "For macOS/Linux, in Codex, ask:")
         readme = readme.replace("The shared Python runtime is", (
             f"Platform scope: v{version} is released for macOS/Linux. Windows manuscript and report "

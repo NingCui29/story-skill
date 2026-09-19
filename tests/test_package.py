@@ -61,7 +61,9 @@ class PackageVersionTests(unittest.TestCase):
                                ("0.4.9", package.LEGACY_SUITE_FILES),
                                ("0.5.0", package.LEGACY_SUITE_FILES),
                                ("0.5.1", package.SUITE_FILES),
-                               ("0.5.12", package.SUITE_FILES)):
+                               ("0.5.6", package.SUITE_FILES),
+                               ("0.5.7", package.TAGGED_SUITE_FILES),
+                               ("0.5.12", package.TAGGED_SUITE_FILES)):
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 fixture_suite(root / "skills", version)
@@ -76,7 +78,9 @@ class PackageVersionTests(unittest.TestCase):
 
     def test_historical_and_current_manifests_cannot_be_interchanged(self):
         for version, files in (("0.4.0", package.SUITE_FILES), ("0.5.0", package.SUITE_FILES),
-                               ("0.5.1", package.LEGACY_SUITE_FILES)):
+                               ("0.5.1", package.LEGACY_SUITE_FILES),
+                               ("0.5.6", package.TAGGED_SUITE_FILES),
+                               ("0.5.7", package.SUITE_FILES)):
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 fixture_suite(root / "skills", version, files)

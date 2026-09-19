@@ -90,9 +90,21 @@ class SuiteInstallTests(unittest.TestCase):
         package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(package)
         self.assertEqual(installer.SUITE_FILES, package.SUITE_FILES)
+        self.assertEqual(installer.TAGGED_SUITE_FILES, package.TAGGED_SUITE_FILES)
         self.assertEqual(installer.LEGACY_SUITE_FILES, package.LEGACY_SUITE_FILES)
-        for version in ("0.4.0", "0.4.12", "0.5.0", "0.5.1", "0.5.12"):
+        for version in ("0.4.0", "0.4.12", "0.5.0", "0.5.1", "0.5.6", "0.5.7", "0.5.12"):
             self.assertEqual(installer.suite_files(version), package.suite_files(version))
+
+    def test_tagged_release_installs_its_planning_reference(self):
+        reference = self.source / "story-codex-plan/references/fanqie-tags.md"
+        reference.parent.mkdir(parents=True, exist_ok=True)
+        reference.write_text("阅读标签与内容标签", encoding="utf-8")
+        runtime = self.source / "story-codex/scripts/story.py"
+        runtime.write_text('VERSION = "0.5.7"\n', encoding="utf-8")
+        installed = self.install()
+        self.assertEqual(installed["files"], 34)
+        self.assertEqual((self.target("story-codex-plan") / "references/fanqie-tags.md").read_bytes(),
+                         reference.read_bytes())
 
     def test_historical_suite_installs_then_upgrades_with_new_analysis_references(self):
         added = set(installer.SUITE_FILES) - set(installer.LEGACY_SUITE_FILES)
