@@ -1,0 +1,49 @@
+{
+  "method": "han_v1: named Unicode unified/compatibility CJK ideographs and 〇. Body excludes Markdown headings and the two standalone 第一场/第二场 labels; excludes punctuation and whitespace.",
+  "outputs": {
+    "p83": {
+      "body_han_v1": 823,
+      "including_headings_han_v1": 846,
+      "requested_range": [
+        700,
+        1000
+      ],
+      "within_range": true,
+      "heading_han_v1": 23,
+      "notes": "Original author metadata preserved; independent recount uses one common method."
+    },
+    "p17": {
+      "body_han_v1": 785,
+      "including_headings_han_v1": 807,
+      "requested_range": [
+        700,
+        1000
+      ],
+      "within_range": true,
+      "heading_han_v1": 22,
+      "notes": "Original author metadata preserved; independent recount uses one common method."
+    },
+    "p42": {
+      "body_han_v1": 957,
+      "including_headings_han_v1": 957,
+      "requested_range": [
+        800,
+        1100
+      ],
+      "within_range": true,
+      "heading_han_v1": 0,
+      "notes": "Original author metadata preserved; independent recount uses one common method."
+    },
+    "p91": {
+      "body_han_v1": 865,
+      "including_headings_han_v1": 865,
+      "requested_range": [
+        800,
+        1100
+      ],
+      "within_range": true,
+      "heading_han_v1": 0,
+      "notes": "Original author metadata preserved; independent recount uses one common method."
+    }
+  }
+}

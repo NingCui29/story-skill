@@ -1,0 +1,90 @@
+{
+  "files": {
+    "baseline": [
+      {
+        "path": "output.md",
+        "bytes": 1841,
+        "sha256": "8037a1330e08e1e12ef2d8be1d8e04cda585477fb3a8f02acc2478beec163efc"
+      },
+      {
+        "path": "process.json",
+        "bytes": 11288,
+        "sha256": "ad808bb0e1b68d58ba07ad5d0597c4a64ec314384c6034a793e1e51e1df05906"
+      },
+      {
+        "path": "浅水区/.story/delta-1.json",
+        "bytes": 1623,
+        "sha256": "1b2849c5b40ad7ba6dd908d436f6cfb7febcdb8f319daaac835e0c5a2098be43"
+      },
+      {
+        "path": "浅水区/.story/drafts/chapter-1.md",
+        "bytes": 1859,
+        "sha256": "6c2c6e98567f97d3d241b145b1f82417620f324e1682b7263330ab5d0a93b80e"
+      },
+      {
+        "path": "浅水区/.story/operation.lock",
+        "bytes": 1,
+        "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+      },
+      {
+        "path": "浅水区/.story/plan-1.json",
+        "bytes": 954,
+        "sha256": "e00e0c825de21d5daa24ff4eaaa8224b1e836adc5d2b50782518ef77ce92d708"
+      },
+      {
+        "path": "浅水区/.story/prepare-1.json",
+        "bytes": 1396,
+        "sha256": "f8a7152f5132c6327d83ff4e0491bfea506c68f6e3221410f88fcf34d03152a9"
+      },
+      {
+        "path": "浅水区/.story/state.sqlite3",
+        "bytes": 524288,
+        "sha256": "cc2c805a7e00608d2221ac140018c48f1e5c0fd3e39c29680cc5c695e294731e"
+      },
+      {
+        "path": "浅水区/01_大纲细纲/第1章 门口.md",
+        "bytes": 822,
+        "sha256": "df87795a3710289ebe0fff859254ec9f3f6629beea8b518fdcd2cb7e65108cc3"
+      },
+      {
+        "path": "浅水区/chapters/第一卷 初学/第1章 门口.md",
+        "bytes": 1859,
+        "sha256": "6c2c6e98567f97d3d241b145b1f82417620f324e1682b7263330ab5d0a93b80e"
+      },
+      {
+        "path": "浅水区/创作约定.md",
+        "bytes": 628,
+        "sha256": "fd8552913072deb5c7c0e53d542d3c6eac3bb9c5a08042911e3ed130aaf4a4a2"
+      }
+    ],
+    "candidate": [
+      {
+        "path": "output.md",
+        "bytes": 1745,
+        "sha256": "3fb7d6b664be797ab38b1f62a6f8bda79fcb6c116da3ac201a545ebbc54aef23"
+      },
+      {
+        "path": "process.json",
+        "bytes": 2486,
+        "sha256": "f11e1d8d0aad9aad90e9419b7a53a12694b1a5d50e003747b0df7817f330c9d2"
+      }
+    ]
+  },
+  "counts": {
+    "baseline": {
+      "method": "han_v1",
+      "value": 481,
+      "within_450_600": true
+    },
+    "candidate": {
+      "method": "han_v1",
+      "value": 459,
+      "within_450_600": true
+    }
+  },
+  "candidate_only_capture_files": true,
+  "baseline_database_created": true,
+  "baseline_readable_plan_created": true,
+  "baseline_export_created": true,
+  "scope": "Filesystem observation after both trials, with exact hashes; tool call totals are separately reported by each agent."
+}

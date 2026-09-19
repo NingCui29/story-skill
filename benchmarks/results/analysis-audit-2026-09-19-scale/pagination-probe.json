@@ -1,0 +1,40 @@
+{
+  "date": "2026-09-19T06:50:47.056613+00:00",
+  "ok": true,
+  "scope": "Synthetic multi-chapter runtime API audit; no CLI subprocesses or literary analysis.",
+  "fixture_recipe": {
+    "chapters": 137,
+    "body_lines_per_chapter": 12,
+    "chunk_chars": 256,
+    "line_endings": [
+      "LF",
+      "CRLF",
+      "CR"
+    ],
+    "unicode": [
+      "emoji",
+      "CJK extension",
+      "combining accent"
+    ],
+    "blank_run_every_chapters": 17
+  },
+  "characters": 69647,
+  "source_sha256": "7af2eaa5e1a232f0b5c13c0e8137b36402b1a1fab83b3dc5dfdadc5b923376ba",
+  "chunks": 298,
+  "automatic_noncontent": 24,
+  "out_of_order_records": 25,
+  "partial_findings_pages": 14,
+  "final_findings_pages": 97,
+  "next_calls_after_reopen": 125,
+  "findings_budget_bytes": 2000,
+  "next_budget_bytes": 1800,
+  "all_saved_ranges_reconstructed_exactly": true,
+  "all_quotes_and_chunk_hashes_matched": true,
+  "original_file_removed_before_resume": true,
+  "incomplete_and_stale_reports_rejected": true,
+  "partial_coverage_label_preserved": true,
+  "final_retry_preserved_bytes_and_revision": true,
+  "duration_seconds": 2.105,
+  "runtime_sha256": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
+  "temporary_workspace_removed": true
+}

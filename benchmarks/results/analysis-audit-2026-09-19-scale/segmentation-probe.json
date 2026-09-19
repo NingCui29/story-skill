@@ -1,0 +1,187 @@
+{
+  "result": "PASS",
+  "python_version": "3.12.14 (main, Aug 25 2026, 13:50:22) [Clang 22.1.3 ]",
+  "python_executable": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "runtime_path": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+  "runtime_raw_sha256": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
+  "seed": 20260919,
+  "counts": {
+    "split_cases": 380,
+    "ingest_cases": 24,
+    "chunks": 120,
+    "manual_records": 87,
+    "auto_blank_chunks": 33,
+    "source_read_checks": 216,
+    "max_chars": 80015
+  },
+  "cases": [
+    {
+      "maximum": 256,
+      "case": "long_paragraph",
+      "characters": 1026,
+      "chunks": 5,
+      "manual": 5
+    },
+    {
+      "maximum": 256,
+      "case": "long_title",
+      "characters": 536,
+      "chunks": 4,
+      "manual": 4
+    },
+    {
+      "maximum": 256,
+      "case": "blank_blocks",
+      "characters": 2063,
+      "chunks": 10,
+      "manual": 2
+    },
+    {
+      "maximum": 256,
+      "case": "mixed_unicode",
+      "characters": 783,
+      "chunks": 5,
+      "manual": 4
+    },
+    {
+      "maximum": 256,
+      "case": "lf_at_boundary",
+      "characters": 514,
+      "chunks": 3,
+      "manual": 3
+    },
+    {
+      "maximum": 256,
+      "case": "crlf_across_boundary",
+      "characters": 514,
+      "chunks": 3,
+      "manual": 3
+    },
+    {
+      "maximum": 257,
+      "case": "long_paragraph",
+      "characters": 1030,
+      "chunks": 5,
+      "manual": 5
+    },
+    {
+      "maximum": 257,
+      "case": "long_title",
+      "characters": 538,
+      "chunks": 4,
+      "manual": 4
+    },
+    {
+      "maximum": 257,
+      "case": "blank_blocks",
+      "characters": 2071,
+      "chunks": 10,
+      "manual": 2
+    },
+    {
+      "maximum": 257,
+      "case": "mixed_unicode",
+      "characters": 794,
+      "chunks": 5,
+      "manual": 5
+    },
+    {
+      "maximum": 257,
+      "case": "lf_at_boundary",
+      "characters": 516,
+      "chunks": 3,
+      "manual": 3
+    },
+    {
+      "maximum": 257,
+      "case": "crlf_across_boundary",
+      "characters": 516,
+      "chunks": 3,
+      "manual": 3
+    },
+    {
+      "maximum": 2400,
+      "case": "long_paragraph",
+      "characters": 9602,
+      "chunks": 5,
+      "manual": 5
+    },
+    {
+      "maximum": 2400,
+      "case": "long_title",
+      "characters": 4824,
+      "chunks": 4,
+      "manual": 4
+    },
+    {
+      "maximum": 2400,
+      "case": "blank_blocks",
+      "characters": 19215,
+      "chunks": 10,
+      "manual": 2
+    },
+    {
+      "maximum": 2400,
+      "case": "mixed_unicode",
+      "characters": 7218,
+      "chunks": 5,
+      "manual": 5
+    },
+    {
+      "maximum": 2400,
+      "case": "lf_at_boundary",
+      "characters": 4802,
+      "chunks": 3,
+      "manual": 3
+    },
+    {
+      "maximum": 2400,
+      "case": "crlf_across_boundary",
+      "characters": 4802,
+      "chunks": 3,
+      "manual": 3
+    },
+    {
+      "maximum": 10000,
+      "case": "long_paragraph",
+      "characters": 40002,
+      "chunks": 5,
+      "manual": 5
+    },
+    {
+      "maximum": 10000,
+      "case": "long_title",
+      "characters": 20024,
+      "chunks": 4,
+      "manual": 4
+    },
+    {
+      "maximum": 10000,
+      "case": "blank_blocks",
+      "characters": 80015,
+      "chunks": 10,
+      "manual": 2
+    },
+    {
+      "maximum": 10000,
+      "case": "mixed_unicode",
+      "characters": 30021,
+      "chunks": 5,
+      "manual": 5
+    },
+    {
+      "maximum": 10000,
+      "case": "lf_at_boundary",
+      "characters": 20002,
+      "chunks": 3,
+      "manual": 3
+    },
+    {
+      "maximum": 10000,
+      "case": "crlf_across_boundary",
+      "characters": 20002,
+      "chunks": 3,
+      "manual": 3
+    }
+  ]
+}

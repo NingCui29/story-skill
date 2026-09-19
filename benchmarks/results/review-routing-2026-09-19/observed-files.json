@@ -1,0 +1,173 @@
+{
+  "pending": [
+    {
+      "path": "output.md",
+      "bytes": 1073,
+      "sha256": "77c98e38dba107468a0ddfcac1dffae64847f5ac3453ea270b9d9eef133032c0"
+    },
+    {
+      "path": "process.json",
+      "bytes": 12185,
+      "sha256": "5ed2a34c955101a4d281f3dbcf53e530357888a812cf52f846ebeca611839b20"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.commit.json",
+      "bytes": 579,
+      "sha256": "16cf04437fe0f6dfc2c1fc0cafbe2b5bf942233dcf4604a16b95525e1bb45d34"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.delta.json",
+      "bytes": 3638,
+      "sha256": "bc6b201ab20235d203741a6d2e6269cea737f02022d1a20cc7a6e9535095fa22"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.md",
+      "bytes": 970,
+      "sha256": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.prepare.json",
+      "bytes": 1396,
+      "sha256": "818aa02324c17fe6edd82de403d067446d7938e27483cd97bd02a31738626bf7"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.status.json",
+      "bytes": 652,
+      "sha256": "a7b4e16cbb71a8612f9fdf2ab56955f07c9eee087505eeb5e77041bac579c9f2"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.审前.md",
+      "bytes": 1018,
+      "sha256": "ac0f071efb02bcba6988159f11c1238c7884091185f1a6ffd3d713dea5bff288"
+    },
+    {
+      "path": "雨棚修鞋/.story/operation.lock",
+      "bytes": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "雨棚修鞋/.story/state.sqlite3",
+      "bytes": 552960,
+      "sha256": "d725e30e7f9dbc4b9baf03f1ba8e86f9893a951d686c0119d950800c39602466"
+    },
+    {
+      "path": "雨棚修鞋/01_大纲细纲/第一卷 雨棚/第1章 借伞.md",
+      "bytes": 265,
+      "sha256": "b48ed0cc87cb4fa9cd0ae29bdebcfb511e30832c6ad724cf3365ef6218effa35"
+    },
+    {
+      "path": "雨棚修鞋/chapters/第一卷 雨棚/第1章 借伞.md",
+      "bytes": 970,
+      "sha256": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482"
+    },
+    {
+      "path": "雨棚修鞋/创作约定.md",
+      "bytes": 174,
+      "sha256": "98cf8263702c09cd9b895cda6403429847e8f220d6eba68885f29c6a7891921b"
+    },
+    {
+      "path": "雨棚修鞋/审稿记录/第1章 借伞.md",
+      "bytes": 1553,
+      "sha256": "bb52c6e3c2edf925ba612c40f9a9cb6d2e2876fdde213d69513d72fd49363bd4"
+    }
+  ],
+  "unmanaged": [
+    {
+      "path": "output.md",
+      "bytes": 547,
+      "sha256": "3ce3cf175f63167af5abebe93933e4dae0146ad6388da3ecde36f86e74322649"
+    },
+    {
+      "path": "process.json",
+      "bytes": 4060,
+      "sha256": "1a5cd1916e49f63e905b7c87c5857983b6bb23938c3f0a39163cb27c783f234b"
+    },
+    {
+      "path": "修改稿.md",
+      "bytes": 1237,
+      "sha256": "241cdb80a7329ec0bd952543577aafb9e30cb0789f3e471512df947c3e696333"
+    },
+    {
+      "path": "片段.md",
+      "bytes": 1000,
+      "sha256": "18c453aa2f17a3b8d2f27963ba778fdfe788ad33149b502d879b19d061e1954a"
+    }
+  ],
+  "draft-only": [
+    {
+      "path": "output.md",
+      "bytes": 691,
+      "sha256": "75908c001881acfc24c341a05c2a21a130a934f5a994aa94cae36837dc32fc24"
+    },
+    {
+      "path": "process.json",
+      "bytes": 12382,
+      "sha256": "630da899d8078f19d7f24a0594b75f0de254e121b5b52244bde0314a6d102c2d"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 候选.md",
+      "bytes": 1118,
+      "sha256": "6f1ae78262b373ad505b7749e13d7c4614d7514e593eef238c489c8df11f994f"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.commit.json",
+      "bytes": 579,
+      "sha256": "16cf04437fe0f6dfc2c1fc0cafbe2b5bf942233dcf4604a16b95525e1bb45d34"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.delta.json",
+      "bytes": 3638,
+      "sha256": "bc6b201ab20235d203741a6d2e6269cea737f02022d1a20cc7a6e9535095fa22"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.md",
+      "bytes": 970,
+      "sha256": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.prepare.json",
+      "bytes": 1396,
+      "sha256": "818aa02324c17fe6edd82de403d067446d7938e27483cd97bd02a31738626bf7"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.status.json",
+      "bytes": 652,
+      "sha256": "a7b4e16cbb71a8612f9fdf2ab56955f07c9eee087505eeb5e77041bac579c9f2"
+    },
+    {
+      "path": "雨棚修鞋/.story/drafts/第1章 借伞.审前.md",
+      "bytes": 1018,
+      "sha256": "ac0f071efb02bcba6988159f11c1238c7884091185f1a6ffd3d713dea5bff288"
+    },
+    {
+      "path": "雨棚修鞋/.story/operation.lock",
+      "bytes": 1,
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "雨棚修鞋/.story/state.sqlite3",
+      "bytes": 552960,
+      "sha256": "d725e30e7f9dbc4b9baf03f1ba8e86f9893a951d686c0119d950800c39602466"
+    },
+    {
+      "path": "雨棚修鞋/01_大纲细纲/第一卷 雨棚/第1章 借伞.md",
+      "bytes": 265,
+      "sha256": "b48ed0cc87cb4fa9cd0ae29bdebcfb511e30832c6ad724cf3365ef6218effa35"
+    },
+    {
+      "path": "雨棚修鞋/chapters/第一卷 雨棚/第1章 借伞.md",
+      "bytes": 970,
+      "sha256": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482"
+    },
+    {
+      "path": "雨棚修鞋/创作约定.md",
+      "bytes": 174,
+      "sha256": "98cf8263702c09cd9b895cda6403429847e8f220d6eba68885f29c6a7891921b"
+    },
+    {
+      "path": "雨棚修鞋/审稿记录/第1章 借伞.md",
+      "bytes": 1553,
+      "sha256": "bb52c6e3c2edf925ba612c40f9a9cb6d2e2876fdde213d69513d72fd49363bd4"
+    }
+  ]
+}

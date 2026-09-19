@@ -1,0 +1,5356 @@
+{
+  "environment": {
+    "python": "3.9.6 (default, Apr 30 2025, 02:07:18) \n[Clang 17.0.0 (clang-1700.0.13.5)]",
+    "platform": "macOS-15.8-x86_64-i386-64bit",
+    "tool_sha256": "2fcb98ede72c7948815dcbe7178fd40633b382ba260272745d6a8fc175ab177c",
+    "root": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-scale-audit-ygd5qcqq"
+  },
+  "cases": [
+    {
+      "chunks": 1000,
+      "source_characters": 2400000,
+      "source_utf8_bytes": 7110214,
+      "analysis_stored_utf8_bytes": 717893,
+      "findings_per_chunk": 3,
+      "ingest_s": 0.238651618,
+      "api_default_page_s": [
+        0.04058704900000004,
+        0.042280273000000035,
+        0.03781811100000004,
+        0.038633841,
+        0.04255741599999996
+      ],
+      "api_default_page_median_s": 0.04058704900000004,
+      "default_page_bytes": 8642,
+      "counter_one_page": {
+        "loads_calls": 1020,
+        "loads_utf8_bytes": 732215,
+        "dumps_calls": 1044,
+        "dumps_utf8_bytes": 1111207
+      },
+      "full_pagination": {
+        "pages": 100,
+        "total_s": 3.9836798929999997,
+        "page_median_s": 0.03860873800000009,
+        "snapshot_total_s": 3.453509227000004,
+        "snapshot_fraction": 0.8669143404489916,
+        "returned_packet_bytes": 872339,
+        "loads_calls_exact": 102000,
+        "loads_utf8_bytes_exact": 73225086,
+        "fingerprint_stable": true,
+        "ordered_complete": true
+      },
+      "cli_page_s": [
+        0.2093717970000002,
+        0.20283027600000025,
+        0.20867430200000037
+      ],
+      "cli_page_median_s": 0.20867430200000037
+    },
+    {
+      "chunks": 3000,
+      "source_characters": 7200000,
+      "source_utf8_bytes": 21326214,
+      "analysis_stored_utf8_bytes": 2155893,
+      "findings_per_chunk": 3,
+      "ingest_s": 0.7205617929999999,
+      "api_default_page_s": [
+        0.1529244349999992,
+        0.14876935599999985,
+        0.14870148999999966,
+        0.15155874600000008,
+        0.15352255300000017
+      ],
+      "api_default_page_median_s": 0.15155874600000008,
+      "default_page_bytes": 8642,
+      "counter_one_page": {
+        "loads_calls": 3020,
+        "loads_utf8_bytes": 2170215,
+        "dumps_calls": 3044,
+        "dumps_utf8_bytes": 2977207
+      },
+      "full_pagination": {
+        "pages": 300,
+        "total_s": 41.069431033,
+        "page_median_s": 0.13287642549999745,
+        "snapshot_total_s": 32.920146178999985,
+        "snapshot_fraction": 0.8015729790010501,
+        "returned_packet_bytes": 2623739,
+        "loads_calls_exact": 906000,
+        "loads_utf8_bytes_exact": 651079686,
+        "fingerprint_stable": true,
+        "ordered_complete": true
+      },
+      "cli_page_s": [
+        0.2569487839999951,
+        0.24819830599999904,
+        0.2569072900000009
+      ],
+      "cli_page_median_s": 0.2569072900000009,
+      "budgeted_pagination_limit100": {
+        "requested_limit": 100,
+        "budget_bytes": 20000,
+        "source": "a55b8147d14ccd83932561edb742e7d80062a29f6ad4d7ea660121f6e4e2dcd4",
+        "analysis_sha256": "45ac8cfd4a07e677c15589a0fc440ae2d84a3b8aacb0a76320f59b4868294270",
+        "baseline_fingerprint_check": "The prior benchmark did not retain the literal fingerprint. A fresh limit-10 control from the same unchanged retained database was captured immediately before this run; all limit-100 pages equal that fingerprint.",
+        "measured_at_utc": "2026-09-19T06:55:57.327221+00:00",
+        "pages": 131,
+        "total_s": 17.5684249,
+        "page_median_s": 0.13318854799999968,
+        "max_page_bytes": 19782,
+        "returned_packet_bytes": 2577178,
+        "page_size_distribution": {
+          "10": 1,
+          "23": 130
+        },
+        "ordered_complete": true,
+        "unique_chunks": 3000,
+        "duplicate_chunks": 0,
+        "missing_chunks": [],
+        "fingerprints_unique": 1,
+        "all_fingerprints_equal_same_db_limit10": true,
+        "baseline_limit10_pages": 300,
+        "baseline_limit10_total_s": 41.069431033,
+        "page_count_reduction_fraction": 0.5633333333333334,
+        "elapsed_reduction_fraction_observed": 0.5722262408290131,
+        "cli_first_and_last": [
+          {
+            "page": "first",
+            "offset": 0,
+            "next_offset": 23,
+            "returned": 23,
+            "first_chunk": 1,
+            "last_chunk": 23,
+            "bytes": 19563,
+            "elapsed_s": 0.2530968539999989,
+            "equals_api_packet": true,
+            "fingerprint_matches_limit10_control": true
+          },
+          {
+            "page": "last",
+            "offset": 2990,
+            "next_offset": 3000,
+            "returned": 10,
+            "first_chunk": 2991,
+            "last_chunk": 3000,
+            "bytes": 8757,
+            "elapsed_s": 0.251071661000001,
+            "equals_api_packet": true,
+            "fingerprint_matches_limit10_control": true
+          }
+        ],
+        "database_sha256_before": "ab769d57a9796a3988f5fb4c5bb6fd4ed71b82f394e2b83efb35a7566856c4c3",
+        "database_sha256_after": "ab769d57a9796a3988f5fb4c5bb6fd4ed71b82f394e2b83efb35a7566856c4c3",
+        "database_unchanged": true,
+        "tool_normalized_text_sha256": "2fcb98ede72c7948815dcbe7178fd40633b382ba260272745d6a8fc175ab177c",
+        "tool_matches_original_baseline": true,
+        "method": "Only the requested page limit changed; the 20000-byte cap is identical. API pagination uses returned next_offset, checks serialized bytes for every page, ordinal coverage and fingerprint equality. Timings exclude the initial control and two CLI checks; the prior run also included lightweight per-page coverage checks. Sequential runs on a normally cached local machine are not a controlled CPU benchmark. No source, installation, or database edits.",
+        "page_details": [
+          {
+            "offset": 0,
+            "next_offset": 23,
+            "returned": 23,
+            "first_chunk": 1,
+            "last_chunk": 23,
+            "bytes": 19563,
+            "elapsed_s": 0.130882628
+          },
+          {
+            "offset": 23,
+            "next_offset": 46,
+            "returned": 23,
+            "first_chunk": 24,
+            "last_chunk": 46,
+            "bytes": 19603,
+            "elapsed_s": 0.131968427
+          },
+          {
+            "offset": 46,
+            "next_offset": 69,
+            "returned": 23,
+            "first_chunk": 47,
+            "last_chunk": 69,
+            "bytes": 19640,
+            "elapsed_s": 0.13544414400000004
+          },
+          {
+            "offset": 69,
+            "next_offset": 92,
+            "returned": 23,
+            "first_chunk": 70,
+            "last_chunk": 92,
+            "bytes": 19640,
+            "elapsed_s": 0.13464719400000003
+          },
+          {
+            "offset": 92,
+            "next_offset": 115,
+            "returned": 23,
+            "first_chunk": 93,
+            "last_chunk": 115,
+            "bytes": 19673,
+            "elapsed_s": 0.131487421
+          },
+          {
+            "offset": 115,
+            "next_offset": 138,
+            "returned": 23,
+            "first_chunk": 116,
+            "last_chunk": 138,
+            "bytes": 19688,
+            "elapsed_s": 0.13339511400000004
+          },
+          {
+            "offset": 138,
+            "next_offset": 161,
+            "returned": 23,
+            "first_chunk": 139,
+            "last_chunk": 161,
+            "bytes": 19688,
+            "elapsed_s": 0.14117955299999996
+          },
+          {
+            "offset": 161,
+            "next_offset": 184,
+            "returned": 23,
+            "first_chunk": 162,
+            "last_chunk": 184,
+            "bytes": 19688,
+            "elapsed_s": 0.13698275699999996
+          },
+          {
+            "offset": 184,
+            "next_offset": 207,
+            "returned": 23,
+            "first_chunk": 185,
+            "last_chunk": 207,
+            "bytes": 19688,
+            "elapsed_s": 0.13175965199999995
+          },
+          {
+            "offset": 207,
+            "next_offset": 230,
+            "returned": 23,
+            "first_chunk": 208,
+            "last_chunk": 230,
+            "bytes": 19688,
+            "elapsed_s": 0.13161655799999994
+          },
+          {
+            "offset": 230,
+            "next_offset": 253,
+            "returned": 23,
+            "first_chunk": 231,
+            "last_chunk": 253,
+            "bytes": 19688,
+            "elapsed_s": 0.13432136799999994
+          },
+          {
+            "offset": 253,
+            "next_offset": 276,
+            "returned": 23,
+            "first_chunk": 254,
+            "last_chunk": 276,
+            "bytes": 19688,
+            "elapsed_s": 0.1310735569999999
+          },
+          {
+            "offset": 276,
+            "next_offset": 299,
+            "returned": 23,
+            "first_chunk": 277,
+            "last_chunk": 299,
+            "bytes": 19688,
+            "elapsed_s": 0.1320248020000001
+          },
+          {
+            "offset": 299,
+            "next_offset": 322,
+            "returned": 23,
+            "first_chunk": 300,
+            "last_chunk": 322,
+            "bytes": 19688,
+            "elapsed_s": 0.1356935589999999
+          },
+          {
+            "offset": 322,
+            "next_offset": 345,
+            "returned": 23,
+            "first_chunk": 323,
+            "last_chunk": 345,
+            "bytes": 19688,
+            "elapsed_s": 0.1411554559999999
+          },
+          {
+            "offset": 345,
+            "next_offset": 368,
+            "returned": 23,
+            "first_chunk": 346,
+            "last_chunk": 368,
+            "bytes": 19688,
+            "elapsed_s": 0.1318461059999998
+          },
+          {
+            "offset": 368,
+            "next_offset": 391,
+            "returned": 23,
+            "first_chunk": 369,
+            "last_chunk": 391,
+            "bytes": 19688,
+            "elapsed_s": 0.12931804999999974
+          },
+          {
+            "offset": 391,
+            "next_offset": 414,
+            "returned": 23,
+            "first_chunk": 392,
+            "last_chunk": 414,
+            "bytes": 19688,
+            "elapsed_s": 0.13273717500000037
+          },
+          {
+            "offset": 414,
+            "next_offset": 437,
+            "returned": 23,
+            "first_chunk": 415,
+            "last_chunk": 437,
+            "bytes": 19729,
+            "elapsed_s": 0.13203436000000002
+          },
+          {
+            "offset": 437,
+            "next_offset": 460,
+            "returned": 23,
+            "first_chunk": 438,
+            "last_chunk": 460,
+            "bytes": 19734,
+            "elapsed_s": 0.13185802499999966
+          },
+          {
+            "offset": 460,
+            "next_offset": 483,
+            "returned": 23,
+            "first_chunk": 461,
+            "last_chunk": 483,
+            "bytes": 19734,
+            "elapsed_s": 0.13167460799999997
+          },
+          {
+            "offset": 483,
+            "next_offset": 506,
+            "returned": 23,
+            "first_chunk": 484,
+            "last_chunk": 506,
+            "bytes": 19734,
+            "elapsed_s": 0.13318854799999968
+          },
+          {
+            "offset": 506,
+            "next_offset": 529,
+            "returned": 23,
+            "first_chunk": 507,
+            "last_chunk": 529,
+            "bytes": 19734,
+            "elapsed_s": 0.13164195600000017
+          },
+          {
+            "offset": 529,
+            "next_offset": 552,
+            "returned": 23,
+            "first_chunk": 530,
+            "last_chunk": 552,
+            "bytes": 19734,
+            "elapsed_s": 0.13201398100000006
+          },
+          {
+            "offset": 552,
+            "next_offset": 575,
+            "returned": 23,
+            "first_chunk": 553,
+            "last_chunk": 575,
+            "bytes": 19734,
+            "elapsed_s": 0.13134980500000015
+          },
+          {
+            "offset": 575,
+            "next_offset": 598,
+            "returned": 23,
+            "first_chunk": 576,
+            "last_chunk": 598,
+            "bytes": 19734,
+            "elapsed_s": 0.13412043999999979
+          },
+          {
+            "offset": 598,
+            "next_offset": 621,
+            "returned": 23,
+            "first_chunk": 599,
+            "last_chunk": 621,
+            "bytes": 19734,
+            "elapsed_s": 0.1313805450000003
+          },
+          {
+            "offset": 621,
+            "next_offset": 644,
+            "returned": 23,
+            "first_chunk": 622,
+            "last_chunk": 644,
+            "bytes": 19734,
+            "elapsed_s": 0.13324117800000002
+          },
+          {
+            "offset": 644,
+            "next_offset": 667,
+            "returned": 23,
+            "first_chunk": 645,
+            "last_chunk": 667,
+            "bytes": 19734,
+            "elapsed_s": 0.13566884500000054
+          },
+          {
+            "offset": 667,
+            "next_offset": 690,
+            "returned": 23,
+            "first_chunk": 668,
+            "last_chunk": 690,
+            "bytes": 19734,
+            "elapsed_s": 0.13400964299999973
+          },
+          {
+            "offset": 690,
+            "next_offset": 713,
+            "returned": 23,
+            "first_chunk": 691,
+            "last_chunk": 713,
+            "bytes": 19734,
+            "elapsed_s": 0.13096417199999966
+          },
+          {
+            "offset": 713,
+            "next_offset": 736,
+            "returned": 23,
+            "first_chunk": 714,
+            "last_chunk": 736,
+            "bytes": 19734,
+            "elapsed_s": 0.13091818300000035
+          },
+          {
+            "offset": 736,
+            "next_offset": 759,
+            "returned": 23,
+            "first_chunk": 737,
+            "last_chunk": 759,
+            "bytes": 19734,
+            "elapsed_s": 0.1321477670000002
+          },
+          {
+            "offset": 759,
+            "next_offset": 782,
+            "returned": 23,
+            "first_chunk": 760,
+            "last_chunk": 782,
+            "bytes": 19734,
+            "elapsed_s": 0.1340323330000004
+          },
+          {
+            "offset": 782,
+            "next_offset": 805,
+            "returned": 23,
+            "first_chunk": 783,
+            "last_chunk": 805,
+            "bytes": 19734,
+            "elapsed_s": 0.13158654499999933
+          },
+          {
+            "offset": 805,
+            "next_offset": 828,
+            "returned": 23,
+            "first_chunk": 806,
+            "last_chunk": 828,
+            "bytes": 19734,
+            "elapsed_s": 0.13236305000000037
+          },
+          {
+            "offset": 828,
+            "next_offset": 851,
+            "returned": 23,
+            "first_chunk": 829,
+            "last_chunk": 851,
+            "bytes": 19734,
+            "elapsed_s": 0.13818932700000008
+          },
+          {
+            "offset": 851,
+            "next_offset": 874,
+            "returned": 23,
+            "first_chunk": 852,
+            "last_chunk": 874,
+            "bytes": 19734,
+            "elapsed_s": 0.133968254
+          },
+          {
+            "offset": 874,
+            "next_offset": 897,
+            "returned": 23,
+            "first_chunk": 875,
+            "last_chunk": 897,
+            "bytes": 19734,
+            "elapsed_s": 0.1317364449999996
+          },
+          {
+            "offset": 897,
+            "next_offset": 920,
+            "returned": 23,
+            "first_chunk": 898,
+            "last_chunk": 920,
+            "bytes": 19734,
+            "elapsed_s": 0.13708954999999978
+          },
+          {
+            "offset": 920,
+            "next_offset": 943,
+            "returned": 23,
+            "first_chunk": 921,
+            "last_chunk": 943,
+            "bytes": 19734,
+            "elapsed_s": 0.13298033399999998
+          },
+          {
+            "offset": 943,
+            "next_offset": 966,
+            "returned": 23,
+            "first_chunk": 944,
+            "last_chunk": 966,
+            "bytes": 19734,
+            "elapsed_s": 0.12923782699999986
+          },
+          {
+            "offset": 966,
+            "next_offset": 989,
+            "returned": 23,
+            "first_chunk": 967,
+            "last_chunk": 989,
+            "bytes": 19734,
+            "elapsed_s": 0.13208425899999998
+          },
+          {
+            "offset": 989,
+            "next_offset": 1012,
+            "returned": 23,
+            "first_chunk": 990,
+            "last_chunk": 1012,
+            "bytes": 19761,
+            "elapsed_s": 0.13110088799999975
+          },
+          {
+            "offset": 1012,
+            "next_offset": 1035,
+            "returned": 23,
+            "first_chunk": 1013,
+            "last_chunk": 1035,
+            "bytes": 19782,
+            "elapsed_s": 0.13259683699999947
+          },
+          {
+            "offset": 1035,
+            "next_offset": 1058,
+            "returned": 23,
+            "first_chunk": 1036,
+            "last_chunk": 1058,
+            "bytes": 19782,
+            "elapsed_s": 0.13830294200000015
+          },
+          {
+            "offset": 1058,
+            "next_offset": 1081,
+            "returned": 23,
+            "first_chunk": 1059,
+            "last_chunk": 1081,
+            "bytes": 19782,
+            "elapsed_s": 0.1355968040000004
+          },
+          {
+            "offset": 1081,
+            "next_offset": 1104,
+            "returned": 23,
+            "first_chunk": 1082,
+            "last_chunk": 1104,
+            "bytes": 19782,
+            "elapsed_s": 0.13233511000000053
+          },
+          {
+            "offset": 1104,
+            "next_offset": 1127,
+            "returned": 23,
+            "first_chunk": 1105,
+            "last_chunk": 1127,
+            "bytes": 19782,
+            "elapsed_s": 0.13614136999999982
+          },
+          {
+            "offset": 1127,
+            "next_offset": 1150,
+            "returned": 23,
+            "first_chunk": 1128,
+            "last_chunk": 1150,
+            "bytes": 19782,
+            "elapsed_s": 0.13804633800000055
+          },
+          {
+            "offset": 1150,
+            "next_offset": 1173,
+            "returned": 23,
+            "first_chunk": 1151,
+            "last_chunk": 1173,
+            "bytes": 19782,
+            "elapsed_s": 0.14046049800000038
+          },
+          {
+            "offset": 1173,
+            "next_offset": 1196,
+            "returned": 23,
+            "first_chunk": 1174,
+            "last_chunk": 1196,
+            "bytes": 19782,
+            "elapsed_s": 0.1383414150000002
+          },
+          {
+            "offset": 1196,
+            "next_offset": 1219,
+            "returned": 23,
+            "first_chunk": 1197,
+            "last_chunk": 1219,
+            "bytes": 19782,
+            "elapsed_s": 0.13525246500000065
+          },
+          {
+            "offset": 1219,
+            "next_offset": 1242,
+            "returned": 23,
+            "first_chunk": 1220,
+            "last_chunk": 1242,
+            "bytes": 19782,
+            "elapsed_s": 0.133405271
+          },
+          {
+            "offset": 1242,
+            "next_offset": 1265,
+            "returned": 23,
+            "first_chunk": 1243,
+            "last_chunk": 1265,
+            "bytes": 19782,
+            "elapsed_s": 0.13302352599999967
+          },
+          {
+            "offset": 1265,
+            "next_offset": 1288,
+            "returned": 23,
+            "first_chunk": 1266,
+            "last_chunk": 1288,
+            "bytes": 19782,
+            "elapsed_s": 0.13442656500000005
+          },
+          {
+            "offset": 1288,
+            "next_offset": 1311,
+            "returned": 23,
+            "first_chunk": 1289,
+            "last_chunk": 1311,
+            "bytes": 19782,
+            "elapsed_s": 0.13431188900000013
+          },
+          {
+            "offset": 1311,
+            "next_offset": 1334,
+            "returned": 23,
+            "first_chunk": 1312,
+            "last_chunk": 1334,
+            "bytes": 19782,
+            "elapsed_s": 0.13897022599999964
+          },
+          {
+            "offset": 1334,
+            "next_offset": 1357,
+            "returned": 23,
+            "first_chunk": 1335,
+            "last_chunk": 1357,
+            "bytes": 19782,
+            "elapsed_s": 0.1391425549999994
+          },
+          {
+            "offset": 1357,
+            "next_offset": 1380,
+            "returned": 23,
+            "first_chunk": 1358,
+            "last_chunk": 1380,
+            "bytes": 19782,
+            "elapsed_s": 0.13413300899999925
+          },
+          {
+            "offset": 1380,
+            "next_offset": 1403,
+            "returned": 23,
+            "first_chunk": 1381,
+            "last_chunk": 1403,
+            "bytes": 19782,
+            "elapsed_s": 0.12958192600000018
+          },
+          {
+            "offset": 1403,
+            "next_offset": 1426,
+            "returned": 23,
+            "first_chunk": 1404,
+            "last_chunk": 1426,
+            "bytes": 19782,
+            "elapsed_s": 0.1315318370000007
+          },
+          {
+            "offset": 1426,
+            "next_offset": 1449,
+            "returned": 23,
+            "first_chunk": 1427,
+            "last_chunk": 1449,
+            "bytes": 19782,
+            "elapsed_s": 0.13237049199999973
+          },
+          {
+            "offset": 1449,
+            "next_offset": 1472,
+            "returned": 23,
+            "first_chunk": 1450,
+            "last_chunk": 1472,
+            "bytes": 19782,
+            "elapsed_s": 0.13356256699999847
+          },
+          {
+            "offset": 1472,
+            "next_offset": 1495,
+            "returned": 23,
+            "first_chunk": 1473,
+            "last_chunk": 1495,
+            "bytes": 19782,
+            "elapsed_s": 0.13219679000000006
+          },
+          {
+            "offset": 1495,
+            "next_offset": 1518,
+            "returned": 23,
+            "first_chunk": 1496,
+            "last_chunk": 1518,
+            "bytes": 19782,
+            "elapsed_s": 0.1401810490000006
+          },
+          {
+            "offset": 1518,
+            "next_offset": 1541,
+            "returned": 23,
+            "first_chunk": 1519,
+            "last_chunk": 1541,
+            "bytes": 19782,
+            "elapsed_s": 0.1360918550000001
+          },
+          {
+            "offset": 1541,
+            "next_offset": 1564,
+            "returned": 23,
+            "first_chunk": 1542,
+            "last_chunk": 1564,
+            "bytes": 19782,
+            "elapsed_s": 0.13431221199999932
+          },
+          {
+            "offset": 1564,
+            "next_offset": 1587,
+            "returned": 23,
+            "first_chunk": 1565,
+            "last_chunk": 1587,
+            "bytes": 19782,
+            "elapsed_s": 0.13416305600000022
+          },
+          {
+            "offset": 1587,
+            "next_offset": 1610,
+            "returned": 23,
+            "first_chunk": 1588,
+            "last_chunk": 1610,
+            "bytes": 19782,
+            "elapsed_s": 0.1327119579999998
+          },
+          {
+            "offset": 1610,
+            "next_offset": 1633,
+            "returned": 23,
+            "first_chunk": 1611,
+            "last_chunk": 1633,
+            "bytes": 19782,
+            "elapsed_s": 0.13726894000000023
+          },
+          {
+            "offset": 1633,
+            "next_offset": 1656,
+            "returned": 23,
+            "first_chunk": 1634,
+            "last_chunk": 1656,
+            "bytes": 19782,
+            "elapsed_s": 0.13475565100000075
+          },
+          {
+            "offset": 1656,
+            "next_offset": 1679,
+            "returned": 23,
+            "first_chunk": 1657,
+            "last_chunk": 1679,
+            "bytes": 19782,
+            "elapsed_s": 0.13072131500000062
+          },
+          {
+            "offset": 1679,
+            "next_offset": 1702,
+            "returned": 23,
+            "first_chunk": 1680,
+            "last_chunk": 1702,
+            "bytes": 19782,
+            "elapsed_s": 0.13151392500000014
+          },
+          {
+            "offset": 1702,
+            "next_offset": 1725,
+            "returned": 23,
+            "first_chunk": 1703,
+            "last_chunk": 1725,
+            "bytes": 19782,
+            "elapsed_s": 0.13411016000000053
+          },
+          {
+            "offset": 1725,
+            "next_offset": 1748,
+            "returned": 23,
+            "first_chunk": 1726,
+            "last_chunk": 1748,
+            "bytes": 19782,
+            "elapsed_s": 0.13071733600000002
+          },
+          {
+            "offset": 1748,
+            "next_offset": 1771,
+            "returned": 23,
+            "first_chunk": 1749,
+            "last_chunk": 1771,
+            "bytes": 19782,
+            "elapsed_s": 0.13918646800000012
+          },
+          {
+            "offset": 1771,
+            "next_offset": 1794,
+            "returned": 23,
+            "first_chunk": 1772,
+            "last_chunk": 1794,
+            "bytes": 19782,
+            "elapsed_s": 0.1407559410000001
+          },
+          {
+            "offset": 1794,
+            "next_offset": 1817,
+            "returned": 23,
+            "first_chunk": 1795,
+            "last_chunk": 1817,
+            "bytes": 19782,
+            "elapsed_s": 0.1321825039999993
+          },
+          {
+            "offset": 1817,
+            "next_offset": 1840,
+            "returned": 23,
+            "first_chunk": 1818,
+            "last_chunk": 1840,
+            "bytes": 19782,
+            "elapsed_s": 0.13232627200000024
+          },
+          {
+            "offset": 1840,
+            "next_offset": 1863,
+            "returned": 23,
+            "first_chunk": 1841,
+            "last_chunk": 1863,
+            "bytes": 19782,
+            "elapsed_s": 0.13644612599999917
+          },
+          {
+            "offset": 1863,
+            "next_offset": 1886,
+            "returned": 23,
+            "first_chunk": 1864,
+            "last_chunk": 1886,
+            "bytes": 19782,
+            "elapsed_s": 0.13311385399999942
+          },
+          {
+            "offset": 1886,
+            "next_offset": 1909,
+            "returned": 23,
+            "first_chunk": 1887,
+            "last_chunk": 1909,
+            "bytes": 19782,
+            "elapsed_s": 0.13102817299999892
+          },
+          {
+            "offset": 1909,
+            "next_offset": 1932,
+            "returned": 23,
+            "first_chunk": 1910,
+            "last_chunk": 1932,
+            "bytes": 19782,
+            "elapsed_s": 0.13166630999999995
+          },
+          {
+            "offset": 1932,
+            "next_offset": 1955,
+            "returned": 23,
+            "first_chunk": 1933,
+            "last_chunk": 1955,
+            "bytes": 19782,
+            "elapsed_s": 0.131280018
+          },
+          {
+            "offset": 1955,
+            "next_offset": 1978,
+            "returned": 23,
+            "first_chunk": 1956,
+            "last_chunk": 1978,
+            "bytes": 19782,
+            "elapsed_s": 0.13246337899999894
+          },
+          {
+            "offset": 1978,
+            "next_offset": 2001,
+            "returned": 23,
+            "first_chunk": 1979,
+            "last_chunk": 2001,
+            "bytes": 19782,
+            "elapsed_s": 0.1333252189999996
+          },
+          {
+            "offset": 2001,
+            "next_offset": 2024,
+            "returned": 23,
+            "first_chunk": 2002,
+            "last_chunk": 2024,
+            "bytes": 19782,
+            "elapsed_s": 0.13149185000000152
+          },
+          {
+            "offset": 2024,
+            "next_offset": 2047,
+            "returned": 23,
+            "first_chunk": 2025,
+            "last_chunk": 2047,
+            "bytes": 19782,
+            "elapsed_s": 0.13492949200000126
+          },
+          {
+            "offset": 2047,
+            "next_offset": 2070,
+            "returned": 23,
+            "first_chunk": 2048,
+            "last_chunk": 2070,
+            "bytes": 19782,
+            "elapsed_s": 0.13631780400000082
+          },
+          {
+            "offset": 2070,
+            "next_offset": 2093,
+            "returned": 23,
+            "first_chunk": 2071,
+            "last_chunk": 2093,
+            "bytes": 19782,
+            "elapsed_s": 0.13552214000000085
+          },
+          {
+            "offset": 2093,
+            "next_offset": 2116,
+            "returned": 23,
+            "first_chunk": 2094,
+            "last_chunk": 2116,
+            "bytes": 19782,
+            "elapsed_s": 0.1369254360000003
+          },
+          {
+            "offset": 2116,
+            "next_offset": 2139,
+            "returned": 23,
+            "first_chunk": 2117,
+            "last_chunk": 2139,
+            "bytes": 19782,
+            "elapsed_s": 0.13759257100000077
+          },
+          {
+            "offset": 2139,
+            "next_offset": 2162,
+            "returned": 23,
+            "first_chunk": 2140,
+            "last_chunk": 2162,
+            "bytes": 19782,
+            "elapsed_s": 0.13600375499999906
+          },
+          {
+            "offset": 2162,
+            "next_offset": 2185,
+            "returned": 23,
+            "first_chunk": 2163,
+            "last_chunk": 2185,
+            "bytes": 19782,
+            "elapsed_s": 0.13743778699999964
+          },
+          {
+            "offset": 2185,
+            "next_offset": 2208,
+            "returned": 23,
+            "first_chunk": 2186,
+            "last_chunk": 2208,
+            "bytes": 19782,
+            "elapsed_s": 0.13494726099999887
+          },
+          {
+            "offset": 2208,
+            "next_offset": 2231,
+            "returned": 23,
+            "first_chunk": 2209,
+            "last_chunk": 2231,
+            "bytes": 19782,
+            "elapsed_s": 0.13219240799999987
+          },
+          {
+            "offset": 2231,
+            "next_offset": 2254,
+            "returned": 23,
+            "first_chunk": 2232,
+            "last_chunk": 2254,
+            "bytes": 19782,
+            "elapsed_s": 0.12903719800000069
+          },
+          {
+            "offset": 2254,
+            "next_offset": 2277,
+            "returned": 23,
+            "first_chunk": 2255,
+            "last_chunk": 2277,
+            "bytes": 19782,
+            "elapsed_s": 0.13400624299999997
+          },
+          {
+            "offset": 2277,
+            "next_offset": 2300,
+            "returned": 23,
+            "first_chunk": 2278,
+            "last_chunk": 2300,
+            "bytes": 19782,
+            "elapsed_s": 0.13152763499999942
+          },
+          {
+            "offset": 2300,
+            "next_offset": 2323,
+            "returned": 23,
+            "first_chunk": 2301,
+            "last_chunk": 2323,
+            "bytes": 19782,
+            "elapsed_s": 0.13951950700000104
+          },
+          {
+            "offset": 2323,
+            "next_offset": 2346,
+            "returned": 23,
+            "first_chunk": 2324,
+            "last_chunk": 2346,
+            "bytes": 19782,
+            "elapsed_s": 0.134574795999999
+          },
+          {
+            "offset": 2346,
+            "next_offset": 2369,
+            "returned": 23,
+            "first_chunk": 2347,
+            "last_chunk": 2369,
+            "bytes": 19782,
+            "elapsed_s": 0.13149130499999906
+          },
+          {
+            "offset": 2369,
+            "next_offset": 2392,
+            "returned": 23,
+            "first_chunk": 2370,
+            "last_chunk": 2392,
+            "bytes": 19782,
+            "elapsed_s": 0.13244993600000043
+          },
+          {
+            "offset": 2392,
+            "next_offset": 2415,
+            "returned": 23,
+            "first_chunk": 2393,
+            "last_chunk": 2415,
+            "bytes": 19782,
+            "elapsed_s": 0.1356174870000011
+          },
+          {
+            "offset": 2415,
+            "next_offset": 2438,
+            "returned": 23,
+            "first_chunk": 2416,
+            "last_chunk": 2438,
+            "bytes": 19782,
+            "elapsed_s": 0.13295464199999962
+          },
+          {
+            "offset": 2438,
+            "next_offset": 2461,
+            "returned": 23,
+            "first_chunk": 2439,
+            "last_chunk": 2461,
+            "bytes": 19782,
+            "elapsed_s": 0.13257401999999985
+          },
+          {
+            "offset": 2461,
+            "next_offset": 2484,
+            "returned": 23,
+            "first_chunk": 2462,
+            "last_chunk": 2484,
+            "bytes": 19782,
+            "elapsed_s": 0.13258020199999976
+          },
+          {
+            "offset": 2484,
+            "next_offset": 2507,
+            "returned": 23,
+            "first_chunk": 2485,
+            "last_chunk": 2507,
+            "bytes": 19782,
+            "elapsed_s": 0.13458732399999995
+          },
+          {
+            "offset": 2507,
+            "next_offset": 2530,
+            "returned": 23,
+            "first_chunk": 2508,
+            "last_chunk": 2530,
+            "bytes": 19782,
+            "elapsed_s": 0.13206115000000018
+          },
+          {
+            "offset": 2530,
+            "next_offset": 2553,
+            "returned": 23,
+            "first_chunk": 2531,
+            "last_chunk": 2553,
+            "bytes": 19782,
+            "elapsed_s": 0.1333296940000004
+          },
+          {
+            "offset": 2553,
+            "next_offset": 2576,
+            "returned": 23,
+            "first_chunk": 2554,
+            "last_chunk": 2576,
+            "bytes": 19782,
+            "elapsed_s": 0.13555632199999934
+          },
+          {
+            "offset": 2576,
+            "next_offset": 2599,
+            "returned": 23,
+            "first_chunk": 2577,
+            "last_chunk": 2599,
+            "bytes": 19782,
+            "elapsed_s": 0.1463052349999998
+          },
+          {
+            "offset": 2599,
+            "next_offset": 2622,
+            "returned": 23,
+            "first_chunk": 2600,
+            "last_chunk": 2622,
+            "bytes": 19782,
+            "elapsed_s": 0.13703421199999966
+          },
+          {
+            "offset": 2622,
+            "next_offset": 2645,
+            "returned": 23,
+            "first_chunk": 2623,
+            "last_chunk": 2645,
+            "bytes": 19782,
+            "elapsed_s": 0.13844779099999904
+          },
+          {
+            "offset": 2645,
+            "next_offset": 2668,
+            "returned": 23,
+            "first_chunk": 2646,
+            "last_chunk": 2668,
+            "bytes": 19782,
+            "elapsed_s": 0.13741071299999952
+          },
+          {
+            "offset": 2668,
+            "next_offset": 2691,
+            "returned": 23,
+            "first_chunk": 2669,
+            "last_chunk": 2691,
+            "bytes": 19782,
+            "elapsed_s": 0.13574939200000102
+          },
+          {
+            "offset": 2691,
+            "next_offset": 2714,
+            "returned": 23,
+            "first_chunk": 2692,
+            "last_chunk": 2714,
+            "bytes": 19782,
+            "elapsed_s": 0.13066228600000152
+          },
+          {
+            "offset": 2714,
+            "next_offset": 2737,
+            "returned": 23,
+            "first_chunk": 2715,
+            "last_chunk": 2737,
+            "bytes": 19782,
+            "elapsed_s": 0.1324286689999994
+          },
+          {
+            "offset": 2737,
+            "next_offset": 2760,
+            "returned": 23,
+            "first_chunk": 2738,
+            "last_chunk": 2760,
+            "bytes": 19782,
+            "elapsed_s": 0.13207670999999976
+          },
+          {
+            "offset": 2760,
+            "next_offset": 2783,
+            "returned": 23,
+            "first_chunk": 2761,
+            "last_chunk": 2783,
+            "bytes": 19782,
+            "elapsed_s": 0.13130392899999777
+          },
+          {
+            "offset": 2783,
+            "next_offset": 2806,
+            "returned": 23,
+            "first_chunk": 2784,
+            "last_chunk": 2806,
+            "bytes": 19782,
+            "elapsed_s": 0.12974503999999953
+          },
+          {
+            "offset": 2806,
+            "next_offset": 2829,
+            "returned": 23,
+            "first_chunk": 2807,
+            "last_chunk": 2829,
+            "bytes": 19782,
+            "elapsed_s": 0.13112790199999935
+          },
+          {
+            "offset": 2829,
+            "next_offset": 2852,
+            "returned": 23,
+            "first_chunk": 2830,
+            "last_chunk": 2852,
+            "bytes": 19782,
+            "elapsed_s": 0.13360999200000023
+          },
+          {
+            "offset": 2852,
+            "next_offset": 2875,
+            "returned": 23,
+            "first_chunk": 2853,
+            "last_chunk": 2875,
+            "bytes": 19782,
+            "elapsed_s": 0.13333244600000072
+          },
+          {
+            "offset": 2875,
+            "next_offset": 2898,
+            "returned": 23,
+            "first_chunk": 2876,
+            "last_chunk": 2898,
+            "bytes": 19782,
+            "elapsed_s": 0.13339140200000088
+          },
+          {
+            "offset": 2898,
+            "next_offset": 2921,
+            "returned": 23,
+            "first_chunk": 2899,
+            "last_chunk": 2921,
+            "bytes": 19782,
+            "elapsed_s": 0.13244663200000062
+          },
+          {
+            "offset": 2921,
+            "next_offset": 2944,
+            "returned": 23,
+            "first_chunk": 2922,
+            "last_chunk": 2944,
+            "bytes": 19782,
+            "elapsed_s": 0.1326951919999999
+          },
+          {
+            "offset": 2944,
+            "next_offset": 2967,
+            "returned": 23,
+            "first_chunk": 2945,
+            "last_chunk": 2967,
+            "bytes": 19782,
+            "elapsed_s": 0.13234416799999948
+          },
+          {
+            "offset": 2967,
+            "next_offset": 2990,
+            "returned": 23,
+            "first_chunk": 2968,
+            "last_chunk": 2990,
+            "bytes": 19782,
+            "elapsed_s": 0.1373849930000013
+          },
+          {
+            "offset": 2990,
+            "next_offset": 3000,
+            "returned": 10,
+            "first_chunk": 2991,
+            "last_chunk": 3000,
+            "bytes": 8757,
+            "elapsed_s": 0.1276178839999993
+          }
+        ]
+      }
+    }
+  ],
+  "methods": {
+    "original_baseline": "Public create/ingest and one representative record() call per case; remaining equivalently shaped short JSON records inserted directly into scratch databases to bound setup time. Each chunk has three short findings. Full pagination uses the real findings API with limit10 and budget20000; separate real CLI single-page invocations. Counter pass is separate from timings. Original results are preserved unchanged.",
+    "followup_script": "/private/tmp/story_analysis_budget_pagination_audit.py",
+    "original_script": "/tmp/story_analysis_scale_audit.py"
+  },
+  "supported_runtime_comparison": {
+    "environment": {
+      "python": "3.12.14 (main, Aug 25 2026, 13:50:22) [Clang 22.1.3 ]",
+      "python_version": "3.12.14",
+      "executable": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "platform": "macOS-15.8-x86_64-i386-64bit",
+      "dont_write_bytecode": true
+    },
+    "measured_at_utc": "2026-09-19T06:58:20.967760+00:00",
+    "source": "a55b8147d14ccd83932561edb742e7d80062a29f6ad4d7ea660121f6e4e2dcd4",
+    "chunks": 3000,
+    "source_characters": 7200000,
+    "findings_per_chunk": 3,
+    "analysis_stored_utf8_bytes": 2155893,
+    "tool_raw_bytes_sha256": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
+    "tool_matches_original_normalized_text_sha": true,
+    "method": "Same retained synthetic 3000-chunk database. Sequential full API pagination, first limit10 then limit100, both budget20000; resume exclusively via returned next_offset. Validate actual compact UTF-8 packet size, complete ordered ordinals, and every page fingerprint against both runs first fingerprint. Real CLI first/last page of both runs use the same Python executable with -B and must equal the API packet. Source records, analysis records and meta revision checked unchanged before/after. Timings exclude initial state checks and CLI checks but include lightweight pagination validations. No writes to repository, installed tools, source text or analysis database.",
+    "preparation_boundary": "Original scratch corpus used public create/ingest, one public record() validation and direct bulk insertion of remaining equivalent short analysis records; it is a synthetic throughput case, not an end-to-end record-write benchmark.",
+    "measurement_limits": "A single sequential pair under normal local OS caching, not isolated cold-I/O or repeated statistical benchmarking; page-count/byte/fingerprint evidence is deterministic, wall times are local observations. Python3.9 historical results remain exploratory and are not the final performance conclusion.",
+    "logical_state_before": {
+      "sources_sha256": "e810b5eeac1dbf80a40b1db7f127df238a0dda7ec111241e92204e799dccf502",
+      "chunks_sha256": "bd3df664c1b38298fb11b4ce6a1f72e40e67778ea3b1388e6b7f702fc3cda4c7",
+      "meta_revision": 2,
+      "analyzed_chunks": 3000
+    },
+    "logical_state_after": {
+      "sources_sha256": "e810b5eeac1dbf80a40b1db7f127df238a0dda7ec111241e92204e799dccf502",
+      "chunks_sha256": "bd3df664c1b38298fb11b4ce6a1f72e40e67778ea3b1388e6b7f702fc3cda4c7",
+      "meta_revision": 2,
+      "analyzed_chunks": 3000
+    },
+    "sources_analysis_revision_unchanged": true,
+    "runs": [
+      {
+        "requested_limit": 10,
+        "budget_bytes": 20000,
+        "first_analysis_sha256": "45ac8cfd4a07e677c15589a0fc440ae2d84a3b8aacb0a76320f59b4868294270",
+        "pages": 300,
+        "total_s": 38.491441881000355,
+        "page_median_s": 0.12719016000119154,
+        "max_page_bytes": 8757,
+        "returned_packet_bytes": 2623739,
+        "page_size_distribution": {
+          "10": 300
+        },
+        "ordered_complete": true,
+        "unique_chunks": 3000,
+        "duplicate_chunks": 0,
+        "missing_chunks": [],
+        "fingerprints_unique": 1,
+        "all_fingerprints_equal_first": true,
+        "all_fingerprints_equal_limit10": true,
+        "cli_first_and_last": [
+          {
+            "page": "first",
+            "offset": 0,
+            "next_offset": 10,
+            "returned": 10,
+            "first_chunk": 1,
+            "last_chunk": 10,
+            "bytes": 8642,
+            "elapsed_s": 0.249544872000115,
+            "analysis_sha256": "45ac8cfd4a07e677c15589a0fc440ae2d84a3b8aacb0a76320f59b4868294270",
+            "equals_api_packet": true
+          },
+          {
+            "page": "last",
+            "offset": 2990,
+            "next_offset": 3000,
+            "returned": 10,
+            "first_chunk": 2991,
+            "last_chunk": 3000,
+            "bytes": 8757,
+            "elapsed_s": 0.24842324000201188,
+            "analysis_sha256": "45ac8cfd4a07e677c15589a0fc440ae2d84a3b8aacb0a76320f59b4868294270",
+            "equals_api_packet": true
+          }
+        ],
+        "page_details": [
+          {
+            "offset": 0,
+            "next_offset": 10,
+            "returned": 10,
+            "first_chunk": 1,
+            "last_chunk": 10,
+            "bytes": 8642,
+            "elapsed_s": 0.13860452500011888
+          },
+          {
+            "offset": 10,
+            "next_offset": 20,
+            "returned": 10,
+            "first_chunk": 11,
+            "last_chunk": 20,
+            "bytes": 8673,
+            "elapsed_s": 0.13558699999703094
+          },
+          {
+            "offset": 20,
+            "next_offset": 30,
+            "returned": 10,
+            "first_chunk": 21,
+            "last_chunk": 30,
+            "bytes": 8673,
+            "elapsed_s": 0.13653480799985118
+          },
+          {
+            "offset": 30,
+            "next_offset": 40,
+            "returned": 10,
+            "first_chunk": 31,
+            "last_chunk": 40,
+            "bytes": 8673,
+            "elapsed_s": 0.11851142099840217
+          },
+          {
+            "offset": 40,
+            "next_offset": 50,
+            "returned": 10,
+            "first_chunk": 41,
+            "last_chunk": 50,
+            "bytes": 8690,
+            "elapsed_s": 0.12546967299931566
+          },
+          {
+            "offset": 50,
+            "next_offset": 60,
+            "returned": 10,
+            "first_chunk": 51,
+            "last_chunk": 60,
+            "bytes": 8693,
+            "elapsed_s": 0.13047593800001778
+          },
+          {
+            "offset": 60,
+            "next_offset": 70,
+            "returned": 10,
+            "first_chunk": 61,
+            "last_chunk": 70,
+            "bytes": 8693,
+            "elapsed_s": 0.12745472399910796
+          },
+          {
+            "offset": 70,
+            "next_offset": 80,
+            "returned": 10,
+            "first_chunk": 71,
+            "last_chunk": 80,
+            "bytes": 8693,
+            "elapsed_s": 0.11405429400110734
+          },
+          {
+            "offset": 80,
+            "next_offset": 90,
+            "returned": 10,
+            "first_chunk": 81,
+            "last_chunk": 90,
+            "bytes": 8693,
+            "elapsed_s": 0.11389917600172339
+          },
+          {
+            "offset": 90,
+            "next_offset": 100,
+            "returned": 10,
+            "first_chunk": 91,
+            "last_chunk": 100,
+            "bytes": 8696,
+            "elapsed_s": 0.12099183200189145
+          },
+          {
+            "offset": 100,
+            "next_offset": 110,
+            "returned": 10,
+            "first_chunk": 101,
+            "last_chunk": 110,
+            "bytes": 8715,
+            "elapsed_s": 0.12026330899971072
+          },
+          {
+            "offset": 110,
+            "next_offset": 120,
+            "returned": 10,
+            "first_chunk": 111,
+            "last_chunk": 120,
+            "bytes": 8715,
+            "elapsed_s": 0.11673098599931109
+          },
+          {
+            "offset": 120,
+            "next_offset": 130,
+            "returned": 10,
+            "first_chunk": 121,
+            "last_chunk": 130,
+            "bytes": 8715,
+            "elapsed_s": 0.11274593500274932
+          },
+          {
+            "offset": 130,
+            "next_offset": 140,
+            "returned": 10,
+            "first_chunk": 131,
+            "last_chunk": 140,
+            "bytes": 8715,
+            "elapsed_s": 0.11566453200066462
+          },
+          {
+            "offset": 140,
+            "next_offset": 150,
+            "returned": 10,
+            "first_chunk": 141,
+            "last_chunk": 150,
+            "bytes": 8715,
+            "elapsed_s": 0.1209026710021135
+          },
+          {
+            "offset": 150,
+            "next_offset": 160,
+            "returned": 10,
+            "first_chunk": 151,
+            "last_chunk": 160,
+            "bytes": 8715,
+            "elapsed_s": 0.11870895299944095
+          },
+          {
+            "offset": 160,
+            "next_offset": 170,
+            "returned": 10,
+            "first_chunk": 161,
+            "last_chunk": 170,
+            "bytes": 8715,
+            "elapsed_s": 0.11548892600330873
+          },
+          {
+            "offset": 170,
+            "next_offset": 180,
+            "returned": 10,
+            "first_chunk": 171,
+            "last_chunk": 180,
+            "bytes": 8715,
+            "elapsed_s": 0.11460404799800017
+          },
+          {
+            "offset": 180,
+            "next_offset": 190,
+            "returned": 10,
+            "first_chunk": 181,
+            "last_chunk": 190,
+            "bytes": 8715,
+            "elapsed_s": 0.11981971299974248
+          },
+          {
+            "offset": 190,
+            "next_offset": 200,
+            "returned": 10,
+            "first_chunk": 191,
+            "last_chunk": 200,
+            "bytes": 8715,
+            "elapsed_s": 0.12025562499911757
+          },
+          {
+            "offset": 200,
+            "next_offset": 210,
+            "returned": 10,
+            "first_chunk": 201,
+            "last_chunk": 210,
+            "bytes": 8715,
+            "elapsed_s": 0.1298448620000272
+          },
+          {
+            "offset": 210,
+            "next_offset": 220,
+            "returned": 10,
+            "first_chunk": 211,
+            "last_chunk": 220,
+            "bytes": 8715,
+            "elapsed_s": 0.12051917899952969
+          },
+          {
+            "offset": 220,
+            "next_offset": 230,
+            "returned": 10,
+            "first_chunk": 221,
+            "last_chunk": 230,
+            "bytes": 8715,
+            "elapsed_s": 0.12117017800119356
+          },
+          {
+            "offset": 230,
+            "next_offset": 240,
+            "returned": 10,
+            "first_chunk": 231,
+            "last_chunk": 240,
+            "bytes": 8715,
+            "elapsed_s": 0.12197173800086603
+          },
+          {
+            "offset": 240,
+            "next_offset": 250,
+            "returned": 10,
+            "first_chunk": 241,
+            "last_chunk": 250,
+            "bytes": 8715,
+            "elapsed_s": 0.11919581300026039
+          },
+          {
+            "offset": 250,
+            "next_offset": 260,
+            "returned": 10,
+            "first_chunk": 251,
+            "last_chunk": 260,
+            "bytes": 8715,
+            "elapsed_s": 0.11867835500015644
+          },
+          {
+            "offset": 260,
+            "next_offset": 270,
+            "returned": 10,
+            "first_chunk": 261,
+            "last_chunk": 270,
+            "bytes": 8715,
+            "elapsed_s": 0.12171020399910049
+          },
+          {
+            "offset": 270,
+            "next_offset": 280,
+            "returned": 10,
+            "first_chunk": 271,
+            "last_chunk": 280,
+            "bytes": 8715,
+            "elapsed_s": 0.12248908899709932
+          },
+          {
+            "offset": 280,
+            "next_offset": 290,
+            "returned": 10,
+            "first_chunk": 281,
+            "last_chunk": 290,
+            "bytes": 8715,
+            "elapsed_s": 0.11728186600157642
+          },
+          {
+            "offset": 290,
+            "next_offset": 300,
+            "returned": 10,
+            "first_chunk": 291,
+            "last_chunk": 300,
+            "bytes": 8715,
+            "elapsed_s": 0.11271594699792331
+          },
+          {
+            "offset": 300,
+            "next_offset": 310,
+            "returned": 10,
+            "first_chunk": 301,
+            "last_chunk": 310,
+            "bytes": 8715,
+            "elapsed_s": 0.14490637500057346
+          },
+          {
+            "offset": 310,
+            "next_offset": 320,
+            "returned": 10,
+            "first_chunk": 311,
+            "last_chunk": 320,
+            "bytes": 8715,
+            "elapsed_s": 0.1268727429996943
+          },
+          {
+            "offset": 320,
+            "next_offset": 330,
+            "returned": 10,
+            "first_chunk": 321,
+            "last_chunk": 330,
+            "bytes": 8715,
+            "elapsed_s": 0.11880949300029897
+          },
+          {
+            "offset": 330,
+            "next_offset": 340,
+            "returned": 10,
+            "first_chunk": 331,
+            "last_chunk": 340,
+            "bytes": 8715,
+            "elapsed_s": 0.11783383500005584
+          },
+          {
+            "offset": 340,
+            "next_offset": 350,
+            "returned": 10,
+            "first_chunk": 341,
+            "last_chunk": 350,
+            "bytes": 8715,
+            "elapsed_s": 0.12726030200064997
+          },
+          {
+            "offset": 350,
+            "next_offset": 360,
+            "returned": 10,
+            "first_chunk": 351,
+            "last_chunk": 360,
+            "bytes": 8715,
+            "elapsed_s": 0.1302653749989986
+          },
+          {
+            "offset": 360,
+            "next_offset": 370,
+            "returned": 10,
+            "first_chunk": 361,
+            "last_chunk": 370,
+            "bytes": 8715,
+            "elapsed_s": 0.12022897000133526
+          },
+          {
+            "offset": 370,
+            "next_offset": 380,
+            "returned": 10,
+            "first_chunk": 371,
+            "last_chunk": 380,
+            "bytes": 8715,
+            "elapsed_s": 0.11252723899815464
+          },
+          {
+            "offset": 380,
+            "next_offset": 390,
+            "returned": 10,
+            "first_chunk": 381,
+            "last_chunk": 390,
+            "bytes": 8715,
+            "elapsed_s": 0.12230512399764848
+          },
+          {
+            "offset": 390,
+            "next_offset": 400,
+            "returned": 10,
+            "first_chunk": 391,
+            "last_chunk": 400,
+            "bytes": 8715,
+            "elapsed_s": 0.12606533900179784
+          },
+          {
+            "offset": 400,
+            "next_offset": 410,
+            "returned": 10,
+            "first_chunk": 401,
+            "last_chunk": 410,
+            "bytes": 8715,
+            "elapsed_s": 0.11923163499886869
+          },
+          {
+            "offset": 410,
+            "next_offset": 420,
+            "returned": 10,
+            "first_chunk": 411,
+            "last_chunk": 420,
+            "bytes": 8722,
+            "elapsed_s": 0.11412938600187772
+          },
+          {
+            "offset": 420,
+            "next_offset": 430,
+            "returned": 10,
+            "first_chunk": 421,
+            "last_chunk": 430,
+            "bytes": 8735,
+            "elapsed_s": 0.1219667789991945
+          },
+          {
+            "offset": 430,
+            "next_offset": 440,
+            "returned": 10,
+            "first_chunk": 431,
+            "last_chunk": 440,
+            "bytes": 8735,
+            "elapsed_s": 0.1187317809999513
+          },
+          {
+            "offset": 440,
+            "next_offset": 450,
+            "returned": 10,
+            "first_chunk": 441,
+            "last_chunk": 450,
+            "bytes": 8735,
+            "elapsed_s": 0.11544393900112482
+          },
+          {
+            "offset": 450,
+            "next_offset": 460,
+            "returned": 10,
+            "first_chunk": 451,
+            "last_chunk": 460,
+            "bytes": 8735,
+            "elapsed_s": 0.11273206200348795
+          },
+          {
+            "offset": 460,
+            "next_offset": 470,
+            "returned": 10,
+            "first_chunk": 461,
+            "last_chunk": 470,
+            "bytes": 8735,
+            "elapsed_s": 0.11551364999832003
+          },
+          {
+            "offset": 470,
+            "next_offset": 480,
+            "returned": 10,
+            "first_chunk": 471,
+            "last_chunk": 480,
+            "bytes": 8735,
+            "elapsed_s": 0.12251513600131148
+          },
+          {
+            "offset": 480,
+            "next_offset": 490,
+            "returned": 10,
+            "first_chunk": 481,
+            "last_chunk": 490,
+            "bytes": 8735,
+            "elapsed_s": 0.11997323800096638
+          },
+          {
+            "offset": 490,
+            "next_offset": 500,
+            "returned": 10,
+            "first_chunk": 491,
+            "last_chunk": 500,
+            "bytes": 8735,
+            "elapsed_s": 0.11485928500042064
+          },
+          {
+            "offset": 500,
+            "next_offset": 510,
+            "returned": 10,
+            "first_chunk": 501,
+            "last_chunk": 510,
+            "bytes": 8735,
+            "elapsed_s": 0.126778395002475
+          },
+          {
+            "offset": 510,
+            "next_offset": 520,
+            "returned": 10,
+            "first_chunk": 511,
+            "last_chunk": 520,
+            "bytes": 8735,
+            "elapsed_s": 0.12414758900195011
+          },
+          {
+            "offset": 520,
+            "next_offset": 530,
+            "returned": 10,
+            "first_chunk": 521,
+            "last_chunk": 530,
+            "bytes": 8735,
+            "elapsed_s": 0.12069966100170859
+          },
+          {
+            "offset": 530,
+            "next_offset": 540,
+            "returned": 10,
+            "first_chunk": 531,
+            "last_chunk": 540,
+            "bytes": 8735,
+            "elapsed_s": 0.11679833499874803
+          },
+          {
+            "offset": 540,
+            "next_offset": 550,
+            "returned": 10,
+            "first_chunk": 541,
+            "last_chunk": 550,
+            "bytes": 8735,
+            "elapsed_s": 0.12298038299923064
+          },
+          {
+            "offset": 550,
+            "next_offset": 560,
+            "returned": 10,
+            "first_chunk": 551,
+            "last_chunk": 560,
+            "bytes": 8735,
+            "elapsed_s": 0.13352808300260222
+          },
+          {
+            "offset": 560,
+            "next_offset": 570,
+            "returned": 10,
+            "first_chunk": 561,
+            "last_chunk": 570,
+            "bytes": 8735,
+            "elapsed_s": 0.13510047400268377
+          },
+          {
+            "offset": 570,
+            "next_offset": 580,
+            "returned": 10,
+            "first_chunk": 571,
+            "last_chunk": 580,
+            "bytes": 8735,
+            "elapsed_s": 0.11523197600035928
+          },
+          {
+            "offset": 580,
+            "next_offset": 590,
+            "returned": 10,
+            "first_chunk": 581,
+            "last_chunk": 590,
+            "bytes": 8735,
+            "elapsed_s": 0.11713902399787912
+          },
+          {
+            "offset": 590,
+            "next_offset": 600,
+            "returned": 10,
+            "first_chunk": 591,
+            "last_chunk": 600,
+            "bytes": 8735,
+            "elapsed_s": 0.12005347500235075
+          },
+          {
+            "offset": 600,
+            "next_offset": 610,
+            "returned": 10,
+            "first_chunk": 601,
+            "last_chunk": 610,
+            "bytes": 8735,
+            "elapsed_s": 0.12041173599936883
+          },
+          {
+            "offset": 610,
+            "next_offset": 620,
+            "returned": 10,
+            "first_chunk": 611,
+            "last_chunk": 620,
+            "bytes": 8735,
+            "elapsed_s": 0.12817736199940555
+          },
+          {
+            "offset": 620,
+            "next_offset": 630,
+            "returned": 10,
+            "first_chunk": 621,
+            "last_chunk": 630,
+            "bytes": 8735,
+            "elapsed_s": 0.12027612399833743
+          },
+          {
+            "offset": 630,
+            "next_offset": 640,
+            "returned": 10,
+            "first_chunk": 631,
+            "last_chunk": 640,
+            "bytes": 8735,
+            "elapsed_s": 0.1297511509983451
+          },
+          {
+            "offset": 640,
+            "next_offset": 650,
+            "returned": 10,
+            "first_chunk": 641,
+            "last_chunk": 650,
+            "bytes": 8735,
+            "elapsed_s": 0.12500635200194665
+          },
+          {
+            "offset": 650,
+            "next_offset": 660,
+            "returned": 10,
+            "first_chunk": 651,
+            "last_chunk": 660,
+            "bytes": 8735,
+            "elapsed_s": 0.12079215799894882
+          },
+          {
+            "offset": 660,
+            "next_offset": 670,
+            "returned": 10,
+            "first_chunk": 661,
+            "last_chunk": 670,
+            "bytes": 8735,
+            "elapsed_s": 0.11622486299893353
+          },
+          {
+            "offset": 670,
+            "next_offset": 680,
+            "returned": 10,
+            "first_chunk": 671,
+            "last_chunk": 680,
+            "bytes": 8735,
+            "elapsed_s": 0.12235113700080547
+          },
+          {
+            "offset": 680,
+            "next_offset": 690,
+            "returned": 10,
+            "first_chunk": 681,
+            "last_chunk": 690,
+            "bytes": 8735,
+            "elapsed_s": 0.12596878800104605
+          },
+          {
+            "offset": 690,
+            "next_offset": 700,
+            "returned": 10,
+            "first_chunk": 691,
+            "last_chunk": 700,
+            "bytes": 8735,
+            "elapsed_s": 0.11981754999942495
+          },
+          {
+            "offset": 700,
+            "next_offset": 710,
+            "returned": 10,
+            "first_chunk": 701,
+            "last_chunk": 710,
+            "bytes": 8735,
+            "elapsed_s": 0.11521634100063238
+          },
+          {
+            "offset": 710,
+            "next_offset": 720,
+            "returned": 10,
+            "first_chunk": 711,
+            "last_chunk": 720,
+            "bytes": 8735,
+            "elapsed_s": 0.12704651200328954
+          },
+          {
+            "offset": 720,
+            "next_offset": 730,
+            "returned": 10,
+            "first_chunk": 721,
+            "last_chunk": 730,
+            "bytes": 8735,
+            "elapsed_s": 0.22880754599827924
+          },
+          {
+            "offset": 730,
+            "next_offset": 740,
+            "returned": 10,
+            "first_chunk": 731,
+            "last_chunk": 740,
+            "bytes": 8735,
+            "elapsed_s": 0.12252718300078413
+          },
+          {
+            "offset": 740,
+            "next_offset": 750,
+            "returned": 10,
+            "first_chunk": 741,
+            "last_chunk": 750,
+            "bytes": 8735,
+            "elapsed_s": 0.1261578979974729
+          },
+          {
+            "offset": 750,
+            "next_offset": 760,
+            "returned": 10,
+            "first_chunk": 751,
+            "last_chunk": 760,
+            "bytes": 8735,
+            "elapsed_s": 0.12122156599798473
+          },
+          {
+            "offset": 760,
+            "next_offset": 770,
+            "returned": 10,
+            "first_chunk": 761,
+            "last_chunk": 770,
+            "bytes": 8735,
+            "elapsed_s": 0.11846665099801612
+          },
+          {
+            "offset": 770,
+            "next_offset": 780,
+            "returned": 10,
+            "first_chunk": 771,
+            "last_chunk": 780,
+            "bytes": 8735,
+            "elapsed_s": 0.11949579499923857
+          },
+          {
+            "offset": 780,
+            "next_offset": 790,
+            "returned": 10,
+            "first_chunk": 781,
+            "last_chunk": 790,
+            "bytes": 8735,
+            "elapsed_s": 0.12927271999797085
+          },
+          {
+            "offset": 790,
+            "next_offset": 800,
+            "returned": 10,
+            "first_chunk": 791,
+            "last_chunk": 800,
+            "bytes": 8735,
+            "elapsed_s": 0.13638548399831052
+          },
+          {
+            "offset": 800,
+            "next_offset": 810,
+            "returned": 10,
+            "first_chunk": 801,
+            "last_chunk": 810,
+            "bytes": 8735,
+            "elapsed_s": 0.12092938699788647
+          },
+          {
+            "offset": 810,
+            "next_offset": 820,
+            "returned": 10,
+            "first_chunk": 811,
+            "last_chunk": 820,
+            "bytes": 8735,
+            "elapsed_s": 0.12093356200057315
+          },
+          {
+            "offset": 820,
+            "next_offset": 830,
+            "returned": 10,
+            "first_chunk": 821,
+            "last_chunk": 830,
+            "bytes": 8735,
+            "elapsed_s": 0.12618543799908366
+          },
+          {
+            "offset": 830,
+            "next_offset": 840,
+            "returned": 10,
+            "first_chunk": 831,
+            "last_chunk": 840,
+            "bytes": 8735,
+            "elapsed_s": 0.1258771059983701
+          },
+          {
+            "offset": 840,
+            "next_offset": 850,
+            "returned": 10,
+            "first_chunk": 841,
+            "last_chunk": 850,
+            "bytes": 8735,
+            "elapsed_s": 0.1214307779991941
+          },
+          {
+            "offset": 850,
+            "next_offset": 860,
+            "returned": 10,
+            "first_chunk": 851,
+            "last_chunk": 860,
+            "bytes": 8735,
+            "elapsed_s": 0.1189211470009468
+          },
+          {
+            "offset": 860,
+            "next_offset": 870,
+            "returned": 10,
+            "first_chunk": 861,
+            "last_chunk": 870,
+            "bytes": 8735,
+            "elapsed_s": 0.126272039997275
+          },
+          {
+            "offset": 870,
+            "next_offset": 880,
+            "returned": 10,
+            "first_chunk": 871,
+            "last_chunk": 880,
+            "bytes": 8735,
+            "elapsed_s": 0.13939312100046664
+          },
+          {
+            "offset": 880,
+            "next_offset": 890,
+            "returned": 10,
+            "first_chunk": 881,
+            "last_chunk": 890,
+            "bytes": 8735,
+            "elapsed_s": 0.1248573650009348
+          },
+          {
+            "offset": 890,
+            "next_offset": 900,
+            "returned": 10,
+            "first_chunk": 891,
+            "last_chunk": 900,
+            "bytes": 8735,
+            "elapsed_s": 0.11988839900004677
+          },
+          {
+            "offset": 900,
+            "next_offset": 910,
+            "returned": 10,
+            "first_chunk": 901,
+            "last_chunk": 910,
+            "bytes": 8735,
+            "elapsed_s": 0.13079839599959087
+          },
+          {
+            "offset": 910,
+            "next_offset": 920,
+            "returned": 10,
+            "first_chunk": 911,
+            "last_chunk": 920,
+            "bytes": 8735,
+            "elapsed_s": 0.1274738130014157
+          },
+          {
+            "offset": 920,
+            "next_offset": 930,
+            "returned": 10,
+            "first_chunk": 921,
+            "last_chunk": 930,
+            "bytes": 8735,
+            "elapsed_s": 0.12316566599838552
+          },
+          {
+            "offset": 930,
+            "next_offset": 940,
+            "returned": 10,
+            "first_chunk": 931,
+            "last_chunk": 940,
+            "bytes": 8735,
+            "elapsed_s": 0.11959321499671205
+          },
+          {
+            "offset": 940,
+            "next_offset": 950,
+            "returned": 10,
+            "first_chunk": 941,
+            "last_chunk": 950,
+            "bytes": 8735,
+            "elapsed_s": 0.13327497399950516
+          },
+          {
+            "offset": 950,
+            "next_offset": 960,
+            "returned": 10,
+            "first_chunk": 951,
+            "last_chunk": 960,
+            "bytes": 8735,
+            "elapsed_s": 0.13496548799957964
+          },
+          {
+            "offset": 960,
+            "next_offset": 970,
+            "returned": 10,
+            "first_chunk": 961,
+            "last_chunk": 970,
+            "bytes": 8735,
+            "elapsed_s": 0.12568408199877013
+          },
+          {
+            "offset": 970,
+            "next_offset": 980,
+            "returned": 10,
+            "first_chunk": 971,
+            "last_chunk": 980,
+            "bytes": 8735,
+            "elapsed_s": 0.12191693299973849
+          },
+          {
+            "offset": 980,
+            "next_offset": 990,
+            "returned": 10,
+            "first_chunk": 981,
+            "last_chunk": 990,
+            "bytes": 8735,
+            "elapsed_s": 0.13519431999884546
+          },
+          {
+            "offset": 990,
+            "next_offset": 1000,
+            "returned": 10,
+            "first_chunk": 991,
+            "last_chunk": 1000,
+            "bytes": 8738,
+            "elapsed_s": 0.1328041229971859
+          },
+          {
+            "offset": 1000,
+            "next_offset": 1010,
+            "returned": 10,
+            "first_chunk": 1001,
+            "last_chunk": 1010,
+            "bytes": 8757,
+            "elapsed_s": 0.13596215599682182
+          },
+          {
+            "offset": 1010,
+            "next_offset": 1020,
+            "returned": 10,
+            "first_chunk": 1011,
+            "last_chunk": 1020,
+            "bytes": 8757,
+            "elapsed_s": 0.13265059500190546
+          },
+          {
+            "offset": 1020,
+            "next_offset": 1030,
+            "returned": 10,
+            "first_chunk": 1021,
+            "last_chunk": 1030,
+            "bytes": 8757,
+            "elapsed_s": 0.13918825200016727
+          },
+          {
+            "offset": 1030,
+            "next_offset": 1040,
+            "returned": 10,
+            "first_chunk": 1031,
+            "last_chunk": 1040,
+            "bytes": 8757,
+            "elapsed_s": 0.13194388400006574
+          },
+          {
+            "offset": 1040,
+            "next_offset": 1050,
+            "returned": 10,
+            "first_chunk": 1041,
+            "last_chunk": 1050,
+            "bytes": 8757,
+            "elapsed_s": 0.12135932199817034
+          },
+          {
+            "offset": 1050,
+            "next_offset": 1060,
+            "returned": 10,
+            "first_chunk": 1051,
+            "last_chunk": 1060,
+            "bytes": 8757,
+            "elapsed_s": 0.12440331000107108
+          },
+          {
+            "offset": 1060,
+            "next_offset": 1070,
+            "returned": 10,
+            "first_chunk": 1061,
+            "last_chunk": 1070,
+            "bytes": 8757,
+            "elapsed_s": 0.1290149950000341
+          },
+          {
+            "offset": 1070,
+            "next_offset": 1080,
+            "returned": 10,
+            "first_chunk": 1071,
+            "last_chunk": 1080,
+            "bytes": 8757,
+            "elapsed_s": 0.12251972100057174
+          },
+          {
+            "offset": 1080,
+            "next_offset": 1090,
+            "returned": 10,
+            "first_chunk": 1081,
+            "last_chunk": 1090,
+            "bytes": 8757,
+            "elapsed_s": 0.12433731499913847
+          },
+          {
+            "offset": 1090,
+            "next_offset": 1100,
+            "returned": 10,
+            "first_chunk": 1091,
+            "last_chunk": 1100,
+            "bytes": 8757,
+            "elapsed_s": 0.1227243700013787
+          },
+          {
+            "offset": 1100,
+            "next_offset": 1110,
+            "returned": 10,
+            "first_chunk": 1101,
+            "last_chunk": 1110,
+            "bytes": 8757,
+            "elapsed_s": 0.12951975500254775
+          },
+          {
+            "offset": 1110,
+            "next_offset": 1120,
+            "returned": 10,
+            "first_chunk": 1111,
+            "last_chunk": 1120,
+            "bytes": 8757,
+            "elapsed_s": 0.14872098300111247
+          },
+          {
+            "offset": 1120,
+            "next_offset": 1130,
+            "returned": 10,
+            "first_chunk": 1121,
+            "last_chunk": 1130,
+            "bytes": 8757,
+            "elapsed_s": 0.13787010899977759
+          },
+          {
+            "offset": 1130,
+            "next_offset": 1140,
+            "returned": 10,
+            "first_chunk": 1131,
+            "last_chunk": 1140,
+            "bytes": 8757,
+            "elapsed_s": 0.14859646799959592
+          },
+          {
+            "offset": 1140,
+            "next_offset": 1150,
+            "returned": 10,
+            "first_chunk": 1141,
+            "last_chunk": 1150,
+            "bytes": 8757,
+            "elapsed_s": 0.1396999259995937
+          },
+          {
+            "offset": 1150,
+            "next_offset": 1160,
+            "returned": 10,
+            "first_chunk": 1151,
+            "last_chunk": 1160,
+            "bytes": 8757,
+            "elapsed_s": 0.13457752099930076
+          },
+          {
+            "offset": 1160,
+            "next_offset": 1170,
+            "returned": 10,
+            "first_chunk": 1161,
+            "last_chunk": 1170,
+            "bytes": 8757,
+            "elapsed_s": 0.1488390429985884
+          },
+          {
+            "offset": 1170,
+            "next_offset": 1180,
+            "returned": 10,
+            "first_chunk": 1171,
+            "last_chunk": 1180,
+            "bytes": 8757,
+            "elapsed_s": 0.14952711099977023
+          },
+          {
+            "offset": 1180,
+            "next_offset": 1190,
+            "returned": 10,
+            "first_chunk": 1181,
+            "last_chunk": 1190,
+            "bytes": 8757,
+            "elapsed_s": 0.1475079560004815
+          },
+          {
+            "offset": 1190,
+            "next_offset": 1200,
+            "returned": 10,
+            "first_chunk": 1191,
+            "last_chunk": 1200,
+            "bytes": 8757,
+            "elapsed_s": 0.14106419599920628
+          },
+          {
+            "offset": 1200,
+            "next_offset": 1210,
+            "returned": 10,
+            "first_chunk": 1201,
+            "last_chunk": 1210,
+            "bytes": 8757,
+            "elapsed_s": 0.14495432200055802
+          },
+          {
+            "offset": 1210,
+            "next_offset": 1220,
+            "returned": 10,
+            "first_chunk": 1211,
+            "last_chunk": 1220,
+            "bytes": 8757,
+            "elapsed_s": 0.1385564689990133
+          },
+          {
+            "offset": 1220,
+            "next_offset": 1230,
+            "returned": 10,
+            "first_chunk": 1221,
+            "last_chunk": 1230,
+            "bytes": 8757,
+            "elapsed_s": 0.14810016699993866
+          },
+          {
+            "offset": 1230,
+            "next_offset": 1240,
+            "returned": 10,
+            "first_chunk": 1231,
+            "last_chunk": 1240,
+            "bytes": 8757,
+            "elapsed_s": 0.13969576100134873
+          },
+          {
+            "offset": 1240,
+            "next_offset": 1250,
+            "returned": 10,
+            "first_chunk": 1241,
+            "last_chunk": 1250,
+            "bytes": 8757,
+            "elapsed_s": 0.1508515469977283
+          },
+          {
+            "offset": 1250,
+            "next_offset": 1260,
+            "returned": 10,
+            "first_chunk": 1251,
+            "last_chunk": 1260,
+            "bytes": 8757,
+            "elapsed_s": 0.13984420600172598
+          },
+          {
+            "offset": 1260,
+            "next_offset": 1270,
+            "returned": 10,
+            "first_chunk": 1261,
+            "last_chunk": 1270,
+            "bytes": 8757,
+            "elapsed_s": 0.12544711099690176
+          },
+          {
+            "offset": 1270,
+            "next_offset": 1280,
+            "returned": 10,
+            "first_chunk": 1271,
+            "last_chunk": 1280,
+            "bytes": 8757,
+            "elapsed_s": 0.14000174799730303
+          },
+          {
+            "offset": 1280,
+            "next_offset": 1290,
+            "returned": 10,
+            "first_chunk": 1281,
+            "last_chunk": 1290,
+            "bytes": 8757,
+            "elapsed_s": 0.14034377899952233
+          },
+          {
+            "offset": 1290,
+            "next_offset": 1300,
+            "returned": 10,
+            "first_chunk": 1291,
+            "last_chunk": 1300,
+            "bytes": 8757,
+            "elapsed_s": 0.12619044299935922
+          },
+          {
+            "offset": 1300,
+            "next_offset": 1310,
+            "returned": 10,
+            "first_chunk": 1301,
+            "last_chunk": 1310,
+            "bytes": 8757,
+            "elapsed_s": 0.11814691600011429
+          },
+          {
+            "offset": 1310,
+            "next_offset": 1320,
+            "returned": 10,
+            "first_chunk": 1311,
+            "last_chunk": 1320,
+            "bytes": 8757,
+            "elapsed_s": 0.1387555080000311
+          },
+          {
+            "offset": 1320,
+            "next_offset": 1330,
+            "returned": 10,
+            "first_chunk": 1321,
+            "last_chunk": 1330,
+            "bytes": 8757,
+            "elapsed_s": 0.13885591100188321
+          },
+          {
+            "offset": 1330,
+            "next_offset": 1340,
+            "returned": 10,
+            "first_chunk": 1331,
+            "last_chunk": 1340,
+            "bytes": 8757,
+            "elapsed_s": 0.1287021089992777
+          },
+          {
+            "offset": 1340,
+            "next_offset": 1350,
+            "returned": 10,
+            "first_chunk": 1341,
+            "last_chunk": 1350,
+            "bytes": 8757,
+            "elapsed_s": 0.12331649299812852
+          },
+          {
+            "offset": 1350,
+            "next_offset": 1360,
+            "returned": 10,
+            "first_chunk": 1351,
+            "last_chunk": 1360,
+            "bytes": 8757,
+            "elapsed_s": 0.13106595299905166
+          },
+          {
+            "offset": 1360,
+            "next_offset": 1370,
+            "returned": 10,
+            "first_chunk": 1361,
+            "last_chunk": 1370,
+            "bytes": 8757,
+            "elapsed_s": 0.12822315900120884
+          },
+          {
+            "offset": 1370,
+            "next_offset": 1380,
+            "returned": 10,
+            "first_chunk": 1371,
+            "last_chunk": 1380,
+            "bytes": 8757,
+            "elapsed_s": 0.14035975200022222
+          },
+          {
+            "offset": 1380,
+            "next_offset": 1390,
+            "returned": 10,
+            "first_chunk": 1381,
+            "last_chunk": 1390,
+            "bytes": 8757,
+            "elapsed_s": 0.12769462500000373
+          },
+          {
+            "offset": 1390,
+            "next_offset": 1400,
+            "returned": 10,
+            "first_chunk": 1391,
+            "last_chunk": 1400,
+            "bytes": 8757,
+            "elapsed_s": 0.13434921199950622
+          },
+          {
+            "offset": 1400,
+            "next_offset": 1410,
+            "returned": 10,
+            "first_chunk": 1401,
+            "last_chunk": 1410,
+            "bytes": 8757,
+            "elapsed_s": 0.12832646199967712
+          },
+          {
+            "offset": 1410,
+            "next_offset": 1420,
+            "returned": 10,
+            "first_chunk": 1411,
+            "last_chunk": 1420,
+            "bytes": 8757,
+            "elapsed_s": 0.12439073799760081
+          },
+          {
+            "offset": 1420,
+            "next_offset": 1430,
+            "returned": 10,
+            "first_chunk": 1421,
+            "last_chunk": 1430,
+            "bytes": 8757,
+            "elapsed_s": 0.12330492999899434
+          },
+          {
+            "offset": 1430,
+            "next_offset": 1440,
+            "returned": 10,
+            "first_chunk": 1431,
+            "last_chunk": 1440,
+            "bytes": 8757,
+            "elapsed_s": 0.13503265499821282
+          },
+          {
+            "offset": 1440,
+            "next_offset": 1450,
+            "returned": 10,
+            "first_chunk": 1441,
+            "last_chunk": 1450,
+            "bytes": 8757,
+            "elapsed_s": 0.13044967799942242
+          },
+          {
+            "offset": 1450,
+            "next_offset": 1460,
+            "returned": 10,
+            "first_chunk": 1451,
+            "last_chunk": 1460,
+            "bytes": 8757,
+            "elapsed_s": 0.1305286030001298
+          },
+          {
+            "offset": 1460,
+            "next_offset": 1470,
+            "returned": 10,
+            "first_chunk": 1461,
+            "last_chunk": 1470,
+            "bytes": 8757,
+            "elapsed_s": 0.13191031099995598
+          },
+          {
+            "offset": 1470,
+            "next_offset": 1480,
+            "returned": 10,
+            "first_chunk": 1471,
+            "last_chunk": 1480,
+            "bytes": 8757,
+            "elapsed_s": 0.13447720399926766
+          },
+          {
+            "offset": 1480,
+            "next_offset": 1490,
+            "returned": 10,
+            "first_chunk": 1481,
+            "last_chunk": 1490,
+            "bytes": 8757,
+            "elapsed_s": 0.1358711620014219
+          },
+          {
+            "offset": 1490,
+            "next_offset": 1500,
+            "returned": 10,
+            "first_chunk": 1491,
+            "last_chunk": 1500,
+            "bytes": 8757,
+            "elapsed_s": 0.12216306400296162
+          },
+          {
+            "offset": 1500,
+            "next_offset": 1510,
+            "returned": 10,
+            "first_chunk": 1501,
+            "last_chunk": 1510,
+            "bytes": 8757,
+            "elapsed_s": 0.13756385300075635
+          },
+          {
+            "offset": 1510,
+            "next_offset": 1520,
+            "returned": 10,
+            "first_chunk": 1511,
+            "last_chunk": 1520,
+            "bytes": 8757,
+            "elapsed_s": 0.13187569900037488
+          },
+          {
+            "offset": 1520,
+            "next_offset": 1530,
+            "returned": 10,
+            "first_chunk": 1521,
+            "last_chunk": 1530,
+            "bytes": 8757,
+            "elapsed_s": 0.12941582200073753
+          },
+          {
+            "offset": 1530,
+            "next_offset": 1540,
+            "returned": 10,
+            "first_chunk": 1531,
+            "last_chunk": 1540,
+            "bytes": 8757,
+            "elapsed_s": 0.1281637989995943
+          },
+          {
+            "offset": 1540,
+            "next_offset": 1550,
+            "returned": 10,
+            "first_chunk": 1541,
+            "last_chunk": 1550,
+            "bytes": 8757,
+            "elapsed_s": 0.134141100999841
+          },
+          {
+            "offset": 1550,
+            "next_offset": 1560,
+            "returned": 10,
+            "first_chunk": 1551,
+            "last_chunk": 1560,
+            "bytes": 8757,
+            "elapsed_s": 0.13214038300066022
+          },
+          {
+            "offset": 1560,
+            "next_offset": 1570,
+            "returned": 10,
+            "first_chunk": 1561,
+            "last_chunk": 1570,
+            "bytes": 8757,
+            "elapsed_s": 0.12336165300075663
+          },
+          {
+            "offset": 1570,
+            "next_offset": 1580,
+            "returned": 10,
+            "first_chunk": 1571,
+            "last_chunk": 1580,
+            "bytes": 8757,
+            "elapsed_s": 0.12539045199810062
+          },
+          {
+            "offset": 1580,
+            "next_offset": 1590,
+            "returned": 10,
+            "first_chunk": 1581,
+            "last_chunk": 1590,
+            "bytes": 8757,
+            "elapsed_s": 0.13658765999934985
+          },
+          {
+            "offset": 1590,
+            "next_offset": 1600,
+            "returned": 10,
+            "first_chunk": 1591,
+            "last_chunk": 1600,
+            "bytes": 8757,
+            "elapsed_s": 0.13383126800181344
+          },
+          {
+            "offset": 1600,
+            "next_offset": 1610,
+            "returned": 10,
+            "first_chunk": 1601,
+            "last_chunk": 1610,
+            "bytes": 8757,
+            "elapsed_s": 0.12295201899905805
+          },
+          {
+            "offset": 1610,
+            "next_offset": 1620,
+            "returned": 10,
+            "first_chunk": 1611,
+            "last_chunk": 1620,
+            "bytes": 8757,
+            "elapsed_s": 0.12369400800162111
+          },
+          {
+            "offset": 1620,
+            "next_offset": 1630,
+            "returned": 10,
+            "first_chunk": 1621,
+            "last_chunk": 1630,
+            "bytes": 8757,
+            "elapsed_s": 0.12972637599887094
+          },
+          {
+            "offset": 1630,
+            "next_offset": 1640,
+            "returned": 10,
+            "first_chunk": 1631,
+            "last_chunk": 1640,
+            "bytes": 8757,
+            "elapsed_s": 0.1277117649988213
+          },
+          {
+            "offset": 1640,
+            "next_offset": 1650,
+            "returned": 10,
+            "first_chunk": 1641,
+            "last_chunk": 1650,
+            "bytes": 8757,
+            "elapsed_s": 0.1275797070011322
+          },
+          {
+            "offset": 1650,
+            "next_offset": 1660,
+            "returned": 10,
+            "first_chunk": 1651,
+            "last_chunk": 1660,
+            "bytes": 8757,
+            "elapsed_s": 0.12295865300256992
+          },
+          {
+            "offset": 1660,
+            "next_offset": 1670,
+            "returned": 10,
+            "first_chunk": 1661,
+            "last_chunk": 1670,
+            "bytes": 8757,
+            "elapsed_s": 0.134593645001587
+          },
+          {
+            "offset": 1670,
+            "next_offset": 1680,
+            "returned": 10,
+            "first_chunk": 1671,
+            "last_chunk": 1680,
+            "bytes": 8757,
+            "elapsed_s": 0.13292536199878668
+          },
+          {
+            "offset": 1680,
+            "next_offset": 1690,
+            "returned": 10,
+            "first_chunk": 1681,
+            "last_chunk": 1690,
+            "bytes": 8757,
+            "elapsed_s": 0.13702362199910567
+          },
+          {
+            "offset": 1690,
+            "next_offset": 1700,
+            "returned": 10,
+            "first_chunk": 1691,
+            "last_chunk": 1700,
+            "bytes": 8757,
+            "elapsed_s": 0.12766780400124844
+          },
+          {
+            "offset": 1700,
+            "next_offset": 1710,
+            "returned": 10,
+            "first_chunk": 1701,
+            "last_chunk": 1710,
+            "bytes": 8757,
+            "elapsed_s": 0.13205986300090444
+          },
+          {
+            "offset": 1710,
+            "next_offset": 1720,
+            "returned": 10,
+            "first_chunk": 1711,
+            "last_chunk": 1720,
+            "bytes": 8757,
+            "elapsed_s": 0.1310019820011803
+          },
+          {
+            "offset": 1720,
+            "next_offset": 1730,
+            "returned": 10,
+            "first_chunk": 1721,
+            "last_chunk": 1730,
+            "bytes": 8757,
+            "elapsed_s": 0.12069725499895867
+          },
+          {
+            "offset": 1730,
+            "next_offset": 1740,
+            "returned": 10,
+            "first_chunk": 1731,
+            "last_chunk": 1740,
+            "bytes": 8757,
+            "elapsed_s": 0.12745184099912876
+          },
+          {
+            "offset": 1740,
+            "next_offset": 1750,
+            "returned": 10,
+            "first_chunk": 1741,
+            "last_chunk": 1750,
+            "bytes": 8757,
+            "elapsed_s": 0.13210358200012706
+          },
+          {
+            "offset": 1750,
+            "next_offset": 1760,
+            "returned": 10,
+            "first_chunk": 1751,
+            "last_chunk": 1760,
+            "bytes": 8757,
+            "elapsed_s": 0.13630334900153684
+          },
+          {
+            "offset": 1760,
+            "next_offset": 1770,
+            "returned": 10,
+            "first_chunk": 1761,
+            "last_chunk": 1770,
+            "bytes": 8757,
+            "elapsed_s": 0.1401752720012155
+          },
+          {
+            "offset": 1770,
+            "next_offset": 1780,
+            "returned": 10,
+            "first_chunk": 1771,
+            "last_chunk": 1780,
+            "bytes": 8757,
+            "elapsed_s": 0.13596326699916972
+          },
+          {
+            "offset": 1780,
+            "next_offset": 1790,
+            "returned": 10,
+            "first_chunk": 1781,
+            "last_chunk": 1790,
+            "bytes": 8757,
+            "elapsed_s": 0.13482373100123368
+          },
+          {
+            "offset": 1790,
+            "next_offset": 1800,
+            "returned": 10,
+            "first_chunk": 1791,
+            "last_chunk": 1800,
+            "bytes": 8757,
+            "elapsed_s": 0.1329189520001819
+          },
+          {
+            "offset": 1800,
+            "next_offset": 1810,
+            "returned": 10,
+            "first_chunk": 1801,
+            "last_chunk": 1810,
+            "bytes": 8757,
+            "elapsed_s": 0.12363211900083115
+          },
+          {
+            "offset": 1810,
+            "next_offset": 1820,
+            "returned": 10,
+            "first_chunk": 1811,
+            "last_chunk": 1820,
+            "bytes": 8757,
+            "elapsed_s": 0.1338563110002724
+          },
+          {
+            "offset": 1820,
+            "next_offset": 1830,
+            "returned": 10,
+            "first_chunk": 1821,
+            "last_chunk": 1830,
+            "bytes": 8757,
+            "elapsed_s": 0.13078488999963156
+          },
+          {
+            "offset": 1830,
+            "next_offset": 1840,
+            "returned": 10,
+            "first_chunk": 1831,
+            "last_chunk": 1840,
+            "bytes": 8757,
+            "elapsed_s": 0.12922974600223824
+          },
+          {
+            "offset": 1840,
+            "next_offset": 1850,
+            "returned": 10,
+            "first_chunk": 1841,
+            "last_chunk": 1850,
+            "bytes": 8757,
+            "elapsed_s": 0.1327302329991653
+          },
+          {
+            "offset": 1850,
+            "next_offset": 1860,
+            "returned": 10,
+            "first_chunk": 1851,
+            "last_chunk": 1860,
+            "bytes": 8757,
+            "elapsed_s": 0.13224953600001754
+          },
+          {
+            "offset": 1860,
+            "next_offset": 1870,
+            "returned": 10,
+            "first_chunk": 1861,
+            "last_chunk": 1870,
+            "bytes": 8757,
+            "elapsed_s": 0.13517386999956216
+          },
+          {
+            "offset": 1870,
+            "next_offset": 1880,
+            "returned": 10,
+            "first_chunk": 1871,
+            "last_chunk": 1880,
+            "bytes": 8757,
+            "elapsed_s": 0.12712001800173311
+          },
+          {
+            "offset": 1880,
+            "next_offset": 1890,
+            "returned": 10,
+            "first_chunk": 1881,
+            "last_chunk": 1890,
+            "bytes": 8757,
+            "elapsed_s": 0.1240767799972673
+          },
+          {
+            "offset": 1890,
+            "next_offset": 1900,
+            "returned": 10,
+            "first_chunk": 1891,
+            "last_chunk": 1900,
+            "bytes": 8757,
+            "elapsed_s": 0.13254666899956646
+          },
+          {
+            "offset": 1900,
+            "next_offset": 1910,
+            "returned": 10,
+            "first_chunk": 1901,
+            "last_chunk": 1910,
+            "bytes": 8757,
+            "elapsed_s": 0.1266160140003194
+          },
+          {
+            "offset": 1910,
+            "next_offset": 1920,
+            "returned": 10,
+            "first_chunk": 1911,
+            "last_chunk": 1920,
+            "bytes": 8757,
+            "elapsed_s": 0.12040414800139843
+          },
+          {
+            "offset": 1920,
+            "next_offset": 1930,
+            "returned": 10,
+            "first_chunk": 1921,
+            "last_chunk": 1930,
+            "bytes": 8757,
+            "elapsed_s": 0.1262867430014012
+          },
+          {
+            "offset": 1930,
+            "next_offset": 1940,
+            "returned": 10,
+            "first_chunk": 1931,
+            "last_chunk": 1940,
+            "bytes": 8757,
+            "elapsed_s": 0.12868067999806954
+          },
+          {
+            "offset": 1940,
+            "next_offset": 1950,
+            "returned": 10,
+            "first_chunk": 1941,
+            "last_chunk": 1950,
+            "bytes": 8757,
+            "elapsed_s": 0.13656147199799307
+          },
+          {
+            "offset": 1950,
+            "next_offset": 1960,
+            "returned": 10,
+            "first_chunk": 1951,
+            "last_chunk": 1960,
+            "bytes": 8757,
+            "elapsed_s": 0.12379323999994085
+          },
+          {
+            "offset": 1960,
+            "next_offset": 1970,
+            "returned": 10,
+            "first_chunk": 1961,
+            "last_chunk": 1970,
+            "bytes": 8757,
+            "elapsed_s": 0.12825665600030334
+          },
+          {
+            "offset": 1970,
+            "next_offset": 1980,
+            "returned": 10,
+            "first_chunk": 1971,
+            "last_chunk": 1980,
+            "bytes": 8757,
+            "elapsed_s": 0.12612509799873806
+          },
+          {
+            "offset": 1980,
+            "next_offset": 1990,
+            "returned": 10,
+            "first_chunk": 1981,
+            "last_chunk": 1990,
+            "bytes": 8757,
+            "elapsed_s": 0.12239574199702474
+          },
+          {
+            "offset": 1990,
+            "next_offset": 2000,
+            "returned": 10,
+            "first_chunk": 1991,
+            "last_chunk": 2000,
+            "bytes": 8757,
+            "elapsed_s": 0.11818889400092303
+          },
+          {
+            "offset": 2000,
+            "next_offset": 2010,
+            "returned": 10,
+            "first_chunk": 2001,
+            "last_chunk": 2010,
+            "bytes": 8757,
+            "elapsed_s": 0.13659555699996417
+          },
+          {
+            "offset": 2010,
+            "next_offset": 2020,
+            "returned": 10,
+            "first_chunk": 2011,
+            "last_chunk": 2020,
+            "bytes": 8757,
+            "elapsed_s": 0.24098940400290303
+          },
+          {
+            "offset": 2020,
+            "next_offset": 2030,
+            "returned": 10,
+            "first_chunk": 2021,
+            "last_chunk": 2030,
+            "bytes": 8757,
+            "elapsed_s": 0.12956666799800587
+          },
+          {
+            "offset": 2030,
+            "next_offset": 2040,
+            "returned": 10,
+            "first_chunk": 2031,
+            "last_chunk": 2040,
+            "bytes": 8757,
+            "elapsed_s": 0.12863001500227256
+          },
+          {
+            "offset": 2040,
+            "next_offset": 2050,
+            "returned": 10,
+            "first_chunk": 2041,
+            "last_chunk": 2050,
+            "bytes": 8757,
+            "elapsed_s": 0.12994220900145592
+          },
+          {
+            "offset": 2050,
+            "next_offset": 2060,
+            "returned": 10,
+            "first_chunk": 2051,
+            "last_chunk": 2060,
+            "bytes": 8757,
+            "elapsed_s": 0.11962894099997357
+          },
+          {
+            "offset": 2060,
+            "next_offset": 2070,
+            "returned": 10,
+            "first_chunk": 2061,
+            "last_chunk": 2070,
+            "bytes": 8757,
+            "elapsed_s": 0.13567861399860703
+          },
+          {
+            "offset": 2070,
+            "next_offset": 2080,
+            "returned": 10,
+            "first_chunk": 2071,
+            "last_chunk": 2080,
+            "bytes": 8757,
+            "elapsed_s": 0.13155785699927947
+          },
+          {
+            "offset": 2080,
+            "next_offset": 2090,
+            "returned": 10,
+            "first_chunk": 2081,
+            "last_chunk": 2090,
+            "bytes": 8757,
+            "elapsed_s": 0.13181479000195395
+          },
+          {
+            "offset": 2090,
+            "next_offset": 2100,
+            "returned": 10,
+            "first_chunk": 2091,
+            "last_chunk": 2100,
+            "bytes": 8757,
+            "elapsed_s": 0.13856497099914122
+          },
+          {
+            "offset": 2100,
+            "next_offset": 2110,
+            "returned": 10,
+            "first_chunk": 2101,
+            "last_chunk": 2110,
+            "bytes": 8757,
+            "elapsed_s": 0.12329855799907818
+          },
+          {
+            "offset": 2110,
+            "next_offset": 2120,
+            "returned": 10,
+            "first_chunk": 2111,
+            "last_chunk": 2120,
+            "bytes": 8757,
+            "elapsed_s": 0.1287517189994105
+          },
+          {
+            "offset": 2120,
+            "next_offset": 2130,
+            "returned": 10,
+            "first_chunk": 2121,
+            "last_chunk": 2130,
+            "bytes": 8757,
+            "elapsed_s": 0.12629074299911736
+          },
+          {
+            "offset": 2130,
+            "next_offset": 2140,
+            "returned": 10,
+            "first_chunk": 2131,
+            "last_chunk": 2140,
+            "bytes": 8757,
+            "elapsed_s": 0.1439469110009668
+          },
+          {
+            "offset": 2140,
+            "next_offset": 2150,
+            "returned": 10,
+            "first_chunk": 2141,
+            "last_chunk": 2150,
+            "bytes": 8757,
+            "elapsed_s": 0.13022324000121444
+          },
+          {
+            "offset": 2150,
+            "next_offset": 2160,
+            "returned": 10,
+            "first_chunk": 2151,
+            "last_chunk": 2160,
+            "bytes": 8757,
+            "elapsed_s": 0.13041667899960885
+          },
+          {
+            "offset": 2160,
+            "next_offset": 2170,
+            "returned": 10,
+            "first_chunk": 2161,
+            "last_chunk": 2170,
+            "bytes": 8757,
+            "elapsed_s": 0.12771368600078858
+          },
+          {
+            "offset": 2170,
+            "next_offset": 2180,
+            "returned": 10,
+            "first_chunk": 2171,
+            "last_chunk": 2180,
+            "bytes": 8757,
+            "elapsed_s": 0.12781675700171036
+          },
+          {
+            "offset": 2180,
+            "next_offset": 2190,
+            "returned": 10,
+            "first_chunk": 2181,
+            "last_chunk": 2190,
+            "bytes": 8757,
+            "elapsed_s": 0.12727580499995383
+          },
+          {
+            "offset": 2190,
+            "next_offset": 2200,
+            "returned": 10,
+            "first_chunk": 2191,
+            "last_chunk": 2200,
+            "bytes": 8757,
+            "elapsed_s": 0.12838338399888016
+          },
+          {
+            "offset": 2200,
+            "next_offset": 2210,
+            "returned": 10,
+            "first_chunk": 2201,
+            "last_chunk": 2210,
+            "bytes": 8757,
+            "elapsed_s": 0.12583402300151647
+          },
+          {
+            "offset": 2210,
+            "next_offset": 2220,
+            "returned": 10,
+            "first_chunk": 2211,
+            "last_chunk": 2220,
+            "bytes": 8757,
+            "elapsed_s": 0.11859248600012506
+          },
+          {
+            "offset": 2220,
+            "next_offset": 2230,
+            "returned": 10,
+            "first_chunk": 2221,
+            "last_chunk": 2230,
+            "bytes": 8757,
+            "elapsed_s": 0.12454188500123564
+          },
+          {
+            "offset": 2230,
+            "next_offset": 2240,
+            "returned": 10,
+            "first_chunk": 2231,
+            "last_chunk": 2240,
+            "bytes": 8757,
+            "elapsed_s": 0.13206420399728813
+          },
+          {
+            "offset": 2240,
+            "next_offset": 2250,
+            "returned": 10,
+            "first_chunk": 2241,
+            "last_chunk": 2250,
+            "bytes": 8757,
+            "elapsed_s": 0.12530437299938058
+          },
+          {
+            "offset": 2250,
+            "next_offset": 2260,
+            "returned": 10,
+            "first_chunk": 2251,
+            "last_chunk": 2260,
+            "bytes": 8757,
+            "elapsed_s": 0.12030539600164047
+          },
+          {
+            "offset": 2260,
+            "next_offset": 2270,
+            "returned": 10,
+            "first_chunk": 2261,
+            "last_chunk": 2270,
+            "bytes": 8757,
+            "elapsed_s": 0.12547525400077575
+          },
+          {
+            "offset": 2270,
+            "next_offset": 2280,
+            "returned": 10,
+            "first_chunk": 2271,
+            "last_chunk": 2280,
+            "bytes": 8757,
+            "elapsed_s": 0.12783871300052851
+          },
+          {
+            "offset": 2280,
+            "next_offset": 2290,
+            "returned": 10,
+            "first_chunk": 2281,
+            "last_chunk": 2290,
+            "bytes": 8757,
+            "elapsed_s": 0.12639735699849552
+          },
+          {
+            "offset": 2290,
+            "next_offset": 2300,
+            "returned": 10,
+            "first_chunk": 2291,
+            "last_chunk": 2300,
+            "bytes": 8757,
+            "elapsed_s": 0.1208983590004209
+          },
+          {
+            "offset": 2300,
+            "next_offset": 2310,
+            "returned": 10,
+            "first_chunk": 2301,
+            "last_chunk": 2310,
+            "bytes": 8757,
+            "elapsed_s": 0.12278983099895413
+          },
+          {
+            "offset": 2310,
+            "next_offset": 2320,
+            "returned": 10,
+            "first_chunk": 2311,
+            "last_chunk": 2320,
+            "bytes": 8757,
+            "elapsed_s": 0.12879377699937322
+          },
+          {
+            "offset": 2320,
+            "next_offset": 2330,
+            "returned": 10,
+            "first_chunk": 2321,
+            "last_chunk": 2330,
+            "bytes": 8757,
+            "elapsed_s": 0.12671616799707408
+          },
+          {
+            "offset": 2330,
+            "next_offset": 2340,
+            "returned": 10,
+            "first_chunk": 2331,
+            "last_chunk": 2340,
+            "bytes": 8757,
+            "elapsed_s": 0.12091981999765267
+          },
+          {
+            "offset": 2340,
+            "next_offset": 2350,
+            "returned": 10,
+            "first_chunk": 2341,
+            "last_chunk": 2350,
+            "bytes": 8757,
+            "elapsed_s": 0.12244541100153583
+          },
+          {
+            "offset": 2350,
+            "next_offset": 2360,
+            "returned": 10,
+            "first_chunk": 2351,
+            "last_chunk": 2360,
+            "bytes": 8757,
+            "elapsed_s": 0.12976896100008162
+          },
+          {
+            "offset": 2360,
+            "next_offset": 2370,
+            "returned": 10,
+            "first_chunk": 2361,
+            "last_chunk": 2370,
+            "bytes": 8757,
+            "elapsed_s": 0.12417834700318053
+          },
+          {
+            "offset": 2370,
+            "next_offset": 2380,
+            "returned": 10,
+            "first_chunk": 2371,
+            "last_chunk": 2380,
+            "bytes": 8757,
+            "elapsed_s": 0.1320126850005181
+          },
+          {
+            "offset": 2380,
+            "next_offset": 2390,
+            "returned": 10,
+            "first_chunk": 2381,
+            "last_chunk": 2390,
+            "bytes": 8757,
+            "elapsed_s": 0.1262055400002282
+          },
+          {
+            "offset": 2390,
+            "next_offset": 2400,
+            "returned": 10,
+            "first_chunk": 2391,
+            "last_chunk": 2400,
+            "bytes": 8757,
+            "elapsed_s": 0.13166075600020122
+          },
+          {
+            "offset": 2400,
+            "next_offset": 2410,
+            "returned": 10,
+            "first_chunk": 2401,
+            "last_chunk": 2410,
+            "bytes": 8757,
+            "elapsed_s": 0.1267479269990872
+          },
+          {
+            "offset": 2410,
+            "next_offset": 2420,
+            "returned": 10,
+            "first_chunk": 2411,
+            "last_chunk": 2420,
+            "bytes": 8757,
+            "elapsed_s": 0.13227317199925892
+          },
+          {
+            "offset": 2420,
+            "next_offset": 2430,
+            "returned": 10,
+            "first_chunk": 2421,
+            "last_chunk": 2430,
+            "bytes": 8757,
+            "elapsed_s": 0.13171599199995399
+          },
+          {
+            "offset": 2430,
+            "next_offset": 2440,
+            "returned": 10,
+            "first_chunk": 2431,
+            "last_chunk": 2440,
+            "bytes": 8757,
+            "elapsed_s": 0.13018901999748778
+          },
+          {
+            "offset": 2440,
+            "next_offset": 2450,
+            "returned": 10,
+            "first_chunk": 2441,
+            "last_chunk": 2450,
+            "bytes": 8757,
+            "elapsed_s": 0.12963098299951525
+          },
+          {
+            "offset": 2450,
+            "next_offset": 2460,
+            "returned": 10,
+            "first_chunk": 2451,
+            "last_chunk": 2460,
+            "bytes": 8757,
+            "elapsed_s": 0.12642133999906946
+          },
+          {
+            "offset": 2460,
+            "next_offset": 2470,
+            "returned": 10,
+            "first_chunk": 2461,
+            "last_chunk": 2470,
+            "bytes": 8757,
+            "elapsed_s": 0.1270890240011795
+          },
+          {
+            "offset": 2470,
+            "next_offset": 2480,
+            "returned": 10,
+            "first_chunk": 2471,
+            "last_chunk": 2480,
+            "bytes": 8757,
+            "elapsed_s": 0.12945139500152436
+          },
+          {
+            "offset": 2480,
+            "next_offset": 2490,
+            "returned": 10,
+            "first_chunk": 2481,
+            "last_chunk": 2490,
+            "bytes": 8757,
+            "elapsed_s": 0.12499858399678487
+          },
+          {
+            "offset": 2490,
+            "next_offset": 2500,
+            "returned": 10,
+            "first_chunk": 2491,
+            "last_chunk": 2500,
+            "bytes": 8757,
+            "elapsed_s": 0.12198446999900625
+          },
+          {
+            "offset": 2500,
+            "next_offset": 2510,
+            "returned": 10,
+            "first_chunk": 2501,
+            "last_chunk": 2510,
+            "bytes": 8757,
+            "elapsed_s": 0.12975102299969876
+          },
+          {
+            "offset": 2510,
+            "next_offset": 2520,
+            "returned": 10,
+            "first_chunk": 2511,
+            "last_chunk": 2520,
+            "bytes": 8757,
+            "elapsed_s": 0.13034390599932522
+          },
+          {
+            "offset": 2520,
+            "next_offset": 2530,
+            "returned": 10,
+            "first_chunk": 2521,
+            "last_chunk": 2530,
+            "bytes": 8757,
+            "elapsed_s": 0.1278317039977992
+          },
+          {
+            "offset": 2530,
+            "next_offset": 2540,
+            "returned": 10,
+            "first_chunk": 2531,
+            "last_chunk": 2540,
+            "bytes": 8757,
+            "elapsed_s": 0.12339237600099295
+          },
+          {
+            "offset": 2540,
+            "next_offset": 2550,
+            "returned": 10,
+            "first_chunk": 2541,
+            "last_chunk": 2550,
+            "bytes": 8757,
+            "elapsed_s": 0.12886769200122217
+          },
+          {
+            "offset": 2550,
+            "next_offset": 2560,
+            "returned": 10,
+            "first_chunk": 2551,
+            "last_chunk": 2560,
+            "bytes": 8757,
+            "elapsed_s": 0.12990505500056315
+          },
+          {
+            "offset": 2560,
+            "next_offset": 2570,
+            "returned": 10,
+            "first_chunk": 2561,
+            "last_chunk": 2570,
+            "bytes": 8757,
+            "elapsed_s": 0.12394030599898542
+          },
+          {
+            "offset": 2570,
+            "next_offset": 2580,
+            "returned": 10,
+            "first_chunk": 2571,
+            "last_chunk": 2580,
+            "bytes": 8757,
+            "elapsed_s": 0.12206317600066541
+          },
+          {
+            "offset": 2580,
+            "next_offset": 2590,
+            "returned": 10,
+            "first_chunk": 2581,
+            "last_chunk": 2590,
+            "bytes": 8757,
+            "elapsed_s": 0.12754228199992212
+          },
+          {
+            "offset": 2590,
+            "next_offset": 2600,
+            "returned": 10,
+            "first_chunk": 2591,
+            "last_chunk": 2600,
+            "bytes": 8757,
+            "elapsed_s": 0.1265574779972667
+          },
+          {
+            "offset": 2600,
+            "next_offset": 2610,
+            "returned": 10,
+            "first_chunk": 2601,
+            "last_chunk": 2610,
+            "bytes": 8757,
+            "elapsed_s": 0.12438806800128077
+          },
+          {
+            "offset": 2610,
+            "next_offset": 2620,
+            "returned": 10,
+            "first_chunk": 2611,
+            "last_chunk": 2620,
+            "bytes": 8757,
+            "elapsed_s": 0.12066886799948406
+          },
+          {
+            "offset": 2620,
+            "next_offset": 2630,
+            "returned": 10,
+            "first_chunk": 2621,
+            "last_chunk": 2630,
+            "bytes": 8757,
+            "elapsed_s": 0.1281064390022948
+          },
+          {
+            "offset": 2630,
+            "next_offset": 2640,
+            "returned": 10,
+            "first_chunk": 2631,
+            "last_chunk": 2640,
+            "bytes": 8757,
+            "elapsed_s": 0.13051478800116456
+          },
+          {
+            "offset": 2640,
+            "next_offset": 2650,
+            "returned": 10,
+            "first_chunk": 2641,
+            "last_chunk": 2650,
+            "bytes": 8757,
+            "elapsed_s": 0.12366371499956585
+          },
+          {
+            "offset": 2650,
+            "next_offset": 2660,
+            "returned": 10,
+            "first_chunk": 2651,
+            "last_chunk": 2660,
+            "bytes": 8757,
+            "elapsed_s": 0.1314873009978328
+          },
+          {
+            "offset": 2660,
+            "next_offset": 2670,
+            "returned": 10,
+            "first_chunk": 2661,
+            "last_chunk": 2670,
+            "bytes": 8757,
+            "elapsed_s": 0.13091893400269328
+          },
+          {
+            "offset": 2670,
+            "next_offset": 2680,
+            "returned": 10,
+            "first_chunk": 2671,
+            "last_chunk": 2680,
+            "bytes": 8757,
+            "elapsed_s": 0.12863365600060206
+          },
+          {
+            "offset": 2680,
+            "next_offset": 2690,
+            "returned": 10,
+            "first_chunk": 2681,
+            "last_chunk": 2690,
+            "bytes": 8757,
+            "elapsed_s": 0.12134015300034662
+          },
+          {
+            "offset": 2690,
+            "next_offset": 2700,
+            "returned": 10,
+            "first_chunk": 2691,
+            "last_chunk": 2700,
+            "bytes": 8757,
+            "elapsed_s": 0.13451938700018218
+          },
+          {
+            "offset": 2700,
+            "next_offset": 2710,
+            "returned": 10,
+            "first_chunk": 2701,
+            "last_chunk": 2710,
+            "bytes": 8757,
+            "elapsed_s": 0.12995723099811585
+          },
+          {
+            "offset": 2710,
+            "next_offset": 2720,
+            "returned": 10,
+            "first_chunk": 2711,
+            "last_chunk": 2720,
+            "bytes": 8757,
+            "elapsed_s": 0.1310729500000889
+          },
+          {
+            "offset": 2720,
+            "next_offset": 2730,
+            "returned": 10,
+            "first_chunk": 2721,
+            "last_chunk": 2730,
+            "bytes": 8757,
+            "elapsed_s": 0.12274341300144442
+          },
+          {
+            "offset": 2730,
+            "next_offset": 2740,
+            "returned": 10,
+            "first_chunk": 2731,
+            "last_chunk": 2740,
+            "bytes": 8757,
+            "elapsed_s": 0.1254926420006086
+          },
+          {
+            "offset": 2740,
+            "next_offset": 2750,
+            "returned": 10,
+            "first_chunk": 2741,
+            "last_chunk": 2750,
+            "bytes": 8757,
+            "elapsed_s": 0.13347561999762547
+          },
+          {
+            "offset": 2750,
+            "next_offset": 2760,
+            "returned": 10,
+            "first_chunk": 2751,
+            "last_chunk": 2760,
+            "bytes": 8757,
+            "elapsed_s": 0.12534338000114076
+          },
+          {
+            "offset": 2760,
+            "next_offset": 2770,
+            "returned": 10,
+            "first_chunk": 2761,
+            "last_chunk": 2770,
+            "bytes": 8757,
+            "elapsed_s": 0.12847994199910318
+          },
+          {
+            "offset": 2770,
+            "next_offset": 2780,
+            "returned": 10,
+            "first_chunk": 2771,
+            "last_chunk": 2780,
+            "bytes": 8757,
+            "elapsed_s": 0.12321248099760851
+          },
+          {
+            "offset": 2780,
+            "next_offset": 2790,
+            "returned": 10,
+            "first_chunk": 2781,
+            "last_chunk": 2790,
+            "bytes": 8757,
+            "elapsed_s": 0.12814256599813234
+          },
+          {
+            "offset": 2790,
+            "next_offset": 2800,
+            "returned": 10,
+            "first_chunk": 2791,
+            "last_chunk": 2800,
+            "bytes": 8757,
+            "elapsed_s": 0.12560697399749188
+          },
+          {
+            "offset": 2800,
+            "next_offset": 2810,
+            "returned": 10,
+            "first_chunk": 2801,
+            "last_chunk": 2810,
+            "bytes": 8757,
+            "elapsed_s": 0.12091199600035907
+          },
+          {
+            "offset": 2810,
+            "next_offset": 2820,
+            "returned": 10,
+            "first_chunk": 2811,
+            "last_chunk": 2820,
+            "bytes": 8757,
+            "elapsed_s": 0.1278022519982187
+          },
+          {
+            "offset": 2820,
+            "next_offset": 2830,
+            "returned": 10,
+            "first_chunk": 2821,
+            "last_chunk": 2830,
+            "bytes": 8757,
+            "elapsed_s": 0.13127745499878074
+          },
+          {
+            "offset": 2830,
+            "next_offset": 2840,
+            "returned": 10,
+            "first_chunk": 2831,
+            "last_chunk": 2840,
+            "bytes": 8757,
+            "elapsed_s": 0.12367147999975714
+          },
+          {
+            "offset": 2840,
+            "next_offset": 2850,
+            "returned": 10,
+            "first_chunk": 2841,
+            "last_chunk": 2850,
+            "bytes": 8757,
+            "elapsed_s": 0.12232782699720701
+          },
+          {
+            "offset": 2850,
+            "next_offset": 2860,
+            "returned": 10,
+            "first_chunk": 2851,
+            "last_chunk": 2860,
+            "bytes": 8757,
+            "elapsed_s": 0.12462413699904573
+          },
+          {
+            "offset": 2860,
+            "next_offset": 2870,
+            "returned": 10,
+            "first_chunk": 2861,
+            "last_chunk": 2870,
+            "bytes": 8757,
+            "elapsed_s": 0.12859174800178153
+          },
+          {
+            "offset": 2870,
+            "next_offset": 2880,
+            "returned": 10,
+            "first_chunk": 2871,
+            "last_chunk": 2880,
+            "bytes": 8757,
+            "elapsed_s": 0.12674140899980557
+          },
+          {
+            "offset": 2880,
+            "next_offset": 2890,
+            "returned": 10,
+            "first_chunk": 2881,
+            "last_chunk": 2890,
+            "bytes": 8757,
+            "elapsed_s": 0.1272774320023018
+          },
+          {
+            "offset": 2890,
+            "next_offset": 2900,
+            "returned": 10,
+            "first_chunk": 2891,
+            "last_chunk": 2900,
+            "bytes": 8757,
+            "elapsed_s": 0.13533192800241522
+          },
+          {
+            "offset": 2900,
+            "next_offset": 2910,
+            "returned": 10,
+            "first_chunk": 2901,
+            "last_chunk": 2910,
+            "bytes": 8757,
+            "elapsed_s": 0.13160139200044796
+          },
+          {
+            "offset": 2910,
+            "next_offset": 2920,
+            "returned": 10,
+            "first_chunk": 2911,
+            "last_chunk": 2920,
+            "bytes": 8757,
+            "elapsed_s": 0.12559128000066266
+          },
+          {
+            "offset": 2920,
+            "next_offset": 2930,
+            "returned": 10,
+            "first_chunk": 2921,
+            "last_chunk": 2930,
+            "bytes": 8757,
+            "elapsed_s": 0.12474759299948346
+          },
+          {
+            "offset": 2930,
+            "next_offset": 2940,
+            "returned": 10,
+            "first_chunk": 2931,
+            "last_chunk": 2940,
+            "bytes": 8757,
+            "elapsed_s": 0.12742216200058465
+          },
+          {
+            "offset": 2940,
+            "next_offset": 2950,
+            "returned": 10,
+            "first_chunk": 2941,
+            "last_chunk": 2950,
+            "bytes": 8757,
+            "elapsed_s": 0.13780362499892362
+          },
+          {
+            "offset": 2950,
+            "next_offset": 2960,
+            "returned": 10,
+            "first_chunk": 2951,
+            "last_chunk": 2960,
+            "bytes": 8757,
+            "elapsed_s": 0.12480484900152078
+          },
+          {
+            "offset": 2960,
+            "next_offset": 2970,
+            "returned": 10,
+            "first_chunk": 2961,
+            "last_chunk": 2970,
+            "bytes": 8757,
+            "elapsed_s": 0.12213519099896075
+          },
+          {
+            "offset": 2970,
+            "next_offset": 2980,
+            "returned": 10,
+            "first_chunk": 2971,
+            "last_chunk": 2980,
+            "bytes": 8757,
+            "elapsed_s": 0.12738502900174353
+          },
+          {
+            "offset": 2980,
+            "next_offset": 2990,
+            "returned": 10,
+            "first_chunk": 2981,
+            "last_chunk": 2990,
+            "bytes": 8757,
+            "elapsed_s": 0.12849699099751888
+          },
+          {
+            "offset": 2990,
+            "next_offset": 3000,
+            "returned": 10,
+            "first_chunk": 2991,
+            "last_chunk": 3000,
+            "bytes": 8757,
+            "elapsed_s": 0.1259929629995895
+          }
+        ]
+      },
+      {
+        "requested_limit": 100,
+        "budget_bytes": 20000,
+        "first_analysis_sha256": "45ac8cfd4a07e677c15589a0fc440ae2d84a3b8aacb0a76320f59b4868294270",
+        "pages": 131,
+        "total_s": 17.413318910003,
+        "page_median_s": 0.13195432199790957,
+        "max_page_bytes": 19782,
+        "returned_packet_bytes": 2577178,
+        "page_size_distribution": {
+          "10": 1,
+          "23": 130
+        },
+        "ordered_complete": true,
+        "unique_chunks": 3000,
+        "duplicate_chunks": 0,
+        "missing_chunks": [],
+        "fingerprints_unique": 1,
+        "all_fingerprints_equal_first": true,
+        "all_fingerprints_equal_limit10": true,
+        "cli_first_and_last": [
+          {
+            "page": "first",
+            "offset": 0,
+            "next_offset": 23,
+            "returned": 23,
+            "first_chunk": 1,
+            "last_chunk": 23,
+            "bytes": 19563,
+            "elapsed_s": 0.23759389000042574,
+            "analysis_sha256": "45ac8cfd4a07e677c15589a0fc440ae2d84a3b8aacb0a76320f59b4868294270",
+            "equals_api_packet": true
+          },
+          {
+            "page": "last",
+            "offset": 2990,
+            "next_offset": 3000,
+            "returned": 10,
+            "first_chunk": 2991,
+            "last_chunk": 3000,
+            "bytes": 8757,
+            "elapsed_s": 0.2529110590003256,
+            "analysis_sha256": "45ac8cfd4a07e677c15589a0fc440ae2d84a3b8aacb0a76320f59b4868294270",
+            "equals_api_packet": true
+          }
+        ],
+        "page_details": [
+          {
+            "offset": 0,
+            "next_offset": 23,
+            "returned": 23,
+            "first_chunk": 1,
+            "last_chunk": 23,
+            "bytes": 19563,
+            "elapsed_s": 0.13151750299948617
+          },
+          {
+            "offset": 23,
+            "next_offset": 46,
+            "returned": 23,
+            "first_chunk": 24,
+            "last_chunk": 46,
+            "bytes": 19603,
+            "elapsed_s": 0.1337287810019916
+          },
+          {
+            "offset": 46,
+            "next_offset": 69,
+            "returned": 23,
+            "first_chunk": 47,
+            "last_chunk": 69,
+            "bytes": 19640,
+            "elapsed_s": 0.13195037599871284
+          },
+          {
+            "offset": 69,
+            "next_offset": 92,
+            "returned": 23,
+            "first_chunk": 70,
+            "last_chunk": 92,
+            "bytes": 19640,
+            "elapsed_s": 0.1325194819983153
+          },
+          {
+            "offset": 92,
+            "next_offset": 115,
+            "returned": 23,
+            "first_chunk": 93,
+            "last_chunk": 115,
+            "bytes": 19673,
+            "elapsed_s": 0.13360111600195523
+          },
+          {
+            "offset": 115,
+            "next_offset": 138,
+            "returned": 23,
+            "first_chunk": 116,
+            "last_chunk": 138,
+            "bytes": 19688,
+            "elapsed_s": 0.1339164349992643
+          },
+          {
+            "offset": 138,
+            "next_offset": 161,
+            "returned": 23,
+            "first_chunk": 139,
+            "last_chunk": 161,
+            "bytes": 19688,
+            "elapsed_s": 0.13141691200144123
+          },
+          {
+            "offset": 161,
+            "next_offset": 184,
+            "returned": 23,
+            "first_chunk": 162,
+            "last_chunk": 184,
+            "bytes": 19688,
+            "elapsed_s": 0.12609823199818493
+          },
+          {
+            "offset": 184,
+            "next_offset": 207,
+            "returned": 23,
+            "first_chunk": 185,
+            "last_chunk": 207,
+            "bytes": 19688,
+            "elapsed_s": 0.13508723300037673
+          },
+          {
+            "offset": 207,
+            "next_offset": 230,
+            "returned": 23,
+            "first_chunk": 208,
+            "last_chunk": 230,
+            "bytes": 19688,
+            "elapsed_s": 0.13708428800237016
+          },
+          {
+            "offset": 230,
+            "next_offset": 253,
+            "returned": 23,
+            "first_chunk": 231,
+            "last_chunk": 253,
+            "bytes": 19688,
+            "elapsed_s": 0.12912790200061863
+          },
+          {
+            "offset": 253,
+            "next_offset": 276,
+            "returned": 23,
+            "first_chunk": 254,
+            "last_chunk": 276,
+            "bytes": 19688,
+            "elapsed_s": 0.12531036799919093
+          },
+          {
+            "offset": 276,
+            "next_offset": 299,
+            "returned": 23,
+            "first_chunk": 277,
+            "last_chunk": 299,
+            "bytes": 19688,
+            "elapsed_s": 0.12673186500251177
+          },
+          {
+            "offset": 299,
+            "next_offset": 322,
+            "returned": 23,
+            "first_chunk": 300,
+            "last_chunk": 322,
+            "bytes": 19688,
+            "elapsed_s": 0.13330217100156005
+          },
+          {
+            "offset": 322,
+            "next_offset": 345,
+            "returned": 23,
+            "first_chunk": 323,
+            "last_chunk": 345,
+            "bytes": 19688,
+            "elapsed_s": 0.12986909699975513
+          },
+          {
+            "offset": 345,
+            "next_offset": 368,
+            "returned": 23,
+            "first_chunk": 346,
+            "last_chunk": 368,
+            "bytes": 19688,
+            "elapsed_s": 0.12498790999961784
+          },
+          {
+            "offset": 368,
+            "next_offset": 391,
+            "returned": 23,
+            "first_chunk": 369,
+            "last_chunk": 391,
+            "bytes": 19688,
+            "elapsed_s": 0.12851703399792314
+          },
+          {
+            "offset": 391,
+            "next_offset": 414,
+            "returned": 23,
+            "first_chunk": 392,
+            "last_chunk": 414,
+            "bytes": 19688,
+            "elapsed_s": 0.1314989489983418
+          },
+          {
+            "offset": 414,
+            "next_offset": 437,
+            "returned": 23,
+            "first_chunk": 415,
+            "last_chunk": 437,
+            "bytes": 19729,
+            "elapsed_s": 0.12751731500247843
+          },
+          {
+            "offset": 437,
+            "next_offset": 460,
+            "returned": 23,
+            "first_chunk": 438,
+            "last_chunk": 460,
+            "bytes": 19734,
+            "elapsed_s": 0.12397747300201445
+          },
+          {
+            "offset": 460,
+            "next_offset": 483,
+            "returned": 23,
+            "first_chunk": 461,
+            "last_chunk": 483,
+            "bytes": 19734,
+            "elapsed_s": 0.12859713699799613
+          },
+          {
+            "offset": 483,
+            "next_offset": 506,
+            "returned": 23,
+            "first_chunk": 484,
+            "last_chunk": 506,
+            "bytes": 19734,
+            "elapsed_s": 0.13246945600258186
+          },
+          {
+            "offset": 506,
+            "next_offset": 529,
+            "returned": 23,
+            "first_chunk": 507,
+            "last_chunk": 529,
+            "bytes": 19734,
+            "elapsed_s": 0.12819010100065498
+          },
+          {
+            "offset": 529,
+            "next_offset": 552,
+            "returned": 23,
+            "first_chunk": 530,
+            "last_chunk": 552,
+            "bytes": 19734,
+            "elapsed_s": 0.12602906200118014
+          },
+          {
+            "offset": 552,
+            "next_offset": 575,
+            "returned": 23,
+            "first_chunk": 553,
+            "last_chunk": 575,
+            "bytes": 19734,
+            "elapsed_s": 0.12988519400096266
+          },
+          {
+            "offset": 575,
+            "next_offset": 598,
+            "returned": 23,
+            "first_chunk": 576,
+            "last_chunk": 598,
+            "bytes": 19734,
+            "elapsed_s": 0.13157537000006414
+          },
+          {
+            "offset": 598,
+            "next_offset": 621,
+            "returned": 23,
+            "first_chunk": 599,
+            "last_chunk": 621,
+            "bytes": 19734,
+            "elapsed_s": 0.13582314099767245
+          },
+          {
+            "offset": 621,
+            "next_offset": 644,
+            "returned": 23,
+            "first_chunk": 622,
+            "last_chunk": 644,
+            "bytes": 19734,
+            "elapsed_s": 0.14347530200029723
+          },
+          {
+            "offset": 644,
+            "next_offset": 667,
+            "returned": 23,
+            "first_chunk": 645,
+            "last_chunk": 667,
+            "bytes": 19734,
+            "elapsed_s": 0.137984081000468
+          },
+          {
+            "offset": 667,
+            "next_offset": 690,
+            "returned": 23,
+            "first_chunk": 668,
+            "last_chunk": 690,
+            "bytes": 19734,
+            "elapsed_s": 0.1339942839986179
+          },
+          {
+            "offset": 690,
+            "next_offset": 713,
+            "returned": 23,
+            "first_chunk": 691,
+            "last_chunk": 713,
+            "bytes": 19734,
+            "elapsed_s": 0.1265926310006762
+          },
+          {
+            "offset": 713,
+            "next_offset": 736,
+            "returned": 23,
+            "first_chunk": 714,
+            "last_chunk": 736,
+            "bytes": 19734,
+            "elapsed_s": 0.13925130999996327
+          },
+          {
+            "offset": 736,
+            "next_offset": 759,
+            "returned": 23,
+            "first_chunk": 737,
+            "last_chunk": 759,
+            "bytes": 19734,
+            "elapsed_s": 0.14973854400159325
+          },
+          {
+            "offset": 759,
+            "next_offset": 782,
+            "returned": 23,
+            "first_chunk": 760,
+            "last_chunk": 782,
+            "bytes": 19734,
+            "elapsed_s": 0.1313591260004614
+          },
+          {
+            "offset": 782,
+            "next_offset": 805,
+            "returned": 23,
+            "first_chunk": 783,
+            "last_chunk": 805,
+            "bytes": 19734,
+            "elapsed_s": 0.12851319599940325
+          },
+          {
+            "offset": 805,
+            "next_offset": 828,
+            "returned": 23,
+            "first_chunk": 806,
+            "last_chunk": 828,
+            "bytes": 19734,
+            "elapsed_s": 0.13399351300176932
+          },
+          {
+            "offset": 828,
+            "next_offset": 851,
+            "returned": 23,
+            "first_chunk": 829,
+            "last_chunk": 851,
+            "bytes": 19734,
+            "elapsed_s": 0.14236547499967855
+          },
+          {
+            "offset": 851,
+            "next_offset": 874,
+            "returned": 23,
+            "first_chunk": 852,
+            "last_chunk": 874,
+            "bytes": 19734,
+            "elapsed_s": 0.12905898800090654
+          },
+          {
+            "offset": 874,
+            "next_offset": 897,
+            "returned": 23,
+            "first_chunk": 875,
+            "last_chunk": 897,
+            "bytes": 19734,
+            "elapsed_s": 0.12465092099955655
+          },
+          {
+            "offset": 897,
+            "next_offset": 920,
+            "returned": 23,
+            "first_chunk": 898,
+            "last_chunk": 920,
+            "bytes": 19734,
+            "elapsed_s": 0.1347985009997501
+          },
+          {
+            "offset": 920,
+            "next_offset": 943,
+            "returned": 23,
+            "first_chunk": 921,
+            "last_chunk": 943,
+            "bytes": 19734,
+            "elapsed_s": 0.13214652500028023
+          },
+          {
+            "offset": 943,
+            "next_offset": 966,
+            "returned": 23,
+            "first_chunk": 944,
+            "last_chunk": 966,
+            "bytes": 19734,
+            "elapsed_s": 0.12801880100232665
+          },
+          {
+            "offset": 966,
+            "next_offset": 989,
+            "returned": 23,
+            "first_chunk": 967,
+            "last_chunk": 989,
+            "bytes": 19734,
+            "elapsed_s": 0.12560626799677266
+          },
+          {
+            "offset": 989,
+            "next_offset": 1012,
+            "returned": 23,
+            "first_chunk": 990,
+            "last_chunk": 1012,
+            "bytes": 19761,
+            "elapsed_s": 0.13479740499678883
+          },
+          {
+            "offset": 1012,
+            "next_offset": 1035,
+            "returned": 23,
+            "first_chunk": 1013,
+            "last_chunk": 1035,
+            "bytes": 19782,
+            "elapsed_s": 0.13054685200040694
+          },
+          {
+            "offset": 1035,
+            "next_offset": 1058,
+            "returned": 23,
+            "first_chunk": 1036,
+            "last_chunk": 1058,
+            "bytes": 19782,
+            "elapsed_s": 0.12585779299843125
+          },
+          {
+            "offset": 1058,
+            "next_offset": 1081,
+            "returned": 23,
+            "first_chunk": 1059,
+            "last_chunk": 1081,
+            "bytes": 19782,
+            "elapsed_s": 0.12614196299909963
+          },
+          {
+            "offset": 1081,
+            "next_offset": 1104,
+            "returned": 23,
+            "first_chunk": 1082,
+            "last_chunk": 1104,
+            "bytes": 19782,
+            "elapsed_s": 0.13691225100046722
+          },
+          {
+            "offset": 1104,
+            "next_offset": 1127,
+            "returned": 23,
+            "first_chunk": 1105,
+            "last_chunk": 1127,
+            "bytes": 19782,
+            "elapsed_s": 0.12915690400041058
+          },
+          {
+            "offset": 1127,
+            "next_offset": 1150,
+            "returned": 23,
+            "first_chunk": 1128,
+            "last_chunk": 1150,
+            "bytes": 19782,
+            "elapsed_s": 0.1258894419988792
+          },
+          {
+            "offset": 1150,
+            "next_offset": 1173,
+            "returned": 23,
+            "first_chunk": 1151,
+            "last_chunk": 1173,
+            "bytes": 19782,
+            "elapsed_s": 0.13572466899859137
+          },
+          {
+            "offset": 1173,
+            "next_offset": 1196,
+            "returned": 23,
+            "first_chunk": 1174,
+            "last_chunk": 1196,
+            "bytes": 19782,
+            "elapsed_s": 0.13563567099845386
+          },
+          {
+            "offset": 1196,
+            "next_offset": 1219,
+            "returned": 23,
+            "first_chunk": 1197,
+            "last_chunk": 1219,
+            "bytes": 19782,
+            "elapsed_s": 0.12787585999831208
+          },
+          {
+            "offset": 1219,
+            "next_offset": 1242,
+            "returned": 23,
+            "first_chunk": 1220,
+            "last_chunk": 1242,
+            "bytes": 19782,
+            "elapsed_s": 0.12482378300046548
+          },
+          {
+            "offset": 1242,
+            "next_offset": 1265,
+            "returned": 23,
+            "first_chunk": 1243,
+            "last_chunk": 1265,
+            "bytes": 19782,
+            "elapsed_s": 0.13838545699763927
+          },
+          {
+            "offset": 1265,
+            "next_offset": 1288,
+            "returned": 23,
+            "first_chunk": 1266,
+            "last_chunk": 1288,
+            "bytes": 19782,
+            "elapsed_s": 0.1389651630015578
+          },
+          {
+            "offset": 1288,
+            "next_offset": 1311,
+            "returned": 23,
+            "first_chunk": 1289,
+            "last_chunk": 1311,
+            "bytes": 19782,
+            "elapsed_s": 0.12803559399981168
+          },
+          {
+            "offset": 1311,
+            "next_offset": 1334,
+            "returned": 23,
+            "first_chunk": 1312,
+            "last_chunk": 1334,
+            "bytes": 19782,
+            "elapsed_s": 0.13496950099943206
+          },
+          {
+            "offset": 1334,
+            "next_offset": 1357,
+            "returned": 23,
+            "first_chunk": 1335,
+            "last_chunk": 1357,
+            "bytes": 19782,
+            "elapsed_s": 0.13442071399913402
+          },
+          {
+            "offset": 1357,
+            "next_offset": 1380,
+            "returned": 23,
+            "first_chunk": 1358,
+            "last_chunk": 1380,
+            "bytes": 19782,
+            "elapsed_s": 0.13539839700024459
+          },
+          {
+            "offset": 1380,
+            "next_offset": 1403,
+            "returned": 23,
+            "first_chunk": 1381,
+            "last_chunk": 1403,
+            "bytes": 19782,
+            "elapsed_s": 0.12989978099722066
+          },
+          {
+            "offset": 1403,
+            "next_offset": 1426,
+            "returned": 23,
+            "first_chunk": 1404,
+            "last_chunk": 1426,
+            "bytes": 19782,
+            "elapsed_s": 0.12763159799942514
+          },
+          {
+            "offset": 1426,
+            "next_offset": 1449,
+            "returned": 23,
+            "first_chunk": 1427,
+            "last_chunk": 1449,
+            "bytes": 19782,
+            "elapsed_s": 0.13325015700320364
+          },
+          {
+            "offset": 1449,
+            "next_offset": 1472,
+            "returned": 23,
+            "first_chunk": 1450,
+            "last_chunk": 1472,
+            "bytes": 19782,
+            "elapsed_s": 0.13556604599943967
+          },
+          {
+            "offset": 1472,
+            "next_offset": 1495,
+            "returned": 23,
+            "first_chunk": 1473,
+            "last_chunk": 1495,
+            "bytes": 19782,
+            "elapsed_s": 0.1453721560028498
+          },
+          {
+            "offset": 1495,
+            "next_offset": 1518,
+            "returned": 23,
+            "first_chunk": 1496,
+            "last_chunk": 1518,
+            "bytes": 19782,
+            "elapsed_s": 0.1316342940008326
+          },
+          {
+            "offset": 1518,
+            "next_offset": 1541,
+            "returned": 23,
+            "first_chunk": 1519,
+            "last_chunk": 1541,
+            "bytes": 19782,
+            "elapsed_s": 0.13433223299944075
+          },
+          {
+            "offset": 1541,
+            "next_offset": 1564,
+            "returned": 23,
+            "first_chunk": 1542,
+            "last_chunk": 1564,
+            "bytes": 19782,
+            "elapsed_s": 0.1316290949980612
+          },
+          {
+            "offset": 1564,
+            "next_offset": 1587,
+            "returned": 23,
+            "first_chunk": 1565,
+            "last_chunk": 1587,
+            "bytes": 19782,
+            "elapsed_s": 0.12639838399991277
+          },
+          {
+            "offset": 1587,
+            "next_offset": 1610,
+            "returned": 23,
+            "first_chunk": 1588,
+            "last_chunk": 1610,
+            "bytes": 19782,
+            "elapsed_s": 0.1358153779983695
+          },
+          {
+            "offset": 1610,
+            "next_offset": 1633,
+            "returned": 23,
+            "first_chunk": 1611,
+            "last_chunk": 1633,
+            "bytes": 19782,
+            "elapsed_s": 0.13398895499994978
+          },
+          {
+            "offset": 1633,
+            "next_offset": 1656,
+            "returned": 23,
+            "first_chunk": 1634,
+            "last_chunk": 1656,
+            "bytes": 19782,
+            "elapsed_s": 0.13059911600066698
+          },
+          {
+            "offset": 1656,
+            "next_offset": 1679,
+            "returned": 23,
+            "first_chunk": 1657,
+            "last_chunk": 1679,
+            "bytes": 19782,
+            "elapsed_s": 0.1265149200007727
+          },
+          {
+            "offset": 1679,
+            "next_offset": 1702,
+            "returned": 23,
+            "first_chunk": 1680,
+            "last_chunk": 1702,
+            "bytes": 19782,
+            "elapsed_s": 0.1355627109987836
+          },
+          {
+            "offset": 1702,
+            "next_offset": 1725,
+            "returned": 23,
+            "first_chunk": 1703,
+            "last_chunk": 1725,
+            "bytes": 19782,
+            "elapsed_s": 0.13770112900238018
+          },
+          {
+            "offset": 1725,
+            "next_offset": 1748,
+            "returned": 23,
+            "first_chunk": 1726,
+            "last_chunk": 1748,
+            "bytes": 19782,
+            "elapsed_s": 0.12835764899864444
+          },
+          {
+            "offset": 1748,
+            "next_offset": 1771,
+            "returned": 23,
+            "first_chunk": 1749,
+            "last_chunk": 1771,
+            "bytes": 19782,
+            "elapsed_s": 0.1312475020022248
+          },
+          {
+            "offset": 1771,
+            "next_offset": 1794,
+            "returned": 23,
+            "first_chunk": 1772,
+            "last_chunk": 1794,
+            "bytes": 19782,
+            "elapsed_s": 0.15052938000007998
+          },
+          {
+            "offset": 1794,
+            "next_offset": 1817,
+            "returned": 23,
+            "first_chunk": 1795,
+            "last_chunk": 1817,
+            "bytes": 19782,
+            "elapsed_s": 0.13169076499980292
+          },
+          {
+            "offset": 1817,
+            "next_offset": 1840,
+            "returned": 23,
+            "first_chunk": 1818,
+            "last_chunk": 1840,
+            "bytes": 19782,
+            "elapsed_s": 0.1278061160010111
+          },
+          {
+            "offset": 1840,
+            "next_offset": 1863,
+            "returned": 23,
+            "first_chunk": 1841,
+            "last_chunk": 1863,
+            "bytes": 19782,
+            "elapsed_s": 0.12984708200019668
+          },
+          {
+            "offset": 1863,
+            "next_offset": 1886,
+            "returned": 23,
+            "first_chunk": 1864,
+            "last_chunk": 1886,
+            "bytes": 19782,
+            "elapsed_s": 0.1398513339991041
+          },
+          {
+            "offset": 1886,
+            "next_offset": 1909,
+            "returned": 23,
+            "first_chunk": 1887,
+            "last_chunk": 1909,
+            "bytes": 19782,
+            "elapsed_s": 0.13049781399968197
+          },
+          {
+            "offset": 1909,
+            "next_offset": 1932,
+            "returned": 23,
+            "first_chunk": 1910,
+            "last_chunk": 1932,
+            "bytes": 19782,
+            "elapsed_s": 0.12638289000096847
+          },
+          {
+            "offset": 1932,
+            "next_offset": 1955,
+            "returned": 23,
+            "first_chunk": 1933,
+            "last_chunk": 1955,
+            "bytes": 19782,
+            "elapsed_s": 0.13133159800054273
+          },
+          {
+            "offset": 1955,
+            "next_offset": 1978,
+            "returned": 23,
+            "first_chunk": 1956,
+            "last_chunk": 1978,
+            "bytes": 19782,
+            "elapsed_s": 0.13668035899900133
+          },
+          {
+            "offset": 1978,
+            "next_offset": 2001,
+            "returned": 23,
+            "first_chunk": 1979,
+            "last_chunk": 2001,
+            "bytes": 19782,
+            "elapsed_s": 0.12794133900024462
+          },
+          {
+            "offset": 2001,
+            "next_offset": 2024,
+            "returned": 23,
+            "first_chunk": 2002,
+            "last_chunk": 2024,
+            "bytes": 19782,
+            "elapsed_s": 0.13480893399901106
+          },
+          {
+            "offset": 2024,
+            "next_offset": 2047,
+            "returned": 23,
+            "first_chunk": 2025,
+            "last_chunk": 2047,
+            "bytes": 19782,
+            "elapsed_s": 0.13678281800093828
+          },
+          {
+            "offset": 2047,
+            "next_offset": 2070,
+            "returned": 23,
+            "first_chunk": 2048,
+            "last_chunk": 2070,
+            "bytes": 19782,
+            "elapsed_s": 0.1364293419974274
+          },
+          {
+            "offset": 2070,
+            "next_offset": 2093,
+            "returned": 23,
+            "first_chunk": 2071,
+            "last_chunk": 2093,
+            "bytes": 19782,
+            "elapsed_s": 0.13046059399857768
+          },
+          {
+            "offset": 2093,
+            "next_offset": 2116,
+            "returned": 23,
+            "first_chunk": 2094,
+            "last_chunk": 2116,
+            "bytes": 19782,
+            "elapsed_s": 0.12796482799967634
+          },
+          {
+            "offset": 2116,
+            "next_offset": 2139,
+            "returned": 23,
+            "first_chunk": 2117,
+            "last_chunk": 2139,
+            "bytes": 19782,
+            "elapsed_s": 0.14238355699853855
+          },
+          {
+            "offset": 2139,
+            "next_offset": 2162,
+            "returned": 23,
+            "first_chunk": 2140,
+            "last_chunk": 2162,
+            "bytes": 19782,
+            "elapsed_s": 0.13198194099823013
+          },
+          {
+            "offset": 2162,
+            "next_offset": 2185,
+            "returned": 23,
+            "first_chunk": 2163,
+            "last_chunk": 2185,
+            "bytes": 19782,
+            "elapsed_s": 0.13569207100226777
+          },
+          {
+            "offset": 2185,
+            "next_offset": 2208,
+            "returned": 23,
+            "first_chunk": 2186,
+            "last_chunk": 2208,
+            "bytes": 19782,
+            "elapsed_s": 0.1306184109998867
+          },
+          {
+            "offset": 2208,
+            "next_offset": 2231,
+            "returned": 23,
+            "first_chunk": 2209,
+            "last_chunk": 2231,
+            "bytes": 19782,
+            "elapsed_s": 0.13627287300187163
+          },
+          {
+            "offset": 2231,
+            "next_offset": 2254,
+            "returned": 23,
+            "first_chunk": 2232,
+            "last_chunk": 2254,
+            "bytes": 19782,
+            "elapsed_s": 0.13195432199790957
+          },
+          {
+            "offset": 2254,
+            "next_offset": 2277,
+            "returned": 23,
+            "first_chunk": 2255,
+            "last_chunk": 2277,
+            "bytes": 19782,
+            "elapsed_s": 0.12811498999872128
+          },
+          {
+            "offset": 2277,
+            "next_offset": 2300,
+            "returned": 23,
+            "first_chunk": 2278,
+            "last_chunk": 2300,
+            "bytes": 19782,
+            "elapsed_s": 0.1355439020007907
+          },
+          {
+            "offset": 2300,
+            "next_offset": 2323,
+            "returned": 23,
+            "first_chunk": 2301,
+            "last_chunk": 2323,
+            "bytes": 19782,
+            "elapsed_s": 0.1493570649981848
+          },
+          {
+            "offset": 2323,
+            "next_offset": 2346,
+            "returned": 23,
+            "first_chunk": 2324,
+            "last_chunk": 2346,
+            "bytes": 19782,
+            "elapsed_s": 0.1359055079992686
+          },
+          {
+            "offset": 2346,
+            "next_offset": 2369,
+            "returned": 23,
+            "first_chunk": 2347,
+            "last_chunk": 2369,
+            "bytes": 19782,
+            "elapsed_s": 0.12883890800003428
+          },
+          {
+            "offset": 2369,
+            "next_offset": 2392,
+            "returned": 23,
+            "first_chunk": 2370,
+            "last_chunk": 2392,
+            "bytes": 19782,
+            "elapsed_s": 0.13632225599940284
+          },
+          {
+            "offset": 2392,
+            "next_offset": 2415,
+            "returned": 23,
+            "first_chunk": 2393,
+            "last_chunk": 2415,
+            "bytes": 19782,
+            "elapsed_s": 0.13420837599915103
+          },
+          {
+            "offset": 2415,
+            "next_offset": 2438,
+            "returned": 23,
+            "first_chunk": 2416,
+            "last_chunk": 2438,
+            "bytes": 19782,
+            "elapsed_s": 0.12507201100015664
+          },
+          {
+            "offset": 2438,
+            "next_offset": 2461,
+            "returned": 23,
+            "first_chunk": 2439,
+            "last_chunk": 2461,
+            "bytes": 19782,
+            "elapsed_s": 0.12805763600044884
+          },
+          {
+            "offset": 2461,
+            "next_offset": 2484,
+            "returned": 23,
+            "first_chunk": 2462,
+            "last_chunk": 2484,
+            "bytes": 19782,
+            "elapsed_s": 0.1375585149980907
+          },
+          {
+            "offset": 2484,
+            "next_offset": 2507,
+            "returned": 23,
+            "first_chunk": 2485,
+            "last_chunk": 2507,
+            "bytes": 19782,
+            "elapsed_s": 0.13338043600015226
+          },
+          {
+            "offset": 2507,
+            "next_offset": 2530,
+            "returned": 23,
+            "first_chunk": 2508,
+            "last_chunk": 2530,
+            "bytes": 19782,
+            "elapsed_s": 0.1266567259990552
+          },
+          {
+            "offset": 2530,
+            "next_offset": 2553,
+            "returned": 23,
+            "first_chunk": 2531,
+            "last_chunk": 2553,
+            "bytes": 19782,
+            "elapsed_s": 0.12976361199980602
+          },
+          {
+            "offset": 2553,
+            "next_offset": 2576,
+            "returned": 23,
+            "first_chunk": 2554,
+            "last_chunk": 2576,
+            "bytes": 19782,
+            "elapsed_s": 0.1348738560009224
+          },
+          {
+            "offset": 2576,
+            "next_offset": 2599,
+            "returned": 23,
+            "first_chunk": 2577,
+            "last_chunk": 2599,
+            "bytes": 19782,
+            "elapsed_s": 0.14604683899960946
+          },
+          {
+            "offset": 2599,
+            "next_offset": 2622,
+            "returned": 23,
+            "first_chunk": 2600,
+            "last_chunk": 2622,
+            "bytes": 19782,
+            "elapsed_s": 0.12947759199960274
+          },
+          {
+            "offset": 2622,
+            "next_offset": 2645,
+            "returned": 23,
+            "first_chunk": 2623,
+            "last_chunk": 2645,
+            "bytes": 19782,
+            "elapsed_s": 0.13288463299977593
+          },
+          {
+            "offset": 2645,
+            "next_offset": 2668,
+            "returned": 23,
+            "first_chunk": 2646,
+            "last_chunk": 2668,
+            "bytes": 19782,
+            "elapsed_s": 0.13735356100005447
+          },
+          {
+            "offset": 2668,
+            "next_offset": 2691,
+            "returned": 23,
+            "first_chunk": 2669,
+            "last_chunk": 2691,
+            "bytes": 19782,
+            "elapsed_s": 0.12939873700088356
+          },
+          {
+            "offset": 2691,
+            "next_offset": 2714,
+            "returned": 23,
+            "first_chunk": 2692,
+            "last_chunk": 2714,
+            "bytes": 19782,
+            "elapsed_s": 0.13962128899947857
+          },
+          {
+            "offset": 2714,
+            "next_offset": 2737,
+            "returned": 23,
+            "first_chunk": 2715,
+            "last_chunk": 2737,
+            "bytes": 19782,
+            "elapsed_s": 0.14380760099811596
+          },
+          {
+            "offset": 2737,
+            "next_offset": 2760,
+            "returned": 23,
+            "first_chunk": 2738,
+            "last_chunk": 2760,
+            "bytes": 19782,
+            "elapsed_s": 0.13755043899800512
+          },
+          {
+            "offset": 2760,
+            "next_offset": 2783,
+            "returned": 23,
+            "first_chunk": 2761,
+            "last_chunk": 2783,
+            "bytes": 19782,
+            "elapsed_s": 0.12854932400296093
+          },
+          {
+            "offset": 2783,
+            "next_offset": 2806,
+            "returned": 23,
+            "first_chunk": 2784,
+            "last_chunk": 2806,
+            "bytes": 19782,
+            "elapsed_s": 0.1331708020006772
+          },
+          {
+            "offset": 2806,
+            "next_offset": 2829,
+            "returned": 23,
+            "first_chunk": 2807,
+            "last_chunk": 2829,
+            "bytes": 19782,
+            "elapsed_s": 0.14254562000132864
+          },
+          {
+            "offset": 2829,
+            "next_offset": 2852,
+            "returned": 23,
+            "first_chunk": 2830,
+            "last_chunk": 2852,
+            "bytes": 19782,
+            "elapsed_s": 0.1396038189996034
+          },
+          {
+            "offset": 2852,
+            "next_offset": 2875,
+            "returned": 23,
+            "first_chunk": 2853,
+            "last_chunk": 2875,
+            "bytes": 19782,
+            "elapsed_s": 0.13034429699837347
+          },
+          {
+            "offset": 2875,
+            "next_offset": 2898,
+            "returned": 23,
+            "first_chunk": 2876,
+            "last_chunk": 2898,
+            "bytes": 19782,
+            "elapsed_s": 0.13365854599760496
+          },
+          {
+            "offset": 2898,
+            "next_offset": 2921,
+            "returned": 23,
+            "first_chunk": 2899,
+            "last_chunk": 2921,
+            "bytes": 19782,
+            "elapsed_s": 0.13590092999947956
+          },
+          {
+            "offset": 2921,
+            "next_offset": 2944,
+            "returned": 23,
+            "first_chunk": 2922,
+            "last_chunk": 2944,
+            "bytes": 19782,
+            "elapsed_s": 0.12940700800027116
+          },
+          {
+            "offset": 2944,
+            "next_offset": 2967,
+            "returned": 23,
+            "first_chunk": 2945,
+            "last_chunk": 2967,
+            "bytes": 19782,
+            "elapsed_s": 0.12694494999959716
+          },
+          {
+            "offset": 2967,
+            "next_offset": 2990,
+            "returned": 23,
+            "first_chunk": 2968,
+            "last_chunk": 2990,
+            "bytes": 19782,
+            "elapsed_s": 0.13281923499744153
+          },
+          {
+            "offset": 2990,
+            "next_offset": 3000,
+            "returned": 10,
+            "first_chunk": 2991,
+            "last_chunk": 3000,
+            "bytes": 8757,
+            "elapsed_s": 0.12899194499914302
+          }
+        ]
+      }
+    ],
+    "comparison": {
+      "page_count_reduction_fraction": 0.5633333333333334,
+      "elapsed_reduction_fraction_observed": 0.5476054400913899,
+      "elapsed_speedup_observed": 2.210459825604476,
+      "first_fingerprints_equal": true
+    },
+    "script": "/private/tmp/story_analysis_supported_runtime_comparison.py"
+  },
+  "historical_measurements_status": "The original environment/cases and budgeted_pagination_limit100 were measured with Python 3.9.6 (outside documented 3.10+ support), retained only as exploratory history. Use supported_runtime_comparison for final conclusions. The historical environment.tool_sha256 hashed normalized read_text content; supported_runtime_comparison.tool_raw_bytes_sha256 hashes original source bytes."
+}

@@ -1,0 +1,21 @@
+{
+  "skill_files_read": [
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/snapshot-a/story-codex-plan/SKILL.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/snapshot-a/story-codex/SKILL.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/snapshot-a/story-codex-write/references/drama.md"
+  ],
+  "request_file": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/01-opening-plan.md",
+  "output_file": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/runs/p17/output.md",
+  "word_count": {
+    "method": "Count Unicode CJK ideographs U+3400-U+4DBF and U+4E00-U+9FFF; exclude punctuation, whitespace and Markdown. Main body excludes scene headings.",
+    "body_chinese_characters": 785,
+    "including_headings_chinese_characters": 807
+  },
+  "scope": {
+    "scene_count": 2,
+    "connected_scenes": true,
+    "planning_only": true,
+    "book_project_created": false,
+    "full_book_outline_created": false
+  }
+}

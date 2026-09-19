@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.5.5"
+VERSION = "0.5.6"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -74,16 +74,27 @@ def volume_directory(value):
     return f"{match[1]} {title}"
 
 
+def first_chapter_heading(text):
+    lines = text.lstrip("\ufeff").splitlines()
+    if not lines:
+        return None
+    first = lines[0]
+    markdown = re.match(r"^#\s+(\S.*)$", first)
+    if markdown:
+        return re.sub(r"(?:^|[ \t]+)#+[ \t]*$", "", markdown[1]).strip()
+    if re.match(r"^第[0-9０-９零〇一二三四五六七八九十百千万两]+章[ \t　:：、.．-]+\S", first):
+        return first.strip()
+    return None
+
+
 def chapter_filename(chapter, text, plan, imported=False):
     title = plan.get("title")
     if title is None:
-        lines = text.lstrip("\ufeff").splitlines()
-        heading = re.match(r"^#\s+(\S.*?)\s*$", lines[0]) if lines else None
-        title = re.sub(r"\s+#+$", "", heading[1]) if heading else ""
-        title = re.sub(r"^第[0-9０-９零〇一二三四五六七八九十百千万两]+章[\s　:：、.．-]*", "", title).strip()
+        heading = first_chapter_heading(text)
+        title = re.sub(r"^第[0-9０-９零〇一二三四五六七八九十百千万两]+章[\s　:：、.．-]*", "", heading or "").strip()
     if not title:
         if not imported:
-            fail("chapter_title_missing", "Set plan.title or give the draft a Markdown H1 chapter title")
+            fail("chapter_title_missing", "Set plan.title or give the draft a plain 第N章 章节名称 heading")
         title = "正文"
     return f"第{chapter}章 {filename_component(title, 'chapter title')}.md"
 
@@ -566,9 +577,8 @@ def valid_plan(raw):
 def manuscript_counts(text, include_title=False):
     """Declared character counts, never platform word counts or model tokens."""
     lines = text.splitlines()
-    title = re.match(r"^#\s+(\S.*)$", lines[0].lstrip("\ufeff")) if lines else None
-    if title:
-        title_text = re.sub(r"(?:^|[ \t]+)#+[ \t]*$", "", title[1])
+    title_text = first_chapter_heading(text)
+    if title_text is not None:
         lines = ([title_text] if include_title else []) + lines[1:]
     chars = [c for c in "\n".join(lines)
              if not c.isspace() and unicodedata.category(c) not in ("Cc", "Cf")]
@@ -602,7 +612,7 @@ def lint_text(text, plan):
                          "note": "Editorial signal only; repetition can be intentional"})
     return {"ok": not errors, "visible_chars": counts["visible_nonspace_v1"],
             "length_count": count, "count_method": method, "counts": counts,
-            "count_scope": "body_and_lead_with_title_text" if plan.get("count_title", False) else "body_and_lead_without_first_h1",
+            "count_scope": "body_and_lead_with_title_text" if plan.get("count_title", False) else "body_and_lead_without_first_title",
             "unicode_version": unicodedata.unidata_version,
             "draft_sha256": digest(text), "errors": errors, "warnings": warnings}
 
@@ -1058,7 +1068,9 @@ class Book:
             for row in rows:
                 try:
                     self._check_artifact(row["path"], row["sha"], row["written_sha"])
-                    if self._last_artifact_check[1] != row["sha"] or self._artifact_has_alias(row["path"]):
+                    # A matching file does not clear a failed publication or acknowledgement.
+                    if (row["path"] in errors or self._last_artifact_check[1] != row["sha"] or
+                            self._artifact_has_alias(row["path"])):
                         pending.append(row["path"])
                 except (OSError, StoryError) as error:
                     changed.append(row["path"])
@@ -1688,6 +1700,10 @@ class Book:
         return {"source": sid, "idempotent": False, **status}
 
     def coverage(self, sid):
+        with self.read_snapshot():
+            return self._coverage(sid)
+
+    def _coverage(self, sid):
         source = self.source_info(sid)
         rows = self.db.execute("SELECT ordinal,start,end,CASE WHEN analysis IS NULL THEN NULL ELSE 1 END FROM chunks WHERE source=? ORDER BY ordinal", (sid,)).fetchall()
         missing = [r[0] for r in rows if r[3] is None]
@@ -1701,6 +1717,10 @@ class Book:
                 "report_path": report_path if finalized else None}
 
     def list_sources(self, offset=0, limit=10, budget=12000):
+        with self.read_snapshot():
+            return self._list_sources(offset, limit, budget)
+
+    def _list_sources(self, offset=0, limit=10, budget=12000):
         integer(offset, "offset")
         integer(limit, "limit", 1)
         total = self.db.execute("SELECT count(*) FROM sources").fetchone()[0]
@@ -1880,7 +1900,7 @@ class Book:
 
 
 def split_source(text, maximum):
-    pattern = re.compile(r"(?m)^[ \t\u3000]*(?:#{1,6}[ \t]*)?(?:第[0-9０-９一二三四五六七八九十百千万零〇两]+[章节回卷][^\r\n]*|(?:番外|序章|序言|楔子|尾声|终章|后记)[^\r\n]*)\r?$")
+    pattern = re.compile(r"(?:\A|(?<=[\r\n]))[ \t\u3000]*(?:#{1,6}[ \t]*)?(?:第[0-9０-９一二三四五六七八九十百千万零〇两]+[章节回卷][^\r\n]*|(?:番外|序章|序言|楔子|尾声|终章|后记)[^\r\n]*)(?=[\r\n]|\Z)")
     heads = [(m.start(), m.group().strip()[:200]) for m in pattern.finditer(text)]
     if not heads or heads[0][0] != 0:
         heads.insert(0, (0, "未命名文本 / 前言"))

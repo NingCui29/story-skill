@@ -1,0 +1,230 @@
+{
+  "status": "completed_candidate_only",
+  "baseline_sha256": {
+    "雨棚修鞋/创作约定.md": "98cf8263702c09cd9b895cda6403429847e8f220d6eba68885f29c6a7891921b",
+    "雨棚修鞋/审稿记录/第1章 借伞.md": "bb52c6e3c2edf925ba612c40f9a9cb6d2e2876fdde213d69513d72fd49363bd4",
+    "雨棚修鞋/.story/operation.lock": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+    "雨棚修鞋/.story/state.sqlite3": "d725e30e7f9dbc4b9baf03f1ba8e86f9893a951d686c0119d950800c39602466",
+    "雨棚修鞋/.story/drafts/第1章 借伞.status.json": "a7b4e16cbb71a8612f9fdf2ab56955f07c9eee087505eeb5e77041bac579c9f2",
+    "雨棚修鞋/.story/drafts/第1章 借伞.审前.md": "ac0f071efb02bcba6988159f11c1238c7884091185f1a6ffd3d713dea5bff288",
+    "雨棚修鞋/.story/drafts/第1章 借伞.commit.json": "16cf04437fe0f6dfc2c1fc0cafbe2b5bf942233dcf4604a16b95525e1bb45d34",
+    "雨棚修鞋/.story/drafts/第1章 借伞.prepare.json": "818aa02324c17fe6edd82de403d067446d7938e27483cd97bd02a31738626bf7",
+    "雨棚修鞋/.story/drafts/第1章 借伞.delta.json": "bc6b201ab20235d203741a6d2e6269cea737f02022d1a20cc7a6e9535095fa22",
+    "雨棚修鞋/.story/drafts/第1章 借伞.md": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482",
+    "雨棚修鞋/chapters/第一卷 雨棚/第1章 借伞.md": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482",
+    "雨棚修鞋/01_大纲细纲/第一卷 雨棚/第1章 借伞.md": "b48ed0cc87cb4fa9cd0ae29bdebcfb511e30832c6ad724cf3365ef6218effa35"
+  },
+  "created_files": [
+    "雨棚修鞋/.story/drafts/第1章 候选.md",
+    "output.md",
+    "process.json"
+  ],
+  "workdir": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only",
+  "request_file": "../draft-only-request.md",
+  "skills_read": [
+    "../snapshot-final/story-codex-review/SKILL.md",
+    "../snapshot-final/story-codex/SKILL.md"
+  ],
+  "references_read": [],
+  "book_files_read": [
+    "雨棚修鞋/创作约定.md",
+    "雨棚修鞋/chapters/第一卷 雨棚/第1章 借伞.md",
+    "雨棚修鞋/01_大纲细纲/第一卷 雨棚/第1章 借伞.md",
+    "雨棚修鞋/.story/drafts/第1章 借伞.delta.json"
+  ],
+  "read_scope_note": "技能和上述作品文件为文本读取；为验证隔离，对当前书目录的12个既有文件读取字节计算SHA-256，没有打开其他任务、其他代理输出、seed或仓库。",
+  "identity": {
+    "last_chapter": 1,
+    "revision": 2,
+    "changed_export_count": 0,
+    "pending_export_count": 0,
+    "note": "创作约定中的目标章尚未提交已陈旧；依据status与用户明确说明按已提交第1章处理。"
+  },
+  "book_commands": [
+    {
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py status --book /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋",
+      "exit_code": 0,
+      "result_summary": {
+        "last_chapter": 1,
+        "next_chapter": 2,
+        "revision": 2,
+        "cards": 3,
+        "changed_export_count": 0,
+        "pending_export_count": 0,
+        "full_book_verified": true
+      }
+    },
+    {
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py --help",
+      "exit_code": 0,
+      "result_summary": "读取共享工具命令列表，确认prepare为只读审查骨架。"
+    },
+    {
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py lint --help",
+      "exit_code": 0,
+      "result_summary": "读取lint必需参数；未单独执行lint，prepare已返回完整lint结果。"
+    },
+    {
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py prepare --help",
+      "exit_code": 0,
+      "result_summary": "读取prepare必需参数与只读骨架选项。"
+    },
+    {
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py prepare --book /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋 --chapter 1 --draft \"/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋/.story/drafts/第1章 候选.md\"",
+      "exit_code": 0,
+      "result_summary": {
+        "mode": "replace_last",
+        "ready_to_commit": false,
+        "base_revision": 2,
+        "budget_used": 1406,
+        "budget_limit": 16000,
+        "lint": {
+          "ok": true,
+          "errors": [],
+          "warnings": [],
+          "count_method": "han_v1",
+          "length_count": 301,
+          "draft_sha256": "6f1ae78262b373ad505b7749e13d7c4614d7514e593eef238c489c8df11f994f"
+        }
+      }
+    },
+    {
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py context --book /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋 --chapter 1",
+      "exit_code": 0,
+      "result_summary": {
+        "mode": "replace_last",
+        "revision": 2,
+        "budget_used": 872,
+        "budget_limit": 16000,
+        "omitted_optional_count": 3,
+        "previous": null,
+        "plan_goal": "借伞离开",
+        "plan_stop": "杜宁撑伞跨出门槛，老陈收针。",
+        "note": "只读核对现行采用计划；未调用plan/notes写入。"
+      }
+    },
+    {
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py template delta",
+      "exit_code": 0,
+      "result_summary": "读取delta字段样例。"
+    }
+  ],
+  "review_mode": "current_session_self_review",
+  "independent_review": false,
+  "candidate_review_delta": {
+    "base_revision": 2,
+    "book_id": "fd3d2b66-0db6-429b-b6a3-3f1726ee5947",
+    "changes": [
+      {
+        "id": "du_ning_interview_shoes",
+        "kind": "fact",
+        "text": "杜宁明天要穿修好的鞋去面试，修鞋费已经付过；章末她把鞋盒装进布袋，搁在膝上，仍坐在修鞋摊前，和老陈分饼等候他的儿子，没有离开。",
+        "source": "第1章 借伞",
+        "critical": false,
+        "status": "active",
+        "tags": [
+          "杜宁",
+          "鞋",
+          "面试"
+        ],
+        "due": null,
+        "quote": "她把鞋盒装进布袋，搁在膝上，又从袋口取出路上买的饼，隔着纸袋掰开。"
+      },
+      {
+        "id": "umbrella_return_promise",
+        "kind": "hook",
+        "text": "杜宁接受老陈借伞的安排，承诺面试后归还；章末老陈把伞放在她脚边，她尚未撑伞离开，还伞承诺未兑现。触发条件为面试结束，未指定兑现章号。",
+        "source": "第1章 借伞",
+        "critical": false,
+        "status": "active",
+        "tags": [
+          "杜宁",
+          "老陈",
+          "借伞",
+          "还伞"
+        ],
+        "due": null,
+        "quote": "“我面试完就还您。”"
+      },
+      {
+        "id": "lao_chen_son_pickup",
+        "kind": "fact",
+        "text": "老陈说儿子今天下班会来接他，因此把伞借给杜宁；章末杜宁与他分饼等候，儿子仍未到场，接人没有实际发生。",
+        "source": "第1章 借伞",
+        "critical": false,
+        "status": "active",
+        "tags": [
+          "老陈",
+          "儿子",
+          "回家"
+        ],
+        "due": null,
+        "quote": "“等我儿子下班。他今天来接。”"
+      }
+    ],
+    "review": {
+      "draft_sha256": "6f1ae78262b373ad505b7749e13d7c4614d7514e593eef238c489c8df11f994f",
+      "checks": {
+        "causality": {
+          "note": "保留鞋用于明日面试、雨中护鞋以及借伞前先关心老陈回家方式的因果；杜宁用路上买的饼回应照顾并明确提出陪他等儿子，老陈放下针接饼，新增选择有可见回应。",
+          "quote": "“还热的。您儿子没来，我陪您吃一会儿。”"
+        },
+        "continuity": {
+          "note": "修鞋费已付、明天面试、老陈儿子当天来接以及面试后还伞全部保留。伞由门后挪到杜宁脚边，鞋盒在布袋里置于膝上，停笔时两人仍在摊前；没有把接人安排或还伞承诺写成已经发生。",
+          "quote": "“等我儿子下班。他今天来接。”"
+        },
+        "constraints": {
+          "note": "本轮明确授权另试结尾，因此候选不沿用旧计划的离开停笔点。已写分饼和等待，未写儿子到场或杜宁离开。正文 han_v1 为301，符合180—400。仅保存候选，不采用计划、不替换正文、不写入正式状态。",
+          "quote": "杜宁在凳子上坐稳，咬了一口，和他一起望着雨里的巷口。"
+        },
+        "style": {
+          "note": "保留前半章原声线及弯伞骨、红线等有效细节，只替换末段。用隔纸掰饼、放针接饼和共同望向巷口落实陪伴，未额外用旁白宣告关系升温。",
+          "quote": "老陈手里的针停了停，放进盒里。他把伞挪到她脚边，接过半张饼。"
+        }
+      },
+      "issues": []
+    },
+    "summary": "杜宁取到修好且已付费、准备用于明天面试的鞋；得知老陈的儿子当天来接后接受借伞，答应面试后归还。章末她把鞋盒装进布袋放在膝上，取出路上买的饼，与老陈分食并一起等候；伞放在她脚边，儿子尚未到场，她没有离开，还伞与面试均未发生。"
+  },
+  "candidate_plan": {
+    "adopted": false,
+    "goal": "杜宁取到已付费的修好鞋，接受借伞并承诺面试后归还，留下和老陈分饼等儿子。",
+    "stop": "杜宁和老陈坐着分饼，共同望向雨中的巷口；儿子未到，杜宁未离开。",
+    "preserved": [
+      "修鞋费已付",
+      "老陈的儿子当天来接",
+      "面试后还伞",
+      "第三人称现实日常",
+      "汉字180—400"
+    ],
+    "note": "仅随候选记录，不更改创作约定、文本细纲或数据库计划。"
+  },
+  "issues_reviewed": [
+    {
+      "severity": "blocker",
+      "location": "原稿末段",
+      "original_quote": "老陈替她把门帘掀高，等她跨过门槛，才坐回去收那几根散开的针。",
+      "impact": "现行结尾不符合本轮候选需要的分饼等待停笔点。",
+      "evidence": "用户本轮明确要求留下分饼并停在儿子到来之前。",
+      "minimal_change": "保留前文，替换末段为取饼、分饼、坐下等候。",
+      "resolution": "resolved_in_candidate_only"
+    }
+  ],
+  "verification": {
+    "deterministic_lint_passed": true,
+    "semantic_review_completed": true,
+    "review_and_change_quotes_are_literal_substrings": true,
+    "original_files_checked": 12,
+    "original_files_changed": [],
+    "database_sha256_unchanged": true,
+    "original_prose_and_adopted_plan_unchanged": true,
+    "no_candidate_publication": true
+  },
+  "clarification": {
+    "asked": false,
+    "reason": "用户已明确候选范围和新停笔点，不需澄清；未向真实用户提问。"
+  },
+  "modified_existing_files": [],
+  "unresolved_blockers": [],
+  "final_state": "候选稿与候选审查记录已保存，未提交、未替换、未写入式对账、未建立或发布历史分支；现行revision仍为2，第1章正文与计划完整保留。"
+}

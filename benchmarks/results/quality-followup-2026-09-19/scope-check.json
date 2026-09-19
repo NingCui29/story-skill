@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "checks": {
+    "snapshot_a_matches_frozen_hashes": true,
+    "snapshot_b_matches_frozen_hashes": true,
+    "current_skill_sources_match_candidate": true,
+    "only_drama_guidance_changed_this_round": true,
+    "original_outputs_and_processes_preserved": true,
+    "all_prompt_hashes_match": true,
+    "all_word_counts_in_range": true,
+    "runtime_hash_matches_prior_regression_evidence": true
+  },
+  "runtime_validation": "Reuse prior 558-run result: 551 passed, 7 skipped; no runtime edit or full-suite rerun in this round.",
+  "source_sha256": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4"
+}

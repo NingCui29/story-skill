@@ -1,0 +1,150 @@
+{
+  "date": "2026-09-19T07:24:53.060529+00:00",
+  "ok": true,
+  "environment": {
+    "python": "3.12.14",
+    "platform": "macOS-15.8-x86_64-i386-64bit"
+  },
+  "scope": "One shared creative guidance sentence and documentation; preserved prior worktree runtime fixes.",
+  "comparisons": [
+    {
+      "task": "opening",
+      "anonymous_preference": "轻微偏好A",
+      "condition": "candidate",
+      "run": "p83",
+      "explicit_constraint_violations": []
+    },
+    {
+      "task": "quiet",
+      "anonymous_preference": "轻微偏好B",
+      "condition": "candidate",
+      "run": "p91",
+      "explicit_constraint_violations": []
+    }
+  ],
+  "retention_decision": "Retain candidate wording unchanged after evaluation as a clarification. Two slight preferences are not a win rate or evidence of stable literary improvement. Preserve dense-mistake and polished-dialogue criticisms.",
+  "checks": {
+    "scope": true,
+    "skill_format": true,
+    "anonymous_inputs_match_originals": true,
+    "original_review_preserved": true,
+    "structured_review_quotes": [
+      {
+        "task": "opening",
+        "label": "A",
+        "group": "best_to_preserve",
+        "exact_substring": true
+      },
+      {
+        "task": "opening",
+        "label": "B",
+        "group": "best_to_preserve",
+        "exact_substring": true
+      },
+      {
+        "task": "opening",
+        "label": "A",
+        "group": "main_weaknesses",
+        "exact_substring": true
+      },
+      {
+        "task": "opening",
+        "label": "B",
+        "group": "main_weaknesses",
+        "exact_substring": true
+      },
+      {
+        "task": "quiet",
+        "label": "A",
+        "group": "best_to_preserve",
+        "exact_substring": true
+      },
+      {
+        "task": "quiet",
+        "label": "B",
+        "group": "best_to_preserve",
+        "exact_substring": true
+      },
+      {
+        "task": "quiet",
+        "label": "A",
+        "group": "main_weaknesses",
+        "exact_substring": true
+      },
+      {
+        "task": "quiet",
+        "label": "B",
+        "group": "main_weaknesses",
+        "exact_substring": true
+      }
+    ],
+    "local_markdown_links": {
+      "status": "passed",
+      "files_scanned": 175,
+      "links_checked": 857,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    },
+    "git_diff_check": {
+      "ok": true,
+      "stdout": "",
+      "stderr": ""
+    }
+  },
+  "runtime_regression": {
+    "rerun_this_round": false,
+    "source_sha256": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
+    "prior_evidence": "../analysis-audit-2026-09-19-recovery/validation.json",
+    "run": 558,
+    "passed": 551,
+    "skipped": 7
+  },
+  "publication": {
+    "published": false,
+    "pushed": false,
+    "installed_skills_changed": false
+  },
+  "limits": [
+    "Two tasks, one output per task/version; author self-review permitted, internal drafts not measured.",
+    "Independent model reviewer, no human reader or repeated sampling.",
+    "Exact provider model revision and actual account usage not measured.",
+    "No long-form continuation or commercial reader outcome tested."
+  ],
+  "source_sha256": {
+    "README.md": "08047ee5d43ad587a7146738c20948f33bbd8a9d64161dc4c6e2b6216d1b3ce7",
+    "docs/README.md": "a9c5897505f712124ddc1b1bfbd629ee1d87a0ff3d9b3ca29620839248af9efd",
+    "docs/中文冲突与看点.md": "49227cf70e77c6de53b9da0efe4e47426e216fdb32840127faa64c88aee11994",
+    "skills/story-codex-write/references/drama.md": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4"
+  },
+  "artifact_sha256": {
+    "README.md": "6b398713a8e533c162929eed6c5bc970846b68ec0416352751e6548739dc67b2",
+    "anonymous-mapping.json": "59c986f67ce8340075e7f9b6048082d9a37a68e8f4247846231feedc921cd581",
+    "blind-review.json": "4aed7c006b1240417aa929da2cc8e1f1360c9fa349189f93927ed3ae8f9ee720",
+    "blind-review.md": "8ad997f1d22091d80c512d94d60ba1e14aa095a882a2f7638991d1da52ee4fe9",
+    "candidate.json": "658417dd631606a1dd57a125cdf773e3dff37c4f7e5147c5e8385ee95e8423af",
+    "inputs/01-opening-plan.md": "a8b0c669077596bf0b2cc4f93c75c47c8712504bf345ae2079b5dd549391d82b",
+    "inputs/02-quiet-scene.md": "d8873716e042eb95b8f30afbc345dddb31f2da247a51756cde46a87764dd4aa5",
+    "instruction-snapshots/baseline/story-codex-plan__SKILL.md.txt": "7a5d1c1dc7763429d7e6308b1231c8b57bcb3c43d3a34212e64c4db4ea9d3e85",
+    "instruction-snapshots/baseline/story-codex-write__SKILL.md.txt": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4",
+    "instruction-snapshots/baseline/story-codex-write__references__chapter.md.txt": "69156986948bf01bc11312f14603b09d6ff0fd27e7d5de68b9e4813574e67da6",
+    "instruction-snapshots/baseline/story-codex-write__references__drama.md.txt": "6f49f0de5642c76987da48b4ebfad5ef1d14f6acc72b311ebfde2a8e8d76f7b7",
+    "instruction-snapshots/baseline/story-codex__SKILL.md.txt": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
+    "instruction-snapshots/candidate/story-codex-write__references__drama.md.txt": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4",
+    "instruction-snapshots/manifest.json": "9b563bbe169adfb3f4f5c228a7c5183484095fdab9de7fda508aac43e24937ca",
+    "protocol.json": "6502990c46a7c331371ff72e916984641c8924193cbcd60220896ba4acaf2fcd",
+    "reviewer-brief.md": "c2a61d7f609c1ee596b6442cc52df9405a42dbfc84fe37897ccd803d97942aad",
+    "rule-review.md": "c3f1b88bff414cc6f4820cdda1d34c816a0b3ea840be71659bfa16e0e5b1685d",
+    "runs/p17/output.md": "af4384082482d1584d77af551491509a6f90a68d28d81b15847126d168536b88",
+    "runs/p17/process.json": "56ad34ec40b674169423a9ebf0a82ca98dd59cdbd0cc3e46e71a43e2bc759df1",
+    "runs/p42/output.md": "e03ab9f38a53fe16cb941cc2edd8467c4613b12846507b0d1300d39807d35c00",
+    "runs/p42/process.json": "40c5c1d0e177d3f5d06827afa79f65413f9ee7febfb3bce4529aef2f979dc72c",
+    "runs/p83/output.md": "e1c1e55ab0055b476056b6498fa4fe109e7dd31b47edf52e568db354abcc0b00",
+    "runs/p83/process.json": "d78aae4ee70ebae3dfab8d3e07a06a67269ffa4f180d4b1140a24d48fe4421f7",
+    "runs/p91/output.md": "9d1894df5eb6c48da7b860ae957bbab890f02226bc4855d80813dcc83224782c",
+    "runs/p91/process.json": "5dfbd5d3eb739b31ed37a4c996a26aeb9283ba2f8f106d63b85966ed48c017ad",
+    "scope-check.json": "84e8887850766ba063fe031b3e80c8978b78ce18ded159c05cd6b114bae7a5b4",
+    "skill-validation.json": "a15cd1eff7155f6a3d57043e70934dac0a90ad55febce247716bbd313c45ba14",
+    "word-counts.json": "fe772e4987617100c5b816ccebd5aa5b3d2d57f12f6bd3f0521b0570e207b2bc"
+  },
+  "owned_temporary_workspace_removed": true
+}

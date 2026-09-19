@@ -1,0 +1,104 @@
+{
+  "scope": "Temporary synthetic evidence-save audit; no implementation change or literary evaluation.",
+  "ok": true,
+  "runtime_sha256": "71ac56a32e935fc30f5a94f02164906c58814f2194ba697d74cd372413cccef8",
+  "checks": [
+    {
+      "case": "new_absent_quote_1",
+      "quote": "她把🙂𠮷写在纸上。 ",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "new_absent_quote_2",
+      "quote": "café",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "new_absent_quote_3",
+      "quote": "第二章独有的答案。",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "new_absent_quote_4",
+      "quote": "她把🙂𠮷写在纸上。\n",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "new_absent_quote_5",
+      "quote": "café。\r\n第2章 答案",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "exact_quote_1",
+      "quote": "她把🙂𠮷写在纸上。",
+      "passed": true,
+      "stored_verbatim": true,
+      "retry_idempotent": true
+    },
+    {
+      "case": "exact_quote_2",
+      "quote": "  她把🙂𠮷写在纸上。\r\n",
+      "passed": true,
+      "stored_verbatim": true,
+      "retry_idempotent": true
+    },
+    {
+      "case": "exact_quote_3",
+      "quote": "café",
+      "passed": true,
+      "stored_verbatim": true,
+      "retry_idempotent": true
+    },
+    {
+      "case": "replace_absent_quote_1",
+      "quote": "她把🙂𠮷写在纸上。 ",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "replace_absent_quote_2",
+      "quote": "café",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "replace_absent_quote_3",
+      "quote": "第二章独有的答案。",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "replace_absent_quote_4",
+      "quote": "她把🙂𠮷写在纸上。\n",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "replace_absent_quote_5",
+      "quote": "café。\r\n第2章 答案",
+      "expected": "invalid_evidence",
+      "passed": true,
+      "state_unchanged": true
+    },
+    {
+      "case": "reopen_and_source_identity",
+      "passed": true
+    }
+  ],
+  "case_count": 14,
+  "temporary_workspace_removed": true
+}

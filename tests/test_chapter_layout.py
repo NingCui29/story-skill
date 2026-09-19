@@ -99,6 +99,18 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual(first["path"], str(self.root / self.book.chapter_path(1)))
         self.assertEqual(second["path"], str(self.root / self.book.chapter_path(2)))
 
+    def test_plain_chapter_heading_exports_as_plain_text_and_is_excluded_from_body_count(self):
+        text = "第1章 门后的雨\n" + BODY
+        body_count = story.manuscript_counts(BODY)["visible_nonspace_v1"]
+        self.save_plan(1, length=[body_count, body_count])
+        result, _ = self.commit(1, text)
+
+        relative = "chapters/第一卷 雨夜/第1章 门后的雨.md"
+        self.assertEqual(result["path"], str(self.root / relative))
+        self.assertEqual((self.root / relative).read_bytes(), text.encode("utf-8"))
+        self.assertEqual(self.book.lint(1, self.draft)["length_count"], body_count)
+        self.assertEqual(story.manuscript_counts(text, True)["visible_nonspace_v1"], body_count + 7)
+
     def test_chinese_heading_prefix_is_removed_and_path_survives_retry_and_reopen(self):
         text = "# 第一章 门后的雨\n" + BODY
         self.save_plan(1, volume_dir="第一卷 雨夜")

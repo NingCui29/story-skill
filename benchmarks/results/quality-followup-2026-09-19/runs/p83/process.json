@@ -1,0 +1,41 @@
+{
+  "task": "01-opening-plan.md",
+  "snapshot": "snapshot-b",
+  "skill_and_reference_files_read": [
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/snapshot-b/story-codex-plan/SKILL.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/snapshot-b/story-codex/SKILL.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/snapshot-b/story-codex-write/references/drama.md"
+  ],
+  "other_input_files_read": [
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/01-opening-plan.md"
+  ],
+  "output_file": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/runs/p83/output.md",
+  "word_count": {
+    "value": 846,
+    "unit": "Unicode 汉字字符",
+    "method": "Python re.findall 按下列 Unicode CJK 字符范围逐字符统计，包含两场戏标题，排除标点、空格和换行。",
+    "pattern": "[\\u3400-\\u4DBF\\u4E00-\\u9FFF\\U00020000-\\U0002FA1F]",
+    "all_characters_including_whitespace_and_punctuation": 965,
+    "requested_range": [
+      700,
+      1000
+    ],
+    "within_requested_range": true
+  },
+  "scope_check": {
+    "two_connected_opening_scenes": true,
+    "independent_local_plan_only": true,
+    "events_attempts_obstacles_choices_and_consequences_present": true,
+    "prose_draft_written": false,
+    "whole_book_outline_written": false,
+    "book_library_cards_or_other_project_files_created": false,
+    "royalty_or_nobility_rescue": false,
+    "heroine_omniscient": false,
+    "external_works_or_other_run_outputs_read": false,
+    "files_written": [
+      "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/runs/p83/output.md",
+      "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-creative-quality-y10wj14d/runs/p83/process.json"
+    ],
+    "review_method": "人工核对题目与两场戏方案的范围、连接、人物选择和局部因果；字符统计只验证篇幅。"
+  }
+}

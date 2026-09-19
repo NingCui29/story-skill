@@ -1,0 +1,30 @@
+{
+  "scope": "Parent read-only post-trial verification, not counted in trial agent tool calls.",
+  "python": "3.12.14",
+  "status": {
+    "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
+    "cards": 0,
+    "changed_export_count": 0,
+    "changed_exports": [],
+    "id": "676ef8ae-b502-48f8-a1de-c0624ca1c8ca",
+    "imported_through": 0,
+    "integrity": {
+      "full_book_verified": true,
+      "last_full_audit_revision": 2,
+      "mode": "strict",
+      "note": "Hash verification is a point-in-time observation; outside editors can save again.",
+      "unverified_archive_count": 0,
+      "verified_file_count": 1
+    },
+    "kind": "short",
+    "last_chapter": 1,
+    "more_sources": false,
+    "next_chapter": 2,
+    "pending_export_count": 0,
+    "pending_exports": [],
+    "recent_sources": [],
+    "revision": 2,
+    "sources": 0,
+    "title": "浅水区"
+  }
+}

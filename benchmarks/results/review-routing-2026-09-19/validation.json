@@ -1,0 +1,135 @@
+{
+  "date": "2026-09-19T07:46:42.348378+00:00",
+  "ok": true,
+  "environment": {
+    "python": "3.12.14",
+    "platform": "macOS-15.8-x86_64-i386-64bit"
+  },
+  "checks": {
+    "before_frozen_sources_match": true,
+    "initial_frozen_sources_match": true,
+    "final_sources_match_snapshot_and_workspace": true,
+    "all_requests_preserved": true,
+    "original_agent_deliveries_preserved": true,
+    "unmanaged_original_preserved": true,
+    "unmanaged_no_book_or_plan_created": true,
+    "unmanaged_retained_facts_and_authorized_ending": true,
+    "unmanaged_copy_matches": true,
+    "pending_committed_and_exported": true,
+    "pending_four_review_and_three_state_quotes_exact": true,
+    "pending_export_matches_archive": true,
+    "candidate_existing_12_files_unchanged": true,
+    "candidate_archive_matches": true,
+    "candidate_review_and_state_quotes_exact": true,
+    "candidate_planning_explicitly_unadopted": true,
+    "external_and_history_rules_preserved": true,
+    "quality-followup-2026-09-19_artifacts_unchanged": true,
+    "standalone-writing-2026-09-19_artifacts_unchanged": true,
+    "all_runtime_modules_unchanged": true,
+    "runtime_matches_prior_regression": true,
+    "final_skill_format": true
+  },
+  "word_counts_han_v1_excluding_h1": {
+    "pending": 262,
+    "candidate": 301
+  },
+  "local_markdown_links": {
+    "status": "passed",
+    "files_scanned": 188,
+    "links_checked": 895,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "git_diff_check": "passed",
+  "trials": {
+    "initial_candidate": [
+      "pending first commit",
+      "unmanaged plot revision"
+    ],
+    "final_candidate": [
+      "committed chapter candidate-only revision"
+    ],
+    "baseline_generation": false,
+    "literary_comparison": false
+  },
+  "rule_review": {
+    "initial_audit_agent": "review_scope_followup",
+    "final_review_agent": "review_routing_final_check",
+    "final_review_found": "Draft-only boundary was limited to pending chapters.",
+    "resolution": "Lifted permission scope to all revisions; protect adopted plans and formal state. Independent follow-up confirmed resolved.",
+    "remaining_must_fix_findings": []
+  },
+  "runtime_regression": {
+    "rerun_this_round": false,
+    "prior_evidence": "../analysis-audit-2026-09-19-recovery/validation.json",
+    "run": 558,
+    "passed": 551,
+    "skipped": 7
+  },
+  "published": false,
+  "pushed": false,
+  "actual_user_skills_updated": false,
+  "real_novels_touched": false,
+  "source_sha256": {
+    "README.md": "a75f7c8d888b485ee201234f94dbadb5e365a7a1ab120b64d5a4ff68c9be0d67",
+    "docs/README.md": "0b988cb72d76773e3aec4ea211c1475f85f2400818a7ef350a42493e80ddd2cd",
+    "docs/中文小说上手.md": "9fe40238b134108dd2580602a4a555713146ea242cc70aa6c13c3da4774b13c7",
+    "skills/story-codex/SKILL.md": "756092d13a0f55541c02d23b511ea71e65c8c3faeb5e3648ce45c3e715ee1a46",
+    "skills/story-codex-review/SKILL.md": "272d7cf129eefe6ba9181c82ee278fe40e377a0d4c27fd2ad484e22352851cf6"
+  },
+  "artifact_sha256": {
+    "README.md": "68914a4d69e5750c364b3bf357621d59acf0323d1929e45101a1af74702101ce",
+    "candidate.json": "0d2cfdf8cda7ab1bc3e9cf60e9eabd24636213f3b53150af163affb5201f6777",
+    "draft-only/candidate.md": "6f1ae78262b373ad505b7749e13d7c4614d7514e593eef238c489c8df11f994f",
+    "draft-only/output.md.txt": "75908c001881acfc24c341a05c2a21a130a934f5a994aa94cae36837dc32fc24",
+    "draft-only/process.json": "630da899d8078f19d7f24a0594b75f0de254e121b5b52244bde0314a6d102c2d",
+    "draft-only/verification.json": "cc75ca6f48222d032db788d5594a5044cac44de620c96997019d225cf14f109b",
+    "draft-only-before.json": "a3e4d1f957dba3d2f2fac9f10372f085ba45c5f9cb8940bafb510243dbbfb535",
+    "final-candidate.json": "0bb7904064ebb50e12b6153fcebd3865ed4a08876dad3db7c0d8b7e082e9a41b",
+    "inputs/draft-only-request.md": "60e6be56640e6474bd881549b3ef4288594d32e23f1bfd6e66fd509dbd264bb4",
+    "inputs/original-draft.md": "ac0f071efb02bcba6988159f11c1238c7884091185f1a6ffd3d713dea5bff288",
+    "inputs/pending-request.md": "cab30c9edcebee02d8a6aec7fe0260322efda9726b41f96c3ebcd11ec8e6b446",
+    "inputs/plan.json": "f93058d300fd16bb5a3f379f389950e385e2d7f2367aed302f152c311ca68a71",
+    "inputs/unmanaged-request.md": "3d89f24dc668b6241742ee4358a16a29580ab3d7b64ce4b95666d833326b4af4",
+    "observed-files.json": "41966a18aa1d51c28075fa6539cc51c6ad83048cefa34b17a8c88101594d842a",
+    "pending/chapter.md": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482",
+    "pending/output.md.txt": "77c98e38dba107468a0ddfcac1dffae64847f5ac3453ea270b9d9eef133032c0",
+    "pending/process.json": "5ed2a34c955101a4d281f3dbcf53e530357888a812cf52f846ebeca611839b20",
+    "pending/project-text/.story__drafts__第1章 借伞.commit.json.txt": "16cf04437fe0f6dfc2c1fc0cafbe2b5bf942233dcf4604a16b95525e1bb45d34",
+    "pending/project-text/.story__drafts__第1章 借伞.delta.json.txt": "bc6b201ab20235d203741a6d2e6269cea737f02022d1a20cc7a6e9535095fa22",
+    "pending/project-text/.story__drafts__第1章 借伞.md.txt": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482",
+    "pending/project-text/.story__drafts__第1章 借伞.prepare.json.txt": "818aa02324c17fe6edd82de403d067446d7938e27483cd97bd02a31738626bf7",
+    "pending/project-text/.story__drafts__第1章 借伞.status.json.txt": "a7b4e16cbb71a8612f9fdf2ab56955f07c9eee087505eeb5e77041bac579c9f2",
+    "pending/project-text/.story__drafts__第1章 借伞.审前.md.txt": "ac0f071efb02bcba6988159f11c1238c7884091185f1a6ffd3d713dea5bff288",
+    "pending/project-text/01_大纲细纲__第一卷 雨棚__第1章 借伞.md.txt": "b48ed0cc87cb4fa9cd0ae29bdebcfb511e30832c6ad724cf3365ef6218effa35",
+    "pending/project-text/chapters__第一卷 雨棚__第1章 借伞.md.txt": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482",
+    "pending/project-text/创作约定.md.txt": "98cf8263702c09cd9b895cda6403429847e8f220d6eba68885f29c6a7891921b",
+    "pending/project-text/审稿记录__第1章 借伞.md.txt": "bb52c6e3c2edf925ba612c40f9a9cb6d2e2876fdde213d69513d72fd49363bd4",
+    "pending/verification.json": "dc641f1c1dd47385434b06fbbf8dbb4c6e132c68861518bcf72174b6453ee059",
+    "protocol.json": "52d59624a2ea1a732e855bdf68a33bdc8dfab62ea825ea8b55bbe2f8a85efa4c",
+    "runtime-contract.json": "4ff782526d28f13c9f453b88daaada4fd17dfbeefd36b85ce2d9597464f0f8b9",
+    "skill-validation-initial.json": "fdd4f51ab04799409bfd22376198db448360daecb87d3ee3a0cec13239048046",
+    "skill-validation.json": "308a2bd14a75ed5be8711be34529dc934766f7b505b91144a79d791f7b9fc71f",
+    "snapshots/after/skills__story-codex-review__SKILL.md.txt": "adfc633c731bfa7e03a4d2578bcce7e4694e9b901a7c91f5db34c589ee3e46f5",
+    "snapshots/after/skills__story-codex-write__references__chapter.md.txt": "19871bffdfbecec1b49bb1a6aa25ac213b8d42e270f289deaa880f9db90e94f9",
+    "snapshots/after/skills__story-codex-write__references__drama.md.txt": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4",
+    "snapshots/after/skills__story-codex__SKILL.md.txt": "756092d13a0f55541c02d23b511ea71e65c8c3faeb5e3648ce45c3e715ee1a46",
+    "snapshots/after/skills__story-codex__references__project-state.md.txt": "8c6a34e74c28af93551e418de1d46c232b5d3cb0d78b2bdc430c80d93ca8900a",
+    "snapshots/before/skills__story-codex-review__SKILL.md.txt": "df8fb85320b9193c0f4ed7fba55a6a55541e1e130043cfb48c81fe96b20d9ca4",
+    "snapshots/before/skills__story-codex__SKILL.md.txt": "c9b693c4518dd3d8ee471abf9a1a24ed41967d8c0019282fabeb495d7e999695",
+    "snapshots/final/skills__story-codex-review__SKILL.md.txt": "272d7cf129eefe6ba9181c82ee278fe40e377a0d4c27fd2ad484e22352851cf6",
+    "snapshots/final/skills__story-codex__SKILL.md.txt": "756092d13a0f55541c02d23b511ea71e65c8c3faeb5e3648ce45c3e715ee1a46",
+    "snapshots/manifest.json": "e76f56e807833c01baa1254641ab6de5dd0f04241e36b84416abc94e6baabbd7",
+    "unmanaged/original.md": "18c453aa2f17a3b8d2f27963ba778fdfe788ad33149b502d879b19d061e1954a",
+    "unmanaged/output.md.txt": "3ce3cf175f63167af5abebe93933e4dae0146ad6388da3ecde36f86e74322649",
+    "unmanaged/process.json": "1a5cd1916e49f63e905b7c87c5857983b6bb23938c3f0a39163cb27c783f234b",
+    "unmanaged/revised.md": "241cdb80a7329ec0bd952543577aafb9e30cb0789f3e471512df947c3e696333"
+  },
+  "limits": [
+    "Three synthetic tasks, one independent execution each; first two use initial candidate, third uses final candidate.",
+    "Pure review and full historical/external-edit revisions were checked statically, not newly generated.",
+    "Tool-call lists are agent records; parent independently verified files, state, exact quotes and hashes.",
+    "No human reader, repeated sampling, literary gain or actual account cost measurement."
+  ],
+  "owned_temporary_workspace_removed": true
+}

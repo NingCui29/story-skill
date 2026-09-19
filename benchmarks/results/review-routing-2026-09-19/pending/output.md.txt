@@ -1,0 +1,9 @@
+已完成《雨棚修鞋》第1章《借伞》的润色、审查、首次正式提交与导出。
+
+- 压缩重复的焦急描写，顺畅衔接叹气与老陈推凳子的回应；还伞对白明确为面试后归还。
+- 保留既定人物、取鞋与借伞事件，停在杜宁撑伞跨过门槛、老陈收针。
+- 正文为 **262 个汉字**（han_v1），满足 180—400 字要求。字数与格式校验、严格完整性核验均通过，无待导出文件；本次为会话自审，未另做独立盲审。
+
+[阅读正式正文](/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋/chapters/第一卷 雨棚/第1章 借伞.md) · [查看审稿记录](/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋/审稿记录/第1章 借伞.md) · [查看审前草稿](/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋/.story/drafts/第1章 借伞.审前.md)
+
+当前已提交第1章，状态版本为2；下一断点为第2章。

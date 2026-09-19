@@ -1,0 +1,27 @@
+{
+  "ok": true,
+  "validator": "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+  "checks": [
+    {
+      "skill": "story-codex",
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": ""
+    },
+    {
+      "skill": "story-codex-plan",
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": ""
+    },
+    {
+      "skill": "story-codex-write",
+      "exit_code": 0,
+      "stdout": "Skill is valid!\n",
+      "stderr": ""
+    }
+  ],
+  "temporary_dependency": "PyYAML 6.0.3",
+  "temporary_dependency_removed": true,
+  "scope": "Skill format only, not creative quality or route behavior."
+}

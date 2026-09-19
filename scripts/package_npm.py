@@ -166,7 +166,7 @@ def wrapper_files(version):
         readme = readme.replace(previous_request,
             "$skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md "
             f"安装或升级 Story Codex，固定使用 v{version}。")
-    if version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5"):
+    if version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6"):
         readme = readme.replace("In Codex, ask:", "For macOS/Linux, in Codex, ask:")
         readme = readme.replace("The shared Python runtime is", (
             f"Platform scope: v{version} is released for macOS/Linux. Windows manuscript and report "

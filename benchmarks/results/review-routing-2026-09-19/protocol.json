@@ -1,0 +1,16 @@
+{
+  "date": "2026-09-19T07:35:33.460974+00:00",
+  "scope": "Separate unmanaged revisions, first commit of a pending chapter, and revisions of committed chapters.",
+  "before_sha256": {
+    "skills/story-codex/SKILL.md": "c9b693c4518dd3d8ee471abf9a1a24ed41967d8c0019282fabeb495d7e999695",
+    "skills/story-codex-review/SKILL.md": "df8fb85320b9193c0f4ed7fba55a6a55541e1e130043cfb48c81fe96b20d9ca4"
+  },
+  "runtime_sha256": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
+  "static_findings": [
+    "Unsubmitted new draft is described under replace-last/history routing.",
+    "Plan/context/changes instructions precede unmanaged file exception.",
+    "Single-file review exception is not limited to unmanaged files."
+  ],
+  "validation_design": "Parent probes existing runtime rejection of wrong revision routes. Two fresh agents then use final frozen skills on pending-chapter submission and unmanaged text revision. No baseline generation, literary ranking, or account-cost claim.",
+  "temporary_workspace": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y"
+}

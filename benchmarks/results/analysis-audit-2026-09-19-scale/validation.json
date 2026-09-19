@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "date": "2026-09-19T07:02:46.563800+00:00",
+  "ok": true,
+  "base_commit": "71dd056f5499e4b94702cd000439f1b710c03c36",
+  "base_worktree_evidence": "../analysis-audit-2026-09-19-recovery/validation.json",
+  "scope": "One analysis skill pagination example/cursor clarification plus documentation and synthetic verification. Runtime unchanged from preceding unpublished recovery fix.",
+  "findings": [
+    {
+      "id": "S1",
+      "problem": "The fixed 10-record example can leave much of the existing byte budget unused while each page recomputes the source analysis snapshot.",
+      "resolution": "Request up to 100 records within the same 20000-byte budget and continue via returned next_offset. Keep all snapshot and evidence checks.",
+      "runtime_or_database_schema_changed": false
+    }
+  ],
+  "checks": {
+    "supported_runtime_performance": {
+      "evidence": "performance-probe.json",
+      "result_key": "supported_runtime_comparison",
+      "python": "3.12.14",
+      "source_characters": 7200000,
+      "chunks": 3000,
+      "runs": [
+        {
+          "requested_limit": 10,
+          "budget_bytes": 20000,
+          "pages": 300,
+          "total_s": 38.491441881000355,
+          "max_page_bytes": 8757,
+          "page_size_distribution": {
+            "10": 300
+          }
+        },
+        {
+          "requested_limit": 100,
+          "budget_bytes": 20000,
+          "pages": 131,
+          "total_s": 17.413318910003,
+          "max_page_bytes": 19782,
+          "page_size_distribution": {
+            "10": 1,
+            "23": 130
+          }
+        }
+      ],
+      "complete_ordered_records_identical": true,
+      "analysis_fingerprints_identical": true,
+      "source_records_and_revision_unchanged": true,
+      "real_cli_first_last_checks": 4,
+      "comparison": {
+        "page_count_reduction_fraction": 0.5633333333333334,
+        "elapsed_reduction_fraction_observed": 0.5476054400913899,
+        "elapsed_speedup_observed": 2.210459825604476,
+        "first_fingerprints_equal": true
+      }
+    },
+    "segmentation": {
+      "evidence": "segmentation-probe.json",
+      "python": "3.12.14",
+      "result": "PASS",
+      "split_cases": 380,
+      "ingest_cases": 24,
+      "chunks": 120,
+      "manual_records": 87,
+      "auto_blank_chunks": 33,
+      "source_read_checks": 216,
+      "max_chars": 80015
+    },
+    "recovery_and_pagination": {
+      "evidence": "pagination-probe.json",
+      "ok": true,
+      "synthetic_chapters": 137,
+      "characters": 69647,
+      "chunks": 298,
+      "source_file_removed_before_resume": true,
+      "all_ranges_and_quotes_verified": true,
+      "incomplete_and_stale_reports_rejected": true
+    },
+    "skill_validation": {
+      "evidence": "skill-validation.json",
+      "ok": true,
+      "temporary_dependency_removed": true
+    },
+    "prior_runtime_regression": {
+      "reused": true,
+      "rerun_this_round": false,
+      "reason": "Runtime byte hash matches the preceding verified snapshot; this round changes only skill instructions/docs.",
+      "evidence": "../analysis-audit-2026-09-19-recovery/unit-tests.json",
+      "run": 558,
+      "passed": 551,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 7
+    },
+    "local_markdown_links": {
+      "status": "passed",
+      "files_scanned": 165,
+      "links_checked": 836,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    },
+    "new_readme_heading_anchor_valid": true,
+    "git_diff_check": "passed",
+    "historical_evaluations_and_published_evidence_unchanged": true,
+    "retained_temporary_probe_materials_cleaned": true
+  },
+  "limits": [
+    "Performance fixture has three short findings per chunk; most records were inserted directly into the scratch database after a representative public record call. This measures reads, not end-to-end analysis or record writes.",
+    "The supported-runtime comparison is one sequential local run per limit under normal caching. Wall times are observations, not a general speed guarantee.",
+    "Original performance results also retain Python 3.9 exploratory measurements and a normalized-text hash; final conclusions use only the 3.12 supported_runtime_comparison and raw runtime bytes hash.",
+    "All source texts are synthetic; no new literary quality evaluation or independently verified real whole-book completeness claim.",
+    "No new Windows CI or fixed-version release/install validation this round."
+  ],
+  "published": false,
+  "pushed": false,
+  "actual_user_skills_updated": false,
+  "real_novels_touched": false,
+  "input_sha256": {
+    "skills/story-codex-analyze/SKILL.md": "42f0a93aeaf5efc573ebde7c61eade71ed24a62d18cffde8da60785930c2a661",
+    "skills/story-codex/scripts/story.py": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
+    "README.md": "e1690d814fe3fdc55c0e054d8b29d9ce60d84f214ee4f8fdcc12407874ea91b4",
+    "docs/作品深读与评估.md": "8f650d41942f55415069c031433d037da77d0c2ead40333911f3d83e94e4afa3"
+  }
+}

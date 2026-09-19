@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "date": "2026-09-19T06:46:02.648862+00:00",
+  "ok": true,
+  "base_commit": "71dd056f5499e4b94702cd000439f1b710c03c36",
+  "base_worktree_runtime_sha256": "71ac56a32e935fc30f5a94f02164906c58814f2194ba697d74cd372413cccef8",
+  "preceding_worktree_evidence": "../analysis-audit-2026-09-19-followup/validation.json",
+  "scope": "Unreleased evidence/workflow audit and one export receipt correction, preserving prior uncommitted fixes.",
+  "environment": {
+    "platform": "macOS-15.8-x86_64-i386-64bit",
+    "python": "3.12.14"
+  },
+  "findings": [
+    {
+      "id": "R1",
+      "priority": "P2",
+      "problem": "Safe export could report complete after publication succeeded but post-publication directory verification failed; a queued report could remain unacknowledged while the response recorded a full audit.",
+      "resolution": "Keep paths with errors from this export attempt pending even if their observed file hash matches; retain outside-edit checks and allow normal retry.",
+      "data_loss_observed": false,
+      "before": "export-before.json"
+    }
+  ],
+  "checks": {
+    "evidence_save_probe": {
+      "ok": true,
+      "cases": 14,
+      "evidence": "evidence-save-probe.json",
+      "scope": "Ran before receipt fix; evidence-save implementation unchanged by this fix. Exact Unicode/newline quotes, rejection atomicity, idempotence and restart."
+    },
+    "workflow_contract_review": {
+      "agent": "analysis_workflow_contract_audit",
+      "must_fix_findings": [],
+      "targeted_existing_tests_passed": 5,
+      "scope": "Nonconsecutive findings pages, Unicode offsets after source removal, page byte budget, next budget failure, source-read ranges."
+    },
+    "report_recovery_audit": {
+      "agent": "analysis_report_recovery_audit",
+      "targeted_existing_tests_passed": 22,
+      "scope": "Baseline/recovery tests plus temporary report BOM/CRLF, retry and outside-edit probes; discovered R1."
+    },
+    "new_regressions": {
+      "tests": 2,
+      "before_failed": 2,
+      "before_errors": 0,
+      "after_passed": 2,
+      "scope": "Unacknowledged report and acknowledged-but-missing report; post-publication fault, incomplete receipt, CLI failure, retry preserving bytes/events."
+    },
+    "independent_fix_review": {
+      "agent": "analysis_workflow_contract_audit",
+      "must_fix_findings": [],
+      "targeted_tests_passed": 9,
+      "local_mode_probe": "Failure remains incomplete; successful retry reports scope complete, exports_complete null and full_book_verified false."
+    },
+    "full_regressions": {
+      "status": "passed",
+      "run": 558,
+      "passed": 551,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 7,
+      "duration_seconds": 80.713,
+      "evidence": "unit-tests.json"
+    },
+    "cli_smoke": {
+      "ok": true,
+      "commands": 20,
+      "evidence": "smoke.json"
+    },
+    "historical_evaluations_committed_prior_evidence_and_release_files_unchanged": true,
+    "local_markdown_links": {
+      "status": "passed",
+      "files_scanned": 165,
+      "links_checked": 833,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    },
+    "new_readme_heading_anchor_valid": true,
+    "git_diff_check": "passed"
+  },
+  "limits": [
+    "Temporary synthetic fixtures and injected IO failure, not real storage outage testing.",
+    "No literary quality evaluation or change to deep-reading instructions this round.",
+    "No new Windows CI run; the existing Windows export issue remains outside this fix."
+  ],
+  "published": false,
+  "pushed": false,
+  "actual_user_skills_updated": false,
+  "real_novels_touched": false,
+  "input_sha256": {
+    "skills/story-codex/scripts/story.py": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
+    "tests/test_analysis_export_ack.py": "289e0c1a406207367bcd2a8efd151a1678274387c666e521dd74f2896d29387a",
+    "skills/story-codex-analyze/SKILL.md": "7d38bbd559eaf9aa2f6c2a47f3a8f88fb873030b8cfe5167a69768d2d125e267",
+    "skills/story-codex-analyze/references/deep-reading.md": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
+    "README.md": "f79e154cca7e33f85bdd982a293ee1618e7429183a2dc12c314f5d9a1246c398",
+    "docs/作品深读与评估.md": "313530299ac1ed480d9dfefb6f47bd25f7a648175fd590672c15dec4f01bc941"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "python": "3.12.14",
+  "status": {
+    "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋",
+    "cards": 3,
+    "changed_export_count": 0,
+    "changed_exports": [],
+    "id": "fd3d2b66-0db6-429b-b6a3-3f1726ee5947",
+    "imported_through": 0,
+    "integrity": {
+      "full_book_verified": true,
+      "last_full_audit_revision": 2,
+      "mode": "strict",
+      "note": "Hash verification is a point-in-time observation; outside editors can save again.",
+      "unverified_archive_count": 0,
+      "verified_file_count": 1
+    },
+    "kind": "long",
+    "last_chapter": 1,
+    "more_sources": false,
+    "next_chapter": 2,
+    "pending_export_count": 0,
+    "pending_exports": [],
+    "recent_sources": [],
+    "revision": 2,
+    "sources": 0,
+    "title": "雨棚修鞋"
+  },
+  "draft_and_export_sha256": "0c307e8ac299fe7f1a79a4f37216616ee47fa54471222251147b00c877158482",
+  "review_quotes_exact": {
+    "causality": true,
+    "continuity": true,
+    "constraints": true,
+    "style": true
+  },
+  "state_change_quotes_exact": [
+    {
+      "id": "du_ning_interview_shoes",
+      "quote_exact": true
+    },
+    {
+      "id": "umbrella_return_promise",
+      "quote_exact": true
+    },
+    {
+      "id": "lao_chen_son_pickup",
+      "quote_exact": true
+    }
+  ],
+  "scope": "Parent post-trial file and tool verification, separate from author self-review. Not a literary quality evaluation."
+}

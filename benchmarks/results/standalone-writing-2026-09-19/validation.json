@@ -1,0 +1,114 @@
+{
+  "date": "2026-09-19T07:33:01.251379+00:00",
+  "ok": true,
+  "checks": {
+    "request_unchanged": true,
+    "before_skill_hashes_match": true,
+    "candidate_skill_hashes_match": true,
+    "original_trial_outputs_and_records_preserved": true,
+    "candidate_only_evaluation_capture_files": true,
+    "baseline_extra_project_observed": true,
+    "both_outputs_in_requested_range": true,
+    "chapter_steps_byte_identical_after_scope_prefix": true,
+    "formal_writing_flow_unchanged": true,
+    "previous_literary_trial_artifacts_unchanged": true,
+    "creative_guidance_unchanged_this_round": true,
+    "runtime_unchanged_matches_prior_tests": true,
+    "skill_format": true,
+    "database_hash_unchanged_by_parent_status_check": true
+  },
+  "local_markdown_links": {
+    "status": "passed",
+    "files_scanned": 179,
+    "links_checked": 872,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "git_diff_check": "passed",
+  "environment": {
+    "parent_python": "3.12.14",
+    "post_trial_shell_python3": "Python 3.9.6",
+    "limitation": "Baseline agent used python3; post-trial shell lookup is 3.9.6, outside supported runtime range. This is route/file observation, not compatibility or performance validation."
+  },
+  "observed_book_tool_calls_reported_by_agents": {
+    "baseline": 11,
+    "candidate": 0
+  },
+  "static_boundary_review": {
+    "agent": "standalone_scope_audit",
+    "must_fix_findings": [],
+    "cases": [
+      "independent snippet",
+      "adopted book continuation",
+      "complete short story",
+      "adopted outline revision",
+      "later adoption of a trial"
+    ],
+    "scope": "Static instruction review; only independent snippet was behaviorally compared."
+  },
+  "literary_rule_review": {
+    "agent": "creative_instruction_followup",
+    "decision": "Prior sample criticisms already covered; no new literary constraints added."
+  },
+  "runtime_regression": {
+    "rerun_this_round": false,
+    "prior_evidence": "../analysis-audit-2026-09-19-recovery/validation.json",
+    "run": 558,
+    "passed": 551,
+    "skipped": 7,
+    "runtime_sha256": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80"
+  },
+  "published": false,
+  "pushed": false,
+  "actual_user_skills_updated": false,
+  "real_novels_touched": false,
+  "source_sha256": {
+    "README.md": "674279f3598b54b06dd36d06bb1d657783893c416f118bdece70a3ff66c15a3a",
+    "docs/README.md": "3f885cacb1335e1e79f0c24b39658771f89f49b482944bae3d1016910290a817",
+    "docs/中文小说上手.md": "da502cef0208ec3f565b75c0de94dfe0170c981c1a157ade57f125303739c072",
+    "skills/story-codex/SKILL.md": "c9b693c4518dd3d8ee471abf9a1a24ed41967d8c0019282fabeb495d7e999695",
+    "skills/story-codex-write/SKILL.md": "0a04a4efd72b4cc0974055b76e13f6f4fca50907a1910a963a3fc729ca3f48b7",
+    "skills/story-codex-write/references/chapter.md": "19871bffdfbecec1b49bb1a6aa25ac213b8d42e270f289deaa880f9db90e94f9",
+    "skills/story-codex-plan/SKILL.md": "deaff4e31ef3965782344170a77ba5135771b2698d7b5e070de64e08b8a5b338",
+    "skills/story-codex-write/references/drama.md": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4"
+  },
+  "artifact_sha256": {
+    "README.md": "aa15f0d586beeda82ffe4709c08aee468bea9bdb226f2b038b6a0a74732b5d81",
+    "baseline/output.md": "8037a1330e08e1e12ef2d8be1d8e04cda585477fb3a8f02acc2478beec163efc",
+    "baseline/process.json": "ad808bb0e1b68d58ba07ad5d0597c4a64ec314384c6034a793e1e51e1df05906",
+    "baseline-created-text/浅水区__.story__delta-1.json.txt": "1b2849c5b40ad7ba6dd908d436f6cfb7febcdb8f319daaac835e0c5a2098be43",
+    "baseline-created-text/浅水区__.story__drafts__chapter-1.md.txt": "6c2c6e98567f97d3d241b145b1f82417620f324e1682b7263330ab5d0a93b80e",
+    "baseline-created-text/浅水区__.story__plan-1.json.txt": "e00e0c825de21d5daa24ff4eaaa8224b1e836adc5d2b50782518ef77ce92d708",
+    "baseline-created-text/浅水区__.story__prepare-1.json.txt": "f8a7152f5132c6327d83ff4e0491bfea506c68f6e3221410f88fcf34d03152a9",
+    "baseline-created-text/浅水区__01_大纲细纲__第1章 门口.md.txt": "df87795a3710289ebe0fff859254ec9f3f6629beea8b518fdcd2cb7e65108cc3",
+    "baseline-created-text/浅水区__chapters__第一卷 初学__第1章 门口.md.txt": "6c2c6e98567f97d3d241b145b1f82417620f324e1682b7263330ab5d0a93b80e",
+    "baseline-created-text/浅水区__创作约定.md.txt": "fd8552913072deb5c7c0e53d542d3c6eac3bb9c5a08042911e3ed130aaf4a4a2",
+    "baseline-status-verification.json": "2ef48b143454e598213b20eeec7c9e21bcc0b6d66c1094a2978ff78e930f77a7",
+    "candidate/output.md": "3fb7d6b664be797ab38b1f62a6f8bda79fcb6c116da3ac201a545ebbc54aef23",
+    "candidate/process.json": "f11e1d8d0aad9aad90e9419b7a53a12694b1a5d50e003747b0df7817f330c9d2",
+    "candidate.json": "80a7cda84250655643722f1b26d114997ee216665bf8c63b623c6c7a46decf01",
+    "observed-files.json": "ce6755c3ac7ed08f6f9d4b650957287597dc25b8b44ef44a7b93d0923c5899e6",
+    "protocol.json": "e2419fa0e7efeaa9cc4d2f9f26f89e6ebd185fc7bd76195c46e69ffa6b8308e5",
+    "request.md": "89d278860fe663bc0f7d4b02065972232c25e0917d79f797c085ac5344d82ff4",
+    "skill-validation.json": "c4d5fdbccf5ab181898f155d3d9b13ae8584dc3d2b846d056d92e5e636d6303a",
+    "snapshots/after/skills__story-codex-plan__SKILL.md.txt": "deaff4e31ef3965782344170a77ba5135771b2698d7b5e070de64e08b8a5b338",
+    "snapshots/after/skills__story-codex-write__SKILL.md.txt": "0a04a4efd72b4cc0974055b76e13f6f4fca50907a1910a963a3fc729ca3f48b7",
+    "snapshots/after/skills__story-codex-write__references__chapter.md.txt": "19871bffdfbecec1b49bb1a6aa25ac213b8d42e270f289deaa880f9db90e94f9",
+    "snapshots/after/skills__story-codex-write__references__drama.md.txt": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4",
+    "snapshots/after/skills__story-codex__SKILL.md.txt": "c9b693c4518dd3d8ee471abf9a1a24ed41967d8c0019282fabeb495d7e999695",
+    "snapshots/before/skills__story-codex-plan__SKILL.md.txt": "7a5d1c1dc7763429d7e6308b1231c8b57bcb3c43d3a34212e64c4db4ea9d3e85",
+    "snapshots/before/skills__story-codex-write__SKILL.md.txt": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4",
+    "snapshots/before/skills__story-codex-write__references__chapter.md.txt": "69156986948bf01bc11312f14603b09d6ff0fd27e7d5de68b9e4813574e67da6",
+    "snapshots/before/skills__story-codex-write__references__drama.md.txt": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4",
+    "snapshots/before/skills__story-codex__SKILL.md.txt": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
+    "snapshots/before/skills__story-codex__references__project-state.md.txt": "8c6a34e74c28af93551e418de1d46c232b5d3cb0d78b2bdc430c80d93ca8900a",
+    "snapshots/manifest.json": "d4c2489765468ba36fa07759ebd416fb00a2c0304a11c621d1c2bdc2626d5780"
+  },
+  "limits": [
+    "One independently generated output per condition; no repeated sampling or token-cost measurement.",
+    "Book command totals come from agent process records; filesystem outcomes independently checked.",
+    "No literary superiority comparison or human reader evaluation.",
+    "Other four managed-workflow boundaries and local planning checked statically, not separately executed."
+  ],
+  "owned_temporary_workspace_removed": true
+}

@@ -1,0 +1,57 @@
+{
+  "snapshots/after/skills__story-codex-plan__SKILL.md.txt": {
+    "source": "skills/story-codex-plan/SKILL.md",
+    "condition": "after",
+    "sha256": "deaff4e31ef3965782344170a77ba5135771b2698d7b5e070de64e08b8a5b338"
+  },
+  "snapshots/after/skills__story-codex-write__SKILL.md.txt": {
+    "source": "skills/story-codex-write/SKILL.md",
+    "condition": "after",
+    "sha256": "0a04a4efd72b4cc0974055b76e13f6f4fca50907a1910a963a3fc729ca3f48b7"
+  },
+  "snapshots/after/skills__story-codex-write__references__chapter.md.txt": {
+    "source": "skills/story-codex-write/references/chapter.md",
+    "condition": "after",
+    "sha256": "19871bffdfbecec1b49bb1a6aa25ac213b8d42e270f289deaa880f9db90e94f9"
+  },
+  "snapshots/after/skills__story-codex-write__references__drama.md.txt": {
+    "source": "skills/story-codex-write/references/drama.md",
+    "condition": "after",
+    "sha256": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4"
+  },
+  "snapshots/after/skills__story-codex__SKILL.md.txt": {
+    "source": "skills/story-codex/SKILL.md",
+    "condition": "after",
+    "sha256": "c9b693c4518dd3d8ee471abf9a1a24ed41967d8c0019282fabeb495d7e999695"
+  },
+  "snapshots/before/skills__story-codex-plan__SKILL.md.txt": {
+    "source": "skills/story-codex-plan/SKILL.md",
+    "condition": "before",
+    "sha256": "7a5d1c1dc7763429d7e6308b1231c8b57bcb3c43d3a34212e64c4db4ea9d3e85"
+  },
+  "snapshots/before/skills__story-codex-write__SKILL.md.txt": {
+    "source": "skills/story-codex-write/SKILL.md",
+    "condition": "before",
+    "sha256": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4"
+  },
+  "snapshots/before/skills__story-codex-write__references__chapter.md.txt": {
+    "source": "skills/story-codex-write/references/chapter.md",
+    "condition": "before",
+    "sha256": "69156986948bf01bc11312f14603b09d6ff0fd27e7d5de68b9e4813574e67da6"
+  },
+  "snapshots/before/skills__story-codex-write__references__drama.md.txt": {
+    "source": "skills/story-codex-write/references/drama.md",
+    "condition": "before",
+    "sha256": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4"
+  },
+  "snapshots/before/skills__story-codex__SKILL.md.txt": {
+    "source": "skills/story-codex/SKILL.md",
+    "condition": "before",
+    "sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd"
+  },
+  "snapshots/before/skills__story-codex__references__project-state.md.txt": {
+    "source": "skills/story-codex/references/project-state.md",
+    "condition": "before",
+    "sha256": "8c6a34e74c28af93551e418de1d46c232b5d3cb0d78b2bdc430c80d93ca8900a"
+  }
+}

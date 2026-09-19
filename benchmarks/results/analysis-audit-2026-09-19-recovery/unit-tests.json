@@ -1,0 +1,34 @@
+{
+  "command": [
+    "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "-X",
+    "utf8",
+    "/Users/cuining/Documents/GitHub/story-skill/scripts/verify.py",
+    "--unittest-report",
+    "benchmarks/results/analysis-audit-2026-09-19-recovery/unit-tests.json"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "..............................................................................................................................................................................s...............................................................................................................................................................................................sssss.........................................s.................................................................................................................................................\n----------------------------------------------------------------------\nRan 558 tests in 79.670s\n\nOK (skipped=7)\n",
+  "duration_seconds": 80.713,
+  "status": "passed",
+  "ok": true,
+  "run": 558,
+  "passed": 551,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 7,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+  "discovery_argv": [
+    "unittest",
+    "discover",
+    "-s",
+    "tests"
+  ],
+  "runtime_sha256": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
+  "platform": "macOS-15.8-x86_64-i386-64bit",
+  "python": "3.12.14"
+}

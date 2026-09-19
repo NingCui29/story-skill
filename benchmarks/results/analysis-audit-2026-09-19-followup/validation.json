@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "date": "2026-09-19T06:33:10.980278+00:00",
+  "ok": true,
+  "base_commit": "71dd056f5499e4b94702cd000439f1b710c03c36",
+  "scope": "Unreleased follow-up analysis runtime fixes; no fixed release, installed skill update or real novel edits.",
+  "environment": {
+    "platform": "macOS-15.8-x86_64-i386-64bit",
+    "python": "3.12.14"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "problem": "CR-only and mixed-newline sources lose chapter boundaries despite preserving source text.",
+      "resolution": "Recognize LF, CRLF and CR line boundaries without text normalization or re-splitting existing sources.",
+      "before": "line-endings-before.json"
+    },
+    {
+      "id": "F2",
+      "problem": "Concurrent finalization can combine pending chunks from an earlier state with a later final report path.",
+      "resolution": "Read source progress and report registration in the same database snapshot.",
+      "before": "read-snapshots-before.json"
+    },
+    {
+      "id": "F3",
+      "problem": "Concurrent ingest can produce a source list whose total and returned rows disagree.",
+      "resolution": "Read source count, rows and their progress in the same snapshot; preserve caller transactions.",
+      "before": "read-snapshots-before.json"
+    }
+  ],
+  "checks": {
+    "new_regressions": {
+      "tests": 8,
+      "passed": 8,
+      "line_ending_and_indent_combinations": 108,
+      "ingest_unicode_scenarios": 12,
+      "independent_rerun_passed": true
+    },
+    "analysis_regressions": {
+      "run": 46,
+      "passed": 46,
+      "failed": 0,
+      "errors": 0
+    },
+    "full_regressions": {
+      "status": "passed",
+      "run": 556,
+      "passed": 549,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 7,
+      "duration_seconds": 70.891,
+      "evidence": "unit-tests.json"
+    },
+    "cli_smoke": {
+      "ok": true,
+      "commands": 20,
+      "evidence": "smoke.json"
+    },
+    "independent_review": {
+      "agent": "analysis_followup_review",
+      "must_fix_findings": [],
+      "scope": "Runtime diff and both new test files; nested transactions, errors, chapter boundaries and saved source identity.",
+      "legacy_lf_crlf_comparisons": 41472,
+      "legacy_comparisons_matched": true,
+      "literary_quality_reviewed": false
+    },
+    "historical_evaluations_prior_audit_and_release_files_unchanged": true,
+    "local_markdown_links": {
+      "status": "passed",
+      "files_scanned": 165,
+      "links_checked": 830,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    },
+    "new_readme_heading_anchor_valid": true,
+    "git_diff_check": "passed"
+  },
+  "limits": [
+    "Synthetic source fixtures and deterministic two-connection SQLite WAL interleavings, not a production concurrency load test.",
+    "Read consistency applies to each response, not to all pages requested at different times.",
+    "No literary quality evaluation this round; source and quote checks do not prove interpretations or whole-book completeness.",
+    "No new Windows CI run; existing Windows export limitation is outside this change."
+  ],
+  "published": false,
+  "pushed": false,
+  "actual_user_skills_updated": false,
+  "real_novels_touched": false,
+  "input_sha256": {
+    "skills/story-codex/scripts/story.py": "71ac56a32e935fc30f5a94f02164906c58814f2194ba697d74cd372413cccef8",
+    "tests/test_analysis_line_endings.py": "21245060e60c734419a410587a45bbd8371bb4116963064aa3dabb7828e58b0d",
+    "tests/test_analysis_read_snapshots.py": "08e8bcb21d31c27bd66d2c4eea3dee2840d3a45fb92cab50085a3576478ff7a1",
+    "README.md": "4c7a83149bdd972af7e21d8c956ac59b8210bf35b39f22325a35bb5e00aa6715",
+    "docs/作品深读与评估.md": "3388707a4996c5128562d6251b5813f4fd3459d1404cf1cdcc1c4207f68d7fef"
+  }
+}

@@ -354,7 +354,7 @@ class NpmSuiteTests(NpmPackageTests):
                 self.assertIn(f"固定使用 v{version}", npm.wrapper_files(version)[1]["README.md"].decode())
 
     def test_current_patch_wrappers_preserve_the_reviewed_platform_scope(self):
-        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5"):
+        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6"):
             with self.subTest(version=version):
                 manifest, files = npm.wrapper_files(version)
                 readme = files["README.md"].decode("utf-8")

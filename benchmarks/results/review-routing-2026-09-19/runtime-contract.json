@@ -1,0 +1,30 @@
+{
+  "python": "3.12.14",
+  "scope": "Parent deliberately exercised incompatible routes; not a baseline agent failure or a new runtime fix.",
+  "context_mode": "next",
+  "replace_last_error": {
+    "code": "chapter_order",
+    "message": "Only the latest native chapter can be replaced"
+  },
+  "history_start": {
+    "chapter": 1,
+    "error": "chapter_missing",
+    "message": "Historical chapter is not recorded",
+    "ok": false
+  },
+  "history_exit_code": 2,
+  "history_output_stream": "stderr",
+  "state_before": {
+    "revision": 1,
+    "last_chapter": 0
+  },
+  "state_after": {
+    "revision": 1,
+    "last_chapter": 0
+  },
+  "no_publication": true,
+  "setup_notes": [
+    "Initial fixture harness incorrectly used Book as a context manager; corrected to contextlib.closing.",
+    "CLI error JSON is on stderr; harness corrected parser and repeated bounded probes. Agent fixtures were copied before probes and remain uncommitted."
+  ]
+}

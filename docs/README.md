@@ -1,10 +1,10 @@
 # Story Codex 文档导航
 
-当前已发布版本：**v0.5.5**。本版汇总历史修订恢复、世界状态与证据衔接，以及局部点评、资料问答和细纲默认范围调整；沿用 7 个技能入口、33 个载荷文件和书名目录。[v0.5.5 版本说明](releases/v0.5.5.md)汇总变化；工程、固定标签、Release、CI 和 Packages 以[逐项发布状态](github-release.md#v055-发布验证记录)为准；本地完整检查、Release 和官方隔离安装已通过，Linux 成功、Windows 保留已知失败，Packages 工作流回下载产物已独立复核。
+当前版本：**v0.5.6**。本版完善拆书恢复、试写与审稿分流、正文纯文本格式，以及从参考分析到原创策划的目录衔接；沿用 7 个技能入口、33 个载荷文件和 schema 2。[版本说明](releases/v0.5.6.md)汇总变化；工程、固定标签、Release、CI 和 Packages 以[本版验证记录](../benchmarks/results/v0.5.6/README.md)的实际结果为准。
 
-使用说明见 [从拆书开始，新起一本书](../README.md#从拆书开始新起一本书)、[大纲细纲怎样保存](中文小说上手.md#大纲细纲怎样保存)、[超长篇实操](超长篇实操.md)和[恢复流程](recovery.md)。v0.5.5 的新结果登记到[独立验证目录](../benchmarks/results/v0.5.5/README.md)，不将维护快照或旧版本通过数改名为新版验收。
+使用说明见 [从拆书开始，新起一本书](../README.md#从拆书开始新起一本书)、[大纲细纲怎样保存](中文小说上手.md#大纲细纲怎样保存)、[超长篇实操](超长篇实操.md)和[恢复流程](recovery.md)。v0.5.6 的新结果登记到[独立验证目录](../benchmarks/results/v0.5.6/README.md)，不将维护快照或旧版本通过数改名为新版验收。
 
-本文当前用法对应 v0.5.5；实际默认安装按 [INSTALL.md](../INSTALL.md)，macOS／Linux 使用已核验的 v0.5.5。Windows 的既有 WinError 32 未修复，继续使用 v0.4.0；已经用新版写入的书先完整备份，不直接降级。本次发布未更新本机安装。
+本文当前用法对应 v0.5.6；实际默认安装按 [INSTALL.md](../INSTALL.md) 核对固定标签与附件。Windows 的既有 WinError 32 未修复，继续使用 v0.4.0；已经用新版写入的书先完整备份，不直接降级。仓库发布不会自动更新本机安装。
 
 ## 开始使用
 
@@ -28,7 +28,7 @@ $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.
 
 ## 当前实现与证据
 
-v0.5.5 已发布，工程验收、平台结果和分发文件以 [版本说明](releases/v0.5.5.md) 与 [本版验证目录](../benchmarks/results/v0.5.5/README.md) 为准。作品分析的程序核验与文学评阅分别报告，不用测试通过替代解释是否成立。
+v0.5.6 的工程验收、平台结果和分发文件以 [版本说明](releases/v0.5.6.md) 与 [本版验证目录](../benchmarks/results/v0.5.6/README.md) 为准。作品分析的程序核验与文学评阅分别报告，不用测试通过替代解释是否成立。
 
 | 内容 | 已完成的范围与入口 |
 |---|---|
@@ -38,11 +38,16 @@ v0.5.5 已发布，工程验收、平台结果和分发文件以 [版本说明](
 | 完整九章的跨章分析 | [《阿Q正傳》试用](../benchmarks/results/analysis-crosschapter/README.md)：14 块、64 条逐块引文核对通过；独立模型评阅未提出必须修改项，两项可选措辞另存澄清稿 |
 | 长篇状态与历史修订 | [超长篇实操](超长篇实操.md) 和 [按版本保存的验收](超长篇验收.md) |
 | 阅读承诺、正文详略和跨章审稿的开发比较 | [三题实际结果](../benchmarks/results/quality-focus-2026-09-11/README.md)：规划持平、正文略偏初版候选、跨章审稿略偏旧版；最终措辞仅语义复核，不证明稳定提升 |
+| 人物选择指导续修 | [2026-09-19 独立试用](../benchmarks/results/quality-followup-2026-09-19/README.md)：补充欲望与性情对选择的影响，保留新旧原始稿件与适用边界 |
+| 试写、局部设计与修订分流 | [独立试写](../benchmarks/results/standalone-writing-2026-09-19/README.md)与[审稿分流](../benchmarks/results/review-routing-2026-09-19/README.md)：区分独立片段、新章草稿和已提交章节，沿本次授权处理 |
+| 正文纯文本格式 | [章节流程](../skills/story-codex-write/references/chapter.md)：新写章保留 `.md` 文件名，正文不用 Markdown 排版标记；旧章不自动转换 |
 | 文学评阅和实际用量的比较方法 | [评估方法](evaluation.md) |
 
 《阿Q正傳》试用是固定单版本、单作品、一次完整生成及独立模型评阅，没有旧版对照、重复采样或人类编辑。前两轮与后续修订也未证明“大师级”认证、稳定质量提升或实际账户成本下降。各轮冻结技能与输入哈希独立保存，旧输出不追认为最终版生成。
 
 ## 已发布历史快照
+
+v0.5.5 于 2026-09-12 发布，补齐历史修订决定回读、关联后文复核和世界状态衔接；Release、Packages 与平台范围保留在 [v0.5.5 说明](releases/v0.5.5.md)和[原验证记录](../benchmarks/results/v0.5.5/README.md)。
 
 v0.5.4 已于 2026-09-11 发布，补充阅读承诺、正文详略和跨章审稿。固定标签、Release 附件、官方隔离安装及 Packages 回下载已核验，Linux 通过，Windows 保留已知导出失败；实际范围见 [v0.5.4 说明](releases/v0.5.4.md)和[原验证记录](../benchmarks/results/v0.5.4/README.md)。
 

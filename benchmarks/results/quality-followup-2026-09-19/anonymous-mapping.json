@@ -1,0 +1,25 @@
+{
+  "assignment": "Random first-pair order, opposite condition order for second pair; labels prepared before reviewer starts.",
+  "files": {
+    "opening/A.md": {
+      "run": "p83",
+      "condition": "candidate",
+      "sha256": "e1c1e55ab0055b476056b6498fa4fe109e7dd31b47edf52e568db354abcc0b00"
+    },
+    "opening/B.md": {
+      "run": "p17",
+      "condition": "baseline",
+      "sha256": "af4384082482d1584d77af551491509a6f90a68d28d81b15847126d168536b88"
+    },
+    "quiet/A.md": {
+      "run": "p42",
+      "condition": "baseline",
+      "sha256": "e03ab9f38a53fe16cb941cc2edd8467c4613b12846507b0d1300d39807d35c00"
+    },
+    "quiet/B.md": {
+      "run": "p91",
+      "condition": "candidate",
+      "sha256": "9d1894df5eb6c48da7b860ae957bbab890f02226bc4855d80813dcc83224782c"
+    }
+  }
+}

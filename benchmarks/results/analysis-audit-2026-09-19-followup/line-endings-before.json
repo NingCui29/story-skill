@@ -1,0 +1,28 @@
+{
+  "scope": "Heading newline regressions before regex change; read snapshot fix already present",
+  "base_commit": "71dd056f5499e4b94702cd000439f1b710c03c36",
+  "runtime_sha256": "35bd6778884c8c1caafa1f64e1bb7133a9f8c35a56ce86a10d5b9a2cadeb306d",
+  "status": "failed",
+  "run": 4,
+  "passed": 1,
+  "failed": 85,
+  "errors": 0,
+  "skipped": 0,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+  "representative_failures": [
+    {
+      "test": "test_all_line_ending_combinations_keep_indented_chapter_boundaries (test_analysis_line_endings.AnalysisLineEndingTests.test_all_line_ending_combinations_keep_indented_chapter_boundaries) (endings=('\\n', '\\n', '\\r'), indent=\"''\")",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/cuining/Documents/GitHub/story-skill/tests/test_analysis_line_endings.py\", line 41, in test_all_line_ending_combinations_keep_indented_chapter_boundaries\n    self.assert_sections(text, story.split_source(text, 2400), sections,\n  File \"/Users/cuining/Documents/GitHub/story-skill/tests/test_analysis_line_endings.py\", line 31, in assert_sections\n    self.assertEqual(chunks, expected)\nAssertionError: Lists differ: [(0, 30, '第1章 门外')] != [(0, 15, '第1章 门外'), (15, 30, '第2章 归来')]\n\nFirst differing element 0:\n(0, 30, '第1章 门外')\n(0, 15, '第1章 门外')\n\nSecond list contains 1 additional elements.\nFirst extra element 1:\n(15, 30, '第2章 归来')\n\n- [(0, 30, '第1章 门外')]\n+ [(0, 15, '第1章 门外'), (15, 30, '第2章 归来')]\n"
+    },
+    {
+      "test": "test_ingest_and_source_read_preserve_original_unicode_ranges (test_analysis_line_endings.AnalysisLineEndingTests.test_ingest_and_source_read_preserve_original_unicode_ranges) (endings=('\\r', '\\r', '\\r'), indent=\"'  '\")",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/cuining/Documents/GitHub/story-skill/tests/test_analysis_line_endings.py\", line 89, in test_ingest_and_source_read_preserve_original_unicode_ranges\n    self.assert_sections(text,\n  File \"/Users/cuining/Documents/GitHub/story-skill/tests/test_analysis_line_endings.py\", line 31, in assert_sections\n    self.assertEqual(chunks, expected)\nAssertionError: Lists differ: [(0, 34, '未命名文本 / 前言')] != [(0, 17, '第1章 门外'), (17, 34, '第2章 归来')]\n\nFirst differing element 0:\n(0, 34, '未命名文本 / 前言')\n(0, 17, '第1章 门外')\n\nSecond list contains 1 additional elements.\nFirst extra element 1:\n(17, 34, '第2章 归来')\n\n- [(0, 34, '未命名文本 / 前言')]\n+ [(0, 17, '第1章 门外'), (17, 34, '第2章 归来')]\n"
+    },
+    {
+      "test": "test_mixed_lines_preserve_blank_prefix_and_heading_types (test_analysis_line_endings.AnalysisLineEndingTests.test_mixed_lines_preserve_blank_prefix_and_heading_types)",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/cuining/Documents/GitHub/story-skill/tests/test_analysis_line_endings.py\", line 53, in test_mixed_lines_preserve_blank_prefix_and_heading_types\n    self.assert_sections(text, story.split_source(text, 2400), sections,\n  File \"/Users/cuining/Documents/GitHub/story-skill/tests/test_analysis_line_endings.py\", line 31, in assert_sections\n    self.assertEqual(chunks, expected)\nAssertionError: Lists differ: [(0, 58, '未命名文本 / 前言'), (58, 95, '## 第２章 归来')] != [(0, 8, '未命名文本 / 前言'), (8, 24, '# 第一卷 旧街'), (2[55 chars]封信')]\n\nFirst differing element 0:\n(0, 58, '未命名文本 / 前言')\n(0, 8, '未命名文本 / 前言')\n\nSecond list contains 3 additional elements.\nFirst extra element 2:\n(24, 58, '第1章 门外')\n\n- [(0, 58, '未命名文本 / 前言'), (58, 95, '## 第２章 归来')]\n+ [(0, 8, '未命名文本 / 前言'),\n+  (8, 24, '# 第一卷 旧街'),\n+  (24, 58, '第1章 门外'),\n+  (58, 79, '## 第２章 归来'),\n+  (79, 95, '番外 一封信')]\n"
+    }
+  ]
+}
