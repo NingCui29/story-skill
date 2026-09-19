@@ -1,6 +1,19 @@
 # 安装、升级与 GitHub 发布
 
-当前已发布 **v0.5.7**，开书全书总纲新增番茄阅读标签和内容标签规则。套件包含 7 个技能、34 个载荷文件，schema 2 不变。[版本说明](releases/v0.5.7.md) · [统一安装指引](../INSTALL.md)。macOS／Linux 使用 v0.5.7；Windows 导出的既有 WinError 32 未修复，继续使用 v0.4.0。已用新版写入的书先完整备份，不盲目降级。
+当前已发布 **v0.5.8**，番茄短篇按截图可见选项记录五栏作品分类；长篇继续使用阅读标签和内容标签。套件包含 7 个技能、34 个载荷文件，schema 2 不变。[版本说明](releases/v0.5.8.md) · [统一安装指引](../INSTALL.md)。macOS／Linux 使用 v0.5.8；Windows 导出的既有 WinError 32 未修复，继续使用 v0.4.0。已用新版写入的书先完整备份，不盲目降级。
+
+## v0.5.8 发布验证记录
+
+v0.5.8 已于 **2026-09-19 22:33:11（北京时间）** 发布。固定标签、Release 附件回下载、官方安装器 Git 方式隔离安装及 GitHub Packages 注册表回下载均已核验；Linux CI 成功，Windows 复现既有 WinError 32，整体 CI 失败。[本版验证目录](../benchmarks/results/v0.5.8/README.md)保存本地与远端回执。下方历史记录保持原值。
+
+| 环节 | 实际状态与证据 |
+|---|---|
+| 本地工程验证 | Python 3.10：560 项中 553 通过、7 跳过；CLI、中文稿件和长篇回放、技能格式、安装及本地链接通过。[完整回执](../benchmarks/results/v0.5.8/verification.json) |
+| ZIP 与固定标签 | `v0.5.8` → `09d2522a1486cde65a1db5aaec2a96974de77962`；34 文件 ZIP SHA-256 `253c072cc1d28703e36209a6374e6e008fa3abaf0c939d0429e042444ebd5cbc`，与固定源码逐文件一致。[构建](../benchmarks/results/v0.5.8/package.json) · [发布核验](../benchmarks/results/v0.5.8/release/release.json) |
+| Release 与附件 | [v0.5.8 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.5.8) 已公开；ZIP 和 checksum 回下载与本地构建逐字节一致。[回执](../benchmarks/results/v0.5.8/release/release.json) |
+| 官方固定标签安装 | 官方安装器从 `v0.5.8` 以 Git 方式隔离安装 7 技能、34 文件，与 Release 一致；版本、帮助、初始化和状态检查通过。本机现有安装未改。[回执](../benchmarks/results/v0.5.8/release/remote-install.json) |
+| 发布提交的 Linux／Windows CI | 两次推送运行的 Linux 检查成功；Windows 在报告导出时复现 `WinError 32`，整体 CI 失败。[分项回执](../benchmarks/results/v0.5.8/release/ci.json) |
+| GitHub Packages | [工作流 35449089424](https://github.com/NingCui29/story-skill/actions/runs/35449089424) 成功公开发布 `@ningcui29/story-codex@0.5.8` 并从注册表回下载；[工作流回执](../benchmarks/results/v0.5.8/release/receipt.json)与[独立复核](../benchmarks/results/v0.5.8/release/packages-independent.json)确认 34 个技能文件、2 个包装文件、SHA-512 和四项运行命令 |
 
 ## v0.5.7 发布验证记录
 
@@ -190,16 +203,16 @@ Release ZIP 的 SHA-256 为 `087ad76fe32714ea776853cab579c3b6087ed092ef0857c55a7
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Codex
 ```
 
-Codex 先读取仓库 [INSTALL.md](../INSTALL.md)，按照其中的固定版本与 7 个路径调用官方安装脚本，并处理已有目录、完整备份、文件核对和失败恢复。main 上维护的是安装指引，macOS／Linux 载荷固定到 `v0.5.7`，Windows 暂用 `v0.4.0`；该 Markdown 文件不是可直接传给官方脚本的技能目录。v0.5.7 的远端核验状态见本页顶部。
+Codex 先读取仓库 [INSTALL.md](../INSTALL.md)，按照其中的固定版本与 7 个路径调用官方安装脚本，并处理已有目录、完整备份、文件核对和失败恢复。main 上维护的是安装指引，macOS／Linux 载荷固定到 `v0.5.8`，Windows 暂用 `v0.4.0`；该 Markdown 文件不是可直接传给官方脚本的技能目录。v0.5.8 的远端核验状态见本页顶部。
 
 官方脚本没有 `--update`，遇到同名目录仍拒绝覆盖。统一入口通过 Codex 编排安装与升级步骤，不修改用户的系统 skill；本仓库项目安装器的 `--update` 是另一项已有能力，适用条件见下文。
 
 ## 手动复查：固定版本与安装器参数
 
-下列命令以 v0.5.7 为目标；发布与核验状态见本页顶部。本机官方安装器支持一次 `--path` 接收多个路径。需要手动安装到没有同名技能的目录时，macOS／Linux 使用以下参数；Windows 将 `--ref` 改为 `v0.4.0`；`<skill-installer目录>` 由 Codex 定位到本机实际路径：
+下列命令以 v0.5.8 为目标；发布与核验状态见本页顶部。本机官方安装器支持一次 `--path` 接收多个路径。需要手动安装到没有同名技能的目录时，macOS／Linux 使用以下参数；Windows 将 `--ref` 改为 `v0.4.0`；`<skill-installer目录>` 由 Codex 定位到本机实际路径：
 
 ```bash
-python3 "<skill-installer目录>/scripts/install-skill-from-github.py" --repo NingCui29/story-skill --ref v0.5.7 --path skills/story-codex skills/story-codex-plan skills/story-codex-write skills/story-codex-analyze skills/story-codex-review skills/story-codex-research skills/story-codex-cover
+python3 "<skill-installer目录>/scripts/install-skill-from-github.py" --repo NingCui29/story-skill --ref v0.5.8 --path skills/story-codex skills/story-codex-plan skills/story-codex-write skills/story-codex-analyze skills/story-codex-review skills/story-codex-research skills/story-codex-cover
 ```
 
 这份本机安装器默认安装到 `$CODEX_HOME/skills`，未设置时为 `~/.codex/skills`；其他 Codex 环境应核对其实际安装器与技能目录。只在一个项目使用时，可在同一请求中明确“安装到 `/Users/作者/小说/我的写作项目/.agents/skills`”；对应的 `--dest` 指向 **skills 父目录**，安装器创建 7 个子目录。它与下文项目安装脚本的 `--project` 参数含义不同。
@@ -208,7 +221,7 @@ python3 "<skill-installer目录>/scripts/install-skill-from-github.py" --repo Ni
 
 安装后核对 7 个目录都包含 `SKILL.md`，核心包含 `scripts/story.py` 和其余 4 个运行时模块，再在下一条消息使用 `$story-codex-plan` 或其他专用入口；未显示时重启 Codex。Python 要求为 3.10+，运行时仅用标准库；Codex 自身的账号和额度另计。
 
-本版套件 ZIP 名为 `story-codex-0.5.7.zip`，附同名 `.zip.sha256`；[Release 下载](https://github.com/NingCui29/story-skill/releases/tag/v0.5.7) 的附件按 [安装指引](../INSTALL.md) 核验。附件按 7 个同级技能打包，实际载荷数量由本版打包结果核验；Source code ZIP 是 GitHub 自动生成的完整源码仓库，不能将整个仓库当成一个技能目录。
+本版套件 ZIP 名为 `story-codex-0.5.8.zip`，附同名 `.zip.sha256`；[Release 下载](https://github.com/NingCui29/story-skill/releases/tag/v0.5.8) 的附件按 [安装指引](../INSTALL.md) 核验。附件按 7 个同级技能打包，实际载荷数量由本版打包结果核验；Source code ZIP 是 GitHub 自动生成的完整源码仓库，不能将整个仓库当成一个技能目录。
 
 ## 从源码安装到一个项目
 
@@ -217,10 +230,10 @@ python3 "<skill-installer目录>/scripts/install-skill-from-github.py" --repo Ni
 macOS／Linux 需要独立源码时，先克隆到一个不存在的新目录。Windows 暂用 v0.4.0，将下面的标签与目录后缀一并改为 v0.4.0：
 
 ```bash
-git clone --branch v0.5.7 --depth 1 https://github.com/NingCui29/story-skill.git story-skill-v0.5.7
+git clone --branch v0.5.8 --depth 1 https://github.com/NingCui29/story-skill.git story-skill-v0.5.8
 ```
 
-在该 v0.5.7 源码仓库目录运行：
+在该 v0.5.8 源码仓库目录运行：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "/Users/作者/小说/我的写作项目"
@@ -230,7 +243,7 @@ python3 -B -X utf8 scripts/install.py --project "/Users/作者/小说/我的写�
 
 若在开发仓库本身试用，运行 `python3 -B -X utf8 scripts/install.py --project "."`。根 `.agents/skills/` 是安装副本，受 Git 忽略；它不会替代 `skills/` 源码，也不会随源码编辑自动更新。克隆新版仓库后仍需安装，再在 Codex 的下一条消息调用技能；未显示时重启 Codex。
 
-## 手动复查：旧版升级到 0.5.7
+## 手动复查：旧版升级到 0.5.8
 
 日常升级直接使用上面的统一入口；以下说明供复查具体处理方式。所有安装均为文件副本，main 有新提交不会自动更新本机。先确认实际安装父目录和版本，再选择相同的安装方式；书目录无需搬动，技能安装也不会自动迁移书库。
 
@@ -241,7 +254,7 @@ python3 -B -X utf8 scripts/install.py --project "/Users/作者/小说/我的写�
 | 官方 `$skill-installer` 安装 | 同名目录存在会拒绝覆盖；把旧目录与本地修改备份并移出扫描目录，再安装整套固定版本 |
 | 手动复制或解压 | 不会自动获得项目安装器的托管清单；同样先在扫描目录之外保留完整副本，再按选定方式重新安装 |
 
-仅第一种情况，在 **v0.5.7 源码仓库**目录运行：
+仅第一种情况，在 **v0.5.8 源码仓库**目录运行：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "/Users/作者/小说/我的写作项目" --update
@@ -292,12 +305,12 @@ $skill-installer https://github.com/NingCui29/story-skill/tree/v0.3.0/.agents/sk
 ```bash
 git status --short
 git remote -v
-python3 -B -X utf8 scripts/smoke.py --output dist/manual-smoke-v0.5.7.json
-python3 -B -X utf8 scripts/long_acceptance.py --output dist/manual-long-v0.5.7.json
+python3 -B -X utf8 scripts/smoke.py --output dist/manual-smoke-v0.5.8.json
+python3 -B -X utf8 scripts/long_acceptance.py --output dist/manual-long-v0.5.8.json
 python3 -B -X utf8 scripts/package.py
 ```
 
-单元测试所需旧 ZIP 已随 [测试夹具](../tests/fixtures/README.md) 保存；`migrate_probe.py` 默认使用固定旧工具生成的三类 schema 1 合成夹具，用 `--source` 复查历史实书时需另备相应旧数据库。`verify.py` 校验报告的当前哈希绑定。v0.5.7 新证据保存到 `benchmarks/results/v0.5.7/`；历史 [v0.5.5 验证](../benchmarks/results/v0.5.5/README.md)与其他旧回执保持原样。运行时或技能文本变化后，不能将旧版测试数及 token 百分比改名为新版结果。
+单元测试所需旧 ZIP 已随 [测试夹具](../tests/fixtures/README.md) 保存；`migrate_probe.py` 默认使用固定旧工具生成的三类 schema 1 合成夹具，用 `--source` 复查历史实书时需另备相应旧数据库。`verify.py` 校验报告的当前哈希绑定。v0.5.8 新证据保存到 `benchmarks/results/v0.5.8/`；历史 [v0.5.5 验证](../benchmarks/results/v0.5.5/README.md)与其他旧回执保持原样。运行时或技能文本变化后，不能将旧版测试数及 token 百分比改名为新版结果。
 
 提交前检查本版 `skills/` 改动、维护文档、验证回执与发布工具按计划进入暂存；不要把本地安装副本、虚拟环境、数据库或测试产物放入提交。先审查完整 diff，再提交和推送。只有推送完成，main 的多路径安装入口才具备远端源码。
 
@@ -309,7 +322,7 @@ python3 -B -X utf8 scripts/package.py
 
 ## GitHub Packages 同步
 
-[Packages](https://github.com/NingCui29/story-skill/pkgs/npm/story-codex) 使用 GitHub npm 注册表。本版包为 `@ningcui29/story-codex@0.5.7`，发布与回下载状态以本页 v0.5.7 记录为准；历史版本的发布和下载结果保留在本页历史记录。仓库归属已核对为 `NingCui29/story-skill`；旧 `Cuinings` API 地址重定向到同一仓库 ID。新版工作流、包作用域、repository 元数据与安装链接均使用当前归属。npm 包不使用安装钩子注册 Codex；下载后不能当成已安装技能。
+[Packages](https://github.com/NingCui29/story-skill/pkgs/npm/story-codex) 使用 GitHub npm 注册表。本版包为 `@ningcui29/story-codex@0.5.8`，发布与回下载状态以本页 v0.5.8 记录为准；历史版本的发布和下载结果保留在本页历史记录。仓库归属已核对为 `NingCui29/story-skill`；旧 `Cuinings` API 地址重定向到同一仓库 ID。新版工作流、包作用域、repository 元数据与安装链接均使用当前归属。npm 包不使用安装钩子注册 Codex；下载后不能当成已安装技能。
 
 [同步工作流](../.github/workflows/packages.yml) 在正式 Release 发布时运行，也可在 [Actions](https://github.com/NingCui29/story-skill/actions/workflows/packages.yml) 手动选择已发布的新版本 tag 补同步。工作流从该 Release 的 ZIP 和 checksum 构建，使用仓库 `GITHUB_TOKEN` 的 `contents: read`、`packages: write` 权限。其他仓库触发会被拒绝。
 
@@ -326,7 +339,7 @@ python3 -B -X utf8 scripts/sync_packages.py --tag v0.3.0 --prepare-only
 本版工作流已完成注册表回下载，其归档产物也经过独立复核。以下为具备相应下载权限时的命令；本机账号缺少 `read:packages` 范围，本机直连查询未作为发布验收依据：
 
 ```bash
-npm pack @ningcui29/story-codex@0.5.7 --registry=https://npm.pkg.github.com
+npm pack @ningcui29/story-codex@0.5.8 --registry=https://npm.pkg.github.com
 ```
 
 包可见性与仓库可见性分别管理。GitHub npm 即使公开也需要认证下载；在 Codex 中优先使用前述技能安装方式。[GitHub npm 官方说明](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)

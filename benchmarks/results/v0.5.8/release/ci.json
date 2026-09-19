@@ -1,0 +1,24 @@
+{
+  "ok": false,
+  "tag": "v0.5.8",
+  "commit": "09d2522a1486cde65a1db5aaec2a96974de77962",
+  "runs": [
+    {
+      "id": 35449006839,
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/35449006839",
+      "event": "push",
+      "linux": "success",
+      "windows": "failure",
+      "windows_failure": "test_analysis_baselines.AnalysisBaselineTests.test_cli_report_uses_captured_fingerprint_and_rejects_stale_input: report export io_error, WinError 32"
+    },
+    {
+      "id": 35448992275,
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/35448992275",
+      "event": "push",
+      "linux": "success",
+      "windows": "failure",
+      "windows_failure": "regression tests step failed"
+    }
+  ],
+  "note": "Overall CI failed on Windows; no cross-platform success claim."
+}

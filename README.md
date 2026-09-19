@@ -166,7 +166,7 @@ $story-codex-write 写一段约500个汉字的现代生活小说片段。
 
 | 范围 | 状态 |
 |---|---|
-| **v0.5.8** | 番茄短篇按图片可见选项在总纲中选择主分类、情节、角色、情绪和背景；长篇标签流程保留。本地 560 项测试中 553 项通过、7 项按条件跳过；[本版说明](docs/releases/v0.5.8.md) · [发布与校验状态](benchmarks/results/v0.5.8/README.md) |
+| **v0.5.8** | 番茄短篇按图片可见选项在总纲中选择主分类、情节、角色、情绪和背景；长篇标签流程保留。固定标签、Release 附件、隔离安装和 GitHub Packages 已核验；Linux CI 通过，Windows 仍有已知 `WinError 32`。[本版说明](docs/releases/v0.5.8.md) · [发布与校验状态](benchmarks/results/v0.5.8/README.md) |
 | **v0.5.7** | 面向番茄的开书总纲按本书设定记录阅读标签、内容标签及选词依据；固定标签、Release 附件、隔离安装和 GitHub Packages 已核验。Linux CI 通过，Windows 仍有已知 `WinError 32`。[本版说明](docs/releases/v0.5.7.md) · [发布与校验状态](benchmarks/results/v0.5.7/README.md) |
 | **v0.5.6** | 拆书分章与恢复、独立试写、改稿分流、正文纯文本格式和目录交接规范；固定标签、Release 附件、隔离安装及 GitHub Packages 已核验。Linux CI 通过，Windows 仍有已知 `WinError 32`。[本版说明](docs/releases/v0.5.6.md) · [发布与校验状态](benchmarks/results/v0.5.6/README.md) |
 | **v0.5.5 历史版本** | 固定标签、Release 附件和隔离安装已核验；Linux 检查通过。Windows 因已知 `WinError 32` 导出失败，安装指引仍使用 v0.4.0。[历史范围](docs/releases/v0.5.5.md) |
