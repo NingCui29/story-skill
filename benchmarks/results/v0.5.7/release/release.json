@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "tag": "v0.5.7",
+  "commit": "b8814b49a236e97213b38b46f72dd037d1c83580",
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.5.7",
+  "archive_sha256": "dc798d6880a682932f43f627bd7327e80ab8236a7c7f353024f398f5f1e6cb7d",
+  "skill_files": 34,
+  "tagged_source_matches": true,
+  "assets": [
+    {
+      "name": "story-codex-0.5.7.zip",
+      "sha256": "dc798d6880a682932f43f627bd7327e80ab8236a7c7f353024f398f5f1e6cb7d",
+      "bytes": 134239
+    },
+    {
+      "name": "story-codex-0.5.7.zip.sha256",
+      "sha256": "13889245381aecad4464150eed0b4836f30075760920cfc6ed02c380144a72e9",
+      "bytes": 88
+    }
+  ]
+}

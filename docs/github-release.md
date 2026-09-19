@@ -1,10 +1,19 @@
 # 安装、升级与 GitHub 发布
 
-**v0.5.7 正在发布验证。** 本版为开书全书总纲加入番茄阅读标签和内容标签规则，套件增至 34 个载荷文件；schema 2 与七个技能入口不变。[版本说明](releases/v0.5.7.md) · [统一安装指引](../INSTALL.md)。安装目标在固定标签、Release 附件和 Packages 核验完成后更新。Windows 导出的既有 WinError 32 未修复，继续使用 v0.4.0。已用新版写入的书先完整备份，不盲目降级。
+当前已发布 **v0.5.7**，开书全书总纲新增番茄阅读标签和内容标签规则。套件包含 7 个技能、34 个载荷文件，schema 2 不变。[版本说明](releases/v0.5.7.md) · [统一安装指引](../INSTALL.md)。macOS／Linux 使用 v0.5.7；Windows 导出的既有 WinError 32 未修复，继续使用 v0.4.0。已用新版写入的书先完整备份，不盲目降级。
 
 ## v0.5.7 发布验证记录
 
-[本版验证目录](../benchmarks/results/v0.5.7/README.md)逐项登记实际结果；下方 v0.5.6 及更早记录保持历史原值。发布标签与附件固定后，再登记提交、摘要、平台 CI 和 GitHub Packages 回下载。
+v0.5.7 已于 **2026-09-19 20:09:23（北京时间）** 发布。固定标签、Release 附件回下载、官方安装器 Git 方式隔离安装及 GitHub Packages 注册表回下载均已核验；Linux 全步骤成功，Windows 复现既有 WinError 32，整体 CI 失败。[本版验证目录](../benchmarks/results/v0.5.7/README.md)保存本地与远端回执。下方 v0.5.6 及更早记录保持历史原值。
+
+| 环节 | 实际状态与证据 |
+|---|---|
+| 本地工程验证 | Python 3.10：560 项中 553 通过、7 跳过；CLI、中文稿件和长篇回放、技能格式、安装及本地链接通过。[完整回执](../benchmarks/results/v0.5.7/verification.json) |
+| ZIP 与本地 npm 包 | 34 文件 ZIP SHA-256 `dc798d6880a682932f43f627bd7327e80ab8236a7c7f353024f398f5f1e6cb7d`；本地 npm 包及四项命令检查通过。[ZIP](../benchmarks/results/v0.5.7/package.json) · [npm](../benchmarks/results/v0.5.7/npm-package.json) |
+| 固定标签与 Release | `v0.5.7` → `b8814b49a236e97213b38b46f72dd037d1c83580`；[Release](https://github.com/NingCui29/story-skill/releases/tag/v0.5.7) 的 ZIP/checksum 已回下载，服务端摘要、34 个技能文件与固定源码一致。[发布核验](../benchmarks/results/v0.5.7/release/release.json) |
+| 官方固定标签安装 | [隔离安装](../benchmarks/results/v0.5.7/release/remote-install.json)采用官方安装器 Git 方式，7 技能、34 文件与 Release 一致；版本、帮助、初始化和状态检查通过。本机直接下载方式超时，现有安装未改 |
+| 发布提交的 Linux／Windows CI | [两次运行](../benchmarks/results/v0.5.7/release/ci.json)：Linux 全步骤成功；Windows 在报告导出时复现 `WinError 32`，整体 CI 失败 |
+| GitHub Packages | [工作流 35442058102](https://github.com/NingCui29/story-skill/actions/runs/35442058102) 成功公开发布 `@ningcui29/story-codex@0.5.7` 并从注册表回下载；[工作流回执](../benchmarks/results/v0.5.7/release/receipt.json)与[独立复核](../benchmarks/results/v0.5.7/release/packages-independent.json)确认 34 个载荷文件、2 个包装文件、SHA-512 与本地构建一致 |
 
 ## v0.5.6 发布验证记录
 

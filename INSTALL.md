@@ -20,10 +20,10 @@ macOS／Linux 按下表安装或升级到 v0.5.7。先核验固定标签解析�
 |---|---|
 | 仓库 | `NingCui29/story-skill` |
 | macOS／Linux 目标标签 | `v0.5.7` |
-| macOS／Linux 固定提交 | 待 v0.5.7 标签推送后核对；标签不随后续文档更新移动 |
-| 发布与验证状态 | 发布准备中；须以[本版验证目录](benchmarks/results/v0.5.7/README.md)登记的固定标签、Release 附件回下载和隔离安装实测为准 |
+| macOS／Linux 固定提交 | `b8814b49a236e97213b38b46f72dd037d1c83580`；标签不随后续文档更新移动 |
+| 发布与验证状态 | [Release](https://github.com/NingCui29/story-skill/releases/tag/v0.5.7)、附件回下载和官方安装器 Git 方式的隔离安装已核验；[本版验证目录](benchmarks/results/v0.5.7/README.md)记录 GitHub Packages 与平台 CI 的实际结果 |
 | Python | 3.10 或更高 |
-| 目标载荷 | 7 个同级技能目录，共 34 个文件；安装前须核对固定提交源码、Release ZIP 与官方固定标签安装的一致性 |
+| 目标载荷 | 7 个同级技能目录，共 34 个文件；固定提交源码、Release ZIP 与官方固定标签隔离安装已逐文件核对 |
 | Release ZIP | [story-codex-0.5.7.zip](https://github.com/NingCui29/story-skill/releases/download/v0.5.7/story-codex-0.5.7.zip) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.5.7/story-codex-0.5.7.zip.sha256) |
 | ZIP SHA-256 | `dc798d6880a682932f43f627bd7327e80ab8236a7c7f353024f398f5f1e6cb7d`；本地构建回执见 [package.json](benchmarks/results/v0.5.7/package.json)，远端按本表重新核对 |
 | Windows 固定标签／提交 | `v0.4.0`／`c1b3c3377573610a191e165ceb6866ae35afe5a8` |

@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "workflow_run": 35442058102,
+  "tag": "v0.5.7",
+  "package": "@ningcui29/story-codex@0.5.7",
+  "sha256": "676c667a803e4202e20e73a91b588472951c3db69f36c3b029144ce8fc20f3f1",
+  "integrity": "sha512-EmPq9LTKVNQggEU6KI6+zSg8vM7GYEVmd9yPQNyklKpXhv7XTalAaR0iEYR8WPeuMkIl1UTvahU3TmWkPyaE5w==",
+  "skill_files": 34,
+  "wrapper_files": 2,
+  "checks": {
+    "workflow_ok": true,
+    "identity": true,
+    "payload_matches_local": true,
+    "wrapper_matches_local": true,
+    "archive_sha_matches": true,
+    "registry_integrity_matches": true
+  },
+  "package_url": "https://github.com/users/NingCui29/packages/npm/package/story-codex",
+  "visibility": "public"
+}

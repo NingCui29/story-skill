@@ -1,0 +1,46 @@
+{
+  "tag": "v0.5.7",
+  "commit": "b8814b49a236e97213b38b46f72dd037d1c83580",
+  "runs": [
+    {
+      "id": 35442024181,
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 105894365190,
+          "name": "test (windows-latest, 3.12)",
+          "conclusion": "failure"
+        },
+        {
+          "id": 105894365383,
+          "name": "test (ubuntu-latest, 3.10)",
+          "conclusion": "success"
+        }
+      ],
+      "windows_winerror32": true,
+      "windows_error_excerpt": "derr)  2026-09-19T12:08:53.7478653Z AssertionError: 2 != 0 : {\"analyzed\":2,\"chunks_total\":2,\"complete_for_imported_text\":true,\"export_details\":{\"code\":\"io_error\"},\"export_error\":\"[WinError 32] The process cannot access the file because it is being used by another process: 'C:\\\\\\\\"
+    },
+    {
+      "id": 35442016830,
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 105894346160,
+          "name": "test (windows-latest, 3.12)",
+          "conclusion": "failure"
+        },
+        {
+          "id": 105894346195,
+          "name": "test (ubuntu-latest, 3.10)",
+          "conclusion": "success"
+        }
+      ],
+      "windows_winerror32": true,
+      "windows_error_excerpt": "derr)  2026-09-19T12:08:50.8870449Z AssertionError: 2 != 0 : {\"analyzed\":2,\"chunks_total\":2,\"complete_for_imported_text\":true,\"export_details\":{\"code\":\"io_error\"},\"export_error\":\"[WinError 32] The process cannot access the file because it is being used by another process: 'C:\\\\\\\\"
+    }
+  ]
+}
