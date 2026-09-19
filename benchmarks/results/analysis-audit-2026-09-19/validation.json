@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "date": "2026-09-19T05:03:31.121035+00:00",
+  "ok": true,
+  "base_commit": "a5d5f3ce3340ca9e8731bc355c0c855acac4a51c",
+  "scope": "Unpublished analysis skill/runtime fixes; no release, installed skill update or real novel edits.",
+  "environment": {
+    "platform": "macOS-15.8-x86_64-i386-64bit",
+    "python": "3.12.14"
+  },
+  "findings": [
+    {
+      "id": "A1",
+      "problem": "Deep-reading tool and chunk requirements leaked into direct text analysis and external document revision.",
+      "resolution": "Scope corpus tools and fingerprints to existing projects; directly supplied text uses real chapters, paragraphs or quotations."
+    },
+    {
+      "id": "A2",
+      "problem": "Indented chapter headings collapsed into unnamed source chunks.",
+      "resolution": "Recognize horizontal ASCII/full-width whitespace without changing text; existing sources retain saved chunks."
+    },
+    {
+      "id": "D1",
+      "problem": "Current analysis documentation still referred to v0.5.4.",
+      "resolution": "Point to published v0.5.5 while marking these workspace fixes as unpublished; preserve historical results."
+    }
+  ],
+  "checks": {
+    "regression_tests": {
+      "ok": true,
+      "run": 548,
+      "passed": 541,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 7
+    },
+    "heading_before": "before.json",
+    "heading_after": {
+      "tests": 5,
+      "passed": 5,
+      "independent_rerun_passed": true
+    },
+    "skill_validator": {
+      "status": "passed",
+      "output": "Skill is valid!",
+      "validator": "skill-creator/scripts/quick_validate.py",
+      "temporary_dependency": "PyYAML 6.0.3"
+    },
+    "cli_smoke": {
+      "ok": true,
+      "commands": 20,
+      "report": "smoke.json"
+    },
+    "forward_trials": [
+      {
+        "task": "direct complete short-text deep reading",
+        "agent": "analyze_direct_trial",
+        "output": "trial-direct.md",
+        "corpus_created": false,
+        "invented_source_or_chunk_ids": false
+      },
+      {
+        "task": "external analysis revision",
+        "agent": "analyze_revision_trial",
+        "output": "trial-revision.md",
+        "corpus_created": false,
+        "invented_source_or_chunk_ids": false,
+        "distinct_source_quotes": 11,
+        "quoted_source_occurrences": 13
+      }
+    ],
+    "independent_code_review": "analyze_capability_check: five heading tests passed; no must-fix regression found.",
+    "local_markdown_links": {
+      "status": "passed",
+      "files_scanned": 165,
+      "links_checked": 842,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    },
+    "historical_evaluation_and_published_evidence_unchanged": true
+  },
+  "limits": [
+    "Two independent model trials on the same synthetic short story, once per task; no old-version comparison or human editor.",
+    "Program checks do not prove literary interpretation or independently verified whole-book completeness.",
+    "No new Windows CI run; known export issue unchanged."
+  ],
+  "published": false,
+  "actual_user_skills_updated": false,
+  "real_novels_touched": false,
+  "input_sha256": {
+    "skills/story-codex/SKILL.md": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
+    "skills/story-codex-analyze/SKILL.md": "7d38bbd559eaf9aa2f6c2a47f3a8f88fb873030b8cfe5167a69768d2d125e267",
+    "skills/story-codex-analyze/references/deep-reading.md": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
+    "skills/story-codex/scripts/story.py": "d47cffb954338ee2aa4c7a580d764388568f71be793f03209e824b7c4c6fccb2",
+    "tests/test_analysis_headings.py": "9f4f00b5aaccd0a795254e20163a85d3cb602ec67a2c2fa071e3498a7744f187"
+  },
+  "trial_files_sha256": {
+    "trial-direct.md": "a0f39af4cf612fc4a2d47e16527d370a0d7f3f6e711f7184ebe1fb0d5d897940",
+    "trial-original-analysis.md": "b8cfefb1708608998978e84aceb428cc6088827b7dbb765be0b05a71bd868321",
+    "trial-revision.md": "1254e8dbd88a1692cd9beff7cc00d70b60fe28f4feed8e1445bbb12204caa419",
+    "trial-source.txt": "a72bcc8866ccd212b16d535728bc36efb6a4346d6d8136356efaed5640047d74"
+  },
+  "temporary_trial_workspace_removed": true
+}

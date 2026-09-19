@@ -1880,7 +1880,7 @@ class Book:
 
 
 def split_source(text, maximum):
-    pattern = re.compile(r"(?m)^(?:#{1,6}[ \t]*)?(?:第[0-9０-９一二三四五六七八九十百千万零〇两]+[章节回卷][^\r\n]*|(?:番外|序章|序言|楔子|尾声|终章|后记)[^\r\n]*)\r?$")
+    pattern = re.compile(r"(?m)^[ \t\u3000]*(?:#{1,6}[ \t]*)?(?:第[0-9０-９一二三四五六七八九十百千万零〇两]+[章节回卷][^\r\n]*|(?:番外|序章|序言|楔子|尾声|终章|后记)[^\r\n]*)\r?$")
     heads = [(m.start(), m.group().strip()[:200]) for m in pattern.finditer(text)]
     if not heads or heads[0][0] != 0:
         heads.insert(0, (0, "未命名文本 / 前言"))
