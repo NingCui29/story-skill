@@ -1,10 +1,10 @@
 # 安装、升级与 GitHub 发布
 
-当前准备发布 **v0.5.6**，改进拆书分析、独立试写、审稿路由与正文目录约束。七个技能、33 个载荷文件和 schema 2 的布局沿用。[版本说明](releases/v0.5.6.md) · [统一安装指引](../INSTALL.md)。目标平台为 macOS／Linux；Windows 导出的既有 WinError 32 未修复，Windows 继续使用 v0.4.0。已用新版写入的书先完整备份，不盲目降级。
+当前已发布 **v0.5.6**，改进拆书分析、独立试写、审稿路由与正文目录约束。七个技能、33 个载荷文件和 schema 2 的布局沿用。[版本说明](releases/v0.5.6.md) · [统一安装指引](../INSTALL.md)。目标平台为 macOS／Linux；Windows 导出的既有 WinError 32 未修复，Windows 继续使用 v0.4.0。已用新版写入的书先完整备份，不盲目降级。
 
 ## v0.5.6 发布验证记录
 
-本地测试、ZIP 与 npm 包已完成构建；远端提交、固定标签、Release 附件与 Packages 的状态待实际发布后逐项记录。[本版验证目录](../benchmarks/results/v0.5.6/README.md)保存本地回执，不将本地构建等同于 GitHub 分发成功。
+v0.5.6 已于 **2026-09-19 17:35:13（北京时间）** 发布。固定标签、Release 附件回下载、官方隔离安装及 GitHub Packages 注册表回下载均已核验；Linux 全步骤成功，Windows 复现既有 WinError 32，整体 CI 失败。[本版验证目录](../benchmarks/results/v0.5.6/README.md)保存本地与远端回执。
 
 | 环节 | 当前结果 |
 |---|---|
@@ -12,7 +12,10 @@
 | 指令计数与合成检查 | [本版重测](../benchmarks/results/v0.5.6/tokens.md)固定指令输入；[四组容量](../benchmarks/results/v0.5.6/scaling.json)和[三类旧库迁移](../benchmarks/results/v0.5.6/migration.json)通过，不作为文学质量结论 |
 | 本地 ZIP | [构建回执](../benchmarks/results/v0.5.6/package.json)：33 个技能文件，SHA-256 `d82f7cb7f195260f26b65ea155f515b579ff672cd9da03fbd6467775fffcaba2` |
 | 本地 npm 包 | [构建](../benchmarks/results/v0.5.6/npm-package.json)与[载荷核验](../benchmarks/results/v0.5.6/npm-verify.json)通过，33 个技能文件与 ZIP 一致 |
-| GitHub 发布 | 待固定标签、Release 回下载、隔离安装、Packages 回下载及远端 CI 验证 |
+| 固定标签与 Release | `v0.5.6` → `9026008907991c0c87eab86f97a9ceb6b8454e8c`；[Release](https://github.com/NingCui29/story-skill/releases/tag/v0.5.6) 的 ZIP/checksum 已回下载，服务端摘要与固定提交的 33 个技能文件一致。[发布核验](../benchmarks/results/v0.5.6/release/release.json) |
+| 官方固定标签安装 | [隔离安装](../benchmarks/results/v0.5.6/release/remote-install.json) 7 技能、33 文件与 Release 一致；版本、帮助、初始化和状态四项通过，本机现有安装未改 |
+| 远端 CI | [两次运行](../benchmarks/results/v0.5.6/release/ci.json)：Linux 全步骤成功；Windows 在报告导出时复现 `WinError 32`，后续步骤跳过，整体 CI 失败 |
+| GitHub Packages | [工作流 35435102680](https://github.com/NingCui29/story-skill/actions/runs/35435102680) 成功发布公开包 `@ningcui29/story-codex@0.5.6` 并从注册表回下载；[工作流回执](../benchmarks/results/v0.5.6/release/packages.json)和回下载归档的[独立复核](../benchmarks/results/v0.5.6/release/packages-independent.json)确认 33 个载荷文件、2 个包装文件与本地构建一致 |
 
 ## v0.5.5 发布验证记录
 
@@ -180,7 +183,7 @@ Codex 先读取仓库 [INSTALL.md](../INSTALL.md)，按照其中的固定版本�
 
 ## 手动复查：固定版本与安装器参数
 
-下列命令使用固定版本 v0.5.6；在本页顶部确认远端发布与回下载验收完成后再执行。本机官方安装器支持一次 `--path` 接收多个路径。需要手动安装到没有同名技能的目录时，macOS／Linux 使用以下参数；Windows 将 `--ref` 改为 `v0.4.0`；`<skill-installer目录>` 由 Codex 定位到本机实际路径：
+下列命令使用已发布并核验的固定版本 v0.5.6，实际范围见本页顶部。本机官方安装器支持一次 `--path` 接收多个路径。需要手动安装到没有同名技能的目录时，macOS／Linux 使用以下参数；Windows 将 `--ref` 改为 `v0.4.0`；`<skill-installer目录>` 由 Codex 定位到本机实际路径：
 
 ```bash
 python3 "<skill-installer目录>/scripts/install-skill-from-github.py" --repo NingCui29/story-skill --ref v0.5.6 --path skills/story-codex skills/story-codex-plan skills/story-codex-write skills/story-codex-analyze skills/story-codex-review skills/story-codex-research skills/story-codex-cover
@@ -307,7 +310,7 @@ python3 -B -X utf8 scripts/package.py
 python3 -B -X utf8 scripts/sync_packages.py --tag v0.3.0 --prepare-only
 ```
 
-发布后应确认工作流完成注册表回下载，并独立复核其归档产物。以下为具备相应下载权限时的命令；当前本地构建结果不代表注册表已经发布：
+本版工作流已完成注册表回下载，其归档产物也经过独立复核。以下为具备相应下载权限时的命令；本机账号缺少 `read:packages` 范围，本机直连查询未作为发布验收依据：
 
 ```bash
 npm pack @ningcui29/story-codex@0.5.6 --registry=https://npm.pkg.github.com

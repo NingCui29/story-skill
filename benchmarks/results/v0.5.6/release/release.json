@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "checked_at": "2026-09-19T09:36:01.057983+00:00",
+  "tag": "v0.5.6",
+  "tag_commit": "9026008907991c0c87eab86f97a9ceb6b8454e8c",
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.5.6",
+  "published_at": "2026-09-19T09:35:13Z",
+  "draft": false,
+  "prerelease": false,
+  "assets": [
+    {
+      "name": "story-codex-0.5.6.zip",
+      "size": 129503,
+      "digest": "sha256:d82f7cb7f195260f26b65ea155f515b579ff672cd9da03fbd6467775fffcaba2",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.6/story-codex-0.5.6.zip"
+    },
+    {
+      "name": "story-codex-0.5.6.zip.sha256",
+      "size": 88,
+      "digest": "sha256:bbdccaa3abf1b9f52cb5ff8aba7731c09d51e6670b3c9ec16ecac8673e27cd42",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.6/story-codex-0.5.6.zip.sha256"
+    }
+  ],
+  "zip_sha256": "d82f7cb7f195260f26b65ea155f515b579ff672cd9da03fbd6467775fffcaba2",
+  "checksum_sha256": "bbdccaa3abf1b9f52cb5ff8aba7731c09d51e6670b3c9ec16ecac8673e27cd42",
+  "skill_files": 33,
+  "zip_matches_local": true,
+  "zip_matches_fixed_tag": true,
+  "checksum_matches_local": true,
+  "server_digests_match": true
+}

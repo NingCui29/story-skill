@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "checked_at": "2026-09-19T09:38:08.852267+00:00",
+  "source": "official skill-installer from GitHub fixed tag v0.5.6",
+  "target": "isolated temporary skills directory",
+  "installed_skills": [
+    "story-codex",
+    "story-codex-analyze",
+    "story-codex-cover",
+    "story-codex-plan",
+    "story-codex-research",
+    "story-codex-review",
+    "story-codex-write"
+  ],
+  "files": 33,
+  "all_file_sha256_match_release_zip": true,
+  "cli": {
+    "version": {
+      "exit_code": 0,
+      "stdout": "0.5.6\n",
+      "stderr": ""
+    },
+    "help": {
+      "exit_code": 0,
+      "stdout": "usage: story.py [-h] [--version]\n                {template,init,status,migrate,audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,export,notes,plan,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,in",
+      "stderr": ""
+    },
+    "init": {
+      "exit_code": 0,
+      "stdout": "{\"created\":\"/private/tmp/story-skill-install-v0.5.6-verify/book\",\"id\":\"deac198f-1758-4c05-bbe7-50d7bb71c201\",\"imported_through\":0,\"kind\":\"long\",\"last_chapter\":0,\"revision\":0,\"schema\":2,\"title\":\"发布隔离检查\"}\n",
+      "stderr": ""
+    },
+    "status": {
+      "exit_code": 0,
+      "stdout": "{\"book\":\"/private/tmp/story-skill-install-v0.5.6-verify/book\",\"cards\":0,\"changed_export_count\":0,\"changed_exports\":[],\"id\":\"deac198f-1758-4c05-bbe7-50d7bb71c201\",\"imported_through\":0,\"integrity\":{\"full_book_verified\":true,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Hash verification is a point-in-time observation; outside editors can save again.\",\"unverified_archive_count\":0,\"verified_",
+      "stderr": ""
+    }
+  },
+  "user_install_untouched": true,
+  "excluded_runtime_cache_files": 4
+}

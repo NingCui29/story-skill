@@ -1,0 +1,139 @@
+{
+  "checked_at": "2026-09-19T09:39:48.615684+00:00",
+  "tag_commit": "9026008907991c0c87eab86f97a9ceb6b8454e8c",
+  "runs": [
+    {
+      "id": 35435065856,
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/35435065856",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "name": "test (ubuntu-latest, 3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/NingCui29/story-skill/actions/runs/35435065856/job/105876217376",
+          "steps": [
+            {
+              "name": "Run regression tests including historical migration",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build the complete skill ZIP",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exercise the local CLI workflow",
+              "conclusion": "success"
+            },
+            {
+              "name": "Replay the reviewed Chinese manuscripts",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exercise multi-line writing and historical revision",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "test (windows-latest, 3.12)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/NingCui29/story-skill/actions/runs/35435065856/job/105876217532",
+          "steps": [
+            {
+              "name": "Run regression tests including historical migration",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Build the complete skill ZIP",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Exercise the local CLI workflow",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Replay the reviewed Chinese manuscripts",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Exercise multi-line writing and historical revision",
+              "conclusion": "skipped"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 35435084001,
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/35435084001",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "name": "test (windows-latest, 3.12)",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/NingCui29/story-skill/actions/runs/35435084001/job/105876264557",
+          "steps": [
+            {
+              "name": "Run regression tests including historical migration",
+              "conclusion": "failure"
+            },
+            {
+              "name": "Build the complete skill ZIP",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Exercise the local CLI workflow",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Replay the reviewed Chinese manuscripts",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Exercise multi-line writing and historical revision",
+              "conclusion": "skipped"
+            }
+          ]
+        },
+        {
+          "name": "test (ubuntu-latest, 3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/NingCui29/story-skill/actions/runs/35435084001/job/105876264749",
+          "steps": [
+            {
+              "name": "Run regression tests including historical migration",
+              "conclusion": "success"
+            },
+            {
+              "name": "Build the complete skill ZIP",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exercise the local CLI workflow",
+              "conclusion": "success"
+            },
+            {
+              "name": "Replay the reviewed Chinese manuscripts",
+              "conclusion": "success"
+            },
+            {
+              "name": "Exercise multi-line writing and historical revision",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "linux_all_steps_success": true,
+  "windows_known_failure": {
+    "test": "test_cli_report_uses_captured_fingerprint_and_rejects_stale_input",
+    "error": "[WinError 32] report.md temporary-file replacement blocked by Windows file lock",
+    "followup_steps_skipped": true
+  },
+  "overall_ci_status": "failure_due_to_windows"
+}

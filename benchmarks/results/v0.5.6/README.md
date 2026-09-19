@@ -9,8 +9,9 @@
 | 合成容量与迁移 | [四组容量](scaling.json)覆盖 400／4,000 章、2,000／20,000 卡与 strict／local；[三类旧库迁移](migration.json)使用生成的 schema 1 夹具，不代表真实用户书库 |
 | ZIP | [package.json](package.json)：33 个技能载荷，SHA-256 `d82f7cb7f195260f26b65ea155f515b579ff672cd9da03fbd6467775fffcaba2`；附件同名 `.zip.sha256` |
 | npm 包 | [npm-package.json](npm-package.json)构建 `@ningcui29/story-codex@0.5.6`；[npm-verify.json](npm-verify.json)逐文件核对 ZIP 与本地 tarball |
-| 固定标签与 Release | 发布后核对标签提交、附件回下载及 SHA-256，不以本地构建代替远端验收 |
-| 平台 CI | 发布提交后读取 Linux／Windows 的实际运行结果；Windows 已知问题单独列明 |
-| GitHub Packages | Release 发布后由工作流同步，再核对注册表回下载的 33 个载荷文件及包装文件 |
+| 固定标签与 Release | `v0.5.6` 固定到 `9026008907991c0c87eab86f97a9ceb6b8454e8c`；[Release](https://github.com/NingCui29/story-skill/releases/tag/v0.5.6) 的 ZIP/checksum 已回下载，服务端摘要、33 个技能文件与固定源码一致。[发布核验](release/release.json) |
+| 官方固定标签安装 | [隔离安装](release/remote-install.json) 7 个技能、33 个文件与 Release 一致；版本、帮助、初始化和状态 4 项命令通过，本机现有安装未改 |
+| 平台 CI | [两次发布提交运行](release/ci.json)的 Linux 全步骤成功；Windows 在既有 `WinError 32` 报告导出处失败，后续步骤跳过，整体 CI 失败 |
+| GitHub Packages | [工作流 35435102680](https://github.com/NingCui29/story-skill/actions/runs/35435102680) 成功发布公开包 `@ningcui29/story-codex@0.5.6` 并从注册表回下载；[工作流回执](release/packages.json)与回下载产物的[独立核验](release/packages-independent.json)确认 33 个载荷文件、2 个包装文件及本地构建摘要一致 |
 
-开发阶段的分析修正、人物选择、试写和审稿分流原始材料仍在各自的 2026-09-19 目录，不追认为本版独立文学评阅。单元测试与文件哈希只能证明对应工程检查，不证明小说质量；远端状态以实际回执更新。
+开发阶段的分析修正、人物选择、试写和审稿分流原始材料仍在各自的 2026-09-19 目录，不追认为本版独立文学评阅。单元测试与文件哈希只能证明对应工程检查，不证明小说质量。固定标签保留发布时快照；main 上的后续文档补记不移动标签或替换附件。
