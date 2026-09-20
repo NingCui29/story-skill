@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "draft": true,
+  "release_id": 392359194,
+  "tag": "v0.5.9",
+  "tag_commit": "d700689a801aab27c5aac3641f3a3369a860d3b4",
+  "url": "https://github.com/NingCui29/story-skill/releases/tag/untagged-292bcdc1f6d6fd5e9a4d",
+  "assets": [
+    {
+      "id": 576415006,
+      "name": "story-codex-0.5.9.zip",
+      "bytes": 135476,
+      "sha256": "8710ed9b01a6e0d70d547eacf8be52ef30d3b22c116c420506d61b4e3276105b",
+      "download_verified": true
+    },
+    {
+      "id": 576415175,
+      "name": "story-codex-0.5.9.zip.sha256",
+      "bytes": 88,
+      "sha256": "9b5d65bd3a2890daa860950f584afc9a929f6b2f294137dbae973d9a24caa7d1",
+      "download_verified": true
+    }
+  ]
+}

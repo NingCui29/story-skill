@@ -2,7 +2,7 @@
 
 Story Codex 是一套面向 Codex 的中文小说技能。你可以从一部参考作品开始拆解写法，也可以直接开一本新书；之后按卷规划、逐章写作、审稿和续写。它把可读稿件与写作进度保存在书目录中，方便换会话接着做。
 
-**当前版本：**macOS／Linux 使用 v0.5.8；Windows 因已知导出问题暂用 v0.4.0。本机已安装技能不会随仓库修改或 GitHub 发布自动更新。[安装指引](INSTALL.md) · [v0.5.8 变化与验证](docs/releases/v0.5.8.md)
+**当前版本：**macOS／Linux 使用 v0.5.9；Windows 因已知导出问题暂用 v0.4.0。本机已安装技能不会随仓库修改或 GitHub 发布自动更新。[安装指引](INSTALL.md) · [v0.5.9 变化与验证](docs/releases/v0.5.9.md)
 
 [安装与升级](#安装与升级) · [拆书怎么用](#拆书怎么用) · [从拆书开始开新书](#从拆书开始新起一本书) · [文件目录](#文件放在哪里) · [文档导航](docs/README.md)
 
@@ -166,6 +166,7 @@ $story-codex-write 写一段约500个汉字的现代生活小说片段。
 
 | 范围 | 状态 |
 |---|---|
+| **v0.5.9** | 明确独立代理交接与自审、独立复核、盲评的边界；正文指导按说话人和意义转折自然分段，交付前检查密集长段，不设统一字数上限。固定标签、Release 附件、隔离安装和 GitHub Packages 已核验；Linux CI 通过，Windows 仍有已知 `WinError 32`。[本版说明](docs/releases/v0.5.9.md) · [发布与校验状态](benchmarks/results/v0.5.9/README.md) |
 | **v0.5.8** | 番茄短篇按图片可见选项在总纲中选择主分类、情节、角色、情绪和背景；长篇标签流程保留。固定标签、Release 附件、隔离安装和 GitHub Packages 已核验；Linux CI 通过，Windows 仍有已知 `WinError 32`。[本版说明](docs/releases/v0.5.8.md) · [发布与校验状态](benchmarks/results/v0.5.8/README.md) |
 | **v0.5.7** | 面向番茄的开书总纲按本书设定记录阅读标签、内容标签及选词依据；固定标签、Release 附件、隔离安装和 GitHub Packages 已核验。Linux CI 通过，Windows 仍有已知 `WinError 32`。[本版说明](docs/releases/v0.5.7.md) · [发布与校验状态](benchmarks/results/v0.5.7/README.md) |
 | **v0.5.6** | 拆书分章与恢复、独立试写、改稿分流、正文纯文本格式和目录交接规范；固定标签、Release 附件、隔离安装及 GitHub Packages 已核验。Linux CI 通过，Windows 仍有已知 `WinError 32`。[本版说明](docs/releases/v0.5.6.md) · [发布与校验状态](benchmarks/results/v0.5.6/README.md) |

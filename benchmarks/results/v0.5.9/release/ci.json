@@ -1,0 +1,64 @@
+{
+  "ok_for_macos_linux_release": true,
+  "overall_ci_success": false,
+  "tag_commit": "d700689a801aab27c5aac3641f3a3369a860d3b4",
+  "runs": [
+    {
+      "id": 35498811424,
+      "event": "push",
+      "head_sha": "d700689a801aab27c5aac3641f3a3369a860d3b4",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/35498811424",
+      "jobs": [
+        {
+          "id": 106046716579,
+          "name": "test (ubuntu-latest, 3.10)",
+          "conclusion": "success",
+          "url": "https://github.com/NingCui29/story-skill/actions/runs/35498811424/job/106046716579",
+          "failed_steps": []
+        },
+        {
+          "id": 106046716591,
+          "name": "test (windows-latest, 3.12)",
+          "conclusion": "failure",
+          "url": "https://github.com/NingCui29/story-skill/actions/runs/35498811424/job/106046716591",
+          "failed_steps": [
+            "Run regression tests including historical migration"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 35498826198,
+      "event": "push",
+      "head_sha": "d700689a801aab27c5aac3641f3a3369a860d3b4",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/35498826198",
+      "jobs": [
+        {
+          "id": 106046755600,
+          "name": "test (windows-latest, 3.12)",
+          "conclusion": "failure",
+          "url": "https://github.com/NingCui29/story-skill/actions/runs/35498826198/job/106046755600",
+          "failed_steps": [
+            "Run regression tests including historical migration"
+          ]
+        },
+        {
+          "id": 106046755780,
+          "name": "test (ubuntu-latest, 3.10)",
+          "conclusion": "success",
+          "url": "https://github.com/NingCui29/story-skill/actions/runs/35498826198/job/106046755780",
+          "failed_steps": []
+        }
+      ]
+    }
+  ],
+  "windows_failure": {
+    "code": "WinError 32",
+    "step": "Run regression tests including historical migration",
+    "observed_in_tag_run_log": true
+  }
+}
