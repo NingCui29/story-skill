@@ -112,5 +112,5 @@
       "scope": "Conservative upstream entry-only comparison. Candidate includes shared entry, review entry and conditional Chinese conflict/payoff reference. Manuscripts, tools and historical revision references are excluded."
     }
   ],
-  "report_path": "benchmarks/results/v0.5.6/tokens.json"
+  "report_path": "benchmarks/results/v0.5.9/tokens.json"
 }
