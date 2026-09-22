@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Run regression tests including historical migration
-        run: python -u -B -X utf8 -m unittest discover -s tests -v -f
+        run: python -u -B -X utf8 -m unittest discover -s tests -v
       - name: Build the complete skill ZIP
         run: python -B -X utf8 scripts/package.py
       - name: Exercise the local CLI workflow

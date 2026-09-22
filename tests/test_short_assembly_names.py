@@ -96,7 +96,7 @@ class ShortAssemblyNameTests(unittest.TestCase):
         initialized = self.create("旧院:最后一把钥匙")
         self.commit(1, "归还", "第1章 归还\n她归还钥匙，从此关上了旧院的门。\n")
         output = self.root / initialized["short_assembly_path"]
-        output.write_text("这份手工原稿必须保留。\n", encoding="utf-8")
+        output.write_bytes("这份手工原稿必须保留。\n".encode("utf-8"))
         with self.assertRaises(story.StoryError) as raised:
             self.book.assemble_short(1)
         self.assertEqual(raised.exception.code, "assembly_conflict")

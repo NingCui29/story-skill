@@ -18,7 +18,7 @@ spec.loader.exec_module(story)
 class ShortAssemblyTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="story-short-assembly-")
-        self.root = Path(self.temp.name) / "书库"
+        self.root = Path(self.temp.name).resolve() / "书库"
         story.Book.create(self.root, "雨夜的钥匙", "short")
         self.book = story.Book(self.root)
         self.draft = self.root / ".story/drafts/章.md"
@@ -33,7 +33,7 @@ class ShortAssemblyTests(unittest.TestCase):
                 "constraints": [], "requires": [], "tags": [], "length": [1, 200],
                 "beats": [{"choice": "她决定行动", "change": "局面发生变化"}]}
         self.book.save_plan(number, plan, self.book.meta("revision"))
-        self.draft.write_text(text, encoding="utf-8")
+        self.draft.write_bytes(text.encode("utf-8"))
         quote = text.splitlines()[1]
         delta = {"book_id": self.book.meta("id"), "base_revision": self.book.meta("revision"),
                  "summary": "她作出了选择。", "changes": [],
@@ -54,7 +54,7 @@ class ShortAssemblyTests(unittest.TestCase):
         self.commit(2, "还钥", "# 第2章 还钥\n她归还钥匙，也还清了欠账。\n")
         command = [sys.executable, "-B", str(TOOL), "assemble-short", "--book", str(self.root),
                    "--final-chapter", "2"]
-        first = subprocess.run(command, capture_output=True, text=True)
+        first = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(first.returncode, 0, first.stderr)
         result = json.loads(first.stdout)
         output = self.root / "雨夜的钥匙.txt"
@@ -96,7 +96,7 @@ class ShortAssemblyTests(unittest.TestCase):
         self.assertFalse(refreshed["updated"])
         self.assertIsNone(refreshed["backup"])
         self.assertIn("欠账亲手注销", output.read_text(encoding="utf-8"))
-        output.write_text("读者手工批注，必须保留。\n", encoding="utf-8")
+        output.write_bytes("读者手工批注，必须保留。\n".encode("utf-8"))
         self.assert_error("assembly_conflict", lambda: self.book.assemble_short(2))
         self.assertEqual(output.read_text(encoding="utf-8"), "读者手工批注，必须保留。\n")
 
@@ -217,7 +217,7 @@ class ShortAssemblyTests(unittest.TestCase):
     def test_safe_export_repairs_chapters_without_overwriting_edited_copy(self):
         self.commit(1, "借钥", "第1章 借钥\n她从门房借到一把钥匙。\n")
         output = Path(self.book.assemble_short(1)["path"])
-        output.write_text("读者手工批注，必须保留。\n", encoding="utf-8")
+        output.write_bytes("读者手工批注，必须保留。\n".encode("utf-8"))
         chapter = self.root / self.book.chapter_path(1)
         chapter.unlink()
         result = self.book.export(safe_only=True)
@@ -242,7 +242,7 @@ class ShortAssemblyTests(unittest.TestCase):
                 if mode == "missing":
                     output.unlink()
                 elif mode == "edited":
-                    output.write_text("读者手工批注，必须保留。\n", encoding="utf-8")
+                    output.write_bytes("读者手工批注，必须保留。\n".encode("utf-8"))
                 result = self.book.export(safe_only=True)
                 self.assertEqual(result["exports_complete"], mode != "edited", result)
                 if mode != "edited":
@@ -255,7 +255,7 @@ class ShortAssemblyTests(unittest.TestCase):
         self.book.close()
         self.temp.cleanup()
         self.temp = tempfile.TemporaryDirectory(prefix="story-long-assembly-")
-        self.root = Path(self.temp.name) / "长篇"
+        self.root = Path(self.temp.name).resolve() / "长篇"
         story.Book.create(self.root, "长篇", "long")
         self.book = story.Book(self.root)
         self.assert_error("short_only", lambda: self.book.assemble_short(1))

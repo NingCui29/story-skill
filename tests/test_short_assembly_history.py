@@ -1,4 +1,5 @@
 """The complete short-story copy follows reviewed historical and outside edits."""
+import hashlib
 from pathlib import Path
 import tempfile
 import unittest
@@ -21,7 +22,7 @@ class ShortAssemblyHistoryTests(unittest.TestCase):
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="story-short-assembly-history-")
-        self.root = Path(self.temp.name) / "书库"
+        self.root = Path(self.temp.name).resolve() / "书库"
         story.Book.create(self.root, "远处的账本", "short")
         self.book = story.Book(self.root)
         self.draft = self.root / "draft.md"
@@ -85,12 +86,14 @@ class ShortAssemblyHistoryTests(unittest.TestCase):
         latest = self.root / self.book.chapter_path(2)
         old_full = self.output.read_bytes()
         outside = self.texts[2].replace("一张收据", "三张收据")
-        latest.write_text(outside, encoding="utf-8")
+        latest.write_bytes(outside.encode("utf-8"))
+        outside_bytes = latest.read_bytes()
         packet = self.book.reconcile(2)
         self.assertEqual(self.output.read_bytes(), old_full)
-        self.assertEqual(packet["external_edit"]["sha256"], story.digest(outside))
+        self.assertEqual(latest.read_bytes(), outside_bytes)
+        self.assertEqual(packet["external_edit"]["sha256"], hashlib.sha256(outside_bytes).hexdigest())
         reviewed = outside + "她把收据分别封好。\n"
-        self.draft.write_text(reviewed, encoding="utf-8")
+        self.draft.write_bytes(reviewed.encode("utf-8"))
         delta = {"book_id": self.book.meta("id"), "base_revision": packet["revision"],
                  "external_sha256": packet["external_edit"]["sha256"],
                  "summary": "她交出钥匙，将三张收据分别封存。", "changes": [],

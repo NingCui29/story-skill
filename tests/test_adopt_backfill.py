@@ -1,4 +1,5 @@
 """Recover omitted short-story chapters without changing the adopted baseline."""
+import hashlib
 import json
 from pathlib import Path
 import sqlite3
@@ -30,7 +31,7 @@ class AdoptBackfillTests(unittest.TestCase):
     def source(self, chapter, text=None):
         path = self.root / f"旧稿第{chapter}章.md"
         text = text or f"第{chapter}章 借钥\n她核对第{chapter}张借据，随后把钥匙放在桌边。\n"
-        path.write_text(text, encoding="utf-8")
+        path.write_bytes(text.encode("utf-8"))
         self.originals[chapter] = text
         return path
 
@@ -74,7 +75,7 @@ class AdoptBackfillTests(unittest.TestCase):
         process = subprocess.run([sys.executable, "-B", str(fixture.TOOL), "adopt-backfill", "--book",
                                   str(self.root), "--chapter", "1", "--draft", str(source), "--summary",
                                   "她核对旧借据，留下钥匙。", "--expect", str(self.revision()),
-                                  "--volume-dir", "第一卷 雨夜"], capture_output=True, text=True)
+                                  "--volume-dir", "第一卷 雨夜"], capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(process.returncode, 0, process.stderr)
         result = json.loads(process.stdout)
         self.assertTrue(result["exports_complete"], result)
@@ -91,7 +92,7 @@ class AdoptBackfillTests(unittest.TestCase):
         receipt = json.loads(row["receipt"])
         self.assertEqual(receipt["quality"], "imported_unverified")
         self.assertEqual(receipt["source_path"], str(source.resolve()))
-        self.assertEqual(receipt["source_sha256"], story.digest(self.originals[1]))
+        self.assertEqual(receipt["source_sha256"], hashlib.sha256(source_bytes).hexdigest())
         self.assertFalse(history.read_dependencies(self.book, 1)["complete"])
         assembled = self.book.assemble_short(3)
         combined = Path(assembled["path"]).read_text(encoding="utf-8")
@@ -166,7 +167,7 @@ class AdoptBackfillTests(unittest.TestCase):
         self.backfill()
         exported = self.root / self.book.chapter_path(1)
         edited = "读者手工批注，保留此修改。\n"
-        exported.write_text(edited, encoding="utf-8")
+        exported.write_bytes(edited.encode("utf-8"))
         before = self.count_records(), self.revision()
         try:
             result = self.backfill()
@@ -182,7 +183,7 @@ class AdoptBackfillTests(unittest.TestCase):
         self.source(1)
         exported = self.root / self.book.chapter_path(2)
         edited = "作者尚未提交的第二章修订，必须保留。\n"
-        exported.write_text(edited, encoding="utf-8")
+        exported.write_bytes(edited.encode("utf-8"))
         self.assert_rejected_without_writes(lambda: self.backfill())
         self.assertEqual(exported.read_text(encoding="utf-8"), edited)
         self.assertIsNone(self.book.db.execute("SELECT 1 FROM chapters WHERE chapter=1").fetchone())
