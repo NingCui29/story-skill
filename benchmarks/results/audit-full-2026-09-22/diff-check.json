@@ -1,0 +1,7 @@
+{
+  "scope": "Whitespace and conflict-marker check for current tracked diff",
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "",
+  "ok": true
+}

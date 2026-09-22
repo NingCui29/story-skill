@@ -114,6 +114,27 @@ class NpmPackageTests(unittest.TestCase):
             "0.5.2": {
                 "package.json": "b1bfe5a491b1302f615184afea6fda544cd0c713a7d2a3a0d960350f897c5ed4",
                 "README.md": "83511010fa3fb2040fb885b1e023cec9a3788033e0ea04d6c9994f0f724525ef"},
+            "0.5.3": {
+                "package.json": "dd2b8142c89cd8e1774a55655ced445ea84d2e6907828372124131e44c6bc712",
+                "README.md": "0b04ab5e5214b6ab9f30dba85fd24c29c73c24046f8164ec5db2ed4826411cd8"},
+            "0.5.4": {
+                "package.json": "61ab7472d3531d2fb5917dd58a27e7cf9da49948b8bfe755ae5108bcc12f725e",
+                "README.md": "7789ad6f60a598f5b7a9e286c147b2491c6a64c84a21af586c415e0ce3b5a73d"},
+            "0.5.5": {
+                "package.json": "9950bd3f92ad074d898ff6422bd498853e5f8cb9a876cac3aed1416d9b30577c",
+                "README.md": "495a7155035c221c97e52b2218a526dc5eb8dc4062aae334f893c9ee10b0c1eb"},
+            "0.5.6": {
+                "package.json": "1559c5efcf8484bf5a10f6f7600ac65e0b2dab8d1092f09ab827a7c1f0523a42",
+                "README.md": "3af27f3c066031f34a0ad5c46dd40194c4e21d82b072896f36dff011a9ab93d5"},
+            "0.5.7": {
+                "package.json": "36b040d158b70f98a19ba34cc228c6a5bc33d76ae6df30fab4ea8e66476d1bee",
+                "README.md": "264022a9ff24628818c42acf549a4d347639f8b833c0250fec8f3ea356aecb4e"},
+            "0.5.8": {
+                "package.json": "e675215fd6aad1c29347447f5c3491715bdeaba2baa72abc68cf39a21ca9d276",
+                "README.md": "637b93a84782abb7468247f752a48ffbcbea9cb89e4342865aa6d4575770b15e"},
+            "0.5.9": {
+                "package.json": "ecd1a20745c32cbaa979de2b407938480d9f8be909408b91ece8e850c48c8f47",
+                "README.md": "22d89e8b2b0c8ec4fa8f71b1294cd4ce536c3754aebb8078feb35213b9d0d053"},
         }
         for version, hashes in expected.items():
             with self.subTest(version=version):
@@ -336,7 +357,7 @@ class NpmSuiteTests(NpmPackageTests):
             npm.payload_files("0.6.0")
 
     def test_new_analysis_references_roundtrip_in_current_patch_only(self):
-        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.6", "0.5.7", "0.5.12"):
+        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.6", "0.5.7", "0.5.9", "0.5.10", "0.5.12"):
             with self.subTest(version=version):
                 self.version = version
                 self.archive = self.root / f"story-codex-{version}.zip"
@@ -354,8 +375,8 @@ class NpmSuiteTests(NpmPackageTests):
                 self.assertEqual(set(result["payload_manifest"]), set(files))
                 self.assertIn(f"固定使用 v{version}", npm.wrapper_files(version)[1]["README.md"].decode())
 
-    def test_current_patch_wrappers_preserve_the_reviewed_platform_scope(self):
-        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7"):
+    def test_historical_patch_wrappers_preserve_the_reviewed_platform_scope(self):
+        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8", "0.5.9"):
             with self.subTest(version=version):
                 manifest, files = npm.wrapper_files(version)
                 readme = files["README.md"].decode("utf-8")
@@ -367,6 +388,21 @@ class NpmSuiteTests(NpmPackageTests):
                 self.assertIn("Windows users should retain the verified v0.4.0 suite.", readme)
                 self.assertIn("preserve the complete book and skill backup first", readme)
                 self.assertIn(f"固定使用 v{version}", readme)
+
+    def test_v0510_and_later_wrappers_include_windows_without_legacy_install_target(self):
+        for version in ("0.5.10", "0.5.12"):
+            with self.subTest(version=version):
+                manifest, files = npm.wrapper_files(version)
+                readme = files["README.md"].decode("utf-8")
+                self.assertEqual(manifest["version"], version)
+                self.assertEqual(manifest["files"], list(npm.TAGGED_SUITE_FILES))
+                self.assertIn("For macOS, Linux and Windows, in Codex, ask:", readme)
+                self.assertIn("Platform scope: macOS, Linux and Windows.", readme)
+                self.assertIn("Consult the matching release verification", readme)
+                self.assertIn("Preserve a complete book and skill backup before upgrading.", readme)
+                self.assertIn(f"固定使用 v{version}", readme)
+                self.assertNotIn("WinError 32", readme)
+                self.assertNotIn("v0.4.0", readme)
 
     def test_release_version_cannot_accept_another_reviewed_layout(self):
         for version, files in (("0.4.0", npm.SUITE_FILES), ("0.4.9", npm.SUITE_FILES),

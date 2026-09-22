@@ -8,6 +8,8 @@
 
 按分支返回的影响范围、状态要求和 review_template 准备修订，用 `history-update` 保存，`history-inspect` 继续取断点。每个受影响章须刷新正文/摘要/依赖及审查，整个候选包另做状态和覆盖审查；`history-publish` 才发布。正文证据变化后的世界记录须在分支 world_changes 中重绑定，或用 retirements 明确撤销，并处理仍引用它的认知/规则；包含通过 world-save 后补的正文基线。分支未发布时原版继续有效。发布后用 `history-inspect` 分页条目的 `affected[].path` 定位当前托管正文（相对于书目录），即使重复发布时 `exported` 为空也可查到。该路径指向当前导出，基线与已保存候选版本仍按各自 SHA 定点读取。不能按章号猜文件名；旧工程仍识别原导出路径，不借历史修订批量搬动文件。
 
+短篇正式 `history-publish` 后，本次明确要求完整成品时，按 [短篇完本与修订交付](../../story-codex-write/references/chapter.md#短篇完本与修订交付) 核对总纲平台分类、全文和实际封面；此前没有全文或封面时也执行首次交付。普通修订已有全文时只核对同步状态、导出回执和实际文件，必要时恢复导出；封面仅在书名、署名、题材或投稿规格变化时复核或修订。未发布的历史候选不刷新正式全文或封面。
+
 `history-inspect --branch B --chapter N` 返回所请求 N 章的 base/candidate 正文及空白 chapter_review_template；顶层 chapter 仍是分支起点，不能用它替代本次请求的章号。先读稿，再填观察和原句。一般 inspection 还给 state_review_template 的精确 before_sha/before，after 不预填：须明确填完整卡片以保持/修改，或 null 删除，并补候选章号、原句和理由。默认50张，可用 --state-offset/--state-limit 分页，单页最多200张。
 
 中断后先用 `history-saved --branch B` 只读取回 `saved.state_changes`、`saved.world_changes` 和 `saved.semantic_review` 的完整已保存内容，包括删除用的 null、引文、理由和整体审查说明。`candidate_chapters` 列出已有候选，正文和逐章审查用 `history-inspect --chapter N` 读取；空白模板不代表原审查未保存。取回结果保留原 hash，`revision` 是分支版本，`current_revision` 是读取快照中的书库版本；过期或已发布分支也可读取，这不表示旧审查重新有效。先核对同一分支版本及当前基线再续改，不能仅换版本号。未保存或已失效的整体审查返回 null。

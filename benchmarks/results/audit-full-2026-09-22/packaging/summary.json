@@ -1,0 +1,40 @@
+{
+  "scope": "Current working-tree local ZIP/npm content verification; no release or registry validation and no publication",
+  "root": "/private/tmp/story-full-content-check-j2_1ru1d",
+  "version": "0.5.9",
+  "ok": true,
+  "source_files": 34,
+  "source_sha256": "0122366e240f6438128c26863a37886bf93d7127f31cdfbb3732340fcd0d285f",
+  "source_stable": true,
+  "archive": "/private/tmp/story-full-content-check-j2_1ru1d/story-codex-0.5.9.zip",
+  "archive_sha256": "dc2e74ef79f346c8af9cb529e7da783abf10ecc87bd3e4e0d8472d60b4b4288e",
+  "npm_tarball": "/private/tmp/story-full-content-check-j2_1ru1d/npm/ningcui29-story-codex-0.5.9.tgz",
+  "npm_sha256": "939c3825de07e2224a7e37aa0f74550bd5220918c94c28715f76225ea3ed9329",
+  "npm_integrity": "sha512-NfvMfGWzgVKlvWfMjxXy2vr39blJz7haAzLU+1NPMe34SCTfNDmH7rInhSUMkLDaurT96o1nb2PktXNYx5Dt8Q==",
+  "npm_launcher": "/private/tmp/story-full-content-check-j2_1ru1d/bin/npm",
+  "npm_cli": "/private/tmp/story-release-npm-10.9.3/package/bin/npm-cli.js",
+  "npm_version": "10.9.3",
+  "node": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "node_version": "v24.19.0",
+  "payload_files": 34,
+  "wrapper_files": 2,
+  "runtime": {
+    "ok": true,
+    "commands": 4,
+    "skills": [
+      "story-codex",
+      "story-codex-analyze",
+      "story-codex-cover",
+      "story-codex-plan",
+      "story-codex-research",
+      "story-codex-review",
+      "story-codex-write"
+    ],
+    "skill_files": 34,
+    "temporary_book_removed": true
+  },
+  "entry_type_cases": 5,
+  "npm_offline": true,
+  "isolated_npm_config": true,
+  "environment_recovery": "Initial PATH had no npm; used existing npm CLI with bundled Node, no dependency installation"
+}

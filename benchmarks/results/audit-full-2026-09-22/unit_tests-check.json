@@ -1,0 +1,31 @@
+{
+  "command": [
+    "/Users/cuining/.local/bin/python3.10",
+    "-B",
+    "-X",
+    "utf8",
+    "/Users/cuining/Documents/GitHub/story-skill/scripts/verify.py",
+    "--unittest-report",
+    "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/audit-full-2026-09-22/unit-tests.json"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "............................................................................................................................................................................................s................................................................................................................................................................................................sssss.........................................s.......................................................................................................................................................................\n----------------------------------------------------------------------\nRan 595 tests in 71.887s\n\nOK (skipped=7)\n",
+  "duration_seconds": 72.853,
+  "status": "passed",
+  "ok": true,
+  "run": 595,
+  "passed": 588,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 7,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+  "discovery_argv": [
+    "unittest",
+    "discover",
+    "-s",
+    "tests"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "scope": "One independent model proofreading execution plus primary-agent reading of each complete output; developer-created samples, no pre-change comparison or literary superiority claim",
+  "cases": 12,
+  "corrected_ids": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05"
+  ],
+  "ambiguous_preserved_ids": [
+    "06"
+  ],
+  "valid_preserved_ids": [
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12"
+  ],
+  "input_output_identity_verified": true,
+  "reading_result": "Corrections address subject omission, 的/地, quoted sentence terminator, medial speech tag punctuation and explicitly declarative sentence ending. Ambiguous pronoun marked; dialogue ellipsis, nested and multiparagraph quotations, punctuation combinations, code/URL/decimal/chat symbols and embedded quotation retained.",
+  "ok": true,
+  "source_rule_sha256": {
+    "skills/story-codex-review/SKILL.md": "d10cf3161b23bfb0bf1a4e910ce78676c742c2872f7d38d3931720a595f2e80c",
+    "skills/story-codex-write/references/drama.md": "fbcf12dd6d665a5a2a2296be8455110f0d6bbc25580b926fac088407bc28999a",
+    "skills/story-codex-write/references/chapter.md": "efa24f55a218e6d005a16a4b12b17c4caea048aaf7f7fba8825307deafec8c57"
+  }
+}

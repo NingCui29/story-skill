@@ -170,13 +170,21 @@ def wrapper_files(version):
         readme = readme.replace(previous_request,
             "$skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md "
             f"安装或升级 Story Codex，固定使用 v{version}。")
-    if re.fullmatch(r"0\.5\.([1-9][0-9]*)", version):
+    patch = re.fullmatch(r"0\.5\.([1-9][0-9]*)", version)
+    if patch and int(patch.group(1)) < 10:
         readme = readme.replace("In Codex, ask:", "For macOS/Linux, in Codex, ask:")
         readme = readme.replace("The shared Python runtime is", (
             f"Platform scope: v{version} is released for macOS/Linux. Windows manuscript and report "
             "export still has the known WinError 32 limitation; Windows users should retain "
             "the verified v0.4.0 suite. Do not automatically downgrade a book already processed "
             "by v0.5.x; preserve the complete book and skill backup first.\n\n"
+            "The shared Python runtime is"))
+    elif patch:
+        readme = readme.replace("In Codex, ask:", "For macOS, Linux and Windows, in Codex, ask:")
+        readme = readme.replace("The shared Python runtime is", (
+            "Platform scope: macOS, Linux and Windows. Consult the matching release verification "
+            "for the tested environments and remaining limitations. Preserve a complete book "
+            "and skill backup before upgrading.\n\n"
             "The shared Python runtime is"))
     return manifest, {
         "package.json": (json.dumps(manifest, ensure_ascii=False, indent=2) + "\n").encode("utf-8"),

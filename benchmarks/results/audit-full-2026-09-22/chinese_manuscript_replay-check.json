@@ -1,0 +1,655 @@
+{
+  "command": [
+    "/Users/cuining/.local/bin/python3.10",
+    "-B",
+    "-X",
+    "utf8",
+    "/Users/cuining/Documents/GitHub/story-skill/scripts/chinese_acceptance.py",
+    "--output",
+    "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/audit-full-2026-09-22/chinese.json"
+  ],
+  "exit_code": 0,
+  "stdout": "{\"ok\": true, \"books\": [\"渡口夜账\", \"留半寸\"], \"retained_workdir\": null}\n",
+  "stderr": "",
+  "duration_seconds": 12.278,
+  "status": "passed",
+  "result": {
+    "ok": true,
+    "method": "Fixed original manuscripts with recorded semantic review, replayed through real CLI subprocesses; no new model evaluation",
+    "retained_workdir": null,
+    "runtime_sha256": "7d9f619655be6823bb4a05e994ec9f5216d08fb4897c8e4bc3dfe9491eeaa839",
+    "books": [
+      {
+        "title": "渡口夜账",
+        "kind": "long",
+        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/渡口夜账",
+        "chapters": [
+          {
+            "draft": "drafts/01.md",
+            "chapter": 1,
+            "mode": "next",
+            "sha256": "2fd4f5bc9e4e017cd6d32d313c5621ab8aaec972e36f231560534ebc20444296",
+            "lint": {
+              "count_method": "visible_nonspace_v1",
+              "count_scope": "body_and_lead_without_first_title",
+              "counts": {
+                "han_v1": 1879,
+                "letters_numbers_v1": 1879,
+                "visible_nonspace_v1": 2260
+              },
+              "draft_sha256": "2fd4f5bc9e4e017cd6d32d313c5621ab8aaec972e36f231560534ebc20444296",
+              "errors": [],
+              "length_count": 2260,
+              "ok": true,
+              "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/渡口夜账/chapters/第一卷 渡口夜账/第1章 没销的借条.md",
+              "unicode_version": "13.0.0",
+              "visible_chars": 2260,
+              "warnings": []
+            },
+            "context_bytes": 8276,
+            "revision": 5,
+            "idempotent_retry": true,
+            "resumed_committed_export": false
+          },
+          {
+            "draft": "drafts/02.md",
+            "chapter": 2,
+            "mode": "next",
+            "sha256": "da19c8ca5f4738c5921ec6567e515140e99aaf0410eb1ce32135a7f8f7d9e592",
+            "lint": {
+              "count_method": "visible_nonspace_v1",
+              "count_scope": "body_and_lead_without_first_title",
+              "counts": {
+                "han_v1": 1892,
+                "letters_numbers_v1": 1892,
+                "visible_nonspace_v1": 2240
+              },
+              "draft_sha256": "da19c8ca5f4738c5921ec6567e515140e99aaf0410eb1ce32135a7f8f7d9e592",
+              "errors": [],
+              "length_count": 2240,
+              "ok": true,
+              "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/渡口夜账/chapters/第一卷 渡口夜账/第2章 旧机一台.md",
+              "unicode_version": "13.0.0",
+              "visible_chars": 2240,
+              "warnings": []
+            },
+            "context_bytes": 9591,
+            "revision": 6,
+            "idempotent_retry": true,
+            "resumed_committed_export": false
+          },
+          {
+            "draft": "drafts/03.md",
+            "chapter": 3,
+            "mode": "next",
+            "sha256": "9f6bceb6f09072cdc0cc06f529795b77ea65f1ac2177ac9a69b99359334bb8a1",
+            "lint": {
+              "count_method": "visible_nonspace_v1",
+              "count_scope": "body_and_lead_without_first_title",
+              "counts": {
+                "han_v1": 2003,
+                "letters_numbers_v1": 2011,
+                "visible_nonspace_v1": 2346
+              },
+              "draft_sha256": "9f6bceb6f09072cdc0cc06f529795b77ea65f1ac2177ac9a69b99359334bb8a1",
+              "errors": [],
+              "length_count": 2346,
+              "ok": true,
+              "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/渡口夜账/chapters/第一卷 渡口夜账/第3章 两个去处.md",
+              "unicode_version": "13.0.0",
+              "visible_chars": 2346,
+              "warnings": []
+            },
+            "context_bytes": 10032,
+            "revision": 7,
+            "idempotent_retry": true,
+            "resumed_committed_export": false
+          },
+          {
+            "draft": "drafts/03-r1.md",
+            "chapter": 3,
+            "mode": "replace_last",
+            "sha256": "276c57114538ee387f5c82505d3d0b525fdbcb0137af6193cb9cafa98d55d787",
+            "lint": {
+              "count_method": "visible_nonspace_v1",
+              "count_scope": "body_and_lead_without_first_title",
+              "counts": {
+                "han_v1": 2004,
+                "letters_numbers_v1": 2012,
+                "visible_nonspace_v1": 2347
+              },
+              "draft_sha256": "276c57114538ee387f5c82505d3d0b525fdbcb0137af6193cb9cafa98d55d787",
+              "errors": [],
+              "length_count": 2347,
+              "ok": true,
+              "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/渡口夜账/chapters/第一卷 渡口夜账/第3章 两个去处.md",
+              "unicode_version": "13.0.0",
+              "visible_chars": 2347,
+              "warnings": []
+            },
+            "context_bytes": 10040,
+            "revision": 8,
+            "idempotent_retry": true,
+            "resumed_committed_export": false
+          },
+          {
+            "draft": "drafts/03-r2.md",
+            "chapter": 3,
+            "mode": "reconcile_last",
+            "sha256": "1cc3165c3a5b1f8d4df740ff65e60ddec839fc29b94edc22f9c598f68354aede",
+            "lint": {
+              "count_method": "visible_nonspace_v1",
+              "count_scope": "body_and_lead_without_first_title",
+              "counts": {
+                "han_v1": 2191,
+                "letters_numbers_v1": 2199,
+                "visible_nonspace_v1": 2564
+              },
+              "draft_sha256": "1cc3165c3a5b1f8d4df740ff65e60ddec839fc29b94edc22f9c598f68354aede",
+              "errors": [],
+              "length_count": 2564,
+              "ok": true,
+              "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/渡口夜账/chapters/第一卷 渡口夜账/第3章 两个去处.md",
+              "unicode_version": "13.0.0",
+              "visible_chars": 2564,
+              "warnings": []
+            },
+            "context_bytes": 10456,
+            "revision": 10,
+            "idempotent_retry": true,
+            "resumed_committed_export": false
+          }
+        ],
+        "recovery": {
+          "missing_chapter_restored": true,
+          "outside_draft_preserved": true,
+          "remaining_changes": [
+            "chapters/第一卷 渡口夜账/第3章 两个去处.md"
+          ]
+        },
+        "analysis": null,
+        "status": {
+          "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/渡口夜账",
+          "cards": 14,
+          "changed_export_count": 0,
+          "changed_exports": [],
+          "id": "73ca5758-082f-43cd-aacf-4f1fb0bf4193",
+          "imported_through": 0,
+          "integrity": {
+            "full_book_verified": true,
+            "last_full_audit_revision": 10,
+            "mode": "strict",
+            "note": "Hash verification is a point-in-time observation; outside editors can save again.",
+            "unverified_archive_count": 0,
+            "verified_file_count": 3
+          },
+          "kind": "long",
+          "last_chapter": 3,
+          "more_sources": false,
+          "next_chapter": 4,
+          "pending_export_count": 0,
+          "pending_exports": [],
+          "recent_sources": [],
+          "revision": 10,
+          "short_assembly": null,
+          "short_assembly_path": null,
+          "sources": 0,
+          "title": "渡口夜账"
+        },
+        "commands": [
+          {
+            "command": "init",
+            "exit_code": 0
+          },
+          {
+            "command": "notes",
+            "exit_code": 0
+          },
+          {
+            "command": "status",
+            "exit_code": 0
+          },
+          {
+            "command": "plan",
+            "exit_code": 0
+          },
+          {
+            "command": "status",
+            "exit_code": 0
+          },
+          {
+            "command": "plan",
+            "exit_code": 0
+          },
+          {
+            "command": "status",
+            "exit_code": 0
+          },
+          {
+            "command": "plan",
+            "exit_code": 0
+          },
+          {
+            "command": "context",
+            "exit_code": 0
+          },
+          {
+            "command": "prepare",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "context",
+            "exit_code": 0
+          },
+          {
+            "command": "prepare",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "context",
+            "exit_code": 0
+          },
+          {
+            "command": "prepare",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "context",
+            "exit_code": 0
+          },
+          {
+            "command": "prepare",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "status",
+            "exit_code": 0
+          },
+          {
+            "command": "plan",
+            "exit_code": 0
+          },
+          {
+            "command": "reconcile",
+            "exit_code": 2
+          },
+          {
+            "command": "export",
+            "exit_code": 2
+          },
+          {
+            "command": "export",
+            "exit_code": 2
+          },
+          {
+            "command": "reconcile",
+            "exit_code": 0
+          },
+          {
+            "command": "prepare",
+            "exit_code": 0
+          },
+          {
+            "command": "reconcile",
+            "exit_code": 0
+          },
+          {
+            "command": "reconcile",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "status",
+            "exit_code": 0
+          }
+        ],
+        "scenario_sha256": "a09619ff9ce955e86dc99d71c2f9355fb0c72ca8c4da6b178f8e6124836d42ae"
+      },
+      {
+        "title": "留半寸",
+        "kind": "short",
+        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/留半寸",
+        "chapters": [
+          {
+            "draft": "drafts/01.md",
+            "chapter": 1,
+            "mode": "next",
+            "sha256": "f3e5fe8e806e066578e4354104df318ea77ff16432b362492b81dbca6ea5d3fb",
+            "lint": {
+              "count_method": "visible_nonspace_v1",
+              "count_scope": "body_and_lead_without_first_title",
+              "counts": {
+                "han_v1": 1781,
+                "letters_numbers_v1": 1781,
+                "visible_nonspace_v1": 2108
+              },
+              "draft_sha256": "f3e5fe8e806e066578e4354104df318ea77ff16432b362492b81dbca6ea5d3fb",
+              "errors": [],
+              "length_count": 2108,
+              "ok": true,
+              "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/留半寸/chapters/第一卷 留半寸/第1章 留半寸.md",
+              "unicode_version": "13.0.0",
+              "visible_chars": 2108,
+              "warnings": []
+            },
+            "context_bytes": 1922,
+            "revision": 3,
+            "idempotent_retry": true,
+            "resumed_committed_export": false
+          }
+        ],
+        "recovery": null,
+        "analysis": {
+          "coverage": {
+            "analyzed": 2,
+            "chunks_total": 2,
+            "complete_for_imported_text": true,
+            "next_chunk": null,
+            "pending": 0,
+            "report_path": ".story/analysis/71468575e14ea2321f98e6c8c88213c74677128eb1d046aaf2d7b6b1cf4cef3e/report.md",
+            "source": "71468575e14ea2321f98e6c8c88213c74677128eb1d046aaf2d7b6b1cf4cef3e",
+            "source_coverage": "complete",
+            "text_coverage_contiguous": true
+          },
+          "resumed_ordinals": [
+            1,
+            2
+          ],
+          "source_sha256": "71468575e14ea2321f98e6c8c88213c74677128eb1d046aaf2d7b6b1cf4cef3e",
+          "report_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/留半寸_拆文/.story/analysis/71468575e14ea2321f98e6c8c88213c74677128eb1d046aaf2d7b6b1cf4cef3e/report.md",
+          "report_sha256": "22619a85401269bac1e77552b59888899aa0cddda8fbeea6d698e382df79159f"
+        },
+        "status": {
+          "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-43ag2uds/留半寸",
+          "cards": 3,
+          "changed_export_count": 0,
+          "changed_exports": [],
+          "id": "78c1817a-9183-41f8-a539-d453b828987f",
+          "imported_through": 0,
+          "integrity": {
+            "full_book_verified": true,
+            "last_full_audit_revision": 3,
+            "mode": "strict",
+            "note": "Hash verification is a point-in-time observation; outside editors can save again.",
+            "unverified_archive_count": 0,
+            "verified_file_count": 1
+          },
+          "kind": "short",
+          "last_chapter": 1,
+          "more_sources": false,
+          "next_chapter": 2,
+          "pending_export_count": 0,
+          "pending_exports": [],
+          "recent_sources": [],
+          "revision": 3,
+          "short_assembly": null,
+          "short_assembly_path": "留半寸.txt",
+          "sources": 0,
+          "title": "留半寸"
+        },
+        "commands": [
+          {
+            "command": "init",
+            "exit_code": 0
+          },
+          {
+            "command": "notes",
+            "exit_code": 0
+          },
+          {
+            "command": "status",
+            "exit_code": 0
+          },
+          {
+            "command": "plan",
+            "exit_code": 0
+          },
+          {
+            "command": "context",
+            "exit_code": 0
+          },
+          {
+            "command": "prepare",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "commit",
+            "exit_code": 0
+          },
+          {
+            "command": "recall",
+            "exit_code": 0
+          },
+          {
+            "command": "status",
+            "exit_code": 0
+          },
+          {
+            "command": "init",
+            "exit_code": 0
+          },
+          {
+            "command": "ingest",
+            "exit_code": 0
+          },
+          {
+            "command": "next",
+            "exit_code": 0
+          },
+          {
+            "command": "record",
+            "exit_code": 0
+          },
+          {
+            "command": "next",
+            "exit_code": 0
+          },
+          {
+            "command": "record",
+            "exit_code": 0
+          },
+          {
+            "command": "next",
+            "exit_code": 0
+          },
+          {
+            "command": "findings",
+            "exit_code": 0
+          },
+          {
+            "command": "report",
+            "exit_code": 0
+          },
+          {
+            "command": "coverage",
+            "exit_code": 0
+          }
+        ],
+        "scenario_sha256": "39a0c5113e93eb722fef4cedd665f09c14eb2bea64401db9bdcde68fd7bfd124"
+      }
+    ]
+  }
+}

@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.5.9"
+VERSION = "0.5.10"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -60,6 +60,25 @@ def filename_component(value, name):
             len(value.encode("utf-8")) > 180):
         fail("invalid_input", f"{name} must be a portable filename component")
     return value
+
+
+def book_text_filename(title):
+    """Keep the full title as metadata; choose a stable portable reading-copy name."""
+    title = text_field(title, "title", 200)
+    replacements = str.maketrans('<>:"/\\|?*', '＜＞：＂／＼｜？＊')
+    component = title.translate(replacements)
+    component = "".join("_" if unicodedata.category(char).startswith("C") or char in "\u2028\u2029"
+                        else char for char in component).strip().rstrip(". ")
+    if not component:
+        component = "作品-" + digest(title)[:8]
+    if re.fullmatch(r"(?i:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\..*)?", component):
+        component = "_" + component
+    if len(component) > 100 or len(component.encode("utf-8")) > 180:
+        suffix = "-" + digest(title)[:8]
+        while len(component) + len(suffix) > 100 or len((component + suffix).encode("utf-8")) > 180:
+            component = component[:-1]
+        component = component.rstrip(". ") + suffix
+    return filename_component(component, "book output filename") + ".txt"
 
 
 VOLUME_DIRECTORY = re.compile(r"(第[0-9０-９零〇一二三四五六七八九十百千万两]+卷)\s+(\S.*)")
@@ -143,12 +162,13 @@ def safe_path(root, relative):
 
 
 @contextmanager
-def _windows_path_handle(path, directory=False):
+def _windows_path_handle(path, directory=False, write_shared=False):
     """Pin Windows parents against rename/reparse replacement without hard links.
 
-    CreateFileW opens reparse points themselves so they can be rejected. Parent
-    handles share read access only: ordinary child-file operations still work,
-    while directory deletion/rename and writable reparse handles cannot race us.
+    CreateFileW opens reparse points themselves so they can be rejected. Strict
+    directory opens initially deny write/delete sharing. A caller may allow
+    write sharing only while a pinned child keeps that directory nonempty;
+    delete sharing remains disabled to prevent directory replacement.
     https://learn.microsoft.com/windows/win32/api/fileapi/nf-fileapi-createfilew
     """
     import ctypes
@@ -176,7 +196,7 @@ def _windows_path_handle(path, directory=False):
     # FILE_TRAVERSE as well as FILE_READ_ATTRIBUTES so withholding share-delete
     # actually pins each directory; no listing, write or delete access is needed.
     handle = kernel.CreateFileW(name, 0xA0 if directory else 0x80000000,
-                                0x1 if directory else 0x7, None, 3,
+                                (0x3 if write_shared else 0x1) if directory else 0x7, None, 3,
                                 0x00200000 | (0x02000000 if directory else 0), None)
     if handle == ctypes.c_void_p(-1).value:
         raise ctypes.WinError(ctypes.get_last_error())
@@ -194,6 +214,37 @@ def _windows_path_handle(path, directory=False):
 
 
 @contextmanager
+def _windows_directory_guard(path):
+    """Keep the leaf nonempty; close deletes the guard without a path-based race.
+
+    NTFS rejects reparse-point conversion of a nonempty directory. Denying
+    delete/write sharing on this child keeps it present and unchanged until
+    the enclosing directory pin is released. No hard-link support is needed.
+    https://learn.microsoft.com/windows/win32/fileio/reparse-points
+    """
+    import ctypes
+    from ctypes import wintypes
+    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+    kernel.CreateFileW.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD,
+                                  wintypes.LPVOID, wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+    kernel.CreateFileW.restype = wintypes.HANDLE
+    kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+    kernel.CloseHandle.restype = wintypes.BOOL
+    name = str(path / (".story-pin-" + uuid.uuid4().hex))
+    if not name.startswith("\\\\?\\"):
+        name = "\\\\?\\UNC\\" + name[2:] if name.startswith("\\\\") else "\\\\?\\" + name
+    # DELETE | FILE_READ_ATTRIBUTES, FILE_SHARE_READ, CREATE_NEW;
+    # DELETE_ON_CLOSE | OPEN_REPARSE_POINT | TEMPORARY.
+    handle = kernel.CreateFileW(name, 0x10080, 0x1, None, 1, 0x04200100, None)
+    if handle == ctypes.c_void_p(-1).value:
+        raise ctypes.WinError(ctypes.get_last_error())
+    try:
+        yield
+    finally:
+        kernel.CloseHandle(handle)
+
+
+@contextmanager
 def _pinned_directory(path, create=False, exclusive=False):
     """Traverse once without following links; keep every parent bound during I/O."""
     from contextlib import ExitStack
@@ -201,16 +252,27 @@ def _pinned_directory(path, create=False, exclusive=False):
     if os.name == "nt":
         with ExitStack() as stack:
             current = Path(path.anchor)
-            stack.enter_context(_windows_path_handle(current, directory=True))
+            strict = stack.enter_context(ExitStack())
+            strict.enter_context(_windows_path_handle(current, directory=True))
             for index, part in enumerate(path.parts[1:]):
-                current = current / part
+                child = current / part
                 if create:
                     try:
-                        current.mkdir()
+                        child.mkdir()
                     except FileExistsError:
                         if exclusive and index == len(path.parts) - 2:
                             raise
-                stack.enter_context(_windows_path_handle(current, directory=True))
+                child_pin = stack.enter_context(ExitStack())
+                child_pin.enter_context(_windows_path_handle(child, directory=True))
+                # The child cannot be removed, so its parent cannot become an
+                # empty reparse point. Allow rename's internal write access to
+                # the parent while continuing to deny deletion of that parent.
+                stack.enter_context(_windows_path_handle(current, directory=True, write_shared=True))
+                strict.close()
+                current, strict = child, child_pin
+            stack.enter_context(_windows_directory_guard(current))
+            stack.enter_context(_windows_path_handle(current, directory=True, write_shared=True))
+            strict.close()
             yield SimpleNamespace(path=path, fd=None)
         return
     if not all(hasattr(os, name) for name in ("O_DIRECTORY", "O_NOFOLLOW")) or os.open not in os.supports_dir_fd:
@@ -397,9 +459,10 @@ def _restore_displaced_file(backup, target):
 def atomic_write(path, content, allowed_hashes, backup):
     """Publish through pinned parents; retain displaced versions for recovery.
 
-    POSIX operations use no-follow directory handles. Windows pins parents with
-    non-delete/non-write-sharing directory handles and uses no-replace rename,
-    which also works on exFAT. If a parent cannot be pinned, nothing is displaced.
+    POSIX operations use no-follow directory handles. Windows prevents parent
+    deletion and reparse conversion while permitting child-file rename; initial
+    publication never replaces an existing target or requires hard links.
+    If a parent cannot be pinned, nothing is displaced.
     """
     from contextlib import ExitStack
     path, backup = Path(path), Path(backup)
@@ -723,6 +786,8 @@ class Book:
                 storage.execute_schema(db, SCHEMA + storage.SCHEMA + search.SCHEMA + world.SCHEMA + history.SCHEMA)
                 values = {"schema": SCHEMA_VERSION, "revision": 0, "last_chapter": 0,
                           "imported_through": 0, "title": title, "kind": kind, "id": str(uuid.uuid4())}
+                if kind == "short":
+                    values["short_assembly_path"] = book_text_filename(title)
                 db.executemany("INSERT INTO meta VALUES (?,?)", [(k, dumps(v)) for k, v in values.items()])
         finally:
             db.close()
@@ -984,6 +1049,9 @@ class Book:
         if self.integrity == "strict":
             return self.db.execute("SELECT path,sha,written_sha FROM artifact_state ORDER BY path").fetchall()
         paths = set(getattr(self, "_local_artifacts", []))
+        assembly = self._short_assembly_record()
+        if assembly:
+            paths.add(assembly["path"])
         paths.add(self.chapter_path(self.meta("last_chapter")))
         marks = ",".join("?" for _ in paths)
         return self.db.execute("SELECT path,sha,written_sha FROM artifact_state WHERE "
@@ -1003,12 +1071,19 @@ class Book:
         written, backups, errors = [], [], {}
         def remember(relative, error):
             item = errors.setdefault(relative, {"path": relative, "message": str(error),
-                "code": error.code if isinstance(error, StoryError) else "io_error"})
+                "code": error.code if isinstance(error, StoryError) else
+                ("sqlite_error" if isinstance(error, sqlite3.Error) else "io_error")})
             if isinstance(error, StoryError):
                 item.setdefault("details", {}).update(error.details)
         # The OS lock serializes compliant state writers. File I/O does not hold a
         # SQLite write transaction; the expected SHA is rechecked before acknowledgement.
         with storage.operation_lock(self):
+            try:
+                self._refresh_short_assembly()
+            except (OSError, StoryError, sqlite3.Error) as error:
+                if not safe_only:
+                    raise
+                remember(self._short_assembly_record()["path"], error)
             rows = self._artifact_rows()
             snapshots = {}
             retired = self._retired_chapters()
@@ -1017,7 +1092,7 @@ class Book:
                     continue
                 try:
                     self._check_artifact(row["path"], row["sha"], row["written_sha"])
-                except (OSError, StoryError) as error:
+                except (OSError, StoryError, sqlite3.Error) as error:
                     if not safe_only:
                         raise
                     remember(row["path"], error)
@@ -1025,7 +1100,7 @@ class Book:
                 try:
                     self._check_artifact(row["path"], row["sha"], row["written_sha"])
                     snapshots[row["path"]] = self._last_artifact_check[1]
-                except (OSError, StoryError) as error:
+                except (OSError, StoryError, sqlite3.Error) as error:
                     if not safe_only:
                         raise
                     remember(row["path"], error)
@@ -1048,7 +1123,7 @@ class Book:
                             if not live or live[0] != row["sha"]:
                                 fail("stale_export", "Queued content changed during export; retry", path=relative)
                             self.db.execute("UPDATE artifact_state SET written_sha=? WHERE path=?", (row["sha"], relative))
-                except (OSError, StoryError) as error:
+                except (OSError, StoryError, sqlite3.Error) as error:
                     if not safe_only:
                         raise
                     remember(relative, error)
@@ -1059,7 +1134,7 @@ class Book:
                     saved = self._retire_chapter(row)
                     if saved:
                         backups.append(saved)
-                except (OSError, StoryError) as error:
+                except (OSError, StoryError, sqlite3.Error) as error:
                     if not safe_only:
                         raise
                     remember(row["path"], error)
@@ -1072,7 +1147,7 @@ class Book:
                     if (row["path"] in errors or self._last_artifact_check[1] != row["sha"] or
                             self._artifact_has_alias(row["path"])):
                         pending.append(row["path"])
-                except (OSError, StoryError) as error:
+                except (OSError, StoryError, sqlite3.Error) as error:
                     changed.append(row["path"])
                     remember(row["path"], error)
                     if not safe_only:
@@ -1082,6 +1157,11 @@ class Book:
                     changed.append(row["path"])
                 else:
                     pending.append(row["path"])
+            assembly = self._short_assembly_status()
+            if assembly and assembly["state"] != "current":
+                unresolved = changed if assembly["state"] == "changed" else pending
+                if assembly["path"] not in unresolved:
+                    unresolved.append(assembly["path"])
             self._verified_paths = len(rows)
             clean = not pending and not changed
             self._health_clean = clean
@@ -1094,12 +1174,143 @@ class Book:
             result = {"exported": written, "backups": backups,
                       "exports_complete": clean if self.integrity == "strict" else (False if not clean else None),
                       "scope_exports_complete": clean, "integrity": self._integrity_report()}
+            if assembly:
+                result["short_assembly"] = assembly
             if safe_only:
                 result.update(safe_only=True, pending_exports=pending[:20], pending_export_count=len(pending),
                     changed_exports=changed[:20], changed_export_count=len(changed),
                     export_errors=list(errors.values())[:20], export_error_count=len(errors))
                 if not clean:
-                    result["recovery"] = "Resolve remaining paths; use reconcile for an outside edit of the latest chapter."
+                    result["recovery"] = "Resolve remaining paths; use reconcile for an outside edit of the latest chapter. For an edited book-title copy, preserve it outside its managed path, then retry export; adopt its changes through chapter review."
+            return result
+
+    def _short_assembly_record(self):
+        row = self.db.execute("SELECT value FROM meta WHERE key='short_assembly'").fetchone()
+        return json.loads(row[0]) if row else None
+
+    def short_assembly_path(self):
+        record = self._short_assembly_record()
+        if record:
+            return record["path"]
+        row = self.db.execute("SELECT value FROM meta WHERE key='short_assembly_path'").fetchone()
+        return json.loads(row[0]) if row else book_text_filename(self.meta("title"))
+
+    def _short_assembly_sources(self):
+        rows = self.db.execute("SELECT chapter,sha FROM chapter_state ORDER BY chapter").fetchall()
+        return {"numbers": [row["chapter"] for row in rows],
+                "chapter_shas": [row["sha"] for row in rows],
+                "chapter_paths": [self.chapter_path(row["chapter"]) for row in rows]}
+
+    def _short_assembly_status(self):
+        record = self._short_assembly_record()
+        if not record:
+            return None
+        sources = self._short_assembly_sources()
+        last = self.meta("last_chapter")
+        source_current = (record.get("format") == 1 and last > 0 and
+            sources["numbers"] == list(range(1, last + 1)) and
+            all(record.get(key) == sources[key] for key in ("chapter_shas", "chapter_paths")))
+        row = self.db.execute("SELECT sha,written_sha FROM artifact_state WHERE path=?",
+                              (record["path"],)).fetchone()
+        registered = bool(row and row["sha"] == record["sha256"])
+        state = "current"
+        try:
+            self._check_artifact(record["path"], record["sha256"], row["written_sha"] if row else None)
+            if self._last_artifact_check[1] is None:
+                state = "missing"
+            elif not source_current or not registered:
+                state = "stale"
+            elif (self._last_artifact_check[1] != row["sha"] or row["written_sha"] != row["sha"] or
+                    self._artifact_has_alias(record["path"])):
+                state = "pending"
+        except (OSError, StoryError):
+            state = "changed"
+        return {"path": record["path"], "state": state, "source_current": source_current,
+                "chapters": len(record["chapter_shas"]), "source_chapters": last,
+                "sha256": record["sha256"]}
+
+    def _queue_short_assembly(self):
+        """Record the desired reading copy durably before any filesystem publication."""
+        title = self.meta("title")
+        relative = self.short_assembly_path()
+        last = self.meta("last_chapter")
+        rows = self.db.execute("SELECT chapter,text,sha FROM chapters ORDER BY chapter").fetchall()
+        if not rows or [row["chapter"] for row in rows] != list(range(1, last + 1)):
+            fail("chapters_incomplete", "Every chapter from 1 through the final chapter must be committed")
+        sections, chapter_shas, chapter_paths = [], [], []
+        for row in rows:
+            number, prose, sha = row["chapter"], row["text"], row["sha"]
+            registered = self.chapter_path(number)
+            artifact = self.db.execute("SELECT sha FROM artifact_state WHERE path=?", (registered,)).fetchone()
+            if digest(prose) != sha or not artifact or artifact["sha"] != sha:
+                fail("state_corrupt", "Chapter and registered export disagree", chapter=number)
+            heading = Path(registered).stem
+            if not re.fullmatch(rf"第{number}章 .+", heading):
+                source_heading = first_chapter_heading(prose)
+                source_title = re.sub(r"^第[0-9０-９零〇一二三四五六七八九十百千万两]+章[\s　:：、.．-]*",
+                                      "", source_heading or "").strip()
+                heading = f"第{number}章 {source_title or '正文'}"
+            # Use the same line boundaries as heading detection, including Unicode separators.
+            lines = prose.lstrip("\ufeff").splitlines()
+            body = "\n".join(lines[1:] if first_chapter_heading(prose) else lines)
+            sections.append(heading + "\n\n" + body.strip("\n"))
+            chapter_shas.append(sha)
+            chapter_paths.append(registered)
+        content = title + "\n\n" + "\n\n".join(sections) + "\n"
+        previous = self._short_assembly_record()
+        row = self.db.execute("SELECT sha,written_sha FROM artifact_state WHERE path=?", (relative,)).fetchone()
+        accepted = previous.get("sha256") if previous and previous["path"] == relative else None
+        try:
+            if row:
+                # An earlier publication may have succeeded before its acknowledgement failed.
+                self._check_artifact(relative, row["sha"], row["written_sha"])
+                accepted = self._last_artifact_check[1] or row["written_sha"]
+            self.queue_artifact(relative, content, accepted_sha=accepted)
+        except StoryError as error:
+            if error.code == "export_conflict":
+                fail("assembly_conflict", "Book-title file was edited outside Story Codex; preserve it before recovery",
+                     path=str(safe_path(self.root, relative)))
+            raise
+        record = {"format": 1, "path": relative, "sha256": digest(content),
+                  "chapter_shas": chapter_shas, "chapter_paths": chapter_paths, "revision": self.meta("revision")}
+        self.set_meta("short_assembly_path", relative)
+        self.set_meta("short_assembly", record)
+        return record
+
+    def _refresh_short_assembly(self):
+        assembly = self._short_assembly_status()
+        if assembly and (not assembly["source_current"] or not self.db.execute(
+                "SELECT 1 FROM artifact_state WHERE path=? AND sha=?",
+                (assembly["path"], assembly["sha256"])).fetchone()):
+            with self.transaction():
+                self._queue_short_assembly()
+
+    def assemble_short(self, final_chapter):
+        """Enable a protected reading copy after every short-story chapter is exported."""
+        integer(final_chapter, "final chapter", 1)
+        if self.meta("kind") != "short":
+            fail("short_only", "Only a short-story book can be assembled")
+        self.integrity = "strict"
+        with storage.operation_lock(self):
+            with self.transaction():
+                last = self.meta("last_chapter")
+                if last != final_chapter:
+                    fail("chapters_incomplete", "Final chapter must match the committed last chapter",
+                         expected=final_chapter, actual=last)
+                pending, changed = self._export_health(include_assembly=False)
+                if pending or changed:
+                    fail("exports_unresolved", "Resolve chapter exports before assembling the short story",
+                         pending=pending[:20], changed=changed[:20])
+                record = self._queue_short_assembly()
+                target = safe_path(self.root, record["path"])
+                existed = target.exists()
+                old_sha = hashlib.sha256(target.read_bytes()).hexdigest() if existed else None
+            # Both the content and its accepted predecessor are committed before publishing.
+            result = self.delivery({"path": str(target), "chapters": final_chapter, "sha256": record["sha256"],
+                                    "source_revision": record["revision"]})
+            complete = result.get("exports_complete") is True
+            result.update(created=complete and not existed, updated=complete and existed and old_sha != record["sha256"],
+                          backup=next((path for path in result.get("backups", []) if Path(path).name == target.name), None))
             return result
 
     def delivery(self, result):
@@ -1113,9 +1324,12 @@ class Book:
                     "export_details": {"code": error.code, **error.details} if isinstance(error, StoryError) else
                                       {"code": "sqlite_error" if isinstance(error, sqlite3.Error) else "io_error"}}
 
-    def _export_health(self):
+    def _export_health(self, include_assembly=True):
         pending, drift = [], []
+        assembly = self._short_assembly_status() if include_assembly else self._short_assembly_record()
         rows = self._artifact_rows()
+        if not include_assembly and assembly:
+            rows = [row for row in rows if row["path"] != assembly["path"]]
         for row in rows:
             try:
                 self._check_artifact(row["path"], row["sha"], row["written_sha"])
@@ -1130,6 +1344,10 @@ class Book:
                 pending.append(row["path"])
             except StoryError:
                 drift.append(row["path"])
+        if include_assembly and assembly and assembly["state"] != "current":
+            unresolved = drift if assembly["state"] == "changed" else pending
+            if assembly["path"] not in unresolved:
+                unresolved.append(assembly["path"])
         self._verified_paths = len(rows)
         self._health_clean = not pending and not drift
         return pending, drift
@@ -1141,6 +1359,8 @@ class Book:
             sources = self.list_sources(0, 3, 6000)
             return {"book": str(self.root), "id": self.meta("id"), "title": self.meta("title"),
                     "kind": self.meta("kind"), "revision": self.meta("revision"),
+                    "short_assembly": self._short_assembly_status(),
+                    "short_assembly_path": self.short_assembly_path() if self.meta("kind") == "short" else None,
                     "last_chapter": self.meta("last_chapter"), "next_chapter": self.meta("last_chapter") + 1,
                     "imported_through": self.meta("imported_through"),
                     "cards": self.db.execute("SELECT count(*) FROM cards").fetchone()[0],
@@ -1628,6 +1848,62 @@ class Book:
         return self.delivery({"adopted_through": chapter, "revision": revision, "path": str(self.root / relative),
                               "quality": "imported_unverified"})
 
+    def adopt_backfill(self, chapter, draft, summary, expected, volume_dir=None):
+        """Fill a missing old short-story chapter without replaying historical state."""
+        integer(chapter, "chapter", 1)
+        integer(expected, "expected revision")
+        summary = text_field(summary, "summary", 800)
+        text = read_text(draft)
+        if "\x00" in text:
+            fail("corrupt_text", "Remove NUL characters before importing historical prose")
+        if not visible_count(text):
+            fail("empty_source", "Cannot import an empty historical chapter")
+        volume = volume_directory(volume_dir) if volume_dir is not None else None
+        source_path = str(Path(draft).resolve())
+        fingerprint = digest(dumps({"chapter": chapter, "source_path": source_path, "sha256": digest(text),
+                                    "summary": summary, "volume_dir": volume}))
+        idempotent = False
+        with self.transaction():
+            if self.meta("kind") != "short":
+                fail("short_only", "Historical backfill is for an adopted short story")
+            through = self.meta("imported_through")
+            if not 1 <= chapter < through:
+                fail("backfill_range", "Fill only missing chapters before the adopted baseline", imported_through=through)
+            existing = self.db.execute("SELECT receipt,sha,summary,imported FROM chapter_state WHERE chapter=?", (chapter,)).fetchone()
+            if existing:
+                receipt = json.loads(existing["receipt"])
+                if (receipt.get("backfill_input_sha256") != fingerprint or not existing["imported"] or
+                        existing["sha"] != digest(text) or existing["summary"] != summary):
+                    fail("chapter_exists", "Historical backfill never replaces an existing chapter; use reviewed history revision",
+                         chapter=chapter)
+                idempotent = True
+            else:
+                if expected != self.meta("revision"):
+                    fail("stale_revision", "State changed; reload status before importing historical prose",
+                         expected=expected, actual=self.meta("revision"))
+                # The chapter's original state changes are unknown. Preserve the current
+                # cards/world/progress and record only its authentic text and provenance.
+                pending, changed = self._export_health()
+                if pending or changed:
+                    fail("exports_unresolved", "Resolve previous exports before importing another historical chapter",
+                         pending=pending[:10], changed=changed[:10])
+                plan_row = self.db.execute("SELECT data FROM plans WHERE chapter=?", (chapter,)).fetchone()
+                plan = json.loads(plan_row[0]) if plan_row else {}
+                if volume is not None:
+                    plan["volume_dir"] = volume
+                relative = self.queue_chapter(chapter, text, plan, imported=True)
+                receipt = {"source_path": source_path, "source_sha256": digest(text), "quality": "imported_unverified",
+                           "backfill_input_sha256": fingerprint, "imported_through": through}
+                self.db.execute("INSERT INTO chapters VALUES (?,?,?,?,?,?,1)",
+                                (chapter, text, digest(text), summary, dumps(receipt), fingerprint))
+                self.index_chapter(chapter, text, summary)
+                self.event("adopt_backfill", {"chapter": chapter, "receipt": receipt, "summary": summary})
+                history.on_commit(self, chapter, {}, receipt, text, digest(text))
+            revision = self.meta("revision")
+            relative = self.chapter_path(chapter)
+        return self.delivery({"backfilled": chapter, "idempotent": idempotent, "revision": revision,
+                              "path": str(self.root / relative), "quality": "imported_unverified"})
+
     def source(self, sid):
         row = self.db.execute("SELECT * FROM sources WHERE id=?", (sid,)).fetchone()
         if not row:
@@ -1965,6 +2241,9 @@ def parser():
     s = command("export", "Repair exports without replacing outside edits")
     s.add_argument("--safe-only", action="store_true",
                    help="Recover known versions and missing files while leaving conflicting paths untouched")
+    s = command("assemble-short", "Assemble all committed short-story chapters into one book-title text file")
+    s.add_argument("--final-chapter", type=int, required=True,
+                   help="Expected last committed chapter; narrative completion requires editorial review")
     for name in ("notes", "plan"):
         s = command(name, "Save cards or a chapter plan with optimistic concurrency")
         s.add_argument("--input", required=True)
@@ -1993,14 +2272,14 @@ def parser():
     s = command("sources", "Find saved source IDs and analysis checkpoints after a new session", 12000)
     s.add_argument("--offset", type=int, default=0)
     s.add_argument("--limit", type=int, default=10)
-    for name in ("lint", "commit", "adopt"):
+    for name in ("lint", "commit", "adopt", "adopt-backfill"):
         s = command(name, "Check, commit, or import one last complete chapter")
         s.add_argument("--chapter", type=int, required=True)
         s.add_argument("--draft", required=True)
         if name == "commit":
             s.add_argument("--input", required=True)
             s.add_argument("--replace-last", action="store_true")
-        if name == "adopt":
+        if name in ("adopt", "adopt-backfill"):
             s.add_argument("--volume-dir", help="Named volume directory, for example 第一卷 雨夜; otherwise use the saved chapter plan")
             s.add_argument("--summary", required=True)
             s.add_argument("--expect", type=int, required=True)
@@ -2055,6 +2334,8 @@ def run(args):
             return book.status()
         if cmd == "export":
             return book.export(safe_only=args.safe_only)
+        if cmd == "assemble-short":
+            return book.assemble_short(args.final_chapter)
         if cmd == "notes":
             return book.save_notes(read_json(args.input), args.expect)
         if cmd == "plan":
@@ -2080,6 +2361,8 @@ def run(args):
             return book.commit(args.chapter, args.draft, read_json(args.input), args.replace_last)
         if cmd == "adopt":
             return book.adopt(args.chapter, args.draft, args.summary, args.expect, args.volume_dir)
+        if cmd == "adopt-backfill":
+            return book.adopt_backfill(args.chapter, args.draft, args.summary, args.expect, args.volume_dir)
         if cmd == "ingest":
             return book.ingest(args.file, args.coverage, args.encoding, args.chunk_chars)
         if cmd == "coverage":

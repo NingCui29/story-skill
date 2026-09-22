@@ -1,0 +1,89 @@
+{
+  "canonical_root": "/Users/cuining/Documents/GitHub/story-skill",
+  "runtime_sha256": "7d9f619655be6823bb4a05e994ec9f5216d08fb4897c8e4bc3dfe9491eeaa839",
+  "all_snapshot_files_stable": true,
+  "changed_files": [],
+  "source_files": 46,
+  "runtime_bindings_match": true,
+  "upgrade_core_binding_matches": true,
+  "old_release_archive_sha256_matches_sidecar": true,
+  "capacity": {
+    "ok": true,
+    "runtime_stable": true,
+    "baseline_unchanged": true,
+    "temporary_data_removed": true,
+    "cases": [
+      {
+        "chapters": 400,
+        "cards": 2000,
+        "integrity": "strict",
+        "ok": true,
+        "operations": 7,
+        "required_card_overload_rejected": true,
+        "context_seconds": 0.432952,
+        "commit_seconds": 1.324242
+      },
+      {
+        "chapters": 400,
+        "cards": 2000,
+        "integrity": "local",
+        "ok": true,
+        "operations": 7,
+        "required_card_overload_rejected": true,
+        "context_seconds": 0.005296,
+        "commit_seconds": 0.0369
+      },
+      {
+        "chapters": 4000,
+        "cards": 20000,
+        "integrity": "strict",
+        "ok": true,
+        "operations": 7,
+        "required_card_overload_rejected": true,
+        "context_seconds": 4.210934,
+        "commit_seconds": 13.248161
+      },
+      {
+        "chapters": 4000,
+        "cards": 20000,
+        "integrity": "local",
+        "ok": true,
+        "operations": 7,
+        "required_card_overload_rejected": true,
+        "context_seconds": 0.014153,
+        "commit_seconds": 0.045406
+      }
+    ]
+  },
+  "migration": {
+    "ok": true,
+    "books": 3,
+    "source_unchanged": true,
+    "runtime_stable": true
+  },
+  "upgrade": {
+    "ok": true,
+    "checks": 16,
+    "from": "0.4.0",
+    "to_source_version": "0.5.9",
+    "all_seven_skills": 7,
+    "temporary_project_removed": true,
+    "current_archive_status": "not_available"
+  },
+  "existing_release_probe": {
+    "ok": false,
+    "expected_boundary": "Retained dist/story-codex-0.5.9.zip differs from unpublished canonical source; it was not replaced.",
+    "failure": {
+      "type": "ValueError",
+      "message": "Upgrade verification failed: current_archive_matches_canonical"
+    }
+  },
+  "reports": {
+    "scaling.json": "bd1e62cf818fb07024046efc94065c4ab47f81525284c74f071dd49168214892",
+    "migration.json": "358cf11ce90903946d701571c3a2a253a8df16a153ac998921968c3876a08f61",
+    "upgrade-canonical-source.json": "15c1a4ef9732fe797ddcc688433e6f0c63a5e781113845bd67adb72b34e302d8",
+    "upgrade-with-existing-release.json": "52b1315e3bad2eec950ee1ee471ca9f0aefd9be8a1687564e8bd509c2f4bf3c9",
+    "source-snapshot.json": "a3c853bd8d00a3a969f155d04b87fde67a912496c62e3d77596ee393cd4abdf7"
+  },
+  "current_source_acceptance_ok": true
+}

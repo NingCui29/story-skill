@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "archive": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-full-check-9uvfmc3x/source-audit.zip",
+  "version": "0.5.9",
+  "sha256": "dc2e74ef79f346c8af9cb529e7da783abf10ecc87bd3e4e0d8472d60b4b4288e",
+  "bytes": 143832,
+  "files": 34,
+  "contents_match_current_skill": true,
+  "missing": [],
+  "extra": [],
+  "changed": [],
+  "duplicate_entries": [],
+  "corrupt_entry": null,
+  "non_regular_entries": []
+}

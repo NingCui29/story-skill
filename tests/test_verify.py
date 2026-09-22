@@ -5,6 +5,7 @@ import io
 import json
 import os
 from pathlib import Path
+import stat
 import tempfile
 import unittest
 import zipfile
@@ -48,6 +49,40 @@ class VerificationEvidenceTests(unittest.TestCase):
                 result = verify.check_archive(archive)
             self.assertEqual(result["status"], "failed")
             self.assertEqual(result["changed"], ["story-codex-write/SKILL.md"])
+
+    def archive_with_member_kind(self, kind):
+        with tempfile.TemporaryDirectory(prefix="story-archive-kind-") as directory:
+            archive = Path(directory) / "story-codex-0.4.0.zip"
+            files = {"story-codex/SKILL.md": b"core", "story-codex-write/SKILL.md": b"writing"}
+            expected = {name: hashlib.sha256(raw).hexdigest() for name, raw in files.items()}
+            with zipfile.ZipFile(archive, "w") as bundle:
+                for name, raw in files.items():
+                    member = zipfile.ZipInfo(name)
+                    member.create_system = 3
+                    member.external_attr = ((kind if name == "story-codex/SKILL.md" else stat.S_IFREG) | 0o644) << 16
+                    bundle.writestr(member, raw)
+            with patch.object(verify, "skill_files", return_value=expected), patch.object(verify, "package_module") as loader:
+                loader.return_value.current_version.return_value = "0.4.0"
+                return verify.check_archive(archive)
+
+    def test_archive_rejects_special_members_even_when_names_and_bytes_match(self):
+        for kind in (stat.S_IFLNK, stat.S_IFIFO, stat.S_IFDIR):
+            with self.subTest(kind=kind):
+                result = self.archive_with_member_kind(kind)
+                self.assertEqual(result["status"], "failed")
+                self.assertFalse(result["contents_match_current_skill"])
+                self.assertEqual(result["non_regular_entries"], ["story-codex/SKILL.md"])
+                self.assertEqual(result["changed"], [])
+                self.assertEqual(result["missing"], [])
+                self.assertEqual(result["extra"], [])
+
+    def test_archive_accepts_regular_and_unspecified_member_types(self):
+        for kind in (stat.S_IFREG, 0):
+            with self.subTest(kind=kind):
+                result = self.archive_with_member_kind(kind)
+                self.assertEqual(result["status"], "passed")
+                self.assertTrue(result["contents_match_current_skill"])
+                self.assertEqual(result["non_regular_entries"], [])
 
     def test_counts_come_from_real_callbacks_including_failed_subtests(self):
         class Example(unittest.TestCase):

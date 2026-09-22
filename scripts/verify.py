@@ -128,17 +128,22 @@ def check_archive(path):
     package.validate_archive_name(path, version)
     expected = skill_files()
     with zipfile.ZipFile(path) as archive:
-        names = archive.namelist()
+        members = archive.infolist()
+        names = [member.filename for member in members]
+        non_regular = sorted(member.filename for member in members
+                             if member.is_dir() or stat.S_IFMT(member.external_attr >> 16)
+                             not in (0, stat.S_IFREG))
         actual = {name: hashlib.sha256(archive.read(name)).hexdigest() for name in names}
         corrupt = archive.testzip()
     mismatches = sorted(name for name in actual.keys() & expected.keys() if actual[name] != expected[name])
     missing, extra = sorted(expected.keys() - actual.keys()), sorted(actual.keys() - expected.keys())
     duplicates = sorted(name for name in set(names) if names.count(name) > 1)
-    matches = not (missing or extra or mismatches or duplicates or corrupt)
+    matches = not (missing or extra or mismatches or duplicates or corrupt or non_regular)
     return {"status": "passed" if matches else "failed", "archive": str(path), "version": version,
             "sha256": digest(path), "bytes": path.stat().st_size, "files": len(names),
             "contents_match_current_skill": matches, "missing": missing, "extra": extra,
-            "changed": mismatches, "duplicate_entries": duplicates, "corrupt_entry": corrupt}
+            "changed": mismatches, "duplicate_entries": duplicates, "corrupt_entry": corrupt,
+            "non_regular_entries": non_regular}
 
 
 def check_benchmark():

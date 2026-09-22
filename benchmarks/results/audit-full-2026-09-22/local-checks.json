@@ -1,0 +1,19 @@
+{
+  "scope": "Unpublished local source checks; no remote release, CI or installed-skill upgrade",
+  "environment": {
+    "platform": "macOS-15.8-x86_64-i386-64bit",
+    "python": "3.10.21",
+    "executable": "/Users/cuining/.local/bin/python3.10"
+  },
+  "checks": {
+    "cli_smoke": "passed",
+    "chinese_manuscript_replay": "passed",
+    "long_form_cli_replay": "passed",
+    "local_markdown_links": "passed",
+    "source_archive": "passed",
+    "isolated_install": "passed",
+    "unit_tests": "passed",
+    "input_stability": "passed"
+  },
+  "ok": true
+}

@@ -14,7 +14,7 @@ description: 中文小说任务总入口与共享规则；在需求跨流程或�
 | 当前请求 | 技能 |
 |---|---|
 | 开书、设定、大纲、导入续写基线 | [story-codex-plan](../story-codex-plan/SKILL.md) |
-| 写正文、继续一章、长短篇连载 | [story-codex-write](../story-codex-write/SKILL.md) |
+| 写正文、继续一章、长短篇连载或短篇完本交付 | [story-codex-write](../story-codex-write/SKILL.md) |
 | 拆文、深读、分析稿修订与续跑 | [story-codex-analyze](../story-codex-analyze/SKILL.md) |
 | 正文审稿、修改、去 AI 味、历史改稿、旧库迁移 | [story-codex-review](../story-codex-review/SKILL.md) |
 | 扫榜、写作素材与资料查证 | [story-codex-research](../story-codex-research/SKILL.md) |

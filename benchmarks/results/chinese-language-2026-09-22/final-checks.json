@@ -1,0 +1,33 @@
+{
+  "scope": "Current language-only change validation",
+  "ok": true,
+  "files_changed_this_turn": {
+    "skills/story-codex-write/references/drama.md": "fbcf12dd6d665a5a2a2296be8455110f0d6bbc25580b926fac088407bc28999a",
+    "skills/story-codex-review/SKILL.md": "d10cf3161b23bfb0bf1a4e910ce78676c742c2872f7d38d3931720a595f2e80c",
+    "skills/story-codex-write/references/chapter.md": "efa24f55a218e6d005a16a4b12b17c4caea048aaf7f7fba8825307deafec8c57",
+    "docs/中文冲突与看点.md": "28d6c07f65e649877b82f90efcdd4271b038ae8c687765b53fe51c0669f0118e",
+    "docs/中文小说上手.md": "98209bb8a0c4613afa7187073aa754887a51b1f0888cdce3a79fd3539e082d7d",
+    "docs/evaluation.md": "c05f3552396df560b7fe9cc151a52bae0ab3323029a8fafd337876182d36299c",
+    "docs/目录结构.md": "84f2ef079a7955f55faef43ae331e0b86c4a2fdd6e15969c8d11f93b7676824a",
+    "docs/recovery.md": "447139865c42dedf2c4dcc7b2bfda370ee8a870e3fa6f2cf471a00e8ce9fc194"
+  },
+  "local_links": {
+    "status": "passed",
+    "files_scanned": 204,
+    "links_checked": 1106,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "changed_file_anchor_checks": {
+    "count": 29,
+    "missing": []
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "prior_audit_evidence_unchanged": true,
+  "new_runtime_tests": false,
+  "new_full_package_or_release_verification": false
+}

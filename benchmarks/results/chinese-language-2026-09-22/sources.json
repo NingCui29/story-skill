@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-09-22",
+  "standard": "GB/T 15834-2011",
+  "status": "现行 推荐性",
+  "status_source": "https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=22EA6D162E4110E752259661E1A0D0A8",
+  "pdf_source": "https://pub.bnu.edu.cn/docs/20171102100137826379.pdf",
+  "pdf_publisher_page": "https://pub.bnu.edu.cn/hzfw/zyxz/39381.html",
+  "pdf_sha256": "30e433119ba2cba77ff8e981ad482de1108810326c91df3aed236cf273616612",
+  "pdf_pages_viewed_one_based": [
+    1,
+    9,
+    10,
+    11,
+    12,
+    21,
+    23,
+    24
+  ],
+  "relevant_sections": [
+    "4.7",
+    "4.8.3.4",
+    "4.8.3.5",
+    "4.10",
+    "4.11",
+    "B.1.5 examples",
+    "B.2.1",
+    "B.2.3",
+    "B.2.4"
+  ],
+  "scope": "Standard status verified on official portal; primary standard scan read from university publishing institute. Original tutorial examples written for this repo; not a verbatim reproduction of the standard."
+}

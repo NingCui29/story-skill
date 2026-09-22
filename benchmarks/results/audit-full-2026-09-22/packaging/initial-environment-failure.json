@@ -1,0 +1,9 @@
+{
+  "scope": "Current working-tree local ZIP/npm content verification; no release or registry validation and no publication",
+  "root": "/private/tmp/story-full-content-check-j2_1ru1d",
+  "ok": false,
+  "error": {
+    "type": "ValueError",
+    "message": "npm is required to build this content package"
+  }
+}

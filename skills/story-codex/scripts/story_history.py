@@ -330,7 +330,7 @@ def _state_at_revision(book, revision):
         manifest = json.loads(_body(book, snap["manifest_sha"]))
         state = {cid: json.loads(_body(book, sha)) for cid, sha in manifest["cards"].items()}
         cursor = snap["revision"]
-    non_card_events = {"plan", "adopt", "analysis", "ingest", "report", "world_save", "history_dependencies",
+    non_card_events = {"plan", "adopt", "adopt_backfill", "analysis", "ingest", "report", "world_save", "history_dependencies",
                        "history_snapshot", "history_branch_start", "history_branch_update", "history_branch_refresh"}
     replayed = 0
     for row in book.db.execute("SELECT revision,kind,data FROM events WHERE revision>? AND revision<=? ORDER BY revision", (cursor, revision)):

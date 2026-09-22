@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "date": "2026-09-22T09:01:51.233672+00:00",
+  "scope": "Current unpublished source on local Intel macOS; not a release receipt or literary-quality evaluation",
+  "runtime_version": "0.5.9",
+  "git_head": "40a5f3515c0f3762c7af20c26d0dbaf83e15816a",
+  "environment": {
+    "platform": "macOS-15.8-x86_64-i386-64bit",
+    "python": "3.10.21"
+  },
+  "checks": {
+    "cli_smoke": "passed",
+    "chinese_manuscript_replay": "passed",
+    "long_form_cli_replay": "passed",
+    "local_markdown_links": "passed",
+    "source_archive": "passed",
+    "isolated_install": "passed",
+    "unit_tests": "passed",
+    "input_stability": "passed",
+    "skill_validation": "passed",
+    "workflow_and_docs": "passed_after_two_documentation_fixes",
+    "capacity": "passed",
+    "migration": "passed",
+    "source_upgrade": "passed",
+    "zip_npm_content_chain": "passed",
+    "static_token_benchmark": "passed",
+    "diff_check": "passed",
+    "final_local_markdown_links": "passed"
+  },
+  "unit_tests": {
+    "ok": true,
+    "status": "passed",
+    "run": 595,
+    "passed": 588,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 7,
+    "expected_failures": 0,
+    "unexpected_successes": 0,
+    "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests"
+  },
+  "fixed_this_audit": [
+    {
+      "file": "docs/超长篇实操.md",
+      "issue": "v0.5.4 applicability statement contradicted use of history-saved introduced in v0.5.5"
+    },
+    {
+      "file": "docs/evaluation.md",
+      "issue": "Historical v0.5.5 incorrectly called current version"
+    }
+  ],
+  "existing_release_bindings": "failed_expected_source_mismatch; original receipts retained",
+  "release_readiness_verified": false,
+  "remote_release_or_ci_verified": false,
+  "windows_verified": false,
+  "new_literary_evaluation": false,
+  "real_install_updated": false,
+  "published": false,
+  "source_files_stable": true,
+  "source_file_count": 100,
+  "current_local_functional_acceptance_ok": true
+}

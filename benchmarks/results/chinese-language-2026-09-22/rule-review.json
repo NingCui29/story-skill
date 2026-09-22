@@ -1,0 +1,14 @@
+{
+  "scope": "Independent semantic review of language guidance and linked workflows; not program tests",
+  "reviewer": "review_workflow_rules",
+  "findings_after_edit": [],
+  "checked": [
+    "multiparagraph quotation scope",
+    "English/code/URL/chat preservation",
+    "oral ellipsis/inversion/interruption/rhetoric",
+    "speech tags and punctuation examples",
+    "review-only vs authorized proofreading vs formal commit",
+    "lint vs reading judgement"
+  ],
+  "result": "passed"
+}

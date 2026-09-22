@@ -1,0 +1,38 @@
+[
+  {
+    "path": "docs/中文小说上手.md",
+    "before_sha256": "d8e891214ef54d46629e94ed11580c20046aa3eee26db14730d98b26de80230f",
+    "after_sha256": "98209bb8a0c4613afa7187073aa754887a51b1f0888cdce3a79fd3539e082d7d",
+    "line": 11,
+    "newline_preserved": true,
+    "links_and_code_unchanged": true,
+    "exact_replacement_only": true
+  },
+  {
+    "path": "docs/evaluation.md",
+    "before_sha256": "930f673b2b4056d826d98372006dd941a96d1480913939f2778c887248d4132f",
+    "after_sha256": "c05f3552396df560b7fe9cc151a52bae0ab3323029a8fafd337876182d36299c",
+    "line": 33,
+    "newline_preserved": true,
+    "links_and_code_unchanged": true,
+    "exact_replacement_only": true
+  },
+  {
+    "path": "docs/目录结构.md",
+    "before_sha256": "cc751c0a5ecbd798f7be6a67be79a594e259803cee23c4073af80ff36309fcba",
+    "after_sha256": "84f2ef079a7955f55faef43ae331e0b86c4a2fdd6e15969c8d11f93b7676824a",
+    "line": 176,
+    "newline_preserved": true,
+    "links_and_code_unchanged": true,
+    "exact_replacement_only": true
+  },
+  {
+    "path": "docs/recovery.md",
+    "before_sha256": "58bff2d017f5aaa5d89a09294d26b5d47c04db4d00ec0dc2d1ee23416f970c45",
+    "after_sha256": "447139865c42dedf2c4dcc7b2bfda370ee8a870e3fa6f2cf471a00e8ce9fc194",
+    "line": 7,
+    "newline_preserved": true,
+    "links_and_code_unchanged": true,
+    "exact_replacement_only": true
+  }
+]

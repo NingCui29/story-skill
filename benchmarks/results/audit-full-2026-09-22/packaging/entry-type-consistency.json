@@ -1,0 +1,51 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "case": "symlink",
+      "archive": "/private/tmp/story-full-content-check-j2_1ru1d/entry-type-cases/symlink/story-codex-0.5.9.zip",
+      "verify_status": "failed",
+      "non_regular_entries": [
+        "story-codex/SKILL.md"
+      ],
+      "npm_accepts": false,
+      "npm_rejection": "Release ZIP contains a linked or special member: story-codex/SKILL.md"
+    },
+    {
+      "case": "fifo",
+      "archive": "/private/tmp/story-full-content-check-j2_1ru1d/entry-type-cases/fifo/story-codex-0.5.9.zip",
+      "verify_status": "failed",
+      "non_regular_entries": [
+        "story-codex/SKILL.md"
+      ],
+      "npm_accepts": false,
+      "npm_rejection": "Release ZIP contains a linked or special member: story-codex/SKILL.md"
+    },
+    {
+      "case": "directory",
+      "archive": "/private/tmp/story-full-content-check-j2_1ru1d/entry-type-cases/directory/story-codex-0.5.9.zip",
+      "verify_status": "failed",
+      "non_regular_entries": [
+        "story-codex/SKILL.md"
+      ],
+      "npm_accepts": false,
+      "npm_rejection": "Release ZIP contains a linked or special member: story-codex/SKILL.md"
+    },
+    {
+      "case": "regular",
+      "archive": "/private/tmp/story-full-content-check-j2_1ru1d/entry-type-cases/regular/story-codex-0.5.9.zip",
+      "verify_status": "passed",
+      "non_regular_entries": [],
+      "npm_accepts": true,
+      "npm_rejection": null
+    },
+    {
+      "case": "unspecified",
+      "archive": "/private/tmp/story-full-content-check-j2_1ru1d/entry-type-cases/unspecified/story-codex-0.5.9.zip",
+      "verify_status": "passed",
+      "non_regular_entries": [],
+      "npm_accepts": true,
+      "npm_rejection": null
+    }
+  ]
+}

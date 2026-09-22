@@ -173,16 +173,25 @@ class RetirementPathRaceTests(unittest.TestCase):
 
     @unittest.skipUnless(sys.platform == "win32", "Requires native Windows directory share locks")
     def test_windows_parent_pin_blocks_rename_but_allows_child_publication(self):
-        parent = self.root / "windows-parent"
+        parent = self.root / "第一卷 雪夜𠮷📖"
         parent.mkdir()
+        moved = parent.with_name("移走的卷目录𠮷")
+        target = parent / "第1章 门后的雨📖.md"
+        stage = parent / "待发布𠮷.tmp"
+        revision = parent / "修订稿📖.tmp"
         with fixture.story._pinned_directory(parent):
             with self.assertRaises(OSError):
-                os.replace(parent, parent.with_name("moved-parent"))
-            (parent / "child.txt").write_bytes(b"ordinary child write")
-        self.assertEqual((parent / "child.txt").read_bytes(), b"ordinary child write")
-        moved = parent.with_name("moved-parent")
+                os.replace(parent, moved)
+            stage.write_bytes("首次正文。\n".encode("utf-8"))
+            os.rename(stage, target)
+            self.assertEqual(target.read_bytes(), "首次正文。\n".encode("utf-8"))
+            revision.write_bytes("修订后的正文。\n".encode("utf-8"))
+            os.replace(revision, target)
+            self.assertEqual(target.read_bytes(), "修订后的正文。\n".encode("utf-8"))
+            self.assertFalse(stage.exists())
+            self.assertFalse(revision.exists())
         os.replace(parent, moved)
-        self.assertEqual((moved / "child.txt").read_bytes(), b"ordinary child write")
+        self.assertEqual((moved / target.name).read_bytes(), "修订后的正文。\n".encode("utf-8"))
 
 
 if __name__ == "__main__":

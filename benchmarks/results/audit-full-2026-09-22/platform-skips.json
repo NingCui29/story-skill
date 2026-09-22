@@ -1,0 +1,34 @@
+{
+  "scope": "Current-platform unittest skip decorators collected by discovery only; tests were not rerun",
+  "count": 7,
+  "tests": [
+    {
+      "id": "test_install_races.InstallationRaceTests.test_windows_publication_refuses_an_empty_target_created_inside_rename",
+      "reason": "Windows rename provides the no-replace guarantee tested here"
+    },
+    {
+      "id": "test_portable_export.PortableWindowsExportTests.test_editor_save_during_restore_is_preserved_with_backup",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "id": "test_portable_export.PortableWindowsExportTests.test_failed_publication_restores_a_copy_and_retains_backup_for_retry",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "id": "test_portable_export.PortableWindowsExportTests.test_first_export_succeeds_without_hard_links",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "id": "test_portable_export.PortableWindowsExportTests.test_recreated_target_wins_over_publication_and_restore",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "id": "test_portable_export.PortableWindowsExportTests.test_revision_preserves_old_backup_without_hard_links",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "id": "test_retirement_path_race.RetirementPathRaceTests.test_windows_parent_pin_blocks_rename_but_allows_child_publication",
+      "reason": "Requires native Windows directory share locks"
+    }
+  ]
+}
