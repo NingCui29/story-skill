@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "commands": 4,
+  "skills": [
+    "story-codex",
+    "story-codex-analyze",
+    "story-codex-cover",
+    "story-codex-plan",
+    "story-codex-research",
+    "story-codex-review",
+    "story-codex-write"
+  ],
+  "skill_files": 34,
+  "temporary_book_removed": true,
+  "version": "0.5.10",
+  "source_commit": "bc443cf7e493bfe0198b5b50de4357ae3ec38c22",
+  "source_files_stable": true,
+  "archive_sha256": "821e896a9cb3066dd6daaf56c921217ece468629622d95c597f19f6733897797",
+  "npm_version": "10.9.3",
+  "scope": "Local offline npm pack and isolated runtime checks; no registry publication or real installation update."
+}

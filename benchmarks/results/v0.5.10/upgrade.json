@@ -1,0 +1,481 @@
+{
+  "schema": 1,
+  "date": "2026-09-22T10:25:34.778402+00:00",
+  "ok": true,
+  "method": "Prior release ZIP installed and upgraded through real install.py CLI subprocesses",
+  "scope": "Managed skill files, backup bytes, update idempotency, installed version and prepare CLI help",
+  "environment": {
+    "platform": "macOS-15.8-x86_64-i386-64bit",
+    "python": "3.10.21",
+    "executable": "/Users/cuining/.local/bin/python3.10"
+  },
+  "commands": [
+    {
+      "name": "install_old_release",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/旧版安装源/scripts/install.py",
+        "--project",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\": \"installed\", \"path\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/skills\", \"skills\": [\"story-codex\", \"story-codex-plan\", \"story-codex-write\", \"story-codex-analyze\", \"story-codex-review\", \"story-codex-research\", \"story-codex-cover\"], \"changed_skills\": [\"story-codex\", \"story-codex-plan\", \"story-codex-write\", \"story-codex-analyze\", \"story-codex-review\", \"story-codex-research\", \"story-codex-cover\"], \"backup\": null, \"files\": 34}\n",
+      "stderr": "",
+      "duration_seconds": 0.569
+    },
+    {
+      "name": "old_installed_version",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/skills/story-codex/scripts/story.py",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "0.5.9\n",
+      "stderr": "",
+      "duration_seconds": 0.128
+    },
+    {
+      "name": "update_to_canonical",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "-X",
+        "utf8",
+        "/Users/cuining/Documents/GitHub/story-skill/scripts/install.py",
+        "--project",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目",
+        "--update"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\": \"updated\", \"path\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/skills\", \"skills\": [\"story-codex\", \"story-codex-plan\", \"story-codex-write\", \"story-codex-analyze\", \"story-codex-review\", \"story-codex-research\", \"story-codex-cover\"], \"changed_skills\": [\"story-codex\", \"story-codex-plan\", \"story-codex-write\", \"story-codex-review\", \"story-codex-cover\"], \"backup\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/.story-codex-backups/b8e7f0eb737f448986830a8d846559c8\", \"files\": 34}\n",
+      "stderr": "",
+      "duration_seconds": 0.539
+    },
+    {
+      "name": "updated_installed_version",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/skills/story-codex/scripts/story.py",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "0.5.10\n",
+      "stderr": "",
+      "duration_seconds": 0.156
+    },
+    {
+      "name": "updated_prepare_help",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/skills/story-codex/scripts/story.py",
+        "prepare",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: story.py prepare [-h] --book BOOK [--integrity {strict,local}]\n                        [--budget-bytes BUDGET_BYTES] --chapter CHAPTER\n                        --draft DRAFT [--reconcile]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --integrity {strict,local}\n                        strict hashes all exports; local verifies\n                        recent/queued files and reports unverified archives\n  --budget-bytes BUDGET_BYTES\n                        Hard limit on compact JSON UTF-8 bytes\n  --chapter CHAPTER\n  --draft DRAFT\n  --reconcile           Bind the inspected outside edit for a reviewed\n                        reconciliation\n",
+      "stderr": "",
+      "duration_seconds": 0.152
+    },
+    {
+      "name": "repeat_update",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "-X",
+        "utf8",
+        "/Users/cuining/Documents/GitHub/story-skill/scripts/install.py",
+        "--project",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目",
+        "--update"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\": \"unchanged\", \"path\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/skills\", \"skills\": [\"story-codex\", \"story-codex-plan\", \"story-codex-write\", \"story-codex-analyze\", \"story-codex-review\", \"story-codex-research\", \"story-codex-cover\"]}\n",
+      "stderr": "",
+      "duration_seconds": 0.129
+    }
+  ],
+  "checks": {
+    "current_archive_matches_canonical": {
+      "status": "passed"
+    },
+    "version_advances": {
+      "status": "passed",
+      "old_version": "0.5.9",
+      "new_version": "0.5.10"
+    },
+    "archive_extraction_exact": {
+      "status": "passed",
+      "skill_count": 7
+    },
+    "installer_copy_exact": {
+      "status": "passed",
+      "copied_sha256": "2d08901bb201644c1fcef93dcea53aa1658ae0da2fa64de113d9e729621735ba"
+    },
+    "old_release_managed_install": {
+      "status": "passed"
+    },
+    "all_prior_skills_managed": {
+      "status": "passed",
+      "skill_count": 7
+    },
+    "old_manifest_matches_archive": {
+      "status": "passed"
+    },
+    "old_installed_version": {
+      "status": "passed",
+      "actual": "0.5.9"
+    },
+    "update_status": {
+      "status": "passed"
+    },
+    "previous_release_backup_exact": {
+      "status": "passed",
+      "changed_skills": [
+        "story-codex",
+        "story-codex-cover",
+        "story-codex-plan",
+        "story-codex-review",
+        "story-codex-write"
+      ],
+      "prior_skill_count": 7,
+      "original_files_sha256": {
+        "story-codex": {
+          ".story-codex-install.json": "7953acc7c6a27eda0708653cedd7e9c2b29bf6647f9b21faccbf2d9982e5141d",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "6674b9f5da3df30489fa5d5e331bf410a169e9b965db5a416628dd168965891e",
+          "agents/openai.yaml": "15aa0bdd2ba3803da40a00ef96899a09da1e7f6a6d52a01fdccd73f130615617",
+          "references/project-state.md": "ac680824d43717e637771c47d5a781dccdd81be52dbeec512216c112f1ef845c",
+          "scripts/story.py": "c3701cbdc4ee397bc00aef1673641b9e57da361579b6b8a2699b5a46286a2aa4",
+          "scripts/story_history.py": "d6353d790676486bc7a4df3ae9042a560218ce738ff5bba92551bf166a29961f",
+          "scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+          "scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+          "scripts/story_world.py": "d3d61a81b8bfcb50d845a4fd8077444e182c9237eacef5584e6dab626a07cf51"
+        },
+        "story-codex-plan": {
+          ".story-codex-install.json": "53120ab70ace08cd2ec6263069451c98e201df1c8d0b4bac0a7d9b454917b796",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "dc9f1f03092c86b3d95d048d840d45543455996e842015c5f48ed27a1f77c1c5",
+          "agents/openai.yaml": "91d5054d329cba6094bf952128f8b45204a6998c532ff9359de912c6cf4461c3",
+          "references/fanqie-tags.md": "2c901a983bdea114ac12546ce9434ea7c4a52be0f3539de871b4a000b7167529"
+        },
+        "story-codex-write": {
+          ".story-codex-install.json": "9223a62a770bcf1a60964d5e31ffd0b4910961b227c30732ff97ef0a6b511c76",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "377b2c2e40ffb2afd58a0698c86a14368add92b982a9033b9c54770391c04729",
+          "agents/openai.yaml": "aaf575e3af0e3ef0f7cb648c065fd3b7c1d1e8f7c022e76ba04ecf9b705377e3",
+          "references/chapter.md": "7eb5d778a90b0a1eea64bb306cb231f9ba2244291b3f3b6d913a27dbcd7ce530",
+          "references/drama.md": "59bec5e1dcbd6038c9e2e49f36f5eadc3f797bb4c5433afcacfd6f45c14ad452",
+          "references/long-form.md": "ef0676b682f3ea4902c1fa95e239929f75ad268c65489b223e572efd2000a12b"
+        },
+        "story-codex-analyze": {
+          ".story-codex-install.json": "84a3cfb6148e44a71d98d427309f23235b2a97e2f8777c440d59c173fc87dc2a",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "5869b57ec589de655bc98ddc8ef631f41772facf87807667cec566523bd1e113",
+          "agents/openai.yaml": "af9aa6755f241868eaf640dfa5b6b130bab29f32e13b05872e4caf73dda194ae",
+          "references/deep-reading.md": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
+          "references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2"
+        },
+        "story-codex-review": {
+          ".story-codex-install.json": "f57dea73c46e9a06379c4f89da1e5c0fdba7da287c0d8260f4d70f201243fe34",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "272d7cf129eefe6ba9181c82ee278fe40e377a0d4c27fd2ad484e22352851cf6",
+          "agents/openai.yaml": "49767d87691f46c0819c920284d9c2847880a2fab69225b90c4df7734ded9bab",
+          "references/history.md": "6f06b71a4fc16af52f8b8d31c65543545378fde9e9f00dc172fede4459c4e322"
+        },
+        "story-codex-research": {
+          ".story-codex-install.json": "30ab5f9aa3f50766ba560dcc3e091a38c3ac8ed5f46edf752d36fc41655e9f75",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "17b05e9a84ed057974a353c232d986c08613c9005983090f9b600195c16fac39",
+          "agents/openai.yaml": "c1d004732ad14aeb4de504637fb614174dfc8e2eeb77fb750d038a23be1106b0"
+        },
+        "story-codex-cover": {
+          ".story-codex-install.json": "5120cf5c05509f4d9c1fb142f76987d0b2d86c4da5b11e9f43a368531d6f85a1",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "15b21ebc8b26c17641ea32e1feddffafbfa5710940ef863fee54d6775ffd58b3",
+          "agents/openai.yaml": "a62ccc4aa41734b35bd4bb8beeef721d6ec531bab19bd9721dc3266e9b219bdc"
+        }
+      },
+      "backup_files_sha256": {
+        "story-codex-review": {
+          ".story-codex-install.json": "f57dea73c46e9a06379c4f89da1e5c0fdba7da287c0d8260f4d70f201243fe34",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "272d7cf129eefe6ba9181c82ee278fe40e377a0d4c27fd2ad484e22352851cf6",
+          "agents/openai.yaml": "49767d87691f46c0819c920284d9c2847880a2fab69225b90c4df7734ded9bab",
+          "references/history.md": "6f06b71a4fc16af52f8b8d31c65543545378fde9e9f00dc172fede4459c4e322"
+        },
+        "story-codex-plan": {
+          ".story-codex-install.json": "53120ab70ace08cd2ec6263069451c98e201df1c8d0b4bac0a7d9b454917b796",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "dc9f1f03092c86b3d95d048d840d45543455996e842015c5f48ed27a1f77c1c5",
+          "agents/openai.yaml": "91d5054d329cba6094bf952128f8b45204a6998c532ff9359de912c6cf4461c3",
+          "references/fanqie-tags.md": "2c901a983bdea114ac12546ce9434ea7c4a52be0f3539de871b4a000b7167529"
+        },
+        "story-codex": {
+          ".story-codex-install.json": "7953acc7c6a27eda0708653cedd7e9c2b29bf6647f9b21faccbf2d9982e5141d",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "6674b9f5da3df30489fa5d5e331bf410a169e9b965db5a416628dd168965891e",
+          "agents/openai.yaml": "15aa0bdd2ba3803da40a00ef96899a09da1e7f6a6d52a01fdccd73f130615617",
+          "references/project-state.md": "ac680824d43717e637771c47d5a781dccdd81be52dbeec512216c112f1ef845c",
+          "scripts/story.py": "c3701cbdc4ee397bc00aef1673641b9e57da361579b6b8a2699b5a46286a2aa4",
+          "scripts/story_history.py": "d6353d790676486bc7a4df3ae9042a560218ce738ff5bba92551bf166a29961f",
+          "scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+          "scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+          "scripts/story_world.py": "d3d61a81b8bfcb50d845a4fd8077444e182c9237eacef5584e6dab626a07cf51"
+        },
+        "story-codex-cover": {
+          ".story-codex-install.json": "5120cf5c05509f4d9c1fb142f76987d0b2d86c4da5b11e9f43a368531d6f85a1",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "15b21ebc8b26c17641ea32e1feddffafbfa5710940ef863fee54d6775ffd58b3",
+          "agents/openai.yaml": "a62ccc4aa41734b35bd4bb8beeef721d6ec531bab19bd9721dc3266e9b219bdc"
+        },
+        "story-codex-write": {
+          ".story-codex-install.json": "9223a62a770bcf1a60964d5e31ffd0b4910961b227c30732ff97ef0a6b511c76",
+          "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+          "SKILL.md": "377b2c2e40ffb2afd58a0698c86a14368add92b982a9033b9c54770391c04729",
+          "agents/openai.yaml": "aaf575e3af0e3ef0f7cb648c065fd3b7c1d1e8f7c022e76ba04ecf9b705377e3",
+          "references/chapter.md": "7eb5d778a90b0a1eea64bb306cb231f9ba2244291b3f3b6d913a27dbcd7ce530",
+          "references/drama.md": "59bec5e1dcbd6038c9e2e49f36f5eadc3f797bb4c5433afcacfd6f45c14ad452",
+          "references/long-form.md": "ef0676b682f3ea4902c1fa95e239929f75ad268c65489b223e572efd2000a12b"
+        }
+      }
+    },
+    "updated_manifest_matches_canonical": {
+      "status": "passed",
+      "installed_files_sha256": {
+        ".story-codex-install.json": "0c90a85566e59a24c8d26f2d64c9c7153ccafa5bd651a166be1f3b081f33bc71",
+        "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+        "SKILL.md": "10e68d6ecd40d7348dd6b840e8b5f679dd4a57b1a06f0f586739da01a03adff4",
+        "agents/openai.yaml": "15aa0bdd2ba3803da40a00ef96899a09da1e7f6a6d52a01fdccd73f130615617",
+        "references/project-state.md": "429d687fc05e93397970bd45cb0b27ff4d826d23520e424e607d8e2e10fad7dd",
+        "scripts/story.py": "57c2f1c3ceb6c2fa094dcb16cf2cfc9537a39298784031aa2509d50314781593",
+        "scripts/story_history.py": "02bdd130ae014f977bf03cc13cfc27fb6bdb873df491da19d5d3748e34beda1f",
+        "scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "scripts/story_world.py": "d3d61a81b8bfcb50d845a4fd8077444e182c9237eacef5584e6dab626a07cf51"
+      }
+    },
+    "all_seven_skills_match_canonical": {
+      "status": "passed",
+      "skill_count": 7,
+      "files": 34
+    },
+    "updated_installed_version": {
+      "status": "passed",
+      "actual": "0.5.10"
+    },
+    "prepare_cli_available": {
+      "status": "passed"
+    },
+    "repeat_update_idempotent": {
+      "status": "passed",
+      "backup_count": 1
+    },
+    "input_files_unchanged": {
+      "status": "passed"
+    },
+    "book_and_other_skill_unchanged": {
+      "status": "passed"
+    },
+    "current_archive_unchanged": {
+      "status": "passed"
+    }
+  },
+  "initial_archive": {
+    "path": "/Users/cuining/Documents/GitHub/story-skill/dist/story-codex-0.5.9.zip",
+    "sha256": "8710ed9b01a6e0d70d547eacf8be52ef30d3b22c116c420506d61b4e3276105b",
+    "bytes": 135476,
+    "version": "0.5.9",
+    "files": {
+      "story-codex-analyze/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-codex-analyze/SKILL.md": "5869b57ec589de655bc98ddc8ef631f41772facf87807667cec566523bd1e113",
+      "story-codex-analyze/agents/openai.yaml": "af9aa6755f241868eaf640dfa5b6b130bab29f32e13b05872e4caf73dda194ae",
+      "story-codex-analyze/references/deep-reading.md": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
+      "story-codex-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+      "story-codex-cover/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-codex-cover/SKILL.md": "15b21ebc8b26c17641ea32e1feddffafbfa5710940ef863fee54d6775ffd58b3",
+      "story-codex-cover/agents/openai.yaml": "a62ccc4aa41734b35bd4bb8beeef721d6ec531bab19bd9721dc3266e9b219bdc",
+      "story-codex-plan/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-codex-plan/SKILL.md": "dc9f1f03092c86b3d95d048d840d45543455996e842015c5f48ed27a1f77c1c5",
+      "story-codex-plan/agents/openai.yaml": "91d5054d329cba6094bf952128f8b45204a6998c532ff9359de912c6cf4461c3",
+      "story-codex-plan/references/fanqie-tags.md": "2c901a983bdea114ac12546ce9434ea7c4a52be0f3539de871b4a000b7167529",
+      "story-codex-research/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-codex-research/SKILL.md": "17b05e9a84ed057974a353c232d986c08613c9005983090f9b600195c16fac39",
+      "story-codex-research/agents/openai.yaml": "c1d004732ad14aeb4de504637fb614174dfc8e2eeb77fb750d038a23be1106b0",
+      "story-codex-review/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-codex-review/SKILL.md": "272d7cf129eefe6ba9181c82ee278fe40e377a0d4c27fd2ad484e22352851cf6",
+      "story-codex-review/agents/openai.yaml": "49767d87691f46c0819c920284d9c2847880a2fab69225b90c4df7734ded9bab",
+      "story-codex-review/references/history.md": "6f06b71a4fc16af52f8b8d31c65543545378fde9e9f00dc172fede4459c4e322",
+      "story-codex-write/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-codex-write/SKILL.md": "377b2c2e40ffb2afd58a0698c86a14368add92b982a9033b9c54770391c04729",
+      "story-codex-write/agents/openai.yaml": "aaf575e3af0e3ef0f7cb648c065fd3b7c1d1e8f7c022e76ba04ecf9b705377e3",
+      "story-codex-write/references/chapter.md": "7eb5d778a90b0a1eea64bb306cb231f9ba2244291b3f3b6d913a27dbcd7ce530",
+      "story-codex-write/references/drama.md": "59bec5e1dcbd6038c9e2e49f36f5eadc3f797bb4c5433afcacfd6f45c14ad452",
+      "story-codex-write/references/long-form.md": "ef0676b682f3ea4902c1fa95e239929f75ad268c65489b223e572efd2000a12b",
+      "story-codex/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-codex/SKILL.md": "6674b9f5da3df30489fa5d5e331bf410a169e9b965db5a416628dd168965891e",
+      "story-codex/agents/openai.yaml": "15aa0bdd2ba3803da40a00ef96899a09da1e7f6a6d52a01fdccd73f130615617",
+      "story-codex/references/project-state.md": "ac680824d43717e637771c47d5a781dccdd81be52dbeec512216c112f1ef845c",
+      "story-codex/scripts/story.py": "c3701cbdc4ee397bc00aef1673641b9e57da361579b6b8a2699b5a46286a2aa4",
+      "story-codex/scripts/story_history.py": "d6353d790676486bc7a4df3ae9042a560218ce738ff5bba92551bf166a29961f",
+      "story-codex/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "story-codex/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "story-codex/scripts/story_world.py": "d3d61a81b8bfcb50d845a4fd8077444e182c9237eacef5584e6dab626a07cf51"
+    }
+  },
+  "current_source": {
+    "version": "0.5.10",
+    "files": {
+      "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "SKILL.md": "10e68d6ecd40d7348dd6b840e8b5f679dd4a57b1a06f0f586739da01a03adff4",
+      "agents/openai.yaml": "15aa0bdd2ba3803da40a00ef96899a09da1e7f6a6d52a01fdccd73f130615617",
+      "references/project-state.md": "429d687fc05e93397970bd45cb0b27ff4d826d23520e424e607d8e2e10fad7dd",
+      "scripts/story.py": "57c2f1c3ceb6c2fa094dcb16cf2cfc9537a39298784031aa2509d50314781593",
+      "scripts/story_history.py": "02bdd130ae014f977bf03cc13cfc27fb6bdb873df491da19d5d3748e34beda1f",
+      "scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "scripts/story_world.py": "d3d61a81b8bfcb50d845a4fd8077444e182c9237eacef5584e6dab626a07cf51"
+    },
+    "suite": {
+      "story-codex": {
+        "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+        "SKILL.md": "10e68d6ecd40d7348dd6b840e8b5f679dd4a57b1a06f0f586739da01a03adff4",
+        "agents/openai.yaml": "15aa0bdd2ba3803da40a00ef96899a09da1e7f6a6d52a01fdccd73f130615617",
+        "references/project-state.md": "429d687fc05e93397970bd45cb0b27ff4d826d23520e424e607d8e2e10fad7dd",
+        "scripts/story.py": "57c2f1c3ceb6c2fa094dcb16cf2cfc9537a39298784031aa2509d50314781593",
+        "scripts/story_history.py": "02bdd130ae014f977bf03cc13cfc27fb6bdb873df491da19d5d3748e34beda1f",
+        "scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "scripts/story_world.py": "d3d61a81b8bfcb50d845a4fd8077444e182c9237eacef5584e6dab626a07cf51"
+      },
+      "story-codex-plan": {
+        "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+        "SKILL.md": "acd18739e82477b463cb2245085aca3eecc101c6903924f1a4e7cfcaf0ab4955",
+        "agents/openai.yaml": "91d5054d329cba6094bf952128f8b45204a6998c532ff9359de912c6cf4461c3",
+        "references/fanqie-tags.md": "2d3eb2b8d6f7309d810584ac2570faf7a4076cf379ccd29815310b6726e487f8"
+      },
+      "story-codex-write": {
+        "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+        "SKILL.md": "8c288618db6784e9d7bc51060dadf1c5c2ca691adca536629c85ea8d15137184",
+        "agents/openai.yaml": "aaf575e3af0e3ef0f7cb648c065fd3b7c1d1e8f7c022e76ba04ecf9b705377e3",
+        "references/chapter.md": "efa24f55a218e6d005a16a4b12b17c4caea048aaf7f7fba8825307deafec8c57",
+        "references/drama.md": "fbcf12dd6d665a5a2a2296be8455110f0d6bbc25580b926fac088407bc28999a",
+        "references/long-form.md": "ef0676b682f3ea4902c1fa95e239929f75ad268c65489b223e572efd2000a12b"
+      },
+      "story-codex-analyze": {
+        "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+        "SKILL.md": "5869b57ec589de655bc98ddc8ef631f41772facf87807667cec566523bd1e113",
+        "agents/openai.yaml": "af9aa6755f241868eaf640dfa5b6b130bab29f32e13b05872e4caf73dda194ae",
+        "references/deep-reading.md": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
+        "references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2"
+      },
+      "story-codex-review": {
+        "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+        "SKILL.md": "d10cf3161b23bfb0bf1a4e910ce78676c742c2872f7d38d3931720a595f2e80c",
+        "agents/openai.yaml": "49767d87691f46c0819c920284d9c2847880a2fab69225b90c4df7734ded9bab",
+        "references/history.md": "98d8c55fca597f184683a415b3e593efe721a1de470dfcb2dbb79098a8d4653f"
+      },
+      "story-codex-research": {
+        "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+        "SKILL.md": "17b05e9a84ed057974a353c232d986c08613c9005983090f9b600195c16fac39",
+        "agents/openai.yaml": "c1d004732ad14aeb4de504637fb614174dfc8e2eeb77fb750d038a23be1106b0"
+      },
+      "story-codex-cover": {
+        "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+        "SKILL.md": "cb57085c5bfb0f2e5505d0e4367def7e4ddc9321b52b6d94e9a0e84959748e12",
+        "agents/openai.yaml": "a62ccc4aa41734b35bd4bb8beeef721d6ec531bab19bd9721dc3266e9b219bdc"
+      }
+    }
+  },
+  "installer": {
+    "path": "/Users/cuining/Documents/GitHub/story-skill/scripts/install.py",
+    "sha256": "2d08901bb201644c1fcef93dcea53aa1658ae0da2fa64de113d9e729621735ba"
+  },
+  "current_archive": {
+    "status": "passed",
+    "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/story-codex-0.5.10.zip",
+    "version": "0.5.10",
+    "sha256": "821e896a9cb3066dd6daaf56c921217ece468629622d95c597f19f6733897797",
+    "bytes": 145903,
+    "files": 34,
+    "contents_match_current_skill": true,
+    "missing": [],
+    "extra": [],
+    "changed": [],
+    "duplicate_entries": [],
+    "corrupt_entry": null,
+    "non_regular_entries": []
+  },
+  "initial_install": {
+    "status": "installed",
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/skills",
+    "skills": [
+      "story-codex",
+      "story-codex-plan",
+      "story-codex-write",
+      "story-codex-analyze",
+      "story-codex-review",
+      "story-codex-research",
+      "story-codex-cover"
+    ],
+    "changed_skills": [
+      "story-codex",
+      "story-codex-plan",
+      "story-codex-write",
+      "story-codex-analyze",
+      "story-codex-review",
+      "story-codex-research",
+      "story-codex-cover"
+    ],
+    "backup": null,
+    "files": 34
+  },
+  "update": {
+    "status": "updated",
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/skills",
+    "skills": [
+      "story-codex",
+      "story-codex-plan",
+      "story-codex-write",
+      "story-codex-analyze",
+      "story-codex-review",
+      "story-codex-research",
+      "story-codex-cover"
+    ],
+    "changed_skills": [
+      "story-codex",
+      "story-codex-plan",
+      "story-codex-write",
+      "story-codex-review",
+      "story-codex-cover"
+    ],
+    "backup": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/.story-codex-backups/b8e7f0eb737f448986830a8d846559c8",
+    "files": 34
+  },
+  "repeat_update": {
+    "status": "unchanged",
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-hia064fv/升级验证项目/.agents/skills",
+    "skills": [
+      "story-codex",
+      "story-codex-plan",
+      "story-codex-write",
+      "story-codex-analyze",
+      "story-codex-review",
+      "story-codex-research",
+      "story-codex-cover"
+    ]
+  },
+  "temporary_project_removed": true
+}

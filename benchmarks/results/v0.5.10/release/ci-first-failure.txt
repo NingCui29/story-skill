@@ -1,0 +1,15 @@
+2026-09-22T10:24:00.5926331Z test_backfilled_chapter_remains_editable_through_reviewed_history (test_adopt_backfill.AdoptBackfillTests.test_backfilled_chapter_remains_editable_through_reviewed_history) ... ok
+2026-09-22T10:24:00.8514274Z test_cli_backfill_after_continuation_preserves_state_and_completes_assembly (test_adopt_backfill.AdoptBackfillTests.test_cli_backfill_after_continuation_preserves_state_and_completes_assembly) ... ERROR
+2026-09-22T10:24:00.8542762Z ERROR: test_cli_backfill_after_continuation_preserves_state_and_completes_assembly (test_adopt_backfill.AdoptBackfillTests.test_cli_backfill_after_continuation_preserves_state_and_completes_assembly)
+2026-09-22T10:24:00.8545415Z Traceback (most recent call last):
+2026-09-22T10:24:00.8552928Z   File "D:\a\story-skill\story-skill\tests\test_adopt_backfill.py", line 68, in test_cli_backfill_after_continuation_preserves_state_and_completes_assembly
+2026-09-22T10:24:00.8554199Z     self.fixture.commit(3, "还钥", "第3章 还钥\n她归还钥匙，当场注销了借据。\n")
+2026-09-22T10:24:00.8554806Z   File "D:\a\story-skill\story-skill\tests\test_short_assembly.py", line 43, in commit
+2026-09-22T10:24:00.8555369Z     result = self.book.commit(number, self.draft, delta, replace_last=replace_last)
+2026-09-22T10:24:00.8556412Z   File "D:\a\story-skill\story-skill\skills\story-codex\scripts\story.py", line 1724, in commit
+2026-09-22T10:24:00.8557666Z   File "D:\a\story-skill\story-skill\skills\story-codex\scripts\story.py", line 1689, in validate_delta
+2026-09-22T10:24:00.8558747Z     fail("stale_review", "Review must refer to the exact current draft SHA-256")
+2026-09-22T10:24:00.8559317Z   File "D:\a\story-skill\story-skill\skills\story-codex\scripts\story.py", line 35, in fail
+2026-09-22T10:24:00.8560220Z story_short_assembly.StoryError: Review must refer to the exact current draft SHA-256
+2026-09-22T10:24:00.8561048Z Ran 2 tests in 1.248s
+2026-09-22T10:24:00.8561258Z FAILED (errors=1)

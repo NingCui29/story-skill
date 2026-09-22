@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "tag": "v0.5.10",
+  "tag_commit": "0f2bb216f2b1422ab615d990fdc97c60d7ec6941",
+  "method": "official_skill_installer_git",
+  "skills": 7,
+  "files": 34,
+  "installed_files_match_release_zip": true,
+  "cli": [
+    {
+      "command": "version",
+      "ok": true
+    },
+    {
+      "command": "help",
+      "ok": true
+    },
+    {
+      "command": "init",
+      "ok": true
+    },
+    {
+      "command": "status",
+      "ok": true
+    }
+  ],
+  "temporary_install_removed": true,
+  "real_user_install_touched": false
+}

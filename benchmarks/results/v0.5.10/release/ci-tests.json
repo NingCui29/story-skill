@@ -1,0 +1,75 @@
+{
+  "ok": true,
+  "run_id": 35716909379,
+  "commit": "0f2bb216f2b1422ab615d990fdc97c60d7ec6941",
+  "platforms": {
+    "windows": {
+      "run": 605,
+      "passed": 598,
+      "skipped": 7,
+      "seconds": 188.947,
+      "summary": "OK (skipped=7)",
+      "skips": [
+        "test_atomic_displacement_source_parent_swap_preserves_outside_inode (test_retirement_path_race.RetirementPathRaceTests.test_atomic_displacement_source_parent_swap_preserves_outside_inode) ... skipped 'POSIX permits swapping an open parent directory'",
+        "test_empty_outside_parent_cannot_hide_a_retired_chapter_after_preflight (test_retirement_path_race.RetirementPathRaceTests.test_empty_outside_parent_cannot_hide_a_retired_chapter_after_preflight) ... skipped 'Requires a directory symlink'",
+        "test_first_publication_parent_swap_cannot_create_outside_chapter (test_retirement_path_race.RetirementPathRaceTests.test_first_publication_parent_swap_cannot_create_outside_chapter) ... skipped 'POSIX permits swapping an open parent directory'",
+        "test_retirement_backup_parent_swap_cannot_write_into_outside_directory (test_retirement_path_race.RetirementPathRaceTests.test_retirement_backup_parent_swap_cannot_write_into_outside_directory) ... skipped 'POSIX permits swapping an open parent directory'",
+        "test_retirement_source_parent_swap_cannot_displace_identical_outside_file (test_retirement_path_race.RetirementPathRaceTests.test_retirement_source_parent_swap_cannot_displace_identical_outside_file) ... skipped 'POSIX permits swapping an open parent directory'",
+        "test_unsupported_directory_binding_keeps_original_untouched (test_retirement_path_race.RetirementPathRaceTests.test_unsupported_directory_binding_keeps_original_untouched) ... skipped 'POSIX capability fallback'",
+        "test_new_chapter_rejects_unicode_alias_of_registered_volume_directory (test_volume_consistency.VolumeConsistencyTests.test_new_chapter_rejects_unicode_alias_of_registered_volume_directory) ... skipped 'Filesystem keeps these directory names distinct'"
+      ],
+      "native_directory_tests": [
+        "test_atomic_first_publication_and_revision_preserve_unicode_bytes (test_windows_directory_pins.WindowsDirectoryPinTests.test_atomic_first_publication_and_revision_preserve_unicode_bytes) ... ok",
+        "test_changed_target_is_restored_and_retained_in_backup (test_windows_directory_pins.WindowsDirectoryPinTests.test_changed_target_is_restored_and_retained_in_backup) ... ok",
+        "test_empty_pinned_directory_rejects_junction_conversion_until_released (test_windows_directory_pins.WindowsDirectoryPinTests.test_empty_pinned_directory_rejects_junction_conversion_until_released) ... ok",
+        "test_external_process_cannot_swap_pinned_leaf_or_ancestor (test_windows_directory_pins.WindowsDirectoryPinTests.test_external_process_cannot_swap_pinned_leaf_or_ancestor) ... ok",
+        "test_external_recreated_target_wins_over_backup_restore (test_windows_directory_pins.WindowsDirectoryPinTests.test_external_recreated_target_wins_over_backup_restore) ... ok",
+        "test_external_target_wins_over_first_publication (test_windows_directory_pins.WindowsDirectoryPinTests.test_external_target_wins_over_first_publication) ... ok",
+        "test_nested_directory_guards_leave_no_files_on_normal_or_exception_exit (test_windows_directory_pins.WindowsDirectoryPinTests.test_nested_directory_guards_leave_no_files_on_normal_or_exception_exit) ... ok",
+        "test_pinned_directories_allow_cross_directory_backup_and_copy_restore (test_windows_directory_pins.WindowsDirectoryPinTests.test_pinned_directories_allow_cross_directory_backup_and_copy_restore) ... ok",
+        "test_root_report_update_and_nested_backup_restore_share_ancestors (test_windows_directory_pins.WindowsDirectoryPinTests.test_root_report_update_and_nested_backup_restore_share_ancestors) ... ok"
+      ]
+    },
+    "ubuntu": {
+      "run": 605,
+      "passed": 584,
+      "skipped": 21,
+      "seconds": 51.726,
+      "summary": "OK (skipped=21)",
+      "skips": [
+        "test_case_insensitive_title_alias_is_rejected_before_chapter_commit (test_chapter_layout.ChapterLayoutTests) ... skipped 'Filesystem distinguishes names that differ only in letter case'",
+        "test_windows_publication_refuses_an_empty_target_created_inside_rename (test_install_races.InstallationRaceTests) ... skipped 'Windows rename provides the no-replace guarantee tested here'",
+        "test_case_alias_rename_is_rejected_before_review (test_layout_preflight.LayoutPreflightTests) ... skipped 'Filesystem distinguishes names that differ only in letter case'",
+        "test_editor_save_during_restore_is_preserved_with_backup (test_portable_export.PortableWindowsExportTests) ... skipped 'Windows publication without hard links'",
+        "test_failed_publication_restores_a_copy_and_retains_backup_for_retry (test_portable_export.PortableWindowsExportTests) ... skipped 'Windows publication without hard links'",
+        "test_first_export_succeeds_without_hard_links (test_portable_export.PortableWindowsExportTests) ... skipped 'Windows publication without hard links'",
+        "test_recreated_target_wins_over_publication_and_restore (test_portable_export.PortableWindowsExportTests) ... skipped 'Windows publication without hard links'",
+        "test_revision_preserves_old_backup_without_hard_links (test_portable_export.PortableWindowsExportTests) ... skipped 'Windows publication without hard links'",
+        "test_windows_parent_pin_blocks_rename_but_allows_child_publication (test_retirement_path_race.RetirementPathRaceTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_external_case_only_folder_rename_cannot_register_a_second_volume_spelling (test_volume_consistency.VolumeConsistencyTests) ... skipped 'Filesystem keeps these directory names distinct'",
+        "test_new_chapter_rejects_case_alias_of_registered_volume_directory (test_volume_consistency.VolumeConsistencyTests) ... skipped 'Filesystem keeps these directory names distinct'",
+        "test_new_chapter_rejects_unicode_alias_of_registered_volume_directory (test_volume_consistency.VolumeConsistencyTests) ... skipped 'Filesystem keeps these directory names distinct'",
+        "test_atomic_first_publication_and_revision_preserve_unicode_bytes (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_changed_target_is_restored_and_retained_in_backup (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_empty_pinned_directory_rejects_junction_conversion_until_released (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_external_process_cannot_swap_pinned_leaf_or_ancestor (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_external_recreated_target_wins_over_backup_restore (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_external_target_wins_over_first_publication (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_nested_directory_guards_leave_no_files_on_normal_or_exception_exit (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_pinned_directories_allow_cross_directory_backup_and_copy_restore (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_root_report_update_and_nested_backup_restore_share_ancestors (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'"
+      ],
+      "native_directory_tests": [
+        "test_atomic_first_publication_and_revision_preserve_unicode_bytes (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_changed_target_is_restored_and_retained_in_backup (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_empty_pinned_directory_rejects_junction_conversion_until_released (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_external_process_cannot_swap_pinned_leaf_or_ancestor (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_external_recreated_target_wins_over_backup_restore (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_external_target_wins_over_first_publication (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_nested_directory_guards_leave_no_files_on_normal_or_exception_exit (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_pinned_directories_allow_cross_directory_backup_and_copy_restore (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'",
+        "test_root_report_update_and_nested_backup_restore_share_ancestors (test_windows_directory_pins.WindowsDirectoryPinTests) ... skipped 'Requires native Windows directory share locks'"
+      ]
+    }
+  }
+}

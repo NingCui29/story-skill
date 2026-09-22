@@ -1,0 +1,43 @@
+{
+  "runtime_unchanged_after_local_verification": true,
+  "final_fixture_commit": "0f2bb216f2b1422ab615d990fdc97c60d7ec6941",
+  "changes": "Test fixtures preserve UTF-8 bytes on Windows; no runtime or skill changes, no weakened assertions.",
+  "targeted_tests": [
+    {
+      "modules": [
+        "test_history_dependency_read",
+        "test_long_history",
+        "test_history_state_scope",
+        "test_history_world_scope"
+      ],
+      "run": 80,
+      "passed": 80
+    },
+    {
+      "modules": [
+        "test_context_dependencies",
+        "test_skill_audit_fixes",
+        "test_world_fact_recall"
+      ],
+      "run": 22,
+      "passed": 22
+    },
+    {
+      "modules": [
+        "test_analysis_export_ack",
+        "test_analysis_headings"
+      ],
+      "run": 7,
+      "passed": 7,
+      "additional_CRLF_simulation_passed": true
+    }
+  ],
+  "windows_initial_fix_tests": {
+    "run_id": 35716110750,
+    "new_native_tests": 9,
+    "passed": 9,
+    "full_suite_passed": false,
+    "remaining_failures": "30 legacy fixture line-ending/hash errors; corrected in final_fixture_commit"
+  },
+  "payload_binding": "All 34 current skill file hashes match verification.json skill_input_snapshot; fixture edits do not change release payload."
+}
