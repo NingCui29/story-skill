@@ -19,7 +19,7 @@ history = story.history
 class LongHistoryTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="story-history-")
-        self.root = Path(self.temp.name) / "book"
+        self.root = Path(self.temp.name).resolve() / "book"
         story.Book.create(self.root, "远处的账本", "long")
         self.book = story.Book(self.root)
         self.draft = self.root / "draft.md"
@@ -262,7 +262,7 @@ class LongHistoryTests(unittest.TestCase):
         self.dep(1)
         staged = self.stage(self.start())
         path = self.root / self.book.chapter_path(1)
-        path.write_text("用户刚增加的结尾。", encoding="utf-8")
+        path.write_bytes("用户刚增加的结尾。".encode("utf-8"))
         revision = self.rev()
         self.assert_code("exports_unresolved", history.branch_publish, self.book, staged["branch"], revision)
         self.assertEqual(path.read_text(encoding="utf-8"), "用户刚增加的结尾。")
@@ -367,7 +367,7 @@ class LongHistoryTests(unittest.TestCase):
         self.add(1)
         self.add_fact()
         changed = self.texts[1] + "她抬头看雨。\n"
-        self.draft.write_text(changed, encoding="utf-8")
+        self.draft.write_bytes(changed.encode("utf-8"))
         raw = {"book_id": self.book.meta("id"), "base_revision": self.rev(), "summary": "她交出钥匙，留在渡口。", "changes": [],
                "review": {"draft_sha256": story.digest(changed), "checks": {
                    key: {"note": "新增景物描写未改变交接。", "quote": "灯还亮着。"} for key in story.CHECKS}, "issues": []}}

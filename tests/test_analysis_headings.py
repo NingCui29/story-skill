@@ -51,10 +51,10 @@ class AnalysisHeadingTests(unittest.TestCase):
         # An old installation treated both indented chapters as one chunk.
         # Re-ingest must retain its saved ranges, analysis and resume position.
         with tempfile.TemporaryDirectory(prefix="story-analysis-headings-") as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             source = root / "原文.txt"
             text = "\u3000\u3000第1章 收据\n她把收据放进抽屉。\n\u3000\u3000第2章 归还\n他带着原件回来。\n"
-            source.write_text(text, encoding="utf-8")
+            source.write_bytes(text.encode("utf-8"))
             story.Book.create(root / "分析", "收据", "analysis")
             with closing(story.Book(root / "分析")) as book:
                 with patch.object(story, "split_source", return_value=[(0, len(text), "未命名文本 / 前言")]):
@@ -71,7 +71,7 @@ class AnalysisHeadingTests(unittest.TestCase):
                 self.assertEqual(book.next_chunks(sid)["chunks"], [])
                 item = book.findings(sid)["results"][0]
                 self.assertEqual(book.source_read(sid, item["start"], item["end"], 12000)["text"], text)
-                self.assertEqual(source.read_text(encoding="utf-8"), text)
+                self.assertEqual(source.read_bytes(), text.encode("utf-8"))
 
 
 if __name__ == "__main__":

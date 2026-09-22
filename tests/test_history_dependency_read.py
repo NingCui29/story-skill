@@ -20,7 +20,7 @@ history = story.history
 class HistoryDependencyReadTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="story-dependency-read-")
-        self.root = Path(self.temp.name) / "book"
+        self.root = Path(self.temp.name).resolve() / "book"
         story.Book.create(self.root, "依赖读取夹具", "long")
         self.book = story.Book(self.root)
         self.texts = {}
@@ -48,7 +48,7 @@ class HistoryDependencyReadTests(unittest.TestCase):
                 "beats": [{"choice": "核对信件", "change": "留下钥匙"}]}
         self.book.save_plan(chapter, plan, self.revision())
         draft = self.root / "draft.md"
-        draft.write_text(text, encoding="utf-8")
+        draft.write_bytes(text.encode("utf-8"))
         raw = {"book_id": self.book.meta("id"), "base_revision": self.revision(),
                "summary": "核对信件后留下钥匙。", "changes": [],
                "dependencies": list(dependencies), "dependency_review": {"complete": True, "note": note},
@@ -60,17 +60,17 @@ class HistoryDependencyReadTests(unittest.TestCase):
 
     def cli(self, *args):
         return subprocess.run([sys.executable, "-B", str(TOOL), "history-deps", "--book", str(self.root),
-                               *map(str, args)], capture_output=True, text=True)
+                               *map(str, args)], capture_output=True, text=True, encoding="utf-8")
 
     def write_payload(self, payload):
         path = self.root / "dependencies.json"
-        path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        path.write_bytes(json.dumps(payload, ensure_ascii=False).encode("utf-8"))
         return path
 
     def test_imported_baseline_reads_without_plan_or_branch(self):
         draft = self.root / "import.md"
         text = "# 第8章 基线\n周宁把旧信留在桌边。\n"
-        draft.write_text(text, encoding="utf-8")
+        draft.write_bytes(text.encode("utf-8"))
         self.book.adopt(8, draft, "旧信留在桌边。", self.revision(), volume_dir="第一卷 交接")
         before = self.snapshot()
         result = history.read_dependencies(self.book, 8)

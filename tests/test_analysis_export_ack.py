@@ -1,4 +1,5 @@
 from contextlib import redirect_stderr, redirect_stdout
+import hashlib
 import io
 import json
 from pathlib import Path
@@ -16,7 +17,7 @@ story = fixtures.story
 class AnalysisExportAcknowledgementTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="story-analysis-export-ack-")
-        self.root = Path(self.temp.name) / "报告导出确认"
+        self.root = (Path(self.temp.name) / "报告导出确认").resolve()
         story.Book.create(self.root, "门后的信", "analysis")
         self.book = story.Book(self.root)
         source = self.root / "原文.txt"
@@ -61,7 +62,7 @@ class AnalysisExportAcknowledgementTests(unittest.TestCase):
             if not failed:
                 failed = True
                 self.assertTrue(self.target.is_file(), "The failure must follow publication")
-                self.assertEqual(story.digest(self.target.read_text(encoding="utf-8")), self.state()["sha"])
+                self.assertEqual(hashlib.sha256(self.target.read_bytes()).hexdigest(), self.state()["sha"])
                 raise OSError("temporary directory verification failure after publication")
             return verify(directory)
 

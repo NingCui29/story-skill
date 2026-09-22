@@ -25,7 +25,7 @@ class ContextDependencyTests(unittest.TestCase):
     def seed(self, first_at=10):
         text = "# 第1章 开信\n甲先在东屋等候，后来移到西屋拆信。\n"
         draft = self.root / "source.md"
-        draft.write_text(text, encoding="utf-8")
+        draft.write_bytes(text.encode("utf-8"))
         self.book.adopt(1, draft, "移到西屋拆信。", self.book.meta("revision"), "第一卷 夜信")
         evidence = {"kind": "chapter", "chapter": 1, "sha256": story.digest(text),
                     "quote": "甲先在东屋等候，后来移到西屋拆信。"}
@@ -88,7 +88,7 @@ class ContextDependencyTests(unittest.TestCase):
         quote = "甲回看信封，决定先核对寄信人的身份。"
         text = "# 第2章 查信\n" + quote + "\n"
         draft = self.root / "second.md"
-        draft.write_text(text, encoding="utf-8")
+        draft.write_bytes(text.encode("utf-8"))
         raw = {
             "book_id": dependencies["book_id"], "base_revision": dependencies["revision"],
             "summary": "甲开始核对信封上的身份线索。", "changes": [],

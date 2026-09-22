@@ -34,7 +34,7 @@ class HistoryStateScopeTests(unittest.TestCase):
             "complete": True, "note": "本章独立，已核对全部依赖。"}}
         if imported_consumer:
             text = "# 第1章 借钥匙\n她交出钥匙，灯还亮着。\n"
-            f.draft.write_text(text, encoding="utf-8")
+            f.draft.write_bytes(text.encode("utf-8"))
             self.book.adopt(1, f.draft, "核对钥匙。", self.revision(), "第一卷 雨夜")
             f.texts[1] = text
             f.dep(1, extra=[{"kind": "card", "ref": "key", "sha": self.old_sha}])

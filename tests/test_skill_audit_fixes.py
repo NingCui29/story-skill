@@ -91,7 +91,7 @@ class SkillAuditBookTests(unittest.TestCase):
 
     def save_global_rule(self):
         baseline = "# 第1章 立誓\n所有立誓者必须兑现承诺。\n"
-        self.draft.write_text(baseline, encoding="utf-8")
+        self.draft.write_bytes(baseline.encode("utf-8"))
         adopted = self.book.adopt(
             1, self.draft, "立誓规则已有正文证据。", self.revision(),
             volume_dir="第一卷 交接",
@@ -156,7 +156,7 @@ class SkillAuditBookTests(unittest.TestCase):
         self.book.integrity = integrity
         first = "# 第1章 核对承诺\n沈禾核对承诺，然后留下交接凭据。\n"
         self.book.save_plan(1, plan(), self.revision())
-        self.draft.write_text(first, encoding="utf-8")
+        self.draft.write_bytes(first.encode("utf-8"))
         initial = self.book.commit(1, self.draft, self.delta(self.book, first))
         self.assertTrue(initial["scope_exports_complete"], initial)
         self.book.save_plan(2, plan(), self.revision())
@@ -167,7 +167,7 @@ class SkillAuditBookTests(unittest.TestCase):
         try:
             second = first.replace("第1章", "第2章")
             second_draft = self.root / "concurrent-draft.md"
-            second_draft.write_text(second, encoding="utf-8")
+            second_draft.write_bytes(second.encode("utf-8"))
             raw = self.delta(writer, second)
             original_rows = self.book._artifact_rows
             writer_receipts = []
@@ -218,7 +218,7 @@ class SkillAuditBookTests(unittest.TestCase):
 
     def world_check_fixture(self):
         text = "# 第1章 开账\n沈禾开账时有一百枚铜钱，随后留下交接凭据。\n"
-        self.draft.write_text(text, encoding="utf-8")
+        self.draft.write_bytes(text.encode("utf-8"))
         self.book.adopt(1, self.draft, "开账一百枚。", self.revision(), "第一卷 交接")
         story.world.save(self.book, {
             "entities": [

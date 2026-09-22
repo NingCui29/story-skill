@@ -88,7 +88,7 @@ class FactDependencyIntegrationTests(unittest.TestCase):
             try:
                 text = "# 第1章 交接\n甲先收起钥匙，十刻后把钥匙交给乙。\n"
                 draft = root / "source.md"
-                draft.write_text(text, encoding="utf-8")
+                draft.write_bytes(text.encode("utf-8"))
                 book.adopt(1, draft, "甲把钥匙交给乙。", book.meta("revision"), "第一卷 夜门")
                 evidence = {"kind": "chapter", "chapter": 1, "sha256": story.digest(text),
                             "quote": text.splitlines()[1]}
