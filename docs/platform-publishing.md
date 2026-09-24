@@ -1,12 +1,12 @@
 # 七猫、番茄章节发布接入方案
 
-状态：**v0.5.11 开发源码实现阶段 A 的离线准备和 B0 的作者副本本地核对；平台上传与发布尚未实现**。核对日期：2026-09-23。设计基线：v0.5.10，提交 `607d3e3`。开发套件增加为八个技能，仍未发布或升级本机安装；下文远端流程属于后续设计。
+状态：**v0.5.11 提供阶段 A 的离线准备和 B0 的作者副本本地核对；平台上传与发布尚未实现**。功能核对日期：2026-09-24。设计基线：v0.5.10，提交 `607d3e3`。完整套件有八个技能、38 个载荷文件；下文远端流程属于后续设计，分发与跨平台验证状态以实际[发布记录](github-release.md)为准。
 
 这里的“发布账本”是每本书 `.story/publishing.sqlite3` 中的**本地准备记录**，与小说创作状态分开。它保存准备投向哪个平台和作品、选了哪些正式章节、冻结内容及校验依据，以及清单是否仍可用于人工交接；明确要求留痕时，还保存作者副本的本地比较摘要。账本不登录作家后台，不保存密码或 Cookie；平台账号／作品 ID 只是用户声明，账本里的记录不能证明平台已收稿、审核或上线。
 
 ## 已实现的离线命令
 
-从开发源码使用 [story-codex-publish](../skills/story-codex-publish/SKILL.md)，命令入口仍是 `story-codex/scripts/story.py`。正式章节的准备、清单记录、ZIP 导出、材料包复核及备份不联网，不递增创作 revision，不写剧情事件。当前仅支持 `mode=draft`，目标账号和作品 ID 均是用户声明，尚未经过平台核验。
+安装完整 v0.5.11 套件后使用 [story-codex-publish](../skills/story-codex-publish/SKILL.md)，命令入口仍是 `story-codex/scripts/story.py`。正式章节的准备、清单记录、ZIP 导出、材料包复核及备份不联网，不递增创作 revision，不写剧情事件。当前仅支持 `mode=draft`，目标账号和作品 ID 均是用户声明，尚未经过平台核验。
 
 | 命令 | 已实现范围 |
 |---|---|
@@ -112,7 +112,7 @@ material-<UUID>.receipt.json  （ZIP 外，与 ZIP 同目录）
 - `adopt`、`adopt-backfill` 的初始收据为 `imported_unverified`。导入章通过正式历史审查后仍可能保留 `imported=1`，发布资格必须依据当前正式版本及有效审查收据，不能仅凭导入标记放行或永久拒绝。
 - `chapter-read --sha` 能读取历史候选；`history-publish` 是并入本地正式稿。读得到正文或命令名带有 publish，都不能当成远端发布证据。
 
-开发源码已新增 `story-codex-publish` 和共享模块 `story_publish.py`，当前只实现前述离线命令。后续再按平台增加适配说明及执行器；普通提交、导出和导出重试不触发平台写入。
+v0.5.11 包含 `story-codex-publish` 和共享模块 `story_publish.py`，只实现前述离线命令。后续若取得适用接入许可，再按平台增加适配说明及执行器；普通提交、导出和导出重试不触发平台写入。
 
 ## 未来取得平台许可后的自动化流程设计
 
@@ -206,4 +206,4 @@ durable sending（发送意图已经成功持久化）是本地分界点：此�
 
 模拟测试只验证发布模块的本地逻辑。真实后台验收另存平台、入口、操作时间、账号与作品的脱敏标识、固定内容摘要和回读证据，不在公开仓库提交小说全文、登录材料或敏感截图。macOS、Windows 的测试结果各自记录，不把本机浏览器验证视为跨平台通过。
 
-当前源码只实现阶段 A 和 B0 的本地部分。[比较留痕与材料核验](../benchmarks/results/publish-preparation-2026-09-23/comparison-ledger/README.md)记录本轮三个留痕命令、ZIP 竞态修复、完整回归与独立试用。[人工交接与边界历史验证](../benchmarks/results/publish-preparation-2026-09-23/manual-handoff/README.md)、[回执找回与正文格式历史验证](../benchmarks/results/publish-preparation-2026-09-23/receipt-and-dialogue/README.md)、[材料包复核历史验证](../benchmarks/results/publish-preparation-2026-09-22/archive-verification/README.md)及[材料导出阶段验证](../benchmarks/results/publish-preparation-2026-09-22/material-export/README.md)保留各阶段的代码快照。上面的网络、sending 竞态、平台草稿上传、正式发布及排期验收尚未执行，不能由本地准备测试推定通过。
+v0.5.11 只实现阶段 A 和 B0 的本地部分。[比较留痕与材料核验](../benchmarks/results/publish-preparation-2026-09-23/comparison-ledger/README.md)记录本轮三个留痕命令、ZIP 竞态修复、完整回归与独立试用。[人工交接与边界历史验证](../benchmarks/results/publish-preparation-2026-09-23/manual-handoff/README.md)、[回执找回与正文格式历史验证](../benchmarks/results/publish-preparation-2026-09-23/receipt-and-dialogue/README.md)、[材料包复核历史验证](../benchmarks/results/publish-preparation-2026-09-22/archive-verification/README.md)及[材料导出阶段验证](../benchmarks/results/publish-preparation-2026-09-22/material-export/README.md)保留各阶段的代码快照。上面的网络、sending 竞态、平台草稿上传、正式发布及排期验收尚未执行，不能由本地准备测试推定通过。

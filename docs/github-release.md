@@ -1,6 +1,21 @@
 # 安装、升级与 GitHub 发布
 
-当前已发布 **v0.5.10**：修复 Windows 导出，补齐短篇完整交付、旧稿补章、平台分类和中文校对规则。套件包含 7 个技能、34 个载荷文件，schema 2 不变。三平台统一按 [安装指引](../INSTALL.md) 升级。[版本说明](releases/v0.5.10.md)。
+**当前已发布版本为 v0.5.11。** 本版加入离线章节发布准备，套件包含 8 个技能、38 个载荷文件，创作库仍用 schema 2。固定标签、远端 CI、Release 附件、隔离安装及 Packages 工作流已分别核验；包的独立复核证据见下表。[v0.5.11 版本说明](releases/v0.5.11.md) · [安装指引](../INSTALL.md)。
+
+## v0.5.11 发布验证记录
+
+v0.5.11 于 2026-09-24 15:33:07（北京时间）发布，固定标签对应 `9cdf54e75a07e3b61a7b55aa190837608b36d487`。ZIP 包含 8 个同级技能、38 个载荷文件，180,441 字节，SHA-256 为 `60edb470c255c436aa7da74ab02ff0a35e1b5402693908f1f89fcca48b56cf48`。本版各项结果分别见下表和[验证目录](../benchmarks/results/v0.5.11/README.md)；历史 v0.5.10 证据保持原样。
+
+| 环节 | 当前状态 |
+|---|---|
+| 固定标签提交 | `v0.5.11` → `9cdf54e75a07e3b61a7b55aa190837608b36d487`；38 个技能文件与 ZIP 一致。[发布回执](../benchmarks/results/v0.5.11/release/release.json) |
+| 本机工程检查 | 754 项单元测试中 737 通过、17 按条件跳过；冒烟、中文稿与多线写作验收通过。[本地记录](../benchmarks/results/v0.5.11/README.md) |
+| 远端 Windows／Linux CI | [main 推送运行 35969424318](https://github.com/NingCui29/story-skill/actions/runs/35969424318) 与[固定标签运行 35970009432](https://github.com/NingCui29/story-skill/actions/runs/35970009432) 两平台全部步骤成功；[首次运行 35968080584](https://github.com/NingCui29/story-skill/actions/runs/35968080584) 的 Windows 失败已修复，失败记录仍保留。[main CI 回执](../benchmarks/results/v0.5.11/release/ci.json) · [标签 CI 回执](../benchmarks/results/v0.5.11/release/ci-tag.json) |
+| GitHub Release 与附件 | [v0.5.11 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11) 已公开；ZIP 和 `.zip.sha256` 回下载，与固定源码和本地构建一致。[附件回执](../benchmarks/results/v0.5.11/release/release.json) |
+| 官方固定标签隔离安装 | 官方安装器从固定标签安装 8 个技能、38 个文件，逐文件等于 Release ZIP；版本、帮助、初始化、状态四项通过。[安装回执](../benchmarks/results/v0.5.11/release/remote-install.json) |
+| GitHub Packages | [工作流 35970230332](https://github.com/NingCui29/story-skill/actions/runs/35970230332) 报告已发布并从注册表回下载 `@ningcui29/story-codex@0.5.11`；独立复核从工作流 artifact 下载包，确认 38 个技能文件、2 个包装文件与公开 Release 一致，SHA-256 为 `bd0c973f2d37ccc942d2c49bf7178a5e1eb6232da3310845d698e45164071cd9`，四项 CLI 通过。本机账号直接访问 Packages API 返回 403，未称本机直连注册表成功。[工作流回执](../benchmarks/results/v0.5.11/release/packages-receipt.json) · [独立复核](../benchmarks/results/v0.5.11/release/packages-independent.json) |
+
+发布准备只生成离线材料和本地核对记录，不登录七猫或番茄，不上传或提交章节，也不把作者提供的后台副本当作平台已验证。功能和原有书库兼容边界见[本版说明](releases/v0.5.11.md)。
 
 ## v0.5.10 发布验证记录
 
@@ -230,47 +245,47 @@ Release ZIP 的 SHA-256 为 `087ad76fe32714ea776853cab579c3b6087ed092ef0857c55a7
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Codex
 ```
 
-Codex 先读取仓库 [INSTALL.md](../INSTALL.md)，按照其中的固定版本与 7 个路径调用官方安装脚本，并处理已有目录、完整备份、文件核对和失败恢复。main 上维护的是安装指引，macOS、Linux 和 Windows 载荷统一固定到 `v0.5.10`；该 Markdown 文件不是可直接传给官方脚本的技能目录。v0.5.10 的远端核验状态见本页顶部。
+Codex 先读取仓库 [INSTALL.md](../INSTALL.md)，按其中的 v0.5.11 固定版本与 8 个路径调用官方安装脚本，并处理已有目录、完整备份、文件核对和失败恢复。该 Markdown 文件不是可直接传给官方脚本的技能目录。本版远端状态见本页顶部。
 
 官方脚本没有 `--update`，遇到同名目录仍拒绝覆盖。统一入口通过 Codex 编排安装与升级步骤，不修改用户的系统 skill；本仓库项目安装器的 `--update` 是另一项已有能力，适用条件见下文。
 
 ## 手动复查：固定版本与安装器参数
 
-下列命令以 v0.5.10 为目标；发布与核验状态见本页顶部。本机官方安装器支持一次 `--path` 接收多个路径。需要手动安装到没有同名技能的目录时，三平台使用以下参数；`<skill-installer目录>` 由 Codex 定位到本机实际路径：
+下列命令以 v0.5.11 为目标。本机官方安装器支持一次 `--path` 接收多个路径。需要手动安装到没有同名技能的目录时，三平台使用以下参数；`<skill-installer目录>` 由 Codex 定位到本机实际路径：
 
 ```bash
-python3 "<skill-installer目录>/scripts/install-skill-from-github.py" --repo NingCui29/story-skill --ref v0.5.10 --path skills/story-codex skills/story-codex-plan skills/story-codex-write skills/story-codex-analyze skills/story-codex-review skills/story-codex-research skills/story-codex-cover
+python3 "<skill-installer目录>/scripts/install-skill-from-github.py" --repo NingCui29/story-skill --ref v0.5.11 --path skills/story-codex skills/story-codex-plan skills/story-codex-write skills/story-codex-analyze skills/story-codex-review skills/story-codex-research skills/story-codex-cover skills/story-codex-publish
 ```
 
-这份本机安装器默认安装到 `$CODEX_HOME/skills`，未设置时为 `~/.codex/skills`；其他 Codex 环境应核对其实际安装器与技能目录。只在一个项目使用时，可在同一请求中明确“安装到 `/Users/作者/小说/我的写作项目/.agents/skills`”；对应的 `--dest` 指向 **skills 父目录**，安装器创建 7 个子目录。它与下文项目安装脚本的 `--project` 参数含义不同。
+这份本机安装器默认安装到 `$CODEX_HOME/skills`，未设置时为 `~/.codex/skills`；其他 Codex 环境应核对其实际安装器与技能目录。只在一个项目使用时，可在同一请求中明确“安装到 `/Users/作者/小说/我的写作项目/.agents/skills`”；对应的 `--dest` 指向 **skills 父目录**，安装器创建 8 个子目录。它与下文项目安装脚本的 `--project` 参数含义不同。
 
 **官方安装器遇到已有同名目录会拒绝覆盖。** 已有 0.3.0／0.4.0 或部分安装时，先按升级说明处理旧目录与本地修改；多路径安装中途失败也要核对已完成项，不能把部分成功当成整套安装成功。
 
-安装后核对 7 个目录都包含 `SKILL.md`，核心包含 `scripts/story.py` 和其余 4 个运行时模块，再在下一条消息使用 `$story-codex-plan` 或其他专用入口；未显示时重启 Codex。Python 要求为 3.10+，运行时仅用标准库；Codex 自身的账号和额度另计。
+安装后核对 8 个目录都包含 `SKILL.md`，核心包含 `scripts/story.py` 和其余 5 个运行时模块，再在下一条消息使用 `$story-codex-plan` 或其他专用入口；未显示时重启 Codex。Python 要求为 3.10+，运行时仅用标准库；Codex 自身的账号和额度另计。
 
-本版套件 ZIP 名为 `story-codex-0.5.10.zip`，附同名 `.zip.sha256`；[Release 下载](https://github.com/NingCui29/story-skill/releases/tag/v0.5.10) 的附件按 [安装指引](../INSTALL.md) 核验。附件按 7 个同级技能打包，实际载荷数量由本版打包结果核验；Source code ZIP 是 GitHub 自动生成的完整源码仓库，不能将整个仓库当成一个技能目录。
+本版拟发布的套件 ZIP 名为 `story-codex-0.5.11.zip`，附同名 `.zip.sha256`；附件发布并回下载后按[安装指引](../INSTALL.md)核验。本地 ZIP 按 8 个同级技能打包，共 38 个载荷文件，远端仍须独立核对；Source code ZIP 是 GitHub 自动生成的完整源码仓库，不能将整个仓库当成一个技能目录。
 
 ## 从源码安装到一个项目
 
-技能唯一源码位于仓库 `skills/`，共 7 个同级目录。仓库根 `scripts/install.py` 负责把它们安装到目标项目的 `.agents/skills/`；`--project` 指向项目根，不是 skills 父目录。[完整目录职责](目录结构.md)
+技能唯一源码位于仓库 `skills/`，共 8 个同级目录。仓库根 `scripts/install.py` 负责把它们安装到目标项目的 `.agents/skills/`；`--project` 指向项目根，不是 skills 父目录。[完整目录职责](目录结构.md)
 
 需要独立源码时，三平台均克隆同一固定版本到一个不存在的新目录：
 
 ```bash
-git clone --branch v0.5.10 --depth 1 https://github.com/NingCui29/story-skill.git story-skill-v0.5.10
+git clone --branch v0.5.11 --depth 1 https://github.com/NingCui29/story-skill.git story-skill-v0.5.11
 ```
 
-在该 v0.5.10 源码仓库目录运行：
+在该 v0.5.11 源码仓库目录运行：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "/Users/作者/小说/我的写作项目"
 ```
 
-默认安装整套：`story-codex`、`story-codex-plan`、`story-codex-write`、`story-codex-analyze`、`story-codex-review`、`story-codex-research`、`story-codex-cover`。6 个专用技能读取同级核心的共同约束，使用核心的 `scripts/story.py`；不要分别复制不同版本。
+默认安装整套：`story-codex`、`story-codex-plan`、`story-codex-write`、`story-codex-analyze`、`story-codex-review`、`story-codex-research`、`story-codex-cover`、`story-codex-publish`。7 个专用技能读取同级核心的共同约束，使用核心的 `scripts/story.py`；不要分别复制不同版本。
 
 若在开发仓库本身试用，运行 `python3 -B -X utf8 scripts/install.py --project "."`。根 `.agents/skills/` 是安装副本，受 Git 忽略；它不会替代 `skills/` 源码，也不会随源码编辑自动更新。克隆新版仓库后仍需安装，再在 Codex 的下一条消息调用技能；未显示时重启 Codex。
 
-## 手动复查：旧版升级到 0.5.10
+## 手动复查：旧版升级到 0.5.11
 
 日常升级直接使用上面的统一入口；以下说明供复查具体处理方式。所有安装均为文件副本，main 有新提交不会自动更新本机。先确认实际安装父目录和版本，再选择相同的安装方式；书目录无需搬动，技能安装也不会自动迁移书库。
 
@@ -281,13 +296,13 @@ python3 -B -X utf8 scripts/install.py --project "/Users/作者/小说/我的写�
 | 官方 `$skill-installer` 安装 | 同名目录存在会拒绝覆盖；把旧目录与本地修改备份并移出扫描目录，再安装整套固定版本 |
 | 手动复制或解压 | 不会自动获得项目安装器的托管清单；同样先在扫描目录之外保留完整副本，再按选定方式重新安装 |
 
-仅第一种情况，在 **v0.5.10 源码仓库**目录运行：
+仅第一种情况，在 **v0.5.11 源码仓库**目录运行：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "/Users/作者/小说/我的写作项目" --update
 ```
 
-安装器完成后核对完整的 7 个技能，但只替换回执 `changed_skills` 列出的目录；其中原先已存在的旧目录保留在回执 `backup` 指向的 `.agents/.story-codex-backups/` 子目录。未变更目录留在安装位置，新补装目录没有旧版可备份，因此该备份通常是差分，不能当成升级前的完整套件。例如仅4个技能发生变化时，备份只有这4个，另外3个仍在 `.agents/skills/`。从单入口旧版升级时会补齐其余6个专用入口；全部未变时返回 `unchanged`，不会新建备份。保留原始回执及已有备份，不猜备份内容或路径。
+安装器完成后核对完整的 8 个技能，但只替换回执 `changed_skills` 列出的目录；其中原先已存在的旧目录保留在回执 `backup` 指向的 `.agents/.story-codex-backups/` 子目录。未变更目录留在安装位置，新补装目录没有旧版可备份，因此该备份通常是差分，不能当成升级前的完整套件。例如仅4个技能发生变化时，备份只有这4个，另外4个仍在 `.agents/skills/`。从单入口旧版升级时会补齐其余7个专用入口；全部未变时返回 `unchanged`，不会新建备份。保留原始回执及已有备份，不猜备份内容或路径。
 
 其他安装方式备份时也要位于技能扫描目录之外，不能只在 `skills/` 内改成 `story-codex-old` 后继续让 Codex 扫描。保留本地改动的原文件和差异，核对新版后再决定如何恢复定制内容。
 
@@ -295,19 +310,19 @@ python3 -B -X utf8 scripts/install.py --project "/Users/作者/小说/我的写�
 
 ## 补齐依赖与历史回退
 
-核心缺失时，优先重新核对整套安装。若仅缺 `story-codex`，从**与其他 6 个技能相同的版本**补装 `skills/story-codex` 到同一 skills 父目录；不能把 v0.3.0 核心与新版专用技能配在一起。多路径安装未全部成功时先核对已存在的目录，官方安装器不会覆盖它们，不要把一条命令的部分输出当成整套完成。
+核心缺失时，优先重新核对整套安装。若仅缺 `story-codex`，从**与其他 7 个技能相同的版本**补装 `skills/story-codex` 到同一 skills 父目录；不能把 v0.3.0 核心与新版专用技能配在一起。多路径安装未全部成功时先核对已存在的目录，官方安装器不会覆盖它们，不要把一条命令的部分输出当成整套完成。
 
 用户级与项目级若同时存在同名技能，先明确本次使用哪一份，避免不同版本混用。不要直接改安装副本后期待改动进入源码仓库；需维护的技能改动回到 `skills/`，核对后再更新安装副本。
 
-回退到旧的七技能版本时，先停止使用该安装的写作任务，在扫描目录之外准备完整旧套件，核验完成后再切换；保留升级回执、差分备份及当前七目录的完整副本。
+回退到旧的七技能版本时，先停止使用该安装的写作任务，在扫描目录之外准备完整旧套件，核验完成后再切换；保留升级回执、差分备份及当前八目录的完整副本。回退后不可留下新版 `story-codex-publish` 单独搭配旧核心。
 
 1. 若有升级前完整备份，直接用它准备恢复副本。只有差分备份时，将其中的旧目录复制到新的恢复目录，再补入升级回执确认未变更的目录；这些补入目录须逐文件核对旧版可信清单或固定标签，不能只凭名称或核心版本号判断。保留各目录原有的 `.story-codex-install.json`，不要移动或消耗唯一备份。若部分目录原先不存在、升级跨过多次变更，或未变目录已无法核验，改从目标旧版本的固定标签在临时目录准备完整套件，不将现有新版目录凑入旧版。
-2. 恢复目录确认为完整旧套件后，把当前这7个目录移到扫描目录之外并完整保留，再将准备好的7个旧目录放回原 skills 父目录；不要移动其他技能，也不能移出7个后只放回差分备份中的4个。若使用旧固定标签源码，从该源码仓库运行 `python3 -B -X utf8 scripts/install.py --project "<目标项目根>"` 安装整套；目标的7个同名目录须已保留并移出，不能凭空添加 `--source` 参数。其他安装方式沿用其固定版本安装步骤。
+2. 恢复目录确认为完整旧套件后，把当前这8个目录移到扫描目录之外并完整保留，再将准备好的7个旧目录放回原 skills 父目录；不要移动其他技能，也不能移出8个后只放回差分备份中的部分目录。若使用旧固定标签源码，从该源码仓库运行 `python3 -B -X utf8 scripts/install.py --project "<目标项目根>"` 安装整套；目标的7个同名目录须已保留并移出，不能凭空添加 `--source` 参数。其他安装方式沿用其固定版本安装步骤。
 3. 切换前后均按下面7项核验；任一项失败时，停止使用不完整套件，按相同原则恢复刚保留的当前完整副本。技能回退不自动回退书库，也不授权用旧工具打开不兼容的新库。
 
 七项核验：
 
-1. `story-codex`、`story-codex-plan`、`story-codex-write`、`story-codex-analyze`、`story-codex-review`、`story-codex-research`、`story-codex-cover` 七个目录及各自 `SKILL.md` 齐全。
+1. 目标旧版的 `story-codex`、`story-codex-plan`、`story-codex-write`、`story-codex-analyze`、`story-codex-review`、`story-codex-research`、`story-codex-cover` 七个目录及各自 `SKILL.md` 齐全，安装位置没有残留新版 `story-codex-publish`。
 2. 核心的 `scripts/story.py`、`story_storage.py`、`story_history.py`、`story_search.py`、`story_world.py` 五个模块齐全，入口引用的同级文件存在。
 3. 七目录的载荷文件集符合目标旧版本的可信清单，无漏文件或混入新版文件；不要把当前版本的33文件数套用于所有旧版本。
 4. 全部载荷逐文件 SHA-256 与恢复依据一致；差分备份补入的未变目录也须核验。
@@ -321,23 +336,23 @@ python3 -B -X utf8 scripts/install.py --project "/Users/作者/小说/我的写�
 $skill-installer https://github.com/NingCui29/story-skill/tree/v0.3.0/.agents/skills/story-codex
 ```
 
-[v0.3.0 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.3.0) 的 ZIP 内只有一个 `story-codex/`，共 13 个文件。旧版使用 `$story-codex`，没有 6 个新版独立入口。旧 `.agents/skills/story-codex` 源码路径只适用于该固定版本。技能回退不等于书库回退，恢复书籍状态应按 [恢复指南](recovery.md) 处理。
+[v0.3.0 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.3.0) 的 ZIP 内只有一个 `story-codex/`，共 13 个文件。旧版使用 `$story-codex`，没有新版独立入口。旧 `.agents/skills/story-codex` 源码路径只适用于该固定版本。技能回退不等于书库回退，恢复书籍状态应按 [恢复指南](recovery.md) 处理。
 
 ## 维护者：验证并发布新布局
 
-本节说明可复用的发布顺序；具体执行结果以对应提交的 Actions、Release 和 Packages 回执为准。先核对 7 份入口和相对引用、整套安装/更新/恢复、ZIP 与 npm 白名单、新 token 输入清单及下载后的 CLI 验证。保留已发布版本的固定 tag、附件和历史测量，不覆盖已有版本。
+本节说明可复用的发布顺序；具体执行结果以对应提交的 Actions、Release 和 Packages 回执为准。先核对 8 份入口和相对引用、整套安装/更新/恢复、ZIP 与 npm 白名单、新 token 输入清单及下载后的 CLI 验证。保留已发布版本的固定 tag、附件和历史测量，不覆盖已有版本。
 
 在 macOS／Linux 终端中逐条运行并检查结果：
 
 ```bash
 git status --short
 git remote -v
-python3 -B -X utf8 scripts/smoke.py --output dist/manual-smoke-v0.5.10.json
-python3 -B -X utf8 scripts/long_acceptance.py --output dist/manual-long-v0.5.10.json
+python3 -B -X utf8 scripts/smoke.py --output dist/manual-smoke-v0.5.11.json
+python3 -B -X utf8 scripts/long_acceptance.py --output dist/manual-long-v0.5.11.json
 python3 -B -X utf8 scripts/package.py
 ```
 
-单元测试所需旧 ZIP 已随 [测试夹具](../tests/fixtures/README.md) 保存；`migrate_probe.py` 默认使用固定旧工具生成的三类 schema 1 合成夹具，用 `--source` 复查历史实书时需另备相应旧数据库。`verify.py` 校验报告的当前哈希绑定。v0.5.10 新证据保存到 `benchmarks/results/v0.5.10/`；历史 [v0.5.5 验证](../benchmarks/results/v0.5.5/README.md)与其他旧回执保持原样。运行时或技能文本变化后，不能将旧版测试数及 token 百分比改名为新版结果。
+单元测试所需旧 ZIP 已随 [测试夹具](../tests/fixtures/README.md) 保存；`migrate_probe.py` 默认使用固定旧工具生成的三类 schema 1 合成夹具，用 `--source` 复查历史实书时需另备相应旧数据库。`verify.py` 校验报告的当前哈希绑定。v0.5.11 新证据应按实际结果保存到 `benchmarks/results/v0.5.11/`；历史 [v0.5.10 验证](../benchmarks/results/v0.5.10/README.md)与其他旧回执保持原样。运行时或技能文本变化后，不能将旧版测试数及 token 百分比改名为新版结果。
 
 提交前检查本版 `skills/` 改动、维护文档、验证回执与发布工具按计划进入暂存；不要把本地安装副本、虚拟环境、数据库或测试产物放入提交。先审查完整 diff，再提交和推送。只有推送完成，main 的多路径安装入口才具备远端源码。
 
@@ -349,7 +364,7 @@ python3 -B -X utf8 scripts/package.py
 
 ## GitHub Packages 同步
 
-[Packages](https://github.com/NingCui29/story-skill/pkgs/npm/story-codex) 使用 GitHub npm 注册表。本版包为 `@ningcui29/story-codex@0.5.9`，发布与回下载状态以本页 v0.5.10 记录为准；历史版本的发布和下载结果保留在本页历史记录。仓库归属已核对为 `NingCui29/story-skill`；旧 `Cuinings` API 地址重定向到同一仓库 ID。新版工作流、包作用域、repository 元数据与安装链接均使用当前归属。npm 包不使用安装钩子注册 Codex；下载后不能当成已安装技能。
+[Packages](https://github.com/NingCui29/story-skill/pkgs/npm/story-codex) 使用 GitHub npm 注册表。本版 `@ningcui29/story-codex@0.5.11` 已由[同步工作流](https://github.com/NingCui29/story-skill/actions/runs/35970230332)发布并在工作流中回下载；独立复核取回其 artifact 核对，范围见本页顶部。历史版本的结果保留在各自记录中。仓库归属已核对为 `NingCui29/story-skill`；旧 `Cuinings` API 地址重定向到同一仓库 ID。工作流、包作用域、repository 元数据与安装链接均使用当前归属。npm 包不使用安装钩子注册 Codex；下载后不能当成已安装技能。
 
 [同步工作流](../.github/workflows/packages.yml) 在正式 Release 发布时运行，也可在 [Actions](https://github.com/NingCui29/story-skill/actions/workflows/packages.yml) 手动选择已发布的新版本 tag 补同步。工作流从该 Release 的 ZIP 和 checksum 构建，使用仓库 `GITHUB_TOKEN` 的 `contents: read`、`packages: write` 权限。其他仓库触发会被拒绝。
 
@@ -363,10 +378,10 @@ python3 -B -X utf8 scripts/package.py
 python3 -B -X utf8 scripts/sync_packages.py --tag v0.3.0 --prepare-only
 ```
 
-本版工作流已完成注册表回下载，其归档产物也经过独立复核。以下为具备相应下载权限时的命令；本机账号缺少 `read:packages` 范围，本机直连查询未作为发布验收依据：
+本版工作流内的注册表回下载及 artifact 独立复核均已通过；本机账号直接访问 Packages API 返回 403。以下命令供具备下载权限时自行复核：
 
 ```bash
-npm pack @ningcui29/story-codex@0.5.9 --registry=https://npm.pkg.github.com
+npm pack @ningcui29/story-codex@0.5.11 --registry=https://npm.pkg.github.com
 ```
 
 包可见性与仓库可见性分别管理。GitHub npm 即使公开也需要认证下载；在 Codex 中优先使用前述技能安装方式。[GitHub npm 官方说明](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)

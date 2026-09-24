@@ -1,0 +1,66 @@
+{
+  "ok": true,
+  "tag": "v0.5.11",
+  "checked_at_utc": "2026-09-24T07:40:29.459282+00:00",
+  "evidence": {
+    "actions_run_url": "https://github.com/NingCui29/story-skill/actions/runs/35970230332",
+    "artifact_id": 10795767361,
+    "artifact_name": "packages-sync-v0.5.11",
+    "artifact_api_url": "https://api.github.com/repos/NingCui29/story-skill/actions/artifacts/10795767361/zip",
+    "artifact_sha256": "b97999fafd2fbdae37905ebbbdbe06fda1c94cd16c9a2d9b03652e8933b9505f",
+    "receipt_sha256": "2ef8cb59393a601c205b4e7af0eb647c2de94a67512f78065bf6e3d649276942"
+  },
+  "release": {
+    "url": "https://github.com/NingCui29/story-skill/releases/tag/v0.5.11",
+    "archive_sha256": "60edb470c255c436aa7da74ab02ff0a35e1b5402693908f1f89fcca48b56cf48",
+    "checksum_matches": true
+  },
+  "package": {
+    "name": "@ningcui29/story-codex",
+    "version": "0.5.11",
+    "package_url_reported_by_actions_receipt": "https://github.com/users/NingCui29/packages/npm/package/story-codex",
+    "visibility_reported_by_actions_receipt": "public",
+    "linked_repository_reported_by_actions_receipt": "NingCui29/story-skill",
+    "registry_identity_reported_by_actions_receipt": "github-actions[bot]",
+    "new_publication_reported_by_actions_receipt": true,
+    "downloaded_from_registry_reported_by_actions_receipt": true,
+    "downloaded_tarball_sha256": "bd0c973f2d37ccc942d2c49bf7178a5e1eb6232da3310845d698e45164071cd9",
+    "downloaded_tarball_bytes": 158882,
+    "downloaded_integrity_sha512": "sha512-u+1C2fE3Ibfto+xjP9cYuY2P1+2xP0ypvCdNyyNiEVaQFzWJmi1KI0eQN4x397PpwIk+BDL78Y7tiZBi4HTaGg==",
+    "registry_integrity_receipt_matches_tarball": true,
+    "payload_bytes_match_public_release": true,
+    "wrapper_bytes_match_package_npm": true,
+    "payload_files": 38,
+    "wrapper_files": [
+      "README.md",
+      "package.json"
+    ],
+    "skills": [
+      "story-codex",
+      "story-codex-analyze",
+      "story-codex-cover",
+      "story-codex-plan",
+      "story-codex-publish",
+      "story-codex-research",
+      "story-codex-review",
+      "story-codex-write"
+    ],
+    "runtime_smoke": {
+      "ok": true,
+      "commands": 4,
+      "skills": [
+        "story-codex",
+        "story-codex-analyze",
+        "story-codex-cover",
+        "story-codex-plan",
+        "story-codex-publish",
+        "story-codex-research",
+        "story-codex-review",
+        "story-codex-write"
+      ],
+      "skill_files": 38,
+      "temporary_book_removed": true
+    }
+  },
+  "access_note": "Local credential received HTTP 403 from GitHub Packages package API; registry download and package linkage were reported by the successful Actions receipt. The downloaded tarball was independently fetched from that Actions artifact and verified against the public Release ZIP and checksum."
+}

@@ -1,0 +1,70 @@
+{
+  "date": "2026-09-24",
+  "scope": "local_checks_and_release_evidence_index",
+  "version": "0.5.11",
+  "fixed_tag_commit": "9cdf54e75a07e3b61a7b55aa190837608b36d487",
+  "full_unit_tests": {"run": 754, "passed": 737, "skipped": 17, "failed": 0},
+  "local_acceptance": {
+    "smoke": {"ok": true, "receipt": "smoke.json"},
+    "chinese": {"ok": true, "receipt": "chinese.json"},
+    "long": {"ok": true, "receipt": "long.json"}
+  },
+  "archive": {
+    "path": "dist/story-codex-0.5.11.zip",
+    "bytes": 180441,
+    "sha256": "60edb470c255c436aa7da74ab02ff0a35e1b5402693908f1f89fcca48b56cf48",
+    "checksum_file_matches": true,
+    "skills": 8,
+    "skill_files": 38,
+    "all_files_match_local_source": true
+  },
+  "package_script_tests": {
+    "test_package_npm.py": {"run": 47, "result": "passed"},
+    "test_sync_packages.py": {"run": 19, "result": "passed"}
+  },
+  "packages_workflow": {
+    "yaml_parsed": true,
+    "release_event": "published",
+    "manual_default_tag": "v0.5.11",
+    "packages_permission": "write"
+  },
+  "npm_manifest_configuration": {
+    "package_name": "@ningcui29/story-codex",
+    "version": "0.5.11",
+    "registry": "https://npm.pkg.github.com",
+    "skill_files": 38,
+    "skill_roots": 8,
+    "checked_without_npm_pack": true
+  },
+  "local_npm_build": {
+    "result": "not_run",
+    "reason": "npm command is unavailable on this machine"
+  },
+  "remote_ci": {
+    "status": "success",
+    "main_run_id": 35969424318,
+    "tag_run_id": 35970009432,
+    "windows": "success",
+    "linux": "success",
+    "first_run_windows_failed": 35968080584,
+    "receipt": "release/ci.json"
+  },
+  "release_download": {
+    "status": "verified",
+    "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.5.11",
+    "source_and_download_match": true,
+    "official_isolated_install_passed": true,
+    "receipt": "release/release.json",
+    "install_receipt": "release/remote-install.json"
+  },
+  "github_packages_download": {
+    "workflow_status": "success",
+    "run_id": 35970230332,
+    "registry_download_reported_by_workflow_receipt": true,
+    "artifact_independently_verified": true,
+    "tarball_sha256": "bd0c973f2d37ccc942d2c49bf7178a5e1eb6232da3310845d698e45164071cd9",
+    "local_direct_registry_access": "HTTP 403",
+    "workflow_receipt": "release/packages-receipt.json",
+    "independent_receipt": "release/packages-independent.json"
+  }
+}

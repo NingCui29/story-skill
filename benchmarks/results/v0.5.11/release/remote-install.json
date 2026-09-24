@@ -1,0 +1,54 @@
+{
+  "version": "0.5.11",
+  "checked_at_utc": "2026-09-24T07:36:27.282910+00:00",
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.5.11",
+  "tag": "v0.5.11",
+  "resolved_tag_commit": "9cdf54e75a07e3b61a7b55aa190837608b36d487",
+  "assets": {
+    "zip_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.11/story-codex-0.5.11.zip",
+    "checksum_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.11/story-codex-0.5.11.zip.sha256",
+    "zip_bytes": 180441,
+    "sha256": "60edb470c255c436aa7da74ab02ff0a35e1b5402693908f1f89fcca48b56cf48",
+    "checksum_file_matches": true
+  },
+  "installer": {
+    "name": "official skill-installer",
+    "method": "git",
+    "source": "NingCui29/story-skill",
+    "ref": "v0.5.11",
+    "destination": "isolated temporary skills parent; cleaned after validation",
+    "skill_count": 8,
+    "skills": [
+      "story-codex",
+      "story-codex-plan",
+      "story-codex-write",
+      "story-codex-analyze",
+      "story-codex-review",
+      "story-codex-research",
+      "story-codex-cover",
+      "story-codex-publish"
+    ],
+    "file_count": 38,
+    "bytewise_equal_to_downloaded_release_zip": true
+  },
+  "cli": {
+    "version": {
+      "passed": true,
+      "exit_code": 0
+    },
+    "help": {
+      "passed": true,
+      "exit_code": 0
+    },
+    "init": {
+      "passed": true,
+      "exit_code": 0
+    },
+    "status": {
+      "passed": true,
+      "exit_code": 0
+    }
+  },
+  "overall_passed": true,
+  "existing_installation_changed": false
+}
