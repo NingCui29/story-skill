@@ -2,17 +2,17 @@
 
 [历史资料名称替换说明](../benchmarks/NAME_REDACTION.md)：旧版路径和哈希可能无法以遮盖后的快照复验。
 
-本页的新命名源码入口对应 **v0.6.0**，8 个技能共有 38 个载荷文件；远程可用性以该版 Release 附件及回下载验证为准。[v0.5.11](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11) 是历史固定版，其目录和分发身份保持当时原样。当前源码的[发布准备技能](../skills/story-skill-publish/SKILL.md)使用独立本地记录，只准备和复核离线材料，不上传、提交或排期平台章节。[v0.6.0 说明](releases/v0.6.0.md) · [功能边界](platform-publishing.md) · [安装指引](../INSTALL.md)
+当前发布版为 **v0.6.0**，8 个技能共有 38 个载荷文件；固定标签、Release 附件和新包已发布并完成回下载验证。[v0.5.11](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11) 是历史固定版，其目录和分发身份保持当时原样。当前源码的[发布准备技能](../skills/story-skill-publish/SKILL.md)使用独立本地记录，只准备和复核离线材料，不上传、提交或排期平台章节。[v0.6.0 说明](releases/v0.6.0.md) · [功能边界](platform-publishing.md) · [安装指引](../INSTALL.md)
 
 v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Windows 导出修复仍适用；当版工程、固定标签、Release、CI 和 Packages 的已核验范围见[历史记录](../benchmarks/results/v0.5.10/README.md)。v0.5.11 的远端分发与跨平台结果见[本版验证目录](../benchmarks/results/v0.5.11/README.md)和[发布记录](github-release.md)，不沿用旧版的验证结论。
 
 使用说明见 [从拆书开始，新起一本书](../README.md#从拆书开始新起一本书)、[大纲细纲怎样保存](中文小说上手.md#大纲细纲怎样保存)、[离线发布准备](中文小说上手.md#章节离线发布准备)、[超长篇实操](超长篇实操.md)和[恢复流程](recovery.md)。
 
-本文技能入口与源码路径对应 v0.6.0；v0.5.11 固定标签不提供这些新名称入口。是否能从远端安装，按 v0.6.0 Release 附件及回下载验证判定。正式版按 [INSTALL.md](../INSTALL.md) 核对实际标签与附件；各平台验证范围以当版记录为准。升级前保留完整书库和本地技能修改，仓库发布不会自动更新本机安装。
+本文技能入口与源码路径对应 v0.6.0；v0.5.11 固定标签不提供这些新名称入口。v0.6.0 的远端分发和 Git 方法隔离安装已经核对。正式版按 [INSTALL.md](../INSTALL.md) 核对实际标签与附件；各平台验证范围以当版记录为准。升级前保留完整书库和本地技能修改，仓库发布不会自动更新本机安装。
 
 ## 开始使用
 
-需要安装或升级时，可在当前应用中发送以下请求；安装指引会先核对 v0.6.0 Release 附件和回下载结果，条件未满足则保留现有安装：
+需要安装或升级时，可在当前应用中发送以下请求；安装时继续核对 v0.6.0 固定标签、Release 附件和本地已有修改；检查不符则保留现有安装：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill

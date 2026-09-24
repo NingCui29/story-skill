@@ -1,6 +1,8 @@
 # 安装、升级与 GitHub 发布
 
-> **历史记录提示：** 下列 v0.5.11 及更早发布记录经过名称遮盖。固定标签、附件和包身份并未更名；旧版路径不能由新技能名推导。历史资料中的来源路径与哈希可能无法用遮盖后的文件复验，旧资源请从各版本 Release 页面核对。v0.6.0 是否可远程安装，应按该版 Release 附件和回下载验证判断。
+> **历史记录提示：** 本仓库文档和 14 个旧版 Release 的标题、正文已做名称遮盖；28 个旧附件的文件名、旧包身份、固定标签和提交历史仍保留原样，以免现有下载地址与安装依赖失效。旧版路径不能由新技能名推导，历史资料中的来源路径与哈希可能无法用遮盖后的文件复验。v0.6.0 的附件与回下载已核对；安装时仍须检查当前标签与附件状态。
+
+**当前发布版 v0.6.0。** [固定标签](https://github.com/NingCui29/story-skill/tree/v0.6.0)为 `53c7f3289b1cb78699ff0734d4ba8b291a2557d5`；[版本说明](releases/v0.6.0.md)登记本地、Linux／Windows CI、Release、固定标签安装和 GitHub Packages 的实际核验结果。标签里的文档是发布前快照，main 上这份记录于发布后补充。套件 ZIP 180,434 字节，SHA-256 `089480dd1769ff13167553396090bec16298840be4449a9a2b5c550a10572056`。
 
 **v0.5.11 历史发布记录。** 本版加入离线章节发布准备，套件包含 8 个技能、38 个载荷文件，创作库仍用 schema 2。固定标签、远端 CI、Release 附件、隔离安装及 Packages 工作流已分别核验；包的独立复核证据见下表。[v0.5.11 版本说明](releases/v0.5.11.md) · [安装指引](../INSTALL.md)。
 
@@ -241,9 +243,9 @@ Release ZIP 的 SHA-256 为 `087ad76fe32714ea776853cab579c3b6087ed092ef0857c55a7
 
 ## Story Skill 安装与升级
 
-**本页新命名源码入口对应 v0.6.0。** [本版说明](releases/v0.6.0.md)登记已完成的本地核验；远程可用性以该版 Release 附件及回下载验证为准。v0.5.11 历史固定版仍是原标签与原分发身份；本文对历史名称的遮盖不会更改该标签的目录、附件或 npm 包。请从[对应版本 Release 页面](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11)核对实际旧版资源，不要把下文的新技能名拼进旧标签安装命令。
+**当前发布版为 v0.6.0。** [本版说明](releases/v0.6.0.md)登记本地与远端核验；[Release 附件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.0)已公开并完成回下载。v0.5.11 历史固定版仍是原标签与原分发身份；本文对历史名称的遮盖不会更改该标签的目录、附件或 npm 包。请从[对应版本 Release 页面](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11)核对实际旧版资源，不要把下文的新技能名拼进旧标签安装命令。
 
-v0.6.0 Release 附件齐全且回下载核验通过时，按 [INSTALL.md](../INSTALL.md) 的固定标签、附件与校验值安装完整套件。用户无需手填八个目录；也不要把文档页地址直接当技能目录传给官方安装器。若只在本地开发工作树试用，先核对本仓库安装器支持新布局，再在隔离项目中验证；源码修改不会自动同步本机已安装副本。
+按 [INSTALL.md](../INSTALL.md) 的固定标签、附件与校验值安装 v0.6.0 完整套件。用户无需手填八个目录；也不要把文档页地址直接当技能目录传给官方安装器。若只在本地开发工作树试用，先核对本仓库安装器支持新布局，再在隔离项目中验证；源码修改不会自动同步本机已安装副本。
 
 升级时先核对当前安装的完整目录、实际版本和本地修改。把旧目录与修改完整备份到技能扫描目录之外，再准备同一版本的八个新技能，核对 `SKILL.md`、共享脚本、载荷文件和运行时命令。旧入口仍留在扫描目录会造成两套技能同时显示；新旧目录切换前后都要核查。项目安装器管理的安装应按其回执处理，不能删托管清单来强行覆盖。仅复制新目录不等于完成旧入口迁移。
 
@@ -253,7 +255,7 @@ v0.6.0 Release 附件齐全且回下载核验通过时，按 [INSTALL.md](../INS
 
 本节说明可复用的发布顺序；具体执行结果以对应提交的 Actions、Release 和 Packages 回执为准。先核对 8 份入口和相对引用、整套安装/更新/恢复、ZIP 与 npm 白名单、新 token 输入清单及下载后的 CLI 验证。保留已发布版本的固定 tag、附件和历史测量，不覆盖已有版本。
 
-在开发工作树中逐条运行并检查结果；这些命令只生成本地证据，不表示 v0.6.0 已发布：
+在开发工作树中逐条运行并检查结果；这些命令只生成本地证据，不表示远端附件或包仍与当前工作树一致：
 
 ```bash
 git status --short
@@ -263,7 +265,7 @@ python3 -B -X utf8 scripts/long_acceptance.py --output dist/manual-long-v0.6.0.j
 python3 -B -X utf8 scripts/package.py
 ```
 
-迁移探针使用保留的 [schema 1 旧运行时夹具](../tests/fixtures/schema1_runtime.py)，经固定摘要核对后生成三类合成夹具，用 `--source` 复查历史实书时需另备相应旧数据库。`verify.py` 校验报告的当前哈希绑定。v0.6.0 新证据应按实际结果另存到新目录；历史 [v0.5.10 验证](../benchmarks/results/v0.5.10/README.md)与其他旧回执只作为经名称遮盖的历史参考。运行时或技能文本变化后，不能将旧版测试数及 token 百分比改名为新版结果。
+迁移探针使用保留的 [schema 1 旧运行时夹具](../tests/fixtures/schema1_runtime.py)，经固定摘要核对后生成三类合成夹具，用 `--source` 复查历史实书时需另备相应旧数据库。`verify.py` 校验报告的当前哈希绑定。v0.6.0 本地核验记录已存入[本版目录](../benchmarks/results/v0.6.0/verification.json)；历史 [v0.5.10 验证](../benchmarks/results/v0.5.10/README.md)与其他旧回执只作为经名称遮盖的历史参考。运行时或技能文本变化后，不能将旧版测试数及 token 百分比改名为新版结果。
 
 提交前检查本版 `skills/` 改动、维护文档、验证回执与发布工具按计划进入暂存；不要把本地安装副本、虚拟环境、数据库或测试产物放入提交。先审查完整 diff，再提交和推送。只有推送完成，main 的多路径安装入口才具备远端源码。
 
@@ -277,4 +279,4 @@ python3 -B -X utf8 scripts/package.py
 
 [同步工作流](../.github/workflows/packages.yml) 在正式 Release 发布后从该版本的 ZIP 和校验文件构建包；也可在 [Actions 页面](https://github.com/NingCui29/story-skill/actions/workflows/packages.yml) 对已发布标签手动补同步。工作流必须核对实际包身份、载荷清单、回下载摘要与临时工程中的版本、帮助、初始化和状态命令。已有版本若内容不同，应停止，不能删除或覆盖注册表文件。
 
-v0.5.11 及更早版本使用历史包身份，名称在本页已遮盖；[v0.5.11 发布页](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11)和上方工作流、回执保留当时验证结论。遮盖后的名称不能直接用于 `npm pack`。v0.6.0 包的状态必须以该版实际发布及回下载回执为准，不能将历史包的状态算作新包完成。GitHub npm 即使包页面公开，下载仍可能需要认证；[官方注册表说明](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)给出认证要求。
+v0.5.11 及更早版本使用历史包身份，名称在本页已遮盖；[v0.5.11 发布页](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11)和上方工作流、回执保留当时验证结论。遮盖后的名称不能直接用于 `npm pack`。[v0.6.0 包同步工作流](https://github.com/NingCui29/story-skill/actions/runs/36013527161)成功，新的 `@ningcui29/story-skill@0.6.0` 已公开并关联仓库；回下载 tarball 158,798 字节，SHA-256 `ed449831b750d50d3066980f1d0270a8b995165a9f7d61de4a58964c890775e6`，经本仓库打包工具独立核验。历史包的状态不能算作新版结果。GitHub npm 即使包页面公开，下载仍可能需要认证；[官方注册表说明](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry)给出认证要求。

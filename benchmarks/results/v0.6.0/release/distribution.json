@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "version": "0.6.0",
+  "checked_at_date": "2026-09-24",
+  "scope": {
+    "independent_this_agent": [
+      "public tag/ref API",
+      "workflow run and job APIs",
+      "Release API",
+      "public Release asset re-download and checksum",
+      "public workflow artifact metadata"
+    ],
+    "parent_reported": [
+      "fixed-tag Git installer eight roots and 38 files matching ZIP",
+      "package tarball re-download and content verification",
+      "direct archive endpoint timeout"
+    ]
+  },
+  "tag": {
+    "name": "v0.6.0",
+    "ref_object_sha": "f78af742cde08c4a1089d7f5c2101487d6205996",
+    "ref_object_type": "tag",
+    "commit_sha": "53c7f3289b1cb78699ff0734d4ba8b291a2557d5",
+    "api": "https://api.github.com/repos/NingCui29/story-skill/git/ref/tags/v0.6.0"
+  },
+  "runs": [
+    {
+      "id": 36011391166,
+      "name": "Verify source and package",
+      "event": "push",
+      "ref": "main",
+      "head_sha": "53c7f3289b1cb78699ff0734d4ba8b291a2557d5",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "test (ubuntu-latest, 3.10)",
+          "id": 107672719213,
+          "conclusion": "success"
+        },
+        {
+          "name": "test (windows-latest, 3.12)",
+          "id": 107672719633,
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 36012525172,
+      "name": "Verify source and package",
+      "event": "push",
+      "ref": "v0.6.0",
+      "head_sha": "53c7f3289b1cb78699ff0734d4ba8b291a2557d5",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "test (windows-latest, 3.12)",
+          "id": 107676579666,
+          "conclusion": "success"
+        },
+        {
+          "name": "test (ubuntu-latest, 3.10)",
+          "id": 107676580228,
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 36013527161,
+      "name": "Sync v0.6.0 to GitHub Packages",
+      "event": "release",
+      "ref": "v0.6.0",
+      "head_sha": "53c7f3289b1cb78699ff0734d4ba8b291a2557d5",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "publish",
+          "id": 107680032193,
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "release": {
+    "id": 395776133,
+    "tag": "v0.6.0",
+    "draft": false,
+    "prerelease": false,
+    "published_at": "2026-09-24T14:32:20Z",
+    "url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.0",
+    "assets": [
+      {
+        "id": 586140364,
+        "name": "story-skill-0.6.0.zip",
+        "api_size": 180434,
+        "api_digest": "sha256:089480dd1769ff13167553396090bec16298840be4449a9a2b5c550a10572056",
+        "downloaded_size": 180434,
+        "downloaded_sha256": "089480dd1769ff13167553396090bec16298840be4449a9a2b5c550a10572056",
+        "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.0/story-skill-0.6.0.zip"
+      },
+      {
+        "id": 586140557,
+        "name": "story-skill-0.6.0.zip.sha256",
+        "api_size": 88,
+        "api_digest": "sha256:88be2ac662dcfea520288acadc67f0bafae30643abea7fc76ad58f86707094b5",
+        "downloaded_size": 88,
+        "downloaded_sha256": "88be2ac662dcfea520288acadc67f0bafae30643abea7fc76ad58f86707094b5",
+        "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.0/story-skill-0.6.0.zip.sha256"
+      }
+    ]
+  },
+  "archive": {
+    "sha256_file_content_matches_zip": true,
+    "member_count": 38,
+    "roots": [
+      "story-skill",
+      "story-skill-analyze",
+      "story-skill-cover",
+      "story-skill-plan",
+      "story-skill-publish",
+      "story-skill-research",
+      "story-skill-review",
+      "story-skill-write"
+    ],
+    "member_names_unique": true,
+    "old_name_marker_absent": true
+  },
+  "packages": {
+    "workflow_artifact": {
+      "id": 10812699964,
+      "name": "packages-sync-v0.6.0",
+      "size_in_bytes": 161807,
+      "digest": "sha256:c10e8f3022d44abe84edafcc2334d4645322b8870c6baba56ac7a3a61e21a585",
+      "expired": false,
+      "created_at": "2026-09-24T14:32:42Z",
+      "metadata_checked_via": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/36013527161/artifacts",
+      "archive_download_status": "anonymous API returned 401; authenticated download succeeded and tarball was independently verified"
+    },
+    "package_name": "@ningcui29/story-skill",
+    "package_version": "0.6.0",
+    "tarball_bytes": 158798,
+    "tarball_sha256": "ed449831b750d50d3066980f1d0270a8b995165a9f7d61de4a58964c890775e6",
+    "tarball_verification_source": "authenticated workflow artifact download and scripts/package_npm.py verify in release coordinator session",
+    "registry_anonymous_metadata_status": 401,
+    "authenticated_tarball_verification": {
+      "status": "passed",
+      "tool": "scripts/package_npm.py verify",
+      "archive_bytes": 158798,
+      "archive_sha256": "ed449831b750d50d3066980f1d0270a8b995165a9f7d61de4a58964c890775e6",
+      "payload_file_count": 38
+    }
+  },
+  "installer": {
+    "source": "parent-agent report",
+    "reference": "v0.6.0",
+    "method": "git",
+    "installed_roots": 8,
+    "matching_zip_files": 38,
+    "direct_archive_method": "timed out in parent check; not counted as passed"
+  },
+  "limitations": [
+    "Anonymous GitHub Actions artifact ZIP and package registry returned HTTP 401; authenticated artifact download succeeded, and its tarball was independently checked in the release coordinator session.",
+    "The public ZIP was independently downloaded and verified against its checksum file and Release API metadata."
+  ]
+}

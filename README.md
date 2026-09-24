@@ -2,7 +2,7 @@
 
 Story Skill 是一套供写作助手使用的中文小说技能。你可以从一部参考作品开始拆解写法，也可以直接开一本新书；之后按卷规划、逐章写作、审稿和续写。它把可读稿件与写作进度保存在书目录中，方便换会话接着做。
 
-**当前源码版本：v0.6.0。**完整套件包含 8 个技能、38 个载荷文件，固定标签和分发验证以[安装指引](INSTALL.md)与[发布记录](docs/github-release.md)为准。旧版 [v0.5.11](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11) 的在线附件和包仍保留原发布身份；历史文档中的名称已遮盖，不能把替换后的名称当作旧版下载地址。本机已安装技能不会随仓库修改自动更新。
+**当前发布版：v0.6.0。** 完整套件包含 8 个技能、38 个载荷文件；[固定标签、Release 附件和新包](docs/releases/v0.6.0.md)均已发布并回下载核验。安装前请阅读[安装指引](INSTALL.md)。旧版 [v0.5.11](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11) 的在线附件和包仍保留原发布身份；历史文档中的名称已遮盖，不能把替换后的名称当作旧版下载地址。本机已安装技能不会随仓库修改自动更新。
 
 **v0.5.10 已有：**短篇全文合并、旧短篇补章与合法全文文件名、完本封面联动，以及全部正式总纲的平台分类要求；同时补充全书完本审查、中文语法标点指导并修复 Windows 导出。[当版变化与验证](docs/releases/v0.5.10.md)
 
@@ -18,7 +18,7 @@ Story Skill 是一套供写作助手使用的中文小说技能。你可以从�
 
 ## 安装与升级
 
-正式发布完成后，可在支持技能的应用中发送：
+可在支持技能的应用中发送：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill
@@ -181,7 +181,7 @@ $story-skill-write 写一段约500个汉字的现代生活小说片段。
 
 | 范围 | 状态 |
 |---|---|
-| **v0.6.0 源码** | 统一名称为 Story Skill，八个入口改用 `$story-skill*`，同步调整安装器、发布包、测试与历史资料；固定标签、在线附件和包的状态以[发布记录](docs/github-release.md)为准。 |
+| **v0.6.0（当前发布版）** | 统一名称为 Story Skill，八个入口改用 `$story-skill*`；固定标签、Linux／Windows CI、Release 附件、安装器 Git 方法与新包回下载已核对。[发布证据](docs/releases/v0.6.0.md) · [安装指引](INSTALL.md) |
 | **v0.5.11** | 新增离线发布准备技能，按正式章节生成和复核材料包，并比较作者提供的草稿副本；仍不执行平台上传、提交或排期。短篇合并稿从第 1 章章名开始。[功能边界](docs/platform-publishing.md)；分发与跨平台检查以实际[发布记录](docs/github-release.md)为准。 |
 | **v0.5.10** | 短篇全文合并与旧章补齐、完本封面及总纲平台分类、全书审查与中文语法标点指导；修复 Windows 导出，Windows 原生 CI 与 Linux CI 通过。固定标签、Release 附件、隔离安装及 GitHub Packages 的核验范围见[本版说明](docs/releases/v0.5.10.md)与[独立验证记录](benchmarks/results/v0.5.10/README.md)。 |
 | **v0.5.9** | 明确独立代理交接与自审、独立复核、盲评的边界；正文指导按说话人和意义转折自然分段，交付前检查密集长段，不设统一字数上限。固定标签、Release 附件、隔离安装和 GitHub Packages 已核验；Linux CI 通过，Windows 仍有已知 `WinError 32`。[本版说明](docs/releases/v0.5.9.md) · [发布与校验状态](benchmarks/results/v0.5.9/README.md) |

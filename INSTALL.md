@@ -1,14 +1,14 @@
 # 安装或升级 Story Skill
 
-**本版目标：v0.6.0。** 新版统一使用 `story-skill` 名称。八个入口、安装器、压缩包和包名都已更换；旧版 [v0.5.11 发布页](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11)仍保留原发布身份，不能从该固定标签获取新版入口。只有 [v0.6.0 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.0) 已公开、ZIP 与校验附件齐全并完成回下载验证时，才按本页远程升级；未满足时保留现有安装。
+**当前发布版：v0.6.0。** 新版统一使用 `story-skill` 名称。八个入口、安装器、压缩包和包名都已更换。[v0.6.0 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.0) 已公开；套件 ZIP、校验附件和公开回下载均已核对。固定标签指向提交 `53c7f3289b1cb78699ff0734d4ba8b291a2557d5`。旧版 [v0.5.11 发布页](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11)仍保留原发布身份，不能从该标签获取新版入口。
 
-满足上述发布条件后，可把这一行发送给支持技能的应用：
+可把这一行发送给支持技能的应用：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill
 ```
 
-这是一条自然语言安装请求。本页不是技能目录，不能把本页地址直接当作安装脚本的 `--url`。安装前核对固定标签解析出的提交、ZIP 校验文件、附件回下载结果及[发布记录](docs/github-release.md)；信息缺失或不一致时保留现有安装。运行时需要 Python 3.10 或更新版本。
+这是一条自然语言安装请求。本页不是技能目录，不能把本页地址直接当作安装脚本的 `--url`。安装前核对固定标签提交、ZIP 校验文件及[发布记录](docs/github-release.md)；信息缺失或不一致时保留现有安装。运行时需要 Python 3.10 或更新版本。
 
 ## 完整套件
 
@@ -25,13 +25,13 @@ skills/story-skill-cover
 skills/story-skill-publish
 ```
 
-新版 ZIP 名为 `story-skill-0.6.0.zip`，包名为 `@ningcui29/story-skill`。这两个名称不表示资源已经公开；应分别核对 Release 与包的实际状态。历史文档经过名称遮盖；旧版资源的真实文件名不会因文档改写而改变。
+新版 ZIP 名为 `story-skill-0.6.0.zip`，包名为 `@ningcui29/story-skill`。Release 附件和 GitHub Packages 的新包均已公开；npm 包不是直接可发现的技能安装。历史文档经过名称遮盖；旧版资源的真实文件名不会因文档改写而改变。
 
-远程安装时，先用官方安装脚本从 `v0.6.0` 固定标签将八个 `--path` 安装到隔离临时目录；另从同一版本 Release 下载 ZIP 和 `.zip.sha256`，核对摘要，并逐文件比较临时目录与 ZIP。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
+远程安装时，先用官方安装脚本从 `v0.6.0` 固定标签将八个 `--path` 安装到隔离临时目录；另从同一版本 Release 下载 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.0/story-skill-0.6.0.zip) 和 [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.0/story-skill-0.6.0.zip.sha256)，核对摘要，并逐文件比较临时目录与 ZIP。套件 ZIP 为 180,434 字节，SHA-256 为 `089480dd1769ff13167553396090bec16298840be4449a9a2b5c550a10572056`；公开回下载与此一致。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
 
 ## 从本仓库源码安装
 
-需要在发布前试用时，使用已取得并自行核验的 v0.6.0 源码。先运行仓库测试和 `python3 -B -X utf8 scripts/verify.py`，再把上述八个目录作为一个整体复制到目标的技能父目录。项目内托管安装可在仓库根目录运行：
+需要从源码试用时，使用已取得并自行核验的 v0.6.0 源码。先运行仓库测试和 `python3 -B -X utf8 scripts/verify.py`，再把上述八个目录作为一个整体复制到目标的技能父目录。项目内托管安装可在仓库根目录运行：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "<项目根目录>"
