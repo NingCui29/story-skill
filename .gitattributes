@@ -13,3 +13,6 @@
 /benchmarks/analysis-depth/** text eol=lf
 /benchmarks/analysis-real/** text eol=lf
 /benchmarks/analysis-crosschapter/** text eol=lf
+
+# Legacy runtime fixture is verified by byte SHA-256 during migration tests.
+/tests/fixtures/schema1_runtime.py text eol=lf
