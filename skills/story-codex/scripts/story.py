@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.5.10"
+VERSION = "0.5.11"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -104,6 +104,16 @@ def first_chapter_heading(text):
     if re.match(r"^第[0-9０-９零〇一二三四五六七八九十百千万两]+章[ \t　:：、.．-]+\S", first):
         return first.strip()
     return None
+
+
+_ASSEMBLY_BREAK = r"\r\n|[\n\r\v\f\x1c-\x1e\x85\u2028\u2029]"
+
+
+def _assembly_boundary_breaks(text, leading=False):
+    """Count existing line separators without rewriting any source character."""
+    pattern = rf"(?:{_ASSEMBLY_BREAK})+"
+    match = re.match(pattern, text) if leading else re.search(pattern + r"$", text)
+    return len(re.findall(_ASSEMBLY_BREAK, match.group())) if match else 0
 
 
 def chapter_filename(chapter, text, plan, imported=False):
@@ -1207,7 +1217,7 @@ class Book:
             return None
         sources = self._short_assembly_sources()
         last = self.meta("last_chapter")
-        source_current = (record.get("format") == 1 and last > 0 and
+        source_current = (record.get("format") == 2 and last > 0 and
             sources["numbers"] == list(range(1, last + 1)) and
             all(record.get(key) == sources[key] for key in ("chapter_shas", "chapter_paths")))
         row = self.db.execute("SELECT sha,written_sha FROM artifact_state WHERE path=?",
@@ -1231,7 +1241,6 @@ class Book:
 
     def _queue_short_assembly(self):
         """Record the desired reading copy durably before any filesystem publication."""
-        title = self.meta("title")
         relative = self.short_assembly_path()
         last = self.meta("last_chapter")
         rows = self.db.execute("SELECT chapter,text,sha FROM chapters ORDER BY chapter").fetchall()
@@ -1250,13 +1259,21 @@ class Book:
                 source_title = re.sub(r"^第[0-9０-９零〇一二三四五六七八九十百千万两]+章[\s　:：、.．-]*",
                                       "", source_heading or "").strip()
                 heading = f"第{number}章 {source_title or '正文'}"
-            # Use the same line boundaries as heading detection, including Unicode separators.
-            lines = prose.lstrip("\ufeff").splitlines()
-            body = "\n".join(lines[1:] if first_chapter_heading(prose) else lines)
-            sections.append(heading + "\n\n" + body.strip("\n"))
+            # Remove only the source heading. Preserve every original body character,
+            # including nonstandard separators and meaningful blank lines.
+            lines = prose.splitlines(keepends=True)
+            body = "".join(lines[1:]) if first_chapter_heading(prose) else prose
+            sections.append(heading + "\n" * max(0, 2 - _assembly_boundary_breaks(body, leading=True)) + body)
             chapter_shas.append(sha)
             chapter_paths.append(registered)
-        content = title + "\n\n" + "\n\n".join(sections) + "\n"
+        parts = [sections[0]]
+        for previous, current in zip(sections, sections[1:]):
+            parts.append("\n" * max(0, 2 - _assembly_boundary_breaks(previous) -
+                                     _assembly_boundary_breaks(current, leading=True)))
+            parts.append(current)
+        content = "".join(parts)
+        if not _assembly_boundary_breaks(content):
+            content += "\n"
         previous = self._short_assembly_record()
         row = self.db.execute("SELECT sha,written_sha FROM artifact_state WHERE path=?", (relative,)).fetchone()
         accepted = previous.get("sha256") if previous and previous["path"] == relative else None
@@ -1271,7 +1288,7 @@ class Book:
                 fail("assembly_conflict", "Book-title file was edited outside Story Codex; preserve it before recovery",
                      path=str(safe_path(self.root, relative)))
             raise
-        record = {"format": 1, "path": relative, "sha256": digest(content),
+        record = {"format": 2, "path": relative, "sha256": digest(content),
                   "chapter_shas": chapter_shas, "chapter_paths": chapter_paths, "revision": self.meta("revision")}
         self.set_meta("short_assembly_path", relative)
         self.set_meta("short_assembly", record)
@@ -2238,6 +2255,7 @@ def parser():
     s.add_argument("--kind", choices=sorted(set(world.FIELDS)-{"aliases"}), required=True)
     s.add_argument("--id", required=True)
     history.register_parser(sub, command)
+    publish.register_parser(sub, command)
     s = command("export", "Repair exports without replacing outside edits")
     s.add_argument("--safe-only", action="store_true",
                    help="Recover known versions and missing files while leaving conflicting paths untouched")
@@ -2319,6 +2337,8 @@ def run(args):
         return storage.migrate(CORE, args.book)
     book = Book(args.book, integrity=getattr(args, "integrity", "strict"))
     try:
+        if cmd.startswith("publish-"):
+            return publish.run(book, args)
         if cmd.startswith("history-") or cmd.startswith("cache-"):
             return history.run(book, args)
         if cmd == "world-save":
@@ -2408,10 +2428,11 @@ def _load_extension(name):
     return module
 
 
-storage, search, world, history = (_load_extension(name) for name in ("storage", "search", "world", "history"))
+storage, search, world, history, publish = (_load_extension(name) for name in ("storage", "search", "world", "history", "publish"))
 CORE = SimpleNamespace(**globals())
-for extension in (search, world, history):
+for extension in (search, world, history, publish):
     extension.inject(CORE)
+TEMPLATES["publish"] = publish.template()
 TEMPLATES["world"] = world.template()
 for world_kind in world.FIELDS:
     TEMPLATES["world-" + world_kind] = world.template(world_kind)

@@ -1,0 +1,9 @@
+{
+  "platform": "macOS-15.8-x86_64-i386-64bit",
+  "machine": "x86_64",
+  "python": "3.10.21",
+  "scope": "Local macOS execution only; no current-version Windows/Linux CI or live author-portal testing.",
+  "source_version": "0.5.11",
+  "released": false,
+  "production_install_updated": false
+}

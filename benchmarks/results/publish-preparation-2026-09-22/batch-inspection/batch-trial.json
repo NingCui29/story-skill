@@ -1,0 +1,561 @@
+{
+  "book_root": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例",
+  "same_snapshot_as_original_trial": true,
+  "chapter_coverage": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "old_prepare_stdout_bytes": 96293,
+  "old_whole_inspect_stdout_bytes": 96332,
+  "records": [
+    {
+      "operation": "current status",
+      "command": [
+        "status",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例"
+      ],
+      "exit_code": 0,
+      "stdout_utf8_bytes": 725,
+      "stderr_utf8_bytes": 0,
+      "response": {
+        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例",
+        "cards": 1,
+        "changed_export_count": 0,
+        "changed_exports": [],
+        "id": "0afc8f36-7721-428e-89b0-4a69d8580b5c",
+        "imported_through": 0,
+        "integrity": {
+          "full_book_verified": true,
+          "last_full_audit_revision": 24,
+          "mode": "strict",
+          "note": "Hash verification is a point-in-time observation; outside editors can save again.",
+          "unverified_archive_count": 0,
+          "verified_file_count": 12
+        },
+        "kind": "long",
+        "last_chapter": 12,
+        "more_sources": false,
+        "next_chapter": 13,
+        "pending_export_count": 0,
+        "pending_exports": [],
+        "recent_sources": [],
+        "revision": 25,
+        "short_assembly": null,
+        "short_assembly_path": null,
+        "sources": 0,
+        "title": "雾港长篇容量样例"
+      }
+    },
+    {
+      "operation": "summary prepare",
+      "command": [
+        "publish-prepare",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例",
+        "--input",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例/.story/publish-input.json",
+        "--expect",
+        "25",
+        "--summary"
+      ],
+      "exit_code": 0,
+      "stdout_utf8_bytes": 746,
+      "stderr_utf8_bytes": 0,
+      "response": {
+        "account_id": "batch-author-fixture",
+        "book_title": "雾港长篇容量样例",
+        "chapters": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "checked_at": "2026-09-22T14:58:48.112978+00:00",
+        "content_scope": "metadata",
+        "content_verification": "unread",
+        "created": "2026-09-22T14:58:46.684626+00:00",
+        "id": "7b2adf1ac3304129a4fb1bb30b12942a",
+        "idempotent": true,
+        "manifest_sha256": "6667fbaf336901499163de08771525af620b9f67d1b4be5d6241b06ec7748c8f",
+        "mode": "draft",
+        "ok": true,
+        "platform": "fanqie",
+        "platform_verified": false,
+        "ready_to_upload": false,
+        "reasons": [],
+        "remote_book_id": "batch-book-fixture",
+        "remote_state": "unknown",
+        "scope": "offline_chapter_draft_material",
+        "source_check_performed": true,
+        "source_matches_current": true,
+        "source_revision": 24,
+        "status": "prepared",
+        "total_chapters": 12
+      }
+    },
+    {
+      "operation": "chapter page 0",
+      "command": [
+        "publish-inspect",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例",
+        "--id",
+        "7b2adf1ac3304129a4fb1bb30b12942a",
+        "--summary",
+        "--offset",
+        "0",
+        "--limit",
+        "5"
+      ],
+      "exit_code": 0,
+      "stdout_utf8_bytes": 2187,
+      "stderr_utf8_bytes": 0,
+      "response": {
+        "account_id": "batch-author-fixture",
+        "book_title": "雾港长篇容量样例",
+        "budget": {
+          "limit": 16000,
+          "unit": "utf8_bytes",
+          "used": 2186
+        },
+        "chapter_page": {
+          "limit": 5,
+          "next_offset": 5,
+          "offset": 0,
+          "results": [
+            {
+              "body_characters": 2479,
+              "chapter": 1,
+              "chapter_path": "chapters/第一卷 雾港来信/第1章 第1封雨夜来信.md",
+              "local_visible_nonspace_v1": 2424,
+              "title": "第1封雨夜来信",
+              "upload_sha256": "86026c623facd79dd94552541a1dea8274a81f460bf14176e7cc6a4a7af4095d"
+            },
+            {
+              "body_characters": 2472,
+              "chapter": 2,
+              "chapter_path": "chapters/第一卷 雾港来信/第2章 第2封雨夜来信.md",
+              "local_visible_nonspace_v1": 2417,
+              "title": "第2封雨夜来信",
+              "upload_sha256": "7b809c79370cb4d1b5f30eaaae2582d4e992f3ad4c2dd57ab29535b8773b3da1"
+            },
+            {
+              "body_characters": 2468,
+              "chapter": 3,
+              "chapter_path": "chapters/第一卷 雾港来信/第3章 第3封雨夜来信.md",
+              "local_visible_nonspace_v1": 2413,
+              "title": "第3封雨夜来信",
+              "upload_sha256": "55b59faa25070cfb397be2ddfd677aa2a561b131fd516933f19d015c4f031bcf"
+            },
+            {
+              "body_characters": 2475,
+              "chapter": 4,
+              "chapter_path": "chapters/第一卷 雾港来信/第4章 第4封雨夜来信.md",
+              "local_visible_nonspace_v1": 2420,
+              "title": "第4封雨夜来信",
+              "upload_sha256": "add0ed2f80d609cf9dd78b23820b1b41a3b821cb8a33ce06bb483fe29acd5654"
+            },
+            {
+              "body_characters": 2479,
+              "chapter": 5,
+              "chapter_path": "chapters/第一卷 雾港来信/第5章 第5封雨夜来信.md",
+              "local_visible_nonspace_v1": 2424,
+              "title": "第5封雨夜来信",
+              "upload_sha256": "f897a808a29815152acd38338bf1232c0ef712a7a4ff66d726d3db04db446757"
+            }
+          ],
+          "total": 12
+        },
+        "chapters": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "checked_at": "2026-09-22T14:58:48.112978+00:00",
+        "content_scope": "chapter_summaries",
+        "content_verification": "unread",
+        "created": "2026-09-22T14:58:46.684626+00:00",
+        "id": "7b2adf1ac3304129a4fb1bb30b12942a",
+        "manifest_sha256": "6667fbaf336901499163de08771525af620b9f67d1b4be5d6241b06ec7748c8f",
+        "mode": "draft",
+        "ok": true,
+        "platform": "fanqie",
+        "platform_verified": false,
+        "ready_to_upload": false,
+        "reasons": [],
+        "remote_book_id": "batch-book-fixture",
+        "remote_state": "unknown",
+        "scope": "offline_chapter_draft_material",
+        "source_check_performed": false,
+        "source_matches_current": null,
+        "source_revision": 24,
+        "status": "prepared",
+        "total_chapters": 12
+      }
+    },
+    {
+      "operation": "chapter page 5",
+      "command": [
+        "publish-inspect",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例",
+        "--id",
+        "7b2adf1ac3304129a4fb1bb30b12942a",
+        "--summary",
+        "--offset",
+        "5",
+        "--limit",
+        "5"
+      ],
+      "exit_code": 0,
+      "stdout_utf8_bytes": 2192,
+      "stderr_utf8_bytes": 0,
+      "response": {
+        "account_id": "batch-author-fixture",
+        "book_title": "雾港长篇容量样例",
+        "budget": {
+          "limit": 16000,
+          "unit": "utf8_bytes",
+          "used": 2191
+        },
+        "chapter_page": {
+          "limit": 5,
+          "next_offset": 10,
+          "offset": 5,
+          "results": [
+            {
+              "body_characters": 2472,
+              "chapter": 6,
+              "chapter_path": "chapters/第一卷 雾港来信/第6章 第6封雨夜来信.md",
+              "local_visible_nonspace_v1": 2417,
+              "title": "第6封雨夜来信",
+              "upload_sha256": "e6faff9a9147187c8fcf89db0b8fb60d69ec26a7523ee5773295643efb556bd9"
+            },
+            {
+              "body_characters": 2468,
+              "chapter": 7,
+              "chapter_path": "chapters/第一卷 雾港来信/第7章 第7封雨夜来信.md",
+              "local_visible_nonspace_v1": 2413,
+              "title": "第7封雨夜来信",
+              "upload_sha256": "a53c6b609744c5ac9b5f3126c0e68de45242136af54647d9e4af2f8fb9c53ae1"
+            },
+            {
+              "body_characters": 2475,
+              "chapter": 8,
+              "chapter_path": "chapters/第一卷 雾港来信/第8章 第8封雨夜来信.md",
+              "local_visible_nonspace_v1": 2420,
+              "title": "第8封雨夜来信",
+              "upload_sha256": "cbf18a4d2b01bf2e2f1d2614b4eb197943a3751193a8782ed1dc1d2c75342856"
+            },
+            {
+              "body_characters": 2479,
+              "chapter": 9,
+              "chapter_path": "chapters/第一卷 雾港来信/第9章 第9封雨夜来信.md",
+              "local_visible_nonspace_v1": 2424,
+              "title": "第9封雨夜来信",
+              "upload_sha256": "65bd83972dc00c4c8bbb860db31a8dfc4b2d23a1c366fe38ec3aa86b47666477"
+            },
+            {
+              "body_characters": 2472,
+              "chapter": 10,
+              "chapter_path": "chapters/第一卷 雾港来信/第10章 第10封雨夜来信.md",
+              "local_visible_nonspace_v1": 2417,
+              "title": "第10封雨夜来信",
+              "upload_sha256": "32bf38e5fd7f385760fa52e4b73730d9b01a1a2fd357b5beb22ffea3e7a57851"
+            }
+          ],
+          "total": 12
+        },
+        "chapters": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "checked_at": "2026-09-22T14:58:48.112978+00:00",
+        "content_scope": "chapter_summaries",
+        "content_verification": "unread",
+        "created": "2026-09-22T14:58:46.684626+00:00",
+        "id": "7b2adf1ac3304129a4fb1bb30b12942a",
+        "manifest_sha256": "6667fbaf336901499163de08771525af620b9f67d1b4be5d6241b06ec7748c8f",
+        "mode": "draft",
+        "ok": true,
+        "platform": "fanqie",
+        "platform_verified": false,
+        "ready_to_upload": false,
+        "reasons": [],
+        "remote_book_id": "batch-book-fixture",
+        "remote_state": "unknown",
+        "scope": "offline_chapter_draft_material",
+        "source_check_performed": false,
+        "source_matches_current": null,
+        "source_revision": 24,
+        "status": "prepared",
+        "total_chapters": 12
+      }
+    },
+    {
+      "operation": "chapter page 10",
+      "command": [
+        "publish-inspect",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例",
+        "--id",
+        "7b2adf1ac3304129a4fb1bb30b12942a",
+        "--summary",
+        "--offset",
+        "10",
+        "--limit",
+        "5"
+      ],
+      "exit_code": 0,
+      "stdout_utf8_bytes": 1410,
+      "stderr_utf8_bytes": 0,
+      "response": {
+        "account_id": "batch-author-fixture",
+        "book_title": "雾港长篇容量样例",
+        "budget": {
+          "limit": 16000,
+          "unit": "utf8_bytes",
+          "used": 1409
+        },
+        "chapter_page": {
+          "limit": 5,
+          "next_offset": null,
+          "offset": 10,
+          "results": [
+            {
+              "body_characters": 2468,
+              "chapter": 11,
+              "chapter_path": "chapters/第一卷 雾港来信/第11章 第11封雨夜来信.md",
+              "local_visible_nonspace_v1": 2413,
+              "title": "第11封雨夜来信",
+              "upload_sha256": "1e8f636e9cc3a1a4085983c493ee8aae5764f022f9190004685e97f6aaddcbf2"
+            },
+            {
+              "body_characters": 2475,
+              "chapter": 12,
+              "chapter_path": "chapters/第一卷 雾港来信/第12章 第12封雨夜来信.md",
+              "local_visible_nonspace_v1": 2420,
+              "title": "第12封雨夜来信",
+              "upload_sha256": "7a13d41909fca1e3d608e8d57ede9412484324978db590d42f3a3a7f9e4ba9a8"
+            }
+          ],
+          "total": 12
+        },
+        "chapters": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "checked_at": "2026-09-22T14:58:48.112978+00:00",
+        "content_scope": "chapter_summaries",
+        "content_verification": "unread",
+        "created": "2026-09-22T14:58:46.684626+00:00",
+        "id": "7b2adf1ac3304129a4fb1bb30b12942a",
+        "manifest_sha256": "6667fbaf336901499163de08771525af620b9f67d1b4be5d6241b06ec7748c8f",
+        "mode": "draft",
+        "ok": true,
+        "platform": "fanqie",
+        "platform_verified": false,
+        "ready_to_upload": false,
+        "reasons": [],
+        "remote_book_id": "batch-book-fixture",
+        "remote_state": "unknown",
+        "scope": "offline_chapter_draft_material",
+        "source_check_performed": false,
+        "source_matches_current": null,
+        "source_revision": 24,
+        "status": "prepared",
+        "total_chapters": 12
+      }
+    },
+    {
+      "operation": "chapter 6",
+      "command": [
+        "publish-inspect",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例",
+        "--id",
+        "7b2adf1ac3304129a4fb1bb30b12942a",
+        "--chapter",
+        "6"
+      ],
+      "exit_code": 0,
+      "stdout_utf8_bytes": 8749,
+      "stderr_utf8_bytes": 0,
+      "response": {
+        "account_id": "batch-author-fixture",
+        "book_title": "雾港长篇容量样例",
+        "budget": {
+          "limit": 16000,
+          "unit": "utf8_bytes",
+          "used": 8748
+        },
+        "chapter_snapshot": {
+          "author_note": "",
+          "body": "沈禾把盖过印章的收据放在桌上，请守门人逐字核对交接的日期。\n\n街上传来送货车的铃声，两名搬运工在门口停住脚步。沈禾请他们分别讲清到场的时辰，把先后顺序写在另一张纸上。彼此冲突的记忆仍未消失，但至少有一件事得到了证实：那只箱子在天亮之前就被移出了仓库。\n\n她收起写好的记录，把原件交给掌柜，自己留下抄件。掌柜答应在下一班船靠岸前找回登记簿，守门人则带她去看库房另一侧的门锁。新的线索没有让疑问全部消失，却给了她继续追查的具体方向。\n\n码头上的风还没有停。她沿着潮湿的石阶走到仓门前，把昨夜整理的名单摊开。名单上的每一笔都来自不同人的口述，她不肯省去任何一处矛盾，直到守门人指认其中那个曾经见过的名字。\n\n守门人没有立刻回答。他把灯移近纸面，先看那枚模糊的印记，再翻过背面检查折痕。沈禾站在旁边等着，双手始终放在桌沿之外。她需要一份能交给众人核对的结果，也需要知道是谁换走了原来的账页。\n\n街上传来送货车的铃声，两名搬运工在门口停住脚步。沈禾请他们分别讲清到场的时辰，把先后顺序写在另一张纸上。彼此冲突的记忆仍未消失，但至少有一件事得到了证实：那只箱子在天亮之前就被移出了仓库。\n\n她收起写好的记录，把原件交给掌柜，自己留下抄件。掌柜答应在下一班船靠岸前找回登记簿，守门人则带她去看库房另一侧的门锁。新的线索没有让疑问全部消失，却给了她继续追查的具体方向。\n\n码头上的风还没有停。她沿着潮湿的石阶走到仓门前，把昨夜整理的名单摊开。名单上的每一笔都来自不同人的口述，她不肯省去任何一处矛盾，直到守门人指认其中那个曾经见过的名字。\n\n守门人没有立刻回答。他把灯移近纸面，先看那枚模糊的印记，再翻过背面检查折痕。沈禾站在旁边等着，双手始终放在桌沿之外。她需要一份能交给众人核对的结果，也需要知道是谁换走了原来的账页。\n\n街上传来送货车的铃声，两名搬运工在门口停住脚步。沈禾请他们分别讲清到场的时辰，把先后顺序写在另一张纸上。彼此冲突的记忆仍未消失，但至少有一件事得到了证实：那只箱子在天亮之前就被移出了仓库。\n\n她收起写好的记录，把原件交给掌柜，自己留下抄件。掌柜答应在下一班船靠岸前找回登记簿，守门人则带她去看库房另一侧的门锁。新的线索没有让疑问全部消失，却给了她继续追查的具体方向。\n\n码头上的风还没有停。她沿着潮湿的石阶走到仓门前，把昨夜整理的名单摊开。名单上的每一笔都来自不同人的口述，她不肯省去任何一处矛盾，直到守门人指认其中那个曾经见过的名字。\n\n守门人没有立刻回答。他把灯移近纸面，先看那枚模糊的印记，再翻过背面检查折痕。沈禾站在旁边等着，双手始终放在桌沿之外。她需要一份能交给众人核对的结果，也需要知道是谁换走了原来的账页。\n\n街上传来送货车的铃声，两名搬运工在门口停住脚步。沈禾请他们分别讲清到场的时辰，把先后顺序写在另一张纸上。彼此冲突的记忆仍未消失，但至少有一件事得到了证实：那只箱子在天亮之前就被移出了仓库。\n\n她收起写好的记录，把原件交给掌柜，自己留下抄件。掌柜答应在下一班船靠岸前找回登记簿，守门人则带她去看库房另一侧的门锁。新的线索没有让疑问全部消失，却给了她继续追查的具体方向。\n\n码头上的风还没有停。她沿着潮湿的石阶走到仓门前，把昨夜整理的名单摊开。名单上的每一笔都来自不同人的口述，她不肯省去任何一处矛盾，直到守门人指认其中那个曾经见过的名字。\n\n守门人没有立刻回答。他把灯移近纸面，先看那枚模糊的印记，再翻过背面检查折痕。沈禾站在旁边等着，双手始终放在桌沿之外。她需要一份能交给众人核对的结果，也需要知道是谁换走了原来的账页。\n\n街上传来送货车的铃声，两名搬运工在门口停住脚步。沈禾请他们分别讲清到场的时辰，把先后顺序写在另一张纸上。彼此冲突的记忆仍未消失，但至少有一件事得到了证实：那只箱子在天亮之前就被移出了仓库。\n\n她收起写好的记录，把原件交给掌柜，自己留下抄件。掌柜答应在下一班船靠岸前找回登记簿，守门人则带她去看库房另一侧的门锁。新的线索没有让疑问全部消失，却给了她继续追查的具体方向。\n\n码头上的风还没有停。她沿着潮湿的石阶走到仓门前，把昨夜整理的名单摊开。名单上的每一笔都来自不同人的口述，她不肯省去任何一处矛盾，直到守门人指认其中那个曾经见过的名字。\n\n守门人没有立刻回答。他把灯移近纸面，先看那枚模糊的印记，再翻过背面检查折痕。沈禾站在旁边等着，双手始终放在桌沿之外。她需要一份能交给众人核对的结果，也需要知道是谁换走了原来的账页。\n\n街上传来送货车的铃声，两名搬运工在门口停住脚步。沈禾请他们分别讲清到场的时辰，把先后顺序写在另一张纸上。彼此冲突的记忆仍未消失，但至少有一件事得到了证实：那只箱子在天亮之前就被移出了仓库。\n\n她收起写好的记录，把原件交给掌柜，自己留下抄件。掌柜答应在下一班船靠岸前找回登记簿，守门人则带她去看库房另一侧的门锁。新的线索没有让疑问全部消失，却给了她继续追查的具体方向。\n\n码头上的风还没有停。她沿着潮湿的石阶走到仓门前，把昨夜整理的名单摊开。名单上的每一笔都来自不同人的口述，她不肯省去任何一处矛盾，直到守门人指认其中那个曾经见过的名字。\n\n守门人没有立刻回答。他把灯移近纸面，先看那枚模糊的印记，再翻过背面检查折痕。沈禾站在旁边等着，双手始终放在桌沿之外。她需要一份能交给众人核对的结果，也需要知道是谁换走了原来的账页。\n\n街上传来送货车的铃声，两名搬运工在门口停住脚步。沈禾请他们分别讲清到场的时辰，把先后顺序写在另一张纸上。彼此冲突的记忆仍未消失，但至少有一件事得到了证实：那只箱子在天亮之前就被移出了仓库。\n\n她收起写好的记录，把原件交给掌柜，自己留下抄件。掌柜答应在下一班船靠岸前找回登记簿，守门人则带她去看库房另一侧的门锁。新的线索没有让疑问全部消失，却给了她继续追查的具体方向。\n\n码头上的风还没有停。她沿着潮湿的石阶走到仓门前，把昨夜整理的名单摊开。名单上的每一笔都来自不同人的口述，她不肯省去任何一处矛盾，直到守门人指认其中那个曾经见过的名字。\n",
+          "body_characters": 2472,
+          "body_sha": "f09fb010a44c5e94d813e264700f43b8a03f14f57186c2209c1fdd8029c76d05",
+          "chapter": 6,
+          "chapter_path": "chapters/第一卷 雾港来信/第6章 第6封雨夜来信.md",
+          "conversion_rule": "confirmed_first_heading_removed_v1",
+          "head_id": "7e5db9c78d724450aba43751f5b9e19a",
+          "local_visible_nonspace_v1": 2417,
+          "review_receipt_sha": "c79243d7d6a347dd971896ceb570e0c878f7e7d3120b093a0809e99bffa8553d",
+          "source_revision": 24,
+          "title": "第6封雨夜来信",
+          "upload_sha256": "e6faff9a9147187c8fcf89db0b8fb60d69ec26a7523ee5773295643efb556bd9"
+        },
+        "chapters": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "checked_at": "2026-09-22T14:58:48.112978+00:00",
+        "content_scope": "single_chapter",
+        "content_verification": "unread",
+        "created": "2026-09-22T14:58:46.684626+00:00",
+        "id": "7b2adf1ac3304129a4fb1bb30b12942a",
+        "manifest_sha256": "6667fbaf336901499163de08771525af620b9f67d1b4be5d6241b06ec7748c8f",
+        "mode": "draft",
+        "ok": true,
+        "platform": "fanqie",
+        "platform_verified": false,
+        "ready_to_upload": false,
+        "reasons": [],
+        "remote_book_id": "batch-book-fixture",
+        "remote_state": "unknown",
+        "scope": "offline_chapter_draft_material",
+        "source_check_performed": false,
+        "source_matches_current": null,
+        "source_revision": 24,
+        "status": "prepared",
+        "total_chapters": 12
+      }
+    },
+    {
+      "operation": "chapter 6 low budget",
+      "command": [
+        "publish-inspect",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-batch-usability-m373dfuh/雾港长篇容量样例",
+        "--id",
+        "7b2adf1ac3304129a4fb1bb30b12942a",
+        "--chapter",
+        "6",
+        "--budget-bytes",
+        "256"
+      ],
+      "exit_code": 2,
+      "stdout_utf8_bytes": 0,
+      "stderr_utf8_bytes": 160,
+      "response": {
+        "budget_bytes": 256,
+        "error": "budget_exceeded",
+        "message": "Required content cannot fit; increase the budget or narrow the range",
+        "minimum_bytes": 8746,
+        "ok": false
+      }
+    }
+  ],
+  "final_runtime_check": {
+    "exit_code": 0,
+    "stdout_utf8_bytes": 768,
+    "response": {
+      "account_id": "batch-author-fixture",
+      "book_title": "雾港长篇容量样例",
+      "chapters": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "checked_at": "2026-09-22T14:58:48.112978+00:00",
+      "checked_revision": 25,
+      "content_scope": "metadata",
+      "content_verification": "unread",
+      "created": "2026-09-22T14:58:46.684626+00:00",
+      "id": "7b2adf1ac3304129a4fb1bb30b12942a",
+      "idempotent": true,
+      "manifest_sha256": "6667fbaf336901499163de08771525af620b9f67d1b4be5d6241b06ec7748c8f",
+      "mode": "draft",
+      "ok": true,
+      "platform": "fanqie",
+      "platform_verified": false,
+      "ready_to_upload": false,
+      "reasons": [],
+      "remote_book_id": "batch-book-fixture",
+      "remote_state": "unknown",
+      "scope": "offline_chapter_draft_material",
+      "source_check_performed": true,
+      "source_matches_current": true,
+      "source_revision": 24,
+      "status": "prepared",
+      "total_chapters": 12
+    },
+    "same_frozen_snapshot": true
+  }
+}

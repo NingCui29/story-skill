@@ -1,0 +1,29 @@
+{
+  "kind": "isolated_synthetic_two_chapter_skill_trial",
+  "steps": [
+    "status",
+    "template publish",
+    "publish-prepare",
+    "publish-inspect",
+    "publish-check",
+    "status"
+  ],
+  "local_plan_state": "prepared",
+  "check_ok": true,
+  "check_reasons": [],
+  "chapter_numbers": [
+    1,
+    2
+  ],
+  "body_visible_nonspace_v1": [
+    36,
+    36
+  ],
+  "story_revision_before": 4,
+  "story_revision_after": 4,
+  "platform_verified": false,
+  "ready_to_upload": false,
+  "remote_state": "unknown",
+  "content_verification": "unread",
+  "observation": "Independent agent followed the skill without test implementation context; remote-content field ambiguity was clarified in the skill afterward. No website or real installation used."
+}

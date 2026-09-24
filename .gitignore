@@ -28,6 +28,9 @@ build/
 **/.story/export-backups/
 .story-tmp-*
 .story-restore-*
+.publishing-init-*
+.publishing-export-*
+**/.story/publishing-exports/
 .story-codex-install.lock
 .story-codex-stage-*/
 .story-codex-backups/

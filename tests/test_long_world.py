@@ -309,7 +309,7 @@ class LongWorldTests(unittest.TestCase):
     def test_complete_template_is_valid_planned_data_only(self):
         value = world.template("all")
         self.save(**value)
-        packet = world.context(self.book, plan(["jiang"], at=20, volume="v1", arc="a1", line="north-line"), 2)
+        packet = world.context(self.book, plan(["lin"], at=20, volume="v1", arc="a1", line="bridge-line"), 2)
         self.assertEqual(packet["facts"], [])
         self.assertEqual(packet["knowledge"], [])
         self.assertEqual(packet["resources"], [])

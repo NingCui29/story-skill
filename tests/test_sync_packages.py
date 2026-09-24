@@ -177,10 +177,12 @@ class PackageSyncTests(unittest.TestCase):
     def smoke_archive(self, names=None, changed=None, version="0.5.7"):
         archive = self.root / "suite.tgz"
         root = SCRIPTS.parent / "skills"
+        current = sync.package_npm.version_from_source((root / "story-codex/scripts/story.py").read_bytes())
         with tarfile.open(archive, "w:gz") as bundle:
             for name in (sync.package_npm.payload_files(version) if names is None else names):
                 raw = changed if name == "story-codex-plan/SKILL.md" and changed is not None else (root / name).read_bytes()
-                if version != "0.5.7" and name.endswith("/SKILL.md"):
+                if (version != current and name.endswith("/SKILL.md") and
+                        not (name == "story-codex-plan/SKILL.md" and changed is not None)):
                     # Model the historical layout without borrowing today's reference links.
                     raw = b"# Historical suite smoke fixture\n"
                 member = tarfile.TarInfo("package/" + name)
@@ -202,6 +204,23 @@ class PackageSyncTests(unittest.TestCase):
         with patch.object(sync.subprocess, "run", side_effect=execute):
             result = sync.runtime_smoke(archive, "0.5.7")
         self.assertEqual(result["skill_files"], 34)
+        self.assertEqual(set(result["skills"]), set(sync.package_npm.LEGACY_SKILL_NAMES))
+        self.assertTrue(result["temporary_book_removed"])
+
+    def test_current_runtime_smoke_includes_the_publication_dependency(self):
+        archive = self.smoke_archive(version="0.5.11")
+        results = [SimpleNamespace(returncode=0, stdout="0.5.11\n"), SimpleNamespace(returncode=0, stdout="help"),
+                   SimpleNamespace(returncode=0, stdout="{}"), SimpleNamespace(returncode=0, stdout='{"last_chapter":0}')]
+
+        def execute(arguments, **kwargs):
+            suite = Path(arguments[4]).parents[2]
+            self.assertEqual({p.relative_to(suite).as_posix() for p in suite.rglob("*") if p.is_file()},
+                             set(sync.package_npm.PUBLISH_SUITE_FILES))
+            return results.pop(0)
+
+        with patch.object(sync.subprocess, "run", side_effect=execute):
+            result = sync.runtime_smoke(archive, "0.5.11")
+        self.assertEqual(result["skill_files"], 38)
         self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES))
         self.assertTrue(result["temporary_book_removed"])
 

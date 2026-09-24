@@ -15,10 +15,11 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
 SKILL = SKILLS / "story-codex"
 SOURCE = SKILLS
-SKILL_NAMES = ("story-codex", "story-codex-plan", "story-codex-write", "story-codex-analyze",
+LEGACY_SKILL_NAMES = ("story-codex", "story-codex-plan", "story-codex-write", "story-codex-analyze",
                "story-codex-review", "story-codex-research", "story-codex-cover")
+SKILL_NAMES = LEGACY_SKILL_NAMES + ("story-codex-publish",)
 LEGACY_SUITE_FILES = tuple(sorted(
-    [f"{name}/{relative}" for name in SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
+    [f"{name}/{relative}" for name in LEGACY_SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
     + ["story-codex/scripts/" + name for name in (
         "story.py", "story_history.py", "story_search.py", "story_storage.py", "story_world.py")]
     + ["story-codex/references/project-state.md", "story-codex-write/references/chapter.md",
@@ -29,6 +30,9 @@ SUITE_FILES = tuple(sorted(LEGACY_SUITE_FILES + (
     "story-codex-analyze/references/examples.md")))
 TAGGED_SUITE_FILES = tuple(sorted(SUITE_FILES + (
     "story-codex-plan/references/fanqie-tags.md",)))
+PUBLISH_SUITE_FILES = tuple(sorted(TAGGED_SUITE_FILES + (
+    "story-codex-publish/LICENSE", "story-codex-publish/SKILL.md",
+    "story-codex-publish/agents/openai.yaml", "story-codex/scripts/story_publish.py")))
 
 
 def suite_files(version):
@@ -37,8 +41,16 @@ def suite_files(version):
         return LEGACY_SUITE_FILES
     patch = re.fullmatch(r"0\.5\.([1-9][0-9]*)", version)
     if patch:
+        if int(patch.group(1)) >= 11:
+            return PUBLISH_SUITE_FILES
         return TAGGED_SUITE_FILES if int(patch.group(1)) >= 7 else SUITE_FILES
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
+
+
+def skill_names(version):
+    """Select named skill roots from the version-bound reviewed payload."""
+    roots = {path.split("/", 1)[0] for path in suite_files(version)}
+    return tuple(name for name in SKILL_NAMES if name in roots)
 
 
 def source_version(raw):
@@ -89,6 +101,10 @@ def source_entries():
     files = {}
     for skill in SKILL_NAMES:
         directory = SOURCE / skill
+        # The publisher was added in 0.5.11. Missing historical roots are
+        # allowed only here; the exact version manifest is checked below.
+        if skill not in LEGACY_SKILL_NAMES and not os.path.lexists(directory):
+            continue
         if not directory.is_dir() or linked(directory):
             raise ValueError(f"Source suite is missing an ordinary skill directory: {skill}")
         for path in sorted(directory.rglob("*")):

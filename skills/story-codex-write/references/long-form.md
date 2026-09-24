@@ -19,7 +19,7 @@
 | 类别 | 必须表达的含义 |
 |---|---|
 | entities / aliases | 实体用稳定 id、name、kind、description。别名用 alias、entity、scope；scope 是故事线 ID 或 `*`。同名或同范围别名匹配多人时必须改用 ID，不能猜人。 |
-| facts | id、subject、predicate、value；同一 clock 内的 subject＋predicate 是单值状态槽，按故事时间取有效状态。start/end 是生效区间，end 不包含在内；hard 为布尔值。每次变化另设 ID，不能覆盖旧正文事实。并存关系分别建槽：例如“钥匙／持有人／甲”和“账册／持有人／甲”，不要把甲的两件物品都记成“甲／持有物”；用 entities 关联本章要召回的持有人。召回后会核对同一状态槽的后续记录，物件换主后不要求新记录重复标注旧主人；只选旧主人也不能把已交出的物件写成仍在手中。 |
+| facts | id、subject、predicate、value；同一 clock 内的 subject＋predicate 是单值状态槽，按故事时间取有效状态。start/end 是生效区间，end 不包含在内；hard 为布尔值。每次变化另设 ID，不能覆盖旧正文事实。并存关系分别建槽：例如“钥匙／持有人／甲”和“药箱／持有人／甲”，不要把甲的两件物品都记成“甲／持有物”；用 entities 关联本章要召回的持有人。召回后会核对同一状态槽的后续记录，物件换主后不要求新记录重复标注旧主人；只选旧主人也不能把已交出的物件写成仍在手中。 |
 | lines | id 是本次断点事件 ID，line 是贯穿多章的线 ID；保存 at、place、summary、unfinished、entities。 |
 | knowledge | id、actor、fact、state、at、channel。state 为 knows/believes/suspects/unknown；unknown 是有依据的明确不知，缺记录不等于不知。人物相信的命题可以是 author_plan 中尚未证实的说法，不得因此升级为世界真相。同一 actor＋fact 的认知变化按故事时间衔接；通过关联物件或地点召回时，也核对后续变化，不因新记录未重复这些关联就沿用旧认知。 |
 | hooks | 每次变化有 id，同一伏笔共用 hook。state 为 seeded/reinforced/dormant/fulfilled/breached/abandoned/reopened；at 是发生时间，hard_deadline 是故事内期限，window_start/window_end 是作者预计章数。entities/trigger_line 用于长距唤回。履约、违约须正文证据；违约、放弃、重开须 reason。同章同 hook 的多次变化须能区分真实先后；同一已知刻度会报 world_time_ambiguous，不能靠 ID 排序或编造时间通关。先核对正文并统一更细的时钟含义；旧记录若仍无法排序，保留歧义并审查，不宣称最终状态已确定。 |

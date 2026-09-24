@@ -1,0 +1,116 @@
+{
+  "ok": true,
+  "sample": "12 synthetic chapters, 40 archive members, 2470-2471 local characters each",
+  "exit_code": 0,
+  "result": {
+    "account_id": "export-author-fixture",
+    "archive": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例/.story/publishing-exports/material-209de6095230463596bd0ae1210162e8.zip",
+    "archive_bytes": 15799,
+    "archive_sha256": "1d0027a4860eefb2a653f908c6c88a87dbdc5e6768b46a975aa3032c33034c08",
+    "artifact_verified": true,
+    "book_title": "雾港长篇视图样例",
+    "chapter_checks": [
+      {
+        "changed_fields": [],
+        "chapter": 1,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 2,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 3,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 4,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 5,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 6,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 7,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 8,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 9,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 10,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 11,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 12,
+        "matches_current": true
+      }
+    ],
+    "chapters": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "checked_at": "2026-09-23T00:57:24.978857+00:00",
+    "checked_revision": 24,
+    "content_scope": "metadata",
+    "content_verification": "unread",
+    "created": "2026-09-23T00:57:24.471208+00:00",
+    "current_reasons": [],
+    "id": "913c21f254e443a59191be9f8a47cad6",
+    "manifest_sha256": "13637ab3f6b7550188591b4eca0a969989afb0adb58e7da50411891ea1fc7f2a",
+    "mode": "draft",
+    "ok": true,
+    "platform": "fanqie",
+    "platform_verified": false,
+    "ready_to_upload": false,
+    "reasons": [],
+    "remote_book_id": "export-book-fixture",
+    "remote_state": "unknown",
+    "scope": "offline_chapter_draft_material",
+    "sha_check_performed": true,
+    "source_check_performed": true,
+    "source_matches_current": true,
+    "source_revision": 24,
+    "status": "prepared",
+    "total_chapters": 12,
+    "usable_now": true
+  },
+  "ledger_sha256_before": "dc914811a534783d38b346ccc605b8d18b4e9e8fc063028ff31caf7d3c8a0f25",
+  "ledger_sha256_after": "dc914811a534783d38b346ccc605b8d18b4e9e8fc063028ff31caf7d3c8a0f25",
+  "source_evidence": "material-export/cli-trial.json"
+}

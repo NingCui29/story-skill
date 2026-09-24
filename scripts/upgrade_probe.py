@@ -50,8 +50,9 @@ def hashes(files):
 
 
 def unpack_old_archive(archive_path, skill_parent):
-    """Validate a legacy core ZIP or seven-skill ZIP before writing any members."""
-    allowed = set(load_script("install").SKILL_NAMES)
+    """Validate legacy or version-bound suite roots before writing any members."""
+    installer = load_script("install")
+    allowed = set(installer.SKILL_NAMES)
     entries, canonical, extracted, roots = [], {}, {}, set()
     with zipfile.ZipFile(archive_path) as archive:
         if archive.testzip() is not None:
@@ -90,12 +91,15 @@ def unpack_old_archive(archive_path, skill_parent):
                 raise ValueError("An archive skill root must be a directory")
             roots.add(parts[0])
             entries.append((entry, parts))
-        if roots != {"story-codex"} and roots != allowed:
-            raise ValueError("Archive must contain the legacy core or all seven skills")
         names = {"/".join(parts) for entry, parts in entries if not entry.is_dir()}
         required = {root + "/SKILL.md" for root in roots} | {"story-codex/scripts/story.py"}
         if not required <= names:
             raise ValueError("Old archive is missing skill entries or the runtime")
+        version = installer.runtime_version(archive.read("story-codex/scripts/story.py"))
+        expected_roots = ({"story-codex"} if tuple(map(int, version.split("."))) < (0, 4, 0)
+                          else set(installer.skill_names(version)))
+        if roots != expected_roots:
+            raise ValueError(f"Archive must contain all skill roots reviewed for {version}")
         if any("/".join(parts[:i]) in names for _, parts in entries for i in range(1, len(parts))):
             raise ValueError("Archive file is also used as a parent directory")
         skill_parent.mkdir(parents=True, exist_ok=True)
@@ -167,7 +171,7 @@ def probe(old_archive, timeout):
             old_repository = temporary / "旧版安装源"
             old_source, archive_files = unpack_old_archive(old_archive, old_repository / "unpacked")
             # The unchanged installer derives SOURCE from this temporary repository.
-            # Preserve a legacy flat source or all seven sibling roots as packaged.
+            # Preserve the version's legacy flat source or complete sibling roots.
             old_source.rename(old_repository / "skills")
             old_source = old_repository / "skills"
             legacy = (old_source / "SKILL.md").is_file()
@@ -203,7 +207,7 @@ def probe(old_archive, timeout):
             report["initial_install"] = initial
             check("old_release_managed_install", initial.get("status") == "installed" and
                   Path(initial["path"]).resolve() == (target if legacy else skills_target).resolve() and
-                  (legacy or initial.get("skills") == list(installer.SKILL_NAMES)))
+                  (legacy or initial.get("skills") == list(old_suite)))
             originals = {name: read_tree(skills_target / name, installer) for name in old_suite}
             check("all_prior_skills_managed", all(installer.managed_snapshot(skills_target / name)["files"] == files
                                                   for name, files in old_suite.items()), skill_count=len(old_suite))
@@ -219,7 +223,7 @@ def probe(old_archive, timeout):
             report["update"] = updated
             check("update_status", updated.get("status") == "updated" and bool(updated.get("backup")) and
                   Path(updated["path"]).resolve() == skills_target.resolve() and
-                  updated.get("skills") == list(installer.SKILL_NAMES))
+                  updated.get("skills") == list(current_suite))
             backup = Path(updated["backup"]).resolve()
             backup.relative_to((project / ".agents/.story-codex-backups").resolve())
             changed = {name for name in old_suite if old_suite[name] != current_suite[name]}
@@ -236,10 +240,10 @@ def probe(old_archive, timeout):
                   manifest.get("files") == current_files and
                   {name: value for name, value in installed_hashes.items() if name != installer.MARKER} == current_files,
                   installed_files_sha256=installed_hashes)
-            installed_suite = {name: read_tree(skills_target / name, installer) for name in installer.SKILL_NAMES}
-            check("all_seven_skills_match_canonical", all(
+            installed_suite = {name: read_tree(skills_target / name, installer) for name in current_suite}
+            check("all_skills_match_canonical", all(
                 installer.inventory(skills_target / name) == current_suite[name] and
-                installer.managed_snapshot(skills_target / name) is not None for name in installer.SKILL_NAMES),
+                installer.managed_snapshot(skills_target / name) is not None for name in current_suite),
                 skill_count=len(installed_suite), files=sum(len(files) for files in current_suite.values()))
             installed_version = run("updated_installed_version", [target / "scripts/story.py", "--version"]).strip()
             check("updated_installed_version", installed_version == current_version, actual=installed_version)

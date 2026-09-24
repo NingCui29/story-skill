@@ -1,0 +1,437 @@
+{
+  "book_root": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例",
+  "synthetic_fixture": "tests.test_publish_views.PublishViewTests.make_formal_chapters(12); copied after close, original fixture auto-cleaned",
+  "plan_id": "913c21f254e443a59191be9f8a47cad6",
+  "zip_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例/.story/publishing-exports/material-209de6095230463596bd0ae1210162e8.zip",
+  "zip_sha256": "1d0027a4860eefb2a653f908c6c88a87dbdc5e6768b46a975aa3032c33034c08",
+  "zip_bytes": 15799,
+  "extracted_readback": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例/.story/export-trial-readback",
+  "checks": {
+    "all_commands_succeeded": true,
+    "summary_prepare_omits_manifest": true,
+    "exact_40_members": true,
+    "zip_crc_valid": true,
+    "zip_sha_matches_receipt": true,
+    "zip_size_matches_receipt": true,
+    "manifest_exact": true,
+    "manifest_canonical_bytes_exact": true,
+    "receipt_exact": true,
+    "all_12_complete": true,
+    "all_fields_exact": true,
+    "unicode_and_crlf_preserved": true,
+    "index_numeric_order": true,
+    "zip_member_numeric_order": true,
+    "revision_unchanged": true,
+    "writer_state_unchanged": true,
+    "frozen_snapshot_unchanged": true,
+    "export_checked_source": true,
+    "remote_flags_unchanged": true
+  },
+  "passed": true,
+  "revision_before": 24,
+  "revision_after": 24,
+  "writer_before": {
+    "file_sha256": "fb5d43e62ae57b364df202dc0e17cb0259340fd546b8fe303cacdcadab49381b",
+    "logical_sha256": "c6db1abfbf3b5d9a111d41f7453892710650a6edb77c797dd12bf524140a3490"
+  },
+  "writer_after": {
+    "file_sha256": "fb5d43e62ae57b364df202dc0e17cb0259340fd546b8fe303cacdcadab49381b",
+    "logical_sha256": "c6db1abfbf3b5d9a111d41f7453892710650a6edb77c797dd12bf524140a3490"
+  },
+  "manifest_sha256": "13637ab3f6b7550188591b4eca0a969989afb0adb58e7da50411891ea1fc7f2a",
+  "chapter_checks": [
+    {
+      "chapter": 1,
+      "title": "雨夜第1封来信",
+      "visible_nonspace_v1": 2470,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 0,
+      "expected_crlf_count": 0,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7452
+    },
+    {
+      "chapter": 2,
+      "title": "雨夜第2封来信",
+      "visible_nonspace_v1": 2470,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 43,
+      "expected_crlf_count": 43,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7495
+    },
+    {
+      "chapter": 3,
+      "title": "雨夜第3封来信",
+      "visible_nonspace_v1": 2470,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 0,
+      "expected_crlf_count": 0,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7452
+    },
+    {
+      "chapter": 4,
+      "title": "雨夜第4封来信",
+      "visible_nonspace_v1": 2470,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 43,
+      "expected_crlf_count": 43,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7495
+    },
+    {
+      "chapter": 5,
+      "title": "雨夜第5封来信",
+      "visible_nonspace_v1": 2470,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 0,
+      "expected_crlf_count": 0,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7452
+    },
+    {
+      "chapter": 6,
+      "title": "雨夜第6封来信",
+      "visible_nonspace_v1": 2470,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 43,
+      "expected_crlf_count": 43,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7495
+    },
+    {
+      "chapter": 7,
+      "title": "雨夜第7封来信",
+      "visible_nonspace_v1": 2470,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 0,
+      "expected_crlf_count": 0,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7452
+    },
+    {
+      "chapter": 8,
+      "title": "雨夜第8封来信",
+      "visible_nonspace_v1": 2470,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 43,
+      "expected_crlf_count": 43,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7495
+    },
+    {
+      "chapter": 9,
+      "title": "雨夜第9封来信",
+      "visible_nonspace_v1": 2470,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 0,
+      "expected_crlf_count": 0,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7452
+    },
+    {
+      "chapter": 10,
+      "title": "雨夜第10封来信",
+      "visible_nonspace_v1": 2471,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 43,
+      "expected_crlf_count": 43,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7496
+    },
+    {
+      "chapter": 11,
+      "title": "雨夜第11封来信",
+      "visible_nonspace_v1": 2471,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 0,
+      "expected_crlf_count": 0,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7453
+    },
+    {
+      "chapter": 12,
+      "title": "雨夜第12封来信",
+      "visible_nonspace_v1": 2471,
+      "title_exact": true,
+      "body_exact": true,
+      "note_exact": true,
+      "crlf_count": 43,
+      "expected_crlf_count": 43,
+      "non_bmp_preserved": true,
+      "body_utf8_bytes": 7496
+    }
+  ],
+  "index_numeric_order": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "zip_member_numeric_order": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "guide": "《雾港长篇视图样例》章节材料\n\n目标平台：番茄\n账号标识：export-author-fixture\n平台作品 ID：export-book-fixture\n清单 ID：913c21f254e443a59191be9f8a47cad6\n导出时间（UTC）：2026-09-23T00:57:25.090909+00:00\n本次核对创作版本：24\n\n本地材料已准备，尚未上传。账号与作品 ID 仅为用户声明，尚未在平台核验。\n解压后按目录中的章号顺序打开各章文件。标题.txt 仅含章名，正文.txt 仅含正文，作者的话.txt 仅含该字段；三个文件均为 UTF-8 文本，不额外添加章头、标点或换行。\n手动填写时核对平台账号、作品、章节分组及章序，再将各文件内容放入对应字段。空的作者的话文件表示该字段为空。不要把目录、使用说明或 JSON 清单贴入正文。\n目录中的字数是本地口径，平台统计可能不同。manifest.json 保存完整冻结内容与来源证明；receipt.json 保存本次本地核对结果，均不是平台回执。\n此包只在导出时核对过正式稿。后续改稿、清单过期或取消不会修改或撤回旧包；使用前应重新核对，必要时重新准备并导出。包内含完整稿件及目标标识，请按需要自行保管。\n逐章材料不代表短故事整篇投稿或完本验收。平台草稿、审核、排期和上线状态均未知。\n",
+  "index": "《雾港长篇视图样例》章节目录\n按章号顺序填写，字数为本地统计，平台可能不同。\n\n第1章 雨夜第1封来信｜2470 字｜章节/第1章/\n第2章 雨夜第2封来信｜2470 字｜章节/第2章/\n第3章 雨夜第3封来信｜2470 字｜章节/第3章/\n第4章 雨夜第4封来信｜2470 字｜章节/第4章/\n第5章 雨夜第5封来信｜2470 字｜章节/第5章/\n第6章 雨夜第6封来信｜2470 字｜章节/第6章/\n第7章 雨夜第7封来信｜2470 字｜章节/第7章/\n第8章 雨夜第8封来信｜2470 字｜章节/第8章/\n第9章 雨夜第9封来信｜2470 字｜章节/第9章/\n第10章 雨夜第10封来信｜2471 字｜章节/第10章/\n第11章 雨夜第11封来信｜2471 字｜章节/第11章/\n第12章 雨夜第12封来信｜2471 字｜章节/第12章/",
+  "export_receipt": {
+    "account_id": "export-author-fixture",
+    "book_title": "雾港长篇视图样例",
+    "chapter_checks": [
+      {
+        "changed_fields": [],
+        "chapter": 1,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 2,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 3,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 4,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 5,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 6,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 7,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 8,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 9,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 10,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 11,
+        "matches_current": true
+      },
+      {
+        "changed_fields": [],
+        "chapter": 12,
+        "matches_current": true
+      }
+    ],
+    "chapters": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "checked_at": "2026-09-23T00:57:24.978857+00:00",
+    "checked_revision": 24,
+    "content_scope": "metadata",
+    "content_verification": "unread",
+    "created": "2026-09-23T00:57:24.471208+00:00",
+    "export": {
+      "bytes": 15799,
+      "chapters": 12,
+      "encoding": "utf-8",
+      "files": 40,
+      "format": "zip",
+      "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例/.story/publishing-exports/material-209de6095230463596bd0ae1210162e8.zip",
+      "sha256": "1d0027a4860eefb2a653f908c6c88a87dbdc5e6768b46a975aa3032c33034c08"
+    },
+    "export_created": true,
+    "exported_at": "2026-09-23T00:57:25.090909+00:00",
+    "id": "913c21f254e443a59191be9f8a47cad6",
+    "manifest_sha256": "13637ab3f6b7550188591b4eca0a969989afb0adb58e7da50411891ea1fc7f2a",
+    "mode": "draft",
+    "ok": true,
+    "platform": "fanqie",
+    "platform_verified": false,
+    "ready_to_upload": false,
+    "reasons": [],
+    "remote_book_id": "export-book-fixture",
+    "remote_state": "unknown",
+    "scope": "offline_chapter_draft_material",
+    "source_check_performed": true,
+    "source_matches_current": true,
+    "source_revision": 24,
+    "status": "prepared",
+    "total_chapters": 12
+  },
+  "commands": [
+    {
+      "label": "01_status_before",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "status",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 726,
+      "stderr_bytes": 0,
+      "response_file": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/evidence/01_status_before.stdout"
+    },
+    {
+      "label": "02_prepare_summary",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "publish-prepare",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例",
+        "--input",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例/.story/publish-input.json",
+        "--expect",
+        "24",
+        "--summary"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 771,
+      "stderr_bytes": 0,
+      "response_file": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/evidence/02_prepare_summary.stdout"
+    },
+    {
+      "label": "03_frozen_before",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "publish-inspect",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例",
+        "--id",
+        "913c21f254e443a59191be9f8a47cad6",
+        "--budget-bytes",
+        "200000"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 98523,
+      "stderr_bytes": 0,
+      "response_file": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/evidence/03_frozen_before.stdout"
+    },
+    {
+      "label": "04_export",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "publish-export",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例",
+        "--id",
+        "913c21f254e443a59191be9f8a47cad6"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 1886,
+      "stderr_bytes": 0,
+      "response_file": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/evidence/04_export.stdout"
+    },
+    {
+      "label": "05_frozen_after",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "publish-inspect",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例",
+        "--id",
+        "913c21f254e443a59191be9f8a47cad6",
+        "--budget-bytes",
+        "200000"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 98523,
+      "stderr_bytes": 0,
+      "response_file": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/evidence/05_frozen_after.stdout"
+    },
+    {
+      "label": "06_status_after",
+      "command": [
+        "/Users/cuining/.local/bin/python3.10",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "status",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例"
+      ],
+      "exit_code": 0,
+      "stdout_bytes": 726,
+      "stderr_bytes": 0,
+      "response_file": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/evidence/06_status_after.stdout"
+    }
+  ]
+}

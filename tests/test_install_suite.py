@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import importlib.util
 import json
 from pathlib import Path
@@ -18,7 +19,7 @@ class SuiteInstallTests(unittest.TestCase):
         self.root = Path(self.tmp.name)
         self.source = self.root / "skills"
         self.project = self.root / "中文项目"
-        for name in installer.SKILL_NAMES:
+        for name in installer.LEGACY_SKILL_NAMES:
             folder = self.source / name
             (folder / "agents").mkdir(parents=True)
             for relative, raw in {"SKILL.md": name, "agents/openai.yaml": name,
@@ -48,13 +49,26 @@ class SuiteInstallTests(unittest.TestCase):
         return self.project / ".agents/skills" / name
 
     def change_source(self):
-        for name in installer.SKILL_NAMES:
+        for name in installer.LEGACY_SKILL_NAMES:
             (self.source / name / "SKILL.md").write_text(name + " updated", encoding="utf-8")
+
+    def legacy_source(self, version):
+        source = self.root / ("single-source-" + (version or "unversioned"))
+        (source / "scripts").mkdir(parents=True)
+        (source / "SKILL.md").write_bytes(b"legacy skill")
+        runtime = f'VERSION = "{version}"\n' if version else 'print("legacy runtime")\n'
+        (source / "scripts/story.py").write_text(runtime, encoding="utf-8")
+        return source
+
+    def project_bytes(self, project=None):
+        project = project or self.project
+        return {path.relative_to(project).as_posix(): path.read_bytes()
+                for path in project.rglob("*") if path.is_file()}
 
     def test_install_all_dependencies_preserves_book_and_other_skills(self):
         result = self.install()
-        self.assertEqual(result["skills"], list(installer.SKILL_NAMES))
-        for name in installer.SKILL_NAMES:
+        self.assertEqual(result["skills"], list(installer.LEGACY_SKILL_NAMES))
+        for name in installer.LEGACY_SKILL_NAMES:
             self.assertEqual(installer.inventory(self.source / name), installer.inventory(self.target(name)))
         self.assertEqual(self.book.read_text(encoding="utf-8"), "不能改动的小说正文")
         self.assertEqual(self.other.read_text(encoding="utf-8"), "其他技能")
@@ -62,7 +76,7 @@ class SuiteInstallTests(unittest.TestCase):
 
     def test_single_new_core_redirects_to_complete_suite(self):
         result = installer.install(self.project, source=self.source / "story-codex")
-        self.assertEqual(result["skills"], list(installer.SKILL_NAMES))
+        self.assertEqual(result["skills"], list(installer.LEGACY_SKILL_NAMES))
         (self.source / "story-codex-cover/SKILL.md").unlink()
         with self.assertRaisesRegex(ValueError, "incomplete"):
             installer.install(self.project, True, self.source / "story-codex")
@@ -91,6 +105,7 @@ class SuiteInstallTests(unittest.TestCase):
         spec.loader.exec_module(package)
         self.assertEqual(installer.SUITE_FILES, package.SUITE_FILES)
         self.assertEqual(installer.TAGGED_SUITE_FILES, package.TAGGED_SUITE_FILES)
+        self.assertEqual(installer.PUBLISH_SUITE_FILES, package.PUBLISH_SUITE_FILES)
         self.assertEqual(installer.LEGACY_SUITE_FILES, package.LEGACY_SUITE_FILES)
         for version in ("0.4.0", "0.4.12", "0.5.0", "0.5.1", "0.5.6", "0.5.7", "0.5.12"):
             self.assertEqual(installer.suite_files(version), package.suite_files(version))
@@ -105,6 +120,203 @@ class SuiteInstallTests(unittest.TestCase):
         self.assertEqual(installed["files"], 34)
         self.assertEqual((self.target("story-codex-plan") / "references/fanqie-tags.md").read_bytes(),
                          reference.read_bytes())
+
+    def prepare_version(self, version):
+        for relative in installer.suite_files(version):
+            path = self.source / relative
+            if not path.exists():
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b"new reviewed content\n")
+        (self.source / "story-codex/scripts/story.py").write_text(
+            f'VERSION = "{version}"\n', encoding="utf-8")
+
+    def test_seven_skill_release_upgrades_to_eight_and_keeps_exact_backup(self):
+        self.prepare_version("0.5.10")
+        initial = self.install()
+        self.assertEqual(initial["skills"], list(installer.LEGACY_SKILL_NAMES))
+        before = {name: installer.inventory(self.target(name)) for name in installer.LEGACY_SKILL_NAMES}
+        self.prepare_version("0.5.11")
+        upgraded = self.install(True)
+        self.assertEqual(upgraded["skills"], list(installer.SKILL_NAMES))
+        self.assertEqual(upgraded["files"], 38)
+        self.assertEqual(len(upgraded["skills"]), 8)
+        self.assertEqual(installer.inventory(Path(upgraded["backup"]) / "story-codex"), before["story-codex"])
+        self.assertFalse((Path(upgraded["backup"]) / "story-codex-publish").exists())
+        for name in installer.SKILL_NAMES:
+            self.assertEqual(installer.inventory(self.target(name)), installer.inventory(self.source / name))
+        self.assertEqual(self.install(True)["status"], "unchanged")
+
+    def test_eighth_skill_install_failure_restores_the_seven_skill_release(self):
+        self.prepare_version("0.5.10")
+        self.install()
+        before = {name: installer.managed_snapshot(self.target(name).resolve()) for name in installer.LEGACY_SKILL_NAMES}
+        self.prepare_version("0.5.11")
+        real_move = installer.move_directory
+
+        def move(source, destination):
+            if Path(source).parent.name.startswith(".story-codex-stage-") and Path(source).name == "story-codex-publish":
+                raise OSError("eighth skill publication failed")
+            return real_move(source, destination)
+
+        with patch.object(installer, "move_directory", side_effect=move), self.assertRaises(OSError):
+            self.install(True)
+        self.assertFalse(self.target("story-codex-publish").exists())
+        self.assertEqual({name: installer.managed_snapshot(self.target(name).resolve()) for name in before}, before)
+
+    def test_new_runtime_and_publisher_are_required_together(self):
+        self.prepare_version("0.5.11")
+        runtime = self.source / "story-codex/scripts/story_publish.py"
+        original = runtime.read_bytes()
+        runtime.unlink()
+        with self.assertRaisesRegex(ValueError, "incomplete"):
+            self.install()
+        runtime.write_bytes(original)
+        (self.source / "story-codex-publish/SKILL.md").unlink()
+        with self.assertRaisesRegex(ValueError, "incomplete"):
+            self.install()
+        self.assertFalse(self.target("story-codex").exists())
+
+    def test_older_suite_cannot_leave_the_publisher_installed_with_a_downgraded_core(self):
+        self.prepare_version("0.5.10")
+        older_source = self.root / "older-source"
+        for relative in installer.suite_files("0.5.10"):
+            path = older_source / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes((self.source / relative).read_bytes())
+        self.prepare_version("0.5.11")
+        self.install()
+        before = {path.relative_to(self.project).as_posix(): path.read_bytes()
+                  for path in self.project.rglob("*") if path.is_file()}
+        with self.assertRaisesRegex(ValueError, "omit existing suite skill"):
+            installer.install(self.project, True, older_source)
+        self.assertEqual({path.relative_to(self.project).as_posix(): path.read_bytes()
+                          for path in self.project.rglob("*") if path.is_file()}, before)
+        self.assertTrue((self.target("story-codex-publish") / "SKILL.md").is_file())
+        self.assertFalse((self.project / ".agents/.story-codex-backups").exists())
+
+    def test_unchanged_old_suite_cannot_ignore_an_unmanaged_publisher(self):
+        self.install()
+        publisher = self.target("story-codex-publish")
+        publisher.mkdir()
+        (publisher / "SKILL.md").write_bytes(b"keep this unmanaged publisher")
+        with self.assertRaisesRegex(ValueError, "omit existing suite skill"):
+            self.install(True)
+        self.assertEqual((publisher / "SKILL.md").read_bytes(), b"keep this unmanaged publisher")
+
+    def test_legacy_single_sources_cannot_replace_an_eight_skill_installation(self):
+        self.prepare_version("0.5.11")
+        self.install()
+        before = self.project_bytes()
+        for version in ("0.3.0", None):
+            legacy = self.legacy_source(version)
+            for update in (False, True):
+                with self.subTest(version=version, update=update), \
+                        self.assertRaisesRegex(ValueError, "omit existing suite skill"):
+                    installer.install(self.project, update, legacy)
+                self.assertEqual(self.project_bytes(), before)
+        self.assertFalse((self.project / ".agents/.story-codex-backups").exists())
+
+    def test_unchanged_and_in_place_legacy_sources_cannot_ignore_a_publisher(self):
+        for version in ("0.3.0", None):
+            with self.subTest(version=version):
+                legacy = self.legacy_source(version)
+                project = self.root / ("legacy-project-" + (version or "unversioned"))
+                installer.install(project, source=legacy)
+                publisher = project / ".agents/skills/story-codex-publish"
+                publisher.mkdir()
+                (publisher / "SKILL.md").write_bytes(b"keep this unmanaged publisher")
+                before = self.project_bytes(project)
+                for update in (False, True):
+                    with self.assertRaisesRegex(ValueError, "omit existing suite skill"):
+                        installer.install(project, update, legacy)
+                    self.assertEqual(self.project_bytes(project), before)
+                with self.assertRaisesRegex(ValueError, "omit existing suite skill"):
+                    installer.install(project, source=project / ".agents/skills/story-codex")
+                self.assertEqual(self.project_bytes(project), before)
+
+    def test_legacy_sources_install_and_update_without_touching_unrelated_skills(self):
+        for version in ("0.3.0", None):
+            with self.subTest(version=version):
+                legacy = self.legacy_source(version)
+                project = self.root / ("legacy-project-" + (version or "unversioned"))
+                other = project / ".agents/skills/unrelated/SKILL.md"
+                other.parent.mkdir(parents=True)
+                other.write_bytes(b"unrelated skill")
+                self.assertEqual(installer.install(project, source=legacy)["status"], "installed")
+                self.assertEqual(installer.install(project, source=legacy)["status"], "unchanged")
+                target = project / ".agents/skills/story-codex"
+                self.assertEqual(installer.install(project, source=target)["status"], "already_in_place")
+                (legacy / "SKILL.md").write_bytes(b"legacy skill updated")
+                updated = installer.install(project, True, legacy)
+                self.assertEqual(updated["status"], "updated")
+                self.assertEqual((Path(updated["backup"]) / "SKILL.md").read_bytes(), b"legacy skill")
+                self.assertEqual((target / "SKILL.md").read_bytes(), b"legacy skill updated")
+                self.assertEqual(other.read_bytes(), b"unrelated skill")
+                self.assertTrue(all(not (project / ".agents/skills" / name).exists()
+                                    for name in installer.SKILL_NAMES if name != "story-codex"))
+
+    def test_legacy_guard_checks_the_targets_after_acquiring_the_installation_lock(self):
+        legacy = self.legacy_source("0.3.0")
+        installer.install(self.project, source=legacy)
+        before = self.project_bytes()
+        publisher = self.target("story-codex-publish")
+        real_lock = installer.installation_lock
+
+        @contextmanager
+        def lock(project):
+            with real_lock(project):
+                publisher.mkdir()
+                (publisher / "SKILL.md").write_bytes(b"publisher at lock acquisition")
+                yield
+
+        with patch.object(installer, "installation_lock", side_effect=lock), \
+                self.assertRaisesRegex(ValueError, "omit existing suite skill"):
+            installer.install(self.project, True, legacy)
+        before[".agents/skills/story-codex-publish/SKILL.md"] = b"publisher at lock acquisition"
+        self.assertEqual(self.project_bytes(), before)
+
+    def test_publisher_added_during_legacy_staging_blocks_update_without_changing_core(self):
+        legacy = self.legacy_source(None)
+        installer.install(self.project, source=legacy)
+        before = self.project_bytes()
+        (legacy / "SKILL.md").write_bytes(b"legacy skill updated")
+        publisher = self.target("story-codex-publish")
+        real_copy = installer.shutil.copyfile
+
+        def copy(source, destination):
+            result = real_copy(source, destination)
+            if not publisher.exists():
+                publisher.mkdir()
+                (publisher / "SKILL.md").write_bytes(b"concurrent publisher")
+            return result
+
+        with patch.object(installer.shutil, "copyfile", side_effect=copy), \
+                self.assertRaisesRegex(ValueError, "omit existing suite skill"):
+            installer.install(self.project, True, legacy)
+        before[".agents/skills/story-codex-publish/SKILL.md"] = b"concurrent publisher"
+        self.assertEqual(self.project_bytes(), before)
+        self.assertFalse((self.project / ".agents/.story-codex-backups").exists())
+
+    def test_publisher_added_during_old_suite_staging_is_preserved_and_blocks_update(self):
+        self.install()
+        before = {name: installer.managed_snapshot(self.target(name).resolve())
+                  for name in installer.LEGACY_SKILL_NAMES}
+        self.change_source()
+        publisher = self.target("story-codex-publish")
+        real_copy = installer.shutil.copyfile
+
+        def copy(source, destination):
+            result = real_copy(source, destination)
+            if not publisher.exists():
+                publisher.mkdir()
+                (publisher / "SKILL.md").write_bytes(b"concurrent publisher")
+            return result
+
+        with patch.object(installer.shutil, "copyfile", side_effect=copy), \
+                self.assertRaisesRegex(ValueError, "omit existing suite skill"):
+            self.install(True)
+        self.assertEqual({name: installer.managed_snapshot(self.target(name).resolve()) for name in before}, before)
+        self.assertEqual((publisher / "SKILL.md").read_bytes(), b"concurrent publisher")
 
     def test_historical_suite_installs_then_upgrades_with_new_analysis_references(self):
         added = set(installer.SUITE_FILES) - set(installer.LEGACY_SUITE_FILES)
@@ -164,7 +376,7 @@ class SuiteInstallTests(unittest.TestCase):
         result = self.install(True)
         self.assertEqual(result["status"], "updated")
         self.assertEqual((Path(result["backup"]) / "story-codex/SKILL.md").read_bytes(), b"legacy skill")
-        for name in installer.SKILL_NAMES:
+        for name in installer.LEGACY_SKILL_NAMES:
             self.assertTrue((self.target(name) / "SKILL.md").exists())
 
     def test_pre_03_legacy_sources_remain_installable(self):
@@ -202,7 +414,7 @@ class SuiteInstallTests(unittest.TestCase):
         with patch.object(installer, "move_directory", side_effect=move):
             with self.assertRaisesRegex(OSError, "third publication"):
                 self.install(True)
-        for name in installer.SKILL_NAMES:
+        for name in installer.LEGACY_SKILL_NAMES:
             self.assertEqual((self.target(name) / "SKILL.md").read_text(), name)
         self.assertEqual(list((self.project / ".agents/skills").glob(".story-codex-stage-*")), [])
 
@@ -216,7 +428,7 @@ class SuiteInstallTests(unittest.TestCase):
 
         with patch.object(installer, "move_directory", side_effect=move), self.assertRaises(OSError):
             self.install()
-        self.assertTrue(all(not self.target(name).exists() for name in installer.SKILL_NAMES))
+        self.assertTrue(all(not self.target(name).exists() for name in installer.LEGACY_SKILL_NAMES))
         self.assertEqual(self.other.read_text(encoding="utf-8"), "其他技能")
 
     def test_edit_to_published_member_is_preserved_and_previous_version_kept(self):
@@ -272,7 +484,7 @@ class SuiteInstallTests(unittest.TestCase):
 
         with patch.object(installer.shutil, "copyfile", side_effect=copy), self.assertRaisesRegex(ValueError, "Source"):
             self.install()
-        self.assertTrue(all(not self.target(name).exists() for name in installer.SKILL_NAMES))
+        self.assertTrue(all(not self.target(name).exists() for name in installer.LEGACY_SKILL_NAMES))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,10 @@
+{
+  "validator": "skill-creator/scripts/quick_validate.py",
+  "skills": {
+    "story-codex": "valid",
+    "story-codex-write": "valid",
+    "story-codex-review": "valid",
+    "story-codex-publish": "valid"
+  },
+  "diff_check": "passed"
+}

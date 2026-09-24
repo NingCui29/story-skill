@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "skill": "story-codex-publish",
+  "result": "Skill is valid!",
+  "error": "",
+  "evidence": "quick_validate.py completed successfully before final packaging; skill content is covered by source-manifest.json"
+}

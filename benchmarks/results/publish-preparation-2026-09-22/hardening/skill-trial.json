@@ -1,0 +1,246 @@
+{
+  "task": "异常退出后的独立发布准备技能续接试用",
+  "book_root": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-recovery-trial-f6zx6iw5/雾港书稿",
+  "skill": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-publish/SKILL.md",
+  "runtime": "/Users/cuining/.local/bin/python3.10",
+  "tool": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+  "steps": [
+    {
+      "command": "publish-list --offset 0 --limit 10",
+      "exit_code": 2,
+      "response": {
+        "error": "publishing_recovery_required",
+        "message": "SQLite needs a writable recovery pass; run publish-recover --book with this book root before listing again. No plan ID or upload is involved.",
+        "ok": false
+      }
+    },
+    {
+      "command": "publish-recover",
+      "exit_code": 0,
+      "response": {
+        "book_id": "a74c5f84-7daf-4eb9-aefc-b1341a68da4e",
+        "ledger_exists": true,
+        "note": "Local ledger checked; no plan status or platform state was changed.",
+        "ok": true,
+        "plans": 2,
+        "platform_verified": false,
+        "ready_to_upload": false,
+        "remote_state": "unknown"
+      }
+    },
+    {
+      "command": "publish-list --offset 0 --limit 10",
+      "exit_code": 0,
+      "response": {
+        "book_id": "a74c5f84-7daf-4eb9-aefc-b1341a68da4e",
+        "budget": {
+          "limit": 16000,
+          "unit": "utf8_bytes",
+          "used": 1334
+        },
+        "ledger_exists": true,
+        "limit": 10,
+        "next_offset": null,
+        "offset": 0,
+        "ok": true,
+        "results": [
+          {
+            "account_id": "author-one",
+            "book_title": "门后的账本",
+            "chapters": [
+              1
+            ],
+            "checked_at": "2026-09-22T14:44:37.608961+00:00",
+            "content_verification": "unread",
+            "created": "2026-09-22T14:44:37.606101+00:00",
+            "id": "03f69f992c104e73933a70891b32dd72",
+            "manifest_sha256": "a7fe0a3a202f7920b84ecc40a37dd7da12c2e4040f550ff00634916a4ea5f01e",
+            "mode": "draft",
+            "ok": false,
+            "platform": "qimao",
+            "platform_verified": false,
+            "ready_to_upload": false,
+            "reasons": [],
+            "remote_book_id": "book-one",
+            "remote_state": "unknown",
+            "scope": "offline_chapter_draft_material",
+            "source_revision": 2,
+            "status": "cancelled"
+          },
+          {
+            "account_id": "author-one",
+            "book_title": "门后的账本",
+            "chapters": [
+              1
+            ],
+            "checked_at": "2026-09-22T14:44:37.600750+00:00",
+            "content_verification": "unread",
+            "created": "2026-09-22T14:44:37.600505+00:00",
+            "id": "8aebd8e6106a4089af60699aebcc1243",
+            "manifest_sha256": "658129ae645c0b07d218e3808dac061282836a71343ecc7954a8cd75ff9c0178",
+            "mode": "draft",
+            "ok": true,
+            "platform": "fanqie",
+            "platform_verified": false,
+            "ready_to_upload": false,
+            "reasons": [],
+            "remote_book_id": "book-one",
+            "remote_state": "unknown",
+            "scope": "offline_chapter_draft_material",
+            "source_revision": 2,
+            "status": "prepared"
+          }
+        ],
+        "total": 2
+      }
+    },
+    {
+      "command": "publish-inspect --id 8aebd8e6106a4089af60699aebcc1243",
+      "exit_code": 0,
+      "response": {
+        "account_id": "author-one",
+        "book_title": "门后的账本",
+        "budget": {
+          "limit": 16000,
+          "unit": "utf8_bytes",
+          "used": 1583
+        },
+        "chapters": [
+          {
+            "chapter": 1,
+            "title": "门后的账本1",
+            "chapter_path": "chapters/第一卷 雨夜/第1章 门后的账本1.md",
+            "body_characters": 34,
+            "local_visible_nonspace_v1": 32,
+            "body_sha": "cd50fa77ba132144b6ac6d9c260b1e4cbbfcc7a5c15f1d54e2c03a5cee0a876d",
+            "upload_sha256": "66b4dcf3e4c0e4d4a276a87940c9a1f609b9286c2cceb31cc3cb4bb7ed710c3f",
+            "conversion_rule": "confirmed_first_heading_removed_v1"
+          }
+        ],
+        "checked_at": "2026-09-22T14:44:37.600750+00:00",
+        "content_verification": "unread",
+        "created": "2026-09-22T14:44:37.600505+00:00",
+        "id": "8aebd8e6106a4089af60699aebcc1243",
+        "manifest_sha256": "658129ae645c0b07d218e3808dac061282836a71343ecc7954a8cd75ff9c0178",
+        "mode": "draft",
+        "ok": true,
+        "platform": "fanqie",
+        "platform_verified": false,
+        "ready_to_upload": false,
+        "reasons": [],
+        "remote_book_id": "book-one",
+        "remote_state": "unknown",
+        "scope": "offline_chapter_draft_material",
+        "source_revision": 2,
+        "status": "prepared"
+      }
+    },
+    {
+      "command": "publish-inspect --id 03f69f992c104e73933a70891b32dd72",
+      "exit_code": 2,
+      "response": {
+        "account_id": "author-one",
+        "book_title": "门后的账本",
+        "budget": {
+          "limit": 16000,
+          "unit": "utf8_bytes",
+          "used": 1583
+        },
+        "chapters": [
+          {
+            "chapter": 1,
+            "title": "门后的账本1",
+            "chapter_path": "chapters/第一卷 雨夜/第1章 门后的账本1.md",
+            "body_characters": 34,
+            "local_visible_nonspace_v1": 32,
+            "body_sha": "cd50fa77ba132144b6ac6d9c260b1e4cbbfcc7a5c15f1d54e2c03a5cee0a876d",
+            "upload_sha256": "66b4dcf3e4c0e4d4a276a87940c9a1f609b9286c2cceb31cc3cb4bb7ed710c3f",
+            "conversion_rule": "confirmed_first_heading_removed_v1"
+          }
+        ],
+        "checked_at": "2026-09-22T14:44:37.608961+00:00",
+        "content_verification": "unread",
+        "created": "2026-09-22T14:44:37.606101+00:00",
+        "id": "03f69f992c104e73933a70891b32dd72",
+        "manifest_sha256": "a7fe0a3a202f7920b84ecc40a37dd7da12c2e4040f550ff00634916a4ea5f01e",
+        "mode": "draft",
+        "ok": false,
+        "platform": "qimao",
+        "platform_verified": false,
+        "ready_to_upload": false,
+        "reasons": [],
+        "remote_book_id": "book-one",
+        "remote_state": "unknown",
+        "scope": "offline_chapter_draft_material",
+        "source_revision": 2,
+        "status": "cancelled"
+      }
+    },
+    {
+      "command": "publish-check --id 8aebd8e6106a4089af60699aebcc1243",
+      "exit_code": 0,
+      "response": {
+        "account_id": "author-one",
+        "book_title": "门后的账本",
+        "chapters": [
+          1
+        ],
+        "checked_at": "2026-09-22T14:46:51.744458+00:00",
+        "content_verification": "unread",
+        "created": "2026-09-22T14:44:37.600505+00:00",
+        "id": "8aebd8e6106a4089af60699aebcc1243",
+        "manifest_sha256": "658129ae645c0b07d218e3808dac061282836a71343ecc7954a8cd75ff9c0178",
+        "mode": "draft",
+        "ok": true,
+        "platform": "fanqie",
+        "platform_verified": false,
+        "ready_to_upload": false,
+        "reasons": [],
+        "remote_book_id": "book-one",
+        "remote_state": "unknown",
+        "scope": "offline_chapter_draft_material",
+        "source_revision": 2,
+        "status": "prepared"
+      }
+    },
+    {
+      "command": "status",
+      "exit_code": 0,
+      "response": {
+        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-recovery-trial-f6zx6iw5/雾港书稿",
+        "cards": 0,
+        "changed_export_count": 0,
+        "changed_exports": [],
+        "id": "a74c5f84-7daf-4eb9-aefc-b1341a68da4e",
+        "imported_through": 0,
+        "integrity": {
+          "full_book_verified": true,
+          "last_full_audit_revision": 2,
+          "mode": "strict",
+          "note": "Hash verification is a point-in-time observation; outside editors can save again.",
+          "unverified_archive_count": 0,
+          "verified_file_count": 1
+        },
+        "kind": "long",
+        "last_chapter": 1,
+        "more_sources": false,
+        "next_chapter": 2,
+        "pending_export_count": 0,
+        "pending_exports": [],
+        "recent_sources": [],
+        "revision": 2,
+        "short_assembly": null,
+        "short_assembly_path": null,
+        "sources": 0,
+        "title": "门后的账本"
+      }
+    }
+  ],
+  "outcome": "按技能发现 publishing_recovery_required，使用无需清单ID的 publish-recover 后恢复查询。已有2份清单完整回读，番茄 prepared 且正式稿核对通过，七猫 cancelled 保持取消。没有新建清单或平台操作。",
+  "doc_obstacles": [],
+  "notes": [
+    "书根目录名为雾港书稿，书籍元数据及已有清单内书名为门后的账本；按指定书根与同一book_id核对，未改名。",
+    "cancelled清单回读退出码2且ok=false，仍返回完整冻结内容，技能已说明此行为。",
+    "本地材料已准备，尚未上传；远端状态unknown，platform_verified与ready_to_upload均false。"
+  ]
+}

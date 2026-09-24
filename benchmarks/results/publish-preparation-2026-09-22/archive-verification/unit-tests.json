@@ -1,0 +1,81 @@
+{
+  "ok": true,
+  "run": 715,
+  "passed": 698,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 17,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "elapsed_seconds": 82.064,
+  "skips": [
+    {
+      "test": "test_windows_publication_refuses_an_empty_target_created_inside_rename (test_install_races.InstallationRaceTests)",
+      "reason": "Windows rename provides the no-replace guarantee tested here"
+    },
+    {
+      "test": "test_editor_save_during_restore_is_preserved_with_backup (test_portable_export.PortableWindowsExportTests)",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_failed_publication_restores_a_copy_and_retains_backup_for_retry (test_portable_export.PortableWindowsExportTests)",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_first_export_succeeds_without_hard_links (test_portable_export.PortableWindowsExportTests)",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_recreated_target_wins_over_publication_and_restore (test_portable_export.PortableWindowsExportTests)",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_revision_preserves_old_backup_without_hard_links (test_portable_export.PortableWindowsExportTests)",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_windows_database_pin_blocks_replacement_for_connection_lifetime (test_publish_paths.PublishingConnectionPathTests)",
+      "reason": "Native Windows delete-sharing protection"
+    },
+    {
+      "test": "test_windows_parent_pin_blocks_rename_but_allows_child_publication (test_retirement_path_race.RetirementPathRaceTests)",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_atomic_first_publication_and_revision_preserve_unicode_bytes (test_windows_directory_pins.WindowsDirectoryPinTests)",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_changed_target_is_restored_and_retained_in_backup (test_windows_directory_pins.WindowsDirectoryPinTests)",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_empty_pinned_directory_rejects_junction_conversion_until_released (test_windows_directory_pins.WindowsDirectoryPinTests)",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_external_process_cannot_swap_pinned_leaf_or_ancestor (test_windows_directory_pins.WindowsDirectoryPinTests)",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_external_recreated_target_wins_over_backup_restore (test_windows_directory_pins.WindowsDirectoryPinTests)",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_external_target_wins_over_first_publication (test_windows_directory_pins.WindowsDirectoryPinTests)",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_nested_directory_guards_leave_no_files_on_normal_or_exception_exit (test_windows_directory_pins.WindowsDirectoryPinTests)",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_pinned_directories_allow_cross_directory_backup_and_copy_restore (test_windows_directory_pins.WindowsDirectoryPinTests)",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_root_report_update_and_nested_backup_restore_share_ancestors (test_windows_directory_pins.WindowsDirectoryPinTests)",
+      "reason": "Requires native Windows directory share locks"
+    }
+  ]
+}

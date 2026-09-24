@@ -31,7 +31,7 @@ class ShortAssemblyNameTests(unittest.TestCase):
         self.draft.parent.mkdir(parents=True)
         return result
 
-    def test_portable_name_is_visible_at_init_and_full_title_survives_assembly(self):
+    def test_portable_name_is_visible_and_full_title_remains_in_metadata(self):
         for title in ("雨夜的钥匙", '旧院:最后一把钥匙?', '旧院/来信\\回信*"<>|', "CON", "NUL.txt", ".", "..",
                       "长书名" * 60, " A " * 50, "旧院\n最后的来信"):
             with self.subTest(title=title):
@@ -47,7 +47,7 @@ class ShortAssemblyNameTests(unittest.TestCase):
                 self.assertTrue(result["exports_complete"], result)
                 self.assertEqual(Path(result["path"]), self.root / relative)
                 content = Path(result["path"]).read_text(encoding="utf-8")
-                self.assertTrue(content.startswith(title + "\n\n第1章 归还\n"))
+                self.assertTrue(content.startswith("第1章 归还\n\n"))
                 self.assertEqual(self.book.meta("title"), title)
                 self.book.close()
                 self.book = story.Book(self.root)

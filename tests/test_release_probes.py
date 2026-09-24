@@ -116,7 +116,7 @@ class ReleaseProbeTests(unittest.TestCase):
             self.assertFalse((Path(directory) / "old.py").exists())
 
     def test_seven_skill_archive_keeps_all_sibling_roots(self):
-        names = upgrade.load_script("install").SKILL_NAMES
+        names = upgrade.load_script("install").LEGACY_SKILL_NAMES
         with tempfile.TemporaryDirectory(prefix="story-upgrade-suite-") as directory:
             root = Path(directory).resolve()
             archive = root / "suite.zip"
@@ -128,6 +128,28 @@ class ReleaseProbeTests(unittest.TestCase):
             self.assertEqual(source, root / "unpacked")
             self.assertEqual({name.split("/")[0] for name in files}, set(names))
             self.assertTrue((source / "story-codex-write/SKILL.md").is_file())
+
+    def test_eight_skill_archive_keeps_publisher_and_rejects_mislabeled_roots(self):
+        installer = upgrade.load_script("install")
+        for version, names, valid in (("0.5.11", installer.SKILL_NAMES, True),
+                                      ("0.5.10", installer.SKILL_NAMES, False),
+                                      ("0.5.11", installer.LEGACY_SKILL_NAMES, False),
+                                      ("0.6.0", installer.SKILL_NAMES, False)):
+            with self.subTest(version=version, count=len(names)), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory).resolve()
+                archive = root / "suite.zip"
+                with zipfile.ZipFile(archive, "w") as bundle:
+                    for name in names:
+                        bundle.writestr(name + "/SKILL.md", "# " + name)
+                    bundle.writestr("story-codex/scripts/story.py", f'VERSION = "{version}"\n')
+                if valid:
+                    source, files = upgrade.unpack_old_archive(archive, root / "unpacked")
+                    self.assertEqual(source, root / "unpacked")
+                    self.assertEqual({name.split("/")[0] for name in files}, set(names))
+                else:
+                    with self.assertRaises(ValueError):
+                        upgrade.unpack_old_archive(archive, root / "unpacked")
+                    self.assertFalse((root / "unpacked").exists())
 
     def test_invalid_archive_paths_are_rejected_before_extraction(self):
         invalid_members = [
@@ -217,7 +239,7 @@ class ReleaseProbeTests(unittest.TestCase):
         self.assertEqual(report["initial_archive"]["version"], "0.2.0")
         self.assertEqual(report["checks"]["archive_extraction_exact"]["skill_count"], 1)
         self.assertEqual(report["checks"]["previous_release_backup_exact"]["status"], "passed")
-        self.assertEqual(report["checks"]["all_seven_skills_match_canonical"]["skill_count"], 7)
+        self.assertEqual(report["checks"]["all_skills_match_canonical"]["skill_count"], 8)
 
 
 if __name__ == "__main__":

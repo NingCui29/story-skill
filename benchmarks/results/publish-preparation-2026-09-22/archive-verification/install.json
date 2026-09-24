@@ -1,0 +1,31 @@
+{
+  "status": "installed",
+  "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-publish-verify-final-install-e4zvmls3/.agents/skills",
+  "skills": [
+    "story-codex",
+    "story-codex-plan",
+    "story-codex-write",
+    "story-codex-analyze",
+    "story-codex-review",
+    "story-codex-research",
+    "story-codex-cover",
+    "story-codex-publish"
+  ],
+  "changed_skills": [
+    "story-codex",
+    "story-codex-plan",
+    "story-codex-write",
+    "story-codex-analyze",
+    "story-codex-review",
+    "story-codex-research",
+    "story-codex-cover",
+    "story-codex-publish"
+  ],
+  "backup": null,
+  "files": 38,
+  "ok": true,
+  "payload_mismatches": [],
+  "verify_export_help_exit": 0,
+  "isolated": true,
+  "temporary_install_cleaned": true
+}

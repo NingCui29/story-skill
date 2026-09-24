@@ -1,0 +1,45 @@
+{
+  "ok": true,
+  "results": [
+    {
+      "skill": "story-codex",
+      "ok": true,
+      "output": "Skill is valid!"
+    },
+    {
+      "skill": "story-codex-analyze",
+      "ok": true,
+      "output": "Skill is valid!"
+    },
+    {
+      "skill": "story-codex-cover",
+      "ok": true,
+      "output": "Skill is valid!"
+    },
+    {
+      "skill": "story-codex-plan",
+      "ok": true,
+      "output": "Skill is valid!"
+    },
+    {
+      "skill": "story-codex-publish",
+      "ok": true,
+      "output": "Skill is valid!"
+    },
+    {
+      "skill": "story-codex-research",
+      "ok": true,
+      "output": "Skill is valid!"
+    },
+    {
+      "skill": "story-codex-review",
+      "ok": true,
+      "output": "Skill is valid!"
+    },
+    {
+      "skill": "story-codex-write",
+      "ok": true,
+      "output": "Skill is valid!"
+    }
+  ]
+}

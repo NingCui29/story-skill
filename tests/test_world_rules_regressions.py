@@ -43,8 +43,8 @@ class WorldRulesRegressions(unittest.TestCase):
         self.assertEqual({r["subject"] for r in result["facts"]}, {"key", "ledger"})
         example = world.template()["facts"][0]
         self.assertEqual(example["predicate"], "持有人")
-        self.assertEqual(example["subject"], "key")
-        self.assertIn("jiang", example["entities"])
+        self.assertEqual(example["subject"], "scarf")
+        self.assertIn("lin", example["entities"])
 
     def test_evidenced_zero_opening_blocks_positive_spending(self):
         self.save(transfers=[{"id": "opening", "resource": "coin", "receiver": "a", "amount": "0",

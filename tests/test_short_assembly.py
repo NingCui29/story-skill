@@ -62,7 +62,7 @@ class ShortAssemblyTests(unittest.TestCase):
         self.assertTrue(result["created"])
         self.assertEqual(result["chapters"], 2)
         self.assertEqual(output.read_text(encoding="utf-8"),
-                         "雨夜的钥匙\n\n第1章 借钥\n\n她从门房借到一把钥匙。\n\n"
+                         "第1章 借钥\n\n她从门房借到一把钥匙。\n\n"
                          "第2章 还钥\n\n她归还钥匙，也还清了欠账。\n")
         repeated = self.book.assemble_short(2)
         self.assertFalse(repeated["created"])
@@ -107,8 +107,56 @@ class ShortAssemblyTests(unittest.TestCase):
                 text = separator.join(("第1章 借钥", "她从门房借到一把钥匙。", "", "她终于推开了门。", ""))
                 self.commit(1, "借钥", text, replace_last=index > 0)
                 result = self.book.assemble_short(1)
-                self.assertEqual(Path(result["path"]).read_text(encoding="utf-8"),
-                                 "雨夜的钥匙\n\n第1章 借钥\n\n她从门房借到一把钥匙。\n\n她终于推开了门。\n")
+                expected_body = separator.join(("她从门房借到一把钥匙。", "", "她终于推开了门。", ""))
+                self.assertEqual(Path(result["path"]).read_bytes().decode("utf-8"),
+                                 "第1章 借钥\n\n" + expected_body)
+
+    def legacy_title_line_copy(self):
+        self.commit(1, "借钥", "第1章 借钥\n她从门房借到一把钥匙。\n")
+        result = self.book.assemble_short(1)
+        output = Path(result["path"])
+        old_text = "雨夜的钥匙\n\n" + output.read_text(encoding="utf-8")
+        old_sha = story.digest(old_text)
+        record = self.book._short_assembly_record()
+        record.update(format=1, sha256=old_sha)
+        with self.book.transaction():
+            self.book.db.execute("INSERT OR IGNORE INTO core_objects(sha,text) VALUES(?,?)",
+                                 (old_sha, old_text))
+            self.book.set_meta("short_assembly", record)
+            self.book.db.execute("UPDATE artifact_state SET sha=?,written_sha=? WHERE path=?",
+                                 (old_sha, old_sha, record["path"]))
+        output.write_text(old_text, encoding="utf-8")
+        return output, old_text
+
+    def test_previous_title_line_format_is_stale_and_reassembled_with_backup(self):
+        output, old_text = self.legacy_title_line_copy()
+        self.assertEqual(self.book.status()["short_assembly"]["state"], "stale")
+
+        refreshed = self.book.assemble_short(1)
+        self.assertTrue(refreshed["updated"])
+        self.assertEqual(Path(refreshed["backup"]).read_text(encoding="utf-8"), old_text)
+        self.assertEqual(output.read_text(encoding="utf-8"),
+                         "第1章 借钥\n\n她从门房借到一把钥匙。\n")
+        self.assertEqual(self.book.status()["short_assembly"]["state"], "current")
+
+    def test_safe_export_upgrades_legacy_copy_with_backup(self):
+        output, old_text = self.legacy_title_line_copy()
+        recovered = self.book.export(safe_only=True)
+        self.assertTrue(recovered["exports_complete"])
+        self.assertEqual(self.book.status()["short_assembly"]["state"], "current")
+        self.assertEqual(output.read_text(encoding="utf-8"),
+                         "第1章 借钥\n\n她从门房借到一把钥匙。\n")
+        self.assertTrue(any(Path(path).read_text(encoding="utf-8") == old_text
+                            for path in recovered["backups"]))
+
+    def test_safe_export_preserves_external_edit_to_legacy_copy(self):
+        output, _ = self.legacy_title_line_copy()
+        outside_edit = "读者在旧全文补充的内容，不可覆盖。\n"
+        output.write_text(outside_edit, encoding="utf-8")
+        recovered = self.book.export(safe_only=True)
+        self.assertFalse(recovered["exports_complete"])
+        self.assertEqual(output.read_text(encoding="utf-8"), outside_edit)
+        self.assertEqual(self.book.status()["short_assembly"]["state"], "changed")
 
     def test_missing_copy_is_reported_and_export_restores_it(self):
         self.commit(1, "借钥", "第1章 借钥\n她从门房借到一把钥匙。\n")

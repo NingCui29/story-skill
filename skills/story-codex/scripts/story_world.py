@@ -888,21 +888,21 @@ def _evaluate(book, plan, chapter, packet, rule_horizon):
 
 def template(kind=None):
     evidence = {"kind": "author_plan", "note": "可修改的字段示例；须结合本书重新设计，提交正文证据后才能作为已发生事实。"}
-    structure = {"title": "停航交接", "goal": "核实旧机去处", "entry_condition": "清册存在缺项", "exit_condition": "找到实物及接收证据", "cost": "整理费可能延后", "evidence": evidence}
-    values = {"entities": [{"id": "jiang", "name": "江棠", "kind": "character", "description": "渡口资料整理人"},
-                         {"id": "north", "name": "北库", "kind": "place", "description": "待交接库房"},
-                         {"id": "key", "name": "北库钥匙", "kind": "item", "description": "按物品记录其唯一当前持有人"},
-                         {"id": "coin", "name": "备用金", "kind": "resource", "description": "统一以元为单位的指定资金"}],
-            "aliases": [{"alias": "小江", "entity": "jiang", "scope": "north-line"}],
-            "volumes": [{"id": "v1", **structure, "title": "第一卷 停航交接"}], "arcs": [{"id": "a1", "volume": "v1", **structure}],
-            "lines": [{"id": "north-entry", "line": "north-line", "clock": "main", "at": 10, "place": "north", "summary": "准备在库门前核对", "unfinished": "等待当事人解释缺项", "entities": ["jiang"], "evidence": evidence}],
-            "facts": [{"id": "f-key", "subject": "key", "predicate": "持有人", "value": "江棠", "entities": ["jiang"], "clock": "main", "start": 10, "end": None, "hard": True, "evidence": evidence}],
-            "knowledge": [{"id": "k-key", "actor": "jiang", "fact": "f-key", "state": "unknown", "clock": "main", "at": 0, "channel": "计划在开篇交代尚未获知钥匙去处", "evidence": evidence}],
-            "hooks": [{"id": "h-seed", "hook": "return-key", "state": "seeded", "description": "准备写下归还钥匙的承诺", "clock": "main", "at": 10, "hard_deadline": 40, "window_start": 2, "window_end": 5, "trigger_line": "north-line", "entities": ["jiang"], "evidence": evidence}],
-            "rules": [{"id": "r1", "rule": "joint-check", "version": 1, "clock": "main", "start": 0, "end": None, "cooldown": None, "description": "当事人到齐才能共同核对", "hard": True, "line": "north-line", "requires": [], "entities": ["jiang"], "evidence": evidence}],
-            "uses": [{"id": "u1", "actor": "jiang", "rule": "joint-check", "clock": "main", "at": 20, "exception": None, "evidence": evidence}],
-            "transfers": [{"id": "t-opening", "resource": "coin", "sender": None, "receiver": "jiang", "amount": "100", "quantity_text": "备用金一百元", "clock": "main", "at": 0, "opening": True, "evidence": evidence}],
-            "arc_steps": [{"id": "s1", "arc": "a1", "actor": "jiang", "pattern": "以公开核对保全证据", "desire": "完成整理", "strategy": "请当事人共同确认", "choice": "暂缓署名", "cost": "报酬延后", "relationship": "与催促者产生分歧", "result": "取得核对机会", "irreversible": False, "evidence": evidence}]}
+    structure = {"title": "雨夜寻人", "goal": "在天黑前与失散同伴会合", "entry_condition": "同伴在岔路走散", "exit_condition": "两人在旧桥重逢", "cost": "返程被迫推迟", "evidence": evidence}
+    values = {"entities": [{"id": "lin", "name": "林岚", "kind": "character", "description": "与同伴走散的行路人"},
+                         {"id": "bridge", "name": "旧桥", "kind": "place", "description": "两条山路交汇的地方"},
+                         {"id": "scarf", "name": "红围巾", "kind": "item", "description": "可能帮助辨认同伴行踪的随身物"},
+                         {"id": "water", "name": "饮水", "kind": "resource", "description": "按升记录的随身饮水"}],
+            "aliases": [{"alias": "阿岚", "entity": "lin", "scope": "bridge-line"}],
+            "volumes": [{"id": "v1", **structure, "title": "第一卷 雨夜寻人"}], "arcs": [{"id": "a1", "volume": "v1", **structure}],
+            "lines": [{"id": "bridge-entry", "line": "bridge-line", "clock": "main", "at": 10, "place": "bridge", "summary": "林岚沿旧桥寻找同伴", "unfinished": "桥对岸的口哨尚未辨明", "entities": ["lin"], "evidence": evidence}],
+            "facts": [{"id": "f-scarf", "subject": "scarf", "predicate": "持有人", "value": "林岚", "entities": ["lin"], "clock": "main", "start": 10, "end": None, "hard": True, "evidence": evidence}],
+            "knowledge": [{"id": "k-scarf", "actor": "lin", "fact": "f-scarf", "state": "unknown", "clock": "main", "at": 0, "channel": "开篇尚未找到红围巾", "evidence": evidence}],
+            "hooks": [{"id": "h-seed", "hook": "meet-at-bridge", "state": "seeded", "description": "两人约定天黑前在旧桥会合", "clock": "main", "at": 10, "hard_deadline": 40, "window_start": 2, "window_end": 5, "trigger_line": "bridge-line", "entities": ["lin"], "evidence": evidence}],
+            "rules": [{"id": "r1", "rule": "whistle-signal", "version": 1, "clock": "main", "start": 0, "end": None, "cooldown": None, "description": "彼此以三短一长的口哨确认方位", "hard": True, "line": "bridge-line", "requires": [], "entities": ["lin"], "evidence": evidence}],
+            "uses": [{"id": "u1", "actor": "lin", "rule": "whistle-signal", "clock": "main", "at": 20, "exception": None, "evidence": evidence}],
+            "transfers": [{"id": "t-opening", "resource": "water", "sender": None, "receiver": "lin", "amount": "2", "quantity_text": "随身饮水两升", "clock": "main", "at": 0, "opening": True, "evidence": evidence}],
+            "arc_steps": [{"id": "s1", "arc": "a1", "actor": "lin", "pattern": "先寻找同伴再考虑返程", "desire": "确认同伴安全", "strategy": "循约定的口哨声靠近旧桥", "choice": "放弃返程车继续寻人", "cost": "入夜仍留在山中", "relationship": "与同伴的信任加深", "result": "听见桥对岸传来回应", "irreversible": False, "evidence": evidence}]}
     if kind == "all":
         return values
     if kind is None:
