@@ -1279,7 +1279,16 @@ def verify_export(book, path, expected_sha, expected_id):
                     api._verify_bound_directory(directory)
                     def identity(value):
                         return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns
-                    if identity(before) != identity(opened) or identity(opened) != identity(after_open) or identity(opened) != identity(after_path):
+                    # On Windows, path stat and handle fstat can report different
+                    # creation/change times for the same file. Compare those
+                    # timestamps within each observation method, and bind the
+                    # two views by file identity, size, and modification time.
+                    # The final path check and hash below
+                    # still catch rewrites after the copy was made.
+                    if (not os.path.samestat(before, opened) or before.st_size != opened.st_size or
+                            before.st_mtime_ns != opened.st_mtime_ns or
+                            identity(before) != identity(after_path) or
+                            identity(opened) != identity(after_open)):
                         api.fail("unsafe_publish_path", "Export archive changed during verification", path=str(path))
                     if archive_sha != expected_sha:
                         api.fail("publish_export_mismatch", "Archive SHA-256 differs from the original export receipt",

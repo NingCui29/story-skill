@@ -1,6 +1,7 @@
 """Offline publishing prepares reviewed snapshots without changing writing history."""
 import copy
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing
 import importlib.util
 import json
 import os
@@ -252,7 +253,7 @@ class PublishTests(unittest.TestCase):
         original = self.prepare()
         self.commit(text=self.texts[1] + "她把账页上那处墨痕记了下来。\n", replace_last=True)
         before = self.writing_snapshot()
-        with sqlite3.connect(self.ledger) as ledger:
+        with closing(sqlite3.connect(self.ledger)) as ledger:
             saved = tuple(ledger.iterdump())
         listed = publishing.list_plans(self.book)["results"][0]
         inspected = self.inspect(original["id"])
@@ -264,7 +265,7 @@ class PublishTests(unittest.TestCase):
             self.assertEqual(result["status"], "prepared")
             self.assertEqual(result["checked_at"], original["checked_at"])
         self.assertEqual(inspected["manifest"], original["manifest"])
-        with sqlite3.connect(self.ledger) as ledger:
+        with closing(sqlite3.connect(self.ledger)) as ledger:
             self.assertEqual(tuple(ledger.iterdump()), saved)
         self.assertEqual(self.writing_snapshot(), before)
 
@@ -513,7 +514,7 @@ class PublishTests(unittest.TestCase):
         cancelled = publishing.cancel(self.book, original["id"])
         self.commit(text=self.texts[1] + "她记下了门后的脚步声。\n", replace_last=True)
         before = self.writing_snapshot()
-        with sqlite3.connect(self.ledger) as ledger:
+        with closing(sqlite3.connect(self.ledger)) as ledger:
             saved = tuple(ledger.iterdump())
         result = publishing.check(self.book, original["id"])
         self.assertEqual(result["status"], "cancelled")
@@ -521,7 +522,7 @@ class PublishTests(unittest.TestCase):
         self.assertIsNone(result["source_matches_current"])
         self.assertEqual(result["checked_at"], cancelled["checked_at"])
         self.assertEqual(result["reasons"], cancelled["reasons"])
-        with sqlite3.connect(self.ledger) as ledger:
+        with closing(sqlite3.connect(self.ledger)) as ledger:
             self.assertEqual(tuple(ledger.iterdump()), saved)
         self.assertEqual(self.writing_snapshot(), before)
 
@@ -652,7 +653,7 @@ raise AssertionError('Crash barrier was not reached')
         self.assertEqual(prepared["status"], "prepared")
         self.assertEqual(publishing.list_plans(self.book)["total"], 1)
         self.assertEqual(self.inspect(prepared["id"])["manifest"]["chapters"][0]["body"], BODY)
-        with sqlite3.connect(self.ledger) as ledger:
+        with closing(sqlite3.connect(self.ledger)) as ledger:
             self.assertEqual(ledger.execute("PRAGMA integrity_check").fetchone()[0], "ok")
         again = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", timeout=20)
         self.assertEqual(again.returncode, 0, again.stderr)
@@ -700,7 +701,7 @@ os._exit(77)
         self.assertEqual(result["reasons"], [])
         self.assertEqual(self.inspect(plan["id"])["manifest"], plan["manifest"])
         self.assertEqual(publishing.list_plans(self.book)["total"], 1)
-        with sqlite3.connect(self.ledger) as ledger:
+        with closing(sqlite3.connect(self.ledger)) as ledger:
             self.assertEqual(ledger.execute("PRAGMA integrity_check").fetchone()[0], "ok")
         self.assertEqual(self.writing_snapshot(), before)
 
@@ -716,7 +717,7 @@ os._exit(77)
         ids = [ready["id"], cancelled["id"], stale["id"]]
         before_plans = {plan_id: self.inspect(plan_id) for plan_id in ids}
         before = self.writing_snapshot()
-        with sqlite3.connect(self.ledger) as ledger:
+        with closing(sqlite3.connect(self.ledger)) as ledger:
             before_ledger = tuple(ledger.iterdump())
         script = """
 import os
@@ -751,7 +752,7 @@ os._exit(77)
         self.assertIsNone(result["source_matches_current"])
         self.assertEqual(publishing.list_plans(self.book)["total"], 3)
         self.assertEqual({plan_id: self.inspect(plan_id) for plan_id in ids}, before_plans)
-        with sqlite3.connect(self.ledger) as ledger:
+        with closing(sqlite3.connect(self.ledger)) as ledger:
             self.assertEqual(ledger.execute("PRAGMA integrity_check").fetchone()[0], "ok")
             self.assertEqual(tuple(ledger.iterdump()), before_ledger)
         self.assertEqual(self.writing_snapshot(), before)
@@ -845,7 +846,7 @@ os._exit(77)
             path = Path(result["backup"])
             self.assertTrue(path.is_absolute())
             self.assertEqual(path.parent, self.root / ".story/publishing-backups")
-            with sqlite3.connect(path) as saved, sqlite3.connect(self.ledger) as live:
+            with closing(sqlite3.connect(path)) as saved, closing(sqlite3.connect(self.ledger)) as live:
                 self.assertEqual(saved.execute("PRAGMA integrity_check").fetchone()[0], "ok")
                 self.assertEqual(tuple(saved.iterdump()), tuple(live.iterdump()))
         self.assertEqual(self.inspect(plan["id"])["status"], "prepared")
@@ -868,7 +869,7 @@ os._exit(77)
         damaged = b'"remote_book_id":"book-ond"'
         self.assertEqual(raw.count(original), 1)
         self.ledger.write_bytes(raw.replace(original, damaged))
-        with sqlite3.connect(self.ledger) as ledger:
+        with closing(sqlite3.connect(self.ledger)) as ledger:
             self.assertEqual(ledger.execute("PRAGMA integrity_check").fetchone()[0], "ok")
             self.assertEqual(ledger.execute("SELECT fingerprint FROM plans WHERE id=?", (plan["id"],)).fetchone()[0],
                              plan["manifest_sha256"])
@@ -911,7 +912,7 @@ os._exit(77)
             for description, statements in mutations.items():
                 with self.subTest(description=description):
                     self.ledger.write_bytes(pristine)
-                    with sqlite3.connect(self.ledger) as db:
+                    with closing(sqlite3.connect(self.ledger)) as db, db:
                         for statement in statements:
                             db.execute(statement)
                     changed = self.ledger.read_bytes()

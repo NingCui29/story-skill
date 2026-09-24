@@ -1,4 +1,5 @@
 """Explicit, book-bound local comparison history never becomes platform proof."""
+from contextlib import closing
 import json
 from pathlib import Path
 import sqlite3
@@ -28,7 +29,7 @@ class PublishComparisonRecordTests(unittest.TestCase):
                 "author_note": self.frozen["author_note"], **changes}
 
     def count(self):
-        with sqlite3.connect(self.fixture.ledger) as db:
+        with closing(sqlite3.connect(self.fixture.ledger)) as db:
             return db.execute("SELECT count(*) FROM meta WHERE key GLOB 'comparison:*'").fetchone()[0]
 
     def assert_code(self, code, call, *args, **kwargs):
@@ -126,13 +127,13 @@ class PublishComparisonRecordTests(unittest.TestCase):
         self.assertEqual(publishing.recover(self.book)["local_comparison_records"], 3)
         backup = publishing.backup(self.book)
         self.assertEqual(backup["local_comparison_records"], 3)
-        with sqlite3.connect(backup["backup"]) as db:
+        with closing(sqlite3.connect(backup["backup"])) as db:
             self.assertEqual(db.execute("SELECT count(*) FROM meta WHERE key GLOB 'comparison:*'").fetchone()[0], 3)
         self.assertEqual(self.fixture.writing_snapshot()[0], self.fixture.rev())
 
     def test_corrupt_or_cross_plan_record_is_not_silently_listed_or_backed_up(self):
         record = publishing.record_compare(self.book, self.plan["id"], 1, self.copied())
-        with sqlite3.connect(self.fixture.ledger) as db:
+        with closing(sqlite3.connect(self.fixture.ledger)) as db, db:
             key = "comparison:" + record["record_id"]
             data = json.loads(db.execute("SELECT value FROM meta WHERE key=?", (key,)).fetchone()[0])
             data["record"]["remote_state"] = "live"

@@ -81,6 +81,28 @@ class PublishExportVerifyTests(unittest.TestCase):
         self.assertEqual(self.fixture.ledger.read_bytes(), before_ledger)
         self.assertEqual(self.fixture.writing_snapshot(), before_story)
 
+    def test_path_and_handle_ctime_disagreement_does_not_reject_an_unchanged_archive(self):
+        # Windows path stat and handle fstat can expose different creation/change
+        # times for one file. Each view must remain stable across verification.
+        real_stat = publishing._bound_stat
+
+        class PathStat:
+            def __init__(self, value):
+                self.value = value
+
+            def __getattr__(self, name):
+                if name == "st_ctime_ns":
+                    return self.value.st_ctime_ns + 1_000_000_000
+                return getattr(self.value, name)
+
+        def different_ctime(file, missing=False):
+            value = real_stat(file, missing=missing)
+            return PathStat(value) if value is not None and file.path == self.archive else value
+
+        with patch.object(publishing, "_bound_stat", side_effect=different_ctime):
+            result = self.verify()
+        self.assertTrue(result["artifact_verified"])
+
     def test_crc_valid_title_and_body_rewrites_are_rejected(self):
         for member, replacement in (("章节/第1章/标题.txt", "伪造章名"),
                                     ("章节/第1章/正文.txt", "这段已被替换。")):

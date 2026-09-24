@@ -125,7 +125,9 @@ class ShortAssemblyTests(unittest.TestCase):
             self.book.set_meta("short_assembly", record)
             self.book.db.execute("UPDATE artifact_state SET sha=?,written_sha=? WHERE path=?",
                                  (old_sha, old_sha, record["path"]))
-        output.write_text(old_text, encoding="utf-8")
+        # Preserve the exact bytes registered above; text-mode writes convert
+        # LF to CRLF on Windows and would turn this fixture into an outside edit.
+        output.write_bytes(old_text.encode("utf-8"))
         return output, old_text
 
     def test_previous_title_line_format_is_stale_and_reassembled_with_backup(self):
