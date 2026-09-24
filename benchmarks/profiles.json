@@ -15,11 +15,11 @@
         "skills/story-long-write/references/long-chapter-hooks.md"
       ],
       "candidate": [
-        "skills/story-codex/SKILL.md",
-        "skills/story-codex-write/SKILL.md",
-        "skills/story-codex/references/project-state.md",
-        "skills/story-codex-write/references/chapter.md",
-        "skills/story-codex-write/references/drama.md"
+        "skills/story-skill/SKILL.md",
+        "skills/story-skill-write/SKILL.md",
+        "skills/story-skill/references/project-state.md",
+        "skills/story-skill-write/references/chapter.md",
+        "skills/story-skill-write/references/drama.md"
       ],
       "scope": "Cold instruction load only. Candidate includes the full shared entry, specialized writing entry, project-state guide and chapter workflow. Upstream excludes other conditional references, project files and agents; command templates and tool results are excluded on both sides. Candidate also includes the required Chinese conflict, reader-payoff and scene-craft guide, counted in full."
     },
@@ -35,12 +35,12 @@
         "skills/story-long-write/references/long-chapter-hooks.md"
       ],
       "candidate": [
-        "skills/story-codex/SKILL.md",
-        "skills/story-codex-write/SKILL.md",
-        "skills/story-codex/references/project-state.md",
-        "skills/story-codex-write/references/chapter.md",
-        "skills/story-codex-write/references/drama.md",
-        "skills/story-codex-write/references/long-form.md"
+        "skills/story-skill/SKILL.md",
+        "skills/story-skill-write/SKILL.md",
+        "skills/story-skill/references/project-state.md",
+        "skills/story-skill-write/references/chapter.md",
+        "skills/story-skill-write/references/drama.md",
+        "skills/story-skill-write/references/long-form.md"
       ],
       "scope": "Cold instruction load only. Candidate includes shared entry, specialized writing entry, shared planning state, chapter workflow and conditional world-state guide. Planning/import and historical-revision workflows are separate tasks. Upstream retains its verified required-file lower bound. Domain templates, tool output and manuscript context are excluded on both sides. Candidate also includes the required Chinese conflict, reader-payoff and scene-craft guide, counted in full."
     },
@@ -51,11 +51,11 @@
         "skills/story-short-write/SKILL.md"
       ],
       "candidate": [
-        "skills/story-codex/SKILL.md",
-        "skills/story-codex-write/SKILL.md",
-        "skills/story-codex/references/project-state.md",
-        "skills/story-codex-write/references/chapter.md",
-        "skills/story-codex-write/references/drama.md"
+        "skills/story-skill/SKILL.md",
+        "skills/story-skill-write/SKILL.md",
+        "skills/story-skill/references/project-state.md",
+        "skills/story-skill-write/references/chapter.md",
+        "skills/story-skill-write/references/drama.md"
       ],
       "scope": "Conservative lower bound for upstream: its required short-fiction references are deliberately excluded. Candidate also includes the required Chinese conflict, reader-payoff and scene-craft guide, counted in full."
     },
@@ -66,9 +66,9 @@
         "skills/story-long-analyze/SKILL.md"
       ],
       "candidate": [
-        "skills/story-codex/SKILL.md",
-        "skills/story-codex-analyze/SKILL.md",
-        "skills/story-codex-analyze/references/deep-reading.md"
+        "skills/story-skill/SKILL.md",
+        "skills/story-skill-analyze/SKILL.md",
+        "skills/story-skill-analyze/references/deep-reading.md"
       ],
       "scope": "Conservative upstream entry-only comparison. Candidate includes the shared entry, analysis entry and deep-reading reference required for whole-work synthesis. Conditional teaching examples, all source text, reports and tool output are excluded. No reduction in required source coverage is assumed; this is not a quality or billed-usage comparison."
     },
@@ -79,10 +79,10 @@
         "skills/story-long-analyze/SKILL.md"
       ],
       "candidate": [
-        "skills/story-codex/SKILL.md",
-        "skills/story-codex-analyze/SKILL.md",
-        "skills/story-codex-analyze/references/deep-reading.md",
-        "skills/story-codex-analyze/references/examples.md"
+        "skills/story-skill/SKILL.md",
+        "skills/story-skill-analyze/SKILL.md",
+        "skills/story-skill-analyze/references/deep-reading.md",
+        "skills/story-skill-analyze/references/examples.md"
       ],
       "scope": "Conservative upstream entry-only comparison. Candidate includes shared and analysis entries, the deep-reading guide and conditional teaching examples. Source texts, reports, tools and evaluator instructions are excluded; this profile describes the larger teaching/repair instruction load, not every analysis request."
     },
@@ -93,8 +93,8 @@
         "skills/story-review/SKILL.md"
       ],
       "candidate": [
-        "skills/story-codex/SKILL.md",
-        "skills/story-codex-review/SKILL.md"
+        "skills/story-skill/SKILL.md",
+        "skills/story-skill-review/SKILL.md"
       ],
       "scope": "Review instructions only, including shared entry and specialized review entry. Reviewer-agent context, manuscripts, conditional historical-revision instructions and tool output are excluded. Conditional drama.md used for conflict/payoff critique is excluded here and measured separately."
     },
@@ -105,12 +105,12 @@
         "skills/story-review/SKILL.md"
       ],
       "candidate": [
-        "skills/story-codex/SKILL.md",
-        "skills/story-codex-review/SKILL.md",
-        "skills/story-codex-write/references/drama.md"
+        "skills/story-skill/SKILL.md",
+        "skills/story-skill-review/SKILL.md",
+        "skills/story-skill-write/references/drama.md"
       ],
       "scope": "Conservative upstream entry-only comparison. Candidate includes shared entry, review entry and conditional Chinese conflict/payoff reference. Manuscripts, tools and historical revision references are excluded."
     }
   ],
-  "report_path": "benchmarks/results/v0.5.10/tokens.json"
+  "report_path": "benchmarks/results/v0.6.0/tokens.json"
 }

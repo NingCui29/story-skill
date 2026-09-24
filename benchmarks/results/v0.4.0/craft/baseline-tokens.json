@@ -4,7 +4,7 @@
   "upstream_revision": "4daac79077928d0d5ba0eda93e46ce68dfcd40ae",
   "tiktoken_version": "0.14.0",
   "encoding": "o200k_base",
-  "method": "Sum exact tokens per LF-normalized instruction file, disallowed_special=(). This is a reproducible tokenizer proxy, not Codex billed tokens or full-turn usage.",
+  "method": "Sum exact tokens per LF-normalized instruction file, disallowed_special=(). This is a reproducible tokenizer proxy, not 助手 billed tokens or full-turn usage.",
   "profiles": [
     {
       "id": "long_chapter_required_minimum",
@@ -58,28 +58,28 @@
       ],
       "candidate_files": [
         {
-          "path": "skills/story-codex/SKILL.md",
+          "path": "skills/story-skill/SKILL.md",
           "bytes": 4429,
           "sha256": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
           "normalized_text_sha256": "a6fd170061b0a57871988a3ab6ca4af65dfaf1ae2ecdb141a93604fc317b41ca",
           "tokens": 1169
         },
         {
-          "path": "skills/story-codex-write/SKILL.md",
+          "path": "skills/story-skill-write/SKILL.md",
           "bytes": 1647,
           "sha256": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
           "normalized_text_sha256": "d6dd6c94036b191ff94416650273a561187d3c5e60a3e501f2fb739f75d576af",
           "tokens": 432
         },
         {
-          "path": "skills/story-codex/references/project-state.md",
+          "path": "skills/story-skill/references/project-state.md",
           "bytes": 1814,
           "sha256": "b31ceeaebf53525f48302f724afa6040bc51f603d3bdc5af71e5f01b84122422",
           "normalized_text_sha256": "d0cba4d15bbcf152346fecfebc92d695ef862a051ed6d596db500b5c41ecf47a",
           "tokens": 487
         },
         {
-          "path": "skills/story-codex-write/references/chapter.md",
+          "path": "skills/story-skill-write/references/chapter.md",
           "bytes": 3297,
           "sha256": "441eed7b0c5e4f240c210d927305ece2f42496295d8c7d5ff12fbccd36088365",
           "normalized_text_sha256": "0a699b25138f6cb5bb8b59a8f6d830e9a861f3c606571b571bd6ba9f775d932a",
@@ -140,35 +140,35 @@
       ],
       "candidate_files": [
         {
-          "path": "skills/story-codex/SKILL.md",
+          "path": "skills/story-skill/SKILL.md",
           "bytes": 4429,
           "sha256": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
           "normalized_text_sha256": "a6fd170061b0a57871988a3ab6ca4af65dfaf1ae2ecdb141a93604fc317b41ca",
           "tokens": 1169
         },
         {
-          "path": "skills/story-codex-write/SKILL.md",
+          "path": "skills/story-skill-write/SKILL.md",
           "bytes": 1647,
           "sha256": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
           "normalized_text_sha256": "d6dd6c94036b191ff94416650273a561187d3c5e60a3e501f2fb739f75d576af",
           "tokens": 432
         },
         {
-          "path": "skills/story-codex/references/project-state.md",
+          "path": "skills/story-skill/references/project-state.md",
           "bytes": 1814,
           "sha256": "b31ceeaebf53525f48302f724afa6040bc51f603d3bdc5af71e5f01b84122422",
           "normalized_text_sha256": "d0cba4d15bbcf152346fecfebc92d695ef862a051ed6d596db500b5c41ecf47a",
           "tokens": 487
         },
         {
-          "path": "skills/story-codex-write/references/chapter.md",
+          "path": "skills/story-skill-write/references/chapter.md",
           "bytes": 3297,
           "sha256": "441eed7b0c5e4f240c210d927305ece2f42496295d8c7d5ff12fbccd36088365",
           "normalized_text_sha256": "0a699b25138f6cb5bb8b59a8f6d830e9a861f3c606571b571bd6ba9f775d932a",
           "tokens": 921
         },
         {
-          "path": "skills/story-codex-write/references/long-form.md",
+          "path": "skills/story-skill-write/references/long-form.md",
           "bytes": 6323,
           "sha256": "8f42cae23a756a1ff77033317b7d982d75fe5f7f8a7386e0beb9c9491987fc9b",
           "normalized_text_sha256": "4ba030c4597d1bc9386e97edfc6ea9e29e39dcb2c3fcfeaaa3214781783cf66e",
@@ -194,28 +194,28 @@
       ],
       "candidate_files": [
         {
-          "path": "skills/story-codex/SKILL.md",
+          "path": "skills/story-skill/SKILL.md",
           "bytes": 4429,
           "sha256": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
           "normalized_text_sha256": "a6fd170061b0a57871988a3ab6ca4af65dfaf1ae2ecdb141a93604fc317b41ca",
           "tokens": 1169
         },
         {
-          "path": "skills/story-codex-write/SKILL.md",
+          "path": "skills/story-skill-write/SKILL.md",
           "bytes": 1647,
           "sha256": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
           "normalized_text_sha256": "d6dd6c94036b191ff94416650273a561187d3c5e60a3e501f2fb739f75d576af",
           "tokens": 432
         },
         {
-          "path": "skills/story-codex/references/project-state.md",
+          "path": "skills/story-skill/references/project-state.md",
           "bytes": 1814,
           "sha256": "b31ceeaebf53525f48302f724afa6040bc51f603d3bdc5af71e5f01b84122422",
           "normalized_text_sha256": "d0cba4d15bbcf152346fecfebc92d695ef862a051ed6d596db500b5c41ecf47a",
           "tokens": 487
         },
         {
-          "path": "skills/story-codex-write/references/chapter.md",
+          "path": "skills/story-skill-write/references/chapter.md",
           "bytes": 3297,
           "sha256": "441eed7b0c5e4f240c210d927305ece2f42496295d8c7d5ff12fbccd36088365",
           "normalized_text_sha256": "0a699b25138f6cb5bb8b59a8f6d830e9a861f3c606571b571bd6ba9f775d932a",
@@ -241,14 +241,14 @@
       ],
       "candidate_files": [
         {
-          "path": "skills/story-codex/SKILL.md",
+          "path": "skills/story-skill/SKILL.md",
           "bytes": 4429,
           "sha256": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
           "normalized_text_sha256": "a6fd170061b0a57871988a3ab6ca4af65dfaf1ae2ecdb141a93604fc317b41ca",
           "tokens": 1169
         },
         {
-          "path": "skills/story-codex-analyze/SKILL.md",
+          "path": "skills/story-skill-analyze/SKILL.md",
           "bytes": 3874,
           "sha256": "50dc30426f04d70e5bfb7f7f97601b6d39e287ea51110046a86253fad00e9e59",
           "normalized_text_sha256": "f0b5aed904802e9937f29a437b72502d2cf90257054424ab543ca3c5cb3154b0",
@@ -274,14 +274,14 @@
       ],
       "candidate_files": [
         {
-          "path": "skills/story-codex/SKILL.md",
+          "path": "skills/story-skill/SKILL.md",
           "bytes": 4429,
           "sha256": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
           "normalized_text_sha256": "a6fd170061b0a57871988a3ab6ca4af65dfaf1ae2ecdb141a93604fc317b41ca",
           "tokens": 1169
         },
         {
-          "path": "skills/story-codex-review/SKILL.md",
+          "path": "skills/story-skill-review/SKILL.md",
           "bytes": 4087,
           "sha256": "0f0294cbc70a296b6bb28fae6f3f973ada77417e429c17c77b7203c83505fe7c",
           "normalized_text_sha256": "a83de307540498e3485e35a78ba56c3263a961c449f2344d2d53b670d139ff64",

@@ -1,38 +1,38 @@
 {
-  "snapshots/before/skills__story-codex__SKILL.md.txt": {
-    "source": "skills/story-codex/SKILL.md",
+  "snapshots/before/skills__story-skill__SKILL.md.txt": {
+    "source": "skills/story-skill/SKILL.md",
     "sha256": "c9b693c4518dd3d8ee471abf9a1a24ed41967d8c0019282fabeb495d7e999695"
   },
-  "snapshots/before/skills__story-codex-review__SKILL.md.txt": {
-    "source": "skills/story-codex-review/SKILL.md",
+  "snapshots/before/skills__story-skill-review__SKILL.md.txt": {
+    "source": "skills/story-skill-review/SKILL.md",
     "sha256": "df8fb85320b9193c0f4ed7fba55a6a55541e1e130043cfb48c81fe96b20d9ca4"
   },
-  "snapshots/after/skills__story-codex__SKILL.md.txt": {
-    "source": "skills/story-codex/SKILL.md",
+  "snapshots/after/skills__story-skill__SKILL.md.txt": {
+    "source": "skills/story-skill/SKILL.md",
     "sha256": "756092d13a0f55541c02d23b511ea71e65c8c3faeb5e3648ce45c3e715ee1a46"
   },
-  "snapshots/after/skills__story-codex-review__SKILL.md.txt": {
-    "source": "skills/story-codex-review/SKILL.md",
+  "snapshots/after/skills__story-skill-review__SKILL.md.txt": {
+    "source": "skills/story-skill-review/SKILL.md",
     "sha256": "adfc633c731bfa7e03a4d2578bcce7e4694e9b901a7c91f5db34c589ee3e46f5"
   },
-  "snapshots/after/skills__story-codex-write__references__chapter.md.txt": {
-    "source": "skills/story-codex-write/references/chapter.md",
+  "snapshots/after/skills__story-skill-write__references__chapter.md.txt": {
+    "source": "skills/story-skill-write/references/chapter.md",
     "sha256": "19871bffdfbecec1b49bb1a6aa25ac213b8d42e270f289deaa880f9db90e94f9"
   },
-  "snapshots/after/skills__story-codex-write__references__drama.md.txt": {
-    "source": "skills/story-codex-write/references/drama.md",
+  "snapshots/after/skills__story-skill-write__references__drama.md.txt": {
+    "source": "skills/story-skill-write/references/drama.md",
     "sha256": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4"
   },
-  "snapshots/after/skills__story-codex__references__project-state.md.txt": {
-    "source": "skills/story-codex/references/project-state.md",
+  "snapshots/after/skills__story-skill__references__project-state.md.txt": {
+    "source": "skills/story-skill/references/project-state.md",
     "sha256": "8c6a34e74c28af93551e418de1d46c232b5d3cb0d78b2bdc430c80d93ca8900a"
   },
-  "snapshots/final/skills__story-codex__SKILL.md.txt": {
-    "source": "skills/story-codex/SKILL.md",
+  "snapshots/final/skills__story-skill__SKILL.md.txt": {
+    "source": "skills/story-skill/SKILL.md",
     "sha256": "756092d13a0f55541c02d23b511ea71e65c8c3faeb5e3648ce45c3e715ee1a46"
   },
-  "snapshots/final/skills__story-codex-review__SKILL.md.txt": {
-    "source": "skills/story-codex-review/SKILL.md",
+  "snapshots/final/skills__story-skill-review__SKILL.md.txt": {
+    "source": "skills/story-skill-review/SKILL.md",
     "sha256": "272d7cf129eefe6ba9181c82ee278fe40e377a0d4c27fd2ad484e22352851cf6"
   }
 }

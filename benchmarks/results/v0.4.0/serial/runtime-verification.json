@@ -5,7 +5,7 @@
       "-B",
       "-X",
       "utf8",
-      "C:\\Users\\Work\\AppData\\Local\\Temp\\story-serial-eval-8wuy07z0\\after\\skills\\story-codex\\scripts\\story.py",
+      "C:\\Users\\Work\\AppData\\Local\\Temp\\story-serial-eval-8wuy07z0\\after\\skills\\story-skill\\scripts\\story.py",
       "status",
       "--book",
       "C:\\Users\\Work\\AppData\\Local\\Temp\\story-serial-eval-8wuy07z0\\writer"
@@ -44,7 +44,7 @@
       "-B",
       "-X",
       "utf8",
-      "C:\\Users\\Work\\AppData\\Local\\Temp\\story-serial-eval-8wuy07z0\\after\\skills\\story-codex\\scripts\\story.py",
+      "C:\\Users\\Work\\AppData\\Local\\Temp\\story-serial-eval-8wuy07z0\\after\\skills\\story-skill\\scripts\\story.py",
       "audit",
       "--book",
       "C:\\Users\\Work\\AppData\\Local\\Temp\\story-serial-eval-8wuy07z0\\writer"

@@ -20,8 +20,8 @@ Windows CI 的 311 项测试全部通过；Linux CI 为 305 项通过，6 项 Wi
 
 Release ZIP 的 SHA-256：`087ad76fe32714ea776853cab579c3b6087ed092ef0857c55a76ae20aff7d54b`。
 
-GitHub npm 包为公开的 `@ningcui29/story-codex@0.4.0`，回下载的 TGZ 与本地构建逐字节一致，SHA-256：`0cc37dcf98580b1ab7379ec7c54f23167b972e9e5d404679502fd975d982fa71`。公开包页面不等于匿名 npm 下载；npm 注册表仍要求认证，内容包本身不自动注册 Codex 技能。
+GitHub npm 包为公开的 `@ningcui29/story-skill@0.4.0`，回下载的 TGZ 与本地构建逐字节一致，SHA-256：`0cc37dcf98580b1ab7379ec7c54f23167b972e9e5d404679502fd975d982fa71`。公开包页面不等于匿名 npm 下载；npm 注册表仍要求认证，内容包本身不自动注册 助手 技能。
 
-安装验证只使用隔离临时目录，没有更新用户技能或真实书库。CLI 与文件一致性验证不替代 Codex UI 自动发现测试，也不证明长程小说质量或实际账户 token 降幅。
+安装验证只使用隔离临时目录，没有更新用户技能或真实书库。CLI 与文件一致性验证不替代 助手 UI 自动发现测试，也不证明长程小说质量或实际账户 token 降幅。
 
-[Release](https://github.com/NingCui29/story-skill/releases/tag/v0.4.0) · [发布提交 CI](https://github.com/NingCui29/story-skill/actions/runs/34431400166) · [Packages 同步](https://github.com/NingCui29/story-skill/actions/runs/34431905475) · [Packages](https://github.com/NingCui29/story-skill/pkgs/npm/story-codex) · [安装与升级](../../../../docs/github-release.md)
+[Release](https://github.com/NingCui29/story-skill/releases/tag/v0.4.0) · [发布提交 CI](https://github.com/NingCui29/story-skill/actions/runs/34431400166) · [Packages 同步](https://github.com/NingCui29/story-skill/actions/runs/34431905475) · [Packages](https://github.com/NingCui29/story-skill/pkgs/npm/story-skill) · [安装与升级](../../../../docs/github-release.md)

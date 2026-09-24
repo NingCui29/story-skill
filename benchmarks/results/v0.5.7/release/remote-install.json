@@ -5,13 +5,13 @@
   "archive_sha256": "dc798d6880a682932f43f627bd7327e80ab8236a7c7f353024f398f5f1e6cb7d",
   "skill_files": 34,
   "skills": [
-    "story-codex",
-    "story-codex-plan",
-    "story-codex-write",
-    "story-codex-analyze",
-    "story-codex-review",
-    "story-codex-research",
-    "story-codex-cover"
+    "story-skill",
+    "story-skill-plan",
+    "story-skill-write",
+    "story-skill-analyze",
+    "story-skill-review",
+    "story-skill-research",
+    "story-skill-cover"
   ],
   "files_equal_release_zip": true,
   "commands": {

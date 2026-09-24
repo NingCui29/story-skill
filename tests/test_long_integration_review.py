@@ -7,7 +7,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("long_integration_review_runtime", ROOT / "skills/story-codex/scripts/story.py")
+SPEC = importlib.util.spec_from_file_location("long_integration_review_runtime", ROOT / "skills/story-skill/scripts/story.py")
 story = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(story)
 

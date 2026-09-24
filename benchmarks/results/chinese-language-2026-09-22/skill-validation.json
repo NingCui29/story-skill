@@ -2,13 +2,13 @@
   "scope": "Entry validation for skills affected by current wording edits; temporary dependency only",
   "checks": [
     {
-      "skill": "story-codex-write",
+      "skill": "story-skill-write",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": ""
     },
     {
-      "skill": "story-codex-review",
+      "skill": "story-skill-review",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": ""

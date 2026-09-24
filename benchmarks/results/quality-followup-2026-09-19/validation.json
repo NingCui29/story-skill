@@ -114,7 +114,7 @@
     "README.md": "08047ee5d43ad587a7146738c20948f33bbd8a9d64161dc4c6e2b6216d1b3ce7",
     "docs/README.md": "a9c5897505f712124ddc1b1bfbd629ee1d87a0ff3d9b3ca29620839248af9efd",
     "docs/中文冲突与看点.md": "49227cf70e77c6de53b9da0efe4e47426e216fdb32840127faa64c88aee11994",
-    "skills/story-codex-write/references/drama.md": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4"
+    "skills/story-skill-write/references/drama.md": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4"
   },
   "artifact_sha256": {
     "README.md": "6b398713a8e533c162929eed6c5bc970846b68ec0416352751e6548739dc67b2",
@@ -124,12 +124,12 @@
     "candidate.json": "658417dd631606a1dd57a125cdf773e3dff37c4f7e5147c5e8385ee95e8423af",
     "inputs/01-opening-plan.md": "a8b0c669077596bf0b2cc4f93c75c47c8712504bf345ae2079b5dd549391d82b",
     "inputs/02-quiet-scene.md": "d8873716e042eb95b8f30afbc345dddb31f2da247a51756cde46a87764dd4aa5",
-    "instruction-snapshots/baseline/story-codex-plan__SKILL.md.txt": "7a5d1c1dc7763429d7e6308b1231c8b57bcb3c43d3a34212e64c4db4ea9d3e85",
-    "instruction-snapshots/baseline/story-codex-write__SKILL.md.txt": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4",
-    "instruction-snapshots/baseline/story-codex-write__references__chapter.md.txt": "69156986948bf01bc11312f14603b09d6ff0fd27e7d5de68b9e4813574e67da6",
-    "instruction-snapshots/baseline/story-codex-write__references__drama.md.txt": "6f49f0de5642c76987da48b4ebfad5ef1d14f6acc72b311ebfde2a8e8d76f7b7",
-    "instruction-snapshots/baseline/story-codex__SKILL.md.txt": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
-    "instruction-snapshots/candidate/story-codex-write__references__drama.md.txt": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4",
+    "instruction-snapshots/baseline/story-skill-plan__SKILL.md.txt": "7a5d1c1dc7763429d7e6308b1231c8b57bcb3c43d3a34212e64c4db4ea9d3e85",
+    "instruction-snapshots/baseline/story-skill-write__SKILL.md.txt": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4",
+    "instruction-snapshots/baseline/story-skill-write__references__chapter.md.txt": "69156986948bf01bc11312f14603b09d6ff0fd27e7d5de68b9e4813574e67da6",
+    "instruction-snapshots/baseline/story-skill-write__references__drama.md.txt": "6f49f0de5642c76987da48b4ebfad5ef1d14f6acc72b311ebfde2a8e8d76f7b7",
+    "instruction-snapshots/baseline/story-skill__SKILL.md.txt": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
+    "instruction-snapshots/candidate/story-skill-write__references__drama.md.txt": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4",
     "instruction-snapshots/manifest.json": "9b563bbe169adfb3f4f5c228a7c5183484095fdab9de7fda508aac43e24937ca",
     "protocol.json": "6502990c46a7c331371ff72e916984641c8924193cbcd60220896ba4acaf2fcd",
     "reviewer-brief.md": "c2a61d7f609c1ee596b6442cc52df9405a42dbfc84fe37897ccd803d97942aad",

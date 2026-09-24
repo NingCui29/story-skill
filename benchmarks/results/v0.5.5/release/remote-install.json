@@ -10,40 +10,40 @@
   "environment": {
     "platform": "macOS-15.7.9-x86_64-i386-64bit",
     "python": "3.12.14",
-    "python_executable": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+    "python_executable": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3"
   },
   "installer": {
-    "script": "/Users/cuining/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py",
+    "script": "/Users/cuining/.story-skill/skills/.system/skill-installer/scripts/install-skill-from-github.py",
     "sha256": "38f311b75664bb063808f982c600271ebc4b560830f491705190f88a94e3e781",
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
-      "/Users/cuining/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py",
+      "/Users/cuining/.story-skill/skills/.system/skill-installer/scripts/install-skill-from-github.py",
       "--repo",
       "NingCui29/story-skill",
       "--ref",
       "v0.5.5",
       "--path",
-      "skills/story-codex",
-      "skills/story-codex-plan",
-      "skills/story-codex-write",
-      "skills/story-codex-analyze",
-      "skills/story-codex-review",
-      "skills/story-codex-research",
-      "skills/story-codex-cover",
+      "skills/story-skill",
+      "skills/story-skill-plan",
+      "skills/story-skill-write",
+      "skills/story-skill-analyze",
+      "skills/story-skill-review",
+      "skills/story-skill-research",
+      "skills/story-skill-cover",
       "--dest",
       "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-remote-055-independent-p9e7b3ve/skills"
     ],
     "exit_code": 0,
     "destination_was_new": true,
     "installed_skills": [
-      "story-codex",
-      "story-codex-plan",
-      "story-codex-write",
-      "story-codex-analyze",
-      "story-codex-review",
-      "story-codex-research",
-      "story-codex-cover"
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover"
     ]
   },
   "file_verification": {

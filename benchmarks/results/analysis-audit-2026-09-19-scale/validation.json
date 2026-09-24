@@ -116,8 +116,8 @@
   "actual_user_skills_updated": false,
   "real_novels_touched": false,
   "input_sha256": {
-    "skills/story-codex-analyze/SKILL.md": "42f0a93aeaf5efc573ebde7c61eade71ed24a62d18cffde8da60785930c2a661",
-    "skills/story-codex/scripts/story.py": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
+    "skills/story-skill-analyze/SKILL.md": "42f0a93aeaf5efc573ebde7c61eade71ed24a62d18cffde8da60785930c2a661",
+    "skills/story-skill/scripts/story.py": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
     "README.md": "e1690d814fe3fdc55c0e054d8b29d9ce60d84f214ee4f8fdcc12407874ea91b4",
     "docs/作品深读与评估.md": "8f650d41942f55415069c031433d037da77d0c2ead40333911f3d83e94e4afa3"
   }

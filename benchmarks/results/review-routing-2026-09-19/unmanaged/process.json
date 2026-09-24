@@ -3,8 +3,8 @@
   "workdir": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/unmanaged",
   "request_read": "../unmanaged-request.md",
   "skills_read": [
-    "../snapshot-after/story-codex-review/SKILL.md",
-    "../snapshot-after/story-codex/SKILL.md"
+    "../snapshot-after/story-skill-review/SKILL.md",
+    "../snapshot-after/story-skill/SKILL.md"
   ],
   "references_read": [],
   "source_files_read": [
@@ -22,11 +22,11 @@
       "result": "exit 0；读取修改范围、保留项和另存要求"
     },
     {
-      "command": "cat ../snapshot-after/story-codex-review/SKILL.md",
+      "command": "cat ../snapshot-after/story-skill-review/SKILL.md",
       "result": "exit 0；读取审稿技能"
     },
     {
-      "command": "cat ../snapshot-after/story-codex/SKILL.md",
+      "command": "cat ../snapshot-after/story-skill/SKILL.md",
       "result": "exit 0；读取共同约束，未执行总入口路由"
     },
     {
@@ -38,7 +38,7 @@
       "result": "exit 0；读取完整原文"
     },
     {
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B - <inline script>",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B - <inline script>",
       "purpose": "另存完整修改稿，创建用户交付说明及过程记录",
       "result": "生成修改稿.md、output.md、process.json"
     },
@@ -47,7 +47,7 @@
       "result": "exit 0；完整回读修改稿，进行当前会话语义自审"
     },
     {
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B - <inline verification script>",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B - <inline verification script>",
       "result": "exit 0；原文哈希、必保留文本、结尾顺序和目录边界检查均通过"
     }
   ],

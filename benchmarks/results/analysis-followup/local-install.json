@@ -4,10 +4,10 @@
   "files": 33,
   "skills": 7,
   "changed_files": [
-    "story-codex/SKILL.md",
-    "story-codex-analyze/SKILL.md"
+    "story-skill/SKILL.md",
+    "story-skill-analyze/SKILL.md"
   ],
   "all_installed_files_match_archive": true,
-  "backup": "/Users/cuining/.codex/backups/story-codex/20260910-175452-analysis-followup-xccsyk0s",
-  "receipt": "/Users/cuining/.codex/backups/story-codex/20260910-175452-analysis-followup-xccsyk0s/installation-receipt.json"
+  "backup": "/Users/cuining/.story-skill/backups/story-skill/20260910-175452-analysis-followup-xccsyk0s",
+  "receipt": "/Users/cuining/.story-skill/backups/story-skill/20260910-175452-analysis-followup-xccsyk0s/installation-receipt.json"
 }

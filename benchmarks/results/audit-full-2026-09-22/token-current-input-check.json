@@ -4,142 +4,142 @@
   "inputs": [
     {
       "profile": "long_chapter_required_minimum",
-      "path": "skills/story-codex/SKILL.md",
+      "path": "skills/story-skill/SKILL.md",
       "matches": true
     },
     {
       "profile": "long_chapter_required_minimum",
-      "path": "skills/story-codex-write/SKILL.md",
+      "path": "skills/story-skill-write/SKILL.md",
       "matches": true
     },
     {
       "profile": "long_chapter_required_minimum",
-      "path": "skills/story-codex/references/project-state.md",
+      "path": "skills/story-skill/references/project-state.md",
       "matches": true
     },
     {
       "profile": "long_chapter_required_minimum",
-      "path": "skills/story-codex-write/references/chapter.md",
+      "path": "skills/story-skill-write/references/chapter.md",
       "matches": true
     },
     {
       "profile": "long_chapter_required_minimum",
-      "path": "skills/story-codex-write/references/drama.md",
+      "path": "skills/story-skill-write/references/drama.md",
       "matches": true
     },
     {
       "profile": "long_multi_line",
-      "path": "skills/story-codex/SKILL.md",
+      "path": "skills/story-skill/SKILL.md",
       "matches": true
     },
     {
       "profile": "long_multi_line",
-      "path": "skills/story-codex-write/SKILL.md",
+      "path": "skills/story-skill-write/SKILL.md",
       "matches": true
     },
     {
       "profile": "long_multi_line",
-      "path": "skills/story-codex/references/project-state.md",
+      "path": "skills/story-skill/references/project-state.md",
       "matches": true
     },
     {
       "profile": "long_multi_line",
-      "path": "skills/story-codex-write/references/chapter.md",
+      "path": "skills/story-skill-write/references/chapter.md",
       "matches": true
     },
     {
       "profile": "long_multi_line",
-      "path": "skills/story-codex-write/references/drama.md",
+      "path": "skills/story-skill-write/references/drama.md",
       "matches": true
     },
     {
       "profile": "long_multi_line",
-      "path": "skills/story-codex-write/references/long-form.md",
+      "path": "skills/story-skill-write/references/long-form.md",
       "matches": true
     },
     {
       "profile": "short_write_conservative",
-      "path": "skills/story-codex/SKILL.md",
+      "path": "skills/story-skill/SKILL.md",
       "matches": true
     },
     {
       "profile": "short_write_conservative",
-      "path": "skills/story-codex-write/SKILL.md",
+      "path": "skills/story-skill-write/SKILL.md",
       "matches": true
     },
     {
       "profile": "short_write_conservative",
-      "path": "skills/story-codex/references/project-state.md",
+      "path": "skills/story-skill/references/project-state.md",
       "matches": true
     },
     {
       "profile": "short_write_conservative",
-      "path": "skills/story-codex-write/references/chapter.md",
+      "path": "skills/story-skill-write/references/chapter.md",
       "matches": true
     },
     {
       "profile": "short_write_conservative",
-      "path": "skills/story-codex-write/references/drama.md",
+      "path": "skills/story-skill-write/references/drama.md",
       "matches": true
     },
     {
       "profile": "long_analysis_conservative",
-      "path": "skills/story-codex/SKILL.md",
+      "path": "skills/story-skill/SKILL.md",
       "matches": true
     },
     {
       "profile": "long_analysis_conservative",
-      "path": "skills/story-codex-analyze/SKILL.md",
+      "path": "skills/story-skill-analyze/SKILL.md",
       "matches": true
     },
     {
       "profile": "long_analysis_conservative",
-      "path": "skills/story-codex-analyze/references/deep-reading.md",
+      "path": "skills/story-skill-analyze/references/deep-reading.md",
       "matches": true
     },
     {
       "profile": "analysis_with_examples",
-      "path": "skills/story-codex/SKILL.md",
+      "path": "skills/story-skill/SKILL.md",
       "matches": true
     },
     {
       "profile": "analysis_with_examples",
-      "path": "skills/story-codex-analyze/SKILL.md",
+      "path": "skills/story-skill-analyze/SKILL.md",
       "matches": true
     },
     {
       "profile": "analysis_with_examples",
-      "path": "skills/story-codex-analyze/references/deep-reading.md",
+      "path": "skills/story-skill-analyze/references/deep-reading.md",
       "matches": true
     },
     {
       "profile": "analysis_with_examples",
-      "path": "skills/story-codex-analyze/references/examples.md",
+      "path": "skills/story-skill-analyze/references/examples.md",
       "matches": true
     },
     {
       "profile": "review_conservative",
-      "path": "skills/story-codex/SKILL.md",
+      "path": "skills/story-skill/SKILL.md",
       "matches": true
     },
     {
       "profile": "review_conservative",
-      "path": "skills/story-codex-review/SKILL.md",
+      "path": "skills/story-skill-review/SKILL.md",
       "matches": true
     },
     {
       "profile": "review_conflict",
-      "path": "skills/story-codex/SKILL.md",
+      "path": "skills/story-skill/SKILL.md",
       "matches": true
     },
     {
       "profile": "review_conflict",
-      "path": "skills/story-codex-review/SKILL.md",
+      "path": "skills/story-skill-review/SKILL.md",
       "matches": true
     },
     {
       "profile": "review_conflict",
-      "path": "skills/story-codex-write/references/drama.md",
+      "path": "skills/story-skill-write/references/drama.md",
       "matches": true
     }
   ]

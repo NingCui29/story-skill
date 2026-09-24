@@ -13,12 +13,11 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
-import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-TOOL = ROOT / "skills/story-codex/scripts/story.py"
-LEGACY_ARCHIVE = ROOT / "tests/fixtures/story-codex-0.2.0.zip"
-LEGACY_SHA256 = "efdfd997ecac9564fc737b22df8969c7770858a354084132c7d1ce274486a37e"
+TOOL = ROOT / "skills/story-skill/scripts/story.py"
+SCHEMA1_RUNTIME = ROOT / "tests/fixtures/schema1_runtime.py"
+SCHEMA1_RUNTIME_SHA256 = "70c8a0294d72103cb2232834ac951f30abef6ab20e940cb0303aca1858910cb3"
 RETAINED_NAMES = ("渡口夜账", "留半寸", "留半寸_拆文")
 GENERATED_NAMES = ("合成迁移长篇", "合成迁移短篇", "合成迁移拆文")
 
@@ -46,10 +45,10 @@ def inventory(root):
 
 
 def legacy_runtime(path):
-    if hashlib.sha256(LEGACY_ARCHIVE.read_bytes()).hexdigest() != LEGACY_SHA256:
-        raise ValueError("Legacy runtime fixture differs from its retained SHA-256")
-    with zipfile.ZipFile(LEGACY_ARCHIVE) as archive:
-        path.write_bytes(archive.read("story-codex/scripts/story.py"))
+    raw = SCHEMA1_RUNTIME.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != SCHEMA1_RUNTIME_SHA256:
+        raise ValueError("Schema 1 runtime fixture differs from its retained SHA-256")
+    path.write_bytes(raw)
     return load_runtime("migration_probe_legacy", path)
 
 
@@ -100,7 +99,8 @@ def probe(source=None, timeout=60):
                 "scope": ("Synthetic Chinese schema1 fixtures created by the fixed v0.2.0 runtime; not retained historical book databases"
                           if generated else "Explicit retained schema1 books copied to isolated TEMP; source books unchanged"),
                 "environment": {"platform": platform.platform(), "python": platform.python_version()},
-                "legacy_runtime_archive": {"path": str(LEGACY_ARCHIVE), "sha256": LEGACY_SHA256},
+                "schema1_runtime_fixture": {"path": str(SCHEMA1_RUNTIME),
+                                            "sha256": SCHEMA1_RUNTIME_SHA256},
                 "runtime": runtime(), "books": []}
     try:
         with tempfile.TemporaryDirectory(prefix="story-migration-probe-") as directory:

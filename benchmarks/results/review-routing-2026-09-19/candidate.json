@@ -1,7 +1,7 @@
 {
   "after_sha256": {
-    "skills/story-codex/SKILL.md": "756092d13a0f55541c02d23b511ea71e65c8c3faeb5e3648ce45c3e715ee1a46",
-    "skills/story-codex-review/SKILL.md": "adfc633c731bfa7e03a4d2578bcce7e4694e9b901a7c91f5db34c589ee3e46f5"
+    "skills/story-skill/SKILL.md": "756092d13a0f55541c02d23b511ea71e65c8c3faeb5e3648ce45c3e715ee1a46",
+    "skills/story-skill-review/SKILL.md": "adfc633c731bfa7e03a4d2578bcce7e4694e9b901a7c91f5db34c589ee3e46f5"
   },
   "frozen_snapshot": "snapshot-after",
   "draft_han_count": 276

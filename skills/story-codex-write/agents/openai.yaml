@@ -1,6 +1,0 @@
-interface:
-  display_name: "Story Codex · 正文写作"
-  short_description: "中文长短篇正文与连载续写，按章召回人物状态、核对证据并保存创作断点"
-  default_prompt: "使用 $story-codex-write 按这本书已确认的细纲继续下一章，并完成审查和保存。"
-policy:
-  allow_implicit_invocation: true

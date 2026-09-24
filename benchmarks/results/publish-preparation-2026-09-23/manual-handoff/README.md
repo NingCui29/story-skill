@@ -10,7 +10,7 @@
 
 - `python3 -B -m unittest discover -s tests -q`：744 项，727 通过、17 项按环境条件跳过，0 失败、0 错误。未在 Windows 原生环境或真实作家后台执行。
 - 发布相关子集：122 项通过、1 项按环境条件跳过；包括账本结构变更、回执修改／替换及副本逐字段比较的回归。
-- `skill-creator` 的 `quick_validate.py`：`story-codex-publish` 有效。系统 Python 原先缺少 PyYAML，临时安装到 `/tmp` 后运行；没有更改全局 Python 环境。
+- `skill-creator` 的 `quick_validate.py`：`story-skill-publish` 有效。系统 Python 原先缺少 PyYAML，临时安装到 `/tmp` 后运行；没有更改全局 Python 环境。
 - `git diff --check`：通过。
 - 最终开发 ZIP：38 个技能载荷文件，SHA-256 `e5da692162ddd057548ae1d6746d6076e0d95636fe8a58926b4b85b3cb8d24fd`。隔离项目安装显示 8 个技能、38 个文件；安装副本中的 `story.py --version` 返回 `0.5.11`，`publish-compare --help` 可调用。另有 59 项打包与安装测试通过。这些均为本地构建及隔离试验，不代表发布或本机安装升级。
 

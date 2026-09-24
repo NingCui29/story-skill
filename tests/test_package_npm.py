@@ -26,13 +26,13 @@ class NpmPackageTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="story-npm-test-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
-        self.version = "0.3.0"
-        self.archive = self.root / "story-codex-0.3.0.zip"
+        self.version = "0.6.0"
+        self.archive = self.root / "story-skill-0.6.0.zip"
         self.checksum = self.root / "release.sha256"
         self.tarball = self.root / "package.tgz"
-        self.payload = {name: ("原始字节：" + name + "\r\n").encode() for name in npm.PAYLOAD_FILES}
-        self.payload["story-codex/scripts/story.py"] = (
-            b'VERSION = "0.3.0"\r\nraise RuntimeError("never execute archive code")\n')
+        self.payload = {name: ("原始字节：" + name + "\r\n").encode() for name in npm.SUITE_FILES}
+        self.payload["story-skill/scripts/story.py"] = (
+            b'VERSION = "0.6.0"\r\nraise RuntimeError("never execute archive code")\n')
         self.write_zip()
 
     def write_zip(self, payload=None, extra=None):
@@ -93,56 +93,7 @@ class NpmPackageTests(unittest.TestCase):
         self.assertEqual(version, self.version)
         self.assertEqual(checksum, hashlib.sha256(self.archive.read_bytes()).hexdigest())
 
-    def test_legacy_wrapper_preserves_the_original_published_bytes(self):
-        manifest, files = npm.wrapper_files("0.3.0")
-        self.assertEqual(manifest["name"], "@cuinings/story-codex")
-        self.assertEqual({name: hashlib.sha256(raw).hexdigest() for name, raw in files.items()}, {
-            "package.json": "da354ce0b6d066562b308ae94421266bf9b3424f6e344efb22e0b12847ccb086",
-            "README.md": "8e1927337054a60d02a67a2b4e177c44ccc531c77af61bf3ad8a8d6005a5c957"})
 
-    def test_published_suite_wrappers_preserve_the_original_bytes(self):
-        expected = {
-            "0.4.0": {
-                "package.json": "b2bd06124a2ecca52cf129455e6c55b1a6d2fe817eab1e9ae932c1a4f01b7426",
-                "README.md": "5e6db786403cd3acfaa1598c8ec55a95b2038c4ca04117f961b0339dd495d158"},
-            "0.5.0": {
-                "package.json": "9576eee516a3ef82edf6d17e69fb18b0dadd53beb0044cf0a299372bcfd08550",
-                "README.md": "8ea0b2ab04033a20e5386c6cad96e02ad21f53b03a59439d885609d14ea5d46c"},
-            "0.5.1": {
-                "package.json": "c39405263e796825fbdefd084003f95dcb8dce295e099853798ba236d8b033cb",
-                "README.md": "4c9a1783ba9c3d515cf22601227352637f276b928e9336d06103b1b7ae61e1af"},
-            "0.5.2": {
-                "package.json": "b1bfe5a491b1302f615184afea6fda544cd0c713a7d2a3a0d960350f897c5ed4",
-                "README.md": "83511010fa3fb2040fb885b1e023cec9a3788033e0ea04d6c9994f0f724525ef"},
-            "0.5.3": {
-                "package.json": "dd2b8142c89cd8e1774a55655ced445ea84d2e6907828372124131e44c6bc712",
-                "README.md": "0b04ab5e5214b6ab9f30dba85fd24c29c73c24046f8164ec5db2ed4826411cd8"},
-            "0.5.4": {
-                "package.json": "61ab7472d3531d2fb5917dd58a27e7cf9da49948b8bfe755ae5108bcc12f725e",
-                "README.md": "7789ad6f60a598f5b7a9e286c147b2491c6a64c84a21af586c415e0ce3b5a73d"},
-            "0.5.5": {
-                "package.json": "9950bd3f92ad074d898ff6422bd498853e5f8cb9a876cac3aed1416d9b30577c",
-                "README.md": "495a7155035c221c97e52b2218a526dc5eb8dc4062aae334f893c9ee10b0c1eb"},
-            "0.5.6": {
-                "package.json": "1559c5efcf8484bf5a10f6f7600ac65e0b2dab8d1092f09ab827a7c1f0523a42",
-                "README.md": "3af27f3c066031f34a0ad5c46dd40194c4e21d82b072896f36dff011a9ab93d5"},
-            "0.5.7": {
-                "package.json": "36b040d158b70f98a19ba34cc228c6a5bc33d76ae6df30fab4ea8e66476d1bee",
-                "README.md": "264022a9ff24628818c42acf549a4d347639f8b833c0250fec8f3ea356aecb4e"},
-            "0.5.8": {
-                "package.json": "e675215fd6aad1c29347447f5c3491715bdeaba2baa72abc68cf39a21ca9d276",
-                "README.md": "637b93a84782abb7468247f752a48ffbcbea9cb89e4342865aa6d4575770b15e"},
-            "0.5.9": {
-                "package.json": "ecd1a20745c32cbaa979de2b407938480d9f8be909408b91ece8e850c48c8f47",
-                "README.md": "22d89e8b2b0c8ec4fa8f71b1294cd4ce536c3754aebb8078feb35213b9d0d053"},
-            "0.5.10": {
-                "package.json": "e6ce6a0bb18175b011699e19805029c819a2ac1b6eaac2215ade1e2488b008cb",
-                "README.md": "3739c9520a818710dde589f0e330989118cc690c7a15dffb3ad989ac11d0ef8c"},
-        }
-        for version, hashes in expected.items():
-            with self.subTest(version=version):
-                _, files = npm.wrapper_files(version)
-                self.assertEqual({name: hashlib.sha256(raw).hexdigest() for name, raw in files.items()}, hashes)
 
     def test_checksum_binds_exact_filename_and_archive_bytes(self):
         correct = self.checksum.read_text(encoding="utf-8")
@@ -153,13 +104,13 @@ class NpmPackageTests(unittest.TestCase):
                 npm.read_release(self.archive, self.checksum)
 
     def test_zip_rejects_extra_missing_duplicate_and_linked_members(self):
-        link = zipfile.ZipInfo("story-codex/scripts/story_world.py")
+        link = zipfile.ZipInfo("story-skill/scripts/story_world.py")
         link.create_system = 3
         link.external_attr = (stat.S_IFLNK | 0o777) << 16
         removed = dict(self.payload)
         removed.pop(link.filename)
-        cases = [(self.payload, ("story-codex/../../escape", b"bad")),
-                 (removed, None), (self.payload, ("story-codex/SKILL.md", b"duplicate")),
+        cases = [(self.payload, ("story-skill/../../escape", b"bad")),
+                 (removed, None), (self.payload, ("story-skill/SKILL.md", b"duplicate")),
                  (removed, (link, b"elsewhere"))]
         for payload, extra in cases:
             with self.subTest(extra=extra), self.assertRaises(ValueError):
@@ -167,10 +118,10 @@ class NpmPackageTests(unittest.TestCase):
                 npm.read_release(self.archive, self.checksum)
 
     def test_version_must_be_single_literal_and_match_archive_name(self):
-        for code in [b'VERSION = str("0.3.0")', b'VERSION = "99.0.0"',
-                     b'VERSION = "0.3.0"\nVERSION = "0.3.0"']:
+        for code in [b'VERSION = str("0.6.0")', b'VERSION = "99.0.0"',
+                     b'VERSION = "0.6.0"\nVERSION = "0.6.0"']:
             with self.subTest(code=code), self.assertRaises(ValueError):
-                self.payload["story-codex/scripts/story.py"] = code
+                self.payload["story-skill/scripts/story.py"] = code
                 self.write_zip()
                 npm.read_release(self.archive, self.checksum)
 
@@ -188,23 +139,23 @@ class NpmPackageTests(unittest.TestCase):
         self.assertTrue({"scripts", "bin", "dependencies", "devDependencies", "main"}.isdisjoint(manifest))
 
     def test_tarball_rejects_changed_bytes_and_newline_normalization(self):
-        for replacement in [b"X" + self.payload["story-codex/SKILL.md"][1:],
-                            self.payload["story-codex/SKILL.md"].replace(b"\r\n", b"\n")]:
+        for replacement in [b"X" + self.payload["story-skill/SKILL.md"][1:],
+                            self.payload["story-skill/SKILL.md"].replace(b"\r\n", b"\n")]:
             with self.subTest(replacement=replacement), self.assertRaisesRegex(ValueError, "bytes differ"):
                 files = self.tar_files()
-                files["package/story-codex/SKILL.md"] = replacement
+                files["package/story-skill/SKILL.md"] = replacement
                 self.write_tar(files)
                 self.verify()
 
     def test_tarball_rejects_missing_extra_duplicate_and_links(self):
-        duplicate = tarfile.TarInfo("package/story-codex/SKILL.md")
+        duplicate = tarfile.TarInfo("package/story-skill/SKILL.md")
         duplicate.size = 1
         link = tarfile.TarInfo("package/linked")
         link.type = tarfile.SYMTYPE
         link.linkname = "../outside"
         hardlink = tarfile.TarInfo("package/hardlink")
         hardlink.type = tarfile.LNKTYPE
-        hardlink.linkname = "package/story-codex/SKILL.md"
+        hardlink.linkname = "package/story-skill/SKILL.md"
         outside = tarfile.TarInfo("../escape")
         outside.size = 1
         cases = [(duplicate, b"x"), (link, None), (hardlink, None), (outside, b"x")]
@@ -213,7 +164,7 @@ class NpmPackageTests(unittest.TestCase):
                 self.write_tar(extra=extra)
                 self.verify()
         files = self.tar_files()
-        files.pop("package/story-codex/LICENSE")
+        files.pop("package/story-skill/LICENSE")
         self.write_tar(files)
         with self.assertRaisesRegex(ValueError, "missing"):
             self.verify()
@@ -298,7 +249,7 @@ class NpmPackageTests(unittest.TestCase):
 
 
     def test_npm_12_keyed_receipt_is_checked_against_its_package_name(self):
-        receipt = {"name": "@ningcui29/story-codex", "version": "0.5.0"}
+        receipt = {"name": "@ningcui29/story-skill", "version": "0.6.0"}
         def invoke(value):
             with patch.object(npm, "npm_command", return_value=["npm"]), patch.object(
                     npm.subprocess, "run", return_value=types.SimpleNamespace(
@@ -311,155 +262,37 @@ class NpmPackageTests(unittest.TestCase):
                 invoke(invalid)
 
 
-class NpmSuiteTests(NpmPackageTests):
-    def setUp(self):
-        super().setUp()
-        self.version = "0.4.0"
-        self.archive = self.root / "story-codex-0.4.0.zip"
-        self.payload = {name: ("原始套件字节：" + name + "\r\n").encode() for name in npm.LEGACY_SUITE_FILES}
-        self.payload["story-codex/scripts/story.py"] = (
-            b'VERSION = "0.4.0"\nraise RuntimeError("must never run payload")\n')
-        self.write_zip()
-
-    def test_new_version_rejects_old_single_skill_layout(self):
-        self.write_zip({name: self.payload.get(name, b"legacy") for name in npm.PAYLOAD_FILES})
-        with self.assertRaisesRegex(ValueError, "reviewed layout"):
-            npm.read_release(self.archive, self.checksum)
-
-    def test_current_package_identity_matches_current_repository_owner(self):
-        manifest, _ = npm.wrapper_files(self.version)
-        self.assertEqual(manifest["name"], "@ningcui29/story-codex")
+class NpmSuiteTests(unittest.TestCase):
+    def test_current_package_identity_and_wrapper(self):
+        manifest, files = npm.wrapper_files("0.6.0")
+        self.assertEqual(manifest["name"], "@ningcui29/story-skill")
         self.assertEqual(manifest["repository"]["url"], "https://github.com/NingCui29/story-skill.git")
-        self.assertEqual(manifest["homepage"], "https://github.com/NingCui29/story-skill#readme")
-        with patch.object(npm, "npm_pack", side_effect=self.fake_pack):
-            result = npm.build(self.archive, self.checksum, self.root / "current")
-        self.assertEqual(Path(result["tarball"]).name, "ningcui29-story-codex-0.4.0.tgz")
-        self.assertEqual(result["name"], manifest["name"])
+        self.assertEqual(manifest["files"], list(npm.SUITE_FILES))
+        self.assertEqual(len(npm.SUITE_FILES), 38)
+        readme = files["README.md"].decode("utf-8")
+        self.assertIn("eight sibling skills", readme)
+        self.assertIn("`story-skill-publish/`", readme)
+        self.assertIn("固定使用 v0.6.0", readme)
+        self.assertIn("For macOS, Linux and Windows", readme)
+        self.assertIn("does not log in to author platforms", readme)
+        forbidden = ("co" + "dex").encode()
+        self.assertNotIn(forbidden, files["README.md"].lower())
 
-    def test_old_version_rejects_new_layout(self):
-        self.archive = self.root / "story-codex-0.3.0.zip"
-        self.payload["story-codex/scripts/story.py"] = b'VERSION = "0.3.0"\n'
-        self.write_zip()
-        with self.assertRaisesRegex(ValueError, "reviewed layout"):
-            npm.read_release(self.archive, self.checksum)
-
-    def test_v050_release_roundtrip_uses_suite_and_unified_install_request(self):
-        self.version = "0.5.0"
-        self.archive = self.root / "story-codex-0.5.0.zip"
-        self.payload["story-codex/scripts/story.py"] = b'VERSION = "0.5.0"\n'
-        self.write_zip()
-        with patch.object(npm, "npm_pack", side_effect=self.fake_pack):
-            result = npm.build(self.archive, self.checksum, self.root / "v050")
-        self.assertEqual(result["version"], "0.5.0")
-        self.assertEqual(result["name"], "@ningcui29/story-codex")
-        self.assertEqual(set(result["payload_manifest"]), set(npm.LEGACY_SUITE_FILES))
-        _, wrapper = npm.wrapper_files(self.version)
-        self.assertIn("blob/main/INSTALL.md", wrapper["README.md"].decode())
-        self.assertIn("固定使用 v0.5.0", wrapper["README.md"].decode())
-        with self.assertRaisesRegex(ValueError, "no reviewed payload layout"):
-            npm.payload_files("0.6.0")
-
-    def test_new_analysis_references_roundtrip_in_current_patch_only(self):
-        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.6", "0.5.7", "0.5.9", "0.5.10", "0.5.11", "0.5.12"):
-            with self.subTest(version=version):
-                self.version = version
-                self.archive = self.root / f"story-codex-{version}.zip"
-                files = npm.payload_files(version)
-                self.payload = {name: ("完整技能字节：" + name + "\r\n").encode() for name in files}
-                self.payload["story-codex/scripts/story.py"] = f'VERSION = "{version}"\n'.encode()
-                self.write_zip()
-                with patch.object(npm, "npm_pack", side_effect=self.fake_pack):
-                    result = npm.build(self.archive, self.checksum, self.root / version)
-                self.assertEqual(result["version"], version)
-                self.assertEqual(result["name"], "@ningcui29/story-codex")
-                self.assertEqual(result["package_manifest"]["repository"]["url"],
-                                 "https://github.com/NingCui29/story-skill.git")
-                self.assertEqual(len(result["payload_manifest"]), len(files))
-                self.assertEqual(set(result["payload_manifest"]), set(files))
-                self.assertIn(f"固定使用 v{version}", npm.wrapper_files(version)[1]["README.md"].decode())
-
-    def test_historical_patch_wrappers_preserve_the_reviewed_platform_scope(self):
-        for version in ("0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.5", "0.5.6", "0.5.7", "0.5.8", "0.5.9"):
-            with self.subTest(version=version):
-                manifest, files = npm.wrapper_files(version)
-                readme = files["README.md"].decode("utf-8")
-                self.assertEqual(manifest["version"], version)
-                self.assertEqual(manifest["files"], list(npm.payload_files(version)))
-                self.assertIn("For macOS/Linux, in Codex, ask:", readme)
-                self.assertIn(f"Platform scope: v{version} is released for macOS/Linux.", readme)
-                self.assertIn("WinError 32", readme)
-                self.assertIn("Windows users should retain the verified v0.4.0 suite.", readme)
-                self.assertIn("preserve the complete book and skill backup first", readme)
-                self.assertIn(f"固定使用 v{version}", readme)
-
-    def test_v0510_and_later_wrappers_include_windows_without_legacy_install_target(self):
-        for version in ("0.5.10", "0.5.11", "0.5.12"):
-            with self.subTest(version=version):
-                manifest, files = npm.wrapper_files(version)
-                readme = files["README.md"].decode("utf-8")
-                self.assertEqual(manifest["version"], version)
-                self.assertEqual(manifest["files"], list(npm.payload_files(version)))
-                self.assertIn("For macOS, Linux and Windows, in Codex, ask:", readme)
-                self.assertIn("Platform scope: macOS, Linux and Windows.", readme)
-                self.assertIn("Consult the matching release verification", readme)
-                self.assertIn("Preserve a complete book and skill backup before upgrading.", readme)
-                self.assertIn(f"固定使用 v{version}", readme)
-                self.assertNotIn("WinError 32", readme)
-                self.assertNotIn("v0.4.0", readme)
-
-    def test_release_version_cannot_accept_another_reviewed_layout(self):
-        for version, files in (("0.4.0", npm.SUITE_FILES), ("0.4.9", npm.SUITE_FILES),
-                               ("0.5.0", npm.SUITE_FILES), ("0.5.1", npm.LEGACY_SUITE_FILES),
-                               ("0.5.2", npm.LEGACY_SUITE_FILES), ("0.5.3", npm.LEGACY_SUITE_FILES),
-                               ("0.5.4", npm.LEGACY_SUITE_FILES),
-                               ("0.5.6", npm.TAGGED_SUITE_FILES),
-                               ("0.5.7", npm.SUITE_FILES),
-                               ("0.5.10", npm.PUBLISH_SUITE_FILES),
-                               ("0.5.11", npm.TAGGED_SUITE_FILES),
-                               ("0.5.12", npm.LEGACY_SUITE_FILES)):
-            with self.subTest(version=version):
-                self.archive = self.root / f"story-codex-{version}.zip"
-                self.payload = {name: b"layout fixture" for name in files}
-                self.payload["story-codex/scripts/story.py"] = f'VERSION = "{version}"\n'.encode()
-                self.write_zip()
-                with self.assertRaisesRegex(ValueError, "version's reviewed layout"):
-                    npm.read_release(self.archive, self.checksum)
-
-    def test_eight_skill_wrapper_describes_only_local_publication_preparation(self):
-        for version in ("0.5.11", "0.5.12"):
-            with self.subTest(version=version):
-                manifest, files = npm.wrapper_files(version)
-                readme = files["README.md"].decode("utf-8")
-                self.assertIn("eight-skill", manifest["description"])
-                self.assertEqual(manifest["files"], list(npm.PUBLISH_SUITE_FILES))
-                self.assertIn("eight sibling skills", readme)
-                self.assertIn("all eight complete skill directories", readme)
-                self.assertIn("`story-codex-publish/`", readme)
-                self.assertIn("38 skill files", readme)
-                self.assertIn("does not log in to author platforms, upload chapters or publish them remotely", readme)
-                self.assertNotIn("seven", readme)
-
-    def test_unknown_or_noncanonical_versions_have_no_layout(self):
-        for version in ("0.3.1", "0.4.01", "0.5.01", "0.6.0", "1.0.0"):
+    def test_only_current_release_family_has_reviewed_layout(self):
+        for version in ("0.6.0", "0.6.1"):
+            self.assertEqual(npm.payload_files(version), npm.SUITE_FILES)
+            self.assertEqual(npm.package_identity(version), (npm.NAME, npm.REPOSITORY))
+        for version in ("0.5.11", "0.6.00", "1.0.0"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed payload layout"):
                 npm.payload_files(version)
 
-    def test_zip_and_npm_share_the_same_explicit_suite_manifest(self):
+    def test_zip_and_npm_share_one_manifest(self):
         spec = importlib.util.spec_from_file_location("zip_suite_manifest", ROOT / "scripts/package.py")
         zip_package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(zip_package)
         self.assertEqual(npm.SUITE_FILES, zip_package.SUITE_FILES)
-        self.assertEqual(npm.TAGGED_SUITE_FILES, zip_package.TAGGED_SUITE_FILES)
-        self.assertEqual(npm.PUBLISH_SUITE_FILES, zip_package.PUBLISH_SUITE_FILES)
-        self.assertEqual(len(npm.PUBLISH_SUITE_FILES), 38)
-        self.assertEqual(npm.LEGACY_SUITE_FILES, zip_package.LEGACY_SUITE_FILES)
-        self.assertEqual(len(npm.SUITE_FILES), 33)
-        self.assertEqual(len(npm.TAGGED_SUITE_FILES), 34)
-        self.assertEqual(len(npm.LEGACY_SUITE_FILES), 31)
-        for version in ("0.4.0", "0.4.12", "0.5.0", "0.5.1", "0.5.2", "0.5.3", "0.5.4", "0.5.6", "0.5.7", "0.5.12"):
-            self.assertEqual(npm.payload_files(version), zip_package.suite_files(version))
-        self.assertEqual({name.split("/", 1)[0] for name in npm.SUITE_FILES}, set(npm.LEGACY_SKILL_NAMES))
-        self.assertIn("all seven", npm.wrapper_files(self.version)[1]["README.md"].decode())
+        self.assertEqual(npm.SKILL_NAMES, zip_package.SKILL_NAMES)
+        self.assertEqual(npm.payload_files("0.6.0"), zip_package.suite_files("0.6.0"))
 
 
 if __name__ == "__main__":

@@ -599,7 +599,7 @@
 2026-09-11T09:13:47.5543921Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.21/x64
 2026-09-11T09:13:47.5544311Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.21/x64/lib
 2026-09-11T09:13:47.5544507Z ##[endgroup]
-2026-09-11T09:13:47.6354725Z {"archive": "/home/runner/work/story-skill/story-skill/dist/story-codex-0.5.3.zip", "version": "0.5.3", "files": 33, "sha256": "6d5acf81f9d7d21dfa0719fad2dd50bf8ae0c2bed0c21fa85485924084768044", "bytes": 118923}
+2026-09-11T09:13:47.6354725Z {"archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-0.5.3.zip", "version": "0.5.3", "files": 33, "sha256": "6d5acf81f9d7d21dfa0719fad2dd50bf8ae0c2bed0c21fa85485924084768044", "bytes": 118923}
 2026-09-11T09:13:47.6436481Z ##[group]Run python -B -X utf8 scripts/smoke.py --output dist/ci-smoke.json
 2026-09-11T09:13:47.6436799Z python -B -X utf8 scripts/smoke.py --output dist/ci-smoke.json
 2026-09-11T09:13:47.6468968Z shell: /usr/bin/bash -e {0}

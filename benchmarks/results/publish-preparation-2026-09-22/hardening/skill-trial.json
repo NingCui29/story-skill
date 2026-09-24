@@ -1,9 +1,9 @@
 {
   "task": "异常退出后的独立发布准备技能续接试用",
   "book_root": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-recovery-trial-f6zx6iw5/雾港书稿",
-  "skill": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-publish/SKILL.md",
+  "skill": "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-publish/SKILL.md",
   "runtime": "/Users/cuining/.local/bin/python3.10",
-  "tool": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+  "tool": "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
   "steps": [
     {
       "command": "publish-list --offset 0 --limit 10",

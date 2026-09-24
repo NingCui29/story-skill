@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "skill": "story-codex-publish",
+  "skill": "story-skill-publish",
   "result": "Skill is valid!",
   "error": "",
   "evidence": "quick_validate.py completed successfully after final skill documentation changes"

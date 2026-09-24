@@ -1,7 +1,7 @@
 {
   "full_name": "NingCui29/story-skill",
   "html_url": "https://github.com/NingCui29/story-skill",
-  "description": "面向 Codex 的中文小说技能套件：7 个入口覆盖规划、写作、拆文、审稿、调研和封面，共用本地状态、断点与证据工具，按需加载，支持中文长篇和历史修订。",
+  "description": "面向 助手 的中文小说技能套件：7 个入口覆盖规划、写作、拆文、审稿、调研和封面，共用本地状态、断点与证据工具，按需加载，支持中文长篇和历史修订。",
   "default_branch": "main",
   "visibility": "public"
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install the complete Story Codex suite into one project's .agents/skills directory."""
+"""Install the complete Story Skill suite into one project's .agents/skills directory."""
 from __future__ import annotations
 
 import argparse
@@ -18,35 +18,25 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "skills"
-LEGACY_SKILL_NAMES = ("story-codex", "story-codex-plan", "story-codex-write", "story-codex-analyze",
-               "story-codex-review", "story-codex-research", "story-codex-cover")
-SKILL_NAMES = LEGACY_SKILL_NAMES + ("story-codex-publish",)
-LEGACY_SUITE_FILES = tuple(sorted(
-    [f"{name}/{relative}" for name in LEGACY_SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
-    + ["story-codex/scripts/" + name for name in (
-        "story.py", "story_history.py", "story_search.py", "story_storage.py", "story_world.py")]
-    + ["story-codex/references/project-state.md", "story-codex-write/references/chapter.md",
-       "story-codex-write/references/long-form.md", "story-codex-write/references/drama.md",
-       "story-codex-review/references/history.md"]))
-SUITE_FILES = tuple(sorted(LEGACY_SUITE_FILES + (
-    "story-codex-analyze/references/deep-reading.md",
-    "story-codex-analyze/references/examples.md")))
-TAGGED_SUITE_FILES = tuple(sorted(SUITE_FILES + (
-    "story-codex-plan/references/fanqie-tags.md",)))
-PUBLISH_SUITE_FILES = tuple(sorted(TAGGED_SUITE_FILES + (
-    "story-codex-publish/LICENSE", "story-codex-publish/SKILL.md",
-    "story-codex-publish/agents/openai.yaml", "story-codex/scripts/story_publish.py")))
-MARKER = ".story-codex-install.json"
+SKILL_NAMES = ("story-skill", "story-skill-plan", "story-skill-write", "story-skill-analyze",
+               "story-skill-review", "story-skill-research", "story-skill-cover", "story-skill-publish")
+SUITE_FILES = tuple(sorted(
+    [f"{name}/{relative}" for name in SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
+    + ["story-skill/scripts/" + name for name in (
+        "story.py", "story_history.py", "story_search.py", "story_storage.py", "story_world.py",
+        "story_publish.py")]
+    + ["story-skill/references/project-state.md", "story-skill-write/references/chapter.md",
+       "story-skill-write/references/long-form.md", "story-skill-write/references/drama.md",
+       "story-skill-review/references/history.md",
+    "story-skill-analyze/references/deep-reading.md",
+    "story-skill-analyze/references/examples.md",
+    "story-skill-plan/references/fanqie-tags.md"]))
+MARKER = ".story-skill-install.json"
 
 
 def suite_files(version):
-    if re.fullmatch(r"0\.4\.(?:0|[1-9][0-9]*)", version) or version == "0.5.0":
-        return LEGACY_SUITE_FILES
-    patch = re.fullmatch(r"0\.5\.([1-9][0-9]*)", version)
-    if patch:
-        if int(patch.group(1)) >= 11:
-            return PUBLISH_SUITE_FILES
-        return TAGGED_SUITE_FILES if int(patch.group(1)) >= 7 else SUITE_FILES
+    if re.fullmatch(r"0\.6\.(?:0|[1-9][0-9]*)", version):
+        return SUITE_FILES
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 
@@ -56,15 +46,13 @@ def skill_names(version):
     return tuple(name for name in SKILL_NAMES if name in roots)
 
 
-def runtime_version(raw, allow_missing=False):
+def runtime_version(raw):
     versions = []
     for node in ast.parse(raw.decode("utf-8-sig")).body:
         targets = node.targets if isinstance(node, ast.Assign) else (
             [node.target] if isinstance(node, ast.AnnAssign) else [])
         if any(isinstance(target, ast.Name) and target.id == "VERSION" for target in targets):
             versions.append(ast.literal_eval(node.value))
-    if not versions and allow_missing:
-        return None
     if (len(versions) != 1 or not isinstance(versions[0], str) or
             not re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", versions[0])):
         raise ValueError("Source runtime must define one literal semantic VERSION")
@@ -111,7 +99,7 @@ def inventory(directory):
 @contextmanager
 def installation_lock(project):
     """The OS releases this lock on process exit; the empty lock file may remain."""
-    lock = checked(project, ".agents/skills/.story-codex-install.lock")
+    lock = checked(project, ".agents/skills/.story-skill-install.lock")
     lock.parent.mkdir(parents=True, exist_ok=True)
     flags = os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0)
     fd = os.open(lock, flags, 0o600)
@@ -167,6 +155,41 @@ def validate_stage(source, stage, files, manifest):
 
 
 def validate_omitted_targets(project, names):
+    parent = checked(project, ".agents/skills")
+    if parent.is_dir():
+        groups = {}
+        suffixes = ("plan", "write", "analyze", "review", "research", "cover", "publish")
+        for child in parent.iterdir():
+            if child.name in SKILL_NAMES or not child.name.startswith("story-"):
+                continue
+            if linked(child):
+                raise ValueError("An unverified linked writing skill remains in the skills directory")
+            if not child.is_dir():
+                continue
+            if linked(child / "scripts"):
+                raise ValueError("An unverified linked writing runtime remains in the skills directory")
+            runtime = child / "scripts/story.py"
+            if linked(runtime):
+                raise ValueError("An unverified linked writing runtime remains in the skills directory")
+            if runtime.is_file():
+                try:
+                    version = runtime_version(runtime.read_bytes())
+                except (SyntaxError, ValueError):
+                    version = None
+                if version is not None and tuple(map(int, version.split("."))) < (0, 6, 0):
+                    raise ValueError("An earlier writing suite remains in the skills directory; "
+                                     "move its complete installation outside skill discovery before installing this suite")
+            entry = child / "SKILL.md"
+            if linked(entry):
+                raise ValueError("An unverified linked writing skill remains in the skills directory")
+            for suffix in suffixes:
+                if child.name.endswith("-" + suffix) and entry.is_file():
+                    prefix = child.name[:-(len(suffix) + 1)]
+                    groups.setdefault(prefix, set()).add(suffix)
+                    break
+        if groups:
+            raise ValueError("An earlier writing suite remains in the skills directory; "
+                             "move its complete installation outside skill discovery before installing this suite")
     for name in SKILL_NAMES:
         if name in names:
             continue
@@ -176,83 +199,12 @@ def validate_omitted_targets(project, names):
                              "refusing a mixed-version installation; keep the complete installed suite")
 
 
-def install_locked(project, target, source, files, update):
-    validate_omitted_targets(project, ("story-codex",))
-    original = managed_snapshot(target)
-    if original is not None:
-        if files == original["files"]:
-            return {"status": "unchanged", "path": str(target)}
-        if not update:
-            raise ValueError("A managed version exists; use --update for a reviewed replacement")
-    stage = Path(tempfile.mkdtemp(prefix=".story-codex-stage-", dir=target.parent))
-    backup = None
-    moved_original = False
-    try:
-        for relative in files:
-            destination = checked(stage.resolve(), relative)
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source / relative, destination)
-            if hashlib.sha256(destination.read_bytes()).hexdigest() != files[relative]:
-                raise ValueError(f"Source file changed while copying; installation was not published: {relative}")
-        manifest = (json.dumps({"schema": 1, "files": files}, ensure_ascii=False,
-                               sort_keys=True, indent=2) + "\n").encode("utf-8")
-        (stage / MARKER).write_bytes(manifest)
-        validate_stage(source, stage, files, manifest)
-        validate_omitted_targets(project, ("story-codex",))
-        if managed_snapshot(checked(project, ".agents/skills/story-codex")) != original:
-            raise ValueError("Installed skill changed during staging; it will not be replaced")
-        if original is not None:
-            backup = checked(project, f".agents/.story-codex-backups/{uuid.uuid4().hex}")
-            backup.parent.mkdir(parents=True, exist_ok=True)
-            move_directory(target, backup)
-            moved_original = True
-        try:
-            if moved_original and managed_snapshot(backup) != original:
-                raise ValueError("Installed skill changed while being moved; restoring the moved version")
-            validate_stage(source, stage, files, manifest)
-            validate_omitted_targets(project, ("story-codex",))
-            move_directory(stage, checked(project, ".agents/skills/story-codex"))
-            expected = {"files": files, "manifest_sha256": hashlib.sha256(manifest).hexdigest()}
-            if managed_snapshot(checked(project, ".agents/skills/story-codex")) != expected:
-                raise ValueError("Published installation differs from the verified package and manifest")
-        except BaseException as error:
-            if moved_original:
-                try:
-                    move_directory(backup, checked(project, ".agents/skills/story-codex"))
-                except (OSError, ValueError) as recovery_error:
-                    raise ValueError(
-                        f"Installation failed ({error}); the moved skill is preserved at {backup}. "
-                        f"Recovery did not replace the current target: {recovery_error}") from error
-            raise
-    finally:
-        if stage.exists():
-            # This exact temporary child was allocated above, never a caller-supplied deletion target.
-            if stage.resolve().parent != target.parent.resolve() or not stage.name.startswith(".story-codex-stage-"):
-                raise ValueError("Refusing to clean a stage outside the installation directory")
-            shutil.rmtree(stage)
-    return {"status": "updated" if backup else "installed", "path": str(target),
-            "backup": str(backup) if backup else None, "files": len(files)}
-
-
-def install_legacy(project, update=False, source=SOURCE):
-    project, source = Path(project).expanduser().resolve(), Path(source).resolve()
-    target = checked(project, ".agents/skills/story-codex")
-    files = inventory(source)
-    if "SKILL.md" not in files or "scripts/story.py" not in files:
-        raise ValueError("Source package is incomplete")
-    with installation_lock(project):
-        if target == source:
-            validate_omitted_targets(project, ("story-codex",))
-            return {"status": "already_in_place", "path": str(target)}
-        return install_locked(project, checked(project, ".agents/skills/story-codex"), source, files, update)
-
-
 def suite_inventory(source):
     """Copy only the version's reviewed skill roots, never sibling project data."""
     result = {}
     if linked(source):
         raise ValueError(f"Refusing linked source directory: {source}")
-    runtime = checked(source, "story-codex/scripts/story.py")
+    runtime = checked(source, "story-skill/scripts/story.py")
     if not runtime.is_file():
         raise ValueError("Source suite is incomplete: missing scripts/story.py")
     version = runtime_version(runtime.read_bytes())
@@ -277,7 +229,7 @@ def clean_stage(stage, parent):
     if not os.path.lexists(stage):
         return
     if (linked(stage) or stage.resolve().parent != parent.resolve()
-            or not stage.name.startswith(".story-codex-stage-")):
+            or not stage.name.startswith(".story-skill-stage-")):
         raise ValueError(f"Refusing to clean an altered installation stage: {stage}")
     shutil.rmtree(stage)
 
@@ -293,7 +245,7 @@ def install_suite_locked(project, source, files, update):
         return {"status": "unchanged", "path": str(parent), "skills": list(names)}
     if any(originals.values()) and not update:
         raise ValueError("A managed version exists; use --update for a reviewed suite replacement")
-    stage = Path(tempfile.mkdtemp(prefix=".story-codex-stage-", dir=parent))
+    stage = Path(tempfile.mkdtemp(prefix=".story-skill-stage-", dir=parent))
     backup = None
     moved, published, expected = [], [], {}
     manifests = {}
@@ -327,7 +279,7 @@ def install_suite_locked(project, source, files, update):
             if managed_snapshot(targets[name]) != originals[name]:
                 raise ValueError(f"Installed skill changed during staging: {name}")
         if any(originals[name] for name in changed):
-            backup = checked(project, f".agents/.story-codex-backups/{uuid.uuid4().hex}")
+            backup = checked(project, f".agents/.story-skill-backups/{uuid.uuid4().hex}")
             backup.mkdir(parents=True)
         try:
             for name in changed:
@@ -395,20 +347,13 @@ def install(project, update=False, source=SOURCE):
         raise ValueError(f"Refusing linked source directory: {source}")
     source = source.resolve()
     if (source / "SKILL.md").is_file():
-        # Preserve the old explicit source API for managed v0.3 installations.
-        # A v0.4 core directory is never allowed to omit its sibling dependencies.
-        runtime = source / "scripts/story.py"
-        if runtime.is_file():
-            version = runtime_version(runtime.read_bytes(), allow_missing=True)
-            if version and tuple(map(int, version.split("."))) >= (0, 4, 0):
-                source = source.parent
-            else:
-                return install_legacy(project, update, source)
-        else:
-            raise ValueError("Source package is incomplete")
+        if source.name != SKILL_NAMES[0] or not (source / "scripts/story.py").is_file():
+            raise ValueError("A full supported suite is required")
+        source = source.parent
     files = suite_inventory(source)
     target = checked(project, ".agents/skills")
     if target == source:
+        validate_omitted_targets(project, files)
         return {"status": "already_in_place", "path": str(target), "skills": list(files)}
     with installation_lock(project):
         return install_suite_locked(project, source, files, update)
@@ -418,7 +363,7 @@ def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--project", required=True, help="Target Codex project; no global configuration is changed")
+    p.add_argument("--project", required=True, help="Target writing project; no global configuration is changed")
     p.add_argument("--update", action="store_true", help="Replace an unchanged managed installation; retain backup")
     args = p.parse_args()
     try:

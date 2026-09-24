@@ -4,10 +4,10 @@
   "environment": {
     "platform": "macOS-15.7.9-x86_64-i386-64bit",
     "python": "3.12.14",
-    "executable": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+    "executable": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3"
   },
   "not_verified": [
-    "Codex UI discovery and automatic routing in a new conversation",
+    "助手 UI discovery and automatic routing in a new conversation",
     "Live model-generated novel quality compared with upstream",
     "Actual account usage or total-turn token savings",
     "Long-run consistency over hundreds of generated chapters"
@@ -15,44 +15,44 @@
   "skill_input_snapshot": {
     "status": "passed",
     "files": {
-      "story-codex/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
-      "story-codex/SKILL.md": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022",
-      "story-codex/agents/openai.yaml": "15aa0bdd2ba3803da40a00ef96899a09da1e7f6a6d52a01fdccd73f130615617",
-      "story-codex/references/project-state.md": "2bf653bc4960eb65277e034a8312b91e62931bfa87061261e241e01a057b04b7",
-      "story-codex/scripts/story.py": "5527d93f7ee3f49b42891b814ae4d635e728db482d1c44067d41586b92f884e5",
-      "story-codex/scripts/story_history.py": "17c9ba82ab72f2d7b3a6679b6f7ca27bfe193ad8c9fa772ca19f6a93ff52739a",
-      "story-codex/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
-      "story-codex/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
-      "story-codex/scripts/story_world.py": "26ff12ff415753592aff933b4236095735706c9aac58a1c479312b66e4d3e74a",
-      "story-codex-analyze/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
-      "story-codex-analyze/SKILL.md": "ce6fe0be2ca7b51824c46e9c0516d70174eedb1c53a81e876afd1be832fa8725",
-      "story-codex-analyze/agents/openai.yaml": "af9aa6755f241868eaf640dfa5b6b130bab29f32e13b05872e4caf73dda194ae",
-      "story-codex-analyze/references/deep-reading.md": "a41fc259d192a81e3ae4da1579892e922d9a8f5d269929315ec9f9d6a6d8db0c",
-      "story-codex-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
-      "story-codex-cover/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
-      "story-codex-cover/SKILL.md": "15b21ebc8b26c17641ea32e1feddffafbfa5710940ef863fee54d6775ffd58b3",
-      "story-codex-cover/agents/openai.yaml": "a62ccc4aa41734b35bd4bb8beeef721d6ec531bab19bd9721dc3266e9b219bdc",
-      "story-codex-plan/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
-      "story-codex-plan/SKILL.md": "c437b2354cf8955771d43f6596ebe290e839ad09a871fb754a240d27cb679e5e",
-      "story-codex-plan/agents/openai.yaml": "91d5054d329cba6094bf952128f8b45204a6998c532ff9359de912c6cf4461c3",
-      "story-codex-research/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
-      "story-codex-research/SKILL.md": "87da9985f5e65c544bb36963409ba19ad8ea7c26f68a14439716b7533f736152",
-      "story-codex-research/agents/openai.yaml": "c1d004732ad14aeb4de504637fb614174dfc8e2eeb77fb750d038a23be1106b0",
-      "story-codex-review/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
-      "story-codex-review/SKILL.md": "39f246774c8a75324446c46d3cbc2ece9968cd7f350517cc3bbbea917a25ea63",
-      "story-codex-review/agents/openai.yaml": "49767d87691f46c0819c920284d9c2847880a2fab69225b90c4df7734ded9bab",
-      "story-codex-review/references/history.md": "80687aad2d22dd61db6eff1c90c2462162de1ba3ff0927816c843238139d0e74",
-      "story-codex-write/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
-      "story-codex-write/SKILL.md": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
-      "story-codex-write/agents/openai.yaml": "aaf575e3af0e3ef0f7cb648c065fd3b7c1d1e8f7c022e76ba04ecf9b705377e3",
-      "story-codex-write/references/chapter.md": "57eb844fd2ccd9a56430f71f3d543e9435801b9859f243d743955a1a267c8d7c",
-      "story-codex-write/references/drama.md": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
-      "story-codex-write/references/long-form.md": "6e1928b860c10a74f9946d0c3e3d914c21da98adc355710cb7957c1580c7f41e"
+      "story-skill/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-skill/SKILL.md": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022",
+      "story-skill/agents/openai.yaml": "15aa0bdd2ba3803da40a00ef96899a09da1e7f6a6d52a01fdccd73f130615617",
+      "story-skill/references/project-state.md": "2bf653bc4960eb65277e034a8312b91e62931bfa87061261e241e01a057b04b7",
+      "story-skill/scripts/story.py": "5527d93f7ee3f49b42891b814ae4d635e728db482d1c44067d41586b92f884e5",
+      "story-skill/scripts/story_history.py": "17c9ba82ab72f2d7b3a6679b6f7ca27bfe193ad8c9fa772ca19f6a93ff52739a",
+      "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "story-skill/scripts/story_world.py": "26ff12ff415753592aff933b4236095735706c9aac58a1c479312b66e4d3e74a",
+      "story-skill-analyze/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-skill-analyze/SKILL.md": "ce6fe0be2ca7b51824c46e9c0516d70174eedb1c53a81e876afd1be832fa8725",
+      "story-skill-analyze/agents/openai.yaml": "af9aa6755f241868eaf640dfa5b6b130bab29f32e13b05872e4caf73dda194ae",
+      "story-skill-analyze/references/deep-reading.md": "a41fc259d192a81e3ae4da1579892e922d9a8f5d269929315ec9f9d6a6d8db0c",
+      "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+      "story-skill-cover/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-skill-cover/SKILL.md": "15b21ebc8b26c17641ea32e1feddffafbfa5710940ef863fee54d6775ffd58b3",
+      "story-skill-cover/agents/openai.yaml": "a62ccc4aa41734b35bd4bb8beeef721d6ec531bab19bd9721dc3266e9b219bdc",
+      "story-skill-plan/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-skill-plan/SKILL.md": "c437b2354cf8955771d43f6596ebe290e839ad09a871fb754a240d27cb679e5e",
+      "story-skill-plan/agents/openai.yaml": "91d5054d329cba6094bf952128f8b45204a6998c532ff9359de912c6cf4461c3",
+      "story-skill-research/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-skill-research/SKILL.md": "87da9985f5e65c544bb36963409ba19ad8ea7c26f68a14439716b7533f736152",
+      "story-skill-research/agents/openai.yaml": "c1d004732ad14aeb4de504637fb614174dfc8e2eeb77fb750d038a23be1106b0",
+      "story-skill-review/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-skill-review/SKILL.md": "39f246774c8a75324446c46d3cbc2ece9968cd7f350517cc3bbbea917a25ea63",
+      "story-skill-review/agents/openai.yaml": "49767d87691f46c0819c920284d9c2847880a2fab69225b90c4df7734ded9bab",
+      "story-skill-review/references/history.md": "80687aad2d22dd61db6eff1c90c2462162de1ba3ff0927816c843238139d0e74",
+      "story-skill-write/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-skill-write/SKILL.md": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
+      "story-skill-write/agents/openai.yaml": "aaf575e3af0e3ef0f7cb648c065fd3b7c1d1e8f7c022e76ba04ecf9b705377e3",
+      "story-skill-write/references/chapter.md": "57eb844fd2ccd9a56430f71f3d543e9435801b9859f243d743955a1a267c8d7c",
+      "story-skill-write/references/drama.md": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
+      "story-skill-write/references/long-form.md": "6e1928b860c10a74f9946d0c3e3d914c21da98adc355710cb7957c1580c7f41e"
     }
   },
   "unit_tests": {
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
       "-X",
       "utf8",
@@ -83,7 +83,7 @@
   },
   "cli_smoke": {
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
       "-X",
       "utf8",
@@ -149,7 +149,7 @@
   },
   "chinese_manuscript_replay": {
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
       "-X",
       "utf8",
@@ -796,7 +796,7 @@
   },
   "long_form_cli_replay": {
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
       "-X",
       "utf8",
@@ -2927,11 +2927,11 @@
         {
           "label": "创建独立中文书",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "init",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -2949,11 +2949,11 @@
         {
           "label": "保存创作限制与物件卡",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "notes",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -2971,11 +2971,11 @@
         {
           "label": "建立人物身份、分线化名及待证命题",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "world-save",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -2993,11 +2993,11 @@
         {
           "label": "保存第1章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3017,11 +3017,11 @@
         {
           "label": "读取第1章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3039,11 +3039,11 @@
         {
           "label": "准备第1章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3061,11 +3061,11 @@
         {
           "label": "提交第1章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3085,11 +3085,11 @@
         {
           "label": "确认已有工程不能靠adopt静默跳号",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "adopt",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3112,11 +3112,11 @@
         {
           "label": "保存第2章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3136,11 +3136,11 @@
         {
           "label": "读取第2章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3158,11 +3158,11 @@
         {
           "label": "准备第2章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3180,11 +3180,11 @@
         {
           "label": "提交第2章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3204,11 +3204,11 @@
         {
           "label": "保存第3章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3228,11 +3228,11 @@
         {
           "label": "读取第3章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3250,11 +3250,11 @@
         {
           "label": "准备第3章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3272,11 +3272,11 @@
         {
           "label": "提交第3章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3296,11 +3296,11 @@
         {
           "label": "保存第4章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3320,11 +3320,11 @@
         {
           "label": "读取第4章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3342,11 +3342,11 @@
         {
           "label": "准备第4章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3364,11 +3364,11 @@
         {
           "label": "提交第4章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3388,11 +3388,11 @@
         {
           "label": "保存第5章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3412,11 +3412,11 @@
         {
           "label": "读取第5章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3434,11 +3434,11 @@
         {
           "label": "准备第5章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3456,11 +3456,11 @@
         {
           "label": "提交第5章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3480,11 +3480,11 @@
         {
           "label": "保存第6章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3504,11 +3504,11 @@
         {
           "label": "读取第6章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3526,11 +3526,11 @@
         {
           "label": "准备第6章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3548,11 +3548,11 @@
         {
           "label": "提交第6章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3572,11 +3572,11 @@
         {
           "label": "保存第7章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3596,11 +3596,11 @@
         {
           "label": "读取第7章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3618,11 +3618,11 @@
         {
           "label": "准备第7章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3640,11 +3640,11 @@
         {
           "label": "提交第7章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3664,11 +3664,11 @@
         {
           "label": "保存第8章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3688,11 +3688,11 @@
         {
           "label": "读取第8章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3710,11 +3710,11 @@
         {
           "label": "准备第8章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3732,11 +3732,11 @@
         {
           "label": "提交第8章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3756,11 +3756,11 @@
         {
           "label": "保存第9章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3780,11 +3780,11 @@
         {
           "label": "读取第9章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3802,11 +3802,11 @@
         {
           "label": "准备第9章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3824,11 +3824,11 @@
         {
           "label": "提交第9章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3848,11 +3848,11 @@
         {
           "label": "保存第10章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3872,11 +3872,11 @@
         {
           "label": "读取第10章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3894,11 +3894,11 @@
         {
           "label": "准备第10章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3916,11 +3916,11 @@
         {
           "label": "提交第10章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3940,11 +3940,11 @@
         {
           "label": "保存第11章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3964,11 +3964,11 @@
         {
           "label": "读取第11章上下文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -3986,11 +3986,11 @@
         {
           "label": "准备第11章审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "prepare",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4008,11 +4008,11 @@
         {
           "label": "提交第11章",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "commit",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4032,11 +4032,11 @@
         {
           "label": "检验已提交双线与伏笔状态",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "world-check",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4052,11 +4052,11 @@
         {
           "label": "检索早期物件的精确原文",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "recall",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4072,11 +4072,11 @@
         {
           "label": "保存历史复核所需的下一章取材计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4096,11 +4096,11 @@
         {
           "label": "读取历史复核实际使用的现态卡片",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4118,11 +4118,11 @@
         {
           "label": "记录第1章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4140,11 +4140,11 @@
         {
           "label": "记录第2章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4162,11 +4162,11 @@
         {
           "label": "记录第3章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4184,11 +4184,11 @@
         {
           "label": "记录第4章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4206,11 +4206,11 @@
         {
           "label": "记录第5章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4228,11 +4228,11 @@
         {
           "label": "记录第6章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4250,11 +4250,11 @@
         {
           "label": "记录第7章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4272,11 +4272,11 @@
         {
           "label": "记录第8章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4294,11 +4294,11 @@
         {
           "label": "记录第9章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4316,11 +4316,11 @@
         {
           "label": "记录第10章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4338,11 +4338,11 @@
         {
           "label": "记录第11章实际复核的依赖",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-deps",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4360,11 +4360,11 @@
         {
           "label": "保存修订前状态快照",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-snapshot",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4382,11 +4382,11 @@
         {
           "label": "创建钥匙颜色修正的历史分支",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-start",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4406,11 +4406,11 @@
         {
           "label": "读取候选范围与状态修订要求",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-inspect",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4426,11 +4426,11 @@
         {
           "label": "保存两章候选、最终卡片决策及全部受影响领域证据",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-update",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4450,11 +4450,11 @@
         {
           "label": "读取第1章前后对照与审查模板",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-inspect",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4472,11 +4472,11 @@
         {
           "label": "读取第11章前后对照与审查模板",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-inspect",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4494,11 +4494,11 @@
         {
           "label": "保存逐章对读后的四项审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-update",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4518,11 +4518,11 @@
         {
           "label": "读取最新整包审查指纹",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-inspect",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4538,11 +4538,11 @@
         {
           "label": "保存整个历史分支的真实覆盖与状态审查",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-update",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4562,11 +4562,11 @@
         {
           "label": "发布已审查历史分支",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "history-publish",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4584,11 +4584,11 @@
         {
           "label": "保存发布后的下一章计划",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "plan",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4608,11 +4608,11 @@
         {
           "label": "读取历史修订后的相关资料",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "context",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4630,11 +4630,11 @@
         {
           "label": "检查已撤回颜色不再作为当前正文命中",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "recall",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -4650,11 +4650,11 @@
         {
           "label": "复核分支发布后的领域一致性",
           "command": [
-            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
             "-B",
             "-X",
             "utf8",
-            "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+            "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
             "world-check",
             "--book",
             "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-long-acceptance-oa_jf9v1/北库双线验证",
@@ -5648,14 +5648,14 @@
   "skill_frontmatter": {
     "status": "passed",
     "skills": {
-      "story-codex": {
+      "story-skill": {
         "command": [
-          "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
           "-B",
           "-X",
           "utf8",
-          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
-          "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex"
+          "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill"
         ],
         "exit_code": 0,
         "stdout": "Skill is valid!\n",
@@ -5663,14 +5663,14 @@
         "duration_seconds": 0.104,
         "status": "passed"
       },
-      "story-codex-plan": {
+      "story-skill-plan": {
         "command": [
-          "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
           "-B",
           "-X",
           "utf8",
-          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
-          "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-plan"
+          "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-plan"
         ],
         "exit_code": 0,
         "stdout": "Skill is valid!\n",
@@ -5678,14 +5678,14 @@
         "duration_seconds": 0.089,
         "status": "passed"
       },
-      "story-codex-write": {
+      "story-skill-write": {
         "command": [
-          "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
           "-B",
           "-X",
           "utf8",
-          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
-          "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-write"
+          "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-write"
         ],
         "exit_code": 0,
         "stdout": "Skill is valid!\n",
@@ -5693,14 +5693,14 @@
         "duration_seconds": 0.088,
         "status": "passed"
       },
-      "story-codex-analyze": {
+      "story-skill-analyze": {
         "command": [
-          "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
           "-B",
           "-X",
           "utf8",
-          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
-          "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-analyze"
+          "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-analyze"
         ],
         "exit_code": 0,
         "stdout": "Skill is valid!\n",
@@ -5708,14 +5708,14 @@
         "duration_seconds": 0.09,
         "status": "passed"
       },
-      "story-codex-review": {
+      "story-skill-review": {
         "command": [
-          "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
           "-B",
           "-X",
           "utf8",
-          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
-          "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-review"
+          "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-review"
         ],
         "exit_code": 0,
         "stdout": "Skill is valid!\n",
@@ -5723,14 +5723,14 @@
         "duration_seconds": 0.088,
         "status": "passed"
       },
-      "story-codex-research": {
+      "story-skill-research": {
         "command": [
-          "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
           "-B",
           "-X",
           "utf8",
-          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
-          "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-research"
+          "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-research"
         ],
         "exit_code": 0,
         "stdout": "Skill is valid!\n",
@@ -5738,14 +5738,14 @@
         "duration_seconds": 0.094,
         "status": "passed"
       },
-      "story-codex-cover": {
+      "story-skill-cover": {
         "command": [
-          "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
           "-B",
           "-X",
           "utf8",
-          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
-          "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-cover"
+          "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-cover"
         ],
         "exit_code": 0,
         "stdout": "Skill is valid!\n",
@@ -5762,7 +5762,7 @@
     "installed_files_match": true,
     "installation": {
       "command": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
         "-X",
         "utf8",
@@ -5771,7 +5771,7 @@
         "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-release-verify-67ywj31n/安装验证项目"
       ],
       "exit_code": 0,
-      "stdout": "{\"status\": \"installed\", \"path\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-release-verify-67ywj31n/安装验证项目/.agents/skills\", \"skills\": [\"story-codex\", \"story-codex-plan\", \"story-codex-write\", \"story-codex-analyze\", \"story-codex-review\", \"story-codex-research\", \"story-codex-cover\"], \"changed_skills\": [\"story-codex\", \"story-codex-plan\", \"story-codex-write\", \"story-codex-analyze\", \"story-codex-review\", \"story-codex-research\", \"story-codex-cover\"], \"backup\": null, \"files\": 33}\n",
+      "stdout": "{\"status\": \"installed\", \"path\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-release-verify-67ywj31n/安装验证项目/.agents/skills\", \"skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\"], \"changed_skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\"], \"backup\": null, \"files\": 33}\n",
       "stderr": "",
       "duration_seconds": 1.076,
       "status": "passed"
@@ -5780,51 +5780,51 @@
       "status": "installed",
       "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-release-verify-67ywj31n/安装验证项目/.agents/skills",
       "skills": [
-        "story-codex",
-        "story-codex-plan",
-        "story-codex-write",
-        "story-codex-analyze",
-        "story-codex-review",
-        "story-codex-research",
-        "story-codex-cover"
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover"
       ],
       "changed_skills": [
-        "story-codex",
-        "story-codex-plan",
-        "story-codex-write",
-        "story-codex-analyze",
-        "story-codex-review",
-        "story-codex-research",
-        "story-codex-cover"
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover"
       ],
       "backup": null,
       "files": 33
     },
     "cli_help": {
       "command": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
         "-X",
         "utf8",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-release-verify-67ywj31n/安装验证项目/.agents/skills/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-release-verify-67ywj31n/安装验证项目/.agents/skills/story-skill/scripts/story.py",
         "--help"
       ],
       "exit_code": 0,
-      "stdout": "usage: story.py [-h] [--version]\n                {template,init,status,migrate,audit,world-save,world-check,world-read,cache-get,cache-put,history-deps,history-inspect,history-publish,history-refresh,history-snapshot,history-start,history-state,history-update,export,notes,plan,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,ingest,coverage,next,record,findings,source-read,report}\n                ...\n\nStory Codex: local, bounded context and transactional writing state. No API\ncalls.\n\npositional arguments:\n  {template,init,status,migrate,audit,world-save,world-check,world-read,cache-get,cache-put,history-deps,history-inspect,history-publish,history-refresh,history-snapshot,history-start,history-state,history-update,export,notes,plan,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,ingest,coverage,next,record,findings,source-read,report}\n    template            Print just one JSON input example\n    init                Create state once; never overwrite an existing book\n    status              Compact checkpoint and export health\n    migrate             Explicit schema upgrade with a consistent rollback\n                        backup\n    audit               Hash every managed export and report conflicts\n    world-save          Save structured story state with cited evidence\n    world-check         Check recorded rules, knowledge and continuity\n    world-read          Inspect one stored narrative record, including stale\n                        evidence for reviewed repair\n    cache-get           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    cache-put           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-deps        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-inspect     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-publish     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-refresh     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-snapshot    Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-start       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-state       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-update      Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    export              Repair exports without replacing outside edits\n    notes               Save cards or a chapter plan with optimistic\n                        concurrency\n    plan                Save cards or a chapter plan with optimistic\n                        concurrency\n    context             Build a bounded chapter context packet\n    prepare             Read-only review scaffold bound to the current book,\n                        state and draft\n    reconcile           Inspect an outside edit of the latest native chapter,\n                        or apply its reviewed draft\n    recall              Bounded literal substring search of cards, summaries\n                        and chapter prose\n    chapter-read        Read a bounded excerpt of a current or immutable\n                        historical chapter\n    dependencies        Resolve candidate evidence hashes for a reviewed\n                        chapter dependency declaration\n    sources             Find saved source IDs and analysis checkpoints after a\n                        new session\n    lint                Check, commit, or import one last complete chapter\n    commit              Check, commit, or import one last complete chapter\n    adopt               Check, commit, or import one last complete chapter\n    ingest              Snapshot source text and split without losing bonus\n                        chapters\n    coverage            Incremental source analysis and evidence-backed\n                        checkpoints\n    next                Incremental source analysis and evidence-backed\n                        checkpoints\n    record              Incremental source analysis and evidence-backed\n                        checkpoints\n    findings            Incremental source analysis and evidence-backed\n                        checkpoints\n    source-read         Incremental source analysis and evidence-backed\n                        checkpoints\n    report              Incremental source analysis and evidence-backed\n                        checkpoints\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
+      "stdout": "usage: story.py [-h] [--version]\n                {template,init,status,migrate,audit,world-save,world-check,world-read,cache-get,cache-put,history-deps,history-inspect,history-publish,history-refresh,history-snapshot,history-start,history-state,history-update,export,notes,plan,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,ingest,coverage,next,record,findings,source-read,report}\n                ...\n\nStory Skill: local, bounded context and transactional writing state. No API\ncalls.\n\npositional arguments:\n  {template,init,status,migrate,audit,world-save,world-check,world-read,cache-get,cache-put,history-deps,history-inspect,history-publish,history-refresh,history-snapshot,history-start,history-state,history-update,export,notes,plan,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,ingest,coverage,next,record,findings,source-read,report}\n    template            Print just one JSON input example\n    init                Create state once; never overwrite an existing book\n    status              Compact checkpoint and export health\n    migrate             Explicit schema upgrade with a consistent rollback\n                        backup\n    audit               Hash every managed export and report conflicts\n    world-save          Save structured story state with cited evidence\n    world-check         Check recorded rules, knowledge and continuity\n    world-read          Inspect one stored narrative record, including stale\n                        evidence for reviewed repair\n    cache-get           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    cache-put           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-deps        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-inspect     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-publish     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-refresh     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-snapshot    Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-start       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-state       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-update      Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    export              Repair exports without replacing outside edits\n    notes               Save cards or a chapter plan with optimistic\n                        concurrency\n    plan                Save cards or a chapter plan with optimistic\n                        concurrency\n    context             Build a bounded chapter context packet\n    prepare             Read-only review scaffold bound to the current book,\n                        state and draft\n    reconcile           Inspect an outside edit of the latest native chapter,\n                        or apply its reviewed draft\n    recall              Bounded literal substring search of cards, summaries\n                        and chapter prose\n    chapter-read        Read a bounded excerpt of a current or immutable\n                        historical chapter\n    dependencies        Resolve candidate evidence hashes for a reviewed\n                        chapter dependency declaration\n    sources             Find saved source IDs and analysis checkpoints after a\n                        new session\n    lint                Check, commit, or import one last complete chapter\n    commit              Check, commit, or import one last complete chapter\n    adopt               Check, commit, or import one last complete chapter\n    ingest              Snapshot source text and split without losing bonus\n                        chapters\n    coverage            Incremental source analysis and evidence-backed\n                        checkpoints\n    next                Incremental source analysis and evidence-backed\n                        checkpoints\n    record              Incremental source analysis and evidence-backed\n                        checkpoints\n    findings            Incremental source analysis and evidence-backed\n                        checkpoints\n    source-read         Incremental source analysis and evidence-backed\n                        checkpoints\n    report              Incremental source analysis and evidence-backed\n                        checkpoints\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
       "stderr": "",
       "duration_seconds": 0.207,
       "status": "passed"
     },
     "cli_smoke": {
       "command": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
         "-X",
         "utf8",
         "-c",
         "import importlib.util,pathlib,sys; spec=importlib.util.spec_from_file_location('release_smoke',sys.argv[1]); module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module); module.TOOL=pathlib.Path(sys.argv[2]); sys.argv=[sys.argv[1],'--output',sys.argv[3]]; module.main()",
         "/Users/cuining/Documents/GitHub/story-skill/scripts/smoke.py",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-release-verify-67ywj31n/安装验证项目/.agents/skills/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-release-verify-67ywj31n/安装验证项目/.agents/skills/story-skill/scripts/story.py",
         "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-release-verify-67ywj31n/installed-smoke.json"
       ],
       "exit_code": 0,
@@ -5891,196 +5891,196 @@
     "files": [
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022",
         "current_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022"
       },
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex-write/SKILL.md",
+        "path": "skills/story-skill-write/SKILL.md",
         "matches": true,
         "recorded_sha256": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
         "current_sha256": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d"
       },
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex/references/project-state.md",
+        "path": "skills/story-skill/references/project-state.md",
         "matches": true,
         "recorded_sha256": "2bf653bc4960eb65277e034a8312b91e62931bfa87061261e241e01a057b04b7",
         "current_sha256": "2bf653bc4960eb65277e034a8312b91e62931bfa87061261e241e01a057b04b7"
       },
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex-write/references/chapter.md",
+        "path": "skills/story-skill-write/references/chapter.md",
         "matches": true,
         "recorded_sha256": "57eb844fd2ccd9a56430f71f3d543e9435801b9859f243d743955a1a267c8d7c",
         "current_sha256": "57eb844fd2ccd9a56430f71f3d543e9435801b9859f243d743955a1a267c8d7c"
       },
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex-write/references/drama.md",
+        "path": "skills/story-skill-write/references/drama.md",
         "matches": true,
         "recorded_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
         "current_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022",
         "current_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex-write/SKILL.md",
+        "path": "skills/story-skill-write/SKILL.md",
         "matches": true,
         "recorded_sha256": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
         "current_sha256": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex/references/project-state.md",
+        "path": "skills/story-skill/references/project-state.md",
         "matches": true,
         "recorded_sha256": "2bf653bc4960eb65277e034a8312b91e62931bfa87061261e241e01a057b04b7",
         "current_sha256": "2bf653bc4960eb65277e034a8312b91e62931bfa87061261e241e01a057b04b7"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex-write/references/chapter.md",
+        "path": "skills/story-skill-write/references/chapter.md",
         "matches": true,
         "recorded_sha256": "57eb844fd2ccd9a56430f71f3d543e9435801b9859f243d743955a1a267c8d7c",
         "current_sha256": "57eb844fd2ccd9a56430f71f3d543e9435801b9859f243d743955a1a267c8d7c"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex-write/references/drama.md",
+        "path": "skills/story-skill-write/references/drama.md",
         "matches": true,
         "recorded_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
         "current_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex-write/references/long-form.md",
+        "path": "skills/story-skill-write/references/long-form.md",
         "matches": true,
         "recorded_sha256": "6e1928b860c10a74f9946d0c3e3d914c21da98adc355710cb7957c1580c7f41e",
         "current_sha256": "6e1928b860c10a74f9946d0c3e3d914c21da98adc355710cb7957c1580c7f41e"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022",
         "current_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex-write/SKILL.md",
+        "path": "skills/story-skill-write/SKILL.md",
         "matches": true,
         "recorded_sha256": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
         "current_sha256": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex/references/project-state.md",
+        "path": "skills/story-skill/references/project-state.md",
         "matches": true,
         "recorded_sha256": "2bf653bc4960eb65277e034a8312b91e62931bfa87061261e241e01a057b04b7",
         "current_sha256": "2bf653bc4960eb65277e034a8312b91e62931bfa87061261e241e01a057b04b7"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex-write/references/chapter.md",
+        "path": "skills/story-skill-write/references/chapter.md",
         "matches": true,
         "recorded_sha256": "57eb844fd2ccd9a56430f71f3d543e9435801b9859f243d743955a1a267c8d7c",
         "current_sha256": "57eb844fd2ccd9a56430f71f3d543e9435801b9859f243d743955a1a267c8d7c"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex-write/references/drama.md",
+        "path": "skills/story-skill-write/references/drama.md",
         "matches": true,
         "recorded_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
         "current_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f"
       },
       {
         "profile": "long_analysis_conservative",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022",
         "current_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022"
       },
       {
         "profile": "long_analysis_conservative",
-        "path": "skills/story-codex-analyze/SKILL.md",
+        "path": "skills/story-skill-analyze/SKILL.md",
         "matches": true,
         "recorded_sha256": "ce6fe0be2ca7b51824c46e9c0516d70174eedb1c53a81e876afd1be832fa8725",
         "current_sha256": "ce6fe0be2ca7b51824c46e9c0516d70174eedb1c53a81e876afd1be832fa8725"
       },
       {
         "profile": "long_analysis_conservative",
-        "path": "skills/story-codex-analyze/references/deep-reading.md",
+        "path": "skills/story-skill-analyze/references/deep-reading.md",
         "matches": true,
         "recorded_sha256": "a41fc259d192a81e3ae4da1579892e922d9a8f5d269929315ec9f9d6a6d8db0c",
         "current_sha256": "a41fc259d192a81e3ae4da1579892e922d9a8f5d269929315ec9f9d6a6d8db0c"
       },
       {
         "profile": "analysis_with_examples",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022",
         "current_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022"
       },
       {
         "profile": "analysis_with_examples",
-        "path": "skills/story-codex-analyze/SKILL.md",
+        "path": "skills/story-skill-analyze/SKILL.md",
         "matches": true,
         "recorded_sha256": "ce6fe0be2ca7b51824c46e9c0516d70174eedb1c53a81e876afd1be832fa8725",
         "current_sha256": "ce6fe0be2ca7b51824c46e9c0516d70174eedb1c53a81e876afd1be832fa8725"
       },
       {
         "profile": "analysis_with_examples",
-        "path": "skills/story-codex-analyze/references/deep-reading.md",
+        "path": "skills/story-skill-analyze/references/deep-reading.md",
         "matches": true,
         "recorded_sha256": "a41fc259d192a81e3ae4da1579892e922d9a8f5d269929315ec9f9d6a6d8db0c",
         "current_sha256": "a41fc259d192a81e3ae4da1579892e922d9a8f5d269929315ec9f9d6a6d8db0c"
       },
       {
         "profile": "analysis_with_examples",
-        "path": "skills/story-codex-analyze/references/examples.md",
+        "path": "skills/story-skill-analyze/references/examples.md",
         "matches": true,
         "recorded_sha256": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
         "current_sha256": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2"
       },
       {
         "profile": "review_conservative",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022",
         "current_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022"
       },
       {
         "profile": "review_conservative",
-        "path": "skills/story-codex-review/SKILL.md",
+        "path": "skills/story-skill-review/SKILL.md",
         "matches": true,
         "recorded_sha256": "39f246774c8a75324446c46d3cbc2ece9968cd7f350517cc3bbbea917a25ea63",
         "current_sha256": "39f246774c8a75324446c46d3cbc2ece9968cd7f350517cc3bbbea917a25ea63"
       },
       {
         "profile": "review_conflict",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022",
         "current_sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022"
       },
       {
         "profile": "review_conflict",
-        "path": "skills/story-codex-review/SKILL.md",
+        "path": "skills/story-skill-review/SKILL.md",
         "matches": true,
         "recorded_sha256": "39f246774c8a75324446c46d3cbc2ece9968cd7f350517cc3bbbea917a25ea63",
         "current_sha256": "39f246774c8a75324446c46d3cbc2ece9968cd7f350517cc3bbbea917a25ea63"
       },
       {
         "profile": "review_conflict",
-        "path": "skills/story-codex-write/references/drama.md",
+        "path": "skills/story-skill-write/references/drama.md",
         "matches": true,
         "recorded_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
         "current_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f"
@@ -6115,7 +6115,7 @@
   },
   "package": {
     "status": "passed",
-    "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/story-codex-0.5.1.zip",
+    "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/story-skill-0.5.1.zip",
     "version": "0.5.1",
     "sha256": "419aa4277c609c5626862cdf5a78c6d6f7d67bbef17d018f53ad64dea225900c",
     "bytes": 109889,

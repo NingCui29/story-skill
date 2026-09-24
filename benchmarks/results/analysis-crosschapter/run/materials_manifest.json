@@ -16,17 +16,17 @@
   },
   {
     "name": "analysis_skill",
-    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex-analyze/SKILL.md",
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill-analyze/SKILL.md",
     "sha256": "ce6fe0be2ca7b51824c46e9c0516d70174eedb1c53a81e876afd1be832fa8725"
   },
   {
     "name": "shared_skill",
-    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex/SKILL.md",
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill/SKILL.md",
     "sha256": "27414c93216c0b26490c06d6c65ba84ca0454bd4babae47570ac28becfbb6022"
   },
   {
     "name": "deep_reading",
-    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex-analyze/references/deep-reading.md",
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill-analyze/references/deep-reading.md",
     "sha256": "a41fc259d192a81e3ae4da1579892e922d9a8f5d269929315ec9f9d6a6d8db0c"
   }
 ]

@@ -5,37 +5,37 @@
   "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.3.0",
   "package": {
     "ok": true,
-    "name": "@cuinings/story-codex",
+    "name": "@cuinings/story-skill",
     "version": "0.3.0",
-    "tarball": "D:\\Developer\\WorkSpace\\story-skill\\dist\\audit-legacy-packages\\build\\cuinings-story-codex-0.3.0.tgz",
+    "tarball": "D:\\Developer\\WorkSpace\\story-skill\\dist\\audit-legacy-packages\\build\\cuinings-story-skill-0.3.0.tgz",
     "sha256": "cb9fdf2859e7c478b89edc662e5b1662f3323d98199791862b64e6dee610a589",
     "integrity": "sha512-EtyMbdWq4Wbb+1yba9YKgPyaVdUhmxN4VEPEPDDX64AQYErZFpq7DwOCgk22tO0vSh0COALn3zZs1hRdPFzPRA==",
     "bytes": 70295,
     "registry": "https://npm.pkg.github.com",
     "archive_sha256": "9e72497995e2269066fe3222a004be353fbb3f014af7a842745505dec5612948",
     "payload_manifest": {
-      "story-codex/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
-      "story-codex/SKILL.md": "9cf15c3be01ca827d744756d2ac4d9455c4a1e792020cac6cd5ed5d27814ffc6",
-      "story-codex/agents/openai.yaml": "d34634e53f6f55985a8c86e9370a2300c700398725c64bed354eb8a9ec9d9eee",
-      "story-codex/references/analyze.md": "06684da84cef9f12e93c76cc3d34289c9f82378984185a097d02272605c43af0",
-      "story-codex/references/long-form.md": "0a2709b5c56e52630577b53af4ba6bbb37bcadd8e9e34801ee069db10b7c3256",
-      "story-codex/references/research.md": "2ccd803f66b12ce456c2b13a7b51a0ba927e26280509cb82a7fb832cca0c7a2c",
-      "story-codex/references/revise.md": "94785089b348e56043ba55da0487c883dcb0aa5e4d93fd024600042993e527b5",
-      "story-codex/references/write.md": "f1adc541a4072e4710ad319270c0589f36b768d4d1976457f4a9d8c3de749be9",
-      "story-codex/scripts/story.py": "b390723cd2de0cd06e269dc337dc4e531d857e5449ffa24e3992d8cf9d52b062",
-      "story-codex/scripts/story_history.py": "0ac81506a47ece5b33da91db2000a8ff5c935a9afb9f4243abb6230be381548f",
-      "story-codex/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
-      "story-codex/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
-      "story-codex/scripts/story_world.py": "ea14f42d8defcb6a59f9d60499bad9705bc5966b50d48296b11c71895e8e3c92"
+      "story-skill/LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
+      "story-skill/SKILL.md": "9cf15c3be01ca827d744756d2ac4d9455c4a1e792020cac6cd5ed5d27814ffc6",
+      "story-skill/agents/openai.yaml": "d34634e53f6f55985a8c86e9370a2300c700398725c64bed354eb8a9ec9d9eee",
+      "story-skill/references/analyze.md": "06684da84cef9f12e93c76cc3d34289c9f82378984185a097d02272605c43af0",
+      "story-skill/references/long-form.md": "0a2709b5c56e52630577b53af4ba6bbb37bcadd8e9e34801ee069db10b7c3256",
+      "story-skill/references/research.md": "2ccd803f66b12ce456c2b13a7b51a0ba927e26280509cb82a7fb832cca0c7a2c",
+      "story-skill/references/revise.md": "94785089b348e56043ba55da0487c883dcb0aa5e4d93fd024600042993e527b5",
+      "story-skill/references/write.md": "f1adc541a4072e4710ad319270c0589f36b768d4d1976457f4a9d8c3de749be9",
+      "story-skill/scripts/story.py": "b390723cd2de0cd06e269dc337dc4e531d857e5449ffa24e3992d8cf9d52b062",
+      "story-skill/scripts/story_history.py": "0ac81506a47ece5b33da91db2000a8ff5c935a9afb9f4243abb6230be381548f",
+      "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "story-skill/scripts/story_world.py": "ea14f42d8defcb6a59f9d60499bad9705bc5966b50d48296b11c71895e8e3c92"
     },
     "wrapper_manifest": {
       "package.json": "da354ce0b6d066562b308ae94421266bf9b3424f6e344efb22e0b12847ccb086",
       "README.md": "8e1927337054a60d02a67a2b4e177c44ccc531c77af61bf3ad8a8d6005a5c957"
     },
     "package_manifest": {
-      "name": "@cuinings/story-codex",
+      "name": "@cuinings/story-skill",
       "version": "0.3.0",
-      "description": "Complete Story Codex skill content for Chinese novel writing and review",
+      "description": "Complete Story Skill skill content for Chinese novel writing and review",
       "license": "MIT",
       "repository": {
         "type": "git",
@@ -46,19 +46,19 @@
         "registry": "https://npm.pkg.github.com"
       },
       "files": [
-        "story-codex/LICENSE",
-        "story-codex/SKILL.md",
-        "story-codex/agents/openai.yaml",
-        "story-codex/references/analyze.md",
-        "story-codex/references/long-form.md",
-        "story-codex/references/research.md",
-        "story-codex/references/revise.md",
-        "story-codex/references/write.md",
-        "story-codex/scripts/story.py",
-        "story-codex/scripts/story_history.py",
-        "story-codex/scripts/story_search.py",
-        "story-codex/scripts/story_storage.py",
-        "story-codex/scripts/story_world.py"
+        "story-skill/LICENSE",
+        "story-skill/SKILL.md",
+        "story-skill/agents/openai.yaml",
+        "story-skill/references/analyze.md",
+        "story-skill/references/long-form.md",
+        "story-skill/references/research.md",
+        "story-skill/references/revise.md",
+        "story-skill/references/write.md",
+        "story-skill/scripts/story.py",
+        "story-skill/scripts/story_history.py",
+        "story-skill/scripts/story_search.py",
+        "story-skill/scripts/story_storage.py",
+        "story-skill/scripts/story_world.py"
       ]
     }
   },
@@ -67,7 +67,7 @@
     "ok": true,
     "commands": 4,
     "skills": [
-      "story-codex"
+      "story-skill"
     ],
     "skill_files": 13,
     "temporary_book_removed": true

@@ -17,48 +17,28 @@ import tarfile
 import tempfile
 import zipfile
 
-NAME = "@ningcui29/story-codex"
+NAME = "@ningcui29/story-skill"
 REGISTRY = "https://npm.pkg.github.com"
 REPOSITORY = "https://github.com/NingCui29/story-skill.git"
-LEGACY_NAME = "@cuinings/story-codex"
-LEGACY_REPOSITORY = "https://github.com/Cuinings/story-skill.git"
-PAYLOAD_FILES = tuple("story-codex/" + name for name in (
-    "LICENSE", "SKILL.md", "agents/openai.yaml", "references/analyze.md",
-    "references/long-form.md", "references/research.md", "references/revise.md",
-    "references/write.md", "scripts/story.py", "scripts/story_history.py",
-    "scripts/story_search.py", "scripts/story_storage.py", "scripts/story_world.py",
-))
-LEGACY_SKILL_NAMES = ("story-codex", "story-codex-plan", "story-codex-write", "story-codex-analyze",
-               "story-codex-review", "story-codex-research", "story-codex-cover")
-SKILL_NAMES = LEGACY_SKILL_NAMES + ("story-codex-publish",)
-LEGACY_SUITE_FILES = tuple(sorted(
-    [f"{name}/{relative}" for name in LEGACY_SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
-    + ["story-codex/scripts/" + name for name in (
-        "story.py", "story_history.py", "story_search.py", "story_storage.py", "story_world.py")]
-    + ["story-codex/references/project-state.md", "story-codex-write/references/chapter.md",
-       "story-codex-write/references/long-form.md", "story-codex-write/references/drama.md",
-       "story-codex-review/references/history.md"]))
-SUITE_FILES = tuple(sorted(LEGACY_SUITE_FILES + (
-    "story-codex-analyze/references/deep-reading.md",
-    "story-codex-analyze/references/examples.md")))
-TAGGED_SUITE_FILES = tuple(sorted(SUITE_FILES + (
-    "story-codex-plan/references/fanqie-tags.md",)))
-PUBLISH_SUITE_FILES = tuple(sorted(TAGGED_SUITE_FILES + (
-    "story-codex-publish/LICENSE", "story-codex-publish/SKILL.md",
-    "story-codex-publish/agents/openai.yaml", "story-codex/scripts/story_publish.py")))
+SKILL_NAMES = ("story-skill", "story-skill-plan", "story-skill-write", "story-skill-analyze",
+               "story-skill-review", "story-skill-research", "story-skill-cover", "story-skill-publish")
+SUITE_FILES = tuple(sorted(
+    [f"{name}/{relative}" for name in SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
+    + ["story-skill/scripts/" + name for name in (
+        "story.py", "story_history.py", "story_search.py", "story_storage.py", "story_world.py",
+        "story_publish.py")]
+    + ["story-skill/references/project-state.md", "story-skill-write/references/chapter.md",
+       "story-skill-write/references/long-form.md", "story-skill-write/references/drama.md",
+       "story-skill-review/references/history.md",
+    "story-skill-analyze/references/deep-reading.md",
+    "story-skill-analyze/references/examples.md",
+    "story-skill-plan/references/fanqie-tags.md"]))
 MAX_BYTES = 256 * 1024 * 1024
 
 
 def payload_files(version):
-    if version == "0.3.0":
-        return PAYLOAD_FILES
-    if re.fullmatch(r"0\.4\.(?:0|[1-9][0-9]*)", version) or version == "0.5.0":
-        return LEGACY_SUITE_FILES
-    patch = re.fullmatch(r"0\.5\.([1-9][0-9]*)", version)
-    if patch:
-        if int(patch.group(1)) >= 11:
-            return PUBLISH_SUITE_FILES
-        return TAGGED_SUITE_FILES if int(patch.group(1)) >= 7 else SUITE_FILES
+    if re.fullmatch(r"0\.6\.(?:0|[1-9][0-9]*)", version):
+        return SUITE_FILES
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -70,7 +50,7 @@ def skill_names(version):
 
 def package_identity(version):
     payload_files(version)
-    return (LEGACY_NAME, LEGACY_REPOSITORY) if version == "0.3.0" else (NAME, REPOSITORY)
+    return NAME, REPOSITORY
 
 
 def sha256(raw):
@@ -107,9 +87,7 @@ def read_release(archive, sha256_file):
     with zipfile.ZipFile(io.BytesIO(raw)) as bundle:
         members = bundle.infolist()
         names = [member.filename for member in members]
-        layouts = (set(PAYLOAD_FILES), set(LEGACY_SUITE_FILES), set(SUITE_FILES),
-                   set(TAGGED_SUITE_FILES), set(PUBLISH_SUITE_FILES))
-        if len(names) != len(set(names)) or set(names) not in layouts:
+        if len(names) != len(set(names)) or set(names) != set(SUITE_FILES):
             raise ValueError("Release ZIP must contain exactly a reviewed skill file list, without duplicates")
         if sum(member.file_size for member in members) > MAX_BYTES:
             raise ValueError("Release ZIP payload is too large")
@@ -118,10 +96,10 @@ def read_release(archive, sha256_file):
             if member.is_dir() or kind not in (0, stat.S_IFREG):
                 raise ValueError(f"Release ZIP contains a linked or special member: {member.filename}")
         payload = {name: bundle.read(name) for name in sorted(names)}
-    version = version_from_source(payload["story-codex/scripts/story.py"])
+    version = version_from_source(payload["story-skill/scripts/story.py"])
     if set(payload) != set(payload_files(version)):
         raise ValueError("Release ZIP file list does not match its version's reviewed layout")
-    if archive.name != f"story-codex-{version}.zip":
+    if archive.name != f"story-skill-{version}.zip":
         raise ValueError("Release ZIP filename differs from its runtime VERSION")
     return payload, version, sha256(raw)
 
@@ -131,7 +109,7 @@ def wrapper_files(version):
     name, repository = package_identity(version)
     manifest = {
         "name": name, "version": version,
-        "description": "Complete Story Codex skill content for Chinese novel writing and review",
+        "description": "Eight Story Skill skills for Chinese novel writing, review and publication preparation",
         "license": "MIT",
         "repository": {"type": "git", "url": repository},
         "homepage": repository.removesuffix(".git") + "#readme",
@@ -139,75 +117,25 @@ def wrapper_files(version):
         "files": list(files),
     }
     readme = (
-        f"# Story Codex {version}\n\n"
-        "This npm package contains the complete skill in `story-codex/`. "
-        "Its 13 skill files preserve the exact bytes of the matching GitHub Release ZIP.\n\n"
-        "npm is a content distribution channel; installing this package does not register "
-        "the skill with Codex. The original Git-based skill installation remains recommended. "
-        "In Codex, ask:\n\n"
-        "```text\n"
-        "使用 skill-installer 安装 https://github.com/Cuinings/story-skill/tree/"
-        f"v{version}/.agents/skills/story-codex\n"
-        "```\n\n"
-        "Alternatively, copy the complete `story-codex/` directory to your project's "
-        "`.agents/skills/` using the repository's documented installation procedure. "
-        "The Python runtime is `story-codex/scripts/story.py`; npm does not install Python.\n\n"
+        f"# Story Skill {version}\n\n"
+        "This npm package contains eight sibling skills: "
+        + ", ".join(f"`{skill}/`" for skill in SKILL_NAMES) + ". "
+        + f"Its {len(files)} skill files preserve the exact bytes of the matching GitHub Release ZIP.\n\n"
+        "npm distributes content; installing this package does not register skills with the host app. "
+        "Copy all eight complete skill directories into your project's `.agents/skills/`, "
+        "or follow the repository's managed installation instructions. "
+        "Do not copy only an individual task skill: its shared runtime is required.\n\n"
+        "For macOS, Linux and Windows, ask:\n\n```text\n"
+        f"$skill-installer 按 https://github.com/NingCui29/story-skill/blob/v{version}/INSTALL.md "
+        f"安装或升级 Story Skill，固定使用 v{version}。\n```\n\n"
+        "The shared Python runtime is `story-skill/scripts/story.py`; npm does not install Python. "
+        "Project data and novels belong outside the skill installation directory.\n\n"
+        "The publication skill prepares local snapshots and records only; it does not log in to "
+        "author platforms, upload chapters or publish them remotely.\n\n"
         "GitHub Packages npm downloads require authentication. "
-        "See https://github.com/Cuinings/story-skill for setup and update instructions.\n\n"
-        "License: MIT; the complete license is in `story-codex/LICENSE`.\n"
+        "See https://github.com/NingCui29/story-skill for setup and update instructions.\n\n"
+        "License: MIT; each skill contains its complete `LICENSE`.\n"
     )
-    if version != "0.3.0":
-        manifest["description"] = "Complete seven-skill Story Codex suite for Chinese novel writing and review"
-        readme = (
-            f"# Story Codex {version}\n\n"
-            "This npm package contains seven sibling skills: "
-            + ", ".join(f"`{name}/`" for name in LEGACY_SKILL_NAMES) + ". "
-            f"Its {len(files)} skill files preserve the exact bytes of the matching GitHub Release ZIP.\n\n"
-            "npm distributes content; it does not register skills with Codex. "
-            "Copy all seven complete skill directories into your project's `.agents/skills/`, "
-            "or follow the repository's managed suite installation instructions. "
-            "Do not copy only an individual task skill: its shared runtime is required.\n\n"
-            "In Codex, ask:\n\n```text\n"
-            f"使用 skill-installer 从 https://github.com/NingCui29/story-skill/tree/v{version}/skills "
-            "安装全部七个技能目录：" + "、".join(LEGACY_SKILL_NAMES) + "。\n```\n\n"
-            "The shared Python runtime is `story-codex/scripts/story.py`; npm does not install Python. "
-            "Project data and novels belong outside the skill installation directory.\n\n"
-            "GitHub Packages npm downloads require authentication. "
-            "See https://github.com/NingCui29/story-skill for setup and update instructions.\n\n"
-            "License: MIT; each skill contains its complete `LICENSE`.\n"
-        )
-    if version.startswith("0.5."):
-        previous_request = (f"使用 skill-installer 从 https://github.com/NingCui29/story-skill/tree/v{version}/skills "
-                            "安装全部七个技能目录：" + "、".join(LEGACY_SKILL_NAMES) + "。")
-        readme = readme.replace(previous_request,
-            "$skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md "
-            f"安装或升级 Story Codex，固定使用 v{version}。")
-    patch = re.fullmatch(r"0\.5\.([1-9][0-9]*)", version)
-    if patch and int(patch.group(1)) < 10:
-        readme = readme.replace("In Codex, ask:", "For macOS/Linux, in Codex, ask:")
-        readme = readme.replace("The shared Python runtime is", (
-            f"Platform scope: v{version} is released for macOS/Linux. Windows manuscript and report "
-            "export still has the known WinError 32 limitation; Windows users should retain "
-            "the verified v0.4.0 suite. Do not automatically downgrade a book already processed "
-            "by v0.5.x; preserve the complete book and skill backup first.\n\n"
-            "The shared Python runtime is"))
-    elif patch:
-        readme = readme.replace("In Codex, ask:", "For macOS, Linux and Windows, in Codex, ask:")
-        readme = readme.replace("The shared Python runtime is", (
-            "Platform scope: macOS, Linux and Windows. Consult the matching release verification "
-            "for the tested environments and remaining limitations. Preserve a complete book "
-            "and skill backup before upgrading.\n\n"
-            "The shared Python runtime is"))
-    if files == PUBLISH_SUITE_FILES:
-        manifest["description"] = (
-            "Complete eight-skill Story Codex suite for Chinese novel writing, review and offline publication preparation")
-        readme = readme.replace("seven sibling skills", "eight sibling skills")
-        readme = readme.replace("all seven complete skill directories", "all eight complete skill directories")
-        readme = readme.replace("`story-codex-cover/`. ", "`story-codex-cover/`, `story-codex-publish/`. ")
-        readme = readme.replace("Project data and novels belong outside the skill installation directory.", (
-            "Project data and novels belong outside the skill installation directory.\n\n"
-            "The publication skill prepares local publication snapshots and records only; "
-            "it does not log in to author platforms, upload chapters or publish them remotely."))
     return manifest, {
         "package.json": (json.dumps(manifest, ensure_ascii=False, indent=2) + "\n").encode("utf-8"),
         "README.md": readme.encode("utf-8"),
@@ -331,7 +259,7 @@ def main(argv=None):
     subparsers = parser.add_subparsers(dest="command", required=True)
     for name in ("build", "verify"):
         command = subparsers.add_parser(name)
-        command.add_argument("--archive", required=True, help="Published story-codex-<version>.zip")
+        command.add_argument("--archive", required=True, help="Published story-skill-<version>.zip")
         command.add_argument("--sha256-file", required=True, help="Published SHA256 file naming the ZIP")
         if name == "build":
             command.add_argument("--output-dir", required=True)

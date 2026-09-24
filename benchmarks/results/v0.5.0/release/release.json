@@ -28,7 +28,7 @@
   "node_id": "RE_kwDOUR8APM4XArSm",
   "tag_name": "v0.5.0",
   "target_commitish": "main",
-  "name": "Story Codex v0.5.0（macOS/Linux）",
+  "name": "Story Skill v0.5.0（macOS/Linux）",
   "draft": false,
   "immutable": false,
   "prerelease": false,
@@ -40,7 +40,7 @@
       "url": "https://api.github.com/repos/NingCui29/story-skill/releases/assets/554421290",
       "id": 554421290,
       "node_id": "RA_kwDOUR8APM4hC8wq",
-      "name": "story-codex-0.5.0.zip",
+      "name": "story-skill-0.5.0.zip",
       "label": "",
       "uploader": {
         "login": "NingCui29",
@@ -70,13 +70,13 @@
       "download_count": 0,
       "created_at": "2026-09-10T06:37:54Z",
       "updated_at": "2026-09-10T06:37:54Z",
-      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.0/story-codex-0.5.0.zip"
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.0/story-skill-0.5.0.zip"
     },
     {
       "url": "https://api.github.com/repos/NingCui29/story-skill/releases/assets/554421302",
       "id": 554421302,
       "node_id": "RA_kwDOUR8APM4hC8w2",
-      "name": "story-codex-0.5.0.zip.sha256",
+      "name": "story-skill-0.5.0.zip.sha256",
       "label": "",
       "uploader": {
         "login": "NingCui29",
@@ -106,10 +106,10 @@
       "download_count": 0,
       "created_at": "2026-09-10T06:37:54Z",
       "updated_at": "2026-09-10T06:37:54Z",
-      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.0/story-codex-0.5.0.zip.sha256"
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.0/story-skill-0.5.0.zip.sha256"
     }
   ],
   "tarball_url": "https://api.github.com/repos/NingCui29/story-skill/tarball/v0.5.0",
   "zipball_url": "https://api.github.com/repos/NingCui29/story-skill/zipball/v0.5.0",
-  "body": "正文按具名分卷保存，卷目录必须带卷名，章节文件名统一为 `第X章 章节名称.md`：\n\n```text\nchapters/第一卷 雨夜/第1章 雨中来客.md\nchapters/第二卷 归途/第2章 旧站重逢.md\n```\n\n**本版当前推荐 macOS/Linux。Windows 检查尚未通过：正文或拆文报告导出可能因文件共享锁冲突保持待恢复状态，Windows 用户请暂缓升级，继续使用现有 v0.4.0。数据库提交成功不表示文件已交付。**\n\n- 新写、导入、修订统一检查卷名和章名；已有旧章继续按登记路径读取，不自动批量迁移。\n- 改进章节改名、外部改稿、硬链接和导出中断后的版本保留与恢复；查询回执返回实际正文路径。\n- 新建书库的 88 条建表语句与初始信息在同一事务内完成，保留原有持久化设置，增加中断回滚验证。\n- 更新全部 7 个技能入口、安装指引、使用文档、版本信息和本版验证记录。\n\nmacOS 本地验收完成 **379 项测试（372 项通过、7 项平台专用测试跳过），12 项整包检查全部通过**。Linux 回归、打包及三类 CLI 演练通过；Windows 的失败记录与限制如实保留。百万／千万字合成容量四种组合、v0.4.0 整套升级 18 项检查通过。\n\n下载 `story-codex-0.5.0.zip` 与同名 `.zip.sha256` 校验文件。套件包含 7 个同级技能、31 个文件。安装或升级请使用 [统一安装指引](https://github.com/NingCui29/story-skill/blob/main/INSTALL.md)，保留现有安装的备份和本地修改。\n\nZIP SHA-256：`d65504d907110ad59fa465566f7374991a216c03cdd42edc81b19ddcc87810a8`\n\n[完整版本说明](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.5.0.md) · [发布验证记录](https://github.com/NingCui29/story-skill/blob/main/docs/github-release.md)\n\n容量结果为合成夹具验证；schema 1 迁移使用固定旧版工具生成的三类夹具，本次未重验缺失的历史实书。指令 token 只统计冷加载指令，不等同于账户用量或文学质量。\n"
+  "body": "正文按具名分卷保存，卷目录必须带卷名，章节文件名统一为 `第X章 章节名称.md`：\n\n```text\nchapters/第一卷 雨夜/第1章 雨中来客.md\nchapters/第二卷 归途/第2章 旧站重逢.md\n```\n\n**本版当前推荐 macOS/Linux。Windows 检查尚未通过：正文或拆文报告导出可能因文件共享锁冲突保持待恢复状态，Windows 用户请暂缓升级，继续使用现有 v0.4.0。数据库提交成功不表示文件已交付。**\n\n- 新写、导入、修订统一检查卷名和章名；已有旧章继续按登记路径读取，不自动批量迁移。\n- 改进章节改名、外部改稿、硬链接和导出中断后的版本保留与恢复；查询回执返回实际正文路径。\n- 新建书库的 88 条建表语句与初始信息在同一事务内完成，保留原有持久化设置，增加中断回滚验证。\n- 更新全部 7 个技能入口、安装指引、使用文档、版本信息和本版验证记录。\n\nmacOS 本地验收完成 **379 项测试（372 项通过、7 项平台专用测试跳过），12 项整包检查全部通过**。Linux 回归、打包及三类 CLI 演练通过；Windows 的失败记录与限制如实保留。百万／千万字合成容量四种组合、v0.4.0 整套升级 18 项检查通过。\n\n下载 `story-skill-0.5.0.zip` 与同名 `.zip.sha256` 校验文件。套件包含 7 个同级技能、31 个文件。安装或升级请使用 [统一安装指引](https://github.com/NingCui29/story-skill/blob/main/INSTALL.md)，保留现有安装的备份和本地修改。\n\nZIP SHA-256：`d65504d907110ad59fa465566f7374991a216c03cdd42edc81b19ddcc87810a8`\n\n[完整版本说明](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.5.0.md) · [发布验证记录](https://github.com/NingCui29/story-skill/blob/main/docs/github-release.md)\n\n容量结果为合成夹具验证；schema 1 迁移使用固定旧版工具生成的三类夹具，本次未重验缺失的历史实书。指令 token 只统计冷加载指令，不等同于账户用量或文学质量。\n"
 }

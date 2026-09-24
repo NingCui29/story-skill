@@ -1,7 +1,12 @@
-# Historical migration fixture
+# Schema 1 migration fixture
 
-`story-codex-0.2.0.zip` is the unchanged local Story Codex 0.2.0 skill archive retained before the schema 2 migration. Its MIT license is inside the ZIP. It is a test input, not the current installable skill or a newly published GitHub Release.
+`schema1_runtime.py` preserves the version 0.2.0 schema 1 behavior needed to
+create representative books for migration and rollback tests. Two user-facing
+brand strings were updated; database and export logic are unchanged. The fixture
+is source code under the repository's MIT license and is never included in an
+installable release package.
 
-SHA-256: `efdfd997ecac9564fc737b22df8969c7770858a354084132c7d1ce274486a37e` (29,325 bytes).
-
-`test_long_storage.py` checks this digest before loading the old runtime to create authentic schema 1 books. Keeping the fixture in the repository makes migration unit tests runnable in a fresh checkout; it replaces the test's dependency on ignored local `dist/` content. Historical real-book capacity/migration probes remain separate from these unit tests.
+SHA-256: `70c8a0294d72103cb2232834ac951f30abef6ab20e940cb0303aca1858910cb3`
+(64,267 bytes). Tests verify the digest before loading the fixture. This keeps
+schema migration tests runnable in a fresh checkout without relying on ignored
+local build artifacts.

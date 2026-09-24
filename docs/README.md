@@ -1,19 +1,21 @@
-# Story Codex 文档导航
+# Story Skill 文档导航
 
-当前已发布版本：[**v0.5.11**](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11)。完整套件有 8 个技能、38 个载荷文件，小说书库沿用 schema 2；新增的[发布准备技能](../skills/story-codex-publish/SKILL.md)使用独立的本地账本，只准备和复核离线材料，不上传、提交或排期平台章节。[功能边界](platform-publishing.md) · [安装指引](../INSTALL.md)
+[历史资料名称替换说明](../benchmarks/NAME_REDACTION.md)：旧版路径和哈希可能无法以遮盖后的快照复验。
+
+本页的新命名源码入口对应 **v0.6.0**，8 个技能共有 38 个载荷文件；远程可用性以该版 Release 附件及回下载验证为准。[v0.5.11](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11) 是历史固定版，其目录和分发身份保持当时原样。当前源码的[发布准备技能](../skills/story-skill-publish/SKILL.md)使用独立本地记录，只准备和复核离线材料，不上传、提交或排期平台章节。[v0.6.0 说明](releases/v0.6.0.md) · [功能边界](platform-publishing.md) · [安装指引](../INSTALL.md)
 
 v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Windows 导出修复仍适用；当版工程、固定标签、Release、CI 和 Packages 的已核验范围见[历史记录](../benchmarks/results/v0.5.10/README.md)。v0.5.11 的远端分发与跨平台结果见[本版验证目录](../benchmarks/results/v0.5.11/README.md)和[发布记录](github-release.md)，不沿用旧版的验证结论。
 
 使用说明见 [从拆书开始，新起一本书](../README.md#从拆书开始新起一本书)、[大纲细纲怎样保存](中文小说上手.md#大纲细纲怎样保存)、[离线发布准备](中文小说上手.md#章节离线发布准备)、[超长篇实操](超长篇实操.md)和[恢复流程](recovery.md)。
 
-本文当前用法对应 v0.5.11；macOS、Linux 和 Windows 均按 [INSTALL.md](../INSTALL.md) 核对固定标签与附件。各平台验证范围以实际记录为准，不将 v0.5.10 的 Windows CI 结果推定为新版结果。升级前保留完整书库和本地技能修改，仓库发布不会自动更新本机安装。
+本文技能入口与源码路径对应 v0.6.0；v0.5.11 固定标签不提供这些新名称入口。是否能从远端安装，按 v0.6.0 Release 附件及回下载验证判定。正式版按 [INSTALL.md](../INSTALL.md) 核对实际标签与附件；各平台验证范围以当版记录为准。升级前保留完整书库和本地技能修改，仓库发布不会自动更新本机安装。
 
 ## 开始使用
 
-安装或升级都在 Codex 对话框发送同一行，由 Codex 读取指引并调用官方安装脚本：
+需要安装或升级时，可在当前应用中发送以下请求；安装指引会先核对 v0.6.0 Release 附件和回下载结果，条件未满足则保留现有安装：
 
 ```text
-$skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Codex
+$skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill
 ```
 
 | 要做的事 | 阅读文档 |
@@ -34,7 +36,7 @@ $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.
 
 | 内容 | 已完成的范围与入口 |
 |---|---|
-| 开篇点评、完整深读与分析修订 | [深读入口与评估汇总](作品深读与评估.md)，可直接通过 `story-codex-analyze` 使用 |
+| 开篇点评、完整深读与分析修订 | [深读入口与评估汇总](作品深读与评估.md)，可直接通过 `story-skill-analyze` 使用 |
 | 合成短文与完整真实短篇 | [第一轮](../benchmarks/results/analysis-depth/README.md) 和 [第二轮](../benchmarks/results/analysis-real/README.md) 保留匿名模型评阅、分歧及原始材料 |
 | 分析稿修订和迁移试用 | [语义修订](../benchmarks/results/analysis-revision/README.md) 与 [恢复试用](../benchmarks/results/analysis-followup/README.md) 保留旧定稿及独立新稿 |
 | 完整九章的跨章分析 | [《阿Q正傳》试用](../benchmarks/results/analysis-crosschapter/README.md)：14 块、64 条逐块引文核对通过；独立模型评阅未提出必须修改项，两项可选措辞另存澄清稿 |
@@ -42,7 +44,7 @@ $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.
 | 阅读承诺、正文详略和跨章审稿的开发比较 | [三题实际结果](../benchmarks/results/quality-focus-2026-09-11/README.md)：规划持平、正文略偏初版候选、跨章审稿略偏旧版；最终措辞仅语义复核，不证明稳定提升 |
 | 人物选择指导续修 | [2026-09-19 独立试用](../benchmarks/results/quality-followup-2026-09-19/README.md)：补充欲望与性情对选择的影响，保留新旧原始稿件与适用边界 |
 | 试写、局部设计与修订分流 | [独立试写](../benchmarks/results/standalone-writing-2026-09-19/README.md)与[审稿分流](../benchmarks/results/review-routing-2026-09-19/README.md)：区分独立片段、新章草稿和已提交章节，沿本次授权处理 |
-| 正文纯文本与对白分段 | [成稿格式](../skills/story-codex-write/references/drama.md#成稿格式)：段间空一行，换人默认换段，紧密动作与短对白可同段；[章节流程](../skills/story-codex-write/references/chapter.md)保留 `.md` 文件名，旧章不自动转换 |
+| 正文纯文本与对白分段 | [成稿格式](../skills/story-skill-write/references/drama.md#成稿格式)：段间空一行，换人默认换段，紧密动作与短对白可同段；[章节流程](../skills/story-skill-write/references/chapter.md)保留 `.md` 文件名，旧章不自动转换 |
 | 短篇完整交付与后续修订 | [完整短篇流程](中文小说上手.md#写完整短篇)：全文、实际封面和现行总纲分类；已有全文随正式导出同步，纯审稿不自动写入 |
 | 章节离线发布准备 | [发布准备流程](中文小说上手.md#章节离线发布准备)：冻结已审查正式章、导出并复核本地材料包；作者副本比较仍不代表平台已保存 |
 | 全书审查与中文校对 | [本版指导修订](中文冲突与看点.md#v0510-指导修订)：区分完本审查、普通单章和局部校对，保留叙述规则及有依据的人物口语；尚无本轮新文学实测 |

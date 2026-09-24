@@ -2,13 +2,13 @@
   "ok": true,
   "commands": 4,
   "skills": [
-    "story-codex",
-    "story-codex-analyze",
-    "story-codex-cover",
-    "story-codex-plan",
-    "story-codex-research",
-    "story-codex-review",
-    "story-codex-write"
+    "story-skill",
+    "story-skill-analyze",
+    "story-skill-cover",
+    "story-skill-plan",
+    "story-skill-research",
+    "story-skill-review",
+    "story-skill-write"
   ],
   "skill_files": 34,
   "temporary_book_removed": true

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Story Codex · 发布准备"
-  short_description: "核对正式章节并准备七猫或番茄草稿材料，保存固定快照和本地发布清单"
-  default_prompt: "使用 $story-codex-publish 为指定作品和章节准备发布材料，检查正式稿资格并说明平台上传状态。"

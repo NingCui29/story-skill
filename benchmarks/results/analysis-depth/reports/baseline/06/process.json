@@ -1,7 +1,7 @@
 {
   "skills_read": [
-    "story-codex-analyze/SKILL.md",
-    "story-codex/SKILL.md"
+    "story-skill-analyze/SKILL.md",
+    "story-skill/SKILL.md"
   ],
   "completed": true
 }

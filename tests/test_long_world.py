@@ -9,7 +9,7 @@ from types import SimpleNamespace
 import unittest
 
 
-PATH = Path(__file__).resolve().parents[1] / "skills/story-codex/scripts/story_world.py"
+PATH = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story_world.py"
 SPEC = importlib.util.spec_from_file_location("world_behavior_tests", PATH)
 world = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(world)

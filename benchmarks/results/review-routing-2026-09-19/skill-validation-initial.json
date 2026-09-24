@@ -1,15 +1,15 @@
 {
   "ok": true,
-  "validator": "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+  "validator": "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
   "checks": [
     {
-      "skill": "story-codex",
+      "skill": "story-skill",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": ""
     },
     {
-      "skill": "story-codex-review",
+      "skill": "story-skill-review",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": ""

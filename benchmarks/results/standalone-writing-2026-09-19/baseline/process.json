@@ -2,17 +2,17 @@
   "workspace": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline",
   "request_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/request.md",
   "read_skill_and_reference_paths": [
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex-write/SKILL.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/SKILL.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex-write/references/chapter.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/references/project-state.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex-write/references/drama.md"
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill-write/SKILL.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/SKILL.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill-write/references/chapter.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/references/project-state.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill-write/references/drama.md"
   ],
   "book_tool_calls": [
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "init",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -29,7 +29,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "status",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区"
@@ -42,7 +42,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "plan",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -60,7 +60,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "context",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -78,7 +78,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "lint",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -96,7 +96,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "prepare",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -113,7 +113,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "lint",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -130,7 +130,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "prepare",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -148,7 +148,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "commit",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -168,7 +168,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "commit",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -188,7 +188,7 @@
     {
       "argv": [
         "python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-codex/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/snapshot-before/story-skill/scripts/story.py",
         "commit",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-standalone-scope-ers698wr/baseline/浅水区",
@@ -209,10 +209,10 @@
   ],
   "non_book_tool_calls": [
     {
-      "command": "python3 ../snapshot-before/story-codex/scripts/story.py --help"
+      "command": "python3 ../snapshot-before/story-skill/scripts/story.py --help"
     },
     {
-      "command": "python3 ../snapshot-before/story-codex/scripts/story.py template plan"
+      "command": "python3 ../snapshot-before/story-skill/scripts/story.py template plan"
     }
   ],
   "created_book": true,

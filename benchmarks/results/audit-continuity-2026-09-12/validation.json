@@ -74,9 +74,9 @@
     "README.md": "b6f437a86f25d9d2658679ee573585c464b55334abe078b3cc704b0cc0e87439",
     "docs/github-release.md": "e06820b36aab5888e95c5007ec01c2a25f3576e0bada2ea9b09a22e6a0337585",
     "docs/超长篇实操.md": "8f81256e22c4f30fc8c32b7069ca9c5b8dd0d470168841f0bfc1757935eb8a0a",
-    "skills/story-codex-review/references/history.md": "1dd533ef12c1074245b980320f1e836dc60f1b455b4d01fc39f1443323d8c14e",
-    "skills/story-codex-write/references/chapter.md": "69156986948bf01bc11312f14603b09d6ff0fd27e7d5de68b9e4813574e67da6",
-    "skills/story-codex-write/references/long-form.md": "2c06aea9840c5bb15ff7af78ff822cadeda04a89b388ed423d0535b541bbb7c3"
+    "skills/story-skill-review/references/history.md": "1dd533ef12c1074245b980320f1e836dc60f1b455b4d01fc39f1443323d8c14e",
+    "skills/story-skill-write/references/chapter.md": "69156986948bf01bc11312f14603b09d6ff0fd27e7d5de68b9e4813574e67da6",
+    "skills/story-skill-write/references/long-form.md": "2c06aea9840c5bb15ff7af78ff822cadeda04a89b388ed423d0535b541bbb7c3"
   },
   "limits": [
     "Executed on Intel macOS only; seven conditional skips are not passes.",

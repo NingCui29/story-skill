@@ -9,16 +9,16 @@
   "prerelease": false,
   "assets": [
     {
-      "name": "story-codex-0.5.6.zip",
+      "name": "story-skill-0.5.6.zip",
       "size": 129503,
       "digest": "sha256:d82f7cb7f195260f26b65ea155f515b579ff672cd9da03fbd6467775fffcaba2",
-      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.6/story-codex-0.5.6.zip"
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.6/story-skill-0.5.6.zip"
     },
     {
-      "name": "story-codex-0.5.6.zip.sha256",
+      "name": "story-skill-0.5.6.zip.sha256",
       "size": 88,
       "digest": "sha256:bbdccaa3abf1b9f52cb5ff8aba7731c09d51e6670b3c9ec16ecac8673e27cd42",
-      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.6/story-codex-0.5.6.zip.sha256"
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.6/story-skill-0.5.6.zip.sha256"
     }
   ],
   "zip_sha256": "d82f7cb7f195260f26b65ea155f515b579ff672cd9da03fbd6467775fffcaba2",

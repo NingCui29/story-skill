@@ -8,10 +8,9 @@ import sqlite3
 import tempfile
 import unittest
 from unittest.mock import patch
-import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("story_storage_test_runtime", ROOT / "skills/story-codex/scripts/story.py")
+SPEC = importlib.util.spec_from_file_location("story_storage_test_runtime", ROOT / "skills/story-skill/scripts/story.py")
 story = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(story)
 TEXT = "# 第1章 交钥匙\n江棠把旧钥匙交给杜承安。雨停之前，他必须回来。\n"
@@ -45,11 +44,10 @@ class LongStorageTests(unittest.TestCase):
 
     def old_book(self):
         runtime = Path(self.tmp.name) / "old.py"
-        fixture = ROOT / "tests/fixtures/story-codex-0.2.0.zip"
+        fixture = ROOT / "tests/fixtures/schema1_runtime.py"
         self.assertEqual(hashlib.sha256(fixture.read_bytes()).hexdigest(),
-                         "efdfd997ecac9564fc737b22df8969c7770858a354084132c7d1ce274486a37e")
-        with zipfile.ZipFile(fixture) as archive:
-            runtime.write_bytes(archive.read("story-codex/scripts/story.py"))
+                         "70c8a0294d72103cb2232834ac951f30abef6ab20e940cb0303aca1858910cb3")
+        runtime.write_bytes(fixture.read_bytes())
         spec = importlib.util.spec_from_file_location("old_migration_runtime", runtime)
         old = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(old)

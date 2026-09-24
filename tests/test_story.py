@@ -13,7 +13,7 @@ import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
-TOOL = ROOT / "skills/story-codex/scripts/story.py"
+TOOL = ROOT / "skills/story-skill/scripts/story.py"
 spec = importlib.util.spec_from_file_location("story", TOOL)
 story = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(story)
@@ -283,9 +283,9 @@ class StoryTests(unittest.TestCase):
         except OSError:
             if os.name != "nt":
                 self.skipTest("Link creation is unavailable")
-            environment = dict(os.environ, STORY_CODEX_TEST_LINK=str(target), STORY_CODEX_TEST_TARGET=str(external))
+            environment = dict(os.environ, STORY_SKILL_TEST_LINK=str(target), STORY_SKILL_TEST_TARGET=str(external))
             result = subprocess.run(["powershell.exe", "-NoProfile", "-NonInteractive", "-Command",
-                                     "New-Item -ItemType Junction -Path $env:STORY_CODEX_TEST_LINK -Target $env:STORY_CODEX_TEST_TARGET -ErrorAction Stop | Out-Null"],
+                                     "New-Item -ItemType Junction -Path $env:STORY_SKILL_TEST_LINK -Target $env:STORY_SKILL_TEST_TARGET -ErrorAction Stop | Out-Null"],
                                     env=environment, capture_output=True,
                                     creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             if result.returncode:

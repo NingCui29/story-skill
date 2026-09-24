@@ -87,7 +87,7 @@
   "actual_user_skills_updated": false,
   "real_novels_touched": false,
   "input_sha256": {
-    "skills/story-codex/scripts/story.py": "71ac56a32e935fc30f5a94f02164906c58814f2194ba697d74cd372413cccef8",
+    "skills/story-skill/scripts/story.py": "71ac56a32e935fc30f5a94f02164906c58814f2194ba697d74cd372413cccef8",
     "tests/test_analysis_line_endings.py": "21245060e60c734419a410587a45bbd8371bb4116963064aa3dabb7828e58b0d",
     "tests/test_analysis_read_snapshots.py": "08e8bcb21d31c27bd66d2c4eea3dee2840d3a45fb92cab50085a3576478ff7a1",
     "README.md": "4c7a83149bdd972af7e21d8c956ac59b8210bf35b39f22325a35bb5e00aa6715",

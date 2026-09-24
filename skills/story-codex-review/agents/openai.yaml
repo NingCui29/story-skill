@@ -1,6 +1,0 @@
-interface:
-  display_name: "Story Codex · 审稿修订"
-  short_description: "中文小说审稿、最小修改与去 AI 味，支持外部改稿协调和历史章节修订"
-  default_prompt: "使用 $story-codex-review 审查指定章节，以证据说明问题并完成我授权的修改。"
-policy:
-  allow_implicit_invocation: true

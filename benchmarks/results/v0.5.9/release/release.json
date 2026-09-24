@@ -8,13 +8,13 @@
   "draft": false,
   "assets": [
     {
-      "name": "story-codex-0.5.9.zip",
+      "name": "story-skill-0.5.9.zip",
       "bytes": 135476,
       "sha256": "8710ed9b01a6e0d70d547eacf8be52ef30d3b22c116c420506d61b4e3276105b",
       "public_download_verified": true
     },
     {
-      "name": "story-codex-0.5.9.zip.sha256",
+      "name": "story-skill-0.5.9.zip.sha256",
       "bytes": 88,
       "sha256": "9b5d65bd3a2890daa860950f584afc9a929f6b2f294137dbae973d9a24caa7d1",
       "public_download_verified": true

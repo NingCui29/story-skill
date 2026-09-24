@@ -2,7 +2,7 @@
   "request": "Recover the saved historical branch without the lost input file; read only, no publishing, reconstruction, rewriting, or original-book cleanup.",
   "book": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-history-2z94rt2b/book",
   "branch": "6e1c4b13f90e4cdcaef5fe9974e598b8",
-  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
   "inspection": {
     "affected": [
       {

@@ -14,10 +14,10 @@
     "self_check": "permitted in same generation",
     "provider_usage": null,
     "actual_read_paths": [
-      "story-codex/SKILL.md",
-      "story-codex-plan/SKILL.md",
-      "story-codex-review/SKILL.md",
-      "story-codex-write/references/drama.md"
+      "story-skill/SKILL.md",
+      "story-skill-plan/SKILL.md",
+      "story-skill-review/SKILL.md",
+      "story-skill-write/references/drama.md"
     ],
     "workers": {
       "before": "quality_probe_a",

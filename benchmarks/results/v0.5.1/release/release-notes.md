@@ -1,4 +1,4 @@
-# Story Codex v0.5.1
+# Story Skill v0.5.1
 
 本版完善作品深读、分析示范和分析稿修订续跑，面向 macOS／Linux。七个技能入口保持不变，完整套件增加到 33 个文件。
 
@@ -21,18 +21,18 @@ Intel macOS／Python 3.12：397 项测试中 390 项通过、7 项按条件跳�
 
 ## 安装
 
-在 Codex 发送：
+在 助手 发送：
 
 ```text
-$skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Codex
+$skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill
 ```
 
-macOS／Linux 固定 v0.5.1；Windows 固定 v0.4.0。完整技能 ZIP 为 `story-codex-0.5.1.zip`，SHA-256：
+macOS／Linux 固定 v0.5.1；Windows 固定 v0.4.0。完整技能 ZIP 为 `story-skill-0.5.1.zip`，SHA-256：
 
 ```text
 419aa4277c609c5626862cdf5a78c6d6f7d67bbef17d018f53ad64dea225900c
 ```
 
-GitHub 自动生成的 Source code ZIP 是整个源码仓库。npm 包名为 `@ningcui29/story-codex@0.5.1`，npm 本身不会注册 Codex 技能。
+GitHub 自动生成的 Source code ZIP 是整个源码仓库。npm 包名为 `@ningcui29/story-skill@0.5.1`，npm 本身不会注册 助手 技能。
 
 [版本说明](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.5.1.md) · [安装指引](https://github.com/NingCui29/story-skill/blob/main/INSTALL.md) · [逐项发布与回下载记录](https://github.com/NingCui29/story-skill/blob/main/docs/github-release.md)

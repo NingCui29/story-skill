@@ -1,41 +1,41 @@
 {
   "ok": true,
-  "validator": "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+  "validator": "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
   "dependency": "PyYAML 6.0.3 in a removed temporary directory",
   "scope": "Skill frontmatter, naming and scaffold checks; not literary quality",
   "results": [
     {
-      "skill": "story-codex",
+      "skill": "story-skill",
       "exit_code": 0,
       "result": "Skill is valid!"
     },
     {
-      "skill": "story-codex-analyze",
+      "skill": "story-skill-analyze",
       "exit_code": 0,
       "result": "Skill is valid!"
     },
     {
-      "skill": "story-codex-cover",
+      "skill": "story-skill-cover",
       "exit_code": 0,
       "result": "Skill is valid!"
     },
     {
-      "skill": "story-codex-plan",
+      "skill": "story-skill-plan",
       "exit_code": 0,
       "result": "Skill is valid!"
     },
     {
-      "skill": "story-codex-research",
+      "skill": "story-skill-research",
       "exit_code": 0,
       "result": "Skill is valid!"
     },
     {
-      "skill": "story-codex-review",
+      "skill": "story-skill-review",
       "exit_code": 0,
       "result": "Skill is valid!"
     },
     {
-      "skill": "story-codex-write",
+      "skill": "story-skill-write",
       "exit_code": 0,
       "result": "Skill is valid!"
     }

@@ -38,4 +38,4 @@
 
 完整深读静态指令为 4,518 tokens，包含按需样例时为 6,527，均比上一轮增加 403。统计包括整个共同入口与分析入口，因此也计入只在修订任务使用的段落；不代表每轮实际账户用量。[计数及文件哈希](tokens.md)
 
-本机七技能共 33 文件与当前包一致，原安装有完整备份，见 [本机同步回执](local-install.json)。当前开发 ZIP SHA256 为 `419aa4277c609c5626862cdf5a78c6d6f7d67bbef17d018f53ad64dea225900c`；上一轮开发 ZIP 原字节另存 `dist/story-codex-analysis-revision.zip`，此前回执保持原来的哈希。GitHub v0.5.0 标签和附件未变。
+本机七技能共 33 文件与当前包一致，原安装有完整备份，见 [本机同步回执](local-install.json)。当前开发 ZIP SHA256 为 `419aa4277c609c5626862cdf5a78c6d6f7d67bbef17d018f53ad64dea225900c`；上一轮开发 ZIP 原字节另存 `dist/story-skill-analysis-revision.zip`，此前回执保持原来的哈希。GitHub v0.5.0 标签和附件未变。

@@ -1338,7 +1338,7 @@
     "environment": {
       "python": "3.12.14 (main, Aug 25 2026, 13:50:22) [Clang 22.1.3 ]",
       "python_version": "3.12.14",
-      "executable": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "executable": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "platform": "macOS-15.8-x86_64-i386-64bit",
       "dont_write_bytecode": true
     },

@@ -1,7 +1,7 @@
 {
   "ok": true,
   "exit_code": 0,
-  "validator": "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+  "validator": "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
   "stdout": "Skill is valid!\n",
   "stderr": "",
   "temporary_dependency": "PyYAML 6.0.3",

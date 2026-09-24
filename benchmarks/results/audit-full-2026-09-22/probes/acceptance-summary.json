@@ -72,7 +72,7 @@
   },
   "existing_release_probe": {
     "ok": false,
-    "expected_boundary": "Retained dist/story-codex-0.5.9.zip differs from unpublished canonical source; it was not replaced.",
+    "expected_boundary": "Retained dist/story-skill-0.5.9.zip differs from unpublished canonical source; it was not replaced.",
     "failure": {
       "type": "ValueError",
       "message": "Upgrade verification failed: current_archive_matches_canonical"

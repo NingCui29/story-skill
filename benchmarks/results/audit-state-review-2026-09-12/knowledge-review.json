@@ -290,7 +290,7 @@
   },
   "ok": true,
   "reviewed_file_sha256": {
-    "skills/story-codex/scripts/story.py": "e03602bd66ac8b1399e65903dfe4a1bd0ed9af7f50cd8744413167f66450e5a5",
+    "skills/story-skill/scripts/story.py": "e03602bd66ac8b1399e65903dfe4a1bd0ed9af7f50cd8744413167f66450e5a5",
     "tests/test_world_knowledge_recall.py": "b97ef2acc09a277c0e00fc9da8d2046cf90166bde0d78841d478a9e135cc0a5e"
   }
 }

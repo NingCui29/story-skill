@@ -1,0 +1,6 @@
+interface:
+  display_name: "Story Skill · 开书规划"
+  short_description: "中文小说开书、人物设定、长短篇大纲与既有作品续写基线，保留阶段断点"
+  default_prompt: "使用 $story-skill-plan 为这本中文小说建立设定和近期大纲，先不要写正文。"
+policy:
+  allow_implicit_invocation: true

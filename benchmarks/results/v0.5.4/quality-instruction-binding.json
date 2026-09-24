@@ -3,17 +3,17 @@
   "source_record": "../quality-focus-2026-09-11/README.md",
   "scope": "Three released instruction files match final development text; blind comparison used the initial candidate, followed by a review-only wording refinement without a new blind run",
   "files": {
-    "skills/story-codex-plan/SKILL.md": {
+    "skills/story-skill-plan/SKILL.md": {
       "release_sha256": "7a5d1c1dc7763429d7e6308b1231c8b57bcb3c43d3a34212e64c4db4ea9d3e85",
       "final_development_sha256": "7a5d1c1dc7763429d7e6308b1231c8b57bcb3c43d3a34212e64c4db4ea9d3e85",
       "initial_compared_sha256": "7a5d1c1dc7763429d7e6308b1231c8b57bcb3c43d3a34212e64c4db4ea9d3e85"
     },
-    "skills/story-codex-write/references/drama.md": {
+    "skills/story-skill-write/references/drama.md": {
       "release_sha256": "6f49f0de5642c76987da48b4ebfad5ef1d14f6acc72b311ebfde2a8e8d76f7b7",
       "final_development_sha256": "6f49f0de5642c76987da48b4ebfad5ef1d14f6acc72b311ebfde2a8e8d76f7b7",
       "initial_compared_sha256": "6f49f0de5642c76987da48b4ebfad5ef1d14f6acc72b311ebfde2a8e8d76f7b7"
     },
-    "skills/story-codex-review/SKILL.md": {
+    "skills/story-skill-review/SKILL.md": {
       "release_sha256": "df8fb85320b9193c0f4ed7fba55a6a55541e1e130043cfb48c81fe96b20d9ca4",
       "final_development_sha256": "df8fb85320b9193c0f4ed7fba55a6a55541e1e130043cfb48c81fe96b20d9ca4",
       "initial_compared_sha256": "09e652e7ca97dd3e62f72da9ae6381fbbf0a3dbac5ed4cb61c5c1c3df3b74c64"

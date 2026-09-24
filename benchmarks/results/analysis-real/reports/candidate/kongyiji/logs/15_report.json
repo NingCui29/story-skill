@@ -1,7 +1,7 @@
 {
   "command": [
-    "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-codex/scripts/story.py",
+    "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-skill/scripts/story.py",
     "report",
     "--source",
     "8aa6a3e99ba280f88e8e3506a20d8367e535dacfa27c3b7b22a2f2b0e36e5133",

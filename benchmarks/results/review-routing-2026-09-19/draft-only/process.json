@@ -22,8 +22,8 @@
   "workdir": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only",
   "request_file": "../draft-only-request.md",
   "skills_read": [
-    "../snapshot-final/story-codex-review/SKILL.md",
-    "../snapshot-final/story-codex/SKILL.md"
+    "../snapshot-final/story-skill-review/SKILL.md",
+    "../snapshot-final/story-skill/SKILL.md"
   ],
   "references_read": [],
   "book_files_read": [
@@ -42,7 +42,7 @@
   },
   "book_commands": [
     {
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py status --book /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-skill/scripts/story.py status --book /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋",
       "exit_code": 0,
       "result_summary": {
         "last_chapter": 1,
@@ -55,22 +55,22 @@
       }
     },
     {
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py --help",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-skill/scripts/story.py --help",
       "exit_code": 0,
       "result_summary": "读取共享工具命令列表，确认prepare为只读审查骨架。"
     },
     {
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py lint --help",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-skill/scripts/story.py lint --help",
       "exit_code": 0,
       "result_summary": "读取lint必需参数；未单独执行lint，prepare已返回完整lint结果。"
     },
     {
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py prepare --help",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-skill/scripts/story.py prepare --help",
       "exit_code": 0,
       "result_summary": "读取prepare必需参数与只读骨架选项。"
     },
     {
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py prepare --book /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋 --chapter 1 --draft \"/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋/.story/drafts/第1章 候选.md\"",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-skill/scripts/story.py prepare --book /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋 --chapter 1 --draft \"/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋/.story/drafts/第1章 候选.md\"",
       "exit_code": 0,
       "result_summary": {
         "mode": "replace_last",
@@ -89,7 +89,7 @@
       }
     },
     {
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py context --book /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋 --chapter 1",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-skill/scripts/story.py context --book /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/draft-only/雨棚修鞋 --chapter 1",
       "exit_code": 0,
       "result_summary": {
         "mode": "replace_last",
@@ -104,7 +104,7 @@
       }
     },
     {
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-codex/scripts/story.py template delta",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B /var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-final/story-skill/scripts/story.py template delta",
       "exit_code": 0,
       "result_summary": "读取delta字段样例。"
     }

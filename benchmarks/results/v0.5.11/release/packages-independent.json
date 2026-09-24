@@ -16,9 +16,9 @@
     "checksum_matches": true
   },
   "package": {
-    "name": "@ningcui29/story-codex",
+    "name": "@ningcui29/story-skill",
     "version": "0.5.11",
-    "package_url_reported_by_actions_receipt": "https://github.com/users/NingCui29/packages/npm/package/story-codex",
+    "package_url_reported_by_actions_receipt": "https://github.com/users/NingCui29/packages/npm/package/story-skill",
     "visibility_reported_by_actions_receipt": "public",
     "linked_repository_reported_by_actions_receipt": "NingCui29/story-skill",
     "registry_identity_reported_by_actions_receipt": "github-actions[bot]",
@@ -36,27 +36,27 @@
       "package.json"
     ],
     "skills": [
-      "story-codex",
-      "story-codex-analyze",
-      "story-codex-cover",
-      "story-codex-plan",
-      "story-codex-publish",
-      "story-codex-research",
-      "story-codex-review",
-      "story-codex-write"
+      "story-skill",
+      "story-skill-analyze",
+      "story-skill-cover",
+      "story-skill-plan",
+      "story-skill-publish",
+      "story-skill-research",
+      "story-skill-review",
+      "story-skill-write"
     ],
     "runtime_smoke": {
       "ok": true,
       "commands": 4,
       "skills": [
-        "story-codex",
-        "story-codex-analyze",
-        "story-codex-cover",
-        "story-codex-plan",
-        "story-codex-publish",
-        "story-codex-research",
-        "story-codex-review",
-        "story-codex-write"
+        "story-skill",
+        "story-skill-analyze",
+        "story-skill-cover",
+        "story-skill-plan",
+        "story-skill-publish",
+        "story-skill-research",
+        "story-skill-review",
+        "story-skill-write"
       ],
       "skill_files": 38,
       "temporary_book_removed": true

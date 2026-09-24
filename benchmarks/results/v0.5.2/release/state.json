@@ -91,7 +91,7 @@
     "version": "0.5.2",
     "skills": 7,
     "files": 33,
-    "backup": "/Users/cuining/.codex/story-codex-v052-backup-jbsfjhqj"
+    "backup": "/Users/cuining/.story-skill/story-skill-v052-backup-jbsfjhqj"
   },
   "completion_scope": "Published Release, fixed tag, public package, independent downloads, official isolated installation and existing local installation update. macOS/Linux validated; known Windows CI failure retained. User novels were not accessed."
 }

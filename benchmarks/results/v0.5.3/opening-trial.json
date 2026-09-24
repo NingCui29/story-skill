@@ -6,9 +6,9 @@
     "continue existing custom book root without nesting"
   ],
   "instruction_manifest": {
-    "story-codex/SKILL.md": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
-    "story-codex/references/project-state.md": "eaa1b09d246ea95508e0354f72294add5cdf82ef47c466cea3a321af8b8f70c4",
-    "story-codex-plan/SKILL.md": "b2d213473a8f4b3988eace9aebce24ffe9409489d9ffc193494c7f21d97b63da"
+    "story-skill/SKILL.md": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
+    "story-skill/references/project-state.md": "eaa1b09d246ea95508e0354f72294add5cdf82ef47c466cea3a321af8b8f70c4",
+    "story-skill-plan/SKILL.md": "b2d213473a8f4b3988eace9aebce24ffe9409489d9ffc193494c7f21d97b63da"
   },
   "original_verification": "opening-trial/verification.json",
   "commands_and_artifacts": "opening-trial/receipts.json",

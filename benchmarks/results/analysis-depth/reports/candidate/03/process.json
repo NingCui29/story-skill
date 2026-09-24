@@ -1,8 +1,8 @@
 {
   "skill_paths_read": [
-    "story-codex-analyze/SKILL.md",
-    "story-codex/SKILL.md",
-    "story-codex-analyze/references/deep-reading.md"
+    "story-skill-analyze/SKILL.md",
+    "story-skill/SKILL.md",
+    "story-skill-analyze/references/deep-reading.md"
   ],
   "completed": true
 }

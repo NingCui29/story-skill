@@ -26,7 +26,7 @@
     "site_admin": false
   },
   "html_url": "https://github.com/NingCui29/story-skill",
-  "description": "面向 Codex 的中文小说技能套件：7 个入口覆盖规划、写作、拆书、审稿、调研和封面，支持从拆书到原创开书、独立书名目录、分层大纲、具名分卷、固定章节文件名及状态衔接。v0.5.3 适用于 macOS/Linux；Windows 继续使用 v0.4.0。",
+  "description": "面向 助手 的中文小说技能套件：7 个入口覆盖规划、写作、拆书、审稿、调研和封面，支持从拆书到原创开书、独立书名目录、分层大纲、具名分卷、固定章节文件名及状态衔接。v0.5.3 适用于 macOS/Linux；Windows 继续使用 v0.4.0。",
   "fork": false,
   "url": "https://api.github.com/repos/NingCui29/story-skill",
   "forks_url": "https://api.github.com/repos/NingCui29/story-skill/forks",

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Story Codex · 小说封面"
-  short_description: "根据书名、署名、题材和发布规格制作中文小说封面，检查文字与实际尺寸"
-  default_prompt: "使用 $story-codex-cover 按这本书的题材、书名和署名制作符合要求的封面。"
-policy:
-  allow_implicit_invocation: true

@@ -21,10 +21,10 @@ OUTPUT = Path(__file__).resolve().parent
 REPO = "NingCui29/story-skill"
 TAG = "v0.5.4"
 VERSION = "0.5.4"
-PYTHON = "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+PYTHON = "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3"
 GH = "/private/tmp/story-github-cli-anbp8wqh/gh"
-INSTALLER = Path("/Users/cuining/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py")
-GLOBAL_SKILLS = Path("/Users/cuining/.codex/skills")
+INSTALLER = Path("/Users/cuining/.story-skill/skills/.system/skill-installer/scripts/install-skill-from-github.py")
+GLOBAL_SKILLS = Path("/Users/cuining/.story-skill/skills")
 
 
 def digest(raw):
@@ -91,7 +91,7 @@ def main():
     commit_manifest = bind_commit_payload(args.expected_commit, expected_files)
     if len(expected) != 33 or package.current_version() != VERSION:
         raise ValueError("Current source is not the expected 33-file v0.5.4 suite")
-    archive_name = f"story-codex-{VERSION}.zip"
+    archive_name = f"story-skill-{VERSION}.zip"
     local_archive = ROOT / "dist" / archive_name
     local_raw = local_archive.read_bytes()
     global_before = inventory(GLOBAL_SKILLS, package.SKILL_NAMES)
@@ -106,7 +106,7 @@ def main():
     installed = {**common, "ok": False, "commands": [], "installer": {
         "path": str(INSTALLER), "sha256": digest(INSTALLER.read_bytes())}, "scope":
         "Official public fixed-tag download into a unique temporary directory; four real CLI checks after exact file verification. "
-        "No global skill installation, user novel, Codex UI discovery, Windows execution or literary quality validation."}
+        "No global skill installation, user novel, 助手 UI discovery, Windows execution or literary quality validation."}
 
     def run(report, command, env=None, timeout=180):
         started = time.monotonic()
@@ -172,7 +172,7 @@ def main():
             actual = inventory(destination, package.SKILL_NAMES)
             if actual != expected or {path.name for path in destination.iterdir()} != set(package.SKILL_NAMES):
                 raise ValueError("Official fixed-tag installation differs from Release and source")
-            tool = destination / "story-codex/scripts/story.py"
+            tool = destination / "story-skill/scripts/story.py"
             prefix = [PYTHON, "-B", "-X", "utf8", str(tool)]
             if run(installed, prefix + ["--version"], env=env).strip() != VERSION:
                 raise ValueError("Installed runtime version differs")

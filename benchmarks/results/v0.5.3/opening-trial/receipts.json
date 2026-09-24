@@ -3,9 +3,9 @@
     "label": "setup_existing_book",
     "cwd": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目",
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
-      "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+      "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
       "init",
       "--book",
       "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目/固定书根",
@@ -28,9 +28,9 @@
     "request": "在这个写作项目里开一本叫《雾港来信》的长篇，现实悬疑，先保存简短创作约定和全书粗纲，不写正文。",
     "cwd": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目",
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
-      "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+      "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
       "init",
       "--book",
       "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目/雾港来信",
@@ -64,9 +64,9 @@
     "label": "request_1_status",
     "cwd": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目",
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
-      "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+      "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
       "status",
       "--book",
       "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目/雾港来信"
@@ -80,9 +80,9 @@
     "request": "继续《旧灯》的规划，书目录就是这个项目下的 固定书根，补一句下一步安排，不写正文。",
     "cwd": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目",
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
-      "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+      "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
       "status",
       "--book",
       "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目/固定书根"
@@ -104,9 +104,9 @@
     "label": "request_2_status_after",
     "cwd": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目",
     "command": [
-      "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
       "-B",
-      "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+      "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
       "status",
       "--book",
       "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-plan-opening-trial-s8znofu0/写作项目/固定书根"

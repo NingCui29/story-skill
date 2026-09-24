@@ -2,10 +2,10 @@
   "status": "completed",
   "task_scope": "读完给定完整微型小说，修订既有点评；未扩大为书库或其他流程。",
   "skill_files_read": [
-    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-revision-p_vh67pv/after/skills/story-codex-analyze/SKILL.md",
-    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-revision-p_vh67pv/after/skills/story-codex/SKILL.md",
-    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-revision-p_vh67pv/after/skills/story-codex-analyze/references/deep-reading.md",
-    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-revision-p_vh67pv/after/skills/story-codex-analyze/references/examples.md"
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-revision-p_vh67pv/after/skills/story-skill-analyze/SKILL.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-revision-p_vh67pv/after/skills/story-skill/SKILL.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-revision-p_vh67pv/after/skills/story-skill-analyze/references/deep-reading.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-revision-p_vh67pv/after/skills/story-skill-analyze/references/examples.md"
   ],
   "input_files_read": [
     "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-revision-p_vh67pv/transfer-input/task.md",

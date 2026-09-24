@@ -333,7 +333,7 @@
       "command": [
         "/Users/cuining/.local/bin/python3.10",
         "-B",
-        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
         "status",
         "--book",
         "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例"
@@ -348,7 +348,7 @@
       "command": [
         "/Users/cuining/.local/bin/python3.10",
         "-B",
-        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
         "publish-prepare",
         "--book",
         "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例",
@@ -368,7 +368,7 @@
       "command": [
         "/Users/cuining/.local/bin/python3.10",
         "-B",
-        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
         "publish-inspect",
         "--book",
         "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例",
@@ -387,7 +387,7 @@
       "command": [
         "/Users/cuining/.local/bin/python3.10",
         "-B",
-        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
         "publish-export",
         "--book",
         "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例",
@@ -404,7 +404,7 @@
       "command": [
         "/Users/cuining/.local/bin/python3.10",
         "-B",
-        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
         "publish-inspect",
         "--book",
         "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例",
@@ -423,7 +423,7 @@
       "command": [
         "/Users/cuining/.local/bin/python3.10",
         "-B",
-        "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
         "status",
         "--book",
         "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/publish-export-real-size-fcsuxshe/雾港长篇视图样例"

@@ -6,16 +6,16 @@
   "published_at": "2026-09-24T07:33:07Z",
   "assets": [
     {
-      "name": "story-codex-0.5.11.zip",
+      "name": "story-skill-0.5.11.zip",
       "size": 180441,
       "digest": "sha256:60edb470c255c436aa7da74ab02ff0a35e1b5402693908f1f89fcca48b56cf48",
-      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.11/story-codex-0.5.11.zip"
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.11/story-skill-0.5.11.zip"
     },
     {
-      "name": "story-codex-0.5.11.zip.sha256",
+      "name": "story-skill-0.5.11.zip.sha256",
       "size": 89,
       "digest": "sha256:2c60a17c83ffb3102cc80ed569b0ed10a8d5c7146dcd6cae2107af390816313c",
-      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.11/story-codex-0.5.11.zip.sha256"
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.11/story-skill-0.5.11.zip.sha256"
     }
   ],
   "archive_sha256": "60edb470c255c436aa7da74ab02ff0a35e1b5402693908f1f89fcca48b56cf48",

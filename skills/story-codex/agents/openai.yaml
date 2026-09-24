@@ -1,6 +1,0 @@
-interface:
-  display_name: "Story Codex · 小说入口"
-  short_description: "中文小说技能总入口，按当前任务选择规划、写作、拆文、审稿、调研或封面"
-  default_prompt: "使用 $story-codex 读取这本书的约定和断点，按我的要求选择本次流程。"
-policy:
-  allow_implicit_invocation: true

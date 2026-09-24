@@ -10,7 +10,7 @@
     "long": {"ok": true, "receipt": "long.json"}
   },
   "archive": {
-    "path": "dist/story-codex-0.5.11.zip",
+    "path": "dist/story-skill-0.5.11.zip",
     "bytes": 180441,
     "sha256": "60edb470c255c436aa7da74ab02ff0a35e1b5402693908f1f89fcca48b56cf48",
     "checksum_file_matches": true,
@@ -29,7 +29,7 @@
     "packages_permission": "write"
   },
   "npm_manifest_configuration": {
-    "package_name": "@ningcui29/story-codex",
+    "package_name": "@ningcui29/story-skill",
     "version": "0.5.11",
     "registry": "https://npm.pkg.github.com",
     "skill_files": 38,

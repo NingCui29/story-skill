@@ -5,7 +5,7 @@ def sha(data): return hashlib.sha256(data).hexdigest()
 def write(p,v): p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n')
 for pair in sys.argv[1:]:
  side,case=pair.split('/'); job=W/'jobs'/side/case; dest=OUT/'reports'/side/case;dest.mkdir(parents=True,exist_ok=True)
- source=(job/'source.txt').read_text(); sid=sha(source.encode()); tool=W/side/'skills/story-codex/scripts/story.py';book=job/'book'; raw=(job/'report.md').read_bytes(); art=book/f'.story/analysis/{sid}/report.md'; before=art.read_bytes();calls=[]
+ source=(job/'source.txt').read_text(); sid=sha(source.encode()); tool=W/side/'skills/story-skill/scripts/story.py';book=job/'book'; raw=(job/'report.md').read_bytes(); art=book/f'.story/analysis/{sid}/report.md'; before=art.read_bytes();calls=[]
  def run(command,*args):
   cmd=[sys.executable,'-B',str(tool),command,'--book',str(book),*map(str,args)]; p=subprocess.run(cmd,capture_output=True,text=True);rec={'command':cmd,'exit_code':p.returncode,'stdout':p.stdout,'stderr':p.stderr};calls.append(rec);assert p.returncode==0,rec;return json.loads(p.stdout)
  status=run('status');sources=run('sources');coverage=run('coverage','--source',sid);nxt=run('next','--source',sid)

@@ -553,7 +553,7 @@ test (ubuntu-latest, 3.10)	Build the complete skill ZIP	2026-09-10T11:03:09.0774
 test (ubuntu-latest, 3.10)	Build the complete skill ZIP	2026-09-10T11:03:09.0774531Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.21/x64
 test (ubuntu-latest, 3.10)	Build the complete skill ZIP	2026-09-10T11:03:09.0774917Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.21/x64/lib
 test (ubuntu-latest, 3.10)	Build the complete skill ZIP	2026-09-10T11:03:09.0775249Z ##[endgroup]
-test (ubuntu-latest, 3.10)	Build the complete skill ZIP	2026-09-10T11:03:09.1954853Z {"archive": "/home/runner/work/story-skill/story-skill/dist/story-codex-0.5.1.zip", "version": "0.5.1", "files": 33, "sha256": "419aa4277c609c5626862cdf5a78c6d6f7d67bbef17d018f53ad64dea225900c", "bytes": 109889}
+test (ubuntu-latest, 3.10)	Build the complete skill ZIP	2026-09-10T11:03:09.1954853Z {"archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-0.5.1.zip", "version": "0.5.1", "files": 33, "sha256": "419aa4277c609c5626862cdf5a78c6d6f7d67bbef17d018f53ad64dea225900c", "bytes": 109889}
 test (ubuntu-latest, 3.10)	Exercise the local CLI workflow	﻿2026-09-10T11:03:09.2074007Z ##[group]Run python -B -X utf8 scripts/smoke.py --output dist/ci-smoke.json
 test (ubuntu-latest, 3.10)	Exercise the local CLI workflow	2026-09-10T11:03:09.2074586Z ^[[36;1mpython -B -X utf8 scripts/smoke.py --output dist/ci-smoke.json^[[0m
 test (ubuntu-latest, 3.10)	Exercise the local CLI workflow	2026-09-10T11:03:09.2112438Z shell: /usr/bin/bash -e {0}

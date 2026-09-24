@@ -1,6 +1,6 @@
 {
   "build": {
-    "archive": "/private/tmp/story-full-content-check-j2_1ru1d/story-codex-0.5.9.zip",
+    "archive": "/private/tmp/story-full-content-check-j2_1ru1d/story-skill-0.5.9.zip",
     "version": "0.5.9",
     "files": 34,
     "sha256": "dc2e74ef79f346c8af9cb529e7da783abf10ecc87bd3e4e0d8472d60b4b4288e",
@@ -8,7 +8,7 @@
   },
   "verification": {
     "status": "passed",
-    "archive": "/private/tmp/story-full-content-check-j2_1ru1d/story-codex-0.5.9.zip",
+    "archive": "/private/tmp/story-full-content-check-j2_1ru1d/story-skill-0.5.9.zip",
     "version": "0.5.9",
     "sha256": "dc2e74ef79f346c8af9cb529e7da783abf10ecc87bd3e4e0d8472d60b4b4288e",
     "bytes": 143832,

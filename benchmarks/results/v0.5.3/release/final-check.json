@@ -1,7 +1,7 @@
 {
   "package": {
     "status": "passed",
-    "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/story-codex-0.5.3.zip",
+    "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/story-skill-0.5.3.zip",
     "version": "0.5.3",
     "sha256": "6d5acf81f9d7d21dfa0719fad2dd50bf8ae0c2bed0c21fa85485924084768044",
     "bytes": 118923,
@@ -20,196 +20,196 @@
     "files": [
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
         "current_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd"
       },
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex-write/SKILL.md",
+        "path": "skills/story-skill-write/SKILL.md",
         "matches": true,
         "recorded_sha256": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4",
         "current_sha256": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4"
       },
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex/references/project-state.md",
+        "path": "skills/story-skill/references/project-state.md",
         "matches": true,
         "recorded_sha256": "eaa1b09d246ea95508e0354f72294add5cdf82ef47c466cea3a321af8b8f70c4",
         "current_sha256": "eaa1b09d246ea95508e0354f72294add5cdf82ef47c466cea3a321af8b8f70c4"
       },
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex-write/references/chapter.md",
+        "path": "skills/story-skill-write/references/chapter.md",
         "matches": true,
         "recorded_sha256": "082070b91b1a6b15d8c889500894441c12cd00ba856c61503632d7f6dac1c2e2",
         "current_sha256": "082070b91b1a6b15d8c889500894441c12cd00ba856c61503632d7f6dac1c2e2"
       },
       {
         "profile": "long_chapter_required_minimum",
-        "path": "skills/story-codex-write/references/drama.md",
+        "path": "skills/story-skill-write/references/drama.md",
         "matches": true,
         "recorded_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
         "current_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
         "current_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex-write/SKILL.md",
+        "path": "skills/story-skill-write/SKILL.md",
         "matches": true,
         "recorded_sha256": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4",
         "current_sha256": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex/references/project-state.md",
+        "path": "skills/story-skill/references/project-state.md",
         "matches": true,
         "recorded_sha256": "eaa1b09d246ea95508e0354f72294add5cdf82ef47c466cea3a321af8b8f70c4",
         "current_sha256": "eaa1b09d246ea95508e0354f72294add5cdf82ef47c466cea3a321af8b8f70c4"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex-write/references/chapter.md",
+        "path": "skills/story-skill-write/references/chapter.md",
         "matches": true,
         "recorded_sha256": "082070b91b1a6b15d8c889500894441c12cd00ba856c61503632d7f6dac1c2e2",
         "current_sha256": "082070b91b1a6b15d8c889500894441c12cd00ba856c61503632d7f6dac1c2e2"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex-write/references/drama.md",
+        "path": "skills/story-skill-write/references/drama.md",
         "matches": true,
         "recorded_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
         "current_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f"
       },
       {
         "profile": "long_multi_line",
-        "path": "skills/story-codex-write/references/long-form.md",
+        "path": "skills/story-skill-write/references/long-form.md",
         "matches": true,
         "recorded_sha256": "290c5ba915cb32f745417a135198f0e2eabc77f10967d0074be1e8752532ae63",
         "current_sha256": "290c5ba915cb32f745417a135198f0e2eabc77f10967d0074be1e8752532ae63"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
         "current_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex-write/SKILL.md",
+        "path": "skills/story-skill-write/SKILL.md",
         "matches": true,
         "recorded_sha256": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4",
         "current_sha256": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex/references/project-state.md",
+        "path": "skills/story-skill/references/project-state.md",
         "matches": true,
         "recorded_sha256": "eaa1b09d246ea95508e0354f72294add5cdf82ef47c466cea3a321af8b8f70c4",
         "current_sha256": "eaa1b09d246ea95508e0354f72294add5cdf82ef47c466cea3a321af8b8f70c4"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex-write/references/chapter.md",
+        "path": "skills/story-skill-write/references/chapter.md",
         "matches": true,
         "recorded_sha256": "082070b91b1a6b15d8c889500894441c12cd00ba856c61503632d7f6dac1c2e2",
         "current_sha256": "082070b91b1a6b15d8c889500894441c12cd00ba856c61503632d7f6dac1c2e2"
       },
       {
         "profile": "short_write_conservative",
-        "path": "skills/story-codex-write/references/drama.md",
+        "path": "skills/story-skill-write/references/drama.md",
         "matches": true,
         "recorded_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
         "current_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f"
       },
       {
         "profile": "long_analysis_conservative",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
         "current_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd"
       },
       {
         "profile": "long_analysis_conservative",
-        "path": "skills/story-codex-analyze/SKILL.md",
+        "path": "skills/story-skill-analyze/SKILL.md",
         "matches": true,
         "recorded_sha256": "4e6dc7abf84371911f498a0d67c58bbf57ac036bfee9c5c8cb3744fa3d31b912",
         "current_sha256": "4e6dc7abf84371911f498a0d67c58bbf57ac036bfee9c5c8cb3744fa3d31b912"
       },
       {
         "profile": "long_analysis_conservative",
-        "path": "skills/story-codex-analyze/references/deep-reading.md",
+        "path": "skills/story-skill-analyze/references/deep-reading.md",
         "matches": true,
         "recorded_sha256": "d53c46833e871126fc23401f32d1a069e8869980479a66574d16273454399e8d",
         "current_sha256": "d53c46833e871126fc23401f32d1a069e8869980479a66574d16273454399e8d"
       },
       {
         "profile": "analysis_with_examples",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
         "current_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd"
       },
       {
         "profile": "analysis_with_examples",
-        "path": "skills/story-codex-analyze/SKILL.md",
+        "path": "skills/story-skill-analyze/SKILL.md",
         "matches": true,
         "recorded_sha256": "4e6dc7abf84371911f498a0d67c58bbf57ac036bfee9c5c8cb3744fa3d31b912",
         "current_sha256": "4e6dc7abf84371911f498a0d67c58bbf57ac036bfee9c5c8cb3744fa3d31b912"
       },
       {
         "profile": "analysis_with_examples",
-        "path": "skills/story-codex-analyze/references/deep-reading.md",
+        "path": "skills/story-skill-analyze/references/deep-reading.md",
         "matches": true,
         "recorded_sha256": "d53c46833e871126fc23401f32d1a069e8869980479a66574d16273454399e8d",
         "current_sha256": "d53c46833e871126fc23401f32d1a069e8869980479a66574d16273454399e8d"
       },
       {
         "profile": "analysis_with_examples",
-        "path": "skills/story-codex-analyze/references/examples.md",
+        "path": "skills/story-skill-analyze/references/examples.md",
         "matches": true,
         "recorded_sha256": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
         "current_sha256": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2"
       },
       {
         "profile": "review_conservative",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
         "current_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd"
       },
       {
         "profile": "review_conservative",
-        "path": "skills/story-codex-review/SKILL.md",
+        "path": "skills/story-skill-review/SKILL.md",
         "matches": true,
         "recorded_sha256": "88404348abf68da3917ee3e0b114e67a08a5d7ef6e52e55c498178c40da1d005",
         "current_sha256": "88404348abf68da3917ee3e0b114e67a08a5d7ef6e52e55c498178c40da1d005"
       },
       {
         "profile": "review_conflict",
-        "path": "skills/story-codex/SKILL.md",
+        "path": "skills/story-skill/SKILL.md",
         "matches": true,
         "recorded_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
         "current_sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd"
       },
       {
         "profile": "review_conflict",
-        "path": "skills/story-codex-review/SKILL.md",
+        "path": "skills/story-skill-review/SKILL.md",
         "matches": true,
         "recorded_sha256": "88404348abf68da3917ee3e0b114e67a08a5d7ef6e52e55c498178c40da1d005",
         "current_sha256": "88404348abf68da3917ee3e0b114e67a08a5d7ef6e52e55c498178c40da1d005"
       },
       {
         "profile": "review_conflict",
-        "path": "skills/story-codex-write/references/drama.md",
+        "path": "skills/story-skill-write/references/drama.md",
         "matches": true,
         "recorded_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
         "current_sha256": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f"

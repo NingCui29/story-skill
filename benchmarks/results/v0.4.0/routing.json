@@ -1,10 +1,10 @@
 {
   "ok": true,
-  "method": "Independent agent explicitly invoked the core skill for a synthetic read-only manuscript review; not automatic Codex UI discovery",
+  "method": "Independent agent explicitly invoked the core skill for a synthetic read-only manuscript review; not automatic 助手 UI discovery",
   "scenario": "One unique key given away and then reused without a return; review only, no manuscript changes or project initialization",
   "skill_files": {
-    "skills/story-codex/SKILL.md": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
-    "skills/story-codex-review/SKILL.md": "0f0294cbc70a296b6bb28fae6f3f973ada77417e429c17c77b7203c83505fe7c"
+    "skills/story-skill/SKILL.md": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
+    "skills/story-skill-review/SKILL.md": "0f0294cbc70a296b6bb28fae6f3f973ada77417e429c17c77b7203c83505fe7c"
   },
   "input_sha256_before_and_after": {
     "稿件.md": "5e2e1fb2ec83b68b3dab5505e2840a5a960cd23a27f700a6856d0ec8d76160d8",

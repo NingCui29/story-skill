@@ -1,9 +1,9 @@
 ---
-name: story-codex
+name: story-skill
 description: 中文小说任务总入口与共享规则；在需求跨流程或尚未明确是规划、正文、拆文、审稿、调研还是封面时使用。不用于软件开发或普通文案。
 ---
 
-# Story Codex
+# Story Skill
 
 以读者体验和用户创作意图为准，缩减重复指令与无关上下文，保留正文长度、因果、人物选择和关键证据。
 
@@ -13,14 +13,14 @@ description: 中文小说任务总入口与共享规则；在需求跨流程或�
 
 | 当前请求 | 技能 |
 |---|---|
-| 开书、设定、大纲、导入续写基线 | [story-codex-plan](../story-codex-plan/SKILL.md) |
-| 写正文、继续一章、长短篇连载 | [story-codex-write](../story-codex-write/SKILL.md) |
-| 拆文、深读、分析稿修订与续跑 | [story-codex-analyze](../story-codex-analyze/SKILL.md) |
-| 正文审稿、修改、去 AI 味、历史改稿、旧库迁移 | [story-codex-review](../story-codex-review/SKILL.md) |
-| 扫榜、写作素材与资料查证 | [story-codex-research](../story-codex-research/SKILL.md) |
-| 小说封面生成或修改 | [story-codex-cover](../story-codex-cover/SKILL.md) |
+| 开书、设定、大纲、导入续写基线 | [story-skill-plan](../story-skill-plan/SKILL.md) |
+| 写正文、继续一章、长短篇连载 | [story-skill-write](../story-skill-write/SKILL.md) |
+| 拆文、深读、分析稿修订与续跑 | [story-skill-analyze](../story-skill-analyze/SKILL.md) |
+| 正文审稿、修改、去 AI 味、历史改稿、旧库迁移 | [story-skill-review](../story-skill-review/SKILL.md) |
+| 扫榜、写作素材与资料查证 | [story-skill-research](../story-skill-research/SKILL.md) |
+| 小说封面生成或修改 | [story-skill-cover](../story-skill-cover/SKILL.md) |
 
-专用技能是本套件的独立入口；路径相对于安装后的兄弟目录。缺少本次需要的技能时，指出缺失路径并提示安装完整 Story Codex 套件，不伪执行该流程。
+专用技能是本套件的独立入口；路径相对于安装后的兄弟目录。缺少本次需要的技能时，指出缺失路径并提示安装完整 Story Skill 套件，不伪执行该流程。
 
 ## 共同约束
 
@@ -36,7 +36,7 @@ description: 中文小说任务总入口与共享规则；在需求跨流程或�
 
 仅本技能持有 `scripts/` 共享运行时：`story.py` 是 Python 3.10+ 标准库入口，其他四个模块随它一起分发。记 `scripts/story.py` 的绝对路径为 `<tool>`；执行而非读取整个脚本。用 `python "<tool>" --help` 查看命令，按需用 `template plan|delta|notes|analysis` 取得本次数据样例。专用技能通过相对路径定位此处，不各自复制脚本。工具或宿主能力缺失时说明具体缺口，不伪造结果。
 
-作者用自然语言提要求；由 Codex 维护 JSON、版本和断点，不让作者手填机器字段。已有托管工程先 `status --book "<书目录>"` 获取断点；单文件审稿、资料讨论或封面不查询书库状态。仅当前流程需要保存工程时才初始化，不因 status 失败覆盖原工程。
+作者用自然语言提要求；由 助手 维护 JSON、版本和断点，不让作者手填机器字段。已有托管工程先 `status --book "<书目录>"` 获取断点；单文件审稿、资料讨论或封面不查询书库状态。仅当前流程需要保存工程时才初始化，不因 status 失败覆盖原工程。
 
 规划或写作需要卡片、细纲时才读 [项目状态](references/project-state.md)。写作前用 `context` 取得本章计划、关键状态和最近衔接；不把全书、数据库或全部参考装入上下文。结果报告预算、遗漏数和状态版本；缺必要信息时定点 `recall` 或读原文，关键资料超预算则明确增大本次预算，不静默截断。
 

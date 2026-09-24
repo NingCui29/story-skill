@@ -21,7 +21,7 @@ from urllib.parse import unquote, urlsplit
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILL = ROOT / "skills/story-codex"
+SKILL = ROOT / "skills/story-skill"
 SKILLS = ROOT / "skills"
 PYTHON = [sys.executable, "-B", "-X", "utf8"]
 
@@ -61,6 +61,9 @@ def summarize_unittest(result):
 
 
 def unittest_child(output):
+    # Run the suite from this repository even when an unrelated installed
+    # package also uses the top-level name "tests".
+    sys.path.insert(0, str(ROOT))
     runner = unittest.TextTestRunner(resultclass=CountedTestResult)
     program = unittest.main(module=None, argv=["unittest", "discover", "-s", "tests"],
                             testRunner=runner, exit=False)
@@ -84,7 +87,7 @@ def select_archive(explicit=None):
         return Path(explicit).expanduser().resolve()
     package = package_module()
     version = package.current_version(SKILL / "scripts/story.py")
-    path = ROOT / f"dist/story-codex-{version}.zip"
+    path = ROOT / f"dist/story-skill-{version}.zip"
     if not path.is_file():
         raise ValueError(f"No archive for runtime VERSION {version}; run scripts/package.py or pass --archive")
     return path.resolve()
@@ -117,7 +120,7 @@ def skill_files():
     for name in names:
         if not {f"{name}/SKILL.md", f"{name}/agents/openai.yaml", f"{name}/LICENSE"} <= files.keys():
             raise ValueError(f"Skill is incomplete: {name}")
-    if "story-codex/scripts/story.py" not in files:
+    if "story-skill/scripts/story.py" not in files:
         raise ValueError("Shared runtime is missing")
     return files
 
@@ -273,16 +276,16 @@ def check_install(temp, timeout):
         return installed
     receipt = json.loads(installed["stdout"])
     parent = project / ".agents/skills"
-    target = parent / "story-codex"
+    target = parent / "story-skill"
     expected = skill_files()
     actual, managed = {}, {}
     for name in package_module().SKILL_NAMES:
         directory = parent / name
-        marker = json.loads((directory / ".story-codex-install.json").read_text(encoding="utf-8"))
+        marker = json.loads((directory / ".story-skill-install.json").read_text(encoding="utf-8"))
         managed.update({f"{name}/{key}": value for key, value in marker["files"].items()})
         actual.update({f"{name}/{path.relative_to(directory).as_posix()}": digest(path)
                        for path in directory.rglob("*") if path.is_file()
-                       and path.name != ".story-codex-install.json"})
+                       and path.name != ".story-skill-install.json"})
     matching = expected == actual == managed
     help_result = run(PYTHON + [str(target / "scripts/story.py"), "--help"], timeout)
     smoke_result = check_smoke(temp / "installed-smoke.json", timeout, target / "scripts/story.py")
@@ -336,7 +339,7 @@ def verify(archive=None, validator=None, validator_python=None, timeout=300):
     report = {"schema": 2, "date": datetime.now(timezone.utc).isoformat(),
               "environment": {"platform": platform.platform(), "python": platform.python_version(),
                               "executable": sys.executable},
-              "not_verified": ["Codex UI discovery and automatic routing in a new conversation",
+              "not_verified": ["Host-app skill discovery and automatic routing in a new conversation",
                                "Live model-generated novel quality compared with upstream",
                                "Actual account usage or total-turn token savings",
                                "Long-run consistency over hundreds of generated chapters"]}

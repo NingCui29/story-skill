@@ -1,4 +1,4 @@
-# Story Codex v0.5.2
+# Story Skill v0.5.2
 
 本版整理大纲与细纲规范，并修复状态保护、历史修订和分析恢复中的问题。完整套件仍为7个技能、33个文件，沿用 schema 2。
 
@@ -10,7 +10,7 @@
 
 本机 Intel macOS／Python 3.12：443项测试中436通过、7项按条件跳过、零失败；12项整包检查、18项整套升级检查、三类合成旧库迁移和四组百万／千万字容量检查通过。这些工程检查不代表文学质量认证。
 
-发布后核验：Release ZIP 与校验文件回下载通过；官方固定标签隔离安装的7个技能、33个文件与源码逐字节一致。GitHub Packages `@ningcui29/story-codex@0.5.2` 已公开发布，注册表回下载的33个技能文件及2个包装文件一致，四项运行检查通过。[Packages 工作流](https://github.com/NingCui29/story-skill/actions/runs/34577548793)
+发布后核验：Release ZIP 与校验文件回下载通过；官方固定标签隔离安装的7个技能、33个文件与源码逐字节一致。GitHub Packages `@ningcui29/story-skill@0.5.2` 已公开发布，注册表回下载的33个技能文件及2个包装文件一致，四项运行检查通过。[Packages 工作流](https://github.com/NingCui29/story-skill/actions/runs/34577548793)
 
 固定发布提交的 [CI](https://github.com/NingCui29/story-skill/actions/runs/34577137667)：Linux 443项中431通过、12项平台跳过，全部步骤成功；Windows 在首项报告导出测试以已有 WinError 32 停止，整体 CI 为失败，未宣称全平台通过。
 

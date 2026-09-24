@@ -2,7 +2,7 @@
 
 **当前套件为 v0.5.11，包含 8 个技能、38 个载荷文件。**v0.5.10 已修复 Windows 正文和报告导出的 WinError 32，并通过当版原生 CI；[当版记录](../benchmarks/results/v0.5.10/README.md)不能代替 v0.5.11 的跨平台结果，也不推定覆盖所有设备和文件系统。恢复旧版留下的待导出内容前，先完整备份书库，按 [INSTALL.md](../INSTALL.md) 升级同版整套技能，再核对 `status` 和导出回执；不要盲目降级或覆盖待恢复内容。
 
-以下 CLI 示例均需 `python "<核心技能目录>/scripts/story.py"` 前缀；书籍命令另附 `--book "<书目录绝对路径>"`，`template` 与帮助命令不附 `--book`。本页基础恢复流程沿用 [v0.5.5](releases/v0.5.5.md) 起的行为，历史验证见 [当时的发布记录](github-release.md#v055-发布验证记录)；当前安装版本、固定来源和平台范围统一按 [INSTALL.md](../INSTALL.md) 核对。平台验证范围见上方；共享核心为 `story-codex`；数据库继续使用 schema 2，v0.3.0、v0.4.0、v0.5.0、v0.5.1、v0.5.2、v0.5.3 书库无需重新导入。分卷正文命名只应用到新保存的目标，已有旧章路径继续识别。
+以下 CLI 示例均需 `python "<核心技能目录>/scripts/story.py"` 前缀；书籍命令另附 `--book "<书目录绝对路径>"`，`template` 与帮助命令不附 `--book`。本页基础恢复流程沿用 [v0.5.5](releases/v0.5.5.md) 起的行为，历史验证见 [当时的发布记录](github-release.md#v055-发布验证记录)；当前安装版本、固定来源和平台范围统一按 [INSTALL.md](../INSTALL.md) 核对。平台验证范围见上方；共享核心为 `story-skill`；数据库继续使用 schema 2，v0.3.0、v0.4.0、v0.5.0、v0.5.1、v0.5.2、v0.5.3 书库无需重新导入。分卷正文命名只应用到新保存的目标，已有旧章路径继续识别。
 
 旧 schema 1 小说书库先停止写入，保留原书并复制到独立目录，再 `migrate --book "<副本>"`。迁移工具会先用 SQLite backup 生成一致备份并检查完整性，再在同一事务中执行所有结构变更；失败时回滚。迁移备份位于 `.story/migration-backups/`。回退时停止相关进程，在另一个独立书目录恢复备份并使用 v0.2.0；备份之后的新修改不会自动出现在旧版中。无须重新初始化或修改书籍身份。
 
@@ -10,7 +10,7 @@ v0.5.2 增加历史审查级别兼容、卡片与后补世界证据的修订保�
 
 ## 离线发布材料恢复
 
-v0.5.11 的 `story-codex-publish` 将本地准备记录保存在 `.story/publishing.sqlite3`，其 schema 1 与本页前述需迁移的旧小说书库 schema 1 是不同文件。发布准备账本不存平台上传、审核或上线状态；它的清单、ZIP 与包外回执均不能证明远端已收稿。[完整边界](platform-publishing.md)
+发布准备能力始于 v0.5.11；当前源码的 `story-skill-publish` 将本地准备记录保存在 `.story/publishing.sqlite3`，其 schema 1 与本页前述需迁移的旧小说书库 schema 1 是不同文件。发布准备账本不存平台上传、审核或上线状态；它的清单、ZIP 与包外回执均不能证明远端已收稿。[完整边界](platform-publishing.md)
 
 换会话后先用 `publish-list --book "<书目录>"` 找清单，再用 `publish-export-list --book "<书目录>" --id "<清单ID>" --offset 0 --limit 10` 找回包外回执。列表只说明保存记录与 ZIP 是否存在，不核对当前正文，也不自动挑选最新包。取得原始回执后用 `publish-verify-export --book "<书目录>" --receipt "<回执绝对路径>"` 核对所属书、原清单、ZIP 原始摘要和当前正式稿；旧包不会随改稿自动更新。缺失或损坏的回执不要用待查 ZIP 现算的哈希冒充原值，应从仍有效的清单重新导出；若正式章或审查依据已变化，先用 `publish-check` 查看差异，再重新准备。
 
@@ -28,7 +28,7 @@ v0.5.11 的 `story-codex-publish` 将本地准备记录保存在 `.story/publish
 
 v0.5.5 新增的 `history-saved --branch B` 只读返回分支已保存的卡片决定、世界修补与整体审查；不需要原 input 文件或 --expect。正文和逐章审查用 `history-inspect --branch B --chapter N` 取回。检查分支 revision 一致，保留原引文、说明、hash 和删除用的 null；空白模板不是已保存决定。过期分支仍可读，但续改前仍须核对变化并按回执刷新或重建。完整返回超预算时增大 --budget-bytes，不手工截断。
 
-继续编辑时，state_changes 数组、world_changes 对象各自整段替换；保留同段中其他有效决定，未传的段不动。整体审查为 null 时不要直接重交，修改后按新回执完成审查。详见 [历史分支流程](../skills/story-codex-review/references/history.md)。该读取入口已随 v0.5.5 发布，固定发布包的能力以对应版本为准；[v0.5.5 核验状态](../benchmarks/results/v0.5.5/README.md)不会将尚未安装的能力算作本机已具备。
+继续编辑时，state_changes 数组、world_changes 对象各自整段替换；保留同段中其他有效决定，未传的段不动。整体审查为 null 时不要直接重交，修改后按新回执完成审查。详见 [历史分支流程](../skills/story-skill-review/references/history.md)。该读取入口已随 v0.5.5 发布，固定发布包的能力以对应版本为准；[v0.5.5 核验状态](../benchmarks/results/v0.5.5/README.md)不会将尚未安装的能力算作本机已具备。
 
 ## 已提交，但尚未导出
 
@@ -54,7 +54,7 @@ v0.5.5 新增的 `history-saved --branch B` 只读返回分支已保存的卡片
 
 若重命名期间新旧两个路径都被外部保存，先把所有外部版本分别另存 `.story/drafts/`，核对文件内容与哈希后再处理。合并修改时从这些保留副本起草，不用一个版本覆盖另一个。若当前托管路径也有外改阻断，用 `chapter-read --chapter N` 分段取出数据库已提交正文，后续各段固定使用首段返回的 `source_sha256`，直到 `next_start` 为 null；完整拼接并核对哈希后恢复该托管路径。外部副本继续保留，旧路径的外改仍待对账。再按 `export --safe-only` 的回执恢复缺失文件，重新读取 `reconcile` 或历史分支检查得到的路径与哈希，以合并后的草稿完成审查。
 
-更早章节、含结构化世界变化或已合并历史分支的章节，以及该章产生的状态卡在提交后又有更新的情况，使用 [历史分支](../skills/story-codex-review/references/history.md)。通过 `world-save` 后补的正文证据也受保护，不能因原提交回执没有世界增量就普通替换。遇到 `revised_state_conflict` 时保留当前卡片和正文，按回执的 `chapter` 运行 `history-start --chapter N --expect R`（R 取最新 status），在分支中复核后续状态；反复 `reconcile` 不能解决这类冲突，不回写旧卡绕过保护。导入基线若缺少章计划，先依据采用的细纲为受影响章保存计划，再创建分支。候选、旧版、证据及审核状态分别保存；复核没有完成不能发布。导入基线和已完成分析报告仍不允许无条件覆盖。
+更早章节、含结构化世界变化或已合并历史分支的章节，以及该章产生的状态卡在提交后又有更新的情况，使用 [历史分支](../skills/story-skill-review/references/history.md)。通过 `world-save` 后补的正文证据也受保护，不能因原提交回执没有世界增量就普通替换。遇到 `revised_state_conflict` 时保留当前卡片和正文，按回执的 `chapter` 运行 `history-start --chapter N --expect R`（R 取最新 status），在分支中复核后续状态；反复 `reconcile` 不能解决这类冲突，不回写旧卡绕过保护。导入基线若缺少章计划，先依据采用的细纲为受影响章保存计划，再创建分支。候选、旧版、证据及审核状态分别保存；复核没有完成不能发布。导入基线和已完成分析报告仍不允许无条件覆盖。
 
 v0.5.2 的历史审查接受 `advice`；旧 `minor` 同样表示可选建议，`major` 和 `blocker` 仍阻止发布。普通审稿继续使用 `blocker/advice`，不靠改级别跳过未解决的问题。
 
@@ -84,13 +84,13 @@ v0.5.2 的历史审查接受 `advice`；旧 `minor` 同样表示可选建议，`
 
 独立修订需要跨轮处理时，在新稿旁记录原文、旧稿和当前稿的路径及哈希、已处理与待核对的问题、下一步。恢复时先读进度与当前稿，核对文件变化，再接未完成问题。`status` 里的 report_path 仍指向旧定稿，不能说明独立新稿已完成。缺少原文时注明哪些判断无法核验；新稿继承原分析范围，不把局部修订扩大称为全书分析。
 
-交付给出新稿实际路径、修改说明和核验范围。已保存字段、引文和哈希通过，只能说明程序检查通过，文学判断仍需原文复核。[技能入口](../skills/story-codex-analyze/SKILL.md) · [修订恢复试用](../benchmarks/results/analysis-followup/README.md) · [完整九章试用](../benchmarks/results/analysis-crosschapter/README.md)
+交付给出新稿实际路径、修改说明和核验范围。已保存字段、引文和哈希通过，只能说明程序检查通过，文学判断仍需原文复核。[技能入口](../skills/story-skill-analyze/SKILL.md) · [修订恢复试用](../benchmarks/results/analysis-followup/README.md) · [完整九章试用](../benchmarks/results/analysis-crosschapter/README.md)
 
 ## 安装更新失败
 
 源文件在复制期间变化时，安装器停止发布；已安装版本不受影响。等源文件保存完成后重新运行 `scripts/install.py --project "<项目>" --update`。用户在目标技能目录中的修改会触发拒绝；先复核这些改动，不要直接删除安装清单绕过检查。
 
-同一项目的安装操作使用操作系统锁。看到 `Another installation may be running` 时，等待该安装进程退出后重试；`.agents/skills/.story-codex-install.lock` 文件可以留存，无需手动删除，进程强退也会释放锁。
+同一项目的安装操作使用操作系统锁。看到 `Another installation may be running` 时，等待该安装进程退出后重试；`.agents/skills/.story-skill-install.lock` 文件可以留存，无需手动删除，进程强退也会释放锁。
 
 若发布失败后目标目录又被外部创建，恢复不会覆盖它。错误中的 `the moved skill is preserved at <backup>` 指向被搬走的技能；核对当前目标与该备份后再决定使用哪个版本。Windows 下的发布和恢复均拒绝替换已存在的目标目录；POSIX 的目录预检不能提供同等的原子保护。
 

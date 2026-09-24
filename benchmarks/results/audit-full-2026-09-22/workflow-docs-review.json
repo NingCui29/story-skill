@@ -7,21 +7,21 @@
     "active_documents": 12,
     "agent_metadata_files": 7,
     "markdown_files": [
-      "skills/story-codex/SKILL.md",
-      "skills/story-codex/references/project-state.md",
-      "skills/story-codex-analyze/SKILL.md",
-      "skills/story-codex-analyze/references/deep-reading.md",
-      "skills/story-codex-analyze/references/examples.md",
-      "skills/story-codex-cover/SKILL.md",
-      "skills/story-codex-plan/SKILL.md",
-      "skills/story-codex-plan/references/fanqie-tags.md",
-      "skills/story-codex-research/SKILL.md",
-      "skills/story-codex-review/SKILL.md",
-      "skills/story-codex-review/references/history.md",
-      "skills/story-codex-write/SKILL.md",
-      "skills/story-codex-write/references/chapter.md",
-      "skills/story-codex-write/references/drama.md",
-      "skills/story-codex-write/references/long-form.md",
+      "skills/story-skill/SKILL.md",
+      "skills/story-skill/references/project-state.md",
+      "skills/story-skill-analyze/SKILL.md",
+      "skills/story-skill-analyze/references/deep-reading.md",
+      "skills/story-skill-analyze/references/examples.md",
+      "skills/story-skill-cover/SKILL.md",
+      "skills/story-skill-plan/SKILL.md",
+      "skills/story-skill-plan/references/fanqie-tags.md",
+      "skills/story-skill-research/SKILL.md",
+      "skills/story-skill-review/SKILL.md",
+      "skills/story-skill-review/references/history.md",
+      "skills/story-skill-write/SKILL.md",
+      "skills/story-skill-write/references/chapter.md",
+      "skills/story-skill-write/references/drama.md",
+      "skills/story-skill-write/references/long-form.md",
       "README.md",
       "INSTALL.md",
       "docs/README.md",
@@ -36,13 +36,13 @@
       "docs/超长篇验收.md"
     ],
     "agent_metadata_files_reviewed": [
-      "skills/story-codex/agents/openai.yaml",
-      "skills/story-codex-analyze/agents/openai.yaml",
-      "skills/story-codex-cover/agents/openai.yaml",
-      "skills/story-codex-plan/agents/openai.yaml",
-      "skills/story-codex-research/agents/openai.yaml",
-      "skills/story-codex-review/agents/openai.yaml",
-      "skills/story-codex-write/agents/openai.yaml"
+      "skills/story-skill/agents/openai.yaml",
+      "skills/story-skill-analyze/agents/openai.yaml",
+      "skills/story-skill-cover/agents/openai.yaml",
+      "skills/story-skill-plan/agents/openai.yaml",
+      "skills/story-skill-research/agents/openai.yaml",
+      "skills/story-skill-review/agents/openai.yaml",
+      "skills/story-skill-write/agents/openai.yaml"
     ]
   },
   "link_checks": {
@@ -86,8 +86,8 @@
       "scenario": "完整长篇完本",
       "result": "规则语义走查通过",
       "evidence": [
-        "skills/story-codex-write/SKILL.md:16",
-        "skills/story-codex-write/references/chapter.md:13"
+        "skills/story-skill-write/SKILL.md:16",
+        "skills/story-skill-write/references/chapter.md:13"
       ],
       "observation": "终章与全书主要因果、阅读承诺、人物选择和结局后果核对；长篇不误走短篇全文合并命令。"
     },
@@ -95,9 +95,9 @@
       "scenario": "完整短篇首次及正式修订后成品交付",
       "result": "规则语义走查通过",
       "evidence": [
-        "skills/story-codex-write/references/chapter.md:19",
-        "skills/story-codex-write/references/chapter.md:21",
-        "skills/story-codex-review/SKILL.md:44"
+        "skills/story-skill-write/references/chapter.md:19",
+        "skills/story-skill-write/references/chapter.md:21",
+        "skills/story-skill-review/SKILL.md:44"
       ],
       "observation": "核对现行总纲平台分类、全部章节、实际终章与结局；首次全文和实际封面不能因旧产物缺失而省略。"
     },
@@ -105,7 +105,7 @@
       "scenario": "开放结尾",
       "result": "规则语义走查通过",
       "evidence": [
-        "skills/story-codex-write/references/chapter.md:15"
+        "skills/story-skill-write/references/chapter.md:15"
       ],
       "observation": "允许有意保留未知，区分本书收束与续作引子，不要求交代所有人物余生。"
     },
@@ -113,8 +113,8 @@
       "scenario": "整书纯审稿",
       "result": "规则语义走查通过",
       "evidence": [
-        "skills/story-codex-review/SKILL.md:14",
-        "skills/story-codex-review/SKILL.md:30"
+        "skills/story-skill-review/SKILL.md:14",
+        "skills/story-skill-review/SKILL.md:30"
       ],
       "observation": "核对全书并报告结论，未授权修改时不提交正文、不改变正式规划、不生成交付产物。"
     },
@@ -122,11 +122,11 @@
       "scenario": "普通单章、局部校对、独立片段与候选稿",
       "result": "规则语义走查通过",
       "evidence": [
-        "skills/story-codex-write/SKILL.md:10",
-        "skills/story-codex-write/SKILL.md:12",
-        "skills/story-codex-write/references/chapter.md:15",
-        "skills/story-codex-review/SKILL.md:22",
-        "skills/story-codex-review/SKILL.md:46"
+        "skills/story-skill-write/SKILL.md:10",
+        "skills/story-skill-write/SKILL.md:12",
+        "skills/story-skill-write/references/chapter.md:15",
+        "skills/story-skill-review/SKILL.md:22",
+        "skills/story-skill-review/SKILL.md:46"
       ],
       "observation": "不自动扩成全书审查、首次完本交付或正式状态写入；已授权单章修订仅核对已有全文的同步。"
     },
@@ -134,8 +134,8 @@
       "scenario": "不可靠叙述、人物自欺、延迟揭露与普通视角",
       "result": "规则语义走查通过",
       "evidence": [
-        "skills/story-codex-write/references/drama.md:23",
-        "skills/story-codex-analyze/references/deep-reading.md:21"
+        "skills/story-skill-write/references/drama.md:23",
+        "skills/story-skill-analyze/references/deep-reading.md:21"
       ],
       "observation": "有既定叙述依据和可回看线索的安排可保留；不能为悬念临时改变叙述规则，也不强迫提前泄露真相。"
     },
@@ -143,8 +143,8 @@
       "scenario": "信息反转与人物行动造成的局势逆转",
       "result": "规则语义走查通过",
       "evidence": [
-        "skills/story-codex-write/references/drama.md:25",
-        "skills/story-codex-review/SKILL.md:17"
+        "skills/story-skill-write/references/drama.md:25",
+        "skills/story-skill-review/SKILL.md:17"
       ],
       "observation": "分别检查线索与叙述相容性、选择资源阻力和后果的因果，不要求每次逆转另藏秘密。"
     },
@@ -152,11 +152,11 @@
       "scenario": "具名目录、平台标签、封面及导出恢复衔接",
       "result": "规则语义走查通过",
       "evidence": [
-        "skills/story-codex/references/project-state.md:16",
-        "skills/story-codex/references/project-state.md:61",
-        "skills/story-codex-write/references/chapter.md:23",
-        "skills/story-codex-write/references/chapter.md:25",
-        "skills/story-codex-cover/SKILL.md:15"
+        "skills/story-skill/references/project-state.md:16",
+        "skills/story-skill/references/project-state.md:61",
+        "skills/story-skill-write/references/chapter.md:23",
+        "skills/story-skill-write/references/chapter.md:25",
+        "skills/story-skill-cover/SKILL.md:15"
       ],
       "observation": "按实际登记路径交付和恢复；长短篇与多平台分类分开、拟选不当已确认；外改先保留再恢复；全文同步不等于文学完本，封面按相关变化复核。"
     },
@@ -233,6 +233,6 @@
     "替换按 UTF-8 字节执行，原有 CRLF/LF 数量与行数保持不变；未重写历史测量、冻结样稿或发布来源。",
     "语义结果是规则与情景走查，不是实际小说写作、读者评阅或文学质量提升的证明。",
     "未运行工程测试、安装、发布、图片生成或真实作品操作。",
-    "外链未联网核验；Codex UI 的发现、自动路由和工具实际调用未在本轮实测。"
+    "外链未联网核验；助手 UI 的发现、自动路由和工具实际调用未在本轮实测。"
   ]
 }

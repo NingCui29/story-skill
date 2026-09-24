@@ -1,0 +1,6 @@
+interface:
+  display_name: "Story Skill · 写作调研"
+  short_description: "围绕中文小说创作决策查榜单和资料，记录来源、时间、样本与可验证依据"
+  default_prompt: "使用 $story-skill-research 调研这个小说题材的当前榜单与写作资料，注明来源和样本限制。"
+policy:
+  allow_implicit_invocation: true

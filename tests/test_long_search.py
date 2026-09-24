@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location(
-    "story_search_test", ROOT / "skills/story-codex/scripts/story_search.py")
+    "story_search_test", ROOT / "skills/story-skill/scripts/story_search.py")
 search = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(search)
 

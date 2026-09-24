@@ -2,8 +2,8 @@
   "date": "2026-09-19T07:42:14.888567+00:00",
   "reason": "Independent final rule review found draft-only protection limited to uncommitted chapters. Generalize it to committed chapter candidates and protect adopted plans.",
   "after_sha256": {
-    "skills/story-codex/SKILL.md": "756092d13a0f55541c02d23b511ea71e65c8c3faeb5e3648ce45c3e715ee1a46",
-    "skills/story-codex-review/SKILL.md": "272d7cf129eefe6ba9181c82ee278fe40e377a0d4c27fd2ad484e22352851cf6"
+    "skills/story-skill/SKILL.md": "756092d13a0f55541c02d23b511ea71e65c8c3faeb5e3648ce45c3e715ee1a46",
+    "skills/story-skill-review/SKILL.md": "272d7cf129eefe6ba9181c82ee278fe40e377a0d4c27fd2ad484e22352851cf6"
   },
   "first_two_trials": "Generated under earlier snapshot-after, preserved unchanged. Final extra gate was added afterward; these outputs are not relabeled as final-snapshot generations.",
   "additional_trial": "Fresh independent agent revises a committed chapter as a candidate; compare official chapter, adopted plan and database state before/after."

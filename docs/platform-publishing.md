@@ -6,7 +6,7 @@
 
 ## 已实现的离线命令
 
-安装完整 v0.5.11 套件后使用 [story-codex-publish](../skills/story-codex-publish/SKILL.md)，命令入口仍是 `story-codex/scripts/story.py`。正式章节的准备、清单记录、ZIP 导出、材料包复核及备份不联网，不递增创作 revision，不写剧情事件。当前仅支持 `mode=draft`，目标账号和作品 ID 均是用户声明，尚未经过平台核验。
+v0.6.0 源码的入口为 [story-skill-publish](../skills/story-skill-publish/SKILL.md)，共享命令为 `story-skill/scripts/story.py`；v0.5.11 固定标签仍保留历史命名，不能用这些新路径安装。正式章节的准备、清单记录、ZIP 导出、材料包复核及备份不联网，不递增创作 revision，不写剧情事件。当前仅支持 `mode=draft`，目标账号和作品 ID 均是用户声明，尚未经过平台核验。
 
 | 命令 | 已实现范围 |
 |---|---|
@@ -104,7 +104,7 @@ material-<UUID>.receipt.json  （ZIP 外，与 ZIP 同目录）
 
 ## 已有能力与新增边界
 
-现有 [story.py](../skills/story-codex/scripts/story.py) 的 `commit`、`delivery`、`chapter_path` 可提供本地正式稿、导出结果和真实章节路径。[story_storage.py](../skills/story-codex/scripts/story_storage.py) 保存不可变正文对象；[story_history.py](../skills/story-codex/scripts/story_history.py) 管理正式版本及审查收据。
+现有 [story.py](../skills/story-skill/scripts/story.py) 的 `commit`、`delivery`、`chapter_path` 可提供本地正式稿、导出结果和真实章节路径。[story_storage.py](../skills/story-skill/scripts/story_storage.py) 保存不可变正文对象；[story_history.py](../skills/story-skill/scripts/story_history.py) 管理正式版本及审查收据。
 
 需要区分三件事：
 
@@ -112,7 +112,7 @@ material-<UUID>.receipt.json  （ZIP 外，与 ZIP 同目录）
 - `adopt`、`adopt-backfill` 的初始收据为 `imported_unverified`。导入章通过正式历史审查后仍可能保留 `imported=1`，发布资格必须依据当前正式版本及有效审查收据，不能仅凭导入标记放行或永久拒绝。
 - `chapter-read --sha` 能读取历史候选；`history-publish` 是并入本地正式稿。读得到正文或命令名带有 publish，都不能当成远端发布证据。
 
-v0.5.11 包含 `story-codex-publish` 和共享模块 `story_publish.py`，只实现前述离线命令。后续若取得适用接入许可，再按平台增加适配说明及执行器；普通提交、导出和导出重试不触发平台写入。
+发布准备能力始于 v0.5.11；当前源码以 `story-skill-publish` 和共享模块 `story_publish.py` 实现前述离线命令。后续若取得适用接入许可，再按平台增加适配说明及执行器；普通提交、导出和导出重试不触发平台写入。
 
 ## 未来取得平台许可后的自动化流程设计
 

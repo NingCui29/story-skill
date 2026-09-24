@@ -1,6 +1,6 @@
 {
   "method": "Two independent temporary-book CLI behavior exercises. Read skill instructions and CLI output only; no runtime implementation, diff, tests, or other agent conclusions read; no new prose or repository/installation edits.",
-  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
+  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
   "case1": {
     "chapter_sha256": "3f5a5e0da1ffe91a38cd3846659e36dbb1cb43160198f85b4e748f7d4600255d",
     "original_quote": "甲先在东屋等候，后来移到西屋拆信。",

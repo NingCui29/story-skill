@@ -1,10 +1,10 @@
 {
   "validator": "skill-creator/scripts/quick_validate.py",
   "skills": {
-    "story-codex": "valid",
-    "story-codex-write": "valid",
-    "story-codex-review": "valid",
-    "story-codex-publish": "valid"
+    "story-skill": "valid",
+    "story-skill-write": "valid",
+    "story-skill-review": "valid",
+    "story-skill-publish": "valid"
   },
   "diff_check": "passed"
 }

@@ -3,13 +3,13 @@
   "work_directory": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending",
   "request_file": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending-request.md",
   "skills_read": [
-    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex-review/SKILL.md",
-    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex/SKILL.md"
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill-review/SKILL.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill/SKILL.md"
   ],
   "references_read": [
-    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex-write/references/chapter.md",
-    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex-write/references/drama.md",
-    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex/references/project-state.md"
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill-write/references/chapter.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill-write/references/drama.md",
+    "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill/references/project-state.md"
   ],
   "project_files_read": [
     "雨棚修鞋/创作约定.md",
@@ -31,9 +31,9 @@
   "commands": [
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
-        "../snapshot-after/story-codex/scripts/story.py",
+        "../snapshot-after/story-skill/scripts/story.py",
         "status",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋"
@@ -50,9 +50,9 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
-        "../snapshot-after/story-codex/scripts/story.py",
+        "../snapshot-after/story-skill/scripts/story.py",
         "context",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋",
@@ -80,9 +80,9 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
-        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex/scripts/story.py",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill/scripts/story.py",
         "lint",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋",
@@ -103,9 +103,9 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
-        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex/scripts/story.py",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill/scripts/story.py",
         "prepare",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋",
@@ -125,9 +125,9 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
-        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex/scripts/story.py",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill/scripts/story.py",
         "template",
         "delta",
         "--book",
@@ -138,9 +138,9 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
-        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex/scripts/story.py",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill/scripts/story.py",
         "template",
         "delta"
       ],
@@ -149,9 +149,9 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
-        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex/scripts/story.py",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill/scripts/story.py",
         "template",
         "notes"
       ],
@@ -160,9 +160,9 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
-        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex/scripts/story.py",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill/scripts/story.py",
         "commit",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋",
@@ -199,9 +199,9 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
         "-B",
-        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-codex/scripts/story.py",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/snapshot-after/story-skill/scripts/story.py",
         "status",
         "--book",
         "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-review-routing-4t8ny28y/pending/雨棚修鞋"

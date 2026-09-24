@@ -24,4 +24,4 @@
 - [GitHub Packages 工作流](release/packages-workflow.json) 成功；[原始回执](release/packages.json) 与 [本机独立复核](release/package-check.json) 确认包版本 0.5.3、归档摘要、注册表 SHA-512、33 个技能文件、2 个包装文件与四项 CLI 通过。回下载 tarball SHA-256 为 `cd27f60476a8bb764c795192c0d9094f37840dc2371eb8913f63e491251e1d8b`，与本地构建相同。
 - [本机技能更新](release/local-install.json)：保留完整旧版后更新到 0.5.3，33 个文件与四项 CLI 通过，与官方隔离安装分别记录。
 
-[逐项状态](release/state.json) 汇总文件一致性、四项 CLI 检查、平台边界与本机安装状态。安装与运行验证不等于 Codex UI 自动发现或文学质量验证。GitHub npm 下载仍需认证，npm 不会自动注册 Codex 技能。
+[逐项状态](release/state.json) 汇总文件一致性、四项 CLI 检查、平台边界与本机安装状态。安装与运行验证不等于 助手 UI 自动发现或文学质量验证。GitHub npm 下载仍需认证，npm 不会自动注册 助手 技能。

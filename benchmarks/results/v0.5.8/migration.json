@@ -10,7 +10,7 @@
     "python": "3.9.6"
   },
   "legacy_runtime_archive": {
-    "path": "/Users/cuining/Documents/GitHub/story-skill/tests/fixtures/story-codex-0.2.0.zip",
+    "path": "/Users/cuining/Documents/GitHub/story-skill/tests/fixtures/story-skill-0.2.0.zip",
     "sha256": "efdfd997ecac9564fc737b22df8969c7770858a354084132c7d1ce274486a37e"
   },
   "runtime": {

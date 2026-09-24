@@ -1,7 +1,7 @@
 {
-  "method": "Independent story-codex-write CLI exercise. Read repository skills/templates/help, not implementation, diff, tests, or other agent conclusions. Created native commits for two minimal synthetic chapters and only a plan for chapter 3.",
-  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
-  "python": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "method": "Independent story-skill-write CLI exercise. Read repository skills/templates/help, not implementation, diff, tests, or other agent conclusions. Created native commits for two minimal synthetic chapters and only a plan for chapter 3.",
+  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
+  "python": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
   "commits": [
     {
       "backups": [],

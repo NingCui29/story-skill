@@ -1,7 +1,7 @@
 {
-  "method": "Independent use of repository story-codex-write instructions and real CLI; ordinary fact cards chosen for this small single-thread story. No implementation, diff, tests, or historical review conclusions read. Created and committed only two minimal synthetic chapters; no chapter 3 prose.",
-  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
-  "python": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "method": "Independent use of repository story-skill-write instructions and real CLI; ordinary fact cards chosen for this small single-thread story. No implementation, diff, tests, or historical review conclusions read. Created and committed only two minimal synthetic chapters; no chapter 3 prose.",
+  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
+  "python": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
   "setup": {
     "commit1": {
       "backups": [],

@@ -22,47 +22,47 @@ class VerificationEvidenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="story-suite-links-") as directory:
             root = Path(directory)
             skills = root / "skills"
-            core = skills / "story-codex"
-            review = skills / "story-codex-review"
+            core = skills / "story-skill"
+            review = skills / "story-skill-review"
             core.mkdir(parents=True)
             review.mkdir()
             (core / "SKILL.md").write_text("# Core\n", encoding="utf-8")
             (review / "SKILL.md").write_text(
-                "[shared](../story-codex/SKILL.md)\n[history](references/history.md)\n", encoding="utf-8")
+                "[shared](../story-skill/SKILL.md)\n[history](references/history.md)\n", encoding="utf-8")
             with patch.object(verify, "ROOT", root), patch.object(verify, "SKILLS", skills):
                 result = verify.check_markdown_links()
             self.assertEqual(result["status"], "failed")
             self.assertEqual(result["links_checked"], 2)
-            self.assertEqual(result["missing"], [{"source": "skills/story-codex-review/SKILL.md",
+            self.assertEqual(result["missing"], [{"source": "skills/story-skill-review/SKILL.md",
                                                  "target": "references/history.md", "exists": False}])
 
     def test_archive_validation_covers_specialized_skill_bytes(self):
         with tempfile.TemporaryDirectory(prefix="story-suite-archive-") as directory:
-            archive = Path(directory) / "story-codex-0.4.0.zip"
-            files = {"story-codex/SKILL.md": b"core", "story-codex-write/SKILL.md": b"writing"}
+            archive = Path(directory) / "story-skill-0.6.0.zip"
+            files = {"story-skill/SKILL.md": b"core", "story-skill-write/SKILL.md": b"writing"}
             expected = {key: hashlib.sha256(raw).hexdigest() for key, raw in files.items()}
             with zipfile.ZipFile(archive, "w") as bundle:
                 for name, raw in files.items():
-                    bundle.writestr(name, raw if name.startswith("story-codex/") else b"changed")
+                    bundle.writestr(name, raw if name.startswith("story-skill/") else b"changed")
             with patch.object(verify, "skill_files", return_value=expected), patch.object(verify, "package_module") as loader:
-                loader.return_value.current_version.return_value = "0.4.0"
+                loader.return_value.current_version.return_value = "0.6.0"
                 result = verify.check_archive(archive)
             self.assertEqual(result["status"], "failed")
-            self.assertEqual(result["changed"], ["story-codex-write/SKILL.md"])
+            self.assertEqual(result["changed"], ["story-skill-write/SKILL.md"])
 
     def archive_with_member_kind(self, kind):
         with tempfile.TemporaryDirectory(prefix="story-archive-kind-") as directory:
-            archive = Path(directory) / "story-codex-0.4.0.zip"
-            files = {"story-codex/SKILL.md": b"core", "story-codex-write/SKILL.md": b"writing"}
+            archive = Path(directory) / "story-skill-0.6.0.zip"
+            files = {"story-skill/SKILL.md": b"core", "story-skill-write/SKILL.md": b"writing"}
             expected = {name: hashlib.sha256(raw).hexdigest() for name, raw in files.items()}
             with zipfile.ZipFile(archive, "w") as bundle:
                 for name, raw in files.items():
                     member = zipfile.ZipInfo(name)
                     member.create_system = 3
-                    member.external_attr = ((kind if name == "story-codex/SKILL.md" else stat.S_IFREG) | 0o644) << 16
+                    member.external_attr = ((kind if name == "story-skill/SKILL.md" else stat.S_IFREG) | 0o644) << 16
                     bundle.writestr(member, raw)
             with patch.object(verify, "skill_files", return_value=expected), patch.object(verify, "package_module") as loader:
-                loader.return_value.current_version.return_value = "0.4.0"
+                loader.return_value.current_version.return_value = "0.6.0"
                 return verify.check_archive(archive)
 
     def test_archive_rejects_special_members_even_when_names_and_bytes_match(self):
@@ -71,7 +71,7 @@ class VerificationEvidenceTests(unittest.TestCase):
                 result = self.archive_with_member_kind(kind)
                 self.assertEqual(result["status"], "failed")
                 self.assertFalse(result["contents_match_current_skill"])
-                self.assertEqual(result["non_regular_entries"], ["story-codex/SKILL.md"])
+                self.assertEqual(result["non_regular_entries"], ["story-skill/SKILL.md"])
                 self.assertEqual(result["changed"], [])
                 self.assertEqual(result["missing"], [])
                 self.assertEqual(result["extra"], [])
@@ -162,9 +162,9 @@ class VerificationEvidenceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="story-verify-version-test-") as directory:
             root = Path(directory).resolve()
             (root / "dist").mkdir()
-            current = root / "dist/story-codex-2.4.6.zip"
+            current = root / "dist/story-skill-2.4.6.zip"
             current.write_bytes(b"current")
-            (root / "dist/story-codex-9.9.9.zip").write_bytes(b"different release")
+            (root / "dist/story-skill-9.9.9.zip").write_bytes(b"different release")
             with patch.object(verify, "ROOT", root), patch.object(verify, "package_module") as loader:
                 loader.return_value.current_version.return_value = "2.4.6"
                 self.assertEqual(verify.select_archive(), current)
@@ -185,7 +185,7 @@ class VersionedEvidenceTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="story-versioned-evidence-test-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
-        self.skill = self.root / "skills/story-codex"
+        self.skill = self.root / "skills/story-skill"
         (self.skill / "scripts").mkdir(parents=True)
         self.runtime = self.skill / "scripts/story.py"
         package = verify.package_module()
@@ -215,10 +215,10 @@ class VersionedEvidenceTests(unittest.TestCase):
             (directory / filename).write_text(json.dumps(report), encoding="utf-8")
 
     def test_default_output_uses_runtime_version_without_overwriting_other_releases(self):
-        previous = self.root / "benchmarks/results/v0.3.0/verification.json"
+        previous = self.root / "benchmarks/results/v0.6.0/verification.json"
         previous.parent.mkdir(parents=True)
         previous.write_bytes(b"preserved historical evidence\n")
-        for version in ("0.4.0", "0.5.0", "0.5.1"):
+        for version in ("0.6.1", "0.6.2"):
             with self.subTest(version=version):
                 directory = self.use_version(version)
                 with patch.object(verify.sys, "argv", ["verify.py"]), patch.object(
@@ -230,7 +230,7 @@ class VersionedEvidenceTests(unittest.TestCase):
                 self.assertEqual(previous.read_bytes(), b"preserved historical evidence\n")
 
     def test_explicit_output_is_honored_without_creating_default_directory(self):
-        directory = self.use_version("0.5.1")
+        directory = self.use_version("0.6.0")
         target = self.root / "custom/evidence.json"
         with patch.object(verify.sys, "argv", ["verify.py", "--output", str(target)]), patch.object(
                 verify, "verify", return_value={"ok": True}), patch("sys.stdout", new=io.StringIO()):
@@ -239,7 +239,7 @@ class VersionedEvidenceTests(unittest.TestCase):
         self.assertFalse(directory.exists())
 
     def test_probes_follow_runtime_version_and_keep_exact_hash_binding(self):
-        for version in ("0.4.0", "0.5.0", "0.5.1"):
+        for version in ("0.6.1", "0.6.2"):
             with self.subTest(version=version):
                 directory = self.use_version(version)
                 hashes = {"story.py": verify.digest(self.runtime)}
@@ -253,8 +253,8 @@ class VersionedEvidenceTests(unittest.TestCase):
                 self.assertTrue(all(not item["matches_current_runtime"] for item in changed["reports"]))
 
     def test_missing_current_probes_do_not_fall_back_to_a_previous_release(self):
-        current = self.use_version("0.5.1")
-        older = self.root / "benchmarks/results/v0.5.0"
+        current = self.use_version("0.6.1")
+        older = self.root / "benchmarks/results/v0.6.0"
         self.write_probes(older, {"story.py": verify.digest(self.runtime)})
         with self.assertRaises(FileNotFoundError) as error:
             verify.check_recorded_probes()

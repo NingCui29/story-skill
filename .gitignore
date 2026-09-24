@@ -17,7 +17,7 @@ coverage.xml
 dist/
 build/
 *.egg-info/
-.story-codex-package-*.zip
+.story-skill-package-*.zip
 
 # Project-local installed skill copies; canonical sources live in /skills/.
 /.agents/skills/
@@ -31,9 +31,9 @@ build/
 .publishing-init-*
 .publishing-export-*
 **/.story/publishing-exports/
-.story-codex-install.lock
-.story-codex-stage-*/
-.story-codex-backups/
+.story-skill-install.lock
+.story-skill-stage-*/
+.story-skill-backups/
 
 # Verification temporary output and leftover test fixtures
 .verification-*.json

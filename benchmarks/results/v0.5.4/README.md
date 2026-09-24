@@ -18,7 +18,7 @@
 - [Release](https://github.com/NingCui29/story-skill/releases/tag/v0.5.4)：固定提交 `89945075e0917acff8f23b9fa356c3a8cbba658e`。[附件回下载](release/release.json)与本地ZIP、固定提交源码33个文件一致；下载及安装后再次核对标签。
 - [官方固定标签隔离安装](release/remote-install.json)：7个技能、33个文件一致，版本、帮助、初始化与状态4项运行检查通过。
 - [远端CI](release/ci.json)：Linux 443项中431通过、12跳过；Windows在首项报告导出测试出现既有WinError 32，后续步骤跳过，因此整轮CI为失败，不代表全平台通过。
-- [GitHub Packages](release/packages.json)：公开发布 `@ningcui29/story-codex@0.5.4`；[独立复核](release/package-check.json)确认回下载包与本地产物一致，33个技能文件及4项运行检查通过。
+- [GitHub Packages](release/packages.json)：公开发布 `@ningcui29/story-skill@0.5.4`；[独立复核](release/package-check.json)确认回下载包与本地产物一致，33个技能文件及4项运行检查通过。
 - [本机升级](release/local-install.json)：原位置从0.5.3更新至0.5.4，旧版完整备份，33个文件与Release一致，4项运行检查通过；没有需要合并的本地修改。
 
-[最终核对](release/final-check.json)记录当前文档、发布回执、固定标签和830个既有结果文件的一致性。技能可在下一条消息使用；未显示时重启Codex。本版开发比较范围及限制保持不变，不据此承诺作品吸引力或读者留存提升。
+[最终核对](release/final-check.json)记录当前文档、发布回执、固定标签和830个既有结果文件的一致性。技能可在下一条消息使用；未显示时重启助手。本版开发比较范围及限制保持不变，不据此承诺作品吸引力或读者留存提升。

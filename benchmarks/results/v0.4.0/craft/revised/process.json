@@ -2,10 +2,10 @@
   "task": "依据 revised 技能，完成 workshop 与 quiet 两个独立场景",
   "inputs_read": [
     "C:/Users/Work/AppData/Local/Temp/story-craft-eval-qw5ghqhl/briefs.json",
-    "C:/Users/Work/AppData/Local/Temp/story-craft-eval-qw5ghqhl/revised/skills/story-codex-write/SKILL.md",
-    "C:/Users/Work/AppData/Local/Temp/story-craft-eval-qw5ghqhl/revised/skills/story-codex/SKILL.md",
-    "C:/Users/Work/AppData/Local/Temp/story-craft-eval-qw5ghqhl/revised/skills/story-codex-write/references/chapter.md",
-    "C:/Users/Work/AppData/Local/Temp/story-craft-eval-qw5ghqhl/revised/skills/story-codex-write/references/drama.md"
+    "C:/Users/Work/AppData/Local/Temp/story-craft-eval-qw5ghqhl/revised/skills/story-skill-write/SKILL.md",
+    "C:/Users/Work/AppData/Local/Temp/story-craft-eval-qw5ghqhl/revised/skills/story-skill/SKILL.md",
+    "C:/Users/Work/AppData/Local/Temp/story-craft-eval-qw5ghqhl/revised/skills/story-skill-write/references/chapter.md",
+    "C:/Users/Work/AppData/Local/Temp/story-craft-eval-qw5ghqhl/revised/skills/story-skill-write/references/drama.md"
   ],
   "scope": "仅生成两个场景 Markdown 和本说明文件；未读取其他 candidate、真实小说、仓库资料或记忆；未初始化工程或创建数据库。",
   "workflow": "依次读取正文入口、公共约束、章流程、冲突与场景参考；针对用户的单场景授权直接起草，用 Python 标准库核对字数，并进行当前会话语义自审。工程 context、prepare、commit、export 不适用于此次明确禁止初始化和建库的授权，未执行也未宣称执行。",

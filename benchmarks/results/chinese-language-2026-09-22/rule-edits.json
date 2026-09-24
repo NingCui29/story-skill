@@ -2,7 +2,7 @@
   "scope": "Language guidance and workflow wording only; runtime unchanged",
   "files": [
     {
-      "path": "skills/story-codex-write/references/drama.md",
+      "path": "skills/story-skill-write/references/drama.md",
       "before_sha256": "5626417993c1b7fc440a770989ac0cf04053bbd21bd028f794e0a64fbf22b9a0",
       "after_sha256": "fbcf12dd6d665a5a2a2296be8455110f0d6bbc25580b926fac088407bc28999a",
       "before_crlf": 0,
@@ -10,7 +10,7 @@
       "bytes_added": 2466
     },
     {
-      "path": "skills/story-codex-review/SKILL.md",
+      "path": "skills/story-skill-review/SKILL.md",
       "before_sha256": "a9a943560ae29ec60eef4332c201743b5e862f278d17b96d9bfc31d527c2e51e",
       "after_sha256": "d10cf3161b23bfb0bf1a4e910ce78676c742c2872f7d38d3931720a595f2e80c",
       "before_crlf": 25,
@@ -18,7 +18,7 @@
       "bytes_added": 282
     },
     {
-      "path": "skills/story-codex-write/references/chapter.md",
+      "path": "skills/story-skill-write/references/chapter.md",
       "before_sha256": "859ecbcd7c61c3c6584063a0b0aaa51013b852fcead9c4b25bc44862f029064c",
       "after_sha256": "efa24f55a218e6d005a16a4b12b17c4caea048aaf7f7fba8825307deafec8c57",
       "before_crlf": 4,

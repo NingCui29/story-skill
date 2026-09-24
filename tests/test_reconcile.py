@@ -5,7 +5,7 @@ import tempfile
 import unittest
 
 
-TOOL = Path(__file__).resolve().parents[1] / "skills/story-codex/scripts/story.py"
+TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 spec = importlib.util.spec_from_file_location("story_reconcile_tests", TOOL)
 story = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(story)

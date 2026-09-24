@@ -2,8 +2,8 @@
   "date": "2026-09-19T07:35:33.460974+00:00",
   "scope": "Separate unmanaged revisions, first commit of a pending chapter, and revisions of committed chapters.",
   "before_sha256": {
-    "skills/story-codex/SKILL.md": "c9b693c4518dd3d8ee471abf9a1a24ed41967d8c0019282fabeb495d7e999695",
-    "skills/story-codex-review/SKILL.md": "df8fb85320b9193c0f4ed7fba55a6a55541e1e130043cfb48c81fe96b20d9ca4"
+    "skills/story-skill/SKILL.md": "c9b693c4518dd3d8ee471abf9a1a24ed41967d8c0019282fabeb495d7e999695",
+    "skills/story-skill-review/SKILL.md": "df8fb85320b9193c0f4ed7fba55a6a55541e1e130043cfb48c81fe96b20d9ca4"
   },
   "runtime_sha256": "6c2a79ba38bcd7e5bd6fed016edd48b1b900e9630e6df7998b900e56c3ff0c80",
   "static_findings": [

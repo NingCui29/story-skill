@@ -1,8 +1,8 @@
 {
   "skills_read": [
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-codex-analyze/SKILL.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-codex/SKILL.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-codex-analyze/references/deep-reading.md"
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-skill-analyze/SKILL.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-skill/SKILL.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-skill-analyze/references/deep-reading.md"
   ],
   "source_id": "8aa6a3e99ba280f88e8e3506a20d8367e535dacfa27c3b7b22a2f2b0e36e5133",
   "chunks": [
@@ -369,7 +369,7 @@
     }
   ],
   "runtime_read": {
-    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-codex/scripts/story.py",
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/candidate/skills/story-skill/scripts/story.py",
     "method": "rg 定点检索 analysis、source_sha256、chunk_sha256，获取记录字段与模板定义"
   },
   "source_initial_read": {

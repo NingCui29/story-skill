@@ -88,10 +88,10 @@
   "actual_user_skills_updated": false,
   "real_novels_touched": false,
   "input_sha256": {
-    "skills/story-codex/SKILL.md": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
-    "skills/story-codex-analyze/SKILL.md": "7d38bbd559eaf9aa2f6c2a47f3a8f88fb873030b8cfe5167a69768d2d125e267",
-    "skills/story-codex-analyze/references/deep-reading.md": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
-    "skills/story-codex/scripts/story.py": "d47cffb954338ee2aa4c7a580d764388568f71be793f03209e824b7c4c6fccb2",
+    "skills/story-skill/SKILL.md": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd",
+    "skills/story-skill-analyze/SKILL.md": "7d38bbd559eaf9aa2f6c2a47f3a8f88fb873030b8cfe5167a69768d2d125e267",
+    "skills/story-skill-analyze/references/deep-reading.md": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
+    "skills/story-skill/scripts/story.py": "d47cffb954338ee2aa4c7a580d764388568f71be793f03209e824b7c4c6fccb2",
     "tests/test_analysis_headings.py": "9f4f00b5aaccd0a795254e20163a85d3cb602ec67a2c2fa071e3498a7744f187"
   },
   "trial_files_sha256": {

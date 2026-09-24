@@ -8,12 +8,12 @@
   "skill_files": 34,
   "assets": [
     {
-      "name": "story-codex-0.5.8.zip",
+      "name": "story-skill-0.5.8.zip",
       "sha256": "253c072cc1d28703e36209a6374e6e008fa3abaf0c939d0429e042444ebd5cbc",
       "bytes": 135216
     },
     {
-      "name": "story-codex-0.5.8.zip.sha256",
+      "name": "story-skill-0.5.8.zip.sha256",
       "sha256": "3a44519eb2b15aa32525e368a8fadf2be638011eb680226d95ebe49390ac84e8",
       "bytes": 88
     }

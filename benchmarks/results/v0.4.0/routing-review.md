@@ -13,11 +13,11 @@
 
 实际重新读取：
 
-- D:/Developer/WorkSpace/story-skill/skills/story-codex/SKILL.md
+- D:/Developer/WorkSpace/story-skill/skills/story-skill/SKILL.md
 - C:/Users/Work/AppData/Local/Temp/story-suite-forward-yawj5e9z/创作约定.md
 - C:/Users/Work/AppData/Local/Temp/story-suite-forward-yawj5e9z/稿件.md
 
-复用当前上下文中已读取且本次确认未变的 D:/Developer/WorkSpace/story-skill/skills/story-codex-review/SKILL.md，未重复加载专用技能。未读取其他参考、源码或代理报告；旧审查结果仅随目录列举显示文件名，未读取内容。
+复用当前上下文中已读取且本次确认未变的 D:/Developer/WorkSpace/story-skill/skills/story-skill-review/SKILL.md，未重复加载专用技能。未读取其他参考、源码或代理报告；旧审查结果仅随目录列举显示文件名，未读取内容。
 
 实际命令：Get-Content -LiteralPath ... -Raw（当前总入口和两个原始文件）；Get-ChildItem -LiteralPath ... -Force（目录检查）；Get-FileHash -Algorithm SHA256 -LiteralPath ...（前后原文件校验）；[System.IO.File]::WriteAllText(...) 与 AppendAllText(...)（本复验记录）。
 

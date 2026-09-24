@@ -4,15 +4,15 @@
   "downloaded_tarball_matches_local": true,
   "tarball_sha256": "0cc37dcf98580b1ab7379ec7c54f23167b972e9e5d404679502fd975d982fa71",
   "files": 31,
-  "package_name": "@ningcui29/story-codex",
+  "package_name": "@ningcui29/story-skill",
   "version": "0.4.0",
   "visibility": "public",
-  "package_url": "https://github.com/users/NingCui29/packages/npm/package/story-codex",
+  "package_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill",
   "linked_repository": "NingCui29/story-skill",
   "public_browser_observation": {
     "authenticated": false,
-    "url": "https://github.com/NingCui29/story-skill/pkgs/npm/story-codex",
-    "heading": "story-codex 0.4.0 Latest",
+    "url": "https://github.com/NingCui29/story-skill/pkgs/npm/story-skill",
+    "heading": "story-skill 0.4.0 Latest",
     "version_id": 1230834850
   }
 }

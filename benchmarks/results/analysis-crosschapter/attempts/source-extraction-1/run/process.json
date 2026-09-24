@@ -1,9 +1,9 @@
 {
   "resources_read": [
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex-analyze/SKILL.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill-analyze/SKILL.md",
     "/Users/cuining/Documents/GitHub/story-skill/benchmarks/analysis-crosschapter/task.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex/SKILL.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex-analyze/references/deep-reading.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill/SKILL.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill-analyze/references/deep-reading.md",
     "/Users/cuining/Documents/GitHub/story-skill/benchmarks/analysis-crosschapter/chapters.json",
     "/Users/cuining/Documents/GitHub/story-skill/benchmarks/analysis-crosschapter/source.txt"
   ],
@@ -18,8 +18,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill/scripts/story.py",
         "template",
         "analysis"
       ],
@@ -31,8 +31,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill/scripts/story.py",
         "init",
         "--book",
         "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/analysis-crosschapter/run",
@@ -49,8 +49,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill/scripts/story.py",
         "ingest",
         "--book",
         "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/analysis-crosschapter/run",
@@ -67,8 +67,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill/scripts/story.py",
         "next",
         "--book",
         "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/analysis-crosschapter/run",
@@ -87,5 +87,5 @@
     }
   ],
   "unexposed_parameters": "不可控",
-  "executed_runtime": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-codex/scripts/story.py"
+  "executed_runtime": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs/story-skill/scripts/story.py"
 }

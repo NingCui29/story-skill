@@ -22,7 +22,7 @@
         "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目"
       ],
       "exit_code": 0,
-      "stdout": "{\"status\": \"installed\", \"path\": \"C:\\\\Users\\\\Work\\\\AppData\\\\Local\\\\Temp\\\\story-upgrade-probe-5a9ft72u\\\\升级验证项目\\\\.agents\\\\skills\\\\story-codex\", \"backup\": null, \"files\": 8}\r\n",
+      "stdout": "{\"status\": \"installed\", \"path\": \"C:\\\\Users\\\\Work\\\\AppData\\\\Local\\\\Temp\\\\story-upgrade-probe-5a9ft72u\\\\升级验证项目\\\\.agents\\\\skills\\\\story-skill\", \"backup\": null, \"files\": 8}\r\n",
       "stderr": "",
       "duration_seconds": 0.111
     },
@@ -33,7 +33,7 @@
         "-B",
         "-X",
         "utf8",
-        "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-codex\\scripts\\story.py",
+        "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-skill\\scripts\\story.py",
         "--version"
       ],
       "exit_code": 0,
@@ -54,7 +54,7 @@
         "--update"
       ],
       "exit_code": 0,
-      "stdout": "{\"status\": \"updated\", \"path\": \"C:\\\\Users\\\\Work\\\\AppData\\\\Local\\\\Temp\\\\story-upgrade-probe-5a9ft72u\\\\升级验证项目\\\\.agents\\\\skills\\\\story-codex\", \"backup\": \"C:\\\\Users\\\\Work\\\\AppData\\\\Local\\\\Temp\\\\story-upgrade-probe-5a9ft72u\\\\升级验证项目\\\\.agents\\\\.story-codex-backups\\\\c0f8500c95af4408be4d8a3bfbc2f1a3\", \"files\": 13}\r\n",
+      "stdout": "{\"status\": \"updated\", \"path\": \"C:\\\\Users\\\\Work\\\\AppData\\\\Local\\\\Temp\\\\story-upgrade-probe-5a9ft72u\\\\升级验证项目\\\\.agents\\\\skills\\\\story-skill\", \"backup\": \"C:\\\\Users\\\\Work\\\\AppData\\\\Local\\\\Temp\\\\story-upgrade-probe-5a9ft72u\\\\升级验证项目\\\\.agents\\\\.story-skill-backups\\\\c0f8500c95af4408be4d8a3bfbc2f1a3\", \"files\": 13}\r\n",
       "stderr": "",
       "duration_seconds": 0.131
     },
@@ -65,7 +65,7 @@
         "-B",
         "-X",
         "utf8",
-        "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-codex\\scripts\\story.py",
+        "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-skill\\scripts\\story.py",
         "--version"
       ],
       "exit_code": 0,
@@ -80,7 +80,7 @@
         "-B",
         "-X",
         "utf8",
-        "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-codex\\scripts\\story.py",
+        "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-skill\\scripts\\story.py",
         "prepare",
         "--help"
       ],
@@ -102,7 +102,7 @@
         "--update"
       ],
       "exit_code": 0,
-      "stdout": "{\"status\": \"unchanged\", \"path\": \"C:\\\\Users\\\\Work\\\\AppData\\\\Local\\\\Temp\\\\story-upgrade-probe-5a9ft72u\\\\升级验证项目\\\\.agents\\\\skills\\\\story-codex\"}\r\n",
+      "stdout": "{\"status\": \"unchanged\", \"path\": \"C:\\\\Users\\\\Work\\\\AppData\\\\Local\\\\Temp\\\\story-upgrade-probe-5a9ft72u\\\\升级验证项目\\\\.agents\\\\skills\\\\story-skill\"}\r\n",
       "stderr": "",
       "duration_seconds": 0.092
     }
@@ -139,7 +139,7 @@
     "previous_release_backup_exact": {
       "status": "passed",
       "original_files_sha256": {
-        ".story-codex-install.json": "1a521f07e62aaf14e01fb6b83c6c044271807c96d011c52f405059eddf931d00",
+        ".story-skill-install.json": "1a521f07e62aaf14e01fb6b83c6c044271807c96d011c52f405059eddf931d00",
         "agents/openai.yaml": "d34634e53f6f55985a8c86e9370a2300c700398725c64bed354eb8a9ec9d9eee",
         "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
         "references/analyze.md": "06684da84cef9f12e93c76cc3d34289c9f82378984185a097d02272605c43af0",
@@ -150,7 +150,7 @@
         "SKILL.md": "f0f2e32d8ee6f88189011f81589d9a424f8bc24987a27b1c5abe3a4d27cd5c05"
       },
       "backup_files_sha256": {
-        ".story-codex-install.json": "1a521f07e62aaf14e01fb6b83c6c044271807c96d011c52f405059eddf931d00",
+        ".story-skill-install.json": "1a521f07e62aaf14e01fb6b83c6c044271807c96d011c52f405059eddf931d00",
         "agents/openai.yaml": "d34634e53f6f55985a8c86e9370a2300c700398725c64bed354eb8a9ec9d9eee",
         "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
         "references/analyze.md": "06684da84cef9f12e93c76cc3d34289c9f82378984185a097d02272605c43af0",
@@ -164,7 +164,7 @@
     "updated_manifest_matches_canonical": {
       "status": "passed",
       "installed_files_sha256": {
-        ".story-codex-install.json": "f896c9418dcdeae09b4d85e41ea87ccd711fad867000e339dff72177f623991b",
+        ".story-skill-install.json": "f896c9418dcdeae09b4d85e41ea87ccd711fad867000e339dff72177f623991b",
         "agents/openai.yaml": "d34634e53f6f55985a8c86e9370a2300c700398725c64bed354eb8a9ec9d9eee",
         "LICENSE": "2351e1b2ef21fa45dd2140c9e88f6f55730e00cc2a30da5980a0af28e969bc32",
         "references/analyze.md": "06684da84cef9f12e93c76cc3d34289c9f82378984185a097d02272605c43af0",
@@ -199,7 +199,7 @@
     }
   },
   "initial_archive": {
-    "path": "D:\\Developer\\WorkSpace\\story-skill\\dist\\story-codex-0.2.0.zip",
+    "path": "D:\\Developer\\WorkSpace\\story-skill\\dist\\story-skill-0.2.0.zip",
     "sha256": "efdfd997ecac9564fc737b22df8969c7770858a354084132c7d1ce274486a37e",
     "bytes": 29325,
     "version": "0.2.0",
@@ -238,7 +238,7 @@
   },
   "current_archive": {
     "status": "passed",
-    "archive": "D:\\Developer\\WorkSpace\\story-skill\\dist\\story-codex-0.3.0.zip",
+    "archive": "D:\\Developer\\WorkSpace\\story-skill\\dist\\story-skill-0.3.0.zip",
     "version": "0.3.0",
     "sha256": "9e72497995e2269066fe3222a004be353fbb3f014af7a842745505dec5612948",
     "bytes": 75282,
@@ -252,19 +252,19 @@
   },
   "initial_install": {
     "status": "installed",
-    "path": "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-codex",
+    "path": "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-skill",
     "backup": null,
     "files": 8
   },
   "update": {
     "status": "updated",
-    "path": "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-codex",
-    "backup": "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\.story-codex-backups\\c0f8500c95af4408be4d8a3bfbc2f1a3",
+    "path": "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-skill",
+    "backup": "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\.story-skill-backups\\c0f8500c95af4408be4d8a3bfbc2f1a3",
     "files": 13
   },
   "repeat_update": {
     "status": "unchanged",
-    "path": "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-codex"
+    "path": "C:\\Users\\Work\\AppData\\Local\\Temp\\story-upgrade-probe-5a9ft72u\\升级验证项目\\.agents\\skills\\story-skill"
   },
   "temporary_project_removed": true
 }

@@ -1,23 +1,23 @@
-diff --git a/skills/story-codex-plan/SKILL.md b/skills/story-codex-plan/SKILL.md
+diff --git a/skills/story-skill-plan/SKILL.md b/skills/story-skill-plan/SKILL.md
 index 0e20a77..62d62ae 100644
---- a/skills/story-codex-plan/SKILL.md
-+++ b/skills/story-codex-plan/SKILL.md
+--- a/skills/story-skill-plan/SKILL.md
++++ b/skills/story-skill-plan/SKILL.md
 @@ -9,6 +9,8 @@ description: 中文小说开书、人物与世界设定、大纲、近期细纲
  
  从用户要求/已有项目确认题材、读者期待、主角欲望、代价、篇幅和不可改变的事实。缺少可自行选择的设定时提出并采用合理方案；涉及已有剧情的未知项先查证。不要求必须有对标书。
  
 +开书或复核总纲时，对照书名、简介和题材标签，核对最主要的阅读承诺由哪些情节建立、阶段兑现并影响后续；延后兑现应有本书理由，慢热也可通过小的关系或认知变化维持期待。发现定位与安排不符时，指出具体项，按本次授权校准定位或情节安排，再展开相关细纲，不统一规定兑现章号。
 +
- 设计主线矛盾、开篇看点或修整平淡大纲时，读取 [冲突与看点](../story-codex-write/references/drama.md)。先确定人物难以兼得的目标、有效阻力与可兑现的阅读期待，再展开设定；不要把世界观清单当情节。近期细纲写清具体尝试、阻力如何回应、选择造成的变化，以及读者会在哪场戏得到回报，不靠“强冲突、大反转、爽点”标签代替内容。关系、幽默和日常也可承担看点。
+ 设计主线矛盾、开篇看点或修整平淡大纲时，读取 [冲突与看点](../story-skill-write/references/drama.md)。先确定人物难以兼得的目标、有效阻力与可兑现的阅读期待，再展开设定；不要把世界观清单当情节。近期细纲写清具体尝试、阻力如何回应、选择造成的变化，以及读者会在哪场戏得到回报，不靠“强冲突、大反转、爽点”标签代替内容。关系、幽默和日常也可承担看点。
  
- 新书落盘前先读取 [书名目录与开书落点](../story-codex/references/project-state.md#书名目录与开书落点)，确定最终书根。默认在写作父目录下先建以书名命名的独立文件夹，再执行 `init --book "<父目录>/<书名>" --title "<书名>" --kind long|short`；`--book` 已是最终书根，`--title` 不会再创建书名子目录。用户明确指定书目录或继续已有书时沿用原位置。初始化后核对回执中的 `created/title` 与实际目录，再把约定、策划和大纲保存到该书根；交付时给出实际书目录。按需创建设定。长篇先交代全书从开端到结局的走向与分卷粗纲，再展开近期细纲；说明本卷目标、升级代价和终局储备，未确定处标明待定，不为填满章节提前细化全书。短篇先有结局与关键选择，可用一份规划简化层级。用户只要求局部设计时沿用已有总纲，不扩写未授权部分。
-diff --git a/skills/story-codex-review/SKILL.md b/skills/story-codex-review/SKILL.md
+ 新书落盘前先读取 [书名目录与开书落点](../story-skill/references/project-state.md#书名目录与开书落点)，确定最终书根。默认在写作父目录下先建以书名命名的独立文件夹，再执行 `init --book "<父目录>/<书名>" --title "<书名>" --kind long|short`；`--book` 已是最终书根，`--title` 不会再创建书名子目录。用户明确指定书目录或继续已有书时沿用原位置。初始化后核对回执中的 `created/title` 与实际目录，再把约定、策划和大纲保存到该书根；交付时给出实际书目录。按需创建设定。长篇先交代全书从开端到结局的走向与分卷粗纲，再展开近期细纲；说明本卷目标、升级代价和终局储备，未确定处标明待定，不为填满章节提前细化全书。短篇先有结局与关键选择，可用一份规划简化层级。用户只要求局部设计时沿用已有总纲，不扩写未授权部分。
+diff --git a/skills/story-skill-review/SKILL.md b/skills/story-skill-review/SKILL.md
 index c3cb359..7f5381e 100644
---- a/skills/story-codex-review/SKILL.md
-+++ b/skills/story-codex-review/SKILL.md
+--- a/skills/story-skill-review/SKILL.md
++++ b/skills/story-skill-review/SKILL.md
 @@ -7,7 +7,7 @@ description: 中文小说审稿、修改、去 AI 味及已提交章节修订，
  
- 先按需读取 `../story-codex/SKILL.md` 的“共同约束”；同版内容已在当前上下文中则复用。此入口已完成任务选择，不执行公共入口的路由。共享工具位于 `../story-codex/scripts/story.py`，记其绝对路径为 `<tool>`；下文所有书籍命令都显式附加 `--book "<书目录绝对路径>"`。公共技能或所需工具缺失时，说明缺失路径并提示安装完整 Story Codex 套件；不假称已执行。
+ 先按需读取 `../story-skill/SKILL.md` 的“共同约束”；同版内容已在当前上下文中则复用。此入口已完成任务选择，不执行公共入口的路由。共享工具位于 `../story-skill/scripts/story.py`，记其绝对路径为 `<tool>`；下文所有书籍命令都显式附加 `--book "<书目录绝对路径>"`。公共技能或所需工具缺失时，说明缺失路径并提示安装完整 Story Skill 套件；不假称已执行。
  
 -读取目标正文、用户修改要求和相关约束；只有需要解释矛盾时补读上下文。默认当前会话一次审查；不为了更高评分循环重写整章。采用独立审查时遵循公共约束，并明确真实执行方式。
 +读取目标正文、用户修改要求和相关约束；需要核对矛盾、连载节奏、关系变化或期待兑现时，用现有摘要或目录定位，再补读必要原文，摘要不能替代读感判断。默认当前会话一次审查；不为了更高评分循环重写整章。采用独立审查时遵循公共约束，并明确真实执行方式。
@@ -27,7 +27,7 @@ index c3cb359..7f5381e 100644
 @@ -16,10 +16,12 @@ description: 中文小说审稿、修改、去 AI 味及已提交章节修订，
  - 读感：读者在期待什么，哪段实际情节兑现了看点，哪里只用评价宣布结果；人物声线、对白潜台词、有效留白与中文语句是否自然，重复解释是否拖慢场景。
  
- 用户指出“平、冲突弱、看点不足”时，按需读 [冲突与看点](../story-codex-write/references/drama.md)，指出牵挂减弱的具体位置，区分有效安静与无事发生、可理解的阻力与强行刁难。优先修复无阻力兑现、重复拖延、回报一笔带过，不以每章争吵、反转或强悬念作为通用标准。纯审稿只交问题与建议，最小校对不升级为情节改写。
+ 用户指出“平、冲突弱、看点不足”时，按需读 [冲突与看点](../story-skill-write/references/drama.md)，指出牵挂减弱的具体位置，区分有效安静与无事发生、可理解的阻力与强行刁难。优先修复无阻力兑现、重复拖延、回报一笔带过，不以每章争吵、反转或强悬念作为通用标准。纯审稿只交问题与建议，最小校对不升级为情节改写。
 +
 +核对阶段回报时，区分尚未发生、已经发生但体验被跳过，以及已有余波仍在影响生活或关系；结合必要前后文，只说明与本次疑点有关的依据和取舍。修订后回查原先定位的问题及应保留的有效内容，未改项说明取舍，不把脚本通过写成吸引力已改善。
  
@@ -38,10 +38,10 @@ index c3cb359..7f5381e 100644
  
  每轮合并新增要求与必须保留项，保留上一轮问题的解决状态；重点复核旧问题是否复发、人物知识与伏笔是否仍成立。用户允许改变剧情时先同步当前章 plan 和创作约定；普通最新章修订再取新版 context，历史修订则在计划就绪后建立分支并读取 history-inspect / history-dependencies。不能用旧停笔点阻挡已授权修改。保存每轮稿件，changes 描述相对章前基线的完整最终增量；不能只写相对上一轮的差异，否则被撤回的旧事实会丢失。
  
-diff --git a/skills/story-codex-write/references/drama.md b/skills/story-codex-write/references/drama.md
+diff --git a/skills/story-skill-write/references/drama.md b/skills/story-skill-write/references/drama.md
 index 039469f..d56cb1b 100644
---- a/skills/story-codex-write/references/drama.md
-+++ b/skills/story-codex-write/references/drama.md
+--- a/skills/story-skill-write/references/drama.md
++++ b/skills/story-skill-write/references/drama.md
 @@ -30,6 +30,8 @@
  
  内心戏写判断、犹豫或自我辩解，叙述补必要信息，避免刚说完一句话又用旁白翻译一次。挑能影响行动或显出关系的具体细节，不堆感官清单；情绪可直写，不必每次换成握拳、看人、呼吸一滞。中文语序、指代和段落转接先让意思顺畅，保留适合本书的长短句、修辞与节奏，不机械切碎句子或一律删除语气词。

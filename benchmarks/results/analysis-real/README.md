@@ -58,4 +58,4 @@
 
 [五项相关工程检查](technical.json) 通过：开发 ZIP、当前指令计数与哈希、当次本地链接、隔离安装和分析技能官方校验。第一轮 390 项回归没有重跑；本轮核对了相关代码与测试文件哈希，仍与当时 383 通过、7 项平台跳过的字节一致。没有把旧结果说成本轮新执行，也未完成新版本发布验收。
 
-当前静态深读指令为 4,111 tokens，含按需教学样例时为 5,648；相对第一轮各增加 48。[计数](tokens.md) 不包括原文、报告、工具输出或推理，不能换算成实际账户用量。套件仍为 33 文件，开发版尚未发布。v0.5.0 包与标签保持不变；第一轮开发包另存为 `dist/story-codex-analysis-depth-pilot.zip`，旧回执保留当时路径和原哈希，见 [历史证据核对](prior-evidence-check.json)。最终一致性检查见 [final-check.json](final-check.json)。
+当前静态深读指令为 4,111 tokens，含按需教学样例时为 5,648；相对第一轮各增加 48。[计数](tokens.md) 不包括原文、报告、工具输出或推理，不能换算成实际账户用量。套件仍为 33 文件，开发版尚未发布。v0.5.0 包与标签保持不变；第一轮开发包另存为 `dist/story-skill-analysis-depth-pilot.zip`，旧回执保留当时路径和原哈希，见 [历史证据核对](prior-evidence-check.json)。最终一致性检查见 [final-check.json](final-check.json)。

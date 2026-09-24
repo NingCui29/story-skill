@@ -1,28 +1,28 @@
 {
   "task": "继续这份中断的《门边》分析修订，接着已保存进度完成剩余问题，并交付修订后的完整分析。",
   "authorized_root": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-followup-rr916sz5",
-  "skill_entry": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-analyze/SKILL.md",
+  "skill_entry": "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-analyze/SKILL.md",
   "read_files": [
-    "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-analyze/SKILL.md",
-    "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/SKILL.md",
+    "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-analyze/SKILL.md",
+    "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/SKILL.md",
     "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-followup-rr916sz5/分析工程/revisions/门边-第1次/进度.md",
     "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-followup-rr916sz5/分析工程/revisions/门边-第1次/report.md",
     "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-followup-rr916sz5/原文.txt",
     "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-followup-rr916sz5/已提交分析.md",
     "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-followup-rr916sz5/分析工程/.story/analysis/c76221d63b425e487d90568d1f598ca83836ad66d44aa485ee513f3b69943db7/report.md",
-    "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-analyze/references/examples.md"
+    "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-analyze/references/examples.md"
   ],
   "read_files_scope": "列出本次通过命令显式读取内容或哈希的任务文件和技能文档；story.py 执行过程内部读取的运行时依赖与工程数据库未逐文件跟踪，未宣称此列表是操作系统级完整读取审计。",
   "executed_tool_entrypoints": [
-    "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py"
+    "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py"
   ],
   "executed_commands": [
     {
-      "command": "cat /Users/cuining/Documents/GitHub/story-skill/skills/story-codex-analyze/SKILL.md",
+      "command": "cat /Users/cuining/Documents/GitHub/story-skill/skills/story-skill-analyze/SKILL.md",
       "exit_code": 0
     },
     {
-      "command": "cat '/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/SKILL.md'",
+      "command": "cat '/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/SKILL.md'",
       "exit_code": 0
     },
     {
@@ -34,11 +34,11 @@
       "exit_code": 0
     },
     {
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 /Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py status --book '/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-followup-rr916sz5/分析工程'",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 /Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py status --book '/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-followup-rr916sz5/分析工程'",
       "exit_code": 0
     },
     {
-      "command": "cat '/Users/cuining/Documents/GitHub/story-skill/skills/story-codex-analyze/references/examples.md'",
+      "command": "cat '/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-analyze/references/examples.md'",
       "exit_code": 0
     },
     {

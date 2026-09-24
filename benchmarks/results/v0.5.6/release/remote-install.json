@@ -4,13 +4,13 @@
   "source": "official skill-installer from GitHub fixed tag v0.5.6",
   "target": "isolated temporary skills directory",
   "installed_skills": [
-    "story-codex",
-    "story-codex-analyze",
-    "story-codex-cover",
-    "story-codex-plan",
-    "story-codex-research",
-    "story-codex-review",
-    "story-codex-write"
+    "story-skill",
+    "story-skill-analyze",
+    "story-skill-cover",
+    "story-skill-plan",
+    "story-skill-research",
+    "story-skill-review",
+    "story-skill-write"
   ],
   "files": 33,
   "all_file_sha256_match_release_zip": true,

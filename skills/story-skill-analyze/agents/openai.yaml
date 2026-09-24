@@ -1,0 +1,6 @@
+interface:
+  display_name: "Story Skill · 小说拆解"
+  short_description: "中文小说逐段拆解与证据聚合，记录来源覆盖范围，支持长篇分析断点续跑"
+  default_prompt: "使用 $story-skill-analyze 从现有分析断点继续拆解这部小说，保存证据和进度。"
+policy:
+  allow_implicit_invocation: true

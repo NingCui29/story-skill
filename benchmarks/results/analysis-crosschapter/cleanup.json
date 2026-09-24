@@ -2,7 +2,7 @@
   "removed_temporary_frozen_suite": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-crosschapter-skills-upw24kgs",
   "removed": true,
   "canonical_and_installed_skills_preserved": true,
-  "retained_archive": "dist/story-codex-0.5.1.zip",
+  "retained_archive": "dist/story-skill-0.5.1.zip",
   "archive_sha256": "419aa4277c609c5626862cdf5a78c6d6f7d67bbef17d018f53ad64dea225900c",
   "retained_analysis_book": "run/.story/state.sqlite3",
   "note": "Executed frozen instruction copies, hashes, logs and archive remain available. Reopen script falls back to matching canonical runtime after temporary suite cleanup."

@@ -85,8 +85,8 @@
   },
   "documentation_sha256": {
     "README.md": "00e2e0ff5e99b17a323a2c67091fc7d1f52bc14ffb5b705323cfd2a8e50fbe58",
-    "skills/story-codex-write/references/long-form.md": "af76af1899b2e7282186d03e8d75b8e6eb258f0196486e3ade2c4eefdd0eede8",
-    "skills/story-codex-review/references/history.md": "32bc516ba50b58ff5a1cf3a34615156bac9a997878d7c03fa1aeaaad6f0e84c6"
+    "skills/story-skill-write/references/long-form.md": "af76af1899b2e7282186d03e8d75b8e6eb258f0196486e3ade2c4eefdd0eede8",
+    "skills/story-skill-review/references/history.md": "32bc516ba50b58ff5a1cf3a34615156bac9a997878d7c03fa1aeaaad6f0e84c6"
   },
   "limits": [
     "Executed on Intel macOS only; seven conditional skips are not passes.",

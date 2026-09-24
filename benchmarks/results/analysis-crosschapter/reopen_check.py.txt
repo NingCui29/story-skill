@@ -10,10 +10,10 @@ import sys
 out = Path(__file__).resolve().parent
 run = out / "run"
 manifest = json.loads((out / "manifest.json").read_text())
-tool = Path(manifest["frozen_skill_dir"]) / "story-codex/scripts/story.py"
+tool = Path(manifest["frozen_skill_dir"]) / "story-skill/scripts/story.py"
 if not tool.exists():
-    tool = out.parents[2] / "skills/story-codex/scripts/story.py"
-assert hashlib.sha256(tool.read_bytes()).hexdigest() == manifest["skills_sha256"]["story-codex/scripts/story.py"]
+    tool = out.parents[2] / "skills/story-skill/scripts/story.py"
+assert hashlib.sha256(tool.read_bytes()).hexdigest() == manifest["skills_sha256"]["story-skill/scripts/story.py"]
 sid = manifest["source_sha256"]
 report = run / f".story/analysis/{sid}/report.md"
 original = run / "report_submission.md"

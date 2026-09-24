@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
-TOOL = ROOT / "skills/story-codex/scripts/story.py"
+TOOL = ROOT / "skills/story-skill/scripts/story.py"
 spec = importlib.util.spec_from_file_location("story_portable_export", TOOL)
 story = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(story)

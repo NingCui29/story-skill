@@ -1,1 +1,1 @@
-{"ok": false, "error": "[Errno 2] No such file or directory: 'dist/story-codex-0.5.1.zip.sha256'", "error_type": "FileNotFoundError"}
+{"ok": false, "error": "[Errno 2] No such file or directory: 'dist/story-skill-0.5.1.zip.sha256'", "error_type": "FileNotFoundError"}

@@ -1,6 +1,6 @@
 # 离线发布准备：开发验证
 
-2026-09-22，仓库开发版 v0.5.11。新增 `story-codex-publish`，开发套件为 8 个技能、38 个载荷文件；创作书库保持 schema 2，独立发布账本使用 schema 1。此记录不是 GitHub Release、Packages 注册表发布或作家平台验收。
+2026-09-22，仓库开发版 v0.5.11。新增 `story-skill-publish`，开发套件为 8 个技能、38 个载荷文件；创作书库保持 schema 2，独立发布账本使用 schema 1。此记录不是 GitHub Release、Packages 注册表发布或作家平台验收。
 
 后续已完成[审查修复](hardening/README.md)、[批量查看与状态复核](batch-inspection/README.md)、[章节材料 ZIP 导出](material-export/README.md)及[材料包复核](archive-verification/README.md)。最新为 715 项回归，698 通过、17 项平台条件跳过；完整范围见材料包复核记录。下文保留初版实现及其源文件快照的验证记录；当前源码和开发包以最新记录为准。
 
@@ -34,4 +34,4 @@
 
 进程中断测试不等于完整断电容灾。POSIX 首次正式放置账本使用已有的 link/unlink 保护，若在极窄窗口中断留下双链接，会拒绝继续并保留现场；不自动删库重建。当前没有自动覆盖恢复或远端操作接口。
 
-[功能入口](../../../skills/story-codex-publish/SKILL.md) · [用法及后续接入方案](../../../docs/platform-publishing.md)
+[功能入口](../../../skills/story-skill-publish/SKILL.md) · [用法及后续接入方案](../../../docs/platform-publishing.md)

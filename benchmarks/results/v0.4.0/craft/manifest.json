@@ -30,18 +30,18 @@
     "revised-instructions.json": "88129398287f98c9b59b89f0f666ad29c748a8b5dbbc086a3fb94752471ac8fb"
   },
   "revised_instruction_hashes": {
-    "skills/story-codex/SKILL.md": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
-    "skills/story-codex-plan/SKILL.md": "54aeb7b337f05c281e31ed5ee3f962ccadbe3f0bcc253b8f604f4eea4cc91796",
-    "skills/story-codex-write/SKILL.md": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
-    "skills/story-codex-analyze/SKILL.md": "50dc30426f04d70e5bfb7f7f97601b6d39e287ea51110046a86253fad00e9e59",
-    "skills/story-codex-review/SKILL.md": "090242f8eacd9f72a57dd8413006dda256d6729c97acb7695fd1c7a59013d175",
-    "skills/story-codex-research/SKILL.md": "87da9985f5e65c544bb36963409ba19ad8ea7c26f68a14439716b7533f736152",
-    "skills/story-codex-cover/SKILL.md": "15b21ebc8b26c17641ea32e1feddffafbfa5710940ef863fee54d6775ffd58b3",
-    "skills/story-codex-review/references/history.md": "85cb0d81aa2e0a7998a87b53442465e3824ba4d357a25fd28727be8ec5da290b",
-    "skills/story-codex-write/references/chapter.md": "3fb19018e9465a101fe76698a7757c5843900ef501151e0f45a930c4e89f55f3",
-    "skills/story-codex-write/references/long-form.md": "e49fea777d871e8f8e5b6595e010cf9647b01848205f5e76c3a9e7d1c3fdd9bc",
-    "skills/story-codex-write/references/drama.md": "f85f0d060c171066af958124a066ea48495a49b190e9ed125a18bd32f82eb6b7",
-    "skills/story-codex/references/project-state.md": "ae24149b4e8b98d8feb83d7e1f8a95c20bf225b2a397b700686f013572ca4f09"
+    "skills/story-skill/SKILL.md": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
+    "skills/story-skill-plan/SKILL.md": "54aeb7b337f05c281e31ed5ee3f962ccadbe3f0bcc253b8f604f4eea4cc91796",
+    "skills/story-skill-write/SKILL.md": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d",
+    "skills/story-skill-analyze/SKILL.md": "50dc30426f04d70e5bfb7f7f97601b6d39e287ea51110046a86253fad00e9e59",
+    "skills/story-skill-review/SKILL.md": "090242f8eacd9f72a57dd8413006dda256d6729c97acb7695fd1c7a59013d175",
+    "skills/story-skill-research/SKILL.md": "87da9985f5e65c544bb36963409ba19ad8ea7c26f68a14439716b7533f736152",
+    "skills/story-skill-cover/SKILL.md": "15b21ebc8b26c17641ea32e1feddffafbfa5710940ef863fee54d6775ffd58b3",
+    "skills/story-skill-review/references/history.md": "85cb0d81aa2e0a7998a87b53442465e3824ba4d357a25fd28727be8ec5da290b",
+    "skills/story-skill-write/references/chapter.md": "3fb19018e9465a101fe76698a7757c5843900ef501151e0f45a930c4e89f55f3",
+    "skills/story-skill-write/references/long-form.md": "e49fea777d871e8f8e5b6595e010cf9647b01848205f5e76c3a9e7d1c3fdd9bc",
+    "skills/story-skill-write/references/drama.md": "f85f0d060c171066af958124a066ea48495a49b190e9ed125a18bd32f82eb6b7",
+    "skills/story-skill/references/project-state.md": "ae24149b4e8b98d8feb83d7e1f8a95c20bf225b2a397b700686f013572ca4f09"
   },
   "runtime_changed": false,
   "versions": {
@@ -66,18 +66,18 @@
     "labels": "blind-mapping.json"
   },
   "final_instruction_hashes": {
-    "skills/story-codex/references/project-state.md": "ae24149b4e8b98d8feb83d7e1f8a95c20bf225b2a397b700686f013572ca4f09",
-    "skills/story-codex/SKILL.md": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
-    "skills/story-codex-analyze/SKILL.md": "50dc30426f04d70e5bfb7f7f97601b6d39e287ea51110046a86253fad00e9e59",
-    "skills/story-codex-cover/SKILL.md": "15b21ebc8b26c17641ea32e1feddffafbfa5710940ef863fee54d6775ffd58b3",
-    "skills/story-codex-plan/SKILL.md": "54aeb7b337f05c281e31ed5ee3f962ccadbe3f0bcc253b8f604f4eea4cc91796",
-    "skills/story-codex-research/SKILL.md": "87da9985f5e65c544bb36963409ba19ad8ea7c26f68a14439716b7533f736152",
-    "skills/story-codex-review/references/history.md": "85cb0d81aa2e0a7998a87b53442465e3824ba4d357a25fd28727be8ec5da290b",
-    "skills/story-codex-review/SKILL.md": "090242f8eacd9f72a57dd8413006dda256d6729c97acb7695fd1c7a59013d175",
-    "skills/story-codex-write/references/chapter.md": "3fb19018e9465a101fe76698a7757c5843900ef501151e0f45a930c4e89f55f3",
-    "skills/story-codex-write/references/drama.md": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
-    "skills/story-codex-write/references/long-form.md": "e49fea777d871e8f8e5b6595e010cf9647b01848205f5e76c3a9e7d1c3fdd9bc",
-    "skills/story-codex-write/SKILL.md": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d"
+    "skills/story-skill/references/project-state.md": "ae24149b4e8b98d8feb83d7e1f8a95c20bf225b2a397b700686f013572ca4f09",
+    "skills/story-skill/SKILL.md": "0d0995a5f0aa128373683ceffd8e96b39912b67be61febbf4d5246a35270e1cd",
+    "skills/story-skill-analyze/SKILL.md": "50dc30426f04d70e5bfb7f7f97601b6d39e287ea51110046a86253fad00e9e59",
+    "skills/story-skill-cover/SKILL.md": "15b21ebc8b26c17641ea32e1feddffafbfa5710940ef863fee54d6775ffd58b3",
+    "skills/story-skill-plan/SKILL.md": "54aeb7b337f05c281e31ed5ee3f962ccadbe3f0bcc253b8f604f4eea4cc91796",
+    "skills/story-skill-research/SKILL.md": "87da9985f5e65c544bb36963409ba19ad8ea7c26f68a14439716b7533f736152",
+    "skills/story-skill-review/references/history.md": "85cb0d81aa2e0a7998a87b53442465e3824ba4d357a25fd28727be8ec5da290b",
+    "skills/story-skill-review/SKILL.md": "090242f8eacd9f72a57dd8413006dda256d6729c97acb7695fd1c7a59013d175",
+    "skills/story-skill-write/references/chapter.md": "3fb19018e9465a101fe76698a7757c5843900ef501151e0f45a930c4e89f55f3",
+    "skills/story-skill-write/references/drama.md": "0e03e711c4f73f0d89dccd2cb0b39e90e526d61ff373e1a7ef2fe6afa5dd854f",
+    "skills/story-skill-write/references/long-form.md": "e49fea777d871e8f8e5b6595e010cf9647b01848205f5e76c3a9e7d1c3fdd9bc",
+    "skills/story-skill-write/SKILL.md": "1dfcccafcb95a4f1eacf48d4514bced347a6e1799305ab9bde5ea1ec7bd56d1d"
   },
   "holdout": {
     "body_characters": 834,

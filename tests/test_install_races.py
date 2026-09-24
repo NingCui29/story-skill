@@ -19,14 +19,18 @@ class InstallationRaceTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="story-install-race-test-")
         self.root = Path(self.temp.name).resolve()
-        self.source = self.root / "source"
-        (self.source / "scripts").mkdir(parents=True)
-        (self.source / "SKILL.md").write_bytes(b"original skill\n")
-        self.runtime = self.source / "scripts/story.py"
-        self.runtime.write_bytes(b"print('v1')\n")
+        self.source = self.root / "skills"
+        for relative in installer.SUITE_FILES:
+            path = self.source / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(("reviewed file: " + relative + "\n").encode())
+        (self.source / "story-skill/SKILL.md").write_bytes(b"original skill\n")
+        self.runtime = self.source / "story-skill/scripts/story.py"
+        self.runtime.write_bytes(b'VERSION = "0.6.0"\n# v1\n')
         self.project = self.root / "project"
-        self.target = Path(installer.install(self.project, source=self.source)["path"])
-        self.runtime.write_bytes(b"print('v2')\n")
+        installer.install(self.project, source=self.source)
+        self.target = self.project / ".agents/skills/story-skill"
+        self.runtime.write_bytes(b'VERSION = "0.6.0"\n# v2\n')
 
     def tearDown(self):
         self.temp.cleanup()
@@ -65,13 +69,13 @@ class InstallationRaceTests(unittest.TestCase):
         return result
 
     def backups(self):
-        return list((self.project / ".agents/.story-codex-backups").glob("*"))
+        return list((self.project / ".agents/.story-skill-backups").glob("*"))
 
     def assert_original_runtime(self):
-        self.assertEqual((self.target / "scripts/story.py").read_bytes(), b"print('v1')\n")
+        self.assertEqual((self.target / "scripts/story.py").read_bytes(), b'VERSION = "0.6.0"\n# v1\n')
 
     def test_source_save_during_copy_is_rejected_without_bad_manifest(self):
-        result = self.during_staging(lambda: self.runtime.write_bytes(b"print('v3 concurrent save')\n"))
+        result = self.during_staging(lambda: self.runtime.write_bytes(b'VERSION = "0.6.0"\n# v3 concurrent save\n'))
         self.assertIsInstance(result.get("error"), ValueError)
         self.assertIn("Source", str(result["error"]))
         self.assert_original_runtime()
@@ -84,11 +88,11 @@ class InstallationRaceTests(unittest.TestCase):
 
         def copy(source, destination):
             result = real_copy(source, destination)
-            (self.source / "new-reference.md").write_bytes(b"new source content")
+            (self.source / "story-skill/new-reference.md").write_bytes(b"new source content")
             return result
 
         with patch.object(installer.shutil, "copyfile", side_effect=copy):
-            with self.assertRaisesRegex(ValueError, "Source package changed"):
+            with self.assertRaisesRegex(ValueError, "unreviewed files"):
                 self.update()
         self.assert_original_runtime()
         self.assertEqual(self.backups(), [])
@@ -154,7 +158,7 @@ class InstallationRaceTests(unittest.TestCase):
         real_move = installer.move_directory
 
         def move(source, destination):
-            if Path(source).name.startswith(".story-codex-stage-"):
+            if Path(source).parent.name.startswith(".story-skill-stage-"):
                 self.target.mkdir()
                 (self.target / "new-owner.txt").write_bytes(b"new target must survive")
             return real_move(source, destination)
@@ -164,14 +168,14 @@ class InstallationRaceTests(unittest.TestCase):
                 self.update()
         self.assertEqual((self.target / "new-owner.txt").read_bytes(), b"new target must survive")
         self.assertEqual(len(self.backups()), 1)
-        self.assertEqual((self.backups()[0] / "scripts/story.py").read_bytes(), b"print('v1')\n")
+        self.assertEqual((self.backups()[0] / "story-skill/scripts/story.py").read_bytes(), b'VERSION = "0.6.0"\n# v1\n')
 
     def test_stage_edit_inside_publication_is_detected_and_both_versions_survive(self):
         changed_bytes = b"stage changed just before its real rename\r\n"
         real_move = installer.move_directory
 
         def move(source, destination):
-            if Path(source).name.startswith(".story-codex-stage-"):
+            if Path(source).parent.name.startswith(".story-skill-stage-"):
                 (Path(source) / "SKILL.md").write_bytes(changed_bytes)
             return real_move(source, destination)
 
@@ -179,18 +183,18 @@ class InstallationRaceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Recovery did not replace"):
                 self.update()
         self.assertEqual((self.target / "SKILL.md").read_bytes(), changed_bytes)
-        self.assertEqual((self.target / "scripts/story.py").read_bytes(), b"print('v2')\n")
+        self.assertEqual((self.target / "scripts/story.py").read_bytes(), b'VERSION = "0.6.0"\n# v2\n')
         self.assertEqual(len(self.backups()), 1)
-        self.assertEqual((self.backups()[0] / "SKILL.md").read_bytes(), b"original skill\n")
-        self.assertEqual((self.backups()[0] / "scripts/story.py").read_bytes(), b"print('v1')\n")
+        self.assertEqual((self.backups()[0] / "story-skill/SKILL.md").read_bytes(), b"original skill\n")
+        self.assertEqual((self.backups()[0] / "story-skill/scripts/story.py").read_bytes(), b'VERSION = "0.6.0"\n# v1\n')
 
     def test_target_recreated_during_recovery_is_not_replaced(self):
         real_move = installer.move_directory
 
         def move(source, destination):
-            if Path(source).name.startswith(".story-codex-stage-"):
+            if Path(source).parent.name.startswith(".story-skill-stage-"):
                 raise OSError("simulated publication failure")
-            if Path(source).parent.name == ".story-codex-backups":
+            if Path(source).parent.parent.name == ".story-skill-backups":
                 self.target.mkdir()
                 (self.target / "new-owner.txt").write_bytes(b"created during rollback")
             return real_move(source, destination)
@@ -200,14 +204,14 @@ class InstallationRaceTests(unittest.TestCase):
                 self.update()
         self.assertEqual((self.target / "new-owner.txt").read_bytes(), b"created during rollback")
         self.assertEqual(len(self.backups()), 1)
-        self.assertEqual((self.backups()[0] / "SKILL.md").read_bytes(), b"original skill\n")
+        self.assertEqual((self.backups()[0] / "story-skill/SKILL.md").read_bytes(), b"original skill\n")
 
     @unittest.skipUnless(os.name == "nt", "Windows rename provides the no-replace guarantee tested here")
     def test_windows_publication_refuses_an_empty_target_created_inside_rename(self):
         real_rename = installer.os.rename
 
         def rename(source, destination):
-            if Path(source).name.startswith(".story-codex-stage-"):
+            if Path(source).parent.name.startswith(".story-skill-stage-"):
                 self.target.mkdir()
             return real_rename(source, destination)
 
@@ -235,7 +239,7 @@ class InstallationRaceTests(unittest.TestCase):
         child = subprocess.run([sys.executable, "-B", "-c", code, str(ROOT / "scripts/install.py"), str(self.project)],
                                capture_output=True, timeout=10)
         self.assertEqual(child.returncode, 0, child.stderr)
-        self.assertTrue((self.project / ".agents/skills/.story-codex-install.lock").is_file())
+        self.assertTrue((self.project / ".agents/skills/.story-skill-install.lock").is_file())
         self.assertEqual(self.update()["status"], "updated")
 
 

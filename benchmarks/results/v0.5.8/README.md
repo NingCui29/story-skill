@@ -11,6 +11,6 @@
 | 固定标签与 Release | `v0.5.8` 指向 `09d2522a1486cde65a1db5aaec2a96974de77962`；[Release](https://github.com/NingCui29/story-skill/releases/tag/v0.5.8) 的 ZIP/checksum 已回下载，与固定源码和本地包一致。[发布核验](release/release.json) |
 | 官方固定标签安装 | [隔离安装](release/remote-install.json)使用官方安装器 Git 方式；7 技能、34 文件与 Release 一致，版本／帮助／初始化／状态四项命令通过；本机现有安装未改 |
 | 远端 CI | [两次推送运行](release/ci.json)的 Linux 成功；Windows 在报告导出时复现 `WinError 32`，整体 CI 失败 |
-| GitHub Packages | [工作流 35449089424](https://github.com/NingCui29/story-skill/actions/runs/35449089424) 成功公开发布 `@ningcui29/story-codex@0.5.8` 并从注册表回下载；[工作流回执](release/receipt.json)及[独立核验](release/packages-independent.json)确认 34 个技能文件、2 个包装文件、SHA-512 和四项命令 |
+| GitHub Packages | [工作流 35449089424](https://github.com/NingCui29/story-skill/actions/runs/35449089424) 成功公开发布 `@ningcui29/story-skill@0.5.8` 并从注册表回下载；[工作流回执](release/receipt.json)及[独立核验](release/packages-independent.json)确认 34 个技能文件、2 个包装文件、SHA-512 和四项命令 |
 
 固定标签保留发布时快照；main 的后续文档更新不移动标签或替换附件。Windows 仍有已知 `WinError 32` 导出问题，Windows 安装目标保留 v0.4.0。工程检查不证明标签适合某本书，投稿前仍须按实际页面核对。

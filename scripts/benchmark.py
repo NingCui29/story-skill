@@ -45,7 +45,7 @@ def inventory(root, paths, enc):
 
 
 def synthetic_context(enc):
-    spec = importlib.util.spec_from_file_location("story_benchmark", ROOT / "skills/story-codex/scripts/story.py")
+    spec = importlib.util.spec_from_file_location("story_benchmark", ROOT / "skills/story-skill/scripts/story.py")
     story = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(story)
     with tempfile.TemporaryDirectory(prefix="story-context-benchmark-") as directory:
@@ -108,7 +108,7 @@ def benchmark(upstream, output):
                  "scope": "Name and description only; host wrappers, paths, truncation and coexistence with installed skills excluded."}
     result = {"schema": 1, "repository": config["repository"], "upstream_revision": revision,
               "tiktoken_version": importlib.metadata.version("tiktoken"), "encoding": config["encoding"],
-              "method": "Sum exact tokens per LF-normalized instruction file, disallowed_special=(). This is a reproducible tokenizer proxy, not Codex billed tokens or full-turn usage.",
+              "method": "Sum exact tokens per LF-normalized instruction file, disallowed_special=(). This is a reproducible tokenizer proxy, not billed tokens or full-turn usage.",
               "profiles": profiles, "discovery": discovery, "synthetic_context": synthetic_context(enc),
               "not_measured": ["reasoning tokens", "output manuscript tokens", "tool calls and outputs", "cached-input pricing",
                                "actual provider usage", "model-specific tokenizer", "literary quality", "full CLI end-to-end agent behavior"]}
@@ -116,7 +116,7 @@ def benchmark(upstream, output):
     output.mkdir(parents=True, exist_ok=True)
     (output / "tokens.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     lines = ["# Token 基准", "", f"上游提交：`{revision}`；计数器：tiktoken {result['tiktoken_version']} / `{config['encoding']}`。", "",
-             "以下只统计冷加载的指令文件。计数可复现，不等同于 Codex 实际账单或一轮总 token；正文、推理、工具结果和缓存计价均未纳入。", "",
+             "以下只统计冷加载的指令文件。计数可复现，不等同于实际账单或一轮总 token；正文、推理、工具结果和缓存计价均未纳入。", "",
              "| 场景 | 上游 tokens | 新版 tokens | 指令减少 |", "|---|---:|---:|---:|"]
     lines += [f"| {p['label']} | {p['upstream_tokens']:,} | {p['candidate_tokens']:,} | {p['reduction_percent']}% |" for p in profiles]
     lines += ["", "原始文件清单、SHA-256 和每个场景的统计边界见 [tokens.json](tokens.json)。", "",

@@ -2,16 +2,16 @@
   "from": "v0.5.3",
   "to": "v0.5.4",
   "changed_skills": [
-    "story-codex",
-    "story-codex-plan",
-    "story-codex-write",
-    "story-codex-review"
+    "story-skill",
+    "story-skill-plan",
+    "story-skill-write",
+    "story-skill-review"
   ],
   "backup_directories": 4,
   "verified_unchanged_directories": [
-    "story-codex-analyze",
-    "story-codex-research",
-    "story-codex-cover"
+    "story-skill-analyze",
+    "story-skill-research",
+    "story-skill-cover"
   ],
   "restored_skills": 7,
   "prepared_checks": [

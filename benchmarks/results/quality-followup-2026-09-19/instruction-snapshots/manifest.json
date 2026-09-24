@@ -1,27 +1,27 @@
 {
   "files": {
-    "instruction-snapshots/baseline/story-codex__SKILL.md.txt": {
-      "source_relative_path": "story-codex/SKILL.md",
+    "instruction-snapshots/baseline/story-skill__SKILL.md.txt": {
+      "source_relative_path": "story-skill/SKILL.md",
       "sha256": "309be26778024bea0efbffaa6459922bdf73db0cf1739ba8163dbd26a628bdbd"
     },
-    "instruction-snapshots/baseline/story-codex-plan__SKILL.md.txt": {
-      "source_relative_path": "story-codex-plan/SKILL.md",
+    "instruction-snapshots/baseline/story-skill-plan__SKILL.md.txt": {
+      "source_relative_path": "story-skill-plan/SKILL.md",
       "sha256": "7a5d1c1dc7763429d7e6308b1231c8b57bcb3c43d3a34212e64c4db4ea9d3e85"
     },
-    "instruction-snapshots/baseline/story-codex-write__SKILL.md.txt": {
-      "source_relative_path": "story-codex-write/SKILL.md",
+    "instruction-snapshots/baseline/story-skill-write__SKILL.md.txt": {
+      "source_relative_path": "story-skill-write/SKILL.md",
       "sha256": "601c0725290971448ad0c26c3df82d1af2479b2b66ed1f02de393ab607e464f4"
     },
-    "instruction-snapshots/baseline/story-codex-write__references__chapter.md.txt": {
-      "source_relative_path": "story-codex-write/references/chapter.md",
+    "instruction-snapshots/baseline/story-skill-write__references__chapter.md.txt": {
+      "source_relative_path": "story-skill-write/references/chapter.md",
       "sha256": "69156986948bf01bc11312f14603b09d6ff0fd27e7d5de68b9e4813574e67da6"
     },
-    "instruction-snapshots/baseline/story-codex-write__references__drama.md.txt": {
-      "source_relative_path": "story-codex-write/references/drama.md",
+    "instruction-snapshots/baseline/story-skill-write__references__drama.md.txt": {
+      "source_relative_path": "story-skill-write/references/drama.md",
       "sha256": "6f49f0de5642c76987da48b4ebfad5ef1d14f6acc72b311ebfde2a8e8d76f7b7"
     },
-    "instruction-snapshots/candidate/story-codex-write__references__drama.md.txt": {
-      "source_relative_path": "story-codex-write/references/drama.md",
+    "instruction-snapshots/candidate/story-skill-write__references__drama.md.txt": {
+      "source_relative_path": "story-skill-write/references/drama.md",
       "sha256": "5a19d5bc9dc75946a2ad1ad5e71c2c3008f2548ba4576412810a9066cf5969a4"
     }
   },

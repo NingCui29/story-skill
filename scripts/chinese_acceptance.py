@@ -10,7 +10,7 @@ import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-TOOL = ROOT / "skills/story-codex/scripts/story.py"
+TOOL = ROOT / "skills/story-skill/scripts/story.py"
 
 
 def sha(raw):

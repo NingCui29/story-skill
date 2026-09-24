@@ -56,7 +56,7 @@
     },
     {
       "group": "history_saved_targeted_regression",
-      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B -m unittest discover -s tests -p test_history_saved_read.py",
+      "command": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3 -B -m unittest discover -s tests -p test_history_saved_read.py",
       "exit_code": 0,
       "tests_run": 10,
       "failures": 0,
@@ -100,23 +100,23 @@
   ],
   "code_and_document_reading": [
     {
-      "file": "skills/story-codex/scripts/story_history.py",
+      "file": "skills/story-skill/scripts/story_history.py",
       "lines": "799-814",
       "function_sha256": "437c9af535b8c999940cf45e0abe874de38292d9b14ba0e47f7480fe620b8ab0",
       "conclusion": "Saved decisions are decoded directly from one persisted branch row inside read_snapshot; no editable/publication check, hash refresh, review generation, or database write is performed."
     },
     {
-      "file": "skills/story-codex/scripts/story_history.py",
+      "file": "skills/story-skill/scripts/story_history.py",
       "lines": "1050-1108",
       "conclusion": "history-saved uses the shared 64000-byte default budget, requires branch, accepts neither input nor expect, and dispatches directly to branch_saved."
     },
     {
-      "file": "skills/story-codex/scripts/story.py",
+      "file": "skills/story-skill/scripts/story.py",
       "lines": "473-484,683-693",
       "conclusion": "bounded_packet measures UTF-8 and errors rather than dropping fields; read_snapshot keeps a consistent read and does not finish a caller-owned transaction."
     },
     {
-      "file": "skills/story-codex-review/references/history.md",
+      "file": "skills/story-skill-review/references/history.md",
       "lines": "13-15,33-35",
       "conclusion": "Recovery instructions distinguish saved decisions from current canonical state or renewed approval, explain null reviews and whole-section replacement, and require full-budget readback rather than pagination or truncation."
     },
@@ -201,22 +201,22 @@
     ],
     "code_reading": [
       {
-        "file": "skills/story-codex/scripts/story_history.py",
+        "file": "skills/story-skill/scripts/story_history.py",
         "lines": "410-416",
         "observation": "Typed fact foreign-key propagation is represented only as a chapter-to-chapter edge and requires both evidence records to use mode=chapter. A mutable author_plan fact therefore has no corresponding typed record-to-record edge."
       },
       {
-        "file": "skills/story-codex/scripts/story_history.py",
+        "file": "skills/story-skill/scripts/story_history.py",
         "lines": "384-389,397-409,423-451",
         "observation": "The entity/rule shorthand is normalized to world.entities/world.rules for reverse matching; declared chapter and produced-record edges are traversed, and current resolved hashes are kept in fences. This was code reading, not an additional execution."
       },
       {
-        "file": "skills/story-codex/scripts/story_history.py",
+        "file": "skills/story-skill/scripts/story_history.py",
         "lines": "474-525",
         "observation": "Unchanged record comparison uses the same scalar/default/list normalization and stored tuple shape as world._normal/_stored; chapter evidence is structurally normalized without requiring the not-yet-published body. Explicitly retired records count as changes; stable impact_world entries preserve a previously expanded scope. This was code reading."
       },
       {
-        "file": "skills/story-codex/scripts/story_history.py",
+        "file": "skills/story-skill/scripts/story_history.py",
         "lines": "924-959,1013-1019",
         "observation": "Refresh validates recorded scope; publication rederives the saved world changes and blocks uncovered consumers. Published receipts retain prior history_world_ids and attribute this branch actual changed-world IDs to its target for subsequent impact analysis. The confirmed missing typed foreign-key edge affects both update and publication rederivation."
       }
@@ -224,7 +224,7 @@
     "finding": {
       "priority": "P2",
       "title": "Author-plan facts do not propagate through recorded rule prerequisites into the historical review scope",
-      "source": "skills/story-codex/scripts/story_history.py",
+      "source": "skills/story-skill/scripts/story_history.py",
       "lines": "410-416",
       "expected_affected": [
         1,

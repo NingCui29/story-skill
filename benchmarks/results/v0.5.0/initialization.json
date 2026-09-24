@@ -21,7 +21,7 @@
     "schema_statements_outside_transaction": 88,
     "source_binding": {
       "reference_commit": "8311b947d2d9dd46c2e0be0287786bc6c06e2076",
-      "path": "skills/story-codex/scripts/story.py",
+      "path": "skills/story-skill/scripts/story.py",
       "function": "Book.create",
       "function_sha256": "509e050c52a84b8ca1f86be2a58f189f89349f2f2aabe629a8f1f33439b1e94a",
       "hash_scope": "UTF-8 source bytes from @classmethod through the method return, including original line endings.",
@@ -46,7 +46,7 @@
     "schema_statements_outside_transaction": 0,
     "explicit_commit_count": 1,
     "source_binding": {
-      "path": "skills/story-codex/scripts/story.py",
+      "path": "skills/story-skill/scripts/story.py",
       "runtime_sha256": "e75752fef5b0edaacf0edead35024e90149e0d659906d5153d30f4f2fb74c647",
       "runtime_hash_scope": "Current working-tree story.py bytes when this evidence binding was recorded.",
       "function": "Book.create",

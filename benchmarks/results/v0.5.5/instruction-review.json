@@ -6,24 +6,24 @@
   "base_head": "f2f5aa14712e9a2de273187266e27eb5346dc8c2",
   "target_files": [
     {
-      "path": "skills/story-codex-analyze/SKILL.md",
+      "path": "skills/story-skill-analyze/SKILL.md",
       "sha256": "0466ea1b123b6f1ac42c9de46ec061220e373bbc9a61a80d5f5e2200dfa4c3bd"
     },
     {
-      "path": "skills/story-codex-research/SKILL.md",
+      "path": "skills/story-skill-research/SKILL.md",
       "sha256": "17b05e9a84ed057974a353c232d986c08613c9005983090f9b600195c16fac39"
     },
     {
-      "path": "skills/story-codex/references/project-state.md",
+      "path": "skills/story-skill/references/project-state.md",
       "sha256": "8c6a34e74c28af93551e418de1d46c232b5d3cb0d78b2bdc430c80d93ca8900a"
     }
   ],
   "related_instructions_and_maintenance_docs": [
-    "skills/story-codex/SKILL.md",
-    "skills/story-codex-plan/SKILL.md",
-    "skills/story-codex-write/references/long-form.md",
-    "skills/story-codex-write/references/chapter.md",
-    "skills/story-codex-review/references/history.md",
+    "skills/story-skill/SKILL.md",
+    "skills/story-skill-plan/SKILL.md",
+    "skills/story-skill-write/references/long-form.md",
+    "skills/story-skill-write/references/chapter.md",
+    "skills/story-skill-review/references/history.md",
     "README.md",
     "docs/github-release.md",
     "docs/recovery.md",
@@ -41,11 +41,11 @@
       "kind": "instruction_consistency",
       "title": "近期细纲范围的新默认规则尚未同步到直接引用的长篇说明",
       "changed_location": {
-        "path": "skills/story-codex/references/project-state.md",
+        "path": "skills/story-skill/references/project-state.md",
         "line": 56
       },
       "related_location": {
-        "path": "skills/story-codex-write/references/long-form.md",
+        "path": "skills/story-skill-write/references/long-form.md",
         "line": 11
       },
       "evidence": {
@@ -61,28 +61,28 @@
         "verified_at_utc": "2026-09-12T11:44:40.336512+00:00",
         "scope": "Only long-form.md line 11 and project-state.md line 56 were rechecked; no expanded review.",
         "long_form_after": "本卷保存目标、进入/结束条件和代价，情节段隶属卷；细纲范围按本次授权和写作需要确定，未指定时默认细化近期3—5章。未来方案用 `author_plan`，正文已发生必须用 chapter 证据。切回故事线读取它自己的最后场景、地点和未完动作，而非只接全书上一章。`context` 自动加入关联世界资料；硬事实和已选资料超预算会报错，不能删除必要状态来凑预算。",
-        "project_state_after": "多卷、多视角和长期连载需要结构化世界资料时补读 [超长篇状态](../../story-codex-write/references/long-form.md)。近期细纲范围按本次授权和写作需要确定；未指定范围时，默认细化近期3—5章。",
+        "project_state_after": "多卷、多视角和长期连载需要结构化世界资料时补读 [超长篇状态](../../story-skill-write/references/long-form.md)。近期细纲范围按本次授权和写作需要确定；未指定范围时，默认细化近期3—5章。",
         "assessment": "两处均以本次授权和写作需要确定细纲范围，仅在未指定时默认近期3—5章；原指令不一致已消除。",
         "sha256": {
-          "skills/story-codex-write/references/long-form.md": "ef0676b682f3ea4902c1fa95e239929f75ad268c65489b223e572efd2000a12b",
-          "skills/story-codex/references/project-state.md": "8c6a34e74c28af93551e418de1d46c232b5d3cb0d78b2bdc430c80d93ca8900a"
+          "skills/story-skill-write/references/long-form.md": "ef0676b682f3ea4902c1fa95e239929f75ad268c65489b223e572efd2000a12b",
+          "skills/story-skill/references/project-state.md": "8c6a34e74c28af93551e418de1d46c232b5d3cb0d78b2bdc430c80d93ca8900a"
         }
       }
     }
   ],
   "accepted_changes": [
     {
-      "path": "skills/story-codex-analyze/SKILL.md",
+      "path": "skills/story-skill-analyze/SKILL.md",
       "line": 18,
       "assessment": "单次局部点评默认直接回答；全量、跨轮或明确建立工程的任务仍进入可恢复语料流程。与共享入口的简单讨论不建工程、分析范围及原文证据要求一致，不取消既有来源断点、覆盖与哈希核验。"
     },
     {
-      "path": "skills/story-codex-research/SKILL.md",
+      "path": "skills/story-skill-research/SKILL.md",
       "line": 14,
       "assessment": "简单资料问答不强制生成研究包；跨轮复用、明确保存或已有归档约定仍保存。来源、采集日期、指标边界及事实与推断区分不变，notes 仍限制为需持久保存且与当前章相关的简短事实。"
     },
     {
-      "path": "skills/story-codex/references/project-state.md",
+      "path": "skills/story-skill/references/project-state.md",
       "line": 56,
       "assessment": "将 3—5 章设为未指定范围时的默认值，按授权和写作需要确定具体范围；直接引用的 long-form.md 现已同步，与规划入口完成已授权产物的要求一致。"
     }

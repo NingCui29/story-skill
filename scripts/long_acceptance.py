@@ -15,7 +15,7 @@ import time
 
 
 ROOT = Path(__file__).resolve().parents[1]
-TOOL = ROOT / "skills/story-codex/scripts/story.py"
+TOOL = ROOT / "skills/story-skill/scripts/story.py"
 OUTPUT = ROOT / "benchmarks/results/v0.5.0/long-acceptance.json"
 
 SCENES = {

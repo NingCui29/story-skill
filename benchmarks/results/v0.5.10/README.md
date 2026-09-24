@@ -13,7 +13,7 @@
 | ZIP | 7 技能、34 文件，SHA-256 `821e896a9cb3066dd6daaf56c921217ece468629622d95c597f19f6733897797`。[构建](package.json) · [固定标签与公开回下载](release/release.json) |
 | npm | [本地构建](npm-package.json)、[清单复核](npm-verify.json)、[运行检查](npm-smoke.json)通过；34 技能文件与 ZIP 一致，另有 2 个包装文件 |
 | 官方固定标签安装 | [隔离安装](release/remote-install.json) 7 技能、34 文件与公开 ZIP 逐文件一致；版本、帮助、初始化、状态均通过 |
-| GitHub Packages | [@ningcui29/story-codex@0.5.10](https://github.com/users/NingCui29/packages/npm/package/story-codex) 已发布；注册表回下载和摘要核对见[工作流回执](release/receipt.json)，下载产物的[独立复核](release/packages-independent.json)通过 |
+| GitHub Packages | [@ningcui29/story-skill@0.5.10](https://github.com/users/NingCui29/packages/npm/package/story-skill) 已发布；注册表回下载和摘要核对见[工作流回执](release/receipt.json)，下载产物的[独立复核](release/packages-independent.json)通过 |
 
 首轮被测试样本的换行转换中断，第二轮完成全部测试并定位 30 处相关失败：[首轮](release/ci-first.json) · [第二轮](release/ci-second.json) · [错误日志](release/ci-second-tests.log)（去除时间前缀和行尾空白）。均保留失败记录；最终版本修正样本，未删除或跳过失败断言。历史版本的 Windows 失败记录不改写。
 

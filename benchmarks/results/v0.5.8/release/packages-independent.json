@@ -2,7 +2,7 @@
   "ok": true,
   "workflow_run": 35449089424,
   "artifact_id": 10586173116,
-  "package_url": "https://github.com/users/NingCui29/packages/npm/package/story-codex",
+  "package_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill",
   "visibility": "public",
   "linked_repository": "NingCui29/story-skill",
   "tarball_sha256": "6bd4b6cd692ab1bf5338605ba01a2f5fb57b07294572b314372208ae968d398b",
@@ -14,13 +14,13 @@
     "ok": true,
     "commands": 4,
     "skills": [
-      "story-codex",
-      "story-codex-analyze",
-      "story-codex-cover",
-      "story-codex-plan",
-      "story-codex-research",
-      "story-codex-review",
-      "story-codex-write"
+      "story-skill",
+      "story-skill-analyze",
+      "story-skill-cover",
+      "story-skill-plan",
+      "story-skill-research",
+      "story-skill-review",
+      "story-skill-write"
     ],
     "skill_files": 34,
     "temporary_book_removed": true

@@ -42,7 +42,7 @@ def read_url(url, token=None, auth_host=None):
                 not (host in {"github.com", "api.github.com", "npm.pkg.github.com"}
                      or host.endswith(".githubusercontent.com"))):
             raise ValueError("Unexpected download host")
-        headers = {"User-Agent": "story-codex-packages-sync"}
+        headers = {"User-Agent": "story-skill-packages-sync"}
         if token and host == auth_host:
             headers["Authorization"] = "Bearer " + token
         if host == "api.github.com":
@@ -68,7 +68,7 @@ def read_json(url, token=None, auth_host=None):
 
 def version_from_tag(tag):
     if not re.fullmatch(r"v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)", tag):
-        raise ValueError("tag must be a stable version such as v0.3.0")
+        raise ValueError("tag must be a stable version such as v0.6.0")
     return tag[1:]
 
 
@@ -77,7 +77,7 @@ def release_files(tag, output, token=None):
     release = read_json(API + "/releases/tags/" + tag, token, "api.github.com")
     if release["draft"] or release["prerelease"] or release["tag_name"] != tag:
         raise ValueError("Only a published stable release can be mirrored")
-    names = [f"story-codex-{version}.zip", f"story-codex-{version}.zip.sha256"]
+    names = [f"story-skill-{version}.zip", f"story-skill-{version}.zip.sha256"]
     paths = []
     output.mkdir(parents=True, exist_ok=True)
     for name in names:
@@ -161,22 +161,21 @@ def runtime_smoke(tarball, version):
         if seen != expected:
             raise ValueError("Runtime smoke is missing required skill dependencies")
         skills = sorted({name.split("/", 1)[0] for name in expected})
-        if version != "0.3.0":
-            # Local Markdown links and task runtime paths must survive sibling installation.
-            for name in skills:
-                entry = root / name / "SKILL.md"
-                content = entry.read_text(encoding="utf-8-sig")
-                for link in re.findall(r"\[[^\]]*\]\(([^)]+)\)", content):
-                    link = link.split("#", 1)[0]
-                    if not link or "://" in link:
-                        continue
-                    destination = (entry.parent / link).resolve()
-                    destination.relative_to(root.resolve())
-                    if not destination.is_file():
-                        raise ValueError(f"Installed skill has a broken local dependency: {name}: {link}")
-                if name != "story-codex" and not (entry.parent / "../story-codex/scripts/story.py").is_file():
-                    raise ValueError(f"Installed task skill has no shared runtime: {name}")
-        tool = root / "story-codex/scripts/story.py"
+        # Local Markdown links and task runtime paths must survive sibling installation.
+        for name in skills:
+            entry = root / name / "SKILL.md"
+            content = entry.read_text(encoding="utf-8-sig")
+            for link in re.findall(r"\[[^\]]*\]\(([^)]+)\)", content):
+                link = link.split("#", 1)[0]
+                if not link or "://" in link:
+                    continue
+                destination = (entry.parent / link).resolve()
+                destination.relative_to(root.resolve())
+                if not destination.is_file():
+                    raise ValueError(f"Installed skill has a broken local dependency: {name}: {link}")
+            if name != "story-skill" and not (entry.parent / "../story-skill/scripts/story.py").is_file():
+                raise ValueError(f"Installed task skill has no shared runtime: {name}")
+        tool = root / "story-skill/scripts/story.py"
         prefix = [sys.executable, "-B", "-X", "utf8", str(tool)]
         book = root / "book"
         commands = [["--version"], ["--help"],
@@ -198,9 +197,6 @@ def runtime_smoke(tarball, version):
 def sync(tag, output, prepare_only=False):
     version = version_from_tag(tag)
     expected_name, _ = package_npm.package_identity(version)
-    if not prepare_only and expected_name != NAME:
-        raise ValueError("Historical package scope belongs to the previous owner; use --prepare-only to verify it, "
-                         "or publish a current suite release under the current owner")
     if os.environ.get("GITHUB_REPOSITORY", REPOSITORY).lower() != REPOSITORY.lower():
         raise ValueError("Publishing is restricted to the linked repository")
     token = os.environ.get("NODE_AUTH_TOKEN")
@@ -249,7 +245,7 @@ def sync(tag, output, prepare_only=False):
         report.update(ok=True, downloaded_integrity=integrity, downloaded_package=verified,
                       runtime=runtime_smoke(target, version))
         info = read_json("https://api.github.com/users/" + REPOSITORY.split("/", 1)[0] +
-                         "/packages/npm/story-codex", token, "api.github.com")
+                         "/packages/npm/story-skill", token, "api.github.com")
         linked = info.get("repository", {}).get("full_name", "")
         if linked.lower() != REPOSITORY.lower():
             raise ValueError("Published package is not linked to the expected repository")

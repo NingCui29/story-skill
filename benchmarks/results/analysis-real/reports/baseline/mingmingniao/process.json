@@ -1,8 +1,8 @@
 {
   "skill_files_read": [
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex-analyze/SKILL.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/SKILL.md",
-    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex-analyze/references/deep-reading.md"
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill-analyze/SKILL.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/SKILL.md",
+    "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill-analyze/references/deep-reading.md"
   ],
   "source_file": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/jobs/baseline/mingmingniao/source.txt",
   "book_directory": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/jobs/baseline/mingmingniao/book",
@@ -282,8 +282,8 @@
   "cli_calls": [
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "init",
         "--title",
         "冥冥鸟",
@@ -297,8 +297,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "ingest",
         "--help",
         "--book",
@@ -309,8 +309,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "template",
         "analysis",
         "--book",
@@ -321,8 +321,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "ingest",
         "--file",
         "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/jobs/baseline/mingmingniao/source.txt",
@@ -338,8 +338,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "record",
         "--help",
         "--book",
@@ -350,8 +350,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "next",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -367,8 +367,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "record",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -384,8 +384,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "record",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -401,8 +401,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "next",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -418,8 +418,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "record",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -435,8 +435,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "record",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -452,8 +452,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "next",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -469,8 +469,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "record",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -486,8 +486,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "record",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -503,8 +503,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "next",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -520,8 +520,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "record",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -537,8 +537,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "record",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -554,8 +554,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "source-read",
         "--help",
         "--book",
@@ -566,8 +566,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "coverage",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -579,8 +579,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "findings",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -598,8 +598,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "findings",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -617,8 +617,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "source-read",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -636,8 +636,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "source-read",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -655,8 +655,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "source-read",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -674,8 +674,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "source-read",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -693,8 +693,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "source-read",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -712,8 +712,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "source-read",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -731,8 +731,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "source-read",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -750,8 +750,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "source-read",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -769,8 +769,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "report",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -784,8 +784,8 @@
     },
     {
       "argv": [
-        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+        "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
         "coverage",
         "--source",
         "e399782dd081a1cba41adaa98056c7aeff9b5f5d5c2cae0cb06557e188198fe5",
@@ -797,7 +797,7 @@
     }
   ],
   "tool_contract_read": {
-    "file": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-codex/scripts/story.py",
+    "file": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-analysis-real-_c50j36_/baseline/skills/story-skill/scripts/story.py",
     "lines": [
       1835,
       1863

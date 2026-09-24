@@ -4,13 +4,13 @@
   "errors": [],
   "historical_files_preserved": 301,
   "only_changed_skill_files": [
-    "skills/story-codex-analyze/SKILL.md",
-    "skills/story-codex/SKILL.md"
+    "skills/story-skill-analyze/SKILL.md",
+    "skills/story-skill/SKILL.md"
   ],
   "runtime_unchanged": true,
   "archive": {
     "status": "passed",
-    "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/story-codex-0.5.1.zip",
+    "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/story-skill-0.5.1.zip",
     "version": "0.5.1",
     "sha256": "419aa4277c609c5626862cdf5a78c6d6f7d67bbef17d018f53ad64dea225900c",
     "bytes": 109889,
@@ -26,10 +26,10 @@
   "installed_files_match": true,
   "installed_file_count": 33,
   "prior_archives": {
-    "story-codex-0.5.0.zip": "d65504d907110ad59fa465566f7374991a216c03cdd42edc81b19ddcc87810a8",
-    "story-codex-analysis-depth-pilot.zip": "8acea76d49c7ddd206f95a567193a1eb8aa8a4d496a2d2152325438668a14f34",
-    "story-codex-analysis-real.zip": "2dfe3a82ec4a6eee1edfa66ef6cb8de7f61ec91eb97537a48519606c953efac3",
-    "story-codex-analysis-revision.zip": "218300b6f152e85dae1f8b829d216edd87eea0120aae7fd4615b615fc486a6c2"
+    "story-skill-0.5.0.zip": "d65504d907110ad59fa465566f7374991a216c03cdd42edc81b19ddcc87810a8",
+    "story-skill-analysis-depth-pilot.zip": "8acea76d49c7ddd206f95a567193a1eb8aa8a4d496a2d2152325438668a14f34",
+    "story-skill-analysis-real.zip": "2dfe3a82ec4a6eee1edfa66ef6cb8de7f61ec91eb97537a48519606c953efac3",
+    "story-skill-analysis-revision.zip": "218300b6f152e85dae1f8b829d216edd87eea0120aae7fd4615b615fc486a6c2"
   },
   "final_reports": [
     {

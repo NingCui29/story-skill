@@ -1,6 +1,6 @@
 {
   "scope": "Bundled skill-creator validator; temporary PyYAML dependency only",
-  "validator": "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+  "validator": "/Users/cuining/.story-skill/skills/.system/skill-creator/scripts/quick_validate.py",
   "validator_sha256": "ee6dba90f44d37171c5a6edb8095979c54919ff6822c1a907afca2e78c48738c",
   "python": "3.10.21 (main, Sep  1 2026, 14:10:03) [Clang 22.1.3 ]",
   "dependency_setup": {
@@ -10,49 +10,49 @@
   },
   "skills": [
     {
-      "skill": "story-codex",
+      "skill": "story-skill",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": "",
       "sha256": "10e68d6ecd40d7348dd6b840e8b5f679dd4a57b1a06f0f586739da01a03adff4"
     },
     {
-      "skill": "story-codex-analyze",
+      "skill": "story-skill-analyze",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": "",
       "sha256": "5869b57ec589de655bc98ddc8ef631f41772facf87807667cec566523bd1e113"
     },
     {
-      "skill": "story-codex-cover",
+      "skill": "story-skill-cover",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": "",
       "sha256": "cb57085c5bfb0f2e5505d0e4367def7e4ddc9321b52b6d94e9a0e84959748e12"
     },
     {
-      "skill": "story-codex-plan",
+      "skill": "story-skill-plan",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": "",
       "sha256": "acd18739e82477b463cb2245085aca3eecc101c6903924f1a4e7cfcaf0ab4955"
     },
     {
-      "skill": "story-codex-research",
+      "skill": "story-skill-research",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": "",
       "sha256": "17b05e9a84ed057974a353c232d986c08613c9005983090f9b600195c16fac39"
     },
     {
-      "skill": "story-codex-review",
+      "skill": "story-skill-review",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": "",
       "sha256": "a9a943560ae29ec60eef4332c201743b5e862f278d17b96d9bfc31d527c2e51e"
     },
     {
-      "skill": "story-codex-write",
+      "skill": "story-skill-write",
       "exit_code": 0,
       "stdout": "Skill is valid!\n",
       "stderr": "",

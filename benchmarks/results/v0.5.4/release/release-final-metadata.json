@@ -40,7 +40,7 @@
       "url": "https://api.github.com/repos/NingCui29/story-skill/releases/assets/557293576",
       "id": 557293576,
       "node_id": "RA_kwDOUR8APM4hN6AI",
-      "name": "story-codex-0.5.4.zip",
+      "name": "story-skill-0.5.4.zip",
       "label": "",
       "uploader": {
         "login": "NingCui29",
@@ -70,13 +70,13 @@
       "download_count": 0,
       "created_at": "2026-09-11T13:21:29Z",
       "updated_at": "2026-09-11T13:21:29Z",
-      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.4/story-codex-0.5.4.zip"
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.4/story-skill-0.5.4.zip"
     },
     {
       "url": "https://api.github.com/repos/NingCui29/story-skill/releases/assets/557293578",
       "id": 557293578,
       "node_id": "RA_kwDOUR8APM4hN6AK",
-      "name": "story-codex-0.5.4.zip.sha256",
+      "name": "story-skill-0.5.4.zip.sha256",
       "label": "",
       "uploader": {
         "login": "NingCui29",
@@ -106,7 +106,7 @@
       "download_count": 0,
       "created_at": "2026-09-11T13:21:29Z",
       "updated_at": "2026-09-11T13:21:29Z",
-      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.4/story-codex-0.5.4.zip.sha256"
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.5.4/story-skill-0.5.4.zip.sha256"
     }
   ],
   "tarball_url": "https://api.github.com/repos/NingCui29/story-skill/tarball/v0.5.4",

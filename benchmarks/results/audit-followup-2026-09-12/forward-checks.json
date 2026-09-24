@@ -1,7 +1,7 @@
 {
   "method": "Independent CLI behavior exercise of two temporary synthetic books; no implementation/diff/tests read, no new prose, repository or installed-skill edits.",
-  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-codex/scripts/story.py",
-  "python": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+  "runtime": "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
+  "python": "/Users/cuining/.cache/story-skill-runtimes/story-skill-primary-runtime/dependencies/python/bin/python3",
   "case1": {
     "original_sha256": "b3d3ee277c0045b0e151e6bfe72532ec51cd5ea736ceed5c68c1b35accf4be33",
     "read_receipt": {

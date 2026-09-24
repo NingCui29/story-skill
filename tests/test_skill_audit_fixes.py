@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 
 
-TOOL = Path(__file__).resolve().parents[1] / "skills/story-codex/scripts/story.py"
+TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 SPEC = importlib.util.spec_from_file_location("skill_audit_fixes_story", TOOL)
 story = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(story)

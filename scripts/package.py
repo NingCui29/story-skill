@@ -13,37 +13,27 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
-SKILL = SKILLS / "story-codex"
+SKILL = SKILLS / "story-skill"
 SOURCE = SKILLS
-LEGACY_SKILL_NAMES = ("story-codex", "story-codex-plan", "story-codex-write", "story-codex-analyze",
-               "story-codex-review", "story-codex-research", "story-codex-cover")
-SKILL_NAMES = LEGACY_SKILL_NAMES + ("story-codex-publish",)
-LEGACY_SUITE_FILES = tuple(sorted(
-    [f"{name}/{relative}" for name in LEGACY_SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
-    + ["story-codex/scripts/" + name for name in (
-        "story.py", "story_history.py", "story_search.py", "story_storage.py", "story_world.py")]
-    + ["story-codex/references/project-state.md", "story-codex-write/references/chapter.md",
-       "story-codex-write/references/long-form.md", "story-codex-write/references/drama.md",
-       "story-codex-review/references/history.md"]))
-SUITE_FILES = tuple(sorted(LEGACY_SUITE_FILES + (
-    "story-codex-analyze/references/deep-reading.md",
-    "story-codex-analyze/references/examples.md")))
-TAGGED_SUITE_FILES = tuple(sorted(SUITE_FILES + (
-    "story-codex-plan/references/fanqie-tags.md",)))
-PUBLISH_SUITE_FILES = tuple(sorted(TAGGED_SUITE_FILES + (
-    "story-codex-publish/LICENSE", "story-codex-publish/SKILL.md",
-    "story-codex-publish/agents/openai.yaml", "story-codex/scripts/story_publish.py")))
+SKILL_NAMES = ("story-skill", "story-skill-plan", "story-skill-write", "story-skill-analyze",
+               "story-skill-review", "story-skill-research", "story-skill-cover", "story-skill-publish")
+SUITE_FILES = tuple(sorted(
+    [f"{name}/{relative}" for name in SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
+    + ["story-skill/scripts/" + name for name in (
+        "story.py", "story_history.py", "story_search.py", "story_storage.py", "story_world.py",
+        "story_publish.py")]
+    + ["story-skill/references/project-state.md", "story-skill-write/references/chapter.md",
+       "story-skill-write/references/long-form.md", "story-skill-write/references/drama.md",
+       "story-skill-review/references/history.md",
+    "story-skill-analyze/references/deep-reading.md",
+    "story-skill-analyze/references/examples.md",
+    "story-skill-plan/references/fanqie-tags.md"]))
 
 
 def suite_files(version):
-    """Keep published layouts fixed while reviewing each supported version family."""
-    if re.fullmatch(r"0\.4\.(?:0|[1-9][0-9]*)", version) or version == "0.5.0":
-        return LEGACY_SUITE_FILES
-    patch = re.fullmatch(r"0\.5\.([1-9][0-9]*)", version)
-    if patch:
-        if int(patch.group(1)) >= 11:
-            return PUBLISH_SUITE_FILES
-        return TAGGED_SUITE_FILES if int(patch.group(1)) >= 7 else SUITE_FILES
+    """Accept only the reviewed layout for the current release family."""
+    if re.fullmatch(r"0\.6\.(?:0|[1-9][0-9]*)", version):
+        return SUITE_FILES
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 
@@ -72,9 +62,9 @@ def current_version(runtime=None):
 
 
 def validate_archive_name(output, version):
-    match = re.fullmatch(r"story-codex-([0-9]+\.[0-9]+\.[0-9]+)\.zip", Path(output).name)
-    if match and match.group(1) != version:
-        raise ValueError(f"Archive filename version {match.group(1)} differs from runtime VERSION {version}")
+    expected = f"story-skill-{version}.zip"
+    if Path(output).name != expected:
+        raise ValueError(f"Archive filename must be {expected}")
 
 
 def validate_archive(path, entries):
@@ -101,10 +91,6 @@ def source_entries():
     files = {}
     for skill in SKILL_NAMES:
         directory = SOURCE / skill
-        # The publisher was added in 0.5.11. Missing historical roots are
-        # allowed only here; the exact version manifest is checked below.
-        if skill not in LEGACY_SKILL_NAMES and not os.path.lexists(directory):
-            continue
         if not directory.is_dir() or linked(directory):
             raise ValueError(f"Source suite is missing an ordinary skill directory: {skill}")
         for path in sorted(directory.rglob("*")):
@@ -117,7 +103,7 @@ def source_entries():
                 files[relative.as_posix()] = path.read_bytes()
             elif not path.is_dir():
                 raise ValueError(f"Refusing special package content: {relative}")
-    runtime = files.get("story-codex/scripts/story.py")
+    runtime = files.get("story-skill/scripts/story.py")
     if runtime is None:
         raise ValueError("Source suite differs from its reviewed file manifest; missing scripts/story.py")
     required = set(suite_files(source_version(runtime)))
@@ -130,14 +116,14 @@ def source_entries():
 
 def package(output=None):
     entries = source_entries()
-    runtime = dict(entries).get("story-codex/scripts/story.py")
+    runtime = dict(entries).get("story-skill/scripts/story.py")
     if runtime is None:
         raise ValueError("Source package is missing scripts/story.py")
     version = source_version(runtime)
-    output = (Path(output).expanduser() if output is not None else ROOT / f"dist/story-codex-{version}.zip").absolute()
+    output = (Path(output).expanduser() if output is not None else ROOT / f"dist/story-skill-{version}.zip").absolute()
     validate_archive_name(output, version)
     output.parent.mkdir(parents=True, exist_ok=True)
-    fd, name = tempfile.mkstemp(prefix=".story-codex-package-", suffix=".zip", dir=output.parent)
+    fd, name = tempfile.mkstemp(prefix=".story-skill-package-", suffix=".zip", dir=output.parent)
     stage = Path(name)
     try:
         os.close(fd)
@@ -160,7 +146,7 @@ def package(output=None):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--output", help="Archive path; defaults to dist/story-codex-<runtime VERSION>.zip")
+    p.add_argument("--output", help="Archive path; defaults to dist/story-skill-<runtime VERSION>.zip")
     args = p.parse_args()
     print(json.dumps(package(args.output), ensure_ascii=False))
 
