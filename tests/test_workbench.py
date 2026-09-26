@@ -25,9 +25,11 @@ class WorkbenchTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="story-workbench-")
         self.root = Path(self.temp.name).resolve() / "中文 书#册%目录"
+        self.addCleanup(self.temp.cleanup)
         self.title = '雨夜 <script>alert("workbench-title")</script> & “账本”'
         story.Book.create(self.root, self.title, "long")
         self.book = story.Book(self.root)
+        self.addCleanup(self.book.close)
         self.body_tokens = []
         for chapter in (1, 2):
             self.commit(chapter)
@@ -37,10 +39,6 @@ class WorkbenchTests(unittest.TestCase):
             "platform": "fanqie", "account_id": self.account_id,
             "remote_book_id": self.remote_book_id, "chapters": [1, 2], "mode": "draft",
         }, self.book.meta("revision"), summary=True)
-
-    def tearDown(self):
-        self.book.close()
-        self.temp.cleanup()
 
     def commit(self, chapter):
         title = f"雨夜 & 账本#{chapter}%"
@@ -58,7 +56,7 @@ class WorkbenchTests(unittest.TestCase):
         self.book.save_plan(chapter, plan, self.book.meta("revision"))
         draft = self.root / ".story/drafts" / f"第{chapter}章.md"
         draft.parent.mkdir(parents=True, exist_ok=True)
-        draft.write_text(text, encoding="utf-8")
+        draft.write_bytes(text.encode("utf-8"))
         review = {name: {
             "note": "已核对人物选择、代价、连续性和停笔位置。",
             "quote": "沈禾把唯一的钥匙交给守门人。",
