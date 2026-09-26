@@ -496,7 +496,7 @@ class WorkbenchTests(unittest.TestCase):
         target = self.root / ".story/workbench/index.html"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text("old tracked workbench", encoding="utf-8")
-        subprocess.run(["git", "-C", str(self.root), "add", "-f", "--", 
+        subprocess.run(["git", "-C", str(self.root), "add", "-f", "--",
                         ".story/workbench/index.html"], check=True)
         self.assert_story_error("workbench_tracked_output", story.workbench.export, self.book)
         self.assertEqual(target.read_text(encoding="utf-8"), "old tracked workbench")
