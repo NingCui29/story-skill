@@ -1,0 +1,17 @@
+{
+  "tag": "v0.6.1",
+  "commit": "f2e2842223432092133e0293419eed399fa55791",
+  "files": 39,
+  "sha256": "ff10d20a5f1a56387dc29f8c9adeed9636c3c02973f2807c83921e2146f958c7",
+  "bytes": 200030,
+  "tag_payload_matches": true,
+  "validation_commit": "c692dcfd93bbfa50d964f967e514efe749072cfb",
+  "validation_commit_runtime_matches_tag": true,
+  "tag_ci_note": "Original tag test fixtures used platform-translated draft newlines. Main fixes tests only; tag and payload unchanged.",
+  "release_download_matches": true,
+  "release_published": true,
+  "packages_published": true,
+  "packages_run": 36221484446,
+  "ci_fixed_run": 36221129490,
+  "local_install_updated": false
+}

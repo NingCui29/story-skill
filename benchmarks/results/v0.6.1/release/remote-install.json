@@ -1,0 +1,28 @@
+{
+  "tag": "v0.6.1",
+  "remote_clone_matches_zip": true,
+  "files": 39,
+  "installed_payload_matches": true,
+  "checks": [
+    {
+      "command": "--version",
+      "passed": true
+    },
+    {
+      "command": "--help",
+      "passed": true
+    },
+    {
+      "command": "init",
+      "passed": true
+    },
+    {
+      "command": "status",
+      "passed": true
+    },
+    {
+      "command": "workbench-export",
+      "passed": true
+    }
+  ]
+}

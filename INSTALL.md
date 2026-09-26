@@ -1,8 +1,6 @@
 # 安装或升级 Story Skill
 
-**当前发布版：v0.6.0。** 新版统一使用 `story-skill` 名称。八个入口、安装器、压缩包和包名都已更换。[v0.6.0 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.0) 已公开；套件 ZIP、校验附件和公开回下载均已核对。固定标签指向提交 `53c7f3289b1cb78699ff0734d4ba8b291a2557d5`。旧版 [v0.5.11 发布页](https://github.com/NingCui29/story-skill/releases/tag/v0.5.11)仍保留原发布身份，不能从该标签获取新版入口。
-
-仓库 main 当前是**尚未发布的 v0.6.1 候选源码**：8 个技能、39 个载荷文件，新增 `skills/story-skill/scripts/story_workbench.py`。它尚无固定标签、Release 附件或 Packages 分发，也没有在本文声称已安装到本机。下面“完整套件”和固定下载校验仍专指已发布的 v0.6.0；只有明确要测试候选源码时，才按“从本仓库源码安装”在隔离项目验证 39 文件版本。
+**当前发布版：v0.6.1。** 固定标签 `f2e2842223432092133e0293419eed399fa55791`。八技能、39 文件；Release 附件和 Packages 的核验结果见[发布记录](docs/releases/v0.6.1.md)。
 
 可把这一行发送给支持技能的应用：
 
@@ -14,7 +12,7 @@ $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.
 
 ## 完整套件
 
-已发布的 v0.6.0 一次安装以下八个同级目录，共 38 个载荷文件：
+已发布的 v0.6.1 一次安装以下八个同级目录，共 39 个载荷文件：
 
 ```text
 skills/story-skill
@@ -27,13 +25,13 @@ skills/story-skill-cover
 skills/story-skill-publish
 ```
 
-新版 ZIP 名为 `story-skill-0.6.0.zip`，包名为 `@ningcui29/story-skill`。Release 附件和 GitHub Packages 的新包均已公开；npm 包不是直接可发现的技能安装。历史文档经过名称遮盖；旧版资源的真实文件名不会因文档改写而改变。
+新版 ZIP 名为 `story-skill-0.6.1.zip`，包名为 `@ningcui29/story-skill`。Release 附件和 GitHub Packages 的新包均已公开；npm 包不是直接可发现的技能安装。历史文档经过名称遮盖；旧版资源的真实文件名不会因文档改写而改变。
 
-远程安装时，先用官方安装脚本从 `v0.6.0` 固定标签将八个 `--path` 安装到隔离临时目录；另从同一版本 Release 下载 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.0/story-skill-0.6.0.zip) 和 [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.0/story-skill-0.6.0.zip.sha256)，核对摘要，并逐文件比较临时目录与 ZIP。套件 ZIP 为 180,434 字节，SHA-256 为 `089480dd1769ff13167553396090bec16298840be4449a9a2b5c550a10572056`；公开回下载与此一致。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
+远程安装时，先用官方安装脚本从 `v0.6.1` 固定标签将八个 `--path` 安装到隔离临时目录；另从同一版本 Release 下载 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.1/story-skill-0.6.1.zip) 和 [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.1/story-skill-0.6.1.zip.sha256)，核对摘要，并逐文件比较临时目录与 ZIP。套件 ZIP 为 200,030 字节，SHA-256 为 `ff10d20a5f1a56387dc29f8c9adeed9636c3c02973f2807c83921e2146f958c7`；公开回下载与此一致。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
 
 ## 从本仓库源码安装
 
-需要稳定源码时，使用已取得并自行核验的 v0.6.0 固定标签。需要测试当前 main 时，先把它视为未发布的 v0.6.1 候选，在隔离检出中运行仓库测试和 `python3 -B -X utf8 scripts/verify.py`，确认 8 个技能、39 个载荷文件和 `story.py --version` 的候选版本后，再把八个目录作为一个整体复制到隔离项目的技能父目录。项目内托管安装可在仓库根目录运行：
+使用已核验的 v0.6.1 固定标签。main 可能包含后续更改，不能仅凭版本号判定其与附件相同。项目内托管安装可在仓库根目录运行：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "<项目根目录>"
@@ -41,12 +39,12 @@ python3 -B -X utf8 scripts/install.py --project "<项目根目录>"
 
 对已采用新名称、由本仓库安装器管理且清单一致、没有外部修改的项目安装，可在验证新版后使用 `--update`。仍使用旧入口名称的项目安装和用户级安装，应先核对内容，完整备份并移出原有八个旧版目录，再放入新版八个目录；不能直接对旧入口执行新版 `--update`。不要让两套入口在技能扫描目录中并存。备份放在扫描目录之外，保留原件及额外文件。无法确认安装来源、目录归属、链接或并发变化时，停止覆盖并说明具体路径。
 
-候选版新增的本地工作台只在安装副本确实含 `story_workbench.py` 且版本为 0.6.1 时可用。源码检出、构建成功或文档出现命令都不等于本机技能已经升级，也不等于该候选已经发布。
+本地工作台需要安装副本包含 `story_workbench.py`；源码检出或发布成功不等于本机安装已更新。
 
 ## 安装核验
 
-比较目标的八个目录与已验证的新套件，核对文件集合和字节；安装器回执、`__pycache__` 与 `.pyc` 可按各自规则排除。用新版核心 `scripts/story.py` 在隔离书目录执行 `--version`、`--help`、`init`、`status`。只有版本为 `0.6.0`、八目录及全部 38 个载荷文件完整且四个命令通过，才报告安装成功。若安装中断或目标被其他进程修改，保留备份与现场，不把部分结果报告为完成。
+比较目标的八个目录与已验证的新套件，核对文件集合和字节；安装器回执、`__pycache__` 与 `.pyc` 可按各自规则排除。用新版核心 `scripts/story.py` 在隔离书目录执行 `--version`、`--help`、`init`、`status`。只有版本为 `0.6.1`、八目录及全部 39 个载荷文件完整且四个命令通过，才报告安装成功。若安装中断或目标被其他进程修改，保留备份与现场，不把部分结果报告为完成。
 
-若明确验证 main 候选，则单独记录版本 0.6.1、39 个载荷文件和新增模块，并另测 `workbench-snapshot`、`workbench-export`；该结果只能称为候选源码或隔离安装验证，不能写成 v0.6.0 发布验证，也不能写成已发布 v0.6.1。
+如测试 main 源码，单独记录提交与文件哈希，不将它冒充固定标签安装。
 
 安装或升级只更换技能文件。已有小说正文和 `.story/` 书籍状态不会自动迁移；书库仍使用 schema 2，本地发布记录另用 schema 1。新版的章节、目录、平台分类和离线发布准备规则见[上手说明](docs/中文小说上手.md)及[目录规范](docs/目录结构.md)。
