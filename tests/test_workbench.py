@@ -680,7 +680,7 @@ server.serve_forever()
 
     def _crash_save(self, payload, phase, recovery=False):
         payload_path = self.root / '.crash-payload.json'
-        payload_path.write_text(json.dumps(payload, ensure_ascii=False))
+        payload_path.write_text(json.dumps(payload, ensure_ascii=False), encoding='utf-8')
         program = r'''
 import importlib.util, json, os, sys
 from pathlib import Path
@@ -691,7 +691,7 @@ w = story.workbench
 original = w.api.atomic_write
 phase = sys.argv[4]
 def write(path, *args, **kwargs):
-    name = str(path)
+    name = Path(path).as_posix()
     is_body = name.endswith(('.md', '.txt')) and '/.backups/' not in name
     if phase == 'before-body' and is_body:
         os._exit(73)
@@ -702,9 +702,9 @@ def write(path, *args, **kwargs):
         os._exit(73)
     return result
 w.api.atomic_write = write
-w._editor_save(Path(sys.argv[2]), json.loads(Path(sys.argv[3]).read_text()), recovery=sys.argv[5] == '1')
+w._editor_save(Path(sys.argv[2]), json.loads(Path(sys.argv[3]).read_text(encoding='utf-8')), recovery=sys.argv[5] == '1')
 '''
-        result = subprocess.run([sys.executable, '-c', program, str(TOOL), str(self.root), str(payload_path),
+        result = subprocess.run([sys.executable, '-X', 'utf8', '-c', program, str(TOOL), str(self.root), str(payload_path),
                                  phase, '1' if recovery else '0'], capture_output=True, text=True, timeout=25)
         self.assertEqual(result.returncode, 73, result.stderr)
 
