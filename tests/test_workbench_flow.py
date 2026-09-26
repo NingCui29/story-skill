@@ -22,7 +22,8 @@ class WorkbenchFlowTests(unittest.TestCase):
     def material(self, relative, text):
         p = self.root / relative
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(text, encoding='utf-8')
+        # Fixtures compare exact bytes; do not let Windows translate LF to CRLF.
+        p.write_bytes(text.encode('utf-8'))
         return 'file:' + relative
 
     def test_groups_include_future_plans_without_claiming_prose_or_adoption(self):
