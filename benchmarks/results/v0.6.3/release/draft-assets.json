@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "scope": "Authenticated download of draft Release assets; not proof of public availability",
+  "sha256": "8bbe8ebbf715cb7dcc7e0a4c8b840d0bdd9a2091fdb817461c509c62ace6ea8c",
+  "bytes": 232960,
+  "files": 39,
+  "tag": "v0.6.3",
+  "commit": "03dd637ea03f62560b89e5f9030267b06c041e56"
+}

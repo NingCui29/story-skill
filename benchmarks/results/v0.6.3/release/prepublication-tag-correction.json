@@ -1,0 +1,19 @@
+{
+  "release_public": false,
+  "payload_unchanged": true,
+  "corrections": [
+    {
+      "release_not_created": true,
+      "reason": "Fix Windows-only byte-equality test fixture before publishing; all 39 skill payload files unchanged.",
+      "previous_commit": "94a462ef225bd17081c98a97398711cbccac4768",
+      "final_commit": "924fdc2e6157f3928070ef6014d7757e8b721ba4",
+      "leased_previous_tag_object": "53274aa7361a5cae8f9ca221179e8229c3a1f84e"
+    },
+    {
+      "reason": "Explicit UTF-8 and portable paths for crash recovery test subprocess; no payload changes.",
+      "previous_commit": "924fdc2e6157f3928070ef6014d7757e8b721ba4",
+      "final_commit": "03dd637ea03f62560b89e5f9030267b06c041e56",
+      "leased_previous_tag_object": "2cfbeb804f2704ad1dd59d8100a7346429eefb06"
+    }
+  ]
+}
