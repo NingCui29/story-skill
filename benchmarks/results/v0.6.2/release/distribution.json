@@ -1,0 +1,18 @@
+{
+  "version": "0.6.2",
+  "tag": "v0.6.2",
+  "commit": "d4ddc0e9285b0dff5e100185ed262a985f70ee59",
+  "public_download_verified": true,
+  "files": 39,
+  "assets": {
+    "story-skill-0.6.2.zip": {
+      "bytes": 204726,
+      "sha256": "09135f199a66cffd83676a7f7ba29b9de95bd97aef6122eaa33e7b651222e66f"
+    },
+    "story-skill-0.6.2.zip.sha256": {
+      "bytes": 88,
+      "sha256": "31d9305b13eef6114e548bb2844b30cb2496a86f64bf2f3b6244504c879013b8"
+    }
+  },
+  "tag_payload_exact": true
+}
