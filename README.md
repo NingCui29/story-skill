@@ -2,9 +2,9 @@
 
 Story Skill 是一套供写作助手使用的中文小说技能。你可以从一部参考作品开始拆解写法，也可以直接开一本新书；之后按卷规划、逐章写作、审稿和续写。它把可读稿件与写作进度保存在书目录中，方便换会话接着做。
 
-**当前发布版：v0.6.1。** 完整套件包含 8 个技能、39 个载荷文件，新增三栏只读工作台。[发布记录](docs/releases/v0.6.1.md) · [安装指引](INSTALL.md)。本机已安装技能不会随仓库发布自动更新。
+**当前发布版：v0.6.2。** 完整套件包含 8 个技能、39 个载荷文件，支持三栏阅读与候选稿编辑。[发布记录](docs/releases/v0.6.2.md) · [安装指引](INSTALL.md)。本机已安装技能不会随仓库发布自动更新。
 
-v0.6.1 提供分卷目录、正文阅读、章节搜索和本地状态概览，仍为单书只读模式。
+v0.6.2 提供分卷目录、正文阅读、章节搜索和本地状态概览，另提供单书候选稿编辑模式。
 
 **v0.5.10 已有：**短篇全文合并、旧短篇补章与合法全文文件名、完本封面联动，以及全部正式总纲的平台分类要求；同时补充全书完本审查、中文语法标点指导并修复 Windows 导出。[当版变化与验证](docs/releases/v0.5.10.md)
 
@@ -149,9 +149,9 @@ $story-skill-write 写一段约500个汉字的现代生活小说片段。
 
 独立试写后说“继续”，仍沿用片段任务。已有书若只想先看下一章候选稿，可明确说“只保存草稿，暂不提交”；采用后再进入正式章节流程。[独立试写记录](benchmarks/results/standalone-writing-2026-09-19/README.md)
 
-## 本地只读工作台
+## 本地工作台
 
-v0.6.1可从已初始化的书生成一页本地静态概览。它显示正式进度、最近正式章节、待同步或外改提示，以及本地保存的发布准备摘要；不会写入正文、卡片、世界状态、历史分支、分析记录或发布记录。
+v0.6.2可从已初始化的书生成一页本地静态概览。它显示正式进度、最近正式章节、待同步或外改提示，以及本地保存的发布准备摘要；不会写入正文、卡片、世界状态、历史分支、分析记录或发布记录。
 
 ```bash
 python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-snapshot --book "<书目录绝对路径>" --limit 10
@@ -161,6 +161,14 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-export --bo
 `workbench-export` 默认生成 `.story/workbench/index.html`；`--open` 只请求系统默认浏览器打开该文件。浏览器打开失败时，回执中的 `opened` 为 false，并保留 `open_error` 和已经生成的页面路径，不把导出成功误报为打开成功。页面不联网、不上传作品，也不执行平台操作。
 
 如果书目录位于 Git 仓库内，导出前必须让整个 `.story/workbench/`（包括 `.backups/`）处于忽略状态，且不能已有被跟踪的工作台文件；发现仓库却无法核验 Git 状态时，工具会停止导出。本仓库的根 `.gitignore` 已包含 `**/.story/workbench/`，其他书库需在自己的忽略规则或 `.git/info/exclude` 中加入相应规则。当前静态页只有概览与本次章节页；章节可用快照返回的游标继续读取，卡片、世界、历史、分析和发布仍只有摘要，没有各自的完整分区游标。草稿、候选稿、可读大纲、封面及其他作者产物尚无登记表，页面会明确显示“未登记”，不会按文件名或修改时间猜测当前版本。[实现状态与边界](docs/本地工作台分析.md)
+
+编辑候选稿时运行：
+
+```bash
+python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-serve --book "<书目录绝对路径>" --limit 100 --open
+```
+
+默认静态导出为三栏阅读页，`--overview-only` 才生成旧式概览。编辑页仅连接本机，正文区隐藏匹配的章名，保存时恢复原章名；每次另存 `.story/drafts/workbench/` 候选文件，不替换正式章节。正式稿变化后须重新打开；未保存文字在关闭或刷新时可能丢失。
 
 ## 文件放在哪里
 
@@ -197,7 +205,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-export --bo
 | 范围 | 状态 |
 |---|---|
 | **v0.6.0** | 统一名称为 Story Skill，八个入口改用 `$story-skill*`；固定标签、Linux／Windows CI、Release 附件、安装器 Git 方法与新包回下载已核对。[发布证据](docs/releases/v0.6.0.md) · [安装指引](INSTALL.md) |
-| **v0.6.1（当前发布版）** | 含 39 个载荷文件和三栏只读工作台；分发核验见[版本说明](docs/releases/v0.6.1.md)，本机安装需另行更新。[工作台边界](docs/本地工作台分析.md) |
+| **v0.6.2（当前发布版）** | 含 39 个载荷文件、三栏阅读与候选编辑；分发核验见[版本说明](docs/releases/v0.6.2.md)，本机安装需另行更新。[工作台边界](docs/本地工作台分析.md) |
 | **v0.5.11** | 新增离线发布准备技能，按正式章节生成和复核材料包，并比较作者提供的草稿副本；仍不执行平台上传、提交或排期。短篇合并稿从第 1 章章名开始。[功能边界](docs/platform-publishing.md)；分发与跨平台检查以实际[发布记录](docs/github-release.md)为准。 |
 | **v0.5.10** | 短篇全文合并与旧章补齐、完本封面及总纲平台分类、全书审查与中文语法标点指导；修复 Windows 导出，Windows 原生 CI 与 Linux CI 通过。固定标签、Release 附件、隔离安装及 GitHub Packages 的核验范围见[本版说明](docs/releases/v0.5.10.md)与[独立验证记录](benchmarks/results/v0.5.10/README.md)。 |
 | **v0.5.9** | 明确独立代理交接与自审、独立复核、盲评的边界；正文指导按说话人和意义转折自然分段，交付前检查密集长段，不设统一字数上限。固定标签、Release 附件、隔离安装和 GitHub Packages 已核验；Linux CI 通过，Windows 仍有已知 `WinError 32`。[本版说明](docs/releases/v0.5.9.md) · [发布与校验状态](benchmarks/results/v0.5.9/README.md) |
@@ -229,4 +237,4 @@ python3 -B -X utf8 scripts/smoke.py --output dist/manual-smoke.json
 
 本项目参考 [oh-story-claudecode](https://github.com/zenstory-ai/oh-story-claudecode) 的公开流程独立实现。[设计取舍](docs/upstream-analysis.md) · [MIT License](LICENSE)
 
-工作台页面内阅读：在 `workbench-export` 后加 `--include-text`，以三栏界面浏览本页已核对的正式正文：左侧目录、中间正文、右侧章节摘要；作品进度收进概览。默认仍只显示摘要；正文更新后需重新导出。详见[本地工作台说明](docs/本地工作台分析.md#页面内阅读)。
+工作台页面内阅读：运行 `workbench-export`，默认以三栏界面浏览本页已核对的正式正文：左侧目录、中间正文、右侧章节摘要；作品进度收进概览。仅需摘要用 `--overview-only`；正文更新后需重新导出。详见[本地工作台说明](docs/本地工作台分析.md#页面内阅读)。

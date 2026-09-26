@@ -1,0 +1,42 @@
+[
+  {
+    "skill": "story-skill",
+    "ok": true,
+    "output": "Skill is valid!\n"
+  },
+  {
+    "skill": "story-skill-analyze",
+    "ok": true,
+    "output": "Skill is valid!\n"
+  },
+  {
+    "skill": "story-skill-cover",
+    "ok": true,
+    "output": "Skill is valid!\n"
+  },
+  {
+    "skill": "story-skill-plan",
+    "ok": true,
+    "output": "Skill is valid!\n"
+  },
+  {
+    "skill": "story-skill-publish",
+    "ok": true,
+    "output": "Skill is valid!\n"
+  },
+  {
+    "skill": "story-skill-research",
+    "ok": true,
+    "output": "Skill is valid!\n"
+  },
+  {
+    "skill": "story-skill-review",
+    "ok": true,
+    "output": "Skill is valid!\n"
+  },
+  {
+    "skill": "story-skill-write",
+    "ok": true,
+    "output": "Skill is valid!\n"
+  }
+]

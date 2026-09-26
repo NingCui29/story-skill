@@ -279,8 +279,8 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertNotIn(forbidden, files["README.md"].lower())
 
     def test_only_current_release_family_has_reviewed_layout(self):
-        layouts = {"0.6.0": npm.SUITE_FILES_V060, "0.6.1": npm.SUITE_FILES_V061}
-        skill_layouts = {"0.6.0": npm.SKILL_NAMES_V060, "0.6.1": npm.SKILL_NAMES_V061}
+        layouts = {"0.6.0": npm.SUITE_FILES_V060, "0.6.1": npm.SUITE_FILES_V061, "0.6.2": npm.SUITE_FILES_V061}
+        skill_layouts = {"0.6.0": npm.SKILL_NAMES_V060, "0.6.1": npm.SKILL_NAMES_V061, "0.6.2": npm.SKILL_NAMES_V061}
         for version, expected in layouts.items():
             self.assertEqual(npm.payload_files(version), expected)
             self.assertEqual(npm.skill_names(version), skill_layouts[version])
@@ -291,7 +291,7 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertEqual(npm.SUITE_FILES, npm.SUITE_FILES_V061)
         self.assertEqual(npm.SKILL_NAMES, npm.SKILL_NAMES_V061)
         self.assertIn("story-skill/scripts/story_workbench.py", npm.SUITE_FILES)
-        for version in ("0.5.11", "0.6.00", "0.6.2", "0.6.99", "1.0.0"):
+        for version in ("0.5.11", "0.6.00", "0.6.3", "0.6.99", "1.0.0"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed payload layout"):
                 npm.payload_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed payload layout"):

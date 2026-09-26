@@ -113,7 +113,7 @@ def suite_files(version):
     """Return the immutable file manifest reviewed for one exact version."""
     if version == "0.6.0":
         return SUITE_FILES_V060
-    if version == "0.6.1":
+    if version in ("0.6.1", "0.6.2"):
         return SUITE_FILES_V061
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
@@ -122,7 +122,7 @@ def skill_names(version):
     """Return the immutable skill-root list reviewed for one exact version."""
     if version == "0.6.0":
         return SKILL_NAMES_V060
-    if version == "0.6.1":
+    if version in ("0.6.1", "0.6.2"):
         return SKILL_NAMES_V061
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 

@@ -13,6 +13,8 @@ import sqlite3
 import subprocess
 import uuid
 import webbrowser
+import secrets
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
 CONTRACT = "story.workbench.v1"
@@ -49,10 +51,17 @@ def register_parser(sub, command):
     export_parser.add_argument("--limit", type=int, default=DEFAULT_LIMIT)
     export_parser.add_argument("--offset", type=int, default=0)
     export_parser.add_argument("--cursor", help="Opaque cursor returned by an earlier snapshot")
-    export_parser.add_argument("--include-text", action="store_true", help="Embed verified chapters from this page for local reading")
+    mode = export_parser.add_mutually_exclusive_group()
+    mode.add_argument("--include-text", action="store_true", dest="include_text", help="Use the default three-column reader")
+    mode.add_argument("--overview-only", action="store_false", dest="include_text", help="Export a summary without embedding chapter text")
+    export_parser.set_defaults(include_text=True)
     export_parser.add_argument("--output", help="HTML path inside .story/workbench; defaults to index.html")
     export_parser.add_argument("--open", action="store_true", dest="open_browser",
                                help="Open the generated file with the default browser")
+
+    editor = command("workbench-serve", "Open a loopback editor that saves candidate drafts only", DEFAULT_BUDGET, False)
+    editor.add_argument("--limit", type=int, default=DEFAULT_LIMIT)
+    editor.add_argument("--open", action="store_true", dest="open_browser")
 
 
 class _ReadOnlyBook:
@@ -849,6 +858,21 @@ def _reading_text(book, packet):
     return result
 
 
+def _body_without_heading(text, chapter, title):
+    lines = text.splitlines(keepends=True)
+    if not lines:
+        return "", text
+    first = lines[0].strip()
+    # Only remove an exact opening heading, never mentions within the story.
+    first = re.sub(r"^#{1,6}\s+", "", first)
+    if first != title or not re.match(rf"^第0*{chapter}章(?:\s|$)", first):
+        return "", text
+    end = 1
+    while end < len(lines) and not lines[end].strip():
+        end += 1
+    return "".join(lines[:end]), "".join(lines[end:])
+
+
 def _render_desk(packet, reading):
     book = packet["book"]
     rows = sorted(packet["chapters"]["results"], key=lambda row: row["chapter"])
@@ -858,7 +882,7 @@ def _render_desk(packet, reading):
         groups.setdefault(str(path.parent), []).append(
             f'<a class="chapter-link" href="#chapter-{number}">{_escape(path.stem)}</a>')
         articles.append(f'<article id="chapter-{number}" hidden><div class="eyebrow">正式正文 · 只读</div>'
-                        f'<h1>{_escape(path.stem)}</h1><pre>{_escape(reading[number])}</pre></article>')
+                        f'<h1>{_escape(path.stem)}</h1><pre>{_escape(_body_without_heading(reading[number], number, path.stem)[1])}</pre></article>')
         notes.append(f'<section data-note="chapter-{number}" hidden><h3>本章摘要</h3>'
                      f'<p>{_escape(row["summary"]) or "尚无摘要"}</p>'
                      f'<h3>原稿</h3><a href="{_escape((Path(book["root"]) / path).as_uri())}">打开章节文件</a></section>')
@@ -1040,7 +1064,7 @@ def _git_ignore_status(book, target, backup):
 
 
 def export(book, output=None, open_browser=False, limit=DEFAULT_LIMIT, budget=DEFAULT_BUDGET,
-           offset=0, cursor=None, include_text=False, **legacy):
+           offset=0, cursor=None, include_text=True, **legacy):
     if "open" in legacy:
         open_browser = bool(legacy.pop("open"))
     if legacy:
@@ -1076,7 +1100,136 @@ def export(book, output=None, open_browser=False, limit=DEFAULT_LIMIT, budget=DE
             "opened": opened, "open_error": open_error}
 
 
+def _save_candidate(root, packet, chapter, text):
+    if type(chapter) is not int or not isinstance(text, str) or not text.strip():
+        api.fail("invalid_input", "Chapter and non-empty text are required")
+    if len(text.encode("utf-8")) > 1024 * 1024:
+        api.fail("workbench_read_limit", "Candidate is larger than 1 MiB")
+    row = next((row for row in packet["chapters"]["results"] if row["chapter"] == chapter), None)
+    if row is None:
+        api.fail("invalid_input", "Chapter is outside this editing session")
+    book = _ReadOnlyBook(root)
+    try:
+        current = snapshot(book, limit=packet["chapters"]["limit"])
+        if current["snapshot"]["id"] != packet["snapshot"]["id"]:
+            api.fail("stale_snapshot", "作品已变化，请另开工作台核对。当前编辑内容仍保留在页面中。")
+        originals = _reading_text(book, packet)
+        prefix, _ = _body_without_heading(originals[chapter], chapter, Path(row["path"]).stem)
+        text = prefix + text
+        name = f".story/drafts/workbench/第{chapter}章_基线{row['sha256']}_修订{uuid.uuid4().hex}.md"
+        target = api.safe_path(book.root, name)
+        api.atomic_write(target, text, set(), api.safe_path(book.root,
+                         f".story/drafts/workbench/.backups/{uuid.uuid4().hex}.md"))
+        return {"ok": True, "path": name, "base_sha256": row["sha256"],
+                "sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
+                "formal_changed": False}
+    finally:
+        book.close()
+
+
+def _editor_page(packet, reading, token):
+    page = _render_desk(packet, reading)
+    script = """const editors=new Map(),saved=new Map();
+document.querySelectorAll('article').forEach(article=>{const area=document.createElement('textarea');area.value=article.querySelector('pre').textContent;area.hidden=true;area.setAttribute('aria-label','候选修订正文');area.style.cssText='width:100%;min-height:65vh;resize:vertical;font:18px/1.8 serif;padding:16px;border:1px solid #ccd5e0';article.append(area);editors.set(article.id,area);saved.set(article.id,area.value);});
+const editButton=document.querySelector('#edit-chapter'),saveButton=document.querySelector('#save-candidate'),message=document.querySelector('#save-message');
+function dirty(){return [...editors].some(([id,area])=>area.value!==saved.get(id));}
+function editingControls(){const area=editors.get(current);editButton.disabled=!area;saveButton.disabled=!area;editButton.textContent=area&&!area.hidden?'阅读预览':'编辑本章';}
+window.addEventListener('hashchange',editingControls);editingControls();
+editButton.addEventListener('click',()=>{const area=editors.get(current);if(!area)return;area.hidden=!area.hidden;const pre=document.getElementById(current).querySelector('pre');pre.hidden=!area.hidden;if(area.hidden)pre.textContent=area.value;else area.focus();editingControls();});
+saveButton.addEventListener('click',async()=>{const id=current,area=editors.get(id);if(!area)return;const text=area.value;saveButton.disabled=true;message.textContent='正在保存候选稿…';try{const response=await fetch(location.pathname+'candidate',{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify({chapter:Number(id.slice(8)),text})});const result=await response.json();if(!response.ok)throw new Error(result.message||'保存失败');saved.set(id,text);message.textContent='已保存候选稿：'+result.path+'；正式稿未改变。';}catch(error){message.textContent=error.message+' 编辑内容仍保留，请勿关闭页面。';}finally{editingControls();}});
+window.addEventListener('beforeunload',event=>{if(dirty()){event.preventDefault();event.returnValue='';}});""".replace("TOKEN", json.dumps(token))
+    old_script = re.search(r"<script>(.*?)</script>", page, re.S).group(1)
+    combined = old_script + "\n" + script
+    old_hash = base64.b64encode(hashlib.sha256(old_script.encode()).digest()).decode()
+    new_hash = base64.b64encode(hashlib.sha256(combined.encode()).digest()).decode()
+    page = page.replace(old_hash, new_hash).replace("default-src 'none';", "default-src 'none'; connect-src 'self';")
+    page = page.replace('<script>'+old_script+'</script>', '<script>'+combined+'</script>')
+    page = page.replace('<main class="manuscript">', '<div class="reader-controls"><button id="edit-chapter">编辑本章</button><button id="save-candidate">保存候选稿</button></div><p id="save-message" role="status" style="margin:8px 20px;overflow-wrap:anywhere">编辑仅存为候选，采用前仍需审查提交；切章保留未保存内容，关闭页面会丢失。</p><main class="manuscript">')
+    page = page.replace('本地只读</span>', '本地候选编辑</span>').replace('本页不提供编辑保存。', '编辑内容另存为候选稿，正式正文不变。')
+    return page.encode("utf-8")
+
+
+def editor_server(root, limit=DEFAULT_LIMIT):
+    book = _ReadOnlyBook(root)
+    try:
+        packet = snapshot(book, limit=limit)
+        reading = _reading_text(book, packet)
+    finally:
+        book.close()
+    token = secrets.token_urlsafe(32)
+    route = '/' + token + '/'
+    page = _editor_page(packet, reading, token)
+
+    class Handler(BaseHTTPRequestHandler):
+        def setup(self):
+            super().setup()
+            self.connection.settimeout(10)
+
+        def log_message(self, *args):
+            pass
+
+        def reply(self, status, data, content_type="application/json; charset=utf-8"):
+            self.send_response(status)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("Referrer-Policy", "no-referrer")
+            self.send_header("X-Frame-Options", "DENY")
+            self.end_headers()
+            self.wfile.write(data)
+
+        def allowed(self):
+            return self.headers.get("Host") == f"127.0.0.1:{self.server.server_port}"
+
+        def do_GET(self):
+            if not self.allowed() or self.path != route:
+                return self.reply(404, b'{}')
+            self.reply(200, page, "text/html; charset=utf-8")
+
+        def do_POST(self):
+            origin = f"http://127.0.0.1:{self.server.server_port}"
+            if (not self.allowed() or self.path != route+'candidate' or
+                    self.headers.get("Origin") != origin or
+                    self.headers.get("X-Story-Token") != token):
+                return self.reply(403, b'{}')
+            if self.headers.get("Content-Type") != "application/json" or self.headers.get("Transfer-Encoding"):
+                return self.reply(400, b'{}')
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < length <= 7 * 1024 * 1024:
+                    return self.reply(413, b'{}')
+                raw = self.rfile.read(length)
+                if len(raw) != length:
+                    return self.reply(400, b'{}')
+                payload = json.loads(raw)
+                if not isinstance(payload, dict):
+                    return self.reply(400, b'{}')
+                result = _save_candidate(root, packet, payload.get("chapter"), payload.get("text"))
+                self.reply(200, json.dumps(result, ensure_ascii=False).encode())
+            except api.StoryError as error:
+                self.reply(409, json.dumps({"message": str(error), "error": error.code}, ensure_ascii=False).encode())
+            except (ValueError, UnicodeError, OSError):
+                self.reply(400, b'{"message":"Invalid request or save failed"}')
+
+    server = HTTPServer(("127.0.0.1", 0), Handler)
+    server.editor_url = f"http://127.0.0.1:{server.server_port}"+route
+    return server
+
+
 def run(args):
+    if args.command == "workbench-serve":
+        server = editor_server(args.book, args.limit)
+        print(json.dumps({"url": server.editor_url, "mode": "candidate-editing"}), flush=True)
+        if args.open_browser:
+            webbrowser.open(server.editor_url)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            server.server_close()
+        return {"ok": True, "stopped": True}
     book = _ReadOnlyBook(args.book)
     try:
         if args.command == "workbench-snapshot":

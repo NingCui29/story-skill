@@ -1,6 +1,6 @@
 # 安装或升级 Story Skill
 
-**当前发布版：v0.6.1。** 固定标签 `f2e2842223432092133e0293419eed399fa55791`。八技能、39 文件；Release 附件和 Packages 的核验结果见[发布记录](docs/releases/v0.6.1.md)。
+**v0.6.2 发布准备中，暂勿据此升级。** 固定标签 `v0.6.2`，发布提交将在回下载核验后补录。八技能、39 文件；Release 附件和 Packages 的核验结果见[发布记录](docs/releases/v0.6.2.md)。
 
 可把这一行发送给支持技能的应用：
 
@@ -12,7 +12,7 @@ $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.
 
 ## 完整套件
 
-已发布的 v0.6.1 一次安装以下八个同级目录，共 39 个载荷文件：
+v0.6.2 完整套件 一次安装以下八个同级目录，共 39 个载荷文件：
 
 ```text
 skills/story-skill
@@ -25,13 +25,13 @@ skills/story-skill-cover
 skills/story-skill-publish
 ```
 
-新版 ZIP 名为 `story-skill-0.6.1.zip`，包名为 `@ningcui29/story-skill`。Release 附件和 GitHub Packages 的新包均已公开；npm 包不是直接可发现的技能安装。历史文档经过名称遮盖；旧版资源的真实文件名不会因文档改写而改变。
+新版 ZIP 名为 `story-skill-0.6.2.zip`，包名为 `@ningcui29/story-skill`。Release 附件和 GitHub Packages 的新包尚待本轮发布核验；npm 包不是直接可发现的技能安装。历史文档经过名称遮盖；旧版资源的真实文件名不会因文档改写而改变。
 
-远程安装时，先用官方安装脚本从 `v0.6.1` 固定标签将八个 `--path` 安装到隔离临时目录；另从同一版本 Release 下载 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.1/story-skill-0.6.1.zip) 和 [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.1/story-skill-0.6.1.zip.sha256)，核对摘要，并逐文件比较临时目录与 ZIP。套件 ZIP 为 200,030 字节，SHA-256 为 `ff10d20a5f1a56387dc29f8c9adeed9636c3c02973f2807c83921e2146f958c7`；公开回下载与此一致。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
+远程安装时，先用官方安装脚本从 `v0.6.2` 固定标签将八个 `--path` 安装到隔离临时目录；另从同一版本 Release 下载 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.2/story-skill-0.6.2.zip) 和 [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.2/story-skill-0.6.2.zip.sha256)，核对摘要，并逐文件比较临时目录与 ZIP。套件 ZIP 为 204,726 字节，SHA-256 为 `09135f199a66cffd83676a7f7ba29b9de95bd97aef6122eaa33e7b651222e66f`；公开回下载尚待核验。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
 
 ## 从本仓库源码安装
 
-使用已核验的 v0.6.1 固定标签。main 可能包含后续更改，不能仅凭版本号判定其与附件相同。项目内托管安装可在仓库根目录运行：
+使用已核验的 v0.6.2 固定标签。main 可能包含后续更改，不能仅凭版本号判定其与附件相同。项目内托管安装可在仓库根目录运行：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "<项目根目录>"
@@ -43,7 +43,7 @@ python3 -B -X utf8 scripts/install.py --project "<项目根目录>"
 
 ## 安装核验
 
-比较目标的八个目录与已验证的新套件，核对文件集合和字节；安装器回执、`__pycache__` 与 `.pyc` 可按各自规则排除。用新版核心 `scripts/story.py` 在隔离书目录执行 `--version`、`--help`、`init`、`status`。只有版本为 `0.6.1`、八目录及全部 39 个载荷文件完整且四个命令通过，才报告安装成功。若安装中断或目标被其他进程修改，保留备份与现场，不把部分结果报告为完成。
+比较目标的八个目录与已验证的新套件，核对文件集合和字节；安装器回执、`__pycache__` 与 `.pyc` 可按各自规则排除。用新版核心 `scripts/story.py` 在隔离书目录执行 `--version`、`--help`、`init`、`status`。只有版本为 `0.6.2`、八目录及全部 39 个载荷文件完整且四个命令通过，才报告安装成功。若安装中断或目标被其他进程修改，保留备份与现场，不把部分结果报告为完成。
 
 如测试 main 源码，单独记录提交与文件哈希，不将它冒充固定标签安装。
 

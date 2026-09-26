@@ -114,7 +114,7 @@ class ReleaseProbeTests(unittest.TestCase):
     def test_current_suite_upgrade_probe_preserves_book_and_backup(self):
         report = upgrade.probe(timeout=60)
         self.assertTrue(report["ok"], report.get("error"))
-        self.assertEqual(report["version"], "0.6.1")
+        self.assertEqual(report["version"], load("package").current_version(ROOT / "skills/story-skill/scripts/story.py"))
         self.assertTrue(report["temporary_project_removed"])
         self.assertEqual({command["name"] for command in report["commands"]},
                          {"initial_install", "managed_update", "installed_version", "prepare_help", "repeat_update"})

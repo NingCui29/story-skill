@@ -355,6 +355,68 @@ class WorkbenchTests(unittest.TestCase):
         for name in misleading:
             self.assertNotIn(name, page)
 
+    def test_editor_http_saves_candidate_and_rejects_stale_or_foreign_requests(self):
+        import threading
+        import http.client
+        server = story.workbench.editor_server(self.root)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            route = '/' + server.editor_url.split('/')[-2] + '/'
+            token = route.strip('/')
+            connection = http.client.HTTPConnection('127.0.0.1', server.server_port)
+            connection.request('GET', route)
+            response = connection.getresponse()
+            self.assertEqual(response.status, 200)
+            self.assertIn('保存候选稿', response.read().decode())
+            connection.close()
+            origin = f'http://127.0.0.1:{server.server_port}'
+            text = '第1章 修订\n\n她走进雨里。'
+            body = json.dumps({'chapter': 1, 'text': text})
+            headers = {'Content-Type': 'application/json', 'Origin': origin, 'X-Story-Token': token}
+            def post(extra):
+                client = http.client.HTTPConnection('127.0.0.1', server.server_port)
+                client.request('POST', route+'candidate', body, extra)
+                response = client.getresponse()
+                status, raw = response.status, response.read()
+                client.close()
+                return status, json.loads(raw)
+            before = self.book.meta('revision')
+            status, result = post(headers)
+            self.assertEqual(status, 200, result)
+            self.assertTrue((self.root / result['path']).read_text(encoding='utf-8').endswith(text))
+            self.assertEqual(self.book.meta('revision'), before)
+            self.assertFalse(result['formal_changed'])
+            status, second = post(headers)
+            self.assertEqual(status, 200)
+            self.assertNotEqual(result['path'], second['path'])
+            self.assertEqual(post({**headers, 'Origin': 'https://example.com'})[0], 403)
+            self.assertEqual(post({**headers, 'X-Story-Token': 'wrong'})[0], 403)
+            self.assertEqual(post({**headers, 'Host': 'example.com'})[0], 403)
+            packet = story.workbench.snapshot(self.book)
+            (self.root / packet['chapters']['results'][0]['path']).write_bytes(b'changed')
+            self.assertEqual(post(headers)[0], 409)
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join()
+
+    def test_reader_hides_only_matching_opening_heading(self):
+        split = story.workbench._body_without_heading
+        self.assertEqual(split("第2章 雨夜\n\n她来了。\n", 2, "第2章 雨夜"),
+                         ("第2章 雨夜\n\n", "她来了。\n"))
+        self.assertEqual(split("她念起第2章 雨夜。", 2, "第2章 雨夜"),
+                         ("", "她念起第2章 雨夜。"))
+        self.assertEqual(split("第3章 雨夜\n正文", 2, "第2章 雨夜")[0], "")
+
+    def test_default_cli_exports_three_column_reader(self):
+        process, result = self.cli("workbench-export")
+        self.assertEqual(process.returncode, 0, process.stderr)
+        page = Path(result["path"]).read_text(encoding="utf-8")
+        self.assertIn('class="desk"', page)
+        for token in self.body_tokens:
+            self.assertIn(token, page)
+
     def test_reading_export_embeds_verified_text_and_navigation(self):
         result = story.workbench.export(self.book, include_text=True)
         page = Path(result["path"]).read_text(encoding="utf-8")
@@ -414,7 +476,7 @@ class WorkbenchTests(unittest.TestCase):
         self.assertFalse((self.root / ".story/workbench/index.html").exists())
 
     def test_html_is_escaped_self_contained_and_omits_complete_prose(self):
-        process, result = self.cli("workbench-export")
+        process, result = self.cli("workbench-export", "--overview-only")
         self.assertEqual(process.returncode, 0, process.stderr)
         path = Path(result["path"])
         self.assertEqual(path, self.root / ".story/workbench/index.html")

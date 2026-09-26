@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "files": 39,
+  "project": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v062-install-m6hvoimr",
+  "checks": {
+    "version": {
+      "exit_code": 0,
+      "output": "0.6.2\n"
+    },
+    "help": {
+      "exit_code": 0,
+      "output": "help returned"
+    },
+    "init": {
+      "exit_code": 0,
+      "output": "{\"created\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v062-install-m6hvoimr/book\",\"id\":\"9620d2ca-7fc7-4dc5-857f-4bd95c250d36\",\"imported_through\":0,\"kind\":\"long\",\"last_chapter\":0,\"revision\":0,\"schema\":2,\"title\":\"发布隔离检查\"}\n"
+    },
+    "status": {
+      "exit_code": 0,
+      "output": "{\"book\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v062-install-m6hvoimr/book\",\"cards\":0,\"changed_export_count\":0,\"changed_exports\":[],\"id\":\"9620d2ca-7fc7-4dc5-857f-4bd95c250d36\",\"imported_through\":0,\"integrity\":{\"full_book_verified\":true,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Hash verification is a point-in-time observation; outside editors can save again.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"kind\":\"long\",\"last_chapter\":0,\"more_sources\":false,\"next_chapter\":1,\"pending_export_count\":0,\"pending_exports\":[],\"recent_sources\":[],\"revision\":0,\"short_assembly\":null,\"short_assembly_path\":null,\"sources\":0,\"title\":\"发布隔离检查\"}\n"
+    }
+  },
+  "final_zip_verified": true
+}

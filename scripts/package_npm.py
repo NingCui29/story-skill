@@ -118,7 +118,7 @@ MAX_BYTES = 256 * 1024 * 1024
 def payload_files(version):
     if version == "0.6.0":
         return SUITE_FILES_V060
-    if version == "0.6.1":
+    if version in ("0.6.1", "0.6.2"):
         return SUITE_FILES_V061
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
@@ -127,7 +127,7 @@ def skill_names(version):
     """Return the immutable skill-root list reviewed for one exact version."""
     if version == "0.6.0":
         return SKILL_NAMES_V060
-    if version == "0.6.1":
+    if version in ("0.6.1", "0.6.2"):
         return SKILL_NAMES_V061
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 

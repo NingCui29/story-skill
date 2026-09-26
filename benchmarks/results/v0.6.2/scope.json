@@ -1,0 +1,13 @@
+{
+  "version": "0.6.2",
+  "runtime_sha256": {
+    "story.py": "ce2bb671b83fd8dd4573e846f39cc378690e1b23cc5c86cacf6e4925613ed51f",
+    "story_history.py": "02bdd130ae014f977bf03cc13cfc27fb6bdb873df491da19d5d3748e34beda1f",
+    "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story_workbench.py": "e4ac68f1af7d0c8d7d02ab7548c4c8a1802eb3a2129ce5630023795505725543",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+  },
+  "scope": "Unit tests, CLI smoke, Chinese fixture replay, history workflow, skill validation, isolated installation and ZIP checks. No new literary quality evaluation or capacity benchmark."
+}
