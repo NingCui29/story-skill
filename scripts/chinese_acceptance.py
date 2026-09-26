@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Replay reviewed Chinese manuscripts through real CLI processes; no model calls."""
+"""Exercise Chinese CLI transactions with synthetic inputs or explicit local manuscripts."""
 import argparse
 from contextlib import nullcontext
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -178,10 +179,62 @@ def replay(root, scenario_path, resume_prepared_first=False):
             "scenario_sha256": sha(scenario_path.read_bytes())}
 
 
+def generated_scenarios(base):
+    """Generate tiny technical fixtures, not novels or literary review evidence."""
+    paths = []
+    for kind in ("long", "short"):
+        folder = base / kind
+        folder.mkdir(parents=True)
+        plans, units = [], []
+        for number in range(1, 4 if kind == "long" else 2):
+            quote = f"测试员将编号{number}的蓝色方块放进盒子。"
+            text = f"第{number}章 测试单元\n\n{quote}\n\n盒盖已经合上，本次操作结束。\n"
+            draft = folder / f"unit-{number}.md"
+            draft.write_bytes(text.encode("utf-8"))
+            plans.append({"goal": "放入方块", "stop": "盒盖合上", "requires": ["operator"],
+                          "length": [10, 200], "beats": [{"choice": "放入方块", "change": "盒盖合上"}]})
+            units.append({"chapter": number, "draft": draft.name, "reviewed_sha256": sha(draft.read_bytes()),
+                          "summary": f"编号{number}方块已经入盒。",
+                          "changes": [{"id": "operator", "text": f"已放入编号{number}方块。", "quote": quote}],
+                          "checks": {key: {"note": "合成事务夹具，仅核对动作与停止状态，不评价文学质量。", "quote": quote}
+                                     for key in ("causality", "continuity", "constraints", "style")},
+                          "expected_cards": {"operator": f"已放入编号{number}方块。"}})
+        if kind == "long":
+            # Preserve two revisions, external-edit recovery, and idempotent retries.
+            for index, color in enumerate(("红色", "绿色"), 1):
+                revised = copy.deepcopy(units[2])
+                previous = (folder / revised["draft"]).read_text(encoding="utf-8")
+                draft = folder / f"revision-{index}.md"
+                draft.write_bytes(previous.replace("蓝色", color).encode("utf-8"))
+                revised.update(draft=draft.name, reviewed_sha256=sha(draft.read_bytes()), replace_last=True)
+                for check in revised["checks"].values():
+                    check["quote"] = check["quote"].replace("蓝色", color)
+                revised["changes"][0]["quote"] = revised["changes"][0]["quote"].replace("蓝色", color)
+                if index == 2:
+                    revised["external_recovery"] = True
+                units.append(revised)
+        scenario = {"title": "合成中文事务" + kind, "kind": kind,
+                    "notes": [{"id": "operator", "kind": "character", "text": "测试员准备放入方块。", "source": "合成输入"}],
+                    "plans": plans, "units": units}
+        if kind == "short":
+            source = folder / "source.txt"
+            source.write_bytes("第1章 输入甲\n测试员放入方块。\n\n第2章 输入乙\n测试员关闭盒盖。\n".encode("utf-8"))
+            report = folder / "report.md"
+            report.write_bytes("# 合成拆文报告\n\n先放入方块，再关闭盒盖。两个输入单元分别保存精确引文，逐块续跑后生成报告。仅验证分块恢复与报告保存，不作文学评价。\n".encode("utf-8"))
+            scenario["analysis"] = {"source": source.name, "reviewed_sha256": sha(source.read_bytes()),
+                                    "coverage": "complete", "report": report.name,
+                                    "chunks": [{"ordinal": i, "summary": q,
+                                                "findings": [{"kind": "动作", "claim": q, "quote": q}]}
+                                               for i, q in enumerate(("测试员放入方块。", "测试员关闭盒盖。"), 1)]}
+        paths.append(write_json(folder / "scenario.json", scenario))
+    return paths
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--workdir", help="New empty directory to retain actual book state; otherwise temporary")
-    p.add_argument("--output", default=str(ROOT / "benchmarks/results/v0.5.0/chinese.json"))
+    p.add_argument("--scenario-dir", help="Explicit local reviewed manuscripts; default uses temporary synthetic fixtures")
+    p.add_argument("--output", default=str(ROOT / "dist/ci-chinese.json"))
     args = p.parse_args()
     ctx = nullcontext(args.workdir) if args.workdir else tempfile.TemporaryDirectory(prefix="story-chinese-")
     with ctx as name:
@@ -189,11 +242,14 @@ def main():
         if root.exists() and any(root.iterdir()):
             raise ValueError("Use a new empty workdir; existing manuscripts and state are never replaced")
         root.mkdir(parents=True, exist_ok=True)
-        scenarios = sorted((ROOT / "examples").glob("*/scenario.json"))
+        scenarios = (sorted(Path(args.scenario_dir).glob("*/scenario.json")) if args.scenario_dir
+                     else generated_scenarios(root / "_synthetic-inputs"))
         if len(scenarios) < 2:
             raise ValueError("Both long and complete short manuscript scenarios are required")
         books = [replay(root, path) for path in scenarios]
-        result = {"ok": True, "method": "Fixed original manuscripts with recorded semantic review, replayed through real CLI subprocesses; no new model evaluation",
+        result = {"ok": True, "method": ("Explicit local fixed manuscripts replayed through CLI; no new model evaluation" if args.scenario_dir
+                  else "Generated minimal Chinese transaction fixtures through real CLI; not novels or literary quality evidence"),
+                  "mode": "local-manuscripts" if args.scenario_dir else "synthetic-transactions",
                   "retained_workdir": str(root) if args.workdir else None,
                   "runtime_sha256": sha(TOOL.read_bytes()), "books": books}
         write_json(Path(args.output), result)

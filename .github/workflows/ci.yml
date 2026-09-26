@@ -35,7 +35,7 @@ jobs:
         run: python -B -X utf8 scripts/package.py
       - name: Exercise the local CLI workflow
         run: python -B -X utf8 scripts/smoke.py --output dist/ci-smoke.json
-      - name: Replay the reviewed Chinese manuscripts
+      - name: Exercise synthetic Chinese transactions
         run: python -B -X utf8 scripts/chinese_acceptance.py --output dist/ci-chinese.json
       - name: Exercise multi-line writing and historical revision
         run: python -B -X utf8 scripts/long_acceptance.py --output dist/ci-long.json

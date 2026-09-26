@@ -48,7 +48,7 @@ $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.
 | 长篇状态与历史修订 | [超长篇实操](超长篇实操.md) 和 [按版本保存的验收](超长篇验收.md) |
 | 阅读承诺、正文详略和跨章审稿的开发比较 | [三题实际结果](../benchmarks/results/quality-focus-2026-09-11/README.md)：规划持平、正文略偏初版候选、跨章审稿略偏旧版；最终措辞仅语义复核，不证明稳定提升 |
 | 人物选择指导续修 | [2026-09-19 独立试用](../benchmarks/results/quality-followup-2026-09-19/README.md)：补充欲望与性情对选择的影响，保留新旧原始稿件与适用边界 |
-| 连续章节写作试用 | [三章执行记录](../benchmarks/results/writing-sequence-2026-09-26/assessment.md)：保存规划、连续正文、独立评阅、实测计数与提交导出回执；程序正确性和文学表现分别报告 |
+| 连续章节写作试用 | [记录范围](../benchmarks/results/writing-sequence-2026-09-26/assessment.md)：测试小说及含原文的评阅、过程材料只在本地保留，当前仓库不提供样稿 |
 | 试写、局部设计与修订分流 | [独立试写](../benchmarks/results/standalone-writing-2026-09-19/README.md)与[审稿分流](../benchmarks/results/review-routing-2026-09-19/README.md)：区分独立片段、新章草稿和已提交章节，沿本次授权处理 |
 | 正文纯文本与对白分段 | [成稿格式](../skills/story-skill-write/references/drama.md#成稿格式)：段间空一行，换人默认换段，紧密动作与短对白可同段；[章节流程](../skills/story-skill-write/references/chapter.md)保留 `.md` 文件名，旧章不自动转换 |
 | 番茄与七猫商业连载 | [采用的商业写作规则及任务模板](../skills/story-skill-write/references/drama.md#番茄与七猫商业连载)：开中尾推进、爽点反馈、可追踪悬念、手机段落、续写和内容改稿；用户创作规范，不是平台官方审核规则 |
@@ -89,7 +89,7 @@ v0.4.0 已归档结果：干净检出 **311 项测试、12 项整包检查通过
 |---|---|
 | [上游分析与设计取舍](upstream-analysis.md) | 固定上游提交的分析，不是对上游最新版本的持续评价 |
 | [超长篇优化方案](超长篇优化方案.md) | 设计分层、能力边界与后续方向；完成状态见当前验收 |
-| [v0.2.0 中文实测](中文实测.md) | 早期真实稿件、修订及 exFAT 恢复记录；当前另有重放验证 |
+| [v0.2.0 中文实测](中文实测.md) | 旧样稿移除范围与本地重放方法；当前默认使用合成事务检查 |
 | [v0.2.0 测试清理记录](测试清理记录.md) | 当时的临时目录处理结果，不作为现在的目录状态清单 |
 
 历史样稿、原始评阅、哈希和日期测量保持原记录。维护说明写在仓库 `docs/`；实际技能行为在 `skills/`，小说正文在用户指定的书目录。

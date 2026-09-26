@@ -23,7 +23,7 @@ build/
 /.agents/skills/
 
 # Local story state and recovery artifacts
-# Keep drafts, chapter exports, analysis reports and benchmark results versioned.
+# Author manuscripts are local; engineering evidence may be versioned.
 *.sqlite3*
 **/.story/export-backups/
 .story-tmp-*
@@ -55,3 +55,11 @@ examples/_portable-export-*/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Author trial manuscripts stay local; only the scope notice is public.
+/benchmarks/results/writing-sequence-2026-09-26/*
+!/benchmarks/results/writing-sequence-2026-09-26/assessment.md
+/.local-writing-samples/
+
+# Retired author examples are backed up locally, never republished.
+/examples/
