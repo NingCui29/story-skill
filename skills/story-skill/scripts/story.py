@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -2233,10 +2233,11 @@ def parser():
     sub = p.add_subparsers(dest="command", required=True)
     t = sub.add_parser("template", help="Print just one JSON input example")
     t.add_argument("kind", choices=TEMPLATES)
-    def command(name, help_text, budget=None):
+    def command(name, help_text, budget=None, integrity=True):
         s = sub.add_parser(name, help=help_text)
         s.add_argument("--book", required=True, help="Explicit, isolated book directory")
-        s.add_argument("--integrity", choices=("strict", "local"), default="strict", help="strict hashes all exports; local verifies recent/queued files and reports unverified archives")
+        if integrity:
+            s.add_argument("--integrity", choices=("strict", "local"), default="strict", help="strict hashes all exports; local verifies recent/queued files and reports unverified archives")
         if budget:
             s.add_argument("--budget-bytes", type=int, default=budget, help="Hard limit on compact JSON UTF-8 bytes")
         return s
@@ -2256,6 +2257,7 @@ def parser():
     s.add_argument("--id", required=True)
     history.register_parser(sub, command)
     publish.register_parser(sub, command)
+    workbench.register_parser(sub, command)
     s = command("export", "Repair exports without replacing outside edits")
     s.add_argument("--safe-only", action="store_true",
                    help="Recover known versions and missing files while leaving conflicting paths untouched")
@@ -2335,6 +2337,8 @@ def run(args):
         return Book.create(args.book, args.title, args.kind)
     if cmd == "migrate":
         return storage.migrate(CORE, args.book)
+    if cmd.startswith("workbench-"):
+        return workbench.run(args)
     book = Book(args.book, integrity=getattr(args, "integrity", "strict"))
     try:
         if cmd.startswith("publish-"):
@@ -2428,9 +2432,10 @@ def _load_extension(name):
     return module
 
 
-storage, search, world, history, publish = (_load_extension(name) for name in ("storage", "search", "world", "history", "publish"))
+storage, search, world, history, publish, workbench = (_load_extension(name) for name in (
+    "storage", "search", "world", "history", "publish", "workbench"))
 CORE = SimpleNamespace(**globals())
-for extension in (search, world, history, publish):
+for extension in (search, world, history, publish, workbench):
     extension.inject(CORE)
 TEMPLATES["publish"] = publish.template()
 TEMPLATES["world"] = world.template()

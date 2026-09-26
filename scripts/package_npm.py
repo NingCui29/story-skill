@@ -20,32 +20,116 @@ import zipfile
 NAME = "@ningcui29/story-skill"
 REGISTRY = "https://npm.pkg.github.com"
 REPOSITORY = "https://github.com/NingCui29/story-skill.git"
-SKILL_NAMES = ("story-skill", "story-skill-plan", "story-skill-write", "story-skill-analyze",
-               "story-skill-review", "story-skill-research", "story-skill-cover", "story-skill-publish")
-SUITE_FILES = tuple(sorted(
-    [f"{name}/{relative}" for name in SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
-    + ["story-skill/scripts/" + name for name in (
-        "story.py", "story_history.py", "story_search.py", "story_storage.py", "story_world.py",
-        "story_publish.py")]
-    + ["story-skill/references/project-state.md", "story-skill-write/references/chapter.md",
-       "story-skill-write/references/long-form.md", "story-skill-write/references/drama.md",
-       "story-skill-review/references/history.md",
+SKILL_NAMES_V060 = (
+    "story-skill", "story-skill-plan", "story-skill-write", "story-skill-analyze",
+    "story-skill-review", "story-skill-research", "story-skill-cover", "story-skill-publish",
+)
+SKILL_NAMES_V061 = (
+    "story-skill", "story-skill-plan", "story-skill-write", "story-skill-analyze",
+    "story-skill-review", "story-skill-research", "story-skill-cover", "story-skill-publish",
+)
+SUITE_FILES_V060 = (
+    "story-skill-analyze/LICENSE",
+    "story-skill-analyze/SKILL.md",
+    "story-skill-analyze/agents/openai.yaml",
     "story-skill-analyze/references/deep-reading.md",
     "story-skill-analyze/references/examples.md",
-    "story-skill-plan/references/fanqie-tags.md"]))
+    "story-skill-cover/LICENSE",
+    "story-skill-cover/SKILL.md",
+    "story-skill-cover/agents/openai.yaml",
+    "story-skill-plan/LICENSE",
+    "story-skill-plan/SKILL.md",
+    "story-skill-plan/agents/openai.yaml",
+    "story-skill-plan/references/fanqie-tags.md",
+    "story-skill-publish/LICENSE",
+    "story-skill-publish/SKILL.md",
+    "story-skill-publish/agents/openai.yaml",
+    "story-skill-research/LICENSE",
+    "story-skill-research/SKILL.md",
+    "story-skill-research/agents/openai.yaml",
+    "story-skill-review/LICENSE",
+    "story-skill-review/SKILL.md",
+    "story-skill-review/agents/openai.yaml",
+    "story-skill-review/references/history.md",
+    "story-skill-write/LICENSE",
+    "story-skill-write/SKILL.md",
+    "story-skill-write/agents/openai.yaml",
+    "story-skill-write/references/chapter.md",
+    "story-skill-write/references/drama.md",
+    "story-skill-write/references/long-form.md",
+    "story-skill/LICENSE",
+    "story-skill/SKILL.md",
+    "story-skill/agents/openai.yaml",
+    "story-skill/references/project-state.md",
+    "story-skill/scripts/story.py",
+    "story-skill/scripts/story_history.py",
+    "story-skill/scripts/story_publish.py",
+    "story-skill/scripts/story_search.py",
+    "story-skill/scripts/story_storage.py",
+    "story-skill/scripts/story_world.py",
+)
+SUITE_FILES_V061 = (
+    "story-skill-analyze/LICENSE",
+    "story-skill-analyze/SKILL.md",
+    "story-skill-analyze/agents/openai.yaml",
+    "story-skill-analyze/references/deep-reading.md",
+    "story-skill-analyze/references/examples.md",
+    "story-skill-cover/LICENSE",
+    "story-skill-cover/SKILL.md",
+    "story-skill-cover/agents/openai.yaml",
+    "story-skill-plan/LICENSE",
+    "story-skill-plan/SKILL.md",
+    "story-skill-plan/agents/openai.yaml",
+    "story-skill-plan/references/fanqie-tags.md",
+    "story-skill-publish/LICENSE",
+    "story-skill-publish/SKILL.md",
+    "story-skill-publish/agents/openai.yaml",
+    "story-skill-research/LICENSE",
+    "story-skill-research/SKILL.md",
+    "story-skill-research/agents/openai.yaml",
+    "story-skill-review/LICENSE",
+    "story-skill-review/SKILL.md",
+    "story-skill-review/agents/openai.yaml",
+    "story-skill-review/references/history.md",
+    "story-skill-write/LICENSE",
+    "story-skill-write/SKILL.md",
+    "story-skill-write/agents/openai.yaml",
+    "story-skill-write/references/chapter.md",
+    "story-skill-write/references/drama.md",
+    "story-skill-write/references/long-form.md",
+    "story-skill/LICENSE",
+    "story-skill/SKILL.md",
+    "story-skill/agents/openai.yaml",
+    "story-skill/references/project-state.md",
+    "story-skill/scripts/story.py",
+    "story-skill/scripts/story_history.py",
+    "story-skill/scripts/story_publish.py",
+    "story-skill/scripts/story_search.py",
+    "story-skill/scripts/story_storage.py",
+    "story-skill/scripts/story_workbench.py",
+    "story-skill/scripts/story_world.py",
+)
+# Compatibility aliases mean "current source candidate", not every future 0.6.x release.
+SKILL_NAMES = SKILL_NAMES_V061
+SUITE_FILES = SUITE_FILES_V061
 MAX_BYTES = 256 * 1024 * 1024
 
 
 def payload_files(version):
-    if re.fullmatch(r"0\.6\.(?:0|[1-9][0-9]*)", version):
-        return SUITE_FILES
+    if version == "0.6.0":
+        return SUITE_FILES_V060
+    if version == "0.6.1":
+        return SUITE_FILES_V061
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
 def skill_names(version):
-    """Select named skill roots from the version-bound reviewed payload."""
-    roots = {path.split("/", 1)[0] for path in payload_files(version)}
-    return tuple(name for name in SKILL_NAMES if name in roots)
+    """Return the immutable skill-root list reviewed for one exact version."""
+    if version == "0.6.0":
+        return SKILL_NAMES_V060
+    if version == "0.6.1":
+        return SKILL_NAMES_V061
+    raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
 def package_identity(version):
@@ -87,14 +171,16 @@ def read_release(archive, sha256_file):
     with zipfile.ZipFile(io.BytesIO(raw)) as bundle:
         members = bundle.infolist()
         names = [member.filename for member in members]
-        if len(names) != len(set(names)) or set(names) != set(SUITE_FILES):
-            raise ValueError("Release ZIP must contain exactly a reviewed skill file list, without duplicates")
+        if len(names) != len(set(names)):
+            raise ValueError("Release ZIP must not contain duplicate members")
         if sum(member.file_size for member in members) > MAX_BYTES:
             raise ValueError("Release ZIP payload is too large")
         for member in members:
             kind = stat.S_IFMT(member.external_attr >> 16)
             if member.is_dir() or kind not in (0, stat.S_IFREG):
                 raise ValueError(f"Release ZIP contains a linked or special member: {member.filename}")
+        if "story-skill/scripts/story.py" not in names:
+            raise ValueError("Release ZIP is missing its shared runtime")
         payload = {name: bundle.read(name) for name in sorted(names)}
     version = version_from_source(payload["story-skill/scripts/story.py"])
     if set(payload) != set(payload_files(version)):
@@ -106,6 +192,7 @@ def read_release(archive, sha256_file):
 
 def wrapper_files(version):
     files = payload_files(version)
+    names = skill_names(version)
     name, repository = package_identity(version)
     manifest = {
         "name": name, "version": version,
@@ -119,7 +206,7 @@ def wrapper_files(version):
     readme = (
         f"# Story Skill {version}\n\n"
         "This npm package contains eight sibling skills: "
-        + ", ".join(f"`{skill}/`" for skill in SKILL_NAMES) + ". "
+        + ", ".join(f"`{skill}/`" for skill in names) + ". "
         + f"Its {len(files)} skill files preserve the exact bytes of the matching GitHub Release ZIP.\n\n"
         "npm distributes content; installing this package does not register skills with the host app. "
         "Copy all eight complete skill directories into your project's `.agents/skills/`, "

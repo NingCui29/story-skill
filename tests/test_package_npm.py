@@ -26,13 +26,13 @@ class NpmPackageTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="story-npm-test-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
-        self.version = "0.6.0"
-        self.archive = self.root / "story-skill-0.6.0.zip"
+        self.version = "0.6.1"
+        self.archive = self.root / "story-skill-0.6.1.zip"
         self.checksum = self.root / "release.sha256"
         self.tarball = self.root / "package.tgz"
         self.payload = {name: ("原始字节：" + name + "\r\n").encode() for name in npm.SUITE_FILES}
         self.payload["story-skill/scripts/story.py"] = (
-            b'VERSION = "0.6.0"\r\nraise RuntimeError("never execute archive code")\n')
+            b'VERSION = "0.6.1"\r\nraise RuntimeError("never execute archive code")\n')
         self.write_zip()
 
     def write_zip(self, payload=None, extra=None):
@@ -118,8 +118,8 @@ class NpmPackageTests(unittest.TestCase):
                 npm.read_release(self.archive, self.checksum)
 
     def test_version_must_be_single_literal_and_match_archive_name(self):
-        for code in [b'VERSION = str("0.6.0")', b'VERSION = "99.0.0"',
-                     b'VERSION = "0.6.0"\nVERSION = "0.6.0"']:
+        for code in [b'VERSION = str("0.6.1")', b'VERSION = "99.0.0"',
+                     b'VERSION = "0.6.1"\nVERSION = "0.6.1"']:
             with self.subTest(code=code), self.assertRaises(ValueError):
                 self.payload["story-skill/scripts/story.py"] = code
                 self.write_zip()
@@ -264,35 +264,51 @@ class NpmPackageTests(unittest.TestCase):
 
 class NpmSuiteTests(unittest.TestCase):
     def test_current_package_identity_and_wrapper(self):
-        manifest, files = npm.wrapper_files("0.6.0")
+        manifest, files = npm.wrapper_files("0.6.1")
         self.assertEqual(manifest["name"], "@ningcui29/story-skill")
         self.assertEqual(manifest["repository"]["url"], "https://github.com/NingCui29/story-skill.git")
         self.assertEqual(manifest["files"], list(npm.SUITE_FILES))
-        self.assertEqual(len(npm.SUITE_FILES), 38)
+        self.assertEqual(len(npm.SUITE_FILES), 39)
         readme = files["README.md"].decode("utf-8")
         self.assertIn("eight sibling skills", readme)
         self.assertIn("`story-skill-publish/`", readme)
-        self.assertIn("固定使用 v0.6.0", readme)
+        self.assertIn("固定使用 v0.6.1", readme)
         self.assertIn("For macOS, Linux and Windows", readme)
         self.assertIn("does not log in to author platforms", readme)
         forbidden = ("co" + "dex").encode()
         self.assertNotIn(forbidden, files["README.md"].lower())
 
     def test_only_current_release_family_has_reviewed_layout(self):
-        for version in ("0.6.0", "0.6.1"):
-            self.assertEqual(npm.payload_files(version), npm.SUITE_FILES)
+        layouts = {"0.6.0": npm.SUITE_FILES_V060, "0.6.1": npm.SUITE_FILES_V061}
+        skill_layouts = {"0.6.0": npm.SKILL_NAMES_V060, "0.6.1": npm.SKILL_NAMES_V061}
+        for version, expected in layouts.items():
+            self.assertEqual(npm.payload_files(version), expected)
+            self.assertEqual(npm.skill_names(version), skill_layouts[version])
             self.assertEqual(npm.package_identity(version), (npm.NAME, npm.REPOSITORY))
-        for version in ("0.5.11", "0.6.00", "1.0.0"):
+        self.assertEqual(len(npm.SUITE_FILES_V060), 38)
+        self.assertNotIn("story-skill/scripts/story_workbench.py", npm.SUITE_FILES_V060)
+        self.assertEqual(len(npm.SUITE_FILES), 39)
+        self.assertEqual(npm.SUITE_FILES, npm.SUITE_FILES_V061)
+        self.assertEqual(npm.SKILL_NAMES, npm.SKILL_NAMES_V061)
+        self.assertIn("story-skill/scripts/story_workbench.py", npm.SUITE_FILES)
+        for version in ("0.5.11", "0.6.00", "0.6.2", "0.6.99", "1.0.0"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed payload layout"):
                 npm.payload_files(version)
+            with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed payload layout"):
+                npm.skill_names(version)
 
     def test_zip_and_npm_share_one_manifest(self):
         spec = importlib.util.spec_from_file_location("zip_suite_manifest", ROOT / "scripts/package.py")
         zip_package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(zip_package)
         self.assertEqual(npm.SUITE_FILES, zip_package.SUITE_FILES)
+        self.assertEqual(npm.SUITE_FILES_V060, zip_package.SUITE_FILES_V060)
+        self.assertEqual(npm.SUITE_FILES_V061, zip_package.SUITE_FILES_V061)
         self.assertEqual(npm.SKILL_NAMES, zip_package.SKILL_NAMES)
-        self.assertEqual(npm.payload_files("0.6.0"), zip_package.suite_files("0.6.0"))
+        self.assertEqual(npm.SKILL_NAMES_V060, zip_package.SKILL_NAMES_V060)
+        self.assertEqual(npm.SKILL_NAMES_V061, zip_package.SKILL_NAMES_V061)
+        for version in ("0.6.0", "0.6.1"):
+            self.assertEqual(npm.payload_files(version), zip_package.suite_files(version))
 
 
 if __name__ == "__main__":

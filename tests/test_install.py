@@ -21,7 +21,7 @@ class InstallTests(unittest.TestCase):
             path = self.source / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(("fixture: " + relative + "\n").encode("utf-8"))
-        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.0"\n', encoding="utf-8")
+        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.1"\n', encoding="utf-8")
         self.project = self.root / "项目"
         self.project.mkdir()
 
@@ -43,7 +43,7 @@ class InstallTests(unittest.TestCase):
 
     def test_update_preserves_backup(self):
         self.install()
-        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.0"\n# revised\n', encoding="utf-8")
+        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.1"\n# revised\n', encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "--update"):
             self.install()
         result = self.install(True)
@@ -69,7 +69,7 @@ class InstallTests(unittest.TestCase):
 
     def test_failed_swap_restores_previous_installation(self):
         self.install()
-        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.0"\n# revised\n', encoding="utf-8")
+        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.1"\n# revised\n', encoding="utf-8")
         original_move = installer.move_directory
 
         def move(source, destination):

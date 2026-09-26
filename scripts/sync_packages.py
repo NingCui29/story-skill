@@ -58,7 +58,11 @@ def read_url(url, token=None, auth_host=None):
             if error.code not in (301, 302, 303, 307, 308):
                 raise
             url = urllib.parse.urljoin(url, error.headers["Location"])
-            error.close()
+            # Some redirect handlers (and our Python 3.9 regression fixture)
+            # provide no response body.  HTTPError.close() delegates to that
+            # optional object and is not safe when it is absent.
+            if error.fp is not None:
+                error.close()
     raise ValueError("Too many download redirects")
 
 

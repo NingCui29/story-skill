@@ -15,32 +15,116 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
 SKILL = SKILLS / "story-skill"
 SOURCE = SKILLS
-SKILL_NAMES = ("story-skill", "story-skill-plan", "story-skill-write", "story-skill-analyze",
-               "story-skill-review", "story-skill-research", "story-skill-cover", "story-skill-publish")
-SUITE_FILES = tuple(sorted(
-    [f"{name}/{relative}" for name in SKILL_NAMES for relative in ("LICENSE", "SKILL.md", "agents/openai.yaml")]
-    + ["story-skill/scripts/" + name for name in (
-        "story.py", "story_history.py", "story_search.py", "story_storage.py", "story_world.py",
-        "story_publish.py")]
-    + ["story-skill/references/project-state.md", "story-skill-write/references/chapter.md",
-       "story-skill-write/references/long-form.md", "story-skill-write/references/drama.md",
-       "story-skill-review/references/history.md",
+SKILL_NAMES_V060 = (
+    "story-skill", "story-skill-plan", "story-skill-write", "story-skill-analyze",
+    "story-skill-review", "story-skill-research", "story-skill-cover", "story-skill-publish",
+)
+SKILL_NAMES_V061 = (
+    "story-skill", "story-skill-plan", "story-skill-write", "story-skill-analyze",
+    "story-skill-review", "story-skill-research", "story-skill-cover", "story-skill-publish",
+)
+SUITE_FILES_V060 = (
+    "story-skill-analyze/LICENSE",
+    "story-skill-analyze/SKILL.md",
+    "story-skill-analyze/agents/openai.yaml",
     "story-skill-analyze/references/deep-reading.md",
     "story-skill-analyze/references/examples.md",
-    "story-skill-plan/references/fanqie-tags.md"]))
+    "story-skill-cover/LICENSE",
+    "story-skill-cover/SKILL.md",
+    "story-skill-cover/agents/openai.yaml",
+    "story-skill-plan/LICENSE",
+    "story-skill-plan/SKILL.md",
+    "story-skill-plan/agents/openai.yaml",
+    "story-skill-plan/references/fanqie-tags.md",
+    "story-skill-publish/LICENSE",
+    "story-skill-publish/SKILL.md",
+    "story-skill-publish/agents/openai.yaml",
+    "story-skill-research/LICENSE",
+    "story-skill-research/SKILL.md",
+    "story-skill-research/agents/openai.yaml",
+    "story-skill-review/LICENSE",
+    "story-skill-review/SKILL.md",
+    "story-skill-review/agents/openai.yaml",
+    "story-skill-review/references/history.md",
+    "story-skill-write/LICENSE",
+    "story-skill-write/SKILL.md",
+    "story-skill-write/agents/openai.yaml",
+    "story-skill-write/references/chapter.md",
+    "story-skill-write/references/drama.md",
+    "story-skill-write/references/long-form.md",
+    "story-skill/LICENSE",
+    "story-skill/SKILL.md",
+    "story-skill/agents/openai.yaml",
+    "story-skill/references/project-state.md",
+    "story-skill/scripts/story.py",
+    "story-skill/scripts/story_history.py",
+    "story-skill/scripts/story_publish.py",
+    "story-skill/scripts/story_search.py",
+    "story-skill/scripts/story_storage.py",
+    "story-skill/scripts/story_world.py",
+)
+SUITE_FILES_V061 = (
+    "story-skill-analyze/LICENSE",
+    "story-skill-analyze/SKILL.md",
+    "story-skill-analyze/agents/openai.yaml",
+    "story-skill-analyze/references/deep-reading.md",
+    "story-skill-analyze/references/examples.md",
+    "story-skill-cover/LICENSE",
+    "story-skill-cover/SKILL.md",
+    "story-skill-cover/agents/openai.yaml",
+    "story-skill-plan/LICENSE",
+    "story-skill-plan/SKILL.md",
+    "story-skill-plan/agents/openai.yaml",
+    "story-skill-plan/references/fanqie-tags.md",
+    "story-skill-publish/LICENSE",
+    "story-skill-publish/SKILL.md",
+    "story-skill-publish/agents/openai.yaml",
+    "story-skill-research/LICENSE",
+    "story-skill-research/SKILL.md",
+    "story-skill-research/agents/openai.yaml",
+    "story-skill-review/LICENSE",
+    "story-skill-review/SKILL.md",
+    "story-skill-review/agents/openai.yaml",
+    "story-skill-review/references/history.md",
+    "story-skill-write/LICENSE",
+    "story-skill-write/SKILL.md",
+    "story-skill-write/agents/openai.yaml",
+    "story-skill-write/references/chapter.md",
+    "story-skill-write/references/drama.md",
+    "story-skill-write/references/long-form.md",
+    "story-skill/LICENSE",
+    "story-skill/SKILL.md",
+    "story-skill/agents/openai.yaml",
+    "story-skill/references/project-state.md",
+    "story-skill/scripts/story.py",
+    "story-skill/scripts/story_history.py",
+    "story-skill/scripts/story_publish.py",
+    "story-skill/scripts/story_search.py",
+    "story-skill/scripts/story_storage.py",
+    "story-skill/scripts/story_workbench.py",
+    "story-skill/scripts/story_world.py",
+)
+# Compatibility aliases mean "current source candidate", not every future 0.6.x release.
+SKILL_NAMES = SKILL_NAMES_V061
+SUITE_FILES = SUITE_FILES_V061
 
 
 def suite_files(version):
-    """Accept only the reviewed layout for the current release family."""
-    if re.fullmatch(r"0\.6\.(?:0|[1-9][0-9]*)", version):
-        return SUITE_FILES
+    """Return the immutable file manifest reviewed for one exact version."""
+    if version == "0.6.0":
+        return SUITE_FILES_V060
+    if version == "0.6.1":
+        return SUITE_FILES_V061
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 
 def skill_names(version):
-    """Select named skill roots from the version-bound reviewed payload."""
-    roots = {path.split("/", 1)[0] for path in suite_files(version)}
-    return tuple(name for name in SKILL_NAMES if name in roots)
+    """Return the immutable skill-root list reviewed for one exact version."""
+    if version == "0.6.0":
+        return SKILL_NAMES_V060
+    if version == "0.6.1":
+        return SKILL_NAMES_V061
+    raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 
 def source_version(raw):
@@ -88,8 +172,12 @@ def source_entries():
     """Package only the reviewed suite manifest, rejecting new or missing skill files."""
     if linked(SOURCE):
         raise ValueError("Refusing linked source directory")
+    initial_runtime = SOURCE / "story-skill/scripts/story.py"
+    if not initial_runtime.is_file() or linked(initial_runtime):
+        raise ValueError("Source suite differs from its reviewed file manifest; missing scripts/story.py")
+    initial_version = source_version(initial_runtime.read_bytes())
     files = {}
-    for skill in SKILL_NAMES:
+    for skill in skill_names(initial_version):
         directory = SOURCE / skill
         if not directory.is_dir() or linked(directory):
             raise ValueError(f"Source suite is missing an ordinary skill directory: {skill}")
@@ -106,7 +194,10 @@ def source_entries():
     runtime = files.get("story-skill/scripts/story.py")
     if runtime is None:
         raise ValueError("Source suite differs from its reviewed file manifest; missing scripts/story.py")
-    required = set(suite_files(source_version(runtime)))
+    version = source_version(runtime)
+    if version != initial_version:
+        raise ValueError("Source runtime changed while its reviewed file manifest was being read")
+    required = set(suite_files(version))
     if set(files) != required:
         raise ValueError(f"Source suite differs from its reviewed file manifest; "
                          f"missing={sorted(required - files.keys())}, "

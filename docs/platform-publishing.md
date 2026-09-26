@@ -2,7 +2,11 @@
 
 状态：**v0.5.11 提供阶段 A 的离线准备和 B0 的作者副本本地核对；平台上传与发布尚未实现**。功能核对日期：2026-09-24。设计基线：v0.5.10，提交 `607d3e3`。完整套件有八个技能、38 个载荷文件；下文远端流程属于后续设计，分发与跨平台验证状态以实际[发布记录](github-release.md)为准。
 
+当前发布版 v0.6.0 仍是 8 个技能、38 个载荷文件，并保留上述离线发布能力。main 的 v0.6.1 候选为 39 个载荷文件，增加本地只读工作台；它尚未发布，也不表示本机安装已更新。历史 38 文件事实仍专指对应发布版。
+
 这里的“发布账本”是每本书 `.story/publishing.sqlite3` 中的**本地准备记录**，与小说创作状态分开。它保存准备投向哪个平台和作品、选了哪些正式章节、冻结内容及校验依据，以及清单是否仍可用于人工交接；明确要求留痕时，还保存作者副本的本地比较摘要。账本不登录作家后台，不保存密码或 Cookie；平台账号／作品 ID 只是用户声明，账本里的记录不能证明平台已收稿、审核或上线。
+
+main 候选的 `workbench-snapshot` 和 `workbench-export` 只读取发布账本的存在、清单数量、状态计数和近期本地导出回执摘要，不展示平台账号或作品标识，不重新核对完整清单，也不写 `checked_at` 或状态。它会检查回执对应 ZIP 是否存在、字节数是否匹配，缺失或不符时要求处理，但不做逐字节哈希核验。页面列出的导出回执不能替代 `publish-list`、`publish-inspect`、`publish-check`、`publish-export-list` 或 `publish-verify-export`。当前发布区域只有摘要，尚无自己的完整分区游标；页面也不上传、提交或排期。[工作台范围](本地工作台分析.md)
 
 ## 已实现的离线命令
 
@@ -47,7 +51,7 @@ v0.6.0 源码的入口为 [story-skill-publish](../skills/story-skill-publish/SK
 
 已有清单可直接运行 `publish-export --book "<绝对书根>" --id "<清单ID>"`，无需用户填写新的 JSON。工具在导出前重新核对正式稿，只有清单状态为 prepared 且本次匹配才生成材料包；stale、cancelled 或正文存在外改时不生成。修复后仍须对 stale 清单显式重新准备，不能通过重复导出恢复其有效状态。
 
-材料包位于书根 `.story/publishing-exports/material-<UUID>.zip`，旁边的 `material-<UUID>.receipt.json` 是包外原始回执，两个文件使用同一工具生成的 UUID。回执保存书籍 ID、清单 ID、同名 ZIP 文件名、ZIP 原始 SHA-256、字节数及导出时间；`publish-export` 返回其绝对路径 `export.receipt_path`。每次生成新包与新回执，不覆盖以前的文件。交付时核对 `export_created`，报告 ZIP 和包外回执的真实路径以及清单 ID、原始 SHA-256；保留两者供之后找回和验包。
+材料包位于书根 `.story/publishing-exports/material-<UUID>.zip`，旁边的 `material-<UUID>.receipt.json` 是包外原始回执，两个文件使用同一工具生成的 UUID。回执保存书籍 ID、清单 ID、同名 ZIP 文件名、ZIP 原始 SHA-256、字节数及导出时间；`publish-export` 返回其绝对路径 `export.receipt_path`。每次生成新包与新回执，不覆盖以前的文件。交付时核对 `export_created`，默认报告 ZIP 与包外回执的真实路径和中文核验结论，保留两者供之后找回和验包；清单 ID 与原始 SHA-256 在创作侧保存，仅在技术校验或排障时提供。
 
 ```text
 material-<UUID>.zip

@@ -31,6 +31,7 @@ build/
 .publishing-init-*
 .publishing-export-*
 **/.story/publishing-exports/
+**/.story/workbench/
 .story-skill-install.lock
 .story-skill-stage-*/
 .story-skill-backups/

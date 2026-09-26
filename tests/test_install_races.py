@@ -26,11 +26,11 @@ class InstallationRaceTests(unittest.TestCase):
             path.write_bytes(("reviewed file: " + relative + "\n").encode())
         (self.source / "story-skill/SKILL.md").write_bytes(b"original skill\n")
         self.runtime = self.source / "story-skill/scripts/story.py"
-        self.runtime.write_bytes(b'VERSION = "0.6.0"\n# v1\n')
+        self.runtime.write_bytes(b'VERSION = "0.6.1"\n# v1\n')
         self.project = self.root / "project"
         installer.install(self.project, source=self.source)
         self.target = self.project / ".agents/skills/story-skill"
-        self.runtime.write_bytes(b'VERSION = "0.6.0"\n# v2\n')
+        self.runtime.write_bytes(b'VERSION = "0.6.1"\n# v2\n')
 
     def tearDown(self):
         self.temp.cleanup()
@@ -72,10 +72,10 @@ class InstallationRaceTests(unittest.TestCase):
         return list((self.project / ".agents/.story-skill-backups").glob("*"))
 
     def assert_original_runtime(self):
-        self.assertEqual((self.target / "scripts/story.py").read_bytes(), b'VERSION = "0.6.0"\n# v1\n')
+        self.assertEqual((self.target / "scripts/story.py").read_bytes(), b'VERSION = "0.6.1"\n# v1\n')
 
     def test_source_save_during_copy_is_rejected_without_bad_manifest(self):
-        result = self.during_staging(lambda: self.runtime.write_bytes(b'VERSION = "0.6.0"\n# v3 concurrent save\n'))
+        result = self.during_staging(lambda: self.runtime.write_bytes(b'VERSION = "0.6.1"\n# v3 concurrent save\n'))
         self.assertIsInstance(result.get("error"), ValueError)
         self.assertIn("Source", str(result["error"]))
         self.assert_original_runtime()
@@ -168,7 +168,7 @@ class InstallationRaceTests(unittest.TestCase):
                 self.update()
         self.assertEqual((self.target / "new-owner.txt").read_bytes(), b"new target must survive")
         self.assertEqual(len(self.backups()), 1)
-        self.assertEqual((self.backups()[0] / "story-skill/scripts/story.py").read_bytes(), b'VERSION = "0.6.0"\n# v1\n')
+        self.assertEqual((self.backups()[0] / "story-skill/scripts/story.py").read_bytes(), b'VERSION = "0.6.1"\n# v1\n')
 
     def test_stage_edit_inside_publication_is_detected_and_both_versions_survive(self):
         changed_bytes = b"stage changed just before its real rename\r\n"
@@ -183,10 +183,10 @@ class InstallationRaceTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Recovery did not replace"):
                 self.update()
         self.assertEqual((self.target / "SKILL.md").read_bytes(), changed_bytes)
-        self.assertEqual((self.target / "scripts/story.py").read_bytes(), b'VERSION = "0.6.0"\n# v2\n')
+        self.assertEqual((self.target / "scripts/story.py").read_bytes(), b'VERSION = "0.6.1"\n# v2\n')
         self.assertEqual(len(self.backups()), 1)
         self.assertEqual((self.backups()[0] / "story-skill/SKILL.md").read_bytes(), b"original skill\n")
-        self.assertEqual((self.backups()[0] / "story-skill/scripts/story.py").read_bytes(), b'VERSION = "0.6.0"\n# v1\n')
+        self.assertEqual((self.backups()[0] / "story-skill/scripts/story.py").read_bytes(), b'VERSION = "0.6.1"\n# v1\n')
 
     def test_target_recreated_during_recovery_is_not_replaced(self):
         real_move = installer.move_directory

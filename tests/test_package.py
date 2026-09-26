@@ -13,7 +13,7 @@ package = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(package)
 
 
-def fixture_suite(source, version="0.6.0", files=None):
+def fixture_suite(source, version="0.6.1", files=None):
     for name in (package.suite_files(version) if files is None else files):
         path = source / name
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -35,12 +35,12 @@ class PackageVersionTests(unittest.TestCase):
             root = Path(directory)
             source = root / "skill"
             fixture_suite(source)
-            runtime = b'VERSION = "0.6.0"\n'
+            runtime = b'VERSION = "0.6.1"\n'
             with patch.object(package, "ROOT", root), patch.object(package, "SOURCE", source):
                 result = package.package()
-            archive_path = root / "dist/story-skill-0.6.0.zip"
+            archive_path = root / "dist/story-skill-0.6.1.zip"
             self.assertEqual(Path(result["archive"]), archive_path)
-            self.assertEqual(result["version"], "0.6.0")
+            self.assertEqual(result["version"], "0.6.1")
             with zipfile.ZipFile(archive_path) as archive:
                 self.assertEqual(archive.read("story-skill/scripts/story.py"), runtime)
 
@@ -49,26 +49,37 @@ class PackageVersionTests(unittest.TestCase):
             root = Path(directory)
             source = root / "skill"
             fixture_suite(source)
-            output = root / "story-skill-0.6.1.zip"
+            output = root / "story-skill-0.6.0.zip"
             output.write_bytes(b"existing reviewed artifact")
             with patch.object(package, "ROOT", root), patch.object(package, "SOURCE", source):
-                with self.assertRaisesRegex(ValueError, "Archive filename must be story-skill-0.6.0.zip"):
+                with self.assertRaisesRegex(ValueError, "Archive filename must be story-skill-0.6.1.zip"):
                     package.package(output)
             self.assertEqual(output.read_bytes(), b"existing reviewed artifact")
 
     def test_manifest_is_bound_to_version_and_unknown_families_are_rejected(self):
-        for version in ("0.6.0", "0.6.1"):
+        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061}
+        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061}
+        for version, expected in layouts.items():
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
+                self.assertEqual(package.skill_names(version), skill_layouts[version])
                 root = Path(directory)
                 fixture_suite(root / "skills", version)
                 with patch.object(package, "ROOT", root), patch.object(package, "SOURCE", root / "skills"):
                     result = package.package()
-                self.assertEqual(result["files"], len(package.SUITE_FILES))
+                self.assertEqual(result["files"], len(expected))
                 with zipfile.ZipFile(result["archive"]) as archive:
-                    self.assertEqual(archive.namelist(), list(package.SUITE_FILES))
-        for version in ("0.5.11", "0.6.00", "1.0.0", "2.4.6"):
+                    self.assertEqual(archive.namelist(), list(expected))
+        self.assertEqual(len(package.SUITE_FILES_V060), 38)
+        self.assertNotIn("story-skill/scripts/story_workbench.py", package.SUITE_FILES_V060)
+        self.assertEqual(len(package.SUITE_FILES), 39)
+        self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V061)
+        self.assertEqual(package.SKILL_NAMES, package.SKILL_NAMES_V061)
+        self.assertIn("story-skill/scripts/story_workbench.py", package.SUITE_FILES)
+        for version in ("0.5.11", "0.6.00", "0.6.2", "0.6.99", "1.0.0", "2.4.6"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 package.suite_files(version)
+            with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
+                package.skill_names(version)
 
     def test_missing_reviewed_file_cannot_replace_existing_archive(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -76,7 +87,7 @@ class PackageVersionTests(unittest.TestCase):
             source = root / "skills"
             fixture_suite(source)
             (source / "story-skill-publish/SKILL.md").unlink()
-            output = root / "story-skill-0.6.0.zip"
+            output = root / "story-skill-0.6.1.zip"
             output.write_bytes(b"existing reviewed artifact")
             with patch.object(package, "SOURCE", source):
                 with self.assertRaisesRegex(ValueError, "reviewed file manifest"):

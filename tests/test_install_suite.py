@@ -21,7 +21,7 @@ class SuiteInstallTests(unittest.TestCase):
             path = self.source / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(("reviewed file: " + relative + "\n").encode("utf-8"))
-        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.0"\n', encoding="utf-8")
+        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.1"\n', encoding="utf-8")
         self.project.mkdir()
         self.book = self.project / "books/我的小说/正文/第1章.md"
         self.book.parent.mkdir(parents=True)
@@ -63,6 +63,7 @@ class SuiteInstallTests(unittest.TestCase):
 
     def test_missing_dependency_or_reference_stops_before_install(self):
         for relative in ("story-skill/scripts/story_storage.py",
+                         "story-skill/scripts/story_workbench.py",
                          "story-skill-plan/references/fanqie-tags.md",
                          "story-skill-publish/SKILL.md"):
             with self.subTest(relative=relative):
@@ -85,15 +86,34 @@ class SuiteInstallTests(unittest.TestCase):
         package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(package)
         self.assertEqual(installer.SUITE_FILES, package.SUITE_FILES)
-        self.assertEqual(installer.skill_names("0.6.0"), package.skill_names("0.6.0"))
-        self.assertEqual(installer.suite_files("0.6.0"), package.suite_files("0.6.0"))
-        with self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
-            installer.suite_files("0.5.11")
+        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True)):
+            with self.subTest(version=version):
+                files = installer.suite_files(version)
+                self.assertEqual(installer.skill_names(version), package.skill_names(version))
+                self.assertEqual(files, package.suite_files(version))
+                self.assertEqual(len(files), size)
+                self.assertEqual("story-skill/scripts/story_workbench.py" in files, has_workbench)
+        self.assertEqual(installer.SUITE_FILES, installer.SUITE_FILES_V061)
+        self.assertEqual(installer.SKILL_NAMES, installer.SKILL_NAMES_V061)
+        for version in ("0.5.11", "0.6.2", "0.6.99"):
+            with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
+                installer.suite_files(version)
+            with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
+                installer.skill_names(version)
+
+    def test_published_v060_installs_legacy_layout_without_workbench(self):
+        workbench = self.source / "story-skill/scripts/story_workbench.py"
+        workbench.unlink()
+        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.0"\n', encoding="utf-8")
+        result = self.install()
+        self.assertEqual(result["files"], 38)
+        self.assertFalse((self.target("story-skill") / "scripts/story_workbench.py").exists())
 
     def test_planning_reference_and_publication_runtime_are_installed(self):
         self.install()
         for relative in ("story-skill-plan/references/fanqie-tags.md",
-                         "story-skill/scripts/story_publish.py"):
+                         "story-skill/scripts/story_publish.py",
+                         "story-skill/scripts/story_workbench.py"):
             self.assertEqual((self.project / ".agents/skills" / relative).read_bytes(),
                              (self.source / relative).read_bytes())
 
@@ -116,18 +136,18 @@ class SuiteInstallTests(unittest.TestCase):
         runtime.write_text('VERSION = "0.5.11"\n', encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
             self.install()
-        runtime.write_text('VERSION = "0.6.0"\n', encoding="utf-8")
+        runtime.write_text('VERSION = "0.6.1"\n', encoding="utf-8")
         single = self.root / "single-skill"
         (single / "scripts").mkdir(parents=True)
         (single / "SKILL.md").write_text("partial", encoding="utf-8")
-        (single / "scripts/story.py").write_text('VERSION = "0.6.0"\n', encoding="utf-8")
+        (single / "scripts/story.py").write_text('VERSION = "0.6.1"\n', encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "full supported suite"):
             self.install(source=single)
         self.assertFalse(self.target("story-skill").exists())
 
     def test_unknown_suite_version_is_rejected_before_writing_targets(self):
         runtime = self.source / "story-skill/scripts/story.py"
-        for version in ("0.6.00", "0.7.0", "1.0.0"):
+        for version in ("0.6.00", "0.6.2", "0.6.99", "0.7.0", "1.0.0"):
             with self.subTest(version=version):
                 runtime.write_text(f'VERSION = "{version}"\n', encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "no reviewed suite layout"):

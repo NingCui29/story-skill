@@ -51,6 +51,6 @@ chapter 证据必须匹配数据库已提交正文的哈希及原句。作者计
 
 delta 可一并填写 `dependencies:[{"kind":"world.facts","ref":"事实ID","sha":"实际依赖摘要哈希"}]` 和 `dependency_review:{"complete":false,"note":"本章已核对的依赖与仍未确认的范围"}`。complete 只有充分复核后才能为 true，且必须包含 plan.requires 卡；省略时保守视为未完整核对，不自动宣称依赖覆盖完整。
 
-人物可以主动违约；把期限风险交给语义审查，实际违约记 breached 及后果，不能假写 fulfilled。已明确的数字矛盾要修正事件、补真实依据或说明授权例外；不靠删字段或伪造起始余额通关。script 的 ok 只说明所记录范围未发现确定性阻断。
+人物可以主动违约；把期限风险交给语义审查，实际违约记 breached 及后果，不能假写 fulfilled。已明确的数字矛盾要修正事件、回读原文并补录已有依据，或说明授权例外；原文没有依据时保留未知或阻断，不为通过校验补写账目、凭证或办事过程，也不靠删字段或伪造起始余额通关。script 的 ok 只说明所记录范围未发现确定性阻断。
 
 写本章时可用 `dependencies --chapter N` 取得候选证据哈希；返回含已选卷段、故事线候选及 world_warnings，候选哈希不代表选择了某个状态或完成歧义复核。选出实际使用项、补足遗漏，将 `dependencies` 与 `dependency_review: {"complete":true,"note":"具体核对说明"}` 一起放入delta。完整声明必须涵盖plan.requires；完整与否由实际审查决定，不能自动把候选当完整。未声明的章按依赖不完整处理，历史修订可能需要扩大复核范围。`chapter-read --chapter N --sha256 SHA --start A --end B` 可定点读当前或已归档版本，不读整个数据库。

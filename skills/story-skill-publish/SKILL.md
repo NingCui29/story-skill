@@ -15,11 +15,11 @@ description: 为七猫或番茄准备已审查正式章节的离线材料，导�
 
 1. 用 `status --book "<书根>"` 取得当前 revision 和导出状态，再运行 `template publish` 获得输入结构。由 助手 填写机器字段，`chapters` 使用连续且升序的数字章号，`mode` 仅支持 `draft`。
 2. 使用 `publish-prepare --book "<书根>" --input "<输入JSON路径>" --expect R --summary` 保存清单并取得简洁回执；完整稿件仍保存在账本中，不加 `--summary` 时回执包含完整清单。输入文件保存在本书 `.story/` 内；普通写作、提交和导出不隐式执行此命令。相同正式章节和目标复用仍有效的清单；无关笔记更新不会生成重复清单，回执中的准备版本仍保留原值。
-3. 用 `publish-inspect --book "<书根>" --id "<清单ID>" --summary --offset 0 --limit 20` 分页核对章序、章名和本地字数；按 `chapter_page.next_offset` 继续。需要核对正文时使用 `--chapter N` 回读该章完整冻结内容，不把目录摘要或单章当成全部正文已回读。展示清单 ID、目标平台和作品 ID。平台字数可能不同，不以当前文件替换冻结内容。
-4. 需要交付文件或手工填写平台时，运行 `publish-export --book "<绝对书根>" --id "<清单ID>"`。工具在导出前重新核对正式稿，仅 prepared 且本次匹配的清单生成 ZIP 和同名包外回执；stale、cancelled 或存在正文外改时不生成。stale 不因后来匹配而复活，解决问题后显式重新准备。核对 `export_created`，报告清单 ID、真实 ZIP 路径、SHA-256 和 `export.receipt_path`；每次导出保留新的 ZIP 与包外回执，无需用户手写 JSON。
+3. 用 `publish-inspect --book "<书根>" --id "<清单ID>" --summary --offset 0 --limit 20` 分页核对章序、章名和本地字数；按 `chapter_page.next_offset` 继续。需要核对正文时使用 `--chapter N` 回读该章完整冻结内容，不把目录摘要或单章当成全部正文已回读。创作侧核对清单 ID、目标平台和作品 ID；向作者默认说明书名、目标平台及其提供的目标账号／作品标识，并注明未做远端核验，用户要求技术追溯或排障时再给工具生成的清单 ID。平台字数可能不同，不以当前文件替换冻结内容。
+4. 需要交付文件或手工填写平台时，运行 `publish-export --book "<绝对书根>" --id "<清单ID>"`。工具在导出前重新核对正式稿，仅 prepared 且本次匹配的清单生成 ZIP 和同名包外回执；stale、cancelled 或存在正文外改时不生成。stale 不因后来匹配而复活，解决问题后显式重新准备。核对 `export_created`，在创作侧保存清单 ID、真实 ZIP 路径、SHA-256 和 `export.receipt_path`；向作者默认交付可打开的 ZIP 与同名包外回执两个路径，并给出中文核对结论，用户要求技术校验详情或排障时再提供原始 ID 与哈希。每次导出保留新的 ZIP 与包外回执，无需用户手写 JSON。
 5. 交付或再次使用 ZIP 前，运行 `publish-verify-export --book "<绝对书根>" --receipt "<包外回执绝对路径>"`；也可继续使用 `--file "<ZIP绝对路径>" --id "<预期清单ID>" --sha256 "<原始SHA-256>"`，其中 ID 和 SHA-256 必须来自原始导出命令回执或新保存的包外回执。工具比对原始哈希、预期清单、包内容和所属书，同时只读核对当前正式稿。分别检查 `artifact_verified` 与 `usable_now`；只有包通过核验且清单仍为 prepared、本次来源匹配，才可考虑人工填写，在平台页面另行确认账号、作品、章节位置和实际可用的输入栏位。不能把包内导出时的 prepared 当成清单现存状态。
 
-工具会检查正式版本、对应审查收据、登记路径和导出冲突。原始导入稿的 `imported_unverified` 不是已审查；有效的历史审查可使导入章具备准备资格。遇到阻断时按现有 [审稿修订](../story-skill-review/SKILL.md) 流程在用户授权范围内处理，不伪造通过的审查收据。短篇可以准备指定逐章材料，但这不证明已完本，也不是短故事整篇投稿。
+工具会检查正式版本、对应审查收据、登记路径和导出冲突。原始导入稿的 `imported_unverified` 不是已审查；有效的历史审查可使导入章具备准备资格。只有缺少有效审查、导入稿尚未审查或正文确需修改时，才按现有 [审稿修订](../story-skill-review/SKILL.md) 流程在用户授权范围内处理；清单过期、路径冲突、导出失败和恢复问题留在本发布流程处理。不伪造通过的审查收据。短篇可以准备指定逐章材料，但这不证明已完本，也不是短故事整篇投稿。
 
 ZIP 保存在本书 `.story/publishing-exports/material-<UUID>.zip`，其旁边另存同 UUID 的 `material-<UUID>.receipt.json` 包外回执，记录本书 ID、清单 ID、同名 ZIP 名称、原始 SHA-256、字节数和导出时间。每次生成新的一对文件，不覆盖旧包。ZIP 内有 `使用说明.txt`、`目录.txt`、`manifest.json`、`receipt.json`，各章保存在 `章节/第N章/` 下的 `标题.txt`、`正文.txt`、`作者的话.txt`；三个字段按冻结值原样写为 UTF-8。`作者的话.txt` 只是本地保留的候选字段，番茄和七猫后台是否有对应栏、名称及位置均须在实际页面核对，不能假定两平台的输入栏位相同。导出结果只证明导出当时版本匹配；之后改稿须重新核对或准备，旧 ZIP 不会自动更新或撤销。
 
@@ -40,10 +40,10 @@ ZIP 保存在本书 `.story/publishing-exports/material-<UUID>.zip`，其旁边�
 
 ## 人工填写后的副本核对
 
-作者在官方后台自行操作后，若提供其回读的标题、正文及可取得的作者的话，可用 `publish-compare --book "<书根>" --id "<清单ID>" --chapter N --input "<JSON路径>"` 对照冻结章节。JSON 的 `title`、`body` 必填，`author_note` 可选；缺少的字段列为未核对，不当作一致。比较仅统一 CRLF／CR 与 LF，其他汉字、标点、空格和段落差异均保留。结果报告各字段是否匹配、`fields_checked`、`unchecked_fields` 与 `copy_matches_frozen`；`usable_now` 仅表示这份作者提供的副本和当前正式稿是否适合继续人工核对，不表示平台已保存。副本来源恒记为 `user_supplied_copy`，`platform_verified=false`、`ready_to_upload=false`、`remote_state=unknown`；不要将其写作平台回执或独立远端回读。输入副本可能含未公开正文，应放在本书 `.story/` 的本地私有路径，不提交公开仓库。实际后台缺少作者的话栏位时，报告该字段未核对，不编造一个已填写的栏位。
+作者在官方后台自行操作后，若提供其回读的标题、正文及可取得的作者的话，可用 `publish-compare --book "<书根>" --id "<清单ID>" --chapter N --input "<JSON路径>"` 对照冻结章节。JSON 的 `title`、`body` 必填，`author_note` 可选；缺少的字段列为未核对，不当作一致。比较仅统一 CRLF／CR 与 LF，其他汉字、标点、空格和段落差异均保留。创作侧读取各字段是否匹配、`fields_checked`、`unchecked_fields` 与 `copy_matches_frozen`；向作者用中文说明标题、正文和作者的话分别是否一致、哪些尚未核对，用户要求排障或结构化结果时再给原始字段。`usable_now` 仅表示这份作者提供的副本和当前正式稿是否适合继续人工核对，不表示平台已保存。副本来源恒记为 `user_supplied_copy`，`platform_verified=false`、`ready_to_upload=false`、`remote_state=unknown`；不要将其写作平台回执或独立远端回读。输入副本可能含未公开正文，应放在本书 `.story/` 的本地私有路径，不提交公开仓库。实际后台缺少作者的话栏位时，报告该字段未核对，不编造一个已填写的栏位。
 
 需要留存本次本地核对时，改用显式的 `publish-compare-record --book "<书根>" --id "<清单ID>" --chapter N --input "<JSON路径>"`。返回 `record_saved`、`record_id` 和 `record_sha256`；即使字段不一致或清单已经过期，也只记录当时结果，不写“平台已保存”。此命令在发布账本中新增摘要和字段哈希，不保存作者副本文字；相同输入再次执行会新增历史。只想临时核对时仍用只读 `publish-compare`。
 
 跨会话先用 `publish-compare-history --book "<书根>" --id "<清单ID>" --offset 0 --limit 10` 分页找记录，再用 `publish-compare-inspect --book "<书根>" --record-id "<记录ID>"` 查看。历史结果里的 `usable_at_record` 只表示保存当时，本次查询不核对当前正式稿；继续人工填报前另运行 `publish-check`，必要时用当前作者副本重新比较。`publish-backup` 与 `publish-recover` 会校验并计数本地比较记录，旧 schema 1 账本无需迁移。记录及其自带摘要不是数字签名或平台回执；数据库管理员仍可修改账本。
 
-交付明确写“本地材料已准备，尚未上传”，报告清单状态及未解决项。`platform_verified=false`、`ready_to_upload=false` 表示目标与上传能力尚未核验，不能为了满足“自动发布”而改为 true。用户已在平台手动操作也不能据此伪造本版工具不支持的远端回执。
+交付明确写“本地材料已准备；本工具未执行上传，平台保存状态未由本工具核验”，用中文说明本地核对是否通过及未解决项，不默认展示机器状态字段。`platform_verified=false`、`ready_to_upload=false` 在创作侧表示目标与上传能力尚未核验，不能为了满足“自动发布”而改为 true；仅在用户要求技术详情或排障时展示这些原始值。用户已在平台手动操作也不能据此伪造本版工具不支持的远端回执；有作者提供的明确凭据时，只说明凭据实际支持的状态。
