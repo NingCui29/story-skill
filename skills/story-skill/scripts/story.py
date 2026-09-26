@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.2"
+VERSION = "0.6.3"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -2216,7 +2216,9 @@ TEMPLATES = {
                "tags": ["主角"], "source": "<填写用户要求或原文位置>", "critical": False,
                "status": "active", "due": None}],
     "plan": {"title": "<填写章节名称，不含章号>", "volume_dir": "第一卷 <填写卷名>",
-             "goal": "<填写本章推进目标>", "beats": [{"choice": "<填写人物选择>", "change": "<填写后果与变化>"}],
+             "goal": "<填写人物本章要争取的结果与主要阅读期待>",
+             "beats": [{"choice": "<填写人物的具体尝试及所遇回应，按场景需要保留取舍>",
+                        "change": "<填写尝试后的局面、认知或关系变化及本场承担的阅读回报>"}],
              "stop": "<填写停笔点>", "constraints": ["<填写用户原始硬要求>"], "length": [2200, 2800],
              "requires": ["hero"], "tags": ["主角"], "count_method": "visible_nonspace_v1", "count_title": False},
     "delta": {"book_id": "<填写context返回的book_id>", "base_revision": 0, "summary": "<填写本章结果与下章衔接>", "changes": [],

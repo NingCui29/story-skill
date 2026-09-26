@@ -57,8 +57,8 @@ class PackageVersionTests(unittest.TestCase):
             self.assertEqual(output.read_bytes(), b"existing reviewed artifact")
 
     def test_manifest_is_bound_to_version_and_unknown_families_are_rejected(self):
-        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061}
-        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061}
+        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061}
+        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061}
         for version, expected in layouts.items():
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 self.assertEqual(package.skill_names(version), skill_layouts[version])
@@ -75,7 +75,7 @@ class PackageVersionTests(unittest.TestCase):
         self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V061)
         self.assertEqual(package.SKILL_NAMES, package.SKILL_NAMES_V061)
         self.assertIn("story-skill/scripts/story_workbench.py", package.SUITE_FILES)
-        for version in ("0.5.11", "0.6.00", "0.6.3", "0.6.99", "1.0.0", "2.4.6"):
+        for version in ("0.5.11", "0.6.00", "0.6.4", "0.6.99", "1.0.0", "2.4.6"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 package.suite_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):

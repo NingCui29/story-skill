@@ -1,0 +1,125 @@
+{
+  "schema": 2,
+  "date": "2026-09-26T13:05:07.869458+00:00",
+  "ok": true,
+  "method": "Current suite installed, synthetically changed, and replaced through real CLI commands",
+  "scope": "Managed skill files, backup bytes, update idempotency, unrelated files, and runtime startup",
+  "environment": {
+    "platform": "macOS-15.8-x86_64-i386-64bit",
+    "python": "3.12.14",
+    "executable": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+  },
+  "version": "0.6.3",
+  "commands": [
+    {
+      "name": "initial_install",
+      "command": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-X",
+        "utf8",
+        "/Users/cuining/Documents/GitHub/story-skill/scripts/install.py",
+        "--project",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-denhwj6h/验证项目"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 1.17
+    },
+    {
+      "name": "managed_update",
+      "command": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-denhwj6h/candidate/scripts/install.py",
+        "--project",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-denhwj6h/验证项目",
+        "--update"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.419
+    },
+    {
+      "name": "installed_version",
+      "command": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-denhwj6h/验证项目/.agents/skills/story-skill/scripts/story.py",
+        "--version"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.261
+    },
+    {
+      "name": "prepare_help",
+      "command": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-denhwj6h/验证项目/.agents/skills/story-skill/scripts/story.py",
+        "prepare",
+        "--help"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.279
+    },
+    {
+      "name": "repeat_update",
+      "command": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-denhwj6h/candidate/scripts/install.py",
+        "--project",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-denhwj6h/验证项目",
+        "--update"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.177
+    }
+  ],
+  "checks": {
+    "initial_install": {
+      "status": "passed"
+    },
+    "initial_payload": {
+      "status": "passed"
+    },
+    "single_skill_changed": {
+      "status": "passed"
+    },
+    "update_status": {
+      "status": "passed"
+    },
+    "backup_exact": {
+      "status": "passed"
+    },
+    "updated_payload": {
+      "status": "passed"
+    },
+    "unchanged_siblings": {
+      "status": "passed"
+    },
+    "runtime_version": {
+      "status": "passed"
+    },
+    "prepare_cli": {
+      "status": "passed"
+    },
+    "repeat_idempotent": {
+      "status": "passed"
+    },
+    "original_source_unchanged": {
+      "status": "passed"
+    },
+    "book_and_other_skill_unchanged": {
+      "status": "passed"
+    }
+  },
+  "temporary_project_removed": true
+}

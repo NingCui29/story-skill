@@ -1,0 +1,314 @@
+[
+  {
+    "path": "story-skill/LICENSE",
+    "bytes": 1081,
+    "lines": 21,
+    "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill/SKILL.md",
+    "bytes": 10289,
+    "lines": 50,
+    "sha256": "861488c5d06d7537e1c3113b9fe1e57709979f4c5a48a065e35ce3e4e2f1a2d8",
+    "installed_match": true,
+    "same_as_release_tag": false
+  },
+  {
+    "path": "story-skill/agents/openai.yaml",
+    "bytes": 344,
+    "lines": 6,
+    "sha256": "0f06df3badff4c9a96cd45a694496a4a3e49052c4747ec377f47dbeb630ac74a",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill/references/project-state.md",
+    "bytes": 13435,
+    "lines": 87,
+    "sha256": "d6d45ebaa78e5cb788be299e84e4b2ab43ccab47d4faa09d18697779c1e2293c",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill/scripts/story.py",
+    "bytes": 137209,
+    "lines": 2449,
+    "sha256": "091bd992c37b008ce1286bec05e47ab97bb49c9c45b4b5bdabebf9d9781a7fe2",
+    "installed_match": true,
+    "same_as_release_tag": false
+  },
+  {
+    "path": "story-skill/scripts/story_history.py",
+    "bytes": 75455,
+    "lines": 1203,
+    "sha256": "02bdd130ae014f977bf03cc13cfc27fb6bdb873df491da19d5d3748e34beda1f",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill/scripts/story_publish.py",
+    "bytes": 102483,
+    "lines": 1679,
+    "sha256": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill/scripts/story_search.py",
+    "bytes": 13962,
+    "lines": 292,
+    "sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill/scripts/story_storage.py",
+    "bytes": 10434,
+    "lines": 193,
+    "sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill/scripts/story_workbench.py",
+    "bytes": 119240,
+    "lines": 1811,
+    "sha256": "694090a0ddc56dce29cf286a56c21732eee2c4d67ce3c8665e5aeb1c73e6710f",
+    "installed_match": true,
+    "same_as_release_tag": false
+  },
+  {
+    "path": "story-skill/scripts/story_world.py",
+    "bytes": 61442,
+    "lines": 912,
+    "sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-analyze/LICENSE",
+    "bytes": 1081,
+    "lines": 21,
+    "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-analyze/SKILL.md",
+    "bytes": 9045,
+    "lines": 54,
+    "sha256": "39e71daaef1be2285a548bfc2b379b83cd74894e713361e8eecdd488ec052264",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-analyze/agents/openai.yaml",
+    "bytes": 349,
+    "lines": 6,
+    "sha256": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-analyze/references/deep-reading.md",
+    "bytes": 5943,
+    "lines": 52,
+    "sha256": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-analyze/references/examples.md",
+    "bytes": 7318,
+    "lines": 79,
+    "sha256": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-cover/LICENSE",
+    "bytes": 1081,
+    "lines": 21,
+    "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-cover/SKILL.md",
+    "bytes": 2001,
+    "lines": 15,
+    "sha256": "f3c80c1ae478c3b33f077c2a79facbebd3f5abe6ca1f22c1a78c0d69d3d90c02",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-cover/agents/openai.yaml",
+    "bytes": 344,
+    "lines": 6,
+    "sha256": "53b2f469ff188bf50adcd663db27d53e33b67ed35b55fd42fc192e28ed4896f7",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-plan/LICENSE",
+    "bytes": 1081,
+    "lines": 21,
+    "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-plan/SKILL.md",
+    "bytes": 7836,
+    "lines": 32,
+    "sha256": "a57b3d94e342500e1ff49044ef94961e4cd739b9520c6e02d76d10deee56f3a4",
+    "installed_match": true,
+    "same_as_release_tag": false
+  },
+  {
+    "path": "story-skill-plan/agents/openai.yaml",
+    "bytes": 346,
+    "lines": 6,
+    "sha256": "475ae88f08812b8bdcf885c53f23a82fc98281b75ebf321d5c9ca89428577018",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-plan/references/fanqie-tags.md",
+    "bytes": 11618,
+    "lines": 258,
+    "sha256": "f5af3796d364ff02c5b7d7c449cec9646b1dc17a2485416259115019d108d08e",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-publish/LICENSE",
+    "bytes": 1081,
+    "lines": 21,
+    "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-publish/SKILL.md",
+    "bytes": 13145,
+    "lines": 49,
+    "sha256": "b63b17e6c690e2793a82152aff42cfb2c22a219040339da85b45fcf0f270bd99",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-publish/agents/openai.yaml",
+    "bytes": 322,
+    "lines": 4,
+    "sha256": "43bb3505b40c2c1b05c901b7c8ec35faa448e005cc0f21d5eb482be812b67ad0",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-research/LICENSE",
+    "bytes": 1081,
+    "lines": 21,
+    "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-research/SKILL.md",
+    "bytes": 1526,
+    "lines": 14,
+    "sha256": "1d1c8ef5c49488837c1c6e0ab1b581c218bbfce641f1c8302378088bf94233d1",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-research/agents/openai.yaml",
+    "bytes": 365,
+    "lines": 6,
+    "sha256": "fa58f9b8653b56c69c2806632b27f0c0aecd705d802848312bbc5b9ea86b6221",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-review/LICENSE",
+    "bytes": 1081,
+    "lines": 21,
+    "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-review/SKILL.md",
+    "bytes": 12577,
+    "lines": 62,
+    "sha256": "9dfda5166575a487af0e940fa3022076d6f80a6f82307aa52217a484f1c42c63",
+    "installed_match": true,
+    "same_as_release_tag": false
+  },
+  {
+    "path": "story-skill-review/agents/openai.yaml",
+    "bytes": 343,
+    "lines": 6,
+    "sha256": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-review/references/history.md",
+    "bytes": 13047,
+    "lines": 64,
+    "sha256": "c63c38804993d7f77e4376c516095f3b7ad8ec23c9c9498dd5e491cfac40b325",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-write/LICENSE",
+    "bytes": 1081,
+    "lines": 21,
+    "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-write/SKILL.md",
+    "bytes": 5449,
+    "lines": 26,
+    "sha256": "f3685d06fff74b83391281e63a91f15e5cbfebc56891a34eb8709abfe26b9d58",
+    "installed_match": true,
+    "same_as_release_tag": false
+  },
+  {
+    "path": "story-skill-write/agents/openai.yaml",
+    "bytes": 350,
+    "lines": 6,
+    "sha256": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-write/references/chapter.md",
+    "bytes": 9972,
+    "lines": 29,
+    "sha256": "d6a66ce04db6fd3eacf8b018ca46b90db94d413869e91c1de058fd6a28915706",
+    "installed_match": true,
+    "same_as_release_tag": true
+  },
+  {
+    "path": "story-skill-write/references/drama.md",
+    "bytes": 22746,
+    "lines": 158,
+    "sha256": "5788b922a723c81abca57a0cb782fd245914efe0af34447d707341ddd26e46c1",
+    "installed_match": true,
+    "same_as_release_tag": false
+  },
+  {
+    "path": "story-skill-write/references/long-form.md",
+    "bytes": 10088,
+    "lines": 56,
+    "sha256": "0fceb8eb9debdee40e01a8db51ec51f8c03363a60e7431432a38d6c77ef65d19",
+    "installed_match": true,
+    "same_as_release_tag": true
+  }
+]

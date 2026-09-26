@@ -1,0 +1,45 @@
+{
+  "count_method": "visible_nonspace_v1",
+  "count_title": false,
+  "chapters": [
+    {
+      "chapter": 1,
+      "path": "chapters/第一卷 银幕还没亮/第1章 凳子先搬走.md",
+      "sha256": "1e1f1367f1c02dd7dbbd2829d7668e1b8842e0a3042c7e458918a47a456d1a16",
+      "counts": {
+        "visible_nonspace_v1": 1600,
+        "letters_numbers_v1": 1357,
+        "han_v1": 1357
+      },
+      "draft_bytes_match": true,
+      "committed": true,
+      "exports_complete": true
+    },
+    {
+      "chapter": 2,
+      "path": "chapters/第一卷 银幕还没亮/第2章 照不到的墙.md",
+      "sha256": "1eb761c55039958b77599f44af91c14ba0e427e2bf2f0c146a1f8f30bf523c20",
+      "counts": {
+        "visible_nonspace_v1": 1499,
+        "letters_numbers_v1": 1288,
+        "han_v1": 1288
+      },
+      "draft_bytes_match": true,
+      "committed": true,
+      "exports_complete": true
+    },
+    {
+      "chapter": 3,
+      "path": "chapters/第一卷 银幕还没亮/第3章 后排留个位置.md",
+      "sha256": "179c6d43b8a52e205b2108b612cbd3fac053a62254fffcd86958b3a1fcc62b37",
+      "counts": {
+        "visible_nonspace_v1": 1536,
+        "letters_numbers_v1": 1325,
+        "han_v1": 1325
+      },
+      "draft_bytes_match": true,
+      "committed": true,
+      "exports_complete": true
+    }
+  ]
+}

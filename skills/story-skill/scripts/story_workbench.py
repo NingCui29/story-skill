@@ -14,6 +14,8 @@ import subprocess
 import uuid
 import webbrowser
 import secrets
+import threading
+import http.client
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
@@ -61,7 +63,11 @@ def register_parser(sub, command):
 
     editor = command("workbench-serve", "Open a loopback editor that saves candidate drafts only", DEFAULT_BUDGET, False)
     editor.add_argument("--limit", type=int, default=DEFAULT_LIMIT)
+    editor.add_argument("--library-book", action="append", default=[], help="Another explicitly selected book on the local shelf; repeat as needed")
     editor.add_argument("--open", action="store_true", dest="open_browser")
+    command("workbench-status", "Check the registered local editor instance", DEFAULT_BUDGET, False)
+    stop = command("workbench-stop", "Stop the registered editor after preserving edits in all its pages", DEFAULT_BUDGET, False)
+    stop.add_argument("--saved", action="store_true", help="All editor pages have saved or downloaded their pending text")
 
 
 class _ReadOnlyBook:
@@ -862,7 +868,7 @@ def _body_without_heading(text, chapter, title):
     lines = text.splitlines(keepends=True)
     if not lines:
         return "", text
-    first = lines[0].strip()
+    first = lines[0].lstrip('\ufeff').strip()
     # Only remove an exact opening heading, never mentions within the story.
     first = re.sub(r"^#{1,6}\s+", "", first)
     if first != title or not re.match(rf"^第0*{chapter}章(?:\s|$)", first):
@@ -1113,52 +1119,892 @@ def _save_candidate(root, packet, chapter, text):
         current = snapshot(book, limit=packet["chapters"]["limit"])
         if current["snapshot"]["id"] != packet["snapshot"]["id"]:
             api.fail("stale_snapshot", "作品已变化，请另开工作台核对。当前编辑内容仍保留在页面中。")
-        originals = _reading_text(book, packet)
-        prefix, _ = _body_without_heading(originals[chapter], chapter, Path(row["path"]).stem)
-        text = prefix + text
-        name = f".story/drafts/workbench/第{chapter}章_基线{row['sha256']}_修订{uuid.uuid4().hex}.md"
-        target = api.safe_path(book.root, name)
-        api.atomic_write(target, text, set(), api.safe_path(book.root,
-                         f".story/drafts/workbench/.backups/{uuid.uuid4().hex}.md"))
-        return {"ok": True, "path": name, "base_sha256": row["sha256"],
-                "sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
-                "formal_changed": False}
+        source = _editor_document(root, f'formal:{chapter}')
+        if source['sha256'] != row['sha256']:
+            api.fail('stale_snapshot', '正式章节已变化，请重新载入。')
+        saved = _editor_save(root, {**source, 'text': text}, force_candidate=True)
+        saved.update(base_sha256=row['sha256'], sha256=hashlib.sha256(_author_read(Path(root), saved['path'])).hexdigest())
+        return saved
     finally:
         book.close()
+
+
+# Author files are discoverable without treating their names as adoption evidence.
+AUTHOR_SUFFIXES = {'.md', '.txt', '.png', '.jpg', '.jpeg', '.webp'}
+AUTHOR_LIMIT = 5000
+AUTHOR_TEXT_LIMIT = 1024 * 1024
+MAX_EDITOR_CHAPTER = (1 << 63) - 1
+PENDING_SAVE_LIMIT = 7 * 1024 * 1024
+
+
+def _start_pending_save(root, name, text, content, meta):
+    # One flushed record contains both the user's text and its provenance before
+    # either destination is touched. A competing writer cannot replace it.
+    _validate_candidate_metadata(meta, name + '.meta.json')
+    if len(json.dumps(meta, ensure_ascii=False).encode('utf-8')) > 16384:
+        api.fail('workbench_write_limit', '来源记录超过保存上限，请下载文字后整理章名信息。')
+    record = {'version': 1, 'target': name, 'text': text, 'meta': meta,
+              'content_sha256': hashlib.sha256(content.encode('utf-8')).hexdigest()}
+    content = json.dumps(record, ensure_ascii=False)
+    pending_name = name + '.pending.json'
+    api.atomic_write(api.safe_path(root, pending_name), content, set(),
+                     api.safe_path(root, '.story/drafts/workbench/.backups/' + uuid.uuid4().hex + '/pending'))
+    return pending_name, hashlib.sha256(content.encode('utf-8')).hexdigest()
+
+
+def _finish_pending_save(root, pending):
+    name, digest = pending
+    api._retire_bound_file(api.safe_path(root, name),
+                          api.safe_path(root, '.story/drafts/workbench/.backups/' + uuid.uuid4().hex + '/completed.json'),
+                          {digest})
+
+
+def _pending_document(root, document_id):
+    row = next((r for r in _author_files(Path(root)) if r['id'] == document_id), None)
+    if row is None or not row['path'].endswith('.pending.json'):
+        api.fail('invalid_input', '待核对记录未列入本书目录。')
+    raw = _author_read(Path(root), row['path'], PENDING_SAVE_LIMIT)
+    try:
+        record = json.loads(raw)
+        if not isinstance(record, dict) or record.get('version') != 1 or record.get('target') != row['path'][:-13]:
+            raise ValueError('record target or version')
+        meta, text = record['meta'], record['text']
+        _validate_candidate_metadata(meta, row['path'])
+        if not isinstance(text, str) or not text.strip():
+            raise ValueError('record text')
+        content = text if meta.get('recovery') else meta.get('prefix', '') + text
+        if len(content.encode('utf-8')) > AUTHOR_TEXT_LIMIT or hashlib.sha256(content.encode('utf-8')).hexdigest() != record.get('content_sha256'):
+            raise ValueError('record content')
+    except (KeyError, ValueError, UnicodeError) as error:
+        api.fail('workbench_pending_invalid', '待核对记录损坏，请保留原文件并在外部核对。', path=row['path'], cause=str(error))
+    packet = _editor_packet(root)
+    result = {'ok': True, **row, 'text': text, 'prefix': meta.get('prefix', ''),
+              'sha256': hashlib.sha256(raw).hexdigest(), 'snapshot': packet['snapshot']['id'],
+              'metadata_sha256': hashlib.sha256(raw).hexdigest(), 'kind': 'candidate',
+              'source': meta.get('source'), 'chapter': meta.get('chapter'), 'base_sha256': meta.get('base_sha256'),
+              'editable': True, 'needs_recovery': True,
+              'status': '保存尚未确认完成；文字及来源已保留。可另存新候选，原文件留待核对。'}
+    result['content_kind'] = _candidate_content_kind(meta)
+    if result['chapter'] and result['content_kind'] != 'material':
+        try:
+            formal = _editor_document(root, f"formal:{result['chapter']}")
+            result['comparison'] = {'title': formal['title'], 'text': formal['text'], 'sha256': formal['sha256']}
+        except api.StoryError:
+            pass
+    return result
+
+
+def _author_files(root, warnings=None):
+    def report(path):
+        if warnings is not None:
+            warnings.append('已跳过无法安全读取的文件或目录：' + str(path))
+
+    roots = []
+    for relative, category in [('.story/drafts', '候选与草稿'), ('.story/analysis', '拆书分析')]:
+        try:
+            path = api.safe_path(root, relative)
+            if path.is_dir():
+                roots.append((path, category))
+        except api.StoryError as error:
+            if error.code != 'linked_path':
+                raise
+            report(relative)
+        except OSError:
+            report(relative)
+    try:
+        children = list(root.iterdir())
+    except OSError:
+        report('书根')
+        children = []
+    for path in children:
+        if path.name.startswith('.') or path.name == 'chapters':
+            continue
+        try:
+            if path.is_symlink() or getattr(path, 'is_junction', lambda: False)():
+                report(path.name)
+                continue
+            if path.is_dir() and (re.match(r'^\d{2}_', path.name) or
+                                  any(word in path.name for word in ('大纲', '细纲', '封面', '策划', '分析'))):
+                roots.append((path, '创作材料'))
+            elif path.is_file() and path.suffix.lower() in AUTHOR_SUFFIXES:
+                roots.append((path, '创作材料'))
+        except OSError:
+            report(path.name)
+    result, inspected = [], 0
+    for start, category in sorted(roots):
+        pending = [start]
+        while pending:
+            path = pending.pop()
+            inspected += 1
+            if inspected > AUTHOR_LIMIT:
+                api.fail('workbench_scan_limit', '创作材料超过扫描上限，请先整理归档。', maximum=AUTHOR_LIMIT)
+            relative = path.relative_to(root).as_posix()
+            try:
+                api.safe_path(root, relative)
+                if path.is_dir():
+                    pending.extend(sorted((p for p in path.iterdir()
+                                           if not p.name.startswith('.') and p.name != '__pycache__'), reverse=True))
+                elif path.is_file() and (path.suffix.lower() in AUTHOR_SUFFIXES or
+                                        (relative.startswith('.story/drafts/workbench/') and relative.endswith('.pending.json'))):
+                    facts = path.stat()
+                    pending_save = relative.endswith('.pending.json')
+                    result.append({'id': ('pending:' if pending_save else 'file:') + relative, 'path': relative,
+                                   'title': Path(relative[:-13]).stem + ' · 保存待核对' if pending_save else path.stem,
+                                   'category': '自动恢复' if pending_save or '/自动恢复/' in relative else category,
+                                   'modified': datetime.fromtimestamp(facts.st_mtime, timezone.utc).isoformat(),
+                                   'bytes': facts.st_size})
+            except api.StoryError as error:
+                if error.code != 'linked_path':
+                    raise
+                report(relative)
+            except OSError:
+                report(relative)
+    return sorted(result, key=lambda row: (row['category'], row['path']))
+
+
+def _author_read(root, relative, maximum=AUTHOR_TEXT_LIMIT):
+    path = api.safe_path(root, relative)
+    with api._pinned_directory(path.parent) as directory:
+        with api._bound_reader(api._BoundFile(directory, path.name)) as stream:
+            raw = stream.read(maximum + 1)
+    if len(raw) > maximum:
+        api.fail('workbench_read_limit', '文件超过工作台预览上限，请在外部编辑器打开。')
+    return raw
+
+
+def _editor_packet(root, chapter=None, offset=0, limit=DEFAULT_LIMIT):
+    book = _ReadOnlyBook(root)
+    try:
+        if chapter is not None:
+            _editor_chapter(chapter)
+            offset = book.db.execute('SELECT count(*) FROM chapter_state WHERE chapter > ?', (chapter,)).fetchone()[0]
+            limit = 1
+        return snapshot(book, limit=limit, offset=offset)
+    finally:
+        book.close()
+
+
+def _editor_catalog(root, offset=0, limit=DEFAULT_LIMIT, query=''):
+    if type(offset) is not int or not isinstance(query, str) or len(query) > 200:
+        api.fail('invalid_input', '目录参数无效。')
+    packet = _editor_packet(root, offset=offset, limit=limit)
+    # Search the whole formal directory, not only the currently loaded page.
+    rows = packet['chapters']['results']
+    if query:
+        book = _ReadOnlyBook(root)
+        try:
+            metadata = {row['key']: json.loads(row['value']) for row in book.db.execute('SELECT key,value FROM meta')}
+            metadata['__root'] = str(book.root)
+            matches = []
+            for row in book.db.execute('SELECT chapter FROM chapter_state ORDER BY chapter DESC'):
+                path = _chapter_path(metadata, row['chapter'])
+                if query.casefold() in Path(path).stem.casefold():
+                    matches.append({'chapter': row['chapter'], 'path': path})
+            rows = matches[offset:offset + limit]
+            total = len(matches)
+        finally:
+            book.close()
+    else:
+        total = packet['chapters']['total']
+    warnings = []
+    all_files = _author_files(Path(root), warnings)
+    files = [row for row in all_files if not query or query.casefold() in row['path'].casefold()]
+    return {'ok': True, 'chapters': [{'id': f"formal:{r['chapter']}", 'title': Path(r['path']).stem,
+                                    'path': r['path'], 'category': '正式正文'} for r in rows],
+            'files': files, 'related_files': all_files, 'warnings': warnings, 'total': total, 'offset': offset, 'limit': limit,
+            'has_more': offset + len(rows) < total, 'snapshot': packet['snapshot']['id'],
+            'workspace': _workspace_index(root, all_files, offset, limit, query)}
+
+
+def _candidate_metadata(root, relative):
+    if not relative.startswith('.story/drafts/workbench/'):
+        return {}
+    try:
+        _author_read(root, relative + '.pending.json', PENDING_SAVE_LIMIT)
+    except FileNotFoundError:
+        pass
+    except (api.StoryError, OSError) as error:
+        api.fail('workbench_metadata_pending', '保存记录待核对，暂不可编辑；请从自动恢复区打开待核对记录。',
+                 path=relative + '.pending.json', cause=str(error))
+    else:
+        api.fail('workbench_metadata_pending', '上次保存尚未确认完成；请从自动恢复区找回文字并另存候选。',
+                 path=relative + '.pending.json')
+    name = relative + '.meta.json'
+    try:
+        raw = _author_read(root, name, 16384)
+    except FileNotFoundError:
+        return {}
+    except (api.StoryError, OSError) as error:
+        api.fail('workbench_metadata_unreadable', '来源记录无法读取，请检查文件或权限。', path=name, cause=str(error))
+    try:
+        value = json.loads(raw)
+    except (ValueError, UnicodeError):
+        api.fail('workbench_metadata_corrupt', '来源记录损坏，无法解析；请恢复来源记录后再编辑。', path=name)
+    _validate_candidate_metadata(value, name)
+    value['_metadata_sha256'] = hashlib.sha256(raw).hexdigest()
+    return value
+
+
+def _validate_candidate_metadata(value, name):
+    if not isinstance(value, dict):
+        api.fail('workbench_metadata_corrupt', '来源记录格式错误，应为对象。', path=name)
+    if 'content_kind' in value and value['content_kind'] not in ('material', 'prose'):
+        api.fail('workbench_metadata_invalid', '来源记录内容类型无效。', path=name)
+    chapter = value.get('chapter')
+    if chapter is not None and (type(chapter) is not int or not 1 <= chapter <= MAX_EDITOR_CHAPTER):
+        api.fail('workbench_metadata_invalid', '来源记录章号无效或超出范围。', path=name)
+    for field in ('source_sha256', 'base_sha256', 'content_sha256'):
+        item = value.get(field)
+        if item is not None and (not isinstance(item, str) or not re.fullmatch(r'[0-9a-f]{64}', item)):
+            api.fail('workbench_metadata_invalid', '来源记录校验值格式错误。', path=name, field=field)
+    for field, maximum in (('source', 2048), ('prefix', 8192)):
+        item = value.get(field)
+        if (field == 'prefix' and field in value and item is None) or (item is not None and (not isinstance(item, str) or len(item) > maximum)):
+            api.fail('workbench_metadata_invalid', '来源记录字段格式错误。', path=name, field=field)
+
+
+def _candidate_content_kind(meta):
+    if meta.get('content_kind'):
+        return meta['content_kind']
+    # Legacy source paths can identify planning materials without opening them.
+    # This is a display hint, never permission to read or adopt a source file.
+    source = meta.get('source') or ''
+    if source.startswith('plan:') or (source.startswith('file:') and
+            not source[5:].startswith(('.story/drafts/', 'chapters/'))):
+        return 'material'
+    return 'prose'
+
+
+def _editor_chapter(value):
+    if type(value) is not int or not 1 <= value <= MAX_EDITOR_CHAPTER:
+        api.fail('invalid_input', '章号必须为有效范围内的正整数。')
+    return value
+
+
+def _editor_document_raw(root, document_id):
+    if not isinstance(document_id, str) or len(document_id) > 2048:
+        api.fail('invalid_input', '文件标识无效。')
+    if re.fullmatch(r'plan:[1-9]\d*', document_id):
+        number = _editor_chapter(int(document_id.split(':')[1]))
+        context = _chapter_context(root, number)
+        plan = context['plan']
+        if not plan:
+            api.fail('invalid_input', '此章尚未保存工具计划。')
+        text = '# 第' + str(number) + '章 ' + plan['title'] + '\n\n## 本章目标\n\n' + plan['goal']
+        for beat in plan.get('beats', []):
+            text += '\n\n### 场景\n\n' + beat['choice'] + '\n\n' + beat['change']
+        text += '\n\n## 停笔点\n\n' + plan['stop']
+        return {'ok': True, 'id': document_id, 'path': '工具章计划 · 第' + str(number) + '章',
+                'title': '第' + str(number) + '章 ' + plan['title'], 'text': text, 'kind': 'plan',
+                'chapter': number, 'sha256': api.digest(text), 'editable': False, 'status': '已保存计划，尚非正文'}
+    if document_id.startswith('pending:'):
+        return _pending_document(root, document_id)
+    if re.fullmatch(r'formal:[1-9]\d*', document_id):
+        chapter = _editor_chapter(int(document_id.split(':')[1]))
+        packet = _editor_packet(root, chapter=chapter)
+        row = next((r for r in packet['chapters']['results'] if r['chapter'] == chapter), None)
+        if row is None:
+            api.fail('invalid_input', '正式章节不存在。')
+        raw = _author_read(Path(root), row['path'])
+        if hashlib.sha256(raw).hexdigest() != row['sha256']:
+            api.fail('workbench_changed', '正式文件有外部改动，请先核对；不会把外改当作正式稿。')
+        prefix, text = _body_without_heading(raw.decode('utf-8'), chapter, Path(row['path']).stem)
+        return {'ok': True, 'id': document_id, 'path': row['path'], 'title': Path(row['path']).stem,
+                'text': text, 'prefix': prefix, 'sha256': row['sha256'], 'snapshot': packet['snapshot']['id'],
+                'kind': 'formal', 'chapter': chapter, 'summary': row['summary'], 'base_sha256': row['sha256'],
+                'status': '正式稿', 'editable': True}
+    row = next((r for r in _author_files(Path(root)) if r['id'] == document_id), None)
+    if row is None:
+        api.fail('invalid_input', '文件未列入本书材料目录。')
+    image_type = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp'}.get(Path(row['path']).suffix.lower())
+    raw = _author_read(Path(root), row['path'], 8 * 1024 * 1024 if image_type else AUTHOR_TEXT_LIMIT)
+    packet = _editor_packet(root)
+    result = {'ok': True, **row, 'sha256': hashlib.sha256(raw).hexdigest(), 'snapshot': packet['snapshot']['id'],
+              'kind': 'material', 'status': '材料文件，采用状态未登记', 'editable': not image_type}
+    if image_type:
+        result.update(image='data:' + image_type + ';base64,' + base64.b64encode(raw).decode())
+        return result
+    result.update(text=raw.decode('utf-8'), prefix='')
+    try:
+        meta = _candidate_metadata(Path(root), row['path'])
+    except api.StoryError as error:
+        if not error.code.startswith('workbench_metadata_'):
+            raise
+        result.update(editable=False, status=str(error) + ' 当前只读，正文保留。',
+                      metadata_error={'code': error.code, 'path': error.details.get('path')}, source=None)
+        return result
+    result['metadata_sha256'] = meta.get('_metadata_sha256')
+    if row['category'] in ('候选与草稿', '自动恢复'):
+        result.update(kind='candidate', status='候选稿，未采用；未记录正式基线')
+    result['source'] = meta.get('source') if isinstance(meta.get('source'), str) else None
+    result['content_kind'] = _candidate_content_kind(meta) if result['kind'] == 'candidate' else 'material'
+    if result['content_kind'] == 'material':
+        if meta.get('chapter'):
+            result['chapter'] = meta['chapter']
+        if result['kind'] == 'candidate':
+            result['status'] = '材料候选，未采用；不计作小说正文'
+        return result
+    chapter = meta.get('chapter')
+    base_sha = meta.get('base_sha256')
+    # Unregistered old drafts get a visible suggestion, never an asserted lineage.
+    hint = re.match(r'^第(\d+)章', Path(row['path']).stem) if result['kind'] == 'candidate' else None
+    if type(chapter) is not int or chapter < 1:
+        chapter = _editor_chapter(int(hint.group(1))) if hint else None
+        base_sha = None
+    if chapter:
+        result['chapter'] = chapter
+        result['base_sha256'] = base_sha
+        prefix, body = _body_without_heading(result['text'], chapter, Path(row['path']).stem)
+        if meta.get('prefix') and isinstance(meta['prefix'], str) and result['text'].startswith(meta['prefix']):
+            prefix, body = meta['prefix'], result['text'][len(meta['prefix']):]
+        result.update(prefix=meta.get('prefix', '') if meta.get('recovery') else prefix, text=body)
+        try:
+            formal = _editor_document(root, f'formal:{chapter}')
+            if not prefix and not meta and re.fullmatch(rf'第0*{chapter}章_基线[0-9a-f]{{64}}_修订[0-9a-f]{{32}}', Path(row['path']).stem):
+                prefix, body = _body_without_heading(result['text'], chapter, formal['title'])
+                result.update(prefix=prefix, text=body)
+            result['comparison'] = {'title': formal['title'], 'text': formal['text'], 'sha256': formal['sha256']}
+            result['status'] = ('候选稿，未采用；正式基线已变化' if base_sha and base_sha != formal['sha256'] else
+                                '候选稿，未采用；正式基线一致' if base_sha else
+                                '未登记版本关系；按文件名建议与此章对照')
+        except api.StoryError:
+            result['status'] = '草稿；对应正式章节不存在或暂不可读'
+    return result
+
+
+def _editor_save(root, payload, recovery=False, force_candidate=False):
+    text = payload.get('text')
+    if not isinstance(text, str) or not text.strip() or len(text.encode('utf-8')) > AUTHOR_TEXT_LIMIT:
+        api.fail('invalid_input', '请输入不超过 1 MiB 的非空正文。')
+    source_id = payload.get('id')
+    if recovery:
+        # Recovery can rescue text even when the source has changed or disappeared.
+        if not isinstance(source_id, str) or not source_id.startswith(('formal:', 'file:', 'pending:')) or len(source_id) > 2048:
+            api.fail('invalid_input', '恢复来源无效。')
+        key = payload.get('recovery_key')
+        if not isinstance(key, str) or not re.fullmatch(r'[a-zA-Z0-9-]{16,80}', key):
+            api.fail('invalid_input', '恢复标识无效。')
+        title = payload.get('title', '未保存编辑')
+        if not isinstance(title, str):
+            api.fail('invalid_input', '恢复稿名称无效。')
+        label = re.sub(r'[^\w\u4e00-\u9fff -]', '_', title)[:60]
+        name = '.story/drafts/workbench/自动恢复/' + label + '_' + key + '.txt'
+        meta = {'source': source_id, 'recovery': True, 'source_sha256': payload.get('sha256'),
+                'chapter': payload.get('chapter'), 'base_sha256': payload.get('base_sha256'),
+                'prefix': payload.get('prefix', ''), 'created': _utc_now(), 'adopted': False}
+        meta['content_kind'] = payload.get('content_kind', _candidate_content_kind(meta))
+        if meta['chapter'] is not None:
+            _editor_chapter(meta['chapter'])
+        if not isinstance(meta['prefix'], str) or len(meta['prefix']) > 8192:
+            api.fail('invalid_input', '恢复稿章名信息无效。')
+        for field in ('source_sha256', 'base_sha256'):
+            if meta[field] is not None and (not isinstance(meta[field], str) or not re.fullmatch(r'[0-9a-f]{64}', meta[field])):
+                api.fail('invalid_input', '恢复稿来源校验值无效。')
+        conflict, conflict_reason = False, None
+        allowed, meta_allowed = set(), set()
+        try:
+            # Check the marker before reading the body: interruption may have
+            # happened before any body existed. Never reuse that destination.
+            existing_meta = _candidate_metadata(Path(root), name)
+            try:
+                old_hash = hashlib.sha256(_author_read(Path(root), name)).hexdigest()
+            except FileNotFoundError:
+                old_hash = None
+            meta_hash = existing_meta.get('_metadata_sha256')
+            if old_hash is not None or meta_hash is not None:
+                if (not meta_hash or payload.get('recovery_metadata_sha256') != meta_hash or
+                        (old_hash is not None and payload.get('recovery_sha256') != old_hash)):
+                    conflict, conflict_reason = True, 'changed'
+                else:
+                    allowed = {old_hash} if old_hash else set()
+                    meta_allowed = {meta_hash}
+        except api.StoryError as error:
+            if not error.code.startswith('workbench_metadata_'):
+                raise
+            conflict = True
+            conflict_reason = 'pending' if error.code == 'workbench_metadata_pending' else 'metadata'
+        if conflict:
+            key = uuid.uuid4().hex
+            name = '.story/drafts/workbench/自动恢复/' + label + '_' + key + '.txt'
+            allowed, meta_allowed = set(), set()
+        meta['content_sha256'] = hashlib.sha256(text.encode('utf-8')).hexdigest()
+        content = text
+    else:
+        source = _editor_document(root, source_id)
+        if not source['editable']:
+            api.fail('invalid_input', '当前文件只读；图片仅供预览，来源记录异常须先修复。')
+        if (payload.get('sha256') != source['sha256'] or payload.get('snapshot') != source['snapshot'] or
+                payload.get('metadata_sha256') != source.get('metadata_sha256')):
+            api.fail('stale_snapshot', '来源或正式状态已变化。请保留恢复稿，刷新后重新对照。')
+        if text == source['text'] and not source.get('needs_recovery') and not force_candidate:
+            return {'ok': True, 'unchanged': True, 'id': source_id, 'path': source['path']}
+        name = '.story/drafts/workbench/' + re.sub(r'[^\w\u4e00-\u9fff -]', '_', source['title'])[:70] + '_候选_' + uuid.uuid4().hex[:12] + '.md'
+        meta = {'source': source_id, 'source_sha256': source['sha256'], 'chapter': source.get('chapter'),
+                'base_sha256': source.get('base_sha256'), 'prefix': source.get('prefix', ''),
+                'created': _utc_now(), 'adopted': False,
+                'content_kind': 'prose' if source['is_prose'] else 'material'}
+        content = source.get('prefix', '') + text
+        allowed, meta_allowed = set(), set()
+    if len(content.encode('utf-8')) > AUTHOR_TEXT_LIMIT:
+        api.fail('workbench_write_limit', '完整候选文件（含恢复的章名）不得超过 1 MiB，请缩减后保存。',
+                 maximum_bytes=AUTHOR_TEXT_LIMIT, actual_bytes=len(content.encode('utf-8')))
+    target = api.safe_path(Path(root), name)
+    pending = _start_pending_save(Path(root), name, text, content, meta)
+    try:
+        previous_body = api.atomic_write(target, content, allowed, api.safe_path(Path(root), '.story/drafts/workbench/.backups/' + uuid.uuid4().hex + '/previous'))
+    except (OSError, api.StoryError, ValueError) as error:
+        api.fail('workbench_partial_save', '候选正文写入未完成；完整编辑已保留在自动恢复区的待核对记录中。',
+                 path=name, incomplete_path=pending[0], cause=str(error))
+    try:
+        meta_path = name + '.meta.json'
+        api.atomic_write(api.safe_path(Path(root), meta_path), json.dumps(meta, ensure_ascii=False), meta_allowed,
+                         api.safe_path(Path(root), '.story/drafts/workbench/.backups/' + uuid.uuid4().hex + '/previous'))
+    except (OSError, api.StoryError, ValueError) as error:
+        incomplete = api.safe_path(Path(root), '.story/drafts/workbench/.backups/' + uuid.uuid4().hex + '/incomplete.md')
+        try:
+            api._retire_bound_file(target, incomplete, {hashlib.sha256(content.encode('utf-8')).hexdigest()})
+            if previous_body:
+                prior = _author_read(Path(root), Path(previous_body).relative_to(root).as_posix()).decode('utf-8')
+                api.atomic_write(target, prior, set(), api.safe_path(Path(root),
+                                 '.story/drafts/workbench/.backups/' + uuid.uuid4().hex + '/rollback'))
+            _finish_pending_save(Path(root), pending)
+        except (OSError, api.StoryError, ValueError) as rollback_error:
+            api.fail('workbench_partial_save', '来源记录保存失败，回退未完成；请保留编辑并核对文件，勿直接重复保存。',
+                     path=name, incomplete_path=str(incomplete), previous_body=previous_body,
+                     cause=str(error), rollback_error=str(rollback_error))
+        api.fail('workbench_save_rolled_back', '来源记录保存失败，不完整候选已移出目录并保留为暂存文件。'
+                 + ('上一份恢复稿已还原。' if previous_body else '') + '请保留编辑后重试。',
+                 path=name, incomplete_path=str(incomplete), cause=str(error))
+    metadata_hash = hashlib.sha256(json.dumps(meta, ensure_ascii=False).encode('utf-8')).hexdigest()
+    if recovery and (hashlib.sha256(_author_read(Path(root), name)).hexdigest() != meta['content_sha256'] or
+                     hashlib.sha256(_author_read(Path(root), name + '.meta.json', 16384)).hexdigest() != metadata_hash):
+        api.fail('recovery_changed', '恢复稿或来源在写入后发生变化；待核对记录已保留，请保留编辑后重试。', path=pending[0])
+    try:
+        _finish_pending_save(Path(root), pending)
+    except (OSError, api.StoryError, ValueError) as error:
+        api.fail('workbench_partial_save', '正文与来源已写入，保存收尾未确认；请从自动恢复区核对后另存候选。',
+                 path=name, incomplete_path=pending[0], cause=str(error))
+    result = {'ok': True, 'id': 'file:' + name, 'path': name, 'formal_changed': False}
+    if recovery:
+        result.update(recovery_key=key, recovery_sha256=meta['content_sha256'],
+                      recovery_metadata_sha256=metadata_hash, conflict=conflict, conflict_reason=conflict_reason)
+    return result
+
+
+def _chapter_hint(path):
+    match = re.match(r'^第([0-9]+)章(?:\s|_|$)', Path(path).stem)
+    if not match or len(match[1]) > 18:
+        return None
+    number = int(match[1])
+    return number if number > 0 else None
+
+
+def _workspace_index(root, files, offset=0, limit=DEFAULT_LIMIT, query=''):
+    """Read chapter relationships; names are navigation hints, never adoption evidence."""
+    book = _ReadOnlyBook(root)
+    try:
+        with book.read_snapshot():
+            metadata = _meta_map(book.db)
+            metadata['__root'] = str(book.root)
+            plans = {r['chapter']: json.loads(r['data']) for r in book.db.execute('SELECT chapter,data FROM plans')}
+            formal = {r['chapter']: _chapter_path(metadata, r['chapter'])
+                      for r in book.db.execute('SELECT chapter FROM chapter_state')}
+            revision = book.meta('revision')
+            next_chapter = book.meta('last_chapter') + 1
+            title = book.meta('title')
+        grouped = {}
+        for row in files:
+            chapter = _chapter_hint(row['path'])
+            if chapter:
+                grouped.setdefault(chapter, []).append({**row, 'relation': '同章号文件，采用关系须另核对'})
+        numbers = sorted(set(plans) | set(formal) | set(grouped))
+        groups = []
+        for n in numbers:
+            plan = plans.get(n, {})
+            label = f'第{n}章 ' + plan['title'] if plan.get('title') else Path(formal[n]).stem if n in formal else f'第{n}章'
+            items = []
+            if n in formal:
+                items.append({'id': f'formal:{n}', 'title': '正式正文', 'path': formal[n], 'category': '正式正文'})
+            if n in plans:
+                items.append({'id': f'plan:{n}', 'title': '已保存章计划', 'path': f'第{n}章 工具计划', 'category': '计划'})
+            items.extend(grouped.get(n, []))
+            if query and not (query.casefold() in label.casefold() or any(query.casefold() in x['path'].casefold() for x in items)):
+                continue
+            groups.append({'chapter': n, 'title': label, 'volume': plan.get('volume_dir', ''),
+                           'status': '已有正式稿' if n in formal else '已规划，未提交' if n in plans else '仅有同章号材料',
+                           'items': items, 'has_plan': n in plans})
+        return {'title': title, 'revision': revision, 'captured_at': _utc_now(), 'formal_total': len(formal),
+                'planned_total': len(plans), 'next_chapter': next_chapter, 'total': len(groups),
+                'groups': groups[offset:offset + limit], 'has_more': offset + limit < len(groups),
+                'offset': offset, 'limit': limit}
+    finally:
+        book.close()
+
+
+def _chapter_context(root, chapter):
+    if not chapter:
+        return None
+    book = _ReadOnlyBook(root)
+    try:
+        with book.read_snapshot():
+            row = book.db.execute('SELECT data FROM plans WHERE chapter=?', (chapter,)).fetchone()
+            plan = json.loads(row['data']) if row else None
+            row = book.db.execute('SELECT summary,receipt,sha FROM chapter_state WHERE chapter=?', (chapter,)).fetchone()
+            prior = book.db.execute('SELECT summary FROM chapter_state WHERE chapter=?', (chapter - 1,)).fetchone()
+            receipt = json.loads(row['receipt']) if row else {}
+            return {'chapter': chapter, 'plan': plan, 'previous_summary': prior['summary'] if prior else None,
+                    'formal_sha256': row['sha'] if row else None,
+                    'review': receipt.get('input', {}).get('review'), 'imported': receipt.get('quality') == 'imported_unverified'}
+    finally:
+        book.close()
+
+
+def _editor_document(root, document_id):
+    result = _editor_document_raw(root, document_id)
+    number = result.get('chapter') or _chapter_hint(result.get('path', ''))
+    result['context'] = _chapter_context(root, number)
+    path = result.get('path', '')
+    result['historical_note'] = ('记录内容反映编写时状态；当前进度请看顶部。'
+                                 if any(w in path for w in ('记录', '历史', '报告', '测试结果')) else '规划材料保留编写时内容；实际正文进度以顶部为准。' if any(w in path for w in ('大纲', '细纲', '策划')) else '')
+    result['is_prose'] = result.get('kind') in ('formal', 'candidate') and result.get('content_kind') != 'material' and bool(number)
+    result['content_kind'] = 'prose' if result['is_prose'] else 'material'
+    result['render_markdown'] = result.get('kind') == 'plan' or (not result['is_prose'] and
+        (path.lower().endswith('.md') or result.get('kind') == 'candidate'))
+    if result.get('kind') == 'candidate' and result['is_prose'] and result.get('context'):
+        if result['sha256'] == result['context']['formal_sha256']:
+            result['status'] = '内容与当前正式稿逐字一致；不据此推断采用历史'
+    return result
+
+
+def _editor_metrics(root, payload):
+    doc = _editor_document(root, payload.get('id'))
+    text = payload.get('text')
+    selected = payload.get('selection', '')
+    if not isinstance(text, str) or not isinstance(selected, str) or len(text.encode('utf-8')) + len(selected.encode('utf-8')) > 2 * AUTHOR_TEXT_LIMIT:
+        api.fail('invalid_input', '字数核对文本过大或无效。')
+    plan = (doc.get('context') or {}).get('plan') or {}
+    method = plan.get('count_method', 'visible_nonspace_v1') if doc['is_prose'] else 'visible_nonspace_v1'
+    counted = doc.get('prefix', '') + text if doc['is_prose'] else '\n' + text
+    counts = api.manuscript_counts(counted, plan.get('count_title', False) if doc['is_prose'] else True)
+    value = counts[method]
+    target = plan.get('length') if doc['is_prose'] else None
+    return {'ok': True, 'count': value, 'method': method, 'target': target,
+            'include_title': bool(plan.get('count_title')) if doc['is_prose'] else None,
+            'selection': api.manuscript_counts('\n' + selected, True)[method],
+            'in_range': target[0] <= value <= target[1] if target else None,
+            'is_prose': doc['is_prose'], 'text_sha256': api.digest(text)}
+
+
+def _editor_review_task(root, document_id, expected_sha=None):
+    doc = _editor_document(root, document_id)
+    if expected_sha is not None and expected_sha != doc['sha256']:
+        api.fail('stale_snapshot', '所选文件已变化，请刷新后重新生成审稿任务。')
+    if not doc.get('editable') or doc.get('needs_recovery'):
+        api.fail('invalid_input', '请先将可编辑内容保存为完整候选稿。')
+    context = doc.get('context') or {}
+    lint = None
+    if doc['is_prose'] and context.get('plan'):
+        lint = api.lint_text(doc.get('prefix', '') + doc['text'], context['plan'])
+    prompt = ('请审查以下已保存文件，先核对文件仍与本次校验值一致，再读取本书约定及相关细纲、前文。\n'
+              f'书目录：{Path(root).absolute()}\n文件：{doc["path"]}\n校验值：{doc["sha256"]}\n'
+              f'文件状态：{doc["status"]}\n'
+              '先检查叙事、人物行动、连续性、阅读期待、字数与中文格式，指出具体依据。\n'
+              '本次只审查，不自动修改或正式采用；需要修改时另存候选。不要将页面格式检查当成人工审稿。')
+    return {'ok': True, 'prompt': prompt, 'lint': lint, 'status': '审稿任务已生成，尚未交给助手执行'}
+
+
+def _editor_search(root, query, offset=0, limit=30):
+    if not isinstance(query, str) or not query.strip() or len(query) > 200 or type(offset) is not int or offset < 0:
+        api.fail('invalid_input', '请输入1至200字搜索词。')
+    query = query.strip()
+    book = _ReadOnlyBook(root)
+    try:
+        with book.read_snapshot():
+            meta = _meta_map(book.db); meta['__root'] = str(book.root)
+            rows = [{'id': f'formal:{r["chapter"]}', 'path': _chapter_path(meta, r['chapter']),
+                     'title': Path(_chapter_path(meta, r['chapter'])).stem, 'sha256': r['sha']}
+                    for r in book.db.execute('SELECT chapter,sha FROM chapter_state ORDER BY chapter')]
+    finally:
+        book.close()
+    warnings = []
+    rows += [r for r in _author_files(Path(root), warnings) if Path(r['path']).suffix.lower() in ('.md', '.txt')]
+    hits, read_bytes, checked = [], 0, 0
+    # Bound each request and explicitly report incomplete coverage; never silently call a partial scan complete.
+    for row in rows:
+        if checked >= 3000 or read_bytes >= 32 * 1024 * 1024:
+            warnings.append('达到本轮搜索上限，尚未覆盖全部文件。可缩小作品材料范围后重试。')
+            break
+        checked += 1
+        try:
+            raw = _author_read(Path(root), row['path'])
+            read_bytes += len(raw)
+            if row.get('sha256') and hashlib.sha256(raw).hexdigest() != row['sha256']:
+                warnings.append('正式稿外改，未纳入搜索：' + row['path']); continue
+            text = raw.decode('utf-8')
+            match = re.search(re.escape(query), text, re.IGNORECASE)
+            if match:
+                found = match.start()
+                hits.append({'id': row['id'], 'path': row['path'], 'title': row['title'],
+                             'excerpt': text[max(0, found - 45):found + len(query) + 110].replace('\n', ' ')})
+        except (OSError, UnicodeError, api.StoryError):
+            warnings.append('无法读取，未纳入搜索：' + row['path'])
+    return {'ok': True, 'results': hits[offset:offset + limit], 'total': len(hits), 'offset': offset,
+            'has_more': offset + limit < len(hits), 'checked': checked, 'warnings': warnings,
+            'complete': checked == len(rows) and not warnings}
+
+
+def _library_roots(root, extra=None):
+    paths = [Path(root).absolute()] + [Path(p).expanduser().absolute() for p in (extra or [])]
+    if len(paths) > 30:
+        api.fail('invalid_input', '工作台书架最多登记30本作品。')
+    result = {}
+    for path in paths:
+        book = _ReadOnlyBook(path)
+        try:
+            key = hashlib.sha256(str(book.root).encode()).hexdigest()[:20]
+            result[key] = {'root': str(book.root), 'title': book.meta('title'), 'key': key}
+        finally:
+            book.close()
+    return result
+
+
+def _library_open(library, key, current_root=None, current_url=None):
+    if not isinstance(key, str) or key not in library:
+        api.fail('invalid_input', '作品未登记在本次书架中。')
+    root = library[key]['root']
+    if current_root is not None and root == str(current_root):
+        return {'ok': True, 'url': current_url, 'outdated': False}
+    state = _service_request(root)
+    if state.get('running'):
+        return {'ok': True, 'url': state['url'], 'outdated': state.get('outdated', False)}
+    # Unreachable instances are not assumed dead; only an unregistered/stopped service can start here.
+    record_path = api.safe_path(Path(root), '.story/workbench-service.json')
+    if record_path.exists():
+        record = json.loads(_author_read(Path(root), '.story/workbench-service.json', 8192))
+        if not record.get('stopped'):
+            api.fail('workbench_unreachable', '此作品的服务无法确认已退出，请先核对原工作台。')
+    import sys
+    import time
+    command = [sys.executable, str(Path(__file__).with_name('story.py')), 'workbench-serve', '--book', root]
+    for entry in library.values():
+        if entry['root'] != root:
+            command += ['--library-book', entry['root']]
+    process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                               stderr=subprocess.DEVNULL, start_new_session=True)
+    for _ in range(30):
+        time.sleep(0.1)
+        state = _service_request(root)
+        if state.get('running'):
+            return {'ok': True, 'url': state['url'], 'outdated': state.get('outdated', False)}
+        if process.poll() is not None:
+            break
+    api.fail('workbench_start_pending', '启动尚未确认，请稍后再次打开或查看该作品服务状态。')
 
 
 def _editor_page(packet, reading, token):
-    page = _render_desk(packet, reading)
-    script = """const editors=new Map(),saved=new Map();
-document.querySelectorAll('article').forEach(article=>{const area=document.createElement('textarea');area.value=article.querySelector('pre').textContent;area.hidden=true;area.setAttribute('aria-label','候选修订正文');area.style.cssText='width:100%;min-height:65vh;resize:vertical;font:18px/1.8 serif;padding:16px;border:1px solid #ccd5e0';article.append(area);editors.set(article.id,area);saved.set(article.id,area.value);});
-const editButton=document.querySelector('#edit-chapter'),saveButton=document.querySelector('#save-candidate'),message=document.querySelector('#save-message');
-function dirty(){return [...editors].some(([id,area])=>area.value!==saved.get(id));}
-function editingControls(){const area=editors.get(current);editButton.disabled=!area;saveButton.disabled=!area;editButton.textContent=area&&!area.hidden?'阅读预览':'编辑本章';}
-window.addEventListener('hashchange',editingControls);editingControls();
-editButton.addEventListener('click',()=>{const area=editors.get(current);if(!area)return;area.hidden=!area.hidden;const pre=document.getElementById(current).querySelector('pre');pre.hidden=!area.hidden;if(area.hidden)pre.textContent=area.value;else area.focus();editingControls();});
-saveButton.addEventListener('click',async()=>{const id=current,area=editors.get(id);if(!area)return;const text=area.value;saveButton.disabled=true;message.textContent='正在保存候选稿…';try{const response=await fetch(location.pathname+'candidate',{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify({chapter:Number(id.slice(8)),text})});const result=await response.json();if(!response.ok)throw new Error(result.message||'保存失败');saved.set(id,text);message.textContent='已保存候选稿：'+result.path+'；正式稿未改变。';}catch(error){message.textContent=error.message+' 编辑内容仍保留，请勿关闭页面。';}finally{editingControls();}});
-window.addEventListener('beforeunload',event=>{if(dirty()){event.preventDefault();event.returnValue='';}});""".replace("TOKEN", json.dumps(token))
-    old_script = re.search(r"<script>(.*?)</script>", page, re.S).group(1)
-    combined = old_script + "\n" + script
-    old_hash = base64.b64encode(hashlib.sha256(old_script.encode()).digest()).decode()
-    new_hash = base64.b64encode(hashlib.sha256(combined.encode()).digest()).decode()
-    page = page.replace(old_hash, new_hash).replace("default-src 'none';", "default-src 'none'; connect-src 'self';")
-    page = page.replace('<script>'+old_script+'</script>', '<script>'+combined+'</script>')
-    page = page.replace('<main class="manuscript">', '<div class="reader-controls"><button id="edit-chapter">编辑本章</button><button id="save-candidate">保存候选稿</button></div><p id="save-message" role="status" style="margin:8px 20px;overflow-wrap:anywhere">编辑仅存为候选，采用前仍需审查提交；切章保留未保存内容，关闭页面会丢失。</p><main class="manuscript">')
-    page = page.replace('本地只读</span>', '本地候选编辑</span>').replace('本页不提供编辑保存。', '编辑内容另存为候选稿，正式正文不变。')
-    return page.encode("utf-8")
+    # The editor loads one document at a time; author files are never executable HTML.
+    script = r"""const TOKEN=__TOKEN__, LIMIT=__LIMIT__;
+const $=id=>document.getElementById(id), docs=new Map();let active=null,offset=0,loading=false,reloadPending=false,openSequence=0,reloading=false,queryTimer;
+const note=text=>$('message').textContent=text;
+async function call(action,data={}){const response=await fetch(location.pathname+'api/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(data)});const value=await response.json();if(!response.ok)throw Error((value.message||'请求失败')+(value.details?.path?' 文件：'+value.details.path:'')+(value.details?.incomplete_path?' 暂存：'+value.details.incomplete_path:''));return value;}
+let currentCatalog=null,viewMode='chapters',metricTimer,metricSequence=0,searchSequence=0,fullSearchOffset=0;
+const readableMethod={visible_nonspace_v1:'非空白可见字符（含标点）',letters_numbers_v1:'汉字、字母与数字',han_v1:'汉字'};
+function chapterNumber(d){return d.context?.chapter||d.chapter||null;}
+function simpleCount(text){return [...text].filter(c=>!/[\s\p{Cc}\p{Cf}]/u.test(c)).length;}
+function inlineText(parent,text,path){
+ const regex=/(\[([^\]\n]+)\]\(([^)\n]+)\)|\*\*([^*\n]+)\*\*|`([^`\n]+)`)/g;let last=0,m;
+ while((m=regex.exec(text))){parent.append(document.createTextNode(text.slice(last,m.index)));let el;
+  if(m[2]){let url;try{url=new URL(m[3],'https://story.local/'+path);}catch{}if(url&&/^https?:$/.test(url.protocol)){
+   el=document.createElement('a');el.textContent=m[2];
+   if(url.hostname==='story.local'){el.href='#';el.onclick=e=>{e.preventDefault();try{openDoc('file:'+decodeURIComponent(url.pathname.slice(1)));}catch{note('链接路径无法识别。');}};}
+   else{el.href=url.href;el.target='_blank';el.rel='noreferrer noopener';}
+  }else{el=document.createElement('span');el.textContent=m[2];}}
+  else{el=document.createElement(m[4]?'strong':'code');el.textContent=m[4]||m[5];}
+  parent.append(el);last=regex.lastIndex;
+ }parent.append(document.createTextNode(text.slice(last)));
+}
+function renderMarkdown(container,text,path){
+ container.replaceChildren();const lines=text.replace(/\r\n/g,'\n').split('\n');let i=0;
+ const cells=line=>line.trim().replace(/^\||\|$/g,'').split('|').map(x=>x.trim());
+ while(i<lines.length){const line=lines[i];if(!line.trim()){i++;continue;}
+  if(line.startsWith('```')){const pre=document.createElement('pre');const block=[];i++;while(i<lines.length&&!lines[i].startsWith('```'))block.push(lines[i++]);i++;pre.textContent=block.join('\n');container.append(pre);continue;}
+  if(i+1<lines.length&&line.includes('|')&&/^\s*\|?\s*:?-{3,}/.test(lines[i+1])){
+   const table=document.createElement('table');const tr=document.createElement('tr');for(const x of cells(line)){const th=document.createElement('th');inlineText(th,x,path);tr.append(th);}table.append(tr);i+=2;
+   while(i<lines.length&&lines[i].includes('|')&&lines[i].trim()){const row=document.createElement('tr');for(const x of cells(lines[i++])){const td=document.createElement('td');inlineText(td,x,path);row.append(td);}table.append(row);}const wrap=document.createElement('div');wrap.className='table-scroll';wrap.append(table);container.append(wrap);continue;
+  }
+  const heading=line.match(/^(#{1,6})\s+(.+)/);if(heading){const h=document.createElement('h'+heading[1].length);inlineText(h,heading[2],path);container.append(h);i++;continue;}
+  const list=line.match(/^\s*(?:[-*+]\s+|\d+[.)]\s+)(.*)/);if(list){const ul=document.createElement(/^\s*\d/.test(line)?'ol':'ul');while(i<lines.length){const m=lines[i].match(/^\s*(?:[-*+]\s+|\d+[.)]\s+)(.*)/);if(!m)break;const li=document.createElement('li');inlineText(li,m[1],path);ul.append(li);i++;}container.append(ul);continue;}
+  const p=document.createElement(line.startsWith('> ')?'blockquote':'p');inlineText(p,line.replace(/^> /,''),path);container.append(p);i++;
+ }
+}
+function readingView(d){const formatted=d.render_markdown&&!d.editing&&!d.rawPreview&&!d.image;
+ $('formatted').hidden=!formatted;$('source-view').hidden=!d.render_markdown;$('source-view').textContent=d.rawPreview?'排版预览':'查看源码';
+ if(formatted){$('prose').hidden=true;renderMarkdown($('formatted'),d.value,d.path);}
+ $('history-note').textContent=d.historical_note||'';
+ $('review-task-box').hidden=true;
+ showChapterInfo(d);scheduleMetrics();
+}
+function showChapterInfo(d){const box=$('chapter-info');box.replaceChildren();const ctx=d.context,p=ctx?.plan;
+ if(!ctx){box.textContent='这是全书材料。可从左栏按章查看细纲、正文及候选。';return;}
+ const add=(title,text,target=box)=>{if(!text)return;const h=document.createElement('h4');h.textContent=title;const v=document.createElement('p');v.textContent=text;target.append(h,v);};
+ add('第'+ctx.chapter+'章 · 目标',p?.goal||'尚未保存工具章计划');add('前章衔接',ctx.previous_summary||'没有已提交的前章摘要');
+ add('停笔点',p?.stop);add('本章约束',(p?.constraints||[]).join('\n'));
+ const related=(currentCatalog?.related_files||currentCatalog?.files||[]).filter(r=>Number(r.path.split('/').pop().match(/^第(\d+)章(?:\s|_|\.)/)?.[1])===ctx.chapter);
+ if(related.length){add('相关材料','同章号匹配仅用于导航，不代表已经采用。');related.slice(0,30).forEach(r=>box.append(item(r)));}
+ if(ctx.review){const reviewBox=document.createElement('details');const summary=document.createElement('summary');summary.textContent='正式稿审查记录';reviewBox.append(summary);box.append(reviewBox);add('记录范围','以下记录只对应已提交正式稿，不能代替对当前候选的审查。',reviewBox);for(const [key,label]of Object.entries({causality:'因果',continuity:'连续性',constraints:'约束',style:'文风'})){add(label,ctx.review.checks?.[key]?.note,reviewBox);}for(const issue of ctx.review.issues||[])add('审查问题',issue.issue,reviewBox);}
+ else add('审查状态',ctx.formal_sha256?'暂无可展示的审查记录。':'尚无正式提交的审查记录。');
+}
+function scheduleMetrics(){clearTimeout(metricTimer);++metricSequence;const d=docs.get(active);if(!d||!d.editable){$('word-count').textContent='';return;}
+ $('word-count').textContent='正在核对字数…';const seq=metricSequence;metricTimer=setTimeout(async()=>{try{
+  const selected=d.editing?$('text').value.slice($('text').selectionStart,$('text').selectionEnd):'';
+  const m=await call('metrics',{id:d.id,text:d.value,selection:selected});if(seq!==metricSequence||active!==d.id)return;
+  $('word-count').textContent=(m.is_prose?'正文':'材料')+' '+m.count+' 字符 · '+readableMethod[m.method]+(m.is_prose?(m.include_title?' · 含章名':' · 不含章名'):'')+(m.target?' · 目标 '+m.target.join('～')+' · '+(m.in_range?'范围内':'范围外'):'')+(m.selection?' · 已选 '+m.selection:'');
+ }catch(e){if(seq===metricSequence)$('word-count').textContent='字数核对失败：'+e.message;}},350);
+}
+function drawCatalog(c,expanded){currentCatalog=c;const w=c.workspace;
+ $('book-progress').textContent=`当前进度：正式 ${w.formal_total} 章 · 已规划 ${w.planned_total} 章 · 下一章 第${w.next_chapter}章 · 刷新于 ${new Date(w.captured_at).toLocaleTimeString()}`;
+ if(viewMode!=='chapters')return;
+ $('list').replaceChildren();
+ function group(title,rows,expandedDefault=false){const d=document.createElement('details');d.dataset.group=title;d.open=$('search').value?true:(expanded.get(title)??expandedDefault);const h=document.createElement('summary');h.textContent=title;d.append(h);rows.forEach(r=>d.append(item(r)));$('list').append(d);}
+ group('全书材料',c.files.filter(r=>!/^第\d+章(?:\s|_|$)/.test(r.title)&&r.category!=='自动恢复'),false);
+ for(const g of w.groups){group((g.volume?g.volume+' / ':'')+g.title+' · '+g.status,g.items,!!$('search').value||g.chapter===w.next_chapter||g.chapter===(chapterNumber(docs.get(active)||{})||1));}
+ const recoveries=c.files.filter(r=>r.category==='自动恢复');if(recoveries.length)group('自动恢复',recoveries,true);
+ $('range').textContent=w.total?`${w.offset+1}—${Math.min(w.offset+w.limit,w.total)} / ${w.total} 个章节（含规划）`:'尚无章节规划';
+ $('older').disabled=!w.has_more;$('newer').disabled=w.offset===0;
+ if(active)showChapterInfo(docs.get(active));
+}
+// Paragraph LCS with a bounded fallback. Preserve every line, including blank lines, on both sides.
+function diffLines(before,after){const a=before.split('\n'),b=after.split('\n');if(before===after)return {left:a.map(text=>({text,change:''})),right:b.map(text=>({text,change:''})),coarse:false};if(a.length*b.length>350000){return {left:a.map(t=>({text:t,change:'removed'})),right:b.map(t=>({text:t,change:'added'})),coarse:true};}
+ const dp=Array.from({length:a.length+1},()=>new Uint32Array(b.length+1));for(let i=a.length-1;i>=0;i--)for(let j=b.length-1;j>=0;j--)dp[i][j]=a[i]===b[j]?1+dp[i+1][j+1]:Math.max(dp[i+1][j],dp[i][j+1]);
+ const left=[],right=[];let i=0,j=0;while(i<a.length||j<b.length){if(i<a.length&&j<b.length&&a[i]===b[j]){left.push({text:a[i++],change:''});right.push({text:b[j++],change:''});}else if(i<a.length&&(j===b.length||dp[i+1][j]>=dp[i][j+1]))left.push({text:a[i++],change:'removed'});else right.push({text:b[j++],change:'added'});}return {left,right,coarse:false};}
+function drawDiff(before,after){const diff=diffLines(before,after);for(const [id,rows]of [['before',diff.left],['after',diff.right]]){const box=$(id);box.replaceChildren();for(const r of rows){const span=document.createElement('span');span.className='diff-line '+r.change;span.textContent=r.text;box.append(span);}}
+ $('compare-label').textContent+=' · 红色为删除，绿色为新增'+(diff.coarse?'（长文本使用整块高亮）':'');}
+async function fullSearch(){const seq=++searchSequence,q=$('full-query').value.trim();if(!q){fullSearchOffset=0;$('search-results').replaceChildren();$('search-status').textContent='';$('search-prev').disabled=true;$('search-next').disabled=true;return;}$('search-status').textContent='搜索中…';try{const r=await call('search',{query:q,offset:fullSearchOffset});if(seq!==searchSequence)return;$('search-results').replaceChildren();for(const row of r.results){const b=item(row);const small=document.createElement('small');small.textContent=row.excerpt;b.append(small);$('search-results').append(b);}$('search-status').textContent=`找到 ${r.total} 份文件 · 已检查 ${r.checked} 份`+(r.complete?' · 本轮覆盖完整':' · 存在未覆盖文件')+(r.warnings.length?'\n'+r.warnings.join('\n'):'');$('search-prev').disabled=!fullSearchOffset;$('search-next').disabled=!r.has_more;}catch(e){if(seq===searchSequence)$('search-status').textContent=e.message;}}
+function applyReading(){const size=$('font-size').value,line=$('line-height').value,font=$('font-family').value;document.documentElement.style.setProperty('--reader-size',size+'px');document.documentElement.style.setProperty('--reader-line',line);document.documentElement.style.setProperty('--reader-font',font==='sans'?'system-ui':"'Songti SC','SimSun',serif");document.body.classList.toggle('focus-reading',$('focus-reading').checked);try{localStorage.setItem('story-reading',JSON.stringify({size,line,font,focus:$('focus-reading').checked}));}catch{}}
+async function loadBooks(){try{const r=await call('books');$('book-select').replaceChildren();for(const b of r.books){const o=document.createElement('option');o.value=b.key;o.textContent=b.title;o.selected=b.root===r.current;$('book-select').append(o);}$('book-open').disabled=r.books.length<2;$('book-hint').textContent=r.books.length<2?'目前只登记本书；启动服务时可添加其他作品。':'作品会在新标签页打开，当前编辑保留。';}catch(e){$('book-hint').textContent=e.message;}}
+function setupWorkspace(){
+ $('view-chapters').onclick=()=>{viewMode='chapters';offset=0;catalog();};$('view-files').onclick=()=>{viewMode='files';offset=0;catalog();};
+ $('source-view').onclick=()=>{const d=docs.get(active);d.rawPreview=!d.rawPreview;show(d);};
+ $('text').addEventListener('select',scheduleMetrics);$('text').addEventListener('keyup',scheduleMetrics);
+ $('review-task').onclick=async()=>{const d=docs.get(active);if(!d?.editable)return;if(dirty(d)||d.needs_recovery){note('请先保存当前候选稿，再生成绑定该文件的审稿任务。');return;}try{const r=await call('review-task',{id:d.id,sha256:d.sha256});if(active!==d.id)return;$('review-task-box').hidden=false;$('review-prompt').value=r.prompt;$('review-task-status').textContent=r.status+(r.lint?'；基础检查'+(r.lint.ok?'未发现阻断项':'发现 '+r.lint.errors.length+' 项问题')+'，不代表语义审查通过。':'。');$('review-findings').textContent=r.lint?[...r.lint.errors,...r.lint.warnings].map(x=>x.code+(x.expected?'：目标 '+x.expected.join('～')+'，实际 '+x.actual:'')).join('\n'):'';}catch(e){note(e.message);}};
+ $('copy-review').onclick=async()=>{try{await navigator.clipboard.writeText($('review-prompt').value);$('review-task-status').textContent='已复制，请粘贴给助手执行审查；当前尚未正式采用。';}catch{$('review-prompt').select();note('请复制已选中的审稿任务。');}};
+ $('full-go').onclick=()=>{fullSearchOffset=0;fullSearch();};$('full-query').onkeydown=e=>{if(e.key==='Enter'){fullSearchOffset=0;fullSearch();}};$('search-prev').onclick=()=>{fullSearchOffset=Math.max(0,fullSearchOffset-30);fullSearch();};$('search-next').onclick=()=>{fullSearchOffset+=30;fullSearch();};
+ try{const p=JSON.parse(localStorage.getItem('story-reading')||'{}');if(['16','19','22','25'].includes(p.size))$('font-size').value=p.size;if(['1.6','1.9','2.2'].includes(p.line))$('line-height').value=p.line;if(['serif','sans'].includes(p.font))$('font-family').value=p.font;$('focus-reading').checked=p.focus===true;}catch{}
+ for(const id of ['font-size','line-height','font-family','focus-reading'])$(id).onchange=applyReading;applyReading();
+ $('book-open').onclick=async()=>{try{const r=await call('open-book',{key:$('book-select').value});const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='打开所选作品';$('book-hint').replaceChildren(a);a.click();if(r.outdated)note('所选作品服务仍使用较早代码；原编辑保留，可另行升级。');}catch(e){$('book-hint').textContent=e.message;}};
+ loadBooks();
+}
+
+function dirty(d){return d&&d.editable&&d.value!==d.text;}
+function badge(){pendingEdits();if(!active)return;const d=docs.get(active);$('state').textContent=dirty(d)?'未保存的候选编辑':d.status;$('save').disabled=(!dirty(d)&&!d.needs_recovery)||d.saving;$('save').textContent=d.needs_recovery?'恢复为新候选':'保存候选稿';$('edit').disabled=!d.editable;$('review-task').disabled=!d.editable;$('compare').disabled=!d.comparison&&d.kind!=='formal';$('download').disabled=!d.editable;$('edit').textContent=d.editing?'阅读预览':'编辑';document.querySelectorAll('[data-doc]').forEach(e=>{const item=docs.get(e.dataset.doc);e.classList.toggle('selected',e.dataset.doc===active);e.classList.toggle('dirty',!!dirty(item));});}
+function show(d){active=d.id;$('title').textContent=d.title;$('path').textContent=d.path;$('text').value=d.value;$('text').hidden=!d.editable||!d.editing;$('prose').hidden=!!d.image||!!d.editing;$('prose').textContent=d.value||'';$('cover').hidden=!d.image;if(d.image)$('cover').src=d.image;$('difference').hidden=true;$('detail').textContent=[d.status,d.metadata_error?'来源记录文件：'+d.metadata_error.path:'',d.modified?'文件修改时间：'+new Date(d.modified).toLocaleString():'',d.source?'来源：'+d.source:'',d.summary?'正式稿摘要：'+d.summary:'',d.comparison?'对照对象：'+d.comparison.title:''].filter(Boolean).join('\n\n');readingView(d);badge();}
+async function openDoc(id){const sequence=++openSequence;try{if(!docs.has(id)){const d=await call('open',{id});if(sequence!==openSequence)return;d.value=d.text||'';d.editing=false;d.recoveryKey=crypto.randomUUID();if(!docs.has(id))docs.set(id,d);}if(sequence!==openSequence)return;show(docs.get(id));location.hash=encodeURIComponent(id);}catch(e){if(sequence===openSequence)note(e.message);}}
+function pendingEdits(){const pending=[...docs.values()].filter(dirty);$('pending-box').hidden=!pending.length;$('pending-count').textContent='待保存文件 · '+pending.length;$('pending-list').replaceChildren();for(const d of pending){const b=document.createElement('button');b.className='document';b.title=d.path||d.id;b.textContent=d.title+' · '+(d.recovered===d.value?'已写入恢复稿':'尚未写入恢复稿');b.onclick=()=>openDoc(d.id);$('pending-list').append(b);}}
+function item(row){const b=document.createElement('button');b.className='document';b.dataset.doc=row.id;b.title=row.path;b.textContent=row.category==='正式正文'||row.category==='计划'?row.title:row.title+' · '+(row.path.split('/').slice(-2,-1)[0]||'书根');b.onclick=()=>openDoc(row.id);return b;}
+async function catalog(){if(loading){reloadPending=true;return;}loading=true;try{const c=await call('catalog',{offset,query:$('search').value});$('directory-warning').textContent=(c.warnings||[]).join('\n');const expandedGroups=new Map([...$('list').querySelectorAll('details')].map(g=>[g.dataset.group,g.open]));const listScroll=$('list').parentElement.scrollTop;if(viewMode!=='chapters'){$('list').replaceChildren();const section=(title,rows,expanded=true)=>{const group=document.createElement('details');group.dataset.group=title;group.open=$('search').value?true:(expandedGroups.get(title)??expanded);const summary=document.createElement('summary');summary.textContent=title+' · '+rows.length;group.append(summary);rows.forEach(r=>group.append(item(r)));$('list').append(group);};section('正式正文',c.chapters);for(const category of ['候选与草稿','自动恢复','创作材料','拆书分析']){const rows=c.files.filter(r=>r.category===category);if(rows.length){const folders=new Map();for(const row of rows){const folder=row.path.includes('/')?row.path.slice(0,row.path.lastIndexOf('/')):'书根';if(!folders.has(folder))folders.set(folder,[]);folders.get(folder).push(row);}for(const [folder,entries] of folders)section(category+' / '+folder,entries,!!$('search').value||category==='自动恢复');}}$('range').textContent=c.total?`${offset+1}—${Math.min(offset+LIMIT,c.total)} / ${c.total} 章`:'没有匹配的正式章节';$('older').disabled=!c.has_more;$('newer').disabled=offset===0;}drawCatalog(c,expandedGroups);$('list').parentElement.scrollTop=listScroll;badge();if(!active){let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{}if(/^chapter-\d+$/.test(id||''))id='formal:'+id.slice(8);id=id||c.chapters[0]?.id||c.files[0]?.id||c.workspace?.groups[0]?.items[0]?.id;if(id)await openDoc(id);}}catch(e){note(e.message);}finally{loading=false;if(reloadPending){reloadPending=false;catalog();}}}
+async function recover(d,force=false){if(d.recovering){await d.recovering;if(force||(dirty(d)&&d.value!==d.recovered))return recover(d,force);return;}if(!dirty(d)||(!force&&d.value===d.recovered))return;if(force)d.recovered=undefined;const value=d.value;d.recovering=(async()=>{try{const r=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});d.recovered=value;d.recoveryPath=r.path;d.recoverySha=r.recovery_sha256;d.recoveryMetadataSha=r.recovery_metadata_sha256;if(r.recovery_key)d.recoveryKey=r.recovery_key;pendingEdits();await catalog();if(active===d.id)note(r.conflict?'原恢复稿有变化或保存待核对，本次编辑已另存恢复稿，原文件保留。':'编辑已写入自动恢复稿；正式采用前仍须审查。');}catch(e){if(active===d.id)note('自动恢复保存失败：'+e.message+'，请下载当前文字。');}})();try{await d.recovering;}finally{d.recovering=null;}}
+$('text').addEventListener('input',()=>{const d=docs.get(active);d.value=$('text').value;clearTimeout(d.timer);d.timer=setTimeout(()=>recover(d),1200);badge();scheduleMetrics();});
+$('edit').onclick=()=>{const d=docs.get(active);d.editing=!d.editing;show(d);if(d.editing)$('text').focus();};
+$('save').onclick=async()=>{const d=docs.get(active);if((!dirty(d)&&!d.needs_recovery)||d.saving||reloading)return;const text=d.value;d.saving=true;badge();try{await recover(d);const r=await call('save',{id:d.id,sha256:d.sha256,snapshot:d.snapshot,metadata_sha256:d.metadata_sha256,text});const fresh=await call('open',{id:r.id});fresh.value=d.value;fresh.editing=d.editing;fresh.recoveryKey=crypto.randomUUID();docs.set(r.id,fresh);d.value=d.text;clearTimeout(d.timer);if(active===d.id){show(fresh);location.hash=encodeURIComponent(fresh.id);}if(dirty(fresh))fresh.timer=setTimeout(()=>recover(fresh),1200);note('已保存候选稿：'+r.path+'；正式稿未改变。');await catalog();}catch(e){note(e.message+' 当前文字仍在编辑器中，可下载或从自动恢复稿找回。');}finally{d.saving=false;badge();}};
+$('compare').onclick=async()=>{const d=docs.get(active),id=active;$('difference').hidden=true;try{const fresh=await call('open',{id:d.kind==='formal'?id:'formal:'+d.chapter});if(active!==id)return;$('before').textContent=fresh.text;$('after').textContent=d.value;$('compare-label').textContent=d.base_sha256?(d.base_sha256===fresh.sha256?'最新正式稿与当前候选：基线一致':'最新正式稿与当前候选：正式基线已变化'):'最新正式稿对照：未确认版本关系';drawDiff(fresh.text,d.value);$('difference').hidden=false;}catch(e){if(active===id)note('无法读取最新正式稿：'+e.message);}};
+$('download').onclick=()=>{const d=docs.get(active),a=document.createElement('a');const url=URL.createObjectURL(new Blob([d.value],{type:'text/plain;charset=utf-8'}));a.href=url;a.download=d.title+'-候选.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+async function reloadDocuments(preserve){if(reloading)return;if([...docs.values()].some(d=>d.saving)){note('候选稿正在保存，请完成后再重新载入。');return;}const changes=[...docs.values()].filter(dirty);if(changes.length&&!preserve){note('有未保存编辑，请使用“保留恢复稿并重新载入”。');return;}reloading=true;const id=active;try{for(const d of changes){await recover(d,true);if(d.value!==d.recovered){note('恢复尚未成功，已停止重新载入，请下载当前文字。');return;}}const fresh=id?await call('open',{id}):null;if(active!==id){note('已切换文件，本次重新载入取消；原编辑仍保留。');return;}for(const d of docs.values()){if(dirty(d)&&d.value!==d.recovered){note('恢复期间又有输入，已保留编辑；请再次操作。');return;}}++openSequence;for(const d of docs.values())clearTimeout(d.timer);docs.clear();active=null;if(fresh){fresh.value=fresh.text||'';fresh.editing=false;fresh.recoveryKey=crypto.randomUUID();docs.set(fresh.id,fresh);show(fresh);}note(changes.length?'恢复稿已保留，来源已重新载入；可从左栏打开恢复稿。':'来源已重新读取。');await catalog();}catch(e){note('重新载入失败：'+e.message+'；原编辑仍保留。');}finally{reloading=false;}}
+$('refresh').onclick=()=>reloadDocuments(false);
+$('recover-reload').onclick=()=>reloadDocuments(true);
+$('search').oninput=()=>{clearTimeout(queryTimer);queryTimer=setTimeout(()=>{offset=0;catalog();},300);};$('older').onclick=()=>{offset+=LIMIT;catalog();};$('newer').onclick=()=>{offset=Math.max(0,offset-LIMIT);catalog();};
+window.addEventListener('beforeunload',event=>{if([...docs.values()].some(dirty)){event.preventDefault();event.returnValue='';}});
+window.addEventListener('hashchange',()=>{let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}if(/^chapter-\d+$/.test(id))id='formal:'+id.slice(8);if(id&&id!==active)openDoc(id);});
+setupWorkspace();catalog();""".replace('__TOKEN__', json.dumps(token)).replace('__LIMIT__', str(packet['chapters']['limit']))
+    digest = base64.b64encode(hashlib.sha256(script.encode()).digest()).decode()
+    page = '''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'self'; img-src data:; script-src 'sha256-__HASH__'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>__TITLE__ · 写作工作台</title><style>
+#build-label{display:block;color:#718096;font-size:11px}#pending-box{border:1px solid #e5c694;border-radius:8px;padding:10px;margin-bottom:14px;background:#fffaf0}#pending-list{max-height:220px;overflow:auto}*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;color:#293446;background:#f7f8fa;font:14px/1.7 system-ui,-apple-system,'PingFang SC',sans-serif}header{height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid #dde3ea;background:white}button,input{font:inherit}button{cursor:pointer;border:1px solid #dce2e9;background:white;border-radius:7px;padding:7px 12px;color:#34445b}button:disabled{opacity:.45;cursor:default}.desk{display:grid;grid-template-columns:280px minmax(0,1fr) 280px;height:calc(100vh - 66px)}nav,aside{overflow:auto;padding:20px;background:#f5f7fa}nav{border-right:1px solid #e1e5eb}aside{border-left:1px solid #e1e5eb}main{overflow:auto;padding:28px 40px;background:white;min-width:0}#search{width:100%;padding:10px;border:1px solid #dce2e9;border-radius:6px}.document{display:block;width:100%;text-align:left;margin:5px 0;border:0;background:transparent;overflow-wrap:anywhere}.selected{background:#e7eefb;color:#285c9e}.dirty:after{content:' · 未保存';color:#b65226}summary{cursor:pointer;margin:16px 0 8px;color:#6d7b8d}.tools{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:-28px;background:white;padding:8px 0;z-index:1}h1{font-size:25px;font-weight:600}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:19px/2 'Songti SC','SimSun',serif}textarea{width:100%;min-height:65vh;resize:vertical;border:1px solid #cad5e1;border-radius:6px;padding:18px;font:19px/1.9 'Songti SC','SimSun',serif;color:#293446}#detail{font:13px/1.8 system-ui;white-space:pre-wrap}#path,#message,#state{overflow-wrap:anywhere;color:#718096;font-size:12px}#state{color:#966127}#cover{max-width:100%;max-height:75vh}.comparison{display:grid;grid-template-columns:1fr 1fr;gap:20px}.comparison pre{font-size:15px;background:#f7f8fa;padding:12px}.pager{display:flex;gap:8px;margin:12px 0}#range{font-size:12px;color:#718096}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #527bb5}@media(max-width:1000px){.desk{grid-template-columns:220px minmax(0,1fr) 230px}main{padding:24px}}@media(max-width:760px){.desk{grid-template-columns:150px minmax(0,1fr)}aside{display:none}nav{padding:10px}main{padding:15px}.comparison{grid-template-columns:1fr}}
+
+:root{--reader-size:19px;--reader-line:1.9;--reader-font:'Songti SC','SimSun',serif}#prose,#text,#formatted{font-size:var(--reader-size);line-height:var(--reader-line);font-family:var(--reader-font)}#formatted{overflow-wrap:anywhere}#formatted h1{font-size:1.35em}#formatted h2{font-size:1.18em}#formatted h3{font-size:1.05em}#formatted pre{font:14px/1.6 monospace;background:#f5f7fa;padding:12px}#formatted code{font-size:.85em;background:#f1f4f8}#formatted table{border-collapse:collapse;font:14px/1.7 system-ui;width:100%}#formatted td,#formatted th{border:1px solid #dce2e9;padding:8px;text-align:left}.table-scroll{overflow:auto}#book-progress{font-size:12px;color:#526777;margin:4px 0}header{height:auto;min-height:78px;gap:14px}.desk{height:calc(100vh - 88px)}#history-note{font:13px/1.6 system-ui;color:#946425;background:#fff6df}#history-note:empty{display:none}#word-count{font:13px/1.8 system-ui;color:#456875}#chapter-info{font:13px/1.8 system-ui;white-space:pre-wrap}#chapter-info h4{margin-bottom:5px}#chapter-info p{margin-top:5px}#chapter-info .document{font-size:12px}#review-prompt{min-height:220px;font:13px/1.8 system-ui}#review-task-box{padding:14px;background:#eef4fa;margin:20px 0}#review-findings{font:13px/1.6 system-ui;color:#8a392b}.diff-line{display:block;white-space:pre-wrap;min-height:1em}.diff-line.removed{background:#ffe3df;color:#882f26}.diff-line.added{background:#ddf4e4;color:#215b36}.navigation-mode{display:flex;gap:4px;margin:10px 0}.navigation-mode button{font-size:12px}#search-results small{display:block;font-size:12px;color:#677488;margin-top:6px}#search-status,#book-hint{white-space:pre-wrap;font:12px/1.7 system-ui}#book-select,#full-query{width:100%;max-width:100%;padding:6px}#reading-options{font:13px/1.8 system-ui;padding:8px 0}#reading-options label{display:inline-block;margin-right:12px}#reading-options select{font:inherit}.focus-reading .desk{grid-template-columns:240px minmax(0,1fr)}.focus-reading aside{display:none}.focus-reading main{padding-left:max(24px,calc((100vw - 1080px)/2));padding-right:max(24px,calc((100vw - 1080px)/2))}@media(max-width:760px){header{padding:10px;flex-wrap:wrap}.desk{height:auto;min-height:80vh;grid-template-columns:135px minmax(0,1fr)}.focus-reading .desk{grid-template-columns:1fr}.focus-reading nav{display:none}main{max-height:85vh}.tools button{font-size:12px}#book-progress{font-size:11px}}
+</style></head><body><header><div><strong>__TITLE__</strong><p id="book-progress" role="status">正在读取当前进度…</p><small id="build-label" title="用于区分工作台页面更新，不是技能发布版本">界面标识：__BUILD__</small></div><div><button id="recover-reload">保留恢复稿并重新载入</button> <button id="refresh">刷新目录与状态</button></div></header><div class="desk"><nav aria-label="作品目录"><details><summary>切换作品</summary><select id="book-select" aria-label="选择作品"></select><button id="book-open">打开作品</button><p id="book-hint"></p></details><div class="navigation-mode"><button id="view-chapters">按章查看</button><button id="view-files">按文件查看</button></div><section id="pending-box" hidden><strong id="pending-count"></strong><div id="pending-list"></div></section><input id="search" type="search" placeholder="搜索全书章名或材料路径" aria-label="搜索作品文件"><div class="pager"><button id="newer">较新章节</button><button id="older">更早章节</button></div><p id="range"></p><p id="directory-warning" role="status"></p><div id="list"></div><details><summary>全文搜索</summary><input id="full-query" aria-label="搜索正文与材料内容" placeholder="搜索正文与材料内容"><button id="full-go">搜索内容</button><p id="search-status" role="status"></p><div id="search-results"></div><button id="search-prev" disabled>上一页结果</button><button id="search-next" disabled>下一页结果</button></details></nav><main><div class="tools"><button id="edit" disabled>编辑</button><button id="save" disabled>保存候选稿</button><button id="compare" disabled>对照正式稿</button><button id="review-task" disabled>审稿</button><button id="source-view" hidden>查看源码</button><button id="download" disabled>下载当前文字</button></div><p id="message" role="status">编辑会写入本书自动恢复稿；关闭前仍请保存候选。文件名称不代表已采用。</p><details id="reading-options"><summary>阅读设置</summary><label>字号 <select id="font-size"><option>16</option><option selected>19</option><option>22</option><option>25</option></select></label><label>行距 <select id="line-height"><option>1.6</option><option selected>1.9</option><option>2.2</option></select></label><label>字体 <select id="font-family"><option value="serif">宋体</option><option value="sans">黑体</option></select></label><label><input id="focus-reading" type="checkbox">专注阅读</label></details><p id="word-count" role="status"></p><h1 id="title">选择章节或材料</h1><p id="state"></p><p id="path"></p><p id="history-note"></p><div id="formatted" hidden></div><pre id="prose"></pre><textarea id="text" aria-label="候选正文编辑" hidden></textarea><img id="cover" alt="封面预览" hidden><section id="review-task-box" hidden><h3>交给助手审稿</h3><p id="review-task-status"></p><pre id="review-findings"></pre><textarea id="review-prompt" aria-label="审稿任务" readonly></textarea><button id="copy-review">复制审稿任务</button></section><section id="difference" hidden><p id="compare-label"></p><div class="comparison"><section><h3>当前正式稿</h3><pre id="before"></pre></section><section><h3>当前候选</h3><pre id="after"></pre></section></div></section></main><aside><h3>本章写作</h3><div id="chapter-info"></div><h3>文件与版本</h3><pre id="detail"></pre><h3>采用候选</h3><p>保存不会覆盖正式稿。请将候选路径交给助手，按现有审稿和历史修订流程采用。</p><p>旧稿未登记的版本关系会明确标注；自动恢复稿须自行核对后再采用。</p><p>自动恢复在停止输入后写入本书文件；失败会提示。关闭或崩溃前尚未写入的文字仍可能丢失。</p></aside></div><script>__SCRIPT__</script></body></html>'''
+    return page.replace('__TITLE__', _escape(packet['book']['title'])).replace('__HASH__', digest).replace('__BUILD__', hashlib.sha256((page + script.partition('\n')[2]).encode()).hexdigest()[:10]).replace('__SCRIPT__', script).encode('utf-8')
 
 
-def editor_server(root, limit=DEFAULT_LIMIT):
-    book = _ReadOnlyBook(root)
+@contextmanager
+def _editor_lease(root):
+    # Keep the lock inode in place. The OS releases ownership on normal exit or
+    # process death; never infer ownership from a stale PID or delete the lock.
+    path = api.safe_path(root, '.story/workbench-server.lock')
+    with api._pinned_directory(path.parent) as directory:
+        with path.open('a+b') as handle:
+            api._verify_bound_directory(directory)
+            handle.seek(0, 2)
+            if handle.tell() == 0:
+                handle.write(b'0')
+                handle.flush()
+            handle.seek(0)
+            try:
+                if os.name == 'nt':
+                    import msvcrt
+                    msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+                else:
+                    import fcntl
+                    fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except OSError:
+                api.fail('workbench_running', '本书已有工作台运行。请用 workbench-status 查看；升级前保留所有页面编辑，再用 workbench-stop --saved 停止。')
+            try:
+                yield
+            finally:
+                handle.seek(0)
+                if os.name == 'nt':
+                    msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+                else:
+                    fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+def _service_request(root, action='session', saved=False):
+    root = Path(root).expanduser().resolve()
     try:
-        packet = snapshot(book, limit=limit)
-        reading = _reading_text(book, packet)
+        record = json.loads(_author_read(root, '.story/workbench-service.json', 8192))
+    except FileNotFoundError:
+        return {'ok': True, 'running': False, 'status': '未登记服务；较早版本的服务须另行核对。'}
+    except (ValueError, UnicodeError):
+        api.fail('workbench_service_invalid', '工作台服务记录损坏，请保留记录并核对实际进程。')
+    if (not isinstance(record, dict) or record.get('root') != str(root) or
+            type(record.get('port')) is not int or not 1 <= record['port'] <= 65535 or
+            not isinstance(record.get('token'), str) or not re.fullmatch(r'[A-Za-z0-9_-]{43}', record['token']) or
+            not isinstance(record.get('instance'), str) or not re.fullmatch(r'[0-9a-f]{32}', record['instance'])):
+        api.fail('workbench_service_invalid', '工作台服务记录无效；不会向未确认的进程发送停止请求。')
+    if action == 'stop' and not saved:
+        api.fail('workbench_unsaved', '请先保留所有工作台页面的编辑，再使用 --saved 停止服务。')
+    if record.get('stopped') is True:
+        return {'ok': True, 'running': False, 'status': '登记服务已正常停止。'}
+    connection = http.client.HTTPConnection('127.0.0.1', record['port'], timeout=3)
+    try:
+        origin = f"http://127.0.0.1:{record['port']}"
+        connection.request('POST', '/' + record['token'] + '/api/' + action,
+                           json.dumps({'instance': record['instance'], 'saved': saved}),
+                           {'Content-Type': 'application/json', 'Origin': origin, 'X-Story-Token': record['token']})
+        response = connection.getresponse()
+        raw = response.read(8193)
+        if response.status != 200 or len(raw) > 8192:
+            api.fail('workbench_service_mismatch', '服务未确认此实例；不会按记录中的 PID 结束进程。')
+        result = json.loads(raw)
+        if not isinstance(result, dict) or result.get('instance') != record['instance'] or result.get('root') != str(root):
+            api.fail('workbench_service_mismatch', '服务身份不一致，未确认停止。')
+        result['outdated'] = result.get('code_sha256') != hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+        result['url'] = origin + '/' + record['token'] + '/'
+        return result
+    except (OSError, http.client.HTTPException, ValueError) as error:
+        return {'ok': True, 'running': None, 'status': '登记服务暂不可达，不能据此判定进程已退出。', 'reason': str(error)}
     finally:
-        book.close()
+        connection.close()
+
+
+def editor_server(root, limit=DEFAULT_LIMIT, library_books=None):
+    root = Path(root).expanduser().resolve()
+    packet = _editor_packet(root, limit=limit)
     token = secrets.token_urlsafe(32)
     route = '/' + token + '/'
-    page = _editor_page(packet, reading, token)
+    library = _library_roots(root, library_books)
+    identity = {'instance': uuid.uuid4().hex, 'root': str(root), 'pid': os.getpid(),
+                'code_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), 'started': _utc_now()}
 
     class Handler(BaseHTTPRequestHandler):
         def setup(self):
@@ -1168,35 +2014,38 @@ def editor_server(root, limit=DEFAULT_LIMIT):
         def log_message(self, *args):
             pass
 
-        def reply(self, status, data, content_type="application/json; charset=utf-8"):
+        def reply(self, status, data, content_type='application/json; charset=utf-8'):
             self.send_response(status)
-            self.send_header("Content-Type", content_type)
-            self.send_header("Content-Length", str(len(data)))
-            self.send_header("Cache-Control", "no-store")
-            self.send_header("X-Content-Type-Options", "nosniff")
-            self.send_header("Referrer-Policy", "no-referrer")
-            self.send_header("X-Frame-Options", "DENY")
+            self.send_header('Content-Type', content_type)
+            self.send_header('Content-Length', str(len(data)))
+            self.send_header('Cache-Control', 'no-store')
+            self.send_header('X-Content-Type-Options', 'nosniff')
+            self.send_header('Referrer-Policy', 'no-referrer')
+            self.send_header('X-Frame-Options', 'DENY')
             self.end_headers()
             self.wfile.write(data)
 
         def allowed(self):
-            return self.headers.get("Host") == f"127.0.0.1:{self.server.server_port}"
+            return self.headers.get('Host') == f'127.0.0.1:{self.server.server_port}'
 
         def do_GET(self):
             if not self.allowed() or self.path != route:
                 return self.reply(404, b'{}')
-            self.reply(200, page, "text/html; charset=utf-8")
+            try:
+                fresh = _editor_packet(root, limit=limit)
+                self.reply(200, _editor_page(fresh, {}, token), 'text/html; charset=utf-8')
+            except (api.StoryError, OSError, ValueError) as error:
+                self.reply(409, json.dumps({'message': str(error)}, ensure_ascii=False).encode())
 
         def do_POST(self):
-            origin = f"http://127.0.0.1:{self.server.server_port}"
-            if (not self.allowed() or self.path != route+'candidate' or
-                    self.headers.get("Origin") != origin or
-                    self.headers.get("X-Story-Token") != token):
+            origin = f'http://127.0.0.1:{self.server.server_port}'
+            if (not self.allowed() or not self.path.startswith(route) or
+                    self.headers.get('Origin') != origin or self.headers.get('X-Story-Token') != token):
                 return self.reply(403, b'{}')
-            if self.headers.get("Content-Type") != "application/json" or self.headers.get("Transfer-Encoding"):
+            if self.headers.get('Content-Type') != 'application/json' or self.headers.get('Transfer-Encoding'):
                 return self.reply(400, b'{}')
             try:
-                length = int(self.headers.get("Content-Length", "0"))
+                length = int(self.headers.get('Content-Length', '0'))
                 if not 0 < length <= 7 * 1024 * 1024:
                     return self.reply(413, b'{}')
                 raw = self.rfile.read(length)
@@ -1205,21 +2054,92 @@ def editor_server(root, limit=DEFAULT_LIMIT):
                 payload = json.loads(raw)
                 if not isinstance(payload, dict):
                     return self.reply(400, b'{}')
-                result = _save_candidate(root, packet, payload.get("chapter"), payload.get("text"))
+                action = self.path[len(route):]
+                if action in ('api/session', 'api/stop'):
+                    if payload.get('instance') != identity['instance']:
+                        return self.reply(409, b'{}')
+                    if action == 'api/stop' and payload.get('saved') is not True:
+                        return self.reply(409, b'{}')
+                    result = {'ok': True, **identity, 'running': True, 'stop_requested': action == 'api/stop'}
+                    self.reply(200, json.dumps(result, ensure_ascii=False).encode())
+                    if action == 'api/stop':
+                        threading.Thread(target=self.server.shutdown, daemon=True).start()
+                    return
+                elif action == 'api/catalog':
+                    result = _editor_catalog(root, payload.get('offset', 0), limit, payload.get('query', ''))
+                elif action == 'api/metrics':
+                    result = _editor_metrics(root, payload)
+                elif action == 'api/review-task':
+                    result = _editor_review_task(root, payload.get('id'), payload.get('sha256'))
+                elif action == 'api/search':
+                    result = _editor_search(root, payload.get('query'), payload.get('offset', 0))
+                elif action == 'api/books':
+                    result = {'ok': True, 'books': list(library.values()), 'current': str(root)}
+                elif action == 'api/open-book':
+                    result = _library_open(library, payload.get('key'), root, self.server.editor_url)
+                elif action == 'api/open':
+                    result = _editor_document(root, payload.get('id'))
+                elif action in ('api/save', 'api/recover'):
+                    result = _editor_save(root, payload, recovery=action.endswith('recover'))
+                elif action == 'candidate':
+                    result = _save_candidate(root, packet, payload.get('chapter'), payload.get('text'))
+                else:
+                    return self.reply(404, b'{}')
                 self.reply(200, json.dumps(result, ensure_ascii=False).encode())
             except api.StoryError as error:
-                self.reply(409, json.dumps({"message": str(error), "error": error.code}, ensure_ascii=False).encode())
-            except (ValueError, UnicodeError, OSError):
-                self.reply(400, b'{"message":"Invalid request or save failed"}')
+                self.reply(409, json.dumps({'message': str(error), 'error': error.code, 'details': error.details}, ensure_ascii=False).encode())
+            except (ValueError, UnicodeError, OSError) as error:
+                self.reply(400, json.dumps({'message': str(error)}, ensure_ascii=False).encode())
 
-    server = HTTPServer(("127.0.0.1", 0), Handler)
-    server.editor_url = f"http://127.0.0.1:{server.server_port}"+route
-    return server
+    class EditorServer(HTTPServer):
+        def server_close(self):
+            try:
+                super().server_close()
+                if getattr(self, 'lease', None) is not None:
+                    try:
+                        path = '.story/workbench-service.json'
+                        raw = _author_read(root, path, 8192)
+                        record = json.loads(raw)
+                        if record.get('instance') == identity['instance'] and not record.get('stopped'):
+                            record['stopped'] = True
+                            api.atomic_write(api.safe_path(root, path), json.dumps(record, ensure_ascii=False),
+                                             {hashlib.sha256(raw).hexdigest()},
+                                             api.safe_path(root, '.story/.workbench-backups/' + uuid.uuid4().hex + '/service.json'))
+                    except (OSError, api.StoryError, ValueError, AttributeError):
+                        # Failure to update a status hint must not hold the lease.
+                        pass
+            finally:
+                self.lease.close()
 
+    lease = ExitStack()
+    lease.enter_context(_editor_lease(root))
+    server = None
+    try:
+        server = EditorServer(('127.0.0.1', 0), Handler, bind_and_activate=False)
+        server.lease = lease
+        server.server_bind()
+        server.server_activate()
+        server.editor_url = f'http://127.0.0.1:{server.server_port}' + route
+        path = '.story/workbench-service.json'
+        try:
+            allowed = {hashlib.sha256(_author_read(root, path, 8192)).hexdigest()}
+        except FileNotFoundError:
+            allowed = set()
+        api.atomic_write(api.safe_path(root, path), json.dumps({**identity, 'port': server.server_port, 'token': token}, ensure_ascii=False),
+                         allowed, api.safe_path(root, '.story/.workbench-backups/' + uuid.uuid4().hex + '/service.json'))
+        return server
+    except BaseException:
+        if server is not None:
+            server.server_close()
+        else:
+            lease.close()
+        raise
 
 def run(args):
+    if args.command in ('workbench-status', 'workbench-stop'):
+        return _service_request(args.book, 'stop' if args.command == 'workbench-stop' else 'session', getattr(args, 'saved', False))
     if args.command == "workbench-serve":
-        server = editor_server(args.book, args.limit)
+        server = editor_server(args.book, args.limit, args.library_book)
         print(json.dumps({"url": server.editor_url, "mode": "candidate-editing"}), flush=True)
         if args.open_browser:
             webbrowser.open(server.editor_url)

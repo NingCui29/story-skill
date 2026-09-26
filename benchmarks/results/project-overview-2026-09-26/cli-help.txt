@@ -1,0 +1,128 @@
+usage: - [-h] [--version]
+         {template,init,status,migrate,audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,export,assemble-short,notes,plan,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}
+         ...
+
+Story Skill: local, bounded context and transactional writing state. No API
+calls.
+
+positional arguments:
+  {template,init,status,migrate,audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,export,assemble-short,notes,plan,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}
+    template            Print just one JSON input example
+    init                Create state once; never overwrite an existing book
+    status              Compact checkpoint and export health
+    migrate             Explicit schema upgrade with a consistent rollback
+                        backup
+    audit               Hash every managed export and report conflicts
+    world-save          Save structured story state with cited evidence
+    world-check         Check recorded rules, knowledge and continuity
+    world-read          Inspect one stored narrative record, including stale
+                        evidence for reviewed repair
+    cache-get           Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    cache-put           Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-dependencies
+                        Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-deps        Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-inspect     Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-publish     Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-refresh     Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-saved       Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-snapshot    Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-start       Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-state       Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    history-update      Versioned dependencies, reviewed historical branches,
+                        and evidence-bound caches
+    publish-backup      Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-cancel      Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-check       Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-compare     Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-compare-history
+                        Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-compare-inspect
+                        Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-compare-record
+                        Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-export      Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-export-list
+                        Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-inspect     Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-list        Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-prepare     Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-recover     Prepare and inspect offline chapter publishing
+                        material; never uploads
+    publish-verify-export
+                        Prepare and inspect offline chapter publishing
+                        material; never uploads
+    workbench-snapshot  Read one bounded, non-mutating local workbench
+                        snapshot
+    workbench-export    Generate a self-contained, read-only local author
+                        workbench
+    workbench-serve     Open a loopback editor that saves candidate drafts
+                        only
+    workbench-status    Check the registered local editor instance
+    workbench-stop      Stop the registered editor after preserving edits in
+                        all its pages
+    export              Repair exports without replacing outside edits
+    assemble-short      Assemble all committed short-story chapters into one
+                        book-title text file
+    notes               Save cards or a chapter plan with optimistic
+                        concurrency
+    plan                Save cards or a chapter plan with optimistic
+                        concurrency
+    context             Build a bounded chapter context packet
+    prepare             Read-only review scaffold bound to the current book,
+                        state and draft
+    reconcile           Inspect an outside edit of the latest native chapter,
+                        or apply its reviewed draft
+    recall              Bounded literal substring search of cards, summaries
+                        and chapter prose
+    chapter-read        Read a bounded excerpt of a current or immutable
+                        historical chapter
+    dependencies        Resolve candidate evidence hashes for a reviewed
+                        chapter dependency declaration
+    sources             Find saved source IDs and analysis checkpoints after a
+                        new session
+    lint                Check, commit, or import one last complete chapter
+    commit              Check, commit, or import one last complete chapter
+    adopt               Check, commit, or import one last complete chapter
+    adopt-backfill      Check, commit, or import one last complete chapter
+    ingest              Snapshot source text and split without losing bonus
+                        chapters
+    coverage            Incremental source analysis and evidence-backed
+                        checkpoints
+    next                Incremental source analysis and evidence-backed
+                        checkpoints
+    record              Incremental source analysis and evidence-backed
+                        checkpoints
+    findings            Incremental source analysis and evidence-backed
+                        checkpoints
+    source-read         Incremental source analysis and evidence-backed
+                        checkpoints
+    report              Incremental source analysis and evidence-backed
+                        checkpoints
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit

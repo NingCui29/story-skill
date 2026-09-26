@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-09-26T11:09:51.840768+00:00",
+  "tests": [
+    {
+      "suite": "test_skill_audit_fixes.py",
+      "run": 10,
+      "passed": 10
+    },
+    {
+      "suite": "test_story.py",
+      "run": 35,
+      "passed": 35
+    }
+  ],
+  "quick_validate": {
+    "skill": "skills/story-skill",
+    "passed": true,
+    "dependency_note": "Initial attempts lacked PyYAML. Final run used PyYAML 6.0.3 installed in a temporary target directory, leaving the system installation unchanged."
+  },
+  "git_diff_check": true,
+  "local_sync": {
+    "files": [
+      "SKILL.md",
+      "scripts/story.py"
+    ],
+    "byte_comparison": true,
+    "backup": "/Users/cuining/.codex/skill-backups/writing-rules-20260926-190833"
+  },
+  "scope": "Targeted checks for this writing-guidance change; does not repeat previous full-suite or Windows checks."
+}

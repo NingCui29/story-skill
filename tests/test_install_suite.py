@@ -86,7 +86,7 @@ class SuiteInstallTests(unittest.TestCase):
         package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(package)
         self.assertEqual(installer.SUITE_FILES, package.SUITE_FILES)
-        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True)):
+        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True), ("0.6.3", 39, True)):
             with self.subTest(version=version):
                 files = installer.suite_files(version)
                 self.assertEqual(installer.skill_names(version), package.skill_names(version))
@@ -95,7 +95,7 @@ class SuiteInstallTests(unittest.TestCase):
                 self.assertEqual("story-skill/scripts/story_workbench.py" in files, has_workbench)
         self.assertEqual(installer.SUITE_FILES, installer.SUITE_FILES_V061)
         self.assertEqual(installer.SKILL_NAMES, installer.SKILL_NAMES_V061)
-        for version in ("0.5.11", "0.6.3", "0.6.99"):
+        for version in ("0.5.11", "0.6.4", "0.6.99"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 installer.suite_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
@@ -147,7 +147,7 @@ class SuiteInstallTests(unittest.TestCase):
 
     def test_unknown_suite_version_is_rejected_before_writing_targets(self):
         runtime = self.source / "story-skill/scripts/story.py"
-        for version in ("0.6.00", "0.6.3", "0.6.99", "0.7.0", "1.0.0"):
+        for version in ("0.6.00", "0.6.4", "0.6.99", "0.7.0", "1.0.0"):
             with self.subTest(version=version):
                 runtime.write_text(f'VERSION = "{version}"\n', encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "no reviewed suite layout"):

@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-09-26T12:39:43.596222+00:00",
+  "tests": {
+    "total": 788,
+    "passed": 771,
+    "skipped": 17,
+    "workbench": 82
+  },
+  "runtime": "Python 3.12; Node.js available for JavaScript behavioral tests",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_workbench.py": "c6af36bd3c71b572d3b6f496112d2fb7891ccc3e7596a41e5c91506b4a291858",
+    "tests/test_workbench.py": "555f184dc40f6b01640a227d300a0bc1b2a35bcf4aafb0944ab669725378675c",
+    "tests/test_workbench_flow.py": "497bc10e80653807596e1dd1f6832aae874905e67413a235cb1db304f4000ce7",
+    "skills/story-skill/SKILL.md": "d3aea6cba700952f5799b19592a28abb42eaa8f29928f53831c75299c13387c6"
+  },
+  "installed_matches_repository": true,
+  "book_unchanged": {
+    "revision": 8,
+    "formal_chapters": 1,
+    "chapter_sha256": "8c0656464c962560c7ce49327e991fd26713b9487fcb76a747d5360f3ee1b9be"
+  },
+  "browser": {
+    "isolated_candidate_saved": true,
+    "line_diff_verified": true,
+    "search_found_candidate_and_recovery": true,
+    "review_prompt_bound_to_saved_hash": true,
+    "second_book_opened": true,
+    "reading_settings_applied": true,
+    "production_tables_rendered": 3,
+    "production_count": 2414,
+    "production_console_errors": []
+  },
+  "windows_desktop_tested": false,
+  "published": false
+}

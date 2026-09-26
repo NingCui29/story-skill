@@ -116,7 +116,7 @@ MARKER = ".story-skill-install.json"
 def suite_files(version):
     if version == "0.6.0":
         return SUITE_FILES_V060
-    if version in ("0.6.1", "0.6.2"):
+    if version in ("0.6.1", "0.6.2", "0.6.3"):
         return SUITE_FILES_V061
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
@@ -125,7 +125,7 @@ def skill_names(version):
     """Return the immutable skill-root list reviewed for one exact version."""
     if version == "0.6.0":
         return SKILL_NAMES_V060
-    if version in ("0.6.1", "0.6.2"):
+    if version in ("0.6.1", "0.6.2", "0.6.3"):
         return SKILL_NAMES_V061
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 

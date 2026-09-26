@@ -1,0 +1,16 @@
+{
+  "date": "2026-09-26",
+  "full_tests": 794,
+  "passed": 777,
+  "skipped": 17,
+  "workbench_tests": 88,
+  "formal_sha256": "8c0656464c962560c7ce49327e991fd26713b9487fcb76a747d5360f3ee1b9be",
+  "revision": 8,
+  "formal_chapters": 1,
+  "installed_source_sha256": "d37e633d2b10f2eaee7fc547ab03e2e5457e4262036e152beac523e7ad440cb1",
+  "browser_isolated_material_candidate": ".story/drafts/workbench/第1章 她穿着我姐的睡衣_候选_ad00799928a5.md",
+  "browser_material_count": 772,
+  "browser_console_errors": [],
+  "github_published": false,
+  "windows_tested": false
+}

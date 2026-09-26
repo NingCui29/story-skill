@@ -1,0 +1,3812 @@
+{
+  "template": {
+    "usage": "usage: - template [-h]\n                  {notes,plan,delta,analysis,publish,world,world-entities,world-aliases,world-volumes,world-arcs,world-lines,world-facts,world-knowledge,world-hooks,world-rules,world-uses,world-transfers,world-arc_steps}",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "kind"
+        ],
+        "required": true,
+        "default": null,
+        "choices": [
+          "notes",
+          "plan",
+          "delta",
+          "analysis",
+          "publish",
+          "world",
+          "world-entities",
+          "world-aliases",
+          "world-volumes",
+          "world-arcs",
+          "world-lines",
+          "world-facts",
+          "world-knowledge",
+          "world-hooks",
+          "world-rules",
+          "world-uses",
+          "world-transfers",
+          "world-arc_steps"
+        ],
+        "help": null
+      }
+    ]
+  },
+  "init": {
+    "usage": "usage: - init [-h] --book BOOK [--integrity {strict,local}] --title TITLE\n              [--kind {long,short,analysis}]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--title"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--kind"
+        ],
+        "required": false,
+        "default": "long",
+        "choices": [
+          "long",
+          "short",
+          "analysis"
+        ],
+        "help": null
+      }
+    ]
+  },
+  "status": {
+    "usage": "usage: - status [-h] --book BOOK [--integrity {strict,local}]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      }
+    ]
+  },
+  "migrate": {
+    "usage": "usage: - migrate [-h] --book BOOK [--integrity {strict,local}]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      }
+    ]
+  },
+  "audit": {
+    "usage": "usage: - audit [-h] --book BOOK [--integrity {strict,local}]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      }
+    ]
+  },
+  "world-save": {
+    "usage": "usage: - world-save [-h] --book BOOK [--integrity {strict,local}] --input\n                    INPUT --expect EXPECT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "world-check": {
+    "usage": "usage: - world-check [-h] --book BOOK [--integrity {strict,local}]\n                     [--budget-bytes BUDGET_BYTES] --chapter CHAPTER",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "world-read": {
+    "usage": "usage: - world-read [-h] --book BOOK [--integrity {strict,local}]\n                    [--budget-bytes BUDGET_BYTES] --kind\n                    {arc_steps,arcs,entities,facts,hooks,knowledge,lines,rules,transfers,uses,volumes}\n                    --id ID",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 12000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--kind"
+        ],
+        "required": true,
+        "default": null,
+        "choices": [
+          "arc_steps",
+          "arcs",
+          "entities",
+          "facts",
+          "hooks",
+          "knowledge",
+          "lines",
+          "rules",
+          "transfers",
+          "uses",
+          "volumes"
+        ],
+        "help": null
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "cache-get": {
+    "usage": "usage: - cache-get [-h] --book BOOK [--integrity {strict,local}]\n                   [--budget-bytes BUDGET_BYTES] --chapter CHAPTER --kind KIND",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--kind"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "cache-put": {
+    "usage": "usage: - cache-put [-h] --book BOOK [--integrity {strict,local}] --input INPUT\n                   --chapter CHAPTER --expect EXPECT --kind KIND",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--kind"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "history-dependencies": {
+    "usage": "usage: - history-dependencies [-h] --book BOOK [--integrity {strict,local}]\n                              [--budget-bytes BUDGET_BYTES] --chapter CHAPTER\n                              --branch BRANCH",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--branch"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "history-deps": {
+    "usage": "usage: - history-deps [-h] --book BOOK [--integrity {strict,local}]\n                      [--budget-bytes BUDGET_BYTES]\n                      (--chapter CHAPTER | --input INPUT) [--expect EXPECT]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Read the published dependency declaration without changing state"
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Replace the declaration with a reviewed payload; requires --expect"
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Required for --input; not accepted with --chapter"
+      }
+    ]
+  },
+  "history-inspect": {
+    "usage": "usage: - history-inspect [-h] --book BOOK [--integrity {strict,local}]\n                         [--budget-bytes BUDGET_BYTES] [--limit LIMIT]\n                         [--state-limit STATE_LIMIT] --branch BRANCH\n                         [--chapter CHAPTER] [--state-offset STATE_OFFSET]\n                         [--affected-offset AFFECTED_OFFSET]\n                         [--world-offset WORLD_OFFSET]\n                         [--hints-offset HINTS_OFFSET]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 25,
+        "choices": null,
+        "help": "Entries per affected/world/hints page, at most 200"
+      },
+      {
+        "flags": [
+          "--state-limit"
+        ],
+        "required": false,
+        "default": 50,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--branch"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--state-offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--affected-offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--world-offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--hints-offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "history-publish": {
+    "usage": "usage: - history-publish [-h] --book BOOK [--integrity {strict,local}]\n                         --branch BRANCH --expect EXPECT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--branch"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "history-refresh": {
+    "usage": "usage: - history-refresh [-h] --book BOOK [--integrity {strict,local}]\n                         [--budget-bytes BUDGET_BYTES] [--limit LIMIT]\n                         [--state-limit STATE_LIMIT] --branch BRANCH --expect\n                         EXPECT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 25,
+        "choices": null,
+        "help": "Entries per affected/world/hints page, at most 200"
+      },
+      {
+        "flags": [
+          "--state-limit"
+        ],
+        "required": false,
+        "default": 50,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--branch"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "history-saved": {
+    "usage": "usage: - history-saved [-h] --book BOOK [--integrity {strict,local}]\n                       [--budget-bytes BUDGET_BYTES] --branch BRANCH",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--branch"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "history-snapshot": {
+    "usage": "usage: - history-snapshot [-h] --book BOOK [--integrity {strict,local}]\n                          [--label LABEL] --expect EXPECT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--label"
+        ],
+        "required": false,
+        "default": "manual",
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "history-start": {
+    "usage": "usage: - history-start [-h] --book BOOK [--integrity {strict,local}]\n                       [--budget-bytes BUDGET_BYTES] [--limit LIMIT]\n                       [--state-limit STATE_LIMIT] --chapter CHAPTER\n                       [--label LABEL] --expect EXPECT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 25,
+        "choices": null,
+        "help": "Entries per affected/world/hints page, at most 200"
+      },
+      {
+        "flags": [
+          "--state-limit"
+        ],
+        "required": false,
+        "default": 50,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--label"
+        ],
+        "required": false,
+        "default": "manual",
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "history-state": {
+    "usage": "usage: - history-state [-h] --book BOOK [--integrity {strict,local}]\n                       [--budget-bytes BUDGET_BYTES] --chapter CHAPTER\n                       [--before] [--offset OFFSET] [--limit LIMIT]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--before"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 50,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "history-update": {
+    "usage": "usage: - history-update [-h] --book BOOK [--integrity {strict,local}]\n                        [--budget-bytes BUDGET_BYTES] [--limit LIMIT]\n                        [--state-limit STATE_LIMIT] --input INPUT --branch\n                        BRANCH --expect EXPECT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 25,
+        "choices": null,
+        "help": "Entries per affected/world/hints page, at most 200"
+      },
+      {
+        "flags": [
+          "--state-limit"
+        ],
+        "required": false,
+        "default": 50,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--branch"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "publish-backup": {
+    "usage": "usage: - publish-backup [-h] --book BOOK [--integrity {strict,local}]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      }
+    ]
+  },
+  "publish-cancel": {
+    "usage": "usage: - publish-cancel [-h] --book BOOK [--integrity {strict,local}] --id ID",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "publish-check": {
+    "usage": "usage: - publish-check [-h] --book BOOK [--integrity {strict,local}] --id ID",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "publish-compare": {
+    "usage": "usage: - publish-compare [-h] --book BOOK [--integrity {strict,local}]\n                         [--budget-bytes BUDGET_BYTES] --id ID --chapter\n                         CHAPTER --input INPUT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Frozen publishing plan ID"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Chapter in the frozen plan"
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "JSON file containing copied title/body and optional author_note"
+      }
+    ]
+  },
+  "publish-compare-history": {
+    "usage": "usage: - publish-compare-history [-h] --book BOOK [--integrity {strict,local}]\n                                 [--budget-bytes BUDGET_BYTES] --id ID\n                                 [--offset OFFSET] [--limit LIMIT]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Frozen publishing plan ID"
+      },
+      {
+        "flags": [
+          "--offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 10,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "publish-compare-inspect": {
+    "usage": "usage: - publish-compare-inspect [-h] --book BOOK [--integrity {strict,local}]\n                                 [--budget-bytes BUDGET_BYTES] --record-id\n                                 RECORD_ID",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--record-id"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Saved local comparison record ID"
+      }
+    ]
+  },
+  "publish-compare-record": {
+    "usage": "usage: - publish-compare-record [-h] --book BOOK [--integrity {strict,local}]\n                                [--budget-bytes BUDGET_BYTES] --id ID\n                                --chapter CHAPTER --input INPUT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Frozen publishing plan ID"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Chapter in the frozen plan"
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "JSON file containing copied title/body and optional author_note"
+      }
+    ]
+  },
+  "publish-export": {
+    "usage": "usage: - publish-export [-h] --book BOOK [--integrity {strict,local}] --id ID",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "publish-export-list": {
+    "usage": "usage: - publish-export-list [-h] --book BOOK [--integrity {strict,local}]\n                             [--budget-bytes BUDGET_BYTES] [--id ID]\n                             [--offset OFFSET] [--limit LIMIT]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Filter saved export receipts by publishing plan ID"
+      },
+      {
+        "flags": [
+          "--offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 10,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "publish-inspect": {
+    "usage": "usage: - publish-inspect [-h] --book BOOK [--integrity {strict,local}]\n                         [--budget-bytes BUDGET_BYTES]\n                         [--summary | --chapter CHAPTER] [--offset OFFSET]\n                         [--limit LIMIT] --id ID",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--summary"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": "Read a page of chapter titles and counts without prose"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Read exactly one complete frozen chapter"
+      },
+      {
+        "flags": [
+          "--offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": "Chapter offset for --summary"
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 20,
+        "choices": null,
+        "help": "Chapter page size for --summary, at most 100"
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "publish-list": {
+    "usage": "usage: - publish-list [-h] --book BOOK [--integrity {strict,local}]\n                      [--budget-bytes BUDGET_BYTES] [--offset OFFSET]\n                      [--limit LIMIT]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 10,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "publish-prepare": {
+    "usage": "usage: - publish-prepare [-h] --book BOOK [--integrity {strict,local}] --input\n                         INPUT --expect EXPECT [--summary]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--summary"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": "Return compact metadata; full frozen content remains in the ledger"
+      }
+    ]
+  },
+  "publish-recover": {
+    "usage": "usage: - publish-recover [-h] --book BOOK [--integrity {strict,local}]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      }
+    ]
+  },
+  "publish-verify-export": {
+    "usage": "usage: - publish-verify-export [-h] --book BOOK [--integrity {strict,local}]\n                               [--receipt RECEIPT] [--file FILE]\n                               [--sha256 SHA256] [--id ID]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--receipt"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Absolute path to a saved local export receipt"
+      },
+      {
+        "flags": [
+          "--file"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Absolute path to a saved chapter material ZIP"
+      },
+      {
+        "flags": [
+          "--sha256"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Original export receipt SHA-256"
+      },
+      {
+        "flags": [
+          "--id"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Expected publishing plan ID for --file"
+      }
+    ]
+  },
+  "workbench-snapshot": {
+    "usage": "usage: - workbench-snapshot [-h] --book BOOK [--budget-bytes BUDGET_BYTES]\n                            [--limit LIMIT] [--offset OFFSET]\n                            [--cursor CURSOR]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 10,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--cursor"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Opaque cursor returned by an earlier snapshot"
+      }
+    ]
+  },
+  "workbench-export": {
+    "usage": "usage: - workbench-export [-h] --book BOOK [--budget-bytes BUDGET_BYTES]\n                          [--limit LIMIT] [--offset OFFSET] [--cursor CURSOR]\n                          [--include-text | --overview-only] [--output OUTPUT]\n                          [--open]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 10,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--cursor"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Opaque cursor returned by an earlier snapshot"
+      },
+      {
+        "flags": [
+          "--include-text"
+        ],
+        "required": false,
+        "default": true,
+        "choices": null,
+        "help": "Use the default three-column reader"
+      },
+      {
+        "flags": [
+          "--overview-only"
+        ],
+        "required": false,
+        "default": true,
+        "choices": null,
+        "help": "Export a summary without embedding chapter text"
+      },
+      {
+        "flags": [
+          "--output"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "HTML path inside .story/workbench; defaults to index.html"
+      },
+      {
+        "flags": [
+          "--open"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": "Open the generated file with the default browser"
+      }
+    ]
+  },
+  "workbench-serve": {
+    "usage": "usage: - workbench-serve [-h] --book BOOK [--budget-bytes BUDGET_BYTES]\n                         [--limit LIMIT] [--open]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 10,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--open"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "workbench-status": {
+    "usage": "usage: - workbench-status [-h] --book BOOK [--budget-bytes BUDGET_BYTES]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      }
+    ]
+  },
+  "workbench-stop": {
+    "usage": "usage: - workbench-stop [-h] --book BOOK [--budget-bytes BUDGET_BYTES]\n                        [--saved]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 64000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--saved"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": "All editor pages have saved or downloaded their pending text"
+      }
+    ]
+  },
+  "export": {
+    "usage": "usage: - export [-h] --book BOOK [--integrity {strict,local}] [--safe-only]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--safe-only"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": "Recover known versions and missing files while leaving conflicting paths untouched"
+      }
+    ]
+  },
+  "assemble-short": {
+    "usage": "usage: - assemble-short [-h] --book BOOK [--integrity {strict,local}]\n                        --final-chapter FINAL_CHAPTER",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--final-chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Expected last committed chapter; narrative completion requires editorial review"
+      }
+    ]
+  },
+  "notes": {
+    "usage": "usage: - notes [-h] --book BOOK [--integrity {strict,local}] --input INPUT\n               --expect EXPECT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "plan": {
+    "usage": "usage: - plan [-h] --book BOOK [--integrity {strict,local}] --input INPUT\n              --expect EXPECT --chapter CHAPTER",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "context": {
+    "usage": "usage: - context [-h] --book BOOK [--integrity {strict,local}]\n                 [--budget-bytes BUDGET_BYTES] --chapter CHAPTER",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "prepare": {
+    "usage": "usage: - prepare [-h] --book BOOK [--integrity {strict,local}]\n                 [--budget-bytes BUDGET_BYTES] --chapter CHAPTER --draft DRAFT\n                 [--reconcile]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--draft"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--reconcile"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": "Bind the inspected outside edit for a reviewed reconciliation"
+      }
+    ]
+  },
+  "reconcile": {
+    "usage": "usage: - reconcile [-h] --book BOOK [--integrity {strict,local}]\n                   [--budget-bytes BUDGET_BYTES] --chapter CHAPTER\n                   [--draft DRAFT] [--input INPUT]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--draft"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "recall": {
+    "usage": "usage: - recall [-h] --book BOOK [--integrity {strict,local}]\n                [--budget-bytes BUDGET_BYTES] --query QUERY",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 8000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--query"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "chapter-read": {
+    "usage": "usage: - chapter-read [-h] --book BOOK [--integrity {strict,local}]\n                      [--budget-bytes BUDGET_BYTES] --chapter CHAPTER\n                      [--sha256 SHA256] [--start START] [--end END]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 12000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--sha256"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--start"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--end"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "dependencies": {
+    "usage": "usage: - dependencies [-h] --book BOOK [--integrity {strict,local}]\n                      [--budget-bytes BUDGET_BYTES] --chapter CHAPTER",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 16000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "sources": {
+    "usage": "usage: - sources [-h] --book BOOK [--integrity {strict,local}]\n                 [--budget-bytes BUDGET_BYTES] [--offset OFFSET]\n                 [--limit LIMIT]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 12000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 10,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "lint": {
+    "usage": "usage: - lint [-h] --book BOOK [--integrity {strict,local}] --chapter CHAPTER\n              --draft DRAFT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--draft"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "commit": {
+    "usage": "usage: - commit [-h] --book BOOK [--integrity {strict,local}] --chapter\n                CHAPTER --draft DRAFT --input INPUT [--replace-last]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--draft"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--replace-last"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "adopt": {
+    "usage": "usage: - adopt [-h] --book BOOK [--integrity {strict,local}] --chapter CHAPTER\n               --draft DRAFT [--volume-dir VOLUME_DIR] --summary SUMMARY\n               --expect EXPECT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--draft"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--volume-dir"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Named volume directory, for example 第一卷 雨夜; otherwise use the saved chapter plan"
+      },
+      {
+        "flags": [
+          "--summary"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "adopt-backfill": {
+    "usage": "usage: - adopt-backfill [-h] --book BOOK [--integrity {strict,local}]\n                        --chapter CHAPTER --draft DRAFT\n                        [--volume-dir VOLUME_DIR] --summary SUMMARY --expect\n                        EXPECT",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--chapter"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--draft"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--volume-dir"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "Named volume directory, for example 第一卷 雨夜; otherwise use the saved chapter plan"
+      },
+      {
+        "flags": [
+          "--summary"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "ingest": {
+    "usage": "usage: - ingest [-h] --book BOOK [--integrity {strict,local}] --file FILE\n                [--coverage {complete,partial,unknown}] [--encoding ENCODING]\n                [--chunk-chars CHUNK_CHARS]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--file"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--coverage"
+        ],
+        "required": false,
+        "default": "unknown",
+        "choices": [
+          "complete",
+          "partial",
+          "unknown"
+        ],
+        "help": null
+      },
+      {
+        "flags": [
+          "--encoding"
+        ],
+        "required": false,
+        "default": "utf-8-sig",
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--chunk-chars"
+        ],
+        "required": false,
+        "default": 2400,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "coverage": {
+    "usage": "usage: - coverage [-h] --book BOOK [--integrity {strict,local}] --source\n                  SOURCE",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--source"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "next": {
+    "usage": "usage: - next [-h] --book BOOK [--integrity {strict,local}]\n              [--budget-bytes BUDGET_BYTES] --source SOURCE [--limit LIMIT]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 22000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--source"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 2,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "record": {
+    "usage": "usage: - record [-h] --book BOOK [--integrity {strict,local}] --source SOURCE\n                --chunk CHUNK --input INPUT [--replace]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--source"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--chunk"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--input"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--replace"
+        ],
+        "required": false,
+        "default": false,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "findings": {
+    "usage": "usage: - findings [-h] --book BOOK [--integrity {strict,local}]\n                  [--budget-bytes BUDGET_BYTES] --source SOURCE\n                  [--limit LIMIT] [--offset OFFSET]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 20000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--source"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--limit"
+        ],
+        "required": false,
+        "default": 10,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--offset"
+        ],
+        "required": false,
+        "default": 0,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "source-read": {
+    "usage": "usage: - source-read [-h] --book BOOK [--integrity {strict,local}]\n                     [--budget-bytes BUDGET_BYTES] --source SOURCE --start\n                     START --end END",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--budget-bytes"
+        ],
+        "required": false,
+        "default": 12000,
+        "choices": null,
+        "help": "Hard limit on compact JSON UTF-8 bytes"
+      },
+      {
+        "flags": [
+          "--source"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--start"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--end"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      }
+    ]
+  },
+  "report": {
+    "usage": "usage: - report [-h] --book BOOK [--integrity {strict,local}] --source SOURCE\n                --file FILE [--expect-analysis EXPECT_ANALYSIS]",
+    "options": [
+      {
+        "flags": [
+          "-h",
+          "--help"
+        ],
+        "required": false,
+        "default": "==SUPPRESS==",
+        "choices": null,
+        "help": "show this help message and exit"
+      },
+      {
+        "flags": [
+          "--book"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": "Explicit, isolated book directory"
+      },
+      {
+        "flags": [
+          "--integrity"
+        ],
+        "required": false,
+        "default": "strict",
+        "choices": [
+          "strict",
+          "local"
+        ],
+        "help": "strict hashes all exports; local verifies recent/queued files and reports unverified archives"
+      },
+      {
+        "flags": [
+          "--source"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--file"
+        ],
+        "required": true,
+        "default": null,
+        "choices": null,
+        "help": null
+      },
+      {
+        "flags": [
+          "--expect-analysis"
+        ],
+        "required": false,
+        "default": null,
+        "choices": null,
+        "help": "findings.analysis_sha256 captured while aggregating; required for a new final report"
+      }
+    ]
+  }
+}
