@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "tag": "v0.6.5",
+  "commit": "c98fa5b7e0e1c7300e9df33e6d8649c902f49d10",
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.5",
+  "published_at": "2026-09-27T02:30:47Z",
+  "public_archive": {
+    "bytes": 247255,
+    "sha256": "0fb372dbfe1f27a21bbb641b98df5f5f953d7e99a2c409b8be141ece859630df",
+    "matches_local_build": true
+  },
+  "skills": 8,
+  "files": 40,
+  "ci_run": 36288311103,
+  "tag_ci_run": 36288422548,
+  "packages_run": 36288730643,
+  "package": {
+    "name": "@ningcui29/story-skill",
+    "version": "0.6.5",
+    "sha256": "3ed2e067616e968bd427b55ab2b56be6839379fcfd5b18077590b81bb6908e22",
+    "bytes": 224362,
+    "public": true,
+    "payload_files": 40,
+    "wrapper_files": 2
+  }
+}

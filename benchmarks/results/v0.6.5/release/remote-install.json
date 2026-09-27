@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "tag": "v0.6.5",
+  "commit": "c98fa5b7e0e1c7300e9df33e6d8649c902f49d10",
+  "method": "fixed-tag clone plus managed isolated install",
+  "skills": 8,
+  "files": 40,
+  "files_match": true,
+  "archive_sha256": "0fb372dbfe1f27a21bbb641b98df5f5f953d7e99a2c409b8be141ece859630df",
+  "checks": [
+    {
+      "command": "--version",
+      "ok": true
+    },
+    {
+      "command": "--help",
+      "ok": true
+    },
+    {
+      "command": "init",
+      "ok": true
+    },
+    {
+      "command": "status",
+      "ok": true
+    }
+  ]
+}
