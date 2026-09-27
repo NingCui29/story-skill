@@ -165,12 +165,17 @@ class PackageSyncTests(unittest.TestCase):
         self.assertTrue(sync.sync("v0.6.0", self.root)["ok"])
         self.assertEqual([c.args[0][0] for c in self.npm.call_args_list], ["whoami", "publish"])
 
-    def smoke_archive(self, version="0.6.1", names=None, changed=None):
+    def smoke_archive(self, version="0.6.5", names=None, changed=None):
         archive = self.root / "suite.tgz"
         root = SCRIPTS.parent / "skills"
         with tarfile.open(archive, "w:gz") as bundle:
             for name in (sync.package_npm.payload_files(version) if names is None else names):
-                raw = changed if name == "story-skill-plan/SKILL.md" and changed is not None else (root / name).read_bytes()
+                raw = (root / name).read_bytes()
+                if version == "0.6.0" and name.endswith("/SKILL.md"):
+                    # Synthetic entry for the historical layout: do not inject current-only references.
+                    raw = b"# Historical layout fixture\n[shared runtime](../story-skill/scripts/story.py)\n"
+                if name == "story-skill-plan/SKILL.md" and changed is not None:
+                    raw = changed
                 member = tarfile.TarInfo("package/" + name)
                 member.size = len(raw)
                 bundle.addfile(member, io.BytesIO(raw))
@@ -178,18 +183,18 @@ class PackageSyncTests(unittest.TestCase):
 
     def test_runtime_smoke_installs_all_suite_dependencies_before_execution(self):
         archive = self.smoke_archive()
-        results = [SimpleNamespace(returncode=0, stdout="0.6.1\n"), SimpleNamespace(returncode=0, stdout="help"),
+        results = [SimpleNamespace(returncode=0, stdout="0.6.5\n"), SimpleNamespace(returncode=0, stdout="help"),
                    SimpleNamespace(returncode=0, stdout="{}"), SimpleNamespace(returncode=0, stdout='{"last_chapter":0}')]
 
         def execute(arguments, **kwargs):
             suite = Path(arguments[4]).parents[2]
             self.assertEqual({p.relative_to(suite).as_posix() for p in suite.rglob("*") if p.is_file()},
-                             set(sync.package_npm.payload_files("0.6.1")))
+                             set(sync.package_npm.payload_files("0.6.5")))
             return results.pop(0)
 
         with patch.object(sync.subprocess, "run", side_effect=execute):
-            result = sync.runtime_smoke(archive, "0.6.1")
-        self.assertEqual(result["skill_files"], 39)
+            result = sync.runtime_smoke(archive, "0.6.5")
+        self.assertEqual(result["skill_files"], 40)
         self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES))
         self.assertTrue(result["temporary_book_removed"])
 
@@ -215,14 +220,14 @@ class PackageSyncTests(unittest.TestCase):
                                             if name.startswith("story-skill/")])
         with patch.object(sync.subprocess, "run") as execute:
             with self.assertRaisesRegex(ValueError, "missing required skill dependencies"):
-                sync.runtime_smoke(archive, "0.6.1")
+                sync.runtime_smoke(archive, "0.6.5")
         execute.assert_not_called()
 
     def test_runtime_smoke_rejects_broken_sibling_link_before_execution(self):
         archive = self.smoke_archive(changed=b"[missing shared rules](../story-skill/missing.md)")
         with patch.object(sync.subprocess, "run") as execute:
             with self.assertRaisesRegex(ValueError, "broken local dependency"):
-                sync.runtime_smoke(archive, "0.6.1")
+                sync.runtime_smoke(archive, "0.6.5")
         execute.assert_not_called()
 
 

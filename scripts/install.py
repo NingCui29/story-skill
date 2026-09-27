@@ -107,9 +107,13 @@ SUITE_FILES_V061 = (
     "story-skill/scripts/story_workbench.py",
     "story-skill/scripts/story_world.py",
 )
+SUITE_FILES_V065 = tuple(sorted((*SUITE_FILES_V061,
+    "story-skill-plan/references/qimao-tags.md",
+)))
+
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
 SKILL_NAMES = SKILL_NAMES_V061
-SUITE_FILES = SUITE_FILES_V061
+SUITE_FILES = SUITE_FILES_V065
 MARKER = ".story-skill-install.json"
 
 
@@ -118,6 +122,8 @@ def suite_files(version):
         return SUITE_FILES_V060
     if version in ("0.6.1", "0.6.2", "0.6.3", "0.6.4"):
         return SUITE_FILES_V061
+    if version == "0.6.5":
+        return SUITE_FILES_V065
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 
@@ -126,6 +132,8 @@ def skill_names(version):
     if version == "0.6.0":
         return SKILL_NAMES_V060
     if version in ("0.6.1", "0.6.2", "0.6.3", "0.6.4"):
+        return SKILL_NAMES_V061
+    if version == "0.6.5":
         return SKILL_NAMES_V061
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 

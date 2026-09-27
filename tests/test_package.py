@@ -57,8 +57,8 @@ class PackageVersionTests(unittest.TestCase):
             self.assertEqual(output.read_bytes(), b"existing reviewed artifact")
 
     def test_manifest_is_bound_to_version_and_unknown_families_are_rejected(self):
-        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061}
-        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061}
+        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061, "0.6.5": package.SUITE_FILES_V065}
+        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061, "0.6.5": package.SKILL_NAMES_V061}
         for version, expected in layouts.items():
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 self.assertEqual(package.skill_names(version), skill_layouts[version])
@@ -71,11 +71,11 @@ class PackageVersionTests(unittest.TestCase):
                     self.assertEqual(archive.namelist(), list(expected))
         self.assertEqual(len(package.SUITE_FILES_V060), 38)
         self.assertNotIn("story-skill/scripts/story_workbench.py", package.SUITE_FILES_V060)
-        self.assertEqual(len(package.SUITE_FILES), 39)
-        self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V061)
+        self.assertEqual(len(package.SUITE_FILES), 40)
+        self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V065)
         self.assertEqual(package.SKILL_NAMES, package.SKILL_NAMES_V061)
         self.assertIn("story-skill/scripts/story_workbench.py", package.SUITE_FILES)
-        for version in ("0.5.11", "0.6.00", "0.6.5", "0.6.99", "1.0.0", "2.4.6"):
+        for version in ("0.5.11", "0.6.00", "0.6.6", "0.6.99", "1.0.0", "2.4.6"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 package.suite_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
@@ -118,7 +118,7 @@ class PackagePublicationTests(unittest.TestCase):
         self.assertEqual(self.output.read_bytes(), self.original)
         self.assertEqual(list(self.output.parent.glob(".story-skill-package-*.zip")), [])
         with zipfile.ZipFile(self.output) as archive:
-            self.assertEqual(len(archive.namelist()), len(package.SUITE_FILES))
+            self.assertEqual(len(archive.namelist()), len(package.suite_files(self.first["version"])))
             self.assertIsNone(archive.testzip())
 
     def test_partial_write_then_disk_full_preserves_previous_archive(self):
@@ -179,7 +179,7 @@ class PackagePublicationTests(unittest.TestCase):
             self.assertNotEqual(source, self.output)
             self.assertEqual(destination, self.output)
             with zipfile.ZipFile(source) as archive:
-                self.assertEqual(len(archive.namelist()), len(package.SUITE_FILES))
+                self.assertEqual(len(archive.namelist()), len(package.suite_files(self.first["version"])))
                 self.assertIsNone(archive.testzip())
             return real_replace(source, destination)
 
