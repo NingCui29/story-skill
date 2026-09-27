@@ -219,23 +219,87 @@ const link=all.find(e=>e.tag==='a');link.onclick({preventDefault(){}});assert.eq
         s = self.script()
         source = s[s.index('function drawCatalog'):s.index('// Paragraph LCS')]
         source += s[s.index('async function catalog'):s.index('async function recover')]
+        source += s[s.index('function primaryChapterDocument'):s.index('function locateActive')]
         mock = r"""
-class E {constructor(){this.children=[];this.dataset={};this.open=false;this.value='';this.parentElement={scrollTop:0};}replaceChildren(){this.children=[];this.parentElement.scrollTop=0;}append(e){this.children.push(e);}querySelectorAll(){return this.children;}}
+class E {constructor(){this.children=[];this.dataset={};this.open=false;this.value='';this.parentElement={scrollTop:0};}replaceChildren(){this.children=[];this.parentElement.scrollTop=0;}append(e){this.children.push(e);}setAttribute(k,v){this[k]=v;}querySelectorAll(){return this.children;}}
 const elements=new Map(),$=id=>{if(!elements.has(id))elements.set(id,new E());return elements.get(id);};
 const document={createElement:()=>new E()},docs=new Map([['plan:1',{id:'plan:1',value:'未保存编辑'}]]);
 let currentCatalog,viewMode='chapters',loading=false,reloadPending=false,offset=0,active='plan:1',LIMIT=10;
-const location={hash:''},chapterNumber=()=>1,showChapterInfo=()=>{},badge=()=>{},item=r=>r,note=e=>{throw Error(e);};let opened=null;
+const updateChapterPicker=()=>{};const location={hash:''},chapterNumber=()=>1,showChapterInfo=()=>{},badge=()=>{},item=r=>r,note=e=>{throw Error(e);};let opened=null;
 const openDoc=async id=>{opened=id;};
 const packet={chapters:[],files:[],warnings:[],total:0,workspace:{formal_total:0,planned_total:1,next_chapter:1,captured_at:'2026-09-26',groups:[{chapter:1,title:'第1章 计划',status:'已规划',items:[{id:'plan:1'}]}],total:1,offset:0,limit:10,has_more:false}};
 const call=async()=>packet;
 """
         self.js(mock + source, r"""
 (async()=>{
- const group=new E();group.dataset.group='第1章 计划 · 已规划';group.open=false;$('list').append(group);$('list').parentElement.scrollTop=149;
- await catalog();assert.equal($('list').children.find(g=>g.dataset.group===group.dataset.group).open,false);assert.equal($('list').parentElement.scrollTop,149);assert.equal(docs.get(active).value,'未保存编辑');
+ const group=new E();group.dataset.group='全书材料';group.open=false;$('list').append(group);$('list').parentElement.scrollTop=149;
+ await catalog();assert.equal($('list').children.find(g=>g.dataset.group===group.dataset.group).open,false);assert.equal($('list').parentElement.scrollTop,149);assert.equal(docs.get(active).value,'未保存编辑');assert.equal($('list').children.find(x=>x.dataset.chapter==='1').dataset.doc,'plan:1');
  active=null;await catalog();assert.equal(opened,'plan:1');
 })().catch(e=>{console.error(e);process.exit(1);});
 """)
+
+    def test_comparison_is_a_mode_and_returns_without_losing_editor_position(self):
+        s=self.script()
+        source=s[s.index('function leaveComparison'):s.index('function stepDiff')]
+        source+=s[s.index("$('compare').onclick"):s.index("$('download').onclick")]
+        self.js(r"""
+const nodes={},$=id=>nodes[id]||(nodes[id]={hidden:false,textContent:'',scrollTop:0,selectionStart:2,selectionEnd:5,focus(){},setSelectionRange(a,b){this.selectionStart=a;this.selectionEnd=b;}});
+const main={scrollTop:400},classes=new Set();const document={querySelector:()=>main,body:{classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}}};
+let active='formal:1',compareSequence=0,diffTargets=[],diffIndex=-1;
+const d={id:active,kind:'formal',value:'尚未保存的编辑',editing:true},docs=new Map([[active,d]]);
+const drawDiff=()=>{diffTargets=[{}];},note=e=>{throw Error(e);};
+let call=async()=>({text:'正式原文',sha256:'base'});$('text').scrollTop=99;
+"""+source,r"""
+(async()=>{
+ await $('compare').onclick();assert.ok($('document-body').hidden);assert.ok(!$('difference').hidden);assert.equal(main.scrollTop,0);assert.ok(classes.has('comparing'));
+ leaveComparison();assert.equal(d.value,'尚未保存的编辑');assert.equal(main.scrollTop,400);assert.equal($('text').scrollTop,99);assert.equal($('text').selectionStart,2);assert.ok(!$('document-body').hidden);
+ let resolve;call=()=>new Promise(r=>resolve=r);const pending=$('compare').onclick();leaveComparison();resolve({text:'迟到的响应'});await pending;assert.ok($('difference').hidden);
+})().catch(e=>{console.error(e);process.exit(1);});
+""")
+
+    def test_shortcut_saves_only_when_available_and_escape_closes_panels(self):
+        s=self.script();source=s[s.index("document.addEventListener('keydown'"):s.index("document.addEventListener('pointerdown'")]
+        self.js(r"""
+const trapPanelFocus=()=>false;const handlers={},document={querySelector:()=>({inert:false}),addEventListener:(k,fn)=>handlers[k]=fn,body:{classList:{contains:k=>k==='nav-open'}}};
+const nodes={},$=id=>nodes[id]||(nodes[id]={open:true,disabled:false,click(){this.clicks=(this.clicks||0)+1;},focus(){this.focused=true;}});let closes=0,prevented=0;const closePanels=()=>closes++;
+"""+source,r"""
+const key={key:'s',metaKey:true,preventDefault(){prevented++;}};handlers.keydown(key);assert.equal($('save').clicks,1);assert.equal(prevented,1);
+$('save').disabled=true;handlers.keydown(key);assert.equal($('save').clicks,1);
+handlers.keydown({...key,isComposing:true});assert.equal(prevented,2);
+handlers.keydown({key:'Escape'});assert.equal(closes,1);assert.equal($('maintenance').open,false);assert.equal($('more-actions').open,false);
+""")
+
+    def test_display_names_preserve_real_names_and_download_identity(self):
+        s = self.script()
+        source = s[s.index('function displayTitle'):s.index('function locateActive')]
+        self.js(source, r"""
+const formal={title:'第1章 原名',kind:'formal',path:'chapters/第1章 原名.md'};
+assert.equal(downloadName(formal),'第1章 原名.txt');
+assert.equal(downloadName({...formal,editable:true,text:'原文',value:'改文'}),'第1章 原名-未保存候选.txt');
+assert.equal(downloadName({title:'总纲',kind:'material',external:true}),'总纲.txt');
+const draft={title:'第1章 原名_候选_abcdef123456',kind:'candidate',path:'.story/drafts/workbench/第1章 原名_候选_abcdef123456.md'};
+assert.equal(displayTitle(draft),'第1章 原名');assert.equal(downloadName(draft),'第1章 原名-候选.txt');
+assert.equal(displayTitle({...draft,path:'.story/drafts/作者自命名.md'}),draft.title);
+assert.equal(draft.title,'第1章 原名_候选_abcdef123456');
+""")
+
+    def test_directory_refresh_does_not_reload_or_mutate_unsaved_text(self):
+        s = self.script()
+        source = s[s.index("$('refresh').onclick"):s.index("$('search').oninput")]
+        self.js(r"""
+const nodes={},$=id=>nodes[id]||(nodes[id]={});const draft={text:'磁盘内容',value:'未保存修改'};
+let catalogs=0,reloads=[];const catalog=()=>catalogs++,reloadDocuments=p=>reloads.push(p);
+"""+source, r"""
+$('refresh').onclick();assert.equal(catalogs,1);assert.deepEqual(reloads,[]);assert.equal(draft.value,'未保存修改');
+$('reload-source').onclick();$('recover-reload').onclick();assert.deepEqual(reloads,[false,true]);
+""")
+
+    def test_focus_supports_both_directory_orders(self):
+        c=w._editor_catalog(self.root,limit=1,focus=1)
+        self.assertEqual(c['offset'],1)
+        self.assertEqual(c['chapters'][0]['id'],'formal:1')
+        self.assertEqual(c['workspace']['offset'],0)
+        self.assertEqual(c['workspace']['groups'][0]['chapter'],1)
 
     def test_empty_fulltext_search_clears_status_and_paging(self):
         s = self.script()
@@ -244,4 +308,100 @@ const call=async()=>packet;
 let searchSequence=0,fullSearchOffset=30;const nodes={};const $=id=>nodes[id]||(nodes[id]={value:'',textContent:'旧结果',disabled:false,replaceChildren(){this.cleared=true;}});
 """ + source, r"""
 (async()=>{await fullSearch();assert.equal(fullSearchOffset,0);assert.equal($('search-status').textContent,'');assert.ok($('search-results').cleared);assert.ok($('search-prev').disabled);assert.ok($('search-next').disabled);})().catch(e=>{console.error(e);process.exit(1);});
+""")
+
+    def test_search_results_preserve_candidate_and_formal_identity(self):
+        docid=self.material('.story/drafts/第8章 检索候选.md','独有定位词')
+        row=w._editor_search(self.root,'独有定位词')['results'][0]
+        self.assertEqual(row['id'],docid)
+        self.assertEqual(row['category'],'候选与草稿')
+        self.assertIn('modified',row)
+        formal=w._editor_document(self.root,'formal:1')
+        results=w._editor_search(self.root,formal['text'].strip()[:8])['results']
+        row=next(r for r in results if r['id']=='formal:1')
+        self.assertEqual(row['kind'],'formal')
+        self.assertEqual(row['category'],'正式正文')
+
+    def test_per_document_positions_and_mode_positions_remain_independent(self):
+        s=self.script();source=s[s.index('function rememberView'):s.index('function searchRanges')]
+        self.js(r"""
+let searchPreview=false,active='a';const a={id:'a',editing:true},b={id:'b',editing:true},docs=new Map([['a',a],['b',b]]);
+const main={scrollTop:144},text={hidden:false,scrollTop:65,selectionStart:2,selectionEnd:8,selectionDirection:'backward',setSelectionRange(a,b,d){this.selectionStart=a;this.selectionEnd=b;this.selectionDirection=d;}};
+const $=()=>text,document={querySelector:()=>main};
+"""+source,r"""
+rememberView();restoreView(b);assert.equal(text.selectionStart,0);assert.equal(main.scrollTop,0);
+active='b';text.selectionStart=1;text.selectionEnd=1;main.scrollTop=500;rememberView();
+restoreView(a);assert.equal(text.selectionStart,2);assert.equal(text.selectionEnd,8);assert.equal(text.selectionDirection,'backward');assert.equal(text.scrollTop,65);assert.equal(main.scrollTop,144);
+a.editing=false;text.hidden=true;main.scrollTop=900;rememberView(a);a.editing=true;restoreView(a);assert.equal(main.scrollTop,144);
+searchPreview=true;main.scrollTop=9999;rememberView(a);restoreView(a);assert.equal(main.scrollTop,144);
+""")
+
+    def test_search_preview_uses_live_buffer_literal_unicode_and_safe_marks(self):
+        s=self.script();source=s[s.index('function searchRanges'):s.index('let closePanels')]
+        self.js(r"""
+class E{constructor(){this.children=[];this.hidden=false;this.classList={toggle(){}};}append(...a){this.children.push(...a);}replaceChildren(){this.children=[];}scrollIntoView(){this.scrolled=true;}}
+const nodes={},$=id=>nodes[id]||(nodes[id]=new E()),document={createTextNode:t=>({textContent:t}),createElement:()=>new E()};
+let active='d',searchPreview=false,searchMarks=[],searchIndex=-1,remembered=0;
+const d={value:'新稿 <script> *灯😀灯',text:'磁盘旧稿',prefix:'第1章 灯\n\n',editing:true},docs=new Map([['d',d]]),dirty=x=>x.value!==x.text,rememberView=()=>remembered++;
+"""+source,r"""
+assert.deepEqual(searchRanges('灯😀灯','灯'),[{start:0,end:1},{start:3,end:4}]);
+assert.deepEqual(searchRanges('a+b A+B','a+b'),[{start:0,end:3},{start:4,end:7}]);
+assert.equal(searchRanges('[x].*','[x].*').length,1);assert.equal(searchRanges('ABC','abc').length,1);
+previewSearch('灯');assert.equal(searchMarks.length,3);assert.ok(searchMarks[0].scrolled);assert.ok($('match-query').textContent.includes('未保存'));stepSearch(1);assert.ok(searchMarks[1].scrolled);
+assert.equal($('match-text').children.map(x=>x.textContent).join(''),d.prefix+d.value);assert.equal(d.value,'新稿 <script> *灯😀灯');assert.ok(d.editing);
+previewSearch('已删除的词');assert.equal(searchMarks.length,0);assert.ok($('match-position').textContent.includes('未找到'));assert.ok($('match-prev').disabled);assert.ok($('match-next').disabled);
+""")
+
+    def test_drawer_tab_wraps_both_directions_and_ignores_hidden_items(self):
+        s=self.script();source=s[s.index('function panelFocusables'):s.index('let compareSequence')]
+        self.js(r"""
+let opened=true,prevented=0;const first={tabIndex:0,getClientRects:()=>[1],focus(){document.activeElement=this;}},last={...first},hidden={...first,getClientRects:()=>[]},disabled={...first,disabled:true};
+const panel={querySelectorAll:()=>[first,hidden,disabled,last]},$=()=>panel;
+const document={activeElement:last,body:{classList:{contains:k=>opened&&k==='nav-open'}}};
+"""+source,r"""
+assert.equal(panelFocusables(panel).length,2);
+const e={key:'Tab',preventDefault(){prevented++;}};assert.ok(trapPanelFocus(e));assert.equal(document.activeElement,first);
+trapPanelFocus({...e,shiftKey:true});assert.equal(document.activeElement,last);
+document.activeElement={};trapPanelFocus(e);assert.equal(document.activeElement,first);
+opened=false;assert.equal(trapPanelFocus(e),false);assert.equal(prevented,3);
+""")
+
+    def test_prose_spacing_preserves_exact_text_and_special_blank_lines(self):
+        s=self.script();source=s[s.index('function renderProse'):s.index('function readingView')]
+        self.js(r"""
+class E{constructor(){this.children=[];this.style={};}replaceChildren(){this.children=[];}append(x){this.children.push(x);}}
+const document={createElement:()=>new E()};
+"""+source,r"""
+const box=new E();for(const text of ['甲\n\n乙','甲\r\n \r\n乙\n\n\n丙','日期：今天\n署名：某人','\n\n特殊开头\t \n','<script>文本</script>']){renderProse(box,text);assert.equal(box.children.map(x=>x.textContent).join(''),text);}
+renderProse(box,'甲\n\n乙\n\n\n丙');assert.equal(box.children[1].style.height,'calc(var(--reader-size) * 0.8)');assert.equal(box.children[3].style.height,'calc(var(--reader-size) * 1.6)');
+""")
+
+    def test_file_purpose_does_not_claim_adoption_from_directory(self):
+        s=self.script();source=s[s.index('function versionLabel'):s.index('function downloadName')]
+        self.js(source,r"""
+const outline={path:'01_大纲细纲/第一卷/第1章.md',category:'创作材料'};
+const manuscript={path:'02_正文/第一卷/第1章.md',category:'创作材料'};
+assert.equal(filePurpose(outline),'细纲材料');assert.equal(filePurpose(manuscript),'正文目录文件');assert.equal(versionLabel(manuscript),'材料');
+assert.equal(filePurpose({path:'.story/drafts/第1章.md',category:'候选与草稿'}),'候选稿');
+assert.equal(filePurpose({...manuscript,kind:'formal'}),'正式正文');
+""")
+
+    def test_chapter_picker_keeps_versions_materials_and_current_unsaved_buffer(self):
+        s=self.script();source=s[s.index('function displayTitle'):s.index('function downloadName')]
+        source+=s[s.index('function chapterChoices'):s.index('function updateChapterPicker')]
+        source+=s[s.index('function primaryChapterDocument'):s.index('function locateActive')]
+        self.js("const chapterNumber=d=>d.context?.chapter||d.chapter;\n"+source,r"""
+const formal={id:'formal:1',category:'正式正文',title:'正式正文',path:'chapters/第1章.md'},plan={id:'plan:1',category:'计划',title:'已保存章计划'},draft={id:'file:draft',category:'候选与草稿',path:'.story/drafts/第1章 候选.md',title:'候选'},outline={id:'file:outline',path:'01_大纲细纲/第1章 细纲.md',title:'细纲'};
+const c={workspace:{groups:[{chapter:1,items:[plan,draft,formal]}]},related_files:[draft,outline,{id:'other',path:'第2章.md'},{id:'external',external:true,path:'第1章.md'}]};
+const d={...draft,kind:'candidate',context:{chapter:1},value:'未保存文字'};
+const rows=chapterChoices(c,d);assert.equal(rows.length,4);assert.ok(rows.find(x=>x.id==='file:outline').label.startsWith('细纲材料'));assert.equal(rows.find(x=>x.id==='file:draft').value,'未保存文字');assert.ok(rows.find(x=>x.id==='formal:1').manuscript);assert.ok(!rows.find(x=>x.id==='plan:1').manuscript);
+assert.equal(primaryChapterDocument(c.workspace.groups[0]).id,'formal:1');assert.equal(primaryChapterDocument({chapter:1,items:[draft,plan]}).id,'plan:1');assert.deepEqual(chapterChoices(c,{id:'global'}),[]);
+""")
+
+    def test_column_sizes_preserve_reading_space_and_reject_invalid_preferences(self):
+        s=self.script();source=s[s.index('function fitColumns'):s.index('function setupColumns')]
+        self.js(source,r"""
+assert.deepEqual(fitColumns(undefined,null,1065),{left:236,right:248});assert.deepEqual(fitColumns(-10,900,1200),{left:180,right:360});
+for(const width of [821,900,1065,1440]){const p=fitColumns(360,360,width);assert.ok(p.left>=180&&p.right>=200);assert.ok(width-p.left-p.right>=360);}
+assert.deepEqual(fitColumns(NaN,Infinity,1065),{left:236,right:248});
 """)

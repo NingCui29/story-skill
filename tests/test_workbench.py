@@ -414,9 +414,10 @@ class WorkbenchTests(unittest.TestCase):
 const assert=require('assert');
 let openSequence=0,active=null; const docs=new Map(), location={hash:''};
 const crypto={randomUUID:()=> 'test-recovery-key'};
+const document={body:{classList:{remove(){}}}},$=()=>({setAttribute(){}});
 let requests=[],shown=[],writes=[];
 const show=d=>{active=d.id;shown.push(d.id);};
-const note=()=>{}; const catalog=async()=>{}; const pendingEdits=()=>{};
+const closePanels=()=>{};const previewSearch=()=>{};const note=()=>{}; const catalog=async()=>{}; const pendingEdits=()=>{};const displayTitle=d=>d.title,versionLabel=()=>'';
 const dirty=d=>d.value!==d.text;
 let call=(action,data)=>new Promise(resolve=>requests.push({data,resolve}));
 eval(process.argv[1]);eval(process.argv[2]);
@@ -471,7 +472,7 @@ eval(process.argv[1]);eval(process.argv[2]);
         program = r"""
 const assert=require('assert'),docs=new Map(),elements={};let opened;
 const $=id=>elements[id]||(elements[id]={children:[],replaceChildren(){this.children=[];},append(b){this.children.push(b);}});
-const document={createElement:()=>({})},openDoc=id=>{opened=id;};
+const document={createElement:()=>({})},openDoc=id=>{opened=id;},displayTitle=d=>d.title;
 const dirty=d=>d.editable&&d.value!==d.text;
 eval(process.argv[1]);
 docs.set('outside-page',{id:'outside-page',title:'outside page',editable:true,text:'old',value:'new'});
@@ -1056,6 +1057,100 @@ eval(process.argv[1]);
         for value in ['file:.story/state.sqlite3', 'file:../outside.txt', 'file:/etc/passwd', 'formal:999']:
             with self.subTest(value=value), self.assertRaises(story.StoryError):
                 story.workbench._editor_document(self.root, value)
+
+    def test_incomplete_plan_http_error_does_not_drop_connection(self):
+        import threading
+        import http.client
+        w = story.workbench
+        self.book.db.execute('UPDATE plans SET data=? WHERE chapter=1', ('{}',))
+        self.book.db.commit()
+        server = w.editor_server(self.root)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            token = server.editor_url.rstrip('/').split('/')[-1]
+            connection = http.client.HTTPConnection('127.0.0.1', server.server_port)
+            headers = {'Content-Type': 'application/json', 'X-Story-Token': token,
+                       'Origin': f'http://127.0.0.1:{server.server_port}'}
+            # A nonempty old plan with a missing required field must return JSON, not a dropped socket.
+            self.book.db.execute('UPDATE plans SET data=? WHERE chapter=1', ('{"goal":"保留目标"}',))
+            self.book.db.commit()
+            connection.request('POST', '/' + token + '/api/open', json.dumps({'id':'plan:1'}), headers)
+            response = connection.getresponse()
+            self.assertEqual(response.status, 409)
+            self.assertEqual(json.loads(response.read())['error'], 'workbench_legacy_fields')
+            connection.request('POST', '/' + token + '/api/open', json.dumps({'id':'plan:2'}), headers)
+            response = connection.getresponse()
+            self.assertEqual(response.status, 200)
+            self.assertIn('text', json.loads(response.read()))
+            connection.close()
+        finally:
+            server.shutdown(); server.server_close(); thread.join(timeout=3)
+
+    def test_legacy_plan_without_title_remains_readable_and_unchanged(self):
+        plan = json.loads(self.book.db.execute('SELECT data FROM plans WHERE chapter=1').fetchone()[0])
+        del plan['title']
+        raw = json.dumps(plan, ensure_ascii=False)
+        self.book.db.execute('UPDATE plans SET data=? WHERE chapter=1', (raw,))
+        self.book.db.commit()
+        doc = story.workbench._editor_document(self.root, 'plan:1')
+        self.assertIn('未登记章名', doc['title'])
+        self.assertIn(plan['goal'], doc['text'])
+        self.assertFalse(doc['editable'])
+        self.assertEqual(self.book.db.execute('SELECT data FROM plans WHERE chapter=1').fetchone()[0], raw)
+
+    def test_chapter_focus_selects_containing_page_without_reordering(self):
+        w = story.workbench
+        page = w._editor_catalog(self.root, limit=1, focus=2)['workspace']
+        self.assertEqual(page['offset'], 1)
+        self.assertEqual([g['chapter'] for g in page['groups']], [2])
+        first = w._editor_catalog(self.root, offset=0, limit=1)['workspace']
+        self.assertEqual([g['chapter'] for g in first['groups']], [1])
+        filtered = w._editor_catalog(self.root, limit=1, query='第1章', focus=2)['workspace']
+        self.assertEqual([g['chapter'] for g in filtered['groups']], [1])
+
+    def test_heading_spacing_is_display_only_and_other_names_remain(self):
+        split = story.workbench._body_without_heading
+        original = '第1章 试稿\n\n她进门。\n'
+        prefix, body = split(original, 1, '第1章  试稿')
+        self.assertEqual(body, '她进门。\n')
+        self.assertEqual(prefix + body, original)
+        self.assertEqual(split(original, 1, '第1章 另一稿'), ('', original))
+        self.assertEqual(split(original, 2, '第2章 试稿'), ('', original))
+
+    def test_explicit_material_roots_are_searchable_read_only_and_separate(self):
+        w = story.workbench
+        outer = Path(self.temp.name) / '外层大纲'
+        outer.mkdir()
+        original = '# 第99章 外层提纲\n\n独有材料检索词。'
+        (outer / '第99章 提纲.md').write_text(original, encoding='utf-8')
+        (outer / '封面.png').write_bytes(b'\x89PNG\r\n')
+        (outer / '.private.md').write_text('hidden', encoding='utf-8')
+        roots = w._material_roots([outer])
+        catalog = w._editor_catalog(self.root, material_roots=roots)
+        rows = [r for r in catalog['files'] if r.get('external')]
+        self.assertEqual(len(rows), 2)
+        self.assertNotIn(99, [g['chapter'] for g in catalog['workspace']['groups']])
+        entry = next(r for r in rows if r['path'].endswith('.md'))
+        doc = w._linked_material_document(roots, entry['id'])
+        self.assertFalse(doc['editable'])
+        self.assertIsNone(doc['context'])
+        self.assertEqual(doc['text'], original)
+        self.assertEqual(w._editor_search(self.root, '独有材料检索词', material_roots=roots)['total'], 1)
+        with self.assertRaises(story.StoryError):
+            w._editor_save(self.root, {**doc, 'text': '不应写入'})
+        with self.assertRaises(story.StoryError):
+            w._linked_material_document({}, entry['id'])
+        with self.assertRaises(story.StoryError):
+            w._linked_material_document(roots, entry['id'] + '/../secret.md')
+        self.assertEqual((outer / '第99章 提纲.md').read_text(encoding='utf-8'), original)
+        image = next(r for r in rows if r['path'].endswith('.png'))
+        self.assertTrue(w._linked_material_document(roots, image['id'])['image'].startswith('data:image/png'))
+        if os.name != 'nt':
+            (outer / 'shortcut.md').symlink_to(outer / '第99章 提纲.md')
+            warnings = []
+            self.assertEqual(len(w._linked_material_files(roots, warnings)), 2)
+            self.assertTrue(warnings)
 
     def test_reader_hides_only_matching_opening_heading(self):
         split = story.workbench._body_without_heading

@@ -64,6 +64,7 @@ def register_parser(sub, command):
     editor = command("workbench-serve", "Open a loopback editor that saves candidate drafts only", DEFAULT_BUDGET, False)
     editor.add_argument("--limit", type=int, default=DEFAULT_LIMIT)
     editor.add_argument("--library-book", action="append", default=[], help="Another explicitly selected book on the local shelf; repeat as needed")
+    editor.add_argument("--material-root", action="append", default=[], help="Explicit external directory of read-only author materials; repeat as needed")
     editor.add_argument("--open", action="store_true", dest="open_browser")
     command("workbench-status", "Check the registered local editor instance", DEFAULT_BUDGET, False)
     stop = command("workbench-stop", "Stop the registered editor after preserving edits in all its pages", DEFAULT_BUDGET, False)
@@ -871,7 +872,7 @@ def _body_without_heading(text, chapter, title):
     first = lines[0].lstrip('\ufeff').strip()
     # Only remove an exact opening heading, never mentions within the story.
     first = re.sub(r"^#{1,6}\s+", "", first)
-    if first != title or not re.match(rf"^第0*{chapter}章(?:\s|$)", first):
+    if re.sub(r"\s+", " ", first) != re.sub(r"\s+", " ", title.strip()) or not re.match(rf"^第0*{chapter}章(?:\s|$)", first):
         return "", text
     end = 1
     while end < len(lines) and not lines[end].strip():
@@ -934,7 +935,7 @@ document.querySelector('#toggle-context').addEventListener('click',()=>{const cl
 <title>{_escape(book["title"])} · Story Skill</title><style>
 .reading-column{{min-width:0;min-height:0;display:flex;flex-direction:column}}.reading-column main{{flex:1;min-height:0}}.reader-controls{{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 20px;border-bottom:1px solid #e3e7ee;background:white;font-size:12px;color:#7b8799}}button:disabled{{opacity:.4;cursor:default}}#chapter-search{{width:100%;padding:10px;border:1px solid #dce2eb;border-radius:7px;margin:8px 0 18px;font:inherit}}a:focus-visible,button:focus-visible,input:focus-visible{{outline:2px solid #476aab;outline-offset:2px}}*{{box-sizing:border-box}}[hidden]{{display:none!important}}body{{margin:0;color:#243047;background:#fafbfc;font:14px/1.7 system-ui,-apple-system,"PingFang SC",sans-serif}}a{{color:#476aab;text-decoration:none}}button{{font:inherit;cursor:pointer;background:white;border:1px solid #dce2eb;border-radius:7px;padding:6px 12px;color:#46556e}}header{{height:66px;border-bottom:1px solid #e3e7ee;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:#fff;gap:16px}}header strong{{font-size:16px}}.brand{{color:#70819d;font-size:12px;margin-right:24px}}.desk{{display:grid;grid-template-columns:260px minmax(0,1fr) 280px;height:calc(100vh - 66px)}}nav,aside{{padding:24px 18px;overflow:auto;background:#f6f8fb}}nav{{border-right:1px solid #e3e7ee}}aside{{border-left:1px solid #e3e7ee}}.manuscript{{overflow:auto;padding:48px clamp(24px,5vw,88px);background:white}}h1{{font-size:25px;line-height:1.5;margin:12px 0 32px}}h2{{font-size:19px}}h3{{font-size:13px;color:#748096;margin:24px 0 8px}}p{{overflow-wrap:anywhere}}pre{{white-space:pre-wrap;overflow-wrap:anywhere;font:19px/2.05 "Songti SC","SimSun",serif;color:#303743;margin:0;max-width:800px}}summary{{cursor:pointer;color:#7b8799;font-size:12px;padding:16px 8px 8px;overflow-wrap:anywhere}}.chapter-link{{display:block;padding:10px 12px;border-radius:7px;color:#526078;overflow-wrap:anywhere}}.chapter-link:hover{{background:#edf1f7}}.selected{{background:#e7eefb!important;color:#315fa5;font-weight:600}}.eyebrow,.muted{{font-size:12px;color:#8894a6}}.overview-link{{display:block;padding:10px 12px;border-bottom:1px solid #e1e6ef;margin-bottom:8px}}.context-closed .desk{{grid-template-columns:260px minmax(0,1fr)}}.context-closed aside{{display:none}}article{{max-width:850px;margin:auto}}.status{{color:#5f8974;font-size:12px}}@media(max-width:1000px){{.desk{{grid-template-columns:210px minmax(0,1fr) 220px}}.manuscript{{padding:30px 24px}}}}@media(max-width:760px){{#toggle-context{{display:none}}.reader-controls{{padding:8px;flex-wrap:wrap}}.desk,.context-closed .desk{{grid-template-columns:160px minmax(0,1fr)}}aside{{display:none}}header{{padding:0 12px}}.brand{{display:none}}nav{{padding:14px 8px}}pre{{font-size:17px}}}}
 </style></head><body><header><div><span class="brand">STORY SKILL / 写作工作台</span><strong>{_escape(book["title"])}</strong></div><div><span class="status">本地只读</span> <button id="toggle-context" aria-expanded="true">章节信息</button></div></header>
-<noscript><p>正文切换需要启用 JavaScript；可直接打开书目录中的章节原稿。</p></noscript><div class="desk"><nav aria-label="作品目录"><a class="overview-link" href="#overview">作品概览</a><label class="eyebrow" for="chapter-search">搜索本页章节</label><input id="chapter-search" type="search" placeholder="输入章名或编号"><p id="search-empty" hidden role="status">未找到匹配章节</p><div class="eyebrow">正文目录 · 本页 {len(rows)} 章</div>{navigation or '<p>尚无正式章节</p>'}<p class="muted">{_escape(coverage)}</p></nav>
+<noscript><p>正文切换需要启用 JavaScript；可直接打开书目录中的章节原稿。</p></noscript><div class="desk"><nav id="book-nav" aria-label="作品目录"><a class="overview-link" href="#overview">作品概览</a><label class="eyebrow" for="chapter-search">搜索本页章节</label><input id="chapter-search" type="search" placeholder="输入章名或编号"><p id="search-empty" hidden role="status">未找到匹配章节</p><div class="eyebrow">正文目录 · 本页 {len(rows)} 章</div>{navigation or '<p>尚无正式章节</p>'}<p class="muted">{_escape(coverage)}</p></nav>
 <div class="reading-column"><div class="reader-controls"><button id="previous" disabled>上一章</button><span id="reading-position" aria-live="polite"></span><button id="next" disabled>下一章</button></div><main class="manuscript"><p id="missing-chapter" hidden role="status">该章节未包含在此页面中，请从左侧选择已载入章节。</p>{"".join(articles)}<section id="overview" hidden><h1>作品概览</h1><h2>{_escape(title)}</h2><p>{_escape(note)}</p><p>已正式保存 {total} 章</p><p>{_escape(coverage)}</p><h2>需要处理</h2>{attention or "<p>当前没有待处理提示。</p>"}<h2>交付准备</h2><p>{_escape(delivery)}</p><p class="muted">这里只显示本地记录；未核验 ZIP 内容，也不代表平台已保存、审核或上线。</p><p class="muted">生成于 {_escape(packet["captured_at"])}。原稿修改后需重新导出。</p></section></main></div>
 <aside aria-label="章节信息"><div class="eyebrow">章节信息</div>{"".join(notes)}<h3>阅读说明</h3><p class="muted">正文为生成时核对的正式稿副本。本页不提供编辑保存。</p><p class="muted">细纲与人物资料尚未接入。</p></aside></div><script>{script}</script></body></html>'''
 
@@ -1262,6 +1263,64 @@ def _author_files(root, warnings=None):
     return sorted(result, key=lambda row: (row['category'], row['path']))
 
 
+def _material_roots(paths):
+    if len(paths or []) > 10:
+        api.fail('invalid_input', '最多关联10个只读材料目录。')
+    roots = {}
+    for value in paths or []:
+        path = Path(value).expanduser().absolute()
+        if path.is_symlink() or getattr(path, 'is_junction', lambda: False)():
+            api.fail('linked_path', '关联材料目录不能是链接。', path=str(path))
+        path = path.resolve()
+        if not path.is_dir():
+            api.fail('invalid_input', '关联材料目录不存在。', path=str(path))
+        key = hashlib.sha256(str(path).encode()).hexdigest()[:20]
+        roots[key] = path
+    return roots
+
+
+def _linked_material_files(roots, warnings=None):
+    rows, inspected = [], 0
+    for key, root in roots.items():
+        pending = list(root.iterdir())
+        while pending:
+            path = pending.pop()
+            inspected += 1
+            if inspected > AUTHOR_LIMIT:
+                api.fail('workbench_scan_limit', '关联材料超过扫描上限，请缩小指定目录。')
+            if path.name.startswith('.') or path.name == '__pycache__':
+                continue
+            relative = path.relative_to(root).as_posix()
+            try:
+                path = api.safe_path(root, relative)
+                if path.is_dir():
+                    pending.extend(path.iterdir())
+                elif path.is_file() and path.suffix.lower() in AUTHOR_SUFFIXES:
+                    rows.append({'id': 'linked:' + key + ':' + relative, 'path': str(path),
+                                 'relative': relative, 'source_root': str(root), 'external': True,
+                                 'title': path.stem, 'category': '关联材料（只读）'})
+            except (api.StoryError, OSError):
+                if warnings is not None:
+                    warnings.append('已跳过无法安全读取的关联材料：' + str(path))
+    return sorted(rows, key=lambda r: r['path'])
+
+
+def _linked_material_document(roots, document_id):
+    row = next((r for r in _linked_material_files(roots) if r['id'] == document_id), None)
+    if row is None:
+        api.fail('invalid_input', '材料未列入本次明确关联的目录。')
+    mime = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp'}.get(Path(row['path']).suffix.lower())
+    raw = _author_read(Path(row['source_root']), row['relative'], 8 * 1024 * 1024 if mime else AUTHOR_TEXT_LIMIT)
+    result = {'ok': True, **row, 'text': '' if mime else raw.decode('utf-8'), 'sha256': hashlib.sha256(raw).hexdigest(),
+              'kind': 'material', 'editable': False, 'is_prose': False, 'context': None,
+              'source': row['source_root'], 'status': '关联材料，只读；未与本书正式状态合并',
+              'render_markdown': Path(row['path']).suffix.lower() == '.md',
+              'historical_note': '来自明确关联的外部目录；修改与采用请交给助手核对原始书目录。'}
+    if mime:
+        result['image'] = 'data:' + mime + ';base64,' + base64.b64encode(raw).decode()
+    return result
+
+
 def _author_read(root, relative, maximum=AUTHOR_TEXT_LIMIT):
     path = api.safe_path(root, relative)
     with api._pinned_directory(path.parent) as directory:
@@ -1284,9 +1343,18 @@ def _editor_packet(root, chapter=None, offset=0, limit=DEFAULT_LIMIT):
         book.close()
 
 
-def _editor_catalog(root, offset=0, limit=DEFAULT_LIMIT, query=''):
+def _editor_catalog(root, offset=0, limit=DEFAULT_LIMIT, query='', focus=None, material_roots=None):
     if type(offset) is not int or not isinstance(query, str) or len(query) > 200:
         api.fail('invalid_input', '目录参数无效。')
+    if focus is not None:
+        _editor_chapter(focus)
+        book = _ReadOnlyBook(root)
+        try:
+            numbers = [r[0] for r in book.db.execute('SELECT chapter FROM chapter_state ORDER BY chapter DESC')]
+            if focus in numbers and not query:
+                offset = numbers.index(focus) // limit * limit
+        finally:
+            book.close()
     packet = _editor_packet(root, offset=offset, limit=limit)
     # Search the whole formal directory, not only the currently loaded page.
     rows = packet['chapters']['results']
@@ -1308,12 +1376,14 @@ def _editor_catalog(root, offset=0, limit=DEFAULT_LIMIT, query=''):
         total = packet['chapters']['total']
     warnings = []
     all_files = _author_files(Path(root), warnings)
+    all_files += _linked_material_files(material_roots or {}, warnings)
     files = [row for row in all_files if not query or query.casefold() in row['path'].casefold()]
     return {'ok': True, 'chapters': [{'id': f"formal:{r['chapter']}", 'title': Path(r['path']).stem,
                                     'path': r['path'], 'category': '正式正文'} for r in rows],
             'files': files, 'related_files': all_files, 'warnings': warnings, 'total': total, 'offset': offset, 'limit': limit,
             'has_more': offset + len(rows) < total, 'snapshot': packet['snapshot']['id'],
-            'workspace': _workspace_index(root, all_files, offset, limit, query)}
+            'workspace': _workspace_index(root, all_files, offset, limit, query, focus),
+            'book_root': str(root), 'material_roots': [str(p) for p in (material_roots or {}).values()]}
 
 
 def _candidate_metadata(root, relative):
@@ -1390,12 +1460,13 @@ def _editor_document_raw(root, document_id):
         plan = context['plan']
         if not plan:
             api.fail('invalid_input', '此章尚未保存工具计划。')
-        text = '# 第' + str(number) + '章 ' + plan['title'] + '\n\n## 本章目标\n\n' + plan['goal']
+        label = f'第{number}章' + (' ' + plan['title'] if plan.get('title') else '（未登记章名）')
+        text = '# ' + label + '\n\n## 本章目标\n\n' + plan.get('goal', '未登记目标')
         for beat in plan.get('beats', []):
             text += '\n\n### 场景\n\n' + beat['choice'] + '\n\n' + beat['change']
         text += '\n\n## 停笔点\n\n' + plan['stop']
         return {'ok': True, 'id': document_id, 'path': '工具章计划 · 第' + str(number) + '章',
-                'title': '第' + str(number) + '章 ' + plan['title'], 'text': text, 'kind': 'plan',
+                'title': label, 'text': text, 'kind': 'plan',
                 'chapter': number, 'sha256': api.digest(text), 'editable': False, 'status': '已保存计划，尚非正文'}
     if document_id.startswith('pending:'):
         return _pending_document(root, document_id)
@@ -1599,7 +1670,7 @@ def _chapter_hint(path):
     return number if number > 0 else None
 
 
-def _workspace_index(root, files, offset=0, limit=DEFAULT_LIMIT, query=''):
+def _workspace_index(root, files, offset=0, limit=DEFAULT_LIMIT, query='', focus=None):
     """Read chapter relationships; names are navigation hints, never adoption evidence."""
     book = _ReadOnlyBook(root)
     try:
@@ -1614,6 +1685,8 @@ def _workspace_index(root, files, offset=0, limit=DEFAULT_LIMIT, query=''):
             title = book.meta('title')
         grouped = {}
         for row in files:
+            if row.get('external'):
+                continue
             chapter = _chapter_hint(row['path'])
             if chapter:
                 grouped.setdefault(chapter, []).append({**row, 'relation': '同章号文件，采用关系须另核对'})
@@ -1622,6 +1695,8 @@ def _workspace_index(root, files, offset=0, limit=DEFAULT_LIMIT, query=''):
         for n in numbers:
             plan = plans.get(n, {})
             label = f'第{n}章 ' + plan['title'] if plan.get('title') else Path(formal[n]).stem if n in formal else f'第{n}章'
+            if re.fullmatch(r'[0-9]+', label):
+                label = f'第{n}章（未登记章名）'
             items = []
             if n in formal:
                 items.append({'id': f'formal:{n}', 'title': '正式正文', 'path': formal[n], 'category': '正式正文'})
@@ -1633,6 +1708,12 @@ def _workspace_index(root, files, offset=0, limit=DEFAULT_LIMIT, query=''):
             groups.append({'chapter': n, 'title': label, 'volume': plan.get('volume_dir', ''),
                            'status': '已有正式稿' if n in formal else '已规划，未提交' if n in plans else '仅有同章号材料',
                            'items': items, 'has_plan': n in plans})
+        if focus is not None:
+            _editor_chapter(focus)
+            for index, group in enumerate(groups):
+                if group['chapter'] == focus:
+                    offset = index // limit * limit
+                    break
         return {'title': title, 'revision': revision, 'captured_at': _utc_now(), 'formal_total': len(formal),
                 'planned_total': len(plans), 'next_chapter': next_chapter, 'total': len(groups),
                 'groups': groups[offset:offset + limit], 'has_more': offset + limit < len(groups),
@@ -1713,7 +1794,7 @@ def _editor_review_task(root, document_id, expected_sha=None):
     return {'ok': True, 'prompt': prompt, 'lint': lint, 'status': '审稿任务已生成，尚未交给助手执行'}
 
 
-def _editor_search(root, query, offset=0, limit=30):
+def _editor_search(root, query, offset=0, limit=30, material_roots=None):
     if not isinstance(query, str) or not query.strip() or len(query) > 200 or type(offset) is not int or offset < 0:
         api.fail('invalid_input', '请输入1至200字搜索词。')
     query = query.strip()
@@ -1722,12 +1803,14 @@ def _editor_search(root, query, offset=0, limit=30):
         with book.read_snapshot():
             meta = _meta_map(book.db); meta['__root'] = str(book.root)
             rows = [{'id': f'formal:{r["chapter"]}', 'path': _chapter_path(meta, r['chapter']),
-                     'title': Path(_chapter_path(meta, r['chapter'])).stem, 'sha256': r['sha']}
+                     'title': Path(_chapter_path(meta, r['chapter'])).stem, 'sha256': r['sha'],
+                     'category': '正式正文', 'kind': 'formal'}
                     for r in book.db.execute('SELECT chapter,sha FROM chapter_state ORDER BY chapter')]
     finally:
         book.close()
     warnings = []
     rows += [r for r in _author_files(Path(root), warnings) if Path(r['path']).suffix.lower() in ('.md', '.txt')]
+    rows += [r for r in _linked_material_files(material_roots or {}, warnings) if Path(r['path']).suffix.lower() in ('.md', '.txt')]
     hits, read_bytes, checked = [], 0, 0
     # Bound each request and explicitly report incomplete coverage; never silently call a partial scan complete.
     for row in rows:
@@ -1736,7 +1819,7 @@ def _editor_search(root, query, offset=0, limit=30):
             break
         checked += 1
         try:
-            raw = _author_read(Path(root), row['path'])
+            raw = _author_read(Path(row['source_root']), row['relative']) if row.get('external') else _author_read(Path(root), row['path'])
             read_bytes += len(raw)
             if row.get('sha256') and hashlib.sha256(raw).hexdigest() != row['sha256']:
                 warnings.append('正式稿外改，未纳入搜索：' + row['path']); continue
@@ -1744,7 +1827,7 @@ def _editor_search(root, query, offset=0, limit=30):
             match = re.search(re.escape(query), text, re.IGNORECASE)
             if match:
                 found = match.start()
-                hits.append({'id': row['id'], 'path': row['path'], 'title': row['title'],
+                hits.append({**{key: row[key] for key in ('id', 'path', 'title', 'category', 'kind', 'external', 'modified') if key in row},
                              'excerpt': text[max(0, found - 45):found + len(query) + 110].replace('\n', ' ')})
         except (OSError, UnicodeError, api.StoryError):
             warnings.append('无法读取，未纳入搜索：' + row['path'])
@@ -1804,17 +1887,106 @@ def _library_open(library, key, current_root=None, current_url=None):
 def _editor_page(packet, reading, token):
     # The editor loads one document at a time; author files are never executable HTML.
     script = r"""const TOKEN=__TOKEN__, LIMIT=__LIMIT__;
-const $=id=>document.getElementById(id), docs=new Map();let active=null,offset=0,loading=false,reloadPending=false,openSequence=0,reloading=false,queryTimer;
-const note=text=>$('message').textContent=text;
+const $=id=>document.getElementById(id), docs=new Map();let active=null,offset=0,loading=false,reloadPending=false,openSequence=0,reloading=false,queryTimer,pendingFocus=false;
+const note=text=>{$('message').textContent=text;$('message').hidden=!text||text.startsWith('已打开：');};
 async function call(action,data={}){const response=await fetch(location.pathname+'api/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(data)});const value=await response.json();if(!response.ok)throw Error((value.message||'请求失败')+(value.details?.path?' 文件：'+value.details.path:'')+(value.details?.incomplete_path?' 暂存：'+value.details.incomplete_path:''));return value;}
 let currentCatalog=null,viewMode='chapters',metricTimer,metricSequence=0,searchSequence=0,fullSearchOffset=0;
 const readableMethod={visible_nonspace_v1:'非空白可见字符（含标点）',letters_numbers_v1:'汉字、字母与数字',han_v1:'汉字'};
 function chapterNumber(d){return d.context?.chapter||d.chapter||null;}
 function simpleCount(text){return [...text].filter(c=>!/[\s\p{Cc}\p{Cf}]/u.test(c)).length;}
+function displayTitle(d){
+ const title=d.title||'未命名材料';
+ if(!(d.path||'').startsWith('.story/drafts/workbench/'))return title;
+ return title.replace(/_候选_[0-9a-f]{12}(?:_\d+)?$/i,'').replace(/_[0-9a-f]{8}-[0-9a-f-]{27,}$/i,'');
+}
+function versionLabel(d){return d.category==='自动恢复'||(d.path||'').includes('/自动恢复/')?'恢复副本':d.kind==='candidate'||d.category==='候选与草稿'?'候选':d.kind==='formal'||d.category==='正式正文'?'正式稿':d.kind==='plan'||d.category==='计划'?'章计划':d.external?'只读材料':'材料';}
+function filePurpose(d){
+ if(d.kind==='formal'||d.category==='正式正文')return '正式正文';
+ if(d.kind==='plan'||d.category==='计划')return '章计划';
+ const path=(d.path||'').replace(/\\/g,'/');
+ if(/(?:^|\/)\d+_大纲细纲\//.test(path))return '细纲材料';
+ if(/(?:^|\/)\d+_正文\//.test(path))return '正文目录文件';
+ return versionLabel(d)==='候选'?'候选稿':versionLabel(d)==='恢复副本'?'恢复副本':d.external?'关联材料':'创作材料';
+}
+function downloadName(d){return displayTitle(d)+(d.editable&&d.value!==undefined&&d.value!==d.text?'-未保存候选':versionLabel(d)==='候选'?'-候选':versionLabel(d)==='恢复副本'?'-恢复副本':'')+'.txt';}
+function chapterChoices(c,d){
+ const n=chapterNumber(d);if(!n)return [];
+ const group=c?.workspace?.groups.find(g=>g.chapter===n),rows=[...(group?.items||[])];
+ for(const r of c?.related_files||c?.files||[])if(!r.external&&Number(r.path?.split('/').pop().match(/^第(\d+)章(?:\s|_|\.)/)?.[1])===n)rows.push(r);
+ rows.push(d);const unique=[...new Map(rows.map(r=>[r.id,r])).values()];
+ return unique.map(r=>({...r,label:filePurpose(r)+' · '+displayTitle({...r,title:r.title==='正式正文'?(group?.title||r.path?.split('/').pop()?.replace(/\.(md|txt)$/i,'')||r.title):r.title})+(r.modified?' · '+new Date(r.modified).toLocaleString():''),manuscript:['正式稿','候选','恢复副本'].includes(versionLabel(r))}));
+}
+function updateChapterPicker(){
+ const d=docs.get(active),box=$('chapter-picker'),select=$('chapter-version');if(!d){box.hidden=true;return;}
+ const rows=chapterChoices(currentCatalog,d);box.hidden=!rows.length;select.replaceChildren();
+ for(const [label,match]of [['稿件',true],['计划与材料',false]]){const group=document.createElement('optgroup');group.label=label;
+  for(const r of rows.filter(r=>r.manuscript===match)){const o=document.createElement('option');o.value=r.id;o.textContent=r.label+(dirty(docs.get(r.id))?' · 未保存':'');if(rows.filter(x=>x.label===r.label).length>1)o.textContent+=' · '+r.path;o.title=r.path;o.selected=r.id===active;group.append(o);}if(group.children.length)select.append(group);
+ }
+ $('chapter-picker-help').textContent='同章号文件供切换查看；候选和材料不代表已采用。';
+}
+function primaryChapterDocument(group){return group.items.find(r=>r.id==='formal:'+group.chapter)||group.items.find(r=>r.id==='plan:'+group.chapter)||group.items[0];}
+function locateActive(){
+ const row=[...$('list').querySelectorAll('[data-doc]')].find(e=>e.dataset.doc===active||Number(e.dataset.chapter)===chapterNumber(docs.get(active)||{}));
+ if(!row){if(active)$('directory-warning').textContent+=' 当前文件不在筛选结果中，可清空搜索后定位。';return;}
+ for(let p=row.parentElement;p&&p!==$('list');p=p.parentElement)if(p.tagName==='DETAILS')p.open=true;
+ row.scrollIntoView({block:'nearest'});
+}
+// Keep each document's edit and reading positions separate; search is a temporary view.
+let searchPreview=false,searchMarks=[],searchIndex=-1;
+function rememberView(d=docs.get(active)){
+ if(!d||searchPreview)return;
+ const mode=$('text').hidden?'reading':'editing';d.positions=d.positions||{};
+ d.positions[mode]={main:document.querySelector('main').scrollTop,editor:$('text').scrollTop,start:$('text').selectionStart,end:$('text').selectionEnd,direction:$('text').selectionDirection};
+}
+function restoreView(d){
+ const p=d.positions?.[d.editing?'editing':'reading'];
+ if(d.editing){$('text').setSelectionRange(p?.start||0,p?.end||0,p?.direction||'none');$('text').scrollTop=p?.editor||0;}
+ document.querySelector('main').scrollTop=p?.main||0;
+}
+function searchRanges(text,query){
+ if(!query)return [];const escaped=query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),rx=new RegExp(escaped,'giu'),ranges=[];let m;
+ while((m=rx.exec(text)))ranges.push({start:m.index,end:m.index+m[0].length});return ranges;
+}
+function stepSearch(delta){
+ searchIndex=Math.max(0,Math.min(searchMarks.length-1,searchIndex+delta));
+ searchMarks.forEach((el,i)=>el.classList.toggle('current-match',i===searchIndex));
+ if(searchMarks[searchIndex])searchMarks[searchIndex].scrollIntoView({block:'center'});
+ $('match-position').textContent=searchMarks.length?'第 '+(searchIndex+1)+' / '+searchMarks.length+' 处':'当前文字中未找到；文件可能已修改，请重新搜索。';
+ $('match-prev').disabled=searchIndex<=0;$('match-next').disabled=searchIndex>=searchMarks.length-1;
+}
+function previewSearch(query){
+ const d=docs.get(active);rememberView(d);searchPreview=true;searchMarks=[];searchIndex=-1;
+ // Recompute against the current buffer, never substitute disk text for unsaved edits.
+ const text=(d.prefix||'')+(d.value||''),box=$('match-text');box.replaceChildren();let last=0;
+ for(const r of searchRanges(text,query)){box.append(document.createTextNode(text.slice(last,r.start)));const mark=document.createElement('mark');mark.textContent=text.slice(r.start,r.end);box.append(mark);searchMarks.push(mark);last=r.end;}
+ box.append(document.createTextNode(text.slice(last)));
+ for(const id of ['formatted','prose','text','cover'])$(id).hidden=true;
+ $('match-view').hidden=false;$('match-query').textContent='搜索“'+query+'” · 当前文字定位预览（含原始标题和格式）'+(dirty(d)?' · 含未保存编辑':'');
+ $('match-back').textContent=d.editing?'返回编辑位置':'返回阅读位置';stepSearch(1);
+ if(!searchMarks.length)$('match-view').scrollIntoView({block:'start'});
+}
+let closePanels=()=>{};
+function panelFocusables(panel){return [...panel.querySelectorAll('button,input,select,textarea,a[href],summary,[tabindex]')].filter(el=>{
+ if(el.disabled||el.tabIndex<0||!el.getClientRects().length)return false;
+ for(let p=el.parentElement;p&&p!==panel;p=p.parentElement)if(p.tagName==='DETAILS'&&!p.open&&!p.querySelector('summary')?.contains(el))return false;
+ return true;
+});}
+function trapPanelFocus(e){
+ const id=document.body.classList.contains('nav-open')?'book-nav':document.body.classList.contains('context-open')?'book-context':null;
+ if(!id||e.key!=='Tab')return false;
+ const panel=$(id),items=panelFocusables(panel),index=items.indexOf(document.activeElement);
+ e.preventDefault();const next=index<0?(e.shiftKey?items.length-1:0):(index+(e.shiftKey?-1:1)+items.length)%items.length;(items[next]||panel).focus();return true;
+}
+let compareSequence=0,diffTargets=[],diffIndex=-1;
+function leaveComparison(){
+ ++compareSequence;const d=docs.get(active);document.body.classList.remove('comparing');$('document-body').hidden=false;$('difference').hidden=true;
+ if(d?.comparePosition){const p=d.comparePosition;document.querySelector('main').scrollTop=p.main;$('text').scrollTop=p.editor;if(d.editing){$('text').focus({preventScroll:true});$('text').setSelectionRange(p.start,p.end);}delete d.comparePosition;}
+}
+function stepDiff(delta){diffIndex=Math.max(0,Math.min(diffTargets.length-1,diffIndex+delta));if(diffTargets[diffIndex])diffTargets[diffIndex].scrollIntoView({block:'center'});$('diff-position').textContent=diffTargets.length?'标记片段 '+(diffIndex+1)+' / '+diffTargets.length:'两版文字一致';$('diff-prev').disabled=diffIndex<=0;$('diff-next').disabled=diffIndex>=diffTargets.length-1;}
 function inlineText(parent,text,path){
  const regex=/(\[([^\]\n]+)\]\(([^)\n]+)\)|\*\*([^*\n]+)\*\*|`([^`\n]+)`)/g;let last=0,m;
  while((m=regex.exec(text))){parent.append(document.createTextNode(text.slice(last,m.index)));let el;
-  if(m[2]){let url;try{url=new URL(m[3],'https://story.local/'+path);}catch{}if(url&&/^https?:$/.test(url.protocol)){
+  if(m[2]){let url;try{url=new URL(m[3],'https://story.local/'+path);}catch{}if(url&&/^https?:$/.test(url.protocol)&&!(path===null&&url.hostname==='story.local')){
    el=document.createElement('a');el.textContent=m[2];
    if(url.hostname==='story.local'){el.href='#';el.onclick=e=>{e.preventDefault();try{openDoc('file:'+decodeURIComponent(url.pathname.slice(1)));}catch{note('链接路径无法识别。');}};}
    else{el.href=url.href;el.target='_blank';el.rel='noreferrer noopener';}
@@ -1837,37 +2009,56 @@ function renderMarkdown(container,text,path){
   const p=document.createElement(line.startsWith('> ')?'blockquote':'p');inlineText(p,line.replace(/^> /,''),path);container.append(p);i++;
  }
 }
+function renderProse(container,text){
+ container.replaceChildren();
+ // Preserve exact characters and meaningful extra blank lines; only change their visual spacing.
+ for(const part of text.split(/(\r?\n[ \t]*\r?\n(?:[ \t]*\r?\n)*)/)){
+  if(!part)continue;const span=document.createElement('span');span.textContent=part;
+  const gap=/^\r?\n[ \t]*\r?\n/.test(part);span.className=gap?'prose-gap':'prose-paragraph';
+  if(gap)span.style.height='calc(var(--reader-size) * '+((part.match(/\n/g)||[]).length-1)*0.8+')';
+  container.append(span);
+ }
+}
 function readingView(d){const formatted=d.render_markdown&&!d.editing&&!d.rawPreview&&!d.image;
  $('formatted').hidden=!formatted;$('source-view').hidden=!d.render_markdown;$('source-view').textContent=d.rawPreview?'排版预览':'查看源码';
- if(formatted){$('prose').hidden=true;renderMarkdown($('formatted'),d.value,d.path);}
+ if(formatted){$('prose').hidden=true;renderMarkdown($('formatted'),d.value,d.external?null:d.path);}else if(d.is_prose&&!d.editing&&!d.image)renderProse($('prose'),d.value||'');
  $('history-note').textContent=d.historical_note||'';
  $('review-task-box').hidden=true;
  showChapterInfo(d);scheduleMetrics();
 }
-function showChapterInfo(d){const box=$('chapter-info');box.replaceChildren();const ctx=d.context,p=ctx?.plan;
- if(!ctx){box.textContent='这是全书材料。可从左栏按章查看细纲、正文及候选。';return;}
+function showChapterInfo(d){$('context-title').textContent=d.image?'封面信息':d.external?'材料来源':d.kind==='plan'?'章计划':d.is_prose?'本章写作':'材料信息';$('adoption-help').hidden=!d.is_prose;const box=$('chapter-info'),expanded=new Set(box.dataset.contextDoc===d.id?[...box.querySelectorAll('details[open]')].map(e=>e.dataset.section):[]);box.dataset.contextDoc=d.id;box.replaceChildren();const ctx=d.context,p=ctx?.plan;
+ if(!ctx){box.textContent=d.external?'关联材料只读展示，不推断与本书章节或采用状态的关系。':'这是全书材料。可从左栏按章查看细纲、正文及候选。';return;}
  const add=(title,text,target=box)=>{if(!text)return;const h=document.createElement('h4');h.textContent=title;const v=document.createElement('p');v.textContent=text;target.append(h,v);};
- add('第'+ctx.chapter+'章 · 目标',p?.goal||'尚未保存工具章计划');add('前章衔接',ctx.previous_summary||'没有已提交的前章摘要');
- add('停笔点',p?.stop);add('本章约束',(p?.constraints||[]).join('\n'));
- const related=(currentCatalog?.related_files||currentCatalog?.files||[]).filter(r=>Number(r.path.split('/').pop().match(/^第(\d+)章(?:\s|_|\.)/)?.[1])===ctx.chapter);
- if(related.length){add('相关材料','同章号匹配仅用于导航，不代表已经采用。');related.slice(0,30).forEach(r=>box.append(item(r)));}
+ const fold=(label)=>{const section=document.createElement('details');section.dataset.section=label;section.open=expanded.has(label);const summary=document.createElement('summary');summary.textContent=label;section.append(summary);box.append(section);return section;};
+ add('第'+ctx.chapter+'章 · 目标',p?.goal||'尚未保存工具章计划');add('停笔点',p?.stop);
+ add('前章摘要',ctx.previous_summary||'没有已提交的前章摘要',fold('前章衔接'));add('完整约束',(p?.constraints||[]).join('\n'),fold('本章约束'));
+ const related=(currentCatalog?.related_files||currentCatalog?.files||[]).filter(r=>!r.external&&Number(r.path.split('/').pop().match(/^第(\d+)章(?:\s|_|\.)/)?.[1])===ctx.chapter);
+ if(related.length){const relatedBox=fold('相关材料 · '+related.length);add('关联说明','同章号匹配仅用于导航，不代表已经采用。',relatedBox);related.slice(0,30).forEach(r=>relatedBox.append(item(r)));}
  if(ctx.review){const reviewBox=document.createElement('details');const summary=document.createElement('summary');summary.textContent='正式稿审查记录';reviewBox.append(summary);box.append(reviewBox);add('记录范围','以下记录只对应已提交正式稿，不能代替对当前候选的审查。',reviewBox);for(const [key,label]of Object.entries({causality:'因果',continuity:'连续性',constraints:'约束',style:'文风'})){add(label,ctx.review.checks?.[key]?.note,reviewBox);}for(const issue of ctx.review.issues||[])add('审查问题',issue.issue,reviewBox);}
  else add('审查状态',ctx.formal_sha256?'暂无可展示的审查记录。':'尚无正式提交的审查记录。');
 }
-function scheduleMetrics(){clearTimeout(metricTimer);++metricSequence;const d=docs.get(active);if(!d||!d.editable){$('word-count').textContent='';return;}
- $('word-count').textContent='正在核对字数…';const seq=metricSequence;metricTimer=setTimeout(async()=>{try{
+function scheduleMetrics(){clearTimeout(metricTimer);++metricSequence;const d=docs.get(active);if(!d||!d.editable){$('word-count').textContent='暂无字数统计';$('count-method').textContent='当前文件不提供字数统计。';return;}
+ $('word-count').textContent='正在核对字数…';$('count-method').textContent='正在读取本文件计数口径…';const seq=metricSequence;metricTimer=setTimeout(async()=>{try{
   const selected=d.editing?$('text').value.slice($('text').selectionStart,$('text').selectionEnd):'';
   const m=await call('metrics',{id:d.id,text:d.value,selection:selected});if(seq!==metricSequence||active!==d.id)return;
-  $('word-count').textContent=(m.is_prose?'正文':'材料')+' '+m.count+' 字符 · '+readableMethod[m.method]+(m.is_prose?(m.include_title?' · 含章名':' · 不含章名'):'')+(m.target?' · 目标 '+m.target.join('～')+' · '+(m.in_range?'范围内':'范围外'):'')+(m.selection?' · 已选 '+m.selection:'');
+  $('word-count').textContent=m.count+' 字符'+(m.target&&!m.in_range?' · 范围外':'')+(m.selection?' · 已选 '+m.selection:'');
+  $('count-method').textContent=(m.is_prose?'正文':'材料')+' '+m.count+' 字符 · '+readableMethod[m.method]+(m.is_prose?(m.include_title?' · 含章名':' · 不含章名'):'')+(m.target?' · 目标 '+m.target.join('～')+' · '+(m.in_range?'范围内':'范围外'):'')+(m.selection?' · 已选 '+m.selection:'');
  }catch(e){if(seq===metricSequence)$('word-count').textContent='字数核对失败：'+e.message;}},350);
 }
 function drawCatalog(c,expanded){currentCatalog=c;const w=c.workspace;
+ $('view-chapters').setAttribute('aria-pressed',String(viewMode==='chapters'));$('view-files').setAttribute('aria-pressed',String(viewMode==='files'));
+ $('root-hint').textContent='当前书库：'+(c.book_root||'')+(c.material_roots?.length?' · 只读材料目录：'+c.material_roots.join('；'):'');
+ $('newer').textContent='上一页';$('older').textContent='下一页';
  $('book-progress').textContent=`当前进度：正式 ${w.formal_total} 章 · 已规划 ${w.planned_total} 章 · 下一章 第${w.next_chapter}章 · 刷新于 ${new Date(w.captured_at).toLocaleTimeString()}`;
- if(viewMode!=='chapters')return;
+ updateChapterPicker();if(viewMode!=='chapters')return;
+ offset=w.offset;
  $('list').replaceChildren();
- function group(title,rows,expandedDefault=false){const d=document.createElement('details');d.dataset.group=title;d.open=$('search').value?true:(expanded.get(title)??expandedDefault);const h=document.createElement('summary');h.textContent=title;d.append(h);rows.forEach(r=>d.append(item(r)));$('list').append(d);}
- group('全书材料',c.files.filter(r=>!/^第\d+章(?:\s|_|$)/.test(r.title)&&r.category!=='自动恢复'),false);
- for(const g of w.groups){group((g.volume?g.volume+' / ':'')+g.title+' · '+g.status,g.items,!!$('search').value||g.chapter===w.next_chapter||g.chapter===(chapterNumber(docs.get(active)||{})||1));}
+ function group(title,rows,expandedDefault=false,label=title){const d=document.createElement('details');d.dataset.group=title;d.open=$('search').value?true:(expanded.get(title)??expandedDefault);const h=document.createElement('summary');h.textContent=label;d.append(h);rows.forEach(r=>d.append(item(r)));$('list').append(d);}
+ if(c.files.some(r=>r.external))group('关联材料（只读）',c.files.filter(r=>r.external),false);
+ group('全书材料',c.files.filter(r=>!r.external&&!/^第\d+章(?:\s|_|$)/.test(r.title)&&r.category!=='自动恢复'),false);
+ let volume=null;for(const g of w.groups){if(g.volume&&g.volume!==volume){const h=document.createElement('h3');h.className='volume-heading';h.textContent=g.volume;$('list').append(h);}volume=g.volume;
+ const selected=primaryChapterDocument(g);if(!selected)continue;const button=document.createElement('button');button.className='document chapter-entry';button.dataset.doc=selected.id;button.dataset.chapter=String(g.chapter);button.title=g.status;const name=document.createElement('span');name.textContent=g.title;const status=document.createElement('small');status.className='document-type';status.textContent=g.status==='已有正式稿'?'正式':g.status==='已规划，未提交'?'规划':g.status;button.append(name,status);button.onclick=()=>openDoc(selected.id);$('list').append(button);
+ }
  const recoveries=c.files.filter(r=>r.category==='自动恢复');if(recoveries.length)group('自动恢复',recoveries,true);
  $('range').textContent=w.total?`${w.offset+1}—${Math.min(w.offset+w.limit,w.total)} / ${w.total} 个章节（含规划）`:'尚无章节规划';
  $('older').disabled=!w.has_more;$('newer').disabled=w.offset===0;
@@ -1877,39 +2068,80 @@ function drawCatalog(c,expanded){currentCatalog=c;const w=c.workspace;
 function diffLines(before,after){const a=before.split('\n'),b=after.split('\n');if(before===after)return {left:a.map(text=>({text,change:''})),right:b.map(text=>({text,change:''})),coarse:false};if(a.length*b.length>350000){return {left:a.map(t=>({text:t,change:'removed'})),right:b.map(t=>({text:t,change:'added'})),coarse:true};}
  const dp=Array.from({length:a.length+1},()=>new Uint32Array(b.length+1));for(let i=a.length-1;i>=0;i--)for(let j=b.length-1;j>=0;j--)dp[i][j]=a[i]===b[j]?1+dp[i+1][j+1]:Math.max(dp[i+1][j],dp[i][j+1]);
  const left=[],right=[];let i=0,j=0;while(i<a.length||j<b.length){if(i<a.length&&j<b.length&&a[i]===b[j]){left.push({text:a[i++],change:''});right.push({text:b[j++],change:''});}else if(i<a.length&&(j===b.length||dp[i+1][j]>=dp[i][j+1]))left.push({text:a[i++],change:'removed'});else right.push({text:b[j++],change:'added'});}return {left,right,coarse:false};}
-function drawDiff(before,after){const diff=diffLines(before,after);for(const [id,rows]of [['before',diff.left],['after',diff.right]]){const box=$(id);box.replaceChildren();for(const r of rows){const span=document.createElement('span');span.className='diff-line '+r.change;span.textContent=r.text;box.append(span);}}
+function drawDiff(before,after){diffTargets=[];diffIndex=-1;const diff=diffLines(before,after);for(const [id,rows]of [['before',diff.left],['after',diff.right]]){const box=$(id);box.replaceChildren();let lastChange='';for(const r of rows){const span=document.createElement('span');span.className='diff-line '+r.change;span.textContent=r.text;box.append(span);if(r.change&&r.change!==lastChange)diffTargets.push(span);lastChange=r.change;}}
  $('compare-label').textContent+=' · 红色为删除，绿色为新增'+(diff.coarse?'（长文本使用整块高亮）':'');}
-async function fullSearch(){const seq=++searchSequence,q=$('full-query').value.trim();if(!q){fullSearchOffset=0;$('search-results').replaceChildren();$('search-status').textContent='';$('search-prev').disabled=true;$('search-next').disabled=true;return;}$('search-status').textContent='搜索中…';try{const r=await call('search',{query:q,offset:fullSearchOffset});if(seq!==searchSequence)return;$('search-results').replaceChildren();for(const row of r.results){const b=item(row);const small=document.createElement('small');small.textContent=row.excerpt;b.append(small);$('search-results').append(b);}$('search-status').textContent=`找到 ${r.total} 份文件 · 已检查 ${r.checked} 份`+(r.complete?' · 本轮覆盖完整':' · 存在未覆盖文件')+(r.warnings.length?'\n'+r.warnings.join('\n'):'');$('search-prev').disabled=!fullSearchOffset;$('search-next').disabled=!r.has_more;}catch(e){if(seq===searchSequence)$('search-status').textContent=e.message;}}
+async function fullSearch(){const seq=++searchSequence,q=$('full-query').value.trim();if(!q){fullSearchOffset=0;$('search-results').replaceChildren();$('search-status').textContent='';$('search-prev').disabled=true;$('search-next').disabled=true;return;}$('search-status').textContent='搜索中…';try{const r=await call('search',{query:q,offset:fullSearchOffset});if(seq!==searchSequence)return;$('search-results').replaceChildren();for(const row of r.results){const b=item(row);b.onclick=()=>openDoc(row.id,q);const small=document.createElement('small');small.textContent=row.excerpt;b.append(small);$('search-results').append(b);}$('search-status').textContent=`找到 ${r.total} 份文件 · 已检查 ${r.checked} 份`+(r.complete?' · 本轮覆盖完整':' · 存在未覆盖文件')+(r.warnings.length?'\n'+r.warnings.join('\n'):'');$('search-prev').disabled=!fullSearchOffset;$('search-next').disabled=!r.has_more;}catch(e){if(seq===searchSequence)$('search-status').textContent=e.message;}}
 function applyReading(){const size=$('font-size').value,line=$('line-height').value,font=$('font-family').value;document.documentElement.style.setProperty('--reader-size',size+'px');document.documentElement.style.setProperty('--reader-line',line);document.documentElement.style.setProperty('--reader-font',font==='sans'?'system-ui':"'Songti SC','SimSun',serif");document.body.classList.toggle('focus-reading',$('focus-reading').checked);try{localStorage.setItem('story-reading',JSON.stringify({size,line,font,focus:$('focus-reading').checked}));}catch{}}
 async function loadBooks(){try{const r=await call('books');$('book-select').replaceChildren();for(const b of r.books){const o=document.createElement('option');o.value=b.key;o.textContent=b.title;o.selected=b.root===r.current;$('book-select').append(o);}$('book-open').disabled=r.books.length<2;$('book-hint').textContent=r.books.length<2?'目前只登记本书；启动服务时可添加其他作品。':'作品会在新标签页打开，当前编辑保留。';}catch(e){$('book-hint').textContent=e.message;}}
+function fitColumns(left,right,width){
+ left=Number.isFinite(left)?Math.max(180,Math.min(360,left)):236;right=Number.isFinite(right)?Math.max(200,Math.min(360,right)):248;
+ if(width>820){let excess=Math.max(0,left+right-(width-360)),cut=Math.min(left-180,excess);left-=cut;excess-=cut;right-=Math.min(right-200,excess);}
+ return {left:Math.round(left),right:Math.round(right)};
+}
+function setupColumns(){
+ let sizes={left:236,right:248};try{const p=JSON.parse(localStorage.getItem('story-columns')||'{}');sizes=fitColumns(p.left,p.right,innerWidth);document.body.classList.toggle('nav-closed',p.navClosed===true);document.body.classList.toggle('context-closed',p.contextClosed===true);}catch{}
+ const apply=()=>{sizes=fitColumns(sizes.left,sizes.right,innerWidth);document.documentElement.style.setProperty('--nav-width',sizes.left+'px');document.documentElement.style.setProperty('--context-width',sizes.right+'px');for(const side of ['left','right'])$('resize-'+side).setAttribute('aria-valuenow',String(sizes[side]));};
+ const persist=()=>{try{localStorage.setItem('story-columns',JSON.stringify({...sizes,navClosed:document.body.classList.contains('nav-closed'),contextClosed:document.body.classList.contains('context-closed')}));}catch{}};
+ for(const side of ['left','right']){const handle=$('resize-'+side);let drag=null;
+  handle.onpointerdown=e=>{if(e.button!==0||innerWidth<=820)return;drag={x:e.clientX,size:sizes[side]};handle.setPointerCapture(e.pointerId);document.body.classList.add('resizing');e.preventDefault();};
+  handle.onpointermove=e=>{if(!drag)return;sizes[side]=drag.size+(side==='left'?1:-1)*(e.clientX-drag.x);apply();};
+  const finish=()=>{if(!drag)return;drag=null;document.body.classList.remove('resizing');persist();};handle.onpointerup=finish;handle.onpointercancel=finish;handle.onlostpointercapture=finish;
+  handle.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','Home'].includes(e.key))return;e.preventDefault();sizes[side]=e.key==='Home'?(side==='left'?236:248):sizes[side]+(e.key==='ArrowRight'?1:-1)*(side==='left'?1:-1)*16;apply();persist();};
+ }
+ $('layout-reset').onclick=()=>{sizes={left:236,right:248};document.body.classList.remove('nav-closed','context-closed','focus-reading');$('focus-reading').checked=false;apply();persist();$('nav-toggle').textContent='收起目录';$('context-toggle').textContent='收起辅助栏';$('nav-toggle').setAttribute('aria-expanded','true');$('context-toggle').setAttribute('aria-expanded','true');};
+ window.addEventListener('resize',apply);apply();return persist;
+}
 function setupWorkspace(){
- $('view-chapters').onclick=()=>{viewMode='chapters';offset=0;catalog();};$('view-files').onclick=()=>{viewMode='files';offset=0;catalog();};
+ const persistColumns=setupColumns();$('chapter-version').onchange=()=>openDoc($('chapter-version').value);
+
+ $('view-chapters').onclick=()=>{viewMode='chapters';offset=0;catalog(true);};$('view-files').onclick=()=>{viewMode='files';offset=0;catalog(true);};
+ $('locate').onclick=()=>{$('search').value='';catalog(true);};
+ $('compare-back').onclick=leaveComparison;$('diff-prev').onclick=()=>stepDiff(-1);$('diff-next').onclick=()=>stepDiff(1);
+ $('refresh-compact').onclick=()=>catalog();
+ const narrow=matchMedia('(max-width:820px)');let panelOpener=null;
+ const syncPanels=()=>{const opened=narrow.matches?document.body.classList.contains('context-open'):!document.body.classList.contains('context-closed')&&!document.body.classList.contains('focus-reading');$('context-toggle').textContent=opened?'收起辅助栏':'辅助信息';$('context-toggle').setAttribute('aria-expanded',String(opened));const navOpened=narrow.matches?document.body.classList.contains('nav-open'):!document.body.classList.contains('nav-closed');$('nav-toggle').textContent=navOpened?'收起目录':'作品目录';$('nav-toggle').setAttribute('aria-expanded',String(navOpened));};
+ closePanels=(restore=true)=>{document.body.classList.remove('nav-open','context-open');document.querySelector('main').inert=false;document.querySelector('header').inert=false;$('book-nav').inert=false;$('book-context').inert=false;syncPanels();const opener=panelOpener;panelOpener=null;if(restore&&opener)opener.focus({preventScroll:true});};
+ const openPanel=(kind,opener)=>{closePanels(false);panelOpener=opener;document.body.classList.add(kind+'-open');const panel=$(kind==='nav'?'book-nav':'book-context');document.querySelector('main').inert=true;document.querySelector('header').inert=true;$(kind==='nav'?'book-context':'book-nav').inert=true;syncPanels();(panelFocusables(panel)[0]||panel).focus({preventScroll:true});};
+ $('context-toggle').onclick=()=>{if(narrow.matches)openPanel('context',$('context-toggle'));else{document.body.classList.toggle('context-closed');document.body.classList.remove('focus-reading');$('focus-reading').checked=false;syncPanels();persistColumns();}};
+ $('nav-toggle').onclick=()=>{if(narrow.matches)openPanel('nav',$('nav-toggle'));else{document.body.classList.toggle('nav-closed');syncPanels();persistColumns();}};
+ const resetColumns=$('layout-reset').onclick;$('layout-reset').onclick=()=>{resetColumns();applyReading();syncPanels();};
+ $('nav-close').onclick=()=>closePanels();$('context-close').onclick=()=>closePanels();$('panel-dismiss').onclick=()=>closePanels();narrow.addEventListener('change',()=>closePanels());syncPanels();
+ $('match-back').onclick=()=>{const d=docs.get(active);show(d);if(d.editing)$('text').focus({preventScroll:true});};$('match-prev').onclick=()=>stepSearch(-1);$('match-next').onclick=()=>stepSearch(1);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePanels();for(const id of ['maintenance','more-actions','reading-options'])$(id).open=false;}if(trapPanelFocus(e))return;if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='s'&&!e.isComposing&&!document.querySelector('main').inert){e.preventDefault();if(!$('save').disabled)$('save').click();}});
+ document.addEventListener('pointerdown',e=>{for(const id of ['maintenance','more-actions','reading-options'])if(!$(id).contains(e.target))$(id).open=false;});
+ for(const id of ['maintenance','more-actions','reading-options'])$(id).addEventListener('click',e=>{if(e.target.closest('button'))$(id).open=false;});
  $('source-view').onclick=()=>{const d=docs.get(active);d.rawPreview=!d.rawPreview;show(d);};
  $('text').addEventListener('select',scheduleMetrics);$('text').addEventListener('keyup',scheduleMetrics);
- $('review-task').onclick=async()=>{const d=docs.get(active);if(!d?.editable)return;if(dirty(d)||d.needs_recovery){note('请先保存当前候选稿，再生成绑定该文件的审稿任务。');return;}try{const r=await call('review-task',{id:d.id,sha256:d.sha256});if(active!==d.id)return;$('review-task-box').hidden=false;$('review-prompt').value=r.prompt;$('review-task-status').textContent=r.status+(r.lint?'；基础检查'+(r.lint.ok?'未发现阻断项':'发现 '+r.lint.errors.length+' 项问题')+'，不代表语义审查通过。':'。');$('review-findings').textContent=r.lint?[...r.lint.errors,...r.lint.warnings].map(x=>x.code+(x.expected?'：目标 '+x.expected.join('～')+'，实际 '+x.actual:'')).join('\n'):'';}catch(e){note(e.message);}};
+ $('review-task').onclick=async()=>{const d=docs.get(active);if(!d?.editable)return;if(dirty(d)||d.needs_recovery){note('请先保存当前候选稿，再生成绑定该文件的审稿任务。');return;}try{const r=await call('review-task',{id:d.id,sha256:d.sha256});if(active!==d.id)return;leaveComparison();$('review-task-box').hidden=false;$('review-task-box').scrollIntoView({block:'start'});$('review-prompt').value=r.prompt;$('review-task-status').textContent=r.status+(r.lint?'；基础检查'+(r.lint.ok?'未发现阻断项':'发现 '+r.lint.errors.length+' 项问题')+'，不代表语义审查通过。':'。');$('review-findings').textContent=r.lint?[...r.lint.errors,...r.lint.warnings].map(x=>x.code+(x.expected?'：目标 '+x.expected.join('～')+'，实际 '+x.actual:'')).join('\n'):'';}catch(e){note(e.message);}};
  $('copy-review').onclick=async()=>{try{await navigator.clipboard.writeText($('review-prompt').value);$('review-task-status').textContent='已复制，请粘贴给助手执行审查；当前尚未正式采用。';}catch{$('review-prompt').select();note('请复制已选中的审稿任务。');}};
  $('full-go').onclick=()=>{fullSearchOffset=0;fullSearch();};$('full-query').onkeydown=e=>{if(e.key==='Enter'){fullSearchOffset=0;fullSearch();}};$('search-prev').onclick=()=>{fullSearchOffset=Math.max(0,fullSearchOffset-30);fullSearch();};$('search-next').onclick=()=>{fullSearchOffset+=30;fullSearch();};
- try{const p=JSON.parse(localStorage.getItem('story-reading')||'{}');if(['16','19','22','25'].includes(p.size))$('font-size').value=p.size;if(['1.6','1.9','2.2'].includes(p.line))$('line-height').value=p.line;if(['serif','sans'].includes(p.font))$('font-family').value=p.font;$('focus-reading').checked=p.focus===true;}catch{}
- for(const id of ['font-size','line-height','font-family','focus-reading'])$(id).onchange=applyReading;applyReading();
+ try{const p=JSON.parse(localStorage.getItem('story-reading')||'{}');if(['16','19','22','25'].includes(p.size))$('font-size').value=p.size;if(['1.6','1.8','1.9','2.2'].includes(p.line))$('line-height').value=p.line;if(['serif','sans'].includes(p.font))$('font-family').value=p.font;$('focus-reading').checked=p.focus===true;}catch{}
+ for(const id of ['font-size','line-height','font-family','focus-reading'])$(id).onchange=()=>{applyReading();syncPanels();};applyReading();syncPanels();
  $('book-open').onclick=async()=>{try{const r=await call('open-book',{key:$('book-select').value});const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='打开所选作品';$('book-hint').replaceChildren(a);a.click();if(r.outdated)note('所选作品服务仍使用较早代码；原编辑保留，可另行升级。');}catch(e){$('book-hint').textContent=e.message;}};
  loadBooks();
 }
 
 function dirty(d){return d&&d.editable&&d.value!==d.text;}
-function badge(){pendingEdits();if(!active)return;const d=docs.get(active);$('state').textContent=dirty(d)?'未保存的候选编辑':d.status;$('save').disabled=(!dirty(d)&&!d.needs_recovery)||d.saving;$('save').textContent=d.needs_recovery?'恢复为新候选':'保存候选稿';$('edit').disabled=!d.editable;$('review-task').disabled=!d.editable;$('compare').disabled=!d.comparison&&d.kind!=='formal';$('download').disabled=!d.editable;$('edit').textContent=d.editing?'阅读预览':'编辑';document.querySelectorAll('[data-doc]').forEach(e=>{const item=docs.get(e.dataset.doc);e.classList.toggle('selected',e.dataset.doc===active);e.classList.toggle('dirty',!!dirty(item));});}
-function show(d){active=d.id;$('title').textContent=d.title;$('path').textContent=d.path;$('text').value=d.value;$('text').hidden=!d.editable||!d.editing;$('prose').hidden=!!d.image||!!d.editing;$('prose').textContent=d.value||'';$('cover').hidden=!d.image;if(d.image)$('cover').src=d.image;$('difference').hidden=true;$('detail').textContent=[d.status,d.metadata_error?'来源记录文件：'+d.metadata_error.path:'',d.modified?'文件修改时间：'+new Date(d.modified).toLocaleString():'',d.source?'来源：'+d.source:'',d.summary?'正式稿摘要：'+d.summary:'',d.comparison?'对照对象：'+d.comparison.title:''].filter(Boolean).join('\n\n');readingView(d);badge();}
-async function openDoc(id){const sequence=++openSequence;try{if(!docs.has(id)){const d=await call('open',{id});if(sequence!==openSequence)return;d.value=d.text||'';d.editing=false;d.recoveryKey=crypto.randomUUID();if(!docs.has(id))docs.set(id,d);}if(sequence!==openSequence)return;show(docs.get(id));location.hash=encodeURIComponent(id);}catch(e){if(sequence===openSequence)note(e.message);}}
-function pendingEdits(){const pending=[...docs.values()].filter(dirty);$('pending-box').hidden=!pending.length;$('pending-count').textContent='待保存文件 · '+pending.length;$('pending-list').replaceChildren();for(const d of pending){const b=document.createElement('button');b.className='document';b.title=d.path||d.id;b.textContent=d.title+' · '+(d.recovered===d.value?'已写入恢复稿':'尚未写入恢复稿');b.onclick=()=>openDoc(d.id);$('pending-list').append(b);}}
-function item(row){const b=document.createElement('button');b.className='document';b.dataset.doc=row.id;b.title=row.path;b.textContent=row.category==='正式正文'||row.category==='计划'?row.title:row.title+' · '+(row.path.split('/').slice(-2,-1)[0]||'书根');b.onclick=()=>openDoc(row.id);return b;}
-async function catalog(){if(loading){reloadPending=true;return;}loading=true;try{const c=await call('catalog',{offset,query:$('search').value});$('directory-warning').textContent=(c.warnings||[]).join('\n');const expandedGroups=new Map([...$('list').querySelectorAll('details')].map(g=>[g.dataset.group,g.open]));const listScroll=$('list').parentElement.scrollTop;if(viewMode!=='chapters'){$('list').replaceChildren();const section=(title,rows,expanded=true)=>{const group=document.createElement('details');group.dataset.group=title;group.open=$('search').value?true:(expandedGroups.get(title)??expanded);const summary=document.createElement('summary');summary.textContent=title+' · '+rows.length;group.append(summary);rows.forEach(r=>group.append(item(r)));$('list').append(group);};section('正式正文',c.chapters);for(const category of ['候选与草稿','自动恢复','创作材料','拆书分析']){const rows=c.files.filter(r=>r.category===category);if(rows.length){const folders=new Map();for(const row of rows){const folder=row.path.includes('/')?row.path.slice(0,row.path.lastIndexOf('/')):'书根';if(!folders.has(folder))folders.set(folder,[]);folders.get(folder).push(row);}for(const [folder,entries] of folders)section(category+' / '+folder,entries,!!$('search').value||category==='自动恢复');}}$('range').textContent=c.total?`${offset+1}—${Math.min(offset+LIMIT,c.total)} / ${c.total} 章`:'没有匹配的正式章节';$('older').disabled=!c.has_more;$('newer').disabled=offset===0;}drawCatalog(c,expandedGroups);$('list').parentElement.scrollTop=listScroll;badge();if(!active){let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{}if(/^chapter-\d+$/.test(id||''))id='formal:'+id.slice(8);id=id||c.chapters[0]?.id||c.files[0]?.id||c.workspace?.groups[0]?.items[0]?.id;if(id)await openDoc(id);}}catch(e){note(e.message);}finally{loading=false;if(reloadPending){reloadPending=false;catalog();}}}
+function badge(){pendingEdits();if(!active)return;const d=docs.get(active);$('state').textContent=d.saving?'正在保存候选…':dirty(d)?(d.recovered===d.value?'待保存 · 恢复副本已写入':'待保存 · 恢复副本尚未写入'):d.status;$('save').disabled=(!dirty(d)&&!d.needs_recovery)||d.saving;$('save').textContent=d.needs_recovery?'恢复为新候选':'保存候选稿';$('edit').disabled=!d.editable;$('review-task').disabled=!d.editable;$('compare').disabled=!d.comparison&&d.kind!=='formal';$('download').disabled=!d.editable&&!d.text;$('edit').textContent=d.editing?'返回阅读':'编辑';$('edit').setAttribute('aria-pressed',String(!!d.editing));document.querySelectorAll('[data-doc]').forEach(e=>{const item=docs.get(e.dataset.doc);e.classList.toggle('selected',e.dataset.chapter?Number(e.dataset.chapter)===chapterNumber(d):e.dataset.doc===active);e.classList.toggle('dirty',!!dirty(item));});}
+function show(d){leaveComparison();rememberView();searchPreview=false;$('match-view').hidden=true;active=d.id;$('title').textContent=displayTitle(d);$('path').textContent=d.path;$('text').value=d.value;$('text').hidden=!d.editable||!d.editing;$('prose').hidden=!!d.image||!!d.editing;$('prose').textContent=d.value||'';$('cover').hidden=!d.image;if(d.image)$('cover').src=d.image;$('difference').hidden=true;$('detail').textContent=[d.status,d.metadata_error?'来源记录文件：'+d.metadata_error.path:'',d.modified?'文件修改时间：'+new Date(d.modified).toLocaleString():'',d.source?'来源：'+d.source:'',d.summary?'正式稿摘要：'+d.summary:'',d.comparison?'对照对象：'+d.comparison.title:''].filter(Boolean).join('\n\n');readingView(d);badge();updateChapterPicker();restoreView(d);}
+async function openDoc(id,query=''){const sequence=++openSequence;try{if(!docs.has(id)){const d=await call('open',{id});if(sequence!==openSequence)return;d.value=d.text||'';d.editing=false;d.recoveryKey=crypto.randomUUID();if(!docs.has(id))docs.set(id,d);}if(sequence!==openSequence)return;show(docs.get(id));closePanels();location.hash=encodeURIComponent(id);note('已打开：'+displayTitle(docs.get(id))+' · '+versionLabel(docs.get(id)));if(query)previewSearch(query);await catalog(true);}catch(e){if(sequence===openSequence)note('打开失败（'+id+'）：'+e.message);}}
+function pendingEdits(){const pending=[...docs.values()].filter(dirty);$('pending-box').hidden=!pending.length;$('pending-count').textContent='待保存文件 · '+pending.length;$('pending-list').replaceChildren();for(const d of pending){const b=document.createElement('button');b.className='document';b.title=d.path||d.id;b.textContent=displayTitle(d)+' · '+(d.recovered===d.value?'已写入恢复稿':'尚未写入恢复稿');b.onclick=()=>openDoc(d.id);$('pending-list').append(b);}}
+function item(row){const b=document.createElement('button');b.className='document';b.dataset.doc=row.id;b.title=row.path+(row.modified?'\n修改时间：'+new Date(row.modified).toLocaleString():'');const title=document.createElement('span');title.className='document-name';title.textContent=row.category==='正式正文'||row.category==='计划'?row.title:displayTitle(row);const type=document.createElement('small');type.className='document-type';const purpose=filePurpose(row),version=versionLabel(row);type.textContent=purpose+(version==='材料'||purpose===version||purpose===version+'稿'||purpose==='正式正文'||purpose==='章计划'?'':' · '+version);b.append(title);if(title.textContent!==purpose&&title.textContent!=='已保存章计划')b.append(type);b.onclick=()=>openDoc(row.id);return b;}
+async function catalog(focusCurrent=false){if(loading){reloadPending=true;pendingFocus=pendingFocus||focusCurrent;return;}loading=true;try{const c=await call('catalog',{offset,query:$('search').value,focus:focusCurrent?chapterNumber(docs.get(active)||{}):null});$('directory-warning').textContent=(c.warnings||[]).join('\n');const expandedGroups=new Map([...$('list').querySelectorAll('details')].map(g=>[g.dataset.group,g.open]));const listScroll=$('list').parentElement.scrollTop;if(viewMode!=='chapters'){offset=c.offset;$('list').replaceChildren();const section=(title,rows,expanded=true)=>{const group=document.createElement('details');group.dataset.group=title;group.open=$('search').value?true:(expandedGroups.get(title)??expanded);const summary=document.createElement('summary');summary.textContent=title+' · '+rows.length;group.append(summary);rows.forEach(r=>group.append(item(r)));$('list').append(group);};section('正式正文',c.chapters);for(const category of ['候选与草稿','自动恢复','创作材料','拆书分析','关联材料（只读）']){const rows=c.files.filter(r=>r.category===category);if(rows.length){const folders=new Map();for(const row of rows){const folder=row.path.includes('/')?row.path.slice(0,row.path.lastIndexOf('/')):'书根';if(!folders.has(folder))folders.set(folder,[]);folders.get(folder).push(row);}for(const [folder,entries] of folders)section(category+' / '+folder,entries,!!$('search').value||category==='自动恢复');}}$('range').textContent=c.total?`正式章节 ${offset+1}—${Math.min(offset+LIMIT,c.total)} / ${c.total} · 材料另列`:'没有匹配的正式章节';$('older').disabled=!c.has_more;$('newer').disabled=offset===0;}drawCatalog(c,expandedGroups);$('list').parentElement.scrollTop=listScroll;badge();if(focusCurrent&&active)locateActive();if(!active){let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{}if(/^chapter-\d+$/.test(id||''))id='formal:'+id.slice(8);id=id||c.chapters[0]?.id||c.files[0]?.id||c.workspace?.groups[0]?.items[0]?.id;if(id)await openDoc(id);}}catch(e){note(e.message);}finally{loading=false;if(reloadPending){reloadPending=false;const focus=pendingFocus;pendingFocus=false;catalog(focus);}}}
 async function recover(d,force=false){if(d.recovering){await d.recovering;if(force||(dirty(d)&&d.value!==d.recovered))return recover(d,force);return;}if(!dirty(d)||(!force&&d.value===d.recovered))return;if(force)d.recovered=undefined;const value=d.value;d.recovering=(async()=>{try{const r=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});d.recovered=value;d.recoveryPath=r.path;d.recoverySha=r.recovery_sha256;d.recoveryMetadataSha=r.recovery_metadata_sha256;if(r.recovery_key)d.recoveryKey=r.recovery_key;pendingEdits();await catalog();if(active===d.id)note(r.conflict?'原恢复稿有变化或保存待核对，本次编辑已另存恢复稿，原文件保留。':'编辑已写入自动恢复稿；正式采用前仍须审查。');}catch(e){if(active===d.id)note('自动恢复保存失败：'+e.message+'，请下载当前文字。');}})();try{await d.recovering;}finally{d.recovering=null;}}
 $('text').addEventListener('input',()=>{const d=docs.get(active);d.value=$('text').value;clearTimeout(d.timer);d.timer=setTimeout(()=>recover(d),1200);badge();scheduleMetrics();});
 $('edit').onclick=()=>{const d=docs.get(active);d.editing=!d.editing;show(d);if(d.editing)$('text').focus();};
-$('save').onclick=async()=>{const d=docs.get(active);if((!dirty(d)&&!d.needs_recovery)||d.saving||reloading)return;const text=d.value;d.saving=true;badge();try{await recover(d);const r=await call('save',{id:d.id,sha256:d.sha256,snapshot:d.snapshot,metadata_sha256:d.metadata_sha256,text});const fresh=await call('open',{id:r.id});fresh.value=d.value;fresh.editing=d.editing;fresh.recoveryKey=crypto.randomUUID();docs.set(r.id,fresh);d.value=d.text;clearTimeout(d.timer);if(active===d.id){show(fresh);location.hash=encodeURIComponent(fresh.id);}if(dirty(fresh))fresh.timer=setTimeout(()=>recover(fresh),1200);note('已保存候选稿：'+r.path+'；正式稿未改变。');await catalog();}catch(e){note(e.message+' 当前文字仍在编辑器中，可下载或从自动恢复稿找回。');}finally{d.saving=false;badge();}};
-$('compare').onclick=async()=>{const d=docs.get(active),id=active;$('difference').hidden=true;try{const fresh=await call('open',{id:d.kind==='formal'?id:'formal:'+d.chapter});if(active!==id)return;$('before').textContent=fresh.text;$('after').textContent=d.value;$('compare-label').textContent=d.base_sha256?(d.base_sha256===fresh.sha256?'最新正式稿与当前候选：基线一致':'最新正式稿与当前候选：正式基线已变化'):'最新正式稿对照：未确认版本关系';drawDiff(fresh.text,d.value);$('difference').hidden=false;}catch(e){if(active===id)note('无法读取最新正式稿：'+e.message);}};
-$('download').onclick=()=>{const d=docs.get(active),a=document.createElement('a');const url=URL.createObjectURL(new Blob([d.value],{type:'text/plain;charset=utf-8'}));a.href=url;a.download=d.title+'-候选.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+$('save').onclick=async()=>{const d=docs.get(active);if((!dirty(d)&&!d.needs_recovery)||d.saving||reloading)return;const text=d.value;d.saving=true;badge();try{await recover(d);const r=await call('save',{id:d.id,sha256:d.sha256,snapshot:d.snapshot,metadata_sha256:d.metadata_sha256,text});const fresh=await call('open',{id:r.id});fresh.value=d.value;fresh.editing=d.editing;fresh.recoveryKey=crypto.randomUUID();if(active===d.id)rememberView(d);fresh.positions={...d.positions};docs.set(r.id,fresh);d.value=d.text;clearTimeout(d.timer);if(active===d.id){show(fresh);location.hash=encodeURIComponent(fresh.id);}if(dirty(fresh))fresh.timer=setTimeout(()=>recover(fresh),1200);if(active===fresh.id)note('候选已保存 · '+new Date().toLocaleTimeString()+' · 尚未正式采用');await catalog(active===fresh.id);}catch(e){note(e.message+' 当前文字仍在编辑器中，可下载或从自动恢复稿找回。');}finally{d.saving=false;badge();}};
+$('compare').onclick=async()=>{const d=docs.get(active),id=active,seq=++compareSequence;try{const fresh=await call('open',{id:d.kind==='formal'?id:'formal:'+d.chapter});if(active!==id||seq!==compareSequence)return;
+ if(!d.comparePosition)d.comparePosition={main:document.querySelector('main').scrollTop,editor:$('text').scrollTop,start:$('text').selectionStart,end:$('text').selectionEnd};
+ $('compare-label').textContent=d.base_sha256?(d.base_sha256===fresh.sha256?'最新正式稿与当前文字：基线一致':'最新正式稿与当前文字：正式基线已变化'):'最新正式稿对照：未确认版本关系';drawDiff(fresh.text,d.value);
+ $('review-task-box').hidden=true;$('document-body').hidden=true;$('difference').hidden=false;document.body.classList.add('comparing');document.querySelector('main').scrollTop=0;
+ $('compare-back').textContent=d.editing?'返回编辑':'返回阅读';$('diff-position').textContent=diffTargets.length?'共 '+diffTargets.length+' 个标记片段':'两版文字一致';$('diff-prev').disabled=true;$('diff-next').disabled=!diffTargets.length;
+ }catch(e){if(active===id&&seq===compareSequence)note('无法读取最新正式稿：'+e.message);}};
+$('download').onclick=()=>{const d=docs.get(active),a=document.createElement('a');const url=URL.createObjectURL(new Blob([d.value],{type:'text/plain;charset=utf-8'}));a.href=url;a.download=downloadName(d);a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 async function reloadDocuments(preserve){if(reloading)return;if([...docs.values()].some(d=>d.saving)){note('候选稿正在保存，请完成后再重新载入。');return;}const changes=[...docs.values()].filter(dirty);if(changes.length&&!preserve){note('有未保存编辑，请使用“保留恢复稿并重新载入”。');return;}reloading=true;const id=active;try{for(const d of changes){await recover(d,true);if(d.value!==d.recovered){note('恢复尚未成功，已停止重新载入，请下载当前文字。');return;}}const fresh=id?await call('open',{id}):null;if(active!==id){note('已切换文件，本次重新载入取消；原编辑仍保留。');return;}for(const d of docs.values()){if(dirty(d)&&d.value!==d.recovered){note('恢复期间又有输入，已保留编辑；请再次操作。');return;}}++openSequence;for(const d of docs.values())clearTimeout(d.timer);docs.clear();active=null;if(fresh){fresh.value=fresh.text||'';fresh.editing=false;fresh.recoveryKey=crypto.randomUUID();docs.set(fresh.id,fresh);show(fresh);}note(changes.length?'恢复稿已保留，来源已重新载入；可从左栏打开恢复稿。':'来源已重新读取。');await catalog();}catch(e){note('重新载入失败：'+e.message+'；原编辑仍保留。');}finally{reloading=false;}}
-$('refresh').onclick=()=>reloadDocuments(false);
+$('refresh').onclick=()=>catalog();
+$('reload-source').onclick=()=>reloadDocuments(false);
 $('recover-reload').onclick=()=>reloadDocuments(true);
 $('search').oninput=()=>{clearTimeout(queryTimer);queryTimer=setTimeout(()=>{offset=0;catalog();},300);};$('older').onclick=()=>{offset+=LIMIT;catalog();};$('newer').onclick=()=>{offset=Math.max(0,offset-LIMIT);catalog();};
 window.addEventListener('beforeunload',event=>{if([...docs.values()].some(dirty)){event.preventDefault();event.returnValue='';}});
@@ -1919,10 +2151,25 @@ setupWorkspace();catalog();""".replace('__TOKEN__', json.dumps(token)).replace('
     page = '''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'self'; img-src data:; script-src 'sha256-__HASH__'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <title>__TITLE__ · 写作工作台</title><style>
-#build-label{display:block;color:#718096;font-size:11px}#pending-box{border:1px solid #e5c694;border-radius:8px;padding:10px;margin-bottom:14px;background:#fffaf0}#pending-list{max-height:220px;overflow:auto}*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;color:#293446;background:#f7f8fa;font:14px/1.7 system-ui,-apple-system,'PingFang SC',sans-serif}header{height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid #dde3ea;background:white}button,input{font:inherit}button{cursor:pointer;border:1px solid #dce2e9;background:white;border-radius:7px;padding:7px 12px;color:#34445b}button:disabled{opacity:.45;cursor:default}.desk{display:grid;grid-template-columns:280px minmax(0,1fr) 280px;height:calc(100vh - 66px)}nav,aside{overflow:auto;padding:20px;background:#f5f7fa}nav{border-right:1px solid #e1e5eb}aside{border-left:1px solid #e1e5eb}main{overflow:auto;padding:28px 40px;background:white;min-width:0}#search{width:100%;padding:10px;border:1px solid #dce2e9;border-radius:6px}.document{display:block;width:100%;text-align:left;margin:5px 0;border:0;background:transparent;overflow-wrap:anywhere}.selected{background:#e7eefb;color:#285c9e}.dirty:after{content:' · 未保存';color:#b65226}summary{cursor:pointer;margin:16px 0 8px;color:#6d7b8d}.tools{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:-28px;background:white;padding:8px 0;z-index:1}h1{font-size:25px;font-weight:600}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:19px/2 'Songti SC','SimSun',serif}textarea{width:100%;min-height:65vh;resize:vertical;border:1px solid #cad5e1;border-radius:6px;padding:18px;font:19px/1.9 'Songti SC','SimSun',serif;color:#293446}#detail{font:13px/1.8 system-ui;white-space:pre-wrap}#path,#message,#state{overflow-wrap:anywhere;color:#718096;font-size:12px}#state{color:#966127}#cover{max-width:100%;max-height:75vh}.comparison{display:grid;grid-template-columns:1fr 1fr;gap:20px}.comparison pre{font-size:15px;background:#f7f8fa;padding:12px}.pager{display:flex;gap:8px;margin:12px 0}#range{font-size:12px;color:#718096}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #527bb5}@media(max-width:1000px){.desk{grid-template-columns:220px minmax(0,1fr) 230px}main{padding:24px}}@media(max-width:760px){.desk{grid-template-columns:150px minmax(0,1fr)}aside{display:none}nav{padding:10px}main{padding:15px}.comparison{grid-template-columns:1fr}}
-
-:root{--reader-size:19px;--reader-line:1.9;--reader-font:'Songti SC','SimSun',serif}#prose,#text,#formatted{font-size:var(--reader-size);line-height:var(--reader-line);font-family:var(--reader-font)}#formatted{overflow-wrap:anywhere}#formatted h1{font-size:1.35em}#formatted h2{font-size:1.18em}#formatted h3{font-size:1.05em}#formatted pre{font:14px/1.6 monospace;background:#f5f7fa;padding:12px}#formatted code{font-size:.85em;background:#f1f4f8}#formatted table{border-collapse:collapse;font:14px/1.7 system-ui;width:100%}#formatted td,#formatted th{border:1px solid #dce2e9;padding:8px;text-align:left}.table-scroll{overflow:auto}#book-progress{font-size:12px;color:#526777;margin:4px 0}header{height:auto;min-height:78px;gap:14px}.desk{height:calc(100vh - 88px)}#history-note{font:13px/1.6 system-ui;color:#946425;background:#fff6df}#history-note:empty{display:none}#word-count{font:13px/1.8 system-ui;color:#456875}#chapter-info{font:13px/1.8 system-ui;white-space:pre-wrap}#chapter-info h4{margin-bottom:5px}#chapter-info p{margin-top:5px}#chapter-info .document{font-size:12px}#review-prompt{min-height:220px;font:13px/1.8 system-ui}#review-task-box{padding:14px;background:#eef4fa;margin:20px 0}#review-findings{font:13px/1.6 system-ui;color:#8a392b}.diff-line{display:block;white-space:pre-wrap;min-height:1em}.diff-line.removed{background:#ffe3df;color:#882f26}.diff-line.added{background:#ddf4e4;color:#215b36}.navigation-mode{display:flex;gap:4px;margin:10px 0}.navigation-mode button{font-size:12px}#search-results small{display:block;font-size:12px;color:#677488;margin-top:6px}#search-status,#book-hint{white-space:pre-wrap;font:12px/1.7 system-ui}#book-select,#full-query{width:100%;max-width:100%;padding:6px}#reading-options{font:13px/1.8 system-ui;padding:8px 0}#reading-options label{display:inline-block;margin-right:12px}#reading-options select{font:inherit}.focus-reading .desk{grid-template-columns:240px minmax(0,1fr)}.focus-reading aside{display:none}.focus-reading main{padding-left:max(24px,calc((100vw - 1080px)/2));padding-right:max(24px,calc((100vw - 1080px)/2))}@media(max-width:760px){header{padding:10px;flex-wrap:wrap}.desk{height:auto;min-height:80vh;grid-template-columns:135px minmax(0,1fr)}.focus-reading .desk{grid-template-columns:1fr}.focus-reading nav{display:none}main{max-height:85vh}.tools button{font-size:12px}#book-progress{font-size:11px}}
-</style></head><body><header><div><strong>__TITLE__</strong><p id="book-progress" role="status">正在读取当前进度…</p><small id="build-label" title="用于区分工作台页面更新，不是技能发布版本">界面标识：__BUILD__</small></div><div><button id="recover-reload">保留恢复稿并重新载入</button> <button id="refresh">刷新目录与状态</button></div></header><div class="desk"><nav aria-label="作品目录"><details><summary>切换作品</summary><select id="book-select" aria-label="选择作品"></select><button id="book-open">打开作品</button><p id="book-hint"></p></details><div class="navigation-mode"><button id="view-chapters">按章查看</button><button id="view-files">按文件查看</button></div><section id="pending-box" hidden><strong id="pending-count"></strong><div id="pending-list"></div></section><input id="search" type="search" placeholder="搜索全书章名或材料路径" aria-label="搜索作品文件"><div class="pager"><button id="newer">较新章节</button><button id="older">更早章节</button></div><p id="range"></p><p id="directory-warning" role="status"></p><div id="list"></div><details><summary>全文搜索</summary><input id="full-query" aria-label="搜索正文与材料内容" placeholder="搜索正文与材料内容"><button id="full-go">搜索内容</button><p id="search-status" role="status"></p><div id="search-results"></div><button id="search-prev" disabled>上一页结果</button><button id="search-next" disabled>下一页结果</button></details></nav><main><div class="tools"><button id="edit" disabled>编辑</button><button id="save" disabled>保存候选稿</button><button id="compare" disabled>对照正式稿</button><button id="review-task" disabled>审稿</button><button id="source-view" hidden>查看源码</button><button id="download" disabled>下载当前文字</button></div><p id="message" role="status">编辑会写入本书自动恢复稿；关闭前仍请保存候选。文件名称不代表已采用。</p><details id="reading-options"><summary>阅读设置</summary><label>字号 <select id="font-size"><option>16</option><option selected>19</option><option>22</option><option>25</option></select></label><label>行距 <select id="line-height"><option>1.6</option><option selected>1.9</option><option>2.2</option></select></label><label>字体 <select id="font-family"><option value="serif">宋体</option><option value="sans">黑体</option></select></label><label><input id="focus-reading" type="checkbox">专注阅读</label></details><p id="word-count" role="status"></p><h1 id="title">选择章节或材料</h1><p id="state"></p><p id="path"></p><p id="history-note"></p><div id="formatted" hidden></div><pre id="prose"></pre><textarea id="text" aria-label="候选正文编辑" hidden></textarea><img id="cover" alt="封面预览" hidden><section id="review-task-box" hidden><h3>交给助手审稿</h3><p id="review-task-status"></p><pre id="review-findings"></pre><textarea id="review-prompt" aria-label="审稿任务" readonly></textarea><button id="copy-review">复制审稿任务</button></section><section id="difference" hidden><p id="compare-label"></p><div class="comparison"><section><h3>当前正式稿</h3><pre id="before"></pre></section><section><h3>当前候选</h3><pre id="after"></pre></section></div></section></main><aside><h3>本章写作</h3><div id="chapter-info"></div><h3>文件与版本</h3><pre id="detail"></pre><h3>采用候选</h3><p>保存不会覆盖正式稿。请将候选路径交给助手，按现有审稿和历史修订流程采用。</p><p>旧稿未登记的版本关系会明确标注；自动恢复稿须自行核对后再采用。</p><p>自动恢复在停止输入后写入本书文件；失败会提示。关闭或崩溃前尚未写入的文字仍可能丢失。</p></aside></div><script>__SCRIPT__</script></body></html>'''
+:root{--reader-size:19px;--reader-line:1.8;--reader-font:'Songti SC','SimSun',serif;--ink:#273447;--muted:#64748b;--line:#e2e8ef;--accent:#335f86}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{height:100%;margin:0}body{display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;color:var(--ink);background:#f6f7f9;font:14px/1.65 system-ui,-apple-system,'PingFang SC',sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 24px;border-bottom:1px solid var(--line);background:#fff;z-index:5}.book-heading{min-width:0}.eyebrow{display:block;color:var(--muted);font-size:11px;letter-spacing:.12em;margin-bottom:3px}.book-heading>strong{display:block;font-size:17px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:48vw}#book-progress{color:var(--muted);font-size:12px;margin:3px 0 0}.header-actions,.mode-actions,.save-actions{display:flex;align-items:center;gap:8px}.header-actions{flex-shrink:0}
+button,input,select{font:inherit}button,summary{touch-action:manipulation}button{cursor:pointer;border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 11px;color:var(--ink);transition:background .12s}button:hover:not(:disabled){background:#edf2f7}button:disabled{opacity:.42;cursor:default}button.primary{background:var(--accent);color:white;border-color:var(--accent)}button.primary:hover:not(:disabled){background:#284d70}button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,select:focus-visible{outline:2px solid #467aa9;outline-offset:3px}
+summary{cursor:pointer;color:var(--muted);margin:14px 0 8px;overflow-wrap:anywhere}.menu{position:relative}.menu>summary{list-style:none;margin:0;border:1px solid var(--line);border-radius:8px;padding:7px 11px;color:var(--ink)}.menu>summary::-webkit-details-marker{display:none}.menu[open]>summary{background:#edf2f7}.menu-panel{position:absolute;right:0;top:calc(100% + 8px);width:280px;max-width:calc(100vw - 32px);max-height:65vh;overflow:auto;padding:14px;background:white;box-shadow:0 10px 32px #27344722;border:1px solid var(--line);border-radius:12px;z-index:30}.menu-panel>button{display:block;text-align:left;border:0;width:100%;margin:4px 0}.menu-panel>strong{font-size:12px;color:var(--muted)}#root-hint{font-size:12px;overflow-wrap:anywhere}#build-label{display:block;font-size:11px;color:var(--muted);margin-top:12px}
+.desk{display:grid;grid-template-columns:var(--nav-width,236px) minmax(0,1fr) var(--context-width,248px);min-height:0;position:relative}nav,aside{overflow:auto;overscroll-behavior:contain;padding:22px 18px;background:#f6f8fa;min-width:0}nav{border-right:1px solid var(--line)}aside{border-left:1px solid var(--line)}main{overflow:auto;overscroll-behavior:contain;padding:24px clamp(24px,3.5vw,64px) 70px;background:#fff;min-width:0;scroll-padding-top:90px}.tools{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;position:sticky;top:-24px;background:#fff;padding:12px 0;border-bottom:1px solid var(--line);z-index:4}.tools button,.tools summary{white-space:nowrap;font-size:13px}
+h1{font-size:26px;line-height:1.5;font-weight:650;margin:20px 0 8px;overflow-wrap:anywhere}.document-meta{display:flex;gap:4px 16px;flex-wrap:wrap;align-items:center;margin-bottom:22px}.document-meta p{margin:0}#state{font-size:12px;color:#6e5a38}#word-count{font-size:12px;color:var(--muted)}#message[hidden]{display:none}#message{font-size:12px;color:var(--muted);overflow-wrap:anywhere;min-height:1.6em;margin:12px 0}#history-note{font:12px/1.7 system-ui;color:#866536;background:#faf5e9;padding:8px 12px;border-radius:6px}#history-note:empty{display:none}#document-body{max-width:780px;margin:0 auto}#prose,#text,#formatted{font-size:var(--reader-size);line-height:var(--reader-line);font-family:var(--reader-font)}pre{white-space:pre-wrap;overflow-wrap:anywhere}#prose{margin:0}.prose-paragraph{display:block;white-space:pre-wrap}.prose-gap{display:block;white-space:pre;line-height:0;font-size:0;overflow:hidden}.document-name{display:block}.document-type{display:block;font-size:11px;color:var(--muted);margin-top:2px}.volume-heading{font-size:12px;font-weight:650;color:var(--muted);margin:20px 8px 4px}#count-details{font-size:12px;color:var(--muted)}#count-details>summary{padding:0;margin:0}#count-method{max-width:550px;padding:8px 0;line-height:1.7}#chapter-info>details{border-top:1px solid var(--line);margin-top:12px}#reading-options .menu-panel{left:auto;right:0;width:240px}#reading-options label{display:block}#locate,#refresh{border-color:transparent;background:transparent}#edit[aria-pressed="true"]{background:#e8eef5;border-color:#c4d2e2;color:#28547a}textarea{width:100%;min-height:62vh;resize:vertical;border:1px solid #c6d3e1;border-radius:8px;padding:20px;color:var(--ink);background:#fff;font:19px/1.9 'Songti SC','SimSun',serif}#text{padding:0;border:0;border-radius:0;outline-offset:5px}#text:focus{box-shadow:0 0 0 3px #335f8610}#cover{display:block;max-width:100%;max-height:75vh;margin:auto}
+.navigation-mode{display:flex;gap:4px;flex-wrap:wrap;margin:14px 0}.navigation-mode button{font-size:12px}.navigation-mode [aria-pressed="true"]{background:#e8eef5;border-color:#c4d2e2;color:#28547a}#locate{border-color:transparent;color:var(--muted)}#search,#full-query,#book-select{width:100%;max-width:100%;padding:9px;border:1px solid var(--line);border-radius:7px;background:white}.pager{display:flex;gap:8px;margin:12px 0 4px}.pager button{font-size:12px}#range{font-size:11px;color:var(--muted);margin:6px 0 18px}.document{display:block;width:100%;text-align:left;margin:4px 0;padding:9px 10px;border:1px solid transparent;border-radius:7px;background:transparent;overflow-wrap:anywhere;font-size:12px}.selected{background:#e6eef7!important;border-color:#d1dfef;color:#244f77;font-weight:600}.dirty:after{content:' · 未保存';color:#9b582e}#list>details{padding-bottom:8px;border-bottom:1px solid #e8edf2}#list>details>summary{font-size:12px;line-height:1.8;color:#43546a}#directory-warning{font-size:12px;color:#936333;overflow-wrap:anywhere}#pending-box{border:1px solid #e8d6ad;border-radius:8px;padding:10px;margin-bottom:14px;background:#fffaf0}#pending-count{font-size:12px}#pending-list{max-height:180px;overflow:auto}#search-results small{display:block;font-size:12px;color:var(--muted);margin-top:6px}#search-status,#book-hint{white-space:pre-wrap;font:12px/1.7 system-ui}
+aside h3{margin:0 0 20px;font-size:13px;font-weight:650}#chapter-info{font:13px/1.9 system-ui;white-space:pre-wrap}#chapter-info h4{font-size:11px;color:var(--muted);font-weight:500;margin:22px 0 5px}#chapter-info h4:first-child{margin-top:0}#chapter-info p{margin:0 0 12px}#version-details,#adoption-help{border-top:1px solid var(--line);margin-top:22px;font-size:12px}#detail,#path{font:12px/1.8 system-ui;overflow-wrap:anywhere;white-space:pre-wrap}#reading-options{font-size:12px;color:var(--muted)}#reading-options>summary{margin:0}#reading-options label{display:inline-block;margin:8px 12px 8px 0}#reading-options select{font:inherit}
+#formatted{overflow-wrap:anywhere}#formatted h1{font-size:1.35em}#formatted h2{font-size:1.18em}#formatted h3{font-size:1.05em}#formatted pre{font:14px/1.6 monospace;background:#f5f7fa;padding:12px}#formatted code{font-size:.85em;background:#f1f4f8}#formatted table{border-collapse:collapse;font:14px/1.7 system-ui;width:100%}#formatted td,#formatted th{border:1px solid var(--line);padding:8px;text-align:left}.table-scroll{overflow:auto}
+#review-task-box{padding:18px;background:#eef4fa;border-radius:10px;margin:20px 0;scroll-margin-top:85px}#review-prompt{min-height:220px;font:13px/1.8 system-ui}#review-findings{font:13px/1.6 system-ui;color:#8a392b}.comparison{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.comparison section{min-width:0}.comparison h3{font-size:12px;color:var(--muted)}.comparison pre{font:15px/1.9 var(--reader-font);background:#f7f8fa;padding:12px;border-radius:8px}.diff-line{display:block;white-space:pre-wrap;min-height:1em;scroll-margin-top:135px}.diff-line.removed{background:#ffe3df;color:#882f26}.diff-line.added{background:#ddf4e4;color:#215b36}.diff-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:sticky;top:30px;background:white;z-index:3;padding:10px 0;font-size:12px}.diff-tools button{font-size:12px}#compare-label{font-size:12px;color:var(--muted)}.comparing #reading-options,.comparing #word-count,.comparing #history-note,.comparing #edit,.comparing #source-view{display:none}
+.context-closed .desk,.focus-reading .desk{grid-template-columns:var(--nav-width,236px) minmax(0,1fr)}.context-closed aside,.focus-reading aside{display:none}.focus-reading #document-body{max-width:760px}#panel-dismiss,#refresh-compact,.panel-close{display:none}
+#match-tools{position:sticky;top:40px;background:white;padding:10px 0;z-index:3;display:flex;flex-wrap:wrap;gap:8px;align-items:center}#match-query{font:12px/1.7 system-ui}#match-text mark{background:#fff1a6;scroll-margin-top:150px}#match-text mark.current-match{background:#ffc66b;outline:2px solid #a85813}
+@media(max-width:1100px){header{padding:12px 18px}.header-actions{gap:5px}.header-actions>button,.header-actions>details>summary{font-size:12px}main{padding:24px}nav,aside{padding:18px 14px}.tools{gap:4px}.mode-actions,.save-actions{gap:4px}.tools button,.tools summary{padding:7px 8px;font-size:12px}}
+#chapter-picker{display:flex;align-items:center;gap:8px;max-width:100%;flex-basis:100%;font-size:12px;color:var(--muted)}#chapter-version{flex:1;min-width:0;max-width:100%;padding:6px 8px;background:#f8fafb;color:var(--ink);border:1px solid var(--line);border-radius:6px}.chapter-entry{margin:2px 0;padding:10px}.chapter-entry span{display:block}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.column-resizer{position:absolute;top:0;bottom:0;width:8px;z-index:6;cursor:col-resize;touch-action:none}#resize-left{left:calc(var(--nav-width,236px) - 4px)}#resize-right{right:calc(var(--context-width,248px) - 4px)}.column-resizer:hover,.column-resizer:focus-visible{background:#335f8630;outline:1px solid var(--accent)}.resizing{cursor:col-resize;user-select:none}.nav-closed nav,.nav-closed #resize-left,.context-closed #resize-right,.focus-reading #resize-right{display:none}.nav-closed .desk{grid-template-columns:minmax(0,1fr) var(--context-width,248px)}.nav-closed.context-closed .desk,.nav-closed.focus-reading .desk{grid-template-columns:minmax(0,1fr)}
+@media(max-width:820px){.column-resizer{display:none!important}.nav-closed .desk,.nav-closed.context-closed .desk,.nav-closed.focus-reading .desk{grid-template-columns:minmax(0,1fr)}#reading-options .menu-panel{width:200px}header{padding:12px 16px;gap:8px;align-items:flex-start}.book-heading>strong{max-width:52vw;font-size:15px}#book-progress{font-size:11px}.header-actions{flex-wrap:wrap;justify-content:flex-end;max-width:45%}.header-actions>#refresh{display:none}#nav-toggle,.panel-close{display:inline-block}.panel-close{margin-bottom:12px}#refresh-compact{display:block}.desk,.context-closed .desk,.focus-reading .desk{grid-template-columns:minmax(0,1fr)}main{padding:18px 20px 60px}.tools{top:-18px}nav,aside{display:none!important;position:absolute;top:0;bottom:0;width:min(320px,85vw);z-index:12;box-shadow:0 8px 35px #24344730}.nav-open nav{display:block!important;left:0}.context-open aside{display:block!important;right:0}.nav-open #panel-dismiss,.context-open #panel-dismiss{display:block;position:absolute;inset:0;border:0;border-radius:0;background:#26344833;z-index:10;width:100%;height:100%}.comparison{grid-template-columns:minmax(0,1fr)}.diff-tools{top:28px}h1{font-size:23px}.document-meta{margin-bottom:22px}#document-body{max-width:700px}}
+@media(prefers-reduced-motion:reduce){button{transition:none}}
+</style></head><body><header><div class="book-heading"><span class="eyebrow">写作工作台</span><strong title="__TITLE__">__TITLE__</strong><p id="book-progress" role="status">正在读取当前进度…</p></div><div class="header-actions"><button id="nav-toggle" aria-expanded="false" aria-controls="book-nav">作品目录</button><button id="refresh">刷新目录与状态</button><button id="context-toggle" aria-expanded="true" aria-controls="book-context">收起辅助栏</button><details id="maintenance" class="menu"><summary>工作台设置</summary><div class="menu-panel"><button id="refresh-compact">刷新目录</button><button id="layout-reset">恢复默认布局</button><strong>文件与恢复</strong><button id="reload-source">重新读取文件</button><button id="recover-reload">保留恢复稿并重新载入</button><details id="root-location"><summary>书库与材料位置</summary><span id="root-hint"></span></details><small id="build-label" title="用于区分工作台页面更新，不是技能发布版本">界面标识：__BUILD__</small></div></details></div></header><div class="desk"><nav id="book-nav" aria-label="作品目录" tabindex="-1"><button id="nav-close" class="panel-close">关闭目录</button><details><summary>切换作品</summary><select id="book-select" aria-label="选择作品"></select><button id="book-open">打开作品</button><p id="book-hint"></p></details><div class="navigation-mode"><button id="view-chapters">按章查看</button><button id="view-files">按文件查看</button><button id="locate">定位当前文件</button></div><section id="pending-box" hidden><strong id="pending-count"></strong><div id="pending-list"></div></section><input id="search" type="search" placeholder="搜索全书章名或材料路径" aria-label="搜索作品文件"><div class="pager"><button id="newer">上一页</button><button id="older">下一页</button></div><p id="range"></p><p id="directory-warning" role="status"></p><div id="list"></div><details><summary>全文搜索</summary><input id="full-query" aria-label="搜索正文与材料内容" placeholder="搜索正文与材料内容"><button id="full-go">搜索内容</button><p id="search-status" role="status"></p><div id="search-results"></div><button id="search-prev" disabled>上一页结果</button><button id="search-next" disabled>下一页结果</button></details></nav><div id="resize-left" class="column-resizer" role="separator" aria-label="调整目录宽度" aria-orientation="vertical" aria-valuemin="180" aria-valuemax="360" tabindex="0"></div><main><div class="tools"><div class="mode-actions"><button id="edit" disabled>编辑</button><button id="compare" disabled>对照正式稿</button><details id="reading-options" class="menu"><summary>阅读设置</summary><div class="menu-panel"><label>字号 <select id="font-size"><option>16</option><option selected>19</option><option>22</option><option>25</option></select></label><label>行距 <select id="line-height"><option>1.6</option><option selected>1.8</option><option>1.9</option><option>2.2</option></select></label><label>字体 <select id="font-family"><option value="serif">宋体</option><option value="sans">黑体</option></select></label><label><input id="focus-reading" type="checkbox">专注阅读</label></div></details></div><div class="save-actions"><button id="save" class="primary" disabled title="保存候选稿（⌘S / Ctrl+S）">保存候选稿</button><details id="more-actions" class="menu"><summary>更多</summary><div class="menu-panel"><button id="review-task" disabled>生成审稿任务</button><button id="source-view" hidden>查看源码</button><button id="download" disabled>下载当前文字</button></div></details></div></div><p id="message" role="status">编辑会写入本书自动恢复稿；关闭前仍请保存候选。文件名称不代表已采用。</p><h1 id="title">选择章节或材料</h1><div class="document-meta"><div id="chapter-picker" hidden><label for="chapter-version">本章稿件与材料</label><select id="chapter-version" aria-describedby="chapter-picker-help"></select><span id="chapter-picker-help" class="sr-only"></span></div><p id="state"></p><details id="count-details"><summary id="word-count" aria-label="字数与统计口径"></summary><p id="count-method"></p></details></div><p id="history-note"></p><div id="document-body"><section id="match-view" hidden><div id="match-tools"><button id="match-back">返回阅读位置</button><button id="match-prev">上一处命中</button><span id="match-position" role="status"></span><button id="match-next">下一处命中</button></div><p id="match-query"></p><pre id="match-text"></pre></section><div id="formatted" hidden></div><pre id="prose"></pre><textarea id="text" aria-label="候选正文编辑" hidden></textarea><img id="cover" alt="封面预览" hidden></div><section id="review-task-box" hidden><h3>交给助手审稿</h3><p id="review-task-status"></p><pre id="review-findings"></pre><textarea id="review-prompt" aria-label="审稿任务" readonly></textarea><button id="copy-review">复制审稿任务</button></section><section id="difference" hidden><div class="diff-tools"><button id="compare-back">返回阅读</button><button id="diff-prev">上一处差异</button><span id="diff-position" role="status"></span><button id="diff-next">下一处差异</button></div><p id="compare-label"></p><div class="comparison"><section><h3>当前正式稿</h3><pre id="before"></pre></section><section><h3>当前文字</h3><pre id="after"></pre></section></div></section></main><div id="resize-right" class="column-resizer" role="separator" aria-label="调整辅助栏宽度" aria-orientation="vertical" aria-valuemin="200" aria-valuemax="360" tabindex="0"></div><button id="panel-dismiss" aria-label="关闭侧栏" tabindex="-1"></button><aside id="book-context" aria-label="写作辅助" tabindex="-1"><button id="context-close" class="panel-close">关闭辅助栏</button><h3 id="context-title">本章写作</h3><div id="chapter-info"></div><details id="version-details"><summary>文件与版本</summary><pre id="detail"></pre><details id="file-location"><summary>文件位置</summary><p id="path"></p></details></details><details id="adoption-help"><summary>保存与采用说明</summary><p>保存不会覆盖正式稿。请将候选路径交给助手，按现有审稿和历史修订流程采用。</p><p>旧稿未登记的版本关系会明确标注；自动恢复稿须自行核对后再采用。</p><p>自动恢复在停止输入后写入本书文件；失败会提示。关闭或崩溃前尚未写入的文字仍可能丢失。</p></details></aside></div><script>__SCRIPT__</script></body></html>'''
     return page.replace('__TITLE__', _escape(packet['book']['title'])).replace('__HASH__', digest).replace('__BUILD__', hashlib.sha256((page + script.partition('\n')[2]).encode()).hexdigest()[:10]).replace('__SCRIPT__', script).encode('utf-8')
 
 
@@ -1997,12 +2244,13 @@ def _service_request(root, action='session', saved=False):
         connection.close()
 
 
-def editor_server(root, limit=DEFAULT_LIMIT, library_books=None):
+def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=None):
     root = Path(root).expanduser().resolve()
     packet = _editor_packet(root, limit=limit)
     token = secrets.token_urlsafe(32)
     route = '/' + token + '/'
     library = _library_roots(root, library_books)
+    materials = _material_roots(material_roots)
     identity = {'instance': uuid.uuid4().hex, 'root': str(root), 'pid': os.getpid(),
                 'code_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), 'started': _utc_now()}
 
@@ -2066,19 +2314,21 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None):
                         threading.Thread(target=self.server.shutdown, daemon=True).start()
                     return
                 elif action == 'api/catalog':
-                    result = _editor_catalog(root, payload.get('offset', 0), limit, payload.get('query', ''))
+                    result = _editor_catalog(root, payload.get('offset', 0), limit, payload.get('query', ''), payload.get('focus'), materials)
                 elif action == 'api/metrics':
                     result = _editor_metrics(root, payload)
                 elif action == 'api/review-task':
                     result = _editor_review_task(root, payload.get('id'), payload.get('sha256'))
                 elif action == 'api/search':
-                    result = _editor_search(root, payload.get('query'), payload.get('offset', 0))
+                    result = _editor_search(root, payload.get('query'), payload.get('offset', 0), material_roots=materials)
                 elif action == 'api/books':
                     result = {'ok': True, 'books': list(library.values()), 'current': str(root)}
                 elif action == 'api/open-book':
                     result = _library_open(library, payload.get('key'), root, self.server.editor_url)
                 elif action == 'api/open':
-                    result = _editor_document(root, payload.get('id'))
+                    document_id = payload.get('id')
+                    result = (_linked_material_document(materials, document_id) if isinstance(document_id, str) and document_id.startswith('linked:')
+                              else _editor_document(root, document_id))
                 elif action in ('api/save', 'api/recover'):
                     result = _editor_save(root, payload, recovery=action.endswith('recover'))
                 elif action == 'candidate':
@@ -2090,6 +2340,9 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None):
                 self.reply(409, json.dumps({'message': str(error), 'error': error.code, 'details': error.details}, ensure_ascii=False).encode())
             except (ValueError, UnicodeError, OSError) as error:
                 self.reply(400, json.dumps({'message': str(error)}, ensure_ascii=False).encode())
+            except (KeyError, TypeError) as error:
+                self.reply(409, json.dumps({'message': '此材料含旧版或不完整字段，请核对章计划；原文未修改。',
+                                           'error': 'workbench_legacy_fields'}, ensure_ascii=False).encode())
 
     class EditorServer(HTTPServer):
         def server_close(self):
@@ -2139,7 +2392,7 @@ def run(args):
     if args.command in ('workbench-status', 'workbench-stop'):
         return _service_request(args.book, 'stop' if args.command == 'workbench-stop' else 'session', getattr(args, 'saved', False))
     if args.command == "workbench-serve":
-        server = editor_server(args.book, args.limit, args.library_book)
+        server = editor_server(args.book, args.limit, args.library_book, args.material_root)
         print(json.dumps({"url": server.editor_url, "mode": "candidate-editing"}), flush=True)
         if args.open_browser:
             webbrowser.open(server.editor_url)
