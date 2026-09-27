@@ -1123,7 +1123,7 @@ eval(process.argv[1]);
         outer = Path(self.temp.name) / '外层大纲'
         outer.mkdir()
         original = '# 第99章 外层提纲\n\n独有材料检索词。'
-        (outer / '第99章 提纲.md').write_text(original, encoding='utf-8')
+        (outer / '第99章 提纲.md').write_bytes(original.encode('utf-8'))
         (outer / '封面.png').write_bytes(b'\x89PNG\r\n')
         (outer / '.private.md').write_text('hidden', encoding='utf-8')
         roots = w._material_roots([outer])
@@ -1143,7 +1143,10 @@ eval(process.argv[1]);
             w._linked_material_document({}, entry['id'])
         with self.assertRaises(story.StoryError):
             w._linked_material_document(roots, entry['id'] + '/../secret.md')
-        self.assertEqual((outer / '第99章 提纲.md').read_text(encoding='utf-8'), original)
+        self.assertEqual((outer / '第99章 提纲.md').read_bytes(), original.encode('utf-8'))
+        windows_text = original.replace('\n', '\r\n')
+        (outer / '第99章 提纲.md').write_bytes(windows_text.encode('utf-8'))
+        self.assertEqual(w._linked_material_document(roots, entry['id'])['text'], windows_text)
         image = next(r for r in rows if r['path'].endswith('.png'))
         self.assertTrue(w._linked_material_document(roots, image['id'])['image'].startswith('data:image/png'))
         if os.name != 'nt':
