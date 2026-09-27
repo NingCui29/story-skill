@@ -1,0 +1,10 @@
+{
+  "tag": "v0.6.4",
+  "release_still_draft": true,
+  "published_at": null,
+  "old_tag_object": "997dfde3ecf02105155d49ab41d70b0891acb5b6",
+  "old_commit": "f5d9c9f42d93afba6ef38768e527872995e21819",
+  "new_commit": "523cc9ffbb2ced0e4c78310f8b26bfbfd55ddae3",
+  "payload_unchanged": true,
+  "reason": "Before public Release: correct Windows fixture to preserve LF and explicitly cover CRLF; published historical tags untouched."
+}

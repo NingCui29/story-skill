@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "version": "0.6.4",
+  "date": "2026-09-27T00:20:02.680229+00:00",
+  "ok": true,
+  "mode": "generated-schema1-fixtures",
+  "scope": "Synthetic Chinese schema1 fixtures created by the fixed v0.2.0 runtime; not retained historical book databases",
+  "environment": {
+    "platform": "macOS-15.8-x86_64-i386-64bit",
+    "python": "3.12.14"
+  },
+  "schema1_runtime_fixture": {
+    "path": "/Users/cuining/Documents/GitHub/story-skill/tests/fixtures/schema1_runtime.py",
+    "sha256": "70c8a0294d72103cb2232834ac951f30abef6ab20e940cb0303aca1858910cb3"
+  },
+  "runtime": {
+    "story.py": "0069bcc51382be221446c193ade96359c99fbddcb18f9d71da2d9e97fe399fe8",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_history.py": "02bdd130ae014f977bf03cc13cfc27fb6bdb873df491da19d5d3748e34beda1f",
+    "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story_workbench.py": "4a555c3558dc3d2215ad1a2b490d722298af4d31dfda7bca9bb0c15c52d06e40",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+  },
+  "books": [
+    {
+      "title": "合成迁移长篇",
+      "kind": "long",
+      "book_id": "8143a92b-bcd4-40b2-a273-fa02d13f4f38",
+      "revision": 2,
+      "last_chapter": 1,
+      "sources": 0,
+      "migrated": true,
+      "original_manuscript_and_summary_preserved": true,
+      "source_and_analysis_preserved": true,
+      "exports_clean": true,
+      "old_runtime_rollback_copy_verified": true
+    },
+    {
+      "title": "合成迁移短篇",
+      "kind": "short",
+      "book_id": "08e16adf-b0be-49d5-8035-adca103a25ce",
+      "revision": 1,
+      "last_chapter": 1,
+      "sources": 0,
+      "migrated": true,
+      "original_manuscript_and_summary_preserved": true,
+      "source_and_analysis_preserved": true,
+      "exports_clean": true,
+      "old_runtime_rollback_copy_verified": true
+    },
+    {
+      "title": "合成迁移拆文",
+      "kind": "analysis",
+      "book_id": "9cac7537-2d0a-415d-b8a7-6415b102f7c5",
+      "revision": 2,
+      "last_chapter": 0,
+      "sources": 1,
+      "migrated": true,
+      "original_manuscript_and_summary_preserved": true,
+      "source_and_analysis_preserved": true,
+      "exports_clean": true,
+      "old_runtime_rollback_copy_verified": true
+    }
+  ],
+  "source_inventory_sha256": "4add05e442674f359e6b3f71469ce904985757c60df545642712c2613c2e6347",
+  "original_tree_unchanged": true,
+  "runtime_stable": true
+}

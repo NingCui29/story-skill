@@ -1,6 +1,6 @@
 # 安装或升级 Story Skill
 
-**v0.6.4 发布准备中。** 固定标签与公开附件验证完成前保留现有安装。八技能、39 文件；Release 附件和 Packages 的核验结果见[发布记录](docs/releases/v0.6.4.md)。
+**当前发布版：v0.6.4。** 固定标签 `v0.6.4` 指向 `523cc9ffbb2ced0e4c78310f8b26bfbfd55ddae3`。八技能、39 文件；Release 附件和 Packages 的核验结果见[发布记录](docs/releases/v0.6.4.md)。
 
 可把这一行发送给支持技能的应用：
 
@@ -25,13 +25,13 @@ skills/story-skill-cover
 skills/story-skill-publish
 ```
 
-新版 ZIP 名为 `story-skill-0.6.4.zip`，包名为 `@ningcui29/story-skill`。Release 附件和 GitHub Packages 的公开回下载尚待验证；npm 包不是直接可发现的技能安装。历史文档经过名称遮盖；旧版资源的真实文件名不会因文档改写而改变。
+新版 ZIP 名为 `story-skill-0.6.4.zip`，包名为 `@ningcui29/story-skill`。Release 附件已公开回下载核验，GitHub Packages 已公开并经认证工作流回下载核验；npm 包不是直接可发现的技能安装。历史文档经过名称遮盖；旧版资源的真实文件名不会因文档改写而改变。
 
-远程安装时，先用官方安装脚本从 `v0.6.4` 固定标签将八个 `--path` 安装到隔离临时目录；另从同一版本 Release 下载 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.4/story-skill-0.6.4.zip) 和 [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.4/story-skill-0.6.4.zip.sha256)，核对摘要，并逐文件比较临时目录与 ZIP。套件 ZIP 为 242,079 字节，SHA-256 为 `8fb32af1de80717638bf26d2ed0a20bbfc3ed52af9dd67ba85a765a996e73b30`；发布后应核对公开回下载与此一致。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
+远程安装时，先用官方安装脚本从 `v0.6.4` 固定标签将八个 `--path` 安装到隔离临时目录；另从同一版本 Release 下载 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.4/story-skill-0.6.4.zip) 和 [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.4/story-skill-0.6.4.zip.sha256)，核对摘要，并逐文件比较临时目录与 ZIP。套件 ZIP 为 242,079 字节，SHA-256 为 `8fb32af1de80717638bf26d2ed0a20bbfc3ed52af9dd67ba85a765a996e73b30`；公开回下载与此一致。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
 
 ## 从本仓库源码安装
 
-发布验证完成后使用 v0.6.4 固定标签。main 可能包含后续更改，不能仅凭版本号判定其与附件相同。项目内托管安装可在仓库根目录运行：
+使用已核验的 v0.6.4 固定标签。main 可能包含后续更改，不能仅凭版本号判定其与附件相同。项目内托管安装可在仓库根目录运行：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "<项目根目录>"
