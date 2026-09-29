@@ -45,7 +45,7 @@ class VolumeConsistencyTests(unittest.TestCase):
         self.assert_rejected("volume_directory_conflict", lambda: self.case.commit(2))
         self.assertEqual(self.book.meta("volume_dir:rain"), "第一卷 雨夜")
 
-        self.case.save_plan(2, volume="rain", volume_dir=None)
+        self.case.save_plan(2, volume="rain", volume_dir=None, title="第二夜")
         self.assertTrue(self.case.commit(2)[0]["exports_complete"])
         self.assertEqual(Path(self.book.chapter_path(1)).parent, Path(self.book.chapter_path(2)).parent)
 
@@ -61,7 +61,7 @@ class VolumeConsistencyTests(unittest.TestCase):
         # leaving an earlier chapter and its saved plan in the original directory.
         with self.book.transaction():
             self.book.set_meta("volume_dir:rain", "第一卷 改名")
-        self.case.save_plan(2, volume="rain", volume_dir=None)
+        self.case.save_plan(2, volume="rain", volume_dir=None, title="第二夜")
         self.case.commit(2)
         for chapter in (1, 2):
             fixture.story.history.save_dependencies(self.book, {
@@ -73,7 +73,7 @@ class VolumeConsistencyTests(unittest.TestCase):
         self.assert_rejected("volume_directory_conflict", lambda: fixture.story.history.branch_publish(
             self.book, packet["branch"], self.book.meta("revision")))
         self.assertEqual(self.book.meta("volume_dir:rain"), "第一卷 改名")
-        self.case.save_plan(3, volume="rain", volume_dir=None)
+        self.case.save_plan(3, volume="rain", volume_dir=None, title="第三夜")
         self.assertTrue(self.case.commit(3)[0]["exports_complete"])
         self.assertEqual(Path(self.book.chapter_path(3)).parent.as_posix(), "chapters/第一卷 改名")
 
@@ -109,7 +109,7 @@ class VolumeConsistencyTests(unittest.TestCase):
         self.assertIsNone(self.book.db.execute("SELECT value FROM meta WHERE key='volume_dir:alias'").fetchone())
 
     def test_new_chapter_cannot_adopt_a_hard_link_to_another_chapter(self):
-        self.case.save_plan(1)
+        self.case.save_plan(1, title="初雨")
         self.case.commit(1)
         first = self.root / self.book.chapter_path(1)
         second = first.parent / "第2章 门后的雨.md"

@@ -44,7 +44,7 @@ class HistoryWorldAuditTests(unittest.TestCase):
                 "evidence": self.evidence(chapter) if chapter else {"kind": "author_plan", "note": "拟写的收支动作"}}
 
     def prepare(self, chapter, transfers=(), time=None, requires=()):
-        plan = {"volume_dir": "第一卷 雨夜", "title": "核对交接", "goal": "核对交接", "stop": "留下收据", "requires": list(requires), "tags": [],
+        plan = {"volume_dir": "第一卷 雨夜", "title": f"核对交接{chapter}", "goal": "核对交接", "stop": "留下收据", "requires": list(requires), "tags": [],
                 "constraints": [], "beats": [{"choice": "核对账本", "change": "留下收据"}], "length": [10, 200]}
         if time is not None:
             plan["time"] = {"clock": "main", "start": time[0], "end": time[1]}

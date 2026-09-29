@@ -32,7 +32,7 @@ class RecoveryRegressionTests(unittest.TestCase):
         self.temp.cleanup()
 
     def save_plan(self, chapter):
-        plan = {"volume_dir": "第一卷 雨夜", "goal": "用钥匙换取入口", "stop": "交出钥匙后停笔",
+        plan = {"volume_dir": "第一卷 雨夜", "title": f"门后的雨{chapter}", "goal": "用钥匙换取入口", "stop": "交出钥匙后停笔",
                 "beats": [{"choice": "沈禾交出钥匙", "change": "失去退路"}],
                 "constraints": [], "requires": [], "tags": [], "length": [20, 120]}
         self.book.save_plan(chapter, plan, self.book.meta("revision"))

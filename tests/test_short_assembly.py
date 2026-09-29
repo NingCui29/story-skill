@@ -258,6 +258,7 @@ class ShortAssemblyTests(unittest.TestCase):
         output = Path(self.book.assemble_short(1)["path"])
         plan = self.book.get_plan(1)
         plan["goal"] = "归还借来的钥匙"
+        plan["title"] = "还钥"
         self.book.save_plan(2, plan, self.book.meta("revision"))
         self.assertEqual(self.book.status()["short_assembly"]["state"], "current")
         self.commit(2, "还钥", "第2章 还钥\n她归还钥匙，也还清了欠账。\n")

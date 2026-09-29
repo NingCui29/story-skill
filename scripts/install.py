@@ -122,7 +122,7 @@ def suite_files(version):
         return SUITE_FILES_V060
     if version in ("0.6.1", "0.6.2", "0.6.3", "0.6.4"):
         return SUITE_FILES_V061
-    if version == "0.6.5":
+    if version in ("0.6.5", "0.6.6"):
         return SUITE_FILES_V065
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
@@ -133,7 +133,7 @@ def skill_names(version):
         return SKILL_NAMES_V060
     if version in ("0.6.1", "0.6.2", "0.6.3", "0.6.4"):
         return SKILL_NAMES_V061
-    if version == "0.6.5":
+    if version in ("0.6.5", "0.6.6"):
         return SKILL_NAMES_V061
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 

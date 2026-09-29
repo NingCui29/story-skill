@@ -99,6 +99,35 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual(first["path"], str(self.root / self.book.chapter_path(1)))
         self.assertEqual(second["path"], str(self.root / self.book.chapter_path(2)))
 
+    def test_chapter_titles_are_unique_across_volumes_and_draft_headings(self):
+        self.save_plan(1, title="门后的雨")
+        self.commit(1)
+        before = self.state_snapshot()
+        self.assert_error("duplicate_chapter_title", lambda: self.save_plan(
+            2, title="门后的雨", volume_dir="第二卷 旧城"))
+        self.assertEqual(self.state_snapshot(), before)
+        self.assert_error("duplicate_chapter_title", lambda: self.save_plan(
+            2, title="门后的雨　", volume_dir="第二卷 旧城"))
+        self.assertEqual(self.state_snapshot(), before)
+
+        self.save_plan(2, volume_dir="第二卷 旧城")
+        self.draft.write_text("第2章 门后的雨\n" + BODY, encoding="utf-8")
+        before = self.state_snapshot()
+        self.assert_error("duplicate_chapter_title", lambda: self.book.lint(2, self.draft))
+        self.assertEqual(self.state_snapshot(), before)
+
+    def test_volume_names_are_unique_but_shared_within_one_volume(self):
+        self.save_plan(1, title="入城")
+        self.save_plan(2, title="旧信")
+        before = self.state_snapshot()
+        self.assert_error("duplicate_volume_title", lambda: self.save_plan(
+            3, title="过河", volume_dir="第二卷 雨夜"))
+        self.assertEqual(self.state_snapshot(), before)
+        self.assert_error("duplicate_volume_title", lambda: self.save_plan(
+            3, title="过河", volume_dir="第二卷　雨夜"))
+        self.assertEqual(self.state_snapshot(), before)
+        self.save_plan(3, title="过河", volume_dir="第二卷 旧城")
+
     def test_plain_chapter_heading_exports_as_plain_text_and_is_excluded_from_body_count(self):
         text = "第1章 门后的雨\n" + BODY
         body_count = story.manuscript_counts(BODY)["visible_nonspace_v1"]
@@ -361,16 +390,16 @@ class ChapterLayoutTests(unittest.TestCase):
                          self.book.meta("revision"))
         self.book.close()
         self.book = story.Book(self.root)
-        self.save_plan(2, volume="rain", volume_dir=None)
+        self.save_plan(2, volume="rain", volume_dir=None, title="第二夜")
         self.commit(2)
-        self.assertEqual(self.book.chapter_path(2), "chapters/第一卷 雨夜/第2章 门后的雨.md")
+        self.assertEqual(self.book.chapter_path(2), "chapters/第一卷 雨夜/第2章 第二夜.md")
 
-        self.save_plan(3, volume="crossing", volume_dir="第2卷 渡口")
+        self.save_plan(3, volume="crossing", volume_dir="第2卷 渡口", title="第三夜")
         self.commit(3)
-        self.save_plan(4, volume="crossing", volume_dir=None)
+        self.save_plan(4, volume="crossing", volume_dir=None, title="第四夜")
         self.commit(4)
-        self.assertEqual(self.book.chapter_path(3), "chapters/第2卷 渡口/第3章 门后的雨.md")
-        self.assertEqual(self.book.chapter_path(4), "chapters/第2卷 渡口/第4章 门后的雨.md")
+        self.assertEqual(self.book.chapter_path(3), "chapters/第2卷 渡口/第3章 第三夜.md")
+        self.assertEqual(self.book.chapter_path(4), "chapters/第2卷 渡口/第4章 第四夜.md")
 
     def test_new_commit_and_adopt_require_named_volume_without_changing_state(self):
         self.save_plan(1, volume_dir=None)
@@ -450,7 +479,7 @@ class ChapterLayoutTests(unittest.TestCase):
 
     def test_historical_revision_recovers_edited_retired_path_of_older_chapter(self):
         for chapter in (1, 2):
-            self.save_plan(chapter)
+            self.save_plan(chapter, **({"title": "渡口另约"} if chapter == 2 else {}))
             self.commit(chapter)
             story.history.save_dependencies(
                 self.book, {"chapter": chapter, "chapter_sha": story.digest(DRAFT), "dependencies": [],

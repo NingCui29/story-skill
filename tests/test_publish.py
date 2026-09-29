@@ -397,9 +397,10 @@ class PublishTests(unittest.TestCase):
         for chapter, (space, with_title) in enumerate(
                 (("\u3000", True), ("\u3000", False), ("\u00a0", True), ("\u00a0", False)), 1):
             with self.subTest(space=repr(space), with_title=with_title):
-                text = "#" + space + "雨夜\n" + BODY
+                title = f"雨夜{chapter}"
+                text = "#" + space + title + "\n" + BODY
                 if with_title:
-                    self.commit(chapter, text=text, title="雨夜")
+                    self.commit(chapter, text=text, title=title)
                 else:
                     self.book.save_plan(chapter, {
                         "volume_dir": "第一卷 雨夜", "goal": "完成钥匙交接", "stop": "看到账本，不翻开",
@@ -411,23 +412,23 @@ class PublishTests(unittest.TestCase):
                         "summary": "沈禾交出钥匙后入内，保留收据。", "changes": [], "review": self.review(text)})
                     self.assertTrue(result["exports_complete"], result)
                 item = self.prepare((chapter,))["manifest"]["chapters"][0]
-                self.assertEqual(item["title"], "雨夜")
+                self.assertEqual(item["title"], title)
                 self.assertEqual(item["body"], BODY)
                 self.assertEqual(item["body_sha"], story.digest(text))
 
     def test_unicode_indentation_in_an_ordinary_first_paragraph_is_preserved(self):
         for chapter, space in enumerate(("\u3000", "\u00a0"), 1):
             text = space + BODY + "\n正文引文中的 # 雨夜保持原样。\n"
-            self.commit(chapter, text=text, title="雨夜")
+            self.commit(chapter, text=text, title=f"雨夜{chapter}")
             self.assertEqual(self.prepare((chapter,))["manifest"]["chapters"][0]["body"], text)
 
     def test_hashes_inside_prose_and_unrecognized_opening_are_preserved(self):
         for chapter, first in ((1, ""), (2, "## 雨夜\n")):
             with self.subTest(chapter=chapter):
                 text = first + BODY + "\n# 账房旧规\n纸条写着：收据编号 #7，切勿遗失。\n"
-                self.commit(chapter, text=text, title="正文中的纸条")
+                self.commit(chapter, text=text, title=f"正文中的纸条{chapter}")
                 item = self.prepare((chapter,))["manifest"]["chapters"][0]
-                self.assertEqual(item["title"], "正文中的纸条")
+                self.assertEqual(item["title"], f"正文中的纸条{chapter}")
                 self.assertEqual(item["body"], text)
 
     def test_chinese_crlf_and_non_bmp_survive_title_body_conversion(self):

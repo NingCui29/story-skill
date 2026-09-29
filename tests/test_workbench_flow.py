@@ -28,7 +28,7 @@ class WorkbenchFlowTests(unittest.TestCase):
 
     def test_groups_include_future_plans_without_claiming_prose_or_adoption(self):
         plan = json.loads(self.book.db.execute('SELECT data FROM plans WHERE chapter=2').fetchone()[0])
-        self.book.save_plan(3, plan, self.book.meta('revision'))
+        self.book.save_plan(3, {**plan, 'title': '第三夜'}, self.book.meta('revision'))
         path = '01_大纲细纲/第一卷 雨夜/第3章 未定.md'
         self.material(path, '# 候选细纲\n未采用')
         c = w._editor_catalog(self.root, limit=2)

@@ -75,6 +75,18 @@ class StoryTests(unittest.TestCase):
         self.assertEqual(story.visible_count("# 标题\r\n甲 乙\t，\u200b\ufeff\nA"), 4)
         self.assertEqual(story.visible_count("第一章\n甲。"), 5)
 
+    def test_complete_chapter_template_length_and_explicit_override(self):
+        template = story.TEMPLATES["plan"]
+        self.assertEqual(template["length"], [2400, 2800])
+        self.assertEqual(template["count_method"], "visible_nonspace_v1")
+        self.assertIs(template["count_title"], False)
+        self.assertEqual(story.valid_plan(plan(length=[1200, 1500]))["length"], [1200, 1500])
+        for count, expected in ((2399, False), (2400, True), (2800, True), (2801, False)):
+            with self.subTest(count=count):
+                result = story.lint_text("第1章 雨夜\n" + "雨" * count, template)
+                self.assertEqual(result["length_count"], count)
+                self.assertIs(result["ok"], expected)
+
     def test_input_placeholders_and_invalid_range(self):
         self.assert_error("placeholder", story.valid_plan, plan(goal="待补充"))
         self.assert_error("invalid_input", story.valid_plan, plan(length=[120, 20]))
@@ -226,7 +238,7 @@ class StoryTests(unittest.TestCase):
     def test_cannot_skip_chapter_or_replace_earlier_history(self):
         self.assert_error("chapter_order", self.book.commit, 2, self.draft, self.delta())
         self.book.commit(1, self.draft, self.delta())
-        self.book.save_plan(2, plan(), self.book.meta("revision"))
+        self.book.save_plan(2, plan(title="第二夜"), self.book.meta("revision"))
         self.book.commit(2, self.draft, self.delta())
         self.assert_error("chapter_order", self.book.commit, 1, self.draft, self.delta(), True)
 

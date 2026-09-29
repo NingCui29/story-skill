@@ -43,7 +43,7 @@ class HistoryDependencyReadTests(unittest.TestCase):
 
     def commit(self, chapter, dependencies=(), note="原声明：已逐项核对所列依赖。"):
         text = f"# 第{chapter}章 留信\n周宁核对第{chapter}封信，随后把钥匙放在桌边。\n"
-        plan = {"title": "留信", "volume_dir": "第一卷 交接", "goal": "核对信件",
+        plan = {"title": f"留信{chapter}", "volume_dir": "第一卷 交接", "goal": "核对信件",
                 "stop": "留下钥匙", "requires": [], "length": [1, 200],
                 "beats": [{"choice": "核对信件", "change": "留下钥匙"}]}
         self.book.save_plan(chapter, plan, self.revision())

@@ -42,7 +42,7 @@ class ReconcileTests(unittest.TestCase):
         self.temp.cleanup()
 
     def save_plan(self, chapter):
-        plan = {"volume_dir": "第一卷 雨夜", "goal": "选择是否交出钥匙", "stop": "确定入口选择后停笔",
+        plan = {"volume_dir": "第一卷 雨夜", "title": f"门后的雨{chapter}", "goal": "选择是否交出钥匙", "stop": "确定入口选择后停笔",
                 "beats": [{"choice": "沈禾决定钥匙的去向", "change": "与守门人的关系改变"}],
                 "constraints": [], "requires": ["hero"], "tags": ["沈禾"], "length": [20, 120]}
         self.book.save_plan(chapter, plan, self.book.meta("revision"))

@@ -55,7 +55,7 @@ SOUTH_SCENES = {
     8: "邱朗来领工钱，关岚让他先看当天记下的工时。两人核对的是南岸搬运，北岸有没有另一笔账，她没有替任何人回答。签完后，她把钱和收条分别收好。",
     9: "关岚把明天要问的事列在纸条背面：账本有没有见到，柜子是谁打开的。邱朗笑她问得细，她说自己只能带着答复结账，不能带着别人的猜测结账。",
 }
-SCENES.update({chapter: f"# 第{chapter}章 南岸短景\n\n{text}\n" for chapter, text in SOUTH_SCENES.items()})
+SCENES.update({chapter: f"# 第{chapter}章 南岸短景{chapter}\n\n{text}\n" for chapter, text in SOUTH_SCENES.items()})
 
 
 def sha(text):

@@ -74,7 +74,7 @@ class ShortAssemblyHistoryTests(unittest.TestCase):
         combined = self.output.read_text(encoding="utf-8")
         self.assertIn("第1章 更正交接\n\n" + revised.splitlines()[1], combined)
         self.assertNotIn("第1章 核对交接", combined)
-        self.assertIn("第2章 核对交接\n\n" + self.texts[2].splitlines()[1], combined)
+        self.assertIn("第2章 核对交接2\n\n" + self.texts[2].splitlines()[1], combined)
         self.assertTrue(any(Path(path).read_text(encoding="utf-8") == old_prose
                             for path in result["backups"]))
         self.assertTrue(any(Path(path).read_bytes() == old_full for path in result["backups"]))
@@ -108,7 +108,7 @@ class ShortAssemblyHistoryTests(unittest.TestCase):
         self.assertEqual(first_path.read_bytes(), first_prose)
         self.assertEqual(latest.read_text(encoding="utf-8"), reviewed)
         combined = self.output.read_text(encoding="utf-8")
-        self.assertIn("第2章 核对交接\n\n" + "\n".join(reviewed.splitlines()[1:]), combined)
+        self.assertIn("第2章 核对交接2\n\n" + "\n".join(reviewed.splitlines()[1:]), combined)
         self.assertTrue(any(Path(path).read_bytes() == old_full for path in result["backups"]))
         self.assert_current()
 

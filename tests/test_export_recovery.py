@@ -30,7 +30,7 @@ class ExportRecoveryTests(unittest.TestCase):
                 "requires": [], "tags": [], "length": [20, 120],
                 "beats": [{"choice": "沈禾决定是否交出钥匙", "change": "失去或保留退路"}]}
         for chapter in (1, 2):
-            self.book.save_plan(chapter, plan, self.book.meta("revision"))
+            self.book.save_plan(chapter, {**plan, "title": f"门后的雨{chapter}"}, self.book.meta("revision"))
             self.book.commit(chapter, self.draft, self.delta())
         self.first = self.root / self.book.chapter_path(1)
         self.second = self.root / self.book.chapter_path(2)

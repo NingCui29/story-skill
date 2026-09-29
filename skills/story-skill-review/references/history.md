@@ -10,7 +10,7 @@
 
 短篇正式 `history-publish` 后，本次明确要求完整成品时，按 [短篇完本与修订交付](../../story-skill-write/references/chapter.md#短篇完本与修订交付) 核对总纲平台分类、全文和实际封面；此前没有全文或封面时也执行首次交付。普通修订已有全文时只核对同步状态、导出回执和实际文件，必要时恢复导出；封面仅在书名、署名、题材或投稿规格变化时复核或修订。未发布的历史候选不刷新正式全文或封面。
 
-`history-inspect --branch B --chapter N` 返回所请求 N 章的 base/candidate 正文及空白 chapter_review_template；顶层 chapter 仍是分支起点，不能用它替代本次请求的章号。先读稿，再填观察和原句。一般 inspection 还给 state_review_template 的精确 before_sha/before，after 不预填：须明确填完整卡片以保持/修改，或 null 删除，并补候选章号、原句和理由。默认50张，可用 --state-offset/--state-limit 分页，单页最多200张。
+`history-inspect --branch B --chapter N` 返回所请求 N 章的 base/candidate 正文及空白 chapter_review_template；顶层 chapter 仍是分支起点，不能用它替代本次请求的章号。先读稿，再填观察和原句。一般 inspection 还给 state_review_template 的精确 before_sha/before，after 不预填：须明确填完整卡片以保持/修改，或 null 删除，并补候选章号、原句和理由。状态卡 `source` 的单条引文只定位主证据；若 `text` 汇总了分散场景，逐项回读同版正文，并在审查说明中指出其他证据位置，必要时收窄或拆分卡片；`quote` 始终取一段连续原文，不拼接两处文字伪装成原句。默认50张，可用 --state-offset/--state-limit 分页，单页最多200张。
 
 中断后先用 `history-saved --branch B` 只读取回 `saved.state_changes`、`saved.world_changes` 和 `saved.semantic_review` 的完整已保存内容，包括删除用的 null、引文、理由和整体审查说明。`candidate_chapters` 列出已有候选，正文和逐章审查用 `history-inspect --chapter N` 读取；空白模板不代表原审查未保存。取回结果保留原 hash，`revision` 是分支版本，`current_revision` 是读取快照中的书库版本；过期或已发布分支也可读取，这不表示旧审查重新有效。先核对同一分支版本及当前基线再续改，不能仅换版本号。未保存或已失效的整体审查返回 null。
 
@@ -25,6 +25,8 @@
 随后读取该章 inspection，把填好的 `chapter_review_template` 放在对应 chapters 项的 `review` 中；text、summary 等未修改字段可省略。`complete` 表示依赖已实际核全，只有核对并补足依赖后才改为 true；跨章依赖指向此次分支中实际采用的正文 SHA。卡片决定放顶层 `state_changes` 数组，世界证据修复放 `world_changes` 对象，字段沿用前述模板与世界状态说明。先保存这些修改，再读取最新 `review_template`，实际复核全范围后作为顶层 `semantic_review` 保存。正文、摘要、依赖或状态变化会使旧审查失效，不能只换指纹；分支审查齐全后再 `history-publish`。
 
 `state_changes` 若真实新增、修改或删除了额外卡片，或 `world_changes` 改变了已有实体、作者计划等世界记录，`history-update` 会把已声明引用这些记录的章节及其后续依赖自动纳入分支；entity/rule 与对应的 world.entities/world.rules 引用一致识别，已记录的事实到认知/规则的引用也会继续传递。返回 `scope_expanded:true` 和 `added_chapter_count` 时，原逐章审查及整个分支审查已清空；按完整分页范围重新读稿，补齐各章候选、依赖、状态和世界记录复核，再逐章及整体审查。规范化后仍是当前原值的卡片或世界记录不会额外拉入消费者；已经扩大过的范围不会因随后改回原值而自动缩小。发布会保留世界变更的来源关联，以便以后再次修订该章时继续复核消费者；不会自动更换声明中已经读取的依赖 SHA，变更后旧缓存可能失效。
+
+因此，发布了真实变化的状态卡或世界记录后，别只看 `status --integrity strict`：从本次受影响章逐章读取 `history-deps --chapter N`，将卡片/世界记录依赖 SHA 与当前记录比较。旧 SHA 仍被引用时，回读该章和新记录，确认语义仍成立，再用返回的完整 `payload`、当前 `chapter_sha` 及核验说明提交 `history-deps --input ... --expect R`；按章顺序重新取最新 R，保留其余依赖，不仅替换哈希。若实际语义已变，先修正文与关联记录，不能把重绑当作审查。最后重读声明及严格状态；严格状态只验正式文件，不会替这一步识别旧依赖。
 
 扩围新章缺计划时，更新原子报 `plan_missing`，本次 payload 尚未保存：保留该文件，补回执列出的新章计划，取最新 R 对原分支执行 `history-refresh`，再重交原 `history-update` payload。若刷新因其他基线变化要求重建，必须在新分支重交这些卡片或世界决定，才会重新触发扩围。旧版候选发布若报 `history_scope_changed`，先向同一分支提交 `history-update` 的空对象 `{}`（或保留的完整卡片/世界决定）触发扩围，再按新范围复核；不要只取新 hash 或重新建立一个未包含这些决定的分支后直接发布。
 

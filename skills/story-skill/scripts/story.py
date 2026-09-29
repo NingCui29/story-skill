@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.5"
+VERSION = "0.6.6"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -91,6 +91,11 @@ def volume_directory(value):
         fail("invalid_input", "Volume directory must include its number and title, for example 第一卷 雨夜")
     title = text_field(match[2], "volume title", 100)
     return f"{match[1]} {title}"
+
+
+def display_name_key(value):
+    """Compare reader-facing names across Unicode forms and harmless spacing."""
+    return unicodedata.normalize("NFKC", " ".join(value.split())).casefold()
 
 
 def first_chapter_heading(text):
@@ -866,6 +871,33 @@ class Book:
             fail("plan_missing", "Save a concrete chapter plan before drafting", chapter=chapter)
         return json.loads(row[0])
 
+    def _check_unique_names(self, chapter, title=None, volume_dir=None):
+        title_key = display_name_key(title) if title else None
+        volume_match = VOLUME_DIRECTORY.fullmatch(volume_dir) if volume_dir else None
+        volume_number = volume_match[1] if volume_match else None
+        volume_key = display_name_key(volume_match[2]) if volume_match else None
+
+        def compare(other_chapter, other_title=None, other_volume=None):
+            if other_chapter == chapter:
+                return
+            if title_key and other_title and display_name_key(other_title) == title_key:
+                fail("duplicate_chapter_title", "Chapter names must be unique within one book",
+                     chapter=chapter, other_chapter=other_chapter, title=title)
+            match = VOLUME_DIRECTORY.fullmatch(other_volume or "")
+            if volume_key and match and match[1] != volume_number and display_name_key(match[2]) == volume_key:
+                fail("duplicate_volume_title", "Volume names must be unique within one book",
+                     chapter=chapter, other_chapter=other_chapter, volume_dir=volume_dir,
+                     other_volume_dir=other_volume)
+
+        for other, data in self.db.execute("SELECT chapter,data FROM plans WHERE chapter<>?", (chapter,)):
+            plan = json.loads(data)
+            compare(other, plan.get("title"), plan.get("volume_dir"))
+        for (other,) in self.db.execute("SELECT chapter FROM chapter_state WHERE chapter<>?", (chapter,)):
+            path = Path(self.chapter_path(other))
+            match = re.fullmatch(r"第\d+章 (.+)", path.stem)
+            compare(other, match[1] if match else None,
+                    path.parent.name if len(path.parts) == 3 else None)
+
     def save_notes(self, payload, expected):
         if not isinstance(payload, list) or len(payload) > 200:
             fail("invalid_input", "notes input must be an array of at most 200 cards")
@@ -888,6 +920,7 @@ class Book:
         integer(chapter, "chapter", 1)
         plan = valid_plan(payload)
         with self.transaction(expected):
+            self._check_unique_names(chapter, plan.get("title"), plan.get("volume_dir"))
             old = self.db.execute("SELECT data FROM plans WHERE chapter=?", (chapter,)).fetchone()
             if not old or old[0] != dumps(plan):
                 self.db.execute("INSERT INTO plans VALUES (?,?) ON CONFLICT(chapter) DO UPDATE SET data=excluded.data",
@@ -966,7 +999,10 @@ class Book:
         if old and previous == f"chapters/{chapter:04d}.md":
             return previous
         volume = self.chapter_volume(plan, Path(previous).parent.name if old else None)
-        return f"chapters/{volume}/{chapter_filename(chapter, text, plan, imported)}"
+        filename = chapter_filename(chapter, text, plan, imported)
+        if not imported:
+            self._check_unique_names(chapter, filename[len(f"第{chapter}章 "):-3], volume)
+        return f"chapters/{volume}/{filename}"
 
     def _chapter_target(self, chapter, text, plan=None, accepted_sha=None, imported=False, external=None):
         plan = plan or {}
@@ -1690,7 +1726,7 @@ class Book:
                 delta["external_sha256"] = packet["external_edit"]["sha256"]
             result = {"mode": packet["mode"], "lint": lint, "delta": delta,
                     "ready_to_commit": False,
-                    "next": "Complete the summary, evidence-based review and state changes; do not change identity or hash fields."}
+                    "next": "Complete the summary and state changes. Compare the draft with active book/volume promises and adjacent prose; keep unresolved findings in review.issues. Hash and quote checks are structural, not narrative approval. Do not change identity or hash fields."}
             if "world" in packet:
                 result["world_check"] = world.check(self, {**packet["plan"], "chapter": chapter})
             return bounded_packet(result, budget)
@@ -2219,7 +2255,7 @@ TEMPLATES = {
              "goal": "<填写人物本章要争取的结果与主要阅读期待>",
              "beats": [{"choice": "<填写人物的具体尝试及所遇回应，按场景需要保留取舍>",
                         "change": "<填写尝试后的局面、认知或关系变化及本场承担的阅读回报>"}],
-             "stop": "<填写停笔点>", "constraints": ["<填写用户原始硬要求>"], "length": [2200, 2800],
+             "stop": "<填写停笔点>", "constraints": ["<填写用户原始硬要求>"], "length": [2400, 2800],
              "requires": ["hero"], "tags": ["主角"], "count_method": "visible_nonspace_v1", "count_title": False},
     "delta": {"book_id": "<填写context返回的book_id>", "base_revision": 0, "summary": "<填写本章结果与下章衔接>", "changes": [],
               "review": {"draft_sha256": "<填写lint返回的SHA256>", "checks": {

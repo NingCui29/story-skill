@@ -234,7 +234,7 @@ class AdoptBackfillTests(unittest.TestCase):
         self.adopt()
         self.backfill()
         for chapter in (1, 2):
-            self.book.save_plan(chapter, {"title": "借钥", "volume_dir": "第一卷 雨夜", "goal": "核对借据",
+            self.book.save_plan(chapter, {"title": f"借钥{chapter}", "volume_dir": "第一卷 雨夜", "goal": "核对借据",
                                          "stop": "留下钥匙", "requires": [], "length": [1, 200],
                                          "beats": [{"choice": "核对借据", "change": "留下钥匙"}]}, self.revision())
         assembled = self.book.assemble_short(2)

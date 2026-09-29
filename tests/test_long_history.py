@@ -41,7 +41,7 @@ class LongHistoryTests(unittest.TestCase):
 
     def add(self, chapter, change=False, dependency_fields=None):
         text = f"# 第{chapter}章\n沈禾在渡口核对第{chapter}册账本。她交出钥匙，留下一张收据。灯还亮着。\n"
-        plan = {"volume_dir": "第一卷 雨夜", "title": "核对交接", "goal": "核对交接", "stop": "留在渡口", "requires": [], "tags": [],
+        plan = {"volume_dir": "第一卷 雨夜", "title": f"核对交接{chapter}", "goal": "核对交接", "stop": "留在渡口", "requires": [], "tags": [],
                 "constraints": ["不离开渡口"], "beats": [{"choice": "交出钥匙", "change": "保留收据"}], "length": [10, 200]}
         self.book.save_plan(chapter, plan, self.rev())
         self.draft.write_bytes(text.encode("utf-8"))
@@ -382,7 +382,7 @@ class LongHistoryTests(unittest.TestCase):
         staged = self.stage(self.start(), {1: changed})
         self.semantic_after(staged, {"world_changes": {"facts": [self.fact(changed)]}})
         self.assertTrue(history.branch_publish(self.book, staged["branch"], self.rev())["exports_complete"])
-        self.book.save_plan(2, {**self.book.get_plan(1), "entities": ["shen"]}, self.rev())
+        self.book.save_plan(2, {**self.book.get_plan(1), "title": "核对交接2", "entities": ["shen"]}, self.rev())
         self.assertIsNotNone(story.world.resolve_dependency(self.book, "facts", "gave-key"))
         self.assertEqual(self.book.context(2)["world"]["facts"][0]["evidence"]["sha"], story.digest(changed))
 

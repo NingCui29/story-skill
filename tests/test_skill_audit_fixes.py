@@ -159,7 +159,7 @@ class SkillAuditBookTests(unittest.TestCase):
         self.draft.write_bytes(first.encode("utf-8"))
         initial = self.book.commit(1, self.draft, self.delta(self.book, first))
         self.assertTrue(initial["scope_exports_complete"], initial)
-        self.book.save_plan(2, plan(), self.revision())
+        self.book.save_plan(2, plan(title="再次核对承诺"), self.revision())
         old_revision = self.revision()
         # Permit a real writer to commit while the repaired reader holds its snapshot.
         self.book.db.execute("PRAGMA journal_mode=WAL")

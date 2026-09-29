@@ -113,7 +113,7 @@ class LongStorageTests(unittest.TestCase):
     def test_local_mode_does_not_claim_archival_integrity(self):
         self.initialize()
         self.book.commit(1, self.draft, self.delta())
-        self.book.save_plan(2, PLAN, self.book.meta("revision"))
+        self.book.save_plan(2, {**PLAN, "title": "第二次交钥匙"}, self.book.meta("revision"))
         self.book.commit(2, self.draft, self.delta())
         archive = self.root / self.book.chapter_path(1)
         stat = archive.stat()

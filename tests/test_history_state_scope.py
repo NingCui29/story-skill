@@ -129,7 +129,7 @@ class HistoryStateScopeTests(unittest.TestCase):
         error = self.assert_code("plan_missing", lambda: history.branch_update(self.book, staged["branch"], payload, self.revision()))
         self.assertEqual(error.details["chapter"], 1)
         self.assertEqual(self.snapshot(), before)
-        self.book.save_plan(1, self.book.get_plan(2), self.revision())
+        self.book.save_plan(1, {**self.book.get_plan(2), "title": "核对交接1"}, self.revision())
         history.branch_refresh(self.book, staged["branch"], self.revision())
         expanded = history.branch_update(self.book, staged["branch"], payload, self.revision())
         self.assertEqual([item["chapter"] for item in expanded["affected"]], [1, 2])
@@ -163,7 +163,7 @@ class HistoryStateScopeTests(unittest.TestCase):
         with self.book.transaction():
             self.book.db.execute("UPDATE history_branches SET data=? WHERE id=?", (story.dumps(data), staged["branch"]))
         self.assert_code("plan_missing", lambda: history.branch_update(self.book, staged["branch"], {}, self.revision()))
-        self.book.save_plan(1, self.book.get_plan(2), self.revision())
+        self.book.save_plan(1, {**self.book.get_plan(2), "title": "核对交接1"}, self.revision())
         refreshed = history.branch_refresh(self.book, staged["branch"], self.revision())
         self.assertEqual([item["chapter"] for item in refreshed["affected"]], [2])
         # Refresh only acknowledges the existing scope; publication still fences

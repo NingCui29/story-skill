@@ -188,7 +188,7 @@ def generated_scenarios(base):
         plans, units = [], []
         for number in range(1, 4 if kind == "long" else 2):
             quote = f"测试员将编号{number}的蓝色方块放进盒子。"
-            text = f"第{number}章 测试单元\n\n{quote}\n\n盒盖已经合上，本次操作结束。\n"
+            text = f"第{number}章 测试单元{number}\n\n{quote}\n\n盒盖已经合上，本次操作结束。\n"
             draft = folder / f"unit-{number}.md"
             draft.write_bytes(text.encode("utf-8"))
             plans.append({"goal": "放入方块", "stop": "盒盖合上", "requires": ["operator"],
