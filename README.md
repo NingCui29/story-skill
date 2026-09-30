@@ -4,9 +4,9 @@
 
 Story Skill 是供写作助手使用的八个技能，涵盖拆书、开书、大纲、正文、审稿、调研、封面和投稿材料准备。每本书独立保存，三栏工作台让你直接阅读、比较版本、修改并保存候选稿。
 
-**版本：v0.6.6 · Python 3.10+ · 支持长篇与短篇**
+**版本：v0.6.7 · Python 3.10+ · 支持长篇与短篇**
 
-[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.6.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
+[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.7.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
 
 ## 它能帮你做什么
 
@@ -142,7 +142,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-serve --boo
 
 正文按语义分段，段间空一行，不手工缩进。换人发言默认换段，同一人物紧密相关的动作和短对白可以同段；不按屏幕行数强拆。成稿不混入 Markdown 标记、评分、分析或创作说明。新写、续写、润色、排版和审校分别处理，硬性字数要求实际统计。
 
-总纲按作品类型与目标平台填写适用分类，标签依据真实内容与已核对选项选择。当前 [七猫作品类型与标签表](skills/story-skill-plan/references/qimao-tags.md) 按男频、女频分别记录用户后台截图可见的一二级分类；四栏标签截图未显示频道，仅在本书实际适用该页面时，按风格、角色、情节、背景分别选 1～3 个有内容依据的标签。短篇完本还需以书名命名的全文合并文件、全文审查与封面；封面生成依赖可用的图像工具。
+总纲按作品类型与目标平台填写适用分类，标签依据真实内容与已核对选项选择。当前 [七猫作品类型与标签表](skills/story-skill-plan/references/qimao-tags.md) 已在七猫中文网新建小说、新建短故事页分别核对男、女频的一二级分类；两频道、两入口均有风格、角色、情节、背景四栏标签，通常每栏必选 1～3 个，现实题材分支按页面提示仅选 1 个。短篇完本还需以书名命名的全文合并文件、全文审查与封面；封面生成依赖可用的图像工具。
 
 一书一目录，小说存放在技能源码和安装目录之外。以下仅为目录示意，规划阶段不提前生成空正文：
 

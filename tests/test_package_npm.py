@@ -264,7 +264,7 @@ class NpmPackageTests(unittest.TestCase):
 
 class NpmSuiteTests(unittest.TestCase):
     def test_current_package_identity_and_wrapper(self):
-        manifest, files = npm.wrapper_files("0.6.6")
+        manifest, files = npm.wrapper_files("0.6.7")
         self.assertEqual(manifest["name"], "@ningcui29/story-skill")
         self.assertEqual(manifest["repository"]["url"], "https://github.com/NingCui29/story-skill.git")
         self.assertEqual(manifest["files"], list(npm.SUITE_FILES))
@@ -272,15 +272,15 @@ class NpmSuiteTests(unittest.TestCase):
         readme = files["README.md"].decode("utf-8")
         self.assertIn("eight sibling skills", readme)
         self.assertIn("`story-skill-publish/`", readme)
-        self.assertIn("固定使用 v0.6.6", readme)
+        self.assertIn("固定使用 v0.6.7", readme)
         self.assertIn("For macOS, Linux and Windows", readme)
         self.assertIn("does not log in to author platforms", readme)
         forbidden = ("co" + "dex").encode()
         self.assertNotIn(forbidden, files["README.md"].lower())
 
     def test_only_current_release_family_has_reviewed_layout(self):
-        layouts = {"0.6.0": npm.SUITE_FILES_V060, "0.6.1": npm.SUITE_FILES_V061, "0.6.2": npm.SUITE_FILES_V061, "0.6.3": npm.SUITE_FILES_V061, "0.6.4": npm.SUITE_FILES_V061, "0.6.5": npm.SUITE_FILES_V065, "0.6.6": npm.SUITE_FILES_V065}
-        skill_layouts = {"0.6.0": npm.SKILL_NAMES_V060, "0.6.1": npm.SKILL_NAMES_V061, "0.6.2": npm.SKILL_NAMES_V061, "0.6.3": npm.SKILL_NAMES_V061, "0.6.4": npm.SKILL_NAMES_V061, "0.6.5": npm.SKILL_NAMES_V061, "0.6.6": npm.SKILL_NAMES_V061}
+        layouts = {"0.6.0": npm.SUITE_FILES_V060, "0.6.1": npm.SUITE_FILES_V061, "0.6.2": npm.SUITE_FILES_V061, "0.6.3": npm.SUITE_FILES_V061, "0.6.4": npm.SUITE_FILES_V061, "0.6.5": npm.SUITE_FILES_V065, "0.6.6": npm.SUITE_FILES_V065, "0.6.7": npm.SUITE_FILES_V065}
+        skill_layouts = {"0.6.0": npm.SKILL_NAMES_V060, "0.6.1": npm.SKILL_NAMES_V061, "0.6.2": npm.SKILL_NAMES_V061, "0.6.3": npm.SKILL_NAMES_V061, "0.6.4": npm.SKILL_NAMES_V061, "0.6.5": npm.SKILL_NAMES_V061, "0.6.6": npm.SKILL_NAMES_V061, "0.6.7": npm.SKILL_NAMES_V061}
         for version, expected in layouts.items():
             self.assertEqual(npm.payload_files(version), expected)
             self.assertEqual(npm.skill_names(version), skill_layouts[version])
@@ -307,7 +307,7 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertEqual(npm.SKILL_NAMES, zip_package.SKILL_NAMES)
         self.assertEqual(npm.SKILL_NAMES_V060, zip_package.SKILL_NAMES_V060)
         self.assertEqual(npm.SKILL_NAMES_V061, zip_package.SKILL_NAMES_V061)
-        for version in ("0.6.0", "0.6.1", "0.6.4", "0.6.5", "0.6.6"):
+        for version in ("0.6.0", "0.6.1", "0.6.4", "0.6.5", "0.6.6", "0.6.7"):
             self.assertEqual(npm.payload_files(version), zip_package.suite_files(version))
 
 
