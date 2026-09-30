@@ -57,8 +57,8 @@ class PackageVersionTests(unittest.TestCase):
             self.assertEqual(output.read_bytes(), b"existing reviewed artifact")
 
     def test_manifest_is_bound_to_version_and_unknown_families_are_rejected(self):
-        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061, "0.6.5": package.SUITE_FILES_V065, "0.6.6": package.SUITE_FILES_V065, "0.6.7": package.SUITE_FILES_V065}
-        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061, "0.6.5": package.SKILL_NAMES_V061, "0.6.6": package.SKILL_NAMES_V061, "0.6.7": package.SKILL_NAMES_V061}
+        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061, "0.6.5": package.SUITE_FILES_V065, "0.6.6": package.SUITE_FILES_V065, "0.6.7": package.SUITE_FILES_V065, "0.6.8": package.SUITE_FILES_V065}
+        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061, "0.6.5": package.SKILL_NAMES_V061, "0.6.6": package.SKILL_NAMES_V061, "0.6.7": package.SKILL_NAMES_V061, "0.6.8": package.SKILL_NAMES_V061}
         for version, expected in layouts.items():
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 self.assertEqual(package.skill_names(version), skill_layouts[version])
