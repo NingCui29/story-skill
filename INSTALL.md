@@ -1,6 +1,6 @@
 # 安装或升级 Story Skill
 
-**当前版本：v0.6.7。** 八技能、40 文件。固定标签、Release 附件与 Packages 的核验结果见[本版记录](docs/releases/v0.6.7.md)；未完成的环节不能视为已发布。
+**当前发布版：v0.6.7。** 八技能、40 文件，固定标签指向 `320f31a9c0adefedb7780848e6a9c7c0e38e7f89`；Release 附件与 Packages 已核验，详情见[本版记录](docs/releases/v0.6.7.md)。
 
 可把这一行发送给支持技能的应用：
 
