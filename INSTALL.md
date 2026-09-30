@@ -1,6 +1,6 @@
 # 安装或升级 Story Skill
 
-**当前发布目标：v0.6.8。** 八技能、40 文件；固定标签、Release 附件与 Packages 的发布后核验状态见[本版记录](docs/releases/v0.6.8.md)。
+**当前发布版：v0.6.8。** 八技能、40 文件，固定标签指向 `0624d867f63622cb377ff73cce28bc87ff7e56df`；Release 附件与 Packages 已核验，详情见[本版记录](docs/releases/v0.6.8.md)。
 
 可把这一行发送给支持技能的应用：
 
@@ -31,7 +31,7 @@ skills/story-skill-publish
 
 ## 从本仓库源码安装
 
-使用经发布后核验的 v0.6.8 固定标签。main 可能包含后续更改，不能仅凭版本号判定其与附件相同。项目内托管安装可在仓库根目录运行：
+使用已核验的 v0.6.8 固定标签。main 可能包含后续更改，不能仅凭版本号判定其与附件相同。项目内托管安装可在仓库根目录运行：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "<项目根目录>"
