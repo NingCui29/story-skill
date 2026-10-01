@@ -23,7 +23,7 @@ class HeadingRegressionEdgesTests(unittest.TestCase):
         for opening in ("第1章\t门后的雨", "第1章　门后的雨", "第1章  门后的雨"):
             with self.subTest(opening=opening):
                 text = opening + "\n" + fixture.BODY
-                self.case.draft.write_text(text, encoding="utf-8")
+                self.case.write_draft(text)
                 lint = self.case.book.lint(1, self.case.draft)
                 self.assertIn("chapter_heading_format", {item["code"] for item in lint["errors"]})
                 with self.assertRaises(fixture.story.StoryError) as raised:
@@ -40,7 +40,7 @@ class HeadingRegressionEdgesTests(unittest.TestCase):
         result, _ = self.case.commit(1, revised, replace_last=True)
         self.assertTrue(result["exports_complete"])
         changed = revised.replace("第1章\t", "第1章  ", 1)
-        self.case.draft.write_text(changed, encoding="utf-8")
+        self.case.write_draft(changed)
         lint = self.case.book.lint(1, self.case.draft)
         self.assertIn("chapter_heading_format", {item["code"] for item in lint["errors"]})
 

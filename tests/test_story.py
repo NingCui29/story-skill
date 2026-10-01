@@ -241,7 +241,7 @@ class StoryTests(unittest.TestCase):
         self.book.commit(1, self.draft, self.delta())
         self.book.save_plan(2, plan(title="第二夜"), self.book.meta("revision"))
         second = DRAFT.replace("第1章 门后的雨", "第2章 第二夜")
-        self.draft.write_text(second, encoding="utf-8")
+        self.draft.write_bytes(second.encode("utf-8"))
         self.book.commit(2, self.draft, self.delta(second))
         self.assert_error("chapter_order", self.book.commit, 1, self.draft, self.delta(second), True)
 

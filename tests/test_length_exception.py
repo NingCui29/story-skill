@@ -40,7 +40,7 @@ class LengthExceptionTests(unittest.TestCase):
 
     def write(self, body=SHORT_BODY):
         text = "第1章 推门\n" + body
-        self.draft.write_text(text, encoding="utf-8")
+        self.draft.write_bytes(text.encode("utf-8"))
         return text
 
     def delta(self, text):
@@ -201,7 +201,7 @@ class LengthExceptionTests(unittest.TestCase):
         self.assertTrue(self.book.lint(1, self.draft)["ok"])
 
     def test_missing_prebaseline_short_chapter_can_keep_its_old_plan(self):
-        self.draft.write_text("第2章 旧章\n" + SHORT_BODY, encoding="utf-8")
+        self.draft.write_bytes(("第2章 旧章\n" + SHORT_BODY).encode("utf-8"))
         self.book.adopt(2, self.draft, "原第二章基线。", self.book.meta("revision"),
                         volume_dir="第一卷 门内")
         # Chapter 1 is historical source material, not the next native chapter.

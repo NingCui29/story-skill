@@ -46,8 +46,12 @@ class ChapterLayoutTests(unittest.TestCase):
                     check: {"note": "人物选择与后果在正文中可见。", "quote": QUOTE}
                     for check in story.CHECKS}, "issues": []}}
 
-    def commit(self, chapter, text=DRAFT, replace_last=False):
+    def write_draft(self, text):
+        # Preserve the fixture's LF bytes on Windows so review hashes bind the file.
         self.draft.write_bytes(text.encode("utf-8"))
+
+    def commit(self, chapter, text=DRAFT, replace_last=False):
+        self.write_draft(text)
         delta = self.delta(text)
         return self.book.commit(chapter, self.draft, delta, replace_last=replace_last), delta
 
@@ -103,7 +107,7 @@ class ChapterLayoutTests(unittest.TestCase):
     def test_complete_native_heading_must_match_number_and_planned_title(self):
         self.save_plan(1, title="门后的雨")
         text = "第2章 草稿标题\n" + BODY
-        self.draft.write_text(text, encoding="utf-8")
+        self.write_draft(text)
         before = self.state_snapshot()
 
         lint = self.book.lint(1, self.draft)
@@ -117,14 +121,14 @@ class ChapterLayoutTests(unittest.TestCase):
     def test_heading_normalizes_chinese_numbers_and_harmless_title_spacing(self):
         self.save_plan(1, title="开 门")
         text = "第一章 开　门\n" + BODY
-        self.draft.write_text(text, encoding="utf-8")
+        self.write_draft(text)
         self.assertTrue(self.book.lint(1, self.draft)["ok"])
         self.assertEqual(story.chapter_number("一百零二"), 102)
         self.assertEqual(story.chapter_number("１２"), 12)
 
     def test_nondefault_saved_length_is_visible_but_explicit_override_is_allowed(self):
         self.save_plan(1, title="门后的雨", length=[20, 120])
-        self.draft.write_text("第1章 门后的雨\n" + BODY, encoding="utf-8")
+        self.write_draft("第1章 门后的雨\n" + BODY)
         lint = self.book.lint(1, self.draft)
         self.assertTrue(lint["ok"])
         warning = next(item for item in lint["warnings"] if item["code"] == "nondefault_plan_length")
@@ -141,14 +145,14 @@ class ChapterLayoutTests(unittest.TestCase):
                            ("第一章\n" + BODY, "chapter_heading_required"),
                            (BODY, "chapter_heading_required")):
             with self.subTest(opening=text.splitlines()[0]):
-                self.draft.write_text(text, encoding="utf-8")
+                self.write_draft(text)
                 lint = self.book.lint(1, self.draft)
                 self.assertFalse(lint["ok"])
                 self.assertIn(code, {item["code"] for item in lint["errors"]})
                 self.assert_error("lint_failed", lambda: self.book.prepare(1, self.draft))
                 self.assert_error("lint_failed", lambda: self.book.commit(1, self.draft, self.delta(text)))
         imported = "第2章 旧稿另名\n" + BODY
-        self.draft.write_text(imported, encoding="utf-8")
+        self.write_draft(imported)
         self.book.adopt(1, self.draft, "保留旧稿基线。", self.book.meta("revision"), volume_dir="第一卷 雨夜")
         lint = self.book.lint(1, self.draft)
         self.assertTrue(lint["ok"])
@@ -159,13 +163,13 @@ class ChapterLayoutTests(unittest.TestCase):
         legacy = "# 第1章 门后的雨\n" + BODY
         with patch.object(story, "chapter_heading_errors", return_value=[]):
             self.commit(1, legacy)
-        self.draft.write_text(legacy, encoding="utf-8")
+        self.write_draft(legacy)
         lint = self.book.lint(1, self.draft)
         self.assertTrue(lint["ok"])
         self.assertTrue(self.book.prepare(1, self.draft)["lint"]["ok"])
         revised = legacy + "她将空手藏进衣袖。\n"
         self.assertTrue(self.commit(1, revised, replace_last=True)[0]["exports_complete"])
-        self.draft.write_text(revised, encoding="utf-8")
+        self.write_draft(revised)
         # The old first line is tolerated only while the adopted title stays put.
         self.save_plan(1, title="修订计划名")
         lint = self.book.lint(1, self.draft)
@@ -181,7 +185,7 @@ class ChapterLayoutTests(unittest.TestCase):
                            ("# 第1章 门后的雨\n" + BODY, "chapter_heading_format"),
                            (BODY, "chapter_heading_required")):
             with self.subTest(first_line=text.splitlines()[0]):
-                self.draft.write_text(text, encoding="utf-8")
+                self.write_draft(text)
                 lint = self.book.lint(1, self.draft)
                 self.assertIn(code, {item["code"] for item in lint["errors"]})
                 self.assert_error("lint_failed", lambda: self.book.prepare(1, self.draft))
@@ -199,7 +203,7 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual(self.state_snapshot(), before)
 
         self.save_plan(2, volume_dir="第二卷 旧城")
-        self.draft.write_text("第2章 门后的雨\n" + BODY, encoding="utf-8")
+        self.write_draft("第2章 门后的雨\n" + BODY)
         before = self.state_snapshot()
         self.assert_error("duplicate_chapter_title", lambda: self.book.lint(2, self.draft))
         self.assertEqual(self.state_snapshot(), before)
@@ -222,7 +226,7 @@ class ChapterLayoutTests(unittest.TestCase):
         plan["title"] = "第1章 门后的雨"
         with self.book.transaction():
             self.book.db.execute("UPDATE plans SET data=? WHERE chapter=1", (story.dumps(plan),))
-        self.draft.write_text(DRAFT, encoding="utf-8")
+        self.write_draft(DRAFT)
         before = self.state_snapshot()
         self.assert_error("chapter_title_prefix", lambda: self.book.lint(1, self.draft))
         self.assertEqual(self.state_snapshot(), before)

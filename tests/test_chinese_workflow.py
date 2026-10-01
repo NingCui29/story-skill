@@ -57,7 +57,7 @@ class ChineseWorkflowTests(unittest.TestCase):
         reviewed = self.delta()
         reviewed.update(book_id=prepared["book_id"], base_revision=prepared["base_revision"])
         reviewed["review"]["draft_sha256"] = prepared["review"]["draft_sha256"]
-        self.draft.write_text(DRAFT + "她停住。", encoding="utf-8")
+        self.draft.write_bytes((DRAFT + "她停住。").encode("utf-8"))
         self.assert_error("stale_review", self.book.commit, 1, self.draft, reviewed)
 
     def test_prepare_applies_budget_to_its_own_returned_packet(self):
@@ -80,7 +80,7 @@ class ChineseWorkflowTests(unittest.TestCase):
     def test_maximum_valid_quote_commits_without_late_source_limit_failure(self):
         quote = "甲" * 1200
         text = "第1章 字段上限\n" + quote
-        self.draft.write_text(text, encoding="utf-8")
+        self.draft.write_bytes(text.encode("utf-8"))
         self.book.save_plan(1, plan(title="字段上限", length=[1200, 1200], count_method="han_v1"), 2)
         delta = self.delta(text)
         delta["review"]["checks"] = {key: {"note": "上限字段的事务回归夹具。", "quote": quote} for key in story.CHECKS}
