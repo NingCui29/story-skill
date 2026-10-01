@@ -17,9 +17,13 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 TOOL = ROOT / "skills/story-skill/scripts/story.py"
 OUTPUT = ROOT / "benchmarks/results/v0.5.0/long-acceptance.json"
+SHORT_SCENE_LENGTH_EXCEPTION = {
+    "source": "user_request",
+    "quote": "本次仅验收十一段短景的真实 CLI 流程，短景按 40—800 或 80—800 字计划保存，不要求达到完整章节 2400—2800 字。",
+}
 
 SCENES = {
-    1: """# 第1章 蓝线钥匙
+    1: """第1章 蓝线钥匙
 
 江棠把缠着蓝线的铜钥匙装进透明袋，递给杜承安。
 “十一日，我来北库取钥匙。”她说。
@@ -28,14 +32,14 @@ SCENES = {
 杜承安说：“我猜账本被邱衡带到南岸了。”
 江棠摇头：“我猜它还锁在北库。”她没有开柜，两个人的话都缺少实物证明。
 """,
-    10: """# 第10章 南岸听雨
+    10: """第10章 南岸听雨
 
 关岚从搬运工邱朗手里接过带泥的绳索。伙计喊他“老邱”，他扭头应了。
 “北岸也有个老邱。”关岚说。
 “他们叫他们的。我没去过北库。”邱朗把手摊开。
 关岚没有替两个“老邱”认关系。她只登记了本地工人的姓名，继续等十一日北岸开库后的消息。
 """,
-    11: """# 第11章 原袋
+    11: """第11章 原袋
 
 江棠回到北库。杜承安从上衣内袋里拿出透明袋，蓝线还缠在铜钥匙上。
 “我答应十一日还你，没拆过袋。”他说。
@@ -55,11 +59,15 @@ SOUTH_SCENES = {
     8: "邱朗来领工钱，关岚让他先看当天记下的工时。两人核对的是南岸搬运，北岸有没有另一笔账，她没有替任何人回答。签完后，她把钱和收条分别收好。",
     9: "关岚把明天要问的事列在纸条背面：账本有没有见到，柜子是谁打开的。邱朗笑她问得细，她说自己只能带着答复结账，不能带着别人的猜测结账。",
 }
-SCENES.update({chapter: f"# 第{chapter}章 南岸短景{chapter}\n\n{text}\n" for chapter, text in SOUTH_SCENES.items()})
+SCENES.update({chapter: f"第{chapter}章 南岸短景{chapter}\n\n{text}\n" for chapter, text in SOUTH_SCENES.items()})
 
 
 def sha(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def first_body_line(text):
+    return next(line for line in text.splitlines()[1:] if line)
 
 
 class CLIError(RuntimeError):
@@ -121,7 +129,7 @@ class Session:
 
 
 def review(text, *, changes=None):
-    quote = next(line for line in text.splitlines() if line and not line.startswith("#"))
+    quote = first_body_line(text)
     return {"draft_sha256": sha(text), "checks": {
         "causality": {"note": "本段围绕纸条、票据或实物核对作出具体选择，结论限于角色实际取得的信息。", "quote": quote},
         "continuity": {"note": "核对实际前文的物件颜色、保管人与两岸人物身份；猜测不当作确认。", "quote": quote},
@@ -135,6 +143,7 @@ def chapter_plan(chapter):
             "beats": [{"choice": "保留实物与信息来源", "change": "区分人物猜测和已见事实"}],
             "constraints": ["现实悬疑，不出现超自然；猜测必须标明"],
             "requires": ["key", "limits"], "tags": ["north"], "length": [80, 800],
+            "length_exception": SHORT_SCENE_LENGTH_EXCEPTION,
             "line": "north-line", "entities": ["jiang", "du", "north", "key-item", "ledger"],
             "time": {"clock": "main", "start": chapter, "end": chapter}}
 
@@ -149,7 +158,7 @@ def native_commit(session, chapter, plan, text, summary, key_text=None, world_ch
     delta.update(summary=summary, review=review(text), changes=[])
     if key_text is not None:
         delta["changes"] = [{"id": "key", "text": key_text,
-                  "quote": next(line for line in text.splitlines() if "钥匙" in line and not line.startswith("#"))}]
+                  "quote": next(line for line in text.splitlines()[1:] if "钥匙" in line)}]
     if world_changes:
         delta["world_changes"] = world_changes
     result = session.run(f"提交第{chapter}章", "commit", "--chapter", chapter, "--draft", draft, payload=delta)
@@ -247,9 +256,10 @@ def acceptance(session):
         plan = {"volume_dir": "第一卷 两岸账本", "goal": "南岸核对材料并保留信息来源", "stop": "仍等十一日北岸核验的答复",
                 "beats": [{"choice": "当面确认或保留未知", "change": "不把同名与转述写成已确认结论"}],
                 "constraints": ["这是一段短景功能夹具，不冒称完整长篇章节"], "requires": ["limits"],
-                "tags": ["south"], "length": [40, 800], "line": "south-line",
+                "tags": ["south"], "length": [40, 800],
+                "length_exception": SHORT_SCENE_LENGTH_EXCEPTION, "line": "south-line",
                 "entities": ["guan", "south", "qiu-south"], "time": {"clock": "main", "start": chapter, "end": chapter}}
-        quote = next(line for line in SCENES[chapter].splitlines() if line and not line.startswith("#"))
+        quote = first_body_line(SCENES[chapter])
         changes = {"lines": [{"id": f"south-after-{chapter}", "line": "south-line", "clock": "main", "at": chapter,
                               "place": "south", "summary": quote, "unfinished": "等待十一日北岸开库的实际答复",
                               "entities": ["guan", "qiu-south"], "evidence": evidence(chapter, quote)}]}
@@ -330,8 +340,7 @@ def historical_branch(session):
         dependencies = [{**item, "sha": sha(revised[int(item["ref"])])} if item["kind"] == "chapter"
                         else dict(item) for item in reviewed_dependencies[chapter]]
         candidates.append({"chapter": chapter, "text": revised[chapter],
-                           "summary": "修订颜色后的北线短景：" + next(line for line in revised[chapter].splitlines()
-                                                                         if line and not line.startswith("#")),
+                           "summary": "修订颜色后的北线短景：" + first_body_line(revised[chapter]),
                            "dependencies": dependencies, "complete": True})
     templates = inspection.get("state_review_template", [])
     if {item["id"] for item in templates} != set(inspection["required_state_ids"]):

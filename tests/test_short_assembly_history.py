@@ -57,7 +57,7 @@ class ShortAssemblyHistoryTests(unittest.TestCase):
         plan = self.book.get_plan(1)
         self.book.save_plan(1, {**plan, "title": "更正交接"}, self.rev())
         self.assert_current()  # A planning revision alone has not changed the source chapter.
-        revised = self.texts[1].replace("一张收据", "两张收据")
+        revised = self.texts[1].replace("第1章 核对交接1", "第1章 更正交接").replace("一张收据", "两张收据")
         staged = self.stage(self.start(1), {1: revised})
         self.assertEqual(self.output.read_bytes(), old_full)
 

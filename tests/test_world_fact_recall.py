@@ -98,7 +98,8 @@ class FactDependencyIntegrationTests(unittest.TestCase):
                               for rid, value, holder, at in (("key-a", "甲", "a", 0), ("key-b", "乙", "b", 10))]}, book.meta("revision"))
                 book.save_plan(2, {"volume_dir": "第一卷 夜门", "title": "索钥", "goal": "甲取回钥匙",
                     "stop": "向乙提出请求", "beats": [{"choice": "向乙索钥", "change": "等待回复"}],
-                    "length": [1, 100], "requires": [], "tags": [], "entities": ["a"],
+                    "length": [1, 100], "length_exception": {"source": "user_request", "quote": "测试章按1至100字写作。"},
+                    "requires": [], "tags": [], "entities": ["a"],
                     "time": {"clock": "main", "start": 20, "end": 20}}, book.meta("revision"))
                 revision = book.meta("revision")
                 result = book.dependency_candidates(2)

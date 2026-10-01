@@ -22,7 +22,7 @@ class LayoutRecoveryEdgeTests(unittest.TestCase):
         fixture.commit(1)
         old_relative = fixture.book.chapter_path(1)
         old = fixture.root / old_relative
-        intermediate_text = "# 第1章 新的入口\n" + layout.BODY + "她没有回头。\n"
+        intermediate_text = "第1章 新的入口\n" + layout.BODY + "她没有回头。\n"
         with patch.object(layout.story, "atomic_write", side_effect=OSError("publication interrupted")):
             failed, _ = fixture.commit(1, intermediate_text, replace_last=True)
         self.assertFalse(failed["exports_complete"])

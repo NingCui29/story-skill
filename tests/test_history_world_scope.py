@@ -179,7 +179,7 @@ class HistoryWorldScopeTests(unittest.TestCase):
         before = self.snapshot()
         self.assert_code("plan_missing", lambda: history.branch_update(self.book, staged["branch"], {}, self.revision()))
         self.assertEqual(self.snapshot(), before)
-        self.book.save_plan(1, {**self.book.get_plan(2), "title": "核对交接1"}, self.revision())
+        self.book.save_plan(1, {**self.book.get_plan(2), "title": "交接"}, self.revision())
         history.branch_refresh(self.book, staged["branch"], self.revision())
         self.assert_code("history_scope_changed", lambda: history.branch_publish(self.book, staged["branch"], self.revision()))
         expanded = history.branch_update(self.book, staged["branch"], {}, self.revision())

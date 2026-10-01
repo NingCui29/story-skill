@@ -12,7 +12,7 @@ spec = importlib.util.spec_from_file_location("story_recovery", TOOL)
 story = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(story)
 
-DRAFT = "# 第1章 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
+DRAFT = "第1章 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
 QUOTE = "沈禾把唯一的钥匙交给守门人。"
 
 
@@ -32,9 +32,10 @@ class RecoveryRegressionTests(unittest.TestCase):
         self.temp.cleanup()
 
     def save_plan(self, chapter):
-        plan = {"volume_dir": "第一卷 雨夜", "title": f"门后的雨{chapter}", "goal": "用钥匙换取入口", "stop": "交出钥匙后停笔",
+        plan = {"volume_dir": "第一卷 雨夜", "title": "门后的雨" if chapter == 1 else f"门后的雨{chapter}", "goal": "用钥匙换取入口", "stop": "交出钥匙后停笔",
                 "beats": [{"choice": "沈禾交出钥匙", "change": "失去退路"}],
-                "constraints": [], "requires": [], "tags": [], "length": [20, 120]}
+                "constraints": [], "requires": [], "tags": [], "length": [20, 120],
+                "length_exception": {"source": "user_request", "quote": "测试章按20至120字写作。"}}
         self.book.save_plan(chapter, plan, self.book.meta("revision"))
 
     def delta(self, text=DRAFT):
@@ -47,7 +48,9 @@ class RecoveryRegressionTests(unittest.TestCase):
     def test_edit_after_export_preflight_is_preserved_and_reported(self):
         self.book.commit(1, self.draft, self.delta())
         self.save_plan(2)
-        second_delta = self.delta()
+        second = DRAFT.replace("第1章 门后的雨", "第2章 门后的雨2")
+        self.draft.write_bytes(second.encode("utf-8"))
+        second_delta = self.delta(second)
         self.book.commit(2, self.draft, second_delta)
         revision = self.book.meta("revision")
         first_path = self.root / self.book.chapter_path(1)
@@ -82,7 +85,9 @@ class RecoveryRegressionTests(unittest.TestCase):
     def test_edit_of_previous_chapter_during_later_export_is_reported(self):
         self.book.commit(1, self.draft, self.delta())
         self.save_plan(2)
-        second_delta = self.delta()
+        second = DRAFT.replace("第1章 门后的雨", "第2章 门后的雨2")
+        self.draft.write_bytes(second.encode("utf-8"))
+        second_delta = self.delta(second)
         self.book.commit(2, self.draft, second_delta)
         revision = self.book.meta("revision")
         first_path = self.root / self.book.chapter_path(1)
@@ -110,10 +115,10 @@ class RecoveryRegressionTests(unittest.TestCase):
         self.assertEqual(self.book.meta("revision"), revision)
         self.assertEqual(self.book.meta("last_chapter"), 2)
         self.assertEqual(first_path.read_bytes(), user_edit)
-        self.assertEqual(second_path.read_bytes(), DRAFT.encode("utf-8"))
+        self.assertEqual(second_path.read_bytes(), second.encode("utf-8"))
         self.assertEqual(self.book.status()["changed_export_count"], 1)
         stored = self.book.db.execute("SELECT text FROM chapters ORDER BY chapter").fetchall()
-        self.assertEqual([row[0] for row in stored], [DRAFT, DRAFT])
+        self.assertEqual([row[0] for row in stored], [DRAFT, second])
 
     def test_existing_backup_is_never_overwritten_or_displaces_target(self):
         target = self.root / "direct-export.md"

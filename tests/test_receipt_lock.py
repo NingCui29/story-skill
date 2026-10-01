@@ -14,8 +14,8 @@ spec = importlib.util.spec_from_file_location("story_receipt_lock", TOOL)
 story = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(story)
 
-DRAFT = "# 第1章 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
-REVISED = "# 第1章 门后的雨\n沈禾收回了唯一的钥匙。\n她决定另找入口，守门人退回雨里。\n"
+DRAFT = "第1章 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
+REVISED = "第1章 门后的雨\n沈禾收回了唯一的钥匙。\n她决定另找入口，守门人退回雨里。\n"
 QUOTE = "沈禾把唯一的钥匙交给守门人。"
 
 
@@ -30,6 +30,7 @@ class ReceiptLockTests(unittest.TestCase):
                                "source": "用户设定"}], 0)
         self.plan = {"volume_dir": "第一卷 雨夜", "goal": "决定钥匙的去向", "stop": "选择入口后停笔", "constraints": [],
                      "requires": ["hero"], "tags": [], "length": [20, 120],
+                     "length_exception": {"source": "user_request", "quote": "测试章按20至120字写作。"},
                      "beats": [{"choice": "沈禾决定是否交出钥匙", "change": "失去或保留退路"}]}
         self.book.save_plan(1, self.plan, self.book.meta("revision"))
         self.draft = self.root / ".story/drafts/chapter.md"

@@ -60,7 +60,7 @@ def synthetic_context(enc):
             book.save_notes(cards, 0)
             plan = {"goal": "拿到失踪者最后留下的信件", "stop": "只确认信封署名，暂不揭示寄信人",
                     "beats": [{"choice": "交换唯一口令", "change": "得到信封并失去退路"}],
-                    "constraints": ["不添加新能力"], "requires": ["c001"], "tags": ["本章"], "length": [2200, 2800]}
+                    "constraints": ["不添加新能力"], "requires": ["c001"], "tags": ["本章"], "length": [2400, 2800]}
             book.save_plan(1, plan, 1)
             packet = book.context(1, 8000)
             all_cards = story.dumps(list(book.cards().values()))

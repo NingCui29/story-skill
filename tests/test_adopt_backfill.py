@@ -30,7 +30,7 @@ class AdoptBackfillTests(unittest.TestCase):
 
     def source(self, chapter, text=None):
         path = self.root / f"旧稿第{chapter}章.md"
-        text = text or f"第{chapter}章 借钥\n她核对第{chapter}张借据，随后把钥匙放在桌边。\n"
+        text = text or f"第{chapter}章 借钥{chapter}\n她核对第{chapter}张借据，随后把钥匙放在桌边。\n"
         path.write_bytes(text.encode("utf-8"))
         self.originals[chapter] = text
         return path
@@ -236,6 +236,7 @@ class AdoptBackfillTests(unittest.TestCase):
         for chapter in (1, 2):
             self.book.save_plan(chapter, {"title": f"借钥{chapter}", "volume_dir": "第一卷 雨夜", "goal": "核对借据",
                                          "stop": "留下钥匙", "requires": [], "length": [1, 200],
+                                         "length_exception": {"source": "user_request", "quote": "测试旧章模拟需要1至200字。"},
                                          "beats": [{"choice": "核对借据", "change": "留下钥匙"}]}, self.revision())
         assembled = self.book.assemble_short(2)
         started = history.branch_start(self.book, 1, self.revision())

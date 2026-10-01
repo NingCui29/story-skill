@@ -13,8 +13,9 @@ spec = importlib.util.spec_from_file_location("story_export_recovery", TOOL)
 story = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(story)
 
-DRAFT = "# 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
-REVISED = "# 门后的雨\n沈禾收回了唯一的钥匙。\n她决定另找入口，守门人退回雨里。\n"
+DRAFT = "第1章 门后的雨1\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
+DRAFT2 = DRAFT.replace("第1章 门后的雨1", "第2章 门后的雨2")
+REVISED = "第2章 门后的雨2\n沈禾收回了唯一的钥匙。\n她决定另找入口，守门人退回雨里。\n"
 
 
 class ExportRecoveryTests(unittest.TestCase):
@@ -28,10 +29,13 @@ class ExportRecoveryTests(unittest.TestCase):
         self.draft.write_bytes(DRAFT.encode("utf-8"))
         plan = {"volume_dir": "第一卷 雨夜", "goal": "决定钥匙的去向", "stop": "选择入口后停笔", "constraints": [],
                 "requires": [], "tags": [], "length": [20, 120],
+                "length_exception": {"source": "user_request", "quote": "测试导出恢复需要20至120字。"},
                 "beats": [{"choice": "沈禾决定是否交出钥匙", "change": "失去或保留退路"}]}
         for chapter in (1, 2):
             self.book.save_plan(chapter, {**plan, "title": f"门后的雨{chapter}"}, self.book.meta("revision"))
-            self.book.commit(chapter, self.draft, self.delta())
+            text = DRAFT if chapter == 1 else DRAFT2
+            self.draft.write_bytes(text.encode("utf-8"))
+            self.book.commit(chapter, self.draft, self.delta(text))
         self.first = self.root / self.book.chapter_path(1)
         self.second = self.root / self.book.chapter_path(2)
 
@@ -99,7 +103,7 @@ class ExportRecoveryTests(unittest.TestCase):
         with patch.object(story, "atomic_write", side_effect=OSError("temporary publication failure")):
             failed = self.book.commit(2, self.draft, delta, replace_last=True)
         self.assertFalse(failed["exports_complete"])
-        self.assertEqual(self.second.read_bytes(), DRAFT.encode("utf-8"))
+        self.assertEqual(self.second.read_bytes(), DRAFT2.encode("utf-8"))
         outside = "第一章由用户另行编辑，必须保留。\n".encode("utf-8")
         self.first.write_bytes(outside)
         revision = self.book.meta("revision")
@@ -113,7 +117,7 @@ class ExportRecoveryTests(unittest.TestCase):
         self.assertEqual(self.second.read_bytes(), REVISED.encode("utf-8"))
         self.assertEqual(self.book.meta("revision"), revision)
         self.assertTrue(recovered["backups"])
-        self.assertEqual(Path(recovered["backups"][0]).read_bytes(), DRAFT.encode("utf-8"))
+        self.assertEqual(Path(recovered["backups"][0]).read_bytes(), DRAFT2.encode("utf-8"))
 
     def test_path_conflict_does_not_block_an_independent_missing_export(self):
         self.first.unlink()
@@ -151,7 +155,7 @@ class ExportRecoveryTests(unittest.TestCase):
         self.assertEqual(result["changed_exports"], [self.book.chapter_path(1)])
         self.assertEqual(result["pending_export_count"], 0)
         self.assertEqual(self.first.read_bytes(), outside)
-        self.assertEqual(self.second.read_bytes(), DRAFT.encode("utf-8"))
+        self.assertEqual(self.second.read_bytes(), DRAFT2.encode("utf-8"))
         self.assertEqual(list(self.first.parent.glob(".story-tmp-*")), [])
 
     def test_publication_conflict_retains_backup_details_after_global_health_check(self):
@@ -235,7 +239,7 @@ class ExportRecoveryTests(unittest.TestCase):
         self.assertEqual(result["changed_export_count"], 0)
         self.assertEqual(result["export_error_count"], 1)
         self.assertFalse(self.first.exists())
-        self.assertEqual(self.second.read_bytes(), DRAFT.encode("utf-8"))
+        self.assertEqual(self.second.read_bytes(), DRAFT2.encode("utf-8"))
         retry = self.book.export(safe_only=True)
         self.assertTrue(retry["exports_complete"])
         self.assertEqual(retry["exported"], [self.book.chapter_path(1)])

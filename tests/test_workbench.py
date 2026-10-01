@@ -43,7 +43,7 @@ class WorkbenchTests(unittest.TestCase):
     def commit(self, chapter):
         title = f"雨夜 & 账本#{chapter}%"
         token = f"FULL-CHAPTER-{chapter}-MUST-NOT-BE-EMBEDDED"
-        text = (f"# 第{chapter}章 {title}\n"
+        text = (f"第{chapter}章 {title}\n"
                 "沈禾把唯一的钥匙交给守门人。\n"
                 "她答应在天亮之前带回账本。\n"
                 f"{token}，这句只用于证明工作台没有嵌入整章。\n")
@@ -51,6 +51,7 @@ class WorkbenchTests(unittest.TestCase):
             "title": title, "volume_dir": "第一卷 雨#夜%", "goal": "用钥匙换取入口",
             "stop": "进入门内，不拿到账本", "constraints": ["天亮前返回"],
             "requires": [], "tags": ["沈禾"], "length": [10, 1000],
+            "length_exception": {"source": "user_request", "quote": "测试章按10至1000字写作。"},
             "beats": [{"choice": "沈禾交出钥匙", "change": "得到入口并失去退路"}],
         }
         self.book.save_plan(chapter, plan, self.book.meta("revision"))
@@ -307,9 +308,10 @@ class WorkbenchTests(unittest.TestCase):
 
     def test_sparse_future_plan_does_not_claim_the_next_chapter_is_ready(self):
         plan = {
-            "title": "更远的一章", "volume_dir": "第一卷 雨夜", "goal": "处理后续选择",
+            "title": "更远的一章", "volume_dir": "第二卷 雨夜之后", "goal": "处理后续选择",
             "stop": "留下新的问题", "constraints": ["不越过当前章"], "requires": [],
             "tags": ["沈禾"], "length": [10, 1000],
+            "length_exception": {"source": "user_request", "quote": "测试章按10至1000字写作。"},
             "beats": [{"choice": "沈禾先等待", "change": "远期计划已存在"}],
         }
         self.book.save_plan(4, plan, self.book.meta("revision"))

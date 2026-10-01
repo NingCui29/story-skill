@@ -13,7 +13,7 @@ story = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(story)
 
 QUOTE = "沈禾把唯一的钥匙交给守门人。"
-OLD_TEXT = "# 第1章 门后的雨\n" + QUOTE + "\n她答应天亮前带回账本。\n"
+OLD_TEXT = "第1章 门后的雨\n" + QUOTE + "\n她答应天亮前带回账本。\n"
 NEW_TEXT = OLD_TEXT.replace("门后的雨", "雨后的门") + "她没有回头。\n"
 
 
@@ -28,6 +28,7 @@ class PathSnapshotTests(unittest.TestCase):
             "volume_dir": "第一卷 雨夜", "goal": "用钥匙换取入口", "stop": "进入门内",
             "beats": [{"choice": "交出钥匙", "change": "得到入口并失去退路"}],
             "constraints": [], "requires": [], "tags": [], "length": [20, 120],
+            "length_exception": {"source": "user_request", "quote": "测试章按20至120字写作。"},
         }, self.book.meta("revision"))
         self.draft.write_bytes(OLD_TEXT.encode("utf-8"))
         self.book.commit(1, self.draft, self.delta(self.book, OLD_TEXT))

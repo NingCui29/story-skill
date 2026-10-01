@@ -32,10 +32,12 @@ def smoke():
         call("notes", "--input", write_json("notes.json", notes), "--expect", 0)
         plan = {"volume_dir": "第一卷 雨夜", "goal": "让沈禾用唯一钥匙换取线索", "stop": "进门，不揭开失踪者身份",
                 "constraints": ["保留拿不到账本的停笔点"], "requires": ["hero"], "tags": ["沈禾"],
-                "length": [150, 350], "beats": [{"choice": "交出唯一钥匙", "change": "进门但失去退路"}]}
+                "length": [150, 350],
+                "length_exception": {"source": "user_request", "quote": "本合成冒烟验收章节采用 150—350 字，验证工具流程。"},
+                "beats": [{"choice": "交出唯一钥匙", "change": "进门但失去退路"}]}
         call("plan", "--chapter", 1, "--input", write_json("plan.json", plan), "--expect", 1)
         packet = call("context", "--chapter", 1, "--budget-bytes", 4000)
-        draft_text = ("# 第一章 门后的雨\n沈禾把钥匙放在门槛上，没有往前推。\n"
+        draft_text = ("第1章 门后的雨\n沈禾把钥匙放在门槛上，没有往前推。\n"
                       "守门人看了一眼她身后的雨，说这把钥匙只能换一次进门。出来以后，锁就会换掉。\n"
                       "她问账本是不是还在楼上。那人伸出手，没有回答。\n"
                       "钥匙是弟弟离家前留给她的。她攥了三个月，边缘已经磨得发亮，原先刻在背面的两个字只剩一横。\n"

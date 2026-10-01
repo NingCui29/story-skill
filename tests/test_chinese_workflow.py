@@ -78,14 +78,15 @@ class ChineseWorkflowTests(unittest.TestCase):
         self.assert_error("exports_unresolved", self.book.prepare, 1, outside)
 
     def test_maximum_valid_quote_commits_without_late_source_limit_failure(self):
-        text = "甲" * 1200
+        quote = "甲" * 1200
+        text = "第1章 字段上限\n" + quote
         self.draft.write_text(text, encoding="utf-8")
         self.book.save_plan(1, plan(title="字段上限", length=[1200, 1200], count_method="han_v1"), 2)
         delta = self.delta(text)
-        delta["review"]["checks"] = {key: {"note": "上限字段的事务回归夹具。", "quote": text} for key in story.CHECKS}
-        delta["changes"] = [{"id": "hero", "text": "字段上限夹具", "quote": text}]
+        delta["review"]["checks"] = {key: {"note": "上限字段的事务回归夹具。", "quote": quote} for key in story.CHECKS}
+        delta["changes"] = [{"id": "hero", "text": "字段上限夹具", "quote": quote}]
         self.assertTrue(self.book.commit(1, self.draft, delta)["exports_complete"])
-        self.assertEqual(self.book.cards()["hero"]["source"], "chapter:1 quote:" + text)
+        self.assertEqual(self.book.cards()["hero"]["source"], "chapter:1 quote:" + quote)
 
 
 if __name__ == "__main__":

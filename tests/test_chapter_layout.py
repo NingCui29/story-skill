@@ -12,7 +12,7 @@ spec.loader.exec_module(story)
 
 QUOTE = "沈禾把唯一的钥匙交给守门人。"
 BODY = QUOTE + "\n她答应在天亮之前带回账本。\n"
-DRAFT = "# 第1章 门后的雨\n" + BODY
+DRAFT = "第1章 门后的雨\n" + BODY
 
 
 class ChapterLayoutTests(unittest.TestCase):
@@ -31,6 +31,7 @@ class ChapterLayoutTests(unittest.TestCase):
     def plan(self, volume_dir="第一卷 雨夜", **fields):
         return {"goal": "决定钥匙的去向", "stop": "选择入口后停笔", "constraints": [],
                 "requires": [], "tags": [], "length": [20, 120],
+                "length_exception": {"source": "user_request", "quote": "测试章节布局需要20至120字。"},
                 "beats": [{"choice": "沈禾决定是否交出钥匙", "change": "失去或保留退路"}],
                 **({"volume_dir": volume_dir} if volume_dir is not None else {}),
                 **fields}
@@ -86,10 +87,10 @@ class ChapterLayoutTests(unittest.TestCase):
         self.save_plan(1)
         first, _ = self.commit(1)
         self.save_plan(2, volume_dir="第二卷 旧城", title="账本归来")
-        second, _ = self.commit(2, "# 第二章 草稿标题\n" + BODY)
+        second, _ = self.commit(2, "第二章 账本归来\n" + BODY)
 
         expected = {"chapters/第一卷 雨夜/第1章 门后的雨.md": DRAFT,
-                    "chapters/第二卷 旧城/第2章 账本归来.md": "# 第二章 草稿标题\n" + BODY}
+                    "chapters/第二卷 旧城/第2章 账本归来.md": "第二章 账本归来\n" + BODY}
         self.assertEqual({p.relative_to(self.root).as_posix()
                           for p in (self.root / "chapters").rglob("*.md")}, set(expected))
         for relative, content in expected.items():
@@ -98,6 +99,93 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual(self.book.chapter_path(2), "chapters/第二卷 旧城/第2章 账本归来.md")
         self.assertEqual(first["path"], str(self.root / self.book.chapter_path(1)))
         self.assertEqual(second["path"], str(self.root / self.book.chapter_path(2)))
+
+    def test_complete_native_heading_must_match_number_and_planned_title(self):
+        self.save_plan(1, title="门后的雨")
+        text = "第2章 草稿标题\n" + BODY
+        self.draft.write_text(text, encoding="utf-8")
+        before = self.state_snapshot()
+
+        lint = self.book.lint(1, self.draft)
+        self.assertFalse(lint["ok"])
+        self.assertEqual({error["code"] for error in lint["errors"]},
+                         {"chapter_heading_number", "chapter_heading_title"})
+        self.assert_error("lint_failed", lambda: self.book.prepare(1, self.draft))
+        self.assert_error("lint_failed", lambda: self.book.commit(1, self.draft, self.delta(text)))
+        self.assertEqual(self.state_snapshot(), before)
+
+    def test_heading_normalizes_chinese_numbers_and_harmless_title_spacing(self):
+        self.save_plan(1, title="开 门")
+        text = "第一章 开　门\n" + BODY
+        self.draft.write_text(text, encoding="utf-8")
+        self.assertTrue(self.book.lint(1, self.draft)["ok"])
+        self.assertEqual(story.chapter_number("一百零二"), 102)
+        self.assertEqual(story.chapter_number("１２"), 12)
+
+    def test_nondefault_saved_length_is_visible_but_explicit_override_is_allowed(self):
+        self.save_plan(1, title="门后的雨", length=[20, 120])
+        self.draft.write_text("第1章 门后的雨\n" + BODY, encoding="utf-8")
+        lint = self.book.lint(1, self.draft)
+        self.assertTrue(lint["ok"])
+        warning = next(item for item in lint["warnings"] if item["code"] == "nondefault_plan_length")
+        self.assertEqual(warning["saved"], [20, 120])
+        self.assertEqual(warning["default"], [2400, 2800])
+        prepared = self.book.prepare(1, self.draft)
+        self.assertTrue(prepared["lint"]["ok"])
+        self.assertTrue(self.book.commit(1, self.draft, self.delta(self.draft.read_text()))["exports_complete"])
+
+    def test_new_chapter_requires_a_plain_complete_heading_but_imports_remain_compatible(self):
+        self.save_plan(1, title="门后的雨")
+        for text, code in (("# 第一章 门后的雨\n" + BODY, "chapter_heading_format"),
+                           ("第1章：门后的雨\n" + BODY, "chapter_heading_format"),
+                           ("第一章\n" + BODY, "chapter_heading_required"),
+                           (BODY, "chapter_heading_required")):
+            with self.subTest(opening=text.splitlines()[0]):
+                self.draft.write_text(text, encoding="utf-8")
+                lint = self.book.lint(1, self.draft)
+                self.assertFalse(lint["ok"])
+                self.assertIn(code, {item["code"] for item in lint["errors"]})
+                self.assert_error("lint_failed", lambda: self.book.prepare(1, self.draft))
+                self.assert_error("lint_failed", lambda: self.book.commit(1, self.draft, self.delta(text)))
+        imported = "第2章 旧稿另名\n" + BODY
+        self.draft.write_text(imported, encoding="utf-8")
+        self.book.adopt(1, self.draft, "保留旧稿基线。", self.book.meta("revision"), volume_dir="第一卷 雨夜")
+        lint = self.book.lint(1, self.draft)
+        self.assertTrue(lint["ok"])
+        self.assertNotIn("nondefault_plan_length", {item["code"] for item in lint["warnings"]})
+
+    def test_unchanged_legacy_heading_is_compatible_but_plan_rename_requires_alignment(self):
+        self.save_plan(1)
+        legacy = "# 第1章 门后的雨\n" + BODY
+        with patch.object(story, "chapter_heading_errors", return_value=[]):
+            self.commit(1, legacy)
+        self.draft.write_text(legacy, encoding="utf-8")
+        lint = self.book.lint(1, self.draft)
+        self.assertTrue(lint["ok"])
+        self.assertTrue(self.book.prepare(1, self.draft)["lint"]["ok"])
+        revised = legacy + "她将空手藏进衣袖。\n"
+        self.assertTrue(self.commit(1, revised, replace_last=True)[0]["exports_complete"])
+        self.draft.write_text(revised, encoding="utf-8")
+        # The old first line is tolerated only while the adopted title stays put.
+        self.save_plan(1, title="修订计划名")
+        lint = self.book.lint(1, self.draft)
+        self.assertFalse(lint["ok"])
+        self.assertIn("chapter_heading_title", {item["code"] for item in lint["errors"]})
+        self.assert_error("lint_failed", lambda: self.book.commit(1, self.draft, self.delta(revised), replace_last=True))
+
+    def test_replacement_rechecks_every_changed_first_line(self):
+        self.save_plan(1, title="门后的雨")
+        self.commit(1)
+        for text, code in (("第2章 门后的雨\n" + BODY, "chapter_heading_number"),
+                           ("第1章 别的标题\n" + BODY, "chapter_heading_title"),
+                           ("# 第1章 门后的雨\n" + BODY, "chapter_heading_format"),
+                           (BODY, "chapter_heading_required")):
+            with self.subTest(first_line=text.splitlines()[0]):
+                self.draft.write_text(text, encoding="utf-8")
+                lint = self.book.lint(1, self.draft)
+                self.assertIn(code, {item["code"] for item in lint["errors"]})
+                self.assert_error("lint_failed", lambda: self.book.prepare(1, self.draft))
+                self.assert_error("lint_failed", lambda: self.book.commit(1, self.draft, self.delta(text), replace_last=True))
 
     def test_chapter_titles_are_unique_across_volumes_and_draft_headings(self):
         self.save_plan(1, title="门后的雨")
@@ -115,6 +203,30 @@ class ChapterLayoutTests(unittest.TestCase):
         before = self.state_snapshot()
         self.assert_error("duplicate_chapter_title", lambda: self.book.lint(2, self.draft))
         self.assertEqual(self.state_snapshot(), before)
+
+    def test_plan_title_rejects_chapter_number_prefix_before_saving(self):
+        before = self.state_snapshot()
+        for title in ("第1章 门后的雨", "第一章 门后的雨", "第１章门后的雨",
+                      "# 第1章 门后的雨", "第 1 章 门后的雨"):
+            with self.subTest(title=title):
+                self.assert_error("chapter_title_prefix", lambda: self.save_plan(1, title=title))
+                self.assertEqual(self.state_snapshot(), before)
+
+        self.save_plan(1, title="门后的雨")
+        result, _ = self.commit(1)
+        self.assertEqual(Path(result["path"]).name, "第1章 门后的雨.md")
+
+    def test_legacy_prefixed_plan_title_cannot_export_a_double_prefix(self):
+        self.save_plan(1, title="门后的雨")
+        plan = self.book.get_plan(1)
+        plan["title"] = "第1章 门后的雨"
+        with self.book.transaction():
+            self.book.db.execute("UPDATE plans SET data=? WHERE chapter=1", (story.dumps(plan),))
+        self.draft.write_text(DRAFT, encoding="utf-8")
+        before = self.state_snapshot()
+        self.assert_error("chapter_title_prefix", lambda: self.book.lint(1, self.draft))
+        self.assertEqual(self.state_snapshot(), before)
+        self.assertFalse((self.root / "chapters/第一卷 雨夜/第1章 第1章 门后的雨.md").exists())
 
     def test_volume_names_are_unique_but_shared_within_one_volume(self):
         self.save_plan(1, title="入城")
@@ -141,7 +253,7 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual(story.manuscript_counts(text, True)["visible_nonspace_v1"], body_count + 7)
 
     def test_chinese_heading_prefix_is_removed_and_path_survives_retry_and_reopen(self):
-        text = "# 第一章 门后的雨\n" + BODY
+        text = "第一章 门后的雨\n" + BODY
         self.save_plan(1, volume_dir="第一卷 雨夜")
         original, delta = self.commit(1, text)
         relative = "chapters/第一卷 雨夜/第1章 门后的雨.md"
@@ -159,7 +271,8 @@ class ChapterLayoutTests(unittest.TestCase):
 
     def test_missing_nested_export_is_recovered_at_persisted_path(self):
         self.save_plan(1, volume_dir="第三卷 渡口", title="过河")
-        self.commit(1)
+        text = "第1章 过河\n" + BODY
+        self.commit(1, text)
         relative = "chapters/第三卷 渡口/第1章 过河.md"
         target = self.root / relative
         target.unlink()
@@ -171,14 +284,14 @@ class ChapterLayoutTests(unittest.TestCase):
         result = self.book.export(safe_only=True)
         self.assertTrue(result["scope_exports_complete"])
         self.assertEqual(result["exported"], [relative])
-        self.assertEqual(target.read_bytes(), DRAFT.encode("utf-8"))
+        self.assertEqual(target.read_bytes(), text.encode("utf-8"))
         self.assertEqual(self.book.meta("revision"), revision)
 
     def test_replacing_title_and_volume_moves_export_and_preserves_backup(self):
         self.save_plan(1)
         self.commit(1)
         old = self.root / "chapters/第一卷 雨夜/第1章 门后的雨.md"
-        revised = "# 第1章 新的入口\n" + BODY + "她没有回头。\n"
+        revised = "第1章 新的入口\n" + BODY + "她没有回头。\n"
         self.save_plan(1, volume_dir="第二卷 渡口")
 
         result, _ = self.commit(1, revised, replace_last=True)
@@ -197,7 +310,7 @@ class ChapterLayoutTests(unittest.TestCase):
         old = self.root / "chapters/第一卷 雨夜/第1章 门后的雨.md"
         self.save_plan(1, title="新的入口", volume_dir="第二卷 渡口")
         new = self.root / "chapters/第二卷 渡口/第1章 新的入口.md"
-        revised = DRAFT + "她没有回头。\n"
+        revised = "第1章 新的入口\n" + BODY + "她没有回头。\n"
         write = story.atomic_write
 
         def fail_new_export(target, *args, **kwargs):
@@ -228,7 +341,7 @@ class ChapterLayoutTests(unittest.TestCase):
         self.save_plan(1, volume_dir="第一卷 雨夜")
         self.commit(1)
         old = self.root / "chapters/第一卷 雨夜/第1章 门后的雨.md"
-        external = "# 第1章 新的入口\n" + BODY + "她没有回头。\n"
+        external = "第1章 新的入口\n" + BODY + "她没有回头。\n"
         old.write_bytes(external.encode("utf-8"))
         packet = self.book.reconcile(1)
         self.assertEqual(Path(packet["external_edit"]["path"]), old)
@@ -261,6 +374,7 @@ class ChapterLayoutTests(unittest.TestCase):
             self.book.set_meta("last_chapter", 1)
             self.book.index_chapter(1, DRAFT, "已存旧版章节。")
         self.assertEqual(self.book.chapter_path(1), relative)
+        self.assertIsNone(self.book.adopted_chapter_title(1))
         self.assertEqual(self.book.export()["exported"], [relative])
         self.book.close()
         self.book = story.Book(self.root)
@@ -275,8 +389,19 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual(self.book.chapter_path(1), relative)
         self.assertEqual((self.root / relative).read_bytes(), revised.encode("utf-8"))
         self.save_plan(2, title="账本归来")
-        self.commit(2)
+        self.commit(2, "第2章 账本归来\n" + BODY)
         self.assertEqual(self.book.chapter_path(2), "chapters/第一卷 雨夜/第2章 账本归来.md")
+
+    def test_flat_path_uses_last_published_plan_title_for_heading_rename_check(self):
+        self.save_plan(1, title="门后的雨")
+        self.commit(1)
+        with self.book.transaction():
+            self.book.set_meta("chapter_path:1", "chapters/0001.md")
+        self.assertEqual(self.book.adopted_chapter_title(1), "门后的雨")
+        self.save_plan(1, title="新的入口")
+        checked = story.lint_text(DRAFT, self.book.get_plan(1), 1, previous_text=DRAFT,
+                                  previous_title=self.book.adopted_chapter_title(1))
+        self.assertIn("chapter_heading_title", {item["code"] for item in checked["errors"]})
 
     def test_new_title_collision_preserves_both_files_and_original_chapter_state(self):
         self.save_plan(1)
@@ -289,7 +414,7 @@ class ChapterLayoutTests(unittest.TestCase):
         occupied.write_bytes(outside)
         revision = self.book.meta("revision")
 
-        self.assert_error("export_conflict", lambda: self.commit(1, DRAFT + "她没有回头。\n",
+        self.assert_error("export_conflict", lambda: self.commit(1, "第1章 新的入口\n" + BODY + "她没有回头。\n",
                                                                  replace_last=True))
         self.assertEqual(self.book.meta("revision"), revision)
         self.assertEqual(self.book.chapter_path(1), old_relative)
@@ -298,7 +423,8 @@ class ChapterLayoutTests(unittest.TestCase):
 
     def test_case_insensitive_title_alias_is_rejected_before_chapter_commit(self):
         self.save_plan(1, title="AI来客")
-        self.commit(1)
+        original = "第1章 AI来客\n" + BODY
+        self.commit(1, original)
         relative = "chapters/第一卷 雨夜/第1章 AI来客.md"
         target = self.root / relative
         alias = self.root / "chapters/第一卷 雨夜/第1章 Ai来客.md"
@@ -308,12 +434,12 @@ class ChapterLayoutTests(unittest.TestCase):
         revision = self.book.meta("revision")
         before = tuple(self.book.db.execute("SELECT * FROM chapters WHERE chapter=1").fetchone())
 
-        self.assert_error("export_path_alias", lambda: self.commit(1, DRAFT + "她没有回头。\n",
+        self.assert_error("export_path_alias", lambda: self.commit(1, "第1章 Ai来客\n" + BODY + "她没有回头。\n",
                                                                    replace_last=True))
         self.assertEqual(self.book.meta("revision"), revision)
         self.assertEqual(tuple(self.book.db.execute("SELECT * FROM chapters WHERE chapter=1").fetchone()), before)
         self.assertEqual(self.book.chapter_path(1), relative)
-        self.assertEqual(target.read_bytes(), DRAFT.encode("utf-8"))
+        self.assertEqual(target.read_bytes(), original.encode("utf-8"))
         self.assertEqual([path.name for path in target.parent.iterdir()], [target.name])
 
     def test_unreviewed_edit_to_retired_path_is_preserved_during_recovery(self):
@@ -323,7 +449,8 @@ class ChapterLayoutTests(unittest.TestCase):
         old = self.root / old_relative
         self.save_plan(1, title="新的入口")
         with patch.object(story, "atomic_write", side_effect=OSError("publication interrupted")):
-            failed, _ = self.commit(1, DRAFT + "她没有回头。\n", replace_last=True)
+            failed, _ = self.commit(1, "第1章 新的入口\n" + BODY + "她没有回头。\n",
+                                    replace_last=True)
         self.assertFalse(failed["exports_complete"])
         outside = "用户在导出中断后修改了旧文件。\n".encode("utf-8")
         old.write_bytes(outside)
@@ -340,13 +467,13 @@ class ChapterLayoutTests(unittest.TestCase):
         old = self.root / old_relative
         intermediate_relative = "chapters/第一卷 雨夜/第1章 新的入口.md"
         intermediate = self.root / intermediate_relative
-        revised = "# 第1章 新的入口\n" + BODY + "她没有回头。\n"
+        revised = "第1章 新的入口\n" + BODY + "她没有回头。\n"
         with patch.object(story, "atomic_write", side_effect=OSError("publication interrupted")):
             failed, _ = self.commit(1, revised, replace_last=True)
         self.assertFalse(failed["exports_complete"])
         self.assertEqual(old.read_bytes(), DRAFT.encode("utf-8"))
         self.assertFalse(intermediate.exists())
-        external = "# 第1章 渡口的灯\n" + BODY + "她停步看向河对岸的灯。\n"
+        external = "第1章 渡口的灯\n" + BODY + "她停步看向河对岸的灯。\n"
         old.write_bytes(external.encode("utf-8"))
 
         recovered = self.book.export(safe_only=True)
@@ -391,13 +518,13 @@ class ChapterLayoutTests(unittest.TestCase):
         self.book.close()
         self.book = story.Book(self.root)
         self.save_plan(2, volume="rain", volume_dir=None, title="第二夜")
-        self.commit(2)
+        self.commit(2, "第2章 第二夜\n" + BODY)
         self.assertEqual(self.book.chapter_path(2), "chapters/第一卷 雨夜/第2章 第二夜.md")
 
         self.save_plan(3, volume="crossing", volume_dir="第2卷 渡口", title="第三夜")
-        self.commit(3)
+        self.commit(3, "第3章 第三夜\n" + BODY)
         self.save_plan(4, volume="crossing", volume_dir=None, title="第四夜")
-        self.commit(4)
+        self.commit(4, "第4章 第四夜\n" + BODY)
         self.assertEqual(self.book.chapter_path(3), "chapters/第2卷 渡口/第3章 第三夜.md")
         self.assertEqual(self.book.chapter_path(4), "chapters/第2卷 渡口/第4章 第四夜.md")
 
@@ -439,19 +566,20 @@ class ChapterLayoutTests(unittest.TestCase):
             self.assert_error("volume_title_missing", lambda: self.commit(1))
             self.assertEqual(self.state_snapshot(), before)
 
-    def test_native_title_is_required_but_explicit_plan_title_allows_plain_body(self):
+    def test_native_heading_is_required_even_with_a_planned_title(self):
         self.save_plan(1)
         self.draft.write_bytes(BODY.encode("utf-8"))
         revision = self.book.meta("revision")
-        self.assert_error("chapter_title_missing",
+        self.assert_error("lint_failed",
                           lambda: self.book.commit(1, self.draft, self.delta(BODY)))
         self.assertEqual(self.book.meta("revision"), revision)
         self.assertEqual(self.book.meta("last_chapter"), 0)
         self.save_plan(1, title="门后的雨")
-        result, _ = self.commit(1, BODY)
+        self.assert_error("lint_failed", lambda: self.commit(1, BODY))
+        result, _ = self.commit(1)
         self.assertTrue(result["exports_complete"])
         target = self.root / "chapters/第一卷 雨夜/第1章 门后的雨.md"
-        self.assertEqual(target.read_bytes(), BODY.encode("utf-8"))
+        self.assertEqual(target.read_bytes(), DRAFT.encode("utf-8"))
 
     def test_untitled_import_uses_body_fallback_in_named_volume(self):
         self.draft.write_bytes(BODY.encode("utf-8"))
@@ -477,12 +605,46 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual([path.relative_to(self.root).as_posix()
                           for path in (self.root / "chapters").rglob("*.md")], [relative])
 
+    def test_history_candidate_rechecks_changed_or_removed_heading(self):
+        self.save_plan(1, title="门后的雨")
+        self.commit(1)
+        story.history.save_dependencies(self.book, {
+            "chapter": 1, "chapter_sha": story.digest(DRAFT), "dependencies": [],
+            "complete": True, "note": "这一章没有外部依赖，修订后仍逐段核对。"},
+            self.book.meta("revision"))
+        packet = story.history.branch_start(self.book, 1, self.book.meta("revision"))
+        for text in ("第2章 门后的雨\n" + BODY, "第1章 旧标题\n" + BODY,
+                     "# 第1章 门后的雨\n" + BODY, BODY):
+            with self.subTest(first_line=text.splitlines()[0]):
+                self.assert_error("lint_failed", lambda: self.stage_history(packet, {1: text}))
+        self.assertEqual((self.root / self.book.chapter_path(1)).read_text(), DRAFT)
+
+    def test_history_publish_rechecks_staged_heading_against_current_plan(self):
+        self.save_plan(1, title="门后的雨")
+        self.commit(1)
+        story.history.save_dependencies(self.book, {
+            "chapter": 1, "chapter_sha": story.digest(DRAFT), "dependencies": [],
+            "complete": True, "note": "这一章没有外部依赖，修订后仍逐段核对。"},
+            self.book.meta("revision"))
+        packet = story.history.branch_start(self.book, 1, self.book.meta("revision"))
+        staged = self.stage_history(packet, {1: DRAFT + "她记住了门的方向。\n"})
+        # Simulate a stale legacy plan write that did not advance the branch revision.
+        plan = self.book.get_plan(1)
+        plan["title"] = "改过的标题"
+        with self.book.transaction():
+            self.book.db.execute("UPDATE plans SET data=? WHERE chapter=1", (story.dumps(plan),))
+        with patch.object(story.history, "_check_fences"):
+            self.assert_error("lint_failed", lambda: story.history.branch_publish(
+                self.book, staged["branch"], self.book.meta("revision")))
+        self.assertEqual((self.root / self.book.chapter_path(1)).read_text(), DRAFT)
+
     def test_historical_revision_recovers_edited_retired_path_of_older_chapter(self):
         for chapter in (1, 2):
             self.save_plan(chapter, **({"title": "渡口另约"} if chapter == 2 else {}))
-            self.commit(chapter)
+            text = DRAFT if chapter == 1 else "第2章 渡口另约\n" + BODY
+            self.commit(chapter, text)
             story.history.save_dependencies(
-                self.book, {"chapter": chapter, "chapter_sha": story.digest(DRAFT), "dependencies": [],
+                self.book, {"chapter": chapter, "chapter_sha": story.digest(text), "dependencies": [],
                             "complete": True, "note": "逐章核对因果与视角，两章没有相互依赖。"},
                 self.book.meta("revision"))
         old_relative = "chapters/第一卷 雨夜/第1章 门后的雨.md"
@@ -490,13 +652,13 @@ class ChapterLayoutTests(unittest.TestCase):
         later_relative = self.book.chapter_path(2)
         later = self.root / later_relative
         packet = story.history.branch_start(self.book, 1, self.book.meta("revision"))
-        revised = "# 第1章 新的入口\n" + BODY + "她没有回头。\n"
+        revised = "第1章 新的入口\n" + BODY + "她没有回头。\n"
         staged = self.stage_history(packet, {1: revised})
         with patch.object(story, "atomic_write", side_effect=OSError("publication interrupted")):
             failed = story.history.branch_publish(self.book, staged["branch"], self.book.meta("revision"))
         self.assertFalse(failed["exports_complete"])
         intermediate = self.root / "chapters/第一卷 雨夜/第1章 新的入口.md"
-        external = "# 第1章 渡口的灯\n" + BODY + "她停步看向河对岸的灯。\n"
+        external = "第1章 渡口的灯\n" + BODY + "她停步看向河对岸的灯。\n"
         old.write_bytes(external.encode("utf-8"))
         recovered = self.book.export(safe_only=True)
         self.assertFalse(recovered["exports_complete"])
@@ -515,7 +677,7 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual((self.root / latest_relative).read_bytes(), external.encode("utf-8"))
         self.assertFalse(old.exists())
         self.assertFalse(intermediate.exists())
-        self.assertEqual(later.read_bytes(), DRAFT.encode("utf-8"))
+        self.assertEqual(later.read_bytes(), ("第2章 渡口另约\n" + BODY).encode("utf-8"))
         self.assertEqual(self.book.chapter_path(2), later_relative)
         self.assertTrue(any(Path(path).read_bytes() == external.encode("utf-8") for path in result["backups"]))
         self.assertEqual(self.book.db.execute(

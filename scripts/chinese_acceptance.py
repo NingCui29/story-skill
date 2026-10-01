@@ -192,7 +192,9 @@ def generated_scenarios(base):
             draft = folder / f"unit-{number}.md"
             draft.write_bytes(text.encode("utf-8"))
             plans.append({"goal": "放入方块", "stop": "盒盖合上", "requires": ["operator"],
-                          "length": [10, 200], "beats": [{"choice": "放入方块", "change": "盒盖合上"}]})
+                          "length": [10, 200],
+                          "length_exception": {"source": "user_request", "quote": "本合成事务验收章节采用 10—200 字，验证工具流程。"},
+                          "beats": [{"choice": "放入方块", "change": "盒盖合上"}]})
             units.append({"chapter": number, "draft": draft.name, "reviewed_sha256": sha(draft.read_bytes()),
                           "summary": f"编号{number}方块已经入盒。",
                           "changes": [{"id": "operator", "text": f"已放入编号{number}方块。", "quote": quote}],

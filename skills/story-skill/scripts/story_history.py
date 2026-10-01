@@ -218,12 +218,52 @@ def on_commit(book, chapter, plan, receipt, text, sha, publication_revision=None
         _snapshot(book, "automatic:" + str(chapter))
 
 
+def published_plan(book, chapter, receipt, sha):
+    """Recover a native chapter's plan from immutable events at publication.
+
+    Current plans may have changed since an old chapter was published. A
+    receipt revision alone is not enough: the matching chapter event must
+    still identify this exact body before an earlier plan event is evidence.
+    Imported prose has no native plan provenance.
+    """
+    if receipt.get("history_branch") or not isinstance(receipt.get("input"), dict):
+        return None
+    base_revision = receipt["input"].get("base_revision")
+    if type(base_revision) is not int or base_revision < 0:
+        return None
+    publication_revision = base_revision + 1
+    row = book.db.execute("SELECT kind,data FROM events WHERE revision=?", (publication_revision,)).fetchone()
+    if row is None or row["kind"] not in ("commit_chapter", "replace_chapter"):
+        return None
+    try:
+        event = json.loads(row["data"])
+    except (TypeError, ValueError):
+        return None
+    if not isinstance(event, dict) or event.get("chapter") != chapter:
+        return None
+    body_sha = event.get("body_sha256")
+    if body_sha is None and isinstance(event.get("text"), str):
+        body_sha = api.digest(event["text"])
+    if body_sha != sha:
+        return None
+    for (raw,) in book.db.execute(
+            "SELECT data FROM events WHERE kind='plan' AND revision<? ORDER BY revision DESC",
+            (publication_revision,)):
+        try:
+            candidate = json.loads(raw)
+        except (TypeError, ValueError):
+            continue
+        if isinstance(candidate, dict) and candidate.get("chapter") == chapter:
+            plan = candidate.get("after")
+            return plan if isinstance(plan, dict) else None
+    return None
+
+
 def _ensure_history(book):
     """Lazily seed existing books, keeping imported status and unverified semantics."""
     missing = book.db.execute("SELECT c.chapter FROM chapters c LEFT JOIN history_heads h ON h.chapter=c.chapter WHERE h.chapter IS NULL ORDER BY c.chapter")
     for item in missing:
         row = book.db.execute("SELECT * FROM chapters WHERE chapter=?", (item[0],)).fetchone()
-        plan = book.db.execute("SELECT data FROM plans WHERE chapter=?", (row["chapter"],)).fetchone()
         receipt = json.loads(row["receipt"])
         if "input" in receipt and type(receipt["input"].get("base_revision")) is int:
             published = receipt["input"]["base_revision"] + 1
@@ -232,7 +272,8 @@ def _ensure_history(book):
             published = event[0] if event else 0
         else:
             api.fail("history_unavailable", "Existing chapter has no verifiable publication revision", chapter=row["chapter"])
-        on_commit(book, row["chapter"], json.loads(plan[0]) if plan else None,
+        plan = published_plan(book, row["chapter"], receipt, row["sha"]) if not row["imported"] else None
+        on_commit(book, row["chapter"], plan,
                   receipt, row["text"], row["sha"], published)
 
 
@@ -761,7 +802,9 @@ def branch_update(book, branch_id, payload, expected, budget=DEFAULT_BUDGET, lim
             plan_row = book.db.execute("SELECT data FROM plans WHERE chapter=?", (int(c),)).fetchone()
             if not plan_row:
                 api.fail("plan_missing", "Historical/imported revisions require a current reviewed plan", chapter=int(c))
-            check = api.lint_text(text, json.loads(plan_row[0]))
+            check = api.lint_text(text, json.loads(plan_row[0]), int(c),
+                                  previous_text=_body(book, data["base_shas"][c]),
+                                  previous_title=book.adopted_chapter_title(int(c)))
             if not check["ok"]:
                 api.fail("lint_failed", "Historical candidate fails deterministic checks", chapter=int(c), lint=check)
             prepared[c] = (entry, text, book.intern_body(text))
@@ -954,6 +997,9 @@ def branch_refresh(book, branch_id, expected, budget=DEFAULT_BUDGET, limit=25, s
 def branch_publish(book, branch_id, expected):
     with book.transaction():
         row, data = _branch(book, branch_id)
+        for chapter in data["candidates"]:
+            if api.outline.binding_for(book, int(chapter)) is not None:
+                api.outline.verify(book, int(chapter), book.get_plan(int(chapter)))
         if row["status"] == "published":
             result = {**json.loads(row["receipt"]), "idempotent": True}
         else:
@@ -1003,7 +1049,9 @@ def branch_publish(book, branch_id, expected):
                 _dependencies(book, candidate["dependencies"], shas)
                 plan = book.get_plan(int(c))
                 _required_dependencies(plan, candidate["dependencies"], candidate["complete"])
-                check = api.lint_text(_body(book, candidate["sha"]), plan)
+                check = api.lint_text(_body(book, candidate["sha"]), plan, int(c),
+                                      previous_text=_body(book, data["base_shas"][c]),
+                                      previous_title=book.adopted_chapter_title(int(c)))
                 if not check["ok"]:
                     api.fail("lint_failed", "Plan changed or historical draft fails checks", chapter=int(c), lint=check)
             decisions = _state_changes(book, data["state_changes"], candidates, data["required_state_ids"])

@@ -216,27 +216,27 @@ class WorldRulesCommitRegressions(unittest.TestCase):
 
     def test_zero_opening_is_committed_and_overdraft_rolls_back_next_chapter(self):
         f = self.fixture
-        text = "# 第一章\n江棠摊开空钱袋，身上确实没有一枚铜钱。\n"
+        text = "第1章 核对行动1\n江棠摊开空钱袋，身上确实没有一枚铜钱。\n"
         changes = {"transfers": [{"id": "zero-opening", "resource": "coin", "receiver": "jiang", "amount": "0",
                                   "quantity_text": "一枚铜钱也没有", "opening": True, "at": 0, "evidence": f.evidence(1, text)}]}
         self.assertTrue(f.book.commit(1, f.draft, f.prepare_input(1, text, 0, changes))["exports_complete"])
-        text = "# 第二章\n江棠没有任何进项，却从空钱袋拿出一枚铜钱交给杜承安。\n"
+        text = "第2章 核对行动2\n江棠没有任何进项，却从空钱袋拿出一枚铜钱交给杜承安。\n"
         changes = {"transfers": [{"id": "overdraft", "resource": "coin", "sender": "jiang", "receiver": "du", "amount": "1",
                                   "quantity_text": "一枚", "at": 1, "evidence": f.evidence(2, text)}]}
         f.assert_atomic_rejection(f.prepare_input(2, text, 1, changes), "resource_overdraft")
 
     def test_another_actors_upgrade_does_not_allow_committed_cooldown_violation(self):
         f = self.fixture
-        text = "# 第一章\n二人施术都须间隔十刻。杜承安在第十五刻施展听风术。\n"
+        text = "第1章 核对行动1\n二人施术都须间隔十刻。杜承安在第十五刻施展听风术。\n"
         rules = {"id": "listen-v1", "rule": "listen", "version": 1, "start": 0, "cooldown": 10,
                  "description": "二人施术都须间隔十刻", "hard": True, "entities": ["jiang", "du"], "evidence": f.evidence(1, text)}
         f.book.commit(1, f.draft, f.prepare_input(1, text, 15, {"rules": [rules], "uses": [
             {"id": "du-first", "actor": "du", "rule": "listen", "at": 15, "evidence": f.evidence(1, text)}]}))
-        text = "# 第二章\n第二十刻，江棠独自突破，冷却缩至一刻，杜承安仍须遵守十刻的限制。\n"
+        text = "第2章 核对行动2\n第二十刻，江棠独自突破，冷却缩至一刻，杜承安仍须遵守十刻的限制。\n"
         upgrade = {**rules, "id": "listen-v2", "version": 2, "start": 20, "cooldown": 1, "entities": ["jiang"],
                    "description": "仅江棠冷却缩至一刻", "evidence": f.evidence(2, text)}
         f.book.commit(2, f.draft, f.prepare_input(2, text, 20, {"rules": [upgrade]}))
-        text = "# 第三章\n第二十一刻，杜承安未等足十刻，又一次施展听风术。\n"
+        text = "第3章 核对行动3\n第二十一刻，杜承安未等足十刻，又一次施展听风术。\n"
         delta = f.prepare_input(3, text, 21, {"uses": [
             {"id": "du-too-soon", "actor": "du", "rule": "listen", "at": 21, "evidence": f.evidence(3, text)}]})
         revision = f.rev()

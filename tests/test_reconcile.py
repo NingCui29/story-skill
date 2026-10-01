@@ -10,8 +10,8 @@ spec = importlib.util.spec_from_file_location("story_reconcile_tests", TOOL)
 story = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(story)
 
-DRAFT = "# 第1章 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
-REVISED = "# 第1章 门后的雨\n沈禾收回了唯一的钥匙。\n她决定另找入口，守门人退回雨里。\n"
+DRAFT = "第1章 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
+REVISED = "第1章 门后的雨\n沈禾收回了唯一的钥匙。\n她决定另找入口，守门人退回雨里。\n"
 ORIGINAL_QUOTE = "沈禾把唯一的钥匙交给守门人。"
 REVISED_QUOTE = "沈禾收回了唯一的钥匙。"
 
@@ -42,9 +42,10 @@ class ReconcileTests(unittest.TestCase):
         self.temp.cleanup()
 
     def save_plan(self, chapter):
-        plan = {"volume_dir": "第一卷 雨夜", "title": f"门后的雨{chapter}", "goal": "选择是否交出钥匙", "stop": "确定入口选择后停笔",
+        plan = {"volume_dir": "第一卷 雨夜", "title": "门后的雨" if chapter == 1 else f"门后的雨{chapter}", "goal": "选择是否交出钥匙", "stop": "确定入口选择后停笔",
                 "beats": [{"choice": "沈禾决定钥匙的去向", "change": "与守门人的关系改变"}],
-                "constraints": [], "requires": ["hero"], "tags": ["沈禾"], "length": [20, 120]}
+                "constraints": [], "requires": ["hero"], "tags": ["沈禾"], "length": [20, 120],
+                "length_exception": {"source": "user_request", "quote": "测试章按20至120字写作。"}}
         self.book.save_plan(chapter, plan, self.book.meta("revision"))
 
     def delta(self, text, quote):
@@ -84,8 +85,9 @@ class ReconcileTests(unittest.TestCase):
 
     def commit_second_chapter(self):
         self.save_plan(2)
-        self.draft.write_bytes(DRAFT.encode("utf-8"))
-        self.book.commit(2, self.draft, self.delta(DRAFT, ORIGINAL_QUOTE))
+        second = DRAFT.replace("第1章 门后的雨", "第2章 门后的雨2")
+        self.draft.write_bytes(second.encode("utf-8"))
+        self.book.commit(2, self.draft, self.delta(second, ORIGINAL_QUOTE))
 
     def test_reconcile_packet_commit_card_rollback_and_idempotent_retry(self):
         target = self.edited_chapter()

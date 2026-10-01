@@ -31,6 +31,7 @@ class ShortAssemblyTests(unittest.TestCase):
     def commit(self, number, title, text, replace_last=False, exports_complete=True):
         plan = {"title": title, "volume_dir": "第一卷 雨夜", "goal": "决定下一步", "stop": "选择后停笔",
                 "constraints": [], "requires": [], "tags": [], "length": [1, 200],
+                "length_exception": {"source": "user_request", "quote": "测试章按1至200字写作。"},
                 "beats": [{"choice": "她决定行动", "change": "局面发生变化"}]}
         self.book.save_plan(number, plan, self.book.meta("revision"))
         self.draft.write_bytes(text.encode("utf-8"))
@@ -49,15 +50,15 @@ class ShortAssemblyTests(unittest.TestCase):
             action()
         self.assertEqual(raised.exception.code, code)
 
-    def test_final_cli_creates_complete_plain_text_by_book_title(self):
+    def test_final_cli_creates_complete_markdown_by_book_title(self):
         self.commit(1, "借钥", "第1章 借钥\n她从门房借到一把钥匙。\n")
-        self.commit(2, "还钥", "# 第2章 还钥\n她归还钥匙，也还清了欠账。\n")
+        self.commit(2, "还钥", "第2章 还钥\n她归还钥匙，也还清了欠账。\n")
         command = [sys.executable, "-B", str(TOOL), "assemble-short", "--book", str(self.root),
                    "--final-chapter", "2"]
         first = subprocess.run(command, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(first.returncode, 0, first.stderr)
         result = json.loads(first.stdout)
-        output = self.root / "雨夜的钥匙.txt"
+        output = self.root / "雨夜的钥匙.md"
         self.assertEqual(Path(result["path"]), output.resolve())
         self.assertTrue(result["created"])
         self.assertEqual(result["chapters"], 2)
@@ -71,7 +72,7 @@ class ShortAssemblyTests(unittest.TestCase):
 
     def test_incomplete_or_unresolved_chapters_do_not_create_file(self):
         self.commit(1, "借钥", "第1章 借钥\n她从门房借到一把钥匙。\n")
-        output = self.root / "雨夜的钥匙.txt"
+        output = self.root / "雨夜的钥匙.md"
         self.assert_error("chapters_incomplete", lambda: self.book.assemble_short(2))
         self.assertFalse(output.exists())
         self.commit(2, "还钥", "第2章 还钥\n她归还钥匙，也还清了欠账。\n")
@@ -99,6 +100,63 @@ class ShortAssemblyTests(unittest.TestCase):
         output.write_bytes("读者手工批注，必须保留。\n".encode("utf-8"))
         self.assert_error("assembly_conflict", lambda: self.book.assemble_short(2))
         self.assertEqual(output.read_text(encoding="utf-8"), "读者手工批注，必须保留。\n")
+
+    def legacy_text_copy(self):
+        self.commit(1, "借钥", "第1章 借钥\n她从门房借到一把钥匙。\n")
+        markdown = Path(self.book.assemble_short(1)["path"])
+        legacy = markdown.with_suffix(".txt")
+        markdown.rename(legacy)
+        record = self.book._short_assembly_record()
+        with self.book.transaction():
+            self.book.db.execute("UPDATE artifact_state SET path=? WHERE path=?",
+                                 (legacy.name, markdown.name))
+            record["path"] = legacy.name
+            self.book.set_meta("short_assembly", record)
+            self.book.set_meta("short_assembly_path", legacy.name)
+        return legacy, markdown
+
+    def test_legacy_text_copy_migrates_to_markdown_and_is_backed_up(self):
+        legacy, markdown = self.legacy_text_copy()
+        original = legacy.read_bytes()
+        self.assertEqual(self.book.status()["short_assembly"]["state"], "current")
+        result = self.book.assemble_short(1)
+        self.assertTrue(result["exports_complete"], result)
+        self.assertEqual(Path(result["path"]), markdown)
+        self.assertEqual(markdown.read_bytes(), original)
+        self.assertFalse(legacy.exists())
+        self.assertTrue(any(Path(path).read_bytes() == original for path in result["backups"]))
+        self.assertIsNone(self.book._retired_short_assembly())
+        status = self.book.status()
+        self.assertEqual(status["short_assembly_path"], markdown.name)
+        self.assertTrue(status["integrity"]["full_book_verified"] if self.book.integrity == "strict" else
+                        status["short_assembly"]["source_current"])
+
+    def test_safe_export_migrates_legacy_copy_without_overwriting_markdown(self):
+        legacy, markdown = self.legacy_text_copy()
+        markdown.write_text("另一份手工全文，不能覆盖。\n", encoding="utf-8")
+        blocked = self.book.export(safe_only=True)
+        self.assertFalse(blocked["exports_complete"])
+        self.assertEqual(legacy.read_text(encoding="utf-8").splitlines()[0], "第1章 借钥")
+        self.assertEqual(markdown.read_text(encoding="utf-8"), "另一份手工全文，不能覆盖。\n")
+        markdown.unlink()
+        recovered = self.book.export(safe_only=True)
+        self.assertTrue(recovered["exports_complete"], recovered)
+        self.assertTrue(markdown.exists())
+        self.assertFalse(legacy.exists())
+
+    def test_interrupted_legacy_retirement_recovers_without_losing_either_copy(self):
+        legacy, markdown = self.legacy_text_copy()
+        original = legacy.read_bytes()
+        with patch.object(story, "_retire_bound_file", side_effect=OSError("archive interrupted")):
+            failed = self.book.export(safe_only=True)
+        self.assertFalse(failed["exports_complete"])
+        self.assertEqual(legacy.read_bytes(), original)
+        self.assertEqual(markdown.read_bytes(), original)
+        self.assertIsNotNone(self.book._retired_short_assembly())
+        recovered = self.book.export(safe_only=True)
+        self.assertTrue(recovered["exports_complete"], recovered)
+        self.assertFalse(legacy.exists())
+        self.assertIsNone(self.book._retired_short_assembly())
 
     def test_all_heading_line_separators_preserve_the_entire_body(self):
         for index, separator in enumerate(("\n", "\r\n", "\r", "\v", "\f", "\x1c", "\x1d", "\x1e",
@@ -194,7 +252,7 @@ class ShortAssemblyTests(unittest.TestCase):
 
     def test_metadata_failure_cannot_leave_an_unregistered_output(self):
         self.commit(1, "借钥", "第1章 借钥\n她从门房借到一把钥匙。\n")
-        output = self.root / "雨夜的钥匙.txt"
+        output = self.root / "雨夜的钥匙.md"
         set_meta = self.book.set_meta
 
         def fail_registration(key, value):
@@ -238,7 +296,7 @@ class ShortAssemblyTests(unittest.TestCase):
     def test_acknowledgement_failure_recovers_without_false_external_conflict(self):
         self.commit(1, "借钥", "第1章 借钥\n她从门房借到一把钥匙。\n")
         self.book.db.execute("""CREATE TEMP TRIGGER fail_assembly_ack BEFORE UPDATE OF written_sha ON artifact_state
-            WHEN NEW.path = '雨夜的钥匙.txt' BEGIN SELECT RAISE(ABORT, 'ack interrupted'); END""")
+            WHEN NEW.path = '雨夜的钥匙.md' BEGIN SELECT RAISE(ABORT, 'ack interrupted'); END""")
         failed = self.book.assemble_short(1)
         self.assertFalse(failed["exports_complete"])
         self.assertEqual(failed["export_details"]["code"], "sqlite_error")

@@ -112,10 +112,17 @@ SUITE_FILES_V061 = (
 SUITE_FILES_V065 = tuple(sorted((*SUITE_FILES_V061,
     "story-skill-plan/references/qimao-tags.md",
 )))
+SUITE_FILES_V069 = tuple(sorted((*SUITE_FILES_V065,
+    "story-skill/scripts/story_outline.py",
+    "story-skill-review/references/fanqie-content-review.md",
+    "story-skill-review/references/qimao-content-review.md",
+    "story-skill-write/references/suspense-evidence.md",
+)))
+SKILL_NAMES_V069 = SKILL_NAMES_V061
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V061
-SUITE_FILES = SUITE_FILES_V065
+SKILL_NAMES = SKILL_NAMES_V069
+SUITE_FILES = SUITE_FILES_V069
 MAX_BYTES = 256 * 1024 * 1024
 
 
@@ -126,6 +133,8 @@ def payload_files(version):
         return SUITE_FILES_V061
     if version in ("0.6.5", "0.6.6", "0.6.7", "0.6.8"):
         return SUITE_FILES_V065
+    if version == "0.6.9":
+        return SUITE_FILES_V069
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -137,6 +146,8 @@ def skill_names(version):
         return SKILL_NAMES_V061
     if version in ("0.6.5", "0.6.6", "0.6.7", "0.6.8"):
         return SKILL_NAMES_V061
+    if version == "0.6.9":
+        return SKILL_NAMES_V069
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 

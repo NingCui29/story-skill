@@ -40,9 +40,10 @@ class LongHistoryTests(unittest.TestCase):
         return error.exception
 
     def add(self, chapter, change=False, dependency_fields=None):
-        text = f"# 第{chapter}章\n沈禾在渡口核对第{chapter}册账本。她交出钥匙，留下一张收据。灯还亮着。\n"
+        text = f"第{chapter}章 核对交接{chapter}\n沈禾在渡口核对第{chapter}册账本。她交出钥匙，留下一张收据。灯还亮着。\n"
         plan = {"volume_dir": "第一卷 雨夜", "title": f"核对交接{chapter}", "goal": "核对交接", "stop": "留在渡口", "requires": [], "tags": [],
-                "constraints": ["不离开渡口"], "beats": [{"choice": "交出钥匙", "change": "保留收据"}], "length": [10, 200]}
+                "constraints": ["不离开渡口"], "beats": [{"choice": "交出钥匙", "change": "保留收据"}], "length": [10, 200],
+                "length_exception": {"source": "user_request", "quote": "测试历史修订需要10至200字。"}}
         self.book.save_plan(chapter, plan, self.rev())
         self.draft.write_bytes(text.encode("utf-8"))
         raw = {"book_id": self.book.meta("id"), "base_revision": self.rev(), "summary": "她交出钥匙，保留收据。",
@@ -311,7 +312,8 @@ class LongHistoryTests(unittest.TestCase):
         self.assertEqual({table: self.book.db.execute(f"SELECT count(*) FROM {table}").fetchone()[0] for table in tables}, counts)
         self.assertEqual(counts["history_heads"], 0)
         self.book.save_plan(20, {"volume_dir": "第一卷 雨夜", "goal": "继续等候", "stop": "留在渡口",
-                               "beats": [{"choice": "留下等候", "change": "继续守灯"}], "length": [10, 200]}, self.rev())
+                               "beats": [{"choice": "留下等候", "change": "继续守灯"}], "length": [10, 200],
+                               "length_exception": {"source": "user_request", "quote": "测试旧稿修订需要10至200字。"}}, self.rev())
         packet = self.start(20)
         self.assert_code("review_incomplete", history.branch_publish, self.book, packet["branch"], self.rev())
         staged = self.stage(packet, {20: text + "她决定继续等候。\n"})
@@ -346,7 +348,8 @@ class LongHistoryTests(unittest.TestCase):
 
     def test_saved_candidate_can_be_read_in_bounded_pieces_without_publishing(self):
         self.add(1)
-        self.book.save_plan(1, {**self.book.get_plan(1), "length": [10, 50000]}, self.rev())
+        self.book.save_plan(1, {**self.book.get_plan(1), "length": [10, 50000],
+                                "length_exception": {"source": "user_request", "quote": "测试长候选读取需要10至50000字。"}}, self.rev())
         packet = self.start()
         changed = self.texts[1] + "窗外雨声。" * 6000
         staged = history.branch_update(self.book, packet["branch"], {"chapters": [self.candidate(1, changed)]}, self.rev())
@@ -672,7 +675,8 @@ class LongHistoryTests(unittest.TestCase):
         text = "# 范围夹具\n这一段仅用于验证分页范围与版本，不作小说质量验收。\n"
         cards = [story.valid_card({"id": f"scope{i:04d}", "text": f"第{i}项状态", "source": "范围夹具"}) for i in range(1, count + 1)]
         plan = story.valid_plan({"volume_dir": "第一卷 范围夹具", "goal": "核对范围", "stop": "结束范围核对",
-                                 "beats": [{"choice": "核对范围", "change": "保留版本证据"}], "length": [1, 200]})
+                                 "beats": [{"choice": "核对范围", "change": "保留版本证据"}], "length": [1, 200],
+                                 "length_exception": {"source": "user_request", "quote": "测试分页范围需要1至200字。"}})
         with self.book.transaction():
             sha = self.book.intern_body(text)
             self.book.db.executemany("INSERT INTO cards VALUES (?,?)", [(c["id"], story.dumps(c)) for c in cards])
@@ -775,7 +779,8 @@ class LongHistoryTests(unittest.TestCase):
         self.draft.write_bytes(text.encode("utf-8"))
         self.book.adopt(1, self.draft, "大篇幅导入，只验证输出上限。", self.rev(), volume_dir="第一卷 雨夜")
         self.book.save_plan(1, {"volume_dir": "第一卷 雨夜", "goal": "核对读取范围", "stop": "读完旧稿",
-                              "beats": [{"choice": "分段核对", "change": "确认完整范围"}], "length": [1, 200000]}, self.rev())
+                              "beats": [{"choice": "分段核对", "change": "确认完整范围"}], "length": [1, 200000],
+                              "length_exception": {"source": "user_request", "quote": "测试旧稿读取需要1至200000字。"}}, self.rev())
         packet = self.start()
         self.assert_code("budget_exceeded", history.branch_inspect, self.book, packet["branch"], chapter=1)
         result = history.branch_inspect(self.book, packet["branch"], chapter=1, budget=300000)

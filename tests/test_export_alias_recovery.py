@@ -25,9 +25,10 @@ class ExportAliasRecoveryTests(unittest.TestCase):
     def test_same_body_rename_detaches_hard_link_inserted_before_export(self):
         fixture = self.fixture
         old = fixture.root / fixture.book.chapter_path(1)
-        fixture.save_plan(1, title="新的入口")
-        relative = "chapters/第一卷 雨夜/第1章 新的入口.md"
+        fixture.save_plan(1, volume_dir="第二卷 渡口")
+        relative = "chapters/第二卷 渡口/第1章 门后的雨.md"
         target = fixture.root / relative
+        target.parent.mkdir(parents=True)
         target.write_bytes(layout.DRAFT.encode("utf-8"))
         outside = Path(fixture.temp.name) / "outside.md"
         outside.write_bytes(layout.DRAFT.encode("utf-8"))

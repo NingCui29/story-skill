@@ -67,6 +67,7 @@ class PublishViewTests(unittest.TestCase):
             plan = {"title": self.titles[chapter], "volume_dir": "第一卷 雾港来信",
                     "goal": "核对仓库交接记录", "stop": "留下抄件，约定下一次核对",
                     "requires": [], "length": [2000, 3000],
+                    "length_exception": {"source": "user_request", "quote": "测试章按2000至3000字写作。"},
                     "beats": [{"choice": "逐项核对记录", "change": "保留可查证的抄件"}]}
             self.book.save_plan(chapter, plan, self.revision())
             self.commit_body(chapter, body)

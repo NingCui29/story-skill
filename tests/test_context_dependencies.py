@@ -46,6 +46,7 @@ class ContextDependencyTests(unittest.TestCase):
             "line": "home", "entities": ["actor"], "time": {"clock": "main", "start": 11, "end": 11},
             "goal": "核对寄信人的身份", "stop": "辨认线索后停笔", "constraints": [], "requires": [],
             "tags": [], "length": [1, 100], "beats": [{"choice": "回看信封", "change": "找到新线索"}],
+            "length_exception": {"source": "user_request", "quote": "测试依赖候选需要1至100字。"},
         }, self.book.meta("revision"))
 
     def assert_selected_dependencies(self):
@@ -86,7 +87,7 @@ class ContextDependencyTests(unittest.TestCase):
         self.seed()
         dependencies = self.book.dependency_candidates(2)
         quote = "甲回看信封，决定先核对寄信人的身份。"
-        text = "# 第2章 查信\n" + quote + "\n"
+        text = "第2章 查信\n" + quote + "\n"
         draft = self.root / "second.md"
         draft.write_bytes(text.encode("utf-8"))
         raw = {

@@ -19,7 +19,7 @@ def load(name):
 
 
 migration, upgrade = load("migrate_probe"), load("upgrade_probe")
-scaling = load("scale_probe")
+scaling, benchmark = load("scale_probe"), load("benchmark")
 
 
 class ProbeOutputTests(unittest.TestCase):
@@ -81,6 +81,28 @@ class ProbeOutputTests(unittest.TestCase):
 
 
 class ReleaseProbeTests(unittest.TestCase):
+    def test_small_capacity_fixture_saves_default_length_plan(self):
+        story = scaling.load_module("test_scale_fixture_story", scaling.TOOL)
+        with tempfile.TemporaryDirectory(prefix="story-small-scale-fixture-") as directory:
+            root = Path(directory).resolve()
+            result = scaling.make_fixture(story, root, 1, 1)
+            self.assertEqual(result["chapter_unique_body_count"], 1)
+            book = story.Book(root)
+            try:
+                plan = json.loads(book.db.execute("SELECT data FROM plans WHERE chapter=2").fetchone()[0])
+                self.assertEqual(plan["length"], [2400, 2800])
+            finally:
+                book.close()
+
+    def test_synthetic_benchmark_context_saves_default_length_plan(self):
+        class CharacterEncoder:
+            def encode(self, value, **_kwargs):
+                return list(value)
+
+        result = benchmark.synthetic_context(CharacterEncoder())
+        self.assertEqual(result["kind"], "synthetic_not_upstream_runtime")
+        self.assertGreaterEqual(result["required_selected"], 1)
+
     def test_generated_schema1_books_cover_native_baseline_and_analysis_rollback(self):
         report = migration.probe()
         self.assertTrue(report["ok"], report.get("error"))

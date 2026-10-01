@@ -65,6 +65,7 @@ class PublishTests(unittest.TestCase):
         text = text if text is not None else f"第{chapter}章 {title}\n" + BODY
         plan = {"title": title, "volume_dir": "第一卷 雨夜", "goal": "完成钥匙交接",
                 "stop": "看到账本，不翻开账本", "requires": [], "length": [10, 500],
+                "length_exception": {"source": "user_request", "quote": "测试章按10至500字写作。"},
                 "beats": [{"choice": "交出钥匙", "change": "获准入内并保留收据"}]}
         self.book.save_plan(chapter, plan, self.rev())
         self.draft.write_bytes(text.encode("utf-8"))
@@ -76,6 +77,20 @@ class PublishTests(unittest.TestCase):
         self.assertTrue(result["exports_complete"], result)
         self.texts[chapter] = text
         return result
+
+    def adopt_legacy(self, text, title=None):
+        """Exercise publishing against a reviewed preexisting manuscript."""
+        plan = {"volume_dir": "第一卷 雨夜", "goal": "完成钥匙交接",
+                "stop": "看到账本，不翻开账本", "requires": [], "length": [10, 500],
+                "length_exception": {"source": "user_request", "quote": "测试章按10至500字写作。"},
+                "beats": [{"choice": "交出钥匙", "change": "获准入内并保留收据"}]}
+        if title is not None:
+            plan["title"] = title
+        self.book.save_plan(1, plan, self.rev())
+        self.draft.write_bytes(text.encode("utf-8"))
+        self.book.adopt(1, self.draft, "导入既有章节并重新审稿。", self.rev(), volume_dir="第一卷 雨夜")
+        self.texts[1] = text
+        self.publish_reviewed_history()
 
     def payload(self, chapters=(1,), **fields):
         return {"platform": "fanqie", "account_id": "author-one", "remote_book_id": "book-one",
@@ -94,6 +109,7 @@ class PublishTests(unittest.TestCase):
             self.book.save_plan(chapter, {
                 "volume_dir": "第一卷 雨夜", "goal": "完成钥匙交接", "stop": "看到门内账本",
                 "requires": [], "length": [10, 500],
+                "length_exception": {"source": "user_request", "quote": "测试章按10至500字写作。"},
                 "beats": [{"choice": "交出钥匙", "change": "保留收据并入内"}]}, self.rev())
         packet = story.history.branch_start(self.book, chapter, self.rev())
         candidates = []
@@ -360,13 +376,13 @@ class PublishTests(unittest.TestCase):
         self.assertEqual(result["manifest"]["chapters"][0]["title"], "旧账本")
 
     def test_plain_first_body_line_is_never_mistaken_for_a_heading(self):
-        self.commit(text=BODY, title="不带章头的原稿")
+        self.adopt_legacy(BODY, title="不带章头的原稿")
         result = self.prepare()
         self.assertEqual(result["manifest"]["chapters"][0]["body"], BODY)
         self.assertEqual(result["manifest"]["chapters"][0]["title"], "不带章头的原稿")
 
     def test_legacy_markdown_title_matching_formal_plan_is_separated(self):
-        self.commit(text="# 雨夜\n" + BODY, title="雨夜")
+        self.adopt_legacy("# 雨夜\n" + BODY, title="雨夜")
         item = self.prepare()["manifest"]["chapters"][0]
         self.assertEqual(item["title"], "雨夜")
         self.assertEqual(item["body"], BODY)
@@ -374,22 +390,14 @@ class PublishTests(unittest.TestCase):
 
     def test_legacy_markdown_title_without_plan_title_remains_publishable(self):
         text = "# 雨夜\n" + BODY
-        self.book.save_plan(1, {
-            "volume_dir": "第一卷 雨夜", "goal": "完成钥匙交接", "stop": "看到账本，不翻开",
-            "requires": [], "length": [10, 500],
-            "beats": [{"choice": "交出钥匙", "change": "保留收据并入内"}]}, self.rev())
-        self.draft.write_bytes(text.encode("utf-8"))
-        result = self.book.commit(1, self.draft, {
-            "book_id": self.book.meta("id"), "base_revision": self.rev(),
-            "summary": "沈禾交出钥匙后入内，保留交接收据。", "changes": [], "review": self.review(text)})
-        self.assertTrue(result["exports_complete"], result)
+        self.adopt_legacy(text)
         self.assertEqual(self.book.chapter_path(1), "chapters/第一卷 雨夜/第1章 雨夜.md")
         item = self.prepare()["manifest"]["chapters"][0]
         self.assertEqual(item["title"], "雨夜")
         self.assertEqual(item["body"], BODY)
 
     def test_legacy_markdown_title_conflicting_with_formal_plan_is_blocked(self):
-        self.commit(text="# 雨夜\n" + BODY, title="晴天")
+        self.adopt_legacy("# 雨夜\n" + BODY, title="晴天")
         self.assert_code("publish_title_mismatch", self.prepare)
         self.assertFalse(self.ledger.exists())
 
@@ -399,47 +407,38 @@ class PublishTests(unittest.TestCase):
             with self.subTest(space=repr(space), with_title=with_title):
                 title = f"雨夜{chapter}"
                 text = "#" + space + title + "\n" + BODY
-                if with_title:
-                    self.commit(chapter, text=text, title=title)
-                else:
-                    self.book.save_plan(chapter, {
-                        "volume_dir": "第一卷 雨夜", "goal": "完成钥匙交接", "stop": "看到账本，不翻开",
-                        "requires": [], "length": [10, 500],
-                        "beats": [{"choice": "交出钥匙", "change": "保留收据并入内"}]}, self.rev())
-                    self.draft.write_bytes(text.encode("utf-8"))
-                    result = self.book.commit(chapter, self.draft, {
-                        "book_id": self.book.meta("id"), "base_revision": self.rev(),
-                        "summary": "沈禾交出钥匙后入内，保留收据。", "changes": [], "review": self.review(text)})
-                    self.assertTrue(result["exports_complete"], result)
-                item = self.prepare((chapter,))["manifest"]["chapters"][0]
-                self.assertEqual(item["title"], title)
-                self.assertEqual(item["body"], BODY)
-                self.assertEqual(item["body_sha"], story.digest(text))
+                selected, body, conversion = publishing._split(
+                    chapter, text, {"title": title} if with_title else {})
+                self.assertEqual(selected, title)
+                self.assertEqual(body, BODY)
+                self.assertEqual(conversion, "confirmed_first_heading_removed_v1")
 
     def test_unicode_indentation_in_an_ordinary_first_paragraph_is_preserved(self):
         for chapter, space in enumerate(("\u3000", "\u00a0"), 1):
             text = space + BODY + "\n正文引文中的 # 雨夜保持原样。\n"
-            self.commit(chapter, text=text, title=f"雨夜{chapter}")
-            self.assertEqual(self.prepare((chapter,))["manifest"]["chapters"][0]["body"], text)
+            title, body, conversion = publishing._split(chapter, text, {"title": f"雨夜{chapter}"})
+            self.assertEqual(title, f"雨夜{chapter}")
+            self.assertEqual(body, text)
+            self.assertEqual(conversion, "body_unchanged_v1")
 
     def test_hashes_inside_prose_and_unrecognized_opening_are_preserved(self):
         for chapter, first in ((1, ""), (2, "## 雨夜\n")):
             with self.subTest(chapter=chapter):
                 text = first + BODY + "\n# 账房旧规\n纸条写着：收据编号 #7，切勿遗失。\n"
-                self.commit(chapter, text=text, title=f"正文中的纸条{chapter}")
-                item = self.prepare((chapter,))["manifest"]["chapters"][0]
-                self.assertEqual(item["title"], f"正文中的纸条{chapter}")
-                self.assertEqual(item["body"], text)
+                title, body, conversion = publishing._split(
+                    chapter, text, {"title": f"正文中的纸条{chapter}"})
+                self.assertEqual(title, f"正文中的纸条{chapter}")
+                self.assertEqual(body, text)
+                self.assertEqual(conversion, "body_unchanged_v1")
 
     def test_chinese_crlf_and_non_bmp_survive_title_body_conversion(self):
         body = BODY.replace("账。", "账：𠮷字旁还有一枚🌧️印记。")
         text = ("# 第一章 雨夜𠮷字\n" + body).replace("\n", "\r\n")
-        self.commit(text=text, title="雨夜𠮷字")
-        result = self.prepare()["manifest"]["chapters"][0]
-        self.assertEqual(result["body"], body.replace("\n", "\r\n"))
-        self.assertEqual(result["title"], "雨夜𠮷字")
-        self.assertEqual(result["body_sha"], story.digest(text))
-        self.assertEqual(result["body"].count("\r\n"), body.count("\n"))
+        title, upload_body, conversion = publishing._split(1, text, {"title": "雨夜𠮷字"})
+        self.assertEqual(upload_body, body.replace("\n", "\r\n"))
+        self.assertEqual(title, "雨夜𠮷字")
+        self.assertEqual(conversion, "confirmed_first_heading_removed_v1")
+        self.assertEqual(upload_body.count("\r\n"), body.count("\n"))
 
     def test_reviewed_import_without_a_title_is_not_given_a_fabricated_title(self):
         self.draft.write_bytes(BODY.encode("utf-8"))
@@ -462,10 +461,12 @@ class PublishTests(unittest.TestCase):
                 self.assert_code("invalid_input", publishing.prepare, self.book, payload, self.rev())
         self.assertEqual(self.writing_snapshot(), before)
 
-    def test_stale_revision_and_ambiguous_title_cannot_create_a_plan(self):
-        self.commit(text="第1章 原稿标题\n" + BODY, title="正式大纲标题")
+    def test_stale_revision_and_draft_heading_mismatch_cannot_create_a_plan(self):
+        self.assert_code("lint_failed", self.commit,
+                         text="第1章 原稿标题\n" + BODY, title="正式大纲标题")
+        self.assertFalse(self.ledger.exists())
+        self.commit(text="第1章 正式大纲标题\n" + BODY, title="正式大纲标题")
         self.assert_code("stale_revision", publishing.prepare, self.book, self.payload(), self.rev() - 1)
-        self.assert_code("publish_title_mismatch", self.prepare)
         self.assertFalse(self.ledger.exists())
 
     def test_qimao_and_fanqie_bindings_get_distinct_plans_in_numeric_chapter_order(self):

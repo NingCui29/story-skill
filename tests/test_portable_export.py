@@ -12,7 +12,7 @@ spec = importlib.util.spec_from_file_location("story_portable_export", TOOL)
 story = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(story)
 
-DRAFT = "# 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
+DRAFT = "第1章 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n"
 REVISED = DRAFT + "她没有回头。\n"
 
 
@@ -32,6 +32,7 @@ class PortableWindowsExportTests(unittest.TestCase):
         self.addCleanup(self.book.close)
         plan = {"volume_dir": "第一卷 雨夜", "goal": "决定钥匙的去向", "stop": "选择入口后停笔", "constraints": [],
                 "requires": [], "tags": [], "length": [20, 120],
+                "length_exception": {"source": "user_request", "quote": "测试章按20至120字写作。"},
                 "beats": [{"choice": "沈禾决定是否交出钥匙", "change": "失去或保留退路"}]}
         self.book.save_plan(1, plan, self.book.meta("revision"))
         self.draft = self.root / ".story/drafts/chapter.md"

@@ -13,9 +13,10 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("story_storage_test_runtime", ROOT / "skills/story-skill/scripts/story.py")
 story = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(story)
-TEXT = "# 第1章 交钥匙\n江棠把旧钥匙交给杜承安。雨停之前，他必须回来。\n"
+TEXT = "第1章 交钥匙\n江棠把旧钥匙交给杜承安。雨停之前，他必须回来。\n"
 PLAN = {"volume_dir": "第一卷 雨夜", "goal": "交出旧钥匙", "stop": "等待杜承安返回", "beats": [{"choice": "交出钥匙", "change": "承担失物风险"}],
-        "requires": ["key"], "tags": ["江棠"], "length": [10, 100]}
+        "requires": ["key"], "tags": ["江棠"], "length": [10, 100],
+        "length_exception": {"source": "user_request", "quote": "测试长篇存储需要10至100字。"}}
 
 
 class LongStorageTests(unittest.TestCase):
@@ -37,9 +38,9 @@ class LongStorageTests(unittest.TestCase):
         self.draft = self.root / "draft.md"
         self.draft.write_bytes(TEXT.encode("utf-8"))
 
-    def delta(self):
+    def delta(self, text=TEXT):
         return {"book_id": self.book.meta("id"), "base_revision": self.book.meta("revision"), "summary": "江棠交出钥匙，等待归还。",
-            "changes": [], "review": {"draft_sha256": story.digest(TEXT), "checks": {
+            "changes": [], "review": {"draft_sha256": story.digest(text), "checks": {
                 key: {"note": "交付动作与归还承诺已在场。", "quote": "江棠把旧钥匙交给杜承安。"} for key in story.CHECKS}, "issues": []}}
 
     def old_book(self):
@@ -114,7 +115,9 @@ class LongStorageTests(unittest.TestCase):
         self.initialize()
         self.book.commit(1, self.draft, self.delta())
         self.book.save_plan(2, {**PLAN, "title": "第二次交钥匙"}, self.book.meta("revision"))
-        self.book.commit(2, self.draft, self.delta())
+        second = TEXT.replace("第1章 交钥匙", "第2章 第二次交钥匙")
+        self.draft.write_bytes(second.encode("utf-8"))
+        self.book.commit(2, self.draft, self.delta(second))
         archive = self.root / self.book.chapter_path(1)
         stat = archive.stat()
         archive.write_bytes(archive.read_bytes().replace("江棠".encode(), "江糖".encode()))

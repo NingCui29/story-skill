@@ -29,7 +29,9 @@ class PublishExportTests(unittest.TestCase):
         body_one = fixtures.BODY.replace("账。", "账：𠮷字旁画着一枚🌧️印记。").replace("\n", "\r\n")
         self.fixture.commit(1, text="第1章 雨夜𠮷字\r\n" + body_one, title="雨夜𠮷字")
         body_two = fixtures.BODY.rstrip("\n") + "街边灯笼🌧️还亮着。"
-        self.fixture.commit(2, text=body_two, title="未写章头的稿件")
+        # Preserve a preexisting unheaded manuscript in this export fixture.
+        with patch.object(story, "chapter_heading_errors", return_value=[]):
+            self.fixture.commit(2, text=body_two, title="未写章头的稿件")
         prepared = self.fixture.prepare((1, 2))
         return prepared, {1: body_one, 2: body_two}
 

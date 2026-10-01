@@ -18,11 +18,12 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.8"
+VERSION = "0.6.9"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
 COUNT_METHODS = ("visible_nonspace_v1", "letters_numbers_v1", "han_v1")
+DEFAULT_CHAPTER_LENGTH = (2400, 2800)
 
 
 class StoryError(Exception):
@@ -78,7 +79,7 @@ def book_text_filename(title):
         while len(component) + len(suffix) > 100 or len((component + suffix).encode("utf-8")) > 180:
             component = component[:-1]
         component = component.rstrip(". ") + suffix
-    return filename_component(component, "book output filename") + ".txt"
+    return filename_component(component, "book output filename") + ".md"
 
 
 VOLUME_DIRECTORY = re.compile(r"(第[0-9０-９零〇一二三四五六七八九十百千万两]+卷)\s+(\S.*)")
@@ -111,6 +112,98 @@ def first_chapter_heading(text):
     return None
 
 
+COMPLETE_CHAPTER_HEADING = re.compile(
+    r"^第([0-9０-９零〇一二三四五六七八九十百千万两]+)章[ \t　:：、.．-]+(\S.*)$")
+PLAIN_CHAPTER_HEADING = re.compile(
+    r"^第([0-9０-９零〇一二三四五六七八九十百千万两]+)章 (\S.*)$")
+CHINESE_CHAPTER_DIGITS = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2,
+                          "三": 3, "四": 4, "五": 5, "六": 6, "七": 7,
+                          "八": 8, "九": 9}
+CHINESE_CHAPTER_UNITS = {"十": 10, "百": 100, "千": 1000}
+
+
+def chapter_number(value):
+    """Read a conventional chapter numeral; leave unusual legacy forms unclassified."""
+    value = unicodedata.normalize("NFKC", value)
+    if value.isdecimal():
+        return int(value)
+    if all(char in CHINESE_CHAPTER_DIGITS for char in value):
+        return int("".join(str(CHINESE_CHAPTER_DIGITS[char]) for char in value))
+    if any(char not in CHINESE_CHAPTER_DIGITS and char not in CHINESE_CHAPTER_UNITS and char != "万"
+           for char in value):
+        return None
+    total = section = digit = 0
+    for char in value:
+        if char in CHINESE_CHAPTER_DIGITS:
+            digit = CHINESE_CHAPTER_DIGITS[char]
+        elif char in CHINESE_CHAPTER_UNITS:
+            section += (digit or 1) * CHINESE_CHAPTER_UNITS[char]
+            digit = 0
+        else:
+            total += (section + digit) * 10000
+            section = digit = 0
+    return total + section + digit
+
+
+def volume_number_key(match):
+    """Treat equivalent Chinese and Arabic volume numerals as one ordinal."""
+    numeral = match[1][1:-1]
+    number = chapter_number(numeral)
+    return ("number", number) if number is not None else ("text", display_name_key(numeral))
+
+
+def same_numbered_volume(left, right):
+    """Whether two named directories claim the same reader-facing volume."""
+    left_match = VOLUME_DIRECTORY.fullmatch(left or "")
+    right_match = VOLUME_DIRECTORY.fullmatch(right or "")
+    return bool(left_match and right_match and
+                volume_number_key(left_match) == volume_number_key(right_match))
+
+
+def chapter_title(value):
+    title = filename_component(value, "plan.title")
+    if re.match(r"^(?:#{1,6}[ \t　]+)?第[ \t　]*[0-9０-９零〇一二三四五六七八九十百千万两]+[ \t　]*章",
+                unicodedata.normalize("NFKC", title)):
+        fail("chapter_title_prefix", "plan.title must omit the chapter number, for example 门后的雨")
+    return title
+
+
+def chapter_heading_errors(text, plan, chapter, *, require_plain=False, previous_text=None,
+                           previous_title=None):
+    """Require a plain heading for new prose and check edited complete headings."""
+    lines = text.lstrip("\ufeff").splitlines()
+    first_line = lines[0] if lines else ""
+    previous_lines = previous_text.lstrip("\ufeff").splitlines() if previous_text is not None else []
+    adopted_title = plan.get("title")
+    # An unknown old title is not evidence that a newly assigned plan title
+    # matches an unchanged heading. Recheck that heading against the plan.
+    title_unchanged = (not adopted_title or (previous_title is not None and
+                       display_name_key(adopted_title) == display_name_key(previous_title)))
+    if previous_text is not None and first_line == (previous_lines[0] if previous_lines else "") and title_unchanged:
+        return []
+    require_plain |= previous_text is not None
+    heading = first_chapter_heading(text)
+    match = COMPLETE_CHAPTER_HEADING.fullmatch(heading or "")
+    errors = []
+    if require_plain and not PLAIN_CHAPTER_HEADING.fullmatch(first_line):
+        errors.append({"code": "chapter_heading_format" if match else "chapter_heading_required",
+                       "expected": f"第{chapter}章 章名"})
+    if not match:
+        return errors
+    number = chapter_number(match[1])
+    if number is not None and number != chapter:
+        errors.append({"code": "chapter_heading_number", "actual": number, "expected": chapter})
+    title = plan.get("title")
+    if title is not None and display_name_key(match[2]) != display_name_key(title):
+        errors.append({"code": "chapter_heading_title", "actual": match[2], "expected": title})
+    return errors
+
+
+def stored_chapter_title(path):
+    match = re.fullmatch(r"第[0-9]+章 (.+)", Path(path).stem)
+    return match[1] if match else None
+
+
 _ASSEMBLY_BREAK = r"\r\n|[\n\r\v\f\x1c-\x1e\x85\u2028\u2029]"
 
 
@@ -123,6 +216,8 @@ def _assembly_boundary_breaks(text, leading=False):
 
 def chapter_filename(chapter, text, plan, imported=False):
     title = plan.get("title")
+    if title is not None:
+        title = chapter_title(title)
     if title is None:
         heading = first_chapter_heading(text)
         title = re.sub(r"^第[0-9０-９零〇一二三四五六七八九十百千万两]+章[\s　:：、.．-]*", "", heading or "").strip()
@@ -630,8 +725,25 @@ def valid_plan(raw):
     if type(include_title) is not bool:
         fail("invalid_input", "plan.count_title must be boolean")
     result.update(count_method=method, count_title=include_title)
+    if "length_exception" in raw:
+        claim = raw["length_exception"]
+        if not isinstance(claim, dict):
+            fail("length_exception_required", "A chapter length exception needs a recorded source and exact quote")
+        source = claim.get("source")
+        required = {"source", "quote", "path"} if source == "book_agreement" else {"source", "quote"}
+        if source not in ("user_request", "book_agreement") or set(claim) != required:
+            fail("length_exception_required", "Use a user_request quote or a book_agreement path and quote")
+        try:
+            exception = {"source": source, "quote": text_field(claim["quote"], "plan.length_exception.quote")}
+            if source == "book_agreement":
+                exception["path"] = text_field(claim["path"], "plan.length_exception.path", 400)
+        except (KeyError, StoryError):
+            fail("length_exception_required", "A chapter length exception needs an exact quote and valid source")
+        if not any(unicodedata.category(char)[0] in "LN" for char in exception["quote"]):
+            fail("length_exception_required", "A chapter length exception needs a readable source quote")
+        result["length_exception"] = exception
     if "title" in raw:
-        result["title"] = filename_component(raw["title"], "plan.title")
+        result["title"] = chapter_title(raw["title"])
     if "volume_dir" in raw:
         result["volume_dir"] = volume_directory(raw["volume_dir"])
     for key in ("volume", "arc", "line"):
@@ -652,6 +764,12 @@ def valid_plan(raw):
     return result
 
 
+def needs_length_exception(plan):
+    return (plan["length"] != list(DEFAULT_CHAPTER_LENGTH)
+            or plan.get("count_method", "visible_nonspace_v1") != "visible_nonspace_v1"
+            or plan.get("count_title", False))
+
+
 def manuscript_counts(text, include_title=False):
     """Declared character counts, never platform word counts or model tokens."""
     lines = text.splitlines()
@@ -670,7 +788,8 @@ def visible_count(text):
     return manuscript_counts(text)["visible_nonspace_v1"]
 
 
-def lint_text(text, plan):
+def lint_text(text, plan, chapter=None, warn_nondefault=False, *, require_plain_heading=False,
+              previous_text=None, previous_title=None):
     method = plan.get("count_method", "visible_nonspace_v1")
     if method not in COUNT_METHODS:
         fail("invalid_input", f"Unknown count method: {method}")
@@ -679,6 +798,15 @@ def lint_text(text, plan):
     errors, warnings = [], []
     if not plan["length"][0] <= count <= plan["length"][1]:
         errors.append({"code": "length", "actual": count, "expected": plan["length"]})
+    if chapter is not None:
+        errors.extend(chapter_heading_errors(text, plan, chapter,
+                                              require_plain=require_plain_heading,
+                                              previous_text=previous_text,
+                                              previous_title=previous_title))
+    if warn_nondefault and plan["length"] != list(DEFAULT_CHAPTER_LENGTH):
+        warnings.append({"code": "nondefault_plan_length", "saved": plan["length"],
+                         "default": list(DEFAULT_CHAPTER_LENGTH),
+                         "note": "完整新章请先核对当前用户要求或书内篇幅约定；明确例外仍有效"})
     if "\ufffd" in text or "\x00" in text:
         errors.append({"code": "corrupt_text"})
     if re.search(r"<填写[^>]*>|(?m:^\s*REPLACE_ME\s*$)", text):
@@ -871,27 +999,78 @@ class Book:
             fail("plan_missing", "Save a concrete chapter plan before drafting", chapter=chapter)
         return json.loads(row[0])
 
-    def _check_unique_names(self, chapter, title=None, volume_dir=None):
+    def _plan_volume_directory(self, plan):
+        if plan.get("volume_dir"):
+            return plan["volume_dir"]
+        vid = plan.get("volume")
+        if not vid:
+            return None
+        row = self.db.execute("SELECT value FROM meta WHERE key=?", ("volume_dir:" + vid,)).fetchone()
+        if row:
+            return json.loads(row[0])
+        row = self.db.execute("SELECT title FROM world_volumes WHERE id=?", (vid,)).fetchone()
+        return row[0] if row else None
+
+    def _check_plan_volume_binding(self, chapter, plan):
+        vid = plan.get("volume")
+        if not vid:
+            return
+        requested = self._plan_volume_directory(plan)
+        row = self.db.execute("SELECT value FROM meta WHERE key=?", ("volume_dir:" + vid,)).fetchone()
+        assigned = json.loads(row[0]) if row else None
+        if requested and assigned and requested != assigned:
+            fail("volume_directory_conflict", "This volume ID already has a directory",
+                 volume=vid, expected=assigned, requested=requested)
+        self._check_registered_volume_owner(vid, requested)
+        for other_chapter, data in self.db.execute("SELECT chapter,data FROM plans WHERE chapter<>?", (chapter,)):
+            other = json.loads(data)
+            other_dir = self._plan_volume_directory(other)
+            if other.get("volume") == vid and requested and other_dir and requested != other_dir:
+                fail("volume_directory_conflict", "One volume ID must keep one directory across plans",
+                     volume=vid, chapter=chapter, other_chapter=other_chapter,
+                     volume_dir=requested, other_volume_dir=other_dir)
+            if (other.get("volume") and other["volume"] != vid and
+                    same_numbered_volume(requested, other_dir)):
+                fail("volume_directory_conflict", "One numbered volume cannot belong to two volume IDs",
+                     volume=vid, other_volume=other["volume"], chapter=chapter,
+                     other_chapter=other_chapter, volume_dir=requested)
+
+    def _check_registered_volume_owner(self, vid, requested):
+        if not vid or not requested:
+            return
+        for key, value in self.db.execute("SELECT key,value FROM meta WHERE key GLOB 'volume_dir:*'"):
+            other_vid = key[len("volume_dir:"):]
+            if other_vid != vid and same_numbered_volume(requested, json.loads(value)):
+                fail("volume_directory_conflict", "One numbered volume cannot belong to two volume IDs",
+                     volume=vid, other_volume=other_vid, volume_dir=requested)
+
+    def _check_unique_names(self, chapter, title=None, volume_dir=None, imported=False):
         title_key = display_name_key(title) if title else None
         volume_match = VOLUME_DIRECTORY.fullmatch(volume_dir) if volume_dir else None
-        volume_number = volume_match[1] if volume_match else None
+        volume_number = volume_number_key(volume_match) if volume_match else None
         volume_key = display_name_key(volume_match[2]) if volume_match else None
 
         def compare(other_chapter, other_title=None, other_volume=None):
             if other_chapter == chapter:
                 return
-            if title_key and other_title and display_name_key(other_title) == title_key:
+            if not imported and title_key and other_title and display_name_key(other_title) == title_key:
                 fail("duplicate_chapter_title", "Chapter names must be unique within one book",
                      chapter=chapter, other_chapter=other_chapter, title=title)
             match = VOLUME_DIRECTORY.fullmatch(other_volume or "")
-            if volume_key and match and match[1] != volume_number and display_name_key(match[2]) == volume_key:
+            other_number = volume_number_key(match) if match else None
+            if volume_number is not None and other_number == volume_number and other_volume != volume_dir:
+                fail("volume_directory_conflict", "One volume number must keep one directory across the book",
+                     chapter=chapter, other_chapter=other_chapter, volume_dir=volume_dir,
+                     other_volume_dir=other_volume)
+            if (not imported and volume_key and match and other_number != volume_number
+                    and display_name_key(match[2]) == volume_key):
                 fail("duplicate_volume_title", "Volume names must be unique within one book",
                      chapter=chapter, other_chapter=other_chapter, volume_dir=volume_dir,
                      other_volume_dir=other_volume)
 
         for other, data in self.db.execute("SELECT chapter,data FROM plans WHERE chapter<>?", (chapter,)):
             plan = json.loads(data)
-            compare(other, plan.get("title"), plan.get("volume_dir"))
+            compare(other, plan.get("title"), self._plan_volume_directory(plan))
         for (other,) in self.db.execute("SELECT chapter FROM chapter_state WHERE chapter<>?", (chapter,)):
             path = Path(self.chapter_path(other))
             match = re.fullmatch(r"第\d+章 (.+)", path.stem)
@@ -920,7 +1099,15 @@ class Book:
         integer(chapter, "chapter", 1)
         plan = valid_plan(payload)
         with self.transaction(expected):
-            self._check_unique_names(chapter, plan.get("title"), plan.get("volume_dir"))
+            imported_gap = (self.meta("kind") == "short" and
+                            0 < chapter < self.meta("imported_through"))
+            if not imported_gap and not self.db.execute(
+                    "SELECT 1 FROM chapter_state WHERE chapter=?", (chapter,)).fetchone():
+                issue = self._length_exception_issue(plan)
+                if issue:
+                    fail(issue["code"], issue["message"], chapter=chapter)
+            self._check_plan_volume_binding(chapter, plan)
+            self._check_unique_names(chapter, plan.get("title"), self._plan_volume_directory(plan))
             old = self.db.execute("SELECT data FROM plans WHERE chapter=?", (chapter,)).fetchone()
             if not old or old[0] != dumps(plan):
                 self.db.execute("INSERT INTO plans VALUES (?,?) ON CONFLICT(chapter) DO UPDATE SET data=excluded.data",
@@ -928,6 +1115,36 @@ class Book:
                 self.event("plan", {"chapter": chapter, "before": json.loads(old[0]) if old else None, "after": plan})
             revision = self.meta("revision")
         return {"chapter": chapter, "revision": revision}
+
+    def _length_exception_issue(self, plan):
+        if not needs_length_exception(plan) and "length_exception" not in plan:
+            return None
+        claim = plan.get("length_exception")
+        if (not isinstance(claim, dict) or claim.get("source") not in
+                ("user_request", "book_agreement") or
+                not isinstance(claim.get("quote"), str) or
+                not any(unicodedata.category(char)[0] in "LN" for char in claim["quote"])):
+            return {"code": "length_exception_required",
+                    "message": "New complete chapters need an explicit user or book agreement for a nondefault length or count method"}
+        required = {"source", "quote", "path"} if claim["source"] == "book_agreement" else {"source", "quote"}
+        if set(claim) != required or "<填写" in claim["quote"] or claim["quote"].strip() in (
+                "TODO", "待补充", "REPLACE_ME"):
+            return {"code": "length_exception_required",
+                    "message": "Chapter length exception must contain a real, exact source quote"}
+        if claim["source"] == "book_agreement":
+            relative = claim.get("path")
+            if relative != "创作约定.md":
+                return {"code": "length_exception_source_missing",
+                        "message": "Chapter length exceptions must cite the current root 创作约定.md"}
+            try:
+                target = safe_path(self.root, relative)
+                source_text = read_text(target) if target.is_file() and target.stat().st_size <= 1_000_000 else ""
+            except (StoryError, OSError, UnicodeError):
+                source_text = ""
+            if claim["quote"] not in source_text:
+                return {"code": "length_exception_source_missing",
+                        "message": "The exact chapter length exception quote is absent from the current book agreement"}
+        return None
 
     def _check_artifact(self, relative, new_sha, old_sha):
         target = safe_path(self.root, relative)
@@ -954,6 +1171,26 @@ class Book:
     def chapter_path(self, chapter):
         row = self.db.execute("SELECT value FROM meta WHERE key=?", (f"chapter_path:{chapter}",)).fetchone()
         return json.loads(row[0]) if row else f"chapters/{chapter:04d}.md"
+
+    def adopted_chapter_title(self, chapter):
+        current = self.db.execute(
+            "SELECT sha,receipt,imported FROM chapters WHERE chapter=?", (chapter,)).fetchone()
+        if current and not current["imported"]:
+            published = history.published_plan(self, chapter, json.loads(current["receipt"]), current["sha"])
+            if published and published.get("title"):
+                return published["title"]
+        row = self.db.execute(
+            "SELECT v.plan,v.sha,v.revision,v.publication_revision FROM history_heads h "
+            "JOIN history_versions v ON v.id=h.version WHERE h.chapter=?",
+            (chapter,)).fetchone()
+        # A lazily seeded head can postdate publication and must not stand in
+        # for an unavailable publication-time plan.
+        if (row and row["plan"] and current and row["sha"] == current["sha"]
+                and row["revision"] == row["publication_revision"]):
+            title = json.loads(row["plan"]).get("title")
+            if title:
+                return title
+        return stored_chapter_title(self.chapter_path(chapter))
 
     def chapter_volume(self, plan, current_directory=None):
         volume = plan.get("volume_dir")
@@ -993,6 +1230,7 @@ class Book:
         return volume
 
     def chapter_destination(self, chapter, text, plan, imported=False):
+        self._check_plan_volume_binding(chapter, plan)
         previous = self.chapter_path(chapter)
         old = self.db.execute("SELECT 1 FROM artifact_state WHERE path=?", (previous,)).fetchone()
         # Read-only resolution is shared by review preparation and publication.
@@ -1000,8 +1238,8 @@ class Book:
             return previous
         volume = self.chapter_volume(plan, Path(previous).parent.name if old else None)
         filename = chapter_filename(chapter, text, plan, imported)
-        if not imported:
-            self._check_unique_names(chapter, filename[len(f"第{chapter}章 "):-3], volume)
+        self._check_unique_names(chapter, None if imported else filename[len(f"第{chapter}章 "):-3],
+                                 volume, imported=imported)
         return f"chapters/{volume}/{filename}"
 
     def _chapter_target(self, chapter, text, plan=None, accepted_sha=None, imported=False, external=None):
@@ -1035,6 +1273,7 @@ class Book:
 
     def queue_chapter(self, chapter, text, plan=None, accepted_sha=None, imported=False):
         plan = plan or {}
+        outline.verify(self, chapter, plan)
         previous, old, relative, reused, target_sha, accepted_sha = self._chapter_target(
             chapter, text, plan, accepted_sha, imported)
         self.queue_artifact(relative, text, accepted_sha=target_sha)
@@ -1132,7 +1371,8 @@ class Book:
                 remember(self._short_assembly_record()["path"], error)
             rows = self._artifact_rows()
             snapshots = {}
-            retired = self._retired_chapters()
+            retired_assembly = self._retired_short_assembly()
+            retired = self._retired_chapters() + ([retired_assembly] if retired_assembly else [])
             for row in retired:
                 if row["path"] == row["destination"]:
                     continue
@@ -1177,7 +1417,8 @@ class Book:
                 if row["path"] in errors or row["destination"] in errors:
                     continue
                 try:
-                    saved = self._retire_chapter(row)
+                    saved = (self._retire_short_assembly(row) if row is retired_assembly
+                             else self._retire_chapter(row))
                     if saved:
                         backups.append(saved)
                 except (OSError, StoryError, sqlite3.Error) as error:
@@ -1198,7 +1439,8 @@ class Book:
                     remember(row["path"], error)
                     if not safe_only:
                         raise
-            for row in self._retired_chapters():
+            outstanding_assembly = self._retired_short_assembly()
+            for row in self._retired_chapters() + ([outstanding_assembly] if outstanding_assembly else []):
                 if row["path"] in errors and errors[row["path"]]["code"] != "export_pending":
                     changed.append(row["path"])
                 else:
@@ -1233,6 +1475,26 @@ class Book:
     def _short_assembly_record(self):
         row = self.db.execute("SELECT value FROM meta WHERE key='short_assembly'").fetchone()
         return json.loads(row[0]) if row else None
+
+    def _retired_short_assembly(self):
+        row = self.db.execute("SELECT value FROM meta WHERE key='short_assembly_retired'").fetchone()
+        return json.loads(row[0]) if row else None
+
+    def _retire_short_assembly(self, row):
+        destination = self.db.execute("SELECT sha FROM artifact_state WHERE path=?",
+                                      (row["destination"],)).fetchone()
+        if not destination:
+            fail("state_corrupt", "Missing Markdown reading copy", path=row["destination"])
+        self._check_artifact(row["destination"], destination["sha"], None)
+        if self._last_artifact_check[1] != destination["sha"]:
+            fail("export_pending", "Recover the Markdown reading copy before retiring the old text copy",
+                 path=row["destination"])
+        target = self._check_artifact(row["path"], row["sha"], row["written_sha"])
+        backup = safe_path(self.root, f".story/export-backups/{uuid.uuid4().hex}/{row['path']}")
+        saved = _retire_bound_file(target, backup, {row["sha"], row["written_sha"]})
+        with self.transaction():
+            self.db.execute("DELETE FROM meta WHERE key='short_assembly_retired'")
+        return saved
 
     def short_assembly_path(self):
         record = self._short_assembly_record()
@@ -1277,7 +1539,10 @@ class Book:
 
     def _queue_short_assembly(self):
         """Record the desired reading copy durably before any filesystem publication."""
-        relative = self.short_assembly_path()
+        prior_record = self._short_assembly_record()
+        preview = self.short_assembly_path()
+        relative = (book_text_filename(self.meta("title")) if Path(preview).suffix.lower() == ".txt"
+                    else preview)
         last = self.meta("last_chapter")
         rows = self.db.execute("SELECT chapter,text,sha FROM chapters ORDER BY chapter").fetchall()
         if not rows or [row["chapter"] for row in rows] != list(range(1, last + 1)):
@@ -1310,9 +1575,19 @@ class Book:
         content = "".join(parts)
         if not _assembly_boundary_breaks(content):
             content += "\n"
-        previous = self._short_assembly_record()
+        if prior_record and prior_record["path"] != relative:
+            old = self.db.execute("SELECT sha,written_sha FROM artifact_state WHERE path=?",
+                                  (prior_record["path"],)).fetchone()
+            if not old or old["sha"] != prior_record["sha256"]:
+                fail("state_corrupt", "Old reading copy registration differs from its record",
+                     path=prior_record["path"])
+            self._check_artifact(prior_record["path"], old["sha"], old["written_sha"])
+            self.set_meta("short_assembly_retired", {"path": prior_record["path"],
+                          "sha": old["sha"], "written_sha": old["written_sha"],
+                          "destination": relative})
+            self.db.execute("DELETE FROM artifact_state WHERE path=?", (prior_record["path"],))
         row = self.db.execute("SELECT sha,written_sha FROM artifact_state WHERE path=?", (relative,)).fetchone()
-        accepted = previous.get("sha256") if previous and previous["path"] == relative else None
+        accepted = prior_record.get("sha256") if prior_record and prior_record["path"] == relative else None
         try:
             if row:
                 # An earlier publication may have succeeded before its acknowledgement failed.
@@ -1332,7 +1607,8 @@ class Book:
 
     def _refresh_short_assembly(self):
         assembly = self._short_assembly_status()
-        if assembly and (not assembly["source_current"] or not self.db.execute(
+        if assembly and (Path(assembly["path"]).suffix.lower() == ".txt" or
+                         not assembly["source_current"] or not self.db.execute(
                 "SELECT 1 FROM artifact_state WHERE path=? AND sha=?",
                 (assembly["path"], assembly["sha256"])).fetchone()):
             with self.transaction():
@@ -1391,7 +1667,8 @@ class Book:
                     pending.append(row["path"])
             except StoryError:
                 drift.append(row["path"])
-        for row in self._retired_chapters():
+        retired_assembly = self._retired_short_assembly()
+        for row in self._retired_chapters() + ([retired_assembly] if retired_assembly else []):
             try:
                 self._check_artifact(row["path"], row["sha"], row["written_sha"])
                 pending.append(row["path"])
@@ -1475,6 +1752,9 @@ class Book:
                 fail("exports_unresolved", "Recover exports or reconcile outside edits before writing",
                      pending=pending[:10], changed=drift[:10])
             plan = self.get_plan(chapter)
+            if plan.get("volume"):
+                self._check_registered_volume_owner(plan["volume"], self._plan_volume_directory(plan))
+            outline_status = outline.verify(self, chapter, plan)
             scopes = {"global"}
             scopes.update(f"{key}:{plan[key]}" for key in ("volume", "arc", "line") if key in plan)
             scopes.update("entity:" + eid for eid in world.resolve(self, plan.get("entities", []), plan.get("line")))
@@ -1522,6 +1802,7 @@ class Book:
                                (c["kind"] == "hook" and c["due"] is not None and c["due"] <= chapter)))
             packet = {"book_id": self.meta("id"), "revision": self.meta("revision"), "chapter": chapter,
                       "mode": "replace_last" if replacing else "next", "plan": plan,
+                      "outline": outline_status,
                       "required_cards": [cards[cid] for cid in sorted(required)], "optional_cards": [],
                       "previous": {"chapter": previous[0], "summary": previous[1], "tail": previous[2][-600:]} if previous else None,
                       "omitted_optional_count": 0}
@@ -1592,8 +1873,18 @@ class Book:
         return bounded_packet(packet, budget)
 
     def _chapter_lint(self, chapter, text, plan, external=None):
-        result = lint_text(text, plan)
         row = self.db.execute("SELECT imported FROM chapter_state WHERE chapter=?", (chapter,)).fetchone()
+        prior = self.db.execute("SELECT text FROM chapters WHERE chapter=?", (chapter,)).fetchone() if row else None
+        result = lint_text(text, plan, chapter, warn_nondefault=row is None,
+                           require_plain_heading=row is None,
+                           previous_text=prior[0] if prior else None,
+                           previous_title=self.adopted_chapter_title(chapter) if prior else None)
+        if row is None and not (self.meta("kind") == "short" and
+                                0 < chapter < self.meta("imported_through")):
+            issue = self._length_exception_issue(plan)
+            if issue:
+                result["errors"].append(issue)
+                result["ok"] = False
         previous, old, relative, reused, target_sha, source_sha = self._chapter_target(
             chapter, text, plan, imported=bool(row and row[0]), external=external)
         queued = self.db.execute("SELECT written_sha FROM artifact_state WHERE path=?", (relative,)).fetchone()
@@ -1607,6 +1898,7 @@ class Book:
         integer(chapter, "chapter", 1)
         text = read_text(draft)
         with self.read_snapshot():
+            outline_status = outline.verify(self, chapter, self.get_plan(chapter))
             # Lint remains usable while reviewing an existing outside edit. This
             # observation is read-only; commit/reconcile still enforce their own
             # external SHA and revision fences before accepting any replacement.
@@ -1614,6 +1906,7 @@ class Book:
             if external:
                 external = {**external, "path": str(self.root / external["path"])}
             result = self._chapter_lint(chapter, text, self.get_plan(chapter), external)
+            result["outline"] = outline_status
             if external:
                 result["external_edit"] = external
             return result
@@ -1715,7 +2008,10 @@ class Book:
         with self.read_snapshot():
             if self.meta("revision") != packet["revision"]:
                 fail("stale_revision", "State changed during preparation; reload context and review again")
+            outline.verify(self, chapter, packet["plan"])
             lint = self._chapter_lint(chapter, text, packet["plan"], packet.get("external_edit"))
+            if any(error["code"].startswith("chapter_heading_") for error in lint["errors"]):
+                fail("lint_failed", "Draft needs a matching plain first-line chapter heading", lint=lint)
             delta = {"book_id": packet["book_id"], "base_revision": packet["revision"],
                      "summary": "<填写本章实际结果与下一章衔接>", "changes": [],
                      "review": {"draft_sha256": lint["draft_sha256"],
@@ -1783,6 +2079,8 @@ class Book:
         input_hash = digest(dumps(inputs))
         idempotent = False
         with self.transaction():
+            if outline.binding_for(self, chapter) is not None:
+                outline.verify(self, chapter, self.get_plan(chapter))
             existing = self.db.execute("SELECT * FROM chapters WHERE chapter=?", (chapter,)).fetchone()
             if existing and existing["input_hash"] == input_hash:
                 idempotent = True
@@ -1811,7 +2109,15 @@ class Book:
                 elif existing or chapter != last + 1:
                     fail("chapter_order", "Commit exactly the next chapter; existing chapters are never overwritten")
                 plan = self.get_plan(chapter)
-                check = lint_text(text, plan)
+                check = lint_text(text, plan, chapter, warn_nondefault=not replace_last,
+                                  require_plain_heading=not replace_last,
+                                  previous_text=existing["text"] if replace_last else None,
+                                  previous_title=self.adopted_chapter_title(chapter) if replace_last else None)
+                if not replace_last:
+                    issue = self._length_exception_issue(plan)
+                    if issue:
+                        check["errors"].append(issue)
+                        check["ok"] = False
                 if not check["ok"]:
                     fail("lint_failed", "Draft fails deterministic checks", lint=check)
                 previous = json.loads(existing["receipt"]) if replace_last else {}
@@ -1917,6 +2223,8 @@ class Book:
                                     "summary": summary, "volume_dir": volume}))
         idempotent = False
         with self.transaction():
+            if outline.binding_for(self, chapter) is not None:
+                outline.verify(self, chapter, self.get_plan(chapter))
             if self.meta("kind") != "short":
                 fail("short_only", "Historical backfill is for an adopted short story")
             through = self.meta("imported_through")
@@ -2255,7 +2563,7 @@ TEMPLATES = {
              "goal": "<填写人物本章要争取的结果与主要阅读期待>",
              "beats": [{"choice": "<填写人物的具体尝试及所遇回应，按场景需要保留取舍>",
                         "change": "<填写尝试后的局面、认知或关系变化及本场承担的阅读回报>"}],
-             "stop": "<填写停笔点>", "constraints": ["<填写用户原始硬要求>"], "length": [2400, 2800],
+             "stop": "<填写停笔点>", "constraints": ["<填写用户原始硬要求>"], "length": list(DEFAULT_CHAPTER_LENGTH),
              "requires": ["hero"], "tags": ["主角"], "count_method": "visible_nonspace_v1", "count_title": False},
     "delta": {"book_id": "<填写context返回的book_id>", "base_revision": 0, "summary": "<填写本章结果与下章衔接>", "changes": [],
               "review": {"draft_sha256": "<填写lint返回的SHA256>", "checks": {
@@ -2299,7 +2607,7 @@ def parser():
     s = command("export", "Repair exports without replacing outside edits")
     s.add_argument("--safe-only", action="store_true",
                    help="Recover known versions and missing files while leaving conflicting paths untouched")
-    s = command("assemble-short", "Assemble all committed short-story chapters into one book-title text file")
+    s = command("assemble-short", "Assemble all committed short-story chapters into one book-title Markdown file")
     s.add_argument("--final-chapter", type=int, required=True,
                    help="Expected last committed chapter; narrative completion requires editorial review")
     for name in ("notes", "plan"):
@@ -2308,6 +2616,11 @@ def parser():
         s.add_argument("--expect", type=int, required=True)
         if name == "plan":
             s.add_argument("--chapter", type=int, required=True)
+    s = command("outline-bind", "Bind one reviewed, adopted readable outline to its saved chapter plan")
+    s.add_argument("--chapter", type=int, required=True)
+    s.add_argument("--file", required=True, help="Book-relative adopted Markdown outline path")
+    s.add_argument("--sha256", required=True, help="SHA-256 of the reviewed outline file bytes")
+    s.add_argument("--expect", type=int, required=True)
     s = command("context", "Build a bounded chapter context packet", 16000)
     s.add_argument("--chapter", type=int, required=True)
     s = command("prepare", "Read-only review scaffold bound to the current book, state and draft", 16000)
@@ -2402,6 +2715,8 @@ def run(args):
             return book.save_notes(read_json(args.input), args.expect)
         if cmd == "plan":
             return book.save_plan(args.chapter, read_json(args.input), args.expect)
+        if cmd == "outline-bind":
+            return outline.bind(book, args.chapter, args.file, args.expect, args.sha256)
         if cmd == "context":
             return book.context(args.chapter, args.budget_bytes)
         if cmd == "prepare":
@@ -2470,8 +2785,8 @@ def _load_extension(name):
     return module
 
 
-storage, search, world, history, publish, workbench = (_load_extension(name) for name in (
-    "storage", "search", "world", "history", "publish", "workbench"))
+storage, search, world, history, publish, workbench, outline = (_load_extension(name) for name in (
+    "storage", "search", "world", "history", "publish", "workbench", "outline"))
 CORE = SimpleNamespace(**globals())
 for extension in (search, world, history, publish, workbench):
     extension.inject(CORE)

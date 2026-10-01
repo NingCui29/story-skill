@@ -18,7 +18,7 @@ spec = importlib.util.spec_from_file_location("story", TOOL)
 story = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(story)
 
-DRAFT = "# 第1章 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n门开了，雨水冲进屋里。\n"
+DRAFT = "第1章 门后的雨\n沈禾把唯一的钥匙交给守门人。\n她答应在天亮之前带回账本。\n门开了，雨水冲进屋里。\n"
 
 
 def card(cid="hero", **extra):
@@ -29,7 +29,8 @@ def card(cid="hero", **extra):
 def plan(**extra):
     return {"volume_dir": "第一卷 雨夜", "goal": "用钥匙换取入口", "stop": "进入门内，不拿到账本",
             "beats": [{"choice": "沈禾交出钥匙", "change": "得到入口并失去退路"}],
-            "constraints": ["天亮前返回"], "requires": ["hero"], "tags": ["沈禾"], "length": [20, 120], **extra}
+            "constraints": ["天亮前返回"], "requires": ["hero"], "tags": ["沈禾"], "length": [20, 120],
+            "length_exception": {"source": "user_request", "quote": "测试章按指定篇幅与口径验收。"}, **extra}
 
 
 class StoryTests(unittest.TestCase):
@@ -239,8 +240,10 @@ class StoryTests(unittest.TestCase):
         self.assert_error("chapter_order", self.book.commit, 2, self.draft, self.delta())
         self.book.commit(1, self.draft, self.delta())
         self.book.save_plan(2, plan(title="第二夜"), self.book.meta("revision"))
-        self.book.commit(2, self.draft, self.delta())
-        self.assert_error("chapter_order", self.book.commit, 1, self.draft, self.delta(), True)
+        second = DRAFT.replace("第1章 门后的雨", "第2章 第二夜")
+        self.draft.write_text(second, encoding="utf-8")
+        self.book.commit(2, self.draft, self.delta(second))
+        self.assert_error("chapter_order", self.book.commit, 1, self.draft, self.delta(second), True)
 
     def test_adopt_preserves_source_and_does_not_fabricate_history(self):
         original = self.draft.read_bytes()

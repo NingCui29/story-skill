@@ -74,8 +74,10 @@ class LayoutPreflightTests(unittest.TestCase):
         layout.story.world.save(fixture.book, {"volumes": [volume]}, fixture.book.meta("revision"))
         fixture.save_plan(1, volume="rain")
         fixture.commit(1)
-        fixture.save_plan(2, volume="rain", volume_dir="第一卷 改名")
-        fixture.draft.write_bytes(layout.DRAFT.encode("utf-8"))
+        # Older runtimes could save this conflicting plan; read paths still reject it.
+        with patch.object(fixture.book, "_check_plan_volume_binding"), patch.object(fixture.book, "_check_unique_names"):
+            fixture.save_plan(2, volume="rain", volume_dir="第一卷 改名")
+        fixture.draft.write_text("第2章 第二夜\n" + layout.BODY, encoding="utf-8")
         self.assert_rejected_without_changes(2, "volume_directory_conflict")
         self.assertFalse((fixture.root / "chapters/第一卷 改名").exists())
         self.assertEqual(fixture.book.chapter_path(1), "chapters/第一卷 雨夜/第1章 门后的雨.md")
@@ -123,7 +125,8 @@ class LayoutPreflightTests(unittest.TestCase):
     def test_case_alias_rename_is_rejected_before_review(self):
         fixture = self.fixture
         fixture.save_plan(1, title="AI来客")
-        fixture.commit(1)
+        original = "第1章 AI来客\n" + layout.BODY
+        fixture.commit(1, original)
         old_relative = fixture.book.chapter_path(1)
         old = fixture.root / old_relative
         alias = old.with_name("第1章 Ai来客.md")
@@ -133,11 +136,11 @@ class LayoutPreflightTests(unittest.TestCase):
         self.assert_rejected_without_changes(1, "export_path_alias")
         before = fixture.state_snapshot()
         with self.assertRaises(layout.story.StoryError) as result:
-            fixture.commit(1, replace_last=True)
+            fixture.commit(1, original, replace_last=True)
         self.assertEqual(result.exception.code, "export_path_alias")
         self.assertEqual(fixture.state_snapshot(), before)
         self.assertEqual(fixture.book.chapter_path(1), old_relative)
-        self.assertEqual(old.read_bytes(), layout.DRAFT.encode("utf-8"))
+        self.assertEqual(old.read_bytes(), original.encode("utf-8"))
         self.assertEqual([path.name for path in old.parent.iterdir()], [old.name])
 
     def check_revised_reconcile_preparation(self, original, external, reviewed):
@@ -184,7 +187,7 @@ class LayoutPreflightTests(unittest.TestCase):
         fixture.save_plan(1)
         fixture.commit(1)
         original = fixture.root / fixture.book.chapter_path(1)
-        intermediate_text = "# 第1章 新的入口\n" + layout.BODY + "她没有回头。\n"
+        intermediate_text = "第1章 新的入口\n" + layout.BODY + "她没有回头。\n"
         with patch.object(layout.story, "atomic_write", side_effect=OSError("publication interrupted")):
             fixture.commit(1, intermediate_text, replace_last=True)
         intermediate = fixture.root / fixture.book.chapter_path(1)

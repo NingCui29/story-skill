@@ -32,7 +32,7 @@ class HistoryWorldAuditTests(unittest.TestCase):
         return self.book.meta("revision")
 
     def text(self, chapter):
-        return f"# 第{chapter}章\n江棠核对账本，逐笔记录铜钱的来去，最后留下收据。\n"
+        return f"第{chapter}章 核对交接{chapter}\n江棠核对账本，逐笔记录铜钱的来去，最后留下收据。\n"
 
     def evidence(self, chapter):
         return {"kind": "chapter", "chapter": chapter, "sha256": story.digest(self.text(chapter)), "quote": "逐笔记录铜钱的来去"}
@@ -45,7 +45,8 @@ class HistoryWorldAuditTests(unittest.TestCase):
 
     def prepare(self, chapter, transfers=(), time=None, requires=()):
         plan = {"volume_dir": "第一卷 雨夜", "title": f"核对交接{chapter}", "goal": "核对交接", "stop": "留下收据", "requires": list(requires), "tags": [],
-                "constraints": [], "beats": [{"choice": "核对账本", "change": "留下收据"}], "length": [10, 200]}
+                "constraints": [], "beats": [{"choice": "核对账本", "change": "留下收据"}], "length": [10, 200],
+                "length_exception": {"source": "user_request", "quote": "测试历史审查需要10至200字。"}}
         if time is not None:
             plan["time"] = {"clock": "main", "start": time[0], "end": time[1]}
         self.book.save_plan(chapter, plan, self.rev())

@@ -38,7 +38,7 @@ class ShortAssemblyNameTests(unittest.TestCase):
                 initialized = self.create(title)
                 relative = initialized["short_assembly_path"]
                 self.assertEqual(Path(relative).name, relative)
-                self.assertTrue(relative.endswith(".txt"))
+                self.assertTrue(relative.endswith(".md"))
                 self.assertEqual(story.filename_component(relative[:-4], "output"), relative[:-4])
                 self.assertEqual(initialized["title"], title)
                 self.assertEqual(self.book.status()["short_assembly_path"], relative)
@@ -76,13 +76,23 @@ class ShortAssemblyNameTests(unittest.TestCase):
         self.assertEqual(Path(result["path"]), self.root / relative)
         self.assertEqual(self.book.meta("short_assembly_path"), relative)
 
+    def test_unassembled_old_text_path_uses_markdown_on_first_assembly(self):
+        self.create("雨夜的钥匙")
+        with self.book.transaction():
+            self.book.set_meta("short_assembly_path", "雨夜的钥匙.txt")
+        self.commit(1, "归还", "第1章 归还\n她归还钥匙，从此关上了旧院的门。\n")
+        result = self.book.assemble_short(1)
+        self.assertTrue(result["exports_complete"], result)
+        self.assertEqual(Path(result["path"]).name, "雨夜的钥匙.md")
+        self.assertEqual(self.book.status()["short_assembly_path"], "雨夜的钥匙.md")
+
     def test_existing_registered_path_is_authoritative_for_revision_and_recovery(self):
         self.create("雨夜的钥匙")
         self.commit(1, "归还", "第1章 归还\n她归还钥匙，从此关上了旧院的门。\n")
         original = Path(self.book.assemble_short(1)["path"])
         # An older runtime's existing registration wins over a newly calculated preview.
         with self.book.transaction():
-            self.book.set_meta("short_assembly_path", "另一个预览名称.txt")
+            self.book.set_meta("short_assembly_path", "另一个预览名称.md")
         relative = original.name
         self.assertEqual(self.book.status()["short_assembly_path"], relative)
         self.commit(1, "归还", "第1章 归还\n她归还钥匙，把旧院的契书也一并交还。\n", replace_last=True)
@@ -90,7 +100,7 @@ class ShortAssemblyNameTests(unittest.TestCase):
         original.unlink()
         self.assertTrue(self.book.export(safe_only=True)["exports_complete"])
         self.assertTrue(original.exists())
-        self.assertFalse((self.root / "另一个预览名称.txt").exists())
+        self.assertFalse((self.root / "另一个预览名称.md").exists())
 
     def test_sanitized_name_collision_preserves_the_preexisting_file(self):
         initialized = self.create("旧院:最后一把钥匙")

@@ -136,7 +136,7 @@ def make_fixture(story, root, count, card_count):
                     "source": "synthetic, no semantic validation", "tags": [f"branch{number}"],
                     "critical": False}))
         plan = {"volume_dir": "第一卷 容量夹具", "title": "容量探针", "goal": "容量探针", "stop": "一次结构提交", "constraints": [],
-                "requires": ["c00000"], "tags": ["current"], "length": [2500, 2500],
+                "requires": ["c00000"], "tags": ["current"], "length": [2400, 2800],
                 "beats": [{"choice": "生成重复字符夹具", "change": "测量读取放大"}]}
         saved = book.save_plan(count + 1, plan, book.meta("revision"))
         if saved.get("exports_complete") is False:

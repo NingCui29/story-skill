@@ -17,6 +17,7 @@ def plan(**changes):
         "volume_dir": "第一卷 交接", "title": "核对承诺",
         "goal": "核对承诺后决定下一步", "stop": "记入账本后停笔",
         "constraints": [], "requires": [], "tags": [], "length": [8, 200],
+        "length_exception": {"source": "user_request", "quote": "测试章按指定篇幅与口径验收。"},
         "beats": [{"choice": "核对承诺", "change": "留下交接凭据"}],
         **changes,
     }
@@ -122,7 +123,7 @@ class SkillAuditBookTests(unittest.TestCase):
     def test_prepare_checks_global_rule_without_extra_plan_fields(self):
         self.save_global_rule()
         self.draft.write_text(
-            "# 第2章 核对承诺\n沈禾核对誓言，决定先留下交接凭据。\n", encoding="utf-8"
+            "第2章 核对承诺\n沈禾核对誓言，决定先留下交接凭据。\n", encoding="utf-8"
         )
         prepared = self.book.prepare(2, self.draft)
         self.assertIn("world_check", prepared)
@@ -148,13 +149,13 @@ class SkillAuditBookTests(unittest.TestCase):
             ["planned-promise"],
         )
         self.draft.write_text(
-            "# 第1章 核对承诺\n沈禾核对誓言，决定先留下交接凭据。\n", encoding="utf-8"
+            "第1章 核对承诺\n沈禾核对誓言，决定先留下交接凭据。\n", encoding="utf-8"
         )
         self.assertIn("world_check", self.book.prepare(1, self.draft))
 
     def assert_status_snapshot(self, integrity):
         self.book.integrity = integrity
-        first = "# 第1章 核对承诺\n沈禾核对承诺，然后留下交接凭据。\n"
+        first = "第1章 核对承诺\n沈禾核对承诺，然后留下交接凭据。\n"
         self.book.save_plan(1, plan(), self.revision())
         self.draft.write_bytes(first.encode("utf-8"))
         initial = self.book.commit(1, self.draft, self.delta(self.book, first))
@@ -165,7 +166,7 @@ class SkillAuditBookTests(unittest.TestCase):
         self.book.db.execute("PRAGMA journal_mode=WAL")
         writer = story.Book(self.root)
         try:
-            second = first.replace("第1章", "第2章")
+            second = first.replace("第1章 核对承诺", "第2章 再次核对承诺")
             second_draft = self.root / "concurrent-draft.md"
             second_draft.write_bytes(second.encode("utf-8"))
             raw = self.delta(writer, second)
