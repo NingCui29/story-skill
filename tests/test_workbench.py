@@ -1348,6 +1348,60 @@ eval(process.argv[1]);
             stream.write("/.story/workbench/.backups/\n")
         self.assert_story_error("workbench_not_ignored", story.workbench.export, self.book)
 
+    def test_git_directory_query_success_does_not_replace_leaf_coverage(self):
+        if subprocess.run(["git", "--version"], capture_output=True).returncode:
+            self.skipTest("Git is unavailable")
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        exclude = self.root / ".git/info/exclude"
+        with exclude.open("a", encoding="utf-8") as stream:
+            stream.write("\n/.story/workbench/index.html\n/.story/workbench/.backups/\n")
+        original_run = subprocess.run
+
+        def directory_success(command, *arguments, **options):
+            if "check-ignore" in command and command[-1] == ".story/workbench/":
+                return subprocess.CompletedProcess(command, 0, stdout=b"", stderr=b"")
+            return original_run(command, *arguments, **options)
+
+        with patch.object(story.workbench.subprocess, "run", side_effect=directory_success):
+            self.assert_story_error("workbench_not_ignored", story.workbench.export, self.book)
+        self.assertFalse((self.root / ".story/workbench/index.html").exists())
+
+    def test_git_whole_workbench_wildcards_cover_root_and_nested_files(self):
+        if subprocess.run(["git", "--version"], capture_output=True).returncode:
+            self.skipTest("Git is unavailable")
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        exclude = self.root / ".git/info/exclude"
+        for rule in ("/.story/workbench/*", "/.story/workbench/**"):
+            with self.subTest(rule=rule):
+                exclude.write_bytes((rule + "\n").encode("utf-8"))
+                result = story.workbench.export(self.book)
+                self.assertEqual(result["git_ignore_status"], "ignored")
+                self.assertTrue(Path(result["path"]).is_file())
+
+    def test_git_parent_repository_ignores_nested_book_workbench(self):
+        if subprocess.run(["git", "--version"], capture_output=True).returncode:
+            self.skipTest("Git is unavailable")
+        repository = self.root.parent
+        subprocess.run(["git", "init", "-q", str(repository)], check=True)
+        exclude = repository / ".git/info/exclude"
+        prefix = f"/{self.root.name}/.story/workbench"
+        exclude.write_bytes((prefix + "/index.html\n" + prefix + "/.backups/\n").encode("utf-8"))
+        self.assert_story_error("workbench_not_ignored", story.workbench.export, self.book)
+        exclude.write_bytes((prefix + "/\n").encode("utf-8"))
+        result = story.workbench.export(self.book)
+        self.assertEqual(result["git_ignore_status"], "ignored")
+        self.assertTrue(Path(result["path"]).is_file())
+
+    def test_git_output_and_fixed_probe_rules_do_not_cover_future_files(self):
+        if subprocess.run(["git", "--version"], capture_output=True).returncode:
+            self.skipTest("Git is unavailable")
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        exclude = self.root / ".git/info/exclude"
+        exclude.write_bytes(("/.story/workbench/index.html\n/.story/workbench/.backups/\n"
+                             "/.story/workbench/.story-ignore-probe\n").encode("utf-8"))
+        self.assert_story_error("workbench_not_ignored", story.workbench.export, self.book)
+        self.assertFalse((self.root / ".story/workbench").exists())
+
     def test_git_probe_only_rules_do_not_masquerade_as_output_ignores(self):
         if subprocess.run(["git", "--version"], capture_output=True).returncode:
             self.skipTest("Git is unavailable")

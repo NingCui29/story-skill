@@ -1049,13 +1049,14 @@ def _git_ignore_status(book, target, backup):
     try:
         tracked = subprocess.run(["git", "-C", str(repository), "ls-files", "-z", "--",
                                   workbench.as_posix()], capture_output=True, timeout=5)
+        # Specific output rules do not cover future workbench files. Probe
+        # absent leaf paths rather than relying on a trailing-slash query.
+        probe = uuid.uuid4().hex
+        scope_paths = (relative_target, relative_backup, workbench / probe,
+                       workbench / uuid.uuid4().hex / probe)
         ignored = [subprocess.run(
             ["git", "-C", str(repository), "check-ignore", "--no-index", "-q", "--", path.as_posix()],
-            capture_output=True, timeout=5) for path in (relative_target, relative_backup)]
-        # Specific output ignores do not cover other workbench files.
-        ignored.append(subprocess.run(
-            ["git", "-C", str(repository), "check-ignore", "--no-index", "-q", "--",
-             workbench.as_posix() + "/"], capture_output=True, timeout=5))
+            capture_output=True, timeout=5) for path in scope_paths]
     except (FileNotFoundError, OSError, subprocess.TimeoutExpired) as error:
         api.fail("workbench_git_check_failed", "Could not verify the book repository ignore rules",
                  path=str(target), reason=str(error))
