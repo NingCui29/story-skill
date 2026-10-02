@@ -1338,6 +1338,16 @@ eval(process.argv[1]);
             stream.write("\n/.story/workbench/index.html\n")
         self.assert_story_error("workbench_not_ignored", story.workbench.export, self.book)
 
+    def test_git_rule_for_only_current_output_paths_does_not_cover_directory(self):
+        if subprocess.run(["git", "--version"], capture_output=True).returncode:
+            self.skipTest("Git is unavailable")
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        exclude = self.root / ".git/info/exclude"
+        with exclude.open("a", encoding="utf-8") as stream:
+            stream.write("\n/.story/workbench/index.html\n")
+            stream.write("/.story/workbench/.backups/\n")
+        self.assert_story_error("workbench_not_ignored", story.workbench.export, self.book)
+
     def test_git_probe_only_rules_do_not_masquerade_as_output_ignores(self):
         if subprocess.run(["git", "--version"], capture_output=True).returncode:
             self.skipTest("Git is unavailable")

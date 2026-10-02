@@ -118,6 +118,18 @@ class PublishValidationTests(unittest.TestCase):
         item["body_sha"] = story.digest(item["body"])
         self.assertEqual(publishing._validated_manifest(self.row(candidate), self.book.meta("id")), candidate)
 
+    def test_historical_v1_count_with_variation_selector_still_validates(self):
+        candidate = copy.deepcopy(self.prepared["manifest"])
+        item = candidate["chapters"][0]
+        item["body"] = "甲\ufe0f乙"
+        item["body_characters"] = 3
+        item["local_visible_nonspace_v1"] = 3
+        item["conversion_rule"] = "body_unchanged_v1"
+        item["body_sha"] = story.digest(item["body"])
+        item["upload_sha256"] = publishing._hash({
+            "title": item["title"], "body": item["body"], "author_note": item["author_note"]})
+        self.assertEqual(publishing._validated_manifest(self.row(candidate), self.book.meta("id")), candidate)
+
     def test_wrong_book_manifest_is_rejected_by_every_existing_ledger_reader(self):
         manifest = copy.deepcopy(self.prepared["manifest"])
         manifest["book_id"] = str(uuid.uuid4())

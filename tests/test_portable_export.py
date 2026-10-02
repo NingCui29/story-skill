@@ -148,6 +148,13 @@ class PublicationSelectionTests(unittest.TestCase):
         link.assert_called_once_with("stage", "target")
         rename.assert_not_called()
 
+    def test_windows_uses_no_replace_rename_without_hard_links(self):
+        with patch.object(story.os, "name", "nt"), patch.object(story.os, "link") as link, \
+                patch.object(story.os, "rename") as rename:
+            story._publish_no_replace("stage", "target")
+        rename.assert_called_once_with("stage", "target")
+        link.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

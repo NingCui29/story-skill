@@ -1,4 +1,5 @@
 """Chapter-centric author workflow: real state, candidate boundaries and UI utilities."""
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -42,6 +43,8 @@ class WorkbenchFlowTests(unittest.TestCase):
         doc = w._editor_document(self.root, 'plan:3')
         self.assertFalse(doc['editable'])
         self.assertTrue(doc['render_markdown'])
+        self.assertIn('### 变化节点', doc['text'])
+        self.assertNotIn('### 场景', doc['text'])
         self.assertNotIn('formal:3', [r['id'] for r in last['items']])
 
     def test_context_uses_actual_receipt_and_prior_summary(self):
@@ -81,6 +84,103 @@ class WorkbenchFlowTests(unittest.TestCase):
         self.assertIsNone(counted['target'])
         self.assertEqual(counted['count'], 7)
 
+    def test_metrics_do_not_call_combining_mark_padding_within_chapter_length(self):
+        plan = json.loads(self.book.db.execute('SELECT data FROM plans WHERE chapter=2').fetchone()[0])
+        plan.update(count_method='visible_nonspace_v1', length=[2400, 2800])
+        self.book.save_plan(2, plan, self.book.meta('revision'))
+        doc = w._editor_document(self.root, 'formal:2')
+        body = '甲' + '\u0301' * 2399
+        result = w._editor_metrics(self.root, {'id': doc['id'], 'text': body})
+        self.assertEqual(result['count'], 2400)
+        self.assertTrue(result['within_target'])
+        self.assertFalse(result['in_range'])
+        self.assertEqual(result['length_issues'], ['invisible_padding'])
+        official = story.lint_text(doc['prefix'] + body, plan)
+        self.assertIn('invisible_padding', {issue['code'] for issue in official['errors']})
+        page = w._editor_page(w.snapshot(self.book), {}, 'test').decode()
+        self.assertIn('章幅检查未通过：附着标记和空白填充符不计下限', page)
+        self.assertIn('仅核对章幅，章头等另查', page)
+
+    def test_metrics_reject_named_blank_glyph_padding_and_keep_ordinary_unicode(self):
+        plan = json.loads(self.book.db.execute('SELECT data FROM plans WHERE chapter=2').fetchone()[0])
+        plan.update(count_method='visible_nonspace_v2', length=[2400, 2800])
+        self.book.save_plan(2, plan, self.book.meta('revision'))
+        doc = w._editor_document(self.root, 'formal:2')
+        for filler in '\u115f\u1160\u2800\u3164\uffa0':
+            with self.subTest(codepoint=f'U+{ord(filler):04X}'):
+                body = '甲' + filler * 2399
+                result = w._editor_metrics(self.root, {
+                    'id': doc['id'], 'text': body, 'selection': filler})
+                self.assertEqual(result['method'], 'visible_nonspace_v2')
+                self.assertEqual(result['count'], 1)
+                self.assertEqual(result['selection'], 0)
+                self.assertFalse(result['within_target'])
+                self.assertFalse(result['in_range'])
+                self.assertEqual(result['length_issues'], ['length'])
+        meaningful = '甲한가⠁🙂。'
+        result = w._editor_metrics(self.root, {
+            'id': doc['id'], 'text': meaningful, 'selection': meaningful})
+        self.assertEqual(result['selection'], len(meaningful))
+
+        # A historical v1 plan still reports its old count, but the editor
+        # must not describe a padded 2400 as a valid chapter length.
+        plan['count_method'] = 'visible_nonspace_v1'
+        self.book.save_plan(2, plan, self.book.meta('revision'))
+        legacy = w._editor_metrics(self.root, {
+            'id': doc['id'], 'text': '甲' + '\u3164' * 2399})
+        self.assertEqual(legacy['count'], 2400)
+        self.assertTrue(legacy['within_target'])
+        self.assertFalse(legacy['in_range'])
+        self.assertEqual(legacy['length_issues'], ['invisible_padding'])
+
+    def test_metrics_keep_saved_v1_boundary_but_recheck_changed_body(self):
+        formal = w._editor_document(self.root, 'formal:2')
+        original = (self.root / formal['path']).read_bytes().decode('utf-8') + '\ufe0f'
+        plan = self.book.get_plan(2)
+        plan['count_method'] = 'visible_nonspace_v1'
+        self.book.save_plan(2, plan, self.book.meta('revision'))
+        draft = self.root / '.story/drafts/第2章 历史口径.md'
+        draft.write_bytes(original.encode('utf-8'))
+        delta = {'book_id': self.book.meta('id'), 'base_revision': self.book.meta('revision'),
+                 'summary': '沈禾交出钥匙。', 'changes': [],
+                 'review': {'draft_sha256': story.digest(original), 'issues': [], 'checks': {
+                     key: {'note': '已核对交出钥匙的动作及后果。', 'quote': '沈禾把唯一的钥匙交给守门人。'}
+                     for key in story.CHECKS}}}
+        self.assertTrue(self.book.commit(2, draft, delta, replace_last=True)['exports_complete'])
+        plan['length'] = [story.manuscript_counts(original)['visible_nonspace_v1'], 1000]
+        self.book.save_plan(2, plan, self.book.meta('revision'))
+        formal = w._editor_document(self.root, 'formal:2')
+        candidate = self.material('.story/drafts/第2章 BOM原文.md', '\ufeff' + original)
+        for document_id in ('formal:2', candidate):
+            with self.subTest(document=document_id):
+                doc = w._editor_document(self.root, document_id)
+                unchanged = w._editor_metrics(self.root, {'id': document_id, 'text': doc['text']})
+                self.assertTrue(unchanged['in_range'])
+                changed = w._editor_metrics(self.root, {
+                    'id': document_id, 'text': doc['text'].replace('唯一', '原有', 1)})
+                self.assertFalse(changed['in_range'])
+                self.assertEqual(changed['length_issues'], ['invisible_padding'])
+
+    def test_metrics_panel_explains_padding_without_calling_it_out_of_range(self):
+        script = self.script()
+        source = script[script.index('function scheduleMetrics'):script.index('function drawCatalog')]
+        mock = r"""
+const elements=new Map(),$=id=>{if(!elements.has(id))elements.set(id,{textContent:''});return elements.get(id);};
+const docs=new Map([['draft',{id:'draft',editable:true,editing:false,value:'甲'}]]);
+const active='draft',readableMethod={visible_nonspace_v1:'可见非空白字符'};
+let metricTimer,metricSequence=0;
+const clearTimeout=()=>{},setTimeout=fn=>{fn();return 1;};
+const call=async()=>({count:2400,target:[2400,2800],in_range:false,within_target:true,
+ length_issues:['invisible_padding'],is_prose:true,include_title:false,selection:0,method:'visible_nonspace_v1'});
+"""
+        self.js(mock + source, r"""
+(async()=>{scheduleMetrics();await new Promise(setImmediate);
+ assert.ok($('word-count').textContent.includes('附着标记和空白填充符不计下限'));
+ assert.ok(!$('word-count').textContent.includes('范围外'));
+ assert.ok($('count-method').textContent.includes('仅核对章幅，章头等另查'));
+})().catch(e=>{console.error(e);process.exit(1);});
+""")
+
     def test_review_task_is_read_only_and_identifies_saved_source(self):
         before = self.fixture.authoritative_state()
         d = w._editor_document(self.root, 'formal:1')
@@ -89,7 +189,82 @@ class WorkbenchFlowTests(unittest.TestCase):
         self.assertIn('不自动修改或正式采用', r['prompt'])
         self.assertIn('尚未交给助手', r['status'])
         self.assertIsNotNone(r['lint'])
+        self.assertEqual(r['check_scope'], 'complete_chapter')
+        self.assertIn('只读完整章节工具检查', r['prompt'])
         self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_review_task_accepts_actual_bom_candidate_and_preserves_raw_snapshot(self):
+        formal = w._editor_document(self.root, 'formal:1')
+        original = (self.root / formal['path']).read_bytes()
+        candidate = self.material('.story/drafts/第1章 BOM候选.md', '\ufeff' + original.decode('utf-8'))
+        opened = w._editor_document(self.root, candidate)
+        raw = (self.root / opened['path']).read_bytes()
+        before = self.fixture.authoritative_state()
+        result = w._editor_review_task(self.root, candidate, opened['sha256'])
+        self.assertEqual(result['check_scope'], 'complete_chapter')
+        self.assertTrue(result['lint']['ok'])
+        self.assertEqual(opened['sha256'], hashlib.sha256(raw).hexdigest())
+        self.assertNotEqual(result['lint']['draft_sha256'], opened['sha256'])
+        self.assertEqual(result['lint']['draft_sha256'], story.digest(original.decode('utf-8')))
+        self.assertIn(opened['sha256'], result['prompt'])
+        self.assertEqual((self.root / opened['path']).read_bytes(), raw)
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_review_task_rejects_bom_only_change_during_lint(self):
+        formal = w._editor_document(self.root, 'formal:1')
+        original = (self.root / formal['path']).read_bytes()
+        candidate = self.material('.story/drafts/第1章 BOM竞态.md', '\ufeff' + original.decode('utf-8'))
+        opened = w._editor_document(self.root, candidate)
+        before = self.fixture.authoritative_state()
+        original_lint = story.Book.lint
+
+        def lint_then_remove_bom(book, chapter, path):
+            result = original_lint(book, chapter, path)
+            path.write_bytes(path.read_bytes().removeprefix(b'\xef\xbb\xbf'))
+            return result
+
+        with patch.object(story.Book, 'lint', new=lint_then_remove_bom):
+            self.fixture.assert_story_error('stale_snapshot', w._editor_review_task,
+                                            self.root, candidate, opened['sha256'])
+        self.assertEqual((self.root / opened['path']).read_bytes(), original)
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_review_task_uses_full_chapter_lint_and_marks_fragment_scope(self):
+        wrong = self.material('.story/drafts/第1章 错题.md',
+                              '第2章 错题\n沈禾把唯一的钥匙交给守门人。\n')
+        checked = w._editor_review_task(self.root, wrong)
+        self.assertEqual(checked['check_scope'], 'complete_chapter')
+        self.assertFalse(checked['lint']['ok'])
+        self.assertIn('chapter_heading_number', {issue['code'] for issue in checked['lint']['errors']})
+        self.assertIn('若本文件只是章中片段', checked['check_note'])
+
+        no_plan = self.material('.story/drafts/第3章 片段.md', '沈禾摸了摸钥匙。')
+        scoped = w._editor_review_task(self.root, no_plan)
+        self.assertIsNone(scoped['lint'])
+        self.assertEqual(scoped['check_scope'], 'no_plan')
+        self.assertIn('未运行完整章节检查', scoped['prompt'])
+
+    def test_review_panel_renders_full_lint_heading_errors(self):
+        script = self.script()
+        source = script[script.index(" $('review-task').onclick=async()=>"):
+                        script.index(" $('copy-review').onclick=async()=>")]
+        mock = r"""
+const elements=new Map(),$=id=>{if(!elements.has(id))elements.set(id,{textContent:'',hidden:true,
+ scrollIntoView(){}});return elements.get(id);};
+const docs=new Map([['draft',{id:'draft',editable:true,needs_recovery:false,sha256:'abc'}]]);
+const active='draft',dirty=()=>false,leaveComparison=()=>{};let warning='';
+const note=x=>warning=x;
+const call=async()=>({prompt:'请审稿',status:'审稿任务已生成',check_note:'只读完整章节工具检查。',
+ lint:{ok:false,errors:[{code:'chapter_heading_title',expected:'第1章 正确',actual:'第1章 错题'}],warnings:[]}});
+"""
+        self.js(mock + source, r"""
+(async()=>{await $('review-task').onclick();
+ assert.equal(warning,'');
+ assert.ok($('review-task-status').textContent.includes('完整章节工具检查'));
+ assert.ok($('review-findings').textContent.includes('第1章 正确'));
+ assert.ok($('review-findings').textContent.includes('第1章 错题'));
+})().catch(e=>{console.error(e);process.exit(1);});
+""")
 
     def test_fulltext_finds_contents_and_excludes_changed_formal(self):
         docid = self.material('00_项目策划/人物.md', '目标：云雀在岸边等船。')

@@ -10,7 +10,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+from datetime import date
 from pathlib import PurePosixPath
+import os
 import re
 import unicodedata
 
@@ -24,6 +26,189 @@ _STATUS_LINE = re.compile(
 _STATUS_TABLE = re.compile(r"^\s*\|\s*(?:当前)?(?:状态|status)\s*\|\s*([^|]*?)\s*\|", re.IGNORECASE)
 _ADOPTED_STATUSES = {"已采用", "adopted"}
 MAX_OUTLINE_BYTES = 4 * 1024 * 1024
+
+_POSITION_HEADING = re.compile(r"^(#{1,6})\s*作品定位与平台分类(?:\s*[（(].*[）)])?\s*$")
+_FIELD = re.compile(r"(?:^|[；;])\s*(?:[-*+]\s*)?(?:\*\*)?([^：:；;]+?)(?:\*\*)?\s*[：:]\s*([^；;]*)")
+_DATE = re.compile(r"(?<!\d)(\d{4}-\d{2}-\d{2})(?!\d)")
+_POSITION_FIELDS = ("篇幅类型", "目标平台", "作品阶段", "来源与核对日期", "选择依据", "待核对")
+_CLASSIFICATION_FIELDS = {"平台分类", "分类频道", "一级分类", "二级分类", "主分类",
+                          "阅读标签", "内容标签", "风格", "角色", "情节", "情绪", "背景"}
+_TAG_GROUP_FIELDS = {"阅读标签": {"主分类", "主题", "角色", "情节"},
+                     "内容标签": {"情节", "情感", "人设", "世界观"}}
+
+
+def _position_sections(text):
+    """Find actual Markdown sections, ignoring examples in fenced blocks."""
+    lines = text.splitlines()
+    sections = []
+    fence = None
+    start = None
+    level = None
+    visible = []
+    for index, line in enumerate(lines):
+        match_fence = re.match(r"^\s*(`{3,}|~{3,})", line)
+        if match_fence:
+            marker = match_fence.group(1)
+            if fence is None:
+                fence = marker
+            elif marker[0] == fence[0] and len(marker) >= len(fence):
+                fence = None
+            continue
+        if fence is not None:
+            continue
+        heading = re.match(r"^(#{1,6})\s+", line)
+        if start is not None and heading and len(heading.group(1)) <= level:
+            sections.append((start + 1, visible))
+            start = None
+            level = None
+            visible = []
+        match = _POSITION_HEADING.match(line)
+        if match:
+            if start is not None:
+                sections.append((start + 1, visible))
+            start = index
+            level = len(match.group(1))
+            visible = [line]
+        elif start is not None:
+            visible.append(line)
+    if start is not None:
+        sections.append((start + 1, visible))
+    return sections
+
+
+def _declared_tag_group_headings(lines):
+    """Count a tagged subsection only when it contains actual labelled fields."""
+    declared = set()
+    for index, line in enumerate(lines):
+        heading = re.match(r"^(#{2,6})\s+(.+?)\s*$", line)
+        if not heading:
+            continue
+        level = len(heading.group(1))
+        for group, expected in _TAG_GROUP_FIELDS.items():
+            if not heading.group(2).endswith(group):
+                continue
+            child_keys = set()
+            for child in lines[index + 1:]:
+                next_heading = re.match(r"^(#{1,6})\s+", child)
+                if next_heading and len(next_heading.group(1)) <= level:
+                    break
+                for match in _FIELD.finditer(child.lstrip(" -*+\t")):
+                    child_keys.update(part.strip() for part in re.split(r"[／/、]", match.group(1)))
+            if child_keys & expected:
+                declared.add(group)
+    return declared
+
+
+def audit_position(book, relative_path):
+    """Read-only structural check; never decides whether platform choices are valid."""
+    relative = _relative_path(book, relative_path)
+    path = book.safe_path(book.root, relative)
+    try:
+        if not path.is_file():
+            book.fail("outline_missing", "Current whole-book outline is missing", path=str(path))
+        resolved = path.resolve(strict=True)
+        try:
+            resolved.relative_to(book.root)
+        except ValueError:
+            book.fail("path_escape", "Whole-book outline resolves outside the book", path=str(path))
+        stat = path.stat()
+        if stat.st_nlink > 1:
+            book.fail("invalid_input", "Whole-book outline cannot share an inode with another file",
+                      path=str(path))
+        if stat.st_size > MAX_OUTLINE_BYTES:
+            book.fail("outline_too_large", "Whole-book outline exceeds the file size limit",
+                      path=str(path), max_bytes=MAX_OUTLINE_BYTES)
+        with path.open("rb") as source:
+            opened_stat = os.fstat(source.fileno())
+            if (opened_stat.st_dev, opened_stat.st_ino) != (stat.st_dev, stat.st_ino):
+                book.fail("outline_changed", "Whole-book outline path changed while opening it", path=str(path))
+            raw = source.read(MAX_OUTLINE_BYTES + 1)
+        if len(raw) > MAX_OUTLINE_BYTES:
+            book.fail("outline_too_large", "Whole-book outline exceeds the file size limit",
+                      path=str(path), max_bytes=MAX_OUTLINE_BYTES)
+        after = book.safe_path(book.root, relative)
+        after_stat = after.stat()
+        if (after.resolve(strict=True) != resolved or
+                (after_stat.st_dev, after_stat.st_ino) != (stat.st_dev, stat.st_ino)):
+            book.fail("outline_changed", "Whole-book outline path changed while it was read", path=str(path))
+        text = raw.decode("utf-8-sig")
+    except OSError as error:
+        book.fail("outline_missing", "Cannot read whole-book outline", path=str(path), error=str(error))
+    except UnicodeDecodeError:
+        book.fail("invalid_encoding", "Whole-book outline must be UTF-8", path=str(path))
+    sections = _position_sections(text)
+    issues = []
+    if not sections:
+        issues.append({"code": "position_section_missing"})
+    elif len(sections) != 1:
+        issues.append({"code": "position_sections_ambiguous", "count": len(sections)})
+    fields = {}
+    checked_platform_rules = "none"
+    if len(sections) == 1:
+        _, lines = sections[0]
+        for line in lines:
+            for match in _FIELD.finditer(line.lstrip(" -*+\t")):
+                key = match.group(1).strip(" *_`\t")
+                value = match.group(2).strip(" *_`\t")
+                fields.setdefault(key, []).append(value)
+        for field in _POSITION_FIELDS:
+            if not any(fields.get(field, [])):
+                issues.append({"code": "position_field_missing", "field": field})
+        if not (any(fields.get("平台入口", [])) or any(fields.get("页面适用性", []))):
+            issues.append({"code": "position_field_missing", "field": "平台入口／页面适用性"})
+        width = fields.get("篇幅类型", [])
+        if width and not any(re.match(r"^(?:长篇|短篇)(?=$|[。.!（(\s])", value) for value in width):
+            issues.append({"code": "length_kind_unresolved"})
+        source_lines = [line for line in lines if "来源与核对日期" in line]
+        source_dates = [candidate for line in source_lines for candidate in _DATE.findall(line)]
+        if not any(_valid_date(value) for value in source_dates):
+            issues.append({"code": "source_date_missing"})
+        declared = {part.strip() for key in fields for part in re.split(r"[／/、]", key)}
+        declared.update(_declared_tag_group_headings(lines))
+        classification_values = [value for key, values in fields.items()
+                                 if any(part.strip() in _CLASSIFICATION_FIELDS
+                                        for part in re.split(r"[／/、]", key))
+                                 for value in values]
+        if not any(token in value for value in classification_values
+                   for token in ("拟选", "后台已确认", "待核对")):
+            issues.append({"code": "classification_status_missing"})
+        if not declared.intersection({"主分类", "一级分类", "阅读标签", "平台分类"}):
+            issues.append({"code": "classification_column_missing"})
+        platform = " ".join(fields.get("目标平台", []))
+        entrance = " ".join(fields.get("平台入口", []) + fields.get("页面适用性", []))
+        if "七猫" in platform and "番茄" not in platform:
+            checked_platform_rules = "qimao"
+            columns = ("分类频道", "一级分类", "二级分类", "风格", "角色", "情节", "背景")
+        elif "番茄" in platform and "七猫" not in platform:
+            if "短故事" in entrance:
+                checked_platform_rules = "fanqie_short"
+                columns = ("主分类", "情节", "角色", "情绪", "背景")
+            elif "小说" in entrance and "待核对" not in entrance:
+                checked_platform_rules = "fanqie_novel"
+                columns = ("目标读者", "阅读标签", "内容标签")
+            else:
+                issues.append({"code": "platform_entrance_unresolved"})
+                columns = ()
+        else:
+            checked_platform_rules = "generic"
+            columns = ()
+        for column in columns:
+            if column not in declared:
+                issues.append({"code": "classification_column_missing", "field": column})
+    return {"ok": not issues, "scope": "outline_structure_only", "path": relative,
+            "sha256": hashlib.sha256(raw).hexdigest(),
+            "section_lines": [start for start, _ in sections], "fields_found": sorted(declared if len(sections) == 1 else fields),
+            "checked_platform_rules": checked_platform_rules,
+            "issues": issues, "manual_review_required": True,
+            "note": "Only required field presence and source-date syntax were checked; platform options, per-column status, evidence, and adoption still require human review."}
+
+
+def _valid_date(value):
+    try:
+        date.fromisoformat(value)
+        return True
+    except ValueError:
+        return False
 
 
 def _chapter(book, chapter):

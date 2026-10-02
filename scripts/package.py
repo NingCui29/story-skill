@@ -114,10 +114,14 @@ SUITE_FILES_V069 = tuple(sorted((*SUITE_FILES_V065,
     "story-skill-write/references/suspense-evidence.md",
 )))
 SKILL_NAMES_V069 = SKILL_NAMES_V061
+SUITE_FILES_V0610 = tuple(sorted((*SUITE_FILES_V069,
+    "story-skill-write/references/content-review.md",
+)))
+SKILL_NAMES_V0610 = SKILL_NAMES_V069
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V069
-SUITE_FILES = SUITE_FILES_V069
+SKILL_NAMES = SKILL_NAMES_V0610
+SUITE_FILES = SUITE_FILES_V0610
 
 
 def suite_files(version):
@@ -130,6 +134,8 @@ def suite_files(version):
         return SUITE_FILES_V065
     if version == "0.6.9":
         return SUITE_FILES_V069
+    if version == "0.6.10":
+        return SUITE_FILES_V0610
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 
@@ -143,6 +149,8 @@ def skill_names(version):
         return SKILL_NAMES_V061
     if version == "0.6.9":
         return SKILL_NAMES_V069
+    if version == "0.6.10":
+        return SKILL_NAMES_V0610
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 

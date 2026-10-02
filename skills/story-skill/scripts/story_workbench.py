@@ -1052,6 +1052,10 @@ def _git_ignore_status(book, target, backup):
         ignored = [subprocess.run(
             ["git", "-C", str(repository), "check-ignore", "--no-index", "-q", "--", path.as_posix()],
             capture_output=True, timeout=5) for path in (relative_target, relative_backup)]
+        # Specific output ignores do not cover other workbench files.
+        ignored.append(subprocess.run(
+            ["git", "-C", str(repository), "check-ignore", "--no-index", "-q", "--",
+             workbench.as_posix() + "/"], capture_output=True, timeout=5))
     except (FileNotFoundError, OSError, subprocess.TimeoutExpired) as error:
         api.fail("workbench_git_check_failed", "Could not verify the book repository ignore rules",
                  path=str(target), reason=str(error))
@@ -1189,7 +1193,8 @@ def _pending_document(root, document_id):
     if result['chapter'] and result['content_kind'] != 'material':
         try:
             formal = _editor_document(root, f"formal:{result['chapter']}")
-            result['comparison'] = {'title': formal['title'], 'text': formal['text'], 'sha256': formal['sha256']}
+            result['comparison'] = {'title': formal['title'], 'text': formal['text'],
+                                    'prefix': formal.get('prefix', ''), 'sha256': formal['sha256']}
         except api.StoryError:
             pass
     return result
@@ -1463,7 +1468,7 @@ def _editor_document_raw(root, document_id):
         label = f'第{number}章' + (' ' + plan['title'] if plan.get('title') else '（未登记章名）')
         text = '# ' + label + '\n\n## 本章目标\n\n' + plan.get('goal', '未登记目标')
         for beat in plan.get('beats', []):
-            text += '\n\n### 场景\n\n' + beat['choice'] + '\n\n' + beat['change']
+            text += '\n\n### 变化节点\n\n' + beat['choice'] + '\n\n' + beat['change']
         text += '\n\n## 停笔点\n\n' + plan['stop']
         return {'ok': True, 'id': document_id, 'path': '工具章计划 · 第' + str(number) + '章',
                 'title': label, 'text': text, 'kind': 'plan',
@@ -1534,7 +1539,8 @@ def _editor_document_raw(root, document_id):
             if not prefix and not meta and re.fullmatch(rf'第0*{chapter}章_基线[0-9a-f]{{64}}_修订[0-9a-f]{{32}}', Path(row['path']).stem):
                 prefix, body = _body_without_heading(result['text'], chapter, formal['title'])
                 result.update(prefix=prefix, text=body)
-            result['comparison'] = {'title': formal['title'], 'text': formal['text'], 'sha256': formal['sha256']}
+            result['comparison'] = {'title': formal['title'], 'text': formal['text'],
+                                    'prefix': formal.get('prefix', ''), 'sha256': formal['sha256']}
             result['status'] = ('候选稿，未采用；正式基线已变化' if base_sha and base_sha != formal['sha256'] else
                                 '候选稿，未采用；正式基线一致' if base_sha else
                                 '未登记版本关系；按文件名建议与此章对照')
@@ -1766,13 +1772,25 @@ def _editor_metrics(root, payload):
     plan = (doc.get('context') or {}).get('plan') or {}
     method = plan.get('count_method', 'visible_nonspace_v1') if doc['is_prose'] else 'visible_nonspace_v1'
     counted = doc.get('prefix', '') + text if doc['is_prose'] else '\n' + text
-    counts = api.manuscript_counts(counted, plan.get('count_title', False) if doc['is_prose'] else True)
-    value = counts[method]
     target = plan.get('length') if doc['is_prose'] else None
+    # The range alone is not a valid chapter-length result: legacy methods
+    # also reject attached marks and blank filler glyphs that v2 does not count.
+    if target:
+        baseline = doc if doc.get('kind') == 'formal' else doc.get('comparison')
+        previous_text = (baseline.get('prefix', '') + baseline['text']).removeprefix('\ufeff') if baseline else None
+        checked = api.lint_text(counted.removeprefix('\ufeff'), plan, previous_text=previous_text)
+        counts, value = checked['counts'], checked['length_count']
+        length_issues = [issue['code'] for issue in checked['errors']
+                         if issue['code'] in ('length', 'invisible_padding')]
+    else:
+        counts = api.manuscript_counts(counted, plan.get('count_title', False) if doc['is_prose'] else True)
+        value, length_issues = counts[method], []
+    within_target = target[0] <= value <= target[1] if target else None
     return {'ok': True, 'count': value, 'method': method, 'target': target,
             'include_title': bool(plan.get('count_title')) if doc['is_prose'] else None,
             'selection': api.manuscript_counts('\n' + selected, True)[method],
-            'in_range': target[0] <= value <= target[1] if target else None,
+            'within_target': within_target, 'in_range': not length_issues if target else None,
+            'length_issues': length_issues,
             'is_prose': doc['is_prose'], 'text_sha256': api.digest(text)}
 
 
@@ -1784,14 +1802,42 @@ def _editor_review_task(root, document_id, expected_sha=None):
         api.fail('invalid_input', '请先将可编辑内容保存为完整候选稿。')
     context = doc.get('context') or {}
     lint = None
-    if doc['is_prose'] and context.get('plan'):
-        lint = api.lint_text(doc.get('prefix', '') + doc['text'], context['plan'])
+    check_scope = 'material'
+    check_note = '这是材料文件，未运行完整章节检查。'
+    if doc['is_prose'] and not context.get('plan'):
+        check_scope = 'no_plan'
+        check_note = '尚无已保存章计划，未运行完整章节检查；请人工核对章号、章名和篇幅。'
+    elif doc['is_prose']:
+        # Book.lint is the same read-only path used by the CLI, including
+        # heading, length exception, outline and destination checks. Read the
+        # saved candidate, never an unsaved editor buffer or a temporary file.
+        book = api.Book(root, read_only=True)
+        try:
+            try:
+                lint = book.lint(context['chapter'], Path(root) / doc['path'])
+            except api.StoryError as error:
+                check_scope = 'blocked'
+                check_note = f'完整章节工具检查未完成（{error.code}）：{error}。请在审稿时核对原因。'
+            else:
+                # The page binds raw file bytes; lint binds UTF-8 text after
+                # stripping an optional BOM. Check both without conflating them.
+                raw = _author_read(Path(root), doc['path'])
+                if (hashlib.sha256(raw).hexdigest() != doc['sha256'] or
+                        api.digest(raw.decode('utf-8-sig')) != lint['draft_sha256']):
+                    api.fail('stale_snapshot', '所选文件在检查期间变化，请刷新后重试。')
+                check_scope = 'complete_chapter'
+                check_note = ('已对保存文件运行只读完整章节工具检查；若本文件只是章中片段，'
+                              '章头和整章字数提示仅供参考。工具结果不代表语义审查通过。')
+        finally:
+            book.close()
     prompt = ('请审查以下已保存文件，先核对文件仍与本次校验值一致，再读取本书约定及相关细纲、前文。\n'
               f'书目录：{Path(root).absolute()}\n文件：{doc["path"]}\n校验值：{doc["sha256"]}\n'
               f'文件状态：{doc["status"]}\n'
+              f'本地工具检查范围：{check_note}\n'
               '先检查叙事、人物行动、连续性、阅读期待、字数与中文格式，指出具体依据。\n'
               '本次只审查，不自动修改或正式采用；需要修改时另存候选。不要将页面格式检查当成人工审稿。')
-    return {'ok': True, 'prompt': prompt, 'lint': lint, 'status': '审稿任务已生成，尚未交给助手执行'}
+    return {'ok': True, 'prompt': prompt, 'lint': lint, 'check_scope': check_scope,
+            'check_note': check_note, 'status': '审稿任务已生成，尚未交给助手执行'}
 
 
 def _editor_search(root, query, offset=0, limit=30, material_roots=None):
@@ -1891,7 +1937,7 @@ const $=id=>document.getElementById(id), docs=new Map();let active=null,offset=0
 const note=text=>{$('message').textContent=text;$('message').hidden=!text||text.startsWith('已打开：');};
 async function call(action,data={}){const response=await fetch(location.pathname+'api/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(data)});const value=await response.json();if(!response.ok)throw Error((value.message||'请求失败')+(value.details?.path?' 文件：'+value.details.path:'')+(value.details?.incomplete_path?' 暂存：'+value.details.incomplete_path:''));return value;}
 let currentCatalog=null,viewMode='chapters',metricTimer,metricSequence=0,searchSequence=0,fullSearchOffset=0;
-const readableMethod={visible_nonspace_v1:'非空白可见字符（含标点）',letters_numbers_v1:'汉字、字母与数字',han_v1:'汉字'};
+const readableMethod={visible_nonspace_v1:'非空白可见字符（旧口径）',visible_nonspace_v2:'独立可见字符（含标点）',letters_numbers_v1:'汉字、字母与数字',han_v1:'汉字'};
 function chapterNumber(d){return d.context?.chapter||d.chapter||null;}
 function simpleCount(text){return [...text].filter(c=>!/[\s\p{Cc}\p{Cf}]/u.test(c)).length;}
 function displayTitle(d){
@@ -2041,8 +2087,9 @@ function scheduleMetrics(){clearTimeout(metricTimer);++metricSequence;const d=do
  $('word-count').textContent='正在核对字数…';$('count-method').textContent='正在读取本文件计数口径…';const seq=metricSequence;metricTimer=setTimeout(async()=>{try{
   const selected=d.editing?$('text').value.slice($('text').selectionStart,$('text').selectionEnd):'';
   const m=await call('metrics',{id:d.id,text:d.value,selection:selected});if(seq!==metricSequence||active!==d.id)return;
-  $('word-count').textContent=m.count+' 字符'+(m.target&&!m.in_range?' · 范围外':'')+(m.selection?' · 已选 '+m.selection:'');
-  $('count-method').textContent=(m.is_prose?'正文':'材料')+' '+m.count+' 字符 · '+readableMethod[m.method]+(m.is_prose?(m.include_title?' · 含章名':' · 不含章名'):'')+(m.target?' · 目标 '+m.target.join('～')+' · '+(m.in_range?'范围内':'范围外'):'')+(m.selection?' · 已选 '+m.selection:'');
+  const lengthState=!m.target?'':m.in_range?'章幅计数通过':!m.within_target?'范围外':m.length_issues?.includes('invisible_padding')?'章幅检查未通过：附着标记和空白填充符不计下限':'章幅检查未通过';
+  $('word-count').textContent=m.count+' 字符'+(lengthState?' · '+lengthState:'')+(m.selection?' · 已选 '+m.selection:'');
+  $('count-method').textContent=(m.is_prose?'正文':'材料')+' '+m.count+' 字符 · '+readableMethod[m.method]+(m.is_prose?(m.include_title?' · 含章名':' · 不含章名'):'')+(m.target?' · 目标 '+m.target.join('～')+' · '+lengthState+'（仅核对章幅，章头等另查）':'')+(m.selection?' · 已选 '+m.selection:'');
  }catch(e){if(seq===metricSequence)$('word-count').textContent='字数核对失败：'+e.message;}},350);
 }
 function drawCatalog(c,expanded){currentCatalog=c;const w=c.workspace;
@@ -2112,7 +2159,7 @@ function setupWorkspace(){
  for(const id of ['maintenance','more-actions','reading-options'])$(id).addEventListener('click',e=>{if(e.target.closest('button'))$(id).open=false;});
  $('source-view').onclick=()=>{const d=docs.get(active);d.rawPreview=!d.rawPreview;show(d);};
  $('text').addEventListener('select',scheduleMetrics);$('text').addEventListener('keyup',scheduleMetrics);
- $('review-task').onclick=async()=>{const d=docs.get(active);if(!d?.editable)return;if(dirty(d)||d.needs_recovery){note('请先保存当前候选稿，再生成绑定该文件的审稿任务。');return;}try{const r=await call('review-task',{id:d.id,sha256:d.sha256});if(active!==d.id)return;leaveComparison();$('review-task-box').hidden=false;$('review-task-box').scrollIntoView({block:'start'});$('review-prompt').value=r.prompt;$('review-task-status').textContent=r.status+(r.lint?'；基础检查'+(r.lint.ok?'未发现阻断项':'发现 '+r.lint.errors.length+' 项问题')+'，不代表语义审查通过。':'。');$('review-findings').textContent=r.lint?[...r.lint.errors,...r.lint.warnings].map(x=>x.code+(x.expected?'：目标 '+x.expected.join('～')+'，实际 '+x.actual:'')).join('\n'):'';}catch(e){note(e.message);}};
+ $('review-task').onclick=async()=>{const d=docs.get(active);if(!d?.editable)return;if(dirty(d)||d.needs_recovery){note('请先保存当前候选稿，再生成绑定该文件的审稿任务。');return;}try{const r=await call('review-task',{id:d.id,sha256:d.sha256});if(active!==d.id)return;leaveComparison();$('review-task-box').hidden=false;$('review-task-box').scrollIntoView({block:'start'});$('review-prompt').value=r.prompt;$('review-task-status').textContent=r.status+'；'+r.check_note+(r.lint?(r.lint.ok?' 未发现工具阻断项。':' 发现 '+r.lint.errors.length+' 项工具问题。'):'');$('review-findings').textContent=r.lint?[...r.lint.errors,...r.lint.warnings].map(x=>x.code+(x.expected?'：目标 '+(Array.isArray(x.expected)?x.expected.join('～'):x.expected):'')+(x.actual!==undefined?'，实际 '+x.actual:'')+(x.message?'：'+x.message:'')).join('\n'):'';}catch(e){note(e.message);}};
  $('copy-review').onclick=async()=>{try{await navigator.clipboard.writeText($('review-prompt').value);$('review-task-status').textContent='已复制，请粘贴给助手执行审查；当前尚未正式采用。';}catch{$('review-prompt').select();note('请复制已选中的审稿任务。');}};
  $('full-go').onclick=()=>{fullSearchOffset=0;fullSearch();};$('full-query').onkeydown=e=>{if(e.key==='Enter'){fullSearchOffset=0;fullSearch();}};$('search-prev').onclick=()=>{fullSearchOffset=Math.max(0,fullSearchOffset-30);fullSearch();};$('search-next').onclick=()=>{fullSearchOffset+=30;fullSearch();};
  try{const p=JSON.parse(localStorage.getItem('story-reading')||'{}');if(['16','19','22','25'].includes(p.size))$('font-size').value=p.size;if(['1.6','1.8','1.9','2.2'].includes(p.line))$('line-height').value=p.line;if(['serif','sans'].includes(p.font))$('font-family').value=p.font;$('focus-reading').checked=p.focus===true;}catch{}

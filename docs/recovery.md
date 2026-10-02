@@ -118,4 +118,4 @@ v0.5.0 首次 Windows CI 达到时限，诊断轮又确认大小写等价路径�
 
 ## 完整核验与局部运行
 
-默认 strict 会哈希核对所有导出。`--integrity local` 只核验最近及队列中的文件，回执列出未核验历史数；`exports_complete: null` 表示局部处理已完成、全书完整性未确认，不是错误也不等同全书清洁。新会话、恢复中断、发生外部编辑后，以及阶段交付前，用 `audit --book "<书目录>"` 完整核验。不要根据mtime/大小、旧审计revision或缓存命中推断磁盘未发生变化。
+默认 strict 会哈希核对所有导出。`--integrity local` 只核验最近及队列中的文件，回执列出未核验历史数；`exports_complete: null` 表示局部处理已完成、全书完整性未确认，不是错误也不等同全书清洁。新会话、恢复中断、发生外部编辑后，以及阶段交付前，用 `audit --book "<书目录>"` 完整核验；`audit` 只接受 strict，传入 `--integrity local` 会报错。其 `read_only: true` 指不修改托管书库记录和导出正文，也不写审计记录；SQLite 读取 WAL 时仍可能创建或清理临时 `state.sqlite3-shm` 旁文件。`checked_revision` 是本次读取快照版本，`last_full_audit_revision` 仅表示此前持久化的完整导出核验，不代表本次核验。发现待导出路径时，明确执行 `export --book "<书目录>" --safe-only` 恢复安全路径，再重新 `audit`；外部修改须先保留并按修订流程核对，不能把 `audit` 当成自动修复。不要根据mtime/大小、旧审计revision或缓存命中推断磁盘未发生变化。

@@ -63,6 +63,62 @@ class LengthExceptionTests(unittest.TestCase):
             self.book.db.execute("INSERT INTO plans(chapter,data) VALUES (?,?)",
                                  (1, story.dumps(value)))
 
+    def committed_v1_boundary(self):
+        # Build a native chapter through the public API, then restore the
+        # historical v1 minimum whose extra mark was counted before v2 existed.
+        self.book.save_plan(1, self.plan(length=[2399, 2800], length_exception={
+            "source": "user_request", "quote": "测试准备阶段按2399至2800字写。"}),
+            self.book.meta("revision"))
+        text = self.write(DEFAULT_BODY[:2399] + "\ufe0f")
+        self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
+        legacy = self.book.get_plan(1)
+        legacy["length"] = [2400, 2800]
+        legacy.pop("length_exception")
+        self.book.save_plan(1, legacy, self.book.meta("revision"))
+        return text
+
+    def test_saved_v1_boundary_lints_and_replaces_unchanged_but_rejects_changed_padding(self):
+        text = self.committed_v1_boundary()
+        checked = self.book.lint(1, self.draft)
+        self.assertTrue(checked["ok"])
+        self.assertEqual(checked["length_count"], 2400)
+        self.assertTrue(self.book.commit(1, self.draft, self.delta(text),
+                                         replace_last=True)["exports_complete"])
+        changed = text.replace("她推开门。", "她敲了门。", 1)
+        self.draft.write_bytes(changed.encode("utf-8"))
+        rejected = self.book.lint(1, self.draft)
+        self.assertIn("invisible_padding", {item["code"] for item in rejected["errors"]})
+        self.assert_error("lint_failed", lambda: self.book.commit(
+            1, self.draft, self.delta(changed), replace_last=True))
+        self.assertEqual((self.root / self.book.chapter_path(1)).read_bytes(), text.encode("utf-8"))
+
+    def test_history_keeps_unchanged_v1_boundary_and_rejects_changed_padding(self):
+        text = self.committed_v1_boundary()
+        history = story.history
+        packet = history.branch_start(self.book, 1, self.book.meta("revision"))
+        candidate = {"sha": story.digest(text), "summary": "她推开门。",
+                     "dependencies": [], "complete": True}
+        entry = {"chapter": 1, "text": text, "summary": candidate["summary"],
+                 "dependencies": [], "complete": True,
+                 "review": {**self.delta(text)["review"],
+                            "candidate_sha256": history.candidate_fingerprint(candidate)}}
+        staged = history.branch_update(self.book, packet["branch"], {"chapters": [entry]},
+                                       self.book.meta("revision"))
+        semantic = {**staged["review_template"], "note": "原正文及前后衔接已完整回读。",
+                    "state_review": "旧章无新增状态，已核对当前记录。",
+                    "coverage_review": "核对本章行动与事实，原文保持不变。"}
+        staged = history.branch_update(self.book, packet["branch"], {"semantic_review": semantic},
+                                       self.book.meta("revision"))
+        published = history.branch_publish(self.book, staged["branch"], self.book.meta("revision"))
+        self.assertTrue(published["exports_complete"])
+        packet = history.branch_start(self.book, 1, self.book.meta("revision"))
+        changed = text.replace("她推开门。", "她敲了门。", 1)
+        error = self.assert_error("lint_failed", lambda: history.branch_update(
+            self.book, packet["branch"], {"chapters": [{"chapter": 1, "text": changed}]},
+            self.book.meta("revision")))
+        self.assertIn("invisible_padding", {item["code"] for item in error.details["lint"]["errors"]})
+        self.assertEqual((self.root / self.book.chapter_path(1)).read_bytes(), text.encode("utf-8"))
+
     def test_new_nondefault_plan_needs_an_explicit_source_at_save(self):
         before = self.book.meta("revision")
         self.assert_error("length_exception_required", lambda: self.book.save_plan(
@@ -174,10 +230,54 @@ class LengthExceptionTests(unittest.TestCase):
                     1, self.plan(**changed), self.book.meta("revision")))
 
     def test_default_count_needs_no_exception(self):
-        self.book.save_plan(1, self.plan(length=[2400, 2800]), self.book.meta("revision"))
+        self.book.save_plan(1, self.plan(length=[2400, 2800],
+                                         count_method="visible_nonspace_v2"),
+                            self.book.meta("revision"))
         text = self.write(DEFAULT_BODY)
         self.assertTrue(self.book.lint(1, self.draft)["ok"])
         self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
+
+    def test_new_default_v2_requires_no_exception_but_explicit_v1_does(self):
+        fresh = self.plan(length=[2400, 2800])
+        fresh.pop("count_method")
+        self.book.save_plan(1, fresh, self.book.meta("revision"))
+        self.assertEqual(self.book.get_plan(1)["count_method"], "visible_nonspace_v2")
+        self.assertFalse(story.needs_length_exception(self.book.get_plan(1)))
+        self.assertTrue(story.needs_length_exception(self.plan(length=[2400, 2800])))
+        self.assert_error("length_exception_required", lambda: self.book.save_plan(
+            2, self.plan(length=[2400, 2800]), self.book.meta("revision")))
+
+    def test_preexisting_uncommitted_default_v1_must_be_reconciled_before_commit(self):
+        old = self.plan(length=[2400, 2800])
+        with self.book.transaction():
+            self.book.db.execute("INSERT INTO plans(chapter,data) VALUES (?,?)",
+                                 (1, story.dumps(old)))
+        self.assertEqual(self.book.get_plan(1)["count_method"], "visible_nonspace_v1")
+        text = self.write(DEFAULT_BODY)
+        lint = self.book.lint(1, self.draft)
+        self.assertIn("length_exception_required", {item["code"] for item in lint["errors"]})
+        self.assert_error("lint_failed", lambda: self.book.commit(
+            1, self.draft, self.delta(text)))
+        self.book.save_plan(1, {**old, "count_method": "visible_nonspace_v2"},
+                            self.book.meta("revision"))
+        self.assertTrue(self.book.lint(1, self.draft)["ok"])
+        self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
+
+    def test_committed_default_v1_remains_compatible_without_old_exception(self):
+        exception = {"source": "user_request", "quote": "本章沿用旧的可见字符口径。"}
+        self.book.save_plan(1, self.plan(length=[2400, 2800],
+                                         length_exception=exception),
+                            self.book.meta("revision"))
+        text = self.write(DEFAULT_BODY)
+        self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
+        legacy = self.book.get_plan(1)
+        legacy.pop("length_exception")
+        with self.book.transaction():
+            self.book.db.execute("UPDATE plans SET data=? WHERE chapter=1", (story.dumps(legacy),))
+        self.assertTrue(self.book.lint(1, self.draft)["ok"])
+        revised = self.write(DEFAULT_BODY + "她停住脚。")
+        self.assertTrue(self.book.commit(1, self.draft, self.delta(revised),
+                                         replace_last=True)["exports_complete"])
 
     def test_old_committed_chapter_is_not_retroactively_blocked(self):
         exception = {"source": "user_request", "quote": "请把本章控制在1200到1500字。"}

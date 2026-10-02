@@ -79,7 +79,7 @@ class StoryTests(unittest.TestCase):
     def test_complete_chapter_template_length_and_explicit_override(self):
         template = story.TEMPLATES["plan"]
         self.assertEqual(template["length"], [2400, 2800])
-        self.assertEqual(template["count_method"], "visible_nonspace_v1")
+        self.assertEqual(template["count_method"], "visible_nonspace_v2")
         self.assertIs(template["count_title"], False)
         self.assertEqual(story.valid_plan(plan(length=[1200, 1500]))["length"], [1200, 1500])
         for count, expected in ((2399, False), (2400, True), (2800, True), (2801, False)):

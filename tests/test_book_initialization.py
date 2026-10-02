@@ -2,6 +2,7 @@
 from contextlib import closing
 import importlib.util
 import json
+import os
 from pathlib import Path
 import sqlite3
 import tempfile
@@ -21,9 +22,14 @@ class BookInitializationTests(unittest.TestCase):
         self.root = Path(self.temp.name).resolve() / "新书"
         self.database = self.root / ".story/state.sqlite3"
 
-    def assert_empty_database(self):
-        self.assertTrue(self.database.is_file())
-        with closing(sqlite3.connect(self.database)) as db:
+    def staged_databases(self):
+        return list(self.database.parent.glob(".state-init-*.sqlite3"))
+
+    def assert_failed_state_preserved(self):
+        self.assertFalse(self.database.exists())
+        staged = self.staged_databases()
+        self.assertEqual(len(staged), 1)
+        with closing(sqlite3.connect(staged[0])) as db:
             self.assertEqual(db.execute("SELECT name FROM sqlite_master").fetchall(), [])
             self.assertEqual(db.execute("PRAGMA integrity_check").fetchone()[0], "ok")
 
@@ -31,7 +37,11 @@ class BookInitializationTests(unittest.TestCase):
         with patch.object(story.history, "SCHEMA", story.history.SCHEMA + "\nCREATE TABLE meta(duplicate TEXT);\n"):
             with self.assertRaisesRegex(sqlite3.OperationalError, "already exists"):
                 story.Book.create(self.root, "未完成的新书", "long")
-        self.assert_empty_database()
+        self.assert_failed_state_preserved()
+        receipt = story.Book.create(self.root, "重试的新书", "long")
+        self.assertTrue(self.database.is_file())
+        self.assertEqual(receipt["title"], "重试的新书")
+        self.assertEqual(len(self.staged_databases()), 1)
 
     def test_initial_metadata_failure_rolls_back_schema_and_partial_identity(self):
         rejection = """
@@ -42,7 +52,7 @@ END;
         with patch.object(story.history, "SCHEMA", story.history.SCHEMA + rejection):
             with self.assertRaisesRegex(sqlite3.IntegrityError, "initial metadata interrupted"):
                 story.Book.create(self.root, "元数据故障", "short")
-        self.assert_empty_database()
+        self.assert_failed_state_preserved()
 
     def test_new_schema_is_invisible_until_complete_identity_is_committed(self):
         execute_schema = story.storage.execute_schema
@@ -55,12 +65,14 @@ END;
             self.assertTrue(db.in_transaction)
             self.assertEqual(db.execute("PRAGMA synchronous").fetchone()[0], synchronous)
             self.assertTrue(db.execute("SELECT name FROM sqlite_master WHERE name='meta'").fetchone())
-            with closing(sqlite3.connect(self.database)) as observer:
+            self.assertFalse(self.database.exists())
+            with closing(sqlite3.connect(self.staged_databases()[0])) as observer:
                 observations.append(observer.execute("SELECT name FROM sqlite_master").fetchall())
 
         with patch.object(story.storage, "execute_schema", side_effect=inspect_before_identity):
             receipt = story.Book.create(self.root, "完整的新书", "long")
         self.assertEqual(observations, [[]])
+        self.assertEqual(self.staged_databases(), [])
         with closing(sqlite3.connect(self.database)) as db:
             meta = {key: json.loads(value) for key, value in db.execute("SELECT key,value FROM meta")}
             self.assertEqual(meta, {key: value for key, value in receipt.items() if key != "created"})
@@ -71,6 +83,37 @@ END;
             self.assertEqual(book.meta("id"), receipt["id"])
         finally:
             book.close()
+
+    def test_publish_failure_preserves_completed_stage_and_allows_retry(self):
+        operation = "rename" if os.name == "nt" else "link"
+        with patch.object(story.os, operation, side_effect=OSError("atomic publish unavailable")):
+            with self.assertRaises(story.StoryError) as result:
+                story.Book.create(self.root, "暂存的新书", "short")
+        self.assertEqual(result.exception.code, "init_publish_failed")
+        self.assertFalse(self.database.exists())
+        staged = self.staged_databases()
+        self.assertEqual(len(staged), 1)
+        with closing(sqlite3.connect(staged[0])) as db:
+            self.assertEqual(json.loads(db.execute("SELECT value FROM meta WHERE key='title'").fetchone()[0]),
+                             "暂存的新书")
+        story.Book.create(self.root, "重试的新书", "short")
+        self.assertTrue(self.database.is_file())
+        self.assertEqual(len(self.staged_databases()), 1)
+
+    def test_concurrent_initializer_never_replaces_existing_state(self):
+        operation = "rename" if os.name == "nt" else "link"
+        real_publish = getattr(story.os, operation)
+
+        def publish_after_other_writer(source, target):
+            Path(target).write_bytes(b"other writer's state")
+            return real_publish(source, target)
+
+        with patch.object(story.os, operation, side_effect=publish_after_other_writer):
+            with self.assertRaises(story.StoryError) as result:
+                story.Book.create(self.root, "竞态中的新书", "long")
+        self.assertEqual(result.exception.code, "book_exists")
+        self.assertEqual(self.database.read_bytes(), b"other writer's state")
+        self.assertEqual(len(self.staged_databases()), 1)
 
 
 if __name__ == "__main__":

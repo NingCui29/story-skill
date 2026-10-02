@@ -76,6 +76,16 @@ class SkillAuditBookTests(unittest.TestCase):
     def revision(self):
         return self.book.meta("revision")
 
+    def test_empty_strict_book_is_not_reported_as_fully_verified(self):
+        status = self.book.status()
+        self.assertEqual(status["last_chapter"], 0)
+        self.assertEqual(status["integrity"]["verified_file_count"], 0)
+        self.assertFalse(status["integrity"]["full_book_verified"])
+        self.assertIn("not literary completion", status["integrity"]["note"])
+        audit = self.book.audit()
+        self.assertTrue(audit["exports_complete"])
+        self.assertFalse(audit["integrity"]["full_book_verified"])
+
     def delta(self, book, text):
         return {
             "book_id": book.meta("id"), "base_revision": book.meta("revision"),

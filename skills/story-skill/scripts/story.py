@@ -18,11 +18,15 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.9"
+VERSION = "0.6.10"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
-COUNT_METHODS = ("visible_nonspace_v1", "letters_numbers_v1", "han_v1")
+COUNT_METHODS = ("visible_nonspace_v1", "visible_nonspace_v2", "letters_numbers_v1", "han_v1")
+# Python's isspace() does not catch these five blank-looking code points:
+# Hangul choseong/jungseong filler, braille pattern blank, Hangul filler,
+# and halfwidth Hangul filler. Exclude only these, not their Unicode blocks.
+V2_EMPTY_GLYPHS = frozenset("\u115f\u1160\u2800\u3164\uffa0")
 DEFAULT_CHAPTER_LENGTH = (2400, 2800)
 
 
@@ -115,7 +119,7 @@ def first_chapter_heading(text):
 COMPLETE_CHAPTER_HEADING = re.compile(
     r"^第([0-9０-９零〇一二三四五六七八九十百千万两]+)章[ \t　:：、.．-]+(\S.*)$")
 PLAIN_CHAPTER_HEADING = re.compile(
-    r"^第([0-9０-９零〇一二三四五六七八九十百千万两]+)章 (\S.*)$")
+    r"^第([1-9][0-9]*)章 (\S.*)$")
 CHINESE_CHAPTER_DIGITS = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2,
                           "三": 3, "四": 4, "五": 5, "六": 6, "七": 7,
                           "八": 8, "九": 9}
@@ -705,7 +709,7 @@ def valid_plan(raw):
               "tags": string_list(raw.get("tags", []), "plan.tags", 24)}
     beats = raw.get("beats")
     if not isinstance(beats, list) or not 1 <= len(beats) <= 40:
-        fail("invalid_input", "plan.beats needs 1 to 40 meaningful scenes")
+        fail("invalid_input", "plan.beats needs 1 to 40 meaningful beats")
     result["beats"] = []
     for beat in beats:
         object_value(beat, "beat")
@@ -718,7 +722,7 @@ def valid_plan(raw):
     if lo > hi or hi > 200000:
         fail("invalid_input", "Invalid plan length range")
     result["length"] = [lo, hi]
-    method = raw.get("count_method", "visible_nonspace_v1")
+    method = raw.get("count_method", "visible_nonspace_v2")
     if method not in COUNT_METHODS:
         fail("invalid_input", f"plan.count_method must be one of {COUNT_METHODS}")
     include_title = raw.get("count_title", False)
@@ -766,19 +770,25 @@ def valid_plan(raw):
 
 def needs_length_exception(plan):
     return (plan["length"] != list(DEFAULT_CHAPTER_LENGTH)
-            or plan.get("count_method", "visible_nonspace_v1") != "visible_nonspace_v1"
+            or plan.get("count_method", "visible_nonspace_v1") != "visible_nonspace_v2"
             or plan.get("count_title", False))
 
 
 def manuscript_counts(text, include_title=False):
-    """Declared character counts, never platform word counts or model tokens."""
+    """Versioned character counts, never platform word counts or model tokens."""
     lines = text.splitlines()
     title_text = first_chapter_heading(text)
     if title_text is not None:
         lines = ([title_text] if include_title else []) + lines[1:]
     chars = [c for c in "\n".join(lines)
              if not c.isspace() and unicodedata.category(c) not in ("Cc", "Cf")]
+    # v1 is frozen for historical plans and publishing snapshots. v2 omits
+    # attached marks plus these five named blank/filler glyphs; it still counts
+    # ordinary Hangul, braille dots, emoji and other meaningful Unicode text.
+    independent = [c for c in chars if not unicodedata.category(c).startswith("M")
+                   and c not in V2_EMPTY_GLYPHS]
     return {"visible_nonspace_v1": len(chars),
+            "visible_nonspace_v2": len(independent),
             "letters_numbers_v1": sum(unicodedata.category(c)[0] in "LN" for c in chars),
             "han_v1": sum(c == "〇" or unicodedata.name(c, "").startswith(
                 ("CJK UNIFIED IDEOGRAPH-", "CJK COMPATIBILITY IDEOGRAPH-")) for c in chars)}
@@ -798,6 +808,14 @@ def lint_text(text, plan, chapter=None, warn_nondefault=False, *, require_plain_
     errors, warnings = [], []
     if not plan["length"][0] <= count <= plan["length"][1]:
         errors.append({"code": "length", "actual": count, "expected": plan["length"]})
+    # A saved v1 chapter is not remeasured against the new visible minimum
+    # while its exact body remains unchanged. New or changed text still is.
+    unchanged_legacy_v1 = (method == "visible_nonspace_v1" and previous_text is not None
+                           and text == previous_text)
+    if (method != "visible_nonspace_v2" and not unchanged_legacy_v1 and count >= plan["length"][0]
+            and counts["visible_nonspace_v2"] < plan["length"][0]):
+        errors.append({"code": "invisible_padding", "actual_visible": counts["visible_nonspace_v2"],
+                       "expected": plan["length"], "note": "Attached marks and blank filler glyphs cannot satisfy the minimum length"})
     if chapter is not None:
         errors.extend(chapter_heading_errors(text, plan, chapter,
                                               require_plain=require_plain_heading,
@@ -869,7 +887,7 @@ class Book:
     fail = staticmethod(fail)
     safe_path = staticmethod(safe_path)
 
-    def __init__(self, root, integrity="strict"):
+    def __init__(self, root, integrity="strict", read_only=False):
         if integrity not in ("strict", "local"):
             fail("invalid_input", "integrity must be strict or local")
         self.integrity = integrity
@@ -879,10 +897,14 @@ class Book:
         if not self.path.is_file():
             fail("book_missing", "No Story Skill state here; initialize an explicit book directory",
                  book=str(self.root))
-        self.db = sqlite3.connect(self.path.as_uri() + "?mode=rw", uri=True, timeout=10)
+        mode = "ro" if read_only else "rw"
+        self.db = sqlite3.connect(self.path.as_uri() + f"?mode={mode}", uri=True, timeout=10)
         self.db.row_factory = sqlite3.Row
+        if read_only:
+            self.db.execute("PRAGMA query_only=ON")
         self.db.execute("PRAGMA foreign_keys=ON")
-        self.db.execute("PRAGMA synchronous=FULL")
+        if not read_only:
+            self.db.execute("PRAGMA synchronous=FULL")
         try:
             schema = self.meta("schema")
         except BaseException:
@@ -916,12 +938,16 @@ class Book:
         root.mkdir(parents=True, exist_ok=True)
         path = safe_path(root, ".story/state.sqlite3")
         path.parent.mkdir(parents=True, exist_ok=True)
+        if path.exists():
+            fail("book_exists", "State already exists; use status, never reinitialize", book=str(root))
+        staged = safe_path(root, f".story/.state-init-{uuid.uuid4().hex}.sqlite3")
         try:
-            with path.open("xb"):
+            with staged.open("xb"):
                 pass
         except FileExistsError:
-            fail("book_exists", "State already exists; use status, never reinitialize", book=str(root))
-        db = sqlite3.connect(path)
+            fail("init_stage_exists", "Initialization staging path already exists; preserve and inspect it",
+                 staged_state=str(staged))
+        db = sqlite3.connect(staged)
         try:
             with db:
                 # Keep all schema and identity writes in one durable transaction.
@@ -934,6 +960,21 @@ class Book:
                 db.executemany("INSERT INTO meta VALUES (?,?)", [(k, dumps(v)) for k, v in values.items()])
         finally:
             db.close()
+        # On POSIX a hard link publishes without replacement. Windows rename
+        # has the same no-replace behavior and works on exFAT without links.
+        # Failed staged files remain inspectable and never block a fresh try.
+        try:
+            _publish_no_replace(staged, path)
+        except FileExistsError:
+            fail("book_exists", "State was created by another initializer; preserve staged evidence",
+                 book=str(root), staged_state=str(staged))
+        except OSError as exc:
+            fail("init_publish_failed", "Atomic publish failed; completed state remains staged for inspection or manual recovery",
+                 staged_state=str(staged), error=str(exc))
+        try:
+            staged.unlink()
+        except OSError:
+            pass  # The published state is complete; an extra POSIX link is harmless.
         return {"created": str(root), **values}
 
     def meta(self, key):
@@ -1349,8 +1390,9 @@ class Book:
         return {"mode": self.integrity, "verified_file_count": self._verified_paths,
                 "unverified_archive_count": max(0, total-self._verified_paths),
                 "last_full_audit_revision": audit[0] if audit else None,
-                "full_book_verified": self.integrity == "strict" and getattr(self, "_health_clean", False),
-                "note": "Hash verification is a point-in-time observation; outside editors can save again."}
+                "full_book_verified": (self.integrity == "strict" and total > 0 and
+                                       getattr(self, "_health_clean", False)),
+                "note": "Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified."}
 
     def export(self, safe_only=False):
         written, backups, errors = [], [], {}
@@ -1427,9 +1469,12 @@ class Book:
                     remember(row["path"], error)
             # A second pass catches edits of an early file while later files were processed.
             pending, changed = [], []
+            verified = 0
             for row in rows:
                 try:
                     self._check_artifact(row["path"], row["sha"], row["written_sha"])
+                    if self._last_artifact_check[1] == row["sha"]:
+                        verified += 1
                     # A matching file does not clear a failed publication or acknowledgement.
                     if (row["path"] in errors or self._last_artifact_check[1] != row["sha"] or
                             self._artifact_has_alias(row["path"])):
@@ -1450,7 +1495,7 @@ class Book:
                 unresolved = changed if assembly["state"] == "changed" else pending
                 if assembly["path"] not in unresolved:
                     unresolved.append(assembly["path"])
-            self._verified_paths = len(rows)
+            self._verified_paths = verified
             clean = not pending and not changed
             self._health_clean = clean
             if not clean and not safe_only:
@@ -1659,26 +1704,29 @@ class Book:
         rows = self._artifact_rows()
         if not include_assembly and assembly:
             rows = [row for row in rows if row["path"] != assembly["path"]]
+        verified = 0
         for row in rows:
             try:
                 self._check_artifact(row["path"], row["sha"], row["written_sha"])
+                if self._last_artifact_check[1] == row["sha"]:
+                    verified += 1
                 if (self._last_artifact_check[1] != row["sha"] or row["written_sha"] != row["sha"] or
                         self._artifact_has_alias(row["path"])):
                     pending.append(row["path"])
-            except StoryError:
+            except (StoryError, OSError):
                 drift.append(row["path"])
         retired_assembly = self._retired_short_assembly()
         for row in self._retired_chapters() + ([retired_assembly] if retired_assembly else []):
             try:
                 self._check_artifact(row["path"], row["sha"], row["written_sha"])
                 pending.append(row["path"])
-            except StoryError:
+            except (StoryError, OSError):
                 drift.append(row["path"])
         if include_assembly and assembly and assembly["state"] != "current":
             unresolved = drift if assembly["state"] == "changed" else pending
             if assembly["path"] not in unresolved:
                 unresolved.append(assembly["path"])
-        self._verified_paths = len(rows)
+        self._verified_paths = verified
         self._health_clean = not pending and not drift
         return pending, drift
 
@@ -1698,6 +1746,26 @@ class Book:
                     "changed_exports": drift[:20], "changed_export_count": len(drift),
                     "sources": sources["total"], "recent_sources": sources["results"],
                     "more_sources": sources["next_offset"] < sources["total"], "integrity": self._integrity_report()}
+
+    def audit(self):
+        """Check managed records and exports without changing either.
+
+        SQLite may create or remove a transient -shm sidecar when reading WAL.
+        """
+        if self.integrity != "strict":
+            fail("invalid_input", "audit requires strict integrity; local does not check every export")
+        with self.read_snapshot():
+            pending, changed = self._export_health()
+            complete = not pending and not changed
+            result = {"read_only": True, "read_only_scope": "managed_book_records_and_exports",
+                      "checked_revision": self.meta("revision"),
+                      "exports_complete": complete, "scope_exports_complete": complete,
+                      "pending_exports": pending[:20], "pending_export_count": len(pending),
+                      "changed_exports": changed[:20], "changed_export_count": len(changed),
+                      "integrity": self._integrity_report()}
+            if not complete:
+                result["recovery"] = "Review changed paths first; explicitly run export --safe-only to recover safe pending exports."
+            return result
 
     def chapter_external_path(self, chapter):
         relative = self.chapter_path(chapter)
@@ -2561,10 +2629,10 @@ TEMPLATES = {
                "status": "active", "due": None}],
     "plan": {"title": "<填写章节名称，不含章号>", "volume_dir": "第一卷 <填写卷名>",
              "goal": "<填写人物本章要争取的结果与主要阅读期待>",
-             "beats": [{"choice": "<填写人物的具体尝试及所遇回应，按场景需要保留取舍>",
-                        "change": "<填写尝试后的局面、认知或关系变化及本场承担的阅读回报>"}],
+             "beats": [{"choice": "<填写本节点承接的阻力、人物的尝试或有依据的取舍>",
+                        "change": "<填写本节点造成的局面、关系或行动条件变化>"}],
              "stop": "<填写停笔点>", "constraints": ["<填写用户原始硬要求>"], "length": list(DEFAULT_CHAPTER_LENGTH),
-             "requires": ["hero"], "tags": ["主角"], "count_method": "visible_nonspace_v1", "count_title": False},
+             "requires": ["hero"], "tags": ["主角"], "count_method": "visible_nonspace_v2", "count_title": False},
     "delta": {"book_id": "<填写context返回的book_id>", "base_revision": 0, "summary": "<填写本章结果与下章衔接>", "changes": [],
               "review": {"draft_sha256": "<填写lint返回的SHA256>", "checks": {
                   key: {"note": "<填写核对结论及理由>", "quote": "<填写正文精确摘录>"} for key in CHECKS}, "issues": []}},
@@ -2592,7 +2660,11 @@ def parser():
     s.add_argument("--kind", choices=("long", "short", "analysis"), default="long")
     command("status", "Compact checkpoint and export health")
     command("migrate", "Explicit schema upgrade with a consistent rollback backup")
-    command("audit", "Hash every managed export and report conflicts")
+    s = command("audit", "Strictly check managed exports without repairing or recording them", integrity=False)
+    s.add_argument("--integrity", choices=("strict",), default="strict",
+                   help="audit always hashes every managed export")
+    s = command("outline-audit", "Read-only structural check of a current whole-book outline", integrity=False)
+    s.add_argument("--file", required=True, help="Book-relative Markdown path to the current whole-book outline")
     s = command("world-save", "Save structured story state with cited evidence")
     s.add_argument("--input", required=True)
     s.add_argument("--expect", type=int, required=True)
@@ -2690,7 +2762,8 @@ def run(args):
         return storage.migrate(CORE, args.book)
     if cmd.startswith("workbench-"):
         return workbench.run(args)
-    book = Book(args.book, integrity=getattr(args, "integrity", "strict"))
+    book = Book(args.book, integrity=getattr(args, "integrity", "strict"),
+                read_only=cmd in ("audit", "outline-audit"))
     try:
         if cmd.startswith("publish-"):
             return publish.run(book, args)
@@ -2703,8 +2776,9 @@ def run(args):
         if cmd == "world-read":
             return book.world_read(args.kind, args.id, args.budget_bytes)
         if cmd == "audit":
-            book.integrity = "strict"
-            return book.export(safe_only=True)
+            return book.audit()
+        if cmd == "outline-audit":
+            return outline.audit_position(book, args.file)
         if cmd == "status":
             return book.status()
         if cmd == "export":

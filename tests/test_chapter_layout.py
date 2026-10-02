@@ -91,10 +91,10 @@ class ChapterLayoutTests(unittest.TestCase):
         self.save_plan(1)
         first, _ = self.commit(1)
         self.save_plan(2, volume_dir="第二卷 旧城", title="账本归来")
-        second, _ = self.commit(2, "第二章 账本归来\n" + BODY)
+        second, _ = self.commit(2, "第2章 账本归来\n" + BODY)
 
         expected = {"chapters/第一卷 雨夜/第1章 门后的雨.md": DRAFT,
-                    "chapters/第二卷 旧城/第2章 账本归来.md": "第二章 账本归来\n" + BODY}
+                    "chapters/第二卷 旧城/第2章 账本归来.md": "第2章 账本归来\n" + BODY}
         self.assertEqual({p.relative_to(self.root).as_posix()
                           for p in (self.root / "chapters").rglob("*.md")}, set(expected))
         for relative, content in expected.items():
@@ -118,11 +118,16 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assert_error("lint_failed", lambda: self.book.commit(1, self.draft, self.delta(text)))
         self.assertEqual(self.state_snapshot(), before)
 
-    def test_heading_normalizes_chinese_numbers_and_harmless_title_spacing(self):
+    def test_new_heading_rejects_noncanonical_numbers_but_old_numerals_still_parse(self):
         self.save_plan(1, title="开 门")
-        text = "第一章 开　门\n" + BODY
-        self.write_draft(text)
-        self.assertTrue(self.book.lint(1, self.draft)["ok"])
+        for opening in ("第一章 开　门", "第01章 开　门", "第１章 开　门"):
+            with self.subTest(opening=opening):
+                text = opening + "\n" + BODY
+                self.write_draft(text)
+                lint = self.book.lint(1, self.draft)
+                self.assertIn("chapter_heading_format", {item["code"] for item in lint["errors"]})
+                self.assert_error("lint_failed", lambda: self.book.prepare(1, self.draft))
+                self.assert_error("lint_failed", lambda: self.book.commit(1, self.draft, self.delta(text)))
         self.assertEqual(story.chapter_number("一百零二"), 102)
         self.assertEqual(story.chapter_number("１２"), 12)
 
@@ -151,7 +156,7 @@ class ChapterLayoutTests(unittest.TestCase):
                 self.assertIn(code, {item["code"] for item in lint["errors"]})
                 self.assert_error("lint_failed", lambda: self.book.prepare(1, self.draft))
                 self.assert_error("lint_failed", lambda: self.book.commit(1, self.draft, self.delta(text)))
-        imported = "第2章 旧稿另名\n" + BODY
+        imported = "第二章 旧稿另名\n" + BODY
         self.write_draft(imported)
         self.book.adopt(1, self.draft, "保留旧稿基线。", self.book.meta("revision"), volume_dir="第一卷 雨夜")
         lint = self.book.lint(1, self.draft)
@@ -256,8 +261,8 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual(self.book.lint(1, self.draft)["length_count"], body_count)
         self.assertEqual(story.manuscript_counts(text, True)["visible_nonspace_v1"], body_count + 7)
 
-    def test_chinese_heading_prefix_is_removed_and_path_survives_retry_and_reopen(self):
-        text = "第一章 门后的雨\n" + BODY
+    def test_plain_heading_prefix_is_removed_and_path_survives_retry_and_reopen(self):
+        text = "第1章 门后的雨\n" + BODY
         self.save_plan(1, volume_dir="第一卷 雨夜")
         original, delta = self.commit(1, text)
         relative = "chapters/第一卷 雨夜/第1章 门后的雨.md"
