@@ -4,13 +4,11 @@
 
 Story Skill 是供写作助手使用的八个技能，涵盖拆书、开书、大纲、正文、审稿、调研、封面和投稿材料准备。每本书独立保存，三栏工作台让你直接阅读、比较版本、修改并保存候选稿。
 
-**最新发布版：v0.6.9 · Python 3.10+ · 支持长篇与短篇**
+**最新发布版：v0.6.10 · Python 3.10+ · 支持长篇与短篇**
 
-本版包含八个技能、44 个载荷文件。[发布记录](docs/releases/v0.6.9.md)列出固定标签、跨平台检查、Release 附件与 Packages 的核验结果。安装或升级按 [INSTALL.md](INSTALL.md) 核对。
+本版包含八个技能、45 个载荷文件。[发布记录](docs/releases/v0.6.10.md)列出固定标签、跨平台检查、Release 附件与 Packages 的核验结果。安装或升级按 [INSTALL.md](INSTALL.md) 核对。
 
-当前源码为 **v0.6.10 开发候选**，包含 45 个载荷文件，尚未发布；已发布的 v0.6.9 固定标签与 44 文件布局保持不变。
-
-[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.9.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
+[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.10.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
 
 ## 它能帮你做什么
 

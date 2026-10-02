@@ -2,6 +2,8 @@
 
 > **历史记录提示：** 本仓库文档和 14 个旧版 Release 的标题、正文已做名称遮盖；28 个旧附件的文件名、旧包身份、固定标签和提交历史仍保留原样，以免现有下载地址与安装依赖失效。旧版路径不能由新技能名推导，历史资料中的来源路径与哈希可能无法用遮盖后的文件复验。v0.6.0 的附件与回下载已核对；安装时仍须检查当前标签与附件状态。
 
+**v0.6.10 已发布。** 八技能、45 个载荷文件，固定标签 `207e2780aae74ca57b809c251a8c5edb783b3224`；ZIP 289,586 字节，SHA-256 `b62be983687a2454706e360d5619c801f0426f957825b879e6b7bef5f606649a`。Linux／Windows [CI 36979796152](https://github.com/NingCui29/story-skill/actions/runs/36979796152)、[Release 附件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.10)公开回下载、固定标签隔离核验和 [Packages 工作流 36980723008](https://github.com/NingCui29/story-skill/actions/runs/36980723008)均成功。[本版记录](releases/v0.6.10.md)列出最终核验结果与首次 Windows 失败的修复范围。
+
 **v0.6.9 已发布。** 八技能、44 个载荷文件，固定标签 `0e7501fcc97241f4c9442225ca943bdfacacbbff`；ZIP 276,526 字节，SHA-256 `c0f20d7e63cb482cb1882aad4175191c78f3d21124ea098d182e127deae8321c`。Linux／Windows [CI 36833725812](https://github.com/NingCui29/story-skill/actions/runs/36833725812)、[Release 附件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.9)回下载、固定标签隔离核验和 [Packages 工作流 36834717514](https://github.com/NingCui29/story-skill/actions/runs/36834717514)均已核验。[本版记录](releases/v0.6.9.md)列出各项证据及边界。
 
 **v0.6.8 已发布。** 八技能、40 文件，ZIP 260,045 字节，SHA-256 `f04512ce044da46878a3ff2391913f0fcc60de50e5e60279714c4fab6784eca2`；固定标签、Linux／Windows CI、Release 附件、隔离安装与 Packages 回下载均已核验。[本版记录](releases/v0.6.8.md)。
