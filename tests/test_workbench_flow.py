@@ -48,10 +48,226 @@ class WorkbenchFlowTests(unittest.TestCase):
         self.assertNotIn('formal:3', [r['id'] for r in last['items']])
 
     def test_context_uses_actual_receipt_and_prior_summary(self):
+        before = self.fixture.authoritative_state()
         d = w._editor_document(self.root, 'formal:2')
         self.assertIn('第1章', d['context']['previous_summary'])
         self.assertIn('checks', d['context']['review'])
         self.assertEqual(d['context']['plan']['title'], '雨夜 & 账本#2%')
+        catalog = w._editor_catalog(self.root, context_chapter=2)
+        self.assertEqual(catalog['workspace']['context_snapshot']['context_sha256'], d['context']['context_sha256'])
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_same_manuscript_hash_can_have_a_new_matching_review(self):
+        formal = w._editor_document(self.root, 'formal:2')
+        text = formal['prefix'] + formal['text']
+        draft = self.root / '.story/drafts/同稿复核.md'
+        draft.write_bytes(text.encode('utf-8'))
+        delta = {'book_id': self.book.meta('id'), 'base_revision': self.book.meta('revision'),
+                 'summary': formal['summary'], 'changes': [],
+                 'review': {'draft_sha256': story.digest(text), 'issues': [], 'checks': {
+                     key: {'note': '同一正文再次核对钥匙交接。', 'quote': '沈禾把唯一的钥匙交给守门人。'}
+                     for key in story.CHECKS}}}
+        self.assertTrue(self.book.commit(2, draft, delta, replace_last=True)['exports_complete'])
+        before = self.fixture.authoritative_state()
+        fresh = w._editor_document(self.root, 'formal:2')
+        self.assertEqual(fresh['sha256'], formal['sha256'])
+        self.assertEqual(fresh['context']['review']['draft_sha256'], fresh['sha256'])
+        self.assertIn('同一正文再次核对', fresh['context']['review']['checks']['causality']['note'])
+        self.assertNotEqual(fresh['context']['context_sha256'], formal['context']['context_sha256'])
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_plan_document_keeps_the_context_used_to_render_its_text(self):
+        original = self.book.get_plan(2)
+        read_context = w._chapter_context
+
+        def change_after_read(root, chapter):
+            context = read_context(root, chapter)
+            self.book.save_plan(2, {**original, 'goal': '保留钥匙，改走侧门'}, self.book.meta('revision'))
+            return context
+
+        with patch.object(w, '_chapter_context', side_effect=change_after_read) as read:
+            doc = w._editor_document(self.root, 'plan:2')
+        self.assertEqual(read.call_count, 1)
+        self.assertIn(original['goal'], doc['text'])
+        self.assertEqual(doc['context']['plan']['goal'], original['goal'])
+        current = w._editor_catalog(self.root, context_chapter=2)['workspace']['context_snapshot']
+        self.assertNotEqual(current['context_sha256'], doc['context']['context_sha256'])
+
+    def test_formal_change_during_open_never_pairs_old_text_with_new_review(self):
+        formal = w._editor_document(self.root, 'formal:2')
+        text = formal['prefix'] + formal['text'] + '她改从侧门离开。\n'
+        draft = self.root / '.story/drafts/读取期间修订.md'
+        draft.write_bytes(text.encode('utf-8'))
+        delta = {'book_id': self.book.meta('id'), 'base_revision': self.book.meta('revision'),
+                 'summary': '沈禾交出钥匙，随后从侧门离开。', 'changes': [],
+                 'review': {'draft_sha256': story.digest(text), 'issues': [], 'checks': {
+                     key: {'note': '新版正式稿已核对侧门离开。', 'quote': '她改从侧门离开。'}
+                     for key in story.CHECKS}}}
+        read_context = w._chapter_context
+
+        def replace_before_context(root, chapter):
+            self.assertTrue(self.book.commit(2, draft, delta, replace_last=True)['exports_complete'])
+            return read_context(root, chapter)
+
+        with patch.object(w, '_chapter_context', side_effect=replace_before_context):
+            self.fixture.assert_story_error('workbench_changed', w._editor_document, self.root, 'formal:2')
+        fresh = w._editor_document(self.root, 'formal:2')
+        self.assertIn('她改从侧门离开。', fresh['text'])
+        self.assertEqual(fresh['sha256'], fresh['context']['review']['draft_sha256'])
+
+    def test_context_refresh_marks_changed_data_without_replacing_cached_documents(self):
+        formal = w._editor_document(self.root, 'formal:2')
+        planned = w._editor_document(self.root, 'plan:2')
+        original = self.book.get_plan(2)
+        before = w._editor_catalog(self.root, context_chapter=2)
+        context_hash = formal['context']['context_sha256']
+        self.assertEqual(before['workspace']['context_snapshot']['context_sha256'], context_hash)
+
+        unrelated = self.book.get_plan(1)
+        self.book.save_plan(1, {**unrelated, 'goal': '另一章的规划调整'}, self.book.meta('revision'))
+        unchanged = w._editor_catalog(self.root, context_chapter=2)
+        self.assertGreater(unchanged['workspace']['revision'], before['workspace']['revision'])
+        self.assertEqual(unchanged['workspace']['context_snapshot']['context_sha256'], context_hash)
+
+        self.book.save_plan(2, {**original, 'goal': '保留钥匙，改走侧门', 'stop': '停在侧门前',
+                               'constraints': ['钥匙不得交出']}, self.book.meta('revision'))
+        # The current document need not belong to the filtered or paged directory.
+        changed = w._editor_catalog(self.root, query='没有匹配文件', limit=1, context_chapter=2)
+        self.assertEqual(changed['workspace']['groups'], [])
+        self.assertNotEqual(changed['workspace']['context_snapshot']['context_sha256'], context_hash)
+        self.assertEqual(w._editor_document(self.root, 'formal:2')['context']['plan']['goal'], '保留钥匙，改走侧门')
+
+        self.book.save_plan(2, original, self.book.meta('revision'))
+        restored = w._editor_catalog(self.root, context_chapter=2)
+        self.assertEqual(restored['workspace']['context_snapshot']['context_sha256'], context_hash)
+
+        text = formal['prefix'] + formal['text'] + '她改从侧门离开。\n'
+        draft = self.root / '.story/drafts/辅助栏修订.md'
+        draft.write_bytes(text.encode('utf-8'))
+        delta = {'book_id': self.book.meta('id'), 'base_revision': self.book.meta('revision'),
+                 'summary': '沈禾交出钥匙，随后从侧门离开。', 'changes': [],
+                 'review': {'draft_sha256': story.digest(text), 'issues': [], 'checks': {
+                     key: {'note': '新版正式稿已核对侧门离开。', 'quote': '她改从侧门离开。'}
+                     for key in story.CHECKS}}}
+        self.assertTrue(self.book.commit(2, draft, delta, replace_last=True)['exports_complete'])
+        revised = w._editor_catalog(self.root, context_chapter=2)
+        fresh = w._editor_document(self.root, 'formal:2')
+        self.assertNotEqual(fresh['context']['formal_sha256'], formal['context']['formal_sha256'])
+
+        script = self.script()
+        source = script[script.index('function showChapterInfo'):script.index('function scheduleMetrics')]
+        source += script[script.index('function drawCatalog'):script.index('// Paragraph LCS')]
+        source += script[script.index('async function openDoc'):script.index('function pendingEdits')]
+        source += script[script.index('async function catalog'):script.index('async function recover')]
+        source = w._book_display_script() + script[script.index('let bookChoices='):script.index('function chapterNumber')] + source
+        fixture = json.dumps({'formal': formal, 'planned': planned, 'fresh': fresh,
+                              'before': before, 'unchanged': unchanged, 'changed': changed,
+                              'restored': restored, 'revised': revised}, ensure_ascii=False)
+        mock = r"""
+class E {constructor(){this.children=[];this.dataset={};this.value='';this.parentElement={scrollTop:0};this.textContent='';}replaceChildren(){this.children=[];this.textContent='';}append(...x){this.children.push(...x);}setAttribute(k,v){this[k]=v;}querySelectorAll(){return [];}}
+const elements=new Map(),$=id=>{if(!elements.has(id))elements.set(id,new E());return elements.get(id);};
+const document={createElement:()=>new E()},docs=new Map();
+let currentCatalog,viewMode='chapters',loading=false,reloadPending=false,pendingFocus=false,offset=0,active='formal:2',LIMIT=10,openSequence=0,openCalls=0,queryTimer;
+const updateChapterPicker=()=>{},location={hash:''},chapterNumber=d=>d.context?.chapter||d.chapter,badge=()=>{},item=r=>r,note=e=>{if(e.includes('失败'))throw Error(e);};
+const primaryChapterDocument=g=>g.items[0],locateActive=()=>{},closePanels=()=>{},displayTitle=d=>d.title,versionLabel=d=>d.kind;
+const show=d=>{active=d.id;showChapterInfo(d);};
+const shown=()=>{const read=e=>(e.textContent||'')+' '+(e.children||[]).map(read).join(' ');return read($('chapter-info'));};
+let packet;
+const call=async(action,payload)=>{if(action==='open'){openCalls++;return fixture.fresh;}assert.equal(payload.context_chapter,2);return packet;};
+"""
+        self.js('const fixture=' + fixture + ';\n' + mock + source, r"""
+(async()=>{
+ const d={...fixture.formal,value:fixture.formal.text+'未保存编辑',editing:true};
+ const plan={...fixture.planned,value:fixture.planned.text};docs.set(d.id,d);docs.set(plan.id,plan);
+ const originalContext=JSON.stringify(d.context),originalValue=d.value,originalReview=d.context.review;
+ packet=fixture.before;await catalog();assert.ok(!shown().includes('辅助信息已过期'));
+ packet=fixture.unchanged;await catalog();assert.ok(!shown().includes('辅助信息已过期'));
+ packet=fixture.changed;await catalog();assert.ok(shown().includes('辅助信息已过期'));assert.ok(shown().includes('用钥匙换取入口'));
+ assert.equal(d.value,originalValue);assert.equal(JSON.stringify(d.context),originalContext);assert.strictEqual(d.context.review,originalReview);
+ await openDoc('plan:2');assert.ok(shown().includes('中栏计划和以下辅助信息仍为载入时版本'));assert.equal(plan.value,fixture.planned.text);
+ viewMode='files';await openDoc('formal:2');assert.ok(shown().includes('辅助信息已过期'));assert.equal(openCalls,0);assert.equal(d.value,originalValue);
+ packet=fixture.restored;await catalog();assert.ok(!shown().includes('辅助信息已过期'));
+ packet=fixture.revised;await catalog();assert.ok(shown().includes('辅助信息已过期'));assert.ok(!shown().includes('新版正式稿已核对侧门离开'));assert.strictEqual(d.context.review,originalReview);
+ // A late response from an older catalog must not mark a freshly loaded document stale.
+ docs.set('formal:2',{...fixture.fresh,value:fixture.fresh.text});packet=fixture.before;await catalog();assert.ok(!shown().includes('辅助信息已过期'));
+ packet=fixture.revised;await catalog();assert.ok(!shown().includes('辅助信息已过期'));assert.ok(shown().includes('新版正式稿已核对侧门离开'));
+})().catch(e=>{console.error(e);process.exit(1);});
+""")
+
+    def test_legacy_candidate_uses_recorded_chapter_in_navigation_and_filtered_picker(self):
+        formal = w._editor_document(self.root, 'formal:1')
+        old_path, legacy_path = formal['path'], 'chapters/0001.md'
+        (self.root / old_path).rename(self.root / legacy_path)
+        with self.book.transaction():
+            self.book.set_meta('chapter_path:1', legacy_path)
+            self.book.db.execute('UPDATE artifact_state SET path=? WHERE path=?', (legacy_path, old_path))
+        formal = w._editor_document(self.root, 'formal:1')
+        before = self.fixture.authoritative_state()
+        saved = self.save_copy(formal, formal['text'] + '她停在门外。\n')
+        self.assertTrue(Path(saved['path']).name.startswith('0001_候选_'))
+        catalog = w._editor_catalog(self.root)
+        group = next(g for g in catalog['workspace']['groups'] if g['chapter'] == 1)
+        candidate = next(r for r in group['items'] if r['id'] == saved['id'])
+        self.assertEqual(candidate['chapter'], 1)
+        self.assertIn('仅用于导航', candidate['relation'])
+        self.assertIn('采用关系待核对', w._editor_document(self.root, saved['id'])['status'])
+        # A filtered-out group must not remove the candidate from the current
+        # chapter picker; the full related-file list retains its recorded chapter.
+        filtered = w._editor_catalog(self.root, query='不存在的目录筛选')
+        self.assertEqual(filtered['workspace']['groups'], [])
+        script = self.script()
+        source = script[script.index('function chapterNumber'):script.index('function updateChapterPicker')]
+        self.js(source, 'const catalog=' + json.dumps(filtered, ensure_ascii=False) + ';\n'
+                + 'const formal=' + json.dumps(formal, ensure_ascii=False) + ';\n'
+                + 'const candidateId=' + json.dumps(saved['id']) + ';\n'
+                + "assert.ok(chapterChoices(catalog,formal).some(r=>r.id===candidateId));\n"
+                + "assert.ok(!chapterChoices(catalog,{id:'formal:2',chapter:2}).some(r=>r.id===candidateId));")
+        (self.root / (saved['path'] + '.meta.json')).unlink()
+        unregistered = w._editor_catalog(self.root)
+        self.assertFalse(any(r['id'] == saved['id'] for g in unregistered['workspace']['groups']
+                             for r in g['items']))
+        self.assertIn(saved['id'], [r['id'] for r in unregistered['files']])
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_navigation_validates_metadata_and_keeps_material_and_filename_fallback(self):
+        relative = '.story/drafts/workbench/第1章 细纲_候选_旧.md'
+        docid = self.material(relative, '# 细纲\n计划材料')
+        metadata = self.root / (relative + '.meta.json')
+        metadata.write_text(json.dumps({'source': 'file:01_大纲细纲/旧细纲.md',
+                                        'chapter': 2, 'content_kind': 'material'}), encoding='utf-8')
+        before = self.fixture.authoritative_state()
+        catalog = w._editor_catalog(self.root)
+        by_chapter = {g['chapter']: [r['id'] for r in g['items']] for g in catalog['workspace']['groups']}
+        self.assertIn(docid, by_chapter[2])
+        self.assertNotIn(docid, by_chapter[1])
+        self.assertFalse(w._editor_document(self.root, docid)['is_prose'])
+        script = self.script()
+        source = script[script.index('function chapterNumber'):script.index('function updateChapterPicker')]
+        self.js(source, 'const catalog=' + json.dumps(catalog, ensure_ascii=False) + ';\n'
+                + 'const materialId=' + json.dumps(docid) + ';\n'
+                + "const material=chapterChoices(catalog,{id:'formal:2',chapter:2}).find(r=>r.id===materialId);\n"
+                + "assert.equal(material.content_kind,'material');assert.ok(!material.manuscript);")
+        text = (self.root / relative).read_bytes().decode('utf-8')
+        pending = w._start_pending_save(self.root, relative, text, text,
+                                       json.loads(metadata.read_text(encoding='utf-8')))
+        blocked = w._editor_catalog(self.root)
+        self.assertFalse(any(r['id'] == docid for g in blocked['workspace']['groups']
+                             if g['chapter'] == 2 for r in g['items']))
+        self.assertEqual(w._editor_document(self.root, docid)['metadata_error']['code'],
+                         'workbench_metadata_pending')
+        w._finish_pending_save(self.root, pending)
+        for content in (None, '{broken', json.dumps({'chapter': True})):
+            with self.subTest(metadata=content):
+                if content is None:
+                    metadata.unlink()
+                else:
+                    metadata.write_text(content, encoding='utf-8')
+                catalog = w._editor_catalog(self.root)
+                by_chapter = {g['chapter']: g['items'] for g in catalog['workspace']['groups']}
+                fallback = next(r for r in by_chapter[1] if r['id'] == docid)
+                self.assertIn('同章号文件', fallback['relation'])
+                self.assertNotIn(docid, [r['id'] for r in by_chapter[2]])
+        self.assertEqual(before, self.fixture.authoritative_state())
 
     def test_equal_draft_is_not_claimed_as_adopted(self):
         formal = w._editor_document(self.root, 'formal:1')
@@ -139,6 +355,9 @@ class WorkbenchFlowTests(unittest.TestCase):
         plan = self.book.get_plan(2)
         plan['count_method'] = 'visible_nonspace_v1'
         self.book.save_plan(2, plan, self.book.meta('revision'))
+        binding = story.outline.binding_for(self.book, 2)
+        story.outline.bind(self.book, 2, binding['path'], self.book.meta('revision'),
+                           hashlib.sha256((self.root / binding['path']).read_bytes()).hexdigest())
         draft = self.root / '.story/drafts/第2章 历史口径.md'
         draft.write_bytes(original.encode('utf-8'))
         delta = {'book_id': self.book.meta('id'), 'base_revision': self.book.meta('revision'),
@@ -283,7 +502,7 @@ const call=async()=>({prompt:'请审稿',status:'审稿任务已生成',check_no
         key = next(iter(library))
         with patch.object(w, '_service_request', side_effect=AssertionError('must not request itself')):
             self.assertEqual(w._library_open(library,key,self.root,'http://127.0.0.1/self/')['url'], 'http://127.0.0.1/self/')
-        with patch.object(w, '_service_request', return_value={'running':True,'url':'http://127.0.0.1:1234/token/'}):
+        with patch.object(w, '_service_request', return_value={'running':True,'url':'http://127.0.0.1:1234/token/', 'book_id':library[key]['book_id']}):
             self.assertEqual(w._library_open(library,key)['url'], 'http://127.0.0.1:1234/token/')
         with self.assertRaises(story.StoryError):
             w._library_open(library,'../../outside')
@@ -395,11 +614,12 @@ const link=all.find(e=>e.tag==='a');link.onclick({preventDefault(){}});assert.eq
         source = s[s.index('function drawCatalog'):s.index('// Paragraph LCS')]
         source += s[s.index('async function catalog'):s.index('async function recover')]
         source += s[s.index('function primaryChapterDocument'):s.index('function locateActive')]
+        source = w._book_display_script() + s[s.index('let bookChoices='):s.index('function chapterNumber')] + source
         mock = r"""
 class E {constructor(){this.children=[];this.dataset={};this.open=false;this.value='';this.parentElement={scrollTop:0};}replaceChildren(){this.children=[];this.parentElement.scrollTop=0;}append(e){this.children.push(e);}setAttribute(k,v){this[k]=v;}querySelectorAll(){return this.children;}}
 const elements=new Map(),$=id=>{if(!elements.has(id))elements.set(id,new E());return elements.get(id);};
 const document={createElement:()=>new E()},docs=new Map([['plan:1',{id:'plan:1',value:'未保存编辑'}]]);
-let currentCatalog,viewMode='chapters',loading=false,reloadPending=false,offset=0,active='plan:1',LIMIT=10;
+let currentCatalog,viewMode='chapters',loading=false,reloadPending=false,pendingFocus=false,offset=0,active='plan:1',LIMIT=10,queryTimer;
 const updateChapterPicker=()=>{};const location={hash:''},chapterNumber=()=>1,showChapterInfo=()=>{},badge=()=>{},item=r=>r,note=e=>{throw Error(e);};let opened=null;
 const openDoc=async id=>{opened=id;};
 const packet={chapters:[],files:[],warnings:[],total:0,workspace:{formal_total:0,planned_total:1,next_chapter:1,captured_at:'2026-09-26',groups:[{chapter:1,title:'第1章 计划',status:'已规划',items:[{id:'plan:1'}]}],total:1,offset:0,limit:10,has_more:false}};
@@ -411,6 +631,108 @@ const call=async()=>packet;
  await catalog();assert.equal($('list').children.find(g=>g.dataset.group===group.dataset.group).open,false);assert.equal($('list').parentElement.scrollTop,149);assert.equal(docs.get(active).value,'未保存编辑');assert.equal($('list').children.find(x=>x.dataset.chapter==='1').dataset.doc,'plan:1');
  active=null;await catalog();assert.equal(opened,'plan:1');
 })().catch(e=>{console.error(e);process.exit(1);});
+""")
+
+    def catalog_race_js(self, test):
+        script = self.script()
+        source = script[script.index('function drawCatalog'):script.index('// Paragraph LCS')]
+        source += script[script.index('function primaryChapterDocument'):script.index('function locateActive')]
+        source += script[script.index('async function catalog'):script.index('async function recover')]
+        source += script[script.index("$('search').oninput="):script.index("window.addEventListener('beforeunload'")]
+        source += script[script.index(" $('locate').onclick="):script.index(" $('compare-back').onclick=")]
+        source = w._book_display_script() + script[script.index('let bookChoices='):script.index('function chapterNumber')] + source
+        mock = r"""
+class E {
+ constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.dataset={};this.value='';this.open=false;this.parentElement={scrollTop:0};this.textContent='';}
+ replaceChildren(){this.children=[];}append(...children){this.children.push(...children);}
+ setAttribute(k,v){this[k]=v;}querySelectorAll(tag){return this.children.filter(e=>e.tagName===tag.toUpperCase());}
+}
+const nodes={},$=id=>nodes[id]||(nodes[id]=new E());
+const document={createElement:tag=>new E(tag)},location={hash:''};
+const docs=new Map([['formal:1',{id:'formal:1',chapter:1,value:'未保存编辑'}],['formal:21',{id:'formal:21',chapter:21,value:'另一章未保存编辑'}]]);
+let currentCatalog,viewMode='chapters',loading=false,reloadPending=false,pendingFocus=false,offset=0,active='formal:1',LIMIT=10,queryTimer,searchTimer;
+const chapterNumber=d=>d.chapter,updateChapterPicker=()=>{},showChapterInfo=()=>{},badge=()=>{},item=row=>row;
+const notes=[],note=text=>notes.push(text),locations=[],locateActive=()=>locations.push(active),openDoc=async()=>{};
+const setTimeout=fn=>{searchTimer=fn;return 1;},clearTimeout=()=>{searchTimer=null;};
+const requests=[],responses=[];
+function packet(request){
+ const page=request.focus?Math.floor((request.focus-1)/LIMIT)*LIMIT:request.offset;
+ const groups=Array.from({length:10},(_,i)=>({chapter:page+i+1,title:'第'+(page+i+1)+'章',status:'已有正式稿',items:[{id:'formal:'+(page+i+1)}]}));
+ return {warnings:[],chapters:[],files:[],related_files:[],total:40,offset:page,has_more:page+LIMIT<40,
+ workspace:{formal_total:40,planned_total:40,next_chapter:41,captured_at:'2026-10-05',groups,total:40,offset:page,limit:LIMIT,has_more:page+LIMIT<40}};
+}
+const call=(action,data)=>new Promise(resolve=>{assert.equal(action,'catalog');requests.push({...data});responses.push(()=>resolve(packet(data)));});
+async function flush(){for(let i=0;i<8;i++)await Promise.resolve();}
+async function respond(index){responses[index]();await flush();}
+"""
+        self.js(mock + source, '(async()=>{\n' + test + r"""
+assert.equal(docs.get('formal:1').value,'未保存编辑');
+assert.equal(docs.get('formal:21').value,'另一章未保存编辑');
+assert.deepEqual(notes,[]);
+})().catch(e=>{console.error(e);process.exit(1);});
+""")
+
+    def test_pending_catalog_preserves_repeated_user_paging(self):
+        self.catalog_race_js(r"""
+const first=catalog();$('older').onclick();$('older').onclick();
+assert.equal(requests.length,1);assert.equal(offset,20);
+await respond(0);await first;
+assert.equal(requests.length,2);assert.equal(requests[1].offset,20);assert.equal(currentCatalog,undefined);
+await respond(1);assert.equal(offset,20);assert.equal(currentCatalog.workspace.offset,20);assert.ok(!loading);
+""")
+
+    def test_pending_catalog_search_resets_page_and_supersedes_old_focus(self):
+        self.catalog_race_js(r"""
+offset=20;active='formal:21';const first=catalog(true);
+$('search').value='新搜索词';$('search').oninput();searchTimer();
+await respond(0);await first;
+assert.equal(requests[1].offset,0);assert.equal(requests[1].query,'新搜索词');assert.equal(requests[1].focus,null);
+assert.equal(currentCatalog,undefined);await respond(1);
+assert.equal(offset,0);assert.deepEqual(locations,[]);
+""")
+
+    def test_pending_catalog_navigation_cancels_previous_chapter_focus(self):
+        self.catalog_race_js(r"""
+active='formal:21';const first=catalog(true);$('older').onclick();await respond(0);await first;
+assert.equal(requests[1].offset,10);assert.equal(requests[1].focus,null);await respond(1);
+assert.equal(offset,10);assert.deepEqual(locations,[]);
+""")
+
+    def test_pending_catalog_background_refresh_keeps_latest_chapter_focus(self):
+        self.catalog_race_js(r"""
+const first=catalog(true);active='formal:21';catalog(true);catalog();await respond(0);await first;
+assert.equal(requests[1].focus,21);assert.equal(requests[1].context_chapter,21);await respond(1);
+assert.equal(offset,20);assert.deepEqual(locations,['formal:21']);
+""")
+
+    def test_pending_catalog_mode_switch_ignores_old_directory(self):
+        self.catalog_race_js(r"""
+const first=catalog();viewMode='files';offset=0;catalog(true,true);await respond(0);await first;
+assert.equal(currentCatalog,undefined);await respond(1);
+assert.equal(viewMode,'files');assert.ok($('range').textContent.includes('正式章节'));
+""")
+
+    def test_catalog_response_during_search_debounce_does_not_render_old_results(self):
+        self.catalog_race_js(r"""
+offset=20;const first=catalog();$('search').value='输入中的搜索词';$('search').oninput();
+await respond(0);await first;assert.equal(currentCatalog,undefined);assert.equal(offset,0);
+searchTimer();assert.equal(requests[1].offset,0);assert.equal(requests[1].query,'输入中的搜索词');
+await respond(1);assert.equal(offset,0);
+""")
+
+    def test_new_chapter_location_cancels_older_search_debounce(self):
+        self.catalog_race_js(r"""
+active='formal:21';$('search').value='搜索中的旧词';$('search').oninput();
+assert.equal(typeof searchTimer,'function');$('locate').onclick();
+assert.equal(searchTimer,null);assert.equal(requests[0].query,'');assert.equal(requests[0].focus,21);
+await respond(0);assert.equal(offset,20);assert.deepEqual(locations,['formal:21']);
+""")
+
+    def test_opening_chapter_cancels_older_search_debounce(self):
+        self.catalog_race_js(r"""
+$('search').value='旧搜索词';$('search').oninput();active='formal:21';const opened=catalog(true);
+assert.equal(searchTimer,null);assert.equal(requests[0].focus,21);
+await respond(0);await opened;assert.equal(offset,20);assert.deepEqual(locations,['formal:21']);
 """)
 
     def test_comparison_is_a_mode_and_returns_without_losing_editor_position(self):
@@ -456,6 +778,42 @@ const draft={title:'第1章 原名_候选_abcdef123456',kind:'candidate',path:'.
 assert.equal(displayTitle(draft),'第1章 原名');assert.equal(downloadName(draft),'第1章 原名-候选.txt');
 assert.equal(displayTitle({...draft,path:'.story/drafts/作者自命名.md'}),draft.title);
 assert.equal(draft.title,'第1章 原名_候选_abcdef123456');
+""")
+
+    def test_download_preserves_complete_prose_and_current_unsaved_text(self):
+        formal = w._editor_document(self.root, 'formal:1')
+        raw = (self.root / formal['path']).read_bytes().decode('utf-8')
+        candidate = self.save_copy(formal, formal['text'] + '她仍握着门环。\n')
+        candidate = w._editor_document(self.root, candidate['id'])
+        recovery = w._editor_save(self.root, {**formal, 'text': formal['text'] + '恢复的末句。\n',
+                                  'recovery_key': 'download-recovery-key-1234'}, recovery=True)
+        recovery = w._editor_document(self.root, recovery['id'])
+        bom_id = self.material('.story/drafts/' + formal['title'] + '.md', '\ufeff' + raw)
+        bom = w._editor_document(self.root, bom_id)
+        material_id = self.material('01_大纲细纲/全书总纲.md', '# 总纲\n\n原计划\n')
+        material = w._editor_document(self.root, material_id)
+        cases = [
+            {'doc': {**formal, 'value': formal['text']}, 'expected': raw},
+            {'doc': {**formal, 'value': formal['text'] + '未保存的末句。\n'},
+             'expected': raw + '未保存的末句。\n'},
+            {'doc': {**candidate, 'value': candidate['text']},
+             'expected': (self.root / candidate['path']).read_bytes().decode('utf-8')},
+            {'doc': {**recovery, 'value': recovery['text']}, 'expected': raw + '恢复的末句。\n'},
+            {'doc': {**bom, 'value': bom['text']}, 'expected': '\ufeff' + raw},
+            {'doc': {**material, 'value': material['text']}, 'expected': material['text']},
+        ]
+        script = self.script()
+        source = script[script.index("$('download').onclick"):script.index('async function reloadDocuments')]
+        mock = r"""
+let active,blob,clicked=0;const docs=new Map(),button={},$=()=>button;
+const document={createElement:()=>({click(){clicked++;}})},downloadName=()=> '当前稿件.txt';
+const URL={createObjectURL(value){blob=value;return 'blob:download';},revokeObjectURL(){}},setTimeout=()=>{};
+"""
+        self.js(mock + source, 'const cases=' + json.dumps(cases, ensure_ascii=False) + ';\n' + r"""
+(async()=>{for(const {doc,expected}of cases){active=doc.id;docs.set(active,doc);button.onclick();
+ const content=Buffer.from(await blob.arrayBuffer()).toString('utf8');assert.equal(content,expected);}
+ assert.equal(clicked,cases.length);
+})().catch(e=>{console.error(e);process.exit(1);});
 """)
 
     def test_directory_refresh_does_not_reload_or_mutate_unsaved_text(self):

@@ -1,0 +1,290 @@
+{
+  "cases": {
+    "author_date_on_source_line": "## 作品定位与平台分类（番茄小说）\n- 篇幅类型：短篇。\n- 目标平台：番茄小说；作品阶段：拟投。\n- 平台入口：短故事。\n- 来源与核对日期：待核对；作者名称／笔名：松间客；依据与日期：用户约定 2026-10-04。\n- 主分类：现实故事（拟选）。\n- 情节／角色／情绪／背景：各栏待核对。\n- 选择依据：人物和主线。\n- 待核对：现行选项。\n",
+    "source_label_in_note": "## 作品定位与平台分类（番茄小说）\n- 篇幅类型：短篇。\n- 目标平台：番茄小说；作品阶段：拟投。\n- 平台入口：短故事。\n- 来源与核对日期：待核对。\n- 备注：来源与核对日期尚未取得；作者指定日期 2026-10-04。\n- 主分类：现实故事（拟选）。\n- 情节／角色／情绪／背景：各栏待核对。\n- 选择依据：人物和主线。\n- 待核对：现行选项。\n",
+    "invalid_source_date_but_author_valid": "## 作品定位与平台分类（番茄小说）\n- 篇幅类型：短篇。\n- 目标平台：番茄小说；作品阶段：拟投。\n- 平台入口：短故事。\n- 来源与核对日期：番茄后台参考；2026-02-30；作者名称／笔名：松间客；依据与日期：2026-10-04。\n- 主分类：现实故事（拟选）。\n- 情节／角色／情绪／背景：各栏待核对。\n- 选择依据：人物和主线。\n- 待核对：现行选项。\n",
+    "parenthetical_source_date": "## 作品定位与平台分类（番茄小说）\n- 篇幅类型：短篇。\n- 目标平台：番茄小说；作品阶段：拟投。\n- 平台入口：短故事。\n- 来源与核对日期：番茄后台参考（获取方式：截图；核对日期：2026-10-01）。\n- 主分类：现实故事（拟选）。\n- 情节／角色／情绪／背景：各栏待核对。\n- 选择依据：人物和主线。\n- 待核对：现行选项。\n"
+  },
+  "results": {
+    "author_date_on_source_line": {
+      "ok": false,
+      "scope": "outline_structure_only",
+      "path": "01_大纲细纲/全书总纲.md",
+      "sha256": "664fc304cdc1781fb0afd38cac695d17e08130c3bcf31821314638c9c63466bd",
+      "section_lines": [
+        1
+      ],
+      "fields_found": [
+        "主分类",
+        "作品阶段",
+        "作者名称",
+        "依据与日期",
+        "平台入口",
+        "待核对",
+        "情绪",
+        "情节",
+        "来源与核对日期",
+        "目标平台",
+        "笔名",
+        "篇幅类型",
+        "背景",
+        "角色",
+        "选择依据"
+      ],
+      "checked_platform_rules": "fanqie_short",
+      "required_platforms": [
+        "fanqie"
+      ],
+      "covered_platforms": [
+        "fanqie"
+      ],
+      "platform_results": [
+        {
+          "ok": false,
+          "platform": "fanqie",
+          "platforms_declared": [
+            "fanqie"
+          ],
+          "section_line": 1,
+          "section_title": "作品定位与平台分类（番茄小说）",
+          "fields_found": [
+            "主分类",
+            "作品阶段",
+            "作者名称",
+            "依据与日期",
+            "平台入口",
+            "待核对",
+            "情绪",
+            "情节",
+            "来源与核对日期",
+            "目标平台",
+            "笔名",
+            "篇幅类型",
+            "背景",
+            "角色",
+            "选择依据"
+          ],
+          "checked_platform_rules": "fanqie_short",
+          "issues": [
+            {
+              "code": "source_date_missing"
+            }
+          ]
+        }
+      ],
+      "issues": [
+        {
+          "code": "source_date_missing"
+        }
+      ],
+      "manual_review_required": true,
+      "note": "Only required field presence and source-date syntax were checked per platform block; platform options, per-column status, evidence, and adoption still require human review."
+    },
+    "source_label_in_note": {
+      "ok": false,
+      "scope": "outline_structure_only",
+      "path": "01_大纲细纲/全书总纲.md",
+      "sha256": "7b7b9d77208c649b0fbb87195b62d2ae23e8717439d5a2fdaa319bb34abbd95e",
+      "section_lines": [
+        1
+      ],
+      "fields_found": [
+        "主分类",
+        "作品阶段",
+        "备注",
+        "平台入口",
+        "待核对",
+        "情绪",
+        "情节",
+        "来源与核对日期",
+        "目标平台",
+        "篇幅类型",
+        "背景",
+        "角色",
+        "选择依据"
+      ],
+      "checked_platform_rules": "fanqie_short",
+      "required_platforms": [
+        "fanqie"
+      ],
+      "covered_platforms": [
+        "fanqie"
+      ],
+      "platform_results": [
+        {
+          "ok": false,
+          "platform": "fanqie",
+          "platforms_declared": [
+            "fanqie"
+          ],
+          "section_line": 1,
+          "section_title": "作品定位与平台分类（番茄小说）",
+          "fields_found": [
+            "主分类",
+            "作品阶段",
+            "备注",
+            "平台入口",
+            "待核对",
+            "情绪",
+            "情节",
+            "来源与核对日期",
+            "目标平台",
+            "篇幅类型",
+            "背景",
+            "角色",
+            "选择依据"
+          ],
+          "checked_platform_rules": "fanqie_short",
+          "issues": [
+            {
+              "code": "source_date_missing"
+            }
+          ]
+        }
+      ],
+      "issues": [
+        {
+          "code": "source_date_missing"
+        }
+      ],
+      "manual_review_required": true,
+      "note": "Only required field presence and source-date syntax were checked per platform block; platform options, per-column status, evidence, and adoption still require human review."
+    },
+    "invalid_source_date_but_author_valid": {
+      "ok": false,
+      "scope": "outline_structure_only",
+      "path": "01_大纲细纲/全书总纲.md",
+      "sha256": "c70335d4e2cb616fcd294016ccb149ea21739a917e871614f80d57d4bae25627",
+      "section_lines": [
+        1
+      ],
+      "fields_found": [
+        "主分类",
+        "作品阶段",
+        "作者名称",
+        "依据与日期",
+        "平台入口",
+        "待核对",
+        "情绪",
+        "情节",
+        "来源与核对日期",
+        "目标平台",
+        "笔名",
+        "篇幅类型",
+        "背景",
+        "角色",
+        "选择依据"
+      ],
+      "checked_platform_rules": "fanqie_short",
+      "required_platforms": [
+        "fanqie"
+      ],
+      "covered_platforms": [
+        "fanqie"
+      ],
+      "platform_results": [
+        {
+          "ok": false,
+          "platform": "fanqie",
+          "platforms_declared": [
+            "fanqie"
+          ],
+          "section_line": 1,
+          "section_title": "作品定位与平台分类（番茄小说）",
+          "fields_found": [
+            "主分类",
+            "作品阶段",
+            "作者名称",
+            "依据与日期",
+            "平台入口",
+            "待核对",
+            "情绪",
+            "情节",
+            "来源与核对日期",
+            "目标平台",
+            "笔名",
+            "篇幅类型",
+            "背景",
+            "角色",
+            "选择依据"
+          ],
+          "checked_platform_rules": "fanqie_short",
+          "issues": [
+            {
+              "code": "source_date_missing"
+            }
+          ]
+        }
+      ],
+      "issues": [
+        {
+          "code": "source_date_missing"
+        }
+      ],
+      "manual_review_required": true,
+      "note": "Only required field presence and source-date syntax were checked per platform block; platform options, per-column status, evidence, and adoption still require human review."
+    },
+    "parenthetical_source_date": {
+      "ok": true,
+      "scope": "outline_structure_only",
+      "path": "01_大纲细纲/全书总纲.md",
+      "sha256": "0ae614ff97e0f1d171ef3afbfa4fde5f927dcd78e89fe519dd03bfee8f661ff4",
+      "section_lines": [
+        1
+      ],
+      "fields_found": [
+        "主分类",
+        "作品阶段",
+        "平台入口",
+        "待核对",
+        "情绪",
+        "情节",
+        "来源与核对日期",
+        "核对日期",
+        "目标平台",
+        "篇幅类型",
+        "背景",
+        "角色",
+        "选择依据"
+      ],
+      "checked_platform_rules": "fanqie_short",
+      "required_platforms": [
+        "fanqie"
+      ],
+      "covered_platforms": [
+        "fanqie"
+      ],
+      "platform_results": [
+        {
+          "ok": true,
+          "platform": "fanqie",
+          "platforms_declared": [
+            "fanqie"
+          ],
+          "section_line": 1,
+          "section_title": "作品定位与平台分类（番茄小说）",
+          "fields_found": [
+            "主分类",
+            "作品阶段",
+            "平台入口",
+            "待核对",
+            "情绪",
+            "情节",
+            "来源与核对日期",
+            "核对日期",
+            "目标平台",
+            "篇幅类型",
+            "背景",
+            "角色",
+            "选择依据"
+          ],
+          "checked_platform_rules": "fanqie_short",
+          "issues": []
+        }
+      ],
+      "issues": [],
+      "manual_review_required": true,
+      "note": "Only required field presence and source-date syntax were checked per platform block; platform options, per-column status, evidence, and adoption still require human review."
+    }
+  }
+}

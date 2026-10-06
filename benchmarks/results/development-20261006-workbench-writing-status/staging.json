@@ -1,0 +1,12 @@
+[
+  {
+    "key": "installed",
+    "original": "~/Applications/写作工作台.app",
+    "stage": "~/.codex/backups/story-skill/shelf-writing-status-9ryonzli/stage-installed.app"
+  },
+  {
+    "key": "dist",
+    "original": "<repo>/dist/写作工作台.app",
+    "stage": "~/.codex/backups/story-skill/shelf-writing-status-9ryonzli/stage-dist.app"
+  }
+]

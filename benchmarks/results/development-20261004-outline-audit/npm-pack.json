@@ -1,0 +1,40 @@
+{
+  "ok": true,
+  "version": "0.6.11",
+  "release_status": "unreleased development snapshot",
+  "node_version": "v24.19.0",
+  "npm_version": "10.9.3",
+  "npm_registry_integrity_verified": true,
+  "zip": {
+    "archive": "~/.codex/skill-backups/story-skill-priority-next-v6d8wr4b/validation/npm-pack/story-skill-0.6.11.zip",
+    "version": "0.6.11",
+    "files": 46,
+    "sha256": "df2781aab74202ec6ce78a56c9dbd7fd5c57664e666649d9004a7cb06ceee653",
+    "bytes": 303362
+  },
+  "tarball": "~/.codex/skill-backups/story-skill-priority-next-v6d8wr4b/validation/npm-pack/packed/ningcui29-story-skill-0.6.11.tgz",
+  "tarball_sha256": "f6ebd99c5a0e50be285ed20f7d767522102c6d13191be3633c2d17e77ffe34e4",
+  "payload_files": 46,
+  "wrapper_files": 2,
+  "strict_tarball_verified": true,
+  "runtime_smoke": {
+    "ok": true,
+    "commands": 4,
+    "skills": [
+      "story-skill",
+      "story-skill-analyze",
+      "story-skill-cover",
+      "story-skill-plan",
+      "story-skill-publish",
+      "story-skill-research",
+      "story-skill-review",
+      "story-skill-write"
+    ],
+    "skill_files": 46,
+    "temporary_book_removed": true
+  },
+  "global_install": false,
+  "published": false,
+  "source_payload_matches_at_end": true,
+  "checks_relaxed": false
+}

@@ -4,6 +4,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 spec = importlib.util.spec_from_file_location("story_reconcile_tests", TOOL)
@@ -47,6 +49,7 @@ class ReconcileTests(unittest.TestCase):
                 "constraints": [], "requires": ["hero"], "tags": ["沈禾"], "length": [20, 120],
                 "length_exception": {"source": "user_request", "quote": "测试章按20至120字写作。"}}
         self.book.save_plan(chapter, plan, self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, chapter)
 
     def delta(self, text, quote):
         return {"book_id": self.book.meta("id"), "base_revision": self.book.meta("revision"),

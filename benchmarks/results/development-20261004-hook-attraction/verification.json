@@ -1,0 +1,114 @@
+{
+  "date": "2026-10-04",
+  "changed_files": [
+    {
+      "path": "skills/story-skill-plan/SKILL.md",
+      "before_sha256": "0c16367acbff6127d7d41a8705d153c6143190c8cbef37330554297693b1caa5",
+      "after_sha256": "5d56bad6a25ca4af4168362b970cad70c77e5edd552d545466e8dcd5b7204b69",
+      "current_sha256": "7b7eefeba5bda43afca5a4811c9ed783e9f11ed9f56c9dd0d4653608285f5cf3",
+      "after_sha256_scope": "hook patch snapshot at initial evidence capture; additional concurrent changes observed later"
+    },
+    {
+      "path": "skills/story-skill-review/SKILL.md",
+      "before_sha256": "8185b0d6e708e763424f952511fadce74eac663f74e2236dd410e8cddd0802fe",
+      "after_sha256": "fd227ba04aa698ea08dfcdd74a3fa21678ca8fca795af2ce76cedd179983b3af",
+      "current_sha256": "5b1c96e4a068a0e77ccd8d179566afe509edee9732f6ffaaa75a49bd8daa2645",
+      "after_sha256_scope": "hook patch snapshot at initial evidence capture; additional concurrent changes observed later"
+    },
+    {
+      "path": "skills/story-skill-write/references/content-review.md",
+      "before_sha256": "4c8def8f7dbfcd2e50402f7d415ba78fad8cbe147ef5b52eb6a989e3171a0c3a",
+      "after_sha256": "0e68d7ea76c5088c03ad134a67156de1fea15e02083a4bf1d6227d445e40545d",
+      "after_sha256_scope": "hook patch snapshot; normalized text still matches current source"
+    },
+    {
+      "path": "skills/story-skill-write/references/drama.md",
+      "before_sha256": "067dac1a0fecdb2e63e646adfb687aa177e1bae7576ef71ed598ad5c9fd7fb79",
+      "after_sha256": "72a3fd484752a89361d0a775721b80695976cacec40934c15d800af0d81f440f",
+      "current_sha256": "590a1c5095af5eb09c534a7b08aa9d1d09755b47cb73ef59d516cb9c2a421a83",
+      "after_sha256_scope": "hook patch snapshot at initial evidence capture; additional concurrent changes observed later"
+    },
+    {
+      "path": "skills/story-skill/SKILL.md",
+      "before_sha256": "d8548c921d6778aa4652b4fcbe228012e50f1f2f18d23f370603725301402afe",
+      "after_sha256": "41211851d4259a4f7642e5f6896c285a54ddd850fedd187b6e18139ad8153653",
+      "after_sha256_scope": "hook patch snapshot; normalized text still matches current source"
+    }
+  ],
+  "other_source_files_observed_changed_during_run": [
+    "story-skill-cover/SKILL.md",
+    "story-skill-cover/agents/openai.yaml"
+  ],
+  "other_source_changes_excluded_from_hook_patch": true,
+  "runtime_unchanged": true,
+  "full_unittest_rerun": false,
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 312,
+    "links_checked": 1693,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "hook_anchors_and_callers_verified": true,
+  "source_archive": {
+    "status": "passed",
+    "archive": "~/.codex/skill-backups/story-hook-attraction-20261004-jy_frkyo/validation/story-skill-0.6.11.zip",
+    "version": "0.6.11",
+    "sha256": "0728f56cf7afc5cdfa02ea27bdc2c6da03fea5a560d328aa36f3dd914f03a87f",
+    "bytes": 323028,
+    "files": 47,
+    "contents_match_current_skill": true,
+    "missing": [],
+    "extra": [],
+    "changed": [],
+    "duplicate_entries": [],
+    "corrupt_entry": null,
+    "non_regular_entries": [],
+    "scope": "Complete source snapshot at initial evidence capture; later concurrent changes are outside this archive"
+  },
+  "installation": {
+    "kind": "local-hook-only-document-patch",
+    "backup": "~/.codex/skill-backups/story-hook-attraction-20261004-jy_frkyo/previous",
+    "receipt": "~/.codex/skill-backups/story-hook-attraction-20261004-jy_frkyo/receipt.json",
+    "files": [
+      "story-skill-plan/SKILL.md",
+      "story-skill-review/SKILL.md",
+      "story-skill-write/references/content-review.md",
+      "story-skill-write/references/drama.md",
+      "story-skill/SKILL.md"
+    ],
+    "hook_paragraphs_match_source": true,
+    "unrelated_installed_files_unchanged_at_patch_time": true,
+    "full_source_install_byte_identity_claimed": false
+  },
+  "scenario_review": {
+    "cases": 6,
+    "conditions": 2,
+    "independent_model_execution": true,
+    "blind_reader_trial": false,
+    "both_conditions_read_by_root": true,
+    "both_conditions_satisfied_scope_and_key_decisions": true,
+    "literary_or_market_improvement_proven": false
+  },
+  "skill_format_validation": {
+    "source_skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-review",
+      "story-skill-write"
+    ],
+    "source_status": "passed",
+    "installed_status": "passed",
+    "installed_details": "installed-format.json",
+    "initial_attempt": "Python 3.12 lacked PyYAML; used temporary isolated validator environment"
+  },
+  "git_diff_check": "passed",
+  "source_snapshot_scope": "changed_files before/after fingerprints describe the hook patch snapshot; final hook paragraphs independently verified against current source and installation",
+  "later_concurrent_changes_in_hook_touched_files": [
+    "skills/story-skill-plan/SKILL.md",
+    "skills/story-skill-review/SKILL.md",
+    "skills/story-skill-write/references/drama.md"
+  ],
+  "later_concurrent_changes_excluded_from_hook_patch": true,
+  "final_hook_paragraphs_match_patch_snapshot_current_source_and_install": true
+}

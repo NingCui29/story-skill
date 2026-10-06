@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "path": "skills/story-skill/scripts/story_workbench.py",
+      "sha256": "9af67784c8068f27dc9ab7f9ecc5cf0a76ff4014601e4467fbab64b97622fc57",
+      "backup": "/tmp/story-writing-status-9af67784-baseline-e0exsbt0/baseline-story_workbench.py",
+      "current_sha256": "4e43e36f0424b0720ae272d952bf9059d5f3b486d79055d033a51957d9b42a6c"
+    },
+    {
+      "path": "tests/test_workbench_writing_status.py",
+      "sha256": "38b50283f3feb757f7cc57ac54e3d38eeda969e9cc19b2d016cfb90e357bbe4e",
+      "backup": "/tmp/story-writing-status-9af67784-baseline-e0exsbt0/baseline-test_workbench_writing_status.py",
+      "current_sha256": "4b7fdbd067bf3d648d0bf861d982dd548d7253fb8f181909035e4c75f2eb162f"
+    }
+  ]
+}

@@ -8,6 +8,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 SPEC = importlib.util.spec_from_file_location("long_history_story", TOOL)
@@ -45,6 +47,7 @@ class LongHistoryTests(unittest.TestCase):
                 "constraints": ["不离开渡口"], "beats": [{"choice": "交出钥匙", "change": "保留收据"}], "length": [10, 200],
                 "length_exception": {"source": "user_request", "quote": "测试历史修订需要10至200字。"}}
         self.book.save_plan(chapter, plan, self.rev())
+        bind_adopted_outline(story, self.book, chapter)
         self.draft.write_bytes(text.encode("utf-8"))
         raw = {"book_id": self.book.meta("id"), "base_revision": self.rev(), "summary": "她交出钥匙，保留收据。",
                "changes": [{"id": "key", "text": "钥匙已经交出。", "quote": "她交出钥匙"}] if change else [],
@@ -559,6 +562,8 @@ class LongHistoryTests(unittest.TestCase):
         self.add(2)
         self.book.save_plan(2, {**self.book.get_plan(2), "entities": ["shen"],
                                "time": {"clock": "main", "start": 15, "end": 15}}, self.rev())
+        binding = story.outline.binding_for(self.book, 2)
+        story.outline.bind(self.book, 2, binding["path"], self.rev(), binding["sha256"])
         staged = self.stage(self.start(2))
         revision = self.rev()
         self.assert_code("world_constraint", history.branch_publish, self.book, staged["branch"], revision)

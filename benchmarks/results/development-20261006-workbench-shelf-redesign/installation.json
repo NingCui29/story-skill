@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "source_sha256": "f19c9133fabaead85bb391b6983c494f8c678d71aaf02b7b642bf718bf4de976",
+  "native_source_sha256": "e2e41e1c762183d80734e60b793058e5df9cf571427462b63583a00f50fa071f",
+  "native_binary_sha256": "28bd32733a27becae3342f7c281590b491d4d89640f90732beef666a37db0c48",
+  "installed_skill_matches": true,
+  "packages": [
+    {
+      "path": "~/Applications/写作工作台.app",
+      "retired": "~/.codex/backups/story-skill/story-shelf-redesign-51eljo6e/retired-installed.app",
+      "workbench_matches": true,
+      "native_matches": false
+    },
+    {
+      "path": "<repo>/dist/写作工作台.app",
+      "retired": "~/.codex/backups/story-skill/story-shelf-redesign-51eljo6e/retired-dist.app",
+      "workbench_matches": true,
+      "native_matches": false
+    }
+  ],
+  "backup": "~/.codex/backups/story-skill/story-shelf-redesign-51eljo6e",
+  "existing_client_process_not_stopped": true
+}

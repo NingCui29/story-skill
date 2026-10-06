@@ -1,0 +1,23 @@
+{
+  "appearanceApplied" : true,
+  "bodyViewWidth" : 1280,
+  "bookinfo" : {
+    "exists" : true,
+    "open" : false,
+    "summary" : "作品信息",
+    "title" : "作品16 · 布局核验"
+  },
+  "bookTitle" : "作品16 · 布局核验",
+  "documentTitle" : "第3章 合成验收样例3",
+  "headerHeight" : 74,
+  "horizontalOverflow" : false,
+  "message" : "已打开：第3章 合成验收样例3 · 正式稿",
+  "metadataPopup" : true,
+  "nativeToolbarIDs" : [
+    "workbench.home"
+  ],
+  "ok" : true,
+  "snapshot" : "\/Users\/cuining\/Documents\/GitHub\/story-skill\/benchmarks\/results\/development-20261006-workbench-editor-layout\/native-editor-legacy.png",
+  "title" : "作品16 · 布局核验 · 写作工作台",
+  "viewportWidth" : 1280
+}

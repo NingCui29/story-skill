@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "source_sha256": "9af67784c8068f27dc9ab7f9ecc5cf0a76ff4014601e4467fbab64b97622fc57",
+  "native_source_sha256": "62d6004b24b0be1b62349ac3b803e8e02dea3dfe7c58dc98fd4dc8bb0b191fbb",
+  "packages": [
+    {
+      "path": "~/Applications/写作工作台.app",
+      "backup": "~/.codex/backups/story-skill/shelf-writing-status-9ryonzli/retired-installed.app",
+      "signed_native_binary_sha256": "293dd47a88aed6565a9bf0ff4b8a9589e383819e8597c377dc3ca4140c5c2830"
+    },
+    {
+      "path": "<repo>/dist/写作工作台.app",
+      "backup": "~/.codex/backups/story-skill/shelf-writing-status-9ryonzli/retired-dist.app",
+      "signed_native_binary_sha256": "293dd47a88aed6565a9bf0ff4b8a9589e383819e8597c377dc3ca4140c5c2830"
+    }
+  ],
+  "installed_skill_matches": true,
+  "source_runtime_files_verified": 9,
+  "existing_native_client_not_stopped": true,
+  "compiled_native_binary_sha256": "8505fcae7461dbb5e03f4b86de4ac10f65fc859bc91f5fff871af067452924ee",
+  "signed_native_binary_sha256": "293dd47a88aed6565a9bf0ff4b8a9589e383819e8597c377dc3ca4140c5c2830",
+  "signed_native_differs_from_compiled_due_to_bundle_signing": true
+}

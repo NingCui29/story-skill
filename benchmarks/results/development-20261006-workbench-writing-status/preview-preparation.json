@@ -1,0 +1,43 @@
+{
+  "root": "/tmp/shelf-status-preview-64ruzf4m",
+  "state_dir": "/tmp/shelf-status-preview-64ruzf4m/shelf",
+  "fixtures": [
+    {
+      "key": "9427227c520d7c073ec8",
+      "root": "/tmp/shelf-status-preview-64ruzf4m/测试作品-待确认",
+      "book_id": "book-id-01",
+      "title": "隔离状态核验·待确认",
+      "kind": "long",
+      "db_sha256": "ae4ec2d012bb22b6e62c703466cb6de74775da34d4440f3a534777bd20469ef7",
+      "material_before_sha256": null
+    },
+    {
+      "key": "21769a955e4cdf3f2ff5",
+      "root": "/tmp/shelf-status-preview-64ruzf4m/测试作品-完本",
+      "book_id": "book-id-03",
+      "title": "隔离状态核验·完本",
+      "kind": "short",
+      "db_sha256": "eaaf8cce1217662dd9c76e3cb6e0a790061f5ba0882c73234204e6f8535d6982",
+      "material_before_sha256": "36a131205b3082890041ce434dbedc28605a79ee27572235da006c47861bf9a7"
+    },
+    {
+      "key": "d08120951b503e476ca0",
+      "root": "/tmp/shelf-status-preview-64ruzf4m/测试作品-连载",
+      "book_id": "book-id-05",
+      "title": "隔离状态核验·连载",
+      "kind": "long",
+      "db_sha256": "6c637bee571c3fa2f3ef9677c7098692f50a34fbfd01677e64ad263a53a97fed",
+      "material_before_sha256": "1b3d427286e4763956aceacd61253f7c44aab0e94a148b49e5a3fc92d6216e3e"
+    },
+    {
+      "key": "0dd7115b36b8b876901e",
+      "root": "/tmp/shelf-status-preview-64ruzf4m/测试作品-分析",
+      "book_id": "book-id-04",
+      "title": "隔离状态核验·分析",
+      "kind": "analysis",
+      "db_sha256": "0e40b06fea0ba94324c5e92eac9c346c4e6a2d8d900508dd8d44a503186db7d8",
+      "material_before_sha256": null
+    }
+  ],
+  "real_registry_only_copied": true
+}

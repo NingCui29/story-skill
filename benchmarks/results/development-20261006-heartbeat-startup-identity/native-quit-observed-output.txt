@@ -1,0 +1,3 @@
+compile: 0 
+quit=allowed; first_document_dirty=true; first_document_checks=1
+result: 0

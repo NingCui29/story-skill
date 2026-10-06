@@ -1,0 +1,33 @@
+{
+  "private_preview_only_mutations": true,
+  "recorded_completed_to_manual_serializing_saved": true,
+  "manual_mark_persisted_after_reload": true,
+  "type_status_order_preferences_persisted_after_reload": true,
+  "clear_mark_restored_recorded_completed": true,
+  "unknown_to_completed_and_back_to_unknown": true,
+  "analysis_has_no_marking_controls": true,
+  "state_options_counts_update_on_success": true,
+  "source_path_line_value_displayed": true,
+  "responsive": [
+    {
+      "width": 1280,
+      "columns": 3,
+      "horizontal_overflow": false,
+      "first_button_bottom": 658.3046875
+    },
+    {
+      "width": 760,
+      "columns": 2,
+      "horizontal_overflow": false
+    },
+    {
+      "width": 390,
+      "columns": 1,
+      "horizontal_overflow": false
+    }
+  ],
+  "viewport_override_reset": true,
+  "live_books": 18,
+  "live_completed_filter_count": 6,
+  "live_registry_not_marked": true
+}

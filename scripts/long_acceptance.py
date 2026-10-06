@@ -151,6 +151,12 @@ def chapter_plan(chapter):
 def native_commit(session, chapter, plan, text, summary, key_text=None, world_changes=None):
     session.run(f"保存第{chapter}章计划", "plan", "--chapter", chapter, payload=plan, expect_revision=True)
     session.plans[chapter] = plan
+    outline_path = session.root / f"第{chapter}章验收细纲.md"
+    outline_path.write_text(f"# 第{chapter}章验收细纲\n状态：已采用\n\n"
+                            + json.dumps(plan, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    session.run(f"绑定第{chapter}章验收细纲", "outline-bind", "--chapter", chapter,
+                "--file", outline_path.name, "--sha256", hashlib.sha256(outline_path.read_bytes()).hexdigest(),
+                expect_revision=True)
     context = session.run(f"读取第{chapter}章上下文", "context", "--chapter", chapter, "--budget-bytes", 16000)
     draft = session.file(f"chapter-{chapter}.md", text)
     prepared = session.run(f"准备第{chapter}章审查", "prepare", "--chapter", chapter, "--draft", draft)

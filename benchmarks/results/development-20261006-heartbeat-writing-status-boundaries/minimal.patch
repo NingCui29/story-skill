@@ -1,0 +1,220 @@
+--- a/skills/story-skill/scripts/story_workbench.py
++++ b/skills/story-skill/scripts/story_workbench.py
+@@ -2116,29 +2116,21 @@
+ 
+ 
+ def _writing_status_fields(text):
+-    fence, skipped_level, fields = None, None, []
+-    for number, line in enumerate(text.splitlines(), 1):
+-        marker = re.match(r'^ {0,3}(`{3,}|~{3,})', line)
+-        if marker:
+-            current = marker.group(1)
+-            if fence is None:
+-                fence = current
+-            elif current[0] == fence[0] and len(current) >= len(fence):
+-                fence = None
+-            continue
+-        if fence is not None:
+-            continue
+-        heading = re.match(r'^ {0,3}(#{1,6})\s+(.+)', line)
++    skipped_level, fields = None, []
++    for index, line in api.outline._unfenced_lines(text.splitlines()):
++        number = index + 1
++        heading = api.outline._heading_parts(line)
+         if heading:
+-            level, title = len(heading.group(1)), heading.group(2).strip()
++            level, title = heading
+             if skipped_level is not None and level <= skipped_level:
+                 skipped_level = None
+-            if _CLASSIFICATION_SKIPPED_SECTION.search(title) or _WRITING_STATUS_PLATFORM.search(title):
++            if (_CLASSIFICATION_SKIPPED_SECTION.search(title) or _WRITING_STATUS_PLATFORM.search(title)
++                    or re.fullmatch(r'(?:完本|完结)计划|目标状态', title)):
+                 skipped_level = min(skipped_level, level) if skipped_level is not None else level
+             elif skipped_level is None and re.fullmatch(r'当前有效状态[（(](?:已)?(?:完本|完结)[）)]', title):
+                 fields.append((number, '当前有效状态', title, 'completed'))
+             continue
+-        if skipped_level is not None or line.startswith(('    ', '\t')) or line.lstrip().startswith('>'):
++        if skipped_level is not None:
+             continue
+         plain = re.sub(r'^ {0,3}(?:[-*+]\s+)?', '', line).replace('**', '')
+         match = _WRITING_STATUS_FIELD.fullmatch(plain)
+@@ -2146,10 +2138,20 @@
+             continue
+         field, value = match.group(1), match.group(2).strip()
+         first = re.split(r'[；;。]', value, maxsplit=1)[0].strip()
++        clauses = [clause.strip() for clause in re.split(r'[，,；;。]', value)]
+         # An unconfirmed document is not a current declaration, even when
+-        # the document status appears after a positive writing-status field.
+-        if re.search(r'候选|草稿|未采用|待定|待核对|待确认|待确定|未确定', first):
++        # its qualification follows a positive clause. Cover/classification
++        # work can still be pending after the manuscript is complete.
++        if any(re.search(r'候选|草稿|未采用|待定|待核对|待确认|待确定|未确定', clause)
++               and (clause_index == 0 or not re.match(r'^(?:封面|(?:平台)?分类|(?:平台)?标签)', clause))
++               for clause_index, clause in enumerate(clauses)):
+             return []
++        negative = re.fullmatch(r'(?:本书)?(?:正文|故事)?(?:尚未|未|(?:不是|并非|不算)(?:已)?)'
++                                r'(完本|完结|连载(?:中)?)', first)
++        if len(value) <= 1000 and negative:
++            status = 'not_serializing' if negative.group(1).startswith('连载') else 'not_completed'
++            fields.append((number, field, value, status))
++            continue
+         if len(value) > 1000 or _WRITING_STATUS_UNCERTAIN.search(first) or _WRITING_STATUS_PLATFORM.search(first):
+             continue
+         completed = (re.fullmatch(r'(?:已)?(?:完本|完结)', first) or
+@@ -2182,12 +2184,18 @@
+                 values.add(status)
+         except (api.StoryError, OSError, UnicodeError, ValueError):
+             issues.append('无法安全读取现行状态材料：' + relative)
+-    if issues or len(values) > 1:
++    negative_states = {'not_completed': 'completed', 'not_serializing': 'serializing'}
++    denied = {status for negative, status in negative_states.items() if negative in values}
++    values.difference_update(negative_states)
++    if issues or len(values) > 1 or denied.intersection(values):
+         result = _unknown_writing_status('；'.join(issues) if issues else '现行材料中的作品状态不一致，请核对或手动标记。')
+         result['sources'] = sources
+         return result
+     if not values:
+-        return _unknown_writing_status('尚无明确的本地连载或完本记录；可手动标记，不按章数或篇幅推断。')
++        result = _unknown_writing_status('现行材料只有明确的否定状态，不能据此确认连载或完本。' if denied else
++                                         '尚无明确的本地连载或完本记录；可手动标记，不按章数或篇幅推断。')
++        result['sources'] = sources
++        return result
+     return {'value': next(iter(values)), 'verified': True, 'source': 'recorded', 'sources': sources,
+             'note': '来自现行材料的明确本地作品状态；不代表平台状态或全书审查通过。'}
+ 
+--- a/tests/test_workbench_writing_status.py
++++ b/tests/test_workbench_writing_status.py
+@@ -121,6 +121,133 @@
+         self.assertFalse(result['verified'])
+         self.assertEqual(len(result['sources']), 2)
+         self.assertIn('不一致', result['note'])
++
++    def test_comments_and_lazy_quotes_cannot_declare_writing_status(self):
++        for hidden in ('<!--\n作品状态：已完本\n-->\n',
++                       '> 旧状态示例\n作品状态：已完本\n',
++                       '> > 旧状态示例\n作品状态：已完本\n'):
++            with self.subTest(hidden=hidden):
++                self.source(hidden)
++                self.assertEqual(self.status()['value'], 'unknown')
++                text = hidden + '\n作品状态：连载中\n'
++                self.source(text)
++                result = self.status()
++                self.assertEqual(result['value'], 'serializing')
++                self.assertEqual(len(result['sources']), 1)
++                self.assertEqual(result['sources'][0]['line'], len(text.splitlines()))
++
++    def test_planned_status_sections_do_not_override_current_outline_status(self):
++        relative = '01_大纲细纲/全书总纲.md'
++        for heading in ('完本计划', '目标状态'):
++            with self.subTest(heading=heading):
++                planned = '# 全书总纲\n## ' + heading + '\n作品状态：已完本\n'
++                self.source(planned, relative)
++                self.assertEqual(self.status()['value'], 'unknown')
++                self.source(planned + '### 交付时状态\n状态：已完本\n'
++                            '## 当前作品\n作品状态：连载中\n', relative)
++                result = self.status()
++                self.assertEqual(result['value'], 'serializing')
++                self.assertEqual([source['line'] for source in result['sources']], [7])
++                self.source('# 全书总纲\n作品状态：已完本\n' + planned, relative)
++                self.assertEqual(self.status()['value'], 'completed')
++
++    def test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts(self):
++        for negative in ('尚未完本', '未完本', '正文尚未完结'):
++            for separate in (False, True):
++                with self.subTest(negative=negative, separate=separate):
++                    self.source('作品状态：已完本\n')
++                    self.source('', '01_大纲细纲/全书总纲.md')
++                    if separate:
++                        self.source('当前状态：' + negative + '\n', '01_大纲细纲/全书总纲.md')
++                    else:
++                        self.source('作品状态：已完本\n当前状态：' + negative + '\n')
++                    result = self.status()
++                    self.assertEqual(result['value'], 'unknown')
++                    self.assertFalse(result['verified'])
++                    self.assertEqual(len(result['sources']), 2)
++                    self.assertIn(negative, [source['value'] for source in result['sources']])
++                    self.assertIn('不一致', result['note'])
++
++    def test_unfinished_record_does_not_invent_serialization_or_conflict_with_it(self):
++        self.source('当前状态：尚未完本\n')
++        result = self.status()
++        self.assertEqual(result['value'], 'unknown')
++        self.assertFalse(result['verified'])
++        self.assertEqual(result['sources'][0]['value'], '尚未完本')
++        self.source('写作状态：连载中\n', '01_大纲细纲/全书总纲.md')
++        self.assertEqual(self.status()['value'], 'serializing')
++
++    def test_negative_serialization_conflicts_only_with_serializing(self):
++        for separate in (False, True):
++            with self.subTest(separate=separate):
++                self.source('作品状态：连载中\n')
++                self.source('', '01_大纲细纲/全书总纲.md')
++                if separate:
++                    self.source('当前状态：尚未连载\n', '01_大纲细纲/全书总纲.md')
++                else:
++                    self.source('作品状态：连载中\n当前状态：尚未连载\n')
++                result = self.status()
++                self.assertEqual(result['value'], 'unknown')
++                self.assertFalse(result['verified'])
++                self.assertEqual(len(result['sources']), 2)
++                self.assertIn('不一致', result['note'])
++        self.source('当前状态：尚未连载\n')
++        self.source('', '01_大纲细纲/全书总纲.md')
++        result = self.status()
++        self.assertEqual(result['value'], 'unknown')
++        self.assertFalse(result['verified'])
++        self.assertEqual(result['sources'][0]['value'], '尚未连载')
++        self.source('作品状态：已完本\n', '01_大纲细纲/全书总纲.md')
++        self.assertEqual(self.status()['value'], 'completed')
++
++    def test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial(self):
++        for prefix in ('不是', '并非', '不算'):
++            for positive, negative in (('已完本', '已完本'), ('已完本', '完结'),
++                                       ('连载中', '连载中')):
++                with self.subTest(prefix=prefix, negative=negative):
++                    self.source('作品状态：' + positive + '\n当前状态：' + prefix + negative + '\n')
++                    result = self.status()
++                    self.assertEqual(result['value'], 'unknown')
++                    self.assertFalse(result['verified'])
++                    self.assertEqual(len(result['sources']), 2)
++                    self.assertIn('不一致', result['note'])
++        for qualified in ('尚未宣布已完本', '未确认已完本'):
++            with self.subTest(qualified=qualified):
++                self.source('作品状态：已完本\n当前状态：' + qualified + '\n')
++                result = self.status()
++                self.assertEqual(result['value'], 'completed')
++                self.assertEqual(len(result['sources']), 1)
++
++    def test_cover_clause_cannot_hide_a_following_candidate_status_qualification(self):
++        for comma in ('，', ','):
++            with self.subTest(comma=comma):
++                self.source('作品状态：已完本；封面待确认' + comma + '该状态仅为候选记录。\n')
++                result = self.status()
++                self.assertEqual(result['value'], 'unknown')
++                self.assertFalse(result['verified'])
++                self.source('状态：已采用，正文完结；封面为候选稿' + comma + '平台分类待核对。\n')
++                result = self.status()
++                self.assertEqual(result['value'], 'completed')
++                self.assertTrue(result['verified'])
++
++    def test_candidate_qualification_after_first_clause_cannot_confirm_completion(self):
++        for separator in ('；', '。'):
++            for qualification in ('此为候选记录，尚未采用', '该状态待确认'):
++                with self.subTest(separator=separator, qualification=qualification):
++                    self.source('作品状态：已完本' + separator + qualification + '。\n')
++                    result = self.status()
++                    self.assertEqual(result['value'], 'unknown')
++                    self.assertFalse(result['verified'])
++
++    def test_completion_followed_by_cover_or_classification_tasks_remains_recorded(self):
++        for tasks in ('平台分类待核对', '封面待确认', '封面为候选稿', '封面候选待确认；分类待确定',
++                      '平台分类待核对；封面草稿未采用'):
++            with self.subTest(tasks=tasks):
++                self.source('状态：已采用，正文完结；' + tasks + '。\n')
++                result = self.status()
++                self.assertEqual(result['value'], 'completed')
++                self.assertTrue(result['verified'])
++                self.assertEqual(len(result['sources']), 1)
+ 
+     def test_only_bounded_current_sources_are_read_and_identity_check_does_not_scan(self):
+         for relative in self.w.CLASSIFICATION_PATHS:

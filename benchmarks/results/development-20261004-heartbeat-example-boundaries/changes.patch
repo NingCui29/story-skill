@@ -1,0 +1,247 @@
+--- before/skills/story-skill/scripts/story_outline.py
++++ after/skills/story-skill/scripts/story_outline.py
+@@ -135,8 +135,46 @@
+     fence = None
+     comment = False
+     code_end = None
++    quote_paragraph = False
++    quote_fence = None
++    quote_comment = False
+     for index, line in enumerate(lines):
+         continuing_code = code_end is not None
++        if fence is None and not comment and not continuing_code:
++            quoted = re.match(r"^ {0,3}>[ \t]?(.*)$", line)
++            if quoted:
++                content = quoted.group(1)
++                while (nested := re.match(r"^ {0,3}>[ \t]?(.*)$", content)):
++                    content = nested.group(1)
++                marker = _FENCE_LINE.match(content)
++                if quote_fence is not None:
++                    if (marker and marker.group(1)[0] == quote_fence[0]
++                            and len(marker.group(1)) >= len(quote_fence)
++                            and not marker.group(2).strip()):
++                        quote_fence = None
++                    quote_paragraph = False
++                elif quote_comment or content.lstrip().startswith("<!--"):
++                    quote_comment = "-->" not in content
++                    quote_paragraph = False
++                elif marker and (marker.group(1)[0] == "~" or "`" not in marker.group(2)):
++                    quote_fence = marker.group(1)
++                    quote_paragraph = False
++                else:
++                    quote_paragraph = bool(content.strip()) and not (
++                        _HEADING.match(content) or content.lstrip().startswith("<!--")
++                        or (not quote_paragraph and (content.startswith("    ")
++                            or re.match(r"^ {0,3}\t", content)))
++                        or re.fullmatch(r" {0,3}(?:=+|-+|(?:[_*][ \t]*){3,})[ \t]*", content))
++                # Quoted code/comment markers never enter document parser state.
++                continue
++            if (quote_paragraph and line.strip() and not _HEADING.match(line)
++                    and not _FENCE_LINE.match(line) and not _INLINE_BLOCK_BREAK.match(line)
++                    and not line.lstrip().startswith("<!--")):
++                # Markdown permits unmarked continuation lines in a quoted paragraph.
++                continue
++            quote_paragraph = False
++            quote_fence = None
++            quote_comment = False
+         if code_end is not None:
+             if index < code_end[0]:
+                 continue
+@@ -219,7 +257,14 @@
+     start = None
+     level = None
+     visible = []
+-    for index, line in _unfenced_lines(text.splitlines()):
++    lines = text.splitlines()
++    if lines and lines[0].rstrip() == "---":
++        end = next((index for index, line in enumerate(lines[1:], 1)
++                    if line.rstrip() in {"---", "..."}), len(lines) - 1)
++        # Metadata is not a rendered section. Preserve original source positions
++        # without imposing adoption's restricted YAML grammar on a read-only audit.
++        lines[:end + 1] = [""] * (end + 1)
++    for index, line in _unfenced_lines(lines):
+         heading = _heading_parts(line)
+         if start is not None and heading and heading[0] <= level:
+             sections.append((start + 1, visible))
+@@ -239,6 +284,29 @@
+     return sections
+ 
+ 
++def _field_matches(line):
++    """Ignore example fields inside code spans, retaining code-formatted values."""
++    spans = []
++    cursor = 0
++    while (marker := re.search(r"`+", line[cursor:])):
++        start = cursor + marker.start()
++        cursor += marker.end()
++        escape_start = start
++        while escape_start and line[escape_start - 1] == "\\":
++            escape_start -= 1
++        if (start - escape_start) % 2:
++            cursor = start + 1
++            continue
++        closer = _inline_code_end([line], 0, cursor, marker.group())
++        if closer:
++            spans.append((start, closer[2]))
++            cursor = closer[2]
++    for match in _FIELD.finditer(line):
++        colon = match.end(1) + re.search(r"[:：]", line[match.end(1):match.start(2)]).start()
++        if not any(start <= colon < end for start, end in spans):
++            yield match
++
++
+ def _declared_tag_group_headings(lines):
+     """Count a tagged subsection only when it contains actual labelled fields."""
+     declared = set()
+@@ -255,7 +323,7 @@
+                 next_heading = _heading_parts(child)
+                 if next_heading and next_heading[0] <= level:
+                     break
+-                for match in _FIELD.finditer(child.lstrip(" -*+\t")):
++                for match in _field_matches(child.lstrip(" -*+\t")):
+                     child_keys.update(part.strip() for part in re.split(r"[／/、]", match.group(1)))
+             if child_keys & expected:
+                 declared.add(group)
+@@ -299,12 +367,17 @@
+     for line in lines:
+         field_line = line.lstrip(" -*+\t")
+         matches = list(_FIELD.finditer(field_line))
++        declarations = {match.start() for match in _field_matches(field_line)}
+         for index, match in enumerate(matches):
++            if match.start() not in declarations:
++                continue
+             key = match.group(1).strip(" *_`\t")
+             value = match.group(2).strip(" *_`\t")
+             if key in {"目标平台", "来源与核对日期", "平台入口", "页面适用性"}:
+                 # Keep unlabelled semicolon continuations and parenthetical
+                 # annotations until the next labelled field outside them.
++                # A quoted field example also ends this value; its dates must
++                # not be borrowed merely because it cannot declare a new field.
+                 # This includes “（拟投；兼投：起点）” and source-date notes.
+                 end = len(field_line)
+                 depth = 0
+--- /dev/null
++++ after/tests/test_outline_example_boundaries.py
+@@ -0,0 +1,122 @@
++"""Examples cannot authorize manuscript saves or satisfy outline audit fields."""
++
++import unittest
++
++import test_plan_outline_sync as binding
++import test_outline_position_audit as positioning
++
++
++class OutlineExampleBoundaryTests(unittest.TestCase):
++    def binding_fixture(self):
++        fixture = binding.OutlineSyncTests()
++        fixture.setUp()
++        self.addCleanup(fixture.tearDown)
++        return fixture
++
++    def positioning_fixture(self):
++        fixture = positioning.OutlinePositionAuditTests()
++        fixture.setUp()
++        self.addCleanup(fixture.tearDown)
++        return fixture
++
++    def test_quoted_adoption_examples_cannot_bind_or_commit(self):
++        for example in ("> 状态：已采用\n", "> 字段示例：\n状态：已采用\n",
++                        "> > 字段示例：\n状态：已采用\n"):
++            with self.subTest(example=example):
++                f = self.binding_fixture()
++                path, sha = f.readable(content="# 章细纲\n" + example + "\n## 本章目标\n")
++                before = (tuple(f.book.db.iterdump()), f.file_snapshot())
++                f.assert_error("invalid_input", f.bind, path, sha)
++                f.assert_error("outline_binding_required", f.book.commit, 1, f.draft, f.delta())
++                self.assertEqual((tuple(f.book.db.iterdump()), f.file_snapshot()), before)
++                self.assertIsNone(binding.outline.binding_for(f.book, 1))
++                self.assertEqual(f.book.meta("last_chapter"), 0)
++
++    def test_quoted_markers_cannot_hide_a_real_candidate(self):
++        for example in ("> <!--\n", "> <!--\n> 状态：已采用\n> -->\n",
++                        "> 示例\n<!-- 顶层注释 -->\n", ">     <!--\n",
++                        "> ```\n> 示例\n> ```\n",
++                        "> # 字段示例\n", "> 字段示例：\n状态：已采用\n\n"):
++            with self.subTest(example=example):
++                f = self.binding_fixture()
++                path, sha = f.readable(content="# 章细纲\n状态：已采用\n" + example +
++                                      "状态：候选\n## 本章目标\n")
++                before = (tuple(f.book.db.iterdump()), f.file_snapshot())
++                error = f.assert_error("invalid_input", f.bind, path, sha)
++                self.assertEqual(error.details["declared_statuses"], ["已采用", "候选"])
++                self.assertEqual((tuple(f.book.db.iterdump()), f.file_snapshot()), before)
++
++    def test_real_declaration_after_quoted_blocks_can_commit(self):
++        for example in ("> 示例\n\n", "> # 示例标题\n",
++                        "> ```\n> 示例\n> ```\n", "> 旧模板\n> ---\n",
++                        ">     示例代码\n", "> \t示例代码\n"):
++            with self.subTest(example=example):
++                f = self.binding_fixture()
++                path, sha = f.readable(content="# 章细纲\n" + example +
++                                      "状态：已采用\n## 本章目标\n")
++                f.bind(path, sha)
++                result = f.book.commit(1, f.draft, f.delta())
++                self.assertTrue(result["committed"])
++                self.assertTrue(result["exports_complete"])
++
++    def test_replacing_a_bound_declaration_with_a_quote_blocks_writing(self):
++        f = self.binding_fixture()
++        path, sha = f.readable(content="# 章细纲\n状态：已采用\n## 本章目标\n")
++        f.bind(path, sha)
++        f.readable(path, "# 章细纲\n> 示例\n状态：已采用\n\n## 本章目标\n")
++        before = (tuple(f.book.db.iterdump()), f.file_snapshot())
++        for operation in (lambda: f.book.context(1), lambda: f.book.prepare(1, f.draft),
++                          lambda: f.book.commit(1, f.draft, f.delta())):
++            f.assert_error("outline_plan_drift", operation)
++            self.assertEqual((tuple(f.book.db.iterdump()), f.file_snapshot()), before)
++
++    def test_frontmatter_templates_cannot_satisfy_platform_coverage(self):
++        f = self.positioning_fixture()
++        templates = f.platform_block("fanqie") + "\n" + f.platform_block("qimao")
++        text = "---\ndescription: |\n" + "".join("  " + line + "\n" for line in templates.splitlines())
++        text += "---\n# 全书总纲\n定位尚未填写。\n"
++        before = tuple(f.book.db.iterdump())
++        result = f.audit(text, require_platforms=("fanqie", "qimao"))
++        self.assertFalse(result["ok"])
++        self.assertEqual(result["covered_platforms"], [])
++        self.assertEqual(result["section_lines"], [])
++        self.assertEqual(tuple(f.book.db.iterdump()), before)
++
++    def test_readonly_audit_keeps_real_sections_after_complex_metadata(self):
++        f = self.positioning_fixture()
++        prefix = '---\ntitle: "候选规划"\nreviewers: [甲, 乙]\n---\n\n'
++        result = f.audit(prefix + f.platform_block("fanqie"), require_platforms=("fanqie",))
++        self.assertTrue(result["ok"], result["issues"])
++        self.assertEqual(result["section_lines"], [6])
++        result = f.audit('---\ndescription: |\n' + f.complete_outline())
++        self.assertFalse(result["ok"])
++        self.assertEqual(result["section_lines"], [])
++
++    def test_inline_and_quoted_field_examples_do_not_fill_missing_fields(self):
++        f = self.positioning_fixture()
++        original = f.complete_outline()
++        for replacement in ('`目标平台：起点。`\n- 作品阶段：拟投。',
++                            '> 填写示例：\n目标平台：起点。\n\n- 作品阶段：拟投。'):
++            with self.subTest(replacement=replacement):
++                result = f.audit(original.replace('- 目标平台：起点；作品阶段：拟投。', replacement))
++                self.assertFalse(result["ok"])
++                self.assertIn({"code": "position_field_missing", "field": "目标平台"}, result["issues"])
++        result = f.audit(original.replace('- 来源与核对日期：后台参考；2026-10-01。',
++                                         '- 备注：`示例；来源与核对日期：2026-10-01`'))
++        self.assertFalse(result["ok"])
++        self.assertIn({"code": "source_date_missing"}, result["issues"])
++        result = f.audit(original.replace('- 来源与核对日期：后台参考；2026-10-01。',
++                                         '- 来源与核对日期：待核对；`作者依据与日期：用户约定 2026-10-04`'))
++        self.assertFalse(result["ok"])
++        self.assertIn({"code": "source_date_missing"}, result["issues"])
++
++    def test_code_formatted_values_remain_valid(self):
++        f = self.positioning_fixture()
++        text = f.complete_outline().replace('来源与核对日期：后台参考；2026-10-01。',
++                                            '来源与核对日期：`2026-10-01`。')
++        result = f.audit(text)
++        self.assertTrue(result["ok"], result["issues"])
++
++
++if __name__ == "__main__":
++    unittest.main()

@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-04",
+  "scope": "source instructions and UI metadata",
+  "changed_files": [
+    {
+      "path": "skills/story-skill-cover/SKILL.md",
+      "before_sha256": "f0686b73a327cb2139baf06c1855e6f4e085a9e0c84b571a46ca81b5d791b88a",
+      "after_sha256": "75e18b71c1529e3873d2025925d3dfae2df1361bb1aef10060b24c21bcad5735"
+    },
+    {
+      "path": "skills/story-skill-cover/agents/openai.yaml",
+      "before_sha256": "f9c68bb3450592f67bd9d4b01f978e1a4fc16af808ec2606f5819261ea919400",
+      "after_sha256": "6925f3d40cb2c4fd1d2a1e576f05453728b92f8cab5e6c70ee9c650bf3a16bc3"
+    }
+  ],
+  "actual_images_generated": false,
+  "installed_skills_modified": false,
+  "validation": {
+    "skill": "Skill is valid!",
+    "ui": "passed",
+    "markdown_links": {
+      "status": "passed",
+      "files_scanned": 308,
+      "links_checked": 1681,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    },
+    "whitespace": "passed"
+  },
+  "independent_read_only_review": {
+    "reviewed": true,
+    "type": "design guidance review",
+    "findings": "Visual hook tied to story expectations and thumbnail interpretation are covered; local scope and unverified click effects remain explicit."
+  }
+}

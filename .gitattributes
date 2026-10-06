@@ -5,6 +5,10 @@
 /skills/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 /benchmarks/results/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
+# Benchmark source fingerprints use exact bytes on every checkout platform.
+/benchmarks/profiles.json text eol=lf
+/scripts/benchmark.py text eol=lf
+
 # Reviewed example prose is hashed as LF bytes; Windows checkout must retain LF.
 /examples/**/*.md text eol=lf
 /examples/**/*.txt text eol=lf

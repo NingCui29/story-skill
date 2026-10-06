@@ -1,0 +1,18 @@
+{
+  "registry_sha256": "1a8b28233c1d258932d95c94b4450ccec35c4091e25d0955f35dc96ee5ca9e43",
+  "registry_mtime_ns": 1791202088997524795,
+  "library": {
+    "ok": true,
+    "instance": "instance-21",
+    "state_dir": "~/.codex/story-workbench",
+    "mode": "library",
+    "pid": 25502,
+    "code_sha256": "7916eed431b06307e17364ceac56e162e1540d57ec238030eddae05dd448a7ce",
+    "runtime_sha256": "a8724d9d5e993aa2457b680bbd6c7c48ad3e07eac0a750eaeb7f56fd03df1200",
+    "started": "2026-10-05T15:04:47.017221Z",
+    "running": true,
+    "stop_requested": false,
+    "outdated": false,
+    "url": "http://127.0.0.1:8765/"
+  }
+}

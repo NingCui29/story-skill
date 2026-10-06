@@ -1,0 +1,12 @@
+{
+  "original.txt": {
+    "unicode_codepoints_including_whitespace": 214,
+    "unicode_codepoints_excluding_whitespace": 209,
+    "han_characters": 178
+  },
+  "revised.txt": {
+    "unicode_codepoints_including_whitespace": 118,
+    "unicode_codepoints_excluding_whitespace": 109,
+    "han_characters": 85
+  }
+}

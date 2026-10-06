@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "restarted": true,
+  "before_instance": "instance-04",
+  "after_instance": "instance-02",
+  "pid": 21986,
+  "url": "http://127.0.0.1:8765/",
+  "outdated": false,
+  "registry_unchanged": true,
+  "editors_stopped": false,
+  "runtime_sha256": "4de95daa8bd92a6c1675f2ca2561ac2dbeeacb10e013d501f1e39782dece3228",
+  "workbench_sha256": "92c9de79b9b1e09c139b23082df81dd302721681a603d90697271a489c050fde"
+}

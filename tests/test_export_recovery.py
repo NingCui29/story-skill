@@ -7,6 +7,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 spec = importlib.util.spec_from_file_location("story_export_recovery", TOOL)
@@ -33,6 +35,7 @@ class ExportRecoveryTests(unittest.TestCase):
                 "beats": [{"choice": "沈禾决定是否交出钥匙", "change": "失去或保留退路"}]}
         for chapter in (1, 2):
             self.book.save_plan(chapter, {**plan, "title": f"门后的雨{chapter}"}, self.book.meta("revision"))
+            bind_adopted_outline(story, self.book, chapter)
             text = DRAFT if chapter == 1 else DRAFT2
             self.draft.write_bytes(text.encode("utf-8"))
             self.book.commit(chapter, self.draft, self.delta(text))

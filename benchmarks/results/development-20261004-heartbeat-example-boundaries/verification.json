@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-04",
+  "scope": "heartbeat incremental parser repair; synthetic books only",
+  "changed_files": {
+    "skills/story-skill/scripts/story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+    "tests/test_outline_example_boundaries.py": "81158176b233c7e104c82b7d80ef8b90b6ef4b201a2c7df97add1de335e0c840"
+  },
+  "targeted_tests": {
+    "tests": 132,
+    "passed": 132,
+    "new_test_methods": 8,
+    "snapshot_source_changed": false
+  },
+  "independent_review": {
+    "synthetic_cases": 7,
+    "passed": 7,
+    "reviewed_source_sha256": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263"
+  },
+  "skill_validation": "story-skill valid",
+  "git_diff_check": "passed",
+  "full_suite_rerun": false,
+  "real_manuscripts_reviewed": false,
+  "installation_modified": false,
+  "git_published": false
+}

@@ -12,6 +12,8 @@ import threading
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 ROOT = Path(__file__).resolve().parents[1]
 TOOL = ROOT / "skills/story-skill/scripts/story.py"
 spec = importlib.util.spec_from_file_location("story", TOOL)
@@ -125,6 +127,7 @@ class StoryTests(unittest.TestCase):
         self.assertEqual(self.book.meta("last_chapter"), 0)
 
     def test_commit_retry_is_idempotent_and_exported(self):
+        bind_adopted_outline(story, self.book, 1)
         delta = self.delta()
         first = self.book.commit(1, self.draft, delta)
         second = self.book.commit(1, self.draft, delta)
@@ -176,6 +179,7 @@ class StoryTests(unittest.TestCase):
         self.assertEqual(self.book.meta("last_chapter"), 0)
 
     def test_card_change_and_chapter_commit_are_atomic(self):
+        bind_adopted_outline(story, self.book, 1)
         delta = self.delta(changes=[{"id": "hero", "text": "沈禾已交出钥匙", "quote": "沈禾把唯一的钥匙交给守门人。"}])
         original = self.book.cards()
         with patch.object(self.book, "queue_artifact", side_effect=OSError("simulated disk failure")):
@@ -185,6 +189,7 @@ class StoryTests(unittest.TestCase):
         self.assertEqual(self.book.meta("last_chapter"), 0)
 
     def test_export_failure_preserves_commit_and_can_recover(self):
+        bind_adopted_outline(story, self.book, 1)
         delta = self.delta()
         with patch.object(story, "atomic_write", side_effect=OSError("disk temporarily unavailable")):
             result = self.book.commit(1, self.draft, delta)
@@ -200,6 +205,7 @@ class StoryTests(unittest.TestCase):
         self.assertTrue(recovered["exports_complete"])
 
     def test_outside_edits_are_never_overwritten(self):
+        bind_adopted_outline(story, self.book, 1)
         target = self.root / "chapters/第一卷 雨夜/第1章 门后的雨.md"
         target.parent.mkdir(parents=True)
         target.write_text("用户原稿", encoding="utf-8")
@@ -208,6 +214,7 @@ class StoryTests(unittest.TestCase):
         self.assertEqual(self.book.meta("last_chapter"), 0)
 
     def test_outside_edits_after_commit_are_visible_and_block_continuation(self):
+        bind_adopted_outline(story, self.book, 1)
         self.book.commit(1, self.draft, self.delta())
         target = self.root / self.book.chapter_path(1)
         target.write_text("用户后改稿", encoding="utf-8")
@@ -217,6 +224,7 @@ class StoryTests(unittest.TestCase):
         self.assertEqual(target.read_text(encoding="utf-8"), "用户后改稿")
 
     def test_replace_last_restores_removed_changes_and_keeps_history(self):
+        bind_adopted_outline(story, self.book, 1)
         delta = self.delta(changes=[{"id": "hero", "text": "已经交出钥匙", "quote": "沈禾把唯一的钥匙交给守门人。"},
                                     card("debt", kind="hook", text="答应带回账本", due=2, quote="她答应在天亮之前带回账本。")])
         self.book.commit(1, self.draft, delta)
@@ -232,14 +240,17 @@ class StoryTests(unittest.TestCase):
         self.assertEqual(self.book.db.execute("SELECT text FROM core_objects WHERE sha=?", (previous_sha,)).fetchone()[0], DRAFT)
 
     def test_replace_detects_intervening_card_edit(self):
+        bind_adopted_outline(story, self.book, 1)
         self.book.commit(1, self.draft, self.delta(changes=[{"id": "hero", "text": "已交出钥匙", "quote": "沈禾把唯一的钥匙交给守门人。"}]))
         self.book.save_notes([card(text="用户重新指定钥匙状态")], self.book.meta("revision"))
         self.assert_error("revised_state_conflict", self.book.commit, 1, self.draft, self.delta(), True)
 
     def test_cannot_skip_chapter_or_replace_earlier_history(self):
+        bind_adopted_outline(story, self.book, 1)
         self.assert_error("chapter_order", self.book.commit, 2, self.draft, self.delta())
         self.book.commit(1, self.draft, self.delta())
         self.book.save_plan(2, plan(title="第二夜"), self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 2)
         second = DRAFT.replace("第1章 门后的雨", "第2章 第二夜")
         self.draft.write_bytes(second.encode("utf-8"))
         self.book.commit(2, self.draft, self.delta(second))
@@ -255,6 +266,7 @@ class StoryTests(unittest.TestCase):
         self.assert_error("adopt_nonempty", self.book.adopt, 109, self.draft, "重复导入", 3)
 
     def test_atomic_export_failure_after_replace_can_retry(self):
+        bind_adopted_outline(story, self.book, 1)
         self.book.commit(1, self.draft, self.delta())
         revised = DRAFT + "她没有回头。\n"
         self.draft.write_bytes(revised.encode("utf-8"))
@@ -266,6 +278,7 @@ class StoryTests(unittest.TestCase):
         self.assertTrue(self.book.commit(1, self.draft, delta, True)["exports_complete"])
 
     def test_parallel_identical_submissions_only_commit_once(self):
+        bind_adopted_outline(story, self.book, 1)
         delta = self.delta()
         barrier = threading.Barrier(2)
         def attempt():
@@ -280,7 +293,7 @@ class StoryTests(unittest.TestCase):
             results = [future.result(timeout=20) for future in futures]
         self.assertEqual(sum(result["idempotent"] for result in results), 1)
         self.assertEqual(self.book.meta("last_chapter"), 1)
-        self.assertEqual(self.book.meta("revision"), 3)
+        self.assertEqual(self.book.meta("revision"), delta["base_revision"] + 1)
 
     def test_recall_output_is_bounded(self):
         self.book.save_notes([card(f"r{i}", text="线索" * 500) for i in range(20)], 2)
@@ -289,6 +302,7 @@ class StoryTests(unittest.TestCase):
         self.assertLessEqual(len(story.dumps(result).encode("utf-8")), 1000)
 
     def test_path_escape_and_linked_managed_directory(self):
+        bind_adopted_outline(story, self.book, 1)
         self.assert_error("path_escape", story.safe_path, self.root, "../other")
         external = self.root.parent / "外部"
         external.mkdir()
@@ -415,6 +429,7 @@ class StoryTests(unittest.TestCase):
         self.assertIsInstance(json.loads(result.stdout), list)
 
     def test_crlf_draft_hash_matches_lint_and_export_bytes(self):
+        bind_adopted_outline(story, self.book, 1)
         text = DRAFT.replace("\n", "\r\n")
         self.draft.write_bytes(text.encode("utf-8"))
         delta = self.delta(text)

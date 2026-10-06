@@ -5,6 +5,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 SPEC = importlib.util.spec_from_file_location("skill_audit_fixes_story", TOOL)
@@ -167,10 +169,12 @@ class SkillAuditBookTests(unittest.TestCase):
         self.book.integrity = integrity
         first = "第1章 核对承诺\n沈禾核对承诺，然后留下交接凭据。\n"
         self.book.save_plan(1, plan(), self.revision())
+        bind_adopted_outline(story, self.book, 1)
         self.draft.write_bytes(first.encode("utf-8"))
         initial = self.book.commit(1, self.draft, self.delta(self.book, first))
         self.assertTrue(initial["scope_exports_complete"], initial)
         self.book.save_plan(2, plan(title="再次核对承诺"), self.revision())
+        bind_adopted_outline(story, self.book, 2)
         old_revision = self.revision()
         # Permit a real writer to commit while the repaired reader holds its snapshot.
         self.book.db.execute("PRAGMA journal_mode=WAL")

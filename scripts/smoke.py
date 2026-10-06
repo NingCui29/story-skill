@@ -36,6 +36,12 @@ def smoke():
                 "length_exception": {"source": "user_request", "quote": "本合成冒烟验收章节采用 150—350 字，验证工具流程。"},
                 "beats": [{"choice": "交出唯一钥匙", "change": "进门但失去退路"}]}
         call("plan", "--chapter", 1, "--input", write_json("plan.json", plan), "--expect", 1)
+        outline_path = root / "首章验收细纲.md"
+        outline_path.write_text("# 首章验收细纲\n状态：已采用\n\n"
+                                + json.dumps(plan, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        call("outline-bind", "--chapter", 1, "--file", outline_path.name,
+             "--sha256", hashlib.sha256(outline_path.read_bytes()).hexdigest(),
+             "--expect", call("status")["revision"])
         packet = call("context", "--chapter", 1, "--budget-bytes", 4000)
         draft_text = ("第1章 门后的雨\n沈禾把钥匙放在门槛上，没有往前推。\n"
                       "守门人看了一眼她身后的雨，说这把钥匙只能换一次进门。出来以后，锁就会换掉。\n"

@@ -1,0 +1,206 @@
+--- story_workbench.py before time sorting
++++ story_workbench.py after time sorting
+@@ -1240,7 +1240,7 @@
+     return result
+ 
+ 
+-def _author_files(root, warnings=None):
++def _author_files(root, warnings=None, exclude=None):
+     def report(path):
+         if warnings is not None:
+             warnings.append('已跳过无法安全读取的文件或目录：' + str(path))
+@@ -1264,6 +1264,8 @@
+         children = []
+     for path in children:
+         if path.name.startswith('.') or path.name == 'chapters':
++            continue
++        if exclude is not None and exclude(path.relative_to(root).as_posix()):
+             continue
+         try:
+             if path.is_symlink() or getattr(path, 'is_junction', lambda: False)():
+@@ -1281,10 +1283,12 @@
+         pending = [start]
+         while pending:
+             path = pending.pop()
++            relative = path.relative_to(root).as_posix()
++            if exclude is not None and exclude(relative):
++                continue
+             inspected += 1
+             if inspected > AUTHOR_LIMIT:
+                 api.fail('workbench_scan_limit', '创作材料超过扫描上限，请先整理归档。', maximum=AUTHOR_LIMIT)
+-            relative = path.relative_to(root).as_posix()
+             try:
+                 api.safe_path(root, relative)
+                 if path.is_dir():
+@@ -2101,6 +2105,103 @@
+             'note': '来自本书现行材料的明确题材记录；不表示平台分类已确认。'}
+ 
+ 
++def _unknown_book_update(note):
++    return {'updated_at': None, 'updated_at_verified': False, 'updated_at_source': None,
++            'updated_at_note': note}
++
++
++def _update_time(value):
++    if not isinstance(value, str) or not re.fullmatch(
++            r'\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})?', value):
++        raise ValueError('invalid recorded update time')
++    parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
++    return (parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed).astimezone(timezone.utc)
++
++
++def _book_update(root, expected):
++    """Newest recorded activity or current author-file mtime; never service time."""
++    book, newest, source, warnings = None, None, None, []
++    try:
++        root = Path(root)
++        book = _ReadOnlyBook(root)
++        with book.read_snapshot():
++            metadata = _meta_map(book.db)
++            if metadata.get('id') != expected['book_id']:
++                return _unknown_book_update('作品身份已变化，更新时间待核对。')
++            metadata['__root'] = str(root)
++            event = book.db.execute('SELECT seq,kind,created FROM events '
++                                    'ORDER BY julianday(created) DESC,seq DESC LIMIT 1').fetchone()
++            last_event = book.db.execute('SELECT created FROM events ORDER BY seq DESC LIMIT 1').fetchone()
++            invalid_event = book.db.execute(
++                'SELECT 1 FROM events WHERE julianday(created) IS NULL LIMIT 1').fetchone()
++            if invalid_event is not None:
++                warnings.append('状态事件中存在无法核对的时间')
++            if last_event is not None:
++                try:
++                    _update_time(last_event['created'])
++                except (ValueError, TypeError):
++                    warnings.append('最近记录的状态事件时间格式无法核对')
++            if event is not None:
++                try:
++                    newest = _update_time(event['created'])
++                    source = {'kind': 'state_event', 'event': event['kind'], 'seq': event['seq']}
++                except (ValueError, TypeError):
++                    warnings.append('最近状态事件的时间格式无法核对')
++            chapters = [row['chapter'] for row in book.db.execute(
++                'SELECT chapter FROM chapter_state ORDER BY chapter LIMIT ?', (MAX_CHAPTERS + 1,))]
++            if len(chapters) > MAX_CHAPTERS:
++                return _unknown_book_update('正式章数超过核对上限，更新时间待核对。')
++            formal_paths = {_chapter_path(metadata, chapter) for chapter in chapters}
++
++        assembly = metadata.get('short_assembly_path')
++
++        def excluded(relative):
++            if relative == assembly or relative.endswith('.pending.json'):
++                return True
++            path = Path(relative)
++            # Author leaf titles may contain words such as “备份证据”. Only
++            # explicit directory labels identify generated or archived copies.
++            directories = path.parts[:-1] if path.suffix else path.parts
++            return any(re.match(r'^(?:\d{2}_)?(?:历史版本|历史归档|作品归档|归档|备份|导出|自动恢复)(?:_|$)', part) or
++                       re.match(r'^(?:\d{2}_)?(?:archives?|exports?|backups?|recovery)(?:[_-]|$)',
++                                part.casefold()) for part in directories)
++
++        files = _author_files(root, warnings, exclude=excluded)
++        paths = {row['path'] for row in files if row.get('category') != '自动恢复'} | formal_paths
++        for relative in sorted(paths):
++            if excluded(relative) and relative not in formal_paths:
++                continue
++            try:
++                path = api.safe_path(root, relative)
++                with api._pinned_directory(path.parent) as directory:
++                    facts = api.publish._bound_stat(api._BoundFile(directory, path.name))
++                modified = datetime.fromtimestamp(facts.st_mtime, timezone.utc)
++                if newest is None or modified > newest:
++                    newest, source = modified, {'kind': 'author_file', 'path': relative}
++            except (api.StoryError, OSError, ValueError, OverflowError):
++                warnings.append('无法安全核对文件时间：' + relative)
++
++        book.verify_state_path()
++        with api._pinned_directory(book.path.parent) as directory:
++            current = api.publish._bound_stat(api._BoundFile(directory, book.path.name))
++        if not os.path.samestat(book._state_stat, current) or book.meta('id') != expected['book_id']:
++            return _unknown_book_update('作品身份在读取时间时变化，更新时间待核对。')
++        if newest is None:
++            return _unknown_book_update('尚无可靠的作品状态事件或当前作者文件时间。')
++        updated_at = newest.isoformat().replace('+00:00', 'Z')
++        source['at'] = updated_at
++        note = '最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。'
++        if warnings:
++            note = '更新时间尚未完整核对：' + '；'.join(warnings[:3])
++        return {'updated_at': updated_at, 'updated_at_verified': not warnings,
++                'updated_at_source': source, 'updated_at_note': note}
++    except (api.StoryError, OSError, ValueError, TypeError, sqlite3.Error):
++        return _unknown_book_update('无法完整核对原作品的更新时间。')
++    finally:
++        if book is not None:
++            book.close()
++
++
+ def _library_roots(root, extra=None):
+     paths = [Path(root).absolute()] + [Path(p).expanduser().absolute() for p in (extra or [])]
+     if len(paths) > 30:
+@@ -2109,6 +2210,7 @@
+     for path in paths:
+         entry = _library_entry(path)
+         entry['classification'] = _book_classification(entry['root'])
++        entry.update(_book_update(entry['root'], entry))
+         _library_entry(entry['root'], entry)
+         result[entry['key']] = entry
+     return result
+@@ -2857,11 +2959,13 @@
+         try:
+             current = _library_entry(entry['root'], entry)
+             current['classification'] = _book_classification(current['root'])
++            current.update(_book_update(current['root'], current))
+             _library_entry(current['root'], current)
+             books.append({**current, 'available': True})
+         except (api.StoryError, OSError, ValueError) as error:
+             books.append({**entry, 'kind': entry.get('kind'), 'kind_verified': False,
+                           'classification': _classification_unavailable('无法核对原作品，题材暂不可用。'),
++                          **_unknown_book_update('无法核对原作品，更新时间暂不可用。'),
+                           'available': False, 'error': str(error)})
+     return {'ok': True, 'books': books, 'current': None}
+ 
+@@ -2949,23 +3053,39 @@
+ 
+ def _library_page(token):
+     page = '''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>写作书架</title>
+-<style>body{font:16px/1.7 system-ui;color:#293341;background:#f5f4ef;max-width:820px;margin:48px auto;padding:0 24px}h1{margin-bottom:4px}p{color:#596575}section{padding:22px;background:white;border:1px solid #ddd;border-radius:12px;margin:20px 0}input,button{font:inherit;padding:9px;border:1px solid #b9c1cb;border-radius:6px}input{box-sizing:border-box;width:100%;margin:8px 0}button{cursor:pointer;background:#f1f4f7}button:disabled{cursor:default;opacity:.5}.type-filters{display:flex;flex-wrap:wrap;gap:8px}.type-filters [aria-pressed="true"]{background:#e6edf4;border-color:#6c839d;color:#234d76}#filter-summary{font-size:13px;margin:12px 0}.book{padding:16px 0;border-bottom:1px solid #eee}.book strong{display:block}.genre-label{font-size:12px;color:#69727c;margin:8px 0 4px}.genre-tags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}.classification-sources{font-size:13px;margin:8px 0 12px;color:#69727c}.classification-sources summary{cursor:pointer}.classification-sources p{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0}.genre-tag{font-size:13px;padding:1px 8px;border-radius:4px;background:#edf3ed;color:#41644c}.genre-tag.pending{background:#f5f1e7;color:#8a6a3e}.path{font-size:13px;overflow-wrap:anywhere;color:#69727c}.error{color:#945322}#message{white-space:pre-wrap}a{color:#285781}</style></head>
+-<body><h1>写作书架</h1><p>收藏这个地址，随时选择作品。书架不绑定某一本书。</p><section><label for="book-path">添加已有作品的本地目录</label><input id="book-path" placeholder="例如：/Users/你的名字/小说/书名" autocomplete="off"><button id="add">添加作品</button> <button id="refresh">刷新书架</button><p>只登记你填写的目录，不扫描磁盘；最多 30 本作品。</p></section><p id="message" role="status"></p><section><h2>我的作品</h2><div class="type-filters" role="group" aria-label="按作品类型筛选"><button id="filter-all" aria-pressed="true">全部 0</button><button id="filter-long" aria-pressed="false">长篇 0</button><button id="filter-short" aria-pressed="false">短篇 0</button><button id="filter-analysis" aria-pressed="false">作品分析 0</button></div><p id="filter-summary" role="status"></p><div id="books"></div></section><p>作品编辑在独立的新标签页打开，原页面编辑保留。关闭书架不会关闭这些编辑服务；编辑地址可能随服务重启变化。</p>
++<style>body{font:16px/1.7 system-ui;color:#293341;background:#f5f4ef;max-width:820px;margin:48px auto;padding:0 24px}h1{margin-bottom:4px}p{color:#596575}section{padding:22px;background:white;border:1px solid #ddd;border-radius:12px;margin:20px 0}input,button,select{font:inherit;padding:9px;border:1px solid #b9c1cb;border-radius:6px}input{box-sizing:border-box;width:100%;margin:8px 0}button{cursor:pointer;background:#f1f4f7}button:disabled{cursor:default;opacity:.5}.shelf-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}.type-filters{display:flex;flex-wrap:wrap;gap:8px}.shelf-sort{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}.shelf-sort select{font-size:14px;background:white}.book-updated{display:block;font-size:13px;color:#69727c;margin:4px 0 8px}.type-filters [aria-pressed="true"]{background:#e6edf4;border-color:#6c839d;color:#234d76}#filter-summary{font-size:13px;margin:12px 0}.book{padding:16px 0;border-bottom:1px solid #eee}.book strong{display:block}.genre-label{font-size:12px;color:#69727c;margin:8px 0 4px}.genre-tags{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}.classification-sources{font-size:13px;margin:8px 0 12px;color:#69727c}.classification-sources summary{cursor:pointer}.classification-sources p{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0}.genre-tag{font-size:13px;padding:1px 8px;border-radius:4px;background:#edf3ed;color:#41644c}.genre-tag.pending{background:#f5f1e7;color:#8a6a3e}.path{font-size:13px;overflow-wrap:anywhere;color:#69727c}.error{color:#945322}#message{white-space:pre-wrap}a{color:#285781}</style></head>
++<body><h1>写作书架</h1><p>收藏这个地址，随时选择作品。书架不绑定某一本书。</p><section><label for="book-path">添加已有作品的本地目录</label><input id="book-path" placeholder="例如：/Users/你的名字/小说/书名" autocomplete="off"><button id="add">添加作品</button> <button id="refresh">刷新书架</button><p>只登记你填写的目录，不扫描磁盘；最多 30 本作品。</p></section><p id="message" role="status"></p><section><h2>我的作品</h2><div class="shelf-controls"><div class="type-filters" role="group" aria-label="按作品类型筛选"><button id="filter-all" aria-pressed="true">全部 0</button><button id="filter-long" aria-pressed="false">长篇 0</button><button id="filter-short" aria-pressed="false">短篇 0</button><button id="filter-analysis" aria-pressed="false">作品分析 0</button></div><label class="shelf-sort" for="shelf-order">更新时间<select id="shelf-order" aria-label="按更新时间排序"><option value="newest">最新在前</option><option value="oldest">最早在前</option></select></label></div><p id="filter-summary" role="status"></p><div id="books"></div></section><p>作品编辑在独立的新标签页打开，原页面编辑保留。关闭书架不会关闭这些编辑服务；编辑地址可能随服务重启变化。</p>
+ <script>const TOKEN=__TOKEN__;const $=id=>document.getElementById(id);let busy=false;
+ async function call(action,data={}){const r=await fetch('/api/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(data)});const v=await r.json();if(!r.ok)throw Error(v.message||'请求失败');return v;}
+ __BOOK_DISPLAY__
+-const shelfKinds=[['all','全部'],['long','长篇'],['short','短篇'],['analysis','作品分析']];let shelfBooks=[],shelfFilter='all';
++const shelfKinds=[['all','全部'],['long','长篇'],['short','短篇'],['analysis','作品分析']];let shelfBooks=[],shelfFilter='all',shelfSort='newest';
+ function shelfBookKind(book){return book.kind_verified!==false&&book.available!==false&&['long','short','analysis'].includes(book.kind)?book.kind:null;}
++function shelfUpdatedTime(book){
++ if(book.available===false||book.updated_at_verified!==true||typeof book.updated_at!=='string')return null;
++ const match=book.updated_at.match(/^([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2})(?:[.]([0-9]{1,9}))?(?:Z|[+]00:00)$/);if(!match)return null;
++ const value=Date.parse(book.updated_at);if(!Number.isFinite(value)||new Date(value).toISOString().slice(0,19)!==match[1])return null;
++ return {value,key:match[1]+'.'+(match[2]||'').padEnd(9,'0')};
++}
++function sortShelfBooks(books,order='newest'){
++ return books.map((book,index)=>({book,index,time:shelfUpdatedTime(book)})).sort((a,b)=>{
++  if(!a.time||!b.time)return a.time?-1:b.time?1:a.index-b.index;
++  const comparison=a.time.key<b.time.key?-1:a.time.key>b.time.key?1:0;return (order==='oldest'?comparison:-comparison)||a.index-b.index;
++ }).map(entry=>entry.book);
++}
++function restoreShelfView(){try{const saved=JSON.parse(localStorage.getItem('story-shelf-view')||'null');if(saved&&typeof saved==='object'){if(shelfKinds.some(([kind])=>kind===saved.filter))shelfFilter=saved.filter;if(['newest','oldest'].includes(saved.sort))shelfSort=saved.sort;}}catch(e){}}
++function persistShelfView(){try{localStorage.setItem('story-shelf-view',JSON.stringify({filter:shelfFilter,sort:shelfSort}));}catch(e){}}
++restoreShelfView();
+ function renderShelf(){
+- const visible=shelfFilter==='all'?shelfBooks:shelfBooks.filter(book=>shelfBookKind(book)===shelfFilter);
++ const visible=sortShelfBooks(shelfFilter==='all'?shelfBooks:shelfBooks.filter(book=>shelfBookKind(book)===shelfFilter),shelfSort);$('shelf-order').value=shelfSort;
+  for(const [kind,label]of shelfKinds){const count=kind==='all'?shelfBooks.length:shelfBooks.filter(book=>shelfBookKind(book)===kind).length;const button=$('filter-'+kind);button.textContent=label+' '+count;button.setAttribute('aria-pressed',String(shelfFilter===kind));}
+  const label=shelfKinds.find(([kind])=>kind===shelfFilter)[1],pending=shelfBooks.filter(book=>!shelfBookKind(book)).length;
+  $('filter-summary').textContent=(shelfFilter==='all'?'全部作品':label)+' · '+visible.length+' 部'+(shelfFilter==='all'&&pending?' · '+pending+' 部类型尚未确认':'');
+  $('books').replaceChildren();if(!visible.length){$('books').textContent=shelfBooks.length?'当前分类暂无作品；可在“全部”查看其他作品。':'书架还是空的，请先添加一本已有作品。';return;}
+- for(const b of visible){const row=document.createElement('div');row.className='book';const title=document.createElement('strong');title.textContent=b.label;const genres=classificationNode(b);const path=document.createElement('details');const summary=document.createElement('summary');summary.textContent='目录位置';const directory=document.createElement('div');directory.className='path';directory.textContent=b.root||'目录未提供';path.append(summary,directory);const open=document.createElement('button');open.textContent='打开作品';open.disabled=!b.available;open.onclick=async()=>{open.disabled=true;try{const r=await call('open-book',{key:b.key});const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='点击打开：'+b.label;$('message').replaceChildren(a);a.click();if(r.outdated)$('message').append(document.createTextNode('（此作品服务使用较早代码，升级前请保留原页面编辑。）'));}catch(e){$('message').textContent=e.message;}finally{open.disabled=!b.available;}};row.append(title,genres,path,open);if(!b.available){const err=document.createElement('p');err.className='error';err.textContent=b.error||'作品暂不可用，请核对目录。';row.append(err);}$('books').append(row);}
++ for(const b of visible){const row=document.createElement('div');row.className='book';const title=document.createElement('strong');title.textContent=b.label;const updated=shelfUpdatedTime(b),time=document.createElement(updated?'time':'p');time.className='book-updated';time.textContent=updated?'更新时间：'+new Date(updated.value).toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}):'更新时间未确认';if(updated)time.dateTime=b.updated_at;if(typeof b.updated_at_note==='string')time.title=b.updated_at_note;const genres=classificationNode(b);const path=document.createElement('details');const summary=document.createElement('summary');summary.textContent='目录位置';const directory=document.createElement('div');directory.className='path';directory.textContent=b.root||'目录未提供';path.append(summary,directory);const open=document.createElement('button');open.textContent='打开作品';open.disabled=!b.available;open.onclick=async()=>{open.disabled=true;try{const r=await call('open-book',{key:b.key});const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='点击打开：'+b.label;$('message').replaceChildren(a);a.click();if(r.outdated)$('message').append(document.createTextNode('（此作品服务使用较早代码，升级前请保留原页面编辑。）'));}catch(e){$('message').textContent=e.message;}finally{open.disabled=!b.available;}};row.append(title,time,genres,path,open);if(!b.available){const err=document.createElement('p');err.className='error';err.textContent=b.error||'作品暂不可用，请核对目录。';row.append(err);}$('books').append(row);}
+ }
+ function render(v){shelfBooks=bookDisplayRows(v.books);renderShelf();}
+-for(const [kind]of shelfKinds)$('filter-'+kind).onclick=()=>{shelfFilter=kind;renderShelf();};
++for(const [kind]of shelfKinds)$('filter-'+kind).onclick=()=>{shelfFilter=kind;persistShelfView();renderShelf();};
++$('shelf-order').onchange=()=>{shelfSort=$('shelf-order').value==='oldest'?'oldest':'newest';persistShelfView();renderShelf();};
+ async function refresh(){try{render(await call('books'));}catch(e){$('message').textContent=e.message;}}
+ $('refresh').onclick=refresh;$('add').onclick=async()=>{if(busy)return;busy=true;$('add').disabled=true;try{const value=await call('add-book',{path:$('book-path').value});render(value);$('book-path').value='';$('message').textContent='作品已登记，重新打开书架仍会保留。';}catch(e){$('message').textContent=e.message;}finally{busy=false;$('add').disabled=false;}};refresh();</script></body></html>'''
+     return page.replace('__BOOK_DISPLAY__', _book_display_script()).replace('__TOKEN__', json.dumps(token)).encode('utf-8')

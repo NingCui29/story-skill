@@ -1,0 +1,62 @@
+[
+  {
+    "destination": "~/Applications/写作工作台.app",
+    "stage": "~/.codex/backups/story-skill/editor-layout-npddni07/stage-installed.app",
+    "old_native_sha256": "293dd47a88aed6565a9bf0ff4b8a9589e383819e8597c377dc3ca4140c5c2830",
+    "signed_native_binary_sha256": "f73c114e6711d9faac61ca14b97ab17df1648e5fcaf1407c2a31c66537cff0b4",
+    "manifest": {
+      "app_version": "0.1.0",
+      "story_version": "0.6.11",
+      "architecture": "x86_64",
+      "minimum_macos": "13.0",
+      "runtime_version": "Python 3.12.14",
+      "runtime_files": {
+        "story.py": "37d840bae8567dc19dfd7d2fc5fb1c086b5bb3ef6e7657107765ef22d588c6ad",
+        "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+        "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+        "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "story_history.py": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
+        "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+        "story_workbench.py": "42a23d14ff3efda3750593659d265b46e83a6b64d870ba9c070ea037e27200f1",
+        "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+        "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+      },
+      "native_source_sha256": "826f6184211584d18d5285d3ff72eba772c74214a45ac90e31b1a6c6e75fe483",
+      "launcher_sha256": "ccb7e9a34f6d5ae9d07f7a496d6af8a8915889287b7f6cebed3a9c70f0f67f4f",
+      "local_build": true,
+      "editor_appearance_sha256": "75a9ab0a40c08b36222f669fc089f25b2c91a9b6fa9cb631f09fcca6e6050ddc",
+      "compiled_native_binary_sha256": "bf5b846b24c6b389b38c17fadfb120b1ccb8366b4e2503f3825f6d3baff850df",
+      "local_editor_layout_update": "2026-10-06"
+    }
+  },
+  {
+    "destination": "<repo>/dist/写作工作台.app",
+    "stage": "~/.codex/backups/story-skill/editor-layout-npddni07/stage-dist.app",
+    "old_native_sha256": "293dd47a88aed6565a9bf0ff4b8a9589e383819e8597c377dc3ca4140c5c2830",
+    "signed_native_binary_sha256": "f73c114e6711d9faac61ca14b97ab17df1648e5fcaf1407c2a31c66537cff0b4",
+    "manifest": {
+      "app_version": "0.1.0",
+      "story_version": "0.6.11",
+      "architecture": "x86_64",
+      "minimum_macos": "13.0",
+      "runtime_version": "Python 3.12.14",
+      "runtime_files": {
+        "story.py": "37d840bae8567dc19dfd7d2fc5fb1c086b5bb3ef6e7657107765ef22d588c6ad",
+        "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+        "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+        "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "story_history.py": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
+        "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+        "story_workbench.py": "42a23d14ff3efda3750593659d265b46e83a6b64d870ba9c070ea037e27200f1",
+        "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+        "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+      },
+      "native_source_sha256": "826f6184211584d18d5285d3ff72eba772c74214a45ac90e31b1a6c6e75fe483",
+      "launcher_sha256": "ccb7e9a34f6d5ae9d07f7a496d6af8a8915889287b7f6cebed3a9c70f0f67f4f",
+      "local_build": true,
+      "editor_appearance_sha256": "75a9ab0a40c08b36222f669fc089f25b2c91a9b6fa9cb631f09fcca6e6050ddc",
+      "compiled_native_binary_sha256": "bf5b846b24c6b389b38c17fadfb120b1ccb8366b4e2503f3825f6d3baff850df",
+      "local_editor_layout_update": "2026-10-06"
+    }
+  }
+]

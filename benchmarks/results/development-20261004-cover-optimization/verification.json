@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-04",
+  "changed_files": [
+    {
+      "path": "skills/story-skill-cover/SKILL.md",
+      "before_sha256": "046078055b4f9384e96eb909c8bcb58b666aacf0b76f2e935deb71d70ed38acf",
+      "after_sha256": "f0686b73a327cb2139baf06c1855e6f4e085a9e0c84b571a46ca81b5d791b88a"
+    },
+    {
+      "path": "skills/story-skill-cover/agents/openai.yaml",
+      "before_sha256": "53b2f469ff188bf50adcd663db27d53e33b67ed35b55fd42fc192e28ed4896f7",
+      "after_sha256": "f9c68bb3450592f67bd9d4b01f978e1a4fc16af808ec2606f5819261ea919400"
+    }
+  ],
+  "source_version": "0.6.11",
+  "scope": "repository source instructions and UI metadata",
+  "installed_skills_modified": false,
+  "novel_files_modified": false,
+  "runtime_unchanged": true,
+  "runtime_files": 8,
+  "full_unittest_rerun": false,
+  "skill_validation": {
+    "passed": true,
+    "message": "Skill is valid!",
+    "isolated_dependency_environment": true
+  },
+  "ui_validation": {
+    "passed": true,
+    "short_description_characters": 34,
+    "invocation_policy_preserved": true
+  },
+  "observed_repository_payload_files": 47,
+  "cover_payload_files": 3,
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 308,
+    "links_checked": 1681,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "referenced_anchors_present": true,
+  "git_diff_check": "passed",
+  "scenario_review": {
+    "kind": "independent synthetic text-only execution review",
+    "cases": 4,
+    "root_reviewed": true,
+    "actual_images_inspected": false,
+    "image_generation_performed": false,
+    "platform_verified": false,
+    "cases_checked": [
+      "long title local cover",
+      "single platform author edit",
+      "final JPG inspection and click claims",
+      "host image generation unavailable"
+    ],
+    "identified_issue": "Missing-tools wording could confuse suite file absence with host image generation absence.",
+    "resolution": "Changed wording to missing suite files; independent targeted recheck confirmed the distinction."
+  }
+}

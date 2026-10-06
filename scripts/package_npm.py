@@ -123,10 +123,18 @@ SUITE_FILES_V0610 = tuple(sorted((*SUITE_FILES_V069,
     "story-skill-write/references/content-review.md",
 )))
 SKILL_NAMES_V0610 = SKILL_NAMES_V069
+SUITE_FILES_V0611 = tuple(sorted((*SUITE_FILES_V0610,
+    "story-skill-plan/references/blurb.md",
+    "story-skill-research/references/reader-validation.md",
+    "story-skill-write/references/punctuation.md",
+    "story-skill/scripts/story_punctuation.py",
+)))
+SKILL_NAMES_V0611 = SKILL_NAMES_V0610
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0610
-SUITE_FILES = SUITE_FILES_V0610
+SKILL_NAMES = SKILL_NAMES_V0611
+SUITE_FILES = SUITE_FILES_V0611
+UNRELEASED_VERSIONS = frozenset()
 MAX_BYTES = 256 * 1024 * 1024
 
 
@@ -141,6 +149,8 @@ def payload_files(version):
         return SUITE_FILES_V069
     if version == "0.6.10":
         return SUITE_FILES_V0610
+    if version == "0.6.11":
+        return SUITE_FILES_V0611
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -156,6 +166,8 @@ def skill_names(version):
         return SKILL_NAMES_V069
     if version == "0.6.10":
         return SKILL_NAMES_V0610
+    if version == "0.6.11":
+        return SKILL_NAMES_V0611
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -221,6 +233,25 @@ def wrapper_files(version):
     files = payload_files(version)
     names = skill_names(version)
     name, repository = package_identity(version)
+    if version in UNRELEASED_VERSIONS:
+        archive_description = (
+            f"Its {len(files)} skill files preserve the exact bytes of the matching local ZIP.\n\n"
+            "Unreleased development snapshot: no published GitHub Release or Packages artifact "
+            "is claimed for this version. Record the source revision and file hashes when testing it.\n\n"
+        )
+        installation = (
+            "For macOS, Linux and Windows, validate this local source snapshot in an isolated "
+            "directory and follow its INSTALL.md development instructions before replacing an installation.\n\n"
+        )
+    else:
+        archive_description = (
+            f"Its {len(files)} skill files preserve the exact bytes of the matching GitHub Release ZIP.\n\n"
+        )
+        installation = (
+            "For macOS, Linux and Windows, ask:\n\n```text\n"
+            f"$skill-installer 按 https://github.com/NingCui29/story-skill/blob/v{version}/INSTALL.md "
+            f"安装或升级 Story Skill，固定使用 v{version}。\n```\n\n"
+        )
     manifest = {
         "name": name, "version": version,
         "description": "Eight Story Skill skills for Chinese novel writing, review and publication preparation",
@@ -234,15 +265,13 @@ def wrapper_files(version):
         f"# Story Skill {version}\n\n"
         "This npm package contains eight sibling skills: "
         + ", ".join(f"`{skill}/`" for skill in names) + ". "
-        + f"Its {len(files)} skill files preserve the exact bytes of the matching GitHub Release ZIP.\n\n"
-        "npm distributes content; installing this package does not register skills with the host app. "
+        + archive_description
+        + "npm distributes content; installing this package does not register skills with the host app. "
         "Copy all eight complete skill directories into your project's `.agents/skills/`, "
         "or follow the repository's managed installation instructions. "
         "Do not copy only an individual task skill: its shared runtime is required.\n\n"
-        "For macOS, Linux and Windows, ask:\n\n```text\n"
-        f"$skill-installer 按 https://github.com/NingCui29/story-skill/blob/v{version}/INSTALL.md "
-        f"安装或升级 Story Skill，固定使用 v{version}。\n```\n\n"
-        "The shared Python runtime is `story-skill/scripts/story.py`; npm does not install Python. "
+        + installation
+        + "The shared Python runtime is `story-skill/scripts/story.py`; npm does not install Python. "
         "Project data and novels belong outside the skill installation directory.\n\n"
         "The publication skill prepares local snapshots and records only; it does not log in to "
         "author platforms, upload chapters or publish them remotely.\n\n"

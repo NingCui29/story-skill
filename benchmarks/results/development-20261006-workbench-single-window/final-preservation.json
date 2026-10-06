@@ -1,0 +1,65 @@
+{
+  "registry_unchanged": true,
+  "registry_books": 18,
+  "active_books": [
+    {
+      "root": "/local-books/book-15",
+      "running": true,
+      "pid": 20594,
+      "instance": "instance-18",
+      "unchanged": true
+    },
+    {
+      "root": "/local-books/book-16",
+      "running": true,
+      "pid": 28793,
+      "instance": "instance-06",
+      "unchanged": true
+    },
+    {
+      "root": "/local-books/book-18",
+      "running": true,
+      "pid": 28801,
+      "instance": "instance-09",
+      "unchanged": true
+    },
+    {
+      "root": "/local-books/book-10",
+      "running": true,
+      "pid": 27471,
+      "instance": "instance-11",
+      "unchanged": true
+    },
+    {
+      "root": "/local-books/book-01",
+      "running": true,
+      "pid": 32956,
+      "instance": "instance-03",
+      "unchanged": true
+    }
+  ],
+  "library_unchanged": true,
+  "library_pid": 39922,
+  "library_instance": "instance-07",
+  "original_client_running": true,
+  "original_client_pid": 40074,
+  "installed_apps": [
+    {
+      "path": "~/Applications/写作工作台.app",
+      "signature_verified": true,
+      "binary_matches_install": true,
+      "sources_match": true,
+      "runtime_preserved": true,
+      "appearance_preserved": true
+    },
+    {
+      "path": "<repo>/dist/写作工作台.app",
+      "signature_verified": true,
+      "binary_matches_install": true,
+      "sources_match": true,
+      "runtime_preserved": true,
+      "appearance_preserved": true
+    }
+  ],
+  "production_lock_exists": false
+}

@@ -7,6 +7,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+
+from outline_fixture import bind_adopted_outline
 from unittest.mock import patch
 
 
@@ -48,6 +50,7 @@ class HistoryDependencyReadTests(unittest.TestCase):
                 "length_exception": {"source": "user_request", "quote": "测试历史依赖读取需要1至200字。"},
                 "beats": [{"choice": "核对信件", "change": "留下钥匙"}]}
         self.book.save_plan(chapter, plan, self.revision())
+        bind_adopted_outline(story, self.book, chapter)
         draft = self.root / "draft.md"
         draft.write_bytes(text.encode("utf-8"))
         raw = {"book_id": self.book.meta("id"), "base_revision": self.revision(),

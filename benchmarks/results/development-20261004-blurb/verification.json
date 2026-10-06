@@ -1,0 +1,123 @@
+{
+  "ok": true,
+  "scope": "Novel blurb skill update: targeted distribution tests, syntax validation, local links and three synthetic semantic exercises. Not a full regression, real-reader test, live platform check or release.",
+  "version": "0.6.11",
+  "skills": 8,
+  "files": 47,
+  "unit_tests": {
+    "run": 54,
+    "passed": 54,
+    "failed": 0,
+    "modules": [
+      "tests.test_package",
+      "tests.test_package_npm",
+      "tests.test_install_suite"
+    ],
+    "execution": "Delegated integration subagent, Python 3.12"
+  },
+  "skill_validation": [
+    {
+      "skill": "story-skill",
+      "status": "passed"
+    },
+    {
+      "skill": "story-skill-plan",
+      "status": "passed"
+    },
+    {
+      "skill": "story-skill-review",
+      "status": "passed"
+    },
+    {
+      "skill": "story-skill-publish",
+      "status": "passed"
+    }
+  ],
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 308,
+    "links_checked": 1681,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "distribution": {
+    "zip_matches_source": true,
+    "npm_payload_reader_matches_source": true,
+    "isolated_install_matches_source": true,
+    "npm_tarball_built": false,
+    "archive_sha256": "57a6feddb7410be3de5f3c79d88185a5bb04f32c2c38d78c2aa0fbf5df8370b4",
+    "v0610_files": 45
+  },
+  "payload_sha256": {
+    "story-skill-analyze/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-analyze/SKILL.md": "390d0f9693c1d572b2d8ae81f33777e9cd42ee8109f95e4d45b08e82ccc17574",
+    "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+    "story-skill-analyze/references/deep-reading.md": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
+    "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+    "story-skill-cover/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-cover/SKILL.md": "f0686b73a327cb2139baf06c1855e6f4e085a9e0c84b571a46ca81b5d791b88a",
+    "story-skill-cover/agents/openai.yaml": "f9c68bb3450592f67bd9d4b01f978e1a4fc16af808ec2606f5819261ea919400",
+    "story-skill-plan/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-plan/SKILL.md": "6bdad0ea41994fac2d72cdbbd2fd65b7843f9d6fccca45d0fa11cb1a63d32dcd",
+    "story-skill-plan/agents/openai.yaml": "2a0cbcafd48794cc8523a745b676d6dced4791cf752f4e592a11fdc8edb36ba7",
+    "story-skill-plan/references/blurb.md": "870e9081b9808bcd0fef3514fd774e4b7a16af729272163514cc788c78074c71",
+    "story-skill-plan/references/fanqie-tags.md": "28976ae2d83bf0c96e1f51854cb8f8745934152e6a6a1291dfed65973359c7e7",
+    "story-skill-plan/references/qimao-tags.md": "515a2080b3a35d4d5e765476fe6544eba1892c7a80fa43a691e39929edde716d",
+    "story-skill-publish/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-publish/SKILL.md": "adb4bbaeb366aaab74c5ed9497ab0767e1d2610313b63f16a7cf783168fb1a79",
+    "story-skill-publish/agents/openai.yaml": "43bb3505b40c2c1b05c901b7c8ec35faa448e005cc0f21d5eb482be812b67ad0",
+    "story-skill-research/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-research/SKILL.md": "dee416264966822405ecd0a23bf15aa2511dc9c828b8462dfadcd1c88f3e0a72",
+    "story-skill-research/agents/openai.yaml": "fa58f9b8653b56c69c2806632b27f0c0aecd705d802848312bbc5b9ea86b6221",
+    "story-skill-research/references/reader-validation.md": "22acc27f359213e75c9bfb1d71dea5c2c679cee7a2a413cee4a97bd98bbb5257",
+    "story-skill-review/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-review/SKILL.md": "777d7778137f16c7dc231ea64e05f614645013122164fde30c598cd4d3c4026d",
+    "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+    "story-skill-review/references/fanqie-content-review.md": "ee2dc118ed062b7a41f4819cf9961a2a257ff993ee2f496ad5d79001784870e8",
+    "story-skill-review/references/history.md": "dad1ef72c3646153920c727fe1c70c6b9c8a682d1d8653001a17975af454efb6",
+    "story-skill-review/references/qimao-content-review.md": "2aa801f04ac46afaeb6a021a1d26cf8df6a6cea382661606926615ac95f67dce",
+    "story-skill-write/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-write/SKILL.md": "c98a948c212df5b0749fcc3f6c6e47c8378743b62804fa6bc185658d2b6388cf",
+    "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+    "story-skill-write/references/chapter.md": "490d5093ebdeacfb5aa555309df41d8b75b17aa85dffc5cf273b0f86e7d1cc8f",
+    "story-skill-write/references/content-review.md": "3a76c2ef6ed6b7c3e1417d804d0a4862d30387d7ae17243a5b0f4497b339c48e",
+    "story-skill-write/references/drama.md": "067dac1a0fecdb2e63e646adfb687aa177e1bae7576ef71ed598ad5c9fd7fb79",
+    "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+    "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+    "story-skill/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill/SKILL.md": "55cb6aade28ec9d63bf47728effc3ee3fd2763698155d2a159c6e9dcb889c8ed",
+    "story-skill/agents/openai.yaml": "0f06df3badff4c9a96cd45a694496a4a3e49052c4747ec377f47dbeb630ac74a",
+    "story-skill/references/project-state.md": "a498e4dfd8fba2c45983dbdf8b8dd08eab476b3c8a80a7c0e0d738c0f27fd8ef",
+    "story-skill/scripts/story.py": "e37f19a3d98a176bf3144124be2c6c15cf70238f9f969eac39f5dc143a25d002",
+    "story-skill/scripts/story_history.py": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
+    "story-skill/scripts/story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+    "story-skill/scripts/story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story-skill/scripts/story_workbench.py": "f47e5b4aeb8131294285738b6270ef9cb7895dd30dcdc6ee76869f259103d210",
+    "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+  },
+  "behavior_exercises": [
+    {
+      "id": 1,
+      "request": "简介优化，书名《离婚后，我修好了整栋楼的灯》。这是现实家庭故事，语气朴实温暖，只给一版简介，不用额外策划。\n原简介：四十一岁的林芸离婚了。她带着十七岁的儿子搬进老小区，日子很难。她以前是电工，为了赚钱开始给邻居修灯。邻居有很多事，她修着修着，跟大家成了朋友，儿子也一点点理解她。这个故事写她重新站稳，也写她和儿子怎样重新相处。",
+      "response": ":::writing{variant=\"standard\" id=\"56231\"}\n四十一岁那年，林芸离了婚，带着十七岁的儿子搬进老小区。往后的日子怎么过，她得一点点重新学。\n\n她拾起做电工的老手艺，从给邻居修灯开始，挣下一份收入，也慢慢找回生活的底气。一次次上门，一盏盏灯亮起来，原本陌生的邻居渐渐成了朋友。\n\n儿子也在这些平常日子里，一点点理解了她。母子俩重新摸索着相处，林芸也靠自己的双手，慢慢站稳了脚。\n\n这栋老楼里的灯亮了，她和儿子的日子，也有了新的盼头。\n:::\n",
+      "status": "passed",
+      "evaluation": "Root semantic inspection of independent subagent completion; synthetic scenario, no live book or platform"
+    },
+    {
+      "id": 2,
+      "request": "只审不改这份简介，核对它是否准确传达本书；不要写正文。\n书名：《灯亮之前》\n已采用策划：现实家庭长篇，主角林芸四十一岁，离婚后带十七岁儿子搬到旧小区，她做电工谋生。前期母子沟通困难，中期靠一次次共同处理生活问题改善关系，后期儿子主动帮她开维修铺。主要阅读满足是生活重建与亲情变化。\n现有开篇：第一章母子为搬家争吵，第二章林芸帮邻居修灯获得第一笔报酬，第三章儿子仍拒绝和她吃饭。\n未采用候选：旧楼闹鬼，女主有读心术。\n待审简介：离婚后的林芸搬进一栋闹鬼的楼，觉醒读心术，三章便让叛逆儿子彻底悔悟。这一次，她要让所有欺负她的人跪地认错。",
+      "response": "这份简介目前不能准确传达《灯亮之前》。它把现实家庭故事写成了灵异异能与复仇爽文，并且与现有开篇相矛盾。\n\n- **混用了未采用设想。** “闹鬼的楼”“觉醒读心术”只存在于未采用候选中，不能作为本书已有设定写进简介。这两项会让读者期待灵异谜团和异能解题，偏离现实家庭定位。\n- **夸大并提前了亲情变化。** “三章便让……儿子彻底悔悟”与第三章儿子仍拒绝和她吃饭直接冲突。已采用策划安排的是中期通过共同处理生活问题逐步改善关系；“彻底悔悟”也把双向相处的变化压成了儿子单方面认错。\n- **许诺了没有依据的复仇主线。** “让所有欺负她的人跪地认错”在所给策划和开篇中没有支撑，会让读者等待持续打脸与报复，遮住本书的生活重建和亲情变化。\n- **遗漏了本书最具体的行动。** 林芸以电工手艺谋生、帮邻居修灯取得第一笔报酬，是已有依据的生活重建起点；待审简介没有呈现这一点，也没有呈现母子关系需要慢慢改善的张力。\n\n审查建议：保留离婚后搬入旧小区这一前提，围绕林芸靠手艺谋生、母子逐步改善关系校准阅读承诺；去掉未采用设定、三章速成的关系结论和复仇许诺。后期儿子帮她开维修铺属于已采用规划中的拟兑现结果，目前不应称为开篇已发生的事实；简介是否提前揭示它，可按预期剧透范围取舍。\n\n以上仅依据你提供的已采用策划与前三章梗概核对，未作全文审查。本次保留原简介，未另写新版或正文。\n",
+      "status": "passed",
+      "evaluation": "Root semantic inspection of independent subagent completion; synthetic scenario, no live book or platform"
+    },
+    {
+      "id": 3,
+      "request": "依据已采用策划为《夜班车不靠站》拟写180字以内的悬疑简介，保留最终谜底，不写正文。季禾是女夜班公交司机，弟弟三年前在末班车失踪。末班车经过废弃旧站后留下失踪乘客旧物，她循物寻找乘客，逐步查出旧站封闭前事故。最终谜底：弟弟尚在人世，母亲参与隐瞒事故。未采用候选：预知未来、富豪男主。只有策划，无正文。",
+      "response": ":::writing{variant=\"standard\" id=\"56232\"}\n三年前，季禾的弟弟在末班车上失踪。\n\n如今，身为夜班公交司机的她发现，每次末班车经过废弃旧站，车上都会留下一件失踪乘客的旧物。\n\n她沿着旧物寻找当年的乘客，一步步查到旧站封闭前的一场事故。\n\n旧站早已废弃，旧物却仍在出现。弟弟究竟去了哪里？那场事故，又有什么真相被留在了当年？\n:::\n",
+      "status": "passed",
+      "evaluation": "Root semantic inspection of independent subagent completion; synthetic scenario, no live book or platform"
+    }
+  ]
+}

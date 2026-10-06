@@ -1,0 +1,8 @@
+{
+  "source_install_packages_match": true,
+  "library_current_and_running": true,
+  "latest_registry_unchanged": true,
+  "all_five_editors_preserved": true,
+  "native_webkit_confirmed": true,
+  "real_status_marks_not_written": true
+}

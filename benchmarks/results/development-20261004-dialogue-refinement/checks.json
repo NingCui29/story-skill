@@ -1,0 +1,14 @@
+{
+  "links": {
+    "status": "passed",
+    "files_scanned": 300,
+    "links_checked": 1660,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "diff_check": {
+    "exit_code": 0,
+    "output": ""
+  },
+  "shared_dialogue_heading_present": true
+}

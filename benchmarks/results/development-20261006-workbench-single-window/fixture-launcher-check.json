@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "services_started": false,
+  "books": [
+    {
+      "book_id": "book-id-02",
+      "probe_injected": true,
+      "csp_valid": true,
+      "script_syntax_valid": true,
+      "initial_files_unchanged": true
+    },
+    {
+      "book_id": "book-id-06",
+      "probe_injected": false,
+      "csp_valid": true,
+      "script_syntax_valid": true,
+      "initial_files_unchanged": true
+    }
+  ],
+  "memory_probe_checked": true,
+  "probe_is_idempotent": true,
+  "unauthorized_root_rejected": true,
+  "launcher_sha256": "86f0b6ad21e82a0ab9c1d75eea5d1e9f02f2c97312a086adbac002dccde22f3e"
+}

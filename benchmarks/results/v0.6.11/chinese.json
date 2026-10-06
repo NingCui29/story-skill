@@ -1,0 +1,594 @@
+{
+  "ok": true,
+  "method": "Generated minimal Chinese transaction fixtures through real CLI; not novels or literary quality evidence",
+  "mode": "synthetic-transactions",
+  "retained_workdir": null,
+  "runtime_sha256": "37d840bae8567dc19dfd7d2fc5fb1c086b5bb3ef6e7657107765ef22d588c6ad",
+  "books": [
+    {
+      "title": "合成中文事务long",
+      "kind": "long",
+      "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long",
+      "chapters": [
+        {
+          "draft": "unit-1.md",
+          "chapter": 1,
+          "mode": "next",
+          "sha256": "4f51b9e8cd93f4fcf6f03c14d384e321026a23d22f75c3cf62fee8bb364e953d",
+          "lint": {
+            "count_method": "visible_nonspace_v2",
+            "count_scope": "body_and_lead_without_first_title",
+            "counts": {
+              "han_v1": 27,
+              "letters_numbers_v1": 28,
+              "visible_nonspace_v1": 31,
+              "visible_nonspace_v2": 31
+            },
+            "draft_sha256": "4f51b9e8cd93f4fcf6f03c14d384e321026a23d22f75c3cf62fee8bb364e953d",
+            "errors": [],
+            "length_count": 31,
+            "ok": true,
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第1章 测试单元1.md",
+            "unicode_version": "15.0.0",
+            "visible_chars": 31,
+            "warnings": [
+              {
+                "code": "nondefault_plan_length",
+                "default": [
+                  2400,
+                  2800
+                ],
+                "note": "完整新章请先核对当前用户要求或书内篇幅约定；明确例外仍有效",
+                "saved": [
+                  10,
+                  200
+                ]
+              }
+            ]
+          },
+          "context_bytes": 1018,
+          "revision": 8,
+          "idempotent_retry": true,
+          "resumed_committed_export": false
+        },
+        {
+          "draft": "unit-2.md",
+          "chapter": 2,
+          "mode": "next",
+          "sha256": "1e86181e1eed3444e962a08183d44386ca1621a850f0fbb62cff49151cb3fbd5",
+          "lint": {
+            "count_method": "visible_nonspace_v2",
+            "count_scope": "body_and_lead_without_first_title",
+            "counts": {
+              "han_v1": 27,
+              "letters_numbers_v1": 28,
+              "visible_nonspace_v1": 31,
+              "visible_nonspace_v2": 31
+            },
+            "draft_sha256": "1e86181e1eed3444e962a08183d44386ca1621a850f0fbb62cff49151cb3fbd5",
+            "errors": [],
+            "length_count": 31,
+            "ok": true,
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第2章 测试单元2.md",
+            "unicode_version": "15.0.0",
+            "visible_chars": 31,
+            "warnings": [
+              {
+                "code": "nondefault_plan_length",
+                "default": [
+                  2400,
+                  2800
+                ],
+                "note": "完整新章请先核对当前用户要求或书内篇幅约定；明确例外仍有效",
+                "saved": [
+                  10,
+                  200
+                ]
+              }
+            ]
+          },
+          "context_bytes": 1248,
+          "revision": 9,
+          "idempotent_retry": true,
+          "resumed_committed_export": false
+        },
+        {
+          "draft": "unit-3.md",
+          "chapter": 3,
+          "mode": "next",
+          "sha256": "99b774923e468041d0d314ebfddc5b9d515867588d4c13d53ed9c09351da488e",
+          "lint": {
+            "count_method": "visible_nonspace_v2",
+            "count_scope": "body_and_lead_without_first_title",
+            "counts": {
+              "han_v1": 27,
+              "letters_numbers_v1": 28,
+              "visible_nonspace_v1": 31,
+              "visible_nonspace_v2": 31
+            },
+            "draft_sha256": "99b774923e468041d0d314ebfddc5b9d515867588d4c13d53ed9c09351da488e",
+            "errors": [],
+            "length_count": 31,
+            "ok": true,
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
+            "unicode_version": "15.0.0",
+            "visible_chars": 31,
+            "warnings": [
+              {
+                "code": "nondefault_plan_length",
+                "default": [
+                  2400,
+                  2800
+                ],
+                "note": "完整新章请先核对当前用户要求或书内篇幅约定；明确例外仍有效",
+                "saved": [
+                  10,
+                  200
+                ]
+              }
+            ]
+          },
+          "context_bytes": 1248,
+          "revision": 10,
+          "idempotent_retry": true,
+          "resumed_committed_export": false
+        },
+        {
+          "draft": "revision-1.md",
+          "chapter": 3,
+          "mode": "replace_last",
+          "sha256": "62d0cdcc4819214b80f8aaa193bcd0962e7d3b3f893abfbcaa9f2f4ac3e7d9d7",
+          "lint": {
+            "count_method": "visible_nonspace_v2",
+            "count_scope": "body_and_lead_without_first_title",
+            "counts": {
+              "han_v1": 27,
+              "letters_numbers_v1": 28,
+              "visible_nonspace_v1": 31,
+              "visible_nonspace_v2": 31
+            },
+            "draft_sha256": "62d0cdcc4819214b80f8aaa193bcd0962e7d3b3f893abfbcaa9f2f4ac3e7d9d7",
+            "errors": [],
+            "length_count": 31,
+            "ok": true,
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
+            "unicode_version": "15.0.0",
+            "visible_chars": 31,
+            "warnings": []
+          },
+          "context_bytes": 1257,
+          "revision": 11,
+          "idempotent_retry": true,
+          "resumed_committed_export": false
+        },
+        {
+          "draft": "revision-2.md",
+          "chapter": 3,
+          "mode": "reconcile_last",
+          "sha256": "a39c783ad957c097a0dbf614a24e08369975400a2721f7b9d2e7ea6fcce4b596",
+          "lint": {
+            "count_method": "visible_nonspace_v2",
+            "count_scope": "body_and_lead_without_first_title",
+            "counts": {
+              "han_v1": 27,
+              "letters_numbers_v1": 28,
+              "visible_nonspace_v1": 31,
+              "visible_nonspace_v2": 31
+            },
+            "draft_sha256": "a39c783ad957c097a0dbf614a24e08369975400a2721f7b9d2e7ea6fcce4b596",
+            "errors": [],
+            "length_count": 31,
+            "ok": true,
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
+            "unicode_version": "15.0.0",
+            "visible_chars": 31,
+            "warnings": []
+          },
+          "context_bytes": 1532,
+          "revision": 12,
+          "idempotent_retry": true,
+          "resumed_committed_export": false
+        }
+      ],
+      "recovery": {
+        "missing_chapter_restored": true,
+        "outside_draft_preserved": true,
+        "remaining_changes": [
+          "chapters/第一卷 合成中文事务long/第3章 测试单元3.md"
+        ]
+      },
+      "analysis": null,
+      "status": {
+        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long",
+        "cards": 1,
+        "changed_export_count": 0,
+        "changed_exports": [],
+        "id": "c5ea614e-31fd-4c08-b3c2-34ecb5569a4a",
+        "imported_through": 0,
+        "integrity": {
+          "full_book_verified": true,
+          "last_full_audit_revision": 12,
+          "mode": "strict",
+          "note": "Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.",
+          "unverified_archive_count": 0,
+          "verified_file_count": 3
+        },
+        "kind": "long",
+        "last_chapter": 3,
+        "more_sources": false,
+        "next_chapter": 4,
+        "pending_export_count": 0,
+        "pending_exports": [],
+        "recent_sources": [],
+        "revision": 12,
+        "short_assembly": null,
+        "short_assembly_path": null,
+        "sources": 0,
+        "title": "合成中文事务long"
+      },
+      "commands": [
+        {
+          "command": "init",
+          "exit_code": 0
+        },
+        {
+          "command": "notes",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        },
+        {
+          "command": "plan",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        },
+        {
+          "command": "outline-bind",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        },
+        {
+          "command": "plan",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        },
+        {
+          "command": "outline-bind",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        },
+        {
+          "command": "plan",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        },
+        {
+          "command": "outline-bind",
+          "exit_code": 0
+        },
+        {
+          "command": "context",
+          "exit_code": 0
+        },
+        {
+          "command": "prepare",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "recall",
+          "exit_code": 0
+        },
+        {
+          "command": "context",
+          "exit_code": 0
+        },
+        {
+          "command": "prepare",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "recall",
+          "exit_code": 0
+        },
+        {
+          "command": "context",
+          "exit_code": 0
+        },
+        {
+          "command": "prepare",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "recall",
+          "exit_code": 0
+        },
+        {
+          "command": "context",
+          "exit_code": 0
+        },
+        {
+          "command": "prepare",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "recall",
+          "exit_code": 0
+        },
+        {
+          "command": "reconcile",
+          "exit_code": 2
+        },
+        {
+          "command": "export",
+          "exit_code": 2
+        },
+        {
+          "command": "export",
+          "exit_code": 2
+        },
+        {
+          "command": "reconcile",
+          "exit_code": 0
+        },
+        {
+          "command": "prepare",
+          "exit_code": 0
+        },
+        {
+          "command": "reconcile",
+          "exit_code": 0
+        },
+        {
+          "command": "reconcile",
+          "exit_code": 0
+        },
+        {
+          "command": "recall",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        }
+      ],
+      "scenario_sha256": "0832d1e3f856a75d20e29a1a5b978c99e0aa3306408b07f1fd87ff5fd1ab6232"
+    },
+    {
+      "title": "合成中文事务short",
+      "kind": "short",
+      "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务short",
+      "chapters": [
+        {
+          "draft": "unit-1.md",
+          "chapter": 1,
+          "mode": "next",
+          "sha256": "4f51b9e8cd93f4fcf6f03c14d384e321026a23d22f75c3cf62fee8bb364e953d",
+          "lint": {
+            "count_method": "visible_nonspace_v2",
+            "count_scope": "body_and_lead_without_first_title",
+            "counts": {
+              "han_v1": 27,
+              "letters_numbers_v1": 28,
+              "visible_nonspace_v1": 31,
+              "visible_nonspace_v2": 31
+            },
+            "draft_sha256": "4f51b9e8cd93f4fcf6f03c14d384e321026a23d22f75c3cf62fee8bb364e953d",
+            "errors": [],
+            "length_count": 31,
+            "ok": true,
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务short/chapters/第一卷 合成中文事务short/第1章 测试单元1.md",
+            "unicode_version": "15.0.0",
+            "visible_chars": 31,
+            "warnings": [
+              {
+                "code": "nondefault_plan_length",
+                "default": [
+                  2400,
+                  2800
+                ],
+                "note": "完整新章请先核对当前用户要求或书内篇幅约定；明确例外仍有效",
+                "saved": [
+                  10,
+                  200
+                ]
+              }
+            ]
+          },
+          "context_bytes": 1019,
+          "revision": 4,
+          "idempotent_retry": true,
+          "resumed_committed_export": false
+        }
+      ],
+      "recovery": null,
+      "analysis": {
+        "coverage": {
+          "analyzed": 2,
+          "chunks_total": 2,
+          "complete_for_imported_text": true,
+          "next_chunk": null,
+          "pending": 0,
+          "report_path": ".story/analysis/3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c/report.md",
+          "source": "3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c",
+          "source_coverage": "complete",
+          "text_coverage_contiguous": true
+        },
+        "resumed_ordinals": [
+          1,
+          2
+        ],
+        "source_sha256": "3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c",
+        "report_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务short_拆文/.story/analysis/3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c/report.md",
+        "report_sha256": "d5ec27bf4488a3e1f0858929b80444b3530d24a6a2a2a481db46bba15d8bc984"
+      },
+      "status": {
+        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务short",
+        "cards": 1,
+        "changed_export_count": 0,
+        "changed_exports": [],
+        "id": "b557c1fe-2747-4b9a-9995-701d1db73c60",
+        "imported_through": 0,
+        "integrity": {
+          "full_book_verified": true,
+          "last_full_audit_revision": 4,
+          "mode": "strict",
+          "note": "Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.",
+          "unverified_archive_count": 0,
+          "verified_file_count": 1
+        },
+        "kind": "short",
+        "last_chapter": 1,
+        "more_sources": false,
+        "next_chapter": 2,
+        "pending_export_count": 0,
+        "pending_exports": [],
+        "recent_sources": [],
+        "revision": 4,
+        "short_assembly": null,
+        "short_assembly_path": "合成中文事务short.md",
+        "sources": 0,
+        "title": "合成中文事务short"
+      },
+      "commands": [
+        {
+          "command": "init",
+          "exit_code": 0
+        },
+        {
+          "command": "notes",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        },
+        {
+          "command": "plan",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        },
+        {
+          "command": "outline-bind",
+          "exit_code": 0
+        },
+        {
+          "command": "context",
+          "exit_code": 0
+        },
+        {
+          "command": "prepare",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "commit",
+          "exit_code": 0
+        },
+        {
+          "command": "recall",
+          "exit_code": 0
+        },
+        {
+          "command": "status",
+          "exit_code": 0
+        },
+        {
+          "command": "init",
+          "exit_code": 0
+        },
+        {
+          "command": "ingest",
+          "exit_code": 0
+        },
+        {
+          "command": "next",
+          "exit_code": 0
+        },
+        {
+          "command": "record",
+          "exit_code": 0
+        },
+        {
+          "command": "next",
+          "exit_code": 0
+        },
+        {
+          "command": "record",
+          "exit_code": 0
+        },
+        {
+          "command": "next",
+          "exit_code": 0
+        },
+        {
+          "command": "findings",
+          "exit_code": 0
+        },
+        {
+          "command": "report",
+          "exit_code": 0
+        },
+        {
+          "command": "coverage",
+          "exit_code": 0
+        }
+      ],
+      "scenario_sha256": "955e109e60b55afbcfaa20f128419772ad2d94993f3c813790cae1424cbb7595"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "url": "http://127.0.0.1:8765/",
+  "total": 17,
+  "types": {
+    "long": 5,
+    "short": 12
+  },
+  "classification_states": {
+    "missing": 13,
+    "recorded": 4
+  },
+  "page_filter_controls_present": true,
+  "inline_script_parses": true,
+  "duplicate_html_ids": 0,
+  "real_browser_rendering_verified": false,
+  "verification_note": "Shelf validation follows its actual HTTP response contract; it does not assume the editor-specific CSP response header."
+}

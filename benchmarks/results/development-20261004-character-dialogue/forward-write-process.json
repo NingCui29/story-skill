@@ -1,0 +1,45 @@
+{
+  "task_scope": "约450—600字独立日常片段；只保存正文，不初始化书库，不作为正式章节采用",
+  "read_skill_files": [
+    {
+      "path": "/tmp/story-dialogue-20261004-0bsdz2rv/snapshot/skills/story-skill-write/SKILL.md",
+      "scope": "全文"
+    },
+    {
+      "path": "/tmp/story-dialogue-20261004-0bsdz2rv/snapshot/skills/story-skill/SKILL.md",
+      "scope": "共同约束"
+    },
+    {
+      "path": "/tmp/story-dialogue-20261004-0bsdz2rv/snapshot/skills/story-skill-write/references/drama.md",
+      "scope": [
+        "主要人物定义与核对",
+        "叙述视角与场景转接",
+        "人物对话方式",
+        "成稿格式",
+        "对白分段与说话人",
+        "中文语法与标点校对",
+        "把读者期待变成可见的戏",
+        "人物在场与去 AI 味复核"
+      ]
+    },
+    {
+      "path": "/tmp/story-dialogue-20261004-0bsdz2rv/snapshot/skills/story-skill-write/references/content-review.md",
+      "scope": "全文"
+    },
+    {
+      "path": "/tmp/story-dialogue-20261004-0bsdz2rv/snapshot/skills/story-skill-write/references/chapter.md",
+      "scope": "章幅与计数"
+    }
+  ],
+  "body_path": "/tmp/story-dialogue-20261004-0bsdz2rv/forward-write.md",
+  "body_character_count": 559,
+  "count_method": "visible_nonspace_v2；含标点，不计空白，本文无附着标记或空白填充符",
+  "raw_character_count": 602,
+  "review_scope": "连读本次完整片段，自审人物回应、关店既定事实、物件与动作衔接、禁止事项和正文格式",
+  "unverified_boundaries": [
+    "仅完成本片段自审，未进行独立复核或读者试读",
+    "未验证正式小说、前后章节或全书连续性",
+    "未运行书库初始化、章节提交或导出流程",
+    "未核验平台后台字数、市场效果或AI检测结果"
+  ]
+}

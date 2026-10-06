@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "workbench_sha256": "e6d051c77045dd9761103a5cbcc6e225cb282712f9e5c5a5b64a37f7d5357445",
+  "installed_skill_and_both_applications_match": true,
+  "signatures_verified_after_relocation": true,
+  "existing_client_process_kept_running": true,
+  "backup": "~/.codex/backups/story-skill/service-recovery-20261006-198cf8051a",
+  "retired_apps": [
+    "~/.codex/backups/story-skill/service-recovery-20261006-198cf8051a/retired-dist.app",
+    "~/.codex/backups/story-skill/service-recovery-20261006-198cf8051a/retired-installed-running.app"
+  ]
+}

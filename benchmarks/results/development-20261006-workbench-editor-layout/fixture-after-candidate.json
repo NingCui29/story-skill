@@ -1,0 +1,17 @@
+{
+  "all_formal_database_and_materials_unchanged": true,
+  "checks": {
+    ".story/state.sqlite3": true,
+    "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md": true,
+    "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md": true,
+    "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md": true,
+    "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md": true,
+    "创作约定.md": true
+  },
+  "candidate_files": [
+    ".story/drafts/workbench/第3章 合成验收样例3_候选_37342f27fb78.md",
+    ".story/drafts/workbench/第3章 合成验收样例3_候选_37342f27fb78.md.meta.json",
+    ".story/drafts/workbench/自动恢复/第3章 合成验收样例3_8c9fd56a-63fb-4ad8-9abb-e4e697627461.txt.meta.json",
+    ".story/drafts/workbench/自动恢复/第3章 合成验收样例3_8c9fd56a-63fb-4ad8-9abb-e4e697627461.txt"
+  ]
+}

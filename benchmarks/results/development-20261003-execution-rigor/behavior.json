@@ -1,0 +1,33 @@
+{
+  "method": "Known-purpose multi-agent regression using current skill instructions. Agents share earlier task context; these are not blind tests.",
+  "partial_context": {
+    "passed": true,
+    "covered_chapters": [
+      1,
+      4
+    ],
+    "unread_chapters": [
+      2,
+      3
+    ],
+    "cash_contradiction": "confirmed within chapter 4",
+    "key_transfer": "unresolved due to missing chapters",
+    "source_files_unchanged": true,
+    "result_path": "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/partial-review/审查结果.md",
+    "response_sha256": "6dd52cba142181a8a4318762d053a4ad8b208261f0129fb91ba00c6ef25a379f"
+  },
+  "read_only": {
+    "passed": true,
+    "fixture_files_compared": 9,
+    "all_hashes_unchanged": true,
+    "new_book_files": 0,
+    "missing_export_restored": false,
+    "outline_bound": false,
+    "result_path": "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/readonly-review/审查结果.md",
+    "response_sha256": "c20b3fdeeca716ec7d39637e65f99beca32171af9ba0aaf0b66172275896e40d"
+  },
+  "limitations": [
+    "Two synthetic first responses do not measure a repeated-pass rate or guarantee future instruction compliance.",
+    "No real novels were modified."
+  ]
+}

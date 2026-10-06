@@ -1,0 +1,26 @@
+[
+  {
+    "source_path": "~/.codex/skills/story-skill-review/SKILL.md",
+    "sha256": "7b7de91947b6e2c0932eb4798f8ee0eea6e0dcda38333482d6bbf6a85ed3a7f8",
+    "snapshot_path": "/tmp/story-dialogue-baseline-z5carz8m/rules/story-skill-review_SKILL.md",
+    "read_scope": "full file"
+  },
+  {
+    "source_path": "~/.codex/skills/story-skill/SKILL.md",
+    "sha256": "7029683ec09507f953bfda6807bd8506ee296ecf3798feb6bf92022218925b4b",
+    "snapshot_path": "/tmp/story-dialogue-baseline-z5carz8m/rules/story-skill_SKILL.md",
+    "read_scope": "full file; apply 共同约束 and relevant 目录边界与共享工具"
+  },
+  {
+    "source_path": "~/.codex/skills/story-skill-write/references/content-review.md",
+    "sha256": "d74314fe7de65f60b5e2c9e71e7cd28e4f29133e8b7fcbdacacffa5070d709cc",
+    "snapshot_path": "/tmp/story-dialogue-baseline-z5carz8m/rules/content-review.md",
+    "read_scope": "full file"
+  },
+  {
+    "source_path": "~/.codex/skills/story-skill-write/references/drama.md",
+    "sha256": "9071c87caf3c9c4bb540bff32f79ae37469ce36b6e74f55d43bbea8c488f60c5",
+    "snapshot_path": "/tmp/story-dialogue-baseline-z5carz8m/rules/drama.md",
+    "read_scope": "headings; lines 63-70, lines 105-136, lines 151-176, lines 205-238, lines 249-280"
+  }
+]

@@ -1,0 +1,208 @@
+--- before/skills/story-skill/scripts/story_workbench.py
++++ after/skills/story-skill/scripts/story_workbench.py
+@@ -89,6 +89,7 @@
+ 
+     editor = command("workbench-serve", "Open a loopback editor that saves candidate drafts only", DEFAULT_BUDGET, False)
+     editor.add_argument("--limit", type=int, default=DEFAULT_LIMIT)
++    editor.add_argument("--expected-book-id", help="Require the book identity selected by the bookshelf")
+     editor.add_argument("--library-book", action="append", default=[], help="Another explicitly selected book on the local shelf; repeat as needed")
+     editor.add_argument("--material-root", action="append", default=[], help="Explicit external directory of read-only author materials; repeat as needed")
+     editor.add_argument("--open", action="store_true", dest="open_browser")
+@@ -2225,9 +2226,17 @@
+         _library_entry(root, entry)
+     if current_root is not None and root == str(current_root):
+         return {'ok': True, 'url': current_url, 'outdated': False}
++
++    def service_result(state):
++        if entry.get('book_id'):
++            _library_entry(root, entry)
++            if state.get('book_id') != entry['book_id']:
++                api.fail('workbench_book_changed', '服务未确认所选作品身份；请保留当前编辑并核对原工作台。', path=root)
++        return {'ok': True, 'url': state['url'], 'outdated': state.get('outdated', False)}
++
+     state = _service_request(root)
+     if state.get('running'):
+-        return {'ok': True, 'url': state['url'], 'outdated': state.get('outdated', False)}
++        return service_result(state)
+     # Only a stopped record or a stable, independently verified exit permits
+     # recovery. The new editor still acquires its own OS lease before starting.
+     record_path = api.safe_path(Path(root), '.story/workbench-service.json')
+@@ -2240,6 +2249,8 @@
+     import sys
+     import time
+     command = [sys.executable, '-B', str(Path(__file__).with_name('story.py')), 'workbench-serve', '--book', root]
++    if entry.get('book_id'):
++        command += ['--expected-book-id', entry['book_id']]
+     for neighbour in library.values():
+         if neighbour['root'] != root:
+             command += ['--library-book', neighbour['root']]
+@@ -2251,7 +2262,7 @@
+         time.sleep(0.1)
+         state = _service_request(root)
+         if state.get('running'):
+-            return {'ok': True, 'url': state['url'], 'outdated': state.get('outdated', False)}
++            return service_result(state)
+         if process.poll() is not None:
+             break
+     api.fail('workbench_start_pending', '启动尚未确认，请稍后再次打开或查看该作品服务状态。')
+@@ -2778,12 +2789,16 @@
+         connection.close()
+ 
+ 
+-def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=None):
++def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=None, expected_book_id=None):
+     if _loaded_runtime_sha256 is None:
+         api.fail('workbench_runtime_unreadable', '无法核对本地工作台代码，请检查安装文件后重新启动。',
+                  cause=_loaded_runtime_error)
+     root = Path(root).expanduser().resolve()
++    if expected_book_id is not None:
++        _library_entry(root, {'book_id': expected_book_id})
+     packet = _editor_packet(root, limit=limit)
++    if expected_book_id is not None and packet['book']['id'] != expected_book_id:
++        api.fail('workbench_book_changed', '启动时作品身份已改变；请核对书架所选作品目录。', path=str(root))
+     token = secrets.token_urlsafe(32)
+     route = '/' + token + '/'
+     library = _library_roots(root, library_books)
+@@ -3344,7 +3359,8 @@
+     if args.command in ('workbench-status', 'workbench-stop'):
+         return _service_request(args.book, 'stop' if args.command == 'workbench-stop' else 'session', getattr(args, 'saved', False))
+     if args.command == "workbench-serve":
+-        server = editor_server(args.book, args.limit, args.library_book, args.material_root)
++        server = editor_server(args.book, args.limit, args.library_book, args.material_root,
++                               getattr(args, 'expected_book_id', None))
+         print(json.dumps({"url": server.editor_url, "mode": "candidate-editing"}), flush=True)
+         if args.open_browser:
+             webbrowser.open(server.editor_url)
+--- before/tests/test_workbench_service_recovery.py
++++ after/tests/test_workbench_service_recovery.py
+@@ -196,12 +196,15 @@
+         _, raw = self.record()
+         before = self.contents()
+         proof = {'running': False, 'exit_verified': True, 'record_sha256': hashlib.sha256(raw).hexdigest()}
+-        ready = {'running': True, 'url': 'http://127.0.0.1:1234/isolated/', 'outdated': False}
++        ready = {'running': True, 'url': 'http://127.0.0.1:1234/isolated/', 'outdated': False,
++                 'book_id': self.entry['book_id']}
+         with patch.object(self.w, '_service_request', side_effect=[proof, ready]), \
+                 patch.object(self.w.subprocess, 'Popen', return_value=SimpleNamespace(poll=lambda: None)) as spawn:
+             result = self.w._library_open({self.entry['key']: self.entry}, self.entry['key'])
+         self.assertTrue(result['ok'])
+         spawn.assert_called_once()
++        command = spawn.call_args.args[0]
++        self.assertEqual(command[command.index('--expected-book-id') + 1], self.entry['book_id'])
+         self.assertEqual(self.contents(), before)
+ 
+     def test_record_changed_after_exit_proof_blocks_spawn(self):
+@@ -248,6 +251,102 @@
+         self.assertEqual(error.exception.code, 'workbench_book_changed')
+         spawn.assert_not_called()
+         self.assertEqual(hashlib.sha256((self.root / '.story/state.sqlite3').read_bytes()).hexdigest(), original_state)
++
++    def test_replacement_after_parent_check_never_returns_another_books_service(self):
++        record, _ = self.record()
++        replacement = self.root.parent / '子进程启动前换入的作品'
++        self.story.Book.create(replacement, '需要打开的作品', 'short')
++        replacement_id = self.w._library_entry(replacement)['book_id']
++        spawned = False
++
++        def connection(*args, **kwargs):
++            def request(*args, **kwargs):
++                if not spawned:
++                    raise ConnectionRefusedError('isolated dead service')
++
++            def response():
++                raw = json.dumps({**record, 'instance': '2' * 32, 'book_id': replacement_id,
++                                  'running': True, 'runtime_sha256': self.w._loaded_runtime_sha256}).encode()
++                return SimpleNamespace(status=200, read=lambda _limit: raw)
++
++            return SimpleNamespace(request=request, getresponse=response, close=lambda: None)
++
++        def launch(command, **kwargs):
++            nonlocal spawned
++            self.root.rename(self.root.parent / '原作品移走')
++            replacement.rename(self.root)
++            # Model the child's first read after the parent's final check. The
++            # service reports its actual replacement ID, not the selected ID.
++            self.assertEqual(self.w._editor_packet(self.root)['book']['id'], replacement_id)
++            self.record_path.write_text(json.dumps({**record, 'instance': '2' * 32,
++                                                   'book_id': replacement_id}))
++            spawned = True
++            return SimpleNamespace(poll=lambda: None)
++
++        with patch.object(self.w.http.client, 'HTTPConnection', side_effect=connection), \
++                patch.object(self.w.os, 'kill', side_effect=ProcessLookupError()), \
++                patch.object(self.w.subprocess, 'Popen', side_effect=launch):
++            with self.assertRaises(self.story.StoryError) as error:
++                self.w._library_open({self.entry['key']: self.entry}, self.entry['key'])
++        self.assertEqual(error.exception.code, 'workbench_book_changed')
++        self.assertTrue(spawned)
++
++    def test_child_cli_rejects_unexpected_book_before_creating_service_files(self):
++        self.root.rename(self.root.parent / '原作品移走')
++        self.story.Book.create(self.root, '需要打开的作品', 'short')
++        for existing_record in (False, True):
++            with self.subTest(existing_record=existing_record):
++                if existing_record:
++                    self.record()
++                    self.lock_path.unlink()
++                before = self.contents()
++                result = subprocess.run([sys.executable, '-B', str(base.TOOL), 'workbench-serve',
++                                         '--book', str(self.root), '--expected-book-id', self.entry['book_id']],
++                                        capture_output=True, text=True, timeout=10)
++                self.assertNotEqual(result.returncode, 0)
++                self.assertIn('workbench_book_changed', result.stdout + result.stderr)
++                self.assertEqual(self.contents(), before)
++                self.assertEqual(self.record_path.exists(), existing_record)
++                self.assertFalse(self.lock_path.exists())
++
++    def test_child_rechecks_expected_book_when_initial_packet_reads_replacement(self):
++        original_packet = self.w._editor_packet
++        before = {}
++
++        def replace_before_packet(*args, **kwargs):
++            self.root.rename(self.root.parent / '原作品移走')
++            self.story.Book.create(self.root, '需要打开的作品', 'short')
++            before.update(self.contents())
++            return original_packet(*args, **kwargs)
++
++        with patch.object(self.w, '_editor_packet', side_effect=replace_before_packet):
++            with self.assertRaises(self.story.StoryError) as error:
++                self.w.editor_server(self.root, expected_book_id=self.entry['book_id'])
++        self.assertEqual(error.exception.code, 'workbench_book_changed')
++        self.assertEqual(self.contents(), before)
++        self.assertFalse(self.record_path.exists())
++        self.assertFalse(self.lock_path.exists())
++
++    def test_library_requires_selected_identity_in_reused_and_started_service(self):
++        for stage in ('reuse', 'start'):
++            for reported_id in (None, 'another-book'):
++                with self.subTest(stage=stage, reported_id=reported_id):
++                    _, raw = self.record()
++                    proof = {'running': False, 'exit_verified': True,
++                             'record_sha256': hashlib.sha256(raw).hexdigest()}
++                    ready = {'running': True, 'url': 'http://127.0.0.1:1234/isolated/'}
++                    if reported_id is not None:
++                        ready['book_id'] = reported_id
++                    states = [ready] if stage == 'reuse' else [proof, ready]
++                    before = self.contents()
++                    with patch.object(self.w, '_service_request', side_effect=states), \
++                            patch.object(self.w.subprocess, 'Popen',
++                                         return_value=SimpleNamespace(poll=lambda: None)) as spawn:
++                        with self.assertRaises(self.story.StoryError) as error:
++                            self.w._library_open({self.entry['key']: self.entry}, self.entry['key'])
++                    self.assertEqual(error.exception.code, 'workbench_book_changed')
++                    self.assertEqual(spawn.call_count, stage == 'start')
++                    self.assertEqual(self.contents(), before)
+ 
+     def test_actual_abnormal_exit_can_restart_through_library_open_without_book_writes(self):
+         program = '''import importlib.util,sys
+--- before/tests/test_workbench_flow.py
++++ after/tests/test_workbench_flow.py
+@@ -502,7 +502,7 @@
+         key = next(iter(library))
+         with patch.object(w, '_service_request', side_effect=AssertionError('must not request itself')):
+             self.assertEqual(w._library_open(library,key,self.root,'http://127.0.0.1/self/')['url'], 'http://127.0.0.1/self/')
+-        with patch.object(w, '_service_request', return_value={'running':True,'url':'http://127.0.0.1:1234/token/'}):
++        with patch.object(w, '_service_request', return_value={'running':True,'url':'http://127.0.0.1:1234/token/', 'book_id':library[key]['book_id']}):
+             self.assertEqual(w._library_open(library,key)['url'], 'http://127.0.0.1:1234/token/')
+         with self.assertRaises(story.StoryError):
+             w._library_open(library,'../../outside')

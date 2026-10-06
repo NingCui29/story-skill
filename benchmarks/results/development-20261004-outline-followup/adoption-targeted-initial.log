@@ -1,0 +1,103 @@
+...........................FFFFFF.................F..............
+======================================================================
+FAIL: test_frontmatter_values_cannot_supply_document_adoption (test_plan_outline_sync.OutlineSyncTests.test_frontmatter_values_cannot_supply_document_adoption) (metadata='description: |\n  status: adopted\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_plan_outline_sync.py", line 181, in test_frontmatter_values_cannot_supply_document_adoption
+    self.assert_error("outline_required", self.book.commit, 1, self.draft, self.delta())
+  File "<repo>/tests/test_story.py", line 64, in assert_error
+    self.assertEqual(result.exception.code, code)
+AssertionError: 'outline_binding_required' != 'outline_required'
+- outline_binding_required
+?        --------
++ outline_required
+
+
+======================================================================
+FAIL: test_frontmatter_values_cannot_supply_document_adoption (test_plan_outline_sync.OutlineSyncTests.test_frontmatter_values_cannot_supply_document_adoption) (metadata='description: >-\n  状态：已采用\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_plan_outline_sync.py", line 181, in test_frontmatter_values_cannot_supply_document_adoption
+    self.assert_error("outline_required", self.book.commit, 1, self.draft, self.delta())
+  File "<repo>/tests/test_story.py", line 64, in assert_error
+    self.assertEqual(result.exception.code, code)
+AssertionError: 'outline_binding_required' != 'outline_required'
+- outline_binding_required
+?        --------
++ outline_required
+
+
+======================================================================
+FAIL: test_frontmatter_values_cannot_supply_document_adoption (test_plan_outline_sync.OutlineSyncTests.test_frontmatter_values_cannot_supply_document_adoption) (metadata='metadata:\n  status: adopted\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_plan_outline_sync.py", line 181, in test_frontmatter_values_cannot_supply_document_adoption
+    self.assert_error("outline_required", self.book.commit, 1, self.draft, self.delta())
+  File "<repo>/tests/test_story.py", line 64, in assert_error
+    self.assertEqual(result.exception.code, code)
+AssertionError: 'outline_binding_required' != 'outline_required'
+- outline_binding_required
+?        --------
++ outline_required
+
+
+======================================================================
+FAIL: test_frontmatter_values_cannot_supply_document_adoption (test_plan_outline_sync.OutlineSyncTests.test_frontmatter_values_cannot_supply_document_adoption) (metadata='metadata: {status: adopted}\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_plan_outline_sync.py", line 181, in test_frontmatter_values_cannot_supply_document_adoption
+    self.assert_error("outline_required", self.book.commit, 1, self.draft, self.delta())
+  File "<repo>/tests/test_story.py", line 64, in assert_error
+    self.assertEqual(result.exception.code, code)
+AssertionError: 'outline_binding_required' != 'outline_required'
+- outline_binding_required
+?        --------
++ outline_required
+
+
+======================================================================
+FAIL: test_frontmatter_values_cannot_supply_document_adoption (test_plan_outline_sync.OutlineSyncTests.test_frontmatter_values_cannot_supply_document_adoption) (metadata='description: "说明\nstatus: adopted\n"\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_plan_outline_sync.py", line 181, in test_frontmatter_values_cannot_supply_document_adoption
+    self.assert_error("outline_required", self.book.commit, 1, self.draft, self.delta())
+  File "<repo>/tests/test_story.py", line 64, in assert_error
+    self.assertEqual(result.exception.code, code)
+AssertionError: 'outline_binding_required' != 'outline_required'
+- outline_binding_required
+?        --------
++ outline_required
+
+
+======================================================================
+FAIL: test_frontmatter_values_cannot_supply_document_adoption (test_plan_outline_sync.OutlineSyncTests.test_frontmatter_values_cannot_supply_document_adoption) (metadata="description: '说明\nstatus: adopted\n'\n")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_plan_outline_sync.py", line 181, in test_frontmatter_values_cannot_supply_document_adoption
+    self.assert_error("outline_required", self.book.commit, 1, self.draft, self.delta())
+  File "<repo>/tests/test_story.py", line 64, in assert_error
+    self.assertEqual(result.exception.code, code)
+AssertionError: 'outline_binding_required' != 'outline_required'
+- outline_binding_required
+?        --------
++ outline_required
+
+
+======================================================================
+FAIL: test_setext_body_status_cannot_supply_document_adoption (test_plan_outline_sync.OutlineSyncTests.test_setext_body_status_cannot_supply_document_adoption)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_plan_outline_sync.py", line 238, in test_setext_body_status_cannot_supply_document_adoption
+    self.assert_error("outline_required", self.book.commit, 1, self.draft, self.delta())
+  File "<repo>/tests/test_story.py", line 64, in assert_error
+    self.assertEqual(result.exception.code, code)
+AssertionError: 'outline_binding_required' != 'outline_required'
+- outline_binding_required
+?        --------
++ outline_required
+
+
+----------------------------------------------------------------------
+Ran 60 tests in 2.470s
+
+FAILED (failures=7)

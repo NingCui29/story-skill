@@ -1,0 +1,17 @@
+{
+  "stage": "/tmp/story-workbench-staging-uo9xpdl2",
+  "scripts": "/tmp/story-workbench-staging-uo9xpdl2/scripts",
+  "version": "0.6.11",
+  "init_created": "/tmp/story-workbench-staging-uo9xpdl2/验证书",
+  "runtime_files": {
+    "story.py": "37d840bae8567dc19dfd7d2fc5fb1c086b5bb3ef6e7657107765ef22d588c6ad",
+    "story_history.py": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
+    "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+    "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story_workbench.py": "794f34fd16faa4a1d69f8f512b0a310d78a599eda75853d2d96827b1fdaa417a",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+  }
+}

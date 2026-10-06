@@ -1,0 +1,291 @@
+{
+  "reviewer": "outline_followup_review",
+  "source_sha256": "7e8915f035856c0009188080ed9056c0ee08848b398544b5c08549464d2804d9",
+  "scope": "read-only independent review with isolated CLI fixtures",
+  "confirmed_regressions_found_and_repaired": [
+    "Indented metadata comments wrongly rejected",
+    "Indented opening code delimiter mistaken for frontmatter",
+    "Space before metadata status colon wrongly rejected (root finding)"
+  ],
+  "adoption_cases": [
+    {
+      "case": "nested_scalar_not_status",
+      "input": "---\ndescription: |\n  status: adopted\n---\n# 全书总纲\n## 第1章\n内容",
+      "expected_adoption": false,
+      "baseline_statuses": [
+        "adopted"
+      ],
+      "current_statuses": [],
+      "result": {
+        "bound": false,
+        "code": "invalid_input",
+        "commit_code": "outline_binding_required",
+        "last_chapter": 0,
+        "state_unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "scalar_fence_cannot_hide_candidate",
+      "input": "---\ndescription: |\n  ```\nstatus: candidate\n---\n# 全书总纲\n```\n状态：已采用\n```\n## 第1章\n内容",
+      "expected_adoption": false,
+      "baseline_statuses": [
+        "已采用"
+      ],
+      "current_statuses": [
+        "candidate"
+      ],
+      "result": {
+        "bound": false,
+        "code": "invalid_input",
+        "commit_code": "outline_binding_required",
+        "last_chapter": 0,
+        "state_unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "setext_body_not_status",
+      "input": "# 全书总纲\n未确认采用\n\n第1章\n---\n状态：已采用\n内容",
+      "expected_adoption": false,
+      "baseline_statuses": [
+        "已采用"
+      ],
+      "current_statuses": [],
+      "result": {
+        "bound": false,
+        "code": "invalid_input",
+        "commit_code": "outline_binding_required",
+        "last_chapter": 0,
+        "state_unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "quoted_multiline_not_status",
+      "input": "---\ndescription: \"example\nstatus: adopted\n\"\n---\n# 全书总纲\n## 第1章\n内容",
+      "expected_adoption": false,
+      "baseline_statuses": [
+        "adopted"
+      ],
+      "current_statuses": [
+        "unsupported_frontmatter"
+      ],
+      "result": {
+        "bound": false,
+        "code": "invalid_input",
+        "commit_code": "outline_binding_required",
+        "last_chapter": 0,
+        "state_unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "unclosed_metadata_cannot_adopt",
+      "input": "---\nstatus: adopted\n# 全书总纲\n状态：已采用\n",
+      "expected_adoption": false,
+      "baseline_statuses": [
+        "adopted",
+        "已采用"
+      ],
+      "current_statuses": [
+        "unclosed_frontmatter"
+      ],
+      "result": {
+        "bound": false,
+        "code": "invalid_input",
+        "commit_code": "outline_binding_required",
+        "last_chapter": 0,
+        "state_unchanged": true
+      },
+      "passed": true
+    },
+    {
+      "case": "indented_metadata_comment",
+      "input": "---\nstatus: adopted\n  # optional note\n---\n# 全书总纲\n## 第1章\n内容",
+      "expected_adoption": true,
+      "baseline_statuses": [
+        "adopted"
+      ],
+      "current_statuses": [
+        "adopted"
+      ],
+      "result": {
+        "bound": true,
+        "last_chapter": 1,
+        "exports_complete": true
+      },
+      "passed": true
+    },
+    {
+      "case": "indented_initial_code",
+      "input": "    ---\n    状态：候选\n    ---\n\n# 全书总纲\n状态：已采用\n\n## 第1章\n内容",
+      "expected_adoption": true,
+      "baseline_statuses": [
+        "已采用"
+      ],
+      "current_statuses": [
+        "已采用"
+      ],
+      "result": {
+        "bound": true,
+        "last_chapter": 1,
+        "exports_complete": true
+      },
+      "passed": true
+    },
+    {
+      "case": "tab_initial_code",
+      "input": "\t---\n\tstatus: candidate\n\t---\n\n# 全书总纲\n状态：已采用\n\n## 第1章\n内容",
+      "expected_adoption": true,
+      "baseline_statuses": [
+        "已采用"
+      ],
+      "current_statuses": [
+        "已采用"
+      ],
+      "result": {
+        "bound": true,
+        "last_chapter": 1,
+        "exports_complete": true
+      },
+      "passed": true
+    },
+    {
+      "case": "english_status_colon_space",
+      "input": "---\nstatus : adopted\n---\n# 全书总纲\n## 第1章\n内容",
+      "expected_adoption": true,
+      "baseline_statuses": [
+        "adopted"
+      ],
+      "current_statuses": [
+        "adopted"
+      ],
+      "result": {
+        "bound": true,
+        "last_chapter": 1,
+        "exports_complete": true
+      },
+      "passed": true
+    },
+    {
+      "case": "chinese_status_colon_space",
+      "input": "---\n状态 : 已采用\n---\n# 全书总纲\n## 第1章\n内容",
+      "expected_adoption": true,
+      "baseline_statuses": [
+        "已采用"
+      ],
+      "current_statuses": [
+        "已采用"
+      ],
+      "result": {
+        "bound": true,
+        "last_chapter": 1,
+        "exports_complete": true
+      },
+      "passed": true
+    },
+    {
+      "case": "setext_progress_not_document_status",
+      "input": "全书总纲\n===\n状态：已采用\n\n第1章\n---\n状态：待写\n内容",
+      "expected_adoption": true,
+      "baseline_statuses": [
+        "已采用",
+        "待写"
+      ],
+      "current_statuses": [
+        "已采用"
+      ],
+      "result": {
+        "bound": true,
+        "last_chapter": 1,
+        "exports_complete": true
+      },
+      "passed": true
+    }
+  ],
+  "entrance_cases": [
+    {
+      "input": "- 平台入口：短故事；页面适用性：小说。",
+      "ok": false,
+      "rule": "none",
+      "issues": [
+        {
+          "code": "platform_entrance_unresolved"
+        }
+      ],
+      "state_unchanged": true,
+      "passed": true
+    },
+    {
+      "input": "- 平台入口：小说（已选，内容标签待核对）。",
+      "ok": true,
+      "rule": "fanqie_novel",
+      "issues": [],
+      "state_unchanged": true,
+      "passed": true
+    },
+    {
+      "input": "- 平台入口：短故事（标签：待核对；入口：待定）。",
+      "ok": false,
+      "rule": "none",
+      "issues": [
+        {
+          "code": "platform_entrance_unresolved"
+        }
+      ],
+      "state_unchanged": true,
+      "passed": true
+    },
+    {
+      "input": "- 平台入口：短故事（拟选）。",
+      "ok": true,
+      "rule": "fanqie_short",
+      "issues": [],
+      "state_unchanged": true,
+      "passed": true
+    },
+    {
+      "input": "- 平台入口：新建小说。",
+      "ok": true,
+      "rule": "fanqie_novel",
+      "issues": [],
+      "state_unchanged": true,
+      "passed": true
+    },
+    {
+      "input": "- 平台入口：番茄免费小说短故事。",
+      "ok": true,
+      "rule": "fanqie_short",
+      "issues": [],
+      "state_unchanged": true,
+      "passed": true
+    },
+    {
+      "input": "- 平台入口：短故事／小说。",
+      "ok": false,
+      "rule": "none",
+      "issues": [
+        {
+          "code": "platform_entrance_unresolved"
+        }
+      ],
+      "state_unchanged": true,
+      "passed": true
+    },
+    {
+      "input": "- 平台入口：小说（入口未确定）。",
+      "ok": false,
+      "rule": "none",
+      "issues": [
+        {
+          "code": "platform_entrance_unresolved"
+        }
+      ],
+      "state_unchanged": true,
+      "passed": true
+    }
+  ],
+  "remaining_confirmed_findings": [],
+  "passed": true
+}

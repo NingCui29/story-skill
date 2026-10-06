@@ -1,0 +1,208 @@
+--- before/skills/story-skill-plan/references/fanqie-tags.md
++++ after/skills/story-skill-plan/references/fanqie-tags.md
+@@ -1,6 +1,6 @@
+ # 番茄分类与标签选择表（作家平台实测）
+ 
+-本表原据用户截图整理于 2026-09-19；2026-09-30 在登录的[番茄作家平台创建小说页](https://fanqienovel.com/main/writer/create?enter_from=book_manage)和短故事编辑页逐栏核对。小说入口先选男频或女频，再选“阅读标签／内容标签”；短故事另用“作品分类”。下列为本次账号页面显示的选项，不保证其他账号或未来页面完全相同；投稿前仍须复核。同名词不得跨栏目挪用。以下不同入口的模板只选用本书适用的一份番茄分段；完整总纲或分类答复还须按 [分类覆盖规则](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 提供七猫及其他已涉及平台，不能把本表当成全部交付。
++本表原据用户截图整理于 2026-09-19；2026-09-30 在登录的[番茄作家平台创建小说页](https://fanqienovel.com/main/writer/create?enter_from=book_manage)和短故事编辑页逐栏核对。小说入口先选男频或女频，再选“阅读标签／内容标签”；短故事另用“作品分类”。下列为本次账号页面显示的选项，不保证其他账号或未来页面完全相同；投稿前仍须复核。同名词不得跨栏目挪用。以下不同入口的模板只选用本书适用的一份番茄分段；完整总纲或分类答复按 [分类覆盖规则](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 确定本轮范围，默认同时提供七猫及其他已涉及平台；用户明确限定本轮单平台时，只处理指定平台。
+ 
+ ## 短故事入口作品分类：写入总纲
+ 
+--- before/skills/story-skill-plan/references/qimao-tags.md
++++ after/skills/story-skill-plan/references/qimao-tags.md
+@@ -15,7 +15,7 @@
+ 
+ ## 写入总纲与交付检查
+ 
+-在 `01_大纲细纲/全书总纲.md` 或已有等效规划靠前位置，仅写本书选择及依据，不复制整份词表。短篇沿用等效规划，并注明使用小说还是短故事入口。以下只是七猫分段；完整总纲或分类答复还须按 [分类覆盖规则](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 提供番茄及其他已涉及平台，不能只交七猫。
++在 `01_大纲细纲/全书总纲.md` 或已有等效规划靠前位置，仅写本书选择及依据，不复制整份词表。短篇沿用等效规划，并注明使用小说还是短故事入口。以下只是七猫分段；完整总纲或分类答复按 [分类覆盖规则](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 确定本轮范围，默认同时提供番茄及其他已涉及平台；用户明确限定本轮单平台时，只处理指定平台。
+ 
+ ```markdown
+ ## 作品定位与平台分类（七猫）
+--- before/skills/story-skill-publish/SKILL.md
++++ after/skills/story-skill-publish/SKILL.md
+@@ -15,7 +15,7 @@
+ 
+ 作者交接前另核对实际创作中是否使用生成式 AI，以及目标平台当前是否要求填写使用情况或保留标识；事实不明就列为待确认，不预填“未使用 AI”，不移除平台已标注的标识。此项人工核对不写入 ZIP 或声称平台认可。用户要求投稿前内容风险检查或带来后台退回理由时，转用 [审稿修订](../story-skill-review/SKILL.md) 中对应平台的条件性审查；有效审查收据只证明本地流程记录完整，不证明平台内容审核通过。
+ 
+-交接时用简短的“已核对／待核对／不适用”清单列出书名与目标作品是否对应、本平台作者名／笔名及封面署名是否对应、简介、封面、章节范围、素材来源与授权依据、AI 使用及所需声明、目标入口分类。每项只记录本次可见依据；缺简介、封面、权利资料或实际后台页面时如实列为待核对，不推断其合规或替作者填写声明。这是现有材料的交接检查，不自动扩大为全文内容审稿；发现具体风险或用户要求深审时按审稿技能处理。交付时分别说明“ZIP 技术核验是否通过”和“投稿材料是否齐全”：前者依据 `artifact_verified`、`usable_now`，后者依据上述清单与当前入口；有待核项就列明，不能把包可用写成材料齐全。分类拟选与后台已确认、作品草稿与审核或发布状态分别记录。 总纲分类另按 [共享覆盖规则](../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 默认给齐番茄、七猫及其他已涉及平台，不因本次材料包只绑定一个目标而省略另一套；材料包仍按本次实际指定平台分别准备。当前作者署名核对保存在本书对应平台的规划或交接记录中，现有发布命令与 ZIP 核验不验证署名；不将笔名塞入账号 ID、`author_note` 或已冻结清单来冒充支持。
++交接时用简短的“已核对／待核对／不适用”清单列出书名与目标作品是否对应、本平台作者名／笔名及封面署名是否对应、简介、封面、章节范围、素材来源与授权依据、AI 使用及所需声明、目标入口分类。每项只记录本次可见依据；缺简介、封面、权利资料或实际后台页面时如实列为待核对，不推断其合规或替作者填写声明。这是现有材料的交接检查，不自动扩大为全文内容审稿；发现具体风险或用户要求深审时按审稿技能处理。交付时分别说明“ZIP 技术核验是否通过”和“投稿材料是否齐全”：前者依据 `artifact_verified`、`usable_now`，后者依据上述清单与当前入口；有待核项就列明，不能把包可用写成材料齐全。分类拟选与后台已确认、作品草稿与审核或发布状态分别记录。总纲分类另按 [共享覆盖规则](../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 默认给齐番茄、七猫及其他已涉及平台，不因本次材料包只绑定一个目标而省略另一套；用户明确限定本轮单平台时，分类核对也限于该平台。材料包仍按本次实际指定平台分别准备。当前作者署名核对保存在本书对应平台的规划或交接记录中，现有发布命令与 ZIP 核验不验证署名；不将笔名塞入账号 ID、`author_note` 或已冻结清单来冒充支持。
+ 
+ 1. 用 `status --book "<书根>"` 取得当前 revision 和导出状态，再运行 `template publish` 获得输入结构。由 助手 填写机器字段，`chapters` 使用连续且升序的数字章号，`mode` 仅支持 `draft`。
+ 2. 使用 `publish-prepare --book "<书根>" --input "<输入JSON路径>" --expect R --summary` 保存清单并取得简洁回执；完整稿件仍保存在账本中，不加 `--summary` 时回执包含完整清单。输入文件保存在本书 `.story/` 内；普通写作、提交和导出不隐式执行此命令。相同正式章节和目标复用仍有效的清单；无关笔记更新不会生成重复清单，回执中的准备版本仍保留原值。
+--- before/skills/story-skill-write/references/chapter.md
++++ after/skills/story-skill-write/references/chapter.md
+@@ -33,7 +33,7 @@
+ 
+ ## 短篇完本与修订交付
+ 
+-完整短篇交付时，无论新写还是修订后成品，都按下述共享规则核对现行总纲或等效规划的分类覆盖：默认番茄、七猫均有独立完整分段，本次要求或书内约定涉及的其他平台也列全，不因主投平台省略另一套。先核对并在交付说明中列出共用的主角与关键人物角色定位，再逐平台核对本书篇幅类型、实际入口、原生栏目与分类、正文依据、来源日期及拟选／已确认／待核对状态；分类答复也按同一范围给齐，并按 [平台作者名与署名](../../story-skill/references/project-state.md#平台作者名与署名) 逐平台列明作者署名及其依据、状态，不混用各平台署名。人物标识留在规划与交付说明，正式正文按场景呈现。缺文件、缺项或与终稿不符时，按 [大纲的平台分类字段](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 留存已有旧版并补齐或更新；已有平台确认值保持实际记录，差异和未核实选项明示待核对，不把本地拟选改称后台已确认。此项在完本交付时核对，不为每章重复查询平台。交付列出全文、实际封面和现行总纲／等效规划的路径，以及剩余待核对项。
++完整短篇交付时，无论新写还是修订后成品，都按下述共享规则核对现行总纲或等效规划的分类覆盖：默认番茄、七猫均有独立完整分段，本次要求或书内约定涉及的其他平台也列全，不因主投平台省略另一套；用户明确限定本轮单平台时，只核对和交付该平台分类。先核对并在交付说明中列出共用的主角与关键人物角色定位，再逐平台核对本书篇幅类型、实际入口、原生栏目与分类、正文依据、来源日期及拟选／已确认／待核对状态；分类答复也按同一范围给齐，并按 [平台作者名与署名](../../story-skill/references/project-state.md#平台作者名与署名) 逐平台列明作者署名及其依据、状态，不混用各平台署名。人物标识留在规划与交付说明，正式正文按场景呈现。缺文件、缺项或与终稿不符时，按 [大纲的平台分类字段](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 留存已有旧版并补齐或更新；已有平台确认值保持实际记录，差异和未核实选项明示待核对，不把本地拟选改称后台已确认。此项在完本交付时核对，不为每章重复查询平台。交付列出全文、实际封面和现行总纲／等效规划的路径，以及剩余待核对项。
+ 
+ 短篇同样放入带卷名的首卷目录，可整篇作为第 1 单元，也可按用户要求分单元提交；范围对应当前单元。整篇单单元若超过默认每章 2400—2800 字，须有用户要求或书根 `创作约定.md` 明确采用单单元篇幅，并在写作前把实际范围写入该单元 `plan.length`、把真实依据写入 `plan.length_exception`；只给全书总字数不自动取消默认章幅。没有单单元例外时按有意义的叙事节点分章，不为凑字数机械切断场景。接入的旧短篇先按 [补齐原章流程](../../story-skill/references/project-state.md#旧短篇补齐原章) 核对并补存缺失原章。全书完本并完成逐章导出后，执行 `assemble-short --book "<目录>" --final-chapter N`，N 为本书实际最终章号；工具核对章节与导出，在书根新建全文并登记为受保护导出，逐章 `.md` 保留。普通书名使用 `<书名>.md`，特殊或过长书名使用回执中的合法文件名；完整书名保留在书籍信息中，预期与登记路径见 [书名与路径规则](../../story-skill/references/project-state.md#书名目录与开书落点)。新合并稿从第 1 章章名开始，按章号顺序仅包含各章章名和正文；旧版含书名首行的合并稿须重新合并并保留备份。核对章节完整、总长度、段落及导语没有重复，打开实际全文文件检查，再按 [全书完本审查](#全书完本审查) 核对文学收束并交付实际路径。
+ 
+--- before/skills/story-skill/references/project-state.md
++++ after/skills/story-skill/references/project-state.md
+@@ -95,7 +95,9 @@
+ 
+ 各平台的作品阶段和分类核对状态分别记录：尚未创建写拟投，未查看后台的现状写待核对，不能把一个平台的创建、签约或分类确认状态套到另一个平台。某个平台资料不足时仍保留该平台及其已知栏目，写出有依据的拟选和具体待核对项，不用缺资料省略整个平台；经该入口确认可选且决定留空的栏位才写“不选”。已有确认值与本次建议不同，保留原值并单列差异，不静默覆盖。
+ 
+-当前或候选总纲、短篇等效规划可用 `outline-audit --book "<书根>" --file "<书根内相对总纲路径.md>" --require-platform fanqie --require-platform qimao` 只读逐平台核对本节字段、日期格式及常见栏目，并检查番茄、七猫是否都存在；明确仅处理单平台时只保留相应 `--require-platform`。回执给出文件哈希、范围与缺项；`ok` 只表示这种结构检查未发现缺项，`manual_review_required` 始终为真。候选、草稿文件也可显式指定后只读检查，检查不改变采用状态；正式 `outline-bind` 仍拒绝候选等非采用文件。主角与角色定位须对照已采用设定及正式正文人工核对；逐平台署名按上述来源核对，两者均不在此结构检查范围内。工具不核对每栏是否选了正确的词、数量限制、状态真伪、内容依据或是否已获采用；多平台或等效自由布局无法完整识别时仍逐平台人工检查，说明未覆盖处，不为通过检查改写真实规划。
++当前或候选总纲、短篇等效规划可用 `outline-audit --book "<书根>" --file "<书根内相对总纲路径.md>" --require-platform fanqie --require-platform qimao` 只读逐平台核对分类字段、分类来源日期格式及常见栏目，并检查番茄、七猫是否都存在；明确仅处理单平台时只保留相应 `--require-platform`。回执给出文件哈希、范围与缺项；`ok` 只表示这种结构检查未发现缺项，`manual_review_required` 始终为真。候选、草稿文件也可显式指定后只读检查，检查不改变采用状态；正式 `outline-bind` 仍拒绝候选等非采用文件。分类来源日期只取“来源与核对日期”字段，作者署名依据或其他备注中的日期不能补足该字段。主角与角色定位须对照已采用设定及正式正文人工核对；逐平台署名按上述来源核对，两者均不在此结构检查范围内。工具不核对每栏是否选了正确的词、数量限制、状态真伪、内容依据或是否已获采用；多平台或等效自由布局无法完整识别时仍逐平台人工检查，说明未覆盖处，不为通过检查改写真实规划。
++
++该结构检查按每个平台一个分类块处理，不区分同平台的不同账号或作品。存在同平台多目标时，保留各目标的署名、分类及来源记录，逐目标人工核查并说明工具未覆盖；多个独立块产生的“重复平台／缺平台”提示不能解释为实际缺少该平台，也不能为了通过检查合并或删除真实目标。
+ 
+ 同一范围维护一个清晰的当前入口，文档头注明状态、更新时间和必要的来源。保留“候选／已采用／待定”等真实状态，整理或版本号较新不代表已获采用。实质修改当前规划、替换已采用方案前，将旧版放入 `99_历史版本/`，保留原文件名与相对关系；只按 `status` 同步已提交章节的进度句，不必每章另存一份大纲历史副本。分批继续时补写相应卷、章文件，将重叠的前三章场面设计等内容并入各章，不再平铺多份范围交叠的候选稿；未决方案可留在对应章并说明分歧。
+ 
+--- before/skills/story-skill/scripts/story_outline.py
++++ after/skills/story-skill/scripts/story_outline.py
+@@ -271,10 +271,10 @@
+         for index, match in enumerate(matches):
+             key = match.group(1).strip(" *_`\t")
+             value = match.group(2).strip(" *_`\t")
+-            if key == "目标平台":
+-                # Unlabelled semicolon-separated targets belong to this
+-                # declaration, until the next labelled field outside an
+-                # annotation begins (e.g. “（拟投；兼投：起点）”).
++            if key in {"目标平台", "来源与核对日期"}:
++                # Keep unlabelled semicolon continuations and parenthetical
++                # annotations until the next labelled field outside them.
++                # This includes “（拟投；兼投：起点）” and source-date notes.
+                 end = len(field_line)
+                 depth = 0
+                 cursor = match.start(2)
+@@ -298,8 +298,8 @@
+     width = fields.get("篇幅类型", [])
+     if width and not any(re.match(r"^(?:长篇|短篇)(?=$|[。.!（(\s])", value) for value in width):
+         issues.append({"code": "length_kind_unresolved"})
+-    source_lines = [line for line in lines if "来源与核对日期" in line]
+-    source_dates = [candidate for line in source_lines for candidate in _DATE.findall(line)]
++    source_dates = [candidate for value in fields.get("来源与核对日期", [])
++                    for candidate in _DATE.findall(value)]
+     if not any(_valid_date(value) for value in source_dates):
+         issues.append({"code": "source_date_missing"})
+     declared = {part.strip() for key in fields for part in re.split(r"[／/、]", key)}
+--- before/tests/test_outline_position_audit.py
++++ after/tests/test_outline_position_audit.py
+@@ -306,6 +306,75 @@
+         self.assertIn(("classification_column_missing", "主分类"), codes)
+         self.assertIn(("classification_column_missing", "情绪"), codes)
+ 
++    def test_classification_source_date_cannot_come_from_author_fields_on_same_line(self):
++        original = "- 来源与核对日期：番茄后台参考；2026-10-01。"
++        for separator in ("；", ";"):
++            for source in ("待核对", "番茄后台参考；2026-02-30"):
++                for author_first in (False, True):
++                    with self.subTest(separator=separator, source=source, author_first=author_first):
++                        author = "作者名称／笔名：北岸；作者依据与日期：用户约定 2026-10-04"
++                        source_field = "来源与核对日期：" + source
++                        fields = (author, source_field) if author_first else (source_field, author)
++                        line = "- " + separator.join(fields).replace("；", separator) + "。"
++                        result = self.audit(self.platform_block("fanqie").replace(original, line),
++                                            require_platforms=("fanqie",))
++                        self.assertFalse(result["ok"])
++                        self.assertEqual(result["issues"], [{"code": "source_date_missing"}])
++
++    def test_mentions_of_source_field_in_notes_cannot_supply_its_date(self):
++        original = "- 来源与核对日期：番茄后台参考；2026-10-01。"
++        for has_source in (False, True):
++            with self.subTest(has_source=has_source):
++                source = "- 来源与核对日期：待核对。\n" if has_source else ""
++                note = "- 备注：来源与核对日期尚未取得；作者指定日期 2026-10-04。"
++                result = self.audit(self.platform_block("fanqie").replace(original, source + note))
++                self.assertFalse(result["ok"])
++                self.assertIn({"code": "source_date_missing"}, result["issues"])
++                missing = {"code": "position_field_missing", "field": "来源与核对日期"}
++                if has_source:
++                    self.assertNotIn(missing, result["issues"])
++                else:
++                    self.assertIn(missing, result["issues"])
++
++    def test_source_date_accepts_its_own_semicolon_continuations(self):
++        original = "- 来源与核对日期：番茄后台参考；2026-10-01。"
++        for value in ("番茄后台参考 2026-10-01", "番茄后台参考；2026-10-01",
++                      "番茄后台参考; 页面已存档; 2026-10-01",
++                      "番茄后台参考（用户截图；2026-10-01）",
++                      "番茄后台参考；2026-10-01；作者名称／笔名：待确认"):
++            with self.subTest(value=value):
++                result = self.audit(self.platform_block("fanqie").replace(
++                    original, "- 来源与核对日期：" + value + "。"))
++                self.assertTrue(result["ok"], result["issues"])
++
++    def test_source_date_does_not_consume_later_field_continuations(self):
++        original = "- 来源与核对日期：番茄后台参考；2026-10-01。"
++        source = ("- 来源与核对日期：番茄后台参考；日期待核对；"
++                  "作者名称／笔名：北岸；用户约定；2026-10-04。")
++        result = self.audit(self.platform_block("fanqie").replace(original, source))
++        self.assertFalse(result["ok"])
++        self.assertEqual(result["issues"], [{"code": "source_date_missing"}])
++
++    def test_parenthetical_source_fields_keep_their_date_and_stop_before_author_fields(self):
++        original = "- 来源与核对日期：番茄后台参考；2026-10-01。"
++        for opening, closing, separator, colon in (("（", "）", "；", "："),
++                                                   ("(", ")", ";", ":")):
++            for nested in (False, True):
++                for source_date in ("2026-10-01", "2026-02-30", "待核对"):
++                    with self.subTest(parentheses=opening + closing, nested=nested, source_date=source_date):
++                        annotation = (f"{opening}获取方式{colon}截图{separator}"
++                                      f"核对日期{colon}{source_date}{closing}")
++                        if nested:
++                            annotation = opening + "用户留存" + annotation + closing
++                        line = ("- 来源与核对日期：番茄后台参考" + annotation + separator +
++                                "作者名称／笔名：北岸；作者依据与日期：用户约定 2026-10-04。")
++                        result = self.audit(self.platform_block("fanqie").replace(original, line))
++                        if source_date == "2026-10-01":
++                            self.assertTrue(result["ok"], result["issues"])
++                        else:
++                            self.assertFalse(result["ok"])
++                            self.assertEqual(result["issues"], [{"code": "source_date_missing"}])
++
+     def test_fenced_template_cannot_disguise_missing_section(self):
+         result = self.audit("""# 只存了模板
+ 
+--- before/docs/目录结构.md
++++ after/docs/目录结构.md
+@@ -157,7 +157,7 @@
+ 
+ 长篇先有从开端到结局的全书走向和分卷粗纲，再展开近期章节。全书总纲链接已建立的卷纲，本卷大纲链接已建立的章细纲；卷目录使用 `第X卷 卷名`，每章细纲使用 `第N章 章节名称.md`，一章一文件。短篇规划可以合为一份；用户已有等效布局继续沿用，不为目录补空章或提前细化整本书。
+ 
+-v0.5.10 起，长篇、短篇的现行全书大纲（短篇可用等效规划）都在靠前位置记录篇幅类型、目标平台和按该平台实际栏目填写的分类标签，并注明选择依据、来源日期及拟选／已确认状态。多个目标平台分别记录；未核实选项明示待核对，不把参考作品或其他平台的标签当成本书已确认分类。[具体字段](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类)
++长篇、短篇的现行全书大纲（短篇可用等效规划）及分类答复先列出共用的主角与关键人物，标明姓名或稳定称呼、角色定位、身份关系及主线作用；随后默认分别给齐番茄、七猫和其他本次要求或书内约定涉及的平台，主投选择不减少覆盖，用户明确限定本轮单平台时才收窄。每个平台独立记录篇幅类型、入口、作品阶段、原生分类及其内容依据、来源日期和确认状态，并分别保存作者名／笔名的来源、日期和确认状态；拟用名不证明后台已登记或改名，未知署名写待确认，不自动跨平台沿用。未核实选项明示待核对，不把参考作品或其他平台的标签当成本书已确认分类。[具体字段](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类)
+ 
+ 同一范围只保留一个清晰的当前入口，文档头注明真实状态和更新时间；候选是否采用依据用户约定与任务记录，不能因整理而自动确认。后续分批设计更新相同文件，场面设计归入相应章；实质改动已采用规划时将旧版本归档到 `99_历史版本/`，保留原文件名、来源和相对关系，避免多个版本、重叠章节范围并排充当当前稿。只同步已提交章的进度句，不必每章另存大纲历史副本。整理旧书先备份、核对各版、保留有效内容并修复引用；存在分歧时注明待定。普通修改细纲和整理旧稿时，都核对并同步已采用的工具计划；续写前定点核对本章当前入口。未决候选不能覆盖已采用计划，已有采用依据不重复确认；不改已发生的正文事实或搬动托管正文。完整规则见 [项目状态与规划](../skills/story-skill/references/project-state.md#可读的大纲与细纲)。
+ 
+@@ -167,9 +167,9 @@
+ 
+ 短篇的 `init`／`status` 回执另有 `short_assembly_path`，首次合并前给出预期相对路径，登记后给出实际路径。普通书名保持 `<书名>.md`；特殊字符会替换，必要时截短并保留可区分后缀，完整书名仍保留在元数据中。新合并稿从第 1 章章名起，仅含章名和正文；旧的含书名首行合并稿在只读状态中标为 stale，下次执行 `export` 或明确重组时备份旧版并刷新。旧版 `.txt` 全文在下一次合并或导出时迁移为 `.md`，旧文件移入 `.story/export-backups/`；不自动覆盖同名不明文件。通过 `adopt` 接入的旧短篇在原目录只读的前提下，按 [旧短篇补齐原章](../skills/story-skill/references/project-state.md#旧短篇补齐原章) 用 `adopt-backfill` 补存真实缺章，再完成合并。
+ 
+-短篇完本交付还需有实际封面图片；优先沿用书内已有封面目录，新书可用 `04_封面/`。封面与全文均保存在本书根内，交付时分别给出可打开的路径。首次完本核对封面的书名、已有署名和实际尺寸；后续正式修订仅在书名、署名、题材或投稿规格变化时复核或修订封面。仅审稿不生成或更新完本产物，封面方案或提示词不能代替图片文件。
++短篇完本交付还需有实际封面图片；优先沿用书内已有封面目录，新书可用 `04_封面/`。封面与全文均保存在本书根内，交付时分别给出可打开的路径。首次完本核对封面的书名、内容、本次目标平台采用的署名和规格；只制作本次要求的版本，署名或规格不同的平台分别保存并标明用途。未指定平台的本地封面沿用有依据的本地署名，未知署名不自拟；后续正式修订仅在书名、署名、题材或投稿规格变化时复核或修订封面。仅审稿不生成或更新完本产物，封面方案或提示词不能代替图片文件。
+ 
+-明确要求完本交付时，同步核对现行总纲或短篇等效规划的篇幅类型、目标平台、原生分类标签、终稿内容依据、来源日期及拟选／已确认／待核对状态；缺漏或不符时保留旧版并按 [分类字段](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类) 补齐，不静默更改平台已确认值。旧短篇正式修订后要求完整成品，即使此前未合并，也按 [完本流程](../skills/story-skill-write/references/chapter.md#短篇完本与修订交付) 首次交付全文、实际封面和总纲分类。普通单章修订只核对已有全文同步，纯审稿或候选稿不自动生成首次成品，不每章重复查平台。
++明确要求完本交付时，按上述覆盖范围同步核对现行总纲或短篇等效规划中的主角与关键人物角色定位、各平台作者署名、篇幅类型、作品阶段、原生分类标签、终稿内容依据、来源日期及逐项确认状态，交付说明也按同一范围列明人物与各平台信息；缺漏或不符时保留旧版并按 [分类字段](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类) 补齐，不静默更改平台已确认值。旧短篇正式修订后要求完整成品，即使此前未合并，也按 [完本流程](../skills/story-skill-write/references/chapter.md#短篇完本与修订交付) 首次交付全文、实际封面和总纲分类。普通单章修订只核对已有全文同步，纯审稿或候选稿不自动生成首次成品，不每章重复查平台。
+ 
+ 章计划 `volume_dir` 指定完整分卷目录名，显式填写时优先使用；未填写但计划已有 `volume` 时，可沿用该 ID 已保存且带卷名的目录，或采用已符合 `第X卷 卷名` 格式的世界卷记录标题，工具会保存本次选择；同一个 `volume` ID 已绑定的目录不能被后续单章计划静默覆盖，填写冲突目录会被拒绝。缺少完整卷名时先核对已有分卷规划；尚未命名时，依据已授权的本卷内容拟定卷名后再提交，不用仅有卷号或内部 ID 的目录代替卷名。`title` 指定章节名称，未填写时从草稿首行纯文本 `第N章 章节名称` 提取并去掉原章号前缀，旧版 Markdown H1 仍可读取。新写章须提供章名，无标题的导入基线可用章名 `正文`，但仍须明确所属卷名：`adopt --volume-dir "第一卷 雨夜"` 可直接指定（替换为本书实际卷名），也可从已保存的该章计划取得完整目录；仅指定导入卷名无需新建章计划。结构化计划的 `volume` 仍是世界状态稳定 ID，展示目录用 `volume_dir` 指定。卷内约束的 `scope: "volume:v1"` 须对应计划的 `volume: "v1"`，或将约束卡显式加入 `requires`；目录名不会自动建立此关联。
+ 
+--- before/docs/中文小说上手.md
++++ after/docs/中文小说上手.md
+@@ -65,7 +65,7 @@
+ 
+ 长篇默认从 `01_大纲细纲/全书总纲.md` 进入，再看 `第X卷 卷名/本卷大纲.md` 和本卷的 `第N章 章节名称.md`。章细纲一章一文件，场面设计放进对应章，近期逐批补充；全书和分卷先说明走向，不要求一次写完所有章细纲。已有等效目录继续沿用，短篇可以简化成一份规划。[目录示例](目录结构.md#小说一书一目录状态与可见稿件分开)
+ 
+-v0.5.10 起，无论长篇还是短篇，正式全书大纲靠前位置都列出篇幅类型、目标平台、作品实际阶段、所选平台入口及对应分类栏目；分类逐栏标拟选、后台已确认、不选或待核对，并写明本书内容依据、来源与核对日期。“不选”只用于已核实可选的栏目，不能代替必选栏的未核项。多个目标平台分别记录。番茄先核对使用“小说”还是“短故事”入口，篇幅类型不自动决定入口；其他平台按实际官方页面或用户提供的后台截图核对，不把番茄词表直接套用。[字段示例与未核实项处理](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类)
++正式全书大纲（短篇可用等效规划）及分类答复先列出共用的主角与关键人物，标明姓名或稳定称呼、角色定位、身份关系及主线作用。默认分别给齐番茄、七猫及其他本次要求或书内约定涉及平台的分类；主投选择不减少覆盖，用户明确限定本轮单平台时才收窄。逐平台记录篇幅类型、作品实际阶段、所选入口与原生分类栏目，以及作者名／笔名的来源、日期和确认状态；拟用署名不等于后台已登记，未知的写待确认，不自动跨平台沿用。分类逐栏标拟选、后台已确认、不选或待核对，并写明本书内容依据、来源与核对日期。“不选”只用于已核实可选的栏目，不能代替必选栏的未核项。番茄先核对使用“小说”还是“短故事”入口，篇幅类型不自动决定入口；其他平台按实际官方页面或用户提供的后台截图核对，不把番茄词表直接套用。[字段示例与未核实项处理](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类)
+ 
+ 当前稿在文档头写明状态和更新时间，旧版进入 `99_历史版本/`。说“继续细纲”时更新已有入口，不再新增一串“前十章”“第十一至十六章”的并排候选稿。若整理已有文件，助手 会先备份、核对各版内容与引用；“候选”仍保留候选状态，未确定的分歧不会被整理动作自动定案。修改已采用细纲时，同步工具中的章计划；续写前再核对本章当前细纲与计划，已有采用依据不重复确认。工具不会自动读取大纲文件。
+ 
+@@ -87,9 +87,9 @@
+ 
+ 已有全文在正式修订、对账、历史发布或新增章节后随导出刷新，包含当前全部连续已提交章节。交付时核对 `status` 中的 `short_assembly`、导出回执和实际全文；缺失或待导出时运行 `export` 恢复，有外部改动先保留并解决冲突。`short_assembly` 只说明同步状态和已合并章数，确认完本仍须核对实际终章、结局和全文。仅审稿不触发这些写入，单章续写也不自动确认全书完本。
+ 
+-每次明确完本交付时，核对现行总纲或等效规划的篇幅类型、目标平台与作品阶段、平台原生分类标签、实际正文依据、来源日期，以及分类逐栏的拟选／后台已确认／不选／待核对状态。缺项或与终稿不符时，实质修改规划先保留旧版，再按 [分类规则](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类) 补齐；平台已确认值不静默改动，未核实项如实标注，不每章重复查平台。旧短篇在正式审稿修订或历史修订后明确要求完整成品，尚无全文时也完成首次合并，并交付实际封面和总纲分类；普通单章修订只核对已有全文同步，纯审稿或候选稿不自动生成首次成品。
++每次明确完本交付时，按上述覆盖范围核对现行总纲或等效规划中的主角与关键人物角色定位、各平台作者署名、篇幅类型、作品阶段、原生分类标签、实际正文依据、来源日期，以及逐项确认状态；交付说明也按同一范围列明人物与各平台信息。缺项或与终稿不符时，实质修改规划先保留旧版，再按 [分类规则](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类) 补齐；平台已确认值不静默改动，未核实项如实标注，不每章重复查平台。旧短篇在正式审稿修订或历史修订后明确要求完整成品，尚无全文时也完成首次合并，并交付实际封面和总纲分类；普通单章修订只核对已有全文同步，纯审稿或候选稿不自动生成首次成品。
+ 
+-首次完本全文核对通过后，还要输出封面图片。沿用与最终书名和内容相符的已有封面，或按 [封面技能](../skills/story-skill-cover/SKILL.md) 生成并保存到本书目录；新书可放在 `04_封面/`。检查可读书名、已有署名、尺寸和文件能否打开；投稿或公开交付前另核对实际使用的参考图、字体和图片素材来源及授权，未核清的部分标为待核。交付时同时给出全文文件与封面图片的实际路径。没有图片产物不能把仅有的提示词或版式称为完本交付；未指定投稿平台时，图片的本地检查不等于平台审核通过。后续正式修订沿用已有合格封面，仅在书名、署名、题材或投稿规格变化时复核并按需修订，不因普通文字校对重新制图。
++首次完本全文核对通过后，还要输出封面图片。沿用与最终书名、内容及本次目标平台署名和规格相符的已有封面，或按 [封面技能](../skills/story-skill-cover/SKILL.md) 生成并保存到本书目录；新书可放在 `04_封面/`。只制作本次要求的版本，署名或规格不同的平台分别保存并注明用途；未指定平台的本地封面沿用有依据的本地署名，署名未知不自拟。检查可读书名、对应署名、尺寸和文件能否打开；投稿或公开交付前另核对实际使用的参考图、字体和图片素材来源及授权，未核清的部分标为待核。交付时同时给出全文文件与封面图片的实际路径。没有图片产物不能把仅有的提示词或版式称为完本交付；未指定投稿平台时，图片的本地检查不等于平台审核通过。后续正式修订沿用已有合格封面，仅在书名、署名、题材或投稿规格变化时复核并按需修订，不因普通文字校对重新制图。
+ 
+ ## 章节离线发布准备
+ 

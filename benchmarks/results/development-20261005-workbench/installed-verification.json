@@ -1,0 +1,7 @@
+{
+  "version": "0.6.11",
+  "version_help_init_status": "passed",
+  "local_service_identity": "passed",
+  "loaded_runtime_sha256": "36b1c4417ad82820c9bd19b10da8f4f3290dcbd1367198b038030a65c0d574e5",
+  "runtime_file_count": 9
+}

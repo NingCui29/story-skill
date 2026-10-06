@@ -35,7 +35,7 @@ v0.6.0 源码的入口为 [story-skill-publish](../skills/story-skill-publish/SK
 
 所有清单均保留 `platform_verified=false`、`ready_to_upload=false`，远端状态为 unknown。`content_verification=unread` 专指远端上传正文尚未核验，本地回读、核对成功或 ZIP 导出都不会改变它。当前状态仅包括本地 prepared、stale、cancelled；下文 sending、平台回执、执行互斥和原生排期尚无对应执行器。逐章准备可用于长短篇，但不等于整篇投稿、完本审查或已取得远端发布授权。
 
-人工交接还应按现有依据列明书名与目标作品、简介、封面、分类、素材来源与授权、AI 使用及平台声明的已核对、待核对和不适用项。分别报告 ZIP 的 `artifact_verified`／`usable_now` 和投稿材料是否齐全；ZIP 可用只证明该包的本地技术条件，不能填平其他待核项。这份清单不自动扩为全文审稿；审查收据、材料包完整性和平台审核结果分别记录。
+人工交接还应按现有依据列明书名与目标作品、本平台作者名／笔名及封面署名、简介、封面、分类、素材来源与授权、AI 使用及平台声明的已核对、待核对和不适用项。作者名按 [平台署名规则](../skills/story-skill/references/project-state.md#平台作者名与署名) 分别记录，拟用新名不代表后台已改名；现有发布命令及 ZIP 核验不验证作者署名，对应关系保存在本书规划或交接记录中。总纲分类按 [共享覆盖规则](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类) 默认给齐番茄、七猫及其他已涉及平台，不能因本次材料包绑定单个平台而遗漏另一套；每份材料包仍只绑定本次实际指定的目标。分别报告 ZIP 的 `artifact_verified`／`usable_now` 和投稿材料是否齐全；ZIP 可用只证明该包的本地技术条件，不能填平其他待核项。这份清单不自动扩为全文审稿；审查收据、材料包完整性和平台审核结果分别记录。
 
 清单列表、导出回执列表、回读、取消和恢复不隐式重新核对正式稿；`source_check_performed=false` 表示本次没有核对，带 `source_matches_current=null` 的回执也不能据此断言匹配。准备、检查、材料导出前的核对及材料包复核会报告本次正式稿匹配结果；其中材料包复核是只读操作，不修改账本中的状态或 `checked_at`。导出已取消清单仍跳过核对，不生成 ZIP。`checked_revision` 和 `chapter_checks` 分别说明本次检查的创作版本与各章差异。过期清单即使在恢复导出后再次匹配，也保持 stale，由新的显式准备生成可用清单。
 

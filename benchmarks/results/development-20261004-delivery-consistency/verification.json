@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-04",
+  "changed_files": [
+    {
+      "path": "skills/story-skill-plan/references/fanqie-tags.md",
+      "before_sha256": "16d39a216e63bab9ce57b143e6333ec9ead544d5199bc8706830d5de836b3ff3",
+      "after_sha256": "28976ae2d83bf0c96e1f51854cb8f8745934152e6a6a1291dfed65973359c7e7"
+    },
+    {
+      "path": "skills/story-skill-plan/references/qimao-tags.md",
+      "before_sha256": "a5e092d991aa280fe4a0d3891323be5fd45f658e9fd5415e6beb4d232f370c9f",
+      "after_sha256": "515a2080b3a35d4d5e765476fe6544eba1892c7a80fa43a691e39929edde716d"
+    },
+    {
+      "path": "skills/story-skill-publish/SKILL.md",
+      "before_sha256": "8861d14af17b9b1b7fb1fd17aef91e0a68a2184614602222b94ffa8ccd863e80",
+      "after_sha256": "dae188c83923c9346a2f8575710cda355161150adb674adced55663deaa8b1d3"
+    },
+    {
+      "path": "skills/story-skill-write/references/chapter.md",
+      "before_sha256": "1841f9b886fbc1991e8668ea421be32bc2bfcf9bc5e247a8a03358d7be90a889",
+      "after_sha256": "490d5093ebdeacfb5aa555309df41d8b75b17aa85dffc5cf273b0f86e7d1cc8f"
+    },
+    {
+      "path": "skills/story-skill/references/project-state.md",
+      "before_sha256": "1e05c6d41ef9fec273431e39a1d6f344feaa8712df67b4d95bb99adc3247246d",
+      "after_sha256": "34fd1c4ac20e4d709cef1a778df03b85ab26cc2d0c0d6f70deb61ce7a841ee6b"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_outline.py",
+      "before_sha256": "7b7ddca30dde9729637c7451d8d9ae494b56be8099c3b590e88cb4ded403ae02",
+      "after_sha256": "5110bf0e78e619f3b52364fbc1aedc0ddf48d088076915b79ff899e16c5faf66"
+    },
+    {
+      "path": "tests/test_outline_position_audit.py",
+      "before_sha256": "7109ab9fadf79371e3d0a77388c0ed8aa1f71d6bef988d9917953087c903f89a",
+      "after_sha256": "467adb27c435ebfe7a58d734cecf22506a0bf534090d9f9e5dac9cf1495abb05"
+    },
+    {
+      "path": "docs/目录结构.md",
+      "before_sha256": "d67346bca62cea3f821b2aef1a89b2bd1bf6f2fa94465c5387418f67baab4230",
+      "after_sha256": "12528c2a17cdb3bf012a2f5cc10d030433e444d9cbcfa5327b3dde531e719d80"
+    },
+    {
+      "path": "docs/中文小说上手.md",
+      "before_sha256": "0a8f27d74f3b52a7b67b0408e8a7c9be8a282c108c7d67e74f39123300102d8b",
+      "after_sha256": "5e4fdf9c3eb9baa7e0a30566c0c32ede642ab52f3150b0d4e0a3730b98d38771"
+    }
+  ],
+  "unittest": {
+    "ok": true,
+    "status": "passed",
+    "run": 1055,
+    "passed": 1038,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 17,
+    "expected_failures": 0,
+    "unexpected_successes": 0,
+    "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests"
+  },
+  "targeted": {
+    "suite": "test_outline_position_audit.py",
+    "tests_run": 44,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 44,
+    "ok": true,
+    "elapsed_seconds": 3.46,
+    "log": "~/.codex/skill-backups/story-skill-delivery-audit-z4v7a636/validation/source-date-targeted-tests.log"
+  },
+  "skill_validation": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "e4131b",
+        "wall_time_seconds": 1.4422e-05,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "243dfe",
+        "wall_time_seconds": 1.481e-05,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "95dd81",
+        "wall_time_seconds": 2.3329e-05,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "94e80f",
+        "wall_time_seconds": 3.3554e-05,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    }
+  ],
+  "package": {
+    "archive": "~/.codex/skill-backups/story-skill-delivery-audit-z4v7a636/validation/story-skill-0.6.11.zip",
+    "version": "0.6.11",
+    "files": 46,
+    "sha256": "dfb0593ac3c3375de9bdc18c63b37833f9e933a17ead896070e3fd42a0807d7c",
+    "bytes": 308889
+  },
+  "zip_source_install_match": true,
+  "installation": {
+    "complete": true,
+    "version": "0.6.11",
+    "kind": "local-development-snapshot",
+    "skills": 8,
+    "files": 46,
+    "smoke": "passed",
+    "receipt": "~/.codex/skill-backups/story-skill-delivery-audit-z4v7a636/final-receipt.json"
+  },
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 291,
+    "links_checked": 1618,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  }
+}

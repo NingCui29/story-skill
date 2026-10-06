@@ -1,0 +1,71 @@
+{
+  "all_five_real_editors_same_instance": true,
+  "real_editors": [
+    {
+      "title": "作品15",
+      "root": "/local-books/book-15",
+      "pid": 20594,
+      "instance": "instance-18",
+      "same_instance": true
+    },
+    {
+      "title": "作品16",
+      "root": "/local-books/book-16",
+      "pid": 28793,
+      "instance": "instance-06",
+      "same_instance": true
+    },
+    {
+      "title": "作品18",
+      "root": "/local-books/book-18",
+      "pid": 28801,
+      "instance": "instance-09",
+      "same_instance": true
+    },
+    {
+      "title": "作品10",
+      "root": "/local-books/book-10",
+      "pid": 27471,
+      "instance": "instance-11",
+      "same_instance": true
+    },
+    {
+      "title": "作品01",
+      "root": "/local-books/book-01",
+      "pid": 32956,
+      "instance": "instance-03",
+      "same_instance": true
+    }
+  ],
+  "original_native_process": "27461 S    ~/Applications/写作工作台.app/Contents/MacOS/StoryWorkbench",
+  "registry": {
+    "sha256": "a702f57d24c56132a7f96de71f2dd41b31b6cbe3f169102c340e021c3a38552a",
+    "mtime_ns": 1791253467490728861,
+    "books": 18
+  },
+  "private_fixture_service_stopped": true,
+  "private_fixture_formal_data_unchanged": {
+    ".story/state.sqlite3": true,
+    "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md": true,
+    "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md": true,
+    "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md": true,
+    "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md": true,
+    "创作约定.md": true
+  },
+  "private_fixture_kept_for_reproducibility": true,
+  "installed_native_screenshot": "native-editor-installed.png",
+  "workbench_tests": {
+    "ran": 344,
+    "passed": 344,
+    "skipped": 0
+  },
+  "desktop_tests": {
+    "ran": 34,
+    "passed": 34,
+    "skipped": 0
+  },
+  "swift_warnings_as_errors_compiled": true,
+  "library_running_current_code": true,
+  "native_shelf_self_test": true,
+  "original_native_still_running_after_self_tests": true
+}

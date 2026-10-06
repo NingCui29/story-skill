@@ -1,0 +1,20 @@
+test_allowed_artifact_never_certifies_review (test_execution_eval.ExecutionEvidenceTests.test_allowed_artifact_never_certifies_review) ... ok
+test_declined_and_failed_null_exit_codes_remain_reviewable (test_execution_eval.ExecutionEvidenceTests.test_declined_and_failed_null_exit_codes_remain_reviewable) ... ok
+test_directory_pattern_allows_children_and_ignores_bytecode (test_execution_eval.ExecutionEvidenceTests.test_directory_pattern_allows_children_and_ignores_bytecode) ... ok
+test_empty_required_output (test_execution_eval.ExecutionEvidenceTests.test_empty_required_output) ... ok
+test_evidence_overwrite_and_tree_output_rejected (test_execution_eval.ExecutionEvidenceTests.test_evidence_overwrite_and_tree_output_rejected) ... ok
+test_execution_items_after_turn_ended_are_incomplete (test_execution_eval.ExecutionEvidenceTests.test_execution_items_after_turn_ended_are_incomplete) ... ok
+test_failed_command_is_preserved_for_recovery_review (test_execution_eval.ExecutionEvidenceTests.test_failed_command_is_preserved_for_recovery_review) ... ok
+test_missing_empty_invalid_and_failed_turn_traces (test_execution_eval.ExecutionEvidenceTests.test_missing_empty_invalid_and_failed_turn_traces) ... ok
+test_missing_required_output (test_execution_eval.ExecutionEvidenceTests.test_missing_required_output) ... ok
+test_skill_drift (test_execution_eval.ExecutionEvidenceTests.test_skill_drift) ... ok
+test_started_followup_turn_and_command_require_completion (test_execution_eval.ExecutionEvidenceTests.test_started_followup_turn_and_command_require_completion) ... ok
+test_traversal_overlap_and_links_rejected (test_execution_eval.ExecutionEvidenceTests.test_traversal_overlap_and_links_rejected) ... ok
+test_unauthorized_modify_add_delete_and_empty_directory (test_execution_eval.ExecutionEvidenceTests.test_unauthorized_modify_add_delete_and_empty_directory) ... ok
+test_unfinished_mcp_and_invalid_completed_items_are_incomplete (test_execution_eval.ExecutionEvidenceTests.test_unfinished_mcp_and_invalid_completed_items_are_incomplete) ... ok
+test_unknown_items_and_unpaired_native_message_completion_are_compatible (test_execution_eval.ExecutionEvidenceTests.test_unknown_items_and_unpaired_native_message_completion_are_compatible) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.157s
+
+OK

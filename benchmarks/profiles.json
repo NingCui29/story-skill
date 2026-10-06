@@ -5,7 +5,7 @@
   "profiles": [
     {
       "id": "long_chapter_required_minimum",
-      "label": "长篇单章：明确必读指令下限",
+      "label": "长篇单章：明确必读文件",
       "upstream": [
         "skills/story-long-write/SKILL.md",
         "skills/story-long-write/references/workflow-chapter.md",
@@ -19,9 +19,11 @@
         "skills/story-skill-write/SKILL.md",
         "skills/story-skill/references/project-state.md",
         "skills/story-skill-write/references/chapter.md",
-        "skills/story-skill-write/references/drama.md"
+        "skills/story-skill-write/references/drama.md",
+        "skills/story-skill-write/references/content-review.md",
+        "skills/story-skill-write/references/punctuation.md"
       ],
-      "scope": "Cold instruction load only. Candidate includes the full shared entry, specialized writing entry, project-state guide and chapter workflow. Upstream excludes other conditional references, project files and agents; command templates and tool results are excluded on both sides. Candidate also includes the required Chinese conflict, reader-payoff and scene-craft guide, counted in full."
+      "scope": "Cold instruction load only. Candidate includes the full shared entry, specialized writing entry, project-state guide and chapter workflow. Upstream excludes other conditional references, project files and agents; command templates and tool results are excluded on both sides. Candidate also includes the required Chinese conflict, reader-payoff and scene-craft guide, counted in full. Candidate includes the mandatory pre-delivery content-review guide in full. These are complete managed chapter-writing scenarios; full reference files are counted even when only their applicable sections are needed. Candidate includes the punctuation reference used in manuscript delivery and format review."
     },
     {
       "id": "long_multi_line",
@@ -40,9 +42,11 @@
         "skills/story-skill/references/project-state.md",
         "skills/story-skill-write/references/chapter.md",
         "skills/story-skill-write/references/drama.md",
-        "skills/story-skill-write/references/long-form.md"
+        "skills/story-skill-write/references/content-review.md",
+        "skills/story-skill-write/references/long-form.md",
+        "skills/story-skill-write/references/punctuation.md"
       ],
-      "scope": "Cold instruction load only. Candidate includes shared entry, specialized writing entry, shared planning state, chapter workflow and conditional world-state guide. Planning/import and historical-revision workflows are separate tasks. Upstream retains its verified required-file lower bound. Domain templates, tool output and manuscript context are excluded on both sides. Candidate also includes the required Chinese conflict, reader-payoff and scene-craft guide, counted in full."
+      "scope": "Cold instruction load only. Candidate includes shared entry, specialized writing entry, shared planning state, chapter workflow and conditional world-state guide. Planning/import and historical-revision workflows are separate tasks. Upstream retains its verified required-file lower bound. Domain templates, tool output and manuscript context are excluded on both sides. Candidate also includes the required Chinese conflict, reader-payoff and scene-craft guide, counted in full. Candidate includes the mandatory pre-delivery content-review guide in full. These are complete managed chapter-writing scenarios; full reference files are counted even when only their applicable sections are needed. Candidate includes the punctuation reference used in manuscript delivery and format review."
     },
     {
       "id": "short_write_conservative",
@@ -55,9 +59,11 @@
         "skills/story-skill-write/SKILL.md",
         "skills/story-skill/references/project-state.md",
         "skills/story-skill-write/references/chapter.md",
-        "skills/story-skill-write/references/drama.md"
+        "skills/story-skill-write/references/drama.md",
+        "skills/story-skill-write/references/content-review.md",
+        "skills/story-skill-write/references/punctuation.md"
       ],
-      "scope": "Conservative lower bound for upstream: its required short-fiction references are deliberately excluded. Candidate also includes the required Chinese conflict, reader-payoff and scene-craft guide, counted in full."
+      "scope": "Conservative lower bound for upstream: its required short-fiction references are deliberately excluded. Candidate also includes the required Chinese conflict, reader-payoff and scene-craft guide, counted in full. Candidate includes the mandatory pre-delivery content-review guide in full. These are complete managed chapter-writing scenarios; full reference files are counted even when only their applicable sections are needed. Candidate includes the punctuation reference used in manuscript delivery and format review."
     },
     {
       "id": "long_analysis_conservative",
@@ -88,29 +94,36 @@
     },
     {
       "id": "review_conservative",
-      "label": "审稿：上游仅入口 vs 新版入口与流程",
-      "upstream": [
-        "skills/story-review/SKILL.md"
-      ],
-      "candidate": [
-        "skills/story-skill/SKILL.md",
-        "skills/story-skill-review/SKILL.md"
-      ],
-      "scope": "Review instructions only, including shared entry and specialized review entry. Reviewer-agent context, manuscripts, conditional historical-revision instructions and tool output are excluded. Conditional drama.md used for conflict/payoff critique is excluded here and measured separately."
-    },
-    {
-      "id": "review_conflict",
-      "label": "冲突与看点审查：含中文场景参考",
+      "label": "完整章内容审稿：上游仅入口 vs 新版适用参考",
       "upstream": [
         "skills/story-review/SKILL.md"
       ],
       "candidate": [
         "skills/story-skill/SKILL.md",
         "skills/story-skill-review/SKILL.md",
-        "skills/story-skill-write/references/drama.md"
+        "skills/story-skill-write/references/content-review.md",
+        "skills/story-skill-write/references/drama.md",
+        "skills/story-skill-write/references/chapter.md",
+        "skills/story-skill-write/references/punctuation.md"
       ],
-      "scope": "Conservative upstream entry-only comparison. Candidate includes shared entry, review entry and conditional Chinese conflict/payoff reference. Manuscripts, tools and historical revision references are excluded."
+      "scope": "Conservative upstream entry-only comparison for content review of a complete chapter, covering causality, continuity, constraints and overall reading experience. Candidate includes shared and review entries, mandatory content-review, the drama guide triggered by character, viewpoint, format and reading-experience checks, and the chapter length/count reference. Entire reference files are counted even when only their applicable sections are needed. This is not a punctuation-only or layout-only review. Reviewer-agent context, manuscripts, project-state, platform-specific checks, historical-revision instructions and tool output are excluded. Candidate includes the punctuation reference used in manuscript delivery and format review."
+    },
+    {
+      "id": "review_conflict",
+      "label": "完整章冲突与看点审查：含内容审查与场景参考",
+      "upstream": [
+        "skills/story-review/SKILL.md"
+      ],
+      "candidate": [
+        "skills/story-skill/SKILL.md",
+        "skills/story-skill-review/SKILL.md",
+        "skills/story-skill-write/references/content-review.md",
+        "skills/story-skill-write/references/drama.md",
+        "skills/story-skill-write/references/chapter.md",
+        "skills/story-skill-write/references/punctuation.md"
+      ],
+      "scope": "Conservative upstream entry-only comparison for content review of a complete chapter with an explicit conflict and reader-payoff critique. Candidate includes shared and review entries, mandatory content-review, triggered Chinese conflict/payoff guidance, and the chapter length/count reference used for content constraints. Entire reference files are counted even when only their applicable sections are needed. Manuscripts, project-state, platform-specific checks, tools and historical revision references are excluded. Candidate includes the punctuation reference used in manuscript delivery and format review."
     }
   ],
-  "report_path": "benchmarks/results/v0.6.5/tokens.json"
+  "report_path": "benchmarks/results/v0.6.11/tokens.json"
 }

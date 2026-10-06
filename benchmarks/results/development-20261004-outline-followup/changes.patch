@@ -1,0 +1,412 @@
+--- a/skills/story-skill/references/project-state.md
++++ b/skills/story-skill/references/project-state.md
+@@ -97,7 +97,7 @@
+ 
+ 当前或候选总纲、短篇等效规划可用 `outline-audit --book "<书根>" --file "<书根内相对总纲路径.md>" --require-platform fanqie --require-platform qimao` 只读逐平台核对分类字段、分类来源日期格式及常见栏目，并检查番茄、七猫是否都存在；明确仅处理单平台时只保留相应 `--require-platform`。回执给出文件哈希、范围与缺项；`ok` 只表示这种结构检查未发现缺项，`manual_review_required` 始终为真。候选、草稿文件也可显式指定后只读检查，检查不改变采用状态；正式 `outline-bind` 仍拒绝候选等非采用文件。分类来源日期只取“来源与核对日期”字段，作者署名依据或其他备注中的日期不能补足该字段。主角与角色定位须对照已采用设定及正式正文人工核对；逐平台署名按上述来源核对，两者均不在此结构检查范围内。工具不核对每栏是否选了正确的词、数量限制、状态真伪、内容依据或是否已获采用；多平台或等效自由布局无法完整识别时仍逐平台人工检查，说明未覆盖处，不为通过检查改写真实规划。
+ 
+-该结构检查按每个平台一个分类块处理，不区分同平台的不同账号或作品。存在同平台多目标时，保留各目标的署名、分类及来源记录，逐目标人工核查并说明工具未覆盖；多个独立块产生的“重复平台／缺平台”提示不能解释为实际缺少该平台，也不能为了通过检查合并或删除真实目标。
++番茄已填写的“平台入口”或“页面适用性”声明须明确，存在多条时须彼此一致；入口待定、互相冲突或无法解析时，不选择小说或短故事的栏目规则。入口已明确、仅标签待核对的备注不影响入口选择。该结构检查按每个平台一个分类块处理，不区分同平台的不同账号或作品。存在同平台多目标时，保留各目标的署名、分类及来源记录，逐目标人工核查并说明工具未覆盖；多个独立块产生的“重复平台／缺平台”提示不能解释为实际缺少该平台，也不能为了通过检查合并或删除真实目标。
+ 
+ 同一范围维护一个清晰的当前入口，文档头注明状态、更新时间和必要的来源。保留“候选／已采用／待定”等真实状态，整理或版本号较新不代表已获采用。实质修改当前规划、替换已采用方案前，将旧版放入 `99_历史版本/`，保留原文件名与相对关系；只按 `status` 同步已提交章节的进度句，不必每章另存一份大纲历史副本。分批继续时补写相应卷、章文件，将重叠的前三章场面设计等内容并入各章，不再平铺多份范围交叠的候选稿；未决方案可留在对应章并说明分歧。
+ 
+@@ -109,7 +109,9 @@
+ 
+ ### 已采用细纲绑定
+ 
+-文档头可使用自定义一级标题；明确写出规划类型的标题也支持其他标题层级，例如 `## 章细纲`、`## 第1章 门后的雨 · 细纲`。仅有章号、场景或“本章目标”的标题视为正文小节。文件开头及首个文档标题前后的状态声明一并核对，包括开头 frontmatter 中的裸值 `status: adopted`；声明冲突时拒绝绑定。在文件 4 MiB 上限内扫描到首个正文小节，不截取固定行数或头部字节。HTML 注释、围栏与缩进代码中的状态示例不作声明；成对行内代码可跨普通文本行，但不跨空行、标题或围栏边界。文档标题之后再出现的章节细纲标题属于小节，其状态不覆盖文档声明。
++文档头可使用自定义一级标题；明确写出规划类型的标题也支持其他标题层级，例如 `## 章细纲`、`## 第1章 门后的雨 · 细纲`。标题支持井号形式及有效的 Setext 下划线形式；仅有章号、场景或“本章目标”的标题视为正文小节。文件开头及首个文档标题前后的状态声明一并核对；声明冲突时拒绝绑定。在文件 4 MiB 上限内扫描到首个正文小节，不截取固定行数或头部字节。HTML 注释、围栏与缩进代码中的状态示例不作声明；成对行内代码可跨普通文本行，但不跨空行、标题或围栏边界。文档标题之后再出现的章节细纲标题属于小节，其状态不覆盖文档声明。
++
++开头 frontmatter 单独解析，仅其顶层裸值（如 `status: adopted`）可声明采用；说明文本中的嵌套状态及代码记号不参与 Markdown 状态判断。工具只支持普通裸值键值及非状态字段的缩进块文本，不是完整 YAML 解析器；未闭合或无法可靠解析的元数据拒绝绑定，不从后文借取采用声明。
+ 
+ 已确认采用的章细纲与已保存工具章计划逐项核对后，可用 `outline-bind --book "<书根绝对路径>" --chapter N --file "<书根内相对细纲路径.md>" --sha256 "<刚审阅文件的 SHA-256>" --expect R` 登记两者的具体版本；`R` 取当前 status。短篇采用单份规划时可把同一已采用文件分别绑定到需要的章节。此操作要求调用者明确选定已采用文件，且新绑定须在首个正文小节前的文档头明确声明采用状态，例如 `状态：已采用`；可置于文档标题前后、无标题时的文件开头，或开头 frontmatter 中的裸值 `status: adopted`；章节小节中的待写、已提交等进度句不代替文档采用声明。文档头为候选、草稿、待定等状态或未写状态时不能绑定，不能靠改成 `README.md` 等中性文件名绕过。候选、草稿、历史版本及正文文件不可绑定，也不按文件名或修改时间推断采用。返回的 `outline.status=adopted` 只表示显式登记了采用声明，并且细纲文件与工具计划的版本仍匹配；工具不能证明实际采用依据已获审阅，也不能证明自由文本与工具计划在语义上相同。
+ 
+--- a/skills/story-skill/scripts/story_outline.py
++++ b/skills/story-skill/scripts/story_outline.py
+@@ -262,6 +262,37 @@
+     return declared
+ 
+ 
++def _fanqie_entrance(values):
++    """Resolve only explicit, consistent entrance declarations and scoped notes."""
++    entrances = set()
++    for value in values:
++        # The brand contains “小说” without declaring the novel entrance.
++        value = re.sub(r"番茄(?:免费小说|小说)?(?:作家平台)?", "", value)
++        parts = [part.strip(" \t\"'“”‘’「」")
++                 for part in re.split(r"[，,；;。.!！／/、|｜（）()]+", value)]
++        found = False
++        for part in filter(None, parts):
++            match = re.fullmatch(
++                r"(?:(?:拟选|已选|拟用|使用|已使用|新建|创建)\s*[:：]?\s*)?"
++                r"(短故事|小说)(?:入口|页面|页)?(?:已选|已确认|拟选)?", part)
++            if match:
++                entrances.add(match.group(1))
++                found = True
++            elif re.fullmatch(r"(?:入口\s*[:：]?\s*)?(?:已选|已选择|已确认|拟选)", part):
++                continue
++            elif (re.match(r"^(?:标签|分类|作品分类|阅读标签|内容标签)(?:[：:]|待|已|未|尚)", part)
++                  and not re.search(r"入口|短故事|小说", part)):
++                # “短故事（入口已选，标签待核对）” has a known entrance.
++                continue
++            else:
++                # Unknown, uncertain or natural-language alternatives need
++                # manual clarification, not a substring-selected rule set.
++                return None
++        if not found:
++            return None
++    return next(iter(entrances)) if len(entrances) == 1 else None
++
++
+ def _audit_position_section(start, lines):
+     fields = {}
+     issues = []
+@@ -271,7 +302,7 @@
+         for index, match in enumerate(matches):
+             key = match.group(1).strip(" *_`\t")
+             value = match.group(2).strip(" *_`\t")
+-            if key in {"目标平台", "来源与核对日期"}:
++            if key in {"目标平台", "来源与核对日期", "平台入口", "页面适用性"}:
+                 # Keep unlabelled semicolon continuations and parenthetical
+                 # annotations until the next labelled field outside them.
+                 # This includes “（拟投；兼投：起点）” and source-date notes.
+@@ -324,7 +355,6 @@
+         issues.append({"code": "position_platform_heading_mismatch", "heading_platforms": heading_platforms,
+                        "declared_platforms": platforms})
+ 
+-    entrance = " ".join(fields.get("平台入口", []) + fields.get("页面适用性", []))
+     checked_platform_rules = "generic"
+     columns = ()
+     if len(platforms) > 1:
+@@ -333,10 +363,11 @@
+         checked_platform_rules = "qimao"
+         columns = ("分类频道", "一级分类", "二级分类", "风格", "角色", "情节", "背景")
+     elif platform == "fanqie":
+-        if "短故事" in entrance:
++        entrance = _fanqie_entrance(fields.get("平台入口", []) + fields.get("页面适用性", []))
++        if entrance == "短故事":
+             checked_platform_rules = "fanqie_short"
+             columns = ("主分类", "情节", "角色", "情绪", "背景")
+-        elif "小说" in entrance and "待核对" not in entrance:
++        elif entrance == "小说":
+             checked_platform_rules = "fanqie_novel"
+             columns = ("目标读者", "阅读标签", "内容标签")
+         else:
+@@ -477,6 +508,75 @@
+     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+ 
+ 
++def _frontmatter_header(lines):
++    """Separate a small, explicit metadata grammar from Markdown examples.
++
++    Only flat plain values and non-status block scalars are supported. Reject
++    other YAML structures rather than reading text inside them as declarations.
++    A malformed header cannot acquire adoption from the following Markdown.
++    """
++    if not lines or lines[0].rstrip() != "---":
++        return [], lines
++    end = next((index for index, line in enumerate(lines[1:], 1)
++                if line.rstrip() in {"---", "..."}), None)
++    if end is None:
++        return ["unclosed_frontmatter"], []
++    statuses = []
++    block_scalar = False
++    for line in lines[1:end]:
++        if not line.strip():
++            continue
++        if line.lstrip().startswith("#"):
++            continue
++        if line.startswith((" ", "\t")):
++            if block_scalar and not line.startswith("\t"):
++                continue
++            return ["unsupported_frontmatter"], []
++        match = re.fullmatch(r"([^\s:#\[\]{},&*!|>'\"%@`?]+)[ \t]*:[ \t]*(.*)", line)
++        if match is None:
++            return ["unsupported_frontmatter"], []
++        key, value = match.groups()
++        value = re.split(r"(?:^|[ \t]+)#", value, maxsplit=1)[0].strip()
++        is_status = key.casefold() in {"状态", "当前状态", "status", "当前status"}
++        block_scalar = bool(re.fullmatch(r"[|>](?:[1-9][+-]?|[+-][1-9]?)?", value))
++        if block_scalar and not is_status:
++            continue
++        if (value.startswith(tuple("'\"[]{}&*!|>%@`")) or
++                re.match(r"[-?:](?:[ \t]|$)", value) or re.search(r":[ \t]", value)):
++            return ["unsupported_frontmatter"], []
++        if is_status:
++            statuses.append(value.casefold())
++    return statuses, lines[end + 1:]
++
++
++def _document_header_lines(lines):
++    """Recognize ATX and Setext headings after removing code and comments."""
++    paragraph = []
++    previous = -2
++    for index, line in _unfenced_lines(lines):
++        if index != previous + 1:
++            for text in paragraph:
++                yield text, None
++            paragraph = []
++        previous = index
++        underline = re.fullmatch(r" {0,3}(=+|-+)[ \t]*", line)
++        if underline and paragraph:
++            title = " ".join(text.strip() for text in paragraph)
++            yield title, (1 if underline.group(1).startswith("=") else 2, title)
++            paragraph = []
++            continue
++        heading = _heading_parts(line)
++        if heading or not line.strip() or _INLINE_BLOCK_BREAK.match(line):
++            for text in paragraph:
++                yield text, None
++            paragraph = []
++            yield line, heading
++        else:
++            paragraph.append(line)
++    for text in paragraph:
++        yield text, None
++
++
+ def _declared_statuses(raw):
+     """Read document declarations before body sections, excluding code examples.
+ 
+@@ -485,26 +585,18 @@
+     override document adoption.
+     Indented code cannot declare status.
+     """
+-    statuses = []
+     title_seen = False
+     lines = raw.decode("utf-8-sig", errors="replace").splitlines()
+-    frontmatter_end = None
+-    if lines and lines[0].strip() == "---":
+-        frontmatter_end = next((index for index, line in enumerate(lines[1:], 1)
+-                                if line.strip() in {"---", "..."}), None)
+-    for index, line in _unfenced_lines(lines):
+-        in_frontmatter = frontmatter_end is not None and index <= frontmatter_end
+-        if in_frontmatter and line.lstrip().startswith("#"):
+-            continue
++    statuses, lines = _frontmatter_header(lines)
++    for line, heading in _document_header_lines(lines):
+         match = _STATUS_LINE.match(line) or _STATUS_TABLE.match(line)
+         if match:
+             statuses.append(match.group(1).strip().strip("*_` ").casefold())
+             continue
+-        heading = _HEADING.match(line)
+         if heading:
+-            title = re.sub(r"[ \t]+#+[ \t]*$", "", line[heading.end():]).strip()
++            level, title = heading
+             if (not title_seen and (_OUTLINE_TITLE.fullmatch(title) or
+-                    (len(heading.group(1)) == 1 and not _BODY_TITLE.match(title)))):
++                    (level == 1 and not _BODY_TITLE.match(title)))):
+                 title_seen = True
+             else:
+                 break
+--- a/tests/test_outline_position_audit.py
++++ b/tests/test_outline_position_audit.py
+@@ -513,6 +513,59 @@
+         self.assertEqual(result["checked_platform_rules"], "fanqie_short")
+         self.assertIn({"code": "classification_column_missing", "field": "情绪"}, result["issues"])
+ 
++    def fanqie_entrance_outline(self, entrance_lines):
++        # Supply both sets of labelled columns so the entrance decision alone
++        # determines these synthetic structure-check results.
++        return (self.platform_block("fanqie")
++                .replace("- 平台入口：短故事。", entrance_lines)
++                .replace("- 选择依据：", "- 目标读者：女频（拟选）。\n"
++                         "- 阅读标签：主分类待核对。\n- 内容标签：人设待核对。\n- 选择依据："))
++
++    def test_fanqie_uncertain_entrance_does_not_select_rules(self):
++        for entrance in ("短故事入口待核对", "短故事（入口待确认）", "小说（入口待核对）",
++                         "短故事／小说（尚未决定）", "短故事或小说", "番茄小说（入口待确认）",
++                         "短故事（标签待核对且入口待定）"):
++            with self.subTest(entrance=entrance):
++                result = self.audit(self.fanqie_entrance_outline("- 平台入口：" + entrance + "。"))
++                self.assertFalse(result["ok"])
++                self.assertEqual(result["checked_platform_rules"], "none")
++                self.assertEqual(result["issues"], [{"code": "platform_entrance_unresolved"}])
++
++    def test_fanqie_conflicting_entrances_do_not_select_rules(self):
++        before = (self.root / ".story/state.sqlite3").read_bytes()
++        for lines in ("- 平台入口：小说。\n- 页面适用性：短故事。",
++                      "- 平台入口：短故事。\n- 平台入口：小说。",
++                      "- 平台入口：短故事；页面适用性：小说。",
++                      "- 平台入口：短故事；小说。"):
++            with self.subTest(lines=lines):
++                result = self.audit(self.fanqie_entrance_outline(lines))
++                self.assertFalse(result["ok"])
++                self.assertEqual(result["checked_platform_rules"], "none")
++                self.assertEqual(result["issues"], [{"code": "platform_entrance_unresolved"}])
++        self.assertEqual((self.root / ".story/state.sqlite3").read_bytes(), before)
++
++    def test_fanqie_clear_entrance_with_pending_tag_notes_still_selects_rules(self):
++        for entrance, rule in (("短故事（入口已选，标签待核对）", "fanqie_short"),
++                               ("小说（入口已选；标签：待核对）", "fanqie_novel"),
++                               ("短故事；入口已确认；分类待核对", "fanqie_short"),
++                               ("小说（内容标签尚未核对）", "fanqie_novel")):
++            with self.subTest(entrance=entrance):
++                result = self.audit(self.fanqie_entrance_outline("- 平台入口：" + entrance + "。"))
++                self.assertTrue(result["ok"], result["issues"])
++                self.assertEqual(result["checked_platform_rules"], rule)
++
++    def test_fanqie_canonical_entrances_and_consistent_aliases_remain_compatible(self):
++        for lines, rule in (("- 平台入口：短故事。", "fanqie_short"),
++                            ("- 平台入口：番茄小说短故事。", "fanqie_short"),
++                            ("- 平台入口：小说。", "fanqie_novel"),
++                            ("- 平台入口：短故事；依据：本书拟选择的创建入口。", "fanqie_short"),
++                            ("- 平台入口：小说；依据：本书拟选择的创建入口。", "fanqie_novel"),
++                            ("- 平台入口：短故事。\n- 页面适用性：短故事入口。", "fanqie_short")):
++            with self.subTest(lines=lines):
++                result = self.audit(self.fanqie_entrance_outline(lines))
++                self.assertTrue(result["ok"], result["issues"])
++                self.assertEqual(result["checked_platform_rules"], rule)
++
+     def test_fanqie_novel_accepts_labelled_subsections(self):
+         text = """## 作品定位与平台分类
+ - 篇幅类型：长篇。
+--- a/tests/test_plan_outline_sync.py
++++ b/tests/test_plan_outline_sync.py
+@@ -161,6 +161,147 @@
+         self.assertEqual(self.bind(path, sha)["outline"]["status"], "adopted")
+         self.assertEqual(self.book.context(1)["outline"]["status"], "adopted")
+ 
++    def test_frontmatter_values_cannot_supply_document_adoption(self):
++        revision = self.book.meta("revision")
++        for metadata in ("description: |\n  status: adopted\n",
++                         "description: >-\n  状态：已采用\n",
++                         "metadata:\n  status: adopted\n",
++                         "metadata: {status: adopted}\n",
++                         "description: \"说明\nstatus: adopted\n\"\n",
++                         "description: '说明\nstatus: adopted\n'\n"):
++            with self.subTest(metadata=metadata):
++                content = "---\n" + metadata + "---\n# 全书总纲\n尚未确认采用。\n"
++                path, sha = self.readable("README.md", content)
++                args = base.story.parser().parse_args([
++                    "outline-bind", "--book", str(self.root), "--chapter", "1", "--file", path,
++                    "--sha256", sha, "--expect", str(revision)])
++                self.assert_error("invalid_input", base.story.run, args)
++                self.assertIsNone(outline.binding_for(self.book, 1))
++                self.assertEqual(self.book.meta("revision"), revision)
++                self.assert_error("outline_binding_required", self.book.commit, 1, self.draft, self.delta())
++                self.assertEqual(self.book.meta("last_chapter"), 0)
++
++    def test_frontmatter_scalar_markers_cannot_hide_candidate_header(self):
++        revision = self.book.meta("revision")
++        for marker, example in (("```", "```\n状态：已采用\n```"),
++                                ("~~~", "~~~\n状态：已采用\n~~~"),
++                                ("<!--", "<!--\n状态：已采用\n-->")):
++            with self.subTest(marker=marker):
++                content = (f"---\ndescription: |\n  {marker}\nstatus: candidate\n---\n"
++                           f"# 全书总纲\n{example}\n## 第1章\n沈禾交出钥匙。\n")
++                path, sha = self.readable("README.md", content)
++                error = self.assert_error("invalid_input", self.bind, path, sha)
++                self.assertEqual(error.details["declared_statuses"], ["candidate"])
++                self.assertIsNone(outline.binding_for(self.book, 1))
++                self.assertEqual(self.book.meta("revision"), revision)
++
++    def test_frontmatter_metadata_and_markdown_have_separate_parser_state(self):
++        content = ("---\ndescription: |-\n  status: candidate\n  ---\n  ```\n  <!--\n"
++                   "  # not a heading\nstatus: adopted\n  # metadata comment\n---\n# 全书规划\n状态：已采用\n"
++                   "\n## 第1章\n状态：待写\n沈禾交出钥匙。\n")
++        path, sha = self.readable("README.md", content)
++        args = base.story.parser().parse_args([
++            "outline-bind", "--book", str(self.root), "--chapter", "1", "--file", path,
++            "--sha256", sha, "--expect", str(self.book.meta("revision"))])
++        self.assertEqual(base.story.run(args)["outline"]["status"], "adopted")
++        self.assertEqual(self.book.context(1)["outline"]["status"], "adopted")
++        committed = self.book.commit(1, self.draft, self.delta())
++        self.assertTrue(committed["exports_complete"])
++        self.assertEqual(self.book.meta("last_chapter"), 1)
++
++    def test_unclosed_or_unsupported_frontmatter_cannot_borrow_markdown_adoption(self):
++        revision = self.book.meta("revision")
++        for prefix in ("---\nstatus: adopted\n",
++                       "---\nstatus: adopted\nmetadata: [\nstatus: candidate\n]\n---\n",
++                       "---\nstatus: adopted\ndescription: \"说明\nstatus: candidate\n\"\n---\n",
++                       "---\nstatus: adopted\ndescription:\n  status: candidate\n---\n",
++                       "---\nstatus: |\n  adopted\n---\n",
++                       "---\nstatus: \"adopted\"\n---\n",
++                       "---\nstatus: adopted\n  but still awaiting approval\n---\n"):
++            with self.subTest(prefix=prefix):
++                path, sha = self.readable("README.md", prefix + "# 全书规划\n状态：已采用\n")
++                self.assert_error("invalid_input", self.bind, path, sha)
++                self.assertIsNone(outline.binding_for(self.book, 1))
++                self.assertEqual(self.book.meta("revision"), revision)
++
++    def test_indented_opening_delimiters_are_code_not_frontmatter(self):
++        for indent in ("    ", "\t", " \t"):
++            with self.subTest(indent=indent):
++                content = (f"{indent}---\n{indent}状态：候选\n{indent}---\n\n"
++                           "# 全书总纲\n状态：已采用\n\n## 第1章\n状态：待写\n")
++                path, sha = self.readable("README.md", content)
++                self.assertEqual(self.bind(path, sha)["outline"]["status"], "adopted")
++                self.assertEqual(self.book.context(1)["outline"]["status"], "adopted")
++
++    def test_plain_frontmatter_keys_allow_spacing_and_comments(self):
++        for declaration in ("status : adopted", "状态 : 已采用", "status\t: adopted # 已确认"):
++            with self.subTest(declaration=declaration):
++                content = ("---\n" + declaration + "\n  # metadata note\n---\n"
++                           "# 全书总纲\n\n## 第1章\n状态：待写\n")
++                path, sha = self.readable("README.md", content)
++                self.assertEqual(self.bind(path, sha)["outline"]["status"], "adopted")
++                self.assertEqual(self.book.context(1)["outline"]["status"], "adopted")
++
++    def test_setext_body_status_cannot_supply_document_adoption(self):
++        revision = self.book.meta("revision")
++        for prefix in ("", "# 全书规划\n\n", "---\nupdated: 2026-10-03\n---\n"):
++            for heading in ("第1章", "本章目标", "场景一", "第1章\n门后的雨"):
++                for underline in ("===", "---"):
++                    with self.subTest(prefix=prefix, heading=heading, underline=underline):
++                        content = prefix + heading + "\n" + underline + "\n状态：已采用\n"
++                        path, sha = self.readable("README.md", content)
++                        self.assert_error("invalid_input", self.bind, path, sha)
++                        self.assertIsNone(outline.binding_for(self.book, 1))
++                        self.assertEqual(self.book.meta("revision"), revision)
++        self.assert_error("outline_binding_required", self.book.commit, 1, self.draft, self.delta())
++        self.assertEqual(self.book.meta("last_chapter"), 0)
++
++    def test_adopted_header_is_not_overridden_by_setext_chapter_progress(self):
++        for prefix in ("状态：已采用\n\n", "# 全书规划\n状态：已采用\n\n",
++                       "---\nstatus: adopted\n---\n"):
++            for underline in ("===", "---"):
++                with self.subTest(prefix=prefix, underline=underline):
++                    content = prefix + "第1章\n门后的雨\n" + underline + "\n状态：待写\n"
++                    path, sha = self.readable("README.md", content)
++                    self.assertEqual(self.bind(path, sha)["outline"]["status"], "adopted")
++                    self.assertEqual(self.book.context(1)["outline"]["status"], "adopted")
++        committed = self.book.commit(1, self.draft, self.delta())
++        self.assertTrue(committed["exports_complete"])
++        self.assertEqual(self.book.meta("last_chapter"), 1)
++
++    def test_setext_document_titles_preserve_adoption_and_header_conflicts(self):
++        for title, underline in (("全书总纲", "---"), ("第1章 雨夜细纲", "---"),
++                                 ("雨夜的交接", "===")):
++            with self.subTest(title=title, underline=underline):
++                document = title + "\n" + underline + "\n状态：已采用\n\n## 本章目标\n状态：待写\n"
++                path, sha = self.readable("README.md", document)
++                self.assertEqual(self.bind(path, sha)["outline"]["status"], "adopted")
++                previous = outline.binding_for(self.book, 1)
++                revision = self.book.meta("revision")
++                path, sha = self.readable("README.md", "status: candidate\n\n" + document)
++                error = self.assert_error("invalid_input", self.bind, path, sha)
++                self.assertEqual(error.details["declared_statuses"], ["candidate", "已采用"])
++                self.assertEqual(outline.binding_for(self.book, 1), previous)
++                self.assertEqual(self.book.meta("revision"), revision)
++
++    def test_multiline_setext_body_title_cannot_supply_status(self):
++        for underline in ("===", "---"):
++            with self.subTest(underline=underline):
++                path, sha = self.readable("README.md", "第1章\n状态：已采用\n" + underline + "\n")
++                revision = self.book.meta("revision")
++                self.assert_error("invalid_input", self.bind, path, sha)
++                self.assertIsNone(outline.binding_for(self.book, 1))
++                self.assertEqual(self.book.meta("revision"), revision)
++
++    def test_setext_examples_do_not_hide_later_header_conflicts(self):
++        for example in ("```\n第1章\n---\n```\n", "<!--\n第1章\n===\n-->\n",
++                        "    第1章\n    ---\n"):
++            with self.subTest(example=example):
++                content = "# 全书总纲\n状态：已采用\n" + example + "status: candidate\n## 第1章\n"
++                path, sha = self.readable("README.md", content)
++                error = self.assert_error("invalid_input", self.bind, path, sha)
++                self.assertEqual(error.details["declared_statuses"], ["已采用", "candidate"])
++
+     def test_titleless_status_does_not_consume_a_chapter_heading_as_title(self):
+         for prefix in ("状态：已采用\n\n", "---\nstatus: adopted\n---\n"):
+             for heading in ("# 第1章", "## 第1章", "# 本章目标", "## 场景一"):

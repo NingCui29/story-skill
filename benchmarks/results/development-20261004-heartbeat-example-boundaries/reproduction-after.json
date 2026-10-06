@@ -1,0 +1,59 @@
+{
+  "runtime_sha256": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+  "adoption": [
+    {
+      "case": "fully_quoted",
+      "result": {
+        "bind": "invalid_input",
+        "commit": "outline_binding_required"
+      },
+      "db_and_files_unchanged": true,
+      "last_chapter": 0
+    },
+    {
+      "case": "lazy_quote",
+      "result": {
+        "bind": "invalid_input",
+        "commit": "outline_binding_required"
+      },
+      "db_and_files_unchanged": true,
+      "last_chapter": 0
+    }
+  ],
+  "frontmatter_audit": {
+    "ok": false,
+    "covered_platforms": [],
+    "section_lines": [],
+    "issues": [
+      {
+        "code": "position_section_missing"
+      },
+      {
+        "code": "required_platform_missing",
+        "platform": "fanqie"
+      },
+      {
+        "code": "required_platform_missing",
+        "platform": "qimao"
+      }
+    ]
+  },
+  "inline_code_audit": {
+    "ok": false,
+    "fields_found": [
+      "作品阶段",
+      "平台入口",
+      "平台分类",
+      "待核对",
+      "来源与核对日期",
+      "篇幅类型",
+      "选择依据"
+    ],
+    "issues": [
+      {
+        "code": "position_field_missing",
+        "field": "目标平台"
+      }
+    ]
+  }
+}

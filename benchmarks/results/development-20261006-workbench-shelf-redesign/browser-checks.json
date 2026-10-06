@@ -1,0 +1,48 @@
+{
+  "browser": "Codex In-app Browser",
+  "private_preview_before_install": true,
+  "title_search": {
+    "query": "妈妈",
+    "result_count": 1
+  },
+  "recorded_genre_search": {
+    "query": "女性成长",
+    "result_count": 1
+  },
+  "directory_search": {
+    "query": "短篇/示例作品",
+    "result_count": 1
+  },
+  "search_inside_type_filter": true,
+  "refresh_preserved_query_and_order": true,
+  "clear_preserved_type_and_order": true,
+  "add_form_collapsed_by_default_and_expandable": true,
+  "responsive": [
+    {
+      "width": 1280,
+      "height": 720,
+      "columns": 3,
+      "horizontal_overflow": false,
+      "first_row_button_bottom": 631.859375
+    },
+    {
+      "width": 760,
+      "height": 900,
+      "columns": 2,
+      "horizontal_overflow": false,
+      "first_button_bottom": 656.5078125
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "columns": 1,
+      "horizontal_overflow": false,
+      "first_button_bottom": 676.609375
+    }
+  ],
+  "viewport_override_reset": true,
+  "installed_library_visible_books": 17,
+  "final_filter": "all",
+  "final_order": "newest",
+  "real_editor_open_buttons_not_clicked": true
+}

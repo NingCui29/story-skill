@@ -1,0 +1,9 @@
+test_replacement_after_parent_check_never_returns_another_books_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_replacement_after_parent_check_never_returns_another_books_service) ... ok
+test_child_cli_rejects_unexpected_book_before_creating_service_files (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_child_cli_rejects_unexpected_book_before_creating_service_files) ... ok
+test_child_rechecks_expected_book_when_initial_packet_reads_replacement (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_child_rechecks_expected_book_when_initial_packet_reads_replacement) ... ok
+test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.876s
+
+OK

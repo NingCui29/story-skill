@@ -1,0 +1,74 @@
+test_replacement_after_parent_check_never_returns_another_books_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_replacement_after_parent_check_never_returns_another_books_service) ... FAIL
+test_child_cli_rejects_unexpected_book_before_creating_service_files (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_child_cli_rejects_unexpected_book_before_creating_service_files) ... FAIL
+test_child_rechecks_expected_book_when_initial_packet_reads_replacement (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_child_rechecks_expected_book_when_initial_packet_reads_replacement) ... ERROR
+test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) ... 
+  test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) (stage='reuse', reported_id=None) ... FAIL
+  test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) (stage='reuse', reported_id='another-book') ... FAIL
+  test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) (stage='start', reported_id=None) ... FAIL
+  test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) (stage='start', reported_id='another-book') ... FAIL
+
+======================================================================
+ERROR: test_child_rechecks_expected_book_when_initial_packet_reads_replacement (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_child_rechecks_expected_book_when_initial_packet_reads_replacement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_service_recovery.py", line 314, in test_child_rechecks_expected_book_when_initial_packet_reads_replacement
+    self.w.editor_server(self.root, expected_book_id=self.entry['book_id'])
+TypeError: editor_server() got an unexpected keyword argument 'expected_book_id'
+
+======================================================================
+FAIL: test_replacement_after_parent_check_never_returns_another_books_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_replacement_after_parent_check_never_returns_another_books_service)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_service_recovery.py", line 286, in test_replacement_after_parent_check_never_returns_another_books_service
+    with self.assertRaises(self.story.StoryError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: StoryError not raised
+
+======================================================================
+FAIL: test_child_cli_rejects_unexpected_book_before_creating_service_files (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_child_cli_rejects_unexpected_book_before_creating_service_files)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_service_recovery.py", line 297, in test_child_cli_rejects_unexpected_book_before_creating_service_files
+    self.assertIn('workbench_book_changed', result.stdout + result.stderr)
+AssertionError: 'workbench_book_changed' not found in 'usage: story.py [-h] [--version]\n                {template,init,status,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,outline-bind,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n                ...\nstory.py: error: unrecognized arguments: --expected-book-id another-book\n'
+
+======================================================================
+FAIL: test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) (stage='reuse', reported_id=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_service_recovery.py", line 335, in test_library_requires_selected_identity_in_reused_and_started_service
+    with self.assertRaises(self.story.StoryError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: StoryError not raised
+
+======================================================================
+FAIL: test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) (stage='reuse', reported_id='another-book')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_service_recovery.py", line 335, in test_library_requires_selected_identity_in_reused_and_started_service
+    with self.assertRaises(self.story.StoryError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: StoryError not raised
+
+======================================================================
+FAIL: test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) (stage='start', reported_id=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_service_recovery.py", line 335, in test_library_requires_selected_identity_in_reused_and_started_service
+    with self.assertRaises(self.story.StoryError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: StoryError not raised
+
+======================================================================
+FAIL: test_library_requires_selected_identity_in_reused_and_started_service (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_library_requires_selected_identity_in_reused_and_started_service) (stage='start', reported_id='another-book')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_service_recovery.py", line 335, in test_library_requires_selected_identity_in_reused_and_started_service
+    with self.assertRaises(self.story.StoryError) as error:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: StoryError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.640s
+
+FAILED (failures=6, errors=1)

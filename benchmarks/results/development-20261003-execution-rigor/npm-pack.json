@@ -1,0 +1,40 @@
+{
+  "ok": true,
+  "version": "0.6.11",
+  "release_status": "unreleased development snapshot",
+  "node_version": "v24.19.0",
+  "npm_version": "10.9.3",
+  "npm_registry_integrity_verified": true,
+  "zip": {
+    "archive": "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/npm-pack/story-skill-0.6.11.zip",
+    "version": "0.6.11",
+    "files": 46,
+    "sha256": "73f0d2fd00c8e292ef4419cf4f5086bc8eaa16420a3429e10b24eba1c3c68ab8",
+    "bytes": 302545
+  },
+  "tarball": "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/npm-pack/packed/ningcui29-story-skill-0.6.11.tgz",
+  "tarball_sha256": "45604909706dcb7c52bd4c27da40b1cd212bd67147d6f0b0e738e7fe0c7c67ca",
+  "payload_files": 46,
+  "wrapper_files": 2,
+  "strict_tarball_verified": true,
+  "runtime_smoke": {
+    "ok": true,
+    "commands": 4,
+    "skills": [
+      "story-skill",
+      "story-skill-analyze",
+      "story-skill-cover",
+      "story-skill-plan",
+      "story-skill-publish",
+      "story-skill-research",
+      "story-skill-review",
+      "story-skill-write"
+    ],
+    "skill_files": 46,
+    "temporary_book_removed": true
+  },
+  "global_install": false,
+  "published": false,
+  "source_payload_matches_at_end": true,
+  "pnpm_note": "Earlier pnpm rejected output remains a separate tool difference; no checks were relaxed."
+}

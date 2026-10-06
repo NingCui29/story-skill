@@ -1,0 +1,450 @@
+--- before/README.md
++++ after/README.md
+@@ -52,7 +52,7 @@
+ 
+ 先确定书名、人物动机、核心冲突、开篇看点和长期推进方向。
+ 另建书名目录，保存创作约定、开书策划、全书总纲、分卷规划和前三章细纲。
+-分别记录长短篇篇幅类型，并按实际内容、目标平台及拟选创建入口填写该入口的分类。本轮只做规划，不写正文。
++记录本书长短篇定位，默认分别给齐番茄、七猫的分类，其他已涉及平台也列全；各按实际内容及拟选创建入口填写。本轮只做规划，不写正文。
+ ```
+ 
+ 写短篇时，将类型改为短篇，补充预计篇幅与结局方向。新写完整章节按 2400—2800 字规划；用户或书根 `创作约定.md` 明确要求其他篇幅或统计口径时，在章计划的 `length_exception` 中记录原话或可核对的书内引文。保存新章计划、检查及提交时均要求这项记录；书内引文还须与当前文件吻合。旧计划不会自动改写，续写前需核对并同步本次未写章节。章中续写、局部修改不按整章字数扩写，旧正式章节也不追溯修改。
+@@ -146,7 +146,7 @@
+ 
+ 正文按语义分段，段间空一行，不手工缩进。换人发言默认换段，同一人物紧密相关的动作和短对白可以同段；不按屏幕行数强拆。成稿不混入 Markdown 标记、评分、分析或创作说明。新写、续写、润色、排版和审校分别处理，硬性字数要求实际统计。
+ 
+-总纲按作品类型与目标平台填写适用分类，标签依据真实内容与已核对选项选择。作品阶段按实际后台记录；分类逐栏区分拟选、后台已确认和待核对，经确认可选而留空的栏目标“不选”。当前 [七猫作品类型与标签表](skills/story-skill-plan/references/qimao-tags.md) 已在七猫中文网新建小说、新建短故事页核对男、女频分类及四栏标签；本次实测的普通分类分支弹窗逐栏要求 1～3 个，不推定覆盖所有分支。现实题材分支另有“仅选1个”的页面提示，但未保存表单的交互与该提示并不一致，最终创建限制尚未确认，规划时标为待核对。短篇完本还需以书名命名的全文合并文件、全文审查与封面；封面生成依赖可用的图像工具。
++总纲与分类答复默认分别给齐番茄、七猫，其他本次要求或书内约定涉及的平台也列全；主投选择不缩减覆盖，只有明确限定本轮单平台时才收窄。各平台按自己的入口和原生栏目填写，标签依据真实内容与已核对选项选择。作品阶段按实际后台记录；分类逐栏区分拟选、后台已确认和待核对，经确认可选而留空的栏目标“不选”。当前 [七猫作品类型与标签表](skills/story-skill-plan/references/qimao-tags.md) 已在七猫中文网新建小说、新建短故事页核对男、女频分类及四栏标签；本次实测的普通分类分支弹窗逐栏要求 1～3 个，不推定覆盖所有分支。现实题材分支另有“仅选1个”的页面提示，但未保存表单的交互与该提示并不一致，最终创建限制尚未确认，规划时标为待核对。短篇完本还需以书名命名的全文合并文件、全文审查与封面；封面生成依赖可用的图像工具。
+ 
+ 一书一目录，小说存放在技能源码和安装目录之外。以下仅为目录示意，规划阶段不提前生成空正文：
+ 
+--- before/skills/story-skill-plan/SKILL.md
++++ after/skills/story-skill-plan/SKILL.md
+@@ -19,7 +19,11 @@
+ 
+ 开书或复核总纲时，对照书名、简介和题材标签，核对最主要的阅读承诺由哪些情节建立、阶段兑现并影响后续；延后兑现应有本书理由，慢热也可通过小的关系或认知变化维持期待。若卖点声称现实、关系或局势发生“变化”，规划须说清可观察的前态、变化和人物承担的后果，不能把新线索首次出现直接当成已证实的变化。发现定位与安排不符时，指出具体项，按本次授权校准定位或情节安排，再展开相关细纲，不统一规定兑现章号。
+ 
+-正式新开或维护任何小说的全书总纲（短篇可用等效规划）时，在靠前位置按 [大纲的平台分类字段](../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 写明本书是长篇还是短篇、目标平台、作品实际阶段、该平台对应的栏目与分类、各项内容依据和核对来源；分类逐栏标拟选、后台已确认或待核对，经证实可选的栏位才可标“不选”。用户指定多个平台时分平台记录；未指定平台时先查书内约定和投稿目标，仍无目标则暂定拟投平台并说明依据。番茄书读取 [番茄标签选择表](references/fanqie-tags.md)，七猫书读取 [七猫作品类型与标签](references/qimao-tags.md)：先依据实际创建入口区分小说、短故事等入口，篇幅类型不代替入口选择；仅当所选入口设有男频、女频频道时再选频道，按对应参考中的原栏目、父子分类和当前数量提示选择，不跨平台、频道或入口借词。其他平台及未覆盖的入口核对其当前官方页面或用户提供的后台截图。不能核实的选项列为待核对，不把自拟题材词伪装成可提交标签；已有平台分类先核对实际值，不擅自更改。平台分类不写入工具章计划的 `tags`；交付总纲前对现行文件运行只读 `outline-audit --book "<书根>" --file "<书根内相对总纲路径.md>"` 核对字段和日期，再人工逐栏检查选项、状态与正文依据。等效格式若未被结构检查识别，不能因工具报缺项就改写有意的布局；人工核对并说明范围。待核对项不能报为平台已确认。
++正式新开、维护总纲（短篇可用等效规划）或直接回答“分类／标签”时，默认同时给出**番茄、七猫**两套分类；本次要求或书内约定还涉及其他平台的，一并逐平台列出。主投平台可单独注明，不因此省略另一平台；只有用户明确要求本轮仅处理某一平台时才收窄范围。文件和答复均须完整覆盖，不能总纲写了两套、答复却只给一套。按 [大纲的平台分类字段](../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 为每个平台分别保存入口、作品阶段、原生栏目、具体分类、内容依据及来源日期，不能合写一组“通用分类”。
++
++分别读取 [番茄标签选择表](references/fanqie-tags.md) 和 [七猫作品类型与标签](references/qimao-tags.md)，按本书在各平台实际拟选或已使用的入口、频道及栏目填写；篇幅类型不代替入口，不跨平台借词。各栏标拟选、后台已确认或待核对，经证实可选才标“不选”。某个平台暂不能核实，也保留该平台完整栏目和已有可靠依据，明确具体待核对项，不能省略该平台或自造官方标签。其他平台按其官方页面或用户提供的后台截图核对；已有分类保留实际值，变化单列说明。平台分类不写入工具章计划的 `tags`。
++
++交付总纲前，默认对现行文件运行 `outline-audit --book "<书根>" --file "<书根内相对总纲路径.md>" --require-platform fanqie --require-platform qimao`，分别检查两平台字段与来源日期，避免一套字段替另一套补缺；明确仅处理一个平台时只要求对应平台。随后人工核对每个平台的选项、数量、状态与正文依据，其他平台未内置的规则也逐栏核查。等效格式未被工具识别时，说明未覆盖处并人工核对，不为通过检查改写真实布局，也不把待核对报成平台已确认。
+ 
+ 设计主线矛盾、开篇看点、具体紧急处置、经营选择或数字安排、其他专业过程，或修整平淡大纲时，读取 [冲突与看点](../story-skill-write/references/drama.md)，具体取舍以该共享指导为准。不要把世界观清单或工具状态当情节来源。近期细纲写清具体尝试、阻力为何不能轻易绕过、尝试如何引出回应、人物如何应变或取舍，以及读者会在哪场戏看到局面变化和回报；连章安排按 [主线跨章推进](../story-skill-write/references/drama.md#主线怎样跨章前进) 核对前章结果怎样改变后章条件，不只排列各章独立事件；更新近期细纲时按同一参考回看阶段完成条件与正文积累，再安排尚未具备的条件。可核验的办事流程只有实际改变人物选择、阻力或后果时才进入细纲，不能用它代替剧情推进，也不靠“强冲突、大反转、爽点”标签代替内容。关系、幽默和日常也可承担看点。规划下一卷时，核对上一卷结束条件是否已在正文达成；有意推迟或改换目标，就明示新的跨卷因果并按授权更新卷纲，不能仅靠切换目录视作阶段完成。
+ 
+--- before/skills/story-skill-plan/references/fanqie-tags.md
++++ after/skills/story-skill-plan/references/fanqie-tags.md
+@@ -1,6 +1,6 @@
+ # 番茄分类与标签选择表（作家平台实测）
+ 
+-本表原据用户截图整理于 2026-09-19；2026-09-30 在登录的[番茄作家平台创建小说页](https://fanqienovel.com/main/writer/create?enter_from=book_manage)和短故事编辑页逐栏核对。小说入口先选男频或女频，再选“阅读标签／内容标签”；短故事另用“作品分类”。下列为本次账号页面显示的选项，不保证其他账号或未来页面完全相同；投稿前仍须复核。同名词不得跨栏目挪用。
++本表原据用户截图整理于 2026-09-19；2026-09-30 在登录的[番茄作家平台创建小说页](https://fanqienovel.com/main/writer/create?enter_from=book_manage)和短故事编辑页逐栏核对。小说入口先选男频或女频，再选“阅读标签／内容标签”；短故事另用“作品分类”。下列为本次账号页面显示的选项，不保证其他账号或未来页面完全相同；投稿前仍须复核。同名词不得跨栏目挪用。以下不同入口的模板只选用本书适用的一份番茄分段；完整总纲或分类答复还须按 [分类覆盖规则](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 提供七猫及其他已涉及平台，不能把本表当成全部交付。
+ 
+ ## 短故事入口作品分类：写入总纲
+ 
+@@ -9,7 +9,7 @@
+ 在 `01_大纲细纲/全书总纲.md`（或短篇已有等效规划）靠前位置，只写本书实际拟选或平台已确认的分类，不把下面的完整选项表复制进每本书：
+ 
+ ```markdown
+-## 作品定位与平台分类
++## 作品定位与平台分类（番茄）
+ 
+ - 篇幅类型：短篇；依据：本书预计篇幅与短篇定位。
+ - 目标平台：番茄小说；作品阶段：尚未创建（拟投），或按本书后台原状态记录（草稿／审核中／退回／已发布等）；未查看后台则写待核对。
+@@ -79,7 +79,7 @@
+ 在 `01_大纲细纲/全书总纲.md`（或已有等效的全书大纲）靠前位置写一组本书标签，保持状态真实：
+ 
+ ```markdown
+-## 作品定位与平台分类
++## 作品定位与平台分类（番茄）
+ 
+ - 篇幅类型：长篇／短篇；依据：本书预计篇幅与定位。
+ - 目标平台：番茄小说；作品阶段：尚未创建（拟投），或按本书后台原状态记录（草稿／审核中／退回／已发布等）；未查看后台则写待核对。
+--- before/skills/story-skill-plan/references/qimao-tags.md
++++ after/skills/story-skill-plan/references/qimao-tags.md
+@@ -15,10 +15,10 @@
+ 
+ ## 写入总纲与交付检查
+ 
+-在 `01_大纲细纲/全书总纲.md` 或已有等效规划靠前位置，仅写本书选择及依据，不复制整份词表。短篇沿用等效规划，并注明使用小说还是短故事入口；多平台分别记录。
++在 `01_大纲细纲/全书总纲.md` 或已有等效规划靠前位置，仅写本书选择及依据，不复制整份词表。短篇沿用等效规划，并注明使用小说还是短故事入口。以下只是七猫分段；完整总纲或分类答复还须按 [分类覆盖规则](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 提供番茄及其他已涉及平台，不能只交七猫。
+ 
+ ```markdown
+-## 作品定位与平台分类
++## 作品定位与平台分类（七猫）
+ 
+ - 篇幅类型：长篇／短篇；依据：……
+ - 目标平台：七猫；作品阶段：尚未创建（拟投），或按本书后台原状态记录（草稿／审核中／退回／已发布等）；未查看后台则写待核对。
+--- before/skills/story-skill-publish/SKILL.md
++++ after/skills/story-skill-publish/SKILL.md
+@@ -15,7 +15,7 @@
+ 
+ 作者交接前另核对实际创作中是否使用生成式 AI，以及目标平台当前是否要求填写使用情况或保留标识；事实不明就列为待确认，不预填“未使用 AI”，不移除平台已标注的标识。此项人工核对不写入 ZIP 或声称平台认可。用户要求投稿前内容风险检查或带来后台退回理由时，转用 [审稿修订](../story-skill-review/SKILL.md) 中对应平台的条件性审查；有效审查收据只证明本地流程记录完整，不证明平台内容审核通过。
+ 
+-交接时用简短的“已核对／待核对／不适用”清单列出书名与目标作品是否对应、简介、封面、章节范围、素材来源与授权依据、AI 使用及所需声明、目标入口分类。每项只记录本次可见依据；缺简介、封面、权利资料或实际后台页面时如实列为待核对，不推断其合规或替作者填写声明。这是现有材料的交接检查，不自动扩大为全文内容审稿；发现具体风险或用户要求深审时按审稿技能处理。交付时分别说明“ZIP 技术核验是否通过”和“投稿材料是否齐全”：前者依据 `artifact_verified`、`usable_now`，后者依据上述清单与当前入口；有待核项就列明，不能把包可用写成材料齐全。分类拟选与后台已确认、作品草稿与审核或发布状态分别记录。
++交接时用简短的“已核对／待核对／不适用”清单列出书名与目标作品是否对应、简介、封面、章节范围、素材来源与授权依据、AI 使用及所需声明、目标入口分类。每项只记录本次可见依据；缺简介、封面、权利资料或实际后台页面时如实列为待核对，不推断其合规或替作者填写声明。这是现有材料的交接检查，不自动扩大为全文内容审稿；发现具体风险或用户要求深审时按审稿技能处理。交付时分别说明“ZIP 技术核验是否通过”和“投稿材料是否齐全”：前者依据 `artifact_verified`、`usable_now`，后者依据上述清单与当前入口；有待核项就列明，不能把包可用写成材料齐全。分类拟选与后台已确认、作品草稿与审核或发布状态分别记录。 总纲分类另按 [共享覆盖规则](../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 默认给齐番茄、七猫及其他已涉及平台，不因本次材料包只绑定一个目标而省略另一套；材料包仍按本次实际指定平台分别准备。
+ 
+ 1. 用 `status --book "<书根>"` 取得当前 revision 和导出状态，再运行 `template publish` 获得输入结构。由 助手 填写机器字段，`chapters` 使用连续且升序的数字章号，`mode` 仅支持 `draft`。
+ 2. 使用 `publish-prepare --book "<书根>" --input "<输入JSON路径>" --expect R --summary` 保存清单并取得简洁回执；完整稿件仍保存在账本中，不加 `--summary` 时回执包含完整清单。输入文件保存在本书 `.story/` 内；普通写作、提交和导出不隐式执行此命令。相同正式章节和目标复用仍有效的清单；无关笔记更新不会生成重复清单，回执中的准备版本仍保留原值。
+--- before/skills/story-skill-write/references/chapter.md
++++ after/skills/story-skill-write/references/chapter.md
+@@ -33,7 +33,7 @@
+ 
+ ## 短篇完本与修订交付
+ 
+-完整短篇交付时，无论新写还是修订后成品，都核对现行全书总纲或等效规划中的篇幅类型、目标平台、平台原生分类、各项实际正文依据、来源与核对日期及拟选／已确认状态。缺文件、缺项或与终稿不符时，按 [大纲的平台分类字段](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 留存已有旧版并补齐或更新；已有平台确认值保持实际记录，差异和未核实选项明示待核对，不把本地拟选改称后台已确认。此项在完本交付时核对，不为每章重复查询平台。交付列出全文、实际封面和现行总纲／等效规划的路径，以及剩余待核对项。
++完整短篇交付时，无论新写还是修订后成品，都按下述共享规则核对现行总纲或等效规划的分类覆盖：默认番茄、七猫均有独立完整分段，本次要求或书内约定涉及的其他平台也列全，不因主投平台省略另一套。逐平台核对本书篇幅类型、实际入口、原生栏目与分类、正文依据、来源日期及拟选／已确认／待核对状态；分类答复也按同一范围给齐。缺文件、缺项或与终稿不符时，按 [大纲的平台分类字段](../../story-skill/references/project-state.md#大纲中的作品类型与平台分类) 留存已有旧版并补齐或更新；已有平台确认值保持实际记录，差异和未核实选项明示待核对，不把本地拟选改称后台已确认。此项在完本交付时核对，不为每章重复查询平台。交付列出全文、实际封面和现行总纲／等效规划的路径，以及剩余待核对项。
+ 
+ 短篇同样放入带卷名的首卷目录，可整篇作为第 1 单元，也可按用户要求分单元提交；范围对应当前单元。整篇单单元若超过默认每章 2400—2800 字，须有用户要求或书根 `创作约定.md` 明确采用单单元篇幅，并在写作前把实际范围写入该单元 `plan.length`、把真实依据写入 `plan.length_exception`；只给全书总字数不自动取消默认章幅。没有单单元例外时按有意义的叙事节点分章，不为凑字数机械切断场景。接入的旧短篇先按 [补齐原章流程](../../story-skill/references/project-state.md#旧短篇补齐原章) 核对并补存缺失原章。全书完本并完成逐章导出后，执行 `assemble-short --book "<目录>" --final-chapter N`，N 为本书实际最终章号；工具核对章节与导出，在书根新建全文并登记为受保护导出，逐章 `.md` 保留。普通书名使用 `<书名>.md`，特殊或过长书名使用回执中的合法文件名；完整书名保留在书籍信息中，预期与登记路径见 [书名与路径规则](../../story-skill/references/project-state.md#书名目录与开书落点)。新合并稿从第 1 章章名开始，按章号顺序仅包含各章章名和正文；旧版含书名首行的合并稿须重新合并并保留备份。核对章节完整、总长度、段落及导语没有重复，打开实际全文文件检查，再按 [全书完本审查](#全书完本审查) 核对文学收束并交付实际路径。
+ 
+--- before/skills/story-skill/references/project-state.md
++++ after/skills/story-skill/references/project-state.md
+@@ -45,23 +45,40 @@
+ 
+ ### 大纲中的作品类型与平台分类
+ 
+-每本小说的现行全书总纲（短篇可用等效规划）都在靠前位置保留以下定位信息；维护旧大纲时补齐，不把平台分类写进工具章计划的 `tags`：
++每本小说的现行全书总纲（短篇可用等效规划）靠前保留本书的篇幅定位，并**默认分别列出番茄、七猫的完整分类**。直接回复分类或标签时同样给齐这两套；本次要求或书内约定包含其他平台的也逐个平台补上。主投选择不减少分类覆盖；只有本轮明确限定单一平台时才按该范围处理。维护旧大纲时补齐缺的平台，已有后台确认值原样保留，新增建议另标拟选或待核对；分类不写进工具章计划的 `tags`。
++
++每个平台使用独立、带平台名称的定位块，不把两个平台合写在同一“目标平台”字段里。以下为框架，各平台具体栏目按对应参考补齐；不能用“同上”“通用标签”替代另一平台的分类：
+ 
+ ```markdown
+-## 作品定位与平台分类
++## 作品定位与平台分类（番茄）
+ 
+-- 篇幅类型：长篇／短篇；依据：预计篇幅与本书定位。
+-- 目标平台：平台名称；作品阶段：尚未创建（拟投），或按本书后台原状态记录（如草稿、审核中、退回、已发布）；未查看后台时写待核对。
+-- 平台入口：该平台实际拟选择或已使用的创建入口；依据：投稿目标或后台现值。
+-- 平台分类：按所选入口的原栏目逐栏写值及核对状态（拟选／后台已确认／待核对）。经该入口确认可选而决定留空的栏目写“不选”；必选栏或可选性未核实的栏目不能写“不选”代替待核对。
+-- 选择依据：各值对应本书已采用的人物、主线、关系或世界设定；未写成正文的注明“规划中”。
+-- 来源与核对日期：官方页面链接、后台截图或已发布书籍的实际设置；日期 YYYY-MM-DD。
+-- 待核对：平台选项、数量限制或本书依据尚不明确的项目；无则写“无”。
++- 篇幅类型：长篇／短篇；依据：本书预计篇幅与定位。
++- 目标平台：番茄小说；作品阶段：按本平台实际情况填写。
++- 平台入口：实际拟选择或已使用的入口；未确定则写待核对及原因。
++- 平台分类：按番茄该入口的原栏目逐栏列具体值及拟选／后台已确认／待核对状态。
++- 选择依据：逐栏对应本书人物、事件、关系或设定；未写成正文的注明规划中。
++- 来源与核对日期：本平台官方页面、后台截图或实际设置；YYYY-MM-DD。
++- 待核对：本平台仍未核实的项目；无则写无。
++
++## 作品定位与平台分类（七猫）
++
++- 篇幅类型：长篇／短篇；依据：与本书整体定位一致。
++- 目标平台：七猫；作品阶段：按本平台实际情况填写。
++- 平台入口：实际拟选择或已使用的入口；未确定则写待核对及原因。
++- 分类频道：按本书在七猫的实际拟选或已用频道填写。
++- 一级分类：按本频道填写具体值及核对状态。
++- 二级分类：按所选一级分类填写具体值及核对状态。
++- 风格／角色／情节／背景：逐栏填写七猫原词及核对状态。
++- 选择依据：逐栏对应本书内容；未写成正文的注明规划中。
++- 来源与核对日期：七猫官方页面、后台截图或实际设置；YYYY-MM-DD。
++- 待核对：本平台仍未核实的项目；无则写无。
+ ```
+ 
+-一部书只写自己的篇幅类型；平台入口另按实际创建选择，不从长篇／短篇直接推定，也不混用其他入口的分类。已有书库还要核对 `status.kind`，不因大纲文字冲突重建书库。明确面向多个平台时按平台分段，各用本平台的原栏目名；番茄的入口、频道、选项和数量规则见 [番茄标签选择表](../../story-skill-plan/references/fanqie-tags.md)，七猫见 [七猫作品类型与标签](../../story-skill-plan/references/qimao-tags.md)，不要跨平台或入口套用。其他入口和平台按当前官方页面或用户提供的后台截图核对。平台未指定时先查创作约定和投稿目标，仍无目标则选择一个合理的拟投平台并说明理由；可继续规划，但未核实的选项列为待核对，不能自造“官方标签”。作品阶段与分类核对状态分开记录：草稿、审核中或退回都不自动证明分类已确认；后台实际显示的分类才标已确认。定位变化先提示与后台现值的差异，不静默覆盖。
++一部书只保留自己的篇幅类型；平台入口分别按实际创建选择，不从长篇／短篇直接推定，已有书库还要核对 `status.kind`。番茄按 [番茄标签选择表](../../story-skill-plan/references/fanqie-tags.md) 选用适用入口的完整栏目，七猫按 [七猫作品类型与标签](../../story-skill-plan/references/qimao-tags.md) 填写；不得跨平台、频道或入口借词。其他已涉及平台使用独立定位块，依据其当前官方页面或用户后台资料填写。
+ 
+-当前或候选总纲、短篇等效规划可用 `outline-audit --book "<书根>" --file "<书根内相对总纲路径.md>"` 只读核对本节字段、日期格式及所选平台常见栏目是否出现。回执给出文件哈希、范围与缺项；`ok` 只表示这种结构检查未发现缺项，`manual_review_required` 始终为真。候选、草稿文件也可显式指定后只读检查，检查不改变采用状态；正式 `outline-bind` 仍拒绝候选等非采用文件。工具不核对每栏是否选了正确的词、数量限制、状态真伪、内容依据或是否已获采用；多平台或等效自由布局无法完整识别时仍逐平台人工检查，说明未覆盖处，不为通过检查改写真实规划。
++各平台的作品阶段和分类核对状态分别记录：尚未创建写拟投，未查看后台的现状写待核对，不能把一个平台的创建、签约或分类确认状态套到另一个平台。某个平台资料不足时仍保留该平台及其已知栏目，写出有依据的拟选和具体待核对项，不用缺资料省略整个平台；经该入口确认可选且决定留空的栏位才写“不选”。已有确认值与本次建议不同，保留原值并单列差异，不静默覆盖。
++
++当前或候选总纲、短篇等效规划可用 `outline-audit --book "<书根>" --file "<书根内相对总纲路径.md>" --require-platform fanqie --require-platform qimao` 只读逐平台核对本节字段、日期格式及常见栏目，并检查番茄、七猫是否都存在；明确仅处理单平台时只保留相应 `--require-platform`。回执给出文件哈希、范围与缺项；`ok` 只表示这种结构检查未发现缺项，`manual_review_required` 始终为真。候选、草稿文件也可显式指定后只读检查，检查不改变采用状态；正式 `outline-bind` 仍拒绝候选等非采用文件。工具不核对每栏是否选了正确的词、数量限制、状态真伪、内容依据或是否已获采用；多平台或等效自由布局无法完整识别时仍逐平台人工检查，说明未覆盖处，不为通过检查改写真实规划。
+ 
+ 同一范围维护一个清晰的当前入口，文档头注明状态、更新时间和必要的来源。保留“候选／已采用／待定”等真实状态，整理或版本号较新不代表已获采用。实质修改当前规划、替换已采用方案前，将旧版放入 `99_历史版本/`，保留原文件名与相对关系；只按 `status` 同步已提交章节的进度句，不必每章另存一份大纲历史副本。分批继续时补写相应卷、章文件，将重叠的前三章场面设计等内容并入各章，不再平铺多份范围交叠的候选稿；未决方案可留在对应章并说明分歧。
+ 
+--- before/skills/story-skill/scripts/story.py
++++ after/skills/story-skill/scripts/story.py
+@@ -2709,6 +2709,8 @@
+                    help="audit always hashes every managed export")
+     s = command("outline-audit", "Read-only structural check of a whole-book outline, including candidates", integrity=False)
+     s.add_argument("--file", required=True, help="Book-relative Markdown path to the current whole-book outline")
++    s.add_argument("--require-platform", action="append", choices=("fanqie", "qimao"), default=[],
++                   help="Require a separate positioning block for this platform; repeat for both")
+     s = command("world-save", "Save structured story state with cited evidence")
+     s.add_argument("--input", required=True)
+     s.add_argument("--expect", type=int, required=True)
+@@ -2824,7 +2826,7 @@
+         if cmd == "audit":
+             return book.audit()
+         if cmd == "outline-audit":
+-            return outline.audit_position(book, args.file)
++            return outline.audit_position(book, args.file, args.require_platform)
+         if cmd == "status":
+             return book.status()
+         if cmd == "export":
+--- before/skills/story-skill/scripts/story_outline.py
++++ after/skills/story-skill/scripts/story_outline.py
+@@ -48,6 +48,68 @@
+                           "阅读标签", "内容标签", "风格", "角色", "情节", "情绪", "背景"}
+ _TAG_GROUP_FIELDS = {"阅读标签": {"主分类", "主题", "角色", "情节"},
+                      "内容标签": {"情节", "情感", "人设", "世界观"}}
++_PLATFORM_ALIASES = {
++    "fanqie": re.compile(r"番茄(?:免费小说|小说)?|(?<![a-z])fanqie(?![a-z])", re.IGNORECASE),
++    "qimao": re.compile(r"七猫(?:免费小说|中文网|小说)?|(?<![a-z])qimao(?![a-z])", re.IGNORECASE),
++}
++_PLATFORM_SEPARATOR = re.compile(
++    r"[／/、，,|｜;&；+＋]|以及|(?<=\S)[及或与和](?=\S)|\s+(?:and|or)\s+", re.IGNORECASE)
++_PLATFORM_STATUS_NOTES = {
++    "拟投", "主投", "辅投", "备选", "候选", "待核对", "待确认", "尚未创建", "未创建", "草稿",
++    "审核中", "退回", "已发布", "已投稿", "后台已确认",
++    "planned", "proposed", "primary", "secondary", "candidate", "draft", "pending", "submitted",
++    "under review", "published", "rejected", "not created", "to be confirmed", "pending verification",
++}
++_PLATFORM_TARGET_DECLARATION = re.compile(
++    r"^(?:(?:兼投|另投|也投|拟投|主投|辅投|同时投稿(?:至|到)?|同时投(?:向|往)?)\s*[:：]?\s*"
++    r"|(?:also|additionally)\s+(?:submit(?:ting)?|publish(?:ing)?|target(?:ing)?)(?:\s+(?:to|on))?\s*[:：]?\s*)",
++    re.IGNORECASE)
++
++
++def _platform_parts(value):
++    """Split declared targets, retaining exact-name boundaries for status notes."""
++    parts = []
++    for part in _PLATFORM_SEPARATOR.split(value):
++        part = part.strip(" 。.!！\t").casefold()
++        status = re.sub(r"^(?:状态|投稿状态|status)\s*[:：]\s*", "", part)
++        if part and status not in _PLATFORM_STATUS_NOTES:
++            parts.append(part)
++    return parts
++
++
++def _declared_platforms(values):
++    """Identify each target; a combined target must never select generic rules."""
++    platforms = set()
++    for value in values:
++        label = value
++        annotations = []
++        while True:
++            matches = list(re.finditer(r"[（(]([^（）()]*)[）)]", label))
++            if not matches:
++                break
++            annotations.extend(match.group(1) for match in matches)
++            label = re.sub(r"[（(][^（）()]*[）)]", " ", label)
++        parts = _platform_parts(label)
++        for annotation in annotations:
++            annotation_parts = _platform_parts(annotation)
++            # Free-form explanations are not platform names. An explicit
++            # additional-submission declaration makes its targets relevant,
++            # including names outside the two platforms with built-in rules.
++            if any(_PLATFORM_TARGET_DECLARATION.match(part) for part in annotation_parts):
++                parts.extend(annotation_parts)
++            else:
++                # A bare known platform name is a target; a platform name
++                # mentioned inside an explanatory sentence is not.
++                parts.extend(part for part in annotation_parts
++                             if any(pattern.fullmatch(part) for pattern in _PLATFORM_ALIASES.values()))
++        for part in parts:
++            target = _PLATFORM_TARGET_DECLARATION.sub("", part)
++            known = [name for name, pattern in _PLATFORM_ALIASES.items() if pattern.search(target)]
++            if known:
++                platforms.update(known)
++            elif target:
++                platforms.add(target)
++    return sorted(platforms)
+ 
+ 
+ def _inline_code_end(lines, index, cursor, marker):
+@@ -200,8 +262,101 @@
+     return declared
+ 
+ 
+-def audit_position(book, relative_path):
++def _audit_position_section(start, lines):
++    fields = {}
++    issues = []
++    for line in lines:
++        field_line = line.lstrip(" -*+\t")
++        matches = list(_FIELD.finditer(field_line))
++        for index, match in enumerate(matches):
++            key = match.group(1).strip(" *_`\t")
++            value = match.group(2).strip(" *_`\t")
++            if key == "目标平台":
++                # Unlabelled semicolon-separated targets belong to this
++                # declaration, until the next labelled field outside an
++                # annotation begins (e.g. “（拟投；兼投：起点）”).
++                end = len(field_line)
++                depth = 0
++                cursor = match.start(2)
++                for following in matches[index + 1:]:
++                    for char in field_line[cursor:following.start()]:
++                        if char in "（(":
++                            depth += 1
++                        elif char in "）)":
++                            depth = max(0, depth - 1)
++                    cursor = following.start()
++                    if depth == 0:
++                        end = cursor
++                        break
++                value = field_line[match.start(2):end].strip(" *_`\t")
++            fields.setdefault(key, []).append(value)
++    for field in _POSITION_FIELDS:
++        if not any(fields.get(field, [])):
++            issues.append({"code": "position_field_missing", "field": field})
++    if not (any(fields.get("平台入口", [])) or any(fields.get("页面适用性", []))):
++        issues.append({"code": "position_field_missing", "field": "平台入口／页面适用性"})
++    width = fields.get("篇幅类型", [])
++    if width and not any(re.match(r"^(?:长篇|短篇)(?=$|[。.!（(\s])", value) for value in width):
++        issues.append({"code": "length_kind_unresolved"})
++    source_lines = [line for line in lines if "来源与核对日期" in line]
++    source_dates = [candidate for line in source_lines for candidate in _DATE.findall(line)]
++    if not any(_valid_date(value) for value in source_dates):
++        issues.append({"code": "source_date_missing"})
++    declared = {part.strip() for key in fields for part in re.split(r"[／/、]", key)}
++    declared.update(_declared_tag_group_headings(lines))
++    classification_values = [value for key, values in fields.items()
++                             if any(part.strip() in _CLASSIFICATION_FIELDS
++                                    for part in re.split(r"[／/、]", key))
++                             for value in values]
++    if not any(token in value for value in classification_values
++               for token in ("拟选", "后台已确认", "待核对")):
++        issues.append({"code": "classification_status_missing"})
++    if not declared.intersection({"主分类", "一级分类", "阅读标签", "平台分类"}):
++        issues.append({"code": "classification_column_missing"})
++
++    platforms = _declared_platforms(fields.get("目标平台", []))
++    platform = platforms[0] if len(platforms) == 1 else None
++    title = _heading_parts(lines[0])[1]
++    heading_platforms = sorted(name for name, pattern in _PLATFORM_ALIASES.items() if pattern.search(title))
++    if len(platforms) > 1:
++        issues.append({"code": "position_platforms_mixed", "platforms": platforms})
++    if heading_platforms and heading_platforms != platforms:
++        issues.append({"code": "position_platform_heading_mismatch", "heading_platforms": heading_platforms,
++                       "declared_platforms": platforms})
++
++    entrance = " ".join(fields.get("平台入口", []) + fields.get("页面适用性", []))
++    checked_platform_rules = "generic"
++    columns = ()
++    if len(platforms) > 1:
++        checked_platform_rules = "none"
++    elif platform == "qimao":
++        checked_platform_rules = "qimao"
++        columns = ("分类频道", "一级分类", "二级分类", "风格", "角色", "情节", "背景")
++    elif platform == "fanqie":
++        if "短故事" in entrance:
++            checked_platform_rules = "fanqie_short"
++            columns = ("主分类", "情节", "角色", "情绪", "背景")
++        elif "小说" in entrance and "待核对" not in entrance:
++            checked_platform_rules = "fanqie_novel"
++            columns = ("目标读者", "阅读标签", "内容标签")
++        else:
++            checked_platform_rules = "none"
++            issues.append({"code": "platform_entrance_unresolved"})
++    for column in columns:
++        if column not in declared:
++            issues.append({"code": "classification_column_missing", "field": column})
++    return {"ok": not issues, "platform": platform, "platforms_declared": platforms,
++            "section_line": start, "section_title": title, "fields_found": sorted(declared),
++            "checked_platform_rules": checked_platform_rules, "issues": issues}
++
++
++def audit_position(book, relative_path, require_platforms=()):
+     """Read-only structural check; never decides whether platform choices are valid."""
++    if (not isinstance(require_platforms, (tuple, list)) or
++            any(not isinstance(platform, str) or platform not in _PLATFORM_ALIASES
++                for platform in require_platforms)):
++        book.fail("invalid_input", "Required platforms must be fanqie or qimao")
++    required_platforms = list(dict.fromkeys(require_platforms))
+     relative = _relative_path(book, relative_path, require_adopted=False)
+     path = book.safe_path(book.root, relative)
+     try:
+@@ -238,70 +393,42 @@
+     except UnicodeDecodeError:
+         book.fail("invalid_encoding", "Whole-book outline must be UTF-8", path=str(path))
+     sections = _position_sections(text)
++    results = [_audit_position_section(start, lines) for start, lines in sections]
+     issues = []
+     if not sections:
+         issues.append({"code": "position_section_missing"})
+-    elif len(sections) != 1:
+-        issues.append({"code": "position_sections_ambiguous", "count": len(sections)})
+-    fields = {}
+-    checked_platform_rules = "none"
+-    if len(sections) == 1:
+-        _, lines = sections[0]
+-        for line in lines:
+-            for match in _FIELD.finditer(line.lstrip(" -*+\t")):
+-                key = match.group(1).strip(" *_`\t")
+-                value = match.group(2).strip(" *_`\t")
+-                fields.setdefault(key, []).append(value)
+-        for field in _POSITION_FIELDS:
+-            if not any(fields.get(field, [])):
+-                issues.append({"code": "position_field_missing", "field": field})
+-        if not (any(fields.get("平台入口", [])) or any(fields.get("页面适用性", []))):
+-            issues.append({"code": "position_field_missing", "field": "平台入口／页面适用性"})
+-        width = fields.get("篇幅类型", [])
+-        if width and not any(re.match(r"^(?:长篇|短篇)(?=$|[。.!（(\s])", value) for value in width):
+-            issues.append({"code": "length_kind_unresolved"})
+-        source_lines = [line for line in lines if "来源与核对日期" in line]
+-        source_dates = [candidate for line in source_lines for candidate in _DATE.findall(line)]
+-        if not any(_valid_date(value) for value in source_dates):
+-            issues.append({"code": "source_date_missing"})
+-        declared = {part.strip() for key in fields for part in re.split(r"[／/、]", key)}
+-        declared.update(_declared_tag_group_headings(lines))
+-        classification_values = [value for key, values in fields.items()
+-                                 if any(part.strip() in _CLASSIFICATION_FIELDS
+-                                        for part in re.split(r"[／/、]", key))
+-                                 for value in values]
+-        if not any(token in value for value in classification_values
+-                   for token in ("拟选", "后台已确认", "待核对")):
+-            issues.append({"code": "classification_status_missing"})
+-        if not declared.intersection({"主分类", "一级分类", "阅读标签", "平台分类"}):
+-            issues.append({"code": "classification_column_missing"})
+-        platform = " ".join(fields.get("目标平台", []))
+-        entrance = " ".join(fields.get("平台入口", []) + fields.get("页面适用性", []))
+-        if "七猫" in platform and "番茄" not in platform:
+-            checked_platform_rules = "qimao"
+-            columns = ("分类频道", "一级分类", "二级分类", "风格", "角色", "情节", "背景")
+-        elif "番茄" in platform and "七猫" not in platform:
+-            if "短故事" in entrance:
+-                checked_platform_rules = "fanqie_short"
+-                columns = ("主分类", "情节", "角色", "情绪", "背景")
+-            elif "小说" in entrance and "待核对" not in entrance:
+-                checked_platform_rules = "fanqie_novel"
+-                columns = ("目标读者", "阅读标签", "内容标签")
+-            else:
+-                issues.append({"code": "platform_entrance_unresolved"})
+-                columns = ()
+-        else:
+-            checked_platform_rules = "generic"
+-            columns = ()
+-        for column in columns:
+-            if column not in declared:
+-                issues.append({"code": "classification_column_missing", "field": column})
++    by_platform = {}
++    for result in results:
++        if result["platform"]:
++            by_platform.setdefault(result["platform"], []).append(result)
++    for platform, matches in by_platform.items():
++        if len(matches) > 1:
++            for result in matches:
++                result["issues"].append({"code": "position_platform_duplicate", "platform": platform,
++                                         "section_lines": [match["section_line"] for match in matches]})
++                result["ok"] = False
++    # Preserve the legacy issue shape for one block. Multiple blocks need
++    # their own location and platform, so missing fields cannot be conflated.
++    for result in results:
++        for issue in result["issues"]:
++            issues.append(dict(issue, section_line=result["section_line"], platform=result["platform"])
++                          if len(results) > 1 else dict(issue))
++    covered_platforms = sorted(platform for platform, matches in by_platform.items()
++                               if len(matches) == 1 and not any(
++                                   issue["code"] == "position_platform_heading_mismatch"
++                                   for issue in matches[0]["issues"]))
++    for platform in required_platforms:
++        if platform not in covered_platforms:
++            issues.append({"code": "required_platform_missing", "platform": platform})
+     return {"ok": not issues, "scope": "outline_structure_only", "path": relative,
+             "sha256": hashlib.sha256(raw).hexdigest(),
+-            "section_lines": [start for start, _ in sections], "fields_found": sorted(declared if len(sections) == 1 else fields),
+-            "checked_platform_rules": checked_platform_rules,
+-            "issues": issues, "manual_review_required": True,
+-            "note": "Only required field presence and source-date syntax were checked; platform options, per-column status, evidence, and adoption still require human review."}
++            "section_lines": [start for start, _ in sections],
++            "fields_found": results[0]["fields_found"] if len(results) == 1 else [],
++            "checked_platform_rules": (results[0]["checked_platform_rules"] if len(results) == 1
++                                       else "multiple" if results else "none"),
++            "required_platforms": required_platforms, "covered_platforms": covered_platforms,
++            "platform_results": results, "issues": issues, "manual_review_required": True,
++            "note": "Only required field presence and source-date syntax were checked per platform block; platform options, per-column status, evidence, and adoption still require human review."}
+ 
+ 
+ def _valid_date(value):

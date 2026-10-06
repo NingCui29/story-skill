@@ -1,0 +1,389 @@
+command: ~/.local/bin/python3.12 -m unittest -v test_workbench_writing_status.WorkbenchWritingStatusTests.test_comments_and_lazy_quotes_cannot_declare_writing_status test_workbench_writing_status.WorkbenchWritingStatusTests.test_planned_status_sections_do_not_override_current_outline_status test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts test_workbench_writing_status.WorkbenchWritingStatusTests.test_unfinished_record_does_not_invent_serialization_or_conflict_with_it test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion test_workbench_writing_status.WorkbenchWritingStatusTests.test_completion_followed_by_cover_or_classification_tasks_remains_recorded
+exit_code: 1
+test_comments_and_lazy_quotes_cannot_declare_writing_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_comments_and_lazy_quotes_cannot_declare_writing_status) ... 
+  test_comments_and_lazy_quotes_cannot_declare_writing_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_comments_and_lazy_quotes_cannot_declare_writing_status) (hidden='<!--\n作品状态：已完本\n-->\n') ... FAIL
+  test_comments_and_lazy_quotes_cannot_declare_writing_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_comments_and_lazy_quotes_cannot_declare_writing_status) (hidden='> 旧状态示例\n作品状态：已完本\n') ... FAIL
+  test_comments_and_lazy_quotes_cannot_declare_writing_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_comments_and_lazy_quotes_cannot_declare_writing_status) (hidden='> > 旧状态示例\n作品状态：已完本\n') ... FAIL
+test_planned_status_sections_do_not_override_current_outline_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_planned_status_sections_do_not_override_current_outline_status) ... 
+  test_planned_status_sections_do_not_override_current_outline_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_planned_status_sections_do_not_override_current_outline_status) (heading='完本计划') ... FAIL
+  test_planned_status_sections_do_not_override_current_outline_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_planned_status_sections_do_not_override_current_outline_status) (heading='目标状态') ... FAIL
+test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) ... 
+  test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='尚未完本', separate=False) ... FAIL
+  test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='尚未完本', separate=True) ... FAIL
+  test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='未完本', separate=False) ... FAIL
+  test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='未完本', separate=True) ... FAIL
+  test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='正文尚未完结', separate=False) ... FAIL
+  test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='正文尚未完结', separate=True) ... FAIL
+test_unfinished_record_does_not_invent_serialization_or_conflict_with_it (test_workbench_writing_status.WorkbenchWritingStatusTests.test_unfinished_record_does_not_invent_serialization_or_conflict_with_it) ... ERROR
+test_candidate_qualification_after_first_clause_cannot_confirm_completion (test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion) ... 
+  test_candidate_qualification_after_first_clause_cannot_confirm_completion (test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion) (separator='；', qualification='此为候选记录，尚未采用') ... FAIL
+  test_candidate_qualification_after_first_clause_cannot_confirm_completion (test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion) (separator='；', qualification='该状态待确认') ... FAIL
+  test_candidate_qualification_after_first_clause_cannot_confirm_completion (test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion) (separator='。', qualification='此为候选记录，尚未采用') ... FAIL
+  test_candidate_qualification_after_first_clause_cannot_confirm_completion (test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion) (separator='。', qualification='该状态待确认') ... FAIL
+test_completion_followed_by_cover_or_classification_tasks_remains_recorded (test_workbench_writing_status.WorkbenchWritingStatusTests.test_completion_followed_by_cover_or_classification_tasks_remains_recorded) ... ok
+
+======================================================================
+ERROR: test_unfinished_record_does_not_invent_serialization_or_conflict_with_it (test_workbench_writing_status.WorkbenchWritingStatusTests.test_unfinished_record_does_not_invent_serialization_or_conflict_with_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 176, in test_unfinished_record_does_not_invent_serialization_or_conflict_with_it
+    self.assertEqual(result['sources'][0]['value'], '尚未完本')
+                     ~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_comments_and_lazy_quotes_cannot_declare_writing_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_comments_and_lazy_quotes_cannot_declare_writing_status) (hidden='<!--\n作品状态：已完本\n-->\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 131, in test_comments_and_lazy_quotes_cannot_declare_writing_status
+    self.assertEqual(self.status()['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_comments_and_lazy_quotes_cannot_declare_writing_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_comments_and_lazy_quotes_cannot_declare_writing_status) (hidden='> 旧状态示例\n作品状态：已完本\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 131, in test_comments_and_lazy_quotes_cannot_declare_writing_status
+    self.assertEqual(self.status()['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_comments_and_lazy_quotes_cannot_declare_writing_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_comments_and_lazy_quotes_cannot_declare_writing_status) (hidden='> > 旧状态示例\n作品状态：已完本\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 131, in test_comments_and_lazy_quotes_cannot_declare_writing_status
+    self.assertEqual(self.status()['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_planned_status_sections_do_not_override_current_outline_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_planned_status_sections_do_not_override_current_outline_status) (heading='完本计划')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 145, in test_planned_status_sections_do_not_override_current_outline_status
+    self.assertEqual(self.status()['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_planned_status_sections_do_not_override_current_outline_status (test_workbench_writing_status.WorkbenchWritingStatusTests.test_planned_status_sections_do_not_override_current_outline_status) (heading='目标状态')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 145, in test_planned_status_sections_do_not_override_current_outline_status
+    self.assertEqual(self.status()['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='尚未完本', separate=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 165, in test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='尚未完本', separate=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 165, in test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='未完本', separate=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 165, in test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='未完本', separate=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 165, in test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='正文尚未完结', separate=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 165, in test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts) (negative='正文尚未完结', separate=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 165, in test_negative_current_completion_is_preserved_for_same_or_other_source_conflicts
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_candidate_qualification_after_first_clause_cannot_confirm_completion (test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion) (separator='；', qualification='此为候选记录，尚未采用')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 186, in test_candidate_qualification_after_first_clause_cannot_confirm_completion
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_candidate_qualification_after_first_clause_cannot_confirm_completion (test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion) (separator='；', qualification='该状态待确认')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 186, in test_candidate_qualification_after_first_clause_cannot_confirm_completion
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_candidate_qualification_after_first_clause_cannot_confirm_completion (test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion) (separator='。', qualification='此为候选记录，尚未采用')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 186, in test_candidate_qualification_after_first_clause_cannot_confirm_completion
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_candidate_qualification_after_first_clause_cannot_confirm_completion (test_workbench_writing_status.WorkbenchWritingStatusTests.test_candidate_qualification_after_first_clause_cannot_confirm_completion) (separator='。', qualification='该状态待确认')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 186, in test_candidate_qualification_after_first_clause_cannot_confirm_completion
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.128s
+
+FAILED (failures=15, errors=1)
+
+Additional confirmed negative-serialization case before its repair:
+command: ~/.local/bin/python3.12 -m unittest -v test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_serialization_conflicts_only_with_serializing
+exit_code: 1
+test_negative_serialization_conflicts_only_with_serializing (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_serialization_conflicts_only_with_serializing) ... 
+  test_negative_serialization_conflicts_only_with_serializing (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_serialization_conflicts_only_with_serializing) (separate=False) ... FAIL
+  test_negative_serialization_conflicts_only_with_serializing (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_serialization_conflicts_only_with_serializing) (separate=True) ... FAIL
+test_negative_serialization_conflicts_only_with_serializing (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_serialization_conflicts_only_with_serializing) ... ERROR
+
+======================================================================
+ERROR: test_negative_serialization_conflicts_only_with_serializing (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_serialization_conflicts_only_with_serializing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 199, in test_negative_serialization_conflicts_only_with_serializing
+    self.assertEqual(result['sources'][0]['value'], '尚未连载')
+                     ~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+======================================================================
+FAIL: test_negative_serialization_conflicts_only_with_serializing (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_serialization_conflicts_only_with_serializing) (separate=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 190, in test_negative_serialization_conflicts_only_with_serializing
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'serializing' != 'unknown'
+- serializing
++ unknown
+
+
+======================================================================
+FAIL: test_negative_serialization_conflicts_only_with_serializing (test_workbench_writing_status.WorkbenchWritingStatusTests.test_negative_serialization_conflicts_only_with_serializing) (separate=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 190, in test_negative_serialization_conflicts_only_with_serializing
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'serializing' != 'unknown'
+- serializing
++ unknown
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.029s
+
+FAILED (failures=2, errors=1)
+
+Two independently confirmed remaining boundaries before their repair:
+command: ~/.local/bin/python3.12 -m unittest -v test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial test_workbench_writing_status.WorkbenchWritingStatusTests.test_cover_clause_cannot_hide_a_following_candidate_status_qualification
+exit_code: 1
+test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) ... 
+  test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不是', negative='已完本') ... FAIL
+  test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不是', negative='完结') ... FAIL
+  test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不是', negative='连载中') ... FAIL
+  test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='并非', negative='已完本') ... FAIL
+  test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='并非', negative='完结') ... FAIL
+  test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='并非', negative='连载中') ... FAIL
+  test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不算', negative='已完本') ... FAIL
+  test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不算', negative='完结') ... FAIL
+  test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不算', negative='连载中') ... FAIL
+test_cover_clause_cannot_hide_a_following_candidate_status_qualification (test_workbench_writing_status.WorkbenchWritingStatusTests.test_cover_clause_cannot_hide_a_following_candidate_status_qualification) ... 
+  test_cover_clause_cannot_hide_a_following_candidate_status_qualification (test_workbench_writing_status.WorkbenchWritingStatusTests.test_cover_clause_cannot_hide_a_following_candidate_status_qualification) (comma='，') ... FAIL
+  test_cover_clause_cannot_hide_a_following_candidate_status_qualification (test_workbench_writing_status.WorkbenchWritingStatusTests.test_cover_clause_cannot_hide_a_following_candidate_status_qualification) (comma=',') ... FAIL
+
+======================================================================
+FAIL: test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不是', negative='已完本')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 210, in test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不是', negative='完结')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 210, in test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不是', negative='连载中')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 210, in test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'serializing' != 'unknown'
+- serializing
++ unknown
+
+
+======================================================================
+FAIL: test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='并非', negative='已完本')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 210, in test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='并非', negative='完结')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 210, in test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='并非', negative='连载中')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 210, in test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'serializing' != 'unknown'
+- serializing
++ unknown
+
+
+======================================================================
+FAIL: test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不算', negative='已完本')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 210, in test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不算', negative='完结')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 210, in test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial (test_workbench_writing_status.WorkbenchWritingStatusTests.test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial) (prefix='不算', negative='连载中')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 210, in test_explicit_denials_conflict_but_unannounced_or_unconfirmed_is_not_a_denial
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'serializing' != 'unknown'
+- serializing
++ unknown
+
+
+======================================================================
+FAIL: test_cover_clause_cannot_hide_a_following_candidate_status_qualification (test_workbench_writing_status.WorkbenchWritingStatusTests.test_cover_clause_cannot_hide_a_following_candidate_status_qualification) (comma='，')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 226, in test_cover_clause_cannot_hide_a_following_candidate_status_qualification
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+======================================================================
+FAIL: test_cover_clause_cannot_hide_a_following_candidate_status_qualification (test_workbench_writing_status.WorkbenchWritingStatusTests.test_cover_clause_cannot_hide_a_following_candidate_status_qualification) (comma=',')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_writing_status.py", line 226, in test_cover_clause_cannot_hide_a_following_candidate_status_qualification
+    self.assertEqual(result['value'], 'unknown')
+AssertionError: 'completed' != 'unknown'
+- completed
++ unknown
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.069s
+
+FAILED (failures=11)

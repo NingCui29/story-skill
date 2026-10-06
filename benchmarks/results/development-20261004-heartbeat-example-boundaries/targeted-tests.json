@@ -1,0 +1,11 @@
+{
+  "modules": [
+    "test_outline_example_boundaries",
+    "test_outline_position_audit",
+    "test_plan_outline_sync",
+    "test_outline_commit_gate",
+    "test_history_outline_fence"
+  ],
+  "exit_code": 0,
+  "changed_during_test": []
+}

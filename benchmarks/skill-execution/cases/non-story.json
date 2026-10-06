@@ -1,0 +1,14 @@
+{
+  "id": "non-story",
+  "prompt": "请只读审查 snippet.py 中的平均数函数，说明空列表输入的问题和一个最小修改建议。不要运行代码、不要编辑 snippet.py，也不要创建测试或工程。将审查意见保存为 review.md。",
+  "invocation": "natural_language",
+  "fixtures": {
+    "snippet.py": "def average(values):\n    return sum(values) / len(values)\n"
+  },
+  "allowed_changes": ["review.md"],
+  "required_outputs": ["review.md"],
+  "review_required": [
+    "按软件代码只读审查处理，未调用小说技能流程、未初始化小说书库。",
+    "没有运行代码、生成测试或改原文件；指出空列表导致除零，给合理的最小建议，并说明本次为静态审查。"
+  ]
+}

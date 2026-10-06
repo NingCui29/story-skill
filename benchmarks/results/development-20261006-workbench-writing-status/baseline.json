@@ -1,0 +1,42 @@
+{
+  "backup": "~/.codex/backups/story-skill/shelf-writing-status-9ryonzli",
+  "registry_sha256": "1a8b28233c1d258932d95c94b4450ccec35c4091e25d0955f35dc96ee5ca9e43",
+  "registry_mtime_ns": 1791202088997524795,
+  "installed_workbench_sha256": "f19c9133fabaead85bb391b6983c494f8c678d71aaf02b7b642bf718bf4de976",
+  "native_source_sha256": "e2e41e1c762183d80734e60b793058e5df9cf571427462b63583a00f50fa071f",
+  "library": {
+    "instance": "instance-14",
+    "pid": 31713,
+    "mode": "library",
+    "state_dir": "~/.codex/story-workbench",
+    "running": true,
+    "outdated": false,
+    "url": "http://127.0.0.1:8765/"
+  },
+  "active_books": [
+    {
+      "title": "作品15",
+      "root": "/local-books/book-15",
+      "instance": "instance-18",
+      "pid": 20594
+    },
+    {
+      "title": "作品16",
+      "root": "/local-books/book-16",
+      "instance": "instance-06",
+      "pid": 28793
+    },
+    {
+      "title": "作品18",
+      "root": "/local-books/book-18",
+      "instance": "instance-09",
+      "pid": 28801
+    },
+    {
+      "title": "作品10",
+      "root": "/local-books/book-10",
+      "instance": "instance-11",
+      "pid": 27471
+    }
+  ]
+}

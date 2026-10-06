@@ -1,0 +1,18 @@
+{
+  "skill_validators": {
+    "skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-publish",
+      "story-skill-write"
+    ],
+    "status": "passed"
+  },
+  "local_links": {
+    "status": "passed",
+    "files_scanned": 284,
+    "links_checked": 1593,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "before": {
+    "pid": 33032,
+    "instance": "instance-16"
+  },
+  "after": {
+    "pid": 39922,
+    "instance": "instance-07",
+    "outdated": false
+  },
+  "registry_before": {
+    "sha256": "a702f57d24c56132a7f96de71f2dd41b31b6cbe3f169102c340e021c3a38552a",
+    "mtime_ns": 1791253467490728861,
+    "books": 18
+  },
+  "registry_after": {
+    "sha256": "a702f57d24c56132a7f96de71f2dd41b31b6cbe3f169102c340e021c3a38552a",
+    "mtime_ns": 1791253467490728861,
+    "books": 18
+  }
+}

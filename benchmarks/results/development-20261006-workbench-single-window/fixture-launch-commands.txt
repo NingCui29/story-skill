@@ -1,0 +1,3 @@
+~/.local/bin/python3.12 -B <repo>/benchmarks/results/development-20261006-workbench-single-window/fixture_launcher.py --book '/tmp/story-editor-layout-f4_xmf3n/合成布局验收_长目录用于测试作品位置弹出内容和窄窗口折行/作品16_布局核验' --library-book '/tmp/story-single-window-u0lllaed/第二部合成作品_用于单窗口切换与缓存保留验收' --limit 10
+
+~/.local/bin/python3.12 -B <repo>/benchmarks/results/development-20261006-workbench-single-window/fixture_launcher.py --book '/tmp/story-single-window-u0lllaed/第二部合成作品_用于单窗口切换与缓存保留验收' --library-book '/tmp/story-editor-layout-f4_xmf3n/合成布局验收_长目录用于测试作品位置弹出内容和窄窗口折行/作品16_布局核验' --limit 10

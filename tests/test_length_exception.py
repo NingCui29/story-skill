@@ -5,6 +5,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 spec = importlib.util.spec_from_file_location("story_length_exception", TOOL)
@@ -63,18 +65,27 @@ class LengthExceptionTests(unittest.TestCase):
             self.book.db.execute("INSERT INTO plans(chapter,data) VALUES (?,?)",
                                  (1, story.dumps(value)))
 
+    def rebind_fixture_outline(self):
+        """Explicitly adopt a synthetic count-plan revision before testing it."""
+        binding = story.outline.binding_for(self.book, 1)
+        self.assertIsNotNone(binding)
+        story.outline.bind(self.book, 1, binding["path"], self.book.meta("revision"),
+                           binding["sha256"])
+
     def committed_v1_boundary(self):
         # Build a native chapter through the public API, then restore the
         # historical v1 minimum whose extra mark was counted before v2 existed.
         self.book.save_plan(1, self.plan(length=[2399, 2800], length_exception={
             "source": "user_request", "quote": "测试准备阶段按2399至2800字写。"}),
             self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 1)
         text = self.write(DEFAULT_BODY[:2399] + "\ufe0f")
         self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
         legacy = self.book.get_plan(1)
         legacy["length"] = [2400, 2800]
         legacy.pop("length_exception")
         self.book.save_plan(1, legacy, self.book.meta("revision"))
+        self.rebind_fixture_outline()
         return text
 
     def test_saved_v1_boundary_lints_and_replaces_unchanged_but_rejects_changed_padding(self):
@@ -163,6 +174,7 @@ class LengthExceptionTests(unittest.TestCase):
     def test_user_request_exception_allows_short_chapter(self):
         exception = {"source": "user_request", "quote": "请把本章控制在1200到1500字。"}
         self.book.save_plan(1, self.plan(length_exception=exception), self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 1)
         text = self.write()
         lint = self.book.lint(1, self.draft)
         self.assertTrue(lint["ok"], lint["errors"])
@@ -183,6 +195,7 @@ class LengthExceptionTests(unittest.TestCase):
         agreement.write_text("# 章幅\n" + quote + "\n", encoding="utf-8")
         exception = {"source": "book_agreement", "path": "创作约定.md", "quote": quote}
         self.book.save_plan(1, self.plan(length_exception=exception), self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 1)
         text = self.write()
         self.assertTrue(self.book.lint(1, self.draft)["ok"])
         self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
@@ -233,6 +246,7 @@ class LengthExceptionTests(unittest.TestCase):
         self.book.save_plan(1, self.plan(length=[2400, 2800],
                                          count_method="visible_nonspace_v2"),
                             self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 1)
         text = self.write(DEFAULT_BODY)
         self.assertTrue(self.book.lint(1, self.draft)["ok"])
         self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
@@ -260,6 +274,7 @@ class LengthExceptionTests(unittest.TestCase):
             1, self.draft, self.delta(text)))
         self.book.save_plan(1, {**old, "count_method": "visible_nonspace_v2"},
                             self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 1)
         self.assertTrue(self.book.lint(1, self.draft)["ok"])
         self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
 
@@ -268,12 +283,14 @@ class LengthExceptionTests(unittest.TestCase):
         self.book.save_plan(1, self.plan(length=[2400, 2800],
                                          length_exception=exception),
                             self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 1)
         text = self.write(DEFAULT_BODY)
         self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
         legacy = self.book.get_plan(1)
         legacy.pop("length_exception")
         with self.book.transaction():
             self.book.db.execute("UPDATE plans SET data=? WHERE chapter=1", (story.dumps(legacy),))
+        self.rebind_fixture_outline()
         self.assertTrue(self.book.lint(1, self.draft)["ok"])
         revised = self.write(DEFAULT_BODY + "她停住脚。")
         self.assertTrue(self.book.commit(1, self.draft, self.delta(revised),
@@ -282,12 +299,14 @@ class LengthExceptionTests(unittest.TestCase):
     def test_old_committed_chapter_is_not_retroactively_blocked(self):
         exception = {"source": "user_request", "quote": "请把本章控制在1200到1500字。"}
         self.book.save_plan(1, self.plan(length_exception=exception), self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 1)
         first = self.write()
         self.book.commit(1, self.draft, self.delta(first))
         legacy = self.book.get_plan(1)
         legacy.pop("length_exception")
         with self.book.transaction():
             self.book.db.execute("UPDATE plans SET data=? WHERE chapter=1", (story.dumps(legacy),))
+        self.rebind_fixture_outline()
         revised = self.write(SHORT_BODY + "她停住脚。")
         self.assertTrue(self.book.lint(1, self.draft)["ok"])
         self.assertTrue(self.book.commit(1, self.draft, self.delta(revised),

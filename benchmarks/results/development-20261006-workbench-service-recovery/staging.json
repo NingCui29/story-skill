@@ -1,0 +1,12 @@
+[
+  {
+    "target": "<repo>/dist/写作工作台.app",
+    "stage": "<repo>/dist/.story-service-stage-64rd8sc8/写作工作台.app",
+    "temporary_directory": "<repo>/dist/.story-service-stage-64rd8sc8"
+  },
+  {
+    "target": "~/Applications/写作工作台.app",
+    "stage": "~/Applications/.story-service-stage-0g657nsg/写作工作台.app",
+    "temporary_directory": "~/Applications/.story-service-stage-0g657nsg"
+  }
+]

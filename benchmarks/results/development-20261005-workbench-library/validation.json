@@ -1,0 +1,37 @@
+{
+  "ok": true,
+  "scope": "Independent loopback bookshelf and existing book-editor compatibility; local development validation only",
+  "workbench_tests": {
+    "run": 161,
+    "passed": 161,
+    "skipped": 0,
+    "log": "workbench-tests.log"
+  },
+  "skill_validation": "passed",
+  "browser_validation": {
+    "empty_shelf": true,
+    "add_book": true,
+    "open_editor_in_new_tab": true,
+    "registered_book_material_visible": true,
+    "live_root_url": "http://127.0.0.1:8765/",
+    "live_registered_books": 17,
+    "long_books": 5,
+    "short_books": 12
+  },
+  "installation": {
+    "version": "0.6.11",
+    "skills": 8,
+    "payload_files": 49,
+    "matches_source": true
+  },
+  "source_sha256": {
+    "skills/story-skill/scripts/story_workbench.py": "ae8bb1fa936f36ba33b91f443a08f535d0cee241dc2b6e83a7aee6d170b6533f",
+    "skills/story-skill/SKILL.md": "315714ff7ff5e43cd87a7d899635493345fb700674f9810413038ed08ae4d1e7",
+    "tests/test_workbench_library.py": "e6d06681dc599b15e3525b804ac1031d43d95bced5f64043b4f34feb6b90753c"
+  },
+  "limits": [
+    "Fixed URL is the bookshelf; editors keep their own loopback addresses.",
+    "No startup-at-login configuration was added.",
+    "No Windows desktop browser validation was performed."
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "version": "0.6.11",
+  "distribution": {
+    "report": "distribution.json",
+    "passed": true
+  },
+  "released": false,
+  "tests": {
+    "run": 1019,
+    "passed": 1002,
+    "skipped": 17,
+    "failures": 0,
+    "errors": 0,
+    "elapsed_seconds": 159.487,
+    "python": "3.12.14",
+    "platform": "macOS",
+    "log": "unittest.log",
+    "skips": "skips.json"
+  },
+  "installation": {
+    "skills": 8,
+    "files": 46,
+    "files_match_source": true,
+    "installed_runtime_version": "0.6.11",
+    "installed_smoke": "passed",
+    "receipt": "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/final-receipt.json",
+    "original_backup": "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/previous",
+    "before_final_sync": "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/before-final-sync"
+  },
+  "source_files": {
+    "story-skill-analyze/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-analyze/SKILL.md": "390d0f9693c1d572b2d8ae81f33777e9cd42ee8109f95e4d45b08e82ccc17574",
+    "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+    "story-skill-analyze/references/deep-reading.md": "0ce4231290c526a479c46021b2713bb800f5ed71ec0f6ed96d68037cb54ee6c9",
+    "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+    "story-skill-cover/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-cover/SKILL.md": "4f18187452e7ccbbeef26b976c7b9122030ab14866f4c269716b2bc88afd17b9",
+    "story-skill-cover/agents/openai.yaml": "53b2f469ff188bf50adcd663db27d53e33b67ed35b55fd42fc192e28ed4896f7",
+    "story-skill-plan/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-plan/SKILL.md": "23a1c1d44953ba066d5667a19f6ef7a66cc7ed973d437e863eebc5b52d1119de",
+    "story-skill-plan/agents/openai.yaml": "475ae88f08812b8bdcf885c53f23a82fc98281b75ebf321d5c9ca89428577018",
+    "story-skill-plan/references/fanqie-tags.md": "976ef869fedd991c0a960508368792b3899df898a44a98e680535da2b40df705",
+    "story-skill-plan/references/qimao-tags.md": "6789d38bddf13220b00a5b8c95e512acb940a27d4cb6911e3dd98e3b688f13fc",
+    "story-skill-publish/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-publish/SKILL.md": "5a2cb27314b1ea063324ffcb70cf540075fe7115c64354a70cf7405758476724",
+    "story-skill-publish/agents/openai.yaml": "43bb3505b40c2c1b05c901b7c8ec35faa448e005cc0f21d5eb482be812b67ad0",
+    "story-skill-research/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-research/SKILL.md": "dee416264966822405ecd0a23bf15aa2511dc9c828b8462dfadcd1c88f3e0a72",
+    "story-skill-research/agents/openai.yaml": "fa58f9b8653b56c69c2806632b27f0c0aecd705d802848312bbc5b9ea86b6221",
+    "story-skill-research/references/reader-validation.md": "f7878034d92955d6d390759d56e69a588f7066e20a954ac1fc217813e47eb947",
+    "story-skill-review/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-review/SKILL.md": "4a94b6d7bfcd10559db677aaf99b219f229e2f27e0070d50b1dccf0d33dceffa",
+    "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+    "story-skill-review/references/fanqie-content-review.md": "ee2dc118ed062b7a41f4819cf9961a2a257ff993ee2f496ad5d79001784870e8",
+    "story-skill-review/references/history.md": "c883bb0a5d6c6fb5b473351a804c9261ba8f9d0855abc94b1ea22018d74b5bcb",
+    "story-skill-review/references/qimao-content-review.md": "2aa801f04ac46afaeb6a021a1d26cf8df6a6cea382661606926615ac95f67dce",
+    "story-skill-write/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill-write/SKILL.md": "74c510f14a57ba38edf9e107756cb4fc8f552dbe281ca099da112f4db88094c3",
+    "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+    "story-skill-write/references/chapter.md": "f1766265677f235574b870e456a447ad9fcab494a4db986593b367e1e2896084",
+    "story-skill-write/references/content-review.md": "1af45c72830147069dec01ec126edaa4ebd6e12ab408393ad9f13e7509df38ee",
+    "story-skill-write/references/drama.md": "d4bf76f20117584cff16b829011a9fe34429be9e875d80fd4ee9c722d786db11",
+    "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+    "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+    "story-skill/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+    "story-skill/SKILL.md": "ca07d71a626ffcb4863918b31246216957762747379b8a537d36c6e9f4842e4f",
+    "story-skill/agents/openai.yaml": "0f06df3badff4c9a96cd45a694496a4a3e49052c4747ec377f47dbeb630ac74a",
+    "story-skill/references/project-state.md": "bb00f40e160f9981b6e2cffaba5eebb51dab3e29e4c41a61b42186a3bd5d4656",
+    "story-skill/scripts/story.py": "8772c0d357740fdc262107d6eef625818ee2b582e96472bbc01b6f9904ef1ddc",
+    "story-skill/scripts/story_history.py": "d06feae3e1559e0e8b6594a5a3aa50895c487bf342510a2fb2866d173feb568e",
+    "story-skill/scripts/story_outline.py": "7ca027e2b1a73da22cf66bc8b3c70888f661ad8f423b8ef1f80adca6ee917204",
+    "story-skill/scripts/story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story-skill/scripts/story_workbench.py": "f47e5b4aeb8131294285738b6270ef9cb7895dd30dcdc6ee76869f259103d210",
+    "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+  },
+  "checks": {
+    "smoke": true,
+    "chinese": true,
+    "long": true,
+    "scale": true
+  },
+  "behavior_test_method": "Known-purpose multi-agent regression; not blind, independent-model or repeated stochastic evaluation",
+  "limitations": [
+    "17 Windows-specific tests were skipped on macOS.",
+    "Binding verifies declared adoption and file/plan versions; it cannot establish semantic agreement, plot quality or platform success.",
+    "The capacity replay used 40 chapters and 200 cards, not a full-size capacity benchmark."
+  ],
+  "behavior": {
+    "report": "behavior.json",
+    "passed": 2,
+    "blind": false
+  },
+  "npm": {
+    "report": "npm-pack.json",
+    "passed": true,
+    "strict_tarball_verified": true,
+    "runtime_smoke_commands": 4
+  },
+  "ok": true
+}

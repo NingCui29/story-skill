@@ -1,0 +1,41 @@
+{
+  "modules": [
+    "test_workbench_service_recovery",
+    "test_workbench_book_identity",
+    "test_workbench_flow",
+    "test_workbench_library",
+    "test_workbench_runtime_regressions",
+    "test_workbench_update_time",
+    "test_workbench_time_display",
+    "test_workbench_time_integration",
+    "test_desktop_backend_runner",
+    "test_desktop_native"
+  ],
+  "returncode": 0,
+  "output": "{\"run\": 159, \"skipped\": 0, \"failures\": 0, \"errors\": 0}\n...............................................................................................................................................................\n----------------------------------------------------------------------\nRan 159 tests in 24.004s\n\nOK\n",
+  "changed_during_verification": [],
+  "source_sha256": {
+    "skills/story-skill/scripts/story_workbench.py": "19f277d3100a316fbba7ffc7d2feff4c85cf54dbffe550816d11b7764fc3008c",
+    "tests/test_workbench_service_recovery.py": "b5c3b3587af5349c60363f7cdf7e899c590fbafe413c8c1a07206d57362581eb",
+    "tests/test_workbench_flow.py": "c33a65e0d1ed1fe211bba2f1630c19e69189ab53aac681c6c7f1067387fe3f84"
+  },
+  "scope": "Incremental heartbeat; isolated service startup, identity, time display, native policy and launcher tests. No live manuscript or installed application testing.",
+  "baseline_workbench_sha256": "e6d051c77045dd9761103a5cbcc6e225cb282712f9e5c5a5b64a37f7d5357445",
+  "tests": {
+    "run": 159,
+    "skipped": 0,
+    "failures": 0,
+    "errors": 0
+  },
+  "independent_review": "Cross-process selected book identity, child initialization, service result and unchanged lease boundaries reviewed read-only; no new issue found.",
+  "pending_native_check": {
+    "status": "simulation_only_actual_AppKit_path_unverified",
+    "source_sha256": "e2f25d8a34fd5916f832bf071a914096840f6b1f2c3caac85cdae581dfb3df15"
+  },
+  "limits": [
+    "No full-repository rerun",
+    "No novel quality or manuscript review",
+    "No real AppKit quit interaction verification",
+    "No installation, service restart, commits, pushes or releases"
+  ]
+}

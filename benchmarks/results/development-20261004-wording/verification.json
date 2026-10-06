@@ -1,0 +1,167 @@
+{
+  "date": "2026-10-04",
+  "scope": "Four skill documentation files only; existing working-tree changes preserved; no runtime or release changes",
+  "changed_files": {
+    "skills/story-skill-write/SKILL.md": {
+      "before_sha256": "918ccdef777e0b71524aeb876c121f570a07db20b1e16d980a1b0e8659cb681d",
+      "crlf": 0,
+      "lf": 44,
+      "after_sha256": "c98a948c212df5b0749fcc3f6c6e47c8378743b62804fa6bc185658d2b6388cf",
+      "installed_before_matches": true,
+      "after_crlf": 0,
+      "task_result_sha256": "c98a948c212df5b0749fcc3f6c6e47c8378743b62804fa6bc185658d2b6388cf",
+      "concurrent_change_preserved": false
+    },
+    "skills/story-skill-review/SKILL.md": {
+      "before_sha256": "7b7de91947b6e2c0932eb4798f8ee0eea6e0dcda38333482d6bbf6a85ed3a7f8",
+      "crlf": 20,
+      "lf": 83,
+      "after_sha256": "51ed0d84797cf949bf2e1712b5b3e374730a32c724721a1a9ac3dc2526bfbf0f",
+      "installed_before_matches": true,
+      "after_crlf": 20,
+      "task_result_sha256": "892be209b37af420a7d6fccd98e212f3c580479721d148f7c6532ee2c5d33cd3",
+      "concurrent_change_preserved": true
+    },
+    "skills/story-skill-write/references/drama.md": {
+      "before_sha256": "9071c87caf3c9c4bb540bff32f79ae37469ce36b6e74f55d43bbea8c488f60c5",
+      "crlf": 0,
+      "lf": 280,
+      "after_sha256": "067dac1a0fecdb2e63e646adfb687aa177e1bae7576ef71ed598ad5c9fd7fb79",
+      "installed_before_matches": true,
+      "after_crlf": 0,
+      "task_result_sha256": "29b478b6986daaa6f11776c3f00c81356e2775a9fd585d0f1e371f71a5959ac2",
+      "concurrent_change_preserved": true
+    },
+    "skills/story-skill-write/references/content-review.md": {
+      "before_sha256": "d74314fe7de65f60b5e2c9e71e7cd28e4f29133e8b7fcbdacacffa5070d709cc",
+      "crlf": 0,
+      "lf": 40,
+      "after_sha256": "3a76c2ef6ed6b7c3e1417d804d0a4862d30387d7ae17243a5b0f4497b339c48e",
+      "installed_before_matches": true,
+      "after_crlf": 0,
+      "task_result_sha256": "3a76c2ef6ed6b7c3e1417d804d0a4862d30387d7ae17243a5b0f4497b339c48e",
+      "concurrent_change_preserved": false
+    }
+  },
+  "skill_validation": [
+    {
+      "skill": "story-skill-write",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    },
+    {
+      "skill": "story-skill-review",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    }
+  ],
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 307,
+    "links_checked": 1674,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "wording_anchor_checks": [
+    {
+      "source": "skills/story-skill-write/SKILL.md",
+      "target": "references/drama.md#用词与语意",
+      "ok": true
+    },
+    {
+      "source": "skills/story-skill-review/SKILL.md",
+      "target": "../story-skill-write/references/drama.md#用词与语意",
+      "ok": true
+    },
+    {
+      "source": "skills/story-skill-write/references/drama.md",
+      "target": "#用词与语意",
+      "ok": true
+    },
+    {
+      "source": "skills/story-skill-write/references/content-review.md",
+      "target": "drama.md#用词与语意",
+      "ok": true
+    }
+  ],
+  "diff_check": {
+    "exit_code": 0,
+    "output": ""
+  },
+  "forward_write": {
+    "characters_nonspace": 216,
+    "han_characters": 185,
+    "range": [
+      180,
+      260
+    ],
+    "root_read_complete": true
+  },
+  "forward_review": {
+    "root_read_complete": true,
+    "A_changes": [
+      "并没有作出任何回应 -> 并没有回应",
+      "进行了短暂的思考 -> 想了片刻"
+    ],
+    "B": "No confirmed wording error; contextual pronoun and meaningful repeat retained; review only"
+  },
+  "forward_boundary": "Samples were generated before two absolute phrases about analytical register and metaphor were relaxed. Whole reference files were not frozen during generation; simultaneous dialogue-documentation updates were preserved. Final rules recheck the same outputs; no regeneration or test dedicated to these refinements.",
+  "limitations": [
+    "Synthetic short excerpts only",
+    "No before-after literary-quality comparison or blind review",
+    "No reader trial or formal-book long-run validation",
+    "No runtime code changed; full unit suite not rerun"
+  ],
+  "installation": {
+    "complete": true,
+    "scope": "Four documentation files verified byte-for-byte against current source; no installed file written by this task",
+    "already_matched_at_prewrite_check": true,
+    "prewrite_check": "Sync write was stopped before mutation because installed baseline had changed; read-only follow-up confirmed installed content already matched current source",
+    "backup": "~/.codex/skill-backups/story-skill-wording-baseline-e_e9r6ad",
+    "backup_provenance": "Initial source snapshots, previously verified equal to installed documentation",
+    "files": [
+      {
+        "source": "skills/story-skill-write/SKILL.md",
+        "installed": "~/.codex/skills/story-skill-write/SKILL.md",
+        "sha256": "c98a948c212df5b0749fcc3f6c6e47c8378743b62804fa6bc185658d2b6388cf",
+        "matches": true
+      },
+      {
+        "source": "skills/story-skill-review/SKILL.md",
+        "installed": "~/.codex/skills/story-skill-review/SKILL.md",
+        "sha256": "51ed0d84797cf949bf2e1712b5b3e374730a32c724721a1a9ac3dc2526bfbf0f",
+        "matches": true
+      },
+      {
+        "source": "skills/story-skill-write/references/drama.md",
+        "installed": "~/.codex/skills/story-skill-write/references/drama.md",
+        "sha256": "067dac1a0fecdb2e63e646adfb687aa177e1bae7576ef71ed598ad5c9fd7fb79",
+        "matches": true
+      },
+      {
+        "source": "skills/story-skill-write/references/content-review.md",
+        "installed": "~/.codex/skills/story-skill-write/references/content-review.md",
+        "sha256": "3a76c2ef6ed6b7c3e1417d804d0a4862d30387d7ae17243a5b0f4497b339c48e",
+        "matches": true
+      }
+    ]
+  },
+  "concurrency_boundary": {
+    "files": [
+      "skills/story-skill-review/SKILL.md",
+      "skills/story-skill-write/references/drama.md"
+    ],
+    "preserved_changes": "Dialogue revision guidance added during this task; retained in source and installation, excluded from changes.patch and recorded in concurrent-preserved.patch",
+    "task_change_attribution": "changes.patch contains only this task's wording and routing edits"
+  },
+  "independent_final_review": {
+    "status": "passed",
+    "scope": "Final four documentation files, original briefs and complete generated outputs",
+    "required_fixes": [],
+    "resolved_rule_issues": [
+      "Analytical register judged by narrator voice, character habit and scene function",
+      "Figurative expression distinguished from literal action"
+    ],
+    "generation_boundary": "Final two wording relaxations were read and reviewed; earlier samples were not regenerated"
+  }
+}

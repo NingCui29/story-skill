@@ -3,6 +3,8 @@ import subprocess
 import sys
 import unittest
 
+from outline_fixture import bind_adopted_outline
+
 import test_story as base
 
 DRAFT, TOOL, plan, story = base.DRAFT, base.TOOL, base.plan, base.story
@@ -163,6 +165,7 @@ class ChineseWorkflowTests(unittest.TestCase):
         self.assertEqual(result["budget"]["used"], len(story.dumps(result).encode("utf-8")))
 
     def test_prepare_reconciliation_binds_external_bytes(self):
+        bind_adopted_outline(story, self.book, 1)
         self.book.commit(1, self.draft, self.delta())
         outside = self.root / self.book.chapter_path(1)
         outside.write_bytes((DRAFT + "她停住。\r\n").encode("utf-8"))
@@ -176,6 +179,7 @@ class ChineseWorkflowTests(unittest.TestCase):
         text = "第1章 字段上限\n" + quote
         self.draft.write_bytes(text.encode("utf-8"))
         self.book.save_plan(1, plan(title="字段上限", length=[1200, 1200], count_method="han_v1"), 2)
+        bind_adopted_outline(story, self.book, 1)
         delta = self.delta(text)
         delta["review"]["checks"] = {key: {"note": "上限字段的事务回归夹具。", "quote": quote} for key in story.CHECKS}
         delta["changes"] = [{"id": "hero", "text": "字段上限夹具", "quote": quote}]

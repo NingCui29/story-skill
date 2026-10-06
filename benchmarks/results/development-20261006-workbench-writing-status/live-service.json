@@ -1,0 +1,46 @@
+{
+  "url": "http://127.0.0.1:8765/",
+  "instance": "instance-16",
+  "pid": 33032,
+  "state_dir": "~/.codex/story-workbench",
+  "mode": "library",
+  "running": true,
+  "outdated": false,
+  "registry_unchanged_from_latest": true,
+  "registry_sha256": "a702f57d24c56132a7f96de71f2dd41b31b6cbe3f169102c340e021c3a38552a",
+  "registry_mtime_ns": 1791253467490728861,
+  "active_books": [
+    {
+      "title": "作品15",
+      "root": "/local-books/book-15",
+      "instance": "instance-18",
+      "pid": 20594
+    },
+    {
+      "title": "作品16",
+      "root": "/local-books/book-16",
+      "instance": "instance-06",
+      "pid": 28793
+    },
+    {
+      "title": "作品18",
+      "root": "/local-books/book-18",
+      "instance": "instance-09",
+      "pid": 28801
+    },
+    {
+      "title": "作品10",
+      "root": "/local-books/book-10",
+      "instance": "instance-11",
+      "pid": 27471
+    },
+    {
+      "title": "作品01",
+      "root": "/local-books/book-01",
+      "instance": "instance-03",
+      "pid": 32956
+    }
+  ],
+  "book_count": 18,
+  "external_new_book_preserved": true
+}

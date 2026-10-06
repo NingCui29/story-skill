@@ -1,0 +1,113 @@
+{
+  "backup": "~/.codex/backups/story-skill/single-window-ihv5ir9n",
+  "registry_sha256": "a194744d1a171443934ccd00d8b37ccc72721f832b45e49b908d0434ef2e7a27",
+  "registry_mtime_ns": 1791278087584761813,
+  "registry_books": 18,
+  "active_books": [
+    {
+      "root": "/local-books/book-15",
+      "title": "作品15",
+      "pid": 20594,
+      "instance": "instance-18"
+    },
+    {
+      "root": "/local-books/book-16",
+      "title": "作品16",
+      "pid": 28793,
+      "instance": "instance-06"
+    },
+    {
+      "root": "/local-books/book-18",
+      "title": "作品18",
+      "pid": 28801,
+      "instance": "instance-09"
+    },
+    {
+      "root": "/local-books/book-10",
+      "title": "作品10",
+      "pid": 27471,
+      "instance": "instance-11"
+    },
+    {
+      "root": "/local-books/book-01",
+      "title": "作品01",
+      "pid": 32956,
+      "instance": "instance-03"
+    }
+  ],
+  "library": {
+    "ok": true,
+    "instance": "instance-07",
+    "state_dir": "~/.codex/story-workbench",
+    "mode": "library",
+    "pid": 39922,
+    "code_sha256": "42a23d14ff3efda3750593659d265b46e83a6b64d870ba9c070ea037e27200f1",
+    "runtime_sha256": "e51c5bd4fe28ec2d3414e61c061801eb01e0545abb20f35f474ea746ac85d389",
+    "started": "2026-10-06T09:06:57.183224Z",
+    "running": true,
+    "stop_requested": false,
+    "outdated": false,
+    "url": "http://127.0.0.1:8765/"
+  },
+  "original_clients": [
+    "40074 ~/Applications/写作工作台.app/Contents/MacOS/StoryWorkbench"
+  ],
+  "packages": [
+    {
+      "destination": "~/Applications/写作工作台.app",
+      "native_sha256": "f73c114e6711d9faac61ca14b97ab17df1648e5fcaf1407c2a31c66537cff0b4",
+      "manifest": {
+        "app_version": "0.1.0",
+        "story_version": "0.6.11",
+        "architecture": "x86_64",
+        "minimum_macos": "13.0",
+        "runtime_version": "Python 3.12.14",
+        "runtime_files": {
+          "story.py": "37d840bae8567dc19dfd7d2fc5fb1c086b5bb3ef6e7657107765ef22d588c6ad",
+          "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+          "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+          "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+          "story_history.py": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
+          "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+          "story_workbench.py": "42a23d14ff3efda3750593659d265b46e83a6b64d870ba9c070ea037e27200f1",
+          "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+          "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+        },
+        "native_source_sha256": "826f6184211584d18d5285d3ff72eba772c74214a45ac90e31b1a6c6e75fe483",
+        "launcher_sha256": "ccb7e9a34f6d5ae9d07f7a496d6af8a8915889287b7f6cebed3a9c70f0f67f4f",
+        "local_build": true,
+        "editor_appearance_sha256": "75a9ab0a40c08b36222f669fc089f25b2c91a9b6fa9cb631f09fcca6e6050ddc",
+        "compiled_native_binary_sha256": "bf5b846b24c6b389b38c17fadfb120b1ccb8366b4e2503f3825f6d3baff850df",
+        "local_editor_layout_update": "2026-10-06"
+      }
+    },
+    {
+      "destination": "<repo>/dist/写作工作台.app",
+      "native_sha256": "f73c114e6711d9faac61ca14b97ab17df1648e5fcaf1407c2a31c66537cff0b4",
+      "manifest": {
+        "app_version": "0.1.0",
+        "story_version": "0.6.11",
+        "architecture": "x86_64",
+        "minimum_macos": "13.0",
+        "runtime_version": "Python 3.12.14",
+        "runtime_files": {
+          "story.py": "37d840bae8567dc19dfd7d2fc5fb1c086b5bb3ef6e7657107765ef22d588c6ad",
+          "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+          "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+          "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+          "story_history.py": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
+          "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+          "story_workbench.py": "42a23d14ff3efda3750593659d265b46e83a6b64d870ba9c070ea037e27200f1",
+          "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+          "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+        },
+        "native_source_sha256": "826f6184211584d18d5285d3ff72eba772c74214a45ac90e31b1a6c6e75fe483",
+        "launcher_sha256": "ccb7e9a34f6d5ae9d07f7a496d6af8a8915889287b7f6cebed3a9c70f0f67f4f",
+        "local_build": true,
+        "editor_appearance_sha256": "75a9ab0a40c08b36222f669fc089f25b2c91a9b6fa9cb631f09fcca6e6050ddc",
+        "compiled_native_binary_sha256": "bf5b846b24c6b389b38c17fadfb120b1ccb8366b4e2503f3825f6d3baff850df",
+        "local_editor_layout_update": "2026-10-06"
+      }
+    }
+  ]
+}

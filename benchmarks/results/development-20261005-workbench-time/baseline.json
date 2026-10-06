@@ -1,0 +1,21 @@
+{
+  "source_sha256": "92c9de79b9b1e09c139b23082df81dd302721681a603d90697271a489c050fde",
+  "installed_sha256": "92c9de79b9b1e09c139b23082df81dd302721681a603d90697271a489c050fde",
+  "snapshot": "/tmp/story-workbench-time-before-xl9ac4n6/story_workbench.py",
+  "registry_sha256": "1a8b28233c1d258932d95c94b4450ccec35c4091e25d0955f35dc96ee5ca9e43",
+  "registry_mtime_ns": 1791202088997524795,
+  "library": {
+    "ok": true,
+    "instance": "instance-02",
+    "state_dir": "~/.codex/story-workbench",
+    "mode": "library",
+    "pid": 21986,
+    "code_sha256": "92c9de79b9b1e09c139b23082df81dd302721681a603d90697271a489c050fde",
+    "runtime_sha256": "4de95daa8bd92a6c1675f2ca2561ac2dbeeacb10e013d501f1e39782dece3228",
+    "started": "2026-10-05T14:15:41.383077Z",
+    "running": true,
+    "stop_requested": false,
+    "outdated": false,
+    "url": "http://127.0.0.1:8765/"
+  }
+}

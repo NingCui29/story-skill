@@ -1,0 +1,15 @@
+{
+  "skill_review_validation": {
+    "status": "passed",
+    "validator": "skill-creator/scripts/quick_validate.py",
+    "runner": "uv run --with PyYAML python",
+    "output": "Skill is valid!"
+  },
+  "links": {
+    "status": "passed",
+    "files_scanned": 281,
+    "links_checked": 1564,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  }
+}

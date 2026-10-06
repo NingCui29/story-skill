@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-05",
+  "scope": "Punctuation rules, advisory lint and distribution; focused regression, not the full repository suite",
+  "tests": {
+    "run": 217,
+    "passed": 216,
+    "skipped": 1,
+    "failed": 0,
+    "groups": [
+      {
+        "scope": "punctuation, base runtime, Chinese counts, budgets, headings",
+        "run": 60,
+        "passed": 60
+      },
+      {
+        "scope": "package, install and distribution smoke",
+        "run": 92,
+        "passed": 91,
+        "skipped": 1
+      },
+      {
+        "scope": "reconcile, receipt locks, history and short assembly history",
+        "run": 59,
+        "passed": 59
+      },
+      {
+        "scope": "benchmark reading contracts",
+        "run": 6,
+        "passed": 6
+      }
+    ]
+  },
+  "independent_review": {
+    "scope": "12 synthetic punctuation review snippets; read-only agent check",
+    "cases": 12,
+    "result": "No blocking rule defect; refined contextual question-mark guidance"
+  },
+  "skill_validation": {
+    "story-skill-write": "passed",
+    "story-skill-review": "passed"
+  },
+  "links": {
+    "files_scanned": 314,
+    "links_checked": 1702,
+    "missing": 0,
+    "anchors_checked": false
+  },
+  "token_benchmark": "Refreshed required punctuation reference inputs; fingerprints and profile contract verified",
+  "distribution": "See distribution.json; temporary installation only",
+  "source_sha256": {
+    "skills/story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+    "skills/story-skill-write/references/drama.md": "5a78141141519f7bd3b156b3b1e12fedec069b02e4f760beb2840cec5363dc8f",
+    "skills/story-skill-write/references/chapter.md": "7ed3981256f8848b05fc03d96242221a89064fac6022c9f4e4145f877f09c4aa",
+    "skills/story-skill-write/SKILL.md": "e80633c5c05bd5e4b535e41540953e10a3c59510ae7846ce19e0be70cbbae148",
+    "skills/story-skill-review/SKILL.md": "edb1fbaf15683e5042df9b0a9a34a2bd2b5608d8bf2d735c53453104db7868a5",
+    "skills/story-skill/scripts/story.py": "37d840bae8567dc19dfd7d2fc5fb1c086b5bb3ef6e7657107765ef22d588c6ad",
+    "skills/story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "tests/test_punctuation.py": "c9a019869b14fabee871ef7db5c05f5db8e5f12a38e7ce93288b1b845f962524",
+    "scripts/package.py": "6a00e58e4c17488b2906576bae1b76cf641830f836330bb744970c703c75060c",
+    "scripts/package_npm.py": "d352718dc1afeaa2cba7f785459232cdc266b810e52e38ff61897342a96e5a04",
+    "scripts/install.py": "efc5b945b949daca3249acdefcf1df4db760857a87c6d5d53cca350808c5cd75",
+    "tests/test_package.py": "dbc937aee875360135fc523e2b9c694a10e37a61ac085b3110e07e0488c2444f",
+    "tests/test_package_npm.py": "650ebbc6f1fcfc40c4eb720faa0da065cdbcdf9683ac79996d17369fc49c9808",
+    "tests/test_install_suite.py": "b0875a767fb17c9b52d200a79f0c47734bb207583542ae2dccf60743babe067b",
+    "tests/test_sync_packages.py": "1f78ada3dbd1643c199a1519806d3150257dff2629763886e0b1dbba46bbe88e",
+    "docs/工程全貌.md": "df33d4cf7397be45c70f974621c0d4795ca2fc6f6d18e64da7a2816ad2bffcd6",
+    "scripts/benchmark.py": "49e0af279873d04693109737b67455da5426693febc2da450ae5f84f023b305e",
+    "benchmarks/profiles.json": "3d8cde1c610cd613ad62afb25e6356cfd95f6ddf22a8f112f70b05074f2e590c"
+  }
+}

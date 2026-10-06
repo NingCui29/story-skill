@@ -1,0 +1,22 @@
+{
+  "scope": "Isolated synthetic shelf status, progress, interface and existing identity regression; no real manuscript quality or live AppKit quit test",
+  "modules": [
+    "test_workbench_shelf_progress",
+    "test_workbench_shelf_layout",
+    "test_workbench_writing_status",
+    "test_workbench_status_display",
+    "test_workbench_time_display",
+    "test_workbench_service_recovery",
+    "test_workbench_book_identity",
+    "test_desktop_native",
+    "test_outline_example_boundaries"
+  ],
+  "returncode": 0,
+  "output": "{\"run\": 114, \"skipped\": 0, \"failures\": 0, \"errors\": 0}\n..................................................................................................................\n----------------------------------------------------------------------\nRan 114 tests in 12.231s\n\nOK\n",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_workbench.py": "4e43e36f0424b0720ae272d952bf9059d5f3b486d79055d033a51957d9b42a6c",
+    "skills/story-skill/scripts/story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+    "tests/test_workbench_writing_status.py": "4b7fdbd067bf3d648d0bf861d982dd548d7253fb8f181909035e4c75f2eb162f"
+  },
+  "changed_during_verification": []
+}

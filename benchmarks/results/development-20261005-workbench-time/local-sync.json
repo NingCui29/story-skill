@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "backup": "~/.codex/backups/story-skill/workbench-time-20261005-7916eed431b0",
+  "before_sha256": "92c9de79b9b1e09c139b23082df81dd302721681a603d90697271a489c050fde",
+  "after_sha256": "7916eed431b06307e17364ceac56e162e1540d57ec238030eddae05dd448a7ce",
+  "runtime_file_equality": {
+    "story.py": true,
+    "story_world.py": true,
+    "story_punctuation.py": true,
+    "story_search.py": true,
+    "story_history.py": true,
+    "story_publish.py": true,
+    "story_workbench.py": true,
+    "story_outline.py": true,
+    "story_storage.py": true
+  },
+  "scope": "story_workbench.py only"
+}

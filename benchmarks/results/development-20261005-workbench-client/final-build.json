@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "source_sha256": "e2f25d8a34fd5916f832bf071a914096840f6b1f2c3caac85cdae581dfb3df15",
+  "backup": "~/.codex/backups/story-skill/desktop-client-final-e2f25d8a34fd",
+  "applications": [
+    "<repo>/dist/写作工作台.app",
+    "~/Applications/写作工作台.app"
+  ],
+  "signature_verified": true
+}

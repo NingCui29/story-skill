@@ -89,6 +89,9 @@ def _resolve(book, kind, ref):
     if kind == "plan":
         row = book.db.execute("SELECT data FROM plans WHERE chapter=?", (int(ref),)).fetchone()
         return _hash(json.loads(row[0])) if row else None
+    if kind == "outline":
+        binding = api.outline.binding_for(book, int(ref))
+        return _hash(binding) if binding is not None else None
     if kind == "chapter":
         row = book.db.execute("SELECT sha FROM chapters WHERE chapter=?", (int(ref),)).fetchone()
         return row[0] if row else None
@@ -155,6 +158,46 @@ def _required_dependencies(plan, dependencies, complete):
         missing = sorted(required - {d["ref"] for d in dependencies if d["kind"] == "card"})
         if missing:
             api.fail("missing_required_dependencies", "A complete dependency review must include explicitly required cards", ids=missing)
+
+
+def replacement_scope(book, chapter, *, body_changed=True, changed_cards=(), card_baseline=None):
+    """Find published consumers of the specified latest-chapter changes.
+
+    Only current published declarations of the versions being replaced count;
+    old versions of a reused card ID are not consumers of its present value.
+    Callers that already staged new cards must pass the pre-change baseline.
+    This lookup never seeds missing history, so read-only context/prepare and
+    books awaiting lazy migration can use it.
+    """
+    cards = sorted(set(changed_cards))
+    conditions, parameters, evidence = [], [], {}
+    if body_changed:
+        row = book.db.execute("SELECT sha FROM chapters WHERE chapter=?", (chapter,)).fetchone()
+        if row:
+            conditions.append("(e.kind='chapter' AND e.ref=?)")
+            parameters.append(str(chapter))
+            evidence[("chapter", str(chapter))] = row[0]
+    if cards:
+        baseline = book.cards(cards) if card_baseline is None else card_baseline
+        cards = [cid for cid in cards if baseline.get(cid) is not None]
+        evidence.update({("card", cid): _hash(baseline[cid]) for cid in cards})
+        if cards:
+            conditions.append("(e.kind='card' AND e.ref IN (" + ",".join("?" for _ in cards) + "))")
+            parameters.extend(cards)
+    rows = book.db.execute(
+        "SELECT h.chapter,e.kind,e.ref,e.sha FROM history_edges e JOIN history_heads h ON h.version=e.version "
+        "WHERE h.chapter<>? AND (" + " OR ".join(conditions) + ")",
+        (chapter, *parameters)) if conditions else ()
+    consumers = sorted({row[0] for row in rows if evidence.get((row[1], row[2])) == row[3]})
+    return {"dependent_chapters": consumers[:25], "dependent_chapter_count": len(consumers)}
+
+
+def require_isolated_replacement(book, chapter, *, body_changed=True, changed_cards=(), card_baseline=None):
+    scope = replacement_scope(book, chapter, body_changed=body_changed, changed_cards=changed_cards,
+                              card_baseline=card_baseline)
+    if scope["dependent_chapter_count"]:
+        api.fail("history_revision_required", "Other published chapters depend on this chapter or its changed cards; review them in a history branch",
+                 chapter=chapter, **scope, recovery_command="history-start")
 
 
 def validate_commit_dependencies(book, raw, chapter):
@@ -371,7 +414,7 @@ def _state_at_revision(book, revision):
         manifest = json.loads(_body(book, snap["manifest_sha"]))
         state = {cid: json.loads(_body(book, sha)) for cid, sha in manifest["cards"].items()}
         cursor = snap["revision"]
-    non_card_events = {"plan", "adopt", "adopt_backfill", "analysis", "ingest", "report", "world_save", "history_dependencies",
+    non_card_events = {"plan", "outline_bind", "adopt", "adopt_backfill", "analysis", "ingest", "report", "world_save", "history_dependencies",
                        "history_snapshot", "history_branch_start", "history_branch_update", "history_branch_refresh"}
     replayed = 0
     for row in book.db.execute("SELECT revision,kind,data FROM events WHERE revision>? AND revision<=? ORDER BY revision", (cursor, revision)):
@@ -486,6 +529,7 @@ def _impact(book, target, impact_cards=(), impact_world=()):
     for chapter in reasons:
         state_ids.update(produced[chapter])
         fences["plan:" + str(chapter)] = _resolve(book, "plan", str(chapter))
+        fences["outline:" + str(chapter)] = _resolve(book, "outline", str(chapter))
         for dep in _edges(book, heads[chapter]["id"]):
             key = dep["kind"] + ":" + dep["ref"]
             fences[key] = _resolve(book, dep["kind"], dep["ref"])
@@ -637,6 +681,14 @@ def _branch(book, bid):
 
 
 def _check_fences(book, data):
+    # Older candidates never recorded which adopted outline was reviewed.
+    # Keep their prose/decisions readable, but do not infer a past review from
+    # today's binding or refresh the missing evidence into an old approval.
+    missing_outlines = sorted(int(c) for c in data["base_heads"] if "outline:" + c not in data["fences"])
+    if missing_outlines:
+        api.fail("stale_branch", "This branch predates outline revision tracking; inspect its saved candidates and decisions, then start a new branch and review them again",
+                 chapters=missing_outlines[:25], missing_outline_count=len(missing_outlines),
+                 recovery_command="history-start")
     for chapter, version in data["base_heads"].items():
         head = _head(book, int(chapter))
         current_sha = _resolve(book, "chapter", chapter)

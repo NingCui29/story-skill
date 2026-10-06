@@ -1,0 +1,30 @@
+{
+  "method": "Fresh subagent contexts received only the task, applicable skill and isolated synthetic book. They were not given expected conclusions or other evaluations. These are development trials, not a frozen-version blind comparison or success-rate estimate.",
+  "plan_recovery_initial": {
+    "mechanical_recovery_passed": true,
+    "scope_issue_observed": true,
+    "finding": "Transient instructions to update planning only and not write prose appeared in the saved chapter constraints.",
+    "evidence": "~/.codex/skill-backups/story-skill-priority-followup-eoi89vg8/plan-recovery-result.json"
+  },
+  "plan_recovery_recheck": {
+    "passed": true,
+    "outline_status": "adopted",
+    "chapter_count": 0,
+    "cards_unchanged": true,
+    "transient_scope_in_constraints": false,
+    "evidence": "~/.codex/skill-backups/story-skill-priority-followup-eoi89vg8/plan-recovery-recheck-result.json"
+  },
+  "volume_continuation": {
+    "passed": true,
+    "adopted_parent_change_found": true,
+    "old_outline_and_plan_synchronized": true,
+    "chapter1_unchanged": true,
+    "chapter2_visible_nonspace_v2": 613,
+    "key_remains_with_keeper": true,
+    "outline_status": "adopted",
+    "pending_exports": 0,
+    "changed_exports": 0,
+    "evidence": "~/.codex/skill-backups/story-skill-priority-followup-eoi89vg8/pending-volume-result.json"
+  },
+  "raw_artifacts_outside_repository": "~/.codex/skill-backups/story-skill-priority-followup-eoi89vg8"
+}

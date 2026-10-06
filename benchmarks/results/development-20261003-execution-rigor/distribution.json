@@ -1,0 +1,147 @@
+{
+  "kind": "local-development-snapshot",
+  "version": "0.6.11",
+  "published": false,
+  "ok": true,
+  "zip": {
+    "archive": "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/final-distribution/first/story-skill-0.6.11.zip",
+    "version": "0.6.11",
+    "files": 46,
+    "sha256": "73f0d2fd00c8e292ef4419cf4f5086bc8eaa16420a3429e10b24eba1c3c68ab8",
+    "bytes": 302545
+  },
+  "reproducible": true,
+  "isolated_install": {
+    "status": "passed",
+    "files": 46,
+    "skills": 8,
+    "installed_files_match": true,
+    "installation": {
+      "command": [
+        "~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-X",
+        "utf8",
+        "<repo>/scripts/install.py",
+        "--project",
+        "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/final-distribution/安装验证项目"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\": \"installed\", \"path\": \"~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/final-distribution/安装验证项目/.agents/skills\", \"skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"changed_skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"backup\": null, \"files\": 46}\n",
+      "stderr": "",
+      "duration_seconds": 1.064,
+      "status": "passed"
+    },
+    "receipt": {
+      "status": "installed",
+      "path": "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/final-distribution/安装验证项目/.agents/skills",
+      "skills": [
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover",
+        "story-skill-publish"
+      ],
+      "changed_skills": [
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover",
+        "story-skill-publish"
+      ],
+      "backup": null,
+      "files": 46
+    },
+    "cli_help": {
+      "command": [
+        "~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-X",
+        "utf8",
+        "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/final-distribution/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: story.py [-h] [--version]\n                {template,init,status,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,export,assemble-short,notes,plan,plan-read,outline-bind,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n                ...\n\nStory Skill: local, bounded context and transactional writing state. No API\ncalls.\n\npositional arguments:\n  {template,init,status,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,export,assemble-short,notes,plan,plan-read,outline-bind,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n    template            Print just one JSON input example\n    init                Create state once; never overwrite an existing book\n    status              Compact checkpoint and export health\n    migrate             Explicit schema upgrade with a consistent rollback\n                        backup\n    audit               Strictly check managed exports without repairing or\n                        recording them\n    outline-audit       Read-only structural check of a current whole-book\n                        outline\n    world-save          Save structured story state with cited evidence\n    world-check         Check recorded rules, knowledge and continuity\n    world-read          Inspect one stored narrative record, including stale\n                        evidence for reviewed repair\n    cache-get           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    cache-put           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-dependencies\n                        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-deps        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-inspect     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-publish     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-refresh     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-saved       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-snapshot    Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-start       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-state       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-update      Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    publish-backup      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-cancel      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-check       Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-history\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-inspect\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-record\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export-list\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-inspect     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-list        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-prepare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-recover     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-verify-export\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    workbench-snapshot  Read one bounded, non-mutating local workbench\n                        snapshot\n    workbench-export    Generate a self-contained, read-only local author\n                        workbench\n    workbench-serve     Open a loopback editor that saves candidate drafts\n                        only\n    workbench-status    Check the registered local editor instance\n    workbench-stop      Stop the registered editor after preserving edits in\n                        all its pages\n    export              Repair exports without replacing outside edits\n    assemble-short      Assemble all committed short-story chapters into one\n                        book-title Markdown file\n    notes               Save cards or a chapter plan with optimistic\n                        concurrency\n    plan                Save cards or a chapter plan with optimistic\n                        concurrency\n    plan-read           Read a complete saved chapter plan for recovery\n                        without verifying adoption\n    outline-bind        Bind one reviewed, adopted readable outline to its\n                        saved chapter plan\n    context             Build a bounded chapter context packet\n    prepare             Read-only review scaffold bound to the current book,\n                        state and draft\n    reconcile           Inspect an outside edit of the latest native chapter,\n                        or apply its reviewed draft\n    recall              Bounded literal substring search of cards, summaries\n                        and chapter prose\n    chapter-read        Read a bounded excerpt of a current or immutable\n                        historical chapter\n    dependencies        Resolve candidate evidence hashes for a reviewed\n                        chapter dependency declaration\n    sources             Find saved source IDs and analysis checkpoints after a\n                        new session\n    lint                Check, commit, or import one last complete chapter\n    commit              Check, commit, or import one last complete chapter\n    adopt               Check, commit, or import one last complete chapter\n    adopt-backfill      Check, commit, or import one last complete chapter\n    ingest              Snapshot source text and split without losing bonus\n                        chapters\n    coverage            Incremental source analysis and evidence-backed\n                        checkpoints\n    next                Incremental source analysis and evidence-backed\n                        checkpoints\n    record              Incremental source analysis and evidence-backed\n                        checkpoints\n    findings            Incremental source analysis and evidence-backed\n                        checkpoints\n    source-read         Incremental source analysis and evidence-backed\n                        checkpoints\n    report              Incremental source analysis and evidence-backed\n                        checkpoints\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
+      "stderr": "",
+      "duration_seconds": 0.265,
+      "status": "passed"
+    },
+    "cli_smoke": {
+      "command": [
+        "~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-X",
+        "utf8",
+        "-c",
+        "import importlib.util,pathlib,sys; spec=importlib.util.spec_from_file_location('release_smoke',sys.argv[1]); module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module); module.TOOL=pathlib.Path(sys.argv[2]); sys.argv=[sys.argv[1],'--output',sys.argv[3]]; module.main()",
+        "<repo>/scripts/smoke.py",
+        "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/final-distribution/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+        "~/.codex/skill-backups/story-skill-execution-20261003T145828Z-k5rcyp9y/validation/final-distribution/installed-smoke.json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"ok\": true, \"method\": \"Synthetic fixture via real CLI subprocesses; no model or API calls\", \"commands_executed\": [\"init\", \"notes\", \"plan\", \"status\", \"outline-bind\", \"context\", \"lint\", \"commit\", \"commit\", \"reconcile\", \"lint\", \"reconcile\", \"reconcile\", \"ingest\", \"next\", \"record\", \"record\", \"next\", \"coverage\", \"findings\", \"report\", \"coverage\"], \"visible_chars\": 213, \"draft_sha256\": \"6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be\", \"reconciled_draft_sha256\": \"ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562\", \"context_bytes\": 1114, \"context_budget_bytes\": 4000, \"chapter_commit_idempotent\": true, \"export_bytes_verified\": true, \"reconcile_idempotent\": true, \"external_backup_verified\": true, \"non_content_chunks_completed\": 1, \"analysis_coverage\": {\"analyzed\": 3, \"chunks_total\": 3, \"complete_for_imported_text\": true, \"next_chunk\": null, \"pending\": 0, \"report_path\": \".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md\", \"source\": \"a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7\", \"source_coverage\": \"partial\", \"text_coverage_contiguous\": true}, \"finding_pages_returned\": 3, \"final_report_exported\": true, \"literary_quality_tested\": false}\n",
+      "stderr": "",
+      "duration_seconds": 3.831,
+      "status": "passed",
+      "evidence": {
+        "ok": true,
+        "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+        "commands_executed": [
+          "init",
+          "notes",
+          "plan",
+          "status",
+          "outline-bind",
+          "context",
+          "lint",
+          "commit",
+          "commit",
+          "reconcile",
+          "lint",
+          "reconcile",
+          "reconcile",
+          "ingest",
+          "next",
+          "record",
+          "record",
+          "next",
+          "coverage",
+          "findings",
+          "report",
+          "coverage"
+        ],
+        "visible_chars": 213,
+        "draft_sha256": "6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be",
+        "reconciled_draft_sha256": "ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562",
+        "context_bytes": 1114,
+        "context_budget_bytes": 4000,
+        "chapter_commit_idempotent": true,
+        "export_bytes_verified": true,
+        "reconcile_idempotent": true,
+        "external_backup_verified": true,
+        "non_content_chunks_completed": 1,
+        "analysis_coverage": {
+          "analyzed": 3,
+          "chunks_total": 3,
+          "complete_for_imported_text": true,
+          "next_chunk": null,
+          "pending": 0,
+          "report_path": ".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md",
+          "source": "a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7",
+          "source_coverage": "partial",
+          "text_coverage_contiguous": true
+        },
+        "finding_pages_returned": 3,
+        "final_report_exported": true,
+        "literary_quality_tested": false
+      }
+    }
+  }
+}

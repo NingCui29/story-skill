@@ -67,6 +67,12 @@ def replay(root, scenario_path, resume_prepared_first=False):
             revision = call("status")["revision"]
             call("plan", "--chapter", number, "--input", write_json(book / f".story/drafts/plan-{number}.json", plan),
                  "--expect", revision)
+            outline_path = book / f"第{number}章验收细纲.md"
+            outline_path.write_text(f"# 第{number}章验收细纲\n状态：已采用\n\n"
+                                    "本文件由固定验收计划生成，仅用于版本绑定的程序重放。\n\n"
+                                    + json.dumps(plan, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            call("outline-bind", "--chapter", number, "--file", outline_path.name,
+                 "--sha256", sha(outline_path.read_bytes()), "--expect", call("status")["revision"])
     recovery = None
     for index, unit in enumerate(scenario["units"], 1):
         number = unit["chapter"]
@@ -84,6 +90,11 @@ def replay(root, scenario_path, resume_prepared_first=False):
             call("plan", "--chapter", number, "--input", write_json(book / f".story/drafts/plan-{index}-revision.json",
                  {"volume_dir": "第一卷 " + scenario["title"], **unit["plan"]}),
                  "--expect", call("status")["revision"])
+            outline_path = book / f"第{number}章验收细纲.md"
+            outline_path.write_text(f"# 第{number}章验收细纲\n状态：已采用\n\n"
+                                    + json.dumps(unit["plan"], ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            call("outline-bind", "--chapter", number, "--file", outline_path.name,
+                 "--sha256", sha(outline_path.read_bytes()), "--expect", call("status")["revision"])
         if unit.get("external_recovery"):
             # Only files created by this run, under its new isolated book, are modified.
             first = chapter_paths[1]

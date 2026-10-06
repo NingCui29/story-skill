@@ -1,0 +1,51 @@
+{
+  "skill_validation": [
+    {
+      "skill": "story-skill",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    },
+    {
+      "skill": "story-skill-analyze",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    },
+    {
+      "skill": "story-skill-cover",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    },
+    {
+      "skill": "story-skill-plan",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    },
+    {
+      "skill": "story-skill-publish",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    },
+    {
+      "skill": "story-skill-research",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    },
+    {
+      "skill": "story-skill-review",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    },
+    {
+      "skill": "story-skill-write",
+      "exit_code": 0,
+      "output": "Skill is valid!\n"
+    }
+  ],
+  "links": {
+    "status": "passed",
+    "files_scanned": 280,
+    "links_checked": 1554,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  }
+}

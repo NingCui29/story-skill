@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "runtime_self_locates_after_relocation": true,
+  "cold_shelf_start": true,
+  "packaged_editor_start": true,
+  "classification_and_time": true,
+  "candidate_save_and_reopen": true,
+  "original_source_and_database_unchanged": true,
+  "temporary_fixture_only": true,
+  "temporary_services_stopped_and_removed": true
+}

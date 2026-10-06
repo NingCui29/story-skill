@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "scope": "story_workbench.py only",
+  "backup": "~/.codex/backups/story-skill/workbench-identity-20261005-b99ab584e194",
+  "before_sha256": "ae8bb1fa936f36ba33b91f443a08f535d0cee241dc2b6e83a7aee6d170b6533f",
+  "after_sha256": "b99ab584e1946dc61e37db993bb3e13fb3f5f1df927f8de56431ceb3bd847a42",
+  "installed": "~/.codex/skills/story-skill/scripts/story_workbench.py",
+  "runtime_file_equality": {
+    "story.py": true,
+    "story_world.py": true,
+    "story_punctuation.py": true,
+    "story_search.py": true,
+    "story_history.py": true,
+    "story_publish.py": true,
+    "story_workbench.py": true,
+    "story_outline.py": true,
+    "story_storage.py": true
+  },
+  "running_real_services_stopped": false,
+  "real_book_state_changed": false
+}

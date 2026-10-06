@@ -1,0 +1,11 @@
+{
+  "suite": "test_outline_position_audit",
+  "tests_run": 48,
+  "passed": 48,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "elapsed_seconds": 4.43,
+  "success": true,
+  "log": "~/.codex/skill-backups/story-skill-outline-followup-g_j_d0v5/validation/entrance-targeted.log"
+}

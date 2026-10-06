@@ -1,0 +1,19 @@
+{
+  "log": "unit-tests.log",
+  "tests": 1362,
+  "passed": 1345,
+  "skipped": 17,
+  "skip_reasons": {
+    "Windows rename provides the no-replace guarantee tested here": 1,
+    "Windows publication without hard links": 5,
+    "Native Windows delete-sharing protection": 1,
+    "Requires native Windows directory share locks": 10
+  },
+  "failures": 0,
+  "errors": 0,
+  "duration_seconds": 225.266,
+  "python": "3.12.14",
+  "node": "24.19.0",
+  "warnings": [],
+  "status": "passed"
+}

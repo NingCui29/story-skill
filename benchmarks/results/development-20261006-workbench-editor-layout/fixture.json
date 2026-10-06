@@ -1,0 +1,117 @@
+{
+  "created_at": "2026-10-06T08:55:02.825961+00:00",
+  "synthetic": true,
+  "service_started": false,
+  "temporary_area": "/tmp/story-editor-layout-f4_xmf3n",
+  "book_root": "/tmp/story-editor-layout-f4_xmf3n/合成布局验收_长目录用于测试作品位置弹出内容和窄窗口折行/作品16_布局核验",
+  "title": "作品16 · 布局核验",
+  "book_id": "book-id-02",
+  "kind": "long",
+  "revision": 7,
+  "formal_chapters": 3,
+  "paragraphs_per_chapter": 10,
+  "formal_paths": [
+    "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md",
+    "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md",
+    "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md"
+  ],
+  "material_paths": [
+    "创作约定.md",
+    "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md"
+  ],
+  "initial_hashes": {
+    ".story/state.sqlite3": {
+      "path": ".story/state.sqlite3",
+      "sha256": "34fe0e03a173a1abe14c140b66de681ddaf7fd15197740c00ba47ca5651cd061",
+      "bytes": 565248,
+      "mtime_ns": 1791276902820983051
+    },
+    "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md": {
+      "path": "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md",
+      "sha256": "aa73f55defe9a0cee3aa2ac5f0c26d06003a5fc2524dd6a6b0f3e7ab6ca1334b",
+      "bytes": 2551,
+      "mtime_ns": 1791276902822322817
+    },
+    "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md": {
+      "path": "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md",
+      "sha256": "116017b1443a31afaa9e822ce94de2097dd93e7ee8493aece3fb71413b527c6d",
+      "bytes": 6265,
+      "mtime_ns": 1791276902762749803
+    },
+    "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md": {
+      "path": "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md",
+      "sha256": "10d6b140fad457433023117fcc9e1a3a1b39f228b47f737ee8b8b68f328bb368",
+      "bytes": 6265,
+      "mtime_ns": 1791276902789716641
+    },
+    "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md": {
+      "path": "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md",
+      "sha256": "5920296bf72341c4c8c6e17a712a8fc746d3a59036cd34462d0ccc7813edc53c",
+      "bytes": 6265,
+      "mtime_ns": 1791276902816426697
+    },
+    "创作约定.md": {
+      "path": "创作约定.md",
+      "sha256": "7afb4ea754edab573238cf9e18d66f10e4c6f768f2960961965945ae5053db75",
+      "bytes": 554,
+      "mtime_ns": 1791276902821891225
+    }
+  },
+  "all_book_files": [
+    {
+      "path": ".story/operation.lock",
+      "sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "bytes": 1,
+      "mtime_ns": 1791276902752866688
+    },
+    {
+      "path": ".story/state.sqlite3",
+      "sha256": "34fe0e03a173a1abe14c140b66de681ddaf7fd15197740c00ba47ca5651cd061",
+      "bytes": 565248,
+      "mtime_ns": 1791276902820983051
+    },
+    {
+      "path": "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md",
+      "sha256": "aa73f55defe9a0cee3aa2ac5f0c26d06003a5fc2524dd6a6b0f3e7ab6ca1334b",
+      "bytes": 2551,
+      "mtime_ns": 1791276902822322817
+    },
+    {
+      "path": "01_大纲细纲/第2章 测试细纲.md",
+      "sha256": "afba2b589bd320c433482c4b66c7bd671e3f1a2bf06b54a8deed6e94c2433979",
+      "bytes": 252,
+      "mtime_ns": 1791276902771271511
+    },
+    {
+      "path": "01_大纲细纲/第3章 测试细纲.md",
+      "sha256": "21405313a645be70703a223892ea40e4ee6f203f81c6d20eb82c6bf82ebac82d",
+      "bytes": 252,
+      "mtime_ns": 1791276902798053868
+    },
+    {
+      "path": "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md",
+      "sha256": "116017b1443a31afaa9e822ce94de2097dd93e7ee8493aece3fb71413b527c6d",
+      "bytes": 6265,
+      "mtime_ns": 1791276902762749803
+    },
+    {
+      "path": "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md",
+      "sha256": "10d6b140fad457433023117fcc9e1a3a1b39f228b47f737ee8b8b68f328bb368",
+      "bytes": 6265,
+      "mtime_ns": 1791276902789716641
+    },
+    {
+      "path": "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md",
+      "sha256": "5920296bf72341c4c8c6e17a712a8fc746d3a59036cd34462d0ccc7813edc53c",
+      "bytes": 6265,
+      "mtime_ns": 1791276902816426697
+    },
+    {
+      "path": "创作约定.md",
+      "sha256": "7afb4ea754edab573238cf9e18d66f10e4c6f768f2960961965945ae5053db75",
+      "bytes": 554,
+      "mtime_ns": 1791276902821891225
+    }
+  ],
+  "note": "独立合成布局验收样例；未读取或复制真实小说正文；未启动服务。adopt仅初始化首章，其余两章按fixture工具登记，审查注释明确仅为机械界面验收。"
+}

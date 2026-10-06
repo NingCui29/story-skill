@@ -1,0 +1,258 @@
+{
+  "total": 17,
+  "types": {
+    "long": 5,
+    "short": 12
+  },
+  "classification_states": {
+    "missing": 13,
+    "recorded": 4
+  },
+  "books": [
+    {
+      "title": "作品15",
+      "kind": "long",
+      "root": "/local-books/book-15",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品16",
+      "kind": "long",
+      "root": "/local-books/book-16",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品17",
+      "kind": "long",
+      "root": "/local-books/book-17",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品18",
+      "kind": "long",
+      "root": "/local-books/book-18",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品14",
+      "kind": "long",
+      "root": "/local-books/book-14",
+      "available": true,
+      "classification": {
+        "status": "recorded",
+        "tags": [
+          "架空古言",
+          "玄学安宅",
+          "关系逆转",
+          "职业成长"
+        ],
+        "sources": [
+          {
+            "path": "创作约定.md",
+            "field": "类型",
+            "value": "架空古言、玄学安宅、关系逆转、职业成长，兼有居家日常与渐进感情。",
+            "line": 9
+          }
+        ],
+        "note": "来自本书现行材料的明确题材记录；不表示平台分类已确认。"
+      }
+    },
+    {
+      "title": "作品02",
+      "kind": "short",
+      "root": "/local-books/book-02",
+      "available": true,
+      "classification": {
+        "status": "recorded",
+        "tags": [
+          "纯爽文"
+        ],
+        "sources": [
+          {
+            "path": "创作约定.md",
+            "field": "类型与阅读期待",
+            "value": "纯爽文。中奖后主角有钱、有本事、有主动权；每章有明确兑现的反击、享受或事业胜利。反派的手段带来新场面，但不让主角长期受气。不把节俭、装穷、无偿原谅写成美德考题。",
+            "line": 7
+          }
+        ],
+        "note": "来自本书现行材料的明确题材记录；不表示平台分类已确认。"
+      }
+    },
+    {
+      "title": "作品03",
+      "kind": "short",
+      "root": "/local-books/book-03",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品04",
+      "kind": "short",
+      "root": "/local-books/book-04",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品05",
+      "kind": "short",
+      "root": "/local-books/book-05",
+      "available": true,
+      "classification": {
+        "status": "recorded",
+        "tags": [
+          "女频现实题材短故事"
+        ],
+        "sources": [
+          {
+            "path": "创作约定.md",
+            "field": "类型与读者期待",
+            "value": "女频现实题材短故事；家庭关系中的清醒反击、中年女性重新获得居住与收入自主权、母女关系有代价地修复。",
+            "line": 5
+          }
+        ],
+        "note": "来自本书现行材料的明确题材记录；不表示平台分类已确认。"
+      }
+    },
+    {
+      "title": "作品06",
+      "kind": "short",
+      "root": "/local-books/book-06",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品07",
+      "kind": "short",
+      "root": "/local-books/book-07",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品08",
+      "kind": "short",
+      "root": "/local-books/book-08",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品09",
+      "kind": "short",
+      "root": "/local-books/book-09",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品10",
+      "kind": "short",
+      "root": "/local-books/book-10",
+      "available": true,
+      "classification": {
+        "status": "recorded",
+        "tags": [
+          "女性成长",
+          "家庭关系"
+        ],
+        "sources": [
+          {
+            "path": "创作约定.md",
+            "field": "类型与期待",
+            "value": "女性成长＋家庭关系；主投番茄短故事。读者期待女儿的劳动获得职业身份、报酬和时间边界，同时看见她确实学习、犯错、承担自己接受的责任。方向已采用，市场表现未经验证，不称爆款。",
+            "line": 8
+          }
+        ],
+        "note": "来自本书现行材料的明确题材记录；不表示平台分类已确认。"
+      }
+    },
+    {
+      "title": "作品11",
+      "kind": "short",
+      "root": "/local-books/book-11",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品12",
+      "kind": "short",
+      "root": "/local-books/book-12",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    },
+    {
+      "title": "作品13",
+      "kind": "short",
+      "root": "/local-books/book-13",
+      "available": true,
+      "classification": {
+        "status": "missing",
+        "tags": [],
+        "sources": [],
+        "note": "尚无可直接显示的明确题材字段，待分类。"
+      }
+    }
+  ],
+  "registry_unchanged": true
+}

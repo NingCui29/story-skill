@@ -1,0 +1,62 @@
+{
+  "task_type": "independent_read_only_dialogue_review",
+  "review_mode": "independent_review_not_blind_review",
+  "input_scope": [
+    "用户提供的完整片段 A",
+    "用户提供的完整片段 B",
+    "用户提供的姐弟身份、鞋店打烊分工、无第三人与无额外声线背景"
+  ],
+  "actual_read_files": [
+    {
+      "path": "/tmp/story-dialogue-20261004-0bsdz2rv/snapshot/skills/story-skill-review/SKILL.md",
+      "coverage": "全文"
+    },
+    {
+      "path": "/tmp/story-dialogue-20261004-0bsdz2rv/snapshot/skills/story-skill/SKILL.md",
+      "coverage": "全文；仅适用共同约束与独立片段边界，不重新路由"
+    },
+    {
+      "path": "/tmp/story-dialogue-20261004-0bsdz2rv/snapshot/skills/story-skill-write/references/content-review.md",
+      "coverage": "全文"
+    },
+    {
+      "path": "/tmp/story-dialogue-20261004-0bsdz2rv/snapshot/skills/story-skill-write/references/drama.md",
+      "coverage": "先读取标题目录，随后定点读取第 63—70、205—226、235—238、249—273 行",
+      "sections": [
+        "人物在场与去 AI 味复核",
+        "人物对话方式",
+        "用中文把人写在场景里",
+        "成稿格式",
+        "对白分段与说话人",
+        "中文语法与标点校对"
+      ]
+    }
+  ],
+  "checks_performed": [
+    "连读两段完整交流与用户背景",
+    "说话人与动作归属",
+    "实际接话与回应功能",
+    "人物知情、关系与既定分工",
+    "整段声线同质而非单个短答换名测试",
+    "相邻动作和整场解释或反证",
+    "对白分段与提示语标点"
+  ],
+  "unverified_scope": [
+    "全书与前后章节",
+    "长期声线与既有人设",
+    "平台规范与商业市场表现",
+    "托管正文身份、章计划与状态库"
+  ],
+  "unverified_reason": "用户只授权独立片段的局部对白审稿，上述材料不构成本次判断的必要前提。",
+  "mutations": [
+    "仅写入指定的 forward-review.md 与 forward-review-process.json"
+  ],
+  "not_performed": [
+    "修改任何正文或主仓库",
+    "初始化书库",
+    "运行书籍状态或提交命令",
+    "扩展故事或新增人物经历",
+    "要求全书材料",
+    "使用外部 AI 检测或质量分数"
+  ]
+}

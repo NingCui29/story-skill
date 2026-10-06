@@ -116,7 +116,7 @@ def make_fixture(story, root, count, card_count):
     body = "甲" * 2500
     sha = story.digest(body)
     (root / "chapters/第一卷 容量夹具").mkdir(parents=True)
-    (root / "load-draft.md").write_text(body, encoding="utf-8")
+    (root / "load-draft.md").write_text(f"第{count + 1}章 容量探针\n\n{body}\n", encoding="utf-8")
     try:
         with book.transaction():
             for number in range(1, count + 1):
@@ -172,6 +172,12 @@ def run_case(story, root, count, card_count, integrity, timeout):
     book = story.Book(root, integrity=integrity)
     draft = root / "load-draft.md"
     try:
+        # Adopt the synthetic next-chapter plan before measuring its read/commit path.
+        outline_path = root / "容量测试新章细纲.md"
+        outline_path.write_text("# 容量测试新章细纲\n状态：已采用\n\n"
+                                + json.dumps(book.get_plan(count + 1), ensure_ascii=False) + "\n",
+                                encoding="utf-8")
+        story.outline.bind(book, count + 1, outline_path.name, book.meta("revision"), file_sha(outline_path))
         case["cli_status"] = cli_status(root, integrity, timeout)
         if not case["cli_status"]["ok"]:
             raise AssertionError("Actual CLI --integrity status failed")

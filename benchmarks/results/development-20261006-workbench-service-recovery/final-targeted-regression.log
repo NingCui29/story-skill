@@ -1,0 +1,18 @@
+E..........................................................................................................
+======================================================================
+ERROR: test_actual_abnormal_exit_can_restart_through_library_open_without_book_writes (test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_actual_abnormal_exit_can_restart_through_library_open_without_book_writes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_workbench_service_recovery.py", line 295, in test_actual_abnormal_exit_can_restart_through_library_open_without_book_writes
+    opened = self.w._library_open({self.entry['key']: self.entry}, self.entry['key'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story_workbench.py", line 2257, in _library_open
+    api.fail('workbench_start_pending', '启动尚未确认，请稍后再次打开或查看该作品服务状态。')
+  File "<repo>/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+workbench_contract_story.StoryError: 启动尚未确认，请稍后再次打开或查看该作品服务状态。
+
+----------------------------------------------------------------------
+Ran 107 tests in 16.924s
+
+FAILED (errors=1)

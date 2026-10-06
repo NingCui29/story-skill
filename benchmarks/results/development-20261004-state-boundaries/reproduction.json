@@ -1,0 +1,192 @@
+{
+  "phase": "before-fix",
+  "cases": [
+    {
+      "case": "bound_to_new_binding",
+      "changed_binding_chapter": 1,
+      "affected": [
+        1
+      ],
+      "old_binding": {
+        "status": "adopted",
+        "chapter": 1,
+        "path": "01_大纲细纲/第1章 测试细纲.md",
+        "sha256": "0a837daf35dc997ed78ffff0180003acafa177171dab61951df02d05c162019f",
+        "plan_sha256": "8bdaaeb8e3c2af79168e8e24f0b5dc0717c9db074bc27ceba1ebc8f00b7c2c76"
+      },
+      "new_binding": {
+        "status": "adopted",
+        "chapter": 1,
+        "path": "01_大纲细纲/第1章 测试细纲.md",
+        "sha256": "005ecbf99414b5328a701b12ea4c0a719af8eba869ab2e546c110dd385dcbe14",
+        "plan_sha256": "8bdaaeb8e3c2af79168e8e24f0b5dc0717c9db074bc27ceba1ebc8f00b7c2c76"
+      },
+      "review_unchanged": true,
+      "old_semantic": {
+        "coverage_review": "已核对关联范围。",
+        "issues": [],
+        "manifest_sha256": "d9566be037dc3805e482447858433b52ea86b99672fddf8116ed7a7ebc76841c",
+        "note": "已复核所有候选。",
+        "reviewed_chapters": [
+          1
+        ],
+        "state_review": "已核对最终状态。"
+      },
+      "new_semantic": {
+        "coverage_review": "已核对关联范围。",
+        "issues": [],
+        "manifest_sha256": "d9566be037dc3805e482447858433b52ea86b99672fddf8116ed7a7ebc76841c",
+        "note": "已复核所有候选。",
+        "reviewed_chapters": [
+          1
+        ],
+        "state_review": "已核对最终状态。"
+      },
+      "refresh_semantic_reviewed": true,
+      "candidate_body_changed_for_rebound_chapter": true,
+      "publication": {
+        "committed": true,
+        "chapters": [
+          1
+        ],
+        "exports_complete": true
+      }
+    },
+    {
+      "case": "unbound_to_bound",
+      "changed_binding_chapter": 1,
+      "affected": [
+        1
+      ],
+      "old_binding": null,
+      "new_binding": {
+        "status": "adopted",
+        "chapter": 1,
+        "path": "01_大纲细纲/第1章 交接细纲.md",
+        "sha256": "c4aa78385187328cebf80550d065081e61e3ddf547461bdc75c958adcee570c2",
+        "plan_sha256": "f01da32efed487452c27915f64b7cc96788dc046556652702eb64fcca9af0406"
+      },
+      "review_unchanged": true,
+      "old_semantic": {
+        "coverage_review": "已核对关联范围。",
+        "issues": [],
+        "manifest_sha256": "da9280e53563e8549918f99f726575f85d429a036dddb25f380285bfbaa4bcc5",
+        "note": "已复核所有候选。",
+        "reviewed_chapters": [
+          1
+        ],
+        "state_review": "已核对最终状态。"
+      },
+      "new_semantic": {
+        "coverage_review": "已核对关联范围。",
+        "issues": [],
+        "manifest_sha256": "da9280e53563e8549918f99f726575f85d429a036dddb25f380285bfbaa4bcc5",
+        "note": "已复核所有候选。",
+        "reviewed_chapters": [
+          1
+        ],
+        "state_review": "已核对最终状态。"
+      },
+      "refresh_semantic_reviewed": true,
+      "candidate_body_changed_for_rebound_chapter": true,
+      "publication": {
+        "committed": true,
+        "chapters": [
+          1
+        ],
+        "exports_complete": true
+      }
+    },
+    {
+      "case": "unchanged_affected_chapter",
+      "changed_binding_chapter": 2,
+      "affected": [
+        1,
+        2
+      ],
+      "old_binding": {
+        "status": "adopted",
+        "chapter": 2,
+        "path": "01_大纲细纲/第2章 测试细纲.md",
+        "sha256": "9b6ff40aab92c227d1b531f43a47d3ea94688b98716be95ab2e3e3340ca57df5",
+        "plan_sha256": "38b40fda2449f37bfb5fca3bc47c249fabd3167b808ab11e2c992311f0b7d2dc"
+      },
+      "new_binding": {
+        "status": "adopted",
+        "chapter": 2,
+        "path": "01_大纲细纲/第2章 测试细纲.md",
+        "sha256": "0d0edb7f7e29e32677304a6eb78b291eb6e730718b3118acf2bfbf6e89441209",
+        "plan_sha256": "38b40fda2449f37bfb5fca3bc47c249fabd3167b808ab11e2c992311f0b7d2dc"
+      },
+      "review_unchanged": true,
+      "old_semantic": {
+        "coverage_review": "已核对关联范围。",
+        "issues": [],
+        "manifest_sha256": "9c6d376c1a10cab45dcd27d542d61f27a6dac9a6b5743658b7cf0493aeb38de7",
+        "note": "已复核所有候选。",
+        "reviewed_chapters": [
+          1,
+          2
+        ],
+        "state_review": "已核对最终状态。"
+      },
+      "new_semantic": {
+        "coverage_review": "已核对关联范围。",
+        "issues": [],
+        "manifest_sha256": "9c6d376c1a10cab45dcd27d542d61f27a6dac9a6b5743658b7cf0493aeb38de7",
+        "note": "已复核所有候选。",
+        "reviewed_chapters": [
+          1,
+          2
+        ],
+        "state_review": "已核对最终状态。"
+      },
+      "refresh_semantic_reviewed": true,
+      "candidate_body_changed_for_rebound_chapter": false,
+      "publication": {
+        "committed": true,
+        "chapters": [
+          1,
+          2
+        ],
+        "exports_complete": true
+      }
+    },
+    {
+      "case": "chapter_review_only",
+      "changed_binding_chapter": 1,
+      "affected": [
+        1
+      ],
+      "old_binding": {
+        "status": "adopted",
+        "chapter": 1,
+        "path": "01_大纲细纲/第1章 测试细纲.md",
+        "sha256": "0a837daf35dc997ed78ffff0180003acafa177171dab61951df02d05c162019f",
+        "plan_sha256": "8bdaaeb8e3c2af79168e8e24f0b5dc0717c9db074bc27ceba1ebc8f00b7c2c76"
+      },
+      "new_binding": {
+        "status": "adopted",
+        "chapter": 1,
+        "path": "01_大纲细纲/第1章 测试细纲.md",
+        "sha256": "005ecbf99414b5328a701b12ea4c0a719af8eba869ab2e546c110dd385dcbe14",
+        "plan_sha256": "8bdaaeb8e3c2af79168e8e24f0b5dc0717c9db074bc27ceba1ebc8f00b7c2c76"
+      },
+      "review_unchanged": true,
+      "old_semantic": null,
+      "new_semantic": null,
+      "refresh_semantic_reviewed": false,
+      "candidate_body_changed_for_rebound_chapter": true,
+      "publication": {
+        "committed": true,
+        "chapters": [
+          1
+        ],
+        "exports_complete": true
+      }
+    }
+  ],
+  "script": "~/.codex/skill-backups/story-skill-priority-audit-_vducr7j/reproduction/repro.py",
+  "raw_output": "~/.codex/skill-backups/story-skill-priority-audit-_vducr7j/reproduction/raw-output.json",
+  "scope": "Isolated synthetic books, supported API sequences; no real novels modified."
+}

@@ -5,6 +5,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from outline_fixture import bind_adopted_outline
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("long_integration_review_runtime", ROOT / "skills/story-skill/scripts/story.py")
@@ -43,6 +45,7 @@ class LongIntegrationReviewTests(unittest.TestCase):
                 "length_exception": {"source": "user_request", "quote": "测试行动核对需要5至200字。"},
                 "entities": ["jiang", "du"], "time": {"clock": "main", "start": at, "end": at}}
         self.book.save_plan(chapter, plan, self.rev())
+        bind_adopted_outline(story, self.book, chapter)
         self.draft.write_bytes(text.encode("utf-8"))
         return {"book_id": self.book.meta("id"), "base_revision": self.rev(), "summary": text.splitlines()[1], "changes": [],
                 "world_changes": changes, "review": {"draft_sha256": story.digest(text),

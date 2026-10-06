@@ -6,6 +6,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 SPEC = importlib.util.spec_from_file_location("story_path_snapshot", TOOL)
@@ -30,6 +32,7 @@ class PathSnapshotTests(unittest.TestCase):
             "constraints": [], "requires": [], "tags": [], "length": [20, 120],
             "length_exception": {"source": "user_request", "quote": "测试章按20至120字写作。"},
         }, self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 1)
         self.draft.write_bytes(OLD_TEXT.encode("utf-8"))
         self.book.commit(1, self.draft, self.delta(self.book, OLD_TEXT))
 
@@ -83,6 +86,7 @@ class PathSnapshotTests(unittest.TestCase):
         old_path = self.book.chapter_path(1)
         second_text = OLD_TEXT.replace("第1章 门后的雨", "第2章 渡口的灯")
         self.book.save_plan(2, self.book.get_plan(1), self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 2)
         self.draft.write_bytes(second_text.encode("utf-8"))
         self.book.commit(2, self.draft, self.delta(self.book, second_text))
         packet = story.history.branch_start(self.book, 1, self.book.meta("revision"))

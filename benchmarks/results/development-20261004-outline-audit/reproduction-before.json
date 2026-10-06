@@ -1,0 +1,82 @@
+{
+  "neutral_path": {
+    "exit_code": 0,
+    "result": {
+      "checked_platform_rules": "qimao",
+      "fields_found": [
+        "一级分类",
+        "二级分类",
+        "作品阶段",
+        "依据",
+        "分类频道",
+        "待核对",
+        "情节",
+        "来源与核对日期",
+        "目标平台",
+        "篇幅类型",
+        "背景",
+        "角色",
+        "选择依据",
+        "页面适用性",
+        "风格"
+      ],
+      "issues": [],
+      "manual_review_required": true,
+      "note": "Only required field presence and source-date syntax were checked; platform options, per-column status, evidence, and adoption still require human review.",
+      "ok": true,
+      "path": "01_大纲细纲/全书总纲.md",
+      "scope": "outline_structure_only",
+      "section_lines": [
+        4
+      ],
+      "sha256": "1d47294e465644584be4814ab8b37e381baa186d387ca0615b8f9810be5e91d5"
+    }
+  },
+  "candidate_path": {
+    "exit_code": 2,
+    "result": {
+      "error": "invalid_input",
+      "message": "Adopted outline cannot use a draft, candidate, history, or manuscript path",
+      "ok": false,
+      "path": "01_大纲细纲/全书总纲_候选.md"
+    }
+  },
+  "closed_heading": {
+    "exit_code": 2,
+    "result": {
+      "checked_platform_rules": "none",
+      "fields_found": [],
+      "issues": [
+        {
+          "code": "position_section_missing"
+        }
+      ],
+      "manual_review_required": true,
+      "note": "Only required field presence and source-date syntax were checked; platform options, per-column status, evidence, and adoption still require human review.",
+      "ok": false,
+      "path": "01_大纲细纲/闭合标题.md",
+      "scope": "outline_structure_only",
+      "section_lines": [],
+      "sha256": "621e08cbf0da420cb3c53f8d60e8cb4fccd742024be475cf6f444a443a6fc471"
+    }
+  },
+  "indented_heading": {
+    "exit_code": 2,
+    "result": {
+      "checked_platform_rules": "none",
+      "fields_found": [],
+      "issues": [
+        {
+          "code": "position_section_missing"
+        }
+      ],
+      "manual_review_required": true,
+      "note": "Only required field presence and source-date syntax were checked; platform options, per-column status, evidence, and adoption still require human review.",
+      "ok": false,
+      "path": "01_大纲细纲/缩进标题.md",
+      "scope": "outline_structure_only",
+      "section_lines": [],
+      "sha256": "c49f97d11c01a6a104aab0236747c74195cdb56f3351df39ef9d4e62dc09e7c5"
+    }
+  }
+}

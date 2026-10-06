@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "version": "0.6.11",
+  "kind_checked": "analysis",
+  "cli_version_help_init_status": true,
+  "catalog_identity_verified": true,
+  "runtime_sha256": "0367c0121ed63f423607d87a25cd175576b4a6f2bee5550037068baf2f5854be",
+  "service_outdated": false,
+  "temporary_service_closed": true,
+  "temporary_book_removed": true,
+  "installed_workbench_sha256": "b99ab584e1946dc61e37db993bb3e13fb3f5f1df927f8de56431ceb3bd847a42",
+  "verification_fixture_note": "Direct internal API calls use the resolved temporary path; macOS /var alias was corrected before this successful run."
+}

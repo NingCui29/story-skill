@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "backup": "~/.codex/backups/story-skill/workbench-classification-20261005-92c9de79b9b1",
+  "before_sha256": "b99ab584e1946dc61e37db993bb3e13fb3f5f1df927f8de56431ceb3bd847a42",
+  "after_sha256": "92c9de79b9b1e09c139b23082df81dd302721681a603d90697271a489c050fde",
+  "runtime_file_equality": {
+    "story.py": true,
+    "story_world.py": true,
+    "story_punctuation.py": true,
+    "story_search.py": true,
+    "story_history.py": true,
+    "story_publish.py": true,
+    "story_workbench.py": true,
+    "story_outline.py": true,
+    "story_storage.py": true
+  },
+  "scope": "story_workbench.py only"
+}

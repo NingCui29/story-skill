@@ -4,6 +4,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 SPEC = importlib.util.spec_from_file_location("context_dependencies_story", TOOL)
@@ -85,6 +87,7 @@ class ContextDependencyTests(unittest.TestCase):
 
     def test_selected_record_hashes_can_be_saved_without_resolving_the_ambiguity(self):
         self.seed()
+        bind_adopted_outline(story, self.book, 2)
         dependencies = self.book.dependency_candidates(2)
         quote = "甲回看信封，决定先核对寄信人的身份。"
         text = "第2章 查信\n" + quote + "\n"

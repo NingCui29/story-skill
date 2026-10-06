@@ -1,0 +1,56 @@
+{
+  "activeBookTitle" : "作品16 · 布局核验",
+  "activePageIsFirstEditor" : true,
+  "allPagesShareMainWindow" : true,
+  "cachedPageCount" : 3,
+  "dirtyBufferCount" : 1,
+  "editorLoadCount" : 1,
+  "editorNavigationCount" : 1,
+  "editorStatePreserved" : true,
+  "loadsUnchanged" : true,
+  "nativeWindowCount" : 2,
+  "navigationsUnchanged" : true,
+  "ok" : false,
+  "pageIDs" : {
+    "first" : "6C896FE7-AEC3-4365-AE39-9E09BED6F293",
+    "second" : "5BD8B31B-44C9-4485-91C9-2ED14CE3FBD8",
+    "shelf" : "2EF3DE6F-FE14-4F50-8945-765B8BC9C9D0"
+  },
+  "pendingSaveCount" : 1,
+  "popupNavigation" : true,
+  "sameEditorPage" : true,
+  "sameEditorWebView" : true,
+  "secondEditorChecked" : true,
+  "secondEditorLoadCount" : 1,
+  "secondEditorNavigationCount" : 1,
+  "secondEditorStatePreserved" : true,
+  "selectionAfter" : [
+    5,
+    13
+  ],
+  "selectionBefore" : [
+    5,
+    13
+  ],
+  "shelfLoadCount" : 1,
+  "shelfNavigationCount" : 1,
+  "shelfStatePreserved" : true,
+  "snapshot" : "\/Users\/cuining\/Documents\/GitHub\/story-skill\/benchmarks\/results\/development-20261006-workbench-single-window\/native-single-window-diagnostic.png",
+  "textareaValuePreserved" : true,
+  "windowInventory" : [
+    {
+      "class" : "NSWindow",
+      "isMainHost" : true,
+      "isPanel" : false,
+      "title" : "作品16 · 布局核验 · 写作工作台",
+      "visible" : true
+    },
+    {
+      "class" : "TUINSWindow",
+      "isMainHost" : false,
+      "isPanel" : false,
+      "title" : "",
+      "visible" : false
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "synthetic_only": true,
+  "wide": {
+    "width": 1280,
+    "height": 790,
+    "header_height": 69.640625,
+    "prose_top": 281.625,
+    "horizontal_overflow": false
+  },
+  "narrow": {
+    "width": 390,
+    "height": 790,
+    "header_height": 106.140625,
+    "horizontal_overflow": false,
+    "popup_width": 362,
+    "popup_right": 376
+  },
+  "metadata_open_header_height": 69.640625,
+  "long_root_panel_overflow": false,
+  "unsaved_retained_after_refresh": true,
+  "unsaved_retained_after_switch_1_then_3": true,
+  "unsaved_retained_after_resize_and_drawer": true,
+  "candidate_save": {
+    "message": "候选已保存 · 16:59:06 · 尚未正式采用",
+    "save_disabled": true,
+    "unsaved_hidden": true
+  },
+  "legacy_unadapted": {
+    "width": 1280,
+    "header_height": 218.234375,
+    "prose_top": 484.671875,
+    "has_book_info": false
+  }
+}

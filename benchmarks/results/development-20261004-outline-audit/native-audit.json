@@ -1,0 +1,40 @@
+{
+  "book_root": "/tmp/story-native-review-audit-20261004/books-l3u9x65w",
+  "results": [
+    {
+      "case": "stale-review",
+      "error": "stale_review",
+      "unchanged": true
+    },
+    {
+      "case": "stale-revision",
+      "error": "stale_revision",
+      "unchanged": true
+    },
+    {
+      "case": "outline-drift",
+      "error": "outline_plan_drift",
+      "unchanged": true
+    },
+    {
+      "case": "incomplete-required",
+      "error": "missing_required_dependencies",
+      "unchanged": true
+    },
+    {
+      "case": "late-world-validation",
+      "error": "world_reference",
+      "unchanged": true
+    },
+    {
+      "case": "replacement-bad-card",
+      "error": "invalid_input",
+      "unchanged": true
+    },
+    {
+      "case": "replacement-bad-dependency",
+      "error": "stale_dependency",
+      "unchanged": true
+    }
+  ]
+}

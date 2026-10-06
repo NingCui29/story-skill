@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-04",
+  "changed_files": [
+    {
+      "path": "skills/story-skill/SKILL.md",
+      "before_sha256": "ca07d71a626ffcb4863918b31246216957762747379b8a537d36c6e9f4842e4f",
+      "after_sha256": "7029683ec09507f953bfda6807bd8506ee296ecf3798feb6bf92022218925b4b"
+    },
+    {
+      "path": "skills/story-skill-cover/SKILL.md",
+      "before_sha256": "96ee36c654305db3ece4e283661b5fb962dea9eacec62bad3ba085c2d1b389b3",
+      "after_sha256": "046078055b4f9384e96eb909c8bcb58b666aacf0b76f2e935deb71d70ed38acf"
+    },
+    {
+      "path": "skills/story-skill-plan/SKILL.md",
+      "before_sha256": "b8edf25b575b7d76069f884fd3b3ce94d76fcb69ca3b71cdda9d7b88e7cda65f",
+      "after_sha256": "835598e5c83c425a386bc7e5f715028c062c7a7e285c43d66ed8a764d8a1aa54"
+    },
+    {
+      "path": "skills/story-skill-research/references/reader-validation.md",
+      "before_sha256": "f7878034d92955d6d390759d56e69a588f7066e20a954ac1fc217813e47eb947",
+      "after_sha256": "338f180da8df3920197c02416e72bb9edfdce1c9fbe89dd3928febd6f3e4758c"
+    }
+  ],
+  "runtime_unchanged": true,
+  "full_unittest_rerun": false,
+  "skill_validation": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "2ad53a",
+        "wall_time_seconds": 0.227552907,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "efbb5a",
+        "wall_time_seconds": 0.22457568,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "da7ae2",
+        "wall_time_seconds": 0.221995588,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    }
+  ],
+  "git_diff_check": {
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "8e3906",
+      "wall_time_seconds": 1.2491e-05,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    }
+  },
+  "scenario_review": {
+    "kind": "independent synthetic text-only execution review",
+    "cases": 4,
+    "root_reviewed": true,
+    "artifact": "scenario-review.md"
+  },
+  "package": {
+    "archive": "~/.codex/skill-backups/story-skill-title-cover-qzecaqve/validation/story-skill-0.6.11.zip",
+    "version": "0.6.11",
+    "files": 46,
+    "sha256": "63d40187d9ed6f835f4ce0d3e3aa6ffeb18aeafeca3af4bd3f6a833479e490ee",
+    "bytes": 311684
+  },
+  "zip_source_install_match": true,
+  "installation": {
+    "complete": true,
+    "kind": "local-development-snapshot",
+    "version": "0.6.11",
+    "skills": 8,
+    "files": 46,
+    "smoke": "passed",
+    "receipt": "~/.codex/skill-backups/story-skill-title-cover-qzecaqve/final-receipt.json"
+  },
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 294,
+    "links_checked": 1636,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "new_shared_anchor_and_entry_links": true
+}

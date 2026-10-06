@@ -9,6 +9,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("story_storage_test_runtime", ROOT / "skills/story-skill/scripts/story.py")
 story = importlib.util.module_from_spec(SPEC)
@@ -92,6 +94,7 @@ class LongStorageTests(unittest.TestCase):
 
     def test_body_dedup_and_incremental_cards_and_no_write_transaction_during_io(self):
         self.initialize()
+        bind_adopted_outline(story, self.book, 1)
         original_cards, original_write = self.book.cards, story.atomic_write
         def selected(ids=None):
             self.assertIsNotNone(ids, "Daily operations must not deserialize every card")
@@ -113,8 +116,10 @@ class LongStorageTests(unittest.TestCase):
 
     def test_local_mode_does_not_claim_archival_integrity(self):
         self.initialize()
+        bind_adopted_outline(story, self.book, 1)
         self.book.commit(1, self.draft, self.delta())
         self.book.save_plan(2, {**PLAN, "title": "第二次交钥匙"}, self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 2)
         second = TEXT.replace("第1章 交钥匙", "第2章 第二次交钥匙")
         self.draft.write_bytes(second.encode("utf-8"))
         self.book.commit(2, self.draft, self.delta(second))
@@ -140,26 +145,28 @@ class LongStorageTests(unittest.TestCase):
 
     def test_world_delta_is_atomic_and_latest_rewrite_requires_history(self):
         self.initialize()
+        bind_adopted_outline(story, self.book, 1)
         changes = {"entities": [{"id": "jiang", "name": "江棠", "kind": "character", "description": "交钥匙的人"}],
                    "facts": [{"id": "gave", "subject": "jiang", "predicate": "钥匙归属", "value": "交给杜承安",
                               "start": 1, "evidence": {"kind": "chapter", "chapter": 1,
                               "sha256": "0" * 64, "quote": "江棠把旧钥匙交给杜承安。"}}]}
+        revision = self.book.meta("revision")
         delta = {**self.delta(), "world_changes": changes}
         with self.assertRaises(story.StoryError) as caught:
             self.book.commit(1, self.draft, delta)
         self.assertEqual(caught.exception.code, "world_evidence")
-        self.assertEqual(self.book.meta("revision"), 2)
+        self.assertEqual(self.book.meta("revision"), revision)
         self.assertEqual(self.book.db.execute("SELECT count(*) FROM chapters").fetchone()[0], 0)
         self.assertEqual(self.book.db.execute("SELECT count(*) FROM world_entities").fetchone()[0], 0)
         self.assertFalse((self.root / "chapters/第一卷 雨夜/第1章 交钥匙.md").exists())
         changes["facts"][0]["evidence"]["sha256"] = story.digest(TEXT)
         self.assertTrue(self.book.commit(1, self.draft, delta)["exports_complete"])
-        self.assertEqual(self.book.meta("revision"), 3)
+        self.assertEqual(self.book.meta("revision"), revision + 1)
         self.assertEqual(self.book.db.execute("SELECT value FROM world_facts WHERE id='gave'").fetchone()[0], "交给杜承安")
         stored = self.book.world_read("facts", "gave")
         self.assertTrue(stored["evidence_current"])
         self.assertIs(type(stored["payload"]["facts"][0]["hard"]), bool)
-        self.assertTrue(story.world.save(self.book, stored["payload"], 3)["idempotent"])
+        self.assertTrue(story.world.save(self.book, stored["payload"], self.book.meta("revision"))["idempotent"])
         with self.assertRaises(story.StoryError) as caught:
             self.book.context(1)
         self.assertEqual(caught.exception.code, "history_revision_required")
@@ -178,6 +185,7 @@ class LongStorageTests(unittest.TestCase):
 
     def test_archived_prose_remains_readable_by_version_under_a_byte_budget(self):
         self.initialize()
+        bind_adopted_outline(story, self.book, 1)
         self.book.commit(1, self.draft, self.delta())
         revised = TEXT.replace("雨停之前", "天亮之前")
         self.draft.write_bytes(revised.encode("utf-8"))
@@ -193,6 +201,7 @@ class LongStorageTests(unittest.TestCase):
 
     def test_dependency_candidates_can_be_reviewed_in_the_same_chapter_commit(self):
         self.initialize()
+        bind_adopted_outline(story, self.book, 1)
         candidates = self.book.dependency_candidates(1)["candidates"]
         self.assertEqual([d["ref"] for d in candidates], ["key"])
         delta = {**self.delta(), "dependencies": candidates,

@@ -1,0 +1,41 @@
+{
+  "books": [
+    {
+      "title": "作品15",
+      "root": "/local-books/book-15",
+      "db_sha256": "c5e8eeb67b928b2a062326a53efcdcce712f2c9e8ac7d2cbf013be99dfc9e61e",
+      "db_mtime_ns": 1791023857965992807,
+      "service_instance": "instance-18",
+      "service_running": true
+    },
+    {
+      "title": "作品16",
+      "root": "/local-books/book-16",
+      "db_sha256": "6c08cc532714abd014a5b732ac72496b8e43ac9fbb4d781908063e9eb05dce6e",
+      "db_mtime_ns": 1791205139099212877,
+      "service_instance": "instance-10",
+      "service_running": null
+    },
+    {
+      "title": "作品18",
+      "root": "/local-books/book-18",
+      "db_sha256": "c8088a9c0520007e449c21a574c2d9a8921e96a144a4453b29ea433904e0a7d3",
+      "db_mtime_ns": 1790528862091803939,
+      "service_instance": "instance-12",
+      "service_running": null
+    },
+    {
+      "title": "作品10",
+      "root": "/local-books/book-10",
+      "db_sha256": "5066db0cacb4a894305926f248d9bae99dbb0c02520f725985c8cf78a97c218e",
+      "db_mtime_ns": 1791099096029463219,
+      "service_instance": "instance-11",
+      "service_running": true
+    }
+  ],
+  "registry_sha256": "1a8b28233c1d258932d95c94b4450ccec35c4091e25d0955f35dc96ee5ca9e43",
+  "source_before_sha256": "7916eed431b06307e17364ceac56e162e1540d57ec238030eddae05dd448a7ce",
+  "installed_before_sha256": "7916eed431b06307e17364ceac56e162e1540d57ec238030eddae05dd448a7ce",
+  "client_before_sha256": "7916eed431b06307e17364ceac56e162e1540d57ec238030eddae05dd448a7ce",
+  "client_native_source_sha256": "e2f25d8a34fd5916f832bf071a914096840f6b1f2c3caac85cdae581dfb3df15"
+}

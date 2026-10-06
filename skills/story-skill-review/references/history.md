@@ -4,7 +4,7 @@
 
 需要理解或重绑定世界记录的字段与证据时，按需读 [世界状态说明](../../story-skill-write/references/long-form.md)；先 `world-read --kind facts --id ID`（可换其他类别）取回真实旧记录，不凭 ID 猜字段。建立分支后用 `history-dependencies --branch B --chapter N` 取该章依赖候选；普通 dependencies/context 不用于历史修订。结果含当前记录哈希及本分支已保存章节候选的哈希，不等于章前事实状态；实际读取、选择并补齐遗漏，处理 unavailable 后才能声明依赖完整。`chapter-read --chapter N --sha256 SHA --start A --end B` 可定点读取当前、归档或该章已保存的分支候选正文；它不会把候选发布为正文。
 
-先核对目标章及受影响章的当前计划；导入基线通常还没有该章计划，按实际原文与本次授权补齐必要目标、停笔点、约束和容量，不虚构此前剧情。然后 `history-start --chapter N --expect R` 创建候选；若报 plan_missing，分支未建立，按回执先补缺失计划，再取最新 R 重试。已在分支范围内的章计划若在建立后补改，须重新建分支，不能只刷新哈希。
+先核对目标章及受影响章的当前计划；导入基线通常还没有该章计划，按实际原文与本次授权补齐必要目标、停笔点、约束和容量，不虚构此前剧情。本次调整计划或细纲时，先按 [规划联动](../../story-skill/references/project-state.md#已采用规划的联动) 同步两者；已绑定章再按 [细纲绑定](../../story-skill/references/project-state.md#已采用细纲绑定) 复核并重新绑定，已提交旧未绑定章沿用原兼容流程。然后 `history-start --chapter N --expect R` 创建候选；若报 plan_missing，分支未建立，按回执先补缺失计划，再取最新 R 重试。已在分支范围内的章计划或细纲绑定（文件路径、内容版本）若在建立后改变，须重新建分支，不能只刷新哈希。旧候选若因缺少细纲版本记录返回 `stale_branch`，先用 `history-inspect` / `history-saved` 保留候选及完整状态、世界决定，在新分支重交必要决定并按实际扩围结果重新审查；旧稿可复用为材料，旧审查不能照搬。
 
 按分支返回的影响范围、状态要求和 review_template 准备修订，用 `history-update` 保存，`history-inspect` 继续取断点。每个受影响章须刷新正文/摘要/依赖及审查，整个候选包另做状态和覆盖审查；`history-publish` 才发布。正文证据变化后的世界记录须在分支 world_changes 中重绑定，或用 retirements 明确撤销，并处理仍引用它的认知/规则；包含通过 world-save 后补的正文基线。分支未发布时原版继续有效。发布后用 `history-inspect` 分页条目的 `affected[].path` 定位当前托管正文（相对于书目录），即使重复发布时 `exported` 为空也可查到。该路径指向当前导出，基线与已保存候选版本仍按各自 SHA 定点读取。不能按章号猜文件名；旧工程仍识别原导出路径，不借历史修订批量搬动文件。
 

@@ -1,0 +1,10 @@
+{
+  "changed": [
+    "scripts/story_workbench.py"
+  ],
+  "backup": "~/.codex/backups/story-skill/workbench-20261005-5e82164c3e09",
+  "old_sha256": "f47e5b4aeb8131294285738b6270ef9cb7895dd30dcdc6ee76869f259103d210",
+  "new_sha256": "794f34fd16faa4a1d69f8f512b0a310d78a599eda75853d2d96827b1fdaa417a",
+  "runtime_files_verified": 9,
+  "existing_services_stopped": false
+}

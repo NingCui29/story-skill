@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "version": "0.6.11",
+  "files": 49,
+  "archive_sha256": "9e09caa1afc3821a67cce4641ffedf849dfae909c5af1369a632514aea871d7a",
+  "installed_bytes_match_current_source": true,
+  "cli_checks": [
+    "version",
+    "help",
+    "init",
+    "status",
+    "lint"
+  ],
+  "lint_ok": true,
+  "punctuation_candidates": 2,
+  "draft_unchanged": true,
+  "user_install_changed": false
+}

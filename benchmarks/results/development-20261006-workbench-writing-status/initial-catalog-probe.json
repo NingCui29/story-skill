@@ -1,0 +1,204 @@
+{
+  "counts": {
+    "unknown": 12,
+    "completed": 7,
+    "serializing": 1,
+    "not_applicable": 1
+  },
+  "books": [
+    {
+      "title": "作品15",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品16",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品17",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品18",
+      "value": "completed",
+      "source": "recorded",
+      "sources": [
+        {
+          "path": "创作约定.md",
+          "field": "当前有效状态",
+          "value": "当前有效状态（完本）",
+          "line": 3
+        },
+        {
+          "path": "01_大纲细纲/全书总纲.md",
+          "field": "当前有效状态",
+          "value": "当前有效状态（完本）",
+          "line": 3
+        },
+        {
+          "path": "01_大纲细纲/全书总纲.md",
+          "field": "状态",
+          "value": "现行版五卷131章已完本核验。以下总纲为已兑现的创作路线，历史进度另存。",
+          "line": 9
+        }
+      ]
+    },
+    {
+      "title": "作品14",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品02",
+      "value": "completed",
+      "source": "recorded",
+      "sources": [
+        {
+          "path": "01_大纲细纲/全书总纲.md",
+          "field": "状态",
+          "value": "已采用，正文完结（十章，29891 字）。第 10 章于 2026-09-24 修订；分类拟选依据仍为 2026-09-20 的开书资料，尚未在平台确认。",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "title": "作品03",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品04",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品05",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品06",
+      "value": "completed",
+      "source": "recorded",
+      "sources": [
+        {
+          "path": "01_大纲细纲/全书总纲.md",
+          "field": "状态",
+          "value": "已完本；2026-09-20 完成单卷八章，共 18,413 个可见非空白字；正式正文见本书 `chapters/`。",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "title": "作品07",
+      "value": "completed",
+      "source": "recorded",
+      "sources": [
+        {
+          "path": "01_大纲细纲/全书总纲.md",
+          "field": "状态",
+          "value": "已完本；2026-09-24 修订第 7、8 章后，单卷八章共 19,148 个可见非空白字；正式正文见本书 `chapters/`。",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "title": "作品08",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品09",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品10",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品11",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "作品12",
+      "value": "completed",
+      "source": "recorded",
+      "sources": [
+        {
+          "path": "01_大纲细纲/全书总纲.md",
+          "field": "状态",
+          "value": "已完本；2026-09-20 完成单卷八章，共 18,888 个可见非空白字；正式正文见本书 `chapters/`。",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "title": "作品13",
+      "value": "completed",
+      "source": "recorded",
+      "sources": [
+        {
+          "path": "创作约定.md",
+          "field": "当前状态",
+          "value": "已完本。第 1–10 章正文全部提交并逐章导出，全文合并稿 `作品13.md` 已生成并登记为受保护导出（revision 23）。",
+          "line": 20
+        }
+      ]
+    },
+    {
+      "title": "隔离状态核验·待确认",
+      "value": "unknown",
+      "source": "unknown",
+      "sources": []
+    },
+    {
+      "title": "隔离状态核验·完本",
+      "value": "completed",
+      "source": "recorded",
+      "sources": [
+        {
+          "path": "创作约定.md",
+          "field": "作品状态",
+          "value": "已完本",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "title": "隔离状态核验·连载",
+      "value": "serializing",
+      "source": "recorded",
+      "sources": [
+        {
+          "path": "创作约定.md",
+          "field": "作品状态",
+          "value": "连载中",
+          "line": 3
+        }
+      ]
+    },
+    {
+      "title": "隔离状态核验·分析",
+      "value": "not_applicable",
+      "source": "unknown",
+      "sources": []
+    }
+  ]
+}

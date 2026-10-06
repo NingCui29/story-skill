@@ -1,0 +1,304 @@
+--- before/skills/story-skill/references/project-state.md
++++ after/skills/story-skill/references/project-state.md
+@@ -61,7 +61,7 @@
+ 
+ 一部书只写自己的篇幅类型；平台入口另按实际创建选择，不从长篇／短篇直接推定，也不混用其他入口的分类。已有书库还要核对 `status.kind`，不因大纲文字冲突重建书库。明确面向多个平台时按平台分段，各用本平台的原栏目名；番茄的入口、频道、选项和数量规则见 [番茄标签选择表](../../story-skill-plan/references/fanqie-tags.md)，七猫见 [七猫作品类型与标签](../../story-skill-plan/references/qimao-tags.md)，不要跨平台或入口套用。其他入口和平台按当前官方页面或用户提供的后台截图核对。平台未指定时先查创作约定和投稿目标，仍无目标则选择一个合理的拟投平台并说明理由；可继续规划，但未核实的选项列为待核对，不能自造“官方标签”。作品阶段与分类核对状态分开记录：草稿、审核中或退回都不自动证明分类已确认；后台实际显示的分类才标已确认。定位变化先提示与后台现值的差异，不静默覆盖。
+ 
+-现行总纲或短篇等效规划可用 `outline-audit --book "<书根>" --file "<书根内相对总纲路径.md>"` 只读核对本节字段、日期格式及所选平台常见栏目是否出现。回执给出文件哈希、范围与缺项；`ok` 只表示这种结构检查未发现缺项，`manual_review_required` 始终为真。工具不核对每栏是否选了正确的词、数量限制、状态真伪、内容依据或是否已获采用；多平台或等效自由布局无法完整识别时仍逐平台人工检查，说明未覆盖处，不为通过检查改写真实规划。
++当前或候选总纲、短篇等效规划可用 `outline-audit --book "<书根>" --file "<书根内相对总纲路径.md>"` 只读核对本节字段、日期格式及所选平台常见栏目是否出现。回执给出文件哈希、范围与缺项；`ok` 只表示这种结构检查未发现缺项，`manual_review_required` 始终为真。候选、草稿文件也可显式指定后只读检查，检查不改变采用状态；正式 `outline-bind` 仍拒绝候选等非采用文件。工具不核对每栏是否选了正确的词、数量限制、状态真伪、内容依据或是否已获采用；多平台或等效自由布局无法完整识别时仍逐平台人工检查，说明未覆盖处，不为通过检查改写真实规划。
+ 
+ 同一范围维护一个清晰的当前入口，文档头注明状态、更新时间和必要的来源。保留“候选／已采用／待定”等真实状态，整理或版本号较新不代表已获采用。实质修改当前规划、替换已采用方案前，将旧版放入 `99_历史版本/`，保留原文件名与相对关系；只按 `status` 同步已提交章节的进度句，不必每章另存一份大纲历史副本。分批继续时补写相应卷、章文件，将重叠的前三章场面设计等内容并入各章，不再平铺多份范围交叠的候选稿；未决方案可留在对应章并说明分歧。
+ 
+--- before/skills/story-skill/scripts/story.py
++++ after/skills/story-skill/scripts/story.py
+@@ -2707,7 +2707,7 @@
+     s = command("audit", "Strictly check managed exports without repairing or recording them", integrity=False)
+     s.add_argument("--integrity", choices=("strict",), default="strict",
+                    help="audit always hashes every managed export")
+-    s = command("outline-audit", "Read-only structural check of a current whole-book outline", integrity=False)
++    s = command("outline-audit", "Read-only structural check of a whole-book outline, including candidates", integrity=False)
+     s.add_argument("--file", required=True, help="Book-relative Markdown path to the current whole-book outline")
+     s = command("world-save", "Save structured story state with cited evidence")
+     s.add_argument("--input", required=True)
+--- before/skills/story-skill/scripts/story_outline.py
++++ after/skills/story-skill/scripts/story_outline.py
+@@ -40,7 +40,7 @@
+ _ADOPTED_STATUSES = {"已采用", "adopted"}
+ MAX_OUTLINE_BYTES = 4 * 1024 * 1024
+ 
+-_POSITION_HEADING = re.compile(r"^(#{1,6})\s*作品定位与平台分类(?:\s*[（(].*[）)])?\s*$")
++_POSITION_TITLE = re.compile(r"作品定位与平台分类(?:\s*[（(].*[）)])?\Z")
+ _FIELD = re.compile(r"(?:^|[；;])\s*(?:[-*+]\s*)?(?:\*\*)?([^：:；;]+?)(?:\*\*)?\s*[：:]\s*([^；;]*)")
+ _DATE = re.compile(r"(?<!\d)(\d{4}-\d{2}-\d{2})(?!\d)")
+ _POSITION_FIELDS = ("篇幅类型", "目标平台", "作品阶段", "来源与核对日期", "选择依据", "待核对")
+@@ -142,6 +142,15 @@
+         yield index, "".join(visible)
+ 
+ 
++def _heading_parts(line):
++    """Read one ATX heading, including optional indentation and closing hashes."""
++    heading = _HEADING.match(line)
++    if heading is None:
++        return None
++    title = re.sub(r"[ \t]+#+[ \t]*$", "", line[heading.end():]).strip()
++    return len(heading.group(1)), title
++
++
+ def _position_sections(text):
+     """Find actual Markdown sections, ignoring examples in fenced blocks."""
+     sections = []
+@@ -149,18 +158,17 @@
+     level = None
+     visible = []
+     for index, line in _unfenced_lines(text.splitlines()):
+-        heading = _HEADING.match(line)
+-        if start is not None and heading and len(heading.group(1)) <= level:
++        heading = _heading_parts(line)
++        if start is not None and heading and heading[0] <= level:
+             sections.append((start + 1, visible))
+             start = None
+             level = None
+             visible = []
+-        match = _POSITION_HEADING.match(line)
+-        if match:
++        if heading and _POSITION_TITLE.fullmatch(heading[1]):
+             if start is not None:
+                 sections.append((start + 1, visible))
+             start = index
+-            level = len(match.group(1))
++            level = heading[0]
+             visible = [line]
+         elif start is not None:
+             visible.append(line)
+@@ -173,17 +181,17 @@
+     """Count a tagged subsection only when it contains actual labelled fields."""
+     declared = set()
+     for index, line in enumerate(lines):
+-        heading = re.match(r"^(#{2,6})\s+(.+?)\s*$", line)
+-        if not heading:
+-            continue
+-        level = len(heading.group(1))
++        heading = _heading_parts(line)
++        if not heading or heading[0] < 2:
++            continue
++        level, title = heading
+         for group, expected in _TAG_GROUP_FIELDS.items():
+-            if not heading.group(2).endswith(group):
++            if not title.endswith(group):
+                 continue
+             child_keys = set()
+             for child in lines[index + 1:]:
+-                next_heading = re.match(r"^(#{1,6})\s+", child)
+-                if next_heading and len(next_heading.group(1)) <= level:
++                next_heading = _heading_parts(child)
++                if next_heading and next_heading[0] <= level:
+                     break
+                 for match in _FIELD.finditer(child.lstrip(" -*+\t")):
+                     child_keys.update(part.strip() for part in re.split(r"[／/、]", match.group(1)))
+@@ -194,11 +202,11 @@
+ 
+ def audit_position(book, relative_path):
+     """Read-only structural check; never decides whether platform choices are valid."""
+-    relative = _relative_path(book, relative_path)
++    relative = _relative_path(book, relative_path, require_adopted=False)
+     path = book.safe_path(book.root, relative)
+     try:
+         if not path.is_file():
+-            book.fail("outline_missing", "Current whole-book outline is missing", path=str(path))
++            book.fail("outline_missing", "Whole-book outline is missing", path=str(path))
+         resolved = path.resolve(strict=True)
+         try:
+             resolved.relative_to(book.root)
+@@ -310,7 +318,8 @@
+     return chapter
+ 
+ 
+-def _relative_path(book, value):
++def _relative_path(book, value, *, require_adopted=True):
++    """Validate the path; only adoption also restricts its document role."""
+     if not isinstance(value, str) or not value or value != value.strip() or "\\" in value:
+         book.fail("invalid_input", "outline file must be a book-relative Markdown path")
+     if any(unicodedata.category(char).startswith("C") for char in value):
+@@ -320,7 +329,7 @@
+             any(part in ("", ".", "..") for part in value.split("/")) or
+             re.match(r"^[a-zA-Z]:", value) or path.suffix.lower() != ".md"):
+         book.fail("invalid_input", "outline file must be a book-relative Markdown path")
+-    for part in path.parts:
++    for part in path.parts if require_adopted else ():
+         name = unicodedata.normalize("NFKC", part).casefold()
+         if (name in {".story", "chapters", "正文", "02_正文", "archive", "archives", "history",
+                      "99_历史版本", "历史版本"} or
+--- before/tests/test_outline_position_audit.py
++++ after/tests/test_outline_position_audit.py
+@@ -11,8 +11,7 @@
+     setUp = base.StoryTests.setUp
+     tearDown = base.StoryTests.tearDown
+ 
+-    def audit(self, text):
+-        relative = "01_大纲细纲/全书总纲.md"
++    def audit(self, text, relative="01_大纲细纲/全书总纲.md"):
+         file = self.root / relative
+         file.parent.mkdir(parents=True, exist_ok=True)
+         file.write_text(text, encoding="utf-8")
+@@ -28,6 +27,56 @@
+         self.assertEqual(result["scope"], "outline_structure_only")
+         return result
+ 
++    def complete_outline(self, heading="## 作品定位与平台分类"):
++        return ("# 全书总纲\n状态：候选\n\n" + heading + "\n"
++                "- 篇幅类型：长篇。\n- 目标平台：起点；作品阶段：拟投。\n"
++                "- 平台入口：小说。\n- 来源与核对日期：后台参考；2026-10-01。\n"
++                "- 平台分类：玄幻（拟选）。\n- 选择依据：主线规划中。\n- 待核对：后台选项。\n")
++
++    def test_explicit_candidate_and_archived_paths_are_read_only_not_adoption(self):
++        before = (self.root / ".story/state.sqlite3").read_bytes()
++        text = self.complete_outline()
++        baseline = self.audit(text)
++        for relative in ("01_大纲细纲/全书总纲_候选.md", "01_大纲细纲/草稿/全书总纲.md",
++                         "99_历史版本/全书总纲.md"):
++            with self.subTest(relative=relative):
++                result = self.audit(text, relative)
++                self.assertTrue(result["ok"], result["issues"])
++                self.assertEqual(result["sha256"], baseline["sha256"])
++                self.assertEqual(result["fields_found"], baseline["fields_found"])
++                self.assertIsNone(base.story.outline.binding_for(self.book, 1))
++                with self.assertRaises(base.story.StoryError) as raised:
++                    base.story.outline.bind(self.book, 1, relative, self.book.meta("revision"),
++                                            result["sha256"])
++                self.assertEqual(raised.exception.code, "invalid_input")
++                self.assertIn("cannot use a draft, candidate, history, or manuscript path",
++                              str(raised.exception))
++                self.assertEqual((self.root / ".story/state.sqlite3").read_bytes(), before)
++
++    def test_position_heading_accepts_atx_indentation_and_closing_hashes(self):
++        for indent in ("", " ", "  ", "   "):
++            for suffix in ("", " ##", "\t### \t"):
++                with self.subTest(indent=indent, suffix=suffix):
++                    result = self.audit(self.complete_outline(
++                        indent + "## 作品定位与平台分类（拟投）" + suffix))
++                    self.assertTrue(result["ok"], result["issues"])
++                    self.assertEqual(result["section_lines"], [4])
++
++    def test_non_atx_headings_and_nonclosing_hashes_do_not_create_sections(self):
++        for heading in ("##作品定位与平台分类", "####### 作品定位与平台分类",
++                        "## 作品定位与平台分类##", "## 作品定位与平台分类 ## 说明",
++                        "## 作品定位与平台分类 \\##", "    ## 作品定位与平台分类 ##"):
++            with self.subTest(heading=heading):
++                result = self.audit(self.complete_outline(heading))
++                self.assertEqual(result["issues"], [{"code": "position_section_missing"}])
++
++    def test_position_section_ends_at_indented_closed_peer_heading(self):
++        result = self.audit("  ## 作品定位与平台分类 ##\n- 篇幅类型：长篇。\n"
++                            "   ## 场景材料 ###\n- 目标平台：七猫。\n")
++        self.assertEqual(result["section_lines"], [1])
++        self.assertNotIn("目标平台", result["fields_found"])
++        self.assertIn({"code": "position_field_missing", "field": "目标平台"}, result["issues"])
++
+     def test_complete_qimao_template_is_structural_only(self):
+         result = self.audit("""# 全书总纲
+ 
+@@ -206,7 +255,7 @@
+         self.assertIn({"code": "classification_column_missing", "field": "情绪"}, result["issues"])
+ 
+     def test_fanqie_novel_accepts_labelled_subsections(self):
+-        result = self.audit("""## 作品定位与平台分类
++        text = """## 作品定位与平台分类
+ - 篇幅类型：长篇。
+ - 目标平台：番茄小说；作品阶段：尚未创建（拟投）。
+ - 平台入口：小说。
+@@ -223,10 +272,39 @@
+ 
+ - 选择依据：当前主线规划中。
+ - 待核对：后台现行选项。
+-""")
+-        self.assertTrue(result["ok"], result["issues"])
+-        self.assertIn("阅读标签", result["fields_found"])
+-        self.assertIn("内容标签", result["fields_found"])
++"""
++        for indent, suffix in (("", ""), (" ", " ##"), ("  ", " ###"), ("   ", "\t# \t")):
++            with self.subTest(indent=indent, suffix=suffix):
++                formatted = "\n".join(indent + line + suffix if line.startswith("### ") else line
++                                      for line in text.splitlines())
++                result = self.audit(formatted)
++                self.assertTrue(result["ok"], result["issues"])
++                self.assertIn("阅读标签", result["fields_found"])
++                self.assertIn("内容标签", result["fields_found"])
++
++    def test_tag_groups_do_not_take_fields_from_indented_peer_sections(self):
++        for boundary in ("  ### 作者备注 ###", "   ## 正文材料 ##"):
++            with self.subTest(boundary=boundary):
++                result = self.audit("## 作品定位与平台分类\n"
++                                    "  ### 番茄小说入口阅读标签 ###\n\n" + boundary + "\n"
++                                    "- 主分类：悬疑脑洞（拟选）。\n")
++                self.assertNotIn("阅读标签", result["fields_found"])
++
++    def test_closed_indented_example_headings_and_fields_stay_inert(self):
++        example = "  ### 番茄小说入口阅读标签 ###\n- 主分类：悬疑脑洞（拟选）。\n"
++        for hidden in ("```markdown\n" + example + "```\n",
++                       "<!--\n" + example + "-->\n",
++                       "\n".join("    " + line for line in example.splitlines())):
++            with self.subTest(hidden=hidden):
++                result = self.audit("  ## 作品定位与平台分类 ##\n" + hidden)
++                self.assertNotIn("主分类", result["fields_found"])
++                self.assertNotIn("阅读标签", result["fields_found"])
++
++        section = "   ## 作品定位与平台分类 ##\n- 目标平台：七猫。\n"
++        for hidden in ("```markdown\n" + section + "```\n", "<!--\n" + section + "-->\n"):
++            with self.subTest(hidden=hidden):
++                result = self.audit(hidden)
++                self.assertEqual(result["issues"], [{"code": "position_section_missing"}])
+ 
+     def test_empty_tag_subsection_does_not_count_as_column(self):
+         result = self.audit("""## 作品定位与平台分类
+@@ -256,17 +334,43 @@
+             base.story.run(args)
+         self.assertEqual(raised.exception.code, "invalid_encoding")
+ 
++    def test_audit_still_rejects_unsafe_or_non_markdown_paths(self):
++        for relative in ("../全书总纲_候选.md", str(self.root / "全书总纲_候选.md"),
++                         "01_大纲细纲/草稿/总纲.txt", "C:/候选.md", "草稿\\总纲.md"):
++            with self.subTest(relative=relative):
++                args = base.story.parser().parse_args([
++                    "outline-audit", "--book", str(self.root), "--file", relative])
++                with self.assertRaises(base.story.StoryError) as raised:
++                    base.story.run(args)
++                self.assertEqual(raised.exception.code, "invalid_input")
++
++    def test_candidate_file_and_directory_symlinks_are_rejected(self):
++        source = self.root / "source"
++        source.mkdir()
++        (source / "全书总纲.md").write_text(self.complete_outline(), encoding="utf-8")
++        (self.root / "全书总纲_候选.md").symlink_to(source / "全书总纲.md")
++        (self.root / "草稿").symlink_to(source, target_is_directory=True)
++        for relative in ("全书总纲_候选.md", "草稿/全书总纲.md"):
++            with self.subTest(relative=relative):
++                args = base.story.parser().parse_args([
++                    "outline-audit", "--book", str(self.root), "--file", relative])
++                with self.assertRaises(base.story.StoryError) as raised:
++                    base.story.run(args)
++                self.assertEqual(raised.exception.code, "linked_path")
++
+     def test_linked_outline_path_is_rejected(self):
+-        file = self.root / "01_大纲细纲/全书总纲.md"
+-        file.parent.mkdir(parents=True, exist_ok=True)
+         source = self.root / "private.md"
+         source.write_text("private", encoding="utf-8")
+-        os.link(source, file)
+-        args = base.story.parser().parse_args([
+-            "outline-audit", "--book", str(self.root), "--file", "01_大纲细纲/全书总纲.md"])
+-        with self.assertRaises(base.story.StoryError) as raised:
+-            base.story.run(args)
+-        self.assertEqual(raised.exception.code, "invalid_input")
++        for relative in ("01_大纲细纲/全书总纲.md", "01_大纲细纲/草稿/全书总纲_候选.md"):
++            with self.subTest(relative=relative):
++                file = self.root / relative
++                file.parent.mkdir(parents=True, exist_ok=True)
++                os.link(source, file)
++                args = base.story.parser().parse_args([
++                    "outline-audit", "--book", str(self.root), "--file", relative])
++                with self.assertRaises(base.story.StoryError) as raised:
++                    base.story.run(args)
++                self.assertEqual(raised.exception.code, "invalid_input")
+ 
+ 
+ if __name__ == "__main__":

@@ -1,0 +1,30 @@
+[
+  {
+    "title": "作品15",
+    "running": true,
+    "exit_verified": false,
+    "record_unchanged": true,
+    "same_active_instance": true
+  },
+  {
+    "title": "作品16",
+    "running": false,
+    "exit_verified": true,
+    "record_unchanged": true,
+    "record_sha256_matches": true
+  },
+  {
+    "title": "作品18",
+    "running": false,
+    "exit_verified": true,
+    "record_unchanged": true,
+    "record_sha256_matches": true
+  },
+  {
+    "title": "作品10",
+    "running": true,
+    "exit_verified": false,
+    "record_unchanged": true,
+    "same_active_instance": true
+  }
+]

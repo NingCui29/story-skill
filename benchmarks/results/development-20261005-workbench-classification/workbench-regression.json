@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "run": 223,
+  "passed": 223,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "duration_seconds": 35.049,
+  "source_sha256": "92c9de79b9b1e09c139b23082df81dd302721681a603d90697271a489c050fde",
+  "log": "workbench-regression.log"
+}

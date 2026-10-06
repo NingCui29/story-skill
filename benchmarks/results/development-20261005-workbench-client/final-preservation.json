@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "same_library_instance": true,
+  "existing_library_running": true,
+  "registry_bytes_and_mtime_unchanged": true,
+  "all_nine_runtime_files_match_source_and_installed_skill": true,
+  "native_source_matches_installed_manifest": true,
+  "launcher_matches_manifest": true,
+  "library_instance": "instance-21",
+  "registry_sha256": "1a8b28233c1d258932d95c94b4450ccec35c4091e25d0955f35dc96ee5ca9e43"
+}

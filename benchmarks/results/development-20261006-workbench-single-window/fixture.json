@@ -1,0 +1,118 @@
+{
+  "created_at": "2026-10-06T09:16:30.098491+00:00",
+  "synthetic": true,
+  "services_started_by_this_task": false,
+  "temporary_area": "/tmp/story-single-window-u0lllaed",
+  "state_dir": "/tmp/story-single-window-u0lllaed/只登记合成作品的私有书架",
+  "registry_path": "/tmp/story-single-window-u0lllaed/只登记合成作品的私有书架/library.json",
+  "registry_sha256": "c52f3613d4a172c16dba4d71d804e540476042c80a8083d04fa7c58ab526d31a",
+  "books": [
+    {
+      "book_root": "/tmp/story-editor-layout-f4_xmf3n/合成布局验收_长目录用于测试作品位置弹出内容和窄窗口折行/作品16_布局核验",
+      "book_id": "book-id-02",
+      "key": "1f27f20f76b7fc5f9b5c",
+      "title": "作品16 · 布局核验",
+      "kind": "long",
+      "formal_chapters": 3,
+      "formal_paths": [
+        "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md",
+        "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md",
+        "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md"
+      ],
+      "material_paths": [
+        "创作约定.md",
+        "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md"
+      ],
+      "initial_hashes": {
+        ".story/state.sqlite3": {
+          "path": ".story/state.sqlite3",
+          "sha256": "34fe0e03a173a1abe14c140b66de681ddaf7fd15197740c00ba47ca5651cd061",
+          "bytes": 565248,
+          "mtime_ns": 1791276902820983051
+        },
+        "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md": {
+          "path": "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md",
+          "sha256": "aa73f55defe9a0cee3aa2ac5f0c26d06003a5fc2524dd6a6b0f3e7ab6ca1334b",
+          "bytes": 2551,
+          "mtime_ns": 1791276902822322817
+        },
+        "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md": {
+          "path": "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md",
+          "sha256": "116017b1443a31afaa9e822ce94de2097dd93e7ee8493aece3fb71413b527c6d",
+          "bytes": 6265,
+          "mtime_ns": 1791276902762749803
+        },
+        "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md": {
+          "path": "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md",
+          "sha256": "10d6b140fad457433023117fcc9e1a3a1b39f228b47f737ee8b8b68f328bb368",
+          "bytes": 6265,
+          "mtime_ns": 1791276902789716641
+        },
+        "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md": {
+          "path": "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md",
+          "sha256": "5920296bf72341c4c8c6e17a712a8fc746d3a59036cd34462d0ccc7813edc53c",
+          "bytes": 6265,
+          "mtime_ns": 1791276902816426697
+        },
+        "创作约定.md": {
+          "path": "创作约定.md",
+          "sha256": "7afb4ea754edab573238cf9e18d66f10e4c6f768f2960961965945ae5053db75",
+          "bytes": 554,
+          "mtime_ns": 1791276902821891225
+        }
+      },
+      "previous_initial_hashes_unchanged": true
+    },
+    {
+      "book_root": "/tmp/story-single-window-u0lllaed/第二部合成作品_用于单窗口切换与缓存保留验收",
+      "book_id": "book-id-06",
+      "key": "7409735e0f88a1f857d0",
+      "title": "同窗口切换样例 · 第二部合成短篇",
+      "kind": "short",
+      "revision": 3,
+      "formal_chapters": 3,
+      "paragraphs_per_chapter": 10,
+      "formal_paths": [
+        "chapters/第一卷 合成切换验收/第1章 第二作品合成验收样例1.md",
+        "chapters/第一卷 合成切换验收/第2章 第二作品合成验收样例2.md",
+        "chapters/第一卷 合成切换验收/第3章 第二作品合成验收样例3.md"
+      ],
+      "material_paths": [
+        "创作约定.md"
+      ],
+      "initial_hashes": {
+        ".story/state.sqlite3": {
+          "path": ".story/state.sqlite3",
+          "sha256": "29656378d43db250652a026013b33696ce6a4373f56f9711740a7a871362efcd",
+          "bytes": 532480,
+          "mtime_ns": 1791278190090236546
+        },
+        "chapters/第一卷 合成切换验收/第1章 第二作品合成验收样例1.md": {
+          "path": "chapters/第一卷 合成切换验收/第1章 第二作品合成验收样例1.md",
+          "sha256": "0620bbfc2fc7d087c3423545c66ff903e80af1af9d8a7b0f5567f2a79e522383",
+          "bytes": 6310,
+          "mtime_ns": 1791278190069966564
+        },
+        "chapters/第一卷 合成切换验收/第2章 第二作品合成验收样例2.md": {
+          "path": "chapters/第一卷 合成切换验收/第2章 第二作品合成验收样例2.md",
+          "sha256": "3da2ba69c12adf96cb0a517ed7bcd222d808fcea56a2d1fa93bcb82fb209d5f7",
+          "bytes": 6310,
+          "mtime_ns": 1791278190085616038
+        },
+        "chapters/第一卷 合成切换验收/第3章 第二作品合成验收样例3.md": {
+          "path": "chapters/第一卷 合成切换验收/第3章 第二作品合成验收样例3.md",
+          "sha256": "7681d12439c4c858047e1fe3b7285efa69da1b813447e3aa52482b14c50ef7bf",
+          "bytes": 6310,
+          "mtime_ns": 1791278190053247637
+        },
+        "创作约定.md": {
+          "path": "创作约定.md",
+          "sha256": "e82edc0b61d8c39e571827b009a5cb4a3906f9a5e98cfc8a5855b9697490617e",
+          "bytes": 438,
+          "mtime_ns": 1791278190091042478
+        }
+      }
+    }
+  ],
+  "note": "私有书架仅登记两部合成作品；第一部复用已停止private服务器的布局样例，第二部经adopt/adopt_backfill导入三章合成占位文字。不含真实作品，不启动服务。"
+}

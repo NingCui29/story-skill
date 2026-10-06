@@ -1,8 +1,11 @@
 import importlib.util
+import hashlib
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+
+from outline_fixture import bind_adopted_outline
 
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
@@ -36,8 +39,19 @@ class ChapterLayoutTests(unittest.TestCase):
                 **({"volume_dir": volume_dir} if volume_dir is not None else {}),
                 **fields}
 
-    def save_plan(self, chapter, **fields):
+    def save_plan(self, chapter, *, bind_outline=True, **fields):
+        """Prepare a synthetic layout plan and its explicitly adopted outline."""
         self.book.save_plan(chapter, self.plan(**fields), self.book.meta("revision"))
+        if bind_outline:
+            binding = story.outline.binding_for(self.book, chapter)
+            if binding is None:
+                bind_adopted_outline(story, self.book, chapter)
+            else:
+                # Layout fixtures deliberately revise titles/directories. Rebind
+                # here in setup, never while constructing a delta or committing.
+                path = self.root / binding["path"]
+                story.outline.bind(self.book, chapter, binding["path"], self.book.meta("revision"),
+                                   hashlib.sha256(path.read_bytes()).hexdigest())
 
     def delta(self, text):
         return {"book_id": self.book.meta("id"), "base_revision": self.book.meta("revision"),
@@ -226,7 +240,7 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertEqual(Path(result["path"]).name, "第1章 门后的雨.md")
 
     def test_legacy_prefixed_plan_title_cannot_export_a_double_prefix(self):
-        self.save_plan(1, title="门后的雨")
+        self.save_plan(1, title="门后的雨", bind_outline=False)
         plan = self.book.get_plan(1)
         plan["title"] = "第1章 门后的雨"
         with self.book.transaction():
@@ -628,7 +642,7 @@ class ChapterLayoutTests(unittest.TestCase):
                 self.assert_error("lint_failed", lambda: self.stage_history(packet, {1: text}))
         self.assertEqual((self.root / self.book.chapter_path(1)).read_text(), DRAFT)
 
-    def test_history_publish_rechecks_staged_heading_against_current_plan(self):
+    def test_history_publish_rejects_plan_drift_before_staged_heading_checks(self):
         self.save_plan(1, title="门后的雨")
         self.commit(1)
         story.history.save_dependencies(self.book, {
@@ -643,7 +657,7 @@ class ChapterLayoutTests(unittest.TestCase):
         with self.book.transaction():
             self.book.db.execute("UPDATE plans SET data=? WHERE chapter=1", (story.dumps(plan),))
         with patch.object(story.history, "_check_fences"):
-            self.assert_error("lint_failed", lambda: story.history.branch_publish(
+            self.assert_error("outline_plan_drift", lambda: story.history.branch_publish(
                 self.book, staged["branch"], self.book.meta("revision")))
         self.assertEqual((self.root / self.book.chapter_path(1)).read_text(), DRAFT)
 

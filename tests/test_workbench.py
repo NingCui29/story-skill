@@ -13,6 +13,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOL = ROOT / "skills/story-skill/scripts/story.py"
@@ -55,6 +57,7 @@ class WorkbenchTests(unittest.TestCase):
             "beats": [{"choice": "沈禾交出钥匙", "change": "得到入口并失去退路"}],
         }
         self.book.save_plan(chapter, plan, self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, chapter)
         draft = self.root / ".story/drafts" / f"第{chapter}章.md"
         draft.parent.mkdir(parents=True, exist_ok=True)
         draft.write_bytes(text.encode("utf-8"))
@@ -376,6 +379,18 @@ class WorkbenchTests(unittest.TestCase):
             text = '第1章 修订\n\n她走进雨里。'
             body = json.dumps({'chapter': 1, 'text': text})
             headers = {'Content-Type': 'application/json', 'Origin': origin, 'X-Story-Token': token}
+            before_read = self.authoritative_state()
+            connection = http.client.HTTPConnection('127.0.0.1', server.server_port)
+            connection.request('POST', route + 'api/catalog',
+                               json.dumps({'query': '不存在的筛选', 'context_chapter': 2}), headers)
+            response = connection.getresponse()
+            self.assertEqual(response.status, 200)
+            catalog = json.loads(response.read())
+            connection.close()
+            self.assertEqual(catalog['workspace']['groups'], [])
+            self.assertEqual(catalog['workspace']['context_snapshot']['context_sha256'],
+                             story.workbench._chapter_context(self.root, 2)['context_sha256'])
+            self.assertEqual(before_read, self.authoritative_state())
             def post(extra):
                 client = http.client.HTTPConnection('127.0.0.1', server.server_port)
                 client.request('POST', route+'candidate', body, extra)
@@ -892,7 +907,7 @@ w._editor_save(Path(sys.argv[2]), json.loads(Path(sys.argv[3]).read_text(encodin
 
     def test_unreadable_directory_does_not_hide_formal_chapters(self):
         blocked = self.root / '01_大纲细纲'
-        blocked.mkdir()
+        blocked.mkdir(exist_ok=True)
         original = Path.iterdir
         def scan(path):
             if path == blocked:
@@ -1059,6 +1074,74 @@ eval(process.argv[1]);
         for value in ['file:.story/state.sqlite3', 'file:../outside.txt', 'file:/etc/passwd', 'formal:999']:
             with self.subTest(value=value), self.assertRaises(story.StoryError):
                 story.workbench._editor_document(self.root, value)
+
+    def test_deep_candidate_metadata_keeps_catalog_and_documents_available(self):
+        import threading
+        import http.client
+        w = story.workbench
+        relative = '.story/drafts/workbench/第1章 雨夜_候选.md'
+        candidate = self.root / relative
+        candidate.parent.mkdir(parents=True, exist_ok=True)
+        text = '候选文字保持原样。'
+        candidate.write_bytes(text.encode('utf-8'))
+        metadata = self.root / (relative + '.meta.json')
+        raw = b'{"chapter":1,"extra":' + b'[' * 2000 + b'0' + b']' * 2000 + b'}'
+        metadata.write_bytes(raw)
+        before = self.authoritative_state()
+        formal = w._editor_document(self.root, 'formal:1')
+        server = w.editor_server(self.root)
+        loads = json.loads
+
+        def parse(value, *args, **kwargs):
+            # Decoder nesting limits differ across Python versions. Exercise the
+            # real HTTP path with the failure raised by the bounded sidecar read.
+            if value == raw:
+                raise RecursionError('maximum recursion depth exceeded while decoding JSON')
+            return loads(value, *args, **kwargs)
+
+        parser = patch.object(w.json, 'loads', side_effect=parse)
+        parser.start()
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            token = server.editor_url.rstrip('/').split('/')[-1]
+            headers = {'Content-Type': 'application/json', 'X-Story-Token': token,
+                       'Origin': f'http://127.0.0.1:{server.server_port}'}
+
+            def post(action, payload):
+                client = http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=5)
+                try:
+                    client.request('POST', '/' + token + '/api/' + action,
+                                   json.dumps(payload), headers)
+                    response = client.getresponse()
+                    status, result = response.status, json.loads(response.read())
+                    self.assertEqual(status, 200, result)
+                    return result
+                finally:
+                    client.close()
+
+            for query in ('', '第2章'):
+                with self.subTest(query=query):
+                    catalog = post('catalog', {'query': query})
+                    row = next(r for r in catalog['related_files'] if r['path'] == relative)
+                    self.assertEqual(row['chapter'], 1)
+                    self.assertIn('同章号文件', row['relation'])
+                    self.assertEqual(any(r['path'] == relative for r in catalog['files']), not query)
+            damaged = post('open', {'id': 'file:' + relative})
+            self.assertEqual(damaged['metadata_error']['code'], 'workbench_metadata_corrupt')
+            self.assertFalse(damaged['editable'])
+            self.assertEqual(damaged['text'], text)
+            opened = post('open', {'id': 'formal:1'})
+            self.assertEqual(opened['text'], formal['text'])
+            self.assertEqual(opened['sha256'], formal['sha256'])
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=3)
+            parser.stop()
+        self.assertEqual(metadata.read_bytes(), raw)
+        self.assertEqual(candidate.read_bytes(), text.encode('utf-8'))
+        self.assertEqual(self.authoritative_state(), before)
 
     def test_incomplete_plan_http_error_does_not_drop_connection(self):
         import threading

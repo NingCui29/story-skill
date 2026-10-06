@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-04",
+  "scope": "documentation-only",
+  "changed_files": [
+    {
+      "path": "skills/story-skill-plan/SKILL.md",
+      "before_sha256": "63a8936de26f94ab5935a3f36e3598ad17bec00dae92e3306bba2c07db4a33d9",
+      "after_sha256": "a5bdf9bb79429c7161560158e785c81c63030ff3e60c9a732151c1f2fff5ffea"
+    },
+    {
+      "path": "skills/story-skill-write/references/chapter.md",
+      "before_sha256": "961855dd4c119b0bc945a3e5df327069a482ba746dd9aa354ce150fdee684f85",
+      "after_sha256": "0e64c9fdb27ba480a332c904d840134646cc7c99a5094c42ccf7245ebfee9780"
+    },
+    {
+      "path": "skills/story-skill-write/references/drama.md",
+      "before_sha256": "d4bf76f20117584cff16b829011a9fe34429be9e875d80fd4ee9c722d786db11",
+      "after_sha256": "7722a3d2fb2cd2b79d466da0df9e49d4434c9758bc1acfb872e1a76407cfa1db"
+    },
+    {
+      "path": "skills/story-skill/references/project-state.md",
+      "before_sha256": "e7fb41032a381d09698ac35d20ffa5ea33055ea80d5f2b6e8ffe8089d5c9839c",
+      "after_sha256": "5a1e317e68f8e0f354c5668baa5884ddb8e31e37773ed3be2d74c3e88e7435cb"
+    },
+    {
+      "path": "README.md",
+      "before_sha256": "88411500cce4df4ae1a400186be62f6e4df80c3c96fdbb0032d2091c3bfcae21",
+      "after_sha256": "61a28c64972ce9c2594d6847d0be7bbebb8b5ab0a6982182aa3f9d164ccb0e51",
+      "baseline_note": "Reconstructed by reversing this turn two exact wording replacements"
+    }
+  ],
+  "skill_validation": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "830b9d",
+        "wall_time_seconds": 0.207336921,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "898ef1",
+        "wall_time_seconds": 0.204774686,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "b9bf6c",
+        "wall_time_seconds": 0.202295169,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    }
+  ],
+  "independent_review": "no actionable issue",
+  "forward_review": {
+    "reviewed_by": "root",
+    "case_a": "passed: protagonist distinguished from narrator and relationship partner; both platforms preserved; no fabricated name",
+    "case_b": "passed: both protagonists listed; supporting roles scoped; planned transition preserved"
+  },
+  "installation": {
+    "complete": true,
+    "version": "0.6.11",
+    "kind": "local-development-snapshot",
+    "skills": 8,
+    "files": 46,
+    "source_and_installed_hash_match": true,
+    "smoke": "passed",
+    "receipt": "~/.codex/skill-backups/story-skill-character-roles-y88fc464/final-receipt.json"
+  },
+  "full_unit_suite": "not rerun; documentation only",
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 287,
+    "links_checked": 1600,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  }
+}

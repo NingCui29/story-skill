@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.10"
+VERSION = "0.6.11"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -667,8 +667,17 @@ def bounded_packet(packet, limit):
             break
         packet["budget"]["used"] = used
     if used > limit:
+        # The retry limit is part of the packet, so its digit count must fit too.
+        minimum = used
+        retry = {**packet, "budget": dict(packet["budget"])}
+        for _ in range(8):
+            retry["budget"].update(limit=minimum, used=minimum)
+            retry_used = len(dumps(retry).encode("utf-8"))
+            if retry_used == minimum:
+                break
+            minimum = retry_used
         fail("budget_exceeded", "Required content cannot fit; increase the budget or narrow the range",
-             minimum_bytes=used, budget_bytes=limit)
+             minimum_bytes=minimum, budget_bytes=limit)
     return packet
 
 
@@ -834,6 +843,7 @@ def lint_text(text, plan, chapter=None, warn_nondefault=False, *, require_plain_
     if repeated:
         warnings.append({"code": "repeated_paragraph", "examples": repeated[:6],
                          "note": "Editorial signal only; repetition can be intentional"})
+    warnings.extend(punctuation.review_warnings(text))
     return {"ok": not errors, "visible_chars": counts["visible_nonspace_v1"],
             "length_count": count, "count_method": method, "counts": counts,
             "count_scope": "body_and_lead_with_title_text" if plan.get("count_title", False) else "body_and_lead_without_first_title",
@@ -1039,6 +1049,19 @@ class Book:
         if not row:
             fail("plan_missing", "Save a concrete chapter plan before drafting", chapter=chapter)
         return json.loads(row[0])
+
+    def plan_read(self, chapter, budget=16000):
+        """Read the complete saved plan for review, without opening writing gates."""
+        integer(chapter, "chapter", 1)
+        with self.read_snapshot():
+            plan = self.get_plan(chapter)
+            return bounded_packet({
+                "read_only": True, "read_only_scope": "saved_chapter_plan",
+                "book_id": self.meta("id"), "revision": self.meta("revision"),
+                "chapter": chapter, "plan": plan,
+                "plan_sha256": outline._plan_sha256(plan),
+                "note": "Saved data only; outline adoption, outline/plan agreement and export health are not verified.",
+            }, budget)
 
     def _plan_volume_directory(self, plan):
         if plan.get("volume_dir"):
@@ -1874,6 +1897,12 @@ class Book:
                       "required_cards": [cards[cid] for cid in sorted(required)], "optional_cards": [],
                       "previous": {"chapter": previous[0], "summary": previous[1], "tail": previous[2][-600:]} if previous else None,
                       "omitted_optional_count": 0}
+            if replacing:
+                scope = history.replacement_scope(self, chapter,
+                    changed_cards=set(receipt.get("before", {})) | set(receipt.get("after", {})))
+                if scope["dependent_chapter_count"]:
+                    packet["replacement_scope"] = {**scope, "history_required_if_changed": True,
+                        "note": "Registered chapters consume this body or its produced cards. Changing consumed evidence requires a history branch; unchanged body/card evidence may be reviewed again."}
             if external:
                 packet.update(mode="reconcile_last", external_edit=external)
             # Global rules apply even when the plan has no optional world selectors.
@@ -2077,6 +2106,9 @@ class Book:
             if self.meta("revision") != packet["revision"]:
                 fail("stale_revision", "State changed during preparation; reload context and review again")
             outline.verify(self, chapter, packet["plan"])
+            if packet["mode"] != "next":
+                prior = self.db.execute("SELECT sha FROM chapter_state WHERE chapter=?", (chapter,)).fetchone()
+                history.require_isolated_replacement(self, chapter, body_changed=digest(text) != prior[0])
             lint = self._chapter_lint(chapter, text, packet["plan"], packet.get("external_edit"))
             if any(error["code"].startswith("chapter_heading_") for error in lint["errors"]):
                 fail("lint_failed", "Draft needs a matching plain first-line chapter heading", lint=lint)
@@ -2091,6 +2123,8 @@ class Book:
             result = {"mode": packet["mode"], "lint": lint, "delta": delta,
                     "ready_to_commit": False,
                     "next": "Complete the summary and state changes. Compare the draft with active book/volume promises and adjacent prose; keep unresolved findings in review.issues. Hash and quote checks are structural, not narrative approval. Do not change identity or hash fields."}
+            if "replacement_scope" in packet:
+                result["replacement_scope"] = packet["replacement_scope"]
             if "world" in packet:
                 result["world_check"] = world.check(self, {**packet["plan"], "chapter": chapter})
             return bounded_packet(result, budget)
@@ -2189,7 +2223,8 @@ class Book:
                 if not check["ok"]:
                     fail("lint_failed", "Draft fails deterministic checks", lint=check)
                 previous = json.loads(existing["receipt"]) if replace_last else {}
-                if (previous.get("history_branch") or previous.get("world_changes") or (replace_last and self.db.execute(
+                if (previous.get("history_branch") or previous.get("world_changes") or
+                        (replace_last and raw.get("world_changes")) or (replace_last and self.db.execute(
                         "SELECT 1 FROM world_evidence WHERE mode='chapter' AND chapter=? AND retired=0 LIMIT 1", (chapter,)).fetchone())):
                     fail("history_revision_required", "Use a history branch to review this chapter and its published world evidence",
                          chapter=chapter, recovery_command="history-start")
@@ -2209,6 +2244,11 @@ class Book:
                 if missing:
                     fail("missing_required_cards", "Plan references unknown cards", ids=missing)
                 dependency_metadata = history.validate_commit_dependencies(self, raw, chapter)
+                # Gate only first native publication; unbound historical chapters,
+                # imports and read-only candidate preparation remain compatible.
+                if not replace_last and outline.binding_for(self, chapter) is None:
+                    fail("outline_binding_required", "Review and bind the adopted outline before the first native chapter commit",
+                         chapter=chapter, recovery_command="outline-bind")
                 before, after = {}, {}
                 for change in raw["changes"]:
                     cid = change["id"]
@@ -2218,6 +2258,11 @@ class Book:
                     card = valid_card(merged)
                     self.put_card(card)
                     after[cid] = card
+                if replace_last:
+                    final_state = self.cards(touched)
+                    history.require_isolated_replacement(self, chapter, body_changed=digest(text) != existing["sha"],
+                        changed_cards=[cid for cid in touched if before_state.get(cid) != final_state.get(cid)],
+                        card_baseline=before_state)
                 receipt = {"input": raw, "before": before, "after": after, "lint": check}
                 receipt.update(dependency_metadata)
                 accepted_sha = raw["external_sha256"] if accept_external else None
@@ -2631,7 +2676,7 @@ TEMPLATES = {
              "goal": "<填写人物本章要争取的结果与主要阅读期待>",
              "beats": [{"choice": "<填写本节点承接的阻力、人物的尝试或有依据的取舍>",
                         "change": "<填写本节点造成的局面、关系或行动条件变化>"}],
-             "stop": "<填写停笔点>", "constraints": ["<填写用户原始硬要求>"], "length": list(DEFAULT_CHAPTER_LENGTH),
+             "stop": "<填写停笔点>", "constraints": ["<填写适用于本章正文的用户硬要求，不含本轮操作范围>"], "length": list(DEFAULT_CHAPTER_LENGTH),
              "requires": ["hero"], "tags": ["主角"], "count_method": "visible_nonspace_v2", "count_title": False},
     "delta": {"book_id": "<填写context返回的book_id>", "base_revision": 0, "summary": "<填写本章结果与下章衔接>", "changes": [],
               "review": {"draft_sha256": "<填写lint返回的SHA256>", "checks": {
@@ -2663,8 +2708,10 @@ def parser():
     s = command("audit", "Strictly check managed exports without repairing or recording them", integrity=False)
     s.add_argument("--integrity", choices=("strict",), default="strict",
                    help="audit always hashes every managed export")
-    s = command("outline-audit", "Read-only structural check of a current whole-book outline", integrity=False)
+    s = command("outline-audit", "Read-only structural check of a whole-book outline, including candidates", integrity=False)
     s.add_argument("--file", required=True, help="Book-relative Markdown path to the current whole-book outline")
+    s.add_argument("--require-platform", action="append", choices=("fanqie", "qimao"), default=[],
+                   help="Require a separate positioning block for this platform; repeat for both")
     s = command("world-save", "Save structured story state with cited evidence")
     s.add_argument("--input", required=True)
     s.add_argument("--expect", type=int, required=True)
@@ -2688,6 +2735,8 @@ def parser():
         s.add_argument("--expect", type=int, required=True)
         if name == "plan":
             s.add_argument("--chapter", type=int, required=True)
+    s = command("plan-read", "Read a complete saved chapter plan for recovery without verifying adoption", 16000, integrity=False)
+    s.add_argument("--chapter", type=int, required=True)
     s = command("outline-bind", "Bind one reviewed, adopted readable outline to its saved chapter plan")
     s.add_argument("--chapter", type=int, required=True)
     s.add_argument("--file", required=True, help="Book-relative adopted Markdown outline path")
@@ -2763,7 +2812,7 @@ def run(args):
     if cmd.startswith("workbench-"):
         return workbench.run(args)
     book = Book(args.book, integrity=getattr(args, "integrity", "strict"),
-                read_only=cmd in ("audit", "outline-audit"))
+                read_only=cmd in ("audit", "outline-audit", "plan-read"))
     try:
         if cmd.startswith("publish-"):
             return publish.run(book, args)
@@ -2778,7 +2827,7 @@ def run(args):
         if cmd == "audit":
             return book.audit()
         if cmd == "outline-audit":
-            return outline.audit_position(book, args.file)
+            return outline.audit_position(book, args.file, args.require_platform)
         if cmd == "status":
             return book.status()
         if cmd == "export":
@@ -2789,6 +2838,8 @@ def run(args):
             return book.save_notes(read_json(args.input), args.expect)
         if cmd == "plan":
             return book.save_plan(args.chapter, read_json(args.input), args.expect)
+        if cmd == "plan-read":
+            return book.plan_read(args.chapter, args.budget_bytes)
         if cmd == "outline-bind":
             return outline.bind(book, args.chapter, args.file, args.expect, args.sha256)
         if cmd == "context":
@@ -2859,8 +2910,8 @@ def _load_extension(name):
     return module
 
 
-storage, search, world, history, publish, workbench, outline = (_load_extension(name) for name in (
-    "storage", "search", "world", "history", "publish", "workbench", "outline"))
+storage, search, world, history, publish, workbench, outline, punctuation = (_load_extension(name) for name in (
+    "storage", "search", "world", "history", "publish", "workbench", "outline", "punctuation"))
 CORE = SimpleNamespace(**globals())
 for extension in (search, world, history, publish, workbench):
     extension.inject(CORE)

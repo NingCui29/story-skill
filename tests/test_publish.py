@@ -1,5 +1,6 @@
 """Offline publishing prepares reviewed snapshots without changing writing history."""
 import copy
+import hashlib
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import closing
 import importlib.util
@@ -68,6 +69,14 @@ class PublishTests(unittest.TestCase):
                 "length_exception": {"source": "user_request", "quote": "测试章按10至500字写作。"},
                 "beats": [{"choice": "交出钥匙", "change": "获准入内并保留收据"}]}
         self.book.save_plan(chapter, plan, self.rev())
+        # This fixture creates a complete adopted plan before preparing its review.
+        # Keep legacy unbound replacements unbound; all new native chapters bind.
+        if not replace_last or story.outline.binding_for(self.book, chapter) is not None:
+            outline_path = self.root / f"第{chapter}章发布验收细纲.md"
+            outline_path.write_text(f"# 第{chapter}章发布验收细纲\n状态：已采用\n\n"
+                                    + json.dumps(plan, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            story.outline.bind(self.book, chapter, outline_path.name, self.rev(),
+                               hashlib.sha256(outline_path.read_bytes()).hexdigest())
         self.draft.write_bytes(text.encode("utf-8"))
         delta = {"book_id": self.book.meta("id"), "base_revision": self.rev(),
                  "summary": "沈禾交出钥匙，保留收据并进入门内。", "changes": [],

@@ -1,0 +1,180 @@
+{
+  "date": "2026-10-05",
+  "kind": "unreleased-development-validation",
+  "runtime_version": "0.6.11",
+  "changed_source_paths_this_turn": [
+    "README.md",
+    "docs/evaluation.md",
+    "benchmarks/profiles.json",
+    "skills/story-skill/SKILL.md",
+    "scripts/execution_eval.py",
+    "tests/test_execution_eval.py",
+    "benchmarks/skill-execution/README.md",
+    "benchmarks/skill-execution/cases/candidate-only.json",
+    "benchmarks/skill-execution/cases/history-candidate.json",
+    "benchmarks/skill-execution/cases/non-story.json",
+    "benchmarks/skill-execution/cases/plan-only.json",
+    "benchmarks/skill-execution/cases/resume-formal.json",
+    "benchmarks/skill-execution/cases/review-only.json",
+    "benchmarks/skill-execution/prepare.py"
+  ],
+  "source_sha256": {
+    "README.md": "ee689cc599d133a6110d13a6df2f94031be00decc9dbd42e9f52f479f4733078",
+    "docs/evaluation.md": "a6a5b8aeaa0a2f4bf28ca5e8759741628715cae8c87b4f284470035afdbff3d1",
+    "benchmarks/profiles.json": "4aa6388db4af23f6c15777ad53427490821eed283a3e3c0fc5c3d2c819eebee6",
+    "skills/story-skill/SKILL.md": "dc6716b5a8fd6fb7df9377df6791747a81f26e332d636bc71b3a7d3dc09d68dc",
+    "scripts/execution_eval.py": "51a328e82d9e08ba19e8f364fd7640ae738185b3beb8b13501e12e490c948daa",
+    "tests/test_execution_eval.py": "99165ccb41b05a7336b40c05a5339b8a2e58090f52c06299915bb54a5303d19f",
+    "benchmarks/skill-execution/README.md": "fc33a35cc695893ac06ea2fceb9d1d0eb72eae376bea51251305724f51e8d8d2",
+    "benchmarks/skill-execution/cases/candidate-only.json": "83b81c1df979097d2d2aefc1a5476c512db063b6e2ec7f41f9fb2b4025caa61f",
+    "benchmarks/skill-execution/cases/history-candidate.json": "19e60af04c5d00aa622e3231c62038a51bde247d715162310489ebcf2cf95a3e",
+    "benchmarks/skill-execution/cases/non-story.json": "90b1fda1ac06571b84f234bf9d52a2754349124189795300ecabe004e4437a09",
+    "benchmarks/skill-execution/cases/plan-only.json": "54373fc0cdfd3174da33afa5e1d1705bd1250e506056b122b09929e6f32994e8",
+    "benchmarks/skill-execution/cases/resume-formal.json": "028d6cb232ed3490255714a8bf539c7edbcbf90e4aeb372a7fbebc042f8c5756",
+    "benchmarks/skill-execution/cases/review-only.json": "7e8173929a79c7707b83175c84d1c89e9efeab682d0486f782d482bbaac33a50",
+    "benchmarks/skill-execution/prepare.py": "879d8f233dece934a8067531861839fceff047071d26023578163dc33df088b4"
+  },
+  "tests": {
+    "targeted_total": 45,
+    "passed": 45,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "groups": [
+      {
+        "name": "execution_eval",
+        "run": 15,
+        "evidence": "execution-tests.json"
+      },
+      {
+        "name": "test_verify.py",
+        "run": 24,
+        "evidence": "current-turn unittest output"
+      },
+      {
+        "name": "test_benchmark.py",
+        "run": 6,
+        "evidence": "current-turn unittest output"
+      }
+    ],
+    "full_repository_regression_run": false,
+    "independent_targeted_probes": 6
+  },
+  "fixture_preparation": {
+    "successful_cases": [
+      "plan-only",
+      "review-only",
+      "candidate-only",
+      "resume-formal",
+      "history-candidate",
+      "non-story"
+    ],
+    "managed_seed_last_chapter": 2,
+    "managed_seed_next_chapter": 3,
+    "initial_failed_setup_preserved": true
+  },
+  "live_execution": {
+    "cli_version": "0.160.0",
+    "model": null,
+    "model_settings": "Inherited host configuration; exact execution model not independently verified",
+    "cases": [
+      {
+        "case": "plan-only",
+        "run_path": "<repo>/.local-writing-samples/skill-execution/plan-only-live-20261005",
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "mechanical_execution_status": "needs_review",
+        "review_mode": "informed_independent_posthoc",
+        "review_checks": {
+          "observed": 5,
+          "failed": 0,
+          "unverified": 0
+        },
+        "evidence": {
+          "case.json": "350592542553986e195bfe4c1277671b8f4efb1785a3fbc8cb674c829bdf87e2",
+          "baseline.json": "2ff2ef45db79ebd3efcad1487e72774108f94f7b05325479a223c5e845ddf1cb",
+          "task.txt": "d2355d1e9bac42a0f51bc79e74ed389b14f0e754d9e35fd6b55056569a705574",
+          "trace.jsonl": "b087e96e1f12c4c19762ac85f5990ae61599d633db22bf5582dea65421f314e6",
+          "final.txt": "653918f5a12bfb5f32f66d8783f67fbebc9b9197479d31d196890f0ae8792478",
+          "check-final.json": "5081cf2b3ae60a23f5b2a6884d5ce2a42048cddd16a7b81ff33389cd2f56f97a",
+          "review-independent.json": "8e1fcc640e52b2ca1f16762b6dfed76ecc02a9c3652388112450fdf0056da270"
+        }
+      },
+      {
+        "case": "non-story",
+        "run_path": "<repo>/.local-writing-samples/skill-execution/non-story-live-20261005",
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "mechanical_execution_status": "needs_review",
+        "review_mode": "informed_independent_posthoc",
+        "review_checks": {
+          "observed": 9,
+          "failed": 0,
+          "unverified": 0
+        },
+        "evidence": {
+          "case.json": "8ceea0abb16e5ced7197e452682158cf3fcccac20546575a5720f542dec1a501",
+          "baseline.json": "d14d3c46377f5ea2de83ad8b315b42238fef5562e5adfd475c7c188e83c162ae",
+          "task.txt": "6e5e55b07d72d9d1e81e2aaa7a2f7621c615d12fbd9a869fbdabbc0cca20bbe3",
+          "trace.jsonl": "92bf7ed4ef9628330624cec4fa8802bbdc6e5e897cd6b44d48aec99aa9df19ee",
+          "final.txt": "6b9d3e0ad2867940dc67f65fd849f40b3d794a5652637b8bda67e4e26b43cc61",
+          "check-final.json": "80d783a60bff47dbf7d9e34d9b7d00693cc1a29c6d234303a5f013c6b20f388e",
+          "review-independent.json": "23d1e87c8af38eade7e0c0787f339060b14507e92d422d9155529e7d3f3301a5"
+        }
+      },
+      {
+        "case": "resume-formal",
+        "run_path": "<repo>/.local-writing-samples/skill-execution/resume-formal-20261005T083727Z-efa2e308b5",
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "mechanical_execution_status": "needs_review",
+        "review_mode": "informed_independent_posthoc",
+        "review_checks": {
+          "observed": 9,
+          "failed": 0,
+          "unverified": 1
+        },
+        "evidence": {
+          "case.json": "6a4e77d7b156341274925744c78c55697917c4ffac6d070e231cfbd3efa37fde",
+          "baseline.json": "73b793d784288a91f1448331169f6a9ef67075e24ea0950d81b2a0a5d0807077",
+          "task.txt": "c1aaaea419980548855d19230a9ff216f191da56e92645c290ff9ed11f81f213",
+          "trace.jsonl": "b6ffa5eb26b3ad8920df2450cf9e20074b29816c4d627a303056e276e959e119",
+          "final.txt": "653f032c47a284680f64b89c5b5ea9ae0b388b188f2f1b902cce0be886ad8ab3",
+          "check-final.json": "d57a60932af0f1662676de06d640ca5460f3cbc2992017426c9e8c94e1f24d71",
+          "review-independent.json": "99c768e422f49d5bcbfcbb0be49b2ac4e6a3ac74b259e6f8600f487f60487909"
+        }
+      },
+      {
+        "case": "candidate-only",
+        "run_path": "<repo>/.local-writing-samples/skill-execution/candidate-only-live-20261005",
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "mechanical_execution_status": "needs_review",
+        "review_mode": "primary_posthoc",
+        "review_checks": {
+          "observed": 4,
+          "failed": 0,
+          "unverified": 0
+        },
+        "evidence": {
+          "case.json": "ba12ec94460ef1eec09925aa83b9bfc1350e840cc1b7791d668e49719b462ec9",
+          "baseline.json": "0b9b27221e141ae906a64beeb669ccdf24b43759b7d864ac3581d101e7e24bd1",
+          "task.txt": "1375b1f07027e3a8d155ad85b38e6ada8b47b6260190d0f4fd49a35c15a67f96",
+          "trace.jsonl": "57603b923f45bdf044152ea1e6ad5e05c961140d577e2b09962b8f7ccbbe7e12",
+          "final.txt": "33a0984b4b3f1376fc02f7011040568027bffd866cbf1e183e2682c16e762f79",
+          "check-final.json": "4bad53ea6e7afdf81964a84cc2d4ccba79970a46c036a63601a9e0ace1d33455",
+          "review-primary.json": "4a1eafdb67ab35a52bda70112238bacad1e6204d1206aa7ad7c653a16d6d09c5"
+        }
+      }
+    ],
+    "prepared_but_not_live_executed": [
+      "review-only",
+      "history-candidate"
+    ],
+    "precommit_independent_review_claim": "unverified; posthoc review cannot retroactively substantiate it",
+    "scope": "Single development trial per case, frozen skill paths supplied to positive tasks; host user memory remained available. No automatic-discovery, blind-quality, superiority or stable-success-rate claim."
+  },
+  "installation": "installation.json",
+  "real_novels_modified": false,
+  "published": false
+}

@@ -1,0 +1,139 @@
+[
+  {
+    "title": "作品15",
+    "root": "/local-books/book-15",
+    "has_record": true,
+    "pid": 20594,
+    "port": 54002,
+    "started": "2026-10-05T13:54:05.269822Z",
+    "stopped": null,
+    "instance": "instance-18",
+    "record_sha256": "ea4bd0eb9211520384453b98bb9e7c7785443715e0e97c55acbf095f14942ef8",
+    "service": {
+      "ok": true,
+      "running": true,
+      "outdated": true,
+      "pid": 20594,
+      "instance": "instance-18",
+      "started": "2026-10-05T13:54:05.269822Z"
+    },
+    "recorded_process": "20594 Mon Oct  5 21:54:04 2026     Ss   ~/.local/bin/python3.12 -B ~/.codex/skills/story-skill/scripts/story.py workbench-serve --book /local-books/book-15"
+  },
+  {
+    "title": "作品16",
+    "root": "/local-books/book-16",
+    "has_record": true,
+    "pid": 9104,
+    "port": 53067,
+    "started": "2026-10-05T10:32:59.800094Z",
+    "stopped": null,
+    "instance": "instance-10",
+    "record_sha256": "a85b0329497202e4f85562736ec5894cb69cc51ecf68b6980cf5e2d3303f6498",
+    "service": {
+      "ok": true,
+      "running": null
+    },
+    "recorded_process": ""
+  },
+  {
+    "title": "作品17",
+    "root": "/local-books/book-17",
+    "has_record": false
+  },
+  {
+    "title": "作品18",
+    "root": "/local-books/book-18",
+    "has_record": true,
+    "pid": 79798,
+    "port": 55843,
+    "started": "2026-09-27T00:15:40.640012Z",
+    "stopped": null,
+    "instance": "instance-12",
+    "record_sha256": "f9236742e8ba04bd9697136fce24e1c44596f96c8e3e06e5f3567d7614cb8548",
+    "service": {
+      "ok": true,
+      "running": null
+    },
+    "recorded_process": ""
+  },
+  {
+    "title": "作品14",
+    "root": "/local-books/book-14",
+    "has_record": false
+  },
+  {
+    "title": "作品02",
+    "root": "/local-books/book-02",
+    "has_record": false
+  },
+  {
+    "title": "作品03",
+    "root": "/local-books/book-03",
+    "has_record": false
+  },
+  {
+    "title": "作品04",
+    "root": "/local-books/book-04",
+    "has_record": false
+  },
+  {
+    "title": "作品05",
+    "root": "/local-books/book-05",
+    "has_record": false
+  },
+  {
+    "title": "作品06",
+    "root": "/local-books/book-06",
+    "has_record": false
+  },
+  {
+    "title": "作品07",
+    "root": "/local-books/book-07",
+    "has_record": false
+  },
+  {
+    "title": "作品08",
+    "root": "/local-books/book-08",
+    "has_record": false
+  },
+  {
+    "title": "作品09",
+    "root": "/local-books/book-09",
+    "has_record": false
+  },
+  {
+    "title": "作品10",
+    "root": "/local-books/book-10",
+    "has_record": true,
+    "pid": 27471,
+    "port": 49540,
+    "started": "2026-10-05T16:10:35.489039Z",
+    "stopped": null,
+    "instance": "instance-11",
+    "record_sha256": "6aea40cf3c3434ff541ea3c194433445c84c7d0c999177f6957a8bc7096dd2bf",
+    "service": {
+      "ok": true,
+      "running": true,
+      "outdated": false,
+      "pid": 27471,
+      "instance": "instance-11",
+      "started": "2026-10-05T16:10:35.489039Z"
+    },
+    "recorded_process": "27471 Tue Oct  6 00:10:35 2026     Ss   ~/.local/bin/python3.12 -B ~/.codex/skills/story-skill/scripts/story.py workbench-serve --book /local-books/book-10"
+  },
+  {
+    "title": "作品11",
+    "root": "/local-books/book-11",
+    "has_record": false
+  },
+  {
+    "title": "作品12",
+    "root": "/local-books/book-12",
+    "has_record": false
+  },
+  {
+    "title": "作品13",
+    "root": "/local-books/book-13",
+    "has_record": false
+  }
+]

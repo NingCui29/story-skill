@@ -1,0 +1,190 @@
+{
+  "date": "2026-10-04",
+  "kind": "local-development-snapshot",
+  "changed_files": [
+    {
+      "path": "skills/story-skill/references/project-state.md",
+      "before_sha256": "34fd1c4ac20e4d709cef1a778df03b85ab26cc2d0c0d6f70deb61ce7a841ee6b",
+      "after_sha256": "a498e4dfd8fba2c45983dbdf8b8dd08eab476b3c8a80a7c0e0d738c0f27fd8ef"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_outline.py",
+      "before_sha256": "5110bf0e78e619f3b52364fbc1aedc0ddf48d088076915b79ff899e16c5faf66",
+      "after_sha256": "7e8915f035856c0009188080ed9056c0ee08848b398544b5c08549464d2804d9"
+    },
+    {
+      "path": "tests/test_outline_position_audit.py",
+      "before_sha256": "467adb27c435ebfe7a58d734cecf22506a0bf534090d9f9e5dac9cf1495abb05",
+      "after_sha256": "d4557b8e156f3da1000dc8503b363484672f155ea56bdf95d8b84c632a2f56c0"
+    },
+    {
+      "path": "tests/test_plan_outline_sync.py",
+      "before_sha256": "a485254e5daae366c39336841c4e3986fa116a60507823f12ab02846280407a8",
+      "after_sha256": "015d46b9d516441b64db964119a03c1e07f55b60ee3b953402673e780d15d020"
+    }
+  ],
+  "unittest": {
+    "ok": true,
+    "status": "passed",
+    "run": 1070,
+    "passed": 1053,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 17,
+    "expected_failures": 0,
+    "unexpected_successes": 0,
+    "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests"
+  },
+  "targeted": {
+    "adoption": {
+      "tests": 62,
+      "elapsed_seconds": 2.505,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "new_regression_methods": 11,
+      "runtime_sha256": "7e8915f035856c0009188080ed9056c0ee08848b398544b5c08549464d2804d9",
+      "test_file_sha256": "015d46b9d516441b64db964119a03c1e07f55b60ee3b953402673e780d15d020",
+      "before": "adoption-before.json",
+      "after": "adoption-after.json",
+      "log": "adoption-targeted.log",
+      "initial_log": "adoption-targeted-initial.log",
+      "initial_failure_reason": "New test assertions incorrectly named the established outline_binding_required error as outline_required; assertions corrected."
+    },
+    "entrance": {
+      "suite": "test_outline_position_audit",
+      "tests_run": 48,
+      "passed": 48,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_seconds": 4.43,
+      "success": true,
+      "log": "~/.codex/skill-backups/story-skill-outline-followup-g_j_d0v5/validation/entrance-targeted.log"
+    }
+  },
+  "independent_review": {
+    "passed": true,
+    "adoption_cases": 11,
+    "entrance_cases": 8,
+    "source_sha256": "7e8915f035856c0009188080ed9056c0ee08848b398544b5c08549464d2804d9"
+  },
+  "skill_validation": {
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "ac6dfe",
+      "wall_time_seconds": 0.279995308,
+      "exit_code": 0,
+      "original_token_count": 4,
+      "output": "Skill is valid!\n"
+    }
+  },
+  "archive": {
+    "status": "passed",
+    "archive": "~/.codex/skill-backups/story-skill-outline-followup-g_j_d0v5/validation/story-skill-0.6.11.zip",
+    "version": "0.6.11",
+    "sha256": "7a06cc9c0fc863bc668e8d13d73b2f50b57755bb59144fdb21b5036784b4b6fc",
+    "bytes": 310351,
+    "files": 46,
+    "contents_match_current_skill": true,
+    "missing": [],
+    "extra": [],
+    "changed": [],
+    "duplicate_entries": [],
+    "corrupt_entry": null,
+    "non_regular_entries": []
+  },
+  "zip_source_install_match": true,
+  "installation": {
+    "complete": true,
+    "kind": "local-development-snapshot",
+    "version": "0.6.11",
+    "skills": 8,
+    "files": 46,
+    "receipt": "~/.codex/skill-backups/story-skill-outline-followup-g_j_d0v5/final-receipt.json",
+    "smoke": "passed"
+  },
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 292,
+    "links_checked": 1630,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "git_diff_check": {
+    "exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "declared_host_skips": [
+    {
+      "test": "test_install_races.InstallationRaceTests.test_windows_publication_refuses_an_empty_target_created_inside_rename",
+      "reason": "Windows rename provides the no-replace guarantee tested here"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_editor_save_during_restore_is_preserved_with_backup",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_failed_publication_restores_a_copy_and_retains_backup_for_retry",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_first_export_succeeds_without_hard_links",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_recreated_target_wins_over_publication_and_restore",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_revision_preserves_old_backup_without_hard_links",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_publish_paths.PublishingConnectionPathTests.test_windows_database_pin_blocks_replacement_for_connection_lifetime",
+      "reason": "Native Windows delete-sharing protection"
+    },
+    {
+      "test": "test_retirement_path_race.RetirementPathRaceTests.test_windows_parent_pin_blocks_rename_but_allows_child_publication",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_atomic_first_publication_and_revision_preserve_unicode_bytes",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_changed_target_is_restored_and_retained_in_backup",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_empty_pinned_directory_rejects_junction_conversion_until_released",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_process_cannot_swap_pinned_leaf_or_ancestor",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_recreated_target_wins_over_backup_restore",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_target_wins_over_first_publication",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_nested_directory_guards_leave_no_files_on_normal_or_exception_exit",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_pinned_directories_allow_cross_directory_backup_and_copy_restore",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_root_report_update_and_nested_backup_restore_share_ancestors",
+      "reason": "Requires native Windows directory share locks"
+    }
+  ]
+}

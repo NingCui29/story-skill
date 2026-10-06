@@ -7,6 +7,8 @@ import sys
 import tempfile
 import unittest
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 SPEC = importlib.util.spec_from_file_location("publishing_views_story", TOOL)
@@ -70,6 +72,7 @@ class PublishViewTests(unittest.TestCase):
                     "length_exception": {"source": "user_request", "quote": "测试章按2000至3000字写作。"},
                     "beats": [{"choice": "逐项核对记录", "change": "保留可查证的抄件"}]}
             self.book.save_plan(chapter, plan, self.revision())
+            bind_adopted_outline(story, self.book, chapter)
             self.commit_body(chapter, body)
             self.bodies[chapter] = body
 

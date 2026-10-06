@@ -1,0 +1,12 @@
+[
+  {
+    "key": "installed",
+    "original": "~/Applications/写作工作台.app",
+    "stage": "~/.codex/backups/story-skill/story-shelf-redesign-51eljo6e/stage-installed.app"
+  },
+  {
+    "key": "dist",
+    "original": "<repo>/dist/写作工作台.app",
+    "stage": "~/.codex/backups/story-skill/story-shelf-redesign-51eljo6e/stage-dist.app"
+  }
+]

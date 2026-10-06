@@ -1,0 +1,250 @@
+{
+  "ok": true,
+  "seconds": 3.002,
+  "total": 17,
+  "verified": 17,
+  "books": [
+    {
+      "title": "作品15",
+      "root": "/local-books/book-15",
+      "kind": "long",
+      "available": true,
+      "updated_at": "2026-10-03T10:40:13.138407Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "03_审校记录/20261003_主线骨架重建记录.md",
+        "at": "2026-10-03T10:40:13.138407Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品16",
+      "root": "/local-books/book-16",
+      "kind": "long",
+      "available": true,
+      "updated_at": "2026-10-05T13:47:41.576016Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "README.md",
+        "at": "2026-10-05T13:47:41.576016Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品17",
+      "root": "/local-books/book-17",
+      "kind": "long",
+      "available": true,
+      "updated_at": "2026-09-24T05:29:47Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "state_event",
+        "event": "replace_chapter",
+        "seq": 18,
+        "at": "2026-09-24T05:29:47Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品18",
+      "root": "/local-books/book-18",
+      "kind": "long",
+      "available": true,
+      "updated_at": "2026-09-27T17:13:29.965696Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "03_工作记录/自动续写断点.md",
+        "at": "2026-09-27T17:13:29.965696Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品14",
+      "root": "/local-books/book-14",
+      "kind": "long",
+      "available": true,
+      "updated_at": "2026-09-26T14:57:11.742595Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "进度断点.md",
+        "at": "2026-09-26T14:57:11.742595Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品02",
+      "root": "/local-books/book-02",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-09-24T05:09:10.408351Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "03_复核/全文审核.md",
+        "at": "2026-09-24T05:09:10.408351Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品03",
+      "root": "/local-books/book-03",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-09-24T05:13:46Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "state_event",
+        "event": "history_branch_update",
+        "seq": 43,
+        "at": "2026-09-24T05:13:46Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品04",
+      "root": "/local-books/book-04",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-09-24T05:13:04Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "state_event",
+        "event": "history_branch_update",
+        "seq": 23,
+        "at": "2026-09-24T05:13:04Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品05",
+      "root": "/local-books/book-05",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-10-04T03:00:32.490599Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "01_大纲细纲/全书总纲.md",
+        "at": "2026-10-04T03:00:32.490599Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品06",
+      "root": "/local-books/book-06",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-09-24T05:13:05Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "state_event",
+        "event": "history_branch_update",
+        "seq": 31,
+        "at": "2026-09-24T05:13:05Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品07",
+      "root": "/local-books/book-07",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-09-24T05:03:07.352381Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "01_大纲细纲/第一卷 不入侧门/第8章 她从正门出发.md",
+        "at": "2026-09-24T05:03:07.352381Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品08",
+      "root": "/local-books/book-08",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-10-01T00:25:18.758548Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "03_复核/全文审核.md",
+        "at": "2026-10-01T00:25:18.758548Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品09",
+      "root": "/local-books/book-09",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-10-01T01:39:25.676663Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "04_封面/封面说明与验收.md",
+        "at": "2026-10-01T01:39:25.676663Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品10",
+      "root": "/local-books/book-10",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-10-05T03:47:32.923039Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "作品简介_推荐稿.txt",
+        "at": "2026-10-05T03:47:32.923039Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品11",
+      "root": "/local-books/book-11",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-09-24T04:49:07.578515Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "01_大纲细纲/第一卷 活人不入碑/第11章 七笔工钱.md",
+        "at": "2026-09-24T04:49:07.578515Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品12",
+      "root": "/local-books/book-12",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-09-21T01:29:25.822494Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "创作约定.md",
+        "at": "2026-09-21T01:29:25.822494Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    },
+    {
+      "title": "作品13",
+      "root": "/local-books/book-13",
+      "kind": "short",
+      "available": true,
+      "updated_at": "2026-10-01T00:46:16.269663Z",
+      "updated_at_verified": true,
+      "updated_at_source": {
+        "kind": "author_file",
+        "path": "创作约定.md",
+        "at": "2026-10-01T00:46:16.269663Z"
+      },
+      "updated_at_note": "最近一次作品状态事件或当前作者文件修改时间；不含服务、导出、归档和自动恢复。"
+    }
+  ]
+}

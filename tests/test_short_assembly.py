@@ -8,6 +8,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 spec = importlib.util.spec_from_file_location("story_short_assembly", TOOL)
@@ -34,6 +36,8 @@ class ShortAssemblyTests(unittest.TestCase):
                 "length_exception": {"source": "user_request", "quote": "测试章按1至200字写作。"},
                 "beats": [{"choice": "她决定行动", "change": "局面发生变化"}]}
         self.book.save_plan(number, plan, self.book.meta("revision"))
+        if not replace_last:
+            bind_adopted_outline(story, self.book, number)
         self.draft.write_bytes(text.encode("utf-8"))
         quote = text.splitlines()[1]
         delta = {"book_id": self.book.meta("id"), "base_revision": self.book.meta("revision"),

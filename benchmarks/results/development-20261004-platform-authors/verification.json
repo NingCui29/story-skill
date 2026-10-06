@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-04",
+  "scope": "documentation-only",
+  "changed_files": [
+    {
+      "path": "skills/story-skill-cover/SKILL.md",
+      "before_sha256": "4f18187452e7ccbbeef26b976c7b9122030ab14866f4c269716b2bc88afd17b9",
+      "after_sha256": "96ee36c654305db3ece4e283661b5fb962dea9eacec62bad3ba085c2d1b389b3"
+    },
+    {
+      "path": "skills/story-skill-plan/SKILL.md",
+      "before_sha256": "a5bdf9bb79429c7161560158e785c81c63030ff3e60c9a732151c1f2fff5ffea",
+      "after_sha256": "b8edf25b575b7d76069f884fd3b3ce94d76fcb69ca3b71cdda9d7b88e7cda65f"
+    },
+    {
+      "path": "skills/story-skill-plan/references/fanqie-tags.md",
+      "before_sha256": "fbe7b08de648de1751cbe1f6cb991b7a58e77ecdc6213851447b9e566da67067",
+      "after_sha256": "16d39a216e63bab9ce57b143e6333ec9ead544d5199bc8706830d5de836b3ff3"
+    },
+    {
+      "path": "skills/story-skill-plan/references/qimao-tags.md",
+      "before_sha256": "17c72bf2194d214a1efdb17268d38764cc578aa098620dbe29ee3ab126cafaad",
+      "after_sha256": "a5e092d991aa280fe4a0d3891323be5fd45f658e9fd5415e6beb4d232f370c9f"
+    },
+    {
+      "path": "skills/story-skill-publish/SKILL.md",
+      "before_sha256": "8f633b14b2134bf248e4ffa149cb56475919d06b88f205ac1333924911e05e93",
+      "after_sha256": "8861d14af17b9b1b7fb1fd17aef91e0a68a2184614602222b94ffa8ccd863e80"
+    },
+    {
+      "path": "skills/story-skill-write/references/chapter.md",
+      "before_sha256": "0e64c9fdb27ba480a332c904d840134646cc7c99a5094c42ccf7245ebfee9780",
+      "after_sha256": "1841f9b886fbc1991e8668ea421be32bc2bfcf9bc5e247a8a03358d7be90a889"
+    },
+    {
+      "path": "skills/story-skill/references/project-state.md",
+      "before_sha256": "5a1e317e68f8e0f354c5668baa5884ddb8e31e37773ed3be2d74c3e88e7435cb",
+      "after_sha256": "1e05c6d41ef9fec273431e39a1d6f344feaa8712df67b4d95bb99adc3247246d"
+    },
+    {
+      "path": "README.md",
+      "before_sha256": "61a28c64972ce9c2594d6847d0be7bbebb8b5ab0a6982182aa3f9d164ccb0e51",
+      "after_sha256": "4b074a777c236dd2d53f678a7fd9371bcebd9ac196d8d4341c1bfb67474360e4"
+    },
+    {
+      "path": "docs/platform-publishing.md",
+      "before_sha256": "69a09b894e6d5e976a9373a5f9351663761e3a2f6a7e180f01b281ba5bc24152",
+      "after_sha256": "8d4f1d505e9c0348a529f2dfcf9d63871f35580631fcdb30060b68d57174323f"
+    }
+  ],
+  "skill_validation": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "147986",
+        "wall_time_seconds": 0.179885428,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "0d79ae",
+        "wall_time_seconds": 0.176842793,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "35f226",
+        "wall_time_seconds": 0.174108377,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "4c4c36",
+        "wall_time_seconds": 0.171552914,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "eeb12c",
+        "wall_time_seconds": 0.169880561,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    }
+  ],
+  "diff_check": "passed for 9 changed documentation files",
+  "independent_review": "no actionable issue",
+  "forward_review": {
+    "reviewed_by": "root",
+    "result": "passed",
+    "scope": "one synthetic offline case, 3 platforms; new cover name, old backend name, unchanged platform name, unknown name, account id and protagonist name distinct; no image or platform action"
+  },
+  "installation": {
+    "complete": true,
+    "version": "0.6.11",
+    "kind": "local-development-snapshot",
+    "skills": 8,
+    "files": 46,
+    "source_and_installed_hash_match": true,
+    "smoke": "passed",
+    "receipt": "~/.codex/skill-backups/story-skill-platform-authors-3edsf7pi/final-receipt.json"
+  },
+  "full_unit_suite": "not rerun; documentation only",
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 289,
+    "links_checked": 1608,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  }
+}

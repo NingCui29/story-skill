@@ -1,0 +1,9 @@
+{
+  "instance": "instance-21",
+  "mode": "library",
+  "pid": 25502,
+  "started": "2026-10-05T15:04:47.017221Z",
+  "running": true,
+  "outdated": false,
+  "state_dir": "~/.codex/story-workbench"
+}

@@ -5,7 +5,9 @@ import io
 import json
 import os
 from pathlib import Path
+import shutil
 import stat
+import subprocess
 import tempfile
 import unittest
 import zipfile
@@ -297,6 +299,109 @@ class BenchmarkContractTests(unittest.TestCase):
         result = self.check()
         self.assertEqual(result["status"], "passed")
         self.assertEqual(result["problems"], [])
+
+    def test_recorded_config_counter_and_synthetic_runtime_fingerprints_are_checked(self):
+        runtime = self.root / "skills/story-skill/scripts/story.py"
+        runtime.parent.mkdir(parents=True)
+        runtime.write_bytes(b"# runtime fixture\n")
+        source = {"profiles_sha256": hashlib.sha256(json.dumps(self.config).encode()).hexdigest(),
+                  "benchmark_script_sha256": verify.digest(ROOT / "scripts/benchmark.py"),
+                  "runtime_files": [{"path": runtime.relative_to(self.root).as_posix(),
+                                     "sha256": verify.digest(runtime)}]}
+        report = {**copy.deepcopy(self.report), "candidate_source": source}
+        self.assertEqual(self.check(report=report)["status"], "passed")
+        for field in ("profiles_sha256", "benchmark_script_sha256", "runtime_files"):
+            with self.subTest(field=field):
+                changed = copy.deepcopy(report)
+                if field == "runtime_files":
+                    changed["candidate_source"][field][0]["sha256"] = "stale"
+                else:
+                    changed["candidate_source"][field] = "stale"
+                self.assertEqual(self.check(report=changed)["status"], "failed")
+        runtime.write_bytes(b"# changed runtime\n")
+        result = self.check(report=report)
+        self.assertEqual(result["status"], "failed")
+        self.assertTrue(any("synthetic runtime fingerprint differs" in problem for problem in result["problems"]))
+
+    @unittest.skipUnless(shutil.which('git'), 'Git is required for checkout normalization checks')
+    def test_autocrlf_checkout_preserves_benchmark_source_fingerprints(self):
+        for relative in ('.gitattributes', 'scripts/benchmark.py', 'scripts/verify.py'):
+            target = self.root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((ROOT / relative).read_bytes())
+        candidate = self.root / 'skills/fixture/SKILL.md'
+        candidate.parent.mkdir(parents=True)
+        candidate.write_bytes((self.root / 'candidate.md').read_bytes())
+        self.config['profiles'][0]['candidate'] = ['skills/fixture/SKILL.md']
+        self.report['profiles'][0]['candidate_files'][0]['path'] = 'skills/fixture/SKILL.md'
+        config = self.root / 'benchmarks/profiles.json'
+        config.write_bytes((json.dumps(self.config, indent=2) + '\n').encode('utf-8'))
+        runtime = self.root / 'skills/story-skill/scripts/story.py'
+        runtime.parent.mkdir(parents=True)
+        runtime.write_bytes(b'# runtime fixture\n')
+        self.report['candidate_source'] = {
+            'profiles_sha256': verify.digest(config),
+            'benchmark_script_sha256': verify.digest(self.root / 'scripts/benchmark.py'),
+            'runtime_files': [{'path': runtime.relative_to(self.root).as_posix(),
+                               'sha256': verify.digest(runtime)}],
+        }
+        (self.root / 'benchmarks/results/tokens.json').write_bytes(
+            (json.dumps(self.report, indent=2) + '\n').encode('utf-8'))
+        ordinary = self.root / 'ordinary.txt'
+        ordinary.write_bytes(b'ordinary\ntext\n')
+        pinned = {relative: (self.root / relative).read_bytes()
+                  for relative in ('benchmarks/profiles.json', 'scripts/benchmark.py')}
+        env = {key: value for key, value in os.environ.items() if not key.startswith('GIT_')}
+        env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull, GIT_ATTR_NOSYSTEM='1')
+
+        def git(*args):
+            subprocess.run(['git', '-c', 'core.attributesFile=' + os.devnull, *args],
+                           cwd=self.root, env=env, check=True, capture_output=True, timeout=30)
+
+        git('init', '-q')
+        git('-c', 'core.autocrlf=false', 'add', '.')
+        for relative in (*pinned, 'ordinary.txt'):
+            (self.root / relative).unlink()
+        git('-c', 'core.autocrlf=true', 'checkout-index', '--force', '--all')
+        self.assertEqual(ordinary.read_bytes(), b'ordinary\r\ntext\r\n')
+        for relative, expected in pinned.items():
+            self.assertEqual((self.root / relative).read_bytes(), expected, relative)
+            self.assertNotIn(b'\r\n', expected, relative)
+        spec = importlib.util.spec_from_file_location('checkout_verify', self.root / 'scripts/verify.py')
+        checked_out = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(checked_out)
+        result = checked_out.check_benchmark()
+        self.assertEqual(result['status'], 'passed', result['problems'])
+        self.assertTrue(all(entry['matches'] for entry in result['source_files']))
+
+    def test_config_and_report_cannot_agree_to_omit_mandatory_content_review(self):
+        actual = json.loads((ROOT / "benchmarks/profiles.json").read_text(encoding="utf-8"))
+        required = "skills/story-skill-write/references/content-review.md"
+        for profile in actual["profiles"]:
+            if required not in profile["candidate"]:
+                continue
+            with self.subTest(profile=profile["id"]):
+                config, report = copy.deepcopy(self.config), copy.deepcopy(self.report)
+                config["profiles"][0].update({key: profile[key] for key in ("id", "label", "scope", "candidate")})
+                measured = report["profiles"][0]
+                measured.update({key: profile[key] for key in ("id", "label", "scope")})
+                measured["candidate_files"] = []
+                for relative in profile["candidate"]:
+                    path = self.root / relative
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_bytes(b"hello\n")
+                    measured["candidate_files"].append({**copy.deepcopy(self.report["profiles"][0]["candidate_files"][0]),
+                                                        "path": relative})
+                measured["candidate_tokens"] = len(measured["candidate_files"]) * 2
+                measured["reduction_percent"] = round((1 - measured["candidate_tokens"] / 30) * 100, 2)
+                self.assertEqual(self.check(config=config, report=report)["status"], "passed")
+                config["profiles"][0]["candidate"] = [path for path in profile["candidate"] if path != required]
+                measured["candidate_files"] = [entry for entry in measured["candidate_files"] if entry["path"] != required]
+                measured["candidate_tokens"] -= 2
+                measured["reduction_percent"] = round((1 - measured["candidate_tokens"] / 30) * 100, 2)
+                result = self.check(config=config, report=report)
+                self.assertEqual(result["status"], "failed")
+                self.assertEqual(result["problems"], [f"Missing required candidate file: {profile['id']}: {required}"])
 
     def test_changed_upstream_inputs_cannot_validate_an_old_report(self):
         alternatives = [["skills/example/SKILL.md"],

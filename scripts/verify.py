@@ -151,10 +151,37 @@ def check_archive(path):
 
 def check_benchmark():
     config = json.loads((ROOT / "benchmarks/profiles.json").read_text(encoding="utf-8"))
+    spec = importlib.util.spec_from_file_location("verify_benchmark", Path(__file__).with_name("benchmark.py"))
+    benchmark = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(benchmark)
     path = ROOT / config.get("report_path", "benchmarks/results/tokens.json")
     report = json.loads(path.read_text(encoding="utf-8"))
     profiles = {item["id"]: item for item in report["profiles"]}
-    problems, files = [], []
+    problems, files = benchmark.profile_contract_problems(config), []
+    source_files = []
+    source = report.get("candidate_source")
+    if source is not None:
+        for field, source_path in (("profiles_sha256", ROOT / "benchmarks/profiles.json"),
+                                   ("benchmark_script_sha256", Path(__file__).with_name("benchmark.py"))):
+            actual = digest(source_path)
+            matches = source.get(field) == actual
+            source_files.append({"path": source_path.name, "matches": matches,
+                                 "recorded_sha256": source.get(field), "current_sha256": actual})
+            if not matches:
+                problems.append(f"Benchmark source fingerprint differs: {field}")
+        runtime = sorted((ROOT / "skills/story-skill/scripts").glob("*.py"))
+        recorded = source.get("runtime_files", [])
+        if [entry["path"] for entry in recorded] != [path.relative_to(ROOT).as_posix() for path in runtime]:
+            problems.append("Benchmark synthetic runtime file list differs")
+        recorded_hashes = {entry["path"]: entry.get("sha256") for entry in recorded}
+        for source_path in runtime:
+            relative = source_path.relative_to(ROOT).as_posix()
+            actual = digest(source_path)
+            matches = recorded_hashes.get(relative) == actual
+            source_files.append({"path": relative, "matches": matches,
+                                 "recorded_sha256": recorded_hashes.get(relative), "current_sha256": actual})
+            if not matches:
+                problems.append(f"Benchmark synthetic runtime fingerprint differs: {relative}")
     if type(report.get("schema")) is not int or report["schema"] != 1:
         problems.append("Unsupported benchmark report schema")
     if len(profiles) != len(report["profiles"]) or len({item["id"] for item in config["profiles"]}) != len(config["profiles"]):
@@ -211,9 +238,10 @@ def check_benchmark():
                           "recorded_sha256": entry["sha256"], "current_sha256": actual})
     passed = not problems and bool(files) and all(item["matches"] for item in files)
     return {"status": "passed" if passed else "failed", "report_sha256": digest(path),
-            "scope": "Candidate file hashes, both input lists, profile configuration and arithmetic; "
+            "scope": "Candidate file hashes, both input lists, explicit scenario reading obligations, profile configuration, arithmetic "
+                     "and recorded source fingerprints when present; "
                      "tokenizer not rerun and upstream file contents not revalidated",
-            "files": files, "problems": problems}
+            "files": files, "source_files": source_files, "problems": problems}
 
 
 def check_markdown_links():

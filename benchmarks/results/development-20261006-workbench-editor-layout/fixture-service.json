@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "instance": "instance-15",
+  "root": "/tmp/story-editor-layout-f4_xmf3n/合成布局验收_长目录用于测试作品位置弹出内容和窄窗口折行/作品16_布局核验",
+  "book_id": "book-id-02",
+  "pid": 38781,
+  "code_sha256": "42a23d14ff3efda3750593659d265b46e83a6b64d870ba9c070ea037e27200f1",
+  "runtime_sha256": "e51c5bd4fe28ec2d3414e61c061801eb01e0545abb20f35f474ea746ac85d389",
+  "started": "2026-10-06T08:57:39.990530Z",
+  "running": true,
+  "stop_requested": false,
+  "outdated": false,
+  "url": "http://127.0.0.1:52799/_o8OdIsqGfmhIo0wmX0I8ntv8ShfGl0CGTJYrsCEHzc/"
+}

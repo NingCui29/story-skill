@@ -1,0 +1,14 @@
+{
+  "id": "candidate-only",
+  "prompt": "请按本书现行约定和已采用第3章计划写下一章候选，正文300—500字，不计首行章名。只保存为 .story/drafts/候选.md，暂不采用为正式章，不提交、不导出、不改计划或状态。先核对真正的正式断点与必要前文，再完成这一个候选。",
+  "invocation": "provided_skill_path:story-skill-write",
+  "managed_fixture": {"profile": "keys-two-chapters"},
+  "fixtures": {},
+  "allowed_changes": [".story/drafts/候选.md"],
+  "required_outputs": [".story/drafts/候选.md"],
+  "review_required": [
+    "核对书库真实断点为第2章，读第3章已采用细纲和必要前文，而不是从目录中最高候选章号猜断点。",
+    "成稿为第3章灯下抄录，正文300—500字、不含章名，人物通过抄写与复核取得一行记录，账本不离房、钥匙仍由许伯持有，停在核对完成。",
+    "只产生指定候选，没有正式提交、导出或改计划和状态；答复明确候选身份，不把结构检查当文学质量保证。"
+  ]
+}

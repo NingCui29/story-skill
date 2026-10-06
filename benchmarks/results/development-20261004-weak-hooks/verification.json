@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-04",
+  "changed_files": [
+    {
+      "path": "skills/story-skill-review/SKILL.md",
+      "before_sha256": "2e5cf9c38ad95903f7d858ae9038b5ae369acc6cc1b82c9c6aa2f5fa008073f7",
+      "after_sha256": "5173523c2250f3eb274205ab59516974649e3968317c7e5e652e8857f40c897e"
+    },
+    {
+      "path": "skills/story-skill-write/SKILL.md",
+      "before_sha256": "74c510f14a57ba38edf9e107756cb4fc8f552dbe281ca099da112f4db88094c3",
+      "after_sha256": "01799c85eac8e3d707464c74b5b6b4ff7e642b603b6c2dbaeb4ba70bf04ac568"
+    },
+    {
+      "path": "skills/story-skill-write/references/content-review.md",
+      "before_sha256": "1af45c72830147069dec01ec126edaa4ebd6e12ab408393ad9f13e7509df38ee",
+      "after_sha256": "01aa8dbf70ba1e8f74402a09ec0c00214811a17787b1e7fe2493fc58dd82ceb2"
+    },
+    {
+      "path": "skills/story-skill-write/references/drama.md",
+      "before_sha256": "7722a3d2fb2cd2b79d466da0df9e49d4434c9758bc1acfb872e1a76407cfa1db",
+      "after_sha256": "e83a9aa08ab09a44902d1f05acfd9368c9c7881267c2e156f99e7828ba0a00ba"
+    }
+  ],
+  "runtime_unchanged": true,
+  "full_unittest_rerun": false,
+  "skill_validation": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "7409c6",
+        "wall_time_seconds": 0.184304553,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    },
+    {
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "b25738",
+        "wall_time_seconds": 0.181571818,
+        "exit_code": 0,
+        "original_token_count": 4,
+        "output": "Skill is valid!\n"
+      }
+    }
+  ],
+  "git_diff_check": {
+    "status": "fulfilled",
+    "value": {
+      "chunk_id": "fbb900",
+      "wall_time_seconds": 1.2637e-05,
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": ""
+    }
+  },
+  "scenario_review": {
+    "kind": "independent synthetic rule execution review, not blind",
+    "cases": 5,
+    "root_reviewed": true,
+    "artifact": "scenario-review.md"
+  },
+  "package": {
+    "archive": "~/.codex/skill-backups/story-skill-weak-hook-sz82b7uo/validation/story-skill-0.6.11.zip",
+    "version": "0.6.11",
+    "files": 46,
+    "sha256": "cd9d29ceab1fb065590debc8fda0acedbc8e3f68632a134f3042bbbc8eb5bbe7",
+    "bytes": 312355
+  },
+  "zip_source_install_match": true,
+  "installation": {
+    "complete": true,
+    "kind": "local-development-snapshot",
+    "version": "0.6.11",
+    "skills": 8,
+    "files": 46,
+    "smoke": "passed",
+    "receipt": "~/.codex/skill-backups/story-skill-weak-hook-sz82b7uo/final-receipt.json"
+  },
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 296,
+    "links_checked": 1641,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "hook_heading_and_caller_links": true
+}

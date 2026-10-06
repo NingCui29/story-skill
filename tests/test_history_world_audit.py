@@ -5,6 +5,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 
 PATH = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 SPEC = importlib.util.spec_from_file_location("history_world_audit_runtime", PATH)
@@ -50,6 +52,12 @@ class HistoryWorldAuditTests(unittest.TestCase):
         if time is not None:
             plan["time"] = {"clock": "main", "start": time[0], "end": time[1]}
         self.book.save_plan(chapter, plan, self.rev())
+        # Explicit fixture setup: make the saved plan usable for native commit.
+        binding = story.outline.binding_for(self.book, chapter)
+        if binding is None:
+            bind_adopted_outline(story, self.book, chapter)
+        else:
+            story.outline.bind(self.book, chapter, binding["path"], self.rev(), binding["sha256"])
         text = self.text(chapter)
         self.draft.write_bytes(text.encode("utf-8"))
         return {"book_id": self.book.meta("id"), "base_revision": self.rev(), "summary": "核对账本后留下收据。", "changes": [],
@@ -81,6 +89,8 @@ class HistoryWorldAuditTests(unittest.TestCase):
     def test_complete_history_candidate_cannot_omit_current_required_card(self):
         self.publish(1)
         self.book.save_plan(1, {**self.book.get_plan(1), "requires": ["key"]}, self.rev())
+        binding = story.outline.binding_for(self.book, 1)
+        story.outline.bind(self.book, 1, binding["path"], self.rev(), binding["sha256"])
         packet = story.history.branch_start(self.book, 1, self.rev())
         revision = self.rev()
         payload = {"chapters": [{"chapter": 1, "text": self.text(1), "summary": "核对账本后留下收据。", "dependencies": [], "complete": True}]}

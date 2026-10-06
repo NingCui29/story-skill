@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "instance": "instance-04",
+  "state_dir": "~/.codex/story-workbench",
+  "mode": "library",
+  "pid": 15056,
+  "code_sha256": "ae8bb1fa936f36ba33b91f443a08f535d0cee241dc2b6e83a7aee6d170b6533f",
+  "runtime_sha256": "6179ee667fcb54951f25fe4b9910077a609527d8605bfca9dea35ff8fb0f4e02",
+  "started": "2026-10-05T12:08:08.990266Z",
+  "running": true,
+  "stop_requested": false,
+  "outdated": true,
+  "url": "http://127.0.0.1:8765/"
+}

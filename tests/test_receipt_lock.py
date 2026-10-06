@@ -8,6 +8,8 @@ import threading
 import unittest
 from unittest.mock import patch
 
+from outline_fixture import bind_adopted_outline
+
 
 TOOL = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story.py"
 spec = importlib.util.spec_from_file_location("story_receipt_lock", TOOL)
@@ -33,6 +35,7 @@ class ReceiptLockTests(unittest.TestCase):
                      "length_exception": {"source": "user_request", "quote": "测试章按20至120字写作。"},
                      "beats": [{"choice": "沈禾决定是否交出钥匙", "change": "失去或保留退路"}]}
         self.book.save_plan(1, self.plan, self.book.meta("revision"))
+        bind_adopted_outline(story, self.book, 1)
         self.draft = self.root / ".story/drafts/chapter.md"
         self.draft.parent.mkdir(parents=True)
         self.draft.write_bytes(DRAFT.encode("utf-8"))

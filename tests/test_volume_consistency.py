@@ -130,6 +130,7 @@ class VolumeConsistencyTests(unittest.TestCase):
                 2, fixture.story.dumps(fixture.story.valid_plan(self.case.plan(
                     volume_dir=None, volume="rain", title="第二夜")))))
         second = "第2章 第二夜\n" + fixture.BODY
+        fixture.bind_adopted_outline(fixture.story, self.book, 2)
         with patch.object(self.book, "_check_unique_names"), patch.object(self.book, "_check_plan_volume_binding"):
             self.case.commit(2, second)
         for chapter in (1, 2):

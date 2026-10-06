@@ -1,0 +1,13 @@
+{
+  "skill_validator": {
+    "skill": "story-skill-review",
+    "status": "passed"
+  },
+  "local_links": {
+    "status": "passed",
+    "files_scanned": 282,
+    "links_checked": 1571,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  }
+}

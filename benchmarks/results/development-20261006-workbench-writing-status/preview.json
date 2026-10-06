@@ -1,0 +1,9 @@
+{
+  "instance": "instance-01",
+  "pid": 32684,
+  "url": "http://127.0.0.1:61419/",
+  "state_dir": "/tmp/shelf-status-preview-64ruzf4m/shelf",
+  "mode": "library",
+  "running": true,
+  "outdated": false
+}

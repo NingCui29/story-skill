@@ -63,3 +63,19 @@ Desktop.ini
 
 # Retired author examples are backed up locally, never republished.
 /examples/
+
+# Private local acceptance screenshots; public text evidence is anonymized.
+/benchmarks/results/development-20261005-workbench-client/native-final.png
+/benchmarks/results/development-20261005-workbench-client/native-installed.png
+/benchmarks/results/development-20261005-workbench-client/native-shelf.png
+/benchmarks/results/development-20261005-workbench-time/shelf-time.jpg
+/benchmarks/results/development-20261006-workbench-editor-layout/native-editor-installed.png
+/benchmarks/results/development-20261006-workbench-editor-layout/native-editor-legacy.png
+/benchmarks/results/development-20261006-workbench-editor-layout/native-editor-new.png
+/benchmarks/results/development-20261006-workbench-editor-layout/native-shelf-final.png
+/benchmarks/results/development-20261006-workbench-service-recovery/native-after-fix.png
+/benchmarks/results/development-20261006-workbench-shelf-redesign/native-shelf-redesign.png
+/benchmarks/results/development-20261006-workbench-single-window/native-single-window-diagnostic.png
+/benchmarks/results/development-20261006-workbench-single-window/native-single-window-installed.png
+/benchmarks/results/development-20261006-workbench-single-window/native-single-window-staged.png
+/benchmarks/results/development-20261006-workbench-writing-status/native-writing-status.png

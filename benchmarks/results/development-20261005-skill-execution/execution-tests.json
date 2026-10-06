@@ -1,0 +1,13 @@
+{
+  "scope": "Execution evaluator final targeted regression; not full repository suite",
+  "run": 15,
+  "passed": 15,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "success": true,
+  "source_sha256": {
+    "scripts/execution_eval.py": "51a328e82d9e08ba19e8f364fd7640ae738185b3beb8b13501e12e490c948daa",
+    "tests/test_execution_eval.py": "99165ccb41b05a7336b40c05a5339b8a2e58090f52c06299915bb54a5303d19f"
+  }
+}

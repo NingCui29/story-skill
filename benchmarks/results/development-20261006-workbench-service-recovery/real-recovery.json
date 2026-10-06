@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "only_independent_bookshelf_restarted": true,
+  "old_library_instance": "instance-21",
+  "new_library_instance": "instance-05",
+  "new_library_current_runtime": true,
+  "books": [
+    {
+      "title": "作品15",
+      "existing_running_instance_preserved": true
+    },
+    {
+      "title": "作品16",
+      "opened_from_bookshelf_api": true,
+      "editor_page_http_200": true,
+      "new_confirmed_instance": "instance-06",
+      "formal_database_bytes_unchanged": true,
+      "old_service_record_backed_up": true
+    },
+    {
+      "title": "作品18",
+      "opened_from_bookshelf_api": true,
+      "editor_page_http_200": true,
+      "new_confirmed_instance": "instance-09",
+      "formal_database_bytes_unchanged": true,
+      "old_service_record_backed_up": true
+    },
+    {
+      "title": "作品10",
+      "existing_running_instance_preserved": true
+    }
+  ],
+  "registry_bytes_unchanged": true,
+  "client_and_existing_editors_not_stopped": true
+}

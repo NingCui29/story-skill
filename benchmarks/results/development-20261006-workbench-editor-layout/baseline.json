@@ -1,0 +1,50 @@
+{
+  "backup": "~/.codex/backups/story-skill/editor-layout-npddni07",
+  "registry_sha256": "a702f57d24c56132a7f96de71f2dd41b31b6cbe3f169102c340e021c3a38552a",
+  "registry_mtime_ns": 1791253467490728861,
+  "installed_workbench_sha256": "9af67784c8068f27dc9ab7f9ecc5cf0a76ff4014601e4467fbab64b97622fc57",
+  "library": {
+    "instance": "instance-16",
+    "pid": 33032,
+    "running": true,
+    "mode": "library",
+    "state_dir": "~/.codex/story-workbench"
+  },
+  "active_books": [
+    {
+      "root": "/local-books/book-15",
+      "title": "作品15",
+      "instance": "instance-18",
+      "pid": 20594,
+      "url": "http://127.0.0.1:54002/KwHUdVoZ7q3AGw0uh7L_MArg3rHl1rsFaPlhgS743LE/"
+    },
+    {
+      "root": "/local-books/book-16",
+      "title": "作品16",
+      "instance": "instance-06",
+      "pid": 28793,
+      "url": "http://127.0.0.1:52337/vtB8pwZ8Y2i8FKM5juMaYH35wc7eQN5sGgPhc4_Nc3E/"
+    },
+    {
+      "root": "/local-books/book-18",
+      "title": "作品18",
+      "instance": "instance-09",
+      "pid": 28801,
+      "url": "http://127.0.0.1:52354/9q3EaUPTJ4vXwDaE7dPoyvroXySNnda0P5F5P-khYDk/"
+    },
+    {
+      "root": "/local-books/book-10",
+      "title": "作品10",
+      "instance": "instance-11",
+      "pid": 27471,
+      "url": "http://127.0.0.1:49540/KtJ2h3c7UggtVlJrc8HBwY4dsif62wnlE-MqlYRuMzk/"
+    },
+    {
+      "root": "/local-books/book-01",
+      "title": "作品01",
+      "instance": "instance-03",
+      "pid": 32956,
+      "url": "http://127.0.0.1:61821/Ktb2g_3OFvW6vEs2hSPRoMtxBQh8Zw1D8KIclyCxzuM/"
+    }
+  ]
+}

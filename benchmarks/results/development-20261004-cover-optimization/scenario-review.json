@@ -1,0 +1,16 @@
+{
+  "kind": "independent synthetic text-only execution review",
+  "cases": 4,
+  "root_reviewed": true,
+  "actual_images_inspected": false,
+  "image_generation_performed": false,
+  "platform_verified": false,
+  "cases_checked": [
+    "long title local cover",
+    "single platform author edit",
+    "final JPG inspection and click claims",
+    "host image generation unavailable"
+  ],
+  "identified_issue": "Missing-tools wording could confuse suite file absence with host image generation absence.",
+  "resolution": "Changed wording to missing suite files; independent targeted recheck confirmed the distinction."
+}

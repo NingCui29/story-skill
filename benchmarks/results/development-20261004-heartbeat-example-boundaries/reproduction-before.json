@@ -1,0 +1,197 @@
+{
+  "scope": "TemporaryDirectory synthetic books only; no repository source edits; no real books",
+  "runtime_sha256": "7e8915f035856c0009188080ed9056c0ee08848b398544b5c08549464d2804d9",
+  "adoption": [
+    {
+      "name": "fully_quoted",
+      "input": "# 全书总纲\n> 字段填写示例：\n> 状态：已采用\n\n## 第1章\n",
+      "before": {
+        "revision": 2,
+        "last_chapter": 0,
+        "binding": null
+      },
+      "statuses": [],
+      "git_head_statuses": [],
+      "error": {
+        "code": "invalid_input",
+        "details": {
+          "path": "/tmp/story-test-8zzgryb7/中文书目录/README.md"
+        }
+      },
+      "after": {
+        "revision": 2,
+        "last_chapter": 0,
+        "binding": null
+      },
+      "db_unchanged": true
+    },
+    {
+      "name": "lazy_quote",
+      "input": "# 全书总纲\n> 字段填写示例：\n状态：已采用\n\n## 第1章\n",
+      "before": {
+        "revision": 2,
+        "last_chapter": 0,
+        "binding": null
+      },
+      "statuses": [
+        "已采用"
+      ],
+      "git_head_statuses": [
+        "已采用"
+      ],
+      "binding_result": {
+        "chapter": 1,
+        "revision": 3,
+        "outline": {
+          "status": "adopted",
+          "chapter": 1,
+          "path": "README.md",
+          "sha256": "bfca82510cc49346640bfc0e238b593db2c52ac299d6e7a1e3d26ce61413e929",
+          "plan_sha256": "2b02df402402dfabd8858eefa29dca18bfd2396e8f59ab5cf376ec94bcd65823"
+        },
+        "related_chapters": [
+          1
+        ]
+      },
+      "commit_result": {
+        "committed": true,
+        "idempotent": false,
+        "chapter": 1,
+        "revision": 4,
+        "path": "/tmp/story-test-w6689kvw/中文书目录/chapters/第一卷 雨夜/第1章 门后的雨.md",
+        "exported": [
+          "chapters/第一卷 雨夜/第1章 门后的雨.md"
+        ],
+        "backups": [],
+        "exports_complete": true,
+        "scope_exports_complete": true,
+        "integrity": {
+          "mode": "strict",
+          "verified_file_count": 1,
+          "unverified_archive_count": 0,
+          "last_full_audit_revision": 4,
+          "full_book_verified": true,
+          "note": "Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified."
+        }
+      },
+      "after": {
+        "revision": 4,
+        "last_chapter": 1,
+        "binding": {
+          "status": "adopted",
+          "chapter": 1,
+          "path": "README.md",
+          "sha256": "bfca82510cc49346640bfc0e238b593db2c52ac299d6e7a1e3d26ce61413e929",
+          "plan_sha256": "2b02df402402dfabd8858eefa29dca18bfd2396e8f59ab5cf376ec94bcd65823"
+        }
+      },
+      "db_unchanged": false
+    }
+  ],
+  "frontmatter_audit": {
+    "input": "---\nstatus: candidate\ndescription: |\n  ## 作品定位与平台分类（番茄小说）\n  - 篇幅类型：短篇。\n  - 目标平台：番茄小说；作品阶段：拟投。\n  - 平台入口：短故事。\n  - 来源与核对日期：番茄后台参考；2026-10-01。\n  - 主分类：现实故事（拟选）。\n  - 情节／角色／情绪／背景：各栏待核对。\n  - 选择依据：人物和主线。\n  - 待核对：现行选项。\n  \n  ## 作品定位与平台分类（七猫）\n  - 篇幅类型：短篇。\n  - 目标平台：七猫；作品阶段：拟投。\n  - 页面适用性：短故事入口待核对。\n  - 来源与核对日期：七猫后台参考；2026-10-02。\n  - 分类频道：女频（拟选）。\n  - 一级分类：现代言情（拟选）。\n  - 二级分类：婚姻家庭（拟选）。\n  - 风格／角色／情节／背景：各栏待核对。\n  - 选择依据：人物和主线。\n  - 待核对：现行选项。\n---\n# 全书总纲\n分类尚未补写。\n",
+    "result": {
+      "ok": true,
+      "scope": "outline_structure_only",
+      "path": "01_大纲细纲/全书总纲.md",
+      "sha256": "3f5b7b006f59e3a4641c44e7d89fad50aebfddca3f35b66c4d12253a918a9fe9",
+      "section_lines": [
+        4,
+        14
+      ],
+      "fields_found": [],
+      "checked_platform_rules": "multiple",
+      "required_platforms": [
+        "fanqie",
+        "qimao"
+      ],
+      "covered_platforms": [
+        "fanqie",
+        "qimao"
+      ],
+      "platform_results": [
+        {
+          "ok": true,
+          "platform": "fanqie",
+          "platforms_declared": [
+            "fanqie"
+          ],
+          "section_line": 4,
+          "section_title": "作品定位与平台分类（番茄小说）",
+          "fields_found": [
+            "主分类",
+            "作品阶段",
+            "平台入口",
+            "待核对",
+            "情绪",
+            "情节",
+            "来源与核对日期",
+            "目标平台",
+            "篇幅类型",
+            "背景",
+            "角色",
+            "选择依据"
+          ],
+          "checked_platform_rules": "fanqie_short",
+          "issues": []
+        },
+        {
+          "ok": true,
+          "platform": "qimao",
+          "platforms_declared": [
+            "qimao"
+          ],
+          "section_line": 14,
+          "section_title": "作品定位与平台分类（七猫）",
+          "fields_found": [
+            "一级分类",
+            "二级分类",
+            "作品阶段",
+            "分类频道",
+            "待核对",
+            "情节",
+            "来源与核对日期",
+            "目标平台",
+            "篇幅类型",
+            "背景",
+            "角色",
+            "选择依据",
+            "页面适用性",
+            "风格"
+          ],
+          "checked_platform_rules": "qimao",
+          "issues": []
+        }
+      ],
+      "issues": [],
+      "manual_review_required": true,
+      "note": "Only required field presence and source-date syntax were checked per platform block; platform options, per-column status, evidence, and adoption still require human review."
+    },
+    "db_unchanged": true,
+    "git_head_section_count": 0
+  },
+  "inline_code_audit": {
+    "input": "# 全书总纲\n状态：候选\n\n## 作品定位与平台分类\n- 篇幅类型：长篇。\n`目标平台：起点。`\n- 作品阶段：拟投。\n- 平台入口：小说。\n- 来源与核对日期：后台参考；2026-10-01。\n- 平台分类：玄幻（拟选）。\n- 选择依据：主线规划中。\n- 待核对：后台选项。\n",
+    "result": {
+      "ok": true,
+      "platform": "起点",
+      "platforms_declared": [
+        "起点"
+      ],
+      "section_line": 4,
+      "section_title": "作品定位与平台分类",
+      "fields_found": [
+        "作品阶段",
+        "平台入口",
+        "平台分类",
+        "待核对",
+        "来源与核对日期",
+        "目标平台",
+        "篇幅类型",
+        "选择依据"
+      ],
+      "checked_platform_rules": "generic",
+      "issues": []
+    }
+  }
+}

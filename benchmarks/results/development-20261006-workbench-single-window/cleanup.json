@@ -1,0 +1,106 @@
+{
+  "private_services": [
+    {
+      "kind": "editor",
+      "root": "/tmp/story-editor-layout-f4_xmf3n/合成布局验收_长目录用于测试作品位置弹出内容和窄窗口折行/作品16_布局核验",
+      "instance": "instance-08",
+      "pid": 41078,
+      "process_exited": true
+    },
+    {
+      "kind": "editor",
+      "root": "/tmp/story-single-window-u0lllaed/第二部合成作品_用于单窗口切换与缓存保留验收",
+      "instance": "instance-17",
+      "pid": 41079,
+      "process_exited": true
+    },
+    {
+      "kind": "shelf",
+      "state_dir": "/tmp/story-single-window-u0lllaed/只登记合成作品的私有书架",
+      "instance": "instance-13",
+      "pid": 41081,
+      "process_exited": true
+    }
+  ],
+  "protected_files": [
+    {
+      "book_id": "book-id-02",
+      "path": ".story/state.sqlite3",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-02",
+      "path": "00_项目策划/很长的布局核验材料目录_用于检查菜单与文件位置文字的自动换行/合成验收材料_长文件名测试_并非小说规划.md",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-02",
+      "path": "chapters/第一卷 合成布局验收/第1章 合成验收样例1.md",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-02",
+      "path": "chapters/第一卷 合成布局验收/第2章 合成验收样例2.md",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-02",
+      "path": "chapters/第一卷 合成布局验收/第3章 合成验收样例3.md",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-02",
+      "path": "创作约定.md",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-06",
+      "path": ".story/state.sqlite3",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-06",
+      "path": "chapters/第一卷 合成切换验收/第1章 第二作品合成验收样例1.md",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-06",
+      "path": "chapters/第一卷 合成切换验收/第2章 第二作品合成验收样例2.md",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-06",
+      "path": "chapters/第一卷 合成切换验收/第3章 第二作品合成验收样例3.md",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    },
+    {
+      "book_id": "book-id-06",
+      "path": "创作约定.md",
+      "sha256_unchanged": true,
+      "mtime_unchanged": true,
+      "bytes_unchanged": true
+    }
+  ],
+  "protected_files_unchanged": true,
+  "fixture_registry_unchanged": true
+}

@@ -1,0 +1,16 @@
+{
+  "tests": 62,
+  "elapsed_seconds": 2.505,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "new_regression_methods": 11,
+  "runtime_sha256": "7e8915f035856c0009188080ed9056c0ee08848b398544b5c08549464d2804d9",
+  "test_file_sha256": "015d46b9d516441b64db964119a03c1e07f55b60ee3b953402673e780d15d020",
+  "before": "adoption-before.json",
+  "after": "adoption-after.json",
+  "log": "adoption-targeted.log",
+  "initial_log": "adoption-targeted-initial.log",
+  "initial_failure_reason": "New test assertions incorrectly named the established outline_binding_required error as outline_required; assertions corrected."
+}

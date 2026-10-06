@@ -1,0 +1,73 @@
+{
+  "ok": true,
+  "application": "dist/release-v0.6.11/写作工作台.app",
+  "archive": "dist/story-workbench-0.1.0-macos-x86_64.zip",
+  "checksum": "dist/story-workbench-0.1.0-macos-x86_64.zip.sha256",
+  "bytes": 26539188,
+  "sha256": "bc34b80f5dd06e2171c0327d21b3dbc6b7b100acc31895396e9cdf5f3e4664d5",
+  "app_version": "0.1.0",
+  "story_version": "0.6.11",
+  "architecture": "x86_64",
+  "minimum_macos_build_target": "13.0",
+  "tested_platform": "Intel macOS 15.8.1",
+  "runtime_files": {
+    "story.py": "37d840bae8567dc19dfd7d2fc5fb1c086b5bb3ef6e7657107765ef22d588c6ad",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_history.py": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
+    "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story_workbench.py": "42a23d14ff3efda3750593659d265b46e83a6b64d870ba9c070ea037e27200f1",
+    "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+  },
+  "native_sources": {
+    "StoryWorkbench.swift": "802131cf750c413bee288d31731d89c0eb5d7d3afa746ed3fcbc6fce9652d7d0",
+    "ClientInstance.swift": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9"
+  },
+  "signature": {
+    "verification": "codesign --verify --deep --strict passed before and after ZIP extraction",
+    "type": "ad-hoc",
+    "developer_id": false,
+    "notarized": false
+  },
+  "runtime_distribution": {
+    "version": "Python 3.12.14",
+    "site_packages": [
+      "README.txt",
+      "pip",
+      "pip-26.2.1.dist-info"
+    ],
+    "extra_third_party_site_packages": [],
+    "python_license_present": true,
+    "pip_license_present": true
+  },
+  "bundle_contents": {
+    "runtime_module_count": 9,
+    "runtime_matches_current_source": true,
+    "native_sources_match_current_source": true,
+    "story_skill_license_matches": true,
+    "external_symlinks": [],
+    "author_state_or_credential_filenames": [],
+    "scope": "Fresh bundle includes only whitelisted app sources, current runtime scripts, licenses and the base Python distribution; no author library or manuscripts are copied."
+  },
+  "cli": {
+    "version": "0.6.11",
+    "help": true,
+    "isolated_init": true,
+    "isolated_status": true,
+    "relocated_extracted_runtime": true
+  },
+  "archive_verification": {
+    "producer": "macOS ditto",
+    "member_metadata_encoding": "UTF-8",
+    "archive_crc_valid": true,
+    "native_extraction_verified": true
+  },
+  "not_verified": [
+    "Apple Silicon execution",
+    "macOS versions other than Intel macOS 15.8.1",
+    "Developer ID signing or notarization",
+    "Native directory picker, download save panel, unsaved close interactions in this release build"
+  ]
+}

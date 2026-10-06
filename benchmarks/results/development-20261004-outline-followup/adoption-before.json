@@ -1,0 +1,80 @@
+{
+  "runtime_sha256": "5110bf0e78e619f3b52364fbc1aedc0ddf48d088076915b79ff899e16c5faf66",
+  "cases": [
+    {
+      "case": "frontmatter_scalar_adoption",
+      "source": "---\ndescription: |\n  status: adopted\n---\n# 全书总纲\n本规划还未确认采用。\n\n## 第1章\n沈禾交出钥匙。\n",
+      "declared_statuses": [
+        "adopted"
+      ],
+      "source_sha256": "d43e8cd4ed907d20a8dbdfa8f2f4ef9a809a43f96710fb0149956daf700b578a",
+      "revision_before": 2,
+      "bind": {
+        "status": "adopted",
+        "revision": 3
+      },
+      "commit": {
+        "last_chapter": 1,
+        "exports_complete": true
+      },
+      "revision_after": 4
+    },
+    {
+      "case": "frontmatter_candidate_hidden_by_scalar_fence",
+      "source": "---\ndescription: |\n  ```\nstatus: candidate\n---\n# 全书总纲\n```\n状态：已采用\n```\n## 第1章\n沈禾交出钥匙。\n",
+      "declared_statuses": [
+        "已采用"
+      ],
+      "source_sha256": "af2222c68c52c2fdf4b3e3ae9fafa0f6c57fcdab5cd6e9e88b54e9067e0dc8d1",
+      "revision_before": 2,
+      "bind": {
+        "status": "adopted",
+        "revision": 3
+      },
+      "commit": {
+        "last_chapter": 1,
+        "exports_complete": true
+      },
+      "revision_after": 4
+    },
+    {
+      "case": "setext_body_adoption",
+      "source": "# 全书总纲\n本规划还未确认采用。\n\n第1章\n------\n状态：已采用\n沈禾交出钥匙。\n",
+      "declared_statuses": [
+        "已采用"
+      ],
+      "source_sha256": "a7eddbafe3c74888443ad04d9c93c176c6e39dfda247e2a5a1442eaf83b6a580",
+      "revision_before": 2,
+      "bind": {
+        "status": "adopted",
+        "revision": 3
+      },
+      "commit": {
+        "last_chapter": 1,
+        "exports_complete": true
+      },
+      "revision_after": 4
+    },
+    {
+      "case": "setext_legitimate_progress",
+      "source": "# 全书总纲\n状态：已采用\n\n第1章\n------\n状态：待写\n沈禾交出钥匙。\n",
+      "declared_statuses": [
+        "已采用",
+        "待写"
+      ],
+      "source_sha256": "80306a85721fd9e3679208fdbe1d6e4e395983e4d387eac6249862d288da1be8",
+      "revision_before": 2,
+      "error": {
+        "code": "invalid_input",
+        "details": {
+          "path": "/tmp/story-test-dyam9v3m/中文书目录/01_大纲细纲/全书总纲.md",
+          "declared_statuses": [
+            "已采用",
+            "待写"
+          ]
+        }
+      },
+      "revision_after": 2
+    }
+  ]
+}
