@@ -270,6 +270,20 @@ class WorkbenchLibraryTests(unittest.TestCase):
         self.assertTrue(self.w._library_service_request(self.state)['running'])
         self.stop(server)
 
+    def test_windows_port_access_denial_keeps_registry_empty_and_releases_lease(self):
+        for stage in ('server_bind', 'server_activate'):
+            with self.subTest(stage=stage):
+                denied = PermissionError(errno.EACCES, 'Winsock access denied')
+                denied.winerror = 10013
+                with patch.object(self.w.HTTPServer, stage, side_effect=denied):
+                    self.assert_story_error('workbench_port_unavailable', self.w.library_server,
+                                            state_dir=self.state, port=0)
+                self.assertFalse((self.state / 'service.json').exists())
+                self.assertFalse((self.state / 'library.json').exists())
+        server = self.start()
+        self.assertTrue(self.w._library_service_request(self.state)['running'])
+        self.stop(server)
+
     def test_conflicting_port_does_not_leak_the_library_lease(self):
         occupied = socket.socket()
         self.addCleanup(occupied.close)

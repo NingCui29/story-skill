@@ -3512,6 +3512,8 @@ def library_server(state_dir=None, port=8765, library_books=None):
         except OSError as error:
             if error.errno == errno.EADDRINUSE:
                 api.fail('workbench_port_in_use', '书架端口已被占用，请核对已有服务；不会自动更换固定地址。', port=port)
+            if getattr(error, 'winerror', None) == 10013:
+                api.fail('workbench_port_unavailable', '书架端口已被占用或受系统限制，请核对已有服务与端口设置；不会自动更换固定地址。', port=port)
             raise
         server.editor_url = f'http://127.0.0.1:{server.server_port}/'
         server.library_token = token

@@ -33,8 +33,10 @@ class WorkbenchClassificationTests(unittest.TestCase):
         return self.w._book_classification(self.root)
 
     def file_state(self, root):
+        # Active directory pins are transient exclusive locks, not authored files.
         return {str(path.relative_to(root)): (path.read_bytes(), path.stat().st_mtime_ns)
-                for path in root.rglob('*') if path.is_file()}
+                for path in root.rglob('*')
+                if not path.name.startswith('.story-pin-') and path.is_file()}
 
     def test_explicit_short_labels_include_source_field_and_line(self):
         self.source('# 创作约定\n\n- **题材与读者期待**：都市悬疑＋修仙；读者期待逐步查明真相。\n')

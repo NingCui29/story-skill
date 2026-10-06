@@ -34,10 +34,12 @@ class WorkbenchBookIdentityTests(unittest.TestCase):
     def assert_windows_rename_blocked(self, root, target):
         def files():
             # The lease byte is locked against reads through a second Windows handle.
+            # Temporary directory pins are exclusive Windows handles, not book data.
             return {path.relative_to(root).as_posix(): (
                         None if path.name == 'workbench-server.lock' else path.read_bytes(),
                         path.stat().st_size, path.stat().st_mtime_ns, path.stat().st_ino)
-                    for path in root.rglob('*') if path.is_file()}
+                    for path in root.rglob('*')
+                    if not path.name.startswith('.story-pin-') and path.is_file()}
 
         before = files()
         entry = self.w._library_entry(root)

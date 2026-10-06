@@ -29,7 +29,7 @@ skills/story-skill-publish
 
 远程安装时，先用官方安装脚本从 `v0.6.11` 固定标签将八个 `--path` 安装到隔离临时目录；另从同一版本 Release 下载 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.11/story-skill-0.6.11.zip) 和 [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.11/story-skill-0.6.11.zip.sha256)，核对摘要，并逐文件比较临时目录与 ZIP。
 
-本版套件 ZIP 为358,050字节，SHA-256 为 `adbb3a49244216ef48b10c1a04d1596a3e275fd5738ea4265bfdce3cb1645bd3`。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
+本版套件 ZIP 为358,111字节，SHA-256 为 `0e0091844449e20576893b2cc2a8a1a9f73755c43c2071b839637f8a8e7eb9ad`。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
 
 ## 从本仓库源码安装
 

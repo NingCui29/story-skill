@@ -1,0 +1,306 @@
+{
+  "conclusion": "failure",
+  "databaseId": 37478069397,
+  "headSha": "adc948da380d49ac85847b772dd56b319c5ad12f",
+  "jobs": [
+    {
+      "completedAt": "2026-10-06T14:22:52Z",
+      "conclusion": "success",
+      "databaseId": 112318661668,
+      "name": "test (ubuntu-latest, 3.10)",
+      "startedAt": "2026-10-06T14:20:05Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-06T14:20:07Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-06T14:20:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:20:08Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "startedAt": "2026-10-06T14:20:07Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:20:08Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 3,
+          "startedAt": "2026-10-06T14:20:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:22:22Z",
+          "conclusion": "success",
+          "name": "Run regression tests including historical migration",
+          "number": 4,
+          "startedAt": "2026-10-06T14:20:08Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:22:23Z",
+          "conclusion": "success",
+          "name": "Build the complete skill ZIP",
+          "number": 5,
+          "startedAt": "2026-10-06T14:22:22Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:22:26Z",
+          "conclusion": "success",
+          "name": "Exercise the local CLI workflow",
+          "number": 6,
+          "startedAt": "2026-10-06T14:22:23Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:22:36Z",
+          "conclusion": "success",
+          "name": "Exercise synthetic Chinese transactions",
+          "number": 7,
+          "startedAt": "2026-10-06T14:22:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:22:49Z",
+          "conclusion": "success",
+          "name": "Exercise multi-line writing and historical revision",
+          "number": 8,
+          "startedAt": "2026-10-06T14:22:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:22:49Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 15,
+          "startedAt": "2026-10-06T14:22:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:22:49Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 16,
+          "startedAt": "2026-10-06T14:22:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:22:49Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "startedAt": "2026-10-06T14:22:49Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/37478069397/job/112318661668"
+    },
+    {
+      "completedAt": "2026-10-06T14:35:21Z",
+      "conclusion": "failure",
+      "databaseId": 112318661815,
+      "name": "test (windows-latest, 3.12)",
+      "startedAt": "2026-10-06T14:20:05Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-06T14:20:06Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-06T14:20:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:20:14Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "startedAt": "2026-10-06T14:20:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:20:14Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 3,
+          "startedAt": "2026-10-06T14:20:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:35:17Z",
+          "conclusion": "failure",
+          "name": "Run regression tests including historical migration",
+          "number": 4,
+          "startedAt": "2026-10-06T14:20:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:35:17Z",
+          "conclusion": "skipped",
+          "name": "Build the complete skill ZIP",
+          "number": 5,
+          "startedAt": "2026-10-06T14:35:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:35:17Z",
+          "conclusion": "skipped",
+          "name": "Exercise the local CLI workflow",
+          "number": 6,
+          "startedAt": "2026-10-06T14:35:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:35:17Z",
+          "conclusion": "skipped",
+          "name": "Exercise synthetic Chinese transactions",
+          "number": 7,
+          "startedAt": "2026-10-06T14:35:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:35:17Z",
+          "conclusion": "skipped",
+          "name": "Exercise multi-line writing and historical revision",
+          "number": 8,
+          "startedAt": "2026-10-06T14:35:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:35:17Z",
+          "conclusion": "skipped",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 15,
+          "startedAt": "2026-10-06T14:35:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:35:19Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 16,
+          "startedAt": "2026-10-06T14:35:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:35:19Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "startedAt": "2026-10-06T14:35:19Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/37478069397/job/112318661815"
+    },
+    {
+      "completedAt": "2026-10-06T14:32:05Z",
+      "conclusion": "failure",
+      "databaseId": 112318661874,
+      "name": "test (windows-latest, 3.10)",
+      "startedAt": "2026-10-06T14:20:05Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-06T14:20:06Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-06T14:20:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:20:14Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "startedAt": "2026-10-06T14:20:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:20:15Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 3,
+          "startedAt": "2026-10-06T14:20:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:32:02Z",
+          "conclusion": "failure",
+          "name": "Run regression tests including historical migration",
+          "number": 4,
+          "startedAt": "2026-10-06T14:20:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:32:02Z",
+          "conclusion": "skipped",
+          "name": "Build the complete skill ZIP",
+          "number": 5,
+          "startedAt": "2026-10-06T14:32:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:32:02Z",
+          "conclusion": "skipped",
+          "name": "Exercise the local CLI workflow",
+          "number": 6,
+          "startedAt": "2026-10-06T14:32:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:32:02Z",
+          "conclusion": "skipped",
+          "name": "Exercise synthetic Chinese transactions",
+          "number": 7,
+          "startedAt": "2026-10-06T14:32:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:32:02Z",
+          "conclusion": "skipped",
+          "name": "Exercise multi-line writing and historical revision",
+          "number": 8,
+          "startedAt": "2026-10-06T14:32:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:32:02Z",
+          "conclusion": "skipped",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 15,
+          "startedAt": "2026-10-06T14:32:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:32:04Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 16,
+          "startedAt": "2026-10-06T14:32:02Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-06T14:32:04Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 17,
+          "startedAt": "2026-10-06T14:32:04Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/37478069397/job/112318661874"
+    }
+  ],
+  "status": "completed",
+  "url": "https://github.com/NingCui29/story-skill/actions/runs/37478069397"
+}

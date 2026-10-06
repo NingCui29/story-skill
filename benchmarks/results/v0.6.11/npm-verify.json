@@ -2,12 +2,12 @@
   "ok": true,
   "name": "@ningcui29/story-skill",
   "version": "0.6.11",
-  "tarball": "dist/release-v0.6.11/candidate2/npm/ningcui29-story-skill-0.6.11.tgz",
-  "sha256": "9c2648b4ff64c264654ae08883ca2e91c77dd0aa511495b3cf58f01d934408fc",
-  "integrity": "sha512-bHQUkQmtCGSUyQOFGgUIkalwvm4eTHmbgFtZwDUWdivHe/r0Ga3l7LcaoCnBn8VMa2Qc9vMg7YZTPicS/J925g==",
-  "bytes": 328123,
+  "tarball": "dist/release-v0.6.11/candidate3/npm/ningcui29-story-skill-0.6.11.tgz",
+  "sha256": "c5ba57f7c8ce748ff6dac91835eff2960daa8ca3532d931c771b574070c21c93",
+  "integrity": "sha512-a+mieEZeQud+dkwNEZ0X/U/NNjxXaGGorUxaiu5grYljOvgtm8kJjf5mdn71HE1xEzmbmT8CVP7dOiBjPhcCQQ==",
+  "bytes": 328178,
   "registry": "https://npm.pkg.github.com",
-  "archive_sha256": "adbb3a49244216ef48b10c1a04d1596a3e275fd5738ea4265bfdce3cb1645bd3",
+  "archive_sha256": "0e0091844449e20576893b2cc2a8a1a9f73755c43c2071b839637f8a8e7eb9ad",
   "payload_manifest": {
     "story-skill-analyze/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
     "story-skill-analyze/SKILL.md": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
@@ -56,7 +56,7 @@
     "story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
     "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
     "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
-    "story-skill/scripts/story_workbench.py": "89626e01729c6e081101e4f25b94c653a008e6f7109d1f05aecee0678c83a004",
+    "story-skill/scripts/story_workbench.py": "feb5170937a05f02220d1d73c539100c34b457325af1664509ab06b214b389f4",
     "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
   },
   "wrapper_manifest": {
@@ -128,7 +128,7 @@
       "story-skill/scripts/story_world.py"
     ]
   },
-  "candidate": "candidate2",
+  "candidate": "candidate3",
   "build_tool": {
     "node": "v24.19.0",
     "npm": "12.2.0",

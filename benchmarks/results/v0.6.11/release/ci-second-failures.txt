@@ -1,0 +1,219 @@
+Run: 37478069397
+Commit: adc948da380d49ac85847b772dd56b319c5ad12f
+Job: Windows / Python 3.10
+Result: 1358 tests; failures=1; errors=4; skipped=50; duration=693.974s
+
+ERROR: test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop (test_workbench_book_identity.WorkbenchBookIdentityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 239, in test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop
+    self.assert_windows_rename_blocked(root, self.area / '原作品已移动')
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 42, in assert_windows_rename_blocked
+    before = files()
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 37, in files
+    return {path.relative_to(root).as_posix(): (
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 38, in <dictcomp>
+    None if path.name == 'workbench-server.lock' else path.read_bytes(),
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-v6_o02ob\\同名目录\\.story\\.story-pin-9115923d560142d0b463e7dea4402814'
+
+ERROR: test_replacement_before_service_registration_is_rejected_and_releases_lease (test_workbench_book_identity.WorkbenchBookIdentityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 375, in test_replacement_before_service_registration_is_rejected_and_releases_lease
+    started = self.w.editor_server(root)
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story_workbench.py", line 3041, in editor_server
+    allowed = {hashlib.sha256(_author_read(root, path, 8192)).hexdigest()}
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 364, in replace_before_registration
+    self.assert_windows_rename_blocked(root, moved)
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 42, in assert_windows_rename_blocked
+    before = files()
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 37, in files
+    return {path.relative_to(root).as_posix(): (
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 38, in <dictcomp>
+    None if path.name == 'workbench-server.lock' else path.read_bytes(),
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-xtmnnxrf\\同名目录\\.story\\.story-pin-310dd06041d6487cae598c7e9a2ba5bd'
+
+ERROR: test_stopping_old_editor_does_not_update_copied_record_in_replacement_book (test_workbench_book_identity.WorkbenchBookIdentityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 317, in test_stopping_old_editor_does_not_update_copied_record_in_replacement_book
+    self.assert_windows_rename_blocked(root, self.area / '原作品已移动')
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 42, in assert_windows_rename_blocked
+    before = files()
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 37, in files
+    return {path.relative_to(root).as_posix(): (
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 38, in <dictcomp>
+    None if path.name == 'workbench-server.lock' else path.read_bytes(),
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-oecxe22_\\同名目录\\.story\\.story-pin-977cb60c96284db4b43161ad400554a2'
+
+ERROR: test_workspace_discards_replacement_book_sources_without_losing_groups (test_workbench_classification.WorkbenchClassificationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_classification.py", line 262, in test_workspace_discards_replacement_book_sources_without_losing_groups
+    workspace = self.w._workspace_index(self.root, [])
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story_workbench.py", line 1817, in _workspace_index
+    classification = _book_classification(book.root)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "D:\a\story-skill\story-skill\tests\test_workbench_classification.py", line 255, in replace_and_read
+    self.assertEqual((self.file_state(self.root), self.file_state(replacement)), before)
+  File "D:\a\story-skill\story-skill\tests\test_workbench_classification.py", line 36, in file_state
+    return {str(path.relative_to(root)): (path.read_bytes(), path.stat().st_mtime_ns)
+  File "D:\a\story-skill\story-skill\tests\test_workbench_classification.py", line 36, in <dictcomp>
+    return {str(path.relative_to(root)): (path.read_bytes(), path.stat().st_mtime_ns)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-classification-2fx7xb4q\\作品\\.story\\.story-pin-3711f5e094bf4955834219361ae3fb98'
+
+FAIL: test_real_port_conflict_does_not_replace_listener_or_write_registry (test_desktop_backend_runner.DesktopBackendRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_desktop_backend_runner.py", line 281, in test_real_port_conflict_does_not_replace_listener_or_write_registry
+    self.assertEqual(result['code'], 'workbench_port_in_use', result)
+AssertionError: 'io_or_input_error' != 'workbench_port_in_use'
+- io_or_input_error
++ workbench_port_in_use
+ : {'ok': False, 'message': '[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions', 'code': 'io_or_input_error', 'log': 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\desktop-backend-runner-38z_blzr\\独立书架\\desktop-client\\launch-e3a72e958d6a49a1b9bca8f1d3ebde47.log'}
+
+
+Job: Windows / Python 3.12
+Ran 1358 tests in 888.716s
+FAILED (failures=1, errors=4, skipped=50)
+
+ERROR: test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop (test_workbench_book_identity.WorkbenchBookIdentityTests.test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 239, in test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop
+    self.assert_windows_rename_blocked(root, self.area / '原作品已移动')
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 42, in assert_windows_rename_blocked
+    before = files()
+             ^^^^^^^
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 38, in files
+    None if path.name == 'workbench-server.lock' else path.read_bytes(),
+                                                      ^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-86okowbo\\同名目录\\.story\\.story-pin-bd412ce5cb27496a9b70639aebad973b'
+
+ERROR: test_replacement_before_service_registration_is_rejected_and_releases_lease (test_workbench_book_identity.WorkbenchBookIdentityTests.test_replacement_before_service_registration_is_rejected_and_releases_lease)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 375, in test_replacement_before_service_registration_is_rejected_and_releases_lease
+    started = self.w.editor_server(root)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story_workbench.py", line 3041, in editor_server
+    allowed = {hashlib.sha256(_author_read(root, path, 8192)).hexdigest()}
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 364, in replace_before_registration
+    self.assert_windows_rename_blocked(root, moved)
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 42, in assert_windows_rename_blocked
+    before = files()
+             ^^^^^^^
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 38, in files
+    None if path.name == 'workbench-server.lock' else path.read_bytes(),
+                                                      ^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-esm8nysc\\同名目录\\.story\\.story-pin-383f8bc4b2004ba1bf8a0fd09577f8d9'
+
+ERROR: test_stopping_old_editor_does_not_update_copied_record_in_replacement_book (test_workbench_book_identity.WorkbenchBookIdentityTests.test_stopping_old_editor_does_not_update_copied_record_in_replacement_book)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 317, in test_stopping_old_editor_does_not_update_copied_record_in_replacement_book
+    self.assert_windows_rename_blocked(root, self.area / '原作品已移动')
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 42, in assert_windows_rename_blocked
+    before = files()
+             ^^^^^^^
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 38, in files
+    None if path.name == 'workbench-server.lock' else path.read_bytes(),
+                                                      ^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-x5twm04g\\同名目录\\.story\\.story-pin-597f05df77d346a59d772af4fb59e49c'
+
+ERROR: test_workspace_discards_replacement_book_sources_without_losing_groups (test_workbench_classification.WorkbenchClassificationTests.test_workspace_discards_replacement_book_sources_without_losing_groups)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_classification.py", line 262, in test_workspace_discards_replacement_book_sources_without_losing_groups
+    workspace = self.w._workspace_index(self.root, [])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story_workbench.py", line 1817, in _workspace_index
+    classification = _book_classification(book.root)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\unittest\mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\story-skill\story-skill\tests\test_workbench_classification.py", line 255, in replace_and_read
+    self.assertEqual((self.file_state(self.root), self.file_state(replacement)), before)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\a\story-skill\story-skill\tests\test_workbench_classification.py", line 36, in file_state
+    return {str(path.relative_to(root)): (path.read_bytes(), path.stat().st_mtime_ns)
+                                          ^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-classification-b6t4oyqy\\作品\\.story\\.story-pin-461d52e3136a460fa5baafad4efd2057'
+
+FAIL: test_real_port_conflict_does_not_replace_listener_or_write_registry (test_desktop_backend_runner.DesktopBackendRunnerTests.test_real_port_conflict_does_not_replace_listener_or_write_registry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_desktop_backend_runner.py", line 281, in test_real_port_conflict_does_not_replace_listener_or_write_registry
+    self.assertEqual(result['code'], 'workbench_port_in_use', result)
+AssertionError: 'io_or_input_error' != 'workbench_port_in_use'
+- io_or_input_error
++ workbench_port_in_use
+ : {'ok': False, 'message': '[WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions', 'code': 'io_or_input_error', 'log': 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\desktop-backend-runner-ym50h7on\\独立书架\\desktop-client\\launch-243eb66f2b5e49cc877bc47baa33357c.log'}

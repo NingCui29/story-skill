@@ -278,7 +278,11 @@ class DesktopBackendRunnerTests(unittest.TestCase):
             process, result = self.run_bundle(path, port)
             self.assertEqual(process.returncode, 2)
             self.assertFalse(result['ok'])
-            self.assertEqual(result['code'], 'workbench_port_in_use', result)
+            expected = {'workbench_port_in_use'}
+            if os.name == 'nt':
+                # Winsock may report WSAEACCES for an existing exclusive listener.
+                expected.add('workbench_port_unavailable')
+            self.assertIn(result['code'], expected, result)
             self.assertIn('已被占用', result['message'])
             self.assertTrue(Path(result['log']).is_file())
             self.assertFalse((self.state / 'service.json').exists())
