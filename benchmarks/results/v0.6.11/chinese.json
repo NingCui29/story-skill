@@ -8,7 +8,7 @@
     {
       "title": "合成中文事务long",
       "kind": "long",
-      "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long",
+      "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务long",
       "chapters": [
         {
           "draft": "unit-1.md",
@@ -28,7 +28,7 @@
             "errors": [],
             "length_count": 31,
             "ok": true,
-            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第1章 测试单元1.md",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务long/chapters/第一卷 合成中文事务long/第1章 测试单元1.md",
             "unicode_version": "15.0.0",
             "visible_chars": 31,
             "warnings": [
@@ -69,7 +69,7 @@
             "errors": [],
             "length_count": 31,
             "ok": true,
-            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第2章 测试单元2.md",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务long/chapters/第一卷 合成中文事务long/第2章 测试单元2.md",
             "unicode_version": "15.0.0",
             "visible_chars": 31,
             "warnings": [
@@ -110,7 +110,7 @@
             "errors": [],
             "length_count": 31,
             "ok": true,
-            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
             "unicode_version": "15.0.0",
             "visible_chars": 31,
             "warnings": [
@@ -151,7 +151,7 @@
             "errors": [],
             "length_count": 31,
             "ok": true,
-            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
             "unicode_version": "15.0.0",
             "visible_chars": 31,
             "warnings": []
@@ -179,7 +179,7 @@
             "errors": [],
             "length_count": 31,
             "ok": true,
-            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
             "unicode_version": "15.0.0",
             "visible_chars": 31,
             "warnings": []
@@ -199,11 +199,11 @@
       },
       "analysis": null,
       "status": {
-        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务long",
+        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务long",
         "cards": 1,
         "changed_export_count": 0,
         "changed_exports": [],
-        "id": "c5ea614e-31fd-4c08-b3c2-34ecb5569a4a",
+        "id": "a8d5b597-b300-4ccf-bca5-dabc6d998f93",
         "imported_through": 0,
         "integrity": {
           "full_book_verified": true,
@@ -405,7 +405,7 @@
     {
       "title": "合成中文事务short",
       "kind": "short",
-      "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务short",
+      "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务short",
       "chapters": [
         {
           "draft": "unit-1.md",
@@ -425,7 +425,7 @@
             "errors": [],
             "length_count": 31,
             "ok": true,
-            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务short/chapters/第一卷 合成中文事务short/第1章 测试单元1.md",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务short/chapters/第一卷 合成中文事务short/第1章 测试单元1.md",
             "unicode_version": "15.0.0",
             "visible_chars": 31,
             "warnings": [
@@ -467,15 +467,15 @@
           2
         ],
         "source_sha256": "3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c",
-        "report_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务short_拆文/.story/analysis/3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c/report.md",
+        "report_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务short_拆文/.story/analysis/3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c/report.md",
         "report_sha256": "d5ec27bf4488a3e1f0858929b80444b3530d24a6a2a2a481db46bba15d8bc984"
       },
       "status": {
-        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-zxq3ptja/合成中文事务short",
+        "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-63pa6589/合成中文事务short",
         "cards": 1,
         "changed_export_count": 0,
         "changed_exports": [],
-        "id": "b557c1fe-2747-4b9a-9995-701d1db73c60",
+        "id": "2a7ec68e-4fc5-47bf-877a-e61b6fcce768",
         "imported_through": 0,
         "integrity": {
           "full_book_verified": true,

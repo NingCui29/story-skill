@@ -1,6 +1,6 @@
 # 安装或升级 Story Skill
 
-**本版：v0.6.11。** 八技能、49 个载荷文件，运行时需要 Python 3.10 或更新版本。固定标签、跨平台 CI、Release 附件和 Packages 的实际核验状态见[本版记录](docs/releases/v0.6.11.md)；发布完成前继续使用已核验的 [v0.6.10](docs/releases/v0.6.10.md)，不把本地构建当作已公开附件。
+**本版：v0.6.11。** 八技能、49 个载荷文件，运行时需要 Python 3.10 或更新版本。固定标签、跨平台 CI、Release 附件和 Packages 的实际核验状态见[本版记录](docs/releases/v0.6.11.md)。[v0.6.11 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.11)已公开提供技能ZIP、Intel Mac客户端与各自校验文件。
 
 可把这一行发送给支持技能的应用：
 

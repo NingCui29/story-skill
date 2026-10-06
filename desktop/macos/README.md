@@ -4,7 +4,7 @@
 
 `写作工作台.app` 将本地书架和作品编辑页面放进独立的 macOS 窗口。它沿用现有工作台服务和保存规则，应用包内携带 Python 运行时与工作台程序。
 
-首版是本机源码构建，尚不是远程发行包。本轮验收范围仅为 Intel Mac / macOS 15.8.1；最低 macOS 13 是构建配置，不表示其它 macOS 版本或 Apple Silicon 已通过验收。构建成功也不等于窗口交互、保存、下载和退出行为均已验收。
+客户端 `0.1.0` 已随 [Story Skill v0.6.11 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.11)公开提供Intel实验构建与校验文件，内含Story Skill 0.6.11；使用临时本地签名，未做Apple公证。本轮验收范围仅为 Intel Mac / macOS 15.8.1；最低 macOS 13 是构建配置，不表示其它 macOS 版本或 Apple Silicon 已通过验收。构建成功也不等于窗口交互、保存、下载和退出行为均已验收。
 
 ## 首版交付与已验证范围（2026-10-05）
 

@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "package": "@ningcui29/story-skill",
+  "version": "0.6.11",
+  "workflow_run_id": 37482553509,
+  "workflow_run_url": "https://github.com/NingCui29/story-skill/actions/runs/37482553509",
+  "source": "Registry-downloaded package obtained locally through the successful Packages workflow artifact. Local verification did not authenticate to or directly download from the registry.",
+  "direct_local_registry_authentication": false,
+  "tarball": "dist/release-v0.6.11/packages-artifact/downloaded-package.tgz",
+  "archive": "dist/release-v0.6.11/public-downloads/story-skill-0.6.11.zip",
+  "checksum": "dist/release-v0.6.11/public-downloads/story-skill-0.6.11.zip.sha256",
+  "expected_manifest": "benchmarks/results/v0.6.11/npm-package.json",
+  "registry_receipt": "benchmarks/results/v0.6.11/release/packages-receipt.json",
+  "registry": "https://npm.pkg.github.com",
+  "registry_identity_in_receipt": "github-actions[bot]",
+  "bytes": 328178,
+  "sha256": "c5ba57f7c8ce748ff6dac91835eff2960daa8ca3532d931c771b574070c21c93",
+  "integrity": "sha512-a+mieEZeQud+dkwNEZ0X/U/NNjxXaGGorUxaiu5grYljOvgtm8kJjf5mdn71HE1xEzmbmT8CVP7dOiBjPhcCQQ==",
+  "archive_sha256": "0e0091844449e20576893b2cc2a8a1a9f73755c43c2071b839637f8a8e7eb9ad",
+  "skills": 8,
+  "payload_files": 49,
+  "wrapper_files": 2,
+  "expected_manifest_matches": true,
+  "public_release_payload_matches": true,
+  "registry_receipt_integrity_matches": true,
+  "workflow_artifact_receipt_matches": true,
+  "safe_extraction": {
+    "regular_files_only": true,
+    "paths_confined_to_new_temporary_directory": true,
+    "extracted_files_hashed": 51,
+    "temporary_directory_removed": true
+  },
+  "cli_checks": {
+    "version": true,
+    "help": true,
+    "init": true,
+    "status": true
+  }
+}

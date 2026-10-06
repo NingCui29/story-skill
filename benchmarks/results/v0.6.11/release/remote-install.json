@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "fixed_commit": "043e8a72c908a5145ab1bf67dd111c67a5c716e4",
+  "remote_commit": "043e8a72c908a5145ab1bf67dd111c67a5c716e4",
+  "tag": "v0.6.11",
+  "tag_commit": "043e8a72c908a5145ab1bf67dd111c67a5c716e4",
+  "tag_verified": true,
+  "tag_status": "verified",
+  "version": "0.6.11",
+  "skills": 8,
+  "files": 49,
+  "archive": "dist/story-skill-0.6.11.zip",
+  "archive_sha256": "0e0091844449e20576893b2cc2a8a1a9f73755c43c2071b839637f8a8e7eb9ad",
+  "payload_matches_local_release_zip": true,
+  "isolated_install_matches": true,
+  "installation_fresh": true,
+  "cli_checks": {
+    "version": true,
+    "help": true,
+    "init": true,
+    "status": true
+  },
+  "scope": "Remote sparse clone fetched and checked out at fixed_commit, installed into a new isolated directory; source, installed payload and local release ZIP match. Exact origin annotated tag v0.6.11 was fetched separately, peeled to the same fixed_commit, and all 49 tagged payloads were verified byte-for-byte against the candidate3 release ZIP."
+}

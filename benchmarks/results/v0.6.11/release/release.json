@@ -1,0 +1,51 @@
+{
+  "ok": true,
+  "verified_at": "2026-10-06T15:00:31.538526+00:00",
+  "tag": "v0.6.11",
+  "release_id": 404841775,
+  "url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.11",
+  "published_at": "2026-10-06T14:52:00Z",
+  "draft": false,
+  "prerelease": false,
+  "fixed_commit": "043e8a72c908a5145ab1bf67dd111c67a5c716e4",
+  "download_authentication": "No authorization header or GitHub token supplied by the verification command",
+  "checksums_match": true,
+  "assets": [
+    {
+      "name": "story-skill-0.6.11.zip",
+      "bytes": 358111,
+      "sha256": "0e0091844449e20576893b2cc2a8a1a9f73755c43c2071b839637f8a8e7eb9ad",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.11/story-skill-0.6.11.zip",
+      "github_digest": "sha256:0e0091844449e20576893b2cc2a8a1a9f73755c43c2071b839637f8a8e7eb9ad",
+      "transfer": "Public GET",
+      "public_download_matches_local": true
+    },
+    {
+      "name": "story-skill-0.6.11.zip.sha256",
+      "bytes": 89,
+      "sha256": "7fbcf6fc497a50cddc9b659b9c498e2a1bd1c64e87ed8ddc19e1a7d526974372",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.11/story-skill-0.6.11.zip.sha256",
+      "github_digest": "sha256:7fbcf6fc497a50cddc9b659b9c498e2a1bd1c64e87ed8ddc19e1a7d526974372",
+      "transfer": "Public GET",
+      "public_download_matches_local": true
+    },
+    {
+      "name": "story-workbench-0.1.0-macos-x86_64.zip",
+      "bytes": 26539249,
+      "sha256": "0405f2cf8b77f3c0e7c97890f4d3b7e7aa46d8bfcb9ba43964d9f775ab648eef",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.11/story-workbench-0.1.0-macos-x86_64.zip",
+      "github_digest": "sha256:0405f2cf8b77f3c0e7c97890f4d3b7e7aa46d8bfcb9ba43964d9f775ab648eef",
+      "transfer": "Public GET, completed using HTTP 206 ranges",
+      "public_download_matches_local": true
+    },
+    {
+      "name": "story-workbench-0.1.0-macos-x86_64.zip.sha256",
+      "bytes": 105,
+      "sha256": "33e85bbbf1594567ba63c81075a7d11c4d9d455e6b32d660c17f4848b1c3b9a4",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.11/story-workbench-0.1.0-macos-x86_64.zip.sha256",
+      "github_digest": "sha256:33e85bbbf1594567ba63c81075a7d11c4d9d455e6b32d660c17f4848b1c3b9a4",
+      "transfer": "Public GET",
+      "public_download_matches_local": true
+    }
+  ]
+}

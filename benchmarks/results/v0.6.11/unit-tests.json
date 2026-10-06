@@ -1,7 +1,7 @@
 {
   "log": "unit-tests.log",
-  "tests": 1362,
-  "passed": 1345,
+  "tests": 1364,
+  "passed": 1347,
   "skipped": 17,
   "skip_reasons": {
     "Windows rename provides the no-replace guarantee tested here": 1,
@@ -11,9 +11,11 @@
   },
   "failures": 0,
   "errors": 0,
-  "duration_seconds": 225.266,
+  "duration_seconds": 231.816,
   "python": "3.12.14",
   "node": "24.19.0",
   "warnings": [],
-  "status": "passed"
+  "status": "passed",
+  "source": "verification.json unit_tests",
+  "date": "2026-10-06T14:41:16.568012+00:00"
 }

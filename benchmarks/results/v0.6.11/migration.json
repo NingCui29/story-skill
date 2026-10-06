@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "version": "0.6.11",
-  "date": "2026-10-06T13:47:16.275875+00:00",
+  "date": "2026-10-06T14:40:52.851167+00:00",
   "ok": true,
   "mode": "generated-schema1-fixtures",
   "scope": "Synthetic Chinese schema1 fixtures created by the fixed v0.2.0 runtime; not retained historical book databases",
@@ -20,7 +20,7 @@
     "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
     "story_history.py": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
     "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
-    "story_workbench.py": "42a23d14ff3efda3750593659d265b46e83a6b64d870ba9c070ea037e27200f1",
+    "story_workbench.py": "feb5170937a05f02220d1d73c539100c34b457325af1664509ab06b214b389f4",
     "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
     "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
   },
@@ -28,7 +28,7 @@
     {
       "title": "合成迁移长篇",
       "kind": "long",
-      "book_id": "347cdb9a-2407-4fb7-997e-d8fc3f72a861",
+      "book_id": "23f87b5c-2a4c-4336-ab53-eee6c6b64c29",
       "revision": 2,
       "last_chapter": 1,
       "sources": 0,
@@ -41,7 +41,7 @@
     {
       "title": "合成迁移短篇",
       "kind": "short",
-      "book_id": "10e88b11-8027-4260-9984-c576cea17798",
+      "book_id": "b9410a5a-5d7a-4ca2-be38-a813cae02751",
       "revision": 1,
       "last_chapter": 1,
       "sources": 0,
@@ -54,7 +54,7 @@
     {
       "title": "合成迁移拆文",
       "kind": "analysis",
-      "book_id": "74c2b7dd-e713-47cc-a3f9-f05ff79fb76a",
+      "book_id": "529d46a0-c08d-4fe9-8fae-18b20899dff2",
       "revision": 2,
       "last_chapter": 0,
       "sources": 1,
@@ -65,7 +65,7 @@
       "old_runtime_rollback_copy_verified": true
     }
   ],
-  "source_inventory_sha256": "456b533bace5793e140a63146639c43ec1b646a181546a285c21db86494c623f",
+  "source_inventory_sha256": "56f50f7b3921185efa191707e882a293b2ff3135c4aadc4149d4adfc737c72df",
   "original_tree_unchanged": true,
   "runtime_stable": true
 }
