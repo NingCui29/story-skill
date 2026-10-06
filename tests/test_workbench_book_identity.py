@@ -2,6 +2,7 @@
 import hashlib
 import http.client
 import json
+import os
 from pathlib import Path
 import tempfile
 import threading
@@ -29,6 +30,23 @@ class WorkbenchBookIdentityTests(unittest.TestCase):
 
     def state_bytes(self, roots):
         return {str(root): (root / '.story/state.sqlite3').read_bytes() for root in roots}
+
+    def assert_windows_rename_blocked(self, root, target):
+        def files():
+            # The lease byte is locked against reads through a second Windows handle.
+            return {path.relative_to(root).as_posix(): (
+                        None if path.name == 'workbench-server.lock' else path.read_bytes(),
+                        path.stat().st_size, path.stat().st_mtime_ns, path.stat().st_ino)
+                    for path in root.rglob('*') if path.is_file()}
+
+        before = files()
+        entry = self.w._library_entry(root)
+        with self.assertRaises(PermissionError) as caught:
+            root.rename(target)
+        self.assertEqual(caught.exception.winerror, 32)
+        self.assertFalse(target.exists())
+        self.assertEqual(self.w._library_entry(root)['book_id'], entry['book_id'])
+        self.assertEqual(files(), before)
 
     def registry(self, rows):
         state = self.area / '独立书架'
@@ -216,6 +234,19 @@ class WorkbenchBookIdentityTests(unittest.TestCase):
         status, opened = self.editor_post(server, 'open', {'id': 'file:' + source_path})
         self.assertEqual(status, 200, opened)
         current_key = self.w._library_entry(root)['key']
+        if os.name == 'nt':
+            # Windows prevents replacing the directory while the editor owns its lease.
+            self.assert_windows_rename_blocked(root, self.area / '原作品已移动')
+            before = self.state_bytes([root]), source.read_bytes()
+            status, catalog = self.editor_post(server, 'catalog')
+            self.assertEqual(status, 200, catalog)
+            self.assertEqual(catalog['workspace']['book_id'], record['book_id'])
+            status, reopened = self.editor_post(server, 'open', {'id': 'file:' + source_path})
+            self.assertEqual(status, 200, reopened)
+            self.assertEqual(reopened['text'], opened['text'])
+            self.assertEqual(reopened['sha256'], opened['sha256'])
+            self.assertEqual((self.state_bytes([root]), source.read_bytes()), before)
+            return
         root.rename(self.area / '原作品已移动')
         self.book('同名目录', 'short')
         (root / source_path).parent.mkdir(parents=True, exist_ok=True)
@@ -282,6 +313,20 @@ class WorkbenchBookIdentityTests(unittest.TestCase):
         service_path = '.story/workbench-service.json'
         raw = (root / service_path).read_bytes()
         record = json.loads(raw)
+        if os.name == 'nt':
+            self.assert_windows_rename_blocked(root, self.area / '原作品已移动')
+            before = self.state_bytes([root])
+            status, stopped = self.editor_post(server, 'stop', {'instance': record['instance'], 'saved': True})
+            self.assertEqual(status, 200, stopped)
+            self.assertTrue(stopped['stop_requested'])
+            server.test_thread.join(timeout=5)
+            self.assertFalse(server.test_thread.is_alive())
+            stopped_record = json.loads((root / service_path).read_bytes())
+            self.assertTrue(stopped_record['stopped'])
+            self.assertEqual(stopped_record['book_id'], record['book_id'])
+            self.assertEqual(self.w._library_entry(root)['book_id'], record['book_id'])
+            self.assertEqual(self.state_bytes([root]), before)
+            return
         root.rename(self.area / '原作品已移动')
         self.book('同名目录', 'short')
         # A copied stale record has the same instance, but belongs to another book.
@@ -306,6 +351,8 @@ class WorkbenchBookIdentityTests(unittest.TestCase):
         moved = self.area / '原作品已移动'
         author_read = self.w._author_read
         replacement = {}
+        original_id = self.w._library_entry(root)['book_id']
+        original_state = self.state_bytes([root])
 
         def files():
             return {path.relative_to(root).as_posix(): (path.read_bytes(), path.stat().st_mtime_ns)
@@ -313,6 +360,10 @@ class WorkbenchBookIdentityTests(unittest.TestCase):
 
         def replace_before_registration(read_root, relative, *args, **kwargs):
             if Path(read_root) == root and relative == '.story/workbench-service.json' and not replacement:
+                if os.name == 'nt':
+                    self.assert_windows_rename_blocked(root, moved)
+                    replacement['blocked'] = True
+                    return author_read(read_root, relative, *args, **kwargs)
                 root.rename(moved)
                 self.book('同名目录', 'short')
                 replacement['before'] = files()
@@ -320,7 +371,23 @@ class WorkbenchBookIdentityTests(unittest.TestCase):
             return author_read(read_root, relative, *args, **kwargs)
 
         with patch.object(self.w, '_author_read', side_effect=replace_before_registration):
-            self.fixture_assert_error('workbench_book_changed', self.w.editor_server, root)
+            if os.name == 'nt':
+                started = self.w.editor_server(root)
+            else:
+                self.fixture_assert_error('workbench_book_changed', self.w.editor_server, root)
+        if os.name == 'nt':
+            try:
+                self.assertTrue(replacement['blocked'])
+                record = json.loads((root / '.story/workbench-service.json').read_bytes())
+                self.assertEqual(record['book_id'], original_id)
+                self.assertEqual(self.state_bytes([root]), original_state)
+            finally:
+                started.server_close()
+            restarted = self.w.editor_server(root)
+            restarted.server_close()
+            self.assertEqual(self.w._library_entry(root)['book_id'], original_id)
+            self.assertEqual(self.state_bytes([root]), original_state)
+            return
         self.assertEqual(files(), replacement['before'])
         self.assertFalse((root / '.story/workbench-service.json').exists())
         self.assertFalse((root / '.story/.workbench-backups').exists())

@@ -1,10 +1,11 @@
 {
   "ok": true,
-  "application": "dist/release-v0.6.11/写作工作台.app",
+  "candidate": "candidate2",
+  "application": "dist/release-v0.6.11/candidate2/写作工作台.app",
   "archive": "dist/story-workbench-0.1.0-macos-x86_64.zip",
   "checksum": "dist/story-workbench-0.1.0-macos-x86_64.zip.sha256",
-  "bytes": 26539188,
-  "sha256": "bc34b80f5dd06e2171c0327d21b3dbc6b7b100acc31895396e9cdf5f3e4664d5",
+  "bytes": 26539191,
+  "sha256": "87235c13551ba0555583aabe810fa844cbe4318b60097dc1374d5d72a3bedb70",
   "app_version": "0.1.0",
   "story_version": "0.6.11",
   "architecture": "x86_64",
@@ -17,7 +18,7 @@
     "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
     "story_history.py": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
     "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
-    "story_workbench.py": "42a23d14ff3efda3750593659d265b46e83a6b64d870ba9c070ea037e27200f1",
+    "story_workbench.py": "89626e01729c6e081101e4f25b94c653a008e6f7109d1f05aecee0678c83a004",
     "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
     "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
   },

@@ -1,4 +1,5 @@
 """Independent local bookshelf lifecycle, persisted identity and HTTP boundaries."""
+import errno
 import http.client
 import importlib.util
 import json
@@ -256,6 +257,18 @@ class WorkbenchLibraryTests(unittest.TestCase):
             self.assertTrue(shelf.test_thread.is_alive())
         self.stop(shelf)
         self.assertFalse(self.w._library_service_request(self.state)['running'])
+
+    def test_listen_port_conflict_keeps_registry_empty_and_releases_lease(self):
+        # Windows can bind a reused address and report the conflict at listen().
+        with patch.object(self.w.HTTPServer, 'server_activate',
+                          side_effect=OSError(errno.EADDRINUSE, 'address already in use')):
+            self.assert_story_error('workbench_port_in_use', self.w.library_server,
+                                    state_dir=self.state, port=0)
+        self.assertFalse((self.state / 'service.json').exists())
+        self.assertFalse((self.state / 'library.json').exists())
+        server = self.start()
+        self.assertTrue(self.w._library_service_request(self.state)['running'])
+        self.stop(server)
 
     def test_conflicting_port_does_not_leak_the_library_lease(self):
         occupied = socket.socket()

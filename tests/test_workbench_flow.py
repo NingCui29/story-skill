@@ -515,7 +515,8 @@ const call=async()=>({prompt:'请审稿',status:'审稿任务已生成',check_no
     def js(self, source, test):
         node = shutil.which('node')
         if not node: self.skipTest('Node.js required')
-        result = subprocess.run([node,'-e',"const assert=require('assert');\n"+source+'\n'+test],capture_output=True,text=True,timeout=15)
+        result = subprocess.run([node, '-'], input="const assert=require('assert');\n"+source+'\n'+test,
+                                capture_output=True, text=True, encoding='utf-8', timeout=15)
         self.assertEqual(result.returncode,0,result.stderr)
 
     def script(self):

@@ -87,8 +87,33 @@ class DesktopBackendRunnerTests(unittest.TestCase):
                     if isinstance(item, dict) and item.get('stopped') is True:
                         final_output = True
             if record.get('instance') == instance and record.get('stopped') is True and final_output:
-                # This PID came from our temporary shelf's authenticated
-                # instance, and this read-only probe never sends termination.
+                # Windows os.kill(pid, 0) is not a read-only existence probe.
+                # A SYNCHRONIZE handle can observe exit without terminating it.
+                if os.name == 'nt':
+                    import ctypes
+                    from ctypes import wintypes
+                    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+                    kernel.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+                    kernel.OpenProcess.restype = wintypes.HANDLE
+                    kernel.WaitForSingleObject.argtypes = (wintypes.HANDLE, wintypes.DWORD)
+                    kernel.WaitForSingleObject.restype = wintypes.DWORD
+                    kernel.CloseHandle.argtypes = (wintypes.HANDLE,)
+                    kernel.CloseHandle.restype = wintypes.BOOL
+                    handle = kernel.OpenProcess(0x00100000, False, pid)
+                    if not handle:
+                        if ctypes.get_last_error() == 87:  # Process has exited.
+                            return
+                        raise ctypes.WinError(ctypes.get_last_error())
+                    try:
+                        wait = kernel.WaitForSingleObject(handle, 0)
+                        if wait == 0:  # WAIT_OBJECT_0: process exited.
+                            return
+                        if wait != 258:  # WAIT_TIMEOUT: still closing.
+                            raise ctypes.WinError(ctypes.get_last_error())
+                    finally:
+                        kernel.CloseHandle(handle)
+                    time.sleep(0.05)
+                    continue
                 try:
                     os.kill(pid, 0)
                 except ProcessLookupError:
@@ -155,7 +180,8 @@ class DesktopBackendRunnerTests(unittest.TestCase):
         self.assertEqual(options['env']['PYTHONNOUSERSITE'], '1')
         self.assertTrue(result['ok'])
         self.assertEqual(Path(result['log']).parent, self.state / 'desktop-client')
-        self.assertEqual(Path(result['log']).stat().st_mode & 0o777, 0o600)
+        if os.name == 'posix':
+            self.assertEqual(Path(result['log']).stat().st_mode & 0o777, 0o600)
 
     def test_start_failure_has_readable_cli_error_and_log_location(self):
         def failed_spawn(_command, **options):
@@ -252,7 +278,7 @@ class DesktopBackendRunnerTests(unittest.TestCase):
             process, result = self.run_bundle(path, port)
             self.assertEqual(process.returncode, 2)
             self.assertFalse(result['ok'])
-            self.assertEqual(result['code'], 'workbench_port_in_use')
+            self.assertEqual(result['code'], 'workbench_port_in_use', result)
             self.assertIn('已被占用', result['message'])
             self.assertTrue(Path(result['log']).is_file())
             self.assertFalse((self.state / 'service.json').exists())

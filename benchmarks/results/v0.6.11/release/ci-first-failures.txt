@@ -1,0 +1,163 @@
+ERROR: test_bundle_starts_reuses_and_leaves_authenticated_service_running (test_desktop_backend_runner.DesktopBackendRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_desktop_backend_runner.py", line 93, in stop_test_shelf
+    os.kill(pid, 0)
+OSError: [WinError 87] The parameter is incorrect
+
+ERROR: test_unbound_imported_chapter_cannot_adopt_an_outline_after_review (test_history_outline_fence.HistoryOutlineFenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_history_outline_fence.py", line 124, in test_unbound_imported_chapter_cannot_adopt_an_outline_after_review
+    f.dep(1)
+  File "D:\a\story-skill\story-skill\tests\test_long_history.py", line 65, in dep
+    return history.save_dependencies(self.book, {"chapter": chapter, "chapter_sha": story.digest(self.texts[chapter]),
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story_history.py", line 364, in save_dependencies
+    api.fail("stale_dependency", "Chapter changed; recheck dependencies", chapter=chapter)
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+long_history_story.StoryError: Chapter changed; recheck dependencies
+
+ERROR: test_editor_save_during_restore_is_preserved_with_backup (test_portable_export.PortableWindowsExportTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_portable_export.py", line 122, in test_editor_save_during_restore_is_preserved_with_backup
+    self.book.commit(1, self.draft, self.delta())
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 2250, in commit
+    fail("outline_binding_required", "Review and bind the adopted outline before the first native chapter commit",
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story_portable_export.StoryError: Review and bind the adopted outline before the first native chapter commit
+
+ERROR: test_failed_publication_restores_a_copy_and_retains_backup_for_retry (test_portable_export.PortableWindowsExportTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_portable_export.py", line 94, in test_failed_publication_restores_a_copy_and_retains_backup_for_retry
+    self.book.commit(1, self.draft, self.delta())
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 2250, in commit
+    fail("outline_binding_required", "Review and bind the adopted outline before the first native chapter commit",
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story_portable_export.StoryError: Review and bind the adopted outline before the first native chapter commit
+
+ERROR: test_first_export_succeeds_without_hard_links (test_portable_export.PortableWindowsExportTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_portable_export.py", line 56, in test_first_export_succeeds_without_hard_links
+    result = self.book.commit(1, self.draft, self.delta())
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 2250, in commit
+    fail("outline_binding_required", "Review and bind the adopted outline before the first native chapter commit",
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story_portable_export.StoryError: Review and bind the adopted outline before the first native chapter commit
+
+ERROR: test_recreated_target_wins_over_publication_and_restore (test_portable_export.PortableWindowsExportTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_portable_export.py", line 74, in test_recreated_target_wins_over_publication_and_restore
+    self.book.commit(1, self.draft, self.delta())
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 2250, in commit
+    fail("outline_binding_required", "Review and bind the adopted outline before the first native chapter commit",
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story_portable_export.StoryError: Review and bind the adopted outline before the first native chapter commit
+
+ERROR: test_revision_preserves_old_backup_without_hard_links (test_portable_export.PortableWindowsExportTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_portable_export.py", line 64, in test_revision_preserves_old_backup_without_hard_links
+    self.book.commit(1, self.draft, self.delta())
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 2250, in commit
+    fail("outline_binding_required", "Review and bind the adopted outline before the first native chapter commit",
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story_portable_export.StoryError: Review and bind the adopted outline before the first native chapter commit
+
+ERROR: test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop (test_workbench_book_identity.WorkbenchBookIdentityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 219, in test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop
+    root.rename(self.area / '原作品已移动')
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1234, in rename
+    self._accessor.rename(self, target)
+PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-0awi7_uu\\同名目录' -> 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-0awi7_uu\\原作品已移动'
+
+ERROR: test_replacement_before_service_registration_is_rejected_and_releases_lease (test_workbench_book_identity.WorkbenchBookIdentityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 323, in test_replacement_before_service_registration_is_rejected_and_releases_lease
+    self.fixture_assert_error('workbench_book_changed', self.w.editor_server, root)
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 334, in fixture_assert_error
+    call(*args)
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story_workbench.py", line 3041, in editor_server
+    allowed = {hashlib.sha256(_author_read(root, path, 8192)).hexdigest()}
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 316, in replace_before_registration
+    root.rename(moved)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1234, in rename
+    self._accessor.rename(self, target)
+PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-euvblbq2\\同名目录' -> 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-euvblbq2\\原作品已移动'
+
+ERROR: test_stopping_old_editor_does_not_update_copied_record_in_replacement_book (test_workbench_book_identity.WorkbenchBookIdentityTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_book_identity.py", line 285, in test_stopping_old_editor_does_not_update_copied_record_in_replacement_book
+    root.rename(self.area / '原作品已移动')
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1234, in rename
+    self._accessor.rename(self, target)
+PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-s5yzi_9n\\同名目录' -> 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-book-identity-s5yzi_9n\\原作品已移动'
+
+ERROR: test_workspace_discards_replacement_book_sources_without_losing_groups (test_workbench_classification.WorkbenchClassificationTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_classification.py", line 252, in test_workspace_discards_replacement_book_sources_without_losing_groups
+    workspace = self.w._workspace_index(self.root, [])
+  File "D:\a\story-skill\story-skill\skills\story-skill\scripts\story_workbench.py", line 1817, in _workspace_index
+    classification = _book_classification(book.root)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1114, in __call__
+    return self._mock_call(*args, **kwargs)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1118, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\unittest\mock.py", line 1179, in _execute_mock_call
+    result = effect(*args, **kwargs)
+  File "D:\a\story-skill\story-skill\tests\test_workbench_classification.py", line 247, in replace_and_read
+    self.root.rename(self.area / '移走原书')
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\pathlib.py", line 1234, in rename
+    self._accessor.rename(self, target)
+PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-classification-9kdsza75\\作品' -> 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\workbench-classification-9kdsza75\\移走原书'
+
+ERROR: test_context_refresh_marks_changed_data_without_replacing_cached_documents (test_workbench_flow.WorkbenchFlowTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_workbench_flow.py", line 178, in test_context_refresh_marks_changed_data_without_replacing_cached_documents
+    self.js('const fixture=' + fixture + ';\n' + mock + source, r"""
+  File "D:\a\story-skill\story-skill\tests\test_workbench_flow.py", line 518, in js
+    result = subprocess.run([node,'-e',"const assert=require('assert');\n"+source+'\n'+test],capture_output=True,text=True,timeout=15)
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\subprocess.py", line 503, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\subprocess.py", line 971, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "C:\hostedtoolcache\windows\Python\3.10.11\x64\lib\subprocess.py", line 1456, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+FileNotFoundError: [WinError 206] The filename or extension is too long
+
+FAIL: test_real_port_conflict_does_not_replace_listener_or_write_registry (test_desktop_backend_runner.DesktopBackendRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_desktop_backend_runner.py", line 255, in test_real_port_conflict_does_not_replace_listener_or_write_registry
+    self.assertEqual(result['code'], 'workbench_port_in_use')
+AssertionError: 'io_or_input_error' != 'workbench_port_in_use'
+- io_or_input_error
++ workbench_port_in_use
+
+FAIL: test_start_uses_only_fixed_cli_and_clean_bundled_python_environment (test_desktop_backend_runner.DesktopBackendRunnerTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\a\story-skill\story-skill\tests\test_desktop_backend_runner.py", line 158, in test_start_uses_only_fixed_cli_and_clean_bundled_python_environment
+    self.assertEqual(Path(result['log']).stat().st_mode & 0o777, 0o600)
+AssertionError: 438 != 384

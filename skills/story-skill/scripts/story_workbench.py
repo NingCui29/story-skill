@@ -3508,11 +3508,11 @@ def library_server(state_dir=None, port=8765, library_books=None):
         server = LibraryServer(('127.0.0.1', port), Handler, bind_and_activate=False)
         try:
             server.server_bind()
+            server.server_activate()
         except OSError as error:
             if error.errno == errno.EADDRINUSE:
                 api.fail('workbench_port_in_use', '书架端口已被占用，请核对已有服务；不会自动更换固定地址。', port=port)
             raise
-        server.server_activate()
         server.editor_url = f'http://127.0.0.1:{server.server_port}/'
         server.library_token = token
         if pending != registry or registry_hash is None:

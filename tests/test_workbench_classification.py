@@ -1,6 +1,7 @@
 """Read-only, explicit subject declarations stay separate from book identity."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -242,8 +243,17 @@ class WorkbenchClassificationTests(unittest.TestCase):
         finally:
             book.close()
         original_classifier = self.w._book_classification
+        before = self.file_state(self.root), self.file_state(replacement)
 
         def replace_and_read(root):
+            if os.name == 'nt':
+                # The open database prevents replacing its directory on Windows.
+                with self.assertRaises(PermissionError) as caught:
+                    self.root.rename(self.area / '移走原书')
+                self.assertEqual(caught.exception.winerror, 32)
+                self.assertFalse((self.area / '移走原书').exists())
+                self.assertEqual((self.file_state(self.root), self.file_state(replacement)), before)
+                return original_classifier(root)
             self.root.rename(self.area / '移走原书')
             replacement.rename(self.root)
             return original_classifier(root)
@@ -254,8 +264,11 @@ class WorkbenchClassificationTests(unittest.TestCase):
         self.assertEqual(workspace['kind'], 'long')
         self.assertEqual(workspace['planned_total'], 1)
         self.assertEqual(workspace['groups'][0]['title'], '第1章 原书章计划')
-        self.assertEqual(workspace['classification']['status'], 'unavailable')
+        self.assertEqual(workspace['classification']['status'], 'missing' if os.name == 'nt' else 'unavailable')
         self.assertEqual(workspace['classification']['tags'], [])
+        if os.name == 'nt':
+            self.assertEqual(self.w._library_entry(self.root)['book_id'], original_id)
+            self.assertEqual((self.file_state(self.root), self.file_state(replacement)), before)
 
 
 if __name__ == '__main__':

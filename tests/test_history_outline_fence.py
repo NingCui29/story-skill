@@ -115,7 +115,7 @@ class HistoryOutlineFenceTests(unittest.TestCase):
     def test_unbound_imported_chapter_cannot_adopt_an_outline_after_review(self):
         f = self.fixture
         text = "第1章 核对交接1\n沈禾在渡口交出钥匙，留下一张收据。灯还亮着。\n"
-        f.draft.write_text(text, encoding="utf-8")
+        f.draft.write_bytes(text.encode("utf-8"))
         self.book.adopt(1, f.draft, "交出钥匙并留下收据。", self.revision(), "第一卷 雨夜")
         f.texts[1] = text
         self.book.save_plan(1, {"volume_dir": "第一卷 雨夜", "title": "核对交接1",

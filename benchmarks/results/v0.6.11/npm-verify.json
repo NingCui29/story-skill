@@ -1,12 +1,14 @@
 {
-  "archive": "dist/story-skill-0.6.11.zip",
-  "version": "0.6.11",
-  "files": 49,
-  "sha256": "adbb3a49244216ef48b10c1a04d1596a3e275fd5738ea4265bfdce3cb1645bd3",
-  "bytes": 358050,
   "ok": true,
-  "checksum": "dist/story-skill-0.6.11.zip.sha256",
-  "source_manifest": {
+  "name": "@ningcui29/story-skill",
+  "version": "0.6.11",
+  "tarball": "dist/release-v0.6.11/candidate2/npm/ningcui29-story-skill-0.6.11.tgz",
+  "sha256": "9c2648b4ff64c264654ae08883ca2e91c77dd0aa511495b3cf58f01d934408fc",
+  "integrity": "sha512-bHQUkQmtCGSUyQOFGgUIkalwvm4eTHmbgFtZwDUWdivHe/r0Ga3l7LcaoCnBn8VMa2Qc9vMg7YZTPicS/J925g==",
+  "bytes": 328123,
+  "registry": "https://npm.pkg.github.com",
+  "archive_sha256": "adbb3a49244216ef48b10c1a04d1596a3e275fd5738ea4265bfdce3cb1645bd3",
+  "payload_manifest": {
     "story-skill-analyze/LICENSE": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
     "story-skill-analyze/SKILL.md": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
     "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
@@ -57,5 +59,81 @@
     "story-skill/scripts/story_workbench.py": "89626e01729c6e081101e4f25b94c653a008e6f7109d1f05aecee0678c83a004",
     "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
   },
-  "candidate": "candidate2"
+  "wrapper_manifest": {
+    "package.json": "2d5284b43e96250f3a3e0fe3de7f148390b072b7501d40765ed3e46f682795fe",
+    "README.md": "9afa100ff351c31213ebcf91c50cdf74dc9bd52595bfe5ebd5da49a2bdc10828"
+  },
+  "package_manifest": {
+    "name": "@ningcui29/story-skill",
+    "version": "0.6.11",
+    "description": "Eight Story Skill skills for Chinese novel writing, review and publication preparation",
+    "license": "MIT",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/NingCui29/story-skill.git"
+    },
+    "homepage": "https://github.com/NingCui29/story-skill#readme",
+    "publishConfig": {
+      "registry": "https://npm.pkg.github.com"
+    },
+    "files": [
+      "story-skill-analyze/LICENSE",
+      "story-skill-analyze/SKILL.md",
+      "story-skill-analyze/agents/openai.yaml",
+      "story-skill-analyze/references/deep-reading.md",
+      "story-skill-analyze/references/examples.md",
+      "story-skill-cover/LICENSE",
+      "story-skill-cover/SKILL.md",
+      "story-skill-cover/agents/openai.yaml",
+      "story-skill-plan/LICENSE",
+      "story-skill-plan/SKILL.md",
+      "story-skill-plan/agents/openai.yaml",
+      "story-skill-plan/references/blurb.md",
+      "story-skill-plan/references/fanqie-tags.md",
+      "story-skill-plan/references/qimao-tags.md",
+      "story-skill-publish/LICENSE",
+      "story-skill-publish/SKILL.md",
+      "story-skill-publish/agents/openai.yaml",
+      "story-skill-research/LICENSE",
+      "story-skill-research/SKILL.md",
+      "story-skill-research/agents/openai.yaml",
+      "story-skill-research/references/reader-validation.md",
+      "story-skill-review/LICENSE",
+      "story-skill-review/SKILL.md",
+      "story-skill-review/agents/openai.yaml",
+      "story-skill-review/references/fanqie-content-review.md",
+      "story-skill-review/references/history.md",
+      "story-skill-review/references/qimao-content-review.md",
+      "story-skill-write/LICENSE",
+      "story-skill-write/SKILL.md",
+      "story-skill-write/agents/openai.yaml",
+      "story-skill-write/references/chapter.md",
+      "story-skill-write/references/content-review.md",
+      "story-skill-write/references/drama.md",
+      "story-skill-write/references/long-form.md",
+      "story-skill-write/references/punctuation.md",
+      "story-skill-write/references/suspense-evidence.md",
+      "story-skill/LICENSE",
+      "story-skill/SKILL.md",
+      "story-skill/agents/openai.yaml",
+      "story-skill/references/project-state.md",
+      "story-skill/scripts/story.py",
+      "story-skill/scripts/story_history.py",
+      "story-skill/scripts/story_outline.py",
+      "story-skill/scripts/story_publish.py",
+      "story-skill/scripts/story_punctuation.py",
+      "story-skill/scripts/story_search.py",
+      "story-skill/scripts/story_storage.py",
+      "story-skill/scripts/story_workbench.py",
+      "story-skill/scripts/story_world.py"
+    ]
+  },
+  "candidate": "candidate2",
+  "build_tool": {
+    "node": "v24.19.0",
+    "npm": "12.2.0",
+    "registry_integrity": "sha512-ZsJjKpTnlmSXOLLXiU1xDCzC4Wlok4IwZmh/aw2KUuXytU7q6qMv/cUT7MoeSf95Slwuw/lRXYefGzGCspHPNQ==",
+    "registry_integrity_verified": true,
+    "credential_configuration": "Isolated empty user/global npm config; npm pack ran offline with scripts disabled"
+  }
 }
