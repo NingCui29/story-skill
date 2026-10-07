@@ -8,7 +8,7 @@ Story Skill 是供 Claude 桌面版、Claude Code、Codex、Google Antigravity �
 
 本版包含八个技能、49 个载荷文件，新增 Claude 桌面导入包、Claude Code 与 Antigravity 安装入口，以及每章自动作者有话说和配图交付。[发布记录](docs/releases/v0.6.12.md)分别记录源码、跨平台检查、Release 附件与 Packages 的实际状态。安装或升级按 [INSTALL.md](INSTALL.md) 核对。
 
-各宿主复用同一套标准 `SKILL.md` 和共享运行时。本版还修复附言候选连续保存、中断恢复与图片引用解析问题。v0.6.12 已发布；旧版 v0.6.11 附件保持不变。
+各宿主复用同源技能规则和共享运行时；Claude 桌面包将内嵌流程映射为参考文件。本版还修复附言候选连续保存、中断恢复与图片引用解析问题。v0.6.12 已发布；旧版 v0.6.11 附件保持不变。
 
 macOS 客户端 `0.1.1` 作为独立 Intel 实验附件提供，内含 Story Skill `0.6.12`；使用本地临时签名，未经 Apple 公证。已测平台及尚未验收的原生交互见[客户端说明](desktop/macos/README.md)。它不替代八技能安装，GitHub 发布也不会自动更新本机安装。
 
@@ -32,13 +32,15 @@ macOS 客户端 `0.1.1` 作为独立 Intel 实验附件提供，内含 Story Ski
 
 ### Claude 桌面版
 
-从[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.12)下载专用导入包及校验文件，也可在本版源码根目录构建：
+请使用修正版 [story-skill-claude-desktop-0.6.12-r2.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.12/story-skill-claude-desktop-0.6.12-r2.zip)。原桌面 ZIP 含9个 `SKILL.md`，无法通过导入器检查；修正版只保留一个入口，八个内嵌流程作为 `GUIDE.md` 参考文件加载。
+
+从[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.12)下载专用导入包及校验文件，也可在包含包装修复的当前源码根目录构建：
 
 ```bash
 python3 -B -X utf8 scripts/package_claude.py
 ```
 
-输出为 `dist/story-skill-claude-desktop-0.6.12.zip`。在 Claude 的 **Settings > Capabilities** 开启 **Code execution and file creation**，再到 **Customize > Skills**，点击 **+ → Create skill → Upload a skill**，上传这个包并启用 Story Skill。组织账号按管理员开放的能力操作。[官方导入说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+输出为 `dist/story-skill-claude-desktop-0.6.12-r2.zip`。在 Claude 的 **Settings > Capabilities** 开启 **Code execution and file creation**，再到 **Customize > Skills**，点击 **+ → Create skill → Upload a skill**，上传这个包并启用 Story Skill。组织账号按管理员开放的能力操作。[官方导入说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 
 该包只有一个顶层 `story-skill/`，内含入口和完整八流程资源。同版 `story-skill-0.6.12.zip` 是八目录分发包，桌面导入请使用上面的专用包。导入后可直接说：“使用 Story Skill，帮我规划一本中文长篇，本轮不写正文。”书稿需放在当前会话能读取和保存的位置；普通聊天中的文件与代码环境不等于作者电脑，完整书目录应下载备份。Cowork 或新的统一任务界面只按已开放的文件权限使用，详细边界见 [安装指引](INSTALL.md#claude-桌面版导入单技能包)。
 

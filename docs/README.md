@@ -14,7 +14,7 @@ v0.6.12 的49文件套件、Claude 桌面导入包、多宿主安装及作者附
 
 本版 **v0.6.12** 包含 8 个技能、49 个载荷文件，支持独立书架、作品切换与候选稿编辑。[发布记录](releases/v0.6.12.md)列出实际验证范围；仓库 main 或本机开发安装可能含有尚未发布的修改，不能只凭 `--version` 判定与固定标签一致。升级前备份书库及本地技能修改，保持八目录版本一致。
 
-v0.6.12 增加 Claude 桌面单技能导入包、Claude Code 与 Google Antigravity 目录安装适配，复用同一套 `SKILL.md` 和共享运行时。Codex 的默认安装行为继续保留，见[统一安装指引](../INSTALL.md)。本版已发布，分发回下载结果见发布记录。
+v0.6.12 增加 Claude 桌面单技能导入包、Claude Code 与 Google Antigravity 目录安装适配，复用同源技能规则和共享运行时；桌面包将内嵌流程映射为参考文件。Codex 的默认安装行为继续保留，见[统一安装指引](../INSTALL.md)。本版已发布，分发回下载结果见发布记录。
 
 v0.6.4 的 `story_workbench.py` 提供每本书的只读快照、三栏阅读页及独立候选编辑。[工作台实现与限制](本地工作台分析.md)。
 
@@ -26,7 +26,7 @@ v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Wi
 
 ## 开始使用
 
-Claude 桌面版优先使用单技能导入包。在当前仓库根目录运行 `python3 -B -X utf8 scripts/package_claude.py`，生成 `dist/story-skill-claude-desktop-0.6.12.zip`，按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)开启代码执行、上传并启用。包内一个总入口按需读取八个流程；原八目录 Release ZIP 用于目录分发，桌面导入使用专用包。启用后直接说“使用 Story Skill”并描述任务即可。[Claude 官方技能说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+Claude 桌面版使用带 `-r2` 的修正版单技能导入包；它在整个ZIP中只含一个 `SKILL.md`，内嵌八流程使用 `GUIDE.md`。原桌面ZIP含9个入口，会被导入器拒绝。在当前仓库根目录运行 `python3 -B -X utf8 scripts/package_claude.py`，生成 `dist/story-skill-claude-desktop-0.6.12-r2.zip`，按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)开启代码执行、上传并启用。包内一个总入口按需读取八个流程；原八目录 Release ZIP 用于目录分发，桌面导入使用专用包。启用后直接说“使用 Story Skill”并描述任务即可。[Claude 官方技能说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 
 普通聊天文件环境、Cowork 或统一任务界面的目录权限、作者电脑的本机工作台分别核对。书稿应保存到会话可访问位置，并下载完整书目录备份；技能导入不会自动启动本机 Python 服务。更多桌面与云端边界见[安装指引](../INSTALL.md#书稿保存与桌面能力)。
 

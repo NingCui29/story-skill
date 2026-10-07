@@ -6,13 +6,15 @@ v0.6.12 新增 Claude 桌面导入包、Claude Code 与 Google Antigravity 目�
 
 ## Claude 桌面版：导入单技能包
 
-从[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.12)取得桌面专用包及校验文件；也可在本版源码根目录构建：
+**桌面包更正：请使用带 `-r2` 的文件。** 原 `story-skill-claude-desktop-0.6.12.zip` 在子目录中还含8个 `SKILL.md`，会被导入器以“Currently there are 9”拒绝。修正版整个 ZIP 只保留一个 `story-skill/SKILL.md`；内嵌流程改为普通 `GUIDE.md`，并同步更新引用。原标准八技能ZIP用于目录安装，不用于桌面单技能上传。
+
+从[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.12)取得桌面专用包及校验文件；也可在含本次包装修复的 `main` 或 `codex/v0.6.12` 源码根目录构建；原固定标签保留原始发布内容：
 
 ```bash
 python3 -B -X utf8 scripts/package_claude.py
 ```
 
-默认输出 `dist/story-skill-claude-desktop-0.6.12.zip`；可用 `--output "<输出ZIP路径>"` 指定位置。自行构建时，以实际源码快照为准；发布包的摘要与核验记录见[本版记录](docs/releases/v0.6.12.md)。
+默认输出 `dist/story-skill-claude-desktop-0.6.12-r2.zip`；可用 `--output "<输出ZIP路径>"` 指定位置。自行构建时，以实际源码快照为准；发布包的摘要与核验记录见[本版记录](docs/releases/v0.6.12.md)。
 
 1. 在 Claude 的 **Settings > Capabilities** 开启 **Code execution and file creation**；组织账号需管理员开放相应能力。
 2. 打开 **Customize > Skills**，点击 **+ → Create skill → Upload a skill**，上传桌面专用 ZIP。
@@ -23,19 +25,22 @@ python3 -B -X utf8 scripts/package_claude.py
 桌面包采用官方要求的单技能根目录格式，并把八个流程完整保留为内部资源：
 
 ```text
-story-skill-claude-desktop-0.6.12.zip
+story-skill-claude-desktop-0.6.12-r2.zip
 └── story-skill/
     ├── SKILL.md
     ├── LICENSE
     └── suite/
         ├── story-skill/
+        │   ├── GUIDE.md
+        │   └── scripts/
         ├── story-skill-plan/
-        └── …其余六个同级流程目录
+        │   └── GUIDE.md
+        └── …其余六个同级流程目录（入口均为 GUIDE.md）
 ```
 
-顶层入口按需读取 `suite/story-skill/SKILL.md`；`suite/` 中保留原八个目录及49个源载荷文件，各相对引用仍以所在文件为基准。加上顶层入口和许可证，桌面包共51个文件。桌面只启用总入口，不把内嵌流程当成八个独立安装项。[官方打包格式](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills)
+顶层入口按需读取 `suite/story-skill/GUIDE.md`；`suite/` 中保留原八个同级目录及49个资源文件，8个入口改名并转换内嵌 Markdown 的相关引用，非 Markdown 资源与源文件逐字节一致。各相对引用仍以所在文件为基准。加上顶层入口和许可证，桌面包共51个文件，递归计数只有1个 `SKILL.md`。桌面只启用总入口，不把内嵌流程当成八个独立安装项。[官方打包格式](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills)
 
-同版 Release 的 `story-skill-0.6.12.zip` 用于八目录分发，桌面单技能上传应选择专用的 `story-skill-claude-desktop-0.6.12.zip`。桌面升级通过下载或构建并导入新版包处理；下文的 `--update` 是目录安装器参数，不执行桌面上传。
+同版 Release 的 `story-skill-0.6.12.zip` 用于八目录分发，桌面单技能上传应选择专用的 `story-skill-claude-desktop-0.6.12-r2.zip`。桌面升级通过下载或构建并导入新版包处理；下文的 `--update` 是目录安装器参数，不执行桌面上传。
 
 ### 书稿保存与桌面能力
 

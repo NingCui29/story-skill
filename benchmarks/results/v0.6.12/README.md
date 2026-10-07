@@ -13,3 +13,9 @@
 [六附件公开回下载](release/release.json)与本地构建字节、GitHub摘要和三份校验文件一致；回下载不使用认证。
 
 GitHub Packages自动发布及注册表回下载成功；本机通过工作流artifact独立复核载荷、包装、摘要和CLI，见[工作流回执](release/packages-receipt.json)与[独立核验](release/packages-independent.json)。
+
+## Claude 桌面导入修正 r2
+
+原桌面ZIP含9个 `SKILL.md`，用户实际上传时被拒绝；原有格式、字节与CLI检查没有发现这个导入约束，历史回执继续保留。修正版将8个内嵌入口及其Markdown引用改为 `GUIDE.md`，整个ZIP只含一个 `story-skill/SKILL.md`，运行时及标准套件未变。
+
+[修正与公开回下载回执](release/claude-desktop-r2.json)记录47项本地打包回归、独立包结构/资源检查和r2两附件的公开下载摘要。实际Claude界面导入仍待复验；原发布提交的跨平台CI数字不作为本次修正版CI结论。

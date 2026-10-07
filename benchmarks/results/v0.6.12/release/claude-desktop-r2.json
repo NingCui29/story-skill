@@ -1,0 +1,160 @@
+{
+  "ok": true,
+  "recorded_at_utc": "2026-10-07T04:02:34.044942+00:00",
+  "runtime_version": "0.6.12",
+  "bundle_revision": 2,
+  "packaging_source_commit": "4383dc7e829858d24eb2b19c3231561a70a40b43",
+  "original_fixed_tag": "v0.6.12",
+  "original_fixed_tag_commit": "1aa1a00752d483d56a6a3b4854e7b94e76942c91",
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.12",
+  "superseded_desktop_archive": {
+    "name": "story-skill-claude-desktop-0.6.12.zip",
+    "skill_md_count": 9,
+    "preserved_for_history": true
+  },
+  "build": {
+    "archive": "story-skill-claude-desktop-0.6.12-r2.zip",
+    "version": "0.6.12",
+    "files": 51,
+    "source_files": 49,
+    "skill_name": "story-skill",
+    "bundle_revision": 2,
+    "skill_entry_count": 1,
+    "entry_path_mapping": {
+      "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+      "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+      "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+      "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+      "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+      "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+      "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+      "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+    },
+    "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+    "sha256": "cb321cac0873115d1fa158ef96dd4d3d8d1a3bdf55c9280b7559fbc70d6fa257",
+    "bytes": 365321
+  },
+  "local_regression": {
+    "command": "python3.12 -B -X utf8 -m unittest discover -s tests -p 'test_package*.py' -v",
+    "tests_run": 47,
+    "claude_package_tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log_sha256": "b02e8df237e26e1dab7ced5c7f85b5e32c16fbb8d2c223cf932e6a2d3a2f89a5",
+    "scope": "Canonical, Claude Desktop and npm packaging tests; not a full repository rerun."
+  },
+  "independent_structure_and_cli_review": {
+    "ok": true,
+    "reviewed_at": "2026-10-07T04:01:24.779974+00:00",
+    "bytes": 365321,
+    "sha256": "cb321cac0873115d1fa158ef96dd4d3d8d1a3bdf55c9280b7559fbc70d6fa257",
+    "bundle_revision": 2,
+    "files": 51,
+    "single_top_level_directory": "story-skill",
+    "recursive_skill_md_count": 1,
+    "skill_entry": "story-skill/SKILL.md",
+    "embedded_guide_count": 8,
+    "wrapper_frontmatter": {
+      "name": "story-skill",
+      "description": "中文小说创作与维护；用于开书、书名与简介、大纲、正文续写、拆文分析、审稿修改、榜单与素材调研、封面及离线投稿材料。按本次需求选择内嵌流程，不用于软件开发或普通文案。",
+      "description_characters": 82,
+      "name_matches_folder": true
+    },
+    "archive_crc_valid": true,
+    "archive_paths_relative": true,
+    "no_symlinks_or_encryption": true,
+    "local_markdown_links_checked": 223,
+    "heading_anchors_checked": 147,
+    "inline_python_paths_checked": 9,
+    "embedded_payload_transformation": {
+      "original_files": 49,
+      "entry_files_renamed": 8,
+      "markdown_only_skill_to_guide_references": true,
+      "all_non_markdown_bytes_unchanged": true,
+      "all_scripts_and_configuration_bytes_unchanged": true
+    },
+    "cli": {
+      "runtime": "Python 3.12.14",
+      "version": "0.6.12",
+      "help": true,
+      "isolated_init": true,
+      "isolated_status": true,
+      "executed_from_independent_extraction": true
+    },
+    "standard_source": {
+      "files": 49,
+      "skill_entries": 8,
+      "hash_difference_count": 0,
+      "git_diff_empty": true
+    },
+    "official_sources": [
+      {
+        "url": "https://support.claude.com/en/articles/12512198-how-to-create-custom-skills",
+        "supports": "Single matching skill folder at ZIP root, metadata fields, bundled references and reference existence checks."
+      },
+      {
+        "url": "https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview",
+        "supports": "SKILL.md YAML frontmatter and on-demand reading of bundled references/scripts."
+      }
+    ],
+    "recursive_single_entry_rule_evidence": "The user reported an actual Claude upload rejection counting all nine SKILL.md files. Reviewed official sources specify the single skill structure but do not explicitly state the recursive count rule.",
+    "not_verified": [
+      "Actual Claude Desktop re-import of this corrected archive",
+      "Claude model task execution or image tool availability"
+    ]
+  },
+  "public_download": {
+    "archive": {
+      "filename": "story-skill-claude-desktop-0.6.12-r2.zip",
+      "public_url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.12/story-skill-claude-desktop-0.6.12-r2.zip",
+      "sha256": "cb321cac0873115d1fa158ef96dd4d3d8d1a3bdf55c9280b7559fbc70d6fa257",
+      "bytes": 365321
+    },
+    "checksum": {
+      "filename": "story-skill-claude-desktop-0.6.12-r2.zip.sha256",
+      "public_url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.12/story-skill-claude-desktop-0.6.12-r2.zip.sha256",
+      "sha256": "d4d3a6c0cd72cecf815ea3291a4f85e970a2966162154e4c407eee65388c0f3b"
+    },
+    "result": {
+      "ok": true,
+      "checks": {
+        "anonymous_curl_download": true,
+        "archive_identical_to_local": true,
+        "checksum_identical_to_local": true,
+        "expected_sha256_matches": true,
+        "expected_365321_bytes_matches": true,
+        "checksum_matches_archive_and_filename": true,
+        "recursive_casefold_skill_md_count_is_one": true,
+        "single_entry_is_story_skill_skill_md": true,
+        "eight_expected_guides": true,
+        "zip_crc_ok": true
+      },
+      "recursive_casefold_skill_md_count": 1,
+      "guide_count": 8
+    }
+  },
+  "github_assets": [
+    {
+      "id": 617502464,
+      "name": "story-skill-claude-desktop-0.6.12-r2.zip",
+      "state": "uploaded",
+      "size": 365321,
+      "digest": "sha256:cb321cac0873115d1fa158ef96dd4d3d8d1a3bdf55c9280b7559fbc70d6fa257",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.12/story-skill-claude-desktop-0.6.12-r2.zip",
+      "created_at": "2026-10-07T03:59:31Z"
+    },
+    {
+      "id": 617502543,
+      "name": "story-skill-claude-desktop-0.6.12-r2.zip.sha256",
+      "state": "uploaded",
+      "size": 107,
+      "digest": "sha256:d4d3a6c0cd72cecf815ea3291a4f85e970a2966162154e4c407eee65388c0f3b",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.12/story-skill-claude-desktop-0.6.12-r2.zip.sha256",
+      "created_at": "2026-10-07T03:59:33Z"
+    }
+  ],
+  "original_six_assets_name_size_digest_preserved": true,
+  "runtime_and_canonical_source_unchanged": true,
+  "actual_claude_ui_reimport_verified": false
+}
