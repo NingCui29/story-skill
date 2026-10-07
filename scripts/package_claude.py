@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("story_suite_package", ROOT / "scripts/package.py")
 suite = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(suite)
+BUNDLE_REVISION = 2
 
 ENTRY = """---
 name: story-skill
@@ -25,9 +26,9 @@ description: 中文小说创作与维护；用于开书、书名与简介、大�
 
 # Story Skill · Claude 桌面版
 
-这是一个可导入的技能，内含八个按需读取的流程及共享工具。用户以自然语言提出任务，或明确指定规划、写作、审稿等流程；内嵌的技能文件是本技能资源，不需要另行安装或假定有八个独立桌面命令。
+这是一个可导入的技能，内含八个按需读取的流程及共享工具。用户以自然语言提出任务，或明确指定规划、写作、审稿等流程；内嵌的 `GUIDE.md` 是本技能的流程资源，不需要另行安装或假定有八个独立桌面命令。整个包只有本文件作为 `SKILL.md` 入口。
 
-使用前读取 [共享规则与流程路由](suite/story-skill/SKILL.md)，按本次任务进入其中一个对应流程；同版已读内容复用。内嵌文件的相对路径以其自身所在目录为基准，八个目录保留同级关系。共享工具位于 `suite/story-skill/scripts/story.py`，先从本技能实际位置转为绝对路径，再使用可用的 Python 3.10+ 执行。
+使用前读取 [共享规则与流程路由](suite/story-skill/GUIDE.md)，按本次任务进入其中一个对应流程；同版已读内容复用。内嵌文件的相对路径以其自身所在目录为基准，八个目录保留同级关系。共享工具位于 `suite/story-skill/scripts/story.py`，先从本技能实际位置转为绝对路径，再使用可用的 Python 3.10+ 执行。
 
 先根据当前会话判断可访问的文件和可用工具。普通聊天的代码执行环境与用户电脑分开，上传稿件后在当前可写目录处理；桌面任务能访问已连接文件夹时，只在实际可访问且获授权的书目录操作。用户电脑上的路径不能直接当作执行环境路径，文件夹可读写也不证明能在用户电脑上运行 Python。
 
@@ -41,13 +42,23 @@ def package(output=None):
     original = suite.source_entries()
     files = dict(original)
     version = suite.source_version(files["story-skill/scripts/story.py"])
+    entry_mapping = {name: "story-skill/suite/" + name.removesuffix("SKILL.md") + "GUIDE.md"
+                     for name in files if name.endswith("/SKILL.md")}
+    # Desktop import checks the entire ZIP. Embedded entries are ordinary guides;
+    # only their Markdown paths and descriptions change, never runtime/config bytes.
+    embedded = [(entry_mapping.get(name, "story-skill/suite/" + name),
+                 raw.replace(b"SKILL.md", b"GUIDE.md") if name.endswith(".md") else raw)
+                for name, raw in original]
     entries = sorted([
         ("story-skill/SKILL.md", ENTRY.encode("utf-8")),
         ("story-skill/LICENSE", files["story-skill/LICENSE"]),
-        *(("story-skill/suite/" + name, raw) for name, raw in original),
+        *embedded,
     ])
+    skill_entry_count = sum(Path(name).name.casefold() == "skill.md" for name, _ in entries)
+    if skill_entry_count != 1:
+        raise ValueError("Claude Desktop bundle must contain exactly one SKILL.md")
     output = (Path(output).expanduser() if output is not None else
-              ROOT / f"dist/story-skill-claude-desktop-{version}.zip").absolute()
+              ROOT / f"dist/story-skill-claude-desktop-{version}-r{BUNDLE_REVISION}.zip").absolute()
     if output.suffix.lower() != ".zip":
         raise ValueError("Claude Desktop output must be a .zip file")
     # This artifact has a different layout from the canonical eight-skill ZIP.
@@ -70,6 +81,10 @@ def package(output=None):
         archive_bytes = stage.read_bytes()
         result = {"archive": str(output), "version": version, "files": len(entries),
                   "source_files": len(original), "skill_name": "story-skill",
+                  "bundle_revision": BUNDLE_REVISION, "skill_entry_count": skill_entry_count,
+                  "entry_path_mapping": entry_mapping,
+                  "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown "
+                                         "references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
                   "sha256": hashlib.sha256(archive_bytes).hexdigest(), "bytes": len(archive_bytes)}
         os.replace(stage, output)
         return result
@@ -82,7 +97,7 @@ def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", help="ZIP path; defaults to dist/story-skill-claude-desktop-<version>.zip")
+    parser.add_argument("--output", help="ZIP path; defaults to dist/story-skill-claude-desktop-<version>-r2.zip")
     args = parser.parse_args()
     print(json.dumps(package(args.output), ensure_ascii=False))
 
