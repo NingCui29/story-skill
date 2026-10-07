@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "run": 22,
+  "passed": 22,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "scope": "test_install_suite.py after resolving the expected macOS temporary path alias; includes all eight v0.6.11 to v0.6.12 host/scope upgrade subcases",
+  "reason": "The earlier full run had loaded this test before the path assertion was corrected. No installer production change was needed."
+}

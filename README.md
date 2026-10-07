@@ -8,7 +8,7 @@ Story Skill 是供 Claude 桌面版、Claude Code、Codex、Google Antigravity �
 
 本版包含八个技能、49 个载荷文件，新增 Claude 桌面导入包、Claude Code 与 Antigravity 安装入口，以及每章自动作者有话说和配图交付。[发布记录](docs/releases/v0.6.12.md)分别记录源码、跨平台检查、Release 附件与 Packages 的实际状态。安装或升级按 [INSTALL.md](INSTALL.md) 核对。
 
-各宿主复用同一套标准 `SKILL.md` 和共享运行时。本版还修复附言候选连续保存、中断恢复与图片引用解析问题。v0.6.12 发布核验正在进行；旧版 v0.6.11 附件保持不变。
+各宿主复用同一套标准 `SKILL.md` 和共享运行时。本版还修复附言候选连续保存、中断恢复与图片引用解析问题。v0.6.12 已发布；旧版 v0.6.11 附件保持不变。
 
 macOS 客户端 `0.1.1` 作为独立 Intel 实验附件提供，内含 Story Skill `0.6.12`；使用本地临时签名，未经 Apple 公证。已测平台及尚未验收的原生交互见[客户端说明](desktop/macos/README.md)。它不替代八技能安装，GitHub 发布也不会自动更新本机安装。
 

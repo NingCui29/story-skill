@@ -1,0 +1,76 @@
+======================================================================
+FAIL: test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup (test_install_suite.SuiteInstallTests.test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup) (host='codex', scope='project')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>/tests/test_install_suite.py", line 183, in test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup
+    self.assertEqual(backup.parent, (parent / ".story-skill-backups").resolve())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('<temporary> chars]ups') != PosixPath('<temporary-alias> chars]ups')
+
+======================================================================
+FAIL: test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup (test_install_suite.SuiteInstallTests.test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup) (host='codex', scope='user')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>/tests/test_install_suite.py", line 183, in test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup
+    self.assertEqual(backup.parent, (parent / ".story-skill-backups").resolve())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('<temporary> chars]ups') != PosixPath('<temporary-alias> chars]ups')
+
+======================================================================
+FAIL: test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup (test_install_suite.SuiteInstallTests.test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup) (host='claude-code', scope='project')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>/tests/test_install_suite.py", line 183, in test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup
+    self.assertEqual(backup.parent, (parent / ".story-skill-backups").resolve())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('<temporary> chars]ups') != PosixPath('<temporary-alias> chars]ups')
+
+======================================================================
+FAIL: test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup (test_install_suite.SuiteInstallTests.test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup) (host='claude-code', scope='user')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>/tests/test_install_suite.py", line 183, in test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup
+    self.assertEqual(backup.parent, (parent / ".story-skill-backups").resolve())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('<temporary> chars]ups') != PosixPath('<temporary-alias> chars]ups')
+
+======================================================================
+FAIL: test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup (test_install_suite.SuiteInstallTests.test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup) (host='antigravity', scope='project')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>/tests/test_install_suite.py", line 183, in test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup
+    self.assertEqual(backup.parent, (parent / ".story-skill-backups").resolve())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('<temporary> chars]ups') != PosixPath('<temporary-alias> chars]ups')
+
+======================================================================
+FAIL: test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup (test_install_suite.SuiteInstallTests.test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup) (host='antigravity', scope='user')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>/tests/test_install_suite.py", line 183, in test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup
+    self.assertEqual(backup.parent, (parent / ".story-skill-backups").resolve())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('<temporary> chars]ups') != PosixPath('<temporary-alias> chars]ups')
+
+======================================================================
+FAIL: test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup (test_install_suite.SuiteInstallTests.test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup) (host='antigravity-cli', scope='project')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>/tests/test_install_suite.py", line 183, in test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup
+    self.assertEqual(backup.parent, (parent / ".story-skill-backups").resolve())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('<temporary> chars]ups') != PosixPath('<temporary-alias> chars]ups')
+
+======================================================================
+FAIL: test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup (test_install_suite.SuiteInstallTests.test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup) (host='antigravity-cli', scope='user')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>/tests/test_install_suite.py", line 183, in test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup
+    self.assertEqual(backup.parent, (parent / ".story-skill-backups").resolve())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PosixPath('<temporary> chars]ups') != PosixPath('<temporary-alias> chars]ups')
+
+----------------------------------------------------------------------
+Ran 1418 tests in 271.739s
+
+FAILED (failures=8, skipped=17)

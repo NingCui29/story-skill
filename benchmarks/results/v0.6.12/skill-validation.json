@@ -1,0 +1,74 @@
+{
+  "status": "passed",
+  "generated_at_utc": "2026-10-07T03:21:05.024627+00:00",
+  "python_version": "3.12.14",
+  "pyyaml_version": "6.0.2",
+  "validator": "bundled skill-creator/scripts/quick_validate.py",
+  "validator_sha256": "ee6dba90f44d37171c5a6edb8095979c54919ff6822c1a907afca2e78c48738c",
+  "skills": [
+    {
+      "path": "skills/story-skill",
+      "status": "passed",
+      "exit_code": 0,
+      "message": "Skill is valid!",
+      "error": ""
+    },
+    {
+      "path": "skills/story-skill-plan",
+      "status": "passed",
+      "exit_code": 0,
+      "message": "Skill is valid!",
+      "error": ""
+    },
+    {
+      "path": "skills/story-skill-write",
+      "status": "passed",
+      "exit_code": 0,
+      "message": "Skill is valid!",
+      "error": ""
+    },
+    {
+      "path": "skills/story-skill-analyze",
+      "status": "passed",
+      "exit_code": 0,
+      "message": "Skill is valid!",
+      "error": ""
+    },
+    {
+      "path": "skills/story-skill-review",
+      "status": "passed",
+      "exit_code": 0,
+      "message": "Skill is valid!",
+      "error": ""
+    },
+    {
+      "path": "skills/story-skill-research",
+      "status": "passed",
+      "exit_code": 0,
+      "message": "Skill is valid!",
+      "error": ""
+    },
+    {
+      "path": "skills/story-skill-cover",
+      "status": "passed",
+      "exit_code": 0,
+      "message": "Skill is valid!",
+      "error": ""
+    },
+    {
+      "path": "skills/story-skill-publish",
+      "status": "passed",
+      "exit_code": 0,
+      "message": "Skill is valid!",
+      "error": ""
+    },
+    {
+      "path": "Claude Desktop bundle/story-skill",
+      "status": "passed",
+      "exit_code": 0,
+      "message": "Skill is valid!",
+      "error": ""
+    }
+  ],
+  "scope": "Skill frontmatter and format validation only; does not prove host discovery, model routing or literary quality."
+}

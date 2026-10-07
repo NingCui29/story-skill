@@ -1,0 +1,410 @@
+{
+  "version": "0.6.12",
+  "checks": {
+    "package": {
+      "status": "passed",
+      "archive": "dist/release-v0.6.12/story-skill-0.6.12.zip",
+      "version": "0.6.12",
+      "sha256": "45f6a70a269a8a36fc340f5e1853b0aebbcdeed481426b2b5a864945be58be75",
+      "bytes": 361280,
+      "files": 49,
+      "contents_match_current_skill": true,
+      "missing": [],
+      "extra": [],
+      "changed": [],
+      "duplicate_entries": [],
+      "corrupt_entry": null,
+      "non_regular_entries": []
+    },
+    "benchmark": {
+      "status": "passed",
+      "report_sha256": "c89c113d1709b72db3d74f5d492dce8b17a44d59dbe58136af1770c29d2d7f5b",
+      "scope": "Candidate file hashes, both input lists, explicit scenario reading obligations, profile configuration, arithmetic and recorded source fingerprints when present; tokenizer not rerun and upstream file contents not revalidated",
+      "files": [
+        {
+          "profile": "long_chapter_required_minimum",
+          "path": "skills/story-skill/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b",
+          "current_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b"
+        },
+        {
+          "profile": "long_chapter_required_minimum",
+          "path": "skills/story-skill-write/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "d41e9d34bf069c32ff5866aba924f1858e2f95c4199acffd71125965a84c2c28",
+          "current_sha256": "d41e9d34bf069c32ff5866aba924f1858e2f95c4199acffd71125965a84c2c28"
+        },
+        {
+          "profile": "long_chapter_required_minimum",
+          "path": "skills/story-skill/references/project-state.md",
+          "matches": true,
+          "recorded_sha256": "a498e4dfd8fba2c45983dbdf8b8dd08eab476b3c8a80a7c0e0d738c0f27fd8ef",
+          "current_sha256": "a498e4dfd8fba2c45983dbdf8b8dd08eab476b3c8a80a7c0e0d738c0f27fd8ef"
+        },
+        {
+          "profile": "long_chapter_required_minimum",
+          "path": "skills/story-skill-write/references/chapter.md",
+          "matches": true,
+          "recorded_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2",
+          "current_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2"
+        },
+        {
+          "profile": "long_chapter_required_minimum",
+          "path": "skills/story-skill-write/references/drama.md",
+          "matches": true,
+          "recorded_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950",
+          "current_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950"
+        },
+        {
+          "profile": "long_chapter_required_minimum",
+          "path": "skills/story-skill-write/references/content-review.md",
+          "matches": true,
+          "recorded_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf",
+          "current_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf"
+        },
+        {
+          "profile": "long_chapter_required_minimum",
+          "path": "skills/story-skill-write/references/punctuation.md",
+          "matches": true,
+          "recorded_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+          "current_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a"
+        },
+        {
+          "profile": "long_multi_line",
+          "path": "skills/story-skill/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b",
+          "current_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b"
+        },
+        {
+          "profile": "long_multi_line",
+          "path": "skills/story-skill-write/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "d41e9d34bf069c32ff5866aba924f1858e2f95c4199acffd71125965a84c2c28",
+          "current_sha256": "d41e9d34bf069c32ff5866aba924f1858e2f95c4199acffd71125965a84c2c28"
+        },
+        {
+          "profile": "long_multi_line",
+          "path": "skills/story-skill/references/project-state.md",
+          "matches": true,
+          "recorded_sha256": "a498e4dfd8fba2c45983dbdf8b8dd08eab476b3c8a80a7c0e0d738c0f27fd8ef",
+          "current_sha256": "a498e4dfd8fba2c45983dbdf8b8dd08eab476b3c8a80a7c0e0d738c0f27fd8ef"
+        },
+        {
+          "profile": "long_multi_line",
+          "path": "skills/story-skill-write/references/chapter.md",
+          "matches": true,
+          "recorded_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2",
+          "current_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2"
+        },
+        {
+          "profile": "long_multi_line",
+          "path": "skills/story-skill-write/references/drama.md",
+          "matches": true,
+          "recorded_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950",
+          "current_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950"
+        },
+        {
+          "profile": "long_multi_line",
+          "path": "skills/story-skill-write/references/content-review.md",
+          "matches": true,
+          "recorded_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf",
+          "current_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf"
+        },
+        {
+          "profile": "long_multi_line",
+          "path": "skills/story-skill-write/references/long-form.md",
+          "matches": true,
+          "recorded_sha256": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+          "current_sha256": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde"
+        },
+        {
+          "profile": "long_multi_line",
+          "path": "skills/story-skill-write/references/punctuation.md",
+          "matches": true,
+          "recorded_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+          "current_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a"
+        },
+        {
+          "profile": "short_write_conservative",
+          "path": "skills/story-skill/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b",
+          "current_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b"
+        },
+        {
+          "profile": "short_write_conservative",
+          "path": "skills/story-skill-write/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "d41e9d34bf069c32ff5866aba924f1858e2f95c4199acffd71125965a84c2c28",
+          "current_sha256": "d41e9d34bf069c32ff5866aba924f1858e2f95c4199acffd71125965a84c2c28"
+        },
+        {
+          "profile": "short_write_conservative",
+          "path": "skills/story-skill/references/project-state.md",
+          "matches": true,
+          "recorded_sha256": "a498e4dfd8fba2c45983dbdf8b8dd08eab476b3c8a80a7c0e0d738c0f27fd8ef",
+          "current_sha256": "a498e4dfd8fba2c45983dbdf8b8dd08eab476b3c8a80a7c0e0d738c0f27fd8ef"
+        },
+        {
+          "profile": "short_write_conservative",
+          "path": "skills/story-skill-write/references/chapter.md",
+          "matches": true,
+          "recorded_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2",
+          "current_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2"
+        },
+        {
+          "profile": "short_write_conservative",
+          "path": "skills/story-skill-write/references/drama.md",
+          "matches": true,
+          "recorded_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950",
+          "current_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950"
+        },
+        {
+          "profile": "short_write_conservative",
+          "path": "skills/story-skill-write/references/content-review.md",
+          "matches": true,
+          "recorded_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf",
+          "current_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf"
+        },
+        {
+          "profile": "short_write_conservative",
+          "path": "skills/story-skill-write/references/punctuation.md",
+          "matches": true,
+          "recorded_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+          "current_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a"
+        },
+        {
+          "profile": "long_analysis_conservative",
+          "path": "skills/story-skill/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b",
+          "current_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b"
+        },
+        {
+          "profile": "long_analysis_conservative",
+          "path": "skills/story-skill-analyze/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+          "current_sha256": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f"
+        },
+        {
+          "profile": "long_analysis_conservative",
+          "path": "skills/story-skill-analyze/references/deep-reading.md",
+          "matches": true,
+          "recorded_sha256": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+          "current_sha256": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf"
+        },
+        {
+          "profile": "analysis_with_examples",
+          "path": "skills/story-skill/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b",
+          "current_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b"
+        },
+        {
+          "profile": "analysis_with_examples",
+          "path": "skills/story-skill-analyze/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+          "current_sha256": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f"
+        },
+        {
+          "profile": "analysis_with_examples",
+          "path": "skills/story-skill-analyze/references/deep-reading.md",
+          "matches": true,
+          "recorded_sha256": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+          "current_sha256": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf"
+        },
+        {
+          "profile": "analysis_with_examples",
+          "path": "skills/story-skill-analyze/references/examples.md",
+          "matches": true,
+          "recorded_sha256": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+          "current_sha256": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2"
+        },
+        {
+          "profile": "review_conservative",
+          "path": "skills/story-skill/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b",
+          "current_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b"
+        },
+        {
+          "profile": "review_conservative",
+          "path": "skills/story-skill-review/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "ef80ecd07b615db404df5bb9653b9994e47e781a02d321b515c293f7a5d2436b",
+          "current_sha256": "ef80ecd07b615db404df5bb9653b9994e47e781a02d321b515c293f7a5d2436b"
+        },
+        {
+          "profile": "review_conservative",
+          "path": "skills/story-skill-write/references/content-review.md",
+          "matches": true,
+          "recorded_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf",
+          "current_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf"
+        },
+        {
+          "profile": "review_conservative",
+          "path": "skills/story-skill-write/references/drama.md",
+          "matches": true,
+          "recorded_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950",
+          "current_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950"
+        },
+        {
+          "profile": "review_conservative",
+          "path": "skills/story-skill-write/references/chapter.md",
+          "matches": true,
+          "recorded_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2",
+          "current_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2"
+        },
+        {
+          "profile": "review_conservative",
+          "path": "skills/story-skill-write/references/punctuation.md",
+          "matches": true,
+          "recorded_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+          "current_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a"
+        },
+        {
+          "profile": "review_conflict",
+          "path": "skills/story-skill/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b",
+          "current_sha256": "e59854cba8105e2e389cd81177a5d9fc9fb5cc575f1e723adce337f6cd3e6d3b"
+        },
+        {
+          "profile": "review_conflict",
+          "path": "skills/story-skill-review/SKILL.md",
+          "matches": true,
+          "recorded_sha256": "ef80ecd07b615db404df5bb9653b9994e47e781a02d321b515c293f7a5d2436b",
+          "current_sha256": "ef80ecd07b615db404df5bb9653b9994e47e781a02d321b515c293f7a5d2436b"
+        },
+        {
+          "profile": "review_conflict",
+          "path": "skills/story-skill-write/references/content-review.md",
+          "matches": true,
+          "recorded_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf",
+          "current_sha256": "076680c36f541d985f97c9cbb899a3c2e21a1028db622d478bd9ab190252b8bf"
+        },
+        {
+          "profile": "review_conflict",
+          "path": "skills/story-skill-write/references/drama.md",
+          "matches": true,
+          "recorded_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950",
+          "current_sha256": "66e9f6c2c9c3064b7cfa3d9516334efd7064412d554e230a9a3e264b2b0b8950"
+        },
+        {
+          "profile": "review_conflict",
+          "path": "skills/story-skill-write/references/chapter.md",
+          "matches": true,
+          "recorded_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2",
+          "current_sha256": "fe0d9f66552616879642cbac89a6e6ea18c5a40d19bb978a994ba042c95546f2"
+        },
+        {
+          "profile": "review_conflict",
+          "path": "skills/story-skill-write/references/punctuation.md",
+          "matches": true,
+          "recorded_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+          "current_sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a"
+        }
+      ],
+      "source_files": [
+        {
+          "path": "profiles.json",
+          "matches": true,
+          "recorded_sha256": "a579b9e0634bd5f6b64f3eeb590af698313201729ea3297e50e45bbdf21a3e85",
+          "current_sha256": "a579b9e0634bd5f6b64f3eeb590af698313201729ea3297e50e45bbdf21a3e85"
+        },
+        {
+          "path": "benchmark.py",
+          "matches": true,
+          "recorded_sha256": "49e0af279873d04693109737b67455da5426693febc2da450ae5f84f023b305e",
+          "current_sha256": "49e0af279873d04693109737b67455da5426693febc2da450ae5f84f023b305e"
+        },
+        {
+          "path": "skills/story-skill/scripts/story.py",
+          "matches": true,
+          "recorded_sha256": "c9211924957700f6fbfc1b065485a82497f98642c11a7bdfca004e84c2ed9699",
+          "current_sha256": "c9211924957700f6fbfc1b065485a82497f98642c11a7bdfca004e84c2ed9699"
+        },
+        {
+          "path": "skills/story-skill/scripts/story_history.py",
+          "matches": true,
+          "recorded_sha256": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3",
+          "current_sha256": "ddb0d71e1c52d478333cf5b33bbf4efd42ec33f0c07569ab154d5a718ad31df3"
+        },
+        {
+          "path": "skills/story-skill/scripts/story_outline.py",
+          "matches": true,
+          "recorded_sha256": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+          "current_sha256": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263"
+        },
+        {
+          "path": "skills/story-skill/scripts/story_publish.py",
+          "matches": true,
+          "recorded_sha256": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+          "current_sha256": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce"
+        },
+        {
+          "path": "skills/story-skill/scripts/story_punctuation.py",
+          "matches": true,
+          "recorded_sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+          "current_sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee"
+        },
+        {
+          "path": "skills/story-skill/scripts/story_search.py",
+          "matches": true,
+          "recorded_sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+          "current_sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6"
+        },
+        {
+          "path": "skills/story-skill/scripts/story_storage.py",
+          "matches": true,
+          "recorded_sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+          "current_sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+        },
+        {
+          "path": "skills/story-skill/scripts/story_workbench.py",
+          "matches": true,
+          "recorded_sha256": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0",
+          "current_sha256": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0"
+        },
+        {
+          "path": "skills/story-skill/scripts/story_world.py",
+          "matches": true,
+          "recorded_sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+          "current_sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+        }
+      ],
+      "problems": []
+    },
+    "recorded_probes": {
+      "status": "passed",
+      "reports": [
+        {
+          "path": "<workspace>/benchmarks/results/v0.6.12/scaling.json",
+          "sha256": "ee49ad7fc497701b38617d6dcca5e268b6b4b352cf0671b97c297815e752c253",
+          "matches_current_runtime": true,
+          "status": "passed"
+        },
+        {
+          "path": "<workspace>/benchmarks/results/v0.6.12/migration.json",
+          "sha256": "bc66b6ef4b8858bf61b9129e40ab7da21d78c9774f6ea71738bd4c2a7f74d0c9",
+          "matches_current_runtime": true,
+          "status": "passed"
+        }
+      ],
+      "scope": "Stored probe success, required capacity sizes and current runtime hashes; these probes are not rerun by verify.py"
+    },
+    "markdown_links": {
+      "status": "passed",
+      "files_scanned": 338,
+      "links_checked": 1879,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    }
+  },
+  "ok": true,
+  "scope": "Local package, benchmark fingerprint, recorded synthetic capacity/migration, and Markdown-link checks only. Full CI and local first-run/focused regression evidence are recorded separately."
+}

@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "report_sha256": "c89c113d1709b72db3d74f5d492dce8b17a44d59dbe58136af1770c29d2d7f5b",
+  "candidate_file_checks": 41,
+  "source_fingerprint_checks": 11,
+  "problems": [],
+  "scope": "Candidate file hashes, both input lists, explicit scenario reading obligations, profile configuration, arithmetic and recorded source fingerprints when present; tokenizer not rerun and upstream file contents not revalidated"
+}

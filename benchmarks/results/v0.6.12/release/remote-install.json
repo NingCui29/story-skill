@@ -1,0 +1,71 @@
+{
+  "ok": true,
+  "tag": "v0.6.12",
+  "remote_commit": "1aa1a00752d483d56a6a3b4854e7b94e76942c91",
+  "source_matches_release_zip": true,
+  "installations": [
+    {
+      "host": "codex",
+      "scope": "project",
+      "skills": 8,
+      "files": 49,
+      "matches_release_zip": true
+    },
+    {
+      "host": "codex",
+      "scope": "user",
+      "skills": 8,
+      "files": 49,
+      "matches_release_zip": true
+    },
+    {
+      "host": "claude-code",
+      "scope": "project",
+      "skills": 8,
+      "files": 49,
+      "matches_release_zip": true
+    },
+    {
+      "host": "claude-code",
+      "scope": "user",
+      "skills": 8,
+      "files": 49,
+      "matches_release_zip": true
+    },
+    {
+      "host": "antigravity",
+      "scope": "project",
+      "skills": 8,
+      "files": 49,
+      "matches_release_zip": true
+    },
+    {
+      "host": "antigravity",
+      "scope": "user",
+      "skills": 8,
+      "files": 49,
+      "matches_release_zip": true
+    },
+    {
+      "host": "antigravity-cli",
+      "scope": "project",
+      "skills": 8,
+      "files": 49,
+      "matches_release_zip": true
+    },
+    {
+      "host": "antigravity-cli",
+      "scope": "user",
+      "skills": 8,
+      "files": 49,
+      "matches_release_zip": true
+    }
+  ],
+  "cli": {
+    "version": "0.6.12",
+    "help": true,
+    "init": true,
+    "status": true
+  },
+  "scope": "Fresh remote fixed-tag checkout and eight isolated directory installations; no real books or host skill directories changed; host model discovery not tested"
+}
