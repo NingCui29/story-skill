@@ -6,13 +6,15 @@ v0.6.9 [已发布](releases/v0.6.9.md)，增加已采用细纲的版本绑定、
 
 v0.6.10 [已发布](releases/v0.6.10.md)，补齐人物、视角、场景衔接及共用内容复核，新增可见字数口径与大纲结构检查，修复只读审查、初始化和工作台校验。套件为八技能、45 个载荷文件；Release、Packages 与跨平台 CI 结果见本版记录。
 
-v0.6.11 的49文件套件、固定书架、macOS实验客户端和本轮规则更新见[本版记录](releases/v0.6.11.md)；各分发环节按实测结果分别登记。
+v0.6.12 的49文件套件、Claude 桌面导入包、多宿主安装及作者附言配图更新见[本版记录](releases/v0.6.12.md)；各分发环节按实测结果分别登记。
 
 [工程全貌快照（2026-09-26）](工程全貌.md)：源码与本机安装差异、八技能职责、写作与商业连载规则、工作台、数据恢复、发布边界、验证证据，以及全部 61 个命令和 39 个分发文件。
 
 [历史资料名称替换说明](../benchmarks/NAME_REDACTION.md)：旧版路径和哈希可能无法以遮盖后的快照复验。
 
-本版 **v0.6.11** 包含 8 个技能、49 个载荷文件，支持独立书架、作品切换与候选稿编辑。[发布记录](releases/v0.6.11.md)列出实际验证范围；仓库 main 或本机开发安装可能含有尚未发布的修改，不能只凭 `--version` 判定与固定标签一致。升级前备份书库及本地技能修改，保持八目录版本一致。
+本版 **v0.6.12** 包含 8 个技能、49 个载荷文件，支持独立书架、作品切换与候选稿编辑。[发布记录](releases/v0.6.12.md)列出实际验证范围；仓库 main 或本机开发安装可能含有尚未发布的修改，不能只凭 `--version` 判定与固定标签一致。升级前备份书库及本地技能修改，保持八目录版本一致。
+
+v0.6.12 增加 Claude 桌面单技能导入包、Claude Code 与 Google Antigravity 目录安装适配，复用同一套 `SKILL.md` 和共享运行时。Codex 的默认安装行为继续保留，见[统一安装指引](../INSTALL.md)。本版发布核验正在进行。
 
 v0.6.4 的 `story_workbench.py` 提供每本书的只读快照、三栏阅读页及独立候选编辑。[工作台实现与限制](本地工作台分析.md)。
 
@@ -24,15 +26,25 @@ v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Wi
 
 ## 开始使用
 
-需要安装或升级时，可在当前应用中发送以下请求；安装时继续核对 v0.6.11 固定标签、Release 附件和本地已有修改；检查不符则保留现有安装：
+Claude 桌面版优先使用单技能导入包。在当前仓库根目录运行 `python3 -B -X utf8 scripts/package_claude.py`，生成 `dist/story-skill-claude-desktop-0.6.12.zip`，按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)开启代码执行、上传并启用。包内一个总入口按需读取八个流程；原八目录 Release ZIP 用于目录分发，桌面导入使用专用包。启用后直接说“使用 Story Skill”并描述任务即可。[Claude 官方技能说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+
+普通聊天文件环境、Cowork 或统一任务界面的目录权限、作者电脑的本机工作台分别核对。书稿应保存到会话可访问位置，并下载完整书目录备份；技能导入不会自动启动本机 Python 服务。更多桌面与云端边界见[安装指引](../INSTALL.md#书稿保存与桌面能力)。
+
+在 Codex 中需要安装或升级时，可发送以下请求；安装时继续核对 v0.6.12 固定标签、Release 附件和本地已有修改；检查不符则保留现有安装：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill
 ```
 
+Claude Code 使用当前仓库源码时，在仓库根目录运行 `python3 -B -X utf8 scripts/install.py --host claude-code --project "<写作项目根目录>"`，或选择 `--host claude-code --user` 安装到本机个人技能目录。八个技能需同级完整安装；托管安装升级加 `--update`。在 Claude Code 中用 `/story-skill`、`/story-skill-plan` 等入口加需求，或直接用自然语言描述任务；本库示例中的 Codex `$技能名` 对应 Claude Code `/技能名`。[官方技能说明](https://code.claude.com/docs/en/skills)
+
+Google Antigravity 使用 `--host antigravity`（2.0／IDE）或 `--host antigravity-cli`（CLI），再选择 `--project "<写作项目根目录>"` 或 `--user`；两种应用的个人技能目录不同，见[安装位置表](../INSTALL.md#从本仓库源码安装)。项目内与 Codex 共用 `.agents/skills/`，同份套件无需重复安装，升级共同影响该副本。可自然语言触发，2.0／CLI 也可用 `/story-skill`；旧目录不自动迁移。[Antigravity 官方说明](https://antigravity.google/docs/skills)
+
+联网与浏览器能力按会话工具核对；封面与配图需要已有图像工具或 MCP。工作台需要在能访问书目录的机器上运行 Python，本机工作台地址不能等同于云端会话地址。`agents/openai.yaml` 仅为 Codex 界面配置，其他宿主无需使用。
+
 | 要做的事 | 阅读文档 |
 |---|---|
-| 一行安装、补齐技能或升级已有版本 | [统一安装指引](../INSTALL.md) |
+| Claude 桌面导入、Codex／Claude Code／Antigravity 安装与升级 | [统一安装指引](../INSTALL.md) |
 | 复查手动参数、升级方式或发布证据 | [安装与发布](github-release.md) |
 | 分清源码、安装副本和书目录 | [目录结构与职责](目录结构.md) |
 | 开书、规划、续写、审稿和作品深读 | [中文小说上手](中文小说上手.md) |

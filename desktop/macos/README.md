@@ -4,7 +4,17 @@
 
 `写作工作台.app` 将本地书架和作品编辑页面放进独立的 macOS 窗口。它沿用现有工作台服务和保存规则，应用包内携带 Python 运行时与工作台程序。
 
-客户端 `0.1.0` 已随 [Story Skill v0.6.11 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.11)公开提供Intel实验构建与校验文件，内含Story Skill 0.6.11；使用临时本地签名，未做Apple公证。本轮验收范围仅为 Intel Mac / macOS 15.8.1；最低 macOS 13 是构建配置，不表示其它 macOS 版本或 Apple Silicon 已通过验收。构建成功也不等于窗口交互、保存、下载和退出行为均已验收。
+当前客户端为 `0.1.1`，内含 Story Skill `0.6.12`，Intel macOS 发布包正在准备，尚未公开发布。先前客户端 `0.1.0` 已随 [Story Skill v0.6.11 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.11)公开提供，内含 Story Skill `0.6.11`。
+
+客户端使用临时本地签名，未做 Apple 公证。当前验收环境为 Intel Mac / macOS 15.8.1；最低 macOS 13 是构建配置，不表示其它 macOS 版本或 Apple Silicon 已通过验收。构建成功也不等于窗口交互、保存、下载和退出行为均已验收。
+
+## 0.1.1 发布候选（2026-10-07）
+
+本次保留既有原生客户端功能，将应用内工作台程序更新到 Story Skill `0.6.12`，包含章节配图展示与候选来源恢复修复。发布文件为 `story-workbench-0.1.1-macos-x86_64.zip` 及同名 `.sha256` 校验文件，构建与隔离验收产物集中在 `dist/release-v0.6.12/`。
+
+本次验收仅检查签名、程序与源码一致性、压缩包完整性，以及解压到新位置后的命令行运行；不启动原生界面，不替换用户已安装的应用，不修改真实书架或作品，也不退出已有服务。原生目录选择、下载保存面板和未保存编辑的关闭交互仍需单独人工验收。
+
+上述隔离检查已通过：9 个工作台模块与源码逐字节一致，压缩包解压前后均通过严格签名核验；解压到新目录后，内嵌 Python 可运行版本、帮助、临时作品初始化与状态读取。详见[构建回执](../../benchmarks/results/v0.6.12/desktop-build.json)与[客户端隔离验收回执](../../benchmarks/results/v0.6.12/desktop-verification.json)。这两份回执不表示发布附件已上传或回下载核验。
 
 ## 首版交付与已验证范围（2026-10-05）
 
@@ -82,7 +92,7 @@
 ```sh
 "$HOME/.local/bin/python3.12" scripts/build_desktop_macos.py \
   --python "$HOME/.local/bin/python3.12" \
-  --output "$HOME/Applications/写作工作台.app"
+  --output "dist/release-v0.6.12/写作工作台.app"
 ```
 
 不要将输出路径设为现有作品目录。构建输出与源代码、真实作品数据分开保存；本地构建不包含远程发布、应用商店上架或发行验收。

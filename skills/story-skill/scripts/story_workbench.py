@@ -1272,7 +1272,7 @@ def _author_files(root, warnings=None, exclude=None):
             if path.is_symlink() or getattr(path, 'is_junction', lambda: False)():
                 report(path.name)
                 continue
-            if path.is_dir() and (re.match(r'^\d{2}_', path.name) or
+            if path.is_dir() and (path.name == '作者有话说' or re.match(r'^\d{2}_', path.name) or
                                   any(word in path.name for word in ('大纲', '细纲', '封面', '策划', '分析'))):
                 roots.append((path, '创作材料'))
             elif path.is_file() and path.suffix.lower() in AUTHOR_SUFFIXES:
@@ -1876,10 +1876,46 @@ def _editor_document(root, document_id):
     result['content_kind'] = 'prose' if result['is_prose'] else 'material'
     result['render_markdown'] = result.get('kind') == 'plan' or (not result['is_prose'] and
         (path.lower().endswith('.md') or result.get('kind') == 'candidate'))
+    if result['render_markdown']:
+        result['markdown_path'] = _markdown_resource_path(Path(root), result)
     if result.get('kind') == 'candidate' and result['is_prose'] and result.get('context'):
         if result['sha256'] == result['context']['formal_sha256']:
             result['status'] = '内容与当前正式稿逐字一致；不据此推断采用历史'
     return result
+
+
+def _markdown_resource_path(root, document):
+    """Locate a material candidate's original directory without changing its text."""
+    if document.get('external') or document.get('metadata_error') or document.get('kind') == 'plan':
+        return None
+    if document.get('kind') != 'candidate':
+        return document.get('path')
+    try:
+        files = {row['id']: row['path'] for row in _author_files(root)}
+        source, seen = document.get('source'), {document['id']}
+        # Each step consumes one discovered source ID; cycles and the finite
+        # material inventory bound traversal without limiting valid save history.
+        while isinstance(source, str) and source in files and source not in seen:
+            seen.add(source)
+            relative = files[source]
+            api.safe_path(root, relative)
+            if source.startswith('pending:'):
+                pending = _pending_document(root, source)
+                if pending['content_kind'] != 'material':
+                    return None
+                source = pending.get('source')
+                continue
+            if not source.startswith('file:'):
+                return None
+            if not relative.startswith('.story/drafts/workbench/'):
+                return relative
+            meta = _candidate_metadata(root, relative)
+            if _candidate_content_kind(meta) != 'material':
+                return None
+            source = meta.get('source')
+    except (api.StoryError, OSError, ValueError):
+        pass
+    return None
 
 
 def _editor_metrics(root, payload):
@@ -2504,16 +2540,80 @@ function leaveComparison(){
 }
 function stepDiff(delta){diffIndex=Math.max(0,Math.min(diffTargets.length-1,diffIndex+delta));if(diffTargets[diffIndex])diffTargets[diffIndex].scrollIntoView({block:'center'});$('diff-position').textContent=diffTargets.length?'标记片段 '+(diffIndex+1)+' / '+diffTargets.length:'两版文字一致';$('diff-prev').disabled=diffIndex<=0;$('diff-next').disabled=diffIndex>=diffTargets.length-1;}
 function inlineText(parent,text,path){
- const regex=/(\[([^\]\n]+)\]\(([^)\n]+)\)|\*\*([^*\n]+)\*\*|`([^`\n]+)`)/g;let last=0,m;
+ const regex=/!?\[|\*\*([^*\n]+)\*\*|`([^`\n]+)`/g;let last=0,m;
  while((m=regex.exec(text))){parent.append(document.createTextNode(text.slice(last,m.index)));let el;
-  if(m[2]){let url;try{url=new URL(m[3],'https://story.local/'+path);}catch{}if(url&&/^https?:$/.test(url.protocol)&&!(path===null&&url.hostname==='story.local')){
-   el=document.createElement('a');el.textContent=m[2];
+  if(m[0]==='['||m[0]==='!['){const ref=markdownReference(text,m.index);
+   if(!ref||ref.target===null){const end=ref?.end||regex.lastIndex;parent.append(document.createTextNode(text.slice(m.index,end)));last=regex.lastIndex=end;continue;}
+   regex.lastIndex=ref.end;
+   if(m[0]==='!['){el=markdownImage(ref.label,ref.target,path);}
+   else{let url;try{url=new URL(ref.target,'https://story.local/'+path);}catch{}if(url&&/^https?:$/.test(url.protocol)&&!(path===null&&url.hostname==='story.local')){
+   el=document.createElement('a');el.textContent=ref.label;
    if(url.hostname==='story.local'){el.href='#';el.onclick=e=>{e.preventDefault();try{openDoc('file:'+decodeURIComponent(url.pathname.slice(1)));}catch{note('链接路径无法识别。');}};}
    else{el.href=url.href;el.target='_blank';el.rel='noreferrer noopener';}
-  }else{el=document.createElement('span');el.textContent=m[2];}}
-  else{el=document.createElement(m[4]?'strong':'code');el.textContent=m[4]||m[5];}
+   }else{el=document.createElement('span');el.textContent=ref.label;}}
+  }else{el=document.createElement(m[1]?'strong':'code');el.textContent=m[1]||m[2];}
   parent.append(el);last=regex.lastIndex;
  }parent.append(document.createTextNode(text.slice(last)));
+}
+function markdownReference(text,start){
+ const labelStart=start+(text[start]==='!'?2:1);let i=labelStart,depth=1,complex=false;
+ for(;i<text.length;i++){
+  if(text[i]==='\\'){complex=true;i++;continue;}
+  if(text[i]==='['){depth++;complex=true;}
+  else if(text[i]===']'&&!--depth)break;
+ }
+ if(depth||text[i+1]!=='(')return null;
+ const label=text.slice(labelStart,i),bodyStart=i+2;let angle=false,quote='',first=true;depth=1;
+ for(i=bodyStart;i<text.length;i++){
+  const c=text[i];if(c==='\\'){i++;continue;}
+  if(angle){if(c==='>')angle=false;continue;}
+  if(quote){if(c===quote)quote='';continue;}
+  if(first&&/\s/.test(c))continue;
+  if(first&&c==='<'){angle=true;first=false;continue;}first=false;
+  if((c==='"'||c==="'")&&/\s/.test(text[i-1])){quote=c;continue;}
+  if(c==='(')depth++;
+  else if(c===')'&&!--depth)break;
+ }
+ const end=i<text.length?i+1:text.length;
+ const result={end,label,target:null};if(depth||angle||quote||complex)return result;
+ const body=text.slice(bodyStart,i).trim();let target,tail='';
+ const title=/^(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^()\\])*\))$/;
+ if(body.startsWith('<')){
+  const close=body.indexOf('>');if(close<0)return result;
+  target=body.slice(1,close);tail=body.slice(close+1);
+  if(tail&&(!/^\s/.test(tail)||!title.test(tail.trim())))return result;
+ }else{
+  const titled=body.match(/^(.*?)\s+("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\((?:\\.|[^()\\])*\))$/);
+  target=titled?titled[1]:body;
+  // Keep space-containing filenames, but do not guess malformed or nested titles.
+  if(/\s+["']|[<>]/.test(target)||(!titled&&/\s+\(.*\)$/.test(body)))return result;
+ }
+ if(!target)return result;
+ result.target=target.replace(/\\([()[\]<>])/g,'$1');return result;
+}
+function markdownImage(alt,target,path){
+ const holder=document.createElement('span');holder.className='markdown-image';
+ const status=document.createElement('span');status.setAttribute('role','status');status.textContent='配图加载中…';holder.append(status);
+ const fail=message=>{status.textContent='配图无法预览：'+message;holder.replaceChildren(status);};let relative;
+ try{
+  if(typeof path!=='string'||!path)throw Error('无法定位本书配图来源。');
+  target=target.trim();if(target.startsWith('<')&&target.endsWith('>'))target=target.slice(1,-1);
+  if(!target||/^(?:[a-z][a-z0-9+.-]*:|[/\\])/i.test(target))throw Error('仅支持本书相对路径图片。');
+  const parts=path.split('/').slice(0,-1);
+  for(const encoded of target.split(/[?#]/,1)[0].split('/')){
+   let part;try{part=decodeURIComponent(encoded);}catch{throw Error('图片路径无法识别。');}
+   if(/[\\/\0]/.test(part))throw Error('图片路径无法识别。');
+   if(part==='..'){if(!parts.length)throw Error('图片路径超出本书目录。');parts.pop();}
+   else if(part&&part!=='.')parts.push(part);
+  }
+  if(!parts.length)throw Error('图片路径无法识别。');relative=parts.join('/');
+ }catch(e){fail(e.message);return holder;}
+ call('open',{id:'file:'+relative}).then(d=>{
+  if(typeof d?.image!=='string'||!/^data:image\/(?:png|jpeg|webp);base64,/.test(d.image)){fail('该文件不是支持的图片。');return;}
+  const image=document.createElement('img');image.alt=alt||'配图';image.onerror=()=>fail('图片数据加载失败。');
+  holder.replaceChildren(image);image.src=d.image;
+ }).catch(e=>fail(e.message||'读取图片失败。'));
+ return holder;
 }
 function renderMarkdown(container,text,path){
  container.replaceChildren();const lines=text.replace(/\r\n/g,'\n').split('\n');let i=0;
@@ -2541,7 +2641,7 @@ function renderProse(container,text){
 }
 function readingView(d){const formatted=d.render_markdown&&!d.editing&&!d.rawPreview&&!d.image;
  $('formatted').hidden=!formatted;$('source-view').hidden=!d.render_markdown;$('source-view').textContent=d.rawPreview?'排版预览':'查看源码';
- if(formatted){$('prose').hidden=true;renderMarkdown($('formatted'),d.value,d.external?null:d.path);}else if(d.is_prose&&!d.editing&&!d.image)renderProse($('prose'),d.value||'');
+ if(formatted){$('prose').hidden=true;renderMarkdown($('formatted'),d.value,d.external?null:d.markdown_path===undefined?d.path:d.markdown_path);}else if(d.is_prose&&!d.editing&&!d.image)renderProse($('prose'),d.value||'');
  $('history-note').textContent=d.historical_note||'';
  $('review-task-box').hidden=true;
  showChapterInfo(d);scheduleMetrics();
@@ -2730,7 +2830,7 @@ summary{cursor:pointer;color:var(--muted);margin:14px 0 8px;overflow-wrap:anywhe
 h1{font-size:24px;line-height:1.45;font-weight:650;margin:14px 0 7px;overflow-wrap:anywhere}.document-meta{display:flex;gap:4px 12px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.document-meta p{margin:0}#state{font-size:12px;color:#6e5a38}#word-count{font-size:12px;color:var(--muted)}#message[hidden]{display:none}#message{font-size:12px;color:var(--muted);overflow-wrap:anywhere;min-height:1.6em;margin:8px 0}#history-note{font:12px/1.7 system-ui;color:#866536;background:#faf5e9;padding:8px 12px;border-radius:6px}#history-note:empty{display:none}#document-body{max-width:780px;margin:0 auto}#prose,#text,#formatted{font-size:var(--reader-size);line-height:var(--reader-line);font-family:var(--reader-font)}pre{white-space:pre-wrap;overflow-wrap:anywhere}#prose{margin:0}.prose-paragraph{display:block;white-space:pre-wrap}.prose-gap{display:block;white-space:pre;line-height:0;font-size:0;overflow:hidden}.document-name{display:block}.document-type{display:block;font-size:11px;color:var(--muted);margin-top:2px}.volume-heading{font-size:12px;font-weight:650;color:var(--muted);margin:20px 8px 4px}#count-details{font-size:12px;color:var(--muted)}#count-details>summary{padding:0;margin:0}#count-method{max-width:550px;padding:8px 0;line-height:1.7}#chapter-info>details{border-top:1px solid var(--line);margin-top:12px}#reading-options .menu-panel{left:auto;right:0;width:240px}#reading-options label{display:block}#locate,#refresh{border-color:transparent;background:transparent}#edit[aria-pressed="true"]{background:#e8eef5;border-color:#c4d2e2;color:#28547a}textarea{width:100%;min-height:62vh;resize:vertical;border:1px solid #c6d3e1;border-radius:8px;padding:20px;color:var(--ink);background:#fff;font:19px/1.9 'Songti SC','SimSun',serif}#text{padding:0;border:0;border-radius:0;outline-offset:5px}#text:focus{box-shadow:0 0 0 3px #335f8610}#cover{display:block;max-width:100%;max-height:75vh;margin:auto}
 .navigation-mode{display:flex;gap:4px;flex-wrap:wrap;margin:14px 0}.navigation-mode button{font-size:12px}.navigation-mode [aria-pressed="true"]{background:#e8eef5;border-color:#c4d2e2;color:#28547a}#locate{border-color:transparent;color:var(--muted)}#search,#full-query,#book-select{width:100%;max-width:100%;padding:9px;border:1px solid var(--line);border-radius:7px;background:white}.pager{display:flex;gap:8px;margin:12px 0 4px}.pager button{font-size:12px}#range{font-size:11px;color:var(--muted);margin:6px 0 18px}.document{display:block;width:100%;text-align:left;margin:4px 0;padding:9px 10px;border:1px solid transparent;border-radius:7px;background:transparent;overflow-wrap:anywhere;font-size:12px}.selected{background:#e6eef7!important;border-color:#d1dfef;color:#244f77;font-weight:600}.dirty:after{content:' · 未保存';color:#9b582e}#list>details{padding-bottom:8px;border-bottom:1px solid #e8edf2}#list>details>summary{font-size:12px;line-height:1.8;color:#43546a}#directory-warning{font-size:12px;color:#936333;overflow-wrap:anywhere}#pending-box{border:1px solid #e8d6ad;border-radius:8px;padding:10px;margin-bottom:14px;background:#fffaf0}#pending-count{font-size:12px}#pending-list{max-height:180px;overflow:auto}#search-results small{display:block;font-size:12px;color:var(--muted);margin-top:6px}#search-status,#book-hint{white-space:pre-wrap;font:12px/1.7 system-ui}
 aside h3{margin:0 0 20px;font-size:13px;font-weight:650}#chapter-info{font:13px/1.9 system-ui;white-space:pre-wrap}#chapter-info h4{font-size:11px;color:var(--muted);font-weight:500;margin:22px 0 5px}#chapter-info h4:first-child{margin-top:0}#chapter-info p{margin:0 0 12px}#version-details,#adoption-help{border-top:1px solid var(--line);margin-top:22px;font-size:12px}#detail,#path{font:12px/1.8 system-ui;overflow-wrap:anywhere;white-space:pre-wrap}#reading-options{font-size:12px;color:var(--muted)}#reading-options>summary{margin:0}#reading-options label{display:inline-block;margin:8px 12px 8px 0}#reading-options select{font:inherit}
-#formatted{overflow-wrap:anywhere}#formatted h1{font-size:1.35em}#formatted h2{font-size:1.18em}#formatted h3{font-size:1.05em}#formatted pre{font:14px/1.6 monospace;background:#f5f7fa;padding:12px}#formatted code{font-size:.85em;background:#f1f4f8}#formatted table{border-collapse:collapse;font:14px/1.7 system-ui;width:100%}#formatted td,#formatted th{border:1px solid var(--line);padding:8px;text-align:left}.table-scroll{overflow:auto}
+#formatted{overflow-wrap:anywhere}#formatted h1{font-size:1.35em}#formatted h2{font-size:1.18em}#formatted h3{font-size:1.05em}#formatted pre{font:14px/1.6 monospace;background:#f5f7fa;padding:12px}#formatted code{font-size:.85em;background:#f1f4f8}#formatted table{border-collapse:collapse;font:14px/1.7 system-ui;width:100%}#formatted td,#formatted th{border:1px solid var(--line);padding:8px;text-align:left}.table-scroll{overflow:auto}.markdown-image{display:block;margin:12px 0}.markdown-image img{display:block;max-width:100%;max-height:75vh;height:auto}.markdown-image>[role="status"]{font:13px/1.6 system-ui;color:var(--muted)}
 #review-task-box{padding:18px;background:#eef4fa;border-radius:10px;margin:20px 0;scroll-margin-top:85px}#review-prompt{min-height:220px;font:13px/1.8 system-ui}#review-findings{font:13px/1.6 system-ui;color:#8a392b}.comparison{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.comparison section{min-width:0}.comparison h3{font-size:12px;color:var(--muted)}.comparison pre{font:15px/1.9 var(--reader-font);background:#f7f8fa;padding:12px;border-radius:8px}.diff-line{display:block;white-space:pre-wrap;min-height:1em;scroll-margin-top:135px}.diff-line.removed{background:#ffe3df;color:#882f26}.diff-line.added{background:#ddf4e4;color:#215b36}.diff-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:sticky;top:30px;background:white;z-index:3;padding:10px 0;font-size:12px}.diff-tools button{font-size:12px}#compare-label{font-size:12px;color:var(--muted)}.comparing #reading-options,.comparing #word-count,.comparing #history-note,.comparing #edit,.comparing #source-view{display:none}
 .context-closed .desk,.focus-reading .desk{grid-template-columns:var(--nav-width,236px) minmax(0,1fr)}.context-closed aside,.focus-reading aside{display:none}.focus-reading #document-body{max-width:760px}#panel-dismiss,#refresh-compact,.panel-close{display:none}
 #match-tools{position:sticky;top:40px;background:white;padding:10px 0;z-index:3;display:flex;flex-wrap:wrap;gap:8px;align-items:center}#match-query{font:12px/1.7 system-ui}#match-text mark{background:#fff1a6;scroll-margin-top:150px}#match-text mark.current-match{background:#ffc66b;outline:2px solid #a85813}

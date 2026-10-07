@@ -125,5 +125,5 @@
       "scope": "Conservative upstream entry-only comparison for content review of a complete chapter with an explicit conflict and reader-payoff critique. Candidate includes shared and review entries, mandatory content-review, triggered Chinese conflict/payoff guidance, and the chapter length/count reference used for content constraints. Entire reference files are counted even when only their applicable sections are needed. Manuscripts, project-state, platform-specific checks, tools and historical revision references are excluded. Candidate includes the punctuation reference used in manuscript delivery and format review."
     }
   ],
-  "report_path": "benchmarks/results/v0.6.11/tokens.json"
+  "report_path": "benchmarks/results/v0.6.12/tokens.json"
 }

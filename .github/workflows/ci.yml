@@ -33,6 +33,8 @@ jobs:
         run: python -u -B -X utf8 -m unittest discover -s tests -v
       - name: Build the complete skill ZIP
         run: python -B -X utf8 scripts/package.py
+      - name: Build the Claude Desktop skill ZIP
+        run: python -B -X utf8 scripts/package_claude.py
       - name: Exercise the local CLI workflow
         run: python -B -X utf8 scripts/smoke.py --output dist/ci-smoke.json
       - name: Exercise synthetic Chinese transactions

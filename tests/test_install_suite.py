@@ -95,7 +95,7 @@ class SuiteInstallTests(unittest.TestCase):
         package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(package)
         self.assertEqual(installer.SUITE_FILES, package.SUITE_FILES)
-        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True), ("0.6.3", 39, True), ("0.6.4", 39, True), ("0.6.5", 40, True), ("0.6.6", 40, True), ("0.6.7", 40, True), ("0.6.8", 40, True), ("0.6.9", 44, True), ("0.6.10", 45, True), ("0.6.11", 49, True)):
+        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True), ("0.6.3", 39, True), ("0.6.4", 39, True), ("0.6.5", 40, True), ("0.6.6", 40, True), ("0.6.7", 40, True), ("0.6.8", 40, True), ("0.6.9", 44, True), ("0.6.10", 45, True), ("0.6.11", 49, True), ("0.6.12", 49, True)):
             with self.subTest(version=version):
                 files = installer.suite_files(version)
                 self.assertEqual(installer.skill_names(version), package.skill_names(version))
@@ -106,15 +106,17 @@ class SuiteInstallTests(unittest.TestCase):
         self.assertEqual(installer.suite_files("0.6.8"), installer.SUITE_FILES_V065)
         self.assertEqual(len(installer.SUITE_FILES_V069), 44)
         self.assertEqual(installer.suite_files("0.6.9"), installer.SUITE_FILES_V069)
-        self.assertEqual(installer.SUITE_FILES, installer.SUITE_FILES_V0611)
-        self.assertEqual(installer.SKILL_NAMES, installer.SKILL_NAMES_V0611)
+        self.assertEqual(installer.SUITE_FILES, installer.SUITE_FILES_V0612)
+        self.assertEqual(installer.SUITE_FILES_V0612, installer.SUITE_FILES_V0611)
+        self.assertEqual(installer.SKILL_NAMES, installer.SKILL_NAMES_V0612)
+        self.assertEqual(installer.SKILL_NAMES_V0612, installer.SKILL_NAMES_V0611)
         self.assertEqual(set(installer.SUITE_FILES_V0611) - set(installer.SUITE_FILES_V0610), {
             "story-skill-plan/references/blurb.md",
             "story-skill-research/references/reader-validation.md",
             "story-skill-write/references/punctuation.md",
             "story-skill/scripts/story_punctuation.py",
         })
-        for version in ("0.5.11", "0.6.12", "0.6.99"):
+        for version in ("0.5.11", "0.6.13", "0.6.99"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 installer.suite_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
@@ -155,6 +157,40 @@ class SuiteInstallTests(unittest.TestCase):
             self.assertEqual(installer.inventory(backup / name), before[name])
             self.assertEqual(installer.inventory(self.target(name)), installer.inventory(self.source / name))
         self.assertEqual(self.install(True)["status"], "unchanged")
+
+    def test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup(self):
+        runtime = self.source / "story-skill/scripts/story.py"
+        previous = b'VERSION = "0.6.11"\n'
+        current = b'VERSION = "0.6.12"\r\n'
+        for host in installer.HOST_DIRECTORIES:
+            for scope in ("project", "user"):
+                with self.subTest(host=host, scope=scope):
+                    root = self.root / (host + "-" + scope)
+                    root.mkdir()
+                    runtime.write_bytes(previous)
+                    installer.install(root, False, self.source, host=host, scope=scope)
+                    parent = root / installer.host_directory(host, scope)
+                    targets = parent / "skills"
+                    before = {name: installer.inventory(targets / name)
+                              for name in installer.SKILL_NAMES_V0611}
+                    runtime.write_bytes(current)
+                    result = installer.install(root, True, self.source, host=host, scope=scope)
+                    self.assertEqual(result["status"], "updated")
+                    self.assertEqual(result["files"], 49)
+                    self.assertEqual(result["skills"], list(installer.SKILL_NAMES_V0612))
+                    self.assertEqual(result["changed_skills"], ["story-skill"])
+                    backup = Path(result["backup"])
+                    self.assertEqual(backup.parent, (parent / ".story-skill-backups").resolve())
+                    self.assertEqual(installer.inventory(backup / "story-skill"), before["story-skill"])
+                    self.assertEqual((backup / "story-skill/scripts/story.py").read_bytes(), previous)
+                    self.assertEqual((targets / "story-skill/scripts/story.py").read_bytes(), current)
+                    for name in installer.SKILL_NAMES_V0612:
+                        self.assertEqual(installer.inventory(targets / name),
+                                         installer.inventory(self.source / name))
+                    self.assertEqual(installer.install(root, True, self.source, host=host, scope=scope)["status"],
+                                     "unchanged")
+        self.assertEqual(self.book.read_text(encoding="utf-8"), "不能改动的小说正文")
+        self.assertEqual(self.other.read_text(encoding="utf-8"), "其他技能")
 
     def test_update_from_v064_adds_qimao_reference_and_keeps_old_backup(self):
         for relative in set(installer.SUITE_FILES) - set(installer.SUITE_FILES_V065):
@@ -285,7 +321,7 @@ class SuiteInstallTests(unittest.TestCase):
 
     def test_unknown_suite_version_is_rejected_before_writing_targets(self):
         runtime = self.source / "story-skill/scripts/story.py"
-        for version in ("0.6.00", "0.6.12", "0.6.99", "0.7.0", "1.0.0"):
+        for version in ("0.6.00", "0.6.13", "0.6.99", "0.7.0", "1.0.0"):
             with self.subTest(version=version):
                 runtime.write_text(f'VERSION = "{version}"\n', encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "no reviewed suite layout"):

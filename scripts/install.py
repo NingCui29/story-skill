@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install the complete Story Skill suite into one project's .agents/skills directory."""
+"""Install the complete Story Skill suite for Codex, Claude Code, or Antigravity."""
 from __future__ import annotations
 
 import argparse
@@ -128,11 +128,27 @@ SUITE_FILES_V0611 = tuple(sorted((*SUITE_FILES_V0610,
     "story-skill/scripts/story_punctuation.py",
 )))
 SKILL_NAMES_V0611 = SKILL_NAMES_V0610
+SUITE_FILES_V0612 = SUITE_FILES_V0611
+SKILL_NAMES_V0612 = SKILL_NAMES_V0611
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0611
-SUITE_FILES = SUITE_FILES_V0611
+SKILL_NAMES = SKILL_NAMES_V0612
+SUITE_FILES = SUITE_FILES_V0612
 MARKER = ".story-skill-install.json"
+HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
+                    "antigravity": ".agents", "antigravity-cli": ".agents"}
+USER_HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
+                        "antigravity": ".gemini/config", "antigravity-cli": ".gemini/antigravity-cli"}
+
+
+def host_directory(host, scope="project"):
+    if scope not in ("project", "user"):
+        raise ValueError(f"Unsupported installation scope: {scope}")
+    directories = USER_HOST_DIRECTORIES if scope == "user" else HOST_DIRECTORIES
+    try:
+        return directories[host]
+    except (KeyError, TypeError) as error:
+        raise ValueError(f"Unsupported installation host: {host}") from error
 
 
 def suite_files(version):
@@ -148,6 +164,8 @@ def suite_files(version):
         return SUITE_FILES_V0610
     if version == "0.6.11":
         return SUITE_FILES_V0611
+    if version == "0.6.12":
+        return SUITE_FILES_V0612
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 
@@ -165,6 +183,8 @@ def skill_names(version):
         return SKILL_NAMES_V0610
     if version == "0.6.11":
         return SKILL_NAMES_V0611
+    if version == "0.6.12":
+        return SKILL_NAMES_V0612
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 
@@ -219,9 +239,9 @@ def inventory(directory):
 
 
 @contextmanager
-def installation_lock(project):
+def installation_lock(project, *, host="codex", scope="project"):
     """The OS releases this lock on process exit; the empty lock file may remain."""
-    lock = checked(project, ".agents/skills/.story-skill-install.lock")
+    lock = checked(project, host_directory(host, scope) + "/skills/.story-skill-install.lock")
     lock.parent.mkdir(parents=True, exist_ok=True)
     flags = os.O_RDWR | os.O_CREAT | getattr(os, "O_NOFOLLOW", 0)
     fd = os.open(lock, flags, 0o600)
@@ -276,8 +296,9 @@ def validate_stage(source, stage, files, manifest):
         raise ValueError("Staged package differs from its manifest; installation was not published")
 
 
-def validate_omitted_targets(project, names):
-    parent = checked(project, ".agents/skills")
+def validate_omitted_targets(project, names, *, host="codex", scope="project"):
+    directory = host_directory(host, scope)
+    parent = checked(project, directory + "/skills")
     if parent.is_dir():
         groups = {}
         suffixes = ("plan", "write", "analyze", "review", "research", "cover", "publish")
@@ -315,7 +336,7 @@ def validate_omitted_targets(project, names):
     for name in SKILL_NAMES:
         if name in names:
             continue
-        target = checked(project, ".agents/skills/" + name)
+        target = checked(project, directory + "/skills/" + name)
         if os.path.lexists(target):
             raise ValueError(f"Source version would omit existing suite skill: {name}; "
                              "refusing a mixed-version installation; keep the complete installed suite")
@@ -356,15 +377,16 @@ def clean_stage(stage, parent):
     shutil.rmtree(stage)
 
 
-def install_suite_locked(project, source, files, update):
-    parent = checked(project, ".agents/skills")
+def install_suite_locked(project, source, files, update, *, host="codex", scope="project"):
+    directory = host_directory(host, scope)
+    parent = checked(project, directory + "/skills")
     names = tuple(files)
-    validate_omitted_targets(project, names)
-    targets = {name: checked(project, ".agents/skills/" + name) for name in names}
+    validate_omitted_targets(project, names, host=host, scope=scope)
+    targets = {name: checked(project, directory + "/skills/" + name) for name in names}
     originals = {name: managed_snapshot(path) for name, path in targets.items()}
     changed = [name for name in names if originals[name] is None or files[name] != originals[name]["files"]]
     if not changed:
-        return {"status": "unchanged", "path": str(parent), "skills": list(names)}
+        return {"status": "unchanged", "host": host, "scope": scope, "path": str(parent), "skills": list(names)}
     if any(originals.values()) and not update:
         raise ValueError("A managed version exists; use --update for a reviewed suite replacement")
     stage = Path(tempfile.mkdtemp(prefix=".story-skill-stage-", dir=parent))
@@ -374,7 +396,7 @@ def install_suite_locked(project, source, files, update):
     preserve_stage = False
 
     def validate_all():
-        validate_omitted_targets(project, names)
+        validate_omitted_targets(project, names, host=host, scope=scope)
         if suite_inventory(source) != files:
             raise ValueError("Source suite changed during installation; retry with a stable source")
         for skill in changed:
@@ -401,12 +423,12 @@ def install_suite_locked(project, source, files, update):
             if managed_snapshot(targets[name]) != originals[name]:
                 raise ValueError(f"Installed skill changed during staging: {name}")
         if any(originals[name] for name in changed):
-            backup = checked(project, f".agents/.story-skill-backups/{uuid.uuid4().hex}")
+            backup = checked(project, f"{directory}/.story-skill-backups/{uuid.uuid4().hex}")
             backup.mkdir(parents=True)
         try:
             for name in changed:
                 if originals[name] is not None:
-                    move_directory(checked(project, ".agents/skills/" + name), backup / name)
+                    move_directory(checked(project, directory + "/skills/" + name), backup / name)
                     moved.append(name)
                     if managed_snapshot(backup / name) != originals[name]:
                         raise ValueError(f"Installed skill changed while being moved: {name}")
@@ -417,14 +439,14 @@ def install_suite_locked(project, source, files, update):
                 for prior in published:
                     if managed_snapshot(targets[prior]) != expected[prior]:
                         raise ValueError(f"Published skill changed during suite installation: {prior}")
-                move_directory(stage / name, checked(project, ".agents/skills/" + name))
+                move_directory(stage / name, checked(project, directory + "/skills/" + name))
                 published.append(name)
                 if managed_snapshot(targets[name]) != expected[name]:
                     raise ValueError(f"Published installation differs from verified skill: {name}")
             for name in names:
                 if managed_snapshot(targets[name]) != expected.get(name, originals[name]):
                     raise ValueError(f"Installed suite changed before completion: {name}")
-            validate_omitted_targets(project, names)
+            validate_omitted_targets(project, names, host=host, scope=scope)
         except BaseException as error:
             recovery_errors = []
             # Only withdraw our still-unchanged output. External edits are never deleted.
@@ -432,7 +454,7 @@ def install_suite_locked(project, source, files, update):
                 try:
                     if managed_snapshot(targets[name]) != expected[name]:
                         raise ValueError("Published skill now has external edits")
-                    move_directory(checked(project, ".agents/skills/" + name), stage / name)
+                    move_directory(checked(project, directory + "/skills/" + name), stage / name)
                     try:
                         if managed_snapshot(stage / name) != expected[name]:
                             raise ValueError("Withdrawn skill changed while being moved")
@@ -443,7 +465,7 @@ def install_suite_locked(project, source, files, update):
                     recovery_errors.append(f"{name}: {recovery_error}")
             for name in reversed(moved):
                 try:
-                    move_directory(backup / name, checked(project, ".agents/skills/" + name))
+                    move_directory(backup / name, checked(project, directory + "/skills/" + name))
                 except (OSError, ValueError) as recovery_error:
                     recovery_errors.append(f"{name}: {recovery_error}")
             if backup is not None and not any(backup.iterdir()):
@@ -456,13 +478,15 @@ def install_suite_locked(project, source, files, update):
     finally:
         if not preserve_stage:
             clean_stage(stage, parent)
-    return {"status": "updated" if any(originals.values()) else "installed", "path": str(parent),
+    return {"status": "updated" if any(originals.values()) else "installed", "host": host,
+            "scope": scope, "path": str(parent),
             "skills": list(names), "changed_skills": changed,
             "backup": str(backup) if backup is not None else None,
             "files": sum(len(value) for value in files.values())}
 
 
-def install(project, update=False, source=SOURCE):
+def install(project, update=False, source=SOURCE, *, host="codex", scope="project"):
+    directory = host_directory(host, scope)
     project = Path(project).expanduser().resolve()
     source = Path(source).expanduser().absolute()
     if linked(source):
@@ -473,23 +497,31 @@ def install(project, update=False, source=SOURCE):
             raise ValueError("A full supported suite is required")
         source = source.parent
     files = suite_inventory(source)
-    target = checked(project, ".agents/skills")
+    target = checked(project, directory + "/skills")
     if target == source:
-        validate_omitted_targets(project, files)
-        return {"status": "already_in_place", "path": str(target), "skills": list(files)}
-    with installation_lock(project):
-        return install_suite_locked(project, source, files, update)
+        validate_omitted_targets(project, files, host=host, scope=scope)
+        return {"status": "already_in_place", "host": host, "scope": scope,
+                "path": str(target), "skills": list(files)}
+    if target.resolve().is_relative_to(source):
+        raise ValueError("Installation target must be outside the source directory")
+    with installation_lock(project, host=host, scope=scope):
+        return install_suite_locked(project, source, files, update, host=host, scope=scope)
 
 
 def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--project", required=True, help="Target writing project; no global configuration is changed")
+    p.add_argument("--host", choices=tuple(HOST_DIRECTORIES), default="codex", help="Skill host (default: codex)")
+    destination = p.add_mutually_exclusive_group(required=True)
+    destination.add_argument("--project", help="Install into this project's host-specific skills directory")
+    destination.add_argument("--user", action="store_true", help="Install into the current user's host-specific skills directory")
     p.add_argument("--update", action="store_true", help="Replace an unchanged managed installation; retain backup")
     args = p.parse_args()
     try:
-        print(json.dumps(install(args.project, args.update), ensure_ascii=False))
+        project = Path.home() if args.user else args.project
+        scope = "user" if args.user else "project"
+        print(json.dumps(install(project, args.update, host=args.host, scope=scope), ensure_ascii=False))
         return 0
     except (OSError, ValueError) as error:
         print(json.dumps({"ok": False, "error": str(error)}, ensure_ascii=False))

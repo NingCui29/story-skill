@@ -21,6 +21,7 @@ build/
 
 # Project-local installed skill copies; canonical sources live in /skills/.
 /.agents/skills/
+/.claude/skills/
 
 # Local story state and recovery artifacts
 # Author manuscripts are local; engineering evidence may be versioned.

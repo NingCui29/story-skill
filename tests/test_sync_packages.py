@@ -171,7 +171,7 @@ class PackageSyncTests(unittest.TestCase):
         with tarfile.open(archive, "w:gz") as bundle:
             for name in (sync.package_npm.payload_files(version) if names is None else names):
                 raw = (root / name).read_bytes()
-                if version != "0.6.11" and name.endswith("/SKILL.md"):
+                if version not in ("0.6.11", "0.6.12") and name.endswith("/SKILL.md"):
                     # Historical fixtures cannot contain links added to current source rules.
                     raw = b"# Historical layout fixture\n[shared runtime](../story-skill/scripts/story.py)\n"
                 if name == "story-skill/scripts/story.py":
@@ -251,6 +251,25 @@ class PackageSyncTests(unittest.TestCase):
             result = sync.runtime_smoke(archive, "0.6.11")
         self.assertEqual(result["skill_files"], 49)
         self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES_V0611))
+
+    def test_runtime_smoke_current_v0612_checks_reader_validation_punctuation_and_all_49_files(self):
+        archive = self.smoke_archive("0.6.12")
+        results = [SimpleNamespace(returncode=0, stdout="0.6.12\n"), SimpleNamespace(returncode=0, stdout="help"),
+                   SimpleNamespace(returncode=0, stdout="{}"), SimpleNamespace(returncode=0, stdout='{"last_chapter":0}')]
+
+        def execute(arguments, **kwargs):
+            suite = Path(arguments[4]).parents[2]
+            self.assertEqual({p.relative_to(suite).as_posix() for p in suite.rglob("*") if p.is_file()},
+                             set(sync.package_npm.payload_files("0.6.12")))
+            self.assertTrue((suite / "story-skill-research/references/reader-validation.md").is_file())
+            self.assertTrue((suite / "story-skill/scripts/story_punctuation.py").is_file())
+            self.assertTrue((suite / "story-skill-write/references/punctuation.md").is_file())
+            return results.pop(0)
+
+        with patch.object(sync.subprocess, "run", side_effect=execute):
+            result = sync.runtime_smoke(archive, "0.6.12")
+        self.assertEqual(result["skill_files"], 49)
+        self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES_V0612))
 
     def test_runtime_smoke_preserves_published_v060_38_file_contract(self):
         archive = self.smoke_archive("0.6.0")

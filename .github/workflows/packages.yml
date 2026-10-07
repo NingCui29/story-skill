@@ -9,7 +9,7 @@ on:
       tag:
         description: Published stable Release tag to synchronize
         required: true
-        default: v0.6.11
+        default: v0.6.12
         type: string
 
 permissions:
@@ -37,8 +37,11 @@ jobs:
           node-version: '24'
       - name: Validate package tooling
         run: |
-          python -B -X utf8 -m unittest discover -s tests -p test_package_npm.py
+          python -B -X utf8 -m unittest discover -s tests -p 'test_package*.py'
           python -B -X utf8 -m unittest discover -s tests -p test_sync_packages.py
+      - name: Verify Claude Desktop skill bundle
+        run: |
+          python -B -X utf8 scripts/package_claude.py --output "$RUNNER_TEMP/story-skill-claude-desktop.zip"
       - name: Publish and verify the Release payload
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

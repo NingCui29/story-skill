@@ -125,10 +125,12 @@ SUITE_FILES_V0611 = tuple(sorted((*SUITE_FILES_V0610,
     "story-skill/scripts/story_punctuation.py",
 )))
 SKILL_NAMES_V0611 = SKILL_NAMES_V0610
+SUITE_FILES_V0612 = SUITE_FILES_V0611
+SKILL_NAMES_V0612 = SKILL_NAMES_V0611
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0611
-SUITE_FILES = SUITE_FILES_V0611
+SKILL_NAMES = SKILL_NAMES_V0612
+SUITE_FILES = SUITE_FILES_V0612
 
 
 def suite_files(version):
@@ -145,6 +147,8 @@ def suite_files(version):
         return SUITE_FILES_V0610
     if version == "0.6.11":
         return SUITE_FILES_V0611
+    if version == "0.6.12":
+        return SUITE_FILES_V0612
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 
@@ -162,6 +166,8 @@ def skill_names(version):
         return SKILL_NAMES_V0610
     if version == "0.6.11":
         return SKILL_NAMES_V0611
+    if version == "0.6.12":
+        return SKILL_NAMES_V0612
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 

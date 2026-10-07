@@ -1,0 +1,5 @@
+{
+  "repository": "https://github.com/NingCui29/story-skill",
+  "description": "面向中文小说创作的 Agent Skills，适配 Codex、Claude Code、Claude 桌面版与 Antigravity。覆盖选题调研、大纲规划、正文续写、审稿修订、封面与发布准备，自动配套章节作者有话说和配图，内置本地写作工作台。",
+  "verified": true
+}

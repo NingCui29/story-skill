@@ -2,15 +2,17 @@
 
 让中文小说从一个想法，走到能持续修改、续写和交付的书稿。
 
-Story Skill 是供写作助手使用的八个技能，涵盖拆书、开书、书名与简介优化、大纲、正文、审稿、调研、封面和投稿材料准备。每本书独立保存，三栏工作台让你直接阅读、比较版本、修改并保存候选稿。
+Story Skill 是供 Claude 桌面版、Claude Code、Codex、Google Antigravity 等写作助手使用的小说技能，涵盖拆书、开书、书名与简介优化、大纲、正文、审稿、调研、封面和投稿材料准备。源码按八个技能分工；桌面导入包通过一个总入口按需读取这些流程。每本书独立保存，三栏本机工作台让你直接阅读、比较版本、修改并保存候选稿。
 
-**本版：v0.6.11 · Python 3.10+ · 支持长篇与短篇**
+**本版：v0.6.12 · Python 3.10+ · 支持长篇与短篇**
 
-本版包含八个技能、49 个载荷文件，加入独立书架、作品切换、本地写作状态和 macOS 桌面客户端，以及选题验证、简介、标点与作者附言配图规则。[发布记录](docs/releases/v0.6.11.md)分别记录源码、跨平台检查、Release 附件与 Packages 的实际状态。安装或升级按 [INSTALL.md](INSTALL.md) 核对。
+本版包含八个技能、49 个载荷文件，新增 Claude 桌面导入包、Claude Code 与 Antigravity 安装入口，以及每章自动作者有话说和配图交付。[发布记录](docs/releases/v0.6.12.md)分别记录源码、跨平台检查、Release 附件与 Packages 的实际状态。安装或升级按 [INSTALL.md](INSTALL.md) 核对。
 
-macOS 客户端 `0.1.0` 作为独立 Intel 实验附件提供，内含 Story Skill `0.6.11`；使用本地临时签名，未经 Apple 公证。已测平台及尚未验收的原生交互见[客户端说明](desktop/macos/README.md)。它不替代八技能安装，GitHub 发布也不会自动更新本机安装。
+各宿主复用同一套标准 `SKILL.md` 和共享运行时。本版还修复附言候选连续保存、中断恢复与图片引用解析问题。v0.6.12 发布核验正在进行；旧版 v0.6.11 附件保持不变。
 
-[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.11.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
+macOS 客户端 `0.1.1` 作为独立 Intel 实验附件提供，内含 Story Skill `0.6.12`；使用本地临时签名，未经 Apple 公证。已测平台及尚未验收的原生交互见[客户端说明](desktop/macos/README.md)。它不替代八技能安装，GitHub 发布也不会自动更新本机安装。
+
+[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.12.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
 
 ## 它能帮你做什么
 
@@ -24,11 +26,25 @@ macOS 客户端 `0.1.0` 作为独立 Intel 实验附件提供，内含 Story Ski
 | 在浏览器整理书稿 | 章节与材料导航、阅读、候选编辑、搜索与差异定位 |
 | 准备投稿 | 已审查正式章节的离线材料包；书名、简介、封面、分类、素材权利与 AI 使用逐项交接核对 |
 
-技能负责约束助手的工作方式，本地工具负责文件与状态；工作台本身不调用模型。联网调研、图像生成等能力由宿主应用提供。
+技能负责约束助手的工作方式，Python 工具负责会话可访问的文件与状态；本机工作台本身不调用模型。联网调研与浏览器操作取决于当前会话可用的工具；Claude 制作封面或附言配图需要用户已有的图像工具或 MCP，安装技能不会让模型自动获得生图能力。
 
 ## 安装升级
 
-向支持技能安装的助手发送：
+### Claude 桌面版
+
+从[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.12)下载专用导入包及校验文件，也可在本版源码根目录构建：
+
+```bash
+python3 -B -X utf8 scripts/package_claude.py
+```
+
+输出为 `dist/story-skill-claude-desktop-0.6.12.zip`。在 Claude 的 **Settings > Capabilities** 开启 **Code execution and file creation**，再到 **Customize > Skills**，点击 **+ → Create skill → Upload a skill**，上传这个包并启用 Story Skill。组织账号按管理员开放的能力操作。[官方导入说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+
+该包只有一个顶层 `story-skill/`，内含入口和完整八流程资源。同版 `story-skill-0.6.12.zip` 是八目录分发包，桌面导入请使用上面的专用包。导入后可直接说：“使用 Story Skill，帮我规划一本中文长篇，本轮不写正文。”书稿需放在当前会话能读取和保存的位置；普通聊天中的文件与代码环境不等于作者电脑，完整书目录应下载备份。Cowork 或新的统一任务界面只按已开放的文件权限使用，详细边界见 [安装指引](INSTALL.md#claude-桌面版导入单技能包)。
+
+### Codex 与 Claude Code
+
+在 Codex 中，可向支持技能安装的助手发送：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill
@@ -36,11 +52,36 @@ $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.
 
 按照 [安装指引](INSTALL.md) 核对固定标签、下载摘要、备份与八个技能目录。安装完成后，发送 `$story-skill` 加上你的需求即可开始。
 
+Claude Code 使用当前仓库源码时，在仓库根目录运行以下命令，将八个技能安装到写作项目的 `.claude/skills/`：
+
+```bash
+python3 -B -X utf8 scripts/install.py --host claude-code --project "<写作项目根目录>"
+```
+
+要在本机各项目中使用，可改用 `--host claude-code --user`，安装到 `~/.claude/skills/`；两种范围任选一个。已有托管安装升级时加 `--update`，安装器保留备份并拒绝覆盖外部修改。完整参数和核验步骤见 [安装指引](INSTALL.md#从本仓库源码安装)。安装后在 Claude Code 中发送 `/story-skill` 加上需求，也可直接描述写作任务。[Claude Code 官方技能说明](https://code.claude.com/docs/en/skills)
+
+### Google Antigravity
+
+在当前仓库根目录运行项目安装：
+
+```bash
+python3 -B -X utf8 scripts/install.py --host antigravity --project "<写作项目根目录>"
+```
+
+Antigravity 2.0／IDE 与 CLI 的项目技能都使用 `.agents/skills/`；个人目录按实际应用区分：
+
+| 使用的应用 | `--host` | 改用 `--user` 时的个人目录 |
+|---|---|---|
+| Antigravity 2.0／IDE | `antigravity` | `~/.gemini/config/skills/` |
+| Antigravity CLI | `antigravity-cli` | `~/.gemini/antigravity-cli/skills/` |
+
+安装后直接描述任务；Antigravity 2.0 与 CLI 也可用 `/story-skill` 加需求。同一项目的 Codex 与 Antigravity 共享已核验的 `.agents/skills/` 套件，无需重复安装；使用 `--update` 会更新这份共同副本。旧 `.agent/skills/` 与 IDE 旧个人目录仍由宿主兼容识别，安装器不会自动迁移或覆盖它们；升级前核对是否存在旧副本。[Antigravity 官方技能说明](https://antigravity.google/docs/skills)
+
 克隆仓库、下载 ZIP 或 npm 包都不等于宿主已加载技能。GitHub 更新也不会自动升级本机安装；升级只更换技能文件，不自动改写小说。安装与发布是否完成，以对应版本的核验记录为准。
 
 ## 开始写书
 
-把 `<…>` 替换为实际路径和要求。不确定该用哪个技能时，用 `$story-skill` 描述目标。
+把 `<…>` 替换为当前会话可访问的实际路径和要求。不确定该用哪个技能时，用总入口描述目标。下列示例采用 Codex 的 `$story-skill…` 写法；Claude Code、Antigravity 2.0／CLI 将开头改为 `/story-skill…`；Claude 桌面版或 Antigravity IDE 可改为“使用 Story Skill”，再说明本轮是规划、写作还是审稿，其余需求照用。也可用普通自然语言提出任务，由助手按技能描述选择流程。
 
 ### 开一本新书
 
@@ -109,6 +150,8 @@ $story-skill-review 审查 <章节或候选稿绝对路径>。
 
 ## 使用工作台
 
+本节用于作者电脑上的 Python 运行时。桌面版普通聊天的代码执行环境、Cowork 的任务环境与作者电脑需分别核对；上传技能不会自动启动电脑上的服务，任务环境中的 `127.0.0.1` 也不能直接当作作者本机工作台。
+
 当前开发源码支持独立固定书架，不需要先指定一本书：
 
 ```bash
@@ -118,6 +161,8 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 服务启动成功后访问 `http://127.0.0.1:8765/`，可收藏该入口。在页面添加已初始化的书目录，再选择作品打开；书架会记住已添加的作品，各书编辑页在新标签打开，原页面的编辑保留。没有书也能先打开空书架。固定地址需要服务保持运行；停止书架不会停止已打开的各书编辑服务。已发布 v0.6.10 不含这个新入口，先核对实际安装命令。
 
 `--port` 可指定其他固定端口，端口占用时会明确报错，不自动改地址。`workbench-library-status` 检查书架服务，`workbench-library-stop --saved` 停止；它们都不需要 `--book`。
+
+书架登记默认保存在 `~/.codex/story-workbench/`，同一台机器上的 Codex、Claude Code 与 Antigravity 使用相同的默认运行时数据位置。需要指定其他位置时，为书架启动、状态与停止命令使用同一个 `--state-dir`；不会自动迁移已有登记。
 
 向助手发送：
 
@@ -163,11 +208,13 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-serve --boo
 
 已有服务且代码未过期时复用其地址。升级前先保存各页面编辑，再停止旧服务并重新启动。服务只监听本机回环地址；`workbench-export` 导出的是只读静态快照，不支持编辑，也不会自动更新。
 
+这些命令由当前会话所在机器运行，需要 Python 和书目录访问权限。Claude Code 在本机运行时可使用本机工作台；云端会话的 `127.0.0.1` 指向云端运行环境，不能当作作者电脑上的入口。个人技能目录也不会自动同步到云端，云端技能加载范围按 [Claude Code 官方说明](https://code.claude.com/docs/en/skills#use-skills-in-cowork-and-cloud-sessions) 核对。
+
 ## 写作与文件约定
 
 以人物欲望、选择和行动推动故事，关注情绪兑现与追读，同时保护因果和人物逻辑。不用办事流程、记录清单或作者解释代替场景。
 
-正文按语义分段，段间空一行，不手工缩进。换人发言默认换段，同一人物紧密相关的动作和短对白可以同段；不按屏幕行数强拆。正文不混入 Markdown 标记、评分、分析或创作过程说明。每个新写完整章节另配 [作者有话说](skills/story-skill-write/references/drama.md#作者有话说)，简短回应本章，不剧透、不计入正文字数；本地保存时与正文分开并一起交付。附言保持无标题的 `.md`，可按本章需要配图，图片文件与附言一并保存和交付。新写、续写、润色、排版和审校分别处理，硬性字数要求实际统计。
+正文按语义分段，段间空一行，不手工缩进。换人发言默认换段，同一人物紧密相关的动作和短对白可以同段；不按屏幕行数强拆。正文不混入 Markdown 标记、评分、分析或创作过程说明。每个完整章节正文完成后，自动交付 [作者有话说和一张配图](skills/story-skill-write/references/drama.md#作者有话说)，完整章候选和续写补完当前章同样执行，无需再次要求。附言简短回应本章，不剧透、不计入正文字数；落盘交付时另存无标题的 `.md`，引用旁边 `配图/` 子目录中的真实图片，纯对话交稿无需另建文件；正文、附言和图片一起交付，并在正文或保存回执后展示附言及配图。用户明确免除的项目按其要求处理；图片工具不可用或生成失败时说明缺图，不用提示词冒充成图。新写、续写、润色、排版和审校分别处理，硬性字数要求实际统计。
 
 总纲与分类答复先统一列出主角及关键人物的角色定位，再默认分别给齐番茄、七猫，其他本次要求或书内约定涉及的平台也列全；主投选择不缩减覆盖，只有明确限定本轮单平台时才收窄。各平台按自己的入口和原生栏目填写，标签依据真实内容与已核对选项选择。作品阶段按实际后台记录；分类逐栏区分拟选、后台已确认和待核对，经确认可选而留空的栏目标“不选”。当前 [七猫作品类型与标签表](skills/story-skill-plan/references/qimao-tags.md) 已在七猫中文网新建小说、新建短故事页核对男、女频分类及四栏标签；本次实测的普通分类分支弹窗逐栏要求 1～3 个，不推定覆盖所有分支。现实题材分支另有“仅选1个”的页面提示，但未保存表单的交互与该提示并不一致，最终创建限制尚未确认，规划时标为待核对。短篇完本还需以书名命名的全文合并文件、全文审查与封面；封面生成依赖可用的图像工具。
 
@@ -194,16 +241,18 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-serve --boo
 
 ## 八个技能入口
 
-| 技能 | 用途 |
+Codex 用 `$技能名`，Claude Code、Antigravity 2.0／CLI 用 `/技能名`，Antigravity IDE 可直接描述任务。目录安装时八个目录需同级完整。Claude 桌面包只启用一个 Story Skill 总入口，下表各流程作为内嵌资源按需读取，不要求八个独立命令。`agents/openai.yaml` 是 Codex 界面配置，其他宿主无需使用。
+
+| 技能名 | 用途 |
 |---|---|
-| `$story-skill` | 总入口、跨流程任务与工作台 |
-| `$story-skill-plan` | 开书、设定、大纲细纲、接入已有作品 |
-| `$story-skill-write` | 正文创作、续写、连载与短篇完本 |
-| `$story-skill-review` | 审稿、修改、排版与历史章节修订 |
-| `$story-skill-analyze` | 开篇点评、完整深读与分析续跑 |
-| `$story-skill-research` | 榜单、题材市场与素材查证 |
-| `$story-skill-cover` | 封面生成与修改 |
-| `$story-skill-publish` | 七猫、番茄离线投稿材料准备与复核 |
+| `story-skill` | 总入口、跨流程任务与工作台 |
+| `story-skill-plan` | 开书、设定、大纲细纲、接入已有作品 |
+| `story-skill-write` | 正文创作、续写、连载与短篇完本 |
+| `story-skill-review` | 审稿、修改、排版与历史章节修订 |
+| `story-skill-analyze` | 开篇点评、完整深读与分析续跑 |
+| `story-skill-research` | 榜单、题材市场与素材查证 |
+| `story-skill-cover` | 封面生成与修改 |
+| `story-skill-publish` | 七猫、番茄离线投稿材料准备与复核 |
 
 投稿准备使用已审查的正式章节；目标平台作品和账号标识已知时，可导出绑定该目标的材料包，并比较作者提供的草稿副本。未在平台建书或缺作品 ID 时，先核对现有稿件与待办，不填虚构 ID，也不宣称 ZIP 已可用。作者名／笔名按本书各平台分别记录，封面及交接材料使用对应署名；未明确同名时不跨平台沿用。交接按书名、平台署名、简介、封面、分类、素材权利与 AI 使用逐项列明已核和待核；这不自动代替全文内容审稿。**当前不执行平台上传、审核提交或定时发布**，最后由作者在平台后台操作。本地检查不等于平台审核通过，也不保证作品的市场表现。[投稿流程](docs/platform-publishing.md)
 

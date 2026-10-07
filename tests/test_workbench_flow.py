@@ -1,4 +1,5 @@
 """Chapter-centric author workflow: real state, candidate boundaries and UI utilities."""
+import base64
 import hashlib
 import json
 from pathlib import Path
@@ -7,6 +8,7 @@ import shutil
 import subprocess
 import unittest
 from unittest.mock import patch
+from urllib.parse import quote
 import test_workbench as base
 
 story = base.story
@@ -545,6 +547,242 @@ assert.ok(all.some(e=>e.tag==='table'));assert.ok(all.some(e=>e.tag==='h1'));ass
 const link=all.find(e=>e.tag==='a');link.onclick({preventDefault(){}});assert.equal(opened,'file:01_大纲细纲/第1章 细纲.md');assert.ok(!all.some(e=>e.href?.startsWith('javascript:')));
 """
         self.js(mock+source,test)
+
+    def markdown_js(self, documents, test):
+        script = self.script()
+        source = script[script.index('function inlineText'):script.index('function readingView')]
+        mock = r"""
+class E{constructor(tag){this.tag=tag;this.children=[];this.textContent='';this.style={};}append(...x){this.children.push(...x);}replaceChildren(...x){this.children=x;this.textContent='';}setAttribute(k,v){this[k]=v;}}
+const document={createElement:t=>new E(t),createTextNode:t=>({tag:'text',textContent:t})};
+const opened=[],openDoc=id=>opened.push(id),note=()=>{},requests=[];
+const call=async(action,payload)=>{assert.equal(action,'open');requests.push(payload.id);if(!documents[payload.id])throw Error('文件未列入本书材料目录。');return documents[payload.id];};
+const nodes=e=>[e,...(e.children||[]).flatMap(nodes)],shown=e=>nodes(e).map(x=>x.textContent||'').join(' ');
+async function flush(){for(let i=0;i<8;i++)await Promise.resolve();}
+"""
+        self.js('const documents=' + json.dumps(documents, ensure_ascii=False) + ';\n' + mock + source,
+                '(async()=>{\n' + test + '\n})().catch(e=>{console.error(e);process.exit(1);});')
+
+    def test_markdown_relative_images_load_book_data_and_keep_inline_text(self):
+        before = self.fixture.authoritative_state()
+        relative = '作者有话说/配图/第1章 中文配图.png'
+        image = self.root / relative
+        image.parent.mkdir(parents=True)
+        image.write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jYQAAAABJRU5ErkJggg=='))
+        doc = w._editor_document(self.root, 'file:' + relative)
+        self.markdown_js({doc['id']: doc}, r"""
+const root=new E('root');
+renderMarkdown(root,'正文 ![章节配图](配图/第1章 中文配图.png) **强调** `代码` [附言](第1章%20附言.md)','作者有话说/第1章 附言.md');
+await flush();
+assert.deepEqual(requests,['file:作者有话说/配图/第1章 中文配图.png']);
+const picture=nodes(root).find(e=>e.tag==='img');assert.ok(picture);assert.equal(picture.alt,'章节配图');assert.equal(picture.src,documents[requests[0]].image);
+assert.ok(nodes(root).some(e=>e.tag==='strong'&&e.textContent==='强调'));assert.ok(nodes(root).some(e=>e.tag==='code'&&e.textContent==='代码'));
+const link=nodes(root).find(e=>e.tag==='a');link.onclick({preventDefault(){}});assert.deepEqual(opened,['file:作者有话说/第1章 附言.md']);
+assert.ok(!shown(root).includes('!'));assert.ok(picture.src.startsWith('data:image/png;base64,'));
+""")
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_markdown_images_support_encoded_names_and_angle_paths(self):
+        relative_paths = ['作者有话说/配图/第1章 中文 #100%.png',
+                          '作者有话说/配图/第1章 中文(彩色).png']
+        documents = {}
+        for relative in relative_paths:
+            path = self.root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jYQAAAABJRU5ErkJggg=='))
+            doc = w._editor_document(self.root, 'file:' + relative)
+            documents[doc['id']] = doc
+        encoded = quote('配图/第1章 中文 #100%.png')
+        text = f'![编码配图]({encoded})\n\n![](<配图/第1章 中文(彩色).png>)'
+        self.markdown_js(documents, 'const text=' + json.dumps(text, ensure_ascii=False) + ';\n' + r"""
+const root=new E('root');renderMarkdown(root,text,'作者有话说/第1章 附言.md');await flush();
+assert.deepEqual(requests,['file:作者有话说/配图/第1章 中文 #100%.png','file:作者有话说/配图/第1章 中文(彩色).png']);
+const pictures=nodes(root).filter(e=>e.tag==='img');assert.equal(pictures.length,2);assert.equal(pictures[1].alt,'配图');
+for(let i=0;i<pictures.length;i++)assert.equal(pictures[i].src,documents[requests[i]].image);
+""")
+
+    def test_markdown_missing_nonimage_and_broken_image_have_visible_failures(self):
+        text_id = self.material('作者有话说/配图/说明.txt', '这是说明，不是图片。')
+        bad_image = self.root / '作者有话说/配图/损坏.png'
+        bad_image.write_bytes(b'not an image')
+        documents = {text_id: w._editor_document(self.root, text_id),
+                     'file:作者有话说/配图/损坏.png': w._editor_document(self.root, 'file:作者有话说/配图/损坏.png'),
+                     'file:作者有话说/配图/异常响应.png': {'image': 'https://example.com/untrusted.png'}}
+        self.markdown_js(documents, r"""
+const root=new E('root');renderMarkdown(root,'![缺图](配图/缺失.png)\n![非图片](配图/说明.txt)\n![损坏](配图/损坏.png)\n![异常响应](配图/异常响应.png)','作者有话说/第1章 附言.md');await flush();
+assert.equal(requests.length,4);assert.ok(shown(root).includes('文件未列入本书材料目录'));assert.ok(shown(root).includes('不是支持的图片'));
+const pictures=nodes(root).filter(e=>e.tag==='img');assert.equal(pictures.length,1);assert.ok(pictures[0].src.startsWith('data:image/png;base64,'));
+pictures[0].onerror();assert.ok(shown(root).includes('图片数据加载失败'));assert.equal(nodes(root).filter(e=>e.tag==='img').length,0);
+assert.ok(!nodes(root).some(e=>e.src?.startsWith('https:')));
+""")
+
+    def test_markdown_images_never_read_external_absolute_or_escaping_paths(self):
+        self.markdown_js({}, r"""
+const root=new E('root');
+renderMarkdown(root,'![远端](https://example.com/image.png)\n![网络](//example.com/image.png)\n![绝对路径](/private/image.png)\n![本机URL](file:///private/image.png)\n![数据URL](data:image/png;base64,aA==)\n![越界](../../image.png)\n![编码越界](..%2fimage.png)\n![编码错误](配图/%ZZ.png)','作者有话说/第1章 附言.md');await flush();
+assert.deepEqual(requests,[]);assert.equal(nodes(root).filter(e=>e.tag==='img').length,0);
+assert.ok(shown(root).includes('仅支持本书相对路径图片'));assert.ok(shown(root).includes('超出本书目录'));assert.ok(shown(root).includes('图片路径无法识别'));
+const linked=new E('root');renderMarkdown(linked,'![来源](配图/图片.png)',null);await flush();assert.deepEqual(requests,[]);assert.ok(shown(linked).includes('无法定位本书配图来源'));
+""")
+
+    def test_material_candidates_keep_original_markdown_image_directory(self):
+        source_path = '作者有话说/第一卷 雨夜/第1章 中文附言.md'
+        image_path = '作者有话说/第一卷 雨夜/配图/第1章 中文配图.png'
+        before = self.fixture.authoritative_state()
+        docid = self.material(source_path, '谢谢阅读。\n\n![章节配图](配图/第1章 中文配图.png)')
+        image = self.root / image_path
+        image.parent.mkdir(parents=True)
+        image.write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jYQAAAABJRU5ErkJggg=='))
+        original = (self.root / source_path).read_bytes()
+        doc = w._editor_document(self.root, docid)
+        self.assertEqual(doc['markdown_path'], source_path)
+        catalog = w._editor_catalog(self.root)
+        self.assertIn(docid, [row['id'] for row in catalog['files']])
+        self.assertIn('file:' + image_path, [row['id'] for row in catalog['files']])
+        for generation in range(2):
+            saved = self.save_copy(doc, doc['text'] + f'\n第{generation + 1}次补充。')
+            doc = w._editor_document(self.root, saved['id'])
+            self.assertTrue(doc['path'].startswith('.story/drafts/workbench/'))
+            self.assertFalse(doc['is_prose'])
+            self.assertEqual(doc['markdown_path'], source_path)
+        preview = w._editor_document(self.root, 'file:' + image_path)
+        script = self.script()
+        view = script[script.index('function readingView'):script.index('function showChapterInfo')]
+        self.markdown_js({preview['id']: preview}, 'const d=' + json.dumps({**doc, 'value': doc['text']}, ensure_ascii=False) + ';\n' + r"""
+const elements=new Map(),$=id=>{if(!elements.has(id))elements.set(id,new E(id));return elements.get(id);};
+const showChapterInfo=()=>{},scheduleMetrics=()=>{};
+""" + view + r"""
+readingView(d);await flush();assert.deepEqual(requests,['file:作者有话说/第一卷 雨夜/配图/第1章 中文配图.png']);
+assert.ok(nodes($('formatted')).some(e=>e.tag==='img'));
+""")
+        self.assertEqual((self.root / source_path).read_bytes(), original)
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_material_image_provenance_is_unavailable_for_missing_cyclic_or_unsafe_sources(self):
+        docid = self.material('作者有话说/第1章 中文附言.md', '![配图](配图/第1章.png)')
+        source = w._editor_document(self.root, docid)
+        saved = self.save_copy(source, source['text'] + '\n补充。')
+        metadata = self.root / (saved['path'] + '.meta.json')
+        original = json.loads(metadata.read_text(encoding='utf-8'))
+        before = self.fixture.authoritative_state()
+        for origin in ('file:作者有话说/已不存在.md', saved['id'], 'file:../../outside.md'):
+            with self.subTest(origin=origin):
+                metadata.write_text(json.dumps({**original, 'source': origin}), encoding='utf-8')
+                doc = w._editor_document(self.root, saved['id'])
+                self.assertIsNone(doc['markdown_path'])
+                self.markdown_js({}, 'const d=' + json.dumps(doc, ensure_ascii=False) + ';\n' + r"""
+const root=new E('root');renderMarkdown(root,d.text,d.markdown_path);await flush();
+assert.deepEqual(requests,[]);assert.ok(shown(root).includes('无法定位本书配图来源'));
+""")
+        metadata.write_text('{broken metadata', encoding='utf-8')
+        corrupted = w._editor_document(self.root, saved['id'])
+        self.assertIn('metadata_error', corrupted)
+        self.assertIsNone(corrupted['markdown_path'])
+        self.assertFalse(corrupted['editable'])
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_author_note_images_keep_existing_scan_and_safe_read_boundaries(self):
+        before = self.fixture.authoritative_state()
+        self.material('作者有话说/第一卷 雨夜/第1章 附言.md', '谢谢阅读。')
+        outside = self.root.parent / '外部图片.png'
+        outside.write_bytes(b'outside fixture, must not be read')
+        linked = self.root / '作者有话说/第一卷 雨夜/外部图片.png'
+        try:
+            linked.symlink_to(outside)
+        except OSError:
+            self.skipTest('Symlinks required for this boundary regression')
+        unrelated = self.root / '私人文件/图片.png'
+        unrelated.parent.mkdir()
+        unrelated.write_bytes(b'unrelated file')
+        catalog = w._editor_catalog(self.root)
+        ids = [row['id'] for row in catalog['files']]
+        self.assertNotIn('file:私人文件/图片.png', ids)
+        self.assertNotIn('file:作者有话说/第一卷 雨夜/外部图片.png', ids)
+        with self.assertRaises(story.StoryError):
+            w._editor_document(self.root, 'file:作者有话说/第一卷 雨夜/外部图片.png')
+        self.assertEqual(outside.read_bytes(), b'outside fixture, must not be read')
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_material_images_survive_long_candidate_save_history(self):
+        source_path = '作者有话说/第一卷 雨夜/第1章 长期附言.md'
+        docid = self.material(source_path, '谢谢阅读。\n\n![配图](配图/第1章.png)')
+        image_path = '作者有话说/第一卷 雨夜/配图/第1章.png'
+        image = self.root / image_path
+        image.parent.mkdir()
+        image.write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jYQAAAABJRU5ErkJggg=='))
+        original = (self.root / source_path).read_bytes()
+        before = self.fixture.authoritative_state()
+        doc = w._editor_document(self.root, docid)
+        for generation in range(1, 41):
+            with self.subTest(generation=generation):
+                saved = self.save_copy(doc, doc['text'] + f'\n第{generation}次补充。')
+                doc = w._editor_document(self.root, saved['id'])
+                self.assertEqual(doc['markdown_path'], source_path)
+                self.assertTrue(doc['editable'])
+                self.assertFalse(doc['is_prose'])
+                self.assertNotIn('metadata_error', doc)
+        self.assertTrue(w._editor_document(self.root, 'file:' + image_path)['image'].startswith('data:image/png;'))
+        self.assertEqual((self.root / source_path).read_bytes(), original)
+        self.assertEqual(before, self.fixture.authoritative_state())
+
+    def test_material_images_survive_pending_recovery_and_reject_invalid_records(self):
+        source_path = '作者有话说/第一卷 雨夜/第1章 恢复附言.md'
+        docid = self.material(source_path, '谢谢阅读。\n\n![配图](配图/第1章.png)')
+        image = self.root / '作者有话说/第一卷 雨夜/配图/第1章.png'
+        image.parent.mkdir()
+        image.write_bytes(base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jYQAAAABJRU5ErkJggg=='))
+        original = (self.root / source_path).read_bytes()
+        before = self.fixture.authoritative_state()
+        doc = w._editor_document(self.root, docid)
+        real_write = w.api.atomic_write
+
+        def interrupt_body(target, *args, **kwargs):
+            if Path(target).suffix == '.md' and '.story/drafts/workbench/' in Path(target).as_posix():
+                raise OSError('interrupted candidate body write')
+            return real_write(target, *args, **kwargs)
+
+        with patch.object(w.api, 'atomic_write', side_effect=interrupt_body), \
+                self.assertRaises(story.StoryError) as failure:
+            self.save_copy(doc, doc['text'] + '\n保存中断前的补充。')
+        self.assertEqual(failure.exception.code, 'workbench_partial_save')
+        pending_path = failure.exception.details['incomplete_path']
+        pending_id = 'pending:' + pending_path
+        doc = w._editor_document(self.root, pending_id)
+        self.assertEqual(doc['markdown_path'], source_path)
+        for generation in range(2):
+            saved = self.save_copy(doc, doc['text'] + f'\n恢复后第{generation + 1}次另存。')
+            doc = w._editor_document(self.root, saved['id'])
+            self.assertEqual(doc['markdown_path'], source_path)
+            self.assertEqual(doc['content_kind'], 'material')
+
+        pending_file = self.root / pending_path
+        record = json.loads(pending_file.read_text(encoding='utf-8'))
+        faults = {
+            'version': {**record, 'version': 99},
+            'content': {**record, 'text': '与原校验值不一致的记录'},
+            'cycle': {**record, 'meta': {**record['meta'], 'source': pending_id}},
+            'unsafe': {**record, 'meta': {**record['meta'], 'source': 'file:../../outside.md'}},
+            'prose': {**record, 'meta': {**record['meta'], 'content_kind': 'prose'}},
+        }
+        real_read = w._author_read
+
+        def book_only(read_root, relative, *args, **kwargs):
+            self.assertEqual(Path(read_root), self.root)
+            self.assertNotIn('..', Path(relative).parts)
+            return real_read(read_root, relative, *args, **kwargs)
+
+        with patch.object(w, '_author_read', side_effect=book_only):
+            for name, invalid in faults.items():
+                with self.subTest(fault=name):
+                    pending_file.write_text(json.dumps(invalid, ensure_ascii=False), encoding='utf-8')
+                    invalid_source = w._editor_document(self.root, saved['id'])
+                    self.assertIsNone(invalid_source['markdown_path'])
+                    self.assertEqual(invalid_source['text'], doc['text'])
+            pending_file.write_text(json.dumps(record, ensure_ascii=False), encoding='utf-8')
+            self.assertEqual(w._editor_document(self.root, saved['id'])['markdown_path'], source_path)
+            pending_file.unlink()
+            self.assertIsNone(w._editor_document(self.root, saved['id'])['markdown_path'])
+        self.assertEqual((self.root / source_path).read_bytes(), original)
+        self.assertEqual(before, self.fixture.authoritative_state())
 
     def save_copy(self, doc, text):
         return w._editor_save(self.root, {'id': doc['id'], 'text': text,

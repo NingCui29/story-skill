@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.11"
+VERSION = "0.6.12"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")

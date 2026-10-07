@@ -1,0 +1,19 @@
+{
+  "version": "0.6.12",
+  "artifacts": {
+    "story-skill-0.6.12.zip": {
+      "bytes": 361280,
+      "sha256": "45f6a70a269a8a36fc340f5e1853b0aebbcdeed481426b2b5a864945be58be75"
+    },
+    "story-skill-claude-desktop-0.6.12.zip": {
+      "bytes": 365277,
+      "sha256": "64f8e9891081b099ac0702bbe57ba21fe593f8ada8010de608aa9a48e928b27b"
+    },
+    "story-workbench-0.1.1-macos-x86_64.zip": {
+      "bytes": 26541059,
+      "sha256": "8663699f730b14459166581b7e93d229dddd00a6091c433757e3793c24090ca6"
+    }
+  },
+  "source_files": 49,
+  "claude_files": 51
+}

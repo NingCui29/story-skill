@@ -57,8 +57,8 @@ class PackageVersionTests(unittest.TestCase):
             self.assertEqual(output.read_bytes(), b"existing reviewed artifact")
 
     def test_manifest_is_bound_to_version_and_unknown_families_are_rejected(self):
-        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061, "0.6.5": package.SUITE_FILES_V065, "0.6.6": package.SUITE_FILES_V065, "0.6.7": package.SUITE_FILES_V065, "0.6.8": package.SUITE_FILES_V065, "0.6.9": package.SUITE_FILES_V069, "0.6.10": package.SUITE_FILES_V0610, "0.6.11": package.SUITE_FILES_V0611}
-        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061, "0.6.5": package.SKILL_NAMES_V061, "0.6.6": package.SKILL_NAMES_V061, "0.6.7": package.SKILL_NAMES_V061, "0.6.8": package.SKILL_NAMES_V061, "0.6.9": package.SKILL_NAMES_V069, "0.6.10": package.SKILL_NAMES_V0610, "0.6.11": package.SKILL_NAMES_V0611}
+        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061, "0.6.5": package.SUITE_FILES_V065, "0.6.6": package.SUITE_FILES_V065, "0.6.7": package.SUITE_FILES_V065, "0.6.8": package.SUITE_FILES_V065, "0.6.9": package.SUITE_FILES_V069, "0.6.10": package.SUITE_FILES_V0610, "0.6.11": package.SUITE_FILES_V0611, "0.6.12": package.SUITE_FILES_V0612}
+        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061, "0.6.5": package.SKILL_NAMES_V061, "0.6.6": package.SKILL_NAMES_V061, "0.6.7": package.SKILL_NAMES_V061, "0.6.8": package.SKILL_NAMES_V061, "0.6.9": package.SKILL_NAMES_V069, "0.6.10": package.SKILL_NAMES_V0610, "0.6.11": package.SKILL_NAMES_V0611, "0.6.12": package.SKILL_NAMES_V0612}
         for version, expected in layouts.items():
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 self.assertEqual(package.skill_names(version), skill_layouts[version])
@@ -76,8 +76,10 @@ class PackageVersionTests(unittest.TestCase):
         self.assertEqual(len(package.SUITE_FILES_V069), 44)
         self.assertEqual(package.suite_files("0.6.9"), package.SUITE_FILES_V069)
         self.assertEqual(len(package.SUITE_FILES), 49)
-        self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V0611)
-        self.assertEqual(package.SKILL_NAMES, package.SKILL_NAMES_V0611)
+        self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V0612)
+        self.assertEqual(package.SUITE_FILES_V0612, package.SUITE_FILES_V0611)
+        self.assertEqual(package.SKILL_NAMES, package.SKILL_NAMES_V0612)
+        self.assertEqual(package.SKILL_NAMES_V0612, package.SKILL_NAMES_V0611)
         self.assertEqual(len(package.SUITE_FILES_V0610), 45)
         self.assertEqual(set(package.SUITE_FILES_V0611) - set(package.SUITE_FILES_V0610), {
             "story-skill-plan/references/blurb.md",
@@ -95,7 +97,7 @@ class PackageVersionTests(unittest.TestCase):
             "story-skill-write/references/suspense-evidence.md",
         })
         self.assertIn("story-skill/scripts/story_workbench.py", package.SUITE_FILES)
-        for version in ("0.5.11", "0.6.00", "0.6.12", "0.6.99", "1.0.0", "2.4.6"):
+        for version in ("0.5.11", "0.6.00", "0.6.13", "0.6.99", "1.0.0", "2.4.6"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 package.suite_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
