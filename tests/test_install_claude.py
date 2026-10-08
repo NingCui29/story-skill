@@ -23,7 +23,7 @@ class ClaudeInstallTests(unittest.TestCase):
             path = self.source / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(("fixture: " + relative + "\n").encode("utf-8"))
-        (self.source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.11"\n')
+        (self.source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.14"\n')
         self.project = self.root / "中文项目"
         self.project.mkdir()
 

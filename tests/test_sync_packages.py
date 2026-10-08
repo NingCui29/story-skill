@@ -171,7 +171,7 @@ class PackageSyncTests(unittest.TestCase):
         with tarfile.open(archive, "w:gz") as bundle:
             for name in (sync.package_npm.payload_files(version) if names is None else names):
                 raw = (root / name).read_bytes()
-                if version not in ("0.6.11", "0.6.12") and name.endswith("/SKILL.md"):
+                if version != "0.6.14" and name.endswith("/SKILL.md"):
                     # Historical fixtures cannot contain links added to current source rules.
                     raw = b"# Historical layout fixture\n[shared runtime](../story-skill/scripts/story.py)\n"
                 if name == "story-skill/scripts/story.py":
@@ -197,7 +197,7 @@ class PackageSyncTests(unittest.TestCase):
         with patch.object(sync.subprocess, "run", side_effect=execute):
             result = sync.runtime_smoke(archive, "0.6.5")
         self.assertEqual(result["skill_files"], 40)
-        self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES))
+        self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES_V061))
         self.assertTrue(result["temporary_book_removed"])
 
     def test_runtime_smoke_published_v069_checks_all_44_files(self):
@@ -252,24 +252,34 @@ class PackageSyncTests(unittest.TestCase):
         self.assertEqual(result["skill_files"], 49)
         self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES_V0611))
 
-    def test_runtime_smoke_current_v0612_checks_reader_validation_punctuation_and_all_49_files(self):
-        archive = self.smoke_archive("0.6.12")
-        results = [SimpleNamespace(returncode=0, stdout="0.6.12\n"), SimpleNamespace(returncode=0, stdout="help"),
-                   SimpleNamespace(returncode=0, stdout="{}"), SimpleNamespace(returncode=0, stdout='{"last_chapter":0}')]
+    def test_runtime_smoke_v0612_v0613_and_current_v0614_preserve_versioned_file_layouts(self):
+        for version, count, skills in (("0.6.12", 49, sync.package_npm.SKILL_NAMES_V0612),
+                                       ("0.6.13", 50, sync.package_npm.SKILL_NAMES_V0613),
+                                       ("0.6.14", 51, sync.package_npm.SKILL_NAMES_V0614)):
+            with self.subTest(version=version):
+                archive = self.smoke_archive(version)
+                results = [SimpleNamespace(returncode=0, stdout=version + "\n"),
+                           SimpleNamespace(returncode=0, stdout="help"),
+                           SimpleNamespace(returncode=0, stdout="{}"),
+                           SimpleNamespace(returncode=0, stdout='{"last_chapter":0}')]
 
-        def execute(arguments, **kwargs):
-            suite = Path(arguments[4]).parents[2]
-            self.assertEqual({p.relative_to(suite).as_posix() for p in suite.rglob("*") if p.is_file()},
-                             set(sync.package_npm.payload_files("0.6.12")))
-            self.assertTrue((suite / "story-skill-research/references/reader-validation.md").is_file())
-            self.assertTrue((suite / "story-skill/scripts/story_punctuation.py").is_file())
-            self.assertTrue((suite / "story-skill-write/references/punctuation.md").is_file())
-            return results.pop(0)
+                def execute(arguments, **kwargs):
+                    suite = Path(arguments[4]).parents[2]
+                    self.assertEqual({p.relative_to(suite).as_posix() for p in suite.rglob("*") if p.is_file()},
+                                     set(sync.package_npm.payload_files(version)))
+                    self.assertTrue((suite / "story-skill-research/references/reader-validation.md").is_file())
+                    self.assertTrue((suite / "story-skill/scripts/story_punctuation.py").is_file())
+                    self.assertTrue((suite / "story-skill-write/references/punctuation.md").is_file())
+                    self.assertEqual((suite / "story-skill-plan/references/outline.md").is_file(),
+                                     version in ("0.6.13", "0.6.14"))
+                    self.assertEqual((suite / "story-skill/references/workbench.md").is_file(),
+                                     version == "0.6.14")
+                    return results.pop(0)
 
-        with patch.object(sync.subprocess, "run", side_effect=execute):
-            result = sync.runtime_smoke(archive, "0.6.12")
-        self.assertEqual(result["skill_files"], 49)
-        self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES_V0612))
+                with patch.object(sync.subprocess, "run", side_effect=execute):
+                    result = sync.runtime_smoke(archive, version)
+                self.assertEqual(result["skill_files"], count)
+                self.assertEqual(set(result["skills"]), set(skills))
 
     def test_runtime_smoke_preserves_published_v060_38_file_contract(self):
         archive = self.smoke_archive("0.6.0")

@@ -1,0 +1,132 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-08T16:27:05.838093+00:00",
+  "head": "7dbc96bd1b4d143749250c5abba9e5d8fb04bc04",
+  "version": "0.6.14",
+  "scope": "Read-only comparison of the current working tree and existing candidate archives against recorded hashes. No test suite, CLI replay or benchmark was rerun; no source or license was edited. Test reuse is limited to the fingerprints actually recorded.",
+  "unit_tests": {
+    "prior_run": 1433,
+    "prior_passed": 1416,
+    "prior_skipped": 17,
+    "recorded_files": 6,
+    "recorded_test_files": 3,
+    "mismatches": [],
+    "separately_recorded_metadata_mismatches": [],
+    "recorded_snapshot_matches": true,
+    "entire_test_tree_fingerprinted": false
+  },
+  "local_checks": {
+    "skill_files": 51,
+    "differences": {
+      "missing": [],
+      "extra": [],
+      "changed": []
+    },
+    "recorded_snapshot_matches": true
+  },
+  "token_report": {
+    "status": "passed",
+    "problems": [],
+    "profiles_sha256_matches": true,
+    "runtime_file_count": 9
+  },
+  "probe_reports": {
+    "status": "passed",
+    "reports": [
+      {
+        "path": "benchmarks/results/v0.6.14/scaling.json",
+        "matches_current_runtime": true,
+        "status": "passed"
+      },
+      {
+        "path": "benchmarks/results/v0.6.14/migration.json",
+        "matches_current_runtime": true,
+        "status": "passed"
+      }
+    ]
+  },
+  "recorded_test_results_reusable": true,
+  "test_reuse_limitations": [
+    "The unit report stores hashes for six monitored files, including three test files; it does not establish a per-file baseline for the entire test tree.",
+    "The unit report records a desktop builder version-metadata change during its run; its current hash matches the separately recorded post-change hash, with validation delegated to the desktop build checks."
+  ],
+  "candidate_packages": {
+    "standard": {
+      "ok": true,
+      "path": "dist/release-v0.6.14/candidate/story-skill-0.6.14.zip",
+      "files": 51,
+      "sha256": "7c76e3027aec65b1e8385f57c6aab0b413fc63cb14383402172f4b297d5c8540",
+      "checksum_matches": true,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    },
+    "claude": {
+      "ok": true,
+      "path": "dist/release-v0.6.14/candidate/story-skill-claude-desktop-0.6.14-r2.zip",
+      "files": 53,
+      "sha256": "ac5668a01ca45bd427cfe79c393f34fb6cb6d2211b34e5296a5780dcc3eee60d",
+      "checksum_matches": true,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    },
+    "npm": {
+      "ok": true,
+      "path": "dist/release-v0.6.14/candidate/npm/ningcui29-story-skill-0.6.14.tgz",
+      "sha256": "f1457973ccc63108cba2d86fefce1d883aef258fc50e613f31ee3d9fbfa2be1e",
+      "payload_files": 51,
+      "wrapper_files": 2,
+      "matches_prior_candidate_manifest": true,
+      "matches_current_skill_sources": true
+    }
+  },
+  "license_provenance": {
+    "repository_root": {
+      "source": "LICENSE",
+      "title": "# Story Skill Non-Commercial Use and Commercial Licensing Agreement",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    "skill_license_sources": {
+      "paths": [
+        "skills/story-skill-analyze/LICENSE",
+        "skills/story-skill-cover/LICENSE",
+        "skills/story-skill-plan/LICENSE",
+        "skills/story-skill-publish/LICENSE",
+        "skills/story-skill-research/LICENSE",
+        "skills/story-skill-review/LICENSE",
+        "skills/story-skill-write/LICENSE",
+        "skills/story-skill/LICENSE"
+      ],
+      "title": "MIT License",
+      "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+      "all_identical": true,
+      "matches_repository_root": false
+    },
+    "standard_zip": {
+      "license_members": 8,
+      "matches": "Each member <skill>/LICENSE is byte-identical to skills/<skill>/LICENSE.",
+      "all_match": true
+    },
+    "claude_zip": {
+      "license_members": 9,
+      "top_level_source": "skills/story-skill/LICENSE",
+      "top_level_matches": true,
+      "embedded_sources": "Each story-skill/suite/<skill>/LICENSE matches skills/<skill>/LICENSE.",
+      "embedded_all_match": true
+    },
+    "npm": {
+      "license_members": 8,
+      "matches": "Each package/<skill>/LICENSE matches skills/<skill>/LICENSE through payload verification.",
+      "all_match": true,
+      "package_json_license": "MIT"
+    },
+    "scope": "Byte provenance and existing labels only. Repository-root and skill-bundled license texts differ; no legal interpretation or license edit was performed.",
+    "desktop_candidate": {
+      "member": "Contents/Resources/StorySkill-LICENSE",
+      "source": "LICENSE",
+      "matches": true,
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    }
+  }
+}

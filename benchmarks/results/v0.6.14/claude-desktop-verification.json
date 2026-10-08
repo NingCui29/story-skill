@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "archive": "[repository]/dist/release-v0.6.14/story-skill-claude-desktop-0.6.14-r2.zip",
+  "version": "0.6.14",
+  "files": 53,
+  "source_files": 51,
+  "skill_name": "story-skill",
+  "bundle_revision": 2,
+  "skill_entry_count": 1,
+  "entry_path_mapping": {
+    "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+    "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+    "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+    "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+    "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+    "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+    "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+    "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+  },
+  "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+  "sha256": "ac5668a01ca45bd427cfe79c393f34fb6cb6d2211b34e5296a5780dcc3eee60d",
+  "bytes": 382058,
+  "mapped_bytes_match": true,
+  "unique_members": true,
+  "crc_valid": true,
+  "ordinary_members": true,
+  "markdown_links_checked": 233,
+  "missing_links": [],
+  "isolated_cli": [
+    {
+      "command": "--version",
+      "passed": true
+    },
+    {
+      "command": "--help",
+      "passed": true
+    },
+    {
+      "command": "init",
+      "passed": true
+    },
+    {
+      "command": "status",
+      "passed": true
+    }
+  ],
+  "host_app_import_tested": false,
+  "license": {
+    "source_files_preserved": true,
+    "suite_and_claude_and_npm": "Embedded skill LICENSE files remain MIT; npm declares MIT.",
+    "repository_and_desktop": "Root LICENSE and standalone macOS client retain existing non-commercial/commercial-licensing text, including unfilled Commercial Licensor and Commercial Licensing Contact fields.",
+    "uniform_license_claimed": false,
+    "disclosure": "Published release notes must state these differing supplied license files; no new licensing identity or permission is inferred."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "upstream_revision": "4daac79077928d0d5ba0eda93e46ce68dfcd40ae",
+  "upstream_recovery": "Original frozen temporary directory had missing Git metadata, blobs and all 18 benchmark input files. A new isolated sparse checkout fetched the exact configured public upstream commit; Git status was clean and 18 input files matched their commit blobs.",
+  "tokenizer": {
+    "version": "0.14.0",
+    "encoding": "o200k_base",
+    "cache_source": "Existing default local tiktoken cache restored to the requested cache directory after the time-bounded official fetch timed out.",
+    "data_sha256": "446a9538cb6c348e3516120d7c08b09f57c36495e2acfffe59a5bf8b0cfb1a2d",
+    "data_bytes": 3613922,
+    "hash_matches_installed_tokenizer_definition": true
+  },
+  "candidate_fingerprints_match_current_source": true,
+  "benchmark_check": "passed",
+  "profiles": 7,
+  "public_reports": {
+    "tokens.json": {
+      "path": "benchmarks/results/v0.6.14/tokens.json",
+      "sha256": "a7bc87f013149a5a02da9f40d0efee22a6fc82651778e9659905ee5a91f751cd"
+    },
+    "tokens.md": {
+      "path": "benchmarks/results/v0.6.14/tokens.md",
+      "sha256": "bdfa06af851f552e907914f7961b08b64997ac03d670d5c9248a9dbb1c0ec14b"
+    }
+  },
+  "raw_logs_directory": "dist/release-v0.6.14",
+  "successful_stdout": "dist/release-v0.6.14/tokens-retry2.stdout.log",
+  "successful_stderr": "dist/release-v0.6.14/tokens-retry2.stderr.log",
+  "prior_failures_retained": true,
+  "public_reports_contain_user_absolute_paths": false,
+  "scope": "Tokenizer counts for explicitly listed instruction files plus synthetic retrieval fixtures; not billed usage, model quality or complete agent-task behavior."
+}

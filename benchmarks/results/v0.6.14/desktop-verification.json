@@ -1,0 +1,400 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-08T16:27:30.355215+00:00",
+  "application": "dist/release-v0.6.14/写作工作台.app",
+  "archive": "dist/release-v0.6.14/story-workbench-0.1.2-macos-x86_64.zip",
+  "checksum": "dist/release-v0.6.14/story-workbench-0.1.2-macos-x86_64.zip.sha256",
+  "bytes": 26543195,
+  "sha256": "335b0d34293870f2be9557165741b2df2b5daeb8282c5d6e4ecd29c7c4091040",
+  "app_version": "0.1.2",
+  "app_build": "3",
+  "story_version": "0.6.14",
+  "architecture": "x86_64",
+  "minimum_macos_build_target": "13.0",
+  "tested_platform": "Intel macOS 15.8.1",
+  "runtime_files": {
+    "story.py": "868f72b1cdf864068f42decbeeb297a346984b015126b0dd6f96d8c7268200a5",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+    "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story_workbench.py": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0",
+    "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+  },
+  "native_sources": {
+    "StoryWorkbench.swift": "802131cf750c413bee288d31731d89c0eb5d7d3afa746ed3fcbc6fce9652d7d0",
+    "ClientInstance.swift": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9"
+  },
+  "native_source_verification_scope": "Manifest hashes match the current Swift sources; no source-to-executable byte equality is asserted.",
+  "signature": {
+    "verification": "Strict deep verification passed for candidate, final app, extracted ZIP and extracted bundle after CLI tests",
+    "type": "ad-hoc",
+    "developer_id": false,
+    "notarized": false
+  },
+  "runtime_distribution": {
+    "version": "Python 3.12.14",
+    "site_packages": [
+      "README.txt",
+      "pip",
+      "pip-26.2.1.dist-info"
+    ],
+    "extra_third_party_site_packages": [],
+    "python_and_pip_licenses": [
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/LICENSE.txt",
+        "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf",
+        "bytes": 13936
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/LICENSE.txt",
+        "sha256": "634300a669d49aeae65b12c6c48c924c51a4cdf3d1ff086dc3456dc8bcaa2104",
+        "bytes": 1093
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE",
+        "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48",
+        "bytes": 197
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.APACHE",
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+        "bytes": 10174
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/packaging/LICENSE.BSD",
+        "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5",
+        "bytes": 1344
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/truststore/LICENSE",
+        "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca",
+        "bytes": 1086
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pygments/LICENSE",
+        "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17",
+        "bytes": 1331
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distlib/LICENSE.txt",
+        "sha256": "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d",
+        "bytes": 14531
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/distro/LICENSE",
+        "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14",
+        "bytes": 11325
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/cachecontrol/LICENSE.txt",
+        "sha256": "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b",
+        "bytes": 558
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+        "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04",
+        "bytes": 1541
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/requests/LICENSE",
+        "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b",
+        "bytes": 10142
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli/LICENSE",
+        "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe",
+        "bytes": 1072
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/certifi/LICENSE",
+        "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7",
+        "bytes": 989
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pyproject_hooks/LICENSE",
+        "sha256": "1b22b049b5267d6dfc23a67bf4a84d8ec04b9fdfb1a51d360e42b4342c8b4154",
+        "bytes": 1081
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/rich/LICENSE",
+        "sha256": "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15",
+        "bytes": 1056
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/tomli_w/LICENSE",
+        "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe",
+        "bytes": 1072
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/urllib3/LICENSE.txt",
+        "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686",
+        "bytes": 1093
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/pkg_resources/LICENSE",
+        "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741",
+        "bytes": 1023
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/resolvelib/LICENSE",
+        "sha256": "f388fd38cad13112c1dc0f669bbe80e7f84541edbafb72f3030d2ca7642c3c9d",
+        "bytes": 751
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/python3.12/site-packages/pip-26.2.1.dist-info/licenses/src/pip/_vendor/platformdirs/LICENSE",
+        "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6",
+        "bytes": 1089
+      }
+    ]
+  },
+  "bundle_contents": {
+    "runtime_module_count": 9,
+    "runtime_matches_current_source": true,
+    "assets": {
+      "Contents/Resources/backend_runner.py": {
+        "source": "desktop/macos/backend_runner.py",
+        "sha256": "ccb7e9a34f6d5ae9d07f7a496d6af8a8915889287b7f6cebed3a9c70f0f67f4f",
+        "bytes_match_source": true
+      },
+      "Contents/Resources/editor-appearance.js": {
+        "source": "desktop/macos/editor-appearance.js",
+        "sha256": "75a9ab0a40c08b36222f669fc089f25b2c91a9b6fa9cb631f09fcca6e6050ddc",
+        "bytes_match_source": true
+      },
+      "Contents/Info.plist": {
+        "source": "desktop/macos/Info.plist",
+        "sha256": "46ed92a7fbeffd1097e1bdf4ead5061475711b304528ed3f4a423981e86fe7e7",
+        "bytes_match_source": true
+      },
+      "Contents/Resources/StorySkill-LICENSE": {
+        "source": "LICENSE",
+        "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "bytes_match_source": true
+      }
+    },
+    "native_sources_match_manifest": true,
+    "app_matches_candidate_bytes_and_modes": true,
+    "extracted_matches_app_bytes_and_modes": true,
+    "extracted_bundle_unchanged_after_cli": true,
+    "bundle_entries": 1835,
+    "symlinks": [
+      {
+        "path": "Contents/Resources/runtime/bin/2to3",
+        "target": "2to3-3.12",
+        "resolved_relative": "Contents/Resources/runtime/bin/2to3-3.12"
+      },
+      {
+        "path": "Contents/Resources/runtime/bin/python3",
+        "target": "python3.12",
+        "resolved_relative": "Contents/Resources/runtime/bin/python3.12"
+      },
+      {
+        "path": "Contents/Resources/runtime/bin/python",
+        "target": "python3.12",
+        "resolved_relative": "Contents/Resources/runtime/bin/python3.12"
+      },
+      {
+        "path": "Contents/Resources/runtime/bin/idle3",
+        "target": "idle3.12",
+        "resolved_relative": "Contents/Resources/runtime/bin/idle3.12"
+      },
+      {
+        "path": "Contents/Resources/runtime/bin/python3-config",
+        "target": "python3.12-config",
+        "resolved_relative": "Contents/Resources/runtime/bin/python3.12-config"
+      },
+      {
+        "path": "Contents/Resources/runtime/bin/pydoc3",
+        "target": "pydoc3.12",
+        "resolved_relative": "Contents/Resources/runtime/bin/pydoc3.12"
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/pkgconfig/python3.pc",
+        "target": "python-3.12.pc",
+        "resolved_relative": "Contents/Resources/runtime/lib/pkgconfig/python-3.12.pc"
+      },
+      {
+        "path": "Contents/Resources/runtime/lib/pkgconfig/python3-embed.pc",
+        "target": "python-3.12-embed.pc",
+        "resolved_relative": "Contents/Resources/runtime/lib/pkgconfig/python-3.12-embed.pc"
+      },
+      {
+        "path": "Contents/Resources/runtime/share/man/man1/python3.1",
+        "target": "python3.12.1",
+        "resolved_relative": "Contents/Resources/runtime/share/man/man1/python3.12.1"
+      }
+    ],
+    "external_symlinks": []
+  },
+  "license": {
+    "story_skill_bundle_license": "Repository root custom non-commercial license, preserved verbatim",
+    "bundle_path": "Contents/Resources/StorySkill-LICENSE",
+    "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "source_bytes_preserved": true,
+    "commercial_licensor_placeholder_present": true,
+    "commercial_contact_placeholder_present": true,
+    "skill_license_files": [
+      {
+        "path": "skills/story-skill/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-analyze/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-cover/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-plan/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-publish/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-research/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-review/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-write/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      }
+    ],
+    "different_root_and_skill_license_texts_observed": true,
+    "third_party_licenses_retained": true,
+    "scope": "Records the bundled text and observed differences; does not resolve licensing rights or reconcile license terms."
+  },
+  "cli": {
+    "version": "0.6.14",
+    "help": true,
+    "isolated_init": true,
+    "isolated_status": true,
+    "relocated_extracted_runtime": true,
+    "sqlite": "3.53.1",
+    "ssl": "OpenSSL 3.5.8 25 Aug 2026",
+    "temporary_book_removed": true,
+    "test_service_record_absent": true
+  },
+  "archive_verification": {
+    "producer": "macOS ditto",
+    "member_count": 3830,
+    "member_metadata_encoding": "UTF-8 member bytes; inspected using metadata_encoding=utf-8",
+    "archive_crc_valid": true,
+    "native_extraction_verified": true,
+    "checksum_verified": true
+  },
+  "public_download_verification": {
+    "completed": false,
+    "status": "not_yet_downloaded_from_public_release"
+  },
+  "scope": {
+    "ui_started": false,
+    "user_services_started_or_stopped": false,
+    "real_books_accessed": false,
+    "installed_application_modified": false,
+    "network_writes": false,
+    "candidate_preserved": true
+  },
+  "not_verified": [
+    "Native UI launch or interaction",
+    "Apple Silicon execution",
+    "Other macOS versions",
+    "Developer ID signing or notarization",
+    "Public release download"
+  ],
+  "raw_evidence": {
+    "directory": "dist/release-v0.6.14",
+    "report": "desktop-final-runtime.json",
+    "commands": {
+      "candidate-signature": {
+        "stdout": "desktop-final-candidate-signature.stdout.log",
+        "stderr": "desktop-final-candidate-signature.stderr.log",
+        "exit_code": 0
+      },
+      "copy": {
+        "stdout": "desktop-final-copy.stdout.log",
+        "stderr": "desktop-final-copy.stderr.log",
+        "exit_code": 0
+      },
+      "signature-before-zip": {
+        "stdout": "desktop-final-signature-before-zip.stdout.log",
+        "stderr": "desktop-final-signature-before-zip.stderr.log",
+        "exit_code": 0
+      },
+      "signature-display": {
+        "stdout": "desktop-final-signature-display.stdout.log",
+        "stderr": "desktop-final-signature-display.stderr.log",
+        "exit_code": 0
+      },
+      "architecture": {
+        "stdout": "desktop-final-architecture.stdout.log",
+        "stderr": "desktop-final-architecture.stderr.log",
+        "exit_code": 0
+      },
+      "archive": {
+        "stdout": "desktop-final-archive.stdout.log",
+        "stderr": "desktop-final-archive.stderr.log",
+        "exit_code": 0
+      },
+      "extract": {
+        "stdout": "desktop-final-extract.stdout.log",
+        "stderr": "desktop-final-extract.stderr.log",
+        "exit_code": 0
+      },
+      "extracted-signature": {
+        "stdout": "desktop-final-extracted-signature.stdout.log",
+        "stderr": "desktop-final-extracted-signature.stderr.log",
+        "exit_code": 0
+      },
+      "runtime-probe": {
+        "stdout": "desktop-final-runtime-probe.stdout.log",
+        "stderr": "desktop-final-runtime-probe.stderr.log",
+        "exit_code": 0
+      },
+      "version": {
+        "stdout": "desktop-final-version.stdout.log",
+        "stderr": "desktop-final-version.stderr.log",
+        "exit_code": 0
+      },
+      "help": {
+        "stdout": "desktop-final-help.stdout.log",
+        "stderr": "desktop-final-help.stderr.log",
+        "exit_code": 0
+      },
+      "init": {
+        "stdout": "desktop-final-init.stdout.log",
+        "stderr": "desktop-final-init.stderr.log",
+        "exit_code": 0
+      },
+      "status": {
+        "stdout": "desktop-final-status.stdout.log",
+        "stderr": "desktop-final-status.stderr.log",
+        "exit_code": 0
+      },
+      "extracted-signature-after-cli": {
+        "stdout": "desktop-final-extracted-signature-after-cli.stdout.log",
+        "stderr": "desktop-final-extracted-signature-after-cli.stderr.log",
+        "exit_code": 0
+      }
+    }
+  },
+  "duration_seconds": 18.361
+}

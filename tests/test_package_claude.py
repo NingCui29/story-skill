@@ -22,7 +22,7 @@ def fixture_suite(source):
         path = source / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(("fixture: " + relative + "\n").encode("utf-8"))
-    (source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.12"\n')
+    (source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.14"\n')
 
 
 class ClaudeDesktopPackageTests(unittest.TestCase):
@@ -32,7 +32,7 @@ class ClaudeDesktopPackageTests(unittest.TestCase):
         self.root = Path(self.temp.name).resolve()
         self.source = self.root / "source"
         fixture_suite(self.source)
-        self.output = self.root / "story-skill-claude-desktop-0.6.12-r2.zip"
+        self.output = self.root / "story-skill-claude-desktop-0.6.14-r2.zip"
 
     def package(self, output=None):
         with patch.object(desktop.suite, "SOURCE", self.source):
@@ -103,16 +103,16 @@ class ClaudeDesktopPackageTests(unittest.TestCase):
         self.assertEqual(dict(desktop.suite.source_entries()), source_entries)
 
     def test_archive_is_deterministic_and_default_name_is_desktop_specific(self):
-        old_output = self.root / "dist/story-skill-claude-desktop-0.6.12.zip"
+        old_output = self.root / "dist/story-skill-claude-desktop-0.6.14.zip"
         old_output.parent.mkdir()
         old_output.write_bytes(b"previous published bundle\n")
         with patch.object(desktop, "ROOT", self.root), patch.object(desktop.suite, "SOURCE", self.source):
             first = desktop.package()
             second = desktop.package()
-        expected = self.root / "dist/story-skill-claude-desktop-0.6.12-r2.zip"
+        expected = self.root / "dist/story-skill-claude-desktop-0.6.14-r2.zip"
         self.assertEqual(Path(first["archive"]), expected)
         self.assertEqual(first, second)
-        self.assertEqual(first["version"], "0.6.12")
+        self.assertEqual(first["version"], "0.6.14")
         self.assertEqual(old_output.read_bytes(), b"previous published bundle\n")
         first_bytes = expected.read_bytes()
         custom = self.root / "custom-desktop.zip"
@@ -135,7 +135,7 @@ class ClaudeDesktopPackageTests(unittest.TestCase):
                                         encoding="utf-8", timeout=30)
                 self.assertEqual(result.returncode, 0, result.stderr)
                 if option == "--version":
-                    self.assertEqual(result.stdout.strip(), "0.6.12")
+                    self.assertEqual(result.stdout.strip(), "0.6.14")
                 else:
                     self.assertIn("usage:", result.stdout)
         self.assertEqual(dict(desktop.suite.source_entries()), before)
@@ -217,7 +217,7 @@ class ClaudeDesktopPackageTests(unittest.TestCase):
         self.assert_preserved(original)
 
     def test_canonical_names_and_non_zip_outputs_are_rejected(self):
-        for name in ("story-skill-0.6.12.zip", "story-skill-0.6.11.zip", "story-skill-0.6.10.zip", "desktop.tar.gz"):
+        for name in ("story-skill-0.6.14.zip", "story-skill-0.6.13.zip", "story-skill-0.6.11.zip", "story-skill-0.6.10.zip", "desktop.tar.gz"):
             with self.subTest(name=name):
                 output = self.root / name
                 output.write_bytes(b"existing reviewed archive\n")

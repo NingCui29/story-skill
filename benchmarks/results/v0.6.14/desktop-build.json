@@ -1,0 +1,90 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-08T16:27:30.355215+00:00",
+  "application": "dist/release-v0.6.14/写作工作台.app",
+  "app_version": "0.1.2",
+  "story_version": "0.6.14",
+  "architecture": "x86_64",
+  "minimum_macos": "13.0",
+  "runtime_version": "Python 3.12.14",
+  "runtime_files": {
+    "story.py": "868f72b1cdf864068f42decbeeb297a346984b015126b0dd6f96d8c7268200a5",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+    "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story_workbench.py": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0",
+    "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+  },
+  "native_source_sha256": "802131cf750c413bee288d31731d89c0eb5d7d3afa746ed3fcbc6fce9652d7d0",
+  "native_sources": {
+    "StoryWorkbench.swift": "802131cf750c413bee288d31731d89c0eb5d7d3afa746ed3fcbc6fce9652d7d0",
+    "ClientInstance.swift": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9"
+  },
+  "launcher_sha256": "ccb7e9a34f6d5ae9d07f7a496d6af8a8915889287b7f6cebed3a9c70f0f67f4f",
+  "editor_appearance_sha256": "75a9ab0a40c08b36222f669fc089f25b2c91a9b6fa9cb631f09fcca6e6050ddc",
+  "local_build": true,
+  "app_build": "3",
+  "origin": "Copied without changing bytes from the locally verified candidate bundle",
+  "candidate": false,
+  "license": {
+    "story_skill_bundle_license": "Repository root custom non-commercial license, preserved verbatim",
+    "bundle_path": "Contents/Resources/StorySkill-LICENSE",
+    "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "source_bytes_preserved": true,
+    "commercial_licensor_placeholder_present": true,
+    "commercial_contact_placeholder_present": true,
+    "skill_license_files": [
+      {
+        "path": "skills/story-skill/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-analyze/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-cover/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-plan/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-publish/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-research/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-review/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      },
+      {
+        "path": "skills/story-skill-write/LICENSE",
+        "sha256": "353e216d4c5717e34ce49c9057d80313427fca282b53e36f1f3d3bf7251932fd",
+        "mit_header": true
+      }
+    ],
+    "different_root_and_skill_license_texts_observed": true,
+    "third_party_licenses_retained": true,
+    "scope": "Records the bundled text and observed differences; does not resolve licensing rights or reconcile license terms."
+  },
+  "public_download_verification": {
+    "completed": false,
+    "status": "not_yet_downloaded_from_public_release"
+  },
+  "raw_evidence_directory": "dist/release-v0.6.14"
+}

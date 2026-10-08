@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "standard": {
+    "archive": "[repository]/dist/release-v0.6.14/story-skill-0.6.14.zip",
+    "version": "0.6.14",
+    "files": 51,
+    "sha256": "7c76e3027aec65b1e8385f57c6aab0b413fc63cb14383402172f4b297d5c8540",
+    "bytes": 377942
+  },
+  "verification": {
+    "status": "passed",
+    "archive": "[repository]/dist/release-v0.6.14/story-skill-0.6.14.zip",
+    "version": "0.6.14",
+    "sha256": "7c76e3027aec65b1e8385f57c6aab0b413fc63cb14383402172f4b297d5c8540",
+    "bytes": 377942,
+    "files": 51,
+    "contents_match_current_skill": true,
+    "missing": [],
+    "extra": [],
+    "changed": [],
+    "duplicate_entries": [],
+    "corrupt_entry": null,
+    "non_regular_entries": []
+  },
+  "license": {
+    "source_files_preserved": true,
+    "suite_and_claude_and_npm": "Embedded skill LICENSE files remain MIT; npm declares MIT.",
+    "repository_and_desktop": "Root LICENSE and standalone macOS client retain existing non-commercial/commercial-licensing text, including unfilled Commercial Licensor and Commercial Licensing Contact fields.",
+    "uniform_license_claimed": false,
+    "disclosure": "Published release notes must state these differing supplied license files; no new licensing identity or permission is inferred."
+  }
+}

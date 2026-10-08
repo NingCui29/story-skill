@@ -1,0 +1,49 @@
+{
+  "ok": true,
+  "status": "passed",
+  "run": 1433,
+  "passed": 1416,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 17,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+  "duration_seconds": 269.311,
+  "process_duration_seconds": 271.643,
+  "environment": {
+    "python": "3.12.14",
+    "node": "24.19.0",
+    "platform": "macOS"
+  },
+  "command": [
+    "python3.12",
+    "-u",
+    "-B",
+    "-X",
+    "utf8",
+    "scripts/verify.py",
+    "--unittest-report",
+    "dist/release-v0.6.14/unit-tests.json"
+  ],
+  "source_snapshot": {
+    "scope": "Current working tree, including uncommitted changes",
+    "monitored_files_unchanged": true,
+    "sha256": {
+      "skills/story-skill/scripts/story.py": "868f72b1cdf864068f42decbeeb297a346984b015126b0dd6f96d8c7268200a5",
+      "skills/story-skill/scripts/story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+      "tests/test_book_kind.py": "fc99f67d8a1f83e311831380a70b2c64acc13178aba980a0cf6a9c1d81d37e07",
+      "scripts/package_npm.py": "6a6a14753fff4ef50b9bdca23f2d349ccd0f07ecbf8a2df45cf5d30fe149efb8",
+      "tests/test_package_npm.py": "65346e7b3bf179ec399c91aa7a27ddfac39af5939e824e754157934f16f58713",
+      "tests/test_sync_packages.py": "f25362ff1296388f442ada8e03bbc46a964eaaef1b07da300feb776ab223a798"
+    }
+  },
+  "metadata_changes_during_run": [
+    {
+      "path": "scripts/build_desktop_macos.py",
+      "change": "app_version metadata changed from 0.1.1 to 0.1.2 to match Info.plist after this test run started.",
+      "validation": "Separate macOS build and manifest/Info.plist consistency verification; not performed by this unittest job.",
+      "sha256_after": "532b840008c330d02fdaa5912391463feb98aabb606152a26380e3e8fb334693"
+    }
+  ]
+}

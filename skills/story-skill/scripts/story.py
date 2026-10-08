@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.12"
+VERSION = "0.6.14"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -1016,6 +1016,40 @@ class Book:
         self.db.execute("INSERT INTO events(revision,kind,data) VALUES (?,?,?)", (rev, kind, dumps(compact_event(self.db, kind, payload))))
         return rev
 
+    def change_kind(self, kind, expected):
+        """Correct fiction metadata without rewriting narrative state or exports."""
+        if kind not in ("long", "short"):
+            fail("invalid_input", "Book kind correction accepts only long or short")
+        integer(expected, "expected revision")
+        with self.transaction(expected):
+            previous = self.meta("kind")
+            if previous not in ("long", "short"):
+                fail("fiction_book_required", "Only an existing fiction book can change between long and short",
+                     actual=previous, requested=kind)
+            changed = previous != kind
+            if changed and kind == "long":
+                # A reading copy remains protected even when missing or pending.
+                # Disabling its workflow is not a safe implicit retirement.
+                records = self.db.execute("SELECT key FROM meta WHERE key IN "
+                                          "('short_assembly','short_assembly_retired') ORDER BY key").fetchall()
+                assembly_path = self.short_assembly_path()
+                registered = self.db.execute("SELECT path FROM artifact_state WHERE path=?",
+                                             (assembly_path,)).fetchone()
+                if records or registered:
+                    fail("book_kind_protected_assembly",
+                         "Cannot change to long while a protected short-story reading copy or retirement is registered; preserve its records and files",
+                         actual=previous, requested=kind,
+                         protected_records=[row["key"] for row in records],
+                         protected_path=assembly_path,
+                         recovery="Keep kind short; retiring a protected reading copy is not supported by book-kind")
+            if changed:
+                self.set_meta("kind", kind)
+                self.event("book_kind", {"before": previous, "after": kind})
+            result = {"book": str(self.root), "id": self.meta("id"), "title": self.meta("title"),
+                      "previous_kind": previous, "kind": kind, "changed": changed,
+                      "revision": self.meta("revision"), "last_chapter": self.meta("last_chapter")}
+        return result
+
     def cards(self, ids=None):
         if ids is None:
             rows = self.db.execute("SELECT id,data FROM cards ORDER BY id")
@@ -1685,11 +1719,11 @@ class Book:
     def assemble_short(self, final_chapter):
         """Enable a protected reading copy after every short-story chapter is exported."""
         integer(final_chapter, "final chapter", 1)
-        if self.meta("kind") != "short":
-            fail("short_only", "Only a short-story book can be assembled")
         self.integrity = "strict"
         with storage.operation_lock(self):
             with self.transaction():
+                if self.meta("kind") != "short":
+                    fail("short_only", "Only a short-story book can be assembled")
                 last = self.meta("last_chapter")
                 if last != final_chapter:
                     fail("chapters_incomplete", "Final chapter must match the committed last chapter",
@@ -2704,6 +2738,9 @@ def parser():
     s.add_argument("--title", required=True)
     s.add_argument("--kind", choices=("long", "short", "analysis"), default="long")
     command("status", "Compact checkpoint and export health")
+    s = command("book-kind", "Correct long/short fiction metadata without rewriting chapters or exports", integrity=False)
+    s.add_argument("--kind", choices=("long", "short"), required=True)
+    s.add_argument("--expect", type=int, required=True)
     command("migrate", "Explicit schema upgrade with a consistent rollback backup")
     s = command("audit", "Strictly check managed exports without repairing or recording them", integrity=False)
     s.add_argument("--integrity", choices=("strict",), default="strict",
@@ -2830,6 +2867,8 @@ def run(args):
             return outline.audit_position(book, args.file, args.require_platform)
         if cmd == "status":
             return book.status()
+        if cmd == "book-kind":
+            return book.change_kind(args.kind, args.expect)
         if cmd == "export":
             return book.export(safe_only=args.safe_only)
         if cmd == "assemble-short":

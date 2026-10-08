@@ -127,10 +127,18 @@ SUITE_FILES_V0611 = tuple(sorted((*SUITE_FILES_V0610,
 SKILL_NAMES_V0611 = SKILL_NAMES_V0610
 SUITE_FILES_V0612 = SUITE_FILES_V0611
 SKILL_NAMES_V0612 = SKILL_NAMES_V0611
+SUITE_FILES_V0613 = tuple(sorted((*SUITE_FILES_V0612,
+    "story-skill-plan/references/outline.md",
+)))
+SKILL_NAMES_V0613 = SKILL_NAMES_V0612
+SUITE_FILES_V0614 = tuple(sorted((*SUITE_FILES_V0613,
+    "story-skill/references/workbench.md",
+)))
+SKILL_NAMES_V0614 = SKILL_NAMES_V0613
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0612
-SUITE_FILES = SUITE_FILES_V0612
+SKILL_NAMES = SKILL_NAMES_V0614
+SUITE_FILES = SUITE_FILES_V0614
 
 
 def suite_files(version):
@@ -149,6 +157,10 @@ def suite_files(version):
         return SUITE_FILES_V0611
     if version == "0.6.12":
         return SUITE_FILES_V0612
+    if version == "0.6.13":
+        return SUITE_FILES_V0613
+    if version == "0.6.14":
+        return SUITE_FILES_V0614
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 
@@ -168,6 +180,10 @@ def skill_names(version):
         return SKILL_NAMES_V0611
     if version == "0.6.12":
         return SKILL_NAMES_V0612
+    if version == "0.6.13":
+        return SKILL_NAMES_V0613
+    if version == "0.6.14":
+        return SKILL_NAMES_V0614
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
 
 

@@ -16,7 +16,7 @@ def fixture_suite(source):
         path = source / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(("fixture: " + relative + "\n").encode("utf-8"))
-    (source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.11"\n')
+    (source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.14"\n')
 
 
 def tree_snapshot(root):

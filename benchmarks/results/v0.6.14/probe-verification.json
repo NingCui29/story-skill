@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "reports": [
+    {
+      "path": "[repository]/benchmarks/results/v0.6.14/scaling.json",
+      "sha256": "a466cfe7c2f1f932b1585719ce9f382564d4d129356cec8f4cb0da42f7f145f9",
+      "matches_current_runtime": true,
+      "status": "passed"
+    },
+    {
+      "path": "[repository]/benchmarks/results/v0.6.14/migration.json",
+      "sha256": "6f9e7aade22aa859fc4b2bd1b14d87250940bd5bf552b304a95f46ec606cf53f",
+      "matches_current_runtime": true,
+      "status": "passed"
+    }
+  ],
+  "scope": "Stored probe success, required capacity sizes and current runtime hashes; these probes are not rerun by verify.py"
+}
