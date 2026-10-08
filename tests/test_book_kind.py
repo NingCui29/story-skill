@@ -63,7 +63,7 @@ class BookKindTests(unittest.TestCase):
         text = f"第{chapter}章 {title}\n{quote}\n"
         self.book.save_plan(chapter, fixtures.plan(title=title, length=[1, 120]), self.revision())
         bind_adopted_outline(story, self.book, chapter)
-        self.draft.write_text(text, encoding="utf-8")
+        self.draft.write_bytes(text.encode("utf-8"))
         card = {**self.book.cards()["hero"], "text": f"她已完成第{chapter}次查看。", "quote": quote}
         delta = {"book_id": self.book.meta("id"), "base_revision": self.revision(),
                  "summary": quote, "changes": [card],
