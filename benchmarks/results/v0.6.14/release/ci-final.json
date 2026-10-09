@@ -1,0 +1,499 @@
+{
+  "conclusion": "success",
+  "createdAt": "2026-10-08T16:44:24Z",
+  "databaseId": 37811145541,
+  "headSha": "2d093cded35317cf8c491ffe1d8e040a9a943685",
+  "jobs": [
+    {
+      "completedAt": "2026-10-08T16:56:47Z",
+      "conclusion": "success",
+      "databaseId": 113427997539,
+      "name": "test (windows-latest, 3.12)",
+      "startedAt": "2026-10-08T16:44:27Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-08T16:44:29Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-08T16:44:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:44:36Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "startedAt": "2026-10-08T16:44:29Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:44:36Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 3,
+          "startedAt": "2026-10-08T16:44:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:09Z",
+          "conclusion": "success",
+          "name": "Run regression tests including historical migration",
+          "number": 4,
+          "startedAt": "2026-10-08T16:44:36Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:10Z",
+          "conclusion": "success",
+          "name": "Build the complete skill ZIP",
+          "number": 5,
+          "startedAt": "2026-10-08T16:56:09Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:11Z",
+          "conclusion": "success",
+          "name": "Build the Claude Desktop skill ZIP",
+          "number": 6,
+          "startedAt": "2026-10-08T16:56:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:15Z",
+          "conclusion": "success",
+          "name": "Exercise the local CLI workflow",
+          "number": 7,
+          "startedAt": "2026-10-08T16:56:11Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:26Z",
+          "conclusion": "success",
+          "name": "Exercise synthetic Chinese transactions",
+          "number": 8,
+          "startedAt": "2026-10-08T16:56:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:44Z",
+          "conclusion": "success",
+          "name": "Exercise multi-line writing and historical revision",
+          "number": 9,
+          "startedAt": "2026-10-08T16:56:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:44Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 17,
+          "startedAt": "2026-10-08T16:56:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:46Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 18,
+          "startedAt": "2026-10-08T16:56:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:46Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 19,
+          "startedAt": "2026-10-08T16:56:46Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/37811145541/job/113427997539",
+      "unitTests": {
+        "testsRun": 1428,
+        "passedTestLines": 1379,
+        "skipped": 50,
+        "individualSkippedTestLines": 49,
+        "nonTestSkipEvents": 1,
+        "failures": 0,
+        "errors": 0,
+        "durationSeconds": 671.466,
+        "conclusion": "success",
+        "summary": "Ran 1428 tests in 671.466s; OK (skipped=50)",
+        "skipReasons": [
+          {
+            "reason": "Automatic dead-service recovery uses POSIX read-only probes",
+            "events": 23
+          },
+          {
+            "reason": "Filesystem keeps these directory names distinct",
+            "events": 1
+          },
+          {
+            "reason": "POSIX SQLite descriptor cache",
+            "events": 1
+          },
+          {
+            "reason": "POSIX capability fallback",
+            "events": 1
+          },
+          {
+            "reason": "POSIX descriptor verification",
+            "events": 5
+          },
+          {
+            "reason": "POSIX permits swapping an open parent directory",
+            "events": 4
+          },
+          {
+            "reason": "Requires a directory symlink",
+            "events": 1
+          },
+          {
+            "reason": "Symbolic links require Windows privileges",
+            "events": 3
+          },
+          {
+            "reason": "Windows holds the open database path against replacement",
+            "events": 1
+          },
+          {
+            "reason": "macOS Swift compiler required",
+            "events": 10
+          }
+        ],
+        "errorTests": [],
+        "failureTests": [],
+        "evidence": "dist/release-v0.6.14/ci-37811145541/ci-job-113427997539.log",
+        "evidenceSha256": "c63ef791e12ea3825487651263282008f4abaff9bc897353313c1a0c245a8194"
+      }
+    },
+    {
+      "completedAt": "2026-10-08T16:47:29Z",
+      "conclusion": "success",
+      "databaseId": 113427997892,
+      "name": "test (ubuntu-latest, 3.10)",
+      "startedAt": "2026-10-08T16:44:27Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-08T16:44:28Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-08T16:44:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:44:30Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "startedAt": "2026-10-08T16:44:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:44:30Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 3,
+          "startedAt": "2026-10-08T16:44:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:46:59Z",
+          "conclusion": "success",
+          "name": "Run regression tests including historical migration",
+          "number": 4,
+          "startedAt": "2026-10-08T16:44:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:46:59Z",
+          "conclusion": "success",
+          "name": "Build the complete skill ZIP",
+          "number": 5,
+          "startedAt": "2026-10-08T16:46:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:47:00Z",
+          "conclusion": "success",
+          "name": "Build the Claude Desktop skill ZIP",
+          "number": 6,
+          "startedAt": "2026-10-08T16:46:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:47:03Z",
+          "conclusion": "success",
+          "name": "Exercise the local CLI workflow",
+          "number": 7,
+          "startedAt": "2026-10-08T16:47:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:47:13Z",
+          "conclusion": "success",
+          "name": "Exercise synthetic Chinese transactions",
+          "number": 8,
+          "startedAt": "2026-10-08T16:47:03Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:47:26Z",
+          "conclusion": "success",
+          "name": "Exercise multi-line writing and historical revision",
+          "number": 9,
+          "startedAt": "2026-10-08T16:47:13Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:47:26Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 17,
+          "startedAt": "2026-10-08T16:47:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:47:26Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 18,
+          "startedAt": "2026-10-08T16:47:26Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:47:26Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 19,
+          "startedAt": "2026-10-08T16:47:26Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/37811145541/job/113427997892",
+      "unitTests": {
+        "testsRun": 1428,
+        "passedTestLines": 1397,
+        "skipped": 32,
+        "individualSkippedTestLines": 31,
+        "nonTestSkipEvents": 1,
+        "failures": 0,
+        "errors": 0,
+        "durationSeconds": 145.143,
+        "conclusion": "success",
+        "summary": "Ran 1428 tests in 145.143s; OK (skipped=32)",
+        "skipReasons": [
+          {
+            "reason": "Filesystem distinguishes names that differ only in letter case",
+            "events": 2
+          },
+          {
+            "reason": "Filesystem keeps these directory names distinct",
+            "events": 3
+          },
+          {
+            "reason": "Native Windows delete-sharing protection",
+            "events": 1
+          },
+          {
+            "reason": "Requires native Windows directory share locks",
+            "events": 10
+          },
+          {
+            "reason": "Windows publication without hard links",
+            "events": 5
+          },
+          {
+            "reason": "Windows rename provides the no-replace guarantee tested here",
+            "events": 1
+          },
+          {
+            "reason": "macOS Swift compiler required",
+            "events": 10
+          }
+        ],
+        "errorTests": [],
+        "failureTests": [],
+        "evidence": "dist/release-v0.6.14/ci-37811145541/ci-job-113427997892.log",
+        "evidenceSha256": "4c64a86c348c21c8a55009171f9ed17a4232c0a969e0eae4ce2a6d0df35dd7a8"
+      }
+    },
+    {
+      "completedAt": "2026-10-08T16:57:36Z",
+      "conclusion": "success",
+      "databaseId": 113427997922,
+      "name": "test (windows-latest, 3.10)",
+      "startedAt": "2026-10-08T16:44:26Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-08T16:44:28Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-08T16:44:27Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:44:35Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "startedAt": "2026-10-08T16:44:28Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:44:35Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 3,
+          "startedAt": "2026-10-08T16:44:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:49Z",
+          "conclusion": "success",
+          "name": "Run regression tests including historical migration",
+          "number": 4,
+          "startedAt": "2026-10-08T16:44:35Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:49Z",
+          "conclusion": "success",
+          "name": "Build the complete skill ZIP",
+          "number": 5,
+          "startedAt": "2026-10-08T16:56:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:50Z",
+          "conclusion": "success",
+          "name": "Build the Claude Desktop skill ZIP",
+          "number": 6,
+          "startedAt": "2026-10-08T16:56:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:56:55Z",
+          "conclusion": "success",
+          "name": "Exercise the local CLI workflow",
+          "number": 7,
+          "startedAt": "2026-10-08T16:56:50Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:57:10Z",
+          "conclusion": "success",
+          "name": "Exercise synthetic Chinese transactions",
+          "number": 8,
+          "startedAt": "2026-10-08T16:56:55Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:57:32Z",
+          "conclusion": "success",
+          "name": "Exercise multi-line writing and historical revision",
+          "number": 9,
+          "startedAt": "2026-10-08T16:57:10Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:57:32Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 17,
+          "startedAt": "2026-10-08T16:57:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:57:34Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 18,
+          "startedAt": "2026-10-08T16:57:32Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-08T16:57:34Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 19,
+          "startedAt": "2026-10-08T16:57:34Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/37811145541/job/113427997922",
+      "unitTests": {
+        "testsRun": 1428,
+        "passedTestLines": 1379,
+        "skipped": 50,
+        "individualSkippedTestLines": 49,
+        "nonTestSkipEvents": 1,
+        "failures": 0,
+        "errors": 0,
+        "durationSeconds": 718.617,
+        "conclusion": "success",
+        "summary": "Ran 1428 tests in 718.617s; OK (skipped=50)",
+        "skipReasons": [
+          {
+            "reason": "Automatic dead-service recovery uses POSIX read-only probes",
+            "events": 23
+          },
+          {
+            "reason": "Filesystem keeps these directory names distinct",
+            "events": 1
+          },
+          {
+            "reason": "POSIX SQLite descriptor cache",
+            "events": 1
+          },
+          {
+            "reason": "POSIX capability fallback",
+            "events": 1
+          },
+          {
+            "reason": "POSIX descriptor verification",
+            "events": 5
+          },
+          {
+            "reason": "POSIX permits swapping an open parent directory",
+            "events": 4
+          },
+          {
+            "reason": "Requires a directory symlink",
+            "events": 1
+          },
+          {
+            "reason": "Symbolic links require Windows privileges",
+            "events": 3
+          },
+          {
+            "reason": "Windows holds the open database path against replacement",
+            "events": 1
+          },
+          {
+            "reason": "macOS Swift compiler required",
+            "events": 10
+          }
+        ],
+        "errorTests": [],
+        "failureTests": [],
+        "evidence": "dist/release-v0.6.14/ci-37811145541/ci-job-113427997922.log",
+        "evidenceSha256": "7717957c11450c346415264707b567d6872122df771305eaf73318d9a30914f3"
+      }
+    }
+  ],
+  "status": "completed",
+  "updatedAt": "2026-10-08T16:57:36Z",
+  "url": "https://github.com/NingCui29/story-skill/actions/runs/37811145541",
+  "workflowName": "Verify source and package",
+  "repository": "NingCui29/story-skill",
+  "checkedAt": "2026-10-08T18:54:19.901349+00:00",
+  "unitTestCountsSource": "Public GitHub Actions job logs. testsRun and skipped use unittest summary values; non-test/class-level skips are included in skipped but excluded from testsRun. passedTestLines counts explicit per-test ok lines.",
+  "rawRunEvidence": "dist/release-v0.6.14/ci-37811145541/ci-poll-latest.json"
+}

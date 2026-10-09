@@ -1,0 +1,92 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-09T01:04:08.462856+00:00",
+  "remote": "https://github.com/NingCui29/story-skill.git",
+  "tag": "v0.6.14",
+  "tag_object": "2d093cded35317cf8c491ffe1d8e040a9a943685",
+  "tag_object_type": "commit",
+  "tag_commit": "2d093cded35317cf8c491ffe1d8e040a9a943685",
+  "tag_verified": true,
+  "tag_status": "verified",
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.14",
+  "release_metadata": {
+    "published_at": "2026-10-09T00:56:55Z",
+    "draft": false,
+    "prerelease": false,
+    "metadata_sha256": "1ae0b03653c846465a871543fda2585a77cd8805d06086b025f098adc53b79c2"
+  },
+  "archive": "dist/release-v0.6.14/story-skill-0.6.14.zip",
+  "archive_sha256": "7c76e3027aec65b1e8385f57c6aab0b413fc63cb14383402172f4b297d5c8540",
+  "tagged_payload": {
+    "skills": 8,
+    "files": 51,
+    "file_set_matches_archive": true,
+    "all_bytes_match_archive": true,
+    "installer_matches_previous_verified_commit": true,
+    "installer_sha256": "ba8ab85a9c66903544c2ddcda22746f281939fc0a4472b3136e7d2dfc1e4496d",
+    "runtime_files": 9,
+    "runtime_hashes_match_previous_recheck": true
+  },
+  "retained_installations": [
+    {
+      "host": "codex",
+      "scope": "project",
+      "files": 51,
+      "retained_installation_matches_tag": true
+    },
+    {
+      "host": "codex",
+      "scope": "user",
+      "files": 51,
+      "retained_installation_matches_tag": true
+    },
+    {
+      "host": "claude-code",
+      "scope": "project",
+      "files": 51,
+      "retained_installation_matches_tag": true
+    },
+    {
+      "host": "claude-code",
+      "scope": "user",
+      "files": 51,
+      "retained_installation_matches_tag": true
+    },
+    {
+      "host": "antigravity",
+      "scope": "project",
+      "files": 51,
+      "retained_installation_matches_tag": true
+    },
+    {
+      "host": "antigravity",
+      "scope": "user",
+      "files": 51,
+      "retained_installation_matches_tag": true
+    },
+    {
+      "host": "antigravity-cli",
+      "scope": "project",
+      "files": 51,
+      "retained_installation_matches_tag": true
+    },
+    {
+      "host": "antigravity-cli",
+      "scope": "user",
+      "files": 51,
+      "retained_installation_matches_tag": true
+    }
+  ],
+  "reused_verification": {
+    "original_report": "benchmarks/results/v0.6.14/release/remote-commit-install.json",
+    "original_report_sha256": "1e51e961409f7d74acaba0cab5a9c8fa500a4d6c813a57dcbd650423cf2b99b0",
+    "original_install_commit": "dd306356fad549ac83f04368ddcdf187f810f75b",
+    "commit_recheck_report": "benchmarks/results/v0.6.14/release/remote-commit-recheck.json",
+    "commit_recheck_report_sha256": "b753a9abfc530a2ad8ac296e1ba8ad271d0fbb12b1675677a1c9f53d986a6f39",
+    "installation_count": 8,
+    "cli_invocations_previously_passed": 32,
+    "new_installations_run": 0,
+    "new_cli_invocations": 0
+  },
+  "scope": "Fetched the exact public origin tag and verified its peeled commit. All 51 tagged payloads, installer and nine runtime files match the final local release ZIP or prior installer/runtime fingerprint; eight retained isolated installations still match. Installation and CLI results are reused from the documented fixed-commit run through the subsequent same-byte commit recheck. No installation or CLI was rerun, no registry was accessed, and the previous two reports were preserved."
+}

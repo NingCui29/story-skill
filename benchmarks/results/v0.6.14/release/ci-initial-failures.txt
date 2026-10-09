@@ -1,0 +1,91 @@
+ERROR: test_assembly_rechecks_kind_after_acquiring_operation_lock (test_book_kind.BookKindTests.test_assembly_rechecks_kind_after_acquiring_operation_lock)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_book_kind.py", line 160, in test_assembly_rechecks_kind_after_acquiring_operation_lock
+    self.commit(1)
+  File "<repo>/tests/test_book_kind.py", line 73, in commit
+    result = self.book.commit(chapter, self.draft, delta)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2209, in commit
+    raw = self.validate_delta(text, raw)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2174, in validate_delta
+    fail("stale_review", "Review must refer to the exact current draft SHA-256")
+  File "<repo>/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story.StoryError: Review must refer to the exact current draft SHA-256
+
+======================================================================
+ERROR: test_cli_long_with_committed_history_can_correct_then_assemble_normally (test_book_kind.BookKindTests.test_cli_long_with_committed_history_can_correct_then_assemble_normally)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_book_kind.py", line 95, in test_cli_long_with_committed_history_can_correct_then_assemble_normally
+    texts = [self.commit(1), self.commit(2)]
+             ^^^^^^^^^^^^^^
+  File "<repo>/tests/test_book_kind.py", line 73, in commit
+    result = self.book.commit(chapter, self.draft, delta)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2209, in commit
+    raw = self.validate_delta(text, raw)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2174, in validate_delta
+    fail("stale_review", "Review must refer to the exact current draft SHA-256")
+  File "<repo>/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story.StoryError: Review must refer to the exact current draft SHA-256
+
+======================================================================
+ERROR: test_history_state_after_new_chapter_replays_type_event_without_changing_cards (test_book_kind.BookKindTests.test_history_state_after_new_chapter_replays_type_event_without_changing_cards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_book_kind.py", line 116, in test_history_state_after_new_chapter_replays_type_event_without_changing_cards
+    self.commit(1)
+  File "<repo>/tests/test_book_kind.py", line 73, in commit
+    result = self.book.commit(chapter, self.draft, delta)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2209, in commit
+    raw = self.validate_delta(text, raw)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2174, in validate_delta
+    fail("stale_review", "Review must refer to the exact current draft SHA-256")
+  File "<repo>/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story.StoryError: Review must refer to the exact current draft SHA-256
+
+======================================================================
+ERROR: test_reverse_keeps_current_or_missing_protected_assembly_and_all_records (test_book_kind.BookKindTests.test_reverse_keeps_current_or_missing_protected_assembly_and_all_records)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_book_kind.py", line 190, in test_reverse_keeps_current_or_missing_protected_assembly_and_all_records
+    self.commit(1)
+  File "<repo>/tests/test_book_kind.py", line 73, in commit
+    result = self.book.commit(chapter, self.draft, delta)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2209, in commit
+    raw = self.validate_delta(text, raw)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2174, in validate_delta
+    fail("stale_review", "Review must refer to the exact current draft SHA-256")
+  File "<repo>/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story.StoryError: Review must refer to the exact current draft SHA-256
+
+======================================================================
+ERROR: test_same_kind_is_noop_and_stale_expect_still_fails (test_book_kind.BookKindTests.test_same_kind_is_noop_and_stale_expect_still_fails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<repo>/tests/test_book_kind.py", line 130, in test_same_kind_is_noop_and_stale_expect_still_fails
+    self.commit(1)
+  File "<repo>/tests/test_book_kind.py", line 73, in commit
+    result = self.book.commit(chapter, self.draft, delta)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2209, in commit
+    raw = self.validate_delta(text, raw)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>/skills/story-skill/scripts/story.py", line 2174, in validate_delta
+    fail("stale_review", "Review must refer to the exact current draft SHA-256")
+  File "<repo>/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+story.StoryError: Review must refer to the exact current draft SHA-256
+
+----------------------------------------------------------------------

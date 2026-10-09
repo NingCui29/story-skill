@@ -1,0 +1,149 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-08T16:46:54.850925+00:00",
+  "previous_commit": "dd306356fad549ac83f04368ddcdf187f810f75b",
+  "fixed_commit": "2d093cded35317cf8c491ffe1d8e040a9a943685",
+  "remote_commit": "2d093cded35317cf8c491ffe1d8e040a9a943685",
+  "tag": null,
+  "tag_verified": false,
+  "tag_status": "pending",
+  "remote_checkout_clean": true,
+  "diff": {
+    "files": [
+      "tests/test_book_kind.py"
+    ],
+    "removed_lines": 1,
+    "added_lines": 1,
+    "change": "Test fixture writes UTF-8 bytes instead of platform-translated text; no production, installer, skill, profile or packaging source changed.",
+    "patch_sha256": "a5c82040d78073567f6943594b70e2b7d168eea38b6248aa9484de70f08408a7"
+  },
+  "source_comparison": {
+    "skill_files": 51,
+    "skill_sets_equal": true,
+    "all_skill_bytes_equal_between_commits_and_release_zip": true,
+    "installer_bytes_equal": true,
+    "installer_sha256": "ba8ab85a9c66903544c2ddcda22746f281939fc0a4472b3136e7d2dfc1e4496d",
+    "runtime_files": 9,
+    "runtime_sha256": {
+      "story.py": "868f72b1cdf864068f42decbeeb297a346984b015126b0dd6f96d8c7268200a5",
+      "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+      "story_outline.py": "361d1fadf5c9dbb2973343aecd0cb909a9cd795b0b62665a6730eba1ce093263",
+      "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+      "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "story_workbench.py": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0",
+      "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+    }
+  },
+  "archive": "dist/release-v0.6.14/story-skill-0.6.14.zip",
+  "archive_sha256": "7c76e3027aec65b1e8385f57c6aab0b413fc63cb14383402172f4b297d5c8540",
+  "reused_evidence": {
+    "report": "benchmarks/results/v0.6.14/release/remote-commit-install.json",
+    "sha256": "1e51e961409f7d74acaba0cab5a9c8fa500a4d6c813a57dcbd650423cf2b99b0",
+    "original_install_commit": "dd306356fad549ac83f04368ddcdf187f810f75b",
+    "installations": 8,
+    "prior_cli_invocations": 32,
+    "retained_installations_rechecked": [
+      {
+        "host": "codex",
+        "scope": "project",
+        "files": 51,
+        "retained_payload_matches_new_commit": true,
+        "prior_cli_reused": {
+          "version": "0.6.14",
+          "help": true,
+          "init": true,
+          "status": true
+        }
+      },
+      {
+        "host": "codex",
+        "scope": "user",
+        "files": 51,
+        "retained_payload_matches_new_commit": true,
+        "prior_cli_reused": {
+          "version": "0.6.14",
+          "help": true,
+          "init": true,
+          "status": true
+        }
+      },
+      {
+        "host": "claude-code",
+        "scope": "project",
+        "files": 51,
+        "retained_payload_matches_new_commit": true,
+        "prior_cli_reused": {
+          "version": "0.6.14",
+          "help": true,
+          "init": true,
+          "status": true
+        }
+      },
+      {
+        "host": "claude-code",
+        "scope": "user",
+        "files": 51,
+        "retained_payload_matches_new_commit": true,
+        "prior_cli_reused": {
+          "version": "0.6.14",
+          "help": true,
+          "init": true,
+          "status": true
+        }
+      },
+      {
+        "host": "antigravity",
+        "scope": "project",
+        "files": 51,
+        "retained_payload_matches_new_commit": true,
+        "prior_cli_reused": {
+          "version": "0.6.14",
+          "help": true,
+          "init": true,
+          "status": true
+        }
+      },
+      {
+        "host": "antigravity",
+        "scope": "user",
+        "files": 51,
+        "retained_payload_matches_new_commit": true,
+        "prior_cli_reused": {
+          "version": "0.6.14",
+          "help": true,
+          "init": true,
+          "status": true
+        }
+      },
+      {
+        "host": "antigravity-cli",
+        "scope": "project",
+        "files": 51,
+        "retained_payload_matches_new_commit": true,
+        "prior_cli_reused": {
+          "version": "0.6.14",
+          "help": true,
+          "init": true,
+          "status": true
+        }
+      },
+      {
+        "host": "antigravity-cli",
+        "scope": "user",
+        "files": 51,
+        "retained_payload_matches_new_commit": true,
+        "prior_cli_reused": {
+          "version": "0.6.14",
+          "help": true,
+          "init": true,
+          "status": true
+        }
+      }
+    ],
+    "new_installations_run": 0,
+    "new_cli_invocations": 0
+  },
+  "scope": "Exact new remote commit fetched without tags. Only one test-fixture line changed. All 51 skill payloads and installer bytes match the earlier remotely verified commit and release ZIP, and all eight retained isolated installations still match. The previous 32 successful CLI executions are reused as same-payload evidence; the original report is preserved. This is not a new test-suite run, tag verification or registry check."
+}

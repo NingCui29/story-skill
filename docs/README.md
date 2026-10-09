@@ -1,6 +1,6 @@
 # Story Skill 文档导航
 
-当前 **v0.6.14 为发布候选**：八个技能、51 个源载荷文件；Claude 桌面 `0.6.14-r2` 候选包已核验53文件及递归唯一 `SKILL.md`，Intel Mac 客户端为0.1.2（build 3，运行时0.6.14）。本地1416项测试通过、17项跳过；固定标签、跨平台 CI、附件与 Packages 的最终发布结果待补，见[发布候选记录](releases/v0.6.14.md)。各分发包的[许可证标注不同](releases/v0.6.14.md#分发中的许可证)，GitHub 发布不自动更新本机技能或客户端。
+**v0.6.14 已于2026-10-09正式发布**：八个技能、51 个源载荷文件；Claude 桌面 `0.6.14-r2` 包含53文件及递归唯一 `SKILL.md`，Intel Mac 客户端为0.1.2（build 3，运行时0.6.14）。本地1416项测试通过、17项跳过，三组跨平台 CI、固定标签、六附件公开回下载与 Packages 独立复核均通过；下载入口及证据范围见[发布记录](releases/v0.6.14.md)。各分发包的[许可证标注不同](releases/v0.6.14.md#分发中的许可证)，GitHub 发布不自动更新本机技能或客户端。
 
 本轮增加[大纲细纲规范](../skills/story-skill-plan/references/outline.md)与[按需工作台参考](../skills/story-skill/references/workbench.md)，统一任务续跑、候选篇幅例外及长短篇附言边界，并新增 `book-kind` 类型更正和短篇合并的并发保护。使用当前源码前按[安装指引](../INSTALL.md)核对实际快照；下列旧版验收数字保持其历史范围。
 
@@ -30,11 +30,11 @@ v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Wi
 
 ## 开始使用
 
-Claude 桌面版使用带 `-r2` 的单技能导入包；它在整个 ZIP 中只含一个 `SKILL.md`，内嵌八流程使用 `GUIDE.md`。v0.6.12 原桌面 ZIP 含9个入口，曾被导入器拒绝，已由该版 r2 替代。在当前仓库根目录运行 `python3 -B -X utf8 scripts/package_claude.py`，生成 `dist/story-skill-claude-desktop-0.6.14-r2.zip`；本版候选包已完成本地检查，最终发布与实际导入结果另记。已核验的包按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)开启代码执行、上传并启用；需要已发布包时使用 v0.6.12-r2。八目录 Release ZIP 用于目录分发，桌面导入使用专用包。启用后直接说“使用 Story Skill”并描述任务即可。[Claude 官方技能说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+Claude 桌面版下载 [v0.6.14-r2 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.14/story-skill-claude-desktop-0.6.14-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.14/story-skill-claude-desktop-0.6.14-r2.zip.sha256)；整个 ZIP 只含一个 `SKILL.md`，内嵌八流程使用 `GUIDE.md`。v0.6.12 原桌面 ZIP 含9个入口，曾被导入器拒绝，已由该版 r2 替代。也可在固定源码根目录运行 `python3 -B -X utf8 scripts/package_claude.py`，生成 `dist/story-skill-claude-desktop-0.6.14-r2.zip`。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)开启代码执行、上传并启用；实际客户端导入仍需核对。八目录 Release ZIP 用于目录分发，桌面导入使用专用包。启用后直接说“使用 Story Skill”并描述任务即可。[Claude 官方技能说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 
 普通聊天文件环境、Cowork 或统一任务界面的目录权限、作者电脑的本机工作台分别核对。书稿应保存到会话可访问位置，并下载完整书目录备份；技能导入不会自动启动本机 Python 服务。更多桌面与云端边界见[安装指引](../INSTALL.md#书稿保存与桌面能力)。
 
-在 Codex 中需要安装或升级时，可发送以下请求；安装时核对已发布版本的固定标签、Release 附件和本地已有修改。v0.6.14 尚未完成发布核验，需要已发布版本时仍按 v0.6.12 记录处理；检查不符则保留现有安装：
+在 Codex 中需要安装或升级时，可发送以下请求；安装时核对 v0.6.14 固定标签、Release 附件和本地已有修改，检查不符则保留现有安装：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill

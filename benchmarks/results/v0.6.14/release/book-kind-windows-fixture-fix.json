@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-10-08T16:43:51.838401+00:00",
+  "changed_file": "tests/test_book_kind.py",
+  "changed_line": 66,
+  "change": "Write fixture draft UTF-8 bytes to preserve LF bytes used in review SHA-256 on every platform.",
+  "runtime_changed": false,
+  "package_contents_changed": false,
+  "before": {
+    "runId": 37809329114,
+    "headSha": "dd306356fad549ac83f04368ddcdf187f810f75b",
+    "jobId": 113421782345,
+    "platform": "windows-latest",
+    "python": "3.12",
+    "testsRun": 1428,
+    "errors": 5,
+    "failures": 0,
+    "skipped": 50,
+    "durationSeconds": 619.792,
+    "failingTests": [
+      "test_assembly_rechecks_kind_after_acquiring_operation_lock (test_book_kind.BookKindTests.test_assembly_rechecks_kind_after_acquiring_operation_lock)",
+      "test_cli_long_with_committed_history_can_correct_then_assemble_normally (test_book_kind.BookKindTests.test_cli_long_with_committed_history_can_correct_then_assemble_normally)",
+      "test_history_state_after_new_chapter_replays_type_event_without_changing_cards (test_book_kind.BookKindTests.test_history_state_after_new_chapter_replays_type_event_without_changing_cards)",
+      "test_reverse_keeps_current_or_missing_protected_assembly_and_all_records (test_book_kind.BookKindTests.test_reverse_keeps_current_or_missing_protected_assembly_and_all_records)",
+      "test_same_kind_is_noop_and_stale_expect_still_fails (test_book_kind.BookKindTests.test_same_kind_is_noop_and_stale_expect_still_fails)"
+    ],
+    "error": "stale_review: Review must refer to the exact current draft SHA-256",
+    "rawLog": "dist/release-v0.6.14/ci-job-113421782345.log",
+    "rawLogSha256": "8f467cf74159efb706cbd414ef61cb940ef0c6243fed93e4b31f82bdb3025ec0",
+    "rootCause": "The test fixture wrote LF source text through Windows text-mode newline translation, creating CRLF bytes, while its review SHA-256 was calculated from the original LF text."
+  },
+  "after": {
+    "platform": "local macOS",
+    "python": "3.12",
+    "testsRun": 9,
+    "passed": 9,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "durationSeconds": 1.63,
+    "windows_ci_verification": "pending_new_candidate_run",
+    "stdout": "dist/release-v0.6.14/book-kind-windows-fixture-fix.stdout.log",
+    "stderr": "dist/release-v0.6.14/book-kind-windows-fixture-fix.stderr.log"
+  }
+}

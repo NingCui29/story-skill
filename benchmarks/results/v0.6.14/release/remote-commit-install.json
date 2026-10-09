@@ -1,0 +1,143 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-08T16:34:04.612383+00:00",
+  "remote": "https://github.com/NingCui29/story-skill.git",
+  "fixed_commit": "dd306356fad549ac83f04368ddcdf187f810f75b",
+  "remote_commit": "dd306356fad549ac83f04368ddcdf187f810f75b",
+  "version": "0.6.14",
+  "tag": null,
+  "tag_verified": false,
+  "tag_status": "pending",
+  "archive": "dist/release-v0.6.14/story-skill-0.6.14.zip",
+  "archive_sha256": "7c76e3027aec65b1e8385f57c6aab0b413fc63cb14383402172f4b297d5c8540",
+  "source_matches_release_zip": true,
+  "source_files": 51,
+  "source_skills": 8,
+  "checkout_clean": true,
+  "installations": [
+    {
+      "host": "codex",
+      "scope": "project",
+      "skills": 8,
+      "files": 51,
+      "matches_release_zip": true,
+      "managed_receipts_valid": true,
+      "symlinks": 0,
+      "cli": {
+        "version": "0.6.14",
+        "help": true,
+        "init": true,
+        "status": true
+      }
+    },
+    {
+      "host": "codex",
+      "scope": "user",
+      "skills": 8,
+      "files": 51,
+      "matches_release_zip": true,
+      "managed_receipts_valid": true,
+      "symlinks": 0,
+      "cli": {
+        "version": "0.6.14",
+        "help": true,
+        "init": true,
+        "status": true
+      }
+    },
+    {
+      "host": "claude-code",
+      "scope": "project",
+      "skills": 8,
+      "files": 51,
+      "matches_release_zip": true,
+      "managed_receipts_valid": true,
+      "symlinks": 0,
+      "cli": {
+        "version": "0.6.14",
+        "help": true,
+        "init": true,
+        "status": true
+      }
+    },
+    {
+      "host": "claude-code",
+      "scope": "user",
+      "skills": 8,
+      "files": 51,
+      "matches_release_zip": true,
+      "managed_receipts_valid": true,
+      "symlinks": 0,
+      "cli": {
+        "version": "0.6.14",
+        "help": true,
+        "init": true,
+        "status": true
+      }
+    },
+    {
+      "host": "antigravity",
+      "scope": "project",
+      "skills": 8,
+      "files": 51,
+      "matches_release_zip": true,
+      "managed_receipts_valid": true,
+      "symlinks": 0,
+      "cli": {
+        "version": "0.6.14",
+        "help": true,
+        "init": true,
+        "status": true
+      }
+    },
+    {
+      "host": "antigravity",
+      "scope": "user",
+      "skills": 8,
+      "files": 51,
+      "matches_release_zip": true,
+      "managed_receipts_valid": true,
+      "symlinks": 0,
+      "cli": {
+        "version": "0.6.14",
+        "help": true,
+        "init": true,
+        "status": true
+      }
+    },
+    {
+      "host": "antigravity-cli",
+      "scope": "project",
+      "skills": 8,
+      "files": 51,
+      "matches_release_zip": true,
+      "managed_receipts_valid": true,
+      "symlinks": 0,
+      "cli": {
+        "version": "0.6.14",
+        "help": true,
+        "init": true,
+        "status": true
+      }
+    },
+    {
+      "host": "antigravity-cli",
+      "scope": "user",
+      "skills": 8,
+      "files": 51,
+      "matches_release_zip": true,
+      "managed_receipts_valid": true,
+      "symlinks": 0,
+      "cli": {
+        "version": "0.6.14",
+        "help": true,
+        "init": true,
+        "status": true
+      }
+    }
+  ],
+  "installation_count": 8,
+  "cli_invocations": 32,
+  "isolated_checkout_retained": true,
+  "scope": "Public remote fixed-commit sparse checkout; eight isolated installations through that checkout's installer across four hosts and project/user layouts. All 51 payloads matched the local release ZIP, with four real CLI checks per installation. No real user installation, service or book changed. Tag resolution and host application skill discovery were not tested."
+}
