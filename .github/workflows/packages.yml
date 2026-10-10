@@ -47,6 +47,40 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PACKAGE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
         run: python -B -X utf8 scripts/sync_packages.py --tag "$PACKAGE_TAG"
+      - name: Record package association metadata
+        if: always()
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE_TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          python -B -X utf8 - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          sys.path.insert(0, "scripts")
+          import sync_packages as sync
+          token = os.environ["NODE_AUTH_TOKEN"]
+          report = {"tag": os.environ["PACKAGE_TAG"], "repository": sync.REPOSITORY}
+          def selected(value, keys):
+              return {key: value.get(key) for key in keys} if isinstance(value, dict) else None
+          for label, url in (
+              ("package", "https://api.github.com/users/NingCui29/packages/npm/story-skill"),
+              ("source_repository", "https://api.github.com/repos/" + sync.REPOSITORY),
+          ):
+              try:
+                  value = sync.read_json(url, token, "api.github.com")
+                  fields = ("id", "name", "package_type", "visibility", "html_url") if label == "package" else ("id", "full_name", "private")
+                  item = {"http_status": 200, "metadata": selected(value, fields)}
+                  if label == "package":
+                      item["repository_field_present"] = "repository" in value
+                      item["repository"] = selected(value.get("repository"), ("id", "full_name", "private"))
+                  report[label] = item
+              except Exception as error:
+                  report[label] = {"http_status": getattr(error, "code", None), "error": str(error).replace(token, "[redacted]")[:500]}
+          output = Path("dist/packages-sync/package-association.json")
+          output.parent.mkdir(parents=True, exist_ok=True)
+          output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+          print(json.dumps(report))
+          PY
       - name: Preserve synchronization receipt
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -54,6 +88,7 @@ jobs:
           name: packages-sync-${{ inputs.tag || github.event.release.tag_name }}
           path: |
             dist/packages-sync/receipt*.json
+            dist/packages-sync/package-association.json
             dist/packages-sync/downloaded-package.tgz
           if-no-files-found: ignore
           retention-days: 14
