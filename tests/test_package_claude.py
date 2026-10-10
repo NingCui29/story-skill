@@ -135,7 +135,8 @@ class ClaudeDesktopPackageTests(unittest.TestCase):
                                         encoding="utf-8", timeout=30)
                 self.assertEqual(result.returncode, 0, result.stderr)
                 if option == "--version":
-                    self.assertEqual(result.stdout.strip(), "0.6.14")
+                    self.assertEqual(result.stdout.strip(), desktop.suite.current_version(
+                        ROOT / "skills/story-skill/scripts/story.py"))
                 else:
                     self.assertIn("usage:", result.stdout)
         self.assertEqual(dict(desktop.suite.source_entries()), before)

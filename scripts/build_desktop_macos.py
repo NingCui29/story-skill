@@ -108,7 +108,7 @@ def build(output, python):
             env=environment, timeout=20))
         if Path(probe['prefix']).resolve() != runtime.resolve():
             raise RuntimeError('Bundled Python did not load its relocated standard library.')
-        manifest = {'app_version': '0.1.2', 'story_version': version,
+        manifest = {'app_version': '0.1.3', 'story_version': version,
                     'architecture': platform.machine(), 'minimum_macos': '13.0',
                     'runtime_version': run([str(bundled_python), '--version'],
                                            env=environment, timeout=20).strip(),

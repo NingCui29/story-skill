@@ -32,7 +32,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 
-def read_url(url, token=None, auth_host=None):
+def read_url(url, token=None, auth_host=None, *, accept="application/vnd.github+json"):
     """Keep credentials on their original registry/API host during redirects."""
     opener = urllib.request.build_opener(NoRedirect)
     for _ in range(6):
@@ -46,7 +46,7 @@ def read_url(url, token=None, auth_host=None):
         if token and host == auth_host:
             headers["Authorization"] = "Bearer " + token
         if host == "api.github.com":
-            headers.update(Accept="application/vnd.github+json",
+            headers.update(Accept=accept,
                            **{"X-GitHub-Api-Version": "2026-03-10"})
         try:
             with opener.open(urllib.request.Request(url, headers=headers), timeout=45) as response:
@@ -92,7 +92,15 @@ def release_files(tag, output, token=None):
         expected_url = f"https://github.com/{REPOSITORY}/releases/download/{tag}/{name}"
         if asset["browser_download_url"] != expected_url:
             raise ValueError("Release asset URL does not match its repository and tag")
-        raw = read_url(expected_url)
+        if token:
+            asset_id = asset.get("id")
+            asset_url = asset.get("url")
+            if (type(asset_id) is not int or asset_id <= 0 or
+                    asset_url != API + f"/releases/assets/{asset_id}"):
+                raise ValueError("Release asset API URL does not match its repository and asset ID")
+            raw = read_url(asset_url, token, "api.github.com", accept="application/octet-stream")
+        else:
+            raw = read_url(expected_url)
         if len(raw) != asset["size"]:
             raise ValueError("Release asset size changed")
         if asset.get("digest") and asset["digest"] != "sha256:" + hashlib.sha256(raw).hexdigest():

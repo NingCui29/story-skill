@@ -4,15 +4,15 @@
 
 Story Skill 是供 Claude 桌面版、Claude Code、Codex、Google Antigravity 等写作助手使用的小说技能，涵盖拆书、开书、书名与简介优化、大纲、正文、审稿、调研、封面和投稿材料准备。源码按八个技能分工；桌面导入包通过一个总入口按需读取这些流程。每本书独立保存，三栏本机工作台让你直接阅读、比较版本、修改并保存候选稿。
 
-**本版：v0.6.14 · Python 3.10+ · 支持长篇与短篇**
+**本版：v0.6.15 · Python 3.10+ · 支持长篇与短篇**
 
-v0.6.14 已于2026-10-09[正式发布](https://github.com/NingCui29/story-skill/releases/tag/v0.6.14)，包含八个技能、51 个载荷文件，补齐大纲细纲规范、按需工作台参考、长短篇交付边界及作品类型更正。本地1416项测试通过、17项跳过；三组跨平台 CI、固定标签、六附件公开回下载及 GitHub Packages 独立复核均通过，实际范围见[发布记录](docs/releases/v0.6.14.md)。安装或升级按 [INSTALL.md](INSTALL.md) 核对。
+v0.6.15 正在准备发布，包含八个技能、51 个载荷文件，更新创新构思与持续展开、场景展开与情绪层次，以及整部作品品质与重读价值的任务指导。本版验证与分发状态见[发布记录](docs/releases/v0.6.15.md)。安装或升级按 [INSTALL.md](INSTALL.md) 核对；仓库现为私有，Release 下载需要相应访问权限。
 
-各宿主复用同源技能规则和共享运行时；Claude 桌面包将内嵌流程映射为参考文件。本轮新增 `book-kind` 安全更正长短篇元数据，并将短篇合并的类型核对放入锁和事务内，防止并发类型更正绕过保护。[v0.6.12](docs/releases/v0.6.12.md) 及更早附件保持原有内容。
+各宿主复用同源技能规则和共享运行时；Claude 桌面包将内嵌流程映射为参考文件。本轮保留现有工具行为和 schema 2，不把规划或机械检查通过当作文学效果已实现。已发布历史标签与附件保持原有内容。
 
-macOS 客户端 `0.1.2`（build 3，内含 Story Skill `0.6.14`）已作为独立 Intel 实验附件发布，采用本地临时签名，未经 Apple 公证。严格签名、源码对照与解压后的隔离运行已核验，具体范围见[客户端说明](desktop/macos/README.md)。它不替代八技能安装，GitHub 发布也不会自动更新本机安装。
+macOS 客户端 `0.1.3`（build 4，内含 Story Skill `0.6.15`）作为独立 Intel 实验附件准备，采用本地临时签名，未经 Apple 公证。验证与分发状态见[客户端说明](desktop/macos/README.md)，GitHub 发布不会自动更新本机安装。
 
-[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.14.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
+[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.15.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
 
 ## 它能帮你做什么
 
@@ -32,17 +32,17 @@ macOS 客户端 `0.1.2`（build 3，内含 Story Skill `0.6.14`）已作为独�
 
 ### Claude 桌面版
 
-下载 [story-skill-claude-desktop-0.6.14-r2.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.14/story-skill-claude-desktop-0.6.14-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.14/story-skill-claude-desktop-0.6.14-r2.zip.sha256)。包内53个文件、递归唯一 `SKILL.md`，八个内嵌流程作为 `GUIDE.md` 参考文件加载；233处引用及隔离CLI已核验，实际客户端导入另记，见[发布记录](docs/releases/v0.6.14.md)。
+下载 [story-skill-claude-desktop-0.6.15-r2.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-skill-claude-desktop-0.6.15-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-skill-claude-desktop-0.6.15-r2.zip.sha256)。包内53个文件、递归唯一 `SKILL.md`，八个内嵌流程作为 `GUIDE.md` 参考文件加载；本版引用与隔离CLI核验、实际客户端导入范围见[发布记录](docs/releases/v0.6.15.md)。
 
-历史 v0.6.12 原桌面 ZIP 含9个 `SKILL.md`，无法通过导入器检查，已由该版 r2 替代；本版沿用修正包装。也可从 v0.6.14 固定源码构建：
+历史 v0.6.12 原桌面 ZIP 含9个 `SKILL.md`，无法通过导入器检查，已由该版 r2 替代；本版沿用修正包装。也可从 v0.6.15 固定源码构建：
 
 ```bash
 python3 -B -X utf8 scripts/package_claude.py
 ```
 
-输出为 `dist/story-skill-claude-desktop-0.6.14-r2.zip`；自行构建不等于发布或导入验收通过。导入已核对的包时，在 Claude 的 **Settings > Capabilities** 开启 **Code execution and file creation**，再到 **Customize > Skills**，点击 **+ → Create skill → Upload a skill**，上传并启用 Story Skill。组织账号按管理员开放的能力操作。[官方导入说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+输出为 `dist/story-skill-claude-desktop-0.6.15-r2.zip`；自行构建不等于发布或导入验收通过。导入已核对的包时，在 Claude 的 **Settings > Capabilities** 开启 **Code execution and file creation**，再到 **Customize > Skills**，点击 **+ → Create skill → Upload a skill**，上传并启用 Story Skill。组织账号按管理员开放的能力操作。[官方导入说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 
-该包只有一个顶层 `story-skill/`，内含入口和完整八流程资源。同版 `story-skill-0.6.14.zip` 是八目录分发包，桌面导入请使用专用包。导入后可直接说：“使用 Story Skill，帮我规划一本中文长篇，本轮不写正文。”书稿需放在当前会话能读取和保存的位置；普通聊天中的文件与代码环境不等于作者电脑，完整书目录应下载备份。Cowork 或新的统一任务界面只按已开放的文件权限使用，详细边界见 [安装指引](INSTALL.md#claude-桌面版导入单技能包)。
+该包只有一个顶层 `story-skill/`，内含入口和完整八流程资源。同版 `story-skill-0.6.15.zip` 是八目录分发包，桌面导入请使用专用包。导入后可直接说：“使用 Story Skill，帮我规划一本中文长篇，本轮不写正文。”书稿需放在当前会话能读取和保存的位置；普通聊天中的文件与代码环境不等于作者电脑，完整书目录应下载备份。Cowork 或新的统一任务界面只按已开放的文件权限使用，详细边界见 [安装指引](INSTALL.md#claude-桌面版导入单技能包)。
 
 ### Codex 与 Claude Code
 
@@ -264,7 +264,7 @@ Codex 用 `$技能名`，Claude Code、Antigravity 2.0／CLI 用 `/技能名`，
 
 `skills/` 为分发源码，`scripts/` 为安装、打包和验证工具，`tests/` 为程序回归。当前仓库不包含作者测试篇及旧示例小说；历史提交和既有标签可能保留旧副本。事务验收使用临时合成文本，不作为文学质量证据。技能的范围遵守与实际交付另用 [执行验收案例包](benchmarks/skill-execution/README.md)，分别核对文件变化、原始执行记录和内容判断。
 
-总纲、卷纲、章细纲的最低内容、可选可读示例及人工质量验收集中见 [大纲细纲规范](skills/story-skill-plan/references/outline.md)。规划、写作和审稿按本次范围共用；目录、采用状态与版本绑定继续按项目状态规则处理。v0.6.14 为八技能、51 个载荷文件，新增按需读取的工作台参考及执行修复；安装时核对固定标签，不能仅凭版本号把后续开发源码视为发布包。
+总纲、卷纲、章细纲的最低内容、可选可读示例及人工质量验收集中见 [大纲细纲规范](skills/story-skill-plan/references/outline.md)。规划、写作和审稿按本次范围共用；目录、采用状态与版本绑定继续按项目状态规则处理。v0.6.15 为八技能、51 个载荷文件，更新创新构思、场景展开与整体品质指导；安装时核对固定标签，不能仅凭版本号把后续开发源码视为发布包。
 
 创作指导还包括 [生活观察与核心追问](skills/story-skill-write/references/drama.md#生活观察与核心追问)、[作品的复杂性](skills/story-skill-write/references/drama.md#作品的复杂性)、[作品的观看方式](skills/story-skill-write/references/drama.md#作品的观看方式) 和 [在重写中发现故事](skills/story-skill-write/references/drama.md#在重写中发现故事)。这些方法按作品与本次任务取用，帮助从具体经验、人物和文本发现作出创作选择；不要求逐章填写主题或统一采用某种文学风格。
 
@@ -275,6 +275,6 @@ python3 -B -X utf8 scripts/chinese_acceptance.py --output dist/manual-chinese.js
 python3 -B -X utf8 scripts/package.py
 ```
 
-分发中的许可证有差异：仓库根与独立 Mac 客户端携带自定义非商业使用／商业授权条款，`Commercial Licensor` 和 `Commercial Licensing Contact` 仍为占位文字；标准、Claude 桌面及 npm 技能包中的各技能保留 MIT 许可证，npm 标识也保留 MIT。各许可证原文保持不变，完整对应关系见[许可分发说明](docs/releases/v0.6.14.md#分发中的许可证)。
+分发中的许可证有差异：仓库根与独立 Mac 客户端携带自定义非商业使用／商业授权条款，`Commercial Licensor` 和 `Commercial Licensing Contact` 仍为占位文字；标准、Claude 桌面及 npm 技能包中的各技能保留 MIT 许可证，npm 标识也保留 MIT。各许可证原文保持不变，完整对应关系见[许可分发说明](docs/releases/v0.6.15.md#分发中的许可证)。
 
 本项目参考 [oh-story-claudecode](https://github.com/zenstory-ai/oh-story-claudecode) 的公开流程独立实现。[设计取舍](docs/upstream-analysis.md) · [仓库根许可证](LICENSE)

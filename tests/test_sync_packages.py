@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 import io
 import json
 import os
@@ -33,6 +34,18 @@ class PackageSyncTests(unittest.TestCase):
         self.stack.enter_context(patch.dict(os.environ, {
             "NODE_AUTH_TOKEN": "fake-test-token", "GITHUB_REPOSITORY": sync.REPOSITORY}))
 
+    def release_fixture(self):
+        payloads = {"story-skill-0.6.15.zip": b"published release bytes"}
+        payloads["story-skill-0.6.15.zip.sha256"] = (
+            hashlib.sha256(payloads["story-skill-0.6.15.zip"]).hexdigest()
+            + "  story-skill-0.6.15.zip\n").encode()
+        assets = [{"id": index, "name": name, "state": "uploaded", "size": len(raw),
+                   "digest": "sha256:" + hashlib.sha256(raw).hexdigest(),
+                   "url": sync.API + f"/releases/assets/{index}",
+                   "browser_download_url": f"https://github.com/{sync.REPOSITORY}/releases/download/v0.6.15/{name}"}
+                  for index, (name, raw) in enumerate(payloads.items(), 1)]
+        return {"draft": False, "prerelease": False, "tag_name": "v0.6.15", "assets": assets}, payloads
+
     def pipeline(self):
         built = {"name": sync.NAME, "version": "0.6.0", "tarball": str(self.root / "built.tgz")}
         self.stack.enter_context(patch.object(sync, "release_files", return_value=(
@@ -66,6 +79,91 @@ class PackageSyncTests(unittest.TestCase):
         self.assertEqual(raw, b"verified bytes")
         self.assertEqual(requests[0].get_header("Authorization"), "Bearer fake")
         self.assertIsNone(requests[1].get_header("Authorization"))
+
+    def test_private_release_uses_authenticated_asset_api_and_drops_token_on_redirects(self):
+        release, payloads = self.release_fixture()
+        requests = []
+        urls = {asset["url"]: asset for asset in release["assets"]}
+
+        def opened(request, **kwargs):
+            requests.append(request)
+            if request.full_url in urls:
+                asset = urls[request.full_url]
+                self.assertEqual(request.get_header("Authorization"), "Bearer private-test-token")
+                self.assertEqual(request.get_header("Accept"), "application/octet-stream")
+                raise urllib.error.HTTPError(request.full_url, 302, "redirect", {
+                    "Location": asset["browser_download_url"]}, None)
+            self.assertIsNone(request.get_header("Authorization"))
+            name = request.full_url.rsplit("/", 1)[1]
+            if request.full_url.startswith("https://github.com/"):
+                raise urllib.error.HTTPError(request.full_url, 302, "redirect", {
+                    "Location": "https://release-assets.githubusercontent.com/" + name}, None)
+            return io.BytesIO(payloads[name])
+
+        with patch.object(sync, "read_json", return_value=release), patch.object(
+                sync.urllib.request, "build_opener", return_value=SimpleNamespace(open=opened)):
+            _, archive, checksum = sync.release_files("v0.6.15", self.root / "release", "private-test-token")
+        self.assertEqual(archive.read_bytes(), payloads[archive.name])
+        self.assertEqual(checksum.read_bytes(), payloads[checksum.name])
+        self.assertEqual(len(requests), 6)
+
+    def test_public_prepare_release_keeps_anonymous_browser_downloads(self):
+        release, payloads = self.release_fixture()
+        requests = []
+
+        def opened(request, **kwargs):
+            requests.append(request)
+            self.assertIsNone(request.get_header("Authorization"))
+            self.assertTrue(request.full_url.startswith(f"https://github.com/{sync.REPOSITORY}/releases/download/v0.6.15/"))
+            return io.BytesIO(payloads[request.full_url.rsplit("/", 1)[1]])
+
+        with patch.object(sync, "read_json", return_value=release), patch.object(
+                sync.urllib.request, "build_opener", return_value=SimpleNamespace(open=opened)):
+            _, archive, checksum = sync.release_files("v0.6.15", self.root / "release")
+        self.assertEqual(archive.read_bytes(), payloads[archive.name])
+        self.assertEqual(checksum.read_bytes(), payloads[checksum.name])
+        self.assertEqual(len(requests), 2)
+
+    def test_private_release_rejects_unbound_asset_api_identity_before_download(self):
+        release, _ = self.release_fixture()
+        asset = release["assets"][0]
+        for changed in ({"url": "https://api.github.com/repos/Other/story-skill/releases/assets/1"},
+                        {"url": sync.API + "/releases/assets/2"},
+                        {"url": asset["url"] + "?redirect=other"},
+                        {"id": "1"}, {"id": True}, {"id": 0}):
+            with self.subTest(changed=changed):
+                invalid = {**release, "assets": [{**asset, **changed}, release["assets"][1]]}
+                with patch.object(sync, "read_json", return_value=invalid), patch.object(sync, "read_url") as fetch:
+                    with self.assertRaisesRegex(ValueError, "asset API URL"):
+                        sync.release_files("v0.6.15", self.root / "release", "private-test-token")
+                fetch.assert_not_called()
+
+    def test_private_release_still_rejects_wrong_asset_size_or_server_digest(self):
+        release, payloads = self.release_fixture()
+        asset = release["assets"][0]
+        for changed, message in (({"size": asset["size"] + 1}, "size changed"),
+                                 ({"digest": "sha256:" + "0" * 64}, "server digest")):
+            with self.subTest(changed=changed):
+                invalid = {**release, "assets": [{**asset, **changed}, release["assets"][1]]}
+                with patch.object(sync, "read_json", return_value=invalid), patch.object(
+                        sync, "read_url", return_value=payloads[asset["name"]]):
+                    with self.assertRaisesRegex(ValueError, message):
+                        sync.release_files("v0.6.15", self.root / "release", "private-test-token")
+
+    def test_authenticated_asset_redirect_rejects_untrusted_or_non_https_hosts(self):
+        for location in ("http://release-assets.githubusercontent.com/package.zip", "https://example.com/package.zip"):
+            with self.subTest(location=location):
+                requests = []
+
+                def opened(request, **kwargs):
+                    requests.append(request)
+                    raise urllib.error.HTTPError(request.full_url, 302, "redirect", {"Location": location}, None)
+
+                with patch.object(sync.urllib.request, "build_opener", return_value=SimpleNamespace(open=opened)):
+                    with self.assertRaisesRegex(ValueError, "Unexpected download host"):
+                        sync.read_url(sync.API + "/releases/assets/1", "private-test-token", "api.github.com",
+                                      accept="application/octet-stream")
+                self.assertEqual(len(requests), 1)
 
     def test_invalid_tag_stops_before_network_or_build(self):
         with patch.object(sync, "release_files") as fetch:
@@ -171,7 +269,7 @@ class PackageSyncTests(unittest.TestCase):
         with tarfile.open(archive, "w:gz") as bundle:
             for name in (sync.package_npm.payload_files(version) if names is None else names):
                 raw = (root / name).read_bytes()
-                if version != "0.6.14" and name.endswith("/SKILL.md"):
+                if version != "0.6.15" and name.endswith("/SKILL.md"):
                     # Historical fixtures cannot contain links added to current source rules.
                     raw = b"# Historical layout fixture\n[shared runtime](../story-skill/scripts/story.py)\n"
                 if name == "story-skill/scripts/story.py":
@@ -252,10 +350,11 @@ class PackageSyncTests(unittest.TestCase):
         self.assertEqual(result["skill_files"], 49)
         self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES_V0611))
 
-    def test_runtime_smoke_v0612_v0613_and_current_v0614_preserve_versioned_file_layouts(self):
+    def test_runtime_smoke_v0612_through_current_v0615_preserve_versioned_file_layouts(self):
         for version, count, skills in (("0.6.12", 49, sync.package_npm.SKILL_NAMES_V0612),
                                        ("0.6.13", 50, sync.package_npm.SKILL_NAMES_V0613),
-                                       ("0.6.14", 51, sync.package_npm.SKILL_NAMES_V0614)):
+                                       ("0.6.14", 51, sync.package_npm.SKILL_NAMES_V0614),
+                                       ("0.6.15", 51, sync.package_npm.SKILL_NAMES_V0615)):
             with self.subTest(version=version):
                 archive = self.smoke_archive(version)
                 results = [SimpleNamespace(returncode=0, stdout=version + "\n"),
@@ -271,9 +370,9 @@ class PackageSyncTests(unittest.TestCase):
                     self.assertTrue((suite / "story-skill/scripts/story_punctuation.py").is_file())
                     self.assertTrue((suite / "story-skill-write/references/punctuation.md").is_file())
                     self.assertEqual((suite / "story-skill-plan/references/outline.md").is_file(),
-                                     version in ("0.6.13", "0.6.14"))
+                                     version in ("0.6.13", "0.6.14", "0.6.15"))
                     self.assertEqual((suite / "story-skill/references/workbench.md").is_file(),
-                                     version == "0.6.14")
+                                     version in ("0.6.14", "0.6.15"))
                     return results.pop(0)
 
                 with patch.object(sync.subprocess, "run", side_effect=execute):

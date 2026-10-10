@@ -2,6 +2,8 @@
 
 > **历史记录提示：** 本仓库文档和 14 个旧版 Release 的标题、正文已做名称遮盖；28 个旧附件的文件名、旧包身份、固定标签和提交历史仍保留原样，以免现有下载地址与安装依赖失效。旧版路径不能由新技能名推导，历史资料中的来源路径与哈希可能无法用遮盖后的文件复验。v0.6.0 的附件与回下载已核对；安装时仍须检查当前标签与附件状态。
 
+**v0.6.15 发布准备中。** 本版同步创新构思与持续展开、场景展开与情绪层次、整体品质与重读价值的规则更新；沿用八技能51文件、Claude单入口53文件布局，准备Intel客户端0.1.3/build 4和三份校验文件。[本版记录](releases/v0.6.15.md)分别登记本地验证、跨平台 CI、固定标签、Release 附件及 Packages 结果。仓库当前为私有，历史的“公开回下载”只描述当时状态；本版使用有权限的下载核验。版本分支统一命名为 `version-<版本号>`。
+
 **v0.6.14 已发布。** 八技能51文件、Claude单入口包53文件、Intel客户端0.1.2/build 3及三份校验文件，六附件公开回下载核验通过。固定标签指向 `2d093cded35317cf8c491ffe1d8e040a9a943685`；[三组跨平台CI](https://github.com/NingCui29/story-skill/actions/runs/37811145541)与[Packages工作流](https://github.com/NingCui29/story-skill/actions/runs/37867333991)全部成功，远端标签、8组隔离安装的同字节复核及注册表下载物独立核验均完成。[本版记录](releases/v0.6.14.md)保留首次Windows测试夹具失败、修正范围和各分发许可证文件的实际差异。
 
 **v0.6.12 已发布，Claude桌面包需使用r2修正版。** 原始八技能49文件套件、Claude桌面51文件包、Intel macOS客户端0.1.1与三份校验文件已公开回下载核验；原桌面包实际导入时因9个SKILL.md被拒绝；r2已公开并回下载核对，递归仅一个入口，47项本地打包回归通过。修复源码及范围见本版记录。固定提交的Linux及两组Windows CI全部成功，远端标签8组隔离安装通过。GitHub Packages及详细分发证据见[本版记录](releases/v0.6.12.md)。
@@ -165,7 +167,7 @@ v0.5.3 已于 **2026-09-11 17:18:19（北京时间）** 发布。固定标签、
 | 官方固定标签安装 | 从远端 `v0.5.3` 隔离安装 7 个技能、33 个文件，与 Release 和源码一致；版本、帮助、初始化、状态四项 CLI 通过，临时数据已清理。[安装核验](../benchmarks/results/v0.5.3/release/remote-install.json) |
 | GitHub Packages | [工作流 34583518477](https://github.com/NingCui29/story-skill/actions/runs/34583518477) 成功发布 旧名称 npm 包（v0.5.3）；注册表回下载后在本机独立核对归档摘要、33 个技能文件、2 个包装文件、SHA-512 和四项 CLI，均通过。[工作流回执](../benchmarks/results/v0.5.3/release/packages.json) · [独立复核](../benchmarks/results/v0.5.3/release/package-check.json) |
 
-本版保留 schema 2，已有书不需重新导入，安装升级不自动搬动书目录。README 新增 [从拆书开始，新起一本书](../README.md#从拆书开始新起一本书)；拆书、方法提炼与原创规划按既有技能顺序推进，没有新增文学质量认证，也没有开展新一轮文学对照实验。
+本版保留 schema 2，已有书不需重新导入，安装升级不自动搬动书目录。README 新增 [从拆书开始，新起一本书](../README.md#从拆书开始)；拆书、方法提炼与原创规划按既有技能顺序推进，没有新增文学质量认证，也没有开展新一轮文学对照实验。
 
 本地 [ZIP](../benchmarks/results/v0.5.3/package.json) 含 33 个载荷文件、118,923 字节，SHA-256 为 `6d5acf81f9d7d21dfa0719fad2dd50bf8ae0c2bed0c21fa85485924084768044`；[npm 构建](../benchmarks/results/v0.5.3/npm-package.json) 的 tarball SHA-256 为 `cd27f60476a8bb764c795192c0d9094f37840dc2371eb8913f63e491251e1d8b`。Release ZIP 和注册表回下载 tarball 均与本地构建逐字节一致。[本机安装](../benchmarks/results/v0.5.3/release/local-install.json) 已在保留完整旧版后更新到 0.5.3，33 个文件和四项 CLI 通过；它与官方固定标签隔离安装分别记录。固定标签保留发布前文档快照，main 记录后续完成的分发状态，不移动标签或替换附件。
 
