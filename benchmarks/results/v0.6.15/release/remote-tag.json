@@ -1,0 +1,85 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-10T01:52:52.500359+00:00",
+  "repository": "NingCui29/story-skill",
+  "tag": "v0.6.15",
+  "tag_commit": "212da1438fb6260c665d24fb780a5981c6fa85cb",
+  "tag_object": "212da1438fb6260c665d24fb780a5981c6fa85cb",
+  "tag_object_type": "commit",
+  "tag_verified": true,
+  "tag_status": "verified",
+  "source_files": 51,
+  "source_skills": 8,
+  "source_matches_release_zip": true,
+  "installer_matches_prior_verified_commit": true,
+  "runtime_modules": 9,
+  "archive_sha256": "383f52943498917e5a9ca40c76873ee70e3eea22b78466ceac18c3129e9fc669",
+  "retained_installations": [
+    {
+      "host": "codex",
+      "scope": "project",
+      "files": 51,
+      "matches_tag": true,
+      "receipts_valid": 8
+    },
+    {
+      "host": "codex",
+      "scope": "user",
+      "files": 51,
+      "matches_tag": true,
+      "receipts_valid": 8
+    },
+    {
+      "host": "claude-code",
+      "scope": "project",
+      "files": 51,
+      "matches_tag": true,
+      "receipts_valid": 8
+    },
+    {
+      "host": "claude-code",
+      "scope": "user",
+      "files": 51,
+      "matches_tag": true,
+      "receipts_valid": 8
+    },
+    {
+      "host": "antigravity",
+      "scope": "project",
+      "files": 51,
+      "matches_tag": true,
+      "receipts_valid": 8
+    },
+    {
+      "host": "antigravity",
+      "scope": "user",
+      "files": 51,
+      "matches_tag": true,
+      "receipts_valid": 8
+    },
+    {
+      "host": "antigravity-cli",
+      "scope": "project",
+      "files": 51,
+      "matches_tag": true,
+      "receipts_valid": 8
+    },
+    {
+      "host": "antigravity-cli",
+      "scope": "user",
+      "files": 51,
+      "matches_tag": true,
+      "receipts_valid": 8
+    }
+  ],
+  "reused_verification": {
+    "report": "benchmarks/results/v0.6.15/release/remote-commit-install.json",
+    "sha256": "97db48918c2dac3138ffa50fc326a524715ac16073473f69104f4ac2a2db4ad4",
+    "commit": "212da1438fb6260c665d24fb780a5981c6fa85cb",
+    "installation_count": 8,
+    "cli_invocations_previously_passed": 32,
+    "new_installations": 0,
+    "new_cli_invocations": 0
+  },
+  "scope": "Fetched the exact origin tag through existing authentication into the retained isolated checkout; its peeled commit, 51 payloads, installer and 9 runtime modules match the prior fixed-commit evidence and canonical ZIP. Eight retained installations were re-compared. No installation or CLI was rerun, no branch/tag ref was changed, and the previous report was preserved."
+}

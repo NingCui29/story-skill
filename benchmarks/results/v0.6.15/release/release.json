@@ -1,0 +1,82 @@
+{
+  "ok": true,
+  "verified_at": "2026-10-10T01:54:27.549181+00:00",
+  "tag": "v0.6.15",
+  "fixed_commit": "212da1438fb6260c665d24fb780a5981c6fa85cb",
+  "release_id": 408509133,
+  "url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.15",
+  "published_at": "2026-10-10T01:53:06Z",
+  "draft": false,
+  "prerelease": false,
+  "download_authentication": "GitHub CLI using existing authentication for private-repository release assets; no token was read or logged.",
+  "anonymous_public_download_tested": false,
+  "checksums_match": true,
+  "assets": [
+    {
+      "name": "story-skill-0.6.15.zip",
+      "bytes": 384177,
+      "sha256": "383f52943498917e5a9ca40c76873ee70e3eea22b78466ceac18c3129e9fc669",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-skill-0.6.15.zip",
+      "github_digest": "sha256:383f52943498917e5a9ca40c76873ee70e3eea22b78466ceac18c3129e9fc669",
+      "download_matches_local": true
+    },
+    {
+      "name": "story-skill-0.6.15.zip.sha256",
+      "bytes": 89,
+      "sha256": "257150f526d33889484f687d90b4b1d0249c44ef75e3d1c7f63cb3085c38ebd6",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-skill-0.6.15.zip.sha256",
+      "github_digest": "sha256:257150f526d33889484f687d90b4b1d0249c44ef75e3d1c7f63cb3085c38ebd6",
+      "download_matches_local": true
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.15-r2.zip",
+      "bytes": 388290,
+      "sha256": "ecb7b195d60a2c039959d833f4ff95fe495a8121ffa8a0d0bdac75e111a52e11",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-skill-claude-desktop-0.6.15-r2.zip",
+      "github_digest": "sha256:ecb7b195d60a2c039959d833f4ff95fe495a8121ffa8a0d0bdac75e111a52e11",
+      "download_matches_local": true
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.15-r2.zip.sha256",
+      "bytes": 107,
+      "sha256": "5487954c7980f97f1ca1f5d9f250b8d93ba38ab07cb13491f60dcf8952bc2286",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-skill-claude-desktop-0.6.15-r2.zip.sha256",
+      "github_digest": "sha256:5487954c7980f97f1ca1f5d9f250b8d93ba38ab07cb13491f60dcf8952bc2286",
+      "download_matches_local": true
+    },
+    {
+      "name": "story-workbench-0.1.3-macos-x86_64.zip",
+      "bytes": 26543187,
+      "sha256": "2d94ab2edea8a155eb9577b3eb9cf1671bc808482df527510a5db7eaa7862ea2",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-workbench-0.1.3-macos-x86_64.zip",
+      "github_digest": "sha256:2d94ab2edea8a155eb9577b3eb9cf1671bc808482df527510a5db7eaa7862ea2",
+      "download_matches_local": true
+    },
+    {
+      "name": "story-workbench-0.1.3-macos-x86_64.zip.sha256",
+      "bytes": 105,
+      "sha256": "8dc7f27e03fa1ba3f6ba490b28ebf436a0c8cd278b4266ef4289621e19b58747",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-workbench-0.1.3-macos-x86_64.zip.sha256",
+      "github_digest": "sha256:8dc7f27e03fa1ba3f6ba490b28ebf436a0c8cd278b4266ef4289621e19b58747",
+      "download_matches_local": true
+    }
+  ],
+  "crc": [
+    {
+      "archive": "story-skill-0.6.15.zip",
+      "crc_valid": true,
+      "members": 51
+    },
+    {
+      "archive": "story-skill-claude-desktop-0.6.15-r2.zip",
+      "crc_valid": true,
+      "members": 53
+    },
+    {
+      "archive": "story-workbench-0.1.3-macos-x86_64.zip",
+      "crc_valid": true,
+      "members": 3830
+    }
+  ],
+  "scope": "Authenticated readback of six published release assets. All complete bytes equal the already verified local artifacts; no upload or release mutation performed."
+}

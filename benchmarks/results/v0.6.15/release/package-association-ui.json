@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "checked_at": "2026-10-10T02:07:17.103574+00:00",
+  "repository": "NingCui29/story-skill",
+  "source_repository_id": 1360986172,
+  "package_id": 15331172,
+  "package_name": "story-skill",
+  "package_type": "npm",
+  "release_version": "0.6.15",
+  "verification_method": "Read-only inspection of the authenticated owner package settings page through the Chrome browser automation tool. No settings were changed.",
+  "settings_url": "https://github.com/users/NingCui29/packages/npm/story-skill/settings",
+  "observed": {
+    "section": "Repository source",
+    "linked_repository_text": "NingCui29/story-skill",
+    "linked_repository_href": "https://github.com/NingCui29/story-skill",
+    "association_notice": "A GitHub repository has been identified as the source for this package. This package will be displayed in this repositories package list.",
+    "unlink_control_present": true,
+    "inherit_access_from_source_repository_checked": true,
+    "visibility": "public"
+  },
+  "cross_checks": {
+    "package_id_and_visibility_from_workflow_api": "packages-association-fallback-diagnostic.json",
+    "both_supported_rest_api_versions_omit_repository_field": true,
+    "authenticated_package_page_redirect": "https://github.com/NingCui29/story-skill/pkgs/npm/story-skill",
+    "latest_package_version": "0.6.15"
+  },
+  "scope": {
+    "repository_visibility_changed": false,
+    "package_visibility_changed": false,
+    "permissions_changed": false,
+    "package_association_changed": false
+  },
+  "limits": "This is an independent UI association check at the recorded time, not evidence that the REST API exposes the association or that future settings remain unchanged."
+}

@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "release_version": "0.6.15",
+  "checked_at": "2026-10-10T01:35:17.798093+00:00",
+  "ok": true,
+  "status": "passed",
+  "run": 1440,
+  "passed": 1423,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 17,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+  "duration_seconds": 271.984,
+  "process_duration_seconds": 274.067,
+  "started_at": "2026-10-10T01:29:54.248750+00:00",
+  "completed_at": "2026-10-10T01:34:28.282044+00:00",
+  "environment": {
+    "python": "3.12.14",
+    "node": "v24.19.0",
+    "platform": "Darwin 15.8.1 x86_64"
+  },
+  "tested_source_commit": "212da1438fb6260c665d24fb780a5981c6fa85cb",
+  "source_stability": {
+    "snapshot_file_count": 179,
+    "unchanged_count": 179,
+    "changed_count": 0,
+    "changed_during_run": [],
+    "snapshot_sha256": "41883588bee33e97530163c28e86e6383d94b238c71be90595efa37da9241454",
+    "snapshot_scope": "Python sources and tests, skill rules/resources, desktop source and metadata, Packages workflow",
+    "current_commit_code_and_rules_match_tested_worktree": true,
+    "note": "The source bytes stayed unchanged during testing. Committing existing edits or changing unrelated documents/reports is not source drift.",
+    "runtime_sha256": "ace309ef8127baf747aeb36713f679be9b54dbcbff889049b69faf238ff76d5b"
+  },
+  "targeted_regressions": [
+    {
+      "pattern": "test_sync_packages.py",
+      "run": 26,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 1.39
+    },
+    {
+      "pattern": "test_package*.py",
+      "run": 50,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 4.759
+    },
+    {
+      "pattern": "test_install*.py",
+      "run": 68,
+      "skipped": 1,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 57.66
+    }
+  ],
+  "private_release_fix": {
+    "regression_tests": 5,
+    "red_run_reproduced_missing_private_asset_support": true,
+    "coverage": [
+      "Authenticated asset API download with application/octet-stream",
+      "Credentials removed on GitHub browser and signed-asset redirects",
+      "Anonymous public download path retained",
+      "Repository and asset-ID binding rejected before download",
+      "Asset size/digest and HTTPS host restrictions retained"
+    ],
+    "github_asset_api_reference": "https://docs.github.com/en/rest/releases/assets#get-a-release-asset"
+  },
+  "evidence": {
+    "full_log": "dist/release-v0.6.15/local-tests.log",
+    "full_counts": "dist/release-v0.6.15/local-tests.json",
+    "source_hashes": "dist/release-v0.6.15/local-tests-run.json",
+    "targeted_log": "dist/release-v0.6.15/targeted-tests.log",
+    "private_asset_red_log": "dist/release-v0.6.15/private-release-red.log"
+  },
+  "scope": {
+    "global_packages_installed": false,
+    "real_books_accessed": false,
+    "user_services_started_or_stopped": false
+  }
+}

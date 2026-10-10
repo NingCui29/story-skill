@@ -1,0 +1,77 @@
+{
+  "ok": false,
+  "diagnostic_only": true,
+  "checked_at": "2026-10-10T02:05:10.553955+00:00",
+  "repository": "NingCui29/story-skill",
+  "tag": "v0.6.15",
+  "release_target_commit": "212da1438fb6260c665d24fb780a5981c6fa85cb",
+  "workflow": {
+    "id": 38015521433,
+    "name": "Sync v0.6.15 to GitHub Packages",
+    "head_sha": "c3765aa2d5fdca1f8ce1fed73bb1b809d60560cf",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/NingCui29/story-skill/actions/runs/38015521433",
+    "created_at": "2026-10-10T02:03:10Z",
+    "updated_at": "2026-10-10T02:03:33Z",
+    "run_attempt": 1
+  },
+  "artifact": {
+    "id": 11656080834,
+    "name": "packages-sync-v0.6.15",
+    "size_in_bytes": 353616,
+    "digest": "sha256:4365b91df23d805ebf5c9d704a66104b94ece29e52b4c96a5ebe94600d93d32c",
+    "created_at": "2026-10-10T02:03:30Z",
+    "expires_at": "2026-10-24T02:03:30Z"
+  },
+  "diagnostic_source_sha256": "5f25588b99b133c9412c47b88e34ab86d1ead9c2cc60ec446ce0615f672be85e",
+  "diagnostic": {
+    "package-association.json": {
+      "tag": "v0.6.15",
+      "repository": "NingCui29/story-skill",
+      "package": {
+        "http_status": 200,
+        "api_version": "2026-03-10",
+        "metadata": {
+          "id": 15331172,
+          "name": "story-skill",
+          "package_type": "npm",
+          "visibility": "public",
+          "html_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill"
+        },
+        "repository_field_present": false,
+        "repository": null
+      },
+      "package_legacy": {
+        "http_status": 200,
+        "api_version": "2022-11-28",
+        "metadata": {
+          "id": 15331172,
+          "name": "story-skill",
+          "package_type": "npm",
+          "visibility": "public",
+          "html_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill"
+        },
+        "repository_field_present": false,
+        "repository": null
+      },
+      "source_repository": {
+        "http_status": 200,
+        "api_version": "2026-03-10",
+        "metadata": {
+          "id": 1360986172,
+          "full_name": "NingCui29/story-skill",
+          "private": true
+        }
+      }
+    },
+    "receipt.json": {
+      "ok": false,
+      "tag": "v0.6.15",
+      "error_type": "ValueError",
+      "error": "Package repository metadata is unavailable in supported API versions"
+    }
+  },
+  "scope": "Read-only download of the failed fallback workflow artifact. The actual current and legacy API observations are retained; no workflow success, repository association, or package permission change is inferred."
+}

@@ -6,11 +6,11 @@ Story Skill 是供 Claude 桌面版、Claude Code、Codex、Google Antigravity �
 
 **本版：v0.6.15 · Python 3.10+ · 支持长篇与短篇**
 
-v0.6.15 正在准备发布，包含八个技能、51 个载荷文件，更新创新构思与持续展开、场景展开与情绪层次，以及整部作品品质与重读价值的任务指导。本版验证与分发状态见[发布记录](docs/releases/v0.6.15.md)。安装或升级按 [INSTALL.md](INSTALL.md) 核对；仓库现为私有，Release 下载需要相应访问权限。
+v0.6.15 已于2026-10-10发布，包含八个技能、51 个载荷文件，更新创新构思与持续展开、场景展开与情绪层次，以及整部作品品质与重读价值的任务指导。本版验证与分发状态见[发布记录](docs/releases/v0.6.15.md)。安装或升级按 [INSTALL.md](INSTALL.md) 核对；仓库现为私有，Release 下载需要相应访问权限。
 
 各宿主复用同源技能规则和共享运行时；Claude 桌面包将内嵌流程映射为参考文件。本轮保留现有工具行为和 schema 2，不把规划或机械检查通过当作文学效果已实现。已发布历史标签与附件保持原有内容。
 
-macOS 客户端 `0.1.3`（build 4，内含 Story Skill `0.6.15`）作为独立 Intel 实验附件准备，采用本地临时签名，未经 Apple 公证。验证与分发状态见[客户端说明](desktop/macos/README.md)，GitHub 发布不会自动更新本机安装。
+macOS 客户端 `0.1.3`（build 4，内含 Story Skill `0.6.15`）已作为独立 Intel 实验附件分发，采用本地临时签名，未经 Apple 公证。验证与分发状态见[客户端说明](desktop/macos/README.md)，GitHub 发布不会自动更新本机安装。
 
 [安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.15.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
 

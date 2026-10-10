@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "checked_at": "2026-10-10T02:10:26.249830+00:00",
+  "run_id": 38014853678,
+  "trigger": "Push of v0.6.15 tag after the prepublication main CI passed",
+  "workflow": {
+    "conclusion": "success",
+    "headSha": "212da1438fb6260c665d24fb780a5981c6fa85cb",
+    "jobs": [
+      {
+        "completedAt": "2026-10-10T02:07:26Z",
+        "conclusion": "success",
+        "databaseId": 114102746936,
+        "name": "test (windows-latest, 3.12)",
+        "startedAt": "2026-10-10T01:52:37Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-10T01:52:38Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-10T01:52:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:52:47Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-10-10T01:52:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:52:47Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "number": 3,
+            "startedAt": "2026-10-10T01:52:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:06:30Z",
+            "conclusion": "success",
+            "name": "Run regression tests including historical migration",
+            "number": 4,
+            "startedAt": "2026-10-10T01:52:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:06:30Z",
+            "conclusion": "success",
+            "name": "Build the complete skill ZIP",
+            "number": 5,
+            "startedAt": "2026-10-10T02:06:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:06:31Z",
+            "conclusion": "success",
+            "name": "Build the Claude Desktop skill ZIP",
+            "number": 6,
+            "startedAt": "2026-10-10T02:06:30Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:06:38Z",
+            "conclusion": "success",
+            "name": "Exercise the local CLI workflow",
+            "number": 7,
+            "startedAt": "2026-10-10T02:06:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:06:56Z",
+            "conclusion": "success",
+            "name": "Exercise synthetic Chinese transactions",
+            "number": 8,
+            "startedAt": "2026-10-10T02:06:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:07:22Z",
+            "conclusion": "success",
+            "name": "Exercise multi-line writing and historical revision",
+            "number": 9,
+            "startedAt": "2026-10-10T02:06:56Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:07:22Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "number": 17,
+            "startedAt": "2026-10-10T02:07:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:07:24Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 18,
+            "startedAt": "2026-10-10T02:07:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:07:24Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 19,
+            "startedAt": "2026-10-10T02:07:24Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/NingCui29/story-skill/actions/runs/38014853678/job/114102746936"
+      },
+      {
+        "completedAt": "2026-10-10T01:54:37Z",
+        "conclusion": "success",
+        "databaseId": 114102746966,
+        "name": "test (ubuntu-latest, 3.10)",
+        "startedAt": "2026-10-10T01:52:36Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-10T01:52:37Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-10T01:52:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:52:39Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-10-10T01:52:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:52:39Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "number": 3,
+            "startedAt": "2026-10-10T01:52:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:54:18Z",
+            "conclusion": "success",
+            "name": "Run regression tests including historical migration",
+            "number": 4,
+            "startedAt": "2026-10-10T01:52:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:54:18Z",
+            "conclusion": "success",
+            "name": "Build the complete skill ZIP",
+            "number": 5,
+            "startedAt": "2026-10-10T01:54:18Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:54:18Z",
+            "conclusion": "success",
+            "name": "Build the Claude Desktop skill ZIP",
+            "number": 6,
+            "startedAt": "2026-10-10T01:54:18Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:54:21Z",
+            "conclusion": "success",
+            "name": "Exercise the local CLI workflow",
+            "number": 7,
+            "startedAt": "2026-10-10T01:54:18Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:54:26Z",
+            "conclusion": "success",
+            "name": "Exercise synthetic Chinese transactions",
+            "number": 8,
+            "startedAt": "2026-10-10T01:54:21Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:54:34Z",
+            "conclusion": "success",
+            "name": "Exercise multi-line writing and historical revision",
+            "number": 9,
+            "startedAt": "2026-10-10T01:54:26Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:54:34Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "number": 17,
+            "startedAt": "2026-10-10T01:54:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:54:35Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 18,
+            "startedAt": "2026-10-10T01:54:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:54:35Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 19,
+            "startedAt": "2026-10-10T01:54:35Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/NingCui29/story-skill/actions/runs/38014853678/job/114102746966"
+      },
+      {
+        "completedAt": "2026-10-10T02:09:36Z",
+        "conclusion": "success",
+        "databaseId": 114102747080,
+        "name": "test (windows-latest, 3.10)",
+        "startedAt": "2026-10-10T01:52:36Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-10T01:52:38Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-10T01:52:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:52:47Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 2,
+            "startedAt": "2026-10-10T01:52:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T01:52:47Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "number": 3,
+            "startedAt": "2026-10-10T01:52:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:08:37Z",
+            "conclusion": "success",
+            "name": "Run regression tests including historical migration",
+            "number": 4,
+            "startedAt": "2026-10-10T01:52:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:08:38Z",
+            "conclusion": "success",
+            "name": "Build the complete skill ZIP",
+            "number": 5,
+            "startedAt": "2026-10-10T02:08:37Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:08:39Z",
+            "conclusion": "success",
+            "name": "Build the Claude Desktop skill ZIP",
+            "number": 6,
+            "startedAt": "2026-10-10T02:08:38Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:08:44Z",
+            "conclusion": "success",
+            "name": "Exercise the local CLI workflow",
+            "number": 7,
+            "startedAt": "2026-10-10T02:08:39Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:09:05Z",
+            "conclusion": "success",
+            "name": "Exercise synthetic Chinese transactions",
+            "number": 8,
+            "startedAt": "2026-10-10T02:08:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:09:31Z",
+            "conclusion": "success",
+            "name": "Exercise multi-line writing and historical revision",
+            "number": 9,
+            "startedAt": "2026-10-10T02:09:05Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:09:31Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "number": 17,
+            "startedAt": "2026-10-10T02:09:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:09:34Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "number": 18,
+            "startedAt": "2026-10-10T02:09:31Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-10T02:09:34Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 19,
+            "startedAt": "2026-10-10T02:09:34Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/NingCui29/story-skill/actions/runs/38014853678/job/114102747080"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/NingCui29/story-skill/actions/runs/38014853678"
+  },
+  "scope": "Same fixed release payload commit as ci-final.json; all three matrix jobs succeeded again."
+}

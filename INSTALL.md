@@ -1,6 +1,6 @@
 # 安装或升级 Story Skill
 
-**本版：v0.6.15，发布准备中。** 八技能、51 个载荷文件，运行时需要 Python 3.10 或更新版本。[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.15)计划提供三个 ZIP 与三份校验文件；固定提交及验证、分发状态见[发布记录](docs/releases/v0.6.15.md)。仓库当前为私有，下载 Release 或源码需要对应权限。
+**本版：v0.6.15，已发布。** 八技能、51 个载荷文件，运行时需要 Python 3.10 或更新版本。[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.15)提供三个 ZIP 与三份校验文件；固定提交及验证、分发状态见[发布记录](docs/releases/v0.6.15.md)。仓库当前为私有，下载 Release 或源码需要对应权限。
 
 [v0.6.12 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.12)保留当版49文件套件及修正历史。Claude 桌面导入包、Claude Code 与 Google Antigravity 目录安装适配从 v0.6.12 开始提供；本轮沿用这些入口与 Codex 的默认安装行为。
 
@@ -145,7 +145,7 @@ python3 -B -X utf8 scripts/install.py --host claude-code --user --update
 
 ## macOS 客户端
 
-本版计划提供 [story-workbench-0.1.3-macos-x86_64.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-workbench-0.1.3-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-workbench-0.1.3-macos-x86_64.zip.sha256)；版本为0.1.3、build 4，内含 Python 3.12 与 Story Skill 0.6.15。它是独立的 Intel Mac 实验客户端，不自动安装八技能，采用本地临时签名，未经 Apple 公证；本版实际验证与分发范围见[客户端说明](desktop/macos/README.md)。历史客户端保留在对应 Release。
+本版提供 [story-workbench-0.1.3-macos-x86_64.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-workbench-0.1.3-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.15/story-workbench-0.1.3-macos-x86_64.zip.sha256)；版本为0.1.3、build 4，内含 Python 3.12 与 Story Skill 0.6.15。它是独立的 Intel Mac 实验客户端，不自动安装八技能，采用本地临时签名，未经 Apple 公证；本版实际验证与分发范围见[客户端说明](desktop/macos/README.md)。历史客户端保留在对应 Release。
 
 升级客户端前保存所有页面需要保留的文字，再退出并替换应用包。已经运行的工作台服务可能继续使用旧代码，须在保留编辑后按服务管理流程更新，不自动结束编辑会话。
 

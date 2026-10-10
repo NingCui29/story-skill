@@ -1,0 +1,79 @@
+{
+  "ok": true,
+  "diagnostic_only": true,
+  "checked_at": "2026-10-10T02:03:04.625799+00:00",
+  "repository": "NingCui29/story-skill",
+  "tag": "v0.6.15",
+  "release_target_commit": "212da1438fb6260c665d24fb780a5981c6fa85cb",
+  "workflow": {
+    "id": 38015202640,
+    "name": "Sync v0.6.15 to GitHub Packages",
+    "head_sha": "b92f861b7ff5a2339c5a21f5efe9a4f998dbda8e",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/NingCui29/story-skill/actions/runs/38015202640",
+    "created_at": "2026-10-10T01:58:12Z",
+    "updated_at": "2026-10-10T01:58:36Z",
+    "run_attempt": 1
+  },
+  "artifacts": [
+    {
+      "id": 11654824610,
+      "name": "packages-sync-v0.6.15",
+      "size_in_bytes": 353564,
+      "digest": "sha256:b81670298bfbf725ec649a8c8eeee83071907bd21a7c80b6c08e8c7ea4a5344b",
+      "created_at": "2026-10-10T01:58:32Z",
+      "expires_at": "2026-10-24T01:58:31Z"
+    }
+  ],
+  "diagnostic_source_sha256": "2651be85f7d702bb5e322fc435b3d0fa3ce5774b067024bc5eb3d89805fecd89",
+  "observed_api_responses": {
+    "tag": "v0.6.15",
+    "repository": "NingCui29/story-skill",
+    "package": {
+      "http_status": 200,
+      "metadata": {
+        "id": 15331172,
+        "name": "story-skill",
+        "package_type": "npm",
+        "visibility": "public",
+        "html_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill"
+      },
+      "repository_field_present": false,
+      "repository": null
+    },
+    "source_repository": {
+      "http_status": 200,
+      "metadata": {
+        "id": 1360986172,
+        "full_name": "NingCui29/story-skill",
+        "private": true
+      }
+    }
+  },
+  "anonymous_package_page": {
+    "checked_at": "2026-10-10T02:03:04.625250+00:00",
+    "url": "https://github.com/users/NingCui29/packages/npm/package/story-skill",
+    "http_status": 200,
+    "authorization_sent": false,
+    "cookie_header_sent": false,
+    "sign_in_link_present": true,
+    "latest_version": "0.6.15",
+    "latest_label_present": true,
+    "installation_command_version": "0.6.15",
+    "page_sha256": "81af1df80a8168f23743f7bd6963ab33fde16ff56afd9f768cef9419087a54d9",
+    "heading_excerpt": "story-skill 0.6.15 Latest",
+    "scope": "Anonymous HTML GET confirms visible package page and version label; it does not establish unauthenticated npm registry download access."
+  },
+  "conclusions": {
+    "package_visibility": "public",
+    "package_visibility_confirmed_by_workflow_api": true,
+    "source_repository_private": true,
+    "package_api_repository_field_present": false,
+    "repository_association_status": "unconfirmed",
+    "workflow_success": false,
+    "missing_field_proves_unlinked": false
+  },
+  "scope": "Read-only examination of the saved authenticated workflow API diagnostic and a fresh anonymous package HTML page. The same workflow token read both package metadata (HTTP 200, public) and the private source repository (HTTP 200). A missing repository key is recorded as unknown association, not proof of an unlinked package. No source, package visibility, repository association, credentials or Git ref was changed."
+}

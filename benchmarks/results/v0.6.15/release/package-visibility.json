@@ -1,0 +1,64 @@
+{
+  "checked_at": "2026-10-10T02:03:04.625799+00:00",
+  "package": "@ningcui29/story-skill",
+  "visibility": "public",
+  "visibility_verified": true,
+  "verification_source": "Authenticated GitHub Packages metadata API observed by diagnostic workflow 38015202640",
+  "metadata_api": "users/NingCui29/packages/npm/story-skill",
+  "metadata_http_status": 200,
+  "metadata": {
+    "id": 15331172,
+    "name": "story-skill",
+    "package_type": "npm",
+    "visibility": "public",
+    "html_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill"
+  },
+  "workflow": {
+    "id": 38015202640,
+    "name": "Sync v0.6.15 to GitHub Packages",
+    "head_sha": "b92f861b7ff5a2339c5a21f5efe9a4f998dbda8e",
+    "event": "workflow_dispatch",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/NingCui29/story-skill/actions/runs/38015202640",
+    "created_at": "2026-10-10T01:58:12Z",
+    "updated_at": "2026-10-10T01:58:36Z",
+    "run_attempt": 1
+  },
+  "diagnostic_report": "benchmarks/results/v0.6.15/release/packages-association-diagnostic.json",
+  "repository_association_status": "unconfirmed",
+  "repository_field_present": false,
+  "anonymous_package_page": {
+    "checked_at": "2026-10-10T02:03:04.625250+00:00",
+    "url": "https://github.com/users/NingCui29/packages/npm/package/story-skill",
+    "http_status": 200,
+    "authorization_sent": false,
+    "cookie_header_sent": false,
+    "sign_in_link_present": true,
+    "latest_version": "0.6.15",
+    "latest_label_present": true,
+    "installation_command_version": "0.6.15",
+    "page_sha256": "81af1df80a8168f23743f7bd6963ab33fde16ff56afd9f768cef9419087a54d9",
+    "heading_excerpt": "story-skill 0.6.15 Latest",
+    "scope": "Anonymous HTML GET confirms visible package page and version label; it does not establish unauthenticated npm registry download access."
+  },
+  "earlier_local_access_observation": {
+    "checked_at": "2026-10-10T01:54:18.236745+00:00",
+    "package": "@ningcui29/story-skill",
+    "metadata_api": "users/NingCui29/packages/npm/story-skill",
+    "metadata_api_exit_code": 1,
+    "local_credentials_read_or_printed": false,
+    "visibility_verified": false,
+    "metadata_access_limitation": "Current GitHub authentication lacks read:packages for the package metadata endpoint; no additional credentials were requested.",
+    "metadata_http_status": 403,
+    "anonymous_registry_metadata": {
+      "url": "https://npm.pkg.github.com/@ningcui29%2fstory-skill",
+      "authorization_sent": false,
+      "http_status": 401,
+      "metadata_readable_without_authentication": false
+    },
+    "interpretation": "Registry authentication requirements and package visibility are separate. An anonymous 401 does not establish private visibility. Workflow receipt visibility is recorded separately from this live metadata observation."
+  },
+  "local_credentials_read_or_printed": false,
+  "interpretation": "The workflow API confirms public package visibility; the fresh anonymous package page shows 0.6.15 Latest. Local metadata API access still lacks read:packages and anonymous npm registry metadata returned 401 in the recorded earlier probe. Those access restrictions do not contradict public package visibility. Repository association remains unconfirmed because the API omitted the repository field."
+}

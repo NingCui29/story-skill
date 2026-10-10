@@ -1,6 +1,6 @@
 # Story Skill 文档导航
 
-**v0.6.15 发布准备中**：八个技能、51 个源载荷文件；Claude 桌面 `0.6.15-r2` 为53文件及递归唯一 `SKILL.md`，Intel Mac 客户端为0.1.3（build 4，运行时0.6.15）。本版验证与分发状态见[发布记录](releases/v0.6.15.md)。仓库现为私有，Release 下载需要对应权限；各分发包的[许可证标注不同](releases/v0.6.15.md#分发中的许可证)，GitHub 发布不自动更新本机技能或客户端。
+**v0.6.15 已发布**：八个技能、51 个源载荷文件；Claude 桌面 `0.6.15-r2` 为53文件及递归唯一 `SKILL.md`，Intel Mac 客户端为0.1.3（build 4，运行时0.6.15）。本版验证与分发状态见[发布记录](releases/v0.6.15.md)。仓库现为私有，Release 下载需要对应权限；各分发包的[许可证标注不同](releases/v0.6.15.md#分发中的许可证)，GitHub 发布不自动更新本机技能或客户端。
 
 本轮更新[创新构思与持续展开](../skills/story-skill-write/references/drama.md#创新构思与持续展开)、[场景展开与情绪层次](../skills/story-skill-write/references/drama.md#场景展开与情绪层次)和[整体品质与重读价值](../skills/story-skill-write/references/drama.md#整体品质与重读价值)，并补齐私有Release附件的Packages认证读取。现有[大纲细纲规范](../skills/story-skill-plan/references/outline.md)、[工作台参考](../skills/story-skill/references/workbench.md)、长短篇边界与工具行为继续保留。使用当前源码前按[安装指引](../INSTALL.md)核对实际快照；下列旧版验收数字保持其历史范围。
 

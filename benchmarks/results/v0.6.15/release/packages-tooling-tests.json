@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "checked_at": "2026-10-10T02:09:49.021773+00:00",
+  "release_version": "0.6.15",
+  "release_payload_commit": "212da1438fb6260c665d24fb780a5981c6fa85cb",
+  "workflow_tooling_commit": "18b8112bdffe62ab0f2d12ca3f5b59a9930563c2",
+  "tests": {
+    "pattern": "test_sync_packages.py",
+    "run": 32,
+    "passed": 32,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "duration_seconds": 1.285
+  },
+  "source_sha256": {
+    "scripts/sync_packages.py": "af139c48d7a139ce10fb1294f8aeb0d821f7477e5137745530cbcf270a7d4cd2",
+    "tests/test_sync_packages.py": "ad03bcc22563effd7c297b090abfe8cbee5263ee704185e819f9866d5fd72a2f",
+    ".github/workflows/packages.yml": "26bfd81ed59af1c81812ac1d934bc87a36676499cb2f8557adafb604d432d58c"
+  },
+  "coverage": [
+    "Private Release asset API authentication and credential removal on other hosts",
+    "Explicit API version selection and supported compatibility read only for absent association fields",
+    "Explicit foreign repository and malformed metadata reject verification",
+    "Unavailable association metadata remains null and is not invented from npm repository URL",
+    "Successful registry content/SRI/runtime verification reported separately from optional API association fields",
+    "Package API URL and visibility validation"
+  ],
+  "independent_association_evidence": "package-association-ui.json",
+  "scope": {
+    "release_tag_moved": false,
+    "skill_payload_changed": false,
+    "full_local_suite_repeated_after_tooling_patch": false,
+    "full_matrix_repeated_for_tooling_patch": false
+  },
+  "evidence": "dist/release-v0.6.15/sync-packages-metadata-tests.log"
+}
