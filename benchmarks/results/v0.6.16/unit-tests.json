@@ -1,0 +1,146 @@
+{
+  "ok": true,
+  "status": "passed",
+  "run": 1593,
+  "passed": 1576,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 17,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+  "version": "0.6.16",
+  "phase": "local full regression",
+  "execution": {
+    "command": [
+      "python3.12",
+      "-u",
+      "-B",
+      "-X",
+      "utf8",
+      "<temporary count-preserving wrapper for scripts/verify.py unittest_child>"
+    ],
+    "started_at": "2026-10-10T10:27:06.693556+00:00",
+    "completed_at": "2026-10-10T10:33:40.014632+00:00",
+    "duration_seconds": 393.315,
+    "exit_code": 0,
+    "source_stability": {
+      "input_file_count_before": 243,
+      "input_file_count_after": 243,
+      "inputs_unchanged": false,
+      "changed_inputs": [
+        ".github/workflows/ci.yml"
+      ],
+      "before_sha256": "bd5c92c4232cb7642e7f8d594b0abaf89aba56164ba558379106879916ee3e0f",
+      "after_sha256": "4a5a7e741ab9b3ed6aca76ada2f07bd97ec22cc11aa517113eae92f52b68ec91",
+      "input_scope": "skills, scripts, tests, workflow files, desktop resources, benchmark inputs excluding results and README, root LICENSE",
+      "documentation_changes": [
+        "INSTALL.md",
+        "README.md",
+        "desktop/macos/README.md",
+        "docs/README.md",
+        "docs/github-release.md",
+        "docs/licensing.md",
+        "docs/releases/v0.6.16.md"
+      ],
+      "git_head_before": "9993bb2d541cd8f24a35528c7780c124af23f813",
+      "git_head_after": "ca3d9d54ccb5dec49fca518299c6de09b54a2ca6",
+      "runtime_and_test_inputs_unchanged": true,
+      "unchanged_audited_file_count": 242,
+      "non_execution_changes": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "change": "job timeout-minutes 20 to 30; matrix and commands unchanged",
+          "affects_local_test_execution": false
+        }
+      ]
+    },
+    "raw_log": "dist/release-v0.6.16/local-tests.log"
+  },
+  "skip_details": [
+    {
+      "test": "test_install_races.InstallationRaceTests.test_windows_publication_refuses_an_empty_target_created_inside_rename",
+      "reason": "Windows rename provides the no-replace guarantee tested here"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_editor_save_during_restore_is_preserved_with_backup",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_failed_publication_restores_a_copy_and_retains_backup_for_retry",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_first_export_succeeds_without_hard_links",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_recreated_target_wins_over_publication_and_restore",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_portable_export.PortableWindowsExportTests.test_revision_preserves_old_backup_without_hard_links",
+      "reason": "Windows publication without hard links"
+    },
+    {
+      "test": "test_publish_paths.PublishingConnectionPathTests.test_windows_database_pin_blocks_replacement_for_connection_lifetime",
+      "reason": "Native Windows delete-sharing protection"
+    },
+    {
+      "test": "test_retirement_path_race.RetirementPathRaceTests.test_windows_parent_pin_blocks_rename_but_allows_child_publication",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_atomic_first_publication_and_revision_preserve_unicode_bytes",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_changed_target_is_restored_and_retained_in_backup",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_empty_pinned_directory_rejects_junction_conversion_until_released",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_process_cannot_swap_pinned_leaf_or_ancestor",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_recreated_target_wins_over_backup_restore",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_target_wins_over_first_publication",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_nested_directory_guards_leave_no_files_on_normal_or_exception_exit",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_pinned_directories_allow_cross_directory_backup_and_copy_restore",
+      "reason": "Requires native Windows directory share locks"
+    },
+    {
+      "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_root_report_update_and_nested_backup_restore_share_ancestors",
+      "reason": "Requires native Windows directory share locks"
+    }
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "os": "Darwin",
+    "architecture": "x86_64",
+    "node": "v24.19.0"
+  },
+  "runtime_sha256": "61d383d65b69267fd6014577757438b59ee7e78118dfda00e912b01f36c11813",
+  "literary_quality_evaluated": false,
+  "method": "scripts/verify.py unittest_child with CountedTestResult; addSkip additionally records the actual test ID and reason; unchanged discovery entry",
+  "unittest_duration_seconds": 390.963,
+  "tested_source_commit": "ca3d9d54ccb5dec49fca518299c6de09b54a2ca6",
+  "commit_byte_verification": {
+    "files": 243,
+    "all_match": true,
+    "scope": "All audited files after test completion match this commit; the CI timeout changed during the suite and is recorded separately."
+  }
+}
