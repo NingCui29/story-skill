@@ -261,6 +261,14 @@ def sync(tag, output, prepare_only=False):
                         "/packages/npm/story-skill")
         for metadata_api_version in ("2026-03-10", "2022-11-28"):
             info = read_json(metadata_url, token, "api.github.com", api_version=metadata_api_version)
+            owner = REPOSITORY.split("/", 1)[0]
+            page_pattern = (r"https://github\.com/(?:users/" + re.escape(owner) +
+                            r"/packages/npm/package/story-skill|" + re.escape(REPOSITORY) +
+                            r"/(?:pkgs/npm/story-skill|packages/[1-9][0-9]*))")
+            if (not isinstance(info, dict) or not isinstance(info.get("html_url"), str) or
+                    not re.fullmatch(page_pattern, info["html_url"], re.IGNORECASE) or
+                    info.get("visibility") not in ("public", "private", "internal")):
+                raise ValueError("Package API metadata has invalid URL or visibility")
             repository = info.get("repository")
             if repository is not None and not isinstance(repository, dict):
                 raise ValueError("Package repository metadata has an invalid shape")
@@ -273,9 +281,10 @@ def sync(tag, output, prepare_only=False):
                 raise ValueError("Published package is not linked to the expected repository")
             break
         else:
-            raise ValueError("Package repository metadata is unavailable in supported API versions")
+            linked = None
         report.update(package_url=info["html_url"], visibility=info["visibility"],
-                      linked_repository=linked, package_metadata_api_version=metadata_api_version)
+                      linked_repository=linked, package_metadata_api_version=metadata_api_version,
+                      association_status="verified" if linked is not None else "unavailable")
     return report
 
 
