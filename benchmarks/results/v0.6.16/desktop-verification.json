@@ -1,0 +1,114 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-10T10:27:29.203136+00:00",
+  "application": "dist/release-v0.6.16/写作工作台.app",
+  "archive": "dist/release-v0.6.16/story-workbench-0.1.4-macos-x86_64.zip",
+  "checksum": "dist/release-v0.6.16/story-workbench-0.1.4-macos-x86_64.zip.sha256",
+  "bytes": 26545027,
+  "sha256": "16548afec5885aac338328c56e84596aec447ed297b4b7fef3352ddd4e140256",
+  "app_version": "0.1.4",
+  "app_build": "5",
+  "story_version": "0.6.16",
+  "architecture": "x86_64",
+  "minimum_macos_build_target": "13.0",
+  "tested_platform": "macOS-15.8.1-x86_64-i386-64bit",
+  "runtime_files": {
+    "story.py": "61d383d65b69267fd6014577757438b59ee7e78118dfda00e912b01f36c11813",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+    "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story_workbench.py": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0",
+    "story_outline.py": "d7fd18c784529dc4006c0a2055e49ad0adeb372f75f2b3790ddebc5eccbf85ae",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+  },
+  "native_sources": {
+    "StoryWorkbench.swift": "802131cf750c413bee288d31731d89c0eb5d7d3afa746ed3fcbc6fce9652d7d0",
+    "ClientInstance.swift": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9"
+  },
+  "assets": {
+    "backend_runner.py": "ccb7e9a34f6d5ae9d07f7a496d6af8a8915889287b7f6cebed3a9c70f0f67f4f",
+    "editor-appearance.js": "75a9ab0a40c08b36222f669fc089f25b2c91a9b6fa9cb631f09fcca6e6050ddc"
+  },
+  "build_inputs_stable": true,
+  "build_input_sha256": {
+    "skills/story-skill/scripts/story.py": "61d383d65b69267fd6014577757438b59ee7e78118dfda00e912b01f36c11813",
+    "skills/story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "skills/story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "skills/story-skill/scripts/story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+    "skills/story-skill/scripts/story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "skills/story-skill/scripts/story_workbench.py": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0",
+    "skills/story-skill/scripts/story_outline.py": "d7fd18c784529dc4006c0a2055e49ad0adeb372f75f2b3790ddebc5eccbf85ae",
+    "skills/story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "desktop/macos/StoryWorkbench.swift": "802131cf750c413bee288d31731d89c0eb5d7d3afa746ed3fcbc6fce9652d7d0",
+    "desktop/macos/ClientInstance.swift": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9",
+    "desktop/macos/AppIcon.swift": "3cb9496be39b898fef81a7547214cd760d03c21f174cd36e050b3d70cad0abf9",
+    "desktop/macos/Info.plist": "16d78ec2f297bae72b7ce1371fcb0844632151a43ba07e3cf55b355059514a98",
+    "desktop/macos/backend_runner.py": "ccb7e9a34f6d5ae9d07f7a496d6af8a8915889287b7f6cebed3a9c70f0f67f4f",
+    "desktop/macos/editor-appearance.js": "75a9ab0a40c08b36222f669fc089f25b2c91a9b6fa9cb631f09fcca6e6050ddc",
+    "scripts/build_desktop_macos.py": "2841bcb77958ecb1a94729de17a10eeca69ac483fba359995b1417c24ca113fa",
+    "LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+  },
+  "build_manifest_sha256": "6ff553076f42dada1511e9dd2b8587065fb4655ffa402dd84670f31c79f2fcd4",
+  "native_executable_sha256": "0cae9804ae6cd2728fa2a726d0469f5d705371b62a394931df4df89dd3011fae",
+  "native_source_scope": "Manifest hashes match the current Swift sources; source bytes are not compared to compiled executable bytes.",
+  "signature": {
+    "type": "ad-hoc",
+    "strict_deep_before_archive": true,
+    "strict_deep_after_extraction": true,
+    "strict_deep_after_cli": true,
+    "developer_id": false,
+    "notarization_assessed": false
+  },
+  "runtime_distribution": {
+    "python": "3.12.14",
+    "sqlite": "3.53.1",
+    "ssl": "OpenSSL 3.5.8 25 Aug 2026",
+    "relocated_prefix_verified": true,
+    "site_packages": [
+      "README.txt",
+      "pip",
+      "pip-26.2.1.dist-info"
+    ],
+    "extra_third_party_site_packages": [],
+    "python_license_present": true,
+    "pip_license_present": true
+  },
+  "contents": {
+    "runtime_modules": 9,
+    "all_runtime_bytes_match_source": true,
+    "internal_symlinks": 9,
+    "external_symlinks": 0,
+    "author_state_or_credential_filenames": [],
+    "license_source": "LICENSE",
+    "bundled_license": "Contents/Resources/StorySkill-LICENSE",
+    "license_bytes_match_source": true,
+    "license_sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "python_build_metadata": "The unchanged third-party CPython distribution can retain build-machine prefixes in sysconfig or library identity metadata; this report does not assert that such metadata is absent."
+  },
+  "archive_verification": {
+    "producer": "macOS ditto",
+    "member_metadata_encoding": "UTF-8",
+    "crc_valid": true,
+    "safe_member_paths": true,
+    "native_extraction_verified": true
+  },
+  "extracted_cli": {
+    "version": "0.6.16",
+    "help": true,
+    "init": true,
+    "status": true,
+    "commands": 4,
+    "temporary_book_removed": true
+  },
+  "scope": {
+    "native_ui_started": false,
+    "real_books_accessed": false,
+    "installed_app_replaced": false,
+    "services_changed": false,
+    "apple_silicon_assessed": false,
+    "other_macos_versions_assessed": false
+  }
+}

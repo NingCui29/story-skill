@@ -1,0 +1,304 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-10T05:58:53.067176+00:00",
+  "status": "Development evidence with unverified independent-review declarations",
+  "public_raw_outputs": false,
+  "publication_redaction": {
+    "private_absolute_paths_replaced": true,
+    "method": "Replace personal installation, temporary and archive roots with role placeholders in this publication copy only",
+    "original_records": "Preserved locally in ignored release evidence; not distributed",
+    "source_fingerprints": "Original execution and report hashes are retained; they do not identify the bytes of this redacted publication copy"
+  },
+  "source_files": {
+    "scripts/execution_review.py": "df81bd7711000d7f4e6f8740417025a223a9ef340eabbd2aa55d2e13414045b0",
+    "tests/test_execution_review.py": "2af572b5f3054bba8196e79066ce628876c65efd359a5fa954119ca0e7bb40d0",
+    "benchmarks/skill-execution/sequence_prepare.py": "91ad87b811584a55be2c129ed9051b107addc3439a2292b457f832b0aa92146d",
+    "benchmarks/skill-execution/sequences/six-chapter-continuity.json": "05c89fe30652f7009f0ceb12f1286a63a6e8f161d4670705e4a4f56efc465b76",
+    "tests/test_execution_sequence.py": "101a7b4577fe90484840b9a296f2ecf33a0be88039fedc25724ecd4f34c876dc",
+    "benchmarks/skill-execution/cases/native-plan.json": "a11f5a8b92a921196623d77ea1a9808cd43d3392eb14f7b7ccd99e2fc50e3c84",
+    "benchmarks/skill-execution/cases/native-review.json": "56e5a8d1a16e56ce6a3b40b23a6966bb3a0564325ccc1960777c369625cece0c",
+    "benchmarks/skill-execution/README.md": "e23f57b33268138d2493f42470b7383b30d3dd1bb483fc2a6f231b3acf5a3e10",
+    "docs/evaluation.md": "d365634b4536011d76395bfc227bc5e847412652cc533751a995b7e2cb321776",
+    "skills/story-skill/SKILL.md": "e7ae6d2df4722b428f1bec2bbb7b7ef76f66d31e35c760e793261fff5a49985c",
+    "benchmarks/results/execution-continuity-2026-10-10/assessment.md": "b54992c1b91faf9d68f8423290d67a4865fb0d0712aa707f5923409ddb311802"
+  },
+  "tests": {
+    "suite": "test_execution*.py",
+    "run": 87,
+    "result": "passed",
+    "actual_command": "python3 -B -m unittest discover -s tests -p 'test_execution*.py'",
+    "receipt": "<evidence-review-root>/execution-review-test-receipt-20261010T054557Z-3584898c.json",
+    "receipt_sha256": "ab62b94945423c86215fb8ecf5c5365a22b39850c3903f3365f6c5fce6108cdc",
+    "provenance": "Previously completed real tool output transcribed by model agent; not an independently signed audit"
+  },
+  "native_runs": [
+    {
+      "run": "native-plan",
+      "task_sha256": "ed3c3fce19f345b1b9d9aac3b917c658d9d2a365c5fbe1bd38758df46a740605",
+      "baseline_sha256": "af0f50c549258b01a101f75158b921cdef042ad68b03d70a6f0ec74c71753a2c",
+      "trace_sha256": "89a4d31a4d41144d6afd0dc68af7f1f6eab39ae0a54884b8578a7e58ebcb65bb",
+      "events": 32,
+      "check_sha256": "c2207e48324fb7d39b004768625c64e0f97a8ae83f49e12cfdb5a020661dc4cc",
+      "mechanical_ok": true,
+      "execution_status": "needs_review",
+      "trace_complete": true,
+      "added_outputs": [
+        "方案.md"
+      ],
+      "original_inputs_unchanged": true,
+      "failed_commands": 0,
+      "reference_review": {
+        "sha256": "069dad1a5168577a2502af07a990c5e89fc875bc529e85895c77006a6ca9cbc6",
+        "validation_status": "traceable",
+        "invocation": "observed",
+        "claims": [
+          {
+            "id": "planning-skill-read",
+            "kind": "skill_read",
+            "status": "observed"
+          },
+          {
+            "id": "connected-local-plan",
+            "kind": "content",
+            "status": "observed"
+          }
+        ]
+      }
+    },
+    {
+      "run": "native-review",
+      "task_sha256": "cc2b3f1a8a8d3c185a51ba5faac3912b96ce85bb0d284330044c1036722dda64",
+      "baseline_sha256": "48028e92868566da82a34c184ae3cca3b60cdc9f0eb3b323b504f4b42d0464d2",
+      "trace_sha256": "1c265b4b259d6787ffe5d2ef2eba38862de20108c4f5824cde73bf207d35a37d",
+      "events": 28,
+      "check_sha256": "3bdf910f2ae410c0a32b3b8257aea72cb0b018a9e39b5ba27eac7579ed1bc106",
+      "mechanical_ok": true,
+      "execution_status": "needs_review",
+      "trace_complete": true,
+      "added_outputs": [
+        "审查.md"
+      ],
+      "original_inputs_unchanged": true,
+      "failed_commands": 0,
+      "reference_review": {
+        "sha256": "843cee49e914843e180346b9aad9b91fb575e7f0f55fececc92a1e0a19438fff",
+        "validation_status": "unverified",
+        "invocation": "observed",
+        "claims": [
+          {
+            "id": "native-read",
+            "kind": "skill_read",
+            "status": "observed"
+          },
+          {
+            "id": "claimed-independent-review",
+            "kind": "independent_review",
+            "status": "unverified"
+          }
+        ]
+      }
+    },
+    {
+      "run": "native-non-story",
+      "task_sha256": "5f03208fae80d941f09c2988ee3c0b98cc01effb694f56e90a58d662012aa9d3",
+      "baseline_sha256": "0e1b2040b975602a5bb59bb529ddfc35b3e0b77ccdfd8c7d1960a310f8a37bea",
+      "trace_sha256": "6de6dd680cf236bf24f5e70d3d734587dd18a9525ae0f64c698c0731b11fb6bd",
+      "events": 13,
+      "check_sha256": "0c997790ce767eb7cac904e1913415252a6300bf998857c67cfbac3bc73ce947",
+      "mechanical_ok": true,
+      "execution_status": "needs_review",
+      "trace_complete": true,
+      "added_outputs": [
+        "review.md"
+      ],
+      "original_inputs_unchanged": true,
+      "failed_commands": 0
+    },
+    {
+      "run": "native-review-followup",
+      "task_sha256": "65044bb1cf722aea0a756ad16bce10eada97c7691976b6181a78c946aa252d82",
+      "baseline_sha256": "ca3fac3f34c5493a8c43a00174892ceca990136c6fba2db86e168fd997ffc48f",
+      "trace_sha256": "f8bf83d820489123fa35d67178d842917619df1c62e4a2f0afc89637bf41e01a",
+      "events": 34,
+      "check_sha256": "f2d74b3b8c33f0f704b47662ed904684c12e1583e46045fbab07645e4e546790",
+      "mechanical_ok": true,
+      "execution_status": "needs_review",
+      "trace_complete": true,
+      "added_outputs": [
+        "审查.md"
+      ],
+      "original_inputs_unchanged": true,
+      "failed_commands": 0,
+      "reference_review": {
+        "sha256": "773ed887c5066d4bb496ac33af8103f904dcbb084bf0540cda71eb65494d4074",
+        "validation_status": "unverified",
+        "invocation": "observed",
+        "claims": [
+          {
+            "id": "native-read",
+            "kind": "skill_read",
+            "status": "observed"
+          },
+          {
+            "id": "claimed-independent-review",
+            "kind": "independent_review",
+            "status": "unverified"
+          }
+        ]
+      }
+    }
+  ],
+  "sequence": {
+    "configuration_sha256": "8252994caa0a6d5e94decb6211781bb6ad46da062f95294338f710d25cf52bcc",
+    "execution_receipt_sha256": "2bc8253a0a4129fc4cf250e52f22728c8ef7964e3b65314943d2d5d780f7cc9a",
+    "mechanical_sequence_complete": true,
+    "execution_status": "needs_review",
+    "quality_assessed_by_mechanical_verifier": false,
+    "book_id": "2f79f2d9-a2f7-40f2-b132-05aa334abe7e",
+    "revision": 25,
+    "formal_chapters": [
+      {
+        "chapter": 1,
+        "path": "chapters/第一卷 重新开门/第1章 借四十分钟.md",
+        "sha256": "e1645a1ab0d810722e9654935212815475bb49222f8c93db95e027d31a351b03",
+        "count": 866
+      },
+      {
+        "chapter": 2,
+        "path": "chapters/第一卷 重新开门/第2章 四点半要走.md",
+        "sha256": "f08f32766a3462dcd71351bb34437494bd859f288eee7eeb0077e6b7ff1781cc",
+        "count": 881
+      },
+      {
+        "chapter": 3,
+        "path": "chapters/第一卷 重新开门/第3章 先听这一小段.md",
+        "sha256": "e426b9d9fc7b4bc215e8f0b747670b275092cc70bc71a7f12bc3129cc57c9631",
+        "count": 863
+      },
+      {
+        "chapter": 4,
+        "path": "chapters/第二卷 让声音留下/第4章 笑声要不要留.md",
+        "sha256": "646c14a403f29afa4d2b1d17934f10bb4dba33ff1be6e48427d8863be2352761",
+        "count": 896
+      },
+      {
+        "chapter": 5,
+        "path": "chapters/第二卷 让声音留下/第5章 凳子往前一点.md",
+        "sha256": "68d314413789af4542357247425bf809df3e36a4c4b79d2748a57555558ec1af",
+        "count": 938
+      },
+      {
+        "chapter": 6,
+        "path": "chapters/第二卷 让声音留下/第6章 门外还有雨.md",
+        "sha256": "0f5f0c61d4f7b11f8ad04225fd5ad0df2cadf3495e4c4215557ac5a6726e79a7",
+        "count": 946
+      }
+    ],
+    "body_count_sum": 5390,
+    "rounds": [
+      {
+        "round": 1,
+        "thread_id": "01a12437-5b49-78e2-8a70-32ab4f90a55d",
+        "events": 89,
+        "trace_sha256": "b9bb25b34595019c2f5a01f4a69bc4efd632d7135cbccbf54d4ff9d7bab9851c",
+        "task_sha256": "b2e0efa9819af81d911a3320c6f6b6a247610a568770ed1f15ef35e6e3c7408e",
+        "baseline_sha256": "e02f525df86c578ed586882a6069bd449024acc868666636c46cf44927d5bdc4",
+        "check_sha256": "3176c217c9817d4d59d59436c1a41349075fdd5afe40681212cbcd282a824c67",
+        "verified_sha256": "162581491f0746fd5d9e95ee499304e00d49749581b53663c85c68f17fab23cc",
+        "failed_commands": 3,
+        "mechanical_ok": true
+      },
+      {
+        "round": 2,
+        "thread_id": "01a12442-21cb-7dd2-9d0f-01e40ce6292d",
+        "events": 102,
+        "trace_sha256": "2cdcee438775d8ff9f124e6e638f28b8f95528519759ebdb4498938886e4abdd",
+        "task_sha256": "a8fce8d50a8665fbdc8bcd148c03ad572cf2d0b25da68445342155d927b1b3a0",
+        "baseline_sha256": "3d88cf675faaf0ffefbd405b37296f9fa4d92ced70bb96b1923e641b7abfb70e",
+        "check_sha256": "94f0a8b4015898098b345ec799034e1067fd30acbbe0c6a8ce531ac7447518b7",
+        "verified_sha256": "218339dd99b677728ee0c1f7821ecd0f4b59fefd0fa8c647add4a3d80f72f516",
+        "failed_commands": 3,
+        "mechanical_ok": true
+      },
+      {
+        "round": 3,
+        "thread_id": "01a1244f-2623-75a2-b3cb-08b3881cda3f",
+        "events": 114,
+        "trace_sha256": "ac720f854fe75e45b8931b685872e64a8fcade77c6c52aee6ab7df0bfadc41fe",
+        "task_sha256": "a8fce8d50a8665fbdc8bcd148c03ad572cf2d0b25da68445342155d927b1b3a0",
+        "baseline_sha256": "4a80475d727d21ff939bade0d4cb8a707159b5f1ecb647f1bba76e966bc5b3a5",
+        "check_sha256": "dce0a169c6869e7a9fbdab4510abf3135d638d2c0a60a5121c32b7c73ca9600c",
+        "verified_sha256": "291ef918582624dc4724c0c16c548ffec6cd0eb0ec3db9dd7e41c3fba8ed8120",
+        "failed_commands": 3,
+        "mechanical_ok": true
+      }
+    ],
+    "whole_body_sha256": "fdfc68f984e40984bc12ca7c316e9a2ab34f77babe72e45859e5f78f3b677a05",
+    "completion_report_sha256": "435689dd795d69701df08ce40d5f7366566394792d28864f23151de4a3f79052",
+    "declaration_reference_check": {
+      "path": "raw-run/sequence/round-3/process-review-check-v2.json",
+      "sha256": "371f489728e73052b45f690c33ac3392d911144ec3ba06affa9d59a7e2a857f0",
+      "status": "unverified"
+    }
+  },
+  "content_reviews": {
+    "native": {
+      "path": "raw-run/native-content-review.json",
+      "sha256": "768f2c123f4a9998f8467355ad13f22ad357459ec0e083aec37732a931fb3539",
+      "kind": "model",
+      "mode": "feedback_aware"
+    },
+    "six_chapter": {
+      "path": "raw-run/independent-content-review.md",
+      "sha256": "23efedef1ef107760c71cca9b380fc3d7255300b392ae6c59d5fced13281d2b1",
+      "kind": "model",
+      "mode": "maintenance background, separate from writer, not blind or human feedback",
+      "reading_scope": "Six formal chapters, initial input, writing agreement and ten adopted planning files; final agreement reread. Did not inspect writer self-review, completion report or assembled text.",
+      "must_fix_found": false,
+      "optional_findings_retained": true
+    }
+  },
+  "installation": {
+    "recorded_at": "2026-10-10T05:56:32.714825+00:00",
+    "installed_payload_verified": 51,
+    "installed_equals_reviewed_stage": true,
+    "own_shared_sentence_present": true,
+    "source_core_at_rule_change": "7c4c4e578d93fb33068a3424107b9290da1805cd005e03761db20901f91dc977",
+    "current_source_core": "e7ae6d2df4722b428f1bec2bbb7b7ef76f66d31e35c760e793261fff5a49985c",
+    "later_source_core_change": "Concurrent host invocation section update only; reporting sentence retained. Not synchronized as part of this execution work. Historical frozen package remains unchanged."
+  },
+  "archive": {
+    "index": ".local-writing-samples/execution-continuity-20261010-n4tyuced/archive-index.json",
+    "index_sha256": "987660f370733162ec92ae58d64796b9ef9388edde7f4e2c20d411cc5856bee9",
+    "files_byte_verified": 545,
+    "sources": {
+      "raw-run": {
+        "original_root": "<raw-run-root>",
+        "archive_root": "<local-evidence-root>/raw-run",
+        "files_verified": 529,
+        "original_absolute_bindings_preserved": true
+      },
+      "evidence-review": {
+        "original_root": "<evidence-review-root>",
+        "archive_root": "<local-evidence-root>/evidence-review",
+        "files_verified": 12,
+        "original_absolute_bindings_preserved": true
+      },
+      "sequence-verifier-repair": {
+        "original_root": "<sequence-verifier-repair-root>",
+        "archive_root": "<local-evidence-root>/sequence-verifier-repair",
+        "files_verified": 4,
+        "original_absolute_bindings_preserved": true
+      }
+    }
+  },
+  "limits": [
+    "CLI only; desktop implicit discovery unverified",
+    "Actual default host memory reads, not pure-context or blind trials",
+    "Six 800-1000-character explicit exceptions, not normal-length long-fiction validation",
+    "No equal-condition before/after repeated sampling or authenticated human response",
+    "Unsupported writer independent-review declarations remain unverified",
+    "Later concurrent source host edits preserved; frozen execution and installation versions stay distinct",
+    "Hash and trace checks do not authenticate literary judgement or activity outside captured roots"
+  ]
+}

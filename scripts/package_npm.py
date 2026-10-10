@@ -142,12 +142,21 @@ SUITE_FILES_V0614 = tuple(sorted((*SUITE_FILES_V0613,
 SKILL_NAMES_V0614 = SKILL_NAMES_V0613
 SUITE_FILES_V0615 = SUITE_FILES_V0614
 SKILL_NAMES_V0615 = SKILL_NAMES_V0614
+SUITE_FILES_V0616 = SUITE_FILES_V0615
+SKILL_NAMES_V0616 = SKILL_NAMES_V0615
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0615
-SUITE_FILES = SUITE_FILES_V0615
+SKILL_NAMES = SKILL_NAMES_V0616
+SUITE_FILES = SUITE_FILES_V0616
 UNRELEASED_VERSIONS = frozenset({"0.6.13"})
 MAX_BYTES = 256 * 1024 * 1024
+# Reviewed full license texts, normalized only for BOM, line endings and trailing
+# whitespace. The package still preserves every original license byte.
+LICENSE_TEXT_DIGESTS = {
+    "387d5f935aa1cb01027e9e0fc2f35d9ba6e2419fcc40aca84709638cd103e290": "MIT",
+    "9010805959e8ec99e344763486e956d962f0886efddc1a0fd1ef0a8d54b6b354":
+        "SEE LICENSE IN LICENSE",
+}
 
 
 def payload_files(version):
@@ -171,6 +180,8 @@ def payload_files(version):
         return SUITE_FILES_V0614
     if version == "0.6.15":
         return SUITE_FILES_V0615
+    if version == "0.6.16":
+        return SUITE_FILES_V0616
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -196,6 +207,8 @@ def skill_names(version):
         return SKILL_NAMES_V0614
     if version == "0.6.15":
         return SKILL_NAMES_V0615
+    if version == "0.6.16":
+        return SKILL_NAMES_V0616
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -257,11 +270,46 @@ def read_release(archive, sha256_file):
     return payload, version, sha256(raw)
 
 
-def wrapper_files(version):
+def payload_license(version, payload):
+    """Identify reviewed licenses in the input, never the current checkout."""
+    licenses = set()
+    for name in skill_names(version):
+        path = name + "/LICENSE"
+        raw = payload.get(path)
+        if not isinstance(raw, bytes):
+            raise ValueError(f"Release ZIP is missing a skill license: {path}")
+        try:
+            normalized = "\n".join(line.rstrip() for line in
+                                   raw.decode("utf-8-sig").splitlines()).strip()
+        except UnicodeDecodeError as error:
+            raise ValueError(f"Unsupported skill license: {path}") from error
+        license_id = LICENSE_TEXT_DIGESTS.get(sha256(normalized.encode("utf-8")))
+        if license_id is None:
+            raise ValueError(f"Unsupported skill license: {path}")
+        licenses.add(license_id)
+    if len(licenses) != 1:
+        raise ValueError("Release ZIP contains mixed skill licenses")
+    return licenses.pop()
+
+
+def wrapper_files(version, payload=None):
+    """Keep legacy callers MIT-compatible; actual builds supply the ZIP payload."""
     files = payload_files(version)
     names = skill_names(version)
     name, repository = package_identity(version)
-    if version in UNRELEASED_VERSIONS:
+    license_id = "MIT" if payload is None else payload_license(version, payload)
+    if license_id != "MIT":
+        archive_description = (
+            f"Its {len(files)} skill files preserve the exact bytes of the input ZIP.\n\n"
+            "This wrapper follows the input ZIP's license files and does not replace "
+            "or relicense previously published Release or Packages artifacts.\n\n"
+        )
+        installation = (
+            "For macOS, Linux and Windows, use the managed installation instructions "
+            "that accompany this source or input ZIP, and validate it in an isolated "
+            "directory before replacing an installation.\n\n"
+        )
+    elif version in UNRELEASED_VERSIONS:
         archive_description = (
             f"Its {len(files)} skill files preserve the exact bytes of the matching local ZIP.\n\n"
             "Unreleased development snapshot: no published GitHub Release or Packages artifact "
@@ -283,21 +331,41 @@ def wrapper_files(version):
     manifest = {
         "name": name, "version": version,
         "description": "Eight Story Skill skills for Chinese novel writing, review and publication preparation",
-        "license": "MIT",
+        "license": license_id,
         "repository": {"type": "git", "url": repository},
         "homepage": repository.removesuffix(".git") + "#readme",
         "publishConfig": {"registry": REGISTRY},
-        "files": list(files),
+        "files": list(files) + (["LICENSE"] if license_id != "MIT" else []),
     }
+    license_description = (
+        "License: MIT; each skill contains its complete `LICENSE`.\n"
+        if license_id == "MIT" else
+        "License: Story Skill Non-Commercial Use and Commercial Licensing Agreement. "
+        "Non-commercial use is permitted under the agreement; commercial use requires "
+        "a separate paid authorization. See the top-level `LICENSE` and each skill's "
+        "complete `LICENSE`.\n"
+    )
+    # Published MIT wrappers are byte-stable; new host guidance belongs to current licensed builds.
+    skill_installation = (
+        "Copy all eight complete skill directories into your project's `.agents/skills/`, "
+        "or follow the repository's managed installation instructions. "
+        if license_id == "MIT" else
+        "Copy all eight complete skill directories into the host's skills directory "
+        "(for example `.agents/skills/` for Codex, `.qoder/skills/` for Qoder, "
+        "`.zcode/skills/` for ZCode, `.workbuddy/skills/` for WorkBuddy AI, "
+        "`.trae/skills/` for TRAE IDE, `.cursor/skills/` for Cursor, "
+        "or `.opencode/skills/` for OpenCode projects), "
+        "or follow the repository's managed installation instructions for the host and scope. "
+        "User directories can differ from project directories; use INSTALL.md's host table. "
+    )
     readme = (
         f"# Story Skill {version}\n\n"
         "This npm package contains eight sibling skills: "
         + ", ".join(f"`{skill}/`" for skill in names) + ". "
         + archive_description
         + "npm distributes content; installing this package does not register skills with the host app. "
-        "Copy all eight complete skill directories into your project's `.agents/skills/`, "
-        "or follow the repository's managed installation instructions. "
-        "Do not copy only an individual task skill: its shared runtime is required.\n\n"
+        + skill_installation
+        + "Do not copy only an individual task skill: its shared runtime is required.\n\n"
         + installation
         + "The shared Python runtime is `story-skill/scripts/story.py`; npm does not install Python. "
         "Project data and novels belong outside the skill installation directory.\n\n"
@@ -305,18 +373,21 @@ def wrapper_files(version):
         "author platforms, upload chapters or publish them remotely.\n\n"
         "GitHub Packages npm downloads require authentication. "
         "See https://github.com/NingCui29/story-skill for setup and update instructions.\n\n"
-        "License: MIT; each skill contains its complete `LICENSE`.\n"
+        + license_description
     )
-    return manifest, {
+    wrapper = {
         "package.json": (json.dumps(manifest, ensure_ascii=False, indent=2) + "\n").encode("utf-8"),
         "README.md": readme.encode("utf-8"),
     }
+    if license_id != "MIT":
+        wrapper["LICENSE"] = payload["story-skill/LICENSE"]
+    return manifest, wrapper
 
 
 def verify_tarball(archive, sha256_file, tarball, expected_manifest=None):
     """Bind files to an earlier build; report actual container hashes for registry SRI checks."""
     payload, version, archive_sha = read_release(archive, sha256_file)
-    manifest, wrapper = wrapper_files(version)
+    manifest, wrapper = wrapper_files(version, payload)
     expected_files = {"package/" + name: raw for name, raw in {**payload, **wrapper}.items()}
     tarball = Path(tarball).expanduser().resolve()
     if tarball.stat().st_size > MAX_BYTES:
@@ -394,7 +465,7 @@ def npm_pack(stage, destination):
 
 def build(archive, sha256_file, output_dir):
     payload, version, _ = read_release(archive, sha256_file)
-    manifest, wrapper = wrapper_files(version)
+    manifest, wrapper = wrapper_files(version, payload)
     output_dir = Path(output_dir).expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
     filename = manifest["name"].removeprefix("@").replace("/", "-") + f"-{version}.tgz"

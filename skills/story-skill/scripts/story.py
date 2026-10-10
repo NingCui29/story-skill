@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.15"
+VERSION = "0.6.16"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -1096,6 +1096,12 @@ class Book:
                 "plan_sha256": outline._plan_sha256(plan),
                 "note": "Saved data only; outline adoption, outline/plan agreement and export health are not verified.",
             }, budget)
+
+    def plan_render(self, chapter, budget=16000, check_file=None):
+        """Render or inspect candidate planning text without changing book state."""
+        integer(chapter, "chapter", 1)
+        with self.read_snapshot():
+            return bounded_packet(outline.render_plan(self, chapter, self.get_plan(chapter), check_file), budget)
 
     def _plan_volume_directory(self, plan):
         if plan.get("volume_dir"):
@@ -2774,6 +2780,9 @@ def parser():
             s.add_argument("--chapter", type=int, required=True)
     s = command("plan-read", "Read a complete saved chapter plan for recovery without verifying adoption", 16000, integrity=False)
     s.add_argument("--chapter", type=int, required=True)
+    s = command("plan-render", "Render candidate planning Markdown or inspect its saved-plan source", 16000, integrity=False)
+    s.add_argument("--chapter", type=int, required=True)
+    s.add_argument("--check-file", help="Book-relative generated candidate path; checks saved fields, not adoption or literary quality")
     s = command("outline-bind", "Bind one reviewed, adopted readable outline to its saved chapter plan")
     s.add_argument("--chapter", type=int, required=True)
     s.add_argument("--file", required=True, help="Book-relative adopted Markdown outline path")
@@ -2849,7 +2858,7 @@ def run(args):
     if cmd.startswith("workbench-"):
         return workbench.run(args)
     book = Book(args.book, integrity=getattr(args, "integrity", "strict"),
-                read_only=cmd in ("audit", "outline-audit", "plan-read"))
+                read_only=cmd in ("audit", "outline-audit", "plan-read", "plan-render"))
     try:
         if cmd.startswith("publish-"):
             return publish.run(book, args)
@@ -2879,6 +2888,8 @@ def run(args):
             return book.save_plan(args.chapter, read_json(args.input), args.expect)
         if cmd == "plan-read":
             return book.plan_read(args.chapter, args.budget_bytes)
+        if cmd == "plan-render":
+            return book.plan_render(args.chapter, args.budget_bytes, args.check_file)
         if cmd == "outline-bind":
             return outline.bind(book, args.chapter, args.file, args.expect, args.sha256)
         if cmd == "context":

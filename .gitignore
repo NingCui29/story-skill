@@ -22,6 +22,19 @@ build/
 # Project-local installed skill copies; canonical sources live in /skills/.
 /.agents/skills/
 /.claude/skills/
+/.qoder/skills/
+/.zcode/skills/
+/.workbuddy/skills/
+/.trae/skills/
+/.traecli/skills/
+/.cursor/skills/
+/.codebuddy/skills/
+/.opencode/skills/
+/.github/skills/
+/.gemini/skills/
+/.cline/skills/
+/.windsurf/skills/
+/.devin/skills/
 
 # Local story state and recovery artifacts
 # Author manuscripts are local; engineering evidence may be versioned.

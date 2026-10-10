@@ -1,0 +1,199 @@
+{
+  "schema": 1,
+  "date": "2026-10-10T09:28:18.446164+00:00",
+  "scope": "Unreleased source development; no real-book or user-install edits, no commit or publication",
+  "runtime_version": "0.6.15",
+  "state_schema": 2,
+  "environment": {
+    "python": "3.12.14",
+    "platform": "macOS-15.8.1-x86_64-i386-64bit"
+  },
+  "source_sha256": {
+    "README.md": "49ca43092a888c0f37b419f1c8e7aab0ced4cb9afc16350550ca6df1d161ef01",
+    "docs/evaluation.md": "291691243695b637c4be18ee269de45339fdbf77d2f0b318f9f3cc5062bd3ec9",
+    "benchmarks/skill-execution/README.md": "4de7647256d06241d5c21d89a6d73ab4d513380a6a155aa7cd26a0171fd59171",
+    "skills/story-skill/SKILL.md": "a85f18456bb1c75a7d9d103eef0fd34f55f1a6427fb68390e8f72f70867c487a",
+    "skills/story-skill-plan/SKILL.md": "c29a81bc298e1bb17a0d14191696471a265e27c97c65c2d52653e765dfd1fe61",
+    "skills/story-skill/references/project-state.md": "4e28296f9da2ae9b1f88e535ca053a77b5fe0d516c0cf6515de2a7300b67ff9e",
+    "skills/story-skill/scripts/story.py": "ff3b650b13619d7db9e167214c3bb5c96cd556d8f8be3f7b47bb2d3affab6f1f",
+    "skills/story-skill/scripts/story_outline.py": "d7fd18c784529dc4006c0a2055e49ad0adeb372f75f2b3790ddebc5eccbf85ae",
+    "scripts/execution_review.py": "14fa2258ce48c38728776e58c651113af06bd8ed3f92632d4e7a4ac26e351e83",
+    "scripts/execution_metrics.py": "9119e52a7fcea9eacaeca2596008fb65bf3d5811cf4bb8f3fe853a53bd19b08c",
+    "tests/test_execution_review.py": "4ba54d2df92c5aa80baeb81df52f3e7076fd0ccc3f530f53e6a5d08e4f622f24",
+    "tests/test_execution_review_assignment.py": "fcba7cb006c25794f710e649bf5d494d9a28d0d1477664e4d3dcb15b3d4fa20a",
+    "tests/test_execution_metrics.py": "dd84f8b3d4cbfa48d8bf814d76ed01dc4d9ae6073e17177e2f47e9cb36fed20a",
+    "tests/test_plan_render.py": "049299c82dafb499b78e188fbcd4c60abdd73b1635c8a96e7a5c0f4f17219bcb"
+  },
+  "checks": {
+    "full_suite_before_last_metrics_fixes": {
+      "status": "passed",
+      "run": 1590,
+      "passed": 1573,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 17,
+      "scope": "Full discovery began before final metrics guards; final affected suite below reran the current source. Counts overlap."
+    },
+    "final_affected_suite": {
+      "status": "passed",
+      "run": 215,
+      "passed": 215,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+      "source_hashes": {
+        "scripts/execution_metrics.py": "9119e52a7fcea9eacaeca2596008fb65bf3d5811cf4bb8f3fe853a53bd19b08c",
+        "scripts/execution_review.py": "14fa2258ce48c38728776e58c651113af06bd8ed3f92632d4e7a4ac26e351e83",
+        "skills/story-skill/scripts/story.py": "ff3b650b13619d7db9e167214c3bb5c96cd556d8f8be3f7b47bb2d3affab6f1f",
+        "skills/story-skill/scripts/story_outline.py": "d7fd18c784529dc4006c0a2055e49ad0adeb372f75f2b3790ddebc5eccbf85ae"
+      }
+    },
+    "cli_smoke": {
+      "status": "passed"
+    },
+    "chinese_manuscript_replay": {
+      "status": "passed"
+    },
+    "long_form_cli_replay": {
+      "status": "passed"
+    },
+    "skill_frontmatter": {
+      "status": "passed"
+    },
+    "actual_package_install": {
+      "status": "passed",
+      "skills": 8,
+      "files": 51,
+      "isolated": true,
+      "installed_files_match": true
+    },
+    "claude_desktop_package": {
+      "status": "passed",
+      "sha256": "953b6863cbec2a57559f3ffccdc328e090803914d30828148cdfbd760c2738ff"
+    },
+    "skill_input_stability": {
+      "status": "passed"
+    },
+    "source_package": {
+      "status": "passed",
+      "name": "story-skill-0.6.15.zip",
+      "sha256": "0e73a1f11e5595a19be76dc13708c4965daa5b67d36cf09ff95466326bba6596"
+    },
+    "local_markdown_links": {
+      "status": "passed",
+      "files_scanned": 347,
+      "links_checked": 2083,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    },
+    "final_affected_source_stability": {
+      "status": "passed"
+    }
+  },
+  "forward_observation": {
+    "outline_binding_rows": [],
+    "chapter_count": 0,
+    "changed_plan_fields": [
+      "stop"
+    ],
+    "supplement_preserved_in_both": true,
+    "supplement_written_to_tool_plan": false,
+    "all_readonly_book_file_snapshots_unchanged": true,
+    "readonly_call_count": 11,
+    "scope": "Independent synthetic one-chapter walkthrough; no adoption, prose, semantic or literary certification"
+  },
+  "historical_review_compatibility": [
+    {
+      "case": "native-plan",
+      "old_status": "traceable",
+      "new_status": "traceable",
+      "exit_code": 0
+    },
+    {
+      "case": "native-review",
+      "old_status": "unverified",
+      "new_status": "unverified",
+      "exit_code": 2
+    },
+    {
+      "case": "native-review-followup",
+      "old_status": "unverified",
+      "new_status": "unverified",
+      "exit_code": 2
+    },
+    {
+      "case": "sequence-final-review",
+      "old_status": "unverified",
+      "new_status": "unverified",
+      "exit_code": 2
+    }
+  ],
+  "real_cli_usage_observation": {
+    "exit_code": 0,
+    "status": "observed",
+    "source_unchanged": true,
+    "matches_earlier_observation": true,
+    "source_sha256": "1c265b4b259d6787ffe5d2ef2eba38862de20108c4f5824cde73bf207d35a37d",
+    "reported": {
+      "input_tokens": 414817,
+      "cached_input_tokens": 365824,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 4809,
+      "reasoning_output_tokens": 1403,
+      "total_tokens": null
+    },
+    "full_task_total": null,
+    "child_coverage": "unknown",
+    "retry_events": null,
+    "metrics_script_sha256": "9119e52a7fcea9eacaeca2596008fb65bf3d5811cf4bb8f3fe853a53bd19b08c"
+  },
+  "independent_metrics_fix_recheck": {
+    "path": "metrics-independent-check/review-fix-verification.json",
+    "sha256": "4b5eeb81c5ee257c1750a63c46377f31b7083dc81e0daa2d2e820f54774a7716"
+  },
+  "retained_failures_and_recovery": [
+    {
+      "check": "source_package",
+      "initial_status": "failed",
+      "cause": "Custom archive filename rejected; existing naming constraint retained",
+      "recheck_status": "passed"
+    },
+    {
+      "check": "skill_validator_dependency",
+      "cause": "Missing yaml module in validation runtime",
+      "recovery": "PyYAML supplied only in temporary validation-deps directory; all eight skills then passed"
+    },
+    {
+      "check": "independent_metrics_review",
+      "cause": "Malformed item type crash and unknown item event miscount",
+      "recovery": "Guards added, regression cases passed and original independent fixtures rechecked"
+    }
+  ],
+  "local_raw_evidence_directory": ".local-writing-samples/improvement-validation-20261010-2h6jep8a",
+  "local_evidence_sha256": {
+    "validation.json": "3970748e9540588a4eab45b3165821d74be484bfa16678794cc5f8dfad280c4c",
+    "unittest.json": "74c6fa596d43a6c8a3c46d331afa48bf42b36624deb7bcf237c74a3d50d7432c",
+    "targeted-final.json": "b108cfb800cef83611ed92c86e8e2696e410f7782547e48f0f688163e37005f6",
+    "targeted-final.log": "757ab82e241bec16c1986e3bf3e078875b8ff8595f0507445ba0826015a9f6e4",
+    "package-recheck.json": "f189d8fdf541f8da96ecab554f19b5da15449c8533689390f8c6c7d4a393828b",
+    "forward-run/report.md": "c572608af75c8bd5d0ea85042ddc707766caed3332f05267f5c9138fc10facf1",
+    "forward-run/final-read-only-state.json": "37e8b95578af9af7a4662c560bf0e6c3dda58847e9bb1eea9b8405019be6ce4a",
+    "review-compatibility/compatibility.json": "96fc48dc4cbae475748bc89f57a6a1a016efcaba23f5c5e10297cd2b900e6b50",
+    "metrics-current-check.json": "2ddf4a3e5a17bac15e031b645b53c6b9a9f9c8309dceffd728a33ef3b61f5107",
+    "metrics-current-source.json": "71c3cc493d602c98297282d89a0a99152766abebfb0de806b57bc0f15f5a4343",
+    "metrics-independent-check/review-fix-verification.json": "4b5eeb81c5ee257c1750a63c46377f31b7083dc81e0daa2d2e820f54774a7716"
+  },
+  "not_verified": [
+    "Literary quality or reliable advantage compared with upstream",
+    "Actual reading or semantic correctness of independent review opinions",
+    "New real positive review-assignment protocol run; positives remain synthetic event tests",
+    "Real cumulative-session usage adapter; current coverage is synthetic",
+    "Desktop skill discovery",
+    "Complete task usage, child inclusion, billing or savings",
+    "Fresh capacity and migration probes for this source"
+  ],
+  "ok": true
+}

@@ -1,21 +1,68 @@
-MIT License
+# Story Skill Non-Commercial Use and Commercial Licensing Agreement
 
-Copyright (c) 2026 Story Skill contributors
+Copyright (c) 2026 Story Skill contributors  
+All rights not expressly granted are reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Commercial Licensor: [Insert the name of the individual or legal entity authorized to grant the relevant commercial license]  
+Commercial Licensing Contact: [Insert an email address or a commercial licensing application page]
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This Agreement applies to the software and associated documentation files distributed with this Agreement (collectively, the “Software”). “Licensor” means the copyright holder or its duly authorized individual or entity having the relevant licensing rights in the applicable Software content.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## 1. License for Non-Commercial Use
+
+Subject to compliance with this Agreement, the Licensor grants, free of charge, to any person obtaining a copy of the Software a non-exclusive license to use, copy, modify, merge, publish, and distribute the Software and modified versions thereof solely for non-commercial purposes.
+
+“Non-commercial purposes” means use that is not intended to obtain commercial benefits or monetary compensation and does not serve for-profit business activities, such as personal learning, research, testing, and exchanges that meet these conditions.
+
+Whether a user is an individual, a business, or a non-profit organization does not, by itself, determine the nature of the use; the determination must be based on the actual purpose of the use.
+
+## 2. Paid Authorization Required for Commercial Use
+
+Any commercial use requires a separate, valid commercial license from the Licensor before such use begins, and payment of the license fees in accordance with the parties’ agreement.
+
+“Commercial use” means use intended to obtain commercial benefits or monetary compensation, or to serve for-profit business activities, including, without limitation:
+
+1. Selling, renting, or otherwise providing the Software or modified versions thereof for a fee.
+2. Integrating the Software into commercial products, paid services, subscription services, or services that generate commercial revenue, such as advertising revenue.
+3. Using the Software for internal business operations, commercial production, client projects, or other for-profit business activities.
+4. Using the Software to create, generate, or process novels, copywriting, or other content intended for publication and sale, paid reading access, advertising monetization, or delivery as part of a commercial engagement.
+
+Providing products, services, or content to end users free of charge does not, by itself, constitute non-commercial use; the determination must still be based on the actual purpose of the use and its commercial revenue model.
+
+## 3. Scope of Commercial Authorization
+
+The licensee, permitted purposes, covered versions, scope of use, term, fees, and payment method of a commercial license shall be governed by the written or electronic commercial license agreement confirmed by both parties.
+
+Obtaining a license for commercial use does not automatically grant the right to resell the Software, sublicense it, distribute it commercially, or provide the Software to third parties as a service. Such rights must be expressly set out in the commercial license agreement.
+
+If a commercial license agreement conflicts with this Agreement, the commercial license agreement shall prevail within the scope it expressly authorizes.
+
+## 4. Copyright Notices and Distribution Conditions
+
+The above copyright notice and the full text of this Agreement must be included in all copies or substantial portions of the Software.
+
+When distributing the Software or modified versions thereof, you must not remove or obscure copyright notices or license notices that are required to be retained, or represent that recipients have obtained commercial-use rights that are not granted under this Agreement.
+
+## 5. User Inputs and Outputs
+
+This Agreement does not grant the Licensor any rights in user inputs or outputs merely because a user uses the Software. Such rights shall be determined under applicable law and applicable third-party agreements.
+
+Users who use the Software for content creation or production for commercial purposes must still obtain commercial authorization under Section 2.
+
+If any output includes protected content from the Software or third-party materials, the relevant portions remain subject to the applicable license terms.
+
+## 6. Existing Licenses and Third-Party Content
+
+This Agreement applies only to versions or content that the Licensor has the right to license under this Agreement and that are expressly released under this Agreement.
+
+This Agreement does not retroactively revoke or restrict any rights previously and lawfully obtained by users under the MIT License or other licenses, nor does it impose additional fee obligations on those existing rights.
+
+Components of the Software separately identified as being subject to third-party licenses remain governed by their respective licenses, and the corresponding copyright notices and license notices must be retained. This Agreement does not diminish any rights already granted to users under those licenses.
+
+## 7. Disclaimer of Warranties and Limitation of Liability
+
+To the maximum extent permitted by applicable law, the Software is provided “AS IS”, without warranty of any kind, express or implied, including, without limitation, warranties of merchantability, fitness for a particular purpose, and noninfringement.
+
+To the maximum extent permitted by applicable law, in no event shall the authors or copyright holders be liable for any claim, damages, or other liability, whether arising in contract, tort, or otherwise, arising out of or in connection with the Software or the use of or other dealings in the Software.
+
+Any warranties, service commitments, or liability obligations expressly set out in a commercial license agreement shall be governed by that agreement.

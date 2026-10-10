@@ -19,6 +19,15 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("release_package_npm", ROOT / "scripts/package_npm.py")
 npm = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(npm)
+MIT_LICENSE = (ROOT / "tests/fixtures/LICENSE").read_bytes()
+
+
+def mit_payload(version, prefix):
+    payload = {name: (prefix + name + "\r\n").encode()
+               for name in npm.payload_files(version)}
+    for name in npm.skill_names(version):
+        payload[name + "/LICENSE"] = MIT_LICENSE
+    return payload
 
 
 class NpmPackageTests(unittest.TestCase):
@@ -30,7 +39,7 @@ class NpmPackageTests(unittest.TestCase):
         self.archive = self.root / "story-skill-0.6.1.zip"
         self.checksum = self.root / "release.sha256"
         self.tarball = self.root / "package.tgz"
-        self.payload = {name: ("原始字节：" + name + "\r\n").encode() for name in npm.payload_files(self.version)}
+        self.payload = mit_payload(self.version, "原始字节：")
         self.payload["story-skill/scripts/story.py"] = (
             b'VERSION = "0.6.1"\r\nraise RuntimeError("never execute archive code")\n')
         self.write_zip()
@@ -47,7 +56,7 @@ class NpmPackageTests(unittest.TestCase):
                                  encoding="utf-8")
 
     def tar_files(self):
-        _, wrapper = npm.wrapper_files(self.version)
+        _, wrapper = npm.wrapper_files(self.version, self.payload)
         return {"package/" + name: raw for name, raw in {**self.payload, **wrapper}.items()}
 
     def write_tar(self, files=None, extra=None, destination=None):
@@ -96,8 +105,7 @@ class NpmPackageTests(unittest.TestCase):
     def test_development_files_require_v0611_and_survive_wrapper_build(self):
         self.version = "0.6.11"
         self.archive = self.root / "story-skill-0.6.11.zip"
-        self.payload = {name: ("开发载荷：" + name + "\r\n").encode()
-                        for name in npm.payload_files(self.version)}
+        self.payload = mit_payload(self.version, "开发载荷：")
         self.payload["story-skill/scripts/story.py"] = b'VERSION = "0.6.11"\n'
         self.write_zip()
         with patch.object(npm, "npm_pack", side_effect=self.fake_pack):
@@ -128,8 +136,7 @@ class NpmPackageTests(unittest.TestCase):
     def test_v0612_build_preserves_all_reviewed_payload_bytes(self):
         self.version = "0.6.12"
         self.archive = self.root / "story-skill-0.6.12.zip"
-        self.payload = {name: ("发布载荷：" + name + "\r\n").encode()
-                        for name in npm.payload_files(self.version)}
+        self.payload = mit_payload(self.version, "发布载荷：")
         self.payload["story-skill/scripts/story.py"] = b'VERSION = "0.6.12"\r\n'
         self.write_zip()
         with patch.object(npm, "npm_pack", side_effect=self.fake_pack):
@@ -145,8 +152,7 @@ class NpmPackageTests(unittest.TestCase):
     def test_v0615_build_preserves_payload_bytes_and_binds_the_new_version(self):
         self.version = "0.6.15"
         self.archive = self.root / "story-skill-0.6.15.zip"
-        self.payload = {name: ("发布载荷：" + name + "\r\n").encode()
-                        for name in npm.payload_files(self.version)}
+        self.payload = mit_payload(self.version, "发布载荷：")
         self.payload["story-skill/scripts/story.py"] = b'VERSION = "0.6.15"\r\n'
         self.write_zip()
         with patch.object(npm, "npm_pack", side_effect=self.fake_pack):
@@ -166,8 +172,7 @@ class NpmPackageTests(unittest.TestCase):
             with self.subTest(version=version):
                 self.version = version
                 self.archive = self.root / f"story-skill-{version}.zip"
-                self.payload = {name: ("开发载荷：" + name + "\r\n").encode()
-                                for name in npm.payload_files(version)}
+                self.payload = mit_payload(version, "开发载荷：")
                 self.payload["story-skill/scripts/story.py"] = f'VERSION = "{version}"\r\n'.encode()
                 self.write_zip()
                 with patch.object(npm, "npm_pack", side_effect=self.fake_pack):
@@ -191,6 +196,69 @@ class NpmPackageTests(unittest.TestCase):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 self.checksum.write_text(invalid, encoding="utf-8")
                 npm.read_release(self.archive, self.checksum)
+
+    def test_custom_license_build_and_verify_preserve_input_license_bytes(self):
+        self.version = "0.6.15"
+        self.archive = self.root / "story-skill-0.6.15.zip"
+        self.payload = mit_payload(self.version, "自定义许可载荷：")
+        self.payload["story-skill/scripts/story.py"] = b'VERSION = "0.6.15"\n'
+        custom = b"\xef\xbb\xbf" + (ROOT / "LICENSE").read_bytes().replace(b"\n", b"\r\n")
+        for name in npm.skill_names(self.version):
+            self.payload[name + "/LICENSE"] = custom
+        self.write_zip()
+        with patch.object(npm, "npm_pack", side_effect=self.fake_pack):
+            result = npm.build(self.archive, self.checksum, self.root / "out")
+        self.assertEqual(result["package_manifest"]["license"], "SEE LICENSE IN LICENSE")
+        self.assertEqual(result["package_manifest"]["files"],
+                         list(npm.payload_files(self.version)) + ["LICENSE"])
+        self.assertEqual(set(result["wrapper_manifest"]), {"README.md", "package.json", "LICENSE"})
+        with tarfile.open(result["tarball"], "r:gz") as bundle:
+            self.assertEqual(bundle.extractfile("package/LICENSE").read(), custom)
+            for name, raw in self.payload.items():
+                self.assertEqual(bundle.extractfile("package/" + name).read(), raw, name)
+            readme = bundle.extractfile("package/README.md").read().decode()
+        self.assertIn("commercial use requires a separate paid authorization", readme)
+        self.assertIn("exact bytes of the input ZIP", readme)
+        self.assertNotIn("License: MIT", readme)
+        self.assertNotIn("matching GitHub Release ZIP", readme)
+        self.assertNotIn("/blob/v0.6.15/", readme)
+        self.assertEqual(result, npm.verify_tarball(self.archive, self.checksum, result["tarball"], result))
+
+        for replacement in (None, b"changed license"):
+            with self.subTest(replacement=replacement):
+                files = self.tar_files()
+                if replacement is None:
+                    files.pop("package/LICENSE")
+                else:
+                    files["package/LICENSE"] = replacement
+                self.write_tar(files)
+                with self.assertRaisesRegex(ValueError, "missing|bytes differ"):
+                    self.verify()
+
+    def test_mixed_and_unknown_license_archives_fail_before_pack_or_replacement(self):
+        self.write_tar()
+        original = dict(self.payload)
+        output, previous = self.prepare_existing()
+        license_path = "story-skill/LICENSE"
+        cases = (
+            ({license_path: (ROOT / "LICENSE").read_bytes()}, "mixed skill licenses"),
+            ({license_path: MIT_LICENSE.replace(b"without restriction", b"for restricted use")},
+             "Unsupported skill license"),
+            ({name + "/LICENSE": b"# Story Skill Non-Commercial Use and Commercial Licensing Agreement\n"
+              for name in npm.skill_names(self.version)}, "Unsupported skill license"),
+            ({license_path: b"\xff"}, "Unsupported skill license"),
+        )
+        for changes, error in cases:
+            with self.subTest(changes=tuple(changes)):
+                self.payload = {**original, **changes}
+                self.write_zip()
+                with patch.object(npm, "npm_pack") as pack:
+                    with self.assertRaisesRegex(ValueError, error):
+                        npm.build(self.archive, self.checksum, output)
+                    pack.assert_not_called()
+                with self.assertRaisesRegex(ValueError, error):
+                    self.verify()
+                self.assert_preserved(output, previous)
 
     def test_zip_rejects_extra_missing_duplicate_and_linked_members(self):
         link = zipfile.ZipInfo("story-skill/scripts/story_world.py")
@@ -352,6 +420,27 @@ class NpmPackageTests(unittest.TestCase):
 
 
 class NpmSuiteTests(unittest.TestCase):
+    def test_historical_mit_wrapper_bytes_are_unchanged_for_input_archives(self):
+        expected = {
+            "0.6.1": {
+                "package.json": "b2f9092688ca6cba246c7bfac990e8379a5fa32ab88cf3697d08df42ba335a93",
+                "README.md": "44a2992f2e58ad0cc78afc061c7c994402d8f3fc18c71e929c3b801cbc8b9c72",
+            },
+            "0.6.15": {
+                "package.json": "2114bf62705874e51d29f392d93502a55e7070cea7cc040759564b90e27bbf7e",
+                "README.md": "33e057e8d99fbd9e0bade72ee7d9ee14ed57ea0b02a9099378465954489d895c",
+            },
+        }
+        for version, digests in expected.items():
+            with self.subTest(version=version):
+                payload = mit_payload(version, "历史MIT归档：")
+                for name in npm.skill_names(version):
+                    payload[name + "/LICENSE"] = MIT_LICENSE.replace(b"\n", b"\r\n")
+                manifest, files = npm.wrapper_files(version, payload)
+                self.assertEqual(manifest["license"], "MIT")
+                self.assertEqual({name: npm.sha256(raw) for name, raw in files.items()}, digests)
+                self.assertEqual((manifest, files), npm.wrapper_files(version))
+
     def test_published_v0612_package_identity_and_wrapper(self):
         manifest, files = npm.wrapper_files("0.6.12")
         self.assertEqual(manifest["name"], "@ningcui29/story-skill")
@@ -385,7 +474,8 @@ class NpmSuiteTests(unittest.TestCase):
     def test_current_and_development_wrappers_preserve_layout_and_release_status(self):
         for version, reviewed, count in (("0.6.13", npm.SUITE_FILES_V0613, 50),
                                          ("0.6.14", npm.SUITE_FILES_V0614, 51),
-                                         ("0.6.15", npm.SUITE_FILES_V0615, 51)):
+                                         ("0.6.15", npm.SUITE_FILES_V0615, 51),
+                                         ("0.6.16", npm.SUITE_FILES_V0616, 51)):
             with self.subTest(version=version):
                 manifest, files = npm.wrapper_files(version)
                 self.assertEqual(manifest["version"], version)
@@ -393,7 +483,7 @@ class NpmSuiteTests(unittest.TestCase):
                 self.assertEqual(len(manifest["files"]), count)
                 self.assertIn("story-skill-plan/references/outline.md", manifest["files"])
                 self.assertEqual("story-skill/references/workbench.md" in manifest["files"],
-                                 version in ("0.6.14", "0.6.15"))
+                                 version in ("0.6.14", "0.6.15", "0.6.16"))
                 readme = files["README.md"].decode("utf-8")
                 if version == "0.6.13":
                     self.assertIn("Unreleased development snapshot", readme)
@@ -403,8 +493,8 @@ class NpmSuiteTests(unittest.TestCase):
                     self.assertIn(f"/blob/v{version}/", readme)
 
     def test_only_current_release_family_has_reviewed_layout(self):
-        layouts = {"0.6.0": npm.SUITE_FILES_V060, "0.6.1": npm.SUITE_FILES_V061, "0.6.2": npm.SUITE_FILES_V061, "0.6.3": npm.SUITE_FILES_V061, "0.6.4": npm.SUITE_FILES_V061, "0.6.5": npm.SUITE_FILES_V065, "0.6.6": npm.SUITE_FILES_V065, "0.6.7": npm.SUITE_FILES_V065, "0.6.8": npm.SUITE_FILES_V065, "0.6.9": npm.SUITE_FILES_V069, "0.6.10": npm.SUITE_FILES_V0610, "0.6.11": npm.SUITE_FILES_V0611, "0.6.12": npm.SUITE_FILES_V0612, "0.6.13": npm.SUITE_FILES_V0613, "0.6.14": npm.SUITE_FILES_V0614, "0.6.15": npm.SUITE_FILES_V0615}
-        skill_layouts = {"0.6.0": npm.SKILL_NAMES_V060, "0.6.1": npm.SKILL_NAMES_V061, "0.6.2": npm.SKILL_NAMES_V061, "0.6.3": npm.SKILL_NAMES_V061, "0.6.4": npm.SKILL_NAMES_V061, "0.6.5": npm.SKILL_NAMES_V061, "0.6.6": npm.SKILL_NAMES_V061, "0.6.7": npm.SKILL_NAMES_V061, "0.6.8": npm.SKILL_NAMES_V061, "0.6.9": npm.SKILL_NAMES_V069, "0.6.10": npm.SKILL_NAMES_V0610, "0.6.11": npm.SKILL_NAMES_V0611, "0.6.12": npm.SKILL_NAMES_V0612, "0.6.13": npm.SKILL_NAMES_V0613, "0.6.14": npm.SKILL_NAMES_V0614, "0.6.15": npm.SKILL_NAMES_V0615}
+        layouts = {"0.6.0": npm.SUITE_FILES_V060, "0.6.1": npm.SUITE_FILES_V061, "0.6.2": npm.SUITE_FILES_V061, "0.6.3": npm.SUITE_FILES_V061, "0.6.4": npm.SUITE_FILES_V061, "0.6.5": npm.SUITE_FILES_V065, "0.6.6": npm.SUITE_FILES_V065, "0.6.7": npm.SUITE_FILES_V065, "0.6.8": npm.SUITE_FILES_V065, "0.6.9": npm.SUITE_FILES_V069, "0.6.10": npm.SUITE_FILES_V0610, "0.6.11": npm.SUITE_FILES_V0611, "0.6.12": npm.SUITE_FILES_V0612, "0.6.13": npm.SUITE_FILES_V0613, "0.6.14": npm.SUITE_FILES_V0614, "0.6.15": npm.SUITE_FILES_V0615, "0.6.16": npm.SUITE_FILES_V0616}
+        skill_layouts = {"0.6.0": npm.SKILL_NAMES_V060, "0.6.1": npm.SKILL_NAMES_V061, "0.6.2": npm.SKILL_NAMES_V061, "0.6.3": npm.SKILL_NAMES_V061, "0.6.4": npm.SKILL_NAMES_V061, "0.6.5": npm.SKILL_NAMES_V061, "0.6.6": npm.SKILL_NAMES_V061, "0.6.7": npm.SKILL_NAMES_V061, "0.6.8": npm.SKILL_NAMES_V061, "0.6.9": npm.SKILL_NAMES_V069, "0.6.10": npm.SKILL_NAMES_V0610, "0.6.11": npm.SKILL_NAMES_V0611, "0.6.12": npm.SKILL_NAMES_V0612, "0.6.13": npm.SKILL_NAMES_V0613, "0.6.14": npm.SKILL_NAMES_V0614, "0.6.15": npm.SKILL_NAMES_V0615, "0.6.16": npm.SKILL_NAMES_V0616}
         for version, expected in layouts.items():
             self.assertEqual(npm.payload_files(version), expected)
             self.assertEqual(npm.skill_names(version), skill_layouts[version])
@@ -416,14 +506,14 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertEqual(len(npm.SUITE_FILES_V069), 44)
         self.assertEqual(npm.payload_files("0.6.9"), npm.SUITE_FILES_V069)
         self.assertEqual(len(npm.SUITE_FILES), 51)
-        self.assertEqual(npm.SUITE_FILES, npm.SUITE_FILES_V0615)
+        self.assertEqual(npm.SUITE_FILES, npm.SUITE_FILES_V0616)
         self.assertEqual(npm.SUITE_FILES_V0612, npm.SUITE_FILES_V0611)
         self.assertEqual(len(npm.SUITE_FILES_V0612), 49)
         self.assertNotIn("story-skill-plan/references/outline.md", npm.SUITE_FILES_V0612)
         self.assertEqual(set(npm.SUITE_FILES_V0613) - set(npm.SUITE_FILES_V0612), {
             "story-skill-plan/references/outline.md",
         })
-        self.assertEqual(npm.SKILL_NAMES, npm.SKILL_NAMES_V0615)
+        self.assertEqual(npm.SKILL_NAMES, npm.SKILL_NAMES_V0616)
         self.assertEqual(len(npm.SUITE_FILES_V0613), 50)
         self.assertNotIn("story-skill/references/workbench.md", npm.SUITE_FILES_V0613)
         self.assertEqual(set(npm.SUITE_FILES_V0614) - set(npm.SUITE_FILES_V0613), {
@@ -442,7 +532,7 @@ class NpmSuiteTests(unittest.TestCase):
             "story-skill/scripts/story_punctuation.py",
         })
         self.assertIn("story-skill/scripts/story_workbench.py", npm.SUITE_FILES)
-        for version in ("0.5.11", "0.6.00", "0.6.16", "0.6.99", "1.0.0"):
+        for version in ("0.5.11", "0.6.00", "0.6.17", "0.6.99", "1.0.0"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed payload layout"):
                 npm.payload_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed payload layout"):

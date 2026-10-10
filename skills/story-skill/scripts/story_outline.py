@@ -581,6 +581,107 @@ def _plan_sha256(plan):
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
+_PLAN_SOURCE = "<!-- story-plan-source/v1 "
+_PLAN_BEGIN = "<!-- story-plan-fields:start -->"
+_PLAN_END = "<!-- story-plan-fields:end -->"
+
+
+def _readable_plan_fields(plan):
+    """Render every stored field, without inventing scenes or adoption status."""
+    lines = []
+
+    def field(label, value):
+        lines.append(f"### {label}")
+        # Quote each line so field contents cannot forge our standalone markers.
+        lines.extend("> " + line for line in str(value).splitlines())
+        lines.append("")
+
+    labels = {"title": "章名", "volume_dir": "卷目录", "volume": "卷引用",
+              "arc": "阶段引用", "line": "故事线引用", "goal": "本章目标",
+              "stop": "停笔点"}
+    for key, label in labels.items():
+        if key in plan:
+            field(label, plan[key])
+    for number, beat in enumerate(plan["beats"], 1):
+        field(f"情节点 {number}：人物尝试或选择", beat["choice"])
+        field(f"情节点 {number}：变化与后果", beat["change"])
+    for key, label in (("constraints", "约束"), ("requires", "所需状态引用"),
+                       ("tags", "标签"), ("entities", "相关实体引用")):
+        if key in plan:
+            field(label, "\n".join(plan[key]) if plan[key] else "无")
+    field("字数范围", f"{plan['length'][0]}—{plan['length'][1]}")
+    field("计数口径", plan.get("count_method", "visible_nonspace_v1"))
+    field("章名计数", "计入" if plan.get("count_title", False) else "不计入")
+    if "length_exception" in plan:
+        exception = plan["length_exception"]
+        field("篇幅例外来源", exception["source"])
+        if "path" in exception:
+            field("篇幅例外文件", exception["path"])
+        field("篇幅例外原句", exception["quote"])
+    if "time" in plan:
+        for key, label in (("clock", "故事时间口径"), ("start", "起始时间"),
+                           ("end", "结束时间")):
+            value = plan["time"].get(key)
+            field(label, "未指定" if value is None else value)
+    return "\n".join(lines) + "\n"
+
+
+def render_plan(book, chapter, plan, check_file=None):
+    """Return a candidate, or check generated fields; never write or adopt it."""
+    source = {"book_id": book.meta("id"), "chapter": chapter,
+              "plan_sha256": _plan_sha256(plan)}
+    fields = _readable_plan_fields(plan)
+    text = (f"# 第{chapter}章 可读细纲\n\n状态：候选\n\n"
+            "以下内容仅由已保存工具章计划生成；生成操作不登记采用，也不证明正文已发生。\n\n"
+            + _PLAN_SOURCE + json.dumps(source, ensure_ascii=False, sort_keys=True) + " -->\n"
+            + _PLAN_BEGIN + "\n" + fields + _PLAN_END + "\n\n"
+            "## 场景补充\n\n可在此补充具体场景；补充内容不自动写回工具计划。\n")
+    result = {"schema_version": 1, "read_only": True, **source,
+              "revision": book.meta("revision"), "status": "candidate", "text": text,
+              "note": "Generated fields only; adoption, supplementary scenes and semantic quality are not verified."}
+    if check_file is None:
+        return result
+    relative = _relative_path(book, check_file, require_adopted=False)
+    path = book.safe_path(book.root, relative)
+    if not path.is_file():
+        book.fail("outline_missing", "Generated candidate is missing", path=relative)
+    if path.stat().st_size > MAX_OUTLINE_BYTES:
+        book.fail("outline_too_large", "Generated candidate exceeds the file size limit", path=relative)
+    with path.open("rb") as stream:
+        raw = stream.read(MAX_OUTLINE_BYTES + 1)
+    if len(raw) > MAX_OUTLINE_BYTES:
+        book.fail("outline_too_large", "Generated candidate exceeds the file size limit", path=relative)
+    try:
+        lines = raw.decode("utf-8-sig").splitlines()
+    except UnicodeError:
+        book.fail("invalid_input", "Generated candidate must be UTF-8", path=relative)
+    headers = [line for line in lines if line.startswith(_PLAN_SOURCE) and line.endswith(" -->")]
+    starts = [i for i, line in enumerate(lines) if line == _PLAN_BEGIN]
+    ends = [i for i, line in enumerate(lines) if line == _PLAN_END]
+    issues = []
+    if len(headers) != 1 or len(starts) != 1 or len(ends) != 1 or starts[0] >= ends[0]:
+        issues.append({"code": "unrecognized_generated_plan"})
+    else:
+        try:
+            recorded = json.loads(headers[0][len(_PLAN_SOURCE):-4])
+        except ValueError:
+            recorded = None
+        if not isinstance(recorded, dict) or set(recorded) != set(source):
+            issues.append({"code": "invalid_generated_source"})
+        else:
+            for key, value in source.items():
+                if type(recorded[key]) is not type(value) or recorded[key] != value:
+                    issues.append({"code": "generated_source_changed", "field": key})
+        actual_fields = "\n".join(lines[starts[0] + 1:ends[0]]) + "\n"
+        if actual_fields != fields:
+            issues.append({"code": "generated_fields_changed"})
+    result.pop("text")
+    result.update(status="matches_saved_plan" if not issues else "needs_review",
+                  ok=not issues, path=relative, file_sha256=hashlib.sha256(raw).hexdigest(),
+                  issues=issues)
+    return result
+
+
 def _frontmatter_header(lines):
     """Separate a small, explicit metadata grammar from Markdown examples.
 

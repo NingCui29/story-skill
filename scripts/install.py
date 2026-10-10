@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install the complete Story Skill suite for Codex, Claude Code, or Antigravity."""
+"""Install the complete Story Skill suite into a supported host's skills directory."""
 from __future__ import annotations
 
 import argparse
@@ -140,15 +140,31 @@ SUITE_FILES_V0614 = tuple(sorted((*SUITE_FILES_V0613,
 SKILL_NAMES_V0614 = SKILL_NAMES_V0613
 SUITE_FILES_V0615 = SUITE_FILES_V0614
 SKILL_NAMES_V0615 = SKILL_NAMES_V0614
+SUITE_FILES_V0616 = SUITE_FILES_V0615
+SKILL_NAMES_V0616 = SKILL_NAMES_V0615
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0615
-SUITE_FILES = SUITE_FILES_V0615
+SKILL_NAMES = SKILL_NAMES_V0616
+SUITE_FILES = SUITE_FILES_V0616
 MARKER = ".story-skill-install.json"
 HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
-                    "antigravity": ".agents", "antigravity-cli": ".agents"}
+                    "antigravity": ".agents", "antigravity-cli": ".agents",
+                    "qoder": ".qoder", "qoder-cn": ".qoder",
+                    "zcode": ".zcode", "workbuddy": ".workbuddy",
+                    "trae": ".trae", "trae-cn": ".trae", "trae-cli": ".traecli",
+                    "cursor": ".cursor", "codebuddy": ".codebuddy",
+                    "opencode": ".opencode", "copilot": ".github",
+                    "gemini-cli": ".gemini", "cline": ".cline",
+                    "windsurf": ".windsurf", "devin": ".devin"}
 USER_HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
-                        "antigravity": ".gemini/config", "antigravity-cli": ".gemini/antigravity-cli"}
+                        "antigravity": ".gemini/config", "antigravity-cli": ".gemini/antigravity-cli",
+                        "qoder": ".qoder", "qoder-cn": ".qoder-cn",
+                        "zcode": ".zcode", "workbuddy": ".workbuddy",
+                        "trae": ".trae", "trae-cn": ".trae-cn", "trae-cli": ".traecli",
+                        "cursor": ".cursor", "codebuddy": ".codebuddy",
+                        "opencode": ".config/opencode", "copilot": ".copilot",
+                        "gemini-cli": ".gemini", "cline": ".cline",
+                        "windsurf": ".codeium/windsurf", "devin": ".config/devin"}
 
 
 def host_directory(host, scope="project"):
@@ -182,6 +198,8 @@ def suite_files(version):
         return SUITE_FILES_V0614
     if version == "0.6.15":
         return SUITE_FILES_V0615
+    if version == "0.6.16":
+        return SUITE_FILES_V0616
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 
@@ -207,6 +225,8 @@ def skill_names(version):
         return SKILL_NAMES_V0614
     if version == "0.6.15":
         return SKILL_NAMES_V0615
+    if version == "0.6.16":
+        return SKILL_NAMES_V0616
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 
@@ -507,9 +527,8 @@ def install_suite_locked(project, source, files, update, *, host="codex", scope=
             "files": sum(len(value) for value in files.values())}
 
 
-def install(project, update=False, source=SOURCE, *, host="codex", scope="project"):
-    directory = host_directory(host, scope)
-    project = Path(project).expanduser().resolve()
+def source_suite(source):
+    """Resolve a core entry or complete suite without modifying its source."""
     source = Path(source).expanduser().absolute()
     if linked(source):
         raise ValueError(f"Refusing linked source directory: {source}")
@@ -519,6 +538,43 @@ def install(project, update=False, source=SOURCE, *, host="codex", scope="projec
             raise ValueError("A full supported suite is required")
         source = source.parent
     files = suite_inventory(source)
+    return source, files
+
+
+def check_installation(project, source=SOURCE, *, host="codex", scope="project"):
+    """Compare a complete installed suite to the source without writes or lock creation."""
+    directory = host_directory(host, scope)
+    project = Path(project).expanduser().resolve()
+    source, files = source_suite(source)
+    parent = checked(project, directory + "/skills")
+    validate_omitted_targets(project, files, host=host, scope=scope)
+    manifests = {}
+    for name, expected in files.items():
+        target = checked(project, directory + "/skills/" + name)
+        if not target.is_dir():
+            raise ValueError(f"Installed suite is missing a skill: {target}")
+        if inventory(target) != expected:
+            raise ValueError(f"Installed skill differs from the current source: {target}")
+        manifests[name] = managed_snapshot(target) if checked(target, MARKER).exists() else None
+    if suite_inventory(source) != files:
+        raise ValueError("Source suite changed during verification; retry with a stable source")
+    for name, expected in files.items():
+        target = checked(parent, name)
+        if inventory(target) != expected:
+            raise ValueError(f"Installed skill changed during verification: {name}")
+        manifest = managed_snapshot(target) if checked(target, MARKER).exists() else None
+        if manifest != manifests[name]:
+            raise ValueError(f"Installation manifest changed during verification: {name}")
+    validate_omitted_targets(project, files, host=host, scope=scope)
+    return {"status": "verified", "host": host, "scope": scope, "path": str(parent),
+            "skills": list(files), "managed_skills": [name for name, value in manifests.items() if value is not None],
+            "files": sum(map(len, files.values()))}
+
+
+def install(project, update=False, source=SOURCE, *, host="codex", scope="project"):
+    directory = host_directory(host, scope)
+    project = Path(project).expanduser().resolve()
+    source, files = source_suite(source)
     target = checked(project, directory + "/skills")
     if target == source:
         validate_omitted_targets(project, files, host=host, scope=scope)
@@ -538,12 +594,16 @@ def main():
     destination = p.add_mutually_exclusive_group(required=True)
     destination.add_argument("--project", help="Install into this project's host-specific skills directory")
     destination.add_argument("--user", action="store_true", help="Install into the current user's host-specific skills directory")
-    p.add_argument("--update", action="store_true", help="Replace an unchanged managed installation; retain backup")
+    action = p.add_mutually_exclusive_group()
+    action.add_argument("--update", action="store_true", help="Replace an unchanged managed installation; retain backup")
+    action.add_argument("--check", action="store_true", help="Verify installed files against this source without writing")
     args = p.parse_args()
     try:
         project = Path.home() if args.user else args.project
         scope = "user" if args.user else "project"
-        print(json.dumps(install(project, args.update, host=args.host, scope=scope), ensure_ascii=False))
+        result = (check_installation(project, host=args.host, scope=scope) if args.check else
+                  install(project, args.update, host=args.host, scope=scope))
+        print(json.dumps(result, ensure_ascii=False))
         return 0
     except (OSError, ValueError) as error:
         print(json.dumps({"ok": False, "error": str(error)}, ensure_ascii=False))
