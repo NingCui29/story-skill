@@ -158,7 +158,9 @@ def runtime_smoke(tarball, version):
         seen = set()
         with tarfile.open(tarball, "r:gz") as bundle:
             for member in bundle.getmembers():
-                if member.name in {"package/package.json", "package/README.md"}:
+                # verify_tarball already bound every wrapper byte to the Release,
+                # including the optional top-level LICENSE in non-MIT packages.
+                if member.name in {"package/package.json", "package/README.md", "package/LICENSE"}:
                     continue
                 if member.name.startswith("package/"):
                     name = member.name[len("package/"):]

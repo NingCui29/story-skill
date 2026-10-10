@@ -1,0 +1,67 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-10T11:31:40.633721+00:00",
+  "tag": "v0.6.16",
+  "fixed_release_commit": "08a598e057adcaa390e90fadf2e3e11d000ebfa2",
+  "affected_files": {
+    "scripts/sync_packages.py": "2c500516b6cc2afa322eb7bf56b6578a0c7eb97b34c491e69633c5f83ad7fc48",
+    "tests/test_sync_packages.py": "fde269d43748fda7c7a6f9866bdbb69150358a2c37c90cc3c305b0a6d7e28b2f"
+  },
+  "change": "Runtime smoke now excludes the already byte-verified optional package/LICENSE wrapper from skill extraction, alongside package.json and README.md. It still installs only the versioned payload allowlist.",
+  "verification_boundary": "Both production call paths validate all tarball members and bytes against the Release ZIP first: prepare-only calls package_npm.build, which returns only after verify_tarball; registry publication calls verify_download, which verifies registry SHA-512 and then verify_tarball. verify_tarball rejects changed, linked, duplicate, missing and unexpected wrapper members. No duplicate license parser or relaxed payload check was introduced.",
+  "red_regression": {
+    "tests": 35,
+    "errors": 1,
+    "failing_case": "test_runtime_smoke_accepts_verified_custom_54_and_historical_mit_53_members, version 0.6.16",
+    "error": "Runtime smoke received an unverified skill member",
+    "log_sha256": "4391cd981c5e4d04fcf86e1f75d2009f9aa1f6d49a0670f9516119c2567bfa60"
+  },
+  "regression_tests": {
+    "command": "python3.12 -B -m unittest discover -s tests -p test_*package*.py",
+    "tests": 88,
+    "seconds": 6.551,
+    "passed": true,
+    "new_test_methods": 3,
+    "cases": [
+      "Verified v0.6.16 custom-license 54-member tarball reaches all four CLI calls with only the 51 skill payloads extracted",
+      "Verified v0.6.15 MIT 53-member tarball retains compatibility",
+      "Actual sync pipeline rejects changed LICENSE bytes and unknown NOTICE despite matching mocked registry SRI before runtime_smoke",
+      "runtime_smoke independently still rejects unknown wrapper members before execution"
+    ],
+    "log_sha256": "327f631cb296f7083e1feb7faf970de10ef90f0479c599ac5464084a5949dfb6"
+  },
+  "actual_registry_artifact_runtime": {
+    "ok": true,
+    "artifact_workflow": 38048304454,
+    "source": "Failed workflow actual registry-download artifact, independently verified before execution",
+    "runtime": {
+      "ok": true,
+      "commands": 4,
+      "skills": [
+        "story-skill",
+        "story-skill-analyze",
+        "story-skill-cover",
+        "story-skill-plan",
+        "story-skill-publish",
+        "story-skill-research",
+        "story-skill-review",
+        "story-skill-write"
+      ],
+      "skill_files": 51,
+      "temporary_book_removed": true
+    },
+    "sha256": "008f94198e16d2bfc0e4b26bf1d76a0782b38bdb64dcb52c75f773fc1ccf22fd",
+    "bytes": 362530,
+    "integrity": "sha512-ALeEI7Z48/RJb0DtRZL9pb2oNljpne0zDfrMPmhxym1VfU5bJVWxSo96debJTSQgYk0QFgiA2uK+3piPkbHPYQ=="
+  },
+  "distribution_recheck": {
+    "source_payloads_unchanged": 51,
+    "installer_packaging_desktop_unique_inputs_unchanged": 21,
+    "artifact_reports_unchanged": 5,
+    "release_tag_or_asset_modified": false,
+    "local_install_or_service_modified": false
+  },
+  "python": "3.12.14",
+  "platform": "Darwin 24.6.0 x86_64",
+  "scope": "Local publisher-tool regression and real artifact runtime verification only. The source tarball was obtained from the failed authenticated workflow artifact, not by direct local registry authentication. No package publication or workflow rerun was performed here. A later successful workflow remains required for end-to-end Packages acceptance."
+}

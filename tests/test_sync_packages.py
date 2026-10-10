@@ -13,6 +13,7 @@ from contextlib import ExitStack
 from types import SimpleNamespace
 from unittest.mock import patch
 import urllib.error
+import zipfile
 
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
@@ -401,6 +402,89 @@ class PackageSyncTests(unittest.TestCase):
                 member.size = len(raw)
                 bundle.addfile(member, io.BytesIO(raw))
         return archive
+
+    def verified_wrapper_fixture(self, version, custom_license):
+        payload = {name: (SCRIPTS.parent / "skills" / name).read_bytes()
+                   for name in sync.package_npm.payload_files(version)}
+        payload["story-skill/scripts/story.py"] = f'VERSION = "{version}"\n'.encode()
+        if not custom_license:
+            license_bytes = (SCRIPTS.parent / "tests/fixtures/LICENSE").read_bytes()
+            for name in sync.package_npm.skill_names(version):
+                payload[name + "/LICENSE"] = license_bytes
+        archive = self.root / f"story-skill-{version}.zip"
+        with zipfile.ZipFile(archive, "w") as bundle:
+            for name, raw in payload.items():
+                bundle.writestr(name, raw)
+        checksum = self.root / "release.sha256"
+        checksum.write_text(hashlib.sha256(archive.read_bytes()).hexdigest()
+                            + "  " + archive.name + "\n", encoding="utf-8")
+        _, wrappers = sync.package_npm.wrapper_files(version, payload)
+        files = {"package/" + name: raw for name, raw in {**payload, **wrappers}.items()}
+        tarball = self.root / "wrapped.tgz"
+        self.write_wrapped_tarball(tarball, files)
+        built = sync.package_npm.verify_tarball(archive, checksum, tarball)
+        return archive, checksum, tarball, built, files
+
+    def write_wrapped_tarball(self, path, files):
+        with tarfile.open(path, "w:gz") as bundle:
+            for name, raw in files.items():
+                member = tarfile.TarInfo(name)
+                member.size = len(raw)
+                bundle.addfile(member, io.BytesIO(raw))
+
+    def test_runtime_smoke_accepts_verified_custom_54_and_historical_mit_53_members(self):
+        for version, custom_license, count in (("0.6.16", True, 54), ("0.6.15", False, 53)):
+            with self.subTest(version=version):
+                _, _, tarball, built, files = self.verified_wrapper_fixture(version, custom_license)
+                self.assertEqual(len(files), count)
+                self.assertEqual(built["package_manifest"]["license"],
+                                 "SEE LICENSE IN LICENSE" if custom_license else "MIT")
+                results = [SimpleNamespace(returncode=0, stdout=version + "\n"),
+                           SimpleNamespace(returncode=0, stdout="help"),
+                           SimpleNamespace(returncode=0, stdout="{}"),
+                           SimpleNamespace(returncode=0, stdout='{"last_chapter":0}')]
+
+                def execute(arguments, **kwargs):
+                    suite = Path(arguments[4]).parents[2]
+                    self.assertEqual({p.relative_to(suite).as_posix() for p in suite.rglob("*") if p.is_file()},
+                                     set(sync.package_npm.payload_files(version)))
+                    return results.pop(0)
+
+                with patch.object(sync.subprocess, "run", side_effect=execute):
+                    result = sync.runtime_smoke(tarball, version)
+                self.assertEqual(result["skill_files"], 51)
+                self.assertEqual(result["commands"], 4)
+                self.assertFalse(results)
+                self.assertTrue(result["temporary_book_removed"])
+
+    def test_registry_download_rejects_changed_license_or_unknown_wrapper_before_runtime(self):
+        archive, checksum, tarball, built, files = self.verified_wrapper_fixture("0.6.16", True)
+        for change in ({"package/LICENSE": b"unreviewed replacement license"},
+                       {"package/NOTICE": b"unexpected wrapper"}):
+            with self.subTest(member=next(iter(change))):
+                self.write_wrapped_tarball(tarball, {**files, **change})
+                raw = tarball.read_bytes()
+                metadata = {"name": built["name"], "version": built["version"],
+                            "repository": built["package_manifest"]["repository"],
+                            "dist": {"tarball": "https://npm.pkg.github.com/download/story-skill/test.tgz",
+                                     "integrity": sync.package_npm.integrity(raw)}}
+                with patch.object(sync, "release_files", return_value=(
+                        {"html_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.16"},
+                        archive, checksum)), patch.object(sync.package_npm, "build", return_value=built), patch.object(
+                        sync, "registry_version", return_value=metadata), patch.object(
+                        sync, "npm_command", return_value=SimpleNamespace(returncode=0, stdout='"test"')), patch.object(
+                        sync, "read_url", return_value=raw), patch.object(sync, "runtime_smoke") as runtime:
+                    with self.assertRaisesRegex(ValueError, "npm tarball member"):
+                        sync.sync("v0.6.16", self.root / "sync")
+                runtime.assert_not_called()
+
+    def test_runtime_smoke_still_rejects_unknown_wrapper_before_execution(self):
+        _, _, tarball, _, files = self.verified_wrapper_fixture("0.6.16", True)
+        self.write_wrapped_tarball(tarball, {**files, "package/NOTICE": b"unexpected wrapper"})
+        with patch.object(sync.subprocess, "run") as execute:
+            with self.assertRaisesRegex(ValueError, "unverified skill member"):
+                sync.runtime_smoke(tarball, "0.6.16")
+        execute.assert_not_called()
 
     def test_runtime_smoke_installs_all_suite_dependencies_before_execution(self):
         archive = self.smoke_archive()
