@@ -32,7 +32,8 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 
-def read_url(url, token=None, auth_host=None, *, accept="application/vnd.github+json"):
+def read_url(url, token=None, auth_host=None, *, accept="application/vnd.github+json",
+             api_version="2026-03-10"):
     """Keep credentials on their original registry/API host during redirects."""
     opener = urllib.request.build_opener(NoRedirect)
     for _ in range(6):
@@ -47,7 +48,7 @@ def read_url(url, token=None, auth_host=None, *, accept="application/vnd.github+
             headers["Authorization"] = "Bearer " + token
         if host == "api.github.com":
             headers.update(Accept=accept,
-                           **{"X-GitHub-Api-Version": "2026-03-10"})
+                           **{"X-GitHub-Api-Version": api_version})
         try:
             with opener.open(urllib.request.Request(url, headers=headers), timeout=45) as response:
                 data = response.read(MAX_BYTES + 1)
@@ -66,8 +67,8 @@ def read_url(url, token=None, auth_host=None, *, accept="application/vnd.github+
     raise ValueError("Too many download redirects")
 
 
-def read_json(url, token=None, auth_host=None):
-    return json.loads(read_url(url, token, auth_host))
+def read_json(url, token=None, auth_host=None, *, api_version="2026-03-10"):
+    return json.loads(read_url(url, token, auth_host, api_version=api_version))
 
 
 def version_from_tag(tag):
@@ -256,13 +257,25 @@ def sync(tag, output, prepare_only=False):
         target, verified, integrity = verify_download(existing, built, archive, checksum, output, token)
         report.update(ok=True, downloaded_integrity=integrity, downloaded_package=verified,
                       runtime=runtime_smoke(target, version))
-        info = read_json("https://api.github.com/users/" + REPOSITORY.split("/", 1)[0] +
-                         "/packages/npm/story-skill", token, "api.github.com")
-        linked = info.get("repository", {}).get("full_name", "")
-        if linked.lower() != REPOSITORY.lower():
-            raise ValueError("Published package is not linked to the expected repository")
+        metadata_url = ("https://api.github.com/users/" + REPOSITORY.split("/", 1)[0] +
+                        "/packages/npm/story-skill")
+        for metadata_api_version in ("2026-03-10", "2022-11-28"):
+            info = read_json(metadata_url, token, "api.github.com", api_version=metadata_api_version)
+            repository = info.get("repository")
+            if repository is not None and not isinstance(repository, dict):
+                raise ValueError("Package repository metadata has an invalid shape")
+            linked = repository.get("full_name") if repository is not None else None
+            # Missing repository metadata does not establish whether the package is linked.
+            # Only missing metadata permits a compatibility read; a mismatch never does.
+            if linked is None or linked == "":
+                continue
+            if not isinstance(linked, str) or linked.lower() != REPOSITORY.lower():
+                raise ValueError("Published package is not linked to the expected repository")
+            break
+        else:
+            raise ValueError("Package repository metadata is unavailable in supported API versions")
         report.update(package_url=info["html_url"], visibility=info["visibility"],
-                      linked_repository=linked)
+                      linked_repository=linked, package_metadata_api_version=metadata_api_version)
     return report
 
 

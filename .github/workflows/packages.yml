@@ -62,15 +62,16 @@ jobs:
           report = {"tag": os.environ["PACKAGE_TAG"], "repository": sync.REPOSITORY}
           def selected(value, keys):
               return {key: value.get(key) for key in keys} if isinstance(value, dict) else None
-          for label, url in (
-              ("package", "https://api.github.com/users/NingCui29/packages/npm/story-skill"),
-              ("source_repository", "https://api.github.com/repos/" + sync.REPOSITORY),
+          for label, url, api_version in (
+              ("package", "https://api.github.com/users/NingCui29/packages/npm/story-skill", "2026-03-10"),
+              ("package_legacy", "https://api.github.com/users/NingCui29/packages/npm/story-skill", "2022-11-28"),
+              ("source_repository", "https://api.github.com/repos/" + sync.REPOSITORY, "2026-03-10"),
           ):
               try:
-                  value = sync.read_json(url, token, "api.github.com")
-                  fields = ("id", "name", "package_type", "visibility", "html_url") if label == "package" else ("id", "full_name", "private")
-                  item = {"http_status": 200, "metadata": selected(value, fields)}
-                  if label == "package":
+                  value = sync.read_json(url, token, "api.github.com", api_version=api_version)
+                  fields = ("id", "name", "package_type", "visibility", "html_url") if label.startswith("package") else ("id", "full_name", "private")
+                  item = {"http_status": 200, "api_version": api_version, "metadata": selected(value, fields)}
+                  if label.startswith("package"):
                       item["repository_field_present"] = "repository" in value
                       item["repository"] = selected(value.get("repository"), ("id", "full_name", "private"))
                   report[label] = item

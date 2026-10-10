@@ -58,7 +58,7 @@ class PackageSyncTests(unittest.TestCase):
         self.verify = self.stack.enter_context(patch.object(sync, "verify_download", return_value=(
             self.root / "verified.tgz", {"ok": True}, "sha512-verified")))
         self.stack.enter_context(patch.object(sync, "runtime_smoke", return_value={"ok": True}))
-        self.stack.enter_context(patch.object(sync, "read_json", return_value={
+        self.metadata = self.stack.enter_context(patch.object(sync, "read_json", return_value={
             "html_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill",
             "visibility": "public", "repository": {"full_name": sync.REPOSITORY}}))
         self.stack.enter_context(patch.object(sync.time, "sleep"))
@@ -80,6 +80,28 @@ class PackageSyncTests(unittest.TestCase):
         self.assertEqual(requests[0].get_header("Authorization"), "Bearer fake")
         self.assertIsNone(requests[1].get_header("Authorization"))
 
+    def test_json_api_version_header_keeps_credentials_and_version_on_api_host(self):
+        for options, expected_version in (({}, "2026-03-10"),
+                                           ({"api_version": "2022-11-28"}, "2022-11-28")):
+            with self.subTest(api_version=expected_version):
+                requests = []
+
+                def opened(request, **kwargs):
+                    requests.append(request)
+                    if len(requests) == 1:
+                        raise urllib.error.HTTPError(request.full_url, 302, "redirect", {
+                            "Location": "https://release-assets.githubusercontent.com/metadata.json"}, None)
+                    return io.BytesIO(b'{"verified":true}')
+
+                with patch.object(sync.urllib.request, "build_opener", return_value=SimpleNamespace(open=opened)):
+                    result = sync.read_json(sync.API, "test-token", "api.github.com", **options)
+                self.assertEqual(result, {"verified": True})
+                self.assertEqual(requests[0].get_header("X-github-api-version"), expected_version)
+                self.assertEqual(requests[0].get_header("Accept"), "application/vnd.github+json")
+                self.assertEqual(requests[0].get_header("Authorization"), "Bearer test-token")
+                self.assertIsNone(requests[1].get_header("X-github-api-version"))
+                self.assertIsNone(requests[1].get_header("Authorization"))
+
     def test_private_release_uses_authenticated_asset_api_and_drops_token_on_redirects(self):
         release, payloads = self.release_fixture()
         requests = []
@@ -91,6 +113,7 @@ class PackageSyncTests(unittest.TestCase):
                 asset = urls[request.full_url]
                 self.assertEqual(request.get_header("Authorization"), "Bearer private-test-token")
                 self.assertEqual(request.get_header("Accept"), "application/octet-stream")
+                self.assertEqual(request.get_header("X-github-api-version"), "2026-03-10")
                 raise urllib.error.HTTPError(request.full_url, 302, "redirect", {
                     "Location": asset["browser_download_url"]}, None)
             self.assertIsNone(request.get_header("Authorization"))
@@ -236,6 +259,70 @@ class PackageSyncTests(unittest.TestCase):
         self.assertTrue(result["ok"])
         self.verify.assert_called_once()
         self.assertEqual([c.args[0][0] for c in self.npm.call_args_list], ["whoami"])
+        self.assertEqual(result["package_metadata_api_version"], "2026-03-10")
+        self.assertEqual(self.metadata.call_count, 1)
+
+    def test_missing_current_repository_metadata_requires_verified_legacy_link(self):
+        self.pipeline()
+        self.registry.return_value = {"name": sync.NAME, "version": "0.6.0"}
+        linked = dict(self.metadata.return_value)
+        for absent in ({}, {"repository": None}, {"repository": {}},
+                       {"repository": {"full_name": None}}, {"repository": {"full_name": ""}}):
+            with self.subTest(current=absent):
+                self.metadata.reset_mock()
+                self.metadata.side_effect = [absent, linked]
+                result = sync.sync("v0.6.0", self.root)
+                self.assertTrue(result["ok"])
+                self.assertEqual(result["linked_repository"], sync.REPOSITORY)
+                self.assertEqual(result["package_metadata_api_version"], "2022-11-28")
+                self.assertEqual([call.kwargs["api_version"] for call in self.metadata.call_args_list],
+                                 ["2026-03-10", "2022-11-28"])
+                self.assertTrue(all(call.args == (
+                    "https://api.github.com/users/NingCui29/packages/npm/story-skill",
+                    "fake-test-token", "api.github.com") for call in self.metadata.call_args_list))
+        self.assertTrue(all(call.args[0][0] == "whoami" for call in self.npm.call_args_list))
+
+    def test_explicit_foreign_current_repository_fails_without_legacy_fallback(self):
+        self.pipeline()
+        self.registry.return_value = {"name": sync.NAME, "version": "0.6.0"}
+        self.metadata.side_effect = [{"repository": {"full_name": "Other/story-skill"}},
+                                     self.metadata.return_value]
+        with self.assertRaisesRegex(ValueError, "not linked to the expected repository"):
+            sync.sync("v0.6.0", self.root)
+        self.assertEqual(self.metadata.call_count, 1)
+
+    def test_missing_legacy_repository_fails_even_when_registry_names_expected_repository(self):
+        self.pipeline()
+        self.registry.return_value = {"name": sync.NAME, "version": "0.6.0",
+                                      "repository": {"url": "https://github.com/" + sync.REPOSITORY + ".git"}}
+        for absent in ({}, {"repository": None}, {"repository": {}},
+                       {"repository": {"full_name": None}}, {"repository": {"full_name": ""}}):
+            with self.subTest(legacy=absent):
+                self.metadata.reset_mock()
+                self.metadata.side_effect = [{}, absent]
+                with self.assertRaisesRegex(ValueError, "repository metadata is unavailable"):
+                    sync.sync("v0.6.0", self.root)
+                self.assertEqual(self.metadata.call_count, 2)
+        self.assertTrue(all(call.args[0][0] == "whoami" for call in self.npm.call_args_list))
+
+    def test_explicit_foreign_legacy_repository_still_fails(self):
+        self.pipeline()
+        self.registry.return_value = {"name": sync.NAME, "version": "0.6.0"}
+        self.metadata.side_effect = [{}, {"repository": {"full_name": "Other/story-skill"}}]
+        with self.assertRaisesRegex(ValueError, "not linked to the expected repository"):
+            sync.sync("v0.6.0", self.root)
+        self.assertEqual(self.metadata.call_count, 2)
+
+    def test_malformed_current_repository_is_not_treated_as_missing(self):
+        self.pipeline()
+        self.registry.return_value = {"name": sync.NAME, "version": "0.6.0"}
+        for repository in (sync.REPOSITORY, [], {"full_name": False}, {"full_name": 123}):
+            with self.subTest(repository=repository):
+                self.metadata.reset_mock()
+                self.metadata.side_effect = [{"repository": repository}, self.metadata.return_value]
+                with self.assertRaises(ValueError):
+                    sync.sync("v0.6.0", self.root)
+                self.assertEqual(self.metadata.call_count, 1)
 
     def test_existing_different_payload_is_never_overwritten(self):
         self.pipeline()
