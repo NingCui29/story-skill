@@ -202,7 +202,7 @@ class NpmPackageTests(unittest.TestCase):
         self.archive = self.root / "story-skill-0.6.15.zip"
         self.payload = mit_payload(self.version, "自定义许可载荷：")
         self.payload["story-skill/scripts/story.py"] = b'VERSION = "0.6.15"\n'
-        custom = b"\xef\xbb\xbf" + (ROOT / "LICENSE").read_bytes().replace(b"\n", b"\r\n")
+        custom = b"\xef\xbb\xbf" + (ROOT / "LICENSE").read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
         for name in npm.skill_names(self.version):
             self.payload[name + "/LICENSE"] = custom
         self.write_zip()
@@ -435,7 +435,7 @@ class NpmSuiteTests(unittest.TestCase):
             with self.subTest(version=version):
                 payload = mit_payload(version, "历史MIT归档：")
                 for name in npm.skill_names(version):
-                    payload[name + "/LICENSE"] = MIT_LICENSE.replace(b"\n", b"\r\n")
+                    payload[name + "/LICENSE"] = MIT_LICENSE.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
                 manifest, files = npm.wrapper_files(version, payload)
                 self.assertEqual(manifest["license"], "MIT")
                 self.assertEqual({name: npm.sha256(raw) for name, raw in files.items()}, digests)

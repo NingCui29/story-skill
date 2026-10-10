@@ -143,7 +143,8 @@ class DesktopHostInstallTests(unittest.TestCase):
                             self.assertEqual(receipt["path"], str(target))
                             for name, files in self.expected.items():
                                 self.assertEqual(installer.inventory(target / name), files)
-                            self.assertEqual(snapshot(locked_target), before)
+                # Compare every file after Windows releases the byte-range lock.
+                self.assertEqual(snapshot(locked_target), before)
 
 
 if __name__ == "__main__":

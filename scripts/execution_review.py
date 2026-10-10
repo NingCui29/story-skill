@@ -11,8 +11,9 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
-import os
-from pathlib import Path
+import ntpath
+from pathlib import Path, PurePosixPath, PureWindowsPath
+import posixpath
 import re
 import shlex
 import sys
@@ -93,6 +94,19 @@ def completed_result(event):
     return False
 
 
+def literal_read_path(name, target, cwd):
+    """Compare a literal operand in the captured filesystem's path flavour.
+
+    Drive-relative and rooted-without-drive Windows paths depend on ambient
+    process state, so they cannot identify a read from the recorded cwd alone.
+    """
+    path_type = PureWindowsPath if isinstance(target, PureWindowsPath) else PurePosixPath
+    path, directory = path_type(name), path_type(cwd)
+    if path.is_absolute():
+        return path == target
+    return not path.anchor and directory.is_absolute() and directory / path == target
+
+
 def read_command(command, target, cwd):
     """Recognise literal cat/head/sed reads only; never execute a command string."""
     try:
@@ -127,11 +141,7 @@ def read_command(command, target, cwd):
         paths = [word for word in args[1:] if word != "--"]
     else:
         return False
-    for name in paths:
-        path = Path(name)
-        if (path if path.is_absolute() else cwd / path).absolute() == target:
-            return True
-    return False
+    return any(literal_read_path(name, target, cwd) for name in paths)
 
 
 def full_cat(command, target, cwd):
@@ -160,8 +170,7 @@ def read_tool(item, target, cwd):
             return False
     if not isinstance(arguments, dict) or not isinstance(arguments.get("path"), str):
         return False
-    path = Path(arguments["path"])
-    return (path if path.is_absolute() else cwd / path).absolute() == target
+    return literal_read_path(arguments["path"], target, cwd)
 
 
 def independent_return(event, quote, thread_id):
@@ -285,17 +294,32 @@ def review_assignment_link(binding, event, ref, trace, workspace):
 
 def injected_skill_inputs(task, launch, workspace, skills, host):
     """Separate skill instructions from a repository name in legitimate paths."""
-    roots = [str(skills), os.path.relpath(skills, workspace)]
-    if host:
-        roots += [host["root"], os.path.relpath(host["root"], workspace)]
+    windows = isinstance(workspace, PureWindowsPath)
+    path_type, path_module = (PureWindowsPath, ntpath) if windows else (PurePosixPath, posixpath)
+
+    def path_text(value):
+        # Backslashes are separators and path case is insensitive on Windows;
+        # on POSIX a backslash is a literal filename character.
+        text = str(value)
+        return text.replace("\\", "/").casefold() if windows else text
+
+    roots = []
+    for root in ([skills, host["root"]] if host else [skills]):
+        roots.append(path_text(root))
+        try:
+            roots.append(path_text(path_module.relpath(str(root), str(workspace))))
+        except ValueError:
+            pass  # Different Windows drives have no relative path.
 
     def root_mentioned(text):
+        text = path_text(text)
         return any(re.search(re.escape(root) + r"(?=$|[/\s`\"'，。;:])", text) for root in roots)
 
     def names(text):
+        text = path_text(text)
         explicit, ambiguous = False, False
         # An actual SKILL.md path supplies a skill, regardless of its parent name.
-        if re.search(r"(?:/|\\)SKILL\.md(?=$|[\s`\"'，。;:])", text, re.IGNORECASE):
+        if re.search(r"/SKILL\.md(?=$|[\s`\"'，。;:])", text, re.IGNORECASE):
             explicit = True
         for match in SKILL_NAME.finditer(text):
             before = text[match.start() - 1:match.start()] if match.start() else ""
@@ -310,8 +334,8 @@ def injected_skill_inputs(task, launch, workspace, skills, host):
     explicit = root_mentioned(task) or bool(launch and launch.get("provided_skill_paths"))
     # Only the exact known working-directory reference is incidental. A child
     # SKILL.md path or a workspace prefix with a different suffix stays visible.
-    directory = re.escape(str(workspace))
-    natural_task = re.sub(directory + r"(?=$|[\s`\"'，。;:])", "<workspace>", task)
+    directory = re.escape(path_text(workspace))
+    natural_task = re.sub(directory + r"(?=$|[\s`\"'，。;:])", "<workspace>", path_text(task))
     named, ambiguous = names(natural_task)
     explicit |= named
     if launch:
@@ -335,19 +359,22 @@ def injected_skill_inputs(task, launch, workspace, skills, host):
                 value = value if separator else ""
             # An identified skill root/SKILL.md remains explicit in a path slot.
             argument = value if positional_path and value else token
-            skill_path = bool(re.search(r"(?:/|\\)SKILL\.md(?=$|[\s`\"'，。;:])", argument, re.IGNORECASE))
+            skill_path = bool(re.search(r"/SKILL\.md(?=$|[\s`\"'，。;:])", path_text(argument), re.IGNORECASE))
             explicit |= skill_path
             ignore = False
             if positional_path and value and option in {"--cd", "-C"}:
-                path, resolved = Path(value), None
+                path, resolved = path_type(value), None
                 startup_cwd = launch.get("cwd")
                 try:
                     if path.is_absolute():
-                        resolved = path.resolve()
-                    elif isinstance(startup_cwd, str) and Path(startup_cwd).is_absolute():
-                        resolved = (Path(startup_cwd) / path).resolve()
+                        resolved = path
+                    elif not path.anchor and isinstance(startup_cwd, str) and path_type(startup_cwd).is_absolute():
+                        resolved = path_type(startup_cwd) / path
+                    if resolved is not None:
+                        resolved = (Path(resolved).resolve() if isinstance(workspace, Path)
+                                    else path_type(path_module.normpath(str(resolved))))
                 except (OSError, RuntimeError):
-                    pass
+                    resolved = None
                 if resolved is not None:
                     explicit |= root_mentioned(str(resolved))
                 # The option denotes a directory, not a skill invocation. An

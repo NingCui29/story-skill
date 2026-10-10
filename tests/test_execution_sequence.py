@@ -31,7 +31,7 @@ class ExecutionSequenceTests(unittest.TestCase):
         (self.workspace / "创作约定.md").write_text(agreement, encoding="utf-8")
         self.story.Book.create(self.workspace, self.manifest["configuration"]["title"], "long")
 
-    def commit(self, first, last, wrong_volume=False):
+    def commit(self, first, last, wrong_volume=False, line_ending=None):
         book = self.story.Book(self.workspace)
         try:
             for chapter in range(first, last + 1):
@@ -61,7 +61,10 @@ class ExecutionSequenceTests(unittest.TestCase):
                 text = f"第{chapter}章 {title}\n\n" + (sentence * 20)[:850] + "\n\n" + quote + "\n"
                 draft = self.workspace / f".story/drafts/第{chapter}章.md"
                 draft.parent.mkdir(parents=True, exist_ok=True)
-                draft.write_text(text, encoding="utf-8")
+                if line_ending is None:
+                    draft.write_text(text, encoding="utf-8")
+                else:
+                    draft.write_bytes(text.replace("\n", line_ending).encode("utf-8"))
                 packet = book.prepare(chapter, draft)
                 self.assertTrue(packet["lint"]["ok"], packet["lint"])
                 delta = packet["delta"]
@@ -235,6 +238,44 @@ class ExecutionSequenceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "exports are incomplete or changed"):
             sequence.complete_round(self.run, 1)
 
+    def test_crlf_committed_exports_advance_without_normalizing_their_bytes(self):
+        self.initialize()
+        self.commit(1, 2, line_ending="\r\n")
+        book = self.story.Book(self.workspace, read_only=True)
+        try:
+            originals = {}
+            for row in book.db.execute("SELECT chapter,text,sha FROM chapters ORDER BY chapter"):
+                path = self.workspace / book.chapter_path(row["chapter"])
+                raw = path.read_bytes()
+                self.assertIn(b"\r\n", raw)
+                self.assertNotIn(b"\r\r\n", raw)
+                self.assertEqual(raw.decode("utf-8"), row["text"])
+                self.assertEqual(sequence.preparer.sha256(path), row["sha"])
+                originals[path] = raw
+        finally:
+            book.close()
+        self.report(1)
+        self.assertEqual(sequence.complete_round(self.run, 1)["round"], 2)
+        for path, raw in originals.items():
+            self.assertEqual(path.read_bytes(), raw)
+
+    def test_crlf_export_line_ending_only_changes_are_still_rejected(self):
+        self.initialize()
+        self.commit(1, 2, line_ending="\r\n")
+        book = self.story.Book(self.workspace, read_only=True)
+        try:
+            path = self.workspace / book.chapter_path(2)
+        finally:
+            book.close()
+        original = path.read_bytes()
+        changed = original.replace(b"\r\n", b"\n")
+        self.assertNotEqual(changed, original)
+        path.write_bytes(changed)
+        self.report(1)
+        with self.assertRaisesRegex(ValueError, "exports are incomplete or changed"):
+            sequence.complete_round(self.run, 1)
+        self.assertFalse((self.run / "round-2").exists())
+
     def test_refuses_wrong_actual_volume(self):
         self.initialize()
         self.commit(1, 2, wrong_volume=True)
@@ -244,7 +285,7 @@ class ExecutionSequenceTests(unittest.TestCase):
 
     def test_refuses_unregistered_formal_export(self):
         self.initialize()
-        self.commit(1, 2)
+        self.commit(1, 2, line_ending="\r\n")
         (self.workspace / "chapters/未登记第3章.md").write_text("不是实际正式正文", encoding="utf-8")
         self.report(1)
         with self.assertRaisesRegex(ValueError, "unregistered"):

@@ -95,7 +95,7 @@ class PlanRenderTests(unittest.TestCase):
     def test_crlf_candidate_can_be_checked_without_changing_its_bytes(self):
         path = self.save_candidate(self.book.plan_render(1)["text"])
         target = self.root.joinpath(path)
-        target.write_bytes(target.read_bytes().replace(b"\n", b"\r\n"))
+        target.write_bytes(target.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
         before = target.read_bytes()
         self.assertTrue(self.book.plan_render(1, check_file=path)["ok"])
         self.assertEqual(target.read_bytes(), before)

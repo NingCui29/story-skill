@@ -171,19 +171,20 @@ class AdditionalHostInstallTests(unittest.TestCase):
                             self.assertEqual(receipt["status"], expected_status)
                             self.assertEqual(receipt["path"], str(target))
                             self.assert_payload(target)
-                            self.assertEqual(snapshot(first_target), first_before)
                             installed_targets.add(target)
+                # Windows byte-range locks also prevent reading the lock file.
+                self.assertEqual(snapshot(first_target), first_before)
                 before = snapshot(root)
                 for host in HOSTS:
                     other_host = next(candidate for candidate in HOSTS
                                       if self.target(root, candidate, scope) != self.target(root, host, scope))
-                    with self.subTest(scope=scope, locked_host=host), \
-                            installer.installation_lock(root, host=host, scope=scope):
-                        with self.assertRaisesRegex(ValueError, "Another installation"):
-                            installer.install(root, source=self.source, host=host, scope=scope)
-                        unchanged = installer.install(root, source=self.source,
-                                                      host=other_host, scope=scope)
-                        self.assertEqual(unchanged["status"], "unchanged")
+                    with self.subTest(scope=scope, locked_host=host):
+                        with installer.installation_lock(root, host=host, scope=scope):
+                            with self.assertRaisesRegex(ValueError, "Another installation"):
+                                installer.install(root, source=self.source, host=host, scope=scope)
+                            unchanged = installer.install(root, source=self.source,
+                                                          host=other_host, scope=scope)
+                            self.assertEqual(unchanged["status"], "unchanged")
                         self.assertEqual(snapshot(root), before)
                 self.assertEqual(snapshot(self.source), self.payload)
 
@@ -203,11 +204,11 @@ class AdditionalHostInstallTests(unittest.TestCase):
         self.assertEqual(snapshot(root), before)
         self.assert_payload(target)
         for locked_host, other_host in (("trae", "trae-cn"), ("trae-cn", "trae")):
-            with self.subTest(locked_host=locked_host), \
-                    installer.installation_lock(root, host=locked_host):
-                for host in (locked_host, other_host):
-                    with self.assertRaisesRegex(ValueError, "Another installation"):
-                        installer.install(root, source=self.source, host=host)
+            with self.subTest(locked_host=locked_host):
+                with installer.installation_lock(root, host=locked_host):
+                    for host in (locked_host, other_host):
+                        with self.assertRaisesRegex(ValueError, "Another installation"):
+                            installer.install(root, source=self.source, host=host)
                 self.assertEqual(snapshot(root), before)
         self.assertEqual(snapshot(self.source), self.payload)
 

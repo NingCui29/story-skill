@@ -240,7 +240,7 @@ def inspect_book(run, manifest, number):
                 if Path(relative).parent.as_posix() != f"chapters/{volume}" or row["imported"]:
                     raise ValueError(f"Wrong volume or imported chapter: {chapter}")
                 target = preparer.fixture_path(workspace, relative)
-                if (not target.is_file() or target.read_text(encoding="utf-8") != row["text"]
+                if (not target.is_file() or target.read_bytes().decode("utf-8") != row["text"]
                         or preparer.sha256(target) != row["sha"]):
                     raise ValueError(f"Formal export differs from committed chapter {chapter}")
                 count = story.manuscript_counts(row["text"])["visible_nonspace_v2"]

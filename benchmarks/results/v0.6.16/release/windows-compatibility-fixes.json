@@ -1,0 +1,71 @@
+{
+  "ok": true,
+  "version": "0.6.16",
+  "checked_at": "2026-10-10T11:00:09.782665+00:00",
+  "initial_failed_ci": 38045281561,
+  "scope": "Local targeted regression for the Windows failure roots; Windows execution remains pending a new complete CI matrix. Skill runtime/payload and package build inputs unchanged.",
+  "groups": [
+    {
+      "modules": [
+        "test_execution_review",
+        "test_execution_review_assignment"
+      ],
+      "run": 80,
+      "passed": 80,
+      "skipped": 0,
+      "duration_seconds": 1.823
+    },
+    {
+      "modules": [
+        "test_execution_sequence"
+      ],
+      "run": 26,
+      "passed": 26,
+      "skipped": 0,
+      "duration_seconds": 19.874
+    },
+    {
+      "modules": [
+        "test_install_additional_hosts",
+        "test_install_desktop_hosts"
+      ],
+      "run": 6,
+      "passed": 6,
+      "skipped": 0,
+      "duration_seconds": 49.567
+    },
+    {
+      "modules": [
+        "test_plan_render"
+      ],
+      "run": 12,
+      "passed": 12,
+      "skipped": 0,
+      "duration_seconds": 0.762
+    },
+    {
+      "modules": [
+        "test_package_npm"
+      ],
+      "run": 27,
+      "passed": 27,
+      "skipped": 0,
+      "duration_seconds": 0.925
+    }
+  ],
+  "total_targeted_tests": 151,
+  "source_manifest": {
+    "scripts/execution_review.py": "ae24498645aba63f41501a15da7b88815f0f13fc63ee79e63cb27859ce43b03f",
+    "benchmarks/skill-execution/sequence_prepare.py": "ac4adfa07b3090cb5116cc8074dd53633a4c2aafbc72cdf608d0b74d8878a71b",
+    ".github/workflows/ci.yml": "a209fb728d3c701da23ac27134ac62c1416f5f3015ee57d08277a7fa2ebf5d1c",
+    "tests/test_execution_review.py": "ad1c2b64a162e05c155f2becd32ea9d601cdd191a9a0b3459a3fe7eb2ef40330",
+    "tests/test_execution_review_assignment.py": "7eaca2ab28a4fb9d98c531e0b14b36392aa1406fe95365099f358c9f20c10663",
+    "tests/test_execution_sequence.py": "20d987f4c746beb97cc1aaab44a406e34d5a14639459119a83255588130feb23",
+    "tests/test_install_additional_hosts.py": "8f8a3255a82076d97adadf60db69e48742375aa704be815acd3c6052e2477c7d",
+    "tests/test_install_desktop_hosts.py": "b89bfc053320bec0f42250f5e20055493b0d1094b4509692dba8e42ca45df504",
+    "tests/test_package_npm.py": "2cf0fa63fddbce27572ab2cfbd2cc2c81a569745321b7c38039a08a4fcf16388",
+    "tests/test_plan_render.py": "29974de11f4cd0a24973e4bca1d3b5bc1132cfaba9e1c53fe5d964d4c65edbb9"
+  },
+  "independent_diff_review": "No blocking finding; preservation of literal shell semantics, exact input bytes, installation locks and full CI steps reviewed.",
+  "literary_quality_evaluated": false
+}

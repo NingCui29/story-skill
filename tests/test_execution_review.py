@@ -1,7 +1,8 @@
 import argparse
 import importlib.util
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
+import shlex
 import tempfile
 import unittest
 
@@ -26,7 +27,8 @@ class ExecutionReviewTests(unittest.TestCase):
         self.skill_name = "story-skill-review/SKILL.md"
         for root in (self.skills, self.host):
             (root / self.skill_name).parent.mkdir()
-            (root / self.skill_name).write_text("# 审稿\n只审查候选，不采用。\n", encoding="utf-8")
+            # Exercise exact CRLF snapshot/returned-text identity on every OS.
+            (root / self.skill_name).write_bytes("# 审稿\r\n只审查候选，不采用。\r\n".encode("utf-8"))
         self.case = {"id": "review-case", "prompt": "请审查候选。", "invocation": "implicit",
                      "allowed_changes": ["candidate.md"], "required_outputs": ["candidate.md"],
                      "review_required": ["不改原稿"]}
@@ -68,8 +70,11 @@ class ExecutionReviewTests(unittest.TestCase):
         return path
 
     def command(self, **updates):
-        item = {"id": "read-1", "type": "command_execution", "command": f"/bin/zsh -lc 'cat {self.target}'",
-                "aggregated_output": self.target.read_text(encoding="utf-8"), "exit_code": 0, "status": "completed"}
+        # This is a POSIX shell event even when its file operands use Windows
+        # paths. Quote both shell layers, and preserve the returned file bytes.
+        command = shlex.join(["/bin/zsh", "-lc", shlex.join(["cat", str(self.target)])])
+        item = {"id": "read-1", "type": "command_execution", "command": command,
+                "aggregated_output": self.target.read_bytes().decode("utf-8"), "exit_code": 0, "status": "completed"}
         item.update(updates)
         return {"type": "item.completed", "item": item}
 
@@ -155,7 +160,7 @@ class ExecutionReviewTests(unittest.TestCase):
     def test_repo_name_in_legitimate_workspace_and_output_paths_is_not_injection(self):
         result, code = self.run_review()
         self.assertEqual((code, result["invocation"]["status"]), (0, "observed"))
-        self.assertIn("/story-skill/", str(self.workspace))
+        self.assertIn("/story-skill/", self.workspace.as_posix())
 
     def test_short_or_equal_path_options_do_not_hide_skill_name_in_other_arguments(self):
         for argv in (["codex", "exec", f"--cd={self.workspace}", f"--output-last-message={self.root / 'final.txt'}"],
@@ -280,8 +285,16 @@ class ExecutionReviewTests(unittest.TestCase):
         self.assertEqual(result["claims"][0]["status"], "observed")
         self.assertEqual(result["claims"][0]["evidence"][0]["identity_source"], "complete_native_return")
 
+    def test_normalized_cat_return_cannot_identify_old_crlf_version(self):
+        self.trace_events([self.command(aggregated_output=self.target.read_text(encoding="utf-8"))])
+        self.check_execution()
+        self.target.write_text("不同规则\n", encoding="utf-8")
+        result, code = self.run_review()
+        self.assertEqual((code, result["claims"][0]["status"]), (2, "unverified"))
+        self.assertIsNone(result["claims"][0]["evidence"][0]["identity_source"])
+
     def test_later_upgrade_without_old_content_identity_is_unverified(self):
-        self.trace_events([self.command(command=f"sed -n '2p' {self.target}", aggregated_output="只审查候选，不采用。\n")])
+        self.trace_events([self.command(command=shlex.join(["sed", "-n", "2p", str(self.target)]), aggregated_output="只审查候选，不采用。\n")])
         self.check_execution()
         self.target.write_text("新规则\n", encoding="utf-8")
         result, code = self.run_review()
@@ -291,7 +304,7 @@ class ExecutionReviewTests(unittest.TestCase):
     def test_archived_old_version_supports_a_partial_read_after_upgrade(self):
         archive = self.root / "old-SKILL.md"
         archive.write_bytes(self.target.read_bytes())
-        self.trace_events([self.command(command=f"sed -n '2p' {self.target}", aggregated_output="只审查候选，不采用。\n")])
+        self.trace_events([self.command(command=shlex.join(["sed", "-n", "2p", str(self.target)]), aggregated_output="只审查候选，不采用。\n")])
         self.check_execution()
         self.target.write_text("新规则\n", encoding="utf-8")
         self.record["claims"][0]["evidence"][0]["target_snapshot"] = self.ref(archive)
@@ -333,7 +346,9 @@ class ExecutionReviewTests(unittest.TestCase):
     def test_command_string_without_returned_text_is_insufficient(self):
         self.trace_events([self.command(aggregated_output="")])
         self.check_execution()
-        self.record["claims"][0]["evidence"][0]["quote"] = str(self.target)
+        # Cite command text, not a raw Windows path whose backslashes are
+        # escaped in the JSON event. No returned text still means no read proof.
+        self.record["claims"][0]["evidence"][0]["quote"] = "cat "
         result, code = self.run_review()
         self.assertEqual((code, result["claims"][0]["status"]), (2, "unverified"))
 
@@ -501,6 +516,91 @@ class ExecutionReviewTests(unittest.TestCase):
         self.run_review()
         with self.assertRaisesRegex(ValueError, "overwrite"):
             self.run_review()
+
+
+class CapturedPathTests(unittest.TestCase):
+    """Check both path flavours even on a runner using the other filesystem."""
+
+    def setUp(self):
+        self.workspace = PureWindowsPath(r"C:\Users\Author\story-skill\trial\story-skill")
+        self.skills = self.workspace.parent / "skills"
+        self.host = {"root": str(self.workspace.parent / "host")}
+        self.target = self.workspace / "rules" / "SKILL.md"
+
+    def injected(self, task="请审查候选。", argv=None, cwd=None):
+        launch = {"argv": argv or ["codex", "exec", "--cd", str(self.workspace)], "cwd": cwd}
+        return review.injected_skill_inputs(task, launch, self.workspace, self.skills, self.host)
+
+    def test_quoted_windows_operands_follow_posix_shell_grammar(self):
+        for name in (str(self.target), self.target.as_posix(), str(self.target).swapcase()):
+            with self.subTest(name=name):
+                command = shlex.join(["cat", name])
+                self.assertTrue(review.read_command(command, self.target, self.workspace))
+                self.assertTrue(review.full_cat(shlex.join(["/bin/zsh", "-lc", command]), self.target, self.workspace))
+
+    def test_unquoted_windows_backslashes_and_shell_operators_are_not_read_proof(self):
+        for command in (f"cat {self.target}", shlex.join(["/bin/zsh", "-lc", f"cat {self.target}"]),
+                        shlex.join(["cat", str(self.target)]) + "; echo ready"):
+            with self.subTest(command=command):
+                self.assertFalse(review.read_command(command, self.target, self.workspace))
+                self.assertFalse(review.full_cat(command, self.target, self.workspace))
+
+    def test_windows_tool_paths_require_a_determinate_target(self):
+        for name, expected in ((str(self.target), True), (r"rules\SKILL.md", True), ("rules/SKILL.md", True),
+                               (str(self.target).swapcase(), True), (r"C:rules\SKILL.md", False),
+                               (str(self.target)[2:], False), (str(self.target).replace("C:", "D:"), False),
+                               (r"other\SKILL.md", False)):
+            with self.subTest(name=name):
+                item = {"type": "mcp_tool_call", "tool": "read_file", "arguments": {"path": name}}
+                self.assertEqual(review.read_tool(item, self.target, self.workspace), expected)
+
+    def test_posix_backslashes_are_literal_filename_characters(self):
+        cwd = PurePosixPath("/work")
+        target = cwd / r"rules\part" / "SKILL.md"
+        self.assertTrue(review.read_command(shlex.join(["cat", str(target)]), target, cwd))
+        self.assertFalse(review.read_command("cat /work/rules/part/SKILL.md", target, cwd))
+        self.assertFalse(review.read_command(shlex.join(["cat", str(target).swapcase()]), target, cwd))
+
+    def test_windows_workspace_and_output_paths_accept_both_separators_and_case(self):
+        for directory in (str(self.workspace), self.workspace.as_posix(), str(self.workspace).swapcase()):
+            with self.subTest(directory=directory):
+                self.assertEqual(self.injected(f"工作目录：{directory}\n请审查候选。",
+                    ["codex", "exec", f"--cd={directory}", "-o", str(self.workspace / "final.txt")]), (False, False))
+
+    def test_windows_skill_roots_are_detected_in_both_separator_forms(self):
+        for path in (str(self.skills), self.skills.as_posix().upper(), r"..\skills", "../skills",
+                     str(self.skills / "story-skill-review"), str(PureWindowsPath(self.host["root"]) / "SKILL.md")):
+            with self.subTest(path=path):
+                self.assertTrue(self.injected(f"请读取 {path} 中规则。")[0])
+
+    def test_windows_unfamiliar_repository_path_remains_ambiguous(self):
+        path = self.workspace.parent / "other" / "story-skill" / "notes.md"
+        self.assertEqual(self.injected(f"附件路径为 {path}。"), (False, True))
+        self.assertEqual(self.injected(f"附件路径为 {self.workspace}-other\\notes.md。"), (False, True))
+
+    def test_windows_relative_launch_uses_only_recorded_absolute_cwd(self):
+        argv = ["codex", "exec", "--cd", "story-skill"]
+        self.assertEqual(self.injected(argv=argv, cwd=str(self.workspace.parent)), (False, False))
+        self.assertEqual(self.injected(argv=argv), (False, True))
+        self.assertEqual(self.injected(argv=["codex", "exec", "-C", r"skills\story-skill-review"],
+                                        cwd=str(self.workspace.parent))[0], True)
+        for value in ("C:story-skill", str(self.workspace)[2:]):
+            with self.subTest(value=value):
+                self.assertEqual(self.injected(argv=["codex", "exec", "--cd", value],
+                                                cwd=str(self.workspace.parent)), (False, True))
+
+    def test_skill_root_on_a_different_windows_drive_is_still_explicit(self):
+        self.host = {"root": r"D:\installed\skills"}
+        self.assertTrue(self.injected(r"请读取 D:/installed/skills/SKILL.md。")[0])
+        self.assertEqual(self.injected(r"附件路径 D:\installed\skills-other\notes.md。"), (False, False))
+
+    def test_posix_workspace_matching_stays_case_sensitive(self):
+        workspace = PurePosixPath("/work/story-skill")
+        skills = PurePosixPath("/frozen/skills")
+        launch = {"argv": ["codex", "exec", "--cd", str(workspace)]}
+        self.assertEqual(review.injected_skill_inputs(f"工作目录：{workspace}", launch, workspace, skills, None), (False, False))
+        self.assertEqual(review.injected_skill_inputs("工作目录：/work/STORY-SKILL", launch, workspace, skills, None), (False, True))
+        self.assertFalse(review.injected_skill_inputs(r"附件名为 rules\SKILL.md", launch, workspace, skills, None)[0])
 
 
 if __name__ == "__main__":

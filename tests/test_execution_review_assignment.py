@@ -65,6 +65,17 @@ class ReviewAssignmentTests(unittest.TestCase):
         result, code = self.f.run_review()
         self.assertEqual((code, result["claims"][-1]["status"]), (0, "observed"))
 
+    def test_normalized_line_endings_cannot_relabel_the_assigned_input_version(self):
+        path = self.f.workspace / "candidate.md"
+        path.write_bytes("保留选择。\r\n结尾的回应缺少动作依据。\r\n".encode("utf-8"))
+        self.input["sha256"] = self.f.digest(path)
+        normalized_digest = review.evaluation.sha(path.read_text(encoding="utf-8").encode("utf-8"))
+        self.assertNotEqual(normalized_digest, self.input["sha256"])
+        self.packet["input"] = {**self.input, "sha256": normalized_digest}
+        self.configure()
+        _, claim = self.assert_unverified()
+        self.assertIn("input", claim["issues"][0])
+
     def test_wrong_agent_return_cannot_link(self):
         other = "different-agent"
         returned = self.returned(receiver_thread_ids=[other], agents_states={other: self.returned()["item"]["agents_states"][self.receiver]})
