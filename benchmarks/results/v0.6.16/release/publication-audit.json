@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "ok": true,
+  "checked_at": "2026-10-10T11:49:00.597966+00:00",
+  "version": "0.6.16",
+  "fixed_release_commit": "08a598e057adcaa390e90fadf2e3e11d000ebfa2",
+  "publisher_commit": "43ce65a9f575382e41f052fe7654fcde2186e17a",
+  "documentation_files_sha256": {
+    "README.md": "78a57fa81133fcbd89bbac0c650bbde333aa8afb1445916a903575a8d426093f",
+    "INSTALL.md": "09a2c8b62f57868407155c0df1fa93028ad83225917c512b6b344e0f468a5f9b",
+    "docs/README.md": "d3c64d627efafa6e673156c8eadf53223054a61e263ba411d2842c3ecf398472",
+    "desktop/macos/README.md": "7b6ae0669272e8b35c87caf72598845850f9caaa4ed317b01238a3275a6ddcf2",
+    "docs/github-release.md": "e870cfcf66eccf19cae6ccedaf7a9f2370ae4067496f7f3337b2496f9eb2a2a8",
+    "docs/releases/v0.6.16.md": "aca5aa4291b8d932c9a065cc6341810b3dd716ae7da09eca0dbb86326e81f0de"
+  },
+  "public_receipt_files_sha256": {
+    "benchmarks/results/v0.6.16/claude-desktop-verification.json": "2b8febb13e976a91ecd20056cbf375cfb51adff22f04ff26a95225fe7d5f6f87",
+    "benchmarks/results/v0.6.16/desktop-build.json": "34c79001e0148c259c19672122caa9e7bc070cae7beb7307ecb59d2f31f5078c",
+    "benchmarks/results/v0.6.16/desktop-verification.json": "06335c3d34ef10ce45e43a59c07fe0f83e1c1a67b5626319caea7cee8f1854fc",
+    "benchmarks/results/v0.6.16/local-checks.json": "f0ed7d57abbf24fdd7726964054dd465fcc9199ffb0fa7206578487a65868916",
+    "benchmarks/results/v0.6.16/local-install.json": "243ce2c7edc8eb19a133095418c50075ee30a49c460ff03100d61842c2f153e6",
+    "benchmarks/results/v0.6.16/npm-local.json": "08dff987256efc1053a902684d67c9950708e7325bd4d5375853f41dcdfcb4c0",
+    "benchmarks/results/v0.6.16/package-verification.json": "564c13fe7e1cc9340c48f012d2872121c4aa2ed1ec91110b095644ff734c7725",
+    "benchmarks/results/v0.6.16/release/ci-final.json": "bec5d8ba3b7e9c44de473e4fc22a660dedabf494e981dcb6d68d7f1c70fb7daa",
+    "benchmarks/results/v0.6.16/release/ci-initial-failure.json": "c24a21bdb98b735bac9e4203d276b52e4d68d84318a8152839573b173e67783d",
+    "benchmarks/results/v0.6.16/release/local-harness-failure.json": "dae1272a54b88da0ac61b28aea6ead04822c2d637526128662099f3a8a44015c",
+    "benchmarks/results/v0.6.16/release/local-initial-regression.json": "4d8dd894326c52e9748e75f4f0a0708e706417e1932609d8eda96b6929408226",
+    "benchmarks/results/v0.6.16/release/packages-download.json": "cec30e4941bd1ab16dda9114e1db31c6c7af511269325da6525ef596db021b39",
+    "benchmarks/results/v0.6.16/release/packages-initial-failure.json": "98a807e599847a7b3f50543a1b2f14e1c10bed73f561c8361423e2bbc4a4e78f",
+    "benchmarks/results/v0.6.16/release/packages-workflow.json": "33c4e550ff47082965cd2d765010e8cd36ac8288f06973e14f31b4625e7405d5",
+    "benchmarks/results/v0.6.16/release/publisher-wrapper-fix.json": "8807bbe29aedb1aad08c800c105983a25b3030d2893dcddbccb1bf97174eaf81",
+    "benchmarks/results/v0.6.16/release/release-download.json": "73f347fc2e067057b8132218350132118b461826c0ad0142b24dac8886287162",
+    "benchmarks/results/v0.6.16/release/remote-commit-install-initial.json": "693a8126f816d4207dc92af0ff36a855704c147297137f341b2df824c7a63895",
+    "benchmarks/results/v0.6.16/release/remote-commit-install.json": "a272f4fcd20608333d6d24581647634e4156397227105c195e47d47f03772995",
+    "benchmarks/results/v0.6.16/release/windows-compatibility-fixes.json": "d06d4052770cd5ac181218fd0d5703526ae5437a304df8d475ff5ae2263ab1bd",
+    "benchmarks/results/v0.6.16/unit-tests.json": "a2c206afb1de4da15ea58fca73a1acc3a07941cf45aea945df052f283742e3db"
+  },
+  "hash_scope": "Six final documents and all 20 other v0.6.16 public JSON receipts; this report intentionally excludes itself to avoid a circular self-hash.",
+  "markdown_validation": {
+    "tracked_and_nonignored_untracked_markdown_files": 334,
+    "local_link_occurrences": 2162,
+    "local_anchor_occurrences": 330,
+    "external_destinations_not_fetched": 334,
+    "all_markdown_manifest_sha256": "6229649e785575c22c591bb43ea124e38b9f1c52a5d5e0741cf86fc788e760e6",
+    "missing_paths_or_anchors": [],
+    "method": "Markdown inline destinations and reference definitions outside fenced and inline code; ATX-heading and explicit HTML anchors, with duplicate-heading suffixes. External URLs are outside this local-reference check."
+  },
+  "privacy_review": {
+    "public_json_files": 20,
+    "final_documents": 6,
+    "findings": [],
+    "method": "Decoded JSON string values and final document text checked for personal home/temp paths, credential patterns and known private-work markers; newly published evidence was also read for scope. This does not claim exhaustive secret detection."
+  },
+  "distribution_binding": {
+    "payload_files": 51,
+    "unique_installer_packaging_and_desktop_inputs": 21,
+    "all_bytes_match_fixed_commit_and_report_manifests": true,
+    "mismatches": [],
+    "root_license_sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "all_eight_skill_licenses_match_root": true,
+    "post_tag_code_changes": [
+      "scripts/sync_packages.py",
+      "tests/test_sync_packages.py"
+    ],
+    "post_tag_code_scope_verified": true
+  },
+  "actual_tag_observation": {
+    "method": "Read-only git ls-remote origin for the exact tag",
+    "tag": "v0.6.16",
+    "object": "08a598e057adcaa390e90fadf2e3e11d000ebfa2",
+    "kind": "lightweight",
+    "commit_matches": true
+  },
+  "release_download_proof": {
+    "release_id": 408874980,
+    "receipt": "benchmarks/results/v0.6.16/release/release-download.json",
+    "private_repository_authenticated_download": true,
+    "actual_retained_downloads_independently_rechecked": true,
+    "asset_count": 6,
+    "assets": [
+      {
+        "name": "story-skill-0.6.16.zip",
+        "bytes": 404246,
+        "sha256": "73117a8f781183c4e310181954cffa9155ecb7ff7a774d0ca3ee9736e54571e4",
+        "download_matches_local_and_receipt": true,
+        "crc_valid": true,
+        "members": 51,
+        "paired_checksum_valid": true
+      },
+      {
+        "name": "story-skill-0.6.16.zip.sha256",
+        "bytes": 89,
+        "sha256": "9a5ecb7b6b76743c9759d6d3c269350e3c94f756f01b1ef1afa8da6874a901f3",
+        "download_matches_local_and_receipt": true
+      },
+      {
+        "name": "story-skill-claude-desktop-0.6.16-r2.zip",
+        "bytes": 409890,
+        "sha256": "fca8892efaf64ea1b719dc0986b21797f97fc90e246bdc10665941f4473e7f29",
+        "download_matches_local_and_receipt": true,
+        "crc_valid": true,
+        "members": 53,
+        "paired_checksum_valid": true
+      },
+      {
+        "name": "story-skill-claude-desktop-0.6.16-r2.zip.sha256",
+        "bytes": 107,
+        "sha256": "803280a5e821e1ddf4717081a44d216c7785ca8c7531982ade0059311c7e675a",
+        "download_matches_local_and_receipt": true
+      },
+      {
+        "name": "story-workbench-0.1.4-macos-x86_64.zip",
+        "bytes": 26545027,
+        "sha256": "16548afec5885aac338328c56e84596aec447ed297b4b7fef3352ddd4e140256",
+        "download_matches_local_and_receipt": true,
+        "crc_valid": true,
+        "members": 3830,
+        "paired_checksum_valid": true
+      },
+      {
+        "name": "story-workbench-0.1.4-macos-x86_64.zip.sha256",
+        "bytes": 105,
+        "sha256": "d876a85db8619d1b4246ad4b286cb902c9042b47a40d55f96c6e9759e38b81a2",
+        "download_matches_local_and_receipt": true
+      }
+    ],
+    "standard_zip_all_51_members_equal_current_and_fixed_source": true
+  },
+  "packages_proof": {
+    "workflow_id": 38048798706,
+    "workflow_source_commit": "43ce65a9f575382e41f052fe7654fcde2186e17a",
+    "workflow_conclusion": "success",
+    "actual_workflow_artifact_independently_reverified": true,
+    "tarball_sha256": "008f94198e16d2bfc0e4b26bf1d76a0782b38bdb64dcb52c75f773fc1ccf22fd",
+    "bytes": 362530,
+    "registry_sha512_sri": "sha512-ALeEI7Z48/RJb0DtRZL9pb2oNljpne0zDfrMPmhxym1VfU5bJVWxSo96debJTSQgYk0QFgiA2uK+3piPkbHPYQ==",
+    "sri_matches_successful_workflow_receipt": true,
+    "payload_files": 51,
+    "wrapper_files": 3,
+    "total_members": 54,
+    "license": "SEE LICENSE IN LICENSE",
+    "visibility": "public",
+    "association_status": "unavailable",
+    "linked_repository": null,
+    "runtime_commands_recorded_by_workflow": 4,
+    "new_runtime_commands_executed_by_this_audit": 0,
+    "local_direct_registry_download_performed": false,
+    "successful_workflow_reused_existing_published_version": true
+  },
+  "test_and_history_boundaries": {
+    "full_ci_run": 38046867128,
+    "full_ci_commit": "08a598e057adcaa390e90fadf2e3e11d000ebfa2",
+    "successful_matrix_jobs": 3,
+    "local_full_suite_run": 1607,
+    "local_successful_cases": 1590,
+    "local_platform_skips": 17,
+    "publisher_targeted_tests": 88,
+    "publisher_targeted_tests_are_not_a_new_full_ci_run": true,
+    "initial_ci_and_packages_and_local_harness_failure_reports_preserved": true,
+    "old_history_baseline": "9993bb2d541cd8f24a35528c7780c124af23f813",
+    "existing_old_release_documents_or_reports_changed": [],
+    "historical_remote_tag_asset_npm_before_after_comparison_performed": false,
+    "historical_remote_limit": "No complete pre-publication snapshot of the 14 old tag targets was available; unchanged old remote tags/assets/npm versions are not independently asserted by this audit. Existing tracked historical files were compared and remain unchanged."
+  },
+  "issues": [],
+  "scope": "Final document/evidence consistency, byte binding, retained download verification and local references only. No new tests, model execution, host UI import, Apple notarization, Apple Silicon validation, literary judgement or platform submission. No remote mutation performed by this audit."
+}

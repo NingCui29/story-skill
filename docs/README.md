@@ -1,6 +1,6 @@
 # Story Skill 文档导航
 
-**v0.6.16 发布准备中**：八个技能、51 个源载荷文件；Claude 桌面 `0.6.16-r2` 为53文件及递归唯一 `SKILL.md`，Intel Mac 客户端为0.1.4（build 5，运行时0.6.16）。本版验证与分发状态见[发布记录](releases/v0.6.16.md)。仓库现为私有，Release 下载需要对应权限；2026-10-10 当前源码的八技能许可已与根自定义条款统一，历史附件保留原标注，见[许可证与分发](licensing.md)。GitHub 发布不自动更新本机技能或客户端。
+**v0.6.16 已发布**：八个技能、51 个源载荷文件；Claude 桌面 `0.6.16-r2` 为53文件及递归唯一 `SKILL.md`，Intel Mac 客户端为0.1.4（build 5，运行时0.6.16）。本版验证与分发状态见[发布记录](releases/v0.6.16.md)。仓库现为私有，Release 下载需要对应权限；2026-10-10 当前源码的八技能许可已与根自定义条款统一，历史附件保留原标注，见[许可证与分发](licensing.md)。GitHub 发布不自动更新本机技能或客户端。
 
 本轮新增[工具章计划转可读候选](../skills/story-skill/references/project-state.md#从工具章计划生成可读候选)、[执行审查与序列评估](../benchmarks/skill-execution/README.md)，加强写作连续性，并补齐多宿主安装、只读核验及随包许可。现有[大纲细纲规范](../skills/story-skill-plan/references/outline.md)、[工作台参考](../skills/story-skill/references/workbench.md)和长短篇边界继续沿用，书库保持schema 2。使用当前源码前按[安装指引](../INSTALL.md)核对实际快照；下列旧版验收数字保持其历史范围。
 

@@ -1,6 +1,6 @@
 # 安装或升级 Story Skill
 
-**本版：v0.6.16，发布准备中。** 八技能、51 个载荷文件，运行时需要 Python 3.10 或更新版本。[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.16)提供三个 ZIP 与三份校验文件；固定提交及验证、分发状态见[发布记录](docs/releases/v0.6.16.md)。仓库当前为私有，下载 Release 或源码需要对应权限。
+**本版：v0.6.16，已发布。** 八技能、51 个载荷文件，运行时需要 Python 3.10 或更新版本。[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.16)提供三个 ZIP 与三份校验文件；固定提交及验证、分发状态见[发布记录](docs/releases/v0.6.16.md)。仓库当前为私有，下载 Release 或源码需要对应权限。
 
 [v0.6.12 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.12)保留当版49文件套件及修正历史。Claude 桌面导入包、Claude Code 与 Google Antigravity 目录安装适配从 v0.6.12 开始提供；本轮沿用这些入口与 Codex 的默认安装行为。
 

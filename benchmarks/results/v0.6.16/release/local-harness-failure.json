@@ -1,11 +1,11 @@
 {
-  "ok": true,
-  "status": "passed",
-  "run": 1607,
-  "passed": 1590,
+  "ok": false,
+  "status": "failed",
+  "run": 1532,
+  "passed": 1509,
   "failed": 0,
-  "errors": 0,
-  "skipped": 17,
+  "errors": 7,
+  "skipped": 16,
   "expected_failures": 0,
   "unexpected_successes": 0,
   "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
@@ -13,22 +13,20 @@
   "phase": "Complete local regression after Windows compatibility fixes",
   "fixed_commit": "08a598e057adcaa390e90fadf2e3e11d000ebfa2",
   "execution": {
-    "started_at": "2026-10-10T11:08:37.094535+00:00",
-    "completed_at": "2026-10-10T11:15:57.320929+00:00",
-    "duration_seconds": 440.321,
+    "started_at": "2026-10-10T11:00:18.531642+00:00",
+    "completed_at": "2026-10-10T11:07:42.230092+00:00",
+    "duration_seconds": 443.691,
     "python": "3.12.14",
     "tested_platform": "macOS-15.8.1-x86_64-i386-64bit",
     "node": "v24.19.0",
-    "exit_code": 0,
-    "raw_log": "dist/release-v0.6.16/final-regression.log",
+    "exit_code": 1,
+    "raw_log": "dist/release-v0.6.16/local-harness-failure.log",
     "source_stability": {
       "input_file_count": 243,
       "inputs_unchanged": true,
       "changed_inputs": [],
       "before_sha256": "37dfd173ac6b468bc3db334130148677c2056a8d5b3f27a77ad107576142b21f",
-      "after_sha256": "37dfd173ac6b468bc3db334130148677c2056a8d5b3f27a77ad107576142b21f",
-      "all_audited_input_bytes_equal_fixed_commit": true,
-      "verified_commit": "08a598e057adcaa390e90fadf2e3e11d000ebfa2"
+      "after_sha256": "37dfd173ac6b468bc3db334130148677c2056a8d5b3f27a77ad107576142b21f"
     },
     "command": "Counted unittest.TestLoader.discover(tests) with TextTestRunner"
   },
@@ -56,10 +54,6 @@
     {
       "test": "test_portable_export.PortableWindowsExportTests.test_revision_preserves_old_backup_without_hard_links",
       "reason": "Windows publication without hard links"
-    },
-    {
-      "test": "test_publish_paths.PublishingConnectionPathTests.test_windows_database_pin_blocks_replacement_for_connection_lifetime",
-      "reason": "Native Windows delete-sharing protection"
     },
     {
       "test": "test_retirement_path_race.RetirementPathRaceTests.test_windows_parent_pin_blocks_rename_but_allows_child_publication",
@@ -102,5 +96,8 @@
       "reason": "Requires native Windows directory share locks"
     }
   ],
-  "literary_quality_evaluated": false
+  "literary_quality_evaluated": false,
+  "failure_cause": "Temporary local validation harness omitted repository root from sys.path, so seven tests importing tests.test_publish could not load. Standard source CI uses python -m unittest from repository root and is unaffected.",
+  "disposition": "Harness corrected to include repository root; a new complete local run is required. Product source was not changed.",
+  "resolved_by": "Complete corrected-harness regression in ../unit-tests.json: 1607 run, 1590 successful cases, 17 native-platform skips, zero failure/error."
 }

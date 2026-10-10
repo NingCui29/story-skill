@@ -1,0 +1,75 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-10T11:45:39.943109+00:00",
+  "version": "0.6.16",
+  "release_id": 408874980,
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.16",
+  "draft": false,
+  "prerelease": false,
+  "published_at": "2026-10-10T11:24:34Z",
+  "tag": "v0.6.16",
+  "tag_commit": "08a598e057adcaa390e90fadf2e3e11d000ebfa2",
+  "source_commit": "08a598e057adcaa390e90fadf2e3e11d000ebfa2",
+  "repository_private": true,
+  "asset_count": 6,
+  "assets": [
+    {
+      "name": "story-skill-0.6.16.zip",
+      "asset_id": 627680661,
+      "bytes": 404246,
+      "sha256": "73117a8f781183c4e310181954cffa9155ecb7ff7a774d0ca3ee9736e54571e4",
+      "downloaded_bytes_equal_local_verified_artifact": true,
+      "github_digest_equal_download": true,
+      "crc_valid": true,
+      "members": 51,
+      "checksum_binds_exact_name_and_bytes": true
+    },
+    {
+      "name": "story-skill-0.6.16.zip.sha256",
+      "asset_id": 627680663,
+      "bytes": 89,
+      "sha256": "9a5ecb7b6b76743c9759d6d3c269350e3c94f756f01b1ef1afa8da6874a901f3",
+      "downloaded_bytes_equal_local_verified_artifact": true,
+      "github_digest_equal_download": true
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.16-r2.zip",
+      "asset_id": 627680659,
+      "bytes": 409890,
+      "sha256": "fca8892efaf64ea1b719dc0986b21797f97fc90e246bdc10665941f4473e7f29",
+      "downloaded_bytes_equal_local_verified_artifact": true,
+      "github_digest_equal_download": true,
+      "crc_valid": true,
+      "members": 53,
+      "checksum_binds_exact_name_and_bytes": true
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.16-r2.zip.sha256",
+      "asset_id": 627680660,
+      "bytes": 107,
+      "sha256": "803280a5e821e1ddf4717081a44d216c7785ca8c7531982ade0059311c7e675a",
+      "downloaded_bytes_equal_local_verified_artifact": true,
+      "github_digest_equal_download": true
+    },
+    {
+      "name": "story-workbench-0.1.4-macos-x86_64.zip",
+      "asset_id": 627680669,
+      "bytes": 26545027,
+      "sha256": "16548afec5885aac338328c56e84596aec447ed297b4b7fef3352ddd4e140256",
+      "downloaded_bytes_equal_local_verified_artifact": true,
+      "github_digest_equal_download": true,
+      "crc_valid": true,
+      "members": 3830,
+      "checksum_binds_exact_name_and_bytes": true
+    },
+    {
+      "name": "story-workbench-0.1.4-macos-x86_64.zip.sha256",
+      "asset_id": 627680715,
+      "bytes": 105,
+      "sha256": "d876a85db8619d1b4246ad4b286cb902c9042b47a40d55f96c6e9759e38b81a2",
+      "downloaded_bytes_equal_local_verified_artifact": true,
+      "github_digest_equal_download": true
+    }
+  ],
+  "scope": "Authenticated downloads of all six published assets, exact byte comparison with previously independently verified local artifacts, GitHub size/digest and paired checksums, ZIP CRC and actual fixed-tag fetch. No repeated UI or literary-quality claim."
+}
