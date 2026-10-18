@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "files_scanned": 30,
+  "links_checked": 328,
+  "missing": [],
+  "outside_plugin": [],
+  "scope": "Local inline/reference Markdown file targets; remote URLs and heading anchors are excluded"
+}

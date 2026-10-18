@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "validator": "<USER_HOME>/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+  "python": "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-skill-validation-env-qxnvz0ss/bin/python",
+  "checks": [
+    {
+      "skill": "story-skill",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-analyze",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-cover",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-plan",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-publish",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-research",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-review",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-write",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    }
+  ]
+}

@@ -268,7 +268,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
         core = {"common", "content_baseline", "content_judgments", "content_outcomes", "content_routing",
                 "characters", "support", "viewpoint", "words", "format"}
         for (scenario, call), row in self.base.items():
-            if scenario not in ("targeted_punctuation",) and call != "cover_designer":
+            if scenario not in ("targeted_punctuation", "short_platform_design") and call != "cover_designer":
                 self.assertTrue(core.issubset(row["source_ids"]), (scenario, call))
         long_sources = set(self.base[("long_chapter", "writer")]["source_ids"])
         self.assertTrue({"write_entry", "tools", "chapter_flow", "length", "outline_quality", "project_binding",
@@ -328,7 +328,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
 
     def test_shared_style_decision_applies_to_body_roles_only(self):
         for (scenario, call), row in self.base.items():
-            applicable = scenario != "targeted_punctuation" and call != "cover_designer"
+            applicable = scenario not in ("targeted_punctuation", "short_platform_design") and call != "cover_designer"
             self.assertEqual("style_resolution" in row["source_ids"], applicable, (scenario, call))
         node = next(item for item in self.config["nodes"] if item["id"] == "style_resolution")
         self.assertEqual((node["path"], node["section"]),
@@ -340,7 +340,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
         index = next(item for item in self.config["nodes"] if item["id"] == "genre_index")
         self.assertEqual((index["section"], index["scope"]), ("题材写法卡", "body"))
         for (scenario, call), base in self.base.items():
-            if scenario == "targeted_punctuation" or call == "cover_designer":
+            if scenario in ("targeted_punctuation", "short_platform_design") or call == "cover_designer":
                 self.assertNotIn("genre_index", base["source_ids"])
                 continue
             self.assertTrue(cards.isdisjoint(base["source_ids"]), (scenario, call))
@@ -360,16 +360,68 @@ class RepositoryInstructionContractTests(unittest.TestCase):
             self.assertTrue(cards.issubset(rows["registered_branch_union"]["source_ids"]))
 
     def test_writing_brief_is_conditional_on_bound_next_chapter_material(self):
-        for row in self.base.values():
-            self.assertNotIn("writing_brief", row["source_ids"])
+        handoff_sources = {"writing_brief", "writing_handoff", "preference_recall"}
+        for (scenario, call), row in self.base.items():
+            if scenario == "long_chapter_handoff":
+                self.assertTrue(handoff_sources.issubset(row["source_ids"]))
+            else:
+                self.assertTrue(handoff_sources.isdisjoint(row["source_ids"]), (scenario, call))
         for scenario in ("long_chapter", "short_write", "short_write_novel_entry", "short_write_unknown_entry"):
             with self.subTest(scenario=scenario):
                 rows = {item["variant"]: item for item in self.report["loads"]
                         if (item["scenario"], item["call"]) == (scenario, "writer")}
                 self.assertEqual(set(rows["branch:writing_brief"]["source_ids"]) -
-                                 set(rows["base"]["source_ids"]), {"writing_brief"})
+                                 set(rows["base"]["source_ids"]), handoff_sources)
                 self.assertTrue({"writing_brief", "genre_business", "climax", "project_binding", "content_plan"}
                                 .issubset(rows["combination:business_brief_payoff"]["source_ids"]))
+
+    def test_handoff_keeps_formal_guards_without_forcing_them_on_fragments(self):
+        ordinary = set(self.base[("long_chapter", "writer")]["source_ids"])
+        handoff = set(self.base[("long_chapter_handoff", "writer")]["source_ids"])
+        self.assertEqual(handoff - ordinary, {"writing_brief", "writing_handoff", "preference_recall"})
+        self.assertTrue(ordinary.issubset(handoff))
+        upper = {(row["scenario"], row["call"]): row for row in self.report["loads"]
+                 if row["variant"] == "registered_branch_union"}
+        ordinary_upper = upper[("long_chapter", "writer")]
+        handoff_upper = upper[("long_chapter_handoff", "writer")]
+        self.assertEqual(handoff_upper["source_ids"], ordinary_upper["source_ids"])
+        self.assertEqual(handoff_upper["limits"], ordinary_upper["limits"])
+        fragment_rows = [row for row in self.report["loads"] if row["scenario"] == "draft_fragment"]
+        for row in fragment_rows:
+            self.assertTrue({"chapter_flow", "project_binding", "writing_brief", "writing_handoff",
+                             "preference_recall"}.isdisjoint(row["source_ids"]), row["variant"])
+
+    def test_coverage_is_required_for_formal_units_but_fact_examples_are_conditional(self):
+        formal = ("long_chapter", "long_chapter_handoff", "short_write", "short_write_novel_entry",
+                  "short_write_unknown_entry")
+        for scenario in formal:
+            base = set(self.base[(scenario, "writer")]["source_ids"])
+            self.assertTrue({"continuity_scope", "chapter_coverage"}.issubset(base), scenario)
+            self.assertTrue({"new_facts", "continuity_examples"}.isdisjoint(base), scenario)
+            rows = {row["variant"]: row for row in self.report["loads"]
+                    if (row["scenario"], row["call"]) == (scenario, "writer")}
+            self.assertEqual(set(rows["branch:new_facts"]["source_ids"]) - base, {"new_facts"}, scenario)
+            self.assertEqual(set(rows["branch:continuity_examples"]["source_ids"]) - base,
+                             {"new_facts", "continuity_examples"}, scenario)
+        fragment = set(self.base[("draft_fragment", "writer")]["source_ids"])
+        self.assertTrue({"continuity_scope", "chapter_coverage", "new_facts", "continuity_examples"}.isdisjoint(fragment))
+
+    def test_short_platform_method_does_not_make_paywalls_or_planning_universal(self):
+        design = {"short_platform_scope", "short_platform_target", "short_platform_progress", "short_platform_review"}
+        for scenario in ("short_write", "short_write_novel_entry", "short_write_unknown_entry"):
+            rows = {row["variant"]: row for row in self.report["loads"]
+                    if (row["scenario"], row["call"]) == (scenario, "writer")}
+            base = set(rows["base"]["source_ids"])
+            self.assertTrue((design | {"short_platform_paywall"}).isdisjoint(base), scenario)
+            self.assertEqual(set(rows["branch:short_platform_design"]["source_ids"]) - base, design, scenario)
+            self.assertEqual(set(rows["branch:short_paywall"]["source_ids"]) - base,
+                             design | {"short_platform_paywall"}, scenario)
+        rows = {row["variant"]: row for row in self.report["loads"]
+                if (row["scenario"], row["call"]) == ("short_platform_design", "planner")}
+        base = set(rows["base"]["source_ids"])
+        self.assertEqual(base, design | {"common", "plan_entry"})
+        self.assertEqual(set(rows["branch:paywall"]["source_ids"]) - base, {"short_platform_paywall"})
+        self.assertTrue({"chapter_flow", "project_binding", "author_note", "note_save", "cover_entry"}.isdisjoint(base))
 
     def test_every_complete_chapter_branch_keeps_name_and_plan_review(self):
         for row in self.report["loads"]:

@@ -1,0 +1,567 @@
+{
+  "schema": 1,
+  "date": "2026-10-18T12:17:10.398074+00:00",
+  "ok": true,
+  "environment": {
+    "platform": "macOS-15.8.1-x86_64-i386-64bit",
+    "python": "3.12.14"
+  },
+  "isolation": {
+    "temporary_codex_home": true,
+    "temporary_working_directory": true,
+    "real_user_config_modified": false,
+    "model_turn_started": false
+  },
+  "not_verified": [
+    "Codex desktop GUI loading and interaction",
+    "Model skill selection, prose quality, or platform acceptance"
+  ],
+  "checks": {
+    "current_source_payload": {
+      "status": "passed",
+      "files": 55,
+      "missing": [],
+      "extra": [],
+      "changed": [],
+      "adapted_ui_files": [
+        "story-skill-analyze/agents/openai.yaml",
+        "story-skill-cover/agents/openai.yaml",
+        "story-skill-plan/agents/openai.yaml",
+        "story-skill-publish/agents/openai.yaml",
+        "story-skill-research/agents/openai.yaml",
+        "story-skill-review/agents/openai.yaml",
+        "story-skill-write/agents/openai.yaml",
+        "story-skill/agents/openai.yaml"
+      ],
+      "adapted_ui_file_count": 8
+    },
+    "source_payload_files": 55,
+    "codex_version": {
+      "command": [
+        "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "codex-cli 0.163.0-alpha.10.2\n",
+      "stderr": "",
+      "duration_seconds": 0.022,
+      "status": "passed"
+    },
+    "marketplace_add": {
+      "command": [
+        "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+        "plugin",
+        "marketplace",
+        "add",
+        "<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"marketplaceName\": \"story-skill-local\",\n  \"installedRoot\": \"<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18\",\n  \"alreadyAdded\": false\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.031,
+      "status": "passed",
+      "json": {
+        "marketplaceName": "story-skill-local",
+        "installedRoot": "<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18",
+        "alreadyAdded": false
+      }
+    },
+    "available_plugins": {
+      "command": [
+        "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+        "plugin",
+        "list",
+        "--available",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"installed\": [],\n  \"available\": [\n    {\n      \"pluginId\": \"story-skill@story-skill-local\",\n      \"name\": \"story-skill\",\n      \"marketplaceName\": \"story-skill-local\",\n      \"version\": \"0.6.18\",\n      \"installed\": false,\n      \"enabled\": false,\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18/plugins/story-skill\"\n      },\n      \"marketplaceSource\": {\n        \"sourceType\": \"local\",\n        \"source\": \"<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18\"\n      },\n      \"installPolicy\": \"AVAILABLE\",\n      \"authPolicy\": \"ON_INSTALL\"\n    }\n  ]\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.029,
+      "status": "passed",
+      "json": {
+        "installed": [],
+        "available": [
+          {
+            "pluginId": "story-skill@story-skill-local",
+            "name": "story-skill",
+            "marketplaceName": "story-skill-local",
+            "version": "0.6.18",
+            "installed": false,
+            "enabled": false,
+            "source": {
+              "source": "local",
+              "path": "<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18/plugins/story-skill"
+            },
+            "marketplaceSource": {
+              "sourceType": "local",
+              "source": "<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18"
+            },
+            "installPolicy": "AVAILABLE",
+            "authPolicy": "ON_INSTALL"
+          }
+        ]
+      }
+    },
+    "plugin_add": {
+      "command": [
+        "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+        "plugin",
+        "add",
+        "story-skill@story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"pluginId\": \"story-skill@story-skill-local\",\n  \"name\": \"story-skill\",\n  \"marketplaceName\": \"story-skill-local\",\n  \"version\": \"0.6.18\",\n  \"installedPath\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18\",\n  \"authPolicy\": \"ON_INSTALL\"\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.055,
+      "status": "passed",
+      "json": {
+        "pluginId": "story-skill@story-skill-local",
+        "name": "story-skill",
+        "marketplaceName": "story-skill-local",
+        "version": "0.6.18",
+        "installedPath": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18",
+        "authPolicy": "ON_INSTALL"
+      }
+    },
+    "installed_plugins": {
+      "command": [
+        "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+        "plugin",
+        "list",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"installed\": [\n    {\n      \"pluginId\": \"story-skill@story-skill-local\",\n      \"name\": \"story-skill\",\n      \"marketplaceName\": \"story-skill-local\",\n      \"version\": \"0.6.18\",\n      \"installed\": true,\n      \"enabled\": true,\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18/plugins/story-skill\"\n      },\n      \"marketplaceSource\": {\n        \"sourceType\": \"local\",\n        \"source\": \"<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18\"\n      },\n      \"installPolicy\": \"AVAILABLE\",\n      \"authPolicy\": \"ON_INSTALL\"\n    }\n  ],\n  \"available\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.035,
+      "status": "passed",
+      "json": {
+        "installed": [
+          {
+            "pluginId": "story-skill@story-skill-local",
+            "name": "story-skill",
+            "marketplaceName": "story-skill-local",
+            "version": "0.6.18",
+            "installed": true,
+            "enabled": true,
+            "source": {
+              "source": "local",
+              "path": "<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18/plugins/story-skill"
+            },
+            "marketplaceSource": {
+              "sourceType": "local",
+              "source": "<REPO_ROOT>/dist/release-v0.6.18/story-skill-codex-0.6.18"
+            },
+            "installPolicy": "AVAILABLE",
+            "authPolicy": "ON_INSTALL"
+          }
+        ],
+        "available": []
+      }
+    },
+    "installed_bytes": {
+      "status": "passed",
+      "files": 58,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    },
+    "skill_entries": {
+      "status": "passed",
+      "names": [
+        "story-skill",
+        "story-skill-analyze",
+        "story-skill-cover",
+        "story-skill-plan",
+        "story-skill-publish",
+        "story-skill-research",
+        "story-skill-review",
+        "story-skill-write"
+      ],
+      "count": 8
+    },
+    "markdown_dependencies": {
+      "status": "passed",
+      "files_scanned": 30,
+      "links_checked": 328,
+      "missing": [],
+      "outside_plugin": [],
+      "scope": "Local inline/reference Markdown file targets; remote URLs and heading anchors are excluded"
+    },
+    "app_server_skill_discovery": {
+      "status": "passed",
+      "method": "skills/list",
+      "skills": [
+        {
+          "name": "story-skill:story-skill",
+          "description": "中文小说任务总入口与共享规则；在需求跨流程或尚未明确是规划、剧本改编、分镜、正文、拆文、审稿、调研、封面还是发布准备时使用。不用于软件开发或普通文案。",
+          "interface": {
+            "displayName": "Story Skill · 小说入口",
+            "shortDescription": "中文小说技能总入口，按任务选择规划、剧本、分镜、写作、拆文、审稿、调研或封面",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill 读取这本书的约定和断点，按我的要求选择本次流程。"
+          },
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-analyze",
+          "description": "中文小说开篇点评、精彩度与平淡原因分析、长短篇深读、全量证据分析、分析稿修订与断点续跑。用于分析已有作品，不把参考剧情当原创书事实。",
+          "interface": {
+            "displayName": "Story Skill · 小说拆解",
+            "shortDescription": "中文小说逐段拆解与证据聚合，记录来源覆盖范围，支持长篇分析断点续跑",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-analyze 从现有分析断点继续拆解这部小说，保存证据和进度。"
+          },
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill-analyze/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-cover",
+          "description": "制作、优化或局部修改中文小说封面，以吸引目标读者点开为设计目标，根据书名、署名、题材和发布规格生成图像，检查视觉钩子、缩略图表现、文字与尺寸。",
+          "interface": {
+            "displayName": "Story Skill · 小说封面",
+            "shortDescription": "制作或优化吸睛的中文小说封面，强化视觉钩子与标题主次，复核实际成图和缩略图",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-cover 制作或优化这本书的封面，以吸睛为优先设计目标，按已采用书名、对应署名和题材强化吸睛看点、视觉焦点与标题主次，并检查实际成图与缩略图。"
+          },
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill-cover/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-plan",
+          "description": "中文小说书名、卷名、章名、简介拟写与优化、钩子与剧情设计、小说架构搭建与重构、大纲优化、开书、人物与世界设定、平台分类、近期细纲，以及把既有作品建立为可续写基线。支持根据小说规划剧本，以及根据小说或剧本拆分镜。规划请求不自动写小说正文。",
+          "interface": {
+            "displayName": "Story Skill · 开书规划",
+            "shortDescription": "中文小说开书与大纲规划、小说改编剧本、根据小说或剧本拆分镜",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-plan 为这本中文小说建立设定和近期大纲，先不要写正文。"
+          },
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill-plan/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-publish",
+          "description": "为七猫或番茄准备已审查正式章节的离线材料，导出并复核 ZIP，可比较作者提供的草稿副本并留存本地核对摘要。当前不执行平台上传、提交或定时发布。",
+          "interface": {
+            "displayName": "Story Skill · 发布准备",
+            "shortDescription": "核对正式章节并准备七猫或番茄草稿材料，保存固定快照和本地发布清单",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-publish 为指定作品和章节准备发布材料，检查正式稿资格并说明平台上传状态。"
+          },
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill-publish/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-research",
+          "description": "为中文小说创作查询榜单、题材市场和写作素材，分析商业选题与阅读数据，核对来源与样本。用于调研、选题取舍和事实查证，不改写正文或生成封面。",
+          "interface": {
+            "displayName": "Story Skill · 写作调研",
+            "shortDescription": "围绕中文小说创作决策查榜单和资料，记录来源、时间、样本与可验证依据",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-research 调研这个小说题材的当前榜单与写作资料，注明来源和样本限制。"
+          },
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill-research/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-review",
+          "description": "中文小说审稿、修改、整书打磨、去 AI 味及已提交章节修订，处理外部改稿、历史依赖复核和旧版状态库迁移。不用于软件代码审查。",
+          "interface": {
+            "displayName": "Story Skill · 审稿修订",
+            "shortDescription": "中文小说审稿、最小修改与去 AI 味，支持外部改稿协调和历史章节修订",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-review 审查指定章节，以证据说明问题并完成我授权的修改。"
+          },
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill-review/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-write",
+          "description": "中文长短篇正文创作与续写，包括逐章提交、短篇完本全文与封面交付、人物状态衔接和长距伏笔。已有章节修订用 story-skill-review。",
+          "interface": {
+            "displayName": "Story Skill · 正文写作",
+            "shortDescription": "中文长短篇正文与连载续写，按章召回人物状态、核对证据并保存创作断点",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-write 按这本书已确认的细纲继续下一章，并完成审查和保存。"
+          },
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill-write/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        }
+      ],
+      "errors": [],
+      "initialization": {
+        "userAgent": "Codex Desktop/0.163.0-alpha.10.2 (Mac OS 15.8.1; x86_64) dumb (story-skill-local-verifier; 1)",
+        "codexHome": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home",
+        "platformFamily": "unix",
+        "platformOs": "macos"
+      },
+      "notification_methods": [
+        "remoteControl/status/changed"
+      ],
+      "ui_default_prompts": {
+        "status": "passed",
+        "adapted_ui_files": 8,
+        "references": {
+          "story-skill:story-skill": [
+            "$story-skill:story-skill"
+          ],
+          "story-skill:story-skill-analyze": [
+            "$story-skill:story-skill-analyze"
+          ],
+          "story-skill:story-skill-cover": [
+            "$story-skill:story-skill-cover"
+          ],
+          "story-skill:story-skill-plan": [
+            "$story-skill:story-skill-plan"
+          ],
+          "story-skill:story-skill-publish": [
+            "$story-skill:story-skill-publish"
+          ],
+          "story-skill:story-skill-research": [
+            "$story-skill:story-skill-research"
+          ],
+          "story-skill:story-skill-review": [
+            "$story-skill:story-skill-review"
+          ],
+          "story-skill:story-skill-write": [
+            "$story-skill:story-skill-write"
+          ]
+        },
+        "scope": "Codex-parsed UI defaultPrompt references; no model routing turn was started"
+      },
+      "model_turn_started": false
+    },
+    "runtime": {
+      "version": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/scripts/story.py",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "0.6.18\n",
+        "stderr": "",
+        "duration_seconds": 0.338,
+        "status": "passed"
+      },
+      "help": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/scripts/story.py",
+          "--help"
+        ],
+        "exit_code": 0,
+        "stdout": "usage: story.py [-h] [--version]\n                {template,init,status,book-kind,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n                ...\n\nStory Skill: local, bounded context and transactional writing state. No API\ncalls.\n\npositional arguments:\n  {template,init,status,book-kind,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n    template            Print just one JSON input example\n    init                Create state once; never overwrite an existing book\n    status              Compact checkpoint and export health\n    book-kind           Correct long/short fiction metadata without rewriting\n                        chapters or exports\n    migrate             Explicit schema upgrade with a consistent rollback\n                        backup\n    audit               Strictly check managed exports without repairing or\n                        recording them\n    outline-audit       Read-only structural check of a whole-book outline,\n                        including candidates\n    world-save          Save structured story state with cited evidence\n    world-check         Check recorded rules, knowledge and continuity\n    world-read          Inspect one stored narrative record, including stale\n                        evidence for reviewed repair\n    cache-get           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    cache-put           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-dependencies\n                        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-deps        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-inspect     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-publish     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-refresh     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-saved       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-snapshot    Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-start       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-state       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-update      Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    publish-backup      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-cancel      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-check       Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-history\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-inspect\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-record\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export-list\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-inspect     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-list        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-prepare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-recover     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-verify-export\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    workbench-snapshot  Read one bounded, non-mutating local workbench\n                        snapshot\n    workbench-export    Generate a self-contained, read-only local author\n                        workbench\n    workbench-serve     Open a loopback editor that saves candidate drafts\n                        only\n    workbench-status    Check the registered local editor instance\n    workbench-stop      Stop the registered editor after preserving edits in\n                        all its pages\n    workbench-library-serve\n                        Open the independent local bookshelf at a fixed\n                        address\n    workbench-library-status\n                        Check the independent bookshelf service\n    workbench-library-stop\n                        Stop the bookshelf without stopping book editors\n    export              Repair exports without replacing outside edits\n    assemble-short      Assemble all committed short-story chapters into one\n                        book-title Markdown file\n    notes               Save cards or a chapter plan with optimistic\n                        concurrency\n    plan                Save cards or a chapter plan with optimistic\n                        concurrency\n    plan-read           Read a complete saved chapter plan for recovery\n                        without verifying adoption\n    plan-render         Render candidate planning Markdown or inspect its\n                        saved-plan source\n    outline-bind        Bind one reviewed, adopted readable outline to its\n                        saved chapter plan\n    context             Build a bounded chapter context packet\n    writing-brief       Read-only evidence packet for a bound next-chapter\n                        plan\n    prepare             Read-only review scaffold bound to the current book,\n                        state and draft\n    reconcile           Inspect an outside edit of the latest native chapter,\n                        or apply its reviewed draft\n    recall              Bounded literal substring search of cards, summaries\n                        and chapter prose\n    chapter-read        Read a bounded excerpt of a current or immutable\n                        historical chapter\n    dependencies        Resolve candidate evidence hashes for a reviewed\n                        chapter dependency declaration\n    sources             Find saved source IDs and analysis checkpoints after a\n                        new session\n    lint                Check, commit, or import one last complete chapter\n    commit              Check, commit, or import one last complete chapter\n    adopt               Check, commit, or import one last complete chapter\n    adopt-backfill      Check, commit, or import one last complete chapter\n    ingest              Snapshot source text and split without losing bonus\n                        chapters\n    coverage            Incremental source analysis and evidence-backed\n                        checkpoints\n    next                Incremental source analysis and evidence-backed\n                        checkpoints\n    record              Incremental source analysis and evidence-backed\n                        checkpoints\n    findings            Incremental source analysis and evidence-backed\n                        checkpoints\n    source-read         Incremental source analysis and evidence-backed\n                        checkpoints\n    report              Incremental source analysis and evidence-backed\n                        checkpoints\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
+        "stderr": "",
+        "duration_seconds": 0.348,
+        "status": "passed"
+      },
+      "init": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/scripts/story.py",
+          "init",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book",
+          "--title",
+          "Codex 插件隔离验收"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"created\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book\",\"id\":\"fcb4cd72-5b04-4112-b363-b405bd0d75f9\",\"imported_through\":0,\"kind\":\"long\",\"last_chapter\":0,\"revision\":0,\"schema\":2,\"title\":\"Codex 插件隔离验收\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.349,
+        "status": "passed"
+      },
+      "status": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/scripts/story.py",
+          "status",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"book\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book\",\"cards\":0,\"changed_export_count\":0,\"changed_exports\":[],\"id\":\"fcb4cd72-5b04-4112-b363-b405bd0d75f9\",\"imported_through\":0,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"kind\":\"long\",\"last_chapter\":0,\"more_sources\":false,\"next_chapter\":1,\"pending_export_count\":0,\"pending_exports\":[],\"recent_sources\":[],\"revision\":0,\"short_assembly\":null,\"short_assembly_path\":null,\"sources\":0,\"title\":\"Codex 插件隔离验收\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.35,
+        "status": "passed"
+      },
+      "audit": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/scripts/story.py",
+          "audit",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"changed_export_count\":0,\"changed_exports\":[],\"checked_revision\":0,\"exports_complete\":true,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"pending_export_count\":0,\"pending_exports\":[],\"read_only\":true,\"read_only_scope\":\"managed_book_records_and_exports\",\"scope_exports_complete\":true}\n",
+        "stderr": "",
+        "duration_seconds": 0.328,
+        "status": "passed"
+      },
+      "health_check_command": "audit (this Story Skill version has no doctor subcommand)"
+    },
+    "workbench": {
+      "status": "passed",
+      "start_command": [
+        "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/scripts/story.py",
+        "workbench-serve",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book"
+      ],
+      "running": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/scripts/story.py",
+          "workbench-status",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"book_id\":\"fcb4cd72-5b04-4112-b363-b405bd0d75f9\",\"code_sha256\":\"ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0\",\"instance\":\"4b70f0e92f2940adbdc079b6a44084ed\",\"ok\":true,\"outdated\":false,\"pid\":37597,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book\",\"running\":true,\"runtime_sha256\":\"ffcfcb5feb04fc25118566849d5b936b67e5b67905082e8151dfd13a04681f8c\",\"started\":\"2026-10-18T12:17:13.109962Z\",\"stop_requested\":false,\"url\":\"http://127.0.0.1:59022/acBhWkPgpKVmETn72z-JHKTYRWbvTCAEOTuxz9hhW1U/\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.325,
+        "status": "passed"
+      },
+      "http": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "bytes": 78732,
+        "sha256": "bb798c8ae2ad1fb7ac0520858e7dfaba8f75e71d5275e000dfa14445c9a08f2f"
+      },
+      "stop": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/scripts/story.py",
+          "workbench-stop",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book",
+          "--saved"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"book_id\":\"fcb4cd72-5b04-4112-b363-b405bd0d75f9\",\"code_sha256\":\"ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0\",\"instance\":\"4b70f0e92f2940adbdc079b6a44084ed\",\"ok\":true,\"outdated\":false,\"pid\":37597,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book\",\"running\":true,\"runtime_sha256\":\"ffcfcb5feb04fc25118566849d5b936b67e5b67905082e8151dfd13a04681f8c\",\"started\":\"2026-10-18T12:17:13.109962Z\",\"stop_requested\":true,\"url\":\"http://127.0.0.1:59022/acBhWkPgpKVmETn72z-JHKTYRWbvTCAEOTuxz9hhW1U/\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.328,
+        "status": "passed"
+      },
+      "final_status": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/codex-home/plugins/cache/story-skill-local/story-skill/0.6.18/skills/story-skill/scripts/story.py",
+          "workbench-status",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-l7pyajy6/book"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"ok\":true,\"running\":false,\"status\":\"登记服务已正常停止。\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.313,
+        "status": "passed"
+      },
+      "process_exit_code": 0,
+      "log": "{\"url\": \"http://127.0.0.1:59022/acBhWkPgpKVmETn72z-JHKTYRWbvTCAEOTuxz9hhW1U/\", \"mode\": \"candidate-editing\"}\n{\"ok\":true,\"stopped\":true}\n",
+      "scope": "Loopback HTTP only; no browser or GUI interaction"
+    },
+    "plugin_unchanged_after_runtime": {
+      "status": "passed",
+      "files": 58,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    },
+    "book_state_location": {
+      "status": "passed",
+      "explicit_book_argument": true,
+      "database_exists": true,
+      "cwd_book_state_created": false
+    },
+    "marketplace_unchanged": {
+      "status": "passed",
+      "files": 60,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    }
+  }
+}

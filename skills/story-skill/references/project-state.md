@@ -174,7 +174,7 @@
 
 局部硬限制同样设 `critical: true`。按 scope 自动召回时，`volume:v1` 对应 `plan.volume: "v1"`，arc、line 同理；`entity:ID` 要求该 ID 在 `plan.entities` 中，关联 ID 须有相应世界记录。`volume_dir` 只决定展示目录，不关联 scope。尚无这些关联或仅使用具名卷目录时，把本章硬限制的卡片 ID 显式加入 `plan.requires`；取回 context 后核对它们确实位于 `required_cards`，缺失时先修正关联或 requires 再起草。
 
-`notes --input "<卡片.json>" --expect R` 更新卡片，R 取 status。新卡须提供 `id/text/source`；已有卡按 ID 合并，只覆盖显式字段，省略的 kind、critical、scope、tags、due 等沿用原值。清除到期章用 `due: null`，清空标签用 `tags: []`；解除硬限制须明确写 `critical: false`，改为全局范围用 `scope: "global"`。`kind` 仅支持 fact、character、world、hook、preference、contract。正文提交的 `changes` 仍需完整卡片对象，每项另带 `quote` 精确原句，`source` 不能替代它。不要把整份大纲拆成无用卡片。
+`notes --input "<卡片.json>" --expect R` 更新卡片，R 取 status。新卡须提供 `id/text/source`；已有卡按 ID 合并，只覆盖显式字段，省略的 kind、critical、scope、tags、due 等沿用原值。清除到期章用 `due: null`，清空标签用 `tags: []`；解除硬限制须明确写 `critical: false`，改为全局范围用 `scope: "global"`。`kind` 仅支持 fact、character、world、hook、preference、contract。明确且稳定的作者偏好复用 preference 卡；写前的范围召回、来源和撤回按 [偏好召回](../../story-skill-write/references/writing-handoff.md#偏好召回)，不从成稿推断长期习惯。正文提交的 `changes` 仍需完整卡片对象，每项另带 `quote` 精确原句，`source` 不能替代它。不要把整份大纲拆成无用卡片。
 
 人物卡只存会影响下一步的已知/误信/未知及获知依据；作者掌握的谜底不等于人物知道。时间地点、物件归属、伤势、关系变化另用短事实卡；承诺写明触发条件或到期章。章末更新变化项，续写前核对这些状态和上章具体后果；有冲突定点补读，不把全书重新装入上下文。
 

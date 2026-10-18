@@ -148,10 +148,16 @@ SUITE_FILES_V0617 = tuple(sorted((*SUITE_FILES_V0616,
     "story-skill-plan/references/qidian-categories.md",
 )))
 SKILL_NAMES_V0617 = SKILL_NAMES_V0616
+SUITE_FILES_V0618 = tuple(sorted((*SUITE_FILES_V0617,
+    "story-skill-write/references/writing-handoff.md",
+    "story-skill-write/references/chapter-continuity.md",
+    "story-skill-plan/references/short-platform.md",
+)))
+SKILL_NAMES_V0618 = SKILL_NAMES_V0617
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0617
-SUITE_FILES = SUITE_FILES_V0617
+SKILL_NAMES = SKILL_NAMES_V0618
+SUITE_FILES = SUITE_FILES_V0618
 UNRELEASED_VERSIONS = frozenset({"0.6.13"})
 MAX_BYTES = 256 * 1024 * 1024
 # Reviewed full license texts, normalized only for BOM, line endings and trailing
@@ -188,6 +194,8 @@ def payload_files(version):
         return SUITE_FILES_V0616
     if version == "0.6.17":
         return SUITE_FILES_V0617
+    if version == "0.6.18":
+        return SUITE_FILES_V0618
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -217,6 +225,8 @@ def skill_names(version):
         return SKILL_NAMES_V0616
     if version == "0.6.17":
         return SKILL_NAMES_V0617
+    if version == "0.6.18":
+        return SKILL_NAMES_V0618
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -312,6 +322,11 @@ def wrapper_files(version, payload=None):
             "This wrapper follows the input ZIP's license files and does not replace "
             "or relicense previously published Release or Packages artifacts.\n\n"
         )
+        if version in UNRELEASED_VERSIONS:
+            archive_description += (
+                "Unreleased development snapshot: no published GitHub Release or Packages artifact "
+                "is claimed for this version. Record the source revision and file hashes when testing it.\n\n"
+            )
         installation = (
             "For macOS, Linux and Windows, use the managed installation instructions "
             "that accompany this source or input ZIP, and validate it in an isolated "

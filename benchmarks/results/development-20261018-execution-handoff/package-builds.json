@@ -1,0 +1,50 @@
+[
+  {
+    "name": "standard",
+    "exit_code": 0,
+    "archive": "<FORWARD_WORK>/packages/standard/story-skill-0.6.18.zip",
+    "version": "0.6.18",
+    "files": 55,
+    "sha256": "b9762ed2fe1a5b54a1b48bc9beaa593310762eb82e5e807550407efdacab5020",
+    "bytes": 444154
+  },
+  {
+    "name": "claude",
+    "exit_code": 0,
+    "archive": "<FORWARD_WORK>/packages/claude/story-skill-claude-desktop-0.6.18-r2.zip",
+    "version": "0.6.18",
+    "files": 57,
+    "source_files": 55,
+    "skill_name": "story-skill",
+    "bundle_revision": 2,
+    "skill_entry_count": 1,
+    "entry_path_mapping": {
+      "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+      "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+      "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+      "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+      "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+      "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+      "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+      "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+    },
+    "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+    "sha256": "bbe50beba3e0825d7e9e962acb47b6306433d1f7d1d5c3a11615cbe7e66d4a04",
+    "bytes": 449942
+  },
+  {
+    "name": "codex",
+    "exit_code": 0,
+    "archive": "<FORWARD_WORK>/packages/codex/story-skill-codex-0.6.18.zip",
+    "checksum": "<FORWARD_WORK>/packages/codex/story-skill-codex-0.6.18.zip.sha256",
+    "marketplace_root": "<FORWARD_WORK>/packages/codex/story-skill-codex-0.6.18",
+    "plugin_root": "<FORWARD_WORK>/packages/codex/story-skill-codex-0.6.18/plugins/story-skill",
+    "version": "0.6.18",
+    "skill_count": 8,
+    "payload_files": 58,
+    "bundle_files": 60,
+    "sha256": "7418f64ffe8c0a5c35ffd1ee04195e4f86db2c369ee7bafb7811bb9467bb4e09",
+    "source_payload_files": 55,
+    "adapted_ui_files": 8
+  }
+]

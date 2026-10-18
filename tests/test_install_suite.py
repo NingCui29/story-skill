@@ -21,7 +21,7 @@ class SuiteInstallTests(unittest.TestCase):
             path = self.source / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(("reviewed file: " + relative + "\n").encode("utf-8"))
-        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.17"\n', encoding="utf-8")
+        (self.source / "story-skill/scripts/story.py").write_text('VERSION = "0.6.18"\n', encoding="utf-8")
         self.project.mkdir()
         self.book = self.project / "books/我的小说/正文/第1章.md"
         self.book.parent.mkdir(parents=True)
@@ -69,6 +69,9 @@ class SuiteInstallTests(unittest.TestCase):
                          "story-skill-plan/references/fanqie-tags.md",
                          "story-skill-plan/references/qimao-tags.md",
                          "story-skill-plan/references/qidian-categories.md",
+                         "story-skill-write/references/writing-handoff.md",
+                         "story-skill-write/references/chapter-continuity.md",
+                         "story-skill-plan/references/short-platform.md",
                          "story-skill-plan/references/blurb.md",
                          "story-skill-plan/references/outline.md",
                          "story-skill-review/references/fanqie-content-review.md",
@@ -97,7 +100,7 @@ class SuiteInstallTests(unittest.TestCase):
         package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(package)
         self.assertEqual(installer.SUITE_FILES, package.SUITE_FILES)
-        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True), ("0.6.3", 39, True), ("0.6.4", 39, True), ("0.6.5", 40, True), ("0.6.6", 40, True), ("0.6.7", 40, True), ("0.6.8", 40, True), ("0.6.9", 44, True), ("0.6.10", 45, True), ("0.6.11", 49, True), ("0.6.12", 49, True), ("0.6.13", 50, True), ("0.6.14", 51, True), ("0.6.15", 51, True), ("0.6.16", 51, True), ("0.6.17", 52, True)):
+        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True), ("0.6.3", 39, True), ("0.6.4", 39, True), ("0.6.5", 40, True), ("0.6.6", 40, True), ("0.6.7", 40, True), ("0.6.8", 40, True), ("0.6.9", 44, True), ("0.6.10", 45, True), ("0.6.11", 49, True), ("0.6.12", 49, True), ("0.6.13", 50, True), ("0.6.14", 51, True), ("0.6.15", 51, True), ("0.6.16", 51, True), ("0.6.17", 52, True), ("0.6.18", 55, True)):
             with self.subTest(version=version):
                 files = installer.suite_files(version)
                 self.assertEqual(installer.skill_names(version), package.skill_names(version))
@@ -108,7 +111,14 @@ class SuiteInstallTests(unittest.TestCase):
         self.assertEqual(installer.suite_files("0.6.8"), installer.SUITE_FILES_V065)
         self.assertEqual(len(installer.SUITE_FILES_V069), 44)
         self.assertEqual(installer.suite_files("0.6.9"), installer.SUITE_FILES_V069)
-        self.assertEqual(installer.SUITE_FILES, installer.SUITE_FILES_V0617)
+        self.assertEqual(installer.SUITE_FILES, installer.SUITE_FILES_V0618)
+        self.assertEqual(len(installer.SUITE_FILES_V0617), 52)
+        self.assertEqual(len(installer.SUITE_FILES_V0618), 55)
+        self.assertEqual(set(installer.SUITE_FILES_V0618) - set(installer.SUITE_FILES_V0617), {
+            "story-skill-write/references/writing-handoff.md",
+            "story-skill-write/references/chapter-continuity.md",
+            "story-skill-plan/references/short-platform.md",
+        })
         self.assertEqual(len(installer.SUITE_FILES_V0616), 51)
         self.assertNotIn("story-skill-plan/references/qidian-categories.md", installer.SUITE_FILES_V0616)
         self.assertEqual(set(installer.SUITE_FILES_V0617) - set(installer.SUITE_FILES_V0616), {
@@ -120,7 +130,7 @@ class SuiteInstallTests(unittest.TestCase):
         self.assertEqual(set(installer.SUITE_FILES_V0613) - set(installer.SUITE_FILES_V0612), {
             "story-skill-plan/references/outline.md",
         })
-        self.assertEqual(installer.SKILL_NAMES, installer.SKILL_NAMES_V0617)
+        self.assertEqual(installer.SKILL_NAMES, installer.SKILL_NAMES_V0618)
         self.assertEqual(len(installer.SUITE_FILES_V0613), 50)
         self.assertNotIn("story-skill/references/workbench.md", installer.SUITE_FILES_V0613)
         self.assertEqual(set(installer.SUITE_FILES_V0614) - set(installer.SUITE_FILES_V0613), {
@@ -137,7 +147,7 @@ class SuiteInstallTests(unittest.TestCase):
             "story-skill-write/references/punctuation.md",
             "story-skill/scripts/story_punctuation.py",
         })
-        for version in ("0.5.11", "0.6.18", "0.6.99"):
+        for version in ("0.5.11", "0.6.19", "0.6.99"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 installer.suite_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
@@ -298,6 +308,35 @@ class SuiteInstallTests(unittest.TestCase):
                 self.assertFalse((backup / name).exists())
         self.assertEqual(self.install(True)["status"], "unchanged")
 
+    def test_v0618_adds_three_references_and_preserves_v0617_backup(self):
+        added = set(installer.SUITE_FILES_V0618) - set(installer.SUITE_FILES_V0617)
+        contents = {relative: (self.source / relative).read_bytes() for relative in added}
+        for relative in added:
+            (self.source / relative).unlink()
+        runtime = self.source / "story-skill/scripts/story.py"
+        runtime.write_bytes(b'VERSION = "0.6.17"\n')
+        self.assertEqual(self.install()["files"], 52)
+        before = {name: installer.inventory(self.target(name)) for name in installer.SKILL_NAMES_V0617}
+        for relative, raw in contents.items():
+            (self.source / relative).write_bytes(raw)
+
+        with self.assertRaisesRegex(ValueError, "unreviewed files"):
+            self.install(True)
+        for name, files in before.items():
+            self.assertEqual(installer.inventory(self.target(name)), files)
+
+        runtime.write_bytes(b'VERSION = "0.6.18"\n')
+        result = self.install(True)
+        self.assertEqual(result["files"], 55)
+        self.assertEqual(set(result["changed_skills"]), {"story-skill", "story-skill-plan", "story-skill-write"})
+        backup = Path(result["backup"])
+        for name in result["changed_skills"]:
+            self.assertEqual(installer.inventory(backup / name), before[name])
+        for relative, raw in contents.items():
+            self.assertEqual((self.project / ".agents/skills" / relative).read_bytes(), raw)
+            self.assertFalse((backup / relative).exists())
+        self.assertEqual(self.install(True)["status"], "unchanged")
+
     def test_update_from_v064_adds_qimao_reference_and_keeps_old_backup(self):
         for relative in set(installer.SUITE_FILES) - set(installer.SUITE_FILES_V065):
             (self.source / relative).unlink()
@@ -362,7 +401,7 @@ class SuiteInstallTests(unittest.TestCase):
         runtime.write_text('VERSION = "0.5.11"\n', encoding="utf-8")
         with self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
             self.install()
-        runtime.write_text('VERSION = "0.6.17"\n', encoding="utf-8")
+        runtime.write_text('VERSION = "0.6.18"\n', encoding="utf-8")
         single = self.root / "single-skill"
         (single / "scripts").mkdir(parents=True)
         (single / "SKILL.md").write_text("partial", encoding="utf-8")
@@ -429,7 +468,7 @@ class SuiteInstallTests(unittest.TestCase):
 
     def test_unknown_suite_version_is_rejected_before_writing_targets(self):
         runtime = self.source / "story-skill/scripts/story.py"
-        for version in ("0.6.00", "0.6.18", "0.6.99", "0.7.0", "1.0.0"):
+        for version in ("0.6.00", "0.6.19", "0.6.99", "0.7.0", "1.0.0"):
             with self.subTest(version=version):
                 runtime.write_text(f'VERSION = "{version}"\n', encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "no reviewed suite layout"):

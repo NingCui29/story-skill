@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.17"
+VERSION = "0.6.18"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -2049,6 +2049,31 @@ class Book:
         except UnicodeError:
             fail("brief_source_encoding", "Brief sources must be valid UTF-8", role=role, path=relative)
 
+    def _writing_preferences(self, context):
+        """Recall existing scoped cards; selection never certifies their authority."""
+        plan = context["plan"]
+        scopes = {"global"}
+        scopes.update(f"{key}:{plan[key]}" for key in ("volume", "arc", "line") if key in plan)
+        scopes.update("entity:" + eid for eid in world.resolve(self, plan.get("entities", []), plan.get("line")))
+        marks = ",".join("?" for _ in scopes)
+        candidates = self.cards(row[0] for row in self.db.execute(
+            f"SELECT id FROM card_index WHERE kind='preference' AND status='active' AND scope IN ({marks})",
+            tuple(sorted(scopes))))
+        required = {card["id"]: card for card in context["required_cards"]
+                    if card["kind"] == "preference" and card["status"] == "active"}
+        candidates.update(required)
+        tags = set(plan["tags"])
+        matches = {cid: card for cid, card in candidates.items()
+                   if cid in required or not card["tags"] or tags.intersection(card["tags"])}
+        total = self.db.execute("SELECT count(*) FROM card_index WHERE kind='preference'").fetchone()[0]
+        return {"status": "recalled_for_semantic_review",
+                "source": "existing_book_preference_cards",
+                "selectors": {"scopes": sorted(scopes), "tags": sorted(tags)},
+                "cards": [matches[cid] for cid in sorted(matches) if cid not in required],
+                "required_card_ids": sorted(required),
+                "card_sha256": {cid: digest(dumps(matches[cid])) for cid in sorted(matches)},
+                "not_selected_count": total - len(matches)}
+
     def writing_brief(self, chapter, budget=24000, request_file=None, style_file=None):
         """Assemble existing evidence for one new chapter; never adopt or settle prose choices."""
         integer(chapter, "chapter", 1)
@@ -2071,6 +2096,7 @@ class Book:
                      current_outline_sha256=actual_outline["sha256"])
             request = self._brief_source(request_file, "request") if request_file is not None else {"status": "not_provided"}
             style = self._brief_source(style_file, "style") if style_file is not None else {"status": "not_provided"}
+            preferences = self._writing_preferences(context)
             context.pop("budget", None)
             return bounded_packet({
                 "schema_version": 1, "read_only": True,
@@ -2080,16 +2106,18 @@ class Book:
                 "book_id": context["book_id"], "revision": context["revision"], "chapter": chapter,
                 "status": "assembled_for_semantic_review", "context": context,
                 "adopted_outline": actual_outline, "current_request": request, "book_style_source": style,
+                "preference_recall": preferences,
                 "semantic_review": {"status": "pending", "checks": [
                     "Select applicable genre guidance from the adopted plan and request; do not infer adoption from labels.",
-                    "Resolve style precedence from actual sources; supplied style text is not an approved resolution.",
+                    "Verify recalled preference sources, scope and exceptions, then resolve style precedence; no supplied source is an approved resolution.",
                     "Check who chooses, causes, bears costs and receives the promised payoff; preserve legitimate cooperation or delegation.",
-                    "Confirm request, plan and adopted outline agree before drafting; a hash binding does not prove semantic agreement."],
+                    "Confirm request, plan and adopted outline agree before drafting; a hash binding does not prove semantic agreement.",
+                    "Track key beat coverage and classify reusable new facts during drafting; record only what the final prose establishes."],
                     "missing_sources": [role for role, value in (("current_request", request), ("book_style_source", style))
                                         if value["status"] == "not_provided"]},
                 "delivery_scope": {"mode": "next_chapter_draft", "chapter": chapter,
                     "goal": context["plan"]["goal"], "stop": context["plan"]["stop"],
-                    "note": "This optional packet grants no commit, cover, publication or plan-change permission. Required context is complete; optional cards are omitted with their count."},
+                    "note": "This packet grants no commit, cover, publication or plan-change permission. Required context is complete; optional cards are omitted with their count."},
             }, budget)
 
     def recall(self, query, budget=8000):

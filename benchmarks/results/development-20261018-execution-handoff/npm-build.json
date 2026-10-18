@@ -1,0 +1,17 @@
+{
+  "command": [
+    "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-B",
+    "scripts/package_npm.py",
+    "build",
+    "--archive",
+    "<FORWARD_WORK>/packages/standard/story-skill-0.6.18.zip",
+    "--sha256-file",
+    "<FORWARD_WORK>/packages/standard/story-skill-0.6.18.zip.sha256",
+    "--output-dir",
+    "<FORWARD_WORK>/packages/npm"
+  ],
+  "exit_code": 1,
+  "stdout": "{\"ok\": false, \"error\": \"npm is required to build this content package\", \"error_type\": \"ValueError\"}\n",
+  "stderr": ""
+}

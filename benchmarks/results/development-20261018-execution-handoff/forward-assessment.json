@@ -1,0 +1,47 @@
+{
+  "method": "Main agent read the actual forward artifacts and execution notes; qualitative scoped review, not an automated literary score or a strict blind experiment.",
+  "cases": [
+    {
+      "case": "bound_next_chapter",
+      "result": "passed_within_scope",
+      "artifact": "forward-use/long-chapter/draft-chapter2.md",
+      "evidence": "Actual brief use without redundant context call reported; root reproduced readonly brief and lint. All three chapter processes are enacted; injury and seventh-day return remain. 2432 visible characters. Revision stays 4, formal chapters stay at 1.",
+      "limits": "Synthetic fixture resembles reference examples; no formal chapter commit or actual preference update tested by this writing run."
+    },
+    {
+      "case": "quiet_short_plan",
+      "result": "passed_within_scope",
+      "artifact": "forward-use/planning-and-review/A-quiet-mending.md",
+      "evidence": "Complete quiet mother/daughter arc; no forced accident, reversal, paywall or state adoption.",
+      "limits": "Planning only; resembles reference example."
+    },
+    {
+      "case": "commercial_short_plan",
+      "result": "passed_within_scope",
+      "artifact": "forward-use/planning-and-review/B-shop-emotion-and-stops.md",
+      "evidence": "Concealment produces funding refusal, disclosure and loss produce limited cooperation; pause candidates have follow-through and complete ending. No official fee or backend claims.",
+      "limits": "No platform research, submission, conversion or reader measurement; resembles reference example."
+    },
+    {
+      "case": "new_ability_candidate_review",
+      "result": "passed_within_scope",
+      "artifact": "forward-use/planning-and-review/C-candidate-setting-review.md",
+      "evidence": "Identifies unauthorized memory/vision ability and premature identity reveal. Card plus quote cannot certify causality or adoption. Does not alter draft.",
+      "limits": "Single supplied candidate; resembles reference example."
+    },
+    {
+      "case": "authorized_ensemble_exploration",
+      "result": "passed_within_scope",
+      "artifact": "forward-use/fresh-cases/task-1-candidate.md",
+      "evidence": "798-character candidate uses new inspection slope within authorized exploration; engineer, miner and winch operator contribute through actual responses; injured left hand remains limited. No book initialization, adoption or lasting preference mutation.",
+      "limits": "Different from reference examples but agent saw historical validation text in memory search; not strictly blind. Fictional engineering conditions not professionally validated."
+    },
+    {
+      "case": "platform_undecided_quiet_short",
+      "result": "passed_within_scope",
+      "artifact": "forward-use/fresh-cases/task-2-concept.md",
+      "evidence": "Botanical specimen project ends with new cohort independently returning a specimen; taxonomy versus oral-name disagreement remains. Produces complete concept despite undecided future platform; no unrequested paywall, prose or rule lookup.",
+      "limits": "Outline only; no prose, platform or reader validation. Same evaluator memory exposure as preceding case."
+    }
+  ]
+}

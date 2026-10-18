@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "base_commit": "27b78ee74976f3c9e418cc927be73d316c93d547",
+  "development_version": "0.6.18",
+  "released_version": "0.6.17",
+  "worktree_was_dirty": [
+    "README.md"
+  ],
+  "forward_work": "<FORWARD_WORK>",
+  "scope": "Four requested improvements; no publication or installed-plugin replacement"
+}

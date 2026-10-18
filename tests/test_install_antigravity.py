@@ -30,7 +30,7 @@ class AntigravityInstallTests(unittest.TestCase):
             path = self.source / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(("fixture: " + relative + "\n").encode("utf-8"))
-        (self.source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.17"\n')
+        (self.source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.18"\n')
         self.project = self.root / "中文项目"
         self.project.mkdir()
         self.user_home = self.root / "fake-home"

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "standard",
+    "archive_sha256_matches": true,
+    "sha256": "b9762ed2fe1a5b54a1b48bc9beaa593310762eb82e5e807550407efdacab5020",
+    "archive_entries": 55,
+    "source_comparison": {
+      "status": "passed",
+      "files": 55,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    }
+  },
+  {
+    "name": "claude",
+    "archive_sha256_matches": true,
+    "sha256": "bbe50beba3e0825d7e9e962acb47b6306433d1f7d1d5c3a11615cbe7e66d4a04",
+    "archive_entries": 57,
+    "source_mapping_scope": "Builder validation and distribution regression tests; this additional check rehashes the completed Claude archive."
+  },
+  {
+    "name": "codex",
+    "archive_sha256_matches": true,
+    "sha256": "7418f64ffe8c0a5c35ffd1ee04195e4f86db2c369ee7bafb7811bb9467bb4e09",
+    "archive_entries": 60,
+    "source_comparison": {
+      "status": "passed",
+      "files": 55,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    },
+    "permitted_ui_adaptations": [
+      "story-skill-analyze/agents/openai.yaml",
+      "story-skill-cover/agents/openai.yaml",
+      "story-skill-plan/agents/openai.yaml",
+      "story-skill-publish/agents/openai.yaml",
+      "story-skill-research/agents/openai.yaml",
+      "story-skill-review/agents/openai.yaml",
+      "story-skill-write/agents/openai.yaml",
+      "story-skill/agents/openai.yaml"
+    ],
+    "extracted_plugin_comparison": {
+      "status": "passed",
+      "files": 55,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    }
+  }
+]

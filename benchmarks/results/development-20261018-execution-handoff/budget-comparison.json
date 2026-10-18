@@ -1,0 +1,34 @@
+{
+  "base_commit": "27b78ee74976f3c9e418cc927be73d316c93d547",
+  "base_variants": 212,
+  "final_variants": 281,
+  "old_limits_changed": [],
+  "write_entry_bytes": {
+    "before": 13295,
+    "after": 10827,
+    "change_percent": -18.5634
+  },
+  "comparisons": [
+    {
+      "key": [
+        "long_chapter",
+        "writer",
+        "base"
+      ],
+      "before": 107181,
+      "after": 107342,
+      "change_percent": 0.1502
+    },
+    {
+      "key": [
+        "draft_fragment",
+        "writer",
+        "base"
+      ],
+      "before": 68484,
+      "after": 66236,
+      "change_percent": -3.2825
+    }
+  ],
+  "snapshot_note": "budget-base is reconstructed from the stated Git commit; instruction-loads-before and -after are retained intermediate working-tree snapshots."
+}

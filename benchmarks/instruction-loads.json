@@ -128,6 +128,91 @@
       "section": "写前简报"
     },
     {
+      "id": "writing_handoff",
+      "path": "skills/story-skill-write/references/writing-handoff.md",
+      "section": "写前交接"
+    },
+    {
+      "id": "preference_recall",
+      "path": "skills/story-skill-write/references/writing-handoff.md",
+      "section": "偏好召回"
+    },
+    {
+      "id": "continuity_scope",
+      "path": "skills/story-skill-write/references/chapter-continuity.md",
+      "section": "关键情节点与新增事实",
+      "scope": "body"
+    },
+    {
+      "id": "chapter_coverage",
+      "path": "skills/story-skill-write/references/chapter-continuity.md",
+      "section": "关键情节点覆盖"
+    },
+    {
+      "id": "new_facts",
+      "path": "skills/story-skill-write/references/chapter-continuity.md",
+      "section": "新增事实分级"
+    },
+    {
+      "id": "continuity_examples",
+      "path": "skills/story-skill-write/references/chapter-continuity.md",
+      "section": "边界示例"
+    },
+    {
+      "id": "plan_entry",
+      "path": "skills/story-skill-plan/SKILL.md"
+    },
+    {
+      "id": "short_platform_scope",
+      "path": "skills/story-skill-plan/references/short-platform.md",
+      "section": "短篇：平台目标、阅读推进与完整收束",
+      "scope": "body"
+    },
+    {
+      "id": "short_platform_target",
+      "path": "skills/story-skill-plan/references/short-platform.md",
+      "section": "先确定本次交付目标"
+    },
+    {
+      "id": "short_platform_progress",
+      "path": "skills/story-skill-plan/references/short-platform.md",
+      "section": "将阅读期待连到人物的选择与后果"
+    },
+    {
+      "id": "short_platform_paywall",
+      "path": "skills/story-skill-plan/references/short-platform.md",
+      "section": "仅在需要时设计付费断点候选"
+    },
+    {
+      "id": "short_platform_review",
+      "path": "skills/story-skill-plan/references/short-platform.md",
+      "section": "在本次范围内复核与交接"
+    },
+    {
+      "id": "coverage_review",
+      "includes": [
+        "continuity_scope",
+        "chapter_coverage"
+      ]
+    },
+    {
+      "id": "brief_handoff",
+      "includes": [
+        "writing_brief",
+        "writing_handoff",
+        "preference_recall"
+      ]
+    },
+    {
+      "id": "short_platform_design",
+      "includes": [
+        "short_platform_scope",
+        "short_platform_target",
+        "short_platform_progress",
+        "short_platform_review"
+      ]
+    },
+    {
       "id": "scene",
       "path": "skills/story-skill-write/references/drama.md",
       "section": "场景展开与情绪层次"
@@ -550,7 +635,8 @@
         "project_binding",
         "content_plan",
         "naming",
-        "format_check"
+        "format_check",
+        "coverage_review"
       ]
     },
     {
@@ -594,7 +680,7 @@
     {
       "id": "long_chapter",
       "task": "已有正式规划的长篇单章写作与自审",
-      "assumptions": "直接进入正文技能；定位、人物和规划基线有效，无新开书/导入/候选/正式历史修订；默认中途章，非指定商业平台。动态约定、细纲、正文、状态不计规则字节。",
+      "assumptions": "直接进入正文技能；定位、人物和规划基线有效，无新开书/导入/候选/正式历史修订；默认中途章，非指定商业平台。动态约定、细纲、正文、状态不计规则字节。 本场景基线为同会话材料齐全；跨会话或分派下一正式新章必须另取写前交接分支。",
       "calls": [
         {
           "id": "writer",
@@ -780,9 +866,26 @@
             },
             {
               "id": "writing_brief",
-              "when": "已有绑定章纲，需集中核对或交接下一新章材料，使用可选只读写前简报。",
+              "when": "跨会话接续或向写手分派已绑定的下一正式新章，默认用只读简报；材料齐全的同会话接续不重复组装。",
               "includes": [
-                "writing_brief"
+                "brief_handoff"
+              ]
+            },
+            {
+              "id": "new_facts",
+              "when": "本次引入可复用人物、地点、线索、机制或重要变化，需按影响及已有授权分级；不为普通感官细节建账。",
+              "includes": [
+                "continuity_scope",
+                "new_facts"
+              ]
+            },
+            {
+              "id": "continuity_examples",
+              "when": "漏纲、关键过程仅概括、新设定或授权边界存在具体疑点，定点取虚构示例帮助判断。",
+              "includes": [
+                "coverage_review",
+                "new_facts",
+                "continuity_examples"
               ]
             }
           ],
@@ -856,7 +959,7 @@
     {
       "id": "short_write",
       "task": "有有效规划的短篇写作、完本和封面交付",
-      "assumptions": "作者已给短篇正文授权且已有有效规划；番茄入口有明确、一致依据，已核为短故事。写作角色覆盖单元及完本规则，单独封面角色另一次冷调用。总纲三平台分类有效，只核对；缺分类需改规划不在此路径。图像工具规则不在表内。",
+      "assumptions": "作者已给短篇正文授权且已有有效规划；番茄入口有明确、一致依据，已核为短故事。写作角色覆盖单元及完本规则，单独封面角色另一次冷调用。总纲三平台分类有效，只核对；缺分类需改规划不在此路径。图像工具规则不在表内。 本场景基线为同会话材料齐全；跨会话或分派下一正式新章必须另取写前交接分支。",
       "calls": [
         {
           "id": "writer",
@@ -1013,9 +1116,41 @@
             },
             {
               "id": "writing_brief",
-              "when": "已有绑定章纲，需集中核对或交接下一新章材料，使用可选只读写前简报。",
+              "when": "跨会话接续或向写手分派已绑定的下一正式新章，默认用只读简报；材料齐全的同会话接续不重复组装。",
               "includes": [
-                "writing_brief"
+                "brief_handoff"
+              ]
+            },
+            {
+              "id": "new_facts",
+              "when": "本次引入可复用人物、地点、线索、机制或重要变化，需按影响及已有授权分级；不为普通感官细节建账。",
+              "includes": [
+                "continuity_scope",
+                "new_facts"
+              ]
+            },
+            {
+              "id": "continuity_examples",
+              "when": "漏纲、关键过程仅概括、新设定或授权边界存在具体疑点，定点取虚构示例帮助判断。",
+              "includes": [
+                "coverage_review",
+                "new_facts",
+                "continuity_examples"
+              ]
+            },
+            {
+              "id": "short_platform_design",
+              "when": "本次短篇开书、整体重构或明确平台适配和商业情绪设计，普通已有规划续写不自动重做。",
+              "includes": [
+                "short_platform_design"
+              ]
+            },
+            {
+              "id": "short_paywall",
+              "when": "本次商业目标明确需要付费断点候选；平台支持及实际设置另核，非商业短篇不触发。",
+              "includes": [
+                "short_platform_design",
+                "short_platform_paywall"
               ]
             }
           ],
@@ -1052,6 +1187,15 @@
                 "genre_business",
                 "writing_brief",
                 "climax"
+              ]
+            },
+            {
+              "id": "platform_handoff",
+              "when": "已绑定商业短篇跨会话接写，核对当前采用的叙事断点与完整结局；不据此报告平台已设置。",
+              "branches": [
+                "writing_brief",
+                "short_paywall",
+                "new_facts"
               ]
             }
           ],
@@ -1113,7 +1257,7 @@
     {
       "id": "short_write_novel_entry",
       "task": "有有效规划且番茄已核小说入口的短篇写作与完本自审",
-      "assumptions": "已有短篇正文授权和有效规划；番茄入口有明确、一致依据，已核为小说，不能因篇幅是短篇而读取短故事栏目。三平台分类和作品分析仍完整核对；封面角色沿用 short_write，未重复登记。",
+      "assumptions": "已有短篇正文授权和有效规划；番茄入口有明确、一致依据，已核为小说，不能因篇幅是短篇而读取短故事栏目。三平台分类和作品分析仍完整核对；封面角色沿用 short_write，未重复登记。 本场景基线为同会话材料齐全；跨会话或分派下一正式新章必须另取写前交接分支。",
       "calls": [
         {
           "id": "writer",
@@ -1270,9 +1414,41 @@
             },
             {
               "id": "writing_brief",
-              "when": "已有绑定章纲，需集中核对或交接下一新章材料，使用可选只读写前简报。",
+              "when": "跨会话接续或向写手分派已绑定的下一正式新章，默认用只读简报；材料齐全的同会话接续不重复组装。",
               "includes": [
-                "writing_brief"
+                "brief_handoff"
+              ]
+            },
+            {
+              "id": "new_facts",
+              "when": "本次引入可复用人物、地点、线索、机制或重要变化，需按影响及已有授权分级；不为普通感官细节建账。",
+              "includes": [
+                "continuity_scope",
+                "new_facts"
+              ]
+            },
+            {
+              "id": "continuity_examples",
+              "when": "漏纲、关键过程仅概括、新设定或授权边界存在具体疑点，定点取虚构示例帮助判断。",
+              "includes": [
+                "coverage_review",
+                "new_facts",
+                "continuity_examples"
+              ]
+            },
+            {
+              "id": "short_platform_design",
+              "when": "本次短篇开书、整体重构或明确平台适配和商业情绪设计，普通已有规划续写不自动重做。",
+              "includes": [
+                "short_platform_design"
+              ]
+            },
+            {
+              "id": "short_paywall",
+              "when": "本次商业目标明确需要付费断点候选；平台支持及实际设置另核，非商业短篇不触发。",
+              "includes": [
+                "short_platform_design",
+                "short_platform_paywall"
               ]
             }
           ],
@@ -1310,6 +1486,15 @@
                 "writing_brief",
                 "climax"
               ]
+            },
+            {
+              "id": "platform_handoff",
+              "when": "已绑定商业短篇跨会话接写，核对当前采用的叙事断点与完整结局；不据此报告平台已设置。",
+              "branches": [
+                "writing_brief",
+                "short_paywall",
+                "new_facts"
+              ]
             }
           ],
           "limits": {
@@ -1337,7 +1522,7 @@
     {
       "id": "short_write_unknown_entry",
       "task": "番茄入口待核时短篇写作与完本自审的保守读取",
-      "assumptions": "已有短篇正文授权和有效规划；番茄入口未明或依据冲突，保守读取两入口并保留待核，不据篇幅猜选。三平台分类和作品分析仍完整核对；若须改规划按既有流程，不把待核当成已确认。封面角色沿用 short_write，未重复登记。",
+      "assumptions": "已有短篇正文授权和有效规划；番茄入口未明或依据冲突，保守读取两入口并保留待核，不据篇幅猜选。三平台分类和作品分析仍完整核对；若须改规划按既有流程，不把待核当成已确认。封面角色沿用 short_write，未重复登记。 本场景基线为同会话材料齐全；跨会话或分派下一正式新章必须另取写前交接分支。",
       "calls": [
         {
           "id": "writer",
@@ -1494,9 +1679,41 @@
             },
             {
               "id": "writing_brief",
-              "when": "已有绑定章纲，需集中核对或交接下一新章材料，使用可选只读写前简报。",
+              "when": "跨会话接续或向写手分派已绑定的下一正式新章，默认用只读简报；材料齐全的同会话接续不重复组装。",
               "includes": [
-                "writing_brief"
+                "brief_handoff"
+              ]
+            },
+            {
+              "id": "new_facts",
+              "when": "本次引入可复用人物、地点、线索、机制或重要变化，需按影响及已有授权分级；不为普通感官细节建账。",
+              "includes": [
+                "continuity_scope",
+                "new_facts"
+              ]
+            },
+            {
+              "id": "continuity_examples",
+              "when": "漏纲、关键过程仅概括、新设定或授权边界存在具体疑点，定点取虚构示例帮助判断。",
+              "includes": [
+                "coverage_review",
+                "new_facts",
+                "continuity_examples"
+              ]
+            },
+            {
+              "id": "short_platform_design",
+              "when": "本次短篇开书、整体重构或明确平台适配和商业情绪设计，普通已有规划续写不自动重做。",
+              "includes": [
+                "short_platform_design"
+              ]
+            },
+            {
+              "id": "short_paywall",
+              "when": "本次商业目标明确需要付费断点候选；平台支持及实际设置另核，非商业短篇不触发。",
+              "includes": [
+                "short_platform_design",
+                "short_platform_paywall"
               ]
             }
           ],
@@ -1533,6 +1750,15 @@
                 "genre_business",
                 "writing_brief",
                 "climax"
+              ]
+            },
+            {
+              "id": "platform_handoff",
+              "when": "已绑定商业短篇跨会话接写，核对当前采用的叙事断点与完整结局；不据此报告平台已设置。",
+              "branches": [
+                "writing_brief",
+                "short_paywall",
+                "new_facts"
               ]
             }
           ],
@@ -1785,6 +2011,30 @@
               "when": "本场涉及阶段高潮、关键回报或兑现归属的设计/审查。",
               "includes": [
                 "climax"
+              ]
+            },
+            {
+              "id": "new_facts",
+              "when": "本次引入可复用人物、地点、线索、机制或重要变化，需按影响及已有授权分级；不为普通感官细节建账。",
+              "includes": [
+                "continuity_scope",
+                "new_facts"
+              ]
+            },
+            {
+              "id": "continuity_examples",
+              "when": "漏纲、关键过程仅概括、新设定或授权边界存在具体疑点，定点取虚构示例帮助判断。",
+              "includes": [
+                "coverage_review",
+                "new_facts",
+                "continuity_examples"
+              ]
+            },
+            {
+              "id": "chapter_coverage",
+              "when": "本次审查需对照有效计划核对关键选择、结果、回报或停笔点的实际呈现。",
+              "includes": [
+                "coverage_review"
               ]
             }
           ],
@@ -2075,6 +2325,30 @@
               "includes": [
                 "climax"
               ]
+            },
+            {
+              "id": "new_facts",
+              "when": "本次引入可复用人物、地点、线索、机制或重要变化，需按影响及已有授权分级；不为普通感官细节建账。",
+              "includes": [
+                "continuity_scope",
+                "new_facts"
+              ]
+            },
+            {
+              "id": "continuity_examples",
+              "when": "漏纲、关键过程仅概括、新设定或授权边界存在具体疑点，定点取虚构示例帮助判断。",
+              "includes": [
+                "coverage_review",
+                "new_facts",
+                "continuity_examples"
+              ]
+            },
+            {
+              "id": "chapter_coverage",
+              "when": "本次审查需对照有效计划核对关键选择、结果、回报或停笔点的实际呈现。",
+              "includes": [
+                "coverage_review"
+              ]
             }
           ],
           "combinations": [
@@ -2249,6 +2523,30 @@
               "when": "本场涉及阶段高潮、关键回报或兑现归属的设计/审查。",
               "includes": [
                 "climax"
+              ]
+            },
+            {
+              "id": "new_facts",
+              "when": "本次引入可复用人物、地点、线索、机制或重要变化，需按影响及已有授权分级；不为普通感官细节建账。",
+              "includes": [
+                "continuity_scope",
+                "new_facts"
+              ]
+            },
+            {
+              "id": "continuity_examples",
+              "when": "漏纲、关键过程仅概括、新设定或授权边界存在具体疑点，定点取虚构示例帮助判断。",
+              "includes": [
+                "coverage_review",
+                "new_facts",
+                "continuity_examples"
+              ]
+            },
+            {
+              "id": "chapter_coverage",
+              "when": "本次审查需对照有效计划核对关键选择、结果、回报或停笔点的实际呈现。",
+              "includes": [
+                "coverage_review"
               ]
             }
           ],
@@ -2495,6 +2793,23 @@
               "includes": [
                 "climax"
               ]
+            },
+            {
+              "id": "new_facts",
+              "when": "本次引入可复用人物、地点、线索、机制或重要变化，需按影响及已有授权分级；不为普通感官细节建账。",
+              "includes": [
+                "continuity_scope",
+                "new_facts"
+              ]
+            },
+            {
+              "id": "continuity_examples",
+              "when": "漏纲、关键过程仅概括、新设定或授权边界存在具体疑点，定点取虚构示例帮助判断。",
+              "includes": [
+                "coverage_review",
+                "new_facts",
+                "continuity_examples"
+              ]
             }
           ],
           "combinations": [
@@ -2543,6 +2858,379 @@
           "base_limits": {
             "nonspace_chars": 28000,
             "utf8_bytes": 79000
+          }
+        }
+      ]
+    },
+    {
+      "id": "long_chapter_handoff",
+      "task": "跨会话接续或分派已绑定的下一正式长篇章",
+      "assumptions": "有效规划、书根与正式新章授权已明确；新的执行者没有同版完整材料，默认生成只读写前简报与偏好召回，再核对必要原文。包含 context 的简报替代同版 context 重复调用；动态正文、简报内容与实际用量不在此规则计数内。",
+      "calls": [
+        {
+          "id": "writer",
+          "role": "下一正式新章的接收写手与自审",
+          "preload": [
+            "write_entry"
+          ],
+          "required": [
+            "common",
+            "semantic_core",
+            "scene_writing",
+            "formal_chapter",
+            "hook",
+            "note_delivery",
+            "genre_index",
+            "brief_handoff"
+          ],
+          "branches": [
+            {
+              "id": "opening",
+              "when": "第一章/开篇写作，或第二三章需要核对开篇承接。",
+              "includes": [
+                "opening",
+                "lens",
+                "content_platform_stage"
+              ]
+            },
+            {
+              "id": "platform",
+              "when": "目标为番茄、起点或七猫。",
+              "includes": [
+                "platform",
+                "content_platform_stage"
+              ]
+            },
+            {
+              "id": "climax",
+              "when": "本章承担阶段高潮或重要兑现。",
+              "includes": [
+                "climax"
+              ]
+            },
+            {
+              "id": "multi_line",
+              "when": "本次设计多线接续、倒叙或揭示顺序。",
+              "includes": [
+                "multi_line"
+              ]
+            },
+            {
+              "id": "long_state",
+              "when": "百万字以上、多卷、多视角或长距伏笔，需要结构化世界状态。",
+              "includes": [
+                "long_state"
+              ]
+            },
+            {
+              "id": "planning_sync",
+              "when": "现行细纲/工具计划需要同步、例外登记或绑定修复。",
+              "includes": [
+                "project_link",
+                "project_cards"
+              ]
+            },
+            {
+              "id": "stage_rhythm",
+              "when": "阶段关键选择落地、重复/篇幅失衡，需要回看有关阶段。",
+              "includes": [
+                "whole_rhythm",
+                "mainline",
+                "volume_length"
+              ]
+            },
+            {
+              "id": "core_concerns",
+              "when": "本章涉及关键关系、人物自我判断或主题表达。",
+              "includes": [
+                "complexity"
+              ]
+            },
+            {
+              "id": "final_chapter",
+              "when": "实际终章交付，核对全书收束；已有明确创作关注也定点核对。",
+              "includes": [
+                "completion",
+                "life",
+                "lens"
+              ]
+            },
+            {
+              "id": "world",
+              "when": "关键结果依赖能力、资源、制度或重要世界机制。",
+              "includes": [
+                "world"
+              ]
+            },
+            {
+              "id": "evidence",
+              "when": "关键转折依赖目击、证据载体、设备时间或路线。",
+              "includes": [
+                "evidence"
+              ]
+            },
+            {
+              "id": "commercial",
+              "when": "目标为番茄/七猫商业网文，或本次要求商业连载风格。",
+              "includes": [
+                "commercial"
+              ]
+            },
+            {
+              "id": "qimao_ai",
+              "when": "本次涉及七猫 AI 使用、征文限制或创作声明。",
+              "includes": [
+                "qimao_ai"
+              ]
+            },
+            {
+              "id": "imagination",
+              "when": "本次明确评估/改进想象力、新意或原创对照。",
+              "includes": [
+                "imagination",
+                "content_originality"
+              ]
+            },
+            {
+              "id": "literary_depth",
+              "when": "本次明确追求文学深度或整部作品表达。",
+              "includes": [
+                "classic",
+                "complexity",
+                "lens",
+                "content_depth"
+              ]
+            },
+            {
+              "id": "scene_diagnosis",
+              "when": "本次专门要求表达、场景或平淡问题诊断，或自审发现相应疑点。",
+              "includes": [
+                "scene_diagnosis"
+              ]
+            },
+            {
+              "id": "genre_urban_relations",
+              "when": "本场主导阅读期待为都市关系与成长；只读选中主卡，确有交汇时补辅卡有关段。",
+              "includes": [
+                "genre_urban_relations"
+              ]
+            },
+            {
+              "id": "genre_business",
+              "when": "本场主导阅读期待为经营与职业；只读选中主卡，确有交汇时补辅卡有关段。",
+              "includes": [
+                "genre_business"
+              ]
+            },
+            {
+              "id": "genre_science_disaster",
+              "when": "本场主导阅读期待为科幻与灾变；只读选中主卡，确有交汇时补辅卡有关段。",
+              "includes": [
+                "genre_science_disaster"
+              ]
+            },
+            {
+              "id": "genre_folk_fantasy",
+              "when": "本场主导阅读期待为民俗与幻想；只读选中主卡，确有交汇时补辅卡有关段。",
+              "includes": [
+                "genre_folk_fantasy"
+              ]
+            },
+            {
+              "id": "genre_mystery",
+              "when": "本场主导阅读期待为悬疑与推理；只读选中主卡，确有交汇时补辅卡有关段。",
+              "includes": [
+                "genre_mystery"
+              ]
+            },
+            {
+              "id": "genre_quiet_daily",
+              "when": "本场主导阅读期待为温暖日常；只读选中主卡，确有交汇时补辅卡有关段。",
+              "includes": [
+                "genre_quiet_daily"
+              ]
+            },
+            {
+              "id": "writing_brief",
+              "when": "跨会话接续或向写手分派已绑定的下一正式新章，默认用只读简报；材料齐全的同会话接续不重复组装。",
+              "includes": [
+                "brief_handoff"
+              ]
+            },
+            {
+              "id": "new_facts",
+              "when": "本次引入可复用人物、地点、线索、机制或重要变化，需按影响及已有授权分级；不为普通感官细节建账。",
+              "includes": [
+                "continuity_scope",
+                "new_facts"
+              ]
+            },
+            {
+              "id": "continuity_examples",
+              "when": "漏纲、关键过程仅概括、新设定或授权边界存在具体疑点，定点取虚构示例帮助判断。",
+              "includes": [
+                "coverage_review",
+                "new_facts",
+                "continuity_examples"
+              ]
+            }
+          ],
+          "combinations": [
+            {
+              "id": "commercial_climax_world",
+              "when": "商业连载高潮章，结果依赖世界机制。",
+              "branches": [
+                "commercial",
+                "climax",
+                "world"
+              ]
+            },
+            {
+              "id": "opening_commercial",
+              "when": "商业长篇开篇；图像工具规则及成图结果未计入。",
+              "branches": [
+                "opening",
+                "commercial"
+              ]
+            },
+            {
+              "id": "folk_mystery_style",
+              "when": "民俗悬疑交汇；奇异规矩影响调查选择，题材与表达同时核对。",
+              "branches": [
+                "genre_folk_fantasy",
+                "genre_mystery"
+              ]
+            },
+            {
+              "id": "business_relationship_payoff",
+              "when": "合作关系影响职业阶段兑现，核对分工、选择与所得。",
+              "branches": [
+                "genre_business",
+                "genre_urban_relations",
+                "climax"
+              ]
+            },
+            {
+              "id": "business_brief_payoff",
+              "when": "已绑定经营题材阶段章，使用写前简报核对材料并检查兑现。",
+              "branches": [
+                "genre_business",
+                "writing_brief",
+                "climax"
+              ]
+            }
+          ],
+          "limits": {
+            "nonspace_chars": 76000,
+            "utf8_bytes": 208000
+          },
+          "limit_basis": "2026-10-18 explicit handoff path: base is current mandatory next-chapter brief/handoff/preference source load plus 15%, rounded up to 1,000. Registered branch union uses the same sources as long_chapter and inherits its 2026-10-17 baseline and unchanged ceiling; this new path grants no extra union allowance.",
+          "baseline": {
+            "base": {
+              "nonspace_chars": 41360,
+              "utf8_bytes": 112411
+            },
+            "registered_maximum": {
+              "nonspace_chars": 65985,
+              "utf8_bytes": 180417
+            }
+          },
+          "base_limits": {
+            "nonspace_chars": 48000,
+            "utf8_bytes": 130000
+          }
+        }
+      ]
+    },
+    {
+      "id": "short_platform_design",
+      "task": "既有短篇的平台化设计与可选断点候选",
+      "assumptions": "已有完整故事规划与有效三平台分类、人物和世界基线；本次只设计适配及阅读推进，不正式采用、不写正文或维护总纲。付费候选只有明确商业目标时另触发；入口未明按已有规则待核。新开书、人物/世界重构、正式总纲保存及分类重做不在此路径。",
+      "calls": [
+        {
+          "id": "planner",
+          "role": "短篇局部平台适配方案",
+          "preload": [
+            "plan_entry"
+          ],
+          "required": [
+            "common",
+            "short_platform_design"
+          ],
+          "branches": [
+            {
+              "id": "paywall",
+              "when": "作者明确需要商业付费断点候选；输出叙事候选与待核项，不执行平台设置。",
+              "includes": [
+                "short_platform_paywall"
+              ]
+            },
+            {
+              "id": "known_fanqie_short",
+              "when": "本次需核对已明确的番茄短故事入口对应项。",
+              "includes": [
+                "fanqie_category_route",
+                "fanqie_short_categories"
+              ]
+            },
+            {
+              "id": "known_fanqie_novel",
+              "when": "本次需核对已明确的番茄小说入口对应项。",
+              "includes": [
+                "fanqie_category_route",
+                "fanqie_novel_categories"
+              ]
+            },
+            {
+              "id": "unknown_fanqie",
+              "when": "番茄入口未知或依据冲突，读取两入口且保留待核。",
+              "includes": [
+                "fanqie_categories"
+              ]
+            },
+            {
+              "id": "qimao",
+              "when": "本次适配七猫，核对对应分类依据。",
+              "includes": [
+                "qimao_categories"
+              ]
+            },
+            {
+              "id": "qidian",
+              "when": "本次适配起点，核对站点和作品类型。",
+              "includes": [
+                "qidian_categories"
+              ]
+            }
+          ],
+          "combinations": [
+            {
+              "id": "commercial_unknown_entry",
+              "when": "商业方案所需番茄入口仍未明；先交叙事候选并保留平台待核。",
+              "branches": [
+                "paywall",
+                "unknown_fanqie"
+              ]
+            }
+          ],
+          "limits": {
+            "nonspace_chars": 31000,
+            "utf8_bytes": 83000
+          },
+          "base_limits": {
+            "nonspace_chars": 15000,
+            "utf8_bytes": 38000
+          },
+          "limit_basis": "2026-10-18 new explicit local planning path; limits are current source baseline plus 15%, rounded up to 1,000. This is a rule inventory, not runtime token usage.",
+          "baseline": {
+            "base": {
+              "nonspace_chars": 12750,
+              "utf8_bytes": 32305
+            },
+            "registered_maximum": {
+              "nonspace_chars": 26605,
+              "utf8_bytes": 72052
+            }
           }
         }
       ]

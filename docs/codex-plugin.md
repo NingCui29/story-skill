@@ -1,10 +1,10 @@
 # Codex 本地插件
 
-已发布的v0.6.17包含一个 Codex 本地插件，内含八个同级技能、共享 Python 运行时和许可证。插件使用 `.codex-plugin/plugin.json` 格式，不需要 MCP 服务或额外 API 密钥。本版 GitHub Release、固定标签安装与匿名回下载均通过，实际状态见 [v0.6.17 发布记录](releases/v0.6.17.md)；它是可下载的本地市场包，不表示已在公共插件目录上架。
+v0.6.18发布候选包含一个 Codex 本地插件，内含八个同级技能、共享 Python 运行时和许可证。插件使用 `.codex-plugin/plugin.json` 格式，不需要 MCP 服务或额外 API 密钥。本版发布验证正在进行，实际状态见 [v0.6.18 发布记录](releases/v0.6.18.md)；它是可下载的本地市场包，不表示已在公共插件目录上架。
 
-下载 [story-skill-codex-0.6.17.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip.sha256)。归档共 57 个文件成员：55 个插件文件（52 个技能载荷及元数据、图标、根许可证）加市场说明与登记文件。仓库当前公开；正式附件的下载可用性以本版回下载回执为准。
+下载 [story-skill-codex-0.6.18.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip.sha256)。归档共 60 个文件成员：58 个插件文件（55 个技能载荷及元数据、图标、根许可证）加市场说明与登记文件。仓库当前公开；正式附件的下载可用性以本版回下载回执为准。
 
-本版[隔离插件验收](../benchmarks/results/v0.6.17/codex-plugin-verification.json)已通过：57个归档成员、55个插件文件与52个源载荷映射相符；实际完成市场注册、插件安装、启用状态查询、八技能发现、运行时及工作台检查，执行前后插件和市场源内容不变。此回执不包含用户当前桌面会话或模型调用验收，本轮最终技能包还包含单一视觉重点、9:16配图和纯文字附言规则，其内容／映射核验与模型实际生图效果分别判断；[Release回下载](../benchmarks/results/v0.6.17/release/release-download.json)已逐字节核对通过。
+本版插件验收覆盖市场注册、插件安装、八技能发现、运行时和工作台；实际结果集中在[发布记录](releases/v0.6.18.md)。本机Codex已同步0.6.18，安装与加载回执单独保存。9:16配图、单一视觉重点和纯文字附言规则保持生效；文件核验不等于实际生图效果验证。
 
 ## 构建
 
@@ -18,16 +18,16 @@ python3 -B -X utf8 scripts/package_codex.py
 
 ```text
 dist/
-├── story-skill-codex-0.6.17.zip
-├── story-skill-codex-0.6.17.zip.sha256
-└── story-skill-codex-0.6.17/
+├── story-skill-codex-0.6.18.zip
+├── story-skill-codex-0.6.18.zip.sha256
+└── story-skill-codex-0.6.18/
     ├── README.md
     ├── .agents/plugins/marketplace.json
     └── plugins/story-skill/
         ├── .codex-plugin/plugin.json
         ├── assets/story-skill.svg
         ├── LICENSE
-        └── skills/                 # 八个同级技能，52 个源载荷文件
+        └── skills/                 # 八个同级技能，55 个源载荷文件
 ```
 
 构建器按标准套件的已审查文件清单取材，技能规则、参考资料和 Python 运行时逐字节保留；仅在八份 `agents/openai.yaml` 中将界面提示词的技能引用映射到插件命名空间，例如 `$story-skill-plan` 变为 `$story-skill:story-skill-plan`。源文件保持原样，插件包另外加入元数据、图标和根许可证。市场目录与 ZIP 使用相同内容；仓库中的小说样本、书库、Git 历史、测试结果和桌面客户端均不打入包。不要把整个源码仓库作为本地插件载荷安装。
@@ -40,18 +40,18 @@ dist/
 
 ```bash
 python3 -B -X utf8 scripts/verify_codex_plugin.py \
-  --marketplace-root dist/story-skill-codex-0.6.17 \
+  --marketplace-root dist/story-skill-codex-0.6.18 \
   --report dist/codex-plugin-verification.json
 ```
 
-验证器使用临时 `CODEX_HOME` 和独立测试目录，实际执行市场注册、插件发现与安装，再从安装副本核对文件及运行 Python 命令。验证期间不调用模型，不需要登录，不改用户原有的 Codex 配置或技能安装。具体验收项、结果和客户端版本以 JSON 报告为准；本版结果集中在 [Codex 插件验收](../benchmarks/results/v0.6.17/codex-plugin-verification.json)。此验证不替代桌面界面验收、模型触发或文学效果评价。
+验证器使用临时 `CODEX_HOME` 和独立测试目录，实际执行市场注册、插件发现与安装，再从安装副本核对文件及运行 Python 命令。验证期间不调用模型，不需要登录，不改用户原有的 Codex 配置或技能安装。具体验收项、结果和客户端版本以 JSON 报告为准；本版结果集中在 [Codex 插件验收](../benchmarks/results/v0.6.18/codex-plugin-verification.json)。此验证不替代桌面界面验收、模型触发或文学效果评价。
 
 ## 安装到日常使用的 Codex
 
 先完成上述验证。在仓库根目录运行：
 
 ```bash
-codex plugin marketplace add "$PWD/dist/story-skill-codex-0.6.17"
+codex plugin marketplace add "$PWD/dist/story-skill-codex-0.6.18"
 codex plugin add story-skill@story-skill-local
 codex plugin list --marketplace story-skill-local --json
 ```
