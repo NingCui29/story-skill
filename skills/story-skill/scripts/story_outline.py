@@ -45,13 +45,19 @@ _FIELD = re.compile(r"(?:^|[；;])\s*(?:[-*+]\s*)?(?:\*\*)?([^：:；;]+?)(?:\*\
 _DATE = re.compile(r"(?<!\d)(\d{4}-\d{2}-\d{2})(?!\d)")
 _POSITION_FIELDS = ("篇幅类型", "目标平台", "作品阶段", "来源与核对日期", "选择依据", "待核对")
 _CLASSIFICATION_FIELDS = {"平台分类", "分类频道", "一级分类", "二级分类", "主分类",
-                          "阅读标签", "内容标签", "风格", "角色", "情节", "情绪", "背景"}
+                          "阅读标签", "内容标签", "风格", "角色", "情节", "情绪", "背景", "发布站点"}
+_POSITION_FIELD_ALIASES = {"一级分类（大类）": "一级分类", "一级分类(大类)": "一级分类",
+                           "二级分类（子类）": "二级分类", "二级分类(子类)": "二级分类"}
+_CLASSIFICATION_STATUS = re.compile(
+    r"(?<![\u4e00-\u9fffA-Za-z0-9])(?:拟选|后台已确认|待核对)(?![\u4e00-\u9fffA-Za-z0-9])")
 _TAG_GROUP_FIELDS = {"阅读标签": {"主分类", "主题", "角色", "情节"},
                      "内容标签": {"情节", "情感", "人设", "世界观"}}
 _PLATFORM_ALIASES = {
     "fanqie": re.compile(r"番茄(?:免费小说|小说)?|(?<![a-z])fanqie(?![a-z])", re.IGNORECASE),
     "qimao": re.compile(r"七猫(?:免费小说|中文网|小说)?|(?<![a-z])qimao(?![a-z])", re.IGNORECASE),
+    "qidian": re.compile(r"起点(?:中文网|女生网|小说)?|(?<![a-z])qidian(?![a-z])", re.IGNORECASE),
 }
+DEFAULT_REQUIRED_PLATFORMS = ("fanqie", "qimao", "qidian")
 _PLATFORM_SEPARATOR = re.compile(
     r"[／/、，,|｜;&；+＋]|以及|(?<=\S)[及或与和](?=\S)|\s+(?:and|or)\s+", re.IGNORECASE)
 _PLATFORM_STATUS_NOTES = {
@@ -94,7 +100,7 @@ def _declared_platforms(values):
             annotation_parts = _platform_parts(annotation)
             # Free-form explanations are not platform names. An explicit
             # additional-submission declaration makes its targets relevant,
-            # including names outside the two platforms with built-in rules.
+            # including names outside the platforms with built-in rules.
             if any(_PLATFORM_TARGET_DECLARATION.match(part) for part in annotation_parts):
                 parts.extend(annotation_parts)
             else:
@@ -361,6 +367,40 @@ def _fanqie_entrance(values):
     return next(iter(entrances)) if len(entrances) == 1 else None
 
 
+def _audit_qidian_fields(fields):
+    """Check declarations only; a source label never proves a saved book setting."""
+    issues = []
+    columns = ("发布站点", "一级分类", "二级分类")
+    for column in columns:
+        values = fields.get(column, [])
+        if not any(value.strip(" \t\r\n。.!！") for value in values):
+            issues.append({"code": "classification_column_missing", "field": column})
+        elif not all(_CLASSIFICATION_STATUS.search(value) for value in values):
+            issues.append({"code": "classification_status_missing", "field": column})
+
+    site_values = fields.get("发布站点", [])
+    sites = {site for value in site_values for site in re.findall(r"起点-(?:男生|女生)", value)}
+    if site_values and (len(sites) != 1 or not all(
+            re.match(r"^起点-(?:男生|女生)(?=$|[\s。.!（(;；])", value) for value in site_values)):
+        issues.append({"code": "qidian_site_unresolved"})
+    if len(sites) == 1:
+        expected_channel = "男频" if "起点-男生" in sites else "女频"
+        channels = {match.group() for value in fields.get("分类频道", [])
+                    if (match := re.match(r"男频|女频", value))}
+        if channels and channels != {expected_channel}:
+            issues.append({"code": "qidian_channel_site_mismatch"})
+
+    source = "\n".join(fields.get("来源与核对日期", []))
+    snapshot_source = re.search(r"快照|实采表|参考表|词表|采集(?:表|资料|菜单)", source)
+    book_source = re.search(r"(?:本书|本作品|该作品)(?:实际)?(?:后台|作品页|分类设置)|实际作品(?:后台|设置)", source)
+    if snapshot_source and not book_source:
+        for column in columns:
+            if any("后台已确认" in _CLASSIFICATION_STATUS.findall(value)
+                   for value in fields.get(column, [])):
+                issues.append({"code": "classification_confirmation_source_missing", "field": column})
+    return issues
+
+
 def _audit_position_section(start, lines):
     fields = {}
     issues = []
@@ -372,8 +412,9 @@ def _audit_position_section(start, lines):
             if match.start() not in declarations:
                 continue
             key = match.group(1).strip(" *_`\t")
+            key = _POSITION_FIELD_ALIASES.get(key, key)
             value = match.group(2).strip(" *_`\t")
-            if key in {"目标平台", "来源与核对日期", "平台入口", "页面适用性"}:
+            if key in {"目标平台", "来源与核对日期", "平台入口", "页面适用性", "发布站点"}:
                 # Keep unlabelled semicolon continuations and parenthetical
                 # annotations until the next labelled field outside them.
                 # A quoted field example also ends this value; its dates must
@@ -435,6 +476,9 @@ def _audit_position_section(start, lines):
     elif platform == "qimao":
         checked_platform_rules = "qimao"
         columns = ("分类频道", "一级分类", "二级分类", "风格", "角色", "情节", "背景")
+    elif platform == "qidian":
+        checked_platform_rules = "qidian"
+        issues.extend(_audit_qidian_fields(fields))
     elif platform == "fanqie":
         entrance = _fanqie_entrance(fields.get("平台入口", []) + fields.get("页面适用性", []))
         if entrance == "短故事":
@@ -454,12 +498,14 @@ def _audit_position_section(start, lines):
             "checked_platform_rules": checked_platform_rules, "issues": issues}
 
 
-def audit_position(book, relative_path, require_platforms=()):
+def audit_position(book, relative_path, require_platforms=None):
     """Read-only structural check; never decides whether platform choices are valid."""
+    if require_platforms is None:
+        require_platforms = DEFAULT_REQUIRED_PLATFORMS
     if (not isinstance(require_platforms, (tuple, list)) or
             any(not isinstance(platform, str) or platform not in _PLATFORM_ALIASES
                 for platform in require_platforms)):
-        book.fail("invalid_input", "Required platforms must be fanqie or qimao")
+        book.fail("invalid_input", "Required platforms must be fanqie, qimao or qidian")
     required_platforms = list(dict.fromkeys(require_platforms))
     relative = _relative_path(book, relative_path, require_adopted=False)
     path = book.safe_path(book.root, relative)
@@ -532,7 +578,7 @@ def audit_position(book, relative_path, require_platforms=()):
                                        else "multiple" if results else "none"),
             "required_platforms": required_platforms, "covered_platforms": covered_platforms,
             "platform_results": results, "issues": issues, "manual_review_required": True,
-            "note": "Only required field presence and source-date syntax were checked per platform block; platform options, per-column status, evidence, and adoption still require human review."}
+            "note": "Only field presence, source-date syntax and declared Qidian site/status consistency were checked per platform block; platform fit, options, actual saved settings, evidence, confirmation truth and adoption still require human review."}
 
 
 def _valid_date(value):

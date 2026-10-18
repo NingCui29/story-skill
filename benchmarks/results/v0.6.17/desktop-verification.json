@@ -1,0 +1,142 @@
+{
+  "ok": true,
+  "status": "passed",
+  "app_version": "0.1.5",
+  "build": "6",
+  "story_version": "0.6.17",
+  "architecture": "x86_64",
+  "archive": "<REPO_ROOT>/dist/release-v0.6.17/story-workbench-0.1.5-macos-x86_64.zip",
+  "sha256": "2e57a52a94afabf5c9a8edb4e997f46afdd6279815e29f8b8b1eecfe29c3b5ba",
+  "bytes": 26547992,
+  "checksum": "<REPO_ROOT>/dist/release-v0.6.17/story-workbench-0.1.5-macos-x86_64.zip.sha256",
+  "zip_members": 3830,
+  "zip_metadata_encoding": "utf-8 (macOS ditto member bytes; UTF-8 flag is absent)",
+  "zip_crc_paths_and_duplicates_passed": true,
+  "extracted_to_new_directory": true,
+  "runtime_modules": [
+    {
+      "name": "story.py",
+      "sha256": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+      "source_bytes_match": true
+    },
+    {
+      "name": "story_world.py",
+      "sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+      "source_bytes_match": true
+    },
+    {
+      "name": "story_punctuation.py",
+      "sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "source_bytes_match": true
+    },
+    {
+      "name": "story_search.py",
+      "sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "source_bytes_match": true
+    },
+    {
+      "name": "story_history.py",
+      "sha256": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+      "source_bytes_match": true
+    },
+    {
+      "name": "story_publish.py",
+      "sha256": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+      "source_bytes_match": true
+    },
+    {
+      "name": "story_workbench.py",
+      "sha256": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0",
+      "source_bytes_match": true
+    },
+    {
+      "name": "story_outline.py",
+      "sha256": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c",
+      "source_bytes_match": true
+    },
+    {
+      "name": "story_storage.py",
+      "sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "source_bytes_match": true
+    }
+  ],
+  "runtime_manifest": {
+    "app_version": "0.1.5",
+    "story_version": "0.6.17",
+    "architecture": "x86_64",
+    "minimum_macos": "13.0",
+    "runtime_version": "Python 3.12.14",
+    "runtime_files": {
+      "story.py": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+      "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+      "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+      "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+      "story_workbench.py": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0",
+      "story_outline.py": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c",
+      "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+    },
+    "native_source_sha256": "802131cf750c413bee288d31731d89c0eb5d7d3afa746ed3fcbc6fce9652d7d0",
+    "native_sources": {
+      "StoryWorkbench.swift": "802131cf750c413bee288d31731d89c0eb5d7d3afa746ed3fcbc6fce9652d7d0",
+      "ClientInstance.swift": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9"
+    },
+    "launcher_sha256": "ccb7e9a34f6d5ae9d07f7a496d6af8a8915889287b7f6cebed3a9c70f0f67f4f",
+    "editor_appearance_sha256": "75a9ab0a40c08b36222f669fc089f25b2c91a9b6fa9cb631f09fcca6e6050ddc",
+    "local_build": true
+  },
+  "plist": {
+    "CFBundleShortVersionString": "0.1.5",
+    "CFBundleVersion": "6",
+    "LSMinimumSystemVersion": "13.0"
+  },
+  "native_sources_current": true,
+  "launcher_and_editor_current": true,
+  "license_matches_root": true,
+  "strict_signature_before_and_after_cli": true,
+  "signature_details": "Executable=<REPO_ROOT>/.local-writing-samples/release-v0.6.17-artifact-validation/mac-extracted/写作工作台.app/Contents/MacOS/StoryWorkbench\nIdentifier=com.storyskill.workbench\nFormat=app bundle with Mach-O thin (x86_64)\nCodeDirectory v=20400 size=2833 flags=0x2(adhoc) hashes=82+3 location=embedded\nVersionPlatform=1\nVersionMin=851968\nVersionSDK=984320\nHash type=sha256 size=32\nCandidateCDHash sha256=43fd5551f432ef9c18fdf12aed4e2592aae3cb19\nCandidateCDHashFull sha256=43fd5551f432ef9c18fdf12aed4e2592aae3cb19cb911b5b534c87989dda43f1\nHash choices=sha256\nCMSDigest=43fd5551f432ef9c18fdf12aed4e2592aae3cb19cb911b5b534c87989dda43f1\nCMSDigestType=2\nExecutable Segment base=0\nExecutable Segment limit=200704\nExecutable Segment flags=0x1\nPage size=4096\nCDHash=43fd5551f432ef9c18fdf12aed4e2592aae3cb19\nSignature=adhoc\nInfo.plist entries=13\nTeamIdentifier=not set\nSealed Resources version=2 rules=13 files=1675\nInternal requirements count=0 size=12\n",
+  "relocated_python": {
+    "prefix": "<REPO_ROOT>/.local-writing-samples/release-v0.6.17-artifact-validation/mac-extracted/写作工作台.app/Contents/Resources/runtime",
+    "executable": "<REPO_ROOT>/.local-writing-samples/release-v0.6.17-artifact-validation/mac-extracted/写作工作台.app/Contents/Resources/runtime/bin/python3",
+    "version": "3.12.14 (main, Sep  1 2026, 14:09:53) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1",
+    "ssl": "OpenSSL 3.5.8 25 Aug 2026"
+  },
+  "cli_commands": {
+    "version": {
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.651
+    },
+    "help": {
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.626
+    },
+    "init": {
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.625
+    },
+    "status": {
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_seconds": 0.612
+    }
+  },
+  "scope": "Built on this Intel Mac; actual ZIP CRC/unpack, nine current runtime modules, build manifest/plist, ad-hoc deep strict signature and extracted-runtime version/help/init/status on an isolated empty synthetic book. No GUI, notarization, real books, user client or existing service was touched.",
+  "collector_initial_failure": {
+    "status": "failed",
+    "stage": "desktop ZIP independent collector",
+    "assertion": "Expected Unicode application basename using default Python ZIP decoding",
+    "cause": "macOS ditto stores UTF-8 member bytes without the ZIP UTF-8 flag; Python default cp437 decoding made the basename differ. No corruption or unsafe path was observed.",
+    "correction": "Read the actual Mac ZIP with metadata_encoding=utf-8 and still check CRC, duplicate paths, containment, extracted signature and CLI."
+  },
+  "generated_at_utc": "2026-10-18T08:26:44.902386+00:00",
+  "privacy_normalization": "Only absolute local repository/home path prefixes are represented by <REPO_ROOT>/<USER_HOME>. Original evidence hashes, values, failures and actual check results are preserved; raw receipts remain in ignored local release evidence.",
+  "raw_evidence": {
+    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/desktop-verification-raw.json",
+    "sha256": "17b8038e028f244889c9f5220752ef462ef595fcd01b773c594493dc583545e8"
+  }
+}

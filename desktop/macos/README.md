@@ -4,9 +4,15 @@
 
 `写作工作台.app` 将本地书架和作品编辑页面放进独立的 macOS 窗口。它沿用现有工作台服务和保存规则，应用包内携带 Python 运行时与工作台程序。
 
-当前客户端 `0.1.4`（build 5）已随 [Story Skill v0.6.16 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.16)分发，内含 Story Skill `0.6.16`；构建与分发状态见下文。历史 `0.1.3`（运行时0.6.15）已分发。历史 `0.1.2`（运行时0.6.14）、`0.1.1`（运行时0.6.12）、`0.1.0`（运行时0.6.11）保留在对应 Release。仓库目前为私有，下载需要相应访问权限。
+当前发布候选客户端为 `0.1.5`（build 6），内含 Story Skill `0.6.17`，准备随 [Story Skill v0.6.17 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.17)分发。构建、验证与远端发布状态以 [v0.6.17 发布记录](../../docs/releases/v0.6.17.md)为准。历史 `0.1.4`（运行时0.6.16）、`0.1.3`（运行时0.6.15）、`0.1.2`（运行时0.6.14）、`0.1.1`（运行时0.6.12）、`0.1.0`（运行时0.6.11）保留在对应 Release。仓库当前公开；本版附件下载仍待发布与回下载核验。
 
 客户端使用临时本地签名，未做 Apple 公证。本轮隔离验收环境为 Intel Mac / macOS 15.8.1；最低 macOS 13 是构建配置，不表示其它 macOS 版本或 Apple Silicon 已通过验收。构建成功也不等于窗口交互、保存、下载和退出行为均已验收。
+
+## 0.1.5 发布候选（2026-10-18）
+
+本版将内嵌运行时更新至 Story Skill `0.6.17`，包含可选只读 `writing-brief` 写前简报；原生界面沿用前版。下载目标为 [story-workbench-0.1.5-macos-x86_64.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip.sha256)。本轮[构建回执](../../benchmarks/results/v0.6.17/desktop-build.json)和[客户端验收](../../benchmarks/results/v0.6.17/desktop-verification.json)已通过：9运行时模块与源码一致，严格签名、ZIP完整性及重新解压后的版本／帮助／初始化／状态四项CLI通过；正式发布与附件回下载仍待核，状态见版本记录。
+
+客户端只携带工作台运行时，题材写法卡、文风裁决、兑现归属及附言配图等技能规则在标准、Claude桌面、Codex插件和npm套件分发。本版沿用完整根自定义许可证，临时本地签名且未经Apple公证；Apple Silicon、其他macOS版本及原生目录选择／下载保存面板／未保存编辑关闭交互未据此获得验证。发布不自动替换本机应用或重启已有服务。
 
 ## 0.1.4 发布记录（2026-10-10）
 
@@ -112,7 +118,7 @@
 ```sh
 "$HOME/.local/bin/python3.12" scripts/build_desktop_macos.py \
   --python "$HOME/.local/bin/python3.12" \
-  --output "dist/release-v0.6.16/写作工作台.app"
+  --output "dist/release-v0.6.17/写作工作台.app"
 ```
 
 不要将输出路径设为现有作品目录。构建输出与源代码、真实作品数据分开保存；本地构建不包含远程发布、应用商店上架或发行验收。

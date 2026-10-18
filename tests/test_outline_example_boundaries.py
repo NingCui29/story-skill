@@ -95,10 +95,10 @@ class OutlineExampleBoundaryTests(unittest.TestCase):
     def test_inline_and_quoted_field_examples_do_not_fill_missing_fields(self):
         f = self.positioning_fixture()
         original = f.complete_outline()
-        for replacement in ('`目标平台：起点。`\n- 作品阶段：拟投。',
-                            '> 填写示例：\n目标平台：起点。\n\n- 作品阶段：拟投。'):
+        for replacement in ('`目标平台：晋江。`\n- 作品阶段：拟投。',
+                            '> 填写示例：\n目标平台：晋江。\n\n- 作品阶段：拟投。'):
             with self.subTest(replacement=replacement):
-                result = f.audit(original.replace('- 目标平台：起点；作品阶段：拟投。', replacement))
+                result = f.audit(original.replace('- 目标平台：晋江；作品阶段：拟投。', replacement))
                 self.assertFalse(result["ok"])
                 self.assertIn({"code": "position_field_missing", "field": "目标平台"}, result["issues"])
         result = f.audit(original.replace('- 来源与核对日期：后台参考；2026-10-01。',

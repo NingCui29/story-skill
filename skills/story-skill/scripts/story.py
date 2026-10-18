@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.16"
+VERSION = "0.6.17"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -420,6 +420,23 @@ class _BoundFile:
 
     def __str__(self):
         return str(self.path)
+
+
+@contextmanager
+def _pinned_read_directory(path):
+    """Pin parents for input reads without the export helper's writable guard."""
+    if os.name != "nt":
+        with _pinned_directory(path) as directory:
+            yield directory
+        return
+    from contextlib import ExitStack
+    with ExitStack() as stack:
+        current = path.anchor
+        stack.enter_context(_windows_path_handle(current, directory=True))
+        for part in path.parts[1:]:
+            current = os.path.join(current, part)
+            stack.enter_context(_windows_path_handle(current, directory=True))
+        yield SimpleNamespace(path=path, fd=None)
 
 
 def _owned_fdopen(fd, mode):
@@ -1867,11 +1884,10 @@ class Book:
             return self.context(chapter, budget, _reconcile=True)
         return self.commit(chapter, draft, raw, replace_last=True, accept_external=True)
 
-    def context(self, chapter, budget=16000, _reconcile=False):
+    def context(self, chapter, budget=16000, _reconcile=False, _include_optional=True):
         integer(chapter, "chapter", 1)
         # Read one SQLite snapshot. Concurrent writers produce either the old or new packet, never a mix.
-        self.db.execute("BEGIN")
-        try:
+        with self.read_snapshot():
             external = self._external_snapshot(chapter) if _reconcile else None
             pending, drift = self._export_health()
             if external:
@@ -1960,6 +1976,9 @@ class Book:
             candidates = sorted((c for c in optional if score(c) > 0), key=lambda c: (-score(c), c["id"]))
             active_total = self.db.execute("SELECT count(*) FROM card_index WHERE status='active'").fetchone()[0]
             packet["omitted_optional_count"] = max(0, active_total - sum(c["status"] == "active" for c in packet["required_cards"]))
+            if not _include_optional:
+                # Internal composition: the complete enclosing brief is bounded once.
+                return packet
             bounded_packet(packet, budget)
             for card in candidates:
                 packet["optional_cards"].append(card)
@@ -1972,8 +1991,101 @@ class Book:
                     packet["optional_cards"].pop()
                     packet["omitted_optional_count"] += 1
             return bounded_packet(packet, budget)
-        finally:
-            self.db.rollback()
+
+    def _brief_source(self, relative, role):
+        """Read one complete, book-local source without following filesystem aliases."""
+        if not isinstance(relative, str) or not relative:
+            fail("invalid_input", "Brief sources must use book-relative file paths", role=role)
+        path = safe_path(self.root, relative)
+        if (relative != relative.strip()
+                or "\\" in relative or re.match(r"^[A-Za-z]:", relative)
+                or any(part in ("", ".", "..") for part in relative.split("/"))
+                or any(unicodedata.category(char).startswith("C") for char in relative)):
+            fail("invalid_input", "Brief sources must use book-relative file paths", role=role)
+        try:
+            with _pinned_read_directory(path.parent) as parent:
+                with _bound_reader(_BoundFile(parent, path.name)) as stream:
+                    before = os.fstat(stream.fileno())
+                    if before.st_nlink != 1:
+                        fail("linked_path", "Brief sources cannot share an inode with another file", role=role, path=relative)
+                    if before.st_size > outline.MAX_OUTLINE_BYTES:
+                        fail("brief_source_too_large", "Brief source exceeds the file size limit", role=role, path=relative)
+                    raw = stream.read(outline.MAX_OUTLINE_BYTES + 1)
+                    after = os.fstat(stream.fileno())
+                    if (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns, before.st_ctime_ns) != (
+                            after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns, after.st_ctime_ns):
+                        fail("brief_source_changed", "Brief source changed while reading", role=role, path=relative)
+                    current = (os.stat(path.name, dir_fd=parent.fd, follow_symlinks=False)
+                               if parent.fd is not None else path.lstat())
+                    if (current.st_dev, current.st_ino, current.st_size, current.st_mtime_ns,
+                            current.st_ctime_ns, current.st_nlink) != (
+                            before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns,
+                            before.st_ctime_ns, 1):
+                        fail("brief_source_changed", "Brief source path changed while reading", role=role, path=relative)
+                    try:
+                        # A pinned POSIX directory may itself have been renamed.
+                        # Reopen the displayed chain without following aliases.
+                        with _pinned_read_directory(path.parent) as displayed:
+                            if parent.fd is not None:
+                                held, visible = os.fstat(parent.fd), os.fstat(displayed.fd)
+                                if (held.st_dev, held.st_ino) != (visible.st_dev, visible.st_ino):
+                                    fail("brief_source_changed", "Brief source directory changed while reading", role=role, path=relative)
+                    except OSError:
+                        fail("brief_source_changed", "Brief source directory changed while reading", role=role, path=relative)
+            if len(raw) > outline.MAX_OUTLINE_BYTES:
+                fail("brief_source_too_large", "Brief source exceeds the file size limit", role=role, path=relative)
+            text = raw.decode("utf-8-sig")
+            if not text.strip():
+                fail("brief_source_empty", "Explicit brief source is empty", role=role, path=relative)
+            return {"status": "provided", "path": relative, "sha256": hashlib.sha256(raw).hexdigest(),
+                    "encoding": "utf-8-sig", "text": text}
+        except FileNotFoundError:
+            fail("brief_source_missing", "Explicit brief source is missing", role=role, path=relative)
+        except UnicodeError:
+            fail("brief_source_encoding", "Brief sources must be valid UTF-8", role=role, path=relative)
+
+    def writing_brief(self, chapter, budget=24000, request_file=None, style_file=None):
+        """Assemble existing evidence for one new chapter; never adopt or settle prose choices."""
+        integer(chapter, "chapter", 1)
+        integer(budget, "budget_bytes", 256)
+        if self.path.stat().st_nlink != 1:
+            fail("linked_path", "Writing brief state cannot share an inode with another file", path=str(self.path))
+        with self.read_snapshot():
+            if chapter != self.meta("last_chapter") + 1:
+                fail("writing_brief_scope", "Writing briefs support only the next new chapter; use context or a history branch for revisions",
+                     chapter=chapter, next_chapter=self.meta("last_chapter") + 1)
+            context = self.context(chapter, budget, _include_optional=False)
+            adopted = context["outline"]
+            if adopted["status"] != "adopted":
+                fail("outline_unbound", "Review and bind the adopted outline before building a writing brief",
+                     chapter=chapter, recovery_command="outline-bind")
+            actual_outline = self._brief_source(adopted["path"], "adopted_outline")
+            if actual_outline["sha256"] != adopted["sha256"]:
+                fail("outline_plan_drift", "Adopted outline changed while building the brief", chapter=chapter,
+                     path=adopted["path"], recorded_outline_sha256=adopted["sha256"],
+                     current_outline_sha256=actual_outline["sha256"])
+            request = self._brief_source(request_file, "request") if request_file is not None else {"status": "not_provided"}
+            style = self._brief_source(style_file, "style") if style_file is not None else {"status": "not_provided"}
+            context.pop("budget", None)
+            return bounded_packet({
+                "schema_version": 1, "read_only": True,
+                "read_only_scope": "book_records_exports_and_supplied_sources",
+                "read_only_note": "No records or source contents are written. OS access times and transient SQLite WAL sidecars are outside this guarantee.",
+                "canonical_book_root": str(self.root),
+                "book_id": context["book_id"], "revision": context["revision"], "chapter": chapter,
+                "status": "assembled_for_semantic_review", "context": context,
+                "adopted_outline": actual_outline, "current_request": request, "book_style_source": style,
+                "semantic_review": {"status": "pending", "checks": [
+                    "Select applicable genre guidance from the adopted plan and request; do not infer adoption from labels.",
+                    "Resolve style precedence from actual sources; supplied style text is not an approved resolution.",
+                    "Check who chooses, causes, bears costs and receives the promised payoff; preserve legitimate cooperation or delegation.",
+                    "Confirm request, plan and adopted outline agree before drafting; a hash binding does not prove semantic agreement."],
+                    "missing_sources": [role for role, value in (("current_request", request), ("book_style_source", style))
+                                        if value["status"] == "not_provided"]},
+                "delivery_scope": {"mode": "next_chapter_draft", "chapter": chapter,
+                    "goal": context["plan"]["goal"], "stop": context["plan"]["stop"],
+                    "note": "This optional packet grants no commit, cover, publication or plan-change permission. Required context is complete; optional cards are omitted with their count."},
+            }, budget)
 
     def recall(self, query, budget=8000):
         text_field(query, "query", 200)
@@ -2753,8 +2865,8 @@ def parser():
                    help="audit always hashes every managed export")
     s = command("outline-audit", "Read-only structural check of a whole-book outline, including candidates", integrity=False)
     s.add_argument("--file", required=True, help="Book-relative Markdown path to the current whole-book outline")
-    s.add_argument("--require-platform", action="append", choices=("fanqie", "qimao"), default=[],
-                   help="Require a separate positioning block for this platform; repeat for both")
+    s.add_argument("--require-platform", action="append", choices=("fanqie", "qimao", "qidian"), default=None,
+                   help="Require separate blocks for the specified platforms; defaults to fanqie, qimao and qidian")
     s = command("world-save", "Save structured story state with cited evidence")
     s.add_argument("--input", required=True)
     s.add_argument("--expect", type=int, required=True)
@@ -2790,6 +2902,10 @@ def parser():
     s.add_argument("--expect", type=int, required=True)
     s = command("context", "Build a bounded chapter context packet", 16000)
     s.add_argument("--chapter", type=int, required=True)
+    s = command("writing-brief", "Read-only evidence packet for a bound next-chapter plan", 24000, integrity=False)
+    s.add_argument("--chapter", type=int, required=True)
+    s.add_argument("--request-file", help="Optional book-relative UTF-8 text; missing explicit paths fail")
+    s.add_argument("--style-file", help="Optional book-relative UTF-8 text, retained for semantic style review")
     s = command("prepare", "Read-only review scaffold bound to the current book, state and draft", 16000)
     s.add_argument("--chapter", type=int, required=True)
     s.add_argument("--draft", required=True)
@@ -2858,7 +2974,7 @@ def run(args):
     if cmd.startswith("workbench-"):
         return workbench.run(args)
     book = Book(args.book, integrity=getattr(args, "integrity", "strict"),
-                read_only=cmd in ("audit", "outline-audit", "plan-read", "plan-render"))
+                read_only=cmd in ("audit", "outline-audit", "plan-read", "plan-render", "writing-brief"))
     try:
         if cmd.startswith("publish-"):
             return publish.run(book, args)
@@ -2894,6 +3010,8 @@ def run(args):
             return outline.bind(book, args.chapter, args.file, args.expect, args.sha256)
         if cmd == "context":
             return book.context(args.chapter, args.budget_bytes)
+        if cmd == "writing-brief":
+            return book.writing_brief(args.chapter, args.budget_bytes, args.request_file, args.style_file)
         if cmd == "prepare":
             return book.prepare(args.chapter, args.draft, args.reconcile, args.budget_bytes)
         if cmd == "reconcile":

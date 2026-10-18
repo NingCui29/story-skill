@@ -1,0 +1,996 @@
+{
+  "schema": 1,
+  "date": "2026-10-17",
+  "generated_at_utc": "2026-10-17T06:38:22.912356+00:00",
+  "scope": "Unreleased v0.6.17 development worktree; preserves earlier dirty changes; no release, live installation sync or real-novel edits.",
+  "head": "cf036629efdbf741ab053540d5b4245125ecc673",
+  "working_tree_dirty": true,
+  "environment": {
+    "platform": "macOS-15.8.1-x86_64-i386-64bit",
+    "python": "3.12.14"
+  },
+  "implementation_checks_passed": true,
+  "unit_tests": {
+    "ok": true,
+    "status": "passed",
+    "run": 1655,
+    "passed": 1638,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 17,
+    "expected_failures": 0,
+    "unexpected_successes": 0,
+    "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests"
+  },
+  "final_related_tests": {
+    "status": "passed",
+    "run": 178,
+    "passed": 178,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0,
+    "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+    "modules": [
+      "test_instruction_budget",
+      "test_prose_trials",
+      "test_execution_eval",
+      "test_execution_review",
+      "test_execution_review_assignment",
+      "test_execution_metrics",
+      "test_benchmark",
+      "test_long_integration_review"
+    ]
+  },
+  "frontmatter": {
+    "passed": true,
+    "skills": [
+      {
+        "skill": "story-skill",
+        "exit_code": 0,
+        "output": "Skill is valid!\n"
+      },
+      {
+        "skill": "story-skill-analyze",
+        "exit_code": 0,
+        "output": "Skill is valid!\n"
+      },
+      {
+        "skill": "story-skill-cover",
+        "exit_code": 0,
+        "output": "Skill is valid!\n"
+      },
+      {
+        "skill": "story-skill-plan",
+        "exit_code": 0,
+        "output": "Skill is valid!\n"
+      },
+      {
+        "skill": "story-skill-publish",
+        "exit_code": 0,
+        "output": "Skill is valid!\n"
+      },
+      {
+        "skill": "story-skill-research",
+        "exit_code": 0,
+        "output": "Skill is valid!\n"
+      },
+      {
+        "skill": "story-skill-review",
+        "exit_code": 0,
+        "output": "Skill is valid!\n"
+      },
+      {
+        "skill": "story-skill-write",
+        "exit_code": 0,
+        "output": "Skill is valid!\n"
+      }
+    ]
+  },
+  "entry_load_comparison": [
+    {
+      "path": "skills/story-skill-write/SKILL.md",
+      "before_bytes": 14815,
+      "after_bytes": 12253,
+      "before_nonspace_chars": 6023,
+      "after_nonspace_chars": 5023,
+      "entry_reduction_percent": 16.6
+    },
+    {
+      "path": "skills/story-skill-review/SKILL.md",
+      "before_bytes": 28535,
+      "after_bytes": 21355,
+      "before_nonspace_chars": 11447,
+      "after_nonspace_chars": 8533,
+      "entry_reduction_percent": 25.46
+    }
+  ],
+  "instruction_budget": {
+    "passed": true,
+    "variants": 102,
+    "calls": [
+      {
+        "scenario": "long_chapter",
+        "role": "写作与本次自审，入口作为宿主技能预加载",
+        "call": "writer",
+        "totals": {
+          "nonspace_chars": 38237,
+          "utf8_bytes": 105106
+        },
+        "limits": {
+          "nonspace_chars": 44000,
+          "utf8_bytes": 121000
+        }
+      },
+      {
+        "scenario": "short_write",
+        "role": "短篇起草与完本自审",
+        "call": "writer",
+        "totals": {
+          "nonspace_chars": 56916,
+          "utf8_bytes": 157203
+        },
+        "limits": {
+          "nonspace_chars": 66000,
+          "utf8_bytes": 181000
+        }
+      },
+      {
+        "scenario": "short_write",
+        "role": "短篇封面：单独分派时的规则预算",
+        "call": "cover_designer",
+        "totals": {
+          "nonspace_chars": 5561,
+          "utf8_bytes": 15971
+        },
+        "limits": {
+          "nonspace_chars": 7000,
+          "utf8_bytes": 19000
+        }
+      },
+      {
+        "scenario": "content_review",
+        "role": "内容审查与结论",
+        "call": "reviewer",
+        "totals": {
+          "nonspace_chars": 19347,
+          "utf8_bytes": 52638
+        },
+        "limits": {
+          "nonspace_chars": 23000,
+          "utf8_bytes": 61000
+        }
+      },
+      {
+        "scenario": "content_rewrite",
+        "role": "按授权内容改稿",
+        "call": "rewriter",
+        "totals": {
+          "nonspace_chars": 22786,
+          "utf8_bytes": 62274
+        },
+        "limits": {
+          "nonspace_chars": 27000,
+          "utf8_bytes": 72000
+        }
+      },
+      {
+        "scenario": "content_rewrite",
+        "role": "另一个代理复核改稿范围与余留问题",
+        "call": "independent_reviewer",
+        "totals": {
+          "nonspace_chars": 19347,
+          "utf8_bytes": 52638
+        },
+        "limits": {
+          "nonspace_chars": 23000,
+          "utf8_bytes": 61000
+        }
+      },
+      {
+        "scenario": "targeted_punctuation",
+        "role": "局部文字/标点审校",
+        "call": "copyeditor",
+        "totals": {
+          "nonspace_chars": 14043,
+          "utf8_bytes": 36916
+        },
+        "limits": {
+          "nonspace_chars": 17000,
+          "utf8_bytes": 43000
+        }
+      },
+      {
+        "scenario": "draft_fragment",
+        "role": "独立片段试写与自审",
+        "call": "writer",
+        "totals": {
+          "nonspace_chars": 24284,
+          "utf8_bytes": 67982
+        },
+        "limits": {
+          "nonspace_chars": 28000,
+          "utf8_bytes": 79000
+        }
+      }
+    ],
+    "scope": "开发期显式命名任务/角色规则清单；只审计已列路径与可叠加分支，不是自动依赖闭包、运行时限流、实际读取记录或小说质量测评。新开书、旧稿导入、平台专项退回、未登记临时分派与其他宿主预加载需另登记，不以此清单声称覆盖全部 Story Skill 调用。",
+    "report": {
+      "path": ".local-writing-samples/optimization-20261017-3wa4rcux/instruction-budget/instruction-loads.json",
+      "sha256": "843f90dc91a416b5107b06bef9e2a735d78027b286db3f3f1f2d058c4e3a7dfb"
+    }
+  },
+  "cli_replays": {
+    "smoke.json": {
+      "ok": true,
+      "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+      "literary_quality_tested": false
+    },
+    "chinese.json": {
+      "ok": true,
+      "method": "Generated minimal Chinese transaction fixtures through real CLI; not novels or literary quality evidence"
+    },
+    "long.json": {
+      "ok": true,
+      "runtime_stable": true
+    }
+  },
+  "packaging_install": {
+    "installation": {
+      "status": "passed",
+      "files": 52,
+      "skills": 8,
+      "installed_files_match": true,
+      "installation": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "<REPO_ROOT>/scripts/install.py",
+          "--project",
+          "<REPO_ROOT>/.local-writing-samples/optimization-20261017-3wa4rcux/final/install-check/安装验证项目"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"status\": \"installed\", \"host\": \"codex\", \"scope\": \"project\", \"path\": \"<REPO_ROOT>/.local-writing-samples/optimization-20261017-3wa4rcux/final/install-check/安装验证项目/.agents/skills\", \"skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"changed_skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"backup\": null, \"files\": 52}\n",
+        "stderr": "",
+        "duration_seconds": 1.286,
+        "status": "passed"
+      },
+      "receipt": {
+        "status": "installed",
+        "host": "codex",
+        "scope": "project",
+        "path": "<REPO_ROOT>/.local-writing-samples/optimization-20261017-3wa4rcux/final/install-check/安装验证项目/.agents/skills",
+        "skills": [
+          "story-skill",
+          "story-skill-plan",
+          "story-skill-write",
+          "story-skill-analyze",
+          "story-skill-review",
+          "story-skill-research",
+          "story-skill-cover",
+          "story-skill-publish"
+        ],
+        "changed_skills": [
+          "story-skill",
+          "story-skill-plan",
+          "story-skill-write",
+          "story-skill-analyze",
+          "story-skill-review",
+          "story-skill-research",
+          "story-skill-cover",
+          "story-skill-publish"
+        ],
+        "backup": null,
+        "files": 52
+      },
+      "cli_help": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "<REPO_ROOT>/.local-writing-samples/optimization-20261017-3wa4rcux/final/install-check/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+          "--help"
+        ],
+        "exit_code": 0,
+        "stdout": "usage: story.py [-h] [--version]\n                {template,init,status,book-kind,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n                ...\n\nStory Skill: local, bounded context and transactional writing state. No API\ncalls.\n\npositional arguments:\n  {template,init,status,book-kind,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n    template            Print just one JSON input example\n    init                Create state once; never overwrite an existing book\n    status              Compact checkpoint and export health\n    book-kind           Correct long/short fiction metadata without rewriting\n                        chapters or exports\n    migrate             Explicit schema upgrade with a consistent rollback\n                        backup\n    audit               Strictly check managed exports without repairing or\n                        recording them\n    outline-audit       Read-only structural check of a whole-book outline,\n                        including candidates\n    world-save          Save structured story state with cited evidence\n    world-check         Check recorded rules, knowledge and continuity\n    world-read          Inspect one stored narrative record, including stale\n                        evidence for reviewed repair\n    cache-get           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    cache-put           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-dependencies\n                        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-deps        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-inspect     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-publish     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-refresh     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-saved       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-snapshot    Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-start       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-state       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-update      Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    publish-backup      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-cancel      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-check       Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-history\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-inspect\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-record\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export-list\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-inspect     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-list        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-prepare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-recover     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-verify-export\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    workbench-snapshot  Read one bounded, non-mutating local workbench\n                        snapshot\n    workbench-export    Generate a self-contained, read-only local author\n                        workbench\n    workbench-serve     Open a loopback editor that saves candidate drafts\n                        only\n    workbench-status    Check the registered local editor instance\n    workbench-stop      Stop the registered editor after preserving edits in\n                        all its pages\n    workbench-library-serve\n                        Open the independent local bookshelf at a fixed\n                        address\n    workbench-library-status\n                        Check the independent bookshelf service\n    workbench-library-stop\n                        Stop the bookshelf without stopping book editors\n    export              Repair exports without replacing outside edits\n    assemble-short      Assemble all committed short-story chapters into one\n                        book-title Markdown file\n    notes               Save cards or a chapter plan with optimistic\n                        concurrency\n    plan                Save cards or a chapter plan with optimistic\n                        concurrency\n    plan-read           Read a complete saved chapter plan for recovery\n                        without verifying adoption\n    plan-render         Render candidate planning Markdown or inspect its\n                        saved-plan source\n    outline-bind        Bind one reviewed, adopted readable outline to its\n                        saved chapter plan\n    context             Build a bounded chapter context packet\n    prepare             Read-only review scaffold bound to the current book,\n                        state and draft\n    reconcile           Inspect an outside edit of the latest native chapter,\n                        or apply its reviewed draft\n    recall              Bounded literal substring search of cards, summaries\n                        and chapter prose\n    chapter-read        Read a bounded excerpt of a current or immutable\n                        historical chapter\n    dependencies        Resolve candidate evidence hashes for a reviewed\n                        chapter dependency declaration\n    sources             Find saved source IDs and analysis checkpoints after a\n                        new session\n    lint                Check, commit, or import one last complete chapter\n    commit              Check, commit, or import one last complete chapter\n    adopt               Check, commit, or import one last complete chapter\n    adopt-backfill      Check, commit, or import one last complete chapter\n    ingest              Snapshot source text and split without losing bonus\n                        chapters\n    coverage            Incremental source analysis and evidence-backed\n                        checkpoints\n    next                Incremental source analysis and evidence-backed\n                        checkpoints\n    record              Incremental source analysis and evidence-backed\n                        checkpoints\n    findings            Incremental source analysis and evidence-backed\n                        checkpoints\n    source-read         Incremental source analysis and evidence-backed\n                        checkpoints\n    report              Incremental source analysis and evidence-backed\n                        checkpoints\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
+        "stderr": "",
+        "duration_seconds": 0.314,
+        "status": "passed"
+      },
+      "cli_smoke": {
+        "command": [
+          "<USER_HOME>/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "-c",
+          "import importlib.util,pathlib,sys; spec=importlib.util.spec_from_file_location('release_smoke',sys.argv[1]); module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module); module.TOOL=pathlib.Path(sys.argv[2]); sys.argv=[sys.argv[1],'--output',sys.argv[3]]; module.main()",
+          "<REPO_ROOT>/scripts/smoke.py",
+          "<REPO_ROOT>/.local-writing-samples/optimization-20261017-3wa4rcux/final/install-check/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+          "<REPO_ROOT>/.local-writing-samples/optimization-20261017-3wa4rcux/final/install-check/installed-smoke.json"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"ok\": true, \"method\": \"Synthetic fixture via real CLI subprocesses; no model or API calls\", \"commands_executed\": [\"init\", \"notes\", \"plan\", \"status\", \"outline-bind\", \"context\", \"lint\", \"commit\", \"commit\", \"reconcile\", \"lint\", \"reconcile\", \"reconcile\", \"ingest\", \"next\", \"record\", \"record\", \"next\", \"coverage\", \"findings\", \"report\", \"coverage\"], \"visible_chars\": 213, \"draft_sha256\": \"6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be\", \"reconciled_draft_sha256\": \"ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562\", \"context_bytes\": 1114, \"context_budget_bytes\": 4000, \"chapter_commit_idempotent\": true, \"export_bytes_verified\": true, \"reconcile_idempotent\": true, \"external_backup_verified\": true, \"non_content_chunks_completed\": 1, \"analysis_coverage\": {\"analyzed\": 3, \"chunks_total\": 3, \"complete_for_imported_text\": true, \"next_chunk\": null, \"pending\": 0, \"report_path\": \".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md\", \"source\": \"a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7\", \"source_coverage\": \"partial\", \"text_coverage_contiguous\": true}, \"finding_pages_returned\": 3, \"final_report_exported\": true, \"literary_quality_tested\": false}\n",
+        "stderr": "",
+        "duration_seconds": 4.673,
+        "status": "passed",
+        "evidence": {
+          "ok": true,
+          "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+          "commands_executed": [
+            "init",
+            "notes",
+            "plan",
+            "status",
+            "outline-bind",
+            "context",
+            "lint",
+            "commit",
+            "commit",
+            "reconcile",
+            "lint",
+            "reconcile",
+            "reconcile",
+            "ingest",
+            "next",
+            "record",
+            "record",
+            "next",
+            "coverage",
+            "findings",
+            "report",
+            "coverage"
+          ],
+          "visible_chars": 213,
+          "draft_sha256": "6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be",
+          "reconciled_draft_sha256": "ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562",
+          "context_bytes": 1114,
+          "context_budget_bytes": 4000,
+          "chapter_commit_idempotent": true,
+          "export_bytes_verified": true,
+          "reconcile_idempotent": true,
+          "external_backup_verified": true,
+          "non_content_chunks_completed": 1,
+          "analysis_coverage": {
+            "analyzed": 3,
+            "chunks_total": 3,
+            "complete_for_imported_text": true,
+            "next_chunk": null,
+            "pending": 0,
+            "report_path": ".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md",
+            "source": "a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7",
+            "source_coverage": "partial",
+            "text_coverage_contiguous": true
+          },
+          "finding_pages_returned": 3,
+          "final_report_exported": true,
+          "literary_quality_tested": false
+        }
+      }
+    },
+    "archive": {
+      "status": "passed",
+      "archive": "<REPO_ROOT>/.local-writing-samples/optimization-20261017-3wa4rcux/final/story-skill-0.6.17.zip",
+      "version": "0.6.17",
+      "sha256": "b4e63b8b27cee15d85b25a3ca633934bb4c9708f432e5d4bf81d08c7f424b6c2",
+      "bytes": 423059,
+      "files": 52,
+      "contents_match_current_skill": true,
+      "missing": [],
+      "extra": [],
+      "changed": [],
+      "duplicate_entries": [],
+      "corrupt_entry": null,
+      "non_regular_entries": []
+    }
+  },
+  "model_trials": {
+    "selected_runs": [
+      {
+        "case": "prose-causal-claim",
+        "arm": "candidate",
+        "process": {
+          "exit_code": 0,
+          "timed_out": false,
+          "case": "prose-causal-claim",
+          "arm": "candidate",
+          "duration_seconds": 118.217
+        },
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "execution_status": "needs_review",
+        "lengths": [
+          {
+            "path": "审稿报告.md",
+            "actual": 506,
+            "range": [
+              350,
+              550
+            ],
+            "passed": true
+          }
+        ],
+        "reported_main_usage": {
+          "input_tokens": 240255,
+          "cached_input_tokens": 213888,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 4457,
+          "reasoning_output_tokens": 1705,
+          "total_tokens": null
+        },
+        "child_coverage": {
+          "role_source": "caller_declared",
+          "status": "unknown",
+          "provided_distinct_files": 0,
+          "parent_relationship": "unverified",
+          "main_includes_child_usage": "unknown",
+          "full_task_total": null
+        },
+        "trace_sha256": "c8fb6c9f9e733e3fd15db2cefeb319e6caa1819617be6d69dc862e4d6227d5c8",
+        "task_sha256": "b2563c872c84ae0a72472767c756b9509b73e611a1be98e8e19a8756983ca255",
+        "artifact_sha256": {
+          "审稿报告.md": "22d4f2f9281771a1535c690bb667b2722dc206daa356af6619a0790e3f7019a7"
+        }
+      },
+      {
+        "case": "prose-detect-only",
+        "arm": "candidate",
+        "process": {
+          "exit_code": 0,
+          "timed_out": false,
+          "case": "prose-detect-only",
+          "arm": "candidate",
+          "duration_seconds": 125.303
+        },
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "execution_status": "needs_review",
+        "lengths": [
+          {
+            "path": "审稿报告.md",
+            "actual": 401,
+            "range": [
+              300,
+              450
+            ],
+            "passed": true
+          }
+        ],
+        "reported_main_usage": {
+          "input_tokens": 303649,
+          "cached_input_tokens": 263296,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 4414,
+          "reasoning_output_tokens": 1945,
+          "total_tokens": null
+        },
+        "child_coverage": {
+          "role_source": "caller_declared",
+          "status": "unknown",
+          "provided_distinct_files": 0,
+          "parent_relationship": "unverified",
+          "main_includes_child_usage": "unknown",
+          "full_task_total": null
+        },
+        "trace_sha256": "511f0bbbfca97bad6c035e1d3e4486622f000035937d31f2abf0431d9d989291",
+        "task_sha256": "1b9ef86bc492e0ec7f7d87ee8bd5f4fa30f67f72b6781754973da7950010a523",
+        "artifact_sha256": {
+          "审稿报告.md": "4aac5fb23292a2aaf5e7636e7d10dbd5034af96551a608aba6718487b13caf6d"
+        }
+      },
+      {
+        "case": "prose-quiet-scene",
+        "arm": "baseline",
+        "process": {
+          "exit_code": 0,
+          "timed_out": false,
+          "case": "prose-quiet-scene",
+          "arm": "baseline",
+          "duration_seconds": 129.547
+        },
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "execution_status": "needs_review",
+        "lengths": [
+          {
+            "path": "候选.md",
+            "actual": 355,
+            "range": [
+              350,
+              550
+            ],
+            "passed": true
+          },
+          {
+            "path": "改稿说明.md",
+            "actual": 218,
+            "range": [
+              150,
+              250
+            ],
+            "passed": true
+          }
+        ],
+        "reported_main_usage": {
+          "input_tokens": 352889,
+          "cached_input_tokens": 309888,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 4832,
+          "reasoning_output_tokens": 1916,
+          "total_tokens": null
+        },
+        "child_coverage": {
+          "role_source": "caller_declared",
+          "status": "unknown",
+          "provided_distinct_files": 0,
+          "parent_relationship": "unverified",
+          "main_includes_child_usage": "unknown",
+          "full_task_total": null
+        },
+        "trace_sha256": "9b6c8176eef5453f3deaa9d0a98e582bdeab2f27665200da065e6999fbfd3fa7",
+        "task_sha256": "fce60f75f2ab2c8db2c369bd9d0c6fa911b467a95b350cb118813bc1fdcb2fe3",
+        "artifact_sha256": {
+          "候选.md": "48d81232f78e8a94bf9dfa53efa1098f74b7fb57d462a4a22de5979dd73d0947",
+          "改稿说明.md": "1b870dc641695c979bab9242a5057b456fb9a869c081d0e73aae42a701c3e159"
+        }
+      },
+      {
+        "case": "prose-quiet-scene",
+        "arm": "candidate",
+        "process": {
+          "exit_code": 0,
+          "timed_out": false,
+          "case": "prose-quiet-scene",
+          "arm": "candidate",
+          "duration_seconds": 128.828
+        },
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "execution_status": "needs_review",
+        "lengths": [
+          {
+            "path": "候选.md",
+            "actual": 355,
+            "range": [
+              350,
+              550
+            ],
+            "passed": true
+          },
+          {
+            "path": "改稿说明.md",
+            "actual": 190,
+            "range": [
+              150,
+              250
+            ],
+            "passed": true
+          }
+        ],
+        "reported_main_usage": {
+          "input_tokens": 375515,
+          "cached_input_tokens": 339200,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 5035,
+          "reasoning_output_tokens": 2008,
+          "total_tokens": null
+        },
+        "child_coverage": {
+          "role_source": "caller_declared",
+          "status": "unknown",
+          "provided_distinct_files": 0,
+          "parent_relationship": "unverified",
+          "main_includes_child_usage": "unknown",
+          "full_task_total": null
+        },
+        "trace_sha256": "482f3f6a5379b8930a353708ad7cc3a8ccfd355481b7aedb988dc1aee0fba195",
+        "task_sha256": "6b0c861c9e953f57f5aba8186e90dfe17e3d7ffabafab6405491c0f1d0b6dabd",
+        "artifact_sha256": {
+          "候选.md": "48d81232f78e8a94bf9dfa53efa1098f74b7fb57d462a4a22de5979dd73d0947",
+          "改稿说明.md": "3ebfdf7e1862d97a96fad2ddde6914b2b9fd9fa0cc10316aeac9a73f06d6f4b8"
+        }
+      },
+      {
+        "case": "prose-swallowed-confrontation",
+        "arm": "candidate",
+        "process": {
+          "exit_code": 0,
+          "timed_out": false,
+          "case": "prose-swallowed-confrontation",
+          "arm": "candidate",
+          "duration_seconds": 248.335
+        },
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "execution_status": "needs_review",
+        "lengths": [
+          {
+            "path": "候选.md",
+            "actual": 802,
+            "range": [
+              650,
+              850
+            ],
+            "passed": true
+          },
+          {
+            "path": "改稿说明.md",
+            "actual": 243,
+            "range": [
+              180,
+              300
+            ],
+            "passed": true
+          }
+        ],
+        "reported_main_usage": {
+          "input_tokens": 490907,
+          "cached_input_tokens": 444544,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 8396,
+          "reasoning_output_tokens": 4126,
+          "total_tokens": null
+        },
+        "child_coverage": {
+          "role_source": "caller_declared",
+          "status": "unknown",
+          "provided_distinct_files": 0,
+          "parent_relationship": "unverified",
+          "main_includes_child_usage": "unknown",
+          "full_task_total": null
+        },
+        "trace_sha256": "45a0482266333d3c7bac882217350f626724338f1e7d220e651a666531184474",
+        "task_sha256": "939ca33fb25f9b9c2af559e5546e60e3c60c7cb321181dca0479854425785cec",
+        "artifact_sha256": {
+          "候选.md": "dae8032b9cc808d448d2b02ccb31185055098be9176f9d5446cac0a7dbe0b551",
+          "改稿说明.md": "93251b7703205772f63fded880166dfc213dbfcd18c95be81db0338126b276bc"
+        }
+      },
+      {
+        "case": "prose-telegraph",
+        "arm": "baseline",
+        "process": {
+          "exit_code": null,
+          "timed_out": true,
+          "case": "prose-telegraph",
+          "arm": "baseline",
+          "duration_seconds": 600.015
+        },
+        "mechanical_ok": false,
+        "trace_status": "incomplete",
+        "execution_status": "failed",
+        "lengths": [
+          {
+            "path": "候选.md",
+            "actual": null,
+            "range": [
+              450,
+              650
+            ],
+            "passed": false
+          },
+          {
+            "path": "改稿说明.md",
+            "actual": null,
+            "range": [
+              180,
+              300
+            ],
+            "passed": false
+          }
+        ],
+        "reported_main_usage": {
+          "input_tokens": null,
+          "cached_input_tokens": null,
+          "cache_write_input_tokens": null,
+          "output_tokens": null,
+          "reasoning_output_tokens": null,
+          "total_tokens": null
+        },
+        "child_coverage": {
+          "role_source": "caller_declared",
+          "status": "unknown",
+          "provided_distinct_files": 0,
+          "parent_relationship": "unverified",
+          "main_includes_child_usage": "unknown",
+          "full_task_total": null
+        },
+        "trace_sha256": "eeff0892e1e47b3c046714fa4a342f5220054931bee6b1e1c7fadd3495fb4cb2",
+        "task_sha256": "f207970190cd7c14fcfee25bb8ca3af5d099bff4d280b8fa854231da62febcb2",
+        "artifact_sha256": {}
+      },
+      {
+        "case": "prose-telegraph",
+        "arm": "candidate",
+        "process": {
+          "exit_code": 0,
+          "timed_out": false,
+          "case": "prose-telegraph",
+          "arm": "candidate",
+          "duration_seconds": 291.827
+        },
+        "mechanical_ok": true,
+        "trace_status": "complete",
+        "execution_status": "needs_review",
+        "lengths": [
+          {
+            "path": "候选.md",
+            "actual": 539,
+            "range": [
+              450,
+              650
+            ],
+            "passed": true
+          },
+          {
+            "path": "改稿说明.md",
+            "actual": 244,
+            "range": [
+              180,
+              300
+            ],
+            "passed": true
+          }
+        ],
+        "reported_main_usage": {
+          "input_tokens": 608852,
+          "cached_input_tokens": 557056,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 8773,
+          "reasoning_output_tokens": 4455,
+          "total_tokens": null
+        },
+        "child_coverage": {
+          "role_source": "caller_declared",
+          "status": "unknown",
+          "provided_distinct_files": 0,
+          "parent_relationship": "unverified",
+          "main_includes_child_usage": "unknown",
+          "full_task_total": null
+        },
+        "trace_sha256": "115579112210694690c1afc9259618bb2c6fdafa115ec9407f38232960e03ad2",
+        "task_sha256": "0b9c03cb318c88b1dac5566a2a9a4e2a0ae1e61dfb6b19986b5f585e6739b010",
+        "artifact_sha256": {
+          "候选.md": "6d5a80a2bb2075890ed479b2f7d973faa837f085472c65657a99d4dfbf10d863",
+          "改稿说明.md": "c38cb05a5abb9e30bb93625103b14cbe5128fc49ad0b401582484b5f4e9bd151"
+        }
+      }
+    ],
+    "frozen_checks": [
+      {
+        "case": "prose-causal-claim",
+        "frozen_inputs_intact": true,
+        "issues": [],
+        "actual_conditions_status": "unverified",
+        "task_execution": "unverified",
+        "quality_assessed": false,
+        "note": "Run execution_eval.check and execution_metrics on each real run, then perform source-cited content review. This check does not read or certify evidence slots."
+      },
+      {
+        "case": "prose-detect-only",
+        "frozen_inputs_intact": true,
+        "issues": [],
+        "actual_conditions_status": "unverified",
+        "task_execution": "unverified",
+        "quality_assessed": false,
+        "note": "Run execution_eval.check and execution_metrics on each real run, then perform source-cited content review. This check does not read or certify evidence slots."
+      },
+      {
+        "case": "prose-quiet-scene",
+        "frozen_inputs_intact": true,
+        "issues": [],
+        "actual_conditions_status": "unverified",
+        "task_execution": "unverified",
+        "quality_assessed": false,
+        "note": "Run execution_eval.check and execution_metrics on each real run, then perform source-cited content review. This check does not read or certify evidence slots."
+      },
+      {
+        "case": "prose-swallowed-confrontation",
+        "frozen_inputs_intact": true,
+        "issues": [],
+        "actual_conditions_status": "unverified",
+        "task_execution": "unverified",
+        "quality_assessed": false,
+        "note": "Run execution_eval.check and execution_metrics on each real run, then perform source-cited content review. This check does not read or certify evidence slots."
+      },
+      {
+        "case": "prose-telegraph",
+        "frozen_inputs_intact": true,
+        "issues": [],
+        "actual_conditions_status": "unverified",
+        "task_execution": "unverified",
+        "quality_assessed": false,
+        "note": "Run execution_eval.check and execution_metrics on each real run, then perform source-cited content review. This check does not read or certify evidence slots."
+      }
+    ],
+    "completed": 6,
+    "timed_out": 1,
+    "all_completed_lengths_passed": true,
+    "all_completed_mechanical_checks_passed": true
+  },
+  "independent_readings": [
+    {
+      "case": "prose-telegraph",
+      "reviewer_kind": "model",
+      "mode": "independent",
+      "path": ".local-writing-samples/optimization-20261017-3wa4rcux/telegraph-independent-reading.md",
+      "sha256": "5874135bb6353de62d886122209fa5501c4292f7d7170f68712adbcc1099264b"
+    },
+    {
+      "case": "prose-quiet-scene",
+      "reviewer_kind": "model",
+      "mode": "version_blind",
+      "path": ".local-writing-samples/optimization-20261017-3wa4rcux/quiet-blind-reading.md",
+      "sha256": "f7a28d09e804348315a01d7b9e27358720962fb3669bbf082656a8449d29cf85"
+    },
+    {
+      "case": "prose-causal-claim",
+      "reviewer_kind": "model",
+      "mode": "independent",
+      "path": ".local-writing-samples/optimization-20261017-3wa4rcux/causal-independent-reading.md",
+      "sha256": "9ca3e1a935ff030f2742a0a3ceddf0a4e620ddfa600f17d74423c8684f196901"
+    },
+    {
+      "case": "prose-detect-only",
+      "reviewer_kind": "model",
+      "mode": "independent",
+      "path": ".local-writing-samples/optimization-20261017-3wa4rcux/detect-independent-reading.md",
+      "sha256": "a5d826e5bc20bcd51d19a9b492436ae65f0ac8fc715f54a607c0d6cec0b8419b"
+    },
+    {
+      "case": "prose-swallowed-confrontation",
+      "reviewer_kind": "model",
+      "mode": "independent",
+      "path": ".local-writing-samples/optimization-20261017-3wa4rcux/confrontation-independent-reading.md",
+      "sha256": "246f7a0256e6fc4c074bb7f1ead7f3b759f1f44732f086ef23286c45c3c8e06a"
+    }
+  ],
+  "independent_tool_review": {
+    "path": ".local-writing-samples/optimization-20261017-3wa4rcux/independent-tool-review.md",
+    "sha256": "c8aadec8ae66632290c3e02d8f9c4819fe3e139365d64bf9addf177a9e43daad"
+  },
+  "independent_tool_fix_review": {
+    "path": ".local-writing-samples/optimization-20261017-3wa4rcux/independent-tool-fix-review.md",
+    "sha256": "1e62c19ca1bc44592ee1809db6043103d0a4366e85737c9251286c6141b8fd9a"
+  },
+  "independent_tool_fix_verification": {
+    "schema": 1,
+    "reviewed_files_sha256": {
+      "benchmarks/skill-execution/prose_trials.py": "b7e65be2e4e93ded2c46cdafb65c6d3676a4b07e640de6fcfec077fe077952ff",
+      "tests/test_prose_trials.py": "383b6a3c7da046cf9ccad3ae466993dec557d539fba8a9ccfc394806de8a76a2",
+      "benchmarks/instruction-loads.json": "e6a36be549a9acac8d34565ae6b138522e7bbcb0e46603ce77e796752d61b5f9",
+      "tests/test_instruction_budget.py": "73e237c09f2010ab27af30dbd991add19f30a50828e695085e64940809885842"
+    },
+    "regression_tests": {
+      "test_prose_trials.py": {
+        "ran": 16,
+        "passed": 16
+      },
+      "test_instruction_budget.py": {
+        "ran": 28,
+        "passed": 28
+      }
+    },
+    "same_content_symlink_reproductions": [
+      {
+        "path": "baseline/sample-1/workspace",
+        "function_result": "ValueError: Symbolic links are not supported",
+        "cli_exit_code": 2,
+        "cli_quality_assessed": false
+      },
+      {
+        "path": "candidate/skills",
+        "function_result": "ValueError: Symbolic links are not supported",
+        "cli_exit_code": 2,
+        "cli_quality_assessed": false
+      },
+      {
+        "path": "baseline",
+        "function_result": "ValueError: Symbolic links are not supported",
+        "cli_exit_code": 2,
+        "cli_quality_assessed": false
+      },
+      {
+        "path": "candidate/sample-1",
+        "function_result": "ValueError: Symbolic links are not supported",
+        "cli_exit_code": 2,
+        "cli_quality_assessed": false
+      },
+      {
+        "path": "candidate/sample-1/task.txt",
+        "function_result": "ValueError: Symbolic links are not supported",
+        "cli_exit_code": 2,
+        "cli_quality_assessed": false
+      },
+      {
+        "path": "baseline/sample-1/baseline.json",
+        "function_result": "ValueError: Symbolic links are not supported",
+        "cli_exit_code": 2,
+        "cli_quality_assessed": false
+      }
+    ],
+    "budget_cli": {
+      "exit_code": 0,
+      "variants": 102,
+      "passed": true,
+      "manifest_sha256": "e6a36be549a9acac8d34565ae6b138522e7bbcb0e46603ce77e796752d61b5f9",
+      "independent_reviewer_long_chapter": {
+        "nonspace_chars": 26099,
+        "utf8_bytes": 71674
+      },
+      "independent_reviewer_commercial_long_chapter": {
+        "nonspace_chars": 30368,
+        "utf8_bytes": 84362
+      },
+      "independent_reviewer_union": {
+        "nonspace_chars": 38339,
+        "utf8_bytes": 107717
+      },
+      "independent_reviewer_union_limits": {
+        "nonspace_chars": 45000,
+        "utf8_bytes": 124000
+      }
+    },
+    "conclusion": "Both reported defects are fixed within the verified scope.",
+    "actual_model_execution": false,
+    "literary_quality_assessed": false
+  },
+  "source_files": {
+    "scripts/instruction_budget.py": "fef0e6453ace5a286e39956d2e98d148e84db92b79bba9c43960a1eddf8bba08",
+    "benchmarks/instruction-loads.json": "e6a36be549a9acac8d34565ae6b138522e7bbcb0e46603ce77e796752d61b5f9",
+    "tests/test_instruction_budget.py": "73e237c09f2010ab27af30dbd991add19f30a50828e695085e64940809885842",
+    "benchmarks/skill-execution/prose_trials.py": "b7e65be2e4e93ded2c46cdafb65c6d3676a4b07e640de6fcfec077fe077952ff",
+    "tests/test_prose_trials.py": "383b6a3c7da046cf9ccad3ae466993dec557d539fba8a9ccfc394806de8a76a2",
+    ".github/workflows/ci.yml": "082289c1c10f050bbdf86932401bdd17d242b281b71af4a1d20b99be14b304f0",
+    "scripts/verify.py": "63e1e8bdf59a527686249e4958d7bdc9d7c00d120023fddff57d70e97135fcfa",
+    "skills/story-skill/SKILL.md": "c5bc1891e6412ede63a01b4bc921a2521dfe26dac89a2e998d2a15ca7d1c4a0d",
+    "skills/story-skill-write/SKILL.md": "630406739563d6313470f93ba42b9ee8b42c59039d9f4f36be67a97800a7cd67",
+    "skills/story-skill-write/references/chapter.md": "c4bb4e5488f8f8066271e2463b10c176041a954aae9d80a5cda076980fa5f77b",
+    "skills/story-skill-write/references/drama.md": "1aaa0ea4b0b722ab75d9fe153f53d9d84ab76a343d82621d72195e2798827046",
+    "skills/story-skill-write/references/content-review.md": "e9057c1f947db87a23d243dec4068f5ad0824a2206cb2dcf72d4300e26eeb7ec",
+    "skills/story-skill-review/SKILL.md": "30baae4cbc1af813826944ebe3bd5ad97094c248fb57c6cb4ac5d6d6a6fc11a2",
+    "skills/story-skill-review/references/history.md": "6be47ce5d88c40205503fc477cee2c3370bd1934e71b7d1129bf0d30cd3eea0c",
+    "benchmarks/skill-execution/prose-cases/conditions.template.json": "97eb8d64624552f490bd0568b25c5ad760b18a8763b0f5aa6ecc5a9e45a6d92a",
+    "benchmarks/skill-execution/prose-cases/feedback-record.template.json": "0e9cbcb8fd47f28471789c8823a31a0aa028c6bde228d661263d7aed13829bc6",
+    "benchmarks/skill-execution/prose-cases/prose-quiet-scene.json": "e0dfea1c9c31590b252d53da264b64560b03d1a432ef1460326f66613845d9e2",
+    "benchmarks/skill-execution/prose-cases/prose-telegraph.json": "1d3d83e2eecff00089aeb46309d80972862a49bd2c2b8e3ceab4e0f5b1187e7d",
+    "benchmarks/skill-execution/prose-cases/prose-detect-only.json": "846369f8618e654c719c08b12bd0d5060567c2168aa01f86285b2327342380cf",
+    "benchmarks/skill-execution/prose-cases/prose-swallowed-confrontation.json": "59c4f9b3185280194d852d5c6c7ffe143a91a202ac00f08c262169483e6c03ba",
+    "benchmarks/skill-execution/prose-cases/prose-causal-claim.json": "a280e2468239f1b5658aa41d999fe8b54ef5b59e665e8a5f615c8a36c1cf7626"
+  },
+  "final_source_files_stable": true,
+  "trial_snapshot_difference": {
+    "path": "skills/story-skill-write/references/chapter.md",
+    "difference": "Trailing blank line removed after freezing; same rstrip text and read-rule sections; hashes intentionally distinct."
+  },
+  "semantic_disagreements": [
+    {
+      "case": "prose-detect-only",
+      "issue": "The generated report calls relief/warmth an unauthorized reconciliation; independent model reviewer considers this stronger than the text establishes.",
+      "status": "retained_disagreement",
+      "original_author_feedback": null,
+      "scope": "Synthetic development case and model opinions; not human feedback, not a new holdout result."
+    }
+  ],
+  "not_verified": [
+    "Literary quality improvement, naturalness stability, originality or reader approval",
+    "Actual billed cost or a complete task/main-plus-child token total",
+    "Historical independence claims lacking verifiable dispatch/recipient/version evidence",
+    "Desktop skill discovery, GUI imports and remote cross-platform CI",
+    "One timed-out baseline; no winner inferred from that incomplete pair",
+    "Real author rejection records or human reading trials"
+  ],
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 351,
+    "links_checked": 2162,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "assessment_sha256": "ce09b7494ba90230e5aebff0e9a389f430ee1e7673cfc13d9d60a09d47dbd834",
+  "privacy_normalization": "Only local absolute path prefixes were normalized: <REPO_ROOT> represents the source repository and <USER_HOME> represents the local user home. Original SHA-256 evidence hashes, numeric values, statuses, failures, outputs and limitations are preserved; unnormalized originals remain in ignored local release evidence."
+}

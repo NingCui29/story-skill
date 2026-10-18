@@ -388,10 +388,12 @@ class PackageSyncTests(unittest.TestCase):
     def smoke_archive(self, version="0.6.5", names=None, changed=None):
         archive = self.root / "suite.tgz"
         root = SCRIPTS.parent / "skills"
+        current_version = sync.package_npm.version_from_source(
+            (root / "story-skill/scripts/story.py").read_bytes())
         with tarfile.open(archive, "w:gz") as bundle:
             for name in (sync.package_npm.payload_files(version) if names is None else names):
                 raw = (root / name).read_bytes()
-                if version != "0.6.15" and name.endswith("/SKILL.md"):
+                if version != current_version and name.endswith("/SKILL.md"):
                     # Historical fixtures cannot contain links added to current source rules.
                     raw = b"# Historical layout fixture\n[shared runtime](../story-skill/scripts/story.py)\n"
                 if name == "story-skill/scripts/story.py":
@@ -406,6 +408,12 @@ class PackageSyncTests(unittest.TestCase):
     def verified_wrapper_fixture(self, version, custom_license):
         payload = {name: (SCRIPTS.parent / "skills" / name).read_bytes()
                    for name in sync.package_npm.payload_files(version)}
+        current_version = sync.package_npm.version_from_source(payload["story-skill/scripts/story.py"])
+        if version != current_version:
+            # Keep historical manifests independent of newly linked source references.
+            for name in payload:
+                if name.endswith("/SKILL.md"):
+                    payload[name] = b"# Historical layout fixture\n[shared runtime](../story-skill/scripts/story.py)\n"
         payload["story-skill/scripts/story.py"] = f'VERSION = "{version}"\n'.encode()
         if not custom_license:
             license_bytes = (SCRIPTS.parent / "tests/fixtures/LICENSE").read_bytes()
@@ -432,8 +440,9 @@ class PackageSyncTests(unittest.TestCase):
                 member.size = len(raw)
                 bundle.addfile(member, io.BytesIO(raw))
 
-    def test_runtime_smoke_accepts_verified_custom_54_and_historical_mit_53_members(self):
-        for version, custom_license, count in (("0.6.16", True, 54), ("0.6.15", False, 53)):
+    def test_runtime_smoke_accepts_verified_custom_and_historical_mit_members(self):
+        for version, custom_license, count in (("0.6.17", True, 55),
+                                               ("0.6.16", True, 54), ("0.6.15", False, 53)):
             with self.subTest(version=version):
                 _, _, tarball, built, files = self.verified_wrapper_fixture(version, custom_license)
                 self.assertEqual(len(files), count)
@@ -452,7 +461,7 @@ class PackageSyncTests(unittest.TestCase):
 
                 with patch.object(sync.subprocess, "run", side_effect=execute):
                     result = sync.runtime_smoke(tarball, version)
-                self.assertEqual(result["skill_files"], 51)
+                self.assertEqual(result["skill_files"], len(sync.package_npm.payload_files(version)))
                 self.assertEqual(result["commands"], 4)
                 self.assertFalse(results)
                 self.assertTrue(result["temporary_book_removed"])
@@ -555,11 +564,13 @@ class PackageSyncTests(unittest.TestCase):
         self.assertEqual(result["skill_files"], 49)
         self.assertEqual(set(result["skills"]), set(sync.package_npm.SKILL_NAMES_V0611))
 
-    def test_runtime_smoke_v0612_through_current_v0615_preserve_versioned_file_layouts(self):
+    def test_runtime_smoke_v0612_through_current_v0617_preserve_versioned_file_layouts(self):
         for version, count, skills in (("0.6.12", 49, sync.package_npm.SKILL_NAMES_V0612),
                                        ("0.6.13", 50, sync.package_npm.SKILL_NAMES_V0613),
                                        ("0.6.14", 51, sync.package_npm.SKILL_NAMES_V0614),
-                                       ("0.6.15", 51, sync.package_npm.SKILL_NAMES_V0615)):
+                                       ("0.6.15", 51, sync.package_npm.SKILL_NAMES_V0615),
+                                       ("0.6.16", 51, sync.package_npm.SKILL_NAMES_V0616),
+                                       ("0.6.17", 52, sync.package_npm.SKILL_NAMES_V0617)):
             with self.subTest(version=version):
                 archive = self.smoke_archive(version)
                 results = [SimpleNamespace(returncode=0, stdout=version + "\n"),
@@ -575,9 +586,11 @@ class PackageSyncTests(unittest.TestCase):
                     self.assertTrue((suite / "story-skill/scripts/story_punctuation.py").is_file())
                     self.assertTrue((suite / "story-skill-write/references/punctuation.md").is_file())
                     self.assertEqual((suite / "story-skill-plan/references/outline.md").is_file(),
-                                     version in ("0.6.13", "0.6.14", "0.6.15"))
+                                     version in ("0.6.13", "0.6.14", "0.6.15", "0.6.16", "0.6.17"))
                     self.assertEqual((suite / "story-skill/references/workbench.md").is_file(),
-                                     version in ("0.6.14", "0.6.15"))
+                                     version in ("0.6.14", "0.6.15", "0.6.16", "0.6.17"))
+                    self.assertEqual((suite / "story-skill-plan/references/qidian-categories.md").is_file(),
+                                     version == "0.6.17")
                     return results.pop(0)
 
                 with patch.object(sync.subprocess, "run", side_effect=execute):

@@ -18,7 +18,7 @@ spec.loader.exec_module(desktop)
 
 
 def fixture_suite(source):
-    for relative in desktop.suite.SUITE_FILES:
+    for relative in desktop.suite.SUITE_FILES_V0614:
         path = source / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(("fixture: " + relative + "\n").encode("utf-8"))

@@ -1,0 +1,1665 @@
+{
+  "schema": 1,
+  "generated_at_utc": "2026-10-17T07:41:48.861439+00:00",
+  "scope": "Unreleased local development; four priorities relative to a preserved pre-turn dirty-worktree snapshot.",
+  "git_head": "cf036629efdbf741ab053540d5b4245125ecc673",
+  "git_branch": "main",
+  "runtime_version": "0.6.17",
+  "payload_change_from_turn_baseline": {
+    "files": 52,
+    "changed": [
+      "story-skill-review/SKILL.md",
+      "story-skill-plan/SKILL.md",
+      "story-skill-write/SKILL.md",
+      "story-skill/scripts/story.py",
+      "story-skill-write/references/drama.md",
+      "story-skill-write/references/chapter.md",
+      "story-skill-write/references/content-review.md"
+    ],
+    "unchanged_files": 45
+  },
+  "upstream_reference": {
+    "version": "0.8.6",
+    "commit": "86a8000cc89048e441b906b3389f1f847aeb20cd",
+    "url": "https://github.com/zenstory-ai/oh-story-claudecode/tree/86a8000cc89048e441b906b3389f1f847aeb20cd",
+    "execution": "not_run; native trials compare local before/after only"
+  },
+  "implementation_checks_passed": true,
+  "unit_tests": {
+    "ok": true,
+    "status": "passed",
+    "run": 1727,
+    "passed": 1710,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 17,
+    "expected_failures": 0,
+    "unexpected_successes": 0,
+    "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests"
+  },
+  "skill_format_checks": [
+    {
+      "skill": "story-skill",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-analyze",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-cover",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-plan",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-publish",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-research",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-review",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-write",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    }
+  ],
+  "instruction_budget": {
+    "passed": true,
+    "manifest_sha256": "8161c380b52d8bb45be130ee1d796e7b3213053dfc40c956ab1ce28bd1fb5ee8",
+    "measured": "Explicit cold rule loads only; not tokens, dynamic story context or actual usage",
+    "loads_checked": 212,
+    "calls": [
+      {
+        "scenario": "long_chapter",
+        "call": "writer",
+        "base": {
+          "nonspace_chars": 38449,
+          "utf8_bytes": 105608
+        },
+        "base_limits": {
+          "nonspace_chars": 44000,
+          "utf8_bytes": 121000
+        },
+        "maximum": {
+          "nonspace_chars": 69657,
+          "utf8_bytes": 190862
+        },
+        "maximum_limits": {
+          "nonspace_chars": 76000,
+          "utf8_bytes": 208000
+        },
+        "passed": true,
+        "failed_variants": []
+      },
+      {
+        "scenario": "short_write",
+        "call": "writer",
+        "base": {
+          "nonspace_chars": 53558,
+          "utf8_bytes": 147194
+        },
+        "base_limits": {
+          "nonspace_chars": 66000,
+          "utf8_bytes": 181000
+        },
+        "maximum": {
+          "nonspace_chars": 76387,
+          "utf8_bytes": 213515
+        },
+        "maximum_limits": {
+          "nonspace_chars": 88000,
+          "utf8_bytes": 245000
+        },
+        "passed": true,
+        "failed_variants": []
+      },
+      {
+        "scenario": "short_write",
+        "call": "cover_designer",
+        "base": {
+          "nonspace_chars": 5561,
+          "utf8_bytes": 15971
+        },
+        "base_limits": {
+          "nonspace_chars": 7000,
+          "utf8_bytes": 19000
+        },
+        "maximum": {
+          "nonspace_chars": 5561,
+          "utf8_bytes": 15971
+        },
+        "maximum_limits": {
+          "nonspace_chars": 7000,
+          "utf8_bytes": 19000
+        },
+        "passed": true,
+        "failed_variants": []
+      },
+      {
+        "scenario": "short_write_novel_entry",
+        "call": "writer",
+        "base": {
+          "nonspace_chars": 56139,
+          "utf8_bytes": 154782
+        },
+        "base_limits": {
+          "nonspace_chars": 66000,
+          "utf8_bytes": 181000
+        },
+        "maximum": {
+          "nonspace_chars": 78968,
+          "utf8_bytes": 221103
+        },
+        "maximum_limits": {
+          "nonspace_chars": 88000,
+          "utf8_bytes": 245000
+        },
+        "passed": true,
+        "failed_variants": []
+      },
+      {
+        "scenario": "short_write_unknown_entry",
+        "call": "writer",
+        "base": {
+          "nonspace_chars": 57561,
+          "utf8_bytes": 158920
+        },
+        "base_limits": {
+          "nonspace_chars": 66000,
+          "utf8_bytes": 181000
+        },
+        "maximum": {
+          "nonspace_chars": 80390,
+          "utf8_bytes": 225241
+        },
+        "maximum_limits": {
+          "nonspace_chars": 88000,
+          "utf8_bytes": 245000
+        },
+        "passed": true,
+        "failed_variants": []
+      },
+      {
+        "scenario": "content_review",
+        "call": "reviewer",
+        "base": {
+          "nonspace_chars": 20372,
+          "utf8_bytes": 55495
+        },
+        "base_limits": {
+          "nonspace_chars": 23000,
+          "utf8_bytes": 61000
+        },
+        "maximum": {
+          "nonspace_chars": 65146,
+          "utf8_bytes": 179228
+        },
+        "maximum_limits": {
+          "nonspace_chars": 72000,
+          "utf8_bytes": 195000
+        },
+        "passed": true,
+        "failed_variants": []
+      },
+      {
+        "scenario": "content_rewrite",
+        "call": "rewriter",
+        "base": {
+          "nonspace_chars": 23811,
+          "utf8_bytes": 65131
+        },
+        "base_limits": {
+          "nonspace_chars": 27000,
+          "utf8_bytes": 72000
+        },
+        "maximum": {
+          "nonspace_chars": 68585,
+          "utf8_bytes": 188864
+        },
+        "maximum_limits": {
+          "nonspace_chars": 76000,
+          "utf8_bytes": 206000
+        },
+        "passed": true,
+        "failed_variants": []
+      },
+      {
+        "scenario": "content_rewrite",
+        "call": "independent_reviewer",
+        "base": {
+          "nonspace_chars": 20372,
+          "utf8_bytes": 55495
+        },
+        "base_limits": {
+          "nonspace_chars": 23000,
+          "utf8_bytes": 61000
+        },
+        "maximum": {
+          "nonspace_chars": 41682,
+          "utf8_bytes": 117462
+        },
+        "maximum_limits": {
+          "nonspace_chars": 45000,
+          "utf8_bytes": 124000
+        },
+        "passed": true,
+        "failed_variants": []
+      },
+      {
+        "scenario": "targeted_punctuation",
+        "call": "copyeditor",
+        "base": {
+          "nonspace_chars": 14256,
+          "utf8_bytes": 37382
+        },
+        "base_limits": {
+          "nonspace_chars": 17000,
+          "utf8_bytes": 43000
+        },
+        "maximum": {
+          "nonspace_chars": 14256,
+          "utf8_bytes": 37382
+        },
+        "maximum_limits": {
+          "nonspace_chars": 17000,
+          "utf8_bytes": 43000
+        },
+        "passed": true,
+        "failed_variants": []
+      },
+      {
+        "scenario": "draft_fragment",
+        "call": "writer",
+        "base": {
+          "nonspace_chars": 24496,
+          "utf8_bytes": 68484
+        },
+        "base_limits": {
+          "nonspace_chars": 28000,
+          "utf8_bytes": 79000
+        },
+        "maximum": {
+          "nonspace_chars": 44349,
+          "utf8_bytes": 126269
+        },
+        "maximum_limits": {
+          "nonspace_chars": 47000,
+          "utf8_bytes": 134000
+        },
+        "passed": true,
+        "failed_variants": []
+      }
+    ],
+    "reports": [
+      "<REPO_ROOT>/.local-writing-samples/four-priorities-20261017-qi2r13rg/final-budget/instruction-loads.json",
+      "<REPO_ROOT>/.local-writing-samples/four-priorities-20261017-qi2r13rg/final-budget/instruction-loads.md"
+    ],
+    "existing_thresholds_unchanged": true
+  },
+  "preserved_invariants": {
+    "story-skill/scripts/story_history.py": {
+      "identical": true,
+      "sha256": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd"
+    },
+    "story-skill-analyze/references/deep-reading.md": {
+      "identical": true,
+      "sha256": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf"
+    },
+    "story-skill/scripts/story_world.py": {
+      "identical": true,
+      "sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+    },
+    "story-skill/scripts/story_storage.py": {
+      "identical": true,
+      "sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+    },
+    "Book.commit": {
+      "ast_unchanged": true
+    },
+    "Book.prepare": {
+      "ast_unchanged": true
+    },
+    "Book.lint": {
+      "ast_unchanged": true
+    },
+    "budget": {
+      "passed": true,
+      "variants": 212
+    }
+  },
+  "writing_brief": {
+    "cli_status": "passed",
+    "complete_minimum_bytes_in_fixture": 3742,
+    "source_hashes_match": true,
+    "semantic_review": "pending",
+    "book_bytes_unchanged": true,
+    "installed_status": "passed",
+    "installed_matches_source": true,
+    "installed_book_bytes_unchanged": true,
+    "independent_usage": {
+      "completed": true,
+      "status_calls": 1,
+      "writing_brief_calls": 1,
+      "book_files_unchanged": 5,
+      "scope": "Read-only prewriting handoff; no prose quality claim"
+    }
+  },
+  "independent_runtime_review": {
+    "reproduced_findings_fixed": 3,
+    "unresolved_required_findings": 0,
+    "final_probes": {
+      "status": "passed",
+      "source_hashes": {
+        "skills/story-skill/scripts/story.py": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+        "tests/test_writing_brief.py": "346600b051037fe604c882d73511b843910934f80cca4c1bd769767436b0ea08"
+      },
+      "exact_minimum_budget": [
+        {
+          "budget": 256,
+          "status": "budget_exceeded",
+          "minimum_bytes": 3069,
+          "budget_bytes": 256
+        },
+        {
+          "budget": 3069,
+          "status": "success",
+          "used": 3069
+        }
+      ],
+      "windows_read_pin": {
+        "status": "passed_no_guard",
+        "all_parent_pins_strict": true,
+        "pins": 9,
+        "native_windows": false
+      },
+      "parent_path_alias_race": {
+        "source_sha256": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+        "status": "brief_source_changed",
+        "details": {
+          "role": "request",
+          "path": "输入/请求.txt"
+        },
+        "fired": true
+      },
+      "wal_snapshot": {
+        "callback_reached": true,
+        "updates": 1,
+        "during_equals_before": true,
+        "before_revision": 3,
+        "during_revision": 3,
+        "after_revision": 4,
+        "before_card": "沈禾还持有钥匙。",
+        "during_card": "沈禾还持有钥匙。",
+        "after_card": "沈禾已经交出了钥匙。",
+        "in_transaction_after_reads": false,
+        "source_sha256": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50"
+      }
+    },
+    "new_writing_brief_tests": 19,
+    "reviewer_targeted_tests_passed": 23,
+    "windows_scope": "Simulated branch; native Windows unverified"
+  },
+  "independent_route_review": {
+    "reproduced_findings_fixed": 1,
+    "unresolved_required_findings": 0,
+    "new_scoped_anchors_valid_unique": 13,
+    "fix": "Registered optional brief in all three short-writing scenario budgets"
+  },
+  "packaging": {
+    "source": {
+      "archive": "<REPO_ROOT>/.local-writing-samples/four-priorities-20261017-qi2r13rg/final/source/story-skill-0.6.17.zip",
+      "version": "0.6.17",
+      "files": 52,
+      "sha256": "712491fa45963c3f4ecaef475e71b5ed65df70d52aa65ec80a2aa98712765363",
+      "bytes": 430247
+    },
+    "claude_desktop": {
+      "archive": "<REPO_ROOT>/.local-writing-samples/four-priorities-20261017-qi2r13rg/final/claude/story-skill-claude-desktop-0.6.17-r2.zip",
+      "version": "0.6.17",
+      "files": 54,
+      "source_files": 52,
+      "skill_name": "story-skill",
+      "bundle_revision": 2,
+      "skill_entry_count": 1,
+      "entry_path_mapping": {
+        "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+        "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+        "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+        "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+        "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+        "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+        "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+        "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+      },
+      "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+      "sha256": "5f51b83e726eab1bc0c3dbf25a512e9191c4c5af9eed5639bb85a80e06ef2bc3",
+      "bytes": 435927
+    },
+    "archive_check": {
+      "status": "passed",
+      "archive": "<REPO_ROOT>/.local-writing-samples/four-priorities-20261017-qi2r13rg/final/source/story-skill-0.6.17.zip",
+      "version": "0.6.17",
+      "sha256": "712491fa45963c3f4ecaef475e71b5ed65df70d52aa65ec80a2aa98712765363",
+      "bytes": 430247,
+      "files": 52,
+      "contents_match_current_skill": true,
+      "missing": [],
+      "extra": [],
+      "changed": [],
+      "duplicate_entries": [],
+      "corrupt_entry": null,
+      "non_regular_entries": []
+    }
+  },
+  "isolated_install": {
+    "status": "passed",
+    "files": 52,
+    "skills": 8,
+    "installed_files_match": true,
+    "user_level_installation": "not_changed"
+  },
+  "functional_acceptance": {
+    "chinese": {
+      "ok": true,
+      "method": "Generated minimal Chinese transaction fixtures through real CLI; not novels or literary quality evidence"
+    },
+    "long": {
+      "ok": true,
+      "scope": "Eleven original short Chinese scenes operated through real CLI calls, with north-line return ten chapter numbers later. These are short functional fixtures, not eleven full-length literary chapters. Nonempty adopt refusal is recorded; no SQL bypass, reused test fixtures, complete-long-novel or total-token-bill claim.",
+      "runtime_stable": true
+    }
+  },
+  "native_trials": {
+    "cases": [
+      {
+        "case": "prose-cooperative-payoff-drift",
+        "status": "needs_content_review",
+        "frozen_inputs_intact": true,
+        "frozen_candidate_matches_current": true,
+        "frozen_payload_files": 52,
+        "samples": [
+          {
+            "sample": "baseline/1",
+            "status": "needs_content_review",
+            "issues": [],
+            "process": {
+              "status": "recorded_success",
+              "receipt": {
+                "exit_code": 0,
+                "timed_out": false,
+                "case": "prose-cooperative-payoff-drift",
+                "arm": "baseline",
+                "duration_seconds": 249.532
+              }
+            },
+            "mechanical_ok": true,
+            "output_length": {
+              "候选.md": {
+                "min": 600,
+                "max": 800,
+                "count_method": "visible_nonspace_v2",
+                "actual": 709,
+                "status": "within_range"
+              },
+              "改稿说明.md": {
+                "min": 160,
+                "max": 260,
+                "count_method": "visible_nonspace_v2",
+                "actual": 213,
+                "status": "within_range"
+              }
+            },
+            "launch_conditions": {
+              "status": "partially_observed",
+              "binding_status": "matches_recorded_launch",
+              "issues": [],
+              "declared": {
+                "model": "gpt-6.1-sol",
+                "settings": {
+                  "model_revision": null,
+                  "reasoning_effort": "ultra",
+                  "host_version": "codex-cli 0.163.0-alpha.10.2",
+                  "seed": null
+                },
+                "repetitions": 1
+              },
+              "fields": {
+                "model_revision": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "reasoning_effort": {
+                  "declared": "ultra",
+                  "recorded_launch": "ultra",
+                  "status": "matches_launch"
+                },
+                "host_version": {
+                  "declared": "codex-cli 0.163.0-alpha.10.2",
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "seed": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "model": {
+                  "declared": "gpt-6.1-sol",
+                  "recorded_launch": "gpt-6.1-sol",
+                  "status": "matches_launch"
+                }
+              },
+              "actual_model_and_settings": "unverified",
+              "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+              "recorded_argv": [
+                "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+                "exec",
+                "--cd",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/baseline/sample-1/workspace",
+                "--sandbox",
+                "workspace-write",
+                "--skip-git-repo-check",
+                "--ephemeral",
+                "--json",
+                "--ignore-user-config",
+                "--ignore-rules",
+                "--model",
+                "gpt-6.1-sol",
+                "-c",
+                "model_reasoning_effort=\"ultra\"",
+                "-c",
+                "approval_policy=\"never\"",
+                "--output-last-message",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/baseline/sample-1/final.txt",
+                "-"
+              ],
+              "unverified_overrides": [],
+              "required_options_observed": true
+            },
+            "evidence": {
+              "launch": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/baseline/sample-1/launch.json",
+                "sha256": "592aeaeec17bb1fe462d380e0cb4200c5584ba7f4b39b9f97f321c126ca95bc1",
+                "bytes": 1375
+              },
+              "process": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/baseline/sample-1/process-result.json",
+                "sha256": "dd0a95a1e452b747a4ab548db7910bef712018735aa0f321c4c05d470c125de5",
+                "bytes": 139
+              },
+              "trace": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/baseline/sample-1/trace.jsonl",
+                "sha256": "9710c51606e73acbdb504059d7c6fa879284d49dcd8a94d3bd452a208952158b",
+                "bytes": 154683
+              },
+              "stderr": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/baseline/sample-1/stderr.log",
+                "sha256": "24ddbfc41be547383809efa4cdb8d0012c917660ba8693fa14e96aecc7a7f04f",
+                "bytes": 6934
+              },
+              "final_message": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/baseline/sample-1/final.txt",
+                "sha256": "e789121f884ea4cbc7caea65f1fcd005d016e53e14381b0ca38b7821d4ffeb22",
+                "bytes": 556
+              }
+            },
+            "all_task_usage": null,
+            "cost": null,
+            "automatic_quality_assessed": false
+          },
+          {
+            "sample": "candidate/1",
+            "status": "needs_content_review",
+            "issues": [],
+            "process": {
+              "status": "recorded_success",
+              "receipt": {
+                "exit_code": 0,
+                "timed_out": false,
+                "case": "prose-cooperative-payoff-drift",
+                "arm": "candidate",
+                "duration_seconds": 307.577
+              }
+            },
+            "mechanical_ok": true,
+            "output_length": {
+              "候选.md": {
+                "min": 600,
+                "max": 800,
+                "count_method": "visible_nonspace_v2",
+                "actual": 705,
+                "status": "within_range"
+              },
+              "改稿说明.md": {
+                "min": 160,
+                "max": 260,
+                "count_method": "visible_nonspace_v2",
+                "actual": 211,
+                "status": "within_range"
+              }
+            },
+            "launch_conditions": {
+              "status": "partially_observed",
+              "binding_status": "matches_recorded_launch",
+              "issues": [],
+              "declared": {
+                "model": "gpt-6.1-sol",
+                "settings": {
+                  "model_revision": null,
+                  "reasoning_effort": "ultra",
+                  "host_version": "codex-cli 0.163.0-alpha.10.2",
+                  "seed": null
+                },
+                "repetitions": 1
+              },
+              "fields": {
+                "model_revision": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "reasoning_effort": {
+                  "declared": "ultra",
+                  "recorded_launch": "ultra",
+                  "status": "matches_launch"
+                },
+                "host_version": {
+                  "declared": "codex-cli 0.163.0-alpha.10.2",
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "seed": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "model": {
+                  "declared": "gpt-6.1-sol",
+                  "recorded_launch": "gpt-6.1-sol",
+                  "status": "matches_launch"
+                }
+              },
+              "actual_model_and_settings": "unverified",
+              "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+              "recorded_argv": [
+                "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+                "exec",
+                "--cd",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/candidate/sample-1/workspace",
+                "--sandbox",
+                "workspace-write",
+                "--skip-git-repo-check",
+                "--ephemeral",
+                "--json",
+                "--ignore-user-config",
+                "--ignore-rules",
+                "--model",
+                "gpt-6.1-sol",
+                "-c",
+                "model_reasoning_effort=\"ultra\"",
+                "-c",
+                "approval_policy=\"never\"",
+                "--output-last-message",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/candidate/sample-1/final.txt",
+                "-"
+              ],
+              "unverified_overrides": [],
+              "required_options_observed": true
+            },
+            "evidence": {
+              "launch": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/candidate/sample-1/launch.json",
+                "sha256": "f563cb7394007af3b69624b0c385efa2b13c9bd085f52b3f77c426766b01dc72",
+                "bytes": 1377
+              },
+              "process": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/candidate/sample-1/process-result.json",
+                "sha256": "6f5bf32059cc50fb705569c2f5584d10b2b21ed5b248035a4039ecf41bf1f37d",
+                "bytes": 140
+              },
+              "trace": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/candidate/sample-1/trace.jsonl",
+                "sha256": "35af983aa984f785e69012c3064a86a626a0133ca6451026f5fe467ca6d65072",
+                "bytes": 129588
+              },
+              "stderr": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/candidate/sample-1/stderr.log",
+                "sha256": "c10850c433f4d206855d117657c0cddb416d182a16a70e20536fb00d6a5244b7",
+                "bytes": 7606
+              },
+              "final_message": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-cooperative-payoff-drift/candidate/sample-1/final.txt",
+                "sha256": "b5e02e065bc37d8fa04a5509c93fff665c55e87901910ec1e6dacaf4257c037a",
+                "bytes": 557
+              }
+            },
+            "all_task_usage": null,
+            "cost": null,
+            "automatic_quality_assessed": false
+          }
+        ],
+        "full_inspection": {
+          "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/final-inspections/prose-cooperative-payoff-drift.json",
+          "sha256": "034e98a7dc444ee44a21e61c0152cfbbb901cbffdece035dc5f830295174e63e",
+          "bytes": 56116
+        }
+      },
+      {
+        "case": "prose-folk-style-contract",
+        "status": "needs_content_review",
+        "frozen_inputs_intact": true,
+        "frozen_candidate_matches_current": true,
+        "frozen_payload_files": 52,
+        "samples": [
+          {
+            "sample": "baseline/1",
+            "status": "needs_content_review",
+            "issues": [],
+            "process": {
+              "status": "recorded_success",
+              "receipt": {
+                "exit_code": 0,
+                "timed_out": false,
+                "case": "prose-folk-style-contract",
+                "arm": "baseline",
+                "duration_seconds": 295.754
+              }
+            },
+            "mechanical_ok": true,
+            "output_length": {
+              "候选.md": {
+                "min": 550,
+                "max": 750,
+                "count_method": "visible_nonspace_v2",
+                "actual": 660,
+                "status": "within_range"
+              },
+              "改稿说明.md": {
+                "min": 160,
+                "max": 260,
+                "count_method": "visible_nonspace_v2",
+                "actual": 193,
+                "status": "within_range"
+              }
+            },
+            "launch_conditions": {
+              "status": "partially_observed",
+              "binding_status": "matches_recorded_launch",
+              "issues": [],
+              "declared": {
+                "model": "gpt-6.1-sol",
+                "settings": {
+                  "model_revision": null,
+                  "reasoning_effort": "ultra",
+                  "host_version": "codex-cli 0.163.0-alpha.10.2",
+                  "seed": null
+                },
+                "repetitions": 1
+              },
+              "fields": {
+                "model_revision": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "reasoning_effort": {
+                  "declared": "ultra",
+                  "recorded_launch": "ultra",
+                  "status": "matches_launch"
+                },
+                "host_version": {
+                  "declared": "codex-cli 0.163.0-alpha.10.2",
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "seed": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "model": {
+                  "declared": "gpt-6.1-sol",
+                  "recorded_launch": "gpt-6.1-sol",
+                  "status": "matches_launch"
+                }
+              },
+              "actual_model_and_settings": "unverified",
+              "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+              "recorded_argv": [
+                "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+                "exec",
+                "--cd",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/baseline/sample-1/workspace",
+                "--sandbox",
+                "workspace-write",
+                "--skip-git-repo-check",
+                "--ephemeral",
+                "--json",
+                "--ignore-user-config",
+                "--ignore-rules",
+                "--model",
+                "gpt-6.1-sol",
+                "-c",
+                "model_reasoning_effort=\"ultra\"",
+                "-c",
+                "approval_policy=\"never\"",
+                "--output-last-message",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/baseline/sample-1/final.txt",
+                "-"
+              ],
+              "unverified_overrides": [],
+              "required_options_observed": true
+            },
+            "evidence": {
+              "launch": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/baseline/sample-1/launch.json",
+                "sha256": "679b25968a7b6f68ab96c77758703cfaae239b8b451e3080289e40795c1dd194",
+                "bytes": 1365
+              },
+              "process": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/baseline/sample-1/process-result.json",
+                "sha256": "6b244e39f4ab81063d9bd0a1dbeae1ce2b1b22ac154ee69b6747d8fafa489aab",
+                "bytes": 134
+              },
+              "trace": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/baseline/sample-1/trace.jsonl",
+                "sha256": "de846aeb7bc0cea8f8dded589ec3771d3d5ffab69a481c9965575e8b71fcb99c",
+                "bytes": 117218
+              },
+              "stderr": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/baseline/sample-1/stderr.log",
+                "sha256": "f3ec5d241d271988bca66afcd3bc601921d530f784193c9e757bca37fabc6d6d",
+                "bytes": 7633
+              },
+              "final_message": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/baseline/sample-1/final.txt",
+                "sha256": "4e51dd8bf1da2508fbf8cead1142d1f8a67e33778c196561b21864f3f3bd79a4",
+                "bytes": 617
+              }
+            },
+            "all_task_usage": null,
+            "cost": null,
+            "automatic_quality_assessed": false
+          },
+          {
+            "sample": "candidate/1",
+            "status": "needs_content_review",
+            "issues": [],
+            "process": {
+              "status": "recorded_success",
+              "receipt": {
+                "exit_code": 0,
+                "timed_out": false,
+                "case": "prose-folk-style-contract",
+                "arm": "candidate",
+                "duration_seconds": 300.742
+              }
+            },
+            "mechanical_ok": true,
+            "output_length": {
+              "候选.md": {
+                "min": 550,
+                "max": 750,
+                "count_method": "visible_nonspace_v2",
+                "actual": 650,
+                "status": "within_range"
+              },
+              "改稿说明.md": {
+                "min": 160,
+                "max": 260,
+                "count_method": "visible_nonspace_v2",
+                "actual": 225,
+                "status": "within_range"
+              }
+            },
+            "launch_conditions": {
+              "status": "partially_observed",
+              "binding_status": "matches_recorded_launch",
+              "issues": [],
+              "declared": {
+                "model": "gpt-6.1-sol",
+                "settings": {
+                  "model_revision": null,
+                  "reasoning_effort": "ultra",
+                  "host_version": "codex-cli 0.163.0-alpha.10.2",
+                  "seed": null
+                },
+                "repetitions": 1
+              },
+              "fields": {
+                "model_revision": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "reasoning_effort": {
+                  "declared": "ultra",
+                  "recorded_launch": "ultra",
+                  "status": "matches_launch"
+                },
+                "host_version": {
+                  "declared": "codex-cli 0.163.0-alpha.10.2",
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "seed": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "model": {
+                  "declared": "gpt-6.1-sol",
+                  "recorded_launch": "gpt-6.1-sol",
+                  "status": "matches_launch"
+                }
+              },
+              "actual_model_and_settings": "unverified",
+              "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+              "recorded_argv": [
+                "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+                "exec",
+                "--cd",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/candidate/sample-1/workspace",
+                "--sandbox",
+                "workspace-write",
+                "--skip-git-repo-check",
+                "--ephemeral",
+                "--json",
+                "--ignore-user-config",
+                "--ignore-rules",
+                "--model",
+                "gpt-6.1-sol",
+                "-c",
+                "model_reasoning_effort=\"ultra\"",
+                "-c",
+                "approval_policy=\"never\"",
+                "--output-last-message",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/candidate/sample-1/final.txt",
+                "-"
+              ],
+              "unverified_overrides": [],
+              "required_options_observed": true
+            },
+            "evidence": {
+              "launch": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/candidate/sample-1/launch.json",
+                "sha256": "4345b60709620d731e58b7b9a3036f2766884481689c0175c8635ce9948a704c",
+                "bytes": 1367
+              },
+              "process": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/candidate/sample-1/process-result.json",
+                "sha256": "cbdff19945474af533b7729f136f2f9f1105a2a51d67c9d7c4e343aa2077658e",
+                "bytes": 135
+              },
+              "trace": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/candidate/sample-1/trace.jsonl",
+                "sha256": "7ac2b3a34be57f027b6e8d6796396ae9da33f258adb83a84c328489c45172295",
+                "bytes": 116815
+              },
+              "stderr": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/candidate/sample-1/stderr.log",
+                "sha256": "2aae506d6f602db368ac2d6d6b5168bd60d75777cd0ca71e840211b55a4e7860",
+                "bytes": 8547
+              },
+              "final_message": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-folk-style-contract/candidate/sample-1/final.txt",
+                "sha256": "f2e5ec702c4a18a9a25f6908eda94ea61c1823ec524c132e26907e0b2d4c9d37",
+                "bytes": 272
+              }
+            },
+            "all_task_usage": null,
+            "cost": null,
+            "automatic_quality_assessed": false
+          }
+        ],
+        "full_inspection": {
+          "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/final-inspections/prose-folk-style-contract.json",
+          "sha256": "c544a4d7ef0cddddbda20dcb89eaee43927e695ff7dae22c12987aa6dda5d7bc",
+          "bytes": 54872
+        }
+      },
+      {
+        "case": "prose-voluntary-payoff-handoff",
+        "status": "needs_content_review",
+        "frozen_inputs_intact": true,
+        "frozen_candidate_matches_current": true,
+        "frozen_payload_files": 52,
+        "samples": [
+          {
+            "sample": "baseline/1",
+            "status": "needs_content_review",
+            "issues": [],
+            "process": {
+              "status": "recorded_success",
+              "receipt": {
+                "exit_code": 0,
+                "timed_out": false,
+                "case": "prose-voluntary-payoff-handoff",
+                "arm": "baseline",
+                "duration_seconds": 164.245
+              }
+            },
+            "mechanical_ok": true,
+            "output_length": {
+              "候选.md": {
+                "min": 400,
+                "max": 600,
+                "count_method": "visible_nonspace_v2",
+                "actual": 425,
+                "status": "within_range"
+              },
+              "改稿说明.md": {
+                "min": 160,
+                "max": 260,
+                "count_method": "visible_nonspace_v2",
+                "actual": 199,
+                "status": "within_range"
+              }
+            },
+            "launch_conditions": {
+              "status": "partially_observed",
+              "binding_status": "matches_recorded_launch",
+              "issues": [],
+              "declared": {
+                "model": "gpt-6.1-sol",
+                "settings": {
+                  "model_revision": null,
+                  "reasoning_effort": "ultra",
+                  "host_version": "codex-cli 0.163.0-alpha.10.2",
+                  "seed": null
+                },
+                "repetitions": 1
+              },
+              "fields": {
+                "model_revision": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "reasoning_effort": {
+                  "declared": "ultra",
+                  "recorded_launch": "ultra",
+                  "status": "matches_launch"
+                },
+                "host_version": {
+                  "declared": "codex-cli 0.163.0-alpha.10.2",
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "seed": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "model": {
+                  "declared": "gpt-6.1-sol",
+                  "recorded_launch": "gpt-6.1-sol",
+                  "status": "matches_launch"
+                }
+              },
+              "actual_model_and_settings": "unverified",
+              "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+              "recorded_argv": [
+                "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+                "exec",
+                "--cd",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/baseline/sample-1/workspace",
+                "--sandbox",
+                "workspace-write",
+                "--skip-git-repo-check",
+                "--ephemeral",
+                "--json",
+                "--ignore-user-config",
+                "--ignore-rules",
+                "--model",
+                "gpt-6.1-sol",
+                "-c",
+                "model_reasoning_effort=\"ultra\"",
+                "-c",
+                "approval_policy=\"never\"",
+                "--output-last-message",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/baseline/sample-1/final.txt",
+                "-"
+              ],
+              "unverified_overrides": [],
+              "required_options_observed": true
+            },
+            "evidence": {
+              "launch": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/baseline/sample-1/launch.json",
+                "sha256": "9c715d43341c7baf94903942f832a786a6939ac2cfbc65f8caaaa3f2990d43de",
+                "bytes": 1375
+              },
+              "process": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/baseline/sample-1/process-result.json",
+                "sha256": "804f8d162f896fdea46cf9318c190061025ed23265a20cd8eaef0b6b9c3ab36a",
+                "bytes": 139
+              },
+              "trace": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/baseline/sample-1/trace.jsonl",
+                "sha256": "4b3323c6b8fb6af942bde2788555a28724d3173e1fc8aecbf7f60c014e378969",
+                "bytes": 126550
+              },
+              "stderr": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/baseline/sample-1/stderr.log",
+                "sha256": "483aefbe4d8acbb7f3a6540dc7253f58b1a14ad0a73d0fe1f24f1ff32d707680",
+                "bytes": 6196
+              },
+              "final_message": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/baseline/sample-1/final.txt",
+                "sha256": "9c0ba1abab344a7b7fee4aa9a8f97d5aeb0b3c88eb72c6ad590c12626a823444",
+                "bytes": 183
+              }
+            },
+            "all_task_usage": null,
+            "cost": null,
+            "automatic_quality_assessed": false
+          },
+          {
+            "sample": "candidate/1",
+            "status": "needs_content_review",
+            "issues": [],
+            "process": {
+              "status": "recorded_success",
+              "receipt": {
+                "exit_code": 0,
+                "timed_out": false,
+                "case": "prose-voluntary-payoff-handoff",
+                "arm": "candidate",
+                "duration_seconds": 210.635
+              }
+            },
+            "mechanical_ok": true,
+            "output_length": {
+              "候选.md": {
+                "min": 400,
+                "max": 600,
+                "count_method": "visible_nonspace_v2",
+                "actual": 465,
+                "status": "within_range"
+              },
+              "改稿说明.md": {
+                "min": 160,
+                "max": 260,
+                "count_method": "visible_nonspace_v2",
+                "actual": 206,
+                "status": "within_range"
+              }
+            },
+            "launch_conditions": {
+              "status": "partially_observed",
+              "binding_status": "matches_recorded_launch",
+              "issues": [],
+              "declared": {
+                "model": "gpt-6.1-sol",
+                "settings": {
+                  "model_revision": null,
+                  "reasoning_effort": "ultra",
+                  "host_version": "codex-cli 0.163.0-alpha.10.2",
+                  "seed": null
+                },
+                "repetitions": 1
+              },
+              "fields": {
+                "model_revision": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "reasoning_effort": {
+                  "declared": "ultra",
+                  "recorded_launch": "ultra",
+                  "status": "matches_launch"
+                },
+                "host_version": {
+                  "declared": "codex-cli 0.163.0-alpha.10.2",
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "seed": {
+                  "declared": null,
+                  "recorded_launch": null,
+                  "status": "unverified"
+                },
+                "model": {
+                  "declared": "gpt-6.1-sol",
+                  "recorded_launch": "gpt-6.1-sol",
+                  "status": "matches_launch"
+                }
+              },
+              "actual_model_and_settings": "unverified",
+              "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+              "recorded_argv": [
+                "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+                "exec",
+                "--cd",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/candidate/sample-1/workspace",
+                "--sandbox",
+                "workspace-write",
+                "--skip-git-repo-check",
+                "--ephemeral",
+                "--json",
+                "--ignore-user-config",
+                "--ignore-rules",
+                "--model",
+                "gpt-6.1-sol",
+                "-c",
+                "model_reasoning_effort=\"ultra\"",
+                "-c",
+                "approval_policy=\"never\"",
+                "--output-last-message",
+                "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/candidate/sample-1/final.txt",
+                "-"
+              ],
+              "unverified_overrides": [],
+              "required_options_observed": true
+            },
+            "evidence": {
+              "launch": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/candidate/sample-1/launch.json",
+                "sha256": "9035316b2adaccfff4bddc70aac683bc91fad6fd98e88a6c1995447802f4e4fb",
+                "bytes": 1377
+              },
+              "process": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/candidate/sample-1/process-result.json",
+                "sha256": "2e5faa78d24594bd8561638701c621017f4a70520cbb4c41cba56840ace75fcb",
+                "bytes": 140
+              },
+              "trace": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/candidate/sample-1/trace.jsonl",
+                "sha256": "4c8b11c8c222a31498b7dd5776fc9d296da6ad191eceb71a7036146de4831a32",
+                "bytes": 131879
+              },
+              "stderr": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/candidate/sample-1/stderr.log",
+                "sha256": "4b6c427f1d759fb4dd75ff927fe1d5597a08d94b0f5f5bf45538d2decb7ce33c",
+                "bytes": 7553
+              },
+              "final_message": {
+                "path": "<REPO_ROOT>/.local-writing-samples/skill-execution/four-priorities-20261017-qi2r13rg/prose-voluntary-payoff-handoff/candidate/sample-1/final.txt",
+                "sha256": "44fd2527984c69ff3d8f68a78a90c0bb2bdefd362cd560ff7f447de930cb45b4",
+                "bytes": 573
+              }
+            },
+            "all_task_usage": null,
+            "cost": null,
+            "automatic_quality_assessed": false
+          }
+        ],
+        "full_inspection": {
+          "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/final-inspections/prose-voluntary-payoff-handoff.json",
+          "sha256": "a6b565b4f54914dc3f90bee7ff3b13c6c1ebe3c20d5258e8099c49806f1cb515",
+          "bytes": 55451
+        }
+      }
+    ],
+    "scheduled_samples": 6,
+    "completed_exit_zero": 6,
+    "process_failures_or_timeouts": 0,
+    "retries": 0,
+    "repetitions_per_arm": 1,
+    "conditions": {
+      "conditions": {
+        "baseline": {
+          "model": "gpt-6.1-sol",
+          "settings": {
+            "model_revision": null,
+            "reasoning_effort": "ultra",
+            "host_version": "codex-cli 0.163.0-alpha.10.2",
+            "seed": null
+          },
+          "repetitions": 1
+        },
+        "candidate": {
+          "model": "gpt-6.1-sol",
+          "settings": {
+            "model_revision": null,
+            "reasoning_effort": "ultra",
+            "host_version": "codex-cli 0.163.0-alpha.10.2",
+            "seed": null
+          },
+          "repetitions": 1
+        }
+      },
+      "assessment_mode": "independent"
+    },
+    "human_readers": 0,
+    "independent_holdout": false,
+    "all_task_usage": null,
+    "billed_cost": null,
+    "automated_inspection_certifies_quality": false
+  },
+  "anonymous_model_reading": {
+    "outcomes": [
+      {
+        "label": "01",
+        "preference": "B",
+        "strength": "slight",
+        "report_file": "anonymous-reading-01-clean.md",
+        "key_requirements": "Both preserve explicit current style, two standalone repeated sentences, one direct fear statement, and unknown visitor/source.",
+        "observations": "Candidate concentrates the character situation and motivation for catching water; baseline has a more natural auditory opening. Both retain repetition and explanatory padding.",
+        "limits": [
+          "One scene, one model reading; no human response or statistically stable improvement.",
+          "Original guide-exposed review retained as exploratory; clean reassessment is primary."
+        ],
+        "case": "prose-folk-style-contract",
+        "report": {
+          "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-reading-01-clean.md",
+          "sha256": "04c9fefad586c67eeed5b25e5420ca7dd97a5d19a248b4348be99afa7c1ca0c9",
+          "bytes": 7108
+        },
+        "mapped_preference": "candidate"
+      },
+      {
+        "label": "02",
+        "preference": "A",
+        "strength": "slight",
+        "report_file": "anonymous-reading-02.md",
+        "key_requirements": "Both correct major facts and the agreed allocation of repair credit, calibration, fees, equipment and appointments; preserve independent partner contribution.",
+        "observations": "Candidate makes the operator defend the agreement in a visible exchange and lets the partner confirm her credit. Both retain procedural exposition; technical standards remain unverified.",
+        "limits": [
+          "Baseline legitimately removes mistaken credit instead of preserving a confrontation; that choice is not a compliance failure.",
+          "Single excerpt, no surrounding chapters or technical criteria."
+        ],
+        "case": "prose-cooperative-payoff-drift",
+        "report": {
+          "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-reading-02.md",
+          "sha256": "a66b2a03d9692959bd03d1aeb46c70039bb35675687c5827b4684b1626fbffe0",
+          "bytes": 7481
+        },
+        "mapped_preference": "candidate"
+      },
+      {
+        "label": "03",
+        "preference": "B",
+        "strength": "slight",
+        "report_file": "anonymous-reading-03.md",
+        "key_requirements": "Both preserve voluntary handoff, technical fee, attribution, agreed division of work and future appointment status.",
+        "observations": "Candidate clarifies receipt and responsibility; baseline dialogue is lighter and more natural. Candidate responsibility exposition interrupts the scene slightly.",
+        "limits": [
+          "Raw task says characters without an explicit counting method; baseline is 366 and candidate 404 under Chinese-only counting, while both pass the predefined visible_nonspace_v2 measure. This partly affects the preference.",
+          "One short confirmation scene with limited emotional movement; future exhibition and fulfilment unknown."
+        ],
+        "case": "prose-voluntary-payoff-handoff",
+        "report": {
+          "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-reading-03.md",
+          "sha256": "27ea2c1789ad8ae20ec88cc1c1497765634e3c3ce3049affb77fb995b616eaab",
+          "bytes": 6253
+        },
+        "mapped_preference": "candidate"
+      }
+    ],
+    "version_mapping_disclosed_to_reviewers": false,
+    "assignment_source": "Fresh independent agents; raw tasks and texts only were supplied.",
+    "primary_readers": 3,
+    "additional_protocol_deviating_review": 1,
+    "protocol_correction": "Original case 01 reader additionally read generic installed analyze/entry guides; retained as exploratory, with no mapping or implementation read. A fresh reader given only the raw task/texts was assigned before reassessment; the clean report is primary regardless of preference."
+  },
+  "final_checks": {
+    "markdown_file_targets": {
+      "status": "passed",
+      "files_scanned": 353,
+      "links_checked": 2187,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    },
+    "git_diff_check": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "source_hash_mismatches": [],
+    "existing_budget_thresholds_unchanged": true
+  },
+  "source_files_sha256": {
+    "README.md": "2261811270223c78fd7309ddf2ae416d2569643aa4ff3a49782718dcdda8c532",
+    "benchmarks/instruction-loads.json": "8161c380b52d8bb45be130ee1d796e7b3213053dfc40c956ab1ce28bd1fb5ee8",
+    "benchmarks/skill-execution/README.md": "1363b67622b97ab4e4dbbfa51926ace2ef9ca7473deae05bd3f8e356d508b3a1",
+    "benchmarks/skill-execution/prose-cases/conditions.template.json": "97eb8d64624552f490bd0568b25c5ad760b18a8763b0f5aa6ecc5a9e45a6d92a",
+    "benchmarks/skill-execution/prose-cases/feedback-record.template.json": "0e9cbcb8fd47f28471789c8823a31a0aa028c6bde228d661263d7aed13829bc6",
+    "benchmarks/skill-execution/prose-cases/prose-causal-claim.json": "a280e2468239f1b5658aa41d999fe8b54ef5b59e665e8a5f615c8a36c1cf7626",
+    "benchmarks/skill-execution/prose-cases/prose-cooperative-payoff-drift.json": "53e965ec03d692fb31070111150e19f7c9dc195b81c4514a69a270b741bb1049",
+    "benchmarks/skill-execution/prose-cases/prose-detect-only.json": "846369f8618e654c719c08b12bd0d5060567c2168aa01f86285b2327342380cf",
+    "benchmarks/skill-execution/prose-cases/prose-folk-style-contract.json": "b25ceb7efb972498805c8624e4be05e6d0b7aebd1a4632a55b5e7d8abb245fc1",
+    "benchmarks/skill-execution/prose-cases/prose-quiet-scene.json": "e0dfea1c9c31590b252d53da264b64560b03d1a432ef1460326f66613845d9e2",
+    "benchmarks/skill-execution/prose-cases/prose-relationship-ambiguity.json": "b2798e5edb487bfd3dc13904ad7927da583a9cd1e889bc7f5b46b4cb27349592",
+    "benchmarks/skill-execution/prose-cases/prose-relationship-contradiction.json": "97c3efd00d983b8c08b7dce10afaeaad4f38a1892d3522d7836ca0c7882a27b8",
+    "benchmarks/skill-execution/prose-cases/prose-swallowed-confrontation.json": "59c4f9b3185280194d852d5c6c7ffe143a91a202ac00f08c262169483e6c03ba",
+    "benchmarks/skill-execution/prose-cases/prose-telegraph.json": "1d3d83e2eecff00089aeb46309d80972862a49bd2c2b8e3ceab4e0f5b1187e7d",
+    "benchmarks/skill-execution/prose-cases/prose-voluntary-payoff-handoff.json": "61393abfd2b5c0237e1f4aa9adce7c045984bcf96b1e070a9b6ab18a840bef5e",
+    "benchmarks/skill-execution/prose_trials.py": "a8c848b3a007f84e117f87a1ee1b7c308671daf66770b71ebbe440dbb57252b2",
+    "docs/evaluation.md": "bf1c65a8fa955b31f8445bcad5ba8d56839e8f44cf206f7b3436e21251981450",
+    "skills/story-skill-plan/SKILL.md": "6a356429a76c24c52ccdff84dd1e8c3680060b2cd00d3b12a30c595dfce3bf4a",
+    "skills/story-skill-review/SKILL.md": "fc661476ef4768d05143bae93caec13162d1ae3651381fa69832219f483895e0",
+    "skills/story-skill-write/SKILL.md": "0bb17ccb6e839ec9056ab3b7e72ee1c6193131a700f3d90dcc2906a0dd77bf2f",
+    "skills/story-skill-write/references/chapter.md": "3dc53e953082760d03f84df244fa18091d2dc32ddc709ca47d38f213ca0515bd",
+    "skills/story-skill-write/references/content-review.md": "0844d9df7e0c9925d79295577b591c61735905e1da3f5eb4400e9d07ab83bf6b",
+    "skills/story-skill-write/references/drama.md": "b3a92403d3e50fbd9b274e005af22a96243ae02589c4250395919aabe1362bcd",
+    "skills/story-skill/scripts/story.py": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+    "tests/test_instruction_budget.py": "084b5cfcb61b09395f859ac5c67bee3e1d41130ff587c2450892e4eb36d22eab",
+    "tests/test_prose_trials.py": "605a99261d376328faeca12256685a7ef159732702659358e18bbb61a82db46a",
+    "tests/test_writing_brief.py": "346600b051037fe604c882d73511b843910934f80cca4c1bd769767436b0ea08"
+  },
+  "private_evidence": [
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/baseline-hashes.json",
+      "sha256": "654e5438bbcba0c2f206474374b8622ef7a6d68f18c2001aef7b7b16cf2c5b0b",
+      "bytes": 8121
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/final-source-hashes.json",
+      "sha256": "b94da99945e6b7a542b37f878a5d5f9024b15d9a039e5f5447ab476e7f7e2a6b",
+      "bytes": 3313
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/unit-tests.json",
+      "sha256": "32e355f7636d0a088762e5e1e443d9f7e0bd47e709cbfb5f353ec6343dce48d7",
+      "bytes": 276
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/unit-tests.log",
+      "sha256": "c5dd6cefca6632f512b0f545713f08816b8e8da6d58e5b629e6d267e892793af",
+      "bytes": 1843
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/skill-validation.json",
+      "sha256": "d09453220ab97f4199a87c313e7843ee5afdbdbe597f565e11b61d6e9d88aabe",
+      "bytes": 908
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/budget-summary.json",
+      "sha256": "56661667f5eb797e808676e5775e7deed4df84b5158b2df28436ffe06c60da20",
+      "bytes": 5494
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/final-budget/instruction-loads.json",
+      "sha256": "69fae263603a181e92b3b75764e6647b26c765afbeda50528de052d3ce11a209",
+      "bytes": 482279
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/preserved-invariants.json",
+      "sha256": "4d88ce9270c84610dec91105c67edd44303cb316d99f30e38a651d6c7291636b",
+      "bytes": 831
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/brief-cli-probe.json",
+      "sha256": "cfd5bcf9a6ffde9fcd64460f678f3096cd00b3417826aafd11aa29d1069d85c5",
+      "bytes": 1585
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/brief-full.json",
+      "sha256": "3fbd0dce8b7649935d6c35d66116e810ad9c4a6f78b20a0a198457227ce6050f",
+      "bytes": 8763
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/brief-too-small.json",
+      "sha256": "651c641404aff7741d85a08d49ae985c7e217cc03d11b295b609b245bc7b359c",
+      "bytes": 436
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/brief-exact-minimum.json",
+      "sha256": "fd380ba3e49a3d9ab0be1bb54a26d24a1056bc5a707024931fcc82796a4c28ad",
+      "bytes": 8761
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/independent-brief-review-uwsprur6/review.md",
+      "sha256": "3eafb509673c6955014de3c037937259fcf95d09973687379ca2162efbebfa06",
+      "bytes": 3984
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/independent-brief-review-uwsprur6/final-probes.json",
+      "sha256": "e0b0ab04a3f8891544d14382fd7bf7f48ab5e52cfc15d12ab728163b05e3b554",
+      "bytes": 1364
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/independent-brief-review-uwsprur6/snapshot-probe.json",
+      "sha256": "678031a38ca91a584fed87b279ddc1b5f662032ef931db053867b644baa65e78",
+      "bytes": 416
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/route-independent-review.md",
+      "sha256": "c103f4090585c2759f40da117a5287b1106642018743c2e38f6c7823a8fdffe5",
+      "bytes": 3885
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/independent-brief-usage.md",
+      "sha256": "1cf95530f49d5cae8f1c4802fad0002b0e900c15a61d6f18ccf3b8c3723723f6",
+      "bytes": 8712
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/final/package-check.json",
+      "sha256": "60c03cce7ae89ee42ce7304be07e5580899b22d4c8996ac69354800e676397ff",
+      "bytes": 2194
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/final/install-check/result.json",
+      "sha256": "d2877804f001068c86ef8379aed45e0174851f15c4e3fdf26ea3ffbea2c436b6",
+      "bytes": 16689
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/final/install-check/installed-brief.json",
+      "sha256": "d0cffc8dcbf7276b93c5cdae8fff8fdd13baf390566b6f2c8ca3217cfddbddb2",
+      "bytes": 4807
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/chinese-acceptance.json",
+      "sha256": "c773a7cefe6019359239a9b9e5295a352ace16755d0e7101fcfa817b9abcbf67",
+      "bytes": 17927
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/long-acceptance.json",
+      "sha256": "2ee7441898e4dc8f46cdd6126c7ccf7c7ec5987d723e38bd24c3d39de0c809c2",
+      "bytes": 344776
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/trial-configuration.json",
+      "sha256": "d109573464e2427f682abb7180ab2ef248268f050d4b6715072c2e488df690cf",
+      "bytes": 568
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/trial-selection.json",
+      "sha256": "061d8c8e9f661e2acc5e672500f87d5bb181dd18ab79f7de2d22f0df7a57f5c3",
+      "bytes": 556
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/launch-schedule.json",
+      "sha256": "b2dec2da474385b64974a42142ec658f2405898189f0c49c41f3a1e88efe354a",
+      "bytes": 498
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/native-results.json",
+      "sha256": "5b28fd1f5fe28f7c6ccee58e63d073edc7e90f28b73bcac36c47ee89b8d7d70c",
+      "bytes": 920
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-mapping.json",
+      "sha256": "d7b33eeb348391724268680561c3a06a373adb5bc40de71e4d28327dc58647b4",
+      "bytes": 307
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/reading-outcomes.json",
+      "sha256": "fd56fc51aa19ce88c0e0f67868c84ac03a4f10bc14de68beb17b8555820e4e97",
+      "bytes": 2258
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/review-protocol-correction.json",
+      "sha256": "ea5985884d1045727eb4da53894b9c1f72792ce703fa123a792c448dfa44aa81",
+      "bytes": 583
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/final-checks.json",
+      "sha256": "76aa93f6aefc073b7bff3e597a1cb8b9dc41af30f4c45ebbc3a189a1a1644d44",
+      "bytes": 394
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-reading-01.md",
+      "sha256": "6b186aaf23cd24c6a3610e35bcc7d975c9ce9c6011a32073202584f39bc0a111",
+      "bytes": 8790
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-review/01/artifact-hashes.json",
+      "sha256": "5b108e078e6df51c28f677df715c0b17133ce3875f1ef448d0710567553c0117",
+      "bytes": 1142
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-reading-02.md",
+      "sha256": "a66b2a03d9692959bd03d1aeb46c70039bb35675687c5827b4684b1626fbffe0",
+      "bytes": 7481
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-review/02/artifact-hashes.json",
+      "sha256": "6953c14b8db6dae5144313caec41bc0c31c42615b8c5c67db4778128e41e7225",
+      "bytes": 1006
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-reading-03.md",
+      "sha256": "27ea2c1789ad8ae20ec88cc1c1497765634e3c3ce3049affb77fb995b616eaab",
+      "bytes": 6253
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-review/03/artifact-hashes.json",
+      "sha256": "510374379bd1a5a5b3d8fe25d6970ce5fc2d8a24720fe22594ed2d035a1318ba",
+      "bytes": 1006
+    },
+    {
+      "path": ".local-writing-samples/four-priorities-20261017-qi2r13rg/anonymous-reading-01-clean.md",
+      "sha256": "04c9fefad586c67eeed5b25e5420ca7dd97a5d19a248b4348be99afa7c1ca0c9",
+      "bytes": 7108
+    }
+  ],
+  "limits": [
+    "Synthetic development cases, one output per arm; no stable literary or general genre-effectiveness claim.",
+    "No actual upstream writing execution or direct native performance comparison.",
+    "Recorded model/settings/CLI launches do not authenticate serving model revision, seed or all host instructions.",
+    "Anonymous model preferences are individual textual judgements, not human feedback or platform outcomes.",
+    "Instruction loads measure explicit cold rule characters/bytes, not runtime token savings or billed costs.",
+    "Read-only checks exclude OS access times and transient SQLite WAL lifecycle; transient restored writes outside snapshots are not established.",
+    "No user-level skill sync, commit, push, release, publication or edits to real novels in this turn."
+  ],
+  "privacy_normalization": "Only local absolute path prefixes were normalized: <REPO_ROOT> represents the source repository and <USER_HOME> represents the local user home. Original SHA-256 evidence hashes, numeric values, statuses, failures, outputs and limitations are preserved; unnormalized originals remain in ignored local release evidence."
+}

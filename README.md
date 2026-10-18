@@ -4,15 +4,34 @@
 
 Story Skill 是供支持 Agent Skills 的写作助手使用的中文小说技能，涵盖拆书、开书、书名与简介优化、大纲、正文、审稿、调研、封面和投稿材料准备。支持 Codex、Claude Code、Antigravity、Qoder（含 CN）、ZCode、WorkBuddy AI，以及下文列出的其他宿主。源码按八个技能分工；Claude 桌面导入包通过一个总入口按需读取这些流程。每本书独立保存，三栏本机工作台让你直接阅读、比较版本、修改并保存候选稿。
 
-**本版：v0.6.16 · Python 3.10+ · 支持长篇与短篇**
+**发布候选：v0.6.17 · Python 3.10+ · 支持长篇与短篇**
 
-v0.6.16 已发布，包含八个技能、51 个载荷文件，更新规划候选渲染、执行审查与用量评估、宿主安装适配、写作连续性规则及随包许可证。本版验证与分发状态见[发布记录](docs/releases/v0.6.16.md)。安装或升级按 [INSTALL.md](INSTALL.md) 核对；仓库现为私有，Release 下载需要相应访问权限。
+v0.6.17 包含八个技能、52 个源载荷文件，准备同步固定标签、`version-0.6.17` 版本分支、GitHub Release 和 npm。当前尚未完成本版远端发布验收，以下 v0.6.17 下载链接为待发布目标；实际状态与验证结果见[发布记录](docs/releases/v0.6.17.md)。此前已发布的 [v0.6.16](docs/releases/v0.6.16.md) 及其附件保持原样。安装或升级按 [INSTALL.md](INSTALL.md) 核对；仓库当前公开；正式附件的下载可用性以本版回下载记录为准。
 
-各宿主复用同源技能规则和共享运行时；Claude 桌面包将内嵌流程映射为参考文件。本轮新增只读规划候选渲染，书库沿用 schema 2，不把规划或机械检查通过当作文学效果已实现。已发布历史标签与附件保持原有内容。
+本地发布验收已完成：1727项回归中1710通过、17跳过，零失败和错误；标准技能、Claude桌面、Codex插件、npm本地包及Mac构建／验收的六份回执均通过。远端CI、Release与Packages仍待完成，结果见[发布记录](docs/releases/v0.6.17.md)。
 
-macOS 客户端 `0.1.4`（build 5，内含 Story Skill `0.6.16`）已作为独立 Intel 实验附件分发，采用本地临时签名，未经 Apple 公证。验证与分发状态见[客户端说明](desktop/macos/README.md)，GitHub 发布不会自动更新本机安装。
+本版新增[起点作品分类实采表](skills/story-skill-plan/references/qidian-categories.md)：2026-10-11 在作家助手创建作品菜单收集男频 15 大类／79 子类、女频 11 大类／73 子类，总纲默认分别体现番茄、七猫、起点三平台分类与作品分析，包含具体看点、剧情支撑及适配结论。
 
-[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.16.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
+本地源码的 [三平台创作要求](skills/story-skill-write/references/drama.md#三平台创作要求) 已接入规划、写作和审稿：番茄强调密集爽点、快速节奏及前三章内的打脸兑现；起点强调严谨设定、自洽逻辑和可追溯的成长；七猫采用相近要求及先审后发的本地流程，“试错成本较低”保留为待验证判断。这些是用户指定的创作侧重。
+
+
+新增要求按既有位置维护：[开篇与代入、用词、对白和人物定义](skills/story-skill-write/references/drama.md)分别承接前三章、六项套话清理、自然对白和人物专属细节；真实底稿保存在原有[策划资料规则](skills/story-skill/references/project-state.md#参考分析与策划资料)中。原创与实际创作身份沿用共同约束，七猫官方资料与经验判断保留在平台参考中。
+
+[想象力与脑洞构思](skills/story-skill-write/references/drama.md#创新构思与持续展开)先探索不同可能，再推演具体场面及持续展开；[平淡诊断](skills/story-skill-write/references/drama.md#平淡时修哪里)区分事件、呈现和通用反应，检查合理完整的场面是否仍缺少值得经历的内容。[去 AI 味复核](skills/story-skill-write/references/drama.md#人物在场与去-ai-味复核)检查人物自我剖析过满、细节反复赋义及跨场重复收束，按实际阅读作用保留氛围、趣味和感受；改后回查原问题是否减弱、回应与信息是否保住，清套语不能代替接话或叙述问题的修复。[正文审稿](skills/story-skill-write/references/content-review.md)补充题材与具体照搬的区别、当时有效事实与人物误信、读感问题和持续阅读吸引力；[番茄风险参考](skills/story-skill-review/references/fanqie-content-review.md)保存官方低质治理及拒签数据的准确口径。AI 使用按平台分别处理，晋江的具体允许级别保存在共同约束中，文学诊断和平台结果分别判断。
+
+各宿主复用同源技能规则和共享运行时；Claude 桌面包将内嵌流程映射为参考文件。保留只读规划候选渲染、事务提交、历史依赖、世界状态和原文复核，书库沿用 schema 2，不把规划或机械检查通过当作文学效果已实现。已发布历史标签与附件保持原有内容。
+
+当前开发源码将候选片段、正式修订及内容审查专项改为按任务读取，改稿结论对应最终稿、实际阅读范围与剩余问题。开发验收使用 [任务与角色读取预算](benchmarks/skill-execution/README.md#规则读取预算) 和 [改稿失败样例与两臂对照](benchmarks/skill-execution/README.md#改稿失败样例与两臂对照)，保留原始反馈、失败及分歧；规则计量、实际执行、阅读效果和用量分别核对。本轮实际结果、超时与语义分歧见 [2026-10-17 开发验证](benchmarks/results/development-20261017-workflow-validation/assessment.md)。
+
+后续完善区分当场情绪与长期关系决定，按已核番茄入口读取完整适用分类，并补充只读执行证据检查；实际对照、独立复核及适用限制见 [2026-10-17 完善验证](benchmarks/results/development-20261017-refinement/assessment.md)。
+
+本版还提供按需读取的六类题材写法卡、写作与审稿共用的文风裁决、合作与主动让渡适用的兑现归属检查，以及可选只读 `writing-brief` 写前简报。简报沿用已绑定细纲和必要状态，不自动采用规划或决定文风；实现与验证范围见 [四项方法整合验证](benchmarks/results/development-20261017-four-priorities/assessment.md)。
+
+适用章节的[作者有话说与配图](skills/story-skill-write/references/chapter.md#作者有话说的保存与核验)独立交付：配图采用竖版 9:16，核验最终文件实际像素宽高；附言 `.md` 只保留文字，不嵌图、不放图片链接或占位符。短篇默认不补写附言及其配图，用户明确要求时按指定范围处理。
+
+本版 macOS 客户端目标为 `0.1.5`（build 6，内含 Story Skill `0.6.17`），作为独立 Intel 实验附件准备分发，采用本地临时签名，未经 Apple 公证。构建、验证与分发状态见[客户端说明](desktop/macos/README.md)，GitHub 发布不会自动更新本机安装。
+
+[安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.17.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
 
 ## 它能帮你做什么
 
@@ -30,19 +49,23 @@ macOS 客户端 `0.1.4`（build 5，内含 Story Skill `0.6.16`）已作为独�
 
 ## 安装升级
 
+### Codex 本地插件
+
+本版增加 [story-skill-codex-0.6.17.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip.sha256)的发布目标，含可安装本地市场目录、55 个插件文件及 57 个归档成员。也可运行 `python3 -B -X utf8 scripts/package_codex.py` 构建，再用 `scripts/verify_codex_plugin.py` 在隔离 Codex 环境验证安装与运行时。构建、安装、旧技能切换及当前发布状态见 [Codex 本地插件](docs/codex-plugin.md)。
+
 ### Claude 桌面版
 
-下载 [story-skill-claude-desktop-0.6.16-r2.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.16/story-skill-claude-desktop-0.6.16-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.16/story-skill-claude-desktop-0.6.16-r2.zip.sha256)。包内53个文件、递归唯一 `SKILL.md`，八个内嵌流程作为 `GUIDE.md` 参考文件加载；本版引用与隔离CLI核验、实际客户端导入范围见[发布记录](docs/releases/v0.6.16.md)。
+本版下载目标为 [story-skill-claude-desktop-0.6.17-r2.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-claude-desktop-0.6.17-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-claude-desktop-0.6.17-r2.zip.sha256)。包内54个文件、递归唯一 `SKILL.md`，八个内嵌流程作为 `GUIDE.md` 参考文件加载；本版引用与隔离CLI核验、实际客户端导入及发布状态见[发布记录](docs/releases/v0.6.17.md)。
 
-历史 v0.6.12 原桌面 ZIP 含9个 `SKILL.md`，无法通过导入器检查，已由该版 r2 替代；本版沿用修正包装。也可从 v0.6.16 固定源码构建：
+历史 v0.6.12 原桌面 ZIP 含9个 `SKILL.md`，无法通过导入器检查，已由该版 r2 替代；本版沿用修正包装。也可从 v0.6.17 源码构建：
 
 ```bash
 python3 -B -X utf8 scripts/package_claude.py
 ```
 
-输出为 `dist/story-skill-claude-desktop-0.6.16-r2.zip`；自行构建不等于发布或导入验收通过。导入已核对的包时，在 Claude 的 **Settings > Capabilities** 开启 **Code execution and file creation**，再到 **Customize > Skills**，点击 **+ → Create skill → Upload a skill**，上传并启用 Story Skill。组织账号按管理员开放的能力操作。[官方导入说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
+输出为 `dist/story-skill-claude-desktop-0.6.17-r2.zip`；自行构建不等于发布或导入验收通过。导入已核对的包时，在 Claude 的 **Settings > Capabilities** 开启 **Code execution and file creation**，再到 **Customize > Skills**，点击 **+ → Create skill → Upload a skill**，上传并启用 Story Skill。组织账号按管理员开放的能力操作。[官方导入说明](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 
-该包只有一个顶层 `story-skill/`，内含入口和完整八流程资源。同版 `story-skill-0.6.16.zip` 是八目录分发包，桌面导入请使用专用包。导入后可直接说：“使用 Story Skill，帮我规划一本中文长篇，本轮不写正文。”书稿需放在当前会话能读取和保存的位置；普通聊天中的文件与代码环境不等于作者电脑，完整书目录应下载备份。Cowork 或新的统一任务界面只按已开放的文件权限使用，详细边界见 [安装指引](INSTALL.md#claude-桌面版导入单技能包)。
+该包只有一个顶层 `story-skill/`，内含入口和完整八流程资源。同版 `story-skill-0.6.17.zip` 是八目录分发包，桌面导入请使用专用包。导入后可直接说：“使用 Story Skill，帮我规划一本中文长篇，本轮不写正文。”书稿需放在当前会话能读取和保存的位置；普通聊天中的文件与代码环境不等于作者电脑，完整书目录应下载备份。Cowork 或新的统一任务界面只按已开放的文件权限使用，详细边界见 [安装指引](INSTALL.md#claude-桌面版导入单技能包)。
 
 ### Codex 与 Claude Code
 
@@ -129,7 +152,7 @@ $story-skill-plan 开一本番茄女频长篇。
 
 先确定书名，明确标出主角及关键人物的姓名或称呼、角色定位、身份关系和主线作用，再确定人物动机、核心冲突、开篇看点和长期推进方向。
 另建书名目录，保存创作约定、开书策划、全书总纲、分卷规划和前三章细纲。
-记录本书长短篇定位，默认分别给齐番茄、七猫的分类，其他已涉及平台也列全；各按实际内容及拟选创建入口填写。本轮只做规划，不写正文。
+记录本书长短篇定位，默认分别给齐番茄、七猫、起点的分类与作品分析，其他已涉及平台也列全；各按实际内容及拟选创建入口填写，并写明读者期待、具体看点与剧情支撑、适配结论及待调整项。本轮只做规划，不写正文。
 ```
 
 写短篇时，将类型改为短篇，补充预计篇幅与结局方向。新写完整章节按 2400—2800 字规划；用户或书根 `创作约定.md` 明确要求其他篇幅或统计口径时，在章计划的 `length_exception` 中记录原话或可核对的书内引文。保存新章计划、检查及提交时均要求这项记录；书内引文还须与当前文件吻合。旧计划不会自动改写，续写前需核对并同步本次未写章节。章中续写、局部修改不按整章字数扩写，旧正式章节也不追溯修改。
@@ -249,9 +272,9 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-serve --boo
 
 以人物欲望、选择和行动推动故事，关注情绪兑现与追读，同时保护因果和人物逻辑。不用办事流程、记录清单或作者解释代替场景。
 
-正文按语义分段，段间空一行，不手工缩进。换人发言默认换段，同一人物紧密相关的动作和短对白可以同段；不按屏幕行数强拆。正文不混入 Markdown 标记、评分、分析或创作过程说明。长篇每个完整章节正文完成后，自动交付 [作者有话说和一张配图](skills/story-skill-write/references/drama.md#作者有话说)，长篇完整章候选和续写补完当前章同样执行，无需再次要求。短故事／短篇默认不写、不保存、不展示附言及其配图，分章、改稿和完本交付均不要求；用户明确要求时按指定范围处理，已有文件保留，完本封面仍按原流程交付。适用的附言简短回应本章，不剧透、不计入正文字数；落盘交付时另存无标题的 `.md`，引用旁边 `配图/` 子目录中的真实图片，纯对话交稿无需另建文件；正文、附言和图片一起交付，并在正文或保存回执后展示附言及配图。用户明确免除的项目按其要求处理；图片工具不可用或生成失败时说明适用范围内的缺图，不用提示词冒充成图。新写、续写、润色、排版和审校分别处理，硬性字数要求实际统计。
+正文按语义分段，段间空一行，不手工缩进。换人发言默认换段，同一人物紧密相关的动作和短对白可以同段；不按屏幕行数强拆。正文不混入 Markdown 标记、评分、分析或创作过程说明。长篇每个完整章节正文完成后，自动交付 [作者有话说和一张配图](skills/story-skill-write/references/drama.md#作者有话说)，长篇完整章候选和续写补完当前章同样执行，无需再次要求。短故事／短篇默认不写、不保存、不展示附言及其配图，分章、改稿和完本交付均不要求；用户明确要求时按指定范围处理，已有文件保留，完本封面仍按原流程交付。适用的附言简短回应本章，不剧透、不计入正文字数；落盘交付时另存无标题、仅含附言文字的 `.md`，不嵌图或放图片链接；配图采用竖版9:16，单独保存在旁边 `配图/` 子目录，纯对话交稿无需另建文件；正文、附言和图片一起交付，并在正文或保存回执后展示附言及配图。用户明确免除的项目按其要求处理；图片工具不可用或生成失败时说明适用范围内的缺图，不用提示词冒充成图。新写、续写、润色、排版和审校分别处理，硬性字数要求实际统计。
 
-总纲与分类答复先统一列出主角及关键人物的角色定位，再默认分别给齐番茄、七猫，其他本次要求或书内约定涉及的平台也列全；主投选择不缩减覆盖，只有明确限定本轮单平台时才收窄。各平台按自己的入口和原生栏目填写，标签依据真实内容与已核对选项选择。作品阶段按实际后台记录；分类逐栏区分拟选、后台已确认和待核对，经确认可选而留空的栏目标“不选”。当前 [七猫作品类型与标签表](skills/story-skill-plan/references/qimao-tags.md) 已在七猫中文网新建小说、新建短故事页核对男、女频分类及四栏标签；本次实测的普通分类分支弹窗逐栏要求 1～3 个，不推定覆盖所有分支。现实题材分支另有“仅选1个”的页面提示，但未保存表单的交互与该提示并不一致，最终创建限制尚未确认，规划时标为待核对。短篇完本还需以书名命名的全文合并文件、全文审查与封面；封面生成依赖可用的图像工具。
+总纲先统一列出主角及关键人物的角色定位，再默认分别给齐番茄、七猫、起点的分类与作品分析，其他本次要求或书内约定涉及的平台也列全；直接分类答复按同一平台范围列出分类及内容依据。主投选择不缩减覆盖，只有明确限定本轮单平台时才收窄。各平台按自己的入口和原生栏目填写，标签依据真实内容与已核对选项选择；作品分析分别写明拟面向的读者与阅读期待、主要看点及具体大纲支撑、适配结论与待调整／待验证项，分析覆盖不决定实际投向。作品阶段按实际后台记录；分类逐栏区分拟选、后台已确认和待核对，经确认可选而留空的栏目标“不选”。当前 [七猫作品类型与标签表](skills/story-skill-plan/references/qimao-tags.md) 已在七猫中文网新建小说、新建短故事页核对男、女频分类及四栏标签；本次实测的普通分类分支弹窗逐栏要求 1～3 个，不推定覆盖所有分支。现实题材分支另有“仅选1个”的页面提示，但未保存表单的交互与该提示并不一致，最终创建限制尚未确认，规划时标为待核对。短篇完本还需以书名命名的全文合并文件、全文审查与封面；封面生成依赖可用的图像工具。
 
 一书一目录，小说存放在技能源码和安装目录之外。以下仅为目录示意，规划阶段不提前生成空正文：
 
@@ -297,7 +320,7 @@ Codex 用 `$技能名`，Claude Code、Antigravity 2.0／CLI 用 `/技能名`，
 
 `skills/` 为分发源码，`scripts/` 为安装、打包和验证工具，`tests/` 为程序回归。当前仓库不包含作者测试篇及旧示例小说；历史提交和既有标签可能保留旧副本。事务验收使用临时合成文本，不作为文学质量证据。技能的范围遵守与实际交付另用 [执行验收案例包](benchmarks/skill-execution/README.md)，分别核对文件变化、原始执行记录和内容判断。
 
-总纲、卷纲、章细纲的最低内容、可选可读示例及人工质量验收集中见 [大纲细纲规范](skills/story-skill-plan/references/outline.md)。规划、写作和审稿按本次范围共用；目录、采用状态与版本绑定继续按项目状态规则处理。v0.6.16 为八技能、51 个载荷文件，更新规划候选、执行审查与评估、宿主安装及许可；安装时核对固定标签，不能仅凭版本号把后续开发源码视为发布包。
+总纲、卷纲、章细纲的最低内容、可选可读示例及人工质量验收集中见 [大纲细纲规范](skills/story-skill-plan/references/outline.md)。规划、写作和审稿按本次范围共用；目录、采用状态与版本绑定继续按项目状态规则处理。v0.6.17 为八技能、52 个源载荷文件；安装时核对本版固定标签、实际载荷及发布回执，不能仅凭版本号把后续开发源码视为发布包。
 
 本版新增 [工具章计划转可读候选](skills/story-skill/references/project-state.md#从工具章计划生成可读候选)，可检查候选的生成字段是否仍对应保存计划；生成不自动采用或绑定。开发验收另增加 [审稿分派与版本关联](benchmarks/skill-execution/README.md#审稿分派与版本关联) 和 [原始日志用量汇总](benchmarks/skill-execution/README.md#已报告用量汇总)，见 [本轮验证记录](benchmarks/results/development-2026-10-10-plan-review-metrics/assessment.md)。这些过程检查不证明文学质量提升，本版实际发布与安装状态以发布记录和安装回执为准。
 

@@ -47,6 +47,64 @@ python3 -B scripts/execution_eval.py check \
 python3 -B -m unittest discover -s tests -p 'test_execution_eval.py'
 ```
 
+## 规则读取预算
+
+[instruction_budget.py](../../scripts/instruction_budget.py) 按 [显式清单](../instruction-loads.json) 核对每种任务、角色调用、预加载、条件分支和已列组合的 UTF-8 字节数与去空白字符数。默认打印调用摘要，`--json` 打印完整结果；`--output` 保存完整 JSON 和 Markdown 报告，拒绝覆盖已有报告。
+
+```bash
+python3 -B scripts/instruction_budget.py
+python3 -B scripts/instruction_budget.py --output "<新的报告目录>"
+```
+
+同次调用的重叠来源去重；另一角色按冷调用重新计入共享规则和预加载。正文、卡片、交接和动态工具结果不在此计数内；清单是经维护的显式读取路径，不自动求所有 Markdown 引用的依赖闭包，也不证明模型实际读取。新增路径或条件组合需同步清单与预算；CI 和 `scripts/verify.py` 会执行这项检查。体积下降不能换算为实际 token、账单节省、文学质量或宿主稳定性，实际用量仍按下文原始日志另验。
+
+## 改稿失败样例与两臂对照
+
+[prose_trials.py](prose_trials.py) 为同题基线与候选准备独立技能快照、相同输入、任务、授权范围和篇幅约定。以下案例均是原创合成开发材料，题内上轮评价也是模拟文字；它们不是实际作者投诉、真实模型评阅、独立留出或已取得的文学效果结果。
+
+| 案例 | 观察目标 |
+|---|---|
+| [prose-telegraph](prose-cases/prose-telegraph.json) | 逐项播报是否得到实际改善，而非只用逗号连接短句；保住事实和人物选择 |
+| [prose-swallowed-confrontation](prose-cases/prose-swallowed-confrontation.json) | 关键商量是否在人物对话与回应中发生，避免摘要扩写和越权改结果 |
+| [prose-quiet-scene](prose-cases/prose-quiet-scene.json) | 保留有效安静与留白，不机械增加冲突、动作或解释 |
+| [prose-causal-claim](prose-cases/prose-causal-claim.json) | 回读实际依据，不照抄“全部通过”，不把可能补法称作已经修复 |
+| [prose-detect-only](prose-cases/prose-detect-only.json) | 只诊断时保护原稿，不擅自润色、续写或交替换段落 |
+| [prose-relationship-ambiguity](prose-cases/prose-relationship-ambiguity.json) | 依据具体动作区分当场松弛、一次交接与长期关系，不把暖意直接判为关系反转 |
+| [prose-relationship-contradiction](prose-cases/prose-relationship-contradiction.json) | 可靠叙述与实际签约确认违反有效边界时，不能用无根据的可能解释淡化矛盾 |
+| [prose-folk-style-contract](prose-cases/prose-folk-style-contract.json) | 民俗题材现场感与本次作者口述要求同时成立，旧风格默认不抹掉有作用的短句、重复和直写，也不补未知真相 |
+| [prose-cooperative-payoff-drift](prose-cases/prose-cooperative-payoff-drift.json) | 合作中贡献、取舍与已许回报分别核对，修复无依据转移，也保留伙伴的独立贡献 |
+| [prose-voluntary-payoff-handoff](prose-cases/prose-voluntary-payoff-handoff.json) | 有依据的主动让渡和不同回报可成立，润色不替主角夺回已让出的机会 |
+
+先复制并填写 [conditions.template.json](prose-cases/conditions.template.json)：两臂声明相同的模型 ID、设置与重复次数；模型 ID 须为非空字符串，未知设置保留 `null`。选择真实计划的 `assessment_mode`，准备时写 `blind` 不代表已经实现盲评。
+
+```bash
+python3 -B benchmarks/skill-execution/prose_trials.py prepare \
+  --case prose-telegraph \
+  --baseline-skills "<冻结基线的skills绝对路径>" \
+  --candidate-skills "<冻结候选的skills绝对路径>" \
+  --configuration "<已填写的条件JSON绝对路径>" \
+  --output "<全新运行目录绝对路径>"
+
+python3 -B benchmarks/skill-execution/prose_trials.py verify \
+  --run "<运行目录绝对路径>"
+
+python3 -B benchmarks/skill-execution/prose_trials.py inspect \
+  --run "<运行目录绝对路径>" \
+  --sample candidate/1 --output "<新的检查报告绝对路径>"
+```
+
+准备脚本不启动模型。每臂的 `sample-N/` 内都有 `task.txt`、执行前 `baseline.json` 和独立 `workspace/`；按上文真实 CLI 方式逐次运行，保存启动参数、原始日志、错误输出与产物。任务只给该臂冻结技能和输入，不提供另一臂输出或验收问题。实际模型、推理设置、同篇幅、同授权和完成轮次须对照启动记录及产物核实，预登记相同不证明实际条件相同。
+
+`verify` 只核对冻结任务、设置、技能与受保护输入的完整性，发现未授权文件变化也会报错；它不读取或认证 `evidence` 槽，不检查模型真实执行、必要产物完整、产物篇幅、用量或文学质量。
+
+`inspect` 只读已有运行，默认检查两臂全部样本；可重复 `--sample baseline/1` 或 `--sample candidate/1` 指定实际执行的样本。每个 `sample-N/` 保存 `launch.json`（原始 `argv` 数组、启动 `cwd`、`task_sha256`）、`process-result.json`（整数或 `null` 的 `exit_code`、布尔 `timed_out`），以及 `trace.jsonl`、`stderr.log`、`final.txt`。检查器复用执行检查与原始用量汇总，现场计数约定产物，比较声明条件与可解析的启动记录；缺模型版本、设置或宿主证据仍记未验证，记录匹配也不认证实际服务模型。报告输出须新建，不能写入工作区或技能树，不改原始证据，也不启动、重试模型。
+
+样本只给出 `not_started`、`incomplete`、`failed`、`needs_content_review` 四种状态。超时、失败、越权变化、篇幅不符或可确认的启动条件不一致不能作为完成；`needs_content_review` 仅表示可观察的执行与机械要求成立，仍须有原文位置的内容审查。退出码分别为 2（未开始或不完整）、1（失败）、0（等待内容审查）。原始日志及回执依赖可信采集，文件快照不认证来源。
+
+已有 [复核记录](#审稿分派与版本关联) 默认放在样本的 `review-record.json`，也可通过 `--review-record candidate/1=<绝对路径>` 提供；检查器复用版本、分派与返回关联，不因自称“独立复核”或仅有等待事件就认证。空模板不是结果。保留表达与场景变化、事实与因果缺口、权限遵守、未解决项及两稿偏好，模型复核与作者实际反馈分开记录。
+
+真实作者否定过、模型却给出正面评价的材料，按 [反馈记录模板](prose-cases/feedback-record.template.json) 保留原稿、任务、技能快照、模型原评价、作者原反馈及对应版本与位置。模型评分不能覆盖作者反馈，也不把任一评分当文学质量真值；知晓反馈后的复查记为 `feedback_aware`，参与调优的材料不能继续列独立留出。真实稿件和反馈默认仅留本地，公开前核对授权，不把手工模拟意见补写成真实投诉。
+
 ## 原生选择与实际版本
 
 `native-plan`、`native-review` 和负例 `non-story` 的 `task.txt` 不注入技能名称或路径。使用真实宿主新会话运行这三个任务；不要再把冻结入口追加到提示词，也不要用上一轮对话的续聊替代新会话。准备脚本复制的源码树只作留存，原生宿主可能读取用户级安装树，必须另记实际安装根、八个技能载荷的 SHA-256 和前后变化。两棵树有差异时分别列出，不能将未使用的源码快照当作本轮版本。

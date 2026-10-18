@@ -1,0 +1,1287 @@
+{
+  "schema": 1,
+  "date": "2026-10-17",
+  "generated_at_utc": "2026-10-17T06:57:28.373300+00:00",
+  "scope": "Unreleased development refinement in an existing dirty worktree; no user-level sync, commit, push, release or real-novel edits.",
+  "head": "cf036629efdbf741ab053540d5b4245125ecc673",
+  "environment": {
+    "python": "3.12.14",
+    "platform": "macOS-15.8.1-x86_64-i386-64bit"
+  },
+  "implementation_checks_passed": true,
+  "unit_tests": {
+    "ok": true,
+    "status": "passed",
+    "run": 1699,
+    "passed": 1568,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 134,
+    "expected_failures": 0,
+    "unexpected_successes": 0,
+    "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests"
+  },
+  "node_supplement": {
+    "status": "passed",
+    "unique_cases": 120,
+    "runs": [
+      {
+        "status": "passed",
+        "run": 24,
+        "passed": 24,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0,
+        "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+        "test_ids": [
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_iframe_is_unchanged",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_legacy_editor_gets_one_style_and_header_adaptation",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_modern_editor_retains_all_existing_controls",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_repeated_execution_is_idempotent",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_unknown_editor_structure_is_unchanged",
+          "test_desktop_native.DesktopNativeTests.test_appearance_injection_is_limited_to_matching_main_frame",
+          "test_desktop_native.DesktopNativeTests.test_appearance_result_uses_real_asset_acceptance",
+          "test_desktop_native.DesktopNativeTests.test_client_book_hint_changes_only_the_original_plain_instruction",
+          "test_desktop_native.DesktopNativeTests.test_leaving_check_includes_inactive_buffers_and_pending_save",
+          "test_workbench.WorkbenchTests.test_editor_switching_and_recovery_request_order",
+          "test_workbench.WorkbenchTests.test_pending_edits_remain_accessible_outside_catalog",
+          "test_workbench.WorkbenchTests.test_reload_failure_and_concurrent_input_preserve_editor",
+          "test_workbench_editor_layout.WorkbenchEditorLayoutTests.test_generated_editor_script_keeps_valid_csp_and_javascript_syntax",
+          "test_workbench_flow.WorkbenchFlowTests.test_legacy_candidate_uses_recorded_chapter_in_navigation_and_filtered_picker",
+          "test_workbench_flow.WorkbenchFlowTests.test_navigation_validates_metadata_and_keeps_material_and_filename_fallback",
+          "test_workbench_markdown.WorkbenchMarkdownTests.test_balanced_parentheses_are_complete_image_destinations",
+          "test_workbench_markdown.WorkbenchMarkdownTests.test_complex_or_unclosed_references_remain_literal_without_requests",
+          "test_workbench_markdown.WorkbenchMarkdownTests.test_existing_spaces_encodings_and_inline_formats_are_preserved",
+          "test_workbench_markdown.WorkbenchMarkdownTests.test_optional_titles_are_separate_from_image_destinations",
+          "test_workbench_markdown.WorkbenchMarkdownTests.test_ordinary_links_use_the_same_complete_destination",
+          "test_workbench_markdown.WorkbenchMarkdownTests.test_untrusted_targets_remain_blocked_after_reference_parsing",
+          "test_workbench_service_recovery.WorkbenchServiceRecoveryTests.test_open_failures_name_selected_book_in_shelf_and_editor",
+          "test_workbench_time_integration.WorkbenchTimeIntegrationTests.test_replaced_or_corrupt_book_cannot_reuse_or_borrow_a_verified_time",
+          "test_workbench_time_integration.WorkbenchTimeIntegrationTests.test_unknown_time_stays_last_in_both_orders_without_using_database_mtime"
+        ],
+        "remaining_skips": []
+      },
+      {
+        "status": "passed",
+        "run": 96,
+        "passed": 96,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "expected_failures": 0,
+        "unexpected_successes": 0,
+        "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+        "test_ids": [
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_existing_controls_keep_node_identity_ids_and_handlers",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_external_invalid_and_non_editor_addresses_are_unchanged",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_ids_remain_unique_and_all_original_named_nodes_survive",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_information_closes_on_outside_pointer_and_escape_restores_focus",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_long_title_location_tags_and_open_state_are_preserved",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_observer_monitors_only_original_title_and_progress_labels",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_observer_updates_open_information_without_reading_editor_state",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_opening_information_refreshes_current_title_and_progress",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_protected_state_and_everything_outside_header_remain_untouched",
+          "test_desktop_editor_appearance.DesktopEditorAppearanceTests.test_repeated_execution_does_not_register_duplicate_observers",
+          "test_workbench_book_display.WorkbenchBookDisplayTests.test_catalog_refresh_updates_current_header_and_renamed_menu_without_touching_text",
+          "test_workbench_book_display.WorkbenchBookDisplayTests.test_identical_leaf_and_parent_names_expand_to_unique_full_directories",
+          "test_workbench_book_display.WorkbenchBookDisplayTests.test_same_title_displays_each_work_type_and_distinguishing_directory",
+          "test_workbench_book_display.WorkbenchBookDisplayTests.test_shelf_uses_the_same_labels_safe_text_and_expandable_directories",
+          "test_workbench_book_display.WorkbenchBookDisplayTests.test_switch_menu_keeps_safe_text_selection_and_legacy_current_type",
+          "test_workbench_book_display.WorkbenchBookDisplayTests.test_unknown_and_unavailable_types_are_explicit_and_never_guessed",
+          "test_workbench_classification_display.WorkbenchClassificationDisplayTests.test_all_and_verified_work_types_have_independent_counts",
+          "test_workbench_classification_display.WorkbenchClassificationDisplayTests.test_classification_sources_preserve_literal_field_value_and_relative_path",
+          "test_workbench_classification_display.WorkbenchClassificationDisplayTests.test_empty_filter_and_empty_shelf_clear_old_cards_and_keep_zero_counts",
+          "test_workbench_classification_display.WorkbenchClassificationDisplayTests.test_genres_use_only_recorded_general_tags_and_name_analysis_subjects",
+          "test_workbench_classification_display.WorkbenchClassificationDisplayTests.test_missing_review_and_unavailable_classifications_have_clear_pending_labels",
+          "test_workbench_classification_display.WorkbenchClassificationDisplayTests.test_refresh_keeps_current_filter_and_updates_total_and_type_counts",
+          "test_workbench_classification_display.WorkbenchClassificationDisplayTests.test_same_title_directory_identity_and_disabled_open_survive_filtering",
+          "test_workbench_classification_editor.ClassificationEditorTests.test_analysis_tags_describe_the_analysis_subject_and_unsafe_text_is_plain",
+          "test_workbench_classification_editor.ClassificationEditorTests.test_current_genres_have_explicit_sources_and_refresh_without_mutating_text",
+          "test_workbench_classification_editor.ClassificationEditorTests.test_unverified_classification_does_not_display_tags_as_confirmed",
+          "test_workbench_document_identity.DocumentIdentityTests.test_badge_updates_identity_and_unsaved_text_without_changing_document",
+          "test_workbench_document_identity.DocumentIdentityTests.test_edited_formal_text_is_explicitly_unsaved_and_keeps_source",
+          "test_workbench_document_identity.DocumentIdentityTests.test_material_candidates_and_recoveries_stay_separate_from_prose",
+          "test_workbench_document_identity.DocumentIdentityTests.test_pending_and_broken_sources_override_candidate_and_recovery_labels",
+          "test_workbench_document_identity.DocumentIdentityTests.test_picker_does_not_call_pending_or_broken_source_a_completed_recovery",
+          "test_workbench_document_identity.DocumentIdentityTests.test_same_name_candidates_have_distinct_visible_locations",
+          "test_workbench_document_identity.DocumentIdentityTests.test_same_name_unsaved_files_remain_distinguishable",
+          "test_workbench_editor_layout.WorkbenchEditorLayoutTests.test_full_progress_remains_inspectable_without_changing_manuscript_state",
+          "test_workbench_editor_layout.WorkbenchEditorLayoutTests.test_information_refresh_follows_renamed_work_without_touching_edit_buffers",
+          "test_workbench_editor_layout.WorkbenchEditorLayoutTests.test_new_information_menu_closes_with_escape_or_outside_pointer_only",
+          "test_workbench_flow.WorkbenchFlowTests.test_catalog_refresh_preserves_collapsed_groups_scroll_and_plan_only_open",
+          "test_workbench_flow.WorkbenchFlowTests.test_catalog_response_during_search_debounce_does_not_render_old_results",
+          "test_workbench_flow.WorkbenchFlowTests.test_chapter_picker_keeps_versions_materials_and_current_unsaved_buffer",
+          "test_workbench_flow.WorkbenchFlowTests.test_column_sizes_preserve_reading_space_and_reject_invalid_preferences",
+          "test_workbench_flow.WorkbenchFlowTests.test_comparison_is_a_mode_and_returns_without_losing_editor_position",
+          "test_workbench_flow.WorkbenchFlowTests.test_context_refresh_marks_changed_data_without_replacing_cached_documents",
+          "test_workbench_flow.WorkbenchFlowTests.test_diff_preserves_all_text_and_only_marks_changes",
+          "test_workbench_flow.WorkbenchFlowTests.test_directory_refresh_does_not_reload_or_mutate_unsaved_text",
+          "test_workbench_flow.WorkbenchFlowTests.test_display_names_preserve_real_names_and_download_identity",
+          "test_workbench_flow.WorkbenchFlowTests.test_download_preserves_complete_prose_and_current_unsaved_text",
+          "test_workbench_flow.WorkbenchFlowTests.test_drawer_tab_wraps_both_directions_and_ignores_hidden_items",
+          "test_workbench_flow.WorkbenchFlowTests.test_empty_fulltext_search_clears_status_and_paging",
+          "test_workbench_flow.WorkbenchFlowTests.test_file_purpose_does_not_claim_adoption_from_directory",
+          "test_workbench_flow.WorkbenchFlowTests.test_markdown_builds_text_nodes_not_executable_html",
+          "test_workbench_flow.WorkbenchFlowTests.test_markdown_images_never_read_external_absolute_or_escaping_paths",
+          "test_workbench_flow.WorkbenchFlowTests.test_markdown_images_support_encoded_names_and_angle_paths",
+          "test_workbench_flow.WorkbenchFlowTests.test_markdown_missing_nonimage_and_broken_image_have_visible_failures",
+          "test_workbench_flow.WorkbenchFlowTests.test_markdown_relative_images_load_book_data_and_keep_inline_text",
+          "test_workbench_flow.WorkbenchFlowTests.test_material_candidates_keep_original_markdown_image_directory",
+          "test_workbench_flow.WorkbenchFlowTests.test_material_image_provenance_is_unavailable_for_missing_cyclic_or_unsafe_sources",
+          "test_workbench_flow.WorkbenchFlowTests.test_metrics_panel_explains_padding_without_calling_it_out_of_range",
+          "test_workbench_flow.WorkbenchFlowTests.test_new_chapter_location_cancels_older_search_debounce",
+          "test_workbench_flow.WorkbenchFlowTests.test_opening_chapter_cancels_older_search_debounce",
+          "test_workbench_flow.WorkbenchFlowTests.test_pending_catalog_background_refresh_keeps_latest_chapter_focus",
+          "test_workbench_flow.WorkbenchFlowTests.test_pending_catalog_mode_switch_ignores_old_directory",
+          "test_workbench_flow.WorkbenchFlowTests.test_pending_catalog_navigation_cancels_previous_chapter_focus",
+          "test_workbench_flow.WorkbenchFlowTests.test_pending_catalog_preserves_repeated_user_paging",
+          "test_workbench_flow.WorkbenchFlowTests.test_pending_catalog_search_resets_page_and_supersedes_old_focus",
+          "test_workbench_flow.WorkbenchFlowTests.test_per_document_positions_and_mode_positions_remain_independent",
+          "test_workbench_flow.WorkbenchFlowTests.test_prose_spacing_preserves_exact_text_and_special_blank_lines",
+          "test_workbench_flow.WorkbenchFlowTests.test_review_panel_renders_full_lint_heading_errors",
+          "test_workbench_flow.WorkbenchFlowTests.test_search_preview_uses_live_buffer_literal_unicode_and_safe_marks",
+          "test_workbench_flow.WorkbenchFlowTests.test_shortcut_saves_only_when_available_and_escape_closes_panels",
+          "test_workbench_focus_regressions.WorkbenchFocusRegressions.test_already_closed_context_opens_once_while_focused",
+          "test_workbench_focus_regressions.WorkbenchFocusRegressions.test_focus_hidden_context_opens_once_then_closes_and_persists_both",
+          "test_workbench_focus_regressions.WorkbenchFocusRegressions.test_narrow_drawer_preserves_focus_preferences_and_restores_keyboard_focus",
+          "test_workbench_focus_regressions.WorkbenchFocusRegressions.test_same_address_reload_restores_last_context_and_reading_choices",
+          "test_workbench_shelf_layout.WorkbenchShelfLayoutTests.test_card_semantics_directory_disambiguation_and_open_failure_name_are_preserved",
+          "test_workbench_shelf_layout.WorkbenchShelfLayoutTests.test_literal_titles_queries_and_source_details_remain_plain_text",
+          "test_workbench_shelf_layout.WorkbenchShelfLayoutTests.test_progress_appears_only_for_verified_real_chapter_counts_without_finish_claims",
+          "test_workbench_shelf_layout.WorkbenchShelfLayoutTests.test_refresh_keeps_query_and_selection_while_results_and_totals_update",
+          "test_workbench_shelf_layout.WorkbenchShelfLayoutTests.test_search_applies_inside_current_type_without_changing_counts_or_sort",
+          "test_workbench_shelf_layout.WorkbenchShelfLayoutTests.test_search_normalizes_case_width_and_matches_all_terms_from_evidenced_tags",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_analysis_is_a_project_without_a_writing_status_mutation_control",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_clearing_manual_mark_can_restore_recorded_completed_state",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_controls_are_accessible_and_open_remains_first_top_level_button",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_editor_distinguishes_manual_mark_from_recorded_state_and_shows_safe_evidence",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_failed_and_pending_mutation_never_optimistically_change_marker_or_filters",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_old_saved_preferences_load_with_all_statuses_and_valid_saved_status_restores",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_only_verified_valid_writing_values_show_serializing_or_completed",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_refresh_and_persisted_preferences_keep_all_selected_filters",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_status_filter_counts_follow_type_and_search_does_not_change_counts",
+          "test_workbench_status_display.WorkbenchStatusDisplayTests.test_successful_mutation_is_confirmed_by_catalog_and_keeps_view_when_card_leaves_filter",
+          "test_workbench_time_display.WorkbenchTimeDisplayTests.test_default_order_local_time_and_uncertain_time_labels",
+          "test_workbench_time_display.WorkbenchTimeDisplayTests.test_disabled_storage_keeps_filter_and_order_in_memory_during_refresh",
+          "test_workbench_time_display.WorkbenchTimeDisplayTests.test_equal_times_stay_stable_and_fractional_seconds_keep_their_order",
+          "test_workbench_time_display.WorkbenchTimeDisplayTests.test_only_verified_legal_utc_timestamps_participate_in_ordering",
+          "test_workbench_time_display.WorkbenchTimeDisplayTests.test_preferences_reload_and_invalid_settings_fall_back_to_defaults",
+          "test_workbench_time_display.WorkbenchTimeDisplayTests.test_sort_directions_keep_unknown_times_last_without_mutating_records",
+          "test_workbench_time_display.WorkbenchTimeDisplayTests.test_sort_type_filter_and_actual_refresh_preserve_selected_view"
+        ],
+        "remaining_skips": []
+      }
+    ],
+    "counting": "The original full-suite process lacked Node on PATH; these disjoint Node-dependent cases were rerun using the bundled runtime. Do not add full-suite and supplement counts."
+  },
+  "frontmatter": [
+    {
+      "skill": "story-skill",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-analyze",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-cover",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-plan",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-publish",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-research",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-review",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-write",
+      "exit_code": 0,
+      "stdout": "Skill is valid!",
+      "stderr": ""
+    }
+  ],
+  "instruction_budget": {
+    "passed": true,
+    "variants": 133,
+    "manifest_sha256": "b9aeb35fd73072320554d50cce3bddf4da91c3808bafdaf09d1fd80d195cb97a",
+    "thresholds_increased": false,
+    "base_calls": [
+      {
+        "scenario": "long_chapter",
+        "call": "writer",
+        "totals": {
+          "nonspace_chars": 37385,
+          "utf8_bytes": 102602
+        }
+      },
+      {
+        "scenario": "short_write",
+        "call": "writer",
+        "totals": {
+          "nonspace_chars": 52389,
+          "utf8_bytes": 143895
+        }
+      },
+      {
+        "scenario": "short_write",
+        "call": "cover_designer",
+        "totals": {
+          "nonspace_chars": 5561,
+          "utf8_bytes": 15971
+        }
+      },
+      {
+        "scenario": "short_write_novel_entry",
+        "call": "writer",
+        "totals": {
+          "nonspace_chars": 54970,
+          "utf8_bytes": 151483
+        }
+      },
+      {
+        "scenario": "short_write_unknown_entry",
+        "call": "writer",
+        "totals": {
+          "nonspace_chars": 56392,
+          "utf8_bytes": 155621
+        }
+      },
+      {
+        "scenario": "content_review",
+        "call": "reviewer",
+        "totals": {
+          "nonspace_chars": 19542,
+          "utf8_bytes": 53225
+        }
+      },
+      {
+        "scenario": "content_rewrite",
+        "call": "rewriter",
+        "totals": {
+          "nonspace_chars": 22981,
+          "utf8_bytes": 62861
+        }
+      },
+      {
+        "scenario": "content_rewrite",
+        "call": "independent_reviewer",
+        "totals": {
+          "nonspace_chars": 19542,
+          "utf8_bytes": 53225
+        }
+      },
+      {
+        "scenario": "targeted_punctuation",
+        "call": "copyeditor",
+        "totals": {
+          "nonspace_chars": 14043,
+          "utf8_bytes": 36916
+        }
+      },
+      {
+        "scenario": "draft_fragment",
+        "call": "writer",
+        "totals": {
+          "nonspace_chars": 23432,
+          "utf8_bytes": 65478
+        }
+      }
+    ],
+    "short_story_entry_change": {
+      "before_nonspace_chars": 56916,
+      "after_nonspace_chars": 52389,
+      "before_utf8_bytes": 157203,
+      "after_utf8_bytes": 143895
+    },
+    "scope": "Explicit cold rule loads, including shared rules; not dynamic story context, actual reading, tokens, costs or quality. Novel/unknown-entry completion variants explicitly reuse short_write cover role."
+  },
+  "package": {
+    "archive": "<REPO_ROOT>/.local-writing-samples/refinement-20261017-pijwze3r/final/source/story-skill-0.6.17.zip",
+    "version": "0.6.17",
+    "files": 52,
+    "sha256": "da1b2f967f597c5166d3be2482c1f4f671b4e69fc6363b4804c527bc03db345f",
+    "bytes": 423869
+  },
+  "claude_desktop_package": {
+    "archive": "<REPO_ROOT>/.local-writing-samples/refinement-20261017-pijwze3r/final/claude/story-skill-claude-desktop-0.6.17-r2.zip",
+    "version": "0.6.17",
+    "files": 54,
+    "source_files": 52,
+    "skill_name": "story-skill",
+    "bundle_revision": 2,
+    "skill_entry_count": 1,
+    "entry_path_mapping": {
+      "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+      "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+      "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+      "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+      "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+      "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+      "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+      "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+    },
+    "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+    "sha256": "0ae26bed3cbac7e25e2896b002b748c531c0b14597d315bd93010e8b60ff9d45",
+    "bytes": 429553
+  },
+  "source_archive_check": {
+    "status": "passed",
+    "archive": "<REPO_ROOT>/.local-writing-samples/refinement-20261017-pijwze3r/final/source/story-skill-0.6.17.zip",
+    "version": "0.6.17",
+    "sha256": "da1b2f967f597c5166d3be2482c1f4f671b4e69fc6363b4804c527bc03db345f",
+    "bytes": 423869,
+    "files": 52,
+    "contents_match_current_skill": true,
+    "missing": [],
+    "extra": [],
+    "changed": [],
+    "duplicate_entries": [],
+    "corrupt_entry": null,
+    "non_regular_entries": []
+  },
+  "isolated_install": {
+    "status": "passed",
+    "files": 52,
+    "skills": 8,
+    "installed_files_match": true
+  },
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 352,
+    "links_checked": 2169,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "independent_code_review": {
+    "status": "reviewed_with_fixed_finding",
+    "findings": [
+      {
+        "priority": 2,
+        "issue": "Inspection report could occupy a not-yet-existing reserved evidence path",
+        "status": "fixed_and_independently_reproduced"
+      }
+    ],
+    "reviewed_source_sha256": {
+      "benchmarks/skill-execution/prose_trials.py": "a8c848b3a007f84e117f87a1ee1b7c308671daf66770b71ebbe440dbb57252b2",
+      "tests/test_prose_trial_inspection.py": "a2b9156e027ee236244b4ab81e59f0d42b1a28360b34492a681d1acadc9324ab"
+    }
+  },
+  "independent_route_review": {
+    "status": "no_reproducible_issue_in_scope",
+    "checks": "Independent raw-byte partition and totals for all selected variants; actual routes, shared sources, complete entry options, three-platform duties and diagnosis triggers checked.",
+    "limitation": "No before/tests/test_instruction_budget.py snapshot was captured, so auditor inspected current contracts without asserting a test-file line diff."
+  },
+  "new_native_trials": [
+    {
+      "case": "prose-relationship-ambiguity",
+      "classification": "original_synthetic_development",
+      "repetitions_per_arm": 1,
+      "inspection": {
+        "path": ".local-writing-samples/refinement-20261017-pijwze3r/new-run-inspection/prose-relationship-ambiguity.json",
+        "sha256": "9bfecc1a5f409975487bef25ed8bd5a1504d19ccce4e60ac6fe7b2289682e370",
+        "bytes": 54937
+      },
+      "status": "needs_content_review",
+      "frozen_inputs_intact": true,
+      "samples": [
+        {
+          "sample": "baseline/1",
+          "status": "needs_content_review",
+          "lengths": {
+            "审稿报告.md": {
+              "min": 300,
+              "max": 450,
+              "count_method": "visible_nonspace_v2",
+              "actual": 382,
+              "status": "within_range"
+            }
+          },
+          "process": {
+            "status": "recorded_success",
+            "receipt": {
+              "exit_code": 0,
+              "timed_out": false,
+              "case": "prose-relationship-ambiguity",
+              "arm": "baseline",
+              "duration_seconds": 137.228
+            }
+          },
+          "launch_conditions": {
+            "status": "partially_observed",
+            "binding_status": "matches_recorded_launch",
+            "issues": [],
+            "declared": {
+              "model": "gpt-6.1-sol",
+              "settings": {
+                "model_revision": null,
+                "reasoning_effort": "ultra",
+                "host_version": "codex-cli 0.163.0-alpha.10.2",
+                "seed": null
+              },
+              "repetitions": 1
+            },
+            "fields": {
+              "model_revision": {
+                "declared": null,
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "reasoning_effort": {
+                "declared": "ultra",
+                "recorded_launch": "ultra",
+                "status": "matches_launch"
+              },
+              "host_version": {
+                "declared": "codex-cli 0.163.0-alpha.10.2",
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "seed": {
+                "declared": null,
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "model": {
+                "declared": "gpt-6.1-sol",
+                "recorded_launch": "gpt-6.1-sol",
+                "status": "matches_launch"
+              }
+            },
+            "actual_model_and_settings": "unverified",
+            "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+            "recorded_argv": [
+              "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+              "exec",
+              "--cd",
+              "<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/baseline/sample-1/workspace",
+              "--sandbox",
+              "workspace-write",
+              "--skip-git-repo-check",
+              "--ephemeral",
+              "--json",
+              "--ignore-user-config",
+              "--ignore-rules",
+              "--model",
+              "gpt-6.1-sol",
+              "-c",
+              "model_reasoning_effort=\"ultra\"",
+              "-c",
+              "approval_policy=\"never\"",
+              "--output-last-message",
+              "<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/baseline/sample-1/final.txt",
+              "-"
+            ],
+            "unverified_overrides": [],
+            "required_options_observed": true
+          },
+          "generated_independent_assignment_status": "unverified",
+          "current_relation_rule_returned_by_successful_read": [],
+          "execution_mechanical_ok": true,
+          "trace_status": "complete",
+          "evidence": {
+            "launch.json": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/baseline/sample-1/launch.json",
+              "sha256": "3bc314535d08012930c84b8c1917f453f40d35ef2fbd0e7bacde24a2fcf82099",
+              "bytes": 1361
+            },
+            "process-result.json": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/baseline/sample-1/process-result.json",
+              "sha256": "afdd87f5d07d0465bea2026285ee630d12af5238c17fdcd748570b54e30ae619",
+              "bytes": 137
+            },
+            "trace.jsonl": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/baseline/sample-1/trace.jsonl",
+              "sha256": "9bce60fb7551599d65428596cb21b4791232b2f5dcb2b9d4d78de39c51c28a04",
+              "bytes": 84041
+            },
+            "stderr.log": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/baseline/sample-1/stderr.log",
+              "sha256": "6d0d316d67a85485ae23492d089a49c35f658f6d72678278fc17cf8a1d617f70",
+              "bytes": 5471
+            },
+            "final.txt": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/baseline/sample-1/final.txt",
+              "sha256": "80cd9da2f8652f599a38d33c15548e2f2ae320cbd6091f1460a98fb8fae45681",
+              "bytes": 326
+            }
+          },
+          "outputs": {},
+          "report": {
+            "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/baseline/sample-1/workspace/审稿报告.md",
+            "sha256": "8cb4c63745c0e7552ed7310c7601fb3095bbb77f4964ffec2a0d1d3f57481256",
+            "bytes": 1139
+          },
+          "usage_report_available_in": ".local-writing-samples/refinement-20261017-pijwze3r/new-run-inspection/prose-relationship-ambiguity.json"
+        },
+        {
+          "sample": "candidate/1",
+          "status": "needs_content_review",
+          "lengths": {
+            "审稿报告.md": {
+              "min": 300,
+              "max": 450,
+              "count_method": "visible_nonspace_v2",
+              "actual": 376,
+              "status": "within_range"
+            }
+          },
+          "process": {
+            "status": "recorded_success",
+            "receipt": {
+              "exit_code": 0,
+              "timed_out": false,
+              "case": "prose-relationship-ambiguity",
+              "arm": "candidate",
+              "duration_seconds": 167.474
+            }
+          },
+          "launch_conditions": {
+            "status": "partially_observed",
+            "binding_status": "matches_recorded_launch",
+            "issues": [],
+            "declared": {
+              "model": "gpt-6.1-sol",
+              "settings": {
+                "model_revision": null,
+                "reasoning_effort": "ultra",
+                "host_version": "codex-cli 0.163.0-alpha.10.2",
+                "seed": null
+              },
+              "repetitions": 1
+            },
+            "fields": {
+              "model_revision": {
+                "declared": null,
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "reasoning_effort": {
+                "declared": "ultra",
+                "recorded_launch": "ultra",
+                "status": "matches_launch"
+              },
+              "host_version": {
+                "declared": "codex-cli 0.163.0-alpha.10.2",
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "seed": {
+                "declared": null,
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "model": {
+                "declared": "gpt-6.1-sol",
+                "recorded_launch": "gpt-6.1-sol",
+                "status": "matches_launch"
+              }
+            },
+            "actual_model_and_settings": "unverified",
+            "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+            "recorded_argv": [
+              "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+              "exec",
+              "--cd",
+              "<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/sample-1/workspace",
+              "--sandbox",
+              "workspace-write",
+              "--skip-git-repo-check",
+              "--ephemeral",
+              "--json",
+              "--ignore-user-config",
+              "--ignore-rules",
+              "--model",
+              "gpt-6.1-sol",
+              "-c",
+              "model_reasoning_effort=\"ultra\"",
+              "-c",
+              "approval_policy=\"never\"",
+              "--output-last-message",
+              "<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/sample-1/final.txt",
+              "-"
+            ],
+            "unverified_overrides": [],
+            "required_options_observed": true
+          },
+          "generated_independent_assignment_status": "unverified",
+          "current_relation_rule_returned_by_successful_read": [
+            {
+              "trace_line": 17,
+              "command": "/bin/zsh -lc \"sed -n '1,45p' '<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/skills/story-skill-write/references/content-review.md'\nsed -n '63,100p' '<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/skills/story-skill-write/references/content-review.md'\""
+            }
+          ],
+          "execution_mechanical_ok": true,
+          "trace_status": "complete",
+          "evidence": {
+            "launch.json": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/sample-1/launch.json",
+              "sha256": "924288feca8043c6d240e12bafed8235541ce06509c518014ab2364211d49e5a",
+              "bytes": 1363
+            },
+            "process-result.json": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/sample-1/process-result.json",
+              "sha256": "5f0f0982e0ee529e8dd7eac04d3bd457df2c627707a3430b42edc14034f45f14",
+              "bytes": 138
+            },
+            "trace.jsonl": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/sample-1/trace.jsonl",
+              "sha256": "fbd8f6a65affe6f2261cbb26e48caeeac9a1d0f4029dba7e1779e7a7e172d2ba",
+              "bytes": 92294
+            },
+            "stderr.log": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/sample-1/stderr.log",
+              "sha256": "74553193a6b4e4a807b7c6a832c35d7d26ad89829b51a4a7ed9c772f5693d443",
+              "bytes": 5720
+            },
+            "final.txt": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/sample-1/final.txt",
+              "sha256": "96f277876eb6a76785fe55b6c4eed0e4e591e02ae0a27c32a8088fc40bc4fbd6",
+              "bytes": 318
+            }
+          },
+          "outputs": {},
+          "report": {
+            "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-ambiguity/candidate/sample-1/workspace/审稿报告.md",
+            "sha256": "9439f3bc2d0533ab7d014ae9b98e57e5ea41eb2e1907d39919fdab7a99a3514c",
+            "bytes": 1123
+          },
+          "usage_report_available_in": ".local-writing-samples/refinement-20261017-pijwze3r/new-run-inspection/prose-relationship-ambiguity.json"
+        }
+      ]
+    },
+    {
+      "case": "prose-relationship-contradiction",
+      "classification": "original_synthetic_development",
+      "repetitions_per_arm": 1,
+      "inspection": {
+        "path": ".local-writing-samples/refinement-20261017-pijwze3r/new-run-inspection/prose-relationship-contradiction.json",
+        "sha256": "450d19be9810f1949cac67c66bf47556927abde5d2d8c4f03e9cd49f02f85a9c",
+        "bytes": 51473
+      },
+      "status": "needs_content_review",
+      "frozen_inputs_intact": true,
+      "samples": [
+        {
+          "sample": "baseline/1",
+          "status": "needs_content_review",
+          "lengths": {
+            "审稿报告.md": {
+              "min": 300,
+              "max": 450,
+              "count_method": "visible_nonspace_v2",
+              "actual": 386,
+              "status": "within_range"
+            }
+          },
+          "process": {
+            "status": "recorded_success",
+            "receipt": {
+              "exit_code": 0,
+              "timed_out": false,
+              "case": "prose-relationship-contradiction",
+              "arm": "baseline",
+              "duration_seconds": 111.063
+            }
+          },
+          "launch_conditions": {
+            "status": "partially_observed",
+            "binding_status": "matches_recorded_launch",
+            "issues": [],
+            "declared": {
+              "model": "gpt-6.1-sol",
+              "settings": {
+                "model_revision": null,
+                "reasoning_effort": "ultra",
+                "host_version": "codex-cli 0.163.0-alpha.10.2",
+                "seed": null
+              },
+              "repetitions": 1
+            },
+            "fields": {
+              "model_revision": {
+                "declared": null,
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "reasoning_effort": {
+                "declared": "ultra",
+                "recorded_launch": "ultra",
+                "status": "matches_launch"
+              },
+              "host_version": {
+                "declared": "codex-cli 0.163.0-alpha.10.2",
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "seed": {
+                "declared": null,
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "model": {
+                "declared": "gpt-6.1-sol",
+                "recorded_launch": "gpt-6.1-sol",
+                "status": "matches_launch"
+              }
+            },
+            "actual_model_and_settings": "unverified",
+            "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+            "recorded_argv": [
+              "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+              "exec",
+              "--cd",
+              "<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/baseline/sample-1/workspace",
+              "--sandbox",
+              "workspace-write",
+              "--skip-git-repo-check",
+              "--ephemeral",
+              "--json",
+              "--ignore-user-config",
+              "--ignore-rules",
+              "--model",
+              "gpt-6.1-sol",
+              "-c",
+              "model_reasoning_effort=\"ultra\"",
+              "-c",
+              "approval_policy=\"never\"",
+              "--output-last-message",
+              "<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/baseline/sample-1/final.txt",
+              "-"
+            ],
+            "unverified_overrides": [],
+            "required_options_observed": true
+          },
+          "generated_independent_assignment_status": "unverified",
+          "current_relation_rule_returned_by_successful_read": [],
+          "execution_mechanical_ok": true,
+          "trace_status": "complete",
+          "evidence": {
+            "launch.json": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/baseline/sample-1/launch.json",
+              "sha256": "44e6f8bf4d850456a0143ed494599e3ae06991959dac1e7b193ac8c00168eab1",
+              "bytes": 1369
+            },
+            "process-result.json": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/baseline/sample-1/process-result.json",
+              "sha256": "4240a0cbf991bf428f731d86114b5708dcea8153bc1697c6af8fb1de18dbad6f",
+              "bytes": 141
+            },
+            "trace.jsonl": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/baseline/sample-1/trace.jsonl",
+              "sha256": "d5ed7d1c02df5445372d96051eda4380ed7e01cb030e1a3ebdc9b2b4d3d5e317",
+              "bytes": 80123
+            },
+            "stderr.log": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/baseline/sample-1/stderr.log",
+              "sha256": "6585eb12d2142c7b0055814bc281a1915bbbc5c92ac514019070636f5db2cdcb",
+              "bytes": 4642
+            },
+            "final.txt": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/baseline/sample-1/final.txt",
+              "sha256": "708adffc928bdfe1fc0e884e6f21a11891bb6bd6d1207ca4d93f6521942004c9",
+              "bytes": 288
+            }
+          },
+          "outputs": {},
+          "report": {
+            "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/baseline/sample-1/workspace/审稿报告.md",
+            "sha256": "fa4c8ab648ad9b7c24c830ddfdc24605024498ba836a0c6b75ebd050da298574",
+            "bytes": 1155
+          },
+          "usage_report_available_in": ".local-writing-samples/refinement-20261017-pijwze3r/new-run-inspection/prose-relationship-contradiction.json"
+        },
+        {
+          "sample": "candidate/1",
+          "status": "needs_content_review",
+          "lengths": {
+            "审稿报告.md": {
+              "min": 300,
+              "max": 450,
+              "count_method": "visible_nonspace_v2",
+              "actual": 368,
+              "status": "within_range"
+            }
+          },
+          "process": {
+            "status": "recorded_success",
+            "receipt": {
+              "exit_code": 0,
+              "timed_out": false,
+              "case": "prose-relationship-contradiction",
+              "arm": "candidate",
+              "duration_seconds": 133.378
+            }
+          },
+          "launch_conditions": {
+            "status": "partially_observed",
+            "binding_status": "matches_recorded_launch",
+            "issues": [],
+            "declared": {
+              "model": "gpt-6.1-sol",
+              "settings": {
+                "model_revision": null,
+                "reasoning_effort": "ultra",
+                "host_version": "codex-cli 0.163.0-alpha.10.2",
+                "seed": null
+              },
+              "repetitions": 1
+            },
+            "fields": {
+              "model_revision": {
+                "declared": null,
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "reasoning_effort": {
+                "declared": "ultra",
+                "recorded_launch": "ultra",
+                "status": "matches_launch"
+              },
+              "host_version": {
+                "declared": "codex-cli 0.163.0-alpha.10.2",
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "seed": {
+                "declared": null,
+                "recorded_launch": null,
+                "status": "unverified"
+              },
+              "model": {
+                "declared": "gpt-6.1-sol",
+                "recorded_launch": "gpt-6.1-sol",
+                "status": "matches_launch"
+              }
+            },
+            "actual_model_and_settings": "unverified",
+            "scope": "Recorded Codex CLI launch only; capture origin and actual serving model are not authenticated.",
+            "recorded_argv": [
+              "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+              "exec",
+              "--cd",
+              "<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/candidate/sample-1/workspace",
+              "--sandbox",
+              "workspace-write",
+              "--skip-git-repo-check",
+              "--ephemeral",
+              "--json",
+              "--ignore-user-config",
+              "--ignore-rules",
+              "--model",
+              "gpt-6.1-sol",
+              "-c",
+              "model_reasoning_effort=\"ultra\"",
+              "-c",
+              "approval_policy=\"never\"",
+              "--output-last-message",
+              "<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/candidate/sample-1/final.txt",
+              "-"
+            ],
+            "unverified_overrides": [],
+            "required_options_observed": true
+          },
+          "generated_independent_assignment_status": "unverified",
+          "current_relation_rule_returned_by_successful_read": [
+            {
+              "trace_line": 15,
+              "command": "/bin/zsh -lc \"sed -n '1,45p;63,100p' '<REPO_ROOT>/.local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/candidate/skills/story-skill-write/references/content-review.md'\""
+            }
+          ],
+          "execution_mechanical_ok": true,
+          "trace_status": "complete",
+          "evidence": {
+            "launch.json": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/candidate/sample-1/launch.json",
+              "sha256": "1de1584ffdb78c59a208c7cf108d5e744a82660f81f039e150c963d041cbd041",
+              "bytes": 1371
+            },
+            "process-result.json": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/candidate/sample-1/process-result.json",
+              "sha256": "a3f3f958b6e7b771ee67c2423bdabf5ada30742402f7587338187f2ef595612a",
+              "bytes": 142
+            },
+            "trace.jsonl": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/candidate/sample-1/trace.jsonl",
+              "sha256": "d2f93349dfede891f63924e0ec4a442486d576fcd1c172fab62c61346eea0ec3",
+              "bytes": 81862
+            },
+            "stderr.log": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/candidate/sample-1/stderr.log",
+              "sha256": "cc8355dfed4d0b464d0ee1167b2ab29c2aaa2a9878ccd595ccd4cf698d45ec15",
+              "bytes": 4763
+            },
+            "final.txt": {
+              "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/candidate/sample-1/final.txt",
+              "sha256": "19f3048bcb2143dff15160824309aedd58029df935c9fe6632eb229266ce129f",
+              "bytes": 187
+            }
+          },
+          "outputs": {},
+          "report": {
+            "path": ".local-writing-samples/skill-execution/refinement-20261017-pijwze3r/prose-relationship-contradiction/candidate/sample-1/workspace/审稿报告.md",
+            "sha256": "1fdb369de5f9e1368e43d9b7f5c3617b63655b22086b802d9f521550ae196076",
+            "bytes": 1097
+          },
+          "usage_report_available_in": ".local-writing-samples/refinement-20261017-pijwze3r/new-run-inspection/prose-relationship-contradiction.json"
+        }
+      ]
+    }
+  ],
+  "candidate_freeze_to_current": [
+    {
+      "case": "prose-relationship-ambiguity",
+      "candidate_frozen_to_current_differences": [
+        "story-skill/references/project-state.md",
+        "story-skill-plan/SKILL.md",
+        "story-skill-plan/references/fanqie-tags.md",
+        "story-skill-write/SKILL.md"
+      ],
+      "review_entry_equal": true,
+      "content_review_equal": true
+    },
+    {
+      "case": "prose-relationship-contradiction",
+      "candidate_frozen_to_current_differences": [
+        "story-skill/references/project-state.md",
+        "story-skill-plan/SKILL.md",
+        "story-skill-plan/references/fanqie-tags.md",
+        "story-skill-write/SKILL.md"
+      ],
+      "review_entry_equal": true,
+      "content_review_equal": true
+    }
+  ],
+  "version_anonymous_independent_reading": {
+    "reviewer_kind": "model",
+    "mode": "independent",
+    "version_mapping_hidden_from_reviewer": true,
+    "prior_feedback_provided": false,
+    "human_readers": 0,
+    "inputs": {
+      "01/任务.txt": {
+        "sha256": "fba1b645fb8ecf65ab354ad594689efc57dbcd526f8d04e4eb27f1a0ff634fac",
+        "bytes": 502
+      },
+      "01/候选.md": {
+        "sha256": "5b948a792fe32a080d706620d4ab5791f256b34b25832ca2ebfd8444d8dcfb0e",
+        "bytes": 556
+      },
+      "01/已采用设定.md": {
+        "sha256": "86b1ddebf116d45e4c3f354e534f4dda48067e343d685c562ad26060db3a88c2",
+        "bytes": 520
+      },
+      "01/报告A.md": {
+        "sha256": "9439f3bc2d0533ab7d014ae9b98e57e5ea41eb2e1907d39919fdab7a99a3514c",
+        "bytes": 1123
+      },
+      "01/报告B.md": {
+        "sha256": "8cb4c63745c0e7552ed7310c7601fb3095bbb77f4964ffec2a0d1d3f57481256",
+        "bytes": 1139
+      },
+      "02/任务.txt": {
+        "sha256": "fba1b645fb8ecf65ab354ad594689efc57dbcd526f8d04e4eb27f1a0ff634fac",
+        "bytes": 502
+      },
+      "02/候选.md": {
+        "sha256": "1a40735ed46e89fdb8fa62743d933c5f0722fd1ca614bdbd4ebe4cc540bc8bef",
+        "bytes": 881
+      },
+      "02/已采用设定.md": {
+        "sha256": "86b1ddebf116d45e4c3f354e534f4dda48067e343d685c562ad26060db3a88c2",
+        "bytes": 520
+      },
+      "02/报告A.md": {
+        "sha256": "fa4c8ab648ad9b7c24c830ddfdc24605024498ba836a0c6b75ebd050da298574",
+        "bytes": 1155
+      },
+      "02/报告B.md": {
+        "sha256": "1fdb369de5f9e1368e43d9b7f5c3617b63655b22086b802d9f521550ae196076",
+        "bytes": 1097
+      }
+    },
+    "preferences": [
+      {
+        "case": "prose-relationship-ambiguity",
+        "preference": "tie",
+        "assessment": "Both main conclusions supported, no material overstatement found."
+      },
+      {
+        "case": "prose-relationship-contradiction",
+        "preference": "baseline_slight",
+        "assessment": "Both main conclusions supported. Candidate wording that earlier key distinction becomes ineffective is overly broad: subsequent decision does not erase earlier action at its time."
+      }
+    ],
+    "stable_quality_improvement_established": false,
+    "generated_review_claims_retroactively_certified": false
+  },
+  "prior_trial_reinspection": [
+    {
+      "case": "prose-causal-claim",
+      "report": {
+        "path": ".local-writing-samples/refinement-20261017-pijwze3r/prior-run-inspection/prose-causal-claim.json",
+        "sha256": "f28bcbd0dde14bfb48cf480e6de00998d2a6c78a4ba0dd1d1261311247722964",
+        "bytes": 37510
+      },
+      "status": "incomplete",
+      "sample_counts": {
+        "not_started": 1,
+        "incomplete": 0,
+        "failed": 0,
+        "needs_content_review": 1
+      }
+    },
+    {
+      "case": "prose-detect-only",
+      "report": {
+        "path": ".local-writing-samples/refinement-20261017-pijwze3r/prior-run-inspection/prose-detect-only.json",
+        "sha256": "021e68227da2011e4c6a05ca1fc4dac606fcc996b08f4c7b48d4a539bc0da129",
+        "bytes": 39479
+      },
+      "status": "incomplete",
+      "sample_counts": {
+        "not_started": 1,
+        "incomplete": 0,
+        "failed": 0,
+        "needs_content_review": 1
+      }
+    },
+    {
+      "case": "prose-quiet-scene",
+      "report": {
+        "path": ".local-writing-samples/refinement-20261017-pijwze3r/prior-run-inspection/prose-quiet-scene.json",
+        "sha256": "3425bb8bfb5cefce5edfbbc3f126b9c96bce479d8a4893f21a3dd8748f3d5c8d",
+        "bytes": 53784
+      },
+      "status": "needs_content_review",
+      "sample_counts": {
+        "not_started": 0,
+        "incomplete": 0,
+        "failed": 0,
+        "needs_content_review": 2
+      }
+    },
+    {
+      "case": "prose-swallowed-confrontation",
+      "report": {
+        "path": ".local-writing-samples/refinement-20261017-pijwze3r/prior-run-inspection/prose-swallowed-confrontation.json",
+        "sha256": "224f2d38d697b78c560b1a79a49bef1e9f59d9f0f7b1fd337b879d95c701639c",
+        "bytes": 38775
+      },
+      "status": "incomplete",
+      "sample_counts": {
+        "not_started": 1,
+        "incomplete": 0,
+        "failed": 0,
+        "needs_content_review": 1
+      }
+    },
+    {
+      "case": "prose-telegraph",
+      "report": {
+        "path": ".local-writing-samples/refinement-20261017-pijwze3r/prior-run-inspection/prose-telegraph.json",
+        "sha256": "66ce007e295bebe1a64d601eb74145c117e5ff1c5764b3c24f4e3f1c0c4f2c5a",
+        "bytes": 49333
+      },
+      "status": "failed",
+      "sample_counts": {
+        "not_started": 0,
+        "incomplete": 0,
+        "failed": 1,
+        "needs_content_review": 1
+      }
+    }
+  ],
+  "not_verified": [
+    "Actual serving model revision, seed and full implicit host context",
+    "Native desktop skill discovery or user-level installation refresh",
+    "Generated independent review claims without dispatch/version linkage",
+    "Human-reader preference, general literary improvement, full-task billing or stable comparative advantage",
+    "Real platform menus or publication outcomes"
+  ],
+  "source_files": {
+    ".github/workflows/ci.yml": "082289c1c10f050bbdf86932401bdd17d242b281b71af4a1d20b99be14b304f0",
+    "README.md": "406fd8389689f5eadc8487e2e3efb04a247420451c9fb21cb29ccf6cf4aa1df4",
+    "benchmarks/instruction-loads.json": "b9aeb35fd73072320554d50cce3bddf4da91c3808bafdaf09d1fd80d195cb97a",
+    "benchmarks/skill-execution/README.md": "37d383e1fce80e6bea815e80775abb5d074f5c74a3496ae7afb4f39accfbcdac",
+    "benchmarks/skill-execution/prose-cases/conditions.template.json": "97eb8d64624552f490bd0568b25c5ad760b18a8763b0f5aa6ecc5a9e45a6d92a",
+    "benchmarks/skill-execution/prose-cases/feedback-record.template.json": "0e9cbcb8fd47f28471789c8823a31a0aa028c6bde228d661263d7aed13829bc6",
+    "benchmarks/skill-execution/prose-cases/prose-causal-claim.json": "a280e2468239f1b5658aa41d999fe8b54ef5b59e665e8a5f615c8a36c1cf7626",
+    "benchmarks/skill-execution/prose-cases/prose-detect-only.json": "846369f8618e654c719c08b12bd0d5060567c2168aa01f86285b2327342380cf",
+    "benchmarks/skill-execution/prose-cases/prose-quiet-scene.json": "e0dfea1c9c31590b252d53da264b64560b03d1a432ef1460326f66613845d9e2",
+    "benchmarks/skill-execution/prose-cases/prose-relationship-ambiguity.json": "b2798e5edb487bfd3dc13904ad7927da583a9cd1e889bc7f5b46b4cb27349592",
+    "benchmarks/skill-execution/prose-cases/prose-relationship-contradiction.json": "97c3efd00d983b8c08b7dce10afaeaad4f38a1892d3522d7836ca0c7882a27b8",
+    "benchmarks/skill-execution/prose-cases/prose-swallowed-confrontation.json": "59c4f9b3185280194d852d5c6c7ffe143a91a202ac00f08c262169483e6c03ba",
+    "benchmarks/skill-execution/prose-cases/prose-telegraph.json": "1d3d83e2eecff00089aeb46309d80972862a49bd2c2b8e3ceab4e0f5b1187e7d",
+    "benchmarks/skill-execution/prose_trials.py": "a8c848b3a007f84e117f87a1ee1b7c308671daf66770b71ebbe440dbb57252b2",
+    "docs/evaluation.md": "993b9aa818545a9373ca2365071323a682a93f8d99484a74f7755955e3ecc7dd",
+    "scripts/instruction_budget.py": "fef0e6453ace5a286e39956d2e98d148e84db92b79bba9c43960a1eddf8bba08",
+    "scripts/verify.py": "63e1e8bdf59a527686249e4958d7bdc9d7c00d120023fddff57d70e97135fcfa",
+    "skills/story-skill-plan/SKILL.md": "71c2f88e11d0c383d39111e1d3f54bbb7c44a0ee037d7f2d4619280729030c45",
+    "skills/story-skill-plan/references/fanqie-tags.md": "06fb7c5344dde2d0d9c46a26d2bc63ff0d648f03394487261150c993592e465f",
+    "skills/story-skill-review/SKILL.md": "30baae4cbc1af813826944ebe3bd5ad97094c248fb57c6cb4ac5d6d6a6fc11a2",
+    "skills/story-skill-review/references/history.md": "6be47ce5d88c40205503fc477cee2c3370bd1934e71b7d1129bf0d30cd3eea0c",
+    "skills/story-skill-write/SKILL.md": "4c9d9a2bbd5354017de2be545216f7c0ca78d22724ffe36986cc0a2a1a98c7fb",
+    "skills/story-skill-write/references/chapter.md": "c4bb4e5488f8f8066271e2463b10c176041a954aae9d80a5cda076980fa5f77b",
+    "skills/story-skill-write/references/content-review.md": "3125b1af30264dad5de8ef096656e73459c0a8115ec766b4fa84cb599972f444",
+    "skills/story-skill-write/references/drama.md": "1aaa0ea4b0b722ab75d9fe153f53d9d84ab76a343d82621d72195e2798827046",
+    "skills/story-skill/SKILL.md": "c5bc1891e6412ede63a01b4bc921a2521dfe26dac89a2e998d2a15ca7d1c4a0d",
+    "skills/story-skill/references/project-state.md": "865354ab7d8d3241cd6f1b9f6be12a906f93d339d23d92c62d1894a96b0d871b",
+    "tests/test_instruction_budget.py": "32166760e07b81874518d2f1ded965d407de454ba438d65fb6eb00fa3e69bc9c",
+    "tests/test_prose_trial_inspection.py": "a2b9156e027ee236244b4ab81e59f0d42b1a28360b34492a681d1acadc9324ab",
+    "tests/test_prose_trials.py": "a3e75ad3f51744e05d932b1e02817820354feb391b2db68b1d2bd05b690ef8ee"
+  },
+  "private_evidence": [
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/unit-tests.json",
+      "sha256": "7c78ff3bcdcd5c74b1bb0a8459d789fc4a4daca8a14177cc57adaa6220ad043a",
+      "bytes": 277
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/unit-tests.log",
+      "sha256": "2d4b3c1f367c1562a26070472562f9965cb0f35e37b47210b28e7b32c81c1d42",
+      "bytes": 1819
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/node-supplement.json",
+      "sha256": "58ab73201a72976ad6ec1d10a54dc9eefe1d72351b32c5c2ae742edab34d8add",
+      "bytes": 3011
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/node-supplement.log",
+      "sha256": "6c794f34fdeef757d757bcadb814804d03aa8c7ecbe7fb8d5336d32cb09f418a",
+      "bytes": 4250
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/node-supplement-selection.json",
+      "sha256": "a3fbfe76ef90488342074482369527779aee4cd0922128d240a3db84898b66fb",
+      "bytes": 2865
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/node-remaining.json",
+      "sha256": "6a3ebf89d6ee1c0f409fd4e0c4d55c76116e310537a0d3a023c29cd007e57f49",
+      "bytes": 12402
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/node-remaining.log",
+      "sha256": "a491c82cdcfc7ed92f574e0172eaeca7cadb3e9b4c99ced0861c145dda0bfbf9",
+      "bytes": 18831
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/node-remaining-selection.json",
+      "sha256": "3abf7e1a57f9945dfb667189de3b50d785a8c114c97adf49aa46ec34b14777b7",
+      "bytes": 12256
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/skill-validation.json",
+      "sha256": "d09453220ab97f4199a87c313e7843ee5afdbdbe597f565e11b61d6e9d88aabe",
+      "bytes": 908
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/launch-schedule.json",
+      "sha256": "e33810fd6306b08b70cacc4d2c7a3ed498a5c7479af7fa5000b26dae6668ea66",
+      "bytes": 367
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/trial-selection.json",
+      "sha256": "d8efb93bb3d5603ac2f0973d6d9bd61ddd600772ce225cc9768e0661c81f8a6f",
+      "bytes": 618
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/trial-configuration.json",
+      "sha256": "d109573464e2427f682abb7180ab2ef248268f050d4b6715072c2e488df690cf",
+      "bytes": 568
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/native-results.json",
+      "sha256": "eb2de56004dbd6b0996c8462208479a0b16a26e2568ac159f342af1bffa3d9da",
+      "bytes": 621
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/anonymous-mapping.json",
+      "sha256": "0f294181d204a24652d3b1a6a66996d334662a371de6a3cfbd87406d66a0d87d",
+      "bytes": 209
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/anonymous-review/artifact-hashes.json",
+      "sha256": "97f02a09159141ced94f412eed903a5560e5632e4c4d8e0ee2e3242cab4cbf60",
+      "bytes": 1271
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/relationship-anonymous-independent-reading.md",
+      "sha256": "16a9f12f567d0e188a8f2084e21f498c46577f007d7a405f53071284d274baf5",
+      "bytes": 7057
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/route-independent-review.md",
+      "sha256": "66b84b10cdd11dcc2a7c9b1aae3de84dd4ea1a33eccea7094550f1a1c077b007",
+      "bytes": 3061
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/inspection-independent-code-review.md",
+      "sha256": "9e299a0bd046da076b7ac4a06394d5012d72b5acb77cc01cb8ca81cbbc000f54",
+      "bytes": 2532
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/inspection-audit-reproductions/reproduction-result.json",
+      "sha256": "ee403348dc9381450d3825fb6ff3e5058b66259c30af9703184937830c960bea",
+      "bytes": 474
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/inspection-audit-reproductions/fixed-reproduction-result.json",
+      "sha256": "0928856f0e8a30b661486c8aeabedfc4300a7500c3422a0f558941a85c244ef7",
+      "bytes": 1328
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/trial-source-drift.json",
+      "sha256": "c00ae1ec8db7a8253b0744d8aefdd76202bf2c9461d09d6383908b2f4fbe07b7",
+      "bytes": 697
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/refinement-delta.json",
+      "sha256": "717f543d5ba0aaf6f7f78b4d0982e6e9e606a9194da021cb555dd6cbb839b622",
+      "bytes": 3479
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/final/package-and-links.json",
+      "sha256": "0266239e9329c02b703f5da1261885a7cea3816521c6fb73b9758037c2df0f38",
+      "bytes": 2399
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/final/install-check/result.json",
+      "sha256": "6ef8f19045374da253eb58df5d9b4ef476cd4482d7535501217daba6750adec3",
+      "bytes": 16525
+    },
+    {
+      "path": ".local-writing-samples/refinement-20261017-pijwze3r/final-budget/instruction-loads.json",
+      "sha256": "4380b1ae1de55a9e3ccd140ae83ed6e2ec2eaebce191b98e76f04250f2210e5f",
+      "bytes": 305117
+    }
+  ],
+  "privacy_normalization": "Only local absolute path prefixes were normalized: <REPO_ROOT> represents the source repository and <USER_HOME> represents the local user home. Original SHA-256 evidence hashes, numeric values, statuses, failures, outputs and limitations are preserved; unnormalized originals remain in ignored local release evidence."
+}

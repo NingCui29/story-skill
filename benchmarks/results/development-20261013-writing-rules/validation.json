@@ -1,0 +1,183 @@
+{
+  "date": "2026-10-13",
+  "timezone": "Asia/Shanghai",
+  "scope": "Current source rules; no installed-skill or platform-acceptance verification",
+  "skill_format": {
+    "passed": 8,
+    "failed": 0,
+    "validator": "skill-creator quick_validate.py"
+  },
+  "regressions": [
+    {
+      "file": "test_package.py",
+      "tests": 13,
+      "exit_code": 0
+    },
+    {
+      "file": "test_package_claude.py",
+      "tests": 13,
+      "exit_code": 0
+    },
+    {
+      "file": "test_package_npm.py",
+      "tests": 27,
+      "exit_code": 0
+    },
+    {
+      "file": "test_sync_packages.py",
+      "tests": 35,
+      "exit_code": 0
+    }
+  ],
+  "regression_total": 88,
+  "rule_and_reference_review": {
+    "core_files_read": 6,
+    "local_links_checked": 231,
+    "dangling_links": 0,
+    "unresolved_rule_conflicts": 0,
+    "method": "independent read-only review, not blind"
+  },
+  "behavior_cases": {
+    "mode": "known-synthetic-cases-not-blind",
+    "source_root": "<REPO_ROOT>",
+    "source_files": [
+      "skills/story-skill-review/SKILL.md",
+      "skills/story-skill/SKILL.md",
+      "skills/story-skill-write/references/drama.md",
+      "skills/story-skill-write/references/content-review.md"
+    ],
+    "artifact_root": "/tmp/story-skill-rule-behavior-20261013-exa5zn8g",
+    "case1": {
+      "result": "pass",
+      "unicode_edits": [
+        {
+          "op": "replace",
+          "input_span": [
+            7,
+            11
+          ],
+          "output_span": [
+            7,
+            8
+          ],
+          "removed": [
+            "U+0020",
+            "U+0020",
+            "U+0020",
+            "U+0020"
+          ],
+          "added": [
+            "U+000A"
+          ],
+          "authorized_plain_whitespace_only": true
+        },
+        {
+          "op": "insert",
+          "input_span": [
+            29,
+            29
+          ],
+          "output_span": [
+            26,
+            27
+          ],
+          "removed": [],
+          "added": [
+            "U+000A"
+          ],
+          "authorized_plain_whitespace_only": true
+        }
+      ],
+      "note": "仅移除4个普通缩进空格并加入段间普通换行；六项词表不越过排版权限，原词与单引号保留。"
+    },
+    "case2": {
+      "result": "pass-after-one-minimal-revision-in-specified-scope",
+      "banned_counts": {
+        "微微": 0,
+        "缓缓": 0,
+        "不禁": 0,
+        "似笑非笑": 0,
+        "与此同时": 0,
+        "心中一震": 0
+      },
+      "semantic_review": "保留两人的微小／含混笑容、椅子慢速及半尺幅度、移动时门把已被压下的同时关系；收紧杯子动作只出现一次，后续捏瘪与水流裤腿保留。她先说、他回答的归属清楚。母亡只保留她转述他曾说过及他注明舅舅消息来源，未确认母亲实际死活或新增身世揭示。局部文本不扩整章、不补附言或配图。",
+      "initial_result": "needs-local-readability-revision",
+      "initial_output": "case2-output-v1.txt",
+      "initial_issues": [
+        "“他的手指猛地收紧，攥紧了杯子”在同一动作中近义重复。",
+        "两人连续“嘴角…一点”的替换重复同类模板动作。"
+      ],
+      "revision": "保留首次输出，进行一次最小局部修订：男方小幅笑容直写为“笑得很浅”；女方含混笑容保留为唇边弧度及不确定是否在笑；杯子动作合并为“猛地攥紧”，不增身世、动机、亲母出场或事件。"
+    },
+    "case3": {
+      "result": "pass",
+      "note": "报告只依据夹具提供的阅读状态判断边界，没有真实第1章全文，故未声称已完成原文读感审查。2、3章未读待核，未自行写稿。"
+    },
+    "case4": {
+      "result": "pass",
+      "policy_read_date": "2026-10-13",
+      "policy_url": "https://bbs.jjwxc.net/showmsg.php?board=17&boardpagemsg=2&id=1575959",
+      "note": "实时官方条款与源码共同约束一致；不执行深度润色或具体人物事件细纲，不跨平台许诺合规。"
+    },
+    "actual_readback": {
+      "case1-output.txt": {
+        "sha256": "85816ef1beb84c0e0a17f4402c5954a843acd4a6800c8d7bbc1dc30862b81716",
+        "text": "第1章 雨夜\n\n他微微一笑，与此同时她缓缓收起伞。\n\n她说：‘我不禁想到昨天。’\n"
+      },
+      "case2-output.txt": {
+        "sha256": "d49849b001810fc01b57cc761544e0354bda652dcd75e49042c6a884b1c124fa",
+        "text": "灯灭了。他笑得很浅，把椅子一点点往门边挪了半尺。椅子挪动时，门外的人已经压下把手。他猛地攥紧了杯子。\n\n她唇边有点弧度，辨不清算不算笑。她说：“你告诉过我，你母亲已经死了。”\n\n“那是舅舅告诉我的。”他把纸杯捏瘪，水流到裤腿上。\n"
+      },
+      "case3-output.txt": {
+        "sha256": "c405a071d0f4a43959d48f6b4ca99da4e4924f197305cdb83fafc201155268b7",
+        "text": "本案例给出的阅读状态只覆盖第1章：已出现轻视与主角准备反击，反击尚未发生，因此当前已读范围内尚未完成打脸兑现。第2、3章未读，前三章是否在第三章结束前兑现仍待核，不能判通过，也不能据此断言前三章一定违规。本次仅审稿，不自行补写第2、3章。\n"
+      },
+      "case4-output.txt": {
+        "sha256": "02a9f702a32753ec9ee288451106dbecb0f55099442c26d9cff9c97148f4534c",
+        "text": "按晋江目前可查的原创写作规范，本次可执行范围是：校对作者已有文字中的错字、错词、语法与知识错误；提供名称、零散人设等要素候选，或不展开具体故事事件七要素的粗纲。你要求的正文深度润色属于描写级别，生成人物事件细纲属于细纲级别，超出该平台允许的AI辅助范围；这两项应由作者自行完成。我可按上述校对、要素或粗纲范围处理已有材料，保留真实输入、输出与修订记录。七猫的AI辅助经验不能替代晋江规定，人工定稿也不能把超范围辅助自动变为合规。当前没有稿件或具体构思输入，所以这里只确认可执行范围，不声称作品合规、已过审或能签约。\n\n依据：晋江文学城原创写作规范，2026-10-13实时读取。https://bbs.jjwxc.net/showmsg.php?board=17&boardpagemsg=2&id=1575959\n"
+      },
+      "case2-output-v1.txt": {
+        "sha256": "4e16855caf71d605b285dc5662cdffc38f5a7cb9665062740ab75d974b2aa203",
+        "text": "灯灭了。他嘴角只提起一点，把椅子一点点往门边挪了半尺。椅子挪动时，门外的人已经压下把手。他的手指猛地收紧，攥紧了杯子。\n\n她嘴角挑起一点，说：“你告诉过我，你母亲已经死了。”\n\n“那是舅舅告诉我的。”他把纸杯捏瘪，水流到裤腿上。\n"
+      }
+    },
+    "limits": [
+      "四例为预先已知的合成夹具，非盲测。",
+      "校验与当前会话语义复核不证明文学质量、原创、平台审核或签约。",
+      "未初始化书库，未改源码、真实书或全局配置。"
+    ]
+  },
+  "repairs": [
+    {
+      "file": "skills/story-skill-review/references/qimao-content-review.md",
+      "change": "Removed one extra blank line at EOF",
+      "diff_check_exit_code": 0
+    },
+    {
+      "file": "/tmp/story-skill-rule-behavior-20261013-exa5zn8g/case2-output.txt",
+      "change": "Removed duplicate cup-clenching phrasing and repeated mouth-action replacements; first output retained",
+      "first_version": "/tmp/story-skill-rule-behavior-20261013-exa5zn8g/case2-output-v1.txt"
+    }
+  ],
+  "source_sha256": {
+    "skills/story-skill/SKILL.md": "09514a5c468461ca985285ffc00a261e121ec9103b75ce3f8d11757a19c83c1b",
+    "skills/story-skill-plan/SKILL.md": "62396d5a2b37e51101f979994cb8067651f185ab6a57573e40339d43c2399c4c",
+    "skills/story-skill-write/SKILL.md": "951ae0e37a16fe34728bc9cc2711ffdaa8e2bb76eaf69caca91f61d96b7c357b",
+    "skills/story-skill-review/SKILL.md": "4ab0700ee30439a8cd1f0bcd5697f297002be358a81d54233585d41ae4bd2e85",
+    "skills/story-skill-publish/SKILL.md": "b7117ee32e33a313aba3e4ed7c6a9306f59e9079a3ce5c59be8ee168d653e87b",
+    "skills/story-skill-research/SKILL.md": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9",
+    "skills/story-skill-write/references/drama.md": "6f525648ded526f77930defc1358b18d64b8db12941b91a5bc01eae88ab2477b",
+    "skills/story-skill-write/references/content-review.md": "949ddea987233ebd30c34ca0f4196a86602f48a753e8fefd659a3e7f41846d36",
+    "skills/story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+    "skills/story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+    "skills/story-skill/references/project-state.md": "89f3797ad830ddb8d3215d3072401165c9bb0117eca41aad62376dafd1e3dadf",
+    "skills/story-skill-plan/references/outline.md": "559d4a83761a8dc68fa933e8356e04aba10d6a9217e425f85e339d6e88cee8c8",
+    "README.md": "2f114ed64c0145100b507b01636a37300bbb4daad9e98157dd1f55b1234112e9"
+  },
+  "limits": [
+    "Known synthetic cases are not blind testing.",
+    "Mechanical validation and case outputs do not prove literary quality, originality, platform approval, signing or market performance.",
+    "No real novel, installation or publishing state was changed."
+  ],
+  "privacy_normalization": "Only local absolute path prefixes were normalized: <REPO_ROOT> represents the source repository and <USER_HOME> represents the local user home. Original SHA-256 evidence hashes, numeric values, statuses, failures, outputs and limitations are preserved; unnormalized originals remain in ignored local release evidence."
+}

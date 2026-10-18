@@ -1,0 +1,30 @@
+{
+  "name": "story-skill",
+  "version": "0.6.17",
+  "description": "中文小说规划、写作、分析、审稿、调研、封面与离线投稿材料准备，包含八个技能及本机工作台运行时。",
+  "author": {
+    "name": "Story Skill contributors"
+  },
+  "homepage": "https://github.com/NingCui29/story-skill",
+  "repository": "https://github.com/NingCui29/story-skill",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": ["中文小说", "写作", "审稿", "大纲", "story-skill"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Story Skill",
+    "shortDescription": "中文小说创作与维护",
+    "longDescription": "按需选择规划、正文、拆文分析、审稿、调研、封面或离线投稿材料流程。八个技能共用本地 Python 运行时，作品文件与状态保存在作者指定的书目录。本机工作台用于阅读、比较和编辑候选稿。需要 Python 3.10+ 及书目录访问权限；联网和图像生成使用当前会话已有工具。",
+    "developerName": "Story Skill contributors",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/NingCui29/story-skill",
+    "defaultPrompt": [
+      "使用 Story Skill，为一个中文小说构思设计人物、主线与开篇大纲。",
+      "使用 Story Skill，读取指定书目录的断点，继续下一章。",
+      "使用 Story Skill，审阅我提供的章节并提出有文本依据的修改建议。"
+    ],
+    "brandColor": "#8B4E26",
+    "composerIcon": "./assets/story-skill.svg",
+    "logo": "./assets/story-skill.svg"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "conditions": {
+    "baseline": {
+      "model": null,
+      "settings": {
+        "model_revision": null,
+        "reasoning_effort": null,
+        "host_version": null,
+        "seed": null
+      },
+      "repetitions": 1
+    },
+    "candidate": {
+      "model": null,
+      "settings": {
+        "model_revision": null,
+        "reasoning_effort": null,
+        "host_version": null,
+        "seed": null
+      },
+      "repetitions": 1
+    }
+  },
+  "assessment_mode": "blind"
+}

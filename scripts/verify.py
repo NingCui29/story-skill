@@ -387,6 +387,8 @@ def verify(archive=None, validator=None, validator_python=None, timeout=300):
     with tempfile.TemporaryDirectory(prefix="story-release-verify-") as directory:
         temp = Path(directory).resolve()
         check("unit_tests", lambda: check_unittest(temp / "unittest.json", timeout))
+        check("instruction_load_budget", lambda: run(
+            PYTHON + [str(ROOT / "scripts/instruction_budget.py")], timeout))
         check("cli_smoke", lambda: check_smoke(temp / "smoke.json", timeout))
         check("chinese_manuscript_replay", lambda: check_chinese(temp / "chinese.json", timeout))
         check("long_form_cli_replay", lambda: check_long_form(temp / "long-form.json", timeout))

@@ -18,9 +18,13 @@ class OutlinePositionAuditTests(unittest.TestCase):
         before = hashlib.sha256(file.read_bytes()).hexdigest()
         revision = self.book.meta("revision")
         argv = ["outline-audit", "--book", str(self.root), "--file", relative]
-        for platform in require_platforms:
+        for platform in require_platforms or ():
             argv.extend(["--require-platform", platform])
         args = base.story.parser().parse_args(argv)
+        if require_platforms is not None:
+            # Field-parsing fixtures use an explicit API scope, including ()
+            # for generic extensions. None exercises the real CLI defaults.
+            args.require_platform = list(require_platforms)
         result = base.story.run(args)
         self.assertEqual(result["sha256"], before)
         self.assertEqual(hashlib.sha256(file.read_bytes()).hexdigest(), before)
@@ -31,11 +35,24 @@ class OutlinePositionAuditTests(unittest.TestCase):
 
     def complete_outline(self, heading="## 作品定位与平台分类"):
         return ("# 全书总纲\n状态：候选\n\n" + heading + "\n"
-                "- 篇幅类型：长篇。\n- 目标平台：起点；作品阶段：拟投。\n"
+                "- 篇幅类型：长篇。\n- 目标平台：晋江；作品阶段：拟投。\n"
                 "- 平台入口：小说。\n- 来源与核对日期：后台参考；2026-10-01。\n"
                 "- 平台分类：玄幻（拟选）。\n- 选择依据：主线规划中。\n- 待核对：后台选项。\n")
 
     def platform_block(self, platform):
+        if platform == "qidian":
+            return """## 作品定位与平台分类（起点）
+- 篇幅类型：短篇。
+- 目标平台：起点；作品阶段：备选（未创建）。
+- 平台入口：作家助手网页版创建作品。
+- 来源与核对日期：起点分类实采表快照；2026-10-11。
+- 发布站点：起点-女生（拟选）。
+- 分类频道：女频。
+- 一级分类（大类）：现代言情（拟选）。
+- 二级分类（子类）：婚恋情缘（待核对）。
+- 选择依据：人物关系和主线规划中。
+- 待核对：本书后台实际设置。
+"""
         if platform == "fanqie":
             return """## 作品定位与平台分类（番茄小说）
 - 篇幅类型：短篇。
@@ -76,13 +93,15 @@ class OutlinePositionAuditTests(unittest.TestCase):
         self.assertEqual((self.root / ".story/state.sqlite3").read_bytes(), before)
         self.assertIsNone(base.story.outline.binding_for(self.book, 1))
 
-    def test_optional_requirements_keep_old_single_platform_cli_compatible(self):
+    def test_default_requires_three_platforms_and_explicit_scope_replaces_it(self):
         text = self.platform_block("qimao")
-        legacy = self.audit(text)
-        self.assertTrue(legacy["ok"])
-        self.assertEqual(legacy["required_platforms"], [])
-        self.assertEqual(legacy["checked_platform_rules"], "qimao")
-        self.assertEqual(legacy["fields_found"], legacy["platform_results"][0]["fields_found"])
+        default = self.audit(text, require_platforms=None)
+        self.assertFalse(default["ok"])
+        self.assertEqual(default["required_platforms"], ["fanqie", "qimao", "qidian"])
+        self.assertEqual(default["issues"], [
+            {"code": "required_platform_missing", "platform": "fanqie"},
+            {"code": "required_platform_missing", "platform": "qidian"},
+        ])
         scoped = self.audit(text, require_platforms=("qimao", "qimao"))
         self.assertTrue(scoped["ok"])
         self.assertEqual(scoped["required_platforms"], ["qimao"])
@@ -90,13 +109,84 @@ class OutlinePositionAuditTests(unittest.TestCase):
         self.assertFalse(required["ok"])
         self.assertEqual(required["issues"], [{"code": "required_platform_missing", "platform": "fanqie"}])
 
+    def test_default_three_platform_blocks_are_independent_and_structural_only(self):
+        text = "\n".join(self.platform_block(platform) for platform in ("fanqie", "qimao", "qidian"))
+        before = (self.root / ".story/state.sqlite3").read_bytes()
+        result = self.audit(text, require_platforms=None)
+        self.assertTrue(result["ok"], result["issues"])
+        self.assertEqual(result["required_platforms"], ["fanqie", "qimao", "qidian"])
+        self.assertEqual(result["covered_platforms"], ["fanqie", "qidian", "qimao"])
+        self.assertEqual([item["checked_platform_rules"] for item in result["platform_results"]],
+                         ["fanqie_short", "qimao", "qidian"])
+        self.assertIn("confirmation truth", result["note"])
+        self.assertEqual((self.root / ".story/state.sqlite3").read_bytes(), before)
+        direct = base.story.outline.audit_position(self.book, result["path"])
+        self.assertEqual(direct["required_platforms"], result["required_platforms"])
+
+    def test_qidian_explicit_scope_and_per_field_statuses(self):
+        text = self.platform_block("qidian")
+        result = self.audit(text, require_platforms=("qidian",))
+        self.assertTrue(result["ok"], result["issues"])
+        self.assertEqual(result["required_platforms"], ["qidian"])
+        self.assertEqual(result["checked_platform_rules"], "qidian")
+        for source, field in (("- 发布站点：起点-女生（拟选）。\n", "发布站点"),
+                              ("- 一级分类（大类）：现代言情（拟选）。\n", "一级分类"),
+                              ("- 二级分类（子类）：婚恋情缘（待核对）。\n", "二级分类")):
+            with self.subTest(field=field):
+                missing = self.audit(text.replace(source, ""), require_platforms=("qidian",))
+                self.assertIn({"code": "classification_column_missing", "field": field}, missing["issues"])
+                unset = self.audit(text.replace(source, source.replace("（拟选）", "").replace("（待核对）", "")),
+                                   require_platforms=("qidian",))
+                self.assertIn({"code": "classification_status_missing", "field": field}, unset["issues"])
+        empty = self.audit(text.replace("现代言情（拟选）", ""), require_platforms=("qidian",))
+        self.assertIn({"code": "classification_column_missing", "field": "一级分类"}, empty["issues"])
+
+    def test_qidian_site_must_be_explicit_and_match_declared_channel(self):
+        text = self.platform_block("qidian")
+        for site in ("待核对", "起点女生", "起点-男生／起点-女生", "起点-女生；起点-男生"):
+            with self.subTest(site=site):
+                result = self.audit(text.replace("发布站点：起点-女生", "发布站点：" + site),
+                                    require_platforms=("qidian",))
+                self.assertIn({"code": "qidian_site_unresolved"}, result["issues"])
+        mismatch = self.audit(text.replace("分类频道：女频", "分类频道：男频"),
+                              require_platforms=("qidian",))
+        self.assertIn({"code": "qidian_channel_site_mismatch"}, mismatch["issues"])
+        male = text.replace("起点-女生", "起点-男生").replace("分类频道：女频", "分类频道：男频")
+        self.assertTrue(self.audit(male, require_platforms=("qidian",))["ok"])
+
+    def test_qidian_snapshot_does_not_supply_confirmed_book_settings(self):
+        text = self.platform_block("qidian").replace("（拟选）", "（后台已确认）").replace("（待核对）", "（后台已确认）")
+        result = self.audit(text, require_platforms=("qidian",))
+        self.assertEqual([issue for issue in result["issues"]
+                          if issue["code"] == "classification_confirmation_source_missing"], [
+            {"code": "classification_confirmation_source_missing", "field": "发布站点"},
+            {"code": "classification_confirmation_source_missing", "field": "一级分类"},
+            {"code": "classification_confirmation_source_missing", "field": "二级分类"},
+        ])
+        declared = self.audit(text.replace("起点分类实采表快照", "本书实际后台设置；对照起点分类实采表快照"),
+                              require_platforms=("qidian",))
+        self.assertTrue(declared["ok"], declared["issues"])
+        self.assertTrue(declared["manual_review_required"])
+
+    def test_qidian_aliases_do_not_create_mixed_or_generic_platforms(self):
+        text = self.platform_block("qidian")
+        for target in ("起点", "起点中文网", "Qidian"):
+            with self.subTest(target=target):
+                result = self.audit(text.replace("目标平台：起点", "目标平台：" + target),
+                                    require_platforms=("qidian",))
+                self.assertTrue(result["ok"], result["issues"])
+                self.assertEqual(result["covered_platforms"], ["qidian"])
+        mixed = self.audit(self.platform_block("fanqie").replace("目标平台：番茄小说", "目标平台：番茄小说（兼投起点）"),
+                           require_platforms=("fanqie", "qidian"))
+        self.assertIn({"code": "position_platforms_mixed", "platforms": ["fanqie", "qidian"]}, mixed["issues"])
+
     def test_extra_specified_platform_is_audited_alongside_both_defaults(self):
         text = (self.platform_block("fanqie") + "\n" + self.platform_block("qimao") + "\n" +
-                self.complete_outline("## 作品定位与平台分类（起点）"))
+                self.complete_outline("## 作品定位与平台分类（晋江）"))
         result = self.audit(text, require_platforms=("fanqie", "qimao"))
         self.assertTrue(result["ok"], result["issues"])
         other = result["platform_results"][2]
-        self.assertEqual(other["platform"], "起点")
+        self.assertEqual(other["platform"], "晋江")
         self.assertEqual(other["checked_platform_rules"], "generic")
         self.assertIn("平台分类", other["fields_found"])
         result = self.audit(text.replace("- 平台分类：玄幻（拟选）。\n", ""),
@@ -119,10 +209,10 @@ class OutlinePositionAuditTests(unittest.TestCase):
         self.assertTrue(all("section_line" in issue and "platform" in issue for issue in result["issues"]))
 
     def test_mixed_target_platforms_never_fall_back_to_generic_success(self):
-        for target in ("番茄、七猫", "番茄／七猫", "番茄；七猫", "番茄（七猫）", "番茄（兼投七猫）", "番茄与起点",
+        for target in ("番茄、七猫", "番茄／七猫", "番茄；七猫", "番茄（七猫）", "番茄（兼投七猫）", "番茄与晋江",
                        "fanqie / qimao"):
             with self.subTest(target=target):
-                text = self.complete_outline().replace("目标平台：起点", "目标平台：" + target)
+                text = self.complete_outline().replace("目标平台：晋江", "目标平台：" + target)
                 result = self.audit(text, require_platforms=("fanqie", "qimao"))
                 self.assertFalse(result["ok"])
                 self.assertEqual(result["checked_platform_rules"], "none")
@@ -151,16 +241,16 @@ class OutlinePositionAuditTests(unittest.TestCase):
                 self.assertEqual(result["covered_platforms"], ["fanqie"])
                 self.assertEqual(result["platform_results"][0]["platforms_declared"], ["fanqie"])
         # The same syntax works for names without built-in platform rules.
-        result = self.audit(self.complete_outline().replace("目标平台：起点", "目标平台：起点，拟投"))
+        result = self.audit(self.complete_outline().replace("目标平台：晋江", "目标平台：晋江，拟投"))
         self.assertTrue(result["ok"], result["issues"])
-        self.assertEqual(result["covered_platforms"], ["起点"])
+        self.assertEqual(result["covered_platforms"], ["晋江"])
 
     def test_explicit_parenthetical_extra_targets_cannot_hide_behind_required_coverage(self):
-        for annotation, target in (("（兼投起点）", "起点"), ("（另投：起点）", "起点"),
-                                   ("（拟投；兼投：起点）", "起点"),
+        for annotation, target in (("（兼投晋江）", "晋江"), ("（另投：晋江）", "晋江"),
+                                   ("（拟投；兼投：晋江）", "晋江"),
                                    (" (also submit to Qidian)", "qidian"),
                                    (" (Planned; ALSO SUBMIT TO: Qidian)", "qidian"),
-                                   ("（拟投（兼投起点））", "起点")):
+                                   ("（拟投（兼投晋江））", "晋江")):
             with self.subTest(annotation=annotation):
                 text = self.platform_block("fanqie").replace(
                     "目标平台：番茄小说", "目标平台：番茄小说" + annotation)
@@ -464,7 +554,7 @@ class OutlinePositionAuditTests(unittest.TestCase):
         result = self.audit("""## 作品定位与平台分类
 
 - 篇幅类型：长篇。
-- 目标平台：起点；作品阶段：拟投。
+- 目标平台：晋江；作品阶段：拟投。
 - 平台入口：小说。
 - 来源与核对日期：待实测；2026-10-01。
 - 选择依据：规划中。
@@ -491,7 +581,7 @@ class OutlinePositionAuditTests(unittest.TestCase):
     def test_status_in_general_to_check_field_does_not_satisfy_classification_status(self):
         result = self.audit("""## 作品定位与平台分类
 - 篇幅类型：长篇。
-- 目标平台：起点；作品阶段：拟投。
+- 目标平台：晋江；作品阶段：拟投。
 - 平台入口：小说。
 - 来源与核对日期：后台截图；2026-10-01。
 - 平台分类：玄幻。

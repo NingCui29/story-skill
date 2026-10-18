@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "record_status": "not_recorded",
+  "classification": null,
+  "classification_choices": [
+    "development",
+    "known_feedback",
+    "holdout"
+  ],
+  "origin": null,
+  "artifact": {
+    "path": null,
+    "sha256": null
+  },
+  "task": {
+    "path": null,
+    "sha256": null
+  },
+  "skills_snapshot": {
+    "path": null,
+    "sha256": null
+  },
+  "actual_model_and_settings": null,
+  "original_model_assessment": {
+    "path": null,
+    "sha256": null,
+    "line": null,
+    "quote": null
+  },
+  "original_author_feedback": {
+    "path": null,
+    "sha256": null,
+    "line": null,
+    "quote": null,
+    "permission_to_retain": null
+  },
+  "review": {
+    "reviewer_kind": null,
+    "mode": null,
+    "has_seen_original_feedback": null,
+    "artifact_sha256": null,
+    "observations": [],
+    "remaining_issues": [],
+    "author_response": null
+  },
+  "note": "此文件是空模板。只据真实原文登记作者否定、模型原评价和对应稿件/技能版本；未知写 null，不把手工模拟意见当真实作者反馈。看过反馈后的复查记为 feedback_aware，不再称盲评。参与规则调试的题目只能列 development 或 known_feedback，不能继续作独立留出；不以模型评分覆盖作者原反馈。真实作品与反馈默认仅保存在本地，公开前另核对授权。"
+}

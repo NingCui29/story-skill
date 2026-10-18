@@ -142,10 +142,14 @@ SUITE_FILES_V0615 = SUITE_FILES_V0614
 SKILL_NAMES_V0615 = SKILL_NAMES_V0614
 SUITE_FILES_V0616 = SUITE_FILES_V0615
 SKILL_NAMES_V0616 = SKILL_NAMES_V0615
+SUITE_FILES_V0617 = tuple(sorted((*SUITE_FILES_V0616,
+    "story-skill-plan/references/qidian-categories.md",
+)))
+SKILL_NAMES_V0617 = SKILL_NAMES_V0616
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0616
-SUITE_FILES = SUITE_FILES_V0616
+SKILL_NAMES = SKILL_NAMES_V0617
+SUITE_FILES = SUITE_FILES_V0617
 MARKER = ".story-skill-install.json"
 HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
                     "antigravity": ".agents", "antigravity-cli": ".agents",
@@ -200,6 +204,8 @@ def suite_files(version):
         return SUITE_FILES_V0615
     if version == "0.6.16":
         return SUITE_FILES_V0616
+    if version == "0.6.17":
+        return SUITE_FILES_V0617
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 
@@ -227,6 +233,8 @@ def skill_names(version):
         return SKILL_NAMES_V0615
     if version == "0.6.16":
         return SKILL_NAMES_V0616
+    if version == "0.6.17":
+        return SKILL_NAMES_V0617
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 
