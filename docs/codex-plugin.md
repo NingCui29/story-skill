@@ -4,7 +4,7 @@ v0.6.17 发布候选包含一个 Codex 本地插件，内含八个同级技能�
 
 下载目标为 [story-skill-codex-0.6.17.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip.sha256)。归档共 57 个文件成员：55 个插件文件（52 个技能载荷及元数据、图标、根许可证）加市场说明与登记文件。仓库当前公开；正式附件的下载可用性以本版回下载回执为准。
 
-本版[隔离插件验收](../benchmarks/results/v0.6.17/codex-plugin-verification.json)已通过：57个归档成员、55个插件文件与52个源载荷映射相符；实际完成市场注册、插件安装、启用状态查询、八技能发现、运行时及工作台检查，执行前后插件和市场源内容不变。此回执不包含用户当前桌面会话或模型调用验收，Release回下载仍待核。
+本版[隔离插件验收](../benchmarks/results/v0.6.17/codex-plugin-verification.json)已通过：57个归档成员、55个插件文件与52个源载荷映射相符；实际完成市场注册、插件安装、启用状态查询、八技能发现、运行时及工作台检查，执行前后插件和市场源内容不变。此回执不包含用户当前桌面会话或模型调用验收，本轮最终技能包还包含单一视觉重点、9:16配图和纯文字附言规则，其内容／映射核验与模型实际生图效果分别判断；Release回下载仍待核。
 
 ## 构建
 

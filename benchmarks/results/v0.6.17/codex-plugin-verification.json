@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "date": "2026-10-18T08:21:02.779764+00:00",
+  "date": "2026-10-18T09:06:25.353116+00:00",
   "ok": true,
   "environment": {
     "platform": "macOS-15.8.1-x86_64-i386-64bit",
@@ -78,7 +78,7 @@
       "exit_code": 0,
       "stdout": "{\n  \"installed\": [],\n  \"available\": [\n    {\n      \"pluginId\": \"story-skill@story-skill-local\",\n      \"name\": \"story-skill\",\n      \"marketplaceName\": \"story-skill-local\",\n      \"version\": \"0.6.17\",\n      \"installed\": false,\n      \"enabled\": false,\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"<REPO_ROOT>/dist/release-v0.6.17/story-skill-codex-0.6.17/plugins/story-skill\"\n      },\n      \"marketplaceSource\": {\n        \"sourceType\": \"local\",\n        \"source\": \"<REPO_ROOT>/dist/release-v0.6.17/story-skill-codex-0.6.17\"\n      },\n      \"installPolicy\": \"AVAILABLE\",\n      \"authPolicy\": \"ON_INSTALL\"\n    }\n  ]\n}\n",
       "stderr": "",
-      "duration_seconds": 0.036,
+      "duration_seconds": 0.035,
       "status": "passed",
       "json": {
         "installed": [],
@@ -113,7 +113,7 @@
         "--json"
       ],
       "exit_code": 0,
-      "stdout": "{\n  \"pluginId\": \"story-skill@story-skill-local\",\n  \"name\": \"story-skill\",\n  \"marketplaceName\": \"story-skill-local\",\n  \"version\": \"0.6.17\",\n  \"installedPath\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17\",\n  \"authPolicy\": \"ON_INSTALL\"\n}\n",
+      "stdout": "{\n  \"pluginId\": \"story-skill@story-skill-local\",\n  \"name\": \"story-skill\",\n  \"marketplaceName\": \"story-skill-local\",\n  \"version\": \"0.6.17\",\n  \"installedPath\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17\",\n  \"authPolicy\": \"ON_INSTALL\"\n}\n",
       "stderr": "",
       "duration_seconds": 0.056,
       "status": "passed",
@@ -122,7 +122,7 @@
         "name": "story-skill",
         "marketplaceName": "story-skill-local",
         "version": "0.6.17",
-        "installedPath": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17",
+        "installedPath": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17",
         "authPolicy": "ON_INSTALL"
       }
     },
@@ -136,7 +136,7 @@
       "exit_code": 0,
       "stdout": "{\n  \"installed\": [\n    {\n      \"pluginId\": \"story-skill@story-skill-local\",\n      \"name\": \"story-skill\",\n      \"marketplaceName\": \"story-skill-local\",\n      \"version\": \"0.6.17\",\n      \"installed\": true,\n      \"enabled\": true,\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"<REPO_ROOT>/dist/release-v0.6.17/story-skill-codex-0.6.17/plugins/story-skill\"\n      },\n      \"marketplaceSource\": {\n        \"sourceType\": \"local\",\n        \"source\": \"<REPO_ROOT>/dist/release-v0.6.17/story-skill-codex-0.6.17\"\n      },\n      \"installPolicy\": \"AVAILABLE\",\n      \"authPolicy\": \"ON_INSTALL\"\n    }\n  ],\n  \"available\": []\n}\n",
       "stderr": "",
-      "duration_seconds": 0.035,
+      "duration_seconds": 0.037,
       "status": "passed",
       "json": {
         "installed": [
@@ -186,7 +186,7 @@
     "markdown_dependencies": {
       "status": "passed",
       "files_scanned": 27,
-      "links_checked": 300,
+      "links_checked": 301,
       "missing": [],
       "outside_plugin": [],
       "scope": "Local inline/reference Markdown file targets; remote URLs and heading anchors are excluded"
@@ -208,7 +208,7 @@
             "brandColor": null,
             "defaultPrompt": "使用 $story-skill:story-skill 读取这本书的约定和断点，按我的要求选择本次流程。"
           },
-          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/SKILL.md",
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/SKILL.md",
           "scope": "user",
           "enabled": true,
           "pluginId": "story-skill@story-skill-local"
@@ -226,7 +226,7 @@
             "brandColor": null,
             "defaultPrompt": "使用 $story-skill:story-skill-analyze 从现有分析断点继续拆解这部小说，保存证据和进度。"
           },
-          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-analyze/SKILL.md",
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-analyze/SKILL.md",
           "scope": "user",
           "enabled": true,
           "pluginId": "story-skill@story-skill-local"
@@ -244,7 +244,7 @@
             "brandColor": null,
             "defaultPrompt": "使用 $story-skill:story-skill-cover 制作或优化这本书的封面，以吸睛为优先设计目标，按已采用书名、对应署名和题材强化吸睛看点、视觉焦点与标题主次，并检查实际成图与缩略图。"
           },
-          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-cover/SKILL.md",
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-cover/SKILL.md",
           "scope": "user",
           "enabled": true,
           "pluginId": "story-skill@story-skill-local"
@@ -262,7 +262,7 @@
             "brandColor": null,
             "defaultPrompt": "使用 $story-skill:story-skill-plan 为这本中文小说建立设定和近期大纲，先不要写正文。"
           },
-          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-plan/SKILL.md",
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-plan/SKILL.md",
           "scope": "user",
           "enabled": true,
           "pluginId": "story-skill@story-skill-local"
@@ -280,7 +280,7 @@
             "brandColor": null,
             "defaultPrompt": "使用 $story-skill:story-skill-publish 为指定作品和章节准备发布材料，检查正式稿资格并说明平台上传状态。"
           },
-          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-publish/SKILL.md",
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-publish/SKILL.md",
           "scope": "user",
           "enabled": true,
           "pluginId": "story-skill@story-skill-local"
@@ -298,7 +298,7 @@
             "brandColor": null,
             "defaultPrompt": "使用 $story-skill:story-skill-research 调研这个小说题材的当前榜单与写作资料，注明来源和样本限制。"
           },
-          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-research/SKILL.md",
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-research/SKILL.md",
           "scope": "user",
           "enabled": true,
           "pluginId": "story-skill@story-skill-local"
@@ -316,7 +316,7 @@
             "brandColor": null,
             "defaultPrompt": "使用 $story-skill:story-skill-review 审查指定章节，以证据说明问题并完成我授权的修改。"
           },
-          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-review/SKILL.md",
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-review/SKILL.md",
           "scope": "user",
           "enabled": true,
           "pluginId": "story-skill@story-skill-local"
@@ -334,7 +334,7 @@
             "brandColor": null,
             "defaultPrompt": "使用 $story-skill:story-skill-write 按这本书已确认的细纲继续下一章，并完成审查和保存。"
           },
-          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-write/SKILL.md",
+          "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill-write/SKILL.md",
           "scope": "user",
           "enabled": true,
           "pluginId": "story-skill@story-skill-local"
@@ -343,7 +343,7 @@
       "errors": [],
       "initialization": {
         "userAgent": "Codex Desktop/0.163.0-alpha.10.2 (Mac OS 15.8.1; x86_64) dumb (story-skill-local-verifier; 1)",
-        "codexHome": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home",
+        "codexHome": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home",
         "platformFamily": "unix",
         "platformOs": "macos"
       },
@@ -390,13 +390,13 @@
           "-B",
           "-X",
           "utf8",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
           "--version"
         ],
         "exit_code": 0,
         "stdout": "0.6.17\n",
         "stderr": "",
-        "duration_seconds": 0.331,
+        "duration_seconds": 0.341,
         "status": "passed"
       },
       "help": {
@@ -405,13 +405,13 @@
           "-B",
           "-X",
           "utf8",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
           "--help"
         ],
         "exit_code": 0,
         "stdout": "usage: story.py [-h] [--version]\n                {template,init,status,book-kind,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n                ...\n\nStory Skill: local, bounded context and transactional writing state. No API\ncalls.\n\npositional arguments:\n  {template,init,status,book-kind,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n    template            Print just one JSON input example\n    init                Create state once; never overwrite an existing book\n    status              Compact checkpoint and export health\n    book-kind           Correct long/short fiction metadata without rewriting\n                        chapters or exports\n    migrate             Explicit schema upgrade with a consistent rollback\n                        backup\n    audit               Strictly check managed exports without repairing or\n                        recording them\n    outline-audit       Read-only structural check of a whole-book outline,\n                        including candidates\n    world-save          Save structured story state with cited evidence\n    world-check         Check recorded rules, knowledge and continuity\n    world-read          Inspect one stored narrative record, including stale\n                        evidence for reviewed repair\n    cache-get           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    cache-put           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-dependencies\n                        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-deps        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-inspect     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-publish     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-refresh     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-saved       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-snapshot    Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-start       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-state       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-update      Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    publish-backup      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-cancel      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-check       Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-history\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-inspect\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-record\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export-list\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-inspect     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-list        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-prepare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-recover     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-verify-export\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    workbench-snapshot  Read one bounded, non-mutating local workbench\n                        snapshot\n    workbench-export    Generate a self-contained, read-only local author\n                        workbench\n    workbench-serve     Open a loopback editor that saves candidate drafts\n                        only\n    workbench-status    Check the registered local editor instance\n    workbench-stop      Stop the registered editor after preserving edits in\n                        all its pages\n    workbench-library-serve\n                        Open the independent local bookshelf at a fixed\n                        address\n    workbench-library-status\n                        Check the independent bookshelf service\n    workbench-library-stop\n                        Stop the bookshelf without stopping book editors\n    export              Repair exports without replacing outside edits\n    assemble-short      Assemble all committed short-story chapters into one\n                        book-title Markdown file\n    notes               Save cards or a chapter plan with optimistic\n                        concurrency\n    plan                Save cards or a chapter plan with optimistic\n                        concurrency\n    plan-read           Read a complete saved chapter plan for recovery\n                        without verifying adoption\n    plan-render         Render candidate planning Markdown or inspect its\n                        saved-plan source\n    outline-bind        Bind one reviewed, adopted readable outline to its\n                        saved chapter plan\n    context             Build a bounded chapter context packet\n    writing-brief       Read-only evidence packet for a bound next-chapter\n                        plan\n    prepare             Read-only review scaffold bound to the current book,\n                        state and draft\n    reconcile           Inspect an outside edit of the latest native chapter,\n                        or apply its reviewed draft\n    recall              Bounded literal substring search of cards, summaries\n                        and chapter prose\n    chapter-read        Read a bounded excerpt of a current or immutable\n                        historical chapter\n    dependencies        Resolve candidate evidence hashes for a reviewed\n                        chapter dependency declaration\n    sources             Find saved source IDs and analysis checkpoints after a\n                        new session\n    lint                Check, commit, or import one last complete chapter\n    commit              Check, commit, or import one last complete chapter\n    adopt               Check, commit, or import one last complete chapter\n    adopt-backfill      Check, commit, or import one last complete chapter\n    ingest              Snapshot source text and split without losing bonus\n                        chapters\n    coverage            Incremental source analysis and evidence-backed\n                        checkpoints\n    next                Incremental source analysis and evidence-backed\n                        checkpoints\n    record              Incremental source analysis and evidence-backed\n                        checkpoints\n    findings            Incremental source analysis and evidence-backed\n                        checkpoints\n    source-read         Incremental source analysis and evidence-backed\n                        checkpoints\n    report              Incremental source analysis and evidence-backed\n                        checkpoints\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
         "stderr": "",
-        "duration_seconds": 0.321,
+        "duration_seconds": 0.348,
         "status": "passed"
       },
       "init": {
@@ -420,17 +420,17 @@
           "-B",
           "-X",
           "utf8",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
           "init",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book",
           "--title",
           "Codex 插件隔离验收"
         ],
         "exit_code": 0,
-        "stdout": "{\"created\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book\",\"id\":\"ea3fac4e-ad47-4399-ae57-a6020a654edd\",\"imported_through\":0,\"kind\":\"long\",\"last_chapter\":0,\"revision\":0,\"schema\":2,\"title\":\"Codex 插件隔离验收\"}\n",
+        "stdout": "{\"created\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book\",\"id\":\"eb32b3e5-2366-401a-a44e-d2267a4bab7e\",\"imported_through\":0,\"kind\":\"long\",\"last_chapter\":0,\"revision\":0,\"schema\":2,\"title\":\"Codex 插件隔离验收\"}\n",
         "stderr": "",
-        "duration_seconds": 0.35,
+        "duration_seconds": 0.348,
         "status": "passed"
       },
       "status": {
@@ -439,15 +439,15 @@
           "-B",
           "-X",
           "utf8",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
           "status",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book"
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book"
         ],
         "exit_code": 0,
-        "stdout": "{\"book\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book\",\"cards\":0,\"changed_export_count\":0,\"changed_exports\":[],\"id\":\"ea3fac4e-ad47-4399-ae57-a6020a654edd\",\"imported_through\":0,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"kind\":\"long\",\"last_chapter\":0,\"more_sources\":false,\"next_chapter\":1,\"pending_export_count\":0,\"pending_exports\":[],\"recent_sources\":[],\"revision\":0,\"short_assembly\":null,\"short_assembly_path\":null,\"sources\":0,\"title\":\"Codex 插件隔离验收\"}\n",
+        "stdout": "{\"book\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book\",\"cards\":0,\"changed_export_count\":0,\"changed_exports\":[],\"id\":\"eb32b3e5-2366-401a-a44e-d2267a4bab7e\",\"imported_through\":0,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"kind\":\"long\",\"last_chapter\":0,\"more_sources\":false,\"next_chapter\":1,\"pending_export_count\":0,\"pending_exports\":[],\"recent_sources\":[],\"revision\":0,\"short_assembly\":null,\"short_assembly_path\":null,\"sources\":0,\"title\":\"Codex 插件隔离验收\"}\n",
         "stderr": "",
-        "duration_seconds": 0.324,
+        "duration_seconds": 0.342,
         "status": "passed"
       },
       "audit": {
@@ -456,15 +456,15 @@
           "-B",
           "-X",
           "utf8",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
           "audit",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book"
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book"
         ],
         "exit_code": 0,
         "stdout": "{\"changed_export_count\":0,\"changed_exports\":[],\"checked_revision\":0,\"exports_complete\":true,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"pending_export_count\":0,\"pending_exports\":[],\"read_only\":true,\"read_only_scope\":\"managed_book_records_and_exports\",\"scope_exports_complete\":true}\n",
         "stderr": "",
-        "duration_seconds": 0.303,
+        "duration_seconds": 0.338,
         "status": "passed"
       },
       "health_check_command": "audit (this Story Skill version has no doctor subcommand)"
@@ -476,10 +476,10 @@
         "-B",
         "-X",
         "utf8",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
         "workbench-serve",
         "--book",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book"
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book"
       ],
       "running": {
         "command": [
@@ -487,22 +487,22 @@
           "-B",
           "-X",
           "utf8",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
           "workbench-status",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book"
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book"
         ],
         "exit_code": 0,
-        "stdout": "{\"book_id\":\"ea3fac4e-ad47-4399-ae57-a6020a654edd\",\"code_sha256\":\"ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0\",\"instance\":\"d1b87ad36ca746ffa8505f7f8705c3ce\",\"ok\":true,\"outdated\":false,\"pid\":22179,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book\",\"running\":true,\"runtime_sha256\":\"634908a0ba14c86d55b107be0df5143c3b076c0046543a2f007a89275d17c9c5\",\"started\":\"2026-10-18T08:21:05.500163Z\",\"stop_requested\":false,\"url\":\"http://127.0.0.1:51814/fEywljgm4dKVX6ps-keCgO45TgSU68l74ZXn6XswsOI/\"}\n",
+        "stdout": "{\"book_id\":\"eb32b3e5-2366-401a-a44e-d2267a4bab7e\",\"code_sha256\":\"ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0\",\"instance\":\"c57d99b5934e4fbf99bd18688978b07f\",\"ok\":true,\"outdated\":false,\"pid\":26112,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book\",\"running\":true,\"runtime_sha256\":\"93fccc20ff3d6246466c88c7852bf0c6e786a1bd79ed74be8376dd8ddd2795fa\",\"started\":\"2026-10-18T09:06:28.173963Z\",\"stop_requested\":false,\"url\":\"http://127.0.0.1:57998/Q2Kfba9VbS58k67COLL4ULJcGK0P7r5F8K-V07Lr2-E/\"}\n",
         "stderr": "",
-        "duration_seconds": 0.335,
+        "duration_seconds": 0.33,
         "status": "passed"
       },
       "http": {
         "status": 200,
         "content_type": "text/html; charset=utf-8",
         "bytes": 78732,
-        "sha256": "c3fee933d97373475ef475874702c5ecb4c04897a38ad78902bcbd19caf90664"
+        "sha256": "1c4c93209dad11fa4558d73cbe611e654ad39c47b4c34b4973f4c8f3c11817a6"
       },
       "stop": {
         "command": [
@@ -510,16 +510,16 @@
           "-B",
           "-X",
           "utf8",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
           "workbench-stop",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book",
           "--saved"
         ],
         "exit_code": 0,
-        "stdout": "{\"book_id\":\"ea3fac4e-ad47-4399-ae57-a6020a654edd\",\"code_sha256\":\"ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0\",\"instance\":\"d1b87ad36ca746ffa8505f7f8705c3ce\",\"ok\":true,\"outdated\":false,\"pid\":22179,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book\",\"running\":true,\"runtime_sha256\":\"634908a0ba14c86d55b107be0df5143c3b076c0046543a2f007a89275d17c9c5\",\"started\":\"2026-10-18T08:21:05.500163Z\",\"stop_requested\":true,\"url\":\"http://127.0.0.1:51814/fEywljgm4dKVX6ps-keCgO45TgSU68l74ZXn6XswsOI/\"}\n",
+        "stdout": "{\"book_id\":\"eb32b3e5-2366-401a-a44e-d2267a4bab7e\",\"code_sha256\":\"ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0\",\"instance\":\"c57d99b5934e4fbf99bd18688978b07f\",\"ok\":true,\"outdated\":false,\"pid\":26112,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book\",\"running\":true,\"runtime_sha256\":\"93fccc20ff3d6246466c88c7852bf0c6e786a1bd79ed74be8376dd8ddd2795fa\",\"started\":\"2026-10-18T09:06:28.173963Z\",\"stop_requested\":true,\"url\":\"http://127.0.0.1:57998/Q2Kfba9VbS58k67COLL4ULJcGK0P7r5F8K-V07Lr2-E/\"}\n",
         "stderr": "",
-        "duration_seconds": 0.333,
+        "duration_seconds": 0.311,
         "status": "passed"
       },
       "final_status": {
@@ -528,19 +528,19 @@
           "-B",
           "-X",
           "utf8",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/codex-home/plugins/cache/story-skill-local/story-skill/0.6.17/skills/story-skill/scripts/story.py",
           "workbench-status",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-aax4ee0d/book"
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-f5gexr6u/book"
         ],
         "exit_code": 0,
         "stdout": "{\"ok\":true,\"running\":false,\"status\":\"登记服务已正常停止。\"}\n",
         "stderr": "",
-        "duration_seconds": 0.333,
+        "duration_seconds": 0.311,
         "status": "passed"
       },
       "process_exit_code": 0,
-      "log": "{\"url\": \"http://127.0.0.1:51814/fEywljgm4dKVX6ps-keCgO45TgSU68l74ZXn6XswsOI/\", \"mode\": \"candidate-editing\"}\n{\"ok\":true,\"stopped\":true}\n",
+      "log": "{\"url\": \"http://127.0.0.1:57998/Q2Kfba9VbS58k67COLL4ULJcGK0P7r5F8K-V07Lr2-E/\", \"mode\": \"candidate-editing\"}\n{\"ok\":true,\"stopped\":true}\n",
       "scope": "Loopback HTTP only; no browser or GUI interaction"
     },
     "plugin_unchanged_after_runtime": {
@@ -567,8 +567,8 @@
   "archive_verification": {
     "status": "passed",
     "archive": "<REPO_ROOT>/dist/release-v0.6.17/story-skill-codex-0.6.17.zip",
-    "sha256": "1b7e44f11529ebd6e1cc5de633f0705bde23ceac337eb563e8f9516eaa5b9466",
-    "bytes": 438305,
+    "sha256": "5130bb0dc6c2508989f79f455cd18ff3c29785b6ae3ecb7b10a72874a0742ad1",
+    "bytes": 438923,
     "marketplace_members": 57,
     "plugin_files": 55,
     "checksum_matches": true,
@@ -612,7 +612,7 @@
       "plugins/story-skill/skills/story-skill/references/project-state.md": "865354ab7d8d3241cd6f1b9f6be12a906f93d339d23d92c62d1894a96b0d871b",
       "plugins/story-skill/skills/story-skill/references/workbench.md": "8b8edb9c4d970047261fdc0738dd27d4fdefb4d09feaad45421d4fc8bae88215",
       "plugins/story-skill/skills/story-skill/agents/openai.yaml": "2345f50e05bdfd36cd331771d35aeb1a480ba409a70f04a22b219ce043b64d72",
-      "plugins/story-skill/skills/story-skill/scripts/story.py": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+      "plugins/story-skill/skills/story-skill/scripts/story.py": "e46a658ece9e582dc6860d550d3cd9b61bb4257d5fd0a50db59fc4834bc34afc",
       "plugins/story-skill/skills/story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
       "plugins/story-skill/skills/story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
       "plugins/story-skill/skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
@@ -623,8 +623,8 @@
       "plugins/story-skill/skills/story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
       "plugins/story-skill/skills/story-skill-research/references/reader-validation.md": "d654fb03817f5e5a9cb72967075e628e36d30a8546dd353d1fafe2d755949e3e",
       "plugins/story-skill/skills/story-skill-research/agents/openai.yaml": "829b2428932bbdeb085b08f44342cd40f668f82c96f6410b09b00582d711c508",
-      "plugins/story-skill/skills/story-skill-write/references/drama.md": "f939c09f382aab8f247ce447b9dfa879d1402efb4ef6b6244b5a6abb81cd3393",
-      "plugins/story-skill/skills/story-skill-write/references/chapter.md": "692645d20cd3c57abc299fff28ad78ceec6c53569d566c8dfee3b2a463ba7749",
+      "plugins/story-skill/skills/story-skill-write/references/drama.md": "7638c61cef1cbbc92fff58d190d4b636bb6a3a72572faaeada811805837faf91",
+      "plugins/story-skill/skills/story-skill-write/references/chapter.md": "3169a971151c98b4d854675db1e79e6a2ce1858fe194a8bd3d9cf9c7befb7bf5",
       "plugins/story-skill/skills/story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
       "plugins/story-skill/skills/story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
       "plugins/story-skill/skills/story-skill-write/references/content-review.md": "0844d9df7e0c9925d79295577b591c61735905e1da3f5eb4400e9d07ab83bf6b",
@@ -633,10 +633,22 @@
       ".agents/plugins/marketplace.json": "98ac96fb73e762a00e951cb186917513b2e48bb89d69d916fef5833ad87ea849"
     }
   },
-  "generated_at_utc": "2026-10-18T08:26:44.894825+00:00",
-  "privacy_normalization": "Only absolute local repository/home path prefixes are represented by <REPO_ROOT>/<USER_HOME>. Original evidence hashes, values, failures and actual check results are preserved; raw receipts remain in ignored local release evidence.",
+  "generated_at_utc": "2026-10-18T09:07:05.022813+00:00",
+  "release_attempt": 3,
+  "source_commit": null,
+  "source_base_commit": "d354bec0ef40fe3c69d694b8aa8f79d02afe849e",
+  "source_snapshot_scope": "Frozen current skill payload; only the two recorded rule documents differ from attempt 2. A later fixed remote commit/tag check must bind this exact payload.",
+  "changed_payload_files_from_attempt_2": [
+    "story-skill-write/references/chapter.md",
+    "story-skill-write/references/drama.md"
+  ],
   "raw_evidence": {
-    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/codex-plugin-verification-raw.json",
-    "sha256": "da98e958afe9795be1ef6478f30523656923cd4fbc36e7eaea8fce1861108ada"
-  }
+    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-3/codex-plugin-verification-raw.json",
+    "sha256": "019a264a2076618be28c4d8451ea06dc78aae9241b2e7a7c4d6c86368d556fc5"
+  },
+  "supersedes_attempt_2_report": {
+    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-2/public-originals/benchmarks/results/v0.6.17/codex-plugin-verification.json",
+    "sha256": "5543ad137742459613c6ac103e0ebda11b0ad2b763cb0165cffd9daea1e93ec9"
+  },
+  "privacy_normalization": "Only local absolute repository/home prefixes use <REPO_ROOT>/<USER_HOME>; hashes and actual results are preserved."
 }

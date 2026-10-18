@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "ok": true,
+  "status": "passed",
+  "verified_at": "2026-10-18T09:10:13.789008+00:00",
+  "scope": "Independent model forward planning on two original synthetic chapter excerpts, followed by root content review. This verifies selected image focus, composition decisions and delivery boundaries only; no raster was generated or visually inspected.",
+  "method": {
+    "agent": "companion_focus_forward",
+    "parent_history_provided": false,
+    "expected_focus_or_answer_provided": false,
+    "sources_limited_to_two_author_note_sections": true,
+    "sample_count": 2,
+    "images_generated": 0,
+    "real_book_files_written": 0,
+    "word_or_heading_match_tests": false
+  },
+  "source_files": {
+    "skills/story-skill-write/references/drama.md": "7638c61cef1cbbc92fff58d190d4b636bb6a3a72572faaeada811805837faf91",
+    "skills/story-skill-write/references/chapter.md": "3169a971151c98b4d854675db1e79e6a2ce1858fe194a8bd3d9cf9c7befb7bf5"
+  },
+  "cases": [
+    {
+      "id": "quiet_response",
+      "origin": "original_synthetic",
+      "selected_focus": "Older person turns toward the granddaughter and finally hears her response; phone light supports the relationship rather than dominating it.",
+      "review": "passed",
+      "observed": [
+        "One coherent relationship focal point rather than a collage of rain, waiting room, phone and people.",
+        "Quiet action remains quiet; no added rescue spectacle.",
+        "Actual pixel ratio and mobile thumbnail review remain future required checks."
+      ]
+    },
+    {
+      "id": "cooperative_trust",
+      "origin": "original_synthetic",
+      "selected_focus": "Two people jointly release the control lever, one hand resting on the other, preserving the partner contribution.",
+      "review": "passed",
+      "observed": [
+        "One shared gesture focal point with both participants retained.",
+        "Airship, crowds and neon are reduced to supporting background.",
+        "Proposed inspection explicitly checks that the action is not read as taking control away."
+      ]
+    }
+  ],
+  "common_delivery_decisions": [
+    "Final file must actually satisfy 9:16; prompt wording is insufficient.",
+    "UTF-8 author-note Markdown contains only author-note prose, without image references or construction notes.",
+    "Image remains a separate actual file; ungenerated images are reported incomplete.",
+    "Short-story defaults and real book state remain unchanged."
+  ],
+  "raw_result": {
+    "path": ".local-writing-samples/release-v0.6.17-20261018-98097b/companion-focus/forward-result.md",
+    "sha256": "defc840dd91cee1373bc4ef862937541fcc267743fb11306dab3559e25eda401"
+  },
+  "limitations": [
+    "Two synthetic planning samples do not prove rendered image prominence, literary quality, human reader preference or cross-genre stability.",
+    "No actual existing author-note image was supplied or edited in this validation."
+  ]
+}

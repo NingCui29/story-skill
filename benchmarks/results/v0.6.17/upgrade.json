@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "date": "2026-10-18T08:19:57.993445+00:00",
+  "date": "2026-10-18T08:54:11.442036+00:00",
   "ok": true,
   "method": "Current suite installed, synthetically changed, and replaced through real CLI commands",
   "scope": "Managed skill files, backup bytes, update idempotency, unrelated files, and runtime startup",
@@ -20,10 +20,10 @@
         "utf8",
         "<REPO_ROOT>/scripts/install.py",
         "--project",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-_hwhotpm/验证项目"
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-080qly8c/验证项目"
       ],
       "exit_code": 0,
-      "duration_seconds": 1.455
+      "duration_seconds": 1.462
     },
     {
       "name": "managed_update",
@@ -32,13 +32,13 @@
         "-B",
         "-X",
         "utf8",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-_hwhotpm/candidate/scripts/install.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-080qly8c/candidate/scripts/install.py",
         "--project",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-_hwhotpm/验证项目",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-080qly8c/验证项目",
         "--update"
       ],
       "exit_code": 0,
-      "duration_seconds": 0.543
+      "duration_seconds": 0.52
     },
     {
       "name": "installed_version",
@@ -47,11 +47,11 @@
         "-B",
         "-X",
         "utf8",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-_hwhotpm/验证项目/.agents/skills/story-skill/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-080qly8c/验证项目/.agents/skills/story-skill/scripts/story.py",
         "--version"
       ],
       "exit_code": 0,
-      "duration_seconds": 0.335
+      "duration_seconds": 0.331
     },
     {
       "name": "prepare_help",
@@ -60,12 +60,12 @@
         "-B",
         "-X",
         "utf8",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-_hwhotpm/验证项目/.agents/skills/story-skill/scripts/story.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-080qly8c/验证项目/.agents/skills/story-skill/scripts/story.py",
         "prepare",
         "--help"
       ],
       "exit_code": 0,
-      "duration_seconds": 0.368
+      "duration_seconds": 0.319
     },
     {
       "name": "repeat_update",
@@ -74,13 +74,13 @@
         "-B",
         "-X",
         "utf8",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-_hwhotpm/candidate/scripts/install.py",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-080qly8c/candidate/scripts/install.py",
         "--project",
-        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-_hwhotpm/验证项目",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-upgrade-probe-080qly8c/验证项目",
         "--update"
       ],
       "exit_code": 0,
-      "duration_seconds": 0.207
+      "duration_seconds": 0.205
     }
   ],
   "checks": {

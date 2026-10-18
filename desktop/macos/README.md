@@ -10,7 +10,7 @@
 
 ## 0.1.5 发布候选（2026-10-18）
 
-本版将内嵌运行时更新至 Story Skill `0.6.17`，包含可选只读 `writing-brief` 写前简报；原生界面沿用前版。下载目标为 [story-workbench-0.1.5-macos-x86_64.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip.sha256)。本轮[构建回执](../../benchmarks/results/v0.6.17/desktop-build.json)和[客户端验收](../../benchmarks/results/v0.6.17/desktop-verification.json)已通过：9运行时模块与源码一致，严格签名、ZIP完整性及重新解压后的版本／帮助／初始化／状态四项CLI通过；正式发布与附件回下载仍待核，状态见版本记录。
+本版将内嵌运行时更新至 Story Skill `0.6.17`，包含可选只读 `writing-brief` 写前简报；原生界面沿用前版。下载目标为 [story-workbench-0.1.5-macos-x86_64.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip.sha256)。本轮[构建回执](../../benchmarks/results/v0.6.17/desktop-build.json)和[客户端验收](../../benchmarks/results/v0.6.17/desktop-verification.json)已通过：9运行时模块与源码一致，严格签名、ZIP完整性及重新解压后的版本／帮助／初始化／状态四项CLI通过；新增配图规则仅进入技能包，Mac归档复用第2次实际构建与验收，9模块和归档摘要未变；正式发布与附件回下载仍待核，状态见版本记录。
 
 客户端只携带工作台运行时，题材写法卡、文风裁决、兑现归属及附言配图等技能规则在标准、Claude桌面、Codex插件和npm套件分发。本版沿用完整根自定义许可证，临时本地签名且未经Apple公证；Apple Silicon、其他macOS版本及原生目录选择／下载保存面板／未保存编辑关闭交互未据此获得验证。发布不自动替换本机应用或重启已有服务。
 

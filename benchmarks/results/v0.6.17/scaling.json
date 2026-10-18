@@ -1,11 +1,11 @@
 {
   "schema": 3,
-  "date": "2026-10-18T08:19:58.059267+00:00",
+  "date": "2026-10-18T08:54:11.551442+00:00",
   "ok": true,
   "runtime_version": "0.6.17",
-  "runtime_sha256": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+  "runtime_sha256": "e46a658ece9e582dc6860d550d3cd9b61bb4257d5fd0a50db59fc4834bc34afc",
   "runtime_files": {
-    "story.py": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+    "story.py": "e46a658ece9e582dc6860d550d3cd9b61bb4257d5fd0a50db59fc4834bc34afc",
     "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
     "story_outline.py": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c",
     "story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
@@ -37,7 +37,7 @@
       "cards": 2000,
       "chapter_body_sha256": "420e95605813533ecdb05bef2b01d972400f26bcbe660d4932d697891acfdb72",
       "chapter_unique_body_count": 1,
-      "database_bytes": 15429632,
+      "database_bytes": 15441920,
       "search_documents": 2800,
       "search_postings": 349112,
       "core_objects": 2401
@@ -47,7 +47,7 @@
       "cards": 20000,
       "chapter_body_sha256": "420e95605813533ecdb05bef2b01d972400f26bcbe660d4932d697891acfdb72",
       "chapter_unique_body_count": 1,
-      "database_bytes": 149544960,
+      "database_bytes": 149782528,
       "search_documents": 28000,
       "search_postings": 3504486,
       "core_objects": 24001
@@ -62,7 +62,7 @@
       "operations": {
         "status": {
           "ok": true,
-          "elapsed_seconds": 1.031514,
+          "elapsed_seconds": 0.962194,
           "python_peak_allocated_bytes": 200567,
           "file_reads": 400,
           "file_bytes_read": 3000000,
@@ -90,7 +90,7 @@
         },
         "context": {
           "ok": true,
-          "elapsed_seconds": 0.988062,
+          "elapsed_seconds": 0.994845,
           "python_peak_allocated_bytes": 1066490,
           "file_reads": 400,
           "file_bytes_read": 3000000,
@@ -115,7 +115,7 @@
         },
         "prepare": {
           "ok": true,
-          "elapsed_seconds": 1.35191,
+          "elapsed_seconds": 0.996082,
           "python_peak_allocated_bytes": 2037355,
           "file_reads": 401,
           "file_bytes_read": 3007525,
@@ -140,7 +140,7 @@
         },
         "recall_exact_id": {
           "ok": true,
-          "elapsed_seconds": 0.199956,
+          "elapsed_seconds": 0.110381,
           "python_peak_allocated_bytes": 633144,
           "file_reads": 0,
           "file_bytes_read": 0,
@@ -193,7 +193,7 @@
         },
         "chinese_substring_search": {
           "ok": true,
-          "elapsed_seconds": 0.000808,
+          "elapsed_seconds": 0.000734,
           "python_peak_allocated_bytes": 10775,
           "file_reads": 0,
           "file_bytes_read": 0,
@@ -241,7 +241,7 @@
         },
         "export_no_changes": {
           "ok": true,
-          "elapsed_seconds": 2.077672,
+          "elapsed_seconds": 1.823864,
           "python_peak_allocated_bytes": 235870,
           "file_reads": 800,
           "file_bytes_read": 6000000,
@@ -272,8 +272,8 @@
         },
         "commit_one_next_chapter": {
           "ok": true,
-          "elapsed_seconds": 3.426181,
-          "python_peak_allocated_bytes": 1320153,
+          "elapsed_seconds": 2.939655,
+          "python_peak_allocated_bytes": 1320059,
           "file_reads": 1202,
           "file_bytes_read": 9015050,
           "manuscript_file_reads": 1201,
@@ -317,12 +317,12 @@
           "<REPO_ROOT>/skills/story-skill/scripts/story.py",
           "status",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-scale-v03-ypmar8ke/case-0-strict",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-scale-v03-qyr3l6zw/case-0-strict",
           "--integrity",
           "strict"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.43404,
+        "elapsed_seconds": 0.410649,
         "stderr": "",
         "instrumentation": "separate process; no Python allocation/read/SQL counters attached",
         "ok": true,
@@ -354,7 +354,7 @@
               "budget_bytes": 16000
             }
           },
-          "elapsed_seconds": 0.968398,
+          "elapsed_seconds": 1.023872,
           "python_peak_allocated_bytes": 1065602,
           "file_reads": 401,
           "file_bytes_read": 3007525,
@@ -386,7 +386,7 @@
       "operations": {
         "status": {
           "ok": true,
-          "elapsed_seconds": 0.003829,
+          "elapsed_seconds": 0.003899,
           "python_peak_allocated_bytes": 19306,
           "file_reads": 1,
           "file_bytes_read": 7500,
@@ -414,7 +414,7 @@
         },
         "context": {
           "ok": true,
-          "elapsed_seconds": 0.010641,
+          "elapsed_seconds": 0.009854,
           "python_peak_allocated_bytes": 1065096,
           "file_reads": 1,
           "file_bytes_read": 7500,
@@ -447,7 +447,7 @@
         },
         "prepare": {
           "ok": true,
-          "elapsed_seconds": 0.076996,
+          "elapsed_seconds": 0.073267,
           "python_peak_allocated_bytes": 1075249,
           "file_reads": 2,
           "file_bytes_read": 15025,
@@ -472,7 +472,7 @@
         },
         "recall_exact_id": {
           "ok": true,
-          "elapsed_seconds": 0.102035,
+          "elapsed_seconds": 0.095742,
           "python_peak_allocated_bytes": 499144,
           "file_reads": 0,
           "file_bytes_read": 0,
@@ -525,7 +525,7 @@
         },
         "chinese_substring_search": {
           "ok": true,
-          "elapsed_seconds": 0.00073,
+          "elapsed_seconds": 0.000717,
           "python_peak_allocated_bytes": 10480,
           "file_reads": 0,
           "file_bytes_read": 0,
@@ -573,7 +573,7 @@
         },
         "export_no_changes": {
           "ok": true,
-          "elapsed_seconds": 0.006134,
+          "elapsed_seconds": 0.006867,
           "python_peak_allocated_bytes": 24037,
           "file_reads": 2,
           "file_bytes_read": 15000,
@@ -601,8 +601,8 @@
         },
         "commit_one_next_chapter": {
           "ok": true,
-          "elapsed_seconds": 0.108917,
-          "python_peak_allocated_bytes": 1110424,
+          "elapsed_seconds": 0.117435,
+          "python_peak_allocated_bytes": 1110377,
           "file_reads": 3,
           "file_bytes_read": 22550,
           "manuscript_file_reads": 2,
@@ -646,12 +646,12 @@
           "<REPO_ROOT>/skills/story-skill/scripts/story.py",
           "status",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-scale-v03-ypmar8ke/case-0-local",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-scale-v03-qyr3l6zw/case-0-local",
           "--integrity",
           "local"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.20389,
+        "elapsed_seconds": 0.163307,
         "stderr": "",
         "instrumentation": "separate process; no Python allocation/read/SQL counters attached",
         "ok": true,
@@ -683,7 +683,7 @@
               "budget_bytes": 16000
             }
           },
-          "elapsed_seconds": 0.023776,
+          "elapsed_seconds": 0.02867,
           "python_peak_allocated_bytes": 1065096,
           "file_reads": 1,
           "file_bytes_read": 7525,
@@ -715,7 +715,7 @@
       "operations": {
         "status": {
           "ok": true,
-          "elapsed_seconds": 9.548979,
+          "elapsed_seconds": 9.193931,
           "python_peak_allocated_bytes": 1800829,
           "file_reads": 4000,
           "file_bytes_read": 30000000,
@@ -743,7 +743,7 @@
         },
         "context": {
           "ok": true,
-          "elapsed_seconds": 9.199516,
+          "elapsed_seconds": 10.284709,
           "python_peak_allocated_bytes": 2659541,
           "file_reads": 4000,
           "file_bytes_read": 30000000,
@@ -768,7 +768,7 @@
         },
         "prepare": {
           "ok": true,
-          "elapsed_seconds": 9.709246,
+          "elapsed_seconds": 9.824646,
           "python_peak_allocated_bytes": 1698389,
           "file_reads": 4001,
           "file_bytes_read": 30007526,
@@ -793,7 +793,7 @@
         },
         "recall_exact_id": {
           "ok": true,
-          "elapsed_seconds": 0.476607,
+          "elapsed_seconds": 0.447609,
           "python_peak_allocated_bytes": 620672,
           "file_reads": 0,
           "file_bytes_read": 0,
@@ -846,7 +846,7 @@
         },
         "chinese_substring_search": {
           "ok": true,
-          "elapsed_seconds": 0.001496,
+          "elapsed_seconds": 0.001299,
           "python_peak_allocated_bytes": 10480,
           "file_reads": 0,
           "file_bytes_read": 0,
@@ -894,7 +894,7 @@
         },
         "export_no_changes": {
           "ok": true,
-          "elapsed_seconds": 19.00207,
+          "elapsed_seconds": 18.670305,
           "python_peak_allocated_bytes": 3189948,
           "file_reads": 8000,
           "file_bytes_read": 60000000,
@@ -925,7 +925,7 @@
         },
         "commit_one_next_chapter": {
           "ok": true,
-          "elapsed_seconds": 31.118243,
+          "elapsed_seconds": 30.458602,
           "python_peak_allocated_bytes": 4412557,
           "file_reads": 12002,
           "file_bytes_read": 90015052,
@@ -970,12 +970,12 @@
           "<REPO_ROOT>/skills/story-skill/scripts/story.py",
           "status",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-scale-v03-ypmar8ke/case-1-strict",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-scale-v03-qyr3l6zw/case-1-strict",
           "--integrity",
           "strict"
         ],
         "returncode": 0,
-        "elapsed_seconds": 2.329258,
+        "elapsed_seconds": 2.309143,
         "stderr": "",
         "instrumentation": "separate process; no Python allocation/read/SQL counters attached",
         "ok": true,
@@ -1007,7 +1007,7 @@
               "budget_bytes": 16000
             }
           },
-          "elapsed_seconds": 9.237653,
+          "elapsed_seconds": 9.282195,
           "python_peak_allocated_bytes": 2660011,
           "file_reads": 4001,
           "file_bytes_read": 30007526,
@@ -1039,7 +1039,7 @@
       "operations": {
         "status": {
           "ok": true,
-          "elapsed_seconds": 0.004216,
+          "elapsed_seconds": 0.007615,
           "python_peak_allocated_bytes": 19312,
           "file_reads": 1,
           "file_bytes_read": 7500,
@@ -1067,7 +1067,7 @@
         },
         "context": {
           "ok": true,
-          "elapsed_seconds": 0.016507,
+          "elapsed_seconds": 0.031995,
           "python_peak_allocated_bytes": 1065098,
           "file_reads": 1,
           "file_bytes_read": 7500,
@@ -1100,7 +1100,7 @@
         },
         "prepare": {
           "ok": true,
-          "elapsed_seconds": 0.463952,
+          "elapsed_seconds": 0.523805,
           "python_peak_allocated_bytes": 1075254,
           "file_reads": 2,
           "file_bytes_read": 15026,
@@ -1125,7 +1125,7 @@
         },
         "recall_exact_id": {
           "ok": true,
-          "elapsed_seconds": 0.118522,
+          "elapsed_seconds": 0.115453,
           "python_peak_allocated_bytes": 584528,
           "file_reads": 0,
           "file_bytes_read": 0,
@@ -1178,7 +1178,7 @@
         },
         "chinese_substring_search": {
           "ok": true,
-          "elapsed_seconds": 0.000736,
+          "elapsed_seconds": 0.0008,
           "python_peak_allocated_bytes": 10480,
           "file_reads": 0,
           "file_bytes_read": 0,
@@ -1226,7 +1226,7 @@
         },
         "export_no_changes": {
           "ok": true,
-          "elapsed_seconds": 0.006426,
+          "elapsed_seconds": 0.006419,
           "python_peak_allocated_bytes": 24779,
           "file_reads": 2,
           "file_bytes_read": 15000,
@@ -1254,7 +1254,7 @@
         },
         "commit_one_next_chapter": {
           "ok": true,
-          "elapsed_seconds": 0.493515,
+          "elapsed_seconds": 0.512241,
           "python_peak_allocated_bytes": 1121034,
           "file_reads": 3,
           "file_bytes_read": 22552,
@@ -1299,12 +1299,12 @@
           "<REPO_ROOT>/skills/story-skill/scripts/story.py",
           "status",
           "--book",
-          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-scale-v03-ypmar8ke/case-1-local",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-scale-v03-qyr3l6zw/case-1-local",
           "--integrity",
           "local"
         ],
         "returncode": 0,
-        "elapsed_seconds": 0.163952,
+        "elapsed_seconds": 0.413214,
         "stderr": "",
         "instrumentation": "separate process; no Python allocation/read/SQL counters attached",
         "ok": true,
@@ -1336,7 +1336,7 @@
               "budget_bytes": 16000
             }
           },
-          "elapsed_seconds": 0.034038,
+          "elapsed_seconds": 0.029154,
           "python_peak_allocated_bytes": 1064682,
           "file_reads": 1,
           "file_bytes_read": 7526,

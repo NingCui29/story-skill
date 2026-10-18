@@ -6,8 +6,8 @@
   "skill_count": 8,
   "archive": {
     "archive": "<REPO_ROOT>/dist/release-v0.6.17/story-skill-0.6.17.zip",
-    "sha256": "24c5976eb68ee071d378e188b6d7def2e78c86100c8cc69520c2546bd0d89b73",
-    "bytes": 430420,
+    "sha256": "a971133c1425606d5617201c7bb1d2061ff10fb419bd8679b25dbae075646d5a",
+    "bytes": 431038,
     "checksum": "<REPO_ROOT>/dist/release-v0.6.17/story-skill-0.6.17.zip.sha256",
     "checksum_matches": true
   },
@@ -45,9 +45,9 @@
     "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
     "story-skill-write/SKILL.md": "0bb17ccb6e839ec9056ab3b7e72ee1c6193131a700f3d90dcc2906a0dd77bf2f",
     "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
-    "story-skill-write/references/chapter.md": "692645d20cd3c57abc299fff28ad78ceec6c53569d566c8dfee3b2a463ba7749",
+    "story-skill-write/references/chapter.md": "3169a971151c98b4d854675db1e79e6a2ce1858fe194a8bd3d9cf9c7befb7bf5",
     "story-skill-write/references/content-review.md": "0844d9df7e0c9925d79295577b591c61735905e1da3f5eb4400e9d07ab83bf6b",
-    "story-skill-write/references/drama.md": "f939c09f382aab8f247ce447b9dfa879d1402efb4ef6b6244b5a6abb81cd3393",
+    "story-skill-write/references/drama.md": "7638c61cef1cbbc92fff58d190d4b636bb6a3a72572faaeada811805837faf91",
     "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
     "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
     "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
@@ -56,7 +56,7 @@
     "story-skill/agents/openai.yaml": "0f06df3badff4c9a96cd45a694496a4a3e49052c4747ec377f47dbeb630ac74a",
     "story-skill/references/project-state.md": "865354ab7d8d3241cd6f1b9f6be12a906f93d339d23d92c62d1894a96b0d871b",
     "story-skill/references/workbench.md": "8b8edb9c4d970047261fdc0738dd27d4fdefb4d09feaad45421d4fc8bae88215",
-    "story-skill/scripts/story.py": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+    "story-skill/scripts/story.py": "e46a658ece9e582dc6860d550d3cd9b61bb4257d5fd0a50db59fc4834bc34afc",
     "story-skill/scripts/story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
     "story-skill/scripts/story_outline.py": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c",
     "story-skill/scripts/story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
@@ -67,10 +67,22 @@
     "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
   },
   "scope": "Actual archive CRC, duplicate/path/type checks, checksum and all 52 source payload bytes. No model or platform claims.",
-  "generated_at_utc": "2026-10-18T08:26:44.888662+00:00",
-  "privacy_normalization": "Only absolute local repository/home path prefixes are represented by <REPO_ROOT>/<USER_HOME>. Original evidence hashes, values, failures and actual check results are preserved; raw receipts remain in ignored local release evidence.",
+  "generated_at_utc": "2026-10-18T09:07:05.019627+00:00",
+  "release_attempt": 3,
+  "source_commit": null,
+  "source_base_commit": "d354bec0ef40fe3c69d694b8aa8f79d02afe849e",
+  "source_snapshot_scope": "Frozen current skill payload; only the two recorded rule documents differ from attempt 2. A later fixed remote commit/tag check must bind this exact payload.",
+  "changed_payload_files_from_attempt_2": [
+    "story-skill-write/references/chapter.md",
+    "story-skill-write/references/drama.md"
+  ],
   "raw_evidence": {
-    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/package-verification-raw.json",
-    "sha256": "d0f4f3344574cf466b28abf5363e898e7fff855f1ef2bb1117e1a6031b83e336"
-  }
+    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-3/package-verification-raw.json",
+    "sha256": "83bff3a34bd2285d9816f6b012605c663789c300ae4e2a77d150b18918051706"
+  },
+  "supersedes_attempt_2_report": {
+    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-2/public-originals/benchmarks/results/v0.6.17/package-verification.json",
+    "sha256": "0062f882ea3425234284351f7a523222283c8d8d9a46d08d5c7fdfa412850824"
+  },
+  "privacy_normalization": "Only local absolute repository/home prefixes use <REPO_ROOT>/<USER_HOME>; hashes and actual results are preserved."
 }

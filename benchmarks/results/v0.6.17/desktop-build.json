@@ -7,7 +7,7 @@
   "minimum_macos": "13.0",
   "runtime_version": "Python 3.12.14",
   "runtime_files": {
-    "story.py": "61ffeb51f1b3f97291e94ea76b78a35679bc4a82c506e69b73cf11f7fecf6e50",
+    "story.py": "e46a658ece9e582dc6860d550d3cd9b61bb4257d5fd0a50db59fc4834bc34afc",
     "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
     "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
     "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
@@ -29,15 +29,21 @@
   "build": "6",
   "archive": {
     "archive": "<REPO_ROOT>/dist/release-v0.6.17/story-workbench-0.1.5-macos-x86_64.zip",
-    "sha256": "2e57a52a94afabf5c9a8edb4e997f46afdd6279815e29f8b8b1eecfe29c3b5ba",
-    "bytes": 26547992,
+    "sha256": "1f5c80a39508597bbd64440fd628774b6c610300263d41827ee9bcb89cb6b418",
+    "bytes": 26548088,
     "checksum": "<REPO_ROOT>/dist/release-v0.6.17/story-workbench-0.1.5-macos-x86_64.zip.sha256"
   },
   "scope": "Actual local macOS build; ad-hoc signing only, no notarization or GUI launch.",
-  "generated_at_utc": "2026-10-18T08:26:44.900842+00:00",
+  "generated_at_utc": "2026-10-18T08:56:28.749487+00:00",
+  "release_attempt": 2,
+  "source_commit": "d354bec0ef40fe3c69d694b8aa8f79d02afe849e",
+  "supersedes_attempt_1_report": {
+    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-1/benchmarks/results/v0.6.17/desktop-build.json",
+    "sha256": "5c9c1231b08cf9846739c0f41e0a38945c12a835277d4a9494c01099d2b18f20"
+  },
   "privacy_normalization": "Only absolute local repository/home path prefixes are represented by <REPO_ROOT>/<USER_HOME>. Original evidence hashes, values, failures and actual check results are preserved; raw receipts remain in ignored local release evidence.",
   "raw_evidence": {
-    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/desktop-build-raw.json",
-    "sha256": "c0cff8c0331fd8e10fbd34c0b683723584d0843d161e34f5788b4dbde7806645"
+    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-2/desktop-build-raw.json",
+    "sha256": "74cb19e2ab40ff5478a6825c757425174bc9080fcf59205653aa65f0c38c4c1a"
   }
 }
