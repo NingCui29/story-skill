@@ -1,1 +1,115 @@
-{"status": "pending", "scope": "Release candidate preparation; no successful execution claimed."}
+{
+  "schema": 1,
+  "ok": true,
+  "status": "passed",
+  "tag": "v0.6.17",
+  "release_id": 416348305,
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.17",
+  "published_at": "2026-10-18T09:20:25Z",
+  "verified_at": "2026-10-18T09:22:49.783927+00:00",
+  "asset_count": 8,
+  "zip_count": 4,
+  "assets": [
+    {
+      "name": "story-skill-0.6.17.zip",
+      "asset_id": 653049234,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-0.6.17.zip",
+      "bytes": 431038,
+      "sha256": "a971133c1425606d5617201c7bb1d2061ff10fb419bd8679b25dbae075646d5a",
+      "server_digest": "sha256:a971133c1425606d5617201c7bb1d2061ff10fb419bd8679b25dbae075646d5a",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-0.6.17.zip.sha256",
+      "asset_id": 653049225,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-0.6.17.zip.sha256",
+      "bytes": 89,
+      "sha256": "532c6c37cc764cad8fd7afa0d223705eff76b2a6cbd0e4796007532c6aa7d8c1",
+      "server_digest": "sha256:532c6c37cc764cad8fd7afa0d223705eff76b2a6cbd0e4796007532c6aa7d8c1",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.17-r2.zip",
+      "asset_id": 653049230,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-claude-desktop-0.6.17-r2.zip",
+      "bytes": 436718,
+      "sha256": "0ae691b32755ab8b373500b0fcd607033dd6175ca392aed023750c8efd34261c",
+      "server_digest": "sha256:0ae691b32755ab8b373500b0fcd607033dd6175ca392aed023750c8efd34261c",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.17-r2.zip.sha256",
+      "asset_id": 653049287,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-claude-desktop-0.6.17-r2.zip.sha256",
+      "bytes": 107,
+      "sha256": "8151520ec6afc1058bef368322513fcd80e23d7526a8f684d957b92ff9d835c3",
+      "server_digest": "sha256:8151520ec6afc1058bef368322513fcd80e23d7526a8f684d957b92ff9d835c3",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-codex-0.6.17.zip",
+      "asset_id": 653049235,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip",
+      "bytes": 438923,
+      "sha256": "5130bb0dc6c2508989f79f455cd18ff3c29785b6ae3ecb7b10a72874a0742ad1",
+      "server_digest": "sha256:5130bb0dc6c2508989f79f455cd18ff3c29785b6ae3ecb7b10a72874a0742ad1",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-codex-0.6.17.zip.sha256",
+      "asset_id": 653049356,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip.sha256",
+      "bytes": 95,
+      "sha256": "6e8e3ed87355fe9b45e50141dd03d439fa52f16e7049ffc456968c88264ad4b7",
+      "server_digest": "sha256:6e8e3ed87355fe9b45e50141dd03d439fa52f16e7049ffc456968c88264ad4b7",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-workbench-0.1.5-macos-x86_64.zip",
+      "asset_id": 653049227,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip",
+      "bytes": 26548088,
+      "sha256": "1f5c80a39508597bbd64440fd628774b6c610300263d41827ee9bcb89cb6b418",
+      "server_digest": "sha256:1f5c80a39508597bbd64440fd628774b6c610300263d41827ee9bcb89cb6b418",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-workbench-0.1.5-macos-x86_64.zip.sha256",
+      "asset_id": 653049393,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip.sha256",
+      "bytes": 105,
+      "sha256": "c542355c382dcd6973c14bd87be60259bf6e51c6f35bf8105d84588da773166a",
+      "server_digest": "sha256:c542355c382dcd6973c14bd87be60259bf6e51c6f35bf8105d84588da773166a",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    }
+  ],
+  "checksum_sidecars_match": true,
+  "all_zip_crc_paths_and_duplicates_passed": true,
+  "scope": "Eight actual anonymous public Release downloads compared byte-for-byte with locally verified build artifacts and GitHub asset SHA256; four ZIP sidecars and CRC/path/duplicate checks. Does not verify host GUI import or Apple notarization.",
+  "publication_sequence": {
+    "initial_draft_tag_lookup_http_status": 404,
+    "prepublication_uploaded_metadata_gate_completed": false,
+    "publication_proceeded_after_failed_draft_lookup": true,
+    "postpublication_uploaded_metadata_check": "passed",
+    "anonymous_actual_download_check": "passed",
+    "note": "The draft tag API lookup failed but the shell continued to publish. This collector sequencing error was acknowledged. All eight actual published asset metadata and anonymous downloaded bytes were then verified; the release assets and tag were not replaced."
+  },
+  "raw_evidence": {
+    "download_report": {
+      "path": ".local-writing-samples/release-v0.6.17-20261018-98097b/release-download-raw.json",
+      "sha256": "ab65d6e5dcefca190e35b2b7a36ba14633fc7ab60a8667188f7ccf70088e09da"
+    },
+    "metadata_report": {
+      "path": ".local-writing-samples/release-v0.6.17-20261018-98097b/published-assets-verified.json",
+      "sha256": "c7f755370e6a468e7c335b168414978417c0f881945882b3fd7bc4c204b0efcd"
+    }
+  }
+}

@@ -3,34 +3,37 @@
   "status": "passed",
   "ok": true,
   "repository_url": "https://github.com/NingCui29/story-skill.git",
-  "requested_commit": "d354bec0ef40fe3c69d694b8aa8f79d02afe849e",
-  "tag": null,
-  "version_branch": null,
+  "requested_commit": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+  "tag": "v0.6.17",
+  "version_branch": "version-0.6.17",
   "archive": "<REPO_ROOT>/dist/release-v0.6.17/story-skill-0.6.17.zip",
   "checks": {
     "remote_refs": {
       "status": "passed",
       "refs": {
-        "refs/heads/main": "d354bec0ef40fe3c69d694b8aa8f79d02afe849e"
+        "refs/heads/main": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+        "refs/heads/version-0.6.17": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+        "refs/tags/v0.6.17": "2fc336654792fa795a15669500bbd5e2ea206da9",
+        "refs/tags/v0.6.17^{}": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1"
       },
-      "tag_commit": null,
-      "version_branch_commit": null,
-      "tag_status_at_validation": "not_yet_created",
+      "tag_commit": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+      "version_branch_commit": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+      "tag_status_at_validation": "present",
       "fixed_commit_verification_does_not_claim_a_release": true
     },
     "github_clone": {
       "status": "passed",
-      "actual_commit": "d354bec0ef40fe3c69d694b8aa8f79d02afe849e",
+      "actual_commit": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
       "origin_url": "https://github.com/NingCui29/story-skill.git",
       "clean_before_install": true,
       "local_source_was_not_clone_origin": true,
-      "acquisition_method": "Actual GitHub HTTPS git fetch of the requested commit into the previous real remote clone; not a local clone"
+      "acquisition_method": "Actual GitHub HTTPS fetch of the annotated tag into the prior real remote clone; tag object and peeled commit verified, no local clone source"
     },
     "fixed_source_zip_bytes": {
       "status": "passed",
       "files": 52,
       "skills": 8,
-      "archive_sha256": "8e73f702e57406ffb0edd7c3f927ef9ef4e805d2fe6db0d85eeea90c4ec0f5b7",
+      "archive_sha256": "a971133c1425606d5617201c7bb1d2061ff10fb419bd8679b25dbae075646d5a",
       "payload_sha256": {
         "story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
         "story-skill-analyze/SKILL.md": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
@@ -64,9 +67,9 @@
         "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
         "story-skill-write/SKILL.md": "0bb17ccb6e839ec9056ab3b7e72ee1c6193131a700f3d90dcc2906a0dd77bf2f",
         "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
-        "story-skill-write/references/chapter.md": "692645d20cd3c57abc299fff28ad78ceec6c53569d566c8dfee3b2a463ba7749",
+        "story-skill-write/references/chapter.md": "3169a971151c98b4d854675db1e79e6a2ce1858fe194a8bd3d9cf9c7befb7bf5",
         "story-skill-write/references/content-review.md": "0844d9df7e0c9925d79295577b591c61735905e1da3f5eb4400e9d07ab83bf6b",
-        "story-skill-write/references/drama.md": "f939c09f382aab8f247ce447b9dfa879d1402efb4ef6b6244b5a6abb81cd3393",
+        "story-skill-write/references/drama.md": "7638c61cef1cbbc92fff58d190d4b636bb6a3a72572faaeada811805837faf91",
         "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
         "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
         "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
@@ -95,7 +98,7 @@
         "status": "installed",
         "host": "codex",
         "scope": "project",
-        "path": "<REPO_ROOT>/.local-writing-samples/release-v0.6.17-artifact-validation/attempt-2/remote-fixed-d354bec0ef40/installation-project/.agents/skills",
+        "path": "<REPO_ROOT>/.local-writing-samples/release-v0.6.17-artifact-validation/attempt-3/remote-fixed-0e0f3e14256e/installation-project/.agents/skills",
         "skills": [
           "story-skill",
           "story-skill-plan",
@@ -123,7 +126,7 @@
         "status": "verified",
         "host": "codex",
         "scope": "project",
-        "path": "<REPO_ROOT>/.local-writing-samples/release-v0.6.17-artifact-validation/attempt-2/remote-fixed-d354bec0ef40/installation-project/.agents/skills",
+        "path": "<REPO_ROOT>/.local-writing-samples/release-v0.6.17-artifact-validation/attempt-3/remote-fixed-0e0f3e14256e/installation-project/.agents/skills",
         "skills": [
           "story-skill",
           "story-skill-plan",
@@ -163,12 +166,12 @@
         "init": {
           "status": "passed",
           "exit_code": 0,
-          "stdout_sha256": "1afcd6f52251d73822839a7149693991a4295552f104fca586cf2297cbbc4436"
+          "stdout_sha256": "66188af548ab2d0dfad5d7606258be721e6e173af0e0bda2fc16dd63855b4a5c"
         },
         "status": {
           "status": "passed",
           "exit_code": 0,
-          "stdout_sha256": "fc788aa577b1fc01d43dc775685aee2131bfb978a9db249031bfb7443bbfefe8"
+          "stdout_sha256": "86dbeeb28cebaf7f0c374bf35d31ad3c7573585a81d7975e114686a319e75033"
         }
       },
       "installed_payload_unchanged": true,
@@ -177,12 +180,12 @@
     }
   },
   "scope": "Actual GitHub remote fetch into the preserved real GitHub clone at a fixed commit; payload equality and separate project installation/CLI. No model turn, GUI or existing user installation is involved.",
-  "started_at_utc": "2026-10-18T08:55:30.312762+00:00",
-  "finished_at_utc": "2026-10-18T08:55:39.482701+00:00",
-  "private_run_directory": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-2/remote-fixed-d354bec0ef40",
+  "started_at_utc": "2026-10-18T09:20:17.766908+00:00",
+  "finished_at_utc": "2026-10-18T09:20:30.846103+00:00",
+  "private_run_directory": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-3/remote-fixed-0e0f3e14256e",
   "raw_evidence": {
-    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-2/remote-fixed-d354bec0ef40/remote-commit-install-raw.json",
-    "sha256": "09c5113b8e91a6241cd023eba29e17484d03bf4c6177b8f4f0e3d7abc40649c9"
+    "path": ".local-writing-samples/release-v0.6.17-artifact-validation/attempt-3/remote-fixed-0e0f3e14256e/remote-commit-install-raw.json",
+    "sha256": "0c8eb0134608c8e047054be1fce37b4a1129f79d81038b9b3a7ecea7dd71cf3f"
   },
   "privacy_normalization": "Absolute local repository and home prefixes are shown as <REPO_ROOT> and <USER_HOME>; raw evidence hashes and results are unchanged."
 }

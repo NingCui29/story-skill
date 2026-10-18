@@ -2,9 +2,9 @@
 
 > **历史记录提示：** 本仓库文档和 14 个旧版 Release 的标题、正文已做名称遮盖；28 个旧附件的文件名、旧包身份、固定标签和提交历史仍保留原样，以免现有下载地址与安装依赖失效。旧版路径不能由新技能名推导，历史资料中的来源路径与哈希可能无法用遮盖后的文件复验。v0.6.0 的附件与回下载已核对；安装时仍须检查当前标签与附件状态。
 
-**v0.6.17 发布候选，待发布验收。** 本版准备八技能52源载荷、Claude桌面54文件、Codex本地市场包57成员（55插件文件）及Intel客户端0.1.5/build 6；Release目标为四个ZIP与四份校验文件，共八附件，npm目标为52载荷加3包装文件、共55成员。固定标签 `v0.6.17`、版本分支 `version-0.6.17`、CI、Release及Packages状态必须按本轮实际回执更新，当前不声明完成。[本版记录](releases/v0.6.17.md)汇集变化、[验证入口](../benchmarks/results/v0.6.17/verification.json)与分发限制。仓库当前公开；下列旧版私有分发描述保留当时事实，不代表本版可见性。
+**v0.6.17 已发布。** 固定标签 `v0.6.17` 指向 `0e0f3e14256e7d53ca86a838252b5e176c3fdcc1`，版本分支为 `version-0.6.17`。八技能52源载荷、Claude桌面54文件、Codex本地市场包57成员（55插件文件）及Intel客户端0.1.5/build 6已分发；Release四个ZIP与四份校验文件，共八附件，已匿名回下载逐字节核验。[三组CI](https://github.com/NingCui29/story-skill/actions/runs/39113218965)和固定标签隔离安装通过，CI实际HEAD与后续两规则验证范围分别记录。[Packages工作流](https://github.com/NingCui29/story-skill/actions/runs/39114942727)成功，注册表回下载独立验收通过。[本版记录](releases/v0.6.17.md)汇集实际结果、首次Windows失败和发布采集顺序更正。仓库当前公开，下列旧版私有分发描述保留当时事实。
 
-本地发布验收已完成：1731项回归中1713通过、18跳过，零失败和错误；标准技能、Claude桌面、Codex插件、npm本地包及Mac构建／验收的六份回执均通过。三组远端CI已通过；Release与Packages仍待完成，结果见[发布记录](releases/v0.6.17.md)。
+本地发布验收已完成：1731项回归中1713通过、18跳过，零失败和错误；标准技能、Claude桌面、Codex插件、npm本地包及Mac构建／验收的六份回执均通过。三组远端CI、固定标签安装和Release八附件核验已通过；Packages工作流与独立回下载验收通过，结果见[发布记录](releases/v0.6.17.md)。
 
 **v0.6.16 已发布。** 固定标签 `v0.6.16` 指向 `08a598e057adcaa390e90fadf2e3e11d000ebfa2`，版本分支为 `version-0.6.16`；八技能51文件、Claude桌面单入口包53文件、Intel客户端0.1.4/build 5及三份校验文件已分发。[三组完整CI](https://github.com/NingCui29/story-skill/actions/runs/38046867128)、六附件鉴权回下载和[Packages工作流](https://github.com/NingCui29/story-skill/actions/runs/38048798706)均通过；npm注册表回下载为51载荷加3包装文件，共54成员，自定义许可标识为 `SEE LICENSE IN LICENSE`。仓库保持私有，Packages保持public；关联字段按实际API回执记录。[本版记录](releases/v0.6.16.md)保留首次Windows失败、npm验证器失败与修复、初始和最终本地回归、固定源码38组隔离安装及分发摘要。Packages验证器修复在后续提交 `43ce65a9f575382e41f052fe7654fcde2186e17a` 通过针对性检查和实际工作流；固定发布标签及所有分发载荷保持不变。
 

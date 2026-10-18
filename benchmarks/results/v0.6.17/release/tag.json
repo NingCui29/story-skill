@@ -1,1 +1,69 @@
-{"status": "pending", "scope": "Release candidate preparation; no successful execution claimed."}
+{
+  "schema": 1,
+  "ok": true,
+  "status": "passed",
+  "observed_at": "2026-10-18T09:21:51.425976+00:00",
+  "tag": "v0.6.17",
+  "fixed_source_commit": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+  "annotated_tag_object": "2fc336654792fa795a15669500bbd5e2ea206da9",
+  "version_branch": "version-0.6.17",
+  "observed_remote_refs": {
+    "refs/heads/main": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+    "refs/heads/version-0.6.17": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+    "refs/tags/v0.6.16": "08a598e057adcaa390e90fadf2e3e11d000ebfa2",
+    "refs/tags/v0.6.17": "2fc336654792fa795a15669500bbd5e2ea206da9",
+    "refs/tags/v0.6.17^{}": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1"
+  },
+  "branches_may_advance_with_final_publication_evidence": true,
+  "ci": {
+    "run_id": 39113218965,
+    "head_sha": "d354bec0ef40fe3c69d694b8aa8f79d02afe849e",
+    "conclusion": "success",
+    "url": "https://github.com/NingCui29/story-skill/actions/runs/39113218965",
+    "fullsuite_input_files": 204,
+    "unchanged_inputs": 202,
+    "post_suite_instruction_files": [
+      "skills/story-skill-write/references/chapter.md",
+      "skills/story-skill-write/references/drama.md"
+    ],
+    "final_instruction_bytes_tested_in_fullsuite": false,
+    "separate_instruction_validation": "benchmarks/results/v0.6.17/verification.json",
+    "changed_paths_since_ci": [
+      "INSTALL.md",
+      "README.md",
+      "benchmarks/results/v0.6.17/claude-desktop-verification.json",
+      "benchmarks/results/v0.6.17/codex-plugin-verification.json",
+      "benchmarks/results/v0.6.17/companion-focus.json",
+      "benchmarks/results/v0.6.17/desktop-build.json",
+      "benchmarks/results/v0.6.17/desktop-verification.json",
+      "benchmarks/results/v0.6.17/migration.json",
+      "benchmarks/results/v0.6.17/npm-local.json",
+      "benchmarks/results/v0.6.17/package-verification.json",
+      "benchmarks/results/v0.6.17/release/ci-attempt-1.json",
+      "benchmarks/results/v0.6.17/release/ci-final.json",
+      "benchmarks/results/v0.6.17/release/remote-commit-install.json",
+      "benchmarks/results/v0.6.17/scaling.json",
+      "benchmarks/results/v0.6.17/tokens.json",
+      "benchmarks/results/v0.6.17/tokens.md",
+      "benchmarks/results/v0.6.17/unit-tests.json",
+      "benchmarks/results/v0.6.17/upgrade.json",
+      "benchmarks/results/v0.6.17/verification.json",
+      "desktop/macos/README.md",
+      "docs/README.md",
+      "docs/codex-plugin.md",
+      "docs/github-release.md",
+      "docs/releases/v0.6.17.md",
+      "skills/story-skill-write/references/chapter.md",
+      "skills/story-skill-write/references/drama.md"
+    ],
+    "remaining_changes_only_docs_and_release_evidence": true
+  },
+  "release_payload": {
+    "files": 52,
+    "archive_sha256": "a971133c1425606d5617201c7bb1d2061ff10fb419bd8679b25dbae075646d5a",
+    "all_52_payload_bytes_match_fixed_tag_tree": true
+  },
+  "historical_v0_6_16_tag_unchanged": true,
+  "tag_will_not_be_moved": true,
+  "verification_harness_note": "The first check assumed the historical v0.6.16 tag was annotated. The actual lightweight tag was then compared directly to its expected commit; no refs were modified by this check."
+}

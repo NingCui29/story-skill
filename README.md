@@ -4,11 +4,11 @@
 
 Story Skill 是供支持 Agent Skills 的写作助手使用的中文小说技能，涵盖拆书、开书、书名与简介优化、大纲、正文、审稿、调研、封面和投稿材料准备。支持 Codex、Claude Code、Antigravity、Qoder（含 CN）、ZCode、WorkBuddy AI，以及下文列出的其他宿主。源码按八个技能分工；Claude 桌面导入包通过一个总入口按需读取这些流程。每本书独立保存，三栏本机工作台让你直接阅读、比较版本、修改并保存候选稿。
 
-**发布候选：v0.6.17 · Python 3.10+ · 支持长篇与短篇**
+**已发布版：v0.6.17 · Python 3.10+ · 支持长篇与短篇**
 
-v0.6.17 包含八个技能、52 个源载荷文件，准备同步固定标签、`version-0.6.17` 版本分支、GitHub Release 和 npm。当前尚未完成本版远端发布验收，以下 v0.6.17 下载链接为待发布目标；实际状态与验证结果见[发布记录](docs/releases/v0.6.17.md)。此前已发布的 [v0.6.16](docs/releases/v0.6.16.md) 及其附件保持原样。安装或升级按 [INSTALL.md](INSTALL.md) 核对；仓库当前公开；正式附件的下载可用性以本版回下载记录为准。
+v0.6.17 已发布，包含八个技能、52 个源载荷文件，固定标签 `v0.6.17` 指向 `0e0f3e14256e7d53ca86a838252b5e176c3fdcc1`，版本分支为 `version-0.6.17`。GitHub Release 的四个 ZIP 与四份校验文件已匿名回下载核验；实际分发与验证结果见[发布记录](docs/releases/v0.6.17.md)。此前已发布的 [v0.6.16](docs/releases/v0.6.16.md) 及其附件保持原样。安装或升级按 [INSTALL.md](INSTALL.md) 核对；仓库当前公开。
 
-本地发布验收已完成：1731项回归中1713通过、18跳过，零失败和错误；标准技能、Claude桌面、Codex插件、npm本地包及Mac构建／验收的六份回执均通过。三组远端CI已通过；Release与Packages仍待完成，结果见[发布记录](docs/releases/v0.6.17.md)。
+本地发布验收已完成：1731项回归中1713通过、18跳过，零失败和错误；标准技能、Claude桌面、Codex插件、npm本地包及Mac构建／验收的六份回执均通过。三组远端CI、固定标签安装和Release八附件核验已通过；Packages工作流与独立回下载验收通过，结果见[发布记录](docs/releases/v0.6.17.md)。
 
 本版新增[起点作品分类实采表](skills/story-skill-plan/references/qidian-categories.md)：2026-10-11 在作家助手创建作品菜单收集男频 15 大类／79 子类、女频 11 大类／73 子类，总纲默认分别体现番茄、七猫、起点三平台分类与作品分析，包含具体看点、剧情支撑及适配结论。
 
@@ -21,7 +21,7 @@ v0.6.17 包含八个技能、52 个源载荷文件，准备同步固定标签、
 
 各宿主复用同源技能规则和共享运行时；Claude 桌面包将内嵌流程映射为参考文件。保留只读规划候选渲染、事务提交、历史依赖、世界状态和原文复核，书库沿用 schema 2，不把规划或机械检查通过当作文学效果已实现。已发布历史标签与附件保持原有内容。
 
-当前开发源码将候选片段、正式修订及内容审查专项改为按任务读取，改稿结论对应最终稿、实际阅读范围与剩余问题。开发验收使用 [任务与角色读取预算](benchmarks/skill-execution/README.md#规则读取预算) 和 [改稿失败样例与两臂对照](benchmarks/skill-execution/README.md#改稿失败样例与两臂对照)，保留原始反馈、失败及分歧；规则计量、实际执行、阅读效果和用量分别核对。本轮实际结果、超时与语义分歧见 [2026-10-17 开发验证](benchmarks/results/development-20261017-workflow-validation/assessment.md)。
+本版将候选片段、正式修订及内容审查专项改为按任务读取，改稿结论对应最终稿、实际阅读范围与剩余问题。开发验收使用 [任务与角色读取预算](benchmarks/skill-execution/README.md#规则读取预算) 和 [改稿失败样例与两臂对照](benchmarks/skill-execution/README.md#改稿失败样例与两臂对照)，保留原始反馈、失败及分歧；规则计量、实际执行、阅读效果和用量分别核对。本轮实际结果、超时与语义分歧见 [2026-10-17 开发验证](benchmarks/results/development-20261017-workflow-validation/assessment.md)。
 
 后续完善区分当场情绪与长期关系决定，按已核番茄入口读取完整适用分类，并补充只读执行证据检查；实际对照、独立复核及适用限制见 [2026-10-17 完善验证](benchmarks/results/development-20261017-refinement/assessment.md)。
 
@@ -29,7 +29,7 @@ v0.6.17 包含八个技能、52 个源载荷文件，准备同步固定标签、
 
 适用章节的[作者有话说与配图](skills/story-skill-write/references/chapter.md#作者有话说的保存与核验)独立交付：配图采用竖版 9:16，先选一个具体视觉重点，通过构图与主体关系突出它，并实际查看手机预览尺度效果和最终像素比例；附言 `.md` 只保留文字，不嵌图、不放图片链接或占位符。短篇默认不补写附言及其配图，用户明确要求时按指定范围处理。
 
-本版 macOS 客户端目标为 `0.1.5`（build 6，内含 Story Skill `0.6.17`），作为独立 Intel 实验附件准备分发，采用本地临时签名，未经 Apple 公证。构建、验证与分发状态见[客户端说明](desktop/macos/README.md)，GitHub 发布不会自动更新本机安装。
+本版 macOS 客户端 `0.1.5`（build 6，内含 Story Skill `0.6.17`）已作为独立 Intel 实验附件分发，采用本地临时签名，未经 Apple 公证。构建、验证与分发状态见[客户端说明](desktop/macos/README.md)，GitHub 发布不会自动更新本机安装。
 
 [安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.17.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
 
@@ -40,6 +40,8 @@ v0.6.17 包含八个技能、52 个源载荷文件，准备同步固定标签、
 | 从想法开书 | 书名、简介、人物动机、核心冲突、全书总纲、分卷规划与近期细纲 |
 | 拟写或优化简介 | 有本书依据、体现具体阅读理由的简介；可从策划生成，也可优化已有文案 |
 | 从参考作品学习 | 有原文依据的分析、可迁移方法及独立的新书设计 |
+| 根据小说规划剧本 | 改编方向、人物与主线取舍、分集规划、场次安排及来源对照 |
+| 根据小说或剧本拆分镜 | 可执行的逐镜画面、动作、景别、运镜、对白／旁白、音效与时长 |
 | 连载或写完短篇 | 沿前文和计划推进的章节、明确断点及实际字数 |
 | 改好已有章节 | 问题分析、修改候选、版本对照与后续依赖复核 |
 | 在浏览器整理书稿 | 章节与材料导航、阅读、候选编辑、搜索与差异定位 |
@@ -51,11 +53,11 @@ v0.6.17 包含八个技能、52 个源载荷文件，准备同步固定标签、
 
 ### Codex 本地插件
 
-本版增加 [story-skill-codex-0.6.17.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip.sha256)的发布目标，含可安装本地市场目录、55 个插件文件及 57 个归档成员。也可运行 `python3 -B -X utf8 scripts/package_codex.py` 构建，再用 `scripts/verify_codex_plugin.py` 在隔离 Codex 环境验证安装与运行时。构建、安装、旧技能切换及当前发布状态见 [Codex 本地插件](docs/codex-plugin.md)。
+本版增加 [story-skill-codex-0.6.17.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip.sha256)，含可安装本地市场目录、55 个插件文件及 57 个归档成员。也可运行 `python3 -B -X utf8 scripts/package_codex.py` 构建，再用 `scripts/verify_codex_plugin.py` 在隔离 Codex 环境验证安装与运行时。构建、安装、旧技能切换及当前发布状态见 [Codex 本地插件](docs/codex-plugin.md)。
 
 ### Claude 桌面版
 
-本版下载目标为 [story-skill-claude-desktop-0.6.17-r2.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-claude-desktop-0.6.17-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-claude-desktop-0.6.17-r2.zip.sha256)。包内54个文件、递归唯一 `SKILL.md`，八个内嵌流程作为 `GUIDE.md` 参考文件加载；本版引用与隔离CLI核验、实际客户端导入及发布状态见[发布记录](docs/releases/v0.6.17.md)。
+下载 [story-skill-claude-desktop-0.6.17-r2.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-claude-desktop-0.6.17-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-claude-desktop-0.6.17-r2.zip.sha256)。包内54个文件、递归唯一 `SKILL.md`，八个内嵌流程作为 `GUIDE.md` 参考文件加载；本版引用与隔离CLI核验、实际客户端导入及发布状态见[发布记录](docs/releases/v0.6.17.md)。
 
 历史 v0.6.12 原桌面 ZIP 含9个 `SKILL.md`，无法通过导入器检查，已由该版 r2 替代；本版沿用修正包装。也可从 v0.6.17 源码构建：
 

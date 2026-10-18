@@ -1,8 +1,8 @@
 # 安装或升级 Story Skill
 
-**发布候选：v0.6.17，待发布验收。** 八技能、52 个源载荷文件，运行时需要 Python 3.10 或更新版本。[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.17)目标为标准技能、Claude 桌面、Codex 插件和 Intel Mac 客户端四个 ZIP 及各自校验文件，共八个附件；固定提交、实际发布与验证状态见[发布记录](docs/releases/v0.6.17.md)。下列本版下载链接为待发布目标，未确认可用前按已验证的本地源码构建。仓库当前公开，正式附件的可用性以本版回下载记录为准。
+**已发布版：v0.6.17。** 八技能、52 个源载荷文件，运行时需要 Python 3.10 或更新版本。[本版 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.17)已提供标准技能、Claude 桌面、Codex 插件和 Intel Mac 客户端四个 ZIP 及各自校验文件，共八个附件；固定标签、版本分支、隔离安装和匿名回下载均通过，详见[发布记录](docs/releases/v0.6.17.md)。仓库当前公开，下载后仍须核对校验文件及完整载荷。
 
-本地发布验收已完成：1731项回归中1713通过、18跳过，零失败和错误；标准技能、Claude桌面、Codex插件、npm本地包及Mac构建／验收的六份回执均通过。三组远端CI已通过；Release与Packages仍待完成，结果见[发布记录](docs/releases/v0.6.17.md)。
+本地发布验收已完成：1731项回归中1713通过、18跳过，零失败和错误；标准技能、Claude桌面、Codex插件、npm本地包及Mac构建／验收的六份回执均通过。三组远端CI、固定标签安装和Release八附件核验已通过；Packages工作流与独立回下载验收通过，结果见[发布记录](docs/releases/v0.6.17.md)。
 
 本版包括题材写法卡、文风统一裁决、兑现归属、只读写前简报、9:16 附言配图、单一视觉重点与纯文字附言要求，以及[起点作品分类实采表](skills/story-skill-plan/references/qidian-categories.md)。此前已发布的 [v0.6.16](docs/releases/v0.6.16.md) 保持八技能、51 文件及原有附件，历史验证不代替本版核验。
 
@@ -10,7 +10,7 @@
 
 ## Codex 本地插件
 
-本版插件下载目标为 [story-skill-codex-0.6.17.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip.sha256)。归档包含本地市场目录和 55 个插件文件，共 57 个成员；不是公共插件目录上架。也可先在仓库根目录运行 `python3 -B -X utf8 scripts/package_codex.py` 构建，再按 [Codex 本地插件说明](docs/codex-plugin.md)执行隔离验证和本地市场安装。包内保留八个同级技能及完整运行时，提供 `.codex-plugin/plugin.json`、图标、许可证和市场目录。此方式不使用下文的目录安装器；已有同名技能时先核对并备份旧副本，避免重复加载。
+下载本版插件 [story-skill-codex-0.6.17.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-skill-codex-0.6.17.zip.sha256)。归档包含本地市场目录和 55 个插件文件，共 57 个成员；不是公共插件目录上架。也可先在仓库根目录运行 `python3 -B -X utf8 scripts/package_codex.py` 构建，再按 [Codex 本地插件说明](docs/codex-plugin.md)执行隔离验证和本地市场安装。包内保留八个同级技能及完整运行时，提供 `.codex-plugin/plugin.json`、图标、许可证和市场目录。此方式不使用下文的目录安装器；已有同名技能时先核对并备份旧副本，避免重复加载。
 
 ## Claude 桌面版：导入单技能包
 
@@ -236,7 +236,7 @@ python3 -B -X utf8 scripts/install.py --host trae-cn --project "<写作项目根
 
 ## macOS 客户端
 
-本版准备分发 [story-workbench-0.1.5-macos-x86_64.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip.sha256)；版本为0.1.5、build 6，内含 Python 3.12 与 Story Skill 0.6.17。它是独立的 Intel Mac 实验客户端，不自动安装八技能，采用本地临时签名，未经 Apple 公证；本版实际验证与分发范围见[客户端说明](desktop/macos/README.md)。历史客户端保留在对应 Release。
+本版提供 [story-workbench-0.1.5-macos-x86_64.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.17/story-workbench-0.1.5-macos-x86_64.zip.sha256)；版本为0.1.5、build 6，内含 Python 3.12 与 Story Skill 0.6.17。它是独立的 Intel Mac 实验客户端，不自动安装八技能，采用本地临时签名，未经 Apple 公证；本版实际验证与分发范围见[客户端说明](desktop/macos/README.md)。历史客户端保留在对应 Release。
 
 升级客户端前保存所有页面需要保留的文字，再退出并替换应用包。已经运行的工作台服务可能继续使用旧代码，须在保留编辑后按服务管理流程更新，不自动结束编辑会话。
 

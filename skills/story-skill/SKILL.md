@@ -1,6 +1,6 @@
 ---
 name: story-skill
-description: 中文小说任务总入口与共享规则；在需求跨流程或尚未明确是规划、正文、拆文、审稿、调研、封面还是发布准备时使用。不用于软件开发或普通文案。
+description: 中文小说任务总入口与共享规则；在需求跨流程或尚未明确是规划、剧本改编、分镜、正文、拆文、审稿、调研、封面还是发布准备时使用。不用于软件开发或普通文案。
 ---
 
 # Story Skill
@@ -22,6 +22,7 @@ description: 中文小说任务总入口与共享规则；在需求跨流程或�
 | 当前请求 | 技能 |
 |---|---|
 | 书名、卷名、章名、简介拟写／审查／优化、开书、设定、大纲、导入续写基线 | [story-skill-plan](../story-skill-plan/SKILL.md) |
+| 根据小说规划剧本、根据小说或剧本拆分镜 | [story-skill-plan](../story-skill-plan/SKILL.md) |
 | 新写正文、章中或跨章续写、长短篇连载或短篇完本交付 | [story-skill-write](../story-skill-write/SKILL.md) |
 | 拆文、深读、分析稿修订与续跑 | [story-skill-analyze](../story-skill-analyze/SKILL.md) |
 | 内容审稿、内容改稿、正文润色、仅排版、审校、修改对照、历史改稿或旧库迁移 | [story-skill-review](../story-skill-review/SKILL.md) |

@@ -1,1 +1,145 @@
-{"status": "pending", "scope": "Release candidate preparation; no successful execution claimed."}
+{
+  "schema": 1,
+  "ok": true,
+  "status": "passed",
+  "checked_at": "2026-10-18T09:24:26.593441+00:00",
+  "name": "@ningcui29/story-skill",
+  "version": "0.6.17",
+  "tag": "v0.6.17",
+  "fixed_source_commit": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+  "workflow_id": 39114942727,
+  "workflow_source_commit": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+  "workflow_conclusion": "success",
+  "workflow_event": "release",
+  "workflow_branch": "v0.6.17",
+  "workflow_url": "https://github.com/NingCui29/story-skill/actions/runs/39114942727",
+  "artifact": {
+    "id": 12131064327,
+    "name": "packages-sync-v0.6.17",
+    "reported_size_in_bytes": 391027,
+    "reported_digest": "sha256:64160de1104102b3d8aa6356e09c27b88ee21859ec95a2d673ee40b48c8275e7",
+    "archive_digest_independently_verified": false,
+    "downloaded_with": "Authenticated gh run download for the exact successful run; extracted members independently verified."
+  },
+  "workflow_registry_download_receipt_sha256": "0f7f628034fd40e24868b547acf584c97ebae9627016e5c929ec68f669c6bf35",
+  "association_metadata_sha256": "1d02e9fe0d90a6debd5a19e63e8af6bf54721c7a529429d13a55c5f16e1aa3ff",
+  "sha256": "6ff0cb2d89be1c4b29a95780a56726794e26dc6826e62b051fb59287d6bce3e0",
+  "integrity": "sha512-TNH0GTAK3v7CunX/NbJe307/C4E90+Aqnt4KABfiyabnVnjabMhVw80cqcsU3JasF7XzkASnP3l7jkTTgCSVFg==",
+  "bytes": 387026,
+  "payload_files": 52,
+  "wrapper_files": 3,
+  "total_members": 55,
+  "payload_bytes_equal_release_and_current_source": true,
+  "all_members_ordinary_and_unique": true,
+  "release_archive_sha256": "a971133c1425606d5617201c7bb1d2061ff10fb419bd8679b25dbae075646d5a",
+  "release_asset_digest_verified": true,
+  "root_license_bytes_equal_source": true,
+  "license": "SEE LICENSE IN LICENSE",
+  "package_manifest_files_count": 53,
+  "package_manifest_file_list_scope": "52 payload files plus explicitly included root LICENSE; README and package.json are npm wrapper members, for 55 tar members in total.",
+  "current_focus_rule_file_sha256": {
+    "skills/story-skill-write/references/drama.md": "7638c61cef1cbbc92fff58d190d4b636bb6a3a72572faaeada811805837faf91",
+    "skills/story-skill-write/references/chapter.md": "3169a971151c98b4d854675db1e79e6a2ce1858fe194a8bd3d9cf9c7befb7bf5"
+  },
+  "package_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill",
+  "visibility": "public",
+  "association_status": "verified",
+  "linked_repository": "NingCui29/story-skill",
+  "association_observations": [
+    {
+      "api": "2026-03-10",
+      "visibility": "public",
+      "repository_field_present": true,
+      "linked_repository": "NingCui29/story-skill"
+    },
+    {
+      "api": "2022-11-28",
+      "visibility": "public",
+      "repository_field_present": true,
+      "linked_repository": "NingCui29/story-skill"
+    }
+  ],
+  "association_note": "Observed package API metadata includes the expected repository.",
+  "published": true,
+  "already_published_before_workflow": false,
+  "publisher_tool_source_matches_current": {
+    "scripts/package_npm.py": "dd2bbc655a880e1943af0a12d7919b77460f704045e60447e0f417693d406f94",
+    "scripts/sync_packages.py": "2c500516b6cc2afa322eb7bf56b6578a0c7eb97b34c491e69633c5f83ad7fc48"
+  },
+  "runtime": {
+    "ok": true,
+    "executed_locally_from_verified_registry_download": true,
+    "commands": 4,
+    "checks": {
+      "version": {
+        "ok": true,
+        "output_sha256": "910c4d9611201a96af6fa2be688c9ce937a67a0f571586e3d2a4df47b07a8121"
+      },
+      "help": {
+        "ok": true,
+        "output_sha256": "13357f4e87526798583ff7c9ad6c61414df7380e6621b57e542b085ec8c311d4"
+      },
+      "init": {
+        "ok": true,
+        "output_sha256": "e7cacb74526b9868c438921fa596eee51bb428454e533c91e0dbb9122a3b88f6"
+      },
+      "status": {
+        "ok": true,
+        "output_sha256": "83c738ca97ad2c849767030b8ad1e30379991b6f9426ec6ec91fcfed98bbac7c"
+      }
+    },
+    "skills": [
+      "story-skill",
+      "story-skill-analyze",
+      "story-skill-cover",
+      "story-skill-plan",
+      "story-skill-publish",
+      "story-skill-research",
+      "story-skill-review",
+      "story-skill-write"
+    ],
+    "skill_files": 52,
+    "temporary_book_removed": true,
+    "installed_payload_unchanged": true
+  },
+  "scope": "Independently checked the exact authenticated registry download retained by this successful workflow: recorded registry SHA512 SRI, exact 55-member tar schema, 52 payload bytes against newly downloaded Release and current source, wrapper identity/root license, and four local CLI commands on that verified payload. No local direct registry authentication, publication, dispatch or host UI validation was performed.",
+  "raw_evidence": {
+    "directory": "<REPO_ROOT>/.local-writing-samples/release-v0.6.17-20261018-98097b/packages/run-39114942727-20261018T092330Z",
+    "files": {
+      "workflow-artifacts.json": "f837888904fd22b7e88c27d4c76c82a95b17c85cab08047abf27001d5fd87ec6",
+      "artifact-download.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "runtime-version.log": "910c4d9611201a96af6fa2be688c9ce937a67a0f571586e3d2a4df47b07a8121",
+      "workflow-run.json": "0734292ee1d04f3c21139e297441259098adc8c77582191fef6148fcce802df4",
+      "fixed-tag-object-0.json": "18cecee9896429aac6339735f3b7f5742da916e594d5f48f4327f1d177507216",
+      "local-fixed-tag.log": "36d88b6bb046765a5cd1d9db201cbf0afc2d093318c2b5df6153d7977ff887b0",
+      "runtime-help.log": "13357f4e87526798583ff7c9ad6c61414df7380e6621b57e542b085ec8c311d4",
+      "workflow-artifacts.log": "410bb877f3b457ccda19595399f689ceb7178c2ee1bb8734d52b8904104bae76",
+      "release-standard-download.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "release-metadata.json": "5635597931298f3d174e2d3f681c548e10f04a9f51a9bd81d860011ec91e76ba",
+      "commands.json": "e2e24b046bc6707220da4f58dca7a24c6c4290be4f709bf6bfe402628110534e",
+      "publisher-package_npm.json": "189f3986ebc50a7f813ccf1d66266b964da2fe1bea070cdb2a8c382165780cfa",
+      "workflow-jobs.json": "a700d22b1e4e03ea7777cde0e509f6aed75c8d5a1f19bf615e757844704f0207",
+      "fixed-tag-ref.log": "8d800fa231a0cc7e951a2374ea925cd519e8029bf71a9cc734e24da152c59d40",
+      "publisher-sync_packages.log": "db3430e1e6b8adc914be7997fc5f59d5e10f9dbac1a9ac6496e8bad03d45d1f9",
+      "runtime-status.log": "83c738ca97ad2c849767030b8ad1e30379991b6f9426ec6ec91fcfed98bbac7c",
+      "workflow-run.log": "3bbe6447ba14acf91479ea111a8087d92f134081ee700958b96872246fff194d",
+      "workflow-jobs.log": "7a90c70f589fd84a366f9c79133fadc3d22ff1ca5d13432c9416ac75261a22f4",
+      "release-metadata.log": "66e5bc49136d96dfafb2fb945118e2abe9439d75b2068b2e43f6558af3cdd2b0",
+      "runtime-init.log": "e7cacb74526b9868c438921fa596eee51bb428454e533c91e0dbb9122a3b88f6",
+      "independent-tarball-verification.json": "f347bdfa1d3688971696d762113f901fb475b339df2a6d15208b656f4a5a7199",
+      "fixed-tag-ref.json": "6bcc278d0f40716147782e1bb4df6c8f8e7eab7ee233be742afa53f95c5d5935",
+      "fixed-tag-object-0.log": "06428b995ba0213d82b38d8d931b3a25de4df0ee74a60ee2bf434000f3c1a931",
+      "workflow-log.log": "8d3806513d158747d076d87bd961c5fd5283a82330d21c92b406848466f19f74",
+      "publisher-package_npm.log": "6b415b5718099f9c699fde59ef2df2e9fc21ee4022e354ca30ade7d1764b093c",
+      "publisher-sync_packages.json": "b69d0c5cf169265b0a3a404bdc187a243cd39ad743a6c15e999c787cb1c291b0"
+    },
+    "report": "<REPO_ROOT>/.local-writing-samples/release-v0.6.17-20261018-98097b/packages/run-39114942727-20261018T092330Z/packages-download.raw.json",
+    "report_sha256": "e6c3604eb333a3b0f319d339544740cefd37ce0ae1bd149fbb456031fe80359e"
+  },
+  "collector_initial_failure": {
+    "occurred": true,
+    "record": "<REPO_ROOT>/.local-writing-samples/release-v0.6.17-20261018-98097b/packages/collector-initial-failure.json",
+    "sha256": "41d324ddf16c85abfb5f75df8e5e9f9229446c4a302e5cb7652ff609a4ae065d",
+    "scope": "The first local independent collector incorrectly asserted the package manifest listed only 52 payload files. The legitimate custom-license root LICENSE makes that manifest list 53; the actual tarball remains exactly 55 members. Corrected this private collector and reran against the same successful workflow; source, published package, tag and workflow were not changed."
+  }
+}
