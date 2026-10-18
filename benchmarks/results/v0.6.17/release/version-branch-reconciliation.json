@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "ok": true,
+  "status": "passed",
+  "observed_at": "2026-10-18T09:29:45.619989+00:00",
+  "fixed_release_tag": "v0.6.17",
+  "fixed_tag_commit": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+  "parallel_changes_first_observed_in_commit": "9823c627fa17152d7d55d2c64651ed588d4c6dca",
+  "source_corrective_commit": "66afafb01da0c0a0f8675477e18f36225eafc11b",
+  "version_branch": "version-0.6.17",
+  "parallel_adaptation_files_kept_on_main": [
+    "skills/story-skill-plan/SKILL.md",
+    "skills/story-skill-plan/agents/openai.yaml",
+    "skills/story-skill-plan/references/outline.md",
+    "skills/story-skill/SKILL.md",
+    "skills/story-skill/agents/openai.yaml"
+  ],
+  "scope": "Five screenplay/storyboard planning rule changes appeared from parallel workspace activity during the final documentation commit. They were kept on main, while the version branch source was restored to the exact published tag using a separate Git index. No working-tree source files, ongoing README changes, release assets or immutable tags were overwritten. The current main may contain development beyond this release.",
+  "version_branch_source_must_match_fixed_tag": true,
+  "working_tree_source_bytes_unchanged_by_reconciliation": true,
+  "version_branch_all_skill_and_wrapper_source_bytes_match_tag": true,
+  "version_branch_source_differences_from_tag": []
+}
