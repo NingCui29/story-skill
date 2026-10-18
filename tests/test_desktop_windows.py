@@ -3,6 +3,8 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+import sys
+import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
@@ -15,6 +17,16 @@ SPEC.loader.exec_module(client)
 
 
 class WindowsDesktopTests(unittest.TestCase):
+    def test_bundled_cli_check_uses_real_init_and_status_schema(self):
+        sys.path.insert(0, str(ROOT / 'scripts'))
+        try:
+            from build_desktop_windows import verify_book_runtime
+        finally:
+            sys.path.pop(0)
+        with tempfile.TemporaryDirectory() as raw:
+            verify_book_runtime(sys.executable, ROOT / 'skills/story-skill/scripts/story.py',
+                                Path(raw) / '中文 空格目录')
+
     def test_navigation_rejects_remote_and_ambiguous_addresses(self):
         self.assertTrue(client.local_url('http://127.0.0.1:8765/'))
         self.assertTrue(client.local_url('http://127.0.0.1:49152/token/'))

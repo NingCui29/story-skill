@@ -1,4 +1,4 @@
-; Build with Inno Setup 6 after build_desktop_windows.py.
+﻿; Build with Inno Setup 6 after build_desktop_windows.py.
 #ifndef AppSource
   #error AppSource must point to the complete portable application folder
 #endif

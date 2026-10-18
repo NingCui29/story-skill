@@ -16,6 +16,20 @@ import tempfile
 from build_desktop_macos import REPO, RUNTIME_FILES
 
 
+def verify_book_runtime(python, script, book):
+    packets = []
+    for arguments in (['init', '--book', str(book), '--title', '桌面验证', '--kind', 'short'],
+                      ['status', '--book', str(book)]):
+        checked = subprocess.run([str(python), '-I', '-B', str(script), *arguments],
+                                 capture_output=True, check=True, timeout=30)
+        packets.append(json.loads(checked.stdout))
+    created, status = packets
+    if (not created.get('id') or created['id'] != status.get('id')
+            or status.get('title') != '桌面验证' or status.get('kind') != 'short'
+            or status.get('revision') != 0 or status.get('next_chapter') != 1):
+        raise RuntimeError('Bundled initialization/status check failed.')
+
+
 def build(output):
     if sys.platform != 'win32' or platform.machine().lower() not in ('amd64', 'x86_64'):
         raise RuntimeError('Run this builder with Windows x64 Python.')
@@ -71,14 +85,7 @@ def build(output):
         subprocess.run([str(runtime / 'python.exe'), '-I', '-B', '-c',
                         'import sqlite3, ssl, ctypes, http.server, multiprocessing'],
                        check=True, timeout=30)
-        book = stage / '隔离验证 空格目录'
-        for arguments in (['init', '--book', str(book), '--title', '桌面验证', '--kind', 'short'],
-                          ['status', '--book', str(book)]):
-            checked = subprocess.run([str(runtime / 'python.exe'), '-I', '-B',
-                                      str(scripts / 'story.py'), *arguments],
-                                     capture_output=True, check=True, timeout=30)
-            if json.loads(checked.stdout).get('ok') is not True:
-                raise RuntimeError('Bundled initialization/status check failed.')
+        verify_book_runtime(runtime / 'python.exe', scripts / 'story.py', stage / '隔离验证 空格目录')
         manifest = {str(path.relative_to(app)).replace('\\', '/'):
                     hashlib.sha256(path.read_bytes()).hexdigest()
                     for path in sorted(app.rglob('*')) if path.is_file()}
