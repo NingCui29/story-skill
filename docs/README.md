@@ -2,7 +2,9 @@
 
 **v0.6.18发布候选**：八个技能、55 个源载荷文件，Claude桌面57文件、Codex市场包60成员（58插件文件）、npm58成员、Intel Mac客户端0.1.6/build 7。实际分发与验证状态见[发布记录](releases/v0.6.18.md)。
 
-本轮新增六类题材写法卡、文风统一裁决、兑现归属和可选只读 `writing-brief` 写前简报，接入[起点分类](../skills/story-skill-plan/references/qidian-categories.md)与[三平台创作要求](../skills/story-skill-write/references/drama.md#三平台创作要求)，并明确[竖版9:16配图、视觉重点与纯文字附言](../skills/story-skill-write/references/chapter.md#作者有话说的保存与核验)。[执行审查与序列评估](../benchmarks/skill-execution/README.md)保留失败、超时和语义分歧，不把模型偏好小样本当成稳定文学提升。现有[大纲细纲规范](../skills/story-skill-plan/references/outline.md)、[工作台参考](../skills/story-skill/references/workbench.md)、事务提交、历史依赖、世界状态和原文复核继续沿用，书库保持schema 2。使用当前源码前按[安装指引](../INSTALL.md)核对实际快照；下列旧版验收数字保持其历史范围。
+本版新增[写前交接与偏好召回](../skills/story-skill-write/references/writing-handoff.md)、[关键情节点覆盖与新增事实分级](../skills/story-skill-write/references/chapter-continuity.md)及[短篇平台化设计](../skills/story-skill-plan/references/short-platform.md)，正文入口按任务条件读取；开发前向试用与边界见[本轮验证](../benchmarks/results/development-20261018-execution-handoff/assessment.md)。
+
+本轮新增六类题材写法卡、文风统一裁决、兑现归属和只读 `writing-brief` 写前简报，接入[起点分类](../skills/story-skill-plan/references/qidian-categories.md)与[三平台创作要求](../skills/story-skill-write/references/drama.md#三平台创作要求)，并明确[竖版9:16配图、视觉重点与纯文字附言](../skills/story-skill-write/references/chapter.md#作者有话说的保存与核验)。[执行审查与序列评估](../benchmarks/skill-execution/README.md)保留失败、超时和语义分歧，不把模型偏好小样本当成稳定文学提升。现有[大纲细纲规范](../skills/story-skill-plan/references/outline.md)、[工作台参考](../skills/story-skill/references/workbench.md)、事务提交、历史依赖、世界状态和原文复核继续沿用，书库保持schema 2。使用当前源码前按[安装指引](../INSTALL.md)核对实际快照；下列旧版验收数字保持其历史范围。
 
 v0.6.5 新增：[七猫作品类型与标签](../skills/story-skill-plan/references/qimao-tags.md)，按后台截图记录两级作品类型及风格、角色、情节、背景。v0.6.6 追加男频分类和写作／审稿流程修订。v0.6.7 在番茄、七猫作家平台核对两种投稿入口的分类与标签。v0.6.8 补齐主线、高潮、钩子与文笔的适用规则，见[本版记录](releases/v0.6.8.md)。本机安装不会自动更新。
 

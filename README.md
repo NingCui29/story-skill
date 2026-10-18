@@ -4,9 +4,9 @@
 
 Story Skill 是供支持 Agent Skills 的写作助手使用的中文小说技能，涵盖拆书、开书、书名与简介优化、大纲、正文、审稿、调研、封面和投稿材料准备。支持 Codex、Claude Code、Antigravity、Qoder（含 CN）、ZCode、WorkBuddy AI，以及下文列出的其他宿主。源码按八个技能分工；Claude 桌面导入包通过一个总入口按需读取这些流程。每本书独立保存，三栏本机工作台让你直接阅读、比较版本、修改并保存候选稿。
 
-**发布候选：v0.6.18 · Python 3.10+ · 支持长篇与短篇**
+**固定安装版本：v0.6.18 · Python 3.10+ · 支持长篇与短篇**
 
-v0.6.18 包含八个技能、55 个源载荷文件，新增写前交接与偏好召回、关键情节点覆盖与新增事实分级、精简执行路径及短篇平台化设计。本版正在进行发布验证；安装包、远端CI、固定标签、分支与注册表的最终状态见[发布记录](docs/releases/v0.6.18.md)。
+v0.6.18 包含八个技能、55 个源载荷文件，新增写前交接与偏好召回、关键情节点覆盖与新增事实分级、精简执行路径及短篇平台化设计。本地完整回归和三组远端CI已通过；固定标签、分支、Release和Packages的最终分发状态见[在线发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.18.md)。
 
 本版新增[起点作品分类实采表](skills/story-skill-plan/references/qidian-categories.md)：2026-10-11 在作家助手创建作品菜单收集男频 15 大类／79 子类、女频 11 大类／73 子类，总纲默认分别体现番茄、七猫、起点三平台分类与作品分析，包含具体看点、剧情支撑及适配结论。
 
@@ -23,7 +23,7 @@ v0.6.18 包含八个技能、55 个源载荷文件，新增写前交接与偏好
 
 后续完善区分当场情绪与长期关系决定，按已核番茄入口读取完整适用分类，并补充只读执行证据检查；实际对照、独立复核及适用限制见 [2026-10-17 完善验证](benchmarks/results/development-20261017-refinement/assessment.md)。
 
-本版还提供按需读取的六类题材写法卡、写作与审稿共用的文风裁决、合作与主动让渡适用的兑现归属检查，以及可选只读 `writing-brief` 写前简报。简报沿用已绑定细纲和必要状态，不自动采用规划或决定文风；实现与验证范围见 [四项方法整合验证](benchmarks/results/development-20261017-four-priorities/assessment.md)。
+本版还提供按需读取的六类题材写法卡、写作与审稿共用的文风裁决、合作与主动让渡适用的兑现归属检查，以及已绑定下一正式章优先使用的只读 `writing-brief` 写前简报。简报沿用已绑定细纲和必要状态，召回本书范围内偏好并保留例外与来源；未绑定或来源不适用时按原流程处理。简报不自动采用规划或决定文风；新增方法与范围见 [写前交接](skills/story-skill-write/references/writing-handoff.md)、[连续性与新增事实](skills/story-skill-write/references/chapter-continuity.md)和[本轮开发验证](benchmarks/results/development-20261018-execution-handoff/assessment.md)；此前方法验证见 [四项方法整合验证](benchmarks/results/development-20261017-four-priorities/assessment.md)。
 
 适用章节的[作者有话说与配图](skills/story-skill-write/references/chapter.md#作者有话说的保存与核验)独立交付：配图采用竖版 9:16，先选一个具体视觉重点，通过构图与主体关系突出它，并实际查看手机预览尺度效果和最终像素比例；附言 `.md` 只保留文字，不嵌图、不放图片链接或占位符。短篇默认不补写附言及其配图，用户明确要求时按指定范围处理。
 

@@ -1,0 +1,407 @@
+{
+  "schema": 1,
+  "ok": true,
+  "version": "0.6.18",
+  "run_id": 39126950559,
+  "url": "https://github.com/NingCui29/story-skill/actions/runs/39126950559",
+  "headSha": "c3f5c1ce1c88d7d2232f9c193fa0e37801c3e384",
+  "status": "completed",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "completedAt": "2026-10-18T12:37:02Z",
+      "conclusion": "success",
+      "databaseId": 117673966434,
+      "name": "test (windows-latest, 3.12)",
+      "startedAt": "2026-10-18T12:21:40Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-18T12:21:41Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-18T12:21:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:21:49Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "startedAt": "2026-10-18T12:21:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:21:49Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 3,
+          "startedAt": "2026-10-18T12:21:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:23:15Z",
+          "conclusion": "success",
+          "name": "Check Windows paths, CRLF and installation locks first",
+          "number": 4,
+          "startedAt": "2026-10-18T12:21:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:36:17Z",
+          "conclusion": "success",
+          "name": "Run regression tests including historical migration",
+          "number": 5,
+          "startedAt": "2026-10-18T12:23:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:36:17Z",
+          "conclusion": "success",
+          "name": "Check declared instruction loads by task and role",
+          "number": 6,
+          "startedAt": "2026-10-18T12:36:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:36:18Z",
+          "conclusion": "success",
+          "name": "Build the complete skill ZIP",
+          "number": 7,
+          "startedAt": "2026-10-18T12:36:17Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:36:18Z",
+          "conclusion": "success",
+          "name": "Build the Claude Desktop skill ZIP",
+          "number": 8,
+          "startedAt": "2026-10-18T12:36:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:36:19Z",
+          "conclusion": "success",
+          "name": "Build the Codex plugin marketplace ZIP",
+          "number": 9,
+          "startedAt": "2026-10-18T12:36:18Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:36:24Z",
+          "conclusion": "success",
+          "name": "Exercise the local CLI workflow",
+          "number": 10,
+          "startedAt": "2026-10-18T12:36:19Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:36:38Z",
+          "conclusion": "success",
+          "name": "Exercise synthetic Chinese transactions",
+          "number": 11,
+          "startedAt": "2026-10-18T12:36:24Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:36:58Z",
+          "conclusion": "success",
+          "name": "Exercise multi-line writing and historical revision",
+          "number": 12,
+          "startedAt": "2026-10-18T12:36:38Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:36:58Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 23,
+          "startedAt": "2026-10-18T12:36:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:37:00Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 24,
+          "startedAt": "2026-10-18T12:36:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:37:00Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 25,
+          "startedAt": "2026-10-18T12:37:00Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39126950559/job/117673966434"
+    },
+    {
+      "completedAt": "2026-10-18T12:25:46Z",
+      "conclusion": "success",
+      "databaseId": 117673966490,
+      "name": "test (ubuntu-latest, 3.10)",
+      "startedAt": "2026-10-18T12:21:40Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-18T12:21:42Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-18T12:21:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:21:44Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "startedAt": "2026-10-18T12:21:42Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:21:44Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 3,
+          "startedAt": "2026-10-18T12:21:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:21:44Z",
+          "conclusion": "skipped",
+          "name": "Check Windows paths, CRLF and installation locks first",
+          "number": 4,
+          "startedAt": "2026-10-18T12:21:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:15Z",
+          "conclusion": "success",
+          "name": "Run regression tests including historical migration",
+          "number": 5,
+          "startedAt": "2026-10-18T12:21:44Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:16Z",
+          "conclusion": "success",
+          "name": "Check declared instruction loads by task and role",
+          "number": 6,
+          "startedAt": "2026-10-18T12:25:15Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:16Z",
+          "conclusion": "success",
+          "name": "Build the complete skill ZIP",
+          "number": 7,
+          "startedAt": "2026-10-18T12:25:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:16Z",
+          "conclusion": "success",
+          "name": "Build the Claude Desktop skill ZIP",
+          "number": 8,
+          "startedAt": "2026-10-18T12:25:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:16Z",
+          "conclusion": "success",
+          "name": "Build the Codex plugin marketplace ZIP",
+          "number": 9,
+          "startedAt": "2026-10-18T12:25:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:20Z",
+          "conclusion": "success",
+          "name": "Exercise the local CLI workflow",
+          "number": 10,
+          "startedAt": "2026-10-18T12:25:16Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:30Z",
+          "conclusion": "success",
+          "name": "Exercise synthetic Chinese transactions",
+          "number": 11,
+          "startedAt": "2026-10-18T12:25:20Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:43Z",
+          "conclusion": "success",
+          "name": "Exercise multi-line writing and historical revision",
+          "number": 12,
+          "startedAt": "2026-10-18T12:25:30Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:43Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 23,
+          "startedAt": "2026-10-18T12:25:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:43Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 24,
+          "startedAt": "2026-10-18T12:25:43Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:25:43Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 25,
+          "startedAt": "2026-10-18T12:25:43Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39126950559/job/117673966490"
+    },
+    {
+      "completedAt": "2026-10-18T12:40:51Z",
+      "conclusion": "success",
+      "databaseId": 117673966607,
+      "name": "test (windows-latest, 3.10)",
+      "startedAt": "2026-10-18T12:21:40Z",
+      "status": "completed",
+      "steps": [
+        {
+          "completedAt": "2026-10-18T12:21:41Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "number": 1,
+          "startedAt": "2026-10-18T12:21:40Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:21:49Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 2,
+          "startedAt": "2026-10-18T12:21:41Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:21:49Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 3,
+          "startedAt": "2026-10-18T12:21:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:23:14Z",
+          "conclusion": "success",
+          "name": "Check Windows paths, CRLF and installation locks first",
+          "number": 4,
+          "startedAt": "2026-10-18T12:21:49Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:39:58Z",
+          "conclusion": "success",
+          "name": "Run regression tests including historical migration",
+          "number": 5,
+          "startedAt": "2026-10-18T12:23:14Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:39:59Z",
+          "conclusion": "success",
+          "name": "Check declared instruction loads by task and role",
+          "number": 6,
+          "startedAt": "2026-10-18T12:39:58Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:39:59Z",
+          "conclusion": "success",
+          "name": "Build the complete skill ZIP",
+          "number": 7,
+          "startedAt": "2026-10-18T12:39:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:40:00Z",
+          "conclusion": "success",
+          "name": "Build the Claude Desktop skill ZIP",
+          "number": 8,
+          "startedAt": "2026-10-18T12:39:59Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:40:01Z",
+          "conclusion": "success",
+          "name": "Build the Codex plugin marketplace ZIP",
+          "number": 9,
+          "startedAt": "2026-10-18T12:40:00Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:40:06Z",
+          "conclusion": "success",
+          "name": "Exercise the local CLI workflow",
+          "number": 10,
+          "startedAt": "2026-10-18T12:40:01Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:40:23Z",
+          "conclusion": "success",
+          "name": "Exercise synthetic Chinese transactions",
+          "number": 11,
+          "startedAt": "2026-10-18T12:40:06Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:40:48Z",
+          "conclusion": "success",
+          "name": "Exercise multi-line writing and historical revision",
+          "number": 12,
+          "startedAt": "2026-10-18T12:40:23Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:40:48Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "number": 23,
+          "startedAt": "2026-10-18T12:40:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:40:50Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "number": 24,
+          "startedAt": "2026-10-18T12:40:48Z",
+          "status": "completed"
+        },
+        {
+          "completedAt": "2026-10-18T12:40:50Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "number": 25,
+          "startedAt": "2026-10-18T12:40:50Z",
+          "status": "completed"
+        }
+      ],
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39126950559/job/117673966607"
+    }
+  ],
+  "raw_run_sha256": "bae0db6ab2675fe810fd9ec1876e79efe424186f7a5d0a178d900772dd3265a9",
+  "scope": "Completed run/job/step API statuses prove all three jobs succeeded. Exact unittest log counts are being collected separately; no counts are inferred from status alone."
+}
