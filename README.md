@@ -144,6 +144,8 @@ python3 -B -X utf8 scripts/install.py --host antigravity --project "<写作项�
 
 ## 使用工作台
 
+独立桌面应用：Mac 沿用[原生客户端](desktop/macos/README.md)；Windows 新增[独立应用开发候选与构建说明](desktop/windows/README.md)，内置 Python 与浏览器引擎。Windows 候选尚未完成真实桌面验收，未作为正式附件发布。
+
 工作台提供章节与材料导航、正文阅读、候选编辑、全文查找和版本差异对照。它在本机运行，本身不调用模型。
 
 可以让助手“打开 <书目录绝对路径> 的可编辑工作台”。手动启动独立书架时，将 `<核心技能目录>` 换成安装后的 `story-skill` 目录：
