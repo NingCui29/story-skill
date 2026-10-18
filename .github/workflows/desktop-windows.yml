@@ -45,6 +45,17 @@ jobs:
           if (!(Test-Path "$destination\StoryWorkbench.exe")) { throw "Installed executable missing" }
           & "$destination\runtime\python.exe" -I -B "$destination\Scripts\story.py" --version
           if ($LASTEXITCODE -ne 0) { throw "Installed backend failed" }
+          $state = "$env:RUNNER_TEMP\desktop-isolated-shelf"
+          $report = "$pwd\dist\windows-native-smoke.json"
+          $ui = Start-Process -FilePath "$destination\StoryWorkbench.exe" -ArgumentList @('--self-test-report', "`"$report`"", '--state-dir', "`"$state`"", '--port', '18765') -PassThru
+          try {
+            if (!$ui.WaitForExit(65000)) { $ui.Kill(); throw "Native window startup timed out" }
+            if ($ui.ExitCode -ne 0) { throw "Native window failed: $($ui.ExitCode)" }
+            $result = Get-Content $report -Raw | ConvertFrom-Json
+            if (!$result.ok -or !$result.native_window -or !$result.shelf_rendered) { throw "Native shelf did not render" }
+          } finally {
+            & "$destination\runtime\python.exe" -I -B "$destination\Scripts\story.py" workbench-library-stop --state-dir "$state"
+          }
           $uninstall = Start-Process -FilePath "$destination\unins000.exe" -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -Wait -PassThru
           if ($uninstall.ExitCode -ne 0) { throw "Uninstaller failed" }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -54,4 +65,6 @@ jobs:
             dist/story-workbench-windows-x86_64.zip
             dist/story-workbench-windows-x86_64.zip.sha256
             dist/story-workbench-windows-x86_64-setup.exe
+            dist/windows-native-smoke.json
+            dist/windows-native-smoke.png
           if-no-files-found: error

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import argparse
 import os
 from pathlib import Path
 import subprocess
@@ -28,12 +29,12 @@ def backend_command(root):
             str(root / 'backend_runner.py')]
 
 
-def start_backend(root):
+def start_backend(root, arguments=()):
     environment = os.environ.copy()
     for name in ('PYTHONHOME', 'PYTHONPATH', 'PYTHONEXECUTABLE'):
         environment.pop(name, None)
     environment.update(PYTHONNOUSERSITE='1', PYTHONUTF8='1')
-    result = subprocess.run(backend_command(root), capture_output=True, text=True,
+    result = subprocess.run([*backend_command(root), *arguments], capture_output=True, text=True,
                             encoding='utf-8', env=environment, timeout=25,
                             creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
     try:
@@ -48,18 +49,31 @@ def start_backend(root):
 
 
 def main():
-    from PySide6.QtCore import QUrl
+    from PySide6.QtCore import QUrl, QTimer
     from PySide6.QtGui import QDesktopServices
     from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
                                    QMessageBox, QFileDialog, QToolBar)
     from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
     from PySide6.QtWebEngineWidgets import QWebEngineView
 
-    app = QApplication(sys.argv)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--self-test-report', type=Path)
+    parser.add_argument('--state-dir', type=Path)
+    parser.add_argument('--port', type=int, default=8765)
+    options = parser.parse_args()
+    if options.self_test_report and not options.state_dir:
+        parser.error('Self-test requires an isolated --state-dir.')
+    app = QApplication([sys.argv[0]])
     app.setApplicationName('写作工作台')
     try:
-        packet = start_backend(resources())
+        arguments = ['--port', str(options.port)]
+        if options.state_dir:
+            arguments.extend(['--state-dir', str(options.state_dir)])
+        packet = start_backend(resources(), arguments)
     except Exception as error:
+        if options.self_test_report:
+            options.self_test_report.write_text(json.dumps({'ok': False, 'error': str(error)}), encoding='utf-8')
+            return 2
         QMessageBox.critical(None, '写作工作台', str(error))
         return 2
 
@@ -139,7 +153,22 @@ def main():
             request.accept()
 
     window = Window()
-    window.add_page(packet['url'])
+    first = window.add_page()
+    if options.self_test_report:
+        def completed(ok):
+            def checked(visible):
+                passed = ok and visible is True
+                options.self_test_report.write_text(json.dumps({
+                    'ok': passed, 'native_window': window.isVisible(),
+                    'shelf_rendered': visible is True, 'title': first.title(),
+                }, ensure_ascii=False), encoding='utf-8')
+                if passed:
+                    first.grab().save(str(options.self_test_report.with_suffix('.png')))
+                app.exit(0 if passed else 2)
+            first.page().runJavaScript("!!document.getElementById('library-heading')", checked)
+        first.loadFinished.connect(completed)
+        QTimer.singleShot(45000, lambda: app.exit(3))
+    first.setUrl(QUrl(packet['url']))
     window.show()
     if packet.get('outdated'):
         QMessageBox.information(window, '书架版本提示', packet['message'])
