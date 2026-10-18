@@ -34,7 +34,7 @@ jobs:
             choco install innosetup --yes --no-progress
             if ($LASTEXITCODE -ne 0) { throw "Inno Setup installation failed" }
           }
-          & $compiler "/DAppSource=$pwd\dist\story-workbench-windows-x86_64" "/DInstallerOutput=$pwd\dist" desktop/windows/installer.iss
+          & $compiler /Qp "/DAppSource=$pwd\dist\story-workbench-windows-x86_64" "/DInstallerOutput=$pwd\dist" desktop/windows/installer.iss
           if ($LASTEXITCODE -ne 0) { throw "Installer build failed" }
       - name: Test installation without launching UI
         shell: pwsh
@@ -52,9 +52,11 @@ jobs:
             if (!$ui.WaitForExit(65000)) { $ui.Kill(); throw "Native window startup timed out" }
             if ($ui.ExitCode -ne 0) { throw "Native window failed: $($ui.ExitCode)" }
             $result = Get-Content $report -Raw | ConvertFrom-Json
+            Get-Content $report -Raw
             if (!$result.ok -or !$result.native_window -or !$result.shelf_rendered) { throw "Native shelf did not render" }
           } finally {
-            & "$destination\runtime\python.exe" -I -B "$destination\Scripts\story.py" workbench-library-stop --state-dir "$state"
+            & "$destination\runtime\python.exe" -I -B "$destination\Scripts\story.py" workbench-library-stop --state-dir "$state" --saved
+            if ($LASTEXITCODE -ne 0) { throw "Isolated bookshelf cleanup failed" }
           }
           $uninstall = Start-Process -FilePath "$destination\unins000.exe" -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -Wait -PassThru
           if ($uninstall.ExitCode -ne 0) { throw "Uninstaller failed" }
