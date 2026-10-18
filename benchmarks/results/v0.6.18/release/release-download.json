@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "ok": true,
+  "status": "passed",
+  "tag": "v0.6.18",
+  "release_id": 416446469,
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.18",
+  "published_at": "2026-10-18T12:53:33Z",
+  "verified_at": "2026-10-18T12:58:53.864155+00:00",
+  "asset_count": 8,
+  "zip_count": 4,
+  "assets": [
+    {
+      "name": "story-skill-0.6.18.zip",
+      "asset_id": 653478315,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-0.6.18.zip",
+      "bytes": 444154,
+      "sha256": "b9762ed2fe1a5b54a1b48bc9beaa593310762eb82e5e807550407efdacab5020",
+      "server_digest": "sha256:b9762ed2fe1a5b54a1b48bc9beaa593310762eb82e5e807550407efdacab5020",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-0.6.18.zip.sha256",
+      "asset_id": 653478312,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-0.6.18.zip.sha256",
+      "bytes": 89,
+      "sha256": "8e2c0d20ac56f4f08b62d838d10b304a498f6912783720b6c3eaad85f98601e6",
+      "server_digest": "sha256:8e2c0d20ac56f4f08b62d838d10b304a498f6912783720b6c3eaad85f98601e6",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.18-r2.zip",
+      "asset_id": 653478313,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-claude-desktop-0.6.18-r2.zip",
+      "bytes": 449942,
+      "sha256": "bbe50beba3e0825d7e9e962acb47b6306433d1f7d1d5c3a11615cbe7e66d4a04",
+      "server_digest": "sha256:bbe50beba3e0825d7e9e962acb47b6306433d1f7d1d5c3a11615cbe7e66d4a04",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.18-r2.zip.sha256",
+      "asset_id": 653478316,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-claude-desktop-0.6.18-r2.zip.sha256",
+      "bytes": 107,
+      "sha256": "1899ff21fdc86e3d84e6e3ed485343359089bcd3d377f4f986380b6acd7b49dc",
+      "server_digest": "sha256:1899ff21fdc86e3d84e6e3ed485343359089bcd3d377f4f986380b6acd7b49dc",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-codex-0.6.18.zip",
+      "asset_id": 653478314,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip",
+      "bytes": 452202,
+      "sha256": "7418f64ffe8c0a5c35ffd1ee04195e4f86db2c369ee7bafb7811bb9467bb4e09",
+      "server_digest": "sha256:7418f64ffe8c0a5c35ffd1ee04195e4f86db2c369ee7bafb7811bb9467bb4e09",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-skill-codex-0.6.18.zip.sha256",
+      "asset_id": 653478388,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip.sha256",
+      "bytes": 95,
+      "sha256": "fb11e3ae53bdd5392772cd81a2bcba0a91c4fecf1a1ead2bd1e00da4683a14f2",
+      "server_digest": "sha256:fb11e3ae53bdd5392772cd81a2bcba0a91c4fecf1a1ead2bd1e00da4683a14f2",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-workbench-0.1.6-macos-x86_64.zip",
+      "asset_id": 653478389,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-workbench-0.1.6-macos-x86_64.zip",
+      "bytes": 25757097,
+      "sha256": "fd9ba13d8eaeef68ffc3f8cfa0a775666816fdcc681a4d62c3d257da726f71a9",
+      "server_digest": "sha256:fd9ba13d8eaeef68ffc3f8cfa0a775666816fdcc681a4d62c3d257da726f71a9",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    },
+    {
+      "name": "story-workbench-0.1.6-macos-x86_64.zip.sha256",
+      "asset_id": 653478607,
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-workbench-0.1.6-macos-x86_64.zip.sha256",
+      "bytes": 105,
+      "sha256": "a3149e30e182d3eb0155315dc492ccf79db5f63737d90688be83e0c71ad93fa8",
+      "server_digest": "sha256:a3149e30e182d3eb0155315dc492ccf79db5f63737d90688be83e0c71ad93fa8",
+      "matches_uploaded_local_bytes": true,
+      "anonymous_download": true
+    }
+  ],
+  "checksum_sidecars_match": true,
+  "all_zip_crc_paths_and_duplicates_passed": true,
+  "scope": "Eight actual anonymous public Release downloads compared byte-for-byte with locally verified build artifacts and GitHub asset SHA256; four ZIP sidecars and CRC/path/duplicate checks. Does not verify host GUI import or Apple notarization."
+}

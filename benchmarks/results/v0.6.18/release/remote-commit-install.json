@@ -1,1 +1,553 @@
-{"status": "pending", "scope": "Fixed-tag verification will run after refs are pushed."}
+{
+  "schema": 1,
+  "ok": true,
+  "status": "passed",
+  "tag": "v0.6.18",
+  "requested_commit": "0df4880e884086cbfed04be0bf4902e8149062f3",
+  "version_branch": "version-0.6.18",
+  "source_method": "GitHub tag/ref and recursive Git tree API plus fixed-commit raw HTTPS downloads; no local clone source used",
+  "source_files_downloaded": 56,
+  "skill_files": 55,
+  "skill_count": 8,
+  "tree_api_sha256": "5f9c29831e872be9ef91669b554e00cf82a8b39ab2ec5104021b4f24742fb44e",
+  "files": [
+    {
+      "path": "scripts/install.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/scripts/install.py",
+      "bytes": 29223,
+      "git_blob_sha": "f281203b74779d0ea1480fff272d46a73d5ece68",
+      "sha256": "142e0cc2091004b729bb6e242564ecf5319c3c291f2d68fe07cab194b54ed469"
+    },
+    {
+      "path": "skills/story-skill-analyze/LICENSE",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-analyze/LICENSE",
+      "bytes": 5955,
+      "git_blob_sha": "5182c8eaacf27ab372a0350e299b8fdd8c57f998",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    {
+      "path": "skills/story-skill-analyze/SKILL.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-analyze/SKILL.md",
+      "bytes": 9516,
+      "git_blob_sha": "1ff71a1f1c6937ebe6b2e55ca2bf347dbf1cddc9",
+      "sha256": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f"
+    },
+    {
+      "path": "skills/story-skill-analyze/agents/openai.yaml",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-analyze/agents/openai.yaml",
+      "bytes": 349,
+      "git_blob_sha": "6c2eaf2aabf57fb5712f50d9ce9d861ddc4cdf6b",
+      "sha256": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43"
+    },
+    {
+      "path": "skills/story-skill-analyze/references/deep-reading.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-analyze/references/deep-reading.md",
+      "bytes": 7832,
+      "git_blob_sha": "f28dd58a264f4aa180b0ea4529c6b97f2a7aa43a",
+      "sha256": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf"
+    },
+    {
+      "path": "skills/story-skill-analyze/references/examples.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-analyze/references/examples.md",
+      "bytes": 7318,
+      "git_blob_sha": "28982fa153910bc4b574fc2c7ba625f936f25365",
+      "sha256": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2"
+    },
+    {
+      "path": "skills/story-skill-cover/LICENSE",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-cover/LICENSE",
+      "bytes": 5955,
+      "git_blob_sha": "5182c8eaacf27ab372a0350e299b8fdd8c57f998",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    {
+      "path": "skills/story-skill-cover/SKILL.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-cover/SKILL.md",
+      "bytes": 7419,
+      "git_blob_sha": "dc850eeef63640bf76897faadb203804cc2511be",
+      "sha256": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209"
+    },
+    {
+      "path": "skills/story-skill-cover/agents/openai.yaml",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-cover/agents/openai.yaml",
+      "bytes": 485,
+      "git_blob_sha": "4e7f76304b43153b192ec8152b4125cbff10a840",
+      "sha256": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac"
+    },
+    {
+      "path": "skills/story-skill-plan/LICENSE",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-plan/LICENSE",
+      "bytes": 5955,
+      "git_blob_sha": "5182c8eaacf27ab372a0350e299b8fdd8c57f998",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    {
+      "path": "skills/story-skill-plan/SKILL.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-plan/SKILL.md",
+      "bytes": 22066,
+      "git_blob_sha": "d09e4dca7027a327ae0d9d86e943372dc8ea82e2",
+      "sha256": "d9bcaf2bdd29bf6795b3df837c341f02e245b78ad47b2b8339d30aba8261f0cf"
+    },
+    {
+      "path": "skills/story-skill-plan/agents/openai.yaml",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-plan/agents/openai.yaml",
+      "bytes": 334,
+      "git_blob_sha": "cffed28818e490f4ead981c5318a3abbfd5dcbc1",
+      "sha256": "60d1738ffeb89e0d4685349378401ee7fdb52ae9e85e60ccbf06a41d50101a01"
+    },
+    {
+      "path": "skills/story-skill-plan/references/blurb.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-plan/references/blurb.md",
+      "bytes": 6165,
+      "git_blob_sha": "e16512179dc0eb7f7180c2000d0f93cb5071e9b2",
+      "sha256": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d"
+    },
+    {
+      "path": "skills/story-skill-plan/references/fanqie-tags.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-plan/references/fanqie-tags.md",
+      "bytes": 17482,
+      "git_blob_sha": "3afe59fad74bbb586a2d12a9f9aefd2be547870d",
+      "sha256": "06fb7c5344dde2d0d9c46a26d2bc63ff0d648f03394487261150c993592e465f"
+    },
+    {
+      "path": "skills/story-skill-plan/references/outline.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-plan/references/outline.md",
+      "bytes": 24161,
+      "git_blob_sha": "6b0aaf85912c5305b3d72b5a9081943286bf4574",
+      "sha256": "0a8725ba6a406133b904708d720e0e66cae6e68f0251dc193dafa13982f34c81"
+    },
+    {
+      "path": "skills/story-skill-plan/references/qidian-categories.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-plan/references/qidian-categories.md",
+      "bytes": 7809,
+      "git_blob_sha": "f8c4cc28ea52c32d09d4caa7a18cd7a8d7c777e9",
+      "sha256": "9cd2d28fc0a3a7d1297cb75c960db5fdf78e238ddd9f130d19e6365f270473ee"
+    },
+    {
+      "path": "skills/story-skill-plan/references/qimao-tags.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-plan/references/qimao-tags.md",
+      "bytes": 13158,
+      "git_blob_sha": "3885b8f2ab097ac992ce8ed57ca3ca83e8d4384c",
+      "sha256": "d9100e1fd8e60094034dad131ac996effebccdb1541212b7de26e5bee768459e"
+    },
+    {
+      "path": "skills/story-skill-plan/references/short-platform.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-plan/references/short-platform.md",
+      "bytes": 6204,
+      "git_blob_sha": "16c1d6e437e767930c8fc67d2b41863cf4d6dd70",
+      "sha256": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe"
+    },
+    {
+      "path": "skills/story-skill-publish/LICENSE",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-publish/LICENSE",
+      "bytes": 5955,
+      "git_blob_sha": "5182c8eaacf27ab372a0350e299b8fdd8c57f998",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    {
+      "path": "skills/story-skill-publish/SKILL.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-publish/SKILL.md",
+      "bytes": 18032,
+      "git_blob_sha": "41215b2580076e89aece80afd3f187475953e9aa",
+      "sha256": "48ab2f349a57656710e005a45acea8ade6ee5d4291b95dae2dbb5f65fe719be9"
+    },
+    {
+      "path": "skills/story-skill-publish/agents/openai.yaml",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-publish/agents/openai.yaml",
+      "bytes": 322,
+      "git_blob_sha": "1831299448674b1b44da421a50db4814d4b6bc07",
+      "sha256": "43bb3505b40c2c1b05c901b7c8ec35faa448e005cc0f21d5eb482be812b67ad0"
+    },
+    {
+      "path": "skills/story-skill-research/LICENSE",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-research/LICENSE",
+      "bytes": 5955,
+      "git_blob_sha": "5182c8eaacf27ab372a0350e299b8fdd8c57f998",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    {
+      "path": "skills/story-skill-research/SKILL.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-research/SKILL.md",
+      "bytes": 3733,
+      "git_blob_sha": "d91490d0af07fd0d097cb97477d8e1e556b6b9d8",
+      "sha256": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9"
+    },
+    {
+      "path": "skills/story-skill-research/agents/openai.yaml",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-research/agents/openai.yaml",
+      "bytes": 365,
+      "git_blob_sha": "d445b273f669e55ecb4da5857807b092c26a76bd",
+      "sha256": "fa58f9b8653b56c69c2806632b27f0c0aecd705d802848312bbc5b9ea86b6221"
+    },
+    {
+      "path": "skills/story-skill-research/references/reader-validation.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-research/references/reader-validation.md",
+      "bytes": 10708,
+      "git_blob_sha": "072f389e6400a44129104afdfaef1672a41e16b7",
+      "sha256": "d654fb03817f5e5a9cb72967075e628e36d30a8546dd353d1fafe2d755949e3e"
+    },
+    {
+      "path": "skills/story-skill-review/LICENSE",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-review/LICENSE",
+      "bytes": 5955,
+      "git_blob_sha": "5182c8eaacf27ab372a0350e299b8fdd8c57f998",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    {
+      "path": "skills/story-skill-review/SKILL.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-review/SKILL.md",
+      "bytes": 21821,
+      "git_blob_sha": "5c4c8f9adf9c9174b5f0bf725204637c2722c4ef",
+      "sha256": "fc661476ef4768d05143bae93caec13162d1ae3651381fa69832219f483895e0"
+    },
+    {
+      "path": "skills/story-skill-review/agents/openai.yaml",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-review/agents/openai.yaml",
+      "bytes": 343,
+      "git_blob_sha": "33cfd42c5a4b81ebef261cc01b1ba0a5c76a6cf2",
+      "sha256": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe"
+    },
+    {
+      "path": "skills/story-skill-review/references/fanqie-content-review.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-review/references/fanqie-content-review.md",
+      "bytes": 4461,
+      "git_blob_sha": "853359216cce1d123bc39c4b12b17d293b117eff",
+      "sha256": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1"
+    },
+    {
+      "path": "skills/story-skill-review/references/history.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-review/references/history.md",
+      "bytes": 21206,
+      "git_blob_sha": "21d872bf8b778e85f2c2729118657e0a5e9210ff",
+      "sha256": "6be47ce5d88c40205503fc477cee2c3370bd1934e71b7d1129bf0d30cd3eea0c"
+    },
+    {
+      "path": "skills/story-skill-review/references/qimao-content-review.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-review/references/qimao-content-review.md",
+      "bytes": 7275,
+      "git_blob_sha": "ab6bb847bec7712639bda525bfbaea11cb51ddb4",
+      "sha256": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565"
+    },
+    {
+      "path": "skills/story-skill-write/LICENSE",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/LICENSE",
+      "bytes": 5955,
+      "git_blob_sha": "5182c8eaacf27ab372a0350e299b8fdd8c57f998",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    {
+      "path": "skills/story-skill-write/SKILL.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/SKILL.md",
+      "bytes": 10827,
+      "git_blob_sha": "912083887665a107fcd0b70d5cb6bd1da683781c",
+      "sha256": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518"
+    },
+    {
+      "path": "skills/story-skill-write/agents/openai.yaml",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/agents/openai.yaml",
+      "bytes": 350,
+      "git_blob_sha": "017a6481ab909c1fe52ef14812b70eb51ae7c217",
+      "sha256": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d"
+    },
+    {
+      "path": "skills/story-skill-write/references/chapter-continuity.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/references/chapter-continuity.md",
+      "bytes": 3994,
+      "git_blob_sha": "c6dfe5239b7a312ee9059699a9a9c315dff9c543",
+      "sha256": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d"
+    },
+    {
+      "path": "skills/story-skill-write/references/chapter.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/references/chapter.md",
+      "bytes": 27698,
+      "git_blob_sha": "4ddd18f525aa3673d8b167fb4603ed3adcb57d55",
+      "sha256": "6afc1734075091716cb97d4eddd0ab19bd92510a8fb662fa0830b346417c615c"
+    },
+    {
+      "path": "skills/story-skill-write/references/content-review.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/references/content-review.md",
+      "bytes": 19602,
+      "git_blob_sha": "808d657559ac51d00e3fb70d26d35fb5d9ccd50e",
+      "sha256": "3e855332540a5bde5789622bef5b5ee9c16a5d3ae7d80dd03779afb492d04860"
+    },
+    {
+      "path": "skills/story-skill-write/references/drama.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/references/drama.md",
+      "bytes": 104196,
+      "git_blob_sha": "a0eabf6bd4261dca0b77a1aee4c3c39a9e23c18a",
+      "sha256": "7638c61cef1cbbc92fff58d190d4b636bb6a3a72572faaeada811805837faf91"
+    },
+    {
+      "path": "skills/story-skill-write/references/long-form.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/references/long-form.md",
+      "bytes": 10199,
+      "git_blob_sha": "aaabcca8cbfc347a7a36250c248971de0b5ebd81",
+      "sha256": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde"
+    },
+    {
+      "path": "skills/story-skill-write/references/punctuation.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/references/punctuation.md",
+      "bytes": 7346,
+      "git_blob_sha": "77de9656c2a2fb06e5568be32c9b2e1443a04f9e",
+      "sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a"
+    },
+    {
+      "path": "skills/story-skill-write/references/suspense-evidence.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/references/suspense-evidence.md",
+      "bytes": 2493,
+      "git_blob_sha": "ef1ddef12573d34e5cc46923784fdeb9b7bacbbe",
+      "sha256": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8"
+    },
+    {
+      "path": "skills/story-skill-write/references/writing-handoff.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill-write/references/writing-handoff.md",
+      "bytes": 3785,
+      "git_blob_sha": "11906f9204fb5a036283f7d42ddf494c025baf0c",
+      "sha256": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850"
+    },
+    {
+      "path": "skills/story-skill/LICENSE",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/LICENSE",
+      "bytes": 5955,
+      "git_blob_sha": "5182c8eaacf27ab372a0350e299b8fdd8c57f998",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    {
+      "path": "skills/story-skill/SKILL.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/SKILL.md",
+      "bytes": 12826,
+      "git_blob_sha": "ec2dcb8d5b0502584272da1ad6aabb58ec1c64da",
+      "sha256": "dd3491efba2c87da449a526af0bab0d2cb8e270ac61684800b3967b4447762af"
+    },
+    {
+      "path": "skills/story-skill/agents/openai.yaml",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/agents/openai.yaml",
+      "bytes": 356,
+      "git_blob_sha": "050ee181af7b9e7e57c69123f9ddf8218b9e36e1",
+      "sha256": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a"
+    },
+    {
+      "path": "skills/story-skill/references/project-state.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/references/project-state.md",
+      "bytes": 36044,
+      "git_blob_sha": "f3ada4d96f3099b434f4fe15a6a5413bb0f1a1d6",
+      "sha256": "72e41437802f5a7774463a11ac87fd7f688c83ba3332994344cdbe2a8e36adfc"
+    },
+    {
+      "path": "skills/story-skill/references/workbench.md",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/references/workbench.md",
+      "bytes": 5775,
+      "git_blob_sha": "a61ae45ee3126f5722b739e4cf99dd243bfeb4ae",
+      "sha256": "8b8edb9c4d970047261fdc0738dd27d4fdefb4d09feaad45421d4fc8bae88215"
+    },
+    {
+      "path": "skills/story-skill/scripts/story.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/scripts/story.py",
+      "bytes": 181412,
+      "git_blob_sha": "a23ade22acb648d4227504d0985161d2f90e26e4",
+      "sha256": "6a71fc32435303c555c5de81760201814fc7706139b81cbdbbbd06902be9455d"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_history.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/scripts/story_history.py",
+      "bytes": 81018,
+      "git_blob_sha": "c7086c689282eb9e60f6f1b399466db9087971b3",
+      "sha256": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_outline.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/scripts/story_outline.py",
+      "bytes": 49202,
+      "git_blob_sha": "25dec1997c1676403ee93759b796f0270e38456d",
+      "sha256": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_publish.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/scripts/story_publish.py",
+      "bytes": 102483,
+      "git_blob_sha": "05cd95a514efc4e3f584d5303e1b886819e1ed05",
+      "sha256": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_punctuation.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/scripts/story_punctuation.py",
+      "bytes": 5106,
+      "git_blob_sha": "77e3953e473b75017d72d677f0ffcad15788b29b",
+      "sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_search.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/scripts/story_search.py",
+      "bytes": 13962,
+      "git_blob_sha": "1aaf06b8281570a49e380d692a069fee76ab8aa0",
+      "sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_storage.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/scripts/story_storage.py",
+      "bytes": 10434,
+      "git_blob_sha": "39fb6cb790c0486cf6cf39b3241b0a455a83db77",
+      "sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_workbench.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/scripts/story_workbench.py",
+      "bytes": 287124,
+      "git_blob_sha": "b977b36cbe1cfeb2d1cd94781be750ec22d7c4e8",
+      "sha256": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_world.py",
+      "url": "https://raw.githubusercontent.com/NingCui29/story-skill/0df4880e884086cbfed04be0bf4902e8149062f3/skills/story-skill/scripts/story_world.py",
+      "bytes": 61442,
+      "git_blob_sha": "e4e7cd717cb6ed9b5a3a5f53b940d4384867e270",
+      "sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+    }
+  ],
+  "source_payload_matches_release_zip": true,
+  "all_git_blob_and_sha256_checks_passed": true,
+  "installation": {
+    "status": "installed",
+    "host": "codex",
+    "scope": "project",
+    "path": "<REPO_ROOT>/.local-writing-samples/release-v0.6.18-20261018/remote-fixed-api-v2/project/.agents/skills",
+    "skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "changed_skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "backup": null,
+    "files": 55
+  },
+  "read_only_install_check": {
+    "status": "verified",
+    "host": "codex",
+    "scope": "project",
+    "path": "<REPO_ROOT>/.local-writing-samples/release-v0.6.18-20261018/remote-fixed-api-v2/project/.agents/skills",
+    "skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "managed_skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "files": 55
+  },
+  "installed_payload_hashes": {
+    "story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-analyze/SKILL.md": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+    "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+    "story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+    "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+    "story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+    "story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+    "story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-plan/SKILL.md": "d9bcaf2bdd29bf6795b3df837c341f02e245b78ad47b2b8339d30aba8261f0cf",
+    "story-skill-plan/agents/openai.yaml": "60d1738ffeb89e0d4685349378401ee7fdb52ae9e85e60ccbf06a41d50101a01",
+    "story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+    "story-skill-plan/references/fanqie-tags.md": "06fb7c5344dde2d0d9c46a26d2bc63ff0d648f03394487261150c993592e465f",
+    "story-skill-plan/references/outline.md": "0a8725ba6a406133b904708d720e0e66cae6e68f0251dc193dafa13982f34c81",
+    "story-skill-plan/references/qidian-categories.md": "9cd2d28fc0a3a7d1297cb75c960db5fdf78e238ddd9f130d19e6365f270473ee",
+    "story-skill-plan/references/qimao-tags.md": "d9100e1fd8e60094034dad131ac996effebccdb1541212b7de26e5bee768459e",
+    "story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+    "story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-publish/SKILL.md": "48ab2f349a57656710e005a45acea8ade6ee5d4291b95dae2dbb5f65fe719be9",
+    "story-skill-publish/agents/openai.yaml": "43bb3505b40c2c1b05c901b7c8ec35faa448e005cc0f21d5eb482be812b67ad0",
+    "story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-research/SKILL.md": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9",
+    "story-skill-research/agents/openai.yaml": "fa58f9b8653b56c69c2806632b27f0c0aecd705d802848312bbc5b9ea86b6221",
+    "story-skill-research/references/reader-validation.md": "d654fb03817f5e5a9cb72967075e628e36d30a8546dd353d1fafe2d755949e3e",
+    "story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-review/SKILL.md": "fc661476ef4768d05143bae93caec13162d1ae3651381fa69832219f483895e0",
+    "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+    "story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+    "story-skill-review/references/history.md": "6be47ce5d88c40205503fc477cee2c3370bd1934e71b7d1129bf0d30cd3eea0c",
+    "story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+    "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-write/SKILL.md": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+    "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+    "story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+    "story-skill-write/references/chapter.md": "6afc1734075091716cb97d4eddd0ab19bd92510a8fb662fa0830b346417c615c",
+    "story-skill-write/references/content-review.md": "3e855332540a5bde5789622bef5b5ee9c16a5d3ae7d80dd03779afb492d04860",
+    "story-skill-write/references/drama.md": "7638c61cef1cbbc92fff58d190d4b636bb6a3a72572faaeada811805837faf91",
+    "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+    "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+    "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+    "story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+    "story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill/SKILL.md": "dd3491efba2c87da449a526af0bab0d2cb8e270ac61684800b3967b4447762af",
+    "story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+    "story-skill/references/project-state.md": "72e41437802f5a7774463a11ac87fd7f688c83ba3332994344cdbe2a8e36adfc",
+    "story-skill/references/workbench.md": "8b8edb9c4d970047261fdc0738dd27d4fdefb4d09feaad45421d4fc8bae88215",
+    "story-skill/scripts/story.py": "6a71fc32435303c555c5de81760201814fc7706139b81cbdbbbd06902be9455d",
+    "story-skill/scripts/story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+    "story-skill/scripts/story_outline.py": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c",
+    "story-skill/scripts/story_publish.py": "2ad809ecbad1ab73b42bbb93bd71f26441847b2793744ef72b737a66dafbf1ce",
+    "story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story-skill/scripts/story_workbench.py": "ad35ff5167473e4d6b5a1590816b78cef58b313d256b85bc0aec84e9ef4105a0",
+    "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+  },
+  "cli": {
+    "version": {
+      "exit_code": 0
+    },
+    "help": {
+      "exit_code": 0
+    },
+    "init": {
+      "exit_code": 0
+    },
+    "status": {
+      "exit_code": 0
+    }
+  },
+  "installed_payload_unchanged": true,
+  "tag_unchanged_before_after": true,
+  "transport_attempts": [
+    {
+      "method": "full shallow Git clone",
+      "status": "failed",
+      "reason": "300 second transport timeout",
+      "report": "remote-commit-install.failed-clone.json"
+    },
+    {
+      "method": "HTTP/1.1 sparse partial Git clone",
+      "status": "failed",
+      "reason": "TLS connection error before checkout",
+      "report": "remote-commit-install.failed-sparse.json"
+    }
+  ],
+  "verified_at": "2026-10-18T12:53:38.021456+00:00",
+  "scope": "Actual remote pinned source bytes, Git tree blob identity, 55 payload matches, isolated full eight-skill installation, read-only check and four CLI commands. No existing user installation or book touched."
+}

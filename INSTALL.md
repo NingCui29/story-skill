@@ -1,6 +1,6 @@
 # 安装或升级 Story Skill
 
-**固定安装版本：v0.6.18。** 八技能、55 个源载荷文件，运行时需要 Python 3.10 或更新版本。本地完整回归和三组远端CI已通过；固定标签、分支、Release和Packages的最终分发状态见[在线发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.18.md)。
+**已发布版：v0.6.18。** 八技能、55 个源载荷文件，运行时需要 Python 3.10 或更新版本。本地1743项回归（1725通过、18跳过，零失败和错误）、Linux与两组Windows CI、固定标签55文件安装、Release八附件匿名回下载及GitHub Packages独立核验均通过。固定标签为 `v0.6.18`，版本分支为 `version-0.6.18`；结果见[发布记录](docs/releases/v0.6.18.md)。
 
 本版包括题材写法卡、文风统一裁决、兑现归属、只读写前简报、9:16 附言配图、单一视觉重点与纯文字附言要求，以及[起点作品分类实采表](skills/story-skill-plan/references/qidian-categories.md)。此前已发布的 [v0.6.16](docs/releases/v0.6.16.md) 保持八技能、51 文件及原有附件，历史验证不代替本版核验。
 

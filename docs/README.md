@@ -1,6 +1,6 @@
 # Story Skill 文档导航
 
-**v0.6.18发布候选**：八个技能、55 个源载荷文件，Claude桌面57文件、Codex市场包60成员（58插件文件）、npm58成员、Intel Mac客户端0.1.6/build 7。实际分发与验证状态见[发布记录](releases/v0.6.18.md)。
+**v0.6.18已发布**：八个技能、55 个源载荷文件，Claude桌面57文件、Codex市场包60成员（58插件文件）、npm58成员、Intel Mac客户端0.1.6/build 7。本地1743项回归（1725通过、18跳过，零失败和错误）、Linux与两组Windows CI、固定标签55文件安装、Release八附件匿名回下载及GitHub Packages独立核验均通过。详见[发布记录](releases/v0.6.18.md)。
 
 本版新增[写前交接与偏好召回](../skills/story-skill-write/references/writing-handoff.md)、[关键情节点覆盖与新增事实分级](../skills/story-skill-write/references/chapter-continuity.md)及[短篇平台化设计](../skills/story-skill-plan/references/short-platform.md)，正文入口按任务条件读取；开发前向试用与边界见[本轮验证](../benchmarks/results/development-20261018-execution-handoff/assessment.md)。
 

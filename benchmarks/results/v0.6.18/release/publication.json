@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "tag": "v0.6.18",
+  "tag_commit": "0df4880e884086cbfed04be0bf4902e8149062f3",
+  "release_id": 416446469,
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.18",
+  "published_at": "2026-10-18T12:53:33Z",
+  "draft_asset_count_verified_before_publication": 8,
+  "draft_assets_verified_receipt_sha256": "ce11f4077d6f5d1677df1b10cf5a4d0eeb58d021785bcc1c975bc4127f073073",
+  "fixed_tag_install_passed_before_publication": true,
+  "asset_names": [
+    "story-skill-0.6.18.zip",
+    "story-skill-0.6.18.zip.sha256",
+    "story-skill-claude-desktop-0.6.18-r2.zip",
+    "story-skill-claude-desktop-0.6.18-r2.zip.sha256",
+    "story-skill-codex-0.6.18.zip",
+    "story-skill-codex-0.6.18.zip.sha256",
+    "story-workbench-0.1.6-macos-x86_64.zip",
+    "story-workbench-0.1.6-macos-x86_64.zip.sha256"
+  ],
+  "scope": "Created a draft, uploaded eight local verified assets, checked exact metadata and notes by release ID after fixed-tag installation, then published. Public byte downloads and registry publication are independently recorded."
+}

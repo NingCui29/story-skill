@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "checked_at": "2026-10-18T12:43:50.165397+00:00",
+  "tag": "v0.6.18",
+  "tag_type": "annotated",
+  "tag_object": "63ae48f1de07c5a953c18b5f0e5d7b02affd3137",
+  "fixed_commit": "0df4880e884086cbfed04be0bf4902e8149062f3",
+  "version_branch": "version-0.6.18",
+  "main_and_version_branch_commit": "0df4880e884086cbfed04be0bf4902e8149062f3",
+  "source_ci_commit": "c3f5c1ce1c88d7d2232f9c193fa0e37801c3e384",
+  "ci_input_files": 216,
+  "fixed_tag_and_final_branch_source_inputs_match_ci": true,
+  "historical_v0617_tag_preserved": true,
+  "refs": {
+    "refs/heads/main": "0df4880e884086cbfed04be0bf4902e8149062f3",
+    "refs/heads/version-0.6.18": "0df4880e884086cbfed04be0bf4902e8149062f3",
+    "refs/tags/v0.6.17": "2fc336654792fa795a15669500bbd5e2ea206da9",
+    "refs/tags/v0.6.17^{}": "0e0f3e14256e7d53ca86a838252b5e176c3fdcc1",
+    "refs/tags/v0.6.18": "63ae48f1de07c5a953c18b5f0e5d7b02affd3137",
+    "refs/tags/v0.6.18^{}": "0df4880e884086cbfed04be0bf4902e8149062f3"
+  },
+  "scope": "Actual origin refs and all 216 CI-bound source/test/build inputs; main/version branch may advance with documentation receipts while the annotated release tag remains fixed."
+}

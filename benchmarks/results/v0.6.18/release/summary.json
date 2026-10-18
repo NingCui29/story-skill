@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "version": "0.6.18",
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.18",
+  "tag_commit": "0df4880e884086cbfed04be0bf4902e8149062f3",
+  "source_ci_commit": "c3f5c1ce1c88d7d2232f9c193fa0e37801c3e384",
+  "asset_count": 8,
+  "npm_version": "0.6.18",
+  "npm_registry_bytes_match_local_pack": true,
+  "local_tests": {
+    "run": 1743,
+    "passed": 1725,
+    "skipped": 18,
+    "failed": 0,
+    "errors": 0
+  },
+  "ci_jobs": 3,
+  "remote_source_skill_files": 55,
+  "all_requested_install_packages_published_and_verified": true,
+  "completed_at": "2026-10-18T13:00:05.343939+00:00",
+  "scope": "All requested release distributions and version branch verified; literary quality, host GUIs and Apple notarization are outside this release verification.",
+  "unchanged_ci_inputs": 215,
+  "documentation_changes_after_fixed_tag": {
+    "desktop/macos/README.md": {
+      "ci_sha256": "47df8f8ed366bcb80c18433ace5630f5abacb407b4edc2c4344c1aedd6fdda6f",
+      "final_sha256": "ddf8de4555047babd9e6c2ed184179e05aa055e4b93c0e321a7a3b13dfb268c1"
+    }
+  }
+}

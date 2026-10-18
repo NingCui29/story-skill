@@ -1,6 +1,6 @@
 # Codex 本地插件
 
-v0.6.18发布候选包含一个 Codex 本地插件，内含八个同级技能、共享 Python 运行时和许可证。插件使用 `.codex-plugin/plugin.json` 格式，不需要 MCP 服务或额外 API 密钥。本版发布验证正在进行，实际状态见 [v0.6.18 发布记录](releases/v0.6.18.md)；它是可下载的本地市场包，不表示已在公共插件目录上架。
+已发布的v0.6.18包含一个 Codex 本地插件，内含八个同级技能、共享 Python 运行时和许可证。插件使用 `.codex-plugin/plugin.json` 格式，不需要 MCP 服务或额外 API 密钥。本版固定标签安装、Release八附件匿名回下载及Packages独立核验均通过，实际状态见 [v0.6.18 发布记录](releases/v0.6.18.md)；它是可下载的本地市场包，不表示已在公共插件目录上架。
 
 下载 [story-skill-codex-0.6.18.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip.sha256)。归档共 60 个文件成员：58 个插件文件（55 个技能载荷及元数据、图标、根许可证）加市场说明与登记文件。仓库当前公开；正式附件的下载可用性以本版回下载回执为准。
 

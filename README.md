@@ -4,9 +4,9 @@
 
 Story Skill 是供支持 Agent Skills 的写作助手使用的中文小说技能，涵盖拆书、开书、书名与简介优化、大纲、正文、审稿、调研、封面和投稿材料准备。支持 Codex、Claude Code、Antigravity、Qoder（含 CN）、ZCode、WorkBuddy AI，以及下文列出的其他宿主。源码按八个技能分工；Claude 桌面导入包通过一个总入口按需读取这些流程。每本书独立保存，三栏本机工作台让你直接阅读、比较版本、修改并保存候选稿。
 
-**固定安装版本：v0.6.18 · Python 3.10+ · 支持长篇与短篇**
+**已发布版：v0.6.18 · Python 3.10+ · 支持长篇与短篇**
 
-v0.6.18 包含八个技能、55 个源载荷文件，新增写前交接与偏好召回、关键情节点覆盖与新增事实分级、精简执行路径及短篇平台化设计。本地完整回归和三组远端CI已通过；固定标签、分支、Release和Packages的最终分发状态见[在线发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.18.md)。
+v0.6.18 包含八个技能、55 个源载荷文件，新增写前交接与偏好召回、关键情节点覆盖与新增事实分级、精简执行路径及短篇平台化设计。本地1743项回归（1725通过、18跳过，零失败和错误）、Linux与两组Windows CI、固定标签55文件安装、Release八附件匿名回下载及GitHub Packages独立核验均通过。固定标签为 `v0.6.18`，版本分支为 `version-0.6.18`；结果见[发布记录](docs/releases/v0.6.18.md)。
 
 本版新增[起点作品分类实采表](skills/story-skill-plan/references/qidian-categories.md)：2026-10-11 在作家助手创建作品菜单收集男频 15 大类／79 子类、女频 11 大类／73 子类，总纲默认分别体现番茄、七猫、起点三平台分类与作品分析，包含具体看点、剧情支撑及适配结论。
 
@@ -27,7 +27,7 @@ v0.6.18 包含八个技能、55 个源载荷文件，新增写前交接与偏好
 
 适用章节的[作者有话说与配图](skills/story-skill-write/references/chapter.md#作者有话说的保存与核验)独立交付：配图采用竖版 9:16，先选一个具体视觉重点，通过构图与主体关系突出它，并实际查看手机预览尺度效果和最终像素比例；附言 `.md` 只保留文字，不嵌图、不放图片链接或占位符。短篇默认不补写附言及其配图，用户明确要求时按指定范围处理。
 
-本版 macOS 客户端 `0.1.6`（build 7，内含 Story Skill `0.6.18`）将作为独立 Intel 实验附件分发，采用本地临时签名，未经 Apple 公证。构建、验证与分发状态见[客户端说明](desktop/macos/README.md)，GitHub 发布不会自动更新本机安装。
+本版 macOS 客户端 `0.1.6`（build 7，内含 Story Skill `0.6.18`）已作为独立 Intel 实验附件分发，采用本地临时签名，未经 Apple 公证。构建、验证与分发状态见[客户端说明](desktop/macos/README.md)，GitHub 发布不会自动更新本机安装。
 
 [安装升级](INSTALL.md) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [版本记录](docs/releases/v0.6.18.md) · [Releases](https://github.com/NingCui29/story-skill/releases) · [Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill)
 

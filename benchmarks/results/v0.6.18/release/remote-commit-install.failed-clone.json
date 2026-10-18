@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "status": "failed",
+  "ok": false,
+  "repository_url": "https://github.com/NingCui29/story-skill.git",
+  "requested_commit": "0df4880e884086cbfed04be0bf4902e8149062f3",
+  "tag": "v0.6.18",
+  "version_branch": "version-0.6.18",
+  "archive": "<REPO_ROOT>/dist/release-v0.6.18/story-skill-0.6.18.zip",
+  "checks": {
+    "remote_refs": {
+      "status": "passed",
+      "refs": {
+        "refs/heads/main": "0df4880e884086cbfed04be0bf4902e8149062f3",
+        "refs/heads/version-0.6.18": "0df4880e884086cbfed04be0bf4902e8149062f3",
+        "refs/tags/v0.6.18": "63ae48f1de07c5a953c18b5f0e5d7b02affd3137",
+        "refs/tags/v0.6.18^{}": "0df4880e884086cbfed04be0bf4902e8149062f3"
+      },
+      "tag_commit": "0df4880e884086cbfed04be0bf4902e8149062f3",
+      "version_branch_commit": "0df4880e884086cbfed04be0bf4902e8149062f3",
+      "tag_status_at_validation": "present",
+      "fixed_commit_verification_does_not_claim_a_release": true
+    }
+  },
+  "scope": "Actual GitHub remote clone at a fixed commit; payload equality and separate project installation/CLI. No model turn, GUI or existing user installation is involved.",
+  "error": "Command failed: remote-0df4880e8840-clone",
+  "traceback": "Traceback (most recent call last):\n  File \"<REPO_ROOT>/.local-writing-samples/release-v0.6.18-20261018/verify_remote_commit.py\", line 38, in main\n    run(label+'clone',['git','clone','--depth','1','--single-branch','--branch',args.tag or 'main','--no-recurse-submodules',raw_url,clone],timeout=300)\n  File \"<REPO_ROOT>/.local-writing-samples/release-v0.6.18-20261018/artifact_runner.py\", line 26, in run\n    if record['exit_code']!=0:raise RuntimeError('Command failed: '+label)\n                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Command failed: remote-0df4880e8840-clone\n",
+  "started_at_utc": "2026-10-18T12:43:25.739292+00:00",
+  "finished_at_utc": "2026-10-18T12:48:31.366504+00:00",
+  "private_run_directory": ".local-writing-samples/release-v0.6.18-20261018/remote-fixed-0df4880e8840",
+  "raw_evidence": {
+    "path": ".local-writing-samples/release-v0.6.18-20261018/remote-fixed-0df4880e8840/remote-commit-install-raw.json",
+    "sha256": "7890a9f862f733c1d98aa18ffa70ce799bc024be5d38742fe217a1c108334d19"
+  },
+  "privacy_normalization": "Absolute local repository and home prefixes are shown as <REPO_ROOT> and <USER_HOME>; raw evidence hashes and results are unchanged."
+}
