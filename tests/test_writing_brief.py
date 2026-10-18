@@ -5,6 +5,7 @@ import json
 import os
 from contextlib import contextmanager
 from pathlib import Path
+from types import SimpleNamespace
 import sqlite3
 import subprocess
 import sys
@@ -55,7 +56,7 @@ class WritingBriefTests(unittest.TestCase):
         self.assertEqual(packet["current_request"]["sha256"], hashlib.sha256(request_raw).hexdigest())
         self.assertEqual(packet["current_request"]["text"], request_raw.decode("utf-8-sig"))
         outline = packet["adopted_outline"]
-        self.assertEqual(outline["text"], (self.root / outline["path"]).read_text(encoding="utf-8"))
+        self.assertEqual(outline["text"], (self.root / outline["path"]).read_bytes().decode("utf-8-sig"))
         self.assertEqual(outline["sha256"], packet["context"]["outline"]["sha256"])
         self.assertEqual(packet["semantic_review"]["status"], "pending")
         self.assertEqual(packet["book_style_source"]["status"], "provided")
@@ -250,6 +251,7 @@ class WritingBriefTests(unittest.TestCase):
         replacement = self.root / "待换.txt"
         replacement.write_text("变更请求\n", encoding="utf-8")
         original = story._bound_reader
+        blocked = []
         @contextmanager
         def replacing(file):
             with original(file) as stream:
@@ -257,14 +259,48 @@ class WritingBriefTests(unittest.TestCase):
                     original_read = stream.read
                     def after_read(*args):
                         result = original_read(*args)
-                        replacement.replace(self.root / relative)
+                        if os.name == "nt":
+                            # Native strict directory handles prevent this replacement.
+                            with self.assertRaises(PermissionError):
+                                replacement.replace(self.root / relative)
+                            blocked.append(True)
+                        else:
+                            replacement.replace(self.root / relative)
                         return result
                     with patch.object(stream, "read", side_effect=after_read):
                         yield stream
                 else:
                     yield stream
         with patch.object(story, "_bound_reader", replacing):
-            self.assert_error("brief_source_changed", self.book.writing_brief, 1, request_file=relative)
+            if os.name == "nt":
+                packet = self.book.writing_brief(1, request_file=relative)
+                self.assertEqual(packet["current_request"]["text"], "原始请求\n")
+                self.assertEqual(packet["current_request"]["sha256"],
+                                 hashlib.sha256("原始请求\n".encode()).hexdigest())
+                self.assertTrue(blocked)
+                self.assertTrue(replacement.is_file())
+            else:
+                self.assert_error("brief_source_changed", self.book.writing_brief, 1, request_file=relative)
+
+    @unittest.skipUnless(os.name == "nt", "Native Windows path/handle timestamp semantics")
+    def test_path_ctime_semantics_do_not_reject_a_stable_source(self):
+        self.bind()
+        relative = self.source("请求.txt", "完整请求。\r\n")
+        source = self.root / relative
+        original = Path.lstat
+        def creation_time(path, *args, **kwargs):
+            info = original(path, *args, **kwargs)
+            if path == source:
+                values = {key: getattr(info, key) for key in dir(info) if key.startswith("st_")}
+                values["st_ctime_ns"] += 1
+                return SimpleNamespace(**values)
+            return info
+        before = self.snapshot()
+        with patch.object(Path, "lstat", creation_time):
+            packet = self.book.writing_brief(1, request_file=relative)
+        self.assertEqual(packet["current_request"]["text"], "完整请求。\r\n")
+        self.assertEqual(packet["current_request"]["sha256"], hashlib.sha256(source.read_bytes()).hexdigest())
+        self.assertEqual(self.snapshot(), before)
 
     def test_state_hardlink_is_rejected(self):
         self.bind()

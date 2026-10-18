@@ -103,8 +103,12 @@ def _plugin_snapshot():
     for field in ("mcpServers", "apps", "hooks", "commands"):
         if manifest.get(field):
             raise ValueError(f"This skills-only plugin builder does not package {field}")
-    if wrapper["LICENSE"] != dict(source)["story-skill/LICENSE"]:
+    packaged_license = dict(source)["story-skill/LICENSE"]
+    if wrapper["LICENSE"].replace(b"\r\n", b"\n") != packaged_license.replace(b"\r\n", b"\n"):
         raise ValueError("Root LICENSE must match the packaged Story Skill license")
+    # Git may check out the root license as CRLF while skill payloads retain LF.
+    # As in the npm wrapper, ship the shared payload's exact license bytes.
+    wrapper["LICENSE"] = packaged_license
     entries = sorted([*(('skills/' + name, raw) for name, raw in adapted), *wrapper.items()])
     original = dict(source)
     adaptation = {

@@ -75,7 +75,8 @@ class CodexPluginPackageTests(unittest.TestCase):
                                   ("$story-skill:" + skill + " ").encode("utf-8"))
             expected["skills/" + name] = raw
         expected.update({name: (source_root / name).read_bytes() for name in (
-            ".codex-plugin/plugin.json", "assets/story-skill.svg", "LICENSE")})
+            ".codex-plugin/plugin.json", "assets/story-skill.svg")})
+        expected["LICENSE"] = source_entries["story-skill/LICENSE"]
         self.assertEqual(directory_files(plugin_root), expected)
         skill_entries = sorted(path.parent.name for path in (plugin_root / "skills").glob("*/SKILL.md"))
         self.assertEqual(skill_entries, sorted(codex.suite.skill_names(receipt["version"])))
@@ -87,9 +88,52 @@ class CodexPluginPackageTests(unittest.TestCase):
         receipt = codex.package(output_dir=self.output)
         self.assert_installable_bundle(receipt, ROOT, self.source_entries)
         plugin_root = Path(receipt["plugin_root"])
-        self.assertEqual((plugin_root / "LICENSE").read_bytes(), (ROOT / "LICENSE").read_bytes())
+        self.assertEqual((plugin_root / "LICENSE").read_bytes(),
+                         self.source_entries["story-skill/LICENSE"])
         self.assertEqual((plugin_root / "skills/story-skill/scripts/story.py").read_bytes(),
                          self.source_entries["story-skill/scripts/story.py"])
+
+    def test_crlf_root_license_matches_lf_payload_without_mutating_sources(self):
+        license_raw = self.source_entries["story-skill/LICENSE"]
+        self.assertNotIn(b"\r\n", license_raw)
+        checkout_raw = license_raw.replace(b"\n", b"\r\n")
+        (self.root / "LICENSE").write_bytes(checkout_raw)
+        before = directory_files(self.source)
+
+        receipt = self.package()
+
+        self.assert_installable_bundle(receipt, self.root, self.source_entries)
+        self.assertEqual((Path(receipt["plugin_root"]) / "LICENSE").read_bytes(), license_raw)
+        self.assertEqual((self.root / "LICENSE").read_bytes(), checkout_raw)
+        self.assertEqual(directory_files(self.source), before)
+
+    def test_lf_root_license_preserves_equivalent_crlf_payload_bytes(self):
+        license_raw = self.source_entries["story-skill/LICENSE"]
+        payload = dict(self.source_entries)
+        for name in codex.suite.SKILL_NAMES:
+            relative = name + "/LICENSE"
+            payload[relative] = license_raw.replace(b"\n", b"\r\n")
+            (self.source / relative).write_bytes(payload[relative])
+        (self.root / "LICENSE").write_bytes(license_raw)
+        before = directory_files(self.source)
+
+        receipt = self.package()
+
+        self.assert_installable_bundle(receipt, self.root, payload)
+        self.assertEqual((Path(receipt["plugin_root"]) / "LICENSE").read_bytes(),
+                         payload["story-skill/LICENSE"])
+        self.assertEqual((self.root / "LICENSE").read_bytes(), license_raw)
+        self.assertEqual(directory_files(self.source), before)
+
+    def test_root_license_content_mismatch_is_rejected_with_either_line_ending(self):
+        license_raw = self.source_entries["story-skill/LICENSE"]
+        for ending in (b"\n", b"\r\n"):
+            with self.subTest(ending=ending):
+                (self.root / "LICENSE").write_bytes(
+                    (license_raw + b"Additional licensing restriction.\n").replace(b"\n", ending))
+                with self.assertRaisesRegex(ValueError, "Root LICENSE must match"):
+                    self.package()
+                self.assertFalse(self.output.exists())
 
     def test_only_ui_prompts_get_exact_namespace_mapping_without_mutating_sources(self):
         before = directory_files(self.source)

@@ -2015,8 +2015,13 @@ class Book:
                     if (before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns, before.st_ctime_ns) != (
                             after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns, after.st_ctime_ns):
                         fail("brief_source_changed", "Brief source changed while reading", role=role, path=relative)
-                    current = (os.stat(path.name, dir_fd=parent.fd, follow_symlinks=False)
-                               if parent.fd is not None else path.lstat())
+                    if os.name == "nt":
+                        # Windows stat() and fstat() can give ctime different meanings.
+                        # Reopen the bound path so identity and change times use the same API.
+                        with _bound_reader(_BoundFile(parent, path.name)) as visible:
+                            current = os.fstat(visible.fileno())
+                    else:
+                        current = os.stat(path.name, dir_fd=parent.fd, follow_symlinks=False)
                     if (current.st_dev, current.st_ino, current.st_size, current.st_mtime_ns,
                             current.st_ctime_ns, current.st_nlink) != (
                             before.st_dev, before.st_ino, before.st_size, before.st_mtime_ns,
