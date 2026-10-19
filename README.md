@@ -8,6 +8,8 @@ Story Skill 是一套中文小说创作技能，供 Codex、Claude Code、Claude
 
 当前开发源码为 **0.6.19 候选**，新增作品回收站删除、备份恢复、恢复中心与保存全部等工作台功能；[操作说明与需求进展](docs/工作台需求与进展.md)列明已实现和待完善范围。下方正式 Release 下载仍为 v0.6.18。
 
+本轮本机全量回归 1902 项，1882 通过、20 条件跳过；Windows 候选安装与卸载流程通过。[本轮验收记录](benchmarks/results/workbench-management-20261019/assessment.md)
+
 [下载安装](#安装升级) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [发布记录](docs/releases/v0.6.18.md)
 
 ## 它能帮你做什么
@@ -34,7 +36,7 @@ Story Skill 是一套中文小说创作技能，供 Codex、Claude Code、Claude
 | Claude 桌面版 | [单入口 ZIP（r2）](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-claude-desktop-0.6.18-r2.zip) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-claude-desktop-0.6.18-r2.zip.sha256) | [导入并启用](INSTALL.md#claude-桌面版导入单技能包) |
 | Claude Code、Antigravity 等目录安装 | [完整八技能 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-0.6.18.zip) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-0.6.18.zip.sha256) | [完整套件与宿主目录](INSTALL.md#目录安装的完整套件) |
 | Intel Mac 本机工作台 | [客户端 0.1.6 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-workbench-0.1.6-macos-x86_64.zip) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-workbench-0.1.6-macos-x86_64.zip.sha256) | [实验客户端说明](desktop/macos/README.md) |
-| Windows x64 本机工作台（0.1.1 候选版） | [安装包 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39213749100/artifacts/12167929980) · [便携包 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39213749100/artifacts/12169415076)（需登录 GitHub） | [双端安装步骤](#独立应用下载与安装) |
+| Windows x64 本机工作台（0.1.2 候选版） | [安装包 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39220741108/artifacts/12171891598) · [便携包 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39220741108/artifacts/12171552315)（需登录 GitHub） | [双端安装步骤](#独立应用下载与安装) |
 
 Mac 客户端内嵌运行时 0.6.18，采用本地临时签名，未经 Apple 公证；完整创作技能另行安装。[GitHub Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill) 也提供 `@ningcui29/story-skill@0.6.18` 内容包，npm 安装本身不向宿主注册技能。
 
@@ -149,7 +151,9 @@ python3 -B -X utf8 scripts/install.py --host antigravity --project "<写作项�
 
 工作台提供章节与材料导航、正文阅读、候选编辑、全文查找和版本差异对照。它在本机运行，本身不调用模型。
 
-新增外观与更新功能的开发候选为 **Mac 0.1.7／Windows 0.1.1**：书架“外观”和编辑页“设置 → 外观”可选择浅色、深色或跟随系统，并记住选择，切换时保留未保存文字。Mac 应用菜单与 Windows 工具栏提供“检查更新”，在后台核对官方正式发布的本平台客户端安装包；有新版时可打开下载入口，再手动安装。网络失败或没有对应安装包时会明确提示。版本检查不上传书稿，也不会自动替换应用或结束服务。旧版客户端需要安装新候选并在保留编辑后重启相应工作台服务，才会具备这些新功能。
+新增外观与更新功能的开发候选为 **Mac 0.1.8／Windows 0.1.2**：书架“外观”和编辑页“设置 → 外观”可选择浅色、深色或跟随系统，并记住选择，切换时保留未保存文字。Mac 应用菜单与 Windows 工具栏提供“检查更新”，在后台核对官方正式发布的本平台客户端安装包；有新版时可打开下载入口，再手动安装。网络失败或没有对应安装包时会明确提示。版本检查不上传书稿，也不会自动替换应用或结束服务。旧版客户端需要安装新候选并在保留编辑后重启相应工作台服务，才会具备这些新功能。
+
+本轮作品管理与恢复功能使用内嵌运行时 **0.6.19**。Mac 当前公开 Release 仍是 0.1.6；0.1.8 开发候选可按 [Mac 构建说明](desktop/macos/README.md#从源码构建)生成。若取得 `.dmg` 候选包，先核对同名 `.sha256`，双击挂载后将“写作工作台.app”拖入 Applications，再按下方步骤打开。
 
 ### 独立应用下载与安装
 
@@ -165,13 +169,13 @@ python3 -B -X utf8 scripts/install.py --host antigravity --project "<写作项�
 
 **Windows（x64 候选版）：**
 
-1. 登录 GitHub，下载[工作台 0.1.1 安装包 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39213749100/artifacts/12167929980)。
-2. 解压 ZIP，运行其中的 `story-workbench-0.1.1-windows-x86_64-setup.exe`，按向导安装；默认安装到当前用户目录，可选创建桌面快捷方式。
+1. 登录 GitHub，下载[工作台 0.1.2 安装包 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39220741108/artifacts/12171891598)。
+2. 解压 ZIP，运行其中的 `story-workbench-0.1.2-windows-x86_64-setup.exe`，按向导安装；默认安装到当前用户目录，可选创建桌面快捷方式。
 3. 从开始菜单打开“写作工作台”。点击“复制作品目录”选择目录，再将路径粘贴到书架添加栏。需要卸载时，在 Windows 应用列表中卸载。
 
-便携使用方式：下载[便携包 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39213749100/artifacts/12169415076)，先解压外层，再解压其中的 `story-workbench-windows-x86_64.zip`，保留完整目录后运行 `StoryWorkbench.exe`。
+便携使用方式：下载[便携包 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39220741108/artifacts/12171552315)，先解压外层，再解压其中的 `story-workbench-windows-x86_64.zip`，保留完整目录后运行 `StoryWorkbench.exe`。
 
-Windows 候选已在 Windows 构建机上通过安装、内置运行时、桌面窗口启动、浅色／深色切换、更新入口、隔离服务关闭及卸载检查；尚未完成所有交互的人工验收和 Windows 10/11 用户环境验收，安装程序未签名，未作为正式 Release 附件发布。该 Actions 下载包预计于 **2027-01-17** 到期，到期或被删除后需重新构建获取新包。可查看[本次构建与验收](https://github.com/NingCui29/story-skill/actions/runs/39213749100)及[对应源码的 Windows 说明](https://github.com/NingCui29/story-skill/blob/49a76b6f41601b14ade073a9b9890a909b067235/desktop/windows/README.md)。
+Windows 候选已在 Windows 构建机上通过安装、内置运行时、桌面窗口启动、作品新建与备份恢复、系统回收站、浅色／深色切换、更新入口、隔离服务关闭及卸载检查；尚未完成所有交互的人工验收和 Windows 10/11 用户环境验收，安装程序未签名，未作为正式 Release 附件发布。该 Actions 下载包预计于 **2027-01-17** 到期，到期或被删除后需重新构建获取新包。可查看[本次构建与验收](https://github.com/NingCui29/story-skill/actions/runs/39220741108)及[对应源码的 Windows 说明](https://github.com/NingCui29/story-skill/blob/a63f44e7156e88bafad2ff3085bba2652f13a36f/desktop/windows/README.md)。
 
 ### 通过助手或命令行打开
 

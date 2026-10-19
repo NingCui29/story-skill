@@ -1,0 +1,116 @@
+{
+  "kind": "workbench-management-development-candidate",
+  "date": "2026-10-19",
+  "production_source_commit": "a63f44e",
+  "runtime_version": "0.6.19",
+  "schema_version": 2,
+  "source_payload_files": 57,
+  "runtime_modules": 11,
+  "local_regression": {
+    "total": 1902,
+    "passed": 1882,
+    "skipped": 20,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 425.386
+  },
+  "archive_regressions": {
+    "total": 41,
+    "passed": 41,
+    "cases": [
+      "sqlite_snapshot_handle_lifetime",
+      "windows_directory_entry_metadata",
+      "transient_directory_pins",
+      "writable_fsync",
+      "independent_path_handle_ctime",
+      "archive_file_replacement",
+      "nested_books",
+      "safe_restore_paths",
+      "no_overwrite",
+      "partial_restore_marker"
+    ]
+  },
+  "mac": {
+    "ok": true,
+    "client_version": "0.1.8",
+    "story_version": "0.6.19",
+    "runtime_modules": 11,
+    "mounted_readonly": true,
+    "signature_verified": true,
+    "source_bytes_equal": true,
+    "dmg_bytes": 37998288,
+    "dmg_sha256": "97ab3271f2108f0d136fd7981f8ffe8d8b757d7953f208eddcda185102fb8e80",
+    "os": "macOS 15.8.1",
+    "architecture": "x86_64",
+    "signature": "ad-hoc",
+    "notarized": false,
+    "native_shelf_rendered": true,
+    "runtime_payload_probe": true,
+    "native_trash_roundtrip_synthetic_only": true
+  },
+  "windows": {
+    "ci_run": 39220741108,
+    "ci_url": "https://github.com/NingCui29/story-skill/actions/runs/39220741108",
+    "conclusion": "success",
+    "client_version": "0.1.2",
+    "installer_artifact": 12171891598,
+    "portable_artifact": 12171552315,
+    "expires_at": "2027-01-17T08:09:16Z",
+    "installer_sha256": "eb03d3c5d0ee9b0567831f310d670b98e3a230a146d2edc891eb8971ab409101",
+    "portable_sha256": "49354d41343db0527e26f1782252f74ac76790c08ce4b8b947db430f59ee661d",
+    "installed_runtime_probe": {
+      "ok": true,
+      "platform": "win32",
+      "story_version": "0.6.19",
+      "isolated_payload": true,
+      "created_and_registered": true,
+      "backup_verified": true,
+      "restore_identity_preserved": true,
+      "candidate_and_binary_preserved": true,
+      "sqlite_integrity_verified": true,
+      "missing_trash_path_refused": true,
+      "native_trash_bridge_checked": true,
+      "existing_book_files_recycled": false
+    },
+    "native_ui_probe": {
+      "ok": true,
+      "native_window": true,
+      "shelf_rendered": true,
+      "title": "写作书架",
+      "captured": true,
+      "client_version": "0.1.2",
+      "update_check_available": true,
+      "themes_verified": true,
+      "theme_captures": {
+        "light": true,
+        "dark": true
+      }
+    },
+    "native_recycle_positive_synthetic_only": true,
+    "install_unicode_space_path": true,
+    "uninstall": true,
+    "small_evidence_zip_crc_verified": true,
+    "large_installer_downloaded_locally": false
+  },
+  "packages": {
+    "standard": {
+      "version": "0.6.19",
+      "sha256": "7c0d3deb6254f81b9b96c1953cf32c518190c443ecb7beb70bea1fa5a18fe8d0",
+      "source_payload_files": 57
+    },
+    "claude": {
+      "version": "0.6.19",
+      "sha256": "fdf04080172bf953887282ba2d6b254ee0ac8e6c869cc1222a5e06832d4f0c08",
+      "source_payload_files": 57
+    },
+    "codex": {
+      "version": "0.6.19",
+      "sha256": "3262f2da9d8722b64bf5def0ed103352116f501e8ef5b2d74c7e40b760e9e95d",
+      "source_payload_files": 57
+    }
+  },
+  "cli_smoke": true,
+  "real_user_books_changed": false,
+  "user_installed_app_replaced": false,
+  "formal_release_created": false
+}
