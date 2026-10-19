@@ -88,7 +88,11 @@ def validate_profile(profile):
 def _directory(root, session_id=None, create=False):
     relative = DIRECTORY + ("/" + _id(session_id) if session_id else "")
     path = api.safe_path(Path(root), relative)
-    with api._pinned_directory(path, create=create) as directory:
+    # Windows traversal briefly denies directory-write sharing before its
+    # child guard is installed. Serialize *before* acquiring any such pin so
+    # another bridge thread cannot pin a writer's parent while waiting for the
+    # session lock. Native path guards and the cross-process lock stay intact.
+    with _LOCAL_LOCK, api._pinned_directory(path, create=create) as directory:
         if create:
             if os.name == "nt":
                 os.chmod(directory.path, 0o700)
@@ -183,7 +187,7 @@ def _lock(directory):
 
 def _external(path, *, create_value=None):
     path = Path(path).expanduser().absolute()
-    with api._pinned_directory(path.parent) as directory:
+    with _LOCAL_LOCK, api._pinned_directory(path.parent) as directory:
         if create_value is not None:
             _write(directory, path.name, create_value)
             return None

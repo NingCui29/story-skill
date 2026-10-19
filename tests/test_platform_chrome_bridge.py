@@ -1,5 +1,6 @@
 """Local bridge contract tests. Fake observations never contact a platform."""
 import copy
+from contextlib import contextmanager
 import json
 import os
 from pathlib import Path
@@ -7,6 +8,7 @@ import subprocess
 import sys
 import threading
 import time
+import traceback
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
@@ -46,23 +48,60 @@ class ChromeBridgeTests(unittest.TestCase):
         self.native_patch.start()
         self.addCleanup(self.native_patch.stop)
         self.jobs = []
+        self.handles = []
+        self.request_threads = []
+        self.driver_threads = []
+        self.driver_failures = []
+        self.async_tracebacks = []
         self.addCleanup(self.cleanup_jobs)
 
     def cleanup_jobs(self):
+        # Detach this fixture's sessions so production waiters finish through
+        # their real lease checks. Never delete or mark a running job complete.
+        for stop, _ in self.driver_threads:
+            stop.set()
+        cleanup_failures = []
+        for index, handle_data in enumerate(self.handles):
+            # Tests may deliberately damage the original handle. Use the
+            # private receipt captured at attach without repairing that input.
+            handle = self.root / ("cleanup-handle-" + str(index) + ".json")
+            try:
+                bridge._external(handle, create_value=handle_data)
+                bridge.heartbeat(self.book, handle, detach=True)
+            except story.StoryError as error:
+                if error.code != "platform_chrome_worker_unavailable":
+                    cleanup_failures.append(traceback.format_exc())
+            except BaseException:
+                cleanup_failures.append(traceback.format_exc())
+            finally:
+                handle.unlink(missing_ok=True)
+        for _, thread in self.driver_threads:
+            thread.join(10)
+        for thread in self.request_threads:
+            thread.join(10)
+        remaining = []
         for job_id in self.jobs:
-            deadline = time.time() + 3
-            while time.time() < deadline and not drafts.workbench_job(self.root, job_id)["done"]:
-                time.sleep(.01)
+            deadline = time.monotonic() + 15
+            while time.monotonic() < deadline and not drafts.workbench_job(self.root, job_id)["done"]:
+                time.sleep(.025)
+            if not drafts.workbench_job(self.root, job_id)["done"]:
+                remaining.append(job_id)
         with drafts._WORKBENCH_LOCK:
             for key, job in list(drafts._WORKBENCH_JOBS.items()):
                 if job["_root"] == str(self.root) and job["done"]:
                     del drafts._WORKBENCH_JOBS[key]
+        alive = [thread.name for thread in self.request_threads + [item[1] for item in self.driver_threads]
+                 if thread.is_alive()]
+        self.assertEqual((alive, remaining, self.driver_failures, cleanup_failures), ([], [], [], []),
+                         "Background work did not finish cleanly:\n" + "\n".join(self.async_tracebacks + cleanup_failures))
 
     def assert_code(self, code, action, *args, **kwargs):
         return self.fixture.assert_code(code, action, *args, **kwargs)
 
     def attach(self, **kwargs):
-        return bridge.attach(self.book, self.plan["id"], self.path.name, self.handle, **kwargs)
+        result = bridge.attach(self.book, self.plan["id"], self.path.name, self.handle, **kwargs)
+        self.handles.append(json.loads(self.handle.read_text()))
+        return result
 
     def binding(self):
         return bridge._binding(self.book, self.plan["id"], self.path.name)[0]
@@ -97,22 +136,27 @@ class ChromeBridgeTests(unittest.TestCase):
                 result.append(adapter._request(operation, params or {}))
             except BaseException as error:
                 errors.append(error)
+                self.async_tracebacks.append(traceback.format_exc())
         thread = threading.Thread(target=call)
+        self.request_threads.append(thread)
         thread.start()
-        self.addCleanup(thread.join, 2)
-        deadline = time.time() + 2
-        while time.time() < deadline:
+        deadline = time.monotonic() + 10
+        while time.monotonic() < deadline:
+            if errors:
+                self.fail("Request worker failed before claim:\n" + "\n".join(self.async_tracebacks))
             claim = bridge.next_request(self.book, self.handle)
             if claim["request_id"]:
                 return thread, result, errors, claim, json.loads(Path(claim["request_path"]).read_text())
             time.sleep(.01)
-        self.fail("request was not queued")
+        self.fail("Request was not queued:\n" + "\n".join(self.async_tracebacks))
 
     def driver(self, remote, calls, *, lose_create=False):
-        stop, failures = threading.Event(), []
+        stop, ready = threading.Event(), threading.Event()
         def work():
-            book = story.Book(self.root)
+            book = None
             try:
+                book = story.Book(self.root)
+                ready.set()
                 while not stop.is_set():
                     claim = bridge.next_request(book, self.handle)
                     if not claim["request_id"]:
@@ -135,16 +179,21 @@ class ChromeBridgeTests(unittest.TestCase):
                     self.write_response(request, result)
                     bridge.respond(book, self.handle, claim["request_id"], self.response)
             except BaseException as error:
-                failures.append(error)
+                if (stop.is_set() and isinstance(error, story.StoryError) and
+                        error.code == "platform_chrome_worker_unavailable"):
+                    return
+                evidence = traceback.format_exc()
+                self.driver_failures.append(evidence)
+                self.async_tracebacks.append(evidence)
             finally:
-                book.close()
+                ready.set()
+                if book is not None:
+                    book.close()
         thread = threading.Thread(target=work)
+        self.driver_threads.append((stop, thread))
         thread.start()
-        def cleanup():
-            stop.set(); thread.join(3)
-            self.assertFalse(thread.is_alive())
-            self.assertEqual(failures, [])
-        self.addCleanup(cleanup)
+        self.assertTrue(ready.wait(10), "Host driver did not initialize")
+        self.assertEqual(self.driver_failures, [], "\n".join(self.driver_failures))
         return stop
 
     def test_no_worker_blocks_without_browser_dependency(self):
@@ -228,10 +277,10 @@ class ChromeBridgeTests(unittest.TestCase):
 
     def test_detach_blocks_and_late_response_is_rejected(self):
         self.attach()
-        with patch.dict(bridge.OP_SECONDS, verify_target=.25):
+        with patch.dict(bridge.OP_SECONDS, verify_target=3):
             thread, _, errors, claim, request = self.enqueue()
             bridge.heartbeat(self.book, self.handle, detach=True)
-            thread.join(2)
+            thread.join(5)
         self.assertEqual(errors[0].code, "platform_chrome_worker_unavailable")
         self.write_response(request, request["binding"]["target"])
         self.assert_code("platform_chrome_worker_unavailable", bridge.respond, self.book, self.handle,
@@ -285,9 +334,9 @@ class ChromeBridgeTests(unittest.TestCase):
 
     def test_expired_request_is_not_redispatched_or_acked(self):
         self.attach()
-        with patch.dict(bridge.OP_SECONDS, verify_target=.1):
+        with patch.dict(bridge.OP_SECONDS, verify_target=3):
             thread, _, errors, claim, request = self.enqueue()
-            thread.join(2)
+            thread.join(5)
         self.assertEqual(errors[0].code, "platform_chrome_request_timeout")
         self.assertEqual(bridge.next_request(self.book, self.handle)["request_id"], None)
         self.write_response(request, request["binding"]["target"])
@@ -299,8 +348,10 @@ class ChromeBridgeTests(unittest.TestCase):
         remote, calls = {}, []
         self.driver(remote, calls)
         job = self.start()
-        deadline = time.time() + 5
-        while time.time() < deadline:
+        deadline = time.monotonic() + 20
+        while time.monotonic() < deadline:
+            if self.driver_failures:
+                self.fail("Host driver failed:\n" + "\n".join(self.driver_failures))
             job = drafts.workbench_job(self.root, job["id"])
             if job["done"]:
                 break
@@ -316,7 +367,7 @@ class ChromeBridgeTests(unittest.TestCase):
         self.attach()
         remote, calls = {}, []
         self.driver(remote, calls, lose_create=True)
-        with patch.dict(bridge.OP_SECONDS, create_draft=.2):
+        with patch.dict(bridge.OP_SECONDS, create_draft=3):
             with bridge.HostAdapter(self.root, self.binding(), self.config) as adapter:
                 result = drafts.run_plan(self.book, self.plan["id"], adapter, execute=True)
         self.assertEqual(result["results"][0]["state"], "unknown", result)
@@ -367,7 +418,7 @@ class ChromeBridgeTests(unittest.TestCase):
 
     def test_dead_owner_is_not_dispatched(self):
         self.attach()
-        with patch.dict(bridge.OP_SECONDS, verify_target=.2):
+        with patch.dict(bridge.OP_SECONDS, verify_target=3):
             thread, _, _, claim, request = self.enqueue()
             # A separate expired outbox simulates a worker killed before claim.
             directory_path = Path(claim["request_path"]).parent
@@ -377,7 +428,60 @@ class ChromeBridgeTests(unittest.TestCase):
                 bridge._write(directory, "outbox-" + request["id"] + ".json", request)
             self.assertIsNone(bridge.next_request(self.book, self.handle)["request_id"])
             self.assertTrue((directory_path / ("outbox-" + request["id"] + ".json")).exists())
-            thread.join(2)
+            thread.join(5)
+
+    def test_external_and_session_directory_pins_never_overlap_between_threads(self):
+        attached = self.attach()
+        original = bridge.api._pinned_directory
+        ownership = threading.Lock()
+        active = {}
+        failures = []
+        start = threading.Barrier(2)
+
+        @contextmanager
+        def exclusive_pin(path, **kwargs):
+            owner = threading.get_ident()
+            with ownership:
+                if any(other != owner for other in active):
+                    raise PermissionError("simulated Windows strict-pin sharing violation")
+                active[owner] = active.get(owner, 0) + 1
+            try:
+                with original(path, **kwargs) as directory:
+                    # Widen the real traversal/write overlap deterministically.
+                    time.sleep(.005)
+                    yield directory
+            finally:
+                with ownership:
+                    active[owner] -= 1
+                    if not active[owner]:
+                        del active[owner]
+
+        def read_external():
+            try:
+                start.wait(timeout=5)
+                for _ in range(10):
+                    self.assertEqual(bridge._external(self.handle)["session_id"], attached["session_id"])
+            except BaseException:
+                failures.append(traceback.format_exc())
+
+        def read_session():
+            try:
+                start.wait(timeout=5)
+                for _ in range(10):
+                    with bridge._directory(self.root, attached["session_id"]) as directory, bridge._lock(directory):
+                        self.assertEqual(bridge._session(directory)["session_id"], attached["session_id"])
+                        bridge._lease(directory, bridge._session(directory), extend=True)
+            except BaseException:
+                failures.append(traceback.format_exc())
+
+        with patch.object(bridge.api, "_pinned_directory", side_effect=exclusive_pin):
+            threads = [threading.Thread(target=read_external), threading.Thread(target=read_session)]
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join(10)
+            self.assertFalse(any(thread.is_alive() for thread in threads))
+        self.assertEqual(failures, [], "\n".join(failures))
 
 
 class WindowsProcessLivenessTests(unittest.TestCase):

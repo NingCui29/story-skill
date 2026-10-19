@@ -57,13 +57,34 @@ class DesktopBackendRunnerTests(unittest.TestCase):
             listener.bind(('127.0.0.1', 0))
             return listener.getsockname()[1]
 
+    def bundle_diagnostic(self, process, result=None):
+        logs = {}
+        try:
+            paths = sorted((self.state / 'desktop-client').glob('launch-*.log'))
+        except OSError as error:
+            logs['read_error'] = str(error)
+        else:
+            for path in paths:
+                try:
+                    logs[path.name] = path.read_text(encoding='utf-8', errors='replace')
+                except OSError as error:
+                    logs[path.name] = {'read_error': str(error)}
+        return {'command': process.args, 'returncode': process.returncode,
+                'result': result, 'stdout': process.stdout, 'stderr': process.stderr,
+                'launch_logs': logs}
+
     def run_bundle(self, path, port):
         result = subprocess.run([sys.executable, '-B', str(path), '--state-dir', str(self.state),
                                  '--port', str(port)], capture_output=True, text=True,
                                 encoding='utf-8', timeout=25)
         lines = result.stdout.splitlines()
-        self.assertEqual(len(lines), 1, result)
-        return result, json.loads(lines[0])
+        self.assertEqual(len(lines), 1, self.bundle_diagnostic(result))
+        try:
+            packet = json.loads(lines[0])
+        except ValueError:
+            self.fail(f'Bundled launcher output is not JSON: {self.bundle_diagnostic(result)}')
+        self.assertIsInstance(packet, dict, self.bundle_diagnostic(result, packet))
+        return result, packet
 
     def stop_test_shelf(self):
         state = self.w._library_service_request(self.state)
@@ -257,8 +278,9 @@ class DesktopBackendRunnerTests(unittest.TestCase):
         self.addCleanup(self.stop_test_shelf)
         port = self.free_port()
         process, result = self.run_bundle(path, port)
-        self.assertEqual(process.returncode, 0, process.stderr)
-        self.assertTrue(result['ok'], result)
+        diagnostic = self.bundle_diagnostic(process, result)
+        self.assertEqual(process.returncode, 0, diagnostic)
+        self.assertTrue(result['ok'], diagnostic)
         self.assertFalse(result['reused'])
         self.assertEqual(result['url'], f'http://127.0.0.1:{port}/')
         before = (self.state / 'service.json').read_bytes(), (self.state / 'library.json').read_bytes()
@@ -266,7 +288,7 @@ class DesktopBackendRunnerTests(unittest.TestCase):
         self.assertTrue(state['running'])
         self.assertFalse(state['outdated'])
         process, reused = self.run_bundle(path, self.free_port())
-        self.assertEqual(process.returncode, 0, process.stderr)
+        self.assertEqual(process.returncode, 0, self.bundle_diagnostic(process, reused))
         self.assertTrue(reused['reused'])
         self.assertEqual(reused['url'], result['url'])
         self.assertEqual(((self.state / 'service.json').read_bytes(),
