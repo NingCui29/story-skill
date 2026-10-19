@@ -21,6 +21,12 @@ jobs:
         with:
           python-version: '3.12'
           architecture: x64
+      - name: Probe book management before desktop build
+        shell: pwsh
+        timeout-minutes: 2
+        run: |
+          python -I -B tests/desktop_payload_probe.py --scripts skills/story-skill/scripts --area "$env:RUNNER_TEMP\source-payload-safety" --report "$env:RUNNER_TEMP\source-runtime-safety.json"
+          if ($LASTEXITCODE -ne 0) { throw "Source runtime safety probe failed" }
       - run: python -m pip install -r desktop/windows/requirements-build.txt
       - name: Test desktop launcher and Windows paths
         run: python -B -X utf8 -m unittest discover -s tests -p test_desktop*.py -v
