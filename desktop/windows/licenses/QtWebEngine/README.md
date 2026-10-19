@@ -7,3 +7,5 @@ The official Qt documentation pages identify their module version as Qt 6.10.3, 
 Each page preserves its full notice body and all preformatted license text, plus the Qt documentation attribution. Only site navigation and active assets are omitted; links to the downloaded component pages are local. Other source and project links remain explicit HTTPS/HTTP URLs. No additional website crawling was performed.
 
 `sources.json` records the official URL, original downloaded byte count/SHA-256, offline byte count/SHA-256, and page version for every file. These records document provenance and make no legal compliance assertion.
+
+Component files use short stable names `component-001.html` through `component-124.html`, numbered by ascending official source URL. The index retains the full component titles; `sources.json` maps each short file to its original source filename and unchanged URL.

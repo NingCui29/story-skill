@@ -39,6 +39,6 @@ GitHub Actions 的 `Build Windows desktop candidate` 可对指定源码构建安
 
 本版待核验最终构建、第三方许可、安装／卸载、原生窗口、运行时与附件回下载。在未安装 Python 的 Windows 10/11 用户环境中，首次启动、中文及空格目录、重复启动、添加和打开作品、候选保存重开、版本对照、下载取消、关闭提示、服务重启与非管理员使用仍按实际人工验收分别登记。
 
-随包 `ThirdPartyLicenses` 保留上游 Python 分发包的许可文件，并补充与 Qt / PySide 6.10.3 对应的 LGPL/GPL 完整文本及官方 Qt WebEngine 第三方归因清单。离线入口为 `ThirdPartyLicenses/Qt/QtWebEngine/index.html`；[来源与逐文件清单](licenses/README.md)记录版本和核对范围，各第三方组件保留自己的许可条款。
+随包 `ThirdPartyLicenses` 保留上游 Python 分发包的许可文件，并补充与 Qt / PySide 6.10.3 对应的 LGPL/GPL 完整文本及官方 Qt WebEngine 第三方归因清单。离线入口为 `ThirdPartyLicenses/Qt/QtWebEngine/index.html`；[来源与逐文件清单](https://github.com/NingCui29/story-skill/blob/main/desktop/windows/licenses/README.md)记录版本和核对范围，各第三方组件保留自己的许可条款。
 
 Mac 使用 `desktop/macos` 的原生 Swift 客户端。两端都不在安装或更新时迁移真实作品、采用候选或自动停止编辑服务。
