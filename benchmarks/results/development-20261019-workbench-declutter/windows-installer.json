@@ -1,0 +1,20 @@
+{
+  "run_id": 39236381261,
+  "job_id": 118006338761,
+  "conclusion": "success",
+  "source_commit": "bcb6966b7e6dc9c07711806cbd26b7d2000199e8",
+  "client_version": "0.1.5",
+  "runtime_version": "0.6.19",
+  "installer_artifact": 12179257167,
+  "portable_artifact": 12179057516,
+  "expires_at": "2027-01-17T10:17:23Z",
+  "installer_sha256": "b7c92a5901be2abb580dc3e71bf4e982e01b8e55b5cdba29937780eb47ff93d2",
+  "native_window": true,
+  "shelf_rendered": true,
+  "themes_verified": true,
+  "update_check_available": true,
+  "update_progress_verified": true,
+  "update_progress_synthetic": true,
+  "runtime_safety": true,
+  "existing_book_files_recycled": false
+}
