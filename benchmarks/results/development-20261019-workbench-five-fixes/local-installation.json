@@ -17,6 +17,9 @@
     "status": "awaiting_macos_downloads_folder_permission",
     "documents_permission_allowed": true,
     "downloads_permission_pending": true,
-    "running_service_version_verified": false
+    "running_service_version_verified": false,
+    "book_services_preserved": 6,
+    "registry_unchanged": true,
+    "forced_termination": false
   }
 }
