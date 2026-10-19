@@ -5,12 +5,106 @@ import json
 import argparse
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
+import tempfile
 from urllib.parse import urlsplit
+import zipfile
 
 
 THEME_CHOICES = ('system', 'light', 'dark')
+
+
+def page_key(value):
+    """Compare controlled pages without storing or changing their fragments."""
+    if not local_url(value):
+        return None
+    url = urlsplit(value)
+    if url.query or not (url.path == '/' or re.fullmatch(r'/[A-Za-z0-9_-]{20,128}/', url.path)):
+        return None
+    return url.port, url.path
+
+
+def close_state_script(include_text=False):
+    """Read all editor buffers, including files hidden by the active document."""
+    return '''(() => {
+        if(document.getElementById('library-heading'))return {kind:'shelf',documents:[]};
+        if(!document.getElementById('current-book-root') || typeof docs==='undefined' || !(docs instanceof Map))return null;
+        if([...docs.values()].some(d=>!d || typeof d!=='object' || typeof d.editable!=='boolean'
+            || typeof d.value!=='string' || (d.editable && typeof d.text!=='string')))return null;
+        return {kind:'editor',documents:[...docs].map(([id,d])=>{
+            const textbox=document.getElementById('text');
+            const value=typeof active!=='undefined' && id===active && d.editing && typeof textbox?.value==='string'
+                ?textbox.value:d.value;
+            const dirty=!!(d?.editable && value!==undefined && value!==d.text);
+            const pending=dirty || !!d?.needs_recovery;
+            return {id:String(id),title:String(d?.title||'未命名文字'),path:String(d?.path||''),
+                dirty,saving:!!d?.saving,needs_recovery:!!d?.needs_recovery,
+                recovery_current:dirty && d.recovered===value,
+                text:__INCLUDE_TEXT__ && pending && typeof value==='string'?value:null};
+        })};
+    })()'''.replace('__INCLUDE_TEXT__', 'true' if include_text else 'false')
+
+
+def checked_close_state(value, include_text=False):
+    if (not isinstance(value, dict) or value.get('kind') not in ('shelf', 'editor')
+            or not isinstance(value.get('documents'), list) or len(value['documents']) > 10000):
+        return None
+    documents = value['documents']
+    if value['kind'] == 'shelf' and documents:
+        return None
+    for document in documents:
+        if (not isinstance(document, dict)
+                or any(not isinstance(document.get(key), str) for key in ('id', 'title', 'path'))
+                or any(type(document.get(key)) is not bool for key in (
+                    'dirty', 'saving', 'needs_recovery', 'recovery_current'))
+                or (include_text and (document['dirty'] or document['needs_recovery'])
+                    and not isinstance(document.get('text'), str))):
+            return None
+    return {'kind': value['kind'], 'documents': documents,
+            'pending': [document for document in documents if document['dirty'] or document['needs_recovery']],
+            'saving': any(document['saving'] for document in documents)}
+
+
+def export_pending_buffers(destination, states):
+    """Save explicit close-time exports atomically, never into a source file."""
+    documents = []
+    for state in states:
+        state = checked_close_state(state, include_text=True)
+        if state is None or state['saving']:
+            raise ValueError('无法确认全部文字已读取；请返回作品保存。')
+        documents.extend(state['pending'])
+    if not documents:
+        raise ValueError('没有读取到待保存文字；请返回作品核对。')
+    destination = Path(destination)
+    if destination.suffix.lower() != '.zip':
+        raise ValueError('请选择 ZIP 文件作为未保存文字导出位置。')
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix='.story-export-', suffix='.zip',
+                                         dir=destination.parent, delete=False) as stream:
+            temporary = Path(stream.name)
+            with zipfile.ZipFile(stream, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
+                manifest = []
+                for index, document in enumerate(documents, 1):
+                    title = re.sub(r'[<>:"/\\|?*\x00-\x1f]', '_', document['title']).strip(' .')[:80]
+                    name = f'{index:03d}-{title or "未命名文字"}.txt'
+                    archive.writestr(name, document['text'].encode('utf-8'))
+                    manifest.append({key: document[key] for key in (
+                        'id', 'title', 'path', 'dirty', 'needs_recovery', 'recovery_current')})
+                    manifest[-1]['export_file'] = name
+                archive.writestr('导出说明.json', json.dumps({
+                    'version': 1, 'status': 'unsaved_buffer_export',
+                    'note': '这是关闭前导出的待保存文字，尚未保存为候选或正式采用。原作品文件未改动。',
+                    'documents': manifest,
+                }, ensure_ascii=False, indent=2).encode('utf-8'))
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, destination)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 
 def theme_from_cookie(cookie):
@@ -113,16 +207,50 @@ def main():
         return 2
 
     class Page(QWebEnginePage):
+        def __init__(self, profile, view):
+            super().__init__(profile, view)
+            self.view = view
+
         def acceptNavigationRequest(self, url, kind, main_frame):
-            if local_url(url.toString()) or url.toString() == 'about:blank':
+            address = url.toString()
+            if address == 'about:blank':
+                return self.view.entry_key is None
+            key = page_key(address)
+            if key is not None and main_frame:
+                if self.view.navigation_approved == address:
+                    self.view.navigation_approved = None
+                    return True
+                if window.close_pending:
+                    return False
+                existing = window.find_page(address, exclude=self.view)
+                if existing is not None:
+                    window.tabs.setCurrentWidget(existing)
+                    if self.view.entry_key is None:
+                        QTimer.singleShot(0, lambda: window.remove_page(self.view))
+                    return False
+                if self.view.entry_key is not None and self.view.entry_key != key:
+                    # A main-frame link cannot replace an editor's hidden buffers.
+                    window.add_page(address)
+                    return False
+                if self.view.entry_key == key and self.view.load_complete:
+                    def checked(allowed):
+                        if allowed:
+                            self.view.navigation_approved = address
+                            self.view.setUrl(url)
+                    window.request_close([self.view], '重新载入', checked)
+                    return False
+                self.view.entry_key = key
                 return True
             if main_frame and url.scheme() in ('http', 'https'):
-                QDesktopServices.openUrl(url)
+                if not local_url(address):
+                    QDesktopServices.openUrl(url)
+            if main_frame and self.view.entry_key is None:
+                QTimer.singleShot(0, lambda: window.remove_page(self.view))
             return False
 
     class View(QWebEngineView):
         def createWindow(self, kind):
-            return window.add_page()
+            return None if window.close_pending else window.add_page()
 
     class Window(QMainWindow):
         def __init__(self):
@@ -140,6 +268,8 @@ def main():
             self.tabs.setTabsClosable(True)
             self.tabs.tabCloseRequested.connect(self.close_tab)
             self.setCentralWidget(self.tabs)
+            self.close_pending = False
+            self.close_approved = False
             toolbar = QToolBar('工作台', self)
             self.addToolBar(toolbar)
             toolbar.addAction('书架', lambda: self.tabs.setCurrentIndex(0))
@@ -243,34 +373,173 @@ def main():
                 QDesktopServices.openUrl(QUrl(result.download_url))
 
         def add_page(self, address=None):
+            existing = self.find_page(address) if address else None
+            if existing is not None:
+                self.tabs.setCurrentWidget(existing)
+                return existing
             view = View(self.tabs)
+            view.entry_key = None
+            view.navigation_approved = None
+            view.load_generation = 0
+            view.load_complete = False
             view.setPage(Page(self.profile, view))
             index = self.tabs.addTab(view, '工作台')
             self.tabs.setCurrentIndex(index)
             view.titleChanged.connect(lambda title: self.tabs.setTabText(
                 self.tabs.indexOf(view), title[:32] or '工作台'))
+            def started():
+                view.load_generation += 1
+                view.load_complete = False
+            view.loadStarted.connect(started)
+            view.loadFinished.connect(lambda ok: setattr(view, 'load_complete', ok is True))
             if address:
                 view.setUrl(QUrl(address))
             return view
 
-        def confirm_close(self):
-            return QMessageBox.question(
-                self, '关闭页面', '请先保存页面中的修改。确认关闭？',
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                QMessageBox.StandardButton.No) == QMessageBox.StandardButton.Yes
+        def find_page(self, address, exclude=None):
+            key = page_key(address)
+            if key is None:
+                return None
+            return next((self.tabs.widget(index) for index in range(self.tabs.count())
+                         if self.tabs.widget(index) is not exclude
+                         and self.tabs.widget(index).entry_key == key), None)
 
-        def close_tab(self, index):
-            if index == 0 or not self.confirm_close():
+        def remove_page(self, view):
+            index = self.tabs.indexOf(view)
+            if index <= 0:
                 return
-            view = self.tabs.widget(index)
             self.tabs.removeTab(index)
             view.deleteLater()
 
+        def probe_close_state(self, view, completion, include_text=False):
+            # A rejected popup has never loaded a book and owns no editor buffer.
+            if view.entry_key is None and view.url().toString() in ('', 'about:blank'):
+                completion(checked_close_state({'kind': 'shelf', 'documents': []}))
+                return
+            if not view.load_complete or page_key(view.url().toString()) != view.entry_key:
+                completion(None)
+                return
+            generation = view.load_generation
+            timer = QTimer(self)
+            timer.setSingleShot(True)
+            finished = False
+
+            def finish(value):
+                nonlocal finished
+                if finished:
+                    return
+                finished = True
+                timer.stop()
+                timer.deleteLater()
+                if (self.tabs.indexOf(view) < 0 or not view.load_complete
+                        or generation != view.load_generation):
+                    value = None
+                completion(checked_close_state(value, include_text=include_text))
+
+            timer.timeout.connect(lambda: finish(None))
+            timer.start(8000)
+            view.page().runJavaScript(close_state_script(include_text), finish)
+
+        def request_close(self, views, action, completion):
+            if self.close_pending:
+                return
+            self.close_pending = True
+            # Prevent new input between an asynchronous probe and the decision.
+            self.tabs.setEnabled(False)
+            states = []
+
+            def finish(allowed, selected=None):
+                self.tabs.setEnabled(True)
+                self.close_pending = False
+                if selected is not None and self.tabs.indexOf(selected) >= 0:
+                    self.tabs.setCurrentWidget(selected)
+                completion(allowed)
+
+            def blocked(view, title, message):
+                self.tabs.setCurrentWidget(view)
+                QMessageBox.warning(self, title, message)
+                finish(False, view)
+
+            def check(index, include_text=False):
+                if index == len(views):
+                    if include_text:
+                        write_export()
+                    else:
+                        decide()
+                    return
+                view = views[index]
+
+                def checked(state):
+                    if state is None:
+                        blocked(view, '暂时无法核对编辑状态',
+                                '页面尚未载入或未能返回完整编辑状态。为保留文字，本次' + action + '已取消。请返回作品检查。')
+                        return
+                    if state['saving']:
+                        blocked(view, '候选稿正在保存', '请等待保存完成后再' + action + '，当前页面和文字仍保留。')
+                        return
+                    states.append(state)
+                    check(index + 1, include_text)
+                self.probe_close_state(view, checked, include_text)
+
+            def decide():
+                pending = [(view, state) for view, state in zip(views, states) if state['pending']]
+                if not pending:
+                    finish(True)
+                    return
+                selected = pending[0][0]
+                self.tabs.setCurrentWidget(selected)
+                count = sum(len(state['pending']) for _, state in pending)
+                dialog = QMessageBox(self)
+                dialog.setWindowTitle('还有待保存文字')
+                dialog.setText(f'{len(pending)} 个作品页面中有 {count} 份待保存文字。')
+                dialog.setInformativeText('请返回保存候选稿，或先导出这些文字再' + action
+                                          + '。自动恢复副本和导出文件都不等于已保存候选，也未正式采用。')
+                back = dialog.addButton('返回作品保存', QMessageBox.ButtonRole.RejectRole)
+                export = dialog.addButton('导出文字后' + action, QMessageBox.ButtonRole.AcceptRole)
+                dialog.setDefaultButton(back)
+                dialog.setEscapeButton(back)
+                dialog.exec()
+                if dialog.clickedButton() != export:
+                    finish(False, selected)
+                    return
+                path, _ = QFileDialog.getSaveFileName(self, '导出全部待保存文字', '工作台待保存文字.zip', 'ZIP 文件 (*.zip)')
+                if not path:
+                    finish(False, selected)
+                    return
+                self.close_export_path = path
+                states.clear()
+                # Read the text after the user's decision; never export an old probe.
+                check(0, True)
+
+            def write_export():
+                try:
+                    export_pending_buffers(self.close_export_path, states)
+                except (OSError, ValueError, zipfile.BadZipFile) as error:
+                    blocked(views[0], '待保存文字尚未导出', str(error) + '；当前页面仍保留。')
+                    return
+                finish(True)
+
+            check(0)
+
+        def close_tab(self, index):
+            if index <= 0:
+                return
+            view = self.tabs.widget(index)
+            self.request_close([view], '关闭页面', lambda allowed: self.remove_page(view) if allowed else None)
+
         def closeEvent(self, event):
-            if self.confirm_close():
+            if self.close_approved:
+                self.close_approved = False
                 event.accept()
-            else:
-                event.ignore()
+                return
+            event.ignore()
+            views = [self.tabs.widget(index) for index in range(self.tabs.count())]
+
+            def checked(allowed):
+                if allowed:
+                    self.close_approved = True
+                    self.close()
+            self.request_close(views, '退出工作台', checked)
 
         def copy_directory(self):
             folder = QFileDialog.getExistingDirectory(self, '选择作品目录')
