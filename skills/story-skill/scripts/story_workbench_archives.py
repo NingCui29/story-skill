@@ -4,7 +4,7 @@ The SQLite online backup is the database payload. Local files are read without
 following links and checked again before publishing. Browser buffers and linked
 external materials are deliberately outside this on-disk backup contract.
 """
-from contextlib import ExitStack
+from contextlib import ExitStack, closing
 from datetime import datetime, timezone
 import hashlib
 import json
@@ -195,7 +195,10 @@ def create_archive(root, output_path, expected_book_id=None):
         snapshots = {}
         for index, (relative, db) in enumerate(databases.items()):
             snapshot = work / ('database-' + str(index) + '.sqlite3')
-            with sqlite3.connect(snapshot) as destination:
+            # SQLite's connection context commits/rolls back but leaves the
+            # handle open. Close it before the temporary directory is removed,
+            # including on Windows where open database files cannot be unlinked.
+            with closing(sqlite3.connect(snapshot)) as destination:
                 db.backup(destination)
                 destination.execute('PRAGMA journal_mode=DELETE')
                 if destination.execute('PRAGMA integrity_check').fetchone()[0] != 'ok':
