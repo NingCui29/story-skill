@@ -10,6 +10,7 @@ import stat
 import tempfile
 import unittest
 from unittest.mock import patch
+import uuid
 import zipfile
 
 import test_workbench as base
@@ -277,6 +278,61 @@ class WorkbenchArchivesTests(unittest.TestCase):
             inventory, _ = self.archives._scan(self.root)
         self.assert_real_scan_identity(inventory)
 
+    def test_rotating_windows_directory_guards_are_silently_ignored(self):
+        original_pin = self.archives.api._pinned_directory
+        created = []
+
+        @contextmanager
+        def guarded_pin(*args, **kwargs):
+            with original_pin(*args, **kwargs) as pinned:
+                guard = pinned.path / ('.story-pin-' + uuid.uuid4().hex)
+                guard.write_bytes(b'windows-delete-on-close-guard')
+                created.append(guard.name)
+                try:
+                    yield pinned
+                finally:
+                    guard.unlink()
+
+        # Nonreserved lookalikes remain ordinary author files.
+        self.write('.story-pin-author-notes.md', b'author notes')
+        self.write('.story/drafts/.story-pin-1234', b'author draft')
+        with patch.object(self.archives.api, '_pinned_directory', side_effect=guarded_pin):
+            first, first_excluded = self.archives._scan(self.root)
+            second, second_excluded = self.archives._scan(self.root)
+            self.assertEqual(first, second)
+            self.assertEqual(first_excluded, second_excluded)
+            packet = self.archive()
+        self.assertGreater(len(created), 2)
+        self.assertTrue(packet['ok'])
+        self.assertFalse(any(Path(row['path']).name in created for row in packet['excluded']))
+        with zipfile.ZipFile(self.output) as archive:
+            names = archive.namelist()
+            self.assertFalse(any(Path(name).name in created for name in names))
+            self.assertIn('book/.story-pin-author-notes.md', names)
+            self.assertIn('book/.story/drafts/.story-pin-1234', names)
+        self.archives.restore_archive(self.output, self.destination)
+        self.assertEqual((self.destination / '.story-pin-author-notes.md').read_bytes(), b'author notes')
+
+    def test_archive_stage_fsync_uses_writable_handle_and_keeps_zip_valid(self):
+        original_fsync = os.fsync
+        flushed_sizes = []
+
+        def flush_writable(fd):
+            # Zero-byte writes validate access without changing content or
+            # offsets. A read-only descriptor raises EBADF on POSIX and cannot
+            # provide Windows FlushFileBuffers' required write access.
+            self.assertEqual(os.write(fd, b''), 0)
+            flushed_sizes.append(os.fstat(fd).st_size)
+            original_fsync(fd)
+
+        with patch.object(self.archives.os, 'fsync', side_effect=flush_writable):
+            result = self.archive()
+        self.assertEqual(len(flushed_sizes), 1)
+        self.assertGreater(flushed_sizes[0], 0)
+        verified = self.archives.inspect_archive(self.output)
+        self.assertEqual(verified['book_id'], self.book_id)
+        self.assertEqual(result['sha256'], hashlib.sha256(self.output.read_bytes()).hexdigest())
+
     def test_zeroed_direntry_metadata_still_rejects_actual_hardlinks(self):
         linked = self.root / '正文硬链接.md'
         os.link(self.root / '正文.md', linked)
@@ -542,6 +598,28 @@ class WorkbenchArchivesTests(unittest.TestCase):
 
         changed = self.rewrite(nest_entry)
         self.error('archive_nested_book', lambda: self.archives.restore_archive(changed, self.destination))
+        self.assertFalse(self.destination.exists())
+
+    def test_reserved_directory_guard_in_manifest_cannot_be_restored(self):
+        self.archive()
+        guard_path = '.story/drafts/.story-pin-' + 'a' * 32
+
+        def replace_with_guard(entries):
+            result = []
+            for info, body in entries:
+                if info.filename == self.archives.MANIFEST_NAME:
+                    manifest = json.loads(body)
+                    for row in manifest['files']:
+                        if row['path'] == '正文.md':
+                            row['path'] = guard_path
+                    body = json.dumps(manifest).encode()
+                elif info.filename == 'book/正文.md':
+                    info = zipfile.ZipInfo('book/' + guard_path)
+                result.append((info, body))
+            return result
+
+        changed = self.rewrite(replace_with_guard)
+        self.error('archive_manifest', lambda: self.archives.restore_archive(changed, self.destination))
         self.assertFalse(self.destination.exists())
 
     def test_limits_block_oversized_book_and_zip(self):
