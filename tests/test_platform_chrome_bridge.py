@@ -420,6 +420,7 @@ class ChromeBridgeTests(unittest.TestCase):
     def test_cross_process_sender_and_host_exchange_five_authenticated_requests(self):
         self.attach()
         ready = self.root / "sender-ready"
+        request_count, operation_budget, startup_and_cleanup_budget = 5, 15, 20
         sender = """
 import importlib.util,json,sys
 from pathlib import Path
@@ -428,11 +429,11 @@ story=importlib.util.module_from_spec(spec);spec.loader.exec_module(story)
 book=story.Book(sys.argv[2])
 try:
     bridge=story.platform_chrome_bridge
-    bridge.OP_SECONDS['verify_target']=5
+    bridge.OP_SECONDS['verify_target']=float(sys.argv[6])
     binding,profile=bridge._binding(book,sys.argv[3],sys.argv[4])
     with bridge.HostAdapter(book.root,binding,profile) as adapter:
         Path(sys.argv[5]).write_text('ready',encoding='utf-8')
-        results=[adapter._request('verify_target',{}) for _ in range(5)]
+        results=[adapter._request('verify_target',{}) for _ in range(int(sys.argv[7]))]
     assert all(result==binding['target'] for result in results)
     print(json.dumps({'ok':True,'requests':len(results)}),flush=True)
 finally:
@@ -442,14 +443,15 @@ finally:
         with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as output, \
                 tempfile.TemporaryFile(mode="w+", encoding="utf-8") as errors:
             process = subprocess.Popen([sys.executable, "-I", "-B", "-c", sender,
-                str(fixtures.TOOL), str(self.root), self.plan["id"], self.path.name, str(ready)],
+                str(fixtures.TOOL), str(self.root), self.plan["id"], self.path.name, str(ready),
+                str(operation_budget), str(request_count)],
                 stdout=output, stderr=errors)
-            deadline = time.monotonic() + 20
+            deadline = time.monotonic() + request_count * operation_budget + startup_and_cleanup_budget
             try:
                 while not ready.exists() and process.poll() is None and time.monotonic() < deadline:
                     time.sleep(.01)
                 self.assertTrue(ready.is_file(), "Sender did not initialize its independent Book and HostAdapter")
-                while len(request_ids) < 5 and process.poll() is None and time.monotonic() < deadline:
+                while len(request_ids) < request_count and process.poll() is None and time.monotonic() < deadline:
                     claim = bridge.next_request(self.book, self.handle)
                     if claim["request_id"] is None:
                         time.sleep(.01)
@@ -462,7 +464,7 @@ finally:
                     request_ids.append(claim["request_id"])
                     self.write_response(request, request["binding"]["target"])
                     bridge.respond(self.book, self.handle, claim["request_id"], self.response)
-                self.assertEqual(len(request_ids), 5, "Cross-process request exchange did not finish")
+                self.assertEqual(len(request_ids), request_count, "Cross-process request exchange did not finish")
                 process.wait(timeout=max(.01, deadline - time.monotonic()))
             except BaseException:
                 failure = traceback.format_exc()
@@ -487,8 +489,8 @@ finally:
         self.assertIsNone(failure, diagnostic)
         self.assertEqual(cleanup_failures, [], diagnostic)
         self.assertEqual(process.returncode, 0, diagnostic)
-        self.assertEqual(json.loads(stdout), {"ok": True, "requests": 5}, diagnostic)
-        self.assertEqual(len(set(request_ids)), 5)
+        self.assertEqual(json.loads(stdout), {"ok": True, "requests": request_count}, diagnostic)
+        self.assertEqual(len(set(request_ids)), request_count)
 
     def test_dead_owner_is_not_dispatched(self):
         self.attach()
