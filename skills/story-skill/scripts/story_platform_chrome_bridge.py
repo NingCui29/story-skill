@@ -125,6 +125,52 @@ def _read(directory, name, *, maximum=MAX_BYTES, private=True):
     return value
 
 
+def _rename(source, target, *, replace=False):
+    """Retry only a Windows rename refused before its local state transition.
+
+    Another process can briefly deny parent-write sharing while establishing
+    its native directory pin. Keep the caller's pins and session lock, and
+    recheck both file identities before retrying; never replay a host request.
+    """
+    if os.name != "nt":
+        if replace:
+            os.replace(source.name, target.name, src_dir_fd=source.directory.fd,
+                       dst_dir_fd=target.directory.fd)
+        else:
+            api.platform_drafts._atomic_publish(source, target)
+        return
+
+    original = api.publish._bound_stat(source)
+    destination = api.publish._bound_stat(target, missing=True)
+    if not replace and destination is not None:
+        _fail("unsafe_file", "Chrome 桥接目标文件已存在；不会覆盖。")
+
+    def unchanged(before, after):
+        if before is None or after is None:
+            return before is after
+        return (os.path.samestat(before, after) and before.st_size == after.st_size and
+                before.st_mtime_ns == after.st_mtime_ns)
+
+    deadline = time.monotonic() + 1.0
+    while True:
+        api._verify_bound_directory(source.directory)
+        if target.directory is not source.directory:
+            api._verify_bound_directory(target.directory)
+        if (not unchanged(original, api.publish._bound_stat(source, missing=True)) or
+                not unchanged(destination, api.publish._bound_stat(target, missing=True))):
+            _fail("unsafe_file", "Chrome 桥接文件在本机写入期间发生变化；未重试。")
+        try:
+            if replace:
+                os.replace(source.path, target.path)
+            else:
+                api.platform_drafts._atomic_publish(source, target)
+            return
+        except OSError as error:
+            if getattr(error, "winerror", None) not in (32, 33) or time.monotonic() >= deadline:
+                raise
+            time.sleep(.01)
+
+
 def _write(directory, name, value, *, replace=False):
     raw = api.dumps(value).encode("utf-8")
     if len(raw) > MAX_BYTES:
@@ -143,13 +189,7 @@ def _write(directory, name, value, *, replace=False):
             stream.flush()
             os.fsync(stream.fileno())
         api._verify_bound_directory(directory)
-        if replace:
-            if os.name == "nt":
-                os.replace(staged.path, destination.path)
-            else:
-                os.replace(staged.name, destination.name, src_dir_fd=directory.fd, dst_dir_fd=directory.fd)
-        else:
-            api.platform_drafts._atomic_publish(staged, destination)
+        _rename(staged, destination, replace=replace)
         if os.name != "nt":
             os.fsync(directory.fd)
         api._verify_bound_directory(directory)
@@ -383,7 +423,7 @@ def next_request(book, handle_path):
             api.publish._bound_stat(source)
             if api.publish._bound_stat(target, missing=True) is not None:
                 _fail("already_claimed", "请求已领取；不会重新派发。")
-            api.platform_drafts._atomic_publish(source, target)
+            _rename(source, target)
             _lease(directory, session, extend=True, until=request["deadline_epoch"] + 30)
             return {"ok": True, "request_id": request["id"], "request_path": str(target.path), "claimed_once": True}
         return {"ok": True, "request_id": None, "request_path": None, "claimed_once": False}

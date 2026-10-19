@@ -634,5 +634,191 @@ class WindowsProcessLivenessTests(unittest.TestCase):
             child.stdout.close()
 
 
+class BridgeRenameSharingRetryTests(unittest.TestCase):
+    """Only local, OS-rejected renames may retry; queue identities stay fixed."""
+
+    def setUp(self):
+        self.directory = SimpleNamespace(path=Path("bridge-rename-fixture"), fd=71)
+        self.source = SimpleNamespace(directory=self.directory, name="source.json",
+                                      path=self.directory.path / "source.json")
+        self.target = SimpleNamespace(directory=self.directory, name="target.json",
+                                      path=self.directory.path / "target.json")
+        self.source_stat = self.stat(11)
+        self.target_stat = None
+        self.elapsed = 0.0
+        self.sleeps = []
+        self.publish = Mock()
+        self.replace = Mock()
+        self.guard = Mock()
+
+    @staticmethod
+    def stat(inode, *, size=23, mtime=31):
+        return SimpleNamespace(st_dev=7, st_ino=inode, st_size=size,
+                               st_mtime_ns=mtime, st_mode=0o100600, st_nlink=1)
+
+    @staticmethod
+    def sharing_error(code=32):
+        error = PermissionError("injected native sharing refusal")
+        error.winerror = code
+        return error
+
+    def stat_file(self, file, *, missing=False):
+        if file is self.source:
+            if self.source_stat is None and not missing:
+                raise FileNotFoundError("source disappeared")
+            return self.source_stat
+        if file is self.target:
+            if self.target_stat is None and not missing:
+                raise FileNotFoundError("target absent")
+            return self.target_stat
+        self.fail("Unexpected bound file")
+
+    def sleep(self, seconds):
+        self.assertGreater(seconds, 0)
+        self.sleeps.append(seconds)
+        self.elapsed += seconds
+
+    @contextmanager
+    def environment(self, platform="nt"):
+        native = SimpleNamespace(name=platform, path=os.path, replace=self.replace,
+                                 rename=Mock(side_effect=AssertionError("must retain atomic publication")))
+        clock = SimpleNamespace(monotonic=lambda: self.elapsed, sleep=self.sleep,
+                                time=lambda: 1000)
+        with patch.object(bridge, "os", native), patch.object(bridge, "time", clock), \
+                patch.object(bridge.api.publish, "_bound_stat", side_effect=self.stat_file), \
+                patch.object(bridge.api, "_verify_bound_directory", self.guard), \
+                patch.object(bridge.api.platform_drafts, "_atomic_publish", self.publish):
+            yield
+
+    def test_local_sharing_refusals_retry_both_publish_and_replace(self):
+        for replace in (False, True):
+            for code in (32, 33):
+                with self.subTest(replace=replace, winerror=code):
+                    operation = self.replace if replace else self.publish
+                    operation.reset_mock()
+                    operation.side_effect = [self.sharing_error(code), None]
+                    self.elapsed, self.sleeps = 0.0, []
+                    with self.environment():
+                        bridge._rename(self.source, self.target, replace=replace)
+                    self.assertEqual(operation.call_count, 2)
+                    self.assertTrue(self.sleeps)
+                    self.assertLessEqual(self.elapsed, 1.0)
+                    self.assertGreaterEqual(self.guard.call_count, 2)
+
+    def test_sharing_refusal_has_bounded_budget_and_preserves_last_error(self):
+        error = self.sharing_error()
+        self.publish.side_effect = error
+        with self.environment(), self.assertRaises(PermissionError) as raised:
+            bridge._rename(self.source, self.target)
+        self.assertIs(raised.exception, error)
+        self.assertGreater(self.publish.call_count, 1)
+        self.assertGreaterEqual(self.elapsed, .99)
+        self.assertLessEqual(self.elapsed, 1.01)
+
+    def test_nonsharing_and_posix_errors_never_retry(self):
+        for platform, code in (("nt", 5), ("nt", None), ("posix", 32)):
+            with self.subTest(platform=platform, winerror=code):
+                error = PermissionError("not retryable")
+                if code is not None:
+                    error.winerror = code
+                self.publish.reset_mock()
+                self.publish.side_effect = error
+                self.elapsed, self.sleeps = 0.0, []
+                with self.environment(platform), self.assertRaises(PermissionError) as raised:
+                    bridge._rename(self.source, self.target)
+                self.assertIs(raised.exception, error)
+                self.publish.assert_called_once_with(self.source, self.target)
+                self.assertEqual(self.sleeps, [])
+
+    def test_source_identity_size_mtime_or_disappearance_stops_retry(self):
+        for changed in (self.stat(12), self.stat(11, size=24), self.stat(11, mtime=32), None):
+            with self.subTest(changed=changed):
+                self.source_stat = self.stat(11)
+                self.publish.reset_mock()
+                def refuse_then_change(*args):
+                    self.source_stat = changed
+                    raise self.sharing_error()
+                self.publish.side_effect = refuse_then_change
+                with self.environment(), self.assertRaises((story.StoryError, OSError)):
+                    bridge._rename(self.source, self.target)
+                self.publish.assert_called_once_with(self.source, self.target)
+
+    def test_new_destination_never_gets_overwritten_after_sharing_refusal(self):
+        for replace in (False, True):
+            with self.subTest(replace=replace):
+                self.target_stat = None
+                operation = self.replace if replace else self.publish
+                operation.reset_mock()
+                def refuse_then_create(*args):
+                    self.target_stat = self.stat(22)
+                    raise self.sharing_error()
+                operation.side_effect = refuse_then_create
+                with self.environment(), self.assertRaises((story.StoryError, OSError)):
+                    bridge._rename(self.source, self.target, replace=replace)
+                self.assertEqual(operation.call_count, 1)
+
+    def test_replacement_destination_identity_or_contents_change_stops_retry(self):
+        for changed in (self.stat(23), self.stat(22, size=24), self.stat(22, mtime=32), None):
+            with self.subTest(changed=changed):
+                self.target_stat = self.stat(22)
+                self.replace.reset_mock()
+                def refuse_then_change(*args):
+                    self.target_stat = changed
+                    raise self.sharing_error()
+                self.replace.side_effect = refuse_then_change
+                with self.environment(), self.assertRaises((story.StoryError, OSError)):
+                    bridge._rename(self.source, self.target, replace=True)
+                self.assertEqual(self.replace.call_count, 1)
+
+    def test_native_directory_guard_failure_stops_retry(self):
+        def verify(directory):
+            if self.publish.call_count:
+                raise OSError("directory binding changed")
+        self.guard.side_effect = verify
+        self.publish.side_effect = self.sharing_error()
+        with self.environment(), self.assertRaises((story.StoryError, OSError)):
+            bridge._rename(self.source, self.target)
+        self.publish.assert_called_once_with(self.source, self.target)
+
+    def test_successful_retried_claim_is_never_dispatched_twice(self):
+        request_id = "a" * 32
+        self.source.name = "outbox-" + request_id + ".json"
+        self.source.path = self.directory.path / self.source.name
+        self.target.name = "claimed-" + request_id + ".json"
+        self.target.path = self.directory.path / self.target.name
+        names = [self.source.name]
+        session = {"binding_sha256": "bound", "binding": {"target": "fixture"}, "session_id": "b" * 32}
+        request = {"schema": 1, "id": request_id, "nonce": "n" * 32,
+                   "binding_sha256": session["binding_sha256"], "binding": session["binding"],
+                   "session_id": session["session_id"], "operation": "verify_target",
+                   "deadline_epoch": 1100, "owner_pid": 123}
+        @contextmanager
+        def authenticated(*args):
+            yield self.directory, session
+        def publish(source, target):
+            if self.publish.call_count == 1:
+                raise self.sharing_error()
+            names[:] = [target.name]
+            self.target_stat, self.source_stat = self.source_stat, None
+        self.publish.side_effect = publish
+        def bound_file(directory, name):
+            return self.source if name == self.source.name else self.target
+        with self.environment(), patch.object(bridge.os, "listdir", side_effect=lambda path: list(names), create=True), \
+                patch.object(bridge, "_authenticated", authenticated), \
+                patch.object(bridge, "_read", return_value=request), \
+                patch.object(bridge, "_owner_alive", return_value=True), \
+                patch.object(bridge, "_lease") as lease, \
+                patch.object(bridge.api, "_BoundFile", side_effect=bound_file):
+            book = SimpleNamespace(root=self.directory.path)
+            first = bridge.next_request(book, "private-handle")
+            second = bridge.next_request(book, "private-handle")
+        self.assertEqual(first["request_id"], request_id)
+        self.assertTrue(first["claimed_once"])
+        self.assertIsNone(second["request_id"])
+        self.assertFalse(second["claimed_once"])
+        self.assertEqual(self.publish.call_count, 2)
+        lease.assert_called_once()
+
+
 if __name__ == "__main__":
     unittest.main()
