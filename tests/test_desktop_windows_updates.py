@@ -18,9 +18,14 @@ CLIENT_SPEC = importlib.util.spec_from_file_location(
     'windows_theme_client', ROOT / 'desktop/windows/client.py')
 client = importlib.util.module_from_spec(CLIENT_SPEC)
 CLIENT_SPEC.loader.exec_module(client)
+CURRENT_VERSION = updates.CLIENT_VERSION
+NEXT_VERSION = '.'.join(str(number) for number in (
+    *updates.version_components(CURRENT_VERSION)[:-1],
+    updates.version_components(CURRENT_VERSION)[-1] + 1,
+))
 
 
-def release(version='0.1.2', extension='-setup.exe', **changes):
+def release(version=NEXT_VERSION, extension='-setup.exe', **changes):
     name = f'story-workbench-{version}-windows-x86_64{extension}'
     result = {
         'tag_name': '0.6.18', 'draft': False, 'prerelease': False,
@@ -40,14 +45,14 @@ class ReleaseTests(unittest.TestCase):
     def test_client_version_is_independent_of_skill_release_tag(self):
         result = evaluate(release())
         self.assertEqual(result.state, 'available')
-        self.assertEqual(result.version, '0.1.2')
-        self.assertIn('0.1.1', result.message)
+        self.assertEqual(result.version, NEXT_VERSION)
+        self.assertIn(CURRENT_VERSION, result.message)
         self.assertNotIn('0.6.18', result.message)
 
     def test_numeric_version_comparison(self):
         self.assertEqual(evaluate(release('0.1.10'), current_version='0.1.9').state, 'available')
-        self.assertEqual(evaluate(release('0.1.1')).state, 'current')
-        result = evaluate(release('0.1.0'))
+        self.assertEqual(evaluate(release(CURRENT_VERSION)).state, 'current')
+        result = evaluate(release('0.1.0'), current_version='0.1.1')
         self.assertEqual(result.state, 'ahead')
         self.assertEqual(result.download_url, '')
 
@@ -57,11 +62,11 @@ class ReleaseTests(unittest.TestCase):
                 updates.version_components(version)
 
     def test_highest_platform_version_and_installer_are_preferred(self):
-        packet = release('0.1.2', '.zip')
-        packet['assets'] += release('0.1.2')['assets'] + release('0.1.1')['assets']
+        packet = release(NEXT_VERSION, '.zip')
+        packet['assets'] += release(NEXT_VERSION)['assets'] + release(CURRENT_VERSION)['assets']
         result = evaluate(packet)
         self.assertTrue(result.download_url.endswith('-setup.exe'))
-        self.assertEqual(result.version, '0.1.2')
+        self.assertEqual(result.version, NEXT_VERSION)
 
     def test_portable_zip_is_supported(self):
         self.assertTrue(evaluate(release(extension='.zip')).download_url.endswith('.zip'))
@@ -93,8 +98,8 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(evaluate(packet).state, 'error')
 
     def test_invalid_compatible_asset_cannot_hide_behind_an_older_valid_asset(self):
-        packet = release('0.1.1')
-        invalid_asset = release('0.1.2')['assets'][0]
+        packet = release(CURRENT_VERSION)
+        invalid_asset = release(NEXT_VERSION)['assets'][0]
         invalid_asset['browser_download_url'] = 'https://evil.test/new.exe'
         packet['assets'].append(invalid_asset)
         result = evaluate(packet)
@@ -232,7 +237,7 @@ class AsyncControlTests(unittest.TestCase):
         return instance, calls, messages
 
     def test_check_returns_before_reply_and_disables_duplicate_requests(self):
-        reply = Reply(json.dumps(release('0.1.1')).encode())
+        reply = Reply(json.dumps(release(CURRENT_VERSION)).encode())
         window, requests, messages = self.make_window(reply)
         window.check_for_updates()
         window.check_for_updates()
@@ -295,8 +300,8 @@ class AsyncControlTests(unittest.TestCase):
 
     def test_network_failure_and_rate_limit_are_reported(self):
         for reply, expected in ((Reply(status=None, error=1), '无法连接'),
-                                (Reply(json.dumps(release('0.1.1')).encode(), status=200, error=1), '无法连接'),
-                                (Reply(json.dumps(release('0.1.2')).encode(), status=200, error=1), '无法连接'),
+                                (Reply(json.dumps(release(CURRENT_VERSION)).encode(), status=200, error=1), '无法连接'),
+                                (Reply(json.dumps(release(NEXT_VERSION)).encode(), status=200, error=1), '无法连接'),
                                 (Reply(b'{}', status=403, error=1), '请求限额')):
             window, _, messages = self.make_window(reply)
             window.check_for_updates()
