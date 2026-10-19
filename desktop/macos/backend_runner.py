@@ -103,9 +103,13 @@ def ensure_bookshelf(story, script, state_dir=None, port=DEFAULT_PORT,
     environment.pop('PYTHONPATH', None)
     environment['PYTHONNOUSERSITE'] = '1'
     environment['PYTHONDONTWRITEBYTECODE'] = '1'
+    process_options = {}
+    if os.name == 'nt':
+        process_options['creationflags'] = subprocess.CREATE_NO_WINDOW
     try:
         process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=stream, stderr=stream,
-                                   close_fds=True, start_new_session=True, env=environment)
+                                   close_fds=True, start_new_session=True, env=environment,
+                                   **process_options)
     except OSError as error:
         raise LauncherError('client_start_failed', '无法运行客户端内的工作台程序：' + str(error)) from error
     finally:

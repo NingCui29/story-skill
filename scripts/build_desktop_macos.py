@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import plistlib
 import shutil
 import subprocess
 import sys
@@ -108,7 +109,9 @@ def build(output, python):
             env=environment, timeout=20))
         if Path(probe['prefix']).resolve() != runtime.resolve():
             raise RuntimeError('Bundled Python did not load its relocated standard library.')
-        manifest = {'app_version': '0.1.6', 'story_version': version,
+        with (contents / 'Info.plist').open('rb') as metadata:
+            app_version = plistlib.load(metadata)['CFBundleShortVersionString']
+        manifest = {'app_version': app_version, 'story_version': version,
                     'architecture': platform.machine(), 'minimum_macos': '13.0',
                     'runtime_version': run([str(bundled_python), '--version'],
                                            env=environment, timeout=20).strip(),

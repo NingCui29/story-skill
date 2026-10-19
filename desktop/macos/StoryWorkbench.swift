@@ -121,6 +121,138 @@ final class WorkbenchPageCache<Page> {
     }
 }
 
+// Desktop versions come from installer names, independently of the bundled
+// Story Skill release tag (for example, client 0.1.6 in release v0.6.18).
+struct WorkbenchClientVersion: Comparable {
+    let text: String
+    private let numbers: [Int]
+
+    init?(_ text: String) {
+        guard text.range(of: "^[0-9]+(?:\\.[0-9]+){1,3}$", options: .regularExpression) != nil else { return nil }
+        let components = text.split(separator: ".").compactMap { Int($0) }
+        guard components.count == text.split(separator: ".").count else { return nil }
+        self.text = text
+        numbers = components
+    }
+
+    static func == (lhs: Self, rhs: Self) -> Bool { !(lhs < rhs) && !(rhs < lhs) }
+    static func < (lhs: Self, rhs: Self) -> Bool {
+        for index in 0..<max(lhs.numbers.count, rhs.numbers.count) {
+            let first = index < lhs.numbers.count ? lhs.numbers[index] : 0
+            let second = index < rhs.numbers.count ? rhs.numbers[index] : 0
+            if first != second { return first < second }
+        }
+        return false
+    }
+}
+
+enum WorkbenchUpdate {
+    static let endpoint = URL(string: "https://api.github.com/repos/NingCui29/story-skill/releases/latest")!
+    enum Result {
+        case available(version: String, releaseURL: URL)
+        case current(version: String)
+        case ahead(current: String, latest: String)
+        case unavailable(String)
+    }
+
+    private struct Release: Decodable {
+        let draft: Bool
+        let prerelease: Bool
+        let tag_name: String
+        let html_url: String
+        let assets: [Asset]
+    }
+    private struct Asset: Decodable {
+        let name: String
+        let state: String
+        let browser_download_url: String
+    }
+
+    static var architecture: String {
+        #if arch(arm64)
+        return "arm64"
+        #else
+        return "x86_64"
+        #endif
+    }
+
+    static func request() -> URLRequest {
+        var request = URLRequest(url: endpoint, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 15)
+        request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
+        request.setValue("2022-11-28", forHTTPHeaderField: "X-GitHub-Api-Version")
+        request.setValue("StoryWorkbench-UpdateCheck", forHTTPHeaderField: "User-Agent")
+        return request
+    }
+
+    static func githubURL(_ address: String, prefix: String) -> URL? {
+        guard let url = URL(string: address),
+              let parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              parts.scheme == "https", parts.host == "github.com", parts.port == nil,
+              parts.user == nil, parts.password == nil, parts.query == nil, parts.fragment == nil,
+              parts.percentEncodedPath == parts.path,
+              parts.path.hasPrefix("/NingCui29/story-skill/releases/" + prefix),
+              parts.path.count > ("/NingCui29/story-skill/releases/" + prefix).count,
+              !parts.path.split(separator: "/").contains(where: { $0 == "." || $0 == ".." }) else { return nil }
+        return url
+    }
+
+    static func evaluate(data: Data?, response: URLResponse?, error: Error?, currentVersion: String?,
+                         architecture: String) -> Result {
+        if let error {
+            let timedOut = (error as NSError).domain == NSURLErrorDomain && (error as NSError).code == NSURLErrorTimedOut
+            return .unavailable(timedOut ? "连接 GitHub 超时，请稍后重试。" : "暂时无法连接 GitHub，请检查网络后重试。")
+        }
+        guard let response = response as? HTTPURLResponse, response.url == endpoint else {
+            return .unavailable("更新服务返回了无法核对的地址，请稍后重试。")
+        }
+        switch response.statusCode {
+        case 200: break
+        case 403, 429: return .unavailable("GitHub 暂时限制了检查请求，请稍后重试。")
+        case 404: return .unavailable("GitHub 暂无可查询的正式发布，请稍后重试。")
+        default: return .unavailable("GitHub 更新服务暂时不可用（HTTP \(response.statusCode)），请稍后重试。")
+        }
+        guard let currentVersion, let current = WorkbenchClientVersion(currentVersion) else {
+            return .unavailable("无法确认当前客户端版本，请从应用的“关于写作工作台”核对版本。")
+        }
+        guard let data, data.count <= 2_000_000, let release = try? JSONDecoder().decode(Release.self, from: data),
+              !release.draft, !release.prerelease,
+              let releaseURL = githubURL(release.html_url, prefix: "tag/"),
+              releaseURL.path == "/NingCui29/story-skill/releases/tag/" + release.tag_name else {
+            return .unavailable("GitHub 返回的发布信息无法核对，请稍后重试。")
+        }
+        var versions: [WorkbenchClientVersion] = []
+        for asset in release.assets where asset.state == "uploaded" {
+            for platform in [architecture, "universal2"] {
+                for suffix in [".dmg", ".zip"] {
+                    let ending = "-macos-" + platform + suffix
+                    guard asset.name.hasPrefix("story-workbench-"), asset.name.hasSuffix(ending) else { continue }
+                    let text = String(asset.name.dropFirst("story-workbench-".count).dropLast(ending.count))
+                    guard let version = WorkbenchClientVersion(text),
+                          let download = githubURL(asset.browser_download_url, prefix: "download/"),
+                          download.path == "/NingCui29/story-skill/releases/download/" + release.tag_name + "/" + asset.name else {
+                        return .unavailable("Mac 安装包信息无法核对，请稍后重试。")
+                    }
+                    versions.append(version)
+                }
+            }
+        }
+        guard let latest = versions.max() else {
+            return .unavailable("最新正式发布尚未提供适用于本机（\(architecture)）的 Mac 安装包。")
+        }
+        if latest > current { return .available(version: latest.text, releaseURL: releaseURL) }
+        if current > latest { return .ahead(current: currentVersion, latest: latest.text) }
+        return .current(version: currentVersion)
+    }
+}
+
+// A release check never follows a server redirect to a different endpoint.
+final class WorkbenchUpdateRedirectPolicy: NSObject, URLSessionTaskDelegate {
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(nil)
+    }
+}
+
 @MainActor
 final class BackendLauncher {
     private var process: Process?
@@ -724,7 +856,7 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
 }
 
 @MainActor
-final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
+final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuItemValidation {
     private let launcher = BackendLauncher()
     private let editorPages = WorkbenchPageCache<WorkbenchWindow>()
     private(set) var mainWindow: NSWindow?
@@ -734,6 +866,8 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var checkingQuit = false
     private var checkingClose = false
     private var allowClose = false
+    private var updateSession: URLSession?
+    private var updateMenuItem: NSMenuItem?
     private let selfTestReport: URL?
     private let selfTestEditorURL: URL?
     private let selfTestSwitchEditorURL: URL?
@@ -858,6 +992,68 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     @objc private func save() { currentWindow?.saveCandidate() }
     @objc private func appearance() { currentWindow?.updateAppearance() }
 
+    func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        menuItem.action != #selector(checkForUpdates) || updateSession == nil
+    }
+
+    @objc private func checkForUpdates() {
+        guard updateSession == nil else { return }
+        let currentVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let architecture = WorkbenchUpdate.architecture
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 15
+        configuration.timeoutIntervalForResource = 20
+        configuration.httpShouldSetCookies = false
+        configuration.urlCache = nil
+        let session = URLSession(configuration: configuration, delegate: WorkbenchUpdateRedirectPolicy(), delegateQueue: nil)
+        updateSession = session
+        updateMenuItem?.title = "正在检查更新…"
+        session.dataTask(with: WorkbenchUpdate.request()) { [weak self] data, response, error in
+            let result = WorkbenchUpdate.evaluate(data: data, response: response, error: error,
+                                                  currentVersion: currentVersion, architecture: architecture)
+            session.finishTasksAndInvalidate()
+            DispatchQueue.main.async { [weak self] in
+                guard let self, self.updateSession === session else { return }
+                self.updateSession = nil
+                self.updateMenuItem?.title = "检查更新…"
+                self.presentUpdate(result)
+            }
+        }.resume()
+    }
+
+    private func presentUpdate(_ result: WorkbenchUpdate.Result) {
+        let alert = NSAlert()
+        var releaseURL: URL?
+        switch result {
+        case .available(let version, let url):
+            alert.messageText = "发现客户端新版本 \(version)"
+            alert.informativeText = "可前往 GitHub 下载 Mac 安装包。请保存当前编辑后，再安装新版。"
+            alert.addButton(withTitle: "打开下载页")
+            alert.addButton(withTitle: "稍后")
+            releaseURL = url
+        case .current(let version):
+            alert.messageText = "当前客户端已是最新可用版本"
+            alert.informativeText = "客户端版本：\(version)。已核对 GitHub 最新正式发布的本机 Mac 安装包。"
+            alert.addButton(withTitle: "好")
+        case .ahead(let current, let latest):
+            alert.messageText = "当前客户端版本高于最新正式安装包"
+            alert.informativeText = "当前版本：\(current)；GitHub 最新正式 Mac 安装包：\(latest)。无需降级。"
+            alert.addButton(withTitle: "好")
+        case .unavailable(let message):
+            alert.messageText = "暂时无法确认更新"
+            alert.informativeText = message
+            alert.addButton(withTitle: "好")
+        }
+        let window = hostWindow()
+        window.makeKeyAndOrderFront(nil)
+        alert.beginSheetModal(for: window) { answer in
+            if answer == .alertFirstButtonReturn, let releaseURL,
+               WorkbenchUpdate.githubURL(releaseURL.absoluteString, prefix: "tag/") != nil {
+                NSWorkspace.shared.open(releaseURL)
+            }
+        }
+    }
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard !checkingQuit, !checkingClose else { return .terminateCancel }
         if selfTestReport != nil { launcher.stop(); return .terminateNow }
@@ -908,6 +1104,8 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let main = NSMenu()
         let application = NSMenu(title: "写作工作台")
         application.addItem(withTitle: "关于写作工作台", action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)), keyEquivalent: "")
+        updateMenuItem = application.addItem(withTitle: "检查更新…", action: #selector(checkForUpdates), keyEquivalent: "")
+        updateMenuItem?.target = self
         application.addItem(.separator())
         application.addItem(withTitle: "隐藏写作工作台", action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
         application.addItem(withTitle: "退出写作工作台", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
