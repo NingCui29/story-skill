@@ -3694,18 +3694,18 @@ input::placeholder{color:var(--muted);opacity:.85}
 .add-help{font-size:12px;margin-top:8px;line-height:1.7}
 .shelf-library{padding-top:2px}
 h2{font-size:18px;letter-spacing:.02em;font-weight:600}
-.shelf-toolbar{display:grid;grid-template-columns:minmax(240px,1fr) auto;align-items:center;gap:16px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:4px}
-.shelf-search{grid-column:1;grid-row:1;max-width:none;margin:0;min-width:0}
-.shelf-search input{background:var(--wb-panel);min-height:41px;padding-left:14px;border-color:transparent}
+.shelf-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-bottom:0}
+.shelf-search{flex:1 1 220px;max-width:none;margin:0;min-width:220px}
+.shelf-search input{background:var(--wb-panel);min-height:36px;padding:6px 78px 6px 11px;border-color:transparent}
 html[data-story-workbench] .shelf-search input{background:var(--wb-panel)}
-.shelf-controls{display:contents}.type-filters{grid-column:1;grid-row:2;gap:4px}
-.type-filters button{font-size:13px;min-height:34px;padding:5px 11px;border-radius:7px}
-.shelf-options{grid-column:2;grid-row:1 / span 2;display:flex;align-items:flex-end;gap:12px}
-.shelf-state,.shelf-sort{display:grid;align-items:start;gap:5px;font-size:11px;line-height:1.5;color:var(--muted)}
-.shelf-state select,.shelf-sort select{font-size:12px;padding:8px 10px;min-height:38px;max-width:180px}
+.shelf-controls{display:contents}.type-filters{flex:0 0 auto;gap:2px}
+.type-filters button{font-size:12px;min-height:32px;padding:5px 8px;border-radius:7px}
+.shelf-options{display:flex;align-items:center;gap:10px;margin-left:auto}
+.shelf-state,.shelf-sort{display:flex;align-items:center;gap:6px;font-size:11px;line-height:1.5;color:var(--muted)}
+.shelf-state select,.shelf-sort select{font-size:12px;padding:5px 8px;min-height:32px;max-width:140px}
 .search-clear{min-height:31px;padding:4px 9px;color:var(--muted);font-size:11px}
-#filter-summary{font-size:12px;min-height:20px;margin:13px 2px 14px}
-#books{gap:18px;margin-top:18px}
+#filter-summary{font-size:12px;min-height:18px;margin:8px 2px 10px}
+#books{gap:18px;margin-top:14px}
 html[data-story-workbench] #books:not(:has(.book)){min-height:210px;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 28px;border:1px dashed var(--line);background:var(--surface);line-height:1.9;border-radius:14px;overflow-wrap:anywhere}
 .book{min-height:210px;grid-template-columns:minmax(0,1fr) 104px;grid-template-rows:auto auto minmax(24px,1fr) auto;gap:9px 10px;padding:19px 20px 18px 23px;border-radius:13px;box-shadow:0 2px 6px #12263b08;overflow:visible}
 .book>*{grid-column:1 / -1}
@@ -3740,8 +3740,9 @@ html[data-story-workbench] .book-management button{display:block;width:100%;marg
 .error{grid-row:6;padding:9px 11px;background:var(--wb-warning-bg);border-radius:7px;font-size:12px;line-height:1.75}
 .search-empty{padding:8px 2px 22px;font-size:12px}.search-empty button{min-height:34px}
 .shelf-footer{font-size:11px;line-height:1.9;padding-top:16px;margin-top:30px;max-width:920px}
-@media(max-width:1100px){body{padding:20px 24px 22px}.shelf-toolbar{grid-template-columns:minmax(0,1fr);gap:12px}.shelf-search{grid-column:1;grid-row:1}.type-filters{grid-row:2}.shelf-options{grid-column:1;grid-row:3;justify-content:flex-end;align-items:center;gap:16px}.shelf-state,.shelf-sort{display:flex;align-items:center;gap:8px}.shelf-state select,.shelf-sort select{min-height:34px;padding:6px 9px}}
-@media(max-width:680px){body{padding:16px 18px 20px}.shelf-header{gap:10px;padding-bottom:12px;margin-bottom:12px}.shelf-header .library-actions .add-body{width:calc(100vw - 36px)}.shelf-header-actions{padding-top:0;gap:12px;align-items:flex-end}.shelf-toolbar{padding:12px;gap:11px}.type-filters{gap:2px}.type-filters button{padding:6px 8px;font-size:12px;min-height:34px}.shelf-options{width:100%;justify-content:space-between;gap:8px}.shelf-state,.shelf-options .shelf-sort{display:grid;gap:5px;min-width:0;flex:1}.shelf-state select,.shelf-options .shelf-sort select{width:100%;max-width:none;font-size:12px;min-width:0}.book{padding:19px 18px 17px 22px;min-height:210px;grid-template-columns:minmax(0,1fr) 104px}.book strong{font-size:18px}.book-progress{padding-right:0}.book>button{min-height:40px;padding:8px 14px}.shelf-footer{margin-top:24px;font-size:11px}.add-fields button{width:100%;min-height:40px}}
+@media(max-width:1100px){body{padding:20px 24px 22px}}
+@media(max-width:960px){.shelf-search{flex-basis:100%}}
+@media(max-width:680px){body{padding:16px 18px 20px}.shelf-header{gap:10px;padding-bottom:12px;margin-bottom:12px}.shelf-header .library-actions .add-body{width:calc(100vw - 36px)}.shelf-header-actions{padding-top:0;gap:12px;align-items:flex-end}.shelf-toolbar{padding:8px;gap:8px}.shelf-search{min-width:0}.type-filters{flex-basis:100%;gap:2px}.type-filters button{padding:5px 7px;font-size:12px;min-height:32px}.shelf-options{width:100%;justify-content:space-between;gap:8px;margin-left:0}.shelf-state,.shelf-options .shelf-sort{display:flex;gap:6px;min-width:0;flex:1}.shelf-state select,.shelf-options .shelf-sort select{flex:1;width:100%;max-width:none;font-size:12px;min-width:0}.book{padding:19px 18px 17px 22px;min-height:210px;grid-template-columns:minmax(0,1fr) 104px}.book strong{font-size:18px}.book-progress{padding-right:0}.book>button{min-height:40px;padding:8px 14px}.shelf-footer{margin-top:24px;font-size:11px}.add-fields button{width:100%;min-height:40px}}
 </style></head>
 <body><h1 id="library-heading" class="sr-only">写作书架</h1><header class="shelf-header">__MANAGEMENT_HTML__<div class="shelf-header-actions">__THEME_CONTROL__</div></header><p id="shelf-intro" class="sr-only">管理本地作品，打开后继续写作。</p>
 <p id="message" role="status"></p>

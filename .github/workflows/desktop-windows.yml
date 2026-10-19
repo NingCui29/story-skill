@@ -76,7 +76,7 @@ jobs:
           if ($uninstall.ExitCode -ne 0) { throw "Uninstaller failed" }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.6-windows-x86_64-installer
+          name: story-workbench-0.1.7-windows-x86_64-installer
           compression-level: 0
           path: |
             dist/story-workbench-*-windows-x86_64-setup.exe
@@ -87,7 +87,7 @@ jobs:
           if-no-files-found: error
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.6-windows-x86_64-portable
+          name: story-workbench-0.1.7-windows-x86_64-portable
           compression-level: 0
           path: |
             dist/story-workbench-windows-x86_64.zip
