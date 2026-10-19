@@ -104,6 +104,12 @@ class WorkbenchArchivesTests(unittest.TestCase):
     def test_service_tokens_cache_and_external_link_are_excluded(self):
         self.write('.story/workbench-service.json', b'SECRET-LOOPBACK-TOKEN')
         self.write('.story/.workbench-backups/one/service.json', b'OLD-SECRET-TOKEN')
+        self.write('.backups/old/service.json', b'OLD-SECRET-LIBRARY-TOKEN')
+        self.write('.story/.backups/old/service.json', b'OLD-SECRET-SERVICE-TOKEN')
+        self.write('.story/workbench-server.lock', b'0')
+        self.write('server.lock', b'0')
+        self.write('service.json', b'SECRET-SHELF-TOKEN')
+        self.write('.story/drafts/workbench/.backups/old/completed.json', b'preserved-candidate-recovery')
         self.write('.git/config', b'SECRET-GIT-CONFIG')
         self.write('.story/workbench/index.html', b'GENERATED-SNAPSHOT')
         external = self.directory / '关联材料'
@@ -118,12 +124,27 @@ class WorkbenchArchivesTests(unittest.TestCase):
             names = archive.namelist()
             self.assertFalse(any('workbench-service' in name or '.git/' in name or '链接资料/' in name for name in names))
             self.assertFalse(any(b'SECRET-' in archive.read(name) for name in names))
+            self.assertIn('book/.story/drafts/workbench/.backups/old/completed.json', names)
+            self.assertFalse(any(name.endswith('server.lock') for name in names))
         self.assertIn({'path': '链接资料', 'reason': 'linked_material'}, packet['excluded'])
 
     def test_hardlinked_local_file_blocks_backup(self):
         os.link(self.root / '正文.md', self.root / '正文硬链接.md')
         self.error('archive_linked_file', self.archive)
         self.assertFalse(self.output.exists())
+
+    def test_nested_initialized_book_is_never_absorbed_into_backup(self):
+        nested = self.root / '另一部独立作品'
+        base.story.Book.create(nested, '独立作品', 'short')
+        self.error('archive_nested_book', self.archive)
+        self.assertFalse(self.output.exists())
+        self.assertTrue((nested / '.story/state.sqlite3').is_file())
+
+    def test_existing_output_alias_cannot_overwrite_source(self):
+        original = (self.root / '正文.md').read_bytes()
+        os.link(self.root / '正文.md', self.output)
+        self.error('archive_exists', self.archive)
+        self.assertEqual((self.root / '正文.md').read_bytes(), original)
 
     def test_backup_requires_identity_and_explicit_external_new_path(self):
         self.error('archive_identity', lambda: self.archives.create_archive(self.root, self.output, 'other-book'))
@@ -214,6 +235,67 @@ class WorkbenchArchivesTests(unittest.TestCase):
             self.error('archive_changed', self.archive)
         self.assertFalse(self.output.exists())
 
+    @unittest.skipUnless(os.name == 'posix', 'Windows pins prevent renaming open directories')
+    def test_source_tree_replacement_never_publishes_success(self):
+        original = self.archives._scan
+        calls = 0
+        moved = self.directory / '保留原作品'
+
+        def scan(root):
+            nonlocal calls
+            result = original(root)
+            calls += 1
+            if calls == 2:
+                self.root.rename(moved)
+                base.story.Book.create(self.root, '替换作品', 'long')
+            return result
+
+        with patch.object(self.archives, '_scan', side_effect=scan):
+            with self.assertRaises(base.story.StoryError):
+                self.archive()
+        self.assertFalse(self.output.exists())
+        self.assertEqual((moved / '正文.md').read_text(), '这是已保存的正文。\n')
+        self.assertTrue((self.root / '.story/state.sqlite3').is_file())
+
+    @unittest.skipUnless(os.name == 'posix', 'Windows denies replacing the pinned archive')
+    def test_archive_path_replacement_during_inspection_is_detected(self):
+        self.archive()
+        original = self.archives._hash_stream
+        changed = False
+
+        def hash_stream(stream, *args, **kwargs):
+            nonlocal changed
+            result = original(stream, *args, **kwargs)
+            if isinstance(stream, zipfile.ZipExtFile) and not changed:
+                changed = True
+                old_bytes = self.output.read_bytes()
+                self.output.rename(self.directory / '保留原备份.zip')
+                self.output.write_bytes(old_bytes)
+            return result
+
+        with patch.object(self.archives, '_hash_stream', side_effect=hash_stream):
+            self.error('archive_changed', lambda: self.archives.inspect_archive(self.output))
+
+    @unittest.skipUnless(os.name == 'posix', 'Windows denies replacing the pinned archive')
+    def test_archive_path_replacement_during_restore_prevents_target_creation(self):
+        self.archive()
+        original = self.archives._hash_stream
+        changed = False
+
+        def hash_stream(stream, output=None, *args, **kwargs):
+            nonlocal changed
+            result = original(stream, output, *args, **kwargs)
+            if output is not None and isinstance(stream, zipfile.ZipExtFile) and not changed:
+                changed = True
+                old_bytes = self.output.read_bytes()
+                self.output.rename(self.directory / '保留原备份.zip')
+                self.output.write_bytes(old_bytes)
+            return result
+
+        with patch.object(self.archives, '_hash_stream', side_effect=hash_stream):
+            self.error('archive_changed', lambda: self.archives.restore_archive(self.output, self.destination))
+        self.assertFalse(self.destination.exists())
+
     def test_corrupt_checksum_is_rejected_before_destination_creation(self):
         self.archive()
         changed = self.rewrite(lambda entries: [(info, b'changed' if info.filename == 'book/正文.md' else body)
@@ -278,6 +360,27 @@ class WorkbenchArchivesTests(unittest.TestCase):
 
         changed = self.rewrite(change_identity)
         self.error('archive_identity', lambda: self.archives.restore_archive(changed, self.destination))
+        self.assertFalse(self.destination.exists())
+
+    def test_nested_book_in_manifest_is_rejected_before_restoration(self):
+        self.archive()
+
+        def nest_entry(entries):
+            result = []
+            for info, body in entries:
+                if info.filename == self.archives.MANIFEST_NAME:
+                    manifest = json.loads(body)
+                    for row in manifest['files']:
+                        if row['path'] == '正文.md':
+                            row['path'] = '另一部作品/.story/state.sqlite3'
+                    body = json.dumps(manifest).encode()
+                elif info.filename == 'book/正文.md':
+                    info = zipfile.ZipInfo('book/另一部作品/.story/state.sqlite3')
+                result.append((info, body))
+            return result
+
+        changed = self.rewrite(nest_entry)
+        self.error('archive_nested_book', lambda: self.archives.restore_archive(changed, self.destination))
         self.assertFalse(self.destination.exists())
 
     def test_limits_block_oversized_book_and_zip(self):

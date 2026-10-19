@@ -65,6 +65,11 @@ def _excluded(relative):
     parts = PurePosixPath(relative).parts
     if any(part in ('.git', '__pycache__', '.DS_Store') for part in parts):
         return True
+    if relative in ('service.json', 'server.lock', '.story/workbench-server.lock'):
+        return True
+    if parts[-1] in ('service.json', 'workbench-service.json', 'library-service.json',
+                     'workbench-server.lock', 'server.lock') and '.backups' in parts:
+        return True
     if any(relative in (database + '-wal', database + '-shm', database + '-journal') for database in DATABASES):
         return True
     if relative.startswith(('.story/workbench-service', '.story/.workbench-backups/',
@@ -95,6 +100,8 @@ def _scan(root):
                     excluded.append({'path': relative, 'reason': 'linked_material'})
                     continue
                 _safe_relative(relative)
+                if relative != DATABASE and relative.endswith('/' + DATABASE):
+                    _fail('nested_book', '作品目录内包含另一部已初始化作品，请分别备份。', path=relative)
                 if stat.S_ISDIR(value.st_mode):
                     pending.append((relative + '/', root / relative))
                 elif stat.S_ISREG(value.st_mode):
@@ -209,6 +216,7 @@ def create_archive(root, output_path, expected_book_id=None):
                         digest, size = _read_file(root, relative, writer)
                 manifest['files'].append({'path': relative, 'sha256': digest, 'bytes': size})
             final_inventory, final_excluded = _scan(root)
+            api._verify_bound_directory(root_pin)
             # The database payload is a SQLite snapshot. Its raw file timestamps
             # may change during checkpointing without changing logical contents.
             if (set(inventory) != set(final_inventory) or
@@ -234,9 +242,16 @@ def create_archive(root, output_path, expected_book_id=None):
             os.fsync(completed.fileno())
         # Inspect the exact stage before publication; no success on an invalid
         # archive and no replacing a competing backup with the same filename.
-        inspected = inspect_archive(staged)
         with api._pinned_directory(work) as staging_pin:
             source = api._BoundFile(staging_pin, staged.name)
+            with api._bound_reader(source) as completed:
+                expected_archive_sha, expected_archive_size = _hash_stream(
+                    completed, maximum=MAX_TOTAL_BYTES + MAX_MANIFEST_BYTES + MAX_FILES * 16384)
+            # Bind inspection to the bytes that will be published, rather than
+            # trusting a previously checked pathname after a competing rename.
+            inspected = inspect_archive(staged)
+            if inspected['manifest_sha256'] != hashlib.sha256(payload).hexdigest():
+                _fail('changed', '备份暂存文件在发布前被替换，已停止发布。')
             api._verify_bound_directory(output_pin)
             try:
                 api._publish_no_replace(source, target)
@@ -248,6 +263,10 @@ def create_archive(root, output_path, expected_book_id=None):
             # A whole archive may exceed the per-book-file ceiling. Account
             # for bounded manifest and ZIP header/path overhead separately.
             digest, size = _hash_stream(completed, maximum=MAX_TOTAL_BYTES + MAX_MANIFEST_BYTES + MAX_FILES * 16384)
+        if (digest, size) != (expected_archive_sha, expected_archive_size):
+            _fail('changed', '备份发布后的内容与已核验文件不一致，请保留文件核对。', path=str(output_path))
+        api.publish._bound_stat(target)
+        api._verify_bound_directory(output_pin)
         return {**inspected, 'ok': True, 'path': str(output_path), 'sha256': digest,
                 'archive_bytes': size, 'note': '备份包含已落盘的书稿和状态；未保存页面文字及关联目录须另行保存。'}
 
@@ -289,6 +308,8 @@ def _validated_manifest(archive):
         if not isinstance(row, dict):
             _fail('manifest', '备份文件清单格式无效。')
         relative = _safe_relative(row.get('path'))
+        if relative != DATABASE and relative.endswith('/' + DATABASE):
+            _fail('nested_book', '备份包含嵌套的独立作品，请分别恢复。', path=relative)
         if _path_key(relative) in path_keys:
             _fail('manifest', '备份文件清单包含重复路径。')
         if _excluded(relative) or not re.fullmatch(r'[0-9a-f]{64}', str(row.get('sha256', ''))) or type(row.get('bytes')) is not int:
@@ -321,17 +342,37 @@ def _validated_manifest(archive):
 def _open_verified_archive(path, stack):
     path = _absolute(path)
     directory = stack.enter_context(api._pinned_directory(path.parent))
-    stream = stack.enter_context(api._bound_reader(api._BoundFile(directory, path.name)))
+    file = api._BoundFile(directory, path.name)
+    expected = api.publish._bound_stat(file)
+    stream = stack.enter_context(api._bound_reader(file))
+
+    def key(value):
+        return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns
+
+    def verify():
+        try:
+            if key(expected) != key(os.fstat(stream.fileno())) or key(expected) != key(api.publish._bound_stat(file)):
+                _fail('changed', '备份文件在读取期间被修改或替换，请重新选择并核对。', path=str(path))
+            api._verify_bound_directory(directory)
+        except OSError as error:
+            _fail('changed', '备份文件在读取期间失去原路径，请重新选择并核对。', path=str(path), reason=str(error))
+        except api.StoryError as error:
+            if error.code == 'archive_changed':
+                raise
+            _fail('changed', '备份文件在读取期间的路径身份无法核对，请重新选择。', path=str(path), reason=str(error))
+
+    verify()
     archive = stack.enter_context(zipfile.ZipFile(stream, 'r'))
+    stack.callback(verify)
     manifest = _validated_manifest(archive)
-    return archive, manifest
+    return archive, manifest, verify
 
 
 def inspect_archive(path):
     """Validate every decompressed file hash before offering restoration."""
     try:
         with ExitStack() as stack:
-            archive, manifest = _open_verified_archive(path, stack)
+            archive, manifest, verify = _open_verified_archive(path, stack)
             total = 0
             for row in manifest['files']:
                 with archive.open('book/' + row['path']) as stream:
@@ -341,6 +382,7 @@ def inspect_archive(path):
                 total += size
             return {key: manifest[key] for key in ('contract', 'book_id', 'revision', 'title', 'kind')} | {
                 'files': len(manifest['files']), 'bytes': total, 'excluded': manifest.get('excluded', []),
+                'manifest_sha256': hashlib.sha256(json.dumps(manifest, ensure_ascii=False, sort_keys=True).encode('utf-8')).hexdigest(),
                 'restore_note': '恢复至新目录并保留原作品身份；核对后再加入书架，避免同时编辑两个副本。'}
     except (zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError, EOFError, NotImplementedError) as error:
         _fail('invalid_zip', '备份压缩包损坏或格式不支持。', reason=str(error))
@@ -355,7 +397,7 @@ def restore_archive(archive_path, destination_root):
         if os.path.lexists(destination_root):
             _fail('exists', '恢复目录已存在，请选择一个全新的目录。', path=str(destination_root))
         try:
-            archive, manifest = _open_verified_archive(archive_path, stack)
+            archive, manifest, verify = _open_verified_archive(archive_path, stack)
             work = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix='.story-restore-', dir=str(parent.path))))
             staged_root = work / 'book'
             staged_root.mkdir()
@@ -378,6 +420,7 @@ def restore_archive(archive_path, destination_root):
                 book.verify_state_path()
             finally:
                 book.close()
+            verify()
             api._verify_bound_directory(parent)
             # Reserve the target directory using mkdir, which is no-replace on
             # both platforms, and move children into that owned destination.
@@ -421,7 +464,9 @@ def restore_archive(archive_path, destination_root):
                         restored_book.verify_state_path()
                     finally:
                         restored_book.close()
+                    verify()
                     api._verify_bound_directory(destination)
+                    api._verify_bound_directory(parent)
                     api._bound_unlink(marker)
             except (OSError, api.StoryError) as error:
                 _fail('partial_restore', '恢复发布未完成，已保留临时标记和现有文件，请核对后重试到新目录。',
