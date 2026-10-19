@@ -16,10 +16,19 @@ Mac 开发候选 0.1.9 / build 10、Windows 开发候选 0.1.3；内嵌运行时
 
 - `test_desktop*.py`：124 项，全部通过，无跳过，42.831 秒。包含两端更新策略、生产下载器、取消／重试、大小与摘要异常、磁盘变化、跳转限制、线程与关闭保护。
 - Swift 完整源码 warnings-as-errors 类型检查通过；Intel Mac 完整独立应用构建和严格深度签名核验通过，11 个运行时模块保持原基线内容。
+- Mac 0.1.9 DMG：37,958,071 字节，SHA256 `ffe5ef3fd3da44e011fac340cc087a55f71358a3e21dabdb89bf3ec8cfc11abc`；只读挂载后整包文件、权限及内部链接与已验收应用一致，再次严格签名核验通过。本机旧 0.1.8 应用完整备份后替换为 0.1.9，安装目录逐字节和隔离 CLI 验证通过；未退出客户端或停止服务。
 - Mac 六个原生阶段自检：检查、下载、校验、已校验、取消、失败；使用明确标注的合成进度，不联网、不打开书架或作品。原生截图及回执只在本地构建目录保留。
 - 另用最终生产 Swift 下载代码实际下载官方 v0.6.18 的 Mac 0.1.6 ZIP：25,757,097 字节，744 次进度回调，从 0 到 100%。独立 SHA256 为 `fd9ba13d8eaeef68ffc3f8cfa0a775666816fdcc681a4d62c3d257da726f71a9`，与 GitHub 官方摘要一致。仅验证下载，未打开或安装旧版。
 
-Windows 原生构建、进度窗口截图、安装及卸载仍以对应 CI 回执为准。原生合成进度截图不等于真实 Windows 网络下载或所有用户系统的人工验收。
+## Windows 构建与交付
+
+[Windows CI 39225291719](https://github.com/NingCui29/story-skill/actions/runs/39225291719) 以精确实现提交 `995203c5f84e590383be4f43e8753059bef8082b` 构建，已成功完成独立应用、Inno 安装程序、Unicode／空格路径安装、内置运行时与作品备份恢复、原生窗口、正常停止隔离书架、卸载和产物上传。
+
+- desktop 119 项，107 通过、12 个平台条件跳过；book 31 项，29 通过、2 个条件跳过。
+- 原生回执 `client_version=0.1.3`、`update_progress_verified=true`、`update_progress_synthetic=true`。截图可见 60%、6.0 MiB／10.0 MiB、1.0 MiB／秒及预计剩余 4 秒，且明确标为界面验证的合成数据。
+- [安装包 artifact](https://github.com/NingCui29/story-skill/actions/runs/39225291719/artifacts/12173886231)与[便携包 artifact](https://github.com/NingCui29/story-skill/actions/runs/39225291719/artifacts/12173936183)需登录 GitHub，预计到期时间为 2027-01-17 08:47:30 UTC。
+
+原生合成进度截图不等于真实 Windows 网络下载或所有用户系统的人工验收。只回读并核验了小体积 JSON、PNG 和 SHA 证据，未将大型 EXE／便携包下载到 Mac。
 
 ## 后续范围
 
