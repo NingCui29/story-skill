@@ -2,6 +2,12 @@ name: Build Windows desktop candidate
 
 on:
   workflow_dispatch:
+    inputs:
+      draft_release_id:
+        description: 'Existing v0.6.19 draft release ID; 0 disables all release uploads'
+        required: false
+        default: '0'
+        type: string
   push:
     branches:
       - 'codex/desktop-installers*'
@@ -28,6 +34,8 @@ jobs:
           python -I -B tests/desktop_payload_probe.py --scripts skills/story-skill/scripts --area "$env:RUNNER_TEMP\source-payload-safety" --report "$env:RUNNER_TEMP\source-runtime-safety.json"
           if ($LASTEXITCODE -ne 0) { throw "Source runtime safety probe failed" }
       - run: python -m pip install -r desktop/windows/requirements-build.txt
+      - name: Test draft publishing safety
+        run: python -B -X utf8 -m unittest discover -s tests -p test_publish_windows_draft.py -v
       - name: Test desktop launcher and Windows paths
         run: python -B -X utf8 -m unittest discover -s tests -p test_desktop*.py -v
       - name: Test book management and native recycle bridge
@@ -72,6 +80,8 @@ jobs:
             & "$destination\runtime\python.exe" -I -B "$destination\Scripts\story.py" workbench-library-stop --state-dir "$state" --saved
             if ($LASTEXITCODE -ne 0) { throw "Isolated bookshelf cleanup failed" }
           }
+          python -B -X utf8 scripts/publish_windows_draft.py --artifact-root dist --verify-only --installed-root "$destination" --receipt dist/windows-distribution-verification.json
+          if ($LASTEXITCODE -ne 0) { throw "Full Windows distribution verification failed" }
           $uninstall = Start-Process -FilePath "$destination\unins000.exe" -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -Wait -PassThru
           if ($uninstall.ExitCode -ne 0) { throw "Uninstaller failed" }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -93,3 +103,58 @@ jobs:
             dist/story-workbench-windows-x86_64.zip
             dist/story-workbench-windows-x86_64.zip.sha256
           if-no-files-found: error
+      - name: Preserve standalone distribution verification
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: story-workbench-0.1.9-windows-x86_64-verification
+          path: |
+            dist/windows-distribution-verification.json
+            dist/windows-build-manifest.json
+            dist/windows-native-smoke.json
+            dist/windows-runtime-safety.json
+            dist/windows-native-smoke*.png
+          if-no-files-found: error
+
+  publish-draft:
+    needs: windows
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.repository == 'NingCui29/story-skill' &&
+      fromJSON(inputs.draft_release_id) > 0
+    runs-on: windows-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - name: Download this run's verified Windows artifacts
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.9-windows-x86_64-installer --dir downloaded/installer
+          if ($LASTEXITCODE -ne 0) { throw "Installer artifact download failed" }
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.9-windows-x86_64-portable --dir downloaded/portable
+          if ($LASTEXITCODE -ne 0) { throw "Portable artifact download failed" }
+      - name: Upload only to the specified matching draft
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DRAFT_RELEASE_ID: ${{ inputs.draft_release_id }}
+        run: |
+          python -B -X utf8 scripts/publish_windows_draft.py --artifact-root downloaded --release-id "$env:DRAFT_RELEASE_ID" --receipt windows-draft-upload.json
+          if ($LASTEXITCODE -ne 0) { throw "Verified draft asset upload failed" }
+      - name: Preserve draft upload receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: story-workbench-0.1.9-windows-draft-upload
+          path: windows-draft-upload.json
+          if-no-files-found: warn

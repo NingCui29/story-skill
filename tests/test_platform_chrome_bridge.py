@@ -820,5 +820,180 @@ class BridgeRenameSharingRetryTests(unittest.TestCase):
         lease.assert_called_once()
 
 
+class BridgePinEnterRetryTests(unittest.TestCase):
+    """Acquisition retries never repeat a caller's body or context exit."""
+
+    def setUp(self):
+        self.path = Path("bridge-pin-fixture")
+        self.directory = SimpleNamespace(path=self.path, fd=None)
+        self.elapsed = 0.0
+        self.sleeps = []
+        self.active = set()
+        self.events = []
+
+    @staticmethod
+    def sharing_error(code=32):
+        error = PermissionError("injected native pin sharing refusal")
+        error.winerror = code
+        return error
+
+    def sleep(self, seconds):
+        self.assertGreater(seconds, 0)
+        self.sleeps.append(seconds)
+        self.elapsed += seconds
+
+    @contextmanager
+    def environment(self, factory, platform="nt"):
+        clock = SimpleNamespace(monotonic=lambda: self.elapsed, sleep=self.sleep)
+        with patch.object(bridge, "os", SimpleNamespace(name=platform)), \
+                patch.object(bridge, "time", clock), \
+                patch.object(bridge.api, "_pinned_directory", side_effect=factory) as pin:
+            yield pin
+
+    def context_factory(self, errors=(), *, always=None, exit_error=None):
+        errors = list(errors)
+        @contextmanager
+        def acquire(path, *, create=False):
+            self.assertEqual(path, self.path)
+            self.assertEqual(self.active, set(), "A failed attempt retained its native pin")
+            attempt = len([event for event in self.events if event[0] == "enter"])
+            self.events.append(("enter", create))
+            self.active.add(attempt)
+            try:
+                error = errors[attempt] if attempt < len(errors) else always
+                if error is not None:
+                    raise error
+                yield self.directory
+            finally:
+                self.active.remove(attempt)
+                self.events.append(("exit", attempt))
+                if exit_error is not None:
+                    raise exit_error
+        return acquire
+
+    def reset_attempts(self):
+        self.elapsed, self.sleeps, self.events, self.active = 0.0, [], [], set()
+
+    def test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit(self):
+        for code in (32, 33):
+            with self.subTest(winerror=code):
+                self.reset_attempts()
+                body = Mock()
+                factory = self.context_factory([self.sharing_error(code)])
+                with self.environment(factory) as pin:
+                    with bridge._pinned(self.path) as directory:
+                        self.assertIs(directory, self.directory)
+                        body()
+                        self.assertEqual(len(self.active), 1)
+                self.assertEqual(pin.call_count, 2)
+                body.assert_called_once_with()
+                self.assertEqual([event[0] for event in self.events], ["enter", "exit", "enter", "exit"])
+                self.assertEqual(self.active, set())
+                self.assertTrue(self.sleeps)
+
+    def test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body(self):
+        for code in (32, 33):
+            with self.subTest(winerror=code):
+                self.reset_attempts()
+                error = self.sharing_error(code)
+                body = Mock()
+                with self.environment(self.context_factory(always=error)) as pin:
+                    with self.assertRaises(PermissionError) as raised:
+                        with bridge._pinned(self.path):
+                            body()
+                self.assertIs(raised.exception, error)
+                self.assertGreater(pin.call_count, 1)
+                self.assertLess(pin.call_count, 200)
+                body.assert_not_called()
+                self.assertGreaterEqual(self.elapsed, .99)
+                self.assertLessEqual(self.elapsed, 1.01)
+                self.assertEqual(self.active, set())
+
+    def test_other_errors_and_posix_sharing_errors_do_not_retry(self):
+        for platform, code in (("nt", 5), ("nt", None), ("posix", 32), ("posix", 33)):
+            with self.subTest(platform=platform, winerror=code):
+                self.reset_attempts()
+                error = PermissionError("unrelated native refusal")
+                if code is not None:
+                    error.winerror = code
+                body = Mock()
+                with self.environment(self.context_factory(always=error), platform) as pin:
+                    with self.assertRaises(PermissionError) as raised:
+                        with bridge._pinned(self.path):
+                            body()
+                self.assertIs(raised.exception, error)
+                pin.assert_called_once_with(self.path, create=False)
+                body.assert_not_called()
+                self.assertEqual(self.sleeps, [])
+                self.assertEqual(self.active, set())
+
+    def test_body_sharing_error_is_propagated_without_reentering_or_replaying(self):
+        for code in (32, 33):
+            with self.subTest(winerror=code):
+                self.reset_attempts()
+                error = self.sharing_error(code)
+                body = Mock(side_effect=error)
+                with self.environment(self.context_factory()) as pin:
+                    with self.assertRaises(PermissionError) as raised:
+                        with bridge._pinned(self.path):
+                            body()
+                self.assertIs(raised.exception, error)
+                pin.assert_called_once_with(self.path, create=False)
+                body.assert_called_once_with()
+                self.assertEqual([event[0] for event in self.events], ["enter", "exit"])
+                self.assertEqual(self.sleeps, [])
+                self.assertEqual(self.active, set())
+
+    def test_exit_sharing_error_is_propagated_without_reentering_or_replaying(self):
+        for code in (32, 33):
+            with self.subTest(winerror=code):
+                self.reset_attempts()
+                error = self.sharing_error(code)
+                body = Mock()
+                with self.environment(self.context_factory(exit_error=error)) as pin:
+                    with self.assertRaises(PermissionError) as raised:
+                        with bridge._pinned(self.path):
+                            body()
+                self.assertIs(raised.exception, error)
+                pin.assert_called_once_with(self.path, create=False)
+                body.assert_called_once_with()
+                self.assertEqual([event[0] for event in self.events], ["enter", "exit"])
+                self.assertEqual(self.sleeps, [])
+                self.assertEqual(self.active, set())
+
+    def test_partial_create_enter_cleans_resources_before_idempotent_retry(self):
+        with tempfile.TemporaryDirectory(prefix="bridge-pin-create-") as area:
+            self.path = Path(area) / "new-session"
+            handles, creations = [], []
+            @contextmanager
+            def acquire(path, *, create=False):
+                self.assertTrue(create)
+                self.assertTrue(all(handle.closed for handle in handles))
+                path.mkdir(exist_ok=True)
+                marker = path / "authorized-before-conflict"
+                if not marker.exists():
+                    marker.write_bytes(b"must survive retry")
+                handle = (path / "native-handle-fixture").open("ab")
+                handles.append(handle)
+                creations.append(path)
+                try:
+                    if len(handles) == 1:
+                        raise self.sharing_error()
+                    self.assertEqual(marker.read_bytes(), b"must survive retry")
+                    yield SimpleNamespace(path=path, fd=None)
+                finally:
+                    handle.close()
+            body = Mock()
+            with self.environment(acquire) as pin:
+                with bridge._pinned(self.path, create=True) as directory:
+                    self.assertEqual(directory.path, self.path)
+                    body()
+            self.assertEqual(pin.call_count, 2)
+            self.assertEqual(creations, [self.path, self.path])
+            self.assertTrue(all(handle.closed for handle in handles))
+            self.assertEqual((self.path / "authorized-before-conflict").read_bytes(), b"must survive retry")
+            body.assert_called_once_with()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -3,7 +3,7 @@
 This transport never starts a browser, connects CDP, or reads browser profiles.
 The host explicitly attaches a private handle and claims each operation once.
 """
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from copy import deepcopy
 from datetime import datetime, timezone
 import hashlib
@@ -85,6 +85,27 @@ def validate_profile(profile):
 
 
 @contextmanager
+def _pinned(path, *, create=False):
+    """Wait briefly for another Windows process to finish entering its pin.
+
+    Failed native enters release their own handles. Only that acquisition is
+    retried; the protected operation and context exit are each run once.
+    """
+    with ExitStack() as stack:
+        deadline = time.monotonic() + 1.0
+        while True:
+            try:
+                directory = stack.enter_context(api._pinned_directory(path, create=create))
+                break
+            except OSError as error:
+                if (os.name != "nt" or getattr(error, "winerror", None) not in (32, 33) or
+                        time.monotonic() >= deadline):
+                    raise
+                time.sleep(.01)
+        yield directory
+
+
+@contextmanager
 def _directory(root, session_id=None, create=False):
     relative = DIRECTORY + ("/" + _id(session_id) if session_id else "")
     path = api.safe_path(Path(root), relative)
@@ -92,7 +113,7 @@ def _directory(root, session_id=None, create=False):
     # child guard is installed. Serialize *before* acquiring any such pin so
     # another bridge thread cannot pin a writer's parent while waiting for the
     # session lock. Native path guards and the cross-process lock stay intact.
-    with _LOCAL_LOCK, api._pinned_directory(path, create=create) as directory:
+    with _LOCAL_LOCK, _pinned(path, create=create) as directory:
         if create:
             if os.name == "nt":
                 os.chmod(directory.path, 0o700)
@@ -227,7 +248,7 @@ def _lock(directory):
 
 def _external(path, *, create_value=None):
     path = Path(path).expanduser().absolute()
-    with _LOCAL_LOCK, api._pinned_directory(path.parent) as directory:
+    with _LOCAL_LOCK, _pinned(path.parent) as directory:
         if create_value is not None:
             _write(directory, path.name, create_value)
             return None
