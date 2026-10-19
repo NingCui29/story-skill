@@ -247,7 +247,9 @@ def create_archive(root, output_path, expected_book_id=None):
             if len(payload) > MAX_MANIFEST_BYTES:
                 _fail('limit', '备份清单超过上限。')
             archive.writestr(MANIFEST_NAME, payload)
-        with staged.open('rb') as completed:
+        # FlushFileBuffers/_commit on Windows requires a writable handle. This
+        # is our unpublished stage, opened without truncating its verified ZIP.
+        with staged.open('r+b') as completed:
             os.fsync(completed.fileno())
         # Inspect the exact stage before publication; no success on an invalid
         # archive and no replacing a competing backup with the same filename.
