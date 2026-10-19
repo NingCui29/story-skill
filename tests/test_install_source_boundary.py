@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("source_boundary_installer", ROOT / "scripts/install.py")
 installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
+CURRENT_VERSION = installer.runtime_version((ROOT / "skills/story-skill/scripts/story.py").read_bytes())
 
 
 def fixture_suite(source):
@@ -16,7 +17,7 @@ def fixture_suite(source):
         path = source / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(("fixture: " + relative + "\n").encode("utf-8"))
-    (source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.18"\n')
+    (source / "story-skill/scripts/story.py").write_bytes(f'VERSION = "{CURRENT_VERSION}"\n'.encode())
 
 
 def tree_snapshot(root):

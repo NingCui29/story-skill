@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("antigravity_installer", ROOT / "scripts/install.py")
 installer = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(installer)
+CURRENT_VERSION = installer.runtime_version((ROOT / "skills/story-skill/scripts/story.py").read_bytes())
 
 HOST_PATHS = {
     ("antigravity", "project"): ".agents/skills",
@@ -30,7 +31,7 @@ class AntigravityInstallTests(unittest.TestCase):
             path = self.source / relative
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(("fixture: " + relative + "\n").encode("utf-8"))
-        (self.source / "story-skill/scripts/story.py").write_bytes(b'VERSION = "0.6.18"\n')
+        (self.source / "story-skill/scripts/story.py").write_bytes(f'VERSION = "{CURRENT_VERSION}"\n'.encode())
         self.project = self.root / "中文项目"
         self.project.mkdir()
         self.user_home = self.root / "fake-home"
