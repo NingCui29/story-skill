@@ -244,7 +244,10 @@ def create_archive(root, output_path, expected_book_id=None):
                 _fail('exists', '备份文件名已被另一操作使用，请使用新文件名。')
             if api._bound_exists(source):
                 api._bound_unlink(source)
-        digest, size = _read_file(output_path.parent, output_path.name)
+        with api._bound_reader(target) as completed:
+            # A whole archive may exceed the per-book-file ceiling. Account
+            # for bounded manifest and ZIP header/path overhead separately.
+            digest, size = _hash_stream(completed, maximum=MAX_TOTAL_BYTES + MAX_MANIFEST_BYTES + MAX_FILES * 16384)
         return {**inspected, 'ok': True, 'path': str(output_path), 'sha256': digest,
                 'archive_bytes': size, 'note': '备份包含已落盘的书稿和状态；未保存页面文字及关联目录须另行保存。'}
 
