@@ -14,12 +14,14 @@
     "services_stopped": false
   },
   "activation": {
-    "status": "awaiting_macos_downloads_folder_permission",
-    "documents_permission_allowed": true,
-    "downloads_permission_pending": true,
-    "running_service_version_verified": false,
+    "status": "active_and_verified",
+    "version": "0.1.14",
+    "build": "15",
+    "shelf_outdated": false,
+    "live_five_fixes_verified": true,
     "book_services_preserved": 6,
     "registry_unchanged": true,
-    "forced_termination": false
+    "forced_termination": false,
+    "macos_permission_resolved": true
   }
 }
