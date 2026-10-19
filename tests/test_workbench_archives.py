@@ -333,6 +333,75 @@ class WorkbenchArchivesTests(unittest.TestCase):
         self.assertEqual(verified['book_id'], self.book_id)
         self.assertEqual(result['sha256'], hashlib.sha256(self.output.read_bytes()).hexdigest())
 
+    @contextmanager
+    def archive_fstat_ctime(self, change_after_first=False):
+        """Emulate Windows fstat ChangeTime differing from lstat birthtime."""
+        original = os.fstat
+        calls = []
+
+        class StatView:
+            def __init__(self, actual, ctime):
+                self.actual, self.st_ctime_ns = actual, ctime
+
+            def __getattr__(self, name):
+                return getattr(self.actual, name)
+
+        class ArchiveOS:
+            def __getattr__(self, name):
+                return getattr(os, name)
+
+            def fstat(self, fd):
+                value = original(fd)
+                calls.append(fd)
+                offset = 2000 if change_after_first and len(calls) > 1 else 1000
+                return StatView(value, value.st_ctime_ns + offset)
+
+        with patch.object(self.archives, 'os', ArchiveOS()):
+            yield calls
+
+    def test_archive_path_and_handle_can_have_different_stable_ctime_semantics(self):
+        self.archive()
+        with self.archive_fstat_ctime() as calls:
+            result = self.archives.inspect_archive(self.output)
+        self.assertEqual(result['book_id'], self.book_id)
+        self.assertGreater(len(calls), 1)
+
+    def test_archive_handle_ctime_change_is_still_rejected(self):
+        self.archive()
+        with self.archive_fstat_ctime(change_after_first=True):
+            with self.assertRaises(base.story.StoryError) as caught:
+                self.archives.inspect_archive(self.output)
+        self.assertEqual(caught.exception.code, 'archive_changed')
+        details = caught.exception.details
+        self.assertEqual(details['opened_handle'][:4], details['current_handle'][:4])
+        self.assertNotEqual(details['opened_handle'][4], details['current_handle'][4])
+
+    def test_archive_named_path_ctime_change_is_still_rejected(self):
+        self.archive()
+        original = self.archives.api.publish._bound_stat
+        calls = []
+
+        class ChangedStat:
+            def __init__(self, actual):
+                self.actual = actual
+                self.st_ctime_ns = actual.st_ctime_ns + 1
+
+            def __getattr__(self, name):
+                return getattr(self.actual, name)
+
+        def path_stat(file, *args, **kwargs):
+            value = original(file, *args, **kwargs)
+            calls.append(str(file))
+            return ChangedStat(value) if len(calls) > 1 else value
+
+        with self.archive_fstat_ctime(), patch.object(self.archives.api.publish, '_bound_stat', side_effect=path_stat):
+            with self.assertRaises(base.story.StoryError) as caught:
+                self.archives.inspect_archive(self.output)
+        self.assertEqual(caught.exception.code, 'archive_changed')
+        details = caught.exception.details
+        self.assertEqual(details['expected_path'][:4], details['current_path'][:4])
+        self.assertNotEqual(details['expected_path'][4], details['current_path'][4])
+
     def test_zeroed_direntry_metadata_still_rejects_actual_hardlinks(self):
         linked = self.root / '正文硬链接.md'
         os.link(self.root / '正文.md', linked)
