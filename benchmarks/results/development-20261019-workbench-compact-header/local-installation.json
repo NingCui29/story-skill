@@ -1,0 +1,27 @@
+{
+  "replacement": {
+    "status": "installed_and_verified",
+    "old_version": "0.1.11",
+    "new_version": "0.1.12",
+    "build": "13",
+    "runtime": "0.6.19",
+    "runtime_modules": 11,
+    "backup_verified": true,
+    "installed_bytes_equal": true,
+    "signature_verified": true,
+    "isolated_cli_verified": true,
+    "client_restarted": false,
+    "services_stopped": false
+  },
+  "activation": {
+    "version": "0.1.12",
+    "build": "13",
+    "shelf_outdated": false,
+    "live_compact_header": true,
+    "visible_title_removed": true,
+    "sky_blue_preserved": true,
+    "book_services_preserved": 6,
+    "registry_unchanged": true,
+    "forced_termination": false
+  }
+}

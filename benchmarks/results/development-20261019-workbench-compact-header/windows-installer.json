@@ -1,0 +1,119 @@
+{
+  "client_version": "0.1.6",
+  "source_commit": "c1486a598b732a0cf334d88edf3ec01cecefaaea",
+  "branch": "codex/desktop-installers-interface-20261019",
+  "run": {
+    "id": 39238341811,
+    "url": "https://github.com/NingCui29/story-skill/actions/runs/39238341811",
+    "conclusion": "success",
+    "job_id": 118012809154,
+    "job_url": "https://github.com/NingCui29/story-skill/actions/runs/39238341811/job/118012809154"
+  },
+  "steps": {
+    "source_payload_probe": "success",
+    "desktop_launcher_and_windows_paths": "success",
+    "book_management_and_native_recycle_bridge": "success",
+    "build_standalone": "success",
+    "build_installer": "success",
+    "installation_native_window_and_uninstall": "success",
+    "artifact_upload": "success"
+  },
+  "artifacts": [
+    {
+      "kind": "installer",
+      "id": 12180511481,
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39238341811/artifacts/12180511481",
+      "size_in_bytes": 182952754,
+      "expired": false,
+      "expires_at": "2027-01-17T10:33:50Z",
+      "outer_artifact_zip_digest": "sha256:b224633e03da9b030061c92f3ee76d85345c6abd023c7ea78c629b3a30063dcf"
+    },
+    {
+      "kind": "portable",
+      "id": 12180616063,
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39238341811/artifacts/12180616063",
+      "size_in_bytes": 257847110,
+      "expired": false,
+      "expires_at": "2027-01-17T10:33:50Z",
+      "outer_artifact_zip_digest": "sha256:d9c52cc042e50161d192b070b6b833dbd18f9b0e15fb35937abc7fffa0df2c89"
+    }
+  ],
+  "native_smoke": {
+    "ok": true,
+    "native_window": true,
+    "shelf_rendered": true,
+    "title": "写作书架",
+    "captured": true,
+    "client_version": "0.1.6",
+    "update_check_available": true,
+    "update_progress_verified": true,
+    "update_progress_synthetic": true,
+    "themes_verified": true,
+    "theme_captures": {
+      "light": true,
+      "dark": true
+    }
+  },
+  "runtime_safety": {
+    "ok": true,
+    "platform": "win32",
+    "story_version": "0.6.19",
+    "isolated_payload": true,
+    "created_and_registered": true,
+    "backup_verified": true,
+    "restore_identity_preserved": true,
+    "candidate_and_binary_preserved": true,
+    "sqlite_integrity_verified": true,
+    "missing_trash_path_refused": true,
+    "native_trash_bridge_checked": true,
+    "existing_book_files_recycled": false
+  },
+  "ci_companion_checksums": {
+    "installer_exe_sha256": "656096bd8ebb08befca810a99af11829f82b4ca352f8dd7bb9b45a9aa283a7f6",
+    "portable_zip_sha256": "d229b7b0ae8937545ac7011a58b8b6de051e27c97d2f4a183be34994fd55bce2"
+  },
+  "download": {
+    "method": "Signed Range reads of ZIP central directory and selected entries only",
+    "crc_verified": true,
+    "exe_downloaded": false,
+    "portable_zip_payload_downloaded": false,
+    "api_credentials_in_output": false
+  },
+  "files": [
+    {
+      "name": "story-workbench-0.1.6-windows-x86_64-setup.exe.sha256",
+      "size_in_bytes": 114,
+      "sha256": "0cf189695addebfc5c349258506794afc16b91842be7d8d0053e04dee59f00bb"
+    },
+    {
+      "name": "story-workbench-windows-x86_64.zip.sha256",
+      "size_in_bytes": 102,
+      "sha256": "6b8918ba8418cdb333c053df16ebdc3e79a977526951f611f49ca5dfa33af9fb"
+    },
+    {
+      "name": "windows-native-smoke-dark.png",
+      "size_in_bytes": 29990,
+      "sha256": "70570592dcd3a11f340399a4e25ebc100b8fef06ebeebdd3830e6e1e4890927c"
+    },
+    {
+      "name": "windows-native-smoke-light.png",
+      "size_in_bytes": 28141,
+      "sha256": "d8adacdc06b7320d40149d4a438e890ed549f79737e759c8fd47c243353825d4"
+    },
+    {
+      "name": "windows-native-smoke.json",
+      "size_in_bytes": 304,
+      "sha256": "bd34149ce9b04bd9e3946dd6ca985359a2d58b3716b4126038920cb29421beae"
+    },
+    {
+      "name": "windows-native-smoke.png",
+      "size_in_bytes": 28141,
+      "sha256": "d8adacdc06b7320d40149d4a438e890ed549f79737e759c8fd47c243353825d4"
+    },
+    {
+      "name": "windows-runtime-safety.json",
+      "size_in_bytes": 407,
+      "sha256": "1b3850b958b701e1d9a17f2e8a432200a00ef900c4abc8a83cb83199b8784fe2"
+    }
+  ]
+}
