@@ -1,0 +1,9 @@
+{
+  "count": 604,
+  "failures": 0,
+  "errors": 0,
+  "skips": 2,
+  "seconds": 117.35,
+  "passed": true,
+  "skipped_reason": "Two Windows Shell tests require Windows; covered by Windows installer CI."
+}

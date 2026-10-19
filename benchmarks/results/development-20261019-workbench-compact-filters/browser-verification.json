@@ -1,0 +1,28 @@
+{
+  "synthetic_only": true,
+  "measurements": [
+    {
+      "viewport_width": 1280,
+      "document_width": 1280,
+      "toolbar_height": 59.09375,
+      "rows": 1
+    },
+    {
+      "viewport_width": 1024,
+      "document_width": 1024,
+      "toolbar_height": 59.09375,
+      "rows": 1
+    },
+    {
+      "viewport_width": 390,
+      "document_width": 390,
+      "toolbar_height": 135.09375,
+      "rows": 3
+    }
+  ],
+  "default_summary_hidden": true,
+  "search_empty_state_verified": true,
+  "clear_search_verified": true,
+  "type_status_sort_combination_verified": true,
+  "temporary_viewport_reset": true
+}

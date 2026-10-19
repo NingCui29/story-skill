@@ -1,0 +1,9 @@
+{
+  "heading_is_unique_sr_only_h1": true,
+  "actions_inside_header": true,
+  "dialog_id_unique": true,
+  "windows_actual_close_script_shelf_state": {
+    "kind": "shelf",
+    "documents": []
+  }
+}

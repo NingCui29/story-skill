@@ -1,0 +1,33 @@
+{
+  "synthetic_only": true,
+  "analysis_after_completed": {
+    "visible_cards": 1,
+    "status": "all",
+    "status_disabled": true,
+    "clear_filters_visible": true
+  },
+  "menus": {
+    "topbar_mutual_exclusion": true,
+    "outside_click_closes": true,
+    "escape_closes_and_returns_summary_focus": true,
+    "dialog_closes_menus": true
+  },
+  "refresh_error": {
+    "failed_owned_error_count": 1,
+    "successful_owned_error_count": 0,
+    "successful_message": "",
+    "successful_cards": 6
+  },
+  "backup": {
+    "actually_created_and_verified": true,
+    "files": 19,
+    "sha256": "d7cd5c83b046c560e26465a1b5b71d6e4d9902ddc95f9d6ab6d70aadff666dd6",
+    "fixture_latency_seconds": 6,
+    "running_aria_busy": true,
+    "progress_indeterminate": true,
+    "completed_elapsed_seconds": 6,
+    "completed_state": "success",
+    "completed_controls_restored": true
+  },
+  "return_refresh_verification": "Event and pending-response behavior tested with deferred JS fixtures; native shelf-only injection tested using real extracted Swift and Python methods. Desktop UI switching not manually driven."
+}

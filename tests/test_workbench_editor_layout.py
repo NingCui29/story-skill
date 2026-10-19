@@ -2,6 +2,7 @@
 import base64
 import hashlib
 from html.parser import HTMLParser
+from pathlib import Path
 import re
 import shutil
 import subprocess
@@ -108,6 +109,61 @@ let active='formal:1';
         self.assertEqual(len(self.tree.ids), len(set(self.tree.ids)))
         self.assertTrue(set(required).issubset(self.tree.nodes))
 
+    def test_theme_control_is_visible_in_header_without_opening_a_menu(self):
+        control = self.tree.nodes['workbench-theme']
+        self.assertTrue(any(node['tag'] == 'header' for node in control['parents']))
+        self.assertFalse(any(node['tag'] == 'details' for node in control['parents']))
+        self.assertFalse(self.tree.beneath('workbench-theme', 'maintenance'))
+        self.assertEqual(control['attrs']['aria-label'], '工作台外观')
+        self.assertEqual(self.tree.ids.count('workbench-theme'), 1)
+
+    def test_version_navigation_is_folded_but_live_save_state_stays_visible(self):
+        self.assertEqual(self.tree.nodes['document-options']['tag'], 'details')
+        self.assertNotIn('open', self.tree.nodes['document-options']['attrs'])
+        self.assertTrue(self.tree.beneath('chapter-version', 'document-options'))
+        for identity in ('state', 'document-role', 'document-unsaved', 'save', 'text'):
+            self.assertFalse(self.tree.beneath(identity, 'document-options'), identity)
+        self.assertIn('<p id="message" role="status"></p>', self.page)
+
+    def test_refresh_is_one_visible_settings_action_and_locate_remains_available(self):
+        self.assertTrue(self.tree.beneath('refresh', 'maintenance'))
+        self.assertIn('hidden', self.tree.nodes['refresh-compact']['attrs'])
+        self.assertNotIn('hidden', self.tree.nodes['refresh']['attrs'])
+        self.assertTrue(self.tree.beneath('locate', 'book-nav'))
+        folded = [parent for parent in self.tree.nodes['locate']['parents'] if parent['tag'] == 'details']
+        self.assertEqual(len(folded), 1)
+        self.assertNotIn('open', folded[0]['attrs'])
+        self.assertIn('<summary>查找与定位</summary>', self.page)
+        for identity in ('newer', 'older'):
+            self.assertIn('disabled', self.tree.nodes[identity]['attrs'])
+
+    def test_native_compatibility_and_new_page_share_visual_rules(self):
+        asset = (Path(__file__).resolve().parents[1] / 'desktop/macos/editor-appearance.js').read_text()
+        css = asset.split('style.textContent = `\n', 1)[1].split('\n`;', 1)[0]
+        self.assertIn(css, self.page)
+        self.assertIn('<body class="native-compact-editor">', self.page)
+
+    def test_primary_action_and_small_text_have_readable_sky_blue_palettes(self):
+        def luminance(color):
+            values = [int(color[index:index + 2], 16) / 255 for index in (1, 3, 5)]
+            values = [value / 12.92 if value <= .04045 else ((value + .055) / 1.055) ** 2.4
+                      for value in values]
+            return sum(value * weight for value, weight in zip(values, (.2126, .7152, .0722)))
+
+        # The light root and explicit dark root each supply the effective tokens.
+        css = self.w._workbench_theme_css()
+        for selector in ('html[data-story-workbench]', 'html[data-story-workbench][data-theme="dark"]'):
+            tokens = dict(re.findall(r'(--[a-z-]+):([^;}]+)', css.split(selector + '{', 1)[1].split('}', 1)[0]))
+            self.assertEqual(tokens['--wb-button'], '#38bdf8')
+            self.assertEqual(tokens['--wb-button-ink'], '#082f49')
+            for front, back in (('--wb-button-ink', '--wb-button'), ('--muted', '--surface'),
+                                ('--muted', '--paper'), ('--muted', '--wb-panel'),
+                                ('--muted', '--wb-tint'), ('--muted', '--wb-hover')):
+                def expanded(value):
+                    return '#' + ''.join(c * 2 for c in value[1:]) if len(value) == 4 else value
+                light, dark = sorted((luminance(expanded(tokens[front])), luminance(expanded(tokens[back]))))
+                self.assertGreaterEqual((dark + .05) / (light + .05), 4.5, (selector, front, back))
+
     def test_manuscript_identity_versions_and_saving_stay_in_document_area(self):
         for identity in ('document-role', 'document-unsaved', 'chapter-version', 'save',
                          'edit', 'compare', 'text', 'prose', 'download', 'history-note'):
@@ -144,8 +200,10 @@ let currentCatalog,viewMode='files';const showChapterInfo=()=>{},updateChapterPi
 const before=JSON.stringify([...docs]);
 drawCatalog({book_root:'/当前/作品',files:[],material_roots:['/材料目录'],workspace:{title:'当前作品',kind:'long',formal_total:38,planned_total:52,next_chapter:39,captured_at:'2026-10-06T00:00:00Z'}},new Map());
 const progress=$('book-progress').textContent;
-assert.ok(progress.includes('正式 38 章'));assert.ok(progress.includes('已规划 52 章'));assert.ok(progress.includes('第39章'));
-assert.equal($('book-progress').title,progress);assert.equal($('book-progress-detail').textContent,progress);
+assert.equal(progress,'正式 38 章 · 下一章 第39章');
+const detail=$('book-progress-detail').textContent;assert.ok(detail.includes('已规划 52 章'));assert.ok(detail.includes('刷新于 '));assert.equal($('book-progress').title,detail);
+drawCatalog({book_root:'/当前/作品',files:[],material_roots:['/材料目录'],workspace:{title:'当前作品',kind:'long',formal_total:38,planned_total:80,next_chapter:39,captured_at:'2026-10-06T00:05:00Z'}},new Map());
+assert.equal($('book-progress').textContent,progress);assert.ok($('book-progress-detail').textContent.includes('已规划 80 章'));assert.notEqual($('book-progress-detail').textContent,detail);
 assert.ok($('root-hint').textContent.includes('/材料目录'));
 assert.equal(JSON.stringify([...docs]),before);assert.equal(active,'formal:1');
 """)

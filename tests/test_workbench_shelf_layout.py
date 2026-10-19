@@ -54,7 +54,7 @@ const labels=()=>$('books').children.map(row=>row.children[0].textContent);
     def test_search_applies_inside_current_type_without_changing_counts_or_sort(self):
         self.js(r"""
 render({books});changeSort('oldest');$('filter-long').onclick();query('修仙');
-assert.equal($('books').children.length,0);assert.ok($('books').textContent.includes('当前分类中没有'));assert.equal($('search-empty').hidden,false);assert.equal($('filter-all').textContent,'全部 4');assert.equal($('total-count').textContent,'4');assert.equal($('filter-long').textContent,'长篇 1');assert.equal(shelfSort,'oldest');
+assert.equal($('books').children.length,0);assert.ok($('books').textContent.includes('当前分类中没有'));assert.equal($('search-empty').hidden,false);assert.equal($('filter-all').textContent,'全部 4');assert.equal($('filter-long').textContent,'长篇 1');assert.equal(shelfSort,'oldest');
 $('filter-short').onclick();assert.equal(shelfQuery,'修仙');assert.equal($('books').children.length,1);assert.ok(labels()[0].includes('短篇'));assert.equal($('search-empty').hidden,true);
 $('empty-clear').onclick();assert.equal(shelfQuery,'');assert.equal(shelfFilter,'short');assert.equal(shelfSort,'oldest');assert.equal($('shelf-search').focused,true);assert.equal($('clear-search').hidden,true);assert.equal($('books').children.length,1);
 """)
@@ -63,7 +63,7 @@ $('empty-clear').onclick();assert.equal(shelfQuery,'');assert.equal(shelfFilter,
         self.js(r"""
 render({books});$('filter-long').onclick();changeSort('oldest');query('灯下');
 response={books:[...books,{title:'灯下第二部',kind:'long',root:'/新增',available:true,key:'new',updated_at:'2026-10-06T00:00:00Z',updated_at_verified:true}]};await refresh();
-assert.equal(shelfQuery,'灯下');assert.equal($('shelf-search').value,'灯下');assert.equal(shelfFilter,'long');assert.equal(shelfSort,'oldest');assert.equal($('books').children.length,2);assert.ok(labels()[0].includes('灯下的都市'));assert.ok(labels()[1].includes('灯下第二部'));assert.equal($('filter-all').textContent,'全部 5');assert.equal($('total-count').textContent,'5');assert.ok($('filter-summary').textContent.includes('长篇 · 2 部'));assert.ok($('filter-summary').textContent.includes('搜索“灯下”'));
+assert.equal(shelfQuery,'灯下');assert.equal($('shelf-search').value,'灯下');assert.equal(shelfFilter,'long');assert.equal(shelfSort,'oldest');assert.equal($('books').children.length,2);assert.ok(labels()[0].includes('灯下的都市'));assert.ok(labels()[1].includes('灯下第二部'));assert.equal($('filter-all').textContent,'全部 5');assert.ok($('filter-summary').textContent.includes('长篇 · 2 部'));assert.ok($('filter-summary').textContent.includes('搜索“灯下”'));
 """)
 
     def test_search_normalizes_case_width_and_matches_all_terms_from_evidenced_tags(self):
@@ -100,12 +100,70 @@ const open=$('books').children[0].children.find(node=>node.tag==='button');asser
     def test_layout_exposes_native_compatible_accessible_responsive_controls(self):
         for marker in ('id="shelf-intro"', 'id="shelf-footer"', 'id="add-book-panel"', 'id="book-path"', 'id="add"', 'id="refresh"', 'id="shelf-search" type="search"', 'for="shelf-search"', 'id="filter-summary" role="status"'):
             self.assertIn(marker, self.page)
+        for identifier in ('new-book', 'add-book-panel', 'book-path', 'add',
+                           'restore-backup', 'recovery-center', 'last-books',
+                           'book-manager', 'workbench-theme'):
+            self.assertEqual(self.page.count('id="' + identifier + '"'), 1)
+        self.assertLess(self.page.index('id="new-book"'), self.page.index('id="add-book-panel"'))
+        self.assertIn('role="search" aria-label="查找书架作品"', self.page)
         self.assertIn('grid-template-columns:repeat(3,minmax(0,1fr))', self.page)
         self.assertIn('grid-template-columns:repeat(2,minmax(0,1fr))', self.page)
         self.assertIn('@media(max-width:680px)', self.page)
         self.assertIn('@media(prefers-reduced-motion:reduce)', self.page)
         self.assertIn('-webkit-line-clamp:3', self.page)
         self.assertNotIn('<details id="add-book-panel" class="shelf-add" open', self.page)
+
+    def test_management_menu_moves_original_evidence_location_and_status_handlers(self):
+        node = shutil.which('node')
+        if not node:
+            self.skipTest('Node.js required')
+        source = base.story.workbench._library_management_script()
+        decorator = source[source.index('function decorateBookManagement(){'):
+                           source.index("$('new-book').onclick")]
+        fixture = r"""
+const assert=require('assert');
+class E {
+ constructor(tag='div'){this.tagName=tag.toUpperCase();this.children=[];this.dataset={};this.className='';this.parentElement=null;this.textContent='';}
+ get classList(){return {contains:value=>this.className.split(/\s+/).includes(value)};}
+ append(...nodes){for(const node of nodes){if(node.parentElement){const siblings=node.parentElement.children;siblings.splice(siblings.indexOf(node),1);}node.parentElement=this;this.children.push(node);}}
+ querySelectorAll(selector){const result=[];for(const child of this.children){if(child.classList.contains(selector.slice(1)))result.push(child);result.push(...child.querySelectorAll(selector));}return result;}
+ querySelector(selector){return this.querySelectorAll(selector)[0]||null;}
+}
+const document={createElement:tag=>new E(tag)},books=new E(),error=new E(),$=id=>id==='books'?books:error;
+let managerGeneration=0,manager={open:false},saved=0;
+const calls=[];for(const name of ['showBookBackup','showRecoveries','showBookService','showRelinkBook','showRemoveBook','showTrashBook'])globalThis[name]=book=>calls.push([name,book.key]);
+const shelfBooks=[{key:'a',available:true},{key:'b',available:true},{key:'missing',available:false}];
+function card(book,root){
+ const row=new E();row.className='book';row.dataset.bookKey=book.key;
+ const title=new E('strong');title.textContent='同名作品';const genres=new E();genres.className='classification';
+ const updated=new E('time');updated.className='book-updated';updated.textContent=book.key==='missing'?'更新时间未确认':'更新时间：2026/10/19 17:00:00';updated.dateTime='2026-10-19T09:00:00Z';updated.title='原始时间来源';
+ const evidence=new E('details');evidence.className='classification-sources';const proof=new E('p');proof.textContent=root+'/01_策划/分类.md：都市';evidence.append(proof);genres.append(evidence);
+ const location=new E('details');location.textContent=root;
+ const status=new E('details');status.className='book-status-editor';const save=new E('button');save.onclick=()=>saved++;status.append(save);
+ const open=new E('button');open.onclick=()=>calls.push(['open',book.key]);row.append(title,updated,genres,location,open,status);books.append(row);
+ return {row,genres,evidence,proof,location,status,save,open,updated};
+}
+const fixtures=shelfBooks.map((book,index)=>card(book,'/合成目录/'+index));
+"""
+        checks = r"""
+decorateBookManagement();
+for(const fixture of fixtures){
+ const {row,genres,evidence,proof,location,status,save,open,updated}=fixture,menu=row.querySelector('.book-management'),panel=menu.querySelector('.book-management-panel');
+ assert.ok(menu);assert.equal(menu.open,undefined,'management must start collapsed');
+ assert.equal(genres.children.length,0);assert.strictEqual(evidence.parentElement,panel);assert.strictEqual(location.parentElement,panel);assert.strictEqual(status.parentElement,panel);
+ assert.strictEqual(updated.parentElement,panel);assert.equal(updated.title,'原始时间来源');assert.equal(updated.dateTime,'2026-10-19T09:00:00Z');assert.ok(updated.textContent.includes('更新时间'));
+ assert.strictEqual(evidence.children[0],proof);assert.ok(proof.textContent.includes(location.textContent));assert.equal(row.children.filter(child=>child.tagName==='DETAILS').length,1);
+ assert.strictEqual(row.children.find(child=>child.tagName==='BUTTON'),open);save.onclick();
+ const actions=panel.children.filter(child=>child.tagName==='BUTTON');assert.deepEqual(actions.map(action=>action.textContent),['备份','找回文字','保存与停止','重新定位','移出书架','删除至回收站']);
+ for(const action of actions)assert.equal(action.disabled,!shelfBooks.find(book=>book.key===row.dataset.bookKey).available&&!['重新定位','移出书架'].includes(action.textContent));
+}
+assert.equal(saved,3);assert.notEqual(fixtures[0].location.textContent,fixtures[1].location.textContent);
+decorateBookManagement();for(const {row}of fixtures)assert.equal(row.querySelectorAll('.book-management').length,1);
+fixtures[0].open.onclick();assert.deepEqual(calls,[['open','a']]);
+"""
+        result = subprocess.run([node, '-e', fixture + decorator + checks],
+                                capture_output=True, text=True, timeout=15)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == '__main__':

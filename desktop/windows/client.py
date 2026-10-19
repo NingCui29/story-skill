@@ -27,6 +27,17 @@ def page_key(value):
     return url.port, url.path
 
 
+def shelf_return_script(port):
+    """Notify the retained shelf document without reloading any editor."""
+    if type(port) is not int or not 1 <= port <= 65535:
+        raise ValueError('Invalid shelf port')
+    return '''(() => {
+        if(window!==window.top || location.protocol!=='http:' || location.hostname!=='127.0.0.1'
+            || location.port!==__PORT__ || location.pathname!=='/' || location.search)return false;
+        window.dispatchEvent(new Event('story-shelf-return'));return true;
+    })()'''.replace('__PORT__', json.dumps(str(port)))
+
+
 def close_state_script(include_text=False):
     """Read all editor buffers, including files hidden by the active document."""
     return '''(() => {
@@ -474,6 +485,7 @@ def main():
             self.setCentralWidget(self.tabs)
             self.close_pending = False
             self.close_approved = False
+            self.tabs.currentChanged.connect(self.notify_shelf_return)
             toolbar = QToolBar('工作台', self)
             self.addToolBar(toolbar)
             toolbar.addAction('书架', lambda: self.tabs.setCurrentIndex(0))
@@ -617,6 +629,16 @@ def main():
                 dialog.deleteLater()
                 completion(passed)
             QTimer.singleShot(1000, capture)
+
+        def notify_shelf_return(self, index):
+            if self.close_pending or index < 0:
+                return
+            view = self.tabs.widget(index)
+            if (view is None or not view.load_complete or view.entry_key is None
+                    or view.entry_key[1] != '/'
+                    or page_key(view.url().toString()) != view.entry_key):
+                return
+            view.page().runJavaScript(shelf_return_script(view.entry_key[0]))
 
         def add_page(self, address=None):
             existing = self.find_page(address) if address else None

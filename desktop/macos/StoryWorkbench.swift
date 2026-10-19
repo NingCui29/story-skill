@@ -848,6 +848,21 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
         window.title = webView.title?.isEmpty == false ? webView.title! : (entryURL.map(WorkbenchURL.isEditor) == true ? "作品 · 写作工作台" : "写作书架")
         configureToolbar(in: window)
         window.makeFirstResponder(webView)
+        notifyShelfReturn()
+    }
+
+    private func notifyShelfReturn() {
+        guard isControlledPage, let entryURL, let current = webView.url,
+              WorkbenchURL.isShelf(entryURL), WorkbenchURL.isShelf(current),
+              WorkbenchURL.samePage(current, entryURL), let port = entryURL.port else { return }
+        let script = """
+        (() => {
+            if(window!==window.top || location.protocol!=='http:' || location.hostname!=='127.0.0.1'
+                || location.port!=='\(port)' || location.pathname!=='/' || location.search)return false;
+            window.dispatchEvent(new Event('story-shelf-return'));return true;
+        })()
+        """
+        webView.evaluateJavaScript(script, completionHandler: nil)
     }
 
     private func configureToolbar(in window: NSWindow) {

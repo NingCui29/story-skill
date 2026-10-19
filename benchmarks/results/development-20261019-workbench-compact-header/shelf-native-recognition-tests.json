@@ -1,0 +1,18 @@
+{
+  "tests": 30,
+  "passed": 30,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "seconds": 11.773,
+  "names": [
+    "test_workbench_shelf_layout",
+    "test_desktop_windows_safety",
+    "test_desktop_windows_updates.NativeSmokeTests",
+    "test_desktop_native.DesktopNativeTests.test_navigation_policy_accepts_only_explicit_local_workbench_pages",
+    "test_desktop_native.DesktopNativeTests.test_editor_self_test_options_fail_closed_before_application_start",
+    "test_desktop_native.DesktopNativeTests.test_switch_self_test_requires_isolated_shelf_and_distinct_optional_second_editor"
+  ],
+  "failure_ids": [],
+  "skipped": []
+}

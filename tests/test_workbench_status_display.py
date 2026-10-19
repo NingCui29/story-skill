@@ -82,7 +82,7 @@ render({books});assert.equal(editor(card('分析书')),undefined);assert.equal(b
 
     def test_status_filter_counts_follow_type_and_search_does_not_change_counts(self):
         self.js(r"""
-render({books});assert.deepEqual(counts(),{all:'全部状态 6',serializing:'连载中 1',completed:'已完本 2',unknown:'待确认 2'});assert.equal($('total-count').textContent,'6');
+render({books});assert.deepEqual(counts(),{all:'全部状态 6',serializing:'连载中 1',completed:'已完本 2',unknown:'待确认 2'});
 filter('completed');assert.equal(cards().length,2);$('filter-long').onclick();assert.equal(cards().length,1);assert.equal(badge(cards()[0]).textContent,'已完本');assert.deepEqual(counts(),{all:'全部状态 3',serializing:'连载中 1',completed:'已完本 1',unknown:'待确认 1'});
 search('没有匹配');assert.equal(cards().length,0);assert.equal(counts().completed,'已完本 1');assert.equal($('filter-all').textContent,'全部 6');$('clear-search').onclick();assert.equal(cards().length,1);assert.equal(shelfStatusFilter,'completed');assert.equal(shelfFilter,'long');
 """)

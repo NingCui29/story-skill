@@ -1,0 +1,32 @@
+{
+  "primary": "#38bdf8",
+  "button_text": "#082f49",
+  "button_contrast": 6.478,
+  "light_and_dark_primary_rgb": [
+    56,
+    189,
+    248
+  ],
+  "responsive_widths": [
+    1280,
+    760,
+    390
+  ],
+  "horizontal_overflow": false,
+  "management_last_item_visible_after_scroll": true,
+  "unsaved_text_selection_and_scroll_preserved_on_theme_switch": true,
+  "synthetic_candidate_saved": true,
+  "formal_files_unchanged": 9,
+  "live_installed_version": "0.1.10",
+  "live_shelf_outdated": false,
+  "live_shelf_primary_rgb": [
+    56,
+    189,
+    248
+  ],
+  "book_services_preserved": 6,
+  "shelf_registry_unchanged": true,
+  "previous_app_fully_backed_up": true,
+  "installed_bundle_bytes_match_build": true,
+  "strict_signature_verified": true
+}

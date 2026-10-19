@@ -1,0 +1,27 @@
+{
+  "replacement": {
+    "status": "installed_and_verified",
+    "old_version": "0.1.13",
+    "new_version": "0.1.14",
+    "build": "15",
+    "runtime": "0.6.19",
+    "runtime_modules": 11,
+    "backup_verified": true,
+    "installed_bytes_equal": true,
+    "signature_verified": true,
+    "isolated_cli_verified": true,
+    "client_restarted": false,
+    "services_stopped": false
+  },
+  "activation": {
+    "status": "active_and_verified",
+    "version": "0.1.14",
+    "build": "15",
+    "shelf_outdated": false,
+    "live_five_fixes_verified": true,
+    "book_services_preserved": 6,
+    "registry_unchanged": true,
+    "forced_termination": false,
+    "macos_permission_resolved": true
+  }
+}

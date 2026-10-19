@@ -61,7 +61,7 @@ class Element {
  querySelector(selector){return this.querySelectorAll(selector)[0]||null;}
  closest(selector){for(let node=this;node;node=node.parentElement)if(node.matches(selector))return node;return null;}
 }
-function page({address='http://127.0.0.1:12345/abcdefghijklmnopqrstuvwxyz012345/',iframe=false,known=true,modern=false}={}){
+function page({address='http://127.0.0.1:12345/abcdefghijklmnopqrstuvwxyz012345/',iframe=false,known=true,modern=false,theme=false,picker=false,navigation=false}={}){
  const html=new Element('html'),head=new Element('head'),body=new Element('body');html.append(head,body);
  head.append(new Element('style',{id:'original-style'},'body{color:black}'));
  const header=new Element('header'),heading=new Element('div',{class:'book-heading'}),actions=new Element('div',{class:'header-actions'});
@@ -75,14 +75,17 @@ function page({address='http://127.0.0.1:12345/abcdefghijklmnopqrstuvwxyz012345/
  const nav=new Element('button',{id:'nav-toggle'},'作品目录'),context=new Element('button',{id:'context-toggle'},'辅助信息'),refresh=new Element('button',{id:'refresh'},'刷新');
  const maintenance=new Element('details',{id:'maintenance',class:'menu'}),maintenanceSummary=new Element('summary',{},'设置'),menu=new Element('div',{class:'menu-panel'});
  const compact=new Element('button',{id:'refresh-compact'},'刷新目录'),reset=new Element('button',{id:'layout-reset'},'恢复默认布局');
+ if(theme){const label=new Element('label',{class:'workbench-theme-control',for:'workbench-theme'},'外观 '),control=new Element('select',{id:'workbench-theme'});control.append(new Element('option',{value:'system'},'跟随系统'),new Element('option',{value:'light'},'浅色'),new Element('option',{value:'dark'},'深色'));label.append(control);menu.append(label);}
  const rootLocation=new Element('details',{id:'root-location'});rootLocation.append(new Element('summary',{},'书库与材料位置'),new Element('span',{id:'root-hint'},'合成材料长路径'));
  menu.append(compact,reset,new Element('button',{id:'reload-source'},'重新读取文件'),new Element('button',{id:'recover-reload'},'保留恢复稿并重新载入'),rootLocation);maintenance.append(maintenanceSummary,menu);
  actions.append(nav,context,refresh);
- if(modern){const info=new Element('details',{id:'book-info',class:'menu'}),panel=new Element('div',{id:'book-info-panel',class:'menu-panel book-info-panel'});panel.append(new Element('strong',{id:'book-info-title'},title.textContent),classification,locationPanel);info.append(new Element('summary',{},'作品信息'),panel);actions.append(info);}
+ if(modern){const info=new Element('details',{id:'book-info',class:'menu'}),panel=new Element('div',{id:'book-info-panel',class:'menu-panel book-info-panel'});panel.append(new Element('strong',{id:'book-info-title'},title.textContent),new Element('p',{id:'book-progress-detail'},progress.textContent),classification,locationPanel);info.append(new Element('summary',{},'作品信息'),panel);actions.append(info);}
  actions.append(maintenance);header.append(heading,actions);
  const desk=new Element('div',{class:'desk'}),bookNav=new Element('nav',{id:'book-nav'}),main=new Element('main'),bookContext=new Element('aside',{id:'book-context'});
  const tools=new Element('div',{class:'tools'}),save=new Element('button',{id:'save'},'保存候选稿'),text=new Element('textarea',{id:'text'}),prose=new Element('pre',{id:'prose'},'合成验收正文');
  tools.append(save,new Element('details',{id:'more-actions',class:'menu'}),new Element('details',{id:'reading-options',class:'menu'}));main.append(tools,text,prose);desk.append(bookNav,main,bookContext);body.append(header,desk);
+ if(picker){const metadata=new Element('div',{class:'document-meta'}),versions=new Element('div',{id:'chapter-picker'});versions.append(new Element('label',{for:'chapter-version'},'本章稿件与材料'),new Element('select',{id:'chapter-version'}),new Element('span',{id:'chapter-picker-help',class:'sr-only'}));metadata.append(new Element('p',{id:'state'},'正在保存候选…'),versions);main.insertBefore(metadata,text);}
+ if(navigation){const modes=new Element('div',{class:'navigation-mode'}),locate=new Element('button',{id:'locate'},'定位当前文件'),search=new Element('details');modes.append(new Element('button',{id:'view-chapters'},'按章查看'),new Element('button',{id:'view-files'},'按文件查看'),locate);search.append(new Element('summary',{},'全文搜索'),new Element('input',{id:'full-query'}));bookNav.append(modes,search);}
  if(!known){heading.className='unknown-heading';nav.remove();context.remove();maintenance.remove();}
  const document={head,body,documentElement:html,readyState:'complete',activeElement:text,listeners:{},
   createElement(tag){const node=new Element(tag);node.ownerDocument=this;return node;},getElementById:id=>html.querySelector('#'+id),
@@ -139,7 +142,74 @@ const ids=p.document.querySelectorAll('[id]').map(n=>n.id);assert.equal(new Set(
         self.js("const p=page();p.run();const first=p.tree(),style=p.styles()[0];p.run();p.run();assert.equal(p.tree(),first);assert.strictEqual(p.styles()[0],style);assert.equal(p.styles().length,1);")
 
     def test_modern_editor_retains_all_existing_controls(self):
-        self.js("const p=page({modern:true}),nodes=p.document.querySelectorAll('[id]'),before=p.tree(),result=p.run();assert.equal(result.applied,true);assert.equal(result.legacy,false);for(const n of nodes)assert.strictEqual(p.document.getElementById(n.id),n);assert.equal(p.tree(),before);p.run();assert.equal(p.tree(),before);")
+        self.js("const p=page({modern:true}),nodes=p.document.querySelectorAll('[id]'),desk=JSON.stringify(p.serialize(p.desk)),result=p.run();assert.equal(result.applied,true);assert.equal(result.legacy,false);for(const n of nodes)assert.strictEqual(p.document.getElementById(n.id),n);assert.ok(p.maintenance.contains(p.refresh));assert.ok(p.compact.hidden);assert.equal(JSON.stringify(p.serialize(p.desk)),desk);assert.equal(p.observers.length,1);assert.equal(p.styles().length,1);const after=p.tree();p.run();assert.equal(p.tree(),after);")
+
+    def test_complete_progress_survives_compaction_refresh_and_unknown_status(self):
+        self.js(r"""
+for(const modern of [false,true]){
+ const p=page({modern}),original=p.progress,first='当前进度：正式 38 章 · 已规划 52 章 · 下一章 第39章 · 刷新于 10:11:12';
+ p.progress.textContent=first;p.progress.title=first;p.run();
+ const detail=p.document.getElementById('book-progress-detail');
+ assert.strictEqual(p.document.getElementById('book-progress'),original);assert.equal(p.progress.textContent,'正式 38 章 · 下一章 第39章');assert.equal(detail.textContent,first);assert.equal(p.progress.title,first);
+ const refreshed=first.replace('52','80').replace('10:11:12','10:15:16');p.progress.textContent=refreshed;p.progress.title=refreshed;p.observers[0].fire(p.progress);
+ assert.equal(detail.textContent,refreshed);assert.equal(p.progress.title,refreshed);assert.equal(p.progress.textContent,'正式 38 章 · 下一章 第39章');
+ const shorter=first.replace('52','9').replace('10:11:12','9:00');p.progress.textContent=shorter;p.observers[0].fire(p.progress);
+ assert.equal(detail.textContent,shorter);assert.equal(p.progress.title,shorter);assert.equal(p.progress.textContent,'正式 38 章 · 下一章 第39章');
+ const stable=p.tree();p.observers[0].fire(p.progress);p.observers[0].fire(p.progress);assert.equal(p.tree(),stable);
+ p.progress.textContent='进度读取失败：来源待核对';p.observers[0].fire(p.progress);assert.equal(p.progress.textContent,'进度读取失败：来源待核对');assert.equal(detail.textContent,p.progress.textContent);assert.strictEqual(p.document.activeElement,p.text);
+}
+""")
+
+    def test_already_compact_service_keeps_its_complete_progress_record(self):
+        self.js(r"""
+const p=page({modern:true}),full='当前进度：正式 3 章 · 已规划 12 章 · 下一章 第4章 · 刷新于 12:30:00';
+p.progress.textContent='正式 3 章 · 下一章 第4章';p.progress.title=full;p.document.getElementById('book-progress-detail').textContent=full;
+p.run();assert.equal(p.progress.textContent,'正式 3 章 · 下一章 第4章');assert.equal(p.document.getElementById('book-progress-detail').textContent,full);
+""")
+
+    def test_refresh_and_locate_move_without_recreating_controls_or_running_actions(self):
+        self.js(r"""
+for(const modern of [false,true]){
+ const p=page({modern,navigation:true}),locate=p.document.getElementById('locate'),query=p.document.getElementById('full-query'),search=query.closest('details');
+ const main=JSON.stringify(p.serialize(p.main));let refreshes=0,locations=0;p.refresh.onclick=()=>refreshes++;locate.onclick=()=>locations++;
+ p.run();assert.ok(p.maintenance.contains(p.refresh));assert.ok(p.compact.hidden);assert.equal(p.refresh.textContent,'刷新目录');
+ assert.strictEqual(p.document.getElementById('refresh'),p.refresh);assert.strictEqual(p.document.getElementById('locate'),locate);assert.strictEqual(locate.parentElement,search);assert.equal(search.querySelector('summary').textContent,'查找与定位');assert.ok(!search.open);
+ assert.equal(refreshes,0);assert.equal(locations,0);assert.equal(JSON.stringify(p.serialize(p.main)),main);assert.strictEqual(p.document.activeElement,p.text);
+ p.refresh.click();locate.click();assert.equal(refreshes,1);assert.equal(locations,1);
+}
+""")
+
+    def test_existing_theme_selector_moves_to_header_with_its_handler_and_selection(self):
+        self.js(r"""
+for(const modern of [false,true]){
+ const p=page({modern,theme:true}),control=p.document.getElementById('workbench-theme'),label=control.parentElement;
+ control.value='dark';let calls=0;control.addEventListener('change',()=>calls++);
+ const options=control.children.slice(),focus=p.document.activeElement;
+ p.run();assert.strictEqual(p.document.getElementById('workbench-theme'),control);assert.strictEqual(label.parentElement,p.actions);
+ assert.equal(control.value,'dark');assert.deepEqual(control.children,options);assert.equal(calls,0);assert.strictEqual(p.document.activeElement,focus);
+ for(const fn of control.listeners.change)fn({target:control});assert.equal(calls,1);
+ p.run();assert.equal(p.document.querySelectorAll('#workbench-theme').length,1);assert.equal(calls,1);
+}
+""")
+
+    def test_service_without_theme_control_does_not_gain_inert_appearance_control(self):
+        self.js("for(const modern of [false,true]){const p=page({modern});p.run();assert.equal(p.document.getElementById('workbench-theme'),null);assert.equal(p.document.querySelectorAll('.workbench-theme-control').length,0);}")
+
+    def test_version_navigation_folds_without_recreating_select_or_touching_editor_state(self):
+        self.js(r"""
+for(const modern of [false,true]){
+ const p=page({modern,picker:true}),picker=p.document.getElementById('chapter-picker'),select=p.document.getElementById('chapter-version'),state=p.document.getElementById('state');
+ select.value='candidate:synthetic';let calls=0;select.addEventListener('change',()=>calls++);
+ p.main.scrollTop=456;p.text.selectionStart=17;p.text.selectionEnd=29;
+ const editor=JSON.stringify(p.serialize(p.text));p.run();
+ const options=p.document.getElementById('document-options');assert.ok(options);assert.ok(!options.open);assert.strictEqual(picker.parentElement,options);
+ assert.strictEqual(p.document.getElementById('chapter-version'),select);assert.equal(select.value,'candidate:synthetic');assert.equal(calls,0);
+ assert.equal(state.textContent,'正在保存候选…');assert.ok(!options.contains(state));assert.equal(JSON.stringify(p.serialize(p.text)),editor);
+ assert.strictEqual(p.document.activeElement,p.text);assert.equal(p.text.selectionStart,17);assert.equal(p.text.selectionEnd,29);assert.equal(p.main.scrollTop,456);
+ for(const fn of select.listeners.change)fn({target:select});assert.equal(calls,1);
+ options.open=true;p.run();assert.strictEqual(p.document.getElementById('document-options'),options);assert.ok(options.open);
+}
+""")
 
     def test_external_invalid_and_non_editor_addresses_are_unchanged(self):
         self.js(r"""

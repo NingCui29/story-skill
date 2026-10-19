@@ -1,0 +1,32 @@
+{
+  "synthetic_only": true,
+  "tests": {
+    "count": 109,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "seconds": 32.396,
+    "log": "independent-ui-safety.log"
+  },
+  "review": {
+    "filter_search_sort_controls_preserved": true,
+    "error_status_retained": true,
+    "management_moves_original_updated_node_with_datetime_title_and_unknown_text": true,
+    "native_windows_shelf_identity_h1_unique": true,
+    "native_macos_shelf_identity_filter_summary_retained": true,
+    "theme_and_edit_buffer_safety_passed": true,
+    "legacy_decoration_keeps_original_handlers": true,
+    "git_diff_check_passed": true
+  },
+  "source_sha256": {
+    "skills/story-skill/scripts/story_workbench.py": "4a484ccaa013ce031520b5fbc9dabd66f155745fb857ce48913db9d41a164d2f",
+    "desktop/macos/editor-appearance.js": "0109acb81513bd2a2a533fd8039f33532e00f5c3cdf86875f2f08b71aed0448d"
+  },
+  "formal_integrity": {
+    "synthetic_only": true,
+    "formal_files_checked": 9,
+    "formal_state_unchanged": true,
+    "mismatches": []
+  },
+  "scope": "Read-only review and synthetic fixture lifecycle. No real author library or manuscripts opened; production source not modified by reviewer."
+}

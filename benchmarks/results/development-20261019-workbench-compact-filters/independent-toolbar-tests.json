@@ -1,0 +1,14 @@
+{
+  "checked_at_utc": "2026-10-19T10:44:09.665253+00:00",
+  "source_sha256": "b393a901c130fd8636a020b383f15af2c6713fcd791f96e862af24501e3e99d0",
+  "modules": [
+    "test_workbench_shelf_layout",
+    "test_workbench_classification_display",
+    "test_workbench_status_display",
+    "test_workbench_time_display"
+  ],
+  "expected_tests": 34,
+  "exit_code": 0,
+  "elapsed_seconds": 4.241,
+  "log": "independent-toolbar-tests.log"
+}
