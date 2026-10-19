@@ -7,8 +7,9 @@ import hashlib
 import importlib.metadata
 import importlib.util
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -37,6 +38,45 @@ def verify_book_runtime(python, script, book):
             or status.get('title') != '桌面验证' or status.get('kind') != 'short'
             or status.get('revision') != 0 or status.get('next_chapter') != 1):
         raise RuntimeError('Bundled initialization/status check failed.')
+
+
+def copy_supplementary_notices(app, pyside_version, qt_version, *, source=None):
+    """Copy the offline notices only when their versions and bytes match."""
+    source = Path(source) if source is not None else REPO / 'desktop/windows/licenses'
+    manifest_path = source / 'manifest.json'
+    if source.is_symlink() or manifest_path.is_symlink():
+        raise RuntimeError('Linked supplementary notices are not supported.')
+    manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+    if (manifest.get('schema') != 1 or manifest.get('pyside_version') != pyside_version or
+            manifest.get('qt_version') != qt_version):
+        raise RuntimeError('Supplementary notices do not match the installed Qt/PySide version.')
+    files = manifest.get('files')
+    required = {'LGPL-3.0-only.txt', 'GPL-2.0-only.txt', 'GPL-3.0-only.txt',
+                'README.md', 'QtWebEngine/index.html'}
+    if not isinstance(files, dict) or not required <= set(files):
+        raise RuntimeError('Supplementary notices are incomplete.')
+    for name, digest in files.items():
+        if (not isinstance(name, str) or not name or '\\' in name or
+                PurePosixPath(name).is_absolute() or '..' in PurePosixPath(name).parts or
+                name == 'manifest.json' or not isinstance(digest, str) or
+                re.fullmatch(r'[0-9a-f]{64}', digest) is None):
+            raise RuntimeError('Invalid supplementary notice manifest entry.')
+    paths = list(source.rglob('*'))
+    if any(path.is_symlink() for path in paths):
+        raise RuntimeError('Linked supplementary notices are not supported.')
+    actual = {path.relative_to(source).as_posix() for path in paths if path.is_file()}
+    if actual != set(files) | {'manifest.json'}:
+        raise RuntimeError('Supplementary notice inventory differs from its manifest.')
+    for name, digest in files.items():
+        if hashlib.sha256((source / name).read_bytes()).hexdigest() != digest:
+            raise RuntimeError('Supplementary notice bytes differ from their manifest: ' + name)
+    destination = Path(app) / 'ThirdPartyLicenses/Qt'
+    shutil.copytree(source, destination)
+    for name, digest in files.items():
+        if hashlib.sha256((destination / name).read_bytes()).hexdigest() != digest:
+            raise RuntimeError('Copied supplementary notice bytes changed: ' + name)
+    return {'files': len(files) + 1, 'pyside_version': pyside_version, 'qt_version': qt_version,
+            'manifest_sha256': hashlib.sha256(manifest_path.read_bytes()).hexdigest()}
 
 
 def build(output):
@@ -89,6 +129,9 @@ def build(output):
                         destination = notices / distribution / Path(*file.parts)
                         destination.parent.mkdir(parents=True, exist_ok=True)
                         shutil.copy2(original, destination)
+        from PySide6.QtCore import qVersion
+        notice_report = copy_supplementary_notices(
+            app, importlib.metadata.version('PySide6'), qVersion())
         result = subprocess.run([str(runtime / 'python.exe'), '-I', '-B',
                                  str(scripts / 'story.py'), '--version'],
                                 capture_output=True, text=True, check=True, timeout=30)
@@ -102,14 +145,15 @@ def build(output):
         (app / 'build-manifest.json').write_text(json.dumps({
             'platform': 'windows-x86_64', 'client_version': client_version,
             'story_version': result.stdout.strip(),
-            'files': manifest, 'ui_verified': False,
+            'files': manifest, 'supplementary_notices': notice_report, 'ui_verified': False,
         }, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         shutil.copytree(app, output)
     shutil.make_archive(str(archive.with_suffix('')), 'zip', output.parent, output.name)
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     archive.with_suffix('.zip.sha256').write_text(f'{digest}  {archive.name}\n', encoding='ascii')
     return {'output': str(output), 'archive': str(archive), 'sha256': digest,
-            'client_version': client_version, 'ui_verified': False}
+            'client_version': client_version, 'supplementary_notices': notice_report,
+            'ui_verified': False}
 
 
 if __name__ == '__main__':

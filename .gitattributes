@@ -3,6 +3,7 @@
 
 # Preserve the exact bytes bound by release archives and evidence hashes.
 /skills/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+/desktop/windows/licenses/** -text
 /benchmarks/results/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
 # Benchmark source fingerprints use exact bytes on every checkout platform.

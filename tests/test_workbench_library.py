@@ -75,10 +75,23 @@ class WorkbenchLibraryTests(unittest.TestCase):
     def snapshot_persistent_files(self):
         # Native directory pins keep private, unreadable guards while the
         # server runs. They are not persisted library or manuscript state.
-        return {path.relative_to(self.root): path.read_bytes()
+        def snapshot(path):
+            if path == self.state / 'server.lock':
+                return self.file_identity(path)
+            try:
+                return path.read_bytes()
+            except OSError as error:
+                self.fail(f'Cannot snapshot persistent file {path}: {error}')
+
+        return {path.relative_to(self.root): snapshot(path)
                 for path in self.root.rglob('*')
                 if not re.fullmatch(r'\.story-pin-[0-9a-f]{32}', path.name)
                 and path.is_file()}
+
+    @staticmethod
+    def file_identity(path):
+        value = path.stat()
+        return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns
 
     def post(self, server, action, payload=None, headers=None):
         request_headers = {
@@ -262,6 +275,11 @@ class WorkbenchLibraryTests(unittest.TestCase):
 
     def test_unauthorized_invalid_json_receives_403_without_changing_files(self):
         self.book()
+        self.state.mkdir()
+        lock = self.state / 'server.lock'
+        lock.write_bytes(b'0')
+        lock_bytes = lock.read_bytes()
+        lock_identity = self.file_identity(lock)
         shelf = self.start()
         guard = self.root / ('.story-pin-' + 'a' * 32)
         guard.write_bytes(b'opaque live directory guard')
@@ -270,13 +288,14 @@ class WorkbenchLibraryTests(unittest.TestCase):
         read_bytes = Path.read_bytes
 
         def read_persistent(path):
-            if path == guard:
-                raise PermissionError('live native guard must never be read')
+            if path in (guard, lock):
+                raise PermissionError(f'live native coordination file must never be read: {path}')
             return read_bytes(path)
 
         with patch.object(Path, 'read_bytes', read_persistent):
             before = self.snapshot_persistent_files()
             self.assertEqual(before[lookalike.relative_to(self.root)], b'persistent user file')
+            self.assertEqual(before[lock.relative_to(self.root)], lock_identity)
             client = http.client.HTTPConnection('127.0.0.1', shelf.server_port, timeout=5)
             try:
                 client.request('POST', '/api/add-book', b'{invalid JSON', {
@@ -288,6 +307,9 @@ class WorkbenchLibraryTests(unittest.TestCase):
                 client.close()
             self.assertEqual(self.snapshot_persistent_files(), before)
         self.assertEqual(self.post(shelf, 'books')[1]['books'], [])
+        self.stop(shelf)
+        self.assertEqual(lock.read_bytes(), lock_bytes)
+        self.assertEqual(self.file_identity(lock), lock_identity)
 
     def test_wrong_content_type_consumes_small_body_before_400(self):
         shelf = self.start()
