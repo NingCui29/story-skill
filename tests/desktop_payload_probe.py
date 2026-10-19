@@ -4,6 +4,7 @@ The same probe runs against copied build sources in unit tests and the installed
 runtime in Windows CI. Native trash is called only for a nonexistent path.
 """
 import argparse
+from contextlib import closing
 import importlib.util
 import json
 from pathlib import Path
@@ -48,7 +49,7 @@ def probe(scripts, area):
             or (restored_root / '合成素材.bin').read_bytes() != binary):
         raise AssertionError('Synthetic backup/restore changed identity or saved files.')
     for book_root in (root, restored_root):
-        with sqlite3.connect(book_root / '.story/state.sqlite3') as database:
+        with closing(sqlite3.connect(book_root / '.story/state.sqlite3')) as database:
             if database.execute('PRAGMA integrity_check').fetchone()[0] != 'ok':
                 raise AssertionError('Synthetic state database failed integrity check.')
     # Test the actual native bridge's failure path without recycling any data.
