@@ -35,6 +35,11 @@ class E {
 }
 const nodes={},$=id=>nodes[id]||(nodes[id]=new E());
 const document={title:'',createElement:tag=>new E(tag),createTextNode:text=>({textContent:text})};
+// These focused tests extract the renderer; lifecycle and session hooks are
+// provided at that boundary and their calls remain observable.
+let managementDecorations=0;const rememberedShelfBooks=[];
+function decorateBookManagement(){managementDecorations++;}
+function rememberShelfBook(key){rememberedShelfBooks.push(key);}
 $('book-title').textContent='当前作品';$('book-kind').dataset.kind='long';$('current-book-root').textContent='/当前/作品';
 """
         result = subprocess.run(
@@ -118,9 +123,10 @@ const books=[{title:'<img onerror=bad>',kind:'long',root:'/甲/相同/目录',ke
 const expected=bookDisplayRows(books),call=async()=>({url:'http://127.0.0.1:1234/editor/'});
 render({books});
 const rows=$('books').children;assert.equal(rows.length,3);
+assert.equal(managementDecorations,1);assert.deepEqual(rows.map(row=>row.dataset.bookKey),books.map(book=>book.key));
 for(let i=0;i<3;i++){assert.equal(rows[i].children[0].textContent,expected[i].label);assert.equal(rows[i].children[0].tag,'strong');const details=rows[i].children.find(child=>child.tag==='details');assert.equal(details.children[0].textContent,'目录位置');assert.equal(details.children[1].textContent,books[i].root);}
 assert.ok(rows[2].children.find(child=>child.tag==='button').disabled);assert.ok(rows[2].children[0].textContent.includes('类型未核对'));
-(async()=>{await rows[0].children.find(child=>child.tag==='button').onclick();assert.equal($('message').children[0].textContent,'点击打开：'+expected[0].label);})().catch(error=>{console.error(error);process.exit(1);});
+(async()=>{await rows[0].children.find(child=>child.tag==='button').onclick();assert.equal($('message').children[0].textContent,'点击打开：'+expected[0].label);assert.deepEqual(rememberedShelfBooks,['KEY-1']);})().catch(error=>{console.error(error);process.exit(1);});
 """)
 
     def test_initial_current_header_escapes_book_identity_and_contains_type(self):

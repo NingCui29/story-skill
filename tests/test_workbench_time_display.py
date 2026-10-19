@@ -21,7 +21,7 @@ class WorkbenchTimeDisplayTests(unittest.TestCase):
         mock = r"""
 const assert=require('assert');
 class E {
- constructor(tag='div'){this.tag=tag;this.children=[];this._text='';this.attributes={};this.value='';}
+ constructor(tag='div'){this.tag=tag;this.children=[];this.dataset={};this._text='';this.attributes={};this.value='';}
  set textContent(value){this._text=String(value);this.children=[];}
  get textContent(){return this._text;}
  set innerHTML(value){throw Error('Bookshelf must use text nodes');}
@@ -32,6 +32,10 @@ class E {
 }
 const nodes={},$=id=>nodes[id]||(nodes[id]=new E());
 const document={createElement:tag=>new E(tag),createTextNode:text=>({textContent:text})};
+// Lifecycle/session hooks sit outside the extracted renderer under test.
+let managementDecorations=0;const rememberedShelfBooks=[];
+function decorateBookManagement(){managementDecorations++;}
+function rememberShelfBook(key){rememberedShelfBooks.push(key);}
 let response={books:[]};const call=async()=>response;
 const localStorage={getItem(){if(storageError)throw Error('Storage blocked');return storageValue;},setItem(key,value){if(storageError)throw Error('Storage blocked');storageValue=value;}};
 const book=(key,at,extras={})=>({title:key,key,root:'/books/'+key,kind:'long',kind_verified:true,available:true,updated_at:at,updated_at_verified:true,...extras});

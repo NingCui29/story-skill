@@ -19,7 +19,7 @@ class WorkbenchClassificationDisplayTests(unittest.TestCase):
         mock = r"""
 const assert=require('assert');
 class E {
- constructor(tag='div'){this.tag=tag;this.children=[];this._text='';this.attributes={};}
+ constructor(tag='div'){this.tag=tag;this.children=[];this.dataset={};this._text='';this.attributes={};}
  set textContent(value){this._text=String(value);this.children=[];}
  get textContent(){return this._text;}
  set innerHTML(value){throw Error('Classification must use text nodes');}
@@ -30,6 +30,10 @@ class E {
 }
 const nodes={},$=id=>nodes[id]||(nodes[id]=new E());
 const document={createElement:tag=>new E(tag),createTextNode:text=>({textContent:text})};
+// Lifecycle/session hooks sit outside the extracted renderer under test.
+let managementDecorations=0;const rememberedShelfBooks=[];
+function decorateBookManagement(){managementDecorations++;}
+function rememberShelfBook(key){rememberedShelfBooks.push(key);}
 const text=node=>[node.textContent,...(node.children||[]).map(text)].join(' ');
 const descendants=node=>[node,...(node.children||[]).flatMap(descendants)];
 const call=async()=>({url:'http://127.0.0.1:1234/editor/'});

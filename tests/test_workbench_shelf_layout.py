@@ -19,7 +19,7 @@ class WorkbenchShelfLayoutTests(unittest.TestCase):
         mock = r"""
 const assert=require('assert');
 class E {
- constructor(tag='div'){this.tag=tag;this.children=[];this._text='';this.attributes={};this.value='';}
+ constructor(tag='div'){this.tag=tag;this.children=[];this.dataset={};this._text='';this.attributes={};this.value='';}
  set textContent(value){this._text=String(value);this.children=[];}
  get textContent(){return this._text;}
  set innerHTML(value){throw Error('Bookshelf must use text nodes');}
@@ -31,6 +31,10 @@ class E {
 }
 const nodes={},$=id=>nodes[id]||(nodes[id]=new E());
 const document={createElement:tag=>new E(tag),createTextNode:text=>({textContent:text})};
+// Lifecycle/session hooks sit outside the extracted renderer under test.
+let managementDecorations=0;const rememberedShelfBooks=[];
+function decorateBookManagement(){managementDecorations++;}
+function rememberShelfBook(key){rememberedShelfBooks.push(key);}
 const localStorage={getItem:()=>null,setItem:()=>{}};
 let response={books:[]},failOpen=false;
 const call=async action=>{if(action==='open-book'){if(failOpen)throw Error('此作品的服务无法确认已退出');return {url:'http://127.0.0.1:1234/confirmed-editor/'};}return response;};
@@ -90,7 +94,7 @@ render({books:[{...books[0],progress:{verified:true,formal_chapters:131,next_cha
 render({books});assert.notEqual(labels()[0],labels()[1]);
 for(const row of $('books').children){assert.equal(row.children[0].tag,'strong');assert.equal(row.children[0].title,row.children[0].textContent);assert.ok(row.children.find(node=>node.className==='book-updated'));assert.ok(row.children.find(node=>node.tag==='details'));assert.ok(row.children.find(node=>node.tag==='button'));}
 const unavailable=$('books').children.find(row=>row.children[0].textContent.includes('旧作品'));assert.ok(unavailable.children.find(node=>node.tag==='button').disabled);
-const open=$('books').children[0].children.find(node=>node.tag==='button');assert.ok(open.attributes['aria-label'].includes('灯下的都市'));failOpen=true;await open.onclick();assert.ok($('message').textContent.includes('打开失败（灯下的都市）'));assert.equal(open.disabled,false);
+const open=$('books').children[0].children.find(node=>node.tag==='button');assert.ok(open.attributes['aria-label'].includes('灯下的都市'));failOpen=true;await open.onclick();assert.ok($('message').textContent.includes('打开失败（灯下的都市）'));assert.equal(open.disabled,false);assert.deepEqual(rememberedShelfBooks,[],'an unconfirmed open must not become a restored session');
 """)
 
     def test_layout_exposes_native_compatible_accessible_responsive_controls(self):
