@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import traceback
@@ -415,6 +416,79 @@ class ChromeBridgeTests(unittest.TestCase):
         self.assertFalse(command("heartbeat")[0]["detached"])
         self.assertTrue(command("detach")[0]["detached"])
         self.assertFalse(self.preview()["can_start"])
+
+    def test_cross_process_sender_and_host_exchange_five_authenticated_requests(self):
+        self.attach()
+        ready = self.root / "sender-ready"
+        sender = """
+import importlib.util,json,sys
+from pathlib import Path
+spec=importlib.util.spec_from_file_location('bridge_sender_story',sys.argv[1])
+story=importlib.util.module_from_spec(spec);spec.loader.exec_module(story)
+book=story.Book(sys.argv[2])
+try:
+    bridge=story.platform_chrome_bridge
+    bridge.OP_SECONDS['verify_target']=5
+    binding,profile=bridge._binding(book,sys.argv[3],sys.argv[4])
+    with bridge.HostAdapter(book.root,binding,profile) as adapter:
+        Path(sys.argv[5]).write_text('ready',encoding='utf-8')
+        results=[adapter._request('verify_target',{}) for _ in range(5)]
+    assert all(result==binding['target'] for result in results)
+    print(json.dumps({'ok':True,'requests':len(results)}),flush=True)
+finally:
+    book.close()
+"""
+        failure, cleanup_failures, request_ids = None, [], []
+        with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as output, \
+                tempfile.TemporaryFile(mode="w+", encoding="utf-8") as errors:
+            process = subprocess.Popen([sys.executable, "-I", "-B", "-c", sender,
+                str(fixtures.TOOL), str(self.root), self.plan["id"], self.path.name, str(ready)],
+                stdout=output, stderr=errors)
+            deadline = time.monotonic() + 20
+            try:
+                while not ready.exists() and process.poll() is None and time.monotonic() < deadline:
+                    time.sleep(.01)
+                self.assertTrue(ready.is_file(), "Sender did not initialize its independent Book and HostAdapter")
+                while len(request_ids) < 5 and process.poll() is None and time.monotonic() < deadline:
+                    claim = bridge.next_request(self.book, self.handle)
+                    if claim["request_id"] is None:
+                        time.sleep(.01)
+                        continue
+                    request = json.loads(Path(claim["request_path"]).read_text())
+                    self.assertTrue(claim["claimed_once"])
+                    self.assertEqual(request["operation"], "verify_target")
+                    self.assertEqual(request["params"], {})
+                    self.assertNotIn(claim["request_id"], request_ids)
+                    request_ids.append(claim["request_id"])
+                    self.write_response(request, request["binding"]["target"])
+                    bridge.respond(self.book, self.handle, claim["request_id"], self.response)
+                self.assertEqual(len(request_ids), 5, "Cross-process request exchange did not finish")
+                process.wait(timeout=max(.01, deadline - time.monotonic()))
+            except BaseException:
+                failure = traceback.format_exc()
+            finally:
+                try:
+                    bridge.heartbeat(self.book, self.handle, detach=True)
+                except story.StoryError as error:
+                    if error.code != "platform_chrome_worker_unavailable":
+                        cleanup_failures.append(traceback.format_exc())
+                except BaseException:
+                    cleanup_failures.append(traceback.format_exc())
+                if process.poll() is None:
+                    process.terminate()
+                    try:
+                        process.wait(timeout=3)
+                    except subprocess.TimeoutExpired:
+                        process.kill(); process.wait(timeout=3)
+                output.seek(0); stdout = output.read()
+                errors.seek(0); stderr = errors.read()
+        diagnostic = "\n".join([failure or "", *cleanup_failures,
+                                "sender stdout:\n" + stdout, "sender stderr:\n" + stderr])
+        self.assertIsNone(failure, diagnostic)
+        self.assertEqual(cleanup_failures, [], diagnostic)
+        self.assertEqual(process.returncode, 0, diagnostic)
+        self.assertEqual(json.loads(stdout), {"ok": True, "requests": 5}, diagnostic)
+        self.assertEqual(len(set(request_ids)), 5)
 
     def test_dead_owner_is_not_dispatched(self):
         self.attach()
