@@ -94,7 +94,13 @@ def _scan(root):
                 if _excluded(relative):
                     excluded.append({'path': relative, 'reason': 'transient_or_service'})
                     continue
-                value = item.stat(follow_symlinks=False)
+                # Windows DirEntry.stat() reports zero st_dev/st_ino/st_nlink.
+                # Read fresh metadata through the pinned parent so identity
+                # and hard-link checks use real values on both platforms.
+                # https://docs.python.org/3.12/library/os.html#os.DirEntry.stat
+                value = (os.stat(item.name, dir_fd=directory.fd, follow_symlinks=False)
+                         if directory.fd is not None else
+                         os.stat(directory.path / item.name, follow_symlinks=False))
                 if (stat.S_ISLNK(value.st_mode) or getattr(value, 'st_file_attributes', 0) & 0x400 or
                         getattr(root / relative, 'is_junction', lambda: False)()):
                     excluded.append({'path': relative, 'reason': 'linked_material'})
