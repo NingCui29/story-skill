@@ -441,7 +441,8 @@ class PackageSyncTests(unittest.TestCase):
                 bundle.addfile(member, io.BytesIO(raw))
 
     def test_runtime_smoke_accepts_verified_custom_and_historical_mit_members(self):
-        for version, custom_license, count in (("0.6.17", True, 55),
+        for version, custom_license, count in (("0.6.19", True, 60), ("0.6.18", True, 58),
+                                               ("0.6.17", True, 55),
                                                ("0.6.16", True, 54), ("0.6.15", False, 53)):
             with self.subTest(version=version):
                 _, _, tarball, built, files = self.verified_wrapper_fixture(version, custom_license)

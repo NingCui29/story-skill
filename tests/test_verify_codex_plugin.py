@@ -137,7 +137,9 @@ class CodexPluginEvidenceTests(unittest.TestCase):
 
     def test_source_comparison_only_accepts_the_eight_ui_adaptations(self):
         source, adapted = verify.expected_source_payload()
-        self.assertEqual(len(source), 55)
+        self.assertEqual(len(source), 57)
+        self.assertIn('story-skill/scripts/story_workbench_books.py', source)
+        self.assertIn('story-skill/scripts/story_workbench_archives.py', source)
         self.assertEqual(adapted, sorted(f"{name}/agents/openai.yaml" for name in verify.SKILL_NAMES))
         for name in source:
             if name not in adapted:

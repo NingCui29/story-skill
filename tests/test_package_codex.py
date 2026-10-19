@@ -82,7 +82,7 @@ class CodexPluginPackageTests(unittest.TestCase):
         self.assertEqual(skill_entries, sorted(codex.suite.skill_names(receipt["version"])))
         self.assertEqual(receipt["skill_count"], 8)
         self.assertEqual(receipt["payload_files"], len(expected))
-        self.assertEqual(receipt["payload_files"], 58)
+        self.assertEqual(receipt["payload_files"], len(codex.suite.suite_files(receipt["version"])) + 3)
 
     def test_real_source_packages_all_reviewed_skills_and_preserves_the_runtime(self):
         receipt = codex.package(output_dir=self.output)
@@ -152,7 +152,7 @@ class CodexPluginPackageTests(unittest.TestCase):
                 else:
                     self.assertEqual(actual[name], raw)
         self.assertEqual(directory_files(self.source), before)
-        self.assertEqual(receipt["source_payload_files"], 55)
+        self.assertEqual(receipt["source_payload_files"], len(codex.suite.suite_files(self.version)))
         self.assertEqual(receipt["adapted_ui_files"], 8)
 
         # A prompt can name several skills. Each complete reference must map once;
