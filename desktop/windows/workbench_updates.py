@@ -7,7 +7,7 @@ from typing import NamedTuple
 from urllib.parse import unquote, urlsplit
 
 
-CLIENT_VERSION = '0.1.8'
+CLIENT_VERSION = '0.1.9'
 REPOSITORY = 'NingCui29/story-skill'
 LATEST_RELEASE_API = f'https://api.github.com/repos/{REPOSITORY}/releases/latest'
 MAX_RESPONSE_BYTES = 2 * 1024 * 1024

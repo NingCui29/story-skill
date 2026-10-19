@@ -2,6 +2,8 @@
 
 > **历史记录提示：** 本仓库文档和 14 个旧版 Release 的标题、正文已做名称遮盖；28 个旧附件的文件名、旧包身份、固定标签和提交历史仍保留原样，以免现有下载地址与安装依赖失效。旧版路径不能由新技能名推导，历史资料中的来源路径与哈希可能无法用遮盖后的文件复验。v0.6.0 的附件与回下载已核对；安装时仍须检查当前标签与附件状态。
 
+**v0.6.19 发布验收中。** 计划固定标签 `v0.6.19` 与版本分支 `version-0.6.19`；目标分发为八技能标准包、Claude 桌面 r2、Codex 插件、GitHub npm 内容包，以及 Intel Mac 0.1.18/build 19、Windows 0.1.9 客户端。标准／Claude／Codex、Mac ZIP 与 DMG、Windows 安装程序与便携 ZIP 共七份二进制文件，各配 `.sha256`，共十四附件。最终构建、CI、固定标签安装、附件回下载及 Packages 独立核验待完成，实际结果统一记入 [本版记录](releases/v0.6.19.md)。下列历史发布记录保持原样。
+
 **v0.6.18已发布。** 固定标签 `v0.6.18` 指向 `0df4880e884086cbfed04be0bf4902e8149062f3`，版本分支为 `version-0.6.18`。八技能55源载荷、Claude57文件、Codex60成员（58插件文件）、npm58成员及Intel客户端0.1.6/build7已分发。本地1743项回归（1725通过、18跳过，零失败和错误）、Linux与两组Windows CI、固定标签55文件安装、Release八附件匿名回下载及GitHub Packages独立核验均通过。[本版记录](releases/v0.6.18.md)保留真实CI HEAD、安装与下载物摘要、首次本地测试问题及Git传输重试。
 
 **v0.6.17 已发布。** 固定标签 `v0.6.17` 指向 `0e0f3e14256e7d53ca86a838252b5e176c3fdcc1`，版本分支为 `version-0.6.17`。八技能52源载荷、Claude桌面54文件、Codex本地市场包57成员（55插件文件）及Intel客户端0.1.5/build 6已分发；Release四个ZIP与四份校验文件，共八附件，已匿名回下载逐字节核验。[三组CI](https://github.com/NingCui29/story-skill/actions/runs/39113218965)和固定标签隔离安装通过，CI实际HEAD与后续两规则验证范围分别记录。[Packages工作流](https://github.com/NingCui29/story-skill/actions/runs/39114942727)成功，注册表回下载独立验收通过。[本版记录](releases/v0.6.17.md)汇集实际结果、首次Windows失败和发布采集顺序更正。仓库当前公开，下列旧版私有分发描述保留当时事实。
@@ -299,7 +301,7 @@ python3 -B -X utf8 scripts/package.py
 
 准备发布固定版本时，在实际通过验证的提交上创建未使用的版本 tag。核对运行时版本、ZIP 文件名、Release tag 和 npm 版本全部一致后，再推送 tag；不要强制移动已经分发的 tag。
 
-在 [创建 GitHub Release](https://github.com/NingCui29/story-skill/releases/new) 选择新 tag，填写本版变化与真实验证范围。v0.6.17 上传标准技能、Claude桌面、Codex插件、Intel Mac客户端四个ZIP及各自 `.sha256`，共八附件；逐一核对实际版本和构建回执后再发布。`dist/` 被 Git 忽略，普通 push 不会上传附件。GitHub 自动生成的 Source code ZIP 包含整个仓库，与套件附件用途不同。
+在 [创建 GitHub Release](https://github.com/NingCui29/story-skill/releases/new) 选择新 tag，填写本版变化与真实验证范围。 v0.6.19 使用标准套件、Claude r2、Codex 插件、版本化 Mac ZIP／DMG 和 Windows setup.exe／ZIP，各配同名校验文件，共十四附件。先核对最终源码、桌面版本、构建回执、许可和包体，再发布并实际回下载；具体清单见[本版记录](releases/v0.6.19.md)。v0.6.17 上传标准技能、Claude桌面、Codex插件、Intel Mac客户端四个ZIP及各自 `.sha256`，共八附件；逐一核对实际版本和构建回执后再发布。`dist/` 被 Git 忽略，普通 push 不会上传附件。GitHub 自动生成的 Source code ZIP 包含整个仓库，与套件附件用途不同。
 
 发布后使用固定 tag 在独立临时目录真实安装整套，核对文件与 ZIP 的逐字节一致性、共享依赖和 CLI 启动结果，再记录验证回执和发布状态。技能在宿主应用中的发现和任务路由需要实际使用验证，文件复制和 CLI 测试不能代替这一层。
 

@@ -234,6 +234,46 @@ class ChromeBridgeTests(unittest.TestCase):
             self.assertFalse(bridge.worker_status(self.root, self.binding())["attached"])
             self.assert_code("platform_chrome_worker_unavailable", bridge.heartbeat, self.book, self.handle)
 
+    def test_detached_session_history_does_not_exhaust_future_attachments(self):
+        preserved = {}
+        with patch.object(bridge, "MAX_SESSIONS", 2):
+            for index in range(3):
+                self.handle = self.root / ("handle-" + str(index) + ".json")
+                attached = self.attach()
+                bridge.heartbeat(self.book, self.handle, detach=True)
+                directory = self.root / bridge.DIRECTORY / attached["session_id"]
+                preserved.update({directory / name: (directory / name).read_bytes()
+                                  for name in ("session.json", "lease.json")})
+            self.handle = self.root / "handle-current.json"
+            self.attach()
+            self.assertTrue(self.preview()["can_start"])
+            self.assertEqual(bridge.worker_status(self.root, self.binding())["active_sessions"], 1)
+        self.assertEqual({path: path.read_bytes() for path in preserved}, preserved)
+
+    def test_expired_session_history_does_not_exhaust_future_attachments(self):
+        now = time.time()
+        with patch.object(bridge, "MAX_SESSIONS", 2):
+            for index in range(4):
+                self.handle = self.root / ("expired-handle-" + str(index) + ".json")
+                with patch.object(bridge.time, "time", return_value=now + index * 121):
+                    self.attach()
+                    status = bridge.worker_status(self.root, self.binding())
+                    self.assertTrue(status["attached"])
+                    self.assertEqual(status["active_sessions"], 1)
+        self.assertEqual(len(list((self.root / bridge.DIRECTORY).iterdir())), 4)
+
+    def test_live_session_limit_blocks_new_binding_without_breaking_existing_worker(self):
+        self.attach()
+        binding, profile = bridge._binding(self.book, self.plan["id"], self.path.name)
+        other_binding = copy.deepcopy(binding)
+        other_binding["target"]["account_id"] = "another-account"
+        self.handle = self.root / "other-handle.json"
+        with patch.object(bridge, "MAX_SESSIONS", 1):
+            with patch.object(bridge, "_binding", return_value=(other_binding, profile)):
+                self.assert_code("platform_chrome_session_limit", self.attach)
+            self.assertTrue(bridge.worker_status(self.root, binding)["attached"])
+        self.assertFalse(self.handle.exists())
+
     def test_expired_request_is_not_redispatched_or_acked(self):
         self.attach()
         with patch.dict(bridge.OP_SECONDS, verify_target=.1):

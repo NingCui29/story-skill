@@ -249,6 +249,8 @@ def attach(book, plan_id, profile_id, handle_path, ttl_seconds=TTL_SECONDS):
     available = worker_status(book.root, binding)
     if available["attached"]:
         _fail("worker_busy", "同一目标已有有效执行端，请复用原句柄或先分离。")
+    if available["active_sessions"] >= MAX_SESSIONS:
+        _fail("session_limit", "本书连接中的 Chrome 桥接会话过多；请先分离不用的执行端。")
     session_id, token = uuid.uuid4().hex, secrets.token_urlsafe(32)
     session = {"schema": 1, "session_id": session_id, "binding": binding, "binding_sha256": _digest(binding),
                "token_sha256": hashlib.sha256(token.encode()).hexdigest(), "created_at": _stamp(), "ttl_seconds": ttl_seconds}
@@ -274,29 +276,34 @@ def attach(book, plan_id, profile_id, handle_path, ttl_seconds=TTL_SECONDS):
 def worker_status(root, binding):
     path = api.safe_path(Path(root), DIRECTORY)
     if not path.exists():
-        return {"attached": False, "state": "worker_unavailable"}
+        return {"attached": False, "state": "worker_unavailable", "active_sessions": 0}
     with _directory(root) as parent:
         names = os.listdir(parent.path if os.name == "nt" else parent.fd)
     names = [name for name in names if re.fullmatch(r"[0-9a-f]{32}", name)]
-    if len(names) > MAX_SESSIONS:
-        _fail("session_limit", "本书保留的 Chrome 桥接会话过多。")
-    candidates = []
+    # Retain expired/detached queues as recovery evidence without making their
+    # lifetime count prevent the next attachment. The limit applies to live
+    # workers; checking the lease must therefore precede counting or binding.
+    candidates, active_sessions = [], 0
     for name in names:
         with _directory(root, name) as directory, _lock(directory):
             session = _session(directory)
-            if session.get("binding") != binding or session.get("binding_sha256") != _digest(binding):
-                continue
             try:
                 lease = _lease(directory, session)
             except api.StoryError as error:
                 if error.code == "platform_chrome_worker_unavailable":
                     continue
                 raise
+            active_sessions += 1
+            if active_sessions > MAX_SESSIONS:
+                _fail("session_limit", "本书连接中的 Chrome 桥接会话过多。")
+            if session.get("binding") != binding or session.get("binding_sha256") != _digest(binding):
+                continue
             candidates.append({"attached": True, "state": "attached", "session_id": name,
                                "expires_at": _stamp(lease["expires"])})
     if len(candidates) > 1:
         _fail("worker_busy", "目标存在多个执行端；请先分离多余会话。")
-    return candidates[0] if candidates else {"attached": False, "state": "worker_unavailable"}
+    status = candidates[0] if candidates else {"attached": False, "state": "worker_unavailable"}
+    return {**status, "active_sessions": active_sessions}
 
 
 def _owner_alive(root, request):
