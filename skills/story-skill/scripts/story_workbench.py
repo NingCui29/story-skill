@@ -4007,6 +4007,26 @@ def library_server(state_dir=None, port=8765, library_books=None):
             def allowed(self):
                 return self.headers.get('Host') == f'127.0.0.1:{self.server.server_port}'
 
+            def reject_post(self, status):
+                self.close_connection = True
+                lengths = self.headers.get_all('Content-Length', [])
+                if self.headers.get('Transfer-Encoding') is None and len(lengths) == 1:
+                    value = lengths[0].strip(' \t')
+                    if re.fullmatch(r'[0-9]+', value):
+                        try:
+                            length = int(value)
+                            if 0 < length <= 16384:
+                                # An unread POST body can reset the connection on
+                                # Windows before the client receives the denial.
+                                self.rfile.read(length)
+                        except (OSError, ValueError):
+                            pass
+                try:
+                    return self.reply(status, b'{}')
+                except OSError:
+                    # A timed-out or disconnected peer never reaches dispatch.
+                    return None
+
             def do_GET(self):
                 origin = f'http://127.0.0.1:{self.server.server_port}'
                 top_navigation = (self.headers.get('Sec-Fetch-Mode') == 'navigate'
@@ -4021,13 +4041,13 @@ def library_server(state_dir=None, port=8765, library_books=None):
                 origin = f'http://127.0.0.1:{self.server.server_port}'
                 if (not self.allowed() or self.headers.get('Origin') != origin
                         or self.headers.get('X-Story-Token') != token):
-                    return self.reply(403, b'{}')
+                    return self.reject_post(403)
                 if self.headers.get('Content-Type') != 'application/json' or self.headers.get('Transfer-Encoding'):
-                    return self.reply(400, b'{}')
+                    return self.reject_post(400)
                 try:
                     length = int(self.headers.get('Content-Length', '0'))
                     if not 0 < length <= 16384:
-                        return self.reply(413, b'{}')
+                        return self.reject_post(413)
                     raw = self.rfile.read(length)
                     if len(raw) != length:
                         return self.reply(400, b'{}')

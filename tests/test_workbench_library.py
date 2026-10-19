@@ -2,6 +2,7 @@
 import errno
 import http.client
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
@@ -10,7 +11,7 @@ import socket
 import tempfile
 import threading
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import test_workbench as base
 
@@ -170,6 +171,118 @@ class WorkbenchLibraryTests(unittest.TestCase):
                 self.assertEqual(self.post(shelf, 'add-book', {'path': str(root)}, headers)[0], 403)
         self.assertEqual(self.request(shelf, 'GET', headers={'Host': 'evil.example'})[0], 404)
         self.assertEqual(self.post(shelf, 'books')[1]['books'], [])
+
+    def denied_handler(self, server, body=b'{}', headers=()):
+        handler = server.RequestHandlerClass.__new__(server.RequestHandlerClass)
+        handler.server = server
+        handler.path = '/api/add-book'
+        handler.headers = http.client.HTTPMessage()
+        for name, value in (
+                ('Host', f'127.0.0.1:{server.server_port}'),
+                ('Origin', f'http://127.0.0.1:{server.server_port}'),
+                ('X-Story-Token', 'wrong'), ('Content-Type', 'application/json'),
+                *headers):
+            handler.headers[name] = value
+        handler.rfile = Mock(wraps=io.BytesIO(body))
+        handler.reply = Mock()
+        return handler
+
+    def test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access(self):
+        shelf = self.start()
+        with patch.object(self.w.json, 'loads') as parse, \
+                patch.object(self.w, '_library_load') as load, \
+                patch.object(self.w, '_library_store') as store, \
+                patch.object(self.w, '_library_entry') as entry:
+            for body in (b'{invalid JSON', b'x' * 16384):
+                with self.subTest(bytes=len(body)):
+                    handler = self.denied_handler(shelf, body, [('Content-Length', str(len(body)))])
+
+                    def reply(status, data):
+                        self.assertEqual((status, data), (403, b'{}'))
+                        self.assertEqual(handler.rfile.tell(), len(body))
+
+                    handler.reply.side_effect = reply
+                    handler.do_POST()
+                    handler.rfile.read.assert_called_once_with(len(body))
+                    handler.reply.assert_called_once_with(403, b'{}')
+                    self.assertTrue(handler.close_connection)
+            parse.assert_not_called()
+            load.assert_not_called()
+            store.assert_not_called()
+            entry.assert_not_called()
+
+    def test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing(self):
+        shelf = self.start()
+        cases = [[], [('Content-Length', '')], [('Content-Length', '-1')],
+                 [('Content-Length', '+2')], [('Content-Length', '2.0')],
+                 [('Content-Length', '\u00a02')],
+                 [('Content-Length', 'not-a-length')], [('Content-Length', '0')],
+                 [('Content-Length', '16385')], [('Content-Length', '9' * 5000)],
+                 [('Content-Length', '2'), ('Content-Length', '2')],
+                 [('Content-Length', '2'), ('Transfer-Encoding', 'chunked')],
+                 [('Content-Length', '2'), ('Transfer-Encoding', '')]]
+        for headers in cases:
+            with self.subTest(headers=headers):
+                handler = self.denied_handler(shelf, headers=headers)
+                handler.do_POST()
+                handler.rfile.read.assert_not_called()
+                handler.reply.assert_called_once_with(403, b'{}')
+                self.assertTrue(handler.close_connection)
+
+    def test_denied_post_read_timeout_or_disconnect_never_reaches_library(self):
+        shelf = self.start()
+        with patch.object(self.w.json, 'loads') as parse, \
+                patch.object(self.w, '_library_load') as load, \
+                patch.object(self.w, '_library_store') as store:
+            for error in (TimeoutError('body timeout'), ConnectionAbortedError('peer gone'),
+                          ValueError('closed body stream')):
+                with self.subTest(error=type(error).__name__):
+                    handler = self.denied_handler(shelf, headers=[('Content-Length', '2')])
+                    handler.rfile.read.side_effect = error
+                    handler.do_POST()
+                    handler.reply.assert_called_once_with(403, b'{}')
+                    self.assertTrue(handler.close_connection)
+            handler = self.denied_handler(shelf, b'{', [('Content-Length', '2')])
+            handler.reply.side_effect = BrokenPipeError('peer closed after partial body')
+            handler.do_POST()
+            handler.rfile.read.assert_called_once_with(2)
+            self.assertTrue(handler.close_connection)
+            parse.assert_not_called()
+            load.assert_not_called()
+            store.assert_not_called()
+
+    def test_unauthorized_invalid_json_receives_403_without_changing_files(self):
+        self.book()
+        shelf = self.start()
+        before = {p.relative_to(self.root): p.read_bytes()
+                  for p in self.root.rglob('*') if p.is_file()}
+        client = http.client.HTTPConnection('127.0.0.1', shelf.server_port, timeout=5)
+        try:
+            client.request('POST', '/api/add-book', b'{invalid JSON', {
+                'Content-Type': 'application/json', 'X-Story-Token': '',
+                'Origin': f'http://127.0.0.1:{shelf.server_port}'})
+            response = client.getresponse()
+            self.assertEqual((response.status, response.read()), (403, b'{}'))
+        finally:
+            client.close()
+        self.assertEqual({p.relative_to(self.root): p.read_bytes()
+                          for p in self.root.rglob('*') if p.is_file()}, before)
+        self.assertEqual(self.post(shelf, 'books')[1]['books'], [])
+
+    def test_wrong_content_type_consumes_small_body_before_400(self):
+        shelf = self.start()
+        handler = self.denied_handler(shelf, headers=[('Content-Length', '2')])
+        handler.headers.replace_header('X-Story-Token', shelf.library_token)
+        handler.headers.replace_header('Content-Type', 'text/plain')
+
+        def reply(status, data):
+            self.assertEqual((status, data), (400, b'{}'))
+            self.assertEqual(handler.rfile.tell(), 2)
+
+        handler.reply.side_effect = reply
+        handler.do_POST()
+        handler.rfile.read.assert_called_once_with(2)
+        handler.reply.assert_called_once_with(400, b'{}')
 
     def test_link_navigation_opens_shelf_but_cross_site_embedding_is_rejected(self):
         shelf = self.start()
