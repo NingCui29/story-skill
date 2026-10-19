@@ -1,5 +1,6 @@
 """Whole-book backup safety and recovery visibility using synthetic books."""
 import hashlib
+from contextlib import closing, contextmanager
 import json
 import os
 from pathlib import Path
@@ -77,18 +78,94 @@ class WorkbenchArchivesTests(unittest.TestCase):
         self.assertEqual((self.destination / '封面/封面.png').read_bytes(), binary)
         self.assertFalse((self.destination / '.story-restore-incomplete.json').exists())
         self.assertEqual((self.destination / '.story/state.sqlite3').stat().st_nlink, 1)
-        with sqlite3.connect(self.destination / '.story/state.sqlite3') as db:
+        with closing(sqlite3.connect(self.destination / '.story/state.sqlite3')) as db:
             self.assertEqual(db.execute('PRAGMA integrity_check').fetchone()[0], 'ok')
 
+    def assert_snapshot_connections_closed_before_cleanup(self, failure=None):
+        """Retain real handles so garbage collection cannot conceal a leak."""
+        original_connect = sqlite3.connect
+        original_temporary = tempfile.TemporaryDirectory
+        captured, cleanup_checks = [], []
+
+        class FailingBackupConnection(sqlite3.Connection):
+            def backup(self, *args, **kwargs):
+                raise sqlite3.DatabaseError('synthetic source backup failure')
+
+        class FailingIntegrityConnection(sqlite3.Connection):
+            def execute(self, sql, *args, **kwargs):
+                if sql.strip().upper() == 'PRAGMA INTEGRITY_CHECK':
+                    return super().execute("SELECT 'synthetic integrity failure'")
+                return super().execute(sql, *args, **kwargs)
+
+        def connect(database, *args, **kwargs):
+            snapshot = Path(str(database)).name == 'database-0.sqlite3'
+            if snapshot and failure == 'integrity':
+                kwargs['factory'] = FailingIntegrityConnection
+            elif not snapshot and failure == 'backup':
+                kwargs['factory'] = FailingBackupConnection
+            connection = original_connect(database, *args, **kwargs)
+            if snapshot:
+                captured.append(connection)
+            return connection
+
+        @contextmanager
+        def temporary(*args, **kwargs):
+            with original_temporary(*args, **kwargs) as location:
+                try:
+                    yield location
+                finally:
+                    if kwargs.get('prefix') == '.story-archive-':
+                        self.assertTrue(captured, 'The archive must create a real SQLite snapshot')
+                        leaked = []
+                        for connection in captured:
+                            try:
+                                connection.execute('SELECT 1')
+                            except sqlite3.ProgrammingError:
+                                cleanup_checks.append('closed')
+                            else:
+                                leaked.append(connection)
+                        # Preserve an informative assertion on Windows without
+                        # allowing this test's own cleanup to leave open files.
+                        for connection in leaked:
+                            connection.close()
+                        self.assertEqual(leaked, [], 'Snapshot connections must close before temporary-directory removal')
+
+        with patch.object(self.archives.sqlite3, 'connect', side_effect=connect), \
+                patch.object(self.archives.tempfile, 'TemporaryDirectory', side_effect=temporary):
+            if failure == 'backup':
+                with self.assertRaisesRegex(sqlite3.DatabaseError, 'synthetic source backup failure'):
+                    self.archive()
+            elif failure == 'integrity':
+                self.error('archive_state', self.archive)
+            else:
+                self.assertTrue(self.archive()['ok'])
+        self.assertEqual(cleanup_checks, ['closed'])
+        # The caller still owns strong references after the complete operation.
+        for connection in captured:
+            with self.assertRaises(sqlite3.ProgrammingError):
+                connection.execute('SELECT 1')
+        self.assertFalse(any(path.name.startswith('.story-archive-') for path in self.directory.iterdir()))
+
+    def test_snapshot_connection_closed_before_successful_archive_cleanup(self):
+        self.assert_snapshot_connections_closed_before_cleanup()
+
+    def test_snapshot_connection_closed_when_source_backup_raises(self):
+        self.assert_snapshot_connections_closed_before_cleanup('backup')
+        self.assertFalse(self.output.exists())
+
+    def test_snapshot_connection_closed_when_integrity_check_fails(self):
+        self.assert_snapshot_connections_closed_before_cleanup('integrity')
+        self.assertFalse(self.output.exists())
+
     def test_backup_reads_wal_commits_into_database_snapshot(self):
-        with sqlite3.connect(self.root / '.story/state.sqlite3') as writer:
+        with closing(sqlite3.connect(self.root / '.story/state.sqlite3')) as writer:
             writer.execute('PRAGMA journal_mode=WAL')
             writer.execute('UPDATE meta SET value=? WHERE key=?', ('9', 'revision'))
             writer.commit()
             packet = self.archive()
             self.assertEqual(packet['revision'], 9)
             self.archives.restore_archive(self.output, self.destination)
-        with sqlite3.connect(self.destination / '.story/state.sqlite3') as db:
+        with closing(sqlite3.connect(self.destination / '.story/state.sqlite3')) as db:
             self.assertEqual(db.execute("SELECT value FROM meta WHERE key='revision'").fetchone()[0], '9')
         self.assertFalse((self.destination / '.story/state.sqlite3-wal').exists())
 
@@ -227,8 +304,9 @@ class WorkbenchArchivesTests(unittest.TestCase):
             result = original(root, relative, writer)
             if writer is not None and not changed:
                 changed = True
-                with sqlite3.connect(self.root / '.story/state.sqlite3') as db:
+                with closing(sqlite3.connect(self.root / '.story/state.sqlite3')) as db:
                     db.execute("UPDATE meta SET value='1' WHERE key='revision'")
+                    db.commit()
             return result
 
         with patch.object(self.archives, '_read_file', side_effect=reader):
