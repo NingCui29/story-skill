@@ -3679,12 +3679,17 @@ input{min-width:0;padding:8px 12px;background:var(--surface);width:100%}a{text-u
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style><style>__THEME_CSS__</style><style>
 /* Shelf structure uses the shared palette in both appearances. */
-body{max-width:1336px;padding:36px 40px 24px;font-size:14px;line-height:1.65}
+body{max-width:1336px;padding:20px 32px 24px;font-size:14px;line-height:1.65}
 button,input,select{border-radius:9px}button{min-height:38px;letter-spacing:.01em}
 input::placeholder{color:var(--muted);opacity:.85}
-.shelf-header{padding-bottom:20px;border-bottom:1px solid var(--line);align-items:flex-start}
-h1{font-size:32px;font-weight:650;letter-spacing:.035em;line-height:1.25}
-.shelf-header-actions{gap:24px;align-items:center;padding-top:5px}
+.shelf-header{padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line);align-items:center;flex-wrap:wrap;gap:12px}
+.shelf-header .library-actions{position:relative;margin:0;min-width:0;gap:8px}
+.shelf-header .library-actions>button,.shelf-header .library-actions>details>summary{font-size:13px;min-height:38px}
+.shelf-header .library-actions #new-book{width:auto;margin:0;padding:7px 15px}
+.shelf-header .library-actions>details{flex:0 1 auto}
+.shelf-header .library-actions>.shelf-add{position:static}
+.shelf-header .library-actions .add-body{left:0;right:auto;width:min(520px,calc(100vw - 64px))}
+.shelf-header-actions{gap:12px;align-items:center;padding-top:0;margin-left:auto}
 .add-body{padding:0 16px 16px}.add-fields{gap:8px}.add-fields input{min-height:40px}
 .add-help{font-size:12px;margin-top:8px;line-height:1.7}
 .shelf-library{padding-top:2px}
@@ -3735,11 +3740,11 @@ html[data-story-workbench] .book-management button{display:block;width:100%;marg
 .error{grid-row:6;padding:9px 11px;background:var(--wb-warning-bg);border-radius:7px;font-size:12px;line-height:1.75}
 .search-empty{padding:8px 2px 22px;font-size:12px}.search-empty button{min-height:34px}
 .shelf-footer{font-size:11px;line-height:1.9;padding-top:16px;margin-top:30px;max-width:920px}
-@media(max-width:1100px){body{padding:30px 28px 22px}.shelf-toolbar{grid-template-columns:minmax(0,1fr);gap:12px}.shelf-search{grid-column:1;grid-row:1}.type-filters{grid-row:2}.shelf-options{grid-column:1;grid-row:3;justify-content:flex-end;align-items:center;gap:16px}.shelf-state,.shelf-sort{display:flex;align-items:center;gap:8px}.shelf-state select,.shelf-sort select{min-height:34px;padding:6px 9px}}
-@media(max-width:680px){body{padding:24px 18px 20px}.shelf-header{gap:12px;padding-bottom:18px}h1{font-size:27px}.shelf-header-actions{padding-top:0;gap:12px;align-items:flex-end}.shelf-toolbar{padding:12px;gap:11px}.type-filters{gap:2px}.type-filters button{padding:6px 8px;font-size:12px;min-height:34px}.shelf-options{width:100%;justify-content:space-between;gap:8px}.shelf-state,.shelf-options .shelf-sort{display:grid;gap:5px;min-width:0;flex:1}.shelf-state select,.shelf-options .shelf-sort select{width:100%;max-width:none;font-size:12px;min-width:0}.book{padding:19px 18px 17px 22px;min-height:210px;grid-template-columns:minmax(0,1fr) 104px}.book strong{font-size:18px}.book-progress{padding-right:0}.book>button{min-height:40px;padding:8px 14px}.shelf-footer{margin-top:24px;font-size:11px}.add-fields button{width:100%;min-height:40px}}
+@media(max-width:1100px){body{padding:20px 24px 22px}.shelf-toolbar{grid-template-columns:minmax(0,1fr);gap:12px}.shelf-search{grid-column:1;grid-row:1}.type-filters{grid-row:2}.shelf-options{grid-column:1;grid-row:3;justify-content:flex-end;align-items:center;gap:16px}.shelf-state,.shelf-sort{display:flex;align-items:center;gap:8px}.shelf-state select,.shelf-sort select{min-height:34px;padding:6px 9px}}
+@media(max-width:680px){body{padding:16px 18px 20px}.shelf-header{gap:10px;padding-bottom:12px;margin-bottom:12px}.shelf-header .library-actions .add-body{width:calc(100vw - 36px)}.shelf-header-actions{padding-top:0;gap:12px;align-items:flex-end}.shelf-toolbar{padding:12px;gap:11px}.type-filters{gap:2px}.type-filters button{padding:6px 8px;font-size:12px;min-height:34px}.shelf-options{width:100%;justify-content:space-between;gap:8px}.shelf-state,.shelf-options .shelf-sort{display:grid;gap:5px;min-width:0;flex:1}.shelf-state select,.shelf-options .shelf-sort select{width:100%;max-width:none;font-size:12px;min-width:0}.book{padding:19px 18px 17px 22px;min-height:210px;grid-template-columns:minmax(0,1fr) 104px}.book strong{font-size:18px}.book-progress{padding-right:0}.book>button{min-height:40px;padding:8px 14px}.shelf-footer{margin-top:24px;font-size:11px}.add-fields button{width:100%;min-height:40px}}
 </style></head>
-<body><header class="shelf-header"><h1 id="library-heading">写作书架</h1><div class="shelf-header-actions">__THEME_CONTROL__</div></header><p id="shelf-intro" class="sr-only">管理本地作品，打开后继续写作。</p>
-__MANAGEMENT_HTML__<p id="message" role="status"></p>
+<body><h1 id="library-heading" class="sr-only">写作书架</h1><header class="shelf-header">__MANAGEMENT_HTML__<div class="shelf-header-actions">__THEME_CONTROL__</div></header><p id="shelf-intro" class="sr-only">管理本地作品，打开后继续写作。</p>
+<p id="message" role="status"></p>
 <main class="shelf-library" aria-labelledby="library-heading"><div class="shelf-toolbar" role="search" aria-label="查找书架作品"><div class="shelf-search"><label class="sr-only" for="shelf-search">搜索当前类型的书名、题材或目录</label><input id="shelf-search" type="search" placeholder="搜索书名、题材或目录" aria-describedby="filter-summary" autocomplete="off"><button id="clear-search" class="search-clear" hidden>清空搜索</button></div><div class="shelf-controls"><div class="type-filters" role="group" aria-label="按作品类型筛选"><button id="filter-all" aria-pressed="true">全部 0</button><button id="filter-long" aria-pressed="false">长篇 0</button><button id="filter-short" aria-pressed="false">短篇 0</button><button id="filter-analysis" aria-pressed="false">作品分析 0</button></div><div class="shelf-options"><label class="shelf-state" for="shelf-status">本地状态<select id="shelf-status" aria-label="按本地作品状态筛选"><option value="all">全部状态 0</option><option value="serializing">连载中 0</option><option value="completed">已完本 0</option><option value="unknown">待确认 0</option></select></label><label class="shelf-sort" for="shelf-order">更新时间<select id="shelf-order" aria-label="按更新时间排序"><option value="newest">最新在前</option><option value="oldest">最早在前</option></select></label></div></div></div><p id="filter-summary" role="status"></p><div id="books"></div><div id="search-empty" class="search-empty" hidden><p>可以清空搜索，继续查看当前类型的作品。</p><button id="empty-clear">清空搜索</button></div></main>
 <script>__THEME_SCRIPT__const TOKEN=__TOKEN__;const $=id=>document.getElementById(id);let busy=false;
 async function call(action,data={}){const r=await fetch('/api/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(data)});const v=await r.json();if(!r.ok)throw Error(v.message||'请求失败');return v;}
