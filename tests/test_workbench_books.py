@@ -296,11 +296,50 @@ class WorkbenchBookManagementTests(unittest.TestCase):
             self.module._macos_trash(self.root / 'does-not-exist')
         self.assertTrue(self.root.exists())
 
+    @unittest.skipUnless(sys.platform == 'darwin', 'requires macOS Foundation')
+    def test_foundation_recycles_owned_book_and_restores_only_its_returned_path(self):
+        name = 'story-workbench-trash-fixture-' + self.module.uuid.uuid4().hex
+        source, entry = self.book(name)
+        contents = 'synthetic workbench recycle fixture'
+        (source / 'synthetic-fixture.txt').write_text(contents, encoding='utf-8')
+        neighbor = self.root / 'preserved-neighbor.txt'
+        neighbor.write_text('preserve', encoding='utf-8')
+        entries, _, result = self.trash(entry)
+        self.assertTrue(result['trashed'])
+        self.assertTrue(result['shelf_removed'])
+        self.assertEqual(entries, {})
+        self.assertFalse(source.exists())
+        self.assertEqual(result['system'], 'macos')
+        target = Path(result['trash_path'])
+        self.assertEqual(target.name, name)
+        self.assertEqual((target / 'synthetic-fixture.txt').read_text(encoding='utf-8'), contents)
+        self.assertEqual(neighbor.read_text(encoding='utf-8'), 'preserve')
+        # Restore this exact uniquely named fixture before TemporaryDirectory
+        # cleanup. No enumeration, emptying or deletion of Trash is performed.
+        self.assertFalse(source.exists())
+        target.rename(source)
+        self.assertTrue((source / '.story/state.sqlite3').exists())
+
     @unittest.skipUnless(sys.platform == 'win32', 'requires Windows Shell')
     def test_windows_shell_missing_path_errors_without_moving_any_directory(self):
         with self.assertRaises(OSError):
             self.module._windows_trash(self.root / 'does-not-exist')
         self.assertTrue(self.root.exists())
+
+    @unittest.skipUnless(sys.platform == 'win32', 'requires Windows Shell')
+    def test_windows_shell_recycles_only_owned_synthetic_directory(self):
+        # The only native side effect is one uniquely named tiny test directory
+        # in this fixture's temporary root entering the system Recycle Bin.
+        # There is deliberately no cleanup that empties or edits the Recycle Bin.
+        source = self.root / ('story-workbench-trash-fixture-' + self.module.uuid.uuid4().hex)
+        source.mkdir()
+        (source / 'synthetic-fixture.txt').write_text('workbench native recycle test', encoding='utf-8')
+        neighbor = self.root / 'preserved-neighbor.txt'
+        neighbor.write_text('preserve', encoding='utf-8')
+        result = self.module._windows_trash(source)
+        self.assertEqual(result['system'], 'windows')
+        self.assertFalse(source.exists())
+        self.assertEqual(neighbor.read_text(encoding='utf-8'), 'preserve')
 
 
 if __name__ == '__main__':

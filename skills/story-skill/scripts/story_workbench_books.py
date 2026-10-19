@@ -178,7 +178,7 @@ def _windows_trash(path):
                                     ctypes.byref(operation)))
         # RECYCLEONDELETE guarantees recycling rather than permanent deletion.
         # EARLYFAILURE turns failures into errors instead of implicit skip/continue.
-        flags = 0x00080000 | 0x00100000 | 0x00000400 | 0x00000004 | 0x00000200
+        flags = 0x00080000 | 0x00100000 | 0x00000400 | 0x00000004 | 0x00000200 | 0x00000010
         checked(method(operation, 5, wintypes.DWORD)(operation, flags))
         checked(shell.SHCreateItemFromParsingName(str(path), None,
                     ctypes.byref(GUID('43826d1e-e718-42ee-bc55-a1e261c37bfe')), ctypes.byref(item)))
