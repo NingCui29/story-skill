@@ -8,6 +8,8 @@ import sys
 import tempfile
 import unittest
 
+from test_desktop_editor_appearance import HARNESS as APPEARANCE_HARNESS
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / 'desktop/macos/StoryWorkbench.swift'
@@ -182,24 +184,32 @@ let bytes=try JSONSerialization.data(withJSONObject:["script":script,"strict":st
 print(String(data:bytes,encoding:.utf8)!)
 ''')
         scripts = json.loads(output)
-        harness = r'''
-const assert=require('assert'),vm=require('vm');
-function page(known,changes={},frame=false){
+        harness = APPEARANCE_HARNESS + r'''
+function nativePage(known,changes={},frame=false){
+ // A book-info ID alone is not proof that the real appearance asset accepted the page.
+ // Use complete controls, protected textarea state and the shared DOM fixture instead.
+ const fixture=page({known,modern:true});
  const window={};window.top=frame?{}:window;
  const record={editable:true,text:'原文',value:'未保存文字',saving:true};
- const current={window,URL,location:{href:'http://127.0.0.1:12345/abcdefghijklmnopqrstuvwxyz012345/',protocol:'http:',hostname:'127.0.0.1',port:'12345',pathname:'/abcdefghijklmnopqrstuvwxyz012345/',...changes},docs:new Map([['inactive',record]]),text:{value:'未保存文字',selectionStart:1,selectionEnd:3},reads:0};
- current.document={getElementById(id){current.reads++;return known&&id==='book-info'?{}:null;},querySelector(){current.reads++;return null;}};
+ const current={window,URL,location:{href:'http://127.0.0.1:12345/abcdefghijklmnopqrstuvwxyz012345/',protocol:'http:',hostname:'127.0.0.1',port:'12345',pathname:'/abcdefghijklmnopqrstuvwxyz012345/',...changes},document:fixture.document,docs:new Map([['inactive',record]]),text:{value:'未保存文字',selectionStart:1,selectionEnd:3},reads:0,fixture};
+ const find=current.document.getElementById.bind(current.document),query=current.document.querySelector.bind(current.document);
+ current.document.getElementById=id=>{current.reads++;return find(id);};
+ current.document.querySelector=selector=>{current.reads++;return query(selector);};
  return current;
 }
 for(const known of [false,true]){
- const current=page(known),before=JSON.stringify([...current.docs]);
+ const current=nativePage(known),before=JSON.stringify([...current.docs]),fixture=current.fixture,desk=JSON.stringify(fixture.serialize(fixture.desk));
  assert.equal(vm.runInNewContext(scripts.script,current),known);
  assert.ok(current.reads>0);
+ assert.equal(!!current.document.getElementById('story-editor-appearance'),known);
+ assert.equal(fixture.body.classList.contains('native-compact-editor'),known);
  assert.equal(JSON.stringify([...current.docs]),before);
  assert.deepEqual(current.text,{value:'未保存文字',selectionStart:1,selectionEnd:3});
+ assert.equal(JSON.stringify(fixture.serialize(fixture.desk)),desk);
+ assert.strictEqual(current.document.activeElement,fixture.text);
 }
-assert.equal(vm.runInNewContext(scripts.strict,page(true)),false);
-for(const invalid of [page(true,{port:'12346'}),page(true,{pathname:'/another_abcdefghijklmnopqrstuvwxyz/'}),page(true,{},true)]){
+assert.equal(vm.runInNewContext(scripts.strict,nativePage(true)),false);
+for(const invalid of [nativePage(true,{port:'12346'}),nativePage(true,{pathname:'/another_abcdefghijklmnopqrstuvwxyz/'}),nativePage(true,{},true)]){
  assert.equal(vm.runInNewContext(scripts.script,invalid),false);assert.equal(invalid.reads,0);
 }
 '''
