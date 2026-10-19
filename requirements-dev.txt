@@ -1,2 +1,3 @@
-# Optional benchmark only. The installed skill runtime and its unit tests use Python's standard library.
+# Optional benchmark only. The offline runtime and unit tests use Python's standard library.
+# Platform draft execution separately needs Playwright and Chromium; see the publish skill reference.
 tiktoken==0.14.0

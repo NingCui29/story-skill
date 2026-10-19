@@ -1,0 +1,26 @@
+{
+  "scope": "offline_regression_retest",
+  "platform_accessed": false,
+  "browser_started": false,
+  "source_frozen": true,
+  "mjs_sha256": "5ecc2702b431feb5798be95e3afb24b0b63fb478bb60b0aba0a5b0d98a81a942",
+  "python": "/Users/cuining/.local/bin/python3.12",
+  "node_path_present": true,
+  "modules": [
+    {
+      "module": "tests.test_workbench",
+      "tests": 83,
+      "passed": 83,
+      "skipped": 0,
+      "seconds": 22.299
+    },
+    {
+      "module": "tests.test_workbench_library",
+      "tests": 15,
+      "passed": 15,
+      "skipped": 0,
+      "seconds": 1.18
+    }
+  ],
+  "finding": "The two outdated-state failures from the full run did not reproduce after source freeze. No runtime digest code change was needed; concurrent MJS source updates are the supported cause."
+}

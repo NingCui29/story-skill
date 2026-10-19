@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "status": "installed_and_verified",
+  "public_release_performed": false,
+  "plugin": {
+    "version": "0.6.19",
+    "actual_default_codex_home": true,
+    "installed": true,
+    "enabled": true,
+    "skill_count": 8,
+    "plugin_files": 65,
+    "exact_packaged_bytes": true,
+    "unrelated_configuration_unchanged": true,
+    "fresh_skills_list": true,
+    "runtime_init_status_audit_and_http_smoke": "passed"
+  },
+  "desktop": {
+    "version": "0.1.17",
+    "build": "18",
+    "story_version": "0.6.19",
+    "runtime_sha256": "9caaee41625da9b7d53321b5e2cd095c90e22dcf050dc6af7cc3c5ff55744137",
+    "workbench_sha256": "d28da29a76dea814dfabb14294f3988163f91423e9c0223b9feabf3c2eec41c4",
+    "runtime_files": 15,
+    "latest_existing_native_and_safety_fixes_preserved": true,
+    "original_top_level_functions_unchanged_except_platform_integration": 102,
+    "strict_signature_verified": true,
+    "installed_tree_exact_staging": true,
+    "target_service_running": true,
+    "target_service_outdated": false,
+    "target_service_uses_installed_bundled_runtime": true,
+    "target_book_identity_verified": true,
+    "target_http_200": true,
+    "targeted_tests": {
+      "run": 49,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "actual_installed_chrome_ui": {
+    "existing_tab_reused": true,
+    "platform_draft_toolbar_visible": true,
+    "fanqie_binding_form_open": true,
+    "account_and_url_fields_empty": true,
+    "binding_fields_visible": true,
+    "save_binding_button_enabled": true,
+    "binding_not_submitted": true,
+    "background_book_tree_scan_limit_message_observed": true,
+    "actual_book_readonly_health_and_latest_formal_source_qualified": true
+  },
+  "preservation": {
+    "full_old_plugin_and_config_backup": true,
+    "full_latest_app_backup": true,
+    "book_observed_md_and_db_files": 6045,
+    "file_hash_size_mtime_unchanged": true,
+    "database_logical_dump_unchanged": true,
+    "other_five_editor_services_unchanged": true
+  },
+  "platform": {
+    "access_during_install": false,
+    "drafts_created_during_install": false,
+    "manuscript_writes_during_install": false,
+    "current_assistant_chrome_worker_still_required_for_execution": true
+  },
+  "private_install_receipts_and_ui_screenshot_retained": true,
+  "existing_book_tree_limitation": {
+    "material_nodes": 6675,
+    "limit": 5000,
+    "same_scan_function_and_limit_in_both_prior_installed_backups": true,
+    "platform_binding_does_not_call_material_scan": true,
+    "no_materials_moved_or_changed": true
+  }
+}

@@ -62,7 +62,9 @@ class WorkbenchRuntimeRegressions(unittest.TestCase):
         self.start_server(story.workbench)
         expected = {'story.py', 'story_storage.py', 'story_search.py', 'story_world.py',
                     'story_history.py', 'story_publish.py', 'story_workbench.py',
-                    'story_outline.py', 'story_punctuation.py', 'story_workbench_books.py', 'story_workbench_archives.py'}
+                    'story_outline.py', 'story_punctuation.py', 'story_workbench_books.py', 'story_workbench_archives.py',
+                    'story_platform_drafts.py', 'story_platform_browser.py', 'story_platform_chrome_bridge.py',
+                    'story_chrome_bridge.mjs'}
         self.assertEqual({source.name for source in story.workbench._runtime_paths}, expected)
         initial = story.workbench._service_request(self.root)
         self.assertFalse(initial['outdated'])

@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "platform": "fanqie",
+  "execution_mode": "host_assisted_cua",
+  "browser": "existing logged-in Google Chrome",
+  "status": "passed_with_documented_scope",
+  "source_phase": {
+    "mjs_sha256": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+    "native_browser_sha256": "3023533a6a5ac53de05f361a058d5947c8f4bcbb59fa0e47bd52749f90c8be24",
+    "self_service_binding_ui": "subsequent_development_increment"
+  },
+  "qualification": {
+    "local_book": "isolated synthetic functional fixture",
+    "frozen_formal_plan_used": true,
+    "production_execution_core_and_target_locks": true,
+    "production_authenticated_queue_and_driver": true,
+    "literary_review_or_real_novel_upload": false
+  },
+  "target_checks": {
+    "stable_account_guard_dom": true,
+    "exact_book_url_identity": true,
+    "draft_and_non_draft_catalogs": true,
+    "single_observed_volume_enumerated": true,
+    "all_rows_scroll_endpoints_and_stability": true,
+    "actual_multiple_volumes_or_pages": false
+  },
+  "functional_chapter_13": {
+    "title": "一键草稿完整链路复验",
+    "frozen_body_characters": 81,
+    "leading_linefeed_and_internal_empty_paragraphs": true,
+    "extra_trailing_linefeeds": false,
+    "first_run": {
+      "job": "succeeded",
+      "fresh_full_readback": "matched",
+      "verified_chapters": 1,
+      "total_chapters": 1
+    },
+    "repeat_same_plan": {
+      "job": "succeeded",
+      "fresh_full_readback": "matched",
+      "ui_result": "existing identical draft",
+      "additional_create_requests": 0
+    },
+    "journal": {
+      "sending": 1,
+      "saved": 1,
+      "reconciled": 1,
+      "unknown": 0,
+      "conflict": 0,
+      "blocked": 0
+    },
+    "global_fence": {
+      "intents": 1,
+      "resolved": 1,
+      "attempt_and_content_match": true
+    },
+    "independent_preview_reload": {
+      "complete_body_characters": 81,
+      "exact_match": true
+    }
+  },
+  "earlier_chapter_12": {
+    "frozen_body_characters": 83,
+    "manifest_and_body_unchanged": true,
+    "all_prior_events_unchanged": true,
+    "unknown_history_preserved": true,
+    "unresolved_recreation_fence_unchanged": true,
+    "latest_state": "conflict",
+    "full_match": false,
+    "platform_functional_cleanup_body_characters": 81,
+    "cleanup_is_not_production_creation_acceptance": true
+  },
+  "remote_final": {
+    "drafts": 3,
+    "functional_test_chapters": [
+      11,
+      12,
+      13
+    ],
+    "non_draft_rows": 10,
+    "all_original_cells_and_edit_links_equal_baseline": true,
+    "original_published_rows": 7,
+    "original_scheduled_rows": 3,
+    "schedule_unchanged": true,
+    "published_or_submitted_by_this_test": false
+  },
+  "browser_cleanup": {
+    "diagnostic_tabs_closed": true,
+    "kept_task_tabs": [
+      "workbench",
+      "final read-only preview"
+    ],
+    "original_user_tab_preserved": true,
+    "worker_detached": true
+  },
+  "limitations": [
+    "Current assistant worker is required; this is not unattended execution.",
+    "Only the observed single-volume full table was accepted live; actual pagination and multiple volumes remain unverified.",
+    "The earlier 83-character tail-linefeed sample remains failed; no trimming was used to manufacture a match.",
+    "Opening or reloading the functional test editor was observed to grow repeated text; cause unverified. Fanqie reads now require independent read-only preview.",
+    "Qimao and Qidian live acceptance is deferred.",
+    "No release or installed-client update was performed."
+  ],
+  "private_raw_evidence_retained": true,
+  "public_evidence_excludes": [
+    "account and work IDs",
+    "draft IDs",
+    "profile and credentials",
+    "raw manuscript",
+    "sensitive screenshots"
+  ]
+}

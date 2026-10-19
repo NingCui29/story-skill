@@ -85,8 +85,8 @@ def _input(raw):
     allowed = {"platform", "account_id", "remote_book_id", "chapters", "mode"}
     if set(raw) != allowed:
         api.fail("invalid_input", "Publishing input must contain exactly platform, account_id, remote_book_id, chapters and mode")
-    if raw["platform"] not in ("fanqie", "qimao") or raw["mode"] != "draft":
-        api.fail("invalid_input", "Offline preparation supports fanqie/qimao and mode=draft only")
+    if raw["platform"] not in ("fanqie", "qimao", "qidian") or raw["mode"] != "draft":
+        api.fail("invalid_input", "Offline preparation supports fanqie/qimao/qidian and mode=draft only")
     chapters = raw["chapters"]
     if not isinstance(chapters, list) or not chapters or len(chapters) > 1000:
         api.fail("invalid_input", "chapters must contain between 1 and 1000 ascending consecutive chapter numbers")
@@ -528,7 +528,7 @@ def _validated_manifest(row, book_id=None):
             raise ValueError("Publishing snapshot belongs to a different book or has no book identity")
         if not isinstance(manifest["book_title"], str) or not manifest["book_title"].strip() or len(manifest["book_title"]) > 200:
             raise ValueError("Invalid snapshot book title")
-        if (manifest["platform"] not in ("fanqie", "qimao") or manifest["mode"] != "draft" or
+        if (manifest["platform"] not in ("fanqie", "qimao", "qidian") or manifest["mode"] != "draft" or
                 manifest["book_kind"] not in ("long", "short") or
                 manifest["binding_status"] != "user_declared_unverified" or
                 type(manifest["conversion_version"]) is not int or manifest["conversion_version"] != 1):
@@ -1076,7 +1076,7 @@ def inspect_comparison(book, record_id, budget=DEFAULT_BUDGET):
 
 def _material_entries(manifest, receipt):
     """Use generated member paths; novel titles and user IDs are content only."""
-    platform = {"fanqie": "番茄", "qimao": "七猫"}[manifest["platform"]]
+    platform = {"fanqie": "番茄", "qimao": "七猫", "qidian": "起点"}[manifest["platform"]]
     guide = (
         f"《{manifest['book_title']}》章节材料\n\n"
         f"目标平台：{platform}\n账号标识：{manifest['account_id']}\n"

@@ -103,7 +103,7 @@ class SuiteInstallTests(unittest.TestCase):
         package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(package)
         self.assertEqual(installer.SUITE_FILES, package.SUITE_FILES)
-        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True), ("0.6.3", 39, True), ("0.6.4", 39, True), ("0.6.5", 40, True), ("0.6.6", 40, True), ("0.6.7", 40, True), ("0.6.8", 40, True), ("0.6.9", 44, True), ("0.6.10", 45, True), ("0.6.11", 49, True), ("0.6.12", 49, True), ("0.6.13", 50, True), ("0.6.14", 51, True), ("0.6.15", 51, True), ("0.6.16", 51, True), ("0.6.17", 52, True), ("0.6.18", 55, True), ("0.6.19", 57, True)):
+        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True), ("0.6.3", 39, True), ("0.6.4", 39, True), ("0.6.5", 40, True), ("0.6.6", 40, True), ("0.6.7", 40, True), ("0.6.8", 40, True), ("0.6.9", 44, True), ("0.6.10", 45, True), ("0.6.11", 49, True), ("0.6.12", 49, True), ("0.6.13", 50, True), ("0.6.14", 51, True), ("0.6.15", 51, True), ("0.6.16", 51, True), ("0.6.17", 52, True), ("0.6.18", 55, True), ("0.6.19", 62, True)):
             with self.subTest(version=version):
                 files = installer.suite_files(version)
                 self.assertEqual(installer.skill_names(version), package.skill_names(version))
@@ -115,8 +115,13 @@ class SuiteInstallTests(unittest.TestCase):
         self.assertEqual(len(installer.SUITE_FILES_V069), 44)
         self.assertEqual(installer.suite_files("0.6.9"), installer.SUITE_FILES_V069)
         self.assertEqual(installer.SUITE_FILES, installer.SUITE_FILES_V0619)
-        self.assertEqual(len(installer.SUITE_FILES_V0619), 57)
+        self.assertEqual(len(installer.SUITE_FILES_V0619), 62)
         self.assertEqual(set(installer.SUITE_FILES_V0619) - set(installer.SUITE_FILES_V0618), {
+            "story-skill/scripts/story_platform_drafts.py",
+            "story-skill/scripts/story_platform_browser.py",
+            "story-skill/scripts/story_platform_chrome_bridge.py",
+            "story-skill/scripts/story_chrome_bridge.mjs",
+            "story-skill-publish/references/platform-drafts.md",
             "story-skill/scripts/story_workbench_books.py",
             "story-skill/scripts/story_workbench_archives.py",
         })
@@ -349,7 +354,7 @@ class SuiteInstallTests(unittest.TestCase):
             self.assertFalse((backup / relative).exists())
         self.assertEqual(self.install(True)["status"], "unchanged")
 
-    def test_v0619_adds_book_management_and_archives_with_exact_v0618_backup(self):
+    def test_v0619_adds_book_management_and_platform_drafts_with_exact_v0618_backup(self):
         added = set(installer.SUITE_FILES_V0619) - set(installer.SUITE_FILES_V0618)
         contents = {relative: (self.source / relative).read_bytes() for relative in added}
         for relative in added:
@@ -365,8 +370,8 @@ class SuiteInstallTests(unittest.TestCase):
             self.install(True)
         runtime.write_bytes(b'VERSION = "0.6.19"\n')
         result = self.install(True)
-        self.assertEqual(result["files"], 57)
-        self.assertEqual(result["changed_skills"], ["story-skill"])
+        self.assertEqual(result["files"], 62)
+        self.assertEqual(result["changed_skills"], ["story-skill", "story-skill-publish"])
         backup = Path(result["backup"])
         self.assertEqual(installer.inventory(backup / "story-skill"), before["story-skill"])
         self.assertEqual((backup / "story-skill/scripts/story.py").read_bytes(), previous)
@@ -374,7 +379,9 @@ class SuiteInstallTests(unittest.TestCase):
             self.assertEqual((self.project / ".agents/skills" / relative).read_bytes(), raw)
             self.assertFalse((backup / relative).exists())
         for name in installer.SKILL_NAMES_V0618:
-            if name != "story-skill":
+            if name in result["changed_skills"]:
+                self.assertEqual(installer.inventory(backup / name), before[name])
+            else:
                 self.assertEqual(installer.inventory(self.target(name)), before[name])
                 self.assertFalse((backup / name).exists())
         self.assertEqual(self.install(True)["status"], "unchanged")

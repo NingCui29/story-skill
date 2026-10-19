@@ -4,7 +4,7 @@
 
 下载 [story-skill-codex-0.6.18.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip.sha256)。归档共 60 个文件成员：58 个插件文件（55 个技能载荷及元数据、图标、根许可证）加市场说明与登记文件。仓库当前公开；正式附件的下载可用性以本版回下载回执为准。
 
-本版插件验收覆盖市场注册、插件安装、八技能发现、运行时和工作台；实际结果集中在[发布记录](releases/v0.6.18.md)。本机Codex已同步0.6.18，安装与加载回执单独保存。9:16配图、单一视觉重点和纯文字附言规则保持生效；文件核验不等于实际生图效果验证。
+本版插件验收覆盖市场注册、插件安装、八技能发现、运行时和工作台；实际结果集中在[发布记录](releases/v0.6.18.md)。v0.6.18发布时已核验本机安装；2026-10-19又按作者要求将本次开发功能更新到日常0.6.19插件，实际已安装且启用，65文件及八技能加载验证通过，完整备份保留，见[本机更新回执](../benchmarks/results/development-20261019-platform-drafts/local-installed-update.json)。此本机更新不是公开发版。9:16配图、单一视觉重点和纯文字附言规则保持生效；文件核验不等于实际生图效果验证。
 
 ## 构建
 

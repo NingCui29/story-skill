@@ -171,7 +171,7 @@ class NpmPackageTests(unittest.TestCase):
                                          ("0.6.14", 51, "0.6.13"),
                                          ("0.6.17", 52, "0.6.16"),
                                          ("0.6.18", 55, "0.6.17"),
-                                         ("0.6.19", 57, "0.6.18")):
+                                         ("0.6.19", 62, "0.6.18")):
             with self.subTest(version=version):
                 self.version = version
                 self.archive = self.root / f"story-skill-{version}.zip"
@@ -481,7 +481,7 @@ class NpmSuiteTests(unittest.TestCase):
                                          ("0.6.16", npm.SUITE_FILES_V0616, 51),
                                          ("0.6.17", npm.SUITE_FILES_V0617, 52),
                                          ("0.6.18", npm.SUITE_FILES_V0618, 55),
-                                         ("0.6.19", npm.SUITE_FILES_V0619, 57)):
+                                         ("0.6.19", npm.SUITE_FILES_V0619, 62)):
             with self.subTest(version=version):
                 manifest, files = npm.wrapper_files(version)
                 self.assertEqual(manifest["version"], version)
@@ -525,12 +525,17 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertEqual(npm.payload_files("0.6.8"), npm.SUITE_FILES_V065)
         self.assertEqual(len(npm.SUITE_FILES_V069), 44)
         self.assertEqual(npm.payload_files("0.6.9"), npm.SUITE_FILES_V069)
-        self.assertEqual(len(npm.SUITE_FILES), 57)
+        self.assertEqual(len(npm.SUITE_FILES), 62)
         self.assertEqual(npm.SUITE_FILES, npm.SUITE_FILES_V0619)
         self.assertEqual(len(npm.SUITE_FILES_V0618), 55)
         self.assertEqual(set(npm.SUITE_FILES_V0619) - set(npm.SUITE_FILES_V0618), {
             "story-skill/scripts/story_workbench_books.py",
             "story-skill/scripts/story_workbench_archives.py",
+            "story-skill/scripts/story_platform_drafts.py",
+            "story-skill/scripts/story_platform_browser.py",
+            "story-skill/scripts/story_platform_chrome_bridge.py",
+            "story-skill/scripts/story_chrome_bridge.mjs",
+            "story-skill-publish/references/platform-drafts.md",
         })
         self.assertEqual(len(npm.SUITE_FILES_V0617), 52)
         self.assertEqual(set(npm.SUITE_FILES_V0618) - set(npm.SUITE_FILES_V0617), {

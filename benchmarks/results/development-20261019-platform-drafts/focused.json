@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "python_version": "3.12.14",
+  "scope": "fake_browser_and_adapter_plus_real_offline_cli",
+  "run": 53,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "modules": [
+    "tests.test_platform_browser",
+    "tests.test_platform_drafts",
+    "tests.test_platform_draft_cli"
+  ],
+  "platform_backend_verified": false,
+  "source_sha256": {
+    "skills/story-skill/scripts/story.py": "a09b0f7d7b229087e45ad497b72f40199cbeac2c421d4afd2e22da4a9b2d527e",
+    "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+    "skills/story-skill/scripts/story_platform_drafts.py": "6d810b3789cc9a4b7d9a1d4b3d83e27e33a4881e7f4ce9a0942bc4bdd3aadbf5",
+    "skills/story-skill/scripts/story_platform_browser.py": "b9c17c7c0957eceb4f41ac65499b333a21380bf8d437390f8720a7a68fb8c28a"
+  }
+}

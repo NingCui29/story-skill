@@ -22,6 +22,10 @@ RUNNER = base.ROOT / 'desktop/macos/backend_runner.py'
 SPEC = importlib.util.spec_from_file_location('desktop_backend_runner_test', RUNNER)
 runner = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(runner)
+BUILD_SPEC = importlib.util.spec_from_file_location(
+    'desktop_backend_runner_build_manifest', base.ROOT / 'scripts/build_desktop_macos.py')
+builder = importlib.util.module_from_spec(BUILD_SPEC)
+BUILD_SPEC.loader.exec_module(builder)
 
 
 class DesktopBackendRunnerTests(unittest.TestCase):
@@ -43,8 +47,8 @@ class DesktopBackendRunnerTests(unittest.TestCase):
         resources = self.area / '客户端 Resources'
         scripts = resources / 'Scripts'
         scripts.mkdir(parents=True)
-        for path in base.TOOL.parent.glob('story*.py'):
-            shutil.copyfile(path, scripts / path.name)
+        for filename in builder.RUNTIME_FILES:
+            shutil.copyfile(base.TOOL.parent / filename, scripts / filename)
         shutil.copyfile(RUNNER, resources / RUNNER.name)
         return resources / RUNNER.name
 

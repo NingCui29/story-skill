@@ -2910,6 +2910,8 @@ def parser():
     s.add_argument("--id", required=True)
     history.register_parser(sub, command)
     publish.register_parser(sub, command)
+    platform_drafts.register_parser(sub, command)
+    platform_chrome_bridge.register_parser(sub, command)
     workbench.register_parser(sub, command)
     s = command("export", "Repair exports without replacing outside edits")
     s.add_argument("--safe-only", action="store_true",
@@ -3009,6 +3011,10 @@ def run(args):
     book = Book(args.book, integrity=getattr(args, "integrity", "strict"),
                 read_only=cmd in ("audit", "outline-audit", "plan-read", "plan-render", "writing-brief"))
     try:
+        if cmd in platform_chrome_bridge.COMMANDS:
+            return platform_chrome_bridge.run(book, args)
+        if cmd.startswith("publish-draft-"):
+            return platform_drafts.run(book, args)
         if cmd.startswith("publish-"):
             return publish.run(book, args)
         if cmd.startswith("history-") or cmd.startswith("cache-"):
@@ -3111,13 +3117,16 @@ def _load_extension(name):
     return module
 
 
-storage, search, world, history, publish, workbench, outline, punctuation, workbench_books, workbench_archives = (_load_extension(name) for name in (
+storage, search, world, history, publish, workbench, outline, punctuation, workbench_books, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge = (_load_extension(name) for name in (
     "storage", "search", "world", "history", "publish", "workbench", "outline", "punctuation",
-    "workbench_books", "workbench_archives"))
+    "workbench_books", "workbench_archives", "platform_browser", "platform_drafts", "platform_chrome_bridge"))
 CORE = SimpleNamespace(**globals())
-for extension in (search, world, history, publish, workbench, workbench_archives):
+for extension in (search, world, history, publish, workbench, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge):
     extension.inject(CORE)
 TEMPLATES["publish"] = publish.template()
+TEMPLATES["platform-browser"] = platform_browser.template()
+for target_platform in ("fanqie", "qimao", "qidian"):
+    TEMPLATES["platform-browser-" + target_platform] = platform_browser.template(target_platform)
 TEMPLATES["world"] = world.template()
 for world_kind in world.FIELDS:
     TEMPLATES["world-" + world_kind] = world.template(world_kind)

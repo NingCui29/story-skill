@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "python_version": "3.12.14",
+  "node_version": "v24.19.0",
+  "run": 311,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "scope": "supplemental_node_enabled_workbench_and_desktop_tests",
+  "modules": [
+    "test_workbench_management_editor",
+    "test_workbench_flow",
+    "test_workbench_markdown",
+    "test_workbench_classification_display",
+    "test_workbench_status_display",
+    "test_workbench_book_display",
+    "test_workbench_service_recovery",
+    "test_workbench_classification_editor",
+    "test_workbench_time_display",
+    "test_workbench_theme",
+    "test_desktop_editor_appearance",
+    "test_workbench_time_integration",
+    "test_desktop_native",
+    "test_workbench_focus_regressions",
+    "test_workbench",
+    "test_workbench_document_identity",
+    "test_desktop_windows_safety",
+    "test_workbench_editor_layout",
+    "test_workbench_shelf_layout",
+    "test_workbench_save_all"
+  ],
+  "platform_backend_verified": false
+}

@@ -1,0 +1,105 @@
+{
+  "scope": "current_frozen_workbench_source_isolated_build_and_local_preview",
+  "ok": true,
+  "source_version": "0.6.19",
+  "source_snapshot_sha256": "55c7d3a05d35c6f559d831cbf970dcfa591bb5bef51407cb8d2715c710091718",
+  "source_sha256": {
+    "skills/story-skill/SKILL.md": "e5fe43095f1f2efeb18f73a717fad7241658765c2554814cfcefb3276347b9e3",
+    "skills/story-skill/scripts/story.py": "a09b0f7d7b229087e45ad497b72f40199cbeac2c421d4afd2e22da4a9b2d527e",
+    "skills/story-skill/scripts/story_platform_drafts.py": "9bcdd99c1606b5580356f64e2bbe83faddc6851f74a9b2ba73507ac1033f12ce",
+    "skills/story-skill/scripts/story_platform_browser.py": "5d25f6f0b61cd78ac563ffb002e829cb5bb9f3f04d8b9463d30e05ae3023f93e",
+    "skills/story-skill/scripts/story_workbench.py": "df9f15771370801e929530557fb56a001a776f845fba6d73b132e8839e6a7052",
+    "skills/story-skill/references/workbench.md": "8b8edb9c4d970047261fdc0738dd27d4fdefb4d09feaad45421d4fc8bae88215",
+    "skills/story-skill-publish/SKILL.md": "3e0947042468d69f565c542940df13929946063b1f437dfd8e8a4c5be5a371be",
+    "skills/story-skill-publish/references/platform-drafts.md": "f88534068890c2568d4fe3a41e710181a1e5a68c9018a090b58d97fc3ca90bfe"
+  },
+  "source_unchanged_after_validation": true,
+  "platform_backend_verified": false,
+  "installed_clients_updated": false,
+  "build_artifacts_retained": false,
+  "packages": [
+    {
+      "kind": "standard",
+      "version": "0.6.19",
+      "payload_files": 60,
+      "sha256": "23d149645fd8c78934538ce67e786a5d87990126d47b8efaac6a90b869789c4b",
+      "zip_verified": true,
+      "manifest_payload_verified": true,
+      "relative_markdown_links_verified": 330,
+      "new_platform_drafts_reference_included_and_linked": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "isolated_workbench_catalog_and_preview_passed": true,
+      "workbench_missing_profile_blocks_execution": true,
+      "creative_state_unchanged": true,
+      "draft_attempt_journal_created": false,
+      "playwright_import_attempted": false,
+      "network_attempted": false,
+      "bundle_files": 60,
+      "source_manifest_files": 60
+    },
+    {
+      "kind": "codex",
+      "version": "0.6.19",
+      "payload_files": 63,
+      "sha256": "0d2fc753d2074702b3f5d15462c643bfa14071833ef842826813c16ef662754c",
+      "zip_verified": true,
+      "manifest_payload_verified": true,
+      "relative_markdown_links_verified": 330,
+      "new_platform_drafts_reference_included_and_linked": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "isolated_workbench_catalog_and_preview_passed": true,
+      "workbench_missing_profile_blocks_execution": true,
+      "creative_state_unchanged": true,
+      "draft_attempt_journal_created": false,
+      "playwright_import_attempted": false,
+      "network_attempted": false,
+      "bundle_files": 65,
+      "source_manifest_files": 60
+    },
+    {
+      "kind": "claude",
+      "version": "0.6.19",
+      "payload_files": 62,
+      "sha256": "7974d1166b81c27143250182492125110d9c9aefee2e32e0e522f107b87041c6",
+      "zip_verified": true,
+      "manifest_payload_verified": true,
+      "relative_markdown_links_verified": 331,
+      "new_platform_drafts_reference_included_and_linked": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "isolated_workbench_catalog_and_preview_passed": true,
+      "workbench_missing_profile_blocks_execution": true,
+      "creative_state_unchanged": true,
+      "draft_attempt_journal_created": false,
+      "playwright_import_attempted": false,
+      "network_attempted": false,
+      "bundle_files": 62,
+      "source_manifest_files": 60
+    }
+  ],
+  "skill_creator_quick_validate": {
+    "status": "passed",
+    "isolated_environment": true,
+    "global_dependencies_changed": false,
+    "installed_clients_updated": false,
+    "temporary_environment_retained": false,
+    "dependency_source": "https://pypi.org/simple",
+    "isolated_dependency": "PyYAML",
+    "isolated_dependency_version": "6.0.3",
+    "results": [
+      {
+        "skill": "story-skill",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-publish",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      }
+    ]
+  }
+}

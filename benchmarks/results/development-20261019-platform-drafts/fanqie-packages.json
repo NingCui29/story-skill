@@ -1,0 +1,151 @@
+{
+  "scope": "frozen_fanqie_adapter_source_isolated_build_and_local_preview",
+  "ok": true,
+  "source_version": "0.6.19",
+  "source_snapshot_sha256": "1b6893f7f7c34a57ab684f46b7ab51952583103950fd62a14d9e4ad95a76988c",
+  "source_sha256": {
+    "skills/story-skill/SKILL.md": "e5fe43095f1f2efeb18f73a717fad7241658765c2554814cfcefb3276347b9e3",
+    "skills/story-skill/scripts/story.py": "a09b0f7d7b229087e45ad497b72f40199cbeac2c421d4afd2e22da4a9b2d527e",
+    "skills/story-skill/scripts/story_platform_drafts.py": "89d7cbd6d241e73b80e590553ab74486d2fbd8320111f2a97c412ffbae331091",
+    "skills/story-skill/scripts/story_platform_browser.py": "35cdc93b0035f4f7b77cd7129aec3998f31af26b4bed4895c99b9f15271a216f",
+    "skills/story-skill/scripts/story_workbench.py": "22f5d79c549cf91af29bd154b9f66f2f90cbf055293896aac3c2687108feed85",
+    "skills/story-skill/references/workbench.md": "8b8edb9c4d970047261fdc0738dd27d4fdefb4d09feaad45421d4fc8bae88215",
+    "skills/story-skill-publish/SKILL.md": "3e0947042468d69f565c542940df13929946063b1f437dfd8e8a4c5be5a371be",
+    "skills/story-skill-publish/references/platform-drafts.md": "bff105edda706b2d88a9db4d406b759b9a12d2d8baee901e71553580f0900ad6"
+  },
+  "source_unchanged_after_validation": true,
+  "platform_backend_verification_in_this_run": false,
+  "real_platform_actions_performed": false,
+  "installed_clients_updated": false,
+  "build_artifacts_retained": false,
+  "packages": [
+    {
+      "kind": "standard",
+      "version": "0.6.19",
+      "payload_files": 60,
+      "bundle_files": 60,
+      "sha256": "aca94d21e15f06b371df1c136f658575172132d2accb5876f8c8d73708e4867d",
+      "zip_verified": true,
+      "manifest_payload_verified": true,
+      "relative_markdown_links_verified": 330,
+      "new_platform_drafts_reference_included_and_linked": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "isolated_workbench_catalog_and_preview_passed": true,
+      "workbench_missing_profile_blocks_execution": true,
+      "creative_state_unchanged": true,
+      "draft_attempt_journal_created": false,
+      "playwright_import_attempted": false,
+      "network_attempted": false
+    },
+    {
+      "kind": "codex",
+      "version": "0.6.19",
+      "payload_files": 63,
+      "bundle_files": 65,
+      "sha256": "2f7135cf9f4eb36ee4ac7cd2ad56e97f92ce248d71516db7adea0058c3fae43f",
+      "zip_verified": true,
+      "manifest_payload_verified": true,
+      "relative_markdown_links_verified": 330,
+      "new_platform_drafts_reference_included_and_linked": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "isolated_workbench_catalog_and_preview_passed": true,
+      "workbench_missing_profile_blocks_execution": true,
+      "creative_state_unchanged": true,
+      "draft_attempt_journal_created": false,
+      "playwright_import_attempted": false,
+      "network_attempted": false
+    },
+    {
+      "kind": "claude",
+      "version": "0.6.19",
+      "payload_files": 62,
+      "bundle_files": 62,
+      "sha256": "265ed82b25d175c0018b9013b5555439ab0c827743a94f2045835357d0960403",
+      "zip_verified": true,
+      "manifest_payload_verified": true,
+      "relative_markdown_links_verified": 331,
+      "new_platform_drafts_reference_included_and_linked": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "isolated_workbench_catalog_and_preview_passed": true,
+      "workbench_missing_profile_blocks_execution": true,
+      "creative_state_unchanged": true,
+      "draft_attempt_journal_created": false,
+      "playwright_import_attempted": false,
+      "network_attempted": false
+    }
+  ],
+  "skill_creator_quick_validate": {
+    "status": "passed",
+    "isolated_environment": true,
+    "global_dependencies_changed": false,
+    "temporary_environment_retained": false,
+    "dependency_source": "https://pypi.org/simple",
+    "isolated_dependency": "PyYAML",
+    "isolated_dependency_version": "6.0.3",
+    "results": [
+      {
+        "skill": "story-skill",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-plan",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-write",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-analyze",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-review",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-research",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-cover",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-publish",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "claude-single-entry",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      }
+    ]
+  }
+}

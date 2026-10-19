@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-19",
+  "method": "Google Chrome visible UI; isolated functional draft only",
+  "private_target_ids_committed": false,
+  "scope": "DOM serialization observations, not production workbench acceptance",
+  "editor_selector": ".serial-editor-content .ProseMirror",
+  "observations": [
+    {
+      "plain_text": "a",
+      "dom": "<p>a</p><p><br class=\"ProseMirror-trailingBreak\"></p>",
+      "stage": "native key input"
+    },
+    {
+      "plain_text": "a\nb",
+      "dom": "<p>a</p><p>b</p><p><br class=\"ProseMirror-trailingBreak\"></p>",
+      "stage": "native key input"
+    },
+    {
+      "plain_text": "a\n\nb",
+      "dom": "<p>a</p><p><br class=\"ProseMirror-trailingBreak\"></p><p>b</p><p><br class=\"ProseMirror-trailingBreak\"></p>",
+      "stage": "saved and freshly reopened"
+    },
+    {
+      "plain_text": "\na\n\n",
+      "dom": "<p><br class=\"ProseMirror-trailingBreak\"></p><p>a</p><p><br class=\"ProseMirror-trailingBreak\"></p><p><br class=\"ProseMirror-trailingBreak\"></p><p><br class=\"ProseMirror-trailingBreak\"></p>",
+      "stage": "saved and freshly reopened"
+    },
+    {
+      "plain_text": "",
+      "dom": "<p><span class=\"syl-placeholder ProseMirror-widget\" ignoreel=\"true\" contenteditable=\"false\">请输入正文</span><img class=\"ProseMirror-separator\" alt=\"\"><br class=\"ProseMirror-trailingBreak\"></p>",
+      "stage": "saved and freshly reopened"
+    },
+    {
+      "plain_text": "示例正文",
+      "dom": "<p>示例正文</p><p><syl-inline __syl_tag=\"true\" ignoreel=\"true\" contenteditable=\"false\" class=\"ProseMirror-widget\"><span class=\"editor-operability-shadow-wrap\"><span class=\"editor-operability-shadow\"><i class=\"tomato-ai-tool-inspire-v2\"></i>暂时没有思路，使用卡文锦囊，AI帮你构思剧情</span></span></syl-inline><img class=\"ProseMirror-separator\" alt=\"\"><br class=\"ProseMirror-trailingBreak\"></p>",
+      "stage": "Existing logged-in Chrome; idle editor final AI suggestion widget observed read-only. Example first paragraph replaces private source text; exact tail DOM is observed."
+    }
+  ],
+  "limits": [
+    "Whole-field fill collapsed intended empty lines in this UI; production writing needs native paragraph inputs and exact pre-save check.",
+    "Only one explicitly observed appended empty paragraph may be decoded as the editor sentinel; other empty paragraphs and whitespace must remain.",
+    "Published chapters and scheduling controls were not changed."
+  ],
+  "sampling_draft_restored": "Original Chinese functional explanation, 54 platform words.",
+  "input_api_observations": [
+    {
+      "api": "CUA locator.type(line) with separate Enter between intended lines",
+      "result": "Extra empty paragraphs observed; strict pre-save comparison failed before save click. Do not use for this editor.",
+      "intended_symbolic_text": "\nA\nB\n\nC\nD\n\n",
+      "observed_symbolic_text": "\nA\n\nB\n\n\nC\n\nD\n\n",
+      "symbols": "A-D replace private functional-test lines; paragraph spacing is the directly observed shape."
+    },
+    {
+      "api": "CUA locator.pressSequentially(line, {delay:0}) with separate Enter",
+      "plain_text": "a\nb",
+      "result": "Read-only DOM exactly P[a], P[b], final empty sentinel; same existing isolated test draft, no second create."
+    },
+    {
+      "api": "CUA locator.pressSequentially(line, {delay:0}) with separate Enter",
+      "plain_text": "甲段：逐字输入。\n乙段：保留换行。",
+      "result": "Strict reader matched full Chinese text exactly; same existing isolated test draft, no second create."
+    }
+  ]
+}

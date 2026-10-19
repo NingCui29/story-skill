@@ -1,0 +1,187 @@
+{
+  "scope": "frozen_fanqie_host_assisted_source_isolated_build_and_local_preview",
+  "ok": true,
+  "verified_at": "2026-10-19T14:37:40.308120+00:00",
+  "source_version": "0.6.19",
+  "source_snapshot_sha256": "b43542838ddf8d4c301f0738cb4822713452ab4e5780b6bd74181ea05ac292b5",
+  "source_sha256": {
+    "skills/story-skill/SKILL.md": "60397e3f57c886d8f81d733feba55dec089a420dcfd12e80ed160d554062de0a",
+    "skills/story-skill/scripts/story.py": "17c0057395d84e4a344f8c926a4a56267437d47e8df6ab5b0d1f9563b868db02",
+    "skills/story-skill/scripts/story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+    "skills/story-skill/scripts/story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py": "f8d0dcf23e59eae939352e20b07773ea459f5407254ceb161577b786ef05dd11",
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+    "skills/story-skill/scripts/story_workbench.py": "ed717f0197fc69821266fa1f58ff18996422266c7cf1f353d228180785bb3bd6",
+    "skills/story-skill/references/workbench.md": "60d713a3aa81009018ed2c8d210ecd2f40d1ea30c90262b1c1ea67ad3b26dff6",
+    "skills/story-skill-publish/SKILL.md": "b2bd7ae524508a59c06c7c1a3c5caede4d369aeb71e4000f446cf6a8bd8766d6",
+    "skills/story-skill-publish/references/platform-drafts.md": "7482481de5bf1da281e8752e49930aea2c3cd878bec6f72308f5e7db8458713d"
+  },
+  "source_unchanged_after_validation": true,
+  "source_snapshot_scope": "62 declared suite payload files",
+  "package_builder_sha256": {
+    "scripts/package.py": "14d541affa70e2a60a6b61847d3fdf50c5d1d496b76f906ed17a701b351a0ccf",
+    "scripts/package_codex.py": "c748efd81121ea2fb94a3d4bbe5235c0a0a4e09a7a0f9e5b1bb5dfb07380d693",
+    "scripts/package_claude.py": "7c414f26e7fa69b229ffd6cf0e332979cc9c37806dc1b6637414b5a32c6e7d27",
+    "scripts/package_npm.py": "ae909cdc196c6b37b57724949fde62b175997a2ec5cbab3f61b821216cdb9fa1",
+    "scripts/install.py": "49946f5c8f83734905fed242482d408a7128fc45365855c35c78e61321681a43",
+    "scripts/build_desktop_macos.py": "42e9e76c803b1c8c6c64ed12627fa913150f0ce761520996338916abc926862f"
+  },
+  "platform_backend_verification_in_this_run": false,
+  "real_platform_actions_performed": false,
+  "installed_clients_updated": false,
+  "build_artifacts_retained": false,
+  "packages": [
+    {
+      "kind": "standard",
+      "version": "0.6.19",
+      "payload_files": 62,
+      "bundle_files": 62,
+      "sha256": "ce4d3f82ac14fd55e9416add83bb94755230298347e5d7f1eed23030f14d6059",
+      "zip_verified": true,
+      "manifest_payload_verified": true,
+      "chrome_bridge_javascript_syntax_verified": true,
+      "relative_markdown_links_verified": 331,
+      "new_platform_drafts_reference_included_and_linked": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "isolated_workbench_catalog_and_preview_passed": true,
+      "workbench_missing_profile_blocks_execution": true,
+      "host_bridge_cli_commands_available": 5,
+      "user_fanqie_binding_local_only": true,
+      "user_binding_idempotency_verified": true,
+      "previous_frozen_plan_unchanged": true,
+      "host_assisted_without_readback_blocks_execution": true,
+      "host_assisted_without_worker_blocks_execution": true,
+      "host_assisted_does_not_require_playwright": true,
+      "creative_state_unchanged": true,
+      "draft_attempt_journal_created": false,
+      "playwright_import_attempted": false,
+      "network_attempted": false
+    },
+    {
+      "kind": "codex",
+      "version": "0.6.19",
+      "payload_files": 65,
+      "bundle_files": 67,
+      "sha256": "9a07fa913902f1d464a442e18b1a6ca565555bd0dceb8974bca622edc7569956",
+      "zip_verified": true,
+      "manifest_payload_verified": true,
+      "chrome_bridge_javascript_syntax_verified": true,
+      "relative_markdown_links_verified": 331,
+      "new_platform_drafts_reference_included_and_linked": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "isolated_workbench_catalog_and_preview_passed": true,
+      "workbench_missing_profile_blocks_execution": true,
+      "host_bridge_cli_commands_available": 5,
+      "user_fanqie_binding_local_only": true,
+      "user_binding_idempotency_verified": true,
+      "previous_frozen_plan_unchanged": true,
+      "host_assisted_without_readback_blocks_execution": true,
+      "host_assisted_without_worker_blocks_execution": true,
+      "host_assisted_does_not_require_playwright": true,
+      "creative_state_unchanged": true,
+      "draft_attempt_journal_created": false,
+      "playwright_import_attempted": false,
+      "network_attempted": false
+    },
+    {
+      "kind": "claude",
+      "version": "0.6.19",
+      "payload_files": 64,
+      "bundle_files": 64,
+      "sha256": "a2adf7964fb4b2e76728d5b32fa7abeb2a539841508387de70e38a6a073f0f54",
+      "zip_verified": true,
+      "manifest_payload_verified": true,
+      "chrome_bridge_javascript_syntax_verified": true,
+      "relative_markdown_links_verified": 332,
+      "new_platform_drafts_reference_included_and_linked": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "isolated_workbench_catalog_and_preview_passed": true,
+      "workbench_missing_profile_blocks_execution": true,
+      "host_bridge_cli_commands_available": 5,
+      "user_fanqie_binding_local_only": true,
+      "user_binding_idempotency_verified": true,
+      "previous_frozen_plan_unchanged": true,
+      "host_assisted_without_readback_blocks_execution": true,
+      "host_assisted_without_worker_blocks_execution": true,
+      "host_assisted_does_not_require_playwright": true,
+      "creative_state_unchanged": true,
+      "draft_attempt_journal_created": false,
+      "playwright_import_attempted": false,
+      "network_attempted": false
+    }
+  ],
+  "skill_creator_quick_validate": {
+    "status": "passed",
+    "isolated_environment": true,
+    "global_dependencies_changed": false,
+    "temporary_environment_retained": false,
+    "dependency_source": "https://pypi.org/simple",
+    "isolated_dependency": "PyYAML",
+    "isolated_dependency_version": "6.0.3",
+    "results": [
+      {
+        "skill": "story-skill",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-plan",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-write",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-analyze",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-review",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-research",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-cover",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "story-skill-publish",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      },
+      {
+        "skill": "claude-single-entry",
+        "returncode": 0,
+        "output": "Skill is valid!",
+        "error": "",
+        "valid": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "platform": "fanqie",
+  "execution_mode": "host_assisted_cua",
+  "evidence_source": "actual_existing_google_chrome_ui",
+  "scope": "functional_test_draft_only",
+  "original_frozen_body_characters": 83,
+  "frozen_manifest_unchanged": true,
+  "unknown_write_history_preserved": true,
+  "same_chapter_recreation_fence_preserved": true,
+  "earlier_manual_tail_newline_sample": {
+    "expected": 83,
+    "observed": 81,
+    "matched": false,
+    "normalization_changed": false
+  },
+  "editor_open_reload_anomaly": {
+    "observed_body_characters": [
+      5247,
+      10495,
+      20991
+    ],
+    "single_editor_reload_also_affected": true,
+    "cause": "unverified",
+    "not_attributed_to_concurrency": true,
+    "later_large_preview": {
+      "paragraphs": 3073,
+      "text_characters_without_paragraph_separators": 38912,
+      "stable_across_reload": true
+    }
+  },
+  "manual_functional_cleanup": {
+    "frozen_body_replaced": false,
+    "platform_test_body_characters": 81,
+    "preview_paragraphs": 7,
+    "one_observed_final_empty_paragraph_removed": true,
+    "leading_and_internal_empty_paragraphs_preserved": true,
+    "complete_preview_body_matched": true,
+    "production_creation_acceptance": false,
+    "observed_empty_paragraph_forms": [
+      "<p></p>",
+      "<p><br></p>"
+    ]
+  },
+  "original_non_draft_directory": {
+    "rows": 10,
+    "all_cells_and_edit_links_match_baseline": true,
+    "scheduled_rows": 3,
+    "schedule_unchanged": true
+  },
+  "production_readback_after_patch": {
+    "status": "passed",
+    "two_fresh_reads_characters": [
+      81,
+      81
+    ],
+    "original_frozen83_result": "conflict"
+  },
+  "independent_new_draft_acceptance": {
+    "status": "passed",
+    "chapter": 13,
+    "characters": 81,
+    "repeat_same_plan_passed": true
+  },
+  "private_raw_evidence_retained": true,
+  "public_payload_excludes": [
+    "account_id",
+    "book_id",
+    "draft_id",
+    "profile",
+    "tokens",
+    "manuscript",
+    "screenshots"
+  ]
+}

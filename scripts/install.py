@@ -153,6 +153,11 @@ SUITE_FILES_V0618 = tuple(sorted((*SUITE_FILES_V0617,
 )))
 SKILL_NAMES_V0618 = SKILL_NAMES_V0617
 SUITE_FILES_V0619 = tuple(sorted((*SUITE_FILES_V0618,
+    "story-skill/scripts/story_platform_drafts.py",
+    "story-skill/scripts/story_platform_browser.py",
+    "story-skill/scripts/story_platform_chrome_bridge.py",
+    "story-skill/scripts/story_chrome_bridge.mjs",
+    "story-skill-publish/references/platform-drafts.md",
     "story-skill/scripts/story_workbench_books.py",
     "story-skill/scripts/story_workbench_archives.py",
 )))

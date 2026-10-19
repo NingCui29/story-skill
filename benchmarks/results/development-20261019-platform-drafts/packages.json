@@ -1,0 +1,38 @@
+{
+  "scope": "isolated_build_and_frozen_plan_preview",
+  "platform_backend_verified": false,
+  "packages": [
+    {
+      "kind": "standard",
+      "version": "0.6.19",
+      "payload_files": 60,
+      "zip_verified": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "playwright_required_for_offline_cli": false
+    },
+    {
+      "kind": "codex",
+      "version": "0.6.19",
+      "payload_files": 63,
+      "zip_verified": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "playwright_required_for_offline_cli": false
+    },
+    {
+      "kind": "claude",
+      "version": "0.6.19",
+      "payload_files": 62,
+      "zip_verified": true,
+      "isolated_frozen_plan_preview_passed": true,
+      "playwright_required_for_offline_cli": false
+    }
+  ],
+  "ok": true,
+  "source_sha256": {
+    "skills/story-skill/scripts/story.py": "a09b0f7d7b229087e45ad497b72f40199cbeac2c421d4afd2e22da4a9b2d527e",
+    "skills/story-skill/scripts/story_platform_drafts.py": "6d810b3789cc9a4b7d9a1d4b3d83e27e33a4881e7f4ce9a0942bc4bdd3aadbf5",
+    "skills/story-skill/scripts/story_platform_browser.py": "b9c17c7c0957eceb4f41ac65499b333a21380bf8d437390f8720a7a68fb8c28a",
+    "skills/story-skill-publish/references/platform-drafts.md": "f55320ffb5611de6b1d54b5aa4ef8f5da9fd09d8b4dd2b7d3c1f6bd427dc7c2d",
+    "scripts/package_claude.py": "3bf11231704c2d5b41f4ab073c57b3a88ccc69b23dbeb7f27e267d9274ca541e"
+  }
+}

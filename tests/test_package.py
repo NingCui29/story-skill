@@ -75,12 +75,17 @@ class PackageVersionTests(unittest.TestCase):
         self.assertEqual(package.suite_files("0.6.8"), package.SUITE_FILES_V065)
         self.assertEqual(len(package.SUITE_FILES_V069), 44)
         self.assertEqual(package.suite_files("0.6.9"), package.SUITE_FILES_V069)
-        self.assertEqual(len(package.SUITE_FILES), 57)
+        self.assertEqual(len(package.SUITE_FILES), 62)
         self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V0619)
         self.assertEqual(len(package.SUITE_FILES_V0618), 55)
         self.assertEqual(set(package.SUITE_FILES_V0619) - set(package.SUITE_FILES_V0618), {
             "story-skill/scripts/story_workbench_books.py",
             "story-skill/scripts/story_workbench_archives.py",
+            "story-skill/scripts/story_platform_drafts.py",
+            "story-skill/scripts/story_platform_browser.py",
+            "story-skill/scripts/story_platform_chrome_bridge.py",
+            "story-skill/scripts/story_chrome_bridge.mjs",
+            "story-skill-publish/references/platform-drafts.md",
         })
         self.assertEqual(len(package.SUITE_FILES_V0617), 52)
         self.assertEqual(set(package.SUITE_FILES_V0618) - set(package.SUITE_FILES_V0617), {

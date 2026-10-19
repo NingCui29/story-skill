@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-19",
+  "browser": "Google Chrome",
+  "environment": "macOS; isolated synthetic book and local authenticated workbench",
+  "production_source_modified_by_harness": false,
+  "real_platform_accessed": false,
+  "adapter": "process-local in-memory fake; no browser launch or network",
+  "checks": [
+    {"name": "toolbar_entry_and_frozen_two_chapter_preview", "status": "passed"},
+    {"name": "dependency_missing_disables_save", "status": "passed"},
+    {"name": "start_returns_and_shows_login_wait", "status": "passed"},
+    {"name": "close_and_reopen_reconnects_existing_job", "status": "passed"},
+    {"name": "after_synthetic_login_release_two_chapters_verified", "status": "passed", "verified_chapters": 2, "total_chapters": 2},
+    {"name": "all_three_temporary_servers_and_books_cleaned", "status": "passed"}
+  ],
+  "evidence_policy": "Screenshots kept in the user's private local visualization directory; no session URL or token committed.",
+  "limits": "This verifies UI and local asynchronous orchestration, not the production platform adapter. Real Fanqie CUA acceptance is documented separately in docs/平台后台验收-2026-10-19.md."
+}

@@ -488,6 +488,17 @@ class PublishTests(unittest.TestCase):
         self.assertEqual([c["chapter"] for c in first["manifest"]["chapters"]], [9, 10])
         self.assertEqual([c["title"] for c in first["manifest"]["chapters"]], ["门后的账本9", "门后的账本10"])
 
+    def test_qidian_snapshot_exports_and_verifies_without_claiming_remote_support(self):
+        self.commit()
+        prepared = self.prepare(platform="qidian")
+        self.assertEqual(prepared["manifest"]["platform"], "qidian")
+        exported = publishing.export_material(self.book, prepared["id"])
+        self.assertTrue(exported["export_created"])
+        verified = publishing.verify_export_receipt(self.book, exported["export"]["receipt_path"])
+        self.assertTrue(verified["artifact_verified"])
+        self.assertTrue(verified["usable_now"])
+        self.assertFalse(verified["platform_verified"])
+
     def test_missing_chapter_and_analysis_book_cannot_prepare(self):
         self.commit()
         with self.assertRaises(story.StoryError):

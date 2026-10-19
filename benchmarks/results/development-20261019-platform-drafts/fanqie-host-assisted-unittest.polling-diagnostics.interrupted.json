@@ -1,0 +1,8 @@
+{
+  "ok": false,
+  "status": "interrupted",
+  "completed": false,
+  "source_sha256": "7815ac67b45da2fb9b2bee760e66e87d51d928d32a9202ec3294ee95e8b02c99",
+  "reason": "Stopped for confirmed live dropdown readiness defect before source repair; no pass claimed.",
+  "prior_passing_report_preserved": "fanqie-host-assisted-unittest.json"
+}
