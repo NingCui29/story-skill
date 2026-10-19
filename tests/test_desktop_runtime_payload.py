@@ -31,7 +31,9 @@ class DesktopRuntimePayloadTests(unittest.TestCase):
                 sys.executable, '-I', '-B', str(ROOT / 'tests/desktop_payload_probe.py'),
                 '--scripts', str(scripts), '--area', str(directory / '隔离验证 空格'),
                 '--report', str(report),
-            ], cwd=directory, capture_output=True, check=True, timeout=45)
+            ], cwd=directory, capture_output=True, timeout=45)
+            self.assertEqual(result.returncode, 0,
+                             result.stdout.decode('utf-8', 'replace') + result.stderr.decode('utf-8', 'replace'))
             receipt = json.loads(result.stdout)
             self.assertEqual(receipt, json.loads(report.read_text(encoding='utf-8')))
             for field in ('ok', 'isolated_payload', 'created_and_registered', 'backup_verified',
