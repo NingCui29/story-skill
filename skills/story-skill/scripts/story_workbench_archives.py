@@ -63,6 +63,8 @@ def _path_key(value):
 
 def _excluded(relative):
     parts = PurePosixPath(relative).parts
+    if any(re.fullmatch(r'\.story-pin-[0-9a-f]{32}', part) for part in parts):
+        return True
     if any(part in ('.git', '__pycache__', '.DS_Store') for part in parts):
         return True
     if relative in ('service.json', 'server.lock', '.story/workbench-server.lock'):
@@ -87,6 +89,11 @@ def _scan(root):
             with os.scandir(directory.fd if directory.fd is not None else directory.path) as entries:
                 rows = sorted(entries, key=lambda item: item.name)
             for item in rows:
+                # Windows directory pins create DELETE_ON_CLOSE guards. Their
+                # names change on every scan; neither payload nor exclusion
+                # evidence may depend on these private transient entries.
+                if re.fullmatch(r'\.story-pin-[0-9a-f]{32}', item.name):
+                    continue
                 seen += 1
                 if seen > MAX_FILES * 2:
                     _fail('limit', '作品目录项目过多，请先整理后备份。', maximum=MAX_FILES * 2)
