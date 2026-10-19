@@ -1,0 +1,22 @@
+{
+  "replacement": {
+    "status": "installed_and_verified",
+    "old_version": "0.1.13",
+    "new_version": "0.1.14",
+    "build": "15",
+    "runtime": "0.6.19",
+    "runtime_modules": 11,
+    "backup_verified": true,
+    "installed_bytes_equal": true,
+    "signature_verified": true,
+    "isolated_cli_verified": true,
+    "client_restarted": false,
+    "services_stopped": false
+  },
+  "activation": {
+    "status": "awaiting_macos_downloads_folder_permission",
+    "documents_permission_allowed": true,
+    "downloads_permission_pending": true,
+    "running_service_version_verified": false
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "modules": [
+    "test_workbench_shelf_layout",
+    "test_workbench_classification_display",
+    "test_workbench_status_display",
+    "test_workbench_time_display",
+    "test_workbench_shelf_progress",
+    "test_workbench_management",
+    "test_workbench_management_editor",
+    "test_workbench_library",
+    "test_workbench_shelf_feedback",
+    "test_workbench_management_feedback",
+    "test_workbench_shelf_menus"
+  ],
+  "tests": 107,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "seconds": 10.648,
+  "failure_ids": [],
+  "source_sha256": "5039645ab375d053d998566fe43702e903fa1e16d7937dab9282075fc58692d5"
+}

@@ -1,0 +1,13 @@
+{
+  "modules": [
+    "test_desktop_shelf_return",
+    "test_desktop_windows_safety",
+    "test_desktop_single_window"
+  ],
+  "tests": 23,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "seconds": 18.965,
+  "failure_ids": []
+}

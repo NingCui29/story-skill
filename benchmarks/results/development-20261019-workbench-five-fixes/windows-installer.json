@@ -1,0 +1,190 @@
+{
+  "client_version": "0.1.8",
+  "source_commit": "7f81a4f9929fd91f848678c5cfb5571770f61855",
+  "branch": "codex/desktop-installers-interface-20261019",
+  "run": {
+    "id": 39248525443,
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "7f81a4f9929fd91f848678c5cfb5571770f61855",
+    "head_branch": "codex/desktop-installers-interface-20261019",
+    "html_url": "https://github.com/NingCui29/story-skill/actions/runs/39248525443",
+    "created_at": "2026-10-19T11:58:42Z",
+    "updated_at": "2026-10-19T12:04:27Z"
+  },
+  "job": {
+    "id": 118046308432,
+    "name": "windows",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/NingCui29/story-skill/actions/runs/39248525443/job/118046308432"
+  },
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Probe book management before desktop build",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run python -m pip install -r desktop/windows/requirements-build.txt",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Test desktop launcher and Windows paths",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Test book management and native recycle bridge",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build standalone candidate",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build installer",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Test installation and native window",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12184597616,
+      "name": "story-workbench-0.1.8-windows-x86_64-portable",
+      "size_in_bytes": 257850244,
+      "expired": false,
+      "expires_at": "2027-01-17T11:58:42Z",
+      "digest": "sha256:07973630a7350aed89763f5f63c105c8454bc56b7d8ac4920acd5e4d0cdf00d7",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39248525443/artifacts/12184597616",
+      "outer_artifact_zip_digest": "sha256:07973630a7350aed89763f5f63c105c8454bc56b7d8ac4920acd5e4d0cdf00d7"
+    },
+    {
+      "id": 12184557726,
+      "name": "story-workbench-0.1.8-windows-x86_64-installer",
+      "size_in_bytes": 182952332,
+      "expired": false,
+      "expires_at": "2027-01-17T11:58:42Z",
+      "digest": "sha256:f149b8826486bb08e3c038e5f6cc161d47b631b8f8a66ee7fe5d3a29e0eb4ece",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39248525443/artifacts/12184557726",
+      "outer_artifact_zip_digest": "sha256:f149b8826486bb08e3c038e5f6cc161d47b631b8f8a66ee7fe5d3a29e0eb4ece"
+    }
+  ],
+  "native_smoke": {
+    "ok": true,
+    "native_window": true,
+    "shelf_rendered": true,
+    "title": "写作书架",
+    "captured": true,
+    "client_version": "0.1.8",
+    "update_check_available": true,
+    "update_progress_verified": true,
+    "update_progress_synthetic": true,
+    "themes_verified": true,
+    "theme_captures": {
+      "light": true,
+      "dark": true
+    }
+  },
+  "runtime_safety": {
+    "ok": true,
+    "platform": "win32",
+    "story_version": "0.6.19",
+    "isolated_payload": true,
+    "created_and_registered": true,
+    "backup_verified": true,
+    "restore_identity_preserved": true,
+    "candidate_and_binary_preserved": true,
+    "sqlite_integrity_verified": true,
+    "missing_trash_path_refused": true,
+    "native_trash_bridge_checked": true,
+    "existing_book_files_recycled": false
+  },
+  "ci_companion_checksums": {
+    "installer_exe_sha256": "fb4188998d44e92550c0534c2ff55cbba5b3f978ab102b0a65ac73875fb3b1e5",
+    "portable_zip_sha256": "af127c1dbc174f0f192b854b8ebaae0dfba5f40574f1ae94d0fc6ae90b233d81"
+  },
+  "download": {
+    "method": "Signed Range reads of ZIP central directory and selected entries; selected entry CRC checked",
+    "selected": "JSON and SHA256 only",
+    "exe_payload_downloaded": false,
+    "portable_zip_payload_downloaded": false,
+    "png_downloaded": false,
+    "credentials_or_signed_download_urls_in_output": false
+  },
+  "files": [
+    {
+      "name": "run-metadata.json",
+      "size_in_bytes": 3277,
+      "sha256": "2f8577aa3dea9ea450c1f79038f759d47b58bce5740fdf3143e2491a65be332e"
+    },
+    {
+      "name": "story-workbench-0.1.8-windows-x86_64-setup.exe.sha256",
+      "size_in_bytes": 114,
+      "sha256": "aa14d121155705d4208e5cedf18f4333dfe415e3de6ebd2d9529c345e221a3fa"
+    },
+    {
+      "name": "story-workbench-windows-x86_64.zip.sha256",
+      "size_in_bytes": 102,
+      "sha256": "f1a5ca7eddbe638eb45c19ac373ff8d3e85b16847136b23165189cdd8ac35315"
+    },
+    {
+      "name": "windows-native-smoke.json",
+      "size_in_bytes": 304,
+      "sha256": "502dc449a33483ed057942bcaa75ef7068ee25d326c13cf3be65cb10afe9845c"
+    },
+    {
+      "name": "windows-runtime-safety.json",
+      "size_in_bytes": 407,
+      "sha256": "1b3850b958b701e1d9a17f2e8a432200a00ef900c4abc8a83cb83199b8784fe2"
+    }
+  ]
+}
