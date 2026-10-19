@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import threading
 from urllib.parse import urlsplit
 import zipfile
 
@@ -168,15 +169,18 @@ def start_backend(root, arguments=()):
 
 
 def main():
-    from PySide6.QtCore import QSettings, QUrl, QTimer
+    from PySide6.QtCore import QSettings, QUrl, QTimer, QThread, Signal, QStandardPaths
     from PySide6.QtGui import QDesktopServices
     from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
     from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget,
-                                   QMessageBox, QFileDialog, QToolBar)
+                                   QMessageBox, QFileDialog, QToolBar, QDialog, QLabel,
+                                   QProgressBar, QPushButton, QVBoxLayout, QHBoxLayout)
     from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile, QWebEngineScript
     from PySide6.QtWebEngineWidgets import QWebEngineView
     from workbench_updates import (CLIENT_VERSION, LATEST_RELEASE_API, MAX_RESPONSE_BYTES,
                                    UpdateResult, evaluate_release_response, official_release_url)
+    from workbench_update_download import (download_update, verify_downloaded, assert_verified_identity, DownloadCancelled,
+                                           DownloadProgress, format_bytes, progress_text)
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--self-test-report', type=Path)
@@ -205,6 +209,206 @@ def main():
             return 2
         QMessageBox.critical(None, '写作工作台', str(error))
         return 2
+
+    class UpdateWorker(QThread):
+        progress = Signal(object)
+        succeeded = Signal(object)
+        failed = Signal(str)
+        cancelled = Signal()
+
+        def __init__(self, result, directory, *, verified=None, parent=None):
+            super().__init__(parent)
+            self.result, self.directory, self.verified = result, directory, verified
+            self.cancel_event = threading.Event()
+
+        def run(self):
+            try:
+                if self.verified is None:
+                    update = download_update(self.result, self.directory,
+                                             progress=self.progress.emit, cancel=self.cancel_event)
+                else:
+                    update = verify_downloaded(self.verified,
+                                               progress=self.progress.emit, cancel=self.cancel_event)
+                self.succeeded.emit(update)
+            except DownloadCancelled:
+                self.cancelled.emit()
+            except Exception as error:
+                self.failed.emit(str(error) or '更新失败，请重试。')
+
+    class UpdateDialog(QDialog):
+        """Modeless progress: downloads and hashing never block manuscript pages."""
+        def __init__(self, owner, result):
+            super().__init__(owner)
+            self.owner, self.result = owner, result
+            self.worker, self.verified, self.outcome = None, None, None
+            self.launch_requested, self.installer_started = False, False
+            self.setWindowTitle('Windows 工作台更新 · ' + result.version)
+            self.resize(570, 250)
+            layout = QVBoxLayout(self)
+            self.message = QLabel(result.message)
+            self.message.setWordWrap(True)
+            layout.addWidget(self.message)
+            self.bar = QProgressBar()
+            self.bar.setRange(0, 100)
+            self.bar.setValue(0)
+            layout.addWidget(self.bar)
+            self.details = QLabel('安装包大小：' + format_bytes(result.asset_size)
+                                  + '。下载后核对官方 SHA256，再启动安装程序。')
+            self.details.setWordWrap(True)
+            layout.addWidget(self.details)
+            row = QHBoxLayout()
+            layout.addLayout(row)
+            self.download_button = QPushButton('下载更新')
+            self.download_button.clicked.connect(self.start_download)
+            row.addWidget(self.download_button)
+            self.cancel_button = QPushButton('取消下载')
+            self.cancel_button.setEnabled(False)
+            self.cancel_button.clicked.connect(self.cancel_download)
+            row.addWidget(self.cancel_button)
+            self.install_button = QPushButton('校验并启动安装程序')
+            self.install_button.clicked.connect(self.install)
+            self.install_button.hide()
+            row.addWidget(self.install_button)
+            self.folder_button = QPushButton('打开所在文件夹')
+            self.folder_button.clicked.connect(self.open_folder)
+            self.folder_button.hide()
+            row.addWidget(self.folder_button)
+            self.close_button = QPushButton('关闭')
+            self.close_button.clicked.connect(self.close_or_exit)
+            row.addWidget(self.close_button)
+
+        def busy(self):
+            # Keep the QThread object alive until its finished signal, including
+            # the short interval after a success/error signal has been emitted.
+            return self.worker is not None
+
+        def start_worker(self, *, verify=False):
+            if self.busy():
+                return
+            cache = Path(QStandardPaths.writableLocation(QStandardPaths.StandardLocation.CacheLocation)) / 'updates'
+            self.outcome = None
+            self.launch_requested = verify
+            self.download_button.setEnabled(False)
+            self.install_button.setEnabled(False)
+            self.folder_button.setEnabled(False)
+            self.cancel_button.setEnabled(True)
+            self.cancel_button.setText('取消校验' if verify else '取消下载')
+            self.close_button.setEnabled(False)
+            self.worker = UpdateWorker(self.result, cache, verified=self.verified if verify else None, parent=self)
+            self.worker.progress.connect(self.set_progress)
+            self.worker.succeeded.connect(lambda update: setattr(self, 'outcome', ('ready', update)))
+            self.worker.failed.connect(lambda message: setattr(self, 'outcome', ('error', message)))
+            self.worker.cancelled.connect(lambda: setattr(self, 'outcome', ('cancelled', None)))
+            self.worker.finished.connect(self.worker_finished)
+            self.worker.start()
+
+        def start_download(self):
+            self.verified = None
+            self.install_button.hide()
+            self.folder_button.hide()
+            self.bar.show()
+            self.start_worker()
+
+        def set_progress(self, event):
+            if self.worker is not None and self.worker.cancel_event.is_set():
+                return
+            if event.stage == 'checksum':
+                self.message.setText('正在取得官方 SHA256 校验信息…')
+                self.bar.setRange(0, 0)
+                self.details.setText('只读取与此安装包同名的官方校验文件。')
+                return
+            self.bar.setRange(0, 100)
+            self.bar.setValue(int(event.received * 100 / event.total) if event.total else 0)
+            if event.stage == 'verifying':
+                self.message.setText('正在校验已下载文件的 SHA256…')
+                self.bar.setFormat('校验 %p%')
+            elif event.stage == 'ready':
+                self.message.setText('下载完成，SHA256 校验通过。')
+                self.bar.setFormat('%p%')
+            else:
+                self.message.setText('正在下载 Windows 工作台 ' + self.result.version + '…')
+                self.bar.setFormat('%p%')
+            self.details.setText(progress_text(event))
+
+        def cancel_download(self):
+            if self.worker is not None:
+                self.worker.cancel_event.set()
+                self.cancel_button.setEnabled(False)
+                self.message.setText('正在取消，等待当前网络读取结束并清理临时文件…')
+
+        def worker_finished(self):
+            worker, self.worker = self.worker, None
+            worker.deleteLater()
+            state, value = self.outcome or ('error', '更新任务未返回结果，请重试。')
+            if worker.cancel_event.is_set():
+                state, value = 'cancelled', None
+            self.close_button.setEnabled(True)
+            self.cancel_button.setEnabled(False)
+            self.bar.setRange(0, 100)
+            self.download_button.setEnabled(True)
+            self.download_button.setText('重新下载')
+            self.folder_button.setEnabled(True)
+            self.install_button.setEnabled(True)
+            if state == 'ready':
+                self.verified = value
+                self.set_progress(DownloadProgress('ready', value.size, value.size))
+                self.download_button.hide()
+                self.folder_button.show()
+                if value.asset_name.lower().endswith('-setup.exe'):
+                    self.install_button.show()
+                    self.details.setText('已核对官方大小及 SHA256。启动安装程序前会再次校验文件并核对全部标签的待保存文字。')
+                else:
+                    self.install_button.hide()
+                    self.details.setText('便携 ZIP 已校验。打开所在文件夹，退出客户端后解压完整目录并手工替换；ZIP 不会自动执行。'
+                                         '如旧文件被服务占用，请先在书架保存并正常停止对应服务。')
+                if self.launch_requested and not self.owner.close_after_update_cancel:
+                    self.owner.launch_verified_installer(value, self)
+            else:
+                self.verified = None
+                self.bar.setValue(0)
+                self.message.setText('更新已取消。' if state == 'cancelled' else '更新未完成：' + value)
+                self.details.setText('当前客户端和作品服务继续运行。可点击重试下载。')
+                self.download_button.setText('重试下载')
+                self.download_button.show()
+                self.install_button.hide()
+                self.folder_button.hide()
+            if self.owner.close_after_update_cancel:
+                self.owner.close_after_update_cancel = False
+                QTimer.singleShot(0, self.owner.close)
+
+        def install(self):
+            if self.verified is not None and self.verified.asset_name.lower().endswith('-setup.exe'):
+                self.start_worker(verify=True)
+
+        def mark_installer_started(self):
+            self.installer_started = True
+            self.message.setText('安装程序已启动，安装进度请查看安装向导。')
+            self.bar.hide()
+            self.details.setText('请退出客户端后继续安装。书架和作品服务不会被结束；如安装器提示文件占用，'
+                                 '请保存并正常停止对应服务后重试。安装完成后重新打开工作台，核对运行版本。'
+                                 '当前窗口不能确认安装完成或新版已启动。')
+            self.install_button.hide()
+            self.close_button.setText('退出客户端，继续安装')
+
+        def open_folder(self):
+            if self.verified is not None:
+                QDesktopServices.openUrl(QUrl.fromLocalFile(str(Path(self.verified.path).parent)))
+
+        def close_or_exit(self):
+            if self.installer_started:
+                self.owner.close()
+            else:
+                self.close()
+
+        def reject(self):
+            self.close()
+
+        def closeEvent(self, event):
+            if self.busy():
+                self.cancel_download()
+                event.ignore()
+            else:
+                event.accept()
 
     class Page(QWebEnginePage):
         def __init__(self, profile, view):
@@ -276,6 +480,8 @@ def main():
             toolbar.addAction('复制作品目录', self.copy_directory)
             self.update_manager = QNetworkAccessManager(self)
             self.update_reply = None
+            self.update_dialog = None
+            self.close_after_update_cancel = False
             self.update_action = toolbar.addAction('检查更新', self.check_for_updates)
 
         def set_theme_seed(self, value):
@@ -301,6 +507,11 @@ def main():
             self.set_theme_seed(value)
 
         def check_for_updates(self):
+            if self.update_dialog is not None and (self.update_dialog.busy() or self.update_dialog.isVisible()):
+                self.update_dialog.show()
+                self.update_dialog.raise_()
+                self.update_dialog.activateWindow()
+                return
             if self.update_reply is not None:
                 return
             self.update_action.setEnabled(False)
@@ -362,15 +573,50 @@ def main():
             if result.state != 'available':
                 QMessageBox.information(self, '检查更新', result.message)
                 return
-            dialog = QMessageBox(self)
-            dialog.setWindowTitle('发现工作台更新')
-            dialog.setText(result.message)
-            download_button = dialog.addButton('打开下载链接', QMessageBox.ButtonRole.AcceptRole)
-            dialog.addButton(QMessageBox.StandardButton.Close)
-            dialog.exec()
-            if (dialog.clickedButton() == download_button
-                    and official_release_url(result.download_url, download=True)):
-                QDesktopServices.openUrl(QUrl(result.download_url))
+            self.present_update(result)
+
+        def present_update(self, result):
+            self.update_dialog = UpdateDialog(self, result)
+            self.update_dialog.show()
+
+        def launch_verified_installer(self, update, dialog):
+            views = [self.tabs.widget(index) for index in range(self.tabs.count())]
+
+            def checked(allowed):
+                if not allowed:
+                    dialog.message.setText('已保留当前页面。保存全部文字后可再次启动安装程序。')
+                    return
+                try:
+                    # No shell, silent flags, service shutdown or Restart Manager
+                    # requests: the normal visible Inno wizard owns installation.
+                    assert_verified_identity(update)
+                    subprocess.Popen([update.path], cwd=str(Path(update.path).parent), close_fds=True)
+                except (OSError, ValueError) as error:
+                    dialog.message.setText('无法启动安装程序：' + str(error) + '。请重新下载校验后重试。')
+                    return
+                dialog.mark_installer_started()
+            self.request_close(views, '启动更新安装', checked)
+
+        def capture_update_smoke(self, completion):
+            """Only used with the existing isolated self-test CLI; no network."""
+            result = UpdateResult('available', '界面验证：合成下载进度，不在下载真实更新。',
+                                  CLIENT_VERSION, '', '', 10 * 1024 * 1024)
+            dialog = UpdateDialog(self, result)
+            dialog.download_button.setEnabled(False)
+            dialog.set_progress(DownloadProgress('downloading', 6 * 1024 * 1024,
+                                                10 * 1024 * 1024, 1024 * 1024, 4))
+            dialog.message.setText('界面验证：合成下载进度，不在下载真实更新。')
+            dialog.show()
+
+            def capture():
+                target = options.self_test_report.with_name(options.self_test_report.stem + '-update-progress.png')
+                passed = (dialog.isVisible() and dialog.bar.value() == 60
+                          and 'MiB/秒' in dialog.details.text() and '4 秒' in dialog.details.text()
+                          and bool(dialog.grab().save(str(target))))
+                dialog.close()
+                dialog.deleteLater()
+                completion(passed)
+            QTimer.singleShot(1000, capture)
 
         def add_page(self, address=None):
             existing = self.find_page(address) if address else None
@@ -528,6 +774,12 @@ def main():
             self.request_close([view], '关闭页面', lambda allowed: self.remove_page(view) if allowed else None)
 
         def closeEvent(self, event):
+            dialog = getattr(self, 'update_dialog', None)
+            if dialog is not None and dialog.busy():
+                event.ignore()
+                self.close_after_update_cancel = True
+                dialog.cancel_download()
+                return
             if self.close_approved:
                 self.close_approved = False
                 event.accept()
@@ -575,15 +827,20 @@ def main():
                 base_capture = False
 
                 def finish(restored=True):
+                    window.capture_update_smoke(lambda progress_verified: finalize(restored, progress_verified))
+
+                def finalize(restored=True, progress_verified=False):
                     themes_verified = (set(verified) == {'light', 'dark'}
                                        and all(verified.values()) and restored is True)
                     captured = base_capture and all(captures.values())
-                    passed = rendered and captured and themes_verified
+                    passed = rendered and captured and themes_verified and progress_verified
                     options.self_test_report.write_text(json.dumps({
                         'ok': passed, 'native_window': window.isVisible(),
                         'shelf_rendered': visible is True, 'title': first.title(),
                         'captured': captured, 'client_version': CLIENT_VERSION,
                         'update_check_available': window.update_action.isEnabled(),
+                        'update_progress_verified': progress_verified,
+                        'update_progress_synthetic': True,
                         'themes_verified': themes_verified, 'theme_captures': captures,
                     }, ensure_ascii=False), encoding='utf-8')
                     app.exit(0 if passed else 2)

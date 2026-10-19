@@ -31,7 +31,8 @@ def release(version=NEXT_VERSION, extension='-setup.exe', **changes):
         'tag_name': '0.6.18', 'draft': False, 'prerelease': False,
         'html_url': 'https://github.com/NingCui29/story-skill/releases/tag/0.6.18',
         'assets': [{'name': name, 'state': 'uploaded', 'browser_download_url':
-                    'https://github.com/NingCui29/story-skill/releases/download/0.6.18/' + name}],
+                    'https://github.com/NingCui29/story-skill/releases/download/0.6.18/' + name,
+                    'size': 123456, 'digest': 'sha256:' + 'a' * 64}],
     }
     result.update(changes)
     return result
@@ -70,6 +71,36 @@ class ReleaseTests(unittest.TestCase):
 
     def test_portable_zip_is_supported(self):
         self.assertTrue(evaluate(release(extension='.zip')).download_url.endswith('.zip'))
+
+    def test_download_metadata_includes_official_size_digest_and_exact_asset(self):
+        packet = release()
+        result = evaluate(packet)
+        self.assertEqual(result.asset_size, 123456)
+        self.assertEqual(result.asset_name, packet['assets'][0]['name'])
+        self.assertEqual(result.sha256, 'a' * 64)
+
+    def test_missing_digest_requires_exact_companion_checksum(self):
+        packet = release()
+        asset = packet['assets'][0]
+        asset.pop('digest')
+        self.assertEqual(evaluate(packet).state, 'error')
+        packet['assets'].append({'name': asset['name'] + '.sha256', 'state': 'uploaded',
+                                 'size': 110, 'browser_download_url': asset['browser_download_url'] + '.sha256'})
+        result = evaluate(packet)
+        self.assertEqual(result.state, 'available')
+        self.assertEqual(result.checksum_url, asset['browser_download_url'] + '.sha256')
+        for changes in ({'size': True}, {'size': updates.MAX_CHECKSUM_BYTES + 1},
+                        {'state': 'new'}, {'browser_download_url': 'https://evil.test/file.sha256'}):
+            alternate = json.loads(json.dumps(packet))
+            alternate['assets'][1].update(changes)
+            self.assertEqual(evaluate(alternate).state, 'error')
+
+    def test_invalid_download_sizes_or_digest_fail_closed(self):
+        for changes in ({'size': 0}, {'size': True}, {'size': updates.MAX_DOWNLOAD_BYTES + 1},
+                        {'size': '123456'}, {'digest': 'sha256:bad'}, {'digest': 'sha512:' + 'a' * 64}):
+            packet = release()
+            packet['assets'][0].update(changes)
+            self.assertEqual(evaluate(packet).state, 'error')
 
     def test_no_matching_platform_or_version_is_not_reported_as_latest(self):
         for name in ('story-workbench-0.1.7-macos-x86_64.dmg',
@@ -229,6 +260,9 @@ class AsyncControlTests(unittest.TestCase):
         calls = []
         instance.update_manager = SimpleNamespace(get=lambda request: (calls.append(request), reply)[1])
         instance.update_reply = None
+        instance.update_dialog = None
+        instance.presented_updates = []
+        instance.present_update = instance.presented_updates.append
         action = SimpleNamespace(enabled=True)
         action.setEnabled = lambda enabled: setattr(action, 'enabled', enabled)
         instance.update_action = action
@@ -261,42 +295,15 @@ class AsyncControlTests(unittest.TestCase):
         self.assertTrue(window.update_action.enabled)
         self.assertIn('超时', messages[0])
 
-    def test_available_update_opens_only_when_download_is_selected(self):
-        for selected in (False, True):
-            reply = Reply(json.dumps(release()).encode())
-            window, _, _ = self.make_window(reply)
-            opened = []
-
-            class Dialog:
-                ButtonRole = SimpleNamespace(AcceptRole=1)
-                StandardButton = SimpleNamespace(Close=2)
-
-                def __init__(self, owner):
-                    self.buttons = []
-
-                def setWindowTitle(self, title):
-                    pass
-
-                def setText(self, message):
-                    pass
-
-                def addButton(self, label, *arguments):
-                    button = object()
-                    self.buttons.append(button)
-                    return button
-
-                def exec(self):
-                    pass
-
-                def clickedButton(self):
-                    return self.buttons[0 if selected else -1]
-
-            window._test_namespace.update(
-                QMessageBox=Dialog, QDesktopServices=SimpleNamespace(openUrl=opened.append))
-            window.check_for_updates()
-            self.assertEqual(opened, [])
-            reply.finished.callback()
-            self.assertEqual(opened, [release()['assets'][0]['browser_download_url']] if selected else [])
+    def test_available_update_presents_download_controls_without_opening_external_links(self):
+        reply = Reply(json.dumps(release()).encode())
+        window, _, _ = self.make_window(reply)
+        window.check_for_updates()
+        self.assertEqual(window.presented_updates, [])
+        reply.finished.callback()
+        self.assertEqual(len(window.presented_updates), 1)
+        self.assertEqual(window.presented_updates[0].download_url,
+                         release()['assets'][0]['browser_download_url'])
 
     def test_network_failure_and_rate_limit_are_reported(self):
         for reply, expected in ((Reply(status=None, error=1), '无法连接'),
@@ -430,7 +437,8 @@ class NativeSmokeTests(unittest.TestCase):
             'first': SimpleNamespace(page=lambda: page, title=lambda: '写作工作台', grab=lambda:
                                      SimpleNamespace(save=lambda target: (saved.append(target), save_succeeds)[1])),
             'window': SimpleNamespace(isVisible=lambda: True,
-                                      update_action=SimpleNamespace(isEnabled=lambda: True)),
+                                      update_action=SimpleNamespace(isEnabled=lambda: True),
+                                      capture_update_smoke=lambda completion: completion(True)),
             'QTimer': SimpleNamespace(singleShot=lambda milliseconds, callback: queued.append((milliseconds, callback))),
             'app': SimpleNamespace(exit=exits.append),
         }
@@ -451,6 +459,8 @@ class NativeSmokeTests(unittest.TestCase):
             packet, selections, saved, exits = self.run_smoke(Path(raw))
         self.assertTrue(packet['ok'])
         self.assertTrue(packet['themes_verified'])
+        self.assertTrue(packet['update_progress_verified'])
+        self.assertTrue(packet['update_progress_synthetic'])
         self.assertEqual(packet['theme_captures'], {'light': True, 'dark': True})
         self.assertEqual(selections, ['light', 'dark', 'system'])
         self.assertEqual({Path(path).name for path in saved},

@@ -7,10 +7,12 @@ from typing import NamedTuple
 from urllib.parse import unquote, urlsplit
 
 
-CLIENT_VERSION = '0.1.2'
+CLIENT_VERSION = '0.1.3'
 REPOSITORY = 'NingCui29/story-skill'
 LATEST_RELEASE_API = f'https://api.github.com/repos/{REPOSITORY}/releases/latest'
 MAX_RESPONSE_BYTES = 2 * 1024 * 1024
+MAX_DOWNLOAD_BYTES = 1024 * 1024 * 1024
+MAX_CHECKSUM_BYTES = 16 * 1024
 _VERSION = r'([0-9]+\.[0-9]+\.[0-9]+)'
 _WINDOWS_ASSET = re.compile(
     r'^story-workbench-' + _VERSION + r'-windows-(?:x86_64|x64)(-setup\.exe|\.zip)$',
@@ -23,6 +25,11 @@ class UpdateResult(NamedTuple):
     message: str
     version: str = ''
     download_url: str = ''
+    asset_name: str = ''
+    asset_size: int = 0
+    sha256: str = ''
+    checksum_url: str = ''
+    checksum_size: int = 0
 
 
 def version_components(value):
@@ -96,15 +103,36 @@ def evaluate_release_response(status, data, current_version=CLIENT_VERSION):
             return UpdateResult('error', '无法验证 Windows 工作台安装包下载信息，请稍后重试。')
         version = match.group(1)
         candidates.append((version_components(version), match.group(2).lower() == '-setup.exe',
-                           version, url))
+                           version, url, asset))
     if not candidates:
         return UpdateResult('unavailable',
                             f'最新正式发布中没有可验证版本的 Windows x64 工作台安装包。当前客户端：{current_version}。')
-    numeric, _, version, url = max(candidates)
+    numeric, _, version, url, asset = max(candidates, key=lambda item: item[:4])
     if numeric > current:
+        size = asset.get('size')
+        if type(size) is not int or not 0 < size <= MAX_DOWNLOAD_BYTES:
+            return UpdateResult('error', '官方安装包大小无效或超出 1 GiB 限制，无法安全下载。')
+        digest = asset.get('digest')
+        checksum_url, checksum_size, sha256 = '', 0, ''
+        if digest is not None:
+            if not isinstance(digest, str) or re.fullmatch(r'sha256:[0-9a-fA-F]{64}', digest) is None:
+                return UpdateResult('error', '官方安装包 SHA256 信息无效，无法安全下载。')
+            sha256 = digest.split(':')[1].lower()
+        else:
+            companions = [item for item in release['assets'] if isinstance(item, dict)
+                          and item.get('name') == asset['name'] + '.sha256']
+            if len(companions) != 1:
+                return UpdateResult('error', '官方发布缺少此安装包的 SHA256 校验信息，无法安全下载。')
+            companion = companions[0]
+            checksum_url, checksum_size = companion.get('browser_download_url'), companion.get('size')
+            if (companion.get('state') != 'uploaded' or type(checksum_size) is not int
+                    or not 0 < checksum_size <= MAX_CHECKSUM_BYTES
+                    or checksum_url != url + '.sha256'
+                    or not official_release_url(checksum_url, download=True)):
+                return UpdateResult('error', '无法验证此安装包的 SHA256 校验文件，无法安全下载。')
         return UpdateResult('available',
-                            f'发现 Windows 工作台 {version}，当前版本 {current_version}。可打开官方安装包下载链接，手动安装。',
-                            version, url)
+                            f'发现 Windows 工作台 {version}，当前版本 {current_version}。可在应用内下载并校验。',
+                            version, url, asset['name'], size, sha256, checksum_url, checksum_size)
     if numeric == current:
         return UpdateResult('current', f'当前 Windows 工作台 {current_version} 已是最新正式版本。', version)
     return UpdateResult('ahead',

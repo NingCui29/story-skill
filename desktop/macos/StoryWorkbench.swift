@@ -39,6 +39,7 @@ struct WorkbenchLaunchOptions {
     let switchEditorURL: URL?
     let shelfURL: URL?
     let secondEditorURL: URL?
+    let updateStage: String?
 
     static func parse(_ arguments: [String]) throws -> WorkbenchLaunchOptions {
         func value(for flag: String) throws -> String? {
@@ -56,6 +57,13 @@ struct WorkbenchLaunchOptions {
         let switchAddress = try value(for: "--self-test-switch-editor-url")
         let shelfAddress = try value(for: "--self-test-shelf-url")
         let secondAddress = try value(for: "--self-test-second-editor-url")
+        let updateStage = try value(for: "--self-test-update-stage")
+        if let updateStage {
+            guard reportPath != nil, editorAddress == nil, shelfAddress == nil, switchAddress == nil, secondAddress == nil,
+                  ["checking", "downloading", "verifying", "verified", "cancelled", "failed"].contains(updateStage) else {
+                throw invalid("更新进度自检需要独立报告路径及已知阶段，不能连接作品或书架。")
+            }
+        }
         var editor: URL?
         if let editorAddress {
             guard reportPath != nil, let url = URL(string: editorAddress), WorkbenchURL.isEditor(url) else {
@@ -83,7 +91,7 @@ struct WorkbenchLaunchOptions {
             second = url
         }
         return WorkbenchLaunchOptions(report: reportPath.map { URL(fileURLWithPath: $0).standardizedFileURL }, editorURL: editor,
-                                      switchEditorURL: switchEditor, shelfURL: shelf, secondEditorURL: second)
+                                      switchEditorURL: switchEditor, shelfURL: shelf, secondEditorURL: second, updateStage: updateStage)
     }
 
     private static func invalid(_ message: String) -> NSError {
@@ -146,10 +154,51 @@ struct WorkbenchClientVersion: Comparable {
     }
 }
 
+import CryptoKit
+
+struct WorkbenchUpdatePackage {
+    static let maximumBytes: Int64 = 2_000_000_000
+    let version: String
+    let releaseURL: URL
+    let name: String
+    let url: URL
+    let size: Int64
+    let digest: String?
+    let checksumURL: URL?
+    let checksumSize: Int64?
+
+    static func validDigest(_ text: String) -> Bool {
+        text.range(of: "^[A-Fa-f0-9]{64}$", options: .regularExpression) != nil
+    }
+
+    static func checksum(_ data: Data, name: String) -> String? {
+        guard data.count <= 4_096, let raw = String(data: data, encoding: .utf8) else { return nil }
+        let line = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard line.count >= 66 else { return nil }
+        let digest = String(line.prefix(64)), suffix = String(line.dropFirst(64))
+        guard validDigest(digest), suffix == "  " + name || suffix == " *" + name else { return nil }
+        return digest.lowercased()
+    }
+
+    // Starting addresses are pinned to the selected official release asset.
+    // Redirects may only use GitHub's HTTPS release-asset storage hosts.
+    static func allowsDownloadURL(_ url: URL, initial: URL) -> Bool {
+        if url == initial { return WorkbenchUpdate.githubURL(url.absoluteString, prefix: "download/") != nil }
+        guard let parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              parts.scheme == "https", parts.port == nil, parts.user == nil, parts.password == nil,
+              parts.fragment == nil, let host = parts.host,
+              ["release-assets.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"].contains(host),
+              parts.path.hasPrefix("/github-production-release-asset/"), parts.percentEncodedPath == parts.path,
+              !parts.path.contains("\\"),
+              !parts.path.split(separator: "/").contains(where: { $0 == "." || $0 == ".." }) else { return false }
+        return true
+    }
+}
+
 enum WorkbenchUpdate {
     static let endpoint = URL(string: "https://api.github.com/repos/NingCui29/story-skill/releases/latest")!
     enum Result {
-        case available(version: String, releaseURL: URL)
+        case available(WorkbenchUpdatePackage)
         case current(version: String)
         case ahead(current: String, latest: String)
         case unavailable(String)
@@ -166,6 +215,8 @@ enum WorkbenchUpdate {
         let name: String
         let state: String
         let browser_download_url: String
+        let size: Int64?
+        let digest: String?
     }
 
     static var architecture: String {
@@ -220,7 +271,7 @@ enum WorkbenchUpdate {
               releaseURL.path == "/NingCui29/story-skill/releases/tag/" + release.tag_name else {
             return .unavailable("GitHub 返回的发布信息无法核对，请稍后重试。")
         }
-        var versions: [WorkbenchClientVersion] = []
+        var packages: [(WorkbenchClientVersion, WorkbenchUpdatePackage)] = []
         for asset in release.assets where asset.state == "uploaded" {
             for platform in [architecture, "universal2"] {
                 for suffix in [".dmg", ".zip"] {
@@ -232,14 +283,42 @@ enum WorkbenchUpdate {
                           download.path == "/NingCui29/story-skill/releases/download/" + release.tag_name + "/" + asset.name else {
                         return .unavailable("Mac 安装包信息无法核对，请稍后重试。")
                     }
-                    versions.append(version)
+                    guard let size = asset.size, (1...WorkbenchUpdatePackage.maximumBytes).contains(size) else {
+                        return .unavailable("Mac 安装包大小无法核对，请稍后重试。")
+                    }
+                    var digest: String?
+                    var checksumURL: URL?
+                    var checksumSize: Int64?
+                    if let supplied = asset.digest {
+                        guard supplied.hasPrefix("sha256:"), WorkbenchUpdatePackage.validDigest(String(supplied.dropFirst(7))) else {
+                            return .unavailable("Mac 安装包校验信息无法核对，请稍后重试。")
+                        }
+                        digest = String(supplied.dropFirst(7)).lowercased()
+                    } else if let companion = release.assets.first(where: { $0.name == asset.name + ".sha256" && $0.state == "uploaded" }),
+                              let companionURL = githubURL(companion.browser_download_url, prefix: "download/"),
+                              companionURL.path == download.path + ".sha256",
+                              let companionBytes = companion.size, (1...4_096).contains(companionBytes) {
+                        checksumURL = companionURL
+                        checksumSize = companionBytes
+                    } else {
+                        return .unavailable("Mac 安装包尚未提供可核对的 SHA256 校验信息，请稍后重试。")
+                    }
+                    packages.append((version, WorkbenchUpdatePackage(version: version.text, releaseURL: releaseURL,
+                        name: asset.name, url: download, size: size, digest: digest,
+                        checksumURL: checksumURL, checksumSize: checksumSize)))
                 }
             }
         }
-        guard let latest = versions.max() else {
+        // Stable tie-break: prefer a disk image, then the current CPU architecture.
+        let sorted = packages.sorted {
+            if $0.0 != $1.0 { return $0.0 > $1.0 }
+            if $0.1.name.hasSuffix(".dmg") != $1.1.name.hasSuffix(".dmg") { return $0.1.name.hasSuffix(".dmg") }
+            return $0.1.name.contains("-" + architecture + ".") && !$1.1.name.contains("-" + architecture + ".")
+        }
+        guard let (latest, package) = sorted.first else {
             return .unavailable("最新正式发布尚未提供适用于本机（\(architecture)）的 Mac 安装包。")
         }
-        if latest > current { return .available(version: latest.text, releaseURL: releaseURL) }
+        if latest > current { return .available(package) }
         if current > latest { return .ahead(current: currentVersion, latest: latest.text) }
         return .current(version: currentVersion)
     }
@@ -250,6 +329,280 @@ final class WorkbenchUpdateRedirectPolicy: NSObject, URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
                     newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
         completionHandler(nil)
+    }
+}
+
+import Darwin
+
+enum WorkbenchUpdateFile {
+    static func verify(_ url: URL, size: Int64, digest: String, cancelled: () -> Bool = { false }) throws {
+        func invalid() -> NSError { NSError(domain: "StoryWorkbench.UpdateIntegrity", code: 1) }
+        guard url.isFileURL, WorkbenchUpdatePackage.validDigest(digest) else { throw invalid() }
+        let descriptor = Darwin.open(url.path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC | O_NONBLOCK)
+        guard descriptor >= 0 else { throw invalid() }
+        let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+        defer { try? handle.close() }
+        var before = stat()
+        guard Darwin.fstat(descriptor, &before) == 0, (before.st_mode & S_IFMT) == S_IFREG,
+              before.st_nlink == 1, before.st_size == size else { throw invalid() }
+        var hasher = SHA256(), count: Int64 = 0
+        while true {
+            guard !cancelled() else { throw invalid() }
+            let data = try handle.read(upToCount: 1_048_576) ?? Data()
+            if data.isEmpty { break }
+            count += Int64(data.count)
+            guard count <= size else { throw invalid() }
+            hasher.update(data: data)
+        }
+        var after = stat(), bound = stat()
+        func unchanged(_ info: stat) -> Bool {
+            info.st_dev == before.st_dev && info.st_ino == before.st_ino && info.st_size == before.st_size &&
+                info.st_nlink == before.st_nlink && info.st_mode == before.st_mode &&
+                info.st_mtimespec.tv_sec == before.st_mtimespec.tv_sec && info.st_mtimespec.tv_nsec == before.st_mtimespec.tv_nsec &&
+                info.st_ctimespec.tv_sec == before.st_ctimespec.tv_sec && info.st_ctimespec.tv_nsec == before.st_ctimespec.tv_nsec
+        }
+        guard !cancelled(), count == size, Darwin.fstat(descriptor, &after) == 0,
+              Darwin.lstat(url.path, &bound) == 0, unchanged(after), unchanged(bound),
+              hasher.finalize().map({ String(format: "%02x", $0) }).joined() == digest.lowercased() else { throw invalid() }
+    }
+}
+
+struct WorkbenchUpdateProgress {
+    let received: Int64
+    let total: Int64
+    let elapsed: TimeInterval
+    var fraction: Double { total > 0 ? min(1, max(0, Double(received) / Double(total))) : 0 }
+    var bytesPerSecond: Double { elapsed > 0 ? Double(received) / elapsed : 0 }
+    var remaining: TimeInterval? { bytesPerSecond > 0 ? Double(max(0, total - received)) / bytesPerSecond : nil }
+    var detail: String {
+        let receivedText = ByteCountFormatter.string(fromByteCount: received, countStyle: .file)
+        let totalText = ByteCountFormatter.string(fromByteCount: total, countStyle: .file)
+        let speed = ByteCountFormatter.string(fromByteCount: Int64(max(0, bytesPerSecond)), countStyle: .file)
+        let eta = remaining.map { "约 \(max(1, Int(ceil($0)))) 秒" } ?? "估算中"
+        return "\(Int(fraction * 100))% · \(receivedText) / \(totalText)\n\(speed)/秒 · 剩余\(eta)"
+    }
+}
+
+enum WorkbenchUpdateDownloadEvent {
+    case preparingChecksum
+    case progress(WorkbenchUpdateProgress)
+    case verifying
+    case completed(URL, digest: String)
+    case cancelled
+    case failed(String)
+}
+
+// Each attempt owns one private staging directory and a serial delegate queue.
+// Cancellation and failures delete partial bytes; only a fully verified package
+// is handed to Finder. No application pages or book services are modified.
+final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecked Sendable {
+    private let package: WorkbenchUpdatePackage
+    private let notify: (WorkbenchUpdateDownloadEvent) -> Void
+    private let queue: OperationQueue
+    private let configuration: URLSessionConfiguration
+    private let stagingParent: URL
+    private var session: URLSession?
+    private var task: URLSessionDataTask?
+    private var directory: URL?
+    private var output: URL?
+    private var handle: FileHandle?
+    private var digest: String?
+    private var hasher = SHA256()
+    private var checksumData = Data()
+    private var checksumPhase = false
+    private var acceptedResponse = false
+    private var received: Int64 = 0
+    private var started: TimeInterval = 0
+    private var redirects = 0
+    private var finished = false
+    private let cancellationLock = NSLock()
+    private var cancellationRequested = false
+    private var lastProgress: TimeInterval = 0
+
+    init(package: WorkbenchUpdatePackage, configuration: URLSessionConfiguration = .ephemeral,
+         stagingParent: URL = FileManager.default.temporaryDirectory, notify: @escaping (WorkbenchUpdateDownloadEvent) -> Void) {
+        self.package = package
+        self.configuration = configuration
+        self.stagingParent = stagingParent
+        self.notify = notify
+        queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        queue.name = "StoryWorkbench.verified-update"
+        super.init()
+    }
+
+    func begin() {
+        queue.addOperation { [self] in
+            guard !finished, session == nil else { return }
+            if isCancelled() { finish(.cancelled); return }
+            guard (1...WorkbenchUpdatePackage.maximumBytes).contains(package.size),
+                  WorkbenchUpdate.githubURL(package.url.absoluteString, prefix: "download/") != nil,
+                  package.url.lastPathComponent == package.name,
+                  package.digest.map(WorkbenchUpdatePackage.validDigest) ?? false ||
+                    (package.checksumURL?.absoluteString == package.url.absoluteString + ".sha256" &&
+                     (1...4_096).contains(package.checksumSize ?? 0)) else {
+                finish(.failed("安装包或校验信息无法核对，请重新检查更新。")); return
+            }
+            do {
+                let folder = stagingParent.appendingPathComponent("story-workbench-update-" + UUID().uuidString, isDirectory: true)
+                try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: false,
+                    attributes: [.posixPermissions: 0o700])
+                directory = folder
+                output = folder.appendingPathComponent(package.name)
+            } catch { finish(.failed("无法创建更新下载临时目录，请检查可用磁盘空间。")); return }
+            configuration.timeoutIntervalForRequest = 20
+            configuration.timeoutIntervalForResource = 1_800
+            configuration.httpShouldSetCookies = false
+            configuration.urlCache = nil
+            configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+            session = URLSession(configuration: configuration, delegate: self, delegateQueue: queue)
+            digest = package.digest?.lowercased()
+            if digest == nil, let checksumURL = package.checksumURL {
+                checksumPhase = true
+                emit(.preparingChecksum)
+                request(checksumURL)
+            } else { beginPackage() }
+        }
+    }
+
+    func cancel() {
+        cancellationLock.lock(); cancellationRequested = true; cancellationLock.unlock()
+        queue.addOperation { [self] in
+            guard !finished else { return }
+            finish(.cancelled)
+        }
+    }
+
+    private func isCancelled() -> Bool {
+        cancellationLock.lock(); defer { cancellationLock.unlock() }; return cancellationRequested
+    }
+
+    private func emit(_ event: WorkbenchUpdateDownloadEvent) {
+        DispatchQueue.main.async { [notify] in notify(event) }
+    }
+
+    private func request(_ url: URL) {
+        acceptedResponse = false
+        redirects = 0
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
+        request.setValue("StoryWorkbench-VerifiedUpdate", forHTTPHeaderField: "User-Agent")
+        request.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
+        task = session?.dataTask(with: request)
+        task?.resume()
+    }
+
+    private func beginPackage() {
+        checksumPhase = false
+        received = 0
+        started = ProcessInfo.processInfo.systemUptime
+        emit(.progress(WorkbenchUpdateProgress(received: 0, total: package.size, elapsed: 0)))
+        request(package.url)
+    }
+
+    private func finish(_ event: WorkbenchUpdateDownloadEvent) {
+        guard !finished else { return }
+        finished = true
+        task?.cancel()
+        session?.invalidateAndCancel()
+        session = nil
+        task = nil
+        try? handle?.close()
+        handle = nil
+        if case .completed = event {} else if let directory { try? FileManager.default.removeItem(at: directory) }
+        emit(event)
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        let initial = checksumPhase ? package.checksumURL! : package.url
+        redirects += 1
+        guard !finished, redirects <= 5, let url = request.url,
+              WorkbenchUpdatePackage.allowsDownloadURL(url, initial: initial) else {
+            completionHandler(nil)
+            finish(.failed("更新下载跳转到未经核对的地址，已停止并清理下载。")); return
+        }
+        var clean = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
+        clean.setValue("StoryWorkbench-VerifiedUpdate", forHTTPHeaderField: "User-Agent")
+        clean.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
+        completionHandler(clean)
+    }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse,
+                    completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        let initial = checksumPhase ? package.checksumURL! : package.url
+        let limit = checksumPhase ? package.checksumSize! : package.size
+        guard !finished, let response = response as? HTTPURLResponse, response.statusCode == 200,
+              let url = response.url, WorkbenchUpdatePackage.allowsDownloadURL(url, initial: initial),
+              response.expectedContentLength < 0 || response.expectedContentLength == limit else {
+            completionHandler(.cancel)
+            finish(.failed("更新服务器返回的地址、状态或文件大小不匹配，已停止并清理下载。")); return
+        }
+        if !checksumPhase {
+            do {
+                guard let output, FileManager.default.createFile(atPath: output.path, contents: nil,
+                    attributes: [.posixPermissions: 0o600]) else { throw NSError(domain: "StoryWorkbench.Update", code: 1) }
+                handle = try FileHandle(forWritingTo: output)
+            } catch {
+                completionHandler(.cancel)
+                finish(.failed("无法写入更新安装包，请检查可用磁盘空间后重试。")); return
+            }
+        }
+        acceptedResponse = true
+        completionHandler(.allow)
+    }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        guard !finished, acceptedResponse else { return }
+        if checksumPhase {
+            guard Int64(checksumData.count) + Int64(data.count) <= package.checksumSize!, checksumData.count + data.count <= 4_096 else {
+                finish(.failed("校验文件超过预期大小，已清理下载。")); return
+            }
+            checksumData.append(data)
+        } else {
+            guard Int64(data.count) <= package.size - received else {
+                finish(.failed("安装包超过预期大小，已清理下载。")); return
+            }
+            do { try handle?.write(contentsOf: data) }
+            catch { finish(.failed("写入安装包失败，请检查可用磁盘空间后重试。")); return }
+            hasher.update(data: data)
+            received += Int64(data.count)
+            let now = ProcessInfo.processInfo.systemUptime
+            if now - lastProgress >= 0.15 || received == package.size {
+                lastProgress = now
+                emit(.progress(WorkbenchUpdateProgress(received: received, total: package.size, elapsed: now - started)))
+            }
+        }
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        guard !finished else { return }
+        if let error {
+            let code = (error as NSError).code
+            finish(.failed(code == NSURLErrorTimedOut ? "更新下载超时，可重试；未完成的文件已清理。" : "更新下载中断，可重试；未完成的文件已清理。")); return
+        }
+        guard acceptedResponse else { finish(.failed("更新服务器没有返回可核对的文件。")); return }
+        if checksumPhase {
+            guard Int64(checksumData.count) == package.checksumSize!,
+                  let expected = WorkbenchUpdatePackage.checksum(checksumData, name: package.name) else {
+                finish(.failed("SHA256 校验文件内容或文件名不匹配，已清理下载。")); return
+            }
+            digest = expected
+            beginPackage()
+            return
+        }
+        guard received == package.size else { finish(.failed("安装包下载不完整，可重试；未完成的文件已清理。")); return }
+        emit(.verifying)
+        do { try handle?.synchronize(); try handle?.close(); handle = nil }
+        catch { finish(.failed("安装包写入磁盘失败，已清理下载。")); return }
+        let actual = hasher.finalize().map { String(format: "%02x", $0) }.joined()
+        guard actual == digest, let output else { finish(.failed("SHA256 校验失败，安装包已删除，请重试。")); return }
+        do {
+            try FileManager.default.setAttributes([.posixPermissions: 0o400], ofItemAtPath: output.path)
+            try WorkbenchUpdateFile.verify(output, size: package.size, digest: actual, cancelled: isCancelled)
+        } catch {
+            finish(isCancelled() ? .cancelled : .failed("安装包磁盘读回校验失败，文件已删除，请重试。")); return
+        }
+        if isCancelled() { finish(.cancelled) } else { finish(.completed(output, digest: actual)) }
     }
 }
 
@@ -868,20 +1221,35 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
     private var allowClose = false
     private var updateSession: URLSession?
     private var updateMenuItem: NSMenuItem?
+    private var updateDownloader: WorkbenchUpdateDownload?
+    private var updatePackage: WorkbenchUpdatePackage?
+    private var updateVerifiedFile: URL?
+    private var updateDownloadedDigest: String?
+    private var updateAttempt = UUID()
+    private var updateProgressWindow: NSPanel?
+    private var updateStage: NSTextField?
+    private var updateDetail: NSTextField?
+    private var updateProgress: NSProgressIndicator?
+    private var updateActionButton: NSButton?
+    private var updateActionMode = "cancel"
+    private var updateRecheckButton: NSButton?
+    private var awaitingUpdateCancellationForQuit = false
     private let selfTestReport: URL?
     private let selfTestEditorURL: URL?
     private let selfTestSwitchEditorURL: URL?
     private let selfTestShelfURL: URL?
     private let selfTestSecondEditorURL: URL?
+    private let selfTestUpdateStage: String?
     private var selfTestEditor: WorkbenchWindow?
 
     init(selfTestReport: URL? = nil, selfTestEditorURL: URL? = nil,
-         selfTestSwitchEditorURL: URL? = nil, selfTestShelfURL: URL? = nil, selfTestSecondEditorURL: URL? = nil) {
+         selfTestSwitchEditorURL: URL? = nil, selfTestShelfURL: URL? = nil, selfTestSecondEditorURL: URL? = nil, selfTestUpdateStage: String? = nil) {
         self.selfTestReport = selfTestReport
         self.selfTestEditorURL = selfTestEditorURL
         self.selfTestSwitchEditorURL = selfTestSwitchEditorURL
         self.selfTestShelfURL = selfTestShelfURL
         self.selfTestSecondEditorURL = selfTestSecondEditorURL
+        self.selfTestUpdateStage = selfTestUpdateStage
         super.init()
     }
 
@@ -918,6 +1286,7 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         installMenu()
+        if let selfTestUpdateStage { collectUpdateSelfTest(selfTestUpdateStage); return }
         if let selfTestEditorURL {
             selfTestEditor = showEditor(selfTestEditorURL)
             collectSelfTest(attempt: 0)
@@ -997,7 +1366,9 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
     }
 
     @objc private func checkForUpdates() {
-        guard updateSession == nil else { return }
+        guard !checkingQuit else { return }
+        if updatePackage != nil { updatePanel().makeKeyAndOrderFront(nil); return }
+        guard updateSession == nil else { updatePanel().makeKeyAndOrderFront(nil); return }
         let currentVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         let architecture = WorkbenchUpdate.architecture
         let configuration = URLSessionConfiguration.ephemeral
@@ -1008,6 +1379,15 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
         let session = URLSession(configuration: configuration, delegate: WorkbenchUpdateRedirectPolicy(), delegateQueue: nil)
         updateSession = session
         updateMenuItem?.title = "正在检查更新…"
+        updatePanel().makeKeyAndOrderFront(nil)
+        updateActionMode = "cancel-check"
+        updateStage?.stringValue = "正在检查更新…"
+        updateDetail?.stringValue = "正在查询 GitHub 最新正式发布和适用于本机的 Mac 安装包，可继续编辑作品。"
+        updateActionButton?.title = "取消检查"
+        updateActionButton?.isEnabled = true
+        updateRecheckButton?.isHidden = true
+        updateProgress?.isIndeterminate = true
+        updateProgress?.startAnimation(nil)
         session.dataTask(with: WorkbenchUpdate.request()) { [weak self] data, response, error in
             let result = WorkbenchUpdate.evaluate(data: data, response: response, error: error,
                                                   currentVersion: currentVersion, architecture: architecture)
@@ -1016,6 +1396,9 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
                 guard let self, self.updateSession === session else { return }
                 self.updateSession = nil
                 self.updateMenuItem?.title = "检查更新…"
+                self.updateProgressWindow?.orderOut(nil)
+                self.updateProgress?.stopAnimation(nil)
+                self.updateActionMode = "check"
                 self.presentUpdate(result)
             }
         }.resume()
@@ -1023,14 +1406,14 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
 
     private func presentUpdate(_ result: WorkbenchUpdate.Result) {
         let alert = NSAlert()
-        var releaseURL: URL?
+        var package: WorkbenchUpdatePackage?
         switch result {
-        case .available(let version, let url):
-            alert.messageText = "发现客户端新版本 \(version)"
-            alert.informativeText = "可前往 GitHub 下载 Mac 安装包。请保存当前编辑后，再安装新版。"
-            alert.addButton(withTitle: "打开下载页")
+        case .available(let available):
+            alert.messageText = "发现客户端新版本 \(available.version)"
+            alert.informativeText = "安装包：\(available.name)（\(ByteCountFormatter.string(fromByteCount: available.size, countStyle: .file))）。将在应用内下载并核对 SHA256。校验通过后由你手动安装、保存退出并重新启动。"
+            alert.addButton(withTitle: "下载更新")
             alert.addButton(withTitle: "稍后")
-            releaseURL = url
+            package = available
         case .current(let version):
             alert.messageText = "当前客户端已是最新可用版本"
             alert.informativeText = "客户端版本：\(version)。已核对 GitHub 最新正式发布的本机 Mac 安装包。"
@@ -1046,13 +1429,197 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
         }
         let window = hostWindow()
         window.makeKeyAndOrderFront(nil)
-        alert.beginSheetModal(for: window) { answer in
-            if answer == .alertFirstButtonReturn, let releaseURL,
-               WorkbenchUpdate.githubURL(releaseURL.absoluteString, prefix: "tag/") != nil {
-                NSWorkspace.shared.open(releaseURL)
-            }
+        alert.beginSheetModal(for: window) { [weak self] answer in
+            if answer == .alertFirstButtonReturn, let package { self?.beginUpdateDownload(package) }
         }
     }
+
+    private func updatePanel() -> NSPanel {
+        if let updateProgressWindow { return updateProgressWindow }
+        let panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 580, height: 260),
+                            styleMask: [.titled], backing: .buffered, defer: false)
+        panel.title = "写作工作台更新"
+        panel.isReleasedWhenClosed = false
+        panel.center()
+        let stage = NSTextField(wrappingLabelWithString: "正在准备更新")
+        stage.font = .boldSystemFont(ofSize: 17)
+        stage.frame = NSRect(x: 24, y: 211, width: 532, height: 25)
+        let detail = NSTextField(wrappingLabelWithString: "")
+        detail.frame = NSRect(x: 24, y: 114, width: 532, height: 86)
+        let progress = NSProgressIndicator(frame: NSRect(x: 24, y: 86, width: 532, height: 18))
+        progress.style = .bar
+        progress.minValue = 0
+        progress.maxValue = 1
+        let action = NSButton(title: "取消下载", target: self, action: #selector(updateAction))
+        action.frame = NSRect(x: 410, y: 25, width: 146, height: 32)
+        let secondary = NSButton(title: "收起", target: self, action: #selector(hideUpdate))
+        secondary.frame = NSRect(x: 284, y: 25, width: 116, height: 32)
+        let recheck = NSButton(title: "重新检查", target: self, action: #selector(restartUpdateCheck))
+        recheck.frame = NSRect(x: 158, y: 25, width: 116, height: 32)
+        recheck.isHidden = true
+        updateRecheckButton = recheck
+        for view in [stage, detail, progress, action, secondary, recheck] { panel.contentView?.addSubview(view) }
+        updateProgressWindow = panel
+        updateStage = stage
+        updateDetail = detail
+        updateProgress = progress
+        updateActionButton = action
+        return panel
+    }
+
+    private func beginUpdateDownload(_ package: WorkbenchUpdatePackage) {
+        guard updateDownloader == nil else { updatePanel().makeKeyAndOrderFront(nil); return }
+        updatePackage = package
+        updateVerifiedFile = nil
+        updateDownloadedDigest = nil
+        updateActionMode = "cancel"
+        updateMenuItem?.title = "更新下载进度…"
+        updateActionButton?.title = "取消下载"
+        updateActionButton?.isEnabled = true
+        updateRecheckButton?.isHidden = true
+        updatePanel().makeKeyAndOrderFront(nil)
+        let attempt = UUID()
+        updateAttempt = attempt
+        let downloader = WorkbenchUpdateDownload(package: package) { [weak self] event in
+            guard let self, self.updateAttempt == attempt else { return }
+            self.showUpdateEvent(event)
+        }
+        updateDownloader = downloader
+        downloader.begin()
+    }
+
+    private func showUpdateEvent(_ event: WorkbenchUpdateDownloadEvent) {
+        _ = updatePanel()
+        switch event {
+        case .preparingChecksum:
+            updateStage?.stringValue = "正在获取 SHA256 校验信息"
+            updateDetail?.stringValue = "\(updatePackage?.name ?? "安装包")\n正在核对官方同名校验文件；可继续编辑作品。"
+            updateProgress?.isIndeterminate = true
+            updateProgress?.startAnimation(nil)
+        case .progress(let progress):
+            updateStage?.stringValue = "正在下载更新 \(updatePackage?.version ?? "")"
+            updateDetail?.stringValue = progress.detail + "\n下载期间可继续编辑作品。"
+            updateProgress?.stopAnimation(nil)
+            updateProgress?.isIndeterminate = false
+            updateProgress?.doubleValue = progress.fraction
+        case .verifying:
+            updateStage?.stringValue = "正在校验 SHA256"
+            updateDetail?.stringValue = "文件已下载，正在核对完整性。校验通过后才能打开安装包。"
+            updateProgress?.isIndeterminate = true
+            updateProgress?.startAnimation(nil)
+        case .completed(let file, let digest):
+            updateDownloader = nil
+            updateVerifiedFile = file
+            updateDownloadedDigest = digest
+            updateActionButton?.isEnabled = true
+            updateActionMode = "open"
+            updateRecheckButton?.isHidden = false
+            updateStage?.stringValue = "校验通过 · 等待手动安装"
+            updateDetail?.stringValue = "打开安装包后，请保存所有作品并退出客户端，将新版放入应用目录替换，再重新启动。后台书架和作品服务会保留，需在确认保存后按需重启。"
+            updateProgress?.stopAnimation(nil)
+            updateProgress?.isIndeterminate = false
+            updateProgress?.doubleValue = 1
+            updateActionButton?.title = "打开安装包"
+            updateMenuItem?.title = "查看更新安装包…"
+        case .cancelled:
+            updateDownloader = nil
+            updateActionMode = "retry"
+            updateRecheckButton?.isHidden = false
+            updateStage?.stringValue = "下载已取消"
+            updateDetail?.stringValue = "未完成的安装包已清理。作品编辑和后台服务继续保留，可重新下载。"
+            updateProgress?.stopAnimation(nil)
+            updateProgress?.isIndeterminate = false
+            updateProgress?.doubleValue = 0
+            updateActionButton?.title = "重新下载"
+            updateActionButton?.isEnabled = true
+            updateMenuItem?.title = "查看更新进度…"
+        case .failed(let message):
+            updateDownloader = nil
+            updateActionMode = "retry"
+            updateRecheckButton?.isHidden = false
+            updateStage?.stringValue = "更新未完成"
+            updateDetail?.stringValue = message
+            updateProgress?.stopAnimation(nil)
+            updateProgress?.isIndeterminate = false
+            updateProgress?.doubleValue = 0
+            updateActionButton?.title = "重试下载"
+            updateActionButton?.isEnabled = true
+            updateMenuItem?.title = "查看更新进度…"
+        }
+        if awaitingUpdateCancellationForQuit, updateDownloader == nil {
+            awaitingUpdateCancellationForQuit = false
+            checkingQuit = false
+            NSApp.reply(toApplicationShouldTerminate: true)
+        }
+    }
+
+    @objc private func updateAction() {
+        guard !awaitingUpdateCancellationForQuit else { return }
+        switch updateActionMode {
+        case "cancel-check":
+            updateSession?.invalidateAndCancel()
+            updateSession = nil
+            updateActionMode = "check"
+            updateStage?.stringValue = "检查已取消"
+            updateDetail?.stringValue = "作品编辑和后台服务继续保留，可重新检查更新。"
+            updateActionButton?.title = "重新检查"
+            updateProgress?.stopAnimation(nil)
+            updateProgress?.isIndeterminate = false
+            updateProgress?.doubleValue = 0
+            updateMenuItem?.title = "检查更新…"
+        case "check": checkForUpdates()
+        case "cancel":
+            updateActionButton?.isEnabled = false
+            updateStage?.stringValue = "正在取消并清理下载…"
+            updateDownloader?.cancel()
+        case "retry":
+            if let updatePackage {
+                updateActionButton?.isEnabled = true
+                updateActionButton?.title = "取消下载"
+                beginUpdateDownload(updatePackage)
+            }
+        case "open":
+            guard let file = updateVerifiedFile, let package = updatePackage, let digest = updateDownloadedDigest else { return }
+            let attempt = updateAttempt
+            updateRecheckButton?.isHidden = true
+            updateActionButton?.isEnabled = false
+            updateStage?.stringValue = "正在重新核对安装包…"
+            DispatchQueue.global(qos: .utility).async { [weak self] in
+                let integrityOK: Bool
+                do {
+                    try WorkbenchUpdateFile.verify(file, size: package.size, digest: digest)
+                    integrityOK = true
+                } catch { integrityOK = false }
+                DispatchQueue.main.async { [weak self] in
+                    guard let self, self.updateAttempt == attempt, self.updateVerifiedFile == file else { return }
+                    self.updateRecheckButton?.isHidden = false
+                    self.updateActionButton?.isEnabled = true
+                    if !integrityOK {
+                        try? FileManager.default.removeItem(at: file.deletingLastPathComponent())
+                        self.updateVerifiedFile = nil
+                        self.showUpdateEvent(.failed("安装包在校验后发生变化，已清理，请重新下载。"))
+                    } else if NSWorkspace.shared.open(file) {
+                        self.updateStage?.stringValue = "安装包已打开 · 等待手动安装 / 重启"
+                    } else {
+                        self.updateStage?.stringValue = "暂时无法打开安装包"
+                        self.updateDetail?.stringValue = "安装包已通过 SHA256 校验。可再次尝试打开；客户端和后台服务仍在运行。"
+                    }
+                }
+            }
+        default: break
+        }
+    }
+
+    @objc private func restartUpdateCheck() {
+        guard updateDownloader == nil, updateSession == nil else { return }
+        updatePackage = nil
+        updateVerifiedFile = nil
+        updateDownloadedDigest = nil
+        updateAttempt = UUID()
+        checkForUpdates()
+    }
+
+    @objc private func hideUpdate() { updateProgressWindow?.orderOut(nil) }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard !checkingQuit, !checkingClose else { return .terminateCancel }
@@ -1061,8 +1628,16 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
         let controllers = cachedPages
         DispatchQueue.main.async { [weak self] in
             self?.confirmAll(controllers, action: "退出客户端", index: 0) { allowed in
-                self?.checkingQuit = false
-                NSApp.reply(toApplicationShouldTerminate: allowed)
+                guard let self else { return }
+                if allowed, let download = self.updateDownloader {
+                    self.awaitingUpdateCancellationForQuit = true
+                    self.updateActionButton?.isEnabled = false
+                    self.updateStage?.stringValue = "退出前正在取消并清理下载…"
+                    download.cancel()
+                } else {
+                    self.checkingQuit = false
+                    NSApp.reply(toApplicationShouldTerminate: allowed)
+                }
             }
         }
         return .terminateLater
@@ -1385,6 +1960,61 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
         }
     }
 
+    private func collectUpdateSelfTest(_ stage: String) {
+        guard let report = selfTestReport else { return }
+        updatePackage = WorkbenchUpdatePackage(version: "0.1.9", releaseURL: URL(string: "https://github.com/NingCui29/story-skill/releases/tag/v0.6.19")!,
+            name: "story-workbench-0.1.9-macos-x86_64.dmg", url: URL(string: "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-macos-x86_64.dmg")!,
+            size: 40_000_000, digest: String(repeating: "a", count: 64), checksumURL: nil, checksumSize: nil)
+        let panel = updatePanel()
+        // Render a real opaque native view in a fixed appearance. cacheDisplay
+        // otherwise omits the window background and resolves dynamic colors
+        // outside the offscreen panel's appearance on some macOS releases.
+        panel.appearance = NSAppearance(named: .aqua)
+        panel.backgroundColor = .windowBackgroundColor
+        panel.contentView?.wantsLayer = true
+        panel.effectiveAppearance.performAsCurrentDrawingAppearance {
+            panel.contentView?.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        }
+        switch stage {
+        case "checking":
+            updateStage?.stringValue = "正在检查更新…"
+            updateDetail?.stringValue = "正在查询 GitHub 最新正式发布和适用于本机的 Mac 安装包，可继续编辑作品。"
+            updateProgress?.isIndeterminate = true
+            updateProgress?.startAnimation(nil)
+            updateActionButton?.title = "取消检查"
+        case "verifying": showUpdateEvent(.verifying)
+        case "verified": showUpdateEvent(.completed(URL(fileURLWithPath: "/synthetic-not-opened/package.dmg"), digest: String(repeating: "a", count: 64)))
+        case "cancelled": showUpdateEvent(.cancelled)
+        case "failed": showUpdateEvent(.failed("合成下载中断，可重试；未完成的文件已清理。"))
+        default: showUpdateEvent(.progress(WorkbenchUpdateProgress(received: 25_600_000, total: 40_000_000, elapsed: 12.8)))
+        }
+        panel.orderBack(nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            guard let self, let content = panel.contentView else { return }
+            var packet: [String: Any] = ["ok": false, "synthetic": true, "stage": stage,
+                "stageText": self.updateStage?.stringValue ?? "", "detail": self.updateDetail?.stringValue ?? "",
+                "progress": self.updateProgress?.doubleValue ?? 0, "indeterminate": self.updateProgress?.isIndeterminate ?? false,
+                "action": self.updateActionButton?.title ?? "", "cachedPages": self.cachedPageCount,
+                "networkStarted": self.updateSession != nil || self.updateDownloader != nil]
+            let snapshot = report.deletingPathExtension().appendingPathExtension("png")
+            if let bitmap = content.bitmapImageRepForCachingDisplay(in: content.bounds) {
+                panel.effectiveAppearance.performAsCurrentDrawingAppearance {
+                    content.layoutSubtreeIfNeeded()
+                    content.displayIfNeeded()
+                    content.cacheDisplay(in: content.bounds, to: bitmap)
+                }
+                if let png = bitmap.representation(using: .png, properties: [:]) {
+                    do {
+                        try FileManager.default.createDirectory(at: snapshot.deletingLastPathComponent(), withIntermediateDirectories: true)
+                        try png.write(to: snapshot, options: .atomic)
+                        packet["ok"] = true; packet["snapshot"] = snapshot.path
+                    } catch { packet["error"] = error.localizedDescription }
+                }
+            }
+            self.finishSelfTest(packet)
+        }
+    }
+
     private func finishSelfTest(_ packet: [String: Any]) {
         guard let selfTestReport else { return }
         do {
@@ -1432,7 +2062,7 @@ struct StoryWorkbenchMain {
         }
         let delegate = WorkbenchApp(selfTestReport: options.report, selfTestEditorURL: options.editorURL,
                                     selfTestSwitchEditorURL: options.switchEditorURL, selfTestShelfURL: options.shelfURL,
-                                    selfTestSecondEditorURL: options.secondEditorURL)
+                                    selfTestSecondEditorURL: options.secondEditorURL, selfTestUpdateStage: options.updateStage)
         application.delegate = delegate
         withExtendedLifetime((clientLease, delegate)) { application.run() }
     }
