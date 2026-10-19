@@ -4,6 +4,7 @@ from contextlib import closing, contextmanager
 import json
 import os
 from pathlib import Path
+from types import SimpleNamespace
 import sqlite3
 import stat
 import tempfile
@@ -209,6 +210,88 @@ class WorkbenchArchivesTests(unittest.TestCase):
         os.link(self.root / '正文.md', self.root / '正文硬链接.md')
         self.error('archive_linked_file', self.archive)
         self.assertFalse(self.output.exists())
+
+    @contextmanager
+    def zeroed_direntry_identity(self):
+        """Reproduce documented Windows DirEntry.stat identity placeholders."""
+        original = os.scandir
+
+        class ZeroedEntry:
+            def __init__(self, entry):
+                self.entry, self.name = entry, entry.name
+
+            def stat(self, *, follow_symlinks=True):
+                value = self.entry.stat(follow_symlinks=follow_symlinks)
+                return SimpleNamespace(st_mode=value.st_mode, st_size=value.st_size,
+                                       st_mtime_ns=value.st_mtime_ns, st_dev=0, st_ino=0,
+                                       st_nlink=0, st_file_attributes=getattr(value, 'st_file_attributes', 0))
+
+        @contextmanager
+        def scandir(*args, **kwargs):
+            with original(*args, **kwargs) as entries:
+                yield iter(ZeroedEntry(entry) for entry in entries)
+
+        class ScanOS:
+            def __getattr__(self, name):
+                return getattr(os, name)
+
+        scan_os = ScanOS()
+        scan_os.scandir = scandir
+        # Scope Windows-like DirEntry objects to the archive scanner, leaving
+        # tempfile/shutil's independent inode checks and cleanup untouched.
+        with patch.object(self.archives, 'os', scan_os):
+            yield
+
+    def assert_real_scan_identity(self, inventory):
+        for relative, row in inventory.items():
+            value = os.stat(self.root / relative, follow_symlinks=False)
+            self.assertEqual(row, (value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns))
+            self.assertNotEqual(row[:2], (0, 0), relative)
+            self.assertEqual(value.st_nlink, 1)
+
+    def test_zeroed_direntry_metadata_uses_real_stat_identity(self):
+        with self.zeroed_direntry_identity():
+            inventory, _ = self.archives._scan(self.root)
+        self.assert_real_scan_identity(inventory)
+        with self.zeroed_direntry_identity():
+            self.assertTrue(self.archive()['ok'])
+        self.assertTrue(self.output.is_file())
+
+    def test_path_pinned_windows_scan_keeps_real_inode_device_and_link_metadata(self):
+        # Exercise the fd=None branch with genuine no-follow metadata, while
+        # retaining POSIX pins beneath the mock for safe local fixture reads.
+        original_pin = self.archives.api._pinned_directory
+        original_verify = self.archives.api._verify_bound_directory
+
+        @contextmanager
+        def path_pin(*args, **kwargs):
+            with original_pin(*args, **kwargs) as pinned:
+                yield SimpleNamespace(path=pinned.path, fd=None, original=pinned)
+
+        def verify(directory):
+            original_verify(directory.original)
+
+        with self.zeroed_direntry_identity(), \
+                patch.object(self.archives.api, '_pinned_directory', side_effect=path_pin), \
+                patch.object(self.archives.api, '_verify_bound_directory', side_effect=verify):
+            inventory, _ = self.archives._scan(self.root)
+        self.assert_real_scan_identity(inventory)
+
+    def test_zeroed_direntry_metadata_still_rejects_actual_hardlinks(self):
+        linked = self.root / '正文硬链接.md'
+        os.link(self.root / '正文.md', linked)
+        original_stat = os.stat
+        checked_link_counts = []
+
+        def checked_stat(*args, **kwargs):
+            value = original_stat(*args, **kwargs)
+            if value.st_nlink == 2 and stat.S_ISREG(value.st_mode):
+                checked_link_counts.append(value.st_nlink)
+            return value
+
+        with self.zeroed_direntry_identity(), patch.object(self.archives.os, 'stat', side_effect=checked_stat):
+            self.error('archive_linked_file', lambda: self.archives._scan(self.root))
+        self.assertTrue(checked_link_counts, 'Actual no-follow metadata must detect the hardlink count')
 
     def test_nested_initialized_book_is_never_absorbed_into_backup(self):
         nested = self.root / '另一部独立作品'
