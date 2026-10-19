@@ -2,7 +2,7 @@
 
 面向 Windows 10/11 x64。客户端使用 PySide6 / Qt WebEngine 桌面窗口，打包 Chromium 和 Python；使用者无需安装 Python、技能或浏览器扩展。当前为开发候选，尚未在真实 Windows 桌面验收，不属于已发布版本。
 
-当前开发候选为 `0.1.4`。可运行 `story-workbench-0.1.4-windows-x86_64-setup.exe`，为当前用户安装并创建开始菜单快捷方式；安装向导可选创建桌面快捷方式，系统应用列表支持卸载。候选未做代码签名。
+当前开发候选为 `0.1.5`。可运行 `story-workbench-0.1.5-windows-x86_64-setup.exe`，为当前用户安装并创建开始菜单快捷方式；安装向导可选创建桌面快捷方式，系统应用列表支持卸载。候选未做代码签名。
 
 也可解压完整 ZIP 到可写目录，双击 `StoryWorkbench.exe`。请保留同目录的 `_internal`、`runtime`、`Scripts` 等文件。
 

@@ -125,6 +125,18 @@ let active='formal:1';
             self.assertFalse(self.tree.beneath(identity, 'document-options'), identity)
         self.assertIn('<p id="message" role="status"></p>', self.page)
 
+    def test_refresh_is_one_visible_settings_action_and_locate_remains_available(self):
+        self.assertTrue(self.tree.beneath('refresh', 'maintenance'))
+        self.assertIn('hidden', self.tree.nodes['refresh-compact']['attrs'])
+        self.assertNotIn('hidden', self.tree.nodes['refresh']['attrs'])
+        self.assertTrue(self.tree.beneath('locate', 'book-nav'))
+        folded = [parent for parent in self.tree.nodes['locate']['parents'] if parent['tag'] == 'details']
+        self.assertEqual(len(folded), 1)
+        self.assertNotIn('open', folded[0]['attrs'])
+        self.assertIn('<summary>查找与定位</summary>', self.page)
+        for identity in ('newer', 'older'):
+            self.assertIn('disabled', self.tree.nodes[identity]['attrs'])
+
     def test_native_compatibility_and_new_page_share_visual_rules(self):
         asset = (Path(__file__).resolve().parents[1] / 'desktop/macos/editor-appearance.js').read_text()
         css = asset.split('style.textContent = `\n', 1)[1].split('\n`;', 1)[0]
@@ -188,8 +200,10 @@ let currentCatalog,viewMode='files';const showChapterInfo=()=>{},updateChapterPi
 const before=JSON.stringify([...docs]);
 drawCatalog({book_root:'/当前/作品',files:[],material_roots:['/材料目录'],workspace:{title:'当前作品',kind:'long',formal_total:38,planned_total:52,next_chapter:39,captured_at:'2026-10-06T00:00:00Z'}},new Map());
 const progress=$('book-progress').textContent;
-assert.ok(progress.includes('正式 38 章'));assert.ok(progress.includes('已规划 52 章'));assert.ok(progress.includes('第39章'));
-assert.equal($('book-progress').title,progress);assert.equal($('book-progress-detail').textContent,progress);
+assert.equal(progress,'正式 38 章 · 下一章 第39章');
+const detail=$('book-progress-detail').textContent;assert.ok(detail.includes('已规划 52 章'));assert.ok(detail.includes('刷新于 '));assert.equal($('book-progress').title,detail);
+drawCatalog({book_root:'/当前/作品',files:[],material_roots:['/材料目录'],workspace:{title:'当前作品',kind:'long',formal_total:38,planned_total:80,next_chapter:39,captured_at:'2026-10-06T00:05:00Z'}},new Map());
+assert.equal($('book-progress').textContent,progress);assert.ok($('book-progress-detail').textContent.includes('已规划 80 章'));assert.notEqual($('book-progress-detail').textContent,detail);
 assert.ok($('root-hint').textContent.includes('/材料目录'));
 assert.equal(JSON.stringify([...docs]),before);assert.equal(active,'formal:1');
 """)

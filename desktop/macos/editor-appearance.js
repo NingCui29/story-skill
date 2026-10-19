@@ -38,16 +38,6 @@
     const panel = element('div', 'book-info-panel', 'menu-panel book-info-panel');
     const fullTitle = element('strong', 'book-info-title');
     const fullProgress = element('p', 'book-progress-detail');
-    const syncLabels = () => {
-      fullTitle.textContent = title.textContent;
-      fullProgress.textContent = progress.textContent;
-    };
-    syncLabels();
-    // Observe only these two display labels, never document buffers or inputs.
-    if (typeof MutationObserver !== 'undefined') {
-      const labels = new MutationObserver(syncLabels);
-      for (const node of [title, progress]) labels.observe(node, {childList: true, characterData: true, subtree: true});
-    }
     panel.append(fullTitle, fullProgress, classification, bookLocation, rootLocation);
     info.append(summary, panel);
     identity.prepend(title);
@@ -55,14 +45,8 @@
     const eyebrow = heading.querySelector('.eyebrow');
     if (eyebrow) eyebrow.hidden = true;
     actions.insertBefore(info, maintenance);
-    const refresh = document.getElementById('refresh');
-    if (refresh) {
-      refresh.textContent = '刷新';
-      refresh.title = '刷新目录与状态，不丢弃未保存文字';
-    }
     const settings = maintenance.querySelector('summary');
     if (settings) settings.textContent = '设置';
-    info.addEventListener('toggle', () => { if (info.open) syncLabels(); });
     document.addEventListener('pointerdown', event => {
       if (info.open && !info.contains(event.target)) info.open = false;
     });
@@ -72,6 +56,52 @@
         summary.focus();
       }
     });
+  }
+  const info = document.getElementById('book-info');
+  const fullTitle = document.getElementById('book-info-title');
+  const fullProgress = document.getElementById('book-progress-detail');
+  const compactProgress = value => {
+    const formal = value.match(/(?:^|：\s*|·\s*)正式\s*(\d+)\s*章/);
+    const next = value.match(/下一章\s*(?:第\s*)?(\d+)\s*章?/);
+    return formal && next ? `正式 ${formal[1]} 章 · 下一章 第${next[1]}章` : value;
+  };
+  const syncLabels = () => {
+    if (fullTitle && fullTitle.textContent !== title.textContent) fullTitle.textContent = title.textContent;
+    if (!fullProgress || !info?.contains(fullProgress)) return;
+    const current = progress.textContent;
+    // New services already provide the short label plus a complete tooltip.
+    // Old services still replace the full label on refresh; retain that text first.
+    const supplied = progress.title || '';
+    const currentSummary = compactProgress(current);
+    const full = current === currentSummary && supplied.length > current.length && compactProgress(supplied) === currentSummary ? supplied : current;
+    const summary = compactProgress(full);
+    if (fullProgress.textContent !== full) fullProgress.textContent = full;
+    if (progress.title !== full) progress.title = full;
+    if (progress.textContent !== summary) progress.textContent = summary;
+  };
+  syncLabels();
+  // Observe only these two display labels, never document buffers or inputs.
+  if (typeof MutationObserver !== 'undefined') {
+    const labels = new MutationObserver(syncLabels);
+    for (const node of [title, progress]) labels.observe(node, {childList: true, characterData: true, subtree: true});
+  }
+  info?.addEventListener('toggle', () => { if (info.open) syncLabels(); });
+  const settingsPanel = maintenance.querySelector('.menu-panel');
+  const refresh = document.getElementById('refresh');
+  const compactRefresh = document.getElementById('refresh-compact');
+  if (settingsPanel && refresh && header.contains(refresh)) {
+    if (refresh.parentElement !== settingsPanel) settingsPanel.prepend(refresh);
+    refresh.textContent = '刷新目录';
+    refresh.title = '刷新目录与状态，不丢弃未保存文字';
+    if (compactRefresh && maintenance.contains(compactRefresh)) compactRefresh.hidden = true;
+  }
+  const locate = document.getElementById('locate');
+  const directorySearch = document.getElementById('full-query')?.closest('details');
+  const directory = document.getElementById('book-nav');
+  if (locate && directorySearch && directory?.contains(locate) && directory.contains(directorySearch)) {
+    if (locate.parentElement !== directorySearch) directorySearch.insertBefore(locate, document.getElementById('full-query'));
+    const summary = directorySearch.querySelector('summary');
+    if (summary?.textContent === '全文搜索') summary.textContent = '查找与定位';
   }
   // Reuse only a control already provided by this service and its own theme code.
   // Older services without an appearance selector keep their original capabilities.
@@ -114,6 +144,7 @@ body.native-compact-editor>header{align-items:center;gap:20px;padding:12px 22px;
 .native-compact-editor nav>details>summary{font-size:12px;color:var(--muted)}.native-compact-editor nav>details:last-child{margin-top:20px;padding-top:4px;border-top:1px solid var(--line)}
 .native-compact-editor .navigation-mode{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:4px;background:var(--wb-tint);border-radius:9px;margin:18px 0 14px}.native-compact-editor .navigation-mode button{font-size:11px;padding:6px 4px;border-color:transparent;background:transparent;border-radius:6px}.native-compact-editor .navigation-mode [aria-pressed="true"]{background:var(--surface)!important;color:var(--wb-selected-ink);font-weight:600;box-shadow:0 1px 3px #102a3b10}.native-compact-editor #locate{grid-column:1/-1;padding:5px;font-size:11px;color:var(--muted)}
 .native-compact-editor #search,.native-compact-editor #full-query,.native-compact-editor #book-select{font-size:12px;border-radius:8px;background:var(--surface);color:var(--ink);border-color:var(--line);padding:9px 10px}.native-compact-editor .pager{gap:5px}.native-compact-editor .pager button{flex:1;font-size:11px;padding:5px;background:transparent}.native-compact-editor #range{font-size:10px;margin-bottom:14px}
+.native-compact-editor .pager:has(>#newer:disabled):has(>#older:disabled){display:none}.native-compact-editor nav>details #locate{display:block;padding:5px 0;margin:0 0 10px;text-align:left}.native-compact-editor #refresh-compact[hidden]{display:none!important}
 .native-compact-editor .document{padding:10px 11px;margin:3px 0;border-radius:8px;line-height:1.6;border-color:transparent;background:transparent}.native-compact-editor .document:hover{background:var(--wb-hover)}.native-compact-editor .document.selected{background:var(--wb-selected)!important;color:var(--wb-selected-ink);box-shadow:inset 3px 0 var(--accent);font-weight:600}.native-compact-editor .document-type,.native-compact-editor .document-location{font-size:10px;color:var(--muted)}.native-compact-editor #list>details{border-color:var(--line);padding-bottom:10px}.native-compact-editor #list>details>summary{font-size:12px;font-weight:600;color:var(--ink)}
 .native-compact-editor main{padding:16px clamp(24px,3.5vw,54px) 80px;scroll-padding-top:80px;background:var(--surface)}
 .native-compact-editor .tools{gap:8px;top:-16px;padding:10px 0 12px;background:var(--surface);border-color:var(--line)}.native-compact-editor .mode-actions,.native-compact-editor .save-actions{gap:5px}.native-compact-editor .tools button,.native-compact-editor .tools summary{font-size:12px;padding:7px 10px;border-radius:7px}.native-compact-editor .tools #edit,.native-compact-editor .tools #compare,.native-compact-editor .tools .menu>summary{border-color:transparent;background:transparent}.native-compact-editor .tools #edit[aria-pressed="true"]{background:var(--wb-selected);color:var(--wb-selected-ink)}
