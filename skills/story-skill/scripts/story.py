@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.18"
+VERSION = "0.6.19"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -3111,10 +3111,11 @@ def _load_extension(name):
     return module
 
 
-storage, search, world, history, publish, workbench, outline, punctuation = (_load_extension(name) for name in (
-    "storage", "search", "world", "history", "publish", "workbench", "outline", "punctuation"))
+storage, search, world, history, publish, workbench, outline, punctuation, workbench_books, workbench_archives = (_load_extension(name) for name in (
+    "storage", "search", "world", "history", "publish", "workbench", "outline", "punctuation",
+    "workbench_books", "workbench_archives"))
 CORE = SimpleNamespace(**globals())
-for extension in (search, world, history, publish, workbench):
+for extension in (search, world, history, publish, workbench, workbench_archives):
     extension.inject(CORE)
 TEMPLATES["publish"] = publish.template()
 TEMPLATES["world"] = world.template()

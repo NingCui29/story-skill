@@ -20,6 +20,7 @@ RUNTIME_FILES = (
     'story.py', 'story_world.py', 'story_punctuation.py', 'story_search.py',
     'story_history.py', 'story_publish.py', 'story_workbench.py',
     'story_outline.py', 'story_storage.py',
+    'story_workbench_books.py', 'story_workbench_archives.py',
 )
 NATIVE_SOURCES = ('StoryWorkbench.swift', 'ClientInstance.swift')
 
