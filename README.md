@@ -24,14 +24,15 @@ Story Skill 是一套中文小说创作技能，供 Codex、Claude Code、Claude
 
 ## 安装升级
 
-先按使用环境选包。每个 ZIP 都有对应的 `.sha256` 校验文件，下载后按 [安装指引](INSTALL.md)核对。
+先按使用环境选包。正式发布的 ZIP 均有对应的 `.sha256` 校验文件，下载后按 [安装指引](INSTALL.md)核对；Windows 工作台候选包的获取方式和验证范围见下文。
 
-| 使用环境 | v0.6.18 下载 | 安装说明 |
+| 使用环境 | 下载 | 安装说明 |
 |---|---|---|
 | Codex 本地插件 | [插件 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-codex-0.6.18.zip.sha256) | [本地市场与插件安装](docs/codex-plugin.md) |
 | Claude 桌面版 | [单入口 ZIP（r2）](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-claude-desktop-0.6.18-r2.zip) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-claude-desktop-0.6.18-r2.zip.sha256) | [导入并启用](INSTALL.md#claude-桌面版导入单技能包) |
 | Claude Code、Antigravity 等目录安装 | [完整八技能 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-0.6.18.zip) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-skill-0.6.18.zip.sha256) | [完整套件与宿主目录](INSTALL.md#目录安装的完整套件) |
 | Intel Mac 本机工作台 | [客户端 0.1.6 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-workbench-0.1.6-macos-x86_64.zip) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-workbench-0.1.6-macos-x86_64.zip.sha256) | [实验客户端说明](desktop/macos/README.md) |
+| Windows x64 本机工作台（候选版） | [安装包与便携包 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39134806713/artifacts/12139069466)（需登录 GitHub） | [双端安装步骤](#独立应用下载与安装) |
 
 Mac 客户端内嵌运行时 0.6.18，采用本地临时签名，未经 Apple 公证；完整创作技能另行安装。[GitHub Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill) 也提供 `@ningcui29/story-skill@0.6.18` 内容包，npm 安装本身不向宿主注册技能。
 
@@ -146,7 +147,31 @@ python3 -B -X utf8 scripts/install.py --host antigravity --project "<写作项�
 
 工作台提供章节与材料导航、正文阅读、候选编辑、全文查找和版本差异对照。它在本机运行，本身不调用模型。
 
-可以让助手“打开 <书目录绝对路径> 的可编辑工作台”。手动启动独立书架时，将 `<核心技能目录>` 换成安装后的 `story-skill` 目录：
+### 独立应用下载与安装
+
+两端应用均内置 Python 运行时，直接安装即可打开书架，无需另装 Python。完整创作技能需在所用助手中另行安装。
+
+**Mac（当前验证范围为 Intel Mac）：**
+
+1. 下载[客户端 0.1.6 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-workbench-0.1.6-macos-x86_64.zip)及[SHA256 校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.18/story-workbench-0.1.6-macos-x86_64.zip.sha256)。
+2. 解压 ZIP，将“写作工作台.app”拖入“应用程序”（Applications）。
+3. 从“应用程序”打开工作台，在书架添加已初始化的作品目录，再打开作品阅读或编辑。
+
+客户端内嵌 Story Skill 0.6.18，采用本地临时签名、未经 Apple 公证；Apple Silicon 尚未验证。详见 [Mac 客户端说明](desktop/macos/README.md)。
+
+**Windows（x64 候选版）：**
+
+1. 登录 GitHub，下载[工作台候选构建 ZIP](https://github.com/NingCui29/story-skill/actions/runs/39134806713/artifacts/12139069466)。
+2. 解压外层 ZIP，运行其中的 `story-workbench-windows-x86_64-setup.exe`，按向导安装；默认安装到当前用户目录，可选创建桌面快捷方式。
+3. 从开始菜单打开“写作工作台”。点击“复制作品目录”选择目录，再将路径粘贴到书架添加栏。需要卸载时，在 Windows 应用列表中卸载。
+
+便携使用方式：解压外层 ZIP 中的 `story-workbench-windows-x86_64.zip`，保留完整目录后运行 `StoryWorkbench.exe`。
+
+Windows 候选已在 Windows 构建机上通过安装、内置运行时、桌面窗口启动、书架页面 DOM 加载、隔离服务关闭及卸载检查；尚未完成人工界面验收和 Windows 10/11 用户环境验收，安装程序未签名，未作为正式 Release 附件发布。该 Actions 下载包预计于 **2027-01-16** 到期，到期或被删除后需重新构建获取新包。可查看[本次构建与验收](https://github.com/NingCui29/story-skill/actions/runs/39134806713)及[对应源码的 Windows 说明](https://github.com/NingCui29/story-skill/blob/a6601f41d38010165f86e122aff511b5139d507c/desktop/windows/README.md)。
+
+### 通过助手或命令行打开
+
+也可以让助手“打开 <书目录绝对路径> 的可编辑工作台”。手动启动独立书架时，将 `<核心技能目录>` 换成安装后的 `story-skill` 目录：
 
 ```bash
 python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-serve --open
@@ -162,7 +187,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 在工作台保存修改会另存新候选；采用为正式稿仍走审稿与修订流程。升级或重启前先保存各页面编辑，再核对并停止旧服务。书架固定入口、单书编辑服务和只读静态导出各有用途，详见 [工作台操作与限制](docs/本地工作台分析.md)。
 
-工作台需在能运行 Python 且可访问书目录的机器上启动。云端任务中的 `127.0.0.1` 指向其运行环境；桌面技能导入也不会自动启动作者电脑上的服务。
+手动运行源码需要本机安装 Python，并能访问书目录；独立应用已内置运行时。云端任务中的 `127.0.0.1` 指向其运行环境；桌面技能导入也不会自动启动作者电脑上的服务。
 
 ## 书稿与交付
 
