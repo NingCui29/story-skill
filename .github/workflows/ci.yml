@@ -33,6 +33,10 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           python -u -B -X utf8 -c "import sys, unittest; sys.path.insert(0, 'tests'); names = ['test_execution_review', 'test_execution_review_assignment', 'test_execution_sequence', 'test_install_additional_hosts', 'test_install_desktop_hosts', 'test_package_npm', 'test_package_codex', 'test_plan_render', 'test_writing_brief']; result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names)); sys.exit(not result.wasSuccessful())"
+      - name: Check platform draft and Chrome bridge compatibility first
+        if: runner.os == 'Windows'
+        run: |
+          python -u -B -X utf8 -c "import sys, unittest; from pathlib import Path; sys.path.insert(0, 'tests'); patterns = ['test_platform*.py', 'test_workbench_platform*.py', 'test_chrome_bridge_driver.py', 'test_fanqie_profile_template.py']; names = sorted({p.stem for pattern in patterns for p in Path('tests').glob(pattern)}); result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names)); sys.exit(not result.wasSuccessful())"
       - name: Run regression tests including historical migration
         run: python -u -B -X utf8 -m unittest discover -s tests -v
       - name: Check declared instruction loads by task and role

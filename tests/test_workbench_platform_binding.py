@@ -67,8 +67,13 @@ class PlatformBindingTests(unittest.TestCase):
         self.assertEqual(story.publish.inspect(self.book, self.old_plan["id"]), old)
         self.assertEqual(len(self.profiles()), 1)
         path = self.profile_dir / result["profile_id"]
-        self.assertEqual(path.stat().st_mode & 0o777, 0o600)
-        self.assertEqual(self.profile_dir.stat().st_mode & 0o777, 0o700)
+        self.assertTrue(path.is_file())
+        self.assertFalse(path.is_symlink())
+        self.assertTrue(self.profile_dir.is_dir())
+        self.assertFalse(self.profile_dir.is_symlink())
+        if os.name == "posix":
+            self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+            self.assertEqual(self.profile_dir.stat().st_mode & 0o777, 0o700)
         self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), result["profile_sha256"])
         saved = json.loads(path.read_text())
         self.assertEqual(saved["execution_mode"], "host_assisted_cua")

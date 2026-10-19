@@ -7,8 +7,9 @@ import subprocess
 import sys
 import threading
 import time
+from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from tests import test_publish as fixtures
 from tests.test_platform_browser import profile
@@ -170,11 +171,17 @@ class ChromeBridgeTests(unittest.TestCase):
         self.assertNotIn("token", result)
         self.assertFalse(result["browser_started"])
         self.assertTrue(self.preview()["can_start"])
-        self.assertEqual(os.stat(self.handle).st_mode & 0o777, 0o600)
+        self.assertTrue(self.handle.is_file())
         directory = self.root / bridge.DIRECTORY / result["session_id"]
-        self.assertEqual(os.stat(directory).st_mode & 0o777, 0o700)
+        self.assertTrue(directory.is_dir())
+        if os.name != "nt":
+            self.assertEqual(os.stat(self.handle).st_mode & 0o777, 0o600)
+            self.assertEqual(os.stat(directory).st_mode & 0o777, 0o700)
         for name in ("session.json", "lease.json"):
-            self.assertEqual(os.stat(directory / name).st_mode & 0o777, 0o600)
+            self.assertTrue((directory / name).is_file())
+            self.assertEqual(json.loads((directory / name).read_text())["schema"], 1)
+            if os.name != "nt":
+                self.assertEqual(os.stat(directory / name).st_mode & 0o777, 0o600)
 
     def test_duplicate_attach_and_existing_handle_do_not_leave_active_orphan(self):
         self.handle.write_text("existing", encoding="utf-8")
@@ -201,7 +208,9 @@ class ChromeBridgeTests(unittest.TestCase):
         self.attach()
         thread, result, errors, claim, request = self.enqueue()
         self.assertEqual(bridge.next_request(self.book, self.handle)["request_id"], None)
-        self.assertEqual(os.stat(claim["request_path"]).st_mode & 0o777, 0o600)
+        self.assertTrue(Path(claim["request_path"]).is_file())
+        if os.name != "nt":
+            self.assertEqual(os.stat(claim["request_path"]).st_mode & 0o777, 0o600)
         self.write_response(request, request["binding"]["target"], nonce="wrong")
         self.assert_code("platform_chrome_invalid_message", bridge.respond, self.book, self.handle,
                          claim["request_id"], self.response)
@@ -369,6 +378,82 @@ class ChromeBridgeTests(unittest.TestCase):
             self.assertIsNone(bridge.next_request(self.book, self.handle)["request_id"])
             self.assertTrue((directory_path / ("outbox-" + request["id"] + ".json")).exists())
             thread.join(2)
+
+
+class WindowsProcessLivenessTests(unittest.TestCase):
+    def kernel(self, wait=0x102, handle=123):
+        return SimpleNamespace(OpenProcess=Mock(return_value=handle),
+                               WaitForSingleObject=Mock(return_value=wait),
+                               CloseHandle=Mock(return_value=1))
+
+    def test_live_and_exited_processes_use_zero_wait_and_close_handles(self):
+        import ctypes
+        from ctypes import wintypes
+        for wait, expected in ((0x102, True), (0, False), (0xffffffff, False), (7, False)):
+            with self.subTest(wait=wait):
+                kernel = self.kernel(wait=wait)
+                with patch.object(ctypes, "WinDLL", return_value=kernel, create=True):
+                    self.assertEqual(bridge._windows_process_alive(1234), expected)
+                kernel.OpenProcess.assert_called_once_with(0x00100000, False, 1234)
+                kernel.WaitForSingleObject.assert_called_once_with(123, 0)
+                kernel.CloseHandle.assert_called_once_with(123)
+                self.assertEqual(kernel.OpenProcess.argtypes, [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD])
+                self.assertIs(kernel.OpenProcess.restype, wintypes.HANDLE)
+                self.assertEqual(kernel.WaitForSingleObject.argtypes, [wintypes.HANDLE, wintypes.DWORD])
+                self.assertIs(kernel.WaitForSingleObject.restype, wintypes.DWORD)
+                self.assertEqual(kernel.CloseHandle.argtypes, [wintypes.HANDLE])
+                self.assertIs(kernel.CloseHandle.restype, wintypes.BOOL)
+
+    def test_invalid_pid_and_access_denied_fail_closed_without_waiting(self):
+        import ctypes
+        with patch.object(ctypes, "WinDLL", create=True) as load:
+            for pid in (None, True, "123", 0, -1, 0x100000000):
+                self.assertFalse(bridge._windows_process_alive(pid))
+            load.assert_not_called()
+        kernel = self.kernel(handle=0)
+        with patch.object(ctypes, "WinDLL", return_value=kernel, create=True):
+            self.assertFalse(bridge._windows_process_alive(1234))
+        kernel.WaitForSingleObject.assert_not_called()
+        kernel.CloseHandle.assert_not_called()
+
+    def test_api_failure_closes_open_handle_and_never_assumes_liveness(self):
+        import ctypes
+        kernel = self.kernel()
+        kernel.WaitForSingleObject.side_effect = OSError("query denied")
+        with patch.object(ctypes, "WinDLL", return_value=kernel, create=True):
+            self.assertFalse(bridge._windows_process_alive(1234))
+        kernel.CloseHandle.assert_called_once_with(123)
+        with patch.object(ctypes, "WinDLL", side_effect=OSError("unavailable"), create=True):
+            self.assertFalse(bridge._windows_process_alive(1234))
+
+    def test_windows_owner_check_never_uses_os_kill(self):
+        platform = SimpleNamespace(name="nt", kill=Mock(side_effect=AssertionError("must not signal")))
+        for alive in (True, False):
+            with patch.object(bridge, "os", platform), patch.object(bridge, "_windows_process_alive", return_value=alive) as query:
+                self.assertEqual(bridge._owner_alive("unused", {"owner_pid": 1234}), alive)
+                query.assert_called_once_with(1234)
+        platform.kill.assert_not_called()
+
+    @unittest.skipUnless(os.name == "nt", "requires a real Windows process handle")
+    def test_native_windows_current_and_exited_child_without_signals(self):
+        child = subprocess.Popen([sys.executable, "-c",
+            "import sys; print('ready', flush=True); sys.stdin.buffer.read(1)"],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        try:
+            self.assertEqual(child.stdout.readline().strip(), b"ready")
+            with patch.object(os, "kill", side_effect=AssertionError("must not signal")):
+                self.assertTrue(bridge._owner_alive("unused", {"owner_pid": os.getpid()}))
+                self.assertTrue(bridge._owner_alive("unused", {"owner_pid": child.pid}))
+                self.assertFalse(bridge._owner_alive("unused", {"owner_pid": 2147483646}))
+            child.stdin.write(b"x"); child.stdin.flush(); child.stdin.close()
+            child.wait(timeout=10)
+            with patch.object(os, "kill", side_effect=AssertionError("must not signal")):
+                self.assertFalse(bridge._owner_alive("unused", {"owner_pid": child.pid}))
+        finally:
+            if child.stdin and not child.stdin.closed:
+                child.stdin.close()
+            child.wait(timeout=10)
+            child.stdout.close()
 
 
 if __name__ == "__main__":

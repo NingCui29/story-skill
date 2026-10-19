@@ -306,10 +306,45 @@ def worker_status(root, binding):
     return {**status, "active_sessions": active_sessions}
 
 
-def _owner_alive(root, request):
+def _windows_process_alive(pid):
+    """Observe a Windows process without sending a console control event."""
+    if type(pid) is not int or not 0 < pid <= 0xffffffff:
+        return False
     try:
-        os.kill(request["owner_pid"], 0)
-    except (OSError, TypeError, KeyError):
+        import ctypes
+        from ctypes import wintypes
+        kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+        kernel.OpenProcess.restype = wintypes.HANDLE
+        kernel.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+        kernel.WaitForSingleObject.restype = wintypes.DWORD
+        kernel.CloseHandle.argtypes = [wintypes.HANDLE]
+        kernel.CloseHandle.restype = wintypes.BOOL
+        # SYNCHRONIZE grants zero-time waiting only; no termination or signal
+        # rights are requested. WAIT_TIMEOUT means the process is still alive.
+        handle = kernel.OpenProcess(0x00100000, False, pid)
+        if not handle:
+            return False
+        try:
+            alive = kernel.WaitForSingleObject(handle, 0) == 0x00000102
+        finally:
+            closed = kernel.CloseHandle(handle)
+        return bool(alive and closed)
+    except (OSError, AttributeError, TypeError, ValueError, OverflowError):
+        return False
+
+
+def _owner_alive(root, request):
+    pid = request.get("owner_pid")
+    if type(pid) is not int or pid <= 0:
+        return False
+    try:
+        if os.name == "nt":
+            if not _windows_process_alive(pid):
+                return False
+        else:
+            os.kill(pid, 0)
+    except (OSError, TypeError, OverflowError):
         return False
     instance = request.get("owner_service_instance")
     if instance is not None:
