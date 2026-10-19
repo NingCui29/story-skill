@@ -363,14 +363,25 @@ def _open_verified_archive(path, stack):
     file = api._BoundFile(directory, path.name)
     expected = api.publish._bound_stat(file)
     stream = stack.enter_context(api._bound_reader(file))
+    opened = os.fstat(stream.fileno())
 
     def key(value):
         return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns
 
+    def identity(value):
+        return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns
+
     def verify():
         try:
-            if key(expected) != key(os.fstat(stream.fileno())) or key(expected) != key(api.publish._bound_stat(file)):
-                _fail('changed', '备份文件在读取期间被修改或替换，请重新选择并核对。', path=str(path))
+            current_handle, current_path = os.fstat(stream.fileno()), api.publish._bound_stat(file)
+            # CPython 3.12 Windows path stat exposes creation time as ctime,
+            # while fstat exposes ChangeTime. Bind their common identity, then
+            # retain each API's complete metadata as its own mutation baseline.
+            if (identity(expected) != identity(opened) or key(opened) != key(current_handle) or
+                    key(expected) != key(current_path) or identity(current_path) != identity(current_handle)):
+                _fail('changed', '备份文件在读取期间被修改或替换，请重新选择并核对。', path=str(path),
+                      expected_path=key(expected), opened_handle=key(opened),
+                      current_path=key(current_path), current_handle=key(current_handle))
             api._verify_bound_directory(directory)
         except OSError as error:
             _fail('changed', '备份文件在读取期间失去原路径，请重新选择并核对。', path=str(path), reason=str(error))
