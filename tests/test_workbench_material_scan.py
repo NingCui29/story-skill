@@ -265,6 +265,9 @@ catalog.materialCursor='old-complete-material-inventory';
         catalog = self.w._editor_catalog(self.root)
         cursor = catalog['materials']['cursor']
         old_root = self.root.with_name('旧书根备份')
+        # The fixture's writer must release SQLite handles before Windows can
+        # rename its parent; retain the cursor and all production identity checks.
+        self.fixture.book.close()
         self.root.rename(old_root)
         shutil.copytree(old_root, self.root)
         # The copied state is byte-identical and has the same book ID, but it is
