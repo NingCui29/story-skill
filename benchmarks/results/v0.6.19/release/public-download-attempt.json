@@ -1,0 +1,53 @@
+{
+  "ok": false,
+  "tag": "v0.6.19",
+  "repository": "NingCui29/story-skill",
+  "assets": [
+    {
+      "name": "story-skill-claude-desktop-0.6.19-r2.zip.sha256",
+      "size": 107,
+      "sha256": "dcace0999f3a90cb987ffc0be67f8d6fd3982f8c95687efab2452dfbae2507f8",
+      "server_digest": "sha256:dcace0999f3a90cb987ffc0be67f8d6fd3982f8c95687efab2452dfbae2507f8",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "dcace0999f3a90cb987ffc0be67f8d6fd3982f8c95687efab2452dfbae2507f8",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-0.6.19.zip.sha256",
+      "size": 89,
+      "sha256": "3203b99fb83697d4655f2586fc3a581592b12470c1aa237be3ffa77df717ab40",
+      "server_digest": "sha256:3203b99fb83697d4655f2586fc3a581592b12470c1aa237be3ffa77df717ab40",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-0.6.19.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "3203b99fb83697d4655f2586fc3a581592b12470c1aa237be3ffa77df717ab40",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-0.6.19.zip",
+      "size": 556840,
+      "sha256": "07851af742fa0279ef212330b139652c8c9818e8a4de21c099c8e1eddf5b8701",
+      "server_digest": "sha256:07851af742fa0279ef212330b139652c8c9818e8a4de21c099c8e1eddf5b8701",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-0.6.19.zip",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "07851af742fa0279ef212330b139652c8c9818e8a4de21c099c8e1eddf5b8701",
+      "final_host": "release-assets.githubusercontent.com"
+    }
+  ],
+  "scope": "Earlier attempt to fully read public Mac binaries stopped on partial responses/TLS EOF; no file checksum mismatch was observed. Final public verification records full small-file reads and large-binary samples backed by local/native full verification and GitHub server digests.",
+  "build_source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+  "tag_source_commit": "17602e5278b906c0bffd9b2661411b5f8acbb357",
+  "source_equivalence": "build-source-equivalence.json",
+  "release_id": 417484030,
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.19",
+  "published_at": "2026-10-19T21:48:32Z"
+}

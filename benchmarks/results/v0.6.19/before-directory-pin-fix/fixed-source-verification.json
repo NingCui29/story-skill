@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "date": "2026-10-19T16:41:15.232431+00:00",
+  "ok": true,
+  "git_commit": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+  "files": 84,
+  "source_input_snapshot_sha256": "0f3e2d26318fbb2921bb4c9a5e7e514a2e248397b953ffea030539f6ec11786d",
+  "worktree_changed": [],
+  "different_from_fixed_commit": [],
+  "scope": "All recorded final source inputs match the fixed Git commit and current worktree bytes."
+}

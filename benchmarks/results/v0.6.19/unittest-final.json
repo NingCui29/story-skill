@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "status": "passed",
+  "run": 2189,
+  "passed": null,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 211,
+  "duration_seconds": 529.932,
+  "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+  "python": "3.12.14",
+  "platform": "macOS-15.8.1-x86_64-i386-64bit",
+  "command": "python3.12 -u -B -X utf8 -m unittest discover -s tests -v",
+  "counting": "TextTestRunner reports testsRun and skipped events. Success callbacks were not recorded, so passed is null; skipped setupClass/subtests need not correspond one-to-one to testsRun.",
+  "log_sha256": "94fad305a315437d87993ec18a1b3fd3a764323e5e866bc12412cd94d09411c5",
+  "node_supplement": "release/local-node-supplement.json"
+}

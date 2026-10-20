@@ -1,6 +1,6 @@
 # 平台章节准备与草稿接入（番茄、七猫、起点）
 
-**2026-10-19 开发补充：** 用户明确功能目标为番茄、七猫、起点，只自动保存平台草稿；本轮真实后台验收随后限定为番茄。开发候选新增 `publish-draft-run`／`publish-draft-status`、独立执行历史、可配置浏览器适配器，以及工作台“平台草稿”入口（本地预览、异步整批保存、进度与只读对账）。起点同时加入离线准备和 ZIP 核验。本轮改动尚未作为新版本安装或发布，提交审核和排期不在范围内。当前使用要求见[平台草稿保存](../skills/story-skill-publish/references/platform-drafts.md)和[实际后台记录](平台后台验收-2026-10-19.md)。
+**v0.6.19 已发布：** 用户明确功能目标为番茄、七猫、起点，只自动保存平台草稿；本轮真实后台验收随后限定为番茄。本版新增 `publish-draft-run`／`publish-draft-status`、独立执行历史、可配置浏览器适配器，以及工作台“平台草稿”入口（本地预览、异步整批保存、进度与只读对账）。起点同时加入离线准备和 ZIP 核验。上述能力已随 [v0.6.19](releases/v0.6.19.md) 分发，提交审核和排期不在范围内。当前使用要求见[平台草稿保存](../skills/story-skill-publish/references/platform-drafts.md)和[实际后台记录](平台后台验收-2026-10-19.md)。
 
 ## 当前源码能力与验收状态
 
@@ -231,4 +231,4 @@ durable sending（发送意图已经成功持久化）是本地分界点：此�
 
 模拟测试只验证发布模块的本地逻辑。真实后台验收另存平台、入口、操作时间、账号与作品的脱敏标识、固定内容摘要和回读证据，不在公开仓库提交小说全文、登录材料或敏感截图。macOS、Windows 的测试结果各自记录，不把本机浏览器验证视为跨平台通过。
 
-v0.5.11 只实现阶段 A 和 B0 的本地部分。[比较留痕与材料核验](../benchmarks/results/publish-preparation-2026-09-23/comparison-ledger/README.md)记录当时三个留痕命令、ZIP 竞态修复、完整回归与独立试用。[人工交接与边界历史验证](../benchmarks/results/publish-preparation-2026-09-23/manual-handoff/README.md)、[回执找回与正文格式历史验证](../benchmarks/results/publish-preparation-2026-09-23/receipt-and-dialogue/README.md)、[材料包复核历史验证](../benchmarks/results/publish-preparation-2026-09-22/archive-verification/README.md)及[材料导出阶段验证](../benchmarks/results/publish-preparation-2026-09-22/material-export/README.md)保留各阶段的代码快照。本轮草稿代码测试和番茄实页采样的范围见页首及实际后台记录；完整自动保存仍待验收，正式发布及排期未实现，不能由本地准备测试推定通过。
+v0.5.11 只实现阶段 A 和 B0 的本地部分。[比较留痕与材料核验](../benchmarks/results/publish-preparation-2026-09-23/comparison-ledger/README.md)记录当时三个留痕命令、ZIP 竞态修复、完整回归与独立试用。[人工交接与边界历史验证](../benchmarks/results/publish-preparation-2026-09-23/manual-handoff/README.md)、[回执找回与正文格式历史验证](../benchmarks/results/publish-preparation-2026-09-23/receipt-and-dialogue/README.md)、[材料包复核历史验证](../benchmarks/results/publish-preparation-2026-09-22/archive-verification/README.md)及[材料导出阶段验证](../benchmarks/results/publish-preparation-2026-09-22/material-export/README.md)保留各阶段的代码快照。本轮草稿代码测试和番茄实页采样的范围见页首及实际后台记录；整批真实正文、真实分页、多卷、七猫及起点仍待实页验收；提交审核及排期未实现，不能由本地准备测试推定通过。

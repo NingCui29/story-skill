@@ -1,12 +1,12 @@
 # 写作工作台 · macOS 桌面版
 
-> 公开记录说明：作品名称、目录及运行实例标识已一致匿名化，个人路径已通用化；日期、工程数值、原始哈希和验收结论保留。截图仅本地保留。
+> 公开记录说明：历史开发记录的作品名称、目录及运行实例标识已一致匿名化，个人路径已通用化，相关真实作品截图仅本地保留。本版验收使用隔离合成书架，截图与回执保存在[本版验证目录](../../benchmarks/results/v0.6.19/)。
 
 `写作工作台.app` 将本地书架和作品编辑页面放进独立的 macOS 窗口。它沿用现有工作台服务和保存规则，应用包内携带 Python 运行时与工作台程序。
 
-本轮发布版本为 **0.1.18 / build 19**，内含 Story Skill **0.6.19**。发布验收正在进行，构建、签名、隔离运行与正式附件回下载待核验，见 [v0.6.19 发布记录](../../docs/releases/v0.6.19.md)。上一正式客户端为 0.1.6，历史附件和记录保持原样。
+已发布 **0.1.18 / build 19**，内含 Story Skill **0.6.19**。构建、严格临时签名、隔离 CLI／原生自检和 ZIP／DMG 验证已通过，实际分发核验范围见 [v0.6.19 发布记录](../../docs/releases/v0.6.19.md)。上一正式客户端为 0.1.6，历史附件和记录保持原样。
 
-本版提供 [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip.sha256)；链接待正式发布后可用。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
+本版提供 [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
 
 工作台采用紧凑的天空蓝界面，支持浅色、深色及跟随系统。书架可新建、移出／撤销、重新定位、删除至系统废纸篓、备份和恢复作品；编辑页提供恢复中心、保存全部候选、两稿对照及下一章任务。原有候选与正式稿身份继续保留。操作和边界见[需求与进展](../../docs/工作台需求与进展.md)。
 
@@ -16,9 +16,9 @@
 
 客户端使用临时本地签名，未做 Apple 公证。本轮发布目标为 Intel Mac；最低 macOS 13 是构建配置，Apple Silicon 及其他 macOS 用户环境未据此获得验证。安装包与已运行服务分别更新，替换应用不会让旧服务自动加载新代码。
 
-## 0.1.18 发布验收（2026-10-19）
+## 0.1.18 发布验收（2026-10-20）
 
-内嵌运行时 0.6.19，包含本轮工作台与平台草稿更新。最终构建、严格签名、运行时逐文件比对、隔离 CLI、原生自检和 ZIP／DMG 回下载均待核验；实际结果统一补录至 [v0.6.19 发布记录](../../docs/releases/v0.6.19.md)，不沿用旧版本的测试数与摘要。
+内嵌运行时 0.6.19，15 个运行时模块与实际构建源码一致；严格临时签名、隔离 CLI／安全探针、AppKit／WKWebView 合成书架与编辑／多书切换自检、ZIP 提取和 DMG 只读挂载后卸载均已通过。未替换作者安装应用或操作真实作品。原生目录选择、下载保存面板、未保存编辑关闭提示及真实升级流程未由本轮自检覆盖；Apple Silicon 与其他 macOS 用户环境仍需分别验证。完整摘要和实际分发核验范围见 [v0.6.19 发布记录](../../docs/releases/v0.6.19.md)。
 
 ## 0.1.6 发布记录（2026-10-18）
 

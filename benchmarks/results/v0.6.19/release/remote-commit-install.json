@@ -1,0 +1,280 @@
+{
+  "schema": 2,
+  "ok": true,
+  "date": "2026-10-19T21:48:08.546059+00:00",
+  "source_commit": "17602e5278b906c0bffd9b2661411b5f8acbb357",
+  "tag": "v0.6.19",
+  "commands": [
+    {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-final-source/remote-source/scripts/install.py",
+        "--host",
+        "codex",
+        "--project",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\": \"installed\", \"host\": \"codex\", \"scope\": \"project\", \"path\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目/.agents/skills\", \"skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"changed_skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"backup\": null, \"files\": 62}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-final-source/remote-source/scripts/install.py",
+        "--host",
+        "codex",
+        "--project",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\": \"verified\", \"host\": \"codex\", \"scope\": \"project\", \"path\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目/.agents/skills\", \"skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"managed_skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"files\": 62}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "0.6.19\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+        "--help"
+      ],
+      "exit_code": 0,
+      "stdout": "usage: story.py [-h] [--version]\n                {template,init,status,book-kind,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,publish-draft-run,publish-draft-status,publish-chrome-attach,publish-chrome-detach,publish-chrome-heartbeat,publish-chrome-next,publish-chrome-respond,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n                ...\n\nStory Skill: local, bounded context and transactional writing state. No API\ncalls.\n\npositional arguments:\n  {template,init,status,book-kind,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,publish-draft-run,publish-draft-status,publish-chrome-attach,publish-chrome-detach,publish-chrome-heartbeat,publish-chrome-next,publish-chrome-respond,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n    template            Print just one JSON input example\n    init                Create state once; never overwrite an existing book\n    status              Compact checkpoint and export health\n    book-kind           Correct long/short fiction metadata without rewriting\n                        chapters or exports\n    migrate             Explicit schema upgrade with a consistent rollback\n                        backup\n    audit               Strictly check managed exports without repairing or\n                        recording them\n    outline-audit       Read-only structural check of a whole-book outline,\n                        including candidates\n    world-save          Save structured story state with cited evidence\n    world-check         Check recorded rules, knowledge and continuity\n    world-read          Inspect one stored narrative record, including stale\n                        evidence for reviewed repair\n    cache-get           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    cache-put           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-dependencies\n                        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-deps        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-inspect     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-publish     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-refresh     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-saved       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-snapshot    Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-start       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-state       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-update      Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    publish-backup      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-cancel      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-check       Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-history\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-inspect\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-record\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export-list\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-inspect     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-list        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-prepare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-recover     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-verify-export\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-draft-run   Preview or explicitly save existing-work chapter\n                        drafts; never submits\n    publish-draft-status\n                        Read recorded platform draft observations without\n                        contacting a platform\n    publish-chrome-attach\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-detach\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-heartbeat\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-next\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-respond\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    workbench-snapshot  Read one bounded, non-mutating local workbench\n                        snapshot\n    workbench-export    Generate a self-contained, read-only local author\n                        workbench\n    workbench-serve     Open a loopback editor that saves candidate drafts\n                        only\n    workbench-status    Check the registered local editor instance\n    workbench-stop      Stop the registered editor after preserving edits in\n                        all its pages\n    workbench-library-serve\n                        Open the independent local bookshelf at a fixed\n                        address\n    workbench-library-status\n                        Check the independent bookshelf service\n    workbench-library-stop\n                        Stop the bookshelf without stopping book editors\n    export              Repair exports without replacing outside edits\n    assemble-short      Assemble all committed short-story chapters into one\n                        book-title Markdown file\n    notes               Save cards or a chapter plan with optimistic\n                        concurrency\n    plan                Save cards or a chapter plan with optimistic\n                        concurrency\n    plan-read           Read a complete saved chapter plan for recovery\n                        without verifying adoption\n    plan-render         Render candidate planning Markdown or inspect its\n                        saved-plan source\n    outline-bind        Bind one reviewed, adopted readable outline to its\n                        saved chapter plan\n    context             Build a bounded chapter context packet\n    writing-brief       Read-only evidence packet for a bound next-chapter\n                        plan\n    prepare             Read-only review scaffold bound to the current book,\n                        state and draft\n    reconcile           Inspect an outside edit of the latest native chapter,\n                        or apply its reviewed draft\n    recall              Bounded literal substring search of cards, summaries\n                        and chapter prose\n    chapter-read        Read a bounded excerpt of a current or immutable\n                        historical chapter\n    dependencies        Resolve candidate evidence hashes for a reviewed\n                        chapter dependency declaration\n    sources             Find saved source IDs and analysis checkpoints after a\n                        new session\n    lint                Check, commit, or import one last complete chapter\n    commit              Check, commit, or import one last complete chapter\n    adopt               Check, commit, or import one last complete chapter\n    adopt-backfill      Check, commit, or import one last complete chapter\n    ingest              Snapshot source text and split without losing bonus\n                        chapters\n    coverage            Incremental source analysis and evidence-backed\n                        checkpoints\n    next                Incremental source analysis and evidence-backed\n                        checkpoints\n    record              Incremental source analysis and evidence-backed\n                        checkpoints\n    findings            Incremental source analysis and evidence-backed\n                        checkpoints\n    source-read         Incremental source analysis and evidence-backed\n                        checkpoints\n    report              Incremental source analysis and evidence-backed\n                        checkpoints\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+        "init",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/合成空书",
+        "--title",
+        "固定tag隔离验证",
+        "--kind",
+        "long"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"created\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/合成空书\",\"id\":\"c1287b18-e11f-4ccd-9eea-c8b60738fb27\",\"imported_through\":0,\"kind\":\"long\",\"last_chapter\":0,\"revision\":0,\"schema\":2,\"title\":\"固定tag隔离验证\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+        "status",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/合成空书"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"book\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/合成空书\",\"cards\":0,\"changed_export_count\":0,\"changed_exports\":[],\"id\":\"c1287b18-e11f-4ccd-9eea-c8b60738fb27\",\"imported_through\":0,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"kind\":\"long\",\"last_chapter\":0,\"more_sources\":false,\"next_chapter\":1,\"pending_export_count\":0,\"pending_exports\":[],\"recent_sources\":[],\"revision\":0,\"short_assembly\":null,\"short_assembly_path\":null,\"sources\":0,\"title\":\"固定tag隔离验证\"}\n",
+      "stderr": ""
+    }
+  ],
+  "is_tag_installation": true,
+  "user_installation_modified": false,
+  "raw_credentials_used": false,
+  "downloaded_official_installer_executed": true,
+  "prepared_remote_source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+  "source_origin": "Actual public HTTPS payload at prepared_remote_source_commit; every required Git blob is independently checked against the actual annotated tag commit tree; official installer additionally fetched using the fixed tag URL",
+  "errors": [],
+  "tag_before": {
+    "ref": "refs/tags/v0.6.19",
+    "tag_object_sha": "59bfd688d11ff51df1451341bb0c9ff6bc615c78",
+    "commit": "17602e5278b906c0bffd9b2661411b5f8acbb357",
+    "ref_response_sha256": "bc7f1dcf7374f986718a66b0ba40ff8f9e9c814b09448656bc3d0775ff413384",
+    "tag_response_sha256": "7bbf3de11989d7e57560a937970f13aeaa7c6b9f029752f3076f06f1da4ef79d"
+  },
+  "remote_commit_response_sha256": "2a69b85a836667ab38cccadc95bd032579017e17ad6d750685862833548a49ac",
+  "remote_tag_tree": {
+    "sha": "14cb0cfe9d5532e12e59ca61ba9941b70037ef8b",
+    "response_sha256": "6aac6f4ed4c0f3e0bf8ec7bb5d79ed98b384e527c04938c216928f9aee9c6aaa",
+    "required_files_verified": 64,
+    "skill_files": 62,
+    "truncated": false
+  },
+  "fixed_tag_installer": {
+    "url": "https://raw.githubusercontent.com/NingCui29/story-skill/v0.6.19/scripts/install.py",
+    "bytes": 29820,
+    "sha256": "49946f5c8f83734905fed242482d408a7128fc45365855c35c78e61321681a43"
+  },
+  "prepared_remote_source_receipt": {
+    "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-final-source/remote-source-prepared.json",
+    "sha256": "bd6523c8d3125fc7d39ffdb0609552dc515d866c1d7edc9c939156f40030c943"
+  },
+  "remote_source_equivalence_receipt": {
+    "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/release/build-source-equivalence.json",
+    "sha256": "738a418aee70084500d16281e0dba3f1649866f30972bd5d59fe5ce5016dcd68",
+    "actual_prepared_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+    "actual_tag_commit": "17602e5278b906c0bffd9b2661411b5f8acbb357"
+  },
+  "remote_source_request_accounting": {
+    "prepared_fixed_commit_file_requests": 64,
+    "prepared_fixed_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+    "reused_files_from_previous_candidate": 64,
+    "tag_phase_fixed_tag_installer_requests": 1,
+    "prepared_payload_reused_after_fresh_tag_tree_validation": 62,
+    "all_required_tag_tree_objects_verified": 64
+  },
+  "installation": {
+    "status": "installed",
+    "host": "codex",
+    "scope": "project",
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目/.agents/skills",
+    "skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "changed_skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "backup": null,
+    "files": 62
+  },
+  "check": {
+    "status": "verified",
+    "host": "codex",
+    "scope": "project",
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-v0619-actual-tag-install-iwf88d05/安装验证项目/.agents/skills",
+    "skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "managed_skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "files": 62
+  },
+  "files": 62,
+  "skills": 8,
+  "source_files": {
+    "story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-analyze/SKILL.md": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+    "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+    "story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+    "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+    "story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+    "story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+    "story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-plan/SKILL.md": "d9bcaf2bdd29bf6795b3df837c341f02e245b78ad47b2b8339d30aba8261f0cf",
+    "story-skill-plan/agents/openai.yaml": "60d1738ffeb89e0d4685349378401ee7fdb52ae9e85e60ccbf06a41d50101a01",
+    "story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+    "story-skill-plan/references/fanqie-tags.md": "06fb7c5344dde2d0d9c46a26d2bc63ff0d648f03394487261150c993592e465f",
+    "story-skill-plan/references/outline.md": "0a8725ba6a406133b904708d720e0e66cae6e68f0251dc193dafa13982f34c81",
+    "story-skill-plan/references/qidian-categories.md": "9cd2d28fc0a3a7d1297cb75c960db5fdf78e238ddd9f130d19e6365f270473ee",
+    "story-skill-plan/references/qimao-tags.md": "d9100e1fd8e60094034dad131ac996effebccdb1541212b7de26e5bee768459e",
+    "story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+    "story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-publish/SKILL.md": "b2bd7ae524508a59c06c7c1a3c5caede4d369aeb71e4000f446cf6a8bd8766d6",
+    "story-skill-publish/agents/openai.yaml": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+    "story-skill-publish/references/platform-drafts.md": "7482481de5bf1da281e8752e49930aea2c3cd878bec6f72308f5e7db8458713d",
+    "story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-research/SKILL.md": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9",
+    "story-skill-research/agents/openai.yaml": "fa58f9b8653b56c69c2806632b27f0c0aecd705d802848312bbc5b9ea86b6221",
+    "story-skill-research/references/reader-validation.md": "d654fb03817f5e5a9cb72967075e628e36d30a8546dd353d1fafe2d755949e3e",
+    "story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-review/SKILL.md": "fc661476ef4768d05143bae93caec13162d1ae3651381fa69832219f483895e0",
+    "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+    "story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+    "story-skill-review/references/history.md": "6be47ce5d88c40205503fc477cee2c3370bd1934e71b7d1129bf0d30cd3eea0c",
+    "story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+    "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-write/SKILL.md": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+    "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+    "story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+    "story-skill-write/references/chapter.md": "6afc1734075091716cb97d4eddd0ab19bd92510a8fb662fa0830b346417c615c",
+    "story-skill-write/references/content-review.md": "3e855332540a5bde5789622bef5b5ee9c16a5d3ae7d80dd03779afb492d04860",
+    "story-skill-write/references/drama.md": "7638c61cef1cbbc92fff58d190d4b636bb6a3a72572faaeada811805837faf91",
+    "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+    "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+    "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+    "story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+    "story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill/SKILL.md": "60397e3f57c886d8f81d733feba55dec089a420dcfd12e80ed160d554062de0a",
+    "story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+    "story-skill/references/project-state.md": "72e41437802f5a7774463a11ac87fd7f688c83ba3332994344cdbe2a8e36adfc",
+    "story-skill/references/workbench.md": "60d713a3aa81009018ed2c8d210ecd2f40d1ea30c90262b1c1ea67ad3b26dff6",
+    "story-skill/scripts/story.py": "17c0057395d84e4a344f8c926a4a56267437d47e8df6ab5b0d1f9563b868db02",
+    "story-skill/scripts/story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+    "story-skill/scripts/story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+    "story-skill/scripts/story_outline.py": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c",
+    "story-skill/scripts/story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+    "story-skill/scripts/story_platform_chrome_bridge.py": "ea5d9b8cef40acef7749f534f1507130a0c068cf043aaece9bfc2964c8fdc384",
+    "story-skill/scripts/story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+    "story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+    "story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story-skill/scripts/story_workbench.py": "094b4438c4fda4bea0101508d5676b24f8397de4bc21e5f06ddcf3e6b549ff41",
+    "story-skill/scripts/story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7",
+    "story-skill/scripts/story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+    "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+  },
+  "installed_markers_and_file_hashes_equal": true,
+  "installed_cli_commands_passed": 4,
+  "temporary_workspace_removed": true,
+  "tag_after": {
+    "ref": "refs/tags/v0.6.19",
+    "tag_object_sha": "59bfd688d11ff51df1451341bb0c9ff6bc615c78",
+    "commit": "17602e5278b906c0bffd9b2661411b5f8acbb357",
+    "ref_response_sha256": "bc7f1dcf7374f986718a66b0ba40ff8f9e9c814b09448656bc3d0775ff413384",
+    "tag_response_sha256": "7bbf3de11989d7e57560a937970f13aeaa7c6b9f029752f3076f06f1da4ef79d"
+  },
+  "tag_before_after_equal": true,
+  "tag_api_response_bytes_equal": true
+}

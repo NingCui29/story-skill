@@ -1,6 +1,6 @@
 # Story Skill 文档导航
 
-**本轮发布版本 v0.6.19，发布验收中。** 八技能源清单为 62 文件，目标分发包括标准 ZIP、Claude 桌面 r2、Codex 本地插件、GitHub npm 内容包，以及 Mac 0.1.18/build 19、Windows 0.1.9 客户端。最终构建、CI、固定标签安装与回下载待核验，见[发布记录](releases/v0.6.19.md)。上一正式版的历史结果保存在 [v0.6.18](releases/v0.6.18.md)。
+**v0.6.19 已发布。** 八技能源清单为 62 文件，提供标准 ZIP、Claude 桌面 r2、Codex 本地插件、GitHub npm 内容包，以及 Mac 0.1.18/build 19、Windows 0.1.9 客户端。构建来源、固定标签、完整 CI、隔离安装及分发验证范围见[发布记录](releases/v0.6.19.md)。上一正式版的历史结果保存在 [v0.6.18](releases/v0.6.18.md)。
 
 本版整合[工作台界面与作品管理](工作台需求与进展.md)、备份恢复、恢复中心、保存全部候选和[检查更新下载进度](工作台更新流程.md)。[平台草稿](../skills/story-skill-publish/references/platform-drafts.md)提供冻结清单、预览、受控保存和全文回读；番茄已有指定合成稿完整链路证据，七猫、起点、多卷和真实分页待实页验收。
 
@@ -32,7 +32,7 @@ v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Wi
 
 ## 开始使用
 
-Claude 桌面版使用 [v0.6.19-r2 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip.sha256)，链接待本版正式发布后可用。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。也可从本版固定源码运行 `python3 -B -X utf8 scripts/package_claude.py` 构建。
+Claude 桌面版使用 [v0.6.19-r2 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip.sha256)。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。也可从本版固定源码运行 `python3 -B -X utf8 scripts/package_claude.py` 构建。
 
 普通聊天文件环境、Cowork 或统一任务界面的目录权限、作者电脑的本机工作台分别核对。书稿应保存到会话可访问位置，并下载完整书目录备份；技能导入不会自动启动本机 Python 服务。更多桌面与云端边界见[安装指引](../INSTALL.md#书稿保存与桌面能力)。
 

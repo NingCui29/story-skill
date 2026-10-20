@@ -1,0 +1,471 @@
+{
+  "schema": 1,
+  "collected_at_utc": "2026-10-19T16:31:23.704315+00:00",
+  "expected_head": "11393173c517cde382bab7303e2b39135f66089c",
+  "ok": false,
+  "conclusion": "failure_observed_in_windows312_log",
+  "scope": "Attempt 1139317 only; Linux completed successfully, Windows312 interrupted with failure, Windows310 remains unconfirmed. This is not final release CI.",
+  "workflow": {
+    "id": 39284239161,
+    "name": "Verify source and package",
+    "head_sha": "11393173c517cde382bab7303e2b39135f66089c",
+    "status": "queued",
+    "conclusion": null,
+    "html_url": "https://github.com/NingCui29/story-skill/actions/runs/39284239161",
+    "created_at": "2026-10-19T16:17:07Z",
+    "updated_at": "2026-10-19T16:17:07Z"
+  },
+  "metadata_conflict": {
+    "present": true,
+    "description": "REST run and job summaries report queued with empty steps while authoritative job logs contain execution and cleanup. Actual evidence and raw summary values are preserved separately."
+  },
+  "jobs": [
+    {
+      "id": 118165543521,
+      "name": "test (ubuntu-latest, 3.10)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39284239161/job/118165543521",
+      "api_summary": {
+        "head_sha": "11393173c517cde382bab7303e2b39135f66089c",
+        "status": "queued",
+        "conclusion": null,
+        "steps": []
+      },
+      "evidence_conclusion": "success",
+      "log": {
+        "path": "dist/release-v0.6.19-final/job-118165543521.log",
+        "bytes": 357052,
+        "sha256": "94dd8fa835d6175700399fe6a29f62b667d795afe905c81f2fec70c20374ff94",
+        "lines": 2753,
+        "first_timestamp": "2026-10-19T16:17:11.1398798Z",
+        "last_timestamp": "2026-10-19T16:21:46.9338332Z"
+      },
+      "checkout_head": "11393173c517cde382bab7303e2b39135f66089c",
+      "checkout_evidence_lines": [
+        92,
+        94,
+        105,
+        106
+      ],
+      "unit_tests": [
+        {
+          "run": 2146,
+          "duration_seconds": 234.32,
+          "skipped": 40,
+          "status": "success",
+          "lines": [
+            2291,
+            2294
+          ]
+        }
+      ],
+      "all_five_new_rejection_tests_present_and_ok": true,
+      "new_rejection_tests": {
+        "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access": [
+          1954
+        ],
+        "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing": [
+          1955
+        ],
+        "test_denied_post_read_timeout_or_disconnect_never_reaches_library": [
+          1956
+        ],
+        "test_unauthorized_invalid_json_receives_403_without_changing_files": [
+          1967
+        ],
+        "test_wrong_content_type_consumes_small_body_before_400": [
+          1971
+        ]
+      },
+      "instruction_budget": {
+        "line": 2305,
+        "passed": true,
+        "manifest_sha256": "1b4fd3a52f682e68c823ca26cceabd49c0a3447df9fd7d445a1340215c671d2b",
+        "measured": "Explicit cold rule loads only; not tokens, dynamic story context or actual usage",
+        "loads_checked": 281
+      },
+      "package_builds": [
+        {
+          "line": 2588,
+          "archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-0.6.19.zip",
+          "version": "0.6.19",
+          "files": 62,
+          "source_files": null,
+          "skill_entry_count": null,
+          "skill_count": null,
+          "payload_files": null,
+          "bundle_files": null,
+          "sha256": "79fc23e14e071d054746e12bbae556debe5ee320379b9a02f1f84e331ee8b32f",
+          "bytes": 555568
+        },
+        {
+          "line": 2600,
+          "archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-claude-desktop-0.6.19-r2.zip",
+          "version": "0.6.19",
+          "files": 64,
+          "source_files": 62,
+          "skill_entry_count": 1,
+          "skill_count": null,
+          "payload_files": null,
+          "bundle_files": null,
+          "sha256": "ef6b5e1faa1759cc1b15ef20e113afda064ad80665a179fd4ef383a0159c0f1d",
+          "bytes": 561757
+        },
+        {
+          "line": 2612,
+          "archive": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.19.zip",
+          "version": "0.6.19",
+          "files": null,
+          "source_files": null,
+          "skill_entry_count": null,
+          "skill_count": 8,
+          "payload_files": 65,
+          "bundle_files": 67,
+          "sha256": "c4c018d8a71148e2c7545bd5dd6a31706afe347b183dd3d33398baa74ab00465",
+          "bytes": null
+        }
+      ],
+      "smoke": {
+        "line": 2624,
+        "ok": true,
+        "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+        "commands_executed": [
+          "init",
+          "notes",
+          "plan",
+          "status",
+          "outline-bind",
+          "context",
+          "lint",
+          "commit",
+          "commit",
+          "reconcile",
+          "lint",
+          "reconcile",
+          "reconcile",
+          "ingest",
+          "next",
+          "record",
+          "record",
+          "next",
+          "coverage",
+          "findings",
+          "report",
+          "coverage"
+        ]
+      },
+      "chinese_acceptance": {
+        "line": 2636,
+        "ok": true,
+        "books": [
+          "合成中文事务long",
+          "合成中文事务short"
+        ]
+      },
+      "long_acceptance": {
+        "line": 2736,
+        "ok": true,
+        "report": "/home/runner/work/story-skill/story-skill/dist/ci-long.json"
+      },
+      "post_job_cleanup_lines": [
+        2737,
+        2740
+      ],
+      "final_cleanup_lines": [
+        2752
+      ],
+      "observed_failures": []
+    },
+    {
+      "id": 118165543789,
+      "name": "test (windows-latest, 3.12)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39284239161/job/118165543789",
+      "api_summary": {
+        "head_sha": "11393173c517cde382bab7303e2b39135f66089c",
+        "status": "queued",
+        "conclusion": null,
+        "steps": []
+      },
+      "evidence_conclusion": "failure",
+      "log": {
+        "path": "dist/release-v0.6.19-final/job-118165543789.log",
+        "bytes": 283308,
+        "sha256": "6ccc32d91521e1f7edbe640dff5e7822a28031c0edc4b1e62ebebaef012982ec",
+        "lines": 1514,
+        "first_timestamp": "2026-10-19T16:17:10.4204870Z",
+        "last_timestamp": "2026-10-19T16:25:19.5228324Z"
+      },
+      "checkout_head": "11393173c517cde382bab7303e2b39135f66089c",
+      "checkout_evidence_lines": [
+        79,
+        81,
+        93
+      ],
+      "preflight_unit_tests": [
+        {
+          "run": 191,
+          "duration_seconds": 85.146,
+          "skipped": 1,
+          "status": "success",
+          "lines": [
+            321,
+            324
+          ]
+        }
+      ],
+      "full_regression": {
+        "complete": false,
+        "total_count": null,
+        "later_budget_packaging_and_cli_checks": "not_executed",
+        "note": "The 191-test successful preflight is not a complete regression result."
+      },
+      "failures": [
+        {
+          "test": "test_platform_chrome_bridge.ChromeBridgeTests.test_attach_has_private_handle_and_allows_local_preview",
+          "line": 1413,
+          "observed": "FAIL; final assertion traceback was not emitted because the later test interrupted unittest."
+        },
+        {
+          "test": "test_platform_chrome_bridge.ChromeBridgeTests.test_dead_owner_is_not_dispatched",
+          "lines": [
+            1415,
+            1450,
+            1474
+          ],
+          "observed": "KeyboardInterrupt while next_request was active; suite aborted before final summary."
+        },
+        {
+          "lines": [
+            1478,
+            1499
+          ],
+          "observed": "Temporary cleanup failed with WinError32 for an open .story-pin file."
+        },
+        {
+          "line": 1500,
+          "observed": "Process completed with exit code 1."
+        }
+      ],
+      "root_cause_assessment": {
+        "confirmed_source_risks": [
+          {
+            "path": "tests/test_platform_chrome_bridge.py",
+            "lines": [
+              173,
+              175,
+              177,
+              204
+            ],
+            "issue": "Unconditional POSIX mode assertions on Windows."
+          },
+          {
+            "path": "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+            "line": 311,
+            "issue": "os.kill(pid, 0) is used as a liveness probe on Windows, where it is not a safe POSIX-style no-op."
+          }
+        ],
+        "causality_limit": "The log proves FAIL, KeyboardInterrupt and pin cleanup errors. The first failing assertion and signal origin were not separately emitted before interruption."
+      }
+    },
+    {
+      "id": 118165543686,
+      "name": "test (windows-latest, 3.10)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39284239161/job/118165543686",
+      "api_summary": {
+        "head_sha": "11393173c517cde382bab7303e2b39135f66089c",
+        "status": "queued",
+        "conclusion": null,
+        "steps": []
+      },
+      "evidence_conclusion": "unknown",
+      "log": null,
+      "retrieval": "BlobNotFound (404) from GitHub redirected log storage at 2026-10-19T16:25:58Z; no successful completion is claimed."
+    }
+  ],
+  "source_binding": {
+    "actual_ci_archive_sha256": "79fc23e14e071d054746e12bbae556debe5ee320379b9a02f1f84e331ee8b32f",
+    "local_final_archive_sha256": "79fc23e14e071d054746e12bbae556debe5ee320379b9a02f1f84e331ee8b32f",
+    "ci_archive_matches_local_final": true,
+    "files": [
+      {
+        "path": "skills/story-skill/scripts/story_workbench.py",
+        "commit_sha256": "094b4438c4fda4bea0101508d5676b24f8397de4bc21e5f06ddcf3e6b549ff41",
+        "matches_collected_worktree": true
+      },
+      {
+        "path": "tests/test_workbench_library.py",
+        "commit_sha256": "7cf9af0d626e08b8263f1c4ca92bdae55e16fb717b14e4d388e84844abea87b0",
+        "matches_collected_worktree": true
+      }
+    ],
+    "note": "The Linux log executes all five new rejection tests and builds the exact local final canonical archive; binding is not based only on run metadata."
+  },
+  "windows_desktop_build": {
+    "run_id": 39284377655,
+    "job_id": 118166059672,
+    "url": "https://github.com/NingCui29/story-skill/actions/runs/39284377655",
+    "api_run_summary": {
+      "head_sha": "11393173c517cde382bab7303e2b39135f66089c",
+      "status": "queued",
+      "conclusion": null,
+      "updated_at": "2026-10-19T16:18:12Z"
+    },
+    "api_job_summary": {
+      "head_sha": "11393173c517cde382bab7303e2b39135f66089c",
+      "status": "queued",
+      "conclusion": null,
+      "steps": []
+    },
+    "evidence_conclusion": "success",
+    "log": {
+      "path": "dist/release-v0.6.19-final/job-118166059672.log",
+      "bytes": 84340,
+      "sha256": "63b4b12d7011619dd7d354a25226701a1058f06a3c3e5fe11329fb0c3ad68f5e",
+      "lines": 689,
+      "first_timestamp": "2026-10-19T16:18:15.6463621Z",
+      "last_timestamp": "2026-10-19T16:23:33.0581025Z"
+    },
+    "checkout_head": "11393173c517cde382bab7303e2b39135f66089c",
+    "checkout_evidence_lines": [
+      80,
+      82,
+      94
+    ],
+    "unit_tests": [
+      {
+        "run": 127,
+        "duration_seconds": 8.853,
+        "skipped": 13,
+        "status": "success",
+        "lines": [
+          335,
+          338
+        ]
+      },
+      {
+        "run": 31,
+        "duration_seconds": 2.891,
+        "skipped": 2,
+        "status": "success",
+        "lines": [
+          381,
+          384
+        ]
+      }
+    ],
+    "payload_probes": [
+      {
+        "line": 131,
+        "ok": true,
+        "platform": "win32",
+        "story_version": "0.6.19",
+        "isolated_payload": true,
+        "created_and_registered": true,
+        "backup_verified": true,
+        "restore_identity_preserved": true,
+        "candidate_and_binary_preserved": true,
+        "sqlite_integrity_verified": true,
+        "missing_trash_path_refused": true,
+        "native_trash_bridge_checked": true,
+        "existing_book_files_recycled": false
+      },
+      {
+        "line": 539,
+        "ok": true,
+        "platform": "win32",
+        "story_version": "0.6.19",
+        "isolated_payload": true,
+        "created_and_registered": true,
+        "backup_verified": true,
+        "restore_identity_preserved": true,
+        "candidate_and_binary_preserved": true,
+        "sqlite_integrity_verified": true,
+        "missing_trash_path_refused": true,
+        "native_trash_bridge_checked": true,
+        "existing_book_files_recycled": false
+      }
+    ],
+    "portable_build": {
+      "line": 476,
+      "output": "D:\\a\\story-skill\\story-skill\\dist\\story-workbench-windows-x86_64",
+      "archive": "D:\\a\\story-skill\\story-skill\\dist\\story-workbench-windows-x86_64.zip",
+      "sha256": "a234e12c0acb770e22cad56c3f34783d0ba42f6d2550eb53daf4bfad9523f940",
+      "client_version": "0.1.9",
+      "ui_verified": false
+    },
+    "native_smoke": {
+      "line": 553,
+      "ok": true,
+      "native_window": true,
+      "shelf_rendered": true,
+      "title": "写作书架",
+      "captured": true,
+      "client_version": "0.1.9",
+      "update_check_available": true,
+      "update_progress_verified": true,
+      "update_progress_synthetic": true,
+      "themes_verified": true,
+      "theme_captures": {
+        "light": true,
+        "dark": true
+      }
+    },
+    "isolated_stop": {
+      "line": 554,
+      "ok": true,
+      "code_sha256": "094b4438c4fda4bea0101508d5676b24f8397de4bc21e5f06ddcf3e6b549ff41",
+      "runtime_sha256": "c915f5503d5309aad555590b66c49602e163612e2dcac2a9ec62f3d0cf39a587",
+      "outdated": false,
+      "stop_requested": true
+    },
+    "installation_and_uninstallation": {
+      "status": "success_observed_by_workflow_control_flow",
+      "lines": [
+        505,
+        553,
+        554,
+        555
+      ],
+      "note": "PowerShell installation/native/uninstallation step has error guards; after native output and authenticated isolated stop, the workflow reaches both successful artifact uploads and final cleanup. This does not establish manual Windows10/11 user-environment coverage."
+    },
+    "artifacts": [
+      {
+        "id": 12202947125,
+        "name": "story-workbench-0.1.9-windows-x86_64-portable",
+        "size_in_bytes": 257918904,
+        "digest": "sha256:5c07b0573a201a3ae197976a6a6afe1987c2c5b8cb40b4c547dbc5496f5fcb0d",
+        "expired": false,
+        "created_at": "2026-10-19T16:23:31Z",
+        "expires_at": "2027-01-17T16:18:13Z",
+        "head_sha": "11393173c517cde382bab7303e2b39135f66089c"
+      },
+      {
+        "id": 12202681528,
+        "name": "story-workbench-0.1.9-windows-x86_64-installer",
+        "size_in_bytes": 183028519,
+        "digest": "sha256:c312600af4ff8a29272ab328cdb61afe4ac5d292209e20a50aa226fd09507548",
+        "expired": false,
+        "created_at": "2026-10-19T16:23:28Z",
+        "expires_at": "2027-01-17T16:18:13Z",
+        "head_sha": "11393173c517cde382bab7303e2b39135f66089c"
+      }
+    ],
+    "final_cleanup_lines": [
+      688
+    ],
+    "failure_markers": [],
+    "not_verified": [
+      "Actual download speed or external installer update; update progress smoke is synthetic.",
+      "Manual user-environment coverage, code signing, and independent artifact/license/payload download inspection (owned by the parent agent)."
+    ]
+  },
+  "transport_issues": [
+    {
+      "resource": "Windows312 log",
+      "issue": "An initial TLS EOF retrieval failed; a subsequent request returned the complete log. This transport failure is separate from the CI failure."
+    },
+    {
+      "resource": "Windows310 and Windows desktop log storage",
+      "issue": "Initial redirected log requests returned BlobNotFound while summary metadata was queued; desktop log later became available."
+    }
+  ]
+}

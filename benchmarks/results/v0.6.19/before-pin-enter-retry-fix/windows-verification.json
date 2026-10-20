@@ -1,0 +1,1541 @@
+{
+  "ok": false,
+  "date": "2026-10-20",
+  "client_version": "0.1.9",
+  "story_version": "0.6.19",
+  "ci": {
+    "run_id": 39291816706,
+    "job_id": 118194119480,
+    "source_commit": "c332265fcbf7611341a1197d5fe6b26f75a98d7d",
+    "candidate_commit": "c332265fcbf7611341a1197d5fe6b26f75a98d7d",
+    "conclusion": "success",
+    "job_url": "https://github.com/NingCui29/story-skill/actions/runs/39291816706/job/118194119480",
+    "log_sha256": "70887b634f9be81de74faf624df5880146b75b5185f4be19128ab60e683cea12",
+    "log_bytes": 84339,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "conclusion": "success"
+      },
+      {
+        "name": "Probe book management before desktop build",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run python -m pip install -r desktop/windows/requirements-build.txt",
+        "conclusion": "success"
+      },
+      {
+        "name": "Test desktop launcher and Windows paths",
+        "conclusion": "success"
+      },
+      {
+        "name": "Test book management and native recycle bridge",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build standalone candidate",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build installer",
+        "conclusion": "success"
+      },
+      {
+        "name": "Test installation and native window",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "outer_artifacts": [
+    {
+      "kind": "installer",
+      "artifact_id": 12204419914,
+      "bytes": 183015299,
+      "sha256": "dff7c3955ac42233dbce1190af92d0df0ed7dea08ce2850b484418b61da4bd66",
+      "crc_and_paths_verified": true
+    },
+    {
+      "kind": "portable",
+      "artifact_id": 12206116859,
+      "bytes": 257920206,
+      "sha256": "7d73f5a1bbb20566c7ca819fcb1bb36835f1445c8ebdff115a35982f52316086",
+      "crc_and_paths_verified": true
+    }
+  ],
+  "assets": [
+    {
+      "name": "story-workbench-0.1.9-windows-x86_64-setup.exe",
+      "bytes": 182925517,
+      "sha256": "780cf6a74d7faab78b77298f08714fbf42e9fa5cc93bda607048b9f011ec3a34",
+      "checksum": "story-workbench-0.1.9-windows-x86_64-setup.exe.sha256"
+    },
+    {
+      "name": "story-workbench-0.1.9-windows-x86_64.zip",
+      "bytes": 257919748,
+      "sha256": "7c97d27a8752ec7d069cff363b92a2bec8819cef084b36c098c671eaf6ecb17a",
+      "checksum": "story-workbench-0.1.9-windows-x86_64.zip.sha256"
+    }
+  ],
+  "portable": {
+    "crc_and_paths_verified": true,
+    "manifest_files_verified": 3574,
+    "manifest_every_file_matched": true,
+    "runtime_files_verified": 15,
+    "runtime_sha256": {
+      "story.py": "17c0057395d84e4a344f8c926a4a56267437d47e8df6ab5b0d1f9563b868db02",
+      "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+      "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+      "story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+      "story_workbench.py": "094b4438c4fda4bea0101508d5676b24f8397de4bc21e5f06ddcf3e6b549ff41",
+      "story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+      "story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+      "story_platform_chrome_bridge.py": "669de3dec0d244d977cc43caea5ce5226b69f7dea5e9458ffd2e01a76a716e9e",
+      "story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+      "story_outline.py": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c",
+      "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+      "story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7"
+    },
+    "source_input_hashes": {
+      ".gitattributes": {
+        "ci_source_sha256": "b04a1edb9a91297e219c345bdec727ebe5c25260d78b6299d00a315cb5bb0bdd",
+        "candidate_source_sha256": "b04a1edb9a91297e219c345bdec727ebe5c25260d78b6299d00a315cb5bb0bdd"
+      },
+      ".github/workflows/desktop-windows.yml": {
+        "ci_source_sha256": "14301e2afb5a7cdb6256626d26a9abfb1acfe0cb7d8a6d8b63b64d955f02e831",
+        "candidate_source_sha256": "14301e2afb5a7cdb6256626d26a9abfb1acfe0cb7d8a6d8b63b64d955f02e831"
+      },
+      "LICENSE": {
+        "ci_source_sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "candidate_source_sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+      },
+      "desktop/macos/AppIcon.swift": {
+        "ci_source_sha256": "3cb9496be39b898fef81a7547214cd760d03c21f174cd36e050b3d70cad0abf9",
+        "candidate_source_sha256": "3cb9496be39b898fef81a7547214cd760d03c21f174cd36e050b3d70cad0abf9"
+      },
+      "desktop/macos/ClientInstance.swift": {
+        "ci_source_sha256": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9",
+        "candidate_source_sha256": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9"
+      },
+      "desktop/macos/Info.plist": {
+        "ci_source_sha256": "9ee91f5283c6600251004260fa26aba27d9ec0b636e77e8fbb1403cf9f6de748",
+        "candidate_source_sha256": "9ee91f5283c6600251004260fa26aba27d9ec0b636e77e8fbb1403cf9f6de748"
+      },
+      "desktop/macos/README.md": {
+        "ci_source_sha256": "e541dfe88bce43f5c7176f40053227a575dabd227355894b97f5a71d379b8330",
+        "candidate_source_sha256": "e541dfe88bce43f5c7176f40053227a575dabd227355894b97f5a71d379b8330"
+      },
+      "desktop/macos/StoryWorkbench.swift": {
+        "ci_source_sha256": "42ececb4ffb9c62176091aa3a69ad60d6b2b4800556974700e84fe39c0efd779",
+        "candidate_source_sha256": "42ececb4ffb9c62176091aa3a69ad60d6b2b4800556974700e84fe39c0efd779"
+      },
+      "desktop/macos/backend_runner.py": {
+        "ci_source_sha256": "55348b7d57897c3740a13fdd00a383a90187bdb4e6721a9a74c3a92f2198090c",
+        "candidate_source_sha256": "55348b7d57897c3740a13fdd00a383a90187bdb4e6721a9a74c3a92f2198090c"
+      },
+      "desktop/macos/editor-appearance.js": {
+        "ci_source_sha256": "0109acb81513bd2a2a533fd8039f33532e00f5c3cdf86875f2f08b71aed0448d",
+        "candidate_source_sha256": "0109acb81513bd2a2a533fd8039f33532e00f5c3cdf86875f2f08b71aed0448d"
+      },
+      "desktop/windows/README.md": {
+        "ci_source_sha256": "83eb2fc264d0da03f4053cbe2925d31322b1d5fa6e72db8e1d3c34975e411592",
+        "candidate_source_sha256": "83eb2fc264d0da03f4053cbe2925d31322b1d5fa6e72db8e1d3c34975e411592"
+      },
+      "desktop/windows/client.py": {
+        "ci_source_sha256": "e6de2f29eb7839f270738979049ec232ff0d5419bffc83568ee68ebec43d80cc",
+        "candidate_source_sha256": "e6de2f29eb7839f270738979049ec232ff0d5419bffc83568ee68ebec43d80cc"
+      },
+      "desktop/windows/installer.iss": {
+        "ci_source_sha256": "8766e386ff1fddcfcb1a6b47757c3d822f274f67915eec4c1b37b5d2cf5de72b",
+        "candidate_source_sha256": "8766e386ff1fddcfcb1a6b47757c3d822f274f67915eec4c1b37b5d2cf5de72b"
+      },
+      "desktop/windows/requirements-build.txt": {
+        "ci_source_sha256": "20308bf5de1dc996a63503f17fc2461dfe8b34575d06fab1940d3a7f35688c11",
+        "candidate_source_sha256": "20308bf5de1dc996a63503f17fc2461dfe8b34575d06fab1940d3a7f35688c11"
+      },
+      "desktop/windows/workbench_update_download.py": {
+        "ci_source_sha256": "88a7c24257831fba51eb8cc7599ad9f9eccc70cfe2836199d10f933296c960c4",
+        "candidate_source_sha256": "88a7c24257831fba51eb8cc7599ad9f9eccc70cfe2836199d10f933296c960c4"
+      },
+      "desktop/windows/workbench_updates.py": {
+        "ci_source_sha256": "0ac66c40db1296dc3fccf4b91029d00c43d980607b6a75b71d0d1120df28dcf0",
+        "candidate_source_sha256": "0ac66c40db1296dc3fccf4b91029d00c43d980607b6a75b71d0d1120df28dcf0"
+      },
+      "scripts/build_desktop_macos.py": {
+        "ci_source_sha256": "42e9e76c803b1c8c6c64ed12627fa913150f0ce761520996338916abc926862f",
+        "candidate_source_sha256": "42e9e76c803b1c8c6c64ed12627fa913150f0ce761520996338916abc926862f"
+      },
+      "scripts/build_desktop_windows.py": {
+        "ci_source_sha256": "d833b751fe0bb521187308020f6bd68a9f3a88955bc76e901b47caf29da364a8",
+        "candidate_source_sha256": "d833b751fe0bb521187308020f6bd68a9f3a88955bc76e901b47caf29da364a8"
+      },
+      "skills/story-skill/scripts/story.py": {
+        "ci_source_sha256": "17c0057395d84e4a344f8c926a4a56267437d47e8df6ab5b0d1f9563b868db02",
+        "candidate_source_sha256": "17c0057395d84e4a344f8c926a4a56267437d47e8df6ab5b0d1f9563b868db02"
+      },
+      "skills/story-skill/scripts/story_chrome_bridge.mjs": {
+        "ci_source_sha256": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+        "candidate_source_sha256": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8"
+      },
+      "skills/story-skill/scripts/story_history.py": {
+        "ci_source_sha256": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+        "candidate_source_sha256": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd"
+      },
+      "skills/story-skill/scripts/story_outline.py": {
+        "ci_source_sha256": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c",
+        "candidate_source_sha256": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c"
+      },
+      "skills/story-skill/scripts/story_platform_browser.py": {
+        "ci_source_sha256": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+        "candidate_source_sha256": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65"
+      },
+      "skills/story-skill/scripts/story_platform_chrome_bridge.py": {
+        "ci_source_sha256": "669de3dec0d244d977cc43caea5ce5226b69f7dea5e9458ffd2e01a76a716e9e",
+        "candidate_source_sha256": "669de3dec0d244d977cc43caea5ce5226b69f7dea5e9458ffd2e01a76a716e9e"
+      },
+      "skills/story-skill/scripts/story_platform_drafts.py": {
+        "ci_source_sha256": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+        "candidate_source_sha256": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167"
+      },
+      "skills/story-skill/scripts/story_publish.py": {
+        "ci_source_sha256": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+        "candidate_source_sha256": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11"
+      },
+      "skills/story-skill/scripts/story_punctuation.py": {
+        "ci_source_sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+        "candidate_source_sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee"
+      },
+      "skills/story-skill/scripts/story_search.py": {
+        "ci_source_sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "candidate_source_sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6"
+      },
+      "skills/story-skill/scripts/story_storage.py": {
+        "ci_source_sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "candidate_source_sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+      },
+      "skills/story-skill/scripts/story_workbench.py": {
+        "ci_source_sha256": "094b4438c4fda4bea0101508d5676b24f8397de4bc21e5f06ddcf3e6b549ff41",
+        "candidate_source_sha256": "094b4438c4fda4bea0101508d5676b24f8397de4bc21e5f06ddcf3e6b549ff41"
+      },
+      "skills/story-skill/scripts/story_workbench_archives.py": {
+        "ci_source_sha256": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7",
+        "candidate_source_sha256": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7"
+      },
+      "skills/story-skill/scripts/story_workbench_books.py": {
+        "ci_source_sha256": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+        "candidate_source_sha256": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4"
+      },
+      "skills/story-skill/scripts/story_world.py": {
+        "ci_source_sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+        "candidate_source_sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+      },
+      "tests/desktop_payload_probe.py": {
+        "ci_source_sha256": "8e7d0a64702be212b5a6a0e33d529801da164b213c4196874b4fa0249e4f306a",
+        "candidate_source_sha256": "8e7d0a64702be212b5a6a0e33d529801da164b213c4196874b4fa0249e4f306a"
+      }
+    },
+    "all_build_inputs_byte_identical": true,
+    "mapped_sources": {
+      "backend_runner.py": {
+        "source": "desktop/macos/backend_runner.py",
+        "source_sha256": "55348b7d57897c3740a13fdd00a383a90187bdb4e6721a9a74c3a92f2198090c",
+        "packaged_sha256": "c6ce1d77714220a18cc5bcdad1b22b179dbf479f820c76f4ca1f424fc03f372e",
+        "byte_identical": false,
+        "exact_source_with_checkout_newlines": true,
+        "newline_conversion": "Windows checkout CRLF/LF only"
+      },
+      "StorySkill-LICENSE.txt": {
+        "source": "LICENSE",
+        "source_sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "packaged_sha256": "f34a779bf87b330af68a9f9cbdb84bcf8d32163eddf3345ab3b1bb71e6141ae6",
+        "byte_identical": false,
+        "exact_source_with_checkout_newlines": true,
+        "newline_conversion": "Windows checkout CRLF/LF only"
+      },
+      "README.md": {
+        "source": "desktop/windows/README.md",
+        "source_sha256": "83eb2fc264d0da03f4053cbe2925d31322b1d5fa6e72db8e1d3c34975e411592",
+        "packaged_sha256": "98b6c30a58c1e4190aba578ffde3008c539aaaa227d1bea5d09a16e7bd1d18cf",
+        "byte_identical": false,
+        "exact_source_with_checkout_newlines": true,
+        "newline_conversion": "Windows checkout CRLF/LF only"
+      }
+    },
+    "portable_inner_zip_renamed_bytes_unchanged": true,
+    "pe_machine": {
+      "installer": "0x14c",
+      "client": "0x8664",
+      "python": "0x8664"
+    },
+    "builder_ui_verified": false,
+    "qt_runtime_versions_static_exports": [
+      {
+        "export": "?qWebEngineChromiumSecurityPatchVersion@@YAPEBDXZ",
+        "rva": 3204544,
+        "file_offset": 3201472,
+        "machine_code_hex": "488d053973ca08c3cccccccccccccccc",
+        "static_lea_rax_ret_ascii": "146.0.7680.164",
+        "string_file_offset": 150683392
+      },
+      {
+        "export": "?qWebEngineChromiumVersion@@YAPEBDXZ",
+        "rva": 3204560,
+        "file_offset": 3201488,
+        "machine_code_hex": "488d05a128ca08c3cccccccccccccccc",
+        "static_lea_rax_ret_ascii": "134.0.6998.208",
+        "string_file_offset": 150664312
+      },
+      {
+        "export": "?qWebEngineVersion@@YAPEBDXZ",
+        "rva": 3204592,
+        "file_offset": 3201520,
+        "machine_code_hex": "488d05e572ca08c3cccccccccccccccc",
+        "static_lea_rax_ret_ascii": "6.10.3",
+        "string_file_offset": 150683356
+      }
+    ],
+    "qtwebengine_core_dll_sha256": "81b75badc7b98c9dd8ac338fe7723be002cf88dcc82a6bdd6990d405c00eadf9"
+  },
+  "notices": {
+    "groups": {
+      "PySide6": [
+        "ThirdPartyLicenses/PySide6/pyside6-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt"
+      ],
+      "PySide6_Essentials": [
+        "ThirdPartyLicenses/PySide6_Essentials/pyside6_essentials-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt"
+      ],
+      "PySide6_Addons": [
+        "ThirdPartyLicenses/PySide6_Addons/pyside6_addons-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt"
+      ],
+      "shiboken6": [
+        "ThirdPartyLicenses/shiboken6/shiboken6-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt"
+      ],
+      "pyinstaller": [
+        "ThirdPartyLicenses/pyinstaller/pyinstaller-6.22.3.dist-info/licenses/COPYING.txt"
+      ]
+    },
+    "python": [
+      "runtime/LICENSE.txt"
+    ],
+    "qt": [
+      "ThirdPartyLicenses/PySide6/pyside6-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+      "ThirdPartyLicenses/PySide6_Addons/pyside6_addons-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+      "ThirdPartyLicenses/PySide6_Essentials/pyside6_essentials-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+      "ThirdPartyLicenses/shiboken6/shiboken6-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt"
+    ],
+    "qtwebengine": [],
+    "archive_inventory": [
+      "StorySkill-LICENSE.txt",
+      "ThirdPartyLicenses/PySide6/pyside6-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+      "ThirdPartyLicenses/PySide6_Addons/pyside6_addons-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+      "ThirdPartyLicenses/PySide6_Essentials/pyside6_essentials-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+      "ThirdPartyLicenses/pyinstaller/pyinstaller-6.22.3.dist-info/licenses/COPYING.txt",
+      "ThirdPartyLicenses/shiboken6/shiboken6-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+      "runtime/LICENSE.txt"
+    ],
+    "text_inventory": [
+      {
+        "path": "StorySkill-LICENSE.txt",
+        "bytes": 6023,
+        "sha256": "f34a779bf87b330af68a9f9cbdb84bcf8d32163eddf3345ab3b1bb71e6141ae6",
+        "text_head": "# Story Skill Non-Commercial Use and Commercial Licensing Agreement\r\n\r\nCopyright (c) 2026 Story Skill contributors  \r\nAll rights not expressly granted are reserved.\r\n\r\nCommercial L"
+      },
+      {
+        "path": "runtime/LICENSE.txt",
+        "bytes": 36874,
+        "sha256": "e502c6b880ff58d614901495a9009c136539cd0b1e2a2abb8fc00b934c203419",
+        "text_head": "A. HISTORY OF THE SOFTWARE\r\n==========================\r\n\r\nPython was created in the early 1990s by Guido van Rossum at Stichting\r\nMathematisch Centrum (CWI, see https://www.cwi.nl)"
+      },
+      {
+        "path": "ThirdPartyLicenses/pyinstaller/pyinstaller-6.22.3.dist-info/licenses/COPYING.txt",
+        "bytes": 32604,
+        "sha256": "0598064c7d2718e38d7914a7d08343b2fa008e3bea9ebba2aa7a6ffa5900dd64",
+        "text_head": "================================\n The PyInstaller licensing terms\n================================\n \n\nCopyright (c) 2010-2023, PyInstaller Development Team\nCopyright (c) 2005-2009,"
+      },
+      {
+        "path": "ThirdPartyLicenses/PySide6/pyside6-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+        "bytes": 470,
+        "sha256": "4f54763ac0fe2abd8f7f8d8fe370a94a08ebf84786aa0b91045bd6628deb08a3",
+        "text_head": "Licensees holding valid commercial Qt licenses may use this software in\r\naccordance with the the terms contained in a written agreement between\r\nyou and The Qt Company. Alternative"
+      },
+      {
+        "path": "ThirdPartyLicenses/PySide6_Addons/pyside6_addons-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+        "bytes": 470,
+        "sha256": "4f54763ac0fe2abd8f7f8d8fe370a94a08ebf84786aa0b91045bd6628deb08a3",
+        "text_head": "Licensees holding valid commercial Qt licenses may use this software in\r\naccordance with the the terms contained in a written agreement between\r\nyou and The Qt Company. Alternative"
+      },
+      {
+        "path": "ThirdPartyLicenses/PySide6_Essentials/pyside6_essentials-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+        "bytes": 470,
+        "sha256": "4f54763ac0fe2abd8f7f8d8fe370a94a08ebf84786aa0b91045bd6628deb08a3",
+        "text_head": "Licensees holding valid commercial Qt licenses may use this software in\r\naccordance with the the terms contained in a written agreement between\r\nyou and The Qt Company. Alternative"
+      },
+      {
+        "path": "ThirdPartyLicenses/shiboken6/shiboken6-6.10.3.dist-info/licenses/LicenseRef-Qt-Commercial.txt",
+        "bytes": 470,
+        "sha256": "4f54763ac0fe2abd8f7f8d8fe370a94a08ebf84786aa0b91045bd6628deb08a3",
+        "text_head": "Licensees holding valid commercial Qt licenses may use this software in\r\naccordance with the the terms contained in a written agreement between\r\nyou and The Qt Company. Alternative"
+      }
+    ],
+    "wheel_metadata_archived": false,
+    "qt_commercial_files_exact_wheel_bytes": true,
+    "qt_commercial_bytes_each": 470,
+    "qt_commercial_sha256": "4f54763ac0fe2abd8f7f8d8fe370a94a08ebf84786aa0b91045bd6628deb08a3",
+    "all_eight_webengine_resource_paks_inspected": [
+      {
+        "file": "qtwebengine_devtools_resources.debug.pak",
+        "sha256": "3f48e171bbd95e164b656c3131e444e86998ba7eb9ee4073e5b1f7d1784248bd",
+        "bytes": 81575289,
+        "version": 5,
+        "resources": 2567,
+        "gzip": 1,
+        "brotli": 1,
+        "uncompressedTotal": 82958023,
+        "potentialCredits": [
+          {
+            "id": 49891,
+            "bytes": 18463,
+            "terms": [
+              "GNU LESSER"
+            ],
+            "head": "// Copyright 2021 The Chromium Authors. All rights reserved.\n// Use of this source code is governed "
+          }
+        ]
+      },
+      {
+        "file": "qtwebengine_devtools_resources.pak",
+        "sha256": "7534b171aaa940ddfe3768dcc674c783695241fc6b37827a595d04255fbb0b13",
+        "bytes": 11020995,
+        "version": 5,
+        "resources": 834,
+        "gzip": 1,
+        "brotli": 778,
+        "uncompressedTotal": 72750418,
+        "potentialCredits": []
+      },
+      {
+        "file": "qtwebengine_resources.debug.pak",
+        "sha256": "7df1870066023b46920a695dae04ccfbb21eba6eb4fa503dd009eefbf1a0c282",
+        "bytes": 2209400,
+        "version": 5,
+        "resources": 1600,
+        "gzip": 751,
+        "brotli": 39,
+        "uncompressedTotal": 7901372,
+        "potentialCredits": []
+      },
+      {
+        "file": "qtwebengine_resources.pak",
+        "sha256": "ab47fa86e8c002dbad866bedeb5430c47c4cee6d4fbdeb019f2b2fa242579f1c",
+        "bytes": 2210782,
+        "version": 5,
+        "resources": 1600,
+        "gzip": 751,
+        "brotli": 39,
+        "uncompressedTotal": 7905657,
+        "potentialCredits": []
+      },
+      {
+        "file": "qtwebengine_resources_100p.debug.pak",
+        "sha256": "fee884da3daa2ea3fef7a0c562117c011f4805776c9ded4cdd035d0163ccf8a5",
+        "bytes": 152020,
+        "version": 5,
+        "resources": 149,
+        "gzip": 47,
+        "brotli": 0,
+        "uncompressedTotal": 340022,
+        "potentialCredits": []
+      },
+      {
+        "file": "qtwebengine_resources_100p.pak",
+        "sha256": "fee884da3daa2ea3fef7a0c562117c011f4805776c9ded4cdd035d0163ccf8a5",
+        "bytes": 152020,
+        "version": 5,
+        "resources": 149,
+        "gzip": 47,
+        "brotli": 0,
+        "uncompressedTotal": 340022,
+        "potentialCredits": []
+      },
+      {
+        "file": "qtwebengine_resources_200p.debug.pak",
+        "sha256": "0128070365a443a80d5fc340221bf186d2c006f00920f19ca53e9e643dfc40c8",
+        "bytes": 207656,
+        "version": 5,
+        "resources": 149,
+        "gzip": 47,
+        "brotli": 0,
+        "uncompressedTotal": 395658,
+        "potentialCredits": []
+      },
+      {
+        "file": "qtwebengine_resources_200p.pak",
+        "sha256": "0128070365a443a80d5fc340221bf186d2c006f00920f19ca53e9e643dfc40c8",
+        "bytes": 207656,
+        "version": 5,
+        "resources": 149,
+        "gzip": 47,
+        "brotli": 0,
+        "uncompressedTotal": 395658,
+        "potentialCredits": []
+      }
+    ],
+    "webengine_core_dll_inspection": {
+      "dll_bytes_scanned": 202340152,
+      "complete_dll": true,
+      "section_rdata_offset": 148469248,
+      "candidates": 1520,
+      "valid_compressed_resources": [
+        {
+          "offset": 153171024,
+          "compression": "gzip",
+          "bytes": 3304,
+          "sha256": "d6e672a0466bbefa0279673026acca63c7b223b91724967039274d2fa28ac98e"
+        },
+        {
+          "offset": 153172144,
+          "compression": "gzip",
+          "bytes": 3320,
+          "sha256": "ccd4f003b3d7c16aa583e5fbd3f13a6f2803e666ab7c5b7064d3a89233f9b89d"
+        },
+        {
+          "offset": 153173280,
+          "compression": "gzip",
+          "bytes": 3320,
+          "sha256": "c803f1826440f097c20caff2a252b34d39b9ccbbcfcf6664bd8d6e4952eba0e8"
+        },
+        {
+          "offset": 153174416,
+          "compression": "gzip",
+          "bytes": 3064,
+          "sha256": "07fb90585207509a71da00d4b956b9575a72b7d0de924bbe1b7fb7244618894d"
+        },
+        {
+          "offset": 153175472,
+          "compression": "gzip",
+          "bytes": 3212,
+          "sha256": "8937db58f00b486a501f61db86c7c33ca04837ce3abe441eca71baa12784c1a2"
+        },
+        {
+          "offset": 153176576,
+          "compression": "gzip",
+          "bytes": 3196,
+          "sha256": "557442cb2f1d162ec0798dcb51c6d0a8be4fa6f392f522b00f9fd7cb4a6e9f63"
+        },
+        {
+          "offset": 153177680,
+          "compression": "gzip",
+          "bytes": 3328,
+          "sha256": "9e3021495cd604ba85bdf7481ecd9fb3862f32fde58e276635cb4067f214e00b"
+        },
+        {
+          "offset": 153178832,
+          "compression": "gzip",
+          "bytes": 3080,
+          "sha256": "7378bf48c739fe743090e4fa01166ff042c4ffee4c5f902ab73c9ac5b9737e91"
+        },
+        {
+          "offset": 153179904,
+          "compression": "gzip",
+          "bytes": 3228,
+          "sha256": "3d66a9a05f0aba884b94cfce487ed9c8ca5ea59520d236f60666ff75b72948bc"
+        },
+        {
+          "offset": 153181008,
+          "compression": "gzip",
+          "bytes": 3252,
+          "sha256": "d6715e58ef44da533186dc50575cff0b813051bdbc6dc551e6387e8c19ca60c0"
+        },
+        {
+          "offset": 153182144,
+          "compression": "gzip",
+          "bytes": 3384,
+          "sha256": "e0091eaff246eece19383470f63782ac40cd5c2f4edb85c8063821f4ef739a54"
+        },
+        {
+          "offset": 153183328,
+          "compression": "gzip",
+          "bytes": 3080,
+          "sha256": "dbd6ab1f95f4f815ad15ad764111d1e6bc4d7c6275fbc1cb37a8bca2efc1615d"
+        },
+        {
+          "offset": 153184400,
+          "compression": "gzip",
+          "bytes": 3228,
+          "sha256": "bac9b9aba24c00ca82fbc9a1f23e9078c99a1d3ea2831c619ea058664e0cdcb1"
+        },
+        {
+          "offset": 153185520,
+          "compression": "gzip",
+          "bytes": 3252,
+          "sha256": "90da15140ef8eefecccc1d4b24b6c1a4fcde0e9b5a5aedd8990b9322946ae1df"
+        },
+        {
+          "offset": 153186656,
+          "compression": "gzip",
+          "bytes": 3384,
+          "sha256": "37725d0a49aba01f759eb44b069a86977e90af7a3e60b7eba906ecb17598d8fb"
+        },
+        {
+          "offset": 153187840,
+          "compression": "gzip",
+          "bytes": 1876,
+          "sha256": "50be78a7b3c67d77a8956e869327231230c4c42d4609f9cb73fd2007609e3333"
+        },
+        {
+          "offset": 153188528,
+          "compression": "gzip",
+          "bytes": 2040,
+          "sha256": "8fa08677653e810bac24445f8e5a4b93ed60ba00c073142941e0a0a2dc01a6b1"
+        },
+        {
+          "offset": 153189264,
+          "compression": "gzip",
+          "bytes": 1620,
+          "sha256": "30a86fa0b82d0e39998834814d45ffe28a30276f60ec00b922da7099b7e044ac"
+        },
+        {
+          "offset": 153189872,
+          "compression": "gzip",
+          "bytes": 1768,
+          "sha256": "cffdad13c58f4a41ff29de82dc615caba677dc82ca62fc4e0034303e66886ea3"
+        },
+        {
+          "offset": 153190528,
+          "compression": "gzip",
+          "bytes": 1940,
+          "sha256": "9051e206530c671ac4c91637b4b8682f047cfdd645024bd8ea9f88c08a3b3249"
+        },
+        {
+          "offset": 153191264,
+          "compression": "gzip",
+          "bytes": 2104,
+          "sha256": "05b64fb12eaf0b6ae33080578449174dfe1211156c2182483fdb97511be69a15"
+        },
+        {
+          "offset": 153192064,
+          "compression": "gzip",
+          "bytes": 1684,
+          "sha256": "e8c707f3eeb964535fcb7d9a13ae638916abb0fa8314798ec2c2d5bfc4b431d4"
+        },
+        {
+          "offset": 153192736,
+          "compression": "gzip",
+          "bytes": 1832,
+          "sha256": "56cd125bf10df8afc23f9fcf8af9e0ad7256f717a1287719b70fd6d5f3eefd42"
+        },
+        {
+          "offset": 153193456,
+          "compression": "gzip",
+          "bytes": 2204,
+          "sha256": "939fd79c450767150f59f04444bfebdba9084b57586fc86a22c5b6efd3748646"
+        },
+        {
+          "offset": 153194272,
+          "compression": "gzip",
+          "bytes": 2368,
+          "sha256": "9d794e46fe51ee66ecce6fcaf52e826813966c843cb0085c5677c6b46f63eeef"
+        },
+        {
+          "offset": 153195152,
+          "compression": "gzip",
+          "bytes": 1924,
+          "sha256": "d86d61e77a023d11ceabb39fd62867a4efbf67d84af466a26496d991dfd27650"
+        },
+        {
+          "offset": 153195888,
+          "compression": "gzip",
+          "bytes": 2072,
+          "sha256": "9de0027884ac26d8fc18f6ce7bd8005f1eadcfc910f7c3e29ef74fa62b0c326b"
+        },
+        {
+          "offset": 153196672,
+          "compression": "gzip",
+          "bytes": 3432,
+          "sha256": "8527cd69c507a856d5442d8a2b9799da8f8f648813637918148b7e4852dc221b"
+        },
+        {
+          "offset": 153197904,
+          "compression": "gzip",
+          "bytes": 3580,
+          "sha256": "da30944d8e4f49ae0cfd291b5e7e70056580379960e11fa5fe8587e16375135b"
+        },
+        {
+          "offset": 153199184,
+          "compression": "gzip",
+          "bytes": 3064,
+          "sha256": "7cfbf13115555408ff1e33e013de32bb27b91f9286bb49446e4c3105025714a3"
+        },
+        {
+          "offset": 153200288,
+          "compression": "gzip",
+          "bytes": 3176,
+          "sha256": "3b39c49a4d9aad5bbbb8e8d0fe3411f13241757271a7fa6a7b6f9e5d4edf8380"
+        },
+        {
+          "offset": 153201424,
+          "compression": "gzip",
+          "bytes": 1816,
+          "sha256": "2fc11ec26513e89f3098eba30c9437c0836e292bac69a5e965028db333c6f46f"
+        },
+        {
+          "offset": 153202112,
+          "compression": "gzip",
+          "bytes": 1952,
+          "sha256": "f84d13fa868d101828a747e8124e947722a42f3757bb58de1d5b39e6f250b02b"
+        },
+        {
+          "offset": 153202848,
+          "compression": "gzip",
+          "bytes": 2996,
+          "sha256": "6c4de372aa7d6d8b4c445d1dfb132d8518f1b3beea5e0e43b1acf51b7d90fd96"
+        },
+        {
+          "offset": 153203856,
+          "compression": "gzip",
+          "bytes": 3132,
+          "sha256": "6fc599507d9aa29a781e353b3eac706c4c8e6361cfcaa43af467f5e55465d5c7"
+        },
+        {
+          "offset": 153204928,
+          "compression": "gzip",
+          "bytes": 4388,
+          "sha256": "580c36dc237cb59823751d5e5942ba4e5633ce26d5cab5a0ad36928e108ddab0"
+        },
+        {
+          "offset": 153206384,
+          "compression": "gzip",
+          "bytes": 4388,
+          "sha256": "c48fc02608041274a5c8f83b8d98aa68a6de1efac93cff38a5f0d272da35e7ed"
+        },
+        {
+          "offset": 153207840,
+          "compression": "gzip",
+          "bytes": 3520,
+          "sha256": "f47a12c344e789495d70b5309b3458ed6cfa7e3b8135dc956484b6e22dd5e95d"
+        },
+        {
+          "offset": 153209008,
+          "compression": "gzip",
+          "bytes": 2224,
+          "sha256": "de9933fca663225c9fac0465cafbd0293b854127c107ac7c5c3bd2ebe27c4507"
+        },
+        {
+          "offset": 153209760,
+          "compression": "gzip",
+          "bytes": 4604,
+          "sha256": "e60d06f7cf6d5077d125c1accefe982106de462773e2c5eff4e458df501f6c92"
+        },
+        {
+          "offset": 153211360,
+          "compression": "gzip",
+          "bytes": 4196,
+          "sha256": "dc14a786e64b40d9cb0fe69ebacbb51a1e22d6f97910609084f3a42c0a08fe6a"
+        },
+        {
+          "offset": 153212800,
+          "compression": "gzip",
+          "bytes": 4532,
+          "sha256": "4510f968a9ccabf101f068ca8fdd02f7622c5368980aacf9ac94fee8fdeaa306"
+        },
+        {
+          "offset": 153214384,
+          "compression": "gzip",
+          "bytes": 4140,
+          "sha256": "9a0c00711fe5a36d641ac3dbff534d917414880127aac7377d05924bc752a401"
+        },
+        {
+          "offset": 153215840,
+          "compression": "gzip",
+          "bytes": 4632,
+          "sha256": "fa2a8dce06697610a0c77f6e4f420f4b791140cde16c33409772675299926c02"
+        },
+        {
+          "offset": 153217472,
+          "compression": "gzip",
+          "bytes": 4176,
+          "sha256": "9e14fff17d0562b1d0aba0120208fe99c7211bd2deaf06aad103495a130e71ec"
+        },
+        {
+          "offset": 153218928,
+          "compression": "gzip",
+          "bytes": 3948,
+          "sha256": "46973b27bbc1cedd912fa7dc65327c04cbbaf0af4d9c7485637f0b2976da5cbf"
+        },
+        {
+          "offset": 153220320,
+          "compression": "gzip",
+          "bytes": 3896,
+          "sha256": "fdb6cbdb0171ea4b43d68a625b6d37dea76ae9fbc10d188562393e7e031ee32f"
+        },
+        {
+          "offset": 153221696,
+          "compression": "gzip",
+          "bytes": 2620,
+          "sha256": "2b20aca55d8c500f75b467065366a7f6fd1de64ce8a22becd3716014e8b213d5"
+        },
+        {
+          "offset": 153222688,
+          "compression": "gzip",
+          "bytes": 2768,
+          "sha256": "30ad65f664692d215e3589b939a7b21d5dd946b8b2bb3de8c6ef51aec89812af"
+        },
+        {
+          "offset": 153223728,
+          "compression": "gzip",
+          "bytes": 21748,
+          "sha256": "bd94bb238b8545783d27e94ddb94c867d3ca1e1a7198bf05a687688cc1b9640d"
+        },
+        {
+          "offset": 153231136,
+          "compression": "gzip",
+          "bytes": 9740,
+          "sha256": "4d2e8f310d59b7b4ed080235148aa7c8c1e37614e404be2eac4374d24dc6c6ce"
+        },
+        {
+          "offset": 153234416,
+          "compression": "gzip",
+          "bytes": 708,
+          "sha256": "81d8c628187624d90520d2a2df582ceaa55ab70ac84f22e7f08dd4e655bf6250"
+        },
+        {
+          "offset": 153234752,
+          "compression": "gzip",
+          "bytes": 876,
+          "sha256": "62ff468445f9b9bf4ccbd1ad753b37aba5e08b37cadbc8b5efec5db2d20647d2"
+        },
+        {
+          "offset": 153235136,
+          "compression": "gzip",
+          "bytes": 3156,
+          "sha256": "4f39b1f4948489602cdb5f922d2b1c4ec995443ae155523e7912cd9895e0fc36"
+        },
+        {
+          "offset": 153236240,
+          "compression": "gzip",
+          "bytes": 7260,
+          "sha256": "d8ebd3df1b8c08589d9aec689404d0f3181e107f628ffbe40453a4d28e5e774f"
+        },
+        {
+          "offset": 153238720,
+          "compression": "gzip",
+          "bytes": 7260,
+          "sha256": "a1b2885cc81ff62ea9b1be85a75b4c4638e837b11ed358e6487af08dffbaca39"
+        },
+        {
+          "offset": 153241200,
+          "compression": "gzip",
+          "bytes": 7552,
+          "sha256": "93ac73feb842187034e8435a08a4c9c28413d8458bfadbd7368c63d70bdb0b49"
+        },
+        {
+          "offset": 153243792,
+          "compression": "gzip",
+          "bytes": 7568,
+          "sha256": "c1d1f162a34749e591b9639f1d857cf0c6eb1de59ce51bf74c61acb6a694b9ae"
+        },
+        {
+          "offset": 153246384,
+          "compression": "gzip",
+          "bytes": 7268,
+          "sha256": "b3b4e856c89f061cf84cb5dc03df989ddd9bb6de7393d8fa31554626423a765b"
+        },
+        {
+          "offset": 153248864,
+          "compression": "gzip",
+          "bytes": 7268,
+          "sha256": "70aefcf6f8122bdfcbb54bee31538a566a7f8a8ec1b4badb958a3157cf0c0999"
+        },
+        {
+          "offset": 153251344,
+          "compression": "gzip",
+          "bytes": 7560,
+          "sha256": "ea27edb3e813b798d72502675770489e65b2b6136b08305a459101d116e20ed6"
+        },
+        {
+          "offset": 153253936,
+          "compression": "gzip",
+          "bytes": 7576,
+          "sha256": "dc25ff06de90b0af7bf9002ce0a1eb02559c3e5bb77c3b0b41910c65c7ec219c"
+        },
+        {
+          "offset": 153256528,
+          "compression": "gzip",
+          "bytes": 7260,
+          "sha256": "5773f75790ecf1e1fbe56ef437df0b8c9467a1b6c6a483e032e96e76d1f30fe8"
+        },
+        {
+          "offset": 153259008,
+          "compression": "gzip",
+          "bytes": 7260,
+          "sha256": "04302f3dbc0b91e3dcb7c9560ef7269309971ddcaf8f1d1482df364b9254215b"
+        },
+        {
+          "offset": 153261488,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "0bd2a41a3b65773d8a7c0111fa754eb71f7b7777d80a97a49dabea3e396d1cf4"
+        },
+        {
+          "offset": 153261712,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "c56052a8406a11c02654a08874178ca74d3aa1ccf26d3f9ba6ab83593e6df1a8"
+        },
+        {
+          "offset": 153262000,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "020f61c196f32aa006579ea09d25f3f23d007243d440a1c259929fa1a991612a"
+        },
+        {
+          "offset": 153262224,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "1fafc4adeaf9f16c4ef7f670eaa5fc5f483b33e2b02709e00a4ce1e38dd1534a"
+        },
+        {
+          "offset": 153262512,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "da2e407aa390c15c53923e85bf59ad9771f359c962e2ce9be5aee58fff21c908"
+        },
+        {
+          "offset": 153262752,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "8ce62f118f5771bd2dc0c80d812662e230031a8c6d5a87ceb9b827c78d6011b7"
+        },
+        {
+          "offset": 153263040,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "b258868b361dd9ec5b4a0006ca76d28b93550345fce4d86929ebc6d72e3cb717"
+        },
+        {
+          "offset": 153263264,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "b5ca50208a2ed8ac2fb4dfe0859d6cd62e015675ce7286a6ad38f69f670c7b8f"
+        },
+        {
+          "offset": 153263552,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "a5273c06644818861421dd731f08d9d94169d3e7d533acdb2f348f22d65a0721"
+        },
+        {
+          "offset": 153263776,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "7e51149c2383ab4105b36c2038bab8e864120825dcaba199a035c8cb0c93b896"
+        },
+        {
+          "offset": 153264064,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "8d233bc4915dee291a548afe7144a503a7cd7e6c16b9c10f79c8adff33dd0058"
+        },
+        {
+          "offset": 153264304,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "32f070fbc06ba545cc7bf37bc05541bac5303c41b2941322dfc10848e5961f4c"
+        },
+        {
+          "offset": 153264592,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "1d372d0e3938787f43e5d821534b27106c530e0b7661071b2547df4fdfdd5473"
+        },
+        {
+          "offset": 153264832,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "438c5a34d2c0c4bd58099b5eeb9c75a54b4ba9e11b0897e034fca907570992da"
+        },
+        {
+          "offset": 153265120,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "15996bd2f9009f1c7c79458c569a85584f9b7e980cc79934ae226c8e2d0be2bd"
+        },
+        {
+          "offset": 153265344,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "2722b87733b92f238513250f0f9bf92398bc7d1871255a4d1ce265d92f8076ae"
+        },
+        {
+          "offset": 153265632,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "c123cd2954fb1aa5f279ae0ae67fda3188ba45b48d96525f63c1d8f69ef25ff9"
+        },
+        {
+          "offset": 153265856,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "211e538c7fb950c3fb15f214aa14f086bc6b984f58072cae3e411037883d4e8c"
+        },
+        {
+          "offset": 153266144,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "d3ae17b679e82d4e920f228cc959f4480acb926584f804dfdd66e0e854ac2eab"
+        },
+        {
+          "offset": 153266368,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "58b40f16b87d7e2dca94d1b7499a3465c329c49973286c83ad4ca0f7ea97da5e"
+        },
+        {
+          "offset": 153266656,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "9a7e9c931ad9b2ce955998a208adb6539b6711bf23d2ad69539c558ebaca044a"
+        },
+        {
+          "offset": 153266880,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "a99cac520b4a1f7dba9f0c2fc70ac49cfc813453cc4bbb56a76ed40aca711046"
+        },
+        {
+          "offset": 153267168,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "6071e2e8a8fa1265078f0069312229fac65c9e1f6d4c57e6fa156398f21875c9"
+        },
+        {
+          "offset": 153267392,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "26ab9ec19d832e989f72227ae8699564d37b0b291f5185c17b63e12e16e73013"
+        },
+        {
+          "offset": 153267680,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "9b5095902a8d177a11003ec2295ba610924bce40755eeff3d5e6af0332b582d4"
+        },
+        {
+          "offset": 153267904,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "b83b86ebd526dba939427df1415a609c4d9f6a172f0c62eb34ca781e1883ee65"
+        },
+        {
+          "offset": 153268192,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "9fadf3522f74b2692a9eaf3974920520ca3cdf4f9b38e0fccdcaeeedb2acf2b9"
+        },
+        {
+          "offset": 153268416,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "a56b46b90b65cb76c5cd781e1fa7dcfbaf1dd1d1820aa989a4009b2eaabd1ae7"
+        },
+        {
+          "offset": 153268704,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "cb1efb4b7f737079db48b1abe76acb11420b4699de81e29222ed1039b16b97a5"
+        },
+        {
+          "offset": 153268944,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "5a26abb320f72a68dd9ac665842d1a1290d7f27c277607f05bcfb356954af8ff"
+        },
+        {
+          "offset": 153269232,
+          "compression": "gzip",
+          "bytes": 428,
+          "sha256": "95302e9196863ac1f9d839e377664aed3b4e4c2c8197189720e34c2f38723c6a"
+        },
+        {
+          "offset": 153269456,
+          "compression": "gzip",
+          "bytes": 572,
+          "sha256": "c4c0d51ad2a1137fd100b823a24245b85c0fdd0dd020e48ba8c0b1280451acce"
+        },
+        {
+          "offset": 153269744,
+          "compression": "gzip",
+          "bytes": 444,
+          "sha256": "20306b7398b4de46ec1ef9979408637c61581d1720552b2a0173f6500163fc8c"
+        },
+        {
+          "offset": 153269984,
+          "compression": "gzip",
+          "bytes": 588,
+          "sha256": "643d384da9466e3b871851026f0af8998668a7f6fd5d4f2b42e9a6791fff64eb"
+        },
+        {
+          "offset": 153270272,
+          "compression": "gzip",
+          "bytes": 444,
+          "sha256": "e6e97a8d640dede36d6e48443f67ab25260587e9ecb7dd973e35093e2eea4da7"
+        },
+        {
+          "offset": 153270512,
+          "compression": "gzip",
+          "bytes": 588,
+          "sha256": "67e6caa8876e005b968c4acca937be2f307bc56ac223b72045731c8bc419d054"
+        },
+        {
+          "offset": 153270800,
+          "compression": "gzip",
+          "bytes": 444,
+          "sha256": "2e04472d58fea407956bc6628650cd24f432dfddcf9f53e3a610cca7e87f1095"
+        },
+        {
+          "offset": 153271040,
+          "compression": "gzip",
+          "bytes": 588,
+          "sha256": "006c4acd757b6917aaac7e689c3ea2dc1cf912834a744512e52460499fc9e400"
+        },
+        {
+          "offset": 153271328,
+          "compression": "gzip",
+          "bytes": 444,
+          "sha256": "df64d17f80d35d46b4749820e8d8067e3d4e580739a8257a0bfd08831934b066"
+        },
+        {
+          "offset": 153271568,
+          "compression": "gzip",
+          "bytes": 588,
+          "sha256": "e221441016878e4010f306e1118938c1a69545c35a8a047a0b3fa07cb6518448"
+        },
+        {
+          "offset": 153271856,
+          "compression": "gzip",
+          "bytes": 444,
+          "sha256": "aeb30839032e5f73975cfe958512561593c6f8be4c60eccf0db37fff76822dca"
+        },
+        {
+          "offset": 153272096,
+          "compression": "gzip",
+          "bytes": 588,
+          "sha256": "021840fc2f9a97e3bc78f51d7dcfe4f879dc00fd7537fffee7686b23a0dd2be1"
+        },
+        {
+          "offset": 153272384,
+          "compression": "gzip",
+          "bytes": 444,
+          "sha256": "72dbc49c228cccab9a818869f8525c3d17e249b77c01131d4c26722ce1ba7067"
+        },
+        {
+          "offset": 153272624,
+          "compression": "gzip",
+          "bytes": 588,
+          "sha256": "64ca46866d6d99160b4f6009264ff53abc8f02d003991f31866d2390cfeb10d2"
+        },
+        {
+          "offset": 153272912,
+          "compression": "gzip",
+          "bytes": 444,
+          "sha256": "6529ff2cebca8522d190a40a537c6b1336399a578f6a19781463b6a185e84425"
+        },
+        {
+          "offset": 153273152,
+          "compression": "gzip",
+          "bytes": 588,
+          "sha256": "a2a20e720bc650a0596237ad10165979a25ae4e8e1490ca48efd3aeac5e6c7c3"
+        },
+        {
+          "offset": 153273440,
+          "compression": "gzip",
+          "bytes": 444,
+          "sha256": "ec0295c7dc6668749d669ad0e009914bc06d57c34aa55156f0197d2be478693d"
+        },
+        {
+          "offset": 153273680,
+          "compression": "gzip",
+          "bytes": 588,
+          "sha256": "0a4a7af482d92d1d9348ad0516daf122b7a15cde35ed4099552ffa5ed5b10d66"
+        },
+        {
+          "offset": 153273968,
+          "compression": "gzip",
+          "bytes": 5692,
+          "sha256": "092f5df5b06129c4673172b23aec76be5cdd5fbd275a2e3f899ef157dd978e5f"
+        },
+        {
+          "offset": 153275920,
+          "compression": "gzip",
+          "bytes": 4652,
+          "sha256": "ff9560f08d42ce09fec18379bae2c4ebf1f6068eaf5f2102affcac40f7c47b76"
+        },
+        {
+          "offset": 153277536,
+          "compression": "gzip",
+          "bytes": 4668,
+          "sha256": "bcdb94f7be065e571194640a49759716fa8d17c2625836ed132c1b6f08800f66"
+        },
+        {
+          "offset": 153279168,
+          "compression": "gzip",
+          "bytes": 4720,
+          "sha256": "ce80e4bcb286fdf5d2c4d0c2b4acac447317fba7240fd9753448d24b2bcf9bc6"
+        },
+        {
+          "offset": 153280816,
+          "compression": "gzip",
+          "bytes": 3500,
+          "sha256": "dc893b9d6569918b7ff005595142f82ae88e5604705de078e654acf28d145849"
+        },
+        {
+          "offset": 153282016,
+          "compression": "gzip",
+          "bytes": 3548,
+          "sha256": "7b00e9819c30b81739bb8c895f39eb726ed331df83b612ba0c045a26def4aa6b"
+        },
+        {
+          "offset": 153283248,
+          "compression": "gzip",
+          "bytes": 4720,
+          "sha256": "bb55006d488a9b342167cb74458152445dcfca04d2ae472fdb7d6a356be9ad5d"
+        },
+        {
+          "offset": 153284896,
+          "compression": "gzip",
+          "bytes": 3532,
+          "sha256": "8740e074c08ce7ff3b7522bde79be72a4bed979278215be788aadce52c601656"
+        },
+        {
+          "offset": 153286112,
+          "compression": "gzip",
+          "bytes": 3516,
+          "sha256": "3589f0a45be3018902c5acb618043674cc2ffb620b556c711b5926cb8691b45b"
+        },
+        {
+          "offset": 153287328,
+          "compression": "gzip",
+          "bytes": 5824,
+          "sha256": "8de9dbbcd1e5ee3b1b971db08b0d9f19fdceb94baf260ca49d24c457f06601e6"
+        },
+        {
+          "offset": 153289328,
+          "compression": "gzip",
+          "bytes": 4784,
+          "sha256": "aada008e959ee79835229b15a01cf1fc653b0ab8470d9df29a763f4fc8548b1e"
+        },
+        {
+          "offset": 153290992,
+          "compression": "gzip",
+          "bytes": 4800,
+          "sha256": "1848cb944fa6adfe5f3e53335864b59ff04e1f41fd65099191dfb94e20616f61"
+        },
+        {
+          "offset": 153292672,
+          "compression": "gzip",
+          "bytes": 4836,
+          "sha256": "21bf47c99859d07b911ac829d67e723868cf20865631c8be18344c826c2cdd39"
+        },
+        {
+          "offset": 153294352,
+          "compression": "gzip",
+          "bytes": 3616,
+          "sha256": "5a41868d92e8cdcdcb0a977f0097312ba0a3de1ea0d6bd54540cda8c8d159256"
+        },
+        {
+          "offset": 153295600,
+          "compression": "gzip",
+          "bytes": 3664,
+          "sha256": "4c1be848bf157dd514b06dfbb32b7a46dd16958e3912ff4a4068b0ce2f88a9db"
+        },
+        {
+          "offset": 153296864,
+          "compression": "gzip",
+          "bytes": 4852,
+          "sha256": "7843e0dba8800fa24406eb15de7ffa8c09c0f175320a1f09f6e05dc7806e6d76"
+        },
+        {
+          "offset": 153298544,
+          "compression": "gzip",
+          "bytes": 3664,
+          "sha256": "4a713cb3420c77c80b535c2e027fa1e20f2f6264679e84117b71f50b5c360edc"
+        },
+        {
+          "offset": 153299808,
+          "compression": "gzip",
+          "bytes": 3648,
+          "sha256": "183b4cff9b3063a3140e41208bb7ee6212c26362379a7df7a213357a3a7510bb"
+        },
+        {
+          "offset": 153301056,
+          "compression": "gzip",
+          "bytes": 5824,
+          "sha256": "0e1147d9ccca196277e863ae764ad9161610fd01d0742f07e35200fe3bbc3da6"
+        },
+        {
+          "offset": 153303056,
+          "compression": "gzip",
+          "bytes": 4784,
+          "sha256": "f7392c5bdde991f9256b194e04a1805b5617c9a045a4e65ea2436554f9bba603"
+        },
+        {
+          "offset": 153304720,
+          "compression": "gzip",
+          "bytes": 4800,
+          "sha256": "ad2da44cfd19a0818191739a354db8919fdb044d6465186311690b78f40f7a82"
+        },
+        {
+          "offset": 153306400,
+          "compression": "gzip",
+          "bytes": 4836,
+          "sha256": "1e3b936daf4a9837dde82485cda0dcaf112344053b4ed68ed30d54de2a71a98c"
+        },
+        {
+          "offset": 153308080,
+          "compression": "gzip",
+          "bytes": 3616,
+          "sha256": "249a65679df34cb497bbba300592422519c155068087fd4a90a38680d8541032"
+        },
+        {
+          "offset": 153309328,
+          "compression": "gzip",
+          "bytes": 3664,
+          "sha256": "1580f18ea0101a47e04abdb1f7a8b3e1c15abe49a808e4063da6f156da89f190"
+        },
+        {
+          "offset": 153310592,
+          "compression": "gzip",
+          "bytes": 4852,
+          "sha256": "938cd7dd72d2d768e70bad1d60b4326e523b262b5dfdaa844a677f42e288959f"
+        },
+        {
+          "offset": 153312288,
+          "compression": "gzip",
+          "bytes": 3664,
+          "sha256": "44fe8eba5f5e6c80a0d3011dcd24b728bae66f0ba7d052e210bf90b387be5d03"
+        },
+        {
+          "offset": 153313552,
+          "compression": "gzip",
+          "bytes": 3648,
+          "sha256": "b14b95f2c6a55454f07117793e0a7659e7870179a829e3650b782746cb564bf6"
+        },
+        {
+          "offset": 153314800,
+          "compression": "gzip",
+          "bytes": 5816,
+          "sha256": "76db8dd6a9d441b22b252cc6138bac11277242ea7fb1819892f409e1217140c3"
+        },
+        {
+          "offset": 153316800,
+          "compression": "gzip",
+          "bytes": 5972,
+          "sha256": "506953a53d427ba74e756db847fe0e1f02e363af6e39675d563c7f617ec8658d"
+        },
+        {
+          "offset": 165334672,
+          "compression": "zlib",
+          "bytes": 2336,
+          "sha256": "34e534b996930fa55a108791978c3ee410da83c69d1a696f31b301d18754d631"
+        },
+        {
+          "offset": 165335296,
+          "compression": "zlib",
+          "bytes": 2769,
+          "sha256": "f472f01180034c15f1bfb187c19d23695fb628913dc4691a60c2726f5aa896ee"
+        },
+        {
+          "offset": 165336064,
+          "compression": "zlib",
+          "bytes": 2896,
+          "sha256": "f10b8bf2a5ccddbc201db3626ec178bf20c64e2d86eccad6cb5e99a514a8589a"
+        },
+        {
+          "offset": 165336864,
+          "compression": "zlib",
+          "bytes": 3125,
+          "sha256": "836ab01212dbe4fea4f074c5cfefd5fdf9311fd36fb5d600b97d457e4917709f"
+        },
+        {
+          "offset": 165337680,
+          "compression": "zlib",
+          "bytes": 3149,
+          "sha256": "c5fdbcacb090183613e20525657abbb291b55bf02393f8e001856cbbf6f759e0"
+        },
+        {
+          "offset": 165338560,
+          "compression": "zlib",
+          "bytes": 3041,
+          "sha256": "1df3d9507f9cdf33c485a9aa4131c7bfea6aa8d1d4739a6bfbd2efd97fd863de"
+        },
+        {
+          "offset": 165339360,
+          "compression": "zlib",
+          "bytes": 3079,
+          "sha256": "38eaf2d11c4c75bde36f826443e479211f945f364382a16deaa7f2d8f32698d0"
+        },
+        {
+          "offset": 165340176,
+          "compression": "zlib",
+          "bytes": 2823,
+          "sha256": "b733171a960072cff6ea9ec1a4bc0d832e8e2b8587a88413537c82437ee7cd7c"
+        },
+        {
+          "offset": 165340992,
+          "compression": "zlib",
+          "bytes": 3047,
+          "sha256": "c266f1443b057c82e3f28c7d9694f30c0c9025c3d7849c47d4b2d15cbfa5b131"
+        },
+        {
+          "offset": 165341808,
+          "compression": "zlib",
+          "bytes": 2777,
+          "sha256": "46686cc905bbcd70eca5bc084bfb5c442ceea7e0de8c1e1ee670b7caefe5a92b"
+        },
+        {
+          "offset": 165342592,
+          "compression": "zlib",
+          "bytes": 2804,
+          "sha256": "e8b9bc46d3e36e75342609334ed2cf95715e5a2a1b0b64121cc5d10919d70a97"
+        },
+        {
+          "offset": 165343392,
+          "compression": "zlib",
+          "bytes": 2789,
+          "sha256": "d850bb9341fb2ec89a842812e964acedb5375e85d392b09c8245ecf05811ba94"
+        },
+        {
+          "offset": 165344176,
+          "compression": "zlib",
+          "bytes": 3064,
+          "sha256": "c28930c6a40f2ca18ebed6dc7607759571f0feff5ae837d8a319ffe71e132389"
+        },
+        {
+          "offset": 165344992,
+          "compression": "zlib",
+          "bytes": 2995,
+          "sha256": "0b8d54b79c29987d154e440ef1de441a9ea47ab0c2d8fec8e24f8fe2b44b0f59"
+        },
+        {
+          "offset": 165345776,
+          "compression": "zlib",
+          "bytes": 3204,
+          "sha256": "6c760f8d2d88105b1be2e4276bb059386879f48d65037590b8efaa6836506dfb"
+        }
+      ],
+      "credits_candidates": [],
+      "raw_ascii_and_utf16_matches": {
+        "chrome://credits": 0,
+        "QtLicense3rdparty": 0,
+        "GNU LESSER": 0,
+        "Software Licenses": 1,
+        "Third-Party Software": 0,
+        "credits.html": 0
+      },
+      "zstd_magic_offsets": [
+        6034768,
+        6034799,
+        6034877,
+        61628487,
+        61644698
+      ],
+      "source_dll_sha256": "81b75badc7b98c9dd8ac338fe7723be002cf88dcc82a6bdd6990d405c00eadf9"
+    },
+    "chromium_credits_extracted": false,
+    "opensource_full_license_texts_found_as_archive_members": false,
+    "scope": "Technical content inventory only; no legal compliance conclusion. Exact archive names, text heads and resource scans were verified from fully checksum-verified CI artifacts."
+  },
+  "native_windows_report": {
+    "ok": true,
+    "native_window": true,
+    "shelf_rendered": true,
+    "title": "写作书架",
+    "captured": true,
+    "client_version": "0.1.9",
+    "update_check_available": true,
+    "update_progress_verified": true,
+    "update_progress_synthetic": true,
+    "themes_verified": true,
+    "theme_captures": {
+      "light": true,
+      "dark": true
+    }
+  },
+  "installed_payload_safety_report": {
+    "ok": true,
+    "platform": "win32",
+    "story_version": "0.6.19",
+    "isolated_payload": true,
+    "created_and_registered": true,
+    "backup_verified": true,
+    "restore_identity_preserved": true,
+    "candidate_and_binary_preserved": true,
+    "sqlite_integrity_verified": true,
+    "missing_trash_path_refused": true,
+    "native_trash_bridge_checked": true,
+    "existing_book_files_recycled": false
+  },
+  "native_execution_evidence": "Remote Windows CI installation, native UI smoke, isolated payload probe, and uninstall; local machine performed static checks only",
+  "windows_executables_run_on_macos": false,
+  "notes": [
+    "Qt/PySide/Shiboken notice files currently contain only four identical 470-byte commercial terms; complete LGPL/GPL texts and Chromium attribution material have not been verified in this c332265 package. Release remains pending notice supplementation.",
+    "Eight .pak resource archives were parsed resource by resource including gzip and Brotli. No complete Chromium credits HTML was identified. A devtools debug JavaScript resource contains a short LGPL2 header, which is not the complete license text.",
+    "The full Qt6WebEngineCore.dll was searched in ASCII and UTF-16 and its valid gzip/zlib resource candidates were inspected. These checks did not identify full Chromium credits; arbitrary native binary searches cannot prove all possible compiled encodings absent.",
+    "README, custom LICENSE, and backend_runner are exact source content after Windows checkout CRLF conversion; raw byte hashes differ and are explicitly recorded."
+  ],
+  "technical_validation_passed": true,
+  "release_ready": false,
+  "screenshots_reviewed": [
+    {
+      "file": "windows-native-smoke-dark.png",
+      "sha256": "482efec2553ec439a75847a07ead89e5312f38b3ea2ba058f6361cef856cc538",
+      "visual_check": "Clean isolated empty shelf; Chinese text, controls, and selected theme render correctly."
+    },
+    {
+      "file": "windows-native-smoke-light.png",
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743",
+      "visual_check": "Clean isolated empty shelf; Chinese text, controls, and selected theme render correctly."
+    },
+    {
+      "file": "windows-native-smoke-update-progress.png",
+      "sha256": "c9a8cb4c117328e179bb2eb5443b96789681a1a69071410a540f85ee6a922177",
+      "visual_check": "Clean isolated empty shelf in light/dark themes; update dialog explicitly shows synthetic validation progress."
+    },
+    {
+      "file": "windows-native-smoke.png",
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743",
+      "visual_check": "Clean isolated empty shelf; Chinese text, controls, and selected theme render correctly."
+    }
+  ]
+}

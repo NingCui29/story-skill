@@ -1,0 +1,134 @@
+{
+  "schema": 5,
+  "ok": true,
+  "date": "2026-10-19T18:02:22.835424+00:00",
+  "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+  "scope": "Fresh final fixed-source four packages, standard/npm/Codex isolation, Mac app/CLI/native/signature/ZIP/DMG, static checks and actual remote source preparation. Historical capacity and long CLI runs retain their actual source; current CI is recorded by root separately. No tag assertion or final remote installer execution yet.",
+  "checks": {
+    "fixed-source-verification.json": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "benchmarks/results/v0.6.19/fixed-source-verification.json",
+      "sha256": "89aac3e390a00a0700b7435895525db1221e16c9b91dd130a9385a7bba306cf7"
+    },
+    "isolated-install.json": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "benchmarks/results/v0.6.19/isolated-install.json",
+      "sha256": "9e3d43832bb1329760e08e68a11af4dc44d18fbc4884bf31548ae7c6941d484d"
+    },
+    "static-checks.json": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "benchmarks/results/v0.6.19/static-checks.json",
+      "sha256": "d74ca0a950d55737637bf305184acfaa6f2166647b9f29deabf95107a336cfaf"
+    },
+    "codex-plugin-verification.json": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "benchmarks/results/v0.6.19/codex-plugin-verification.json",
+      "sha256": "3c81bf4af9fae5bae775f315a3b0ddf94c35ecb93c91da0932190413ad3a2815"
+    },
+    "macos-build.json": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "benchmarks/results/v0.6.19/macos-build.json",
+      "sha256": "ba9099189e508783253dd156082a01afc5303d7fa773b7e85fed0159d0f1d301"
+    },
+    "macos-verification.json": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "benchmarks/results/v0.6.19/macos-verification.json",
+      "sha256": "e49c92c663fe89b0192d6a0ee32dc7bc8704ca85949a870d0dd81eb6a75d3c70"
+    },
+    "macos-payload-probe.json": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "benchmarks/results/v0.6.19/macos-payload-probe.json",
+      "sha256": "e65b75bd5d563477e06810ec236dd342b8833f2587d34cbfcaee48ac3bb080b6"
+    },
+    "macos-native-acceptance.json": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "benchmarks/results/v0.6.19/macos-native-acceptance.json",
+      "sha256": "d97f15a305ed25454b031cdc687763c817196c281e6df3243b79856c20cd1842"
+    },
+    "macos-distribution.json": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "benchmarks/results/v0.6.19/macos-distribution.json",
+      "sha256": "e1bf0b879c372eb5966d1f1b33fe5a05d53418053f6c297672bdab22394278b4"
+    },
+    "real_remote_source_preparation": {
+      "status": "passed",
+      "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+      "path": "dist/release-v0.6.19-final-source/remote-source-prepared.json",
+      "sha256": "bd6523c8d3125fc7d39ffdb0609552dc515d866c1d7edc9c939156f40030c943",
+      "files": 64,
+      "tag_verified": false,
+      "installer_executed": false
+    }
+  },
+  "historical_evidence": {
+    "a9_targeted_cli_and_migration_upgrade": {
+      "status": "historical_passed_not_rerun",
+      "source_commit": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+      "scope": "a9 smoke/Chinese/long/migration/upgrade kept at their actual source. c332 CI separately runs current CLI acceptance; these files are not relabeled as c332 executions.",
+      "reports": {
+        "smoke.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/smoke.json",
+          "sha256": "8d4724bd559223be09bcf9f960773894b778db5c4586a137ef709e4fb36b4656"
+        },
+        "chinese.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/chinese.json",
+          "sha256": "1fc7abb58fb231c6088fbec913c9f96cf048e15424f99a633230d5e623f85f33"
+        },
+        "long.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/long.json",
+          "sha256": "62497749410466bfea84eca5c6068a5976d9c7d7a402bf2a5ae4ef92316731df"
+        },
+        "migration.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/migration.json",
+          "sha256": "2c19666d682562fff8e0dadca6bec4b2497c6d300d47770a6413fe2015f8594a"
+        },
+        "upgrade.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/upgrade.json",
+          "sha256": "c2ffe0ffe60ca6cad1fc973de05b81186f43e2d37b183451e1e864b0026fd65f"
+        }
+      },
+      "previous_delta_report": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/final-delta-verification.json",
+      "previous_delta_report_sha256": "a9e5be3c23c6cc6f65d3bea0cfdb336df56ca9068a20431c6ef6a92c1ac76806"
+    },
+    "9007_full_capacity_and_local_suite": {
+      "full_scaling": {
+        "status": "historical_passed_not_rerun",
+        "source_commit": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+        "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-directory-pin-fix/scaling.json",
+        "sha256": "52020afbd3ed58572499ac49c9cb941aa6089ad426d586958c0fbbccc08a49cb",
+        "cases": 4,
+        "operations": 28,
+        "runtime_matches_fixed_9007": true,
+        "current_runtime_differences": [
+          "story_platform_chrome_bridge.py"
+        ],
+        "scope": "Preserved real full-scale execution from 9007. This is not relabeled as a new final-source execution."
+      },
+      "local_full_suite": {
+        "status": "historical_passed_not_rerun",
+        "source_commit": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+        "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-directory-pin-fix/unittest.json",
+        "sha256": "7c134c373be3abd03d93445a118e5cf5e1a52bf5a426ebb37827bdf14ae902c0",
+        "run": 2156,
+        "passed": 2135,
+        "skipped": 21,
+        "failed": 0,
+        "errors": 0,
+        "scope": "Preserved primary-agent full-suite evidence at 9007; final bridge/tests delta verified separately."
+      }
+    }
+  },
+  "final_delta_report": "benchmarks/results/v0.6.19/final-delta-verification.json",
+  "final_delta_report_sha256": "00892b9dd2fb1454765a09a9d4a71afb2f50871a5bc5d48222cbae692c8ce260",
+  "tag_verified": false,
+  "remote_tag_installation_performed": false
+}

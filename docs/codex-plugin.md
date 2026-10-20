@@ -2,7 +2,7 @@
 
 v0.6.19 包含一个 Codex 本地插件，内含八个同级技能、共享 Python 运行时和许可证。插件使用 `.codex-plugin/plugin.json` 格式，不需要 MCP 服务或额外 API 密钥；通过本地市场安装，不表示在公共插件目录上架。
 
-本版目标下载为 [story-skill-codex-0.6.19.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-codex-0.6.19.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-codex-0.6.19.zip.sha256)。源清单为 62 个技能文件，加元数据、图标和根许可证为 65 个插件文件；市场说明与登记文件另占 2 个成员，共 67 个。最终包体、隔离安装、八技能发现和回下载正在验收，见 [v0.6.19 发布记录](releases/v0.6.19.md)；附件链接待正式发布后可用。
+本版下载为 [story-skill-codex-0.6.19.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-codex-0.6.19.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-codex-0.6.19.zip.sha256)。源清单为 62 个技能文件，加元数据、图标和根许可证为 65 个插件文件；市场说明与登记文件另占 2 个成员，共 67 个。本版包体、隔离安装／启用、八技能发现、CLI 与工作台检查已通过；正式分发及实际下载范围见 [v0.6.19 发布记录](releases/v0.6.19.md)。
 
 本版整合工作台界面、作品管理、备份恢复和平台草稿功能。平台草稿仍依赖当前助手及已连接的 Chrome；安装插件本身不会增加浏览器或图像工具。具体支持范围见[平台草稿说明](../skills/story-skill-publish/references/platform-drafts.md)。历史本机开发安装回执与本版正式分发分别记录，不能只凭版本号视作同一快照。
 
@@ -44,7 +44,7 @@ python3 -B -X utf8 scripts/verify_codex_plugin.py \
   --report dist/codex-plugin-verification.json
 ```
 
-验证器使用临时 `CODEX_HOME` 和独立测试目录，实际执行市场注册、插件发现与安装，再从安装副本核对文件及运行 Python 命令。验证期间不调用模型，不需要登录，不改用户原有的 Codex 配置或技能安装。具体验收项、结果和客户端版本以 JSON 报告为准；本版状态集中在 [发布记录](releases/v0.6.19.md)，实际验收完成后补录回执。此验证不替代桌面界面验收、模型触发或文学效果评价。
+验证器使用临时 `CODEX_HOME` 和独立测试目录，实际执行市场注册、插件发现与安装，再从安装副本核对文件及运行 Python 命令。验证期间不调用模型，不需要登录，不改用户原有的 Codex 配置或技能安装。具体验收项、结果和客户端版本以 JSON 报告为准；本版已完成上述隔离验收，回执集中在[发布记录](releases/v0.6.19.md)；隔离验证没有更新作者日常使用的插件。此验证不替代桌面界面验收、模型触发或文学效果评价。
 
 ## 安装到日常使用的 Codex
 

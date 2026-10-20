@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "date": "2026-10-19",
+  "platform": "macos",
+  "app_version": "0.1.18",
+  "build": "19",
+  "story_version": "0.6.19",
+  "python_version": "Python 3.12.14",
+  "architecture": "x86_64",
+  "strict_signature_before_and_after_cli": true,
+  "signature_kind": "ad-hoc local signature; not notarization",
+  "runtime_modules": 15,
+  "runtime_matches_manifest_and_current_sources": true,
+  "cli_version_help_init_status_audit_passed": true,
+  "payload_probe_report": "macos-payload-probe.json",
+  "synthetic_data_only": true,
+  "installed_application_replaced": false,
+  "existing_user_services_touched": false,
+  "native_gui_acceptance": "passed: isolated real AppKit/WKWebView shelf, editor, and two-editor switching",
+  "native_acceptance_report": "macos-native-acceptance.json",
+  "manual_close_warning_download_installed_app_and_platform_upload": "not exercised"
+}

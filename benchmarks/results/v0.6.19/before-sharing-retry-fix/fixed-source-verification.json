@@ -1,0 +1,26 @@
+{
+  "schema": 2,
+  "date": "2026-10-19T17:00:38.472466+00:00",
+  "ok": true,
+  "git_commit": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+  "production_commit": "49ef0133fd517a9e12f49fd843941f22448e05a7",
+  "historical_base_commit": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+  "files": 89,
+  "production_inputs": 87,
+  "source_input_snapshot_sha256": "f5c588bd925086abe53c0719ca96a18f800433709c0b67d5011a0d5794660c04",
+  "worktree_changed": [],
+  "different_from_fixed_commit": [],
+  "production_inputs_different_from_49ef": [],
+  "production_inputs_different_from_9007": [
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py"
+  ],
+  "49ef_to_candidate_changed_paths": [
+    "tests/test_platform_chrome_bridge.py"
+  ],
+  "bridge_delta": {
+    "9007_sha256": "c0bd88a3229d8d0e1e4c0e8d245aebdd1adfbe853b09ae86b39ea685566f6429",
+    "49ef_sha256": "8821c0e557fc07f347b8fa0cc13b2b833644cba85730de37047202d04a44f761",
+    "candidate_sha256": "8821c0e557fc07f347b8fa0cc13b2b833644cba85730de37047202d04a44f761"
+  },
+  "scope": "All final sources match fixed a9b36e3; all 87 production/build inputs equal production 49ef013. Relative to 9007f5d only bridge source differs; a9b36e3 changes one test file."
+}

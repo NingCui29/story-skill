@@ -1,0 +1,23 @@
+{
+  "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-final-source/story-skill-claude-desktop-0.6.19-r2.zip",
+  "version": "0.6.19",
+  "files": 64,
+  "source_files": 62,
+  "skill_name": "story-skill",
+  "bundle_revision": 2,
+  "skill_entry_count": 1,
+  "entry_path_mapping": {
+    "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+    "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+    "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+    "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+    "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+    "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+    "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+    "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+  },
+  "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+  "sha256": "a95e80108702b9f1a957a62088d6290a21a005144df86179edf861d898112af0",
+  "bytes": 563029,
+  "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3"
+}

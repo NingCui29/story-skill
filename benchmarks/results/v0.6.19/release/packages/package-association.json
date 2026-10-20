@@ -1,0 +1,47 @@
+{
+  "tag": "v0.6.19",
+  "repository": "NingCui29/story-skill",
+  "package": {
+    "http_status": 200,
+    "api_version": "2026-03-10",
+    "metadata": {
+      "id": 15331172,
+      "name": "story-skill",
+      "package_type": "npm",
+      "visibility": "public",
+      "html_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill"
+    },
+    "repository_field_present": true,
+    "repository": {
+      "id": 1360986172,
+      "full_name": "NingCui29/story-skill",
+      "private": false
+    }
+  },
+  "package_legacy": {
+    "http_status": 200,
+    "api_version": "2022-11-28",
+    "metadata": {
+      "id": 15331172,
+      "name": "story-skill",
+      "package_type": "npm",
+      "visibility": "public",
+      "html_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill"
+    },
+    "repository_field_present": true,
+    "repository": {
+      "id": 1360986172,
+      "full_name": "NingCui29/story-skill",
+      "private": false
+    }
+  },
+  "source_repository": {
+    "http_status": 200,
+    "api_version": "2026-03-10",
+    "metadata": {
+      "id": 1360986172,
+      "full_name": "NingCui29/story-skill",
+      "private": false
+    }
+  }
+}

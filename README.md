@@ -6,7 +6,7 @@ Story Skill 是一套中文小说创作技能，供 Codex、Claude Code、Claude
 
 **发布版本：v0.6.19 · 八个技能 · Python 3.10+ · 支持长篇与短篇**
 
-本版整合工作台界面、作品管理、备份恢复、更新下载进度和平台草稿功能。发布验收正在进行，固定标签、安装包与回下载结果见 [v0.6.19 发布记录](docs/releases/v0.6.19.md)；下列下载链接为本版正式附件目标，待发布后可用。上一正式版本见 [v0.6.18](docs/releases/v0.6.18.md)。
+本版整合工作台界面、作品管理、备份恢复、更新下载进度和平台草稿功能，已发布 `v0.6.19`，版本分支为 `version-0.6.19`。完整变化、验收与分发结果见 [v0.6.19 发布记录](docs/releases/v0.6.19.md)。上一正式版本见 [v0.6.18](docs/releases/v0.6.18.md)。
 
 [下载安装](#安装升级) · [开始写书](#开始写书) · [使用工作台](#使用工作台) · [完整文档](docs/README.md) · [发布记录](docs/releases/v0.6.19.md)
 
@@ -30,7 +30,7 @@ Story Skill 是一套中文小说创作技能，供 Codex、Claude Code、Claude
 
 ## 安装升级
 
-先按使用环境选包，并核对同名 `.sha256` 校验文件。本版附件及回下载正在验收，实际状态以[发布记录](docs/releases/v0.6.19.md)为准。
+先按使用环境选包，并核对同名 `.sha256` 校验文件。固定提交、附件摘要及实际下载核验范围见[发布记录](docs/releases/v0.6.19.md)。
 
 | 使用环境 | 下载 | 安装说明 |
 |---|---|---|
@@ -40,7 +40,7 @@ Story Skill 是一套中文小说创作技能，供 Codex、Claude Code、Claude
 | Intel Mac 本机工作台 0.1.18 | [DMG 安装包](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg.sha256) | [Mac 客户端说明](desktop/macos/README.md) |
 | Windows x64 本机工作台 0.1.9 | [安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe) · [校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe.sha256) | [Windows 客户端说明](desktop/windows/README.md) |
 
-两端客户端内嵌运行时 0.6.19，完整创作技能另行安装。Mac 使用本地临时签名、未经 Apple 公证；Windows 安装程序未做代码签名。另提供 Mac ZIP 和 Windows 便携 ZIP，见[独立应用安装步骤](#独立应用下载与安装)。[GitHub Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill) 的本版目标为 `@ningcui29/story-skill@0.6.19`，同步及独立核验待完成；npm 安装本身不向宿主注册技能。
+两端客户端内嵌运行时 0.6.19，完整创作技能另行安装。Mac 使用本地临时签名、未经 Apple 公证；Windows 安装程序未做代码签名。另提供 Mac ZIP 和 Windows 便携 ZIP，见[独立应用安装步骤](#独立应用下载与安装)。[GitHub Packages](https://github.com/users/NingCui29/packages/npm/package/story-skill) 已同步 `@ningcui29/story-skill@0.6.19`，注册表下载物与运行时已独立核验；npm 安装本身不向宿主注册技能。
 
 ### Codex 本地插件
 
@@ -161,7 +161,7 @@ Mac 应用菜单和 Windows 工具栏提供“检查更新”。发现正式新�
 
 ### 独立应用下载与安装
 
-两端均内置 Python，直接安装即可打开书架。安装前保存全部页面编辑，退出旧客户端；正式附件的本版发布验收尚在进行。
+两端均内置 Python，直接安装即可打开书架。安装前保存全部页面编辑，退出旧客户端。本版已完成对应平台的构建与隔离验收；Mac 原生自检在本机完成，Windows 原生自检在 CI runner 完成，具体覆盖范围见[发布记录](docs/releases/v0.6.19.md)。
 
 **Mac（Intel）：**
 

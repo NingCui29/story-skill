@@ -1,0 +1,378 @@
+{
+  "schema": 2,
+  "date": "2026-10-19T16:42:44.627283+00:00",
+  "ok": true,
+  "git_commit_at_start": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+  "git_commit_at_finish": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+  "source_snapshot": "probes-source-inputs.json",
+  "source_files_checked": {
+    "scripts/benchmark.py": "49e0af279873d04693109737b67455da5426693febc2da450ae5f84f023b305e",
+    "scripts/build_desktop_macos.py": "42e9e76c803b1c8c6c64ed12627fa913150f0ce761520996338916abc926862f",
+    "scripts/build_desktop_windows.py": "d833b751fe0bb521187308020f6bd68a9f3a88955bc76e901b47caf29da364a8",
+    "scripts/chinese_acceptance.py": "3de1704a027c8868c149aff7665158b275efabf2fc49767fade09bb4c277a23b",
+    "scripts/execution_eval.py": "51a328e82d9e08ba19e8f364fd7640ae738185b3beb8b13501e12e490c948daa",
+    "scripts/execution_metrics.py": "9119e52a7fcea9eacaeca2596008fb65bf3d5811cf4bb8f3fe853a53bd19b08c",
+    "scripts/execution_review.py": "ae24498645aba63f41501a15da7b88815f0f13fc63ee79e63cb27859ce43b03f",
+    "scripts/install.py": "49946f5c8f83734905fed242482d408a7128fc45365855c35c78e61321681a43",
+    "scripts/instruction_budget.py": "fef0e6453ace5a286e39956d2e98d148e84db92b79bba9c43960a1eddf8bba08",
+    "scripts/long_acceptance.py": "b4611b0608a8f1197321e380c77d236d2b4ce28e27d7c17d74ed447e3177b500",
+    "scripts/migrate_probe.py": "6ebf53538df06db7805f28711a1bdc2cd2f1b7fa1ad7367fb012591f3c82f164",
+    "scripts/package.py": "14d541affa70e2a60a6b61847d3fdf50c5d1d496b76f906ed17a701b351a0ccf",
+    "scripts/package_claude.py": "7c414f26e7fa69b229ffd6cf0e332979cc9c37806dc1b6637414b5a32c6e7d27",
+    "scripts/package_codex.py": "c748efd81121ea2fb94a3d4bbe5235c0a0a4e09a7a0f9e5b1bb5dfb07380d693",
+    "scripts/package_npm.py": "ae909cdc196c6b37b57724949fde62b175997a2ec5cbab3f61b821216cdb9fa1",
+    "scripts/scale_probe.py": "a70526d64cd054fda79caf7c7dc3f6577373689618c284389ef38e56560e1a8c",
+    "scripts/smoke.py": "c5b65f78834a8ea87f3dcdc2e7c867da17006a78a0ade36e88c6639f2cf20274",
+    "scripts/sync_packages.py": "2c500516b6cc2afa322eb7bf56b6578a0c7eb97b34c491e69633c5f83ad7fc48",
+    "scripts/upgrade_probe.py": "9d4b45b3a9a0e852b9ef3733f39dad557e786d97d836ba7d005ccd1d018a1474",
+    "scripts/verify.py": "63e1e8bdf59a527686249e4958d7bdc9d7c00d120023fddff57d70e97135fcfa",
+    "scripts/verify_codex_plugin.py": "1b354d190172a700d2b008e5f00d99028bec1cf359b3fa2b28df30b5f28f076b",
+    "skills/story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "skills/story-skill/SKILL.md": "60397e3f57c886d8f81d733feba55dec089a420dcfd12e80ed160d554062de0a",
+    "skills/story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+    "skills/story-skill/references/project-state.md": "72e41437802f5a7774463a11ac87fd7f688c83ba3332994344cdbe2a8e36adfc",
+    "skills/story-skill/references/workbench.md": "60d713a3aa81009018ed2c8d210ecd2f40d1ea30c90262b1c1ea67ad3b26dff6",
+    "skills/story-skill/scripts/story.py": "17c0057395d84e4a344f8c926a4a56267437d47e8df6ab5b0d1f9563b868db02",
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+    "skills/story-skill/scripts/story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+    "skills/story-skill/scripts/story_outline.py": "e04abaa0d541f91110c97dfba418c8490e6dd3c94bc5f805ce0e24ca0bebda1c",
+    "skills/story-skill/scripts/story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py": "c0bd88a3229d8d0e1e4c0e8d245aebdd1adfbe853b09ae86b39ea685566f6429",
+    "skills/story-skill/scripts/story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+    "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+    "skills/story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "skills/story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "skills/story-skill/scripts/story_workbench.py": "094b4438c4fda4bea0101508d5676b24f8397de4bc21e5f06ddcf3e6b549ff41",
+    "skills/story-skill/scripts/story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7",
+    "skills/story-skill/scripts/story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+    "skills/story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "skills/story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "skills/story-skill-analyze/SKILL.md": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+    "skills/story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+    "skills/story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+    "skills/story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+    "skills/story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "skills/story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+    "skills/story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+    "skills/story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "skills/story-skill-plan/SKILL.md": "d9bcaf2bdd29bf6795b3df837c341f02e245b78ad47b2b8339d30aba8261f0cf",
+    "skills/story-skill-plan/agents/openai.yaml": "60d1738ffeb89e0d4685349378401ee7fdb52ae9e85e60ccbf06a41d50101a01",
+    "skills/story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+    "skills/story-skill-plan/references/fanqie-tags.md": "06fb7c5344dde2d0d9c46a26d2bc63ff0d648f03394487261150c993592e465f",
+    "skills/story-skill-plan/references/outline.md": "0a8725ba6a406133b904708d720e0e66cae6e68f0251dc193dafa13982f34c81",
+    "skills/story-skill-plan/references/qidian-categories.md": "9cd2d28fc0a3a7d1297cb75c960db5fdf78e238ddd9f130d19e6365f270473ee",
+    "skills/story-skill-plan/references/qimao-tags.md": "d9100e1fd8e60094034dad131ac996effebccdb1541212b7de26e5bee768459e",
+    "skills/story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+    "skills/story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "skills/story-skill-publish/SKILL.md": "b2bd7ae524508a59c06c7c1a3c5caede4d369aeb71e4000f446cf6a8bd8766d6",
+    "skills/story-skill-publish/agents/openai.yaml": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+    "skills/story-skill-publish/references/platform-drafts.md": "7482481de5bf1da281e8752e49930aea2c3cd878bec6f72308f5e7db8458713d",
+    "skills/story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "skills/story-skill-research/SKILL.md": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9",
+    "skills/story-skill-research/agents/openai.yaml": "fa58f9b8653b56c69c2806632b27f0c0aecd705d802848312bbc5b9ea86b6221",
+    "skills/story-skill-research/references/reader-validation.md": "d654fb03817f5e5a9cb72967075e628e36d30a8546dd353d1fafe2d755949e3e",
+    "skills/story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "skills/story-skill-review/SKILL.md": "fc661476ef4768d05143bae93caec13162d1ae3651381fa69832219f483895e0",
+    "skills/story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+    "skills/story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+    "skills/story-skill-review/references/history.md": "6be47ce5d88c40205503fc477cee2c3370bd1934e71b7d1129bf0d30cd3eea0c",
+    "skills/story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+    "skills/story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "skills/story-skill-write/SKILL.md": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+    "skills/story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+    "skills/story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+    "skills/story-skill-write/references/chapter.md": "6afc1734075091716cb97d4eddd0ab19bd92510a8fb662fa0830b346417c615c",
+    "skills/story-skill-write/references/content-review.md": "3e855332540a5bde5789622bef5b5ee9c16a5d3ae7d80dd03779afb492d04860",
+    "skills/story-skill-write/references/drama.md": "7638c61cef1cbbc92fff58d190d4b636bb6a3a72572faaeada811805837faf91",
+    "skills/story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+    "skills/story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+    "skills/story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+    "skills/story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+    "tests/fixtures/schema1_runtime.py": "70c8a0294d72103cb2232834ac951f30abef6ab20e940cb0303aca1858910cb3"
+  },
+  "checks": {
+    "cli_smoke": {
+      "status": "passed",
+      "commands": 22,
+      "source_coverage": "partial"
+    },
+    "chinese_cli_replay": {
+      "status": "passed",
+      "books": 2,
+      "commands": 65
+    },
+    "long_form_cli_replay": {
+      "status": "passed",
+      "commands": 88,
+      "checks": 30
+    },
+    "full_scaling": {
+      "status": "passed",
+      "cases": 4,
+      "operations": 28,
+      "case_summary": [
+        {
+          "chapters": 400,
+          "cards": 2000,
+          "integrity": "strict",
+          "ok": true,
+          "status_seconds": 1.571032,
+          "commit_seconds": 4.458751,
+          "hard_constraint_overflow_refused": true
+        },
+        {
+          "chapters": 400,
+          "cards": 2000,
+          "integrity": "local",
+          "ok": true,
+          "status_seconds": 0.005248,
+          "commit_seconds": 0.191745,
+          "hard_constraint_overflow_refused": true
+        },
+        {
+          "chapters": 4000,
+          "cards": 20000,
+          "integrity": "strict",
+          "ok": true,
+          "status_seconds": 10.216856,
+          "commit_seconds": 30.347283,
+          "hard_constraint_overflow_refused": true
+        },
+        {
+          "chapters": 4000,
+          "cards": 20000,
+          "integrity": "local",
+          "ok": true,
+          "status_seconds": 0.005625,
+          "commit_seconds": 0.50996,
+          "hard_constraint_overflow_refused": true
+        }
+      ]
+    },
+    "schema1_migration_and_rollback": {
+      "status": "passed",
+      "books": 3,
+      "kinds": [
+        "analysis",
+        "long",
+        "short"
+      ]
+    },
+    "managed_replacement_upgrade": {
+      "status": "passed",
+      "checks": 12,
+      "commands": 5
+    },
+    "actual_isolated_install": {
+      "status": "passed",
+      "skills": 8,
+      "files": 62,
+      "commands": 5
+    },
+    "static_current_source_checks": {
+      "status": "passed",
+      "checks": {
+        "skill_input_snapshot": {
+          "status": "passed",
+          "files": 62
+        },
+        "package": {
+          "status": "passed",
+          "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/story-skill-0.6.19.zip",
+          "version": "0.6.19",
+          "sha256": "37275960a79b62d200156f6a1bdcb66d7104a241beef03735524ca3c9ca69558",
+          "bytes": 556030,
+          "files": 62,
+          "contents_match_current_skill": true,
+          "missing": [],
+          "extra": [],
+          "changed": [],
+          "duplicate_entries": [],
+          "corrupt_entry": null,
+          "non_regular_entries": []
+        },
+        "local_markdown_links": {
+          "status": "passed",
+          "files_scanned": 389,
+          "links_checked": 2355,
+          "missing": [],
+          "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+        },
+        "claude_single_entry_current_payload": {
+          "status": "passed",
+          "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/story-skill-claude-desktop-0.6.19-r2.zip",
+          "files": 64,
+          "sha256": "076ee9d0211bfd8f67807e6fb833d4091cf6ceb8b79a7dc4dd4a36df1d309ced",
+          "bytes": 562219,
+          "contents_match_current_source": true,
+          "checksum_matches": true
+        },
+        "codex_marketplace_current_payload": {
+          "status": "passed",
+          "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/codex/story-skill-codex-0.6.19.zip",
+          "files": 67,
+          "sha256": "1be62e8c39e7ea69261f16e7a044953923e1f3585912e2475701754787972ac5",
+          "bytes": 564523,
+          "contents_match_current_source": true,
+          "checksum_matches": true
+        },
+        "npm_local_package": {
+          "status": "passed",
+          "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/npm/ningcui29-story-skill-0.6.19.tgz",
+          "files": 65,
+          "payload_files": 62,
+          "wrapper_files": 3,
+          "sha256": "3434e9bcf35e3fd3d832bf7aa6a9cb947eacaca6568992dc6197dd549eabc951",
+          "integrity": "sha512-zC8ove8zBKAMMxvOXrs0uYgJ6YUbY6tFaPo+QBCCdNhchYYfyWmh1KOrJGKWlZxs/rcSiHS2fZ282uwTnoG6KQ==",
+          "bytes": 505009,
+          "checksum_matches": true,
+          "contents_match_current_source": true,
+          "runtime": {
+            "ok": true,
+            "commands": 4,
+            "skills": [
+              "story-skill",
+              "story-skill-analyze",
+              "story-skill-cover",
+              "story-skill-plan",
+              "story-skill-publish",
+              "story-skill-research",
+              "story-skill-review",
+              "story-skill-write"
+            ],
+            "skill_files": 62,
+            "temporary_book_removed": true
+          }
+        }
+      }
+    },
+    "verify_recorded_probes": {
+      "status": "passed",
+      "reports": [
+        {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/scaling.json",
+          "sha256": "52020afbd3ed58572499ac49c9cb941aa6089ad426d586958c0fbbccc08a49cb",
+          "matches_current_runtime": true,
+          "status": "passed"
+        },
+        {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/migration.json",
+          "sha256": "a6a43505b86467d4a0fcff9a1c15dbbb88ebf8ef24e39bdeade8396f45554b5a",
+          "matches_current_runtime": true,
+          "status": "passed"
+        }
+      ],
+      "scope": "Stored probe success, required capacity sizes and current runtime hashes; these probes are not rerun by verify.py"
+    },
+    "source_input_stability": {
+      "status": "passed",
+      "files": 84,
+      "changed": []
+    },
+    "fixed_git_source_match": {
+      "status": "passed",
+      "files": 84,
+      "git_commit": "9007f5d8463399eace6f1e98c51993893d2c8e80"
+    }
+  },
+  "artifacts": [
+    {
+      "type": "package",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/story-skill-0.6.19.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/story-skill-0.6.19.zip.sha256",
+      "files": 62,
+      "sha256": "37275960a79b62d200156f6a1bdcb66d7104a241beef03735524ca3c9ca69558",
+      "bytes": 556030
+    },
+    {
+      "type": "claude-package",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/story-skill-claude-desktop-0.6.19-r2.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/story-skill-claude-desktop-0.6.19-r2.zip.sha256",
+      "files": 64,
+      "sha256": "076ee9d0211bfd8f67807e6fb833d4091cf6ceb8b79a7dc4dd4a36df1d309ced",
+      "bytes": 562219
+    },
+    {
+      "type": "codex-package",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/codex/story-skill-codex-0.6.19.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/codex/story-skill-codex-0.6.19.zip.sha256",
+      "files": 67,
+      "sha256": "1be62e8c39e7ea69261f16e7a044953923e1f3585912e2475701754787972ac5",
+      "bytes": 564523
+    },
+    {
+      "type": "npm-local",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/npm/ningcui29-story-skill-0.6.19.tgz",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-verified/npm/ningcui29-story-skill-0.6.19.tgz.sha256",
+      "files": 65,
+      "sha256": "3434e9bcf35e3fd3d832bf7aa6a9cb947eacaca6568992dc6197dd549eabc951",
+      "bytes": 505009
+    }
+  ],
+  "report_files": {
+    "smoke.json": {
+      "sha256": "8d4724bd559223be09bcf9f960773894b778db5c4586a137ef709e4fb36b4656",
+      "bytes": 1404
+    },
+    "chinese.json": {
+      "sha256": "eea98d05366b7178baff84423956052046ecd431977ed6d9c03e80a55c861afa",
+      "bytes": 17927
+    },
+    "long.json": {
+      "sha256": "e2a1d74423f55b0b9e3833baf14469f1b73f227c96497c75da0f192dce85a8aa",
+      "bytes": 340532
+    },
+    "scaling.json": {
+      "sha256": "52020afbd3ed58572499ac49c9cb941aa6089ad426d586958c0fbbccc08a49cb",
+      "bytes": 48121
+    },
+    "migration.json": {
+      "sha256": "a6a43505b86467d4a0fcff9a1c15dbbb88ebf8ef24e39bdeade8396f45554b5a",
+      "bytes": 3304
+    },
+    "upgrade.json": {
+      "sha256": "ac5950092da745d3de79a04c3466faa633771de178a36c8f118e684fc620d81d",
+      "bytes": 3465
+    },
+    "isolated-install.json": {
+      "sha256": "3646e25d33c74617ead203de049639a9cc44c1aefa014e0cb3e566de34aefe9a",
+      "bytes": 25197
+    },
+    "static-checks.json": {
+      "sha256": "5a18168998b49df7763256a28829ee2305ab01c0945d8323438e596824dd5d38",
+      "bytes": 10038
+    },
+    "package.json": {
+      "sha256": "3cf30f9fae49439eada22616ac53e3b8c20a2f4bc0a23189ff4a3bbceefd64b9",
+      "bytes": 241
+    },
+    "claude-package.json": {
+      "sha256": "8e69d45527d4954722e1f49a2829f81c48e59da1e2f5f9c0939597917fcec88f",
+      "bytes": 1177
+    },
+    "codex-package.json": {
+      "sha256": "ced941587ff74d67a0fff195d16289dcc8bb08633035e9c173d5b677339263f3",
+      "bytes": 735
+    },
+    "npm-local.json": {
+      "sha256": "3ec7088b7d97d1a8965de0d5145066dffee4998797442fce4e5c789ab179e19f",
+      "bytes": 10587
+    },
+    "fixed-source-verification.json": {
+      "sha256": "152c47ab98dac0b8ca7c415e2d2095156c869baab47c77ff350f8cd8665527f7",
+      "bytes": 420
+    }
+  },
+  "not_run": [
+    "Full unittest suite (owned by primary agent)",
+    "Remote publication or registry upload"
+  ],
+  "limitations": [
+    "Scale inputs are synthetic repeated text/indexed cards; measurements include instrumentation and concurrent CPU contention, not real novel quality evidence.",
+    "Migration uses generated schema1 fixtures, not retained historical book databases.",
+    "Upgrade tests a same-version managed replacement using a deliberately modified isolated skill.",
+    "npm package is locally built, verified and exercised; it has not been published to a registry by this agent.",
+    "This report covers local evidence. Windows-native CI and desktop validation are recorded separately by the primary agent."
+  ]
+}

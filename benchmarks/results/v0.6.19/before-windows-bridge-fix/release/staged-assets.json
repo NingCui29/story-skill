@@ -1,0 +1,70 @@
+{
+  "ok": true,
+  "stage": "draft skills and Mac assets only",
+  "expected_final_asset_count": 14,
+  "verified_count": 10,
+  "source_commit": "11393173c517cde382bab7303e2b39135f66089c",
+  "release_id": 417484030,
+  "assets": [
+    {
+      "name": "story-skill-0.6.19.zip",
+      "bytes": 555568,
+      "sha256": "79fc23e14e071d054746e12bbae556debe5ee320379b9a02f1f84e331ee8b32f",
+      "asset_id": 656772405
+    },
+    {
+      "name": "story-skill-0.6.19.zip.sha256",
+      "bytes": 89,
+      "sha256": "b9b7759bdb5854b9fee4d7c23881e34800807032e230d900e1bd444ba64d0635",
+      "asset_id": 656772431
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.19-r2.zip",
+      "bytes": 561757,
+      "sha256": "ef6b5e1faa1759cc1b15ef20e113afda064ad80665a179fd4ef383a0159c0f1d",
+      "asset_id": 656772434
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.19-r2.zip.sha256",
+      "bytes": 107,
+      "sha256": "55ad8311b09525fb93a540f9f02336ce8d6c0d956594793d77f31a41afc34bbb",
+      "asset_id": 656772429
+    },
+    {
+      "name": "story-skill-codex-0.6.19.zip",
+      "bytes": 564061,
+      "sha256": "c4c018d8a71148e2c7545bd5dd6a31706afe347b183dd3d33398baa74ab00465",
+      "asset_id": 656772428
+    },
+    {
+      "name": "story-skill-codex-0.6.19.zip.sha256",
+      "bytes": 95,
+      "sha256": "a77e7c96f339b6acd672a16cf28fd32f6d2a774f92ad223201b7c1f6e85d0bb1",
+      "asset_id": 656772829
+    },
+    {
+      "name": "story-workbench-0.1.18-macos-x86_64.zip",
+      "bytes": 26732180,
+      "sha256": "1c2e5d581253f4f38ce77553c50736d1de6ec185e2a4c19e74c1f5cc34e2e0bc",
+      "asset_id": 656773690
+    },
+    {
+      "name": "story-workbench-0.1.18-macos-x86_64.zip.sha256",
+      "bytes": 106,
+      "sha256": "3e105441a94ab0ef5edf0cf15cb67009f27ccdb3381fce1091537d7b383bcf20",
+      "asset_id": 656773687
+    },
+    {
+      "name": "story-workbench-0.1.18-macos-x86_64.dmg",
+      "bytes": 37962251,
+      "sha256": "536442c9f09b4beda022b78f630d5641ef2b469f830eb0f677c8fd45fb51a217",
+      "asset_id": 656773671
+    },
+    {
+      "name": "story-workbench-0.1.18-macos-x86_64.dmg.sha256",
+      "bytes": 106,
+      "sha256": "2e204007f55f6059b6ac171542ec7e39b4629d29326dd8ab215510c9c2a8eae4",
+      "asset_id": 656773688
+    }
+  ]
+}

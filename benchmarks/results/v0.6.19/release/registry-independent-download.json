@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "version": "0.6.19",
+  "build_source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+  "tag_source_commit": "17602e5278b906c0bffd9b2661411b5f8acbb357",
+  "scope": "Actual authenticated registry download performed in the successful Packages workflow; the exported download is independently checked locally against source payload hashes, wrappers, full-file local-build bytes, SHA512 and four isolated CLI commands. The desktop Git credential lacks registry permission (direct request returned 403), so this report does not claim a second direct registry HTTP download.",
+  "registry_ci_evidence": "packages-ci.json",
+  "bytes": 505786,
+  "sha256": "6e6275b71e270fb81a927bcbe4718a6b656e97f81fbfe48227c68ee57b0df0e2",
+  "sha512_integrity": "sha512-9dkl3g+5QTO6LHpyfzaiV3ISL4QSaDqZjpQzBHbtJh0OnFObRGQ73ti1Lns7ahGD3aw1kzKWJ2c+wTrQ6FkVWg==",
+  "payload_files": 62,
+  "wrapper_files": 3,
+  "tar_members": 65,
+  "byte_identical_to_local_build": true,
+  "runtime": {
+    "ok": true,
+    "commands": 4,
+    "skills": [
+      "story-skill",
+      "story-skill-analyze",
+      "story-skill-cover",
+      "story-skill-plan",
+      "story-skill-publish",
+      "story-skill-research",
+      "story-skill-review",
+      "story-skill-write"
+    ],
+    "skill_files": 62,
+    "temporary_book_removed": true
+  }
+}

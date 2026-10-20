@@ -1,0 +1,852 @@
+{
+  "schema": 1,
+  "collected_at_utc": "2026-10-19T17:06:38.644917+00:00",
+  "expected_head": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+  "run_id": 39289992528,
+  "url": "https://github.com/NingCui29/story-skill/actions/runs/39289992528",
+  "ok": false,
+  "scope": "Attempt a9b36e3: Linux full regression and downstream checks pass; Windows3.12 stops in platform preflight; Windows3.10 full regression still running at collection. Not final release acceptance.",
+  "source_bindings": [
+    {
+      "path": "skills/story-skill/scripts/story_workbench.py",
+      "sha256": "094b4438c4fda4bea0101508d5676b24f8397de4bc21e5f06ddcf3e6b549ff41"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+      "sha256": "8821c0e557fc07f347b8fa0cc13b2b833644cba85730de37047202d04a44f761"
+    },
+    {
+      "path": "tests/test_workbench_library.py",
+      "sha256": "7cf9af0d626e08b8263f1c4ca92bdae55e16fb717b14e4d388e84844abea87b0"
+    },
+    {
+      "path": "tests/test_platform_chrome_bridge.py",
+      "sha256": "834e8dd18b8df9b43ba23855eebbeba26444e4d20032bd362284c709d0c26952"
+    },
+    {
+      "path": "tests/test_desktop_backend_runner.py",
+      "sha256": "ca6bedb17d54247c13dc4d0af6bf614edff76c51a1d4b82c017d873cb414837c"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "0cdb0063b173de8d007085aed431d02ab60be703eca7cf4abb03c83388ad6c89"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 118187827376,
+      "name": "test (windows-latest, 3.10)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39289992528/job/118187827376",
+      "api_summary": {
+        "head_sha": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+        "status": "in_progress",
+        "conclusion": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-19T16:57:39Z",
+            "completed_at": "2026-10-19T16:57:40Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-19T16:57:40Z",
+            "completed_at": "2026-10-19T16:57:50Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-19T16:57:50Z",
+            "completed_at": "2026-10-19T16:57:51Z"
+          },
+          {
+            "name": "Check Windows paths, CRLF and installation locks first",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-19T16:57:51Z",
+            "completed_at": "2026-10-19T16:59:55Z"
+          },
+          {
+            "name": "Check platform draft and Chrome bridge compatibility first",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-19T16:59:55Z",
+            "completed_at": "2026-10-19T17:01:06Z"
+          },
+          {
+            "name": "Run regression tests including historical migration",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 6,
+            "started_at": "2026-10-19T17:01:06Z",
+            "completed_at": null
+          },
+          {
+            "name": "Check declared instruction loads by task and role",
+            "status": "pending",
+            "conclusion": null,
+            "number": 7,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Build the complete skill ZIP",
+            "status": "pending",
+            "conclusion": null,
+            "number": 8,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Build the Claude Desktop skill ZIP",
+            "status": "pending",
+            "conclusion": null,
+            "number": 9,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Build the Codex plugin marketplace ZIP",
+            "status": "pending",
+            "conclusion": null,
+            "number": 10,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Exercise the local CLI workflow",
+            "status": "pending",
+            "conclusion": null,
+            "number": 11,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Exercise synthetic Chinese transactions",
+            "status": "pending",
+            "conclusion": null,
+            "number": 12,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Exercise multi-line writing and historical revision",
+            "status": "pending",
+            "conclusion": null,
+            "number": 13,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "pending",
+            "conclusion": null,
+            "number": 25,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "pending",
+            "conclusion": null,
+            "number": 26,
+            "started_at": null,
+            "completed_at": null
+          }
+        ]
+      },
+      "observed_log_conclusion": "unavailable"
+    },
+    {
+      "id": 118187827890,
+      "name": "test (ubuntu-latest, 3.10)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39289992528/job/118187827890",
+      "api_summary": {
+        "head_sha": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-19T16:57:37Z",
+            "completed_at": "2026-10-19T16:57:38Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-19T16:57:38Z",
+            "completed_at": "2026-10-19T16:57:40Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-19T16:57:40Z",
+            "completed_at": "2026-10-19T16:57:40Z"
+          },
+          {
+            "name": "Check Windows paths, CRLF and installation locks first",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 4,
+            "started_at": "2026-10-19T16:57:40Z",
+            "completed_at": "2026-10-19T16:57:40Z"
+          },
+          {
+            "name": "Check platform draft and Chrome bridge compatibility first",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5,
+            "started_at": "2026-10-19T16:57:40Z",
+            "completed_at": "2026-10-19T16:57:40Z"
+          },
+          {
+            "name": "Run regression tests including historical migration",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-19T16:57:40Z",
+            "completed_at": "2026-10-19T17:01:23Z"
+          },
+          {
+            "name": "Check declared instruction loads by task and role",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-19T17:01:23Z",
+            "completed_at": "2026-10-19T17:01:24Z"
+          },
+          {
+            "name": "Build the complete skill ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-19T17:01:24Z",
+            "completed_at": "2026-10-19T17:01:24Z"
+          },
+          {
+            "name": "Build the Claude Desktop skill ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-19T17:01:24Z",
+            "completed_at": "2026-10-19T17:01:24Z"
+          },
+          {
+            "name": "Build the Codex plugin marketplace ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-19T17:01:24Z",
+            "completed_at": "2026-10-19T17:01:24Z"
+          },
+          {
+            "name": "Exercise the local CLI workflow",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-19T17:01:24Z",
+            "completed_at": "2026-10-19T17:01:28Z"
+          },
+          {
+            "name": "Exercise synthetic Chinese transactions",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-19T17:01:28Z",
+            "completed_at": "2026-10-19T17:01:36Z"
+          },
+          {
+            "name": "Exercise multi-line writing and historical revision",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-19T17:01:36Z",
+            "completed_at": "2026-10-19T17:01:49Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-10-19T17:01:49Z",
+            "completed_at": "2026-10-19T17:01:49Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-19T17:01:49Z",
+            "completed_at": "2026-10-19T17:01:49Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-19T17:01:49Z",
+            "completed_at": "2026-10-19T17:01:49Z"
+          }
+        ]
+      },
+      "observed_log_conclusion": "success",
+      "log": {
+        "path": "dist/release-v0.6.19-verified/job-118187827890.log",
+        "bytes": 358173,
+        "sha256": "6a40b1614bd4280f9afae1db0fdbcef556e4e7d2948c6f39bac1cb13a05464bb",
+        "lines": 2760,
+        "first_timestamp": "﻿2026-10-19T16:57:37.8454372Z",
+        "last_timestamp": "2026-10-19T17:01:49.7798368Z"
+      },
+      "checkout_commit_lines": [
+        106
+      ],
+      "test_runs": [
+        {
+          "line": 2298,
+          "run": 2153,
+          "duration_seconds": 217.835,
+          "result": "OK (skipped=41)"
+        }
+      ],
+      "regression_test_evidence": {
+        "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access": [
+          {
+            "line": 1961,
+            "result": "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing": [
+          {
+            "line": 1962,
+            "result": "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_read_timeout_or_disconnect_never_reaches_library": [
+          {
+            "line": 1963,
+            "result": "test_denied_post_read_timeout_or_disconnect_never_reaches_library (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_unauthorized_invalid_json_receives_403_without_changing_files": [
+          {
+            "line": 1974,
+            "result": "test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_wrong_content_type_consumes_small_body_before_400": [
+          {
+            "line": 1978,
+            "result": "test_wrong_content_type_consumes_small_body_before_400 (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_external_and_session_directory_pins_never_overlap_between_threads": [
+          {
+            "line": 1231,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ],
+        "test_cross_process_sender_and_host_exchange_five_authenticated_requests": [
+          {
+            "line": 1223,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ]
+      },
+      "failures": [],
+      "error_exit_lines": [],
+      "cleanup_lines": [
+        2759
+      ],
+      "checks": {
+        "packages": [
+          {
+            "line": 2595,
+            "archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-0.6.19.zip",
+            "version": "0.6.19",
+            "files": 62,
+            "sha256": "0c337c5d715ce8eb36436727010657d35fd779bd0e92f715110e4b1e626dc9fa",
+            "bytes": 556203
+          },
+          {
+            "line": 2607,
+            "archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-claude-desktop-0.6.19-r2.zip",
+            "version": "0.6.19",
+            "files": 64,
+            "source_files": 62,
+            "skill_name": "story-skill",
+            "bundle_revision": 2,
+            "skill_entry_count": 1,
+            "entry_path_mapping": {
+              "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+              "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+              "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+              "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+              "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+              "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+              "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+              "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+            },
+            "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+            "sha256": "db6f7fa40580076f36971cb0768ff220e2aae4d1b43300ffb34ae43093480ff9",
+            "bytes": 562392
+          },
+          {
+            "line": 2619,
+            "archive": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.19.zip",
+            "checksum": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.19.zip.sha256",
+            "marketplace_root": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.19",
+            "plugin_root": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.19/plugins/story-skill",
+            "version": "0.6.19",
+            "skill_count": 8,
+            "payload_files": 65,
+            "bundle_files": 67,
+            "sha256": "3cb025a96dce68c73d8d84a5d06911436d3690e9ba5a3fc886f3488aeff5aeb9",
+            "source_payload_files": 62,
+            "adapted_ui_files": 8
+          }
+        ],
+        "instruction_budget": {
+          "line": 2312,
+          "passed": true,
+          "loads_checked": 281,
+          "manifest_sha256": "1b4fd3a52f682e68c823ca26cceabd49c0a3447df9fd7d445a1340215c671d2b"
+        },
+        "smoke": {
+          "line": 2631,
+          "ok": true,
+          "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+          "commands_executed": [
+            "init",
+            "notes",
+            "plan",
+            "status",
+            "outline-bind",
+            "context",
+            "lint",
+            "commit",
+            "commit",
+            "reconcile",
+            "lint",
+            "reconcile",
+            "reconcile",
+            "ingest",
+            "next",
+            "record",
+            "record",
+            "next",
+            "coverage",
+            "findings",
+            "report",
+            "coverage"
+          ],
+          "visible_chars": 213,
+          "draft_sha256": "6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be",
+          "reconciled_draft_sha256": "ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562",
+          "context_bytes": 1114,
+          "context_budget_bytes": 4000,
+          "chapter_commit_idempotent": true,
+          "export_bytes_verified": true,
+          "reconcile_idempotent": true,
+          "external_backup_verified": true,
+          "non_content_chunks_completed": 1,
+          "analysis_coverage": {
+            "analyzed": 3,
+            "chunks_total": 3,
+            "complete_for_imported_text": true,
+            "next_chunk": null,
+            "pending": 0,
+            "report_path": ".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md",
+            "source": "a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7",
+            "source_coverage": "partial",
+            "text_coverage_contiguous": true
+          },
+          "finding_pages_returned": 3,
+          "final_report_exported": true,
+          "literary_quality_tested": false
+        },
+        "chinese": {
+          "line": 2643,
+          "ok": true,
+          "books": [
+            "合成中文事务long",
+            "合成中文事务short"
+          ],
+          "retained_workdir": null
+        },
+        "long": {
+          "line": 2743,
+          "ok": true,
+          "report": "/home/runner/work/story-skill/story-skill/dist/ci-long.json"
+        }
+      }
+    },
+    {
+      "id": 118187827988,
+      "name": "test (windows-latest, 3.12)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39289992528/job/118187827988",
+      "api_summary": {
+        "head_sha": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-19T16:57:38Z",
+            "completed_at": "2026-10-19T16:57:38Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-19T16:57:38Z",
+            "completed_at": "2026-10-19T16:57:48Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-19T16:57:48Z",
+            "completed_at": "2026-10-19T16:57:48Z"
+          },
+          {
+            "name": "Check Windows paths, CRLF and installation locks first",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-19T16:57:48Z",
+            "completed_at": "2026-10-19T17:01:01Z"
+          },
+          {
+            "name": "Check platform draft and Chrome bridge compatibility first",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 5,
+            "started_at": "2026-10-19T17:01:01Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Run regression tests including historical migration",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Check declared instruction loads by task and role",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Build the complete skill ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Build the Claude Desktop skill ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Build the Codex plugin marketplace ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Exercise the local CLI workflow",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Exercise synthetic Chinese transactions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Exercise multi-line writing and historical revision",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 25,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:54Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-19T17:02:54Z",
+            "completed_at": "2026-10-19T17:02:57Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-19T17:02:57Z",
+            "completed_at": "2026-10-19T17:02:57Z"
+          }
+        ]
+      },
+      "observed_log_conclusion": "failed",
+      "log": {
+        "path": "dist/release-v0.6.19-verified/job-118187827988.log",
+        "bytes": 96735,
+        "sha256": "a2ac3eec45e39edd5681b25b26e0e7b6d9266e5d197403cb809eb61f550e33fb",
+        "lines": 566,
+        "first_timestamp": "﻿2026-10-19T16:57:38.1997582Z",
+        "last_timestamp": "2026-10-19T17:02:57.4427945Z"
+      },
+      "checkout_commit_lines": [
+        93
+      ],
+      "test_runs": [
+        {
+          "line": 321,
+          "run": 191,
+          "duration_seconds": 189.185,
+          "result": "OK (skipped=1)"
+        },
+        {
+          "line": 549,
+          "run": 184,
+          "duration_seconds": 109.25,
+          "result": "FAILED (failures=1)"
+        }
+      ],
+      "regression_test_evidence": {
+        "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access": [],
+        "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing": [],
+        "test_denied_post_read_timeout_or_disconnect_never_reaches_library": [],
+        "test_unauthorized_invalid_json_receives_403_without_changing_files": [],
+        "test_wrong_content_type_consumes_small_body_before_400": [],
+        "test_external_and_session_directory_pins_never_overlap_between_threads": [
+          {
+            "line": 433,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests.test_external_and_session_directory_pins_never_overlap_between_threads) ... ok"
+          }
+        ],
+        "test_cross_process_sender_and_host_exchange_five_authenticated_requests": [
+          {
+            "line": 425,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests.test_cross_process_sender_and_host_exchange_five_authenticated_requests) ... FAIL"
+          }
+        ]
+      },
+      "failures": [
+        {
+          "line": 520,
+          "text": "FAIL: test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests.test_cross_process_sender_and_host_exchange_five_authenticated_requests)"
+        },
+        {
+          "line": 551,
+          "text": "FAILED (failures=1)"
+        }
+      ],
+      "error_exit_lines": [
+        {
+          "line": 552,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ],
+      "cleanup_lines": [
+        565
+      ],
+      "checks": {
+        "packages": []
+      },
+      "failure_context": [
+        {
+          "line": 520,
+          "text": "FAIL: test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests.test_cross_process_sender_and_host_exchange_five_authenticated_requests)"
+        },
+        {
+          "line": 521,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 522,
+          "text": "Traceback (most recent call last):"
+        },
+        {
+          "line": 523,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\tests\\test_platform_chrome_bridge.py\", line 487, in test_cross_process_sender_and_host_exchange_five_authenticated_requests"
+        },
+        {
+          "line": 524,
+          "text": "    self.assertIsNone(failure, diagnostic)"
+        },
+        {
+          "line": 525,
+          "text": "AssertionError: 'Traceback (most recent call last):\\n  File \"D:\\\\a\\\\story-skill\\\\story-skill\\\\tests\\\\test_platform_chrome_bridge.py\", line 465, in test_cross_process_sender_and_host_exchange_five_authenticated_requests\\n    self.assertEqual(len(request_ids), 5, \"Cross-process request exchange did not finish\")\\n  File \"C:\\\\hostedtoolcache\\\\windows\\\\Python\\\\3.12.10\\\\x64\\\\Lib\\\\unittest\\\\case.py\", line 885, in assertEqual\\n    assertion_func(first, second, msg=msg)\\n  File \"C:\\\\hostedtoolcache\\\\windows\\\\Python\\\\3.12.10\\\\x64\\\\Lib\\\\unittest\\\\case.py\", line 878, in _baseAssertEqual\\n    raise self.failureException(msg)\\nAssertionError: 0 != 5 : Cross-process request exchange did not finish\\n' is not None : Traceback (most recent call last):"
+        },
+        {
+          "line": 526,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\tests\\test_platform_chrome_bridge.py\", line 465, in test_cross_process_sender_and_host_exchange_five_authenticated_requests"
+        },
+        {
+          "line": 527,
+          "text": "    self.assertEqual(len(request_ids), 5, \"Cross-process request exchange did not finish\")"
+        },
+        {
+          "line": 528,
+          "text": "  File \"C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\unittest\\case.py\", line 885, in assertEqual"
+        },
+        {
+          "line": 529,
+          "text": "    assertion_func(first, second, msg=msg)"
+        },
+        {
+          "line": 530,
+          "text": "  File \"C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\unittest\\case.py\", line 878, in _baseAssertEqual"
+        },
+        {
+          "line": 531,
+          "text": "    raise self.failureException(msg)"
+        },
+        {
+          "line": 532,
+          "text": "AssertionError: 0 != 5 : Cross-process request exchange did not finish"
+        },
+        {
+          "line": 533,
+          "text": ""
+        },
+        {
+          "line": 534,
+          "text": "sender stdout:"
+        },
+        {
+          "line": 535,
+          "text": ""
+        },
+        {
+          "line": 536,
+          "text": "sender stderr:"
+        },
+        {
+          "line": 537,
+          "text": "Traceback (most recent call last):"
+        },
+        {
+          "line": 538,
+          "text": "  File \"<string>\", line 13, in <module>"
+        },
+        {
+          "line": 539,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\skills\\story-skill\\scripts\\story_platform_chrome_bridge.py\", line 490, in _request"
+        },
+        {
+          "line": 540,
+          "text": "    _write(directory, \"outbox-\" + request_id + \".json\", request)"
+        },
+        {
+          "line": 541,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\skills\\story-skill\\scripts\\story_platform_chrome_bridge.py\", line 152, in _write"
+        },
+        {
+          "line": 542,
+          "text": "    api.platform_drafts._atomic_publish(staged, destination)"
+        },
+        {
+          "line": 543,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\skills\\story-skill\\scripts\\story_platform_drafts.py\", line 81, in _atomic_publish"
+        },
+        {
+          "line": 544,
+          "text": "    os.rename(source.path, target.path)"
+        },
+        {
+          "line": 545,
+          "text": "PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\story-publish-stowutf_\\\\\\u4e2d\\u6587\\u4e66\\u6839\\\\.story\\\\platform-chrome-bridge\\\\f2dc65d12e494e7ba13b8511a83f47e6\\\\.chrome-stage-55d5074b934a465593ba4dce4818a791' -> 'C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\story-publish-stowutf_\\\\\\u4e2d\\u6587\\u4e66\\u6839\\\\.story\\\\platform-chrome-bridge\\\\f2dc65d12e494e7ba13b8511a83f47e6\\\\outbox-be79672d85a0498592b3812ad52b5e43.json'"
+        },
+        {
+          "line": 546,
+          "text": ""
+        },
+        {
+          "line": 547,
+          "text": ""
+        },
+        {
+          "line": 548,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 549,
+          "text": "Ran 184 tests in 109.250s"
+        },
+        {
+          "line": 550,
+          "text": ""
+        },
+        {
+          "line": 551,
+          "text": "FAILED (failures=1)"
+        }
+      ],
+      "failure_diagnosis": {
+        "test": "test_cross_process_sender_and_host_exchange_five_authenticated_requests",
+        "parent_completed_requests": 0,
+        "expected_requests": 5,
+        "child_error": "PermissionError WinError32",
+        "child_frames": [
+          "story_platform_chrome_bridge.py:490 _request",
+          "story_platform_chrome_bridge.py:152 _write",
+          "story_platform_drafts.py:81 _atomic_publish os.rename(source.path,target.path)"
+        ],
+        "rename": "staged .chrome-stage-* to outbox-*.json in session directory",
+        "interpretation": "The cross-process pin-before-session-lock risk is observed; per-process RLock does not serialize independent sender and host native directory pins. Do not weaken native path guards."
+      }
+    }
+  ],
+  "conclusion": "windows_py312_cross_process_outbox_rename_sharing_violation"
+}

@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "synthetic_data_only": true,
+  "explicit_self_test_urls_bypass_default_launcher": true,
+  "existing_user_services_touched": false,
+  "installed_application_replaced": false,
+  "reports": [
+    "macos-native-shelf.json",
+    "macos-native-editor.json",
+    "macos-native-switch.json"
+  ],
+  "isolated_services_http_200": true,
+  "strict_signature_after_native_self_tests": true,
+  "native_webkit_shelf_editor_and_switching": true,
+  "manual_close_warning_download_and_installed_app_workflows": "not exercised by this acceptance",
+  "isolated_service_cleanup": true,
+  "completed_client_date": "2026-10-20",
+  "source_commit": "9007f5d",
+  "screenshots_visually_inspected": true,
+  "native_screenshot_scope": "WKWebView content captured by built-in self-test; window inventory confirms one visible native host",
+  "switch_fixture": "two isolated book roots with same synthetic restored identity; clean buffers, no pending saves"
+}

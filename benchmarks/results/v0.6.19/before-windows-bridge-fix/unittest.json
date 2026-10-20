@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "status": "passed",
+  "run": 2151,
+  "passed": 2131,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 20,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+  "source_commit": "11393173c517cde382bab7303e2b39135f66089c",
+  "duration_seconds": 547.67,
+  "python": "3.12.14",
+  "node": "24.19.0",
+  "npm": "12.2.0",
+  "log_sha256": "94a2e5f1f442cdc7352de63b66f86373ded118c58de40edcf2cfed9b532d8540"
+}

@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "date": "2026-10-19T17:00:05.424982+00:00",
+  "git_commit": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+  "source_files": {
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py": "8821c0e557fc07f347b8fa0cc13b2b833644cba85730de37047202d04a44f761",
+    "tests/test_platform_chrome_bridge.py": "834e8dd18b8df9b43ba23855eebbeba26444e4d20032bd362284c709d0c26952"
+  },
+  "status": "passed",
+  "run": 26,
+  "passed": 25,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 1,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests",
+  "log": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-release/bridge-targeted-tests.log",
+  "scope": "Entire bridge test module, including real cross-process authenticated request exchange; Windows native test skips on macOS.",
+  "source_stable": true,
+  "ok": true
+}

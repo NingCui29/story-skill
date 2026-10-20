@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "run": 2146,
+  "passed": 2126,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 20,
+  "duration_seconds": 544.479,
+  "source_commit": "9984b6632262091d6962ea1f80dff1655c65239a",
+  "python": "Python 3.12.14",
+  "node": "v24.19.0",
+  "log_sha256": "01e424af0dc0f2bdc996d0410dfe8165700c9d1a8a6d8c60d3d7e110b9c76dc3",
+  "command": "python3.12 -u -B -X utf8 -m unittest discover -s tests -v"
+}

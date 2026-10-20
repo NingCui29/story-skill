@@ -1,0 +1,272 @@
+{
+  "passed": true,
+  "manifest_sha256": "1b4fd3a52f682e68c823ca26cceabd49c0a3447df9fd7d445a1340215c671d2b",
+  "measured": "Explicit cold rule loads only; not tokens, dynamic story context or actual usage",
+  "loads_checked": 281,
+  "calls": [
+    {
+      "scenario": "long_chapter",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 39449,
+        "utf8_bytes": 107558
+      },
+      "base_limits": {
+        "nonspace_chars": 44000,
+        "utf8_bytes": 121000
+      },
+      "maximum": {
+        "nonspace_chars": 73175,
+        "utf8_bytes": 199364
+      },
+      "maximum_limits": {
+        "nonspace_chars": 76000,
+        "utf8_bytes": 208000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 54025,
+        "utf8_bytes": 147572
+      },
+      "base_limits": {
+        "nonspace_chars": 66000,
+        "utf8_bytes": 181000
+      },
+      "maximum": {
+        "nonspace_chars": 82042,
+        "utf8_bytes": 228006
+      },
+      "maximum_limits": {
+        "nonspace_chars": 88000,
+        "utf8_bytes": 245000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write",
+      "call": "cover_designer",
+      "base": {
+        "nonspace_chars": 5561,
+        "utf8_bytes": 15971
+      },
+      "base_limits": {
+        "nonspace_chars": 7000,
+        "utf8_bytes": 19000
+      },
+      "maximum": {
+        "nonspace_chars": 5561,
+        "utf8_bytes": 15971
+      },
+      "maximum_limits": {
+        "nonspace_chars": 7000,
+        "utf8_bytes": 19000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write_novel_entry",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 56606,
+        "utf8_bytes": 155160
+      },
+      "base_limits": {
+        "nonspace_chars": 66000,
+        "utf8_bytes": 181000
+      },
+      "maximum": {
+        "nonspace_chars": 84623,
+        "utf8_bytes": 235594
+      },
+      "maximum_limits": {
+        "nonspace_chars": 88000,
+        "utf8_bytes": 245000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write_unknown_entry",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 58028,
+        "utf8_bytes": 159298
+      },
+      "base_limits": {
+        "nonspace_chars": 66000,
+        "utf8_bytes": 181000
+      },
+      "maximum": {
+        "nonspace_chars": 86045,
+        "utf8_bytes": 239732
+      },
+      "maximum_limits": {
+        "nonspace_chars": 88000,
+        "utf8_bytes": 245000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "content_review",
+      "call": "reviewer",
+      "base": {
+        "nonspace_chars": 20462,
+        "utf8_bytes": 55715
+      },
+      "base_limits": {
+        "nonspace_chars": 23000,
+        "utf8_bytes": 61000
+      },
+      "maximum": {
+        "nonspace_chars": 67502,
+        "utf8_bytes": 185732
+      },
+      "maximum_limits": {
+        "nonspace_chars": 72000,
+        "utf8_bytes": 195000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "content_rewrite",
+      "call": "rewriter",
+      "base": {
+        "nonspace_chars": 23901,
+        "utf8_bytes": 65351
+      },
+      "base_limits": {
+        "nonspace_chars": 27000,
+        "utf8_bytes": 72000
+      },
+      "maximum": {
+        "nonspace_chars": 70941,
+        "utf8_bytes": 195368
+      },
+      "maximum_limits": {
+        "nonspace_chars": 76000,
+        "utf8_bytes": 206000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "content_rewrite",
+      "call": "independent_reviewer",
+      "base": {
+        "nonspace_chars": 20462,
+        "utf8_bytes": 55715
+      },
+      "base_limits": {
+        "nonspace_chars": 23000,
+        "utf8_bytes": 61000
+      },
+      "maximum": {
+        "nonspace_chars": 43960,
+        "utf8_bytes": 123750
+      },
+      "maximum_limits": {
+        "nonspace_chars": 45000,
+        "utf8_bytes": 124000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "targeted_punctuation",
+      "call": "copyeditor",
+      "base": {
+        "nonspace_chars": 14256,
+        "utf8_bytes": 37382
+      },
+      "base_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 43000
+      },
+      "maximum": {
+        "nonspace_chars": 14256,
+        "utf8_bytes": 37382
+      },
+      "maximum_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 43000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "draft_fragment",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 23941,
+        "utf8_bytes": 66236
+      },
+      "base_limits": {
+        "nonspace_chars": 28000,
+        "utf8_bytes": 79000
+      },
+      "maximum": {
+        "nonspace_chars": 45249,
+        "utf8_bytes": 128015
+      },
+      "maximum_limits": {
+        "nonspace_chars": 47000,
+        "utf8_bytes": 134000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "long_chapter_handoff",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 41438,
+        "utf8_bytes": 112627
+      },
+      "base_limits": {
+        "nonspace_chars": 48000,
+        "utf8_bytes": 130000
+      },
+      "maximum": {
+        "nonspace_chars": 73175,
+        "utf8_bytes": 199364
+      },
+      "maximum_limits": {
+        "nonspace_chars": 76000,
+        "utf8_bytes": 208000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_platform_design",
+      "call": "planner",
+      "base": {
+        "nonspace_chars": 12750,
+        "utf8_bytes": 32305
+      },
+      "base_limits": {
+        "nonspace_chars": 15000,
+        "utf8_bytes": 38000
+      },
+      "maximum": {
+        "nonspace_chars": 26605,
+        "utf8_bytes": 72052
+      },
+      "maximum_limits": {
+        "nonspace_chars": 31000,
+        "utf8_bytes": 83000
+      },
+      "passed": true,
+      "failed_variants": []
+    }
+  ]
+}

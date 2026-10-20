@@ -1,0 +1,1195 @@
+{
+  "schema": 1,
+  "collected_at_utc": "2026-10-19T17:43:08.107466+00:00",
+  "expected_head": "d82c9f97f8e8ea0aad04a107ab9f06efc2eebfa9",
+  "run_id": 39295240142,
+  "url": "https://github.com/NingCui29/story-skill/actions/runs/39295240142",
+  "ok": false,
+  "scope": "Attempt d82c9f9: Linux all 2161 tests and downstream checks pass. Both Windows pass 191-test paths preflight, then complete 212-test platform/library preflight with one library snapshot fixture error. Full Windows regression and downstream checks do not run. Not final release acceptance.",
+  "source_bindings": [
+    {
+      "path": "skills/story-skill/scripts/story_workbench.py",
+      "sha256": "094b4438c4fda4bea0101508d5676b24f8397de4bc21e5f06ddcf3e6b549ff41"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+      "sha256": "669de3dec0d244d977cc43caea5ce5226b69f7dea5e9458ffd2e01a76a716e9e"
+    },
+    {
+      "path": "tests/test_workbench_library.py",
+      "sha256": "bcca06274ac4a90bcecc5630fb8f7432a85a9fc787d01b99494ec0548a846deb"
+    },
+    {
+      "path": "tests/test_platform_chrome_bridge.py",
+      "sha256": "f35aed979bbea91a09c1e556ef5200ecd48d6a8ac931287752b2966044896451"
+    },
+    {
+      "path": "tests/test_desktop_backend_runner.py",
+      "sha256": "ca6bedb17d54247c13dc4d0af6bf614edff76c51a1d4b82c017d873cb414837c"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "5796475ab88aff44f4e6e23a9977beaa8ab9d1b6784884cd3b7dc036b11b24af"
+    }
+  ],
+  "release_payload_bindings": [
+    {
+      "path": "dist/release-v0.6.19-candidate/story-skill-0.6.19.zip",
+      "sha256": "d7c818b3388e007549b194dad5845521a1c6ce44262f44c33d87273e297ecb49",
+      "ci_packages": [
+        {
+          "job_id": 118205910270,
+          "sha256": "d7c818b3388e007549b194dad5845521a1c6ce44262f44c33d87273e297ecb49",
+          "matches_local": true
+        }
+      ]
+    },
+    {
+      "path": "dist/release-v0.6.19-candidate/story-skill-claude-desktop-0.6.19-r2.zip",
+      "sha256": "b0ab050d8c44a103bd5160f2044d145e84f303387ee8e4d4479394faab661e24",
+      "ci_packages": [
+        {
+          "job_id": 118205910270,
+          "sha256": "b0ab050d8c44a103bd5160f2044d145e84f303387ee8e4d4479394faab661e24",
+          "matches_local": true
+        }
+      ]
+    },
+    {
+      "path": "dist/release-v0.6.19-candidate/codex/story-skill-codex-0.6.19.zip",
+      "sha256": "929b9346710c65d6e490b2ac367911d27073dba23f4297c2c87735b1f50c5054",
+      "ci_packages": [
+        {
+          "job_id": 118205910270,
+          "sha256": "929b9346710c65d6e490b2ac367911d27073dba23f4297c2c87735b1f50c5054",
+          "matches_local": true
+        }
+      ]
+    }
+  ],
+  "jobs": [
+    {
+      "id": 118205909924,
+      "name": "test (windows-latest, 3.12)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39295240142/job/118205909924",
+      "api_summary": {
+        "head_sha": "d82c9f97f8e8ea0aad04a107ab9f06efc2eebfa9",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-19T17:34:21Z",
+            "completed_at": "2026-10-19T17:34:21Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-19T17:34:21Z",
+            "completed_at": "2026-10-19T17:34:31Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-19T17:34:31Z",
+            "completed_at": "2026-10-19T17:34:31Z"
+          },
+          {
+            "name": "Check Windows paths, CRLF and installation locks first",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-19T17:34:31Z",
+            "completed_at": "2026-10-19T17:37:04Z"
+          },
+          {
+            "name": "Check platform draft and Chrome bridge compatibility first",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 5,
+            "started_at": "2026-10-19T17:37:04Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Run regression tests including historical migration",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Check declared instruction loads by task and role",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Build the complete skill ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Build the Claude Desktop skill ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Build the Codex plugin marketplace ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Exercise the local CLI workflow",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Exercise synthetic Chinese transactions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Exercise multi-line writing and historical revision",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 25,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:41Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-19T17:38:41Z",
+            "completed_at": "2026-10-19T17:38:44Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-19T17:38:44Z",
+            "completed_at": "2026-10-19T17:38:44Z"
+          }
+        ]
+      },
+      "observed_log_conclusion": "failed",
+      "log": {
+        "path": "dist/release-v0.6.19-candidate/job-118205909924.log",
+        "bytes": 100623,
+        "sha256": "8b6ce10275f7bd9f15073e5efd31f5fbf51468e2157692dca3655456fa2fcd5f",
+        "lines": 583,
+        "first_timestamp": "﻿2026-10-19T17:34:21.1158379Z",
+        "last_timestamp": "2026-10-19T17:38:44.0721950Z"
+      },
+      "checkout_commit_lines": [
+        93
+      ],
+      "test_runs": [
+        {
+          "line": 321,
+          "run": 191,
+          "duration_seconds": 149.282,
+          "result": "OK (skipped=1)"
+        },
+        {
+          "line": 566,
+          "run": 212,
+          "duration_seconds": 94.122,
+          "result": "FAILED (errors=1, skipped=1)"
+        }
+      ],
+      "regression_test_evidence": {
+        "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access": [
+          {
+            "line": 482,
+            "result": "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access (test_workbench_library.WorkbenchLibraryTests.test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access) ... ok"
+          }
+        ],
+        "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing": [
+          {
+            "line": 483,
+            "result": "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing (test_workbench_library.WorkbenchLibraryTests.test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing) ... ok"
+          }
+        ],
+        "test_denied_post_read_timeout_or_disconnect_never_reaches_library": [
+          {
+            "line": 484,
+            "result": "test_denied_post_read_timeout_or_disconnect_never_reaches_library (test_workbench_library.WorkbenchLibraryTests.test_denied_post_read_timeout_or_disconnect_never_reaches_library) ... ok"
+          }
+        ],
+        "test_unauthorized_invalid_json_receives_403_without_changing_files": [
+          {
+            "line": 495,
+            "result": "test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests.test_unauthorized_invalid_json_receives_403_without_changing_files) ... ERROR"
+          }
+        ],
+        "test_wrong_content_type_consumes_small_body_before_400": [
+          {
+            "line": 499,
+            "result": "test_wrong_content_type_consumes_small_body_before_400 (test_workbench_library.WorkbenchLibraryTests.test_wrong_content_type_consumes_small_body_before_400) ... ok"
+          }
+        ],
+        "test_external_and_session_directory_pins_never_overlap_between_threads": [
+          {
+            "line": 441,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests.test_external_and_session_directory_pins_never_overlap_between_threads) ... ok"
+          }
+        ],
+        "test_cross_process_sender_and_host_exchange_five_authenticated_requests": [
+          {
+            "line": 433,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests.test_cross_process_sender_and_host_exchange_five_authenticated_requests) ... ok"
+          }
+        ],
+        "test_local_sharing_refusals_retry_both_publish_and_replace": [
+          {
+            "line": 423,
+            "result": "test_local_sharing_refusals_retry_both_publish_and_replace (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_local_sharing_refusals_retry_both_publish_and_replace) ... ok"
+          }
+        ],
+        "test_native_directory_guard_failure_stops_retry": [
+          {
+            "line": 424,
+            "result": "test_native_directory_guard_failure_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_native_directory_guard_failure_stops_retry) ... ok"
+          }
+        ],
+        "test_new_destination_never_gets_overwritten_after_sharing_refusal": [
+          {
+            "line": 425,
+            "result": "test_new_destination_never_gets_overwritten_after_sharing_refusal (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_new_destination_never_gets_overwritten_after_sharing_refusal) ... ok"
+          }
+        ],
+        "test_nonsharing_and_posix_errors_never_retry": [
+          {
+            "line": 426,
+            "result": "test_nonsharing_and_posix_errors_never_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_nonsharing_and_posix_errors_never_retry) ... ok"
+          }
+        ],
+        "test_replacement_destination_identity_or_contents_change_stops_retry": [
+          {
+            "line": 427,
+            "result": "test_replacement_destination_identity_or_contents_change_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_replacement_destination_identity_or_contents_change_stops_retry) ... ok"
+          }
+        ],
+        "test_sharing_refusal_has_bounded_budget_and_preserves_last_error": [
+          {
+            "line": 428,
+            "result": "test_sharing_refusal_has_bounded_budget_and_preserves_last_error (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_sharing_refusal_has_bounded_budget_and_preserves_last_error) ... ok"
+          }
+        ],
+        "test_source_identity_size_mtime_or_disappearance_stops_retry": [
+          {
+            "line": 429,
+            "result": "test_source_identity_size_mtime_or_disappearance_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_source_identity_size_mtime_or_disappearance_stops_retry) ... ok"
+          }
+        ],
+        "test_successful_retried_claim_is_never_dispatched_twice": [
+          {
+            "line": 430,
+            "result": "test_successful_retried_claim_is_never_dispatched_twice (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_successful_retried_claim_is_never_dispatched_twice) ... ok"
+          }
+        ]
+      },
+      "required_regression_tests_passed": false,
+      "failures": [
+        {
+          "line": 548,
+          "text": "ERROR: test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests.test_unauthorized_invalid_json_receives_403_without_changing_files)"
+        },
+        {
+          "line": 568,
+          "text": "FAILED (errors=1, skipped=1)"
+        }
+      ],
+      "error_exit_lines": [
+        {
+          "line": 569,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ],
+      "cleanup_lines": [
+        582
+      ],
+      "checks": {
+        "packages": []
+      },
+      "failure_context": [
+        {
+          "line": 548,
+          "text": "ERROR: test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests.test_unauthorized_invalid_json_receives_403_without_changing_files)"
+        },
+        {
+          "line": 549,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 550,
+          "text": "Traceback (most recent call last):"
+        },
+        {
+          "line": 551,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\tests\\test_workbench_library.py\", line 278, in test_unauthorized_invalid_json_receives_403_without_changing_files"
+        },
+        {
+          "line": 552,
+          "text": "    before = self.snapshot_persistent_files()"
+        },
+        {
+          "line": 553,
+          "text": "             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+        },
+        {
+          "line": 554,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\tests\\test_workbench_library.py\", line 78, in snapshot_persistent_files"
+        },
+        {
+          "line": 555,
+          "text": "    return {path.relative_to(self.root): path.read_bytes()"
+        },
+        {
+          "line": 556,
+          "text": "                                         ^^^^^^^^^^^^^^^^^"
+        },
+        {
+          "line": 557,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\tests\\test_workbench_library.py\", line 275, in read_persistent"
+        },
+        {
+          "line": 558,
+          "text": "    return read_bytes(path)"
+        },
+        {
+          "line": 559,
+          "text": "           ^^^^^^^^^^^^^^^^"
+        },
+        {
+          "line": 560,
+          "text": "  File \"C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\pathlib.py\", line 1020, in read_bytes"
+        },
+        {
+          "line": 561,
+          "text": "    return f.read()"
+        },
+        {
+          "line": 562,
+          "text": "           ^^^^^^^^"
+        },
+        {
+          "line": 563,
+          "text": "PermissionError: [Errno 13] Permission denied"
+        },
+        {
+          "line": 564,
+          "text": ""
+        },
+        {
+          "line": 565,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 566,
+          "text": "Ran 212 tests in 94.122s"
+        },
+        {
+          "line": 567,
+          "text": ""
+        },
+        {
+          "line": 568,
+          "text": "FAILED (errors=1, skipped=1)"
+        }
+      ],
+      "failure_diagnosis": {
+        "test": "test_unauthorized_invalid_json_receives_403_without_changing_files",
+        "frame": "tests/test_workbench_library.py:278 before snapshot -> line78 read_bytes -> line275 read_persistent -> pathlib read_bytes f.read",
+        "error": "PermissionError Errno13, filename absent in original exception",
+        "request_sent": false,
+        "specific_file_inference": "The precise .story-pin-<32lowerhex> guards are now excluded. Source _library_lease holds a Windows msvcrt exclusive first-byte lock on self.state/server.lock throughout the live snapshot, so reading that file via another handle is rejected. Keep the lock; adjust the fixture to check identity while running and bytes after authenticated stop.",
+        "production_changed": false
+      }
+    },
+    {
+      "id": 118205910270,
+      "name": "test (ubuntu-latest, 3.10)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39295240142/job/118205910270",
+      "api_summary": {
+        "head_sha": "d82c9f97f8e8ea0aad04a107ab9f06efc2eebfa9",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-19T17:34:19Z",
+            "completed_at": "2026-10-19T17:34:19Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-19T17:34:19Z",
+            "completed_at": "2026-10-19T17:34:21Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-19T17:34:21Z",
+            "completed_at": "2026-10-19T17:34:21Z"
+          },
+          {
+            "name": "Check Windows paths, CRLF and installation locks first",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 4,
+            "started_at": "2026-10-19T17:34:21Z",
+            "completed_at": "2026-10-19T17:34:21Z"
+          },
+          {
+            "name": "Check platform draft and Chrome bridge compatibility first",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5,
+            "started_at": "2026-10-19T17:34:21Z",
+            "completed_at": "2026-10-19T17:34:21Z"
+          },
+          {
+            "name": "Run regression tests including historical migration",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-19T17:34:21Z",
+            "completed_at": "2026-10-19T17:38:27Z"
+          },
+          {
+            "name": "Check declared instruction loads by task and role",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-19T17:38:27Z",
+            "completed_at": "2026-10-19T17:38:27Z"
+          },
+          {
+            "name": "Build the complete skill ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-19T17:38:27Z",
+            "completed_at": "2026-10-19T17:38:27Z"
+          },
+          {
+            "name": "Build the Claude Desktop skill ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-19T17:38:27Z",
+            "completed_at": "2026-10-19T17:38:27Z"
+          },
+          {
+            "name": "Build the Codex plugin marketplace ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-19T17:38:27Z",
+            "completed_at": "2026-10-19T17:38:28Z"
+          },
+          {
+            "name": "Exercise the local CLI workflow",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-19T17:38:28Z",
+            "completed_at": "2026-10-19T17:38:31Z"
+          },
+          {
+            "name": "Exercise synthetic Chinese transactions",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-19T17:38:31Z",
+            "completed_at": "2026-10-19T17:38:42Z"
+          },
+          {
+            "name": "Exercise multi-line writing and historical revision",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-19T17:38:42Z",
+            "completed_at": "2026-10-19T17:38:57Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-10-19T17:38:57Z",
+            "completed_at": "2026-10-19T17:38:57Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-19T17:38:57Z",
+            "completed_at": "2026-10-19T17:38:57Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-19T17:38:57Z",
+            "completed_at": "2026-10-19T17:38:57Z"
+          }
+        ]
+      },
+      "observed_log_conclusion": "success",
+      "log": {
+        "path": "dist/release-v0.6.19-candidate/job-118205910270.log",
+        "bytes": 359410,
+        "sha256": "e2513acf81b1c27f8d8eb91e05f686c881ba87601d8657e4f629dce1cf6f6fa7",
+        "lines": 2768,
+        "first_timestamp": "﻿2026-10-19T17:34:19.2673494Z",
+        "last_timestamp": "2026-10-19T17:38:57.7757129Z"
+      },
+      "checkout_commit_lines": [
+        106
+      ],
+      "test_runs": [
+        {
+          "line": 2306,
+          "run": 2161,
+          "duration_seconds": 239.329,
+          "result": "OK (skipped=41)"
+        }
+      ],
+      "regression_test_evidence": {
+        "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access": [
+          {
+            "line": 1969,
+            "result": "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing": [
+          {
+            "line": 1970,
+            "result": "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_read_timeout_or_disconnect_never_reaches_library": [
+          {
+            "line": 1971,
+            "result": "test_denied_post_read_timeout_or_disconnect_never_reaches_library (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_unauthorized_invalid_json_receives_403_without_changing_files": [
+          {
+            "line": 1982,
+            "result": "test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_wrong_content_type_consumes_small_body_before_400": [
+          {
+            "line": 1986,
+            "result": "test_wrong_content_type_consumes_small_body_before_400 (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_external_and_session_directory_pins_never_overlap_between_threads": [
+          {
+            "line": 1239,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ],
+        "test_cross_process_sender_and_host_exchange_five_authenticated_requests": [
+          {
+            "line": 1231,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ],
+        "test_local_sharing_refusals_retry_both_publish_and_replace": [
+          {
+            "line": 1221,
+            "result": "test_local_sharing_refusals_retry_both_publish_and_replace (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_native_directory_guard_failure_stops_retry": [
+          {
+            "line": 1222,
+            "result": "test_native_directory_guard_failure_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_new_destination_never_gets_overwritten_after_sharing_refusal": [
+          {
+            "line": 1223,
+            "result": "test_new_destination_never_gets_overwritten_after_sharing_refusal (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_nonsharing_and_posix_errors_never_retry": [
+          {
+            "line": 1224,
+            "result": "test_nonsharing_and_posix_errors_never_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_replacement_destination_identity_or_contents_change_stops_retry": [
+          {
+            "line": 1225,
+            "result": "test_replacement_destination_identity_or_contents_change_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_sharing_refusal_has_bounded_budget_and_preserves_last_error": [
+          {
+            "line": 1226,
+            "result": "test_sharing_refusal_has_bounded_budget_and_preserves_last_error (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_source_identity_size_mtime_or_disappearance_stops_retry": [
+          {
+            "line": 1227,
+            "result": "test_source_identity_size_mtime_or_disappearance_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_successful_retried_claim_is_never_dispatched_twice": [
+          {
+            "line": 1228,
+            "result": "test_successful_retried_claim_is_never_dispatched_twice (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ]
+      },
+      "required_regression_tests_passed": true,
+      "failures": [],
+      "error_exit_lines": [],
+      "cleanup_lines": [
+        2767
+      ],
+      "checks": {
+        "packages": [
+          {
+            "line": 2603,
+            "archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-0.6.19.zip",
+            "version": "0.6.19",
+            "files": 62,
+            "sha256": "d7c818b3388e007549b194dad5845521a1c6ce44262f44c33d87273e297ecb49",
+            "bytes": 556647
+          },
+          {
+            "line": 2615,
+            "archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-claude-desktop-0.6.19-r2.zip",
+            "version": "0.6.19",
+            "files": 64,
+            "source_files": 62,
+            "skill_name": "story-skill",
+            "bundle_revision": 2,
+            "skill_entry_count": 1,
+            "entry_path_mapping": {
+              "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+              "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+              "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+              "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+              "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+              "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+              "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+              "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+            },
+            "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+            "sha256": "b0ab050d8c44a103bd5160f2044d145e84f303387ee8e4d4479394faab661e24",
+            "bytes": 562836
+          },
+          {
+            "line": 2627,
+            "archive": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.19.zip",
+            "checksum": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.19.zip.sha256",
+            "marketplace_root": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.19",
+            "plugin_root": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.19/plugins/story-skill",
+            "version": "0.6.19",
+            "skill_count": 8,
+            "payload_files": 65,
+            "bundle_files": 67,
+            "sha256": "929b9346710c65d6e490b2ac367911d27073dba23f4297c2c87735b1f50c5054",
+            "source_payload_files": 62,
+            "adapted_ui_files": 8
+          }
+        ],
+        "instruction_budget": {
+          "line": 2320,
+          "passed": true,
+          "loads_checked": 281,
+          "manifest_sha256": "1b4fd3a52f682e68c823ca26cceabd49c0a3447df9fd7d445a1340215c671d2b"
+        },
+        "smoke": {
+          "line": 2639,
+          "ok": true,
+          "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+          "commands_executed": [
+            "init",
+            "notes",
+            "plan",
+            "status",
+            "outline-bind",
+            "context",
+            "lint",
+            "commit",
+            "commit",
+            "reconcile",
+            "lint",
+            "reconcile",
+            "reconcile",
+            "ingest",
+            "next",
+            "record",
+            "record",
+            "next",
+            "coverage",
+            "findings",
+            "report",
+            "coverage"
+          ],
+          "visible_chars": 213,
+          "draft_sha256": "6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be",
+          "reconciled_draft_sha256": "ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562",
+          "context_bytes": 1114,
+          "context_budget_bytes": 4000,
+          "chapter_commit_idempotent": true,
+          "export_bytes_verified": true,
+          "reconcile_idempotent": true,
+          "external_backup_verified": true,
+          "non_content_chunks_completed": 1,
+          "analysis_coverage": {
+            "analyzed": 3,
+            "chunks_total": 3,
+            "complete_for_imported_text": true,
+            "next_chunk": null,
+            "pending": 0,
+            "report_path": ".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md",
+            "source": "a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7",
+            "source_coverage": "partial",
+            "text_coverage_contiguous": true
+          },
+          "finding_pages_returned": 3,
+          "final_report_exported": true,
+          "literary_quality_tested": false
+        },
+        "chinese": {
+          "line": 2651,
+          "ok": true,
+          "books": [
+            "合成中文事务long",
+            "合成中文事务short"
+          ],
+          "retained_workdir": null
+        },
+        "long": {
+          "line": 2751,
+          "ok": true,
+          "report": "/home/runner/work/story-skill/story-skill/dist/ci-long.json"
+        }
+      }
+    },
+    {
+      "id": 118205910372,
+      "name": "test (windows-latest, 3.10)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39295240142/job/118205910372",
+      "api_summary": {
+        "head_sha": "d82c9f97f8e8ea0aad04a107ab9f06efc2eebfa9",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-19T17:34:19Z",
+            "completed_at": "2026-10-19T17:34:19Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-19T17:34:19Z",
+            "completed_at": "2026-10-19T17:34:28Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-19T17:34:28Z",
+            "completed_at": "2026-10-19T17:34:28Z"
+          },
+          {
+            "name": "Check Windows paths, CRLF and installation locks first",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-19T17:34:28Z",
+            "completed_at": "2026-10-19T17:36:31Z"
+          },
+          {
+            "name": "Check platform draft and Chrome bridge compatibility first",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 5,
+            "started_at": "2026-10-19T17:36:31Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Run regression tests including historical migration",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Check declared instruction loads by task and role",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Build the complete skill ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Build the Claude Desktop skill ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Build the Codex plugin marketplace ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Exercise the local CLI workflow",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Exercise synthetic Chinese transactions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Exercise multi-line writing and historical revision",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 25,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:06Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-19T17:38:06Z",
+            "completed_at": "2026-10-19T17:38:08Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-19T17:38:08Z",
+            "completed_at": "2026-10-19T17:38:08Z"
+          }
+        ]
+      },
+      "observed_log_conclusion": "failed",
+      "log": {
+        "path": "dist/release-v0.6.19-candidate/job-118205910372.log",
+        "bytes": 75797,
+        "sha256": "4f82670e9db30499013ef25d3c0deb65d81d4d686f84f266f226d4b48b6854aa",
+        "lines": 581,
+        "first_timestamp": "﻿2026-10-19T17:34:19.3276248Z",
+        "last_timestamp": "2026-10-19T17:38:08.3733629Z"
+      },
+      "checkout_commit_lines": [
+        93
+      ],
+      "test_runs": [
+        {
+          "line": 321,
+          "run": 191,
+          "duration_seconds": 120.128,
+          "result": "OK (skipped=1)"
+        },
+        {
+          "line": 564,
+          "run": 212,
+          "duration_seconds": 91.734,
+          "result": "FAILED (errors=1, skipped=1)"
+        }
+      ],
+      "regression_test_evidence": {
+        "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access": [
+          {
+            "line": 482,
+            "result": "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing": [
+          {
+            "line": 483,
+            "result": "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_read_timeout_or_disconnect_never_reaches_library": [
+          {
+            "line": 484,
+            "result": "test_denied_post_read_timeout_or_disconnect_never_reaches_library (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_unauthorized_invalid_json_receives_403_without_changing_files": [
+          {
+            "line": 495,
+            "result": "test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests) ... ERROR"
+          }
+        ],
+        "test_wrong_content_type_consumes_small_body_before_400": [
+          {
+            "line": 499,
+            "result": "test_wrong_content_type_consumes_small_body_before_400 (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_external_and_session_directory_pins_never_overlap_between_threads": [
+          {
+            "line": 441,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ],
+        "test_cross_process_sender_and_host_exchange_five_authenticated_requests": [
+          {
+            "line": 433,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ],
+        "test_local_sharing_refusals_retry_both_publish_and_replace": [
+          {
+            "line": 423,
+            "result": "test_local_sharing_refusals_retry_both_publish_and_replace (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_native_directory_guard_failure_stops_retry": [
+          {
+            "line": 424,
+            "result": "test_native_directory_guard_failure_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_new_destination_never_gets_overwritten_after_sharing_refusal": [
+          {
+            "line": 425,
+            "result": "test_new_destination_never_gets_overwritten_after_sharing_refusal (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_nonsharing_and_posix_errors_never_retry": [
+          {
+            "line": 426,
+            "result": "test_nonsharing_and_posix_errors_never_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_replacement_destination_identity_or_contents_change_stops_retry": [
+          {
+            "line": 427,
+            "result": "test_replacement_destination_identity_or_contents_change_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_sharing_refusal_has_bounded_budget_and_preserves_last_error": [
+          {
+            "line": 428,
+            "result": "test_sharing_refusal_has_bounded_budget_and_preserves_last_error (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_source_identity_size_mtime_or_disappearance_stops_retry": [
+          {
+            "line": 429,
+            "result": "test_source_identity_size_mtime_or_disappearance_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_successful_retried_claim_is_never_dispatched_twice": [
+          {
+            "line": 430,
+            "result": "test_successful_retried_claim_is_never_dispatched_twice (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ]
+      },
+      "required_regression_tests_passed": false,
+      "failures": [
+        {
+          "line": 548,
+          "text": "ERROR: test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests)"
+        },
+        {
+          "line": 566,
+          "text": "FAILED (errors=1, skipped=1)"
+        }
+      ],
+      "error_exit_lines": [
+        {
+          "line": 567,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ],
+      "cleanup_lines": [
+        580
+      ],
+      "checks": {
+        "packages": []
+      },
+      "failure_context": [
+        {
+          "line": 548,
+          "text": "ERROR: test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests)"
+        },
+        {
+          "line": 549,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 550,
+          "text": "Traceback (most recent call last):"
+        },
+        {
+          "line": 551,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\tests\\test_workbench_library.py\", line 278, in test_unauthorized_invalid_json_receives_403_without_changing_files"
+        },
+        {
+          "line": 552,
+          "text": "    before = self.snapshot_persistent_files()"
+        },
+        {
+          "line": 553,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\tests\\test_workbench_library.py\", line 78, in snapshot_persistent_files"
+        },
+        {
+          "line": 554,
+          "text": "    return {path.relative_to(self.root): path.read_bytes()"
+        },
+        {
+          "line": 555,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\tests\\test_workbench_library.py\", line 78, in <dictcomp>"
+        },
+        {
+          "line": 556,
+          "text": "    return {path.relative_to(self.root): path.read_bytes()"
+        },
+        {
+          "line": 557,
+          "text": "  File \"D:\\a\\story-skill\\story-skill\\tests\\test_workbench_library.py\", line 275, in read_persistent"
+        },
+        {
+          "line": 558,
+          "text": "    return read_bytes(path)"
+        },
+        {
+          "line": 559,
+          "text": "  File \"C:\\hostedtoolcache\\windows\\Python\\3.10.11\\x64\\lib\\pathlib.py\", line 1127, in read_bytes"
+        },
+        {
+          "line": 560,
+          "text": "    return f.read()"
+        },
+        {
+          "line": 561,
+          "text": "PermissionError: [Errno 13] Permission denied"
+        },
+        {
+          "line": 562,
+          "text": ""
+        },
+        {
+          "line": 563,
+          "text": "----------------------------------------------------------------------"
+        },
+        {
+          "line": 564,
+          "text": "Ran 212 tests in 91.734s"
+        },
+        {
+          "line": 565,
+          "text": ""
+        },
+        {
+          "line": 566,
+          "text": "FAILED (errors=1, skipped=1)"
+        }
+      ],
+      "failure_diagnosis": {
+        "test": "test_unauthorized_invalid_json_receives_403_without_changing_files",
+        "frame": "tests/test_workbench_library.py:278 before snapshot -> line78 read_bytes -> line275 read_persistent -> pathlib read_bytes f.read",
+        "error": "PermissionError Errno13, filename absent in original exception",
+        "request_sent": false,
+        "specific_file_inference": "The precise .story-pin-<32lowerhex> guards are now excluded. Source _library_lease holds a Windows msvcrt exclusive first-byte lock on self.state/server.lock throughout the live snapshot, so reading that file via another handle is rejected. Keep the lock; adjust the fixture to check identity while running and bytes after authenticated stop.",
+        "production_changed": false
+      }
+    }
+  ],
+  "conclusion": "both_windows_212_test_preflights_stop_on_live_file_snapshot_permission_error"
+}

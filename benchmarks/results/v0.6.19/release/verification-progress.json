@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "status": "published_and_verified",
+  "tag": "v0.6.19",
+  "tag_commit": "17602e5278b906c0bffd9b2661411b5f8acbb357",
+  "tag_object": "59bfd688d11ff51df1451341bb0c9ff6bc615c78",
+  "actual_build_source": "6ec177a113526bb3321a310efd1e78ee717056f3",
+  "version_branch": "version-0.6.19",
+  "version_branch_publication": "Created together with the final documentation receipt in an atomic main/version-branch push; the immutable tag keeps the verified source commit.",
+  "release_id": 417484030,
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.19",
+  "runtime": "0.6.19",
+  "macos": {
+    "version": "0.1.18",
+    "build": 19,
+    "architecture": "x86_64"
+  },
+  "windows": {
+    "version": "0.1.9",
+    "architecture": "x86_64"
+  },
+  "assets": 14,
+  "public_readback_scope": "Three skill ZIPs and seven checksum files downloaded completely without authentication; all four desktop binaries sampled at both ends and bound to complete local/native verification and GitHub server digests. Full public Mac download attempts encountered partial responses/TLS EOF; those attempts are retained.",
+  "packages_scope": "Published public package; actual registry download in CI independently checked locally, with 65 members, byte identity, SHA512 and four CLI commands. Desktop credential direct registry request returned 403 and is retained separately.",
+  "checks": {
+    "ci.json": {
+      "ok": true,
+      "sha256": "50d8bbfccd30205f945e11cc2fe67a7a159ef6ff55a7db3391abde16b0ffc549"
+    },
+    "windows-ci.json": {
+      "ok": true,
+      "sha256": "a2d3e9aacd4518d85c6b36fea7d39e13a035df9b38a7a35729968bc15a5b98ab"
+    },
+    "build-source-equivalence.json": {
+      "ok": true,
+      "sha256": "738a418aee70084500d16281e0dba3f1649866f30972bd5d59fe5ce5016dcd68"
+    },
+    "remote-commit-install.json": {
+      "ok": true,
+      "sha256": "647ce5aaac7b0384a27815e42262e3546817746c2cc2837f75d42d4279dcd7a4"
+    },
+    "packages-ci.json": {
+      "ok": true,
+      "sha256": "804205f96b7425f30a102b69c6e364d5c9b419f5dcb0b2cd0faf11d13a3a65e7"
+    },
+    "registry-independent-download.json": {
+      "ok": true,
+      "sha256": "27f06ff12c1173b2ac42684d261ae2159f79d749a5360451ae3c68c34ea7fff4"
+    },
+    "public-downloads.json": {
+      "ok": true,
+      "sha256": "2d75a21b5163ef3965ed2fe23688db36928d051dd48bd263042f671c306d2f5b"
+    }
+  }
+}

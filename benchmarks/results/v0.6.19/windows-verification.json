@@ -1,0 +1,108 @@
+{
+  "schema": 2,
+  "ok": true,
+  "date": "2026-10-20",
+  "client_version": "0.1.9",
+  "story_version": "0.6.19",
+  "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+  "scope": "Windows distribution technical acceptance. Final publication additionally requires the independent source matrix receipt release/ci.json.",
+  "technical_validation_passed": true,
+  "release_ready": true,
+  "release_ready_scope": "Windows assets only; the overall publication gate is separate.",
+  "canonical_report": {
+    "path": "release/windows-ci.json",
+    "sha256": "a2d3e9aacd4518d85c6b36fea7d39e13a035df9b38a7a35729968bc15a5b98ab",
+    "run_id": 39298368134,
+    "url": "https://github.com/NingCui29/story-skill/actions/runs/39298368134",
+    "native_job_id": 118216720428,
+    "draft_upload_job_id": 118219625689,
+    "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+    "conclusion": "success"
+  },
+  "complete_evidence_directory": "release/windows/",
+  "portable": {
+    "manifest_path": "release/windows/windows-build-manifest.json",
+    "manifest_sha256": "60eedc2c60ec0c9f97896e660dfbdacf0b5df143dc015c2ae9fdd31bdbf3e4fc",
+    "portable_manifest_files_verified": 3706,
+    "installed_manifest_files_verified": 3706,
+    "installed_tree_verified": true,
+    "runtime_modules_verified": 15
+  },
+  "notices": {
+    "supplementary_manifest_sha256": "773dc1092a5b056bce6d40359c7916f8f8def257757902a24f04beaa9ad0dfe8",
+    "notice_files_verified": 131,
+    "offline_webengine_component_pages": 124
+  },
+  "assets": [
+    {
+      "id": 657018911,
+      "name": "story-workbench-0.1.9-windows-x86_64-setup.exe",
+      "sha256": "d3ed6b06a71b8ec38f33afea4060cfbb351c9db180e1566d75ac47938bdb7b53",
+      "bytes": 183021405,
+      "action": "uploaded",
+      "server_digest": "sha256:d3ed6b06a71b8ec38f33afea4060cfbb351c9db180e1566d75ac47938bdb7b53",
+      "server_size": 183021405,
+      "server_state": "uploaded",
+      "server_sha256_and_size_match": true
+    },
+    {
+      "id": 657019148,
+      "name": "story-workbench-0.1.9-windows-x86_64-setup.exe.sha256",
+      "sha256": "b4b78297ea93c4000bc8d5d45adc709e748dbea388eeafb04ff23403298629b3",
+      "bytes": 114,
+      "action": "uploaded",
+      "server_digest": "sha256:b4b78297ea93c4000bc8d5d45adc709e748dbea388eeafb04ff23403298629b3",
+      "server_size": 114,
+      "server_state": "uploaded",
+      "server_sha256_and_size_match": true
+    },
+    {
+      "id": 657019217,
+      "name": "story-workbench-0.1.9-windows-x86_64.zip",
+      "sha256": "890c358d5dc68e9628436b8a0c838b9b8d05f95a72d71e64833d5cbba3694e13",
+      "bytes": 258357237,
+      "action": "uploaded",
+      "server_digest": "sha256:890c358d5dc68e9628436b8a0c838b9b8d05f95a72d71e64833d5cbba3694e13",
+      "server_size": 258357237,
+      "server_state": "uploaded",
+      "server_sha256_and_size_match": true
+    },
+    {
+      "id": 657019448,
+      "name": "story-workbench-0.1.9-windows-x86_64.zip.sha256",
+      "sha256": "27accf28a93bffa8ce9a6223706e58f065088df6316ef444a86fb14db6741e0d",
+      "bytes": 108,
+      "action": "uploaded",
+      "server_digest": "sha256:27accf28a93bffa8ce9a6223706e58f065088df6316ef444a86fb14db6741e0d",
+      "server_size": 108,
+      "server_state": "uploaded",
+      "server_sha256_and_size_match": true
+    }
+  ],
+  "native_windows_report_path": "release/windows/windows-native-smoke.json",
+  "installed_payload_safety_report_path": "release/windows/windows-runtime-safety.json",
+  "draft_upload_receipt_path": "release/windows/windows-draft-upload.json",
+  "screenshots_reviewed": {
+    "reviewed": true,
+    "light_bookshelf_rendered_and_legible": true,
+    "dark_bookshelf_rendered_and_legible": true,
+    "synthetic_progress_rendered_with_percent_bytes_speed_eta": true,
+    "synthetic_progress_label_explicitly_states_no_real_update_download": true,
+    "reviewed_files": [
+      "windows/windows-native-smoke-light.png",
+      "windows/windows-native-smoke-dark.png",
+      "windows/windows-native-smoke-update-progress.png"
+    ]
+  },
+  "source_input_checkout_boundary": {
+    "exact_git_blob_matches": 147,
+    "declared_CRLF_checkout_matches": 14,
+    "all_matched": true
+  },
+  "windows_executables_run_on_macos": false,
+  "notes": [
+    "All Windows executable and installation checks ran on the native GitHub Windows runner at the recorded source commit.",
+    "The update progress screenshot is a synthetic UI check and explicitly states that no real update is downloaded.",
+    "Earlier failed or superseded Windows evidence remains in history; this pointer selects the final 6ec evidence."
+  ]
+}

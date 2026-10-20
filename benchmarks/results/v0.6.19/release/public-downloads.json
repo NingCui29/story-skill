@@ -1,0 +1,257 @@
+{
+  "ok": true,
+  "tag": "v0.6.19",
+  "repository": "NingCui29/story-skill",
+  "assets": [
+    {
+      "name": "story-skill-0.6.19.zip.sha256",
+      "size": 89,
+      "sha256": "3203b99fb83697d4655f2586fc3a581592b12470c1aa237be3ffa77df717ab40",
+      "server_digest": "sha256:3203b99fb83697d4655f2586fc3a581592b12470c1aa237be3ffa77df717ab40",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-0.6.19.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "3203b99fb83697d4655f2586fc3a581592b12470c1aa237be3ffa77df717ab40",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.19-r2.zip.sha256",
+      "size": 107,
+      "sha256": "dcace0999f3a90cb987ffc0be67f8d6fd3982f8c95687efab2452dfbae2507f8",
+      "server_digest": "sha256:dcace0999f3a90cb987ffc0be67f8d6fd3982f8c95687efab2452dfbae2507f8",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "dcace0999f3a90cb987ffc0be67f8d6fd3982f8c95687efab2452dfbae2507f8",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-0.6.19.zip",
+      "size": 556840,
+      "sha256": "07851af742fa0279ef212330b139652c8c9818e8a4de21c099c8e1eddf5b8701",
+      "server_digest": "sha256:07851af742fa0279ef212330b139652c8c9818e8a4de21c099c8e1eddf5b8701",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-0.6.19.zip",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "07851af742fa0279ef212330b139652c8c9818e8a4de21c099c8e1eddf5b8701",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.19-r2.zip",
+      "size": 563029,
+      "sha256": "a95e80108702b9f1a957a62088d6290a21a005144df86179edf861d898112af0",
+      "server_digest": "sha256:a95e80108702b9f1a957a62088d6290a21a005144df86179edf861d898112af0",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "a95e80108702b9f1a957a62088d6290a21a005144df86179edf861d898112af0",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-codex-0.6.19.zip.sha256",
+      "size": 95,
+      "sha256": "efb457da960adb1b62f31441fea6c0f5b40b4cde1d6230f98322217f259e456b",
+      "server_digest": "sha256:efb457da960adb1b62f31441fea6c0f5b40b4cde1d6230f98322217f259e456b",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-codex-0.6.19.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "efb457da960adb1b62f31441fea6c0f5b40b4cde1d6230f98322217f259e456b",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.1.18-macos-x86_64.dmg.sha256",
+      "size": 106,
+      "sha256": "03788c56f78a62669f712eaa39dea7e899c0297de14aec39588092d690e119dd",
+      "server_digest": "sha256:03788c56f78a62669f712eaa39dea7e899c0297de14aec39588092d690e119dd",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "03788c56f78a62669f712eaa39dea7e899c0297de14aec39588092d690e119dd",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-codex-0.6.19.zip",
+      "size": 565333,
+      "sha256": "7e30d88fff25ba13bc4247f0b2de2e2d3d757126ef74a6d10eb555305850e793",
+      "server_digest": "sha256:7e30d88fff25ba13bc4247f0b2de2e2d3d757126ef74a6d10eb555305850e793",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-codex-0.6.19.zip",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "7e30d88fff25ba13bc4247f0b2de2e2d3d757126ef74a6d10eb555305850e793",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.1.18-macos-x86_64.zip.sha256",
+      "size": 106,
+      "sha256": "0bea99ab7328fdacbd6adf71c6ad05b838049a4305fc809bd0b8f1c1917171cb",
+      "server_digest": "sha256:0bea99ab7328fdacbd6adf71c6ad05b838049a4305fc809bd0b8f1c1917171cb",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "0bea99ab7328fdacbd6adf71c6ad05b838049a4305fc809bd0b8f1c1917171cb",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.1.18-macos-x86_64.dmg",
+      "size": 37962260,
+      "sha256": "461676f9f6ea94357413604fe6cc77dfc391ca6b905f472bfe1a4a84ffcd4e0a",
+      "server_digest": "sha256:461676f9f6ea94357413604fe6cc77dfc391ca6b905f472bfe1a4a84ffcd4e0a",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg",
+      "anonymous": true,
+      "method": "anonymous_head_and_tail_ranges_plus_full_build_verification_and_server_digest",
+      "full_file_downloaded_anonymously": false,
+      "samples": [
+        {
+          "start": 0,
+          "end": 65535,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "a6f9ebda8e3b5a7641a3d2b0786f80ca8330e90a84f0c69d17728f58f6d5745b",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 37896724,
+          "end": 37962259,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "7483953cdeef9f983844efca234b86b7967f2fc4ee92d0d782de6fb3da163087",
+          "final_host": "release-assets.githubusercontent.com"
+        }
+      ]
+    },
+    {
+      "name": "story-workbench-0.1.18-macos-x86_64.zip",
+      "size": 26733448,
+      "sha256": "9e59f28bfe17d38014e0eecca620dedddac347f3d1342fc78c0f5a55c34ab1b9",
+      "server_digest": "sha256:9e59f28bfe17d38014e0eecca620dedddac347f3d1342fc78c0f5a55c34ab1b9",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip",
+      "anonymous": true,
+      "method": "anonymous_head_and_tail_ranges_plus_full_build_verification_and_server_digest",
+      "full_file_downloaded_anonymously": false,
+      "samples": [
+        {
+          "start": 0,
+          "end": 65535,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "13980830f88c4401d842bc77e57764f3500d683472eb19ce5e3b2deffc7dbdac",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 26667912,
+          "end": 26733447,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "6f28300ad6f011186161f10ce3090159f80a0298f8f228d97a58bcf4a90625f8",
+          "final_host": "release-assets.githubusercontent.com"
+        }
+      ]
+    },
+    {
+      "name": "story-workbench-0.1.9-windows-x86_64-setup.exe",
+      "size": 183021405,
+      "sha256": "d3ed6b06a71b8ec38f33afea4060cfbb351c9db180e1566d75ac47938bdb7b53",
+      "server_digest": "sha256:d3ed6b06a71b8ec38f33afea4060cfbb351c9db180e1566d75ac47938bdb7b53",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe",
+      "anonymous": true,
+      "method": "anonymous_head_and_tail_ranges_plus_full_build_verification_and_server_digest",
+      "full_file_downloaded_anonymously": false,
+      "samples": [
+        {
+          "start": 0,
+          "end": 65535,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "01520879b2137a22d7d7e8df5c1f14fdd7e2b511414ff4b28988facafabef2a6",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 182955869,
+          "end": 183021404,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "111223ca209418f7bf88ceb295edf5cb327097af7e8c8fdb483509905747137d",
+          "final_host": "release-assets.githubusercontent.com"
+        }
+      ]
+    },
+    {
+      "name": "story-workbench-0.1.9-windows-x86_64-setup.exe.sha256",
+      "size": 114,
+      "sha256": "b4b78297ea93c4000bc8d5d45adc709e748dbea388eeafb04ff23403298629b3",
+      "server_digest": "sha256:b4b78297ea93c4000bc8d5d45adc709e748dbea388eeafb04ff23403298629b3",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "b4b78297ea93c4000bc8d5d45adc709e748dbea388eeafb04ff23403298629b3",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.1.9-windows-x86_64.zip.sha256",
+      "size": 108,
+      "sha256": "27accf28a93bffa8ce9a6223706e58f065088df6316ef444a86fb14db6741e0d",
+      "server_digest": "sha256:27accf28a93bffa8ce9a6223706e58f065088df6316ef444a86fb14db6741e0d",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "27accf28a93bffa8ce9a6223706e58f065088df6316ef444a86fb14db6741e0d",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.1.9-windows-x86_64.zip",
+      "size": 258357237,
+      "sha256": "890c358d5dc68e9628436b8a0c838b9b8d05f95a72d71e64833d5cbba3694e13",
+      "server_digest": "sha256:890c358d5dc68e9628436b8a0c838b9b8d05f95a72d71e64833d5cbba3694e13",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64.zip",
+      "anonymous": true,
+      "method": "anonymous_head_and_tail_ranges_plus_full_build_verification_and_server_digest",
+      "full_file_downloaded_anonymously": false,
+      "samples": [
+        {
+          "start": 0,
+          "end": 65535,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "1fa2bc251f878eb873e000d17768d77c99061194393c20d8e282921ecc428069",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 258291701,
+          "end": 258357236,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "c3e5ed675182ddfbf8822393ea44093074342c6a9ddc6bd7f38765761f784590",
+          "final_host": "release-assets.githubusercontent.com"
+        }
+      ]
+    }
+  ],
+  "scope": "Ten complete anonymous downloads (three skill ZIPs and seven checksums); four desktop binaries sampled at head and tail, bound to full local/native verification and GitHub server digests. Attempts to fully download public Mac binaries were interrupted by partial responses/TLS EOF; no local full public read is claimed.",
+  "build_source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+  "tag_source_commit": "17602e5278b906c0bffd9b2661411b5f8acbb357",
+  "source_equivalence": "build-source-equivalence.json",
+  "release_id": 417484030,
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.19",
+  "published_at": "2026-10-19T21:48:32Z",
+  "latest_tag": "v0.6.19"
+}

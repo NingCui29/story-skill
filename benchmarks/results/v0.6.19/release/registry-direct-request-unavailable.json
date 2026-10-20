@@ -1,0 +1,8 @@
+{
+  "ok": false,
+  "version": "0.6.19",
+  "build_source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3",
+  "tag_source_commit": "17602e5278b906c0bffd9b2661411b5f8acbb357",
+  "source_equivalence": "build-source-equivalence.json",
+  "scope": "Independent read-only registry download; no publish command or user installation"
+}

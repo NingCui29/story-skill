@@ -1,0 +1,87 @@
+{
+  "schema": 3,
+  "date": "2026-10-19T17:02:48.347975+00:00",
+  "ok": true,
+  "git_commit_at_start": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+  "production_commit": "49ef0133fd517a9e12f49fd843941f22448e05a7",
+  "scope": "Final-source targeted local verification and exact four-package reconstruction; historical complete capacity/full-suite runs retain their original 9007 provenance.",
+  "final_delta_report": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/final-delta-verification.json",
+  "final_delta_report_sha256": "a9e5be3c23c6cc6f65d3bea0cfdb336df56ca9068a20431c6ef6a92c1ac76806",
+  "checks": {
+    "cli_smoke": "passed",
+    "chinese_cli_replay": "passed",
+    "long_form_cli_replay": "passed",
+    "schema1_migration_and_rollback": "passed",
+    "managed_replacement_upgrade": "passed",
+    "actual_isolated_install": "passed",
+    "static_current_source_and_packages": "passed",
+    "bridge_targeted_tests": "passed",
+    "production_49ef_equals_candidate": "passed",
+    "source_input_stability": "passed"
+  },
+  "historical_evidence": {
+    "full_scaling": {
+      "status": "historical_passed_not_rerun",
+      "source_commit": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-directory-pin-fix/scaling.json",
+      "sha256": "52020afbd3ed58572499ac49c9cb941aa6089ad426d586958c0fbbccc08a49cb",
+      "cases": 4,
+      "operations": 28,
+      "runtime_matches_fixed_9007": true,
+      "current_runtime_differences": [
+        "story_platform_chrome_bridge.py"
+      ],
+      "scope": "Preserved real full-scale execution from 9007. This is not relabeled as a new final-source execution."
+    },
+    "local_full_suite": {
+      "status": "historical_passed_not_rerun",
+      "source_commit": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-directory-pin-fix/unittest.json",
+      "sha256": "7c134c373be3abd03d93445a118e5cf5e1a52bf5a426ebb37827bdf14ae902c0",
+      "run": 2156,
+      "passed": 2135,
+      "skipped": 21,
+      "failed": 0,
+      "errors": 0,
+      "scope": "Preserved primary-agent full-suite evidence at 9007; final bridge/tests delta verified separately."
+    }
+  },
+  "artifacts": [
+    {
+      "type": "package",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-release/story-skill-0.6.19.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-release/story-skill-0.6.19.zip.sha256",
+      "files": 62,
+      "sha256": "0c337c5d715ce8eb36436727010657d35fd779bd0e92f715110e4b1e626dc9fa",
+      "bytes": 556203
+    },
+    {
+      "type": "claude-package",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-release/story-skill-claude-desktop-0.6.19-r2.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-release/story-skill-claude-desktop-0.6.19-r2.zip.sha256",
+      "files": 64,
+      "sha256": "db6f7fa40580076f36971cb0768ff220e2aae4d1b43300ffb34ae43093480ff9",
+      "bytes": 562392
+    },
+    {
+      "type": "codex-package",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-release/codex/story-skill-codex-0.6.19.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-release/codex/story-skill-codex-0.6.19.zip.sha256",
+      "files": 67,
+      "sha256": "3cb025a96dce68c73d8d84a5d06911436d3690e9ba5a3fc886f3488aeff5aeb9",
+      "bytes": 564696
+    },
+    {
+      "type": "npm-local",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-release/npm/ningcui29-story-skill-0.6.19.tgz",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-release/npm/ningcui29-story-skill-0.6.19.tgz.sha256",
+      "files": 65,
+      "sha256": "cb715af005b7975b81eeaff18f6a02bf76c583f57e77fbb61028fe77ca60d717",
+      "bytes": 505183
+    }
+  ],
+  "remote_validation": {
+    "production_49ef_windows_platform_preflight": "Both Windows versions reported passed by primary agent; CI evidence owned by primary agent.",
+    "a9b36e3_windows_cross_process_ci": "Await primary-agent actual Windows CI evidence; local targeted module does not substitute for it."
+  }
+}

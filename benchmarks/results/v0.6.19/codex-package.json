@@ -1,0 +1,14 @@
+{
+  "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-final-source/codex/story-skill-codex-0.6.19.zip",
+  "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-final-source/codex/story-skill-codex-0.6.19.zip.sha256",
+  "marketplace_root": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-final-source/codex/story-skill-codex-0.6.19",
+  "plugin_root": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-final-source/codex/story-skill-codex-0.6.19/plugins/story-skill",
+  "version": "0.6.19",
+  "skill_count": 8,
+  "payload_files": 65,
+  "bundle_files": 67,
+  "sha256": "7e30d88fff25ba13bc4247f0b2de2e2d3d757126ef74a6d10eb555305850e793",
+  "source_payload_files": 62,
+  "adapted_ui_files": 8,
+  "source_commit": "6ec177a113526bb3321a310efd1e78ee717056f3"
+}

@@ -1,6 +1,6 @@
 # 安装或升级 Story Skill
 
-**本轮发布版本：v0.6.19，发布验收中。** 八技能源清单为 62 个文件，运行时需要 Python 3.10 或更新版本；固定标签目标为 `v0.6.19`，版本分支为 `version-0.6.19`。下载、安装、CI 与 Packages 的实际结果以[发布记录](docs/releases/v0.6.19.md)为准，下列本版附件链接待正式发布后可用。上一正式版见 [v0.6.18](docs/releases/v0.6.18.md)。
+**已发布版本：v0.6.19。** 八技能源清单为 62 个文件，运行时需要 Python 3.10 或更新版本；固定标签为 `v0.6.19`，版本分支为 `version-0.6.19`。固定标签安装、下载、CI 与 Packages 结果见[发布记录](docs/releases/v0.6.19.md)。上一正式版见 [v0.6.18](docs/releases/v0.6.18.md)。
 
 本版整合工作台界面、作品管理、备份恢复、检查更新与下载进度，以及受控平台草稿功能。番茄已有指定合成稿的完整链路证据；七猫、起点、多卷与真实分页待实页验收。写前交接、偏好召回、题材写法、语义审查和采用关系继续保留，详见[本版变化与范围](docs/releases/v0.6.19.md)。
 
@@ -12,7 +12,7 @@
 
 ## Claude 桌面版：导入单技能包
 
-**桌面包使用带 `-r2` 的文件。** v0.6.19 构建目标为 `story-skill-claude-desktop-0.6.19-r2.zip`，整个 ZIP 只保留一个 `story-skill/SKILL.md`；内嵌流程使用普通 `GUIDE.md`，并转换相关引用。v0.6.12 原桌面包在子目录中还含8个 `SKILL.md`，曾被导入器以“Currently there are 9”拒绝，已由该版 r2 替代；原附件与更正记录保留。标准八技能 ZIP 用于目录安装，不用于桌面单技能上传。
+**桌面包使用带 `-r2` 的文件。** v0.6.19 发布文件为 `story-skill-claude-desktop-0.6.19-r2.zip`，整个 ZIP 只保留一个 `story-skill/SKILL.md`；内嵌流程使用普通 `GUIDE.md`，并转换相关引用。v0.6.12 原桌面包在子目录中还含8个 `SKILL.md`，曾被导入器以“Currently there are 9”拒绝，已由该版 r2 替代；原附件与更正记录保留。标准八技能 ZIP 用于目录安装，不用于桌面单技能上传。
 
 下载本版 [Claude 桌面专用包](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip.sha256)。也可在 v0.6.19 源码根目录构建：
 
@@ -234,15 +234,15 @@ python3 -B -X utf8 scripts/install.py --host trae-cn --project "<写作项目根
 
 ## macOS 客户端
 
-本版目标为 Intel Mac 客户端 **0.1.18 / build 19**，内含 Python 3.12 与 Story Skill 0.6.19。下载 [DMG 安装包](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg.sha256)，核对后挂载并将应用拖入 Applications；也可使用 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip.sha256)。
+本版提供 Intel Mac 客户端 **0.1.18 / build 19**，内含 Python 3.12 与 Story Skill 0.6.19。下载 [DMG 安装包](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg.sha256)，核对后挂载并将应用拖入 Applications；也可使用 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip.sha256)。
 
-客户端采用本地临时签名，未经 Apple 公证；Apple Silicon 尚未验证。它不自动安装八技能。本轮构建、签名、隔离运行与正式附件回下载待核验，见[客户端说明](desktop/macos/README.md)和[发布记录](docs/releases/v0.6.19.md)。历史附件保留在对应 Release。
+客户端采用本地临时签名，未经 Apple 公证；Apple Silicon 尚未验证。它不自动安装八技能。本轮构建、严格临时签名、隔离 CLI／原生自检及 ZIP／DMG 验证已通过，实际分发核验范围见[客户端说明](desktop/macos/README.md)和[发布记录](docs/releases/v0.6.19.md)。历史附件保留在对应 Release。
 
 ## Windows 客户端
 
-本版目标为 Windows x64 客户端 **0.1.9**，内含 Python 与 Story Skill 0.6.19。下载[安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe.sha256)，核对后按向导安装；便携使用可下载[完整 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64.zip.sha256)，解压后运行 `StoryWorkbench.exe`。
+本版提供 Windows x64 客户端 **0.1.9**，内含 Python 与 Story Skill 0.6.19。下载[安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe.sha256)，核对后按向导安装；便携使用可下载[完整 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64.zip.sha256)，解压后运行 `StoryWorkbench.exe`。
 
-安装程序未做代码签名。本轮 Windows 构建、安装、原生窗口、卸载与第三方许可核对待核验；人工验收及系统覆盖以[Windows 说明](desktop/windows/README.md)和[发布记录](docs/releases/v0.6.19.md)为准。
+安装程序未做代码签名。本轮原生 Windows CI 已核验构建、安装、窗口、卸载、完整安装载荷与源码，并逐文件核对随包许可清单。Windows 10／11 用户人工验收和实际下载范围见[Windows 说明](desktop/windows/README.md)与[发布记录](docs/releases/v0.6.19.md)。
 
 升级任一客户端前，保存桌面和外部浏览器全部页面需要保留的文字，退出旧客户端后再安装。已运行的工作台服务可能继续使用旧代码，应在保留编辑后按服务管理流程更新；安装包不会自动结束编辑会话。
 

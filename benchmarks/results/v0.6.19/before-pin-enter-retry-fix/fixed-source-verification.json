@@ -1,0 +1,34 @@
+{
+  "schema": 3,
+  "date": "2026-10-19T17:19:17.659906+00:00",
+  "ok": true,
+  "git_commit": "c332265fcbf7611341a1197d5fe6b26f75a98d7d",
+  "previous_candidate": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+  "files": 89,
+  "production_inputs": 87,
+  "source_input_snapshot_sha256": "170567ec73c7058e6dcc0e1aa4882c9cea69ed1c199e23ca1189e39908b5d98d",
+  "worktree_changed": [],
+  "different_from_fixed_commit": [],
+  "production_inputs_different_from_a9": [
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py"
+  ],
+  "candidate_changed_paths": [
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+    "tests/test_platform_chrome_bridge.py"
+  ],
+  "bridge_delta": {
+    "a9_sha256": "8821c0e557fc07f347b8fa0cc13b2b833644cba85730de37047202d04a44f761",
+    "candidate_sha256": "669de3dec0d244d977cc43caea5ce5226b69f7dea5e9458ffd2e01a76a716e9e"
+  },
+  "remote_source": {
+    "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/remote-source",
+    "preparation_report": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/remote-source-prepared.json",
+    "preparation_report_sha256": "9a8d4642352ffd917db306660a19778a19f3ebe6f80addb066ca36cc80bd96b1",
+    "verified_files": 64,
+    "on_disk_remote_bytes_still_match_fixed_commit": true,
+    "different_files": [],
+    "tag_verified": false,
+    "downloaded_installer_executed": false
+  },
+  "scope": "Current 89 inputs equal fixed c332; compared with a9, only the bridge production module differs. Prepared remote bytes match actual GitHub blob IDs and local fixed Git bytes. This does not verify or install a tag."
+}

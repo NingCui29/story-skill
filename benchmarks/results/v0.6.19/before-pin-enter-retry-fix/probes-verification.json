@@ -1,0 +1,116 @@
+{
+  "schema": 4,
+  "date": "2026-10-19T17:21:53.836949+00:00",
+  "ok": true,
+  "git_commit_at_start": "c332265fcbf7611341a1197d5fe6b26f75a98d7d",
+  "scope": "c332 candidate: new exact four-package builds, minimal runtime/installation checks and real remote source preparation. Earlier full capacity and CLI runs retain their original source. No tag is asserted or downloaded installer executed yet.",
+  "final_delta_report": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/final-delta-verification.json",
+  "final_delta_report_sha256": "3f4e55ba83b6ef1449aab219cc2e7faab371addd967044df8f64920e1ed681e9",
+  "checks": {
+    "current_source_and_four_packages": "passed",
+    "necessary_local_candidate_install": "passed",
+    "fixed_commit_and_single_production_delta": "passed",
+    "source_input_stability": "passed",
+    "real_remote_fixed_commit_preparation": "passed",
+    "primary_executed_current_platform_suite": "passed"
+  },
+  "historical_evidence": {
+    "a9_targeted_cli_and_migration_upgrade": {
+      "status": "historical_passed_not_rerun",
+      "source_commit": "a9b36e399038d5c411bddc728662c3867e7f5a43",
+      "scope": "a9 smoke/Chinese/long/migration/upgrade kept at their actual source. c332 CI separately runs current CLI acceptance; these files are not relabeled as c332 executions.",
+      "reports": {
+        "smoke.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/smoke.json",
+          "sha256": "8d4724bd559223be09bcf9f960773894b778db5c4586a137ef709e4fb36b4656"
+        },
+        "chinese.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/chinese.json",
+          "sha256": "1fc7abb58fb231c6088fbec913c9f96cf048e15424f99a633230d5e623f85f33"
+        },
+        "long.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/long.json",
+          "sha256": "62497749410466bfea84eca5c6068a5976d9c7d7a402bf2a5ae4ef92316731df"
+        },
+        "migration.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/migration.json",
+          "sha256": "2c19666d682562fff8e0dadca6bec4b2497c6d300d47770a6413fe2015f8594a"
+        },
+        "upgrade.json": {
+          "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/upgrade.json",
+          "sha256": "c2ffe0ffe60ca6cad1fc973de05b81186f43e2d37b183451e1e864b0026fd65f"
+        }
+      },
+      "previous_delta_report": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-sharing-retry-fix/final-delta-verification.json",
+      "previous_delta_report_sha256": "a9e5be3c23c6cc6f65d3bea0cfdb336df56ca9068a20431c6ef6a92c1ac76806"
+    },
+    "9007_full_capacity_and_local_suite": {
+      "full_scaling": {
+        "status": "historical_passed_not_rerun",
+        "source_commit": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+        "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-directory-pin-fix/scaling.json",
+        "sha256": "52020afbd3ed58572499ac49c9cb941aa6089ad426d586958c0fbbccc08a49cb",
+        "cases": 4,
+        "operations": 28,
+        "runtime_matches_fixed_9007": true,
+        "current_runtime_differences": [
+          "story_platform_chrome_bridge.py"
+        ],
+        "scope": "Preserved real full-scale execution from 9007. This is not relabeled as a new final-source execution."
+      },
+      "local_full_suite": {
+        "status": "historical_passed_not_rerun",
+        "source_commit": "9007f5d8463399eace6f1e98c51993893d2c8e80",
+        "path": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/v0.6.19/before-directory-pin-fix/unittest.json",
+        "sha256": "7c134c373be3abd03d93445a118e5cf5e1a52bf5a426ebb37827bdf14ae902c0",
+        "run": 2156,
+        "passed": 2135,
+        "skipped": 21,
+        "failed": 0,
+        "errors": 0,
+        "scope": "Preserved primary-agent full-suite evidence at 9007; final bridge/tests delta verified separately."
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "type": "package",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/story-skill-0.6.19.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/story-skill-0.6.19.zip.sha256",
+      "files": 62,
+      "sha256": "d7c818b3388e007549b194dad5845521a1c6ce44262f44c33d87273e297ecb49",
+      "bytes": 556647
+    },
+    {
+      "type": "claude-package",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/story-skill-claude-desktop-0.6.19-r2.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/story-skill-claude-desktop-0.6.19-r2.zip.sha256",
+      "files": 64,
+      "sha256": "b0ab050d8c44a103bd5160f2044d145e84f303387ee8e4d4479394faab661e24",
+      "bytes": 562836
+    },
+    {
+      "type": "codex-package",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/codex/story-skill-codex-0.6.19.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/codex/story-skill-codex-0.6.19.zip.sha256",
+      "files": 67,
+      "sha256": "929b9346710c65d6e490b2ac367911d27073dba23f4297c2c87735b1f50c5054",
+      "bytes": 565140
+    },
+    {
+      "type": "npm-local",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/npm/ningcui29-story-skill-0.6.19.tgz",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.19-candidate/npm/ningcui29-story-skill-0.6.19.tgz.sha256",
+      "files": 65,
+      "sha256": "6693418090fb97afeac608e8d80aa42023444e786a2fe4efe2af1d2f1b5f802c",
+      "bytes": 505575
+    }
+  ],
+  "primary_owned_evidence": {
+    "local_full_suite": "unittest-final.json is not modified by this agent; primary agent owns final source binding.",
+    "source_ci_run": 39291742524,
+    "source_ci_status": "Await primary-agent complete c332 Linux/Windows CI evidence; both 192-test Windows platform preflights were reported passed.",
+    "desktop_ci": "Mac/Codex and Windows desktop evidence are owned by their designated agents.",
+    "fixed_tag_install": "Not performed; await creation of actual annotated v0.6.19 ref. Prepared raw official installer will be used only after tag/ref/commit verification."
+  }
+}
