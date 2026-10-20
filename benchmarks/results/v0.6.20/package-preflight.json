@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "ok": true,
+  "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4",
+  "versions": {
+    "runtime_plugin": "0.6.20",
+    "mac": "0.1.19",
+    "mac_build": "20",
+    "windows": "0.1.10"
+  },
+  "packaging_modules_initial_run": {
+    "tests": 145,
+    "failure_entries": 2,
+    "reason": "One obsolete negative installation fixture still rejected newly supported0.6.20; both failure entries belong to that same test. The negative case now uses0.6.21.",
+    "source_state": "0.6.20 version-preparation working tree; not represented as a new complete fixed-source145-test execution after the fixture correction.",
+    "modules": [
+      "tests.test_package",
+      "tests.test_package_claude",
+      "tests.test_package_codex",
+      "tests.test_package_npm",
+      "tests.test_sync_packages",
+      "tests.test_install_suite",
+      "tests.test_verify_codex_plugin"
+    ]
+  },
+  "installation_suite_after_fix": {
+    "tests": 27,
+    "failures": 0,
+    "errors": 0,
+    "duration_seconds": 46.31,
+    "module": "tests.test_install_suite",
+    "fixture_is_in_final_source": true
+  },
+  "unmodified_other_packaging_modules_initial_run_passed": true,
+  "desktop_update_regression": {
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "duration_seconds": 10.28
+  },
+  "historical_compatibility": {
+    "ok": true,
+    "historical_versions_compared": 20,
+    "wrapper_modes_per_version": 2,
+    "historical_layouts_and_wrapper_bytes_unchanged": true,
+    "new_version": "0.6.20",
+    "new_payload_files": 62,
+    "new_skills": 8,
+    "plugin_version": "0.6.20",
+    "mac_version": "0.1.19",
+    "mac_build": "20",
+    "windows_version": "0.1.10",
+    "future_versions_rejected": true,
+    "release_build_performed": false
+  },
+  "private_development_evidence_used": false,
+  "full_packaging145_reexecuted_after_fixture_correction": false
+}

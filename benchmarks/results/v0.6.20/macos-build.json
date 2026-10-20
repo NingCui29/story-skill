@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "application": "<repo>/dist/release-v0.6.20-candidate/写作工作台.app",
+  "app_version": "0.1.19",
+  "story_version": "0.6.20",
+  "architecture": "x86_64",
+  "minimum_macos": "13.0",
+  "runtime_version": "Python 3.12.14",
+  "runtime_files": {
+    "story.py": "34583a5793c79ea5e0d70d52750804f33c723a8367d6dfa76cd93823c863050f",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+    "story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+    "story_workbench.py": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+    "story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+    "story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+    "story_platform_chrome_bridge.py": "ea5d9b8cef40acef7749f534f1507130a0c068cf043aaece9bfc2964c8fdc384",
+    "story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+    "story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+    "story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7"
+  },
+  "native_source_sha256": "42ececb4ffb9c62176091aa3a69ad60d6b2b4800556974700e84fe39c0efd779",
+  "native_sources": {
+    "StoryWorkbench.swift": "42ececb4ffb9c62176091aa3a69ad60d6b2b4800556974700e84fe39c0efd779",
+    "ClientInstance.swift": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9"
+  },
+  "launcher_sha256": "55348b7d57897c3740a13fdd00a383a90187bdb4e6721a9a74c3a92f2198090c",
+  "editor_appearance_sha256": "0109acb81513bd2a2a533fd8039f33532e00f5c3cdf86875f2f08b71aed0448d",
+  "local_build": true,
+  "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4"
+}

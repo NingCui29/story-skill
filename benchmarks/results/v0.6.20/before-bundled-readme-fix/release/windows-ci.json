@@ -1,0 +1,2109 @@
+{
+  "schema": 1,
+  "ok": true,
+  "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4",
+  "collected_at_utc": "2026-10-20T12:38:35.131586+00:00",
+  "run_id": 39422547246,
+  "url": "https://github.com/NingCui29/story-skill/actions/runs/39422547246",
+  "jobs": [
+    {
+      "id": 118626889583,
+      "name": "windows",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Probe book management before desktop build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m pip install -r desktop/windows/requirements-build.txt",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test draft publishing safety",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test desktop launcher and Windows paths",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test book management and native recycle bridge",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build standalone candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build installer",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Test installation and native window",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve standalone distribution verification",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "log": {
+        "path": "dist/release-v0.6.20-candidate/job-118626889583.log",
+        "bytes": 93867,
+        "sha256": "afd0d1c8a6e7335a1ba5e76c08037c22f37a540d08b05fce0b8a21b7d6a14a61"
+      }
+    },
+    {
+      "id": 118629917525,
+      "name": "publish-draft",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Download this run's verified Windows artifacts",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload only to the specified matching draft",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve draft upload receipt",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "log": {
+        "path": "dist/release-v0.6.20-candidate/job-118629917525.log",
+        "bytes": 18090,
+        "sha256": "5fa7d3934d5eb9631b294d992895073f2b5c3cc7b162d61370141c841c66f236"
+      }
+    }
+  ],
+  "logs": [
+    {
+      "job_id": 118626889583,
+      "path": "dist/release-v0.6.20-candidate/job-118626889583.log",
+      "bytes": 93867,
+      "sha256": "afd0d1c8a6e7335a1ba5e76c08037c22f37a540d08b05fce0b8a21b7d6a14a61",
+      "checkout_lines": [
+        94
+      ],
+      "test_summaries": [
+        {
+          "line": 225,
+          "text": "Ran 18 tests in 12.655s"
+        },
+        {
+          "line": 227,
+          "text": "OK"
+        },
+        {
+          "line": 374,
+          "text": "Ran 133 tests in 16.857s"
+        },
+        {
+          "line": 376,
+          "text": "OK (skipped=13)"
+        },
+        {
+          "line": 420,
+          "text": "Ran 31 tests in 2.994s"
+        },
+        {
+          "line": 422,
+          "text": "OK (skipped=2)"
+        }
+      ]
+    },
+    {
+      "job_id": 118629917525,
+      "path": "dist/release-v0.6.20-candidate/job-118629917525.log",
+      "bytes": 18090,
+      "sha256": "5fa7d3934d5eb9631b294d992895073f2b5c3cc7b162d61370141c841c66f236",
+      "checkout_lines": [
+        95
+      ],
+      "test_summaries": []
+    }
+  ],
+  "small_artifacts": [
+    {
+      "id": 12265082082,
+      "name": "story-workbench-0.1.10-windows-x86_64-verification",
+      "size_in_bytes": 232602,
+      "digest": "sha256:bffc1a23d841c11ed7e222386876b6792ed2166250963b4fb77f77cc2d3aa7b1",
+      "expired": false,
+      "download": {
+        "path": "dist/release-v0.6.20-candidate/windows-verification.zip",
+        "bytes": 232602,
+        "sha256": "bffc1a23d841c11ed7e222386876b6792ed2166250963b4fb77f77cc2d3aa7b1"
+      }
+    },
+    {
+      "id": 12264143687,
+      "name": "story-workbench-0.1.10-windows-draft-upload",
+      "size_in_bytes": 9786,
+      "digest": "sha256:08895f4fb7b262a6f54bcceffd81ded00fb164637e7475c06a29d4ee246613f0",
+      "expired": false,
+      "download": {
+        "path": "dist/release-v0.6.20-candidate/windows-draft-upload.zip",
+        "bytes": 9786,
+        "sha256": "08895f4fb7b262a6f54bcceffd81ded00fb164637e7475c06a29d4ee246613f0"
+      }
+    }
+  ],
+  "native_verification": {
+    "ok": true,
+    "repository": "NingCui29/story-skill",
+    "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4",
+    "story_version": "0.6.20",
+    "client_version": "0.1.10",
+    "assets": {
+      "story-workbench-0.1.10-windows-x86_64-setup.exe": {
+        "bytes": 183018999,
+        "sha256": "0a57bfde4c2053ae8d4c9d95ae12b4f51d02adad6e21b47a8439972898ffd586"
+      },
+      "story-workbench-0.1.10-windows-x86_64-setup.exe.sha256": {
+        "bytes": 115,
+        "sha256": "fddcaccba526d1534fd61f89bd9e36fee12ab4e3e692eded76a4b07fcc29cdcd"
+      },
+      "story-workbench-0.1.10-windows-x86_64.zip": {
+        "bytes": 258360655,
+        "sha256": "783362b2518008e6ccb79170ede7ebe9922a228d71896772fcf4f0c3e93b869c"
+      },
+      "story-workbench-0.1.10-windows-x86_64.zip.sha256": {
+        "bytes": 109,
+        "sha256": "564ad13738bd2c774811b9217a0234c8a5d5e4c95a72367562ba726b4d5be69f"
+      }
+    },
+    "portable_crc_and_safe_paths": true,
+    "manifest_sha256": "eecef9ac8eb911768f8c50609cbe3f40b225f27f089f8f1cac42740a106abd3f",
+    "manifest_files_verified": 3706,
+    "runtime_sha256": {
+      "story.py": "34583a5793c79ea5e0d70d52750804f33c723a8367d6dfa76cd93823c863050f",
+      "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+      "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+      "story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+      "story_workbench.py": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+      "story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+      "story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+      "story_platform_chrome_bridge.py": "ea5d9b8cef40acef7749f534f1507130a0c068cf043aaece9bfc2964c8fdc384",
+      "story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+      "story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+      "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+      "story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7"
+    },
+    "installed_manifest_files_verified": 3706,
+    "installed_tree_verified": true,
+    "offline_webengine_component_pages": 124,
+    "mapped_source_sha256": {
+      "backend_runner.py": "c6ce1d77714220a18cc5bcdad1b22b179dbf479f820c76f4ca1f424fc03f372e",
+      "StorySkill-LICENSE.txt": "f34a779bf87b330af68a9f9cbdb84bcf8d32163eddf3345ab3b1bb71e6141ae6",
+      "README.md": "d163bb508d701c57273bd4aa4bc76403ce499d99acb3501cad3425f2230f8098"
+    },
+    "supplementary_notice_manifest_sha256": "773dc1092a5b056bce6d40359c7916f8f8def257757902a24f04beaa9ad0dfe8",
+    "supplementary_notice_files_verified": 131,
+    "supplementary_notice_sha256": {
+      "GPL-2.0-only.txt": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+      "GPL-3.0-only.txt": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "LGPL-3.0-only.txt": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "QtWebEngine/README.md": "91ca5b5391c0e2fb1e1415fd2d4f69323d52e15da280ae2b664527f7c3645263",
+      "QtWebEngine/component-001.html": "02b56640a8bbe8988e00c3e8f54c497543523c724feddc1c87602ed887ad6d00",
+      "QtWebEngine/component-002.html": "8371c05fcc85715b46eac1ab65122241558e73bf694696311685aa6d10425187",
+      "QtWebEngine/component-003.html": "d3c0c91a5d5dba2f026f2a59e7f09249a34252b2cfa93990d7b31e4646edfa2d",
+      "QtWebEngine/component-004.html": "a1e8d257e7cea21ae21ff4579c72194ab30266fd56c8f78b0cfac45750eb762d",
+      "QtWebEngine/component-005.html": "53acf24138ca08e906afc3ec2809680ecaf0ee0d858a39a09d134eb18504e8ec",
+      "QtWebEngine/component-006.html": "80bc9894cc559ad44c52ddab33a3095c867790e807c4f35b5517f4c401c5aaed",
+      "QtWebEngine/component-007.html": "6ef6247ddbc48c91ef8f10470142f668e53b23eb97446909d2c872ed570a097b",
+      "QtWebEngine/component-008.html": "e6c2fbc5a0d5acf132caa052c53e9013b68be3152b46c57dd858567c75bc5c6a",
+      "QtWebEngine/component-009.html": "65b45663aeda7dc45a2b1b42ac70bfb2b4d807e95f0be3997d9d356b6138541a",
+      "QtWebEngine/component-010.html": "900a3dbe5eeb8b1c0a98b9c6f9c59fed435588c567a10a35b0f01a0bcab053e4",
+      "QtWebEngine/component-011.html": "b607d3ef4006b5be228af535791bbd5a470e904e5e22b43d11907f6a82fbe900",
+      "QtWebEngine/component-012.html": "3d9141df889bd33e21b311337162b34cbf0282929a012217f24e4aa8177aec15",
+      "QtWebEngine/component-013.html": "e5efe8482de2348979550f41990859f7bfb9171a114c8bc133c1193bc772f973",
+      "QtWebEngine/component-014.html": "18e8833ff1a6795df97aafa62cc4cc739e1f4e56c1e1149b453d4257223a1fcc",
+      "QtWebEngine/component-015.html": "a58d368e077537a41e87b0f15c0c99e6d89db08b8ead870d9cc0f53c2c905314",
+      "QtWebEngine/component-016.html": "a995916ea6cc466a4a0a01025e86bfac4fe41d85d9632c6f8c9c910967b7c30e",
+      "QtWebEngine/component-017.html": "d09790c9cd2beffdc94579f2a6d6092a6caa6b845468f0bddf8f6ebdb3f21008",
+      "QtWebEngine/component-018.html": "ad7d24fd017670aaa66ff382a94aedccc3ae0643d6f816f2bfb3bde0403dc1c7",
+      "QtWebEngine/component-019.html": "59a62661c032e9332405193c5c25277327eafec90917f8f9c2352ea37d0f7e5b",
+      "QtWebEngine/component-020.html": "470f5471e2f04626069569f1b095f4c23dfcc7a04612f5cbd8008fb274d16431",
+      "QtWebEngine/component-021.html": "940cb6e330c527edfd2ab06c6b9a1be5038954d552eeba8acdfcc8ba01d4bed0",
+      "QtWebEngine/component-022.html": "def9b8b95934943ce811ce1218d8d44253c7f36e22b961508c906dadff2093ea",
+      "QtWebEngine/component-023.html": "4e93280a9eff42a7011bc797aaf4176657340406382608ab0926a17e9e3f68bd",
+      "QtWebEngine/component-024.html": "ba4f3f0e9fa376cb58933f0ed5d3de847455cb82ec206630f8e8cb9a8f2cc58f",
+      "QtWebEngine/component-025.html": "2a64768a389b774ca249422b19cc12bcb5ef15278d805551ee5ae785317b5236",
+      "QtWebEngine/component-026.html": "ae1e823734b2d82878540a57144364cac8d1ecfc7c01491b64eac363b82d7d60",
+      "QtWebEngine/component-027.html": "79390ae7881d910ca91f7867c10b7211758af39fbd482f83210d4445569f1067",
+      "QtWebEngine/component-028.html": "c06697a866490a78b426a142b80a19ea4d5e46c67ef64c2152e8afe5a2da5f6b",
+      "QtWebEngine/component-029.html": "83158db2a45bdeec0c9818b2ba4abfa89d1962ac462c8bb19712af56a0d2be77",
+      "QtWebEngine/component-030.html": "f76e3ff9a4443e8788d7553e1583977b4a5748032dfe6b2f9799fb069fc70415",
+      "QtWebEngine/component-031.html": "1395edcdf22c9a3f386025b1d2db343bfbfc8b77f40d24020332026dc4b4c77e",
+      "QtWebEngine/component-032.html": "8abe6705c46a94df3f1d0b317eba0b1e761593991ea2d95cb7ba327856ba02f6",
+      "QtWebEngine/component-033.html": "356f7dacc297b78c2a1e131b429a174ebe89bb4478987b2bc60374e00d305b9b",
+      "QtWebEngine/component-034.html": "614a90961897dfcdaf02e7e8da568ce79c069f8f70530a503eeb632d4d6f3002",
+      "QtWebEngine/component-035.html": "e222ecf7da2a4825fed589282eb0402717ec45719b0e91b0863a6f66571c4be1",
+      "QtWebEngine/component-036.html": "d08bfe4dac532ccf1aa569927ad686f200c99782eec93d6c63e3e365380b3357",
+      "QtWebEngine/component-037.html": "9c25cfe567cc8874300945b16c0026ac0d259d6875b7f9ec8abd77486200a7da",
+      "QtWebEngine/component-038.html": "c8c2325b83bca158761652ee7e4c3eb09cb6ce7924d31281b2db48a2e190597c",
+      "QtWebEngine/component-039.html": "644ba96beb4dafffa9b17b045e0b582ac0f8311a7083a7537257f17f278e95d4",
+      "QtWebEngine/component-040.html": "78854e7e6de9eeec532260858e99be0bc0f408772c291d7f16317ff6c0dfe275",
+      "QtWebEngine/component-041.html": "6ccc47f6a3727e1241e1cc6c323a8e30ed0fbebc6918b85a3a0b16a4c84ac5cb",
+      "QtWebEngine/component-042.html": "fde367a104e9f7788620fb53089faf63329eee50699380baf1d178b43ee5c2f2",
+      "QtWebEngine/component-043.html": "a020cc63939b8f152755e5ae9fe4fc3aa7b7281fe449ef53a4af75f20db1a228",
+      "QtWebEngine/component-044.html": "23d30727f5ee48089dd8aec6700d3178669a058c56edd49d1e4d4e034e51d484",
+      "QtWebEngine/component-045.html": "3817e60585f5805c36158dd161c2ced7dcb1eeec0ed6eda30d5c4c26f2502a7b",
+      "QtWebEngine/component-046.html": "01750d05ba108ef9c5729629ad9e29d837366047568482d8445c5a3a066d1ee6",
+      "QtWebEngine/component-047.html": "d8f82956408b6cd9f07a90a5842715f899e82fc2e12c73b512c0d3fcf49ffcc5",
+      "QtWebEngine/component-048.html": "c975c94d848cbcebb415f77b5dc4de6fac01529f30833fa2675bea6ff87ca0db",
+      "QtWebEngine/component-049.html": "f015630b814bd9ecba187a5d29ac1955e851c565b981ae9204ccde47edeefca7",
+      "QtWebEngine/component-050.html": "cb246ff00376e2763fb0f71a3fbad3cb85c1caee5cf1328d4543d29114e1269d",
+      "QtWebEngine/component-051.html": "7d36683ce5cd651a9a5379aed83cd447624d43477f4d3cbe966b630598a3c1b6",
+      "QtWebEngine/component-052.html": "8f5fb72d1c0728f7888a095ddcb66cd24645f0691f6650815c43549e8fd97365",
+      "QtWebEngine/component-053.html": "db3b04d0654080f713ffcffbd0aaedd357ce8fa0c492212feb379dd0ce1fd78c",
+      "QtWebEngine/component-054.html": "518aedff7a74d39f86352d39f5375b6ee9e1667aa14611ba27bba62ba4b1fd48",
+      "QtWebEngine/component-055.html": "5c7f28d4421e9d06e83ddbccf67e773890b53c91f56f22657961a0884596dca3",
+      "QtWebEngine/component-056.html": "53305ca55315c5ac3a9288cb39b1124235c6ef0da7969ea6acea858059bade15",
+      "QtWebEngine/component-057.html": "482662f816a729dbb92f008f0036da5d0a6ccd55124f44a435ff3f9ed99e74af",
+      "QtWebEngine/component-058.html": "ef2d269c42c2b7a1cece0234ad57af01194086f21422bd9b17c440d4d0b38d64",
+      "QtWebEngine/component-059.html": "3cee571ca6683375ba6b4881ad6d9df162a9523283577f397d22e35a519716bc",
+      "QtWebEngine/component-060.html": "527bf997a256c53ee0e53ecf2ae900cb288ce02bf213c318ea74cdced1a9da2c",
+      "QtWebEngine/component-061.html": "df1fbb49fd713cb3808b02f2d04f2beb7d4f74f7eb7410ef0f956e5d2bcf471d",
+      "QtWebEngine/component-062.html": "a673f5c8adfdf8b4d821b0e325a1e1d21f9e6844a26537e4c7487105d68051af",
+      "QtWebEngine/component-063.html": "c7f01ebe08324b308321c6037674e6b8aa4a51c35bbd38bfed31cc6c35e4ab0e",
+      "QtWebEngine/component-064.html": "7c56eaffb78e203df218f3baafef5d95162751dc98a83973221271e67e213088",
+      "QtWebEngine/component-065.html": "c37d0258d38d8719d41c1addef9bd6939329e19f6347a28cc38601cb4a29ba14",
+      "QtWebEngine/component-066.html": "c1730877002ac6283c57ebf4104ea0a76b919cde64d2d726b78076db2dce6809",
+      "QtWebEngine/component-067.html": "dee664d47ae9bdff10fae0d398c0a55a839190c7eb875ae2adf9d7934e6d46b6",
+      "QtWebEngine/component-068.html": "3407cf928380bd8f0789775e3a67703dbe457d31811213a8de6d95e211b4c84c",
+      "QtWebEngine/component-069.html": "e005416254acc948e18d99c2766d5d7d95d543f4b7a3c35e405f2b3d185fe953",
+      "QtWebEngine/component-070.html": "5c734df7e20c82b0314a4a17def7b6fdd7f230ae8804b0a10444f09681700a64",
+      "QtWebEngine/component-071.html": "dbaa5917235c64a9b87ab41b4767c5b0611a8638bdb2ede2ea52581386520c18",
+      "QtWebEngine/component-072.html": "43cd47fbaa8fbdbf5f951de0ac529d8b880697d31d192dfd9daddcf7fd12bc2d",
+      "QtWebEngine/component-073.html": "4c18a7c1ca3a84dfb63a69d046734cba9a9440c1892b5655574eeb4c026991e3",
+      "QtWebEngine/component-074.html": "a01d3d7c6a89baa2d3a2d8be0ddaf5db9fe1ed653b21342c1c8e36386a694d12",
+      "QtWebEngine/component-075.html": "59670d52c7f223c92f46bf5db4b88e2565376735057712c93e8ac688ddedb2d5",
+      "QtWebEngine/component-076.html": "2b2d0415b2ac57c1dc4a9047c3362e60d2cab5c596ad9912179105394749de6e",
+      "QtWebEngine/component-077.html": "88bfaaa88e9149cccfb158a097946da5101c25407831591c8e28014b76fb8069",
+      "QtWebEngine/component-078.html": "ed413cc246de550bcaa4777ccd4f0b635289fbd73a676bc55e15e6fa11ad841d",
+      "QtWebEngine/component-079.html": "e5a3f38d7c171d9bfbe0a79c7553566dfe09301d1c9567b0590faf7682da07ac",
+      "QtWebEngine/component-080.html": "126646b4584868a1890afba2d0b1c5056dc669faa8063b152683b753e88eff0e",
+      "QtWebEngine/component-081.html": "9658487e225527bc2d36d2f51775fe888dbf7989cfa0bfa3d963c614381a50ad",
+      "QtWebEngine/component-082.html": "2ff5b57883051e7864579ec3ab05e899f4403907653c8ec972c1910a54952349",
+      "QtWebEngine/component-083.html": "36b4b0c41b82a754089b8b95b399d46e9faf31e5de8cbc00af80c7d732255081",
+      "QtWebEngine/component-084.html": "0e502d1e0ccc1d56cf01dfc6caab2b1c8325c044815281f104183cb6dc6d0d5e",
+      "QtWebEngine/component-085.html": "028ae09e0cfb891d2e8f82ca9e06794621a64e5d3426c40fcc7e85bb2e2360b9",
+      "QtWebEngine/component-086.html": "fa31ca192c12bbb7679fefa7cd5f56af7f699bedefb91a30e4117cd411473459",
+      "QtWebEngine/component-087.html": "e2c3b104798cb8a5088363dfbfa0ce55130d7fc63020196763028935dd6e14cc",
+      "QtWebEngine/component-088.html": "fc1ed11026249baa54e3ae33573c35429dcc1bac34c98681c433f75a024f3217",
+      "QtWebEngine/component-089.html": "a2563908a5ef9c3e6295395a4e33dbb4a824bb1a604220f24ca4b4a324368724",
+      "QtWebEngine/component-090.html": "48993d86334b032cf39edcd588c6341d3a5ed9189cf4da60f96d2c4047e00b1f",
+      "QtWebEngine/component-091.html": "d0dfea501467105e2885d4eda317739a4b8bb1c7a27efb4d00c0ca4833a816c0",
+      "QtWebEngine/component-092.html": "731f8e8bd2991608edcfb3f345ce55828af8ab9524b8a3b09eb6ff78d5b9fcfc",
+      "QtWebEngine/component-093.html": "2551e7246e2765397762d6b5238489b1635dda9807b2bd785143e9d5c8449d17",
+      "QtWebEngine/component-094.html": "e2bd7b963396a81b33b73270cacff606a3e5ac022554539ebcfa9357dde7741b",
+      "QtWebEngine/component-095.html": "4e163bd51cb2a05041e2fe4948b538494460168900755d526be148922a66f308",
+      "QtWebEngine/component-096.html": "2b261803fed945a144c5660c085e815c24ae9b420928e802fd7ca565e21051dc",
+      "QtWebEngine/component-097.html": "8f9ebbd083588ea7286ed88a6251b1b4f48e0de4e7c30eb41732a1d0877036aa",
+      "QtWebEngine/component-098.html": "87bbb8edc94bc6ac1706f722bc29948cf3cec4d50ddd10f539b97076890ff030",
+      "QtWebEngine/component-099.html": "e167a1dda3b503da9757e84aba627dcb63a760ee033b00a17beb26b13682c2b9",
+      "QtWebEngine/component-100.html": "d390a1ba1b80ff64a8959222d0a2566d72fd7596ebb476f5f8c21ac35938a4c1",
+      "QtWebEngine/component-101.html": "2588165205daf4d43897e1a1c48b867992b1820a57a9dcddcb2886f7d29191ab",
+      "QtWebEngine/component-102.html": "34f8cc0c517b5295bbf940df21365817caf02fea684948c405fc59304dd763a2",
+      "QtWebEngine/component-103.html": "a1c5bf5080d0460be18c1083317f4724eec5eadfdb995f8b617af0859dc418b9",
+      "QtWebEngine/component-104.html": "a29084648301afae479470866c2e0082c5cf75072286d5c7a40ecceda1767a08",
+      "QtWebEngine/component-105.html": "16a45aae50dd2ea89f2561d70c7cc3abc61f89b491e30ea3fd94b7da97000ba7",
+      "QtWebEngine/component-106.html": "f32bdf9c6eb53867d6af3d2d2037bb9ee4cff4b785f1ae78368b616b7520c811",
+      "QtWebEngine/component-107.html": "08050cc30d3d4355fb84f139832c4fd5efe383287c4ce60c93eb72a00b978992",
+      "QtWebEngine/component-108.html": "d94e28a40840f727d55158e046f1c55cf36fee555d8904471ecc32321060c29f",
+      "QtWebEngine/component-109.html": "3d05a3aebf2403953302253230c958bf14b39b60e2b0b85db8e8a0dc065f07cf",
+      "QtWebEngine/component-110.html": "f9a4f4d4b1121d0be03fc4aa4b26a88ce5cd5ee7a13723f1ca8995c2a8e85d36",
+      "QtWebEngine/component-111.html": "92380ed8c32d9fadbf2852a1093d2e2b12fb82d4b5260e6c41f281f2c8995d4f",
+      "QtWebEngine/component-112.html": "b122c892a16a1544142b47156049cb490af3449f91f5642e3308ef5a60b98fcc",
+      "QtWebEngine/component-113.html": "7083213e7fb481bba6e278b08499510508e7f6d67181deacc859bbad73c03bd0",
+      "QtWebEngine/component-114.html": "36fd94f5f3105fdf5996b444ac26ccee23c809949974648ca2f4f7d375dddf14",
+      "QtWebEngine/component-115.html": "adecadfa7d26b2de230ef9a4356774c07056b830ef317c5e3a6fcddaa190d64b",
+      "QtWebEngine/component-116.html": "867d84840b6154e4116cb4f380d2e457015136749e9c1eb7e89c9654767d4c56",
+      "QtWebEngine/component-117.html": "1f0bc8d4dc9ecb32b3d926a23900c4e5f902eaa46c1f580adf807f3389f05ca2",
+      "QtWebEngine/component-118.html": "88e5179a19cd4791f7242274410c8a7d0aa72a0c1c2d48c96954c5e1ad1a8884",
+      "QtWebEngine/component-119.html": "ce0260163aab6f741eb5a27967fc387db48d088f4bb2bfa5b3aeb87159a05d38",
+      "QtWebEngine/component-120.html": "ecc1186ea8780a147f9985f267e29da819af9e0150bd2ce200f058c482bd9f39",
+      "QtWebEngine/component-121.html": "6e13f1b29d4a7ef754583d25b7f90d22907259f2c1f7cd9b93385148de6af01a",
+      "QtWebEngine/component-122.html": "7c2f2d3b1e1ebc75d32fc37d20073386aad7cf4bf1f9a9ced834a88c371cb7a7",
+      "QtWebEngine/component-123.html": "5fe06c38c7ed7a178977c652787190a268b3f42fda2d1087fd977312cdd6ec69",
+      "QtWebEngine/component-124.html": "350e6f68ae8894f58dabe464d6f3c608c4ab0fcd8b7e98751bf8dbc52d8fbdf3",
+      "QtWebEngine/index.html": "2d95b187484db70495450cfcf2a60b93f78a521b480ea61aee59086a7dbd3a64",
+      "QtWebEngine/sources.json": "a75f3e8816c89307e3e30011c51224d1f0a392ed23368cbb1014e6b9c5f97870",
+      "README.md": "3cc394686287aa1a5cb2ace7b4d21bc3c4378de952e0b21f890ca1c9a7d0bb6a"
+    },
+    "native_report": {
+      "ok": true,
+      "native_window": true,
+      "shelf_rendered": true,
+      "title": "写作书架",
+      "captured": true,
+      "client_version": "0.1.10",
+      "update_check_available": true,
+      "update_progress_verified": true,
+      "update_progress_synthetic": true,
+      "themes_verified": true,
+      "theme_captures": {
+        "light": true,
+        "dark": true
+      }
+    },
+    "installed_payload_safety_report": {
+      "ok": true,
+      "platform": "win32",
+      "story_version": "0.6.20",
+      "isolated_payload": true,
+      "created_and_registered": true,
+      "backup_verified": true,
+      "restore_identity_preserved": true,
+      "candidate_and_binary_preserved": true,
+      "sqlite_integrity_verified": true,
+      "missing_trash_path_refused": true,
+      "native_trash_bridge_checked": true,
+      "existing_book_files_recycled": false
+    },
+    "source_inputs_sha256": {
+      ".gitattributes": "c833bdc7367d69277e8e7bb12a1c5293720e1ccd6051631cdd81d7e2687ef76b",
+      ".github/workflows/desktop-windows.yml": "79c0b39eb9d3a0e9265033fb278a85b3aa31bdcbf8d48b59f1ab83782b59fe47",
+      "LICENSE": "f34a779bf87b330af68a9f9cbdb84bcf8d32163eddf3345ab3b1bb71e6141ae6",
+      "desktop/macos/backend_runner.py": "c6ce1d77714220a18cc5bcdad1b22b179dbf479f820c76f4ca1f424fc03f372e",
+      "desktop/windows/README.md": "d163bb508d701c57273bd4aa4bc76403ce499d99acb3501cad3425f2230f8098",
+      "desktop/windows/client.py": "5410b4a742b179b066b95bc1b3d56b57951d700197399c9d3b7787bb17028826",
+      "desktop/windows/installer.iss": "4a9240865f305832613787bd67541ae0484c1561701e2598cb11567c699d3c71",
+      "desktop/windows/licenses/GPL-2.0-only.txt": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+      "desktop/windows/licenses/GPL-3.0-only.txt": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "desktop/windows/licenses/LGPL-3.0-only.txt": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+      "desktop/windows/licenses/QtWebEngine/README.md": "91ca5b5391c0e2fb1e1415fd2d4f69323d52e15da280ae2b664527f7c3645263",
+      "desktop/windows/licenses/QtWebEngine/component-001.html": "02b56640a8bbe8988e00c3e8f54c497543523c724feddc1c87602ed887ad6d00",
+      "desktop/windows/licenses/QtWebEngine/component-002.html": "8371c05fcc85715b46eac1ab65122241558e73bf694696311685aa6d10425187",
+      "desktop/windows/licenses/QtWebEngine/component-003.html": "d3c0c91a5d5dba2f026f2a59e7f09249a34252b2cfa93990d7b31e4646edfa2d",
+      "desktop/windows/licenses/QtWebEngine/component-004.html": "a1e8d257e7cea21ae21ff4579c72194ab30266fd56c8f78b0cfac45750eb762d",
+      "desktop/windows/licenses/QtWebEngine/component-005.html": "53acf24138ca08e906afc3ec2809680ecaf0ee0d858a39a09d134eb18504e8ec",
+      "desktop/windows/licenses/QtWebEngine/component-006.html": "80bc9894cc559ad44c52ddab33a3095c867790e807c4f35b5517f4c401c5aaed",
+      "desktop/windows/licenses/QtWebEngine/component-007.html": "6ef6247ddbc48c91ef8f10470142f668e53b23eb97446909d2c872ed570a097b",
+      "desktop/windows/licenses/QtWebEngine/component-008.html": "e6c2fbc5a0d5acf132caa052c53e9013b68be3152b46c57dd858567c75bc5c6a",
+      "desktop/windows/licenses/QtWebEngine/component-009.html": "65b45663aeda7dc45a2b1b42ac70bfb2b4d807e95f0be3997d9d356b6138541a",
+      "desktop/windows/licenses/QtWebEngine/component-010.html": "900a3dbe5eeb8b1c0a98b9c6f9c59fed435588c567a10a35b0f01a0bcab053e4",
+      "desktop/windows/licenses/QtWebEngine/component-011.html": "b607d3ef4006b5be228af535791bbd5a470e904e5e22b43d11907f6a82fbe900",
+      "desktop/windows/licenses/QtWebEngine/component-012.html": "3d9141df889bd33e21b311337162b34cbf0282929a012217f24e4aa8177aec15",
+      "desktop/windows/licenses/QtWebEngine/component-013.html": "e5efe8482de2348979550f41990859f7bfb9171a114c8bc133c1193bc772f973",
+      "desktop/windows/licenses/QtWebEngine/component-014.html": "18e8833ff1a6795df97aafa62cc4cc739e1f4e56c1e1149b453d4257223a1fcc",
+      "desktop/windows/licenses/QtWebEngine/component-015.html": "a58d368e077537a41e87b0f15c0c99e6d89db08b8ead870d9cc0f53c2c905314",
+      "desktop/windows/licenses/QtWebEngine/component-016.html": "a995916ea6cc466a4a0a01025e86bfac4fe41d85d9632c6f8c9c910967b7c30e",
+      "desktop/windows/licenses/QtWebEngine/component-017.html": "d09790c9cd2beffdc94579f2a6d6092a6caa6b845468f0bddf8f6ebdb3f21008",
+      "desktop/windows/licenses/QtWebEngine/component-018.html": "ad7d24fd017670aaa66ff382a94aedccc3ae0643d6f816f2bfb3bde0403dc1c7",
+      "desktop/windows/licenses/QtWebEngine/component-019.html": "59a62661c032e9332405193c5c25277327eafec90917f8f9c2352ea37d0f7e5b",
+      "desktop/windows/licenses/QtWebEngine/component-020.html": "470f5471e2f04626069569f1b095f4c23dfcc7a04612f5cbd8008fb274d16431",
+      "desktop/windows/licenses/QtWebEngine/component-021.html": "940cb6e330c527edfd2ab06c6b9a1be5038954d552eeba8acdfcc8ba01d4bed0",
+      "desktop/windows/licenses/QtWebEngine/component-022.html": "def9b8b95934943ce811ce1218d8d44253c7f36e22b961508c906dadff2093ea",
+      "desktop/windows/licenses/QtWebEngine/component-023.html": "4e93280a9eff42a7011bc797aaf4176657340406382608ab0926a17e9e3f68bd",
+      "desktop/windows/licenses/QtWebEngine/component-024.html": "ba4f3f0e9fa376cb58933f0ed5d3de847455cb82ec206630f8e8cb9a8f2cc58f",
+      "desktop/windows/licenses/QtWebEngine/component-025.html": "2a64768a389b774ca249422b19cc12bcb5ef15278d805551ee5ae785317b5236",
+      "desktop/windows/licenses/QtWebEngine/component-026.html": "ae1e823734b2d82878540a57144364cac8d1ecfc7c01491b64eac363b82d7d60",
+      "desktop/windows/licenses/QtWebEngine/component-027.html": "79390ae7881d910ca91f7867c10b7211758af39fbd482f83210d4445569f1067",
+      "desktop/windows/licenses/QtWebEngine/component-028.html": "c06697a866490a78b426a142b80a19ea4d5e46c67ef64c2152e8afe5a2da5f6b",
+      "desktop/windows/licenses/QtWebEngine/component-029.html": "83158db2a45bdeec0c9818b2ba4abfa89d1962ac462c8bb19712af56a0d2be77",
+      "desktop/windows/licenses/QtWebEngine/component-030.html": "f76e3ff9a4443e8788d7553e1583977b4a5748032dfe6b2f9799fb069fc70415",
+      "desktop/windows/licenses/QtWebEngine/component-031.html": "1395edcdf22c9a3f386025b1d2db343bfbfc8b77f40d24020332026dc4b4c77e",
+      "desktop/windows/licenses/QtWebEngine/component-032.html": "8abe6705c46a94df3f1d0b317eba0b1e761593991ea2d95cb7ba327856ba02f6",
+      "desktop/windows/licenses/QtWebEngine/component-033.html": "356f7dacc297b78c2a1e131b429a174ebe89bb4478987b2bc60374e00d305b9b",
+      "desktop/windows/licenses/QtWebEngine/component-034.html": "614a90961897dfcdaf02e7e8da568ce79c069f8f70530a503eeb632d4d6f3002",
+      "desktop/windows/licenses/QtWebEngine/component-035.html": "e222ecf7da2a4825fed589282eb0402717ec45719b0e91b0863a6f66571c4be1",
+      "desktop/windows/licenses/QtWebEngine/component-036.html": "d08bfe4dac532ccf1aa569927ad686f200c99782eec93d6c63e3e365380b3357",
+      "desktop/windows/licenses/QtWebEngine/component-037.html": "9c25cfe567cc8874300945b16c0026ac0d259d6875b7f9ec8abd77486200a7da",
+      "desktop/windows/licenses/QtWebEngine/component-038.html": "c8c2325b83bca158761652ee7e4c3eb09cb6ce7924d31281b2db48a2e190597c",
+      "desktop/windows/licenses/QtWebEngine/component-039.html": "644ba96beb4dafffa9b17b045e0b582ac0f8311a7083a7537257f17f278e95d4",
+      "desktop/windows/licenses/QtWebEngine/component-040.html": "78854e7e6de9eeec532260858e99be0bc0f408772c291d7f16317ff6c0dfe275",
+      "desktop/windows/licenses/QtWebEngine/component-041.html": "6ccc47f6a3727e1241e1cc6c323a8e30ed0fbebc6918b85a3a0b16a4c84ac5cb",
+      "desktop/windows/licenses/QtWebEngine/component-042.html": "fde367a104e9f7788620fb53089faf63329eee50699380baf1d178b43ee5c2f2",
+      "desktop/windows/licenses/QtWebEngine/component-043.html": "a020cc63939b8f152755e5ae9fe4fc3aa7b7281fe449ef53a4af75f20db1a228",
+      "desktop/windows/licenses/QtWebEngine/component-044.html": "23d30727f5ee48089dd8aec6700d3178669a058c56edd49d1e4d4e034e51d484",
+      "desktop/windows/licenses/QtWebEngine/component-045.html": "3817e60585f5805c36158dd161c2ced7dcb1eeec0ed6eda30d5c4c26f2502a7b",
+      "desktop/windows/licenses/QtWebEngine/component-046.html": "01750d05ba108ef9c5729629ad9e29d837366047568482d8445c5a3a066d1ee6",
+      "desktop/windows/licenses/QtWebEngine/component-047.html": "d8f82956408b6cd9f07a90a5842715f899e82fc2e12c73b512c0d3fcf49ffcc5",
+      "desktop/windows/licenses/QtWebEngine/component-048.html": "c975c94d848cbcebb415f77b5dc4de6fac01529f30833fa2675bea6ff87ca0db",
+      "desktop/windows/licenses/QtWebEngine/component-049.html": "f015630b814bd9ecba187a5d29ac1955e851c565b981ae9204ccde47edeefca7",
+      "desktop/windows/licenses/QtWebEngine/component-050.html": "cb246ff00376e2763fb0f71a3fbad3cb85c1caee5cf1328d4543d29114e1269d",
+      "desktop/windows/licenses/QtWebEngine/component-051.html": "7d36683ce5cd651a9a5379aed83cd447624d43477f4d3cbe966b630598a3c1b6",
+      "desktop/windows/licenses/QtWebEngine/component-052.html": "8f5fb72d1c0728f7888a095ddcb66cd24645f0691f6650815c43549e8fd97365",
+      "desktop/windows/licenses/QtWebEngine/component-053.html": "db3b04d0654080f713ffcffbd0aaedd357ce8fa0c492212feb379dd0ce1fd78c",
+      "desktop/windows/licenses/QtWebEngine/component-054.html": "518aedff7a74d39f86352d39f5375b6ee9e1667aa14611ba27bba62ba4b1fd48",
+      "desktop/windows/licenses/QtWebEngine/component-055.html": "5c7f28d4421e9d06e83ddbccf67e773890b53c91f56f22657961a0884596dca3",
+      "desktop/windows/licenses/QtWebEngine/component-056.html": "53305ca55315c5ac3a9288cb39b1124235c6ef0da7969ea6acea858059bade15",
+      "desktop/windows/licenses/QtWebEngine/component-057.html": "482662f816a729dbb92f008f0036da5d0a6ccd55124f44a435ff3f9ed99e74af",
+      "desktop/windows/licenses/QtWebEngine/component-058.html": "ef2d269c42c2b7a1cece0234ad57af01194086f21422bd9b17c440d4d0b38d64",
+      "desktop/windows/licenses/QtWebEngine/component-059.html": "3cee571ca6683375ba6b4881ad6d9df162a9523283577f397d22e35a519716bc",
+      "desktop/windows/licenses/QtWebEngine/component-060.html": "527bf997a256c53ee0e53ecf2ae900cb288ce02bf213c318ea74cdced1a9da2c",
+      "desktop/windows/licenses/QtWebEngine/component-061.html": "df1fbb49fd713cb3808b02f2d04f2beb7d4f74f7eb7410ef0f956e5d2bcf471d",
+      "desktop/windows/licenses/QtWebEngine/component-062.html": "a673f5c8adfdf8b4d821b0e325a1e1d21f9e6844a26537e4c7487105d68051af",
+      "desktop/windows/licenses/QtWebEngine/component-063.html": "c7f01ebe08324b308321c6037674e6b8aa4a51c35bbd38bfed31cc6c35e4ab0e",
+      "desktop/windows/licenses/QtWebEngine/component-064.html": "7c56eaffb78e203df218f3baafef5d95162751dc98a83973221271e67e213088",
+      "desktop/windows/licenses/QtWebEngine/component-065.html": "c37d0258d38d8719d41c1addef9bd6939329e19f6347a28cc38601cb4a29ba14",
+      "desktop/windows/licenses/QtWebEngine/component-066.html": "c1730877002ac6283c57ebf4104ea0a76b919cde64d2d726b78076db2dce6809",
+      "desktop/windows/licenses/QtWebEngine/component-067.html": "dee664d47ae9bdff10fae0d398c0a55a839190c7eb875ae2adf9d7934e6d46b6",
+      "desktop/windows/licenses/QtWebEngine/component-068.html": "3407cf928380bd8f0789775e3a67703dbe457d31811213a8de6d95e211b4c84c",
+      "desktop/windows/licenses/QtWebEngine/component-069.html": "e005416254acc948e18d99c2766d5d7d95d543f4b7a3c35e405f2b3d185fe953",
+      "desktop/windows/licenses/QtWebEngine/component-070.html": "5c734df7e20c82b0314a4a17def7b6fdd7f230ae8804b0a10444f09681700a64",
+      "desktop/windows/licenses/QtWebEngine/component-071.html": "dbaa5917235c64a9b87ab41b4767c5b0611a8638bdb2ede2ea52581386520c18",
+      "desktop/windows/licenses/QtWebEngine/component-072.html": "43cd47fbaa8fbdbf5f951de0ac529d8b880697d31d192dfd9daddcf7fd12bc2d",
+      "desktop/windows/licenses/QtWebEngine/component-073.html": "4c18a7c1ca3a84dfb63a69d046734cba9a9440c1892b5655574eeb4c026991e3",
+      "desktop/windows/licenses/QtWebEngine/component-074.html": "a01d3d7c6a89baa2d3a2d8be0ddaf5db9fe1ed653b21342c1c8e36386a694d12",
+      "desktop/windows/licenses/QtWebEngine/component-075.html": "59670d52c7f223c92f46bf5db4b88e2565376735057712c93e8ac688ddedb2d5",
+      "desktop/windows/licenses/QtWebEngine/component-076.html": "2b2d0415b2ac57c1dc4a9047c3362e60d2cab5c596ad9912179105394749de6e",
+      "desktop/windows/licenses/QtWebEngine/component-077.html": "88bfaaa88e9149cccfb158a097946da5101c25407831591c8e28014b76fb8069",
+      "desktop/windows/licenses/QtWebEngine/component-078.html": "ed413cc246de550bcaa4777ccd4f0b635289fbd73a676bc55e15e6fa11ad841d",
+      "desktop/windows/licenses/QtWebEngine/component-079.html": "e5a3f38d7c171d9bfbe0a79c7553566dfe09301d1c9567b0590faf7682da07ac",
+      "desktop/windows/licenses/QtWebEngine/component-080.html": "126646b4584868a1890afba2d0b1c5056dc669faa8063b152683b753e88eff0e",
+      "desktop/windows/licenses/QtWebEngine/component-081.html": "9658487e225527bc2d36d2f51775fe888dbf7989cfa0bfa3d963c614381a50ad",
+      "desktop/windows/licenses/QtWebEngine/component-082.html": "2ff5b57883051e7864579ec3ab05e899f4403907653c8ec972c1910a54952349",
+      "desktop/windows/licenses/QtWebEngine/component-083.html": "36b4b0c41b82a754089b8b95b399d46e9faf31e5de8cbc00af80c7d732255081",
+      "desktop/windows/licenses/QtWebEngine/component-084.html": "0e502d1e0ccc1d56cf01dfc6caab2b1c8325c044815281f104183cb6dc6d0d5e",
+      "desktop/windows/licenses/QtWebEngine/component-085.html": "028ae09e0cfb891d2e8f82ca9e06794621a64e5d3426c40fcc7e85bb2e2360b9",
+      "desktop/windows/licenses/QtWebEngine/component-086.html": "fa31ca192c12bbb7679fefa7cd5f56af7f699bedefb91a30e4117cd411473459",
+      "desktop/windows/licenses/QtWebEngine/component-087.html": "e2c3b104798cb8a5088363dfbfa0ce55130d7fc63020196763028935dd6e14cc",
+      "desktop/windows/licenses/QtWebEngine/component-088.html": "fc1ed11026249baa54e3ae33573c35429dcc1bac34c98681c433f75a024f3217",
+      "desktop/windows/licenses/QtWebEngine/component-089.html": "a2563908a5ef9c3e6295395a4e33dbb4a824bb1a604220f24ca4b4a324368724",
+      "desktop/windows/licenses/QtWebEngine/component-090.html": "48993d86334b032cf39edcd588c6341d3a5ed9189cf4da60f96d2c4047e00b1f",
+      "desktop/windows/licenses/QtWebEngine/component-091.html": "d0dfea501467105e2885d4eda317739a4b8bb1c7a27efb4d00c0ca4833a816c0",
+      "desktop/windows/licenses/QtWebEngine/component-092.html": "731f8e8bd2991608edcfb3f345ce55828af8ab9524b8a3b09eb6ff78d5b9fcfc",
+      "desktop/windows/licenses/QtWebEngine/component-093.html": "2551e7246e2765397762d6b5238489b1635dda9807b2bd785143e9d5c8449d17",
+      "desktop/windows/licenses/QtWebEngine/component-094.html": "e2bd7b963396a81b33b73270cacff606a3e5ac022554539ebcfa9357dde7741b",
+      "desktop/windows/licenses/QtWebEngine/component-095.html": "4e163bd51cb2a05041e2fe4948b538494460168900755d526be148922a66f308",
+      "desktop/windows/licenses/QtWebEngine/component-096.html": "2b261803fed945a144c5660c085e815c24ae9b420928e802fd7ca565e21051dc",
+      "desktop/windows/licenses/QtWebEngine/component-097.html": "8f9ebbd083588ea7286ed88a6251b1b4f48e0de4e7c30eb41732a1d0877036aa",
+      "desktop/windows/licenses/QtWebEngine/component-098.html": "87bbb8edc94bc6ac1706f722bc29948cf3cec4d50ddd10f539b97076890ff030",
+      "desktop/windows/licenses/QtWebEngine/component-099.html": "e167a1dda3b503da9757e84aba627dcb63a760ee033b00a17beb26b13682c2b9",
+      "desktop/windows/licenses/QtWebEngine/component-100.html": "d390a1ba1b80ff64a8959222d0a2566d72fd7596ebb476f5f8c21ac35938a4c1",
+      "desktop/windows/licenses/QtWebEngine/component-101.html": "2588165205daf4d43897e1a1c48b867992b1820a57a9dcddcb2886f7d29191ab",
+      "desktop/windows/licenses/QtWebEngine/component-102.html": "34f8cc0c517b5295bbf940df21365817caf02fea684948c405fc59304dd763a2",
+      "desktop/windows/licenses/QtWebEngine/component-103.html": "a1c5bf5080d0460be18c1083317f4724eec5eadfdb995f8b617af0859dc418b9",
+      "desktop/windows/licenses/QtWebEngine/component-104.html": "a29084648301afae479470866c2e0082c5cf75072286d5c7a40ecceda1767a08",
+      "desktop/windows/licenses/QtWebEngine/component-105.html": "16a45aae50dd2ea89f2561d70c7cc3abc61f89b491e30ea3fd94b7da97000ba7",
+      "desktop/windows/licenses/QtWebEngine/component-106.html": "f32bdf9c6eb53867d6af3d2d2037bb9ee4cff4b785f1ae78368b616b7520c811",
+      "desktop/windows/licenses/QtWebEngine/component-107.html": "08050cc30d3d4355fb84f139832c4fd5efe383287c4ce60c93eb72a00b978992",
+      "desktop/windows/licenses/QtWebEngine/component-108.html": "d94e28a40840f727d55158e046f1c55cf36fee555d8904471ecc32321060c29f",
+      "desktop/windows/licenses/QtWebEngine/component-109.html": "3d05a3aebf2403953302253230c958bf14b39b60e2b0b85db8e8a0dc065f07cf",
+      "desktop/windows/licenses/QtWebEngine/component-110.html": "f9a4f4d4b1121d0be03fc4aa4b26a88ce5cd5ee7a13723f1ca8995c2a8e85d36",
+      "desktop/windows/licenses/QtWebEngine/component-111.html": "92380ed8c32d9fadbf2852a1093d2e2b12fb82d4b5260e6c41f281f2c8995d4f",
+      "desktop/windows/licenses/QtWebEngine/component-112.html": "b122c892a16a1544142b47156049cb490af3449f91f5642e3308ef5a60b98fcc",
+      "desktop/windows/licenses/QtWebEngine/component-113.html": "7083213e7fb481bba6e278b08499510508e7f6d67181deacc859bbad73c03bd0",
+      "desktop/windows/licenses/QtWebEngine/component-114.html": "36fd94f5f3105fdf5996b444ac26ccee23c809949974648ca2f4f7d375dddf14",
+      "desktop/windows/licenses/QtWebEngine/component-115.html": "adecadfa7d26b2de230ef9a4356774c07056b830ef317c5e3a6fcddaa190d64b",
+      "desktop/windows/licenses/QtWebEngine/component-116.html": "867d84840b6154e4116cb4f380d2e457015136749e9c1eb7e89c9654767d4c56",
+      "desktop/windows/licenses/QtWebEngine/component-117.html": "1f0bc8d4dc9ecb32b3d926a23900c4e5f902eaa46c1f580adf807f3389f05ca2",
+      "desktop/windows/licenses/QtWebEngine/component-118.html": "88e5179a19cd4791f7242274410c8a7d0aa72a0c1c2d48c96954c5e1ad1a8884",
+      "desktop/windows/licenses/QtWebEngine/component-119.html": "ce0260163aab6f741eb5a27967fc387db48d088f4bb2bfa5b3aeb87159a05d38",
+      "desktop/windows/licenses/QtWebEngine/component-120.html": "ecc1186ea8780a147f9985f267e29da819af9e0150bd2ce200f058c482bd9f39",
+      "desktop/windows/licenses/QtWebEngine/component-121.html": "6e13f1b29d4a7ef754583d25b7f90d22907259f2c1f7cd9b93385148de6af01a",
+      "desktop/windows/licenses/QtWebEngine/component-122.html": "7c2f2d3b1e1ebc75d32fc37d20073386aad7cf4bf1f9a9ced834a88c371cb7a7",
+      "desktop/windows/licenses/QtWebEngine/component-123.html": "5fe06c38c7ed7a178977c652787190a268b3f42fda2d1087fd977312cdd6ec69",
+      "desktop/windows/licenses/QtWebEngine/component-124.html": "350e6f68ae8894f58dabe464d6f3c608c4ab0fcd8b7e98751bf8dbc52d8fbdf3",
+      "desktop/windows/licenses/QtWebEngine/index.html": "2d95b187484db70495450cfcf2a60b93f78a521b480ea61aee59086a7dbd3a64",
+      "desktop/windows/licenses/QtWebEngine/sources.json": "a75f3e8816c89307e3e30011c51224d1f0a392ed23368cbb1014e6b9c5f97870",
+      "desktop/windows/licenses/README.md": "3cc394686287aa1a5cb2ace7b4d21bc3c4378de952e0b21f890ca1c9a7d0bb6a",
+      "desktop/windows/licenses/manifest.json": "773dc1092a5b056bce6d40359c7916f8f8def257757902a24f04beaa9ad0dfe8",
+      "desktop/windows/requirements-build.txt": "a1fccab18f1bf3afd80e31b3ddbf7678b241b22b64ae245491f8401d2998047a",
+      "desktop/windows/workbench_update_download.py": "861fcd8f9bafd33afd252cccf581fda5043082df7066d142ababf61dd8676f92",
+      "desktop/windows/workbench_updates.py": "07e1523fbfcc75964893ff507608ab8dcfd507283ecb0130271f5263d0f6c0d1",
+      "scripts/build_desktop_macos.py": "992865b0afa517a5bde6205d8e91882af7a5fa04c97ec2335c2cbd4d1971221c",
+      "scripts/build_desktop_windows.py": "4fa12600458af85a39d5781dda7023ff686d49b3422578aa494dd596c5cced46",
+      "scripts/publish_windows_draft.py": "268ea54b42fb33e1fcba932729506f9f748b3bc86869ee4a9a08afd9f6586b62",
+      "skills/story-skill/scripts/story.py": "34583a5793c79ea5e0d70d52750804f33c723a8367d6dfa76cd93823c863050f",
+      "skills/story-skill/scripts/story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+      "skills/story-skill/scripts/story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+      "skills/story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+      "skills/story-skill/scripts/story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+      "skills/story-skill/scripts/story_platform_chrome_bridge.py": "ea5d9b8cef40acef7749f534f1507130a0c068cf043aaece9bfc2964c8fdc384",
+      "skills/story-skill/scripts/story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+      "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+      "skills/story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "skills/story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "skills/story-skill/scripts/story_workbench.py": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+      "skills/story-skill/scripts/story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7",
+      "skills/story-skill/scripts/story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+      "skills/story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+      "tests/desktop_payload_probe.py": "149ef63bfd5aca24134d54f609e7a54647dece9d73ba7d3ac3fb5801817216e7"
+    }
+  },
+  "draft_upload": {
+    "ok": true,
+    "repository": "NingCui29/story-skill",
+    "release_id": 418373775,
+    "tag": "v0.6.20",
+    "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4",
+    "draft": true,
+    "assets": [
+      {
+        "id": 659289840,
+        "name": "story-workbench-0.1.10-windows-x86_64-setup.exe",
+        "sha256": "0a57bfde4c2053ae8d4c9d95ae12b4f51d02adad6e21b47a8439972898ffd586",
+        "bytes": 183018999,
+        "action": "uploaded"
+      },
+      {
+        "id": 659290305,
+        "name": "story-workbench-0.1.10-windows-x86_64-setup.exe.sha256",
+        "sha256": "fddcaccba526d1534fd61f89bd9e36fee12ab4e3e692eded76a4b07fcc29cdcd",
+        "bytes": 115,
+        "action": "uploaded"
+      },
+      {
+        "id": 659290426,
+        "name": "story-workbench-0.1.10-windows-x86_64.zip",
+        "sha256": "783362b2518008e6ccb79170ede7ebe9922a228d71896772fcf4f0c3e93b869c",
+        "bytes": 258360655,
+        "action": "uploaded"
+      },
+      {
+        "id": 659290869,
+        "name": "story-workbench-0.1.10-windows-x86_64.zip.sha256",
+        "sha256": "564ad13738bd2c774811b9217a0234c8a5d5e4c95a72367562ba726b4d5be69f",
+        "bytes": 109,
+        "action": "uploaded"
+      }
+    ],
+    "verification": {
+      "ok": true,
+      "repository": "NingCui29/story-skill",
+      "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4",
+      "story_version": "0.6.20",
+      "client_version": "0.1.10",
+      "assets": {
+        "story-workbench-0.1.10-windows-x86_64-setup.exe": {
+          "bytes": 183018999,
+          "sha256": "0a57bfde4c2053ae8d4c9d95ae12b4f51d02adad6e21b47a8439972898ffd586"
+        },
+        "story-workbench-0.1.10-windows-x86_64-setup.exe.sha256": {
+          "bytes": 115,
+          "sha256": "fddcaccba526d1534fd61f89bd9e36fee12ab4e3e692eded76a4b07fcc29cdcd"
+        },
+        "story-workbench-0.1.10-windows-x86_64.zip": {
+          "bytes": 258360655,
+          "sha256": "783362b2518008e6ccb79170ede7ebe9922a228d71896772fcf4f0c3e93b869c"
+        },
+        "story-workbench-0.1.10-windows-x86_64.zip.sha256": {
+          "bytes": 109,
+          "sha256": "564ad13738bd2c774811b9217a0234c8a5d5e4c95a72367562ba726b4d5be69f"
+        }
+      },
+      "portable_crc_and_safe_paths": true,
+      "manifest_sha256": "eecef9ac8eb911768f8c50609cbe3f40b225f27f089f8f1cac42740a106abd3f",
+      "manifest_files_verified": 3706,
+      "runtime_sha256": {
+        "story.py": "34583a5793c79ea5e0d70d52750804f33c723a8367d6dfa76cd93823c863050f",
+        "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+        "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+        "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+        "story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+        "story_workbench.py": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+        "story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+        "story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+        "story_platform_chrome_bridge.py": "ea5d9b8cef40acef7749f534f1507130a0c068cf043aaece9bfc2964c8fdc384",
+        "story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+        "story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+        "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+        "story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7"
+      },
+      "installed_manifest_files_verified": 0,
+      "installed_tree_verified": false,
+      "offline_webengine_component_pages": 124,
+      "mapped_source_sha256": {
+        "backend_runner.py": "c6ce1d77714220a18cc5bcdad1b22b179dbf479f820c76f4ca1f424fc03f372e",
+        "StorySkill-LICENSE.txt": "f34a779bf87b330af68a9f9cbdb84bcf8d32163eddf3345ab3b1bb71e6141ae6",
+        "README.md": "d163bb508d701c57273bd4aa4bc76403ce499d99acb3501cad3425f2230f8098"
+      },
+      "supplementary_notice_manifest_sha256": "773dc1092a5b056bce6d40359c7916f8f8def257757902a24f04beaa9ad0dfe8",
+      "supplementary_notice_files_verified": 131,
+      "supplementary_notice_sha256": {
+        "GPL-2.0-only.txt": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+        "GPL-3.0-only.txt": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+        "LGPL-3.0-only.txt": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+        "QtWebEngine/README.md": "91ca5b5391c0e2fb1e1415fd2d4f69323d52e15da280ae2b664527f7c3645263",
+        "QtWebEngine/component-001.html": "02b56640a8bbe8988e00c3e8f54c497543523c724feddc1c87602ed887ad6d00",
+        "QtWebEngine/component-002.html": "8371c05fcc85715b46eac1ab65122241558e73bf694696311685aa6d10425187",
+        "QtWebEngine/component-003.html": "d3c0c91a5d5dba2f026f2a59e7f09249a34252b2cfa93990d7b31e4646edfa2d",
+        "QtWebEngine/component-004.html": "a1e8d257e7cea21ae21ff4579c72194ab30266fd56c8f78b0cfac45750eb762d",
+        "QtWebEngine/component-005.html": "53acf24138ca08e906afc3ec2809680ecaf0ee0d858a39a09d134eb18504e8ec",
+        "QtWebEngine/component-006.html": "80bc9894cc559ad44c52ddab33a3095c867790e807c4f35b5517f4c401c5aaed",
+        "QtWebEngine/component-007.html": "6ef6247ddbc48c91ef8f10470142f668e53b23eb97446909d2c872ed570a097b",
+        "QtWebEngine/component-008.html": "e6c2fbc5a0d5acf132caa052c53e9013b68be3152b46c57dd858567c75bc5c6a",
+        "QtWebEngine/component-009.html": "65b45663aeda7dc45a2b1b42ac70bfb2b4d807e95f0be3997d9d356b6138541a",
+        "QtWebEngine/component-010.html": "900a3dbe5eeb8b1c0a98b9c6f9c59fed435588c567a10a35b0f01a0bcab053e4",
+        "QtWebEngine/component-011.html": "b607d3ef4006b5be228af535791bbd5a470e904e5e22b43d11907f6a82fbe900",
+        "QtWebEngine/component-012.html": "3d9141df889bd33e21b311337162b34cbf0282929a012217f24e4aa8177aec15",
+        "QtWebEngine/component-013.html": "e5efe8482de2348979550f41990859f7bfb9171a114c8bc133c1193bc772f973",
+        "QtWebEngine/component-014.html": "18e8833ff1a6795df97aafa62cc4cc739e1f4e56c1e1149b453d4257223a1fcc",
+        "QtWebEngine/component-015.html": "a58d368e077537a41e87b0f15c0c99e6d89db08b8ead870d9cc0f53c2c905314",
+        "QtWebEngine/component-016.html": "a995916ea6cc466a4a0a01025e86bfac4fe41d85d9632c6f8c9c910967b7c30e",
+        "QtWebEngine/component-017.html": "d09790c9cd2beffdc94579f2a6d6092a6caa6b845468f0bddf8f6ebdb3f21008",
+        "QtWebEngine/component-018.html": "ad7d24fd017670aaa66ff382a94aedccc3ae0643d6f816f2bfb3bde0403dc1c7",
+        "QtWebEngine/component-019.html": "59a62661c032e9332405193c5c25277327eafec90917f8f9c2352ea37d0f7e5b",
+        "QtWebEngine/component-020.html": "470f5471e2f04626069569f1b095f4c23dfcc7a04612f5cbd8008fb274d16431",
+        "QtWebEngine/component-021.html": "940cb6e330c527edfd2ab06c6b9a1be5038954d552eeba8acdfcc8ba01d4bed0",
+        "QtWebEngine/component-022.html": "def9b8b95934943ce811ce1218d8d44253c7f36e22b961508c906dadff2093ea",
+        "QtWebEngine/component-023.html": "4e93280a9eff42a7011bc797aaf4176657340406382608ab0926a17e9e3f68bd",
+        "QtWebEngine/component-024.html": "ba4f3f0e9fa376cb58933f0ed5d3de847455cb82ec206630f8e8cb9a8f2cc58f",
+        "QtWebEngine/component-025.html": "2a64768a389b774ca249422b19cc12bcb5ef15278d805551ee5ae785317b5236",
+        "QtWebEngine/component-026.html": "ae1e823734b2d82878540a57144364cac8d1ecfc7c01491b64eac363b82d7d60",
+        "QtWebEngine/component-027.html": "79390ae7881d910ca91f7867c10b7211758af39fbd482f83210d4445569f1067",
+        "QtWebEngine/component-028.html": "c06697a866490a78b426a142b80a19ea4d5e46c67ef64c2152e8afe5a2da5f6b",
+        "QtWebEngine/component-029.html": "83158db2a45bdeec0c9818b2ba4abfa89d1962ac462c8bb19712af56a0d2be77",
+        "QtWebEngine/component-030.html": "f76e3ff9a4443e8788d7553e1583977b4a5748032dfe6b2f9799fb069fc70415",
+        "QtWebEngine/component-031.html": "1395edcdf22c9a3f386025b1d2db343bfbfc8b77f40d24020332026dc4b4c77e",
+        "QtWebEngine/component-032.html": "8abe6705c46a94df3f1d0b317eba0b1e761593991ea2d95cb7ba327856ba02f6",
+        "QtWebEngine/component-033.html": "356f7dacc297b78c2a1e131b429a174ebe89bb4478987b2bc60374e00d305b9b",
+        "QtWebEngine/component-034.html": "614a90961897dfcdaf02e7e8da568ce79c069f8f70530a503eeb632d4d6f3002",
+        "QtWebEngine/component-035.html": "e222ecf7da2a4825fed589282eb0402717ec45719b0e91b0863a6f66571c4be1",
+        "QtWebEngine/component-036.html": "d08bfe4dac532ccf1aa569927ad686f200c99782eec93d6c63e3e365380b3357",
+        "QtWebEngine/component-037.html": "9c25cfe567cc8874300945b16c0026ac0d259d6875b7f9ec8abd77486200a7da",
+        "QtWebEngine/component-038.html": "c8c2325b83bca158761652ee7e4c3eb09cb6ce7924d31281b2db48a2e190597c",
+        "QtWebEngine/component-039.html": "644ba96beb4dafffa9b17b045e0b582ac0f8311a7083a7537257f17f278e95d4",
+        "QtWebEngine/component-040.html": "78854e7e6de9eeec532260858e99be0bc0f408772c291d7f16317ff6c0dfe275",
+        "QtWebEngine/component-041.html": "6ccc47f6a3727e1241e1cc6c323a8e30ed0fbebc6918b85a3a0b16a4c84ac5cb",
+        "QtWebEngine/component-042.html": "fde367a104e9f7788620fb53089faf63329eee50699380baf1d178b43ee5c2f2",
+        "QtWebEngine/component-043.html": "a020cc63939b8f152755e5ae9fe4fc3aa7b7281fe449ef53a4af75f20db1a228",
+        "QtWebEngine/component-044.html": "23d30727f5ee48089dd8aec6700d3178669a058c56edd49d1e4d4e034e51d484",
+        "QtWebEngine/component-045.html": "3817e60585f5805c36158dd161c2ced7dcb1eeec0ed6eda30d5c4c26f2502a7b",
+        "QtWebEngine/component-046.html": "01750d05ba108ef9c5729629ad9e29d837366047568482d8445c5a3a066d1ee6",
+        "QtWebEngine/component-047.html": "d8f82956408b6cd9f07a90a5842715f899e82fc2e12c73b512c0d3fcf49ffcc5",
+        "QtWebEngine/component-048.html": "c975c94d848cbcebb415f77b5dc4de6fac01529f30833fa2675bea6ff87ca0db",
+        "QtWebEngine/component-049.html": "f015630b814bd9ecba187a5d29ac1955e851c565b981ae9204ccde47edeefca7",
+        "QtWebEngine/component-050.html": "cb246ff00376e2763fb0f71a3fbad3cb85c1caee5cf1328d4543d29114e1269d",
+        "QtWebEngine/component-051.html": "7d36683ce5cd651a9a5379aed83cd447624d43477f4d3cbe966b630598a3c1b6",
+        "QtWebEngine/component-052.html": "8f5fb72d1c0728f7888a095ddcb66cd24645f0691f6650815c43549e8fd97365",
+        "QtWebEngine/component-053.html": "db3b04d0654080f713ffcffbd0aaedd357ce8fa0c492212feb379dd0ce1fd78c",
+        "QtWebEngine/component-054.html": "518aedff7a74d39f86352d39f5375b6ee9e1667aa14611ba27bba62ba4b1fd48",
+        "QtWebEngine/component-055.html": "5c7f28d4421e9d06e83ddbccf67e773890b53c91f56f22657961a0884596dca3",
+        "QtWebEngine/component-056.html": "53305ca55315c5ac3a9288cb39b1124235c6ef0da7969ea6acea858059bade15",
+        "QtWebEngine/component-057.html": "482662f816a729dbb92f008f0036da5d0a6ccd55124f44a435ff3f9ed99e74af",
+        "QtWebEngine/component-058.html": "ef2d269c42c2b7a1cece0234ad57af01194086f21422bd9b17c440d4d0b38d64",
+        "QtWebEngine/component-059.html": "3cee571ca6683375ba6b4881ad6d9df162a9523283577f397d22e35a519716bc",
+        "QtWebEngine/component-060.html": "527bf997a256c53ee0e53ecf2ae900cb288ce02bf213c318ea74cdced1a9da2c",
+        "QtWebEngine/component-061.html": "df1fbb49fd713cb3808b02f2d04f2beb7d4f74f7eb7410ef0f956e5d2bcf471d",
+        "QtWebEngine/component-062.html": "a673f5c8adfdf8b4d821b0e325a1e1d21f9e6844a26537e4c7487105d68051af",
+        "QtWebEngine/component-063.html": "c7f01ebe08324b308321c6037674e6b8aa4a51c35bbd38bfed31cc6c35e4ab0e",
+        "QtWebEngine/component-064.html": "7c56eaffb78e203df218f3baafef5d95162751dc98a83973221271e67e213088",
+        "QtWebEngine/component-065.html": "c37d0258d38d8719d41c1addef9bd6939329e19f6347a28cc38601cb4a29ba14",
+        "QtWebEngine/component-066.html": "c1730877002ac6283c57ebf4104ea0a76b919cde64d2d726b78076db2dce6809",
+        "QtWebEngine/component-067.html": "dee664d47ae9bdff10fae0d398c0a55a839190c7eb875ae2adf9d7934e6d46b6",
+        "QtWebEngine/component-068.html": "3407cf928380bd8f0789775e3a67703dbe457d31811213a8de6d95e211b4c84c",
+        "QtWebEngine/component-069.html": "e005416254acc948e18d99c2766d5d7d95d543f4b7a3c35e405f2b3d185fe953",
+        "QtWebEngine/component-070.html": "5c734df7e20c82b0314a4a17def7b6fdd7f230ae8804b0a10444f09681700a64",
+        "QtWebEngine/component-071.html": "dbaa5917235c64a9b87ab41b4767c5b0611a8638bdb2ede2ea52581386520c18",
+        "QtWebEngine/component-072.html": "43cd47fbaa8fbdbf5f951de0ac529d8b880697d31d192dfd9daddcf7fd12bc2d",
+        "QtWebEngine/component-073.html": "4c18a7c1ca3a84dfb63a69d046734cba9a9440c1892b5655574eeb4c026991e3",
+        "QtWebEngine/component-074.html": "a01d3d7c6a89baa2d3a2d8be0ddaf5db9fe1ed653b21342c1c8e36386a694d12",
+        "QtWebEngine/component-075.html": "59670d52c7f223c92f46bf5db4b88e2565376735057712c93e8ac688ddedb2d5",
+        "QtWebEngine/component-076.html": "2b2d0415b2ac57c1dc4a9047c3362e60d2cab5c596ad9912179105394749de6e",
+        "QtWebEngine/component-077.html": "88bfaaa88e9149cccfb158a097946da5101c25407831591c8e28014b76fb8069",
+        "QtWebEngine/component-078.html": "ed413cc246de550bcaa4777ccd4f0b635289fbd73a676bc55e15e6fa11ad841d",
+        "QtWebEngine/component-079.html": "e5a3f38d7c171d9bfbe0a79c7553566dfe09301d1c9567b0590faf7682da07ac",
+        "QtWebEngine/component-080.html": "126646b4584868a1890afba2d0b1c5056dc669faa8063b152683b753e88eff0e",
+        "QtWebEngine/component-081.html": "9658487e225527bc2d36d2f51775fe888dbf7989cfa0bfa3d963c614381a50ad",
+        "QtWebEngine/component-082.html": "2ff5b57883051e7864579ec3ab05e899f4403907653c8ec972c1910a54952349",
+        "QtWebEngine/component-083.html": "36b4b0c41b82a754089b8b95b399d46e9faf31e5de8cbc00af80c7d732255081",
+        "QtWebEngine/component-084.html": "0e502d1e0ccc1d56cf01dfc6caab2b1c8325c044815281f104183cb6dc6d0d5e",
+        "QtWebEngine/component-085.html": "028ae09e0cfb891d2e8f82ca9e06794621a64e5d3426c40fcc7e85bb2e2360b9",
+        "QtWebEngine/component-086.html": "fa31ca192c12bbb7679fefa7cd5f56af7f699bedefb91a30e4117cd411473459",
+        "QtWebEngine/component-087.html": "e2c3b104798cb8a5088363dfbfa0ce55130d7fc63020196763028935dd6e14cc",
+        "QtWebEngine/component-088.html": "fc1ed11026249baa54e3ae33573c35429dcc1bac34c98681c433f75a024f3217",
+        "QtWebEngine/component-089.html": "a2563908a5ef9c3e6295395a4e33dbb4a824bb1a604220f24ca4b4a324368724",
+        "QtWebEngine/component-090.html": "48993d86334b032cf39edcd588c6341d3a5ed9189cf4da60f96d2c4047e00b1f",
+        "QtWebEngine/component-091.html": "d0dfea501467105e2885d4eda317739a4b8bb1c7a27efb4d00c0ca4833a816c0",
+        "QtWebEngine/component-092.html": "731f8e8bd2991608edcfb3f345ce55828af8ab9524b8a3b09eb6ff78d5b9fcfc",
+        "QtWebEngine/component-093.html": "2551e7246e2765397762d6b5238489b1635dda9807b2bd785143e9d5c8449d17",
+        "QtWebEngine/component-094.html": "e2bd7b963396a81b33b73270cacff606a3e5ac022554539ebcfa9357dde7741b",
+        "QtWebEngine/component-095.html": "4e163bd51cb2a05041e2fe4948b538494460168900755d526be148922a66f308",
+        "QtWebEngine/component-096.html": "2b261803fed945a144c5660c085e815c24ae9b420928e802fd7ca565e21051dc",
+        "QtWebEngine/component-097.html": "8f9ebbd083588ea7286ed88a6251b1b4f48e0de4e7c30eb41732a1d0877036aa",
+        "QtWebEngine/component-098.html": "87bbb8edc94bc6ac1706f722bc29948cf3cec4d50ddd10f539b97076890ff030",
+        "QtWebEngine/component-099.html": "e167a1dda3b503da9757e84aba627dcb63a760ee033b00a17beb26b13682c2b9",
+        "QtWebEngine/component-100.html": "d390a1ba1b80ff64a8959222d0a2566d72fd7596ebb476f5f8c21ac35938a4c1",
+        "QtWebEngine/component-101.html": "2588165205daf4d43897e1a1c48b867992b1820a57a9dcddcb2886f7d29191ab",
+        "QtWebEngine/component-102.html": "34f8cc0c517b5295bbf940df21365817caf02fea684948c405fc59304dd763a2",
+        "QtWebEngine/component-103.html": "a1c5bf5080d0460be18c1083317f4724eec5eadfdb995f8b617af0859dc418b9",
+        "QtWebEngine/component-104.html": "a29084648301afae479470866c2e0082c5cf75072286d5c7a40ecceda1767a08",
+        "QtWebEngine/component-105.html": "16a45aae50dd2ea89f2561d70c7cc3abc61f89b491e30ea3fd94b7da97000ba7",
+        "QtWebEngine/component-106.html": "f32bdf9c6eb53867d6af3d2d2037bb9ee4cff4b785f1ae78368b616b7520c811",
+        "QtWebEngine/component-107.html": "08050cc30d3d4355fb84f139832c4fd5efe383287c4ce60c93eb72a00b978992",
+        "QtWebEngine/component-108.html": "d94e28a40840f727d55158e046f1c55cf36fee555d8904471ecc32321060c29f",
+        "QtWebEngine/component-109.html": "3d05a3aebf2403953302253230c958bf14b39b60e2b0b85db8e8a0dc065f07cf",
+        "QtWebEngine/component-110.html": "f9a4f4d4b1121d0be03fc4aa4b26a88ce5cd5ee7a13723f1ca8995c2a8e85d36",
+        "QtWebEngine/component-111.html": "92380ed8c32d9fadbf2852a1093d2e2b12fb82d4b5260e6c41f281f2c8995d4f",
+        "QtWebEngine/component-112.html": "b122c892a16a1544142b47156049cb490af3449f91f5642e3308ef5a60b98fcc",
+        "QtWebEngine/component-113.html": "7083213e7fb481bba6e278b08499510508e7f6d67181deacc859bbad73c03bd0",
+        "QtWebEngine/component-114.html": "36fd94f5f3105fdf5996b444ac26ccee23c809949974648ca2f4f7d375dddf14",
+        "QtWebEngine/component-115.html": "adecadfa7d26b2de230ef9a4356774c07056b830ef317c5e3a6fcddaa190d64b",
+        "QtWebEngine/component-116.html": "867d84840b6154e4116cb4f380d2e457015136749e9c1eb7e89c9654767d4c56",
+        "QtWebEngine/component-117.html": "1f0bc8d4dc9ecb32b3d926a23900c4e5f902eaa46c1f580adf807f3389f05ca2",
+        "QtWebEngine/component-118.html": "88e5179a19cd4791f7242274410c8a7d0aa72a0c1c2d48c96954c5e1ad1a8884",
+        "QtWebEngine/component-119.html": "ce0260163aab6f741eb5a27967fc387db48d088f4bb2bfa5b3aeb87159a05d38",
+        "QtWebEngine/component-120.html": "ecc1186ea8780a147f9985f267e29da819af9e0150bd2ce200f058c482bd9f39",
+        "QtWebEngine/component-121.html": "6e13f1b29d4a7ef754583d25b7f90d22907259f2c1f7cd9b93385148de6af01a",
+        "QtWebEngine/component-122.html": "7c2f2d3b1e1ebc75d32fc37d20073386aad7cf4bf1f9a9ced834a88c371cb7a7",
+        "QtWebEngine/component-123.html": "5fe06c38c7ed7a178977c652787190a268b3f42fda2d1087fd977312cdd6ec69",
+        "QtWebEngine/component-124.html": "350e6f68ae8894f58dabe464d6f3c608c4ab0fcd8b7e98751bf8dbc52d8fbdf3",
+        "QtWebEngine/index.html": "2d95b187484db70495450cfcf2a60b93f78a521b480ea61aee59086a7dbd3a64",
+        "QtWebEngine/sources.json": "a75f3e8816c89307e3e30011c51224d1f0a392ed23368cbb1014e6b9c5f97870",
+        "README.md": "3cc394686287aa1a5cb2ace7b4d21bc3c4378de952e0b21f890ca1c9a7d0bb6a"
+      },
+      "native_report": {
+        "ok": true,
+        "native_window": true,
+        "shelf_rendered": true,
+        "title": "写作书架",
+        "captured": true,
+        "client_version": "0.1.10",
+        "update_check_available": true,
+        "update_progress_verified": true,
+        "update_progress_synthetic": true,
+        "themes_verified": true,
+        "theme_captures": {
+          "light": true,
+          "dark": true
+        }
+      },
+      "installed_payload_safety_report": {
+        "ok": true,
+        "platform": "win32",
+        "story_version": "0.6.20",
+        "isolated_payload": true,
+        "created_and_registered": true,
+        "backup_verified": true,
+        "restore_identity_preserved": true,
+        "candidate_and_binary_preserved": true,
+        "sqlite_integrity_verified": true,
+        "missing_trash_path_refused": true,
+        "native_trash_bridge_checked": true,
+        "existing_book_files_recycled": false
+      },
+      "source_inputs_sha256": {
+        ".gitattributes": "c833bdc7367d69277e8e7bb12a1c5293720e1ccd6051631cdd81d7e2687ef76b",
+        ".github/workflows/desktop-windows.yml": "79c0b39eb9d3a0e9265033fb278a85b3aa31bdcbf8d48b59f1ab83782b59fe47",
+        "LICENSE": "f34a779bf87b330af68a9f9cbdb84bcf8d32163eddf3345ab3b1bb71e6141ae6",
+        "desktop/macos/backend_runner.py": "c6ce1d77714220a18cc5bcdad1b22b179dbf479f820c76f4ca1f424fc03f372e",
+        "desktop/windows/README.md": "d163bb508d701c57273bd4aa4bc76403ce499d99acb3501cad3425f2230f8098",
+        "desktop/windows/client.py": "5410b4a742b179b066b95bc1b3d56b57951d700197399c9d3b7787bb17028826",
+        "desktop/windows/installer.iss": "4a9240865f305832613787bd67541ae0484c1561701e2598cb11567c699d3c71",
+        "desktop/windows/licenses/GPL-2.0-only.txt": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+        "desktop/windows/licenses/GPL-3.0-only.txt": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+        "desktop/windows/licenses/LGPL-3.0-only.txt": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+        "desktop/windows/licenses/QtWebEngine/README.md": "91ca5b5391c0e2fb1e1415fd2d4f69323d52e15da280ae2b664527f7c3645263",
+        "desktop/windows/licenses/QtWebEngine/component-001.html": "02b56640a8bbe8988e00c3e8f54c497543523c724feddc1c87602ed887ad6d00",
+        "desktop/windows/licenses/QtWebEngine/component-002.html": "8371c05fcc85715b46eac1ab65122241558e73bf694696311685aa6d10425187",
+        "desktop/windows/licenses/QtWebEngine/component-003.html": "d3c0c91a5d5dba2f026f2a59e7f09249a34252b2cfa93990d7b31e4646edfa2d",
+        "desktop/windows/licenses/QtWebEngine/component-004.html": "a1e8d257e7cea21ae21ff4579c72194ab30266fd56c8f78b0cfac45750eb762d",
+        "desktop/windows/licenses/QtWebEngine/component-005.html": "53acf24138ca08e906afc3ec2809680ecaf0ee0d858a39a09d134eb18504e8ec",
+        "desktop/windows/licenses/QtWebEngine/component-006.html": "80bc9894cc559ad44c52ddab33a3095c867790e807c4f35b5517f4c401c5aaed",
+        "desktop/windows/licenses/QtWebEngine/component-007.html": "6ef6247ddbc48c91ef8f10470142f668e53b23eb97446909d2c872ed570a097b",
+        "desktop/windows/licenses/QtWebEngine/component-008.html": "e6c2fbc5a0d5acf132caa052c53e9013b68be3152b46c57dd858567c75bc5c6a",
+        "desktop/windows/licenses/QtWebEngine/component-009.html": "65b45663aeda7dc45a2b1b42ac70bfb2b4d807e95f0be3997d9d356b6138541a",
+        "desktop/windows/licenses/QtWebEngine/component-010.html": "900a3dbe5eeb8b1c0a98b9c6f9c59fed435588c567a10a35b0f01a0bcab053e4",
+        "desktop/windows/licenses/QtWebEngine/component-011.html": "b607d3ef4006b5be228af535791bbd5a470e904e5e22b43d11907f6a82fbe900",
+        "desktop/windows/licenses/QtWebEngine/component-012.html": "3d9141df889bd33e21b311337162b34cbf0282929a012217f24e4aa8177aec15",
+        "desktop/windows/licenses/QtWebEngine/component-013.html": "e5efe8482de2348979550f41990859f7bfb9171a114c8bc133c1193bc772f973",
+        "desktop/windows/licenses/QtWebEngine/component-014.html": "18e8833ff1a6795df97aafa62cc4cc739e1f4e56c1e1149b453d4257223a1fcc",
+        "desktop/windows/licenses/QtWebEngine/component-015.html": "a58d368e077537a41e87b0f15c0c99e6d89db08b8ead870d9cc0f53c2c905314",
+        "desktop/windows/licenses/QtWebEngine/component-016.html": "a995916ea6cc466a4a0a01025e86bfac4fe41d85d9632c6f8c9c910967b7c30e",
+        "desktop/windows/licenses/QtWebEngine/component-017.html": "d09790c9cd2beffdc94579f2a6d6092a6caa6b845468f0bddf8f6ebdb3f21008",
+        "desktop/windows/licenses/QtWebEngine/component-018.html": "ad7d24fd017670aaa66ff382a94aedccc3ae0643d6f816f2bfb3bde0403dc1c7",
+        "desktop/windows/licenses/QtWebEngine/component-019.html": "59a62661c032e9332405193c5c25277327eafec90917f8f9c2352ea37d0f7e5b",
+        "desktop/windows/licenses/QtWebEngine/component-020.html": "470f5471e2f04626069569f1b095f4c23dfcc7a04612f5cbd8008fb274d16431",
+        "desktop/windows/licenses/QtWebEngine/component-021.html": "940cb6e330c527edfd2ab06c6b9a1be5038954d552eeba8acdfcc8ba01d4bed0",
+        "desktop/windows/licenses/QtWebEngine/component-022.html": "def9b8b95934943ce811ce1218d8d44253c7f36e22b961508c906dadff2093ea",
+        "desktop/windows/licenses/QtWebEngine/component-023.html": "4e93280a9eff42a7011bc797aaf4176657340406382608ab0926a17e9e3f68bd",
+        "desktop/windows/licenses/QtWebEngine/component-024.html": "ba4f3f0e9fa376cb58933f0ed5d3de847455cb82ec206630f8e8cb9a8f2cc58f",
+        "desktop/windows/licenses/QtWebEngine/component-025.html": "2a64768a389b774ca249422b19cc12bcb5ef15278d805551ee5ae785317b5236",
+        "desktop/windows/licenses/QtWebEngine/component-026.html": "ae1e823734b2d82878540a57144364cac8d1ecfc7c01491b64eac363b82d7d60",
+        "desktop/windows/licenses/QtWebEngine/component-027.html": "79390ae7881d910ca91f7867c10b7211758af39fbd482f83210d4445569f1067",
+        "desktop/windows/licenses/QtWebEngine/component-028.html": "c06697a866490a78b426a142b80a19ea4d5e46c67ef64c2152e8afe5a2da5f6b",
+        "desktop/windows/licenses/QtWebEngine/component-029.html": "83158db2a45bdeec0c9818b2ba4abfa89d1962ac462c8bb19712af56a0d2be77",
+        "desktop/windows/licenses/QtWebEngine/component-030.html": "f76e3ff9a4443e8788d7553e1583977b4a5748032dfe6b2f9799fb069fc70415",
+        "desktop/windows/licenses/QtWebEngine/component-031.html": "1395edcdf22c9a3f386025b1d2db343bfbfc8b77f40d24020332026dc4b4c77e",
+        "desktop/windows/licenses/QtWebEngine/component-032.html": "8abe6705c46a94df3f1d0b317eba0b1e761593991ea2d95cb7ba327856ba02f6",
+        "desktop/windows/licenses/QtWebEngine/component-033.html": "356f7dacc297b78c2a1e131b429a174ebe89bb4478987b2bc60374e00d305b9b",
+        "desktop/windows/licenses/QtWebEngine/component-034.html": "614a90961897dfcdaf02e7e8da568ce79c069f8f70530a503eeb632d4d6f3002",
+        "desktop/windows/licenses/QtWebEngine/component-035.html": "e222ecf7da2a4825fed589282eb0402717ec45719b0e91b0863a6f66571c4be1",
+        "desktop/windows/licenses/QtWebEngine/component-036.html": "d08bfe4dac532ccf1aa569927ad686f200c99782eec93d6c63e3e365380b3357",
+        "desktop/windows/licenses/QtWebEngine/component-037.html": "9c25cfe567cc8874300945b16c0026ac0d259d6875b7f9ec8abd77486200a7da",
+        "desktop/windows/licenses/QtWebEngine/component-038.html": "c8c2325b83bca158761652ee7e4c3eb09cb6ce7924d31281b2db48a2e190597c",
+        "desktop/windows/licenses/QtWebEngine/component-039.html": "644ba96beb4dafffa9b17b045e0b582ac0f8311a7083a7537257f17f278e95d4",
+        "desktop/windows/licenses/QtWebEngine/component-040.html": "78854e7e6de9eeec532260858e99be0bc0f408772c291d7f16317ff6c0dfe275",
+        "desktop/windows/licenses/QtWebEngine/component-041.html": "6ccc47f6a3727e1241e1cc6c323a8e30ed0fbebc6918b85a3a0b16a4c84ac5cb",
+        "desktop/windows/licenses/QtWebEngine/component-042.html": "fde367a104e9f7788620fb53089faf63329eee50699380baf1d178b43ee5c2f2",
+        "desktop/windows/licenses/QtWebEngine/component-043.html": "a020cc63939b8f152755e5ae9fe4fc3aa7b7281fe449ef53a4af75f20db1a228",
+        "desktop/windows/licenses/QtWebEngine/component-044.html": "23d30727f5ee48089dd8aec6700d3178669a058c56edd49d1e4d4e034e51d484",
+        "desktop/windows/licenses/QtWebEngine/component-045.html": "3817e60585f5805c36158dd161c2ced7dcb1eeec0ed6eda30d5c4c26f2502a7b",
+        "desktop/windows/licenses/QtWebEngine/component-046.html": "01750d05ba108ef9c5729629ad9e29d837366047568482d8445c5a3a066d1ee6",
+        "desktop/windows/licenses/QtWebEngine/component-047.html": "d8f82956408b6cd9f07a90a5842715f899e82fc2e12c73b512c0d3fcf49ffcc5",
+        "desktop/windows/licenses/QtWebEngine/component-048.html": "c975c94d848cbcebb415f77b5dc4de6fac01529f30833fa2675bea6ff87ca0db",
+        "desktop/windows/licenses/QtWebEngine/component-049.html": "f015630b814bd9ecba187a5d29ac1955e851c565b981ae9204ccde47edeefca7",
+        "desktop/windows/licenses/QtWebEngine/component-050.html": "cb246ff00376e2763fb0f71a3fbad3cb85c1caee5cf1328d4543d29114e1269d",
+        "desktop/windows/licenses/QtWebEngine/component-051.html": "7d36683ce5cd651a9a5379aed83cd447624d43477f4d3cbe966b630598a3c1b6",
+        "desktop/windows/licenses/QtWebEngine/component-052.html": "8f5fb72d1c0728f7888a095ddcb66cd24645f0691f6650815c43549e8fd97365",
+        "desktop/windows/licenses/QtWebEngine/component-053.html": "db3b04d0654080f713ffcffbd0aaedd357ce8fa0c492212feb379dd0ce1fd78c",
+        "desktop/windows/licenses/QtWebEngine/component-054.html": "518aedff7a74d39f86352d39f5375b6ee9e1667aa14611ba27bba62ba4b1fd48",
+        "desktop/windows/licenses/QtWebEngine/component-055.html": "5c7f28d4421e9d06e83ddbccf67e773890b53c91f56f22657961a0884596dca3",
+        "desktop/windows/licenses/QtWebEngine/component-056.html": "53305ca55315c5ac3a9288cb39b1124235c6ef0da7969ea6acea858059bade15",
+        "desktop/windows/licenses/QtWebEngine/component-057.html": "482662f816a729dbb92f008f0036da5d0a6ccd55124f44a435ff3f9ed99e74af",
+        "desktop/windows/licenses/QtWebEngine/component-058.html": "ef2d269c42c2b7a1cece0234ad57af01194086f21422bd9b17c440d4d0b38d64",
+        "desktop/windows/licenses/QtWebEngine/component-059.html": "3cee571ca6683375ba6b4881ad6d9df162a9523283577f397d22e35a519716bc",
+        "desktop/windows/licenses/QtWebEngine/component-060.html": "527bf997a256c53ee0e53ecf2ae900cb288ce02bf213c318ea74cdced1a9da2c",
+        "desktop/windows/licenses/QtWebEngine/component-061.html": "df1fbb49fd713cb3808b02f2d04f2beb7d4f74f7eb7410ef0f956e5d2bcf471d",
+        "desktop/windows/licenses/QtWebEngine/component-062.html": "a673f5c8adfdf8b4d821b0e325a1e1d21f9e6844a26537e4c7487105d68051af",
+        "desktop/windows/licenses/QtWebEngine/component-063.html": "c7f01ebe08324b308321c6037674e6b8aa4a51c35bbd38bfed31cc6c35e4ab0e",
+        "desktop/windows/licenses/QtWebEngine/component-064.html": "7c56eaffb78e203df218f3baafef5d95162751dc98a83973221271e67e213088",
+        "desktop/windows/licenses/QtWebEngine/component-065.html": "c37d0258d38d8719d41c1addef9bd6939329e19f6347a28cc38601cb4a29ba14",
+        "desktop/windows/licenses/QtWebEngine/component-066.html": "c1730877002ac6283c57ebf4104ea0a76b919cde64d2d726b78076db2dce6809",
+        "desktop/windows/licenses/QtWebEngine/component-067.html": "dee664d47ae9bdff10fae0d398c0a55a839190c7eb875ae2adf9d7934e6d46b6",
+        "desktop/windows/licenses/QtWebEngine/component-068.html": "3407cf928380bd8f0789775e3a67703dbe457d31811213a8de6d95e211b4c84c",
+        "desktop/windows/licenses/QtWebEngine/component-069.html": "e005416254acc948e18d99c2766d5d7d95d543f4b7a3c35e405f2b3d185fe953",
+        "desktop/windows/licenses/QtWebEngine/component-070.html": "5c734df7e20c82b0314a4a17def7b6fdd7f230ae8804b0a10444f09681700a64",
+        "desktop/windows/licenses/QtWebEngine/component-071.html": "dbaa5917235c64a9b87ab41b4767c5b0611a8638bdb2ede2ea52581386520c18",
+        "desktop/windows/licenses/QtWebEngine/component-072.html": "43cd47fbaa8fbdbf5f951de0ac529d8b880697d31d192dfd9daddcf7fd12bc2d",
+        "desktop/windows/licenses/QtWebEngine/component-073.html": "4c18a7c1ca3a84dfb63a69d046734cba9a9440c1892b5655574eeb4c026991e3",
+        "desktop/windows/licenses/QtWebEngine/component-074.html": "a01d3d7c6a89baa2d3a2d8be0ddaf5db9fe1ed653b21342c1c8e36386a694d12",
+        "desktop/windows/licenses/QtWebEngine/component-075.html": "59670d52c7f223c92f46bf5db4b88e2565376735057712c93e8ac688ddedb2d5",
+        "desktop/windows/licenses/QtWebEngine/component-076.html": "2b2d0415b2ac57c1dc4a9047c3362e60d2cab5c596ad9912179105394749de6e",
+        "desktop/windows/licenses/QtWebEngine/component-077.html": "88bfaaa88e9149cccfb158a097946da5101c25407831591c8e28014b76fb8069",
+        "desktop/windows/licenses/QtWebEngine/component-078.html": "ed413cc246de550bcaa4777ccd4f0b635289fbd73a676bc55e15e6fa11ad841d",
+        "desktop/windows/licenses/QtWebEngine/component-079.html": "e5a3f38d7c171d9bfbe0a79c7553566dfe09301d1c9567b0590faf7682da07ac",
+        "desktop/windows/licenses/QtWebEngine/component-080.html": "126646b4584868a1890afba2d0b1c5056dc669faa8063b152683b753e88eff0e",
+        "desktop/windows/licenses/QtWebEngine/component-081.html": "9658487e225527bc2d36d2f51775fe888dbf7989cfa0bfa3d963c614381a50ad",
+        "desktop/windows/licenses/QtWebEngine/component-082.html": "2ff5b57883051e7864579ec3ab05e899f4403907653c8ec972c1910a54952349",
+        "desktop/windows/licenses/QtWebEngine/component-083.html": "36b4b0c41b82a754089b8b95b399d46e9faf31e5de8cbc00af80c7d732255081",
+        "desktop/windows/licenses/QtWebEngine/component-084.html": "0e502d1e0ccc1d56cf01dfc6caab2b1c8325c044815281f104183cb6dc6d0d5e",
+        "desktop/windows/licenses/QtWebEngine/component-085.html": "028ae09e0cfb891d2e8f82ca9e06794621a64e5d3426c40fcc7e85bb2e2360b9",
+        "desktop/windows/licenses/QtWebEngine/component-086.html": "fa31ca192c12bbb7679fefa7cd5f56af7f699bedefb91a30e4117cd411473459",
+        "desktop/windows/licenses/QtWebEngine/component-087.html": "e2c3b104798cb8a5088363dfbfa0ce55130d7fc63020196763028935dd6e14cc",
+        "desktop/windows/licenses/QtWebEngine/component-088.html": "fc1ed11026249baa54e3ae33573c35429dcc1bac34c98681c433f75a024f3217",
+        "desktop/windows/licenses/QtWebEngine/component-089.html": "a2563908a5ef9c3e6295395a4e33dbb4a824bb1a604220f24ca4b4a324368724",
+        "desktop/windows/licenses/QtWebEngine/component-090.html": "48993d86334b032cf39edcd588c6341d3a5ed9189cf4da60f96d2c4047e00b1f",
+        "desktop/windows/licenses/QtWebEngine/component-091.html": "d0dfea501467105e2885d4eda317739a4b8bb1c7a27efb4d00c0ca4833a816c0",
+        "desktop/windows/licenses/QtWebEngine/component-092.html": "731f8e8bd2991608edcfb3f345ce55828af8ab9524b8a3b09eb6ff78d5b9fcfc",
+        "desktop/windows/licenses/QtWebEngine/component-093.html": "2551e7246e2765397762d6b5238489b1635dda9807b2bd785143e9d5c8449d17",
+        "desktop/windows/licenses/QtWebEngine/component-094.html": "e2bd7b963396a81b33b73270cacff606a3e5ac022554539ebcfa9357dde7741b",
+        "desktop/windows/licenses/QtWebEngine/component-095.html": "4e163bd51cb2a05041e2fe4948b538494460168900755d526be148922a66f308",
+        "desktop/windows/licenses/QtWebEngine/component-096.html": "2b261803fed945a144c5660c085e815c24ae9b420928e802fd7ca565e21051dc",
+        "desktop/windows/licenses/QtWebEngine/component-097.html": "8f9ebbd083588ea7286ed88a6251b1b4f48e0de4e7c30eb41732a1d0877036aa",
+        "desktop/windows/licenses/QtWebEngine/component-098.html": "87bbb8edc94bc6ac1706f722bc29948cf3cec4d50ddd10f539b97076890ff030",
+        "desktop/windows/licenses/QtWebEngine/component-099.html": "e167a1dda3b503da9757e84aba627dcb63a760ee033b00a17beb26b13682c2b9",
+        "desktop/windows/licenses/QtWebEngine/component-100.html": "d390a1ba1b80ff64a8959222d0a2566d72fd7596ebb476f5f8c21ac35938a4c1",
+        "desktop/windows/licenses/QtWebEngine/component-101.html": "2588165205daf4d43897e1a1c48b867992b1820a57a9dcddcb2886f7d29191ab",
+        "desktop/windows/licenses/QtWebEngine/component-102.html": "34f8cc0c517b5295bbf940df21365817caf02fea684948c405fc59304dd763a2",
+        "desktop/windows/licenses/QtWebEngine/component-103.html": "a1c5bf5080d0460be18c1083317f4724eec5eadfdb995f8b617af0859dc418b9",
+        "desktop/windows/licenses/QtWebEngine/component-104.html": "a29084648301afae479470866c2e0082c5cf75072286d5c7a40ecceda1767a08",
+        "desktop/windows/licenses/QtWebEngine/component-105.html": "16a45aae50dd2ea89f2561d70c7cc3abc61f89b491e30ea3fd94b7da97000ba7",
+        "desktop/windows/licenses/QtWebEngine/component-106.html": "f32bdf9c6eb53867d6af3d2d2037bb9ee4cff4b785f1ae78368b616b7520c811",
+        "desktop/windows/licenses/QtWebEngine/component-107.html": "08050cc30d3d4355fb84f139832c4fd5efe383287c4ce60c93eb72a00b978992",
+        "desktop/windows/licenses/QtWebEngine/component-108.html": "d94e28a40840f727d55158e046f1c55cf36fee555d8904471ecc32321060c29f",
+        "desktop/windows/licenses/QtWebEngine/component-109.html": "3d05a3aebf2403953302253230c958bf14b39b60e2b0b85db8e8a0dc065f07cf",
+        "desktop/windows/licenses/QtWebEngine/component-110.html": "f9a4f4d4b1121d0be03fc4aa4b26a88ce5cd5ee7a13723f1ca8995c2a8e85d36",
+        "desktop/windows/licenses/QtWebEngine/component-111.html": "92380ed8c32d9fadbf2852a1093d2e2b12fb82d4b5260e6c41f281f2c8995d4f",
+        "desktop/windows/licenses/QtWebEngine/component-112.html": "b122c892a16a1544142b47156049cb490af3449f91f5642e3308ef5a60b98fcc",
+        "desktop/windows/licenses/QtWebEngine/component-113.html": "7083213e7fb481bba6e278b08499510508e7f6d67181deacc859bbad73c03bd0",
+        "desktop/windows/licenses/QtWebEngine/component-114.html": "36fd94f5f3105fdf5996b444ac26ccee23c809949974648ca2f4f7d375dddf14",
+        "desktop/windows/licenses/QtWebEngine/component-115.html": "adecadfa7d26b2de230ef9a4356774c07056b830ef317c5e3a6fcddaa190d64b",
+        "desktop/windows/licenses/QtWebEngine/component-116.html": "867d84840b6154e4116cb4f380d2e457015136749e9c1eb7e89c9654767d4c56",
+        "desktop/windows/licenses/QtWebEngine/component-117.html": "1f0bc8d4dc9ecb32b3d926a23900c4e5f902eaa46c1f580adf807f3389f05ca2",
+        "desktop/windows/licenses/QtWebEngine/component-118.html": "88e5179a19cd4791f7242274410c8a7d0aa72a0c1c2d48c96954c5e1ad1a8884",
+        "desktop/windows/licenses/QtWebEngine/component-119.html": "ce0260163aab6f741eb5a27967fc387db48d088f4bb2bfa5b3aeb87159a05d38",
+        "desktop/windows/licenses/QtWebEngine/component-120.html": "ecc1186ea8780a147f9985f267e29da819af9e0150bd2ce200f058c482bd9f39",
+        "desktop/windows/licenses/QtWebEngine/component-121.html": "6e13f1b29d4a7ef754583d25b7f90d22907259f2c1f7cd9b93385148de6af01a",
+        "desktop/windows/licenses/QtWebEngine/component-122.html": "7c2f2d3b1e1ebc75d32fc37d20073386aad7cf4bf1f9a9ced834a88c371cb7a7",
+        "desktop/windows/licenses/QtWebEngine/component-123.html": "5fe06c38c7ed7a178977c652787190a268b3f42fda2d1087fd977312cdd6ec69",
+        "desktop/windows/licenses/QtWebEngine/component-124.html": "350e6f68ae8894f58dabe464d6f3c608c4ab0fcd8b7e98751bf8dbc52d8fbdf3",
+        "desktop/windows/licenses/QtWebEngine/index.html": "2d95b187484db70495450cfcf2a60b93f78a521b480ea61aee59086a7dbd3a64",
+        "desktop/windows/licenses/QtWebEngine/sources.json": "a75f3e8816c89307e3e30011c51224d1f0a392ed23368cbb1014e6b9c5f97870",
+        "desktop/windows/licenses/README.md": "3cc394686287aa1a5cb2ace7b4d21bc3c4378de952e0b21f890ca1c9a7d0bb6a",
+        "desktop/windows/licenses/manifest.json": "773dc1092a5b056bce6d40359c7916f8f8def257757902a24f04beaa9ad0dfe8",
+        "desktop/windows/requirements-build.txt": "a1fccab18f1bf3afd80e31b3ddbf7678b241b22b64ae245491f8401d2998047a",
+        "desktop/windows/workbench_update_download.py": "861fcd8f9bafd33afd252cccf581fda5043082df7066d142ababf61dd8676f92",
+        "desktop/windows/workbench_updates.py": "07e1523fbfcc75964893ff507608ab8dcfd507283ecb0130271f5263d0f6c0d1",
+        "scripts/build_desktop_macos.py": "992865b0afa517a5bde6205d8e91882af7a5fa04c97ec2335c2cbd4d1971221c",
+        "scripts/build_desktop_windows.py": "4fa12600458af85a39d5781dda7023ff686d49b3422578aa494dd596c5cced46",
+        "scripts/publish_windows_draft.py": "268ea54b42fb33e1fcba932729506f9f748b3bc86869ee4a9a08afd9f6586b62",
+        "skills/story-skill/scripts/story.py": "34583a5793c79ea5e0d70d52750804f33c723a8367d6dfa76cd93823c863050f",
+        "skills/story-skill/scripts/story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+        "skills/story-skill/scripts/story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+        "skills/story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+        "skills/story-skill/scripts/story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+        "skills/story-skill/scripts/story_platform_chrome_bridge.py": "ea5d9b8cef40acef7749f534f1507130a0c068cf043aaece9bfc2964c8fdc384",
+        "skills/story-skill/scripts/story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+        "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+        "skills/story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+        "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "skills/story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "skills/story-skill/scripts/story_workbench.py": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+        "skills/story-skill/scripts/story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7",
+        "skills/story-skill/scripts/story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+        "skills/story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+        "tests/desktop_payload_probe.py": "149ef63bfd5aca24134d54f609e7a54647dece9d73ba7d3ac3fb5801817216e7"
+      }
+    }
+  },
+  "independent_server_assets": [
+    {
+      "id": 659289840,
+      "name": "story-workbench-0.1.10-windows-x86_64-setup.exe",
+      "size": 183018999,
+      "digest": "sha256:0a57bfde4c2053ae8d4c9d95ae12b4f51d02adad6e21b47a8439972898ffd586",
+      "state": "uploaded"
+    },
+    {
+      "id": 659290305,
+      "name": "story-workbench-0.1.10-windows-x86_64-setup.exe.sha256",
+      "size": 115,
+      "digest": "sha256:fddcaccba526d1534fd61f89bd9e36fee12ab4e3e692eded76a4b07fcc29cdcd",
+      "state": "uploaded"
+    },
+    {
+      "id": 659290426,
+      "name": "story-workbench-0.1.10-windows-x86_64.zip",
+      "size": 258360655,
+      "digest": "sha256:783362b2518008e6ccb79170ede7ebe9922a228d71896772fcf4f0c3e93b869c",
+      "state": "uploaded"
+    },
+    {
+      "id": 659290869,
+      "name": "story-workbench-0.1.10-windows-x86_64.zip.sha256",
+      "size": 109,
+      "digest": "sha256:564ad13738bd2c774811b9217a0234c8a5d5e4c95a72367562ba726b4d5be69f",
+      "state": "uploaded"
+    }
+  ],
+  "source_input_proof": {
+    "files": 161,
+    "exact_git_blob": 147,
+    "declared_git_CRLF": 14,
+    "all_match": true,
+    "inputs": [
+      {
+        "path": ".gitattributes",
+        "runner_sha256": "c833bdc7367d69277e8e7bb12a1c5293720e1ccd6051631cdd81d7e2687ef76b",
+        "git_blob_sha256": "6440ad375efeebba0db051c8dae71f612a9c83aaa844071c17dccf7c420c7965",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": ".github/workflows/desktop-windows.yml",
+        "runner_sha256": "79c0b39eb9d3a0e9265033fb278a85b3aa31bdcbf8d48b59f1ab83782b59fe47",
+        "git_blob_sha256": "8319dfd22ee3cd9a914ce204c234ce83026fccf875f29770ebcd8af17220a5c4",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "LICENSE",
+        "runner_sha256": "f34a779bf87b330af68a9f9cbdb84bcf8d32163eddf3345ab3b1bb71e6141ae6",
+        "git_blob_sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "desktop/macos/backend_runner.py",
+        "runner_sha256": "c6ce1d77714220a18cc5bcdad1b22b179dbf479f820c76f4ca1f424fc03f372e",
+        "git_blob_sha256": "55348b7d57897c3740a13fdd00a383a90187bdb4e6721a9a74c3a92f2198090c",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "desktop/windows/README.md",
+        "runner_sha256": "d163bb508d701c57273bd4aa4bc76403ce499d99acb3501cad3425f2230f8098",
+        "git_blob_sha256": "185ae722dcd60e672433de655e188b86a6541f9a180e9402f0dc06fd512167d9",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "desktop/windows/client.py",
+        "runner_sha256": "5410b4a742b179b066b95bc1b3d56b57951d700197399c9d3b7787bb17028826",
+        "git_blob_sha256": "e6de2f29eb7839f270738979049ec232ff0d5419bffc83568ee68ebec43d80cc",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "desktop/windows/installer.iss",
+        "runner_sha256": "4a9240865f305832613787bd67541ae0484c1561701e2598cb11567c699d3c71",
+        "git_blob_sha256": "28b29382dea77b5093c28e7032b7d9a62488195feb47105a8655121d4021ee6c",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "desktop/windows/licenses/GPL-2.0-only.txt",
+        "runner_sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+        "git_blob_sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/GPL-3.0-only.txt",
+        "runner_sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+        "git_blob_sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/LGPL-3.0-only.txt",
+        "runner_sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+        "git_blob_sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/README.md",
+        "runner_sha256": "91ca5b5391c0e2fb1e1415fd2d4f69323d52e15da280ae2b664527f7c3645263",
+        "git_blob_sha256": "91ca5b5391c0e2fb1e1415fd2d4f69323d52e15da280ae2b664527f7c3645263",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-001.html",
+        "runner_sha256": "02b56640a8bbe8988e00c3e8f54c497543523c724feddc1c87602ed887ad6d00",
+        "git_blob_sha256": "02b56640a8bbe8988e00c3e8f54c497543523c724feddc1c87602ed887ad6d00",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-002.html",
+        "runner_sha256": "8371c05fcc85715b46eac1ab65122241558e73bf694696311685aa6d10425187",
+        "git_blob_sha256": "8371c05fcc85715b46eac1ab65122241558e73bf694696311685aa6d10425187",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-003.html",
+        "runner_sha256": "d3c0c91a5d5dba2f026f2a59e7f09249a34252b2cfa93990d7b31e4646edfa2d",
+        "git_blob_sha256": "d3c0c91a5d5dba2f026f2a59e7f09249a34252b2cfa93990d7b31e4646edfa2d",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-004.html",
+        "runner_sha256": "a1e8d257e7cea21ae21ff4579c72194ab30266fd56c8f78b0cfac45750eb762d",
+        "git_blob_sha256": "a1e8d257e7cea21ae21ff4579c72194ab30266fd56c8f78b0cfac45750eb762d",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-005.html",
+        "runner_sha256": "53acf24138ca08e906afc3ec2809680ecaf0ee0d858a39a09d134eb18504e8ec",
+        "git_blob_sha256": "53acf24138ca08e906afc3ec2809680ecaf0ee0d858a39a09d134eb18504e8ec",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-006.html",
+        "runner_sha256": "80bc9894cc559ad44c52ddab33a3095c867790e807c4f35b5517f4c401c5aaed",
+        "git_blob_sha256": "80bc9894cc559ad44c52ddab33a3095c867790e807c4f35b5517f4c401c5aaed",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-007.html",
+        "runner_sha256": "6ef6247ddbc48c91ef8f10470142f668e53b23eb97446909d2c872ed570a097b",
+        "git_blob_sha256": "6ef6247ddbc48c91ef8f10470142f668e53b23eb97446909d2c872ed570a097b",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-008.html",
+        "runner_sha256": "e6c2fbc5a0d5acf132caa052c53e9013b68be3152b46c57dd858567c75bc5c6a",
+        "git_blob_sha256": "e6c2fbc5a0d5acf132caa052c53e9013b68be3152b46c57dd858567c75bc5c6a",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-009.html",
+        "runner_sha256": "65b45663aeda7dc45a2b1b42ac70bfb2b4d807e95f0be3997d9d356b6138541a",
+        "git_blob_sha256": "65b45663aeda7dc45a2b1b42ac70bfb2b4d807e95f0be3997d9d356b6138541a",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-010.html",
+        "runner_sha256": "900a3dbe5eeb8b1c0a98b9c6f9c59fed435588c567a10a35b0f01a0bcab053e4",
+        "git_blob_sha256": "900a3dbe5eeb8b1c0a98b9c6f9c59fed435588c567a10a35b0f01a0bcab053e4",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-011.html",
+        "runner_sha256": "b607d3ef4006b5be228af535791bbd5a470e904e5e22b43d11907f6a82fbe900",
+        "git_blob_sha256": "b607d3ef4006b5be228af535791bbd5a470e904e5e22b43d11907f6a82fbe900",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-012.html",
+        "runner_sha256": "3d9141df889bd33e21b311337162b34cbf0282929a012217f24e4aa8177aec15",
+        "git_blob_sha256": "3d9141df889bd33e21b311337162b34cbf0282929a012217f24e4aa8177aec15",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-013.html",
+        "runner_sha256": "e5efe8482de2348979550f41990859f7bfb9171a114c8bc133c1193bc772f973",
+        "git_blob_sha256": "e5efe8482de2348979550f41990859f7bfb9171a114c8bc133c1193bc772f973",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-014.html",
+        "runner_sha256": "18e8833ff1a6795df97aafa62cc4cc739e1f4e56c1e1149b453d4257223a1fcc",
+        "git_blob_sha256": "18e8833ff1a6795df97aafa62cc4cc739e1f4e56c1e1149b453d4257223a1fcc",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-015.html",
+        "runner_sha256": "a58d368e077537a41e87b0f15c0c99e6d89db08b8ead870d9cc0f53c2c905314",
+        "git_blob_sha256": "a58d368e077537a41e87b0f15c0c99e6d89db08b8ead870d9cc0f53c2c905314",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-016.html",
+        "runner_sha256": "a995916ea6cc466a4a0a01025e86bfac4fe41d85d9632c6f8c9c910967b7c30e",
+        "git_blob_sha256": "a995916ea6cc466a4a0a01025e86bfac4fe41d85d9632c6f8c9c910967b7c30e",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-017.html",
+        "runner_sha256": "d09790c9cd2beffdc94579f2a6d6092a6caa6b845468f0bddf8f6ebdb3f21008",
+        "git_blob_sha256": "d09790c9cd2beffdc94579f2a6d6092a6caa6b845468f0bddf8f6ebdb3f21008",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-018.html",
+        "runner_sha256": "ad7d24fd017670aaa66ff382a94aedccc3ae0643d6f816f2bfb3bde0403dc1c7",
+        "git_blob_sha256": "ad7d24fd017670aaa66ff382a94aedccc3ae0643d6f816f2bfb3bde0403dc1c7",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-019.html",
+        "runner_sha256": "59a62661c032e9332405193c5c25277327eafec90917f8f9c2352ea37d0f7e5b",
+        "git_blob_sha256": "59a62661c032e9332405193c5c25277327eafec90917f8f9c2352ea37d0f7e5b",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-020.html",
+        "runner_sha256": "470f5471e2f04626069569f1b095f4c23dfcc7a04612f5cbd8008fb274d16431",
+        "git_blob_sha256": "470f5471e2f04626069569f1b095f4c23dfcc7a04612f5cbd8008fb274d16431",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-021.html",
+        "runner_sha256": "940cb6e330c527edfd2ab06c6b9a1be5038954d552eeba8acdfcc8ba01d4bed0",
+        "git_blob_sha256": "940cb6e330c527edfd2ab06c6b9a1be5038954d552eeba8acdfcc8ba01d4bed0",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-022.html",
+        "runner_sha256": "def9b8b95934943ce811ce1218d8d44253c7f36e22b961508c906dadff2093ea",
+        "git_blob_sha256": "def9b8b95934943ce811ce1218d8d44253c7f36e22b961508c906dadff2093ea",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-023.html",
+        "runner_sha256": "4e93280a9eff42a7011bc797aaf4176657340406382608ab0926a17e9e3f68bd",
+        "git_blob_sha256": "4e93280a9eff42a7011bc797aaf4176657340406382608ab0926a17e9e3f68bd",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-024.html",
+        "runner_sha256": "ba4f3f0e9fa376cb58933f0ed5d3de847455cb82ec206630f8e8cb9a8f2cc58f",
+        "git_blob_sha256": "ba4f3f0e9fa376cb58933f0ed5d3de847455cb82ec206630f8e8cb9a8f2cc58f",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-025.html",
+        "runner_sha256": "2a64768a389b774ca249422b19cc12bcb5ef15278d805551ee5ae785317b5236",
+        "git_blob_sha256": "2a64768a389b774ca249422b19cc12bcb5ef15278d805551ee5ae785317b5236",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-026.html",
+        "runner_sha256": "ae1e823734b2d82878540a57144364cac8d1ecfc7c01491b64eac363b82d7d60",
+        "git_blob_sha256": "ae1e823734b2d82878540a57144364cac8d1ecfc7c01491b64eac363b82d7d60",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-027.html",
+        "runner_sha256": "79390ae7881d910ca91f7867c10b7211758af39fbd482f83210d4445569f1067",
+        "git_blob_sha256": "79390ae7881d910ca91f7867c10b7211758af39fbd482f83210d4445569f1067",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-028.html",
+        "runner_sha256": "c06697a866490a78b426a142b80a19ea4d5e46c67ef64c2152e8afe5a2da5f6b",
+        "git_blob_sha256": "c06697a866490a78b426a142b80a19ea4d5e46c67ef64c2152e8afe5a2da5f6b",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-029.html",
+        "runner_sha256": "83158db2a45bdeec0c9818b2ba4abfa89d1962ac462c8bb19712af56a0d2be77",
+        "git_blob_sha256": "83158db2a45bdeec0c9818b2ba4abfa89d1962ac462c8bb19712af56a0d2be77",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-030.html",
+        "runner_sha256": "f76e3ff9a4443e8788d7553e1583977b4a5748032dfe6b2f9799fb069fc70415",
+        "git_blob_sha256": "f76e3ff9a4443e8788d7553e1583977b4a5748032dfe6b2f9799fb069fc70415",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-031.html",
+        "runner_sha256": "1395edcdf22c9a3f386025b1d2db343bfbfc8b77f40d24020332026dc4b4c77e",
+        "git_blob_sha256": "1395edcdf22c9a3f386025b1d2db343bfbfc8b77f40d24020332026dc4b4c77e",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-032.html",
+        "runner_sha256": "8abe6705c46a94df3f1d0b317eba0b1e761593991ea2d95cb7ba327856ba02f6",
+        "git_blob_sha256": "8abe6705c46a94df3f1d0b317eba0b1e761593991ea2d95cb7ba327856ba02f6",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-033.html",
+        "runner_sha256": "356f7dacc297b78c2a1e131b429a174ebe89bb4478987b2bc60374e00d305b9b",
+        "git_blob_sha256": "356f7dacc297b78c2a1e131b429a174ebe89bb4478987b2bc60374e00d305b9b",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-034.html",
+        "runner_sha256": "614a90961897dfcdaf02e7e8da568ce79c069f8f70530a503eeb632d4d6f3002",
+        "git_blob_sha256": "614a90961897dfcdaf02e7e8da568ce79c069f8f70530a503eeb632d4d6f3002",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-035.html",
+        "runner_sha256": "e222ecf7da2a4825fed589282eb0402717ec45719b0e91b0863a6f66571c4be1",
+        "git_blob_sha256": "e222ecf7da2a4825fed589282eb0402717ec45719b0e91b0863a6f66571c4be1",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-036.html",
+        "runner_sha256": "d08bfe4dac532ccf1aa569927ad686f200c99782eec93d6c63e3e365380b3357",
+        "git_blob_sha256": "d08bfe4dac532ccf1aa569927ad686f200c99782eec93d6c63e3e365380b3357",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-037.html",
+        "runner_sha256": "9c25cfe567cc8874300945b16c0026ac0d259d6875b7f9ec8abd77486200a7da",
+        "git_blob_sha256": "9c25cfe567cc8874300945b16c0026ac0d259d6875b7f9ec8abd77486200a7da",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-038.html",
+        "runner_sha256": "c8c2325b83bca158761652ee7e4c3eb09cb6ce7924d31281b2db48a2e190597c",
+        "git_blob_sha256": "c8c2325b83bca158761652ee7e4c3eb09cb6ce7924d31281b2db48a2e190597c",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-039.html",
+        "runner_sha256": "644ba96beb4dafffa9b17b045e0b582ac0f8311a7083a7537257f17f278e95d4",
+        "git_blob_sha256": "644ba96beb4dafffa9b17b045e0b582ac0f8311a7083a7537257f17f278e95d4",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-040.html",
+        "runner_sha256": "78854e7e6de9eeec532260858e99be0bc0f408772c291d7f16317ff6c0dfe275",
+        "git_blob_sha256": "78854e7e6de9eeec532260858e99be0bc0f408772c291d7f16317ff6c0dfe275",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-041.html",
+        "runner_sha256": "6ccc47f6a3727e1241e1cc6c323a8e30ed0fbebc6918b85a3a0b16a4c84ac5cb",
+        "git_blob_sha256": "6ccc47f6a3727e1241e1cc6c323a8e30ed0fbebc6918b85a3a0b16a4c84ac5cb",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-042.html",
+        "runner_sha256": "fde367a104e9f7788620fb53089faf63329eee50699380baf1d178b43ee5c2f2",
+        "git_blob_sha256": "fde367a104e9f7788620fb53089faf63329eee50699380baf1d178b43ee5c2f2",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-043.html",
+        "runner_sha256": "a020cc63939b8f152755e5ae9fe4fc3aa7b7281fe449ef53a4af75f20db1a228",
+        "git_blob_sha256": "a020cc63939b8f152755e5ae9fe4fc3aa7b7281fe449ef53a4af75f20db1a228",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-044.html",
+        "runner_sha256": "23d30727f5ee48089dd8aec6700d3178669a058c56edd49d1e4d4e034e51d484",
+        "git_blob_sha256": "23d30727f5ee48089dd8aec6700d3178669a058c56edd49d1e4d4e034e51d484",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-045.html",
+        "runner_sha256": "3817e60585f5805c36158dd161c2ced7dcb1eeec0ed6eda30d5c4c26f2502a7b",
+        "git_blob_sha256": "3817e60585f5805c36158dd161c2ced7dcb1eeec0ed6eda30d5c4c26f2502a7b",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-046.html",
+        "runner_sha256": "01750d05ba108ef9c5729629ad9e29d837366047568482d8445c5a3a066d1ee6",
+        "git_blob_sha256": "01750d05ba108ef9c5729629ad9e29d837366047568482d8445c5a3a066d1ee6",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-047.html",
+        "runner_sha256": "d8f82956408b6cd9f07a90a5842715f899e82fc2e12c73b512c0d3fcf49ffcc5",
+        "git_blob_sha256": "d8f82956408b6cd9f07a90a5842715f899e82fc2e12c73b512c0d3fcf49ffcc5",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-048.html",
+        "runner_sha256": "c975c94d848cbcebb415f77b5dc4de6fac01529f30833fa2675bea6ff87ca0db",
+        "git_blob_sha256": "c975c94d848cbcebb415f77b5dc4de6fac01529f30833fa2675bea6ff87ca0db",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-049.html",
+        "runner_sha256": "f015630b814bd9ecba187a5d29ac1955e851c565b981ae9204ccde47edeefca7",
+        "git_blob_sha256": "f015630b814bd9ecba187a5d29ac1955e851c565b981ae9204ccde47edeefca7",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-050.html",
+        "runner_sha256": "cb246ff00376e2763fb0f71a3fbad3cb85c1caee5cf1328d4543d29114e1269d",
+        "git_blob_sha256": "cb246ff00376e2763fb0f71a3fbad3cb85c1caee5cf1328d4543d29114e1269d",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-051.html",
+        "runner_sha256": "7d36683ce5cd651a9a5379aed83cd447624d43477f4d3cbe966b630598a3c1b6",
+        "git_blob_sha256": "7d36683ce5cd651a9a5379aed83cd447624d43477f4d3cbe966b630598a3c1b6",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-052.html",
+        "runner_sha256": "8f5fb72d1c0728f7888a095ddcb66cd24645f0691f6650815c43549e8fd97365",
+        "git_blob_sha256": "8f5fb72d1c0728f7888a095ddcb66cd24645f0691f6650815c43549e8fd97365",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-053.html",
+        "runner_sha256": "db3b04d0654080f713ffcffbd0aaedd357ce8fa0c492212feb379dd0ce1fd78c",
+        "git_blob_sha256": "db3b04d0654080f713ffcffbd0aaedd357ce8fa0c492212feb379dd0ce1fd78c",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-054.html",
+        "runner_sha256": "518aedff7a74d39f86352d39f5375b6ee9e1667aa14611ba27bba62ba4b1fd48",
+        "git_blob_sha256": "518aedff7a74d39f86352d39f5375b6ee9e1667aa14611ba27bba62ba4b1fd48",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-055.html",
+        "runner_sha256": "5c7f28d4421e9d06e83ddbccf67e773890b53c91f56f22657961a0884596dca3",
+        "git_blob_sha256": "5c7f28d4421e9d06e83ddbccf67e773890b53c91f56f22657961a0884596dca3",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-056.html",
+        "runner_sha256": "53305ca55315c5ac3a9288cb39b1124235c6ef0da7969ea6acea858059bade15",
+        "git_blob_sha256": "53305ca55315c5ac3a9288cb39b1124235c6ef0da7969ea6acea858059bade15",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-057.html",
+        "runner_sha256": "482662f816a729dbb92f008f0036da5d0a6ccd55124f44a435ff3f9ed99e74af",
+        "git_blob_sha256": "482662f816a729dbb92f008f0036da5d0a6ccd55124f44a435ff3f9ed99e74af",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-058.html",
+        "runner_sha256": "ef2d269c42c2b7a1cece0234ad57af01194086f21422bd9b17c440d4d0b38d64",
+        "git_blob_sha256": "ef2d269c42c2b7a1cece0234ad57af01194086f21422bd9b17c440d4d0b38d64",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-059.html",
+        "runner_sha256": "3cee571ca6683375ba6b4881ad6d9df162a9523283577f397d22e35a519716bc",
+        "git_blob_sha256": "3cee571ca6683375ba6b4881ad6d9df162a9523283577f397d22e35a519716bc",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-060.html",
+        "runner_sha256": "527bf997a256c53ee0e53ecf2ae900cb288ce02bf213c318ea74cdced1a9da2c",
+        "git_blob_sha256": "527bf997a256c53ee0e53ecf2ae900cb288ce02bf213c318ea74cdced1a9da2c",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-061.html",
+        "runner_sha256": "df1fbb49fd713cb3808b02f2d04f2beb7d4f74f7eb7410ef0f956e5d2bcf471d",
+        "git_blob_sha256": "df1fbb49fd713cb3808b02f2d04f2beb7d4f74f7eb7410ef0f956e5d2bcf471d",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-062.html",
+        "runner_sha256": "a673f5c8adfdf8b4d821b0e325a1e1d21f9e6844a26537e4c7487105d68051af",
+        "git_blob_sha256": "a673f5c8adfdf8b4d821b0e325a1e1d21f9e6844a26537e4c7487105d68051af",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-063.html",
+        "runner_sha256": "c7f01ebe08324b308321c6037674e6b8aa4a51c35bbd38bfed31cc6c35e4ab0e",
+        "git_blob_sha256": "c7f01ebe08324b308321c6037674e6b8aa4a51c35bbd38bfed31cc6c35e4ab0e",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-064.html",
+        "runner_sha256": "7c56eaffb78e203df218f3baafef5d95162751dc98a83973221271e67e213088",
+        "git_blob_sha256": "7c56eaffb78e203df218f3baafef5d95162751dc98a83973221271e67e213088",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-065.html",
+        "runner_sha256": "c37d0258d38d8719d41c1addef9bd6939329e19f6347a28cc38601cb4a29ba14",
+        "git_blob_sha256": "c37d0258d38d8719d41c1addef9bd6939329e19f6347a28cc38601cb4a29ba14",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-066.html",
+        "runner_sha256": "c1730877002ac6283c57ebf4104ea0a76b919cde64d2d726b78076db2dce6809",
+        "git_blob_sha256": "c1730877002ac6283c57ebf4104ea0a76b919cde64d2d726b78076db2dce6809",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-067.html",
+        "runner_sha256": "dee664d47ae9bdff10fae0d398c0a55a839190c7eb875ae2adf9d7934e6d46b6",
+        "git_blob_sha256": "dee664d47ae9bdff10fae0d398c0a55a839190c7eb875ae2adf9d7934e6d46b6",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-068.html",
+        "runner_sha256": "3407cf928380bd8f0789775e3a67703dbe457d31811213a8de6d95e211b4c84c",
+        "git_blob_sha256": "3407cf928380bd8f0789775e3a67703dbe457d31811213a8de6d95e211b4c84c",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-069.html",
+        "runner_sha256": "e005416254acc948e18d99c2766d5d7d95d543f4b7a3c35e405f2b3d185fe953",
+        "git_blob_sha256": "e005416254acc948e18d99c2766d5d7d95d543f4b7a3c35e405f2b3d185fe953",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-070.html",
+        "runner_sha256": "5c734df7e20c82b0314a4a17def7b6fdd7f230ae8804b0a10444f09681700a64",
+        "git_blob_sha256": "5c734df7e20c82b0314a4a17def7b6fdd7f230ae8804b0a10444f09681700a64",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-071.html",
+        "runner_sha256": "dbaa5917235c64a9b87ab41b4767c5b0611a8638bdb2ede2ea52581386520c18",
+        "git_blob_sha256": "dbaa5917235c64a9b87ab41b4767c5b0611a8638bdb2ede2ea52581386520c18",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-072.html",
+        "runner_sha256": "43cd47fbaa8fbdbf5f951de0ac529d8b880697d31d192dfd9daddcf7fd12bc2d",
+        "git_blob_sha256": "43cd47fbaa8fbdbf5f951de0ac529d8b880697d31d192dfd9daddcf7fd12bc2d",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-073.html",
+        "runner_sha256": "4c18a7c1ca3a84dfb63a69d046734cba9a9440c1892b5655574eeb4c026991e3",
+        "git_blob_sha256": "4c18a7c1ca3a84dfb63a69d046734cba9a9440c1892b5655574eeb4c026991e3",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-074.html",
+        "runner_sha256": "a01d3d7c6a89baa2d3a2d8be0ddaf5db9fe1ed653b21342c1c8e36386a694d12",
+        "git_blob_sha256": "a01d3d7c6a89baa2d3a2d8be0ddaf5db9fe1ed653b21342c1c8e36386a694d12",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-075.html",
+        "runner_sha256": "59670d52c7f223c92f46bf5db4b88e2565376735057712c93e8ac688ddedb2d5",
+        "git_blob_sha256": "59670d52c7f223c92f46bf5db4b88e2565376735057712c93e8ac688ddedb2d5",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-076.html",
+        "runner_sha256": "2b2d0415b2ac57c1dc4a9047c3362e60d2cab5c596ad9912179105394749de6e",
+        "git_blob_sha256": "2b2d0415b2ac57c1dc4a9047c3362e60d2cab5c596ad9912179105394749de6e",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-077.html",
+        "runner_sha256": "88bfaaa88e9149cccfb158a097946da5101c25407831591c8e28014b76fb8069",
+        "git_blob_sha256": "88bfaaa88e9149cccfb158a097946da5101c25407831591c8e28014b76fb8069",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-078.html",
+        "runner_sha256": "ed413cc246de550bcaa4777ccd4f0b635289fbd73a676bc55e15e6fa11ad841d",
+        "git_blob_sha256": "ed413cc246de550bcaa4777ccd4f0b635289fbd73a676bc55e15e6fa11ad841d",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-079.html",
+        "runner_sha256": "e5a3f38d7c171d9bfbe0a79c7553566dfe09301d1c9567b0590faf7682da07ac",
+        "git_blob_sha256": "e5a3f38d7c171d9bfbe0a79c7553566dfe09301d1c9567b0590faf7682da07ac",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-080.html",
+        "runner_sha256": "126646b4584868a1890afba2d0b1c5056dc669faa8063b152683b753e88eff0e",
+        "git_blob_sha256": "126646b4584868a1890afba2d0b1c5056dc669faa8063b152683b753e88eff0e",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-081.html",
+        "runner_sha256": "9658487e225527bc2d36d2f51775fe888dbf7989cfa0bfa3d963c614381a50ad",
+        "git_blob_sha256": "9658487e225527bc2d36d2f51775fe888dbf7989cfa0bfa3d963c614381a50ad",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-082.html",
+        "runner_sha256": "2ff5b57883051e7864579ec3ab05e899f4403907653c8ec972c1910a54952349",
+        "git_blob_sha256": "2ff5b57883051e7864579ec3ab05e899f4403907653c8ec972c1910a54952349",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-083.html",
+        "runner_sha256": "36b4b0c41b82a754089b8b95b399d46e9faf31e5de8cbc00af80c7d732255081",
+        "git_blob_sha256": "36b4b0c41b82a754089b8b95b399d46e9faf31e5de8cbc00af80c7d732255081",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-084.html",
+        "runner_sha256": "0e502d1e0ccc1d56cf01dfc6caab2b1c8325c044815281f104183cb6dc6d0d5e",
+        "git_blob_sha256": "0e502d1e0ccc1d56cf01dfc6caab2b1c8325c044815281f104183cb6dc6d0d5e",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-085.html",
+        "runner_sha256": "028ae09e0cfb891d2e8f82ca9e06794621a64e5d3426c40fcc7e85bb2e2360b9",
+        "git_blob_sha256": "028ae09e0cfb891d2e8f82ca9e06794621a64e5d3426c40fcc7e85bb2e2360b9",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-086.html",
+        "runner_sha256": "fa31ca192c12bbb7679fefa7cd5f56af7f699bedefb91a30e4117cd411473459",
+        "git_blob_sha256": "fa31ca192c12bbb7679fefa7cd5f56af7f699bedefb91a30e4117cd411473459",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-087.html",
+        "runner_sha256": "e2c3b104798cb8a5088363dfbfa0ce55130d7fc63020196763028935dd6e14cc",
+        "git_blob_sha256": "e2c3b104798cb8a5088363dfbfa0ce55130d7fc63020196763028935dd6e14cc",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-088.html",
+        "runner_sha256": "fc1ed11026249baa54e3ae33573c35429dcc1bac34c98681c433f75a024f3217",
+        "git_blob_sha256": "fc1ed11026249baa54e3ae33573c35429dcc1bac34c98681c433f75a024f3217",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-089.html",
+        "runner_sha256": "a2563908a5ef9c3e6295395a4e33dbb4a824bb1a604220f24ca4b4a324368724",
+        "git_blob_sha256": "a2563908a5ef9c3e6295395a4e33dbb4a824bb1a604220f24ca4b4a324368724",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-090.html",
+        "runner_sha256": "48993d86334b032cf39edcd588c6341d3a5ed9189cf4da60f96d2c4047e00b1f",
+        "git_blob_sha256": "48993d86334b032cf39edcd588c6341d3a5ed9189cf4da60f96d2c4047e00b1f",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-091.html",
+        "runner_sha256": "d0dfea501467105e2885d4eda317739a4b8bb1c7a27efb4d00c0ca4833a816c0",
+        "git_blob_sha256": "d0dfea501467105e2885d4eda317739a4b8bb1c7a27efb4d00c0ca4833a816c0",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-092.html",
+        "runner_sha256": "731f8e8bd2991608edcfb3f345ce55828af8ab9524b8a3b09eb6ff78d5b9fcfc",
+        "git_blob_sha256": "731f8e8bd2991608edcfb3f345ce55828af8ab9524b8a3b09eb6ff78d5b9fcfc",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-093.html",
+        "runner_sha256": "2551e7246e2765397762d6b5238489b1635dda9807b2bd785143e9d5c8449d17",
+        "git_blob_sha256": "2551e7246e2765397762d6b5238489b1635dda9807b2bd785143e9d5c8449d17",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-094.html",
+        "runner_sha256": "e2bd7b963396a81b33b73270cacff606a3e5ac022554539ebcfa9357dde7741b",
+        "git_blob_sha256": "e2bd7b963396a81b33b73270cacff606a3e5ac022554539ebcfa9357dde7741b",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-095.html",
+        "runner_sha256": "4e163bd51cb2a05041e2fe4948b538494460168900755d526be148922a66f308",
+        "git_blob_sha256": "4e163bd51cb2a05041e2fe4948b538494460168900755d526be148922a66f308",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-096.html",
+        "runner_sha256": "2b261803fed945a144c5660c085e815c24ae9b420928e802fd7ca565e21051dc",
+        "git_blob_sha256": "2b261803fed945a144c5660c085e815c24ae9b420928e802fd7ca565e21051dc",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-097.html",
+        "runner_sha256": "8f9ebbd083588ea7286ed88a6251b1b4f48e0de4e7c30eb41732a1d0877036aa",
+        "git_blob_sha256": "8f9ebbd083588ea7286ed88a6251b1b4f48e0de4e7c30eb41732a1d0877036aa",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-098.html",
+        "runner_sha256": "87bbb8edc94bc6ac1706f722bc29948cf3cec4d50ddd10f539b97076890ff030",
+        "git_blob_sha256": "87bbb8edc94bc6ac1706f722bc29948cf3cec4d50ddd10f539b97076890ff030",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-099.html",
+        "runner_sha256": "e167a1dda3b503da9757e84aba627dcb63a760ee033b00a17beb26b13682c2b9",
+        "git_blob_sha256": "e167a1dda3b503da9757e84aba627dcb63a760ee033b00a17beb26b13682c2b9",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-100.html",
+        "runner_sha256": "d390a1ba1b80ff64a8959222d0a2566d72fd7596ebb476f5f8c21ac35938a4c1",
+        "git_blob_sha256": "d390a1ba1b80ff64a8959222d0a2566d72fd7596ebb476f5f8c21ac35938a4c1",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-101.html",
+        "runner_sha256": "2588165205daf4d43897e1a1c48b867992b1820a57a9dcddcb2886f7d29191ab",
+        "git_blob_sha256": "2588165205daf4d43897e1a1c48b867992b1820a57a9dcddcb2886f7d29191ab",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-102.html",
+        "runner_sha256": "34f8cc0c517b5295bbf940df21365817caf02fea684948c405fc59304dd763a2",
+        "git_blob_sha256": "34f8cc0c517b5295bbf940df21365817caf02fea684948c405fc59304dd763a2",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-103.html",
+        "runner_sha256": "a1c5bf5080d0460be18c1083317f4724eec5eadfdb995f8b617af0859dc418b9",
+        "git_blob_sha256": "a1c5bf5080d0460be18c1083317f4724eec5eadfdb995f8b617af0859dc418b9",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-104.html",
+        "runner_sha256": "a29084648301afae479470866c2e0082c5cf75072286d5c7a40ecceda1767a08",
+        "git_blob_sha256": "a29084648301afae479470866c2e0082c5cf75072286d5c7a40ecceda1767a08",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-105.html",
+        "runner_sha256": "16a45aae50dd2ea89f2561d70c7cc3abc61f89b491e30ea3fd94b7da97000ba7",
+        "git_blob_sha256": "16a45aae50dd2ea89f2561d70c7cc3abc61f89b491e30ea3fd94b7da97000ba7",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-106.html",
+        "runner_sha256": "f32bdf9c6eb53867d6af3d2d2037bb9ee4cff4b785f1ae78368b616b7520c811",
+        "git_blob_sha256": "f32bdf9c6eb53867d6af3d2d2037bb9ee4cff4b785f1ae78368b616b7520c811",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-107.html",
+        "runner_sha256": "08050cc30d3d4355fb84f139832c4fd5efe383287c4ce60c93eb72a00b978992",
+        "git_blob_sha256": "08050cc30d3d4355fb84f139832c4fd5efe383287c4ce60c93eb72a00b978992",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-108.html",
+        "runner_sha256": "d94e28a40840f727d55158e046f1c55cf36fee555d8904471ecc32321060c29f",
+        "git_blob_sha256": "d94e28a40840f727d55158e046f1c55cf36fee555d8904471ecc32321060c29f",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-109.html",
+        "runner_sha256": "3d05a3aebf2403953302253230c958bf14b39b60e2b0b85db8e8a0dc065f07cf",
+        "git_blob_sha256": "3d05a3aebf2403953302253230c958bf14b39b60e2b0b85db8e8a0dc065f07cf",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-110.html",
+        "runner_sha256": "f9a4f4d4b1121d0be03fc4aa4b26a88ce5cd5ee7a13723f1ca8995c2a8e85d36",
+        "git_blob_sha256": "f9a4f4d4b1121d0be03fc4aa4b26a88ce5cd5ee7a13723f1ca8995c2a8e85d36",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-111.html",
+        "runner_sha256": "92380ed8c32d9fadbf2852a1093d2e2b12fb82d4b5260e6c41f281f2c8995d4f",
+        "git_blob_sha256": "92380ed8c32d9fadbf2852a1093d2e2b12fb82d4b5260e6c41f281f2c8995d4f",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-112.html",
+        "runner_sha256": "b122c892a16a1544142b47156049cb490af3449f91f5642e3308ef5a60b98fcc",
+        "git_blob_sha256": "b122c892a16a1544142b47156049cb490af3449f91f5642e3308ef5a60b98fcc",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-113.html",
+        "runner_sha256": "7083213e7fb481bba6e278b08499510508e7f6d67181deacc859bbad73c03bd0",
+        "git_blob_sha256": "7083213e7fb481bba6e278b08499510508e7f6d67181deacc859bbad73c03bd0",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-114.html",
+        "runner_sha256": "36fd94f5f3105fdf5996b444ac26ccee23c809949974648ca2f4f7d375dddf14",
+        "git_blob_sha256": "36fd94f5f3105fdf5996b444ac26ccee23c809949974648ca2f4f7d375dddf14",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-115.html",
+        "runner_sha256": "adecadfa7d26b2de230ef9a4356774c07056b830ef317c5e3a6fcddaa190d64b",
+        "git_blob_sha256": "adecadfa7d26b2de230ef9a4356774c07056b830ef317c5e3a6fcddaa190d64b",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-116.html",
+        "runner_sha256": "867d84840b6154e4116cb4f380d2e457015136749e9c1eb7e89c9654767d4c56",
+        "git_blob_sha256": "867d84840b6154e4116cb4f380d2e457015136749e9c1eb7e89c9654767d4c56",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-117.html",
+        "runner_sha256": "1f0bc8d4dc9ecb32b3d926a23900c4e5f902eaa46c1f580adf807f3389f05ca2",
+        "git_blob_sha256": "1f0bc8d4dc9ecb32b3d926a23900c4e5f902eaa46c1f580adf807f3389f05ca2",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-118.html",
+        "runner_sha256": "88e5179a19cd4791f7242274410c8a7d0aa72a0c1c2d48c96954c5e1ad1a8884",
+        "git_blob_sha256": "88e5179a19cd4791f7242274410c8a7d0aa72a0c1c2d48c96954c5e1ad1a8884",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-119.html",
+        "runner_sha256": "ce0260163aab6f741eb5a27967fc387db48d088f4bb2bfa5b3aeb87159a05d38",
+        "git_blob_sha256": "ce0260163aab6f741eb5a27967fc387db48d088f4bb2bfa5b3aeb87159a05d38",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-120.html",
+        "runner_sha256": "ecc1186ea8780a147f9985f267e29da819af9e0150bd2ce200f058c482bd9f39",
+        "git_blob_sha256": "ecc1186ea8780a147f9985f267e29da819af9e0150bd2ce200f058c482bd9f39",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-121.html",
+        "runner_sha256": "6e13f1b29d4a7ef754583d25b7f90d22907259f2c1f7cd9b93385148de6af01a",
+        "git_blob_sha256": "6e13f1b29d4a7ef754583d25b7f90d22907259f2c1f7cd9b93385148de6af01a",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-122.html",
+        "runner_sha256": "7c2f2d3b1e1ebc75d32fc37d20073386aad7cf4bf1f9a9ced834a88c371cb7a7",
+        "git_blob_sha256": "7c2f2d3b1e1ebc75d32fc37d20073386aad7cf4bf1f9a9ced834a88c371cb7a7",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-123.html",
+        "runner_sha256": "5fe06c38c7ed7a178977c652787190a268b3f42fda2d1087fd977312cdd6ec69",
+        "git_blob_sha256": "5fe06c38c7ed7a178977c652787190a268b3f42fda2d1087fd977312cdd6ec69",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/component-124.html",
+        "runner_sha256": "350e6f68ae8894f58dabe464d6f3c608c4ab0fcd8b7e98751bf8dbc52d8fbdf3",
+        "git_blob_sha256": "350e6f68ae8894f58dabe464d6f3c608c4ab0fcd8b7e98751bf8dbc52d8fbdf3",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/index.html",
+        "runner_sha256": "2d95b187484db70495450cfcf2a60b93f78a521b480ea61aee59086a7dbd3a64",
+        "git_blob_sha256": "2d95b187484db70495450cfcf2a60b93f78a521b480ea61aee59086a7dbd3a64",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/QtWebEngine/sources.json",
+        "runner_sha256": "a75f3e8816c89307e3e30011c51224d1f0a392ed23368cbb1014e6b9c5f97870",
+        "git_blob_sha256": "a75f3e8816c89307e3e30011c51224d1f0a392ed23368cbb1014e6b9c5f97870",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/README.md",
+        "runner_sha256": "3cc394686287aa1a5cb2ace7b4d21bc3c4378de952e0b21f890ca1c9a7d0bb6a",
+        "git_blob_sha256": "3cc394686287aa1a5cb2ace7b4d21bc3c4378de952e0b21f890ca1c9a7d0bb6a",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/licenses/manifest.json",
+        "runner_sha256": "773dc1092a5b056bce6d40359c7916f8f8def257757902a24f04beaa9ad0dfe8",
+        "git_blob_sha256": "773dc1092a5b056bce6d40359c7916f8f8def257757902a24f04beaa9ad0dfe8",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "desktop/windows/requirements-build.txt",
+        "runner_sha256": "a1fccab18f1bf3afd80e31b3ddbf7678b241b22b64ae245491f8401d2998047a",
+        "git_blob_sha256": "20308bf5de1dc996a63503f17fc2461dfe8b34575d06fab1940d3a7f35688c11",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "desktop/windows/workbench_update_download.py",
+        "runner_sha256": "861fcd8f9bafd33afd252cccf581fda5043082df7066d142ababf61dd8676f92",
+        "git_blob_sha256": "88a7c24257831fba51eb8cc7599ad9f9eccc70cfe2836199d10f933296c960c4",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "desktop/windows/workbench_updates.py",
+        "runner_sha256": "07e1523fbfcc75964893ff507608ab8dcfd507283ecb0130271f5263d0f6c0d1",
+        "git_blob_sha256": "e0ebec9c8808c34b7fa3b10d56d96a2ec44ded55c54a22fcbb0bebe50278b9c5",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "scripts/build_desktop_macos.py",
+        "runner_sha256": "992865b0afa517a5bde6205d8e91882af7a5fa04c97ec2335c2cbd4d1971221c",
+        "git_blob_sha256": "42e9e76c803b1c8c6c64ed12627fa913150f0ce761520996338916abc926862f",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "scripts/build_desktop_windows.py",
+        "runner_sha256": "4fa12600458af85a39d5781dda7023ff686d49b3422578aa494dd596c5cced46",
+        "git_blob_sha256": "1c4394f3eb615e9ef60d920225c3e649279557ef47af4e165eb5f48f4b97b8b4",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "scripts/publish_windows_draft.py",
+        "runner_sha256": "268ea54b42fb33e1fcba932729506f9f748b3bc86869ee4a9a08afd9f6586b62",
+        "git_blob_sha256": "db534651fd081664c80c48721b6d5ba88ade0b8e4ecdcf179cefb15c038da7bc",
+        "mapping": "declared_git_text_auto_CRLF"
+      },
+      {
+        "path": "skills/story-skill/scripts/story.py",
+        "runner_sha256": "34583a5793c79ea5e0d70d52750804f33c723a8367d6dfa76cd93823c863050f",
+        "git_blob_sha256": "34583a5793c79ea5e0d70d52750804f33c723a8367d6dfa76cd93823c863050f",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_chrome_bridge.mjs",
+        "runner_sha256": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+        "git_blob_sha256": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_history.py",
+        "runner_sha256": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+        "git_blob_sha256": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_outline.py",
+        "runner_sha256": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+        "git_blob_sha256": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_platform_browser.py",
+        "runner_sha256": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+        "git_blob_sha256": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+        "runner_sha256": "ea5d9b8cef40acef7749f534f1507130a0c068cf043aaece9bfc2964c8fdc384",
+        "git_blob_sha256": "ea5d9b8cef40acef7749f534f1507130a0c068cf043aaece9bfc2964c8fdc384",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_platform_drafts.py",
+        "runner_sha256": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+        "git_blob_sha256": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_publish.py",
+        "runner_sha256": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+        "git_blob_sha256": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_punctuation.py",
+        "runner_sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+        "git_blob_sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_search.py",
+        "runner_sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "git_blob_sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_storage.py",
+        "runner_sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "git_blob_sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_workbench.py",
+        "runner_sha256": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+        "git_blob_sha256": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_workbench_archives.py",
+        "runner_sha256": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7",
+        "git_blob_sha256": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_workbench_books.py",
+        "runner_sha256": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+        "git_blob_sha256": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "skills/story-skill/scripts/story_world.py",
+        "runner_sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+        "git_blob_sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+        "mapping": "exact_git_blob"
+      },
+      {
+        "path": "tests/desktop_payload_probe.py",
+        "runner_sha256": "149ef63bfd5aca24134d54f609e7a54647dece9d73ba7d3ac3fb5801817216e7",
+        "git_blob_sha256": "8e7d0a64702be212b5a6a0e33d529801da164b213c4196874b4fa0249e4f306a",
+        "mapping": "declared_git_text_auto_CRLF"
+      }
+    ]
+  },
+  "evidence_files": [
+    {
+      "path": "benchmarks/results/v0.6.20/release/windows/windows-build-manifest.json",
+      "bytes": 523098,
+      "sha256": "eecef9ac8eb911768f8c50609cbe3f40b225f27f089f8f1cac42740a106abd3f"
+    },
+    {
+      "path": "benchmarks/results/v0.6.20/release/windows/windows-distribution-verification.json",
+      "bytes": 38694,
+      "sha256": "987025879b4444bc34be1552248152f36a9fa35be6de62f87aed59b885175b0b"
+    },
+    {
+      "path": "benchmarks/results/v0.6.20/release/windows/windows-draft-upload.json",
+      "bytes": 40654,
+      "sha256": "c9f7119b4a98d9060174198ac541a4d5be417fdfa0d10672be8151323d9629ba"
+    },
+    {
+      "path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke-dark.png",
+      "bytes": 28942,
+      "sha256": "482efec2553ec439a75847a07ead89e5312f38b3ea2ba058f6361cef856cc538"
+    },
+    {
+      "path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke-light.png",
+      "bytes": 27057,
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    },
+    {
+      "path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke-update-progress.png",
+      "bytes": 4595,
+      "sha256": "c9a8cb4c117328e179bb2eb5443b96789681a1a69071410a540f85ee6a922177"
+    },
+    {
+      "path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke.json",
+      "bytes": 305,
+      "sha256": "adccb5b681d7c82cfd21fdfed07722fe935a9c9a89be9f136548d35a6cf6f4ab"
+    },
+    {
+      "path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke.png",
+      "bytes": 27057,
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    },
+    {
+      "path": "benchmarks/results/v0.6.20/release/windows/windows-runtime-safety.json",
+      "bytes": 407,
+      "sha256": "deaa11f8b4ae4e924e7baec7acac9c7f5b064eb6737f3305a2cff1dc39d78e26"
+    }
+  ],
+  "visual_review": {
+    "ok": true,
+    "scope": "Manually viewed the three original isolated acceptance PNGs. Light and dark bookshelf screens are empty synthetic libraries, legible and unclipped. Update dialog clearly labels synthetic progress, shows 60 percent with received bytes, speed and ETA, and does not claim a real update download.",
+    "files": [
+      "windows-native-smoke-light.png",
+      "windows-native-smoke-dark.png",
+      "windows-native-smoke-update-progress.png"
+    ],
+    "private_user_material_visible": false
+  },
+  "scope": "Full native Windows build/install/payload/manifest and exact four assets uploaded to the specified draft. Source CI is independent. Large installer/portable wrappers were transferred by the workflow and not downloaded again by this collector.",
+  "privacy_review": {
+    "ok": true,
+    "local_paths_in_composite": "Repository-relative paths only.",
+    "raw_ci_reports_modified": false,
+    "raw_artifact_zip_modified": false,
+    "runner_paths": "Only synthetic GitHub runner paths are retained if present; original report/artifact digests remain unchanged.",
+    "development_evidence_included": false
+  }
+}

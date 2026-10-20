@@ -1,0 +1,232 @@
+{
+  "schema": 1,
+  "ok": true,
+  "run_id": 39426215846,
+  "actual_test_checkout": "fea4a332bd912a156fb195b8ad737e18e8a183b6",
+  "scope": "Quick Windows Python3.10/3.12 fixture and classification checks only. The temporary workflow branch commit may differ from the explicit checkout. This does not replace the final full source CI.",
+  "jobs": [
+    {
+      "metadata": {
+        "id": 118639332489,
+        "run_id": 39426215846,
+        "workflow_name": "Verify corrected Windows material fixture",
+        "head_branch": "codex/verify-v0620-material-fixture",
+        "run_url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/39426215846",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOUR8APM8AAAAbn3SMiQ",
+        "head_sha": "7203200077bdc3ab6b352c7bffe34b526bef0995",
+        "url": "https://api.github.com/repos/NingCui29/story-skill/actions/jobs/118639332489",
+        "html_url": "https://github.com/NingCui29/story-skill/actions/runs/39426215846/job/118639332489",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-20T12:56:27Z",
+        "started_at": "2026-10-20T12:56:28Z",
+        "completed_at": "2026-10-20T12:59:35Z",
+        "name": "material (3.10)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-20T12:56:29Z",
+            "completed_at": "2026-10-20T12:56:30Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-20T12:56:30Z",
+            "completed_at": "2026-10-20T12:56:38Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-20T12:56:38Z",
+            "completed_at": "2026-10-20T12:57:27Z"
+          },
+          {
+            "name": "Confirm source and Node then run material and classification cases",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-20T12:57:27Z",
+            "completed_at": "2026-10-20T12:59:32Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-20T12:59:32Z",
+            "completed_at": "2026-10-20T12:59:32Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-20T12:59:32Z",
+            "completed_at": "2026-10-20T12:59:34Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-20T12:59:34Z",
+            "completed_at": "2026-10-20T12:59:34Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/NingCui29/story-skill/check-runs/118639332489",
+        "labels": [
+          "windows-latest"
+        ],
+        "runner_id": 1000000606,
+        "runner_name": "GitHub Actions 1000000606",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "log": {
+        "path": "dist/release-v0.6.20-candidate/fixture-probe/job-118639332489.log",
+        "sha256": "3a5891722568312d22c22434c8390c717dd3e18a20c93aa99cd1a581dad57c49",
+        "bytes": 30640
+      },
+      "actual_checkout_lines": [
+        110,
+        195
+      ],
+      "replacement_case": [
+        {
+          "line": 199,
+          "text": "test_cursor_rejects_replaced_book_root_even_with_identical_book_id (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+        }
+      ],
+      "summaries": [
+        {
+          "line": 273,
+          "text": "Ran 75 tests in 112.092s"
+        },
+        {
+          "line": 275,
+          "text": "OK (skipped=4)"
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "id": 118639332851,
+        "run_id": 39426215846,
+        "workflow_name": "Verify corrected Windows material fixture",
+        "head_branch": "codex/verify-v0620-material-fixture",
+        "run_url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/39426215846",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOUR8APM8AAAAbn3SN8w",
+        "head_sha": "7203200077bdc3ab6b352c7bffe34b526bef0995",
+        "url": "https://api.github.com/repos/NingCui29/story-skill/actions/jobs/118639332851",
+        "html_url": "https://github.com/NingCui29/story-skill/actions/runs/39426215846/job/118639332851",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-20T12:56:27Z",
+        "started_at": "2026-10-20T12:56:28Z",
+        "completed_at": "2026-10-20T12:59:07Z",
+        "name": "material (3.12)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-20T12:56:29Z",
+            "completed_at": "2026-10-20T12:56:30Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-20T12:56:30Z",
+            "completed_at": "2026-10-20T12:56:39Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-20T12:56:39Z",
+            "completed_at": "2026-10-20T12:56:39Z"
+          },
+          {
+            "name": "Confirm source and Node then run material and classification cases",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-20T12:56:39Z",
+            "completed_at": "2026-10-20T12:59:04Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-20T12:59:04Z",
+            "completed_at": "2026-10-20T12:59:04Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-20T12:59:04Z",
+            "completed_at": "2026-10-20T12:59:07Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-20T12:59:07Z",
+            "completed_at": "2026-10-20T12:59:07Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/NingCui29/story-skill/check-runs/118639332851",
+        "labels": [
+          "windows-latest"
+        ],
+        "runner_id": 1000000607,
+        "runner_name": "GitHub Actions 1000000607",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      "log": {
+        "path": "dist/release-v0.6.20-candidate/fixture-probe/job-118639332851.log",
+        "sha256": "2fbd65f72a9d316128d5c8946e4ffd1cbca9d03896b0d5f512c32d0feaac2e49",
+        "bytes": 31609
+      },
+      "actual_checkout_lines": [
+        110,
+        146
+      ],
+      "replacement_case": [
+        {
+          "line": 150,
+          "text": "test_cursor_rejects_replaced_book_root_even_with_identical_book_id (test_workbench_material_scan.WorkbenchMaterialScanTests.test_cursor_rejects_replaced_book_root_even_with_identical_book_id) ... ok"
+        }
+      ],
+      "summaries": [
+        {
+          "line": 224,
+          "text": "Ran 75 tests in 128.352s"
+        },
+        {
+          "line": 226,
+          "text": "OK (skipped=4)"
+        }
+      ]
+    }
+  ],
+  "collected_at_utc": "2026-10-20T12:59:55.350966+00:00"
+}

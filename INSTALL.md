@@ -1,26 +1,26 @@
 # 安装或升级 Story Skill
 
-**已发布版本：v0.6.19。** 八技能源清单为 62 个文件，运行时需要 Python 3.10 或更新版本；固定标签为 `v0.6.19`，版本分支为 `version-0.6.19`。固定标签安装、下载、CI 与 Packages 结果见[发布记录](docs/releases/v0.6.19.md)。上一正式版见 [v0.6.18](docs/releases/v0.6.18.md)。
+**已发布版本：v0.6.20。** 八技能源清单为 62 个文件，运行时需要 Python 3.10 或更新版本；固定标签 `v0.6.20` 已建立并核对，版本分支 `version-0.6.20` 已在远端建立并回读，收尾文档将随 main 与该分支一起快进。实际构建、下载、CI 与 Packages 状态见[发布记录](docs/releases/v0.6.20.md)。上一正式版见 [v0.6.19](docs/releases/v0.6.19.md)。
 
-本版整合工作台界面、作品管理、备份恢复、检查更新与下载进度，以及受控平台草稿功能。番茄已有指定合成稿的完整链路证据；七猫、起点、多卷与真实分页待实页验收。写前交接、偏好召回、题材写法、语义审查和采用关系继续保留，详见[本版变化与范围](docs/releases/v0.6.19.md)。
+本版更新分类的本地决策／后台核验双轴记录、整书内容审稿和阅读期待规则，并将大量材料改为有界分批加载；候选与恢复稿可定点安全打开。既有平台范围保持：番茄只有指定合成稿的单卷完整列表实页证据，七猫、起点、多卷与真实分页待验收。本地套件、两端客户端、完整跨平台 CI 和固定标签隔离安装已通过；公开下载与 Packages 独立核验也已通过，实际范围见[变化与实际范围](docs/releases/v0.6.20.md)。
 
 [v0.6.12 Release](https://github.com/NingCui29/story-skill/releases/tag/v0.6.12)保留当版49文件套件及修正历史。Claude 桌面导入包、Claude Code 与 Google Antigravity 目录安装适配从 v0.6.12 开始提供；本轮沿用这些入口与 Codex 的默认安装行为。
 
 ## Codex 本地插件
 
-下载本版插件 [story-skill-codex-0.6.19.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-codex-0.6.19.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-codex-0.6.19.zip.sha256)。归档包含本地市场目录和 65 个插件文件，共 67 个成员；不是公共插件目录上架。也可先在仓库根目录运行 `python3 -B -X utf8 scripts/package_codex.py` 构建，再按 [Codex 本地插件说明](docs/codex-plugin.md)执行隔离验证和本地市场安装。包内保留八个同级技能及完整运行时，提供 `.codex-plugin/plugin.json`、图标、许可证和市场目录。此方式不使用下文的目录安装器；已有同名技能时先核对并备份旧副本，避免重复加载。
+下载本版插件 [story-skill-codex-0.6.20.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-codex-0.6.20.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-codex-0.6.20.zip.sha256)。归档包含本地市场目录和 65 个插件文件，共 67 个成员；不是公共插件目录上架。也可先在仓库根目录运行 `python3 -B -X utf8 scripts/package_codex.py` 构建，再按 [Codex 本地插件说明](docs/codex-plugin.md)执行隔离验证和本地市场安装。包内保留八个同级技能及完整运行时，提供 `.codex-plugin/plugin.json`、图标、许可证和市场目录。此方式不使用下文的目录安装器；已有同名技能时先核对并备份旧副本，避免重复加载。
 
 ## Claude 桌面版：导入单技能包
 
-**桌面包使用带 `-r2` 的文件。** v0.6.19 发布文件为 `story-skill-claude-desktop-0.6.19-r2.zip`，整个 ZIP 只保留一个 `story-skill/SKILL.md`；内嵌流程使用普通 `GUIDE.md`，并转换相关引用。v0.6.12 原桌面包在子目录中还含8个 `SKILL.md`，曾被导入器以“Currently there are 9”拒绝，已由该版 r2 替代；原附件与更正记录保留。标准八技能 ZIP 用于目录安装，不用于桌面单技能上传。
+**桌面包使用带 `-r2` 的文件。** v0.6.20 发布文件为 `story-skill-claude-desktop-0.6.20-r2.zip`，整个 ZIP 只保留一个 `story-skill/SKILL.md`；内嵌流程使用普通 `GUIDE.md`，并转换相关引用。v0.6.12 原桌面包在子目录中还含8个 `SKILL.md`，曾被导入器以“Currently there are 9”拒绝，已由该版 r2 替代；原附件与更正记录保留。标准八技能 ZIP 用于目录安装，不用于桌面单技能上传。
 
-下载本版 [Claude 桌面专用包](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip.sha256)。也可在 v0.6.19 源码根目录构建：
+下载本版 [Claude 桌面专用包](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-claude-desktop-0.6.20-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-claude-desktop-0.6.20-r2.zip.sha256)。也可在 v0.6.20 源码根目录构建：
 
 ```bash
 python3 -B -X utf8 scripts/package_claude.py
 ```
 
-v0.6.19 源码默认输出 `dist/story-skill-claude-desktop-0.6.19-r2.zip`；本地开发源码按自身版本命名，可用 `--output "<输出ZIP路径>"` 指定位置。自行构建时，以实际源码快照为准；v0.6.19 包体、摘要及导入验证状态见[发布记录](docs/releases/v0.6.19.md)。
+v0.6.20 源码默认输出 `dist/story-skill-claude-desktop-0.6.20-r2.zip`；本地开发源码按自身版本命名，可用 `--output "<输出ZIP路径>"` 指定位置。自行构建时，以实际源码快照为准；v0.6.20 包体、摘要及导入验证状态见[发布记录](docs/releases/v0.6.20.md)。
 
 1. 在 Claude 的 **Settings > Capabilities** 开启 **Code execution and file creation**；组织账号需管理员开放相应能力。
 2. 打开 **Customize > Skills**，点击 **+ → Create skill → Upload a skill**，上传桌面专用 ZIP。
@@ -31,7 +31,7 @@ v0.6.19 源码默认输出 `dist/story-skill-claude-desktop-0.6.19-r2.zip`；本
 桌面包采用官方要求的单技能根目录格式，并把八个流程完整保留为内部资源：
 
 ```text
-story-skill-claude-desktop-0.6.19-r2.zip
+story-skill-claude-desktop-0.6.20-r2.zip
 └── story-skill/
     ├── SKILL.md
     ├── LICENSE
@@ -44,9 +44,9 @@ story-skill-claude-desktop-0.6.19-r2.zip
         └── …其余六个同级流程目录（入口均为 GUIDE.md）
 ```
 
-顶层入口按需读取 `suite/story-skill/GUIDE.md`；`suite/` 中保留八个同级目录及62个源载荷文件，8个入口改名并转换内嵌 Markdown 的相关引用，非 Markdown 资源与源文件逐字节一致。各相对引用仍以所在文件为基准。加上顶层入口和许可证，v0.6.19 桌面包为64个文件、递归仅1个 `SKILL.md`；本版引用、隔离CLI及回下载结果见发布记录。桌面只启用总入口，不把内嵌流程当成八个独立安装项。[官方打包格式](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills)
+顶层入口按需读取 `suite/story-skill/GUIDE.md`；`suite/` 中保留八个同级目录及62个源载荷文件，8个入口改名并转换内嵌 Markdown 的相关引用，非 Markdown 资源与源文件逐字节一致。各相对引用仍以所在文件为基准。加上顶层入口和许可证，v0.6.20 桌面包为64个文件、递归仅1个 `SKILL.md`；本版引用、隔离CLI及回下载结果见发布记录。桌面只启用总入口，不把内嵌流程当成八个独立安装项。[官方打包格式](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills)
 
-本版 `story-skill-0.6.19.zip` 用于八目录分发，桌面单技能上传应选择专用的 `story-skill-claude-desktop-0.6.19-r2.zip`。桌面升级通过下载或构建并导入已核验的新版包处理；下文的 `--update` 是目录安装器参数，不执行桌面上传。
+本版 `story-skill-0.6.20.zip` 用于八目录分发，桌面单技能上传应选择专用的 `story-skill-claude-desktop-0.6.20-r2.zip`。桌面升级通过下载或构建并导入已核验的新版包处理；下文的 `--update` 是目录安装器参数，不执行桌面上传。
 
 ### 书稿保存与桌面能力
 
@@ -70,7 +70,7 @@ Claude Code 与 Antigravity 的目录安装方式见[下文](#从本仓库源码
 
 ## 目录安装的完整套件
 
-v0.6.19 完整套件一次安装以下八个同级目录，共62个载荷文件：
+v0.6.20 完整套件一次安装以下八个同级目录，共62个载荷文件：
 
 ```text
 skills/story-skill
@@ -83,17 +83,17 @@ skills/story-skill-cover
 skills/story-skill-publish
 ```
 
-本版套件 ZIP 为 [story-skill-0.6.19.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-0.6.19.zip)，另附[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-0.6.19.zip.sha256)；npm 包版本为 `@ningcui29/story-skill@0.6.19`。npm 包本身不是可发现的技能安装。历史标签、附件与旧安装说明仍保留，不通过重命名推导旧版资源地址。
+本版套件 ZIP 为 [story-skill-0.6.20.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-0.6.20.zip)，另附[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-0.6.20.zip.sha256)；npm 包版本为 `@ningcui29/story-skill@0.6.20`。npm 包本身不是可发现的技能安装。历史标签、附件与旧安装说明仍保留，不通过重命名推导旧版资源地址。
 
 八个目录中的 `SKILL.md` 为标准技能入口，专用技能通过相对路径引用 `story-skill` 的共享 Python 运行时及其他技能的参考文件，必须保持同级完整安装。`agents/openai.yaml` 是 Codex 界面配置，随套件保留；其他宿主无需使用它。Claude Code、Antigravity 2.0／CLI 可通过 `/技能名` 调用，也可像 Antigravity IDE 一样用匹配描述的自然语言触发，各目录按下文的宿主选择安装。
 
-远程安装时，核对 `v0.6.19` 固定标签与[发布记录](docs/releases/v0.6.19.md)所列提交，先将八个 `--path` 安装到隔离临时目录；另从本版 Release 下载上述 ZIP 和校验文件，核对摘要，并逐文件比较临时目录与 ZIP。仓库为私有时，安装与下载使用已有权限，不把未认证访问失败当作附件缺失。
+远程安装时，核对 `v0.6.20` 固定标签与[发布记录](docs/releases/v0.6.20.md)所列提交，先将八个 `--path` 安装到隔离临时目录；另从本版 Release 下载上述 ZIP 和校验文件，核对摘要，并逐文件比较临时目录与 ZIP。仓库为私有时，安装与下载使用已有权限，不把未认证访问失败当作附件缺失。
 
-各版套件 ZIP 的大小和 SHA-256 以对应[发布记录](docs/releases/v0.6.19.md)和附件校验文件为准。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
+各版套件 ZIP 的大小和 SHA-256 以对应[发布记录](docs/releases/v0.6.20.md)和附件校验文件为准。ZIP 成员只能是上述八个目录内的普通文件，拒绝绝对路径、越界路径和链接。固定标签、临时安装或附件任一环节不一致，停止升级。
 
 ## 从本仓库源码安装
 
-安装发布版时使用对应固定标签。v0.6.19 包含八技能、62 个源载荷文件，本轮工作台、平台草稿及各分发形式的范围见发布记录；历史 v0.6.16 为51文件，v0.6.13 开发清单为50文件，v0.6.12 套件为49文件。明确安装后续本地开发源码时，先保存实际提交、工作区差异和全部载荷文件哈希，在隔离项目中核对；不能仅凭版本号判定其与发布附件相同。在对应仓库根目录运行默认 Codex 项目内托管安装，目标为 `<项目根目录>/.agents/skills/`：
+安装发布版时使用对应固定标签。v0.6.20 包含八技能、62 个源载荷文件，本轮工作台、平台草稿及各分发形式的范围见发布记录；历史 v0.6.16 为51文件，v0.6.13 开发清单为50文件，v0.6.12 套件为49文件。明确安装后续本地开发源码时，先保存实际提交、工作区差异和全部载荷文件哈希，在隔离项目中核对；不能仅凭版本号判定其与发布附件相同。在对应仓库根目录运行默认 Codex 项目内托管安装，目标为 `<项目根目录>/.agents/skills/`：
 
 ```bash
 python3 -B -X utf8 scripts/install.py --project "<项目根目录>"
@@ -130,7 +130,7 @@ python3 -B -X utf8 scripts/install.py --host antigravity --user
 
 ### Qoder、Qoder CN、ZCode 与 WorkBuddy AI
 
-v0.6.19源码安装器支持以下目标；标准技能ZIP只携带八技能，不含安装器。使用本版固定源码，沿用上文的版本与载荷核验要求。以下为默认配置位置：
+v0.6.20源码安装器支持以下目标；标准技能ZIP只携带八技能，不含安装器。使用本版固定源码，沿用上文的版本与载荷核验要求。以下为默认配置位置：
 
 | 应用 | `--host` | `--project` 的安装位置 | `--user` 的安装位置 |
 |---|---|---|---|
@@ -160,7 +160,7 @@ python3 -B -X utf8 scripts/install.py --host workbuddy --user
 
 ### 其他 Agent Skills 宿主
 
-以下目标同样由v0.6.19源码安装器提供；标准技能ZIP不含安装器。每个目标复制相同的完整八技能，项目与个人范围任选一个。表中为宿主原生默认目录，路径依据链接的官方说明：
+以下目标同样由v0.6.20源码安装器提供；标准技能ZIP不含安装器。每个目标复制相同的完整八技能，项目与个人范围任选一个。表中为宿主原生默认目录，路径依据链接的官方说明：
 
 | 应用与官方说明 | `--host` | `--project` 的安装位置 | `--user` 的安装位置 |
 |---|---|---|---|
@@ -224,7 +224,7 @@ python3 -B -X utf8 scripts/install.py --host trae-cn --project "<写作项目根
 
 核验不创建目录或安装锁、不安装或修复文件；`--check` 与 `--update` 互斥。缺技能、载荷缺失或变化、额外文件、链接及无效托管清单会返回失败。完全相同的手工副本也可核验，回执中的 `managed_skills` 表示哪些目录带有效托管清单；通过核验不把手工副本转为托管安装。`verified` 只表示本次文件与源码一致，不表示宿主已发现技能或模型已执行任务。安装器忽略自己的清单以及 `__pycache__`、`.pyc` 等运行缓存，其他额外内容按原保护规则处理。
 
-比较目标的八个目录与已验证的新套件，核对文件集合和字节；安装器回执、`__pycache__` 与 `.pyc` 可按各自规则排除。用新版核心 `scripts/story.py` 在隔离书目录执行 `--version`、`--help`、`init`、`status`。安装 v0.6.19 本版源码时，核对版本 `0.6.19` 和全部62个载荷文件；安装 v0.6.16 发布源码时，仍核对版本 `0.6.16` 和51个文件；历史 v0.6.12 发布套件为 `0.6.12` 和49个文件。八目录、全部载荷、相对引用及四个命令均通过后，才报告安装成功。若安装中断或目标被其他进程修改，保留备份与现场，不把部分结果报告为完成。
+比较目标的八个目录与已验证的新套件，核对文件集合和字节；安装器回执、`__pycache__` 与 `.pyc` 可按各自规则排除。用新版核心 `scripts/story.py` 在隔离书目录执行 `--version`、`--help`、`init`、`status`。安装 v0.6.20 本版源码时，核对版本 `0.6.20` 和全部62个载荷文件；安装 v0.6.16 发布源码时，仍核对版本 `0.6.16` 和51个文件；历史 v0.6.12 发布套件为 `0.6.12` 和49个文件。八目录、全部载荷、相对引用及四个命令均通过后，才报告安装成功。若安装中断或目标被其他进程修改，保留备份与现场，不把部分结果报告为完成。
 
 明确安装更新的本地源码时，仍保存实际快照并逐文件核对；本地验证不代表远端标签、附件或包已同步。
 
@@ -234,15 +234,15 @@ python3 -B -X utf8 scripts/install.py --host trae-cn --project "<写作项目根
 
 ## macOS 客户端
 
-本版提供 Intel Mac 客户端 **0.1.18 / build 19**，内含 Python 3.12 与 Story Skill 0.6.19。下载 [DMG 安装包](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg.sha256)，核对后挂载并将应用拖入 Applications；也可使用 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip.sha256)。
+本版提供 Intel Mac 客户端 **0.1.19 / build 20**，内含 Python 3.12 与 Story Skill 0.6.20。下载 [DMG 安装包](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.dmg.sha256)，核对后挂载并将应用拖入 Applications；也可使用 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.zip.sha256)。
 
-客户端采用本地临时签名，未经 Apple 公证；Apple Silicon 尚未验证。它不自动安装八技能。本轮构建、严格临时签名、隔离 CLI／原生自检及 ZIP／DMG 验证已通过，实际分发核验范围见[客户端说明](desktop/macos/README.md)和[发布记录](docs/releases/v0.6.19.md)。历史附件保留在对应 Release。
+客户端采用本地临时签名，未经 Apple 公证；Apple Silicon 尚未验证。它不自动安装八技能。本轮构建、15 个运行时模块与固定源码核对、严格临时签名、隔离 CLI／安全探针、AppKit／WKWebView 原生自检及 ZIP／DMG 验证已通过；本版已正式分发，公开二进制头尾各 64 KiB 的匿名 Range 核对已通过，完整包另经本地验收，实际范围见[客户端说明](desktop/macos/README.md)和[发布记录](docs/releases/v0.6.20.md)。历史附件保留在对应 Release。
 
 ## Windows 客户端
 
-本版提供 Windows x64 客户端 **0.1.9**，内含 Python 与 Story Skill 0.6.19。下载[安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe.sha256)，核对后按向导安装；便携使用可下载[完整 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64.zip.sha256)，解压后运行 `StoryWorkbench.exe`。
+本版提供 Windows x64 客户端 **0.1.10**，内含 Python 与 Story Skill 0.6.20。下载[安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.10-windows-x86_64-setup.exe)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.10-windows-x86_64-setup.exe.sha256)，核对后按向导安装；便携使用可下载[完整 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.10-windows-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.10-windows-x86_64.zip.sha256)，解压后运行 `StoryWorkbench.exe`。
 
-安装程序未做代码签名。本轮原生 Windows CI 已核验构建、安装、窗口、卸载、完整安装载荷与源码，并逐文件核对随包许可清单。Windows 10／11 用户人工验收和实际下载范围见[Windows 说明](desktop/windows/README.md)与[发布记录](docs/releases/v0.6.19.md)。
+安装程序未做代码签名。Windows 随包指南已改为版本中性的离线用法，本轮原生构建、完整载荷／源码、实际安装及草稿资产核对已通过，本版已正式分发，公开二进制头尾各 64 KiB 的匿名 Range 核对已通过，完整包另经原生 CI 验收；先前候选包的通过不作为新包结果。Windows 10／11 用户人工验收和实际下载范围见[Windows 说明](desktop/windows/README.md)与[发布记录](docs/releases/v0.6.20.md)。
 
 升级任一客户端前，保存桌面和外部浏览器全部页面需要保留的文字，退出旧客户端后再安装。已运行的工作台服务可能继续使用旧代码，应在保留编辑后按服务管理流程更新；安装包不会自动结束编辑会话。
 
@@ -250,4 +250,4 @@ python3 -B -X utf8 scripts/install.py --host trae-cn --project "<写作项目根
 
 ## 随包许可证
 
-当前源码的八技能许可证与根 `LICENSE` 一致，采用自定义非商业使用／商业授权条款；非商业用途免费，商业用途须另行授权并按约定付费。v0.6.19标准、Claude 桌面、Codex 插件与 npm 构建携带完整条款；npm 按输入归档的实际许可生成标识。`Commercial Licensor`、`Commercial Licensing Contact` 仍为占位文字。历史已发布 v0.6.15 技能包继续携带原 MIT 许可证，独立 Mac 客户端携带根自定义条款；安装时以实际归档中的许可证为准。详见[许可证与分发](docs/licensing.md)。
+当前源码的八技能许可证与根 `LICENSE` 一致，采用自定义非商业使用／商业授权条款；非商业用途免费，商业用途须另行授权并按约定付费。v0.6.20标准、Claude 桌面、Codex 插件与本地 npm 构建均携带完整条款；npm 按输入归档的实际许可生成标识。`Commercial Licensor`、`Commercial Licensing Contact` 仍为占位文字。历史已发布 v0.6.15 技能包继续携带原 MIT 许可证，独立 Mac 客户端携带根自定义条款；安装时以实际归档中的许可证为准。详见[许可证与分发](docs/licensing.md)。

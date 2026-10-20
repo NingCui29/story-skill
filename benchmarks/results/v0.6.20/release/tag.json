@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "tag": "v0.6.20",
+  "ref": "refs/tags/v0.6.20",
+  "tag_object_sha": "56e76c7f3c28dd14dc5c69f36886cb1e8e6b467e",
+  "tag_object_type": "tag",
+  "source_commit": "fea4a332bd912a156fb195b8ad737e18e8a183b6",
+  "local_fetched_tag_peeled_commit": "fea4a332bd912a156fb195b8ad737e18e8a183b6",
+  "annotated": true,
+  "scope": "Tag reference and object verified against GitHub API and a real git fetch; no tag signature or public Release completion is implied."
+}

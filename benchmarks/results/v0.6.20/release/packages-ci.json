@@ -1,0 +1,484 @@
+{
+  "schema": 1,
+  "ok": true,
+  "collected_at_utc": "2026-10-20T13:31:53.916020+00:00",
+  "repository": "NingCui29/story-skill",
+  "tag": "v0.6.20",
+  "event": "release",
+  "manual_dispatch_performed": false,
+  "workflow_run_id": 39430482809,
+  "url": "https://github.com/NingCui29/story-skill/actions/runs/39430482809",
+  "actual_head_sha": "fea4a332bd912a156fb195b8ad737e18e8a183b6",
+  "job": {
+    "id": 118653949662,
+    "run_id": 39430482809,
+    "workflow_name": "Sync v0.6.20 to GitHub Packages",
+    "head_branch": "v0.6.20",
+    "run_url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/39430482809",
+    "run_attempt": 1,
+    "node_id": "CR_kwDOUR8APM8AAAAboFOW3g",
+    "head_sha": "fea4a332bd912a156fb195b8ad737e18e8a183b6",
+    "url": "https://api.github.com/repos/NingCui29/story-skill/actions/jobs/118653949662",
+    "html_url": "https://github.com/NingCui29/story-skill/actions/runs/39430482809/job/118653949662",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-20T13:27:04Z",
+    "started_at": "2026-10-20T13:27:07Z",
+    "completed_at": "2026-10-20T13:27:39Z",
+    "name": "publish",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-10-20T13:27:08Z",
+        "completed_at": "2026-10-20T13:27:09Z"
+      },
+      {
+        "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-10-20T13:27:09Z",
+        "completed_at": "2026-10-20T13:27:10Z"
+      },
+      {
+        "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-10-20T13:27:10Z",
+        "completed_at": "2026-10-20T13:27:11Z"
+      },
+      {
+        "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-10-20T13:27:11Z",
+        "completed_at": "2026-10-20T13:27:11Z"
+      },
+      {
+        "name": "Validate package tooling",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-10-20T13:27:11Z",
+        "completed_at": "2026-10-20T13:27:30Z"
+      },
+      {
+        "name": "Verify Claude Desktop skill bundle",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-10-20T13:27:30Z",
+        "completed_at": "2026-10-20T13:27:30Z"
+      },
+      {
+        "name": "Publish and verify the Release payload",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-10-20T13:27:30Z",
+        "completed_at": "2026-10-20T13:27:36Z"
+      },
+      {
+        "name": "Record package association metadata",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-10-20T13:27:36Z",
+        "completed_at": "2026-10-20T13:27:37Z"
+      },
+      {
+        "name": "Preserve synchronization receipt",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-10-20T13:27:37Z",
+        "completed_at": "2026-10-20T13:27:37Z"
+      },
+      {
+        "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-10-20T13:27:37Z",
+        "completed_at": "2026-10-20T13:27:38Z"
+      },
+      {
+        "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-10-20T13:27:38Z",
+        "completed_at": "2026-10-20T13:27:38Z"
+      },
+      {
+        "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-10-20T13:27:38Z",
+        "completed_at": "2026-10-20T13:27:38Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-10-20T13:27:38Z",
+        "completed_at": "2026-10-20T13:27:38Z"
+      }
+    ],
+    "check_run_url": "https://api.github.com/repos/NingCui29/story-skill/check-runs/118653949662",
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "runner_id": 1000000615,
+    "runner_name": "GitHub Actions 1000000615",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions"
+  },
+  "test_results": [
+    {
+      "scope": "test_package*.py",
+      "tests": 74,
+      "seconds": 13.25,
+      "result": "OK"
+    },
+    {
+      "scope": "test_sync_packages.py",
+      "tests": 35,
+      "seconds": 3.727,
+      "result": "OK"
+    }
+  ],
+  "log": {
+    "path": "dist/release-v0.6.20-candidate/job-118653949662.log",
+    "bytes": 28042,
+    "sha256": "9e244c46381e7dae7a04f7c27343b5e9330ea3f14a7ee1abdc5a61f5a8e27624",
+    "actual_checkout_lines": [
+      125
+    ]
+  },
+  "artifact": {
+    "id": 12268066553,
+    "node_id": "MDg6QXJ0aWZhY3QxMjI2ODA2NjU1Mw==",
+    "name": "packages-sync-v0.6.20",
+    "size_in_bytes": 516471,
+    "url": "https://api.github.com/repos/NingCui29/story-skill/actions/artifacts/12268066553",
+    "archive_download_url": "https://api.github.com/repos/NingCui29/story-skill/actions/artifacts/12268066553/zip",
+    "expired": false,
+    "digest": "sha256:4824c31d62f18efdba81ddc13aee2d72e4c16f334d8767480b7ab94e9ee656ef",
+    "created_at": "2026-10-20T13:27:37Z",
+    "updated_at": "2026-10-20T13:27:37Z",
+    "expires_at": "2026-11-03T13:27:37Z",
+    "workflow_run": {
+      "id": 39430482809,
+      "repository_id": 1360986172,
+      "head_repository_id": 1360986172,
+      "head_branch": "v0.6.20",
+      "head_sha": "fea4a332bd912a156fb195b8ad737e18e8a183b6"
+    }
+  },
+  "artifact_download": {
+    "path": "dist/release-v0.6.20-candidate/packages-verification.zip",
+    "bytes": 516471,
+    "sha256": "4824c31d62f18efdba81ddc13aee2d72e4c16f334d8767480b7ab94e9ee656ef",
+    "matches_server_digest": true,
+    "original_bytes_preserved": true
+  },
+  "original_artifact_files": {
+    "receipt.json": {
+      "path": "dist/release-v0.6.20-candidate/packages-verification/receipt.json",
+      "bytes": 24279,
+      "sha256": "f15ab0a1f2cf0b7eaeaa29c828901c67d4083cee37fea4f9a26bd30caa4e4924"
+    },
+    "package-association.json": {
+      "path": "dist/release-v0.6.20-candidate/packages-verification/package-association.json",
+      "bytes": 1183,
+      "sha256": "40ee0733618461b8abd964038429ef1e46aedee6bb7050a48b4d7d6f5f87c824"
+    },
+    "downloaded-package.tgz": {
+      "path": "dist/release-v0.6.20-candidate/packages-verification/downloaded-package.tgz",
+      "bytes": 511849,
+      "sha256": "ec7e08faced14fdf41b1924fe96a80193d791d754157fd9fa7532a5ae3a3210e"
+    }
+  },
+  "public_evidence_files": [
+    {
+      "path": "benchmarks/results/v0.6.20/release/packages/package-association.json",
+      "bytes": 1183,
+      "sha256": "40ee0733618461b8abd964038429ef1e46aedee6bb7050a48b4d7d6f5f87c824"
+    },
+    {
+      "path": "benchmarks/results/v0.6.20/release/packages/receipt.json",
+      "bytes": 24592,
+      "sha256": "da99876edcf5216b1b58049eb79f3823c4362f14aaab0bc90acb4458aa8d180a"
+    }
+  ],
+  "sync_result": {
+    "ok": true,
+    "tag": "v0.6.20",
+    "repository": "NingCui29/story-skill",
+    "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.20",
+    "prepare_only": false,
+    "registry_identity": "github-actions[bot]",
+    "already_published": false,
+    "downloaded_integrity": "sha512-kqYP8hoCuo8qHCMnXv0cp2BAM8t9YDRsv0vTgEshNAO+RCSSGTZgjoQ1TXt2UhQzaHa2V/Idw2TJNi0mUWybsQ==",
+    "runtime": {
+      "ok": true,
+      "commands": 4,
+      "skills": [
+        "story-skill",
+        "story-skill-analyze",
+        "story-skill-cover",
+        "story-skill-plan",
+        "story-skill-publish",
+        "story-skill-research",
+        "story-skill-review",
+        "story-skill-write"
+      ],
+      "skill_files": 62,
+      "temporary_book_removed": true
+    },
+    "package_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill",
+    "visibility": "public",
+    "linked_repository": "NingCui29/story-skill",
+    "package_metadata_api_version": "2026-03-10",
+    "association_status": "verified"
+  },
+  "downloaded_package": {
+    "name": "@ningcui29/story-skill",
+    "version": "0.6.20",
+    "bytes": 511849,
+    "sha256": "ec7e08faced14fdf41b1924fe96a80193d791d754157fd9fa7532a5ae3a3210e",
+    "integrity": "sha512-kqYP8hoCuo8qHCMnXv0cp2BAM8t9YDRsv0vTgEshNAO+RCSSGTZgjoQ1TXt2UhQzaHa2V/Idw2TJNi0mUWybsQ==",
+    "release_zip_sha256": "6b17189d1ce9d4b323c41c8b786b927b57b062d112b31e27e10ae22e7a0fced0",
+    "payload_files": 62,
+    "wrapper_files": 3
+  },
+  "independent_local_verification": {
+    "ok": true,
+    "scope": "Recomputed original artifact ZIP SHA256, downloaded registry TGZ SHA256 and SHA512; verified every62 payload file and3 wrapper file against checksum-bound published canonical ZIP. Root independently runs verify_registry_artifact.py on the unchanged originals.",
+    "tarball": {
+      "ok": true,
+      "name": "@ningcui29/story-skill",
+      "version": "0.6.20",
+      "tarball": "dist/release-v0.6.20-candidate/packages-verification/downloaded-package.tgz",
+      "sha256": "ec7e08faced14fdf41b1924fe96a80193d791d754157fd9fa7532a5ae3a3210e",
+      "integrity": "sha512-kqYP8hoCuo8qHCMnXv0cp2BAM8t9YDRsv0vTgEshNAO+RCSSGTZgjoQ1TXt2UhQzaHa2V/Idw2TJNi0mUWybsQ==",
+      "bytes": 511849,
+      "registry": "https://npm.pkg.github.com",
+      "archive_sha256": "6b17189d1ce9d4b323c41c8b786b927b57b062d112b31e27e10ae22e7a0fced0",
+      "payload_manifest": {
+        "story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-analyze/SKILL.md": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+        "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+        "story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+        "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+        "story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+        "story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+        "story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-plan/SKILL.md": "0f1f8cf09e85130e1dfd2371e71c2c80bed816e00c70e69a0a6ed65708745474",
+        "story-skill-plan/agents/openai.yaml": "60d1738ffeb89e0d4685349378401ee7fdb52ae9e85e60ccbf06a41d50101a01",
+        "story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+        "story-skill-plan/references/fanqie-tags.md": "533f8cbdc62da3c03dca4dcfa849fe51e4f25e1f8165fe8fd43219bef399460f",
+        "story-skill-plan/references/outline.md": "33b14a4560889e593dadf174532accb65732d7b205e5eda092c592b135295d7c",
+        "story-skill-plan/references/qidian-categories.md": "eeaaa495baca608a31163f9f3e07f88112ab432b379926fbd2dc37904e1d03e7",
+        "story-skill-plan/references/qimao-tags.md": "0eebca1c8915efb3a29bea3a2ca39f29d4141c40dc4f8ead67c2efe0d340affb",
+        "story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+        "story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-publish/SKILL.md": "73660b6a1cf64b8420f95ce505d57f6712cc2f5afe747ba4f27124cd4d7bcedc",
+        "story-skill-publish/agents/openai.yaml": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+        "story-skill-publish/references/platform-drafts.md": "7482481de5bf1da281e8752e49930aea2c3cd878bec6f72308f5e7db8458713d",
+        "story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-research/SKILL.md": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9",
+        "story-skill-research/agents/openai.yaml": "fa58f9b8653b56c69c2806632b27f0c0aecd705d802848312bbc5b9ea86b6221",
+        "story-skill-research/references/reader-validation.md": "d654fb03817f5e5a9cb72967075e628e36d30a8546dd353d1fafe2d755949e3e",
+        "story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-review/SKILL.md": "7563ef2c5e8a7253f5c975c432a19c2ed1080dcb6013f6a99074a5f40c34d998",
+        "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+        "story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+        "story-skill-review/references/history.md": "6be47ce5d88c40205503fc477cee2c3370bd1934e71b7d1129bf0d30cd3eea0c",
+        "story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+        "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-write/SKILL.md": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+        "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+        "story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+        "story-skill-write/references/chapter.md": "562b33e719499eda007873cba72209f6677ca8ef9a4cd3cdcaec807d09eff4ae",
+        "story-skill-write/references/content-review.md": "16676244d285becfbf01b1328c0e7c245e97b78a022020df521c1f4decfc37c0",
+        "story-skill-write/references/drama.md": "192ea58e54a8634337188f97422b7fe51db46bcabfba647bd120e234905d51ba",
+        "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+        "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+        "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+        "story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+        "story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill/SKILL.md": "66335db1b9f2340450a37e185f543fccaecfb78c6e81cf718ec681bbd219906b",
+        "story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+        "story-skill/references/project-state.md": "342ff40949a953aa5a79a8e163f4425450e8824c45e4450a92bf62f2491aa32a",
+        "story-skill/references/workbench.md": "60d713a3aa81009018ed2c8d210ecd2f40d1ea30c90262b1c1ea67ad3b26dff6",
+        "story-skill/scripts/story.py": "34583a5793c79ea5e0d70d52750804f33c723a8367d6dfa76cd93823c863050f",
+        "story-skill/scripts/story_chrome_bridge.mjs": "4eaad74a2c5cf8acb0ab1847d007545a85ef625fb9eb530be1663f4cb6f855a8",
+        "story-skill/scripts/story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+        "story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+        "story-skill/scripts/story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+        "story-skill/scripts/story_platform_chrome_bridge.py": "ea5d9b8cef40acef7749f534f1507130a0c068cf043aaece9bfc2964c8fdc384",
+        "story-skill/scripts/story_platform_drafts.py": "bcf426fd4fada8f6459fa88f0254f02e25240d34f26259ccd4d504bc0b773167",
+        "story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+        "story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+        "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "story-skill/scripts/story_workbench.py": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+        "story-skill/scripts/story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7",
+        "story-skill/scripts/story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+        "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+      },
+      "wrapper_manifest": {
+        "package.json": "ab8d60516c8cb82e27f6c0a4ff35de0c86a696bc29edf8bc4edb1c7e2d422673",
+        "README.md": "11fcd4f46c9d55c230c631e53e535e88b1a99d3b3759b426efade6ccd32d52e5",
+        "LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+      },
+      "package_manifest": {
+        "name": "@ningcui29/story-skill",
+        "version": "0.6.20",
+        "description": "Eight Story Skill skills for Chinese novel writing, review and publication preparation",
+        "license": "SEE LICENSE IN LICENSE",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/NingCui29/story-skill.git"
+        },
+        "homepage": "https://github.com/NingCui29/story-skill#readme",
+        "publishConfig": {
+          "registry": "https://npm.pkg.github.com"
+        },
+        "files": [
+          "story-skill-analyze/LICENSE",
+          "story-skill-analyze/SKILL.md",
+          "story-skill-analyze/agents/openai.yaml",
+          "story-skill-analyze/references/deep-reading.md",
+          "story-skill-analyze/references/examples.md",
+          "story-skill-cover/LICENSE",
+          "story-skill-cover/SKILL.md",
+          "story-skill-cover/agents/openai.yaml",
+          "story-skill-plan/LICENSE",
+          "story-skill-plan/SKILL.md",
+          "story-skill-plan/agents/openai.yaml",
+          "story-skill-plan/references/blurb.md",
+          "story-skill-plan/references/fanqie-tags.md",
+          "story-skill-plan/references/outline.md",
+          "story-skill-plan/references/qidian-categories.md",
+          "story-skill-plan/references/qimao-tags.md",
+          "story-skill-plan/references/short-platform.md",
+          "story-skill-publish/LICENSE",
+          "story-skill-publish/SKILL.md",
+          "story-skill-publish/agents/openai.yaml",
+          "story-skill-publish/references/platform-drafts.md",
+          "story-skill-research/LICENSE",
+          "story-skill-research/SKILL.md",
+          "story-skill-research/agents/openai.yaml",
+          "story-skill-research/references/reader-validation.md",
+          "story-skill-review/LICENSE",
+          "story-skill-review/SKILL.md",
+          "story-skill-review/agents/openai.yaml",
+          "story-skill-review/references/fanqie-content-review.md",
+          "story-skill-review/references/history.md",
+          "story-skill-review/references/qimao-content-review.md",
+          "story-skill-write/LICENSE",
+          "story-skill-write/SKILL.md",
+          "story-skill-write/agents/openai.yaml",
+          "story-skill-write/references/chapter-continuity.md",
+          "story-skill-write/references/chapter.md",
+          "story-skill-write/references/content-review.md",
+          "story-skill-write/references/drama.md",
+          "story-skill-write/references/long-form.md",
+          "story-skill-write/references/punctuation.md",
+          "story-skill-write/references/suspense-evidence.md",
+          "story-skill-write/references/writing-handoff.md",
+          "story-skill/LICENSE",
+          "story-skill/SKILL.md",
+          "story-skill/agents/openai.yaml",
+          "story-skill/references/project-state.md",
+          "story-skill/references/workbench.md",
+          "story-skill/scripts/story.py",
+          "story-skill/scripts/story_chrome_bridge.mjs",
+          "story-skill/scripts/story_history.py",
+          "story-skill/scripts/story_outline.py",
+          "story-skill/scripts/story_platform_browser.py",
+          "story-skill/scripts/story_platform_chrome_bridge.py",
+          "story-skill/scripts/story_platform_drafts.py",
+          "story-skill/scripts/story_publish.py",
+          "story-skill/scripts/story_punctuation.py",
+          "story-skill/scripts/story_search.py",
+          "story-skill/scripts/story_storage.py",
+          "story-skill/scripts/story_workbench.py",
+          "story-skill/scripts/story_workbench_archives.py",
+          "story-skill/scripts/story_workbench_books.py",
+          "story-skill/scripts/story_world.py",
+          "LICENSE"
+        ]
+      }
+    }
+  },
+  "local_npm_tarball_comparison": {
+    "path": "dist/release-v0.6.20-candidate/npm/ningcui29-story-skill-0.6.20.tgz",
+    "sha256": "ec7e08faced14fdf41b1924fe96a80193d791d754157fd9fa7532a5ae3a3210e",
+    "registry_download_byte_identical": true
+  },
+  "package_association": {
+    "tag": "v0.6.20",
+    "repository": "NingCui29/story-skill",
+    "package": {
+      "http_status": 200,
+      "api_version": "2026-03-10",
+      "metadata": {
+        "id": 15331172,
+        "name": "story-skill",
+        "package_type": "npm",
+        "visibility": "public",
+        "html_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill"
+      },
+      "repository_field_present": true,
+      "repository": {
+        "id": 1360986172,
+        "full_name": "NingCui29/story-skill",
+        "private": false
+      }
+    },
+    "package_legacy": {
+      "http_status": 200,
+      "api_version": "2022-11-28",
+      "metadata": {
+        "id": 15331172,
+        "name": "story-skill",
+        "package_type": "npm",
+        "visibility": "public",
+        "html_url": "https://github.com/users/NingCui29/packages/npm/package/story-skill"
+      },
+      "repository_field_present": true,
+      "repository": {
+        "id": 1360986172,
+        "full_name": "NingCui29/story-skill",
+        "private": false
+      }
+    },
+    "source_repository": {
+      "http_status": 200,
+      "api_version": "2026-03-10",
+      "metadata": {
+        "id": 1360986172,
+        "full_name": "NingCui29/story-skill",
+        "private": false
+      }
+    }
+  },
+  "privacy_review": {
+    "ok": true,
+    "public_paths": "Repository-relative; raw synthetic runner paths normalized only in the public receipt. Raw original receipt and artifact hashes are preserved separately.",
+    "private_development_material_included": false
+  },
+  "scope": "Actual auto-triggered release workflow, registry publication, downloaded-registry payload, runtime smoke and repository association. This audit did not dispatch or publish a duplicate workflow/package."
+}

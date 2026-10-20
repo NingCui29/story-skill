@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "ok": true,
+  "artifact_build_inputs_frozen": true,
+  "input_count": 223,
+  "assets": [
+    {
+      "file": "dist/release-v0.6.20-candidate/story-skill-0.6.20.zip",
+      "bytes": 563013,
+      "sha256": "6b17189d1ce9d4b323c41c8b786b927b57b062d112b31e27e10ae22e7a0fced0",
+      "checksum": "dist/release-v0.6.20-candidate/story-skill-0.6.20.zip.sha256"
+    },
+    {
+      "file": "dist/release-v0.6.20-candidate/story-skill-claude-desktop-0.6.20-r2.zip",
+      "bytes": 569215,
+      "sha256": "f52ecc29b548261cf0c6bda7bbea5244ae8683ad4ac1beae88a4061aa7456589",
+      "checksum": "dist/release-v0.6.20-candidate/story-skill-claude-desktop-0.6.20-r2.zip.sha256"
+    },
+    {
+      "file": "dist/release-v0.6.20-candidate/codex/story-skill-codex-0.6.20.zip",
+      "bytes": 571505,
+      "sha256": "8ed0ad1f9784db4e0c4eac7761e6b5e24dd3730cf8faa16c8a259e58d20f0bfb",
+      "checksum": "dist/release-v0.6.20-candidate/codex/story-skill-codex-0.6.20.zip.sha256"
+    },
+    {
+      "file": "dist/release-v0.6.20-candidate/story-workbench-0.1.19-macos-x86_64.zip",
+      "bytes": 26737691,
+      "sha256": "03648f0907982eced4fbdc1a1be261be34627edead4b2d60a52282d7fff32db9",
+      "checksum": "dist/release-v0.6.20-candidate/story-workbench-0.1.19-macos-x86_64.zip.sha256"
+    },
+    {
+      "file": "dist/release-v0.6.20-candidate/story-workbench-0.1.19-macos-x86_64.dmg",
+      "bytes": 37103394,
+      "sha256": "8b6ac173f7a5535727bf31e73828b35c39ffb32cbece9c1933f0e4e03651d41f",
+      "checksum": "dist/release-v0.6.20-candidate/story-workbench-0.1.19-macos-x86_64.dmg.sha256"
+    }
+  ],
+  "checks": {
+    "fixed-source-verification.json": {
+      "ok": true,
+      "sha256": "6f80672d38efceba693928ebe0f64f4f6f758acd5f257a3b9f6de00713824357"
+    },
+    "isolated-install.json": {
+      "ok": true,
+      "sha256": "7a119fa16351358e63f51fa3313c533ee9f75f74c7fd31b6b0e9c736bdf3049b"
+    },
+    "static-checks.json": {
+      "ok": true,
+      "sha256": "447f134d35af114b33d3f5d6a5242c63b8e51fe4106ad502af565cb3afad8eef"
+    },
+    "codex-plugin-verification.json": {
+      "ok": true,
+      "sha256": "70e44e945f21005d7bd296b9914e28e9863d9e9d902d4a6d75ce9eb7697ad7d2"
+    },
+    "macos-build.json": {
+      "ok": true,
+      "sha256": "0062f701d1957a744a013b33e393c283de575576f3b521a8a1f386dfd9353889"
+    },
+    "macos-verification.json": {
+      "ok": true,
+      "sha256": "2021ee40ce1a0f55ce6536f18b3c66f3e9cbc00dd59b340c26e24f93f160a2e4"
+    },
+    "macos-native-acceptance.json": {
+      "ok": true,
+      "sha256": "057c8cd891ccbfa3b96c043e349e4c0f97e56a8633765407b47d1c26dcccc5ed"
+    },
+    "macos-distribution.json": {
+      "ok": true,
+      "sha256": "49d32fee8858010b1019c2aca5ca8f83f9b98b55f22a795a269cc17a7c68efb8"
+    },
+    "macos-payload-probe.json": {
+      "ok": true,
+      "sha256": "1d0bff03057e5b0e87377b5ca4cb4a95029c64711bdbc4c7786c9c4e62c3422e"
+    }
+  },
+  "public_receipt_path_privacy_check": {
+    "ok": true,
+    "home_paths_present": false,
+    "real_book_paths_or_excerpts_used": false,
+    "private_raw_scope_error_receipt_ignored": true
+  },
+  "signature_kind": "ad-hoc local signature; not notarization",
+  "not_verified": [
+    "Manual operation of every new UI control",
+    "Existing user application or plugin upgrade",
+    "Platform account actions"
+  ],
+  "upload_performed_by_this_agent": false,
+  "tag_verified": false,
+  "remote_tag_installation_performed": false,
+  "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4"
+}

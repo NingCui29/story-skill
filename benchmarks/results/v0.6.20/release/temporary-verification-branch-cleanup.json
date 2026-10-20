@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "branch": "codex/verify-v0620-material-fixture",
+  "last_verified_commit": "7203200077bdc3ab6b352c7bffe34b526bef0995",
+  "checkout_source": "fea4a332bd912a156fb195b8ad737e18e8a183b6",
+  "run_id": 39426215846,
+  "purpose": "Fast native Windows 3.10/3.12 check of corrected material and classification tests before waiting for the complete matrix.",
+  "deleted_after_success": true,
+  "deletion_response_bytes": 0,
+  "version_branch_affected": false
+}

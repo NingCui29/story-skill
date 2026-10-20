@@ -1,0 +1,10 @@
+{
+  "run_id": 39424888091,
+  "job_id": 118637888099,
+  "source_commit": "9493b8ae1a5766d5e268f969c64b5165923c08d9",
+  "ok": false,
+  "reason": "Draft tag_name reverted to untagged placeholder while target remained9493; strict release tag/source check refused all uploads.",
+  "log_path": "dist/release-v0.6.20-candidate/windows-readme-fix/job-118637888099.log",
+  "log_sha256": "8742af447e52dcfef39385d3b5eb2da2359ebd6e68e30814398294dd6da74eb1",
+  "receipt_artifact_sha256": "c33d284e9d7964bdf30b975c9f9e9b6be14a75bfdf35e5dd9cd13bff9420fd25"
+}

@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "ok": true,
+  "collected_at_utc": "2026-10-20T12:49:22.228408+00:00",
+  "scope": "Content equivalence only. Source CI actually runs at698; this report does not relabel that CI as9493. Skill/Mac/package inputs and all runtime/tests/tooling/workflows are unchanged. Windows README is an actual bundled input and is rebuilt/verified by the separate9493 native Windows run.",
+  "source_ci_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4",
+  "source_ci_run_id": 39422537624,
+  "candidate_tag_target_commit": "9493b8ae1a5766d5e268f969c64b5165923c08d9",
+  "tag_created_or_verified": false,
+  "old_tree": "0973badc7f67cef9bf0c2ff4a64da6c72303eb02",
+  "target_tree": "698c9c99d987a7470425087c9e11e83ffba925ef",
+  "changed_paths": [
+    "desktop/windows/README.md"
+  ],
+  "unchanged_tracked_files": 2779,
+  "all_other_tracked_git_modes_types_and_blob_ids_identical": true,
+  "unchanged_groups": {
+    "skill_sources": {
+      "files": 62,
+      "all_git_entries_and_bytes_identical": true
+    },
+    "runtime": {
+      "files": 15,
+      "all_git_entries_and_bytes_identical": true
+    },
+    "tests_and_fixtures": {
+      "files": 162,
+      "all_git_entries_and_bytes_identical": true
+    },
+    "build_and_packaging_scripts": {
+      "files": 22,
+      "all_git_entries_and_bytes_identical": true
+    },
+    "macos_sources": {
+      "files": 7,
+      "all_git_entries_and_bytes_identical": true
+    },
+    "workflows": {
+      "files": 3,
+      "all_git_entries_and_bytes_identical": true
+    }
+  },
+  "windows_readme": {
+    "path": "desktop/windows/README.md",
+    "old_git_blob": "100644 blob 290e3bcaff4f3ffdb66a73534f2144178c4a1a31",
+    "new_git_blob": "100644 blob e8f816dcc74317b392e863992c600e109e5b7be7",
+    "new_git_blob_bytes": 6223,
+    "new_git_blob_sha256": "cdf98891abf047741f670e7de86df1caf851791cb8783acff4985e2adecea89e",
+    "client_version": "0.1.10",
+    "story_version": "0.6.20",
+    "prior_versions_absent": true,
+    "native_build_run_id": 39424888091,
+    "requires_new_native_manifest_binding": true
+  },
+  "final_evidence_references": {
+    "source_ci": "benchmarks/results/v0.6.20/release/ci.json",
+    "windows_ci": "benchmarks/results/v0.6.20/release/windows-ci.json"
+  }
+}

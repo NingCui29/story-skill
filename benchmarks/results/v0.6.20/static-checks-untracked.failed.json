@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "ok": false,
+  "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4",
+  "scope_error": "Generic Markdown scanner also enumerated untracked private local evidence; this run is excluded from public-source validation. No private paths, titles or excerpts are retained here.",
+  "untracked_private_markdown_link_failures": 3,
+  "private_json_read": false,
+  "resolution": "Rerun the same local-link validator using only Markdown paths tracked in the fixed source commit; keep raw diagnostic locally in ignored dist.",
+  "artifact_source_bytes_affected": false
+}

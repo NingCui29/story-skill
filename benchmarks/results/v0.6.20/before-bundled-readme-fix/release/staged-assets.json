@@ -1,0 +1,65 @@
+{
+  "ok": true,
+  "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4",
+  "release_id": 418373775,
+  "draft": true,
+  "assets": {
+    "story-skill-0.6.20.zip": {
+      "size": 563013,
+      "sha256": "6b17189d1ce9d4b323c41c8b786b927b57b062d112b31e27e10ae22e7a0fced0"
+    },
+    "story-skill-0.6.20.zip.sha256": {
+      "size": 89,
+      "sha256": "ebeaee749dd544b1f5b9f531d5d200b346e886b358a3f1d1481dd5be789a0f1b"
+    },
+    "story-skill-claude-desktop-0.6.20-r2.zip": {
+      "size": 569215,
+      "sha256": "f52ecc29b548261cf0c6bda7bbea5244ae8683ad4ac1beae88a4061aa7456589"
+    },
+    "story-skill-claude-desktop-0.6.20-r2.zip.sha256": {
+      "size": 107,
+      "sha256": "7be5d354a756519ae90899180b7e95e80b92ee8d83d39035aa0715fb9575d516"
+    },
+    "story-skill-codex-0.6.20.zip": {
+      "size": 571505,
+      "sha256": "8ed0ad1f9784db4e0c4eac7761e6b5e24dd3730cf8faa16c8a259e58d20f0bfb"
+    },
+    "story-skill-codex-0.6.20.zip.sha256": {
+      "size": 95,
+      "sha256": "9419119cbd0a265e2b44b1a34eda759227746f33e2e01721de072d18ededf574"
+    },
+    "story-workbench-0.1.19-macos-x86_64.zip": {
+      "size": 26737691,
+      "sha256": "03648f0907982eced4fbdc1a1be261be34627edead4b2d60a52282d7fff32db9"
+    },
+    "story-workbench-0.1.19-macos-x86_64.zip.sha256": {
+      "size": 106,
+      "sha256": "01bebbd8bd4c0bea2e89211b66f5bcf72dbbe2a2e52b77d4a80a3ebcdca0288d"
+    },
+    "story-workbench-0.1.19-macos-x86_64.dmg": {
+      "size": 37103394,
+      "sha256": "8b6ac173f7a5535727bf31e73828b35c39ffb32cbece9c1933f0e4e03651d41f"
+    },
+    "story-workbench-0.1.19-macos-x86_64.dmg.sha256": {
+      "size": 106,
+      "sha256": "d95b921c982d77286a0fdca4e80c4ed8cb8d7d3d655a0b5b9f6dbcadb39c0130"
+    },
+    "story-workbench-0.1.10-windows-x86_64-setup.exe": {
+      "size": 183018999,
+      "sha256": "0a57bfde4c2053ae8d4c9d95ae12b4f51d02adad6e21b47a8439972898ffd586"
+    },
+    "story-workbench-0.1.10-windows-x86_64-setup.exe.sha256": {
+      "size": 115,
+      "sha256": "fddcaccba526d1534fd61f89bd9e36fee12ab4e3e692eded76a4b07fcc29cdcd"
+    },
+    "story-workbench-0.1.10-windows-x86_64.zip": {
+      "size": 258360655,
+      "sha256": "783362b2518008e6ccb79170ede7ebe9922a228d71896772fcf4f0c3e93b869c"
+    },
+    "story-workbench-0.1.10-windows-x86_64.zip.sha256": {
+      "size": 109,
+      "sha256": "564ad13738bd2c774811b9217a0234c8a5d5e4c95a72367562ba726b4d5be69f"
+    }
+  },
+  "scope": "All fourteen staged assets match local full build verification or native Windows full verification, including GitHub size and SHA256. Public anonymous download is still pending publication."
+}

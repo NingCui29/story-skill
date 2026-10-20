@@ -6,7 +6,7 @@
 
 支持 **Codex、Claude Code、Claude 桌面版**及其他兼容 Agent Skills 的助手；另提供 **Mac / Windows 写作工作台**。
 
-[下载安装](#安装升级) · [开始写书](#开始写书) · [工作台预览](#使用工作台) · [完整文档](docs/README.md) · [v0.6.19 发布记录](docs/releases/v0.6.19.md)
+[下载安装](#安装升级) · [开始写书](#开始写书) · [工作台预览](#使用工作台) · [完整文档](docs/README.md) · [v0.6.20 发布记录](docs/releases/v0.6.20.md)
 
 ## 它能帮你做什么
 
@@ -23,15 +23,15 @@
 
 ## 安装升级
 
-当前正式版本为 **v0.6.19**。先选择要使用的部分，再按对应说明安装；两者可以配合使用。
+当前正式版本为 **v0.6.20**。先选择要使用的部分，再按对应说明安装；两者可以配合使用。
 
 ### 安装创作技能
 
 | 使用环境 | 下载 | 安装方式 |
 |---|---|---|
-| Codex 本地插件 | [插件 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-codex-0.6.19.zip) | 解压后添加本地市场并安装插件，见 [Codex 安装说明](docs/codex-plugin.md) |
-| Claude 桌面版 | [单入口 ZIP（r2）](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-claude-desktop-0.6.19-r2.zip) | 上传并启用专用技能包，见 [桌面导入说明](INSTALL.md#claude-桌面版导入单技能包) |
-| Claude Code、Antigravity 等 | [完整八技能 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-skill-0.6.19.zip) | 保留八个同级目录，见 [目录安装说明](INSTALL.md#目录安装的完整套件) |
+| Codex 本地插件 | [插件 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-codex-0.6.20.zip) | 解压后添加本地市场并安装插件，见 [Codex 安装说明](docs/codex-plugin.md) |
+| Claude 桌面版 | [单入口 ZIP（r2）](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-claude-desktop-0.6.20-r2.zip) | 上传并启用专用技能包，见 [桌面导入说明](INSTALL.md#claude-桌面版导入单技能包) |
+| Claude Code、Antigravity 等 | [完整八技能 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-0.6.20.zip) | 保留八个同级目录，见 [目录安装说明](INSTALL.md#目录安装的完整套件) |
 
 <a id="codex-本地插件"></a>
 <a id="claude-桌面版"></a>
@@ -45,14 +45,14 @@ Codex 插件通过本地市场分发。安装后在宿主中确认技能已加�
 
 | 系统 | 当前客户端 | 下载 |
 |---|---|---|
-| Intel Mac | 0.1.18 / build 19 | [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.dmg) · [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.18-macos-x86_64.zip) · [安装说明](desktop/macos/README.md) |
-| Windows x64 | 0.1.9 | [安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64-setup.exe) · [便携 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.19/story-workbench-0.1.9-windows-x86_64.zip) · [安装说明](desktop/windows/README.md) |
+| Intel Mac | 0.1.19 / build 20 | [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.dmg) · [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.zip) · [安装说明](desktop/macos/README.md) |
+| Windows x64 | 0.1.10 | [安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.10-windows-x86_64-setup.exe) · [便携 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.10-windows-x86_64.zip) · [安装说明](desktop/windows/README.md) |
 
 **桌面应用已内置 Python 和运行时，无需另装 Python。** 下载后核对 Release 中的同名 `.sha256` 文件。Mac 使用本地临时签名、未经 Apple 公证，Apple Silicon 尚未验证；Windows 安装程序未做代码签名。
 
 升级前保存全部页面编辑并退出旧客户端。已有工作台服务按 [更新流程](docs/工作台更新流程.md)另行更新。GitHub 发版不会自动替换本机技能或应用。
 
-[全部发行文件与校验文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.19) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（npm 安装不向宿主注册技能）
+[全部发行文件与校验文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.20) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（v0.6.20 已同步并独立核验；npm 安装不向宿主注册技能）
 
 ## 开始写书
 
@@ -101,11 +101,11 @@ Codex 插件通过本地市场分发。安装后在宿主中确认技能已加�
 
 工作台在本机运行，提供书架和单书编辑页，把章节、策划、细纲、草稿与图片放到同一套导航中。
 
-![写作工作台：材料导航、候选正文与材料信息](benchmarks/results/v0.6.19/macos-native-editor.png)
+![写作工作台：材料导航、候选正文与材料信息](benchmarks/results/v0.6.20/macos-native-editor.png)
 
-*截图来自 Mac 客户端的隔离自检，展示合成候选材料。*
+*截图来自 v0.6.20 Mac 客户端的隔离自检，展示合成候选材料。*
 
-- **阅读与查找：** 按章节或文件导航，搜索全文，切换浅色／深色外观。
+- **阅读与查找：** 按章节或文件导航，分批加载大量材料，搜索正文与材料并说明未覆盖范围，切换浅色／深色外观。
 - **候选与版本：** 编辑并保存候选，保存全部候选，找回恢复稿，选择两稿比较差异。
 - **作品管理：** 新建作品、重新定位目录、移出书架，通过系统废纸篓／回收站删除作品。
 - **备份与恢复：** 整书备份、从备份恢复、查看恢复中心与操作结果。
@@ -131,7 +131,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 番茄、七猫、起点均可准备已审查正式章节的离线材料。平台草稿功能提供冻结清单、预览、受控保存、全文回读与重复执行核对；实际保存需要活跃的助手工作进程连接既有、已登录的 Chrome，并使用经核对的配置。
 
-目前真实网页验证覆盖**番茄指定测试作品的合成稿、单卷完整列表**；七猫、起点实页以及真实分页、多卷仍待验收。审核提交与定时发布由作者在平台后台完成。详细范围见 [平台草稿说明](skills/story-skill-publish/references/platform-drafts.md)和 [实际验收记录](docs/releases/v0.6.19.md#平台草稿的实际范围)。
+目前真实网页验证覆盖**番茄指定测试作品的合成稿、单卷完整列表**；七猫、起点实页以及真实分页、多卷仍待验收。审核提交与定时发布由作者在平台后台完成。详细范围见 [平台草稿说明](skills/story-skill-publish/references/platform-drafts.md)和 [实际验收记录](docs/releases/v0.6.20.md#平台草稿的实际范围)。
 
 ## 八个技能入口
 
@@ -150,7 +150,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 ## 版本与验证
 
-**v0.6.19 已发布**，包含八技能套件、Claude 桌面 r2、Codex 本地插件、GitHub npm 内容包，以及 Mac / Windows 客户端。[发布记录](docs/releases/v0.6.19.md)集中列出源码来源、固定标签、安装验证、跨平台 CI、附件摘要和实际下载范围。
+**v0.6.20 已发布**，重点更新分类的本地决策与后台核验、全书审稿范围和阅读期待规则，并修复大量材料阻断工作台目录的问题。标准／Claude／Codex 套件、本地 npm、两端客户端原生验收和完整跨平台 CI 已通过；正式分发状态集中在[发布记录](docs/releases/v0.6.20.md)；[v0.6.19 历史记录](docs/releases/v0.6.19.md)继续保留。
 
 工程检查、宿主加载、平台实页验证与小说阅读效果分别记录。具体方法见 [评估说明](docs/evaluation.md)。
 
@@ -162,6 +162,6 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 ## 许可与参考
 
-当前源码及 v0.6.19 分发采用 [自定义非商业使用／商业授权协议](LICENSE)：非商业用途免费，商业用途须另行授权并按约定付费。商业授权主体及联系字段目前仍为占位内容，具体范围与历史版本许可见 [许可说明](docs/licensing.md)。
+当前源码采用 [自定义非商业使用／商业授权协议](LICENSE)：非商业用途免费，商业用途须另行授权并按约定付费。商业授权主体及联系字段目前仍为占位内容，具体范围与历史版本许可见 [许可说明](docs/licensing.md)。
 
 流程设计参考 [oh-story-claudecode](https://github.com/zenstory-ai/oh-story-claudecode)，实现与取舍见 [对照说明](docs/upstream-analysis.md)。

@@ -1,0 +1,7 @@
+{
+  "full_name": "NingCui29/story-skill",
+  "html_url": "https://github.com/NingCui29/story-skill",
+  "description": "中文长短篇小说 AI 创作套件，包含八个技能与本地写作工作台。覆盖拆书、调研、规划、续写、审稿、封面、投稿材料与受控平台草稿；适配 Codex、Claude Code、Claude 桌面版，提供 Mac / Windows 客户端，支持候选编辑、版本对照和整书备份恢复。",
+  "default_branch": "main",
+  "topics": []
+}

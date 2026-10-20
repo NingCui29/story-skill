@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "reason": "Bundled Windows README at source698 still described prior runtime/client and downloads; new Windows-only README commit will be built independently. The successful698 Windows evidence is retained as historical, not the final release validation.",
+  "source_commit": "698ec2aeed9314f37b35d91df96bcf30d45b81e4",
+  "native_run_id": 39422547246,
+  "files": [
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows-ci.json",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows-ci.json",
+      "sha256_unchanged": "c022f286c558807aed98975174b11a1b3da2ba2ded3c5dc73d13eb0076b763c0"
+    },
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows/windows-build-manifest.json",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows/windows-build-manifest.json",
+      "sha256_unchanged": "eecef9ac8eb911768f8c50609cbe3f40b225f27f089f8f1cac42740a106abd3f"
+    },
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows/windows-draft-upload.json",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows/windows-draft-upload.json",
+      "sha256_unchanged": "c9f7119b4a98d9060174198ac541a4d5be417fdfa0d10672be8151323d9629ba"
+    },
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke.png",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows/windows-native-smoke.png",
+      "sha256_unchanged": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    },
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke-update-progress.png",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows/windows-native-smoke-update-progress.png",
+      "sha256_unchanged": "c9a8cb4c117328e179bb2eb5443b96789681a1a69071410a540f85ee6a922177"
+    },
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke-dark.png",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows/windows-native-smoke-dark.png",
+      "sha256_unchanged": "482efec2553ec439a75847a07ead89e5312f38b3ea2ba058f6361cef856cc538"
+    },
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows/windows-runtime-safety.json",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows/windows-runtime-safety.json",
+      "sha256_unchanged": "deaa11f8b4ae4e924e7baec7acac9c7f5b064eb6737f3305a2cff1dc39d78e26"
+    },
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows/windows-distribution-verification.json",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows/windows-distribution-verification.json",
+      "sha256_unchanged": "987025879b4444bc34be1552248152f36a9fa35be6de62f87aed59b885175b0b"
+    },
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke-light.png",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows/windows-native-smoke-light.png",
+      "sha256_unchanged": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    },
+    {
+      "old_path": "benchmarks/results/v0.6.20/release/windows/windows-native-smoke.json",
+      "history_path": "benchmarks/results/v0.6.20/before-bundled-readme-fix/release/windows/windows-native-smoke.json",
+      "sha256_unchanged": "adccb5b681d7c82cfd21fdfed07722fe935a9c9a89be9f136548d35a6cf6f4ab"
+    }
+  ]
+}
