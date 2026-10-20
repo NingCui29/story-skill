@@ -200,6 +200,36 @@ class NpmPackageTests(unittest.TestCase):
                 self.checksum.write_text(invalid, encoding="utf-8")
                 npm.read_release(self.archive, self.checksum)
 
+    def test_v0620_freezes_layout_and_preserves_all_input_bytes(self):
+        self.version = "0.6.20"
+        self.archive = self.root / "story-skill-0.6.20.zip"
+        for custom_license in (False, True):
+            with self.subTest(custom_license=custom_license):
+                self.payload = mit_payload(self.version, "冻结载荷：")
+                self.payload["story-skill/scripts/story.py"] = b'VERSION = "0.6.20"\r\n'
+                if custom_license:
+                    license_raw = b"\xef\xbb\xbf" + (ROOT / "LICENSE").read_bytes().replace(
+                        b"\r\n", b"\n").replace(b"\n", b"\r\n")
+                    for skill in npm.skill_names(self.version):
+                        self.payload[skill + "/LICENSE"] = license_raw
+                self.write_zip()
+                # Future current-source aliases cannot expand this reviewed release.
+                with patch.object(npm, "SUITE_FILES", ("future/private.md",)), \
+                        patch.object(npm, "SKILL_NAMES", ("future-skill",)), \
+                        patch.object(npm, "npm_pack", side_effect=self.fake_pack):
+                    result = npm.build(self.archive, self.checksum,
+                                       self.root / ("custom" if custom_license else "mit"))
+                self.assertEqual(result["version"], "0.6.20")
+                self.assertEqual(len(result["payload_manifest"]), 62)
+                self.assertEqual(result["package_manifest"]["version"], "0.6.20")
+                self.assertEqual(result["package_manifest"]["license"],
+                                 "SEE LICENSE IN LICENSE" if custom_license else "MIT")
+                with tarfile.open(result["tarball"], "r:gz") as bundle:
+                    for name, raw in self.payload.items():
+                        self.assertEqual(bundle.extractfile("package/" + name).read(), raw, name)
+                self.assertEqual(result, npm.verify_tarball(
+                    self.archive, self.checksum, result["tarball"], result))
+
     def test_custom_license_build_and_verify_preserve_input_license_bytes(self):
         self.version = "0.6.15"
         self.archive = self.root / "story-skill-0.6.15.zip"
@@ -481,7 +511,8 @@ class NpmSuiteTests(unittest.TestCase):
                                          ("0.6.16", npm.SUITE_FILES_V0616, 51),
                                          ("0.6.17", npm.SUITE_FILES_V0617, 52),
                                          ("0.6.18", npm.SUITE_FILES_V0618, 55),
-                                         ("0.6.19", npm.SUITE_FILES_V0619, 62)):
+                                         ("0.6.19", npm.SUITE_FILES_V0619, 62),
+                                         ("0.6.20", npm.SUITE_FILES_V0620, 62)):
             with self.subTest(version=version):
                 manifest, files = npm.wrapper_files(version)
                 self.assertEqual(manifest["version"], version)
@@ -489,7 +520,7 @@ class NpmSuiteTests(unittest.TestCase):
                 self.assertEqual(len(manifest["files"]), count)
                 self.assertIn("story-skill-plan/references/outline.md", manifest["files"])
                 self.assertEqual("story-skill/references/workbench.md" in manifest["files"],
-                                 version in ("0.6.14", "0.6.15", "0.6.16", "0.6.17", "0.6.18", "0.6.19"))
+                                 version in ("0.6.14", "0.6.15", "0.6.16", "0.6.17", "0.6.18", "0.6.19", "0.6.20"))
                 readme = files["README.md"].decode("utf-8")
                 if version == "0.6.13":
                     self.assertIn("Unreleased development snapshot", readme)
@@ -513,8 +544,8 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertIn("managed installation instructions", readme)
 
     def test_only_current_release_family_has_reviewed_layout(self):
-        layouts = {"0.6.0": npm.SUITE_FILES_V060, "0.6.1": npm.SUITE_FILES_V061, "0.6.2": npm.SUITE_FILES_V061, "0.6.3": npm.SUITE_FILES_V061, "0.6.4": npm.SUITE_FILES_V061, "0.6.5": npm.SUITE_FILES_V065, "0.6.6": npm.SUITE_FILES_V065, "0.6.7": npm.SUITE_FILES_V065, "0.6.8": npm.SUITE_FILES_V065, "0.6.9": npm.SUITE_FILES_V069, "0.6.10": npm.SUITE_FILES_V0610, "0.6.11": npm.SUITE_FILES_V0611, "0.6.12": npm.SUITE_FILES_V0612, "0.6.13": npm.SUITE_FILES_V0613, "0.6.14": npm.SUITE_FILES_V0614, "0.6.15": npm.SUITE_FILES_V0615, "0.6.16": npm.SUITE_FILES_V0616, "0.6.17": npm.SUITE_FILES_V0617, "0.6.18": npm.SUITE_FILES_V0618, "0.6.19": npm.SUITE_FILES_V0619}
-        skill_layouts = {"0.6.0": npm.SKILL_NAMES_V060, "0.6.1": npm.SKILL_NAMES_V061, "0.6.2": npm.SKILL_NAMES_V061, "0.6.3": npm.SKILL_NAMES_V061, "0.6.4": npm.SKILL_NAMES_V061, "0.6.5": npm.SKILL_NAMES_V061, "0.6.6": npm.SKILL_NAMES_V061, "0.6.7": npm.SKILL_NAMES_V061, "0.6.8": npm.SKILL_NAMES_V061, "0.6.9": npm.SKILL_NAMES_V069, "0.6.10": npm.SKILL_NAMES_V0610, "0.6.11": npm.SKILL_NAMES_V0611, "0.6.12": npm.SKILL_NAMES_V0612, "0.6.13": npm.SKILL_NAMES_V0613, "0.6.14": npm.SKILL_NAMES_V0614, "0.6.15": npm.SKILL_NAMES_V0615, "0.6.16": npm.SKILL_NAMES_V0616, "0.6.17": npm.SKILL_NAMES_V0617, "0.6.18": npm.SKILL_NAMES_V0618, "0.6.19": npm.SKILL_NAMES_V0619}
+        layouts = {"0.6.0": npm.SUITE_FILES_V060, "0.6.1": npm.SUITE_FILES_V061, "0.6.2": npm.SUITE_FILES_V061, "0.6.3": npm.SUITE_FILES_V061, "0.6.4": npm.SUITE_FILES_V061, "0.6.5": npm.SUITE_FILES_V065, "0.6.6": npm.SUITE_FILES_V065, "0.6.7": npm.SUITE_FILES_V065, "0.6.8": npm.SUITE_FILES_V065, "0.6.9": npm.SUITE_FILES_V069, "0.6.10": npm.SUITE_FILES_V0610, "0.6.11": npm.SUITE_FILES_V0611, "0.6.12": npm.SUITE_FILES_V0612, "0.6.13": npm.SUITE_FILES_V0613, "0.6.14": npm.SUITE_FILES_V0614, "0.6.15": npm.SUITE_FILES_V0615, "0.6.16": npm.SUITE_FILES_V0616, "0.6.17": npm.SUITE_FILES_V0617, "0.6.18": npm.SUITE_FILES_V0618, "0.6.19": npm.SUITE_FILES_V0619, "0.6.20": npm.SUITE_FILES_V0620}
+        skill_layouts = {"0.6.0": npm.SKILL_NAMES_V060, "0.6.1": npm.SKILL_NAMES_V061, "0.6.2": npm.SKILL_NAMES_V061, "0.6.3": npm.SKILL_NAMES_V061, "0.6.4": npm.SKILL_NAMES_V061, "0.6.5": npm.SKILL_NAMES_V061, "0.6.6": npm.SKILL_NAMES_V061, "0.6.7": npm.SKILL_NAMES_V061, "0.6.8": npm.SKILL_NAMES_V061, "0.6.9": npm.SKILL_NAMES_V069, "0.6.10": npm.SKILL_NAMES_V0610, "0.6.11": npm.SKILL_NAMES_V0611, "0.6.12": npm.SKILL_NAMES_V0612, "0.6.13": npm.SKILL_NAMES_V0613, "0.6.14": npm.SKILL_NAMES_V0614, "0.6.15": npm.SKILL_NAMES_V0615, "0.6.16": npm.SKILL_NAMES_V0616, "0.6.17": npm.SKILL_NAMES_V0617, "0.6.18": npm.SKILL_NAMES_V0618, "0.6.19": npm.SKILL_NAMES_V0619, "0.6.20": npm.SKILL_NAMES_V0620}
         for version, expected in layouts.items():
             self.assertEqual(npm.payload_files(version), expected)
             self.assertEqual(npm.skill_names(version), skill_layouts[version])
@@ -526,7 +557,8 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertEqual(len(npm.SUITE_FILES_V069), 44)
         self.assertEqual(npm.payload_files("0.6.9"), npm.SUITE_FILES_V069)
         self.assertEqual(len(npm.SUITE_FILES), 62)
-        self.assertEqual(npm.SUITE_FILES, npm.SUITE_FILES_V0619)
+        self.assertEqual(npm.SUITE_FILES, npm.SUITE_FILES_V0620)
+        self.assertEqual(npm.SUITE_FILES_V0620, npm.SUITE_FILES_V0619)
         self.assertEqual(len(npm.SUITE_FILES_V0618), 55)
         self.assertEqual(set(npm.SUITE_FILES_V0619) - set(npm.SUITE_FILES_V0618), {
             "story-skill/scripts/story_workbench_books.py",
@@ -554,7 +586,7 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertEqual(set(npm.SUITE_FILES_V0613) - set(npm.SUITE_FILES_V0612), {
             "story-skill-plan/references/outline.md",
         })
-        self.assertEqual(npm.SKILL_NAMES, npm.SKILL_NAMES_V0619)
+        self.assertEqual(npm.SKILL_NAMES, npm.SKILL_NAMES_V0620)
         self.assertEqual(len(npm.SUITE_FILES_V0613), 50)
         self.assertNotIn("story-skill/references/workbench.md", npm.SUITE_FILES_V0613)
         self.assertEqual(set(npm.SUITE_FILES_V0614) - set(npm.SUITE_FILES_V0613), {
@@ -573,7 +605,7 @@ class NpmSuiteTests(unittest.TestCase):
             "story-skill/scripts/story_punctuation.py",
         })
         self.assertIn("story-skill/scripts/story_workbench.py", npm.SUITE_FILES)
-        for version in ("0.5.11", "0.6.00", "0.6.20", "0.6.99", "1.0.0"):
+        for version in ("0.5.11", "0.6.00", "0.6.21", "0.6.99", "1.0.0"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed payload layout"):
                 npm.payload_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed payload layout"):
@@ -598,10 +630,11 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertEqual(npm.SUITE_FILES_V0617, zip_package.SUITE_FILES_V0617)
         self.assertEqual(npm.SUITE_FILES_V0618, zip_package.SUITE_FILES_V0618)
         self.assertEqual(npm.SUITE_FILES_V0619, zip_package.SUITE_FILES_V0619)
+        self.assertEqual(npm.SUITE_FILES_V0620, zip_package.SUITE_FILES_V0620)
         self.assertEqual(npm.SKILL_NAMES, zip_package.SKILL_NAMES)
         self.assertEqual(npm.SKILL_NAMES_V060, zip_package.SKILL_NAMES_V060)
         self.assertEqual(npm.SKILL_NAMES_V061, zip_package.SKILL_NAMES_V061)
-        for version in ("0.6.0", "0.6.1", "0.6.4", "0.6.5", "0.6.6", "0.6.7", "0.6.8", "0.6.9", "0.6.10", "0.6.11", "0.6.12", "0.6.13", "0.6.14", "0.6.15", "0.6.16", "0.6.17", "0.6.18", "0.6.19"):
+        for version in ("0.6.0", "0.6.1", "0.6.4", "0.6.5", "0.6.6", "0.6.7", "0.6.8", "0.6.9", "0.6.10", "0.6.11", "0.6.12", "0.6.13", "0.6.14", "0.6.15", "0.6.16", "0.6.17", "0.6.18", "0.6.19", "0.6.20"):
             self.assertEqual(npm.payload_files(version), zip_package.suite_files(version))
 
 

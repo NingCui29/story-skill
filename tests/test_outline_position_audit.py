@@ -141,6 +141,67 @@ class OutlinePositionAuditTests(unittest.TestCase):
         empty = self.audit(text.replace("现代言情（拟选）", ""), require_platforms=("qidian",))
         self.assertIn({"code": "classification_column_missing", "field": "一级分类"}, empty["issues"])
 
+    def separated_block(self, platform, local="已选定", backend="当前菜单未核对，本书设置未核实保存"):
+        text = self.platform_block(platform).replace("（拟选）", "").replace("（待核对）", "")
+        text = text.replace("各栏待核对", "各栏按本地方案填写")
+        return text + "- 本地分类决策：" + local + "。\n- 后台核验：" + backend + "。\n"
+
+    def test_local_decision_and_backend_verification_can_be_separate_for_each_platform(self):
+        for platform in ("fanqie", "qimao", "qidian"):
+            for local in ("已选定", "建议", "内容待定"):
+                with self.subTest(platform=platform, local=local):
+                    result = self.audit(self.separated_block(platform, local), require_platforms=(platform,))
+                    self.assertTrue(result["ok"], result["issues"])
+
+    def test_separated_status_does_not_borrow_a_missing_axis_from_ordinary_notes(self):
+        text = self.separated_block("qidian")
+        for line in ("- 本地分类决策：已选定。\n",
+                     "- 后台核验：当前菜单未核对，本书设置未核实保存。\n"):
+            with self.subTest(missing=line):
+                result = self.audit(text.replace(line, ""), require_platforms=("qidian",))
+                self.assertFalse(result["ok"])
+                self.assertIn({"code": "classification_status_missing", "field": "一级分类"}, result["issues"])
+        for source, replacement in (("本地分类决策：已选定", "本地分类决策：待讨论如何填写"),
+                                    ("后台核验：当前菜单未核对，本书设置未核实保存", "后台核验：已有内容依据")):
+            with self.subTest(replacement=replacement):
+                result = self.audit(text.replace(source, replacement), require_platforms=("qidian",))
+                self.assertFalse(result["ok"])
+
+    def test_separated_status_is_scoped_to_its_platform_block(self):
+        qimao = self.separated_block("qimao").replace("- 本地分类决策：已选定。\n", "")
+        result = self.audit(self.separated_block("fanqie") + "\n" + qimao,
+                            require_platforms=("fanqie", "qimao"))
+        self.assertTrue(result["platform_results"][0]["ok"])
+        self.assertFalse(result["platform_results"][1]["ok"])
+        self.assertIn({"code": "classification_status_missing"}, result["platform_results"][1]["issues"])
+
+    def test_legacy_group_pending_note_is_still_supported(self):
+        text = self.platform_block("fanqie").replace("现实故事（拟选）", "现实故事")
+        result = self.audit(text, require_platforms=("fanqie",))
+        self.assertTrue(result["ok"], result["issues"])
+
+    def test_qidian_block_backend_confirmation_needs_book_specific_source(self):
+        for claim in ("后台已确认", "本书设置后台已确认", "本书设置已核实保存",
+                      "当前菜单已核对；本书设置已核实保存",
+                      "本书设置已核实保存（不能修改）", "本书设置已核实保存（修改权限未知）"):
+            with self.subTest(claim=claim):
+                text = self.separated_block("qidian", backend=claim)
+                result = self.audit(text, require_platforms=("qidian",))
+                self.assertFalse(result["ok"])
+                self.assertIn({"code": "classification_confirmation_source_missing", "field": "一级分类"},
+                              result["issues"])
+                actual = self.audit(text.replace("起点分类实采表快照", "本书实际后台分类设置"),
+                                    require_platforms=("qidian",))
+                self.assertTrue(actual["ok"], actual["issues"])
+
+    def test_menu_confirmation_and_negated_book_confirmation_are_not_saved_book_claims(self):
+        for backend in ("当前菜单已核对，本书设置未核对", "菜单后台已确认，本书设置未核对",
+                        "本书设置未核实保存，不能写后台已确认"):
+            with self.subTest(backend=backend):
+                result = self.audit(self.separated_block("qidian", backend=backend),
+                                    require_platforms=("qidian",))
+                self.assertTrue(result["ok"], result["issues"])
+
     def test_qidian_site_must_be_explicit_and_match_declared_channel(self):
         text = self.platform_block("qidian")
         for site in ("待核对", "起点女生", "起点-男生／起点-女生", "起点-女生；起点-男生"):

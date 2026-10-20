@@ -164,10 +164,12 @@ SUITE_FILES_V0619 = tuple(sorted((*SUITE_FILES_V0618,
     "story-skill/scripts/story_workbench_archives.py",
 )))
 SKILL_NAMES_V0619 = SKILL_NAMES_V0618
+SUITE_FILES_V0620 = SUITE_FILES_V0619
+SKILL_NAMES_V0620 = SKILL_NAMES_V0619
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0619
-SUITE_FILES = SUITE_FILES_V0619
+SKILL_NAMES = SKILL_NAMES_V0620
+SUITE_FILES = SUITE_FILES_V0620
 UNRELEASED_VERSIONS = frozenset({"0.6.13"})
 MAX_BYTES = 256 * 1024 * 1024
 # Reviewed full license texts, normalized only for BOM, line endings and trailing
@@ -208,6 +210,8 @@ def payload_files(version):
         return SUITE_FILES_V0618
     if version == "0.6.19":
         return SUITE_FILES_V0619
+    if version == "0.6.20":
+        return SUITE_FILES_V0620
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -241,6 +245,8 @@ def skill_names(version):
         return SKILL_NAMES_V0618
     if version == "0.6.19":
         return SKILL_NAMES_V0619
+    if version == "0.6.20":
+        return SKILL_NAMES_V0620
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 

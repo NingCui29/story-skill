@@ -908,12 +908,12 @@ w._editor_save(Path(sys.argv[2]), json.loads(Path(sys.argv[3]).read_text(encodin
     def test_unreadable_directory_does_not_hide_formal_chapters(self):
         blocked = self.root / '01_大纲细纲'
         blocked.mkdir(exist_ok=True)
-        original = Path.iterdir
-        def scan(path):
+        original = story.workbench.api._pinned_directory
+        def scan(path, *args, **kwargs):
             if path == blocked:
                 raise PermissionError('test unreadable directory')
-            return original(path)
-        with patch.object(Path, 'iterdir', scan):
+            return original(path, *args, **kwargs)
+        with patch.object(story.workbench.api, '_pinned_directory', scan):
             catalog = story.workbench._editor_catalog(self.root)
         self.assertEqual(len(catalog['chapters']), 2)
         self.assertTrue(any('01_大纲细纲' in warning for warning in catalog['warnings']))

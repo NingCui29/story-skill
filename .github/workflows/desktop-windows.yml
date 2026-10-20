@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       draft_release_id:
-        description: 'Existing v0.6.19 draft release ID; 0 disables all release uploads'
+        description: 'Existing v0.6.20 draft release ID; 0 disables all release uploads'
         required: false
         default: '0'
         type: string
@@ -86,7 +86,7 @@ jobs:
           if ($uninstall.ExitCode -ne 0) { throw "Uninstaller failed" }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.9-windows-x86_64-installer
+          name: story-workbench-0.1.10-windows-x86_64-installer
           compression-level: 0
           path: |
             dist/story-workbench-*-windows-x86_64-setup.exe
@@ -97,7 +97,7 @@ jobs:
           if-no-files-found: error
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.9-windows-x86_64-portable
+          name: story-workbench-0.1.10-windows-x86_64-portable
           compression-level: 0
           path: |
             dist/story-workbench-windows-x86_64.zip
@@ -106,7 +106,7 @@ jobs:
       - name: Preserve standalone distribution verification
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.9-windows-x86_64-verification
+          name: story-workbench-0.1.10-windows-x86_64-verification
           path: |
             dist/windows-distribution-verification.json
             dist/windows-build-manifest.json
@@ -139,9 +139,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.9-windows-x86_64-installer --dir downloaded/installer
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.10-windows-x86_64-installer --dir downloaded/installer
           if ($LASTEXITCODE -ne 0) { throw "Installer artifact download failed" }
-          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.9-windows-x86_64-portable --dir downloaded/portable
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.10-windows-x86_64-portable --dir downloaded/portable
           if ($LASTEXITCODE -ne 0) { throw "Portable artifact download failed" }
       - name: Upload only to the specified matching draft
         shell: pwsh
@@ -155,6 +155,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.9-windows-draft-upload
+          name: story-workbench-0.1.10-windows-draft-upload
           path: windows-draft-upload.json
           if-no-files-found: warn

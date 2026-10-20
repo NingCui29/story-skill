@@ -50,6 +50,9 @@ _POSITION_FIELD_ALIASES = {"一级分类（大类）": "一级分类", "一级�
                            "二级分类（子类）": "二级分类", "二级分类(子类)": "二级分类"}
 _CLASSIFICATION_STATUS = re.compile(
     r"(?<![\u4e00-\u9fffA-Za-z0-9])(?:拟选|后台已确认|待核对)(?![\u4e00-\u9fffA-Za-z0-9])")
+_CLASSIFICATION_LOCAL_STATUS = re.compile(
+    r"(?<![\u4e00-\u9fffA-Za-z0-9])(?:本地)?(?:建议|已选定|已采用|内容待定)(?![\u4e00-\u9fffA-Za-z0-9])")
+_CLASSIFICATION_BACKEND_STATUS = re.compile(r"未核对|待核对|未核实|已核对|已确认|已保存|已核实保存|未保存|未知")
 _TAG_GROUP_FIELDS = {"阅读标签": {"主分类", "主题", "角色", "情节"},
                      "内容标签": {"情节", "情感", "人设", "世界观"}}
 _PLATFORM_ALIASES = {
@@ -367,6 +370,33 @@ def _fanqie_entrance(values):
     return next(iter(entrances)) if len(entrances) == 1 else None
 
 
+def _classification_has_status(fields, value):
+    """Accept legacy inline status or both explicit axes in this platform block."""
+    if _CLASSIFICATION_STATUS.search(value):
+        return True
+    local = [value, *fields.get("本地分类决策", [])]
+    return (any(_CLASSIFICATION_LOCAL_STATUS.search(item) for item in local)
+            and any(_CLASSIFICATION_BACKEND_STATUS.search(item)
+                    for item in fields.get("后台核验", [])))
+
+
+def _classification_block_confirms_book(fields):
+    """A menu check alone does not claim that this book's settings were saved."""
+    for value in fields.get("后台核验", []):
+        for clause in re.split(r"[，,；;。]", value):
+            if re.search(r"菜单|选项|页面", clause) and not re.search(r"本书|本作品|该作品|设置|保存", clause):
+                continue
+            for claim in re.finditer(r"后台已确认|已(?:核实)?保存", clause):
+                prefix = clause[:claim.start()]
+                # A later modification restriction does not negate a saved
+                # setting: “已保存（不能修改）” still needs a book source.
+                if re.search(r"未|待|不|尚|否|无", prefix):
+                    continue
+                if claim.group() == "后台已确认" or re.search(r"本书|本作品|该作品|设置", prefix):
+                    return True
+    return False
+
+
 def _audit_qidian_fields(fields):
     """Check declarations only; a source label never proves a saved book setting."""
     issues = []
@@ -375,7 +405,7 @@ def _audit_qidian_fields(fields):
         values = fields.get(column, [])
         if not any(value.strip(" \t\r\n。.!！") for value in values):
             issues.append({"code": "classification_column_missing", "field": column})
-        elif not all(_CLASSIFICATION_STATUS.search(value) for value in values):
+        elif not all(_classification_has_status(fields, value) for value in values):
             issues.append({"code": "classification_status_missing", "field": column})
 
     site_values = fields.get("发布站点", [])
@@ -394,9 +424,10 @@ def _audit_qidian_fields(fields):
     snapshot_source = re.search(r"快照|实采表|参考表|词表|采集(?:表|资料|菜单)", source)
     book_source = re.search(r"(?:本书|本作品|该作品)(?:实际)?(?:后台|作品页|分类设置)|实际作品(?:后台|设置)", source)
     if snapshot_source and not book_source:
+        block_confirmed = _classification_block_confirms_book(fields)
         for column in columns:
-            if any("后台已确认" in _CLASSIFICATION_STATUS.findall(value)
-                   for value in fields.get(column, [])):
+            if block_confirmed or any("后台已确认" in _CLASSIFICATION_STATUS.findall(value)
+                                      for value in fields.get(column, [])):
                 issues.append({"code": "classification_confirmation_source_missing", "field": column})
     return issues
 
@@ -414,7 +445,7 @@ def _audit_position_section(start, lines):
             key = match.group(1).strip(" *_`\t")
             key = _POSITION_FIELD_ALIASES.get(key, key)
             value = match.group(2).strip(" *_`\t")
-            if key in {"目标平台", "来源与核对日期", "平台入口", "页面适用性", "发布站点"}:
+            if key in {"目标平台", "来源与核对日期", "平台入口", "页面适用性", "发布站点", "后台核验"}:
                 # Keep unlabelled semicolon continuations and parenthetical
                 # annotations until the next labelled field outside them.
                 # A quoted field example also ends this value; its dates must
@@ -453,8 +484,9 @@ def _audit_position_section(start, lines):
                              if any(part.strip() in _CLASSIFICATION_FIELDS
                                     for part in re.split(r"[／/、]", key))
                              for value in values]
-    if not any(token in value for value in classification_values
-               for token in ("拟选", "后台已确认", "待核对")):
+    if not any(_classification_has_status(fields, value) or
+               any(token in value for token in ("拟选", "后台已确认", "待核对"))
+               for value in classification_values):
         issues.append({"code": "classification_status_missing"})
     if not declared.intersection({"主分类", "一级分类", "阅读标签", "平台分类"}):
         issues.append({"code": "classification_column_missing"})

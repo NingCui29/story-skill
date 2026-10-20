@@ -16,6 +16,7 @@ import uuid
 import webbrowser
 import secrets
 import threading
+import time
 import http.client
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -1298,8 +1299,43 @@ def _finish_pending_save(root, pending):
                           {digest})
 
 
+def _author_file(root, document_id):
+    """Validate one discoverable author file without enumerating its siblings."""
+    if not isinstance(document_id, str) or len(document_id) > 2048:
+        return None
+    prefix, separator, relative = document_id.partition(':')
+    if separator != ':' or prefix not in ('file', 'pending') or not relative:
+        return None
+    parts = relative.split('/')
+    if (Path(relative).is_absolute() or Path(relative).as_posix() != relative or
+            any(part in ('', '.', '..', '__pycache__') or
+                (part.startswith('.') and not (index == 0 and part == '.story'))
+                for index, part in enumerate(parts))):
+        return None
+    root = Path(root)
+    if parts[:2] in (['.story', 'drafts'], ['.story', 'analysis']):
+        start = api.safe_path(root, '/'.join(parts[:2]))
+        category = ('候选与草稿' if parts[1] == 'drafts' else '拆书分析') if start.is_dir() else None
+    else:
+        category = _author_root_category(api.safe_path(root, parts[0]))
+    if category is None:
+        return None
+    pending_save = relative.startswith('.story/drafts/workbench/') and relative.endswith('.pending.json')
+    if (prefix == 'pending') != pending_save or not (pending_save or Path(relative).suffix.lower() in AUTHOR_SUFFIXES):
+        return None
+    path = api.safe_path(root, relative)
+    if not path.is_file():
+        return None
+    facts = path.stat()
+    return {'id': document_id, 'path': relative,
+            'title': Path(relative[:-13]).stem + ' · 保存待核对' if pending_save else path.stem,
+            'category': '自动恢复' if pending_save or '/自动恢复/' in relative else category,
+            'modified': datetime.fromtimestamp(facts.st_mtime, timezone.utc).isoformat(),
+            'bytes': facts.st_size}
+
+
 def _pending_document(root, document_id):
-    row = next((r for r in _author_files(Path(root)) if r['id'] == document_id), None)
+    row = _author_file(Path(root), document_id)
     if row is None or not row['path'].endswith('.pending.json'):
         api.fail('invalid_input', '待核对记录未列入本书目录。')
     raw = _author_read(Path(root), row['path'], PENDING_SAVE_LIMIT)
@@ -1334,7 +1370,17 @@ def _pending_document(root, document_id):
     return result
 
 
-def _author_files(root, warnings=None, exclude=None):
+def _author_root_category(path):
+    if path.name.startswith('.') or path.name == 'chapters':
+        return None
+    if path.is_dir() and (path.name == '作者有话说' or re.match(r'^\d{2}_', path.name) or
+                         any(word in path.name for word in ('大纲', '细纲', '封面', '策划', '分析'))):
+        return '创作材料'
+    return '创作材料' if path.is_file() and path.suffix.lower() in AUTHOR_SUFFIXES else None
+
+
+def _author_roots(root, warnings=None, exclude=None):
+    """The shared admission rule for discoverable local author material."""
     def report(path):
         if warnings is not None:
             warnings.append('已跳过无法安全读取的文件或目录：' + str(path))
@@ -1365,13 +1411,20 @@ def _author_files(root, warnings=None, exclude=None):
             if path.is_symlink() or getattr(path, 'is_junction', lambda: False)():
                 report(path.name)
                 continue
-            if path.is_dir() and (path.name == '作者有话说' or re.match(r'^\d{2}_', path.name) or
-                                  any(word in path.name for word in ('大纲', '细纲', '封面', '策划', '分析'))):
-                roots.append((path, '创作材料'))
-            elif path.is_file() and path.suffix.lower() in AUTHOR_SUFFIXES:
-                roots.append((path, '创作材料'))
+            category = _author_root_category(path)
+            if category:
+                roots.append((path, category))
         except OSError:
             report(path.name)
+    return sorted(roots)
+
+
+def _author_files(root, warnings=None, exclude=None):
+    def report(path):
+        if warnings is not None:
+            warnings.append('已跳过无法安全读取的文件或目录：' + str(path))
+
+    roots = _author_roots(root, warnings, exclude)
     result, inspected = [], 0
     for start, category in sorted(roots):
         pending = [start]
@@ -1404,6 +1457,248 @@ def _author_files(root, warnings=None, exclude=None):
             except OSError:
                 report(relative)
     return sorted(result, key=lambda row: (row['category'], row['path']))
+
+
+MATERIAL_SCAN_TTL = 600
+MAX_MATERIAL_SESSIONS = 8
+MAX_MATERIAL_NODES = 100000
+_material_sessions = {}
+_material_sessions_lock = threading.RLock()
+
+
+def _material_directory_key(facts, platform=None):
+    # Windows pins create a temporary child guard, so pinning itself changes
+    # the directory mtime. Its bound handles still reject replacement/links.
+    platform = os.name if platform is None else platform
+    return facts.st_dev, facts.st_ino, None if platform == 'nt' else facts.st_mtime_ns
+
+
+def _material_directory_identity(path):
+    with api._pinned_directory(path) as directory:
+        facts = os.fstat(directory.fd) if directory.fd is not None else Path(path).stat()
+        return _material_directory_key(facts)
+
+
+def _material_binding(root, material_roots):
+    root = Path(root)
+    book = _ReadOnlyBook(root)
+    try:
+        book.verify_state_path()
+        identity = (str(root.absolute()), _material_directory_identity(root), book.meta('id'),
+                    book._state_stat.st_dev, book._state_stat.st_ino)
+    finally:
+        book.close()
+    linked = []
+    for key, path in sorted(material_roots.items()):
+        try:
+            bound = _material_directory_identity(path)
+        except (api.StoryError, OSError):
+            bound = None
+        linked.append((key, str(path), bound))
+    return identity, tuple(linked)
+
+
+def _material_walk(root, starts, warnings, external_key=None):
+    """Yield one inspected node at a time; retain directory iterators between batches."""
+    root = Path(root)
+    # A frame owns its scandir iterator. Rebind its directory before each next()
+    # so a renamed/replaced ancestor cannot attach a different tree to a cursor.
+    stack = []
+    pending = iter(starts)
+    try:
+        while True:
+            if stack:
+                path, category, iterator, original = stack[-1]
+                if _material_directory_identity(path) != original:
+                    api.fail('workbench_material_cursor_changed', '材料目录在分批读取期间变化，请刷新目录重新加载。')
+                try:
+                    entry = next(iterator)
+                    current, category = path / entry.name, category
+                except StopIteration:
+                    iterator.close(); stack.pop()
+                    continue
+            else:
+                try:
+                    current, category = next(pending)
+                except StopIteration:
+                    return
+            relative = current.relative_to(root).as_posix()
+            parts = Path(relative).parts
+            # .story is the sole explicit hidden-root exception. Descendants
+            # such as .backups keep their existing private-file boundary.
+            visible_parts = parts[2:] if not external_key and parts[:2] in (('.story', 'drafts'), ('.story', 'analysis')) else parts
+            if any(part.startswith('.') or part == '__pycache__' for part in visible_parts):
+                yield None
+                continue
+            row = None
+            try:
+                current = api.safe_path(root, relative)
+                if current.is_dir():
+                    with api._pinned_directory(current) as directory:
+                        facts = os.fstat(directory.fd) if directory.fd is not None else current.stat()
+                        identity = _material_directory_key(facts)
+                        iterator = os.scandir(directory.fd if directory.fd is not None else current)
+                    stack.append((current, category, iterator, identity))
+                elif current.is_file() and (current.suffix.lower() in AUTHOR_SUFFIXES or
+                        (not external_key and relative.startswith('.story/drafts/workbench/') and relative.endswith('.pending.json'))):
+                    facts = current.stat()
+                    if external_key:
+                        row = {'id': 'linked:' + external_key + ':' + relative, 'path': str(current),
+                               'relative': relative, 'source_root': str(root), 'external': True,
+                               'title': current.stem, 'category': category}
+                    else:
+                        pending_save = relative.endswith('.pending.json')
+                        row = {'id': ('pending:' if pending_save else 'file:') + relative, 'path': relative,
+                               'title': Path(relative[:-13]).stem + ' · 保存待核对' if pending_save else current.stem,
+                               'category': '自动恢复' if pending_save or '/自动恢复/' in relative else category,
+                               'modified': datetime.fromtimestamp(facts.st_mtime, timezone.utc).isoformat(),
+                               'bytes': facts.st_size}
+            except api.StoryError as error:
+                if error.code not in ('linked_path', 'path_escape'):
+                    raise
+                warnings.append('已跳过无法安全读取的材料：' + relative)
+            except OSError:
+                warnings.append('已跳过无法安全读取的材料：' + relative)
+            yield row
+    finally:
+        for _, _, iterator, _ in stack:
+            iterator.close()
+
+
+def _material_inventory_walk(root, material_roots, warnings):
+    root = Path(root)
+    for relative, category in (('.story/drafts', '候选与草稿'), ('.story/analysis', '拆书分析')):
+        try:
+            path = api.safe_path(root, relative)
+            if path.is_dir():
+                yield from _material_walk(root, [(path, category)], warnings)
+            else:
+                yield None
+        except (api.StoryError, OSError) as error:
+            if isinstance(error, api.StoryError) and error.code == 'workbench_material_cursor_changed':
+                raise
+            warnings.append('已跳过无法安全读取的材料目录：' + relative)
+            yield None
+    with api._pinned_directory(root) as directory:
+        iterator = os.scandir(directory.fd if directory.fd is not None else root)
+        original = _material_directory_identity(root)
+    try:
+        while True:
+            if _material_directory_identity(root) != original:
+                api.fail('workbench_material_cursor_changed', '材料目录在分批读取期间变化，请刷新目录重新加载。')
+            try:
+                entry = next(iterator)
+            except StopIteration:
+                break
+            path = root / entry.name
+            if path.name.startswith('.') or path.name == 'chapters':
+                yield None
+                continue
+            try:
+                api.safe_path(root, entry.name)
+                category = _author_root_category(path)
+            except (api.StoryError, OSError):
+                warnings.append('已跳过无法安全读取的材料：' + entry.name)
+                yield None
+                continue
+            if category:
+                yield from _material_walk(root, [(path, category)], warnings)
+            else:
+                yield None
+    finally:
+        iterator.close()
+    for key, path in sorted(material_roots.items()):
+        try:
+            with api._pinned_directory(path):
+                # The external root is a traversal node, never a document.
+                yield from _material_walk(path, [(path, '关联材料（只读）')], warnings, key)
+        except (api.StoryError, OSError) as error:
+            if isinstance(error, api.StoryError) and error.code == 'workbench_material_cursor_changed':
+                raise
+            warnings.append('已跳过无法安全读取的关联材料目录：' + str(path))
+
+
+def _material_close(session):
+    iterator = session.pop('iterator', None)
+    if iterator is not None:
+        try:
+            iterator.close()
+        except (api.StoryError, OSError):
+            # A displaced linked root may fail the pinned context's exit
+            # verification. Retiring that cache must not block another book.
+            pass
+
+
+def _material_discard(cursor):
+    """Release an inventory's retained iterators, including one-shot searches."""
+    with _material_sessions_lock:
+        session = _material_sessions.pop(cursor, None)
+        if session is not None:
+            _material_close(session)
+
+
+def _material_catalog(root, material_roots=None, cursor=None, advance=False):
+    """In-memory, book-bound material inventory; no file or backup is modified."""
+    material_roots = material_roots or {}
+    if cursor is not None and (not isinstance(cursor, str) or not re.fullmatch(r'[0-9a-f]{64}', cursor)):
+        api.fail('invalid_input', '材料分页标识无效，请刷新目录。')
+    if type(advance) is not bool:
+        api.fail('invalid_input', '材料分页参数无效。')
+    binding = _material_binding(root, material_roots)
+    now = time.monotonic()
+    with _material_sessions_lock:
+        for key, old in list(_material_sessions.items()):
+            if now - old['touched'] > MATERIAL_SCAN_TTL:
+                _material_close(old); del _material_sessions[key]
+        if cursor is None:
+            while len(_material_sessions) >= MAX_MATERIAL_SESSIONS:
+                key = min(_material_sessions, key=lambda token: _material_sessions[token]['touched'])
+                _material_close(_material_sessions.pop(key))
+            cursor = secrets.token_hex(32)
+            warnings = []
+            session = {'binding': binding, 'touched': now, 'rows': {}, 'warnings': warnings,
+                       'inspected': 0, 'complete': False, 'hard_limit': False}
+            session['iterator'] = _material_inventory_walk(root, material_roots, warnings)
+            _material_sessions[cursor] = session
+            advance = True
+        else:
+            session = _material_sessions.get(cursor)
+            if session is None:
+                api.fail('workbench_material_cursor_expired', '材料分页已过期，请刷新目录重新加载。')
+            if session['binding'] != binding:
+                _material_close(session); del _material_sessions[cursor]
+                api.fail('workbench_material_cursor_changed', '作品或关联材料目录已变化，请刷新目录重新加载。')
+            session['touched'] = now
+        try:
+            if advance and not session['complete'] and not session['hard_limit']:
+                for _ in range(min(AUTHOR_LIMIT, MAX_MATERIAL_NODES - session['inspected'])):
+                    try:
+                        row = next(session['iterator'])
+                    except StopIteration:
+                        session['complete'] = True
+                        _material_close(session)
+                        break
+                    session['inspected'] += 1
+                    if row:
+                        session['rows'][row['id']] = row
+                if session['inspected'] >= MAX_MATERIAL_NODES and not session['complete']:
+                    session['hard_limit'] = True
+                    _material_close(session)
+            if _material_binding(root, material_roots) != binding:
+                api.fail('workbench_material_cursor_changed', '作品或关联材料目录在读取期间变化，请刷新目录重新加载。')
+        except BaseException:
+            _material_close(session); _material_sessions.pop(cursor, None)
+            raise
+        warnings = list(session['warnings'])
+        if session['hard_limit']:
+            warnings.append('材料数量达到本次目录核对上限，仍有未覆盖文件；原文件与历史备份均保留，可在原目录查看。')
+        elif not session['complete']:
+            warnings.append('材料目录尚未全部加载，可继续加载其余材料；正式章节和进度已独立读取。')
+        rows = sorted(session['rows'].values(), key=lambda row: (row['category'], row['path']))
+        return rows, {'cursor': cursor, 'complete': session['complete'],
+                      'has_more': not session['complete'] and not session['hard_limit'],
+                      'inspected': session['inspected'], 'loaded': len(rows),
+                      'hard_limit': session['hard_limit']}, warnings
 
 
 def _material_roots(paths):
@@ -1464,11 +1759,29 @@ def _linked_material_files(roots, warnings=None):
 
 
 def _linked_material_document(roots, document_id):
-    row = next((r for r in _linked_material_files(roots) if r['id'] == document_id), None)
-    if row is None:
+    if not isinstance(document_id, str) or len(document_id) > 4096:
         api.fail('invalid_input', '材料未列入本次明确关联的目录。')
-    mime = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp'}.get(Path(row['path']).suffix.lower())
-    raw = _author_read(Path(row['source_root']), row['relative'], 8 * 1024 * 1024 if mime else AUTHOR_TEXT_LIMIT)
+    parts = document_id.split(':', 2)
+    if len(parts) != 3 or parts[0] != 'linked' or parts[1] not in roots:
+        api.fail('invalid_input', '材料未列入本次明确关联的目录。')
+    key, relative = parts[1:]
+    if (not relative or Path(relative).is_absolute() or Path(relative).as_posix() != relative or
+            any(part in ('', '.', '..', '__pycache__') or part.startswith('.') for part in relative.split('/')) or
+            Path(relative).suffix.lower() not in AUTHOR_SUFFIXES):
+        api.fail('invalid_input', '材料未列入本次明确关联的目录。')
+    root = roots[key]
+    try:
+        with api._pinned_directory(root) as directory:
+            path = api.safe_path(root, relative)
+            if not path.is_file():
+                api.fail('invalid_input', '材料未列入本次明确关联的目录。')
+            row = {'id': document_id, 'path': str(path), 'relative': relative,
+                   'source_root': str(root), 'external': True, 'title': path.stem, 'category': '关联材料（只读）'}
+            mime = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp'}.get(path.suffix.lower())
+            raw = _author_read(root, relative, 8 * 1024 * 1024 if mime else AUTHOR_TEXT_LIMIT)
+            api._verify_bound_directory(directory)
+    except OSError:
+        api.fail('invalid_input', '关联材料目录或文件无法安全读取，请重新核对材料位置。')
     result = {'ok': True, **row, 'text': '' if mime else raw.decode('utf-8'), 'sha256': hashlib.sha256(raw).hexdigest(),
               'kind': 'material', 'editable': False, 'is_prose': False, 'context': None,
               'source': row['source_root'], 'status': '关联材料，只读；未与本书正式状态合并',
@@ -1502,7 +1815,7 @@ def _editor_packet(root, chapter=None, offset=0, limit=DEFAULT_LIMIT):
 
 
 def _editor_catalog(root, offset=0, limit=DEFAULT_LIMIT, query='', focus=None, material_roots=None,
-                    context_chapter=None):
+                    context_chapter=None, material_cursor=None, material_more=False):
     if type(offset) is not int or not isinstance(query, str) or len(query) > 200:
         api.fail('invalid_input', '目录参数无效。')
     if context_chapter is not None:
@@ -1535,14 +1848,13 @@ def _editor_catalog(root, offset=0, limit=DEFAULT_LIMIT, query='', focus=None, m
             book.close()
     else:
         total = packet['chapters']['total']
-    warnings = []
-    all_files = _author_files(Path(root), warnings)
-    all_files += _linked_material_files(material_roots or {}, warnings)
+    all_files, materials, warnings = _material_catalog(root, material_roots, material_cursor, material_more)
     all_files = [_navigation_file(Path(root), row) for row in all_files]
     files = [row for row in all_files if not query or query.casefold() in row['path'].casefold()]
     return {'ok': True, 'chapters': [{'id': f"formal:{r['chapter']}", 'title': Path(r['path']).stem,
                                     'path': r['path'], 'category': '正式正文'} for r in rows],
-            'files': files, 'related_files': all_files, 'warnings': warnings, 'total': total, 'offset': offset, 'limit': limit,
+            'files': files, 'related_files': all_files, 'materials': materials,
+            'warnings': warnings, 'total': total, 'offset': offset, 'limit': limit,
             'has_more': offset + len(rows) < total, 'snapshot': packet['snapshot']['id'],
             'workspace': _workspace_index(root, all_files, offset, limit, query, focus, context_chapter),
             'book_root': str(root), 'material_roots': [str(p) for p in (material_roots or {}).values()]}
@@ -1669,7 +1981,7 @@ def _editor_document_raw(root, document_id):
                 'text': text, 'prefix': prefix, 'sha256': row['sha256'], 'snapshot': packet['snapshot']['id'],
                 'kind': 'formal', 'chapter': chapter, 'summary': row['summary'], 'base_sha256': row['sha256'],
                 'status': '正式稿', 'editable': True}
-    row = next((r for r in _author_files(Path(root)) if r['id'] == document_id), None)
+    row = _author_file(Path(root), document_id)
     if row is None:
         api.fail('invalid_input', '文件未列入本书材料目录。')
     image_type = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp'}.get(Path(row['path']).suffix.lower())
@@ -1984,14 +2296,15 @@ def _markdown_resource_path(root, document):
     if document.get('kind') != 'candidate':
         return document.get('path')
     try:
-        files = {row['id']: row['path'] for row in _author_files(root)}
         source, seen = document.get('source'), {document['id']}
-        # Each step consumes one discovered source ID; cycles and the finite
-        # material inventory bound traversal without limiting valid save history.
-        while isinstance(source, str) and source in files and source not in seen:
+        # Validate each source with the same directory admission rules. A large
+        # unrelated backup tree must not prevent opening an existing candidate.
+        while isinstance(source, str) and source not in seen and len(seen) <= MAX_MANAGED_ARTIFACTS:
+            row = _author_file(root, source)
+            if row is None:
+                return None
             seen.add(source)
-            relative = files[source]
-            api.safe_path(root, relative)
+            relative = row['path']
             if source.startswith('pending:'):
                 pending = _pending_document(root, source)
                 if pending['content_kind'] != 'material':
@@ -2132,9 +2445,11 @@ def _editor_search(root, query, offset=0, limit=30, material_roots=None):
                     for r in book.db.execute('SELECT chapter,sha FROM chapter_state ORDER BY chapter')]
     finally:
         book.close()
-    warnings = []
-    rows += [r for r in _author_files(Path(root), warnings) if Path(r['path']).suffix.lower() in ('.md', '.txt')]
-    rows += [r for r in _linked_material_files(material_roots or {}, warnings) if Path(r['path']).suffix.lower() in ('.md', '.txt')]
+    material_rows, material_state, warnings = _material_catalog(root, material_roots)
+    try:
+        rows += [r for r in material_rows if Path(r['path']).suffix.lower() in ('.md', '.txt')]
+    finally:
+        _material_discard(material_state['cursor'])
     hits, read_bytes, checked = [], 0, 0
     # Bound each request and explicitly report incomplete coverage; never silently call a partial scan complete.
     for row in rows:
@@ -2157,7 +2472,7 @@ def _editor_search(root, query, offset=0, limit=30, material_roots=None):
             warnings.append('无法读取，未纳入搜索：' + row['path'])
     return {'ok': True, 'results': hits[offset:offset + limit], 'total': len(hits), 'offset': offset,
             'has_more': offset + limit < len(hits), 'checked': checked, 'warnings': warnings,
-            'complete': checked == len(rows) and not warnings}
+            'complete': material_state['complete'] and checked == len(rows) and not warnings}
 
 
 CLASSIFICATION_PATHS = ('创作约定.md', '01_大纲细纲/全书总纲.md', '00_项目策划/开书策划.md')
@@ -2930,7 +3245,8 @@ function setupWorkspace(){
  $('view-chapters').onclick=()=>{viewMode='chapters';offset=0;catalog(true,true);};$('view-files').onclick=()=>{viewMode='files';offset=0;catalog(true,true);};
  $('locate').onclick=()=>{$('search').value='';catalog(true,true);};
  $('compare-back').onclick=leaveComparison;$('diff-prev').onclick=()=>stepDiff(-1);$('diff-next').onclick=()=>stepDiff(1);
- $('refresh-compact').onclick=()=>catalog();
+ $('refresh-compact').onclick=()=>{catalog.materialCursor=null;catalog();};
+ $('materials-more').onclick=()=>catalog(false,false,true);
  const narrow=matchMedia('(max-width:820px)');let panelOpener=null;
  const syncPanels=()=>{const opened=narrow.matches?document.body.classList.contains('context-open'):!document.body.classList.contains('context-closed')&&!document.body.classList.contains('focus-reading');$('context-toggle').textContent=opened?'收起辅助栏':'辅助信息';$('context-toggle').setAttribute('aria-expanded',String(opened));const navOpened=narrow.matches?document.body.classList.contains('nav-open'):!document.body.classList.contains('nav-closed');$('nav-toggle').textContent=navOpened?'收起目录':'作品目录';$('nav-toggle').setAttribute('aria-expanded',String(navOpened));};
  closePanels=(restore=true)=>{document.body.classList.remove('nav-open','context-open');document.querySelector('main').inert=false;document.querySelector('header').inert=false;$('book-nav').inert=false;$('book-context').inert=false;syncPanels();const opener=panelOpener;panelOpener=null;if(restore&&opener)opener.focus({preventScroll:true});};
@@ -2960,18 +3276,23 @@ function show(d){leaveComparison();rememberView();searchPreview=false;$('match-v
 async function openDoc(id,query=''){const sequence=++openSequence;try{if(!docs.has(id)){const d=await call('open',{id});if(sequence!==openSequence)return;d.value=d.text||'';d.editing=false;d.recoveryKey=crypto.randomUUID();if(!docs.has(id))docs.set(id,d);}if(sequence!==openSequence)return;show(docs.get(id));closePanels();location.hash=encodeURIComponent(id);note('已打开：'+displayTitle(docs.get(id))+' · '+versionLabel(docs.get(id)));if(query)previewSearch(query);await catalog(true);}catch(e){if(sequence===openSequence)note('打开失败（'+id+'）：'+e.message);}}
 function pendingEdits(){const pending=[...docs.values()].filter(dirty);$('pending-box').hidden=!pending.length;$('pending-count').textContent='待保存文件 · '+pending.length;$('pending-list').replaceChildren();for(const d of pending){const b=document.createElement('button');b.className='document';b.title=d.path||d.id;b.textContent=displayTitle(d)+' · '+(d.recovered===d.value?'已写入恢复稿':'尚未写入恢复稿');if(d.path&&pending.filter(x=>displayTitle(x)===displayTitle(d)).length>1){const source=document.createElement('small');source.className='document-location';source.textContent=documentLocation(d);b.append(source);}b.onclick=()=>openDoc(d.id);$('pending-list').append(b);}}
 function item(row){const b=document.createElement('button');b.className='document';b.dataset.doc=row.id;b.title=row.path+(row.modified?'\n修改时间：'+new Date(row.modified).toLocaleString():'');const title=document.createElement('span');title.className='document-name';title.textContent=row.category==='正式正文'||row.category==='计划'?row.title:displayTitle(row);const type=document.createElement('small');type.className='document-type';const identity=documentIdentity(row),purpose=identity.kind==='material'?filePurpose(row):identity.label;type.textContent=purpose;b.append(title);if(title.textContent!==purpose&&title.textContent!=='已保存章计划')b.append(type);if(row.path&&['candidate','recovery','pending','uncertain'].includes(identity.kind)){const source=document.createElement('small');source.className='document-location';source.textContent=documentLocation(row);b.append(source);}b.onclick=()=>openDoc(row.id);return b;}
-async function catalog(focusCurrent=false,navigation=false){
+async function catalog(focusCurrent=false,navigation=false,loadMaterials=false){
  if(navigation||focusCurrent)clearTimeout(queryTimer);
  // Explicit navigation replaces an earlier request to locate the active chapter.
  // Background refreshes retain that request until its response is displayed.
  if(navigation)pendingFocus=false;
- if(loading){reloadPending=true;pendingFocus=pendingFocus||focusCurrent;return;}
+ if(loading){reloadPending=true;pendingFocus=pendingFocus||focusCurrent;catalog.pendingMaterialMore=catalog.pendingMaterialMore||loadMaterials;return;}
  loading=true;pendingFocus=focusCurrent;
+ $('materials-more').disabled=true;
  const query=$('search').value,mode=viewMode;
  try{
-  const c=await call('catalog',{offset,query,focus:focusCurrent?chapterNumber(docs.get(active)||{}):null,context_chapter:chapterNumber(docs.get(active)||{})||null});
+  const c=await call('catalog',{offset,query,focus:focusCurrent?chapterNumber(docs.get(active)||{}):null,context_chapter:chapterNumber(docs.get(active)||{})||null,material_cursor:catalog.materialCursor||null,material_more:loadMaterials});
   // A queued operation owns the current offset. Never replace it with an old response.
   if(reloadPending||query!==$('search').value||mode!==viewMode)return;
+  catalog.materialCursor=c.materials?.cursor||null;
+  $('materials-more').hidden=!c.materials?.has_more;
+  $('materials-more').disabled=!c.materials?.has_more;
+  $('materials-status').textContent=c.materials?'已加载 '+c.materials.loaded+' 份材料'+(c.materials.complete?' · 目录扫描已完成':c.materials.hard_limit?' · 已达本轮核对上限，仍有未覆盖文件':' · 尚有材料未加载'):'';
   $('directory-warning').textContent=(c.warnings||[]).join('\n');
   const expandedGroups=new Map([...$('list').querySelectorAll('details')].map(g=>[g.dataset.group,g.open]));
   const listScroll=$('list').parentElement.scrollTop;
@@ -3002,12 +3323,12 @@ async function catalog(focusCurrent=false,navigation=false){
    if(id)await openDoc(id);
   }
  }catch(e){if(!reloadPending&&query===$('search').value&&mode===viewMode)note(e.message);}
- finally{loading=false;if(reloadPending){reloadPending=false;const focus=pendingFocus;pendingFocus=false;catalog(focus);}}
+ finally{loading=false;if(reloadPending){reloadPending=false;const focus=pendingFocus,more=!!catalog.pendingMaterialMore;pendingFocus=false;catalog.pendingMaterialMore=false;catalog(focus,false,more);}else if(currentCatalog?.materials?.has_more)$('materials-more').disabled=false;}
 }
-async function recover(d,force=false){if(d.recovering){await d.recovering;if(force||(dirty(d)&&d.value!==d.recovered))return recover(d,force);return;}if(!dirty(d)||(!force&&d.value===d.recovered))return;if(force)d.recovered=undefined;const value=d.value;d.recovering=(async()=>{try{const r=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});d.recovered=value;d.recoveryPath=r.path;d.recoverySha=r.recovery_sha256;d.recoveryMetadataSha=r.recovery_metadata_sha256;if(r.recovery_key)d.recoveryKey=r.recovery_key;pendingEdits();await catalog();if(active===d.id)note(r.conflict?'原恢复稿有变化或保存待核对，本次编辑已另存恢复稿，原文件保留。':'编辑已写入自动恢复稿；正式采用前仍须审查。');}catch(e){if(active===d.id)note('自动恢复保存失败：'+e.message+'，请下载当前文字。');}})();try{await d.recovering;}finally{d.recovering=null;}}
+async function recover(d,force=false){if(d.recovering){await d.recovering;if(force||(dirty(d)&&d.value!==d.recovered))return recover(d,force);return;}if(!dirty(d)||(!force&&d.value===d.recovered))return;if(force)d.recovered=undefined;const value=d.value;d.recovering=(async()=>{try{const r=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});d.recovered=value;d.recoveryPath=r.path;d.recoverySha=r.recovery_sha256;d.recoveryMetadataSha=r.recovery_metadata_sha256;if(r.recovery_key)d.recoveryKey=r.recovery_key;pendingEdits();catalog.materialCursor=null;await catalog();if(active===d.id)note(r.conflict?'原恢复稿有变化或保存待核对，本次编辑已另存恢复稿，原文件保留。':'编辑已写入自动恢复稿；正式采用前仍须审查。');}catch(e){if(active===d.id)note('自动恢复保存失败：'+e.message+'，请下载当前文字。');}})();try{await d.recovering;}finally{d.recovering=null;}}
 $('text').addEventListener('input',()=>{const d=docs.get(active);d.value=$('text').value;clearTimeout(d.timer);d.timer=setTimeout(()=>recover(d),1200);badge();scheduleMetrics();});
 $('edit').onclick=()=>{const d=docs.get(active);d.editing=!d.editing;show(d);if(d.editing)$('text').focus();};
-async function saveDocument(d){if((!dirty(d)&&!d.needs_recovery)||d.saving||reloading)return false;const text=d.value;d.saving=true;badge();try{await recover(d);const r=await call('save',{id:d.id,sha256:d.sha256,snapshot:d.snapshot,metadata_sha256:d.metadata_sha256,text});const fresh=await call('open',{id:r.id});fresh.value=d.value;fresh.editing=d.editing;fresh.recoveryKey=crypto.randomUUID();if(active===d.id)rememberView(d);fresh.positions={...d.positions};docs.set(r.id,fresh);d.value=d.text;d.needs_recovery=false;d.savedCandidate=r.id;clearTimeout(d.timer);if(active===d.id){show(fresh);location.hash=encodeURIComponent(fresh.id);}if(dirty(fresh))fresh.timer=setTimeout(()=>recover(fresh),1200);if(active===fresh.id)note('候选已保存 · '+new Date().toLocaleTimeString()+' · 尚未正式采用');await catalog(active===fresh.id);return true;}catch(e){note(e.message+' 当前文字仍在编辑器中，可下载或从自动恢复稿找回。');return false;}finally{d.saving=false;badge();}}
+async function saveDocument(d){if((!dirty(d)&&!d.needs_recovery)||d.saving||reloading)return false;const text=d.value;d.saving=true;badge();try{await recover(d);const r=await call('save',{id:d.id,sha256:d.sha256,snapshot:d.snapshot,metadata_sha256:d.metadata_sha256,text});const fresh=await call('open',{id:r.id});fresh.value=d.value;fresh.editing=d.editing;fresh.recoveryKey=crypto.randomUUID();if(active===d.id)rememberView(d);fresh.positions={...d.positions};docs.set(r.id,fresh);d.value=d.text;d.needs_recovery=false;d.savedCandidate=r.id;clearTimeout(d.timer);if(active===d.id){show(fresh);location.hash=encodeURIComponent(fresh.id);}if(dirty(fresh))fresh.timer=setTimeout(()=>recover(fresh),1200);if(active===fresh.id)note('候选已保存 · '+new Date().toLocaleTimeString()+' · 尚未正式采用');catalog.materialCursor=null;await catalog(active===fresh.id);return true;}catch(e){note(e.message+' 当前文字仍在编辑器中，可下载或从自动恢复稿找回。');return false;}finally{d.saving=false;badge();}}
 $('save').onclick=()=>saveDocument(docs.get(active));
 $('save-all').onclick=async()=>{const pending=[...docs.values()].filter(d=>dirty(d)||d.needs_recovery);if([...docs.values()].some(d=>d.saving)){note('候选正在保存，请完成后再保存全部。');return;}let saved=0;for(const d of pending){if(!await saveDocument(d)){note('保存全部已停止；'+saved+' 份已保存，其余文字保留在页面中。请核对失败提示并下载未保存文字。');return;}saved++;}const remaining=[...docs.values()].filter(d=>dirty(d)||d.saving||d.needs_recovery).length;note('已保存 '+saved+' 份候选；尚未正式采用。'+(remaining?' 另有 '+remaining+' 份新增或未完成编辑，请继续保存。':''));};
 $('compare').onclick=async()=>{$('before-label').textContent='当前正式稿';$('after-label').textContent='当前文字';const d=docs.get(active),id=active,seq=++compareSequence;try{const fresh=await call('open',{id:d.kind==='formal'?id:'formal:'+d.chapter});if(active!==id||seq!==compareSequence)return;
@@ -3018,7 +3339,7 @@ $('compare').onclick=async()=>{$('before-label').textContent='当前正式稿';$
  }catch(e){if(active===id&&seq===compareSequence)note('无法读取最新正式稿：'+e.message);}};
 $('download').onclick=()=>{const d=docs.get(active),a=document.createElement('a');const url=URL.createObjectURL(new Blob([(d.prefix||'')+d.value],{type:'text/plain;charset=utf-8'}));a.href=url;a.download=downloadName(d);a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 async function reloadDocuments(preserve){if(reloading)return;if([...docs.values()].some(d=>d.saving)){note('候选稿正在保存，请完成后再重新载入。');return;}const changes=[...docs.values()].filter(dirty);if(changes.length&&!preserve){note('有未保存编辑，请使用“保留恢复稿并重新载入”。');return;}reloading=true;const id=active;try{for(const d of changes){await recover(d,true);if(d.value!==d.recovered){note('恢复尚未成功，已停止重新载入，请下载当前文字。');return;}}const fresh=id?await call('open',{id}):null;if(active!==id){note('已切换文件，本次重新载入取消；原编辑仍保留。');return;}for(const d of docs.values()){if(dirty(d)&&d.value!==d.recovered){note('恢复期间又有输入，已保留编辑；请再次操作。');return;}}++openSequence;for(const d of docs.values())clearTimeout(d.timer);docs.clear();active=null;if(fresh){fresh.value=fresh.text||'';fresh.editing=false;fresh.recoveryKey=crypto.randomUUID();docs.set(fresh.id,fresh);show(fresh);}note(changes.length?'恢复稿已保留，来源已重新载入；可从左栏打开恢复稿。':'来源已重新读取。');await catalog();}catch(e){note('重新载入失败：'+e.message+'；原编辑仍保留。');}finally{reloading=false;}}
-$('refresh').onclick=()=>catalog();
+$('refresh').onclick=()=>{catalog.materialCursor=null;catalog();};
 $('reload-source').onclick=()=>reloadDocuments(false);
 $('recover-reload').onclick=()=>reloadDocuments(true);
 $('search').oninput=()=>{clearTimeout(queryTimer);offset=0;pendingFocus=false;queryTimer=setTimeout(()=>catalog(false,true),300);};$('older').onclick=()=>{offset+=LIMIT;catalog(false,true);};$('newer').onclick=()=>{offset=Math.max(0,offset-LIMIT);catalog(false,true);};
@@ -3088,7 +3409,7 @@ body.native-compact-editor>header{align-items:center;gap:20px;padding:12px 22px;
 @media(max-width:820px){body.native-compact-editor>header{padding:11px 14px;gap:9px;flex-wrap:wrap}.native-compact-editor .book-heading{flex-basis:100%}.native-compact-editor #book-title{font-size:15px}.native-compact-editor .header-actions{width:100%;max-width:none;justify-content:flex-start;flex-wrap:wrap;gap:4px}.native-compact-editor .header-actions>.workbench-theme-control{margin-left:auto;border-left:0;padding-left:0}.native-compact-editor .header-actions>#refresh{display:none}.native-compact-editor .workbench-theme-control select{max-width:100px}.native-compact-editor .menu-panel.book-info-panel{position:fixed;top:112px;right:14px;left:14px;width:auto;max-width:none;max-height:calc(100vh - 138px)}.native-compact-editor main{padding:12px 20px 64px}.native-compact-editor .tools{top:-12px;padding:8px 0 10px;gap:6px}.native-compact-editor .tools button,.native-compact-editor .tools summary{font-size:11px;padding:7px}.native-compact-editor #save{padding:7px 12px}.native-compact-editor #title{font-size:23px;margin-top:22px}.native-compact-editor .document-meta{margin-bottom:22px}.native-compact-editor nav,.native-compact-editor aside{width:min(340px,88vw);padding:20px 18px}}
 @media(max-width:480px){.native-compact-editor .header-actions>button,.native-compact-editor .header-actions>details>summary{font-size:11px;padding:6px}.native-compact-editor .header-actions>.workbench-theme-control{font-size:10px;gap:4px}.native-compact-editor .workbench-theme-control select{font-size:11px;max-width:91px;min-height:29px}.native-compact-editor main{padding:10px 17px 56px}.native-compact-editor .tools{top:-10px;row-gap:9px}.native-compact-editor .mode-actions{gap:1px}.native-compact-editor .save-actions{margin-left:auto}.native-compact-editor .tools button,.native-compact-editor .tools summary{padding:6px}.native-compact-editor #title{font-size:21px}.native-compact-editor #chapter-picker{flex-wrap:wrap}.native-compact-editor #chapter-picker label{flex-basis:100%}}
 @media(prefers-reduced-motion:reduce){.native-compact-editor button{transition:none}}
-</style><style>__THEME_CSS__</style></head><body class="native-compact-editor"><header><div class="book-heading"><div class="book-identity"><strong id="book-title" title="__TITLE__">__TITLE__</strong><span id="book-kind" class="book-kind" data-kind="__KIND_CODE__">__KIND__</span></div><p id="book-progress" role="status">正在读取当前进度…</p></div><div class="header-actions"><button id="nav-toggle" aria-expanded="false" aria-controls="book-nav">作品目录</button><button id="context-toggle" aria-expanded="true" aria-controls="book-context">收起辅助栏</button>__THEME_CONTROL__<details id="book-info" class="menu"><summary>作品信息</summary><div id="book-info-panel" class="menu-panel book-info-panel"><strong id="book-info-title">__TITLE__</strong><p id="book-progress-detail">正在读取当前进度…</p><div id="book-classification" class="book-classification" hidden></div><details id="current-book-location"><summary>目录位置</summary><p id="current-book-root">__ROOT__</p></details><details id="root-location"><summary>书库与材料位置</summary><span id="root-hint"></span></details></div></details><details id="maintenance" class="menu"><summary>设置</summary><div class="menu-panel"><button id="refresh" title="刷新目录与状态，不丢弃未保存文字">刷新目录</button><button id="refresh-compact" hidden>刷新目录</button><button id="layout-reset">恢复默认布局</button><strong>文件与恢复</strong><button id="reload-source">重新读取文件</button><button id="recover-reload">保留恢复稿并重新载入</button><button id="recoveries-open">恢复中心</button><button id="save-all">保存全部候选</button><small id="build-label" title="用于区分工作台页面更新，不是技能发布版本">界面标识：__BUILD__</small></div></details></div></header><div class="desk"><nav id="book-nav" aria-label="作品目录" tabindex="-1"><button id="nav-close" class="panel-close">关闭目录</button><details><summary>切换作品</summary><select id="book-select" aria-label="选择作品"></select><button id="book-open">打开作品</button><p id="book-hint"></p></details><div class="navigation-mode"><button id="view-chapters">按章查看</button><button id="view-files">按文件查看</button></div><section id="pending-box" hidden><strong id="pending-count"></strong><div id="pending-list"></div></section><input id="search" type="search" placeholder="搜索全书章名或材料路径" aria-label="搜索作品文件"><div class="pager"><button id="newer" disabled>上一页</button><button id="older" disabled>下一页</button></div><p id="range"></p><p id="directory-warning" role="status"></p><div id="list"></div><details><summary>查找与定位</summary><button id="locate">定位当前文件</button><input id="full-query" aria-label="搜索正文与材料内容" placeholder="搜索正文与材料内容"><button id="full-go">搜索内容</button><p id="search-status" role="status"></p><div id="search-results"></div><button id="search-prev" disabled>上一页结果</button><button id="search-next" disabled>下一页结果</button></details></nav><div id="resize-left" class="column-resizer" role="separator" aria-label="调整目录宽度" aria-orientation="vertical" aria-valuemin="180" aria-valuemax="360" tabindex="0"></div><main><div class="tools"><div class="mode-actions"><button id="edit" disabled>编辑</button><button id="compare" disabled>对照正式稿</button><details id="reading-options" class="menu"><summary>阅读设置</summary><div class="menu-panel"><label>字号 <select id="font-size"><option>16</option><option selected>19</option><option>22</option><option>25</option></select></label><label>行距 <select id="line-height"><option>1.6</option><option selected>1.8</option><option>1.9</option><option>2.2</option></select></label><label>字体 <select id="font-family"><option value="serif">宋体</option><option value="sans">黑体</option></select></label><label><input id="focus-reading" type="checkbox">专注阅读</label></div></details></div><div class="save-actions"><button id="save" class="primary" disabled title="保存候选稿（⌘S / Ctrl+S）">保存候选稿</button><button id="platform-drafts-open" __PLATFORM_DISABLED__>平台草稿</button><details id="more-actions" class="menu"><summary>更多</summary><div class="menu-panel"><button id="writing-task">继续下一章</button><button id="review-task" disabled>生成审稿任务</button><button id="compare-choose">选择两稿对照</button><button id="source-view" hidden>查看源码</button><button id="download" disabled>下载当前文字</button></div></details></div></div><p id="message" role="status"></p><h1 id="title">选择章节或材料</h1><div class="document-meta"><div id="document-identity" class="identity-badges" role="status" hidden><span id="document-role" class="identity-badge"></span><span id="document-unsaved" class="identity-badge" hidden>当前文字未保存</span></div><details id="document-options"><summary>稿件与材料</summary><div id="chapter-picker" hidden><label for="chapter-version">本章稿件与材料</label><select id="chapter-version" aria-describedby="chapter-picker-help"></select><span id="chapter-picker-help" class="sr-only"></span></div></details><p id="state"></p><details id="count-details"><summary id="word-count" aria-label="字数与统计口径"></summary><p id="count-method"></p></details></div><p id="history-note"></p><div id="document-body"><section id="match-view" hidden><div id="match-tools"><button id="match-back">返回阅读位置</button><button id="match-prev">上一处命中</button><span id="match-position" role="status"></span><button id="match-next">下一处命中</button></div><p id="match-query"></p><pre id="match-text"></pre></section><div id="formatted" hidden></div><pre id="prose"></pre><textarea id="text" aria-label="候选正文编辑" hidden></textarea><img id="cover" alt="封面预览" hidden></div><section id="review-task-box" hidden><h3 id="assistant-task-title">交给助手审稿</h3><p id="review-task-status"></p><pre id="review-findings"></pre><textarea id="review-prompt" aria-label="审稿任务" readonly></textarea><button id="copy-review">复制审稿任务</button></section><section id="difference" hidden><div class="diff-tools"><button id="compare-back">返回阅读</button><button id="diff-prev">上一处差异</button><span id="diff-position" role="status"></span><button id="diff-next">下一处差异</button></div><p id="compare-label"></p><div class="comparison"><section><h3 id="before-label">当前正式稿</h3><pre id="before"></pre></section><section><h3 id="after-label">当前文字</h3><pre id="after"></pre></section></div></section></main><div id="resize-right" class="column-resizer" role="separator" aria-label="调整辅助栏宽度" aria-orientation="vertical" aria-valuemin="200" aria-valuemax="360" tabindex="0"></div><button id="panel-dismiss" aria-label="关闭侧栏" tabindex="-1"></button><aside id="book-context" aria-label="写作辅助" tabindex="-1"><button id="context-close" class="panel-close">关闭辅助栏</button><h3 id="context-title">本章写作</h3><div id="chapter-info"></div><details id="version-details"><summary>文件与版本</summary><pre id="detail"></pre><details id="file-location"><summary>文件位置</summary><p id="path"></p></details></details><details id="adoption-help"><summary>保存与采用说明</summary><p>保存不会覆盖正式稿。请将候选路径交给助手，按现有审稿和历史修订流程采用。</p><p>旧稿未登记的版本关系会明确标注；自动恢复稿须自行核对后再采用。</p><p>自动恢复在停止输入后写入本书文件；失败会提示。关闭或崩溃前尚未写入的文字仍可能丢失。</p></details></aside></div><script>__SCRIPT__</script></body></html>'''
+</style><style>__THEME_CSS__</style></head><body class="native-compact-editor"><header><div class="book-heading"><div class="book-identity"><strong id="book-title" title="__TITLE__">__TITLE__</strong><span id="book-kind" class="book-kind" data-kind="__KIND_CODE__">__KIND__</span></div><p id="book-progress" role="status">正在读取当前进度…</p></div><div class="header-actions"><button id="nav-toggle" aria-expanded="false" aria-controls="book-nav">作品目录</button><button id="context-toggle" aria-expanded="true" aria-controls="book-context">收起辅助栏</button>__THEME_CONTROL__<details id="book-info" class="menu"><summary>作品信息</summary><div id="book-info-panel" class="menu-panel book-info-panel"><strong id="book-info-title">__TITLE__</strong><p id="book-progress-detail">正在读取当前进度…</p><div id="book-classification" class="book-classification" hidden></div><details id="current-book-location"><summary>目录位置</summary><p id="current-book-root">__ROOT__</p></details><details id="root-location"><summary>书库与材料位置</summary><span id="root-hint"></span></details></div></details><details id="maintenance" class="menu"><summary>设置</summary><div class="menu-panel"><button id="refresh" title="刷新目录与状态，不丢弃未保存文字">刷新目录</button><button id="refresh-compact" hidden>刷新目录</button><button id="layout-reset">恢复默认布局</button><strong>文件与恢复</strong><button id="reload-source">重新读取文件</button><button id="recover-reload">保留恢复稿并重新载入</button><button id="recoveries-open">恢复中心</button><button id="save-all">保存全部候选</button><small id="build-label" title="用于区分工作台页面更新，不是技能发布版本">界面标识：__BUILD__</small></div></details></div></header><div class="desk"><nav id="book-nav" aria-label="作品目录" tabindex="-1"><button id="nav-close" class="panel-close">关闭目录</button><details><summary>切换作品</summary><select id="book-select" aria-label="选择作品"></select><button id="book-open">打开作品</button><p id="book-hint"></p></details><div class="navigation-mode"><button id="view-chapters">按章查看</button><button id="view-files">按文件查看</button></div><section id="pending-box" hidden><strong id="pending-count"></strong><div id="pending-list"></div></section><input id="search" type="search" placeholder="搜索全书章名或材料路径" aria-label="搜索作品文件"><div class="pager"><button id="newer" disabled>上一页</button><button id="older" disabled>下一页</button></div><p id="range"></p><p id="directory-warning" role="status"></p><p id="materials-status" role="status"></p><button id="materials-more" hidden>继续加载材料</button><div id="list"></div><details><summary>查找与定位</summary><button id="locate">定位当前文件</button><input id="full-query" aria-label="搜索正文与材料内容" placeholder="搜索正文与材料内容"><button id="full-go">搜索内容</button><p id="search-status" role="status"></p><div id="search-results"></div><button id="search-prev" disabled>上一页结果</button><button id="search-next" disabled>下一页结果</button></details></nav><div id="resize-left" class="column-resizer" role="separator" aria-label="调整目录宽度" aria-orientation="vertical" aria-valuemin="180" aria-valuemax="360" tabindex="0"></div><main><div class="tools"><div class="mode-actions"><button id="edit" disabled>编辑</button><button id="compare" disabled>对照正式稿</button><details id="reading-options" class="menu"><summary>阅读设置</summary><div class="menu-panel"><label>字号 <select id="font-size"><option>16</option><option selected>19</option><option>22</option><option>25</option></select></label><label>行距 <select id="line-height"><option>1.6</option><option selected>1.8</option><option>1.9</option><option>2.2</option></select></label><label>字体 <select id="font-family"><option value="serif">宋体</option><option value="sans">黑体</option></select></label><label><input id="focus-reading" type="checkbox">专注阅读</label></div></details></div><div class="save-actions"><button id="save" class="primary" disabled title="保存候选稿（⌘S / Ctrl+S）">保存候选稿</button><button id="platform-drafts-open" __PLATFORM_DISABLED__>平台草稿</button><details id="more-actions" class="menu"><summary>更多</summary><div class="menu-panel"><button id="writing-task">继续下一章</button><button id="review-task" disabled>生成审稿任务</button><button id="compare-choose">选择两稿对照</button><button id="source-view" hidden>查看源码</button><button id="download" disabled>下载当前文字</button></div></details></div></div><p id="message" role="status"></p><h1 id="title">选择章节或材料</h1><div class="document-meta"><div id="document-identity" class="identity-badges" role="status" hidden><span id="document-role" class="identity-badge"></span><span id="document-unsaved" class="identity-badge" hidden>当前文字未保存</span></div><details id="document-options"><summary>稿件与材料</summary><div id="chapter-picker" hidden><label for="chapter-version">本章稿件与材料</label><select id="chapter-version" aria-describedby="chapter-picker-help"></select><span id="chapter-picker-help" class="sr-only"></span></div></details><p id="state"></p><details id="count-details"><summary id="word-count" aria-label="字数与统计口径"></summary><p id="count-method"></p></details></div><p id="history-note"></p><div id="document-body"><section id="match-view" hidden><div id="match-tools"><button id="match-back">返回阅读位置</button><button id="match-prev">上一处命中</button><span id="match-position" role="status"></span><button id="match-next">下一处命中</button></div><p id="match-query"></p><pre id="match-text"></pre></section><div id="formatted" hidden></div><pre id="prose"></pre><textarea id="text" aria-label="候选正文编辑" hidden></textarea><img id="cover" alt="封面预览" hidden></div><section id="review-task-box" hidden><h3 id="assistant-task-title">交给助手审稿</h3><p id="review-task-status"></p><pre id="review-findings"></pre><textarea id="review-prompt" aria-label="审稿任务" readonly></textarea><button id="copy-review">复制审稿任务</button></section><section id="difference" hidden><div class="diff-tools"><button id="compare-back">返回阅读</button><button id="diff-prev">上一处差异</button><span id="diff-position" role="status"></span><button id="diff-next">下一处差异</button></div><p id="compare-label"></p><div class="comparison"><section><h3 id="before-label">当前正式稿</h3><pre id="before"></pre></section><section><h3 id="after-label">当前文字</h3><pre id="after"></pre></section></div></section></main><div id="resize-right" class="column-resizer" role="separator" aria-label="调整辅助栏宽度" aria-orientation="vertical" aria-valuemin="200" aria-valuemax="360" tabindex="0"></div><button id="panel-dismiss" aria-label="关闭侧栏" tabindex="-1"></button><aside id="book-context" aria-label="写作辅助" tabindex="-1"><button id="context-close" class="panel-close">关闭辅助栏</button><h3 id="context-title">本章写作</h3><div id="chapter-info"></div><details id="version-details"><summary>文件与版本</summary><pre id="detail"></pre><details id="file-location"><summary>文件位置</summary><p id="path"></p></details></details><details id="adoption-help"><summary>保存与采用说明</summary><p>保存不会覆盖正式稿。请将候选路径交给助手，按现有审稿和历史修订流程采用。</p><p>旧稿未登记的版本关系会明确标注；自动恢复稿须自行核对后再采用。</p><p>自动恢复在停止输入后写入本书文件；失败会提示。关闭或崩溃前尚未写入的文字仍可能丢失。</p></details></aside></div><script>__SCRIPT__</script></body></html>'''
     return page.replace('__PLATFORM_DISABLED__', 'disabled' if packet['book'].get('kind') == 'analysis' else '').replace('__THEME_CSS__', _workbench_theme_css()).replace('__THEME_CONTROL__', _workbench_theme_control()).replace('__KIND__', _escape({'long': '长篇', 'short': '短篇', 'analysis': '作品分析'}.get(packet['book'].get('kind'), '类型未确认'))).replace('__KIND_CODE__', _escape(packet['book'].get('kind') or '')).replace('__ROOT__', _escape(packet['book'].get('root') or '目录未提供')).replace('__TITLE__', _escape(packet['book']['title'])).replace('__HASH__', digest).replace('__BUILD__', hashlib.sha256((page + script.partition('\n')[2]).encode()).hexdigest()[:10]).replace('__SCRIPT__', script).encode('utf-8')
 
 
@@ -3323,7 +3644,8 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                     return
                 elif action == 'api/catalog':
                     result = _editor_catalog(root, payload.get('offset', 0), limit, payload.get('query', ''),
-                                             payload.get('focus'), materials, payload.get('context_chapter'))
+                                             payload.get('focus'), materials, payload.get('context_chapter'),
+                                             payload.get('material_cursor'), payload.get('material_more', False))
                 elif action == 'api/platform-drafts/catalog':
                     result = api.platform_drafts.workbench_catalog(root, payload.get('offset', 0), payload.get('limit', 50),
                                                                    expected_book_id=identity['book_id'])

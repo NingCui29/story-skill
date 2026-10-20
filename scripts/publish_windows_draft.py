@@ -18,8 +18,8 @@ from urllib.parse import quote
 import zipfile
 
 REPOSITORY = 'NingCui29/story-skill'
-STORY_VERSION = '0.6.19'
-CLIENT_VERSION = '0.1.9'
+STORY_VERSION = '0.6.20'
+CLIENT_VERSION = '0.1.10'
 TAG = 'v' + STORY_VERSION
 REPO = Path(__file__).resolve().parents[1]
 SETUP = f'story-workbench-{CLIENT_VERSION}-windows-x86_64-setup.exe'

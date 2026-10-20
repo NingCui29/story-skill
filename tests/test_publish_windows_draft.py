@@ -27,8 +27,8 @@ def fixture(area):
     artifacts = area / 'artifacts'
     runtime = tuple('runtime%d.py' % n for n in range(15))
     write(source / 'scripts/build_desktop_macos.py', ('RUNTIME_FILES = ' + repr(runtime)).encode())
-    write(source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.19"\n')
-    write(source / 'desktop/windows/workbench_updates.py', b'CLIENT_VERSION = "0.1.9"\n')
+    write(source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.20"\n')
+    write(source / 'desktop/windows/workbench_updates.py', b'CLIENT_VERSION = "0.1.10"\n')
     files = {}
     for name in runtime:
         files['Scripts/' + name] = ('runtime ' + name).encode()
@@ -50,7 +50,7 @@ def fixture(area):
     artifacts.mkdir()
     setup = artifacts / publish.SETUP
     setup.write_bytes(b'MZ synthetic installer')
-    manifest = {'platform': 'windows-x86_64', 'client_version': '0.1.9', 'story_version': '0.6.19',
+    manifest = {'platform': 'windows-x86_64', 'client_version': '0.1.10', 'story_version': '0.6.20',
                 'files': {name: hashlib.sha256(data).hexdigest() for name, data in files.items()}}
     files['build-manifest.json'] = json.dumps(manifest).encode()
     portable = artifacts / publish.ORIGINAL_PORTABLE
@@ -60,9 +60,9 @@ def fixture(area):
     for path in (setup, portable):
         path.with_name(path.name + '.sha256').write_text(publish.digest_file(path) + '  ' + path.name + '\n')
     native = dict.fromkeys(publish.NATIVE_FLAGS, True)
-    native.update(client_version='0.1.9', theme_captures={'light': True, 'dark': True})
+    native.update(client_version='0.1.10', theme_captures={'light': True, 'dark': True})
     safety = dict.fromkeys(publish.SAFETY_FLAGS, True)
-    safety.update(platform='win32', story_version='0.6.19', existing_book_files_recycled=False)
+    safety.update(platform='win32', story_version='0.6.20', existing_book_files_recycled=False)
     write(artifacts / 'windows-native-smoke.json', json.dumps(native).encode())
     write(artifacts / 'windows-runtime-safety.json', json.dumps(safety).encode())
     installed = area / 'installed'
@@ -74,7 +74,7 @@ def fixture(area):
 
 class FakeAPI:
     def __init__(self, assets=None):
-        self.release = {'id': 42, 'draft': True, 'tag_name': 'v0.6.19', 'target_commitish': SHA}
+        self.release = {'id': 42, 'draft': True, 'tag_name': 'v0.6.20', 'target_commitish': SHA}
         self.assets = list(assets or [])
         self.calls = []
         self.next_id = 100
@@ -132,6 +132,15 @@ class DistributionTests(unittest.TestCase):
         with self.assertRaisesRegex(publish.VerificationError, 'checksum'):
             self.verified()
 
+    def test_previous_release_source_versions_are_rejected(self):
+        for path, old in ((self.source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.19"\n'),
+                          (self.source / 'desktop/windows/workbench_updates.py', b'CLIENT_VERSION = "0.1.9"\n')):
+            original = path.read_bytes()
+            path.write_bytes(old)
+            with self.subTest(path=path), self.assertRaisesRegex(publish.VerificationError, 'Source versions'):
+                self.verified()
+            path.write_bytes(original)
+
     def test_rejects_wrong_source_runtime_installed_and_notice_bytes(self):
         for path in (self.source / 'skills/story-skill/scripts/runtime0.py',
                      self.installed / 'Scripts/runtime0.py',
@@ -171,7 +180,7 @@ class DistributionTests(unittest.TestCase):
 
     def test_published_wrong_target_or_wrong_tag_never_mutates(self):
         assets, report = self.verified()
-        for key, value in (('draft', False), ('target_commitish', 'b' * 40), ('tag_name', 'v0.6.18')):
+        for key, value in (('draft', False), ('target_commitish', 'b' * 40), ('tag_name', 'v0.6.19')):
             api = FakeAPI()
             api.release[key] = value
             with self.subTest(key=key), self.assertRaises(publish.VerificationError):
@@ -181,6 +190,7 @@ class DistributionTests(unittest.TestCase):
     def test_only_whitelisted_collision_is_deleted_and_server_digest_is_read_back(self):
         assets, report = self.verified()
         api = FakeAPI([{'id': 5, 'name': publish.SETUP, 'size': 0, 'digest': 'sha256:bad'},
+                       {'id': 998, 'name': 'story-workbench-0.1.9-windows-x86_64-setup.exe', 'size': 0},
                        {'id': 999, 'name': 'unrelated-macos.zip', 'size': 0}])
         result = publish.publish(api, 42, SHA, assets, report)
         self.assertTrue(result['ok'])

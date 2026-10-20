@@ -195,14 +195,14 @@ class WorkbenchRuntimeRegressions(unittest.TestCase):
 
     def test_unreadable_material_root_does_not_break_catalog_or_search(self):
         outer, roots = self.material_roots()
-        iterdir = Path.iterdir
+        pin = self.w.api._pinned_directory
 
-        def denied(current):
-            if current == outer:
+        def denied(current, *args, **kwargs):
+            if Path(current) == outer:
                 raise PermissionError('selected material directory is unreadable')
-            return iterdir(current)
+            return pin(current, *args, **kwargs)
 
-        with patch.object(Path, 'iterdir', denied):
+        with patch.object(self.w.api, '_pinned_directory', denied):
             self.assert_unavailable_material_root(roots, outer)
 
     @unittest.skipIf(os.name == 'nt', 'Symbolic links require Windows privileges')
