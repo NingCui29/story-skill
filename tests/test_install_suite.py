@@ -518,7 +518,7 @@ class SuiteInstallTests(unittest.TestCase):
 
     def test_unknown_suite_version_is_rejected_before_writing_targets(self):
         runtime = self.source / "story-skill/scripts/story.py"
-        for version in ("0.6.00", "0.6.20", "0.6.99", "0.7.0", "1.0.0"):
+        for version in ("0.6.00", "0.6.21", "0.6.99", "0.7.0", "1.0.0"):
             with self.subTest(version=version):
                 runtime.write_text(f'VERSION = "{version}"\n', encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
