@@ -545,12 +545,16 @@ class BrowserTests(unittest.TestCase):
         adapter.login_timeout_ms = 20
         adapter._native_navigation_timeout = TimeoutError
         requested = []
+        clock = [100.0]
         def delayed(url, **kwargs):
             requested.append(kwargs["timeout"])
             adapter._list_page.url = url
-            time.sleep(.03)
+            # Windows 3.10's clock resolution can hide a short real sleep.
+            # Advance the navigation beyond the original total budget exactly.
+            clock[0] += .03
             raise TimeoutError("fixture committed after total deadline")
-        with patch.object(adapter._list_page, "goto", side_effect=delayed):
+        with patch.object(adapter._list_page, "goto", side_effect=delayed), \
+                patch.object(browser.time, "monotonic", side_effect=lambda: clock[0]):
             self.assert_code("login_required", adapter.verify_target, "fanqie", "author-1", "book-1")
         self.assertEqual(len(requested), 1)
         self.assertLessEqual(requested[0], 20)
