@@ -992,7 +992,7 @@ test('fresh probe timeout without arrival or DOM proof keeps the original privat
 });
 test('a failed fallback closes its known owned tab before API initialization or after attach failure',async()=>{
   for(const failure of ['goto','empty','attach']){
-    const f=await fixture();let fresh;let clock=Date.now();
+    const f=await fixture();let fresh;const started=Date.now();let clock=started;
     f.original.playwright.domSnapshot=async()=>'';
     f.worker.clock=()=>clock;f.worker.sleep=async ms=>{clock+=ms;await sleep(0);};
     const create=f.browser.tabs.new;f.browser.tabs.new=async()=>{
@@ -1011,7 +1011,7 @@ test('a failed fallback closes its known owned tab before API initialization or 
       else{assert.equal(f.worker.api,undefined);assert.equal(f.events.filter(row=>row[0]==='cli').length,0);}
       assert.equal(f.events.filter(row=>row[0]==='new').length,1);assert.ok(f.events.some(row=>row[0]==='close'&&row[1]===fresh.id));
       assert.ok(!f.events.some(row=>row[0]==='close'&&row[1]==='original'));
-      if(failure==='empty')assert.ok(clock>=Date.now()+14000,'empty fallback has one bounded 15 second readiness budget');
+      if(failure==='empty')assert.equal(clock-started,15000,'empty fallback spends exactly its one bounded 15 second readiness budget');
     }finally{await f.cleanup();}
   }
 });
