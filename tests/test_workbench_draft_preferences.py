@@ -1,6 +1,7 @@
 """Book-local rule preferences survive service ports without publishing writes."""
 import hashlib
 import http.client
+import io
 import json
 import os
 from pathlib import Path
@@ -8,7 +9,7 @@ import stat
 import subprocess
 import threading
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from tests import test_publish as fixtures
 from tests.test_platform_browser import profile
@@ -168,7 +169,131 @@ class DraftPreferenceStorageTests(unittest.TestCase):
         finally:
             client.close()
 
+    def denied_editor_handler(self, server, body=b'{}', headers=()):
+        handler = server.RequestHandlerClass.__new__(server.RequestHandlerClass)
+        handler.server = server
+        token = server.editor_url.rstrip('/').split('/')[-1]
+        handler.path = '/' + token + '/api/platform-drafts/preferences/save'
+        handler.headers = http.client.HTTPMessage()
+        for name, value in (
+                ('Host', f'127.0.0.1:{server.server_port}'),
+                ('Origin', f'http://127.0.0.1:{server.server_port}'),
+                ('X-Story-Token', 'wrong'), ('Content-Type', 'application/json'),
+                *headers):
+            handler.headers[name] = value
+        handler.rfile = Mock(wraps=io.BytesIO(body))
+        handler.reply = Mock()
+        return handler
+
+    def test_editor_denied_post_drains_small_body_before_reply_without_parsing_or_book_access(self):
+        server = self.w.editor_server(self.root)
+        self.addCleanup(server.server_close)
+        token = server.editor_url.rstrip('/').split('/')[-1]
+        with patch.object(self.w.json, 'loads') as parse, \
+                patch.object(self.w, '_library_entry') as entry, \
+                patch.object(self.w, '_platform_draft_rules') as rules, \
+                patch.object(self.w, '_editor_save') as save:
+            for field in ('X-Story-Token', 'Origin', 'Host', 'path'):
+                for body in (b'{invalid JSON', b'x' * 16384):
+                    with self.subTest(field=field, bytes=len(body)):
+                        handler = self.denied_editor_handler(server, body, [('Content-Length', str(len(body)))])
+                        if field != 'X-Story-Token':
+                            handler.headers.replace_header('X-Story-Token', token)
+                            if field == 'path':
+                                handler.path = '/outside/api/platform-drafts/preferences/save'
+                            else:
+                                handler.headers.replace_header(field, 'https://outside.invalid')
+
+                        def reply(status, data):
+                            self.assertEqual((status, data), (403, b'{}'))
+                            self.assertEqual(handler.rfile.tell(), len(body))
+
+                        handler.reply.side_effect = reply
+                        handler.do_POST()
+                        handler.rfile.read.assert_called_once_with(len(body))
+                        handler.reply.assert_called_once_with(403, b'{}')
+                        self.assertTrue(handler.close_connection)
+            parse.assert_not_called()
+            entry.assert_not_called()
+            rules.assert_not_called()
+            save.assert_not_called()
+
+    def test_editor_denied_post_never_reads_ambiguous_oversized_or_transfer_encoded_body(self):
+        server = self.w.editor_server(self.root)
+        self.addCleanup(server.server_close)
+        cases = [[], [('Content-Length', '')], [('Content-Length', '-1')],
+                 [('Content-Length', '+2')], [('Content-Length', '2.0')],
+                 [('Content-Length', '\u00a02')], [('Content-Length', 'not-a-length')],
+                 [('Content-Length', '0')], [('Content-Length', '16385')],
+                 [('Content-Length', '9' * 5000)],
+                 [('Content-Length', '2'), ('Content-Length', '2')],
+                 [('Content-Length', '2'), ('Content-Length', '3')],
+                 [('Content-Length', '2'), ('Transfer-Encoding', 'chunked')],
+                 [('Content-Length', '2'), ('Transfer-Encoding', '')]]
+        with patch.object(self.w.json, 'loads') as parse, \
+                patch.object(self.w, '_library_entry') as entry, \
+                patch.object(self.w, '_platform_draft_rules') as rules:
+            for headers in cases:
+                with self.subTest(headers=headers):
+                    handler = self.denied_editor_handler(server, headers=headers)
+                    handler.do_POST()
+                    handler.rfile.read.assert_not_called()
+                    handler.reply.assert_called_once_with(403, b'{}')
+                    self.assertTrue(handler.close_connection)
+            parse.assert_not_called()
+            entry.assert_not_called()
+            rules.assert_not_called()
+
+    def test_editor_denied_post_timeout_and_disconnect_never_dispatch(self):
+        server = self.w.editor_server(self.root)
+        self.addCleanup(server.server_close)
+        with patch.object(self.w.json, 'loads') as parse, \
+                patch.object(self.w, '_library_entry') as entry, \
+                patch.object(self.w, '_platform_draft_rules') as rules:
+            for error in (TimeoutError('body timeout'), ConnectionAbortedError('peer gone'),
+                          ValueError('closed body stream')):
+                with self.subTest(error=type(error).__name__):
+                    handler = self.denied_editor_handler(server, headers=[('Content-Length', '2')])
+                    handler.rfile.read.side_effect = error
+                    handler.do_POST()
+                    handler.rfile.read.assert_called_once_with(2)
+                    handler.reply.assert_called_once_with(403, b'{}')
+                    self.assertTrue(handler.close_connection)
+            handler = self.denied_editor_handler(server, b'{', [('Content-Length', '2')])
+            handler.reply.side_effect = BrokenPipeError('peer closed after partial body')
+            handler.do_POST()
+            handler.rfile.read.assert_called_once_with(2)
+            self.assertTrue(handler.close_connection)
+            parse.assert_not_called()
+            entry.assert_not_called()
+            rules.assert_not_called()
+
+    def test_editor_wrong_content_type_drains_small_body_before_400(self):
+        server = self.w.editor_server(self.root)
+        self.addCleanup(server.server_close)
+        handler = self.denied_editor_handler(server, headers=[('Content-Length', '2')])
+        token = server.editor_url.rstrip('/').split('/')[-1]
+        handler.headers.replace_header('X-Story-Token', token)
+        handler.headers.replace_header('Content-Type', 'text/plain')
+
+        def reply(status, data):
+            self.assertEqual((status, data), (400, b'{}'))
+            self.assertEqual(handler.rfile.tell(), 2)
+
+        handler.reply.side_effect = reply
+        with patch.object(self.w.json, 'loads') as parse, \
+                patch.object(self.w, '_library_entry') as entry, \
+                patch.object(self.w, '_platform_draft_rules') as rules:
+            handler.do_POST()
+            parse.assert_not_called()
+            entry.assert_not_called()
+            rules.assert_not_called()
+        handler.rfile.read.assert_called_once_with(2)
+        handler.reply.assert_called_once_with(400, b'{}')
+        self.assertTrue(handler.close_connection)
+
     def test_two_actual_loopback_service_ports_read_same_book_preference_without_browser_storage(self):
+        before = self.fixture.writing_snapshot()
         request = {'plan_id': self.plan['id'], 'profile_id': self.profile.name, 'profile_sha256': self.sha}
         first, thread = self.start_server()
         try:
@@ -184,12 +309,18 @@ class DraftPreferenceStorageTests(unittest.TestCase):
             status, packet = self.post(second, 'preferences', request)
             self.assertEqual(status, 200)
             self.assertEqual(packet['preference'], PAIR)
-            for headers in ({'Origin': 'https://outside.invalid'}, {'X-Story-Token': 'bad'}):
+            persisted = {path.name: path.read_bytes() for path in self.directory.glob('*.json')}
+            for headers in ({'Origin': 'https://outside.invalid'}, {'X-Story-Token': 'bad'},
+                            {'X-Story-Token': ''}, {'Host': 'outside.invalid'}):
                 status, _ = self.post(second, 'preferences/save', {**request, 'comparison_policy': 'strict', 'body_encoding': 'verbatim'}, **headers)
                 self.assertEqual(status, 403)
+            status, _ = self.post(second, 'preferences/save', request, **{'Content-Type': 'text/plain'})
+            self.assertEqual(status, 400)
+            self.assertEqual({path.name: path.read_bytes() for path in self.directory.glob('*.json')}, persisted)
             status, _ = self.post(second, 'preferences/save', {**request, **PAIR, 'path': '../outside'})
             self.assertEqual(status, 409)
             self.assertEqual(self.rules()['preference'], PAIR)
+            self.assertEqual(self.fixture.writing_snapshot(), before)
         finally:
             self.stop_server(second, thread)
 

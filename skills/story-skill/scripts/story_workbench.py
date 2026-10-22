@@ -3676,6 +3676,27 @@ def _service_request(root, action='session', saved=False):
         connection.close()
 
 
+def _reject_http_post(handler, status):
+    handler.close_connection = True
+    lengths = handler.headers.get_all('Content-Length', [])
+    if handler.headers.get('Transfer-Encoding') is None and len(lengths) == 1:
+        value = lengths[0].strip(' \t')
+        if re.fullmatch(r'[0-9]+', value):
+            try:
+                length = int(value)
+                if 0 < length <= 16384:
+                    # An unread POST body can reset the connection on Windows
+                    # before the client receives the denial. Never parse it.
+                    handler.rfile.read(length)
+            except (OSError, ValueError):
+                pass
+    try:
+        return handler.reply(status, b'{}')
+    except OSError:
+        # A timed-out or disconnected peer never reaches dispatch.
+        return None
+
+
 def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=None, expected_book_id=None):
     if _loaded_runtime_sha256 is None:
         api.fail('workbench_runtime_unreadable', '无法核对本地工作台代码，请检查安装文件后重新启动。',
@@ -3723,6 +3744,9 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
         def allowed(self):
             return self.headers.get('Host') == f'127.0.0.1:{self.server.server_port}'
 
+        def reject_post(self, status):
+            return _reject_http_post(self, status)
+
         def do_GET(self):
             if not self.allowed() or self.path != route:
                 return self.reply(404, b'{}')
@@ -3739,9 +3763,9 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
             origin = f'http://127.0.0.1:{self.server.server_port}'
             if (not self.allowed() or not self.path.startswith(route) or
                     self.headers.get('Origin') != origin or self.headers.get('X-Story-Token') != token):
-                return self.reply(403, b'{}')
+                return self.reject_post(403)
             if self.headers.get('Content-Type') != 'application/json' or self.headers.get('Transfer-Encoding'):
-                return self.reply(400, b'{}')
+                return self.reject_post(400)
             try:
                 length = int(self.headers.get('Content-Length', '0'))
                 if not 0 < length <= 7 * 1024 * 1024:
@@ -4465,24 +4489,7 @@ def library_server(state_dir=None, port=8765, library_books=None):
                 return self.headers.get('Host') == f'127.0.0.1:{self.server.server_port}'
 
             def reject_post(self, status):
-                self.close_connection = True
-                lengths = self.headers.get_all('Content-Length', [])
-                if self.headers.get('Transfer-Encoding') is None and len(lengths) == 1:
-                    value = lengths[0].strip(' \t')
-                    if re.fullmatch(r'[0-9]+', value):
-                        try:
-                            length = int(value)
-                            if 0 < length <= 16384:
-                                # An unread POST body can reset the connection on
-                                # Windows before the client receives the denial.
-                                self.rfile.read(length)
-                        except (OSError, ValueError):
-                            pass
-                try:
-                    return self.reply(status, b'{}')
-                except OSError:
-                    # A timed-out or disconnected peer never reaches dispatch.
-                    return None
+                return _reject_http_post(self, status)
 
             def do_GET(self):
                 origin = f'http://127.0.0.1:{self.server.server_port}'
