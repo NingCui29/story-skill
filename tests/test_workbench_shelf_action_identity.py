@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 
 import test_workbench as base
@@ -55,19 +56,25 @@ function managementText(text){const node=new E('p');node.textContent=text;manage
         node = shutil.which('node')
         if not node:
             self.skipTest('Node.js required')
-        process = subprocess.Popen([node, '-e', source], stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        try:
-            ready = process.stdout.readline().strip()
-            if ready != 'READY':
-                self.fail('UI probe failed before pause: ' + ready + process.stderr.read())
-            while_paused()
-            output, error = process.communicate('{}\n', timeout=15)
-            self.assertEqual(process.returncode, 0, output + error)
-        finally:
-            if process.poll() is None:
-                process.terminate()
-                process.wait(timeout=5)
+        # stdin carries the pause/resume handshake, so keep the large script
+        # in a temporary file instead of the Windows process command line.
+        with tempfile.TemporaryDirectory() as raw:
+            script = Path(raw) / 'shelf-action.cjs'
+            script.write_text(source, encoding='utf-8')
+            process = subprocess.Popen([node, str(script)], stdin=subprocess.PIPE,
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                       text=True, encoding='utf-8')
+            try:
+                ready = process.stdout.readline().strip()
+                if ready != 'READY':
+                    self.fail('UI probe failed before pause: ' + ready + process.stderr.read())
+                while_paused()
+                output, error = process.communicate('{}\n', timeout=15)
+                self.assertEqual(process.returncode, 0, output + error)
+            finally:
+                if process.poll() is None:
+                    process.terminate()
+                    process.wait(timeout=5)
 
     def replacement_action(self, operation):
         path = self.root / 'same-path'

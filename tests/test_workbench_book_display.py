@@ -43,7 +43,7 @@ function rememberShelfBook(key){rememberedShelfBooks.push(key);}
 $('book-title').textContent='当前作品';$('book-kind').dataset.kind='long';$('current-book-root').textContent='/当前/作品';
 """
         result = subprocess.run(
-            [node, '-e', mock + source + '\n' + test],
+            [node, '-'], input=mock + source + '\n' + test, encoding='utf-8',
             capture_output=True, text=True, timeout=15,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

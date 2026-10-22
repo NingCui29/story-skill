@@ -43,8 +43,8 @@ handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog();
 const textTree=node=>node.textContent+'\n'+node.children.map(textTree).join('\n');
 '''
         source = base.story.workbench._editor_platform_drafts_script()
-        result = subprocess.run([node, '-e', mock + source + '\n(async()=>{' + test +
-                                 '\n})().catch(error=>{console.error(error);process.exitCode=1;});'],
+        result = subprocess.run([node, '-'], input=mock + source + '\n(async()=>{' + test +
+                                 '\n})().catch(error=>{console.error(error);process.exitCode=1;});', encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
