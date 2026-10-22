@@ -139,11 +139,32 @@ class WorkbenchResumeTests(unittest.TestCase):
         self.assertTrue(self.path.is_symlink())
 
     def test_saved_utf16_cursor_is_clamped_and_dirty_flag_does_not_claim_text_recovery(self):
-        saved = self.save(self.payload(buffer_dirty=True, cursor={'start': 100, 'end': 500, 'direction': 'none'}))
-        length = len(self.source.read_text().encode('utf-16-le')) // 2
-        self.assertEqual(saved['state']['cursor'], {'start': length, 'end': length, 'direction': 'none'})
-        self.assertIn('这里只定位已保存文稿', self.read()['note'])
-        self.assertIn('恢复中心', self.read()['note'])
+        fingerprint = None
+        for newline, length in (('\n', 12), ('\r\n', 13)):
+            with self.subTest(newline=repr(newline)):
+                # The API preserves the file's raw text/hash; read_text() would
+                # normalize CRLF and measure a different string on Windows.
+                raw = ('中文😀第一行' + newline + '第二行。').encode('utf-8')
+                self.source.write_bytes(raw)
+                saved = self.save(self.payload(fingerprint, buffer_dirty=True,
+                                  cursor={'start': 100, 'end': 500, 'direction': 'none'}))
+                cursor = {'start': length, 'end': length, 'direction': 'none'}
+                self.assertEqual(saved['state']['cursor'], cursor)
+                self.assertEqual(saved['state']['document_sha256'], hashlib.sha256(raw).hexdigest())
+                loaded = self.read()
+                self.assertEqual(loaded['state']['cursor'], cursor)
+                self.assertIn('这里只定位已保存文稿', loaded['note'])
+                self.assertIn('恢复中心', loaded['note'])
+                fingerprint = saved['state_sha256']
+                # textarea normalizes line breaks to LF. Its real UTF-16
+                # selection after the emoji/newline must round-trip unchanged.
+                for cursor in ({'start': 9, 'end': 11, 'direction': 'backward'},
+                               {'start': 12, 'end': 12, 'direction': 'none'}):
+                    saved = self.save(self.payload(fingerprint, cursor=cursor))
+                    self.assertEqual(saved['state']['cursor'], cursor)
+                    self.assertEqual(self.read()['state']['cursor'], cursor)
+                    fingerprint = saved['state_sha256']
+                self.assertEqual(self.source.read_bytes(), raw)
 
     @unittest.skipIf(os.name == 'nt', 'POSIX descriptor/path replacement race; Windows pins deny rename')
     def test_replaced_book_directory_cannot_receive_original_books_resume_record(self):

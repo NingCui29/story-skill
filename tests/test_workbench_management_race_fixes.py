@@ -60,17 +60,31 @@ class WorkbenchManagementRaceFixes(unittest.TestCase):
         self.assertEqual(set(entries), {self.entry['key']})
         self.assertEqual(entries[self.entry['key']]['book_id'], self.entry['book_id'])
 
+    def replace_before_capture(self, replace):
+        capture = self.books._rename_directory_no_replace
+
+        def inject(source, target):
+            if source.path == self.root:
+                # The intent is durable here and Windows book leases have been
+                # released. Replacing inside _receipt instead is correctly
+                # blocked by those handles before this race can occur.
+                records = [json.loads(path.read_text(encoding='utf-8'))
+                           for path in (self.state / 'operations').glob('*.json')]
+                self.assertEqual([record['action'] for record in records], ['trash-intent'])
+                self.assertEqual(records[0]['restore_root'], str(target.path))
+                replace()
+            return capture(source, target)
+
+        return patch.object(self.books, '_rename_directory_no_replace', side_effect=inject)
+
     def test_replacement_after_intent_is_returned_without_calling_native_trash(self):
         preserved = self.parent / 'A原稿保留'
-        receipt = self.manager._receipt
 
-        def replace_after_receipt(state, record):
-            identifier = receipt(state, record)
+        def replace_after_receipt():
             self.root.rename(preserved)
             self.replacement()
-            return identifier
 
-        with patch.object(self.manager, '_receipt', side_effect=replace_after_receipt), \
+        with self.replace_before_capture(replace_after_receipt), \
                 patch.object(self.books, 'move_to_trash') as native:
             with self.assertRaises(base.story.StoryError) as caught:
                 self.trash()
@@ -100,15 +114,12 @@ class WorkbenchManagementRaceFixes(unittest.TestCase):
 
     def test_same_book_id_in_new_directory_after_intent_is_not_recycled(self):
         preserved = self.parent / 'A原目录'
-        receipt = self.manager._receipt
 
-        def copy_after_receipt(state, record):
-            identifier = receipt(state, record)
+        def copy_after_receipt():
             self.root.rename(preserved)
             shutil.copytree(preserved, self.root)
-            return identifier
 
-        with patch.object(self.manager, '_receipt', side_effect=copy_after_receipt), \
+        with self.replace_before_capture(copy_after_receipt), \
                 patch.object(self.books, 'move_to_trash') as native:
             with self.assertRaises(base.story.StoryError) as caught:
                 self.trash()

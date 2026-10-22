@@ -1,4 +1,5 @@
 """Reload and recovery round trips preserve the exact editor body."""
+import hashlib
 import json
 import shutil
 import subprocess
@@ -55,11 +56,18 @@ class WorkbenchReloadRecoveryTests(unittest.TestCase):
         relative = '.story/drafts/workbench/自动恢复/第1章 手工候选.md'
         path = self.root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text('第1章 手工候选\n\n这是手工文件。')
-        opened = self.w._editor_document(self.root, 'file:' + relative)
-        self.assertEqual(opened['storage_format'], 'candidate-file-v1')
-        self.assertEqual(opened['text'], '这是手工文件。')
-        self.assertEqual(opened['prefix'], '第1章 手工候选\n\n')
+        for newline in ('\n', '\r\n'):
+            with self.subTest(newline=repr(newline)):
+                prefix = '第1章 手工候选' + newline * 2
+                text = '这是手工文件。' + newline + '下一行。'
+                raw = (prefix + text).encode('utf-8')
+                path.write_bytes(raw)
+                opened = self.w._editor_document(self.root, 'file:' + relative)
+                self.assertEqual(opened['storage_format'], 'candidate-file-v1')
+                self.assertEqual(opened['text'], text)
+                self.assertEqual(opened['prefix'], prefix)
+                self.assertEqual(opened['sha256'], hashlib.sha256(raw).hexdigest())
+                self.assertEqual(path.read_bytes(), raw)
         saved, material = self.recovery('材料的完整文字。', 'material-recovery-1234567890')
         metadata = self.root / (saved['path'] + '.meta.json')
         packet = json.loads(metadata.read_text())
