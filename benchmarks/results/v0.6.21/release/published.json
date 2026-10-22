@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "release_id": 420318617,
+  "tag": "v0.6.21",
+  "source_commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+  "published_at": "2026-10-22T09:46:06Z",
+  "url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.21",
+  "assets": 14,
+  "source_ci_run": 39744163838,
+  "scope": "Published after final three-platform full CI, native desktop, fixed-tag installation and all14 staged asset digest gates."
+}

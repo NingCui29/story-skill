@@ -1,0 +1,9 @@
+{
+  "archive": "<repo>/dist/release-v0.6.21-candidate/story-skill-0.6.21.zip",
+  "version": "0.6.21",
+  "files": 64,
+  "sha256": "d6137401b5e2ece120e0a71e9e93b1992d2904a061a971fbd0c5a3f211ce1ae5",
+  "bytes": 621675,
+  "ok": true,
+  "source_commit": "91e49d8d2710cf79c562d4d31217fcae4a978aa8"
+}

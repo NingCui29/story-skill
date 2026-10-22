@@ -1,0 +1,59 @@
+{
+  "activeBookTitle": "桌面隔离验证",
+  "activePageIsFirstEditor": true,
+  "allPagesShareMainWindow": true,
+  "cachedPageCount": 3,
+  "dirtyBufferCount": 0,
+  "editorLoadCount": 1,
+  "editorNavigationCount": 1,
+  "editorStatePreserved": true,
+  "loadsUnchanged": true,
+  "nativeWindowCount": 1,
+  "navigationsUnchanged": true,
+  "ok": true,
+  "pageIDs": {
+    "first": "1EDE4B94-80F1-4D7D-A8A7-01DE727382D0",
+    "second": "260FBEF6-F37E-4B30-9C15-08EF8D959519",
+    "shelf": "40D6D326-43E2-4C6C-9592-A2B795E1F853"
+  },
+  "pendingSaveCount": 0,
+  "popupNavigation": true,
+  "rawAppKitWindowCount": 2,
+  "sameEditorPage": true,
+  "sameEditorWebView": true,
+  "secondEditorChecked": true,
+  "secondEditorLoadCount": 1,
+  "secondEditorNavigationCount": 1,
+  "secondEditorStatePreserved": true,
+  "selectionAfter": [
+    17,
+    17
+  ],
+  "selectionBefore": [
+    17,
+    17
+  ],
+  "shelfLoadCount": 1,
+  "shelfNavigationCount": 1,
+  "shelfStatePreserved": true,
+  "snapshot": "macos-native-switch.png",
+  "textareaValuePreserved": true,
+  "unexpectedVisibleWindowCount": 0,
+  "windowInventory": [
+    {
+      "class": "NSWindow",
+      "isMainHost": true,
+      "isPanel": false,
+      "title": "桌面隔离验证 · 写作工作台",
+      "visible": true
+    },
+    {
+      "class": "TUINSWindow",
+      "isMainHost": false,
+      "isPanel": false,
+      "title": "",
+      "visible": false
+    }
+  ],
+  "source_commit": "be14c3aa9ae8400bccb3872fa39bccc7a8664db6"
+}

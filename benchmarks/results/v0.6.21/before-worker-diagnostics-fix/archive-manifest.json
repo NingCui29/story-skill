@@ -1,0 +1,248 @@
+{
+  "schema": 1,
+  "ok": true,
+  "time_utc": "2026-10-22T07:57:28.339131+00:00",
+  "actual_build_source_commit": "c165520fe283b62870438642ca9e7b6a4d8f21d0",
+  "attempted_candidate_source_commit": "c165520fe283b62870438642ca9e7b6a4d8f21d0",
+  "reason": "Final Windows Python 3.12 full regression reported an actual worker diagnostic publication race: an error flag became visible before its diagnostic phase. No annotated tag or public release was created. The production worker diagnostics fix requires new full package and desktop builds; the original successful local/native build and fourteen staged-asset receipts remain historical rather than final acceptance.",
+  "public_files_preserved": [
+    {
+      "file": "build-inputs.json",
+      "bytes": 65695,
+      "sha256": "16996ae4dcf0b0e6f4689bc06605939bdea2dc03c32af7b982428f4cf889ed07"
+    },
+    {
+      "file": "build-source-equivalence.json",
+      "bytes": 680452,
+      "sha256": "24581d3dbc90c88f16fc78e20b05e9b2b63178bacda95a645202ab07d35cc09a"
+    },
+    {
+      "file": "claude-package.json",
+      "bytes": 1278,
+      "sha256": "7b924911086c390f07a1750b4ba677008e09c8925eb14305c498f63ab955b59d"
+    },
+    {
+      "file": "codex-package.json",
+      "bytes": 692,
+      "sha256": "e65e21c0323b9f9c3579cf69e490e148e615a7a7b474acd190a490f74f77b5db"
+    },
+    {
+      "file": "codex-plugin-verification.json",
+      "bytes": 37885,
+      "sha256": "36fd4da494599c8a0b63145a45a69518220f89981a1f459ec0872244b3db4b02"
+    },
+    {
+      "file": "fixed-source-verification.json",
+      "bytes": 37268,
+      "sha256": "277d9e1f15dad093305af61550ee610d1cf9580eb3aa7558ff64be4d3ad09d82"
+    },
+    {
+      "file": "host-compatibility-summary.json",
+      "bytes": 1949,
+      "sha256": "dc411e576a48282b06de02359cf2eabb8a3a16f7a85274915a295f2b8382d407"
+    },
+    {
+      "file": "local-artifacts.json",
+      "bytes": 2666,
+      "sha256": "f889d2ba60613a66b779638739f3bc82ae142e1e881ae59d105a4427ee46837f"
+    },
+    {
+      "file": "local-package-verification.json",
+      "bytes": 5975,
+      "sha256": "07323d2a74628b6fce5919fa3105c2bd707ad0e3c2433def14dfb275c6c2e8aa"
+    },
+    {
+      "file": "macos-build.json",
+      "bytes": 2485,
+      "sha256": "eec55e41207e66bfd48a81f7dbdd2e5905a7ec64de490a6230649b95ac88cb83"
+    },
+    {
+      "file": "macos-complete-inventory.json",
+      "bytes": 248178,
+      "sha256": "14d5e27978c7dd88a4d235cc673bce0bbe5dd00762e55ef42c7cc7d60c4bc8de"
+    },
+    {
+      "file": "macos-distribution.json",
+      "bytes": 1166,
+      "sha256": "331b782b5057b5d2ff68cbc7c596ae88911f4925ac3ff2831a58344e92cf5b24"
+    },
+    {
+      "file": "macos-native-acceptance.json",
+      "bytes": 647,
+      "sha256": "cad9e97d3dc70edcdcc9f6f428bff2f8ea333fdaf1da421e15b1bcac79e0b367"
+    },
+    {
+      "file": "macos-native-editor.json",
+      "bytes": 628,
+      "sha256": "96109a842d8b21c06ea10c486ce01654c5b2717cc141954ac062d4d6df896698"
+    },
+    {
+      "file": "macos-native-editor.png",
+      "bytes": 263770,
+      "sha256": "5206e5f6e9598b5fbf5d7ac1b3b04752b7db0757f178ab9128969bfee5ce2888"
+    },
+    {
+      "file": "macos-native-shelf.json",
+      "bytes": 1837,
+      "sha256": "9f819bb26d29d575a54cb22a6ac257e8b4bea6a109459ce3eb1807a8abaebeef"
+    },
+    {
+      "file": "macos-native-shelf.png",
+      "bytes": 218239,
+      "sha256": "c95b079dd0e23f0b81031d96ef4528051cca71de92bd623d7afe9644b4fc8e55"
+    },
+    {
+      "file": "macos-native-switch.json",
+      "bytes": 1473,
+      "sha256": "381d9182ba1ba24d888317b9595f3c8182bf4e0ab20f6df3b64c391c6abe5171"
+    },
+    {
+      "file": "macos-native-switch.png",
+      "bytes": 261349,
+      "sha256": "6dfbf0ff7dad2f6b6cb6060e09fb4b8705b831e0ca350e6ac1f9481bf13a5c2a"
+    },
+    {
+      "file": "macos-payload-probe.json",
+      "bytes": 457,
+      "sha256": "0c5b6c8554f851d7995a48cc1182880044cb78bff07bdd7c0d2196983be47b5f"
+    },
+    {
+      "file": "macos-python-inputs.json",
+      "bytes": 195994,
+      "sha256": "4f83bc69d0243bc351440b538fed80bb3a2b2ac8879bbbb5d8c53ddcc694f28b"
+    },
+    {
+      "file": "macos-verification.json",
+      "bytes": 2427,
+      "sha256": "7a1c374d893e513580b5bd10972cfc88f17b6c209408414adb3004ad407bf259"
+    },
+    {
+      "file": "macos-visual-review.json",
+      "bytes": 1348,
+      "sha256": "85ecde694253e5ab2b824e7d717ed543ba547cfa8719b8ce18c4ff8581d1581b"
+    },
+    {
+      "file": "npm-local.json",
+      "bytes": 11700,
+      "sha256": "34300c8fa8db99af6d2104a742b2aa9fc53bbffdab336fcc7ef38c1c0263b80e"
+    },
+    {
+      "file": "package-preflight.json",
+      "bytes": 5577,
+      "sha256": "7436803daa9169d62ffed28ed5d2b3712727f64725538f3e26daf75beedaa3fa"
+    },
+    {
+      "file": "package.json",
+      "bytes": 294,
+      "sha256": "b07ebf81c79a5d38146ada73aabe949538731e0851e781c4a2f18b8490864b29"
+    },
+    {
+      "file": "release/about.json",
+      "bytes": 630,
+      "sha256": "2d80425d9cbf1d6711b5d41a84d76d23ab5f49fc15833c9757421dbad3f134eb"
+    },
+    {
+      "file": "release/ci-attempt-1e38ff0.json",
+      "bytes": 134183,
+      "sha256": "59ee43c767fa06d9837aa7d00eb57b1d324b7a4d272ef64c4e898545d05be10d"
+    },
+    {
+      "file": "release/ci-attempt-4bec48b.json",
+      "bytes": 87955,
+      "sha256": "1ce9ce180e1436e8788a55d8aa1e652949195d004c9f83ee118d165365658a77"
+    },
+    {
+      "file": "release/ci-attempt-91e49d8.json",
+      "bytes": 81372,
+      "sha256": "0efc0a907ca0b84083a282cad3935a4b5eec1378a35c0e82838fc8e5a89959db"
+    },
+    {
+      "file": "release/ci-attempt-be14c3a.json",
+      "bytes": 120941,
+      "sha256": "e60cb03ff6d5cfc4d2e6e8f7c9a3d4dcef4a8c8a349156364e0935711b6ab47c"
+    },
+    {
+      "file": "release/ci-attempt-c165520.json",
+      "bytes": 142770,
+      "sha256": "bb5b160178c5bd4b40b9f2d4f2b532642f069b64876d0ce2bcf57c8885ec9d4e"
+    },
+    {
+      "file": "release/ci-attempt-f4d7cf0.json",
+      "bytes": 97798,
+      "sha256": "de0f441c84882907ab0d9d77980d834fc27bf202706f296ed9dce2a9adf737e4"
+    },
+    {
+      "file": "release/source.json",
+      "bytes": 7683,
+      "sha256": "ad4e6e808b99affd3ca236327ef80c11ee6bf23a44aec1f31d964cef08442542"
+    },
+    {
+      "file": "release/staged-assets.json",
+      "bytes": 9237,
+      "sha256": "831c8e010a053782a47a75f393d5c7f92ca5b58cdc4b1038df8643035d16cc7c"
+    },
+    {
+      "file": "release/windows/windows-build-manifest.json",
+      "bytes": 523313,
+      "sha256": "4390581683d855adcd62374858e6415e554e6609e41cd6a3585b243813e8e254"
+    },
+    {
+      "file": "release/windows/windows-distribution-verification.json",
+      "bytes": 39146,
+      "sha256": "c53eaab522c23ab0fdbe3d8ec06f663de5ba6bd719ef6cc2ce3dfe38d89bfe0f"
+    },
+    {
+      "file": "release/windows/windows-draft-upload.json",
+      "bytes": 41114,
+      "sha256": "08a0b7fa275e2061816898a82affdcad7166249d7a95122f4d851275eb9d85a3"
+    },
+    {
+      "file": "release/windows/windows-native-smoke-dark.png",
+      "bytes": 28942,
+      "sha256": "482efec2553ec439a75847a07ead89e5312f38b3ea2ba058f6361cef856cc538"
+    },
+    {
+      "file": "release/windows/windows-native-smoke-light.png",
+      "bytes": 27057,
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    },
+    {
+      "file": "release/windows/windows-native-smoke-update-progress.png",
+      "bytes": 4595,
+      "sha256": "c9a8cb4c117328e179bb2eb5443b96789681a1a69071410a540f85ee6a922177"
+    },
+    {
+      "file": "release/windows/windows-native-smoke.json",
+      "bytes": 305,
+      "sha256": "ae26a1816c16dc0a810dff905ce03720e299ac3ddecbe997a5dd15d9c3416266"
+    },
+    {
+      "file": "release/windows/windows-native-smoke.png",
+      "bytes": 27057,
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    },
+    {
+      "file": "release/windows/windows-runtime-safety.json",
+      "bytes": 407,
+      "sha256": "5446d27053406f5c45c5bd568989678e4af4fabbcfde7656439f6da5737d2e14"
+    },
+    {
+      "file": "release/windows-ci.json",
+      "bytes": 151648,
+      "sha256": "093b7413d2cd1d9bc58c91c8ba655d895c5be6044cdc9980e7b9f75cd3d5146b"
+    },
+    {
+      "file": "release/worker-failure-publication.json",
+      "bytes": 3232,
+      "sha256": "6236d581dc3dea22cf5fa6266b9fa1cd060e977c7243aa9b6afaadeba6af26c0"
+    },
+    {
+      "file": "static-checks.json",
+      "bytes": 3498,
+      "sha256": "60a1a5bdefa3e819f9892338a5e879956be0db22e8c3af5d50aefb6713220abb"
+    }
+  ],
+  "original_20_local_build_reports_preserved_byte_for_byte": true,
+  "prior_archives_not_nested_or_modified": true,
+  "snapshot_scope": "Only current already-public v0.6.21 JSON/Markdown/PNG are copied here. Existing before-* history remains at its original path. Raw logs, helper scripts, binary artifacts and documentation snapshots are retained only under ignored dist. Current root release metadata and monitors remain in place for the parent to update."
+}

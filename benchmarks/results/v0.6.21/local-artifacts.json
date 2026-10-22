@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "ok": true,
+  "assets": [
+    {
+      "file": "dist/release-v0.6.21-candidate/story-skill-0.6.21.zip",
+      "bytes": 622471,
+      "sha256": "3ed88e36822f1f44f2e5078ea01777488631073f076e963cfe827ea984953553",
+      "checksum_file": "dist/release-v0.6.21-candidate/story-skill-0.6.21.zip.sha256",
+      "checksum_bytes": 89,
+      "checksum_sha256": "8d23dbc0b0b3846fd18b8916a6bbd31596c09b907c8105ac1c363dd8a8af1729"
+    },
+    {
+      "file": "dist/release-v0.6.21-candidate/story-skill-claude-desktop-0.6.21-r2.zip",
+      "bytes": 628741,
+      "sha256": "656c534a4c546e93be132ddbcb756095d2f5e61b5a7415c3f153814f024c0c8f",
+      "checksum_file": "dist/release-v0.6.21-candidate/story-skill-claude-desktop-0.6.21-r2.zip.sha256",
+      "checksum_bytes": 107,
+      "checksum_sha256": "eabfde863a2510031b316c700364e6210d5a0d55bd00e98590021cc9096a79ef"
+    },
+    {
+      "file": "dist/release-v0.6.21-candidate/codex/story-skill-codex-0.6.21.zip",
+      "bytes": 631072,
+      "sha256": "64655f89f0f9dea61a96168fb356f04846b5a4c2f9a16cb96f37c30e0838d6da",
+      "checksum_file": "dist/release-v0.6.21-candidate/codex/story-skill-codex-0.6.21.zip.sha256",
+      "checksum_bytes": 95,
+      "checksum_sha256": "72e868ee2f8d74b02b72656865b779208c0122dd3e9d9533eaee3fdc254d66e8"
+    },
+    {
+      "file": "dist/release-v0.6.21-candidate/story-workbench-0.1.24-macos-x86_64.zip",
+      "bytes": 26794221,
+      "sha256": "1448f2ade61549f5ca2f13969fe09eaa1a0270844a4f8b62a421e889b849ac35",
+      "checksum_file": "dist/release-v0.6.21-candidate/story-workbench-0.1.24-macos-x86_64.zip.sha256",
+      "checksum_bytes": 106,
+      "checksum_sha256": "1e2d18d8ca12a3955831eff4fe611c0534ec337fbfae6872bbd41e48eaa7fcff"
+    },
+    {
+      "file": "dist/release-v0.6.21-candidate/story-workbench-0.1.24-macos-x86_64.dmg",
+      "bytes": 38014194,
+      "sha256": "66cfe53ccd2594131a7ced74bc5a0382459dfb45ca638cb47ffe2152cb7a172b",
+      "checksum_file": "dist/release-v0.6.21-candidate/story-workbench-0.1.24-macos-x86_64.dmg.sha256",
+      "checksum_bytes": 106,
+      "checksum_sha256": "5b02d08ef04ec2fc9a95e65ad80440efa3157eb67c1c6b6678b8dd8ea822f455"
+    }
+  ],
+  "npm": {
+    "file": "dist/release-v0.6.21-candidate/npm/ningcui29-story-skill-0.6.21.tgz",
+    "bytes": 570317,
+    "sha256": "02a48e26ac57b34f752ae93cdc91caad24d68665ae6948c125b9e1af7f1c6030",
+    "integrity": "sha512-0zL/tLdK7RusmmTZlExsRGULAVRReZkPNE/fkwWXH7QAexHvDNRihny+D/hN9PONe5onSz6Of9KZPOL6ivLagQ==",
+    "tar_members": 67,
+    "payload_files": 64,
+    "wrapper_files": 3
+  },
+  "user_installation_modified": false,
+  "source_commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b"
+}

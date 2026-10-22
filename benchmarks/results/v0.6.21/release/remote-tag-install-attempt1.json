@@ -1,0 +1,37 @@
+{
+  "schema": 2,
+  "ok": false,
+  "date": "2026-10-22T09:36:42.023032+00:00",
+  "source_commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+  "tag": "v0.6.21",
+  "commands": [],
+  "is_tag_installation": true,
+  "user_installation_modified": false,
+  "raw_credentials_used": false,
+  "downloaded_official_installer_executed": false,
+  "prepared_remote_source_commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+  "source_origin": "Actual public HTTPS payload at prepared_remote_source_commit; every required Git blob is independently checked against the actual annotated tag commit tree; official installer additionally fetched using the fixed tag URL",
+  "errors": [
+    {
+      "type": "URLError",
+      "message": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)>"
+    }
+  ],
+  "tag_before": {
+    "ref": "refs/tags/v0.6.21",
+    "tag_object_sha": "f0e70f2b762098b5c21e2da46ab1162dc874a646",
+    "commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+    "ref_response_sha256": "c1d994b27d614dcf426c4acd028b857964b8b172aba64b4a5337292e26c5fa3f",
+    "tag_response_sha256": "876f06ce7d3d7aaccc4f151fe035befcc1190cb85be6f9731c084a7aa8d543b4"
+  },
+  "remote_commit_response_sha256": "5bbcd842371ef63056fc184ffc73f1baa88806366f75be98100445040f0d3460",
+  "tag_after": {
+    "ref": "refs/tags/v0.6.21",
+    "tag_object_sha": "f0e70f2b762098b5c21e2da46ab1162dc874a646",
+    "commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+    "ref_response_sha256": "c1d994b27d614dcf426c4acd028b857964b8b172aba64b4a5337292e26c5fa3f",
+    "tag_response_sha256": "876f06ce7d3d7aaccc4f151fe035befcc1190cb85be6f9731c084a7aa8d543b4"
+  },
+  "tag_before_after_equal": true,
+  "tag_api_response_bytes_equal": true
+}

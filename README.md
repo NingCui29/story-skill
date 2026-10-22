@@ -23,7 +23,7 @@
 
 ## 安装升级
 
-本轮候选版本为 **v0.6.21**，仍在执行发行验证；下列附件地址将在正式发布后可用，当前正式版为 [v0.6.20](docs/releases/v0.6.20.md)。实际分发与验收状态见发布记录。先选择要使用的部分，再按对应说明安装；两者可以配合使用。
+当前正式版为 **[v0.6.21](https://github.com/NingCui29/story-skill/releases/tag/v0.6.21)**，下列附件已发布。先选择要使用的部分，再按对应说明安装；两者可以配合使用。变化与完整验收范围见[发布记录](docs/releases/v0.6.21.md)。
 
 ### 安装创作技能
 
@@ -53,7 +53,7 @@ Codex 插件通过本地市场分发。安装后在宿主中确认技能已加�
 
 升级前保存全部页面编辑并退出旧客户端。已有工作台服务按 [更新流程](docs/工作台更新流程.md)另行更新。GitHub 发版不会自动替换本机技能或应用。
 
-[全部发行文件与校验文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.21) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（npm 安装不向宿主注册技能；同步状态见发布记录）
+[全部发行文件与校验文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.21) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（已同步并核验；npm 安装不向宿主注册技能）
 
 ## 开始写书
 
@@ -102,9 +102,9 @@ Codex 插件通过本地市场分发。安装后在宿主中确认技能已加�
 
 工作台在本机运行，提供书架和单书编辑页，把章节、策划、细纲、草稿与图片放到同一套导航中。
 
-![写作工作台：材料导航、候选正文与材料信息](benchmarks/results/v0.6.20/macos-native-editor.png)
+![写作工作台：材料导航、候选正文与材料信息](benchmarks/results/v0.6.21/macos-native-editor.png)
 
-*截图来自 v0.6.20 Mac 客户端的隔离自检，展示合成候选材料。*
+*截图来自 v0.6.21 Mac 客户端的隔离合成自检，展示合成候选材料。*
 
 - **阅读与查找：** 按章节或文件导航，分批加载大量材料，搜索正文与材料并说明未覆盖范围，切换浅色／深色外观。
 - **候选与版本：** 编辑并保存候选，保存全部候选，找回恢复稿，选择两稿比较差异。
@@ -132,7 +132,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 番茄、七猫、起点均可准备已审查正式章节的离线材料。平台草稿功能提供冻结清单、预览、受控保存、全文回读与重复执行核对。番茄可在预览后显式连接 Codex 工作进程与既有、已登录的 Chrome；浏览器拒绝权限时停止。段落编码与允许末尾换行数量变化分别选择，任何变更都需重新预览，未知结果先回读对账。七猫、起点沿用外部已连接助手流程。
 
-目前真实网页验证覆盖**番茄指定测试作品的合成稿、单卷完整列表**；七猫、起点实页以及真实分页、多卷仍待验收。审核提交与定时发布由作者在平台后台完成。详细范围见 [平台草稿说明](skills/story-skill-publish/references/platform-drafts.md)和 [实际验收记录](docs/releases/v0.6.21.md#平台草稿的实际范围)。
+历史实页证据覆盖**番茄指定合成稿、单卷完整列表**；另有单篇草稿经单独排版修复及只读全文核对，不能作为本版自动整批保存验收。七猫、起点实页以及真实分页、多卷仍待验收。审核提交与定时发布由作者在平台后台完成。详细范围见 [平台草稿说明](skills/story-skill-publish/references/platform-drafts.md)和 [实际验收记录](docs/releases/v0.6.21.md#平台草稿的实际范围)。
 
 ## 八个技能入口
 
@@ -151,7 +151,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 ## 版本与验证
 
-**v0.6.21** 新增番茄草稿受控自动连接、独立的段落编码与尾换行比较选项，并修正 WorkBuddy AI 默认目录、补充 WorkBuddy AI 与 Qoder CN 安装调用说明。连接、权限拒绝、未知结果与既有草稿保护分别验证；本轮构建、CI、安装和分发状态见[发布记录](docs/releases/v0.6.21.md)。[v0.6.20 历史记录](docs/releases/v0.6.20.md)继续保留。
+**v0.6.21** 新增番茄草稿受控自动连接、独立的段落编码与尾换行比较选项，并修正 WorkBuddy AI 默认目录、补充 WorkBuddy AI 与 Qoder CN 安装调用说明。同时修复 Windows 会话锁、拒绝请求响应与失败诊断顺序，保留首个 SDK 失败阶段。连接、权限拒绝、未知结果与既有草稿保护由离线回归分别检查，不代表本版自动连接已通过真实整批保存验收；三组完整源码 CI 的 73 项关键回归、固定标签安装、分发与 Packages 核验已完成，完整范围见[发布记录](docs/releases/v0.6.21.md)。[v0.6.20 历史记录](docs/releases/v0.6.20.md)继续保留。
 
 工程检查、宿主加载、平台实页验证与小说阅读效果分别记录。具体方法见 [评估说明](docs/evaluation.md)。
 

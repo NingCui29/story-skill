@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "synthetic_data_only": true,
+  "explicit_self_test_urls_bypass_default_launcher": true,
+  "existing_user_services_touched": false,
+  "installed_application_replaced": false,
+  "reports": [
+    "macos-native-shelf.json",
+    "macos-native-editor.json",
+    "macos-native-switch.json"
+  ],
+  "isolated_services_http_200": true,
+  "strict_signature_after_native_self_tests": true,
+  "native_webkit_shelf_editor_and_switching": true,
+  "manual_close_warning_download_and_installed_app_workflows": "not exercised by this acceptance",
+  "isolated_service_cleanup": true,
+  "source_commit": "c165520fe283b62870438642ca9e7b6a4d8f21d0"
+}

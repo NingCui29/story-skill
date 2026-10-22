@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "evidence_date": "2026-10-21",
+  "publication_date": "2026-10-22",
+  "scope": "Sanitized historical development summary; not a validation of all v0.6.21 bytes or full business workflows. Raw local paths, UI dumps, conversations and account details are excluded.",
+  "source_snapshot_inventory_sha256": "5804bc53fd9f1cbab120b386c8a8907bb5761b5ab12e312b52193dbd7df48a6a",
+  "payload_files_at_historical_snapshot": 64,
+  "skills": 8,
+  "directory_defaults": {
+    "workbuddy": {
+      "user": "~/.workbuddy-ai/skills/",
+      "project": ".workbuddy-ai/skills/"
+    },
+    "qoder-cn": {
+      "user": "~/.qoder-cn/skills/",
+      "project": ".qoder/skills/"
+    }
+  },
+  "native_rule_question_checks": {
+    "workbuddy": {
+      "version": "5.8.4",
+      "passed": 8,
+      "total": 8
+    },
+    "qoder-cn": {
+      "version": "0.4.8",
+      "passed": 8,
+      "total": 8,
+      "read_only_scope": "failed: extra test memory edit, subsequently restored"
+    }
+  },
+  "not_verified": [
+    "complete novel writing",
+    "image generation",
+    "platform draft execution",
+    "all final release source bytes in these host UIs"
+  ],
+  "prior_wrong_workbuddy_path": ".workbuddy/skills/",
+  "raw_evidence_sha256": {
+    "verification.json": "dd4e90b68dc5f5f4a5d779717cb12ba5fad014e2ee05bf63ebdaa30c41d9a90c",
+    "desktop-validation.md": "af6a256b53cebe5d86e692116fca2580f90bfc5917b6b4d5c94bd9f54fa515b0",
+    "desktop-validation.json": "c68c95b5e9055bd9ef0288dcc87808310fa97b31cf4f5dae9c931e7de5c12ad9",
+    "workbuddy-directory-chain.json": "e1ce243aecfec76fe278768e730d63612c431f73da15989756051924712bf15f",
+    "workbuddy-directory-chain-5.8.4.json": "f58caab78ac4f6885eb68eb2dbf01a0e8e18fb31de4f998a23e243e774d9237d",
+    "final-installation-integrity.json": "3d3795f6ab35459fad9d1e30a62f404160e5a54266734e507de28da38477f367",
+    "directory-regression.json": "c65bafc968fb4b87c6144838443bc3ac2809cf714d48744ae300a4c2c10fae32"
+  }
+}

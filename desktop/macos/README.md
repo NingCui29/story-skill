@@ -1,12 +1,12 @@
 # 写作工作台 · macOS 桌面版
 
-> 公开记录说明：历史开发记录的作品名称、目录及运行实例标识已一致匿名化，个人路径已通用化，相关真实作品截图仅本地保留。本版验收将使用隔离合成书架，实际截图与回执按完成状态保存在[本版验证目录](../../benchmarks/results/v0.6.21/)。
+> 公开记录说明：历史开发记录的作品名称、目录及运行实例标识已一致匿名化，个人路径已通用化，相关真实作品截图仅本地保留。本轮本地验收已使用隔离合成书架，实际截图与回执保存在[本版验证目录](../../benchmarks/results/v0.6.21/)。
 
 `写作工作台.app` 将本地书架和作品编辑页面放进独立的 macOS 窗口。它沿用现有工作台服务和保存规则，应用包内携带 Python 运行时与工作台程序。
 
-本目录对应待发行候选 **0.1.24 / build 25**，内含 Story Skill **0.6.21**。实际构建、严格临时签名、隔离 CLI／安全探针、原生合成自检与 ZIP／DMG 分发范围见 [v0.6.21 发布记录](../../docs/releases/v0.6.21.md)。历史附件与记录保持原样。
+本目录对应已发布的 **0.1.24 / build 25**，内含 Story Skill **0.6.21**。已包含 Windows 会话锁、编辑器拒绝 POST 响应及失败诊断发布顺序修复，按 ebabd8b 全新构建验收。17 个运行时文件、严格临时签名、隔离 CLI／安全探针及三个原生合成场景通过；应用、完整 ZIP 与 DMG 内的 1677 文件及 9 链接全部对应。完整跨平台源码 CI（73 项关键回归）、真实固定标签安装与正式分发已通过；公开校验文件完整下载、桌面二进制头尾 Range 核对，未宣称桌面完整匿名回下载。完整范围见 [v0.6.21 发布记录](../../docs/releases/v0.6.21.md)。历史附件与记录保持原样。
 
-本版计划提供以下附件，地址将在正式发布后可用：[DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
+本版已发布 [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
 
 工作台采用紧凑的天空蓝界面，支持浅色、深色及跟随系统。书架可新建、移出／撤销、重新定位、删除至系统废纸篓、备份和恢复作品；编辑页提供恢复中心、保存全部候选、两稿对照及下一章任务。原有候选与正式稿身份继续保留。操作和边界见[需求与进展](../../docs/工作台需求与进展.md)。
 
@@ -144,7 +144,7 @@
 ```sh
 "$HOME/.local/bin/python3.12" scripts/build_desktop_macos.py \
   --python "$HOME/.local/bin/python3.12" \
-  --output "dist/release-v0.6.20-candidate/写作工作台.app"
+  --output "dist/release-v0.6.21-candidate/写作工作台.app"
 ```
 
 不要将输出路径设为现有作品目录。构建输出与源代码、真实作品数据分开保存；本地构建不包含远程发布、应用商店上架或发行验收。

@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "verified_at_utc": "2026-10-22T08:25:07.968041+00:00",
+  "old_release_id": 418373775,
+  "old_tag": "v0.6.20",
+  "old_annotated_tag_object": "56e76c7f3c28dd14dc5c69f36886cb1e8e6b467e",
+  "old_source_commit": "fea4a332bd912a156fb195b8ad737e18e8a183b6",
+  "old_release_attachments": 14,
+  "all_fourteen_names_sizes_and_server_sha256_unchanged": true,
+  "historical_receipt": "../../v0.6.20/release/staged-assets.json",
+  "old_release_and_tag_modified": false
+}

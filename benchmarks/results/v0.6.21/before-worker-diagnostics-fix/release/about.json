@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "repository": "NingCui29/story-skill",
+  "description": "中文长短篇小说 AI 创作技能与本地写作工作台。提供拆书、调研、规划、续写、审稿、封面、投稿材料及受控平台草稿；适配 Codex、Claude、WorkBuddy AI、Qoder CN 等助手，提供 Mac / Windows 客户端，支持候选编辑、版本对照和整书备份恢复。",
+  "homepage": "",
+  "topics": [],
+  "api_patch_response_sha256": "f613a13829c36982ac70cdedb8564dea3dd6c9a416f8e57d43dfa5f882413953",
+  "scope": "Repository About description updated; final independent read recorded during release closure."
+}

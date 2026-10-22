@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "ok": true,
+  "checked_at_utc": "2026-10-22T10:25:24.428274+00:00",
+  "actual_build_source_commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+  "final_candidate_source_commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+  "scope": "Static snapshot of explicitly public v0.6.21 JSON/Markdown/PNG plus seven named distribution documents. Historical attempts remain separately labeled. No private development directory contents, ignored raw logs, daily installation or real manuscripts were read or changed.",
+  "public_files_scanned": 199,
+  "distribution_documents_scanned": [
+    "README.md",
+    "INSTALL.md",
+    "desktop/macos/README.md",
+    "docs/README.md",
+    "docs/codex-plugin.md",
+    "docs/github-release.md",
+    "docs/releases/v0.6.21.md"
+  ],
+  "json_files_parsed": 171,
+  "snapshot_inventory_sha256": "09c2221c24c02635424d035cea944dee8135d8d0e676dc163d988317c91158bd",
+  "privacy": {
+    "automated_pattern_findings": 0,
+    "private_development_paths_tracked": 0,
+    "private_development_content_read": false,
+    "explicit_book_title_fields_checked": 8,
+    "quoted_titles_checked": 3,
+    "unchanged_prior_v0620_public_reference_titles": 2,
+    "png_metadata_chunks": 12,
+    "numeric_resolution_colorspace_dimensions_only_exif_chunks": 12,
+    "png_text_chunks": 0,
+    "rules": [
+      "personal_home_path",
+      "mac_temporary_home_path",
+      "github_credential",
+      "api_secret",
+      "private_key",
+      "loopback_auth_route",
+      "loopback_auth_path",
+      "windows_personal_forward_slash_home",
+      "literal_bearer_credential",
+      "private_development_reference",
+      "credential_in_url_authority",
+      "signed_or_credential_url_query"
+    ],
+    "scope_limit": "Pattern scanning cannot prove every arbitrary private phrase absent. Public data origins and the recorded visual reviews were also checked."
+  },
+  "markdown_links": {
+    "local_file_links_checked": 417,
+    "missing": [],
+    "remote_urls_and_heading_anchors_checked": false
+  },
+  "source_provenance": {
+    "original_build_reports_checked": 20,
+    "all_actual_build_sources_preserved": true,
+    "all_original_report_hashes_match_equivalence_proof": true,
+    "input_counts": {
+      "conservative": 227,
+      "actual_guarded_union": 224,
+      "local_unique": 82,
+      "windows": 163,
+      "payload": 64,
+      "remote_prepared": 66
+    },
+    "equivalence_report": "build-source-equivalence.json",
+    "equivalence_report_sha256": "108c3ab26e0ee55565cc8281ade7379103d3ab9927fc5d7016a584c4bab0a84d",
+    "source91_be14_c165_archives_and_proofs_unchanged": true,
+    "source_relationship": "same_fixed_commit_after_full_rebuild"
+  },
+  "visual_privacy": {
+    "mac_screenshots": 3,
+    "mac_review": "macos-visual-review.json",
+    "windows_screenshots": 4,
+    "windows_review": "release/windows-ci.json#visual_review",
+    "reviewed_png_hashes_unchanged": true,
+    "method": "Fresh Mac images were visually reviewed in this agent run; the parent-authorized Windows review is reused only after every exact PNG SHA matches its recorded actual review."
+  },
+  "permitted_pending_external_steps": [
+    "Final three-matrix source CI",
+    "Annotated v0.6.21 tag and version-0.6.21 branch resolution",
+    "Actual fixed-tag HTTPS isolated installation",
+    "Public Release and anonymous attachment verification",
+    "GitHub Packages publication and registry tarball verification"
+  ],
+  "pending_external_reference_count": 16,
+  "status_refresh_required": [],
+  "user_installation_modified": false,
+  "source_files_modified": false
+}

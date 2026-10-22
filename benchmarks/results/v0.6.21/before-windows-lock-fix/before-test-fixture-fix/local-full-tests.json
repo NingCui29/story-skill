@@ -1,0 +1,16 @@
+{
+  "ok": false,
+  "source_commit": "91e49d8d2710cf79c562d4d31217fcae4a978aa8",
+  "scope": "Complete local Python unittest discover with actual Node wrappers enabled; not cross-platform CI.",
+  "python": "3.12.14",
+  "platform": "macos-x86_64",
+  "tests": 2448,
+  "duration_seconds": 791.224,
+  "skipped": 21,
+  "failures": 1,
+  "errors": 0,
+  "failed_test": "test_source_comparison_only_accepts_the_eight_ui_adaptations",
+  "reason": "Test retained fixed 62-file count; final source payload has 64 files. Production source comparison remained strict.",
+  "raw_log_sha256": "20ca2ca2b66624e9c9fc57c172befcafe0bda3e312df45e89a9d27f65ecdd646",
+  "raw_log_private": true
+}

@@ -1,0 +1,24 @@
+{
+  "appearanceApplied": true,
+  "bodyViewWidth": 1280,
+  "bookinfo": {
+    "exists": true,
+    "open": false,
+    "summary": "作品信息",
+    "title": "桌面隔离验证"
+  },
+  "bookTitle": "桌面隔离验证",
+  "documentTitle": "合成候选",
+  "headerHeight": 72,
+  "horizontalOverflow": false,
+  "message": "已打开：合成候选 · 候选",
+  "metadataPopup": true,
+  "nativeToolbarIDs": [
+    "workbench.home"
+  ],
+  "ok": true,
+  "snapshot": "macos-native-editor.png",
+  "title": "桌面隔离验证 · 写作工作台",
+  "viewportWidth": 1280,
+  "source_commit": "91e49d8d2710cf79c562d4d31217fcae4a978aa8"
+}

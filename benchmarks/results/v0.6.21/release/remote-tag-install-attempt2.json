@@ -1,0 +1,20 @@
+{
+  "schema": 2,
+  "ok": false,
+  "date": "2026-10-22T09:39:28.958652+00:00",
+  "source_commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+  "tag": "v0.6.21",
+  "commands": [],
+  "is_tag_installation": true,
+  "user_installation_modified": false,
+  "raw_credentials_used": false,
+  "downloaded_official_installer_executed": false,
+  "prepared_remote_source_commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+  "source_origin": "Actual public HTTPS payload at prepared_remote_source_commit; every required Git blob is independently checked against the actual annotated tag commit tree; official installer additionally fetched using the fixed tag URL",
+  "errors": [
+    {
+      "type": "URLError",
+      "message": "<urlopen error [SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1010)>"
+    }
+  ]
+}

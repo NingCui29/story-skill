@@ -1,6 +1,6 @@
 # Story Skill 文档导航
 
-**v0.6.21 候选发行记录，仍待发行。** 八技能／64 文件，提供标准 ZIP、Claude 桌面 r2、Codex 本地插件，以及 Mac 0.1.24/build 25、Windows 0.1.11 客户端。本轮 CI、构建、安装、公开下载与 Packages 的实际结果见[发布记录](releases/v0.6.21.md)。上一版 [v0.6.20](releases/v0.6.20.md) 附件和证据保持原样。
+**当前正式版 v0.6.21 已发布。** 八技能／64 文件，提供标准 ZIP、Claude 桌面 r2、Codex 本地插件，以及 Mac 0.1.24/build 25、Windows 0.1.11 客户端。完整源码 CI（73 项关键回归）、新构建、固定标签安装、公开附件请求及 Packages 独立核验均已完成；下载与验证的实际范围见[发布记录](releases/v0.6.21.md)。上一版 [v0.6.20](releases/v0.6.20.md) 附件和证据保持原样。
 
 本版新增番茄草稿受控自动连接、段落编码和尾换行数量比较选项，修正 WorkBuddy AI 默认目录，并补充 WorkBuddy AI 与 Qoder CN 安装调用说明。自动连接仅支持番茄，使用已登录的外部 Codex CLI、官方 Chrome 插件（含 SDK）、已连接的 Chrome 会话及账户额度；拒绝权限即停止，未知结果先回读对账。[平台草稿](../skills/story-skill-publish/references/platform-drafts.md)的本地软件回归与实页验收分别记录，七猫、起点、多卷和真实分页仍按实际覆盖登记。
 

@@ -1,0 +1,67 @@
+{
+  "ok": true,
+  "method": "Three deterministic ordering/storage-failure/barrier regressions run against current production module, then the exact frozen c165 production module loaded from Git in memory; no sleep-based race or disk-source replacement.",
+  "current_tests": 3,
+  "current_failures": 0,
+  "baseline_source": "c165520fe283b62870438642ca9e7b6a4d8f21d0",
+  "baseline_tests": 3,
+  "baseline_assertion_failures": 3,
+  "baseline_errors": 0,
+  "production_disk_bytes_unchanged": true,
+  "all_fixtures_synthetic": true,
+  "user_services_or_installations_modified": false,
+  "schema": 1,
+  "scope": "Synthetic regression verification of the working-tree patch before its release freeze. This is not final source CI, a package build, a platform-page test, or a publication receipt. The exact frozen baseline was loaded from Git in memory; on-disk production source was not replaced.",
+  "tested_source": {
+    "kind": "working-tree-before-freeze",
+    "parent_commit": "c165520fe283b62870438642ca9e7b6a4d8f21d0",
+    "files": [
+      {
+        "path": "skills/story-skill/scripts/story_chrome_worker.py",
+        "bytes": 78014,
+        "sha256": "1b7dea128f3e481e7a3f38240d2ad3dee275c7aaa431b055c3e6c82678cd662e"
+      },
+      {
+        "path": "tests/test_chrome_worker_controller.py",
+        "bytes": 104384,
+        "sha256": "3b8e928ec6b8cc725ae5dd8a2cdedea75cbcd0ffa1b9d802a0d178dda5c5f665"
+      }
+    ]
+  },
+  "full_module": {
+    "module": "tests.test_chrome_worker_controller",
+    "tests_run": 97,
+    "skipped": 0,
+    "failures": 0,
+    "errors": 0,
+    "duration_seconds": 8.62,
+    "result": "OK",
+    "log_sha256": "dab1f5cc252222523c3fea50d2914a8144178600f9285b32d74b0f787a7b1253"
+  },
+  "deterministic_regressions": [
+    {
+      "name": "test_specific_failure_diagnostic_precedes_error_and_terminal_publication",
+      "fixed_result": "passed",
+      "frozen_baseline_result": "assertion_failure",
+      "property": "The diagnostic callback sees no published worker_error, worker_done or terminal event; explicit sdk_setup metadata exists first. Assertions are outside the exception-swallowing callback."
+    },
+    {
+      "name": "test_diagnostic_storage_failure_still_publishes_tool_error_without_retry",
+      "fixed_result": "passed",
+      "frozen_baseline_result": "assertion_failure",
+      "property": "A diagnostic storage OSError cannot suppress the error or initiate another tool/RPC. The callback still precedes publication."
+    },
+    {
+      "name": "test_paused_failure_diagnostic_cannot_expose_error_or_terminal_before_specific_phase",
+      "fixed_result": "passed",
+      "frozen_baseline_result": "assertion_failure",
+      "property": "An Event barrier pauses the diagnostic callback while another thread observes no prematurely published failure/terminal flag; final view preserves sdk_setup and missing_browser_service."
+    }
+  ],
+  "baseline_log_sha256": "25183a5cc8dee3cd6d4c625adf38660368c35ab346325679932b452a4f80e2d1",
+  "full_original_sdk_failure_phase_test_preserved": true,
+  "real_browser_or_platform_accessed": false,
+  "failure_deadlines_or_unknown_write_guards_relaxed": false,
+  "patch_committed_by_this_test": false,
+  "external_codex_cli_or_model_launched": false
+}

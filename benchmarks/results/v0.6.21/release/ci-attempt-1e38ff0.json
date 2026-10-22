@@ -1,0 +1,2748 @@
+{
+  "schema": 1,
+  "collected_at_utc": "2026-10-22T06:51:02.714031+00:00",
+  "expected_head": "1e38ff04634513578e2fb1c327a015b255e45747",
+  "run_id": 39732968647,
+  "url": "https://github.com/NingCui29/story-skill/actions/runs/39732968647",
+  "ok": false,
+  "scope": "Complete source-workflow logs, including preflights and any actually executed full-suite run; a failed preflight is never counted as full regression coverage. Desktop CI is recorded independently. Synthetic CLI checks do not prove live platform pages or literary quality.",
+  "source_bindings": [
+    {
+      "path": "skills/story-skill/scripts/story_workbench.py",
+      "sha256": "1db556c631376fdeedf9f912d2b217a4878764854f3f79c12e0d04a9de167a07"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_outline.py",
+      "sha256": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+      "sha256": "0fd9c733aa4bee7eff9f98d171bdefb4aa5803b41ea31b4c4fce110a8cfad5e9"
+    },
+    {
+      "path": "tests/test_workbench_library.py",
+      "sha256": "8112e1109690a627f5dbdc6b043336b891debb2502010e4aeaf5f7e66e4dc104"
+    },
+    {
+      "path": "tests/test_workbench_material_scan.py",
+      "sha256": "0e9fe349d9193a483b476fc2bbf890517aab55997fa6e5954b5086e309df9f54"
+    },
+    {
+      "path": "tests/test_outline_position_audit.py",
+      "sha256": "e6d1b12b7fadcc3180a0c53581743c62837d87c73da0b82cf6aeee85537db1aa"
+    },
+    {
+      "path": "tests/test_publish_windows_draft.py",
+      "sha256": "aecbb0623622a1f44f947f4c0e69d96c9d65005042afab00947bfd3fd34410b8"
+    },
+    {
+      "path": "tests/test_verify_codex_plugin.py",
+      "sha256": "41beb01c8055beab7d26f05be0fd90e3bd951c43552aa1fe5295e930c09912d1"
+    },
+    {
+      "path": "tests/test_platform_browser.py",
+      "sha256": "1223e3695cf773621e0444101d2ca80e7390efc2c46532057f7d16c9ad180de2"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_browser.py",
+      "sha256": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65"
+    },
+    {
+      "path": "scripts/verify_codex_plugin.py",
+      "sha256": "1b354d190172a700d2b008e5f00d99028bec1cf359b3fa2b28df30b5f28f076b"
+    },
+    {
+      "path": "tests/test_platform_chrome_bridge.py",
+      "sha256": "fbbe577da40c554bd213e780d4894c9afb7b540229baaae467a482ac28742301"
+    },
+    {
+      "path": "tests/test_desktop_backend_runner.py",
+      "sha256": "ca6bedb17d54247c13dc4d0af6bf614edff76c51a1d4b82c017d873cb414837c"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "52037bdfe7f2e85f0011a56726ffbdfa912eae57d1aa634d3e826ee9106c6b39"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_drafts.py",
+      "sha256": "aef1b3e200f677877e98cf095c5785882d494da9e7bc4601f324d01ba506547d"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_chrome_worker.py",
+      "sha256": "a7a4ca8d4b7f7edb14416dfc6453d630b2aa297da943dfa1ad519e29a1e21be0"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_chrome_worker.mjs",
+      "sha256": "98ef4a876eb26992a1ce0421b786a384803afe9e3b0efe47ace1675effd25966"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_chrome_bridge.mjs",
+      "sha256": "dedc29c2155e3f6e197fc9bbd7304548d0d2179414181ef251ad06399e14200e"
+    },
+    {
+      "path": "tests/test_chrome_worker.py",
+      "sha256": "d173a72a27af775027acb07b3f470124eeb5d02cf679322dda4ea0b7887fcefb"
+    },
+    {
+      "path": "tests/test_chrome_bridge_driver.py",
+      "sha256": "c92d1216a9c44fa871651bdfa54491237daf096f7d2244d599f5a1c3a93fe463"
+    },
+    {
+      "path": "tests/test_chrome_worker.mjs",
+      "sha256": "ee198b7a70fcf7306dcb5ca73d842d76793bf9f299e90e4b60839bad50e9b3b3"
+    },
+    {
+      "path": "tests/test_chrome_bridge_driver.mjs",
+      "sha256": "1a2a17a9da8aa7f7c37c42eb6df1302fdd33072a2f206e43a3e2aefe43db3aa5"
+    },
+    {
+      "path": "tests/test_chrome_worker_controller.py",
+      "sha256": "5afd8a4603bdac6027ace792b7336ebec40a55106f8b1563d8d8f847ea12361c"
+    },
+    {
+      "path": "tests/test_platform_draft_auto_connect.py",
+      "sha256": "6c8c3096ec8ab5de23a3bb1426a3400cf3b170748093f14fad0a648e98b685cc"
+    },
+    {
+      "path": "tests/test_platform_draft_equivalence.py",
+      "sha256": "5a572ce6208bf83c1354ed2448495ec5eeadd7c3196a72345d65fec319b2feb4"
+    },
+    {
+      "path": "tests/test_platform_draft_retirement.py",
+      "sha256": "2444f7c73f58a1c75bf9ce3f07325971f9376c0ae258a47b280d1aab80d7b551"
+    },
+    {
+      "path": "tests/test_workbench_platform_draft_ui.py",
+      "sha256": "7187b5b4ec4473e6eeb7a53c7035e1363a07cf4a62b85e51f1d9cad59af0565b"
+    },
+    {
+      "path": "tests/test_workbench_auto_connect_ui.py",
+      "sha256": "29b7d266967e92d943cb664e0289395e92d42fe08fd4eab1b56ee8452d43ac7f"
+    },
+    {
+      "path": "tests/test_workbench_draft_poll_ui.py",
+      "sha256": "379d1594d7a82688a199b1029c43c4a1f192b694192116dc9e42a460ed46f757"
+    },
+    {
+      "path": "tests/test_workbench_draft_preferences.py",
+      "sha256": "d498c5c9749cb64e352cd87e65f2889c7c7e0df414531ab25fcb5bbe8ef97c83"
+    }
+  ],
+  "required_regression_tests": [
+    "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access",
+    "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing",
+    "test_denied_post_read_timeout_or_disconnect_never_reaches_library",
+    "test_unauthorized_invalid_json_receives_403_without_changing_files",
+    "test_wrong_content_type_consumes_small_body_before_400",
+    "test_external_and_session_directory_pins_never_overlap_between_threads",
+    "test_cross_process_sender_and_host_exchange_five_authenticated_requests",
+    "test_local_sharing_refusals_retry_both_publish_and_replace",
+    "test_native_directory_guard_failure_stops_retry",
+    "test_new_destination_never_gets_overwritten_after_sharing_refusal",
+    "test_nonsharing_and_posix_errors_never_retry",
+    "test_replacement_destination_identity_or_contents_change_stops_retry",
+    "test_sharing_refusal_has_bounded_budget_and_preserves_last_error",
+    "test_source_identity_size_mtime_or_disappearance_stops_retry",
+    "test_successful_retried_claim_is_never_dispatched_twice",
+    "test_body_sharing_error_is_propagated_without_reentering_or_replaying",
+    "test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body",
+    "test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit",
+    "test_exit_sharing_error_is_propagated_without_reentering_or_replaying",
+    "test_other_errors_and_posix_sharing_errors_do_not_retry",
+    "test_partial_create_enter_cleans_resources_before_idempotent_retry",
+    "test_loading_more_materials_preserves_current_unsaved_editor",
+    "test_successful_candidate_save_refreshes_material_inventory_for_new_file",
+    "test_history_larger_than_old_limit_pages_without_losing_formal_progress_or_files",
+    "test_catalog_hard_budget_keeps_partial_inventory_and_does_not_block_direct_open",
+    "test_cursor_validation_and_expiry_require_explicit_fresh_scan",
+    "test_cursor_rejects_replaced_book_root_even_with_identical_book_id",
+    "test_windows_guard_mtime_changes_allow_pages_but_not_replaced_directory",
+    "test_candidate_recovery_and_pending_open_without_inventory_rescan",
+    "test_material_candidate_resolves_markdown_origin_without_inventory_rescan",
+    "test_local_decision_and_backend_verification_can_be_separate_for_each_platform",
+    "test_separated_status_does_not_borrow_a_missing_axis_from_ordinary_notes",
+    "test_separated_status_is_scoped_to_its_platform_block",
+    "test_legacy_group_pending_note_is_still_supported",
+    "test_previous_release_source_versions_are_rejected",
+    "test_source_comparison_only_accepts_the_eight_ui_adaptations",
+    "test_manual_login_deadline_includes_initial_navigation",
+    "test_public_chrome_worker_contracts",
+    "test_public_cua_contracts",
+    "test_other_platform_profiles_never_offer_automatic_connection_or_launch",
+    "test_other_platforms_are_rejected_before_runtime_context_or_model_start",
+    "test_fake_native_directory_pin_checks_identity_and_releases_handles",
+    "test_format_choices_are_explicit_and_bound_to_preview_and_start",
+    "test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor",
+    "test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once",
+    "test_origin_denial_explains_permission_separately_from_extension_connection",
+    "test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error",
+    "test_default_stays_strict_and_explicit_policy_preserves_real_hashes",
+    "test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved",
+    "test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate",
+    "test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes",
+    "test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack",
+    "test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched",
+    "test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview",
+    "test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start",
+    "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off",
+    "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock",
+    "test_noncontention_and_explicit_access_denial_never_retry",
+    "test_changed_lock_identity_or_directory_stops_waiting",
+    "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing",
+    "test_body_unlock_and_handoff_errors_are_not_replayed",
+    "test_posix_flock_is_unchanged",
+    "test_empty_lock_initialization_is_not_repeated"
+  ],
+  "required_regression_count": 63,
+  "node_contract_groups": [
+    {
+      "wrapper_test": "test_public_chrome_worker_contracts",
+      "source": "tests/test_chrome_worker.mjs",
+      "contracts": [
+        "URL-free and structured permission refusals stop every existing-page probe stage without another route",
+        "unknown probe failures and malformed snapshots fail closed while denials for another origin never reopen a tab",
+        "permission denial on an existing target page is terminal without a fresh-page fallback",
+        "official origin permission denial during fresh navigation never attaches retries or leaks its URL",
+        "permission classification never attributes an explicit foreign origin or an incomplete phrase to the bound origin"
+      ],
+      "source_sha256": "ee198b7a70fcf7306dcb5ca73d842d76793bf9f299e90e4b60839bad50e9b3b3",
+      "contracts_present_in_frozen_source": true
+    },
+    {
+      "wrapper_test": "test_public_cua_contracts",
+      "source": "tests/test_chrome_bridge_driver.mjs",
+      "contracts": [
+        "management click or post-click permission URL and DOM failures never click again or fall back to navigation",
+        "approximate Runtime.evaluate errors and permission disconnected cancellation or closed codes are never retried"
+      ],
+      "source_sha256": "1a2a17a9da8aa7f7c37c42eb6df1302fdd33072a2f206e43a3e2aefe43db3aa5",
+      "contracts_present_in_frozen_source": true
+    }
+  ],
+  "windows_lock_acquisition_fix_present": true,
+  "windows_lock_required_regressions": [
+    "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off",
+    "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock",
+    "test_noncontention_and_explicit_access_denial_never_retry",
+    "test_changed_lock_identity_or_directory_stops_waiting",
+    "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing",
+    "test_body_unlock_and_handoff_errors_are_not_replayed",
+    "test_posix_flock_is_unchanged",
+    "test_empty_lock_initialization_is_not_repeated"
+  ],
+  "release_payload_bindings": [
+    {
+      "path": "dist/release-v0.6.21-candidate/story-skill-0.6.21.zip",
+      "sha256": "6083cf4b1a8a8171c3df98d0ad63d1c73b5fe168a60019b2b80b9ca0d88d4b97",
+      "ci_packages": [
+        {
+          "job_id": 119671998676,
+          "sha256": "316395ea9f8513cac067d2746b444dfe4e6bba92d2cf3b7c820fb10fce773dd3",
+          "matches_local": false
+        },
+        {
+          "job_id": 119671998861,
+          "sha256": "6083cf4b1a8a8171c3df98d0ad63d1c73b5fe168a60019b2b80b9ca0d88d4b97",
+          "matches_local": true
+        }
+      ],
+      "canonical_matches_linux_ci": true,
+      "scope": "Published canonical archive is the local/Linux build. Actual Windows CI ZIP SHA is retained independently and may differ under Git CRLF checkout; it is not substituted for the canonical release archive."
+    },
+    {
+      "path": "dist/release-v0.6.21-candidate/story-skill-claude-desktop-0.6.21-r2.zip",
+      "sha256": "4a2c2354dc4ba9103367a3afe53b0194805c28927f78bcc55efb802f44a268ef",
+      "ci_packages": [
+        {
+          "job_id": 119671998676,
+          "sha256": "0cb19873a273ba6bd75c557c774551bdb08ea733c2936aff1b4af8368cc7cd2a",
+          "matches_local": false
+        },
+        {
+          "job_id": 119671998861,
+          "sha256": "4a2c2354dc4ba9103367a3afe53b0194805c28927f78bcc55efb802f44a268ef",
+          "matches_local": true
+        }
+      ],
+      "canonical_matches_linux_ci": true,
+      "scope": "Published canonical archive is the local/Linux build. Actual Windows CI ZIP SHA is retained independently and may differ under Git CRLF checkout; it is not substituted for the canonical release archive."
+    },
+    {
+      "path": "dist/release-v0.6.21-candidate/codex/story-skill-codex-0.6.21.zip",
+      "sha256": "a24d05d3c26cd065dc6bb780e1daf38b729f00368bb69ff2d907cfcba579efbc",
+      "ci_packages": [
+        {
+          "job_id": 119671998676,
+          "sha256": "dc71c4ed5cbf13a908e409b116541ef2a7049493b1d756653f69f55110682e2f",
+          "matches_local": false
+        },
+        {
+          "job_id": 119671998861,
+          "sha256": "a24d05d3c26cd065dc6bb780e1daf38b729f00368bb69ff2d907cfcba579efbc",
+          "matches_local": true
+        }
+      ],
+      "canonical_matches_linux_ci": true,
+      "scope": "Published canonical archive is the local/Linux build. Actual Windows CI ZIP SHA is retained independently and may differ under Git CRLF checkout; it is not substituted for the canonical release archive."
+    }
+  ],
+  "canonical_release_archives_match_linux_ci": true,
+  "jobs": [
+    {
+      "id": 119671998416,
+      "name": "test (windows-latest, 3.12)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39732968647/job/119671998416",
+      "api_summary": {
+        "head_sha": "1e38ff04634513578e2fb1c327a015b255e45747",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-22T06:16:58Z",
+            "completed_at": "2026-10-22T06:16:59Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-22T06:16:59Z",
+            "completed_at": "2026-10-22T06:17:09Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-22T06:17:09Z",
+            "completed_at": "2026-10-22T06:17:09Z"
+          },
+          {
+            "name": "Check Windows paths, CRLF and installation locks first",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-22T06:17:09Z",
+            "completed_at": "2026-10-22T06:19:35Z"
+          },
+          {
+            "name": "Check platform draft and Chrome bridge compatibility first",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-22T06:19:35Z",
+            "completed_at": "2026-10-22T06:22:22Z"
+          },
+          {
+            "name": "Run regression tests including historical migration",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 6,
+            "started_at": "2026-10-22T06:22:22Z",
+            "completed_at": "2026-10-22T06:47:38Z"
+          },
+          {
+            "name": "Check declared instruction loads by task and role",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 7,
+            "started_at": "2026-10-22T06:47:38Z",
+            "completed_at": "2026-10-22T06:47:38Z"
+          },
+          {
+            "name": "Build the complete skill ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-10-22T06:47:38Z",
+            "completed_at": "2026-10-22T06:47:38Z"
+          },
+          {
+            "name": "Build the Claude Desktop skill ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9,
+            "started_at": "2026-10-22T06:47:38Z",
+            "completed_at": "2026-10-22T06:47:38Z"
+          },
+          {
+            "name": "Build the Codex plugin marketplace ZIP",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-10-22T06:47:38Z",
+            "completed_at": "2026-10-22T06:47:38Z"
+          },
+          {
+            "name": "Exercise the local CLI workflow",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-10-22T06:47:38Z",
+            "completed_at": "2026-10-22T06:47:38Z"
+          },
+          {
+            "name": "Exercise synthetic Chinese transactions",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-10-22T06:47:38Z",
+            "completed_at": "2026-10-22T06:47:38Z"
+          },
+          {
+            "name": "Exercise multi-line writing and historical revision",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-10-22T06:47:38Z",
+            "completed_at": "2026-10-22T06:47:38Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 25,
+            "started_at": "2026-10-22T06:47:38Z",
+            "completed_at": "2026-10-22T06:47:38Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-22T06:47:38Z",
+            "completed_at": "2026-10-22T06:47:41Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-22T06:47:41Z",
+            "completed_at": "2026-10-22T06:47:41Z"
+          }
+        ]
+      },
+      "observed_log_conclusion": "failed",
+      "log": {
+        "path": "dist/release-v0.6.21-candidate/job-119671998416.log",
+        "bytes": 672717,
+        "sha256": "3cbaa2033f269866d28e6c0cee85d8c9200b5d094972a53bfc4137c927168f05",
+        "lines": 3296,
+        "first_timestamp": "2026-10-22T06:16:58.7823365Z",
+        "last_timestamp": "2026-10-22T06:47:41.4505334Z"
+      },
+      "checkout_commit_lines": [
+        93
+      ],
+      "test_runs": [
+        {
+          "line": 326,
+          "run": 196,
+          "duration_seconds": 141.843,
+          "result": "OK (skipped=1)",
+          "skipped": 1
+        },
+        {
+          "line": 789,
+          "run": 448,
+          "duration_seconds": 161.168,
+          "result": "OK (skipped=6)",
+          "skipped": 6
+        },
+        {
+          "line": 3279,
+          "run": 2451,
+          "duration_seconds": 1475.614,
+          "result": "FAILED (errors=1, skipped=68)",
+          "skipped": 68
+        }
+      ],
+      "full_suite_observed": true,
+      "regression_test_evidence": {
+        "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access": [
+          {
+            "line": 717,
+            "result": "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access (test_workbench_library.WorkbenchLibraryTests.test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access) ... ok"
+          },
+          {
+            "line": 2897,
+            "result": "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access (test_workbench_library.WorkbenchLibraryTests.test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access) ... ok"
+          }
+        ],
+        "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing": [
+          {
+            "line": 718,
+            "result": "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing (test_workbench_library.WorkbenchLibraryTests.test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing) ... ok"
+          },
+          {
+            "line": 2898,
+            "result": "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing (test_workbench_library.WorkbenchLibraryTests.test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing) ... ok"
+          }
+        ],
+        "test_denied_post_read_timeout_or_disconnect_never_reaches_library": [
+          {
+            "line": 719,
+            "result": "test_denied_post_read_timeout_or_disconnect_never_reaches_library (test_workbench_library.WorkbenchLibraryTests.test_denied_post_read_timeout_or_disconnect_never_reaches_library) ... ok"
+          },
+          {
+            "line": 2899,
+            "result": "test_denied_post_read_timeout_or_disconnect_never_reaches_library (test_workbench_library.WorkbenchLibraryTests.test_denied_post_read_timeout_or_disconnect_never_reaches_library) ... ok"
+          }
+        ],
+        "test_unauthorized_invalid_json_receives_403_without_changing_files": [
+          {
+            "line": 730,
+            "result": "test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests.test_unauthorized_invalid_json_receives_403_without_changing_files) ... ok"
+          },
+          {
+            "line": 2910,
+            "result": "test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests.test_unauthorized_invalid_json_receives_403_without_changing_files) ... ok"
+          }
+        ],
+        "test_wrong_content_type_consumes_small_body_before_400": [
+          {
+            "line": 734,
+            "result": "test_wrong_content_type_consumes_small_body_before_400 (test_workbench_library.WorkbenchLibraryTests.test_wrong_content_type_consumes_small_body_before_400) ... ok"
+          },
+          {
+            "line": 2914,
+            "result": "test_wrong_content_type_consumes_small_body_before_400 (test_workbench_library.WorkbenchLibraryTests.test_wrong_content_type_consumes_small_body_before_400) ... ok"
+          }
+        ],
+        "test_external_and_session_directory_pins_never_overlap_between_threads": [
+          {
+            "line": 560,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests.test_external_and_session_directory_pins_never_overlap_between_threads) ... ok"
+          },
+          {
+            "line": 2033,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests.test_external_and_session_directory_pins_never_overlap_between_threads) ... ok"
+          }
+        ],
+        "test_cross_process_sender_and_host_exchange_five_authenticated_requests": [
+          {
+            "line": 551,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests.test_cross_process_sender_and_host_exchange_five_authenticated_requests) ... ok"
+          },
+          {
+            "line": 2024,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests.test_cross_process_sender_and_host_exchange_five_authenticated_requests) ... ok"
+          }
+        ],
+        "test_local_sharing_refusals_retry_both_publish_and_replace": [
+          {
+            "line": 529,
+            "result": "test_local_sharing_refusals_retry_both_publish_and_replace (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_local_sharing_refusals_retry_both_publish_and_replace) ... ok"
+          },
+          {
+            "line": 2002,
+            "result": "test_local_sharing_refusals_retry_both_publish_and_replace (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_local_sharing_refusals_retry_both_publish_and_replace) ... ok"
+          }
+        ],
+        "test_native_directory_guard_failure_stops_retry": [
+          {
+            "line": 530,
+            "result": "test_native_directory_guard_failure_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_native_directory_guard_failure_stops_retry) ... ok"
+          },
+          {
+            "line": 2003,
+            "result": "test_native_directory_guard_failure_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_native_directory_guard_failure_stops_retry) ... ok"
+          }
+        ],
+        "test_new_destination_never_gets_overwritten_after_sharing_refusal": [
+          {
+            "line": 531,
+            "result": "test_new_destination_never_gets_overwritten_after_sharing_refusal (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_new_destination_never_gets_overwritten_after_sharing_refusal) ... ok"
+          },
+          {
+            "line": 2004,
+            "result": "test_new_destination_never_gets_overwritten_after_sharing_refusal (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_new_destination_never_gets_overwritten_after_sharing_refusal) ... ok"
+          }
+        ],
+        "test_nonsharing_and_posix_errors_never_retry": [
+          {
+            "line": 532,
+            "result": "test_nonsharing_and_posix_errors_never_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_nonsharing_and_posix_errors_never_retry) ... ok"
+          },
+          {
+            "line": 2005,
+            "result": "test_nonsharing_and_posix_errors_never_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_nonsharing_and_posix_errors_never_retry) ... ok"
+          }
+        ],
+        "test_replacement_destination_identity_or_contents_change_stops_retry": [
+          {
+            "line": 533,
+            "result": "test_replacement_destination_identity_or_contents_change_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_replacement_destination_identity_or_contents_change_stops_retry) ... ok"
+          },
+          {
+            "line": 2006,
+            "result": "test_replacement_destination_identity_or_contents_change_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_replacement_destination_identity_or_contents_change_stops_retry) ... ok"
+          }
+        ],
+        "test_sharing_refusal_has_bounded_budget_and_preserves_last_error": [
+          {
+            "line": 534,
+            "result": "test_sharing_refusal_has_bounded_budget_and_preserves_last_error (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_sharing_refusal_has_bounded_budget_and_preserves_last_error) ... ok"
+          },
+          {
+            "line": 2007,
+            "result": "test_sharing_refusal_has_bounded_budget_and_preserves_last_error (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_sharing_refusal_has_bounded_budget_and_preserves_last_error) ... ok"
+          }
+        ],
+        "test_source_identity_size_mtime_or_disappearance_stops_retry": [
+          {
+            "line": 535,
+            "result": "test_source_identity_size_mtime_or_disappearance_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_source_identity_size_mtime_or_disappearance_stops_retry) ... ok"
+          },
+          {
+            "line": 2008,
+            "result": "test_source_identity_size_mtime_or_disappearance_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_source_identity_size_mtime_or_disappearance_stops_retry) ... ok"
+          }
+        ],
+        "test_successful_retried_claim_is_never_dispatched_twice": [
+          {
+            "line": 536,
+            "result": "test_successful_retried_claim_is_never_dispatched_twice (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_successful_retried_claim_is_never_dispatched_twice) ... ok"
+          },
+          {
+            "line": 2009,
+            "result": "test_successful_retried_claim_is_never_dispatched_twice (test_platform_chrome_bridge.BridgeRenameSharingRetryTests.test_successful_retried_claim_is_never_dispatched_twice) ... ok"
+          }
+        ],
+        "test_body_sharing_error_is_propagated_without_reentering_or_replaying": [
+          {
+            "line": 523,
+            "result": "test_body_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_body_sharing_error_is_propagated_without_reentering_or_replaying) ... ok"
+          },
+          {
+            "line": 1996,
+            "result": "test_body_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_body_sharing_error_is_propagated_without_reentering_or_replaying) ... ok"
+          }
+        ],
+        "test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body": [
+          {
+            "line": 524,
+            "result": "test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body) ... ok"
+          },
+          {
+            "line": 1997,
+            "result": "test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body) ... ok"
+          }
+        ],
+        "test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit": [
+          {
+            "line": 525,
+            "result": "test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit) ... ok"
+          },
+          {
+            "line": 1998,
+            "result": "test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit) ... ok"
+          }
+        ],
+        "test_exit_sharing_error_is_propagated_without_reentering_or_replaying": [
+          {
+            "line": 526,
+            "result": "test_exit_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_exit_sharing_error_is_propagated_without_reentering_or_replaying) ... ok"
+          },
+          {
+            "line": 1999,
+            "result": "test_exit_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_exit_sharing_error_is_propagated_without_reentering_or_replaying) ... ok"
+          }
+        ],
+        "test_other_errors_and_posix_sharing_errors_do_not_retry": [
+          {
+            "line": 527,
+            "result": "test_other_errors_and_posix_sharing_errors_do_not_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_other_errors_and_posix_sharing_errors_do_not_retry) ... ok"
+          },
+          {
+            "line": 2000,
+            "result": "test_other_errors_and_posix_sharing_errors_do_not_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_other_errors_and_posix_sharing_errors_do_not_retry) ... ok"
+          }
+        ],
+        "test_partial_create_enter_cleans_resources_before_idempotent_retry": [
+          {
+            "line": 528,
+            "result": "test_partial_create_enter_cleans_resources_before_idempotent_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_partial_create_enter_cleans_resources_before_idempotent_retry) ... ok"
+          },
+          {
+            "line": 2001,
+            "result": "test_partial_create_enter_cleans_resources_before_idempotent_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests.test_partial_create_enter_cleans_resources_before_idempotent_retry) ... ok"
+          }
+        ],
+        "test_loading_more_materials_preserves_current_unsaved_editor": [
+          {
+            "line": 2963,
+            "result": "test_loading_more_materials_preserves_current_unsaved_editor (test_workbench_material_scan.WorkbenchMaterialScanTests.test_loading_more_materials_preserves_current_unsaved_editor) ... ok"
+          }
+        ],
+        "test_successful_candidate_save_refreshes_material_inventory_for_new_file": [
+          {
+            "line": 2967,
+            "result": "test_successful_candidate_save_refreshes_material_inventory_for_new_file (test_workbench_material_scan.WorkbenchMaterialScanTests.test_successful_candidate_save_refreshes_material_inventory_for_new_file) ... ok"
+          }
+        ],
+        "test_history_larger_than_old_limit_pages_without_losing_formal_progress_or_files": [
+          {
+            "line": 2961,
+            "result": "test_history_larger_than_old_limit_pages_without_losing_formal_progress_or_files (test_workbench_material_scan.WorkbenchMaterialScanTests.test_history_larger_than_old_limit_pages_without_losing_formal_progress_or_files) ... ok"
+          }
+        ],
+        "test_catalog_hard_budget_keeps_partial_inventory_and_does_not_block_direct_open": [
+          {
+            "line": 2954,
+            "result": "test_catalog_hard_budget_keeps_partial_inventory_and_does_not_block_direct_open (test_workbench_material_scan.WorkbenchMaterialScanTests.test_catalog_hard_budget_keeps_partial_inventory_and_does_not_block_direct_open) ... ok"
+          }
+        ],
+        "test_cursor_validation_and_expiry_require_explicit_fresh_scan": [
+          {
+            "line": 2957,
+            "result": "test_cursor_validation_and_expiry_require_explicit_fresh_scan (test_workbench_material_scan.WorkbenchMaterialScanTests.test_cursor_validation_and_expiry_require_explicit_fresh_scan) ... ok"
+          }
+        ],
+        "test_cursor_rejects_replaced_book_root_even_with_identical_book_id": [
+          {
+            "line": 2956,
+            "result": "test_cursor_rejects_replaced_book_root_even_with_identical_book_id (test_workbench_material_scan.WorkbenchMaterialScanTests.test_cursor_rejects_replaced_book_root_even_with_identical_book_id) ... ok"
+          }
+        ],
+        "test_windows_guard_mtime_changes_allow_pages_but_not_replaced_directory": [
+          {
+            "line": 2968,
+            "result": "test_windows_guard_mtime_changes_allow_pages_but_not_replaced_directory (test_workbench_material_scan.WorkbenchMaterialScanTests.test_windows_guard_mtime_changes_allow_pages_but_not_replaced_directory) ... ok"
+          }
+        ],
+        "test_candidate_recovery_and_pending_open_without_inventory_rescan": [
+          {
+            "line": 2953,
+            "result": "test_candidate_recovery_and_pending_open_without_inventory_rescan (test_workbench_material_scan.WorkbenchMaterialScanTests.test_candidate_recovery_and_pending_open_without_inventory_rescan) ... ok"
+          }
+        ],
+        "test_material_candidate_resolves_markdown_origin_without_inventory_rescan": [
+          {
+            "line": 2964,
+            "result": "test_material_candidate_resolves_markdown_origin_without_inventory_rescan (test_workbench_material_scan.WorkbenchMaterialScanTests.test_material_candidate_resolves_markdown_origin_without_inventory_rescan) ... ok"
+          }
+        ],
+        "test_local_decision_and_backend_verification_can_be_separate_for_each_platform": [
+          {
+            "line": 1722,
+            "result": "test_local_decision_and_backend_verification_can_be_separate_for_each_platform (test_outline_position_audit.OutlinePositionAuditTests.test_local_decision_and_backend_verification_can_be_separate_for_each_platform) ... ok"
+          }
+        ],
+        "test_separated_status_does_not_borrow_a_missing_axis_from_ordinary_notes": [
+          {
+            "line": 1741,
+            "result": "test_separated_status_does_not_borrow_a_missing_axis_from_ordinary_notes (test_outline_position_audit.OutlinePositionAuditTests.test_separated_status_does_not_borrow_a_missing_axis_from_ordinary_notes) ... ok"
+          }
+        ],
+        "test_separated_status_is_scoped_to_its_platform_block": [
+          {
+            "line": 1742,
+            "result": "test_separated_status_is_scoped_to_its_platform_block (test_outline_position_audit.OutlinePositionAuditTests.test_separated_status_is_scoped_to_its_platform_block) ... ok"
+          }
+        ],
+        "test_legacy_group_pending_note_is_still_supported": [
+          {
+            "line": 1720,
+            "result": "test_legacy_group_pending_note_is_still_supported (test_outline_position_audit.OutlinePositionAuditTests.test_legacy_group_pending_note_is_still_supported) ... ok"
+          }
+        ],
+        "test_previous_release_source_versions_are_rejected": [
+          {
+            "line": 2335,
+            "result": "test_previous_release_source_versions_are_rejected (test_publish_windows_draft.DistributionTests.test_previous_release_source_versions_are_rejected) ... ok"
+          }
+        ],
+        "test_source_comparison_only_accepts_the_eight_ui_adaptations": [
+          {
+            "line": 2540,
+            "result": "test_source_comparison_only_accepts_the_eight_ui_adaptations (test_verify_codex_plugin.CodexPluginEvidenceTests.test_source_comparison_only_accepts_the_eight_ui_adaptations) ... ok"
+          }
+        ],
+        "test_manual_login_deadline_includes_initial_navigation": [
+          {
+            "line": 476,
+            "result": "test_manual_login_deadline_includes_initial_navigation (test_platform_browser.BrowserTests.test_manual_login_deadline_includes_initial_navigation) ... ok"
+          },
+          {
+            "line": 1949,
+            "result": "test_manual_login_deadline_includes_initial_navigation (test_platform_browser.BrowserTests.test_manual_login_deadline_includes_initial_navigation) ... ok"
+          }
+        ],
+        "test_public_chrome_worker_contracts": [
+          {
+            "line": 340,
+            "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts.test_public_chrome_worker_contracts) ... ok"
+          },
+          {
+            "line": 937,
+            "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts.test_public_chrome_worker_contracts) ... ok"
+          }
+        ],
+        "test_public_cua_contracts": [
+          {
+            "line": 339,
+            "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts.test_public_cua_contracts) ... ok"
+          },
+          {
+            "line": 936,
+            "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts.test_public_cua_contracts) ... ok"
+          }
+        ],
+        "test_other_platform_profiles_never_offer_automatic_connection_or_launch": [
+          {
+            "line": 604,
+            "result": "test_other_platform_profiles_never_offer_automatic_connection_or_launch (test_platform_draft_auto_connect.PlatformDraftAutoConnectTests.test_other_platform_profiles_never_offer_automatic_connection_or_launch) ... ok"
+          },
+          {
+            "line": 2077,
+            "result": "test_other_platform_profiles_never_offer_automatic_connection_or_launch (test_platform_draft_auto_connect.PlatformDraftAutoConnectTests.test_other_platform_profiles_never_offer_automatic_connection_or_launch) ... ok"
+          }
+        ],
+        "test_other_platforms_are_rejected_before_runtime_context_or_model_start": [
+          {
+            "line": 376,
+            "result": "test_other_platforms_are_rejected_before_runtime_context_or_model_start (test_chrome_worker_controller.ControllerTests.test_other_platforms_are_rejected_before_runtime_context_or_model_start) ... ok"
+          },
+          {
+            "line": 973,
+            "result": "test_other_platforms_are_rejected_before_runtime_context_or_model_start (test_chrome_worker_controller.ControllerTests.test_other_platforms_are_rejected_before_runtime_context_or_model_start) ... ok"
+          }
+        ],
+        "test_fake_native_directory_pin_checks_identity_and_releases_handles": [
+          {
+            "line": 363,
+            "result": "test_fake_native_directory_pin_checks_identity_and_releases_handles (test_chrome_worker_controller.ControllerTests.test_fake_native_directory_pin_checks_identity_and_releases_handles) ... ok"
+          },
+          {
+            "line": 960,
+            "result": "test_fake_native_directory_pin_checks_identity_and_releases_handles (test_chrome_worker_controller.ControllerTests.test_fake_native_directory_pin_checks_identity_and_releases_handles) ... ok"
+          }
+        ],
+        "test_format_choices_are_explicit_and_bound_to_preview_and_start": [
+          {
+            "line": 760,
+            "result": "test_format_choices_are_explicit_and_bound_to_preview_and_start (test_workbench_platform_draft_ui.PlatformDraftUITests.test_format_choices_are_explicit_and_bound_to_preview_and_start) ... ok"
+          },
+          {
+            "line": 2994,
+            "result": "test_format_choices_are_explicit_and_bound_to_preview_and_start (test_workbench_platform_draft_ui.PlatformDraftUITests.test_format_choices_are_explicit_and_bound_to_preview_and_start) ... ok"
+          }
+        ],
+        "test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor": [
+          {
+            "line": 684,
+            "result": "test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests.test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor) ... ok"
+          },
+          {
+            "line": 2693,
+            "result": "test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests.test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor) ... ok"
+          }
+        ],
+        "test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once": [
+          {
+            "line": 686,
+            "result": "test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests.test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once) ... ok"
+          },
+          {
+            "line": 2695,
+            "result": "test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests.test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once) ... ok"
+          }
+        ],
+        "test_origin_denial_explains_permission_separately_from_extension_connection": [
+          {
+            "line": 689,
+            "result": "test_origin_denial_explains_permission_separately_from_extension_connection (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests.test_origin_denial_explains_permission_separately_from_extension_connection) ... ok"
+          },
+          {
+            "line": 2698,
+            "result": "test_origin_denial_explains_permission_separately_from_extension_connection (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests.test_origin_denial_explains_permission_separately_from_extension_connection) ... ok"
+          }
+        ],
+        "test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error": [
+          {
+            "line": 383,
+            "result": "test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error (test_chrome_worker_controller.ControllerTests.test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error) ... ok"
+          },
+          {
+            "line": 980,
+            "result": "test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error (test_chrome_worker_controller.ControllerTests.test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error) ... ok"
+          }
+        ],
+        "test_default_stays_strict_and_explicit_policy_preserves_real_hashes": [
+          {
+            "line": 634,
+            "result": "test_default_stays_strict_and_explicit_policy_preserves_real_hashes (test_platform_draft_equivalence.TerminalLFPolicyTests.test_default_stays_strict_and_explicit_policy_preserves_real_hashes) ... ok"
+          },
+          {
+            "line": 2107,
+            "result": "test_default_stays_strict_and_explicit_policy_preserves_real_hashes (test_platform_draft_equivalence.TerminalLFPolicyTests.test_default_stays_strict_and_explicit_policy_preserves_real_hashes) ... ok"
+          }
+        ],
+        "test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved": [
+          {
+            "line": 623,
+            "result": "test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved (test_platform_draft_equivalence.RenderedBodyTests.test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved) ... ok"
+          },
+          {
+            "line": 2096,
+            "result": "test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved (test_platform_draft_equivalence.RenderedBodyTests.test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved) ... ok"
+          }
+        ],
+        "test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate": [
+          {
+            "line": 630,
+            "result": "test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate (test_platform_draft_equivalence.RenderedBodyV2Tests.test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate) ... ok"
+          },
+          {
+            "line": 2103,
+            "result": "test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate (test_platform_draft_equivalence.RenderedBodyV2Tests.test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate) ... ok"
+          }
+        ],
+        "test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes": [
+          {
+            "line": 657,
+            "result": "test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes (test_platform_draft_retirement.DeletedDraftRetirementTests.test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes) ... ok"
+          },
+          {
+            "line": 2130,
+            "result": "test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes (test_platform_draft_retirement.DeletedDraftRetirementTests.test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes) ... ok"
+          }
+        ],
+        "test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack": [
+          {
+            "line": 655,
+            "result": "test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack (test_platform_draft_retirement.DeletedDraftRetirementTests.test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack) ... ok"
+          },
+          {
+            "line": 2128,
+            "result": "test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack (test_platform_draft_retirement.DeletedDraftRetirementTests.test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack) ... ok"
+          }
+        ],
+        "test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched": [
+          {
+            "line": 705,
+            "result": "test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched (test_workbench_draft_preferences.DraftPreferenceStorageTests.test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched) ... ok"
+          },
+          {
+            "line": 2807,
+            "result": "test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched (test_workbench_draft_preferences.DraftPreferenceStorageTests.test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched) ... ok"
+          }
+        ],
+        "test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview": [
+          {
+            "line": 713,
+            "result": "test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview (test_workbench_draft_preferences.DraftPreferenceUITests.test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview) ... ok"
+          },
+          {
+            "line": 2815,
+            "result": "test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview (test_workbench_draft_preferences.DraftPreferenceUITests.test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview) ... ok"
+          }
+        ],
+        "test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start": [
+          {
+            "line": 696,
+            "result": "test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start (test_workbench_draft_poll_ui.WorkbenchDraftPollUITests.test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start) ... ok"
+          },
+          {
+            "line": 2798,
+            "result": "test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start (test_workbench_draft_poll_ui.WorkbenchDraftPollUITests.test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start) ... ok"
+          }
+        ],
+        "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off": [
+          {
+            "line": 539,
+            "result": "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off) ... ok"
+          },
+          {
+            "line": 2012,
+            "result": "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off) ... ok"
+          }
+        ],
+        "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock": [
+          {
+            "line": 540,
+            "result": "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_contention_deadline_never_enters_body_or_unlocks_unowned_lock) ... ok"
+          },
+          {
+            "line": 2013,
+            "result": "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_contention_deadline_never_enters_body_or_unlocks_unowned_lock) ... ok"
+          }
+        ],
+        "test_noncontention_and_explicit_access_denial_never_retry": [
+          {
+            "line": 543,
+            "result": "test_noncontention_and_explicit_access_denial_never_retry (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_noncontention_and_explicit_access_denial_never_retry) ... ok"
+          },
+          {
+            "line": 2016,
+            "result": "test_noncontention_and_explicit_access_denial_never_retry (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_noncontention_and_explicit_access_denial_never_retry) ... ok"
+          }
+        ],
+        "test_changed_lock_identity_or_directory_stops_waiting": [
+          {
+            "line": 538,
+            "result": "test_changed_lock_identity_or_directory_stops_waiting (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_changed_lock_identity_or_directory_stops_waiting) ... ok"
+          },
+          {
+            "line": 2011,
+            "result": "test_changed_lock_identity_or_directory_stops_waiting (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_changed_lock_identity_or_directory_stops_waiting) ... ok"
+          }
+        ],
+        "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing": [
+          {
+            "line": 542,
+            "result": "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing) ... ok"
+          },
+          {
+            "line": 2015,
+            "result": "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing) ... ok"
+          }
+        ],
+        "test_body_unlock_and_handoff_errors_are_not_replayed": [
+          {
+            "line": 537,
+            "result": "test_body_unlock_and_handoff_errors_are_not_replayed (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_body_unlock_and_handoff_errors_are_not_replayed) ... ok"
+          },
+          {
+            "line": 2010,
+            "result": "test_body_unlock_and_handoff_errors_are_not_replayed (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_body_unlock_and_handoff_errors_are_not_replayed) ... ok"
+          }
+        ],
+        "test_posix_flock_is_unchanged": [
+          {
+            "line": 544,
+            "result": "test_posix_flock_is_unchanged (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_posix_flock_is_unchanged) ... ok"
+          },
+          {
+            "line": 2017,
+            "result": "test_posix_flock_is_unchanged (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_posix_flock_is_unchanged) ... ok"
+          }
+        ],
+        "test_empty_lock_initialization_is_not_repeated": [
+          {
+            "line": 541,
+            "result": "test_empty_lock_initialization_is_not_repeated (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_empty_lock_initialization_is_not_repeated) ... ok"
+          },
+          {
+            "line": 2014,
+            "result": "test_empty_lock_initialization_is_not_repeated (test_platform_chrome_bridge.BridgeWindowsLockContentionTests.test_empty_lock_initialization_is_not_repeated) ... ok"
+          }
+        ]
+      },
+      "required_regression_tests_passed": true,
+      "node_contract_groups": [
+        {
+          "wrapper_test": "test_public_chrome_worker_contracts",
+          "source": "tests/test_chrome_worker.mjs",
+          "contracts": [
+            "URL-free and structured permission refusals stop every existing-page probe stage without another route",
+            "unknown probe failures and malformed snapshots fail closed while denials for another origin never reopen a tab",
+            "permission denial on an existing target page is terminal without a fresh-page fallback",
+            "official origin permission denial during fresh navigation never attaches retries or leaks its URL",
+            "permission classification never attributes an explicit foreign origin or an incomplete phrase to the bound origin"
+          ],
+          "source_sha256": "ee198b7a70fcf7306dcb5ca73d842d76793bf9f299e90e4b60839bad50e9b3b3",
+          "contracts_present_in_frozen_source": true,
+          "wrapper_log_evidence": [
+            {
+              "line": 340,
+              "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts.test_public_chrome_worker_contracts) ... ok"
+            },
+            {
+              "line": 937,
+              "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts.test_public_chrome_worker_contracts) ... ok"
+            }
+          ],
+          "wrapper_passed_without_skip": true,
+          "scope": "Named contracts are in the frozen MJS source; the real Node suite ran through the successful Python wrapper. Node TAP is captured by that wrapper on success and is not claimed as independent CI log lines."
+        },
+        {
+          "wrapper_test": "test_public_cua_contracts",
+          "source": "tests/test_chrome_bridge_driver.mjs",
+          "contracts": [
+            "management click or post-click permission URL and DOM failures never click again or fall back to navigation",
+            "approximate Runtime.evaluate errors and permission disconnected cancellation or closed codes are never retried"
+          ],
+          "source_sha256": "1a2a17a9da8aa7f7c37c42eb6df1302fdd33072a2f206e43a3e2aefe43db3aa5",
+          "contracts_present_in_frozen_source": true,
+          "wrapper_log_evidence": [
+            {
+              "line": 339,
+              "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts.test_public_cua_contracts) ... ok"
+            },
+            {
+              "line": 936,
+              "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts.test_public_cua_contracts) ... ok"
+            }
+          ],
+          "wrapper_passed_without_skip": true,
+          "scope": "Named contracts are in the frozen MJS source; the real Node suite ran through the successful Python wrapper. Node TAP is captured by that wrapper on success and is not claimed as independent CI log lines."
+        }
+      ],
+      "failures": [
+        {
+          "line": 3256,
+          "text": "ERROR: test_two_actual_loopback_service_ports_read_same_book_preference_without_browser_storage (test_workbench_draft_preferences.DraftPreferenceStorageTests.test_two_actual_loopback_service_ports_read_same_book_preference_without_browser_storage)"
+        },
+        {
+          "line": 3281,
+          "text": "FAILED (errors=1, skipped=68)"
+        }
+      ],
+      "error_exit_lines": [
+        {
+          "line": 3282,
+          "text": "##[error]Process completed with exit code 1."
+        }
+      ],
+      "cleanup_lines": [
+        3295
+      ],
+      "checks": {
+        "packages": []
+      }
+    },
+    {
+      "id": 119671998676,
+      "name": "test (windows-latest, 3.10)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39732968647/job/119671998676",
+      "api_summary": {
+        "head_sha": "1e38ff04634513578e2fb1c327a015b255e45747",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-22T06:16:56Z",
+            "completed_at": "2026-10-22T06:16:56Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-22T06:16:56Z",
+            "completed_at": "2026-10-22T06:17:05Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-22T06:17:05Z",
+            "completed_at": "2026-10-22T06:17:51Z"
+          },
+          {
+            "name": "Check Windows paths, CRLF and installation locks first",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-22T06:17:51Z",
+            "completed_at": "2026-10-22T06:19:59Z"
+          },
+          {
+            "name": "Check platform draft and Chrome bridge compatibility first",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-22T06:19:59Z",
+            "completed_at": "2026-10-22T06:23:23Z"
+          },
+          {
+            "name": "Run regression tests including historical migration",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-22T06:23:23Z",
+            "completed_at": "2026-10-22T06:49:26Z"
+          },
+          {
+            "name": "Check declared instruction loads by task and role",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-22T06:49:26Z",
+            "completed_at": "2026-10-22T06:49:27Z"
+          },
+          {
+            "name": "Build the complete skill ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-22T06:49:27Z",
+            "completed_at": "2026-10-22T06:49:28Z"
+          },
+          {
+            "name": "Build the Claude Desktop skill ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-22T06:49:28Z",
+            "completed_at": "2026-10-22T06:49:29Z"
+          },
+          {
+            "name": "Build the Codex plugin marketplace ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-22T06:49:29Z",
+            "completed_at": "2026-10-22T06:49:29Z"
+          },
+          {
+            "name": "Exercise the local CLI workflow",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-22T06:49:29Z",
+            "completed_at": "2026-10-22T06:49:36Z"
+          },
+          {
+            "name": "Exercise synthetic Chinese transactions",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-22T06:49:36Z",
+            "completed_at": "2026-10-22T06:49:53Z"
+          },
+          {
+            "name": "Exercise multi-line writing and historical revision",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-22T06:49:53Z",
+            "completed_at": "2026-10-22T06:50:17Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-10-22T06:50:17Z",
+            "completed_at": "2026-10-22T06:50:18Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-22T06:50:18Z",
+            "completed_at": "2026-10-22T06:50:20Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-22T06:50:20Z",
+            "completed_at": "2026-10-22T06:50:20Z"
+          }
+        ]
+      },
+      "observed_log_conclusion": "success",
+      "log": {
+        "path": "dist/release-v0.6.21-candidate/job-119671998676.log",
+        "bytes": 513147,
+        "sha256": "1f7bd8e51c7bdbf4425aa9080b7efcee1b6eb45e6fee18077e0bd6ff131137cd",
+        "lines": 3762,
+        "first_timestamp": "2026-10-22T06:16:56.2149342Z",
+        "last_timestamp": "2026-10-22T06:50:20.4646008Z"
+      },
+      "checkout_commit_lines": [
+        93
+      ],
+      "test_runs": [
+        {
+          "line": 377,
+          "run": 196,
+          "duration_seconds": 127.76,
+          "result": "OK (skipped=1)",
+          "skipped": 1
+        },
+        {
+          "line": 840,
+          "run": 448,
+          "duration_seconds": 199.544,
+          "result": "OK (skipped=6)",
+          "skipped": 6
+        },
+        {
+          "line": 3307,
+          "run": 2451,
+          "duration_seconds": 1524.893,
+          "result": "OK (skipped=68)",
+          "skipped": 68
+        }
+      ],
+      "full_suite_observed": true,
+      "regression_test_evidence": {
+        "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access": [
+          {
+            "line": 768,
+            "result": "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          },
+          {
+            "line": 2948,
+            "result": "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing": [
+          {
+            "line": 769,
+            "result": "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          },
+          {
+            "line": 2949,
+            "result": "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_read_timeout_or_disconnect_never_reaches_library": [
+          {
+            "line": 770,
+            "result": "test_denied_post_read_timeout_or_disconnect_never_reaches_library (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          },
+          {
+            "line": 2950,
+            "result": "test_denied_post_read_timeout_or_disconnect_never_reaches_library (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_unauthorized_invalid_json_receives_403_without_changing_files": [
+          {
+            "line": 781,
+            "result": "test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          },
+          {
+            "line": 2961,
+            "result": "test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_wrong_content_type_consumes_small_body_before_400": [
+          {
+            "line": 785,
+            "result": "test_wrong_content_type_consumes_small_body_before_400 (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          },
+          {
+            "line": 2965,
+            "result": "test_wrong_content_type_consumes_small_body_before_400 (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_external_and_session_directory_pins_never_overlap_between_threads": [
+          {
+            "line": 611,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          },
+          {
+            "line": 2084,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ],
+        "test_cross_process_sender_and_host_exchange_five_authenticated_requests": [
+          {
+            "line": 602,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          },
+          {
+            "line": 2075,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ],
+        "test_local_sharing_refusals_retry_both_publish_and_replace": [
+          {
+            "line": 580,
+            "result": "test_local_sharing_refusals_retry_both_publish_and_replace (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          },
+          {
+            "line": 2053,
+            "result": "test_local_sharing_refusals_retry_both_publish_and_replace (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_native_directory_guard_failure_stops_retry": [
+          {
+            "line": 581,
+            "result": "test_native_directory_guard_failure_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          },
+          {
+            "line": 2054,
+            "result": "test_native_directory_guard_failure_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_new_destination_never_gets_overwritten_after_sharing_refusal": [
+          {
+            "line": 582,
+            "result": "test_new_destination_never_gets_overwritten_after_sharing_refusal (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          },
+          {
+            "line": 2055,
+            "result": "test_new_destination_never_gets_overwritten_after_sharing_refusal (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_nonsharing_and_posix_errors_never_retry": [
+          {
+            "line": 583,
+            "result": "test_nonsharing_and_posix_errors_never_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          },
+          {
+            "line": 2056,
+            "result": "test_nonsharing_and_posix_errors_never_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_replacement_destination_identity_or_contents_change_stops_retry": [
+          {
+            "line": 584,
+            "result": "test_replacement_destination_identity_or_contents_change_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          },
+          {
+            "line": 2057,
+            "result": "test_replacement_destination_identity_or_contents_change_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_sharing_refusal_has_bounded_budget_and_preserves_last_error": [
+          {
+            "line": 585,
+            "result": "test_sharing_refusal_has_bounded_budget_and_preserves_last_error (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          },
+          {
+            "line": 2058,
+            "result": "test_sharing_refusal_has_bounded_budget_and_preserves_last_error (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_source_identity_size_mtime_or_disappearance_stops_retry": [
+          {
+            "line": 586,
+            "result": "test_source_identity_size_mtime_or_disappearance_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          },
+          {
+            "line": 2059,
+            "result": "test_source_identity_size_mtime_or_disappearance_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_successful_retried_claim_is_never_dispatched_twice": [
+          {
+            "line": 587,
+            "result": "test_successful_retried_claim_is_never_dispatched_twice (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          },
+          {
+            "line": 2060,
+            "result": "test_successful_retried_claim_is_never_dispatched_twice (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_body_sharing_error_is_propagated_without_reentering_or_replaying": [
+          {
+            "line": 574,
+            "result": "test_body_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          },
+          {
+            "line": 2047,
+            "result": "test_body_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body": [
+          {
+            "line": 575,
+            "result": "test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          },
+          {
+            "line": 2048,
+            "result": "test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit": [
+          {
+            "line": 576,
+            "result": "test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          },
+          {
+            "line": 2049,
+            "result": "test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_exit_sharing_error_is_propagated_without_reentering_or_replaying": [
+          {
+            "line": 577,
+            "result": "test_exit_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          },
+          {
+            "line": 2050,
+            "result": "test_exit_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_other_errors_and_posix_sharing_errors_do_not_retry": [
+          {
+            "line": 578,
+            "result": "test_other_errors_and_posix_sharing_errors_do_not_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          },
+          {
+            "line": 2051,
+            "result": "test_other_errors_and_posix_sharing_errors_do_not_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_partial_create_enter_cleans_resources_before_idempotent_retry": [
+          {
+            "line": 579,
+            "result": "test_partial_create_enter_cleans_resources_before_idempotent_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          },
+          {
+            "line": 2052,
+            "result": "test_partial_create_enter_cleans_resources_before_idempotent_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_loading_more_materials_preserves_current_unsaved_editor": [
+          {
+            "line": 3014,
+            "result": "test_loading_more_materials_preserves_current_unsaved_editor (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_successful_candidate_save_refreshes_material_inventory_for_new_file": [
+          {
+            "line": 3018,
+            "result": "test_successful_candidate_save_refreshes_material_inventory_for_new_file (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_history_larger_than_old_limit_pages_without_losing_formal_progress_or_files": [
+          {
+            "line": 3012,
+            "result": "test_history_larger_than_old_limit_pages_without_losing_formal_progress_or_files (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_catalog_hard_budget_keeps_partial_inventory_and_does_not_block_direct_open": [
+          {
+            "line": 3005,
+            "result": "test_catalog_hard_budget_keeps_partial_inventory_and_does_not_block_direct_open (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_cursor_validation_and_expiry_require_explicit_fresh_scan": [
+          {
+            "line": 3008,
+            "result": "test_cursor_validation_and_expiry_require_explicit_fresh_scan (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_cursor_rejects_replaced_book_root_even_with_identical_book_id": [
+          {
+            "line": 3007,
+            "result": "test_cursor_rejects_replaced_book_root_even_with_identical_book_id (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_windows_guard_mtime_changes_allow_pages_but_not_replaced_directory": [
+          {
+            "line": 3019,
+            "result": "test_windows_guard_mtime_changes_allow_pages_but_not_replaced_directory (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_candidate_recovery_and_pending_open_without_inventory_rescan": [
+          {
+            "line": 3004,
+            "result": "test_candidate_recovery_and_pending_open_without_inventory_rescan (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_material_candidate_resolves_markdown_origin_without_inventory_rescan": [
+          {
+            "line": 3015,
+            "result": "test_material_candidate_resolves_markdown_origin_without_inventory_rescan (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_local_decision_and_backend_verification_can_be_separate_for_each_platform": [
+          {
+            "line": 1773,
+            "result": "test_local_decision_and_backend_verification_can_be_separate_for_each_platform (test_outline_position_audit.OutlinePositionAuditTests) ... ok"
+          }
+        ],
+        "test_separated_status_does_not_borrow_a_missing_axis_from_ordinary_notes": [
+          {
+            "line": 1792,
+            "result": "test_separated_status_does_not_borrow_a_missing_axis_from_ordinary_notes (test_outline_position_audit.OutlinePositionAuditTests) ... ok"
+          }
+        ],
+        "test_separated_status_is_scoped_to_its_platform_block": [
+          {
+            "line": 1793,
+            "result": "test_separated_status_is_scoped_to_its_platform_block (test_outline_position_audit.OutlinePositionAuditTests) ... ok"
+          }
+        ],
+        "test_legacy_group_pending_note_is_still_supported": [
+          {
+            "line": 1771,
+            "result": "test_legacy_group_pending_note_is_still_supported (test_outline_position_audit.OutlinePositionAuditTests) ... ok"
+          }
+        ],
+        "test_previous_release_source_versions_are_rejected": [
+          {
+            "line": 2386,
+            "result": "test_previous_release_source_versions_are_rejected (test_publish_windows_draft.DistributionTests) ... ok"
+          }
+        ],
+        "test_source_comparison_only_accepts_the_eight_ui_adaptations": [
+          {
+            "line": 2591,
+            "result": "test_source_comparison_only_accepts_the_eight_ui_adaptations (test_verify_codex_plugin.CodexPluginEvidenceTests) ... ok"
+          }
+        ],
+        "test_manual_login_deadline_includes_initial_navigation": [
+          {
+            "line": 527,
+            "result": "test_manual_login_deadline_includes_initial_navigation (test_platform_browser.BrowserTests) ... ok"
+          },
+          {
+            "line": 2000,
+            "result": "test_manual_login_deadline_includes_initial_navigation (test_platform_browser.BrowserTests) ... ok"
+          }
+        ],
+        "test_public_chrome_worker_contracts": [
+          {
+            "line": 391,
+            "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts) ... ok"
+          },
+          {
+            "line": 988,
+            "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts) ... ok"
+          }
+        ],
+        "test_public_cua_contracts": [
+          {
+            "line": 390,
+            "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts) ... ok"
+          },
+          {
+            "line": 987,
+            "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts) ... ok"
+          }
+        ],
+        "test_other_platform_profiles_never_offer_automatic_connection_or_launch": [
+          {
+            "line": 655,
+            "result": "test_other_platform_profiles_never_offer_automatic_connection_or_launch (test_platform_draft_auto_connect.PlatformDraftAutoConnectTests) ... ok"
+          },
+          {
+            "line": 2128,
+            "result": "test_other_platform_profiles_never_offer_automatic_connection_or_launch (test_platform_draft_auto_connect.PlatformDraftAutoConnectTests) ... ok"
+          }
+        ],
+        "test_other_platforms_are_rejected_before_runtime_context_or_model_start": [
+          {
+            "line": 427,
+            "result": "test_other_platforms_are_rejected_before_runtime_context_or_model_start (test_chrome_worker_controller.ControllerTests) ... ok"
+          },
+          {
+            "line": 1024,
+            "result": "test_other_platforms_are_rejected_before_runtime_context_or_model_start (test_chrome_worker_controller.ControllerTests) ... ok"
+          }
+        ],
+        "test_fake_native_directory_pin_checks_identity_and_releases_handles": [
+          {
+            "line": 414,
+            "result": "test_fake_native_directory_pin_checks_identity_and_releases_handles (test_chrome_worker_controller.ControllerTests) ... ok"
+          },
+          {
+            "line": 1011,
+            "result": "test_fake_native_directory_pin_checks_identity_and_releases_handles (test_chrome_worker_controller.ControllerTests) ... ok"
+          }
+        ],
+        "test_format_choices_are_explicit_and_bound_to_preview_and_start": [
+          {
+            "line": 811,
+            "result": "test_format_choices_are_explicit_and_bound_to_preview_and_start (test_workbench_platform_draft_ui.PlatformDraftUITests) ... ok"
+          },
+          {
+            "line": 3045,
+            "result": "test_format_choices_are_explicit_and_bound_to_preview_and_start (test_workbench_platform_draft_ui.PlatformDraftUITests) ... ok"
+          }
+        ],
+        "test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor": [
+          {
+            "line": 735,
+            "result": "test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests) ... ok"
+          },
+          {
+            "line": 2744,
+            "result": "test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests) ... ok"
+          }
+        ],
+        "test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once": [
+          {
+            "line": 737,
+            "result": "test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests) ... ok"
+          },
+          {
+            "line": 2746,
+            "result": "test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests) ... ok"
+          }
+        ],
+        "test_origin_denial_explains_permission_separately_from_extension_connection": [
+          {
+            "line": 740,
+            "result": "test_origin_denial_explains_permission_separately_from_extension_connection (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests) ... ok"
+          },
+          {
+            "line": 2749,
+            "result": "test_origin_denial_explains_permission_separately_from_extension_connection (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests) ... ok"
+          }
+        ],
+        "test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error": [
+          {
+            "line": 434,
+            "result": "test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error (test_chrome_worker_controller.ControllerTests) ... ok"
+          },
+          {
+            "line": 1031,
+            "result": "test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error (test_chrome_worker_controller.ControllerTests) ... ok"
+          }
+        ],
+        "test_default_stays_strict_and_explicit_policy_preserves_real_hashes": [
+          {
+            "line": 685,
+            "result": "test_default_stays_strict_and_explicit_policy_preserves_real_hashes (test_platform_draft_equivalence.TerminalLFPolicyTests) ... ok"
+          },
+          {
+            "line": 2158,
+            "result": "test_default_stays_strict_and_explicit_policy_preserves_real_hashes (test_platform_draft_equivalence.TerminalLFPolicyTests) ... ok"
+          }
+        ],
+        "test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved": [
+          {
+            "line": 674,
+            "result": "test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved (test_platform_draft_equivalence.RenderedBodyTests) ... ok"
+          },
+          {
+            "line": 2147,
+            "result": "test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved (test_platform_draft_equivalence.RenderedBodyTests) ... ok"
+          }
+        ],
+        "test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate": [
+          {
+            "line": 681,
+            "result": "test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate (test_platform_draft_equivalence.RenderedBodyV2Tests) ... ok"
+          },
+          {
+            "line": 2154,
+            "result": "test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate (test_platform_draft_equivalence.RenderedBodyV2Tests) ... ok"
+          }
+        ],
+        "test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes": [
+          {
+            "line": 708,
+            "result": "test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes (test_platform_draft_retirement.DeletedDraftRetirementTests) ... ok"
+          },
+          {
+            "line": 2181,
+            "result": "test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes (test_platform_draft_retirement.DeletedDraftRetirementTests) ... ok"
+          }
+        ],
+        "test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack": [
+          {
+            "line": 706,
+            "result": "test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack (test_platform_draft_retirement.DeletedDraftRetirementTests) ... ok"
+          },
+          {
+            "line": 2179,
+            "result": "test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack (test_platform_draft_retirement.DeletedDraftRetirementTests) ... ok"
+          }
+        ],
+        "test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched": [
+          {
+            "line": 756,
+            "result": "test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched (test_workbench_draft_preferences.DraftPreferenceStorageTests) ... ok"
+          },
+          {
+            "line": 2858,
+            "result": "test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched (test_workbench_draft_preferences.DraftPreferenceStorageTests) ... ok"
+          }
+        ],
+        "test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview": [
+          {
+            "line": 764,
+            "result": "test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview (test_workbench_draft_preferences.DraftPreferenceUITests) ... ok"
+          },
+          {
+            "line": 2866,
+            "result": "test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview (test_workbench_draft_preferences.DraftPreferenceUITests) ... ok"
+          }
+        ],
+        "test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start": [
+          {
+            "line": 747,
+            "result": "test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start (test_workbench_draft_poll_ui.WorkbenchDraftPollUITests) ... ok"
+          },
+          {
+            "line": 2849,
+            "result": "test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start (test_workbench_draft_poll_ui.WorkbenchDraftPollUITests) ... ok"
+          }
+        ],
+        "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off": [
+          {
+            "line": 590,
+            "result": "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          },
+          {
+            "line": 2063,
+            "result": "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock": [
+          {
+            "line": 591,
+            "result": "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          },
+          {
+            "line": 2064,
+            "result": "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_noncontention_and_explicit_access_denial_never_retry": [
+          {
+            "line": 594,
+            "result": "test_noncontention_and_explicit_access_denial_never_retry (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          },
+          {
+            "line": 2067,
+            "result": "test_noncontention_and_explicit_access_denial_never_retry (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_changed_lock_identity_or_directory_stops_waiting": [
+          {
+            "line": 589,
+            "result": "test_changed_lock_identity_or_directory_stops_waiting (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          },
+          {
+            "line": 2062,
+            "result": "test_changed_lock_identity_or_directory_stops_waiting (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing": [
+          {
+            "line": 593,
+            "result": "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          },
+          {
+            "line": 2066,
+            "result": "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_body_unlock_and_handoff_errors_are_not_replayed": [
+          {
+            "line": 588,
+            "result": "test_body_unlock_and_handoff_errors_are_not_replayed (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          },
+          {
+            "line": 2061,
+            "result": "test_body_unlock_and_handoff_errors_are_not_replayed (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_posix_flock_is_unchanged": [
+          {
+            "line": 595,
+            "result": "test_posix_flock_is_unchanged (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          },
+          {
+            "line": 2068,
+            "result": "test_posix_flock_is_unchanged (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_empty_lock_initialization_is_not_repeated": [
+          {
+            "line": 592,
+            "result": "test_empty_lock_initialization_is_not_repeated (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          },
+          {
+            "line": 2065,
+            "result": "test_empty_lock_initialization_is_not_repeated (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ]
+      },
+      "required_regression_tests_passed": true,
+      "node_contract_groups": [
+        {
+          "wrapper_test": "test_public_chrome_worker_contracts",
+          "source": "tests/test_chrome_worker.mjs",
+          "contracts": [
+            "URL-free and structured permission refusals stop every existing-page probe stage without another route",
+            "unknown probe failures and malformed snapshots fail closed while denials for another origin never reopen a tab",
+            "permission denial on an existing target page is terminal without a fresh-page fallback",
+            "official origin permission denial during fresh navigation never attaches retries or leaks its URL",
+            "permission classification never attributes an explicit foreign origin or an incomplete phrase to the bound origin"
+          ],
+          "source_sha256": "ee198b7a70fcf7306dcb5ca73d842d76793bf9f299e90e4b60839bad50e9b3b3",
+          "contracts_present_in_frozen_source": true,
+          "wrapper_log_evidence": [
+            {
+              "line": 391,
+              "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts) ... ok"
+            },
+            {
+              "line": 988,
+              "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts) ... ok"
+            }
+          ],
+          "wrapper_passed_without_skip": true,
+          "scope": "Named contracts are in the frozen MJS source; the real Node suite ran through the successful Python wrapper. Node TAP is captured by that wrapper on success and is not claimed as independent CI log lines."
+        },
+        {
+          "wrapper_test": "test_public_cua_contracts",
+          "source": "tests/test_chrome_bridge_driver.mjs",
+          "contracts": [
+            "management click or post-click permission URL and DOM failures never click again or fall back to navigation",
+            "approximate Runtime.evaluate errors and permission disconnected cancellation or closed codes are never retried"
+          ],
+          "source_sha256": "1a2a17a9da8aa7f7c37c42eb6df1302fdd33072a2f206e43a3e2aefe43db3aa5",
+          "contracts_present_in_frozen_source": true,
+          "wrapper_log_evidence": [
+            {
+              "line": 390,
+              "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts) ... ok"
+            },
+            {
+              "line": 987,
+              "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts) ... ok"
+            }
+          ],
+          "wrapper_passed_without_skip": true,
+          "scope": "Named contracts are in the frozen MJS source; the real Node suite ran through the successful Python wrapper. Node TAP is captured by that wrapper on success and is not claimed as independent CI log lines."
+        }
+      ],
+      "failures": [],
+      "error_exit_lines": [],
+      "cleanup_lines": [
+        3761
+      ],
+      "checks": {
+        "packages": [
+          {
+            "line": 3602,
+            "archive": "D:\\a\\story-skill\\story-skill\\dist\\story-skill-0.6.21.zip",
+            "version": "0.6.21",
+            "files": 64,
+            "sha256": "316395ea9f8513cac067d2746b444dfe4e6bba92d2cf3b7c820fb10fce773dd3",
+            "bytes": 622256
+          },
+          {
+            "line": 3613,
+            "archive": "D:\\a\\story-skill\\story-skill\\dist\\story-skill-claude-desktop-0.6.21-r2.zip",
+            "version": "0.6.21",
+            "files": 66,
+            "source_files": 64,
+            "skill_name": "story-skill",
+            "bundle_revision": 2,
+            "skill_entry_count": 1,
+            "entry_path_mapping": {
+              "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+              "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+              "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+              "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+              "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+              "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+              "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+              "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+            },
+            "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+            "sha256": "0cb19873a273ba6bd75c557c774551bdb08ea733c2936aff1b4af8368cc7cd2a",
+            "bytes": 628526
+          },
+          {
+            "line": 3624,
+            "archive": "D:\\a\\story-skill\\story-skill\\dist\\ci-codex\\story-skill-codex-0.6.21.zip",
+            "checksum": "D:\\a\\story-skill\\story-skill\\dist\\ci-codex\\story-skill-codex-0.6.21.zip.sha256",
+            "marketplace_root": "D:\\a\\story-skill\\story-skill\\dist\\ci-codex\\story-skill-codex-0.6.21",
+            "plugin_root": "D:\\a\\story-skill\\story-skill\\dist\\ci-codex\\story-skill-codex-0.6.21\\plugins\\story-skill",
+            "version": "0.6.21",
+            "skill_count": 8,
+            "payload_files": 67,
+            "bundle_files": 69,
+            "sha256": "dc71c4ed5cbf13a908e409b116541ef2a7049493b1d756653f69f55110682e2f",
+            "source_payload_files": 64,
+            "adapted_ui_files": 8
+          }
+        ],
+        "instruction_budget": {
+          "line": 3320,
+          "passed": true,
+          "loads_checked": 281,
+          "manifest_sha256": "432160e7ed9f9653e46aeaa0383b8a5fbe14720aae5af2cf0c0f7270348a6979"
+        },
+        "smoke": {
+          "line": 3635,
+          "ok": true,
+          "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+          "commands_executed": [
+            "init",
+            "notes",
+            "plan",
+            "status",
+            "outline-bind",
+            "context",
+            "lint",
+            "commit",
+            "commit",
+            "reconcile",
+            "lint",
+            "reconcile",
+            "reconcile",
+            "ingest",
+            "next",
+            "record",
+            "record",
+            "next",
+            "coverage",
+            "findings",
+            "report",
+            "coverage"
+          ],
+          "visible_chars": 213,
+          "draft_sha256": "6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be",
+          "reconciled_draft_sha256": "ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562",
+          "context_bytes": 1114,
+          "context_budget_bytes": 4000,
+          "chapter_commit_idempotent": true,
+          "export_bytes_verified": true,
+          "reconcile_idempotent": true,
+          "external_backup_verified": true,
+          "non_content_chunks_completed": 1,
+          "analysis_coverage": {
+            "analyzed": 3,
+            "chunks_total": 3,
+            "complete_for_imported_text": true,
+            "next_chunk": null,
+            "pending": 0,
+            "report_path": ".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md",
+            "source": "a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7",
+            "source_coverage": "partial",
+            "text_coverage_contiguous": true
+          },
+          "finding_pages_returned": 3,
+          "final_report_exported": true,
+          "literary_quality_tested": false
+        },
+        "chinese": {
+          "line": 3646,
+          "ok": true,
+          "books": [
+            "合成中文事务long",
+            "合成中文事务short"
+          ],
+          "retained_workdir": null
+        },
+        "long": {
+          "line": 3745,
+          "ok": true,
+          "report": "D:\\a\\story-skill\\story-skill\\dist\\ci-long.json"
+        }
+      }
+    },
+    {
+      "id": 119671998861,
+      "name": "test (ubuntu-latest, 3.10)",
+      "url": "https://github.com/NingCui29/story-skill/actions/runs/39732968647/job/119671998861",
+      "api_summary": {
+        "head_sha": "1e38ff04634513578e2fb1c327a015b255e45747",
+        "status": "completed",
+        "conclusion": "success",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-22T06:16:56Z",
+            "completed_at": "2026-10-22T06:16:57Z"
+          },
+          {
+            "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-22T06:16:57Z",
+            "completed_at": "2026-10-22T06:16:59Z"
+          },
+          {
+            "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-22T06:16:59Z",
+            "completed_at": "2026-10-22T06:16:59Z"
+          },
+          {
+            "name": "Check Windows paths, CRLF and installation locks first",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 4,
+            "started_at": "2026-10-22T06:16:59Z",
+            "completed_at": "2026-10-22T06:16:59Z"
+          },
+          {
+            "name": "Check platform draft and Chrome bridge compatibility first",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5,
+            "started_at": "2026-10-22T06:16:59Z",
+            "completed_at": "2026-10-22T06:16:59Z"
+          },
+          {
+            "name": "Run regression tests including historical migration",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-22T06:16:59Z",
+            "completed_at": "2026-10-22T06:20:18Z"
+          },
+          {
+            "name": "Check declared instruction loads by task and role",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-22T06:20:18Z",
+            "completed_at": "2026-10-22T06:20:19Z"
+          },
+          {
+            "name": "Build the complete skill ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-22T06:20:19Z",
+            "completed_at": "2026-10-22T06:20:19Z"
+          },
+          {
+            "name": "Build the Claude Desktop skill ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-22T06:20:19Z",
+            "completed_at": "2026-10-22T06:20:19Z"
+          },
+          {
+            "name": "Build the Codex plugin marketplace ZIP",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-22T06:20:19Z",
+            "completed_at": "2026-10-22T06:20:19Z"
+          },
+          {
+            "name": "Exercise the local CLI workflow",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-22T06:20:19Z",
+            "completed_at": "2026-10-22T06:20:22Z"
+          },
+          {
+            "name": "Exercise synthetic Chinese transactions",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-22T06:20:22Z",
+            "completed_at": "2026-10-22T06:20:29Z"
+          },
+          {
+            "name": "Exercise multi-line writing and historical revision",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-22T06:20:29Z",
+            "completed_at": "2026-10-22T06:20:39Z"
+          },
+          {
+            "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-10-22T06:20:39Z",
+            "completed_at": "2026-10-22T06:20:39Z"
+          },
+          {
+            "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-22T06:20:39Z",
+            "completed_at": "2026-10-22T06:20:39Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-22T06:20:39Z",
+            "completed_at": "2026-10-22T06:20:39Z"
+          }
+        ]
+      },
+      "observed_log_conclusion": "success",
+      "log": {
+        "path": "dist/release-v0.6.21-candidate/job-119671998861.log",
+        "bytes": 404509,
+        "sha256": "ac6d67257fdb5e66ccaab1489e60a365651b070c41c3ff6bfcf2b1dc7f93fa01",
+        "lines": 3058,
+        "first_timestamp": "2026-10-22T06:16:56.5043548Z",
+        "last_timestamp": "2026-10-22T06:20:39.5083748Z"
+      },
+      "checkout_commit_lines": [
+        106
+      ],
+      "test_runs": [
+        {
+          "line": 2596,
+          "run": 2451,
+          "duration_seconds": 193.724,
+          "result": "OK (skipped=42)",
+          "skipped": 42
+        }
+      ],
+      "full_suite_observed": true,
+      "regression_test_evidence": {
+        "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access": [
+          {
+            "line": 2237,
+            "result": "test_denied_post_consumes_small_body_before_reply_without_parsing_or_book_access (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing": [
+          {
+            "line": 2238,
+            "result": "test_denied_post_never_reads_missing_invalid_large_or_ambiguous_framing (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_denied_post_read_timeout_or_disconnect_never_reaches_library": [
+          {
+            "line": 2239,
+            "result": "test_denied_post_read_timeout_or_disconnect_never_reaches_library (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_unauthorized_invalid_json_receives_403_without_changing_files": [
+          {
+            "line": 2250,
+            "result": "test_unauthorized_invalid_json_receives_403_without_changing_files (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_wrong_content_type_consumes_small_body_before_400": [
+          {
+            "line": 2254,
+            "result": "test_wrong_content_type_consumes_small_body_before_400 (test_workbench_library.WorkbenchLibraryTests) ... ok"
+          }
+        ],
+        "test_external_and_session_directory_pins_never_overlap_between_threads": [
+          {
+            "line": 1373,
+            "result": "test_external_and_session_directory_pins_never_overlap_between_threads (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ],
+        "test_cross_process_sender_and_host_exchange_five_authenticated_requests": [
+          {
+            "line": 1364,
+            "result": "test_cross_process_sender_and_host_exchange_five_authenticated_requests (test_platform_chrome_bridge.ChromeBridgeTests) ... ok"
+          }
+        ],
+        "test_local_sharing_refusals_retry_both_publish_and_replace": [
+          {
+            "line": 1342,
+            "result": "test_local_sharing_refusals_retry_both_publish_and_replace (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_native_directory_guard_failure_stops_retry": [
+          {
+            "line": 1343,
+            "result": "test_native_directory_guard_failure_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_new_destination_never_gets_overwritten_after_sharing_refusal": [
+          {
+            "line": 1344,
+            "result": "test_new_destination_never_gets_overwritten_after_sharing_refusal (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_nonsharing_and_posix_errors_never_retry": [
+          {
+            "line": 1345,
+            "result": "test_nonsharing_and_posix_errors_never_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_replacement_destination_identity_or_contents_change_stops_retry": [
+          {
+            "line": 1346,
+            "result": "test_replacement_destination_identity_or_contents_change_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_sharing_refusal_has_bounded_budget_and_preserves_last_error": [
+          {
+            "line": 1347,
+            "result": "test_sharing_refusal_has_bounded_budget_and_preserves_last_error (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_source_identity_size_mtime_or_disappearance_stops_retry": [
+          {
+            "line": 1348,
+            "result": "test_source_identity_size_mtime_or_disappearance_stops_retry (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_successful_retried_claim_is_never_dispatched_twice": [
+          {
+            "line": 1349,
+            "result": "test_successful_retried_claim_is_never_dispatched_twice (test_platform_chrome_bridge.BridgeRenameSharingRetryTests) ... ok"
+          }
+        ],
+        "test_body_sharing_error_is_propagated_without_reentering_or_replaying": [
+          {
+            "line": 1336,
+            "result": "test_body_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body": [
+          {
+            "line": 1337,
+            "result": "test_continuous_enter_sharing_conflicts_stop_at_deadline_without_body (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit": [
+          {
+            "line": 1338,
+            "result": "test_enter_sharing_conflicts_retry_before_exactly_one_body_and_successful_exit (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_exit_sharing_error_is_propagated_without_reentering_or_replaying": [
+          {
+            "line": 1339,
+            "result": "test_exit_sharing_error_is_propagated_without_reentering_or_replaying (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_other_errors_and_posix_sharing_errors_do_not_retry": [
+          {
+            "line": 1340,
+            "result": "test_other_errors_and_posix_sharing_errors_do_not_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_partial_create_enter_cleans_resources_before_idempotent_retry": [
+          {
+            "line": 1341,
+            "result": "test_partial_create_enter_cleans_resources_before_idempotent_retry (test_platform_chrome_bridge.BridgePinEnterRetryTests) ... ok"
+          }
+        ],
+        "test_loading_more_materials_preserves_current_unsaved_editor": [
+          {
+            "line": 2303,
+            "result": "test_loading_more_materials_preserves_current_unsaved_editor (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_successful_candidate_save_refreshes_material_inventory_for_new_file": [
+          {
+            "line": 2307,
+            "result": "test_successful_candidate_save_refreshes_material_inventory_for_new_file (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_history_larger_than_old_limit_pages_without_losing_formal_progress_or_files": [
+          {
+            "line": 2301,
+            "result": "test_history_larger_than_old_limit_pages_without_losing_formal_progress_or_files (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_catalog_hard_budget_keeps_partial_inventory_and_does_not_block_direct_open": [
+          {
+            "line": 2294,
+            "result": "test_catalog_hard_budget_keeps_partial_inventory_and_does_not_block_direct_open (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_cursor_validation_and_expiry_require_explicit_fresh_scan": [
+          {
+            "line": 2297,
+            "result": "test_cursor_validation_and_expiry_require_explicit_fresh_scan (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_cursor_rejects_replaced_book_root_even_with_identical_book_id": [
+          {
+            "line": 2296,
+            "result": "test_cursor_rejects_replaced_book_root_even_with_identical_book_id (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_windows_guard_mtime_changes_allow_pages_but_not_replaced_directory": [
+          {
+            "line": 2308,
+            "result": "test_windows_guard_mtime_changes_allow_pages_but_not_replaced_directory (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_candidate_recovery_and_pending_open_without_inventory_rescan": [
+          {
+            "line": 2293,
+            "result": "test_candidate_recovery_and_pending_open_without_inventory_rescan (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_material_candidate_resolves_markdown_origin_without_inventory_rescan": [
+          {
+            "line": 2304,
+            "result": "test_material_candidate_resolves_markdown_origin_without_inventory_rescan (test_workbench_material_scan.WorkbenchMaterialScanTests) ... ok"
+          }
+        ],
+        "test_local_decision_and_backend_verification_can_be_separate_for_each_platform": [
+          {
+            "line": 1062,
+            "result": "test_local_decision_and_backend_verification_can_be_separate_for_each_platform (test_outline_position_audit.OutlinePositionAuditTests) ... ok"
+          }
+        ],
+        "test_separated_status_does_not_borrow_a_missing_axis_from_ordinary_notes": [
+          {
+            "line": 1081,
+            "result": "test_separated_status_does_not_borrow_a_missing_axis_from_ordinary_notes (test_outline_position_audit.OutlinePositionAuditTests) ... ok"
+          }
+        ],
+        "test_separated_status_is_scoped_to_its_platform_block": [
+          {
+            "line": 1082,
+            "result": "test_separated_status_is_scoped_to_its_platform_block (test_outline_position_audit.OutlinePositionAuditTests) ... ok"
+          }
+        ],
+        "test_legacy_group_pending_note_is_still_supported": [
+          {
+            "line": 1060,
+            "result": "test_legacy_group_pending_note_is_still_supported (test_outline_position_audit.OutlinePositionAuditTests) ... ok"
+          }
+        ],
+        "test_previous_release_source_versions_are_rejected": [
+          {
+            "line": 1675,
+            "result": "test_previous_release_source_versions_are_rejected (test_publish_windows_draft.DistributionTests) ... ok"
+          }
+        ],
+        "test_source_comparison_only_accepts_the_eight_ui_adaptations": [
+          {
+            "line": 1880,
+            "result": "test_source_comparison_only_accepts_the_eight_ui_adaptations (test_verify_codex_plugin.CodexPluginEvidenceTests) ... ok"
+          }
+        ],
+        "test_manual_login_deadline_includes_initial_navigation": [
+          {
+            "line": 1289,
+            "result": "test_manual_login_deadline_includes_initial_navigation (test_platform_browser.BrowserTests) ... ok"
+          }
+        ],
+        "test_public_chrome_worker_contracts": [
+          {
+            "line": 277,
+            "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts) ... ok"
+          }
+        ],
+        "test_public_cua_contracts": [
+          {
+            "line": 276,
+            "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts) ... ok"
+          }
+        ],
+        "test_other_platform_profiles_never_offer_automatic_connection_or_launch": [
+          {
+            "line": 1417,
+            "result": "test_other_platform_profiles_never_offer_automatic_connection_or_launch (test_platform_draft_auto_connect.PlatformDraftAutoConnectTests) ... ok"
+          }
+        ],
+        "test_other_platforms_are_rejected_before_runtime_context_or_model_start": [
+          {
+            "line": 313,
+            "result": "test_other_platforms_are_rejected_before_runtime_context_or_model_start (test_chrome_worker_controller.ControllerTests) ... ok"
+          }
+        ],
+        "test_fake_native_directory_pin_checks_identity_and_releases_handles": [
+          {
+            "line": 300,
+            "result": "test_fake_native_directory_pin_checks_identity_and_releases_handles (test_chrome_worker_controller.ControllerTests) ... ok"
+          }
+        ],
+        "test_format_choices_are_explicit_and_bound_to_preview_and_start": [
+          {
+            "line": 2334,
+            "result": "test_format_choices_are_explicit_and_bound_to_preview_and_start (test_workbench_platform_draft_ui.PlatformDraftUITests) ... ok"
+          }
+        ],
+        "test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor": [
+          {
+            "line": 2033,
+            "result": "test_connect_only_preview_enables_button_with_connect_expiry_and_preserves_editor (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests) ... ok"
+          }
+        ],
+        "test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once": [
+          {
+            "line": 2035,
+            "result": "test_explicit_connect_click_uses_connect_token_and_sets_auto_connect_once (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests) ... ok"
+          }
+        ],
+        "test_origin_denial_explains_permission_separately_from_extension_connection": [
+          {
+            "line": 2038,
+            "result": "test_origin_denial_explains_permission_separately_from_extension_connection (test_workbench_auto_connect_ui.WorkbenchAutoConnectUITests) ... ok"
+          }
+        ],
+        "test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error": [
+          {
+            "line": 320,
+            "result": "test_resume_allows_only_one_next_call_and_stops_immediately_on_tool_or_permission_error (test_chrome_worker_controller.ControllerTests) ... ok"
+          }
+        ],
+        "test_default_stays_strict_and_explicit_policy_preserves_real_hashes": [
+          {
+            "line": 1447,
+            "result": "test_default_stays_strict_and_explicit_policy_preserves_real_hashes (test_platform_draft_equivalence.TerminalLFPolicyTests) ... ok"
+          }
+        ],
+        "test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved": [
+          {
+            "line": 1436,
+            "result": "test_same_source_unknown_reconciles_encoded_and_other_source_intent_stays_unresolved (test_platform_draft_equivalence.RenderedBodyTests) ... ok"
+          }
+        ],
+        "test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate": [
+          {
+            "line": 1443,
+            "result": "test_v2_lost_create_response_records_v2_unknown_then_reads_without_recreate (test_platform_draft_equivalence.RenderedBodyV2Tests) ... ok"
+          }
+        ],
+        "test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes": [
+          {
+            "line": 1470,
+            "result": "test_precise_retirement_allows_current_formal_content_and_preserves_old_bytes (test_platform_draft_retirement.DeletedDraftRetirementTests) ... ok"
+          }
+        ],
+        "test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack": [
+          {
+            "line": 1468,
+            "result": "test_live_connection_or_unanswered_create_cannot_retire_even_with_operator_ack (test_platform_draft_retirement.DeletedDraftRetirementTests) ... ok"
+          }
+        ],
+        "test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched": [
+          {
+            "line": 2147,
+            "result": "test_preferences_are_private_and_leave_author_database_and_draft_evidence_untouched (test_workbench_draft_preferences.DraftPreferenceStorageTests) ... ok"
+          }
+        ],
+        "test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview": [
+          {
+            "line": 2155,
+            "result": "test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview (test_workbench_draft_preferences.DraftPreferenceUITests) ... ok"
+          }
+        ],
+        "test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start": [
+          {
+            "line": 2138,
+            "result": "test_five_retry_limit_stops_refreshing_without_repeating_preview_or_start (test_workbench_draft_poll_ui.WorkbenchDraftPollUITests) ... ok"
+          }
+        ],
+        "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off": [
+          {
+            "line": 1352,
+            "result": "test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock": [
+          {
+            "line": 1353,
+            "result": "test_contention_deadline_never_enters_body_or_unlocks_unowned_lock (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_noncontention_and_explicit_access_denial_never_retry": [
+          {
+            "line": 1356,
+            "result": "test_noncontention_and_explicit_access_denial_never_retry (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_changed_lock_identity_or_directory_stops_waiting": [
+          {
+            "line": 1351,
+            "result": "test_changed_lock_identity_or_directory_stops_waiting (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing": [
+          {
+            "line": 1355,
+            "result": "test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_body_unlock_and_handoff_errors_are_not_replayed": [
+          {
+            "line": 1350,
+            "result": "test_body_unlock_and_handoff_errors_are_not_replayed (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_posix_flock_is_unchanged": [
+          {
+            "line": 1357,
+            "result": "test_posix_flock_is_unchanged (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ],
+        "test_empty_lock_initialization_is_not_repeated": [
+          {
+            "line": 1354,
+            "result": "test_empty_lock_initialization_is_not_repeated (test_platform_chrome_bridge.BridgeWindowsLockContentionTests) ... ok"
+          }
+        ]
+      },
+      "required_regression_tests_passed": true,
+      "node_contract_groups": [
+        {
+          "wrapper_test": "test_public_chrome_worker_contracts",
+          "source": "tests/test_chrome_worker.mjs",
+          "contracts": [
+            "URL-free and structured permission refusals stop every existing-page probe stage without another route",
+            "unknown probe failures and malformed snapshots fail closed while denials for another origin never reopen a tab",
+            "permission denial on an existing target page is terminal without a fresh-page fallback",
+            "official origin permission denial during fresh navigation never attaches retries or leaks its URL",
+            "permission classification never attributes an explicit foreign origin or an incomplete phrase to the bound origin"
+          ],
+          "source_sha256": "ee198b7a70fcf7306dcb5ca73d842d76793bf9f299e90e4b60839bad50e9b3b3",
+          "contracts_present_in_frozen_source": true,
+          "wrapper_log_evidence": [
+            {
+              "line": 277,
+              "result": "test_public_chrome_worker_contracts (test_chrome_worker.ChromeWorkerContracts) ... ok"
+            }
+          ],
+          "wrapper_passed_without_skip": true,
+          "scope": "Named contracts are in the frozen MJS source; the real Node suite ran through the successful Python wrapper. Node TAP is captured by that wrapper on success and is not claimed as independent CI log lines."
+        },
+        {
+          "wrapper_test": "test_public_cua_contracts",
+          "source": "tests/test_chrome_bridge_driver.mjs",
+          "contracts": [
+            "management click or post-click permission URL and DOM failures never click again or fall back to navigation",
+            "approximate Runtime.evaluate errors and permission disconnected cancellation or closed codes are never retried"
+          ],
+          "source_sha256": "1a2a17a9da8aa7f7c37c42eb6df1302fdd33072a2f206e43a3e2aefe43db3aa5",
+          "contracts_present_in_frozen_source": true,
+          "wrapper_log_evidence": [
+            {
+              "line": 276,
+              "result": "test_public_cua_contracts (test_chrome_bridge_driver.ChromeBridgeDriverContracts) ... ok"
+            }
+          ],
+          "wrapper_passed_without_skip": true,
+          "scope": "Named contracts are in the frozen MJS source; the real Node suite ran through the successful Python wrapper. Node TAP is captured by that wrapper on success and is not claimed as independent CI log lines."
+        }
+      ],
+      "failures": [],
+      "error_exit_lines": [],
+      "cleanup_lines": [
+        3057
+      ],
+      "checks": {
+        "packages": [
+          {
+            "line": 2893,
+            "archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-0.6.21.zip",
+            "version": "0.6.21",
+            "files": 64,
+            "sha256": "6083cf4b1a8a8171c3df98d0ad63d1c73b5fe168a60019b2b80b9ca0d88d4b97",
+            "bytes": 622256
+          },
+          {
+            "line": 2905,
+            "archive": "/home/runner/work/story-skill/story-skill/dist/story-skill-claude-desktop-0.6.21-r2.zip",
+            "version": "0.6.21",
+            "files": 66,
+            "source_files": 64,
+            "skill_name": "story-skill",
+            "bundle_revision": 2,
+            "skill_entry_count": 1,
+            "entry_path_mapping": {
+              "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+              "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+              "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+              "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+              "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+              "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+              "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+              "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+            },
+            "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+            "sha256": "4a2c2354dc4ba9103367a3afe53b0194805c28927f78bcc55efb802f44a268ef",
+            "bytes": 628526
+          },
+          {
+            "line": 2917,
+            "archive": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.21.zip",
+            "checksum": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.21.zip.sha256",
+            "marketplace_root": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.21",
+            "plugin_root": "/home/runner/work/story-skill/story-skill/dist/ci-codex/story-skill-codex-0.6.21/plugins/story-skill",
+            "version": "0.6.21",
+            "skill_count": 8,
+            "payload_files": 67,
+            "bundle_files": 69,
+            "sha256": "a24d05d3c26cd065dc6bb780e1daf38b729f00368bb69ff2d907cfcba579efbc",
+            "source_payload_files": 64,
+            "adapted_ui_files": 8
+          }
+        ],
+        "instruction_budget": {
+          "line": 2610,
+          "passed": true,
+          "loads_checked": 281,
+          "manifest_sha256": "1b4fd3a52f682e68c823ca26cceabd49c0a3447df9fd7d445a1340215c671d2b"
+        },
+        "smoke": {
+          "line": 2929,
+          "ok": true,
+          "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+          "commands_executed": [
+            "init",
+            "notes",
+            "plan",
+            "status",
+            "outline-bind",
+            "context",
+            "lint",
+            "commit",
+            "commit",
+            "reconcile",
+            "lint",
+            "reconcile",
+            "reconcile",
+            "ingest",
+            "next",
+            "record",
+            "record",
+            "next",
+            "coverage",
+            "findings",
+            "report",
+            "coverage"
+          ],
+          "visible_chars": 213,
+          "draft_sha256": "6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be",
+          "reconciled_draft_sha256": "ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562",
+          "context_bytes": 1114,
+          "context_budget_bytes": 4000,
+          "chapter_commit_idempotent": true,
+          "export_bytes_verified": true,
+          "reconcile_idempotent": true,
+          "external_backup_verified": true,
+          "non_content_chunks_completed": 1,
+          "analysis_coverage": {
+            "analyzed": 3,
+            "chunks_total": 3,
+            "complete_for_imported_text": true,
+            "next_chunk": null,
+            "pending": 0,
+            "report_path": ".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md",
+            "source": "a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7",
+            "source_coverage": "partial",
+            "text_coverage_contiguous": true
+          },
+          "finding_pages_returned": 3,
+          "final_report_exported": true,
+          "literary_quality_tested": false
+        },
+        "chinese": {
+          "line": 2941,
+          "ok": true,
+          "books": [
+            "合成中文事务long",
+            "合成中文事务short"
+          ],
+          "retained_workdir": null
+        },
+        "long": {
+          "line": 3041,
+          "ok": true,
+          "report": "/home/runner/work/story-skill/story-skill/dist/ci-long.json"
+        }
+      }
+    }
+  ]
+}
