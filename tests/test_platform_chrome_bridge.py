@@ -1,9 +1,11 @@
 """Local bridge contract tests. Fake observations never contact a platform."""
 import copy
 from contextlib import contextmanager
+import errno
 import json
 import os
 from pathlib import Path
+import queue
 import subprocess
 import sys
 import tempfile
@@ -22,6 +24,14 @@ from tests.test_platform_browser_preview import configuration as preview_profile
 story = fixtures.story
 bridge = story.platform_chrome_bridge
 drafts = story.platform_drafts
+
+
+def windows_lock_api(locking):
+    # Keep native handle-to-fd conversion available to real pinned readers.
+    if os.name == "nt":
+        import msvcrt
+        return SimpleNamespace(**{**vars(msvcrt), "locking": locking})
+    return SimpleNamespace(LK_NBLCK=2, LK_UNLCK=0, locking=locking)
 
 
 class ChromeBridgeTests(unittest.TestCase):
@@ -492,6 +502,104 @@ finally:
         self.assertEqual(json.loads(stdout), {"ok": True, "requests": request_count}, diagnostic)
         self.assertEqual(len(set(request_ids)), request_count)
 
+    @contextmanager
+    def windows_request_clock(self, locking):
+        elapsed = [0.0]
+        started = time.time()
+        clock = SimpleNamespace(monotonic=lambda: elapsed[0], time=lambda: started + elapsed[0],
+                                sleep=lambda seconds: elapsed.__setitem__(0, elapsed[0] + seconds))
+        native = windows_lock_api(locking)
+        native_os = SimpleNamespace(**{**vars(os), "name": "nt"})
+        with patch.object(bridge, "os", native_os), patch.object(bridge, "time", clock), \
+                patch.dict(sys.modules, msvcrt=native), patch.dict(bridge.OP_SECONDS, verify_target=.035):
+            yield elapsed
+
+    def test_initial_windows_lock_timeout_does_not_publish(self):
+        attached = self.attach()
+        adapter = bridge.HostAdapter(self.root, self.binding(), self.config).__enter__()
+        locking = Mock(side_effect=OSError(errno.EACCES, "busy"))
+        with self.windows_request_clock(locking) as elapsed, patch.object(bridge, "_write", wraps=bridge._write) as write:
+            self.assert_code("platform_chrome_request_timeout", adapter._request, "verify_target", {})
+        self.assertAlmostEqual(elapsed[0], .035)
+        self.assertFalse(any(call.args[1] == 0 for call in locking.call_args_list))
+        write.assert_not_called()
+        directory = self.root / bridge.DIRECTORY / attached["session_id"]
+        self.assertEqual(list(directory.glob("outbox-*.json")), [])
+
+    def test_lease_read_exhausting_original_deadline_prevents_dispatch(self):
+        attached = self.attach()
+        adapter = bridge.HostAdapter(self.root, self.binding(), self.config).__enter__()
+        original = bridge._lease
+        locking = Mock()
+        with self.windows_request_clock(locking) as elapsed:
+            def read_lease(*args, **kwargs):
+                value = original(*args, **kwargs)
+                elapsed[0] = .04
+                return value
+            with patch.object(bridge, "_lease", side_effect=read_lease), \
+                    patch.object(bridge, "_write", wraps=bridge._write) as write:
+                self.assert_code("platform_chrome_request_timeout", adapter._request, "verify_target", {})
+        self.assertEqual([call.args[1] for call in locking.call_args_list], [2, 0])
+        write.assert_not_called()
+        directory = self.root / bridge.DIRECTORY / attached["session_id"]
+        self.assertEqual(list(directory.glob("outbox-*.json")), [])
+
+    def test_response_lock_timeout_preserves_single_request_and_deadline(self):
+        attached = self.attach()
+        adapter = bridge.HostAdapter(self.root, self.binding(), self.config).__enter__()
+        attempts = [0]
+        def lock(fd, mode, size):
+            if mode == 2:
+                attempts[0] += 1
+                if attempts[0] > 1:
+                    raise OSError(errno.EACCES, "busy")
+        locking = Mock(side_effect=lock)
+        with self.windows_request_clock(locking) as elapsed, patch.object(bridge, "_write", wraps=bridge._write) as write:
+            self.assert_code("platform_chrome_request_timeout", adapter._request, "verify_target", {})
+        self.assertAlmostEqual(elapsed[0], .035)
+        self.assertEqual([call.args[1] for call in locking.call_args_list], [2, 0, 2, 2, 2, 2])
+        self.assertEqual(write.call_count, 1)
+        directory = self.root / bridge.DIRECTORY / attached["session_id"]
+        requests = list(directory.glob("outbox-*.json"))
+        self.assertEqual(len(requests), 1)
+        request = json.loads(requests[0].read_text())
+        self.assertEqual(write.call_args.args[2], request)
+        self.assertEqual(write.call_args.args[1], "outbox-" + request["id"] + ".json")
+
+    def test_response_lock_transient_collision_keeps_request_and_validates_nonce(self):
+        attached = self.attach()
+        adapter = bridge.HostAdapter(self.root, self.binding(), self.config).__enter__()
+        directory = self.root / bridge.DIRECTORY / attached["session_id"]
+        attempts = [0]
+        observed = []
+        def lock(fd, mode, size):
+            if mode != 2:
+                return
+            attempts[0] += 1
+            if attempts[0] == 2:
+                raise OSError(errno.EACCES, "busy")
+            if attempts[0] == 3:
+                requests = list(directory.glob("outbox-*.json"))
+                self.assertEqual(len(requests), 1)
+                request = json.loads(requests[0].read_text())
+                observed.append(request)
+                response = self.write_response(request, request["binding"]["target"])
+                destination = directory / ("response-" + request["id"] + ".json")
+                destination.write_text(json.dumps(response), encoding="utf-8")
+                destination.chmod(0o600)
+        locking = Mock(side_effect=lock)
+        with self.windows_request_clock(locking) as elapsed, \
+                patch.object(bridge, "_write", wraps=bridge._write) as write, \
+                patch.object(bridge, "_validate_response", wraps=bridge._validate_response) as validate:
+            result = adapter._request("verify_target", {})
+        self.assertEqual(result, adapter.binding["target"])
+        self.assertAlmostEqual(elapsed[0], .01)
+        self.assertEqual([call.args[1] for call in locking.call_args_list], [2, 0, 2, 2, 0])
+        self.assertEqual(write.call_count, 1)
+        self.assertEqual(write.call_args.args[2], observed[0])
+        validate.assert_called_once()
+        self.assertEqual(validate.call_args.args[1], observed[0])
+
     def test_dead_owner_is_not_dispatched(self):
         self.attach()
         with patch.dict(bridge.OP_SECONDS, verify_target=3):
@@ -558,6 +666,220 @@ finally:
                 thread.join(10)
             self.assertFalse(any(thread.is_alive() for thread in threads))
         self.assertEqual(failures, [], "\n".join(failures))
+
+
+class BridgeSessionLockTests(unittest.TestCase):
+    """Exercise only acquisition retries, retaining one protected operation."""
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name).resolve()
+        self.path = self.root / "session.lock"
+        self.path.write_bytes(b"0")
+        self.elapsed, self.sleeps = 0.0, []
+        self.native = windows_lock_api(Mock())
+        self.clock = SimpleNamespace(monotonic=lambda: self.elapsed, sleep=self.sleep)
+
+    def sleep(self, seconds):
+        self.assertGreater(seconds, 0)
+        self.assertLessEqual(seconds, .01)
+        self.sleeps.append(seconds)
+        self.elapsed += seconds
+
+    @contextmanager
+    def environment(self):
+        native_os = SimpleNamespace(**{**vars(os), "name": "nt"})
+        with story._pinned_directory(self.root) as directory, \
+                patch.object(bridge, "os", native_os), patch.object(bridge, "time", self.clock), \
+                patch.dict(sys.modules, msvcrt=self.native):
+            yield directory
+
+    def modes(self):
+        return [call.args[1] for call in self.native.locking.call_args_list]
+
+    def test_short_contention_retries_then_enters_and_unlocks_once(self):
+        native_error = OSError(errno.EACCES, "native lock violation")
+        native_error.winerror = 33
+        errors = [OSError(code, "busy") for code in (errno.EACCES, errno.EAGAIN, errno.EDEADLK)] + [native_error]
+        for error in errors:
+            with self.subTest(error=error):
+                self.native.locking.reset_mock()
+                self.native.locking.side_effect = [error, error, None, None]
+                self.elapsed, self.sleeps = 0.0, []
+                bodies = []
+                with self.environment() as directory, bridge._lock(directory, deadline=.035):
+                    bodies.append("once")
+                self.assertEqual(bodies, ["once"])
+                self.assertEqual(self.modes(), [2, 2, 2, 0])
+                self.assertEqual(self.sleeps, [.01, .01])
+
+    def test_permanent_contention_uses_original_deadline_and_never_unlocks(self):
+        self.native.locking.side_effect = OSError(errno.EACCES, "busy")
+        with self.environment() as directory, self.assertRaises(story.StoryError) as raised:
+            with bridge._lock(directory, deadline=.035):
+                self.fail("timed-out acquisition must not enter the operation")
+        self.assertEqual(raised.exception.code, "platform_chrome_request_timeout")
+        self.assertAlmostEqual(self.elapsed, .035)
+        self.assertEqual(self.modes(), [2, 2, 2, 2])
+
+    def test_management_acquisition_has_its_own_bounded_timeout(self):
+        self.native.locking.side_effect = OSError(errno.EACCES, "busy")
+        with self.environment() as directory, self.assertRaises(story.StoryError) as raised:
+            with bridge._lock(directory):
+                self.fail("permanent contention must not enter the operation")
+        self.assertEqual(raised.exception.code, "platform_chrome_lock_timeout")
+        self.assertAlmostEqual(self.elapsed, 10.0)
+        self.assertNotIn(0, self.modes())
+
+    def test_noncontention_error_propagates_without_retry_or_unlock(self):
+        denied = PermissionError(errno.EACCES, "not a lock collision")
+        denied.winerror = 5
+        for error in (OSError(errno.EBADF, "invalid descriptor"), OSError(errno.EINVAL, "invalid argument"),
+                      OSError(errno.EIO, "I/O error"), denied):
+            with self.subTest(error=error):
+                self.native.locking.reset_mock()
+                self.native.locking.side_effect = error
+                with self.environment() as directory, self.assertRaises(OSError) as raised:
+                    with bridge._lock(directory):
+                        self.fail("failed acquisition must not enter the operation")
+                self.assertIs(raised.exception, error)
+                self.assertEqual(self.modes(), [2])
+                self.assertEqual(self.sleeps, [])
+
+    def test_expired_budget_does_not_attempt_or_unlock(self):
+        with self.environment() as directory, self.assertRaises(story.StoryError) as raised:
+            with bridge._lock(directory, deadline=0):
+                self.fail("expired operation must not start")
+        self.assertEqual(raised.exception.code, "platform_chrome_request_timeout")
+        self.native.locking.assert_not_called()
+
+    @unittest.skipIf(os.name == "nt", "requires the POSIX flock branch")
+    def test_posix_acquisition_error_propagates_without_retry_or_unlock(self):
+        import fcntl
+        error = OSError(errno.EAGAIN, "POSIX acquisition failure")
+        with story._pinned_directory(self.root) as directory, patch.object(bridge, "time", self.clock), \
+                patch.object(fcntl, "flock", side_effect=error) as flock, self.assertRaises(OSError) as raised:
+            with bridge._lock(directory):
+                self.fail("failed acquisition must not enter the operation")
+        self.assertIs(raised.exception, error)
+        self.assertEqual(flock.call_count, 1)
+        self.assertEqual(flock.call_args.args[1], fcntl.LOCK_EX)
+        self.assertEqual(self.sleeps, [])
+
+    def test_deadline_rechecked_after_acquisition_before_body(self):
+        def locking(fd, mode, size):
+            if mode == self.native.LK_NBLCK:
+                self.elapsed = .04
+        self.native.locking.side_effect = locking
+        with self.environment() as directory, self.assertRaises(story.StoryError) as raised:
+            with bridge._lock(directory, deadline=.035):
+                self.fail("late acquisition must not enter the operation")
+        self.assertEqual(raised.exception.code, "platform_chrome_request_timeout")
+        self.assertEqual(self.modes(), [2, 0])
+
+    def test_changed_identity_before_retry_or_after_acquisition_is_rejected(self):
+        original_stat = bridge.api.publish._bound_stat
+        for acquired in (False, True):
+            with self.subTest(acquired=acquired):
+                self.native.locking.reset_mock()
+                changed = False
+                def stat_file(file, **kwargs):
+                    value = original_stat(file, **kwargs)
+                    if changed:
+                        return SimpleNamespace(st_dev=value.st_dev, st_ino=value.st_ino + 1)
+                    return value
+                def locking(fd, mode, size):
+                    nonlocal changed
+                    if mode == self.native.LK_NBLCK:
+                        changed = True
+                        if not acquired:
+                            raise OSError(errno.EACCES, "busy")
+                self.native.locking.side_effect = locking
+                with self.environment() as directory, \
+                        patch.object(bridge.api.publish, "_bound_stat", side_effect=stat_file), \
+                        self.assertRaises(story.StoryError) as raised:
+                    with bridge._lock(directory, deadline=self.elapsed + .035):
+                        self.fail("changed lock identity must not enter the operation")
+                self.assertEqual(raised.exception.code, "platform_chrome_unsafe_file")
+                self.assertEqual(self.modes(), [2, 0] if acquired else [2])
+
+    def test_directory_guard_failure_after_acquisition_still_unlocks(self):
+        guard = Mock(side_effect=[None, OSError("directory changed")])
+        with self.environment() as directory, \
+                patch.object(bridge.api, "_verify_bound_directory", guard), self.assertRaises(OSError):
+            with bridge._lock(directory):
+                self.fail("changed directory must not enter the operation")
+        self.assertEqual(self.modes(), [2, 0])
+
+    def test_body_exception_is_not_retried_and_unlocks_once(self):
+        error = OSError(errno.EACCES, "body failure, not acquisition")
+        bodies = []
+        with self.environment() as directory, self.assertRaises(OSError) as raised:
+            with bridge._lock(directory):
+                bodies.append("once")
+                raise error
+        self.assertIs(raised.exception, error)
+        self.assertEqual(bodies, ["once"])
+        self.assertEqual(self.modes(), [2, 0])
+        self.assertEqual(self.sleeps, [])
+
+    @unittest.skipUnless(os.name == "nt", "requires real Windows cross-process byte-range locks")
+    def test_native_windows_process_waits_for_explicit_release(self):
+        import msvcrt
+        sender = """
+import importlib.util,msvcrt,sys,time
+from pathlib import Path
+spec=importlib.util.spec_from_file_location('lock_sender_story',sys.argv[1])
+story=importlib.util.module_from_spec(spec);spec.loader.exec_module(story)
+original=msvcrt.locking
+reported=False
+def locking(fd,mode,size):
+    global reported
+    try:
+        return original(fd,mode,size)
+    except OSError:
+        if not reported:
+            print('contended',flush=True)
+            reported=True
+        raise
+msvcrt.locking=locking
+with story._pinned_directory(Path(sys.argv[2])) as directory:
+    with story.platform_chrome_bridge._lock(directory,deadline=time.monotonic()+10):
+        print('acquired',flush=True)
+"""
+        process, reader, held = None, None, False
+        messages = queue.Queue()
+        with self.path.open("r+b") as stream:
+            try:
+                msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+                held = True
+                process = subprocess.Popen([sys.executable, "-I", "-B", "-c", sender,
+                    str(fixtures.TOOL), str(self.root)], stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE, text=True)
+                reader = threading.Thread(target=lambda: messages.put(process.stdout.readline()))
+                reader.start()
+                self.assertEqual(messages.get(timeout=15).strip(), "contended")
+                self.assertIsNone(process.poll())
+                stream.seek(0); msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+                held = False
+                reader.join(5)
+                self.assertFalse(reader.is_alive())
+                stdout, stderr = process.communicate(timeout=15)
+                self.assertEqual(process.returncode, 0, stderr)
+                self.assertEqual(stdout.strip(), "acquired")
+            finally:
+                if held:
+                    stream.seek(0); msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+                if process is not None:
+                    if process.poll() is None:
+                        process.kill()
+                    process.wait(timeout=5)
+                if reader is not None:
+                    reader.join(5)
+                    self.assertFalse(reader.is_alive())
+                if process is not None:
+                    process.communicate(timeout=5)
 
 
 class WindowsProcessLivenessTests(unittest.TestCase):

@@ -42,7 +42,7 @@ jobs:
         run: python -B -X utf8 -m unittest discover -s tests -p test_workbench_books.py -v
       - name: Test latest editing, metadata and materials fixes
         run: |
-          python -B -X utf8 -c "import sys, unittest; sys.path.insert(0, 'tests'); names = ['test_workbench_platform_stop', 'test_workbench_recovery_save_close', 'test_workbench_metadata_scope', 'test_workbench_resume_script', 'test_workbench_creator_integration', 'test_workbench_classification_records', 'test_workbench_classification_records_display', 'test_workbench_material_scan', 'test_outline_position_audit']; result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names)); sys.exit(not result.wasSuccessful())"
+          python -B -X utf8 -c "import sys, unittest; sys.path.insert(0, 'tests'); names = ['test_platform_chrome_bridge', 'test_workbench_platform_stop', 'test_workbench_recovery_save_close', 'test_workbench_metadata_scope', 'test_workbench_resume_script', 'test_workbench_creator_integration', 'test_workbench_classification_records', 'test_workbench_classification_records_display', 'test_workbench_material_scan', 'test_outline_position_audit']; result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names)); sys.exit(not result.wasSuccessful())"
       - name: Build standalone candidate
         run: python -B -X utf8 scripts/build_desktop_windows.py --output dist/story-workbench-windows-x86_64
       - name: Build installer

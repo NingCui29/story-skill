@@ -6,6 +6,7 @@ The host explicitly attaches a private handle and claims each operation once.
 from contextlib import ExitStack, contextmanager
 from copy import deepcopy
 from datetime import datetime, timezone
+import errno
 import hashlib
 import hmac
 import json
@@ -220,7 +221,14 @@ def _write(directory, name, value, *, replace=False):
 
 
 @contextmanager
-def _lock(directory):
+def _lock(directory, *, deadline=None):
+    """Acquire once, polling Windows contention within the caller's budget.
+
+    CRT LK_LOCK samples once per second and fails after ten attempts, even
+    when a polling host repeatedly leaves short gaps between lease writes.
+    A supplied deadline is the request's original monotonic deadline; local
+    session-management calls otherwise retain a ten-second acquisition bound.
+    """
     with _LOCAL_LOCK:
         file = api._BoundFile(directory, "session.lock")
         flags = os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0)
@@ -231,18 +239,55 @@ def _lock(directory):
                 _fail("unsafe_file", "Chrome 桥接锁文件发生变化。")
             if held.st_size == 0:
                 stream.write(b"0"); stream.flush()
-            if os.name == "nt":
-                import msvcrt
-                stream.seek(0); msvcrt.locking(stream.fileno(), msvcrt.LK_LOCK, 1)
-            else:
-                import fcntl
-                fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+            def verify():
+                api._verify_bound_directory(directory)
+                if not os.path.samestat(held, api.publish._bound_stat(file)):
+                    _fail("unsafe_file", "Chrome 桥接锁文件在等待期间发生变化。")
+
+            acquired = False
             try:
+                if os.name == "nt":
+                    import msvcrt
+                    request_deadline = deadline is not None
+                    deadline = deadline if request_deadline else time.monotonic() + 10.0
+
+                    def remaining_budget():
+                        remaining = deadline - time.monotonic()
+                        if remaining <= 0:
+                            if request_deadline:
+                                _fail("request_timeout", "宿主操作未在期限内返回；写入结果按未知处理，不重新派发。")
+                            _fail("lock_timeout", "Chrome 桥接会话仍被占用；本次操作未执行。")
+                        return remaining
+
+                    while True:
+                        verify()
+                        remaining_budget()
+                        stream.seek(0)
+                        try:
+                            msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+                            acquired = True
+                            break
+                        except OSError as error:
+                            native_code = getattr(error, "winerror", None)
+                            if ((native_code is not None and native_code != 33) or
+                                    (native_code is None and error.errno not in
+                                     (errno.EACCES, errno.EAGAIN, errno.EDEADLK))):
+                                raise
+                            remaining = deadline - time.monotonic()
+                            if remaining > 0:
+                                time.sleep(min(.01, remaining))
+                else:
+                    import fcntl
+                    fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+                    acquired = True
+                verify()
+                if os.name == "nt":
+                    remaining_budget()
                 yield
             finally:
-                if os.name == "nt":
+                if acquired and os.name == "nt":
                     stream.seek(0); msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
-                else:
+                elif acquired:
                     fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
 
 
@@ -532,7 +577,14 @@ class HostAdapter:
         if self.session_id is None:
             _fail("worker_unavailable", "宿主执行端尚未连接。")
         request_id, nonce = uuid.uuid4().hex, secrets.token_urlsafe(32)
-        deadline = time.time() + OP_SECONDS[operation]
+        seconds = OP_SECONDS[operation]
+        operation_deadline = time.monotonic() + seconds
+        deadline = time.time() + seconds
+
+        def check_deadline():
+            if time.monotonic() >= operation_deadline or time.time() >= deadline:
+                _fail("request_timeout", "宿主操作未在期限内返回；写入结果按未知处理，不重新派发。")
+
         service_instance = None
         service_path = api.safe_path(self.root, ".story/workbench-service.json")
         if service_path.exists():
@@ -543,16 +595,19 @@ class HostAdapter:
                    "binding": self.binding, "binding_sha256": _digest(self.binding), "profile": self.profile,
                    "operation": operation, "params": params, "deadline": _stamp(deadline), "deadline_epoch": deadline,
                    "owner_pid": os.getpid(), "owner_service_instance": service_instance}
-        with _directory(self.root, self.session_id) as directory, _lock(directory):
+        with _directory(self.root, self.session_id) as directory, _lock(directory, deadline=operation_deadline):
+            check_deadline()
             session = _session(directory)
             _lease(directory, session)
             if session["binding"] != self.binding:
                 _fail("invalid_message", "宿主会话目标发生变化。")
+            check_deadline()
             _write(directory, "outbox-" + request_id + ".json", request)
         if self.progress:
             self.progress({"stage": "waiting_host"})
-        while time.time() < deadline:
-            with _directory(self.root, self.session_id) as directory, _lock(directory):
+        while time.monotonic() < operation_deadline and time.time() < deadline:
+            with _directory(self.root, self.session_id) as directory, _lock(directory, deadline=operation_deadline):
+                check_deadline()
                 response_name = "response-" + request_id + ".json"
                 response_file = api._BoundFile(directory, response_name)
                 if api.publish._bound_stat(response_file, missing=True) is not None:
@@ -563,7 +618,9 @@ class HostAdapter:
                     return _validate_result(operation, response["result"], self.binding["target"], params)
                 session = _session(directory)
                 _lease(directory, session)
-            time.sleep(.1)
+            remaining = min(operation_deadline - time.monotonic(), deadline - time.time())
+            if remaining > 0:
+                time.sleep(min(.1, remaining))
         _fail("request_timeout", "宿主操作未在期限内返回；写入结果按未知处理，不重新派发。")
 
     def verify_target(self, **target):
