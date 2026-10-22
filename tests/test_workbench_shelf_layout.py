@@ -78,7 +78,7 @@ render({books});query('ｃａｓｅ　都市');assert.equal($('books').children.
         self.js(r"""
 const title='<img onerror=bad> **灯下**';render({books:[{...books[0],title}]});query('<img');
 assert.equal($('books').children.length,1);const row=$('books').children[0];assert.ok(row.children[0].textContent.includes(title));assert.equal(row.children[0].title,row.children[0].textContent);assert.ok($('filter-summary').textContent.includes('<img'));
-const classification=row.children.find(node=>node.className==='classification'),sources=classification.children.find(node=>node.tag==='details');assert.equal(sources.children[0].textContent,'分类依据');assert.ok(sources.children[1].textContent.includes('01_策划/分类.md'));assert.ok(sources.children[1].textContent.includes('题材：都市、悬疑'));
+const classification=row.children.find(node=>node.className==='classification'),sources=classification.children.find(node=>node.tag==='details');assert.equal(sources.children[0].textContent,'题材依据');assert.ok(sources.children[1].textContent.includes('01_策划/分类.md'));assert.ok(sources.children[1].textContent.includes('题材：都市、悬疑'));
 """)
 
     def test_progress_appears_only_for_verified_real_chapter_counts_without_finish_claims(self):
@@ -146,6 +146,7 @@ function card(book,root){
 const fixtures=shelfBooks.map((book,index)=>card(book,'/合成目录/'+index));
 """
         checks = r"""
+fixtures[2].genres.dataset.classificationEmpty='true';fixtures[2].genres.hidden=true;
 decorateBookManagement();
 for(const fixture of fixtures){
  const {row,genres,evidence,proof,location,status,save,open,updated}=fixture,menu=row.querySelector('.book-management'),panel=menu.querySelector('.book-management-panel');
@@ -158,6 +159,7 @@ for(const fixture of fixtures){
  for(const action of actions)assert.equal(action.disabled,!shelfBooks.find(book=>book.key===row.dataset.bookKey).available&&!['重新定位','移出书架'].includes(action.textContent));
 }
 assert.equal(saved,3);assert.notEqual(fixtures[0].location.textContent,fixtures[1].location.textContent);
+assert.equal(fixtures[2].genres.hidden,true);assert.equal(fixtures[2].evidence.parentElement.className,'book-management-panel','folded empty metadata must keep its reading evidence in management');
 decorateBookManagement();for(const {row}of fixtures)assert.equal(row.querySelectorAll('.book-management').length,1);
 fixtures[0].open.onclick();assert.deepEqual(calls,[['open','a']]);
 """

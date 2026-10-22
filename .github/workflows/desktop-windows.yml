@@ -40,6 +40,9 @@ jobs:
         run: python -B -X utf8 -m unittest discover -s tests -p test_desktop*.py -v
       - name: Test book management and native recycle bridge
         run: python -B -X utf8 -m unittest discover -s tests -p test_workbench_books.py -v
+      - name: Test latest editing, metadata and materials fixes
+        run: |
+          python -B -X utf8 -c "import sys, unittest; sys.path.insert(0, 'tests'); names = ['test_workbench_platform_stop', 'test_workbench_recovery_save_close', 'test_workbench_metadata_scope', 'test_workbench_resume_script', 'test_workbench_creator_integration', 'test_workbench_classification_records', 'test_workbench_classification_records_display', 'test_workbench_material_scan', 'test_outline_position_audit']; result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names)); sys.exit(not result.wasSuccessful())"
       - name: Build standalone candidate
         run: python -B -X utf8 scripts/build_desktop_windows.py --output dist/story-workbench-windows-x86_64
       - name: Build installer
@@ -86,7 +89,7 @@ jobs:
           if ($uninstall.ExitCode -ne 0) { throw "Uninstaller failed" }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.10-windows-x86_64-installer
+          name: story-workbench-0.1.11-windows-x86_64-installer
           compression-level: 0
           path: |
             dist/story-workbench-*-windows-x86_64-setup.exe
@@ -97,7 +100,7 @@ jobs:
           if-no-files-found: error
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.10-windows-x86_64-portable
+          name: story-workbench-0.1.11-windows-x86_64-portable
           compression-level: 0
           path: |
             dist/story-workbench-windows-x86_64.zip
@@ -106,7 +109,7 @@ jobs:
       - name: Preserve standalone distribution verification
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.10-windows-x86_64-verification
+          name: story-workbench-0.1.11-windows-x86_64-verification
           path: |
             dist/windows-distribution-verification.json
             dist/windows-build-manifest.json
@@ -139,9 +142,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.10-windows-x86_64-installer --dir downloaded/installer
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.11-windows-x86_64-installer --dir downloaded/installer
           if ($LASTEXITCODE -ne 0) { throw "Installer artifact download failed" }
-          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.10-windows-x86_64-portable --dir downloaded/portable
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.11-windows-x86_64-portable --dir downloaded/portable
           if ($LASTEXITCODE -ne 0) { throw "Portable artifact download failed" }
       - name: Upload only to the specified matching draft
         shell: pwsh
@@ -155,6 +158,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.10-windows-draft-upload
+          name: story-workbench-0.1.11-windows-draft-upload
           path: windows-draft-upload.json
           if-no-files-found: warn

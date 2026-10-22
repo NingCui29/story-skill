@@ -152,6 +152,25 @@ class WorkbenchBookIdentityTests(unittest.TestCase):
         self.assertEqual((state / 'library.json').read_bytes(), raw)
         self.assertEqual(self.state_bytes(roots.values()), before)
 
+    def test_editor_cross_book_open_keeps_its_original_identity_when_directory_is_reused(self):
+        current, neighbour = self.book('当前作品', 'long'), self.book('待切换目录', 'short')
+        server = self.serve(self.w.editor_server(current, library_books=[neighbour]))
+        old = next(row for row in self.editor_post(server, 'books')[1]['books'] if row['root'] == str(neighbour))
+        neighbour.rename(self.area / '保留原邻书')
+        base.story.Book.create(neighbour, '替换作品', 'short')
+        replacement = self.w._library_entry(neighbour)
+        before = (neighbour / '.story/state.sqlite3').read_bytes()
+        with patch.object(self.w.subprocess, 'Popen') as launch:
+            for expected in (None, old['book_id'], replacement['book_id']):
+                payload = {'key': old['key']}
+                if expected is not None:
+                    payload['expected_book_id'] = expected
+                status, result = self.editor_post(server, 'open-book', payload)
+                self.assertEqual(status, 409, result)
+                self.assertEqual(result['error'], 'workbench_book_changed')
+            launch.assert_not_called()
+        self.assertEqual((neighbour / '.story/state.sqlite3').read_bytes(), before)
+
     def test_unavailable_legacy_book_has_unknown_type_instead_of_inference(self):
         root = self.book('旧版长篇目录', 'analysis')
         legacy = self.legacy_entry(root)

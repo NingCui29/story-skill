@@ -409,7 +409,7 @@ server=story.workbench.editor_server(sys.argv[2]);print('ready',flush=True);serv
         editor_handler = editor[editor.index(" $('book-open').onclick=async()=>"):
                                 editor.index('\n loadBooks();')]
         shelf = self.w._library_page('isolated').decode()
-        shelf_handler = shelf[shelf.index('open.onclick=async()=>'):shelf.index(';row.append(title,time,genres,path,open)')]
+        shelf_handler = shelf[shelf.index('open.onclick=async()=>'):shelf.index('row.append(title,time,genres,path,open)')]
         script = r'''
 const assert=require('assert'),elements=new Map();
 const $=id=>{if(!elements.has(id))elements.set(id,{value:'selected',textContent:''});return elements.get(id);};

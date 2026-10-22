@@ -38,21 +38,51 @@ def shelf_return_script(port):
     })()'''.replace('__PORT__', json.dumps(str(port)))
 
 
+def editor_target_script(address):
+    """Select a requested document in a retained editor without reloading it."""
+    key = page_key(address)
+    if key is None or key[1] == '/' or not urlsplit(address).fragment:
+        return None
+    target = [str(key[0]), key[1], urlsplit(address).fragment]
+    return '''(() => {
+        const target=__TARGET__;
+        if(window!==window.top || location.protocol!=='http:' || location.hostname!=='127.0.0.1'
+            || location.port!==target[0] || location.pathname!==target[1] || location.search
+            || typeof openDoc!=='function')return false;
+        let id;try{id=decodeURIComponent(target[2]);}catch{return false;}
+        if(/^chapter-\\d+$/.test(id))id='formal:'+id.slice(8);
+        if(!id)return false;
+        location.hash=encodeURIComponent(id);
+        void openDoc(id);
+        return true;
+    })()'''.replace('__TARGET__', json.dumps(target))
+
+
 def close_state_script(include_text=False):
     """Read all editor buffers, including files hidden by the active document."""
     return '''(() => {
-        if(document.getElementById('library-heading'))return {kind:'shelf',documents:[]};
+        if(document.getElementById('library-heading')){
+            if(typeof busy!=='boolean' || typeof managerBusy!=='boolean' || typeof lastBooksBusy!=='boolean'
+                || typeof statusSaving==='undefined' || !(statusSaving instanceof Set)
+                || typeof shelfStatusDrafts==='undefined' || !(shelfStatusDrafts instanceof Map))return null;
+            return {kind:'shelf',busy:busy || managerBusy || lastBooksBusy || statusSaving.size>0,
+                shelf_pending:shelfStatusDrafts.size>0,documents:[]};
+        }
         if(!document.getElementById('current-book-root') || typeof docs==='undefined' || !(docs instanceof Map))return null;
         if([...docs.values()].some(d=>!d || typeof d!=='object' || typeof d.editable!=='boolean'
             || typeof d.value!=='string' || (d.editable && typeof d.text!=='string')))return null;
-        return {kind:'editor',documents:[...docs].map(([id,d])=>{
+        return {kind:'editor',busy:false,shelf_pending:false,documents:[...docs].map(([id,d])=>{
             const textbox=document.getElementById('text');
             const value=typeof active!=='undefined' && id===active && d.editing && typeof textbox?.value==='string'
                 ?textbox.value:d.value;
             const dirty=!!(d?.editable && value!==undefined && value!==d.text);
-            const pending=dirty || !!d?.needs_recovery;
+            // Keep the native receipt compatible with older pages: this flag
+            // also covers new-version failures and writes awaiting readback.
+            const needs_recovery=!!(d?.needs_recovery || d?.pendingSaveReadback
+                || (d?.saveError && d?.failedSaveOptions?.newVersion));
+            const pending=dirty || needs_recovery;
             return {id:String(id),title:String(d?.title||'未命名文字'),path:String(d?.path||''),
-                dirty,saving:!!d?.saving,needs_recovery:!!d?.needs_recovery,
+                dirty,saving:!!(d?.saving || d?.recovering),needs_recovery,
                 recovery_current:dirty && d.recovered===value,
                 text:__INCLUDE_TEXT__ && pending && typeof value==='string'?value:null};
         })};
@@ -61,6 +91,8 @@ def close_state_script(include_text=False):
 
 def checked_close_state(value, include_text=False):
     if (not isinstance(value, dict) or value.get('kind') not in ('shelf', 'editor')
+            or type(value.get('busy')) is not bool
+            or type(value.get('shelf_pending')) is not bool
             or not isinstance(value.get('documents'), list) or len(value['documents']) > 10000):
         return None
     documents = value['documents']
@@ -74,7 +106,7 @@ def checked_close_state(value, include_text=False):
                 or (include_text and (document['dirty'] or document['needs_recovery'])
                     and not isinstance(document.get('text'), str))):
             return None
-    return {'kind': value['kind'], 'documents': documents,
+    return {'kind': value['kind'], 'busy': value['busy'], 'shelf_pending': value['shelf_pending'], 'documents': documents,
             'pending': [document for document in documents if document['dirty'] or document['needs_recovery']],
             'saving': any(document['saving'] for document in documents)}
 
@@ -84,7 +116,7 @@ def export_pending_buffers(destination, states):
     documents = []
     for state in states:
         state = checked_close_state(state, include_text=True)
-        if state is None or state['saving']:
+        if state is None or state['saving'] or state['busy'] or state['shelf_pending']:
             raise ValueError('无法确认全部文字已读取；请返回作品保存。')
         documents.extend(state['pending'])
     if not documents:
@@ -190,7 +222,7 @@ def main():
     from PySide6.QtWebEngineWidgets import QWebEngineView
     from workbench_updates import (CLIENT_VERSION, LATEST_RELEASE_API, MAX_RESPONSE_BYTES,
                                    UpdateResult, evaluate_release_response, official_release_url)
-    from workbench_update_download import (download_update, verify_downloaded, assert_verified_identity, DownloadCancelled,
+    from workbench_update_download import (download_update, prepare_installer, DownloadCancelled,
                                            DownloadProgress, format_bytes, progress_text)
 
     parser = argparse.ArgumentParser()
@@ -233,18 +265,24 @@ def main():
             self.cancel_event = threading.Event()
 
         def run(self):
+            prepared = None
             try:
                 if self.verified is None:
                     update = download_update(self.result, self.directory,
                                              progress=self.progress.emit, cancel=self.cancel_event)
                 else:
-                    update = verify_downloaded(self.verified,
-                                               progress=self.progress.emit, cancel=self.cancel_event)
+                    prepared = prepare_installer(self.verified,
+                                                 progress=self.progress.emit, cancel=self.cancel_event)
+                    update = prepared
                 self.succeeded.emit(update)
+                prepared = None  # The finished handler now owns the locked receipt.
             except DownloadCancelled:
                 self.cancelled.emit()
             except Exception as error:
                 self.failed.emit(str(error) or '更新失败，请重试。')
+            finally:
+                if prepared is not None:
+                    prepared.close()
 
     class UpdateDialog(QDialog):
         """Modeless progress: downloads and hashing never block manuscript pages."""
@@ -253,6 +291,8 @@ def main():
             self.owner, self.result = owner, result
             self.worker, self.verified, self.outcome = None, None, None
             self.launch_requested, self.installer_started = False, False
+            self.install_checking, self.install_cancelled = False, False
+            self.install_editing_locked = False
             self.setWindowTitle('Windows 工作台更新 · ' + result.version)
             self.resize(570, 250)
             layout = QVBoxLayout(self)
@@ -291,7 +331,12 @@ def main():
         def busy(self):
             # Keep the QThread object alive until its finished signal, including
             # the short interval after a success/error signal has been emitted.
-            return self.worker is not None
+            return self.worker is not None or self.install_checking or self.install_editing_locked
+
+        def release_install_editing_lock(self):
+            if self.install_editing_locked:
+                self.install_editing_locked = False
+                self.owner.tabs.setEnabled(True)
 
         def start_worker(self, *, verify=False):
             if self.busy():
@@ -311,7 +356,26 @@ def main():
             self.worker.failed.connect(lambda message: setattr(self, 'outcome', ('error', message)))
             self.worker.cancelled.connect(lambda: setattr(self, 'outcome', ('cancelled', None)))
             self.worker.finished.connect(self.worker_finished)
-            self.worker.start()
+            if verify:
+                # The save/export guard has just completed. Keep its decision
+                # current through hashing and process creation without blocking
+                # the Qt event loop or the update dialog's cancel controls.
+                self.install_editing_locked = True
+                self.owner.tabs.setEnabled(False)
+                self.message.setText('正在进行安装前核验，作品编辑暂时锁定…')
+                self.details.setText('可取消核验后继续编辑；下载阶段仍可正常编辑作品。')
+            try:
+                self.worker.start()
+            except Exception:
+                worker, self.worker = self.worker, None
+                worker.deleteLater()
+                self.release_install_editing_lock()
+                self.close_button.setEnabled(True)
+                self.cancel_button.setEnabled(False)
+                self.install_button.setEnabled(True)
+                self.download_button.setEnabled(True)
+                self.folder_button.setEnabled(True)
+                self.message.setText('无法启动更新任务，请重试；作品页面已保留。')
 
         def start_download(self):
             self.verified = None
@@ -339,18 +403,30 @@ def main():
             else:
                 self.message.setText('正在下载 Windows 工作台 ' + self.result.version + '…')
                 self.bar.setFormat('%p%')
-            self.details.setText(progress_text(event))
+            self.details.setText(progress_text(event) + (
+                '\n安装前核验期间暂时锁定作品编辑；可取消核验后继续编辑。'
+                if self.install_editing_locked else ''))
 
         def cancel_download(self):
             if self.worker is not None:
                 self.worker.cancel_event.set()
                 self.cancel_button.setEnabled(False)
                 self.message.setText('正在取消，等待当前网络读取结束并清理临时文件…')
+            elif self.install_checking:
+                self.install_cancelled = True
+                self.message.setText('已取消安装请求，正在等待页面保存核对结束；不会启动安装程序。')
 
         def worker_finished(self):
+            try:
+                self.finish_worker()
+            finally:
+                self.release_install_editing_lock()
+
+        def finish_worker(self):
             worker, self.worker = self.worker, None
             worker.deleteLater()
             state, value = self.outcome or ('error', '更新任务未返回结果，请重试。')
+            prepared = value if state == 'ready' and self.launch_requested else None
             if worker.cancel_event.is_set():
                 state, value = 'cancelled', None
             self.close_button.setEnabled(True)
@@ -361,19 +437,23 @@ def main():
             self.folder_button.setEnabled(True)
             self.install_button.setEnabled(True)
             if state == 'ready':
-                self.verified = value
-                self.set_progress(DownloadProgress('ready', value.size, value.size))
+                self.verified = prepared.update if prepared is not None else value
+                self.set_progress(DownloadProgress('ready', self.verified.size, self.verified.size))
                 self.download_button.hide()
                 self.folder_button.show()
-                if value.asset_name.lower().endswith('-setup.exe'):
+                if self.verified.asset_name.lower().endswith('-setup.exe'):
                     self.install_button.show()
-                    self.details.setText('已核对官方大小及 SHA256。启动安装程序前会再次校验文件并核对全部标签的待保存文字。')
+                    self.details.setText('已核对官方大小及 SHA256。启动安装程序前先核对全部标签，再保护文件并重新校验完整内容。')
                 else:
                     self.install_button.hide()
                     self.details.setText('便携 ZIP 已校验。打开所在文件夹，退出客户端后解压完整目录并手工替换；ZIP 不会自动执行。'
                                          '如旧文件被服务占用，请先在书架保存并正常停止对应服务。')
-                if self.launch_requested and not self.owner.close_after_update_cancel:
-                    self.owner.launch_verified_installer(value, self)
+                if prepared is not None and not self.owner.close_after_update_cancel:
+                    try:
+                        self.owner.complete_installer_handoff(prepared, self)
+                    finally:
+                        prepared.close()
+                        prepared = None
             else:
                 self.verified = None
                 self.bar.setValue(0)
@@ -383,13 +463,15 @@ def main():
                 self.download_button.show()
                 self.install_button.hide()
                 self.folder_button.hide()
+            if prepared is not None:
+                prepared.close()
             if self.owner.close_after_update_cancel:
                 self.owner.close_after_update_cancel = False
                 QTimer.singleShot(0, self.owner.close)
 
         def install(self):
-            if self.verified is not None and self.verified.asset_name.lower().endswith('-setup.exe'):
-                self.start_worker(verify=True)
+            if not self.busy() and self.verified is not None and self.verified.asset_name.lower().endswith('-setup.exe'):
+                self.owner.launch_verified_installer(self.verified, self)
 
         def mark_installer_started(self):
             self.installer_started = True
@@ -440,6 +522,7 @@ def main():
                 existing = window.find_page(address, exclude=self.view)
                 if existing is not None:
                     window.tabs.setCurrentWidget(existing)
+                    window.open_document_target(existing, address)
                     if self.view.entry_key is None:
                         QTimer.singleShot(0, lambda: window.remove_page(self.view))
                     return False
@@ -592,22 +675,41 @@ def main():
             self.update_dialog.show()
 
         def launch_verified_installer(self, update, dialog):
+            if dialog.busy() or self.close_pending:
+                return
+            dialog.install_checking, dialog.install_cancelled = True, False
+            dialog.install_button.setEnabled(False)
             views = [self.tabs.widget(index) for index in range(self.tabs.count())]
 
             def checked(allowed):
+                dialog.install_checking = False
+                dialog.install_button.setEnabled(True)
+                if dialog.install_cancelled or self.close_after_update_cancel:
+                    dialog.message.setText('安装请求已取消，客户端和作品服务继续运行。')
+                    if self.close_after_update_cancel:
+                        self.close_after_update_cancel = False
+                        QTimer.singleShot(0, self.close)
+                    return
                 if not allowed:
                     dialog.message.setText('已保留当前页面。保存全部文字后可再次启动安装程序。')
                     return
-                try:
-                    # No shell, silent flags, service shutdown or Restart Manager
-                    # requests: the normal visible Inno wizard owns installation.
-                    assert_verified_identity(update)
-                    subprocess.Popen([update.path], cwd=str(Path(update.path).parent), close_fds=True)
-                except (OSError, ValueError) as error:
-                    dialog.message.setText('无法启动安装程序：' + str(error) + '。请重新下载校验后重试。')
-                    return
-                dialog.mark_installer_started()
+                dialog.verified = update
+                dialog.start_worker(verify=True)
             self.request_close(views, '启动更新安装', checked)
+
+        def complete_installer_handoff(self, prepared, dialog):
+            try:
+                # The full hash ran after the user's save/export decision. Its
+                # write/delete-denying handle stays open until CreateProcess returns.
+                prepared.assert_current()
+                update = prepared.update
+                subprocess.Popen([update.path], cwd=str(Path(update.path).parent), close_fds=True)
+            except (OSError, ValueError) as error:
+                dialog.message.setText('无法启动安装程序：' + str(error) + '。请重新下载校验后重试。')
+                return
+            finally:
+                prepared.close()
+            dialog.mark_installer_started()
 
         def capture_update_smoke(self, completion):
             """Only used with the existing isolated self-test CLI; no network."""
@@ -644,12 +746,14 @@ def main():
             existing = self.find_page(address) if address else None
             if existing is not None:
                 self.tabs.setCurrentWidget(existing)
+                self.open_document_target(existing, address)
                 return existing
             view = View(self.tabs)
             view.entry_key = None
             view.navigation_approved = None
             view.load_generation = 0
             view.load_complete = False
+            view.pending_document = None
             view.setPage(Page(self.profile, view))
             index = self.tabs.addTab(view, '工作台')
             self.tabs.setCurrentIndex(index)
@@ -659,10 +763,23 @@ def main():
                 view.load_generation += 1
                 view.load_complete = False
             view.loadStarted.connect(started)
-            view.loadFinished.connect(lambda ok: setattr(view, 'load_complete', ok is True))
+            def finished(ok):
+                view.load_complete = ok is True
+                if ok and view.pending_document:
+                    self.open_document_target(view, view.pending_document)
+            view.loadFinished.connect(finished)
             if address:
                 view.setUrl(QUrl(address))
             return view
+
+        def open_document_target(self, view, address):
+            script = editor_target_script(address)
+            if script is None or page_key(address) != view.entry_key:
+                return
+            view.pending_document = address
+            if view.load_complete:
+                view.pending_document = None
+                view.page().runJavaScript(script)
 
         def find_page(self, address, exclude=None):
             key = page_key(address)
@@ -682,7 +799,7 @@ def main():
         def probe_close_state(self, view, completion, include_text=False):
             # A rejected popup has never loaded a book and owns no editor buffer.
             if view.entry_key is None and view.url().toString() in ('', 'about:blank'):
-                completion(checked_close_state({'kind': 'shelf', 'documents': []}))
+                completion(checked_close_state({'kind': 'shelf', 'busy': False, 'shelf_pending': False, 'documents': []}))
                 return
             if not view.load_complete or page_key(view.url().toString()) != view.entry_key:
                 completion(None)
@@ -709,6 +826,12 @@ def main():
             view.page().runJavaScript(close_state_script(include_text), finish)
 
         def request_close(self, views, action, completion):
+            update = getattr(self, 'update_dialog', None)
+            if update is not None and getattr(update, 'install_editing_locked', False):
+                # A second close/reload probe must not re-enable tabs while the
+                # install guard's final hash is still running.
+                completion(False)
+                return
             if self.close_pending:
                 return
             self.close_pending = True
@@ -742,8 +865,16 @@ def main():
                         blocked(view, '暂时无法核对编辑状态',
                                 '页面尚未载入或未能返回完整编辑状态。为保留文字，本次' + action + '已取消。请返回作品检查。')
                         return
+                    if state['busy']:
+                        blocked(view, '书架操作正在进行',
+                                '备份、恢复或其他书架操作尚未完成，本次' + action + '已取消。请等待页面显示执行结果后重试。')
+                        return
+                    if state['shelf_pending']:
+                        blocked(view, '作品状态尚未保存',
+                                '书架上还有未保存的作品状态，本次' + action + '已取消。请先保存状态、改回原状态，或点击书架上的“放弃未保存状态”后重试。')
+                        return
                     if state['saving']:
-                        blocked(view, '候选稿正在保存', '请等待保存完成后再' + action + '，当前页面和文字仍保留。')
+                        blocked(view, '文稿正在保存或恢复', '请等待候选或恢复副本写入完成后再' + action + '，当前页面和文字仍保留。')
                         return
                     states.append(state)
                     check(index + 1, include_text)
@@ -760,7 +891,7 @@ def main():
                 dialog = QMessageBox(self)
                 dialog.setWindowTitle('还有待保存文字')
                 dialog.setText(f'{len(pending)} 个作品页面中有 {count} 份待保存文字。')
-                dialog.setInformativeText('请返回保存候选稿，或先导出这些文字再' + action
+                dialog.setInformativeText('其中可能包含保存结果待核对或保留新版本失败的稿件。请返回重试核对或保存候选稿，或先导出这些文字再' + action
                                           + '。自动恢复副本和导出文件都不等于已保存候选，也未正式采用。')
                 back = dialog.addButton('返回作品保存', QMessageBox.ButtonRole.RejectRole)
                 export = dialog.addButton('导出文字后' + action, QMessageBox.ButtonRole.AcceptRole)

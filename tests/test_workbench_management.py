@@ -37,6 +37,11 @@ class WorkbenchManagementHTTPTests(unittest.TestCase):
         return server
 
     def post(self, action, payload=None, headers=None):
+        if payload and isinstance(payload.get('key'), str) and 'expected_book_id' not in payload:
+            entries, _ = self.w._library_load(self.state)
+            entry = entries.get(payload['key'])
+            if entry:
+                payload = {**payload, 'expected_book_id': entry['book_id']}
         server = self.shelf
         sent = {'Origin': 'http://127.0.0.1:%s' % server.server_port,
                 'Content-Type': 'application/json', 'X-Story-Token': server.library_token}

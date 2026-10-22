@@ -674,32 +674,43 @@ def _profile_name(value):
     return value
 
 
+def _read_bound_profile(directory, name):
+    """Read through an existing pin, including during binding on Windows."""
+    name = _profile_name(name)
+    try:
+        file = api._BoundFile(directory, name)
+        before = api.publish._bound_stat(file)
+        if before.st_nlink != 1 or not 0 < before.st_size <= MAX_PROFILE_BYTES:
+            api.fail("platform_draft_invalid_profile_file", "平台配置必须是大小受限、未链接的普通 JSON 文件。")
+        with api._bound_reader(file) as stream:
+            opened = os.fstat(stream.fileno())
+            data = stream.read(MAX_PROFILE_BYTES + 1)
+            after_read = os.fstat(stream.fileno())
+        after = api.publish._bound_stat(file)
+        if (len(data) > MAX_PROFILE_BYTES or not os.path.samestat(before, opened) or
+                not os.path.samestat(before, after) or opened.st_nlink != 1 or
+                before.st_size != after.st_size or before.st_mtime_ns != after.st_mtime_ns or
+                opened.st_mtime_ns != after_read.st_mtime_ns):
+            api.fail("platform_draft_profile_changed", "读取时平台配置发生改变；请重新核对。")
+        api._verify_bound_directory(directory)
+        profile = json.loads(data.decode("utf-8"))
+        if not isinstance(profile, dict):
+            api.fail("platform_draft_invalid_profile_file", "平台配置必须是 JSON 对象。")
+        # Construction validates routes/coverage/save controls without opening
+        # a browser or contacting a platform. Placeholder templates fail here.
+        api.platform_chrome_bridge.validate_profile(profile)
+        return profile, _hash_bytes(data)
+    except (UnicodeError, ValueError, TypeError, RecursionError, OSError):
+        api.fail("platform_draft_invalid_profile_file", "无法安全读取已保存的平台 JSON 配置。")
+
+
 def _read_profile(root, name):
     name = _profile_name(name)
     try:
         path = api.safe_path(root, PROFILE_DIRECTORY + "/" + name)
         with api._pinned_directory(path.parent) as directory:
-            file = api._BoundFile(directory, name)
-            before = api.publish._bound_stat(file)
-            if before.st_nlink != 1 or not 0 < before.st_size <= MAX_PROFILE_BYTES:
-                api.fail("platform_draft_invalid_profile_file", "平台配置必须是大小受限、未链接的普通 JSON 文件。")
-            with api._bound_reader(file) as stream:
-                opened = os.fstat(stream.fileno())
-                data = stream.read(MAX_PROFILE_BYTES + 1)
-                after_read = os.fstat(stream.fileno())
-            after = api.publish._bound_stat(file)
-            if (len(data) > MAX_PROFILE_BYTES or not os.path.samestat(before, opened) or
-                    not os.path.samestat(before, after) or opened.st_nlink != 1 or
-                    before.st_size != after.st_size or before.st_mtime_ns != after.st_mtime_ns or
-                    opened.st_mtime_ns != after_read.st_mtime_ns):
-                api.fail("platform_draft_profile_changed", "读取时平台配置发生改变；请重新核对。")
-            api._verify_bound_directory(directory)
-        profile = json.loads(data.decode("utf-8"))
-        # Construction validates routes/coverage/save controls without opening
-        # a browser or contacting a platform. Placeholder templates fail here.
-        api.platform_chrome_bridge.validate_profile(profile)
-        return profile, _hash_bytes(data)
-    except (UnicodeError, ValueError, RecursionError, OSError):
+            return _read_bound_profile(directory, name)
+    except OSError:
         api.fail("platform_draft_invalid_profile_file", "无法安全读取已保存的平台 JSON 配置。")
 
 
@@ -756,6 +767,17 @@ def _job_packet(job):
             "job_survives_process_exit": False, "durable_attempt_journal": True}
 
 
+def workbench_activity(root, *, expected_book_id):
+    """Minimal in-process activity for the owning editor's shutdown check."""
+    root = str(Path(root).expanduser().absolute())
+    with _WORKBENCH_LOCK:
+        jobs = [{key: job.get(key) for key in ('id', 'stage', 'mode', 'current_chapter')}
+                for job in _WORKBENCH_JOBS.values()
+                if job['_root'] == root and job['book_id'] == expected_book_id and not job['done']]
+        binding = (root, expected_book_id) in _WORKBENCH_BINDINGS
+    return {'supported': True, 'jobs': jobs, 'binding': binding, 'busy': bool(jobs or binding)}
+
+
 def workbench_catalog(root, offset=0, limit=50, *, expected_book_id=None):
     """Local-only paged plan/profile inventory, including reconnectable jobs."""
     api.integer(offset, "offset")
@@ -785,7 +807,7 @@ def workbench_catalog(root, offset=0, limit=50, *, expected_book_id=None):
 
 @contextmanager
 def _binding_profile(root, profile):
-    """Publish one private profile without replacing existing configuration.
+    """Reuse identical safe configuration, or publish one new private profile.
 
     A failed preparation removes only a new file whose inode/content we still
     own. A process interruption may leave a harmless reusable profile, but can
@@ -795,11 +817,34 @@ def _binding_profile(root, profile):
     if len(raw) > MAX_PROFILE_BYTES:
         api.fail("platform_draft_profile_limit", "生成的平台配置超过大小限制。")
     fingerprint = _hash_bytes(raw)
-    name = "fanqie-" + uuid.uuid4().hex + ".json"
-    path = api.safe_path(root, PROFILE_DIRECTORY + "/" + name)
-    with api._pinned_directory(path.parent, create=True) as directory:
+    content_hash = _hash(profile)
+    path = api.safe_path(root, PROFILE_DIRECTORY)
+    with api._pinned_directory(path, create=True) as directory:
         if os.name != "nt":
             os.fchmod(directory.fd, 0o700)
+        names = sorted(value for value in os.listdir(directory.path if os.name == "nt" else directory.fd)
+                       if value.endswith(".json"))
+        api._verify_bound_directory(directory)
+        if len(names) > MAX_PROFILES:
+            api.fail("platform_draft_profile_limit", "本书平台配置过多，请先整理已有配置。")
+        for name in names:
+            try:
+                saved, saved_fingerprint = _read_bound_profile(directory, name)
+            except api.StoryError:
+                api._verify_bound_directory(directory)
+                continue
+            if _hash(saved) != content_hash:
+                continue
+            # This branch never owns the existing file, even when preparation
+            # fails. Keep its actual byte hash for later preview/start checks.
+            yield name, saved_fingerprint
+            _, current_fingerprint = _read_bound_profile(directory, name)
+            if current_fingerprint != saved_fingerprint:
+                api.fail("platform_draft_profile_changed", "复用的平台配置发生变化，请刷新后重新核对。")
+            return
+        if len(names) >= MAX_PROFILES:
+            api.fail("platform_draft_profile_limit", "本书平台配置过多，请先整理已有配置。")
+        name = "fanqie-" + uuid.uuid4().hex + ".json"
         target = api._BoundFile(directory, name)
         before = api.publish._bound_stat(target, missing=True)
         owned, staged, created = None, None, False
@@ -807,9 +852,6 @@ def _binding_profile(root, profile):
             if before is not None:
                 api.fail("platform_draft_profile_changed", "新配置文件名已存在，未覆盖原配置；请重试。")
             else:
-                names = os.listdir(directory.path if os.name == "nt" else directory.fd)
-                if sum(value.endswith(".json") for value in names) >= MAX_PROFILES:
-                    api.fail("platform_draft_profile_limit", "本书平台配置过多，请先整理已有配置。")
                 fd, staged = api._bound_stage(directory, ".binding-profile-")
                 owned = os.fstat(fd)
                 with api._owned_fdopen(fd, "wb") as stream:
@@ -823,7 +865,7 @@ def _binding_profile(root, profile):
                     os.fsync(directory.fd)
                 if not os.path.samestat(owned, api.publish._bound_stat(target)) or api._bound_hash(target) != fingerprint:
                     api.fail("platform_draft_profile_changed", "新平台配置在保存期间发生变化，未采用。")
-                _read_profile(root, name)
+                _read_bound_profile(directory, name)
             yield name, fingerprint
         except BaseException:
             if created:

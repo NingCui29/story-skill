@@ -25,6 +25,24 @@
       !heading.contains(title) || !heading.contains(progress) || !actions.contains(maintenance)) {
     return {applied: false, reason: 'unknown-layout'};
   }
+  // Old services keep their search handlers. Remove only obsolete presentation
+  // while they fetch; neither manuscript buffers nor service state are touched.
+  const searchStatus = document.getElementById('search-status');
+  const searchResults = document.getElementById('search-results');
+  const searchPrevious = document.getElementById('search-prev');
+  const searchNext = document.getElementById('search-next');
+  if (searchStatus && searchResults && searchPrevious && searchNext) {
+    const clearPendingSearch = () => {
+      if (searchStatus.textContent !== '搜索中…') return;
+      searchResults.replaceChildren();
+      searchPrevious.disabled = true;
+      searchNext.disabled = true;
+    };
+    new MutationObserver(clearPendingSearch).observe(searchStatus, {
+      childList: true, subtree: true, characterData: true
+    });
+    clearPendingSearch();
+  }
   const element = (tag, id, className) => {
     const node = document.createElement(tag);
     if (id) node.id = id;

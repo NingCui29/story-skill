@@ -281,12 +281,102 @@ def _identity(value):
 
 
 def assert_verified_identity(update):
-    """Catch replacement during a save/export dialog after full async hashing."""
+    """Check path metadata; executable handoff also requires a held write-deny lock."""
     value = Path(update.path).lstat()
     if (not update.identity or not stat.S_ISREG(value.st_mode)
             or _identity(value) != update.identity or Path(update.path).name != update.asset_name
             or not update.asset_name.lower().endswith('-setup.exe')):
         raise DownloadError('安装包在校验后发生改变，请重新下载并校验。')
+
+
+class WindowsInstallerLock:
+    """Hold a readable Win32 handle that denies writes, removal and replacement."""
+    def __init__(self, path):
+        if os.name != 'nt':
+            raise DownloadError('启动安装程序需要 Windows 文件保护。')
+        import ctypes
+        from ctypes import wintypes
+        import msvcrt
+
+        kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+        create = kernel.CreateFileW
+        create.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, wintypes.LPVOID,
+                           wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE]
+        create.restype = wintypes.HANDLE
+        close = kernel.CloseHandle
+        close.argtypes = [wintypes.HANDLE]
+        close.restype = wintypes.BOOL
+        # GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, OPEN_REPARSE_POINT.
+        # Omitting FILE_SHARE_WRITE and FILE_SHARE_DELETE also rejects a writer
+        # that already holds the file; no hash is trusted without this protection.
+        handle = create(str(path), 0x80000000, 0x1, None, 3, 0x00200080, None)
+        if handle == ctypes.c_void_p(-1).value:
+            raise DownloadError('无法保护安装包，文件可能正被其他程序写入或移动；请关闭相关程序后重试。')
+        try:
+            descriptor = msvcrt.open_osfhandle(handle, os.O_RDONLY | os.O_BINARY)
+        except BaseException:
+            close(handle)
+            raise
+        try:
+            self.stream = os.fdopen(descriptor, 'rb')
+        except BaseException:
+            os.close(descriptor)
+            raise
+
+    def stat(self):
+        if self.stream is None:
+            raise DownloadError('安装包保护已结束，请重新校验。')
+        return os.fstat(self.stream.fileno())
+
+    def close(self):
+        stream, self.stream = self.stream, None
+        if stream is not None:
+            stream.close()
+
+
+class PreparedInstaller:
+    """An SHA256 receipt whose exact file remains locked through process creation."""
+    def __init__(self, update, lock):
+        self.update, self.lock = update, lock
+
+    def assert_current(self):
+        if self.lock is None:
+            raise DownloadError('安装包保护已结束，请重新校验。')
+        assert_verified_identity(self.update)
+        locked = self.lock.stat()
+        # fstat and lstat on Windows can report different ctime semantics. Bind
+        # the handle using file identity and size; SHA256 was read while locked.
+        if (not stat.S_ISREG(locked.st_mode)
+                or (locked.st_dev, locked.st_ino, locked.st_size) != self.update.identity[:3]):
+            raise DownloadError('安装包路径与受保护文件不一致，请重新下载。')
+
+    def close(self):
+        lock, self.lock = self.lock, None
+        if lock is not None:
+            lock.close()
+
+
+def prepare_installer(update, *, cancel=None, progress=None, clock=time.monotonic, lock_factory=None):
+    """Run after the save/export decision, off the GUI thread, and retain the lock."""
+    cancel = cancel or threading.Event()
+    if not update.asset_name.lower().endswith('-setup.exe'):
+        raise DownloadError('便携包不能启动安装程序。')
+    deadline = clock() + TOTAL_TIMEOUT
+    _check(cancel, clock, deadline)
+    lock = (lock_factory or WindowsInstallerLock)(update.path)
+    prepared = None
+    try:
+        verified = verify_downloaded(update, cancel=cancel, progress=progress, clock=clock)
+        prepared = PreparedInstaller(verified, lock)
+        prepared.assert_current()
+        _check(cancel, clock, deadline)
+        return prepared
+    except BaseException:
+        if prepared is not None:
+            prepared.close()
+        else:
+            lock.close()
+        raise
 
 
 def format_bytes(value):

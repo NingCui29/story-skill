@@ -274,6 +274,17 @@ p.progress.textContent='幂等执行之后的合成进度';observer.fire(p.progr
 assert.equal(p.document.getElementById('book-progress-detail').textContent,p.progress.textContent);
 """)
 
+    def test_legacy_search_clears_only_obsolete_results_during_request(self):
+        self.js(r"""
+const p=page(),status=new Element('p',{id:'search-status'}),results=new Element('div',{id:'search-results'}),prev=new Element('button',{id:'search-prev'}),next=new Element('button',{id:'search-next'});
+results.replaceChildren=function(){this.textContent='';};results.append(new Element('button',{},'旧结果'));prev.disabled=false;next.disabled=false;
+const handler=()=>{};next.onclick=handler;p.main.append(status,results,prev,next);p.run();
+const observer=p.observers.find(o=>o.observations.some(item=>item.target===status));assert.ok(observer);
+status.textContent='搜索中…';observer.fire(status);assert.equal(results.children.length,0);assert.equal(prev.disabled,true);assert.equal(next.disabled,true);assert.strictEqual(next.onclick,handler);
+results.append(new Element('button',{},'新结果'));next.disabled=false;status.textContent='找到 1 份文件';observer.fire(status);assert.equal(results.children[0].textContent,'新结果');assert.equal(next.disabled,false);
+const count=p.observers.length;p.run();assert.equal(p.observers.length,count);
+""")
+
     def test_information_closes_on_outside_pointer_and_escape_restores_focus(self):
         self.js(r"""
 const p=page();p.run();const info=p.document.getElementById('book-info'),summary=info.querySelector('summary');

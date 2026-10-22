@@ -1,0 +1,236 @@
+/* Apply shipped fixes without stopping the retained service. Recovery cache
+   validation is read-only; independent edits are never replaced or saved. */
+(() => {
+  const url = new URL(location.href);
+  if (window !== window.top || url.protocol !== 'http:' || url.hostname !== '127.0.0.1' ||
+      !/^[0-9]+$/.test(url.port) || Number(url.port) < 1 || Number(url.port) > 65535 ||
+      url.username || url.password || url.search || !/^\/[A-Za-z0-9_-]{20,128}\/$/.test(url.pathname)) {
+    return {applied: false, reason: 'outside-editor'};
+  }
+  const version = '__SAFETY_VERSION__';
+  if (window.__storyEditorSafetyVersion === version) return {applied: true, ready: window.__storyEditorSafetyReady};
+  const save = document.getElementById('save');
+  if (!save || !document.getElementById('current-book-root') || !document.getElementById('text') ||
+      typeof docs === 'undefined' || !(docs instanceof Map) || typeof active === 'undefined' ||
+      typeof reloading !== 'boolean' || typeof call !== 'function' || typeof dirty !== 'function' ||
+      typeof recover !== 'function' || typeof badge !== 'function' || typeof note !== 'function' ||
+      typeof rememberView !== 'function' || typeof show !== 'function' || typeof catalog !== 'function') {
+    return {applied: false, reason: 'unknown-editor'};
+  }
+  const $ = id => document.getElementById(id);
+  const canOpen = typeof openDoc === 'function' && window.openDoc === openDoc &&
+      typeof openSequence === 'number' && typeof displayTitle === 'function' &&
+      typeof versionLabel === 'function' && typeof closePanels === 'function' && typeof previewSearch === 'function';
+  const canReload = typeof reloadDocuments === 'function' && window.reloadDocuments === reloadDocuments &&
+      typeof openSequence === 'number';
+  const creatorOwnsInitialDocument = typeof creatorResume === 'object' && creatorResume !== null &&
+      typeof creatorResume.apply === 'function' && typeof creatorResume.load === 'function' &&
+      typeof creatorResumeLoading !== 'undefined';
+  if (($('list') && !canOpen) || (($('reload-source') || $('recover-reload')) && !canReload)) {
+    return {applied: false, reason: 'unknown-editor-entry-points'};
+  }
+  const originalCall = call;
+  const originalBadge = badge, originalRecover = recover;
+  const originalPending = typeof pendingEdits === 'function' ? pendingEdits : () => {};
+  const originalPicker = typeof updateChapterPicker === 'function' ? updateChapterPicker : null;
+  const recoveryFailure = () => Error('恢复稿原文暂不能完整核对，已停止打开，原文件保留。请先保存所有页面的编辑，再正常停止并重新打开本书服务后核对。');
+  const textHash = async text => {
+    if (typeof TextEncoder !== 'function' || typeof crypto === 'undefined' || !crypto.subtle) throw recoveryFailure();
+    const bytes = new TextEncoder().encode(text);
+    if (bytes.length > 1024 * 1024) throw recoveryFailure();
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+  };
+  const isRecovery = value => value && typeof value === 'object' &&
+      (value.category === '自动恢复' || (typeof value.path === 'string' && value.path.startsWith('.story/drafts/workbench/自动恢复/')));
+  const checkedDocument = async value => {
+    if (!value || typeof value !== 'object') return value;
+    const path = typeof value.path === 'string' ? value.path : '';
+    if (!(value.category === '自动恢复' || path.startsWith('.story/drafts/workbench/自动恢复/')) ||
+        value.needs_recovery || value.editable !== true || value.metadata_error ||
+        value.content_kind === 'material' || value.is_prose === false) return value;
+    if (value.storage_format === 'candidate-file-v1') return value;
+    if (typeof value.text !== 'string' || typeof value.prefix !== 'string' ||
+        !/^[0-9a-f]{64}$/.test(value.sha256 || '')) throw recoveryFailure();
+    if (value.storage_format === 'recovery-body-v1') {
+      if (await textHash(value.text) !== value.sha256) throw recoveryFailure();
+      return value;
+    }
+    // Older services expose a body-only recovery as a candidate document.
+    // Only their generated recovery schema is eligible for reconstruction.
+    if (value.storage_format !== undefined || value.kind !== 'candidate' || value.id !== 'file:' + path ||
+        !/^\.story\/drafts\/workbench\/自动恢复\/[^/]{0,60}_[A-Za-z0-9-]{16,80}\.txt$/u.test(path) ||
+        !/^(?:formal:[1-9][0-9]*|file:[^\r\n\0]+|pending:[^\r\n\0]+)$/.test(value.source || '') ||
+        !/^[0-9a-f]{64}$/.test(value.metadata_sha256 || '') ||
+        !Number.isInteger(value.chapter) || value.chapter < 1 || value.prefix.length > 8192 ||
+        (value.is_prose !== true && value.content_kind !== 'prose')) throw recoveryFailure();
+    if (await textHash(value.text) === value.sha256) return value;
+    const heading = value.prefix.match(/^[\ufeff \t]*(?:#{1,6}[ \t]+)?第([0-9]+)章(?:\s|$)/u);
+    if (!heading || Number(heading[1]) !== value.chapter ||
+        await textHash(value.prefix + value.text) !== value.sha256) throw recoveryFailure();
+    return {...value, text: value.prefix + value.text, storage_format: 'recovery-body-v1'};
+  };
+  const checkedCall = async (action, data = {}) => {
+    const value = await originalCall(action, data);
+    return action === 'open' ? checkedDocument(value) : value;
+  };
+  const hideBlocked = (cached, documentID = cached.id) => {
+    if (active !== documentID) return;
+    for (const id of ['text', 'prose', 'formatted', 'cover', 'difference', 'match-view', 'review-task-box']) {
+      const element = $(id);if (element) element.hidden = true;
+    }
+    for (const id of ['edit', 'save', 'download', 'compare', 'review-task']) {
+      const element = $(id);if (element) element.disabled = true;
+    }
+    note(cached.recoveryCompatibilityBlocked + ' 原缓存未改动；请从目录或待保存列表打开其他稿件。');
+  };
+  const checkCached = async (id, cached) => {
+    if (!isRecovery(cached)) return true;
+    const text = cached.text, value = cached.value;
+    let checked;
+    try { checked = await checkedDocument(cached); }
+    catch (error) {
+      if (docs.get(id) !== cached) return true;
+      if (cached.value !== cached.text || cached.saving || cached.recovering) {
+        delete cached.recoveryCompatibilityBlocked;
+        cached.recoveryCompatibilityWarning = '此恢复稿原文暂不能完整核对，但当前独立编辑已保留。保存或下载将使用当前可见文字；原恢复文件仍保留，请另行核对完整原文。';
+        note(cached.recoveryCompatibilityWarning);return true;
+      }
+      cached.recoveryCompatibilityBlocked = error.message;hideBlocked(cached, id);return false;
+    }
+    if (docs.get(id) !== cached) return true;
+    delete cached.recoveryCompatibilityBlocked;
+    if (checked === cached) return true;
+    if (cached.text !== text || cached.value !== value || value !== text || cached.saving || cached.recovering) {
+      cached.recoveryCompatibilityWarning = '此恢复稿在完整性核对前已有独立编辑，当前输入已保留。保存或下载将使用当前可见文字；原恢复文件仍保留，请另行核对完整原文。';
+      note(cached.recoveryCompatibilityWarning);
+      return true;
+    }
+    cached.text = checked.text;cached.value = checked.text;cached.storage_format = checked.storage_format;
+    if (active === id) show(cached);
+    return true;
+  };
+  let ready = Promise.resolve(true);
+  const warnCached = d => { if (d?.recoveryCompatibilityWarning) note(d.recoveryCompatibilityWarning); };
+  // A parameter shadows even a legacy lexical `const call`; no global request
+  // function is overwritten. Every new incoming recovery passes the same check.
+  function installEditorHandlers(call) {
+    /*__DOCUMENT_IDENTITY__*/
+    /*__SAVE_STATUS__*/
+    const canStatus = typeof displayTitle === 'function' && typeof documentLocation === 'function' &&
+      ['document-identity','document-role','document-unsaved','state','pending-box','pending-count','pending-list','save','edit','review-task','compare','download'].every(id => $(id));
+    const badge = canStatus ? shippedBadge : originalBadge, pendingEdits = canStatus ? shippedPending : originalPending;
+    /*__VERSION_NAVIGATION__*/
+    const canVersions = canStatus && originalPicker && typeof filePurpose === 'function' && typeof chapterNumber === 'function' && typeof currentCatalog !== 'undefined' && $('chapter-picker') && $('chapter-version') && $('chapter-picker-help');
+    /*__RECOVER_DOCUMENT__*/
+    /*__SAVE_DOCUMENT__*/
+    /*__OPEN_DOCUMENT__*/
+    /*__RELOAD_DOCUMENTS__*/
+    const shippedSave = saveDocument, shippedOpen = openDoc;
+    saveDocument = async (d, options = {}) => {
+      if (!await ready) return false;
+      if (d && docs.get(d.id) === d && !await checkCached(d.id, d)) {
+        d.saveError = d.recoveryCompatibilityBlocked;note(d.saveError);return false;
+      }
+      const result = await shippedSave(d, options);warnCached(d);return result;
+    };
+    openDoc = async (id, query = '', options = {}) => {
+      // Reserve the user's intent before either readiness or SHA validation can
+      // yield. A later click wins even when it selects the same document.
+      const request = ++openSequence;
+      const current = () => request === openSequence && (!options.guard || options.guard());
+      if (!current() || !await ready || !current()) return false;
+      const cached = docs.get(id);
+      if (cached && !await checkCached(id, cached)) {
+        if (current()) note(cached.recoveryCompatibilityBlocked + ' 原缓存与其他编辑均保留。');return false;
+      }
+      if (!current() || (cached && docs.get(id) !== cached)) return false;
+      const opened = await shippedOpen(id, query, options);warnCached(docs.get(id));return opened;
+    };
+    window.saveDocument = saveDocument;
+    if (canStatus && window.badge === originalBadge) window.badge = badge;
+    if (canStatus && window.pendingEdits === originalPending) window.pendingEdits = pendingEdits;
+    if (window.recover === originalRecover) window.recover = recover;
+    if (canVersions && window.updateChapterPicker === originalPicker) window.updateChapterPicker = updateChapterPicker;
+    save.onclick = () => saveDocument(docs.get(active));
+    if (canOpen) window.openDoc = openDoc;
+    if (canReload) {
+      const shippedReload = reloadDocuments;
+      reloadDocuments = async preserve => { if (await ready) return shippedReload(preserve); };
+      window.reloadDocuments = reloadDocuments;
+      if ($('reload-source')) $('reload-source').onclick = () => reloadDocuments(false);
+      if ($('recover-reload')) $('recover-reload').onclick = () => reloadDocuments(true);
+    }
+    if ($('save-all') && typeof displayTitle === 'function') {
+      /*__SAVE_ALL__*/
+    }
+    if ($('compare-choose') && typeof editorDialog === 'function' &&
+        typeof chapterNumber === 'function' && typeof displayTitle === 'function' &&
+        typeof versionLabel === 'function' && typeof drawDiff === 'function' &&
+        typeof currentCatalog !== 'undefined' && typeof compareSequence === 'number') {
+      /*__COMPARE_CHOOSE__*/
+    }
+    if ($('writing-task') && typeof leaveComparison === 'function') {
+      /*__WRITING_TASK__*/
+    }
+    if ($('review-task') && typeof leaveComparison === 'function') {
+      /*__REVIEW_TASK__*/
+    }
+    /*__DOWNLOAD_DOCUMENT__*/
+    if ($('download')) $('download').onclick = () => downloadDocument(docs.get(active));
+    return {openInitial: shippedOpen, downloadDocument, refreshStatus: () => {if(canStatus)badge();if(canVersions)updateChapterPicker();}};
+  }
+  let initial = null, initialSequence = null;
+  if (canOpen && !creatorOwnsInitialDocument) {
+    // An old open already awaiting HTTP must not later populate an unchecked
+    // cache. Resume the same hash or ordinary catalog default through the new
+    // reader, unless a more recent navigation already owns the page. Current
+    // pages own their initial hash/resume arbitration and must finish it.
+    initialSequence = ++openSequence;
+    if (active === null) {
+      try { initial = decodeURIComponent(location.hash.slice(1)); } catch {}
+      if (/^chapter-[0-9]+$/.test(initial || '')) initial = 'formal:' + initial.slice(8);
+      if (typeof initial !== 'string' || !initial || initial.length > 2048) initial = null;
+    }
+  }
+  const handlers = installEditorHandlers(checkedCall);
+  for (const id of ['edit', 'download', 'compare', 'review-task']) {
+    const button = $(id), previous = button?.onclick;
+    if (typeof previous === 'function') button.onclick = async event => {
+      const selected = active, cached = docs.get(selected), sequence = canOpen ? openSequence : null;
+      const taskBox = id === 'review-task' ? $('review-task-box') : null;
+      const taskRequest = taskBox ? taskBox.taskRequest = (taskBox.taskRequest || 0) + 1 : null;
+      if (!await ready) return;
+      if (!cached || docs.get(selected) !== cached) return;
+      if (!await checkCached(selected, cached)) { hideBlocked(cached, selected);return; }
+      if (docs.get(selected) !== cached) return;
+      // Download belongs to the clicked buffer; editing and panels require the
+      // same visible navigation intent and must never act on a different file.
+      if (id === 'download') {
+        handlers.downloadDocument(cached);warnCached(cached);return;
+      }
+      if (active !== selected || (canOpen && openSequence !== sequence)) return;
+      if (taskBox && taskBox.taskRequest !== taskRequest) return;
+      const result = await previous.call(button, event, taskRequest);if (active === selected) warnCached(cached);return result;
+    };
+  }
+  ready = Promise.resolve().then(async () => {
+    try {
+      for (const [id, cached] of docs) await checkCached(id, cached);
+      if (canOpen && !creatorOwnsInitialDocument && active === null && openSequence === initialSequence) {
+        if (!initial) {
+          const cachedCatalog = typeof currentCatalog === 'undefined' ? null : currentCatalog;
+          const listing = cachedCatalog || await checkedCall('catalog', {offset:0, query:''});
+          initial = listing?.chapters?.[0]?.id || listing?.files?.[0]?.id || listing?.workspace?.groups?.[0]?.items?.[0]?.id;
+        }
+        if (initial && active === null && openSequence === initialSequence) await handlers.openInitial(initial);
+      }
+      handlers.refreshStatus();warnCached(docs.get(active));return true;
+    } catch (error) {
+      note(error.message + ' 当前缓存与编辑均保留，未执行保存或重新载入。');return false;
+    }
+  });
+  window.__storyEditorSafetyVersion = version;
+  window.__storyEditorSafetyReady = ready;
+  return {applied: true, ready};
+})();

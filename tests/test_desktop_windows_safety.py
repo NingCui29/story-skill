@@ -29,8 +29,8 @@ def document(**changes):
     return value
 
 
-def state(*documents, kind='editor'):
-    return dict(kind=kind, documents=list(documents))
+def state(*documents, kind='editor', busy=False, shelf_pending=False):
+    return dict(kind=kind, busy=busy, shelf_pending=shelf_pending, documents=list(documents))
 
 
 class CloseStateTests(unittest.TestCase):
@@ -57,7 +57,7 @@ class CloseStateTests(unittest.TestCase):
     def test_real_script_reads_hidden_buffers_and_preserves_recovery_boundary(self):
         node = shutil.which('node')
         if not node:
-            bundled = Path('/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node')
+            bundled = (Path.home() / '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node')
             node = str(bundled) if bundled.is_file() else None
         if not node:
             self.skipTest('Node is unavailable')
@@ -170,9 +170,10 @@ class View:
     def page(self):
         return self
 
-    def runJavaScript(self, script, callback):
+    def runJavaScript(self, script, callback=None):
         self.scripts.append(script)
-        self.callbacks.append(callback)
+        if callback is not None:
+            self.callbacks.append(callback)
 
     def reply(self, value):
         self.callbacks.pop(0)(value)
@@ -213,7 +214,7 @@ class CloseControlsTests(unittest.TestCase):
     def make_window(self, views, *, export=False, path=''):
         tree = ast.parse(SOURCE.read_text())
         window = next(node for node in ast.walk(tree) if isinstance(node, ast.ClassDef) and node.name == 'Window')
-        names = {'find_page', 'remove_page', 'probe_close_state', 'request_close', 'close_tab', 'closeEvent'}
+        names = {'find_page', 'open_document_target', 'remove_page', 'probe_close_state', 'request_close', 'close_tab', 'closeEvent'}
         window.body = [node for node in window.body if getattr(node, 'name', '') in names]
         window.bases = []
         warnings = []
@@ -255,7 +256,7 @@ class CloseControlsTests(unittest.TestCase):
                 warnings.append((title, message))
 
         namespace = {name: getattr(client, name) for name in (
-            'page_key', 'checked_close_state', 'close_state_script', 'export_pending_buffers', 'zipfile')}
+            'page_key', 'editor_target_script', 'checked_close_state', 'close_state_script', 'export_pending_buffers', 'zipfile')}
         namespace.update(QTimer=Timer, QMessageBox=Dialog, QFileDialog=SimpleNamespace(
             getSaveFileName=lambda *args: (path, '')))
         exec(compile(ast.fix_missing_locations(ast.Module(body=[window], type_ignores=[])),
@@ -431,7 +432,7 @@ class CloseControlsTests(unittest.TestCase):
         self.assertFalse(page.acceptNavigationRequest(self.url(EDITOR + '#other-document'), None, True))
         self.assertEqual(window.tabs.selected, existing)
         self.assertEqual(existing.address, EDITOR)
-        self.assertEqual(existing.scripts, [])
+        self.assertEqual(existing.scripts, [client.editor_target_script(EDITOR + '#other-document')])
         Timer.queued.pop(0)()
         self.assertTrue(placeholder.deleted)
         self.assertEqual(window.tabs.views, [shelf, existing])

@@ -83,6 +83,64 @@ class WorkbenchArchivesTests(unittest.TestCase):
         with closing(sqlite3.connect(self.destination / '.story/state.sqlite3')) as db:
             self.assertEqual(db.execute('PRAGMA integrity_check').fetchone()[0], 'ok')
 
+    def test_restore_rejects_book_ancestor_before_reading_archive(self):
+        self.archive()
+        nested_parent = self.root / '参考资料'
+        nested_parent.mkdir()
+        before = {path.relative_to(self.root): path.read_bytes()
+                  for path in self.root.rglob('*') if path.is_file()}
+        with patch.object(self.archives, '_open_verified_archive') as opened:
+            for destination in (self.root / '恢复副本', nested_parent / '恢复副本'):
+                self.error('workbench_nested_book',
+                           lambda: self.archives.restore_archive(self.output, destination))
+                self.assertFalse(destination.exists())
+            opened.assert_not_called()
+        self.assertEqual(before, {path.relative_to(self.root): path.read_bytes()
+                                 for path in self.root.rglob('*') if path.is_file()})
+        self.assertFalse(list(self.root.rglob('.story-restore-*')))
+
+    def test_restore_rechecks_ancestor_after_archive_validation(self):
+        self.archive()
+        container = self.directory / '稍后初始化的目录'
+        container.mkdir()
+        destination = container / '恢复副本'
+        original = self.archives._open_verified_archive
+
+        def changed_parent(*args):
+            archive, manifest, verify = original(*args)
+
+            def verify_and_initialize():
+                verify()
+                base.story.Book.create(container, '读取期间建立的作品', 'short')
+
+            return archive, manifest, verify_and_initialize
+
+        with patch.object(self.archives, '_open_verified_archive', side_effect=changed_parent):
+            self.error('workbench_nested_book',
+                       lambda: self.archives.restore_archive(self.output, destination))
+        self.assertFalse(destination.exists())
+        self.assertTrue((container / '.story/state.sqlite3').is_file())
+        self.assertFalse(list(container.glob('.story-restore-*')))
+
+    def test_restore_keeps_partial_marker_if_ancestor_becomes_book_during_publication(self):
+        self.archive()
+        container = self.directory / '发布期间初始化的目录'
+        container.mkdir()
+        destination = container / '恢复副本'
+        original = base.story._publish_no_replace
+
+        def initialize_on_publication(source, target):
+            if Path(str(target)) == destination / '.story-restore-incomplete.json':
+                base.story.Book.create(container, '发布期间建立的作品', 'short')
+            return original(source, target)
+
+        with patch.object(self.archives.api, '_publish_no_replace', side_effect=initialize_on_publication):
+            self.error('archive_partial_restore',
+                       lambda: self.archives.restore_archive(self.output, destination))
+        self.assertTrue((destination / '.story-restore-incomplete.json').is_file())
+        self.assertTrue((container / '.story/state.sqlite3').is_file())
+        self.assertEqual((destination / '正文.md').read_bytes(), (self.root / '正文.md').read_bytes())
+
     def assert_snapshot_connections_closed_before_cleanup(self, failure=None):
         """Retain real handles so garbage collection cannot conceal a leak."""
         original_connect = sqlite3.connect

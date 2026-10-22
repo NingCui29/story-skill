@@ -110,6 +110,44 @@ for(const invalid of [context({protocol:'https:'}),context({hostname:'localhost'
         result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + harness], capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_editor_safety_waits_for_readiness_and_checks_the_matching_main_frame(self):
+        node = shutil.which('node')
+        if not node:
+            self.skipTest('Node.js required')
+        output = self.foundation(r'''
+let editor=URL(string:"http://127.0.0.1:12345/abcdefghijklmnopqrstuvwxyz012345/")!
+precondition(WorkbenchAppearance.safetyScript(for:URL(string:"https://example.com/")!,source:"") == nil)
+let script=WorkbenchAppearance.safetyScript(for:editor,source:"(() => { globalThis.installCalls=(globalThis.installCalls||0)+1; return installed; })();")!
+print(String(data:try JSONSerialization.data(withJSONObject:["script":script]),encoding:.utf8)!)
+''')
+        script = json.loads(output)['script']
+        program = r'''
+const assert=require('node:assert/strict'),vm=require('node:vm');
+function page(installed,changes={},nested=false){
+ const window={};window.top=nested?{}:window;
+ return vm.createContext({window,installed,setTimeout,clearTimeout,location:{protocol:'http:',hostname:'127.0.0.1',port:'12345',pathname:'/abcdefghijklmnopqrstuvwxyz012345/',...changes}});
+}
+const run=context=>vm.runInContext('(async()=>{'+script+'})()',context);
+(async()=>{
+ let release;const ready=new Promise(resolve=>release=resolve),pending=page({applied:true,ready});let finished=false;
+ const check=run(pending).then(value=>{finished=true;return value;});
+ await Promise.resolve();assert.equal(finished,false,'native page must remain hidden while verification is pending');
+ release(true);assert.equal(await check,true);assert.equal(pending.installCalls,1);
+ for(const installed of [{applied:true},{applied:false,ready:Promise.resolve(true)},{applied:true,ready:Promise.resolve(false)}])assert.equal(await run(page(installed)),false);
+ const rejected=Promise.reject(Error('synthetic integrity failure'));rejected.catch(()=>{});
+ await assert.rejects(run(page({applied:true,ready:rejected})),/integrity failure/);
+ const stalled=page({applied:true,ready:new Promise(()=>{})}),timers=[];let cleared=false;
+ stalled.setTimeout=(callback,delay)=>{assert.equal(delay,15000);timers.push(callback);return 1;};stalled.clearTimeout=id=>{assert.equal(id,1);cleared=true;};
+ const timeout=run(stalled);assert.equal(timers.length,1);timers[0]();assert.equal(await timeout,false);assert.ok(cleared);
+ for(const context of [page({applied:true,ready:Promise.resolve(true)},{port:'12346'}),page({applied:true,ready:Promise.resolve(true)},{pathname:'/other_abcdefghijklmnopqrstuvwxyz/'}),page({applied:true,ready:Promise.resolve(true)},{},true)]){
+  assert.equal(await run(context),false);assert.equal(context.installCalls,undefined);
+ }
+})().catch(error=>{console.error(error);process.exitCode=1;});
+'''
+        result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + program],
+                                capture_output=True, text=True, timeout=15)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_switch_self_test_requires_isolated_shelf_and_distinct_optional_second_editor(self):
         self.foundation(r'''
 let shelf="http://127.0.0.1:12345/"
@@ -221,19 +259,20 @@ for(const invalid of [nativePage(true,{port:'12346'}),nativePage(true,{pathname:
         if not node:
             self.skipTest('Node.js required')
         source = SOURCE.read_text()
-        script = source.split('let script = "typeof docs', 1)[1].split('"\n', 1)[0]
-        script = 'typeof docs' + script
+        method = source.split('func confirmLeaving(', 1)[1].split('@objc func goHome()', 1)[0]
+        script = method.split('let script = """', 1)[1].split('"""', 1)[0]
         harness = r'''
 const assert=require('assert'),vm=require('vm');
-const evaluate=records=>vm.runInNewContext(script,{docs:new Map(records.map((record,index)=>[String(index),record]))});
-assert.equal(vm.runInNewContext(script,{}),false);
-assert.equal(evaluate([]),false);
-assert.equal(evaluate([{editable:true,text:'saved',value:'saved'}]),false);
-assert.equal(evaluate([{editable:true,text:'saved',value:'saved'},{editable:true,text:'old',value:'inactive edit'}]),true);
-assert.equal(evaluate([{editable:true,text:'saved',value:'saved',saving:true}]),true);
-assert.equal(evaluate([{editable:true,text:'original',value:'edited',recovered:'edited'}]),true);
-assert.equal(evaluate([{editable:false,text:'old',value:'readonly'}]),false);
-assert.equal(evaluate([{editable:true,text:'old'}]),false);
+const evaluate=records=>vm.runInNewContext(script,{Map,docs:new Map(records.map((record,index)=>[String(index),record])),document:{getElementById:id=>id==='current-book-root'?{}:null}});
+assert.equal(vm.runInNewContext(script,{document:{getElementById:()=>null}}),'unknown');
+assert.equal(evaluate([]),'clean');
+assert.equal(evaluate([{editable:true,text:'saved',value:'saved'}]),'clean');
+assert.equal(evaluate([{editable:true,text:'saved',value:'saved'},{editable:true,text:'old',value:'inactive edit'}]),'pending');
+assert.equal(evaluate([{editable:true,text:'saved',value:'saved',saving:true}]),'busy');
+assert.equal(evaluate([{editable:true,text:'original',value:'edited',recovered:'edited'}]),'pending');
+assert.equal(evaluate([{editable:true,text:'saved',value:'saved',needs_recovery:true}]),'pending');
+assert.equal(evaluate([{editable:false,text:'old',value:'readonly'}]),'clean');
+assert.equal(evaluate([{editable:true,text:'old'}]),'unknown');
 '''
         result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + harness], capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

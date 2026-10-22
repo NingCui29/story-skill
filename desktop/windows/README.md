@@ -1,8 +1,10 @@
 # 写作工作台 · Windows 独立应用
 
+本构建客户端为 **0.1.11**，内嵌 Story Skill **0.6.20**。整合保存状态与恢复副本保护、候选版本管理、同稿刷新与光标恢复、题材来源展示、作品服务停止保护及材料分页修复。本次安装包通过 Windows 构建流程验证后以构建产物交付；下方 0.1.10 链接仍是已有正式发行。
+
 面向 Windows 10/11 x64。客户端使用 PySide6 / Qt WebEngine 桌面窗口，内置 Chromium 和 Python；使用者无需另装 Python、技能或浏览器扩展。完整创作技能在所用助手中另行安装。
 
-本目录对应客户端 **0.1.10**，内嵌 Story Skill **0.6.20**。各轮构建、安装验收及实际发布状态见 [v0.6.20 发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.20.md)。Windows 10/11 用户环境的人工验收按实际证据记录；安装程序未做代码签名。
+上一正式发行客户端为 **0.1.10**，内嵌 Story Skill **0.6.20**。各轮构建、安装验收及实际发布状态见 [v0.6.20 发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.20.md)。Windows 10/11 用户环境的人工验收按实际证据记录；安装程序未做代码签名。
 
 ## 下载与安装
 

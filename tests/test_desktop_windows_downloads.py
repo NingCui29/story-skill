@@ -201,17 +201,21 @@ class ControlTests(unittest.TestCase):
     def dialog(self):
         queued, launches = [], []
         owner = SimpleNamespace(close_after_update_cancel=False, close=lambda: launches.append('close'),
+                                tabs=Widget(),
                                 launch_verified_installer=lambda *args: launches.append('launch'))
         namespace = dict(DownloadProgress=delivery.DownloadProgress, progress_text=delivery.progress_text,
                          QTimer=SimpleNamespace(singleShot=lambda delay, callback: queued.append(callback)))
         dialog_class = production_class('UpdateDialog', {
-            'busy', 'worker_finished', 'set_progress', 'cancel_download', 'closeEvent', 'mark_installer_started'}, namespace)
+            'busy', 'worker_finished', 'finish_worker', 'release_install_editing_lock',
+            'set_progress', 'cancel_download', 'closeEvent', 'mark_installer_started'}, namespace)
         instance = dialog_class()
         for name in ('message', 'details', 'bar', 'close_button', 'cancel_button', 'download_button',
                      'folder_button', 'install_button'):
             setattr(instance, name, Widget())
         instance.owner, instance.result = owner, result()
         instance.launch_requested = False
+        instance.install_checking, instance.install_cancelled = False, False
+        instance.install_editing_locked = False
         instance.worker = SimpleNamespace(cancel_event=threading.Event(), deleteLater=lambda: launches.append('deleted'))
         return instance, queued, launches
 
@@ -228,13 +232,15 @@ class ControlTests(unittest.TestCase):
     def test_cancel_between_success_and_finished_never_launches_installer(self):
         dialog, queued, actions = self.dialog()
         dialog.launch_requested = True
-        dialog.outcome = ('ready', SimpleNamespace(size=len(DATA), asset_name=NAME))
+        dialog.outcome = ('ready', SimpleNamespace(update=SimpleNamespace(size=len(DATA), asset_name=NAME),
+                                                  close=lambda: actions.append('lock released')))
         dialog.worker.cancel_event.set()
         dialog.worker_finished()
         self.assertIsNone(dialog.worker)
         self.assertNotIn('launch', actions)
         self.assertEqual(dialog.message.content, '更新已取消。')
         self.assertTrue(dialog.download_button.enabled)
+        self.assertIn('lock released', actions)
 
     def test_window_close_waits_for_worker_finished_then_runs_existing_save_guard(self):
         dialog, queued, actions = self.dialog()
@@ -268,15 +274,18 @@ class ControlTests(unittest.TestCase):
 
     def test_launch_requires_all_tabs_save_guard_and_receipt_after_user_decision(self):
         calls, callbacks, messages = [], [], []
-        namespace = dict(Path=Path, assert_verified_identity=delivery.assert_verified_identity,
+        namespace = dict(Path=Path,
                          subprocess=SimpleNamespace(Popen=lambda *args, **kwargs: calls.append((args, kwargs))))
-        window_class = production_class('Window', {'launch_verified_installer'}, namespace)
+        window_class = production_class('Window', {'launch_verified_installer', 'complete_installer_handoff'}, namespace)
         window = window_class()
+        window.close_pending, window.close_after_update_cancel = False, False
         views = [object(), object(), object()]
         window.tabs = SimpleNamespace(count=lambda: len(views), widget=lambda index: views[index])
         window.request_close = lambda checked_views, action, completion: (
             self.assertEqual(checked_views, views), callbacks.append(completion))
         dialog = SimpleNamespace(message=SimpleNamespace(setText=messages.append),
+                                 busy=lambda: False, install_button=Widget(),
+                                 start_worker=lambda **kwargs: calls.append(('verify after save', kwargs)),
                                  mark_installer_started=lambda: calls.append('started'))
         with tempfile.TemporaryDirectory() as raw:
             downloaded = delivery.download_update(result(), raw, opener=Opener(Response()))
@@ -286,14 +295,20 @@ class ControlTests(unittest.TestCase):
             self.assertEqual(calls, [])
             window.launch_verified_installer(downloaded, dialog)
             callbacks.pop()(True)
-            self.assertEqual(calls[0][0], ([downloaded.path],))
-            self.assertNotIn('shell', calls[0][1])
+            self.assertEqual(calls, [('verify after save', {'verify': True})])
+            prepared = SimpleNamespace(update=downloaded,
+                                       assert_current=lambda: delivery.assert_verified_identity(downloaded),
+                                       close=lambda: calls.append('lock released'))
+            window.complete_installer_handoff(prepared, dialog)
+            self.assertEqual(calls[1][0], ([downloaded.path],))
+            self.assertNotIn('shell', calls[1][1])
             self.assertEqual(calls[-1], 'started')
             calls.clear()
             window.launch_verified_installer(downloaded, dialog)
             Path(downloaded.path).write_bytes(b'x' + DATA[1:])
             callbacks.pop()(True)
-            self.assertEqual(calls, [])
+            window.complete_installer_handoff(prepared, dialog)
+            self.assertEqual(calls, [('verify after save', {'verify': True}), 'lock released'])
             self.assertIn('无法启动', messages[-1])
 
 

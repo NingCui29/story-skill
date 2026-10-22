@@ -14,7 +14,8 @@ class WorkbenchSaveAllTests(unittest.TestCase):
         workbench = base.story.workbench
         page = workbench._editor_page(workbench.snapshot(self.fixture.book), {}, 'test').decode()
         script = page.split('<script>', 1)[1].split('</script>', 1)[0]
-        self.source = (script[script.index('function dirty(d)'):script.index('function badge()')]
+        self.source = (script[script.index('function documentIdentity('):script.index('function documentLocation(')]
+                       + script[script.index('function dirty(d)'):script.index('function badge()')]
                        + script[script.index('async function saveDocument'):script.index("$('compare').onclick")])
 
     def js(self, test):
@@ -28,7 +29,7 @@ const docs=new Map(),notes=[],calls=[],recoveries=[],shown=[],scheduled=[];
 let active='active-clean',reloading=false,saveError=null,openError=null,saveCount=0,heldSave=null;
 const location={hash:''},crypto={randomUUID:()=>String(saveCount)+'-fixture-key'};
 const clearTimeout=()=>{},setTimeout=(callback,delay)=>{scheduled.push({callback,delay});return scheduled.length;};
-const badge=()=>{},note=value=>notes.push(value),rememberView=()=>{};
+const badge=()=>{},note=value=>notes.push(value),rememberView=()=>{},displayTitle=document=>document.title;
 const catalog=async()=>{},recover=async document=>{recoveries.push(document.id);document.recovered=document.value;};
 const show=document=>{shown.push(document.id);active=document.id;};
 const saved=new Map();
@@ -84,6 +85,17 @@ assert.ok(notes.at(-1).includes('1 份已保存'));assert.ok(notes.at(-1).includ
 const hidden=make('hidden','原稿','未保存',{saving:true});docs.set(hidden.id,hidden);
 await $('save-all').onclick();assert.equal(calls.length,0);assert.ok(notes.at(-1).includes('候选正在保存'));
 assert.equal(await saveDocument(hidden),false);assert.equal(hidden.value,'未保存');assert.equal(hidden.saving,true);
+""")
+
+    def test_save_all_final_message_preserves_failed_document_and_concrete_reason(self):
+        self.js(r"""
+const first=make('first','原一','新一'),second=make('second','原二','新二');
+docs.set(first.id,first);docs.set(second.id,second);saveError='second';
+await $('save-all').onclick();
+assert.ok(notes.at(-1).includes('保存全部已停止；1 份已保存'));
+assert.ok(notes.at(-1).includes('失败原因（second）：合成保存失败'));
+assert.equal(second.value,'新二');assert.equal(dirty(second),true);assert.deepEqual(pending().map(d=>d.id),['second']);
+saveError=null;await $('save-all').onclick();assert.ok(!notes.at(-1).includes('合成保存失败'));assert.equal(pending().length,0);
 """)
 
     def test_typing_during_save_keeps_newer_text_dirty_in_the_new_candidate(self):

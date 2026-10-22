@@ -37,6 +37,10 @@ const timers=new Map(),setInterval=callback=>{const id=++timerId;timers.set(id,c
 const tick=milliseconds=>{clock+=milliseconds;for(const callback of timers.values())callback();};
 function closeShelfMenus(){closedMenus++;}
 const requests=[],renders=[],render=value=>renders.push(value),bookName=book=>book.title;
+const shelfStatusDrafts=new Map();function captureShelfStatusDrafts(){}function shelfStatusDraftKey(book){return book.key;}function moveShelfStatusDraft(){}
+async function requestShelfCatalog(action,data){return await call(action,data);}function applyShelfCatalog(result,options){render(result,options);}
+let catalogCurrent=true;function shelfCatalogIsCurrent(){return catalogCurrent;}
+function shelfManagerReceiptIsCurrent(){return true;}
 let response={},failure=null,pending=null;
 let call=async(action,data={})=>{requests.push({action,...data});if(pending)return await pending;if(failure)throw failure;return response;};
 const deferred=()=>{let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return {promise,resolve,reject};};
@@ -112,8 +116,8 @@ response={running:true,outdated:false};await showBookService(book);const confirm
 await run.onclick();assert.equal(requests.length,1);assert.equal(requests[0].action,'book-service');
 assert.equal($('manager-operation').textContent,'操作未提交');assert.equal($('manager-feedback').dataset.state,'error');
 assert.ok($('manager-error').textContent.includes('先保存'));assert.equal(confirmation.checked,false);assert.equal(confirmation.disabled,false);assert.equal(timers.size,0);
-confirmation.checked=true;response={stop_requested:false};await run.onclick();
-assert.equal(requests.length,2);assert.equal(requests[1].action,'stop-book');assert.ok($('manager-operation').textContent.includes('请核对下方结果'));
+confirmation.checked=true;call=async(action,data)=>{requests.push({action,...data});return action==='book-service'?{running:true,outdated:false}:{stop_requested:false};};await run.onclick();
+assert.equal(requests.length,3);assert.equal(requests[1].action,'book-service');assert.equal(requests[2].action,'stop-book');assert.ok($('manager-operation').textContent.includes('请核对下方结果'));
 assert.ok(managerBody.children.some(node=>node.textContent.includes('停止未确认')));assert.equal(confirmation.checked,true);
 ''')
 
@@ -134,6 +138,14 @@ for(const [show,label,operation,expectedAction]of [[showCreateBook,'创建并加
  assert.equal($('manager-operation').textContent,operation);assert.equal(requests.at(-1).action,expectedAction);
  wait.resolve({books:[book],registered:true});await running;assert.equal(managerBusy,false);assert.equal(timers.size,0);assert.equal(manager.attributes['aria-busy'],'false');
 }
+''')
+
+    def test_older_receipt_keeps_current_catalog_and_shows_a_closable_result_to_verify(self):
+        self.js(r'''
+showRestoreBackup();fields()[0].value='/fixture/archive.zip';fields()[1].value='/fixture/restored';catalogCurrent=false;
+response={root:'/fixture/restored',books:[book]};await action('核验并恢复副本').onclick();
+assert.equal(requests.length,1);assert.equal(renders.length,0);assert.equal(manager.open,true);assert.equal(managerBusy,false);assert.equal($('manager-feedback').dataset.state,'unknown');assert.ok($('manager-operation').textContent.includes('较早目录结果'));assert.ok($('manager-detail').textContent.includes('已收到本机服务响应'));assert.ok($('manager-detail').textContent.includes('勿直接重复执行'));assert.ok(!$('manager-detail').textContent.includes('未执行'));
+assert.equal(action('返回书架').disabled,false);await action('返回书架').onclick();assert.equal(manager.open,false);assert.equal(requests.length,1);
 ''')
 
     def test_retry_resets_elapsed_and_announcement_without_leaking_previous_timer(self):

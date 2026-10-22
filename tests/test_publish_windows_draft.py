@@ -28,7 +28,7 @@ def fixture(area):
     runtime = tuple('runtime%d.py' % n for n in range(15))
     write(source / 'scripts/build_desktop_macos.py', ('RUNTIME_FILES = ' + repr(runtime)).encode())
     write(source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.20"\n')
-    write(source / 'desktop/windows/workbench_updates.py', b'CLIENT_VERSION = "0.1.10"\n')
+    write(source / 'desktop/windows/workbench_updates.py', b'CLIENT_VERSION = "0.1.11"\n')
     files = {}
     for name in runtime:
         files['Scripts/' + name] = ('runtime ' + name).encode()
@@ -50,7 +50,7 @@ def fixture(area):
     artifacts.mkdir()
     setup = artifacts / publish.SETUP
     setup.write_bytes(b'MZ synthetic installer')
-    manifest = {'platform': 'windows-x86_64', 'client_version': '0.1.10', 'story_version': '0.6.20',
+    manifest = {'platform': 'windows-x86_64', 'client_version': '0.1.11', 'story_version': '0.6.20',
                 'files': {name: hashlib.sha256(data).hexdigest() for name, data in files.items()}}
     files['build-manifest.json'] = json.dumps(manifest).encode()
     portable = artifacts / publish.ORIGINAL_PORTABLE
@@ -60,7 +60,7 @@ def fixture(area):
     for path in (setup, portable):
         path.with_name(path.name + '.sha256').write_text(publish.digest_file(path) + '  ' + path.name + '\n')
     native = dict.fromkeys(publish.NATIVE_FLAGS, True)
-    native.update(client_version='0.1.10', theme_captures={'light': True, 'dark': True})
+    native.update(client_version='0.1.11', theme_captures={'light': True, 'dark': True})
     safety = dict.fromkeys(publish.SAFETY_FLAGS, True)
     safety.update(platform='win32', story_version='0.6.20', existing_book_files_recycled=False)
     write(artifacts / 'windows-native-smoke.json', json.dumps(native).encode())

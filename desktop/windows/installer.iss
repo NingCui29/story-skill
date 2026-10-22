@@ -5,7 +5,7 @@
 #ifndef InstallerOutput
   #define InstallerOutput "."
 #endif
-#define ClientVersion "0.1.10"
+#define ClientVersion "0.1.11"
 
 [Setup]
 AppId={{8BB803B9-A7FA-47E8-8C3C-E5A6FF197702}

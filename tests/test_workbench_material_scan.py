@@ -70,6 +70,9 @@ class WorkbenchMaterialScanTests(unittest.TestCase):
 
     def test_loading_more_materials_preserves_current_unsaved_editor(self):
         page = self.w._editor_page(self.w.snapshot(self.fixture.book), {}, 'material-ui-test').decode()
+        for control in ('materials-status', 'materials-more', 'save-retry', 'save-status-download',
+                        'save-new-version', 'resume-status', 'presence-status', 'resume-remember'):
+            self.assertEqual(page.count('id="' + control + '"'), 1)
         script = page.split('<script>', 1)[1].split('</script>', 1)[0]
         source = script[script.index('async function catalog('):script.index('async function recover(')]
         self.ui(r"""
@@ -103,7 +106,8 @@ async function call(action,payload){
     def test_successful_candidate_save_refreshes_material_inventory_for_new_file(self):
         page = self.w._editor_page(self.w.snapshot(self.fixture.book), {}, 'material-ui-save').decode()
         script = page.split('<script>', 1)[1].split('</script>', 1)[0]
-        source = script[script.index('async function saveDocument('):script.index("$('save').onclick=")]
+        source = script[script.index('function documentIdentity('):script.index('function documentSaveState(')]
+        source += script[script.index('async function saveDocument('):script.index("$('save').onclick=")]
         self.ui(r"""
 let active='formal:1',reloading=false;
 const original={id:active,text:'正式原文。',value:'本次保存的候选文字。',editable:true,editing:true,positions:{edit:37}};
@@ -127,6 +131,33 @@ catalog.materialCursor='old-complete-material-inventory';
  assert.equal(docs.get(active).value,'本次保存的候选文字。');
  assert.equal(docs.get(active).editing,true);assert.deepEqual(docs.get(active).positions,{edit:37});
  assert.equal(original.text,'正式原文。');
+})().catch(error=>{console.error(error);process.exitCode=1;});
+""")
+
+    def test_recovery_retry_refreshes_material_inventory_only_after_confirmed_write(self):
+        page = self.w._editor_page(self.w.snapshot(self.fixture.book), {}, 'material-ui-recovery').decode()
+        script = page.split('<script>', 1)[1].split('</script>', 1)[0]
+        source = script[script.index('async function recover('):script.index("$('text').addEventListener('input'")]
+        self.ui(r"""
+let active='formal:1',failRecovery=true;
+const original={id:active,text:'正式原文。',value:'需要恢复的编辑。',editable:true};
+const dirty=d=>d?.editable&&d.value!==d.text,badge=()=>{},notes=[],note=text=>notes.push(text);
+const catalogRequests=[];
+async function call(action){
+ assert.equal(action,'recover');if(failRecovery)throw Error('恢复目录暂不可写');
+ return {path:'.story/drafts/workbench/自动恢复/恢复稿.md',recovery_sha256:'saved-recovery-hash'};
+}
+async function catalog(){catalogRequests.push(catalog.materialCursor);}
+catalog.materialCursor='old-complete-material-inventory';
+""" + source, r"""
+(async()=>{
+ assert.equal(await recover(original),false);assert.ok(original.recoveryError);
+ assert.equal(catalog.materialCursor,'old-complete-material-inventory');assert.deepEqual(catalogRequests,[]);
+ failRecovery=false;assert.equal(await recover(original,true),true);
+ assert.equal(original.recovered,original.value);assert.equal(original.recoveryError,'');
+ assert.equal(original.recoverySha,'saved-recovery-hash');assert.deepEqual(catalogRequests,[null]);
+ assert.equal(original.value,'需要恢复的编辑。');assert.equal(original.text,'正式原文。');
+ assert.equal(original.recovering,null);assert.equal(original.recoveringText,undefined);
 })().catch(error=>{console.error(error);process.exitCode=1;});
 """)
 

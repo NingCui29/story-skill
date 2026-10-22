@@ -16,6 +16,7 @@ import stat
 import tempfile
 import unicodedata
 import zipfile
+import zlib
 
 
 CONTRACT = 'story.book-archive.v1'
@@ -413,15 +414,18 @@ def inspect_archive(path):
                 'files': len(manifest['files']), 'bytes': total, 'excluded': manifest.get('excluded', []),
                 'manifest_sha256': hashlib.sha256(json.dumps(manifest, ensure_ascii=False, sort_keys=True).encode('utf-8')).hexdigest(),
                 'restore_note': '恢复至新目录并保留原作品身份；核对后再加入书架，避免同时编辑两个副本。'}
-    except (zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError, EOFError, NotImplementedError) as error:
+    except (zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError, EOFError, NotImplementedError, zlib.error) as error:
         _fail('invalid_zip', '备份压缩包损坏或格式不支持。', reason=str(error))
 
 
 def restore_archive(archive_path, destination_root):
     """Restore into a fresh sibling stage, verify, then publish without replacement."""
     destination_root = _absolute(destination_root)
+    manager = api.workbench_books.BookManager(api.workbench)
+    manager._safe_root(destination_root)
     with ExitStack() as stack:
         stack.enter_context(api.workbench_books.lifecycle_guard(api, destination_root))
+        manager._safe_root(destination_root)
         parent = stack.enter_context(api._pinned_directory(destination_root.parent))
         if os.path.lexists(destination_root):
             _fail('exists', '恢复目录已存在，请选择一个全新的目录。', path=str(destination_root))
@@ -451,6 +455,10 @@ def restore_archive(archive_path, destination_root):
                 book.close()
             verify()
             api._verify_bound_directory(parent)
+            # The parent may have become a book while the archive was read.
+            # Apply the same directory boundary as new-book creation again
+            # before publishing any restored files.
+            manager._safe_root(destination_root)
             # Reserve the target directory using mkdir, which is no-replace on
             # both platforms, and move children into that owned destination.
             # A failed publish leaves a clearly marked partial directory rather
@@ -496,13 +504,14 @@ def restore_archive(archive_path, destination_root):
                     verify()
                     api._verify_bound_directory(destination)
                     api._verify_bound_directory(parent)
+                    manager._safe_root(destination_root)
                     api._bound_unlink(marker)
             except (OSError, api.StoryError) as error:
                 _fail('partial_restore', '恢复发布未完成，已保留临时标记和现有文件，请核对后重试到新目录。',
                       path=str(destination_root), reason=str(error))
             return {'ok': True, 'root': str(destination_root), **identity, 'files': len(manifest['files']),
                     'note': '已恢复到新目录，保留原作品身份。请先核对内容，避免同时编辑原作与恢复副本。'}
-        except (zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError, EOFError, NotImplementedError) as error:
+        except (zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError, EOFError, NotImplementedError, zlib.error) as error:
             _fail('invalid_zip', '备份压缩包损坏或格式不支持。', reason=str(error))
 
 

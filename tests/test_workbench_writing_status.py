@@ -15,8 +15,15 @@ class WorkbenchWritingStatusTests(unittest.TestCase):
     serve = library.WorkbenchLibraryTests.serve
     stop = library.WorkbenchLibraryTests.stop
     request = library.WorkbenchLibraryTests.request
-    post = library.WorkbenchLibraryTests.post
     add = library.WorkbenchLibraryTests.add
+
+    def post(self, server, action, payload=None, headers=None):
+        if action == 'set-book-status' and payload and 'expected_book_id' not in payload:
+            entries, _ = self.w._library_load(self.state)
+            entry = entries.get(payload.get('key'))
+            if entry:
+                payload = {**payload, 'expected_book_id': entry['book_id']}
+        return library.WorkbenchLibraryTests.post(self, server, action, payload, headers)
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='workbench-writing-status-')
@@ -423,9 +430,54 @@ class WorkbenchWritingStatusTests(unittest.TestCase):
 
         with patch.object(self.w, '_library_entry', side_effect=replace_at_second_check):
             with self.assertRaises(base.story.StoryError) as caught:
-                self.w._set_shelf_status(self.state, entries, entry['key'], 'completed', digest)
+                self.w._set_shelf_status(self.state, entries, entry['key'], 'completed', digest, entry['book_id'])
         self.assertEqual(caught.exception.code, 'workbench_book_changed')
         self.assertEqual((self.state / 'library.json').read_bytes(), before)
+
+    def test_same_path_replacement_requires_the_expected_book_identity(self):
+        server = self.start(books=[self.root])
+        old = self.post(server, 'books')[1]['books'][0]
+        status, removed = self.post(server, 'remove-book', {'key': old['key']})
+        self.assertEqual(status, 200, removed)
+        self.root.rename(self.area / '保留原作品')
+        base.story.Book.create(self.root, '替换后的作品', 'long')
+        new = self.add(server, self.root)['books'][0]
+        self.assertEqual(old['key'], new['key'])
+        self.assertNotEqual(old['book_id'], new['book_id'])
+        before = (self.state / 'library.json').read_bytes()
+        book_files = self.file_state(self.root)
+        for identity in (None, '', old['book_id']):
+            payload = {'key': new['key'], 'value': 'completed'}
+            if identity is not None:
+                payload['expected_book_id'] = identity
+            status, result = library.WorkbenchLibraryTests.post(self, server, 'set-book-status', payload)
+            self.assertEqual(status, 409, result)
+            self.assertEqual(result['error'], 'workbench_book_changed')
+            self.assertEqual((self.state / 'library.json').read_bytes(), before)
+        status, result = self.post(server, 'set-book-status', {
+            'key': new['key'], 'value': 'completed', 'expected_book_id': new['book_id']})
+        self.assertEqual(status, 200, result)
+        self.assertEqual(result['books'][0]['writing_status']['value'], 'completed')
+        self.assertEqual(self.file_state(self.root), book_files)
+
+    def test_catalog_generations_follow_server_snapshot_order_across_actions(self):
+        server = self.start(books=[self.root])
+        first = self.post(server, 'books')[1]
+        key = first['books'][0]['key']
+        marked = self.post(server, 'set-book-status', {'key': key, 'value': 'serializing'})[1]
+        removed = self.post(server, 'remove-book', {'key': key})[1]
+        restored = self.post(server, 'undo-remove', {'receipt_id': removed['undo_id']})[1]
+        refreshed = self.post(server, 'books')[1]
+        generations = [value['catalog_generation'] for value in (first, marked, removed, restored, refreshed)]
+        self.assertEqual(generations, sorted(set(generations)))
+        self.assertTrue(all(isinstance(value, int) and value > 0 for value in generations))
+        self.assertTrue(all(value['catalog_instance'] == first['catalog_instance']
+                            for value in (marked, removed, restored, refreshed)))
+        self.stop(server)
+        restarted = self.start()
+        new_catalog = self.post(restarted, 'books')[1]
+        self.assertNotEqual(new_catalog['catalog_instance'], first['catalog_instance'])
+        self.assertEqual(new_catalog['catalog_generation'], 1)
 
 
 if __name__ == '__main__':

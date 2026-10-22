@@ -467,20 +467,24 @@ const call=async()=>({count:2400,target:[2400,2800],in_range:false,within_target
 
     def test_review_panel_renders_full_lint_heading_errors(self):
         script = self.script()
-        source = script[script.index(" $('review-task').onclick=async()=>"):
-                        script.index(" $('copy-review').onclick=async()=>")]
+        source = script[script.index("$('review-task').onclick="):
+                        script.index("$('copy-review').onclick=")]
         mock = r"""
 const elements=new Map(),$=id=>{if(!elements.has(id))elements.set(id,{textContent:'',hidden:true,
  scrollIntoView(){}});return elements.get(id);};
 const docs=new Map([['draft',{id:'draft',editable:true,needs_recovery:false,sha256:'abc'}]]);
 const active='draft',dirty=()=>false,leaveComparison=()=>{};let warning='';
 const note=x=>warning=x;
-const call=async()=>({prompt:'请审稿',status:'审稿任务已生成',check_note:'只读完整章节工具检查。',
- lint:{ok:false,errors:[{code:'chapter_heading_title',expected:'第1章 正确',actual:'第1章 错题'}],warnings:[]}});
+const call=async(action,data)=>{assert.equal(action,'review-task');assert.deepEqual(data,{id:'draft',sha256:'abc'});
+ return {prompt:'请审稿',status:'审稿任务已生成',check_note:'只读完整章节工具检查。',
+ lint:{ok:false,errors:[{code:'chapter_heading_title',expected:'第1章 正确',actual:'第1章 错题'}],warnings:[]}};};
 """
         self.js(mock + source, r"""
 (async()=>{await $('review-task').onclick();
  assert.equal(warning,'');
+ assert.equal($('review-task-box').hidden,false);
+ assert.equal($('assistant-task-title').textContent,'交给助手审稿');
+ assert.equal($('review-prompt').value,'请审稿');
  assert.ok($('review-task-status').textContent.includes('完整章节工具检查'));
  assert.ok($('review-findings').textContent.includes('第1章 正确'));
  assert.ok($('review-findings').textContent.includes('第1章 错题'));
@@ -1042,7 +1046,7 @@ assert.equal(draft.title,'第1章 原名_候选_abcdef123456');
             {'doc': {**material, 'value': material['text']}, 'expected': material['text']},
         ]
         script = self.script()
-        source = script[script.index("$('download').onclick"):script.index('async function reloadDocuments')]
+        source = script[script.index('function downloadDocument('):script.index('async function reloadDocuments')]
         mock = r"""
 let active,blob,clicked=0;const docs=new Map(),button={},$=()=>button;
 const document={createElement:()=>({click(){clicked++;}})},downloadName=()=> '当前稿件.txt';

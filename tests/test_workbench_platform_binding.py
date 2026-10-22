@@ -93,11 +93,14 @@ class PlatformBindingTests(unittest.TestCase):
         repeated = self.bind()
         self.assertEqual(repeated["plan_id"], first["plan_id"])
         self.assertTrue(repeated["plan_reused"])
-        self.assertNotEqual(repeated["profile_id"], first["profile_id"])
+        self.assertEqual(repeated["profile_id"], first["profile_id"])
+        self.assertEqual(repeated["profile_sha256"], first["profile_sha256"])
         self.assertEqual((self.profile_dir / first["profile_id"]).read_bytes(), old_profile)
         self.assertEqual(story.publish.inspect(self.book, first["plan_id"])["manifest"], original)
         changed = self.bind(account_id="777")
         self.assertNotEqual(changed["plan_id"], first["plan_id"])
+        self.assertEqual(changed["profile_id"], first["profile_id"])
+        self.assertEqual(len(self.profiles()), 1)
         self.assertEqual(story.publish.inspect(self.book, first["plan_id"])["manifest"], original)
         self.assertEqual(story.publish.inspect(self.book, changed["plan_id"])["manifest"]["account_id"], "777")
 
@@ -153,6 +156,124 @@ class PlatformBindingTests(unittest.TestCase):
         self.assertEqual((self.profile_dir / first["profile_id"]).read_bytes(), saved)
         self.assertEqual(drafts._WORKBENCH_BINDINGS, {})
         self.assertEqual(story.publish.list_plans(self.book)["total"], 2)
+
+    def test_one_profile_is_reused_for_new_chapters_and_repeated_binding(self):
+        first = self.bind()
+        self.fixture.commit(chapter=2)
+        self.revision = self.book.meta("revision")
+        for start, end in ((1, 1), (2, 2), (1, 2), (2, 2)):
+            result = self.bind(start=start, end=end)
+            self.assertEqual(result["profile_id"], first["profile_id"])
+            self.assertEqual(result["profile_sha256"], first["profile_sha256"])
+            self.assertEqual(result["plan"]["chapters"], list(range(start, end + 1)))
+        self.assertEqual(len(self.profiles()), 1)
+
+    def test_legacy_one_hundred_identical_profiles_allow_binding_without_cleanup(self):
+        first = self.bind()
+        raw = (self.profile_dir / first["profile_id"]).read_bytes()
+        for number in range(drafts.MAX_PROFILES - 1):
+            path = self.profile_dir / ("fanqie-" + format(number, "032x") + ".json")
+            path.write_bytes(raw); path.chmod(0o600)
+        originals = {path: path.read_bytes() for path in self.profiles()}
+        self.assertEqual(len(originals), drafts.MAX_PROFILES)
+        for unused in range(3):
+            repeated = self.bind()
+            self.assertIn(self.profile_dir / repeated["profile_id"], originals)
+            self.assertEqual(repeated["plan_id"], first["plan_id"])
+        self.assertEqual({path: path.read_bytes() for path in self.profiles()}, originals)
+
+    def test_semantically_identical_profile_retains_its_actual_byte_hash(self):
+        first = self.bind()
+        path = self.profile_dir / first["profile_id"]
+        path.write_text(json.dumps(json.loads(path.read_text()), ensure_ascii=False, indent=2), encoding="utf-8")
+        original = path.read_bytes()
+        repeated = self.bind()
+        self.assertEqual(repeated["profile_id"], first["profile_id"])
+        self.assertEqual(repeated["profile_sha256"], hashlib.sha256(original).hexdigest())
+        self.assertNotEqual(repeated["profile_sha256"], first["profile_sha256"])
+        self.assertEqual(path.read_bytes(), original)
+
+    def test_full_directory_with_different_profiles_is_not_overwritten_or_pruned(self):
+        first = self.bind()
+        raw = (self.profile_dir / first["profile_id"]).read_bytes()
+        for number in range(drafts.MAX_PROFILES - 1):
+            path = self.profile_dir / ("fanqie-" + format(number, "032x") + ".json")
+            path.write_bytes(raw)
+        originals = {path: path.read_bytes() for path in self.profiles()}
+        self.code("platform_draft_profile_limit", book_management_url=URL.replace("1234567890&", "9876543210&"))
+        self.assertEqual({path: path.read_bytes() for path in self.profiles()}, originals)
+
+    def test_changed_valid_profile_is_preserved_and_not_reused(self):
+        first = self.bind()
+        path = self.profile_dir / first["profile_id"]
+        saved = json.loads(path.read_text()); saved["editor"]["title"]["selector"] = "input.changed-title"
+        story.platform_chrome_bridge.validate_profile(saved)
+        path.write_text(json.dumps(saved), encoding="utf-8"); original = path.read_bytes()
+        repeated = self.bind()
+        self.assertNotEqual(repeated["profile_id"], first["profile_id"])
+        self.assertEqual(path.read_bytes(), original)
+        self.assertEqual(len(self.profiles()), 2)
+
+    def test_corrupt_and_non_object_profiles_are_preserved_and_not_reused(self):
+        self.profile_dir.mkdir()
+        originals = {}
+        for name, raw in (("broken.json", b"{not-json"), ("array.json", b"[]"),
+                          ("null.json", b"null"), ("wrong-schema.json", b'{"platform":"other"}')):
+            path = self.profile_dir / name; path.write_bytes(raw); originals[path] = raw
+        result = self.bind()
+        self.assertNotIn(self.profile_dir / result["profile_id"], originals)
+        self.assertEqual(len(self.profiles()), len(originals) + 1)
+        self.assertTrue(all(path.read_bytes() == raw for path, raw in originals.items()))
+
+    def test_matching_symlink_and_hardlink_candidates_are_never_reused(self):
+        outside = self.root.parent / "outside-matching-profiles"; outside.mkdir()
+        raw = (story.dumps(story.platform_browser.fanqie_profile_from_book_url(URL)["profile"]) + "\n").encode()
+        self.profile_dir.mkdir()
+        symbolic = self.profile_dir / "symbolic.json"
+        victim = outside / "original.json"; victim.write_bytes(raw)
+        symbolic.symlink_to(victim)
+        alias = self.profile_dir / "hardlinked.json"; os.link(victim, alias)
+        result = self.bind()
+        self.assertNotIn(result["profile_id"], {symbolic.name, alias.name})
+        self.assertTrue(symbolic.is_symlink()); self.assertEqual(alias.stat().st_ino, victim.stat().st_ino)
+        self.assertEqual(victim.read_bytes(), raw)
+
+    def test_failed_new_preparation_cleans_only_its_new_profile(self):
+        first = self.bind()
+        path = self.profile_dir / first["profile_id"]; original = path.read_bytes()
+        other_url = URL.replace("1234567890&", "9876543210&")
+        with patch.object(story.publish, "prepare", side_effect=story.StoryError("synthetic_prepare_failure", "safe")):
+            self.code("synthetic_prepare_failure", book_management_url=other_url)
+        self.assertEqual(self.profiles(), [path]); self.assertEqual(path.read_bytes(), original)
+        self.assertEqual(list(self.profile_dir.glob(".binding-profile-*")), [])
+
+    def test_failed_new_preparation_preserves_a_concurrently_replaced_file(self):
+        first = self.bind()
+        old = self.profile_dir / first["profile_id"]; old_raw = old.read_bytes()
+        replaced = []
+        def replace_then_fail(*args, **kwargs):
+            new = next(path for path in self.profiles() if path != old)
+            staged = self.profile_dir / "external.tmp"; staged.write_bytes(b"external replacement")
+            staged.replace(new); replaced.append(new)
+            raise story.StoryError("synthetic_prepare_failure", "safe")
+        with patch.object(story.publish, "prepare", side_effect=replace_then_fail):
+            self.code("synthetic_prepare_failure", book_management_url=URL.replace("1234567890&", "9876543210&"))
+        self.assertEqual(replaced[0].read_bytes(), b"external replacement")
+        self.assertEqual(old.read_bytes(), old_raw)
+
+    def test_reused_profile_changed_during_preparation_is_rejected_without_cleanup(self):
+        first = self.bind()
+        path = self.profile_dir / first["profile_id"]
+        original = story.publish.prepare
+        def prepare_then_change(*args, **kwargs):
+            result = original(*args, **kwargs)
+            profile = json.loads(path.read_text()); profile["editor"]["title"]["selector"] = "input.changed-title"
+            path.write_text(story.dumps(profile), encoding="utf-8")
+            return result
+        with patch.object(story.publish, "prepare", side_effect=prepare_then_change):
+            self.code("platform_draft_profile_changed")
+        self.assertEqual(len(self.profiles()), 1)
+        self.assertEqual(json.loads(path.read_text())["editor"]["title"]["selector"], "input.changed-title")
 
     def test_profile_directory_symlink_and_leaf_link_are_not_followed(self):
         outside = self.root.parent / "outside-profiles"; outside.mkdir()
