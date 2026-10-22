@@ -8,6 +8,7 @@ import importlib.util
 import json
 from pathlib import Path
 import re
+import sys
 import unicodedata
 from urllib.parse import urlsplit
 
@@ -385,6 +386,9 @@ def run(args):
 
 
 if __name__ == "__main__":
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", newline="\n")
     parser = argparse.ArgumentParser(description=__doc__)
     register_parser(parser.add_subparsers(dest="command", required=True))
     try:

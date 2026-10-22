@@ -776,9 +776,17 @@ class ControllerTests(unittest.TestCase):
 
     def test_lease_without_actual_health_never_ready_or_retried(self):
         self.health_mode = "lease-only"
-        with patch.object(worker, "CONNECT_SECONDS", .05):
+        clock = SimpleNamespace(monotonic=Mock(return_value=time.monotonic()), time=time.time)
+        with patch.object(worker, "time", clock):
             self.start()
-            self.wait(lambda: next(iter(self.controller._workers.values()))["done"].is_set())
+            entry = next(iter(self.controller._workers.values()))
+            self.wait(lambda: entry.get("connection_phase") == "awaiting_health")
+            self.assertEqual(len(self.processes), 1)
+            self.assertFalse(self.state()["ready"], "a lease alone must not establish health")
+            # Expire only after fake launch/handshake; filesystem speed must not
+            # turn this health test into the separate setup-budget test below.
+            clock.monotonic.return_value = entry["connect_deadline"]
+            self.wait(lambda: entry["done"].is_set())
         self.assertEqual(self.state()["error"], "platform_chrome_worker_connect_timeout")
         self.assertFalse(self.state()["ready"])
         self.assertFalse(self.state()["connect_budget_extended"])

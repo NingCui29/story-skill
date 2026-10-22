@@ -11,6 +11,7 @@ import math
 from pathlib import Path
 import re
 import statistics
+import sys
 import unicodedata
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
@@ -723,6 +724,9 @@ def run(args, collect_qimao=None):
 
 
 if __name__ == "__main__":
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", newline="\n")
     parser = argparse.ArgumentParser(description=__doc__)
     register_parser(parser.add_subparsers(dest="command", required=True))
     try:

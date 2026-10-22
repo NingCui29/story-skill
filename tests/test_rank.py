@@ -5,6 +5,8 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -435,6 +437,25 @@ class RankCliTests(unittest.TestCase):
 
     def run_rank(self, *args, **kwargs):
         return rank.run(self.parser.parse_args(args), **kwargs)
+
+    def test_standalone_cli_outputs_utf8_help_and_errors_under_non_utf8_environment(self):
+        script = ROOT / "skills/story-skill/scripts/story_rank.py"
+        environment = os.environ.copy()
+        environment.update(PYTHONIOENCODING="cp1252", PYTHONUTF8="0")
+        for arguments, expected_status in ((("--help",), 0),
+                (("rank-check", "--input", str(self.root / "missing.json")), 2)):
+            with self.subTest(arguments=arguments):
+                result = subprocess.run([sys.executable, str(script), *arguments], cwd=self.root,
+                                        env=environment, capture_output=True, check=False)
+                self.assertEqual(result.returncode, expected_status, result.stderr.decode("utf-8", errors="replace"))
+                output = (result.stdout if expected_status == 0 else result.stderr).decode("utf-8")
+                self.assertNotIn("UnicodeEncodeError", output)
+                if expected_status == 0:
+                    self.assertIn("rank-collect", output)
+                    self.assertIn("扫榜", output)
+                else:
+                    self.assertFalse(json.loads(output)["ok"])
+                    self.assertIn("JSON", json.loads(output)["error"])
 
     def test_check_is_read_only_and_aggregate_does_not_initialize_book(self):
         before = self.input.read_bytes()

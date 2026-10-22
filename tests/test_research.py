@@ -40,8 +40,9 @@ class HandoffTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.text = self.root / "原文.md"
         self.report = self.root / "分析.md"
-        self.text.write_text("第一章\n她用最后一盏灯换来邻居的信任。\n第二章\n承诺的代价仍未兑现。\n", encoding="utf-8")
-        self.report.write_text("## 场景证据\n第一章行动带来关系变化；仅读两章，后续兑现未知。\n", encoding="utf-8")
+        # These literal-quote fixtures intentionally contain LF bytes on every OS.
+        self.text.write_bytes("第一章\n她用最后一盏灯换来邻居的信任。\n第二章\n承诺的代价仍未兑现。\n".encode("utf-8"))
+        self.report.write_bytes("## 场景证据\n第一章行动带来关系变化；仅读两章，后续兑现未知。\n".encode("utf-8"))
         self.decision = research.initialize(sample())
         topic = self.decision["topics"][0]
         topic.update(title="关系回报的奇幻候选", target_reader="偏好人物关系推进的读者", payoff="行动换来可见信任",
@@ -210,10 +211,21 @@ class HandoffTests(unittest.TestCase):
             research.verify(self.decision, self.evidence())
 
     def test_multiline_quote_preserves_exact_text_including_line_break(self):
-        evidence = self.evidence()
-        evidence["items"][0]["quote"] = "第一章\n她用最后一盏灯换来邻居的信任。"
-        verified, _ = research.verify(self.decision, evidence)
-        self.assertTrue(verified["topics"][0]["hypotheses"][0]["verifications"][0]["quote_checked"])
+        for newline in ("\n", "\r\n"):
+            with self.subTest(newline=repr(newline)):
+                quote = "第一章" + newline + "她用最后一盏灯换来邻居的信任。"
+                self.text.write_bytes((quote + newline + "第二章" + newline).encode("utf-8"))
+                evidence = self.evidence()
+                evidence["items"][0]["quote"] = quote
+                verified, _ = research.verify(self.decision, evidence)
+                record = verified["topics"][0]["hypotheses"][0]["verifications"][0]
+                self.assertTrue(record["quote_checked"])
+                self.assertEqual(record["quote"], quote)
+                mismatched = deepcopy(evidence)
+                other_newline = "\r\n" if newline == "\n" else "\n"
+                mismatched["items"][0]["quote"] = quote.replace(newline, other_newline)
+                with self.assertRaisesRegex(ValueError, "精确匹配"):
+                    research.verify(self.decision, mismatched)
 
     def test_missing_bad_credentialed_and_directory_references_are_rejected(self):
         for ref in (str(self.root / "absent.md"), str(self.root), "relative.md", "file:///etc/passwd",
@@ -297,10 +309,18 @@ class HandoffTests(unittest.TestCase):
         self.assertFalse(destination.exists())
 
     def test_import_and_standalone_cli_work_outside_repository(self):
+        environment = os.environ.copy()
+        environment.update(PYTHONIOENCODING="cp1252", PYTHONUTF8="0")
         result = subprocess.run([sys.executable, str(SCRIPT), "--help"], cwd=self.root,
-                                capture_output=True, text=True, check=False)
+                                env=environment, capture_output=True, text=True, encoding="utf-8", check=False)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("research-verify", result.stdout)
+        self.assertIn("拆文", result.stdout)
+        error = subprocess.run([sys.executable, str(SCRIPT), "research-check", "--input", str(self.root / "missing.json")],
+                               cwd=self.root, env=environment, capture_output=True, text=True, encoding="utf-8", check=False)
+        self.assertEqual(error.returncode, 2, error.stderr)
+        self.assertFalse(json.loads(error.stderr)["ok"])
+        self.assertIn("JSON", json.loads(error.stderr)["error"])
 
 
 if __name__ == "__main__":
