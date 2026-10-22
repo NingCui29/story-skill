@@ -277,6 +277,48 @@ class ProtocolTests(unittest.TestCase):
         parsed = client._checkpoint({"content": [{"type": "text", "text": worker.CHECKPOINT_PREFIX + json.dumps(value)}]})
         self.assertEqual(parsed["code"], "platform_chrome_worker_cleanup_failed")
 
+    def test_specific_failure_diagnostic_precedes_error_and_terminal_publication(self):
+        _, client = self.client()
+        self.initialize(client)
+        observed = []
+        def diagnose(phase, **fields):
+            if phase == 'worker_checkpoint':
+                # Assertions belong outside this callback: diagnostic failures
+                # are deliberately swallowed by the production transport.
+                observed.append((client.worker_error, client.worker_done,
+                                 client.worker_done_event.is_set(), fields))
+        client.diagnostic = diagnose
+        value = {'done': True, 'state': 'failed', 'phase': 'cleanup', 'processed': 0,
+                 'code': 'platform_chrome_worker_runtime_unavailable', 'failure_phase': 'sdk_setup',
+                 'error_name': 'Error', 'error_marker': 'missing_browser_service'}
+        observe_tool(client, checkpoint_result(value))
+        self.assertEqual(len(observed), 1)
+        error, terminal, terminal_signalled, fields = observed[0]
+        self.assertEqual((error, terminal, terminal_signalled), (None, None, False))
+        self.assertEqual(fields['failure_phase'], 'sdk_setup')
+        self.assertEqual(fields['error_marker'], 'missing_browser_service')
+        self.assertEqual(client.worker_error, value['code'])
+        self.assertEqual(client.worker_done, value)
+        self.assertTrue(client.worker_done_event.is_set())
+
+    def test_diagnostic_storage_failure_still_publishes_tool_error_without_retry(self):
+        process, client = self.client()
+        self.initialize(client)
+        observed = []
+        def diagnose(phase, **fields):
+            if phase == 'tool_failed':
+                observed.append((client.worker_error, fields))
+                raise OSError('synthetic diagnostic storage failure')
+        client.diagnostic = diagnose
+        before = len(process.messages)
+        observe_tool(client, {}, status='failed', error={
+            'message': 'Error: Browser use requires a trusted Node REPL browser service'})
+        self.assertEqual(len(observed), 1)
+        self.assertIsNone(observed[0][0])
+        self.assertEqual(observed[0][1]['error_marker'], 'missing_browser_service')
+        self.assertEqual(client.worker_error, 'platform_chrome_worker_runtime_unavailable')
+        self.assertEqual(len(process.messages), before, 'diagnostic failure cannot retry a tool or RPC')
+
     def test_checkpoint_rejects_extra_content_unbounded_text_and_unknown_code(self):
         _, client = self.client()
         base = {"done": False, "state": "connecting", "processed": 0}
@@ -1530,6 +1572,47 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(view["worker_phase"], "cleanup")
         self.assertEqual(view["error_marker"], "missing_browser_service")
         self.assertEqual(view["error"], "platform_chrome_worker_runtime_unavailable")
+
+    def test_paused_failure_diagnostic_cannot_expose_error_or_terminal_before_specific_phase(self):
+        self.health_mode = 'lease-only'
+        self.start()
+        entry = next(iter(self.controller._workers.values()))
+        self.wait(lambda: entry.get('client') and entry['client'].turn_id)
+        entered, release = threading.Event(), threading.Event()
+        original = self.controller._diagnose
+        value = {'done': True, 'state': 'failed', 'phase': 'cleanup', 'processed': 0,
+                 'code': 'platform_chrome_worker_runtime_unavailable', 'failure_phase': 'sdk_setup',
+                 'error_name': 'Error', 'error_marker': 'missing_browser_service'}
+        failures = []
+        def diagnose(current, phase, **fields):
+            if phase == 'worker_checkpoint' and fields.get('failure_phase') == 'sdk_setup':
+                entered.set()
+                if not release.wait(5):
+                    failures.append('diagnostic barrier was not released')
+            return original(current, phase, **fields)
+        def report():
+            try:
+                observe_tool(entry['client'], checkpoint_result(value))
+            except BaseException as error:
+                failures.append(error)
+        with patch.object(self.controller, '_diagnose', side_effect=diagnose):
+            thread = threading.Thread(target=report, daemon=True)
+            thread.start()
+            try:
+                self.assertTrue(entered.wait(4), 'failure checkpoint did not reach diagnostic barrier')
+                self.assertIsNone(entry['client'].worker_error)
+                self.assertIsNone(entry['client'].worker_done)
+                self.assertFalse(entry['client'].worker_done_event.is_set())
+            finally:
+                release.set()
+                thread.join(5)
+            self.assertFalse(thread.is_alive(), 'checkpoint reporter did not stop')
+        self.assertEqual(failures, [])
+        self.wait(lambda: entry['done'].is_set())
+        view = self.state()
+        self.assertEqual((view['failure_phase'], view['worker_phase']), ('sdk_setup', 'cleanup'))
+        self.assertEqual(view['error_marker'], 'missing_browser_service')
+        self.assertEqual(view['error'], value['code'])
 
     def test_cli_failure_diagnostics_reach_view_and_private_record_without_raw_content(self):
         self.health_mode = "lease-only"

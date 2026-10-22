@@ -297,6 +297,14 @@ class AppServerClient:
                 # Diagnostic storage never grants access or breaks RPC delivery.
                 pass
 
+    def _publish_worker_error(self, phase, **fields):
+        # The supervisor may stop as soon as it observes this flag. Publish
+        # the specific failure diagnostics before it can freeze a fallback.
+        try:
+            self._emit(phase, **fields)
+        finally:
+            self.worker_error = fields['code']
+
     def _checkpoint(self, result):
         """Only decode our exact tagged, bounded worker result; never DOM/text."""
         if not isinstance(result, dict):
@@ -396,8 +404,7 @@ class AppServerClient:
                 self._early_turn_events.append(message)
                 self._early_turn_bytes += size
             else:
-                self.worker_error = "platform_chrome_worker_invalid_message"
-                self._emit("tool_failed", code=self.worker_error)
+                self._publish_worker_error("tool_failed", code="platform_chrome_worker_invalid_message")
             return
         if not self.thread_id or not self.turn_id or params.get("threadId") != self.thread_id:
             return
@@ -421,8 +428,7 @@ class AppServerClient:
                 self._emit("model_activity")
             elif item.get("type") == "mcpToolCall":
                 if (item.get("server"), item.get("tool")) != ("node_repl", "js"):
-                    self.worker_error = "platform_chrome_worker_unexpected_tool"
-                    self._emit("tool_failed", code=self.worker_error)
+                    self._publish_worker_error("tool_failed", code="platform_chrome_worker_unexpected_tool")
                 elif method == "item/started":
                     item_id = item.get("id")
                     if not isinstance(item_id, str) or not 0 < len(item_id) <= 256 or item.get("status") != "inProgress":
@@ -443,8 +449,7 @@ class AppServerClient:
                               (isinstance(result, dict) and result.get("isError") is True))
                     if failed:
                         fields = self._tool_error(item)
-                        self.worker_error = fields["code"]
-                        self._emit("tool_failed", **fields)
+                        self._publish_worker_error("tool_failed", **fields)
                         return
                     checkpoint = self._checkpoint(result)
                     if (checkpoint and checkpoint["done"] and checkpoint.get("phase") != "cleanup" and
@@ -457,9 +462,6 @@ class AppServerClient:
                         if (checkpoint.get("phase") not in (None, "config_validated") or
                                 checkpoint["state"] in ("ready", "busy") or checkpoint["processed"] > 0):
                             self._worker_entered = True
-                        if checkpoint["done"] and self.worker_done is None:
-                            self.worker_done = dict(checkpoint)
-                            self.worker_done_event.set()
                         fields = {"worker_state": checkpoint["state"], "processed": checkpoint["processed"]}
                         if "phase" in checkpoint:
                             fields["worker_phase"] = checkpoint["phase"]
@@ -471,17 +473,19 @@ class AppServerClient:
                                 fields[key] = checkpoint[key]
                         if "code" in checkpoint:
                             fields["code"] = checkpoint["code"]
-                            self.worker_error = checkpoint["code"]
                         elif checkpoint["done"] and checkpoint["state"] == "failed":
-                            self.worker_error = "platform_chrome_worker_failed"
-                            fields["code"] = self.worker_error
-                        self._emit("worker_checkpoint", **fields)
+                            fields["code"] = "platform_chrome_worker_failed"
+                        if "code" in fields:
+                            self._publish_worker_error("worker_checkpoint", **fields)
+                        else:
+                            self._emit("worker_checkpoint", **fields)
+                        if checkpoint["done"] and self.worker_done is None:
+                            self.worker_done = dict(checkpoint)
+                            self.worker_done_event.set()
                     else:
-                        self.worker_error = "platform_chrome_worker_tool_failed"
-                        self._emit("tool_failed", code=self.worker_error)
+                        self._publish_worker_error("tool_failed", code="platform_chrome_worker_tool_failed")
             elif item.get("type") in ("commandExecution", "fileChange", "dynamicToolCall"):
-                self.worker_error = "platform_chrome_worker_unexpected_tool"
-                self._emit("tool_failed", code=self.worker_error)
+                self._publish_worker_error("tool_failed", code="platform_chrome_worker_unexpected_tool")
 
     def _write(self, message):
         if self._dead:
@@ -1162,6 +1166,11 @@ class ChromeWorkerController:
                 if process.poll() is not None or client.failure:
                     raise WorkerError(client.failure or "platform_chrome_worker_exited")
                 if client.worker_done is not None:
+                    # A terminal failure may arrive after the error-flag check
+                    # above; it must never become a successful stop.
+                    if client.worker_done.get('state') == 'failed':
+                        raise WorkerError(client.worker_error or client.worker_done.get('code') or
+                                          "platform_chrome_worker_failed")
                     # An idle/stopped worker has already detached its health
                     # lease; wait for its normal turn end rather than treating
                     # that expected detach as an expired ready connection.
