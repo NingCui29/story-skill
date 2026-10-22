@@ -22,8 +22,8 @@ async function fixture(options={}){
   const config={schema:1,book_root:book,book_id:'book',plan_id:'plan',profile_id:'profile.json',
     target:{platform:'fanqie',account_id:'123',remote_book_id:'10'},
     handle_path:path.join(run,'handle.json'),binding_sha256:BINDING,worker:{pid:process.pid,instance:INSTANCE},
-    python_executable:'/usr/bin/python3',story_cli:path.join(SCRIPTS,'story.py'),driver_path:path.join(SCRIPTS,'story_chrome_bridge.mjs'),
-    sdk_path:'/local/.codex/plugins/cache/openai-bundled/chrome/1/scripts/browser-client.mjs',
+    python_executable:path.join(directory,process.platform==='win32'?'python.exe':'python3'),story_cli:path.join(SCRIPTS,'story.py'),driver_path:path.join(SCRIPTS,'story_chrome_bridge.mjs'),
+    sdk_path:path.join(directory,'.codex','plugins','cache','openai-bundled','chrome','1','scripts','browser-client.mjs'),
     health_interval_seconds:15,idle_timeout_seconds:120,checkpoint_ms:5,poll_interval_ms:1,browser_id:null,stop_path:path.join(run,'stop')};
   const events=[],nativeTabs=new Map();let id=0;
   const makeTab=(url,tabId=String(++id))=>{
@@ -1739,7 +1739,7 @@ test('explicit body encoding reaches CLI attach and matches the queue independen
 test('private config rejects readable-by-others files symlinks broad directories or executable substitution',async()=>{
   const f=await fixture();try{
     assert.equal(validateWorkerConfig(f.config),f.config);
-    for(const change of [{driver_path:'/tmp/other.mjs'},{story_cli:'/tmp/other.py'},{sdk_path:'/tmp/transport.mjs'},{worker:{pid:0,instance:INSTANCE}},{target:{platform:'fanqie',account_id:'123',remote_book_id:'10',extra:true}},
+    for(const change of [{driver_path:path.join(f.directory,'other.mjs')},{story_cli:path.join(f.directory,'other.py')},{sdk_path:path.join(f.directory,'transport.mjs')},{worker:{pid:0,instance:INSTANCE}},{target:{platform:'fanqie',account_id:'123',remote_book_id:'10',extra:true}},
       {comparison_policy:null},{comparison_policy:true},{comparison_policy:'trim'},
       {body_encoding:null},{body_encoding:true},{body_encoding:'trim'},
       {bootstrap_deadline_ms:null},{bootstrap_deadline_ms:true},{bootstrap_deadline_ms:0},{bootstrap_deadline_ms:-1},
