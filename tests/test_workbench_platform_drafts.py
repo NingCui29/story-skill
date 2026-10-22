@@ -122,14 +122,19 @@ class WorkbenchPlatformDraftTests(unittest.TestCase):
         self.jobs.append(job["id"])
         return job
 
-    def wait_job(self, job_id):
-        deadline = time.monotonic() + 6
+    def wait_job(self, job_id, *, timeout=30):
+        # This bounds local worker completion, not platform login. Allow
+        # headroom for scheduler and local I/O delays on Windows CI.
+        deadline = time.monotonic() + timeout
+        job = None
         while time.monotonic() < deadline:
             job = drafts.workbench_job(self.root, job_id)
             if job["done"]:
                 return job
             threading.Event().wait(.01)
-        self.fail("Fake browser job did not finish")
+        observed = {key: job.get(key) for key in
+                    ("state", "stage", "done", "verified_chapters", "total_chapters", "error")} if job else None
+        self.fail(f"Fake browser job did not finish within {timeout}s; last status: {observed}")
 
     def assert_code(self, code, function, *args, **kwargs):
         with self.assertRaises(story.StoryError) as caught:

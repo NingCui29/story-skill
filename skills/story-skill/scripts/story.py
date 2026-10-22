@@ -555,10 +555,13 @@ def _publish_no_replace(source, target):
         os.link(source, target)
 
 
-def _restore_displaced_file(backup, target):
+def _restore_displaced_file(backup, target, *, move=None):
     if isinstance(backup, _BoundFile) and isinstance(target, _BoundFile):
         if os.name != "nt":
-            _publish_no_replace(backup, target)
+            if move is None:
+                _publish_no_replace(backup, target)
+            else:
+                move(backup, target)
             return
         fd, staged = _bound_stage(target.directory, ".story-restore-")
         try:
@@ -567,7 +570,10 @@ def _restore_displaced_file(backup, target):
                     handle.write(chunk)
                 handle.flush()
                 os.fsync(handle.fileno())
-            _publish_no_replace(staged, target)
+            if move is None:
+                _publish_no_replace(staged, target)
+            else:
+                move(staged, target)
         finally:
             if _bound_exists(staged):
                 _bound_unlink(staged)
@@ -587,18 +593,21 @@ def _restore_displaced_file(backup, target):
             os.unlink(staged)
 
 
-def atomic_write(path, content, allowed_hashes, backup):
+def atomic_write(path, content, allowed_hashes, backup, *, move=None, directory_context=None):
     """Publish through pinned parents; retain displaced versions for recovery.
 
     POSIX operations use no-follow directory handles. Windows prevents parent
     deletion and reparse conversion while permitting child-file rename; initial
     publication never replaces an existing target or requires hard links.
-    If a parent cannot be pinned, nothing is displaced.
+    If a parent cannot be pinned, nothing is displaced. Optional local I/O
+    callbacks let service records wait for Windows sharing locks without
+    changing ordinary manuscript publication or replaying a completed move.
     """
     from contextlib import ExitStack
     path, backup = Path(path), Path(backup)
+    pin = directory_context or _pinned_directory
     with ExitStack() as stack:
-        parent = stack.enter_context(_pinned_directory(path.parent, create=True))
+        parent = stack.enter_context(pin(path.parent, create=True))
         target = _BoundFile(parent, path.name)
         fd, tmp = _bound_stage(parent, ".story-tmp-")
         displaced, saved = False, None
@@ -608,14 +617,20 @@ def atomic_write(path, content, allowed_hashes, backup):
                 handle.flush()
                 os.fsync(handle.fileno())
             if _bound_exists(target):
-                backup_parent = stack.enter_context(_pinned_directory(backup.parent, create=True, exclusive=True))
+                backup_parent = stack.enter_context(pin(backup.parent, create=True, exclusive=True))
                 saved = _BoundFile(backup_parent, backup.name)
-                _bound_replace(target, saved)
+                if move is None:
+                    _bound_replace(target, saved)
+                else:
+                    move(target, saved, replace=True)
                 displaced = True
                 if _bound_hash(saved) not in allowed_hashes:
                     fail("export_conflict", "File changed during export; displaced version preserved",
                          path=str(path), backup=str(backup))
-            _publish_no_replace(tmp, target)
+            if move is None:
+                _publish_no_replace(tmp, target)
+            else:
+                move(tmp, target)
             if _bound_hash(target) != digest(content):
                 fail("export_conflict", "File changed during publication; preserve it and reconcile", path=str(path))
             _verify_bound_directory(parent)
@@ -625,7 +640,10 @@ def atomic_write(path, content, allowed_hashes, backup):
         except (OSError, StoryError) as error:
             if displaced:
                 try:
-                    _restore_displaced_file(saved, target)
+                    if move is None:
+                        _restore_displaced_file(saved, target)
+                    else:
+                        _restore_displaced_file(saved, target, move=move)
                 except (OSError, StoryError):
                     pass
                 if isinstance(error, StoryError):

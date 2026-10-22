@@ -1794,9 +1794,74 @@ def _linked_material_document(roots, document_id):
     return result
 
 
+def _service_sharing_error(error):
+    return os.name == 'nt' and getattr(error, 'winerror', None) in (32, 33)
+
+
+@contextmanager
+def _service_record_directory(path, create=False, exclusive=False):
+    """Retry only an unentered service-record pin, never its protected body."""
+    if os.name != 'nt' or exclusive:
+        with api._pinned_directory(path, create=create, exclusive=exclusive) as directory:
+            yield directory
+        return
+    # Service parents already exist before registration. Do not attach a
+    # retried read/write to a replacement directory at the same pathname.
+    original = Path(path).lstat()
+    deadline = time.monotonic() + 1.0
+    with ExitStack() as stack:
+        while True:
+            if not os.path.samestat(original, Path(path).lstat()):
+                api.fail('workbench_service_changed', '服务记录目录已变化，未重试读取或写入。')
+            try:
+                directory = stack.enter_context(api._pinned_directory(path, create=create))
+                break
+            except OSError as error:
+                if not _service_sharing_error(error) or time.monotonic() >= deadline:
+                    raise
+                time.sleep(.01)
+        if not os.path.samestat(original, Path(path).lstat()):
+            api.fail('workbench_service_changed', '服务记录目录已变化，未读取或写入替代目录。')
+        yield directory
+
+
+def _service_record_move(source, target, *, replace=False):
+    """Wait for short Windows pin overlap without replaying a completed move."""
+    operation = api._bound_replace if replace else api._publish_no_replace
+    if os.name != 'nt':
+        return operation(source, target)
+    original = api.publish._bound_stat(source)
+    destination = api.publish._bound_stat(target, missing=True)
+
+    def unchanged(before, after):
+        return before is after if before is None or after is None else (
+            os.path.samestat(before, after) and before.st_size == after.st_size
+            and before.st_mtime_ns == after.st_mtime_ns)
+
+    deadline = time.monotonic() + 1.0
+    while True:
+        api._verify_bound_directory(source.directory)
+        api._verify_bound_directory(target.directory)
+        if (not unchanged(original, api.publish._bound_stat(source, missing=True)) or
+                not unchanged(destination, api.publish._bound_stat(target, missing=True))):
+            api.fail('workbench_service_changed', '服务记录在写入期间发生变化，未重试覆盖。')
+        try:
+            return operation(source, target)
+        except OSError as error:
+            if not _service_sharing_error(error) or time.monotonic() >= deadline:
+                raise
+            time.sleep(.01)
+
+
+def _write_service_record(path, content, allowed_hashes, backup):
+    return api.atomic_write(path, content, allowed_hashes, backup,
+                            move=_service_record_move, directory_context=_service_record_directory)
+
+
 def _author_read(root, relative, maximum=AUTHOR_TEXT_LIMIT):
     path = api.safe_path(root, relative)
-    with api._pinned_directory(path.parent) as directory:
+    pin = _service_record_directory if relative in ('service.json', '.story/workbench-service.json') else api._pinned_directory
+    with pin(path.parent) as directory:
         with api._bound_reader(api._BoundFile(directory, path.name)) as stream:
             raw = stream.read(maximum + 1)
     if len(raw) > maximum:
@@ -4842,7 +4907,7 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                         record = json.loads(raw)
                         if record.get('instance') == identity['instance'] and not record.get('stopped'):
                             record['stopped'] = True
-                            api.atomic_write(api.safe_path(root, path), json.dumps(record, ensure_ascii=False),
+                            _write_service_record(api.safe_path(root, path), json.dumps(record, ensure_ascii=False),
                                              {hashlib.sha256(raw).hexdigest()},
                                              api.safe_path(root, '.story/.workbench-backups/' + uuid.uuid4().hex + '/service.json'))
                     except (OSError, api.StoryError, ValueError, AttributeError):
@@ -4872,7 +4937,7 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
         except FileNotFoundError:
             allowed = set()
         checked_book()
-        api.atomic_write(api.safe_path(root, path), json.dumps({**identity, 'port': server.server_port, 'token': token}, ensure_ascii=False),
+        _write_service_record(api.safe_path(root, path), json.dumps({**identity, 'port': server.server_port, 'token': token}, ensure_ascii=False),
                          allowed, api.safe_path(root, '.story/.workbench-backups/' + uuid.uuid4().hex + '/service.json'))
         return server
     except BaseException:
@@ -5823,7 +5888,7 @@ def library_server(state_dir=None, port=8765, library_books=None):
                             record = json.loads(raw)
                             if record.get('instance') == identity['instance'] and not record.get('stopped'):
                                 record['stopped'] = True
-                                api.atomic_write(api.safe_path(root, 'service.json'), json.dumps(record, ensure_ascii=False),
+                                _write_service_record(api.safe_path(root, 'service.json'), json.dumps(record, ensure_ascii=False),
                                                  {hashlib.sha256(raw).hexdigest()},
                                                  api.safe_path(root, '.backups/' + uuid.uuid4().hex + '/service.json'))
                         except (OSError, api.StoryError, ValueError, AttributeError, RecursionError):
@@ -5852,7 +5917,7 @@ def library_server(state_dir=None, port=8765, library_books=None):
         except FileNotFoundError:
             record_hash = set()
         api._verify_bound_directory(directory)
-        api.atomic_write(api.safe_path(root, 'service.json'), json.dumps({**identity, 'port': server.server_port, 'token': token}, ensure_ascii=False),
+        _write_service_record(api.safe_path(root, 'service.json'), json.dumps({**identity, 'port': server.server_port, 'token': token}, ensure_ascii=False),
                          record_hash, api.safe_path(root, '.backups/' + uuid.uuid4().hex + '/service.json'))
         server.registered = True
         return server

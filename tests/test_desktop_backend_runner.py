@@ -1,5 +1,5 @@
 """The native client reuses authenticated shelves and never kills unknown services."""
-from contextlib import redirect_stdout
+from contextlib import contextmanager, redirect_stdout
 import importlib.util
 import io
 import json
@@ -10,10 +10,11 @@ import socket
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from types import SimpleNamespace
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import test_workbench as base
 
@@ -314,6 +315,280 @@ class DesktopBackendRunnerTests(unittest.TestCase):
             self.assertFalse((self.state / 'service.json').exists())
             self.assertFalse((self.state / 'library.json').exists())
             self.assertEqual(listener.getsockname()[1], port)
+
+
+class ServiceRecordSharingTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix='desktop-service-sharing-')
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name).resolve() / '独立书架'
+        self.root.mkdir()
+        self.story, self.w = base.story, base.story.workbench
+        self.api = self.w.api
+        self.target = self.root / 'service.json'
+        self.backup = self.root / '.backups' / 'previous' / 'service.json'
+
+    @staticmethod
+    def sharing_error(number=32):
+        error = PermissionError('Windows sharing refusal')
+        error.winerror = number
+        return error
+
+    def platform(self, name='nt'):
+        # Model only the service helper's platform selection; real temporary
+        # filesystem operations and core atomic-write behavior stay intact.
+        return patch.object(self.w, 'os', SimpleNamespace(**{**vars(os), 'name': name}))
+
+    def move(self):
+        with self.story._pinned_directory(self.root) as directory:
+            return self.w._service_record_move(
+                self.story._BoundFile(directory, 'staged'),
+                self.story._BoundFile(directory, 'service.json'))
+
+    def test_first_service_publication_retries_only_the_refused_move(self):
+        publish = self.story._publish_no_replace
+        calls = []
+
+        def transient(source, target):
+            calls.append((source.path, target.path))
+            if len(calls) == 1:
+                raise self.sharing_error()
+            return publish(source, target)
+
+        with self.platform(), patch.object(self.api, '_publish_no_replace', side_effect=transient):
+            self.w._write_service_record(self.target, '{"instance":"new"}', set(), self.backup)
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(calls[0], calls[1])
+        self.assertEqual(self.target.read_bytes(), b'{"instance":"new"}')
+        self.assertFalse(self.backup.exists())
+        self.assertEqual(list(self.root.glob('.story-tmp-*')), [])
+
+    def test_service_revision_retries_each_local_move_and_preserves_old_record(self):
+        self.target.write_bytes(b'{"instance":"old","stopped":true}')
+        old = self.target.read_text(encoding='utf-8')
+        replace, publish = self.story._bound_replace, self.story._publish_no_replace
+        counts = {'replace': 0, 'publish': 0}
+
+        def transient(operation, key):
+            def invoke(source, target):
+                counts[key] += 1
+                if counts[key] == 1:
+                    raise self.sharing_error(33)
+                return operation(source, target)
+            return invoke
+
+        with self.platform(), patch.object(self.api, '_bound_replace', side_effect=transient(replace, 'replace')), \
+                patch.object(self.api, '_publish_no_replace', side_effect=transient(publish, 'publish')):
+            self.w._write_service_record(self.target, '{"instance":"new"}', {self.story.digest(old)}, self.backup)
+        self.assertEqual(counts, {'replace': 2, 'publish': 2})
+        self.assertEqual(self.target.read_bytes(), b'{"instance":"new"}')
+        self.assertEqual(self.backup.read_bytes(), old.encode('utf-8'))
+
+    def test_permanent_sharing_failure_is_bounded_and_leaves_stage_untouched(self):
+        (self.root / 'staged').write_bytes(b'complete new record')
+        error = self.sharing_error()
+        clock = SimpleNamespace(monotonic=Mock(side_effect=[0, 0, 2]), sleep=Mock())
+        with self.platform(), patch.object(self.w, 'time', clock), \
+                patch.object(self.api, '_publish_no_replace', side_effect=error) as publish:
+            with self.assertRaises(PermissionError) as caught:
+                self.move()
+        self.assertIs(caught.exception, error)
+        self.assertEqual(publish.call_count, 2)
+        clock.sleep.assert_called_once_with(.01)
+        self.assertFalse(self.target.exists())
+        self.assertEqual((self.root / 'staged').read_bytes(), b'complete new record')
+
+    def test_failed_publication_retries_restore_without_losing_original_error_or_backup(self):
+        old = '{"instance":"old","stopped":true}'
+        self.target.write_bytes(old.encode('utf-8'))
+        publish = self.story._publish_no_replace
+        failure = self.sharing_error(5)
+        restores = []
+
+        def interrupted(source, target):
+            if source.name.startswith('.story-tmp-'):
+                raise failure
+            restores.append((source.path, target.path))
+            if len(restores) == 1:
+                raise self.sharing_error()
+            return publish(source, target)
+
+        with self.platform(), patch.object(self.api, '_publish_no_replace', side_effect=interrupted):
+            with self.assertRaises(self.story.StoryError) as caught:
+                self.w._write_service_record(self.target, '{"instance":"new"}', {self.story.digest(old)}, self.backup)
+        self.assertEqual(caught.exception.code, 'export_io')
+        self.assertIs(caught.exception.__context__, failure)
+        self.assertEqual(len(restores), 2)
+        self.assertEqual(restores[0], restores[1])
+        self.assertEqual(self.target.read_bytes(), old.encode('utf-8'))
+        self.assertEqual(self.backup.read_bytes(), old.encode('utf-8'))
+        self.assertEqual(list(self.root.glob('.story-tmp-*')), [])
+        self.assertEqual(list(self.root.glob('.story-restore-*')), [])
+
+    def test_replaced_source_or_new_target_is_never_retried_or_overwritten(self):
+        for changed in ('source', 'target'):
+            with self.subTest(changed=changed):
+                staged = self.root / 'staged'
+                staged.write_bytes(b'complete new record')
+
+                def external_change(_delay):
+                    if changed == 'source':
+                        staged.rename(self.root / 'preserved-stage')
+                        staged.write_bytes(b'external replacement')
+                    else:
+                        self.target.write_bytes(b'external service record')
+
+                with self.platform(), patch.object(self.w, 'time', SimpleNamespace(
+                        monotonic=lambda: 0, sleep=external_change)), \
+                        patch.object(self.api, '_publish_no_replace', side_effect=self.sharing_error()) as publish:
+                    with self.assertRaises(self.story.StoryError) as caught:
+                        self.move()
+                self.assertEqual(caught.exception.code, 'workbench_service_changed')
+                publish.assert_called_once()
+                if changed == 'source':
+                    self.assertEqual(staged.read_bytes(), b'external replacement')
+                    self.assertEqual((self.root / 'preserved-stage').read_bytes(), b'complete new record')
+                else:
+                    self.assertEqual(self.target.read_bytes(), b'external service record')
+
+    def test_non_windows_and_non_sharing_errors_are_not_retried(self):
+        (self.root / 'staged').write_bytes(b'new record')
+        for platform, number in (('posix', 32), ('nt', 5)):
+            with self.subTest(platform=platform, number=number):
+                error = self.sharing_error(number)
+                with self.platform(platform), patch.object(self.api, '_publish_no_replace', side_effect=error) as publish, \
+                        patch.object(self.w, 'time', SimpleNamespace(monotonic=lambda: 0, sleep=Mock())) as clock:
+                    with self.assertRaises(PermissionError) as caught:
+                        self.move()
+                self.assertIs(caught.exception, error)
+                publish.assert_called_once()
+                clock.sleep.assert_not_called()
+
+    def test_service_read_retries_pin_entry_but_does_not_replay_read_body(self):
+        self.target.write_bytes(b'confirmed service record')
+        pinned = self.story._pinned_directory
+        calls = []
+
+        @contextmanager
+        def transient(path, **kwargs):
+            calls.append(path)
+            if len(calls) == 1:
+                raise self.sharing_error()
+            with pinned(path, **kwargs) as directory:
+                yield directory
+
+        with self.platform(), patch.object(self.api, '_pinned_directory', side_effect=transient):
+            self.assertEqual(self.w._author_read(self.root, 'service.json', 8192), b'confirmed service record')
+        self.assertEqual(len(calls), 2)
+        error = self.sharing_error()
+        with self.platform(), patch.object(self.api, '_bound_reader', side_effect=error) as read:
+            with self.assertRaises(PermissionError) as caught:
+                self.w._author_read(self.root, 'service.json', 8192)
+        self.assertIs(caught.exception, error)
+        read.assert_called_once()
+
+    def test_service_pin_retry_rejects_replaced_parent(self):
+        preserved = self.root.with_name('原书架')
+
+        def replace_parent(_delay):
+            self.root.rename(preserved)
+            self.root.mkdir()
+            self.target.write_bytes(b'replacement record')
+
+        with self.platform(), patch.object(self.w, 'time', SimpleNamespace(monotonic=lambda: 0, sleep=replace_parent)), \
+                patch.object(self.api, '_pinned_directory', side_effect=self.sharing_error()) as pin:
+            with self.assertRaises(self.story.StoryError) as caught:
+                self.w._author_read(self.root, 'service.json', 8192)
+        self.assertEqual(caught.exception.code, 'workbench_service_changed')
+        pin.assert_called_once()
+        self.assertEqual(self.target.read_bytes(), b'replacement record')
+        self.assertTrue(preserved.is_dir())
+
+    def test_exclusive_backup_pin_failure_keeps_existing_service_record(self):
+        old = '{"instance":"old","stopped":true}'
+        self.target.write_bytes(old.encode('utf-8'))
+        pinned = self.story._pinned_directory
+        exclusive_calls = []
+        error = self.sharing_error()
+
+        @contextmanager
+        def failed_backup(path, **kwargs):
+            if kwargs.get('exclusive'):
+                exclusive_calls.append(path)
+                raise error
+            with pinned(path, **kwargs) as directory:
+                yield directory
+
+        with self.platform(), patch.object(self.api, '_pinned_directory', side_effect=failed_backup):
+            with self.assertRaises(PermissionError) as caught:
+                self.w._write_service_record(self.target, '{"instance":"new"}', {self.story.digest(old)}, self.backup)
+        self.assertIs(caught.exception, error)
+        self.assertEqual(exclusive_calls, [self.backup.parent])
+        self.assertEqual(self.target.read_bytes(), old.encode('utf-8'))
+        self.assertEqual(list(self.root.glob('.story-tmp-*')), [])
+        # A later deliberate launch can retry from the unchanged stopped record.
+        self.w._write_service_record(self.target, '{"instance":"new"}', {self.story.digest(old)}, self.backup)
+        self.assertEqual(self.backup.read_bytes(), old.encode('utf-8'))
+
+    def test_ordinary_atomic_write_keeps_its_single_attempt_and_cleanup(self):
+        error = self.sharing_error()
+        with patch.object(self.story, '_publish_no_replace', side_effect=error) as publish:
+            with self.assertRaises(PermissionError) as caught:
+                self.story.atomic_write(self.target, 'ordinary content', set(), self.backup)
+        self.assertIs(caught.exception, error)
+        publish.assert_called_once()
+        self.assertFalse(self.target.exists())
+        self.assertEqual(list(self.root.glob('.story-tmp-*')), [])
+
+    @unittest.skipUnless(os.name == 'nt', 'Requires native Windows directory sharing')
+    def test_native_strict_parent_pin_release_allows_service_publication(self):
+        held, release, refused = threading.Event(), threading.Event(), threading.Event()
+        failures = []
+        publish = self.story._publish_no_replace
+
+        def reader_pin():
+            try:
+                with self.story._windows_path_handle(self.root, directory=True):
+                    held.set()
+                    if not release.wait(15):
+                        raise AssertionError('Writer never reached the sharing conflict')
+            except BaseException as error:
+                failures.append(error)
+
+        def observed_publish(source, target):
+            try:
+                return publish(source, target)
+            except OSError as error:
+                if getattr(error, 'winerror', None) in (32, 33):
+                    refused.set()
+                raise
+
+        def write():
+            try:
+                self.w._write_service_record(self.target, '{"instance":"native"}', set(), self.backup)
+            except BaseException as error:
+                failures.append(error)
+
+        reader = threading.Thread(target=reader_pin)
+        writer = threading.Thread(target=write)
+        reader.start()
+        try:
+            self.assertTrue(held.wait(5), failures)
+            with patch.object(self.api, '_publish_no_replace', side_effect=observed_publish):
+                writer.start()
+                try:
+                    self.assertTrue(refused.wait(5), failures)
+                finally:
+                    release.set()
+                    writer.join(5)
+        finally:
+            release.set()
+            reader.join(5)
+        self.assertFalse(writer.is_alive())
+        self.assertFalse(reader.is_alive())
+        self.assertEqual(failures, [])
+        self.assertEqual(self.target.read_bytes(), b'{"instance":"native"}')
+        self.assertEqual(list(self.root.glob('.story-tmp-*')), [])
 
 
 if __name__ == '__main__':
