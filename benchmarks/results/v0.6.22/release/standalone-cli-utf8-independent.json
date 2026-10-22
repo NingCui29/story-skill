@@ -1,0 +1,82 @@
+{
+  "code_review": {
+    "configuration_applies_only_to_standalone_entrypoints": true,
+    "controller_change_is_test_only_and_removes_50ms_wall_clock_dependency": true,
+    "help_and_errors_configured_before_argparse": true,
+    "lf_crlf_test_fixture_now_writes_explicit_bytes": true,
+    "normal_module_import_has_no_stream_side_effect": true,
+    "quote_matching_remains_exact": true,
+    "stdout_and_stderr_utf8_with_lf": true
+  },
+  "completed_at": "2026-10-22T15:49:32.242054+00:00",
+  "environment_overrides": {
+    "PYTHONIOENCODING": "cp1252",
+    "PYTHONUTF8": "0"
+  },
+  "environment_scope": "macOS subprocess with explicit non-UTF8 inherited IO settings; not a substitute for native Windows CI",
+  "kind": "independent_standalone_cli_utf8_probe",
+  "ok": true,
+  "python_utf8_flag_used": false,
+  "schema_version": 1,
+  "scope_limits": [
+    "no network",
+    "no real website collection",
+    "no native Windows execution in this probe",
+    "no literary or market validation"
+  ],
+  "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_rank.py": "76e0ac701b519cb66d31b78b4bc3d94bb488ef04fd7e1119b12ebbe09b4d892e",
+    "skills/story-skill/scripts/story_research.py": "72f858596e2604e61789f18121d536b5ec9d242bf4032d251457eede8e9fce84"
+  },
+  "steps": [
+    {
+      "arguments": [
+        "--help"
+      ],
+      "expected_returncode": 0,
+      "module": "skills/story-skill/scripts/story_rank.py",
+      "output": "usage: story_rank.py [-h]\n                     {rank-template,rank-check,rank-aggregate,rank-sample,rank-collect}\n                     ...\n\nBounded, evidence-preserving rank samples. No book state or third-party\npackages.\n\npositional arguments:\n  {rank-template,rank-check,rank-aggregate,rank-sample,rank-collect}\n    rank-template       输出结构化扫榜快照示例\n    rank-check          校验离线扫榜快照与覆盖声明\n    rank-aggregate      去重聚合结构化扫榜快照\n    rank-sample         按同一可比分组抽取代表作阅读候选与来源证据\n    rank-collect        采集七猫公开书库样本（含本地 HTML 导入）\n\noptions:\n  -h, --help            show this help message and exit\n",
+      "output_stream": "stdout",
+      "returncode": 0,
+      "utf8_decoded_strictly": true
+    },
+    {
+      "arguments": [
+        "rank-check",
+        "--input",
+        "<temporary>/missing.json"
+      ],
+      "expected_returncode": 2,
+      "module": "skills/story-skill/scripts/story_rank.py",
+      "output": "{\"ok\": false, \"error\": \"输入必须是最多 4194304 字节的 JSON 文件：<temporary>/missing.json\"}\n",
+      "output_stream": "stderr",
+      "returncode": 2,
+      "utf8_decoded_strictly": true
+    },
+    {
+      "arguments": [
+        "--help"
+      ],
+      "expected_returncode": 0,
+      "module": "skills/story-skill/scripts/story_research.py",
+      "output": "usage: story_research.py [-h]\n                         {research-init,research-check,research-verify,research-render}\n                         ...\n\nOffline scan → text evidence → planning candidates; never changes a novel.\n\npositional arguments:\n  {research-init,research-check,research-verify,research-render}\n    research-init       从代表作样本生成待填写的拆文与选题交接\n    research-check      只读核验研究交接与本地引用版本\n    research-verify     按显式假设与作品身份追加拆文证据\n    research-render     导出当前拆文任务与规划候选\n\noptions:\n  -h, --help            show this help message and exit\n",
+      "output_stream": "stdout",
+      "returncode": 0,
+      "utf8_decoded_strictly": true
+    },
+    {
+      "arguments": [
+        "research-check",
+        "--input",
+        "<temporary>/missing.json"
+      ],
+      "expected_returncode": 2,
+      "module": "skills/story-skill/scripts/story_research.py",
+      "output": "{\"ok\": false, \"error\": \"输入必须是最多 33554432 字节的 JSON 文件：<temporary>/missing.json\"}\n",
+      "output_stream": "stderr",
+      "returncode": 2,
+      "utf8_decoded_strictly": true
+    }
+  ]
+}

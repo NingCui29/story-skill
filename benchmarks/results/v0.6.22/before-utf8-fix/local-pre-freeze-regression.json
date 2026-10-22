@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "ok": true,
+  "test_count": 2549,
+  "seconds": 680.333,
+  "skipped": 21,
+  "failures": 0,
+  "errors": 0,
+  "python": "3.12",
+  "platform": "macOS Intel",
+  "log_sha256": "ffb23e549dd933bbef47853b515f8fa402040ae9d762d8842b95605d387e1038",
+  "log_bytes": 455652,
+  "log_path": "dist/release-v0.6.22-candidate/local-full-tests.log",
+  "head_at_start": "b657be2253244b62b31331964d7ad55b711b02db",
+  "head_at_completion": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+  "run_before_source_freeze": true,
+  "scope": "Complete local run started on the uncommitted candidate before source freeze. Later Windows test fixture and npm release-test adjustments have separate targeted checks. This run is not the final fixed-commit full CI proof; that proof is release/ci.json. Original log remains local."
+}

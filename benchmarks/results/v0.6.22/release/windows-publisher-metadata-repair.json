@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "ok": true,
+  "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+  "scope": "Diagnosis of draft upload metadata rejection, not native or final release acceptance",
+  "run_id": 39807867155,
+  "native_job_id": 119925828655,
+  "native_conclusion": "success",
+  "publisher_job_id": 119929308367,
+  "publisher_conclusion": "failure",
+  "observed_receipt_error": "Release must be the specified draft, tag, and exact source commit",
+  "draft_readback_before_repair": {
+    "id": 420868411,
+    "tag_name": "untagged-05ef3e98fb9b0683a115",
+    "target_commitish": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+    "draft": true
+  },
+  "cause": "The root release agent patched target_commitish without tag_name and checked the source but omitted the tag check. A subsequent GET showed an untagged draft name. The publisher correctly refused this mismatching draft before uploads.",
+  "correction": "Explicitly patched tag_name, target_commitish, draft and prerelease together; independent GET confirmed v0.6.22/a5ebaa5/draft before rerunning only failed publisher job.",
+  "source_changed": false,
+  "native_rebuild_requested": false,
+  "failed_publisher_reruns_requested": 1,
+  "logs": [
+    {
+      "job_id": 119925828655,
+      "sha256": "5a2b23172f1bd278039cf09e13b635b2ef4001110b7772cee660117726622cec",
+      "bytes": 94312
+    },
+    {
+      "job_id": 119929308367,
+      "sha256": "30b8dd4f1d46e01231756cce85b1bc24e1837a364834e66a4c55673d9dd988ed",
+      "bytes": 18514
+    }
+  ],
+  "date_utc": "2026-10-22T15:58:22.364549+00:00"
+}

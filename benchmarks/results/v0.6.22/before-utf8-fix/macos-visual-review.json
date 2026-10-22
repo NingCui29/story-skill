@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "synthetic_data_only": true,
+  "images": [
+    {
+      "file": "macos-native-shelf.png",
+      "bytes": 218239,
+      "sha256": "c95b079dd0e23f0b81031d96ef4528051cca71de92bd623d7afe9644b4fc8e55"
+    },
+    {
+      "file": "macos-native-editor.png",
+      "bytes": 263739,
+      "sha256": "fc732f612a69d666d6dcba8d858b8acb6fa791cac1a63d1d7ac0d6e6defef5dc"
+    },
+    {
+      "file": "macos-native-switch.png",
+      "bytes": 261349,
+      "sha256": "6dfbf0ff7dad2f6b6cb6060e09fb4b8705b831e0ca350e6ac1f9481bf13a5c2a"
+    }
+  ],
+  "reviewed_by_model": true,
+  "observations": "Three freshly captured WebKit views were visually inspected: two synthetic shelf cards render with search/filter/manage controls; the candidate editor body and sidebars render without horizontal clipping; returning to the cached editor preserves the selected candidate and readable text. Native window/cache behavior is separately checked by the self-test JSON. No real manuscript, account data or local personal path appears in these views.",
+  "not_verified": [
+    "Real user manuscripts or installed application replacement",
+    "Platform draft modal interactions or live author-platform browser behavior",
+    "Manual close warnings, update downloads or the default launcher flow"
+  ],
+  "source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef"
+}

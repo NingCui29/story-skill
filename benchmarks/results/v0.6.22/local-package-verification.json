@@ -1,0 +1,106 @@
+{
+  "schema": 2,
+  "ok": true,
+  "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+  "source_tree": "4d215da9e0241e95994af7679eb828a2273c4607",
+  "runtime_version": "0.6.22",
+  "canonical_payload_files": 69,
+  "skill_count": 8,
+  "archive_members": {
+    "standard": 69,
+    "claude": 71,
+    "codex_marketplace": 74,
+    "codex_plugin": 72,
+    "npm_custom": 72
+  },
+  "git_input_count": 232,
+  "guarded_actual_input_count": 229,
+  "local_actual_input_count": 87,
+  "windows_actual_input_count": 166,
+  "non_consumed_worktree_differences_at_start": [],
+  "non_consumed_input_boundary": "The conservative Git snapshot includes Mac README and general CI workflows beyond actual packaging/runtime inputs. Pending README/release documents are not copied or compiled by these builders; all actual local and Windows source-inventory inputs match the immutable commit byte for byte.",
+  "git_input_snapshot_receipt": "build-inputs.json",
+  "git_input_snapshot_sha256": "b498ca33351a0c6ec5f335f26248ce045014ec042eedc5aae1e80abaf93e01c3",
+  "assets": [
+    {
+      "file": "dist/release-v0.6.22-candidate/story-skill-0.6.22.zip",
+      "bytes": 659350,
+      "sha256": "c1a7bed4f29dc8e648718f9605ef417a85269332a8ad801ad3d98a47cae28a6f",
+      "checksum_file": "dist/release-v0.6.22-candidate/story-skill-0.6.22.zip.sha256",
+      "checksum_bytes": 89,
+      "checksum_sha256": "407d8e5c6ca6343e3ea6240b0dcb054add2784dbc2d9578e3ba72c3e3a162a17"
+    },
+    {
+      "file": "dist/release-v0.6.22-candidate/story-skill-claude-desktop-0.6.22-r2.zip",
+      "bytes": 665798,
+      "sha256": "b4a9d9cc9d4e5024bd0c943586c81067d6bf368b5accc9383d2c8e2a465482c9",
+      "checksum_file": "dist/release-v0.6.22-candidate/story-skill-claude-desktop-0.6.22-r2.zip.sha256",
+      "checksum_bytes": 107,
+      "checksum_sha256": "60728d66a122bb46ecfa1c1c466d2d6c9b07c167280894bb15fe205d53cc86d8"
+    },
+    {
+      "file": "dist/release-v0.6.22-candidate/codex/story-skill-codex-0.6.22.zip",
+      "bytes": 668222,
+      "sha256": "1a830f28fdeff5acb58e50bf926c75547362ade12528803aabe9b77dbffbe20e",
+      "checksum_file": "dist/release-v0.6.22-candidate/codex/story-skill-codex-0.6.22.zip.sha256",
+      "checksum_bytes": 95,
+      "checksum_sha256": "41cb9dbb0052edaee27381949d7267505620d5bfb8e7e61bb21cb99091f971cf"
+    },
+    {
+      "file": "dist/release-v0.6.22-candidate/story-workbench-0.1.25-macos-x86_64.zip",
+      "bytes": 26823150,
+      "sha256": "e61f75b5962f32febe01db0d0da581283b15994c2c9553a17946071d62451f4a",
+      "checksum_file": "dist/release-v0.6.22-candidate/story-workbench-0.1.25-macos-x86_64.zip.sha256",
+      "checksum_bytes": 106,
+      "checksum_sha256": "01824c8a1e6e42db11274501b2391682bded3dfa41335a0c9227e61fbbf24bdc"
+    },
+    {
+      "file": "dist/release-v0.6.22-candidate/story-workbench-0.1.25-macos-x86_64.dmg",
+      "bytes": 38028624,
+      "sha256": "ee851e519533c0fafb35c711852be7d39629ffd3e50b1c138dff1fce1be1b45a",
+      "checksum_file": "dist/release-v0.6.22-candidate/story-workbench-0.1.25-macos-x86_64.dmg.sha256",
+      "checksum_bytes": 106,
+      "checksum_sha256": "c84085fc27bb24bf61411ca0703de7b3f6e84b4ac87fa31d3557a7114f1f56ed"
+    }
+  ],
+  "github_release_local_assets_including_sidecars": 10,
+  "npm": {
+    "file": "dist/release-v0.6.22-candidate/npm/ningcui29-story-skill-0.6.22.tgz",
+    "bytes": 602188,
+    "sha256": "8ca18920c41b9a2b616a8c4725cf3e541d6099297cda2ee4aed3e7e36613d37c",
+    "integrity": "sha512-CgbKbgOgVXiTOD65qIo7gB/XdWpEbJ/9Cg6jRCkXc4Rvhu2EcDKf9huG+Kr5I/PQG3NGvUPhaaWhb3XbnlSYiQ==",
+    "tar_members": 72,
+    "payload_files": 69,
+    "wrapper_files": 3
+  },
+  "checks": {
+    "four_formats_exact_member_crc_and_fixed_git_bytes": true,
+    "standard_official_installer_and_check_in_temporary_project": true,
+    "standard_and_npm_cli_probes": true,
+    "real_codex_plugin_install_enable_and_skills_list_in_temporary_home": true,
+    "codex_namespaced_skills": 8,
+    "codex_installed_plugin_files": 72,
+    "codex_loopback_workbench_http_200": true,
+    "macos_version": "0.1.25",
+    "macos_build": "26",
+    "macos_runtime_files": 20,
+    "macos_source_manifest_and_cli_payload_probe": true,
+    "macos_native_shelf_editor_and_cached_switch": true,
+    "macos_three_captured_webkit_views_visually_reviewed": true,
+    "macos_ad_hoc_signature_strict_before_and_after_native": true,
+    "macos_zip_crc_and_extracted_app": true,
+    "macos_readonly_dmg_and_detach": true,
+    "macos_entire_app_files_identical_in_built_zip_and_dmg": 1680,
+    "macos_entire_app_symlinks_identical": 9,
+    "macos_synthetic_acceptance_area_removed": true
+  },
+  "scope_limits": [
+    "Local package/build acceptance only; source CI and Windows build outcomes are separate",
+    "No real model turn, SDK/browser connection or live platform draft operation was started",
+    "Mac signing is local ad-hoc signing, not notarization",
+    "Real user installations and existing user services were not replaced"
+  ],
+  "release_artifacts_uploaded_by_this_agent": false,
+  "user_installation_modified": false,
+  "build_inputs_unchanged_after_all_local_qa": true
+}

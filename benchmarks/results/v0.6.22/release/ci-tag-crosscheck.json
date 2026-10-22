@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "ok": true,
+  "checked_at_utc": "2026-10-22T16:26:50.534694+00:00",
+  "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+  "tag": "v0.6.22",
+  "annotated_tag_object": "d79f5016214c4242186bd34ecb6e4df8a735db06",
+  "fresh_authenticated_api_ref_and_tag_object_match": true,
+  "annotated_tag_peels_to_fixed_build_source": true,
+  "ci_receipt": "ci.json",
+  "ci_receipt_sha256": "7ab285767995e56044e8991bb4b0c70b3177aa80edf0ea80f67299ed02047a07",
+  "source_ci_run_id": 39807694989,
+  "full_source_matrices": [
+    {
+      "id": 119925223011,
+      "name": "test (windows-latest, 3.12)",
+      "full_suite": {
+        "line": 3367,
+        "run": 2549,
+        "duration_seconds": 1636.305,
+        "result": "OK (skipped=68)",
+        "skipped": 68
+      },
+      "log_sha256_verified": true,
+      "checkout_source": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e"
+    },
+    {
+      "id": 119925223347,
+      "name": "test (ubuntu-latest, 3.10)",
+      "full_suite": {
+        "line": 2716,
+        "run": 2549,
+        "duration_seconds": 298.339,
+        "result": "OK (skipped=42)",
+        "skipped": 42
+      },
+      "log_sha256_verified": true,
+      "checkout_source": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e"
+    },
+    {
+      "id": 119925223555,
+      "name": "test (windows-latest, 3.10)",
+      "full_suite": {
+        "line": 3414,
+        "run": 2549,
+        "duration_seconds": 1168.65,
+        "result": "OK (skipped=68)",
+        "skipped": 68
+      },
+      "log_sha256_verified": true,
+      "checkout_source": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e"
+    }
+  ],
+  "strict_required_regressions": 158,
+  "ci_source_bindings_compared_to_fixed_git": 51,
+  "canonical_local_linux_archives_match": 3,
+  "windows_ci_zip_digests_scope": "Windows CI archive digests remain separately recorded under declared CRLF checkout differences; no byte identity with the canonical local/Linux ZIP is claimed.",
+  "scope": "Independent read-only tag/API and existing complete-CI/raw-log/source-hash crosscheck. This does not execute the installer or validate public downloads or registry contents.",
+  "remote_mutations_performed": false,
+  "user_installation_modified": false
+}

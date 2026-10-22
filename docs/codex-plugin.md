@@ -1,10 +1,10 @@
 # Codex 本地插件
 
-v0.6.21 已发布 Codex 本地插件，内含八个同级技能、共享 Python 运行时和许可证。插件使用 `.codex-plugin/plugin.json` 格式，不需要 MCP 服务或额外 API 密钥；通过本地市场安装，不表示在公共插件目录上架。
+v0.6.22 已发布 Codex 本地插件，内含八个同级技能、共享 Python 运行时和许可证。插件使用 `.codex-plugin/plugin.json` 格式，不需要 MCP 服务或额外 API 密钥；通过本地市场安装，不表示在公共插件目录上架。
 
-下载已发布的 [story-skill-codex-0.6.21.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-skill-codex-0.6.21.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-skill-codex-0.6.21.zip.sha256)。源清单为 64 个技能文件，加元数据、图标和根许可证为 67 个插件文件；市场说明与登记文件另占 2 个成员，共 69 个。本轮包体、隔离安装／启用、八技能发现、CLI、HTTP、三组完整源码 CI（73 项关键回归）及插件 ZIP 匿名完整下载均已验收；完整分发记录见 [v0.6.21 发布记录](releases/v0.6.21.md)；这些工程检查不调用模型、不修改日常安装。
+下载已发布的 [story-skill-codex-0.6.22.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-codex-0.6.22.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-codex-0.6.22.zip.sha256)。源清单为 69 个技能文件，加元数据、图标和根许可证为 72 个插件文件；市场说明与登记文件另占 2 个成员，共 74 个。本轮包体、隔离安装／启用、八技能发现、CLI、HTTP、三组完整源码 CI及插件 ZIP 匿名完整下载均已验收；完整分发记录见 [v0.6.22 发布记录](releases/v0.6.22.md)；这些工程检查不调用模型、不修改日常安装。
 
-本版新增番茄草稿受控自动连接、独立的段落编码与末尾换行比较选项；既有作品管理、备份恢复和分类规则继续保留。自动连接仅支持番茄，需要另备已登录的 Codex CLI、官方 Chrome 插件（含 SDK）及已连接的 Chrome 会话，使用账户默认模型设置与额度；权限拒绝即停止。七猫、起点沿用外部已连接助手流程。安装本插件不会安装这些外部组件或增加图像工具。具体支持范围见[平台草稿说明](../skills/story-skill-publish/references/platform-drafts.md)。历史本机开发安装回执与本版正式分发分别记录，不能只凭版本号视作同一快照。
+本版新增结构化扫榜、代表作抽样与研究交接，见[扫榜流程](../skills/story-skill-research/references/rank-scan.md)和[研究交接](../skills/story-skill-research/references/research-handoff.md)。完整研究命令和参考规则随八技能一起提供，研究材料保存到作者指定目录；规划候选和正式正文分别管理。既有番茄平台草稿自动连接仍需要外部 Codex CLI、官方 Chrome 插件（含 SDK）、已连接的 Chrome 与账户额度，安装本插件不会增加这些组件或图像工具。平台实页范围沿用[平台草稿说明](../skills/story-skill-publish/references/platform-drafts.md)。
 
 ## 构建
 
@@ -18,16 +18,16 @@ python3 -B -X utf8 scripts/package_codex.py
 
 ```text
 dist/
-├── story-skill-codex-0.6.21.zip
-├── story-skill-codex-0.6.21.zip.sha256
-└── story-skill-codex-0.6.21/
+├── story-skill-codex-0.6.22.zip
+├── story-skill-codex-0.6.22.zip.sha256
+└── story-skill-codex-0.6.22/
     ├── README.md
     ├── .agents/plugins/marketplace.json
     └── plugins/story-skill/
         ├── .codex-plugin/plugin.json
         ├── assets/story-skill.svg
         ├── LICENSE
-        └── skills/                 # 八个同级技能，64 个源载荷文件
+        └── skills/                 # 八个同级技能，69 个源载荷文件
 ```
 
 构建器按标准套件的已审查文件清单取材，技能规则、参考资料和 Python 运行时逐字节保留；仅在八份 `agents/openai.yaml` 中将界面提示词的技能引用映射到插件命名空间，例如 `$story-skill-plan` 变为 `$story-skill:story-skill-plan`。源文件保持原样，插件包另外加入元数据、图标和根许可证。市场目录与 ZIP 使用相同内容；仓库中的小说样本、书库、Git 历史、测试结果和桌面客户端均不打入包。不要把整个源码仓库作为本地插件载荷安装。
@@ -40,18 +40,18 @@ dist/
 
 ```bash
 python3 -B -X utf8 scripts/verify_codex_plugin.py \
-  --marketplace-root dist/story-skill-codex-0.6.21 \
+  --marketplace-root dist/story-skill-codex-0.6.22 \
   --report dist/codex-plugin-verification.json
 ```
 
-验证器使用临时 `CODEX_HOME` 和独立测试目录，实际执行市场注册、插件发现与安装，再从安装副本核对文件及运行 Python 命令。验证期间不调用模型，不需要登录，不改用户原有的 Codex 配置或技能安装。具体验收项、结果和客户端版本以 JSON 报告为准；本轮实际回执集中在[发布记录](releases/v0.6.21.md)；隔离验证没有更新作者日常使用的插件。此验证不替代桌面界面验收、模型触发或文学效果评价。
+验证器使用临时 `CODEX_HOME` 和独立测试目录，实际执行市场注册、插件发现与安装，再从安装副本核对文件及运行 Python 命令。验证期间不调用模型，不需要登录，不改用户原有的 Codex 配置或技能安装。具体验收项、结果和客户端版本以 JSON 报告为准；本轮实际回执集中在[发布记录](releases/v0.6.22.md)；隔离验证没有更新作者日常使用的插件。此验证不替代桌面界面验收、模型触发或文学效果评价。
 
 ## 安装到日常使用的 Codex
 
 先完成上述验证。在仓库根目录运行：
 
 ```bash
-codex plugin marketplace add "$PWD/dist/story-skill-codex-0.6.21"
+codex plugin marketplace add "$PWD/dist/story-skill-codex-0.6.22"
 codex plugin add story-skill@story-skill-local
 codex plugin list --marketplace story-skill-local --json
 ```

@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "tag": "v0.6.22",
+  "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+  "annotated_tag_object": "d79f5016214c4242186bd34ecb6e4df8a735db06",
+  "git_fetch_and_peeled_commit_verified": true,
+  "existing_tags_moved": false,
+  "date_utc": "2026-10-22T16:23:11.302936+00:00"
+}

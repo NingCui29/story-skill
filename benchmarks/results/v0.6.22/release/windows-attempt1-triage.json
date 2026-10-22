@@ -1,0 +1,207 @@
+{
+  "analysis": {
+    "absence_of_product_defects_proven": false,
+    "code_review": "The asset performs finite DOM transformations on fixed-size fixtures. The fixture MutationObserver fires only when explicitly called. No new loop or changed appearance implementation was found.",
+    "inference": "The clustered process and VM deadlines are compatible with transient Node/runner latency; this is a hypothesis, not an established cause.",
+    "known_product_defect_demonstrated": false,
+    "missing_evidence": [
+      "per-process CPU or scheduler observations",
+      "Node startup/VM timing traces on the failed runner"
+    ],
+    "observed_pattern": "The first four tests in this appearance class failed in a contiguous interval; the next 17 appearance tests passed, including node identity, repeated execution and observer behavior.",
+    "root_cause": "unknown"
+  },
+  "baseline_desktop_test_run": {
+    "duration_seconds": 10.483,
+    "summary_line": 378,
+    "tests_run": 134,
+    "these_four_test_results": "all ok"
+  },
+  "comparison_baseline": {
+    "log_path": "dist/release-v0.6.21-candidate/windows-worker-diagnostics-fix/job-119711137593.log",
+    "log_sha256": "0327aef7be60e0db0c6d0f080fb244b430fb3bf5cb1ecc8d81d0766593352284",
+    "native_job_id": 119711137593,
+    "native_run_id": 39744995190,
+    "same_file_bytes": [
+      {
+        "bytes": 19746,
+        "equal_bytes": true,
+        "path": "desktop/macos/editor-appearance.js",
+        "sha256": "0109acb81513bd2a2a533fd8039f33532e00f5c3cdf86875f2f08b71aed0448d"
+      },
+      {
+        "bytes": 25167,
+        "equal_bytes": true,
+        "path": "tests/test_desktop_editor_appearance.py",
+        "sha256": "f3bd235fa50f4b36918cdcaddf317c873147ffa2ea87623b1cbb9a8d18f22058"
+      }
+    ],
+    "source_commit": "ebabd8bf7fc3c399dfb577bdd327c739f2d5bb0b",
+    "tag": "v0.6.21",
+    "workflow_diff_scope": "only version label and artifact names changed; execution steps and timeout values are unchanged"
+  },
+  "desktop_test_run": {
+    "duration_seconds": 76.677,
+    "errors": 3,
+    "failure_summary_line": 463,
+    "failures": 1,
+    "skipped": 13,
+    "summary_line": 461,
+    "tests_run": 134
+  },
+  "failed_job_id": 119906335027,
+  "failed_run_id": 39802386034,
+  "failures": [
+    {
+      "reason": "outer subprocess timeout at 15 seconds",
+      "result_line": 251,
+      "test": "test_already_compact_service_keeps_its_complete_progress_record",
+      "timeout_line": 391,
+      "traceback_heading_line": 375,
+      "v21_result": "ok",
+      "v21_result_line": 254
+    },
+    {
+      "reason": "outer subprocess timeout at 15 seconds",
+      "result_line": 252,
+      "test": "test_complete_progress_survives_compaction_refresh_and_unknown_status",
+      "timeout_line": 410,
+      "traceback_heading_line": 394,
+      "v21_result": "ok",
+      "v21_result_line": 255
+    },
+    {
+      "reason": "outer subprocess timeout at 15 seconds",
+      "result_line": 253,
+      "test": "test_existing_controls_keep_node_identity_ids_and_handlers",
+      "timeout_line": 429,
+      "traceback_heading_line": 413,
+      "v21_result": "ok",
+      "v21_result_line": 256
+    },
+    {
+      "reason": "Node VM timeout at 1000 milliseconds",
+      "result_line": 254,
+      "test": "test_existing_theme_selector_moves_to_header_with_its_handler_and_selection",
+      "timeout_line": 443,
+      "traceback_heading_line": 432,
+      "v21_result": "ok",
+      "v21_result_line": 257
+    }
+  ],
+  "kind": "windows_native_attempt1_read_only_triage",
+  "log": {
+    "path": "dist/release-v0.6.22-candidate/job-119906335027.log",
+    "scope": "original full job log retained locally; command/source dumps are deliberately not copied into this public summary",
+    "sha256": "6ba310449a9f2f208623bbb666ecfeaedf152baa2e7bfee6dd1e584dd5c88bc1"
+  },
+  "recorded_at": "2026-10-22T15:18:31.967799+00:00",
+  "rerun": {
+    "acceptance_evidence": "coordinator reported the successful API acceptance; no independent network call made by this triage",
+    "api_action": "rerun-failed-jobs",
+    "api_request_accepted": true,
+    "interpretation": "A successful retry would establish that the unchanged source passed the rerun; it would not identify the first failure cause or rewrite its result.",
+    "requested_by": "release coordinator",
+    "requests": 1,
+    "result": "pending at triage time",
+    "run_id": 39802386034,
+    "source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+    "source_tests_and_deadlines_unchanged": true
+  },
+  "runner_images": {
+    "image_change_establishes_cause": false,
+    "v21": {
+      "image": "windows-2025-vs2026",
+      "image_version": "20261018.275.1",
+      "provisioner_version": "20261015.610"
+    },
+    "v22_attempt1": {
+      "image": "windows-2025-vs2026",
+      "image_version": "20261021.278.1",
+      "provisioner_version": "20261021.618"
+    }
+  },
+  "schema_version": 1,
+  "scope": {
+    "network_used_for_triage": false,
+    "new_test_executions_in_this_triage": false,
+    "production_or_test_code_modified": false,
+    "read_only": true,
+    "timeouts_modified": false
+  },
+  "source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+  "status": "failure retained; exact-source failed-job rerun accepted",
+  "subsequent_appearance_tests": {
+    "passed": 17,
+    "tests": [
+      {
+        "line": 255,
+        "test": "test_external_invalid_and_non_editor_addresses_are_unchanged"
+      },
+      {
+        "line": 256,
+        "test": "test_ids_remain_unique_and_all_original_named_nodes_survive"
+      },
+      {
+        "line": 257,
+        "test": "test_iframe_is_unchanged"
+      },
+      {
+        "line": 258,
+        "test": "test_information_closes_on_outside_pointer_and_escape_restores_focus"
+      },
+      {
+        "line": 259,
+        "test": "test_legacy_editor_gets_one_style_and_header_adaptation"
+      },
+      {
+        "line": 260,
+        "test": "test_long_title_location_tags_and_open_state_are_preserved"
+      },
+      {
+        "line": 261,
+        "test": "test_modern_editor_retains_all_existing_controls"
+      },
+      {
+        "line": 262,
+        "test": "test_observer_monitors_only_original_title_and_progress_labels"
+      },
+      {
+        "line": 263,
+        "test": "test_observer_updates_open_information_without_reading_editor_state"
+      },
+      {
+        "line": 264,
+        "test": "test_opening_information_refreshes_current_title_and_progress"
+      },
+      {
+        "line": 265,
+        "test": "test_protected_state_and_everything_outside_header_remain_untouched"
+      },
+      {
+        "line": 266,
+        "test": "test_refresh_and_locate_move_without_recreating_controls_or_running_actions"
+      },
+      {
+        "line": 267,
+        "test": "test_repeated_execution_does_not_register_duplicate_observers"
+      },
+      {
+        "line": 268,
+        "test": "test_repeated_execution_is_idempotent"
+      },
+      {
+        "line": 269,
+        "test": "test_service_without_theme_control_does_not_gain_inert_appearance_control"
+      },
+      {
+        "line": 270,
+        "test": "test_unknown_editor_structure_is_unchanged"
+      },
+      {
+        "line": 271,
+        "test": "test_version_navigation_folds_without_recreating_select_or_touching_editor_state"
+      }
+    ]
+  }
+}

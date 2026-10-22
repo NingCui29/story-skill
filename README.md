@@ -1,14 +1,12 @@
 # Story Skill
 
-> **v0.6.22 正在准备发布。** 新增结构化扫榜、代表作抽样和从正文证据到原创选题的研究交接，见[本轮记录](docs/releases/v0.6.22.md)。下方下载仍为已发布的 v0.6.21。
-
 **面向中文长篇与短篇小说的 AI 创作技能与本地写作工作台。**
 
 在 AI 助手中拆书、规划、写作和改稿，在本地工作台中阅读书稿、编辑候选、比较版本和备份作品。Story Skill 把这些环节连接起来，让已有书稿、创作约定和写作进度能够在后续任务中继续使用。
 
 支持 **Codex、Claude Code、Claude 桌面版、WorkBuddy AI、Qoder CN**及其他兼容 Agent Skills 的助手；另提供 **Mac / Windows 写作工作台**。
 
-[下载安装](#安装升级) · [开始写书](#开始写书) · [工作台预览](#使用工作台) · [完整文档](docs/README.md) · [v0.6.21 发布记录](docs/releases/v0.6.21.md)
+[下载安装](#安装升级) · [开始写书](#开始写书) · [工作台预览](#使用工作台) · [完整文档](docs/README.md) · [v0.6.22 发布记录](docs/releases/v0.6.22.md)
 
 ## 它能帮你做什么
 
@@ -25,16 +23,16 @@
 
 ## 安装升级
 
-当前正式版为 **[v0.6.21](https://github.com/NingCui29/story-skill/releases/tag/v0.6.21)**，下列附件已发布。先选择要使用的部分，再按对应说明安装；两者可以配合使用。变化与完整验收范围见[发布记录](docs/releases/v0.6.21.md)。
+当前正式版为 **[v0.6.22](https://github.com/NingCui29/story-skill/releases/tag/v0.6.22)**，下列附件已发布。先选择要使用的部分，再按对应说明安装；两者可以配合使用。变化与完整验收范围见[发布记录](docs/releases/v0.6.22.md)。
 
 ### 安装创作技能
 
 | 使用环境 | 下载 | 安装方式 |
 |---|---|---|
-| Codex 本地插件 | [插件 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-skill-codex-0.6.21.zip) | 解压后添加本地市场并安装插件，见 [Codex 安装说明](docs/codex-plugin.md) |
-| Claude 桌面版 | [单入口 ZIP（r2）](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-skill-claude-desktop-0.6.21-r2.zip) | 上传并启用专用技能包，见 [桌面导入说明](INSTALL.md#claude-桌面版导入单技能包) |
+| Codex 本地插件 | [插件 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-codex-0.6.22.zip) | 解压后添加本地市场并安装插件，见 [Codex 安装说明](docs/codex-plugin.md) |
+| Claude 桌面版 | [单入口 ZIP（r2）](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-claude-desktop-0.6.22-r2.zip) | 上传并启用专用技能包，见 [桌面导入说明](INSTALL.md#claude-桌面版导入单技能包) |
 | WorkBuddy AI、Qoder CN | 完整八技能目录 | 源码安装器支持个人／项目目录，见 [安装与调用说明](INSTALL.md#workbuddy-ai-与-qoder-cn-快速安装) |
-| Claude Code、Antigravity 等 | [完整八技能 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-skill-0.6.21.zip) | 保留八个同级目录，见 [目录安装说明](INSTALL.md#目录安装的完整套件) |
+| Claude Code、Antigravity 等 | [完整八技能 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-0.6.22.zip) | 保留八个同级目录，见 [目录安装说明](INSTALL.md#目录安装的完整套件) |
 
 <a id="codex-本地插件"></a>
 <a id="claude-桌面版"></a>
@@ -48,14 +46,14 @@ Codex 插件通过本地市场分发。安装后在宿主中确认技能已加�
 
 | 系统 | 当前客户端 | 下载 |
 |---|---|---|
-| Intel Mac | 0.1.24 / build 25 | [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.dmg) · [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.zip) · [安装说明](desktop/macos/README.md) |
-| Windows x64 | 0.1.11 | [安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.11-windows-x86_64-setup.exe) · [便携 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.11-windows-x86_64.zip) · [安装说明](desktop/windows/README.md) |
+| Intel Mac | 0.1.25 / build 26 | [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.dmg) · [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.zip) · [安装说明](desktop/macos/README.md) |
+| Windows x64 | 0.1.12 | [安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64-setup.exe) · [便携 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64.zip) · [安装说明](desktop/windows/README.md) |
 
 **桌面应用已内置 Python 和运行时，无需另装 Python。** 下载后核对 Release 中的同名 `.sha256` 文件。Mac 使用本地临时签名、未经 Apple 公证，Apple Silicon 尚未验证；Windows 安装程序未做代码签名。
 
 升级前保存全部页面编辑并退出旧客户端。已有工作台服务按 [更新流程](docs/工作台更新流程.md)另行更新。GitHub 发版不会自动替换本机技能或应用。
 
-[全部发行文件与校验文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.21) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（已同步并核验；npm 安装不向宿主注册技能）
+[全部发行文件与校验文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.22) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（已同步并核验；npm 安装不向宿主注册技能）
 
 ## 开始写书
 
@@ -117,9 +115,9 @@ v0.6.22 增加结构化研究流程：保存榜单或书库样本，核对来源
 
 工作台在本机运行，提供书架和单书编辑页，把章节、策划、细纲、草稿与图片放到同一套导航中。
 
-![写作工作台：材料导航、候选正文与材料信息](benchmarks/results/v0.6.21/macos-native-editor.png)
+![写作工作台：材料导航、候选正文与材料信息](benchmarks/results/v0.6.22/macos-native-editor.png)
 
-*截图来自 v0.6.21 Mac 客户端的隔离合成自检，展示合成候选材料。*
+*截图来自 v0.6.22 Mac 客户端的隔离合成自检，展示合成候选材料。*
 
 - **阅读与查找：** 按章节或文件导航，分批加载大量材料，搜索正文与材料并说明未覆盖范围，切换浅色／深色外观。
 - **候选与版本：** 编辑并保存候选，保存全部候选，找回恢复稿，选择两稿比较差异。
@@ -147,7 +145,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 番茄、七猫、起点均可准备已审查正式章节的离线材料。平台草稿功能提供冻结清单、预览、受控保存、全文回读与重复执行核对。番茄可在预览后显式连接 Codex 工作进程与既有、已登录的 Chrome；浏览器拒绝权限时停止。段落编码与允许末尾换行数量变化分别选择，任何变更都需重新预览，未知结果先回读对账。七猫、起点沿用外部已连接助手流程。
 
-历史实页证据覆盖**番茄指定合成稿、单卷完整列表**；另有单篇草稿经单独排版修复及只读全文核对，不能作为本版自动整批保存验收。七猫、起点实页以及真实分页、多卷仍待验收。审核提交与定时发布由作者在平台后台完成。详细范围见 [平台草稿说明](skills/story-skill-publish/references/platform-drafts.md)和 [实际验收记录](docs/releases/v0.6.21.md#平台草稿的实际范围)。
+历史实页证据覆盖**番茄指定合成稿、单卷完整列表**；另有单篇草稿经单独排版修复及只读全文核对，不能作为本版自动整批保存验收。七猫、起点实页以及真实分页、多卷仍待验收。审核提交与定时发布由作者在平台后台完成。详细范围见 [平台草稿说明](skills/story-skill-publish/references/platform-drafts.md)和 [实际验收记录](docs/releases/v0.6.22.md#平台草稿的实际范围)。
 
 ## 八个技能入口
 
@@ -166,9 +164,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 ## 版本与验证
 
-**v0.6.22 发布准备中。** 新增来源与覆盖检查、同书去重和分口径聚合，以及标签频次、书名字面模式和字数分析。研究包把可重算样本、待验证假设和正文证据连接起来，保留反例与候选身份；采集与研究命令不会建立书库或改写正式正文。新包、客户端与分发验证按[本轮发布记录](docs/releases/v0.6.22.md)逐项登记。
-
-**v0.6.21** 新增番茄草稿受控自动连接、独立的段落编码与尾换行比较选项，并修正 WorkBuddy AI 默认目录、补充 WorkBuddy AI 与 Qoder CN 安装调用说明。同时修复 Windows 会话锁、拒绝请求响应与失败诊断顺序，保留首个 SDK 失败阶段。连接、权限拒绝、未知结果与既有草稿保护由离线回归分别检查，不代表本版自动连接已通过真实整批保存验收；三组完整源码 CI 的 73 项关键回归、固定标签安装、分发与 Packages 核验已完成，完整范围见[发布记录](docs/releases/v0.6.21.md)。[v0.6.20 历史记录](docs/releases/v0.6.20.md)继续保留。
+**v0.6.22** 新增结构化扫榜、代表作抽样与研究交接，连接样本观察、正文验证和原创选题。修正独立研究命令在非 UTF-8 环境下的中文输出，保留原文引文的精确匹配规则。各分发包、跨平台源码 CI、固定标签安装与公开分发的实际核验范围见[发布记录](docs/releases/v0.6.22.md)；[v0.6.21 历史记录](docs/releases/v0.6.21.md)继续保留。
 
 工程检查、宿主加载、平台实页验证与小说阅读效果分别记录。具体方法见 [评估说明](docs/evaluation.md)。
 

@@ -1,0 +1,208 @@
+{
+  "schema": 2,
+  "ok": true,
+  "checked_at_utc": "2026-10-22T16:43:05.852500+00:00",
+  "actual_build_source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+  "final_candidate_source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+  "scope": "Static snapshot of explicitly public v0.6.22 JSON/Markdown/PNG plus ten named distribution documents. No prior release success or failure is inherited. No private development directory contents, ignored raw logs, daily installation or real manuscripts were read or changed.",
+  "public_files_scanned": 104,
+  "distribution_documents_scanned": [
+    "README.md",
+    "INSTALL.md",
+    "desktop/macos/README.md",
+    "docs/README.md",
+    "docs/codex-plugin.md",
+    "docs/evaluation.md",
+    "docs/github-release.md",
+    "docs/releases/v0.6.22.md",
+    "docs/upstream-analysis.md",
+    "docs/本地工作台分析.md"
+  ],
+  "json_files_parsed": 90,
+  "snapshot_inventory_sha256": "a2413a95169ced94b745ba22a2b028164ee96b93ce367103f42d9d1b2c618656",
+  "privacy": {
+    "automated_pattern_findings": 0,
+    "private_development_paths_tracked": 0,
+    "exact_private_directories_checked": 5,
+    "private_development_content_read": false,
+    "explicit_book_title_fields_checked": 4,
+    "quoted_titles_checked": 20,
+    "unchanged_prior_v0621_public_reference_titles": 4,
+    "reviewed_synthetic_research_report_baselines": 4,
+    "exact_synthetic_research_titles_checked": 12,
+    "current_synthetic_fixture_script_sha256": "9f3499936cc9c4a0e53c6f4b511fd310fa3687e416b029d487e3b0fae116cff6",
+    "synthetic_report_fixture_provenance": [
+      {
+        "file": "benchmarks/results/v0.6.22/before-utf8-fix/macos-research-cli-e2e.json",
+        "source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+        "fixture_script_sha256": "a4069cf355af0d7372928ef352d62b2e0d2e9b2a158d9136a7638a19a0d8d76f",
+        "historical": true
+      },
+      {
+        "file": "benchmarks/results/v0.6.22/before-utf8-fix/research-cli-e2e.json",
+        "source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+        "fixture_script_sha256": "a4069cf355af0d7372928ef352d62b2e0d2e9b2a158d9136a7638a19a0d8d76f",
+        "historical": true
+      },
+      {
+        "file": "benchmarks/results/v0.6.22/macos-research-cli-e2e.json",
+        "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+        "fixture_script_sha256": "9f3499936cc9c4a0e53c6f4b511fd310fa3687e416b029d487e3b0fae116cff6",
+        "historical": false
+      },
+      {
+        "file": "benchmarks/results/v0.6.22/research-cli-e2e.json",
+        "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+        "fixture_script_sha256": "9f3499936cc9c4a0e53c6f4b511fd310fa3687e416b029d487e3b0fae116cff6",
+        "historical": false
+      }
+    ],
+    "png_metadata_chunks": 6,
+    "numeric_resolution_colorspace_dimensions_only_exif_chunks": 6,
+    "png_text_chunks": 0,
+    "rules": [
+      "personal_home_path",
+      "mac_temporary_home_path",
+      "github_credential",
+      "api_secret",
+      "private_key",
+      "loopback_auth_route",
+      "loopback_auth_path",
+      "windows_personal_forward_slash_home",
+      "literal_bearer_credential",
+      "private_development_reference",
+      "credential_in_url_authority",
+      "signed_or_credential_url_query"
+    ],
+    "scope_limit": "Pattern scanning cannot prove every arbitrary private phrase absent. Public data origins and the recorded visual reviews were also checked."
+  },
+  "markdown_links": {
+    "local_file_links_checked": 502,
+    "missing": [],
+    "remote_urls_and_heading_anchors_checked": false
+  },
+  "source_provenance": {
+    "original_build_reports_checked": 20,
+    "all_actual_build_sources_preserved": true,
+    "all_original_report_hashes_match_equivalence_proof": true,
+    "input_counts": {
+      "conservative": 232,
+      "actual_guarded_union": 229,
+      "local_unique": 87,
+      "windows": 166,
+      "payload": 69,
+      "remote_prepared": 71,
+      "desktop_runtime": 20
+    },
+    "equivalence_report": "build-source-equivalence.json",
+    "equivalence_report_sha256": "78d277939f70f726cc9c00448c3af110d89ba0b66f70297c71bb1313e4e5d084",
+    "build_source_record_sha256": "21bea64ea6457c73db54bba0808705d5201292eda5fc501db56293329624b051",
+    "prior_release_results_reused_as_current_pass": false,
+    "actual_input_byte_verification": {
+      "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+      "actual_guarded_files_checked": 229,
+      "all_fixed_git_and_current_file_sha256_match": true,
+      "non_consumed_documents_excluded": true,
+      "verified_input_map_sha256": "76ae07f1881e2892bd440487d09c3442a661c83ed89e8b18a031a65da783626b"
+    },
+    "historical_archive_integrity": [
+      {
+        "archive": "before-utf8-fix",
+        "actual_source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+        "original_files_checked": 45,
+        "original_build_report_hashes_checked": 20,
+        "manifest_sha256": "456e6f5669d6f0d6efa6733dae7cb0c9818513b5af7f6560c4b4f28d91055594",
+        "historical_equivalence_report_sha256": "b8016ebd334b02cf7ab069ed251947e15805756152e8fd445f380133c29e1056",
+        "historical_fixture_script_sha256": "a4069cf355af0d7372928ef352d62b2e0d2e9b2a158d9136a7638a19a0d8d76f",
+        "original_statuses_preserved_without_reinterpretation": true,
+        "accepted_as_current_build_pass": false
+      }
+    ],
+    "historical_build_passes_reused_as_current_pass": false,
+    "source_relationship": "same_fixed_commit_after_fresh_full_build"
+  },
+  "visual_privacy": {
+    "mac_screenshots": 3,
+    "mac_review": "macos-visual-review.json",
+    "mac_reviewed_png_hashes_unchanged": true,
+    "windows_screenshots": 4,
+    "windows_review": "release/windows-visual-review.json",
+    "windows_review_receipt_sha256": "f50998b210b8dc435c54ce9450e96a31faba541d443c144a8d6dc33dfc5ce8d7",
+    "windows_reviewed_png_hashes_unchanged": true,
+    "reviewed_png_hashes_unchanged": true,
+    "performed_visual_review_by_this_helper": false,
+    "method": "This helper does not inspect pixels. It accepts only recorded actual visual reviews after their source and every exact PNG SHA match. Full mode requires both platforms; current-public-only preflight explicitly lists unavailable Windows coverage as not_checked."
+  },
+  "pending_external_reference_count": 16,
+  "status_refresh_required": [],
+  "not_checked": [],
+  "user_installation_modified": false,
+  "source_files_modified": false,
+  "mode": "final_distribution_audit",
+  "release_ready": true,
+  "release_gate_status": {
+    "final_source_ci": "verified",
+    "annotated_tag_and_fixed_tag_installation": "verified",
+    "public_release_and_anonymous_downloads": "verified",
+    "github_packages_registry_verification": "verified"
+  },
+  "final_release_gate_verification": {
+    "ok": true,
+    "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+    "tag": "v0.6.22",
+    "annotated_tag_object": "d79f5016214c4242186bd34ecb6e4df8a735db06",
+    "receipts": {
+      "ci.json": {
+        "file": "release/ci.json",
+        "sha256": "7ab285767995e56044e8991bb4b0c70b3177aa80edf0ea80f67299ed02047a07",
+        "ok": true
+      },
+      "ci-tag-crosscheck.json": {
+        "file": "release/ci-tag-crosscheck.json",
+        "sha256": "c175273075c6764ec1495ff38824381a05f2c8b203f7a108b1e346d5f512e070",
+        "ok": true
+      },
+      "tag.json": {
+        "file": "release/tag.json",
+        "sha256": "59a2be9bbed3a8181f90dbd36c35e713cdc454751f9e8a015c27440ef2f3c610",
+        "ok": true
+      },
+      "remote-commit-install.json": {
+        "file": "release/remote-commit-install.json",
+        "sha256": "c4d67a524c4c4fd706246e9f913ec2930ba4c868f484f45d883a9b37b451e1f7",
+        "ok": true
+      },
+      "published.json": {
+        "file": "release/published.json",
+        "sha256": "c91b1b03f04b7ee93ca0bb57ac88935ba7b2888b79ba35a22b49c0bec35aace4",
+        "ok": true
+      },
+      "public-downloads.json": {
+        "file": "release/public-downloads.json",
+        "sha256": "d1bf6cda033e2ec0204838a53aab65992ee505d0bfff5564bb9e85331a741c80",
+        "ok": true
+      },
+      "packages-ci.json": {
+        "file": "release/packages-ci.json",
+        "sha256": "5adf7b752a5e9ad2453db34ddaba7f229e8e3b381d53d11bbce9a2110b85dd0c",
+        "ok": true
+      },
+      "registry-independent-download.json": {
+        "file": "release/registry-independent-download.json",
+        "sha256": "abf55c05d020afb5b2bb5038b47d0be6e37ce802e62141b6528dcdbac17bdecf",
+        "ok": true
+      }
+    },
+    "source_ci_matrices": 3,
+    "required_regressions": 158,
+    "fixed_tag_installed_files": 69,
+    "release_id": 420868411,
+    "anonymous_complete_downloads": 10,
+    "desktop_head_and_tail_range_checks": 4,
+    "desktop_binaries_claimed_as_complete_anonymous_downloads": false,
+    "packages_automatic_run": 39813978484,
+    "registry_export_and_local_independent_sha256": "8ca18920c41b9a2b616a8c4725cf3e541d6099297cda2ee4aed3e7e36613d37c",
+    "second_local_registry_http_download_claimed": false,
+    "scope": "Recorded actual CI/tag/installer/publication/download/Packages gates and their source/tag/hash bindings were rechecked locally. Ten files had complete anonymous downloads; four desktop binaries had head/tail Range verification linked to complete local/native/server digests. The workflow registry HTTP export was independently checked locally; no second local registry HTTP download is claimed."
+  }
+}

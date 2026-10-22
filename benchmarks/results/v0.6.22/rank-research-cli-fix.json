@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "ok": true,
+  "collected_at_utc": "2026-10-22T15:47:01.623047+00:00",
+  "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+  "source_bindings": [
+    {
+      "path": "skills/story-skill/scripts/story_rank.py",
+      "sha256": "76e0ac701b519cb66d31b78b4bc3d94bb488ef04fd7e1119b12ebbe09b4d892e"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_research.py",
+      "sha256": "72f858596e2604e61789f18121d536b5ec9d242bf4032d251457eede8e9fce84"
+    },
+    {
+      "path": "tests/test_rank.py",
+      "sha256": "2e6a084d747e0c83a25de7f39dd6f4210753866cb4e219f8f1b155fd1c1c128e"
+    },
+    {
+      "path": "tests/test_research.py",
+      "sha256": "c9889197d91694dc18f78bba17f6db52cf6b8b5d1c90cf0898953e3eb7bd8354"
+    }
+  ],
+  "command": [
+    "python3.12",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "-v",
+    "tests.test_rank",
+    "tests.test_rank_sources",
+    "tests.test_research"
+  ],
+  "tests_run": 84,
+  "duration_seconds": 0.617,
+  "skipped": 0,
+  "failures": 0,
+  "errors": 0,
+  "raw_log_sha256": "aef3bb0eb5384273645cc44ae6eb95a1b65260cfd7eda6a977470b2f1bdd011d",
+  "mutation_proof": {
+    "schema": 1,
+    "old_source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+    "old_cli_failures": [
+      {
+        "module": "story_rank.py",
+        "source_sha256": "4dbaf3d9b065730578f3f2f3373aad679f1e7a933271b14c81fcac46324b359a",
+        "returncode": 1,
+        "unicode_encode_error_observed": true
+      },
+      {
+        "module": "story_research.py",
+        "source_sha256": "9ea128836bfae886b2d28da5d5fec4565933fada8758674ce88d57b458646489",
+        "returncode": 1,
+        "unicode_encode_error_observed": true
+      }
+    ],
+    "scope": "Temporary old Git source copies and one in-memory comparison mutation only; no disk production source mutation or user book access.",
+    "line_ending_relaxation_mutation": {
+      "test": "test_multiline_quote_preserves_exact_text_including_line_break",
+      "tests_run": 1,
+      "assertion_failures": 2,
+      "errors": 0,
+      "production_disk_source_unchanged": true
+    }
+  },
+  "scope": "Actual synthetic regressions on macOS; standalone CLI help and JSON errors run with forced cp1252 streams. LF/CRLF quotes retain exact source bytes and mismatches are rejected. This does not claim native Windows execution, live ranking collection, user book edits, or model/platform operations."
+}

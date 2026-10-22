@@ -1,0 +1,186 @@
+{
+  "schema": 1,
+  "ok": true,
+  "source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+  "release_id": 420868411,
+  "tag": "v0.6.22",
+  "draft": true,
+  "asset_count": 14,
+  "local_asset_count": 10,
+  "native_windows_asset_count": 4,
+  "all_names_sizes_states_and_server_sha256_match": true,
+  "assets": [
+    {
+      "id": 666241239,
+      "name": "story-skill-0.6.22.zip",
+      "size": 659202,
+      "digest": "sha256:a6e2b03d751b23cf15eab031eeb4458f0f70711d9e2eb87aeda94185b49bc9e2",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-skill-0.6.22.zip"
+    },
+    {
+      "id": 666241816,
+      "name": "story-skill-0.6.22.zip.sha256",
+      "size": 89,
+      "digest": "sha256:3db97eac3e4c997accc52ac7e732483c6c4e41e49eff2f48a5d6259715380296",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-skill-0.6.22.zip.sha256"
+    },
+    {
+      "id": 666242341,
+      "name": "story-skill-claude-desktop-0.6.22-r2.zip",
+      "size": 665650,
+      "digest": "sha256:a878942459de5bf06e234013149115d55f9134c4c3ab77e89a6c5bc317bc9653",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-skill-claude-desktop-0.6.22-r2.zip"
+    },
+    {
+      "id": 666242954,
+      "name": "story-skill-claude-desktop-0.6.22-r2.zip.sha256",
+      "size": 107,
+      "digest": "sha256:d1ac0d79482a8a349181318479327b7ce2106ad7d6e9f047840a7fa91a4693a6",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-skill-claude-desktop-0.6.22-r2.zip.sha256"
+    },
+    {
+      "id": 666243365,
+      "name": "story-skill-codex-0.6.22.zip",
+      "size": 668074,
+      "digest": "sha256:e2eb8eced95cc5a5bdd9a4303a79d88fba79084d18d26053b2cc895608ee62d2",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-skill-codex-0.6.22.zip"
+    },
+    {
+      "id": 666244021,
+      "name": "story-skill-codex-0.6.22.zip.sha256",
+      "size": 95,
+      "digest": "sha256:837290d30fc5862781da479db0b0c9d8798f736ad4962cd2db940ae3c5279e91",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-skill-codex-0.6.22.zip.sha256"
+    },
+    {
+      "id": 666248778,
+      "name": "story-workbench-0.1.12-windows-x86_64-setup.exe",
+      "size": 183070250,
+      "digest": "sha256:47f7e91bb1582577556cc5eb7b2fcaecd7e05a3aba53d4bc749d60c9bdcd5459",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-workbench-0.1.12-windows-x86_64-setup.exe"
+    },
+    {
+      "id": 666249147,
+      "name": "story-workbench-0.1.12-windows-x86_64-setup.exe.sha256",
+      "size": 115,
+      "digest": "sha256:9627ac6ee863256a6473365c6a76de4f79204260bdf1d628b491cea781fed0e8",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-workbench-0.1.12-windows-x86_64-setup.exe.sha256"
+    },
+    {
+      "id": 666249242,
+      "name": "story-workbench-0.1.12-windows-x86_64.zip",
+      "size": 258444571,
+      "digest": "sha256:52495d011896bb27e007d424cb9bec3997794f65a527de56e9aa55c2466dbc67",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-workbench-0.1.12-windows-x86_64.zip"
+    },
+    {
+      "id": 666249770,
+      "name": "story-workbench-0.1.12-windows-x86_64.zip.sha256",
+      "size": 109,
+      "digest": "sha256:68084d68f35462066f7ef3adc1d8e25e56648c1680d628e96d9aadb89a918c7a",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-workbench-0.1.12-windows-x86_64.zip.sha256"
+    },
+    {
+      "id": 666246128,
+      "name": "story-workbench-0.1.25-macos-x86_64.dmg",
+      "size": 38028623,
+      "digest": "sha256:72555acbafb9fb6a708bf4e301a7cb60ce8c24ad680b8bb39e5ffe1700ba850d",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-workbench-0.1.25-macos-x86_64.dmg"
+    },
+    {
+      "id": 666247208,
+      "name": "story-workbench-0.1.25-macos-x86_64.dmg.sha256",
+      "size": 106,
+      "digest": "sha256:21150ba0ace8d055175871f86b36b837ad4bd2838b9d17afde278637573cd7b3",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-workbench-0.1.25-macos-x86_64.dmg.sha256"
+    },
+    {
+      "id": 666244837,
+      "name": "story-workbench-0.1.25-macos-x86_64.zip",
+      "size": 26822990,
+      "digest": "sha256:0bb2d99f7f9a06aae91e71b8af57de03fbceb847d85b61fb59c3b8b735ba155a",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-workbench-0.1.25-macos-x86_64.zip"
+    },
+    {
+      "id": 666245886,
+      "name": "story-workbench-0.1.25-macos-x86_64.zip.sha256",
+      "size": 106,
+      "digest": "sha256:a73b4ab4eb9609f3d4b6785fd8e10595e43ba1185e0297859bc1b2653b545539",
+      "state": "uploaded",
+      "browser_download_url": "https://github.com/NingCui29/story-skill/releases/download/untagged-05ef3e98fb9b0683a115/story-workbench-0.1.25-macos-x86_64.zip.sha256"
+    }
+  ],
+  "expected_assets": {
+    "story-skill-0.6.22.zip": {
+      "size": 659202,
+      "sha256": "a6e2b03d751b23cf15eab031eeb4458f0f70711d9e2eb87aeda94185b49bc9e2"
+    },
+    "story-skill-0.6.22.zip.sha256": {
+      "size": 89,
+      "sha256": "3db97eac3e4c997accc52ac7e732483c6c4e41e49eff2f48a5d6259715380296"
+    },
+    "story-skill-claude-desktop-0.6.22-r2.zip": {
+      "size": 665650,
+      "sha256": "a878942459de5bf06e234013149115d55f9134c4c3ab77e89a6c5bc317bc9653"
+    },
+    "story-skill-claude-desktop-0.6.22-r2.zip.sha256": {
+      "size": 107,
+      "sha256": "d1ac0d79482a8a349181318479327b7ce2106ad7d6e9f047840a7fa91a4693a6"
+    },
+    "story-skill-codex-0.6.22.zip": {
+      "size": 668074,
+      "sha256": "e2eb8eced95cc5a5bdd9a4303a79d88fba79084d18d26053b2cc895608ee62d2"
+    },
+    "story-skill-codex-0.6.22.zip.sha256": {
+      "size": 95,
+      "sha256": "837290d30fc5862781da479db0b0c9d8798f736ad4962cd2db940ae3c5279e91"
+    },
+    "story-workbench-0.1.25-macos-x86_64.zip": {
+      "size": 26822990,
+      "sha256": "0bb2d99f7f9a06aae91e71b8af57de03fbceb847d85b61fb59c3b8b735ba155a"
+    },
+    "story-workbench-0.1.25-macos-x86_64.zip.sha256": {
+      "size": 106,
+      "sha256": "a73b4ab4eb9609f3d4b6785fd8e10595e43ba1185e0297859bc1b2653b545539"
+    },
+    "story-workbench-0.1.25-macos-x86_64.dmg": {
+      "size": 38028623,
+      "sha256": "72555acbafb9fb6a708bf4e301a7cb60ce8c24ad680b8bb39e5ffe1700ba850d"
+    },
+    "story-workbench-0.1.25-macos-x86_64.dmg.sha256": {
+      "size": 106,
+      "sha256": "21150ba0ace8d055175871f86b36b837ad4bd2838b9d17afde278637573cd7b3"
+    },
+    "story-workbench-0.1.12-windows-x86_64-setup.exe": {
+      "size": 183070250,
+      "sha256": "47f7e91bb1582577556cc5eb7b2fcaecd7e05a3aba53d4bc749d60c9bdcd5459"
+    },
+    "story-workbench-0.1.12-windows-x86_64-setup.exe.sha256": {
+      "size": 115,
+      "sha256": "9627ac6ee863256a6473365c6a76de4f79204260bdf1d628b491cea781fed0e8"
+    },
+    "story-workbench-0.1.12-windows-x86_64.zip": {
+      "size": 258444571,
+      "sha256": "52495d011896bb27e007d424cb9bec3997794f65a527de56e9aa55c2466dbc67"
+    },
+    "story-workbench-0.1.12-windows-x86_64.zip.sha256": {
+      "size": 109,
+      "sha256": "68084d68f35462066f7ef3adc1d8e25e56648c1680d628e96d9aadb89a918c7a"
+    }
+  },
+  "verified_at_utc": "2026-10-22T15:27:51.207914+00:00",
+  "scope": "Fourteen staged assets checked against complete local builds and independent Windows native/upload receipts, then fresh official API states, sizes and SHA256 digests. Public downloads and Packages are separate gates."
+}

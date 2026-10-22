@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "platform": "darwin",
+  "story_version": "0.6.22",
+  "isolated_payload": true,
+  "created_and_registered": true,
+  "backup_verified": true,
+  "restore_identity_preserved": true,
+  "candidate_and_binary_preserved": true,
+  "sqlite_integrity_verified": true,
+  "missing_trash_path_refused": true,
+  "native_trash_bridge_checked": true,
+  "existing_book_files_recycled": false,
+  "source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef"
+}

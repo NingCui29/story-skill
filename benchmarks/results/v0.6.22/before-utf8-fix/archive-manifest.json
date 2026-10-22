@@ -1,0 +1,192 @@
+{
+  "schema": 1,
+  "ok": true,
+  "archived_actual_source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+  "archived_at_utc": "2026-10-22T15:45:35.234491+00:00",
+  "reason": "Final Windows source CI found a real rank/research UTF-8 CLI output problem; these actual build/native/staged passes do not authorize release of this rejected source.",
+  "files": {
+    "build-inputs.json": {
+      "bytes": 68501,
+      "sha256": "48deeac9bf368e887af11e411368c9c5c6e854ea147f47a213ebc4c48d90e72e"
+    },
+    "build-source-equivalence.json": {
+      "bytes": 710116,
+      "sha256": "b8016ebd334b02cf7ab069ed251947e15805756152e8fd445f380133c29e1056"
+    },
+    "claude-package.json": {
+      "bytes": 1278,
+      "sha256": "7a29d08db9ec3492b467e4ff9f5bb2e97e7d5b75d62a7ea51fd0ad6a1a91a7b8"
+    },
+    "codex-package.json": {
+      "bytes": 692,
+      "sha256": "b2e46b196e037f65933406b4bdcd719b266cc368cf6048bd91c50e86d3b5e938"
+    },
+    "codex-plugin-verification.json": {
+      "bytes": 38805,
+      "sha256": "218008be767a632ddabbfb584f86c5ddad6b175af79834b55454d5780b2f5ade"
+    },
+    "fixed-source-verification.json": {
+      "bytes": 39654,
+      "sha256": "5458559272bf0bae5d648200f00c0e0776c948819257fccb544db0aa695c09f3"
+    },
+    "local-artifacts.json": {
+      "bytes": 2666,
+      "sha256": "850c2be5007e2eb552f3784e888877fdb5e6e41e1e1960dc5fb3f0b67eb8598d"
+    },
+    "local-package-verification.json": {
+      "bytes": 5108,
+      "sha256": "b198286d6f59287888b9bc39acc6a9c06607b5650c2c6ede4264675a6fde5304"
+    },
+    "local-pre-freeze-regression.json": {
+      "bytes": 813,
+      "sha256": "026ad5309001eb45c19fd3aa59ae7c9c367110c9e388401d5292f9b9b7b1723e"
+    },
+    "macos-build.json": {
+      "bytes": 2764,
+      "sha256": "2311e6fdea7815a42177f13d171ec103bf9169be6f26e8b0a840af3041405185"
+    },
+    "macos-complete-inventory.json": {
+      "bytes": 248129,
+      "sha256": "350ad8976566fceec634220dddadd6f3b47fa9bb89da61317c8f4fcf07cf5ae6"
+    },
+    "macos-distribution.json": {
+      "bytes": 1166,
+      "sha256": "0a6d5bcd228006c9aaf21cd98de23a1777250e6dfeff0112a6b84282bc06e605"
+    },
+    "macos-native-acceptance.json": {
+      "bytes": 647,
+      "sha256": "ba117d2c249b02dbecd6afc75c233bb44d5b293572b35936dabea10f8ed93abf"
+    },
+    "macos-native-editor.json": {
+      "bytes": 628,
+      "sha256": "d09de23513acd54bd63d678e2f8632fe25488e52f9968ab3ac9daf945317f265"
+    },
+    "macos-native-editor.png": {
+      "bytes": 263739,
+      "sha256": "fc732f612a69d666d6dcba8d858b8acb6fa791cac1a63d1d7ac0d6e6defef5dc"
+    },
+    "macos-native-shelf.json": {
+      "bytes": 1837,
+      "sha256": "2214ac4a9e3f93a887f79dd18616e0800fb996bbcf3c3b774eb17f79f4cbe5ce"
+    },
+    "macos-native-shelf.png": {
+      "bytes": 218239,
+      "sha256": "c95b079dd0e23f0b81031d96ef4528051cca71de92bd623d7afe9644b4fc8e55"
+    },
+    "macos-native-switch.json": {
+      "bytes": 1473,
+      "sha256": "ef5b1c05aa6abc884fad9894b78647e48daf586fb04150c6dd8aabb78736e23c"
+    },
+    "macos-native-switch.png": {
+      "bytes": 261349,
+      "sha256": "6dfbf0ff7dad2f6b6cb6060e09fb4b8705b831e0ca350e6ac1f9481bf13a5c2a"
+    },
+    "macos-payload-probe.json": {
+      "bytes": 457,
+      "sha256": "294d5d2663b20f4d8b524af725f88433f5d2efe1158b8b69d78bcad169e7da3c"
+    },
+    "macos-python-inputs.json": {
+      "bytes": 195994,
+      "sha256": "d2e0ba8053fb545978b43f5edb131f4f45801d8ddced52218e34cce0680c4b82"
+    },
+    "macos-research-cli-e2e.json": {
+      "bytes": 41859,
+      "sha256": "7b6eca95255648d33067efe5aa9af6019a15fad8c1c0fa848201f930b538cd4a"
+    },
+    "macos-verification.json": {
+      "bytes": 2706,
+      "sha256": "ccf33e5d8a256f43cc0db577764d21d25382668bd1d63acef9707ab8e1cf8c9a"
+    },
+    "macos-visual-review.json": {
+      "bytes": 1348,
+      "sha256": "d80f5d2e077cf6320019b99f6b64d04aeb4c64d3c41f33c37e5c1944688b515a"
+    },
+    "npm-local.json": {
+      "bytes": 12542,
+      "sha256": "f97a9583751016291481e9fd9857a418edc45beed71d3595e68ab9a66b07e423"
+    },
+    "package-preflight.json": {
+      "bytes": 3269,
+      "sha256": "a7deaf3f09b12ce580d493459ec1932e8d17762119dc93babb01dff71ace697f"
+    },
+    "package.json": {
+      "bytes": 294,
+      "sha256": "c69ea402ff868ab4658c9fd18d92d30b354da5a4fdf4eb55e2321a42963f2694"
+    },
+    "rank-research-regressions.json": {
+      "bytes": 1908,
+      "sha256": "17950bbed5698f5ef8088c9841f19fde6083c3910bce6b67607f19efd42129d4"
+    },
+    "release/ci-attempt-1649d56.json": {
+      "bytes": 239796,
+      "sha256": "863cf86011030e8e3a55521b0977921e55304074f9e7d338126364aaf0f9fe0d"
+    },
+    "release/source.json": {
+      "bytes": 8466,
+      "sha256": "61239dc75a5b979135a24c7c0fdfce070b596853ef7d8babb2c4bcf99e206ab5"
+    },
+    "release/staged-assets.json": {
+      "bytes": 8422,
+      "sha256": "28ffbe6caf454689de040c732d9ccaa9e43c436e8864b6542e3d41e3c82c5a1d"
+    },
+    "release/windows/windows-build-manifest.json": {
+      "bytes": 523619,
+      "sha256": "fdf4908bbdeb83f14eec3857ca2abf6d73da2c9a01bd7fd428e3a47dc49629cf"
+    },
+    "release/windows/windows-distribution-verification.json": {
+      "bytes": 39791,
+      "sha256": "f0741dc649b6254fb238be1642433dd75819db4446a21469c0ef33906144bd91"
+    },
+    "release/windows/windows-draft-upload.json": {
+      "bytes": 41771,
+      "sha256": "b865c23af4afba3f5d341a0ae6b4a872e5876c0cd4c8bd0104bbd3d14278f187"
+    },
+    "release/windows/windows-native-smoke-dark.png": {
+      "bytes": 28942,
+      "sha256": "482efec2553ec439a75847a07ead89e5312f38b3ea2ba058f6361cef856cc538"
+    },
+    "release/windows/windows-native-smoke-light.png": {
+      "bytes": 27057,
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    },
+    "release/windows/windows-native-smoke-update-progress.png": {
+      "bytes": 4595,
+      "sha256": "c9a8cb4c117328e179bb2eb5443b96789681a1a69071410a540f85ee6a922177"
+    },
+    "release/windows/windows-native-smoke.json": {
+      "bytes": 305,
+      "sha256": "41fcebf2873b96f9c33ff08addeab0bd6e1c07017c1d0ce46519ff3712abe34a"
+    },
+    "release/windows/windows-native-smoke.png": {
+      "bytes": 27057,
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    },
+    "release/windows/windows-runtime-safety.json": {
+      "bytes": 407,
+      "sha256": "72a7ced5d997baba81b491682b51ba7438af61737e329e114c5073a68b388bbc"
+    },
+    "release/windows-attempt1-triage.json": {
+      "bytes": 7277,
+      "sha256": "0af0be5b3e940475be19eaa6710e3ac43c1da90e366b6450c2ab2d8f37882bea"
+    },
+    "release/windows-ci-attempt-1649d56.json": {
+      "bytes": 8900,
+      "sha256": "70c51425627f9bd14c4e39a59704359e687626584cbaf388f7ba22940645567b"
+    },
+    "release/windows-ci.json": {
+      "bytes": 154109,
+      "sha256": "2f00f7d83f19d5d9b989a05d560bbde5c2be648695d2aaa25253dd5313b94e47"
+    },
+    "release/windows-visual-review.json": {
+      "bytes": 1541,
+      "sha256": "e79414960cb44a31575b8c08bbffd1807ef0f4eeb05d9d7a33ff03b9d688df06"
+    },
+    "research-cli-e2e.json": {
+      "bytes": 38223,
+      "sha256": "a8c7f7d6403d1a4141ea0b6c808f2f72cc330aebfc05a034cab01f5547f70dd9"
+    }
+  },
+  "file_count": 45,
+  "all_original_public_bytes_preserved": true,
+  "scope": "Historical public snapshots only; raw logs, downloaded data and binary build trees are retained in ignored dist. Original report source SHAs are unchanged."
+}

@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "ok": true,
+  "collected_at_utc": "2026-10-22T15:17:09.432083+00:00",
+  "source_commit": "1649d56b739367e8993a6cd7854cfb6743c0f0ef",
+  "command": [
+    "python3.12",
+    "-B",
+    "-X",
+    "utf8",
+    "-m",
+    "unittest",
+    "-v",
+    "tests.test_rank",
+    "tests.test_rank_sources",
+    "tests.test_research"
+  ],
+  "tests_run": 83,
+  "duration_seconds": 0.455,
+  "skipped": 0,
+  "failures": 0,
+  "errors": 0,
+  "source_bindings": [
+    {
+      "path": "skills/story-skill/scripts/story.py",
+      "sha256": "fde9694899a90cd9dbc40a1afdaa29ae34ac4d4e9c242595a34f10b5a659c313"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_rank.py",
+      "sha256": "4dbaf3d9b065730578f3f2f3373aad679f1e7a933271b14c81fcac46324b359a"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_rank_sources.py",
+      "sha256": "3632c5f7a9f62f31751a496ffa2e97149fa658266d6e6ce0c4c60c3eee8f4a05"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_research.py",
+      "sha256": "9ea128836bfae886b2d28da5d5fec4565933fada8758674ce88d57b458646489"
+    },
+    {
+      "path": "tests/test_rank.py",
+      "sha256": "c3f302f9daf78ccb718c69b7e5b14437f0b6eea897882b95e0f9c9c438691b10"
+    },
+    {
+      "path": "tests/test_rank_sources.py",
+      "sha256": "6a545734017df2db386de8e32bf593ca4fe5067b69689c26b4759e1f139bd593"
+    },
+    {
+      "path": "tests/test_research.py",
+      "sha256": "0cbadeeba8756dec46fa87fbb4760d188372e1f04bb32055dc21f7942286b53f"
+    }
+  ],
+  "raw_log_sha256": "434f456d22c0d17259f5e900b0f881210b391a167cee111de025c3087304ed96",
+  "scope": "Actual isolated synthetic rank, public-source-parser mocks/HTML fixtures, and research-handoff regressions on macOS. No public network requests, real platform operations, user book changes, or daily installation changes. Symlink behavior passed here; this does not claim Windows privilege handling was exercised."
+}

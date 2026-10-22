@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "source_commit": "a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e",
+  "run_id": 39807867155,
+  "original_native_job_id": 119925828655,
+  "preserved_success_job_in_attempt2": 119932357239,
+  "artifact_id": 12438144333,
+  "artifact_zip_sha256": "2888abd52522a99a76abea96937a47d984a729cd1195d8a6f3f6c43ba416d4b0",
+  "reviewed_at_utc": "2026-10-22T16:01:11.943814+00:00",
+  "method": "Four exact CI PNGs displayed with view_image and inspected by root.",
+  "images": [
+    {
+      "name": "windows-native-smoke-dark.png",
+      "bytes": 28942,
+      "sha256": "482efec2553ec439a75847a07ead89e5312f38b3ea2ba058f6361cef856cc538"
+    },
+    {
+      "name": "windows-native-smoke-light.png",
+      "bytes": 27057,
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    },
+    {
+      "name": "windows-native-smoke-update-progress.png",
+      "bytes": 4595,
+      "sha256": "c9a8cb4c117328e179bb2eb5443b96789681a1a69071410a540f85ee6a922177"
+    },
+    {
+      "name": "windows-native-smoke.png",
+      "bytes": 27057,
+      "sha256": "dd03b8be0b739495521dcd12d8c6337f8c57583508b47dc9a489970d805d5743"
+    }
+  ],
+  "findings": [
+    "Empty isolated shelf has readable Chinese controls and no author data.",
+    "Light and dark captures display the expected selected appearance with legible text.",
+    "Synthetic update dialog explicitly states no real update download; 60 percent and cancel controls are visible."
+  ],
+  "scope": "Visual inspection supplements Windows native self-test; no real user shelf, real updater download or manual Windows 10/11 acceptance claimed."
+}

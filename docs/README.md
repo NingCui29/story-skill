@@ -1,10 +1,9 @@
 # Story Skill 文档导航
 
-**当前正式版 v0.6.21 已发布。** 八技能／64 文件，提供标准 ZIP、Claude 桌面 r2、Codex 本地插件，以及 Mac 0.1.24/build 25、Windows 0.1.11 客户端。完整源码 CI（73 项关键回归）、新构建、固定标签安装、公开附件请求及 Packages 独立核验均已完成；下载与验证的实际范围见[发布记录](releases/v0.6.21.md)。上一版 [v0.6.20](releases/v0.6.20.md) 附件和证据保持原样。
+**当前正式版 v0.6.22 已发布。** 提供八技能／69 文件、标准 ZIP、Claude 桌面 r2、Codex 本地插件，以及 Intel Mac 0.1.25/build 26、Windows x64 0.1.12 客户端。下载与各项验证的实际范围见[发布记录](releases/v0.6.22.md)；[v0.6.21](releases/v0.6.21.md) 附件和证据保持原样。
 
-本版新增番茄草稿受控自动连接、段落编码和尾换行数量比较选项，修正 WorkBuddy AI 默认目录，并补充 WorkBuddy AI 与 Qoder CN 安装调用说明。自动连接仅支持番茄，使用已登录的外部 Codex CLI、官方 Chrome 插件（含 SDK）、已连接的 Chrome 会话及账户额度；拒绝权限即停止，未知结果先回读对账。[平台草稿](../skills/story-skill-publish/references/platform-drafts.md)的本地软件回归与实页验收分别记录，七猫、起点、多卷和真实分页仍按实际覆盖登记。
 
-**v0.6.22 正在准备发布。** 新增结构化扫榜、来源与覆盖校验、同书去重、分口径聚合，以及七猫公开书库点击排序观察样本采集；续增代表作抽样、标签频次、书名字面模式与字数分析，并以研究包衔接拆文验证和选题规划。操作见[结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)和[研究交接](../skills/story-skill-research/references/research-handoff.md)，本轮发行核验见[发布记录](releases/v0.6.22.md)。开发阶段的原始采集与试用材料仅本地保存；七猫样本不是正式排行榜或销量数据，研究交接仍为候选材料。
+**v0.6.22 新增研究流程。** 新增结构化扫榜、来源与覆盖校验、同书去重、分口径聚合，以及七猫公开书库点击排序观察样本采集；续增代表作抽样、标签频次、书名字面模式与字数分析，并以研究包衔接拆文验证和选题规划。操作见[结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)和[研究交接](../skills/story-skill-research/references/research-handoff.md)，本轮发行核验见[发布记录](releases/v0.6.22.md)。开发阶段的原始采集与试用材料仅本地保存；七猫样本不是正式排行榜或销量数据，研究交接仍为候选材料。
 
 既有[写前交接与偏好召回](../skills/story-skill-write/references/writing-handoff.md)、[关键情节点覆盖与新增事实分级](../skills/story-skill-write/references/chapter-continuity.md)、[短篇平台化设计](../skills/story-skill-plan/references/short-platform.md)、[题材与三平台创作要求](../skills/story-skill-write/references/drama.md#三平台创作要求)、[大纲细纲规范](../skills/story-skill-plan/references/outline.md)和语义审查继续沿用，书库保持 schema 2。[执行审查与序列评估](../benchmarks/skill-execution/README.md)保留失败、超时和语义分歧；程序核验不能代替阅读效果与平台验收。下列旧版记录保持其历史范围。
 
@@ -34,11 +33,11 @@ v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Wi
 
 ## 开始使用
 
-Claude 桌面版使用 [v0.6.21-r2 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-skill-claude-desktop-0.6.21-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-skill-claude-desktop-0.6.21-r2.zip.sha256)。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。也可从本版固定源码运行 `python3 -B -X utf8 scripts/package_claude.py` 构建。
+Claude 桌面版使用 [v0.6.22-r2 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-claude-desktop-0.6.22-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-claude-desktop-0.6.22-r2.zip.sha256)。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。也可从本版固定源码运行 `python3 -B -X utf8 scripts/package_claude.py` 构建。
 
 普通聊天文件环境、Cowork 或统一任务界面的目录权限、作者电脑的本机工作台分别核对。书稿应保存到会话可访问位置，并下载完整书目录备份；技能导入不会自动启动本机 Python 服务。更多桌面与云端边界见[安装指引](../INSTALL.md#书稿保存与桌面能力)。
 
-在 Codex 中需要安装或升级时，可发送以下请求；安装时核对 v0.6.21 固定标签、Release 附件和本地已有修改，检查不符则保留现有安装：
+在 Codex 中需要安装或升级时，可发送以下请求；安装时核对 v0.6.22 固定标签、Release 附件和本地已有修改，检查不符则保留现有安装：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill
