@@ -21,8 +21,8 @@ HOST_PATHS = {
     ("qoder-cn", "user"): ".qoder-cn/skills",
     ("zcode", "project"): ".zcode/skills",
     ("zcode", "user"): ".zcode/skills",
-    ("workbuddy", "project"): ".workbuddy/skills",
-    ("workbuddy", "user"): ".workbuddy/skills",
+    ("workbuddy", "project"): ".workbuddy-ai/skills",
+    ("workbuddy", "user"): ".workbuddy-ai/skills",
 }
 
 
@@ -50,7 +50,7 @@ class DesktopHostInstallTests(unittest.TestCase):
     def target(self, root, host, scope):
         return root / HOST_PATHS[host, scope]
 
-    def run_cli(self, root, host, scope):
+    def run_cli(self, root, host, scope, *, update=False):
         original_install = installer.install
         output = io.StringIO()
 
@@ -59,6 +59,8 @@ class DesktopHostInstallTests(unittest.TestCase):
 
         arguments = ["install.py", "--host", host]
         arguments.extend(["--user"] if scope == "user" else ["--project", str(root)])
+        if update:
+            arguments.append("--update")
         with patch("sys.argv", arguments), \
                 patch.object(installer.Path, "home", return_value=root), \
                 patch.object(installer, "install", side_effect=from_fixture), \
@@ -105,6 +107,35 @@ class DesktopHostInstallTests(unittest.TestCase):
                 self.assertEqual(repeated["status"], "unchanged")
                 self.assertEqual(snapshot(root), installed)
                 self.assertEqual(snapshot(self.source), source_before)
+
+    def test_workbuddy_installs_preserve_legacy_directories_without_migrating_them(self):
+        for scope in ("project", "user"):
+            root = self.root / ("旧目录-" + scope)
+            legacy = root / ".workbuddy/skills"
+            for relative, content in {
+                    "story-skill/SKILL.md": b"locally edited legacy Story Skill\n",
+                    "custom-skill/SKILL.md": b"unrelated custom skill\n",
+                    "notes.txt": b"legacy directory notes\n"}.items():
+                path = legacy / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
+            legacy_before = snapshot(legacy)
+            target = self.target(root, "workbuddy", scope)
+
+            for update in (False, True):
+                with self.subTest(scope=scope, update=update):
+                    if update:
+                        changed = self.source / "story-skill-plan/SKILL.md"
+                        changed.write_bytes(changed.read_bytes() + b"updated fixture\n")
+                    status, receipt = self.run_cli(root, "workbuddy", scope, update=update)
+                    self.assertEqual(status, 0)
+                    self.assertEqual(receipt["status"], "updated" if update else "installed")
+                    self.assertEqual(receipt["path"], str(target))
+                    self.assertEqual(snapshot(legacy), legacy_before)
+                    self.assertFalse((target / "custom-skill").exists())
+                    self.assertFalse((target / "notes.txt").exists())
+                    for name, files in installer.suite_inventory(self.source).items():
+                        self.assertEqual(installer.inventory(target / name), files)
 
     def test_qoder_variants_share_the_project_suite_and_installation_lock(self):
         project = self.root / "共享项目"

@@ -99,10 +99,23 @@ class ChromeBridgeTests(unittest.TestCase):
     def assert_code(self, code, action, *args, **kwargs):
         return self.fixture.assert_code(code, action, *args, **kwargs)
 
-    def attach(self, **kwargs):
+    def attach(self, *, healthy=True, **kwargs):
         result = bridge.attach(self.book, self.plan["id"], self.path.name, self.handle, **kwargs)
         self.handles.append(json.loads(self.handle.read_text()))
+        if healthy:
+            self.health()
         return result
+
+    def health(self, **changes):
+        challenge = bridge.health(self.book, self.handle)["challenge"]
+        packet = {key: challenge[key] for key in ("schema", "session_id", "binding_sha256", "nonce")}
+        packet.update(browser={"kind": "chrome", "id": "fixture-connected-chrome"},
+                      capabilities={"list_tabs": True, "get_tab": True, "dom_snapshot": True},
+                      worker={"pid": os.getpid(), "instance": "a" * 32})
+        packet.update(changes)
+        self.response.write_text(json.dumps(packet), encoding="utf-8")
+        self.response.chmod(0o600)
+        return bridge.health(self.book, self.handle, self.response)
 
     def binding(self):
         return bridge._binding(self.book, self.plan["id"], self.path.name)[0]
@@ -206,6 +219,81 @@ class ChromeBridgeTests(unittest.TestCase):
         self.assert_code("platform_chrome_worker_unavailable",
                          bridge.HostAdapter(self.root, self.binding(), self.config).__enter__)
 
+    def test_comparison_policy_is_bound_to_authenticated_session_and_health(self):
+        strict = self.binding()
+        equivalent, _ = bridge._binding(self.book, self.plan["id"], self.path.name,
+                                       comparison_policy="fanqie_terminal_lf_v1")
+        self.assertEqual(strict["comparison_policy"], "strict")
+        self.assertEqual(equivalent["comparison_policy"], "fanqie_terminal_lf_v1")
+        self.assertNotEqual(bridge._digest(strict), bridge._digest(equivalent))
+        result = self.attach(comparison_policy="fanqie_terminal_lf_v1")
+        session = json.loads((self.root / bridge.DIRECTORY / result["session_id"] / "session.json").read_text())
+        self.assertEqual(session["binding"], equivalent)
+        self.assertTrue(bridge.worker_status(self.root, equivalent)["ready"])
+        self.assertFalse(bridge.worker_status(self.root, strict)["ready"])
+        self.assertTrue(self.preview(comparison_policy="fanqie_terminal_lf_v1")["can_start"])
+        self.assertFalse(self.preview()["can_start"])
+
+    def test_invalid_or_foreign_comparison_policy_never_attaches(self):
+        for policy in (None, True, "trim", "fanqie_terminal_lf_v2"):
+            self.assert_code("platform_draft_invalid_comparison_policy", bridge.attach,
+                self.book, self.plan["id"], self.path.name, self.handle, comparison_policy=policy)
+        self.assertFalse(self.handle.exists())
+        binding = self.binding()
+        binding["comparison_policy"] = "fanqie_terminal_lf_v1"
+        binding["target"]["platform"] = "qimao"
+        self.assert_code("platform_draft_invalid_comparison_policy", bridge.HostAdapter,
+                         self.root, binding, self.config)
+
+    def test_attach_cli_defaults_strict_and_passes_explicit_policy(self):
+        import argparse
+        parser = argparse.ArgumentParser()
+        sub = parser.add_subparsers(dest="command")
+        bridge.register_parser(sub, lambda name, *args, **kwargs: sub.add_parser(name))
+        argv = ["publish-chrome-attach", "--id", "plan", "--profile", "profile.json", "--handle", "private.json"]
+        for tail, policy, encoding in (([], "strict", "verbatim"),
+                (["--comparison-policy", "fanqie_terminal_lf_v1"], "fanqie_terminal_lf_v1", "verbatim"),
+                (["--body-encoding", "markdown_paragraphs_v1"], "strict", "markdown_paragraphs_v1"),
+                (["--body-encoding", "markdown_paragraphs_v2"], "strict", "markdown_paragraphs_v2")):
+            args = parser.parse_args(argv + tail)
+            with patch.object(bridge, "attach", return_value={"ok": True}) as attach:
+                bridge.run(self.book, args)
+                attach.assert_called_once_with(self.book, "plan", "profile.json", "private.json", bridge.TTL_SECONDS,
+                                               comparison_policy=policy, body_encoding=encoding)
+
+    def test_body_encoding_is_bound_independently_of_comparison_and_authenticated_health(self):
+        self.fixture.commit(text=self.fixture.texts[1].replace("\n守门人", "\n\n守门人"), replace_last=True)
+        self.plan = self.fixture.prepare()
+        verbatim = self.binding()
+        encoded, _ = bridge._binding(self.book, self.plan["id"], self.path.name,
+                                    body_encoding="markdown_paragraphs_v1")
+        upgraded, _ = bridge._binding(self.book, self.plan["id"], self.path.name,
+                                     body_encoding="markdown_paragraphs_v2")
+        self.assertEqual(verbatim["body_encoding"], "verbatim")
+        self.assertEqual(encoded["body_encoding"], "markdown_paragraphs_v1")
+        self.assertEqual(encoded["comparison_policy"], "strict")
+        self.assertNotEqual(bridge._digest(verbatim), bridge._digest(encoded))
+        self.assertEqual(upgraded["body_encoding"], "markdown_paragraphs_v2")
+        self.assertNotEqual(bridge._digest(encoded), bridge._digest(upgraded))
+        result = self.attach(body_encoding="markdown_paragraphs_v2")
+        session = json.loads((self.root / bridge.DIRECTORY / result["session_id"] / "session.json").read_text())
+        self.assertEqual(session["binding"], upgraded)
+        self.assertTrue(bridge.worker_status(self.root, upgraded)["ready"])
+        self.assertFalse(bridge.worker_status(self.root, encoded)["ready"])
+        self.assertFalse(bridge.worker_status(self.root, verbatim)["ready"])
+        self.assertTrue(self.preview(body_encoding="markdown_paragraphs_v2")["can_start"])
+
+    def test_invalid_or_foreign_body_encoding_never_attaches(self):
+        for encoding in (None, True, "trim", "markdown_paragraphs_v3"):
+            self.assert_code("platform_draft_invalid_body_encoding", bridge.attach,
+                self.book, self.plan["id"], self.path.name, self.handle, body_encoding=encoding)
+        self.assertFalse(self.handle.exists())
+        binding = self.binding()
+        binding["body_encoding"] = "markdown_paragraphs_v2"
+        binding["target"]["platform"] = "qimao"
+        self.assert_code("platform_draft_invalid_body_encoding", bridge.HostAdapter,
+                         self.root, binding, self.config)
+
     def test_obsolete_fanqie_host_profile_cannot_open_editor_for_reconciliation(self):
         obsolete = {**profile(), "execution_mode": "host_assisted_cua"}
         self.path.write_text(json.dumps(obsolete))
@@ -216,10 +304,17 @@ class ChromeBridgeTests(unittest.TestCase):
         self.assert_code("platform_browser_readback_required", bridge.HostAdapter,
                          self.root, self.binding(), obsolete)
 
-    def test_attach_has_private_handle_and_allows_local_preview(self):
-        result = self.attach()
+    def test_attach_requires_real_probe_acknowledgement_before_local_preview_can_start(self):
+        result = self.attach(healthy=False)
         self.assertNotIn("token", result)
         self.assertFalse(result["browser_started"])
+        self.assertEqual((result["state"], result["ready"]), ("awaiting_health", False))
+        self.assertFalse(bridge.worker_status(self.root, self.binding())["ready"])
+        self.assertFalse(self.preview()["can_start"])
+        self.assert_code("platform_chrome_worker_unavailable", bridge.next_request, self.book, self.handle)
+        self.assert_code("platform_chrome_worker_unavailable",
+                         bridge.HostAdapter(self.root, self.binding(), self.config).__enter__)
+        self.assertTrue(self.health()["ready"])
         self.assertTrue(self.preview()["can_start"])
         self.assertTrue(self.handle.is_file())
         directory = self.root / bridge.DIRECTORY / result["session_id"]
@@ -242,6 +337,86 @@ class ChromeBridgeTests(unittest.TestCase):
         self.handle.unlink()
         self.attach()
         self.assert_code("platform_chrome_worker_busy", self.attach)
+
+    def test_probe_nonce_is_single_use_and_does_not_claim_platform_identity(self):
+        self.attach(healthy=False)
+        result = self.health()
+        self.assertTrue(result["ready"])
+        self.assertFalse(result["remote_accessed"])
+        self.assertFalse(result["platform_target_verified"])
+        self.assert_code("platform_chrome_health_expired", bridge.health, self.book, self.handle, self.response)
+        status = bridge.worker_status(self.root, self.binding())
+        self.assertEqual((status["browser_id"], status["worker_pid"], status["worker_instance"]),
+                         ("fixture-connected-chrome", os.getpid(), "a" * 32))
+
+    def test_new_challenge_supersedes_old_probe_and_expired_challenge_cannot_connect(self):
+        self.attach(healthy=False)
+        first = bridge.health(self.book, self.handle)["challenge"]
+        bridge.health(self.book, self.handle)
+        packet = {key: first[key] for key in ("schema", "session_id", "binding_sha256", "nonce")}
+        packet.update(browser={"kind": "chrome", "id": "fixture-connected-chrome"},
+                      capabilities={"list_tabs": True, "get_tab": True, "dom_snapshot": True},
+                      worker={"pid": os.getpid(), "instance": "a" * 32})
+        self.response.write_text(json.dumps(packet), encoding="utf-8"); self.response.chmod(0o600)
+        self.assert_code("platform_chrome_invalid_health", bridge.health, self.book, self.handle, self.response)
+        now = time.time()
+        with patch.object(bridge.time, "time", return_value=now + 31):
+            self.assert_code("platform_chrome_health_expired", bridge.health, self.book, self.handle, self.response)
+        self.assertFalse(bridge.worker_status(self.root, self.binding())["ready"])
+
+    def test_wrong_binding_nonce_schema_and_capability_fail_without_health(self):
+        self.attach(healthy=False)
+        for changes in ({"nonce": "wrong"}, {"binding_sha256": "0" * 64}, {"schema": True},
+                        {"capabilities": {"list_tabs": 1, "get_tab": True, "dom_snapshot": True}},
+                        {"capabilities": {"list_tabs": True, "get_tab": True}},
+                        {"capabilities": {"list_tabs": True, "get_tab": True, "dom_snapshot": False}},
+                        {"browser": {"kind": "iab", "id": "fixture"}},
+                        {"worker": {"pid": True, "instance": "a" * 32}}):
+            self.assert_code("platform_chrome_invalid_health", self.health, **changes)
+            self.assertFalse(bridge.worker_status(self.root, self.binding())["ready"])
+
+    def test_browser_and_worker_are_pinned_until_new_attachment(self):
+        self.attach()
+        for changes in ({"browser": {"kind": "chrome", "id": "another-browser"}},
+                        {"worker": {"pid": os.getpid(), "instance": "b" * 32}},
+                        {"worker": {"pid": os.getpid() + 1, "instance": "a" * 32}}):
+            self.assert_code("platform_chrome_worker_changed", self.health, **changes)
+        self.assertTrue(bridge.worker_status(self.root, self.binding())["ready"])
+
+    def test_dead_process_cannot_connect_or_remain_ready(self):
+        self.attach(healthy=False)
+        with patch.object(bridge, "_owner_alive", return_value=False):
+            self.assert_code("platform_chrome_worker_unavailable", self.health)
+        self.health()
+        with patch.object(bridge, "_owner_alive", return_value=False):
+            status = bridge.worker_status(self.root, self.binding())
+            self.assertEqual((status["ready"], status["health_state"]), (False, "worker_exited"))
+
+    def test_lease_heartbeat_and_queue_poll_cannot_extend_browser_health(self):
+        self.attach()
+        now = time.time()
+        with patch.object(bridge.time, "time", return_value=now + 46):
+            bridge.heartbeat(self.book, self.handle)
+            status = bridge.worker_status(self.root, self.binding())
+            self.assertTrue(status["attached"])
+            self.assertFalse(status["ready"])
+            self.assertEqual(status["health_state"], "expired")
+            self.assert_code("platform_chrome_worker_unavailable", bridge.next_request, self.book, self.handle)
+            self.assertFalse(self.preview()["can_start"])
+
+    def test_health_expiry_keeps_claimed_response_and_blocks_the_next_operation(self):
+        self.attach()
+        thread, result, errors, claim, request = self.enqueue()
+        with patch.object(bridge.time, "time", return_value=time.time() + 46):
+            self.write_response(request, request["binding"]["target"])
+            bridge.respond(self.book, self.handle, claim["request_id"], self.response)
+            thread.join(2)
+            self.assertEqual((result, errors), ([request["binding"]["target"]], []))
+            with self.assertRaises(story.StoryError) as caught:
+                adapter = bridge.HostAdapter(self.root, self.binding(), self.config)
+                adapter.session_id = request["session_id"]
+                adapter.verify_target(**request["binding"]["target"])
+            self.assertEqual(caught.exception.code, "platform_chrome_worker_unavailable")
 
     def test_handle_rejects_wrong_token_and_symlinks(self):
         self.attach()
@@ -412,6 +587,14 @@ class ChromeBridgeTests(unittest.TestCase):
         token = json.loads(self.handle.read_text())["token"]
         self.assertNotIn(token.encode(), output)
         self.assertFalse(attached["browser_started"])
+        challenge = command("health")[0]["challenge"]
+        packet = {key: challenge[key] for key in ("schema", "session_id", "binding_sha256", "nonce")}
+        packet.update(browser={"kind": "chrome", "id": "fixture-cli-chrome"},
+                      capabilities={"list_tabs": True, "get_tab": True, "dom_snapshot": True},
+                      worker={"pid": os.getpid(), "instance": "c" * 32})
+        self.response.write_text(json.dumps(packet), encoding="utf-8")
+        self.response.chmod(0o600)
+        self.assertTrue(command("health", "--input", str(self.response))[0]["ready"])
         self.assertIsNone(command("next")[0]["request_id"])
         self.assertFalse(command("heartbeat")[0]["detached"])
         self.assertTrue(command("detach")[0]["detached"])
@@ -558,6 +741,102 @@ finally:
                 thread.join(10)
             self.assertFalse(any(thread.is_alive() for thread in threads))
         self.assertEqual(failures, [], "\n".join(failures))
+
+
+class MacOSProcessLivenessTests(unittest.TestCase):
+    def queries(self, group=4321, session=5678):
+        return SimpleNamespace(name="posix", getpgid=Mock(return_value=group),
+                               getsid=Mock(return_value=session),
+                               kill=Mock(side_effect=AssertionError("must not signal")))
+
+    def test_specific_pid_requires_both_read_only_queries_and_not_matching_group_ids(self):
+        platform = self.queries()
+        with patch.object(bridge, "os", platform):
+            self.assertTrue(bridge._macos_process_alive(1234))
+        platform.getpgid.assert_called_once_with(1234)
+        platform.getsid.assert_called_once_with(1234)
+        platform.kill.assert_not_called()
+
+    def test_invalid_pid_never_queries_the_current_process_or_a_group(self):
+        platform = self.queries()
+        with patch.object(bridge, "os", platform):
+            for pid in (None, True, "1234", 0, -1, 1.0, 0x80000000):
+                self.assertFalse(bridge._macos_process_alive(pid))
+        platform.getpgid.assert_not_called()
+        platform.getsid.assert_not_called()
+        platform.kill.assert_not_called()
+
+    def test_nonpositive_or_noninteger_query_results_fail_closed(self):
+        for result in (None, True, "4321", 0, -1, 1.0):
+            for query in ("getpgid", "getsid"):
+                with self.subTest(query=query, result=result):
+                    platform = self.queries()
+                    getattr(platform, query).return_value = result
+                    with patch.object(bridge, "os", platform):
+                        self.assertFalse(bridge._macos_process_alive(1234))
+                    platform.kill.assert_not_called()
+
+    def test_query_denial_dead_pid_unavailable_api_or_other_exception_never_assumes_alive(self):
+        for failure in (PermissionError(1, "denied"), ProcessLookupError(3, "exited"),
+                        OverflowError(), ValueError(), TypeError(), RuntimeError()):
+            for query in ("getpgid", "getsid"):
+                with self.subTest(query=query, failure=type(failure).__name__):
+                    platform = self.queries()
+                    getattr(platform, query).side_effect = failure
+                    with patch.object(bridge, "os", platform):
+                        self.assertFalse(bridge._macos_process_alive(1234))
+                    platform.kill.assert_not_called()
+        for missing in ("getpgid", "getsid"):
+            platform = self.queries()
+            delattr(platform, missing)
+            with patch.object(bridge, "os", platform):
+                self.assertFalse(bridge._macos_process_alive(1234))
+            platform.kill.assert_not_called()
+
+    def test_owner_dispatch_only_changes_macos_and_preserves_service_instance_guard(self):
+        platform = self.queries()
+        with patch.object(bridge, "os", platform), patch.object(bridge.sys, "platform", "darwin"):
+            self.assertTrue(bridge._owner_alive("unused", {"owner_pid": 1234}))
+            for service, expected in (({"pid": 1234, "instance": "expected", "stopped": False}, True),
+                                      ({"pid": 1234, "instance": "other", "stopped": False}, False),
+                                      ({"pid": 1235, "instance": "expected", "stopped": False}, False),
+                                      ({"pid": 1234, "instance": "expected", "stopped": True}, False)):
+                with patch.object(bridge.api, "safe_path", return_value=Path("unused-service.json")), \
+                        patch.object(bridge.api, "read_json", return_value=service):
+                    self.assertEqual(bridge._owner_alive("unused", {"owner_pid": 1234,
+                        "owner_service_instance": "expected"}), expected)
+            with patch.object(bridge.api, "safe_path", return_value=Path("unused-service.json")), \
+                    patch.object(bridge.api, "read_json", side_effect=ValueError("unreadable")):
+                self.assertFalse(bridge._owner_alive("unused", {"owner_pid": 1234,
+                    "owner_service_instance": "expected"}))
+        platform.kill.assert_not_called()
+        platform.kill.side_effect = None
+        with patch.object(bridge, "os", platform), patch.object(bridge.sys, "platform", "linux"), \
+                patch.object(bridge, "_macos_process_alive", side_effect=AssertionError("macOS only")):
+            self.assertTrue(bridge._owner_alive("unused", {"owner_pid": 1234}))
+        platform.kill.assert_called_once_with(1234, 0)
+
+    @unittest.skipUnless(sys.platform == "darwin", "requires native macOS process queries")
+    def test_native_live_and_waited_child_pid_without_signals_even_when_its_group_remains(self):
+        child = subprocess.Popen([sys.executable, "-c",
+            "import sys; print('ready', flush=True); sys.stdin.buffer.read(1)"],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        try:
+            self.assertEqual(child.stdout.readline().strip(), b"ready")
+            self.assertEqual(os.getpgid(child.pid), os.getpgid(os.getpid()))
+            with patch.object(os, "kill", side_effect=AssertionError("must not signal")):
+                self.assertTrue(bridge._owner_alive("unused", {"owner_pid": os.getpid()}))
+                self.assertTrue(bridge._owner_alive("unused", {"owner_pid": child.pid}))
+            child.stdin.write(b"x"); child.stdin.flush(); child.stdin.close()
+            child.wait(timeout=10)
+            with patch.object(os, "kill", side_effect=AssertionError("must not signal")):
+                self.assertFalse(bridge._owner_alive("unused", {"owner_pid": child.pid}))
+                self.assertTrue(bridge._owner_alive("unused", {"owner_pid": os.getpid()}))
+        finally:
+            if child.stdin and not child.stdin.closed:
+                child.stdin.close()
+            child.wait(timeout=10)
+            child.stdout.close()
 
 
 class WindowsProcessLivenessTests(unittest.TestCase):
@@ -809,6 +1088,7 @@ class BridgeRenameSharingRetryTests(unittest.TestCase):
                 patch.object(bridge, "_authenticated", authenticated), \
                 patch.object(bridge, "_read", return_value=request), \
                 patch.object(bridge, "_owner_alive", return_value=True), \
+                patch.object(bridge, "_require_health", return_value={"ready": True}) as health, \
                 patch.object(bridge, "_lease") as lease, \
                 patch.object(bridge.api, "_BoundFile", side_effect=bound_file):
             book = SimpleNamespace(root=self.directory.path)
@@ -819,6 +1099,7 @@ class BridgeRenameSharingRetryTests(unittest.TestCase):
         self.assertIsNone(second["request_id"])
         self.assertFalse(second["claimed_once"])
         self.assertEqual(self.publish.call_count, 2)
+        self.assertEqual(health.call_count, 2)
         lease.assert_called_once()
 
 

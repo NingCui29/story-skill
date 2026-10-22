@@ -178,10 +178,16 @@ class Driver {
     this.guardFreshThisOperation = false;
     this.catalogIndex = 0; this.guardRefreshes = 0;
     this.target = request.binding.target; this.deadline = Date.parse(request.deadline);
+    this.comparisonPolicy = Object.hasOwn(request.binding,'comparison_policy') ? request.binding.comparison_policy : 'strict';
+    if (!['strict','fanqie_terminal_lf_v1'].includes(this.comparisonPolicy) ||
+        (this.comparisonPolicy !== 'strict' && this.target.platform !== 'fanqie')) fail('invalid_profile');
+    this.bodyEncoding = Object.hasOwn(request.binding,'body_encoding') ? request.binding.body_encoding : 'verbatim';
+    if (!['verbatim','markdown_paragraphs_v1','markdown_paragraphs_v2'].includes(this.bodyEncoding) ||
+        (this.bodyEncoding !== 'verbatim' && this.target.platform !== 'fanqie')) fail('invalid_profile');
     this.origin = OFFICIAL[this.target.platform];
     if (!this.origin || this.profile.origin !== this.origin || this.profile.platform !== this.target.platform ||
         this.profile.execution_mode !== 'host_assisted_cua' || !Number.isFinite(this.deadline)) fail('invalid_profile');
-    const binding = JSON.stringify([request.binding_sha256, request.binding.profile_sha256, this.target]);
+    const binding = JSON.stringify([request.binding_sha256, request.binding.profile_sha256, this.target, this.comparisonPolicy, this.bodyEncoding]);
     if (this.profile.identity?.account?.source !== 'guard_dom' || this.profile.identity?.book?.source !== 'page_url' ||
         this.profile.editor?.remote_id?.source !== 'page_url') fail('invalid_profile');
     if (this.target.platform === 'fanqie' && !this.profile.readback) fail('readback_required');
@@ -231,7 +237,25 @@ class Driver {
     if (required) fail('identity_mismatch');
     return null;
   }
-  async ax(tab) { this.check(); await tab.getAXState({emit: false}); }
+  async readQuery(tab, query) {
+    const checkURL = async expected => {
+      this.check();const current = await this.url(tab);this.check();this.safe(current);
+      if (expected != null && current !== expected) fail(expected === this.profile.identity.account.guard_url ? 'login_required' : 'identity_mismatch');
+      return current;
+    };
+    const before = await checkURL();let result;
+    try { this.check();result = await query(); }
+    catch (failure) {
+      if (!['Timed out after 3000ms waiting for CDP command Runtime.evaluate.',
+            'Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.'].includes(failure?.message) ||
+          !['Error','TimeoutError'].includes(failure?.name) ||
+          (typeof failure.code === 'string' && /auth|permission|denied|disconnect|unattach|closed|cancel|abort|forbid/i.test(failure.code))) throw failure;
+      await checkURL(before);this.check();
+      result = await query(); // Retry this read once, never its caller or preceding action.
+    }
+    this.check();await checkURL(before);return result;
+  }
+  async ax(tab) { await this.readQuery(tab,()=>tab.getAXState({emit:false})); }
   async url(tab) {
     const value = typeof tab.url === 'function' ? await tab.url() : tab.url;
     if (typeof value !== 'string') fail('unsafe_url');
@@ -243,10 +267,11 @@ class Driver {
     if (!Array.isArray(tabs)) fail('operation_failed');
     return tabs.map(tab => ({...tab, id: String(tab.id ?? tab.tabId)}));
   }
-  async newTab(url) {
+  async newTab(url, {readOnly = false} = {}) {
     this.check(); this.safe(url);
     const before = new Set((await this.tabs()).map(tab => tab.id));
-    const result = await this.api.newTab(url);
+    const context = readOnly === true && this.readOnlyDestination(url) ? {readOnly:true,target:{...this.target}} : {readOnly:false};
+    const result = await this.api.newTab(url,context);
     const tab = result?.tab || result;
     const tabId = result?.id ?? result?.tabId ?? tab?.id ?? tab?.tabId;
     if (tabId == null || before.has(String(tabId))) fail('ambiguous_dom');
@@ -257,17 +282,131 @@ class Driver {
     this.safe(await this.url(tab));
     return {tab, id: String(tabId)};
   }
-  async navigate(tab, url) {
+  readOnlyDestination(url) {
+    if (this.target.platform !== 'fanqie') return false;
+    try {
+      if (this.template(url,this.profile.editor.remote_id,false) != null ||
+          (!this.profile.create_action && url === this.profile.urls.create)) return false;
+      if (url === this.profile.identity.account.guard_url) return true;
+      if (this.template(url,this.profile.identity.book,false) !== this.target.remote_book_id) return false;
+      if (this.profile.chapter_lists.some(listing => listing.url === url)) return true;
+      return !!this.profile.readback && this.template(url,this.profile.readback.remote_id,false) != null;
+    } catch { return false; }
+  }
+  navigationTimeout(failure, url) {
+    if (typeof failure?.message !== 'string' || !['Error','TimeoutError'].includes(failure.name) ||
+        (typeof failure.code === 'string' && /auth|permission|denied|disconnect|unattach|closed|cancel|abort|forbid/i.test(failure.code))) return false;
+    const waiting = /^Timed out waiting for tab [0-9]{1,30} to navigate to (.+)\.$/.exec(failure.message);
+    return failure.message === 'Timed out after 10000ms waiting for CDP command Page.navigate.' || waiting?.[1] === url;
+  }
+  managementTransition(tab, beforeURL, url) {
+    if (this.target.platform !== 'fanqie' || beforeURL === url) return null;
+    let before,target;
+    try { before = new URL(beforeURL);target = new URL(url); } catch { return null; }
+    if (before.origin !== this.origin || target.origin !== this.origin || before.pathname !== target.pathname ||
+        !before.pathname.startsWith('/main/writer/chapter-manage/') ||
+        !/^\?type=[12]$/.test(before.search) || !/^\?type=[12]$/.test(target.search) || before.search === target.search) return null;
+    if (this.state.list?.tab !== tab || !this.state.owned.has(this.state.list.id)) fail('bridge_scope');
+    const labels = {'?type=1':['non_drafts','章节管理'],'?type=2':['drafts','草稿箱']};
+    const listings = [beforeURL,url].map((value,index) => {
+      const matches = this.profile.chapter_lists.filter(listing=>listing.url === value);
+      if (matches.length !== 1) fail('invalid_profile');
+      const listing = matches[0],spec = listing.coverage,[scope,label] = labels[index ? target.search : before.search];
+      if (!this.readOnlyDestination(value) || this.template(value,this.profile.identity.book) !== this.target.remote_book_id ||
+          listing.scope !== scope || !spec || ![undefined,'dom'].includes(spec.source) || spec.attribute != null ||
+          typeof spec.selector !== 'string' || !spec.selector || spec.expected !== label) fail('invalid_profile');
+      return listing;
+    });
+    return {source:listings[0],target:listings[1]};
+  }
+  async switchManagement(tab,beforeURL,url,transition) {
+    const selected = async(spec,expectedURL,remaining) => {
+      const locator = tab.playwright.locator(spec.selector);
+      const checkURL = async() => {
+        remaining();const current = await this.url(tab);remaining();this.safe(current);
+        if (current !== expectedURL) fail('identity_mismatch');
+      };
+      while (true) {
+        await checkURL();const count = await locator.count();await checkURL();
+        if (!Number.isSafeInteger(count) || count < 0 || count > 1) fail('incomplete_scope');
+        if (count === 1) {
+          const visible = await locator.isVisible();await checkURL();
+          if (typeof visible !== 'boolean') fail('incomplete_scope');
+          if (visible) {
+            const value = await locator.evaluate(readDOMValue,null);await checkURL();
+            if (value === spec.expected) return;
+            if (value !== '') fail('incomplete_scope');
+          }
+        }
+        await new Promise(resolve=>setTimeout(resolve,Math.min(100,remaining())));
+      }
+    };
+    const sourceDeadline = Math.min(this.deadline,Date.now()+5000);
+    const sourceRemaining = () => { this.check();const value=sourceDeadline-Date.now();if (value <= 0) fail('incomplete_scope');return value; };
+    this.check();await selected(transition.source.coverage,beforeURL,sourceRemaining);
+    if (typeof tab.playwright.getByRole !== 'function') fail('invalid_profile');
+    const locator = tab.playwright.getByRole('tab',{name:transition.target.coverage.expected,exact:true});
+    if (await locator.count() !== 1 || !await locator.isVisible() || !await locator.isEnabled() ||
+        await locator.getAttribute('aria-selected') !== 'false') fail('incomplete_scope');
+    const listed = (await this.tabs()).filter(item=>item.id === this.state.list.id);
+    if (listed.length !== 1 || listed[0].url !== beforeURL || await this.url(tab) !== beforeURL) fail('identity_mismatch');
+    await selected(transition.source.coverage,beforeURL,sourceRemaining);this.check();
+    await locator.click(this.timeoutOptions()); // One observed UI action; never retry or fall back to goto.
+    const deadline = Math.min(this.deadline,Date.now()+5000);
+    const remaining = () => { this.check();const value=deadline-Date.now();if (value <= 0) fail('navigation_timeout');return value; };
+    while (true) {
+      remaining();const current = await this.url(tab);remaining();
+      if (current !== beforeURL && current !== url) fail('unsafe_navigation');
+      if (current === url) {
+        const snapshot = await tab.getAXState({emit:false});remaining();
+        const after = await this.url(tab);remaining();
+        if (after !== beforeURL && after !== url) fail('unsafe_navigation');
+        if (typeof snapshot !== 'string') fail('incomplete_dom');
+        if (after === url && snapshot.trim().length) {
+          await selected(transition.target.coverage,url,remaining);remaining();
+          if (await this.url(tab) !== url) fail('identity_mismatch');
+          remaining();return;
+        }
+      }
+      await new Promise(resolve=>setTimeout(resolve,Math.min(100,remaining())));
+    }
+  }
+  async navigate(tab, url, {readOnly = false} = {}) {
     this.check(); this.safe(url);
-    if (await this.url(tab) === url) await tab.reload();
-    else await tab.goto(url);
+    const beforeURL = await this.url(tab), attemptedGoto = beforeURL !== url;
+    const transition = readOnly === true ? this.managementTransition(tab,beforeURL,url) : null;
+    if (transition) return this.switchManagement(tab,beforeURL,url,transition);
+    try {
+      if (!attemptedGoto) await tab.reload();
+      else await tab.goto(url);
+    } catch (failure) {
+      if (attemptedGoto !== true || readOnly !== true || !this.readOnlyDestination(beforeURL) ||
+          !this.readOnlyDestination(url) || !this.navigationTimeout(failure,url)) throw failure;
+      // A timed-out SDK acknowledgement is not a second navigation attempt.
+      // Only an already-arrived read-only page can proceed to the normal
+      // identity, scope, readiness and complete-content checks at the caller.
+      try {
+        const arrivalDeadline = Math.min(this.deadline,Date.now()+5000);
+        const remaining = () => { this.check();const value = arrivalDeadline-Date.now();if (value <= 0) throw failure;return value; };
+        while (true) {
+          remaining();const current = await this.url(tab);remaining();
+          if (current !== beforeURL && current !== url) throw failure;
+          const snapshot = await tab.getAXState({emit:false});remaining();
+          const after = await this.url(tab);remaining();
+          if (after !== beforeURL && after !== url) throw failure;
+          if (current === url && after === url && typeof snapshot === 'string' && snapshot.trim().length) return;
+          if (typeof snapshot !== 'string' || snapshot.trim().length) throw failure;
+          await new Promise(resolve=>setTimeout(resolve,Math.min(100,remaining())));
+        }
+      } catch { throw failure; }
+    }
     await this.ax(tab); this.safe(await this.url(tab));
   }
   async action(tab, operation) { this.check(); await operation(); await this.ax(tab); this.safe(await this.url(tab)); }
   async one(tab, spec, root = null) {
     const locator = (root || tab.playwright).locator(spec.selector);
     while (true) {
-      this.check(); const count = await locator.count();
+      this.check(); const count = await this.readQuery(tab,()=>locator.count());
       if (count > 1) fail('ambiguous_dom');
       if (count === 1) return locator;
       await pause(); await this.ax(tab);
@@ -278,10 +417,10 @@ class Driver {
     const locator = await this.one(tab, spec, root);
     let value;
     if (spec.source === 'prosemirror_paragraphs') {
-      const packet = await locator.evaluate(readParagraphs);
+      const packet = await this.readQuery(tab,()=>locator.evaluate(readParagraphs));
       if (packet?.ok !== true || typeof packet.value !== 'string') fail('unsupported_editor');
       value = packet.value;
-    } else value = await locator.evaluate(readDOMValue, spec.attribute ?? null);
+    } else value = await this.readQuery(tab,()=>locator.evaluate(readDOMValue,spec.attribute ?? null));
     if (typeof value !== 'string') fail('incomplete_dom');
     return value;
   }
@@ -297,10 +436,11 @@ class Driver {
     if (spec.source !== 'guard_dom') fail('invalid_profile');
     const fresh = !this.state.guard || refresh || !this.guardFreshThisOperation;
     if (fresh) progress(this.api,{phase:'guard',edge:'begin',guard_refreshes:++this.guardRefreshes});
-    if (!this.state.guard) this.state.guard = await this.newTab(spec.guard_url);
-    else if (fresh) await this.navigate(this.state.guard.tab, spec.guard_url);
+    if (!this.state.guard) this.state.guard = await this.newTab(spec.guard_url,{readOnly:true});
+    else if (fresh) await this.navigate(this.state.guard.tab, spec.guard_url, {readOnly:true});
     if (await this.url(this.state.guard.tab) !== spec.guard_url) fail('login_required');
     const value = await this.value(this.state.guard.tab, spec);
+    if (await this.url(this.state.guard.tab) !== spec.guard_url) fail('login_required');
     if (!value.trim()) fail('login_required');
     if (value.trim() !== this.target.account_id) fail('identity_mismatch');
     this.guardFreshThisOperation = true;
@@ -310,15 +450,17 @@ class Driver {
     this.safe(await this.url(tab));
     if (this.template(await this.url(tab), this.profile.identity.book) !== this.target.remote_book_id) fail('identity_mismatch');
     await this.guard(refresh);
+    this.safe(await this.url(tab));
+    if (this.template(await this.url(tab), this.profile.identity.book) !== this.target.remote_book_id) fail('identity_mismatch');
   }
   async listPage() {
-    if (!this.state.list) this.state.list = await this.newTab(this.profile.urls.drafts);
+    if (!this.state.list) this.state.list = await this.newTab(this.profile.urls.drafts,{readOnly:true});
     return this.state.list.tab;
   }
   async verify() {
     this.state.verified = false;
     const tab = await this.listPage();
-    await this.navigate(tab, this.profile.urls.drafts);
+    await this.navigate(tab, this.profile.urls.drafts, {readOnly:true});
     await this.identity(tab, true);
     this.state.verified = true;
     return {...this.target};
@@ -378,13 +520,45 @@ class Driver {
   async readyRows(tab, listing, section) {
     while (true) {
       this.check(); await this.identity(tab); await this.scope(tab, listing, section);
-      if (await this.value(tab, listing.ready) === listing.ready.expected) {
+      if (await this.emptyDraftRows(tab, listing, section)) return [];
+      if (await this.listReady(tab, listing)) {
         const rows = await this.rows(tab, listing);
         if ((rows.length || await this.visible(tab, listing.empty)) &&
             await this.value(tab, listing.ready) === listing.ready.expected) return rows;
       }
       await pause(); await this.ax(tab);
     }
+  }
+  async listReady(tab, listing) {
+    const locator = tab.playwright.locator(listing.ready.selector); const count = await locator.count();
+    if (count > 1) fail('ambiguous_dom');
+    if (!count) return false;
+    return await this.value(tab, listing.ready) === listing.ready.expected;
+  }
+  async emptyDraftRows(tab, listing, section) {
+    // Fanqie's observed empty draft box omits the table, spinner and scroll
+    // container. A missing table alone never proves an empty catalog.
+    if (this.target.platform !== 'fanqie' || listing.scope !== 'drafts' ||
+        !await this.visible(tab, listing.empty)) return false;
+    const pagination = listing.pagination;
+    if (pagination.mode !== 'all_rows' || pagination.validated !== true ||
+        listing.count?.format !== 'draft_count' || !Array.isArray(pagination.reject_selectors) ||
+        !pagination.reject_selectors.length) fail('incomplete_list');
+    for (let pass = 0; pass < 2; pass++) {
+      this.check(); await this.identity(tab); await this.scope(tab, listing, section);
+      if (!await this.visible(tab, listing.empty)) return false;
+      if ((await this.rows(tab, listing)).length) fail('incomplete_list');
+      const counter = tab.playwright.locator(listing.count.selector); const count = await counter.count();
+      if (count !== 1) fail(count > 1 ? 'ambiguous_dom' : 'incomplete_list');
+      if (await this.value(tab, listing.count) !== '共0篇草稿') fail('incomplete_list');
+      for (const selector of pagination.reject_selectors) if (await tab.playwright.locator(selector).count()) fail('incomplete_list');
+      const ready = tab.playwright.locator(listing.ready.selector); const readyCount = await ready.count();
+      if (readyCount > 1) fail('ambiguous_dom');
+      if (readyCount && !await this.listReady(tab, listing)) return false;
+      await this.identity(tab); await this.scope(tab, listing, section);
+      if (!pass) { await pause(); await this.ax(tab); }
+    }
+    return true;
   }
   async metrics(locator) {
     return locator.evaluate(el => { const r = el.getBoundingClientRect(); return {
@@ -394,6 +568,10 @@ class Driver {
   async allRows(tab, listing, rows, section) {
     const pagination = listing.pagination;
     if (pagination.validated !== true) fail('incomplete_list');
+    if (!rows.length && this.target.platform === 'fanqie' && listing.scope === 'drafts') {
+      if (!await this.emptyDraftRows(tab, listing, section)) fail('incomplete_list');
+      return;
+    }
     const container = await this.one(tab, pagination.container);
     const signature = JSON.stringify(rows); let dimensions;
     progress(this.api,{...this.scan,phase:'all_rows',edge:'begin',row_count:rows.length});
@@ -482,7 +660,10 @@ class Driver {
         }
       }
       await this.identity(tab); await this.scope(tab, listing, section);
-      if (await this.value(tab, listing.ready) !== listing.ready.expected || JSON.stringify(await this.rows(tab, listing)) !== JSON.stringify(rows)) fail('incomplete_list');
+      const emptyCandidate = !rows.length && this.target.platform === 'fanqie' && listing.scope === 'drafts';
+      const emptyDrafts = emptyCandidate && await this.emptyDraftRows(tab, listing, section);
+      if (emptyCandidate && !emptyDrafts) fail('incomplete_list');
+      if ((!emptyDrafts && await this.value(tab, listing.ready) !== listing.ready.expected) || JSON.stringify(await this.rows(tab, listing)) !== JSON.stringify(rows)) fail('incomplete_list');
       const signature = JSON.stringify(rows); if (pages.has(signature)) fail('incomplete_list'); pages.add(signature);
       for (const row of rows) { if (seen.has(row.url)) fail('incomplete_list'); seen.add(row.url); result.push(row); }
       if (seen.size > 100000) fail('incomplete_list');
@@ -493,15 +674,29 @@ class Driver {
     }
     fail('incomplete_list');
   }
-  async catalog() {
+  async catalog({fresh = false} = {}) {
     const tab = await this.listPage(); const result = []; const seen = new Set();
     const catalogIndex = ++this.catalogIndex;
     progress(this.api,{phase:'catalog',edge:'begin',catalog_index:catalogIndex});
+    if (fresh) {
+      // A new popup can allocate a draft without invalidating the management
+      // page's SPA cache. Tab switching alone is not a fresh draft observation.
+      const current = await this.url(tab),list = this.state.list;
+      if (!list || list.tab !== tab || !this.state.owned.has(list.id)) fail('bridge_scope');
+      if (this.profile.chapter_lists.filter(listing => listing.url === current).length !== 1 || !this.readOnlyDestination(current)) fail('unsafe_navigation');
+      await this.identity(tab);
+      const listed = (await this.tabs()).filter(item => item.id === list.id);
+      if (listed.length !== 1 || listed[0].url !== current || await this.url(tab) !== current) fail('identity_mismatch');
+      // If the scan already starts at this URL, its first navigate reloads it.
+      // Otherwise refresh before SPA tab switching can reuse the old snapshot.
+      if (current !== this.profile.chapter_lists[0]?.url) await this.navigate(tab,current,{readOnly:true});
+      if (await this.url(tab) !== current) fail('identity_mismatch');
+    }
     for (let listingIndex = 0; listingIndex < this.profile.chapter_lists.length; listingIndex++) {
       const listing = this.profile.chapter_lists[listingIndex];
       this.scan = {catalog_index:catalogIndex,listing_index:listingIndex,scope:listing.scope};
       progress(this.api,{...this.scan,phase:'listing',edge:'begin'});
-      await this.navigate(tab, listing.url);
+      await this.navigate(tab, listing.url, {readOnly:true});
       if (!listing.sections) {
         result.push(...await this.pages(tab, listing, null, seen));
         progress(this.api,{...this.scan,phase:'listing',edge:'end'}); continue;
@@ -526,7 +721,7 @@ class Driver {
   }
   remote(url) { return this.template(url, this.profile.editor.remote_id); }
   async confirm(remote, chapter = null) {
-    const catalog = await this.catalog();
+    const catalog = await this.catalog({fresh:this.target.platform === 'fanqie' && this.request.operation === 'create_draft' && this.createdRemote === remote});
     for (const row of catalog) if (row.scope === 'drafts' && row.chapter == null && this.remote(row.url) !== remote) fail('unnumbered_draft');
     const evidence = catalog.filter(row => row.scope === 'drafts' && this.remote(row.url) === remote);
     if (evidence.length !== 1 || evidence[0].state !== this.profile.editor.state.expected) fail('not_draft');
@@ -578,15 +773,23 @@ class Driver {
       this.check(); const tab = await this.api.getTab(item.id);
       if (!this.matchingEditor(await this.url(tab),remote) || typeof tab.close !== 'function') fail('editor_in_use');
       await tab.close();
-      if ((await this.tabs()).some(current=>current.id===item.id)) fail('editor_in_use');
-      this.state.owned.delete(item.id);
+      const closeDeadline = Math.min(this.deadline,Date.now()+5000);
+      while (true) {
+        if (Date.now() >= closeDeadline) fail('editor_in_use');
+        const current = await this.tabs();
+        if (Date.now() >= closeDeadline || current.some(candidate=>this.matchingEditor(candidate.url,remote) && !this.state.owned.has(candidate.id))) fail('editor_in_use');
+        const remaining = current.find(candidate=>candidate.id===item.id);
+        if (!remaining) { this.state.owned.delete(item.id); break; }
+        if (!this.matchingEditor(remaining.url,remote)) fail('editor_in_use');
+        await new Promise(resolve=>setTimeout(resolve,Math.max(1,Math.min(100,closeDeadline-Date.now()))));
+      }
     }
     if ((await this.tabs()).some(tab=>this.matchingEditor(tab.url,remote))) fail('editor_in_use');
   }
   async previewBody(tab, spec) {
     const locator = await this.one(tab,spec);
     while (true) {
-      this.check(); const packet = await locator.evaluate(readPreviewParagraphs_v1);
+      this.check(); const packet = await this.readQuery(tab,()=>locator.evaluate(readPreviewParagraphs_v1));
       if (packet?.ok === true && typeof packet.value === 'string') return packet.value;
       if (packet?.pending !== true) fail('unsupported_editor');
       await pause(); await this.ax(tab);
@@ -597,9 +800,10 @@ class Driver {
     if (spec?.remote_id?.source !== 'page_url' || spec?.header?.source !== 'dom' ||
         spec.header.format !== 'chapter_title' || typeof spec.header.title_separator !== 'string' || !spec.header.title_separator ||
         spec?.body?.source !== 'fanqie_preview_paragraphs_v1') fail('invalid_profile');
+    const forceGuard = !(this.target.platform === 'fanqie' && ['find_drafts','read_draft'].includes(this.request.operation));
+    await this.guard(forceGuard); await this.ensureEditorFree(remote,true);
     progress(this.api,{phase:'read',edge:'begin'});
-    await this.guard(true); await this.ensureEditorFree(remote,true);
-    const {tab,id:tabId} = await this.newTab(spec.url.replace('{remote_id}',remote));
+    const {tab,id:tabId} = await this.newTab(spec.url.replace('{remote_id}',remote),{readOnly:true});
     this.state.last_readback_tab_id = tabId;
     await this.identity(tab);
     if (this.template(await this.url(tab),spec.remote_id) !== remote) fail('identity_mismatch');
@@ -612,7 +816,7 @@ class Driver {
     if (this.state.chapters.has(remote) && this.state.chapters.get(remote)!==chapter) fail('identity_mismatch');
     const body = await this.previewBody(tab,spec.body);
     const observation = {remote_id:remote,title:matched[2],body,state:'draft',url:await this.url(tab)};
-    await this.confirm(remote,chapter); await this.identity(tab,true);
+    await this.confirm(remote,chapter); await this.identity(tab,forceGuard);
     if (this.template(await this.url(tab),spec.remote_id)!==remote) fail('identity_mismatch');
     if (await this.value(tab,spec.header)!==header || await this.previewBody(tab,spec.body)!==body) fail('editor_changed');
     await this.ensureEditorFree(remote);
@@ -650,17 +854,23 @@ class Driver {
     const locator = await this.one(tab, spec);
     if (spec.source !== 'prosemirror_paragraphs') return this.action(tab, () => locator.fill(text, this.timeoutOptions()));
     const normalized = normal(text);
-    if (await locator.evaluate(el => el.getAttribute('contenteditable')) !== 'true') fail('unsupported_editor');
+    const tail = /\n*$/.exec(normalized)[0].length,core = normalized.slice(0,normalized.length-tail);
+    if ((core && typeof tab.pasteText !== 'function') || await locator.evaluate(el => el.getAttribute('contenteditable')) !== 'true') fail('unsupported_editor');
     await this.action(tab, () => locator.click(this.timeoutOptions()));
     const selectAll = this.api.selectAllKey || 'Meta+A';
     if (!['Meta+A', 'Control+A'].includes(selectAll)) fail('invalid_profile');
     await this.action(tab, () => locator.press(selectAll, this.timeoutOptions()));
     await this.action(tab, () => locator.press('Backspace', this.timeoutOptions()));
-    const lines = normalized.split('\n');
-    for (let index = 0; index < lines.length; index++) {
-      if (index) await this.action(tab, () => locator.press('Enter', this.timeoutOptions()));
-      if (lines[index]) await this.action(tab, () => locator.pressSequentially(lines[index], {delay: 0, ...this.timeoutOptions()}));
-    }
+    if (await this.value(tab,spec) !== '') fail('editor_changed');
+    if (await locator.evaluate(el => {
+      const focused = el.ownerDocument?.activeElement;
+      return !!focused && (focused === el || el.contains(focused));
+    }) !== true) fail('editor_changed');
+    // Plain-text clipboard insertion can consume terminal line breaks. Keep
+    // them in the input plan, never infer or repair them after a mismatch.
+    if (core) await this.action(tab, () => tab.pasteText(core));
+    if (await this.value(tab,spec) !== core) fail('editor_changed');
+    for (let index = 0; index < tail; index++) await this.action(tab, () => locator.press('Enter',this.timeoutOptions()));
     if (await this.value(tab, spec) !== normalized) fail('editor_changed');
   }
   async create(chapter, title, body) {
@@ -707,7 +917,9 @@ class Driver {
       await this.guard(true); // Direct creation URLs may allocate a cloud draft.
       ({tab} = await this.newTab(this.profile.urls.create));
     }
-    await this.identity(tab); await this.editorReady(tab); await this.editorState(tab);
+    await this.identity(tab); await this.editorReady(tab);
+    this.createdRemote = this.remote(await this.url(tab));
+    await this.editorState(tab);
     const editor = this.profile.editor;
     if (await this.value(tab, editor.title) !== '' || await this.value(tab, editor.body) !== '') fail('not_new_draft');
     await this.identity(tab, true); await this.fill(tab, editor.chapter, String(chapter)); await this.identity(tab);
@@ -726,7 +938,10 @@ class Driver {
     }
     const remote = this.remote(await this.url(tab)); this.state.chapters.set(remote, chapter);
     const observation = await this.read(remote);
-    if (normal(observation.title) !== normal(title) || normal(observation.body) !== normal(body)) fail('save_unverified');
+    const observedBody = normal(observation.body), frozenBody = normal(body);
+    const equalBody = this.comparisonPolicy === 'fanqie_terminal_lf_v1' ?
+      observedBody.replace(/\n+$/,'') === frozenBody.replace(/\n+$/,'') : observedBody === frozenBody;
+    if (normal(observation.title) !== normal(title) || !equalBody) fail('save_unverified');
     return remote;
   }
   async execute() {
@@ -750,6 +965,10 @@ export async function executeChromeBridgeRequest(api, request) {
   try { return {...envelope, ok: true, result: await new Driver(api, request).execute()}; }
   catch (error) {
     const code = /^platform_browser_[a-z_]+$/.test(error?.code || '') ? error.code : 'platform_browser_operation_failed';
+    try {
+      const pending = typeof api?.onDriverError === 'function' ? api.onDriverError(error) : null;
+      if (typeof pending?.catch === 'function') pending.catch(() => {});
+    } catch { /* Diagnostic callbacks never alter or retry the operation. */ }
     progress(api,{phase:'error',code,...errorLocation(error)});
     return {...envelope, ok: false, error:code};
   }

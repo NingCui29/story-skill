@@ -21,6 +21,7 @@ RUNTIME_FILES = (
     'story_history.py', 'story_publish.py', 'story_workbench.py',
     'story_platform_drafts.py', 'story_platform_browser.py',
     'story_platform_chrome_bridge.py', 'story_chrome_bridge.mjs',
+    'story_chrome_worker.py', 'story_chrome_worker.mjs',
     'story_outline.py', 'story_storage.py',
     'story_workbench_books.py', 'story_workbench_archives.py',
 )

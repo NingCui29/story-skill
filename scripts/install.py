@@ -164,15 +164,20 @@ SUITE_FILES_V0619 = tuple(sorted((*SUITE_FILES_V0618,
 SKILL_NAMES_V0619 = SKILL_NAMES_V0618
 SUITE_FILES_V0620 = SUITE_FILES_V0619
 SKILL_NAMES_V0620 = SKILL_NAMES_V0619
+SUITE_FILES_V0621 = tuple(sorted((*SUITE_FILES_V0620,
+    "story-skill/scripts/story_chrome_worker.py",
+    "story-skill/scripts/story_chrome_worker.mjs",
+)))
+SKILL_NAMES_V0621 = SKILL_NAMES_V0620
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0620
-SUITE_FILES = SUITE_FILES_V0620
+SKILL_NAMES = SKILL_NAMES_V0621
+SUITE_FILES = SUITE_FILES_V0621
 MARKER = ".story-skill-install.json"
 HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
                     "antigravity": ".agents", "antigravity-cli": ".agents",
                     "qoder": ".qoder", "qoder-cn": ".qoder",
-                    "zcode": ".zcode", "workbuddy": ".workbuddy",
+                    "zcode": ".zcode", "workbuddy": ".workbuddy-ai",
                     "trae": ".trae", "trae-cn": ".trae", "trae-cli": ".traecli",
                     "cursor": ".cursor", "codebuddy": ".codebuddy",
                     "opencode": ".opencode", "copilot": ".github",
@@ -181,7 +186,7 @@ HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
 USER_HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
                         "antigravity": ".gemini/config", "antigravity-cli": ".gemini/antigravity-cli",
                         "qoder": ".qoder", "qoder-cn": ".qoder-cn",
-                        "zcode": ".zcode", "workbuddy": ".workbuddy",
+                        "zcode": ".zcode", "workbuddy": ".workbuddy-ai",
                         "trae": ".trae", "trae-cn": ".trae-cn", "trae-cli": ".traecli",
                         "cursor": ".cursor", "codebuddy": ".codebuddy",
                         "opencode": ".config/opencode", "copilot": ".copilot",
@@ -230,6 +235,8 @@ def suite_files(version):
         return SUITE_FILES_V0619
     if version == "0.6.20":
         return SUITE_FILES_V0620
+    if version == "0.6.21":
+        return SUITE_FILES_V0621
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 
@@ -265,6 +272,8 @@ def skill_names(version):
         return SKILL_NAMES_V0619
     if version == "0.6.20":
         return SKILL_NAMES_V0620
+    if version == "0.6.21":
+        return SKILL_NAMES_V0621
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
 
 

@@ -57,8 +57,8 @@ class PackageVersionTests(unittest.TestCase):
             self.assertEqual(output.read_bytes(), b"existing reviewed artifact")
 
     def test_manifest_is_bound_to_version_and_unknown_families_are_rejected(self):
-        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061, "0.6.5": package.SUITE_FILES_V065, "0.6.6": package.SUITE_FILES_V065, "0.6.7": package.SUITE_FILES_V065, "0.6.8": package.SUITE_FILES_V065, "0.6.9": package.SUITE_FILES_V069, "0.6.10": package.SUITE_FILES_V0610, "0.6.11": package.SUITE_FILES_V0611, "0.6.12": package.SUITE_FILES_V0612, "0.6.13": package.SUITE_FILES_V0613, "0.6.14": package.SUITE_FILES_V0614, "0.6.15": package.SUITE_FILES_V0615, "0.6.16": package.SUITE_FILES_V0616, "0.6.17": package.SUITE_FILES_V0617, "0.6.18": package.SUITE_FILES_V0618, "0.6.19": package.SUITE_FILES_V0619, "0.6.20": package.SUITE_FILES_V0620}
-        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061, "0.6.5": package.SKILL_NAMES_V061, "0.6.6": package.SKILL_NAMES_V061, "0.6.7": package.SKILL_NAMES_V061, "0.6.8": package.SKILL_NAMES_V061, "0.6.9": package.SKILL_NAMES_V069, "0.6.10": package.SKILL_NAMES_V0610, "0.6.11": package.SKILL_NAMES_V0611, "0.6.12": package.SKILL_NAMES_V0612, "0.6.13": package.SKILL_NAMES_V0613, "0.6.14": package.SKILL_NAMES_V0614, "0.6.15": package.SKILL_NAMES_V0615, "0.6.16": package.SKILL_NAMES_V0616, "0.6.17": package.SKILL_NAMES_V0617, "0.6.18": package.SKILL_NAMES_V0618, "0.6.19": package.SKILL_NAMES_V0619, "0.6.20": package.SKILL_NAMES_V0620}
+        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061, "0.6.5": package.SUITE_FILES_V065, "0.6.6": package.SUITE_FILES_V065, "0.6.7": package.SUITE_FILES_V065, "0.6.8": package.SUITE_FILES_V065, "0.6.9": package.SUITE_FILES_V069, "0.6.10": package.SUITE_FILES_V0610, "0.6.11": package.SUITE_FILES_V0611, "0.6.12": package.SUITE_FILES_V0612, "0.6.13": package.SUITE_FILES_V0613, "0.6.14": package.SUITE_FILES_V0614, "0.6.15": package.SUITE_FILES_V0615, "0.6.16": package.SUITE_FILES_V0616, "0.6.17": package.SUITE_FILES_V0617, "0.6.18": package.SUITE_FILES_V0618, "0.6.19": package.SUITE_FILES_V0619, "0.6.20": package.SUITE_FILES_V0620, "0.6.21": package.SUITE_FILES_V0621}
+        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061, "0.6.5": package.SKILL_NAMES_V061, "0.6.6": package.SKILL_NAMES_V061, "0.6.7": package.SKILL_NAMES_V061, "0.6.8": package.SKILL_NAMES_V061, "0.6.9": package.SKILL_NAMES_V069, "0.6.10": package.SKILL_NAMES_V0610, "0.6.11": package.SKILL_NAMES_V0611, "0.6.12": package.SKILL_NAMES_V0612, "0.6.13": package.SKILL_NAMES_V0613, "0.6.14": package.SKILL_NAMES_V0614, "0.6.15": package.SKILL_NAMES_V0615, "0.6.16": package.SKILL_NAMES_V0616, "0.6.17": package.SKILL_NAMES_V0617, "0.6.18": package.SKILL_NAMES_V0618, "0.6.19": package.SKILL_NAMES_V0619, "0.6.20": package.SKILL_NAMES_V0620, "0.6.21": package.SKILL_NAMES_V0621}
         for version, expected in layouts.items():
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 self.assertEqual(package.skill_names(version), skill_layouts[version])
@@ -75,9 +75,15 @@ class PackageVersionTests(unittest.TestCase):
         self.assertEqual(package.suite_files("0.6.8"), package.SUITE_FILES_V065)
         self.assertEqual(len(package.SUITE_FILES_V069), 44)
         self.assertEqual(package.suite_files("0.6.9"), package.SUITE_FILES_V069)
-        self.assertEqual(len(package.SUITE_FILES), 62)
-        self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V0620)
+        self.assertEqual(len(package.SUITE_FILES), 64)
+        self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V0621)
+        self.assertEqual(len(package.SUITE_FILES_V0619), 62)
         self.assertEqual(package.SUITE_FILES_V0620, package.SUITE_FILES_V0619)
+        self.assertEqual(len(package.SUITE_FILES_V0620), 62)
+        self.assertEqual(set(package.SUITE_FILES_V0621) - set(package.SUITE_FILES_V0620), {
+            "story-skill/scripts/story_chrome_worker.py",
+            "story-skill/scripts/story_chrome_worker.mjs",
+        })
         self.assertEqual(len(package.SUITE_FILES_V0618), 55)
         self.assertEqual(set(package.SUITE_FILES_V0619) - set(package.SUITE_FILES_V0618), {
             "story-skill/scripts/story_workbench_books.py",
@@ -105,7 +111,7 @@ class PackageVersionTests(unittest.TestCase):
         self.assertEqual(set(package.SUITE_FILES_V0613) - set(package.SUITE_FILES_V0612), {
             "story-skill-plan/references/outline.md",
         })
-        self.assertEqual(package.SKILL_NAMES, package.SKILL_NAMES_V0620)
+        self.assertEqual(package.SKILL_NAMES, package.SKILL_NAMES_V0621)
         self.assertEqual(len(package.SUITE_FILES_V0613), 50)
         self.assertNotIn("story-skill/references/workbench.md", package.SUITE_FILES_V0613)
         self.assertEqual(set(package.SUITE_FILES_V0614) - set(package.SUITE_FILES_V0613), {
@@ -133,7 +139,7 @@ class PackageVersionTests(unittest.TestCase):
             "story-skill-write/references/suspense-evidence.md",
         })
         self.assertIn("story-skill/scripts/story_workbench.py", package.SUITE_FILES)
-        for version in ("0.5.11", "0.6.00", "0.6.21", "0.6.99", "1.0.0", "2.4.6"):
+        for version in ("0.5.11", "0.6.00", "0.6.22", "0.6.99", "1.0.0", "2.4.6"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 package.suite_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
@@ -155,7 +161,9 @@ class PackageVersionTests(unittest.TestCase):
                                  ("0.6.18", "story-skill-plan/references/short-platform.md"),
                                  ("0.6.19", "story-skill/scripts/story_workbench_books.py"),
                                  ("0.6.19", "story-skill/scripts/story_workbench_archives.py"),
-                                 ("0.6.20", "story-skill/scripts/story_outline.py")):
+                                 ("0.6.20", "story-skill/scripts/story_outline.py"),
+                                 ("0.6.21", "story-skill/scripts/story_chrome_worker.py"),
+                                 ("0.6.21", "story-skill/scripts/story_chrome_worker.mjs")):
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 source = root / "skills"
@@ -182,6 +190,20 @@ class PackageVersionTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "reviewed file manifest"):
                     package.package(output)
             self.assertEqual(output.read_bytes(), b"existing reviewed artifact")
+
+    def test_published_v0620_rejects_new_worker_files_without_replacing_archive(self):
+        for filename in ("story_chrome_worker.py", "story_chrome_worker.mjs"):
+            with self.subTest(filename=filename), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                source = root / "skills"
+                fixture_suite(source, "0.6.20")
+                (source / "story-skill/scripts" / filename).write_bytes(b"new worker\n")
+                output = root / "story-skill-0.6.20.zip"
+                output.write_bytes(b"existing reviewed artifact")
+                with patch.object(package, "SOURCE", source):
+                    with self.assertRaisesRegex(ValueError, "reviewed file manifest"):
+                        package.package(output)
+                self.assertEqual(output.read_bytes(), b"existing reviewed artifact")
 
 
 class PackagePublicationTests(unittest.TestCase):

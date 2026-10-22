@@ -1,24 +1,28 @@
 # 写作工作台 · macOS 桌面版
 
-> 公开记录说明：历史开发记录的作品名称、目录及运行实例标识已一致匿名化，个人路径已通用化，相关真实作品截图仅本地保留。本版验收使用隔离合成书架，截图与回执保存在[本版验证目录](../../benchmarks/results/v0.6.20/)。
+> 公开记录说明：历史开发记录的作品名称、目录及运行实例标识已一致匿名化，个人路径已通用化，相关真实作品截图仅本地保留。本版验收将使用隔离合成书架，实际截图与回执按完成状态保存在[本版验证目录](../../benchmarks/results/v0.6.21/)。
 
 `写作工作台.app` 将本地书架和作品编辑页面放进独立的 macOS 窗口。它沿用现有工作台服务和保存规则，应用包内携带 Python 运行时与工作台程序。
 
-已发布 **0.1.19 / build 20**，内含 Story Skill **0.6.20**。本轮构建、严格临时签名、隔离 CLI／安全探针、原生合成自检和 ZIP／DMG 验证均已通过，本版已正式分发，公开二进制头尾各 64 KiB 的匿名 Range 核对通过，完整包另经本地验收，实际范围见 [v0.6.20 发布记录](../../docs/releases/v0.6.20.md)。上一正式客户端为 [0.1.18](../../docs/releases/v0.6.19.md)，历史附件和记录保持原样。
+本目录对应待发行候选 **0.1.24 / build 25**，内含 Story Skill **0.6.21**。实际构建、严格临时签名、隔离 CLI／安全探针、原生合成自检与 ZIP／DMG 分发范围见 [v0.6.21 发布记录](../../docs/releases/v0.6.21.md)。历史附件与记录保持原样。
 
-本版提供 [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-workbench-0.1.19-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
+本版计划提供以下附件，地址将在正式发布后可用：[DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.24-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
 
 工作台采用紧凑的天空蓝界面，支持浅色、深色及跟随系统。书架可新建、移出／撤销、重新定位、删除至系统废纸篓、备份和恢复作品；编辑页提供恢复中心、保存全部候选、两稿对照及下一章任务。原有候选与正式稿身份继续保留。操作和边界见[需求与进展](../../docs/工作台需求与进展.md)。
 
 应用菜单中的“检查更新…”按本机架构比较 GitHub 最新正式客户端。下载窗口显示百分比、大小、速度和预计剩余时间，支持取消与重试；通过大小和 SHA256 核对后打开安装包，提示保存、手动安装及重新打开。下载完成与安装完成分别处理，不自动替换运行中的应用或停止作品服务。详见[更新流程](../../docs/工作台更新流程.md)。
 
-平台草稿入口可准备配置、预览冻结清单、保存和回读；实际保存仍需当前助手连接既有已登录 Chrome。番茄已有指定合成稿的完整链路证据，七猫、起点、多卷与真实分页待实页验收，不执行审核提交或定时发布。[平台草稿范围](../../skills/story-skill-publish/references/platform-drafts.md)
+平台草稿入口可准备配置、预览冻结清单、保存和回读；番茄可显式启动受控 Codex 会话连接既有已登录 Chrome，使用账户额度并依赖已登录的外部 Codex CLI、官方 Chrome 插件（含 SDK）及已连接的 Chrome 会话；权限拒绝即停止，未知结果先回读对账。番茄已有指定合成稿的完整链路证据，七猫、起点、多卷与真实分页待实页验收，不执行审核提交或定时发布。[平台草稿范围](../../skills/story-skill-publish/references/platform-drafts.md)
 
 客户端使用临时本地签名，未做 Apple 公证。本轮发布目标为 Intel Mac；最低 macOS 13 是构建配置，Apple Silicon 及其他 macOS 用户环境未据此获得验证。安装包与已运行服务分别更新，替换应用不会让旧服务自动加载新代码。
 
+## 0.1.24 / build 25 发行范围（2026-10-22）
+
+内嵌运行时更新为 0.6.21，共 17 个模块。本版新增番茄草稿受控自动连接与独立的正文编码、比较选项；新软件回归不代替新平台实页验收。构建与验收结果以本版发布记录为准，不更新本机已安装应用或作者作品服务。
+
 ## 0.1.19 发布验收（2026-10-20）
 
-内嵌运行时更新为 0.6.20，实际构建源保留为 `698ec2aeed9314f37b35d91df96bcf30d45b81e4`；后续 Windows 随包指南与测试夹具更正不重建 Mac，来源对应见本版发布记录。主要修复大量历史材料使目录整体失败的问题。正式章节与进度独立返回，材料按批次继续加载；单个候选、恢复稿及指定材料按准入规则直接读取。保留未保存编辑、历史文件和正式采用流程，不迁移作品或自动停止已有服务。
+内嵌运行时更新为 0.6.20，实际构建源保留为 `698ec2aeed9314f37b35d91df96bcf30d45b81e4`；后续 Windows 随包指南与测试夹具更正不重建 Mac，来源对应见 [v0.6.20 发布记录](../../docs/releases/v0.6.20.md)。主要修复大量历史材料使目录整体失败的问题。正式章节与进度独立返回，材料按批次继续加载；单个候选、恢复稿及指定材料按准入规则直接读取。保留未保存编辑、历史文件和正式采用流程，不迁移作品或自动停止已有服务。
 
 本轮15个运行时模块与固定源码、严格临时签名、CLI／安全探针、AppKit／WKWebView 合成书架／编辑／双书切换、ZIP 提取及 DMG 只读挂载／卸载均已通过；新材料加载状态已出现在自检截图中，这不代表逐个人工操作了全部新控件。没有替换本机已安装应用或操作作者已有服务。原生目录选择、下载保存面板、未保存编辑关闭提示、真实升级及 Apple Silicon 等环境仍按实际覆盖登记；旧版成功不能替代本轮验收。
 

@@ -12,6 +12,23 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class DesktopRuntimePayloadTests(unittest.TestCase):
+    def test_desktop_runtime_matches_current_reviewed_suite_script_payload(self):
+        sys.path.insert(0, str(ROOT / 'scripts'))
+        try:
+            from build_desktop_macos import RUNTIME_FILES as mac_files
+            from build_desktop_windows import RUNTIME_FILES as windows_files
+            from package import source_version, suite_files
+        finally:
+            sys.path.pop(0)
+        version = source_version((ROOT / 'skills/story-skill/scripts/story.py').read_bytes())
+        expected = {Path(name).name for name in suite_files(version)
+                    if name.startswith('story-skill/scripts/')}
+        self.assertEqual(mac_files, windows_files)
+        self.assertEqual(len(mac_files), len(set(mac_files)))
+        self.assertEqual(set(mac_files), expected)
+        self.assertIn('story_chrome_worker.py', mac_files)
+        self.assertIn('story_chrome_worker.mjs', mac_files)
+
     def test_exact_desktop_payload_supports_synthetic_book_backup_restore_and_safe_trash_failure(self):
         sys.path.insert(0, str(ROOT / 'scripts'))
         try:

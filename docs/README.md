@@ -1,8 +1,8 @@
 # Story Skill 文档导航
 
-**v0.6.20 已正式发布。** 八技能源清单为 62 文件，提供标准 ZIP、Claude 桌面 r2、Codex 本地插件，以及 Mac 0.1.19/build 20、Windows 0.1.10 客户端。三组完整 CI、固定标签隔离安装和本轮原生验收已通过；公开下载与 npm 内容包独立核验已通过，实际范围见[发布记录](releases/v0.6.20.md)。上一版 [v0.6.19](releases/v0.6.19.md) 的附件和证据保持原样。
+**v0.6.21 候选发行记录，仍待发行。** 八技能／64 文件，提供标准 ZIP、Claude 桌面 r2、Codex 本地插件，以及 Mac 0.1.24/build 25、Windows 0.1.11 客户端。本轮 CI、构建、安装、公开下载与 Packages 的实际结果见[发布记录](releases/v0.6.21.md)。上一版 [v0.6.20](releases/v0.6.20.md) 附件和证据保持原样。
 
-本版更新[分类状态与作品定位](../skills/story-skill/references/project-state.md#大纲中的作品类型与平台分类)、整书审稿与阅读期待规则，并修复[大量材料阻断工作台目录](工作台需求与进展.md)的问题；既有作品管理、备份恢复和[检查更新下载进度](工作台更新流程.md)继续保留。[平台草稿](../skills/story-skill-publish/references/platform-drafts.md)提供冻结清单、预览、受控保存和全文回读；番茄已有指定合成稿完整链路证据，七猫、起点、多卷和真实分页待实页验收。
+本版新增番茄草稿受控自动连接、段落编码和尾换行数量比较选项，修正 WorkBuddy AI 默认目录，并补充 WorkBuddy AI 与 Qoder CN 安装调用说明。自动连接仅支持番茄，使用已登录的外部 Codex CLI、官方 Chrome 插件（含 SDK）、已连接的 Chrome 会话及账户额度；拒绝权限即停止，未知结果先回读对账。[平台草稿](../skills/story-skill-publish/references/platform-drafts.md)的本地软件回归与实页验收分别记录，七猫、起点、多卷和真实分页仍按实际覆盖登记。
 
 既有[写前交接与偏好召回](../skills/story-skill-write/references/writing-handoff.md)、[关键情节点覆盖与新增事实分级](../skills/story-skill-write/references/chapter-continuity.md)、[短篇平台化设计](../skills/story-skill-plan/references/short-platform.md)、[题材与三平台创作要求](../skills/story-skill-write/references/drama.md#三平台创作要求)、[大纲细纲规范](../skills/story-skill-plan/references/outline.md)和语义审查继续沿用，书库保持 schema 2。[执行审查与序列评估](../benchmarks/skill-execution/README.md)保留失败、超时和语义分歧；程序核验不能代替阅读效果与平台验收。下列旧版记录保持其历史范围。
 
@@ -32,11 +32,11 @@ v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Wi
 
 ## 开始使用
 
-Claude 桌面版使用 [v0.6.20-r2 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-claude-desktop-0.6.20-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.20/story-skill-claude-desktop-0.6.20-r2.zip.sha256)。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。也可从本版固定源码运行 `python3 -B -X utf8 scripts/package_claude.py` 构建。
+Claude 桌面版使用 [v0.6.21-r2 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-skill-claude-desktop-0.6.21-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-skill-claude-desktop-0.6.21-r2.zip.sha256)。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。也可从本版固定源码运行 `python3 -B -X utf8 scripts/package_claude.py` 构建。
 
 普通聊天文件环境、Cowork 或统一任务界面的目录权限、作者电脑的本机工作台分别核对。书稿应保存到会话可访问位置，并下载完整书目录备份；技能导入不会自动启动本机 Python 服务。更多桌面与云端边界见[安装指引](../INSTALL.md#书稿保存与桌面能力)。
 
-在 Codex 中需要安装或升级时，可发送以下请求；安装时核对 v0.6.20 固定标签、Release 附件和本地已有修改，检查不符则保留现有安装：
+在 Codex 中需要安装或升级时，可发送以下请求；安装时核对 v0.6.21 固定标签、Release 附件和本地已有修改，检查不符则保留现有安装：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill
@@ -46,7 +46,7 @@ Claude Code 使用当前仓库源码时，在仓库根目录运行 `python3 -B -
 
 Google Antigravity 使用 `--host antigravity`（2.0／IDE）或 `--host antigravity-cli`（CLI），再选择 `--project "<写作项目根目录>"` 或 `--user`；两种应用的个人技能目录不同，见[安装位置表](../INSTALL.md#从本仓库源码安装)。项目内与 Codex 共用 `.agents/skills/`，同份套件无需重复安装，升级共同影响该副本。可自然语言触发，2.0／CLI 也可用 `/story-skill`；旧目录不自动迁移。[Antigravity 官方说明](https://antigravity.google/docs/skills)
 
-当前源码还支持 `--host qoder`、`qoder-cn`、`zcode`、`workbuddy`，范围任选 `--user` 或 `--project "<写作项目根目录>"`。Qoder 与 CN 的个人目录不同，项目共用 `.qoder/skills/`；ZCode 与 WorkBuddy AI 分别使用 `.zcode/skills/`、`.workbuddy/skills/`。本版源码安装器提供这些入口，具体应用版本、目录依据和刷新步骤见[新增宿主安装说明](../INSTALL.md#qoderqoder-cnzcode-与-workbuddy-ai)。ZCode 可沿用本库 `$技能名` 示例，Qoder CLI 使用 `/技能名`，桌面版与 WorkBuddy AI 可用自然语言。
+当前源码还支持 `--host qoder`、`qoder-cn`、`zcode`、`workbuddy`，范围任选 `--user` 或 `--project "<写作项目根目录>"`。Qoder 与 CN 的个人目录不同，项目共用 `.qoder/skills/`；ZCode 使用 `.zcode/skills/`。WorkBuddy AI 个人目录按 5.7.6 产品注入的配置核对为 `~/.workbuddy-ai/skills/`，项目目录为 `.workbuddy-ai/skills/`；安装器不迁移或覆盖旧个人与项目 `.workbuddy/skills/`。本版源码安装器提供这些入口，具体应用版本、目录依据和刷新步骤见[新增宿主安装说明](../INSTALL.md#qoderqoder-cnzcode-与-workbuddy-ai)及[WorkBuddy AI／Qoder CN 快速安装](../INSTALL.md#workbuddy-ai-与-qoder-cn-快速安装)。ZCode 可沿用本库 `$技能名` 示例，Qoder CLI 使用 `/技能名`，Qoder CN 桌面版在新任务输入 `/` 选择技能，WorkBuddy AI 可用自然语言。
 
 同一源码安装器还支持 `trae`、`trae-cn`、`trae-cli`、`cursor`、`codebuddy`、`opencode`、`copilot`、`gemini-cli`、`cline`、`windsurf`、`devin`。按[宿主目录表](../INSTALL.md#其他-agent-skills-宿主)选择默认位置及刷新方式；国内／国际版和不同前端分别核对，不把相似产品名视为共用目录。新增只读 `--check` 比较完整安装与当前源码，核验通过不代表宿主发现或模型执行。ZCode 已在本机隔离环境通过实际客户端解析验证，模型调用范围另行核对。
 

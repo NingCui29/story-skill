@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.20"
+VERSION = "0.6.21"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -3117,11 +3117,11 @@ def _load_extension(name):
     return module
 
 
-storage, search, world, history, publish, workbench, outline, punctuation, workbench_books, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge = (_load_extension(name) for name in (
+storage, search, world, history, publish, workbench, outline, punctuation, workbench_books, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge, chrome_worker = (_load_extension(name) for name in (
     "storage", "search", "world", "history", "publish", "workbench", "outline", "punctuation",
-    "workbench_books", "workbench_archives", "platform_browser", "platform_drafts", "platform_chrome_bridge"))
+    "workbench_books", "workbench_archives", "platform_browser", "platform_drafts", "platform_chrome_bridge", "chrome_worker"))
 CORE = SimpleNamespace(**globals())
-for extension in (search, world, history, publish, workbench, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge):
+for extension in (search, world, history, publish, workbench, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge, chrome_worker):
     extension.inject(CORE)
 TEMPLATES["publish"] = publish.template()
 TEMPLATES["platform-browser"] = platform_browser.template()

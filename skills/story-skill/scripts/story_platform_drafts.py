@@ -19,19 +19,32 @@ import sys
 import threading
 import time
 import uuid
+from urllib.parse import urlsplit
 
 
 COMMANDS = {"publish-draft-run", "publish-draft-status"}
 DIRECTORY = ".story/platform-drafts"
 MAX_EVENTS = 10000
 MAX_EVENT_BYTES = 16384
-EVENTS = {"sending", "saved", "reconciled", "unknown", "blocked", "conflict", "not_found"}
 SUCCESS = {"saved", "reconciled"}
+EQUIVALENT = {"saved_equivalent", "reconciled_equivalent"}
+ACCEPTED = SUCCESS | EQUIVALENT
+EVENTS = {"sending", "unknown", "blocked", "conflict", "not_found"} | ACCEPTED
+COMPARISON_POLICIES = {"strict", "fanqie_terminal_lf_v1"}
+BODY_ENCODINGS = {"verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2"}
+EQUIVALENCE_FIELDS = {"comparison_policy", "canonical_sha256", "observed_canonical_sha256",
+                      "expected_terminal_lf", "observed_terminal_lf"}
+ENCODING_FIELDS = {"body_encoding", "source_content_sha256", "encoded_content_sha256", "rendered_body_matches"}
+ATTEMPT_FIELDS = {"comparison_policy", "body_encoding", "source_content_sha256", "encoded_content_sha256"}
+SCOPE_FIELDS = {"book_id", "plan_id", "manifest_sha256"}
 _EVENT_NAME = re.compile(r"event-([0-9]{8})-([0-9a-f]{32})\.json")
 PROFILE_DIRECTORY = ".story/platform-profiles"
 MAX_PROFILE_BYTES = 1024 * 1024
 MAX_PROFILES = 100
 MAX_WORKBENCH_JOBS = 100
+RETIREMENT_PROOFS = frozenset({"authorization", "backup", "deletion_catalog", "current_catalog",
+                               "absence_request", "absence_response", "closed_job"})
+RETIREMENT_EXTRA_PROOFS = frozenset({"prior_attempt", "manual_cleanup"})
 _WORKBENCH_LOCK = threading.RLock()
 _WORKBENCH_JOBS = {}
 _WORKBENCH_BINDINGS = {}
@@ -57,6 +70,136 @@ def _normal(value):
 
 def _content(item):
     return {name: _normal(item[name]) for name in ("title", "body")}
+
+
+def _comparison_policy(value, platform):
+    if not isinstance(value, str) or value not in COMPARISON_POLICIES:
+        api.fail("platform_draft_invalid_comparison_policy", "Unsupported platform draft comparison policy")
+    if value != "strict" and platform != "fanqie":
+        api.fail("platform_draft_invalid_comparison_policy", "Terminal LF equivalence is available only for Fanqie")
+    return value
+
+
+def _canonical(item):
+    content = _content(item)
+    return {**content, "body": content["body"].rstrip("\n")}
+
+
+def _body_encoding(value, platform):
+    if not isinstance(value, str) or value not in BODY_ENCODINGS or (value != "verbatim" and platform != "fanqie"):
+        api.fail("platform_draft_invalid_body_encoding", "Unsupported platform draft body encoding")
+    return value
+
+
+def _encoded_content(item, encoding, platform):
+    _body_encoding(encoding, platform)
+    content = _content(item)
+    if encoding == "verbatim":
+        return {name: item[name] for name in ("title", "body")}
+    body = content["body"]
+    leading, trailing = len(body) - len(body.lstrip("\n")), len(body) - len(body.rstrip("\n"))
+    inner = body[leading:len(body) - trailing if trailing else len(body)]
+    paragraphs = inner.split("\n\n")
+    unsupported = re.compile(r"^ {0,3}(?:#{1,6}[ \t]|>|`{3}|~{3}|[-*+][ \t]|[0-9]+[.)][ \t]|\||<[A-Za-z/!])")
+    if (leading > 1 or trailing > 1 or not inner or any("\n" in paragraph or not paragraph
+            or unsupported.search(paragraph) for paragraph in paragraphs)):
+        api.fail("platform_draft_unsupported_body_encoding", "Only plain Markdown paragraphs separated by one empty line are supported")
+    rendered_leading = 0 if encoding == "markdown_paragraphs_v2" else leading
+    return {**content, "body": "\n" * rendered_leading + "\n".join(paragraphs) + "\n" * trailing}
+
+
+def _comparison_canonical(item, policy):
+    return _canonical(item) if policy == "fanqie_terminal_lf_v1" else _content(item)
+
+
+def _terminal_lf(item):
+    body = _normal(item["body"])
+    return len(body) - len(body.rstrip("\n"))
+
+
+def _comparison(frozen, observed, policy, platform):
+    _comparison_policy(policy, platform)
+    exact = _content(frozen) == _content(observed)
+    equivalent = not exact and policy == "fanqie_terminal_lf_v1" and _canonical(frozen) == _canonical(observed)
+    return exact, equivalent
+
+
+def _equivalence_evidence(frozen, encoded, observed, policy, encoding):
+    return {"comparison_policy": policy, "canonical_sha256": _hash(_comparison_canonical(encoded, policy)),
+            "observed_canonical_sha256": _hash(_comparison_canonical(observed, policy)),
+            "expected_terminal_lf": _terminal_lf(encoded), "observed_terminal_lf": _terminal_lf(observed),
+            "body_encoding": encoding, "source_content_sha256": _hash(_content(frozen)),
+            "encoded_content_sha256": _hash(_content(encoded)),
+            "rendered_body_matches": _normal(observed["body"]) == _normal(encoded["body"])}
+
+
+def _attempt_evidence(frozen, policy, encoding, platform):
+    _comparison_policy(policy, platform)
+    encoded = _encoded_content(frozen, encoding, platform)
+    return {"comparison_policy": policy, "body_encoding": encoding,
+            "source_content_sha256": _hash(_content(frozen)), "encoded_content_sha256": _hash(_content(encoded))}
+
+
+def _valid_attempt(record, platform, frozen=None):
+    try:
+        _comparison_policy(record["comparison_policy"], platform)
+        _body_encoding(record["body_encoding"], platform)
+        return (record["source_content_sha256"] == record["content_sha256"]
+                and _retirement_hex(record["encoded_content_sha256"])
+                and (record["body_encoding"] != "verbatim" or record["encoded_content_sha256"] == record["content_sha256"])
+                and (frozen is None or _attempt_evidence(frozen, record["comparison_policy"], record["body_encoding"], platform)
+                     == {name: record[name] for name in ATTEMPT_FIELDS}))
+    except api.StoryError:
+        return False
+
+
+def _valid_scope(scope):
+    return (isinstance(scope, dict) and set(scope) == SCOPE_FIELDS
+            and isinstance(scope["book_id"], str) and 0 < len(scope["book_id"]) <= 200
+            and _retirement_hex(scope["plan_id"], 32) and _retirement_hex(scope["manifest_sha256"]))
+
+
+def _record_attempt_metadata(record):
+    return {"comparison_policy": record.get("comparison_policy", "strict"),
+            "body_encoding": record.get("body_encoding", "verbatim"),
+            "source_content_sha256": record.get("source_content_sha256", record["content_sha256"]),
+            "encoded_content_sha256": record.get("encoded_content_sha256", record["content_sha256"])}
+
+
+def _valid_equivalence(record, frozen=None):
+    """Validate an explicit equivalence assertion without rewriting either hash."""
+    extended = "body_encoding" in record
+    policy = record["comparison_policy"]
+    encoding = record.get("body_encoding", "verbatim")
+    if (not isinstance(policy, str) or policy not in COMPARISON_POLICIES
+            or not isinstance(encoding, str) or encoding not in BODY_ENCODINGS):
+        return False
+    try:
+        encoded = _encoded_content(frozen, encoding, "fanqie") if frozen is not None else None
+    except api.StoryError:
+        return False
+    if extended and (record["source_content_sha256"] != record["content_sha256"]
+            or not _retirement_hex(record["encoded_content_sha256"]) or type(record["rendered_body_matches"]) is not bool
+            or record["rendered_body_matches"] != (record["observed_sha256"] == record["encoded_content_sha256"])
+            or (encoding == "verbatim" and record["encoded_content_sha256"] != record["content_sha256"])
+            or (policy == "strict" and (record["canonical_sha256"] != record["encoded_content_sha256"]
+                                        or record["observed_canonical_sha256"] != record["observed_sha256"]))
+            or (encoded is not None and record["encoded_content_sha256"] != _hash(_content(encoded)))):
+        return False
+    return ((policy == "fanqie_terminal_lf_v1" or (extended and encoding in {"markdown_paragraphs_v1", "markdown_paragraphs_v2"}))
+            and _retirement_hex(record["canonical_sha256"])
+            and record["canonical_sha256"] == record["observed_canonical_sha256"]
+            and record["observed_sha256"] != record["content_sha256"]
+            and record["title_matches"] is True and record["body_matches"] is False
+            and all(type(record[name]) is int and record[name] >= 0
+                    for name in ("expected_terminal_lf", "observed_terminal_lf"))
+            and (policy != "strict" or (record["expected_terminal_lf"] == record["observed_terminal_lf"]
+                                       and record.get("rendered_body_matches") is True))
+            and (encoding != "verbatim" or record["expected_terminal_lf"] != record["observed_terminal_lf"])
+            and (not extended or record["encoded_content_sha256"] != record["content_sha256"]
+                 or record["expected_terminal_lf"] != record["observed_terminal_lf"])
+            and (encoded is None or (record["canonical_sha256"] == _hash(_comparison_canonical(encoded, policy))
+                                    and record["expected_terminal_lf"] == _terminal_lf(encoded))))
 
 
 def _target(manifest):
@@ -154,6 +297,234 @@ def _read_record(directory, name):
         api.fail("platform_draft_journal_invalid", "Platform draft journal event is invalid")
 
 
+def _retirement_require(condition):
+    if not condition:
+        api.fail("platform_draft_retirement_invalid", "Deleted-draft retirement evidence is incomplete or changed")
+
+
+def _retirement_hex(value, length=64):
+    return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{" + str(length) + r"}", value) is not None
+
+
+def _retirement_time(value):
+    try:
+        stamp = datetime.fromisoformat(value)
+        return stamp.tzinfo is not None and stamp.utcoffset().total_seconds() == 0
+    except (TypeError, ValueError):
+        return False
+
+
+def _validate_retirement(record, target_hash, chapter, attempt, intents, resolved):
+    fields = {"schema", "kind", "target_sha256", "chapter", "attempt_id", "content_sha256", "at",
+              "intent_sha256", "resolved_sha256", "remote_id", "book_id", "plan_id", "manifest_sha256",
+              "proofs", "acknowledgements", "backup_content_sha256", "content_difference_acknowledged", "derived_unknowns"}
+    _retirement_require(isinstance(record, dict) and set(record) == fields and type(record["schema"]) is int and record["schema"] == 1
+        and record["kind"] == "user_authorized_retirement" and record["target_sha256"] == target_hash
+        and type(record["chapter"]) is int and record["chapter"] == chapter and record["attempt_id"] == attempt and attempt in intents)
+    original = intents[attempt]
+    _retirement_require(record["content_sha256"] == original["content_sha256"]
+        and record["intent_sha256"] == _hash(original) and _retirement_time(record["at"])
+        and record["at"] >= original["at"] and _retirement_hex(record["manifest_sha256"])
+        and _retirement_hex(record["plan_id"], 32) and isinstance(record["book_id"], str)
+        and 0 < len(record["book_id"]) <= 200 and isinstance(record["remote_id"], str)
+        and re.fullmatch(r"[0-9A-Za-z_-]{1,200}", record["remote_id"]) is not None)
+    prior = resolved.get(attempt)
+    _retirement_require(record["resolved_sha256"] == (_hash(prior) if prior else None)
+        and (prior is None or record["remote_id"] == prior["remote_id"]))
+    proofs = record["proofs"]
+    _retirement_require(isinstance(proofs, dict) and RETIREMENT_PROOFS <= set(proofs)
+        and set(proofs) <= RETIREMENT_PROOFS | RETIREMENT_EXTRA_PROOFS
+        and all(_retirement_hex(value) for value in proofs.values())
+        and record["acknowledgements"] == {"deletion_confirmed": True, "complete_catalog_empty": True,
+                                          "all_related_workers_stopped": True}
+        and all(type(value) is bool for value in record["acknowledgements"].values())
+        and _retirement_hex(record["backup_content_sha256"])
+        and type(record["content_difference_acknowledged"]) is bool)
+    if record["backup_content_sha256"] != record["content_sha256"]:
+        _retirement_require(record["content_difference_acknowledged"] is True
+                            and RETIREMENT_EXTRA_PROOFS <= set(proofs))
+    events = record["derived_unknowns"]
+    _retirement_require(isinstance(events, list) and len(events) <= 100)
+    seen = set()
+    for event in events:
+        _retirement_require(isinstance(event, dict) and set(event) == {"sequence", "attempt_id", "event_sha256"}
+            and type(event["sequence"]) is int and event["sequence"] > 0
+            and _retirement_hex(event["attempt_id"], 32) and _retirement_hex(event["event_sha256"])
+            and event["event_sha256"] not in seen)
+        seen.add(event["event_sha256"])
+
+
+def _retirement_proof(proof):
+    _retirement_require(isinstance(proof, dict) and set(proof) == {"path", "sha256"}
+                        and _retirement_hex(proof["sha256"]) and isinstance(proof["path"], str))
+    path = Path(proof["path"])
+    try:
+        _retirement_require(path.is_absolute() and path.resolve(strict=True) == path)
+        with api._pinned_directory(path.parent) as directory:
+            file = api._BoundFile(directory, path.name)
+            before = api.publish._bound_stat(file)
+            _retirement_require(stat.S_ISREG(before.st_mode) and before.st_nlink == 1 and 0 < before.st_size <= 16 * 1024 * 1024)
+            with api._bound_reader(file) as stream:
+                opened = os.fstat(stream.fileno()); data = stream.read(16 * 1024 * 1024 + 1)
+                after_read = os.fstat(stream.fileno())
+            after = api.publish._bound_stat(file)
+            _retirement_require(os.path.samestat(before, opened) and os.path.samestat(before, after)
+                and before.st_size == after.st_size == len(data) and before.st_mtime_ns == after.st_mtime_ns
+                and opened.st_mtime_ns == after_read.st_mtime_ns and _hash_bytes(data) == proof["sha256"])
+            api._verify_bound_directory(directory)
+        return data
+    except (OSError, ValueError):
+        _retirement_require(False)
+
+
+def _retirement_no_active_create(book, target):
+    """A target lock does not cancel a previously claimed browser operation."""
+    bridge = api.platform_chrome_bridge
+    path = api.safe_path(book.root, bridge.DIRECTORY)
+    if not path.exists():
+        return
+    with api._pinned_directory(path) as parent:
+        names = [name for name in os.listdir(parent.path if os.name == "nt" else parent.fd)
+                 if re.fullmatch(r"[0-9a-f]{32}", name)]
+        _retirement_require(len(names) <= bridge.MAX_SESSIONS)
+        for name in names:
+            with bridge._directory(book.root, name) as directory, bridge._lock(directory):
+                session = bridge._session(directory)
+                if session["binding"].get("target") != target:
+                    continue
+                try:
+                    bridge._lease(directory, session)
+                except api.StoryError as error:
+                    if error.code != "platform_chrome_worker_unavailable":
+                        raise
+                else:
+                    _retirement_require(False)
+                for filename in os.listdir(directory.path if os.name == "nt" else directory.fd):
+                    match = re.fullmatch(r"claimed-([0-9a-f]{32})\.json", filename)
+                    if not match:
+                        continue
+                    request = bridge._read(directory, filename)
+                    if request.get("operation") != "create_draft":
+                        continue
+                    response = api.publish._bound_stat(api._BoundFile(directory, "response-" + match[1] + ".json"), missing=True)
+                    if response is None:
+                        health = bridge._health_record(directory, session)
+                        _retirement_require(health is not None and
+                            not bridge._owner_alive(book.root, {"owner_pid": health["worker"]["pid"]}))
+        api._verify_bound_directory(parent)
+
+
+def retire_deleted_attempts(book, packet, *, execute=False, acknowledgement=None):
+    """Record operator-reviewed deletion evidence, never platform success.
+
+    This local, explicit recovery API performs no browser action. The operator
+    must verify the user authorization, deletion/empty-catalog screenshots and
+    that every related worker has stopped. Hashes bind that review to exact
+    artifacts; only matching old attempts and derived non-write events retire.
+    """
+    _retirement_require(type(execute) is bool and (not execute or acknowledgement == "user_authorized_deleted_drafts_only"))
+    fields = {"schema", "kind", "book_id", "plan_id", "manifest_sha256", "target", "acknowledgements", "proofs", "attempts"}
+    _retirement_require(isinstance(packet, dict) and set(packet) == fields and type(packet["schema"]) is int and packet["schema"] == 1
+        and packet["kind"] == "user_authorized_deleted_drafts_retirement" and packet["book_id"] == book.meta("id")
+        and isinstance(packet["proofs"], dict) and RETIREMENT_PROOFS <= set(packet["proofs"])
+        and set(packet["proofs"]) <= RETIREMENT_PROOFS | RETIREMENT_EXTRA_PROOFS
+        and isinstance(packet["attempts"], list) and 0 < len(packet["attempts"]) <= 100)
+    raw = {name: _retirement_proof(proof) for name, proof in packet["proofs"].items()}
+    try:
+        proofs = {name: json.loads(raw[name].decode("utf-8")) for name in
+                  ("authorization", "backup", "absence_request", "absence_response", "closed_job")}
+    except (UnicodeError, ValueError, RecursionError):
+        _retirement_require(False)
+    with _checked_plan(book, packet["plan_id"]) as (manifest, fingerprint, _):
+        _retirement_require(packet["manifest_sha256"] == fingerprint and packet["target"] == _target(manifest))
+        frozen_chapters = [item["chapter"] for item in manifest["chapters"]]
+    authorization, request, response, job = (proofs[name] for name in
+                                            ("authorization", "absence_request", "absence_response", "closed_job"))
+    _retirement_require(isinstance(authorization, dict) and type(authorization.get("schema")) is int and authorization.get("schema") == 1
+        and all(isinstance(authorization.get(key), str) and authorization[key].strip() for key in ("source", "verbatim"))
+        and authorization.get("platform") == packet["target"]["platform"]
+        and authorization.get("authorized_formal_chapters") == frozen_chapters
+        and all(type(chapter) is int for chapter in authorization["authorized_formal_chapters"])
+        and isinstance(authorization.get("deleted_test_drafts"), list))
+    _retirement_require(isinstance(request, dict) and isinstance(response, dict) and isinstance(job, dict)
+                        and type(request.get("schema")) is int and request.get("schema") == 1
+                        and type(response.get("schema")) is int and response.get("schema") == 1)
+    binding = request.get("binding", {})
+    _retirement_require(isinstance(binding, dict) and binding.get("book_id") == packet["book_id"]
+        and binding.get("plan_id") == packet["plan_id"] and binding.get("manifest_sha256") == fingerprint
+        and binding.get("target") == packet["target"] and request.get("binding_sha256") == _hash(binding)
+        and request.get("operation") == "find_drafts" and response.get("ok") is True and response.get("result") == []
+        and all(response.get(key) == request.get(key) and request.get(key) is not None
+                for key in ("id", "session_id", "binding_sha256", "nonce"))
+        and job.get("done") is True and job.get("stage") == "finished"
+        and job.get("book_id") == packet["book_id"] and job.get("plan_id") == packet["plan_id"]
+        and all(job.get(key) == value for key, value in packet["target"].items()))
+    with _target_lock(manifest) as state, _journal(book, packet["plan_id"], manifest, fingerprint) as journal:
+        with _checked_plan(book, packet["plan_id"]) as (_, current_fingerprint, _):
+            _retirement_require(current_fingerprint == fingerprint)
+        _retirement_no_active_create(book, packet["target"])
+        records, seen = [], set()
+        for attempt in packet["attempts"]:
+            expected = {"chapter", "attempt_id", "content_sha256", "intent_sha256", "resolved_sha256", "remote_id",
+                        "backup_index", "backup_content_sha256", "content_difference_acknowledged", "derived_unknowns"}
+            _retirement_require(isinstance(attempt, dict) and set(attempt) == expected
+                and type(attempt["chapter"]) is int and attempt["chapter"] in frozen_chapters
+                and _retirement_hex(attempt["attempt_id"], 32)
+                and all(_retirement_hex(attempt[key]) for key in ("content_sha256", "intent_sha256", "backup_content_sha256"))
+                and (attempt["resolved_sha256"] is None or _retirement_hex(attempt["resolved_sha256"]))
+                and isinstance(attempt["remote_id"], str) and re.fullmatch(r"[0-9A-Za-z_-]{1,200}", attempt["remote_id"]) is not None
+                and (attempt["chapter"], attempt["attempt_id"]) not in seen)
+            chapter, attempt_id = attempt["chapter"], attempt["attempt_id"]
+            seen.add((chapter, attempt_id)); state.attempts(chapter)
+            backup = proofs["backup"]
+            _retirement_require(isinstance(backup, list) and type(attempt["backup_index"]) is int
+                                and 0 <= attempt["backup_index"] < len(backup))
+            row = backup[attempt["backup_index"]]
+            _retirement_require(isinstance(row, dict) and isinstance(row.get("title"), str))
+            title = row["title"]; prefix = f"第{chapter}章 "
+            if title.startswith(prefix):
+                title = title[len(prefix):]
+            body = row.get("body")
+            if isinstance(body, dict):
+                _retirement_require(set(body) == {"ok", "value"} and body["ok"] is True)
+                body = body["value"]
+            _retirement_require(isinstance(body, str) and _hash(_content({"title": title, "body": body})) == attempt["backup_content_sha256"])
+            remote = row.get("remote_id")
+            if remote is None and isinstance(row.get("url"), str):
+                remote = attempt["remote_id"] if re.search(r"(?:^|[/&])" + re.escape(attempt["remote_id"]) + r"(?:[/&]|$)", urlsplit(row["url"]).path) else None
+            _retirement_require(remote == attempt["remote_id"] and any(isinstance(item, dict)
+                and item.get("remote_id") == remote and type(item.get("chapter")) is int and item.get("chapter") == chapter and item.get("title") == title
+                for item in authorization["deleted_test_drafts"]))
+            record = {"schema": 1, "kind": "user_authorized_retirement", "target_sha256": state.target_hash,
+                **{key: attempt[key] for key in expected - {"backup_index"}}, "at": _now(),
+                "book_id": packet["book_id"], "plan_id": packet["plan_id"], "manifest_sha256": fingerprint,
+                "proofs": {name: proof["sha256"] for name, proof in packet["proofs"].items()},
+                "acknowledgements": packet["acknowledgements"]}
+            _validate_retirement(record, state.target_hash, chapter, attempt_id, state.all_intents, state.all_resolved)
+            for event in record["derived_unknowns"]:
+                matching = [value for value in journal.events if value["sequence"] == event["sequence"]]
+                _retirement_require(len(matching) == 1)
+                value = matching[0]
+                _retirement_require(value["chapter"] == chapter and value["attempt_id"] == event["attempt_id"]
+                    and _hash(value) == event["event_sha256"] and value["event"] == "unknown"
+                    and value["reason"] == "previous_attempt_not_found" and value["remote_id"] is None
+                    and not any(other["attempt_id"] == value["attempt_id"] and other["event"] == "sending" for other in journal.events))
+            prior = state.retired.get(attempt_id)
+            if prior is not None:
+                _retirement_require({key: value for key, value in prior.items() if key != "at"} ==
+                                    {key: value for key, value in record.items() if key != "at"})
+            records.append((record, prior is not None))
+        _retirement_require(isinstance(request.get("params"), dict) and type(request["params"].get("chapter")) is int
+                            and request["params"] in [{"chapter": record["chapter"]} for record, _ in records])
+        if execute:
+            for record, exists in records:
+                if not exists:
+                    _write_record(state.directory, f"{state.target_hash}-{record['chapter']}-{record['attempt_id']}.retired.json", record)
+        return {"ok": True, "executed": execute, "kind": "user_authorized_retirement", "attempts": len(records),
+                "already_retired": sum(exists for _, exists in records), "remote_accessed": False,
+                "platform_success_claimed": False, "submission_performed": False}
+
+
 class _TargetState:
     """Keep unresolved writes visible across book copies and new plan IDs.
 
@@ -165,6 +536,7 @@ class _TargetState:
     def __init__(self, directory, manifest, guard):
         self.directory, self.guard = directory, guard
         self.target_hash = _hash(_target(manifest))
+        self.platform = manifest["platform"]
 
     def __call__(self):
         self.guard()
@@ -174,24 +546,51 @@ class _TargetState:
         prefix = self.target_hash + "-" + str(chapter) + "-"
         names = os.listdir(self.directory.path if os.name == "nt" else self.directory.fd)
         names = [name for name in names if name.startswith(prefix)]
-        if len(names) > MAX_EVENTS * 2:
+        if len(names) > MAX_EVENTS * 3:
             api.fail("platform_draft_journal_limit", "Too many target-level draft attempts")
-        intents, resolved = {}, {}
+        intents, resolved, retired = {}, {}, {}
         for name in names:
-            match = re.fullmatch(re.escape(prefix) + r"([0-9a-f]{32})\.(intent|resolved)\.json", name)
+            match = re.fullmatch(re.escape(prefix) + r"([0-9a-f]{32})\.(intent|resolved|retired)\.json", name)
             if not match:
                 api.fail("platform_draft_journal_invalid", "Invalid target-level draft record name")
             record = _read_record(self.directory, name)
+            if match[2] == "retired":
+                retired[match[1]] = record
+                continue
             fields = {"schema", "target_sha256", "chapter", "attempt_id", "content_sha256", "at"}
             if match[2] == "resolved":
                 fields.add("remote_id")
+            extended = isinstance(record, dict) and record.get("schema") == 2
+            equivalent = extended and match[2] == "resolved" and "canonical_sha256" in record
+            if extended:
+                fields |= ATTEMPT_FIELDS | SCOPE_FIELDS
+                if match[2] == "resolved":
+                    fields |= {"observed_sha256", "title_matches", "body_matches", "rendered_body_matches"}
+            if equivalent:
+                fields |= EQUIVALENCE_FIELDS | {"observed_sha256", "title_matches", "body_matches",
+                                                "book_id", "plan_id", "manifest_sha256"}
+                if "body_encoding" in record:
+                    fields |= ENCODING_FIELDS
             if (not isinstance(record, dict) or set(record) != fields or
-                    type(record["schema"]) is not int or record["schema"] != 1 or
+                    type(record["schema"]) is not int or record["schema"] != (2 if extended else 1) or
                     record["target_sha256"] != self.target_hash or type(record["chapter"]) is not int or
                     record["chapter"] != chapter or record["attempt_id"] != match[1] or
                     not isinstance(record["content_sha256"], str) or
                     not re.fullmatch(r"[0-9a-f]{64}", record["content_sha256"])):
                 api.fail("platform_draft_journal_invalid", "Invalid target-level draft record")
+            if extended and (not _valid_attempt(record, self.platform)
+                    or not _valid_scope({name: record[name] for name in SCOPE_FIELDS})):
+                api.fail("platform_draft_journal_invalid", "Invalid target-level attempt metadata")
+            if equivalent and (self.platform != "fanqie" or not _valid_equivalence(record)
+                    or not _retirement_hex(record["observed_sha256"])
+                    or not _retirement_hex(record["manifest_sha256"]) or not _retirement_hex(record["plan_id"], 32)
+                    or not isinstance(record["book_id"], str) or not 0 < len(record["book_id"]) <= 200):
+                api.fail("platform_draft_journal_invalid", "Invalid target-level platform equivalence")
+            if extended and match[2] == "resolved" and not equivalent and (
+                    record["observed_sha256"] != record["content_sha256"] or record["title_matches"] is not True
+                    or record["body_matches"] is not True or record["rendered_body_matches"] is not True
+                    or record["encoded_content_sha256"] != record["content_sha256"]):
+                api.fail("platform_draft_journal_invalid", "Invalid exact target-level resolution")
             try:
                 stamp = datetime.fromisoformat(record["at"])
                 if stamp.tzinfo is None or stamp.utcoffset().total_seconds() != 0:
@@ -206,28 +605,67 @@ class _TargetState:
         if any(key not in intents or intents[key]["content_sha256"] != value["content_sha256"]
                for key, value in resolved.items()):
             api.fail("platform_draft_journal_invalid", "Resolved target attempt has no matching intent")
-        return intents, resolved
+        for key, record in retired.items():
+            _validate_retirement(record, self.target_hash, chapter, key, intents, resolved)
+        self.all_intents, self.all_resolved, self.retired = intents, resolved, retired
+        return ({key: value for key, value in intents.items() if key not in retired},
+                {key: value for key, value in resolved.items() if key not in retired})
 
-    def intent(self, chapter, attempt_id, frozen):
+    def retired_events(self, chapter, book_id, plan_id):
+        self.attempts(chapter)
+        return {event["event_sha256"] for record in self.retired.values()
+                if record["book_id"] == book_id and record["plan_id"] == plan_id
+                for event in record["derived_unknowns"]}
+
+    def intent(self, chapter, attempt_id, frozen, *, comparison_policy="strict", body_encoding="verbatim", scope=None):
         self.guard()
         record = {"schema": 1, "target_sha256": self.target_hash, "chapter": chapter,
                   "attempt_id": attempt_id, "content_sha256": _hash(_content(frozen)), "at": _now()}
+        evidence = _attempt_evidence(frozen, comparison_policy, body_encoding, self.platform)
+        if comparison_policy != "strict" or body_encoding != "verbatim":
+            if not _valid_scope(scope):
+                api.fail("platform_draft_journal_invalid", "Attempt metadata requires an authorized frozen batch")
+            record.update(schema=2, **scope, **evidence)
         try:
             _write_record(self.directory, f"{self.target_hash}-{chapter}-{attempt_id}.intent.json", record)
         except Exception:
             api.fail("platform_draft_journal_write_failed", "Could not persist the target-level sending intent")
 
-    def resolve(self, chapter, observed):
+    def resolve(self, chapter, observed, *, frozen=None, comparison_policy="strict", body_encoding="verbatim", scope=None):
         intents, resolved = self.attempts(chapter)
-        content_hash = _hash(_content(observed))
+        frozen = observed if frozen is None else frozen
+        encoded = _encoded_content(frozen, body_encoding, self.platform)
+        rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, self.platform)
+        if not rendered_exact and not terminal_equivalent:
+            return False
+        equivalent = _content(frozen) != _content(observed)
+        content_hash = _hash(_content(frozen))
         # Do not settle a different, potentially still in-flight version merely
         # because this new plan happens to match the currently visible chapter.
         if any(item["content_sha256"] != content_hash for key, item in intents.items() if key not in resolved):
             return False
+        if any(item["schema"] == 2 and {name: item[name] for name in SCOPE_FIELDS} != scope
+               for key, item in intents.items() if key not in resolved):
+            return False
+        if any(item["schema"] == 2 and not _valid_attempt(item, self.platform, frozen)
+               for key, item in intents.items() if key not in resolved):
+            return False
+        if (equivalent or comparison_policy != "strict" or body_encoding != "verbatim") and not _valid_scope(scope):
+            api.fail("platform_draft_journal_invalid", "Platform equivalence requires an authorized frozen batch")
         for key, intent in intents.items():
             if key in resolved:
                 continue
             record = {**intent, "at": _now(), "remote_id": observed["remote_id"]}
+            if intent["schema"] == 2 or comparison_policy != "strict" or body_encoding != "verbatim":
+                if not _valid_scope(scope):
+                    api.fail("platform_draft_journal_invalid", "Resolution metadata requires an authorized frozen batch")
+                record.update(schema=2, **scope, **_attempt_evidence(frozen, comparison_policy, body_encoding, self.platform),
+                              observed_sha256=_hash(_content(observed)), title_matches=True,
+                              body_matches=not equivalent, rendered_body_matches=rendered_exact)
+            if equivalent:
+                record.update(schema=2, observed_sha256=_hash(_content(observed)), title_matches=True,
+                              body_matches=False, **scope,
+                              **_equivalence_evidence(frozen, encoded, observed, comparison_policy, body_encoding))
             try:
                 _write_record(self.directory, f"{self.target_hash}-{chapter}-{key}.resolved.json", record)
             except Exception:
@@ -385,16 +823,24 @@ class _Journal:
         fields = {"schema", "book_id", "plan_id", "manifest_sha256", "target_sha256", "sequence",
                   "previous_sha256", "at", "event", "chapter", "attempt_id", "remote_id",
                   "content_sha256", "observed_sha256", "title_matches", "body_matches", "reason"}
+        extended = isinstance(record, dict) and record.get("schema") == 2
+        equivalent = extended and record.get("event") in EQUIVALENT
+        if equivalent:
+            fields |= EQUIVALENCE_FIELDS
+            if "body_encoding" in record:
+                fields |= ENCODING_FIELDS
+        elif extended:
+            fields |= ATTEMPT_FIELDS | {"rendered_body_matches"}
         if not isinstance(record, dict) or set(record) != fields:
             raise ValueError("Unexpected fields")
         chapter = record["chapter"]
-        if (type(record["schema"]) is not int or record["schema"] != 1 or
+        if (type(record["schema"]) is not int or record["schema"] != (2 if extended else 1) or
                 record["book_id"] != self.book.meta("id") or record["plan_id"] != self.plan_id or
                 record["manifest_sha256"] != self.fingerprint or
                 record["target_sha256"] != _hash(_target(self.manifest)) or
                 type(record["sequence"]) is not int or record["sequence"] != len(self.events) + 1 or
                 record["previous_sha256"] != self.last_hash or type(chapter) is not int or chapter not in self.chapters or
-                record["event"] not in EVENTS or
+                record["event"] not in EVENTS or (record["event"] in EQUIVALENT and not equivalent) or
                 not isinstance(record["attempt_id"], str) or not re.fullmatch(r"[0-9a-f]{32}", record["attempt_id"]) or
                 record["content_sha256"] != _hash(_content(self.chapters[chapter]))):
             raise ValueError("Invalid event identity")
@@ -413,8 +859,23 @@ class _Journal:
                 record["observed_sha256"] != record["content_sha256"] or
                 record["title_matches"] is not True or record["body_matches"] is not True):
             raise ValueError("A successful observation requires matching content")
+        if extended and "body_encoding" in record and (not _valid_attempt(record, self.manifest["platform"], self.chapters[chapter])
+                or (record["observed_sha256"] is None and record["rendered_body_matches"] is not None)
+                or (record["observed_sha256"] is not None and type(record["rendered_body_matches"]) is not bool)
+                or (record["observed_sha256"] is not None and record["title_matches"] is True
+                    and record["rendered_body_matches"] != (record["observed_sha256"] == record["encoded_content_sha256"]))):
+            raise ValueError("Invalid attempt rendering metadata")
+        for previous in reversed(self.events):
+            if previous["attempt_id"] == record["attempt_id"] and previous["chapter"] == chapter:
+                if _record_attempt_metadata(previous) != _record_attempt_metadata(record):
+                    raise ValueError("Attempt metadata changed during one attempt")
+                break
+        if equivalent and (self.manifest["platform"] != "fanqie" or record["remote_id"] is None
+                or record["observed_sha256"] is None or not _valid_equivalence(record, self.chapters[chapter])):
+            raise ValueError("Platform equivalence requires explicit rendering or terminal LF evidence")
 
-    def append(self, chapter, event, attempt_id=None, remote_id=None, observed=None, reason=None):
+    def append(self, chapter, event, attempt_id=None, remote_id=None, observed=None, reason=None,
+               comparison_policy="strict", body_encoding="verbatim"):
         if self.directory is None:
             api.fail("platform_draft_journal_invalid", "No writable platform draft journal is open")
         if len(self.events) >= MAX_EVENTS:
@@ -430,6 +891,16 @@ class _Journal:
                   "title_matches": _normal(observed["title"]) == _normal(frozen["title"]) if observed is not None else None,
                   "body_matches": _normal(observed["body"]) == _normal(frozen["body"]) if observed is not None else None,
                   "reason": reason}
+        if comparison_policy != "strict" or body_encoding != "verbatim":
+            encoded = _encoded_content(frozen, body_encoding, self.manifest["platform"])
+            record.update(schema=2, **_attempt_evidence(frozen, comparison_policy, body_encoding, self.manifest["platform"]),
+                          rendered_body_matches=_normal(observed["body"]) == _normal(encoded["body"]) if observed is not None else None)
+        if event in EQUIVALENT:
+            encoded = _encoded_content(frozen, body_encoding, self.manifest["platform"])
+            accepted = observed is not None and any(_comparison(encoded, observed, comparison_policy, self.manifest["platform"]))
+            if not accepted or _content(frozen) == _content(observed):
+                api.fail("platform_draft_journal_invalid", "Platform equivalence was not authorized or observed")
+            record.update(schema=2, **_equivalence_evidence(frozen, encoded, observed, comparison_policy, body_encoding))
         self._validate(record)
         try:
             self._write(record)
@@ -445,8 +916,10 @@ class _Journal:
     def latest(self, chapter):
         return next((item for item in reversed(self.events) if item["chapter"] == chapter), None)
 
-    def may_have_remote(self, chapter):
-        return any(item["chapter"] == chapter and item["event"] in ("sending", "unknown", "saved", "reconciled")
+    def may_have_remote(self, chapter, retired_events=()):
+        return any(item["chapter"] == chapter and item["event"] in ({"sending", "unknown"} | ACCEPTED)
+                   and not (item["event"] == "unknown" and item["reason"] == "previous_attempt_not_found"
+                            and _hash(item) in retired_events)
                    for item in self.events)
 
     def recover(self):
@@ -454,7 +927,9 @@ class _Journal:
             previous = self.latest(chapter)
             if previous is not None and previous["event"] == "sending":
                 self.append(chapter, "unknown", attempt_id=previous["attempt_id"],
-                            remote_id=previous["remote_id"], reason="interrupted_sending")
+                            remote_id=previous["remote_id"], reason="interrupted_sending",
+                            comparison_policy=previous.get("comparison_policy", "strict"),
+                            body_encoding=previous.get("body_encoding", "verbatim"))
 
 
 def _hash_bytes(data):
@@ -484,7 +959,8 @@ def _observation(raw, remote_id=None):
 
 
 def _packet(plan_id, manifest, plan_status, journal, *, preview=False, remote_accessed=False,
-            target_verified=False, source_checked=False, observed_chapters=()):
+            target_verified=False, source_checked=False, observed_chapters=(), comparison_policy="strict",
+            body_encoding="verbatim"):
     results = []
     for item in manifest["chapters"]:
         latest = journal.latest(item["chapter"])
@@ -492,25 +968,56 @@ def _packet(plan_id, manifest, plan_status, journal, *, preview=False, remote_ac
         if effective == "sending":
             effective = "unknown"
         observed_this_run = item["chapter"] in observed_chapters
+        equivalent = effective in EQUIVALENT
+        encoding = latest.get("body_encoding", "verbatim") if latest else body_encoding
+        encoded_hash = _hash(_content(_encoded_content(item, encoding, manifest["platform"])))
+        rendered_match = None
+        if latest is not None and latest["observed_sha256"] is not None:
+            if encoding == "verbatim":
+                rendered_match = latest["body_matches"]
+            elif latest["title_matches"] is True:
+                rendered_match = latest["observed_sha256"] == encoded_hash
+        accepted = observed_this_run and (effective in SUCCESS or (equivalent and
+            comparison_policy == latest["comparison_policy"] and body_encoding == latest.get("body_encoding", "verbatim")))
         results.append({"chapter": item["chapter"], "state": effective,
                         "remote_id": latest["remote_id"] if latest is not None else None,
                         "title_body_verified": observed_this_run and effective in SUCCESS,
                         "historical_title_body_match": effective in SUCCESS,
+                        "platform_equivalent": equivalent,
+                        "accepted_this_run": accepted,
+                        "comparison_policy": latest.get("comparison_policy", "strict") if latest else "strict",
+                        "body_encoding": encoding,
+                        "content_sha256": latest["content_sha256"] if latest else _hash(_content(item)),
+                        "source_content_sha256": latest["content_sha256"] if latest else _hash(_content(item)),
+                        "encoded_content_sha256": encoded_hash,
+                        "observed_sha256": latest["observed_sha256"] if latest else None,
+                        "rendered_body_matches": rendered_match,
+                        "rendered": accepted and encoding != "verbatim" and encoded_hash != _hash(_content(item)),
+                        "title_matches": latest["title_matches"] if latest else None,
+                        "body_matches": latest["body_matches"] if latest else None,
                         "observed_this_run": observed_this_run,
                         "observation_scope": "this_run" if observed_this_run else "recorded_history",
                         "last_observed_at": latest["at"] if latest is not None else None,
                         "reason": latest["reason"] if latest is not None else None,
                         "recovery_required": latest is not None and latest["event"] == "sending"})
     all_current = all(item["title_body_verified"] for item in results)
-    return {"ok": all_current, "id": plan_id,
+    all_accepted = all(item["accepted_this_run"] for item in results)
+    return {"ok": all_accepted, "id": plan_id,
             "scope": "platform_chapter_drafts_only", "platform": manifest["platform"],
             "account_id": manifest["account_id"], "remote_book_id": manifest["remote_book_id"],
             "book_title": manifest["book_title"], "plan_status": plan_status,
             "preview": preview, "remote_accessed": remote_accessed,
             "target_verified": target_verified, "source_check_performed": source_checked,
             "content_fields": ["title", "body"], "normalization": "crlf_cr_to_lf_v1",
+            "comparison_policy": comparison_policy,
+            "body_encoding": body_encoding,
             "author_note_included": False, "submission_performed": False,
             "all_chapters_verified_this_run": all_current,
+            "all_chapters_accepted_this_run": all_accepted,
+            "exact_verified_chapters": sum(item["title_body_verified"] for item in results),
+            "equivalent_chapters": sum(item["accepted_this_run"] and item["platform_equivalent"] for item in results),
+            "rendered_chapters": sum(item["rendered"] for item in results),
+            "accepted_chapters": sum(item["accepted_this_run"] for item in results),
             "historical_all_title_body_match": all(item["historical_title_body_match"] for item in results),
             "observation_scope": "recorded_history" if not remote_accessed else "this_run_and_recorded_history",
             "results": results, "history_events_total": len(journal.events),
@@ -522,22 +1029,37 @@ def status(book, plan_id):
     """Report recorded observations, without refreshing source or platform facts."""
     with _checked_plan(book, plan_id, check_source=False) as (manifest, fingerprint, plan_status):
         with _journal(book, plan_id, manifest, fingerprint) as journal:
-            result = _packet(plan_id, manifest, plan_status, journal)
+            latest = [journal.latest(item["chapter"]) for item in manifest["chapters"]]
+            policies = sorted({item.get("comparison_policy", "strict") for item in latest if item is not None})
+            encodings = sorted({item.get("body_encoding", "verbatim") for item in latest if item is not None})
+            result = _packet(plan_id, manifest, plan_status, journal,
+                             comparison_policy=policies[0] if len(policies) == 1 else "strict",
+                             body_encoding=encodings[0] if len(encodings) == 1 else "verbatim")
+            result.update(recorded_comparison_policies=policies, recorded_body_encodings=encodings)
             result["ok"] = True  # The read succeeded; remote facts were not refreshed.
             return result
 
 
-def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False, progress=None):
+def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False, progress=None,
+             comparison_policy="strict", body_encoding="verbatim"):
     """Execute only explicitly requested saves; injected adapters own browser I/O."""
     with _checked_plan(book, plan_id, check_source=not reconcile_only) as (manifest, fingerprint, plan_status):
+        _comparison_policy(comparison_policy, manifest["platform"])
+        encoded_chapters = {item["chapter"]: _encoded_content(item, body_encoding, manifest["platform"])
+                            for item in manifest["chapters"]}
         # Keep immutable in-memory content and never hold a creative transaction
         # or lock across target verification, login, save or remote readback.
         if not execute:
             with _journal(book, plan_id, manifest, fingerprint) as journal:
-                result = _packet(plan_id, manifest, plan_status, journal, preview=True, source_checked=not reconcile_only)
+                result = _packet(plan_id, manifest, plan_status, journal, preview=True, source_checked=not reconcile_only,
+                                 comparison_policy=comparison_policy, body_encoding=body_encoding)
                 result["ok"] = True
                 result["chapters"] = [{"chapter": item["chapter"], "title": item["title"],
-                                       "body_characters": item["body_characters"]} for item in manifest["chapters"]]
+                                       "body_characters": item["body_characters"],
+                                       "encoded_body_characters": len(encoded_chapters[item["chapter"]]["body"]),
+                                       "source_content_sha256": _hash(_content(item)),
+                                       "encoded_content_sha256": _hash(_content(encoded_chapters[item["chapter"]]))}
+                                      for item in manifest["chapters"]]
                 result["requested_mode"] = "reconcile_only" if reconcile_only else "save_draft"
                 return result
     if adapter is None:
@@ -547,11 +1069,25 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
         target_verified = False
         remote_accessed = False
         observed_chapters = set()
+        exact_chapters, equivalent_chapters = set(), set()
+        scope = {"book_id": book.meta("id"), "plan_id": plan_id, "manifest_sha256": fingerprint}
+
+        def append(chapter, event, **kwargs):
+            return journal.append(chapter, event, comparison_policy=comparison_policy, body_encoding=body_encoding, **kwargs)
+
+        def report(stage, chapter):
+            if progress is not None:
+                progress({"stage": stage, "chapter": chapter, "verified_chapters": len(exact_chapters),
+                          "equivalent_chapters": len(equivalent_chapters),
+                          "rendered_chapters": sum(_content(journal.chapters[number]) != _content(encoded_chapters[number])
+                                                   for number in exact_chapters | equivalent_chapters),
+                          "accepted_chapters": len(exact_chapters) + len(equivalent_chapters),
+                          "total_chapters": len(manifest["chapters"])})
+
         for frozen in manifest["chapters"]:
             chapter = frozen["chapter"]
-            if progress is not None:
-                progress({"stage": "chapter_started", "chapter": chapter,
-                          "verified_chapters": len(observed_chapters), "total_chapters": len(manifest["chapters"])})
+            encoded = encoded_chapters[chapter]
+            report("chapter_started", chapter)
             attempt_id = uuid.uuid4().hex
             sending = False
             remote_id = None
@@ -570,7 +1106,7 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                 if not isinstance(found, list):
                     api.fail("platform_draft_invalid_observation", "The complete remote draft list is required")
                 if len(found) > 1:
-                    journal.append(chapter, "conflict", attempt_id=attempt_id, reason="multiple_remote_drafts")
+                    append(chapter, "conflict", attempt_id=attempt_id, reason="multiple_remote_drafts")
                     break
                 if found:
                     listed = _observation(found[0])
@@ -581,26 +1117,29 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                     target_verified = True
                     observed = _observation(adapter.read_draft(remote_id), remote_id)
                     observed_chapters.add(chapter)
-                    if _content(observed) != _content(frozen):
-                        journal.append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
+                    rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, manifest["platform"])
+                    exact = _content(frozen) == _content(observed)
+                    if not rendered_exact and not terminal_equivalent:
+                        append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
                                        observed=observed, reason="remote_content_differs")
                         break
-                    if not guard.resolve(chapter, observed):
-                        journal.append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
+                    if not guard.resolve(chapter, observed, frozen=frozen, comparison_policy=comparison_policy,
+                                         body_encoding=body_encoding, scope=scope):
+                        append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
                                        observed=observed, reason="unresolved_previous_content")
                         break
-                    journal.append(chapter, "reconciled", attempt_id=attempt_id,
+                    append(chapter, "reconciled" if exact else "reconciled_equivalent", attempt_id=attempt_id,
                                    remote_id=remote_id, observed=observed)
-                    if progress is not None:
-                        progress({"stage": "chapter_verified", "chapter": chapter,
-                                  "verified_chapters": len(observed_chapters), "total_chapters": len(manifest["chapters"])})
+                    # The original-source match remains distinct from a rendered match.
+                    (exact_chapters if exact else equivalent_chapters).add(chapter)
+                    report("chapter_verified", chapter)
                     continue
                 target_attempts, _ = guard.attempts(chapter)
-                if journal.may_have_remote(chapter) or target_attempts:
-                    journal.append(chapter, "unknown", attempt_id=attempt_id, reason="previous_attempt_not_found")
+                if journal.may_have_remote(chapter, guard.retired_events(chapter, book.meta("id"), plan_id)) or target_attempts:
+                    append(chapter, "unknown", attempt_id=attempt_id, reason="previous_attempt_not_found")
                     break
                 if reconcile_only:
-                    journal.append(chapter, "not_found", attempt_id=attempt_id, reason="remote_draft_not_found")
+                    append(chapter, "not_found", attempt_id=attempt_id, reason="remote_draft_not_found")
                     break
                 guard()
                 target_verified = False
@@ -611,40 +1150,45 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                 with _checked_plan(book, plan_id) as (_, current_fingerprint, _):
                     if current_fingerprint != fingerprint:
                         api.fail("platform_draft_source_changed", "Publishing plan changed")
-                    guard.intent(chapter, attempt_id, frozen)
+                    guard.intent(chapter, attempt_id, frozen, comparison_policy=comparison_policy,
+                                 body_encoding=body_encoding, scope=scope)
                     sending = True
-                    journal.append(chapter, "sending", attempt_id=attempt_id)
+                    append(chapter, "sending", attempt_id=attempt_id)
                 guard()
-                remote_id = _identifier(adapter.create_draft(chapter, frozen["title"], frozen["body"]), "remote_id")
+                remote_id = _identifier(adapter.create_draft(chapter, encoded["title"], encoded["body"]), "remote_id")
                 guard()
                 target_verified = False
                 adapter.verify_target(**_target(manifest))
                 target_verified = True
                 observed = _observation(adapter.read_draft(remote_id), remote_id)
                 observed_chapters.add(chapter)
-                if _content(observed) != _content(frozen):
-                    journal.append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
+                rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, manifest["platform"])
+                exact = _content(frozen) == _content(observed)
+                if not rendered_exact and not terminal_equivalent:
+                    append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
                                    observed=observed, reason="saved_content_differs")
                     break
-                journal.append(chapter, "saved", attempt_id=attempt_id, remote_id=remote_id, observed=observed)
-                if not guard.resolve(chapter, observed):
+                append(chapter, "saved" if exact else "saved_equivalent", attempt_id=attempt_id,
+                               remote_id=remote_id, observed=observed)
+                if not guard.resolve(chapter, observed, frozen=frozen, comparison_policy=comparison_policy,
+                                     body_encoding=body_encoding, scope=scope):
                     api.fail("platform_draft_unresolved_previous_content", "A previous content version remains unresolved")
-                if progress is not None:
-                    progress({"stage": "chapter_verified", "chapter": chapter,
-                              "verified_chapters": len(observed_chapters), "total_chapters": len(manifest["chapters"])})
+                (exact_chapters if exact else equivalent_chapters).add(chapter)
+                report("chapter_verified", chapter)
             except Exception as error:
                 if _error_code(error).startswith("platform_draft_journal"):
                     raise
                 # A write may have reached the platform even if create() raised.
                 # Record only a safe error code; an interrupted sending event is
                 # itself sufficient to prohibit blind replay on the next run.
-                journal.append(chapter, "unknown" if sending else "blocked", attempt_id=attempt_id,
+                append(chapter, "unknown" if sending else "blocked", attempt_id=attempt_id,
                                remote_id=remote_id, reason=_error_code(error))
                 break
         with _checked_plan(book, plan_id, check_source=False) as (_, _, current_status):
             current_reasons, _ = api.publish._source_comparison(book, manifest)
         result = _packet(plan_id, manifest, current_status, journal, remote_accessed=remote_accessed,
-                         target_verified=target_verified, source_checked=True, observed_chapters=observed_chapters)
+                         target_verified=target_verified, source_checked=True, observed_chapters=observed_chapters,
+                         comparison_policy=comparison_policy, body_encoding=body_encoding)
         result["source_matches_current"] = not current_reasons
         result["local_version_changed"] = bool(current_reasons)
         result["execution_mode"] = getattr(adapter, "execution_mode", "playwright")
@@ -740,6 +1284,7 @@ def _history_summary(result):
     states = [item["state"] for item in result["results"]]
     return {"observation_scope": "recorded_history", "remote_accessed": False,
             "total_chapters": len(states), "matched_chapters": sum(state in SUCCESS for state in states),
+            "equivalent_chapters": sum(state in EQUIVALENT for state in states),
             "unknown_chapters": states.count("unknown"),
             "blocked_chapters": sum(state in ("blocked", "conflict", "not_found") for state in states),
             "pending_chapters": states.count("pending"), "history_events_total": result["history_events_total"]}
@@ -750,7 +1295,8 @@ def _job_packet(job):
     # returned to HTTP clients; no raw exception/profile/content is retained.
     fields = ("id", "book_id", "plan_id", "platform", "account_id", "remote_book_id", "profile_id", "mode",
               "profile_sha256", "execution_mode", "backend", "state", "stage", "done", "created_at", "updated_at", "finished_at",
-              "total_chapters", "verified_chapters", "current_chapter", "error", "result")
+              "total_chapters", "verified_chapters", "accepted_chapters", "equivalent_chapters", "comparison_policy",
+              "body_encoding", "rendered_chapters", "current_chapter", "error", "result")
     return {"ok": True, **{key: json.loads(json.dumps(job[key])) for key in fields if key in job},
             "scope": "platform_chapter_drafts_only", "submission_performed": False,
             "job_survives_process_exit": False, "durable_attempt_journal": True}
@@ -894,15 +1440,18 @@ def workbench_bind(root, account_id, book_management_url, start, end, *, expecte
                 _WORKBENCH_BINDINGS.pop(key, None)
 
 
-def _preflight(root, plan_id, profile_id, expected_book_id=None, reconcile_only=False):
+def _preflight(root, plan_id, profile_id, expected_book_id=None, reconcile_only=False, comparison_policy="strict",
+               body_encoding="verbatim"):
     if type(reconcile_only) is not bool:
         api.fail("invalid_input", "reconcile_only must be a boolean")
     with _workbench_book(root, expected_book_id) as book:
-        result = run_plan(book, plan_id, reconcile_only=reconcile_only)
+        result = run_plan(book, plan_id, reconcile_only=reconcile_only, comparison_policy=comparison_policy,
+                          body_encoding=body_encoding)
         with _checked_plan(book, plan_id, check_source=not reconcile_only) as (manifest, fingerprint, _):
             binding = {"book_id": book.meta("id"), "plan_id": plan_id,
                        "manifest_sha256": fingerprint, "target_sha256": _hash(_target(manifest)),
-                       "mode": "reconcile_only" if reconcile_only else "save_draft"}
+                       "mode": "reconcile_only" if reconcile_only else "save_draft", "comparison_policy": comparison_policy,
+                       "body_encoding": body_encoding}
         root = book.root
     profile = None
     fingerprint = None
@@ -925,7 +1474,7 @@ def _runtime_blockers(profile, runtime):
     if profile is not None and profile.get("execution_mode") == "host_assisted_cua":
         if profile.get("platform") == "fanqie" and profile.get("readback") is None:
             blockers.append("platform_browser_readback_required")
-        if runtime.get("worker", {}).get("attached") is not True:
+        if runtime.get("worker", {}).get("ready") is not True:
             blockers.append("platform_chrome_worker_unavailable")
         return blockers
     if runtime.get("playwright_installed") is False:
@@ -948,19 +1497,42 @@ def _execution_runtime(root, preview, profile, binding):
     return _browser_runtime()
 
 
-def workbench_preview(root, plan_id, profile_id=None, *, expected_book_id=None, reconcile_only=False):
+def _automatic_connection(profile, blockers):
+    """Advertise a local launcher separately from a healthy browser worker."""
+    if (profile is None or profile.get("execution_mode") != "host_assisted_cua" or
+            blockers != ["platform_chrome_worker_unavailable"]):
+        return {"available": False, "uses_codex_quota": True}
+    if profile.get("platform") != "fanqie":
+        return {"available": False, "uses_codex_quota": True,
+                "reason": "platform_chrome_worker_unsupported_platform"}
+    launcher = getattr(api, "chrome_worker", None)
+    if launcher is None:
+        return {"available": False, "uses_codex_quota": True,
+                "reason": "platform_chrome_connector_unavailable"}
+    result = launcher.availability()
+    return {"available": result.get("available") is True, "uses_codex_quota": True,
+            **({"reason": result["reason"]} if isinstance(result.get("reason"), str) else {})}
+
+
+def workbench_preview(root, plan_id, profile_id=None, *, expected_book_id=None, reconcile_only=False,
+                      comparison_policy="strict", body_encoding="verbatim"):
     """Check frozen local sources and profile eligibility; never opens a browser."""
-    root, preview, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id, reconcile_only)
+    root, preview, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id, reconcile_only,
+                                               comparison_policy, body_encoding)
     runtime = _execution_runtime(root, preview, profile, binding)
     blockers = []
     if profile_id is None:
         blockers.append("profile_required")
     blockers.extend(_runtime_blockers(profile, runtime))
+    connection = _automatic_connection(profile, blockers)
     return {"ok": True, **binding, "preview": preview, "browser_runtime": runtime,
             "browser_channel": profile.get("browser_channel", "chromium") if profile is not None else None,
             "execution_mode": profile.get("execution_mode", "playwright") if profile is not None else None,
             "can_start": not blockers, "blockers": blockers,
             "preview_token": _preview_token(binding) if not blockers else None,
+            "connection_ready": not blockers,
+            "can_connect": connection["available"], "automatic_connection": connection,
+            "connect_token": _preview_token(binding) if connection["available"] else None,
             "authorization_scope": "one_frozen_batch_drafts_only", "remote_accessed": False,
             "platform_acceptance_verified": False, "submission_performed": False}
 
@@ -985,6 +1557,9 @@ def _job_progress(job_id, event):
             changes["current_chapter"] = event["chapter"]
         if stage == "chapter_verified" and type(event.get("verified_chapters")) is int:
             changes["verified_chapters"] = event["verified_chapters"]
+        for name in ("accepted_chapters", "equivalent_chapters", "rendered_chapters"):
+            if type(event.get(name)) is int:
+                changes[name] = event[name]
     _update_job(job_id, **changes)
 
 
@@ -992,7 +1567,9 @@ def _safe_job_result(result):
     fields = ("id", "platform", "account_id", "remote_book_id", "plan_status", "remote_accessed",
               "target_verified", "source_matches_current", "local_version_changed", "all_chapters_verified_this_run",
               "historical_all_title_body_match", "observation_scope", "results", "history_events_total",
-              "execution_mode", "backend", "remote_evidence_source")
+              "execution_mode", "backend", "remote_evidence_source", "comparison_policy",
+              "all_chapters_accepted_this_run", "exact_verified_chapters", "equivalent_chapters", "accepted_chapters",
+              "body_encoding", "rendered_chapters")
     return {key: result[key] for key in fields if key in result}
 
 
@@ -1004,9 +1581,11 @@ def _finish_job(job_id, result=None, error=None):
             verified = max(verified, _WORKBENCH_JOBS[job_id]["verified_chapters"])
     if result and result.get("all_chapters_verified_this_run"):
         state = "succeeded"
+    elif result and result.get("all_chapters_accepted_this_run"):
+        state = "succeeded_equivalent"
     elif "unknown" in states:
         state = "unknown"
-    elif verified:
+    elif verified or (result and result.get("accepted_chapters", 0)):
         state = "partial_failure"
     else:
         state = "failed"
@@ -1014,19 +1593,66 @@ def _finish_job(job_id, result=None, error=None):
     if result is not None:
         changes["result"] = _safe_job_result(result)
     changes["verified_chapters"] = verified
+    if result is not None:
+        changes["accepted_chapters"] = result.get("accepted_chapters", verified)
+        changes["equivalent_chapters"] = result.get("equivalent_chapters", 0)
+        changes["rendered_chapters"] = result.get("rendered_chapters", 0)
     _update_job(job_id, **changes)
 
 
 def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
     with _WORKBENCH_LOCK:
         root = _WORKBENCH_JOBS[job_id]["_root"]
+        allow_auto_connect = _WORKBENCH_JOBS[job_id].get("_auto_connect") is True
     _update_job(job_id, state="running", stage="local_preflight")
+    connected_automatically = False
+    owned_worker_id = None
+    result = None
+    failure = None
     try:
         # Recheck after thread dispatch, before constructing/opening a browser.
         reconcile_only = binding["mode"] == "reconcile_only"
-        _, preview, profile, current = _preflight(root, binding["plan_id"], binding["profile_id"], binding["book_id"], reconcile_only)
+        policy = binding["comparison_policy"]
+        encoding = binding["body_encoding"]
+        _, preview, profile, current = _preflight(root, binding["plan_id"], binding["profile_id"], binding["book_id"],
+                                                  reconcile_only, policy, encoding)
         if current != binding:
             api.fail("platform_draft_preview_changed", "冻结清单或平台配置已变化；请重新预览。")
+        blockers = _runtime_blockers(profile, _execution_runtime(root, preview, profile, current))
+        if blockers:
+            if not allow_auto_connect or not _automatic_connection(profile, blockers)["available"]:
+                api.fail(blockers[0], "Chrome 执行连接不可用，请核对连接状态。")
+            _update_job(job_id, stage="connecting_chrome")
+            connected_automatically = True
+            connection = api.chrome_worker.start(root, binding["plan_id"], binding["profile_id"],
+                                                 expected_book_id=binding["book_id"], comparison_policy=policy, body_encoding=encoding)
+            owned_worker_id = connection.get("owned_worker_id")
+            connect_seconds = connection.get("connect_timeout_seconds", 60)
+            if type(connect_seconds) is not int or not 1 <= connect_seconds <= 120:
+                api.fail("platform_chrome_connection_failed", "自动连接期限无效，未启动平台保存。")
+            deadline = time.monotonic() + connect_seconds + 15
+            connection_stage = "connecting_chrome"
+            while True:
+                state = api.chrome_worker.status(root, binding["plan_id"], binding["profile_id"],
+                                                  expected_book_id=binding["book_id"], comparison_policy=policy, body_encoding=encoding)
+                if state.get("ready") is True:
+                    break
+                if state.get("state") in ("failed", "closed", "stopped", "disconnected", "stopping"):
+                    api.fail(state.get("error") or "platform_chrome_connection_failed", "自动连接 Chrome 未完成。")
+                if time.monotonic() >= deadline:
+                    api.fail("platform_chrome_connection_timeout", "自动连接 Chrome 超时，未启动平台保存。")
+                next_stage = ("waiting_for_chrome" if state.get("worker_phase") == "waiting_for_chrome"
+                              else "connecting_chrome")
+                if next_stage != connection_stage:
+                    _update_job(job_id, stage=next_stage)
+                    connection_stage = next_stage
+                time.sleep(0.2)
+            # Connecting runs outside book transactions. Never use the earlier
+            # preview if the author edited the source or binding meanwhile.
+            _, preview, profile, current = _preflight(root, binding["plan_id"], binding["profile_id"],
+                                                       binding["book_id"], reconcile_only, policy, encoding)
+            if current != binding:
+                api.fail("platform_draft_preview_changed", "连接期间正式稿或配置已变化，请重新预览。")
         callback = lambda event: _job_progress(job_id, event)
         with _workbench_book(root, binding["book_id"]) as book:
             if profile.get("execution_mode") == "host_assisted_cua":
@@ -1037,8 +1663,7 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
                     login_timeout_ms=login_timeout_ms, progress_callback=callback)
             with context as adapter:
                 result = run_plan(book, binding["plan_id"], adapter, execute=True,
-                                  reconcile_only=reconcile_only, progress=callback)
-        _finish_job(job_id, result)
+                                  reconcile_only=reconcile_only, progress=callback, comparison_policy=policy, body_encoding=encoding)
     except BaseException as error:
         # Durable intents remain the source of truth even if the worker was
         # interrupted after sending. Status is local-only and never retries.
@@ -1048,21 +1673,45 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
                 result = status(book, binding["plan_id"])
         except BaseException:
             pass
-        _finish_job(job_id, result, _error_code(error))
+        failure = _error_code(error)
+    finally:
+        if connected_automatically and owned_worker_id is not None:
+            try:
+                _update_job(job_id, stage="closing_chrome")
+                api.chrome_worker.disconnect(root, binding["plan_id"], binding["profile_id"],
+                    expected_book_id=binding["book_id"],
+                    owned_worker_id=owned_worker_id,
+                    comparison_policy=binding["comparison_policy"],
+                    body_encoding=binding["body_encoding"],
+                    # The result is recorded locally. Leave the author's
+                    # original Chrome pages, not an extra preview tab.
+                    keep_readback=False)
+            except Exception as error:
+                # Preserve the durable result, but expose cleanup failures and
+                # always let polling reach a terminal state. Never retry writes.
+                if failure is None:
+                    failure = _error_code(error)
+    # The draft result can finish while owned-worker cleanup remains pending.
+    # The controller keeps that connection unavailable until its stop completes.
+    _finish_job(job_id, result, failure)
 
 
 def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_profile_sha256,
-                    preview_token, execute=False, timeout_ms=15000, login_timeout_ms=600000, reconcile_only=False):
+                    preview_token, execute=False, timeout_ms=15000, login_timeout_ms=600000, reconcile_only=False,
+                    auto_connect=False, comparison_policy="strict", body_encoding="verbatim"):
     """Start one explicitly authorized frozen batch; repeat clicks reuse jobs."""
     if execute is not True:
         api.fail("platform_draft_execute_required", "保存平台草稿需要明确点击保存整批草稿。")
+    if type(auto_connect) is not bool:
+        api.fail("invalid_input", "自动连接参数必须是布尔值。")
     if not isinstance(expected_book_id, str) or not isinstance(expected_profile_sha256, str):
         api.fail("platform_draft_preview_required", "请先完成本地预览并核对作品与配置。")
     api.integer(timeout_ms, "timeout_ms", 1)
     api.integer(login_timeout_ms, "login_timeout_ms", 1)
     if timeout_ms > 300000 or login_timeout_ms > 3600000:
         api.fail("invalid_input", "Browser timeout exceeds the supported limit")
-    root, preview, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id, reconcile_only)
+    root, preview, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id, reconcile_only,
+                                               comparison_policy, body_encoding)
     if binding["profile_sha256"] != expected_profile_sha256:
         api.fail("platform_draft_profile_changed", "平台配置已变化；请重新预览。")
     try:
@@ -1075,7 +1724,7 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
     if not valid:
         api.fail("platform_draft_preview_required", "预览已失效或目标发生改变；请重新预览并核对。")
     blockers = _runtime_blockers(profile, _execution_runtime(root, preview, profile, binding))
-    if blockers:
+    if blockers and (not auto_connect or not _automatic_connection(profile, blockers)["available"]):
         api.fail(blockers[0], "所选执行端尚未连接或本地依赖不可用；请完成连接后重新预览。")
     with _WORKBENCH_LOCK:
         if any((other[0] == str(root) and other[1] == binding["book_id"]) or value == binding["target_sha256"]
@@ -1084,7 +1733,9 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
         for job in _WORKBENCH_JOBS.values():
             if (not job["done"] and job["_target_sha256"] == binding["target_sha256"]):
                 if (job["_root"] == str(root) and job["book_id"] == binding["book_id"] and job["plan_id"] == plan_id and
-                        job["mode"] == binding["mode"] and job["profile_sha256"] == binding["profile_sha256"]):
+                        job["mode"] == binding["mode"] and job["profile_sha256"] == binding["profile_sha256"]
+                        and job["comparison_policy"] == binding["comparison_policy"]
+                        and job["body_encoding"] == binding["body_encoding"]):
                     return {**_job_packet(job), "reused": True}
                 api.fail("platform_draft_busy", "该平台作品已有草稿任务正在运行；请等待原任务结束。")
         while len(_WORKBENCH_JOBS) >= MAX_WORKBENCH_JOBS:
@@ -1097,10 +1748,14 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
                "platform": preview["platform"], "account_id": preview["account_id"],
                "remote_book_id": preview["remote_book_id"], "profile_id": profile_id,
                "profile_sha256": binding["profile_sha256"], "mode": binding["mode"], "state": "running", "stage": "queued",
+               "comparison_policy": binding["comparison_policy"],
+               "body_encoding": binding["body_encoding"],
                "execution_mode": profile.get("execution_mode", "playwright"), "backend": profile.get("execution_mode", "playwright"),
                "done": False, "created_at": now, "updated_at": now, "finished_at": None,
-               "total_chapters": len(preview["results"]), "verified_chapters": 0, "current_chapter": None,
-               "error": None, "result": None, "_root": str(root), "_target_sha256": binding["target_sha256"]}
+               "total_chapters": len(preview["results"]), "verified_chapters": 0, "accepted_chapters": 0,
+               "equivalent_chapters": 0, "rendered_chapters": 0, "current_chapter": None,
+               "error": None, "result": None, "_root": str(root), "_target_sha256": binding["target_sha256"],
+               "_auto_connect": auto_connect}
         _WORKBENCH_JOBS[job_id] = job
         worker = threading.Thread(target=_workbench_worker, args=(job_id, binding, timeout_ms, login_timeout_ms),
                                   name="story-platform-draft-" + job_id[:8], daemon=True)
@@ -1130,6 +1785,10 @@ def register_parser(sub, command):
     parser.add_argument("--profile", help="Required with --execute; local browser profile JSON never copied into the journal")
     parser.add_argument("--execute", action="store_true", help="Allow browser access; omission is a local preview")
     parser.add_argument("--reconcile-only", action="store_true", help="With --execute, read and reconcile only; never creates")
+    parser.add_argument("--comparison-policy", choices=sorted(COMPARISON_POLICIES), default="strict",
+                        help="Explicit policy for this frozen batch; strict is the default")
+    parser.add_argument("--body-encoding", choices=sorted(BODY_ENCODINGS), default="verbatim",
+                        help="Explicit execution-layer paragraph rendering; frozen text is preserved")
     parser.add_argument("--timeout-ms", type=int, default=15000)
     parser.add_argument("--login-timeout-ms", type=int, default=180000)
     parser = command("publish-draft-status", "Read recorded platform draft observations without contacting a platform")
@@ -1141,12 +1800,15 @@ def run(book, args):
         return status(book, args.id)
     if args.command != "publish-draft-run":
         raise AssertionError(args.command)
+    policy = getattr(args, "comparison_policy", "strict")
+    encoding = getattr(args, "body_encoding", "verbatim")
     if not args.execute:
-        return run_plan(book, args.id, execute=False, reconcile_only=args.reconcile_only)
+        return run_plan(book, args.id, execute=False, reconcile_only=args.reconcile_only,
+                        comparison_policy=policy, body_encoding=encoding)
     if not args.profile:
         api.fail("invalid_input", "--execute requires --profile with a local browser profile JSON")
     # Preflight must complete before BrowserAdapter.__enter__ can launch/login.
-    run_plan(book, args.id, execute=False, reconcile_only=args.reconcile_only)
+    run_plan(book, args.id, execute=False, reconcile_only=args.reconcile_only, comparison_policy=policy, body_encoding=encoding)
     api.integer(args.timeout_ms, "timeout_ms", 1)
     api.integer(args.login_timeout_ms, "login_timeout_ms", 1)
     profile = api.read_json(args.profile)
@@ -1154,10 +1816,13 @@ def run(book, args):
         saved = api.safe_path(book.root, PROFILE_DIRECTORY + "/" + Path(args.profile).name)
         if Path(args.profile).expanduser().absolute() != saved:
             api.fail("platform_draft_invalid_profile_path", "宿主模式只使用本书已保存的平台配置。")
-        binding, actual_profile = api.platform_chrome_bridge._binding(book, args.id, saved.name)
+        binding, actual_profile = api.platform_chrome_bridge._binding(book, args.id, saved.name,
+                                                                    comparison_policy=policy, body_encoding=encoding)
         with api.platform_chrome_bridge.HostAdapter(book.root, binding, actual_profile) as adapter:
-            return run_plan(book, args.id, adapter, execute=True, reconcile_only=args.reconcile_only)
+            return run_plan(book, args.id, adapter, execute=True, reconcile_only=args.reconcile_only,
+                            comparison_policy=policy, body_encoding=encoding)
     profile = {key: value for key, value in profile.items() if key != "execution_mode"}
     with api.platform_browser.BrowserAdapter(profile, timeout_ms=args.timeout_ms,
                                              login_timeout_ms=args.login_timeout_ms) as adapter:
-        return run_plan(book, args.id, adapter, execute=True, reconcile_only=args.reconcile_only)
+        return run_plan(book, args.id, adapter, execute=True, reconcile_only=args.reconcile_only,
+                        comparison_policy=policy, body_encoding=encoding)

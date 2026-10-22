@@ -166,10 +166,15 @@ SUITE_FILES_V0619 = tuple(sorted((*SUITE_FILES_V0618,
 SKILL_NAMES_V0619 = SKILL_NAMES_V0618
 SUITE_FILES_V0620 = SUITE_FILES_V0619
 SKILL_NAMES_V0620 = SKILL_NAMES_V0619
+SUITE_FILES_V0621 = tuple(sorted((*SUITE_FILES_V0620,
+    "story-skill/scripts/story_chrome_worker.py",
+    "story-skill/scripts/story_chrome_worker.mjs",
+)))
+SKILL_NAMES_V0621 = SKILL_NAMES_V0620
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0620
-SUITE_FILES = SUITE_FILES_V0620
+SKILL_NAMES = SKILL_NAMES_V0621
+SUITE_FILES = SUITE_FILES_V0621
 UNRELEASED_VERSIONS = frozenset({"0.6.13"})
 MAX_BYTES = 256 * 1024 * 1024
 # Reviewed full license texts, normalized only for BOM, line endings and trailing
@@ -212,6 +217,8 @@ def payload_files(version):
         return SUITE_FILES_V0619
     if version == "0.6.20":
         return SUITE_FILES_V0620
+    if version == "0.6.21":
+        return SUITE_FILES_V0621
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -247,6 +254,8 @@ def skill_names(version):
         return SKILL_NAMES_V0619
     if version == "0.6.20":
         return SKILL_NAMES_V0620
+    if version == "0.6.21":
+        return SKILL_NAMES_V0621
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
 
 
@@ -388,18 +397,29 @@ def wrapper_files(version, payload=None):
         "a separate paid authorization. See the top-level `LICENSE` and each skill's "
         "complete `LICENSE`.\n"
     )
-    # Published MIT wrappers are byte-stable; new host guidance belongs to current licensed builds.
+    # Published wrappers are byte-stable; changed host paths belong only to the new release.
+    workbuddy_directory = ".workbuddy-ai" if version == "0.6.21" else ".workbuddy"
     skill_installation = (
         "Copy all eight complete skill directories into your project's `.agents/skills/`, "
         "or follow the repository's managed installation instructions. "
         if license_id == "MIT" else
         "Copy all eight complete skill directories into the host's skills directory "
         "(for example `.agents/skills/` for Codex, `.qoder/skills/` for Qoder, "
-        "`.zcode/skills/` for ZCode, `.workbuddy/skills/` for WorkBuddy AI, "
+        f"`.zcode/skills/` for ZCode, `{workbuddy_directory}/skills/` for WorkBuddy AI, "
         "`.trae/skills/` for TRAE IDE, `.cursor/skills/` for Cursor, "
         "or `.opencode/skills/` for OpenCode projects), "
         "or follow the repository's managed installation instructions for the host and scope. "
         "User directories can differ from project directories; use INSTALL.md's host table. "
+    )
+    publication_description = (
+        "The publication skill prepares local snapshots and can save explicitly authorized "
+        "unpublished platform drafts through the available browser workflow. Automatic Chrome "
+        "connection additionally requires an installed Codex CLI, its configured Node REPL and "
+        "official Chrome SDK, and the signed-in browser; this package does not install them. "
+        "It never submits for review, publishes or schedules chapters.\n\n"
+        if version == "0.6.21" else
+        "The publication skill prepares local snapshots and records only; it does not log in to "
+        "author platforms, upload chapters or publish them remotely.\n\n"
     )
     readme = (
         f"# Story Skill {version}\n\n"
@@ -412,9 +432,8 @@ def wrapper_files(version, payload=None):
         + installation
         + "The shared Python runtime is `story-skill/scripts/story.py`; npm does not install Python. "
         "Project data and novels belong outside the skill installation directory.\n\n"
-        "The publication skill prepares local snapshots and records only; it does not log in to "
-        "author platforms, upload chapters or publish them remotely.\n\n"
-        "GitHub Packages npm downloads require authentication. "
+        + publication_description
+        + "GitHub Packages npm downloads require authentication. "
         "See https://github.com/NingCui29/story-skill for setup and update instructions.\n\n"
         + license_description
     )

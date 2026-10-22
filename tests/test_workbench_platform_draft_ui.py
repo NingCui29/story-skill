@@ -43,9 +43,10 @@ handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog();
 const textTree=node=>node.textContent+'\n'+node.children.map(textTree).join('\n');
 '''
         source = base.story.workbench._editor_platform_drafts_script()
-        result = subprocess.run([node, '-e', mock + source + '\n(async()=>{' + test +
-                                 '\n})().catch(error=>{console.error(error);process.exitCode=1;});'],
-                                capture_output=True, text=True, timeout=15)
+        script = mock + source + '\n(async()=>{' + test + \
+                 '\n})().catch(error=>{console.error(error);process.exitCode=1;});'
+        result = subprocess.run([node, '-'], input=script, encoding='utf-8',
+                                capture_output=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_complete_paging_preview_and_one_batch_click_preserve_dirty_editor(self):
@@ -96,13 +97,13 @@ const expiry=[...timers.values()].find(t=>t.delay>1500);expiry.fn();assert.equal
 await p.run.onclick();assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
 ''')
 
-    def test_failed_start_and_poll_never_claim_saved_or_retry(self):
+    def test_failed_start_and_readonly_poll_retry_never_claim_saved_or_resend(self):
         self.js(r'''
 await platformDraftOpen();const p=platformDraftPanel;handler=async()=>{throw Error('预览已经过期');};await p.run.onclick();
 assert.ok(p.status.textContent.includes('未能确认任务启动'));assert.ok(!p.status.textContent.includes('已保存'));assert.equal(p.run.disabled,true);
 platformDraftDrawJob(p,job());const sent=requests.filter(r=>r.action.endsWith('/start')).length;
 await platformDraftPoll(p);assert.ok(p.status.textContent.includes('后台可能仍在执行'));assert.equal(p.run.disabled,true);
-assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,sent);assert.equal([...timers.values()].filter(t=>t.delay===1500).length,0);
+assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,sent);assert.equal([...timers.values()].filter(t=>t.delay===1500).length,1);
 ''')
 
     def test_verified_count_and_history_results_remain_distinct_and_read_only_mode_is_bound(self):
@@ -126,6 +127,69 @@ await platformDraftCatalog(p);assert.equal(p.previewBox.children.length,0);asser
 currentBookInfo.kind='analysis';platformDraftAvailability();await platformDraftOpen();assert.equal(requests.length,0);assert.equal($('platform-drafts-open').disabled,true);
 currentBookInfo.kind='long';handler=async()=>catalog([plan()],[],{next_offset:0});await platformDraftOpen();
 assert.ok(platformDraftPanel.status.textContent.includes('分页无效'));assert.equal(platformDraftPanel.run.disabled,true);assert.equal(requests.length,1);
+''')
+
+    def test_format_choices_are_explicit_and_bound_to_preview_and_start(self):
+        self.js(r'''
+handler=async(action,payload)=>{
+ if(action.endsWith('/catalog'))return catalog();
+ if(action.endsWith('/preview'))return {...preview(payload),comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding};
+ if(action.endsWith('/start'))return job({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding});throw Error(action);
+};
+await platformDraftOpen();const p=platformDraftPanel;
+assert.equal(p.comparison.value,'strict');assert.equal(p.encoding.value,'verbatim');
+p.comparison.value='fanqie_terminal_lf_v1';p.encoding.value='markdown_paragraphs_v1';
+assert.equal(platformDraftCanStart(p),false);await p.encoding.onchange();
+assert.ok(textTree(p.previewBox).includes('一次换段'));assert.ok(textTree(p.previewBox).includes('允许正文末尾换行数量增加或减少'));
+await p.run.onclick();const sent=requests.findLast(r=>r.action.endsWith('/start')).payload;
+assert.equal(sent.comparison_policy,'fanqie_terminal_lf_v1');assert.equal(sent.body_encoding,'markdown_paragraphs_v1');
+assert.equal(p.comparison.disabled,true);assert.equal(p.encoding.disabled,true);
+''')
+
+    def test_stale_format_preview_does_not_authorize_changed_selection(self):
+        self.js(r'''
+await platformDraftOpen();const p=platformDraftPanel;let release;
+handler=async(action,payload)=>payload.comparison_policy==='fanqie_terminal_lf_v1'?new Promise(resolve=>{release=()=>resolve({...preview(payload),comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding});}):{...preview(payload),comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding};
+p.comparison.value='fanqie_terminal_lf_v1';const stale=p.comparison.onchange();
+p.comparison.value='strict';await p.comparison.onchange();release();await stale;
+assert.equal(p.preview.comparison_policy,'strict');assert.equal(p.run.disabled,false);
+p.encoding.value='markdown_paragraphs_v1';await p.run.onclick();assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
+''')
+
+    def test_compact_paragraph_choice_keeps_legacy_choice_and_binds_its_own_preview(self):
+        self.js(r'''
+handler=async(action,payload)=>{
+ if(action.endsWith('/catalog'))return catalog();
+ if(action.endsWith('/preview'))return {...preview(payload),comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding};
+ if(action.endsWith('/start'))return job({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding});throw Error(action);
+};
+await platformDraftOpen();const p=platformDraftPanel;
+assert.equal(p.encoding.value,'verbatim');
+assert.ok(p.encoding.options.some(o=>o.value==='markdown_paragraphs_v1'));
+assert.ok(p.encoding.options.some(o=>o.value==='markdown_paragraphs_v2'));
+p.encoding.value='markdown_paragraphs_v1';await p.encoding.onchange();
+p.encoding.value='markdown_paragraphs_v2';await p.run.onclick();
+assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
+await p.encoding.onchange();assert.ok(textTree(p.previewBox).includes('去掉正文开头的分隔空段'));
+await p.run.onclick();assert.equal(requests.findLast(r=>r.action.endsWith('/start')).payload.body_encoding,'markdown_paragraphs_v2');
+''')
+
+    def test_equivalent_results_are_not_labelled_as_exact_success(self):
+        self.js(r'''
+await platformDraftOpen();const p=platformDraftPanel;
+platformDraftDrawJob(p,job({done:true,state:'succeeded_equivalent',verified_chapters:0,accepted_chapters:2,equivalent_chapters:2,body_encoding:'markdown_paragraphs_v1',comparison_policy:'fanqie_terminal_lf_v1',result:{results:[{chapter:1,state:'reconciled_equivalent',observed_this_run:true,title_body_verified:false,accepted_this_run:true,body_encoding:'markdown_paragraphs_v1'},{chapter:2,state:'saved_equivalent',observed_this_run:true,title_body_verified:false,accepted_this_run:true,body_encoding:'markdown_paragraphs_v1'}]}}));
+assert.equal(p.progress.value,2);assert.ok(p.progressLabel.textContent.includes('逐字一致 0'));assert.ok(p.progressLabel.textContent.includes('按选定格式核对 2'));
+assert.ok(p.status.textContent.includes('按所选段落排版'));assert.ok(!p.status.textContent.includes('已保存并完整回读'));
+assert.ok(p.results.children[0].textContent.includes('按段落排版核对'));
+platformDraftDrawJob(p,job({done:true,state:'succeeded_equivalent',verified_chapters:0,accepted_chapters:1,equivalent_chapters:1}));assert.ok(p.status.textContent.includes('仍有章节待核实'));
+''')
+
+    def test_format_authorization_does_not_follow_another_plan_or_platform(self):
+        self.js(r'''
+handler=async(action,payload)=>action.endsWith('/catalog')?catalog([plan(),plan('another',{platform:'qidian'})],[],{profiles:[profile,{...profile,id:'qidian.json',platform:'qidian'}]}):preview(payload);
+await platformDraftOpen();const p=platformDraftPanel;
+p.comparison.value='fanqie_terminal_lf_v1';p.encoding.value='markdown_paragraphs_v1';p.plan.value='another';await p.plan.onchange();
+assert.equal(p.comparison.value,'strict');assert.equal(p.encoding.value,'verbatim');assert.equal(p.comparison.disabled,true);assert.equal(p.encoding.disabled,true);
 ''')
 
     def test_local_binding_selects_returned_plan_and_profile_without_start_or_editor_change(self):
@@ -239,6 +303,16 @@ class PlatformDraftHTTPTests(unittest.TestCase):
             with patch.object(self.w, '_library_entry', side_effect=base.story.StoryError('workbench_book_changed', '作品已替换')):
                 self.assertEqual(self.post('start')[0], 409)
             mocked.assert_not_called()
+
+    def test_format_choices_are_forwarded_without_rebinding_the_book(self):
+        for action, method in [('preview', 'workbench_preview'), ('start', 'workbench_start')]:
+            with self.subTest(action=action), patch.object(base.story.platform_drafts, method, return_value={'ok': True}) as mocked:
+                code, _ = self.post(action, {'comparison_policy': 'fanqie_terminal_lf_v1',
+                                             'body_encoding': 'markdown_paragraphs_v1', 'book_id': 'other'})
+                self.assertEqual(code, 200)
+                self.assertEqual(mocked.call_args.kwargs['comparison_policy'], 'fanqie_terminal_lf_v1')
+                self.assertEqual(mocked.call_args.kwargs['body_encoding'], 'markdown_paragraphs_v1')
+                self.assertEqual(mocked.call_args.kwargs['expected_book_id'], self.fixture.book.meta('id'))
 
     def test_bind_route_uses_server_identity_and_rejects_extra_configuration_fields(self):
         data = {'account_id': '123', 'book_management_url': 'official observed URL',

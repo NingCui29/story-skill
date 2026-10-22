@@ -15,16 +15,19 @@ from pathlib import Path
 import re
 import secrets
 import stat
+import sys
 import threading
 import time
 import uuid
 
 
 DIRECTORY = ".story/platform-chrome-bridge"
-COMMANDS = {"publish-chrome-" + name for name in ("attach", "next", "respond", "heartbeat", "detach")}
+COMMANDS = {"publish-chrome-" + name for name in ("attach", "next", "respond", "heartbeat", "health", "detach")}
 MAX_BYTES = 16 * 1024 * 1024
 MAX_SESSIONS = 100
 TTL_SECONDS = 120
+HEALTH_SECONDS = 45
+HEALTH_CHALLENGE_SECONDS = 30
 OP_SECONDS = {"verify_target": 180, "find_drafts": 180, "read_draft": 180, "create_draft": 300}
 ERROR_CODES = {"platform_browser_" + code for code in (
     "ambiguous_dom", "ambiguous_draft", "chapter_exists_not_draft", "editor_changed", "identity_mismatch",
@@ -255,8 +258,9 @@ def _external(path, *, create_value=None):
         return _read(directory, path.name)
 
 
-def _binding(book, plan_id, profile_id):
-    _, _, profile, binding = api.platform_drafts._preflight(book.root, plan_id, profile_id, book.meta("id"), True)
+def _binding(book, plan_id, profile_id, comparison_policy="strict", body_encoding="verbatim"):
+    _, _, profile, binding = api.platform_drafts._preflight(book.root, plan_id, profile_id, book.meta("id"), True,
+        comparison_policy=comparison_policy, body_encoding=body_encoding)
     if validate_profile(profile) != "host_assisted_cua":
         _fail("invalid_profile", "此配置未选择已有 Chrome 会话桥接。")
     with api.platform_drafts._checked_plan(book, plan_id, check_source=False) as (manifest, _, _):
@@ -287,6 +291,11 @@ def _session(directory):
             not re.fullmatch(r"[0-9a-f]{64}", session["token_sha256"]) or
             type(session.get("ttl_seconds")) is not int or not 30 <= session["ttl_seconds"] <= 3600):
         _fail("invalid_message", "Chrome 执行端会话元数据无效。")
+    target = session["binding"].get("target")
+    api.platform_drafts._comparison_policy(session["binding"].get("comparison_policy", "strict"),
+        target.get("platform") if isinstance(target, dict) else None)
+    api.platform_drafts._body_encoding(session["binding"].get("body_encoding", "verbatim"),
+        target.get("platform") if isinstance(target, dict) else None)
     return session
 
 
@@ -306,11 +315,11 @@ def _authenticated(book, handle_path, *, extend=True):
         yield directory, session
 
 
-def attach(book, plan_id, profile_id, handle_path, ttl_seconds=TTL_SECONDS):
+def attach(book, plan_id, profile_id, handle_path, ttl_seconds=TTL_SECONDS, *, comparison_policy="strict", body_encoding="verbatim"):
     api.integer(ttl_seconds, "ttl_seconds", 30)
     if ttl_seconds > 3600:
         _fail("invalid_handle", "执行端心跳期限超过限制。")
-    binding, _ = _binding(book, plan_id, profile_id)
+    binding, _ = _binding(book, plan_id, profile_id, comparison_policy=comparison_policy, body_encoding=body_encoding)
     available = worker_status(book.root, binding)
     if available["attached"]:
         _fail("worker_busy", "同一目标已有有效执行端，请复用原句柄或先分离。")
@@ -335,13 +344,112 @@ def attach(book, plan_id, profile_id, handle_path, ttl_seconds=TTL_SECONDS):
                 "expires": time.time(), "detached": True}, replace=True)
         _fail("unsafe_file", "无法安全创建私有执行端句柄；会话未连接。")
     return {"ok": True, "session_id": session_id, "handle_path": str(Path(handle_path).absolute()),
-            "ttl_seconds": ttl_seconds, "remote_accessed": False, "browser_started": False}
+            "ttl_seconds": ttl_seconds, "state": "awaiting_health", "ready": False,
+            "remote_accessed": False, "browser_started": False}
+
+
+def _health_record(directory, session):
+    if api.publish._bound_stat(api._BoundFile(directory, "health.json"), missing=True) is None:
+        return None
+    record = _read(directory, "health.json", maximum=16384)
+    if (not isinstance(record, dict) or record.get("schema") != 1 or
+            record.get("session_id") != session["session_id"] or
+            record.get("binding_sha256") != session["binding_sha256"] or
+            not isinstance(record.get("browser"), dict) or record["browser"].get("kind") != "chrome" or
+            not isinstance(record["browser"].get("id"), str) or not 1 <= len(record["browser"]["id"]) <= 200 or
+            not isinstance(record.get("worker"), dict) or type(record["worker"].get("pid")) is not int or
+            record["worker"]["pid"] <= 0 or not isinstance(record["worker"].get("instance"), str) or
+            not re.fullmatch(r"[0-9a-f]{32}", record["worker"]["instance"]) or
+            not isinstance(record.get("capabilities"), dict) or set(record["capabilities"]) != {"list_tabs", "get_tab", "dom_snapshot"} or
+            any(value is not True for value in record["capabilities"].values()) or
+            any(type(record.get(key)) not in (int, float) or not math.isfinite(record[key])
+                for key in ("checked_epoch", "expires_epoch")) or
+            record["expires_epoch"] - record["checked_epoch"] != HEALTH_SECONDS):
+        _fail("invalid_health", "Chrome 执行端健康回执无效；未启动新操作。")
+    return record
+
+
+def _health_status(root, directory, session):
+    record = _health_record(directory, session)
+    if record is None:
+        return {"ready": False, "state": "awaiting_health", "health_state": "awaiting_health"}
+    details = {"browser_id": record["browser"]["id"], "worker_pid": record["worker"]["pid"],
+               "worker_instance": record["worker"]["instance"], "health_checked_at": _stamp(record["checked_epoch"]),
+               "health_expires_at": _stamp(record["expires_epoch"])}
+    if record["expires_epoch"] <= time.time() or record["checked_epoch"] > time.time():
+        return {**details, "ready": False, "state": "health_expired", "health_state": "expired"}
+    if not _owner_alive(root, {"owner_pid": record["worker"]["pid"]}):
+        return {**details, "ready": False, "state": "worker_unavailable", "health_state": "worker_exited"}
+    return {**details, "ready": True, "state": "connected", "health_state": "healthy"}
+
+
+def _require_health(root, directory, session):
+    status = _health_status(root, directory, session)
+    if not status["ready"]:
+        _fail("worker_unavailable", "Chrome 执行端尚未通过近期公开浏览器探测，或执行进程已退出；未启动新操作。")
+    return status
+
+
+def health(book, handle_path, input_path=None):
+    """Challenge/ack for an actual public Chrome list/get probe.
+
+    A lease or controller process alone is never browser evidence. The trusted
+    runner obtains this nonce before calling the public SDK list/get and reading
+    a DOM snapshot of the existing target page, then submits the observed browser
+    and its own live supervisor identity. No browser is opened
+    here, and a health acknowledgement does not verify platform account/book.
+    """
+    response = _external(input_path) if input_path is not None else None
+    with _authenticated(book, handle_path) as (directory, session):
+        previous = _health_record(directory, session)
+        if input_path is None:
+            deadline = time.time() + HEALTH_CHALLENGE_SECONDS
+            challenge = {"schema": 1, "session_id": session["session_id"],
+                         "binding_sha256": session["binding_sha256"], "nonce": secrets.token_urlsafe(32),
+                         "expires_at": _stamp(deadline), "deadline_epoch": deadline,
+                         "browser_id": previous["browser"]["id"] if previous else None,
+                         "worker_instance": previous["worker"]["instance"] if previous else None}
+            _write(directory, "health-challenge.json", {**challenge, "consumed": False}, replace=True)
+            return {"ok": True, "health_required": True, "challenge": challenge,
+                    "remote_accessed": False, "browser_started": False}
+        challenge = _read(directory, "health-challenge.json", maximum=16384)
+        if (not isinstance(challenge, dict) or challenge.get("session_id") != session["session_id"] or
+                challenge.get("binding_sha256") != session["binding_sha256"] or challenge.get("consumed") is not False or
+                type(challenge.get("deadline_epoch")) not in (int, float) or
+                not math.isfinite(challenge["deadline_epoch"]) or challenge["deadline_epoch"] <= time.time()):
+            _fail("health_expired", "Chrome 连接探测已失效；请重新进行真实浏览器探测。")
+        required = {"schema", "session_id", "binding_sha256", "nonce", "browser", "capabilities", "worker"}
+        if (not isinstance(response, dict) or set(response) != required or type(response.get("schema")) is not int or
+                response["schema"] != 1 or any(response.get(key) != challenge.get(key)
+                    for key in ("session_id", "binding_sha256", "nonce")) or
+                not isinstance(response.get("browser"), dict) or set(response["browser"]) != {"kind", "id"} or
+                response["browser"].get("kind") != "chrome" or not isinstance(response["browser"].get("id"), str) or
+                not 1 <= len(response["browser"]["id"]) <= 200 or
+                any(ord(char) < 32 or ord(char) == 127 for char in response["browser"]["id"]) or
+                not isinstance(response.get("capabilities"), dict) or set(response["capabilities"]) != {"list_tabs", "get_tab", "dom_snapshot"} or
+                any(value is not True for value in response["capabilities"].values()) or
+                not isinstance(response.get("worker"), dict) or set(response["worker"]) != {"pid", "instance"} or
+                type(response["worker"].get("pid")) is not int or response["worker"]["pid"] <= 0 or
+                not isinstance(response["worker"].get("instance"), str) or
+                not re.fullmatch(r"[0-9a-f]{32}", response["worker"]["instance"])):
+            _fail("invalid_health", "Chrome 连接探测回执与本次挑战不符；未采用。")
+        if previous and (response["browser"] != previous["browser"] or response["worker"] != previous["worker"]):
+            _fail("worker_changed", "Chrome 或执行进程身份发生变化；请结束旧会话后重新连接。")
+        if not _owner_alive(book.root, {"owner_pid": response["worker"]["pid"]}):
+            _fail("worker_unavailable", "Chrome 探测回执的执行进程已退出；未建立连接。")
+        # Consume first: a crash before publishing health remains disconnected.
+        _write(directory, "health-challenge.json", {**challenge, "consumed": True}, replace=True)
+        now = time.time()
+        _write(directory, "health.json", {**response, "checked_epoch": now,
+                                         "expires_epoch": now + HEALTH_SECONDS}, replace=True)
+        return {"ok": True, "session_id": session["session_id"], **_health_status(book.root, directory, session),
+                "remote_accessed": False, "browser_started": False, "platform_target_verified": False}
 
 
 def worker_status(root, binding):
     path = api.safe_path(Path(root), DIRECTORY)
     if not path.exists():
-        return {"attached": False, "state": "worker_unavailable", "active_sessions": 0}
+        return {"attached": False, "ready": False, "state": "worker_unavailable", "active_sessions": 0}
     with _directory(root) as parent:
         names = os.listdir(parent.path if os.name == "nt" else parent.fd)
     names = [name for name in names if re.fullmatch(r"[0-9a-f]{32}", name)]
@@ -363,11 +471,11 @@ def worker_status(root, binding):
                 _fail("session_limit", "本书连接中的 Chrome 桥接会话过多。")
             if session.get("binding") != binding or session.get("binding_sha256") != _digest(binding):
                 continue
-            candidates.append({"attached": True, "state": "attached", "session_id": name,
-                               "expires_at": _stamp(lease["expires"])})
+            candidates.append({"attached": True, "session_id": name, "expires_at": _stamp(lease["expires"]),
+                               **_health_status(root, directory, session)})
     if len(candidates) > 1:
         _fail("worker_busy", "目标存在多个执行端；请先分离多余会话。")
-    status = candidates[0] if candidates else {"attached": False, "state": "worker_unavailable"}
+    status = candidates[0] if candidates else {"attached": False, "ready": False, "state": "worker_unavailable"}
     return {**status, "active_sessions": active_sessions}
 
 
@@ -399,6 +507,18 @@ def _windows_process_alive(pid):
         return False
 
 
+def _macos_process_alive(pid):
+    """Query a specific PID without requiring sandbox signal permission."""
+    if type(pid) is not int or not 0 < pid <= 0x7fffffff:
+        return False
+    try:
+        group = os.getpgid(pid)
+        session = os.getsid(pid)
+        return type(group) is int and group > 0 and type(session) is int and session > 0
+    except Exception:
+        return False
+
+
 def _owner_alive(root, request):
     pid = request.get("owner_pid")
     if type(pid) is not int or pid <= 0:
@@ -406,6 +526,9 @@ def _owner_alive(root, request):
     try:
         if os.name == "nt":
             if not _windows_process_alive(pid):
+                return False
+        elif sys.platform == "darwin":
+            if not _macos_process_alive(pid):
                 return False
         else:
             os.kill(pid, 0)
@@ -424,6 +547,7 @@ def _owner_alive(root, request):
 
 def next_request(book, handle_path):
     with _authenticated(book, handle_path) as (directory, session):
+        _require_health(book.root, directory, session)
         names = sorted(os.listdir(directory.path if os.name == "nt" else directory.fd))
         for name in names:
             if not re.fullmatch(r"outbox-[0-9a-f]{32}\.json", name):
@@ -514,13 +638,15 @@ class HostAdapter:
             _fail("invalid_profile", "此配置未选择已有 Chrome 会话桥接。")
         if profile.get("platform") == "fanqie" and profile.get("readback") is None:
             api.fail("platform_browser_readback_required", "番茄已有Chrome会话必须配置独立只读预览回读；不会打开编辑器核对旧稿。")
+        api.platform_drafts._comparison_policy(binding.get("comparison_policy", "strict"), binding.get("target", {}).get("platform"))
+        api.platform_drafts._body_encoding(binding.get("body_encoding", "verbatim"), binding.get("target", {}).get("platform"))
         self.root, self.binding, self.profile = Path(root), binding, deepcopy(profile)
         self.progress = progress_callback
         self.session_id = None
 
     def __enter__(self):
         status = worker_status(self.root, self.binding)
-        if not status["attached"]:
+        if not status["ready"]:
             _fail("worker_unavailable", "未连接持有既有 Chrome 的宿主执行端；未启动操作。")
         self.session_id = status["session_id"]
         return self
@@ -546,6 +672,7 @@ class HostAdapter:
         with _directory(self.root, self.session_id) as directory, _lock(directory):
             session = _session(directory)
             _lease(directory, session)
+            _require_health(self.root, directory, session)
             if session["binding"] != self.binding:
                 _fail("invalid_message", "宿主会话目标发生变化。")
             _write(directory, "outbox-" + request_id + ".json", request)
@@ -589,17 +716,24 @@ def register_parser(sub, command):
             parser.add_argument("--id", required=True)
             parser.add_argument("--profile", required=True, help="Saved profile filename inside this book")
             parser.add_argument("--ttl-seconds", type=int, default=TTL_SECONDS)
+            parser.add_argument("--comparison-policy", choices=("strict", "fanqie_terminal_lf_v1"), default="strict")
+            parser.add_argument("--body-encoding", choices=("verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2"), default="verbatim")
         elif name.endswith("respond"):
             parser.add_argument("--request-id", required=True)
             parser.add_argument("--input", required=True, help="Private 0600 response JSON file")
+        elif name.endswith("health"):
+            parser.add_argument("--input", help="Omit to issue a nonce; provide private 0600 actual Chrome probe acknowledgement")
 
 
 def run(book, args):
     action = args.command.removeprefix("publish-chrome-")
     if action == "attach":
-        return attach(book, args.id, args.profile, args.handle, args.ttl_seconds)
+        return attach(book, args.id, args.profile, args.handle, args.ttl_seconds,
+                      comparison_policy=args.comparison_policy, body_encoding=args.body_encoding)
     if action == "next":
         return next_request(book, args.handle)
     if action == "respond":
         return respond(book, args.handle, args.request_id, args.input)
+    if action == "health":
+        return health(book, args.handle, args.input)
     return heartbeat(book, args.handle, detach=action == "detach")

@@ -76,6 +76,7 @@ class Locator {
   constructor(tab, lookup, selector) { this.tab=tab; this.lookup=lookup; this.selector=selector; }
   async count() {
     const env=this.tab.env;
+    await env.beforeLocatorCount?.(this.tab,this.selector,this);
     if(env.alwaysMissing===this.selector)return 0;
     if(env.countOverrides?.[this.selector]!=null)return env.countOverrides[this.selector];
     if((env.delayCounts?.[this.selector] || 0)>0){env.delayCounts[this.selector]--;return 0;}
@@ -95,11 +96,12 @@ class Locator {
   }
   async isEnabled() { return this.node().enabled !== false; }
   async evaluate(fn,arg) {
+    await this.tab.env.beforeLocatorEvaluate?.(this.tab,this.selector,fn,this);
     const node=this.node();
     if(['.chapter','.state','.link','.chapter:visible'].includes(this.selector))this.tab.env.events.push(['fieldRead',this.selector]);
-    if (node.dom) return fn(node.dom());
-    if (node.metrics) return node.metrics();
-    return fn(this.dom(node),arg);
+    const result=node.dom?fn(node.dom()):node.metrics?node.metrics():fn(this.dom(node),arg);
+    await this.tab.env.afterLocatorEvaluate?.(this.tab,this.selector);
+    return result;
   }
   dom(node) {
     return {tagName:node.tag || 'DIV',value:node.value?.() ?? '',innerText:node.text ?? '',textContent:node.text ?? '',
@@ -117,23 +119,28 @@ class Locator {
   async click() {
     this.tab.env.events.push(['click',this.selector]);
     if(this.selector==='#body'&&this.tab.env.failBodyFocus)throw new Error('PRIVATE manuscript focus failure');
+    if(this.selector==='#body')this.tab.focusedBody=true;
     await this.node().click?.();
   }
   async fill(value) {
     this.tab.env.events.push(['fill',this.selector]); this.node().set(value);
+    if(this.tab.env.fillFailure)throw this.tab.env.fillFailure;
     if(this.tab.env.changeAccountAfterFill===this.selector)this.tab.env.account='different-account';
   }
   async press(value) {
     this.tab.env.events.push(['press',this.selector,value]);
     assert.equal(this.selector,'#body');
-    if (value === 'Backspace') this.tab.data.body='';
-    else if (value === 'Enter') this.tab.data.body+='\n';
+    if (value === 'Backspace') {
+      this.tab.data.body=this.tab.env.clearBodyResult??'';
+      if(this.tab.env.loseBodyFocusAfterClear)this.tab.focusedBody=false;
+    }
+    else if (value === 'Enter') {this.tab.data.body+='\n';if(this.tab.env.enterFailure)throw this.tab.env.enterFailure;}
     else assert.ok(['Meta+A','Control+A'].includes(value));
   }
   async type() { throw new Error('Paste-like CUA type must not write paragraph bodies'); }
   async pressSequentially(value, options) {
-    this.tab.env.events.push(['pressSequentially',this.selector,value]); assert.equal(this.selector,'#body');
-    assert.equal(options.delay,0); assert.ok(options.timeoutMs>0);
+    this.tab.env.events.push(['pressSequentially',this.selector,value,options]); assert.equal(this.selector,'#body');
+    assert.deepEqual(Object.keys(options),['timeoutMs']); assert.ok(Number.isInteger(options.timeoutMs)&&options.timeoutMs>0);
     assert.ok(!value.includes('\n')); this.tab.data.body+=value;
     if(this.tab.env.changeAccountAfterBodyText)this.tab.env.account='different-account';
   }
@@ -149,9 +156,16 @@ class Tab {
     this.preview=Boolean(preview);if(preview)this.data=this.env.editors.get(preview[1]);
   }
   async url() { return this.current; }
-  async goto(url) { assert.notEqual(url,this.current,'same URL must explicitly reload'); this.env.events.push(['goto',url]);this.load(url); }
-  async reload() { this.env.events.push(['reload',this.current]);this.load(this.current); }
-  async getAXState(options) { assert.equal(options.emit,false);this.env.events.push(['ax',this.id]);return {}; }
+  async goto(url) { assert.notEqual(url,this.current,'same URL must explicitly reload'); this.env.events.push(['goto',url]);this.load(url);await this.env.afterNavigation?.(this,'goto',url); }
+  async reload() { this.env.events.push(['reload',this.current]);this.load(this.current);await this.env.afterNavigation?.(this,'reload',this.current); }
+  async getAXState(options) { assert.equal(options.emit,false);this.env.events.push(['ax',this.id]);await this.env.beforeAX?.(this);return 'visible page'; }
+  async pasteText(value) {
+    this.env.events.push(['pasteText',this.id,value]);assert.equal(typeof value,'string');assert.ok(this.focusedBody);
+    const pasted=this.env.stripPastedTail?value.replace(/\n+$/,''):value;
+    this.data.body=typeof this.env.pastedBody==='function'?this.env.pastedBody(pasted):pasted;
+    if(this.env.changeAccountAfterBodyText)this.env.account='different-account';
+    if(this.env.pasteFailure)throw this.env.pasteFailure;
+  }
   async scroll(coords,direction,pages) { assert.ok(Array.isArray(coords) && coords.length===2);assert.ok(['up','down'].includes(direction));assert.ok(pages>=1);this.env.events.push(['scroll',coords]); }
   async close() {
     this.env.closed.push(this.id);
@@ -174,14 +188,20 @@ class Tab {
       if(selector==='#preview-body')return [{dom:()=>{
         if((env.previewBodyPending||0)>0){env.previewBodyPending--;return element('DIV');}
         if(env.invalidPreviewBody)return element('DIV',{},[element('P',{class:'unknown'},[textNode('正文')]),element('P')]);
-        if(env.changeAccountOnReadBody)env.account='different-account';
-        return previewDOM(this.data.body);
+        if(env.changeAccountOnReadBody||env.changeAccountOnPreviewBody)env.account='different-account';
+        env.onPreviewBody?.();
+        return previewDOM(typeof env.previewBody === 'function' ? env.previewBody(this.data.body) : this.data.body);
       }}];
       return [];
     }
     if(this.data) {
       if(selector==='#body')return [{dom:() => {
-        const result=bodyDOM(this.data.body);
+        const result=bodyDOM(typeof env.editorBody === 'function' ? env.editorBody(this.data.body) : this.data.body);
+        const focused=this.focusedBody?(env.focusBodyChild?result.childNodes[0]:result):null;
+        result.ownerDocument={activeElement:focused};
+        result.contains=node=>result.childNodes.includes(node);
+        if(env.invalidEditorBody)result.childNodes.push(element('IMG'));
+        if(env.bodyNotEditable){const getAttribute=result.getAttribute;result.getAttribute=key=>key==='contenteditable'?'false':getAttribute(key);}
         if(env.changeAccountOnReadBody)env.account='different-account';
         return result;
       }}];
@@ -189,17 +209,22 @@ class Tab {
       if(selector==='#save')return [{text:env.saveLabel || '存草稿',click:() => {
         env.saves++;this.data.saved=true;
         if(env.dropTrailingNewlinesOnSave)this.data.body=this.data.body.replace(/\n\n$/,'');
+        if(env.saveFailure)throw env.saveFailure;
       }}];
       if(selector==='#saved')return plain(this.data.saved?'已保存到云端':'尚未保存');
       return [];
     }
-    if(selector==='#scope')return plain(this.scope());
-    if(selector==='#filter')return plain('全部');
-    if(selector==='#ready')return plain('ready');
-    if(selector==='#empty')return this.rows().length?[]:plain('暂无草稿');
-    if(selector==='#count')return plain('共'+this.rows().length+'篇草稿');
-    if(selector==='#scroll')return [{metrics:() => ({height:100,total:100,width:100,wide:100,top:0,x:50,y:50})}];
+    if(selector==='#scope')return plain(env.wrongDraftScope&&this.scope()==='drafts'?'non_drafts':this.scope());
+    if(selector==='#filter')return plain(env.wrongDraftFilter&&this.scope()==='drafts'?'筛选结果':'全部');
+    if(selector==='#ready')return env.emptyDraftTableOmitted&&this.scope()==='drafts'&&!this.rows().length?[]:plain(env.listReadyText??'ready');
+    if(selector==='#empty')return env.missingEmptyMarker||(this.rows().length&&!env.forceEmptyMarker)?[]:[{text:'暂无草稿',visible:!env.hiddenEmptyMarker}];
+    if(selector==='#count'){
+      env.draftCountReads=(env.draftCountReads||0)+1;env.onDraftCountRead?.(env);
+      return plain(env.draftCountText??('共'+this.rows().length+'篇草稿'));
+    }
+    if(selector==='#scroll')return env.emptyDraftTableOmitted&&this.scope()==='drafts'&&!this.rows().length?[]:[{metrics:() => ({height:100,total:100,width:100,wide:100,top:0,x:50,y:50})}];
     if(selector==='.virtual')return env.virtual?[{}]:[];
+    if(selector==='.pagination')return env.pagination?[{}]:[];
     if(selector==='#sections')return [{click:() => {this.menu=!this.menu;}}];
     if(selector==='#section')return plain(env.sections[this.section]);
     if(selector==='.option')return this.menu?env.sections.map((text,index) => ({text,click:() => {this.section=index;this.menu=false;}})):[];
@@ -220,6 +245,7 @@ class Tab {
       env.add(ORIGIN+'/book/10/edit/99?enter_from=newdraft');
       if(env.concurrentTarget)env.add(ORIGIN+'/book/10/edit/98?enter_from=newdraft');
       if(env.changeAccountOnCreate)env.account='different-account';
+      if(env.createClickFailure)throw env.createClickFailure;
     }}];
     }
     return [];
@@ -228,7 +254,7 @@ class Tab {
 function environment(options = {}) {
   const env={events:[],closed:[],tabs:new Map(),editors:new Map([['11',{scope:'drafts',chapter:11,title:'原稿',body:'原始正文',saved:true}],['1',{scope:'non_drafts',chapter:1,title:'正式章',body:'正式',saved:true}]]),
     account:'stable-id',sections:['第一卷'],creates:0,saves:0,...options};
-  let next=0;env.add=url => {const tab=new Tab(env,String(++next),url);env.tabs.set(tab.id,tab);return tab;};
+  let next=0;env.add=url => {const tab=new Tab(env,String(++next),url);if(env.missingPasteSupport)tab.pasteText=undefined;env.tabs.set(tab.id,tab);return tab;};
   env.add('https://example.com/already-open');
   env.api={listTabs:async () => [...env.tabs.values()].map(tab => ({id:tab.id,url:tab.current})),
     getTab:async id => {env.events.push(['getTab',id]);return env.tabs.get(id);},newTab:async url => {env.events.push(['newTab',url]);return env.add(url);}};
@@ -242,6 +268,128 @@ function request(operation,params={},sid=String(++session),config=profile()) {
 }
 async function verified(env,config=profile()) { const req=request('verify_target',{},undefined,config); const result=await executeChromeBridgeRequest(env.api,req);assert.equal(result.ok,true,JSON.stringify(result));return req; }
 const next=(base,operation,params={}) => ({...base,id:base.id+operation,operation,params});
+const MANAGEMENT='https://fanqienovel.com/main/writer/chapter-manage/10&test';
+const MANAGEMENT_COVERAGE='[role=tab][aria-selected=true] .arco-tabs-header-title-text';
+function managementFixture(options={}) {
+  const config=profile();config.urls.drafts=MANAGEMENT+'?type=2';config.urls.create=config.urls.drafts;
+  config.identity.book.templates.push(...[1,2].map(type=>ORIGIN+'/main/writer/chapter-manage/{book_id}&test?type='+type));
+  config.chapter_lists.reverse();
+  for(const listing of config.chapter_lists){const type=listing.scope==='drafts'?2:1;
+    listing.url=MANAGEMENT+'?type='+type;
+    listing.coverage=field(MANAGEMENT_COVERAGE,{expected:type===1?'章节管理':'草稿箱'});}
+  const env=environment(options),add=env.add;
+  env.add=url=>{
+    const tab=add(url);if(!url.startsWith(MANAGEMENT+'?type='))return tab;
+    const lookup=tab.lookup.bind(tab);
+    tab.scope=()=>tab.current.endsWith('?type=1')?'non_drafts':'drafts';
+    tab.lookup=selector=>selector===MANAGEMENT_COVERAGE?[{text:env.managementCoverage??(tab.scope()==='non_drafts'?'章节管理':'草稿箱'),
+      visible:env.managementCoverageVisible!==false}]:lookup(selector);
+    tab.playwright.getByRole=(role,settings)=>{
+      env.events.push(['getByRole',role,settings]);assert.equal(role,'tab');assert.equal(settings.exact,true);
+      const target=config.chapter_lists.find(listing=>listing.coverage.expected===settings.name);
+      return new Locator(tab,()=>target?Array.from({length:env.managementRoleCount??1},()=>({
+        text:settings.name,visible:!env.managementHidden,enabled:!env.managementDisabled,
+        attrs:{'aria-selected':env.managementAlreadySelected?'true':String(tab.current===target.url)},
+        click:async()=>{
+          env.events.push(['managementClick',settings.name]);if(env.managementClickFailure)throw env.managementClickFailure;
+          const source=tab.current;if(!env.managementStaySource)tab.load(target.url);
+          await env.afterManagementClick?.(tab,source,target.url);
+        }})):[],'role=tab:'+settings.name);
+    };
+    return tab;
+  };
+  return {env,config};
+}
+function cacheManagementRows(env) {
+  const add=env.add;env.catalogRefreshes=0;
+  env.add=url=>{
+    const tab=add(url);if(!url.startsWith(MANAGEMENT+'?type='))return tab;
+    const snapshot=()=>new Map([...env.editors].map(([remote,data])=>[remote,{...data}]));
+    let cached=snapshot();
+    tab.rows=()=>[...cached].filter(([,item])=>item.scope===tab.scope()&&(item.section||0)===tab.section);
+    const reload=tab.reload.bind(tab);
+    tab.reload=async()=>{
+      await reload();cached=snapshot();env.catalogRefreshes++;
+      await env.afterCatalogRefresh?.(tab,cached);
+    };
+    return tab;
+  };
+}
+
+test('new owned draft confirmations refresh a cached management catalog before and after the single save',async()=>{
+  const {env,config}=managementFixture();cacheManagementRows(env);
+  let freshBeforeInput=0,freshAfterSave=0;
+  env.afterCatalogRefresh=async()=>{if(env.creates){if(env.saves)freshAfterSave++;else freshBeforeInput++;}};
+  const base=await verified(env,config);env.events=[];
+  const body='甲段\n乙段\n';
+  const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'新草稿',body}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.equal(result.result,'99');
+  assert.equal(env.creates,1);assert.equal(env.saves,1);assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1);
+  assert.equal(env.editors.get('99').body,body);assert.equal(env.editors.get('99').chapter,12);
+  assert.equal(freshBeforeInput,2,'both editor-state checks observe the cloud allocation through a new catalog load');
+  assert.equal(freshAfterSave,2,'independent preview confirmations observe the saved chapter through new catalog loads');
+  assert.ok(env.events.some(row=>row[0]==='managementClick'));
+  assert.ok(!env.events.some(row=>row[0]==='goto'&&row[1].startsWith(MANAGEMENT)));
+  await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  assert.ok(env.tabs.has('1'),'pre-existing user tab is not touched');
+});
+
+test('ordinary find and independent read keep their current management navigation without proactive creation refreshes',async()=>{
+  const {env,config}=managementFixture();cacheManagementRows(env);const base=await verified(env,config);
+  env.catalogRefreshes=0;env.events=[];
+  assert.deepEqual((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).result,[]);
+  const read=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));assert.equal(read.ok,true,JSON.stringify(read));
+  assert.equal(env.catalogRefreshes,0);assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+
+test('creation catalog refresh failures never replay allocation or accept an old matching URL and DOM',async()=>{
+  for(const failure of [Error('Timed out after 10000ms waiting for CDP command Page.navigate.'),
+    Object.assign(Error('PRIVATE authorization refusal'),{code:'permission_denied'}),Error('Debugger unattached')]){
+    const {env,config}=managementFixture();cacheManagementRows(env);const base=await verified(env,config);let attempts=0;
+    env.afterCatalogRefresh=async()=>{if(env.creates){attempts++;throw failure;}};
+    const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'新草稿',body:'完整正文'}));
+    assert.equal(result.ok,false);assert.equal(result.error,'platform_browser_operation_failed');assert.equal(attempts,1);
+    assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal(env.events.filter(row=>row[0]==='pasteText').length,0);
+    assert.equal(env.events.filter(row=>row[0]==='fill').length,0);assert.equal(env.editors.get('99').body,'');
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'新草稿',body:'完整正文'}))).ok,false);
+    assert.equal(env.creates,1,'the consumed create request stays consumed after a fresh-read failure');
+  }
+});
+
+test('a fresh create catalog still rejects a missing remote wrong state changed account route scope or incomplete pages',async()=>{
+  for(const mode of ['missing','state','account','route','scope','virtual','unnumbered']){
+    const {env,config}=managementFixture();cacheManagementRows(env);
+    if(mode==='state')config.chapter_lists.find(listing=>listing.scope==='drafts').state=field('.state');
+    const base=await verified(env,config);
+    env.afterCatalogRefresh=async(tab,cached)=>{
+      if(!env.creates)return;
+      if(mode==='missing')cached.delete('99');
+      if(mode==='state')cached.get('99').state='已发布';
+      if(mode==='account')env.account='different-account';
+      if(mode==='route')tab.current=MANAGEMENT.replace('/10&','/11&')+'?type=2';
+      if(mode==='scope')env.wrongDraftFilter=true;
+      if(mode==='virtual')env.virtual=true;
+      if(mode==='unnumbered')cached.set('100',{scope:'drafts',chapter:null,title:'',body:''});
+    };
+    const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'新草稿',body:'完整正文'}));
+    const expected={missing:'not_draft',state:'not_draft',account:'identity_mismatch',route:'identity_mismatch',
+      scope:'incomplete_scope',virtual:'incomplete_list',unnumbered:'unnumbered_draft'};
+    assert.equal(result.error,'platform_browser_'+expected[mode],mode);assert.equal(env.creates,1);assert.equal(env.saves,0);
+    assert.equal(env.events.filter(row=>row[0]==='fill'||row[0]==='pasteText').length,0,mode);
+  }
+});
+
+test('a create catalog refresh observes the original deadline before any title or body input',async()=>{
+  const {env,config}=managementFixture();cacheManagementRows(env);const base=await verified(env,config);
+  const now=Date.now;let clock=now();Date.now=()=>clock;
+  const create=next(base,'create_draft',{chapter:12,title:'新草稿',body:'完整正文'});
+  create.deadline=new Date(clock+1000).toISOString();
+  env.afterCatalogRefresh=async()=>{if(env.creates)clock+=1000;};
+  try{
+    const result=await executeChromeBridgeRequest(env.api,create);assert.equal(result.error,'platform_browser_operation_failed');
+    assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal(env.events.filter(row=>row[0]==='fill'||row[0]==='pasteText').length,0);
+  }finally{Date.now=now;}
+});
 
 test('actual observed paragraph samples and exact AI sentinel preserve content',() => {
   const data=JSON.parse(readFileSync(new URL('../benchmarks/results/development-20261019-platform-drafts/fanqie-richtext-observations.json',import.meta.url)));
@@ -260,10 +408,150 @@ test('complete existing-Chrome verify find create read flow uses native paragrap
   assert.equal(created.ok,true,JSON.stringify(created));assert.equal(created.result,'99');assert.equal(env.creates,1);assert.equal(env.saves,1);
   const observed=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'99'}));
   assert.equal(observed.result.body,body);assert.equal(observed.result.title,'验收章');
-  assert.equal(env.events.filter(row => row[0]==='pressSequentially').map(row => row[2]).join('|'),'中文甲|中文乙');
+  assert.deepEqual(env.events.filter(row=>row[0]==='pasteText').map(row=>row[2]),[body.replace(/\n+$/,'')]);
+  assert.equal(env.events.filter(row=>row[0]==='press'&&row[2]==='Enter').length,2);
+  assert.ok(!env.events.some(row=>row[0]==='pressSequentially'));
   assert.ok(env.events.some(row=>row[0]==='reload'));assert.ok(env.events.some(row=>row[0]==='scroll'));
   await closeChromeBridgeSession(env.api,base.session_id);assert.ok(env.tabs.has('1'),'pre-existing user tab survives');
   assert.equal(env.tabs.size,2,'latest readback remains');
+});
+test('bulk body paste preserves encoded characters whitespace and boundary newlines with one paste independent of paragraph count',async()=>{
+  const bodies=['  甲　 \n乙  ','\n甲\n\n乙\n\n','甲\r\n乙\r丙\n',
+    Array.from({length:140},(_,index)=>'第'+index+'段正文  ').join('\n')];
+  for(const [index,body] of bodies.entries()){
+    const env=environment({focusBodyChild:index===1,stripPastedTail:true}),base=await verified(env);
+    const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'粘贴验收',body}));
+    const normalized=body.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+    assert.equal(result.ok,true,JSON.stringify(result));assert.equal(env.editors.get('99').body,normalized);
+    const tail=/\n*$/.exec(normalized)[0].length;
+    assert.deepEqual(env.events.filter(row=>row[0]==='pasteText').map(row=>row[2]),[normalized.slice(0,normalized.length-tail)]);
+    assert.deepEqual(env.events.filter(row=>row[0]==='press').map(row=>row[2]),['Meta+A','Backspace',...Array(tail).fill('Enter')]);
+    assert.ok(!env.events.some(row=>row[0]==='pressSequentially'));
+    assert.equal(env.creates,1);assert.equal(env.saves,1);
+    assert.ok(env.events.some(row=>row[0]==='newTab'&&row[1]===ORIGIN+'/preview/10&99'),'independent preview remains required');
+  }
+});
+test('bulk paste requires empty serialization supported input and body focus before sending any body text',async()=>{
+  for(const [options,code] of [[{clearBodyResult:'残留正文'},'editor_changed'],[{loseBodyFocusAfterClear:true},'editor_changed'],
+    [{bodyNotEditable:true},'unsupported_editor'],[{missingPasteSupport:true},'unsupported_editor']]){
+    const env=environment(options),base=await verified(env);
+    const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'完整正文'}));
+    assert.equal(result.error,'platform_browser_'+code);assert.equal(env.creates,1);assert.equal(env.saves,0);
+    assert.ok(!env.events.some(row=>row[0]==='pasteText'||row[0]==='pressSequentially'||row[0]==='press'&&row[2]==='Enter'));
+    if(options.clearBodyResult)assert.equal(env.editors.get('99').body,options.clearBodyResult);
+    assert.ok(!env.events.some(row=>row[0]==='newTab'&&row[1].includes('/preview/')));
+  }
+});
+test('all-LF bodies retain their original input plan without a clipboard call or required paste support',async()=>{
+  for(const body of ['\n','\n\n','\r\n\r\n']){
+    const env=environment({missingPasteSupport:true}),base=await verified(env),normalized=body.replace(/\r\n/g,'\n');
+    const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body}));
+    assert.equal(result.ok,true,JSON.stringify(result));assert.equal(env.editors.get('99').body,normalized);
+    assert.equal(env.events.filter(row=>row[0]==='pasteText'||row[0]==='pressSequentially').length,0);
+    assert.deepEqual(env.events.filter(row=>row[0]==='press').map(row=>row[2]),['Meta+A','Backspace',...Array(normalized.length).fill('Enter')]);
+    assert.equal(env.creates,1);assert.equal(env.saves,1);
+  }
+});
+test('a planned trailing Enter failure stops without adding another Enter or repeating the successful core paste',async()=>{
+  const original=Error('PRIVATE planned Enter interrupted'),env=environment({enterFailure:original}),base=await verified(env);
+  let observed;env.api.onDriverError=failure=>{observed=failure;};
+  const req=next(base,'create_draft',{chapter:12,title:'验收',body:'完整核心\n\n'});
+  assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');assert.equal(observed,original);
+  assert.equal(env.editors.get('99').body,'完整核心\n');assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1);
+  assert.equal(env.events.filter(row=>row[0]==='press'&&row[2]==='Enter').length,1);assert.equal(env.saves,0);
+  assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');
+  assert.equal(env.creates,1);assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1);
+  assert.equal(env.events.filter(row=>row[0]==='press'&&row[2]==='Enter').length,1);
+});
+test('one partial failing paste or changed serialization stops before save and cannot replay create or paste',async()=>{
+  for(const mode of ['throws','partial','extra_newline','changed_spaces']){
+    const original=Error('PRIVATE paste interrupted'),body='甲段\n乙段  \n\n';
+    const env=environment({pastedBody:value=>mode==='extra_newline'?value+'\n':mode==='changed_spaces'?value.trim():value.slice(0,2),
+      ...(mode==='throws'?{pasteFailure:original}:{})});
+    const base=request('verify_target');base.binding.comparison_policy='fanqie_terminal_lf_v1';
+    assert.equal((await executeChromeBridgeRequest(env.api,base)).ok,true);let observed;env.api.onDriverError=failure=>{observed=failure;};
+    const req=next(base,'create_draft',{chapter:12,title:'验收',body});
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_'+(mode==='throws'?'operation_failed':'editor_changed'));
+    if(mode==='throws')assert.equal(observed,original);
+    assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1);
+    assert.ok(!env.events.some(row=>row[0]==='pressSequentially'||row[0]==='press'&&row[2]==='Enter'));
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');
+    assert.equal(env.creates,1);assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1);
+  }
+});
+test('observed empty Fanqie draft box with no table spinner or scroll container is positively verified',async()=>{
+  const env=environment({emptyDraftTableOmitted:true});env.editors.delete('11');
+  const base=await verified(env);env.events=[];
+  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.deepEqual(result.result,[]);
+  assert.ok(env.draftCountReads>=6,'all three catalog checkpoints repeat the positive zero-count observation');
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
+  const created=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'首篇草稿',body:'正式正文'}));
+  assert.equal(created.ok,true,JSON.stringify(created));assert.equal(created.result,'99');
+  assert.equal(env.creates,1);assert.equal(env.saves,1);
+  assert.ok(env.events.some(row=>row[0]==='scroll'),'nonempty saved draft uses the original table completeness checks');
+});
+test('empty Fanqie catalog rejects absent ambiguous malformed or nonzero count and contradictory rows',async()=>{
+  const cases=[
+    [{alwaysMissing:'#count'},'incomplete_list'],[{duplicateSelector:'#count'},'ambiguous_dom'],
+    [{draftCountText:'共1篇草稿'},'incomplete_list'],[{draftCountText:'共00篇草稿'},'incomplete_list'],
+    [{draftCountText:'共0篇草稿 '},'incomplete_list'],[{draftCountText:'0'},'incomplete_list'],
+    [{forceEmptyMarker:true,keepDraft:true},'incomplete_list']
+  ];
+  for(const [options,code] of cases){
+    const env=environment({emptyDraftTableOmitted:true,...options});if(!options.keepDraft)env.editors.delete('11');
+    const base=await verified(env);const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(result.error,'platform_browser_'+code,JSON.stringify(options));
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+  const config=profile();delete config.chapter_lists[0].count;
+  const env=environment({emptyDraftTableOmitted:true});env.editors.delete('11');const base=await verified(env,config);
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).error,'platform_browser_incomplete_list');
+});
+test('empty Fanqie catalog requires unique visible marker and rejects pagination or virtualization',async()=>{
+  for(const [options,code] of [[{duplicateSelector:'#empty'},'ambiguous_dom'],[{virtual:true},'incomplete_list'],[{pagination:true},'incomplete_list']]){
+    const env=environment({emptyDraftTableOmitted:true,...options});env.editors.delete('11');const base=await verified(env);
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).error,'platform_browser_'+code);
+  }
+  for(const options of [{alwaysMissing:'#empty'},{hiddenEmptyMarker:true},{listReadyText:'loading'}]){
+    const env=environment({...options,emptyDraftTableOmitted:!options.listReadyText});env.editors.delete('11');const base=await verified(env);
+    const req=next(base,'find_drafts',{chapter:12});req.deadline=new Date(Date.now()+125).toISOString();
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed',JSON.stringify(options));
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('empty Fanqie catalog repeats count identity scope and filters before accepting zero rows',async()=>{
+  const cases=[
+    [env=>{env.draftCountText='共1篇草稿';},'incomplete_list'],
+    [env=>{env.account='different-account';},'identity_mismatch'],
+    [env=>{env.wrongDraftScope=true;},'incomplete_scope'],
+    [env=>{env.wrongDraftFilter=true;},'incomplete_scope']
+  ];
+  for(const [change,code] of cases){
+    const env=environment({emptyDraftTableOmitted:true,onDraftCountRead:state=>{if(state.draftCountReads===3)change(state);}});
+    env.editors.delete('11');const base=await verified(env);
+    if(code==='identity_mismatch')env.onDraftCountRead=state=>{
+      if(state.draftCountReads===3){change(state);for(const tab of state.tabs.values())if(tab.current===ORIGIN+'/account')tab.guardAccount=state.account;}
+    };
+    const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(result.error,'platform_browser_'+code);assert.ok(env.draftCountReads>=3);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('a disappearing empty marker cannot fall back to a ready zero-row table at later checkpoints',async()=>{
+  for(const pass of [3,5]){
+    const env=environment({emptyDraftTableOmitted:true,onDraftCountRead:state=>{
+      if(state.draftCountReads===pass*3){state.missingEmptyMarker=true;state.emptyDraftTableOmitted=false;}
+    }});
+    env.editors.delete('11');const base=await verified(env);
+    const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(result.error,'platform_browser_incomplete_list');assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('absence of a spinner while the empty marker is still rendering remains pollable',async()=>{
+  const env=environment({emptyDraftTableOmitted:true,delayCounts:{'#empty':2}});env.editors.delete('11');
+  const base=await verified(env);const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.deepEqual(result.result,[]);assert.equal(env.delayCounts['#empty'],0);
 });
 test('popup concurrent unrelated and old-draft user tabs are never claimed, inspected or closed',async () => {
   const env=environment({concurrent:true,concurrentOldDraft:true});const base=await verified(env);
@@ -300,6 +588,422 @@ test('deadlines, unverified operations and changed session binding refuse UI wor
   const base=await verified(env);const events=env.events.length;
   assert.equal((await executeChromeBridgeRequest(env.api,{...next(base,'find_drafts',{chapter:12}),binding_sha256:'changed'})).error,'platform_browser_identity_mismatch');
   assert.equal(env.events.length,events);
+});
+test('observed read-only navigation acknowledgement timeouts accept an already arrived page without navigation replay',async()=>{
+  const messages=[url=>'Timed out after 10000ms waiting for CDP command Page.navigate.',
+    url=>'Timed out waiting for tab 123456 to navigate to '+url+'.'];
+  for(const destination of [ORIGIN+'/book/10/chapters']){
+    for(const message of messages){
+      const env=environment(),base=await verified(env);let timeouts=0;env.events=[];
+      env.afterNavigation=async(tab,kind,url)=>{
+        if(url!==destination||timeouts)return;
+        timeouts++;env.events.push(['navigationTimeout',tab.id]);throw Error(message(url));
+      };
+      const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+      assert.equal(result.ok,true,JSON.stringify(result));assert.deepEqual(result.result,[]);assert.equal(timeouts,1);
+      const index=env.events.findIndex(row=>row[0]==='navigationTimeout');
+      assert.deepEqual(env.events[index+1],['ax',env.events[index][1]],'recovery reads the existing page rather than navigating again');
+      assert.equal(env.events.filter(row=>['goto','reload'].includes(row[0])&&row[1]===destination).length,1);
+      assert.equal(env.creates,0);assert.equal(env.saves,0);
+    }
+  }
+});
+test('observed management tab switches use one exact frozen role click per direction and no goto reload or new page',async()=>{
+  const {env,config}=managementFixture(),base=await verified(env,config);env.events=[];
+  const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+  assert.equal(response.ok,true,JSON.stringify(response));assert.deepEqual(response.result,[]);
+  assert.deepEqual(env.events.filter(row=>row[0]==='managementClick').map(row=>row[1]),['章节管理','草稿箱']);
+  assert.deepEqual(env.events.filter(row=>row[0]==='getByRole').map(row=>row.slice(1)),[
+    ['tab',{name:'章节管理',exact:true}],['tab',{name:'草稿箱',exact:true}]]);
+  assert.ok(!env.events.some(row=>row[0]==='goto'||row[0]==='newTab'||row[0]==='reload'&&row[1].startsWith(MANAGEMENT)));
+  assert.equal(env.creates,0);assert.equal(env.saves,0);assert.ok(env.accountReads>1);
+});
+test('management tab arrival waits for delayed URL and initially empty AX with a single click and no navigation fallback',async()=>{
+  for(const mode of ['url','ax']){
+    const {env,config}=managementFixture();let clicks=0,pending=0;
+    env.afterManagementClick=async(tab,source,target)=>{
+      if(clicks++)return;
+      if(mode==='url'){const read=tab.url.bind(tab);tab.url=async()=>++pending<=2?source:read();}
+      else{const read=tab.getAXState.bind(tab);tab.getAXState=async options=>++pending<=2?'':read(options);}
+    };
+    const base=await verified(env,config);env.events=[];
+    const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(response.ok,true,JSON.stringify(response));assert.ok(pending>=3);
+    assert.equal(env.events.filter(row=>row[0]==='managementClick').length,2);
+    assert.ok(!env.events.some(row=>row[0]==='goto'||row[0]==='newTab'));assert.equal(env.creates,0);
+  }
+});
+test('management source and target coverage can become uniquely visible after absent hidden or empty loading states',async()=>{
+  for(const stage of ['source','target'])for(const mode of ['absent','hidden','empty']){
+    const {env,config}=managementFixture(),base=await verified(env,config);env.events=[];let reads=0;
+    env.countOverrides={};
+    env.beforeLocatorCount=async(tab,selector)=>{
+      if(selector!==MANAGEMENT_COVERAGE||!tab.current.endsWith(stage==='source'?'?type=2':'?type=1'))return;
+      const loading=++reads<=2;
+      if(mode==='absent'&&loading)env.countOverrides[selector]=0;else delete env.countOverrides[selector];
+      env.managementCoverageVisible=!(mode==='hidden'&&loading);
+      env.managementCoverage=mode==='empty'&&loading?'':undefined;
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(response.ok,true,stage+'/'+mode+': '+JSON.stringify(response));assert.ok(reads>=3);
+    assert.equal(env.events.filter(row=>row[0]==='managementClick').length,2);
+    assert.ok(!env.events.some(row=>['goto','newTab'].includes(row[0])||row[0]==='reload'&&row[1].startsWith(MANAGEMENT)));
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('the source recheck waits for a temporary rerender without clicking twice or replacing the directory page',async()=>{
+  const {env,config}=managementFixture(),base=await verified(env,config);env.events=[];let reads=0;
+  env.countOverrides={};
+  env.beforeLocatorCount=async(tab,selector)=>{
+    if(selector!==MANAGEMENT_COVERAGE||!tab.current.endsWith('?type=2'))return;
+    if([2,3].includes(++reads))env.countOverrides[selector]=0;else delete env.countOverrides[selector];
+  };
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).ok,true);
+  assert.ok(reads>=4);assert.equal(env.events.filter(row=>row[0]==='managementClick').length,2);
+  assert.ok(!env.events.some(row=>['goto','newTab'].includes(row[0])||row[0]==='reload'&&row[1].startsWith(MANAGEMENT)));
+});
+test('create waits for source coverage after its real fresh catalog reload while allocation paste and save stay single',async()=>{
+  const {env,config}=managementFixture();cacheManagementRows(env);const base=await verified(env,config);
+  let loading=0,waits=0;env.countOverrides={};
+  env.afterCatalogRefresh=async()=>{if(env.creates)loading=2;};
+  env.beforeLocatorCount=async(tab,selector)=>{
+    if(selector!==MANAGEMENT_COVERAGE||!tab.current.endsWith('?type=2'))return;
+    if(loading>0){loading--;waits++;env.countOverrides[selector]=0;}else delete env.countOverrides[selector];
+  };
+  const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'新草稿',body:'完整正文\n'}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.ok(waits>=2);
+  assert.equal(env.creates,1);assert.equal(env.saves,1);assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1);
+});
+test('coverage waiting refuses duplicate nonempty wrong URL and SDK errors immediately before another action',async()=>{
+  for(const stage of ['source','target'])for(const mode of ['duplicate','wrong','spaces','book','route','login','foreign','permission','disconnected','url_error']){
+    const {env,config}=managementFixture(),base=await verified(env,config);env.events=[];let reads=0,observed;
+    const original=Object.assign(Error('PRIVATE coverage read refused'),{code:mode==='permission'?'permission_denied':'disconnected'});
+    env.api.onDriverError=failure=>{observed=failure;};env.countOverrides={};
+    env.beforeLocatorCount=async(tab,selector)=>{
+      if(selector!==MANAGEMENT_COVERAGE||!tab.current.endsWith(stage==='source'?'?type=2':'?type=1'))return;
+      reads++;
+      if(mode==='duplicate')env.countOverrides[selector]=2;
+      if(mode==='wrong'||mode==='spaces')env.managementCoverage=mode==='spaces'?' ':'其它范围';
+      if(mode==='book')tab.current=MANAGEMENT.replace('/10&','/11&')+'?type=2';
+      if(mode==='route')tab.current=ORIGIN+'/different';
+      if(mode==='login')tab.current=ORIGIN+'/login';
+      if(mode==='foreign')tab.current='https://example.com/';
+      if(['permission','disconnected'].includes(mode))throw original;
+      if(mode==='url_error')tab.url=async()=>{throw original;};
+    };
+    const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(result.ok,false,stage+'/'+mode);assert.equal(reads,1,stage+'/'+mode);
+    if(['permission','disconnected','url_error'].includes(mode))assert.equal(observed,original);
+    assert.equal(env.events.filter(row=>row[0]==='managementClick').length,stage==='source'?0:1,stage+'/'+mode);
+    assert.ok(!env.events.some(row=>['goto','reload','newTab'].includes(row[0])));assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('source and target loading retain one five-second budget and the original request deadline',async()=>{
+  const now=Date.now;
+  try{
+    for(const stage of ['source','target'])for(const short of [false,true]){
+      let clock=now();Date.now=()=>clock;
+      const {env,config}=managementFixture(),base=await verified(env,config);env.events=[];let reads=0;env.countOverrides={};
+      env.beforeLocatorCount=async(tab,selector)=>{
+        if(selector!==MANAGEMENT_COVERAGE||!tab.current.endsWith(stage==='source'?'?type=2':'?type=1'))return;
+        reads++;clock+=short?250:2500;env.countOverrides[selector]=0;
+      };
+      const req=next(base,'find_drafts',{chapter:12});req.deadline=new Date(clock+(short?250:60000)).toISOString();
+      const result=await executeChromeBridgeRequest(env.api,req);
+      assert.equal(result.error,'platform_browser_'+(short?'operation_failed':stage==='source'?'incomplete_scope':'navigation_timeout'));
+      assert.equal(reads,short?1:2);assert.equal(env.events.filter(row=>row[0]==='managementClick').length,stage==='source'?0:1);
+      assert.ok(!env.events.some(row=>['goto','reload','newTab'].includes(row[0])));
+    }
+  }finally{Date.now=now;}
+});
+test('the second pre-click source check cannot reset the first source readiness budget',async()=>{
+  const {env,config}=managementFixture(),base=await verified(env,config);env.events=[];env.countOverrides={};
+  const now=Date.now;let clock=now(),reads=0;Date.now=()=>clock;
+  const req=next(base,'find_drafts',{chapter:12});req.deadline=new Date(clock+60000).toISOString();
+  env.beforeLocatorCount=async(tab,selector)=>{
+    if(selector!==MANAGEMENT_COVERAGE||!tab.current.endsWith('?type=2'))return;
+    reads++;
+    if(reads===1){clock+=3000;env.countOverrides[selector]=0;}
+    else if(reads===3){clock+=2000;env.countOverrides[selector]=0;}
+    else delete env.countOverrides[selector];
+  };
+  try{
+    const result=await executeChromeBridgeRequest(env.api,req);assert.equal(result.error,'platform_browser_incomplete_scope');
+    assert.equal(reads,3);assert.equal(env.events.filter(row=>row[0]==='managementClick').length,0);
+  }finally{Date.now=now;}
+});
+test('matching coverage returned after its awaited read cannot exceed the original request deadline',async()=>{
+  const {env,config}=managementFixture(),base=await verified(env,config);env.events=[];
+  const now=Date.now;let clock=now();Date.now=()=>clock;
+  const req=next(base,'find_drafts',{chapter:12});req.deadline=new Date(clock+500).toISOString();
+  env.afterLocatorEvaluate=async(_tab,selector)=>{if(selector===MANAGEMENT_COVERAGE)clock+=500;};
+  try{
+    const result=await executeChromeBridgeRequest(env.api,req);assert.equal(result.error,'platform_browser_operation_failed');
+    assert.equal(env.events.filter(row=>row[0]==='managementClick').length,0);
+  }finally{Date.now=now;}
+});
+test('invalid frozen management mapping or selected source refuses before click and never falls back to goto',async()=>{
+  for(const mode of ['duplicate','wrong_label','wrong_scope','attribute','source_selected']){
+    const {env,config}=managementFixture();
+    if(mode==='duplicate')config.chapter_lists.push(structuredClone(config.chapter_lists[0]));
+    if(mode==='wrong_label')config.chapter_lists[0].coverage.expected='其它页面';
+    if(mode==='wrong_scope')config.chapter_lists[0].scope='drafts';
+    if(mode==='attribute')config.chapter_lists[0].coverage.attribute='title';
+    if(mode==='source_selected')env.managementCoverage='章节管理';
+    if(mode==='wrong_scope')config.chapter_lists.push({...structuredClone(config.chapter_lists[0]),url:MANAGEMENT+'?other=1',scope:'non_drafts'});
+    const base=await verified(env,config);env.events=[];
+    const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(response.ok,false);assert.ok(!env.events.some(row=>['managementClick','goto','newTab'].includes(row[0])));
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('missing duplicate hidden disabled selected or unavailable target role is terminal without click goto or new tab',async()=>{
+  for(const options of [{managementRoleCount:0},{managementRoleCount:2},{managementHidden:true},{managementDisabled:true},
+    {managementAlreadySelected:true},{missingRoleAPI:true}]){
+    const {env,config}=managementFixture(options),base=await verified(env,config);env.events=[];
+    if(options.missingRoleAPI)[...env.tabs.values()].find(tab=>tab.current.startsWith(MANAGEMENT)).playwright.getByRole=undefined;
+    const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(response.ok,false);assert.ok(!env.events.some(row=>['managementClick','goto','newTab'].includes(row[0])));
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('management click or post-click permission URL and DOM failures never click again or fall back to navigation',async()=>{
+  for(const mode of ['click','permission','url','ax','other_route','coverage','nonstring_ax']){
+    const original=Error(mode==='permission'?'PRIVATE origin approval gate did not grant access https://fanqienovel.com':'PRIVATE Debugger unattached');
+    const {env,config}=managementFixture(mode==='click'||mode==='permission'?{managementClickFailure:original}:{});
+    env.afterManagementClick=async tab=>{
+      if(mode==='url')tab.url=async()=>{throw original;};
+      if(mode==='ax')tab.getAXState=async()=>{throw original;};
+      if(mode==='other_route')tab.current=ORIGIN+'/login';
+      if(mode==='coverage')env.managementCoverage='草稿箱';
+      if(mode==='nonstring_ax')tab.getAXState=async()=>({});
+    };
+    const base=await verified(env,config);env.events=[];let observed;env.api.onDriverError=failure=>{observed=failure;};
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).ok,false);
+    if(['click','permission','url','ax'].includes(mode))assert.equal(observed,original);
+    assert.equal(env.events.filter(row=>row[0]==='managementClick').length,1);
+    assert.ok(!env.events.some(row=>row[0]==='goto'||row[0]==='newTab'));assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('management arrival respects five-second and original-request budgets without a second click',async()=>{
+  const now=Date.now;
+  try{
+    for(const short of [false,true]){
+      let clock=now();Date.now=()=>clock;
+      const {env,config}=managementFixture({managementStaySource:true}),base=await verified(env,config);env.events=[];
+      env.afterManagementClick=async tab=>{const read=tab.url.bind(tab);tab.url=async()=>{clock+=short?100:1000;return read();};};
+      const req=next(base,'find_drafts',{chapter:12});req.deadline=new Date(clock+(short?250:60000)).toISOString();
+      const response=await executeChromeBridgeRequest(env.api,req);
+      assert.equal(response.error,'platform_browser_'+(short?'operation_failed':'navigation_timeout'));
+      assert.equal(env.events.filter(row=>row[0]==='managementClick').length,1);
+      assert.ok(!env.events.some(row=>row[0]==='goto'||row[0]==='newTab'));assert.equal(env.creates,0);
+    }
+  }finally{Date.now=now;}
+});
+test('management switching keeps fresh identity filters and complete-catalog checks while create remains on its original navigation path',async()=>{
+  for(const options of [{wrongDraftFilter:true},{virtual:true},{switchAccount:true}]){
+    const {env,config}=managementFixture(options);if(options.switchAccount)env.afterManagementClick=async()=>{env.account='changed-account';};
+    const base=await verified(env,config);env.events=[];
+    const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(response.ok,false);assert.ok(env.events.some(row=>row[0]==='managementClick'));
+    assert.ok(!env.events.some(row=>row[0]==='goto'||row[0]==='newTab'));assert.equal(env.creates,0);
+  }
+  const {env,config}=managementFixture(),base=await verified(env,config);env.events=[];
+  const original=Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+  env.afterNavigation=async(tab,kind,url)=>{if(url===config.urls.create)throw original;};
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}))).ok,false);
+  assert.equal(env.events.filter(row=>row[0]==='reload'&&row[1]===config.urls.create).length,1);
+  assert.ok(!env.events.some(row=>row[0]==='managementClick'));assert.equal(env.creates,0);
+});
+test('other management paths retain ordinary navigation and never infer a role click across routes or books',async()=>{
+  for(const foreignBook of [false,true]){
+    const {env,config}=managementFixture();
+    config.chapter_lists[0].url=foreignBook?MANAGEMENT.replace('/10&','/11&')+'?type=1':MANAGEMENT.replace('&test','&other')+'?type=1';
+    config.identity.book.templates.push(ORIGIN+'/main/writer/chapter-manage/{book_id}&other?type=1');
+    const base=await verified(env,config);env.events=[];
+    const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(response.ok,!foreignBook,JSON.stringify(response));
+    if(foreignBook)assert.equal(response.error,'platform_browser_identity_mismatch');
+    assert.ok(!env.events.some(row=>row[0]==='managementClick'));
+    assert.ok(env.events.some(row=>row[0]==='goto'&&row[1]===config.chapter_lists[0].url));assert.equal(env.creates,0);
+  }
+});
+test('changed missing or duplicate owned-list inventory refuses before the selected management click with no navigation fallback',async()=>{
+  for(const mode of ['changed','missing','duplicate']){
+    const {env,config}=managementFixture(),base=await verified(env,config),list=env.api.listTabs;env.events=[];
+    env.api.listTabs=async()=>{
+      const rows=await list(),current=rows.find(row=>row.url===MANAGEMENT+'?type=2');
+      return mode==='missing'?rows.filter(row=>row!==current):mode==='duplicate'?[...rows,{...current}]:
+        rows.map(row=>row===current?{...row,url:ORIGIN+'/login'}:row);
+    };
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).error,'platform_browser_identity_mismatch');
+    assert.ok(!env.events.some(row=>['managementClick','goto','newTab'].includes(row[0])));assert.equal(env.creates,0);
+  }
+});
+test('same-URL reload timeout is rejected even when the old URL and AX remain readable without replaying navigation',async()=>{
+  for(const destination of [ORIGIN+'/account',ORIGIN+'/book/10/drafts']){
+    const env=environment(),base=await verified(env);const original=Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+    let observed;env.api.onDriverError=failure=>{observed=failure;};env.events=[];
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(url!==destination)return;
+      assert.equal(kind,'reload');assert.equal(await tab.url(),destination);
+      env.events.push(['navigationTimeout',tab.id]);throw original;
+    };
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).error,'platform_browser_operation_failed');
+    assert.equal(observed,original);
+    const index=env.events.findIndex(row=>row[0]==='navigationTimeout');
+    assert.ok(index>=0);assert.ok(!env.events.slice(index+1).some(row=>row[0]==='ax'),'old DOM readability is not arrival evidence');
+    assert.equal(env.events.filter(row=>['goto','reload'].includes(row[0])&&row[1]===destination).length,1);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('read-only timeout waits on the same tab for a late target URL or initially empty AX without another navigation',async()=>{
+  for(const mode of ['late_url','empty_ax']){
+    const env=environment(),base=await verified(env),destination=ORIGIN+'/book/10/chapters';let timeouts=0,reads=0;
+    env.events=[];env.afterNavigation=async(tab,kind,url)=>{
+      if(url!==destination||timeouts)return;
+      timeouts++;if(mode==='late_url')tab.current=ORIGIN+'/book/10/drafts';
+      const getAX=tab.getAXState.bind(tab);
+      tab.getAXState=async options=>{
+        reads++;
+        if(reads<3){env.events.push(['pendingAX',tab.id]);if(reads===2)tab.current=destination;return ' \n ';}
+        tab.getAXState=getAX;return getAX(options);
+      };
+      throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(response.ok,true,JSON.stringify(response));assert.deepEqual(response.result,[]);assert.equal(reads,3);
+    assert.equal(timeouts,1);assert.equal(env.events.filter(row=>row[0]==='goto'&&row[1]===destination).length,1);
+    assert.equal(env.events.filter(row=>row[0]==='reload'&&row[1]===destination).length,0);
+    assert.equal(env.events.filter(row=>row[0]==='newTab').length,0);assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('read-only arrival waiting stops at five seconds or the original request deadline and preserves the first timeout',async()=>{
+  const originalNow=Date.now;
+  try{
+    for(const budget of ['arrival_cap','source_never_arrives','request_deadline']){
+      let clock=originalNow();Date.now=()=>clock;
+      const env=environment(),base=await verified(env),destination=ORIGIN+'/book/10/chapters';let reads=0,observed;
+      const original=Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+      env.api.onDriverError=failure=>{observed=failure;};env.events=[];
+      env.afterNavigation=async(tab,kind,url)=>{
+        if(url!==destination)return;
+        if(budget==='source_never_arrives')tab.current=ORIGIN+'/book/10/drafts';
+        tab.getAXState=async()=>{reads++;clock+=budget==='request_deadline'?100:1000;return reads===5&&budget==='arrival_cap'?'late visible page':'';};
+        throw original;
+      };
+      const started=clock,req=next(base,'find_drafts',{chapter:12});
+      req.deadline=new Date(clock+(budget==='request_deadline'?250:60000)).toISOString();
+      const response=await executeChromeBridgeRequest(env.api,req);
+      assert.equal(response.error,'platform_browser_operation_failed');assert.equal(observed,original);
+      assert.equal(reads,budget==='request_deadline'?3:5);assert.equal(clock-started,budget==='request_deadline'?300:5000);
+      assert.equal(env.events.filter(row=>row[0]==='goto'&&row[1]===destination).length,1);
+      assert.equal(env.events.filter(row=>row[0]==='newTab').length,0);assert.equal(env.creates,0);assert.equal(env.saves,0);
+    }
+  }finally{Date.now=originalNow;}
+});
+test('arrival proof refuses other routes URL or AX exceptions and nonempty stale source immediately without polling or navigating again',async()=>{
+  for(const mode of ['foreign_origin','login_route','editor_route','other_readonly_route','url_error','ax_error','after_url_error',
+    'after_foreign_route','source_nonempty','nonstring_ax']){
+    const env=environment(),base=await verified(env),destination=ORIGIN+'/book/10/chapters';let reads=0,urlReads=0,observed;
+    const original=Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+    env.api.onDriverError=failure=>{observed=failure;};env.events=[];
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(url!==destination)return;
+      const route={foreign_origin:'https://example.com/',login_route:ORIGIN+'/login',editor_route:ORIGIN+'/book/10/edit/11?enter_from=modifydraft',
+        other_readonly_route:ORIGIN+'/account',source_nonempty:ORIGIN+'/book/10/drafts'}[mode];
+      if(route)tab.current=route;
+      const readURL=tab.url.bind(tab);
+      tab.url=async()=>{urlReads++;if(mode==='url_error'||mode==='after_url_error'&&urlReads===2)throw Error('PRIVATE URL disconnected');return readURL();};
+      tab.getAXState=async()=>{reads++;if(mode==='ax_error')throw Error('PRIVATE Debugger unattached');
+        if(mode==='after_foreign_route')tab.current='https://example.com/';return mode==='nonstring_ax'?{}:'visible page';};
+      throw original;
+    };
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).error,'platform_browser_operation_failed');
+    assert.equal(observed,original);assert.ok(reads<=1);assert.ok(urlReads<=2);
+    assert.equal(env.events.filter(row=>row[0]==='goto'&&row[1]===destination).length,1);
+    assert.equal(env.events.filter(row=>row[0]==='newTab').length,0);assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('read-draft completes its normal identity catalog and full preview gates after a read-only listing navigation timeout',async()=>{
+  const env=environment(),base=await verified(env);let timeouts=0;
+  env.afterNavigation=async(tab,kind,url)=>{
+    if(url!==ORIGIN+'/book/10/chapters'||timeouts)return;
+    timeouts++;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+  };
+  const result=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.equal(result.result.body,'原始正文');
+  assert.equal(result.result.title,'原稿');assert.equal(timeouts,1);assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+test('an unarrived URL or unreadable AX page preserves the original navigation timeout and never retries',async()=>{
+  for(const mode of ['not_arrived','ax_failed']){
+    const env=environment(),base=await verified(env);const original=Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+    let observed;env.api.onDriverError=failure=>{observed=failure;};env.events=[];
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(url!==ORIGIN+'/book/10/chapters')return;
+      if(mode==='not_arrived')tab.current=ORIGIN+'/book/10/drafts';
+      else tab.getAXState=async()=>{throw Error('PRIVATE probe permission denied');};
+      throw original;
+    };
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).error,'platform_browser_operation_failed');
+    assert.equal(observed,original);assert.equal(env.events.filter(row=>row[0]==='goto'&&row[1]===ORIGIN+'/book/10/chapters').length,1);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('navigation timeout recovery cannot bypass subsequent account identity checks',async()=>{
+  const env=environment(),base=await verified(env);
+  env.afterNavigation=async(tab,kind,url)=>{
+    if(url!==ORIGIN+'/book/10/chapters')return;
+    env.account='changed-account';for(const opened of env.tabs.values())if(opened.current===ORIGIN+'/account')opened.guardAccount=env.account;
+    throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+  };
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).error,'platform_browser_identity_mismatch');
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+test('other errors mismatched navigation destinations and authorization or disconnect codes are never recovered',async()=>{
+  const known='Timed out after 10000ms waiting for CDP command Page.navigate.';
+  for(const [message,code,name] of [['Permission denied',undefined,'Error'],['Debugger unattached',undefined,'Error'],
+      ['Timed out after 20000ms waiting for CDP command Page.navigate.',undefined,'Error'],
+      ['Timed out waiting for tab 123456 to navigate to '+ORIGIN+'/book/other/chapters.',undefined,'Error'],
+      [known,'platform_chrome_worker_origin_permission_required','Error'],[known,'disconnected','Error'],[known,undefined,'AbortError']]){
+    const env=environment(),base=await verified(env);const original=Error(message);original.name=name;if(code)original.code=code;
+    let observed;env.api.onDriverError=failure=>{observed=failure;};env.events=[];
+    env.afterNavigation=async(tab,kind,url)=>{if(url===ORIGIN+'/book/10/chapters')throw original;};
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).error,'platform_browser_operation_failed');
+    assert.equal(observed,original);assert.equal(env.events.filter(row=>row[0]==='goto'&&row[1]===ORIGIN+'/book/10/chapters').length,1);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('a create navigation is never recovered even when its landing URL is also a read-only listing',async()=>{
+  const env=environment(),base=await verified(env);const original=Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+  let observed;env.api.onDriverError=failure=>{observed=failure;};env.events=[];
+  env.afterNavigation=async(tab,kind,url)=>{if(url===base.profile.urls.create)throw original;};
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}))).error,'platform_browser_operation_failed');
+  assert.equal(observed,original);assert.equal(env.creates,0);assert.equal(env.saves,0);
+  assert.equal(env.events.filter(row=>['goto','reload'].includes(row[0])&&row[1]===base.profile.urls.create).length,1);
+});
+test('a failed new preview tab is not retried or treated as an arrived page and keeps its read diagnostic phase',async()=>{
+  const env=environment(),base=await verified(env);const original=Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+  const newTab=env.api.newTab;let attempts=0,observed,phase;
+  env.api.onProgress=event=>{if(event.phase!=='error')phase=event.phase;};
+  env.api.onDriverError=failure=>{observed=failure;};
+  env.api.newTab=async url=>{if(url.startsWith(ORIGIN+'/preview/')){attempts++;throw original;}return newTab(url);};
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}))).error,'platform_browser_operation_failed');
+  assert.equal(attempts,1);assert.equal(observed,original);assert.equal(phase,'read');assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+test('only verified guard list and independent preview openings carry explicit read-only context while direct create remains false',async()=>{
+  const env=environment(),calls=[],create=env.api.newTab;
+  env.api.newTab=async(url,context)=>{calls.push({url,context});return create(url);};
+  const base=await verified(env);assert.equal((await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}))).ok,true);
+  assert.deepEqual(new Set(calls.map(item=>item.url)),new Set([ORIGIN+'/account',ORIGIN+'/book/10/drafts',ORIGIN+'/preview/10&11']));
+  for(const call of calls)assert.deepEqual(call.context,{readOnly:true,target:base.binding.target});
+  const direct=environment(),config=profile();delete config.create_action;
+  const openings=[],open=direct.api.newTab;let created=false;
+  direct.api.newTab=async(url,context)=>{openings.push({url,context});if(created&&url===config.urls.create)throw Error('stop before any direct creation');return open(url);};
+  const directBase=await verified(direct,config);created=true;
+  assert.equal((await executeChromeBridgeRequest(direct.api,next(directBase,'create_draft',{chapter:12,title:'验收',body:'正文'}))).error,'platform_browser_operation_failed');
+  assert.deepEqual(openings.at(-1),{url:config.urls.create,context:{readOnly:false}});
+  assert.equal(direct.creates,0);assert.equal(direct.saves,0);
 });
 test('all observed volumes are enumerated and matching later-volume draft is found',async () => {
   const env=environment({sections:['第一卷','第二卷']});env.editors.set('22',{scope:'drafts',chapter:12,title:'第二卷章',body:'保留',saved:true,section:1});
@@ -344,6 +1048,79 @@ test('platform removing tail newlines after save remains unverified and never ch
   assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');
   assert.equal(env.creates,1);
 });
+test('explicit Fanqie terminal-LF policy accepts only trailing line breaks and preserves both actual texts',async()=>{
+  for(const [body,actual] of [['\n甲\n\n乙\n\n','\n甲\n\n乙'],['正文','正文\n\n'],['甲\r\n乙\r\n','甲\n乙']]){
+    const env=environment({previewBody:()=>actual});const base=request('verify_target');
+    base.binding.comparison_policy='fanqie_terminal_lf_v1';
+    assert.equal((await executeChromeBridgeRequest(env.api,base)).ok,true);
+    const req=next(base,'create_draft',{chapter:12,title:'验收',body});
+    const created=await executeChromeBridgeRequest(env.api,req);
+    assert.equal(created.ok,true,JSON.stringify(created));assert.equal(req.params.body,body);
+    assert.equal(env.editors.get('99').body,body.replace(/\r\n/g,'\n').replace(/\r/g,'\n'),'typing still sends the complete frozen body');
+    const observed=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'99'}));
+    assert.equal(observed.result.body,actual,'readback must retain the actual platform body');
+    assert.equal(env.creates,1);assert.equal(env.saves,1);
+  }
+});
+test('terminal-LF policy refuses leading internal spaces text and title changes',async()=>{
+  const body='\n甲\n\n乙  \n';
+  for(const actual of ['甲\n\n乙  \n','\n甲\n乙  \n','\n甲\n\n乙\n','\n甲\n\n丙  \n']){
+    const env=environment({previewBody:()=>actual});const base=request('verify_target');base.binding.comparison_policy='fanqie_terminal_lf_v1';
+    assert.equal((await executeChromeBridgeRequest(env.api,base)).ok,true);
+    const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body}));
+    assert.equal(result.error,'platform_browser_save_unverified');assert.equal(env.editors.get('99').body,body);
+  }
+  const env=environment({previewHeader:'第12章 验收 '});const base=request('verify_target');base.binding.comparison_policy='fanqie_terminal_lf_v1';
+  assert.equal((await executeChromeBridgeRequest(env.api,base)).ok,true);
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body}))).error,'platform_browser_save_unverified');
+});
+test('terminal-LF readback policy cannot relax the exact editor input check',async()=>{
+  const env=environment({editorBody:value=>value.replace(/\n+$/,'')});const base=request('verify_target');
+  base.binding.comparison_policy='fanqie_terminal_lf_v1';
+  assert.equal((await executeChromeBridgeRequest(env.api,base)).ok,true);
+  const body='甲\n\n';const req=next(base,'create_draft',{chapter:12,title:'验收',body});
+  assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_editor_changed');
+  assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal(req.params.body,body);
+});
+test('comparison policy is validated before UI and cannot change an existing session',async()=>{
+  for(const policy of [null,true,'trim','fanqie_terminal_lf_v2']){
+    const env=environment();const req=request('verify_target');req.binding.comparison_policy=policy;
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_invalid_profile');assert.deepEqual(env.events,[]);
+  }
+  const env=environment();const base=await verified(env);const before=env.events.length;
+  const changed=next(base,'find_drafts',{chapter:12});changed.binding={...base.binding,comparison_policy:'fanqie_terminal_lf_v1'};
+  assert.equal((await executeChromeBridgeRequest(env.api,changed)).error,'platform_browser_identity_mismatch');assert.equal(env.events.length,before);
+  const foreign=request('verify_target');foreign.binding.comparison_policy='fanqie_terminal_lf_v1';foreign.binding.target.platform='qimao';
+  assert.equal((await executeChromeBridgeRequest(environment().api,foreign)).error,'platform_browser_invalid_profile');
+});
+test('Markdown paragraph encoding consumes the already encoded body verbatim without another conversion',async()=>{
+  for(const encoding of ['markdown_paragraphs_v1','markdown_paragraphs_v2']){
+    const env=environment();const base=request('verify_target');base.binding.body_encoding=encoding;
+    assert.equal((await executeChromeBridgeRequest(env.api,base)).ok,true);
+    const body=(encoding==='markdown_paragraphs_v1'?'\n':'')+'首段\n第二段\n末段';const req=next(base,'create_draft',{chapter:12,title:'验收',body});
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).ok,true);
+    assert.equal(req.params.body,body);assert.equal(env.editors.get('99').body,body);
+    const observed=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'99'}));
+    assert.equal(observed.result.body,body);assert.equal(env.creates,1);assert.equal(env.saves,1);
+  }
+});
+test('body encoding is validated before UI and is isolated from comparison policy and session reuse',async()=>{
+  for(const encoding of [null,true,'trim','markdown_paragraphs_v3']){
+    const env=environment();const req=request('verify_target');req.binding.body_encoding=encoding;
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_invalid_profile');assert.deepEqual(env.events,[]);
+  }
+  const env=environment();const base=await verified(env);const before=env.events.length;
+  const changed=next(base,'find_drafts',{chapter:12});changed.binding={...base.binding,body_encoding:'markdown_paragraphs_v1'};
+  assert.equal((await executeChromeBridgeRequest(env.api,changed)).error,'platform_browser_identity_mismatch');assert.equal(env.events.length,before);
+  const oldEnv=environment(),old=request('verify_target');old.binding.body_encoding='markdown_paragraphs_v1';
+  assert.equal((await executeChromeBridgeRequest(oldEnv.api,old)).ok,true);const oldEvents=oldEnv.events.length;
+  const upgrade=next(old,'find_drafts',{chapter:12});upgrade.binding={...old.binding,body_encoding:'markdown_paragraphs_v2'};
+  assert.equal((await executeChromeBridgeRequest(oldEnv.api,upgrade)).error,'platform_browser_identity_mismatch');assert.equal(oldEnv.events.length,oldEvents);
+  for(const encoding of ['markdown_paragraphs_v1','markdown_paragraphs_v2']){
+    const foreign=request('verify_target');foreign.binding.body_encoding=encoding;foreign.binding.target.platform='qidian';
+    assert.equal((await executeChromeBridgeRequest(environment().api,foreign)).error,'platform_browser_invalid_profile');
+  }
+});
 test('catalog reuses this operation guard DOM while checking it throughout every scope and volume',async () => {
   const env=environment({sections:['第一卷','第二卷']});const base=await verified(env);
   env.events=[];env.accountReads=0;
@@ -354,13 +1131,62 @@ test('catalog reuses this operation guard DOM while checking it throughout every
   env.events=[];
   const found=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
   assert.equal(found.ok,true,JSON.stringify(found));
-  assert.equal(env.events.filter(row=>row[0]==='reload'&&row[1]===ORIGIN+'/account').length,3,
-    'one operation entry, one read start and one read return refresh regardless of catalog loops');
+  assert.equal(env.events.filter(row=>row[0]==='reload'&&row[1]===ORIGIN+'/account').length,1,
+    'one fresh account page per read-only operation with repeated live DOM reads through readback');
 });
 test('each new operation refreshes guard rather than trusting prior operation DOM',async () => {
   const env=environment();const base=await verified(env);env.account='different-account';
   const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
   assert.equal(response.error,'platform_browser_identity_mismatch');assert.equal(env.creates,0);
+});
+test('each independent read has one fresh guard but repeatedly checks actual account DOM throughout readback',async()=>{
+  const env=environment({sections:['第一卷','第二卷']}),base=await verified(env);
+  for(let index=0;index<2;index++){
+    env.events=[];env.accountReads=0;
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(response.ok,true,JSON.stringify(response));assert.equal(response.result.body,'原始正文');
+    assert.equal(env.events.filter(row=>row[0]==='reload'&&row[1]===ORIGIN+'/account').length,1);
+    assert.ok(env.accountReads>10,'live account DOM continues to be read without repeat navigation');
+  }
+});
+test('read-only guard never substitutes an old value when live DOM changes becomes empty ambiguous or redirected',async()=>{
+  for(const [mode,code] of [['changed','identity_mismatch'],['empty','login_required'],['multiple','ambiguous_dom'],['redirect','login_required']]){
+    const env=environment(),base=await verified(env);env.events=[];
+    env.onPreviewBody=()=>{
+      const guard=[...env.tabs.values()].find(tab=>tab.current===ORIGIN+'/account');assert.ok(guard);
+      if(mode==='changed')guard.guardAccount='different-account';
+      if(mode==='empty')guard.guardAccount='';
+      if(mode==='multiple')env.countOverrides={'#account':2};
+      if(mode==='redirect')guard.current=ORIGIN+'/login';
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(response.error,'platform_browser_'+code);assert.ok(!Object.hasOwn(response,'result'));
+    assert.equal(env.events.filter(row=>row[0]==='reload'&&row[1]===ORIGIN+'/account').length,1);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('guard exact URL is required before and after the awaited live account DOM read',async()=>{
+  for(const stage of ['before','after']){
+    const env=environment(),base=await verified(env);env.events=[];let changed=false;
+    if(stage==='before')env.afterNavigation=async(tab,kind,url)=>{if(url===ORIGIN+'/account'){changed=true;tab.current=ORIGIN+'/login';}};
+    else env.afterLocatorEvaluate=async(tab,selector)=>{if(selector==='#account'){changed=true;tab.current=ORIGIN+'/login';}};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(changed,true);assert.equal(response.error,'platform_browser_login_required');
+    assert.ok(!env.events.some(row=>row[0]==='newTab'&&row[1].startsWith(ORIGIN+'/preview/')),'redirect stops at the guard before opening preview');
+    assert.equal(env.creates,0);
+  }
+});
+test('book identity is rechecked after the guard await before reading a changed preview document',async()=>{
+  const env=environment(),base=await verified(env);let changed=false,bodyReads=0;
+  env.onPreviewBody=()=>{bodyReads++;};
+  env.afterLocatorEvaluate=async(tab,selector)=>{
+    if(selector!=='#account')return;
+    const preview=[...env.tabs.values()].find(opened=>opened.current===ORIGIN+'/preview/10&11');
+    if(preview){changed=true;preview.current=ORIGIN+'/preview/11&11';}
+  };
+  const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+  assert.equal(changed,true);assert.equal(response.error,'platform_browser_identity_mismatch');assert.equal(bodyReads,0);
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
 });
 test('account switch before create click or each fill or final save is rejected using fresh guard',async () => {
   for(const options of [{changeAccountBeforeCreateClick:true},{changeAccountOnCreate:true},
@@ -375,10 +1201,156 @@ test('account switch before create click or each fill or final save is rejected 
     if(options.changeAccountAfterFill==='#title')assert.deepEqual(fields,['#chapter','#title']);
   }
 });
-test('account switch after body read is blocked by fresh return guard and never returns stale observation',async () => {
-  const env=environment({changeAccountOnReadBody:true});const base=await verified(env);
+test('a hidden server account change without loaded-DOM change is detected at the next read-only operation fresh guard',async () => {
+  const env=environment({changeAccountOnPreviewBody:true});const base=await verified(env);env.events=[];
   const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+  assert.equal(response.ok,true,JSON.stringify(response));assert.equal(response.result.body,'原始正文');
+  assert.equal(env.account,'different-account');
+  assert.equal(env.events.filter(row=>row[0]==='reload'&&row[1]===ORIGIN+'/account').length,1);
+  const later=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+  assert.equal(later.error,'platform_browser_identity_mismatch');assert.ok(!Object.hasOwn(later,'result'));assert.equal(env.creates,0);
+});
+test('create retains forced return guard and rejects a hidden account change after saved-body preview',async()=>{
+  const env=environment({changeAccountOnPreviewBody:true}),base=await verified(env);
+  const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'完整正文\n'}));
   assert.equal(response.error,'platform_browser_identity_mismatch');assert.ok(!Object.hasOwn(response,'result'));
+  assert.equal(env.creates,1);assert.equal(env.saves,1,'write remains a single attempt before the post-save guard refuses confirmation');
+});
+const evaluateTimeout=()=>Error('Timed out after 3000ms waiting for CDP command Runtime.evaluate.');
+const focusSetupTimeout=()=>Error('Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.');
+test('an observed focus-emulation setup timeout can reread the same safe query once under the existing limits',async()=>{
+  for(const name of ['Error','TimeoutError']){
+    const env=environment(),base=await verified(env);let chosen,calls=0;
+    env.beforeLocatorCount=async(tab,selector,locator)=>{
+      if(selector!=='#account')return;chosen??=locator;if(locator!==chosen)return;
+      if(!calls++){const failure=focusSetupTimeout();failure.name=name;throw failure;}
+    };
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).ok,true);
+    assert.equal(calls,2);assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+test('one transient exact Runtime.evaluate timeout can recover each allowed SDK read without repeating the operation',async()=>{
+  for(const kind of ['ax','count','value','paragraphs','preview']){
+    const env=environment(),base=await verified(env);let calls=0,chosen=null;
+    if(kind==='ax')env.beforeAX=async()=>{if(!calls++)throw evaluateTimeout();};
+    if(kind==='count')env.beforeLocatorCount=async(tab,selector,locator)=>{if(selector!=='#account')return;
+      chosen??=locator;if(locator===chosen&&!calls++)throw evaluateTimeout();};
+    if(['value','paragraphs','preview'].includes(kind))env.beforeLocatorEvaluate=async(tab,selector,fn,locator)=>{
+      if(kind==='value'&&selector!=='#account'||kind==='paragraphs'&&fn!==readParagraphs||kind==='preview'&&fn!==readPreviewParagraphs_v1)return;
+      chosen??=locator;if(locator===chosen&&!calls++)throw evaluateTimeout();
+    };
+    const operation=kind==='paragraphs'?'create_draft':kind==='preview'?'read_draft':'find_drafts';
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,
+      operation==='create_draft'?{chapter:12,title:'验收',body:'甲段\n乙段\n'}:operation==='read_draft'?{remote_id:'11'}:{chapter:12}));
+    assert.equal(response.ok,true,JSON.stringify(response));assert.ok(calls>=2);
+    if(kind!=='ax')assert.equal(calls,2,'only the selected locator query is reread once');
+    assert.equal(env.creates,kind==='paragraphs'?1:0);assert.equal(env.saves,kind==='paragraphs'?1:0);
+  }
+});
+test('a successful first read is not repeated and a failed second SDK query never receives a third attempt',async()=>{
+  for(const mode of ['success','second_exact','second_other']){
+    const env=environment(),base=await verified(env);let chosen,calls=0,observed;
+    const first=evaluateTimeout(),second=mode==='second_exact'?evaluateTimeout():Error('PRIVATE second read failure');
+    env.api.onDriverError=failure=>{observed=failure;};
+    env.beforeLocatorCount=async(tab,selector,locator)=>{if(selector!=='#account')return;chosen??=locator;if(locator!==chosen)return;
+      calls++;if(mode==='success')return;throw calls===1?first:second;};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(calls,mode==='success'?1:2);assert.equal(response.ok,mode==='success');
+    if(mode!=='success')assert.equal(observed,second);assert.equal(env.creates,0);
+  }
+});
+test('approximate Runtime.evaluate errors and permission disconnected cancellation or closed codes are never retried',async()=>{
+  const message=evaluateTimeout().message;
+  for(const [text,name,code] of [[message.replace('3000','3001'),'Error'],[message.slice(0,-1),'Error'],[message,'TypeError'],
+    [message,'Error','permission_denied'],[message,'Error','auth_required'],[message,'Error','disconnected'],
+    [message,'Error','Debugger_unattached'],[message,'Error','cancelled'],[message,'Error','closed'],[message,'AbortError'],
+    [focusSetupTimeout().message.replace('3000','3001'),'Error'],[focusSetupTimeout().message.slice(0,-1),'Error'],
+    [focusSetupTimeout().message,'Error','permission_denied'],
+    ['Timed out after 3000ms waiting for CDP command Page.navigate.','Error'],
+    ['Timed out after 3000ms waiting for CDP command Runtime.callFunctionOn.','Error']]){
+    const env=environment(),base=await verified(env),original=Error(text);original.name=name;if(code)original.code=code;
+    let calls=0,observed;env.api.onDriverError=failure=>{observed=failure;};
+    env.beforeLocatorCount=async(tab,selector)=>{if(selector==='#account'){calls++;throw original;}};
+    assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).ok,false);
+    assert.equal(calls,1);assert.equal(observed,original);assert.equal(env.creates,0);
+  }
+});
+test('query retry refuses same-origin route remote login or foreign-origin changes before a second read',async()=>{
+  for(const route of [ORIGIN+'/account?changed=1',ORIGIN+'/book/10/edit/99?enter_from=modifydraft',ORIGIN+'/login','https://example.com/']){
+    const env=environment(),base=await verified(env);let calls=0;
+    env.beforeLocatorCount=async(tab,selector)=>{if(selector==='#account'){calls++;tab.current=route;throw evaluateTimeout();}};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
+    assert.equal(response.ok,false);assert.equal(calls,1);assert.equal(env.creates,0);
+  }
+  const env=environment(),base=await verified(env),fenceFailure=Error('PRIVATE URL check disconnected');let calls=0,observed;
+  env.api.onDriverError=failure=>{observed=failure;};
+  env.beforeLocatorCount=async(tab,selector)=>{if(selector==='#account'){calls++;tab.url=async()=>{throw fenceFailure;};throw evaluateTimeout();}};
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).ok,false);
+  assert.equal(calls,1);assert.equal(observed,fenceFailure,'URL-fence failure stays visible instead of the first query timeout');
+});
+test('retry and successful-query results cannot outlive the original deadline or a post-read URL change',async()=>{
+  const now=Date.now;
+  try{
+    for(const mode of ['before_retry','after_retry','first_success']){
+      let clock=now();Date.now=()=>clock;
+      const env=environment(),base=await verified(env);let calls=0;
+      env.beforeLocatorCount=async(tab,selector)=>{if(selector!=='#account')return;calls++;
+        if(mode==='first_success'||mode==='before_retry'||calls===2)clock+=1000;
+        if(mode!=='first_success'&&calls===1)throw evaluateTimeout();};
+      const req=next(base,'find_drafts',{chapter:12});req.deadline=new Date(clock+500).toISOString();
+      assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');
+      assert.equal(calls,mode==='after_retry'?2:1);assert.equal(env.creates,0);
+    }
+  }finally{Date.now=now;}
+  const env=environment(),base=await verified(env);let calls=0;
+  env.beforeLocatorCount=async(tab,selector)=>{if(selector!=='#account')return;calls++;
+    if(calls===1)throw evaluateTimeout();tab.current=ORIGIN+'/login';};
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).ok,false);assert.equal(calls,2);
+});
+test('recovered reads still reject ambiguous counts wrong or blank accounts and unsupported paragraph structure',async()=>{
+  for(const [mode,code] of [['count2','ambiguous_dom'],['empty','login_required'],['wrong','identity_mismatch'],['paragraphs','unsupported_editor']]){
+    const env=environment(),base=await verified(env);let calls=0;
+    if(mode==='count2')env.beforeLocatorCount=async(tab,selector)=>{if(selector==='#account'&&!calls++){
+      env.countOverrides={'#account':2};throw evaluateTimeout();}};
+    else env.beforeLocatorEvaluate=async(tab,selector,fn)=>{
+      if(mode==='paragraphs'?fn!==readParagraphs:selector!=='#account')return;
+      if(calls++)return;
+      if(mode==='paragraphs')env.invalidEditorBody=true;else tab.guardAccount=mode==='empty'?'':'different-account';throw evaluateTimeout();
+    };
+    const req=mode==='paragraphs'?next(base,'create_draft',{chapter:12,title:'验收',body:'完整正文'}):next(base,'find_drafts',{chapter:12});
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_'+code);assert.equal(env.saves,0);
+  }
+});
+test('either exact read-setup timeout in a write action never repeats click fill paste press or navigation',async()=>{
+  for(const timeout of [evaluateTimeout,focusSetupTimeout])for(const mode of ['click','fill','paste','press','save','navigation']){
+    const original=timeout(),options={click:{createClickFailure:original},fill:{fillFailure:original},paste:{pasteFailure:original},
+      press:{enterFailure:original},save:{saveFailure:original}}[mode]??{};
+    const env=environment(options),base=await verified(env);env.events=[];let observed;env.api.onDriverError=failure=>{observed=failure;};
+    if(mode==='navigation')env.afterNavigation=async(tab,kind,url)=>{if(url===base.profile.urls.create)throw original;};
+    const req=next(base,'create_draft',{chapter:12,title:'验收',body:'完整正文\n\n'});
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).ok,false);assert.equal(observed,original);
+    assert.equal(env.creates,mode==='navigation'?0:1);
+    assert.ok(env.events.filter(row=>row[0]==='click'&&row[1]==='#create').length<=1);
+    assert.ok(env.events.filter(row=>row[0]==='pasteText').length<=1);
+    if(mode==='press')assert.equal(env.events.filter(row=>row[0]==='press'&&row[2]==='Enter').length,1);
+    if(mode==='fill')assert.equal(env.events.filter(row=>row[0]==='fill').length,1);
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).ok,false);assert.equal(env.creates,mode==='navigation'?0:1);
+  }
+});
+test('post-action AX recovery rereads only the snapshot while create paste Enter and save each execute once',async()=>{
+  for(const mode of ['create','paste','press','save']){
+    const env=environment(),base=await verified(env);let started=false,complete=false,snapshots=0;
+    env.beforeAX=async()=>{
+      const reached=mode==='create'?env.creates===1:mode==='save'?env.saves===1:
+        env.events.some(row=>mode==='paste'?row[0]==='pasteText':row[0]==='press'&&row[2]==='Enter');
+      if(complete||!reached&&!started)return;started=true;snapshots++;
+      if(snapshots===1)throw evaluateTimeout();complete=true;
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'完整正文\n'}));
+    assert.equal(response.ok,true,JSON.stringify(response));assert.equal(snapshots,2);assert.equal(env.creates,1);assert.equal(env.saves,1);
+    assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1);
+    assert.equal(env.events.filter(row=>row[0]==='press'&&row[2]==='Enter').length,1);
+  }
 });
 test('body focus failure after empty draft allocation stays failed and cannot retry create',async () => {
   const env=environment({failBodyFocus:true});const base=await verified(env);
@@ -421,6 +1393,16 @@ test('throwing or rejected diagnostic callbacks cannot change a successful creat
     const req=next(base,'create_draft',{chapter:12,title:'验收',body:'正文'});
     const result=await executeChromeBridgeRequest(env.api,req);
     assert.equal(result.ok,true,JSON.stringify(result));assert.equal(result.result,'99');assert.equal(env.creates,1);assert.equal(env.saves,1);
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');assert.equal(env.creates,1);
+  }
+});
+test('throwing or rejected original-error callbacks cannot change failure envelopes or retry a create',async () => {
+  for(const callback of [()=>{throw new Error('PRIVATE diagnostic failure');},()=>Promise.reject(new Error('PRIVATE diagnostic rejection'))]){
+    const env=environment({failBodyFocus:true});env.api.onDriverError=callback;const base=await verified(env);
+    const req=next(base,'create_draft',{chapter:12,title:'验收',body:'正文'});
+    const result=await executeChromeBridgeRequest(env.api,req);
+    assert.equal(result.error,'platform_browser_operation_failed');assert.equal(env.creates,1);assert.equal(env.saves,0);
+    assert.ok(!JSON.stringify(result).includes('PRIVATE'));
     assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');assert.equal(env.creates,1);
   }
 });
@@ -530,13 +1512,70 @@ test('preview readiness polls header and empty body but refuses unknown structur
   assert.equal(failed.error,'platform_browser_unsupported_editor');
   assert.ok(!env.events.some(row=>row[0]==='newTab'&&row[1].includes('/edit/')));
 });
-test('failure to close owned editor blocks fresh preview and consumes its single create request',async()=>{
-  const env=environment({closeEditorFailure:true});const base=await verified(env,previewProfile());env.events=[];
-  const req=next(base,'create_draft',{chapter:12,title:'验收',body:'正文'});
-  const response=await executeChromeBridgeRequest(env.api,req);
-  assert.equal(response.error,'platform_browser_editor_in_use');assert.equal(env.creates,1);assert.equal(env.saves,1);
+test('owned editor inventory may lag one successful close before independent preview readback',async()=>{
+  const env=environment();const base=await verified(env,previewProfile());env.events=[];
+  const get=env.api.getTab,list=env.api.listTabs;let stale,polls=0,closeCalls=0;
+  env.api.getTab=async id=>{
+    const tab=await get(id);
+    if(tab.current.includes('/edit/')&&!tab.delayedClose){
+      tab.delayedClose=true;const close=tab.close.bind(tab);
+      tab.close=async()=>{closeCalls++;stale={id:tab.id,url:tab.current};await close();};
+    }
+    return tab;
+  };
+  env.api.listTabs=async()=>{const rows=await list();if(stale&&++polls<=3)rows.push(stale);return rows;};
+  const body='\n中文甲\n\n中文乙\n\n';
+  const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.ok(polls>=4);assert.equal(closeCalls,1);
+  assert.equal(env.creates,1);assert.equal(env.saves,1);
+  assert.ok(!env.tabs.has(stale.id));assert.ok([...env.tabs.values()].some(tab=>tab.current===ORIGIN+'/preview/10&99'));
+  const readback=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'99'}));
+  assert.equal(readback.result.body,body);assert.equal(readback.result.title,'验收');assert.equal(closeCalls,1);
+});
+test('owned editor close waits at most five seconds or the original deadline without retrying create or close',async()=>{
+  const originalNow=Date.now;
+  try{
+    for(const budget of ['close-cap','request-deadline']){
+      let clock=originalNow();Date.now=()=>clock;
+      const env=environment({closeEditorFailure:true});const base=await verified(env,previewProfile());env.events=[];
+      const list=env.api.listTabs;let closingId,polls=0;
+      env.api.listTabs=async()=>{
+        const rows=await list();closingId ||= env.closed.find(id=>env.tabs.get(id)?.current.includes('/edit/'));
+        if(closingId){polls++;clock+=budget==='close-cap'?1000:100;}
+        return rows;
+      };
+      const req=next(base,'create_draft',{chapter:12,title:'验收',body:'正文'});
+      req.deadline=new Date(clock+(budget==='close-cap'?60000:250)).toISOString();
+      const result=await executeChromeBridgeRequest(env.api,req);
+      assert.equal(result.error,'platform_browser_editor_in_use');assert.equal(env.creates,1);assert.equal(env.saves,1);
+      assert.equal(env.closed.filter(id=>id===closingId).length,1);assert.equal(polls,budget==='close-cap'?5:3);
+      assert.ok(env.tabs.has(closingId),'unconfirmed closure retains the owned tab for existing cleanup');
+      assert.ok(!env.events.some(row=>row[0]==='newTab'&&row[1].includes('/preview/')));
+      assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');assert.equal(env.creates,1);
+    }
+  }finally{Date.now=originalNow;}
+});
+test('a new unowned matching editor during close propagation blocks preview and is never touched',async()=>{
+  const env=environment();const base=await verified(env,previewProfile());env.events=[];
+  const get=env.api.getTab,list=env.api.listTabs;let stale,polls=0,user,closeCalls=0;
+  env.api.getTab=async id=>{
+    const tab=await get(id);
+    if(tab.current.includes('/edit/')&&!tab.delayedClose){
+      tab.delayedClose=true;const close=tab.close.bind(tab);
+      tab.close=async()=>{closeCalls++;stale={id:tab.id,url:tab.current};await close();};
+    }
+    return tab;
+  };
+  env.api.listTabs=async()=>{
+    if(stale&&++polls===2)user=env.add(ORIGIN+'/book/10/edit/99?another=user-entry#caret');
+    const rows=await list();if(stale)rows.push(stale);return rows;
+  };
+  const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}));
+  assert.equal(result.error,'platform_browser_editor_in_use');assert.equal(polls,2);assert.equal(closeCalls,1);
+  assert.equal(env.creates,1);assert.equal(env.saves,1);assert.ok(env.tabs.has(user.id));
+  assert.ok(!env.closed.includes(user.id));
+  assert.ok(!env.events.some(row=>['getTab','ax'].includes(row[0])&&row[1]===user.id));
   assert.ok(!env.events.some(row=>row[0]==='newTab'&&row[1].includes('/preview/')));
-  assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');assert.equal(env.creates,1);
 });
 test('Fanqie host rejects missing or editor-backed readback before any UI operation',async()=>{
   for(const operation of ['verify_target','find_drafts','read_draft','create_draft']){
