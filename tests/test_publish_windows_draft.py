@@ -25,10 +25,10 @@ def write(path, data):
 def fixture(area):
     source = area / 'source'
     artifacts = area / 'artifacts'
-    runtime = tuple('runtime%d.py' % n for n in range(17))
+    runtime = tuple('runtime%d.py' % n for n in range(20))
     write(source / 'scripts/build_desktop_macos.py', ('RUNTIME_FILES = ' + repr(runtime)).encode())
-    write(source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.21"\n')
-    write(source / 'desktop/windows/workbench_updates.py', b'CLIENT_VERSION = "0.1.11"\n')
+    write(source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.22"\n')
+    write(source / 'desktop/windows/workbench_updates.py', b'CLIENT_VERSION = "0.1.12"\n')
     files = {}
     for name in runtime:
         files['Scripts/' + name] = ('runtime ' + name).encode()
@@ -50,7 +50,7 @@ def fixture(area):
     artifacts.mkdir()
     setup = artifacts / publish.SETUP
     setup.write_bytes(b'MZ synthetic installer')
-    manifest = {'platform': 'windows-x86_64', 'client_version': '0.1.11', 'story_version': '0.6.21',
+    manifest = {'platform': 'windows-x86_64', 'client_version': '0.1.12', 'story_version': '0.6.22',
                 'files': {name: hashlib.sha256(data).hexdigest() for name, data in files.items()}}
     files['build-manifest.json'] = json.dumps(manifest).encode()
     portable = artifacts / publish.ORIGINAL_PORTABLE
@@ -60,9 +60,9 @@ def fixture(area):
     for path in (setup, portable):
         path.with_name(path.name + '.sha256').write_text(publish.digest_file(path) + '  ' + path.name + '\n')
     native = dict.fromkeys(publish.NATIVE_FLAGS, True)
-    native.update(client_version='0.1.11', theme_captures={'light': True, 'dark': True})
+    native.update(client_version='0.1.12', theme_captures={'light': True, 'dark': True})
     safety = dict.fromkeys(publish.SAFETY_FLAGS, True)
-    safety.update(platform='win32', story_version='0.6.21', existing_book_files_recycled=False)
+    safety.update(platform='win32', story_version='0.6.22', existing_book_files_recycled=False)
     write(artifacts / 'windows-native-smoke.json', json.dumps(native).encode())
     write(artifacts / 'windows-runtime-safety.json', json.dumps(safety).encode())
     installed = area / 'installed'
@@ -74,7 +74,7 @@ def fixture(area):
 
 class FakeAPI:
     def __init__(self, assets=None):
-        self.release = {'id': 42, 'draft': True, 'tag_name': 'v0.6.21', 'target_commitish': SHA}
+        self.release = {'id': 42, 'draft': True, 'tag_name': 'v0.6.22', 'target_commitish': SHA}
         self.assets = list(assets or [])
         self.calls = []
         self.next_id = 100
@@ -120,7 +120,7 @@ class DistributionTests(unittest.TestCase):
     def test_verifies_full_manifest_source_notices_and_installed_tree(self):
         assets, report = self.verified()
         self.assertEqual(set(assets), set(publish.ASSET_NAMES))
-        self.assertEqual(len(report['runtime_sha256']), 17)
+        self.assertEqual(len(report['runtime_sha256']), 20)
         self.assertEqual(report['offline_webengine_component_pages'], 124)
         self.assertEqual(report['manifest_files_verified'], report['installed_manifest_files_verified'])
         self.assertTrue(report['installed_tree_verified'])

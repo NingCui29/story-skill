@@ -18,8 +18,8 @@ from urllib.parse import quote
 import zipfile
 
 REPOSITORY = 'NingCui29/story-skill'
-STORY_VERSION = '0.6.21'
-CLIENT_VERSION = '0.1.11'
+STORY_VERSION = '0.6.22'
+CLIENT_VERSION = '0.1.12'
 TAG = 'v' + STORY_VERSION
 REPO = Path(__file__).resolve().parents[1]
 SETUP = f'story-workbench-{CLIENT_VERSION}-windows-x86_64-setup.exe'
@@ -140,7 +140,7 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
                     h.update(data)
             require(h.hexdigest() == expected, 'Portable manifest file checksum mismatch')
         runtime = literal((source / 'scripts/build_desktop_macos.py').read_text(encoding='utf-8'), 'RUNTIME_FILES')
-        require(len(runtime) == 17, 'Unexpected runtime module inventory')
+        require(len(runtime) == 20, 'Unexpected runtime module inventory')
         runtime_hashes = {}
         for name in runtime:
             raw = archive.read(prefix + 'Scripts/' + name)

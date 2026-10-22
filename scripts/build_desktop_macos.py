@@ -22,7 +22,7 @@ RUNTIME_FILES = (
     'story_platform_drafts.py', 'story_platform_browser.py',
     'story_platform_chrome_bridge.py', 'story_chrome_bridge.mjs',
     'story_chrome_worker.py', 'story_chrome_worker.mjs',
-    'story_outline.py', 'story_storage.py',
+    'story_outline.py', 'story_storage.py', 'story_rank.py', 'story_rank_sources.py', 'story_research.py',
     'story_workbench_books.py', 'story_workbench_archives.py',
 )
 NATIVE_SOURCES = ('StoryWorkbench.swift', 'ClientInstance.swift')

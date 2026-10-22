@@ -171,10 +171,18 @@ SUITE_FILES_V0621 = tuple(sorted((*SUITE_FILES_V0620,
     "story-skill/scripts/story_chrome_worker.mjs",
 )))
 SKILL_NAMES_V0621 = SKILL_NAMES_V0620
+SUITE_FILES_V0622 = tuple(sorted((*SUITE_FILES_V0621,
+    "story-skill/scripts/story_rank.py",
+    "story-skill/scripts/story_rank_sources.py",
+    "story-skill/scripts/story_research.py",
+    "story-skill-research/references/rank-scan.md",
+    "story-skill-research/references/research-handoff.md",
+)))
+SKILL_NAMES_V0622 = SKILL_NAMES_V0621
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0621
-SUITE_FILES = SUITE_FILES_V0621
+SKILL_NAMES = SKILL_NAMES_V0622
+SUITE_FILES = SUITE_FILES_V0622
 UNRELEASED_VERSIONS = frozenset({"0.6.13"})
 MAX_BYTES = 256 * 1024 * 1024
 # Reviewed full license texts, normalized only for BOM, line endings and trailing
@@ -217,6 +225,8 @@ def payload_files(version):
         return SUITE_FILES_V0619
     if version == "0.6.20":
         return SUITE_FILES_V0620
+    if version == "0.6.22":
+        return SUITE_FILES_V0622
     if version == "0.6.21":
         return SUITE_FILES_V0621
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
@@ -254,6 +264,8 @@ def skill_names(version):
         return SKILL_NAMES_V0619
     if version == "0.6.20":
         return SKILL_NAMES_V0620
+    if version == "0.6.22":
+        return SKILL_NAMES_V0622
     if version == "0.6.21":
         return SKILL_NAMES_V0621
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
@@ -398,7 +410,7 @@ def wrapper_files(version, payload=None):
         "complete `LICENSE`.\n"
     )
     # Published wrappers are byte-stable; changed host paths belong only to the new release.
-    workbuddy_directory = ".workbuddy-ai" if version == "0.6.21" else ".workbuddy"
+    workbuddy_directory = ".workbuddy-ai" if version in ("0.6.21", "0.6.22") else ".workbuddy"
     skill_installation = (
         "Copy all eight complete skill directories into your project's `.agents/skills/`, "
         "or follow the repository's managed installation instructions. "
@@ -417,7 +429,7 @@ def wrapper_files(version, payload=None):
         "connection additionally requires an installed Codex CLI, its configured Node REPL and "
         "official Chrome SDK, and the signed-in browser; this package does not install them. "
         "It never submits for review, publishes or schedules chapters.\n\n"
-        if version == "0.6.21" else
+        if version in ("0.6.21", "0.6.22") else
         "The publication skill prepares local snapshots and records only; it does not log in to "
         "author platforms, upload chapters or publish them remotely.\n\n"
     )

@@ -2,14 +2,14 @@
 
 面向 Windows 10/11 x64。客户端使用 PySide6 / Qt WebEngine 桌面窗口，内置 Chromium 和 Python；使用者无需另装 Python、技能或浏览器扩展。完整创作技能在所用助手中另行安装。
 
-本目录对应客户端 **0.1.11**，内嵌 Story Skill **0.6.21**。各轮构建、安装验收及实际发布状态见 [v0.6.21 发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.21.md)。Windows 10/11 用户环境的人工验收按实际证据记录；安装程序未做代码签名。
+本目录对应客户端 **0.1.12**，内嵌 Story Skill **0.6.22**。各轮构建、安装验收及实际发布状态见 [v0.6.22 发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.22.md)。Windows 10/11 用户环境的人工验收按实际证据记录；安装程序未做代码签名。
 
 ## 下载与安装
 
 本版本的发行文件名如下，以 Release 页面实际可见附件为准；下载后先核对同名校验文件：
 
-- [安装程序 story-workbench-0.1.11-windows-x86_64-setup.exe](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.11-windows-x86_64-setup.exe)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.11-windows-x86_64-setup.exe.sha256)。核对后运行安装向导，为当前用户安装并创建开始菜单快捷方式，可选创建桌面快捷方式；系统应用列表支持卸载。
-- [便携 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.11-windows-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.21/story-workbench-0.1.11-windows-x86_64.zip.sha256)。完整解压到可写目录，双击 `StoryWorkbench.exe`；保留同目录的 `_internal`、`runtime`、`Scripts` 等运行文件。
+- [安装程序 story-workbench-0.1.12-windows-x86_64-setup.exe](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64-setup.exe)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64-setup.exe.sha256)。核对后运行安装向导，为当前用户安装并创建开始菜单快捷方式，可选创建桌面快捷方式；系统应用列表支持卸载。
+- [便携 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64.zip.sha256)。完整解压到可写目录，双击 `StoryWorkbench.exe`；保留同目录的 `_internal`、`runtime`、`Scripts` 等运行文件。
 
 升级前保存桌面与外部浏览器全部页面编辑，退出旧客户端，再安装或替换。打开后若复用旧服务，应在保留编辑后按服务管理流程更新；客户端不自动结束作品服务。
 
@@ -18,6 +18,8 @@
 书架与编辑页在应用标签中打开。点击“复制作品目录”选择目录，再将路径粘贴到书架添加栏。下载使用系统保存面板。重复打开作品复用原标签，关闭、退出、重新载入和跳转时核对全部标签及隐藏文稿；保存中或状态不明时阻止关闭，未保存文字可返回保存或导出完整 ZIP。保存继续生成候选，正式采用沿用审稿流程。
 
 大量材料目录采用有界分批加载，正式进度独立读取；候选与恢复稿按原准入规则定点安全打开。
+
+本版内嵌运行时新增结构化扫榜、代表作抽样和研究交接命令。完整研究流程通过所用助手中的 Story Skill 进行；工作台界面继续用于书稿与候选管理。采集或研究材料不会自动登记为作品、采用规划或写入正式正文。
 
 天空蓝界面集中书架搜索与筛选，低频操作放在“管理作品”。书架和编辑页顶栏的“外观”支持浅色、深色与跟随系统，记住选择并保留未保存文字。书架可新建、移出、重新定位、删除至系统回收站、整书备份及恢复；编辑页提供恢复中心、保存全部候选、两稿对照和下一章任务。[操作与边界](https://github.com/NingCui29/story-skill/blob/main/docs/工作台需求与进展.md)
 
@@ -41,7 +43,7 @@ GitHub Actions 的 `Build Windows desktop candidate` 可对指定源码构建安
 
 ## 验收范围
 
-发行验收须核对安装、原生窗口、完整文件清单、卸载、ZIP 安全路径与 CRC、实际安装目录、源码／许可清单和安全探针；各轮实际回执与范围见[发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.21.md)。摘要及 Range 核对与完整回下载分别记录。
+发行验收须核对安装、原生窗口、完整文件清单、卸载、ZIP 安全路径与 CRC、实际安装目录、源码／许可清单和安全探针；各轮实际回执与范围见[发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.22.md)。摘要及 Range 核对与完整回下载分别记录。
 
 在未安装 Python 的 Windows 10/11 用户环境中，首次启动、中文及空格目录、重复启动、添加和打开作品、候选保存重开、版本对照、下载取消、关闭提示、服务重启与非管理员使用仍按实际人工验收分别登记。合成更新进度不证明真实网络下载或升级安装完成。
 

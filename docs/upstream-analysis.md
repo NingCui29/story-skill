@@ -1,67 +1,93 @@
-# oh-story-claudecode 分析与 Story Skill 设计
+# Oh Story 与 Story Skill 对照及借鉴方向
 
-分析日期：2026-09-08。对象：[zenstory-ai/oh-story-claudecode](https://github.com/zenstory-ai/oh-story-claudecode)，版本文件为 0.7.9，固定提交 `4daac79077928d0d5ba0eda93e46ce68dfcd40ae`。本次浅克隆只读检查，未运行上游部署器，未修改全局已安装技能或任何小说项目。
+更新日期：2026-10-22。上游对象为 [zenstory-ai/oh-story-claudecode v0.9.0](https://github.com/zenstory-ai/oh-story-claudecode/tree/74080143dd1ac9a39a930fafd99a0dbbe61b946a)，固定提交 `74080143dd1ac9a39a930fafd99a0dbbe61b946a`；Story Skill 已发布基线为 v0.6.21，核对工作树起点为 `b657be2253244b62b31331964d7ad55b711b02db`。本页另列 v0.6.22 的结构化扫榜、代表作抽样及研究交接能力，不追认为 v0.6.21 已发布功能；当时的已发布基线见 [v0.6.21 记录](releases/v0.6.21.md)，本轮发行状态与验收范围另见 [v0.6.22 记录](releases/v0.6.22.md)。
 
-## 判断
+本次依据公开源码、技能规则及本地实现进行功能对照，没有运行上游安装器、平台采集器或同条件小说生成实验。源码存在、规则要求、真实执行和阅读效果分别判断。2026-09-08 针对上游 0.7.9 的分析保留在本页历史部分，不再用来描述当前版本。
 
-这个仓库有扎实的网文方法和很多真实使用后的修正，值得保留的是“意图约束—局部上下文—写作—审查—增量追踪”的闭环。对于只用 助手 的作者，主要优化机会是缩小每次必须进入模型的指令面，而不是删掉字数要求、减少正文、漏拆章节或靠更便宜的模型掩盖流程浪费。
+## 当前判断
 
-本次实现得到更短的指令和可复现的状态工具。尚无相同任务下的真实模型用量对照，也没有小说盲评，因此不能宣称所有维度全面优于上游。
+Oh Story 更集中于商业网文的方法、平台扫榜和专业角色协作；Story Skill 更突出正式书稿与候选管理、历史修订、桌面工作台及平台草稿交付。两边都已采用按任务加载、必要状态召回和程序校验，不能继续以“上游全量加载、本项目单入口且没有工作台”概括现状。
 
-## 上游已有的优点
+本轮借鉴上游将市场观察组织为可追溯数据、代表作抽样和选题验证的做法。本地开发版已补入标签、书名字面模式、字数分析及结构化研究交接；平台采集范围、真实作者使用和市场效果仍按各自证据判断。技能数量、规则长度、检测项或测试数量均不作为能力分数；文学质量、真实任务总用量和长期稳定性仍需同条件验证。
 
-| 机制 | 源码证据 | 意义 |
+## 功能与实现对照
+
+| 维度 | Oh Story v0.9.0 | Story Skill v0.6.21 基线 | 判断与边界 |
+|---|---|---|---|
+| 技能组织 | 13 个技能，长短篇写作、拆文和扫榜各有入口，另有去 AI 味、导入与部署流程。[目录](https://github.com/zenstory-ai/oh-story-claudecode/tree/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills) | 8 个技能，长短篇共用写作、分析和审稿入口，另有规划、调研、封面和发布材料。[入口表](../README.md#八个技能入口) | 入口拆分反映产品组织方式，数量不能证明覆盖更广、路由更准或创作更好。 |
+| 扫榜与市场研究 | 平台采集、榜单聚合、去重、题材统计和关键词抽样已有专门脚本；区分新书与成熟大盘、各平台指标及采集失败。[长篇扫榜](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills/story-long-scan/SKILL.md) | 调研规则要求来源、日期、筛选、分页、同书去重和证据边界，主要使用宿主检索、浏览器或作者材料。[调研入口](../skills/story-skill-research/SKILL.md) | 上游的数据处理链更具体，是本轮优先补齐项；本次未实跑其平台采集器，不能承诺接口当前全部可用。 |
+| 指令与上下文 | 按规划时刻或写作阶段选择流程；正文共用技法与本章技法分开，质量参考按问题读取；状态按“缺少就会写错”的范围召回。[长篇入口](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills/story-long-write/SKILL.md) | 按任务读取流程，以计划、关键卡、到期承诺和显式必需资料组装上下文，报告预算和遗漏；规则预算与实际 usage 分开。[工具](../skills/story-skill/scripts/story.py)、[评估口径](evaluation.md#显式读取预算与改稿对照) | 两边都有按需机制。旧版约三万 token 的静态必读统计不能套用新版，也不能推导实际总成本。 |
+| 状态保存 | `_tracking-state.json` 为追踪真源，项目锁串行化写入，检查 revision，先生成派生视图、最后原子写 state 作为提交点。[追踪工具](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills/story-long-write/scripts/tracking_commit.py) | SQLite 在同一事务内保存正式正文、状态增量、事件和版本；Markdown 导出位于事务之后，冲突或中断可恢复。[状态与导出工具](../skills/story-skill/scripts/story.py) | 上游已有并发与版本保护，不能称为随意改 JSON；其追踪提交点与本项目正文入库事务的覆盖范围不同。本项目也不宣称数据库与文件跨介质原子提交。 |
+| 审稿组织 | 默认目标模式 full，优先 4 个专业代理；lean 为 2 个，solo 为同会话；缺失、异常或不支持时按规则降级并说明实际模式。[审稿入口](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills/story-review/SKILL.md) | 默认当前会话一次审查，按任务采用独立复核；保存原稿，并通过正式修订及依赖复核处理历史章节。[审稿入口](../skills/story-skill-review/SKILL.md) | 独立视角与上下文复制都有成本；同会话审查不能冒称独立审查，实际独立性须有调用证据。 |
+| 工作台与编辑 | 浏览器 Dashboard 读取和编辑项目文件，保存时检查文件版本并串行处理同文件修改。[保存实现](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills/story/scripts/dashboard-server.mjs) | 本地网页及 Mac／Windows 客户端提供书架、材料、候选编辑、版本比较、恢复、备份；保存候选与正式采用分开。[工作台说明](本地工作台分析.md)、[保存实现](../skills/story-skill/scripts/story_workbench.py) | 上游直接编辑带冲突保护；Story Skill 保留候选、正式稿和恢复稿身份。界面形态与功能存在不等于所有用户环境都已实测。 |
+| 平台交付 | 本次核对的公开流程中未见与 Story Skill 对应的冻结章节清单、草稿保存及独立全文回读链路。[技能目录](https://github.com/zenstory-ai/oh-story-claudecode/tree/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills) | 三平台离线材料，番茄受控草稿保存、全文回读及重复任务核对；保存草稿、提交审核和发布分别记录。[发布流程](../skills/story-skill-publish/SKILL.md) | 番茄历史实页证据限指定合成稿与单卷完整列表；v0.6.21 自动连接的真实整批、真实分页、多卷及七猫／起点仍有未验收项。不能由代码或离线测试追认通过。[实际范围](releases/v0.6.21.md#平台草稿的实际范围) |
+| 许可 | MIT，分发须保留许可与版权声明。[LICENSE](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/LICENSE) | 当前采用非商业使用及商业授权协议；商业创作用途包括付费阅读、广告变现等，另有既有许可与第三方内容条款。[LICENSE](../LICENSE) | 协议影响作者采用条件。本地商业授权主体及联系渠道当前仍为占位内容，应补齐；本轮功能开发不改变许可。 |
+
+## 值得借鉴的部分
+
+### 先把榜单变成可复核的样本
+
+上游长篇扫榜将采集、聚合和抽样连起来：每次独立目录，先看采集情况，再查看题材分布、多榜重合和代表作；需要分析候选方向时，回到原始条目抽样。它还明确区分在读、付费榜、收藏、热度等口径，以及新书信号与头部老书的存量读者。相关依据见 [扫榜流程](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills/story-long-scan/SKILL.md)和 [聚合工具](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills/story-long-scan/scripts/aggregate-rank.js)。
+
+Story Skill 的 v0.6.22 增量提供可复用的数据层，使网页检索、浏览器观察和作者提供的材料都能留下同一种可核对记录。持续保留以下约束：
+
+- **来源与范围明确。** 记录采集日期、来源 URL、平台、榜单、筛选与排序、分页范围、榜单总量是否可知，以及失败或缺失部分；当前可见样本不能写成全榜。
+- **去重保留出处。** 作品身份、原始名次和每次上榜观察分开保存，避免同一本书多榜出现时把样本量加倍；无法确定同书时保留不确定性。
+- **指标按口径聚合。** 数值与原始文本、单位、时间窗同时保存；不同平台或指标定义不合并比较。等额分类抽样得到的是样本组成，不能据此推断全站题材份额。
+- **统计与创作假设分开。** 先交代有效样本和缺失，再给代表作、重复现象及待验证方向；只有一轮快照时描述现状，没有可比前期数据就不判上升或下降。
+- **回到原始条目核对。** 书名、标签与简介提供选题线索，不能证明开篇、人物弧线或全书情节；需要判断正文表现时转入有原文的作品分析。
+
+### 保持具体场景和读者回报的判断
+
+上游 v0.9.0 的调整已强调人物选择、期待兑现及其后果，检测命中须回到语境判断，并减少固定配额式要求。两边的写作理念有明显重合，不宜继续将上游概括为机械套公式。[更新记录](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/CHANGELOG.md)
+
+借鉴重点是把判断落实到原文：哪里有读者期待、人物做了什么选择、结果怎样改变关系与下一步，必要时保护有效安静和已成立的对白。新增规则之后仍须比较实际稿件，不能靠检查项数量证明阅读效果提高。
+
+### 把代表作选择交给正文验证，再进入选题规划
+
+上游聚合工具提供按题材、标签或书名词抽样，以及高频标签、字数分布、书名常见词和代表作摘要；[选题决策规范](https://github.com/zenstory-ai/oh-story-claudecode/blob/74080143dd1ac9a39a930fafd99a0dbbe61b946a/skills/story-long-scan/references/topic-decision.md)把推荐方向、对标书和待拆文验证假设保存在同一决策文件，拆文后回填依据，再供开书流程选择。其价值是把榜单观察与正文判断衔接起来，并留下下一步需要验证的问题。
+
+本地借鉴这个交接结构：代表作要能解释选入理由、追溯实际样本；吸引力解释要绑定读过的文本、分析范围和反例；进入规划时保留未解决问题、作者条件和差异化方向。书名与标签只提供候选线索，正文出现某种写法也不能证明它导致榜单成绩。样本数量、字面模式频率和引文校验均不换算成爆款概率，也不机械继承固定样本门槛下的高／中／低可行性。
+
+## 结构化扫榜首轮开发（2026-10-22）
+
+首轮在 `story-skill-research` 入口接入[结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)，新增共享运行时 `story_rank.py`、`story_rank_sources.py`。该阶段接入 `rank-template`、`rank-check --input`、`rank-collect --source qimao-library --pages N --output-dir <新目录>`，以及允许多次 `--input` 的 `rank-aggregate --output-dir <新目录>`。统一 JSON 快照保存来源、记录时点、采样范围、作品身份、原始指标和缺失；采集输出原始 HTML、快照及 JSON／Markdown 报告，聚合输出两种报告。输出只写新目录，不需要初始化小说书库。
+
+首个直接采集来源限定为七猫公开书库按点击排序的新书样本；它不冒称七猫排行榜、全站大盘或销量数据。番茄、起点等通过宿主浏览器或作者提供材料整理为统一 JSON 接入，不能据此宣称已有对应平台的直接采集器。聚合按平台、日期、榜单及指标的单位和时间窗保留边界，报告去重与冲突、样本占比、指标缺失和可回溯来源。结构化扫榜输出是研究材料，不自动修改已采用的选题、大纲或正式正文。
+
+同平台按书 ID 或明确作品 URL 去重，不按书名合并；不同采样方式分别统计。同源同日的观测不一致会保留全部版本，并把该作品排除出本组统计，不能用最大指标掩盖差异。日内正常变化也会触发此规则，因此合并后的占比或中位数不能冒称某一时点的完整榜单统计。需要时点对照时，应分别汇总原始快照。
+
+本次直接 HTTP 探测中，七猫返回 WAF 挑战，起点返回 HTTP 403；番茄响应包含动态字体私用区字符及含义不同的零值字段，未据此实现直连采集。随后通过普通浏览器取得七猫公开书库两页 HTML，实际导入并核对 30 本作品，确认本次浏览器保存／导入路径可用。适配器验证源 URL 声明、页码、排序、筛选标题及可见书卡是否矛盾；导入时间与页面原始采集时间仍有区别。该段描述开发阶段的当次观察，原始页面与试用记录仅本地保存；本轮软件发行状态另见[发布记录](releases/v0.6.22.md)，不声称发布时重新采集了网站。两页导入不证明脚本直连、全库覆盖、长期采集、宿主界面或市场判断已通过验收。
+
+## 代表作、模式分析与研究交接增量（v0.6.22）
+
+本次沿用前述快照和来源边界，扩展 [`story_rank.py`](../skills/story-skill/scripts/story_rank.py)，并增加 [`story_research.py`](../skills/story-skill/scripts/story_research.py)。采用上游的抽样与跨流程交接思路，具体接口与数据规则独立实现。开发阶段的测试和独立试用原始记录仅本地保存，本轮发行验收另见[发布记录](releases/v0.6.22.md)；不沿用首轮测试数字或七猫实采结果作为本次自动通过的依据。
+
+| 能力 | 本地开发实现 | 保留的判断边界 |
 |---|---|---|
-| 按阶段、题材和消费者选择参考 | [长篇入口](https://github.com/zenstory-ai/oh-story-claudecode/blob/4daac79077928d0d5ba0eda93e46ce68dfcd40ae/skills/story-long-write/SKILL.md) | 不是把全部资料一次加载的朴素方案 |
-| 增量状态与角色快照 | [state-tracking.md](https://github.com/zenstory-ai/oh-story-claudecode/blob/4daac79077928d0d5ba0eda93e46ce68dfcd40ae/skills/story-long-write/references/state-tracking.md) | 关注“缺少就会写错”的事实与因果 |
-| 事务化追踪和机器字数口径 | [tracking_commit.py](https://github.com/zenstory-ai/oh-story-claudecode/blob/4daac79077928d0d5ba0eda93e46ce68dfcd40ae/skills/story-long-write/scripts/tracking_commit.py) | 追踪不只依赖一段聊天摘要 |
-| 短篇允许主会话分批写作 | [短篇写作 L177-L185](https://github.com/zenstory-ai/oh-story-claudecode/blob/4daac79077928d0d5ba0eda93e46ce68dfcd40ae/skills/story-short-write/SKILL.md#L177-L185) | 不能笼统指责全部写作强制多代理 |
-| 大书分层聚合、可恢复章节边界 | [长篇拆文](https://github.com/zenstory-ai/oh-story-claudecode/blob/4daac79077928d0d5ba0eda93e46ce68dfcd40ae/skills/story-long-analyze/SKILL.md) | 避免全量原文与摘要堆在主线程 |
-| 完整拆解请求能跳过预览询问 | [L139-L149](https://github.com/zenstory-ai/oh-story-claudecode/blob/4daac79077928d0d5ba0eda93e46ce68dfcd40ae/skills/story-long-analyze/SKILL.md#L139-L149) | 上游已处理“持续完成”的明确授权，不能把重复询问说成无例外规则 |
+| 标签与字数分析 | `rank-aggregate` 在各可比分组中统计标签作品频次、有效与缺失标签数、字数范围／中位数与区间分布，保留可追溯作品键。 | 同一书对同一标签只计一次；多标签比例之和可超过 100%。空标签不证明无标签，未知字数不补成零。统计只描述本组有效样本。 |
+| 书名字面模式 | NFKC 归一化后统计首尾 2／4／6 字片段与冒号、逗号、问号结构；至少两本出现才列为重复，压缩证据作品集相同的冗余短片段，并说明展示截断。 | 不是中文分词、情节套路识别或点击因果分析；字面相似不证明作品内容相同。 |
+| 代表作阅读候选 | `rank-sample` 从原始快照重算，限定一个可比分组，可筛分类、标签、书名字面片段与字数，取 1–20 本；按分类、重复标签和字数区间补足覆盖，再以组内名次及作品键稳定排序。输出 `sample.json` 与 `sample.md`，附理由、原观测和来源。 | 排除观测冲突及身份歧义，多个分组必须明确选择。确定性覆盖选择不是随机代表性估计或质量推荐；保存快照与筛选条件用于重算，不等于证明网页原始记录真实。 |
+| 假设及拆文回填 | `research-init` 从抽样结果生成 `decision.json` 与拆文任务；`research-check` 核对结构和关联；`research-verify` 绑定方向、假设、作品、原文／报告、已读范围和结论，追加保存支持、反证、混合或证据不足。 | 程序不自动编写吸引力解释。不同结论并列保留；本地引用文件使用哈希核对版本，原文摘录逐字匹配；URL 来源不自动抓取，摘录保留未核验标记。校验不能证明实际读完、解释成立或市场效果已验证。 |
+| 交给原创规划 | `research-render` 生成 `analysis-brief.md`、`planning-candidate.md` 等可读交接；调研、拆文、规划入口共用[研究交接规则](../skills/story-skill-research/references/research-handoff.md)。保留来源观察、正文证据、原创方向、风险和未决项。 | 研究包保持候选身份，读取用户给定路径或当前任务断点，不靠同题材自动合并分支；不创建小说书库、采用规划、写正文或取得平台权限。 |
 
-## 具体的开销来源
+新增能力覆盖的是本地数据处理与研究材料交接，没有扩大直接平台采集范围，也没有增加专用工作台操作面板。当前七猫适配及其已验证范围仍按首轮记录；番茄、起点等继续使用有来源的统一快照接入。后续需要分别验证更多平台的实际采集、真实研究任务中的拆文与规划衔接，以及同条件作品的阅读效果。
 
-**1. 入口长，触发后即整份进入上下文。** 上游有 13 个 SKILL.md；本次读取的长篇写作入口约 342 行，短篇写作约 388 行，审稿约 493 行，部署约 547 行。入口混合任务路由、产物约束、平台适配、agent 回退和大量参考索引。按需发现只会推迟成本，并不会让触发后的长入口自动免费。[助手 官方技能加载规则](https://learn.chatgpt.com/docs/build-skills)
+## 历史：2026-09-08 的 0.7.9 对照
 
-**2. 单章有明确的全量必读集合。** 长篇入口 L13-L22 指定完整读取 workflow-chapter、long-format、writing-craft、long-chapter-quality、long-chapter-hooks；悬疑、反转还会加文件。按这六份文件统计得到 30,979 tokens，尚未加入正文、细纲、对标、工具回执和子代理。[原始规则](https://github.com/zenstory-ai/oh-story-claudecode/blob/4daac79077928d0d5ba0eda93e46ce68dfcd40ae/skills/story-long-write/SKILL.md#L11-L22)
+历史对象固定为上游提交 `4daac79077928d0d5ba0eda93e46ce68dfcd40ae`，版本文件为 0.7.9；Story Skill 当时是单入口写作核心。以下材料用于复查早期设计取舍，不代表当前任一版本的功能与成本。
 
-**3. 语义方法和完成证明同时偏重。** workflow-chapter 既处理场景写法，又编排对标召回、风格基、多个检查和追踪收口。有些规则值得保留，但部分可由程序做一次确定性计算，没必要把长流程重新解释给模型。[单章流程](https://github.com/zenstory-ai/oh-story-claudecode/blob/4daac79077928d0d5ba0eda93e46ce68dfcd40ae/skills/story-long-write/references/workflow-chapter.md)
-
-**4. 默认审查存在上下文复制成本。** story-review 默认 full，优先四名 reviewer；lean 两名，solo 可用。独立视角可能增加质量，但不该把其成本视为零，也不能把同会话自审伪称同等的独立审查。[审稿模式 L23-L28](https://github.com/zenstory-ai/oh-story-claudecode/blob/4daac79077928d0d5ba0eda93e46ce68dfcd40ae/skills/story-review/SKILL.md#L23-L28)
-
-**5. 跨平台兼容需要较多分支。** 原仓库为多个 CLI、agent 注册格式、hooks 和部署路径服务。这是合理的产品范围，但用户已明确只需要 助手，可以直接收窄安装与运行契约。[仓库说明](https://github.com/zenstory-ai/oh-story-claudecode/tree/4daac79077928d0d5ba0eda93e46ce68dfcd40ae)
-
-## 实现选择
-
-| 问题 | 本版选择 | 代价/边界 |
+| 历史结论或证据 | 当时范围 | 当前使用限制 |
 |---|---|---|
-| 13 个入口与相互路由 | 一个 story-skill，四份任务参考 | 题材教程没有完整搬运，依赖模型能力与本书事实 |
-| 重复读通用技法 | 当前任务只加载一份短流程 | 需要时仍补读证据，不能以预算阻止必要阅读 |
-| 追踪文件全量搬运 | 可检索卡片；计划显式 requires；关键卡和到期承诺强制进入包 | 自动相关性只覆盖候选资料，requires 填漏仍需语义审查发现 |
-| 混书/旧版本提交 | book_id + revision + draft_sha256 | 不保证人写的语义结论一定正确 |
-| 草稿和状态各自完成 | SQLite 同一事务保存正文、增量和回执 | Markdown 导出与数据库之间是可恢复边界，不是假称跨介质原子 |
-| 反复拆已经完成的部分 | 原文哈希、字符区间、逐块幂等提交 | 切块目录不是作品正式章目录；complete 标签仍须由来源证据支撑 |
-| 最新章回炉遗留旧事实 | 先恢复该章变更的前值，再应用新增量，保留历史 | 更早章不自动级联重建，以独立修订基线处理 |
-| 默认多代理开销 | 默认当前会话，明确请求才独立委派 | 放弃默认多视角审查，需实测质量是否受影响 |
-| Windows symlink/全局配置 | 真实目录、项目内安装、哈希校验更新 | 不提供多平台 hooks / Dashboard |
+| 上游已有阶段参考、增量状态、角色快照、事务化追踪，以及可恢复的长篇拆文 | [0.7.9 源码](https://github.com/zenstory-ai/oh-story-claudecode/tree/4daac79077928d0d5ba0eda93e46ce68dfcd40ae) | 早期分析也不能把上游描述成只拼接全量资料；当前实现按上表重新核对。 |
+| 六份单章必读文件静态合计 30,979 tokens | 当时入口与规则集合、指定 tokenizer；[逐文件证据](../benchmarks/results/tokens.json)、[报告](../benchmarks/results/tokens.md) | 不适用于 v0.9.0 的阶段读取规则，不包括实际正文、工具回执、缓存、重试与子代理用量。 |
+| 一个技能入口、四份任务参考，默认同会话与 SQLite 正文状态事务 | Story Skill 初期设计 | 当前已发展为八技能与桌面工作台，不能再使用“没有 Dashboard／仅单入口”作为差异。 |
+| CLI 初始化、计划、上下文、lint、幂等提交、导入分析与报告导出冒烟 | [历史冒烟记录](../benchmarks/results/smoke.json) | 仅说明该次程序通路，不替代当前回归、宿主界面、长程创作或平台验收。 |
 
-```mermaid
-flowchart LR
-    A[用户要求] --> B[一个技能入口]
-    B --> C[本次任务参考]
-    C --> D[本章计划与必要状态]
-    D --> E[助手 写作与语义审查]
-    E --> F[字数 哈希 引文 版本校验]
-    F --> G[SQLite 正文与状态事务]
-    G --> H[可恢复 Markdown 导出]
-```
+当时没有同条件端到端生成、小说盲评或实际账户用量对照，因此“文学质量更好”“总账单节省 93.73%”从未是这些静态测量可以支持的结论。历史数据不因新版发布而改变归属。
 
-## 验证结论与不足
+## 后续如何判断借鉴是否有效
 
-已用固定提交和具名分词器生成 [逐文件 token 证据](../benchmarks/results/tokens.json)。写作、拆解、审稿各路径的指令降幅见 [可读报告](../benchmarks/results/tokens.md)。源文件全部列出，不把磁盘体积当 token，不把合成召回实验标成上游实测。
+结构化扫榜先验证数据行为：来源能回溯、覆盖缺口保留、同书去重不丢榜位、异口径数值不混算、失败与缺失不默认为零、同一输入得到可复查结果。合成数据测试通过不代表真实网页采集成功，也不证明选题会成为热文。
 
-本地回归覆盖事务、隔离、并发、恢复、证据约束、原文保留和安装契约。另用真实 CLI 子进程执行了初始化、计划、上下文、lint、幂等提交、带番外的导入分析、最终报告导出。[冒烟证据](../benchmarks/results/smoke.json)
-
-没有运行两套技能在同一小说上的端到端生成，也没有验证 技能界面 自动路由、真实多模型行为、数百章后的一致性或图片生成。因此“文学质量更好”“总账单节省 93.73%”都不是本次可以下的结论。后续验收方法见 [evaluation.md](evaluation.md)。
-
-本版是可使用的 助手 写作核心，并非上游全部生态能力的等价重制。所有运行时代码与短流程独立编写，未使用原仓库小说 demo 作为创作材料。
+创作与成本比较沿用 [评估方法](evaluation.md)：两套技能固定同一模型与设置、小说输入、计划、篇幅、修改轮次及读者要求，保留原始稿件、失败与重写记录，匿名比较连续章节的阅读偏好、事实错误和兴趣变化。主任务、子任务、缓存与失败调用均按实际 usage 记录；缺字段写未知，静态 token 统计不补成账户消耗。当前仍没有两套技能的同条件多样本文学盲评和实际总用量结果。

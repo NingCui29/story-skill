@@ -674,6 +674,31 @@
         "length",
         "naming"
       ]
+    },
+    {
+      "id": "research_entry",
+      "path": "skills/story-skill-research/SKILL.md"
+    },
+    {
+      "id": "rank_scan",
+      "path": "skills/story-skill-research/references/rank-scan.md"
+    },
+    {
+      "id": "market_selection",
+      "path": "skills/story-skill-research/references/reader-validation.md",
+      "section": "从市场观察到选题取舍"
+    },
+    {
+      "id": "research_handoff",
+      "path": "skills/story-skill-research/references/research-handoff.md"
+    },
+    {
+      "id": "analyze_entry",
+      "path": "skills/story-skill-analyze/SKILL.md"
+    },
+    {
+      "id": "deep_reading",
+      "path": "skills/story-skill-analyze/references/deep-reading.md"
     }
   ],
   "scenarios": [
@@ -3232,6 +3257,115 @@
               "utf8_bytes": 72052
             }
           }
+        }
+      ]
+    },
+    {
+      "id": "rank_research",
+      "task": "结构化扫榜、代表作抽样与拆文选题交接",
+      "assumptions": "调研读取同口径样本并抽样；条件分支建立跨流程研究包。拆文角色仅验证指定假设的实际原文范围；规划角色仅比较交接候选，不新建书库、采用总纲或写正文。数据与工具回执不计入静态规则体积。",
+      "calls": [
+        {
+          "id": "researcher",
+          "role": "结构化扫榜与候选方向分析",
+          "preload": [
+            "research_entry"
+          ],
+          "required": [
+            "common",
+            "rank_scan",
+            "market_selection"
+          ],
+          "limits": {
+            "nonspace_chars": 13000,
+            "utf8_bytes": 32000
+          },
+          "base_limits": {
+            "nonspace_chars": 11000,
+            "utf8_bytes": 26000
+          },
+          "baseline": {
+            "base": {
+              "nonspace_chars": 8901,
+              "utf8_bytes": 22580
+            },
+            "registered_maximum": {
+              "nonspace_chars": 11148,
+              "utf8_bytes": 27824
+            }
+          },
+          "limit_basis": "2026-10-22 explicit sampling/validation/planning handoff paths; measured source plus 15%, rounded to 1,000. Ordinary research omits handoff; not runtime usage.",
+          "branches": [
+            {
+              "id": "handoff",
+              "when": "需要保存扫榜假设供拆文验证并继续选题规划。",
+              "includes": [
+                "research_handoff"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "analyst",
+          "role": "承接研究包验证指定正文机制与反例",
+          "preload": [
+            "analyze_entry"
+          ],
+          "required": [
+            "common",
+            "research_handoff",
+            "deep_reading"
+          ],
+          "limits": {
+            "nonspace_chars": 13000,
+            "utf8_bytes": 33000
+          },
+          "base_limits": {
+            "nonspace_chars": 13000,
+            "utf8_bytes": 33000
+          },
+          "baseline": {
+            "base": {
+              "nonspace_chars": 11076,
+              "utf8_bytes": 28544
+            },
+            "registered_maximum": {
+              "nonspace_chars": 11076,
+              "utf8_bytes": 28544
+            }
+          },
+          "limit_basis": "2026-10-22 explicit sampling/validation/planning handoff paths; measured source plus 15%, rounded to 1,000. Ordinary research omits handoff; not runtime usage."
+        },
+        {
+          "id": "planner",
+          "role": "读取验证证据比较选题候选，不正式开书",
+          "preload": [
+            "plan_entry"
+          ],
+          "required": [
+            "common",
+            "research_handoff",
+            "market_selection"
+          ],
+          "limits": {
+            "nonspace_chars": 17000,
+            "utf8_bytes": 41000
+          },
+          "base_limits": {
+            "nonspace_chars": 17000,
+            "utf8_bytes": 41000
+          },
+          "baseline": {
+            "base": {
+              "nonspace_chars": 14097,
+              "utf8_bytes": 35207
+            },
+            "registered_maximum": {
+              "nonspace_chars": 14097,
+              "utf8_bytes": 35207
+            }
+          },
+          "limit_basis": "2026-10-22 explicit sampling/validation/planning handoff paths; measured source plus 15%, rounded to 1,000. Ordinary research omits handoff; not runtime usage."
         }
       ]
     }

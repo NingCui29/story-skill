@@ -4,6 +4,8 @@
 
 本版新增番茄草稿受控自动连接、段落编码和尾换行数量比较选项，修正 WorkBuddy AI 默认目录，并补充 WorkBuddy AI 与 Qoder CN 安装调用说明。自动连接仅支持番茄，使用已登录的外部 Codex CLI、官方 Chrome 插件（含 SDK）、已连接的 Chrome 会话及账户额度；拒绝权限即停止，未知结果先回读对账。[平台草稿](../skills/story-skill-publish/references/platform-drafts.md)的本地软件回归与实页验收分别记录，七猫、起点、多卷和真实分页仍按实际覆盖登记。
 
+**v0.6.22 正在准备发布。** 新增结构化扫榜、来源与覆盖校验、同书去重、分口径聚合，以及七猫公开书库点击排序观察样本采集；续增代表作抽样、标签频次、书名字面模式与字数分析，并以研究包衔接拆文验证和选题规划。操作见[结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)和[研究交接](../skills/story-skill-research/references/research-handoff.md)，本轮发行核验见[发布记录](releases/v0.6.22.md)。开发阶段的原始采集与试用材料仅本地保存；七猫样本不是正式排行榜或销量数据，研究交接仍为候选材料。
+
 既有[写前交接与偏好召回](../skills/story-skill-write/references/writing-handoff.md)、[关键情节点覆盖与新增事实分级](../skills/story-skill-write/references/chapter-continuity.md)、[短篇平台化设计](../skills/story-skill-plan/references/short-platform.md)、[题材与三平台创作要求](../skills/story-skill-write/references/drama.md#三平台创作要求)、[大纲细纲规范](../skills/story-skill-plan/references/outline.md)和语义审查继续沿用，书库保持 schema 2。[执行审查与序列评估](../benchmarks/skill-execution/README.md)保留失败、超时和语义分歧；程序核验不能代替阅读效果与平台验收。下列旧版记录保持其历史范围。
 
 v0.6.5 新增：[七猫作品类型与标签](../skills/story-skill-plan/references/qimao-tags.md)，按后台截图记录两级作品类型及风格、角色、情节、背景。v0.6.6 追加男频分类和写作／审稿流程修订。v0.6.7 在番茄、七猫作家平台核对两种投稿入口的分类与标签。v0.6.8 补齐主线、高潮、钩子与文笔的适用规则，见[本版记录](releases/v0.6.8.md)。本机安装不会自动更新。
@@ -65,6 +67,8 @@ Google Antigravity 使用 `--host antigravity`（2.0／IDE）或 `--host antigra
 | 从参考作品提炼方法，再设计自己的新书 | [从拆书开始，新起一本书](../README.md#从拆书开始) |
 | 查看深读方法、分析稿修订与实际试用 | [作品深读与评估](作品深读与评估.md) |
 | 改善冲突、人物选择、对白和看点 | [中文冲突与看点](中文冲突与看点.md) |
+| 保存榜单或书库样本、核对来源并聚合比较 | [结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)、[v0.6.22 发布记录](releases/v0.6.22.md) |
+| 选择代表作、分析标签与书名模式，再交给拆文和规划 | [抽样与模式分析](../skills/story-skill-research/references/rank-scan.md#代表作抽样与模式分析)、[研究交接](../skills/story-skill-research/references/research-handoff.md)、[v0.6.22 发布记录](releases/v0.6.22.md) |
 | 审计规则读取、保留改稿失败并准备两臂对照 | [读取预算](../benchmarks/skill-execution/README.md#规则读取预算)、[改稿对照协议](../benchmarks/skill-execution/README.md#改稿失败样例与两臂对照)和[评估边界](evaluation.md#显式读取预算与改稿对照) |
 | 管理百万／千万字长篇的状态与历史修订 | [超长篇实操](超长篇实操.md) |
 | 处理导出失败、外部改稿、迁移或依赖问题 | [恢复指南](recovery.md) |
@@ -76,6 +80,7 @@ Google Antigravity 使用 `--host antigravity`（2.0／IDE）或 `--host antigra
 | 内容 | 已完成的范围与入口 |
 |---|---|
 | 开篇点评、完整深读与分析修订 | [深读入口与评估汇总](作品深读与评估.md)，可直接通过 `story-skill-analyze` 使用 |
+| 代表作抽样与选题证据交接 | [研究交接](../skills/story-skill-research/references/research-handoff.md)：由可重算样本生成候选方向与待验证假设，追加正文证据和反例，再交给规划；[本轮发行验收范围](releases/v0.6.22.md)与首轮实采分开记录，程序不判定文学解释或商业成效 |
 | 合成短文与完整真实短篇 | [第一轮](../benchmarks/results/analysis-depth/README.md) 和 [第二轮](../benchmarks/results/analysis-real/README.md) 保留匿名模型评阅、分歧及原始材料 |
 | 分析稿修订和迁移试用 | [语义修订](../benchmarks/results/analysis-revision/README.md) 与 [恢复试用](../benchmarks/results/analysis-followup/README.md) 保留旧定稿及独立新稿 |
 | 完整九章的跨章分析 | [《阿Q正傳》试用](../benchmarks/results/analysis-crosschapter/README.md)：14 块、64 条逐块引文核对通过；独立模型评阅未提出必须修改项，两项可选措辞另存澄清稿 |
@@ -121,7 +126,7 @@ v0.4.0 已归档结果：干净检出 **311 项测试、12 项整包检查通过
 
 | 文档 | 阅读范围 |
 |---|---|
-| [上游分析与设计取舍](upstream-analysis.md) | 固定上游提交的分析，不是对上游最新版本的持续评价 |
+| [上游对照与借鉴方向](upstream-analysis.md) | 2026-10-22 核对上游 v0.9.0 固定提交与本地已发布 v0.6.21，另列 v0.6.22 的扫榜、抽样、模式分析与研究交接增量；0.7.9 比较和旧 token 测量保留历史归属 |
 | [超长篇优化方案](超长篇优化方案.md) | 设计分层、能力边界与后续方向；完成状态见当前验收 |
 | [v0.2.0 中文实测](中文实测.md) | 旧样稿移除范围与本地重放方法；当前默认使用合成事务检查 |
 | [v0.2.0 测试清理记录](测试清理记录.md) | 当时的临时目录处理结果，不作为现在的目录状态清单 |

@@ -268,7 +268,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
         core = {"common", "content_baseline", "content_judgments", "content_outcomes", "content_routing",
                 "characters", "support", "viewpoint", "words", "format"}
         for (scenario, call), row in self.base.items():
-            if scenario not in ("targeted_punctuation", "short_platform_design") and call != "cover_designer":
+            if scenario not in ("targeted_punctuation", "short_platform_design", "rank_research") and call != "cover_designer":
                 self.assertTrue(core.issubset(row["source_ids"]), (scenario, call))
         long_sources = set(self.base[("long_chapter", "writer")]["source_ids"])
         self.assertTrue({"write_entry", "tools", "chapter_flow", "length", "outline_quality", "project_binding",
@@ -326,9 +326,22 @@ class RepositoryInstructionContractTests(unittest.TestCase):
             if source["path"].endswith("/drama.md"):
                 self.assertEqual(source["scope"] in ("body", "subtree"), True)
 
+    def test_research_handoff_is_conditional_and_each_receiving_role_is_counted(self):
+        research = self.base[("rank_research", "researcher")]
+        self.assertIn("rank_scan", research["source_ids"])
+        self.assertNotIn("research_handoff", research["source_ids"])
+        branch = next(row for row in self.report["loads"]
+                      if row["scenario"] == "rank_research" and row["call"] == "researcher"
+                      and row["variant"] == "branch:handoff")
+        self.assertEqual(set(branch["source_ids"]) - set(research["source_ids"]), {"research_handoff"})
+        self.assertTrue({"common", "analyze_entry", "research_handoff", "deep_reading"}.issubset(
+            self.base[("rank_research", "analyst")]["source_ids"]))
+        self.assertTrue({"common", "plan_entry", "research_handoff", "market_selection"}.issubset(
+            self.base[("rank_research", "planner")]["source_ids"]))
+
     def test_shared_style_decision_applies_to_body_roles_only(self):
         for (scenario, call), row in self.base.items():
-            applicable = scenario not in ("targeted_punctuation", "short_platform_design") and call != "cover_designer"
+            applicable = scenario not in ("targeted_punctuation", "short_platform_design", "rank_research") and call != "cover_designer"
             self.assertEqual("style_resolution" in row["source_ids"], applicable, (scenario, call))
         node = next(item for item in self.config["nodes"] if item["id"] == "style_resolution")
         self.assertEqual((node["path"], node["section"]),
@@ -340,7 +353,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
         index = next(item for item in self.config["nodes"] if item["id"] == "genre_index")
         self.assertEqual((index["section"], index["scope"]), ("题材写法卡", "body"))
         for (scenario, call), base in self.base.items():
-            if scenario in ("targeted_punctuation", "short_platform_design") or call == "cover_designer":
+            if scenario in ("targeted_punctuation", "short_platform_design", "rank_research") or call == "cover_designer":
                 self.assertNotIn("genre_index", base["source_ids"])
                 continue
             self.assertTrue(cards.isdisjoint(base["source_ids"]), (scenario, call))

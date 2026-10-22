@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.21"
+VERSION = "0.6.22"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -2876,6 +2876,8 @@ def parser():
     p.add_argument("--version", action="version", version=VERSION)
     sub = p.add_subparsers(dest="command", required=True)
     t = sub.add_parser("template", help="Print just one JSON input example")
+    rank.register_parser(sub)
+    research.register_parser(sub)
     t.add_argument("kind", choices=TEMPLATES)
     def command(name, help_text, budget=None, integrity=True):
         s = sub.add_parser(name, help=help_text)
@@ -3002,6 +3004,10 @@ def run(args):
     cmd = args.command
     if cmd == "template":
         return TEMPLATES[args.kind]
+    if cmd.startswith("research-"):
+        return research.run(args)
+    if cmd.startswith("rank-"):
+        return rank.run(args, collect_qimao=rank_sources.collect_qimao)
     if cmd == "init":
         return Book.create(args.book, args.title, args.kind)
     if cmd == "migrate":
@@ -3117,9 +3123,9 @@ def _load_extension(name):
     return module
 
 
-storage, search, world, history, publish, workbench, outline, punctuation, workbench_books, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge, chrome_worker = (_load_extension(name) for name in (
+storage, search, world, history, publish, workbench, outline, punctuation, workbench_books, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge, chrome_worker, rank, rank_sources, research = (_load_extension(name) for name in (
     "storage", "search", "world", "history", "publish", "workbench", "outline", "punctuation",
-    "workbench_books", "workbench_archives", "platform_browser", "platform_drafts", "platform_chrome_bridge", "chrome_worker"))
+    "workbench_books", "workbench_archives", "platform_browser", "platform_drafts", "platform_chrome_bridge", "chrome_worker", "rank", "rank_sources", "research"))
 CORE = SimpleNamespace(**globals())
 for extension in (search, world, history, publish, workbench, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge, chrome_worker):
     extension.inject(CORE)

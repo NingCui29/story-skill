@@ -1,5 +1,7 @@
 # 安装或升级 Story Skill
 
+> **v0.6.22 正在准备发布。** 本轮为八技能、69 个源载荷文件和20 个运行时模块，目标客户端为 Mac 0.1.25/build 26 与 Windows 0.1.12。新增[结构化扫榜与抽样](skills/story-skill-research/references/rank-scan.md)及[研究交接](skills/story-skill-research/references/research-handoff.md)，实际构建和分发状态见[本轮记录](docs/releases/v0.6.22.md)。下文下载仍对应正式版 v0.6.21。
+
 **当前正式版：v0.6.21。** 下列附件已发布。八技能源清单为 64 个文件，目录安装的运行时需要 Python 3.10 或更新版本；桌面应用内置 Python。版本变化、固定标签安装、`version-0.6.21` 分支与完整分发记录见[发布记录](docs/releases/v0.6.21.md)；上一版 [v0.6.20](docs/releases/v0.6.20.md) 保持原样。
 
 本版新增番茄平台草稿的受控自动连接、段落编码与尾换行数量比较策略，并修正 WorkBuddy AI 默认目录、补充 WorkBuddy AI 与 Qoder CN 安装调用说明。自动连接仅支持番茄，使用已登录的外部 Codex CLI、官方 Chrome 插件（含 SDK）、已连接的 Chrome 会话及账户额度；权限拒绝即停止，未知结果先回读对账。本轮软件回归不代替新的平台实页验收；七猫、起点、多卷与真实分页仍按实际覆盖登记。
