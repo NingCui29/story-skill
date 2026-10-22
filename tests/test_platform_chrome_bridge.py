@@ -1278,5 +1278,215 @@ class BridgePinEnterRetryTests(unittest.TestCase):
             body.assert_called_once_with()
 
 
+class BridgeWindowsLockContentionTests(unittest.TestCase):
+    """A contended byte lock never replays an operation or sheds its guards."""
+
+    def setUp(self):
+        self.directory = SimpleNamespace(path=Path("bridge-lock-fixture"), fd=71)
+        self.file = SimpleNamespace(directory=self.directory, name="session.lock",
+                                    path=self.directory.path / "session.lock")
+        self.fd_stat = self.file_stat = SimpleNamespace(st_dev=7, st_ino=11, st_size=1)
+        self.elapsed, self.sleeps, self.attempts, self.unlocks, self.closed = 0.0, [], [], 0, 0
+        self.failures, self.always_failure, self.exit_error = [], None, None
+        self.on_acquire = self.on_sleep = self.on_guard = None
+        self.locked = False
+        self.stream = Mock()
+        self.stream.fileno.return_value = 77
+        self.native = SimpleNamespace(LK_LOCK=1, LK_NBLCK=2, LK_UNLCK=0,
+                                      locking=Mock(side_effect=self.locking))
+
+    @staticmethod
+    def refusal(number=36, winerror=None):
+        failure = OSError(number, "injected Windows lock refusal")
+        if winerror is not None:
+            failure.winerror = winerror
+        return failure
+
+    def locking(self, fd, mode, size):
+        self.assertEqual((fd, size), (77, 1))
+        if mode == self.native.LK_UNLCK:
+            self.assertTrue(self.locked, "An unowned lock must never be unlocked")
+            self.unlocks += 1
+            if self.exit_error:
+                raise self.exit_error
+            self.locked = False
+            return
+        self.assertEqual(mode, self.native.LK_NBLCK, "CRT blocking polling must not be used")
+        self.attempts.append(self.elapsed)
+        failure = self.failures.pop(0) if self.failures else self.always_failure
+        if failure is not None:
+            raise failure
+        self.locked = True
+        if self.on_acquire:
+            self.on_acquire()
+
+    def sleep(self, seconds):
+        self.assertGreater(seconds, 0)
+        self.sleeps.append(seconds)
+        if not self.locked and self.unlocks:
+            self.assertTrue(bridge._LOCAL_LOCK._is_owned(), "The same process must not immediately reacquire during handoff")
+        self.elapsed += seconds
+        if self.on_sleep:
+            self.on_sleep(seconds)
+
+    def guard(self, directory):
+        self.assertIs(directory, self.directory)
+        if self.on_guard:
+            self.on_guard()
+
+    @contextmanager
+    def owned(self, fd, mode):
+        self.assertEqual((fd, mode), (77, "r+b"))
+        try:
+            yield self.stream
+        finally:
+            self.closed += 1
+
+    @contextmanager
+    def environment(self, platform="nt"):
+        native_os = SimpleNamespace(name=platform, path=os.path, O_CREAT=os.O_CREAT,
+            O_RDWR=os.O_RDWR, O_NOFOLLOW=getattr(os, "O_NOFOLLOW", 0),
+            open=Mock(return_value=77), fstat=lambda _: self.fd_stat)
+        # Use Windows' actual CRT errno values on every test host, including
+        # errno 36 from the real sender failure, rather than macOS aliases.
+        native_errno = SimpleNamespace(EACCES=13, EAGAIN=11, EDEADLK=36, ETIMEDOUT=110)
+        clock = SimpleNamespace(monotonic=lambda: self.elapsed, sleep=self.sleep)
+        self.flock = SimpleNamespace(LOCK_EX=2, LOCK_UN=8, flock=Mock())
+        with patch.object(bridge, "os", native_os), patch.object(bridge, "errno", native_errno), \
+                patch.object(bridge, "time", clock), patch.object(bridge.secrets, "randbelow", return_value=0), \
+                patch.object(bridge.api, "_BoundFile", return_value=self.file), \
+                patch.object(bridge.api, "_owned_fdopen", side_effect=self.owned), \
+                patch.object(bridge.api.publish, "_bound_stat", side_effect=lambda _: self.file_stat) as bound_stat, \
+                patch.object(bridge.api, "_verify_bound_directory", side_effect=self.guard) as guard, \
+                patch.dict(sys.modules, {"msvcrt": self.native, "fcntl": self.flock}):
+            yield SimpleNamespace(guard=guard, bound_stat=bound_stat, open=native_os.open)
+
+    def test_contended_nonblocking_acquisition_rechecks_identity_and_hands_off(self):
+        for failure in (self.refusal(13), self.refusal(11), self.refusal(36),
+                        self.refusal(13, 32), self.refusal(13, 33)):
+            with self.subTest(errno=failure.errno, winerror=getattr(failure, "winerror", None)):
+                self.setUp()
+                self.failures = [failure, failure]
+                body = Mock()
+                with self.environment() as checks:
+                    with bridge._lock(self.directory):
+                        self.assertTrue(self.locked)
+                        body()
+                body.assert_called_once_with()
+                self.assertEqual(len(self.attempts), 3)
+                self.assertEqual((self.unlocks, self.closed), (1, 1))
+                self.assertEqual(checks.bound_stat.call_count, 5)
+                self.assertEqual(checks.guard.call_count, 5)
+                self.assertEqual(self.sleeps, [.005, .005, .01])
+                self.assertEqual(self.stream.seek.call_args_list, [((0,),)] * 4)
+
+    def test_contention_deadline_never_enters_body_or_unlocks_unowned_lock(self):
+        self.always_failure = failure = self.refusal(36)
+        body = Mock()
+        with self.environment(), self.assertRaises(OSError) as raised:
+            with bridge._lock(self.directory):
+                body()
+        self.assertIs(raised.exception, failure)
+        body.assert_not_called()
+        self.assertEqual((self.unlocks, self.closed), (0, 1))
+        self.assertAlmostEqual(self.elapsed, 10.0)
+        self.assertTrue(all(start < 10 for start in self.attempts))
+        self.assertGreater(len(self.attempts), 1000)
+        self.assertLessEqual(len(self.attempts), 2001)
+        self.assertTrue(all(0 < delay <= .005 for delay in self.sleeps))
+
+    def test_noncontention_and_explicit_access_denial_never_retry(self):
+        for failure in (self.refusal(9), self.refusal(22), self.refusal(5), self.refusal(13, 5)):
+            with self.subTest(errno=failure.errno, winerror=getattr(failure, "winerror", None)):
+                self.setUp()
+                self.failures = [failure]
+                body = Mock()
+                with self.environment(), self.assertRaises(OSError) as raised:
+                    with bridge._lock(self.directory):
+                        body()
+                self.assertIs(raised.exception, failure)
+                body.assert_not_called()
+                self.assertEqual((len(self.attempts), self.unlocks, self.closed), (1, 0, 1))
+                self.assertEqual(self.sleeps, [])
+
+    def test_changed_lock_identity_or_directory_stops_waiting(self):
+        for changed in ("path", "fd", "directory"):
+            with self.subTest(changed=changed):
+                self.setUp()
+                self.failures = [self.refusal(36)]
+                failure = story.StoryError("platform_chrome_unsafe_file", "injected replaced directory")
+                def replace(_):
+                    replacement = SimpleNamespace(st_dev=7, st_ino=12, st_size=1)
+                    if changed == "path":
+                        self.file_stat = replacement
+                    elif changed == "fd":
+                        self.fd_stat = replacement
+                    else:
+                        self.on_guard = lambda: (_ for _ in ()).throw(failure)
+                self.on_sleep = replace
+                body = Mock()
+                with self.environment(), self.assertRaises(story.StoryError) as raised:
+                    with bridge._lock(self.directory):
+                        body()
+                self.assertEqual(raised.exception.code, "platform_chrome_unsafe_file")
+                body.assert_not_called()
+                self.assertEqual((len(self.attempts), self.unlocks, self.closed), (1, 0, 1))
+
+    def test_identity_change_or_deadline_after_acquisition_unlocks_before_refusing(self):
+        for changed in ("path", "deadline"):
+            with self.subTest(changed=changed):
+                self.setUp()
+                def acquired():
+                    if changed == "path":
+                        self.file_stat = SimpleNamespace(st_dev=7, st_ino=12, st_size=1)
+                    else:
+                        self.elapsed = 10
+                self.on_acquire = acquired
+                body = Mock()
+                expected = story.StoryError if changed == "path" else TimeoutError
+                with self.environment(), self.assertRaises(expected):
+                    with bridge._lock(self.directory):
+                        body()
+                body.assert_not_called()
+                self.assertEqual((len(self.attempts), self.unlocks, self.closed), (1, 1, 1))
+                self.assertFalse(self.locked)
+                self.assertEqual(self.sleeps, [.01])
+
+    def test_body_unlock_and_handoff_errors_are_not_replayed(self):
+        for stage in ("body", "unlock", "handoff"):
+            with self.subTest(stage=stage):
+                self.setUp()
+                failure = self.refusal(36, 32)
+                if stage == "unlock":
+                    self.exit_error = failure
+                if stage == "handoff":
+                    self.on_sleep = lambda _: (_ for _ in ()).throw(failure)
+                body = Mock(side_effect=failure if stage == "body" else None)
+                with self.environment(), self.assertRaises(OSError) as raised:
+                    with bridge._lock(self.directory):
+                        body()
+                self.assertIs(raised.exception, failure)
+                body.assert_called_once_with()
+                self.assertEqual((len(self.attempts), self.unlocks, self.closed), (1, 1, 1))
+
+    def test_posix_flock_is_unchanged(self):
+        with self.environment(platform="posix"):
+            with bridge._lock(self.directory):
+                pass
+        self.assertEqual(self.flock.flock.call_args_list, [((77, self.flock.LOCK_EX),), ((77, self.flock.LOCK_UN),)])
+        self.native.locking.assert_not_called()
+        self.assertEqual((self.closed, self.sleeps), (1, []))
+
+    def test_empty_lock_initialization_is_not_repeated(self):
+        self.fd_stat.st_size = 0
+        self.failures = [self.refusal(36), self.refusal(36)]
+        with self.environment():
+            with bridge._lock(self.directory):
+                pass
+        self.stream.write.assert_called_once_with(b"0")
+        self.stream.flush.assert_called_once_with()
+        self.assertEqual((len(self.attempts), self.unlocks, self.closed), (3, 1, 1))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -6,6 +6,7 @@ The host explicitly attaches a private handle and claims each operation once.
 from contextlib import ExitStack, contextmanager
 from copy import deepcopy
 from datetime import datetime, timezone
+import errno
 import hashlib
 import hmac
 import json
@@ -37,6 +38,8 @@ ERROR_CODES = {"platform_browser_" + code for code in (
     "unnumbered_draft", "unsafe_create", "unsafe_navigation", "unsafe_save", "unsafe_url", "unsupported_editor",
     "bridge_scope", "bridge_expired", "editor_in_use", "readback_required")}
 _LOCAL_LOCK = threading.RLock()
+_LOCK_SECONDS = 10.0
+_LOCK_HANDOFF_SECONDS = .01
 
 
 def inject(core):
@@ -222,6 +225,40 @@ def _write(directory, name, value, *, replace=False):
             api._bound_unlink(staged)
 
 
+def _acquire_windows_lock(stream, verify, native):
+    """Poll only a refused local lock acquisition, never its protected body."""
+    deadline = time.monotonic() + _LOCK_SECONDS
+    last_error = None
+
+    def check_deadline():
+        if time.monotonic() >= deadline:
+            if last_error is not None:
+                raise last_error
+            raise TimeoutError(errno.ETIMEDOUT, "Chrome bridge lock acquisition timed out")
+
+    while True:
+        check_deadline()
+        verify()
+        check_deadline()
+        stream.seek(0)
+        try:
+            native.locking(stream.fileno(), native.LK_NBLCK, 1)
+            return deadline
+        except OSError as failure:
+            winerror = getattr(failure, "winerror", None)
+            if not (winerror in (32, 33) or (winerror is None and
+                    failure.errno in (errno.EACCES, errno.EAGAIN, errno.EDEADLK))):
+                raise
+            last_error = failure
+            check_deadline()
+            # CRT's blocking mode waits in one-second steps and can repeatedly
+            # miss short unlock windows. A small jitter avoids that fixed phase.
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise last_error
+            time.sleep(min(.005 + secrets.randbelow(6) / 1000, remaining))
+
+
 @contextmanager
 def _lock(directory):
     with _LOCAL_LOCK:
@@ -230,21 +267,33 @@ def _lock(directory):
         fd = os.open(file.path, flags, 0o600) if os.name == "nt" else os.open(file.name, flags, 0o600, dir_fd=directory.fd)
         with api._owned_fdopen(fd, "r+b") as stream:
             held = os.fstat(stream.fileno())
-            if not os.path.samestat(held, api.publish._bound_stat(file)):
-                _fail("unsafe_file", "Chrome 桥接锁文件发生变化。")
+
+            def verify():
+                api._verify_bound_directory(directory)
+                if (not os.path.samestat(held, os.fstat(stream.fileno())) or
+                        not os.path.samestat(held, api.publish._bound_stat(file))):
+                    _fail("unsafe_file", "Chrome 桥接锁文件发生变化。")
+
+            verify()
             if held.st_size == 0:
                 stream.write(b"0"); stream.flush()
             if os.name == "nt":
                 import msvcrt
-                stream.seek(0); msvcrt.locking(stream.fileno(), msvcrt.LK_LOCK, 1)
+                deadline = _acquire_windows_lock(stream, verify, msvcrt)
             else:
                 import fcntl
                 fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
             try:
+                verify()
+                if os.name == "nt" and time.monotonic() >= deadline:
+                    raise TimeoutError(errno.ETIMEDOUT, "Chrome bridge lock acquisition timed out")
                 yield
             finally:
                 if os.name == "nt":
                     stream.seek(0); msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+                    # Keep this process's local lock during the handoff so its
+                    # polling thread cannot immediately reacquire the byte lock.
+                    time.sleep(_LOCK_HANDOFF_SECONDS)
                 else:
                     fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
 
