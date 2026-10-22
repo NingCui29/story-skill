@@ -107,7 +107,7 @@ for(const invalid of [context({protocol:'https:'}),context({hostname:'localhost'
  assert.equal(vm.runInNewContext(script,invalid),false);assert.equal(invalid.appearanceCalls,undefined);
 }
 '''
-        result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + harness], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input='const script=' + json.dumps(script) + ';\n' + harness, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_editor_safety_waits_for_readiness_and_checks_the_matching_main_frame(self):
@@ -144,7 +144,7 @@ const run=context=>vm.runInContext('(async()=>{'+script+'})()',context);
  }
 })().catch(error=>{console.error(error);process.exitCode=1;});
 '''
-        result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + program],
+        result = subprocess.run([node, '-'], input='const script=' + json.dumps(script) + ';\n' + program, encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
@@ -204,7 +204,7 @@ for(const p of [page('打开失败（某书）：无法确认已退出'),page('�
 const external=page(original);external.location.hostname='example.com';vm.runInNewContext(script,external);assert.equal(external.observations,0);
 const frame=page(original);frame.window.top={};vm.runInNewContext(script,frame);assert.equal(frame.observations,0);
 '''
-        result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + harness],
+        result = subprocess.run([node, '-'], input='const script=' + json.dumps(script) + ';\n' + harness, encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
@@ -251,7 +251,7 @@ for(const invalid of [nativePage(true,{port:'12346'}),nativePage(true,{pathname:
  assert.equal(vm.runInNewContext(scripts.script,invalid),false);assert.equal(invalid.reads,0);
 }
 '''
-        result = subprocess.run([node, '-e', 'const scripts=' + json.dumps(scripts) + ';\n' + harness], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input='const scripts=' + json.dumps(scripts) + ';\n' + harness, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_leaving_check_includes_inactive_buffers_and_pending_save(self):
@@ -274,7 +274,7 @@ assert.equal(evaluate([{editable:true,text:'saved',value:'saved',needs_recovery:
 assert.equal(evaluate([{editable:false,text:'old',value:'readonly'}]),'clean');
 assert.equal(evaluate([{editable:true,text:'old'}]),'unknown');
 '''
-        result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + harness], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input='const script=' + json.dumps(script) + ';\n' + harness, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_bundle_metadata_uses_local_networking_and_current_binary(self):

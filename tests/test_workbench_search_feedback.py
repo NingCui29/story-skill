@@ -23,9 +23,9 @@ const openDoc=(...args)=>opened.push(args);
 const call=(name,args)=>new Promise((resolve,reject)=>requests.push({name,args,resolve,reject}));
 const result=(id,more=false)=>({results:[{id,title:id,excerpt:'命中摘要'}],total:3,checked:5,complete:true,warnings:[],has_more:more});
 """
-        output = subprocess.run([node, '-e', harness + 'async function fullSearch(){' +
+        output = subprocess.run([node, '-'], input=harness + 'async function fullSearch(){' +
                                  function + '\n(async()=>{' + test +
-                                 '})().catch(e=>{console.error(e);process.exitCode=1;});'],
+                                 '})().catch(e=>{console.error(e);process.exitCode=1;});', encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(output.returncode, 0, output.stdout + output.stderr)
 

@@ -31,7 +31,7 @@ class NativeCloseRegressionTests(unittest.TestCase):
             node = str(bundled) if bundled.is_file() else None
         if not node:
             self.skipTest('Node is unavailable')
-        result = subprocess.run([node, '-e', program], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input=program, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_mac_reads_latest_visible_and_all_hidden_buffers_without_mutating_them(self):

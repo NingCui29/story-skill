@@ -32,7 +32,7 @@ $('book-title').textContent='当前作品';$('book-kind').dataset.kind='long';$(
 const text=e=>(e.textContent||'')+e.children.map(text).join(' ');
 const docs=new Map([['formal:1',{text:'原文',value:'未保存正文'}]]);
 """
-        result = subprocess.run([node, '-e', mock + self.source + '\n' + test], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input=mock + self.source + '\n' + test, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_current_genres_have_explicit_sources_and_refresh_without_mutating_text(self):

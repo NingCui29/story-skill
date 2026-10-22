@@ -71,7 +71,7 @@ const docs=new Map([
 ]);
 console.log(JSON.stringify(eval(__SCRIPT__)));
 '''.replace('__SCRIPT__', json.dumps(client.close_state_script(True)))
-        result = subprocess.run([node, '-e', program], capture_output=True, text=True, check=True)
+        result = subprocess.run([node, '-'], input=program, encoding='utf-8', capture_output=True, text=True, check=True)
         checked = client.checked_close_state(json.loads(result.stdout), include_text=True)
         self.assertEqual([item['id'] for item in checked['pending']], ['hidden', 'pending'])
         self.assertEqual([item['text'] for item in checked['pending']], ['未保存文字', '恢复文字'])
@@ -84,7 +84,7 @@ console.log(JSON.stringify(eval(__SCRIPT__)));
             "id==='current-book-root'?{}:null", "id==='current-book-root'?{}:id==='text'?{value:'刚输入的文字'}:null"
         ).replace("const docs=new Map([", "const active='active';const docs=new Map([").replace(
             "title:'当前',editable:true", "title:'当前',editing:true,editable:true")
-        result = subprocess.run([node, '-e', composed], capture_output=True, text=True, check=True)
+        result = subprocess.run([node, '-'], input=composed, encoding='utf-8', capture_output=True, text=True, check=True)
         checked = client.checked_close_state(json.loads(result.stdout), include_text=True)
         self.assertEqual(checked['pending'][0]['text'], '刚输入的文字')
 

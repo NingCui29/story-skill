@@ -53,7 +53,7 @@ docs.set(active,make(active,'当前已保存','当前已保存'));
 const pending=()=>[...docs.values()].filter(document=>dirty(document)||document.needs_recovery);
 """
         program = mock + self.source + '\n(async()=>{' + test + '\n})().catch(error=>{console.error(error);process.exitCode=1;});'
-        result = subprocess.run([node, '-e', program], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input=program, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_save_all_includes_hidden_dirty_and_recovery_buffers_without_switching_active_document(self):

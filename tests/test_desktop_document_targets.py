@@ -46,7 +46,7 @@ for(const changes of [{port:'12346'},{hostname:'localhost'},{protocol:'https:'},
 }
 const nested=context();nested.window.top={};assert.equal(vm.runInContext(script,nested),false);
 '''
-        result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + harness],
+        result = subprocess.run([node, '-'], input='const script=' + json.dumps(script) + ';\n' + harness, encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

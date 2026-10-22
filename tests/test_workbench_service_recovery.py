@@ -422,7 +422,7 @@ const b={key:'shelf',title:'书架选择作品',available:true},open={disabled:f
 await open.onclick();assert.ok($('message').textContent.includes('书架选择作品'));assert.equal(open.disabled,false);
 })().catch(error=>{console.error(error);process.exit(1);});
 '''
-        result = subprocess.run([node, '-e', script], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input=script, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stderr)
 
 

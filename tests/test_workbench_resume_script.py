@@ -27,8 +27,8 @@ const options={bookId:()=>identity,explicitHash:()=>hash,onStatus:packet=>notes.
  restore:async(value,guard)=>{if(guard())restored.push(value);}};
 const tick=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
 '''
-        result = subprocess.run([node, '-e', harness + source + '\n(async()=>{\n' + case +
-                                 '\n})().catch(error=>{console.error(error);process.exitCode=1;});'],
+        result = subprocess.run([node, '-'], input=harness + source + '\n(async()=>{\n' + case +
+                                 '\n})().catch(error=>{console.error(error);process.exitCode=1;});', encoding='utf-8',
                                 text=True, capture_output=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

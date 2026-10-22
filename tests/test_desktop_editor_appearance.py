@@ -117,7 +117,7 @@ class DesktopEditorAppearanceTests(unittest.TestCase):
             self.skipTest('Node.js required')
         self.assertTrue(ASSET.is_file(), 'Client appearance asset must exist')
         source = 'const asset=' + json.dumps(ASSET.read_text(encoding='utf-8')) + ';\n'
-        result = subprocess.run([node, '-e', source + HARNESS + '\n' + test],
+        result = subprocess.run([node, '-'], input=source + HARNESS + '\n' + test, encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
