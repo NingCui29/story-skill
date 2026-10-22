@@ -4,12 +4,19 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      windows_http_recheck:
+        description: 'Recheck bookshelf HTTP fixtures after a test-only timeout adjustment'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   test:
+    if: ${{ github.event_name != 'workflow_dispatch' || !inputs.windows_http_recheck }}
     strategy:
       fail-fast: false
       matrix:
@@ -39,6 +46,39 @@ jobs:
           python -u -B -X utf8 -c "import sys, unittest; from pathlib import Path; sys.path.insert(0, 'tests'); patterns = ['test_platform*.py', 'test_workbench_platform*.py', 'test_chrome_bridge_driver.py', 'test_fanqie_profile_template.py', 'test_workbench_library.py']; names = sorted({p.stem for pattern in patterns for p in Path('tests').glob(pattern)}); result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names)); sys.exit(not result.wasSuccessful())"
       - name: Run regression tests including historical migration
         run: python -u -B -X utf8 -m unittest discover -s tests -v
+      - name: Check declared instruction loads by task and role
+        run: python -B -X utf8 scripts/instruction_budget.py
+      - name: Build the complete skill ZIP
+        run: python -B -X utf8 scripts/package.py
+      - name: Build the Claude Desktop skill ZIP
+        run: python -B -X utf8 scripts/package_claude.py
+      - name: Build the Codex plugin marketplace ZIP
+        run: python -B -X utf8 scripts/package_codex.py --output-dir dist/ci-codex
+      - name: Exercise the local CLI workflow
+        run: python -B -X utf8 scripts/smoke.py --output dist/ci-smoke.json
+      - name: Exercise synthetic Chinese transactions
+        run: python -B -X utf8 scripts/chinese_acceptance.py --output dist/ci-chinese.json
+      - name: Exercise multi-line writing and historical revision
+        run: python -B -X utf8 scripts/long_acceptance.py --output dist/ci-long.json
+
+  windows-http-recheck:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.windows_http_recheck }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.12']
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Recheck all consumers of the bookshelf HTTP fixture
+        run: |
+          python -u -B -X utf8 -c "import sys, unittest; sys.path.insert(0, 'tests'); names = ['test_workbench_library', 'test_workbench_presence_http', 'test_workbench_writing_status', 'test_workbench_shelf_transactions', 'test_workbench_shelf_action_identity']; result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names)); sys.exit(not result.wasSuccessful())"
       - name: Check declared instruction loads by task and role
         run: python -B -X utf8 scripts/instruction_budget.py
       - name: Build the complete skill ZIP

@@ -62,8 +62,9 @@ class WorkbenchLibraryTests(unittest.TestCase):
         server.test_thread.join(timeout=5)
         self.assertFalse(server.test_thread.is_alive())
 
-    def request(self, server, method, path='/', payload=None, headers=None):
-        client = http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=5)
+    def request(self, server, method, path='/', payload=None, headers=None, *, timeout=30):
+        # Bound fixture I/O while allowing scheduler and filesystem delays on Windows CI.
+        client = http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=timeout)
         try:
             client.request(method, path,
                            None if payload is None else json.dumps(payload), headers or {})
