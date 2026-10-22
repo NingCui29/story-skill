@@ -26,7 +26,6 @@ class FakeBrowser:
 
     def __enter__(self):
         self.calls.append(("enter", threading.get_ident()))
-        self.entered.set()
         return self
 
     def __exit__(self, *args):
@@ -36,6 +35,9 @@ class FakeBrowser:
         self.calls.append(("verify", threading.get_ident()))
         if self.callback:
             self.callback({"stage": "waiting_login", "message": "PRIVATE PASSWORD MUST NOT ESCAPE"})
+        # Signal only after the worker's last stage write before release.wait;
+        # entering the browser context still precedes chapter/login progress.
+        self.entered.set()
         if not self.release.wait(5):
             raise RuntimeError("PRIVATE PASSWORD AND FULL MANUSCRIPT")
         if self.callback:
