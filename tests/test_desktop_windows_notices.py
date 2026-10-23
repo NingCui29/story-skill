@@ -2,6 +2,7 @@
 import base64
 import hashlib
 import json
+import os
 from pathlib import Path
 import struct
 import subprocess
@@ -154,6 +155,24 @@ class WindowsNoticeTests(unittest.TestCase):
         self.assertEqual(len(diagnostic['stderr']), 4096)
         self.assertIn('PowerShell inspection error', str(caught.exception))
         self.assertNotIn('EncodedCommand', str(caught.exception))
+
+    def test_signature_child_discards_incompatible_module_paths_without_mutating_parent(self):
+        result = subprocess.CompletedProcess([], 0, json.dumps(self.signature()).encode(), b'')
+        for key in ('PSModulePath', 'PSMODULEPATH', 'psmodulepath'):
+            inherited = {key: r'C:\Program Files\PowerShell\7\Modules',
+                         'SystemRoot': r'C:\Windows', 'PATH': 'unchanged executables',
+                         'BUILD_FIXTURE': 'keep other environment'}
+            with self.subTest(key=key), patch.dict(os.environ, inherited, clear=True), \
+                    patch.object(build.subprocess, 'run', return_value=result) as run:
+                before = dict(os.environ)
+                build.verify_microsoft_signature(self.area / 'runtime.exe')
+                child = run.call_args.kwargs['env']
+                self.assertEqual(child, {name: value for name, value in before.items()
+                                         if name.upper() != 'PSMODULEPATH'})
+                self.assertEqual(dict(os.environ), before)
+                self.assertFalse(any(name.upper() == 'PSMODULEPATH' for name in child))
+                self.assertEqual(next(value for name, value in child.items() if name.upper() == 'SYSTEMROOT'),
+                                 r'C:\Windows')
 
     def test_signature_invalid_json_and_fields_fail_closed_with_diagnostics(self):
         for payload in (b'not json', b'[]', b'{"status":"Valid"}', b'\xff'):

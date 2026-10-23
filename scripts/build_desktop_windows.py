@@ -137,8 +137,10 @@ $v=(Get-Item -LiteralPath $p).VersionInfo;
 """ % path
     command = ['powershell.exe', '-NoProfile', '-NonInteractive', '-EncodedCommand',
                base64.b64encode(script.encode('utf-16le')).decode('ascii')]
+    # A pwsh -> Python -> powershell.exe chain otherwise inherits incompatible PS7 modules.
+    environment = {key: value for key, value in os.environ.items() if key.upper() != 'PSMODULEPATH'}
     try:
-        result = subprocess.run(command, capture_output=True, check=False, timeout=90)
+        result = subprocess.run(command, capture_output=True, check=False, timeout=90, env=environment)
     except subprocess.TimeoutExpired as error:
         raise SignatureVerificationError('Microsoft signature inspection timed out', {
             'timed_out': True, 'stdout': bounded_diagnostic(error.stdout),
