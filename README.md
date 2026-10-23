@@ -47,15 +47,25 @@ Codex 插件通过本地市场分发。安装后在宿主中确认技能已加�
 | 系统 | 当前客户端 | 下载 |
 |---|---|---|
 | Intel Mac | 0.1.25 / build 26 | [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.dmg) · [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.zip) · [安装说明](desktop/macos/README.md) |
-| Windows x64 | 0.2.0（C#） | [构建与安装说明](desktop/windows/README.md) · [Windows 构建产物](https://github.com/NingCui29/story-skill/actions/workflows/desktop-windows.yml) |
+| Windows x64 | 0.2.0（C#） | [EXE 安装包](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.0/story-workbench-0.2.0-windows-x86_64-setup.exe) · [SHA256](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.0/story-workbench-0.2.0-windows-x86_64-setup.exe.sha256) · [安装说明](desktop/windows/README.md) |
 
-**桌面应用内置 Python 作品服务，无需另装 Python。Windows 0.2.0 使用 C# / WPF / WebView2，安装包内置 .NET，并按需安装微软 WebView2 Runtime。** 下载后核对 Release 中的同名 `.sha256` 文件。Mac 使用本地临时签名、未经 Apple 公证，Apple Silicon 尚未验证；Windows 安装程序未做代码签名。Windows 0.2.0 的具体构建验收以对应 Actions 记录为准，当前正式 Release 的旧 Windows 附件不是该 C# 版本。
+**桌面应用内置 Python 作品服务，无需另装 Python。Windows 0.2.0 使用 C# / WPF / WebView2，安装包内置 .NET，并按需安装随包的微软 WebView2 离线运行时。** 下载后核对同名 `.sha256` 文件。Mac 使用本地临时签名、未经 Apple 公证，Apple Silicon 尚未验证；Windows 应用安装程序未做代码签名。Windows C# 版使用独立的 [windows-v0.2.0 发行页](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.0)，构建与验证范围见 [Windows 发布记录](docs/releases/windows-v0.2.0.md)。
+
+**Windows 安装：** 建议使用受支持的 Windows 11 x64。下载上方 EXE 与 SHA256 文件，保存所有工作台及外部浏览器中的编辑并正常退出旧客户端，然后双击 EXE，按向导为当前用户安装，从开始菜单启动“写作工作台”。无需另装 Python 或 .NET；书稿请保存在应用目录之外。
+
+可在安装包所在文件夹打开 PowerShell 校验，结果应与 `.sha256` 文件中的摘要一致：
+
+```powershell
+Get-FileHash .\story-workbench-0.2.0-windows-x86_64-setup.exe -Algorithm SHA256
+```
+
+升级到 C# 版 0.2.0 请使用上述固定链接手动安装。当前应用内更新查询 Story Skill 的最新正式发行页，暂不会发现这个独立 Windows 发行版。
 
 项目代码、依赖与发行包禁止使用 Qt 系列及 PHP；[技术约束与检查](docs/技术约束.md)。
 
 升级前保存全部页面编辑并退出旧客户端。已有工作台服务按 [更新流程](docs/工作台更新流程.md)另行更新。GitHub 发版不会自动替换本机技能或应用。
 
-[全部发行文件与校验文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.22) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（已同步并核验；npm 安装不向宿主注册技能）
+[技能包与 Mac 发行文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.22) · [Windows C# 发行文件](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.0) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（已同步并核验；npm 安装不向宿主注册技能）
 
 ## 开始写书
 

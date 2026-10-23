@@ -4,9 +4,17 @@ Windows 客户端 **0.2.0** 使用 **C# / WPF / .NET 10 / Microsoft WebView2**�
 
 ## 获取和安装
 
-本版本构建产物名为 `story-workbench-0.2.0-windows-x86_64-setup.exe`，校验文件为同名 `.sha256`。从对应的 [Windows 构建记录](https://github.com/NingCui29/story-skill/actions/workflows/desktop-windows.yml) 获取，正式 Release 仅以实际发布的附件为准；旧版 Windows 附件不是本 C# 版本。
+下载 [EXE 安装包](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.0/story-workbench-0.2.0-windows-x86_64-setup.exe)（约 299 MB）及同名 [SHA256 校验文件](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.0/story-workbench-0.2.0-windows-x86_64-setup.exe.sha256)。固定发行页为 [windows-v0.2.0](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.0)。
 
-适用 Windows 10/11 x64。安装前保存工作台及外部浏览器中的编辑，退出旧客户端。双击安装程序，按向导为当前用户安装并创建快捷方式；系统应用列表支持卸载。应用未做代码签名。应用目录不用于存放书稿。
+建议使用受支持的 Windows 11 x64。实际原生验收在 Windows Server 2025 runner 完成，未逐一验证 Windows 10 各版本。安装前保存工作台及外部浏览器中的编辑，退出旧客户端。双击安装程序，按向导为当前用户安装，从开始菜单启动“写作工作台”；系统应用列表支持卸载。应用未做代码签名。应用目录不用于存放书稿。
+
+在下载目录的 PowerShell 中执行以下命令，与 `.sha256` 文件中的摘要比较：
+
+```powershell
+Get-FileHash .\story-workbench-0.2.0-windows-x86_64-setup.exe -Algorithm SHA256
+```
+
+本次安装包摘要为 `72289c4b08aabbfe6de83408e3414fa2a548c4dd4f801a1fb5234ccde98507ce`。升级到 0.2.0 请使用固定链接手动安装；当前应用内更新只查询 Story Skill 最新正式 Release，暂不会发现这个独立 Windows 发行版。
 
 安装包自带 .NET 与 Python，无需另行安装这两者。WebView2 运行时已有时复用，缺失时使用随包微软签名的 Evergreen x64 离线安装程序安装；安装失败会明确中止。便携 ZIP 需完整解压并保留 `runtime`、`Scripts`、`Prerequisites` 及其余文件；如系统缺少 WebView2，先运行 `Prerequisites` 中的微软安装程序。
 
@@ -32,6 +40,8 @@ python scripts/build_desktop_windows.py --output dist/story-workbench-windows-x8
 ```
 
 GitHub Actions 完成 C# 测试、作品服务安全探针、独立发布、安装器构建、中文及空格目录安装、原生窗口与外观验证、完整清单校验及卸载。安装包、校验文件、便携 ZIP 和验收回执作为 Actions 产物保存；常规构建不创建或公开 Release。
+
+0.2.0 的 EXE 构建自 `a875f3b1c3598b715cf291e863ab807116ac61e0`，通过 [Windows 构建与原生验收](https://github.com/NingCui29/story-skill/actions/runs/39945818527)，C# 测试 28/28。发行标签另含下载说明和发布流程更新，客户端代码及作品运行时与已验收构建一致；随包 README 保留构建时快照。缺少 WebView2 的首次离线补装和真实旧版覆盖升级未在该 runner 单独实测，详见 [发布记录](../../docs/releases/windows-v0.2.0.md)。
 
 随包第三方许可来自实际还原的 WebView2 SDK、.NET 与 Python 分发载荷，并记录来源与摘要。完整文件清单包含自带的运行库与先决条件安装器。验收截图中的合成更新进度不代表真实网络升级成功；Windows runner 验收与不同用户系统的人工验收分别记录。
 

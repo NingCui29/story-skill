@@ -22,7 +22,9 @@ concurrency:
 
 jobs:
   publish:
-    if: github.repository == 'NingCui29/story-skill'
+    if: >-
+      github.repository == 'NingCui29/story-skill' &&
+      (github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'v'))
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
