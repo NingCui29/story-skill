@@ -116,6 +116,15 @@ jobs:
             dist/story-workbench-windows-x86_64.zip
             dist/story-workbench-windows-x86_64.zip.sha256
           if-no-files-found: error
+      - name: Preserve build diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: story-workbench-0.2.0-windows-build-diagnostic
+          path: |
+            dist/windows-build-diagnostic.json
+            dist/windows-csharp-tests.json
+          if-no-files-found: warn
       - name: Preserve standalone distribution verification
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

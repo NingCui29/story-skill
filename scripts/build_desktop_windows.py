@@ -116,18 +116,49 @@ def verify_self_contained_host(app):
     return frameworks
 
 
+class SignatureVerificationError(RuntimeError):
+    def __init__(self, message, diagnostic):
+        self.diagnostic = diagnostic
+        super().__init__(message + ': ' + json.dumps(diagnostic, ensure_ascii=False))
+
+
+def bounded_diagnostic(value):
+    if isinstance(value, bytes):
+        value = value.decode('utf-8-sig', errors='replace')
+    return str(value or '')[:4096]
+
+
 def verify_microsoft_signature(path):
     path = str(Path(path).resolve()).replace("'", "''")
-    script = """$ErrorActionPreference='Stop'; $p='%s';
+    script = """$ErrorActionPreference='Stop'; [Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); $p='%s';
 $s=Get-AuthenticodeSignature -LiteralPath $p;
-if ($s.Status -ne 'Valid' -or $s.SignerCertificate.Subject -notmatch '(^|,\\s*)O=Microsoft Corporation(,|$)') { throw 'Microsoft signature validation failed' };
 $v=(Get-Item -LiteralPath $p).VersionInfo;
-@{status='Valid';subject=$s.SignerCertificate.Subject;thumbprint=$s.SignerCertificate.Thumbprint;file_version=$v.FileVersion;product_name=$v.ProductName} | ConvertTo-Json -Compress
+@{status=[string]$s.Status;status_message=[string]$s.StatusMessage;subject=[string]$s.SignerCertificate.Subject;thumbprint=[string]$s.SignerCertificate.Thumbprint;file_version=[string]$v.FileVersion;product_name=[string]$v.ProductName} | ConvertTo-Json -Compress
 """ % path
-    result = subprocess.run(['powershell.exe', '-NoProfile', '-NonInteractive', '-EncodedCommand',
-                             base64.b64encode(script.encode('utf-16le')).decode('ascii')],
-                            capture_output=True, check=True, timeout=90)
-    return json.loads(result.stdout.decode('utf-8-sig'))
+    command = ['powershell.exe', '-NoProfile', '-NonInteractive', '-EncodedCommand',
+               base64.b64encode(script.encode('utf-16le')).decode('ascii')]
+    try:
+        result = subprocess.run(command, capture_output=True, check=False, timeout=90)
+    except subprocess.TimeoutExpired as error:
+        raise SignatureVerificationError('Microsoft signature inspection timed out', {
+            'timed_out': True, 'stdout': bounded_diagnostic(error.stdout),
+            'stderr': bounded_diagnostic(error.stderr)}) from None
+    diagnostic = {'returncode': result.returncode, 'stdout': bounded_diagnostic(result.stdout),
+                  'stderr': bounded_diagnostic(result.stderr)}
+    if result.returncode != 0:
+        raise SignatureVerificationError('Microsoft signature inspection failed', diagnostic)
+    try:
+        signature = json.loads(result.stdout.decode('utf-8-sig'))
+    except (ValueError, UnicodeError):
+        raise SignatureVerificationError('Microsoft signature inspection returned invalid JSON', diagnostic) from None
+    fields = ('status', 'status_message', 'subject', 'thumbprint', 'file_version', 'product_name')
+    if not isinstance(signature, dict) or any(not isinstance(signature.get(key), str) for key in fields):
+        raise SignatureVerificationError('Microsoft signature inspection returned invalid fields', diagnostic)
+    diagnostic['signature'] = {key: bounded_diagnostic(signature[key]) for key in fields}
+    if (signature['status'] != 'Valid' or
+            not re.search(r'(^|,\s*)O=Microsoft Corporation(,|$)', signature['subject'], re.IGNORECASE)):
+        raise SignatureVerificationError('Microsoft signature validation failed', diagnostic)
+    return signature
 
 
 def allowed_microsoft_url(url):
@@ -145,7 +176,25 @@ class MicrosoftRedirects(HTTPRedirectHandler):
         return super().redirect_request(request, fp, code, msg, headers, newurl)
 
 
-def download_webview_runtime(app):
+def download_webview_runtime(app, diagnostic_path=None):
+    diagnostic = {'schema': 1, 'phase': 'download', 'source_url': WEBVIEW_DOWNLOAD}
+    try:
+        return _download_webview_runtime(app, diagnostic)
+    except Exception as error:
+        diagnostic['error'] = bounded_diagnostic(str(error))
+        if isinstance(error, SignatureVerificationError):
+            diagnostic['signature_inspection'] = error.diagnostic
+        destination = Path(app) / 'Prerequisites' / WEBVIEW_INSTALLER
+        if destination.is_file():
+            diagnostic.update(bytes=destination.stat().st_size, sha256=digest_file(destination))
+        if diagnostic_path is not None:
+            diagnostic_path = Path(diagnostic_path)
+            diagnostic_path.parent.mkdir(parents=True, exist_ok=True)
+            diagnostic_path.write_text(json.dumps(diagnostic, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        raise
+
+
+def _download_webview_runtime(app, diagnostic):
     destination = Path(app) / 'Prerequisites' / WEBVIEW_INSTALLER
     destination.parent.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()
@@ -155,7 +204,9 @@ def download_webview_runtime(app):
         if (not allowed_microsoft_url(final_url) or
                 urlsplit(final_url).path.rsplit('/', 1)[-1].casefold() != WEBVIEW_INSTALLER.casefold()):
             raise RuntimeError('Expected the official x64 standalone runtime, not a bootstrapper.')
+        diagnostic['resolved_url'] = final_url
         size = int(response.headers.get('Content-Length', '0'))
+        diagnostic['expected_bytes'] = size
         if not 50 * 1024 ** 2 <= size <= 600 * 1024 ** 2:
             raise RuntimeError('Unexpected offline WebView2 installer size.')
         copied = 0
@@ -171,6 +222,7 @@ def download_webview_runtime(app):
     machine = pe_machine(destination)
     if machine not in (0x14c, 0x8664):
         raise RuntimeError('Unexpected WebView2 standalone installer architecture.')
+    diagnostic.update(phase='signature', pe_machine=machine)
     signature = verify_microsoft_signature(destination)
     return {'kind': 'evergreen-standalone', 'architecture': 'x64',
             'path': destination.relative_to(app).as_posix(), 'source_url': WEBVIEW_DOWNLOAD,
@@ -264,7 +316,7 @@ def build(output):
                                ('LICENSE', 'StorySkill-LICENSE.txt'), ('desktop/windows/README.md', 'README.md')):
             shutil.copy2(REPO / source, app / target)
         notice_report = copy_runtime_notices(app, packages, prefix, configuration)
-        webview = download_webview_runtime(app)
+        webview = download_webview_runtime(app, output.parent / 'windows-build-diagnostic.json')
         result = subprocess.run([str(runtime / 'python.exe'), '-I', '-B', str(scripts / 'story.py'), '--version'],
                                 capture_output=True, text=True, check=True, timeout=30)
         subprocess.run([str(runtime / 'python.exe'), '-I', '-B', '-c',

@@ -4,9 +4,11 @@ import hashlib
 import json
 from pathlib import Path
 import struct
+import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 try:
@@ -120,6 +122,81 @@ class WindowsNoticeTests(unittest.TestCase):
         raw[128:132] = b'NOPE'; path.write_bytes(raw)
         with self.assertRaises(RuntimeError):
             build.pe_machine(path)
+
+    def signature(self, **changes):
+        return dict({'status': 'Valid', 'status_message': 'Signature verified.',
+            'subject': 'CN=Microsoft Corporation, O=Microsoft Corporation, C=US',
+            'thumbprint': 'A' * 40, 'file_version': '145.0.1.0',
+            'product_name': 'Microsoft Edge WebView2'}, **changes)
+
+    def test_signature_receipt_uses_actual_status_and_keeps_microsoft_requirement(self):
+        for changes in ({}, {'status': 'NotTrusted', 'status_message': 'Untrusted root'},
+                        {'subject': 'CN=Microsoft Corporation, O=Other Company'},
+                        {'subject': 'O=Microsoft Corporation Impersonator'}):
+            expected = self.signature(**changes)
+            result = subprocess.CompletedProcess([], 0, json.dumps(expected).encode(), b'')
+            with self.subTest(changes=changes), patch.object(build.subprocess, 'run', return_value=result):
+                if not changes:
+                    self.assertEqual(build.verify_microsoft_signature(self.area / 'runtime.exe'), expected)
+                else:
+                    with self.assertRaises(build.SignatureVerificationError) as caught:
+                        build.verify_microsoft_signature(self.area / 'runtime.exe')
+                    self.assertEqual(caught.exception.diagnostic['signature'], expected)
+
+    def test_signature_nonzero_exit_reports_bounded_stderr_without_encoded_command(self):
+        result = subprocess.CompletedProcess([], 1, b'partial output', b'PowerShell inspection error\n' + b'x' * 6000)
+        with patch.object(build.subprocess, 'run', return_value=result), \
+                self.assertRaises(build.SignatureVerificationError) as caught:
+            build.verify_microsoft_signature(self.area / 'runtime.exe')
+        diagnostic = caught.exception.diagnostic
+        self.assertEqual(diagnostic['returncode'], 1)
+        self.assertEqual(diagnostic['stdout'], 'partial output')
+        self.assertEqual(len(diagnostic['stderr']), 4096)
+        self.assertIn('PowerShell inspection error', str(caught.exception))
+        self.assertNotIn('EncodedCommand', str(caught.exception))
+
+    def test_signature_invalid_json_and_fields_fail_closed_with_diagnostics(self):
+        for payload in (b'not json', b'[]', b'{"status":"Valid"}', b'\xff'):
+            result = subprocess.CompletedProcess([], 0, payload, b'warning details')
+            with self.subTest(payload=payload), patch.object(build.subprocess, 'run', return_value=result), \
+                    self.assertRaises(build.SignatureVerificationError) as caught:
+                build.verify_microsoft_signature(self.area / 'runtime.exe')
+            self.assertEqual(caught.exception.diagnostic['stderr'], 'warning details')
+            self.assertTrue(caught.exception.diagnostic['stdout'])
+
+    def test_signature_timeout_is_bounded_and_never_accepted(self):
+        error = subprocess.TimeoutExpired(['powershell.exe'], 90, output=b'partial', stderr=b'timed out')
+        with patch.object(build.subprocess, 'run', side_effect=error) as run, \
+                self.assertRaises(build.SignatureVerificationError) as caught:
+            build.verify_microsoft_signature(self.area / 'runtime.exe')
+        self.assertEqual(run.call_count, 1)
+        self.assertEqual(run.call_args.kwargs['timeout'], 90)
+        self.assertTrue(caught.exception.diagnostic['timed_out'])
+        self.assertEqual(caught.exception.diagnostic['stdout'], 'partial')
+
+    def test_runtime_failure_receipt_retains_hash_size_source_and_signature(self):
+        signature = self.signature(status='UnknownError', status_message='Trust provider unavailable')
+        failure = build.SignatureVerificationError('Signature rejected', {'signature': signature})
+        raw = b'synthetic downloaded runtime; never executed'
+        def failed_download(app, diagnostic):
+            target = app / 'Prerequisites' / build.WEBVIEW_INSTALLER
+            target.parent.mkdir()
+            target.write_bytes(raw)
+            diagnostic.update(phase='signature', expected_bytes=len(raw),
+                resolved_url='https://msedge.sf.dl.delivery.mp.microsoft.com/files/' + build.WEBVIEW_INSTALLER)
+            raise failure
+        diagnostic_path = self.area / 'dist/windows-build-diagnostic.json'
+        with patch.object(build, '_download_webview_runtime', side_effect=failed_download), \
+                self.assertRaises(build.SignatureVerificationError) as caught:
+            build.download_webview_runtime(self.app, diagnostic_path)
+        self.assertIs(caught.exception, failure)
+        report = json.loads(diagnostic_path.read_text())
+        self.assertEqual(report['phase'], 'signature')
+        self.assertEqual(report['bytes'], len(raw))
+        self.assertEqual(report['sha256'], hashlib.sha256(raw).hexdigest())
+        self.assertEqual(report['source_url'], build.WEBVIEW_DOWNLOAD)
+        self.assertTrue(build.allowed_microsoft_url(report['resolved_url']))
+        self.assertEqual(report['signature_inspection']['signature'], signature)
 
 
 if __name__ == '__main__':
