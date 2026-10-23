@@ -357,7 +357,8 @@ public sealed class MainWindow : Window
         bool systemTheme = Application.Current.ThemeMode.Equals(System.Windows.ThemeMode.System);
 #pragma warning restore WPF0001
         await RememberThemeAsync(original);
-        bool persisted = await NativePreferenceSelfTestAsync(first);
+        var preferenceDetails = new Dictionary<string, object>();
+        bool persisted = await NativePreferenceSelfTestAsync(first, preferenceDetails);
         var lifecycle = await NativeLifecycleSelfTestAsync(); // Intentionally crashes only the isolated test renderer, last.
         bool passed = shelf && captures.Values.All(v => v) && restored && progress && safety && shelfGuard && systemTheme && persisted && lifecycle.recovered && lifecycle.crashProtected;
         Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
@@ -371,7 +372,8 @@ public sealed class MainWindow : Window
             native_close_probe_verified = safety, hidden_buffers_verified = safety, ime_guard_verified = safety,
             buffer_export_verified = safety, synthetic_editor_fixture = true,
             shelf_state_guard_verified = shelfGuard, native_system_theme_verified = systemTheme,
-            preferences_restored_verified = persisted, failed_tab_recovery_verified = lifecycle.recovered,
+            preferences_restored_verified = persisted, preference_diagnostics = preferenceDetails,
+            failed_tab_recovery_verified = lifecycle.recovered,
             unknown_crash_protected = lifecycle.crashProtected
         }), new UTF8Encoding(false));
         exitCode = passed ? 0 : 2; closeApproved = true; Close();
@@ -405,17 +407,40 @@ public sealed class MainWindow : Window
         }
     }
 
-    private async Task<bool> NativePreferenceSelfTestAsync(BrowserTab shelf)
+    private async Task<bool> NativePreferenceSelfTestAsync(BrowserTab shelf, IDictionary<string, object> diagnostics)
     {
         const string keys = "[\"0123456789abcdef0123\"]";
-        await shelf.ExecuteAsync("localStorage.setItem('story-last-books'," + JsonSerializer.Serialize(keys) + ");true");
-        for (int i = 0; i < 50 && (!StoredPreferences.TryGetValue("story-last-books", out var value) || value != keys); i++) await Task.Delay(100);
-        if (!new ThemePreferences(options.StateDirectory).Storage.TryGetValue("story-last-books", out var stored) || stored != keys) return false;
-        await using var synthetic = new SyntheticEditor(clean: true);
-        var page = await OpenPageAsync(synthetic.Url);
-        if (page is null) return false;
-        try { return await page.ExecuteAsync("localStorage.getItem('story-last-books')") == JsonSerializer.Serialize(keys); }
-        finally { pages.Remove(page); tabs.Items.Remove(page.Item); page.Dispose(); tabs.SelectedItem = shelf.Item; }
+        foreach (string stage in new[] { "bridge_received", "disk_reloaded", "new_origin_loaded", "new_origin_value_matches" }) diagnostics[stage] = false;
+        try
+        {
+            await shelf.ExecuteAsync("localStorage.setItem('story-last-books'," + JsonSerializer.Serialize(keys) + ");true");
+            for (int i = 0; i < 50 && (!StoredPreferences.TryGetValue("story-last-books", out var value) || value != keys); i++) await Task.Delay(100);
+            bool received = StoredPreferences.TryGetValue("story-last-books", out var current) && current == keys;
+            bool reloaded = new ThemePreferences(options.StateDirectory).Storage.TryGetValue("story-last-books", out var stored) && stored == keys;
+            diagnostics["bridge_received"] = received; diagnostics["disk_reloaded"] = reloaded;
+            if (!received || !reloaded) return false;
+            await using var synthetic = new SyntheticEditor(clean: true);
+            var page = await OpenPageAsync(synthetic.Url);
+            if (page is null) return false;
+            try
+            {
+                bool differentOrigin = page.LoadComplete && page.Key.Port != shelf.Key.Port;
+                diagnostics["new_origin_loaded"] = differentOrigin;
+                string raw = await page.ExecuteAsync("localStorage.getItem('story-last-books')");
+                string? restored = BrowserSafety.ParseScriptString(raw);
+                diagnostics["response_is_string"] = restored is not null;
+                bool matched = restored == keys;
+                diagnostics["new_origin_value_matches"] = matched;
+                return differentOrigin && matched;
+            }
+            finally { pages.Remove(page); tabs.Items.Remove(page.Item); page.Dispose(); tabs.SelectedItem = shelf.Item; }
+        }
+        catch (Exception error)
+        {
+            // Record only the stage and exception type; never include page data or capability URLs.
+            diagnostics["error_type"] = error.GetType().Name;
+            return false;
+        }
     }
 
     private async Task<(bool recovered, bool crashProtected)> NativeLifecycleSelfTestAsync()

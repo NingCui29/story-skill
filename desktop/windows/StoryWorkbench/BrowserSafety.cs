@@ -57,6 +57,18 @@ public static class BrowserSafety
         && before.Key == after.Key && !after.State.Busy && !after.State.Composing && !after.State.Saving && !after.State.PendingForm
         && SameSnapshot(before.State, after.State);
 
+    public static string? ParseScriptString(string json)
+    {
+        // ExecuteScriptAsync returns JSON. Equivalent quote/Unicode escaping is not a value difference.
+        if (json.Length > 16 * 1024 * 1024) return null;
+        try
+        {
+            using var parsed = JsonDocument.Parse(json, new() { MaxDepth = 4 });
+            return parsed.RootElement.ValueKind == JsonValueKind.String ? parsed.RootElement.GetString() : null;
+        }
+        catch (JsonException) { return null; }
+    }
+
     public static CloseState? ParseState(string json, bool includeText = true)
     {
         try

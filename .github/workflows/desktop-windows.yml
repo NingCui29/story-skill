@@ -93,18 +93,23 @@ jobs:
           $state = "$env:RUNNER_TEMP\desktop-isolated-shelf"
           $report = "$pwd\dist\windows-native-smoke.json"
           $ui = Start-Process -FilePath "$destination\StoryWorkbench.exe" -ArgumentList @('--self-test-report', "`"$report`"", '--state-dir', "`"$state`"", '--port', '18765') -PassThru
+          $nativeFailure = $null
           try {
             if (!$ui.WaitForExit(180000)) { $ui.Kill(); throw "Native window startup timed out" }
             if ($ui.ExitCode -ne 0) { throw "Native window failed: $($ui.ExitCode)" }
             $result = Get-Content $report -Raw | ConvertFrom-Json
             Get-Content $report -Raw
             if (!$result.ok -or !$result.native_window -or !$result.shelf_rendered -or !$result.captured -or !$result.themes_verified -or !$result.update_check_available -or !$result.update_progress_verified -or !$result.in_private -or $result.ui_stack -ne 'wpf-webview2' -or !$result.native_close_probe_verified -or !$result.hidden_buffers_verified -or !$result.ime_guard_verified -or !$result.buffer_export_verified) { throw "Native window theme/update progress checks failed" }
+          } catch {
+            $nativeFailure = $_.Exception.Message
+            Write-Output "Native window acceptance failed: $nativeFailure"
           } finally {
             & "$destination\runtime\python.exe" -I -B "$destination\Scripts\story.py" workbench-library-stop --state-dir "$state" --saved
             if ($LASTEXITCODE -ne 0) { throw "Isolated bookshelf cleanup failed" }
           }
           python -B -X utf8 tests/desktop_installation_probe.py --app "$destination" --installer "$($installer.FullName)" --failure-installer "$env:RUNNER_TEMP\story-workbench-lifecycle-failure-probe.exe" --area "$env:RUNNER_TEMP\installation-lifecycle-probe" --report "$pwd\dist\windows-installation-lifecycle.json"
           if ($LASTEXITCODE -ne 0) { throw "Native installation lifecycle probe failed" }
+          if ($nativeFailure) { throw $nativeFailure }
           python -B scripts/check_forbidden_technologies.py --root "$destination"
           if ($LASTEXITCODE -ne 0) { throw "Installed payload contains prohibited technology" }
           python -B -X utf8 scripts/publish_windows_draft.py --artifact-root dist --verify-only --installed-root "$destination" --receipt dist/windows-distribution-verification.json
@@ -148,6 +153,7 @@ jobs:
             dist/windows-native-smoke.json
             dist/windows-install.log
             ${{ runner.temp }}/installation-lifecycle-probe/*.log
+            dist/windows-native-smoke*.png
             dist/windows-csharp-tests.json
           if-no-files-found: warn
       - name: Preserve standalone distribution verification

@@ -90,12 +90,40 @@ public static class DesktopPreferencesTests
             events.get('change')[0]({target:{id:'workbench-theme'}});assert.equal(messages[0].value,'system');
             """);
         });
+        suite.TestAsync("persisted preferences survive JavaScript result escaping without accepting wrong values", async () =>
+        {
+            const string keys = "[\"0123456789abcdef0123\"]";
+            string dir = Path.Combine(Path.GetTempPath(), "story-prefs-wire-" + Guid.NewGuid().ToString("N"));
+            try
+            {
+                Suite.Check(new ThemePreferences(dir).SaveStorage("story-last-books", keys));
+                var restored = new ThemePreferences(dir);
+                string wire = await Node("const script=" + JsonSerializer.Serialize(BrowserSafety.BootstrapScript("system", restored.Storage)) + ";\n" + """
+                const vm=require('node:vm');
+                class Storage{constructor(){this.data=new Map()}setItem(k,v){this.data.set(String(k),String(v))}getItem(k){return this.data.get(k)||null}}
+                const localStorage=new Storage(),window={};window.top=window;
+                const context={window,location:{protocol:'http:',hostname:'127.0.0.1'},document:{cookie:''},localStorage,Storage,addEventListener:()=>{}};
+                vm.runInNewContext(script,context);
+                process.stdout.write(JSON.stringify(localStorage.getItem('story-last-books')));
+                """);
+                Suite.Check(wire != JsonSerializer.Serialize(keys), "fixture must reproduce the differing JSON escape representations");
+                Suite.Check(BrowserSafety.ParseScriptString(wire) == keys, "JavaScript result must restore the exact persisted value");
+                Suite.Check(BrowserSafety.ParseScriptString(JsonSerializer.Serialize(keys)) == keys);
+                foreach (string invalid in new[] { "null", "true", "123", "{}", "[]", "\"unterminated", "\"value\" trailing" })
+                    Suite.Check(BrowserSafety.ParseScriptString(invalid) is null, "non-string or invalid result must be rejected");
+                Suite.Check(BrowserSafety.ParseScriptString(JsonSerializer.Serialize("[]")) != keys, "different valid string must still fail");
+                Suite.Check(BrowserSafety.ParseScriptString(JsonSerializer.Serialize("[\"ffffffffffffffffffff\"]")) != keys);
+            }
+            finally { if (Directory.Exists(dir)) Directory.Delete(dir, true); }
+        });
     }
-    private static async Task Node(string script)
+    private static async Task<string> Node(string script)
     {
         var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("STORY_TEST_NODE") ?? "node") { UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true };
         using var process = Process.Start(start)!; var stdout = process.StandardOutput.ReadToEndAsync(); var stderr = process.StandardError.ReadToEndAsync();
         await process.StandardInput.WriteAsync(script); process.StandardInput.Close(); await process.WaitForExitAsync();
-        Suite.Check(process.ExitCode == 0, await stdout + await stderr);
+        string output = await stdout;
+        Suite.Check(process.ExitCode == 0, output + await stderr);
+        return output;
     }
 }

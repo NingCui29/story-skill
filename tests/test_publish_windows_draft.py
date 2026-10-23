@@ -103,7 +103,7 @@ def fixture(area):
     write(artifacts / 'windows-previous-upgrade.json', json.dumps({'ok': True, 'previous_version': '0.2.0',
         'installed_version': '0.2.1', 'old_host_preserved': True}).encode())
     write(artifacts / 'windows-csharp-tests.json', json.dumps(
-        {'ok': True, 'total': 38, 'passed': 38, 'skipped': 0, 'failed': []}).encode())
+        {'ok': True, 'total': 39, 'passed': 39, 'skipped': 0, 'failed': []}).encode())
     installed = area / 'installed'
     for name, data in files.items():
         write(installed / name, data)

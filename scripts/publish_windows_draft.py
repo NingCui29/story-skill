@@ -136,7 +136,7 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
             previous.get('installed_version') == CLIENT_VERSION and previous.get('old_host_preserved') is True,
             'Previous Windows release upgrade was not verified')
     require(contracts.get('ok') is True and type(contracts.get('total')) is int and
-            contracts['total'] >= 38 and contracts.get('passed') == contracts['total'] and
+            contracts['total'] >= 39 and contracts.get('passed') == contracts['total'] and
             contracts.get('skipped') == 0 and contracts.get('failed') == [],
             'Native C# contract acceptance report is incomplete')
     require(all(native.get(key) is True for key in NATIVE_FLAGS) and
