@@ -205,13 +205,14 @@ public sealed class BrowserTab : IDisposable
 
     public async Task<SafetySnapshot?> ProbeAsync()
     {
-        if (Disposed || !LoadComplete || BrowserSafety.PageKeyFor(View.CoreWebView2?.Source) != Key) return null;
+        var core = View.CoreWebView2;
+        if (Disposed || !LoadComplete || core is null || BrowserSafety.PageKeyFor(core.Source) != Key) return null;
         long generation = Generation;
         try
         {
             var state = BrowserSafety.ParseState(await ExecuteAsync(BrowserSafety.ProbeScript()));
             if (state is null || Disposed || !LoadComplete || Generation != generation
-                || BrowserSafety.PageKeyFor(View.CoreWebView2.Source) != Key
+                || !ReferenceEquals(core, View.CoreWebView2) || BrowserSafety.PageKeyFor(core.Source) != Key
                 || state.Kind != (Key.Path == "/" ? "shelf" : "editor")) return null;
             return new(generation, Key, state);
         }

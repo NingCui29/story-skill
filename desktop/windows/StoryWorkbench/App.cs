@@ -29,7 +29,7 @@ public sealed class App : Application
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(report)!);
                     File.WriteAllText(report, JsonSerializer.Serialize(new { ok = false, error = error.GetType().Name,
-                        ui_stack = "wpf-webview2", client_version = MainWindow.ClientVersion }), new UTF8Encoding(false));
+                        ui_stack = "wpf-webview2", client_version = global::StoryWorkbench.MainWindow.ClientVersion }), new UTF8Encoding(false));
                 }
                 else MessageBox.Show(error is IOException or ArgumentException ? error.Message
                     : "工作台窗口无法启动，请检查安装目录和 Microsoft Edge WebView2 Runtime 是否完整。", "写作工作台", MessageBoxButton.OK, MessageBoxImage.Error);

@@ -385,8 +385,24 @@ public sealed class MainWindow : Window
                 {
                     using var client = await listener.AcceptTcpClientAsync(cancellation.Token);
                     using var stream = client.GetStream();
+                    using var request = CancellationTokenSource.CreateLinkedTokenSource(cancellation.Token);
+                    request.CancelAfter(TimeSpan.FromSeconds(8));
                     var buffer = new byte[8192];
-                    await stream.ReadAsync(buffer, cancellation.Token);
+                    int received = 0;
+                    bool headersComplete = false;
+                    try
+                    {
+                        while (received < buffer.Length)
+                        {
+                            int count = await stream.ReadAsync(buffer.AsMemory(received), request.Token);
+                            if (count == 0) break;
+                            received += count;
+                            if (buffer.AsSpan(0, received).IndexOf("\r\n\r\n"u8) >= 0)
+                            { headersComplete = true; break; }
+                        }
+                    }
+                    catch (OperationCanceledException) when (!cancellation.IsCancellationRequested) { continue; }
+                    if (!headersComplete) continue;
                     byte[] header = Encoding.ASCII.GetBytes($"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: {body.Length}\r\nConnection: close\r\nCache-Control: no-store\r\n\r\n");
                     await stream.WriteAsync(header, cancellation.Token); await stream.WriteAsync(body, cancellation.Token);
                 }
