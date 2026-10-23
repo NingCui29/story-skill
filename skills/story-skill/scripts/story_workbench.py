@@ -4133,7 +4133,7 @@ def _library_lease(state_dir):
                     fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
-def _library_service_request(state_dir=None, action='session', saved=False):
+def _library_service_request(state_dir=None, action='session', saved=False, _record_retry=True):
     root = _library_state_dir(state_dir)
     if action not in ('session', 'stop'):
         api.fail('invalid_input', '无效的书架服务操作。')
@@ -4161,6 +4161,13 @@ def _library_service_request(state_dir=None, action='session', saved=False):
         response = connection.getresponse()
         raw = response.read(8193)
         if response.status != 200 or len(raw) > 8192:
+            # A new server can publish its identity between our record read and
+            # HTTP request. Retry a read-only session once using the new record;
+            # never replay a stop or treat an unchanged mismatch as process exit.
+            if (action == 'session' and _record_retry and
+                    _author_read(root, 'service.json', 8192) != record_raw):
+                connection.close()
+                return _library_service_request(root, action, saved, _record_retry=False)
             api.fail('workbench_service_mismatch', '服务未确认此书架实例；不会按 PID 结束进程。')
         result = json.loads(raw)
         if (not isinstance(result, dict) or result.get('instance') != record['instance']

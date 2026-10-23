@@ -90,6 +90,26 @@ class DesktopServiceRecoveryTests(unittest.TestCase):
             self.assertFalse(self.w._recorded_process_exited(os.getpid()))
             self.assertTrue(self.w._recorded_process_exited(self.dead_pid))
 
+    def test_restart_publishing_new_record_retries_session_once_without_replaying_stop(self):
+        fresh = {**self.record, 'instance': '2' * 32, 'token': 'y' * 43}
+        def switched_response():
+            (self.state / 'service.json').write_text(json.dumps(fresh))
+            return Mock(status=403, read=lambda _: b'{}')
+        first, second = Mock(), Mock()
+        first.getresponse.side_effect = switched_response
+        second.getresponse.return_value = Mock(status=200, read=lambda _: json.dumps(
+            {**fresh, 'running': True, 'runtime_sha256': self.w._runtime_digest(self.w._runtime_sources())}).encode())
+        with patch.object(self.w.http.client, 'HTTPConnection', side_effect=[first, second]) as connect:
+            result = self.w._library_service_request(self.state)
+        self.assertTrue(result['running'])
+        self.assertEqual(result['instance'], fresh['instance'])
+        self.assertEqual(connect.call_count, 2)
+        (self.state / 'service.json').write_bytes(self.raw)
+        with patch.object(self.w.http.client, 'HTTPConnection', return_value=first) as connect:
+            with self.assertRaises(base.story.StoryError):
+                self.w._library_service_request(self.state, 'stop', True)
+        self.assertEqual(connect.call_count, 1)
+
     def test_actual_abrupt_shelf_exit_restarts_and_preserves_registry(self):
         # Only terminate child processes created by this isolated test.
         (self.state / 'service.json').unlink()
