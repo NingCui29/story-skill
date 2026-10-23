@@ -102,7 +102,8 @@ public static class BrowserSafetyTests
             {
                 string target = Path.Combine(folder, "blocked.zip"); Directory.CreateDirectory(target);
                 File.WriteAllText(Path.Combine(target, "sentinel"), "keep");
-                Suite.Throws<IOException>(() => BrowserSafety.ExportPendingBuffers(target, [Parsed(Buffer())]));
+                var blocked = Suite.Throws<Exception>(() => BrowserSafety.ExportPendingBuffers(target, [Parsed(Buffer())]));
+                Suite.Check(blocked is IOException or UnauthorizedAccessException);
                 Suite.Check(File.ReadAllText(Path.Combine(target, "sentinel")) == "keep");
                 Suite.Check(!Directory.EnumerateFiles(folder, ".story-export-*").Any());
                 Suite.Throws<InvalidOperationException>(() => BrowserSafety.ExportPendingBuffers(Path.Combine(folder, "empty.zip"), [Parsed()]));

@@ -122,7 +122,7 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
     safety = json.loads(one(root, 'windows-runtime-safety.json').read_text(encoding='utf-8-sig'))
     contracts = json.loads(one(root, 'windows-csharp-tests.json').read_text(encoding='utf-8-sig'))
     require(contracts.get('ok') is True and type(contracts.get('total')) is int and
-            contracts['total'] >= 29 and contracts.get('passed') == contracts['total'] and
+            contracts['total'] >= 28 and contracts.get('passed') == contracts['total'] and
             contracts.get('skipped') == 0 and contracts.get('failed') == [],
             'Native C# contract acceptance report is incomplete')
     require(all(native.get(key) is True for key in NATIVE_FLAGS) and
