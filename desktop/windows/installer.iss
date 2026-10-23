@@ -57,6 +57,7 @@ const
 var
   LifecycleReady, UpgradePrepared, UpgradeFinished: Boolean;
   LifecycleHandle: THandle;
+  PostInstallExitCode: Integer;
 
 function CreateLifecycleMutex(Attributes: LongWord; Owner: Boolean; Name: String): THandle;
   external 'CreateMutexW@kernel32.dll stdcall';
@@ -200,6 +201,9 @@ begin
       RaiseException(LifecycleMessage);
   end;
   if CurStep = ssPostInstall then begin
+    { Inno handles exceptions in ssPostInstall and otherwise may still return 0.
+      Only a completed commit clears this failure status. }
+    PostInstallExitCode := 21;
 #ifdef LifecycleFailureProbe
     { Compile-only acceptance fixture, absent from the distributed installer. }
     SaveStringToFile(ExpandConstant('{app}\lifecycle-failure-unowned.txt'),
@@ -212,7 +216,13 @@ begin
     if not LifecycleCommand('commit', '', ExitCode) or (ExitCode <> 0) then
       RaiseException('新版安装完成，但未能写入迁移回执。旧版备份仍保留。' + #13#10 + LifecycleMessage);
     ReleaseLifecycleMutex;
+    PostInstallExitCode := 0;
   end;
+end;
+
+function GetCustomSetupExitCode: Integer;
+begin
+  Result := PostInstallExitCode;
 end;
 
 procedure DeinitializeSetup;
