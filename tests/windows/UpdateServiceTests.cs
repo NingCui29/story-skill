@@ -25,6 +25,14 @@ internal static class UpdateServiceTests
     }
     private static JsonObject Asset(JsonObject release) => release["assets"]![0]!.AsObject();
     private static UpdateResult Evaluate(JsonObject release, string current = "0.2.0") => UpdateService.EvaluateReleaseResponse(200, Encoding.UTF8.GetBytes(release.ToJsonString()), current);
+    private static JsonObject WindowsRelease(string version = "9.0.0")
+    {
+        var release = Release(version); string tag = "windows-v" + version;
+        release["tag_name"] = tag;
+        release["html_url"] = "https://github.com/NingCui29/story-skill/releases/tag/" + tag;
+        Asset(release)["browser_download_url"] = "https://github.com/NingCui29/story-skill/releases/download/" + tag + "/" + Asset(release)["name"]!.GetValue<string>();
+        return release;
+    }
 
     public static void Register(Suite suite)
     {
@@ -102,11 +110,31 @@ internal static class UpdateServiceTests
             var progress = UpdateService.ProgressText(new("downloading", 6 * 1024 * 1024, 10 * 1024 * 1024, 1024 * 1024, 4));
             Suite.Check(progress.Contains("6.0 MiB / 10.0 MiB") && progress.Contains("1.0 MiB/秒") && progress.Contains("4 秒"));
         });
-        suite.TestAsync("updates: latest-release transport is bounded, unauthenticated and cancellable", async () => {
+        suite.Test("updates: independent Windows channel ignores skill latest and rejects mismatched tags", () => {
+            static UpdateResult EvaluateList(params JsonObject[] items) => UpdateService.EvaluateWindowsReleases(
+                Encoding.UTF8.GetBytes(new JsonArray(items.Select(x => (JsonNode)x).ToArray()).ToJsonString()), "0.2.0");
+            Suite.Check(EvaluateList(Release("99.0.0"), WindowsRelease("0.2.0")).State == "current");
+            var draft = WindowsRelease("99.0.0"); draft["draft"] = true;
+            var preview = WindowsRelease("98.0.0"); preview["prerelease"] = true;
+            Suite.Check(EvaluateList(draft, preview, WindowsRelease("0.2.1")).Version == "0.2.1");
+            Suite.Check(EvaluateList(WindowsRelease("0.2.1"), WindowsRelease("0.3.0")).Version == "0.3.0");
+            Suite.Check(EvaluateList(Release()).State == "unavailable");
+            var malformed = WindowsRelease(); malformed["draft"] = null;
+            Suite.Check(EvaluateList(malformed, WindowsRelease("0.2.0")).State == "error");
+            var missingAsset = WindowsRelease(); missingAsset["assets"] = new JsonArray();
+            Suite.Check(EvaluateList(missingAsset, WindowsRelease("0.2.0")).State == "unavailable");
+            var wrongPage = WindowsRelease(); wrongPage["html_url"] = "https://github.com/other/repo/releases/tag/windows-v9.0.0";
+            Suite.Check(EvaluateList(wrongPage).State == "error");
+            var wrongAsset = WindowsRelease(); wrongAsset["tag_name"] = "windows-v8.0.0";
+            wrongAsset["html_url"] = "https://github.com/NingCui29/story-skill/releases/tag/windows-v8.0.0";
+            Asset(wrongAsset)["browser_download_url"] = Asset(wrongAsset)["browser_download_url"]!.GetValue<string>().Replace("windows-v9.0.0", "windows-v8.0.0");
+            Suite.Check(EvaluateList(wrongAsset).State == "error");
+        });
+        suite.TestAsync("updates: Windows release transport is bounded, unauthenticated and cancellable", async () => {
             using var handler = new UpdateFakeHandler((request, _) => {
-                Suite.Check(request.RequestUri!.OriginalString == UpdateService.LatestReleaseApi);
+                Suite.Check(request.RequestUri!.OriginalString == UpdateService.ReleasesApi + "1");
                 Suite.Check(!request.Headers.Contains("Authorization") && !request.Headers.Contains("Cookie"));
-                return Task.FromResult(Response(Encoding.UTF8.GetBytes(Release().ToJsonString())));
+                return Task.FromResult(Response(Encoding.UTF8.GetBytes(new JsonArray(WindowsRelease()).ToJsonString())));
             });
             using var service = new UpdateService(handler); Suite.Check((await service.CheckAsync()).State == "available");
             using var oversized = new UpdateService(new UpdateFakeHandler((_, _) => Task.FromResult(Response(new byte[UpdateService.MaxResponseBytes + 1]))));
@@ -116,6 +144,46 @@ internal static class UpdateServiceTests
             using var stalled = new UpdateService(new UpdateFakeHandler(async (_, token) => { await Task.Delay(Timeout.Infinite, token); return Response([]); }));
             using var cancel = new CancellationTokenSource(TimeSpan.FromMilliseconds(30));
             await Suite.ThrowsAsync<OperationCanceledException>(() => stalled.CheckAsync(cancel.Token));
+        });
+        suite.TestAsync("updates: bounded pagination finds Windows release behind newer skill releases", async () => {
+            int page = 0;
+            using var service = new UpdateService(new UpdateFakeHandler((request, _) => {
+                page++; Suite.Check(request.RequestUri!.OriginalString == UpdateService.ReleasesApi + page);
+                var entries = page == 1 ? new JsonArray(Enumerable.Range(0, 20).Select(_ => (JsonNode)Release()).ToArray()) : new JsonArray(WindowsRelease());
+                var response = Response(Encoding.UTF8.GetBytes(entries.ToJsonString()));
+                if (page == 1) response.Headers.TryAddWithoutValidation("Link", "<https://api.github.com/repos/NingCui29/story-skill/releases?per_page=20&page=2>; rel=\"next\"");
+                return Task.FromResult(response);
+            }));
+            Suite.Check((await service.CheckAsync()).State == "available" && page == 2);
+            int bounded = 0;
+            using var many = new UpdateService(new UpdateFakeHandler((_, _) => {
+                bounded++; var response = Response(Encoding.UTF8.GetBytes(new JsonArray(Enumerable.Range(0, 20).Select(_ => (JsonNode)Release()).ToArray()).ToJsonString()));
+                response.Headers.TryAddWithoutValidation("Link", "<https://evil.invalid/not-followed>; rel=\"next\"");
+                return Task.FromResult(response);
+            }));
+            Suite.Check((await many.CheckAsync()).State == "error" && bounded == 5);
+        });
+        suite.TestAsync("updates: installer process exit restores retry state without killing the child", async () => {
+            foreach (int code in new[] { 2, 0 })
+            {
+                var start = new System.Diagnostics.ProcessStartInfo(OperatingSystem.IsWindows() ? "cmd.exe" : "/bin/sh")
+                { UseShellExecute = false, RedirectStandardInput = true, CreateNoWindow = true };
+                start.ArgumentList.Add(OperatingSystem.IsWindows() ? "/c" : "-c");
+                start.ArgumentList.Add(OperatingSystem.IsWindows() ? "set /p hold=& exit /b " + code : "read line; exit " + code);
+                var child = System.Diagnostics.Process.Start(start)!;
+                var session = new UpdateInstallerSession("synthetic-child", child);
+                try
+                {
+                    Suite.Check(session.IsRunning);
+                    await child.StandardInput.WriteLineAsync("continue"); await child.StandardInput.FlushAsync();
+                    Suite.Check(await session.Completion.WaitAsync(TimeSpan.FromSeconds(10)) == code);
+                    Suite.Check(!session.IsRunning);
+                }
+                finally
+                {
+                    if (!session.Completion.IsCompleted) { child.Kill(entireProcessTree: true); await session.Completion; }
+                }
+            }
         });
         suite.TestAsync("updates: ZIP can never be launched", async () => {
             using var service = new UpdateService();
@@ -140,6 +208,36 @@ internal static class UpdateServiceTests
             Suite.Check(await service.VerifyAsync(update) == update); Suite.Check(events[^1].Stage == "ready");
             Suite.Check(events.Any(e => e.Stage == "verifying")); Suite.Check(File.ReadAllText(sentinel) == "keep");
             Suite.Check(handler.Calls == 2);
+        });
+        suite.TestWindowsAsync("updates: reopening and retry reuse current-official bytes without another download", async () => {
+            using var area = new UpdateTempArea(); using var handler = new UpdateFakeHandler((_, _) => Task.FromResult(Response(Payload)));
+            UpdateDownloaded first;
+            using (var service = new UpdateService(handler)) first = await service.DownloadAsync(Package(), area.Cache);
+            using var noNetwork = new UpdateService(new UpdateFakeHandler((_, _) => throw new Exception("Verified cache must not download again")));
+            var reopened = await noNetwork.ReuseCachedAsync(Package(), area.Cache);
+            Suite.Check(reopened is not null && reopened.Path == first.Path && reopened.Identity == first.Identity);
+            var retried = await noNetwork.DownloadAsync(Package(), area.Cache);
+            Suite.Check(retried.Path == first.Path && Directory.GetDirectories(area.Cache).Length == 1);
+            File.WriteAllBytes(first.Path, Payload.Select(x => (byte)(x ^ 1)).ToArray());
+            Suite.Check(await noNetwork.ReuseCachedAsync(Package(), area.Cache) is null);
+        });
+        suite.TestWindowsAsync("updates: cache pruning retains protected downloads and never deletes foreign entries", async () => {
+            using var area = new UpdateTempArea(); using var service = new UpdateService(new UpdateFakeHandler((_, _) => Task.FromResult(Response(Payload))));
+            var first = await service.DownloadAsync(Package(), area.Cache);
+            string second = Path.Combine(area.Cache, "verified-update-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(second);
+            File.Copy(first.Path, Path.Combine(second, Name));
+            string third = Path.Combine(area.Cache, "verified-update-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(third);
+            File.Copy(first.Path, Path.Combine(third, Name));
+            File.SetLastWriteTimeUtc(first.Path, DateTime.UtcNow.AddDays(-60));
+            string foreign = Path.Combine(area.Cache, "verified-update-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(foreign);
+            File.WriteAllText(Path.Combine(foreign, "author.txt"), "keep");
+            UpdateService.PruneCache(area.Cache, first.Path);
+            Suite.Check(File.Exists(first.Path));
+            Suite.Check(Directory.GetFiles(area.Cache, Name, SearchOption.AllDirectories).Length == UpdateService.MaxCachedPackages);
+            Suite.Check(File.ReadAllText(Path.Combine(foreign, "author.txt")) == "keep");
+            string stale = Path.Combine(area.Cache, "verified-update-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(stale);
+            string part = Path.Combine(stale, Name + ".part"); File.WriteAllBytes(part, Payload); File.SetLastWriteTimeUtc(part, DateTime.UtcNow.AddDays(-2));
+            UpdateService.PruneCache(area.Cache, first.Path); Suite.Check(!Directory.Exists(stale));
         });
         suite.TestWindowsAsync("updates: truncated, excess and mismatched hashes never leave a package", async () => {
             foreach (var bytes in new[] { Payload[..^1], Payload.Concat(new byte[] { 1 }).ToArray(), Payload.Select(b => (byte)(b ^ 1)).ToArray() }) {

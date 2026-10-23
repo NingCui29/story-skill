@@ -5,7 +5,7 @@
 #ifndef InstallerOutput
   #define InstallerOutput "."
 #endif
-#define ClientVersion "0.2.0"
+#define ClientVersion "0.2.1"
 #define WebViewInstaller "MicrosoftEdgeWebView2RuntimeInstallerX64.exe"
 
 [Setup]
@@ -20,7 +20,11 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
 OutputDir={#InstallerOutput}
+#ifdef LifecycleFailureProbe
+OutputBaseFilename=story-workbench-lifecycle-failure-probe
+#else
 OutputBaseFilename=story-workbench-{#ClientVersion}-windows-x86_64-setup
+#endif
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -32,18 +36,12 @@ RestartApplications=no
 Name: "desktopicon"; Description: "创建桌面快捷方式"; Flags: unchecked
 
 [Files]
-Source: "{#AppSource}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+; An independent interpreter permits renaming the old installation and removing
+; its runtime without locking it with the lifecycle helper itself.
+Source: "{#AppSource}\runtime\*"; DestDir: "{tmp}\lifecycle\runtime"; Flags: dontcopy recursesubdirs createallsubdirs
+Source: "{#AppSource}\installation_lifecycle.py"; DestDir: "{tmp}\lifecycle"; Flags: dontcopy
 Source: "{#AppSource}\Prerequisites\{#WebViewInstaller}"; Flags: dontcopy
-
-[InstallDelete]
-; Only an authenticated legacy installation may lose its installer-owned payload.
-Type: filesandordirs; Name: "{app}\_internal"; Check: RemoveLegacyPayload
-Type: filesandordirs; Name: "{app}\ThirdPartyLicenses\Qt"; Check: RemoveLegacyPayload
-Type: filesandordirs; Name: "{app}\ThirdPartyLicenses\PySide6"; Check: RemoveLegacyPayload
-Type: filesandordirs; Name: "{app}\ThirdPartyLicenses\PySide6_Essentials"; Check: RemoveLegacyPayload
-Type: filesandordirs; Name: "{app}\ThirdPartyLicenses\PySide6_Addons"; Check: RemoveLegacyPayload
-Type: filesandordirs; Name: "{app}\ThirdPartyLicenses\shiboken6"; Check: RemoveLegacyPayload
-Type: filesandordirs; Name: "{app}\ThirdPartyLicenses\pyinstaller"; Check: RemoveLegacyPayload
+Source: "{#AppSource}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\写作工作台"; Filename: "{app}\StoryWorkbench.exe"
@@ -55,9 +53,84 @@ Filename: "{app}\StoryWorkbench.exe"; Description: "启动写作工作台"; Flag
 [Code]
 const
   WebViewKey = 'Software\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}';
-  UninstallKey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{8BB803B9-A7FA-47E8-8C3C-E5A6FF197702}_is1';
+  LifecycleMutex = 'Local\StoryWorkbench.InstallLifecycle';
 var
-  LegacyPayloadVerified: Boolean;
+  LifecycleReady, UpgradePrepared, UpgradeFinished: Boolean;
+  LifecycleHandle: THandle;
+
+function CreateLifecycleMutex(Attributes: LongWord; Owner: Boolean; Name: String): THandle;
+  external 'CreateMutexW@kernel32.dll stdcall';
+function CloseLifecycleHandle(Handle: THandle): Boolean;
+  external 'CloseHandle@kernel32.dll stdcall';
+
+procedure ReleaseLifecycleMutex;
+begin
+  if LifecycleHandle <> 0 then begin
+    CloseLifecycleHandle(LifecycleHandle); LifecycleHandle := 0;
+  end;
+end;
+
+function AcquireLifecycleMutex: Boolean;
+var
+  ErrorCode: LongWord;
+begin
+  LifecycleHandle := CreateLifecycleMutex(0, False, LifecycleMutex);
+  ErrorCode := DLLGetLastError;
+  Result := (LifecycleHandle <> 0) and (ErrorCode <> 183);
+  if not Result then ReleaseLifecycleMutex;
+end;
+
+function InitializeSetup: Boolean;
+begin
+  Result := AcquireLifecycleMutex;
+  if not Result then SuppressibleMsgBox('另一个安装或卸载正在进行，或无法取得安装锁。请等待完成后重试。', mbError, MB_OK, IDOK);
+end;
+
+function LifecycleCommand(Action, Extra: String; var ExitCode: Integer): Boolean;
+begin
+  Result := Exec(ExpandConstant('{tmp}\lifecycle\runtime\python.exe'),
+    '-I -B "' + ExpandConstant('{tmp}\lifecycle\installation_lifecycle.py') + '" ' + Action +
+    ' --app "' + ExpandConstant('{app}') + '" --report "' + ExpandConstant('{tmp}\lifecycle-result.json') +
+    '" --journal "' + ExpandConstant('{tmp}\lifecycle-journal.json') + '" ' + Extra,
+    ExpandConstant('{tmp}'), SW_HIDE, ewWaitUntilTerminated, ExitCode);
+end;
+
+function LifecycleMessage: String;
+var
+  Text: AnsiString;
+begin
+  Result := '无法完成安全交接。请保存并关闭所有工作台窗口、正常停止作品服务后重试。原安装文件将保留。';
+  if LoadStringFromFile(ExpandConstant('{tmp}\lifecycle-result.txt'), Text) then
+    Result := UTF8Decode(Text);
+end;
+
+function CheckLifecycle(IsUninstall: Boolean): String;
+var
+  ExitCode: Integer;
+  Extra: String;
+  SilentMode: Boolean;
+begin
+  Result := ''; Extra := '';
+  if IsUninstall then begin Extra := '--uninstall'; SilentMode := UninstallSilent; end
+  else SilentMode := WizardSilent;
+  if not LifecycleCommand('check', Extra, ExitCode) then begin
+    Result := '无法启动安装安全检查，操作已停止。'; exit;
+  end;
+  if ExitCode = 10 then begin
+    if SilentMode then begin
+      Result := '仍有作品服务运行。静默安装/卸载不会代替作者确认保存；请保存并正常停止服务后重试。'; exit;
+    end;
+    if MsgBox('书架或作品服务仍在运行。请先保存工作台及外部浏览器中所有需要保留的编辑。' + #13#10 +
+      '确认已全部保存后，安装器将正常停止已认证的服务。是否继续？',
+      mbConfirmation, MB_YESNO or MB_DEFBUTTON2) <> IDYES then begin
+      Result := '尚未确认全部保存，操作已停止。'; exit;
+    end;
+    if not LifecycleCommand('check', Extra + ' --saved', ExitCode) then begin
+      Result := '无法正常停止服务，操作已停止。'; exit;
+    end;
+  end;
+  if ExitCode <> 0 then Result := LifecycleMessage;
+end;
 
 function ValidRuntimeVersion(Value: String): Boolean;
 var
@@ -89,58 +162,95 @@ begin
   Result := RuntimeAt(HKCU32) or RuntimeAt(HKCU64) or RuntimeAt(HKLM32);
 end;
 
-function RemoveLegacyPayload: Boolean;
-begin
-  Result := LegacyPayloadVerified;
-end;
-
-function VerifyLegacyPayload: Boolean;
-var
-  RegisteredPath: String;
-  Manifest: AnsiString;
-begin
-  Result := RegQueryStringValue(HKCU, UninstallKey, 'Inno Setup: App Path', RegisteredPath);
-  if not Result then exit;
-  Result := CompareText(AddBackslash(ExpandFileName(RegisteredPath)),
-                        AddBackslash(ExpandConstant('{app}'))) = 0;
-  if not Result then exit;
-  Result := FileExists(ExpandConstant('{app}\unins000.exe')) and
-            FileExists(ExpandConstant('{app}\backend_runner.py')) and
-            FileExists(ExpandConstant('{app}\runtime\python.exe')) and
-            FileExists(ExpandConstant('{app}\Scripts\story.py')) and
-            LoadStringFromFile(ExpandConstant('{app}\build-manifest.json'), Manifest);
-  if not Result then exit;
-  Result := (Pos('"platform": "windows-x86_64"', String(Manifest)) > 0) and
-            (Pos('"client_version": "0.1.', String(Manifest)) > 0);
-end;
-
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
   ExitCode: Integer;
   Installed: Boolean;
 begin
   Result := '';
-  LegacyPayloadVerified := False;
-  if DirExists(ExpandConstant('{app}\_internal')) or
-     DirExists(ExpandConstant('{app}\ThirdPartyLicenses\Qt')) then begin
-    LegacyPayloadVerified := VerifyLegacyPayload;
-    if not LegacyPayloadVerified then begin
-      Result := '无法确认目标目录属于旧版写作工作台。请改用空目录安装，原目录未清理。';
-      exit;
+  if not LifecycleReady then begin
+    ExtractTemporaryFiles('{tmp}\lifecycle\*');
+    LifecycleReady := True;
+  end;
+  Result := CheckLifecycle(False);
+  if Result <> '' then exit;
+  if not WebViewRuntimeInstalled then begin
+    ExtractTemporaryFile('{#WebViewInstaller}');
+    Installed := ExecAsOriginalUser(ExpandConstant('{tmp}\{#WebViewInstaller}'),
+      '/silent /install', '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
+    if not Installed then begin
+      Result := '无法启动随安装包提供的 WebView2 离线安装器。安装已停止。'; exit;
     end;
+    if ((ExitCode <> 0) and (ExitCode <> 3010) and (ExitCode <> 1641)) or
+       not WebViewRuntimeInstalled then begin
+      Result := Format('WebView2 运行时安装未完成（代码 %d）。安装已停止，请重试。', [ExitCode]); exit;
+    end;
+    NeedsRestart := (ExitCode = 3010) or (ExitCode = 1641);
   end;
-  if WebViewRuntimeInstalled then exit;
-  ExtractTemporaryFile('{#WebViewInstaller}');
-  Installed := ExecAsOriginalUser(ExpandConstant('{tmp}\{#WebViewInstaller}'),
-    '/silent /install', '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
-  if not Installed then begin
-    Result := '无法启动随安装包提供的 WebView2 离线安装器。安装已停止。';
-    exit;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ExitCode: Integer;
+begin
+  if CurStep = ssInstall then begin
+    UpgradePrepared := True;
+    if not LifecycleCommand('prepare', '--shortcut "' + ExpandConstant('{group}\写作工作台.lnk') +
+      '" --shortcut "' + ExpandConstant('{autodesktop}\写作工作台.lnk') + '"', ExitCode) or (ExitCode <> 0) then
+      RaiseException(LifecycleMessage);
   end;
-  if ((ExitCode <> 0) and (ExitCode <> 3010) and (ExitCode <> 1641)) or
-     not WebViewRuntimeInstalled then begin
-    Result := Format('WebView2 运行时安装未完成（代码 %d）。安装已停止，请重试。', [ExitCode]);
-    exit;
+  if CurStep = ssPostInstall then begin
+#ifdef LifecycleFailureProbe
+    { Compile-only acceptance fixture, absent from the distributed installer. }
+    SaveStringToFile(ExpandConstant('{app}\lifecycle-failure-unowned.txt'),
+      'isolated rollback acceptance; preserve this untracked file', False);
+    RaiseException('isolated rollback acceptance');
+#endif
+    { Files, shortcuts and registry are complete. Commit before [Run] can start
+      the new host, then release its startup gate. }
+    UpgradeFinished := True;
+    if not LifecycleCommand('commit', '', ExitCode) or (ExitCode <> 0) then
+      RaiseException('新版安装完成，但未能写入迁移回执。旧版备份仍保留。' + #13#10 + LifecycleMessage);
+    ReleaseLifecycleMutex;
   end;
-  NeedsRestart := (ExitCode = 3010) or (ExitCode = 1641);
+end;
+
+procedure DeinitializeSetup;
+var
+  ExitCode: Integer;
+begin
+  if UpgradePrepared and not UpgradeFinished then begin
+    if not LifecycleCommand('rollback', '', ExitCode) or (ExitCode <> 0) then
+      SuppressibleMsgBox('未能自动恢复旧版。请保留安装目录旁的 .previous- 备份，不要清理。' + #13#10 +
+        LifecycleMessage, mbError, MB_OK, IDOK);
+  end;
+  ReleaseLifecycleMutex;
+end;
+
+function InitializeUninstall: Boolean;
+var
+  ExitCode: Integer;
+  ErrorText: String;
+begin
+  Result := False;
+  if not AcquireLifecycleMutex then begin
+    SuppressibleMsgBox('另一个安装或卸载正在进行，请等待完成。', mbError, MB_OK, IDOK); exit;
+  end;
+  { This first process only copies its interpreter/helper and exits. All checks
+    and service handoff then run independently outside the installation. }
+  if not Exec(ExpandConstant('{app}\runtime\python.exe'),
+    '-I -B "' + ExpandConstant('{app}\installation_lifecycle.py') + '" stage --app "' +
+    ExpandConstant('{app}') + '" --destination "' + ExpandConstant('{tmp}\lifecycle') +
+    '" --report "' + ExpandConstant('{tmp}\lifecycle-result.json') + '"',
+    ExpandConstant('{tmp}'), SW_HIDE, ewWaitUntilTerminated, ExitCode) or (ExitCode <> 0) then begin
+    SuppressibleMsgBox('无法准备独立卸载检查，未删除安装文件。' + #13#10 + LifecycleMessage, mbError, MB_OK, IDOK); exit;
+  end;
+  ErrorText := CheckLifecycle(True);
+  if ErrorText <> '' then begin SuppressibleMsgBox(ErrorText, mbError, MB_OK, IDOK); exit; end;
+  Result := True;
+end;
+
+procedure DeinitializeUninstall;
+begin
+  ReleaseLifecycleMutex;
 end;

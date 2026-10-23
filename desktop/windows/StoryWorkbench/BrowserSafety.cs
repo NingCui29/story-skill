@@ -17,7 +17,7 @@ public sealed record DocumentBuffer(string Id, string Title, string Path, bool D
 }
 
 public sealed record CloseState(string Kind, IReadOnlyList<DocumentBuffer> Documents,
-    bool Busy, bool Composing, string Fingerprint)
+    bool Busy, bool Composing, string Fingerprint, bool PendingForm = false)
 {
     public IReadOnlyList<DocumentBuffer> Pending => Documents.Where(d => d.Pending).ToArray();
     public bool Saving => Documents.Any(d => d.Saving || d.Recovering);
@@ -51,10 +51,10 @@ public static class BrowserSafety
     }
 
     public static bool CanProceed(CloseState? state) => state is not null && !state.Busy && !state.Composing
-        && !state.Saving && state.Pending.Count == 0;
+        && !state.Saving && !state.PendingForm && state.Pending.Count == 0;
     public static bool SameSnapshot(CloseState before, CloseState after) => before.Fingerprint == after.Fingerprint;
     public static bool CanCommit(SafetySnapshot before, SafetySnapshot after) => before.Generation == after.Generation
-        && before.Key == after.Key && !after.State.Busy && !after.State.Composing && !after.State.Saving
+        && before.Key == after.Key && !after.State.Busy && !after.State.Composing && !after.State.Saving && !after.State.PendingForm
         && SameSnapshot(before.State, after.State);
 
     public static CloseState? ParseState(string json, bool includeText = true)
@@ -84,10 +84,12 @@ public static class BrowserSafety
                 if (includeText && (dirty || recovery || readback || newVersion) && text is null) return null;
                 documents.Add(new(id, title, path, dirty, saving, recovering, recovery, readback, newVersion, current, text));
             }
-            if (kind == "shelf" && (documents.Count != 0 || busy || composing)) return null;
+            bool pendingForm = false;
+            if (root.TryGetProperty("pending_form", out _) && !Bool(root, "pending_form", out pendingForm)) return null;
+            if (kind == "shelf" && documents.Count != 0 || kind == "editor" && pendingForm) return null;
             // Canonical typed representation avoids property-order differences between probes.
-            string canonical = JsonSerializer.Serialize(new { kind, busy, composing, documents });
-            return new(kind!, documents, busy, composing, Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(canonical))));
+            string canonical = JsonSerializer.Serialize(new { kind, busy, composing, documents, pendingForm });
+            return new(kind!, documents, busy, composing, Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(canonical))), pendingForm);
         }
         catch (Exception error) when (error is JsonException or InvalidOperationException or ArgumentException) { return null; }
     }
@@ -107,15 +109,29 @@ public static class BrowserSafety
         value = item.GetBoolean(); return true;
     }
 
-    public static string BootstrapScript(string theme)
+    public static string BootstrapScript(string theme, IReadOnlyDictionary<string, string>? preferences = null)
     {
         theme = theme is "light" or "dark" ? theme : "system";
         return """
         (()=>{
           if(window!==window.top || location.protocol!=='http:' || location.hostname!=='127.0.0.1')return;
+          const inputEvents=['beforeinput','keydown','keyup','paste','cut','drop','click','dblclick','pointerdown','mousedown','touchstart','submit','compositionstart','compositionupdate','compositionend'];
+          const blockInitialInput=event=>{event.preventDefault();event.stopImmediatePropagation()};
+          window.__storyNativeInitialInput={events:inputEvents,block:blockInitialInput};
+          for(const name of inputEvents)addEventListener(name,blockInitialInput,{capture:true,passive:false});
           const theme=__THEME__;
           document.cookie='story_workbench_theme='+theme+'; Path=/; SameSite=Strict';
           try{localStorage.setItem('story-workbench-theme',theme);}catch{}
+          const preferences=__PREFERENCES__,keys=['story-last-books','story-reading','story-columns','story-shelf-view'];
+          try{for(const key of keys)if(typeof preferences[key]==='string')localStorage.setItem(key,preferences[key]);}catch{}
+          if(typeof Storage!=='undefined'){
+            const set=Storage.prototype.setItem;
+            Storage.prototype.setItem=function(key,value){
+              const result=set.call(this,key,value);
+              if(this===localStorage&&keys.includes(key))window.chrome?.webview?.postMessage({kind:'preference',key,value:String(value)});
+              return result;
+            };
+          }
           window.__storyNativeComposing=false;
           addEventListener('compositionstart',()=>{window.__storyNativeComposing=true},true);
           addEventListener('compositionend',()=>{window.__storyNativeComposing=false},true);
@@ -123,11 +139,21 @@ public static class BrowserSafety
             const value=document.getElementById('workbench-theme')?.value;
             if(['system','light','dark'].includes(value))window.chrome?.webview?.postMessage({kind:'theme',value});
           };
-          addEventListener('change',send,true);
+          addEventListener('change',event=>{if(event.target?.id==='workbench-theme')send()},true);
           addEventListener('DOMContentLoaded',send,{once:true});
         })();
-        """.Replace("__THEME__", JsonSerializer.Serialize(theme));
+        """.Replace("__THEME__", JsonSerializer.Serialize(theme)).Replace("__PREFERENCES__", JsonSerializer.Serialize(preferences ?? new Dictionary<string, string>()));
     }
+
+    public static string ReleaseInitialInputScript => """
+        (()=>{
+          const state=window.__storyNativeInitialInput;
+          if(!state)return true;
+          for(const name of state.events)removeEventListener(name,state.block,true);
+          delete window.__storyNativeInitialInput;
+          return true;
+        })()
+        """;
 
     public static string FreezeScript(string token) => """
         (()=>{
@@ -157,11 +183,26 @@ public static class BrowserSafety
     public static string ProbeScript(bool includeText = true) => """
         (()=>{
           if(window!==window.top)return null;
-          if(document.getElementById('library-heading'))return {kind:'shelf',documents:[],busy:false,composing:false};
+          if(document.getElementById('library-heading')){
+            const shelfBusy=(typeof busy!=='undefined'&&!!busy)||(typeof managerBusy!=='undefined'&&!!managerBusy)
+              ||(typeof statusSaving!=='undefined'&&statusSaving.size>0);
+            const changed=element=>{
+              if(element.dataset?.bookStatusOriginal!==undefined)return element.value!==element.dataset.bookStatusOriginal;
+              if(element.type==='checkbox'||element.type==='radio')return element.checked!==element.defaultChecked;
+              if(element.tagName==='SELECT'){
+                const original=[...element.options].findIndex(option=>option.defaultSelected);
+                return element.selectedIndex!==(original<0?0:original);
+              }
+              return element.value!==element.defaultValue;
+            };
+            const fields=[...(document.querySelectorAll('#book-manager[open] input,#book-manager[open] select,#book-manager[open] textarea,.book-status-editor select')||[])];
+            const pendingForm=!!document.getElementById('book-path')?.value?.trim()||fields.some(changed);
+            return {kind:'shelf',documents:[],busy:!!shelfBusy,composing:window.__storyNativeComposing===true,pending_form:pendingForm};
+          }
           if(!document.getElementById('current-book-root') || typeof docs==='undefined' || !(docs instanceof Map))return null;
           if([...docs.values()].some(d=>!d || typeof d!=='object' || typeof d.editable!=='boolean'
               || typeof d.value!=='string' || (d.editable && typeof d.text!=='string')))return null;
-          const busy=(typeof loading!=='undefined' && !!loading)||(typeof reloading!=='undefined' && !!reloading)
+          const editorBusy=(typeof loading!=='undefined' && !!loading)||(typeof reloading!=='undefined' && !!reloading)
               ||(typeof reloadPending!=='undefined' && !!reloadPending);
           const documents=[...docs].map(([id,d])=>{
             const textbox=document.getElementById('text');
@@ -174,7 +215,7 @@ public static class BrowserSafety
               pending_readback,failed_new_version,recovery_current:dirty&&d.recovered===value,
               text:__TEXT__&&pending?value:null};
           });
-          return {kind:'editor',documents,busy,composing:window.__storyNativeComposing===true};
+          return {kind:'editor',documents,busy:editorBusy,composing:window.__storyNativeComposing===true};
         })()
         """.Replace("__TEXT__", includeText ? "true" : "false");
 

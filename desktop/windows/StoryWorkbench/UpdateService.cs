@@ -30,14 +30,28 @@ public sealed record UpdateFileIdentity(uint Volume, ulong Index, long Length, l
 public sealed record UpdateDownloaded(string Path, string Sha256, long Size, string Version,
     string AssetName, UpdateFileIdentity? Identity = null);
 
+/// <summary>A launched installer owns its lifetime. Closing the updater never kills it.</summary>
+public sealed class UpdateInstallerSession
+{
+    public string Path { get; }
+    public Task<int> Completion { get; }
+    public bool IsRunning => !Completion.IsCompleted;
+    public UpdateInstallerSession(string path, Process process)
+    { Path = path; Completion = ObserveAsync(process); }
+    private static async Task<int> ObserveAsync(Process process)
+    {
+        using (process) { await process.WaitForExitAsync().ConfigureAwait(false); return process.ExitCode; }
+    }
+}
+
 public sealed class UpdateException(string message, Exception? inner = null) : Exception(message, inner) { }
 
 /// <summary>Official-release parsing and bounded transfers. No manuscript or window access.</summary>
 public sealed class UpdateService : IDisposable
 {
-    public const string ClientVersion = "0.2.0";
+    public const string ClientVersion = "0.2.1";
     public const string Repository = "NingCui29/story-skill";
-    public const string LatestReleaseApi = "https://api.github.com/repos/" + Repository + "/releases/latest";
+    public const string ReleasesApi = "https://api.github.com/repos/" + Repository + "/releases?per_page=20&page=";
     public const int MaxResponseBytes = 2 * 1024 * 1024;
     public const int MaxChecksumBytes = 16 * 1024;
     public const long MaxDownloadBytes = 1024L * 1024 * 1024;
@@ -50,6 +64,11 @@ public sealed class UpdateService : IDisposable
     private static readonly HashSet<string> CdnHosts = ["release-assets.githubusercontent.com",
         "objects.githubusercontent.com", "github-releases.githubusercontent.com"];
     private readonly HttpClient client;
+    private static readonly SemaphoreSlim InstallerGate = new(1, 1);
+    private static UpdateInstallerSession? activeInstaller;
+    public static UpdateInstallerSession? ActiveInstaller => Volatile.Read(ref activeInstaller) is { IsRunning: true } value ? value : null;
+    public const int MaxCachedPackages = 2;
+    private static readonly Regex CacheFolder = new(@"\Averified-update-[0-9a-f]{32}\z", RegexOptions.CultureInvariant);
 
     // A handler is injectable for synthetic tests; production always disables automatic
     // redirects, cookies, credentials and content decoding, including on CDN hops.
@@ -182,23 +201,70 @@ public sealed class UpdateService : IDisposable
         { return Error("更新信息格式无效，请稍后重试。"); }
     }
 
+    public static UpdateResult EvaluateWindowsReleases(ReadOnlyMemory<byte> data, string currentVersion = ClientVersion)
+    {
+        if (data.Length > MaxResponseBytes) return Error("更新信息超过大小限制，请稍后重试。");
+        try
+        {
+            using var document = JsonDocument.Parse(data, new JsonDocumentOptions { MaxDepth = 32 });
+            if (document.RootElement.ValueKind != JsonValueKind.Array || document.RootElement.GetArrayLength() > 100)
+                return Error("Windows 发布列表格式无效。");
+            JsonElement? selected = null; string version = "";
+            foreach (var release in document.RootElement.EnumerateArray())
+            {
+                var tag = Text(release, "tag_name");
+                var match = Regex.Match(tag, @"\Awindows-v([0-9]+\.[0-9]+\.[0-9]+)\z");
+                if (!match.Success) continue;
+                if (!release.TryGetProperty("draft", out var draft) || draft.ValueKind is not (JsonValueKind.False or JsonValueKind.True)
+                    || !release.TryGetProperty("prerelease", out var preview) || preview.ValueKind is not (JsonValueKind.False or JsonValueKind.True))
+                    return Error("Windows 发布状态无法验证，已停止。");
+                if (draft.ValueKind == JsonValueKind.True || preview.ValueKind == JsonValueKind.True) continue;
+                var candidate = match.Groups[1].Value;
+                if (selected is null || CompareVersions(candidate, version) > 0) { selected = release; version = candidate; }
+            }
+            if (selected is not JsonElement item) return new("unavailable", "尚未找到正式 Windows 独立发行版，请稍后重试或查看官方下载页。");
+            if (Text(item, "html_url") != $"https://github.com/{Repository}/releases/tag/windows-v{version}")
+                return Error("Windows 发布标签与官方页面不一致，已停止。");
+            var result = EvaluateReleaseResponse(200, Encoding.UTF8.GetBytes(item.GetRawText()), currentVersion);
+            if ((result.State is "available" or "current" or "ahead") && result.Version != version)
+                return Error("Windows 发布标签与安装包版本不一致，已停止。");
+            return result;
+        }
+        catch (Exception error) when (error is JsonException or FormatException or InvalidOperationException)
+        { return Error("Windows 发布列表格式无效，请稍后重试。"); }
+    }
+
     public async Task<UpdateResult> CheckAsync(CancellationToken cancellationToken = default)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(TimeSpan.FromSeconds(15));
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
         try
         {
-            using var request = Request(LatestReleaseApi, true);
-            using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
-            // The latest-release API must not redirect to another repository or login page.
-            if (response.RequestMessage?.RequestUri is Uri final && final != request.RequestUri)
-                return Error("更新检查发生了非预期重定向，已停止。");
-            var data = await ReadBoundedAsync(response, MaxResponseBytes, null, timeout.Token).ConfigureAwait(false);
-            return EvaluateReleaseResponse((int)response.StatusCode, data);
+            var releases = new List<JsonElement>(); int received = 0;
+            for (int page = 1; page <= 5; page++)
+            {
+                using var request = Request(ReleasesApi + page, true);
+                using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
+                if (response.RequestMessage?.RequestUri is Uri final && final != request.RequestUri)
+                    return Error("更新检查发生了非预期重定向，已停止。");
+                var data = await ReadBoundedAsync(response, MaxResponseBytes, null, timeout.Token).ConfigureAwait(false);
+                if (response.StatusCode != HttpStatusCode.OK) return EvaluateReleaseResponse((int)response.StatusCode, data);
+                received += data.Length;
+                if (received > MaxResponseBytes) return Error("更新信息超过大小限制，请稍后重试。");
+                using var document = JsonDocument.Parse(data, new JsonDocumentOptions { MaxDepth = 32 });
+                if (document.RootElement.ValueKind != JsonValueKind.Array || document.RootElement.GetArrayLength() > 20)
+                    return Error("Windows 发布列表格式无效。");
+                releases.AddRange(document.RootElement.EnumerateArray().Select(item => item.Clone()));
+                if (document.RootElement.GetArrayLength() < 20
+                    || !response.Headers.TryGetValues("Link", out var links) || !links.Any(link => link.Contains("rel=\"next\"", StringComparison.Ordinal)))
+                    return EvaluateWindowsReleases(JsonSerializer.SerializeToUtf8Bytes(releases));
+            }
+            return Error("发布记录超出自动检查范围，请查看官方下载页。");
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         { return Error("更新检查超时，请检查网络后重试。"); }
         catch (UpdateException error) { return Error(error.Message); }
+        catch (JsonException) { return Error("Windows 发布列表格式无效，请稍后重试。"); }
         catch (Exception error) when (error is HttpRequestException or IOException)
         { return Error("无法连接 GitHub，请检查网络后重试。"); }
     }
@@ -308,13 +374,11 @@ public sealed class UpdateService : IDisposable
         UpdateDirectoryGuard? guard = null;
         try
         {
-            token.ThrowIfCancellationRequested(); var digest = result.Sha256;
-            if (digest.Length == 0)
-            {
-                progress?.Report(new("checksum"));
-                using var checksum = await OpenAsync(result.ChecksumUrl, result.ChecksumSize, token).ConfigureAwait(false);
-                digest = ParseChecksum(await ReadBoundedAsync(checksum, MaxChecksumBytes, result.ChecksumSize, token).ConfigureAwait(false), result.AssetName);
-            }
+            token.ThrowIfCancellationRequested();
+            var digest = await ResolveDigestAsync(result, progress, token).ConfigureAwait(false);
+            var reused = await FindCachedAsync(result, digest, cacheDirectory, progress, token).ConfigureAwait(false);
+            if (reused is not null) return reused;
+            PruneCache(cacheDirectory, maximumPackages: MaxCachedPackages - 1);
             token.ThrowIfCancellationRequested();
             Directory.CreateDirectory(cacheDirectory);
             directory = Path.Combine(Path.GetFullPath(cacheDirectory), "verified-update-" + Guid.NewGuid().ToString("N"));
@@ -344,6 +408,7 @@ public sealed class UpdateService : IDisposable
             File.Move(temporary, target);
             var verified = await VerifyAsync(new(target, digest, result.AssetSize, result.Version, result.AssetName), progress, token).ConfigureAwait(false);
             token.ThrowIfCancellationRequested(); succeeded = true; progress?.Report(new("ready", result.AssetSize, result.AssetSize));
+            PruneCache(cacheDirectory, target);
             return verified;
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
@@ -358,6 +423,93 @@ public sealed class UpdateService : IDisposable
             guard?.Dispose();
             if (!succeeded && directory is not null) { try { Directory.Delete(directory, false); } catch (IOException) { } catch (UnauthorizedAccessException) { } }
         }
+    }
+
+    private async Task<string> ResolveDigestAsync(UpdateResult result, IProgress<UpdateProgress>? progress, CancellationToken token)
+    {
+        if (result.Sha256.Length != 0) return result.Sha256;
+        progress?.Report(new("checksum"));
+        using var checksum = await OpenAsync(result.ChecksumUrl, result.ChecksumSize, token).ConfigureAwait(false);
+        return ParseChecksum(await ReadBoundedAsync(checksum, MaxChecksumBytes, result.ChecksumSize, token).ConfigureAwait(false), result.AssetName);
+    }
+
+    /// <summary>Cache metadata is never trusted: the current official release supplies size, name and SHA256.</summary>
+    public async Task<UpdateDownloaded?> ReuseCachedAsync(UpdateResult result, string cacheDirectory,
+        IProgress<UpdateProgress>? progress = null, CancellationToken cancellationToken = default)
+    {
+        ValidateMetadata(result);
+        if (!Directory.Exists(cacheDirectory)) return null;
+        var digest = await ResolveDigestAsync(result, progress, cancellationToken).ConfigureAwait(false);
+        return await FindCachedAsync(result, digest, cacheDirectory, progress, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<UpdateDownloaded?> FindCachedAsync(UpdateResult result, string digest, string cacheDirectory,
+        IProgress<UpdateProgress>? progress, CancellationToken token)
+    {
+        if (!Directory.Exists(cacheDirectory)) return null;
+        using var cacheGuard = new UpdateDirectoryGuard(cacheDirectory);
+        foreach (var directory in CacheDirectories(cacheDirectory))
+        {
+            token.ThrowIfCancellationRequested();
+            var path = Path.Combine(directory, result.AssetName);
+            if (!File.Exists(path)) continue;
+            try
+            {
+                var verified = await VerifyAsync(new(path, digest, result.AssetSize, result.Version, result.AssetName), progress, token).ConfigureAwait(false);
+                PruneCache(cacheDirectory, path);
+                progress?.Report(new("ready", result.AssetSize, result.AssetSize));
+                return verified;
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException or UpdateException or Win32Exception)
+            { /* Corrupt, occupied or replaced entries cannot become installation candidates. */ }
+        }
+        return null;
+    }
+
+    private static string[] CacheDirectories(string cacheDirectory) => Directory.EnumerateDirectories(Path.GetFullPath(cacheDirectory))
+        .Where(path => CacheFolder.IsMatch(Path.GetFileName(path))).Take(128)
+        .OrderByDescending(Directory.GetLastWriteTimeUtc).ToArray();
+
+    /// <summary>Retain at most two owned package directories; never recurse or delete unfamiliar entries.</summary>
+    public static void PruneCache(string cacheDirectory, string? keepPath = null, int maximumPackages = MaxCachedPackages)
+    {
+        if (!Directory.Exists(cacheDirectory)) return;
+        try
+        {
+            using var cacheGuard = new UpdateDirectoryGuard(cacheDirectory);
+            int retained = 0;
+            foreach (var directory in CacheDirectories(cacheDirectory).OrderByDescending(directory =>
+                string.Equals(directory, Path.GetDirectoryName(keepPath), StringComparison.OrdinalIgnoreCase)
+                || string.Equals(directory, Path.GetDirectoryName(ActiveInstaller?.Path), StringComparison.OrdinalIgnoreCase)))
+            {
+                try
+                {
+                    bool remove = false;
+                    using (var guard = new UpdateDirectoryGuard(directory))
+                    {
+                        var files = Directory.GetFileSystemEntries(directory);
+                        if (files.Length != 1) continue;
+                        var file = files[0];
+                        var name = Path.GetFileName(file);
+                        bool partial = name.EndsWith(".part", StringComparison.Ordinal);
+                        if (!AssetPattern.IsMatch(partial ? name[..^5] : name)) continue;
+                        // Opening proves it is a regular, non-reparse file; an active .part writer denies this open.
+                        long length;
+                        using (var read = UpdateFileAccess.OpenRead(file)) { length = read.Length; }
+                        bool protectedFile = string.Equals(file, keepPath, StringComparison.OrdinalIgnoreCase)
+                            || string.Equals(file, ActiveInstaller?.Path, StringComparison.OrdinalIgnoreCase);
+                        bool expired = File.GetLastWriteTimeUtc(file) < DateTime.UtcNow.AddDays(partial ? -1 : -30);
+                        if (partial && !expired) continue;
+                        if (length > MaxDownloadBytes) expired = true;
+                        if (protectedFile || (!expired && retained < maximumPackages)) { retained++; continue; }
+                        File.Delete(file); remove = true;
+                    }
+                    if (remove) Directory.Delete(directory, recursive: false);
+                }
+                catch (Exception error) when (error is IOException or UnauthorizedAccessException or UpdateException or Win32Exception) { }
+            }
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or UpdateException or Win32Exception) { }
     }
 
     private static void ValidateDownloaded(UpdateDownloaded update)
@@ -405,20 +557,29 @@ public sealed class UpdateService : IDisposable
     }
 
     /// <summary>Call only inside the host's all-tabs protected save operation.</summary>
-    public Task LaunchInstallerAsync(UpdateDownloaded update, CancellationToken cancellationToken = default) => Task.Run(async () =>
+    public Task<UpdateInstallerSession> LaunchInstallerAsync(UpdateDownloaded update, CancellationToken cancellationToken = default) => Task.Run(async () =>
     {
-        ValidateDownloaded(update);
-        if (update.Identity is null || !update.AssetName.EndsWith("-setup.exe", StringComparison.OrdinalIgnoreCase))
-            throw new UpdateException("仅可启动已经校验的安装程序；便携 ZIP 请手动解压。");
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken); timeout.CancelAfter(TotalTimeout);
-        using var guard = new UpdateDirectoryGuard(Path.GetDirectoryName(update.Path)!);
-        using var stream = UpdateFileAccess.OpenRead(update.Path);
-        await VerifyStreamAsync(update, stream, null, timeout.Token).ConfigureAwait(false);
-        timeout.Token.ThrowIfCancellationRequested();
-        // Keep the verified file and every parent pinned until process creation. There
-        // are no shell arguments, silent switches, service stops or automatic exits.
-        var start = new ProcessStartInfo(update.Path) { WorkingDirectory = Path.GetDirectoryName(update.Path)!, UseShellExecute = true };
-        using var process = Process.Start(start) ?? throw new UpdateException("无法启动安装程序，请重试。");
+        await InstallerGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            if (ActiveInstaller is not null) throw new UpdateException("安装向导仍在运行，请先完成或取消该向导。");
+            ValidateDownloaded(update);
+            if (update.Identity is null || !update.AssetName.EndsWith("-setup.exe", StringComparison.OrdinalIgnoreCase))
+                throw new UpdateException("仅可启动已经校验的安装程序；便携 ZIP 请手动解压。");
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken); timeout.CancelAfter(TotalTimeout);
+            using var guard = new UpdateDirectoryGuard(Path.GetDirectoryName(update.Path)!);
+            using var stream = UpdateFileAccess.OpenRead(update.Path);
+            await VerifyStreamAsync(update, stream, null, timeout.Token).ConfigureAwait(false);
+            timeout.Token.ThrowIfCancellationRequested();
+            // Keep the verified file and every parent pinned until process creation. The host
+            // then closes through its protected operation; the installer manages service shutdown.
+            var start = new ProcessStartInfo(update.Path) { WorkingDirectory = Path.GetDirectoryName(update.Path)!, UseShellExecute = true };
+            var process = Process.Start(start) ?? throw new UpdateException("无法启动安装程序，请重试。");
+            var session = new UpdateInstallerSession(update.Path, process);
+            Volatile.Write(ref activeInstaller, session);
+            return session;
+        }
+        finally { InstallerGate.Release(); }
     }, cancellationToken);
 
     public static string FormatBytes(double value)

@@ -4,6 +4,7 @@ The parent app owns only this launcher. Bookshelf and editor processes remain
 independent, including when this launcher receives SIGTERM or its app exits.
 """
 import argparse
+import hashlib
 import importlib.util
 import json
 import os
@@ -94,6 +95,10 @@ def ensure_bookshelf(story, script, state_dir=None, port=DEFAULT_PORT,
     if state.get('running') is not False:
         raise LauncherError('client_service_unconfirmed',
                             '原书架服务暂不可达，无法确认已经退出。请核对原服务；客户端不会结束或替换未确认的进程。')
+    if state.get('exit_verified') is True:
+        raw = story.workbench._author_read(state_dir, 'service.json', 8192)
+        if hashlib.sha256(raw).hexdigest() != state.get('record_sha256'):
+            raise LauncherError('client_service_unconfirmed', '书架服务记录已改变，请重新启动客户端以核对最新状态。')
 
     stream, log = _launch_log(story, state_dir)
     command = [sys.executable, '-B', str(script), 'workbench-library-serve',

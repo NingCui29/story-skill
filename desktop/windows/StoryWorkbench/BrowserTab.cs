@@ -13,15 +13,19 @@ public sealed class BrowserTab : IDisposable
     private readonly string address;
     private string? themeScript;
     private string? approvedNavigation;
+    private ulong? approvedNavigationId;
     private bool guardedNavigation;
     private TaskCompletionSource? navigationCompletion;
     private readonly TaskCompletionSource ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
-    public WebView2 View { get; } = new();
+    private readonly PageLifecycle lifecycle = new();
+    public WebView2 View { get; } = new() { IsEnabled = false };
     public TabItem Item { get; } = new();
     public PageKey Key { get; }
     public long Generation { get; private set; }
     public bool LoadComplete { get; private set; }
     public bool Disposed { get; private set; }
+    public bool CanDiscardFailed => !LoadComplete && lifecycle.CanDiscardFailed;
+    public string EntryAddress => address;
     public string Title { get; private set; } = "工作台";
     public bool IsInPrivate => View.CoreWebView2?.Profile.IsInPrivateModeEnabled == true;
 
@@ -41,12 +45,16 @@ public sealed class BrowserTab : IDisposable
         Item.Header = header; Item.Content = View; Item.Tag = this;
         View.NavigationCompleted += (_, e) =>
         {
+            // Cancelled link/navigation attempts never invalidate the document that is still displayed.
+            if (approvedNavigationId != e.NavigationId) return;
             LoadComplete = e.IsSuccess && BrowserSafety.PageKeyFor(View.Source?.AbsoluteUri) == Key;
+            lifecycle.Complete(LoadComplete);
             guardedNavigation = false;
             if (LoadComplete) ready.TrySetResult();
             else ready.TrySetException(new IOException("页面未能载入；当前作品服务未被关闭。"));
             if (LoadComplete) navigationCompletion?.TrySetResult();
             else navigationCompletion?.TrySetException(new IOException("页面重新载入失败，作品服务仍保留。"));
+            if (CanDiscardFailed) ShowRecoverableFailure();
         };
         View.CoreWebView2InitializationCompleted += (_, e) =>
         {
@@ -79,7 +87,7 @@ public sealed class BrowserTab : IDisposable
             if (Item.Header is StackPanel panel && panel.Children[0] is TextBlock label)
                 label.Text = string.IsNullOrWhiteSpace(Title) ? "工作台" : Title[..Math.Min(Title.Length, 32)];
         };
-        core.ProcessFailed += (_, _) => { Generation++; LoadComplete = false; owner.ShowStatus("页面进程已停止。未确认的编辑状态会阻止关闭，请保留当前窗口。"); };
+        core.ProcessFailed += (_, _) => { Generation++; LoadComplete = false; lifecycle.Fail(); owner.ShowStatus("页面进程已停止。未确认的编辑状态会阻止关闭，请保留当前窗口。"); };
         core.NewWindowRequested += async (_, e) =>
         {
             e.Handled = true;
@@ -100,6 +108,8 @@ public sealed class BrowserTab : IDisposable
                 var value = message.RootElement;
                 if (value.GetProperty("kind").GetString() == "theme")
                     await owner.RememberThemeAsync(value.GetProperty("value").GetString());
+                else if (value.GetProperty("kind").GetString() == "preference")
+                    await owner.RememberPreferenceAsync(value.GetProperty("key").GetString(), value.GetProperty("value").GetString());
             }
             catch (Exception error) when (error is JsonException or KeyNotFoundException or InvalidOperationException) { }
         };
@@ -122,21 +132,39 @@ public sealed class BrowserTab : IDisposable
         await SetThemeSeedAsync(owner.Theme);
         approvedNavigation = address;
         core.Navigate(address);
-        await ready.Task.WaitAsync(TimeSpan.FromSeconds(35));
+        try
+        {
+            await ready.Task.WaitAsync(TimeSpan.FromSeconds(35));
+            if (!await ExecuteBooleanAsync(BrowserSafety.ReleaseInitialInputScript)) throw new IOException("页面初始化保护尚未完成。");
+            View.IsEnabled = true;
+        }
+        catch { lifecycle.Fail(); throw; }
     }
 
     public async Task SetThemeSeedAsync(string theme)
     {
         if (Disposed || View.CoreWebView2 is null) return;
         if (themeScript is not null) View.CoreWebView2.RemoveScriptToExecuteOnDocumentCreated(themeScript);
-        themeScript = await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(BrowserSafety.BootstrapScript(theme));
+        themeScript = await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(BrowserSafety.BootstrapScript(theme, owner.StoredPreferences));
+    }
+
+    public void MarkInitializationFailed()
+    {
+        lifecycle.Fail();
+        try { View.CoreWebView2?.Stop(); } catch (Exception error) when (error is InvalidOperationException or System.Runtime.InteropServices.COMException) { }
+    }
+    public void ResumeInteraction()
+    {
+        if (Disposed) return;
+        if (LoadComplete) lifecycle.AllowInput();
+        View.IsEnabled = !CanDiscardFailed;
     }
 
     private async void NavigationStarting(object? sender, CoreWebView2NavigationStartingEventArgs e)
     {
         if (approvedNavigation == e.Uri)
         {
-            approvedNavigation = null; LoadComplete = false; Generation++; return;
+            approvedNavigation = null; approvedNavigationId = e.NavigationId; LoadComplete = false; Generation++; return;
         }
         e.Cancel = true;
         if (owner.ClosePending) return;
@@ -156,11 +184,35 @@ public sealed class BrowserTab : IDisposable
     public async Task NavigateApprovedAsync(string uri)
     {
         if (BrowserSafety.PageKeyFor(uri) != Key) throw new ArgumentException("作品地址发生变化。");
+        if (!owner.ClosePending) throw new InvalidOperationException("页面须先完成保存核验才能重新载入。");
+        lifecycle.BeginVerifiedNavigation();
+        Item.Content = View;
         guardedNavigation = true;
         approvedNavigation = uri;
         navigationCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
         View.CoreWebView2.Navigate(uri);
-        await navigationCompletion.Task.WaitAsync(TimeSpan.FromSeconds(35));
+        try
+        {
+            await navigationCompletion.Task.WaitAsync(TimeSpan.FromSeconds(35));
+            if (!await ExecuteBooleanAsync(BrowserSafety.ReleaseInitialInputScript)) throw new IOException("页面初始化保护尚未完成。");
+        }
+        catch
+        {
+            // A late navigation must not become interactive after a failed/timed-out protected operation.
+            View.CoreWebView2.Stop();
+            if (!LoadComplete) { lifecycle.Fail(); ShowRecoverableFailure(); }
+            throw;
+        }
+    }
+
+    private void ShowRecoverableFailure()
+    {
+        if (!CanDiscardFailed || Disposed) return;
+        var panel = new StackPanel { Margin = new Thickness(28) };
+        panel.Children.Add(new TextBlock { Text = "页面未能载入。此前文字已完成保存检查；可以重试或关闭此标签。作品服务没有被停止。", TextWrapping = TextWrapping.Wrap });
+        var retry = new Button { Content = "重试载入", HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 16, 0, 0), Padding = new Thickness(12, 6, 12, 6) };
+        retry.Click += async (_, _) => await owner.RetryPageAsync(this);
+        panel.Children.Add(retry); Item.Content = panel;
     }
 
     public async Task NavigateFragmentAsync(string uri)

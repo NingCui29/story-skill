@@ -3568,59 +3568,95 @@ def _editor_lease(root):
                     fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
-def _editor_exit_verified(root, record, raw):
-    """Prove a recorded POSIX process exited, without changing its lease file."""
-    # On Windows os.kill(pid, 0) can terminate a process. Keep automatic
-    # recovery unavailable there until a truly read-only process probe exists.
-    if os.name != 'posix' or type(record.get('pid')) is not int or not 1 <= record['pid'] <= 2**31 - 1:
+def _recorded_process_exited(pid):
+    """Observe process exit only; unknown/denied/reused PIDs never prove exit."""
+    if type(pid) is not int or not 1 <= pid <= 2**31 - 1:
         return False
-
-    def pid_missing():
+    if os.name == 'nt':
         try:
-            os.kill(record['pid'], 0)
+            import ctypes
+            from ctypes import wintypes
+            kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+            kernel.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+            kernel.OpenProcess.restype = wintypes.HANDLE
+            kernel.WaitForSingleObject.argtypes = (wintypes.HANDLE, wintypes.DWORD)
+            kernel.WaitForSingleObject.restype = wintypes.DWORD
+            kernel.CloseHandle.argtypes = (wintypes.HANDLE,)
+            kernel.CloseHandle.restype = wintypes.BOOL
+            # SYNCHRONIZE permits only observing exit. Never use os.kill on Windows.
+            handle = kernel.OpenProcess(0x00100000, False, pid)
+            if not handle:
+                return ctypes.get_last_error() == 87  # ERROR_INVALID_PARAMETER: absent PID.
+            try:
+                exited = kernel.WaitForSingleObject(handle, 0) == 0
+            finally:
+                closed = kernel.CloseHandle(handle)
+            return bool(exited and closed)
+        except (OSError, AttributeError, TypeError, ValueError, OverflowError):
+            return False
+    if os.name == 'posix':
+        try:
+            os.kill(pid, 0)
         except ProcessLookupError:
             return True
         except OSError:
             return False
-        return False
+    return False
 
-    if not pid_missing():
+
+def _service_exit_verified(root, record, raw, record_relative, lock_relative):
+    """Require a dead PID, unchanged record and existing idle OS lease; write nothing."""
+    if not _recorded_process_exited(record.get('pid')):
         return False
     try:
-        import fcntl
-        parent = api.safe_path(root, '.story')
-        with api._pinned_directory(parent) as directory:
-            lock = api._BoundFile(directory, 'workbench-server.lock')
+        path = api.safe_path(root, lock_relative)
+        with api._pinned_directory(path.parent) as directory:
+            lock = api._BoundFile(directory, path.name)
             before = api.publish._bound_stat(lock)
             if before.st_size < 1:
                 return False
             with api._bound_reader(lock) as stream:
                 if not os.path.samestat(before, os.fstat(stream.fileno())):
                     return False
+                stream.seek(0)
                 try:
-                    fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    if os.name == 'nt':
+                        import msvcrt
+                        msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
+                    else:
+                        import fcntl
+                        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
                 except OSError:
                     return False
                 try:
                     api._verify_bound_directory(directory)
-                    if _author_read(root, '.story/workbench-service.json', 8192) != raw:
+                    if _author_read(root, record_relative, 8192) != raw:
                         return False
-                    if not pid_missing():
+                    if not _recorded_process_exited(record.get('pid')):
                         return False
                     after = api.publish._bound_stat(lock)
                     if (not os.path.samestat(before, after) or before.st_size != after.st_size or
                             before.st_mtime_ns != after.st_mtime_ns):
                         return False
                     api._verify_bound_directory(directory)
-                    if _author_read(root, '.story/workbench-service.json', 8192) != raw:
+                    if _author_read(root, record_relative, 8192) != raw:
                         return False
                     final = api.publish._bound_stat(lock)
                     return (os.path.samestat(before, final) and before.st_size == final.st_size and
                             before.st_mtime_ns == final.st_mtime_ns)
                 finally:
-                    fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+                    stream.seek(0)
+                    if os.name == 'nt':
+                        msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+                    else:
+                        fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
     except (api.StoryError, OSError, ValueError):
         return False
+
+
+def _editor_exit_verified(root, record, raw):
+    return _service_exit_verified(root, record, raw, '.story/workbench-service.json',
+                                  '.story/workbench-server.lock')
 
 
 def _service_request(root, action='session', saved=False):
@@ -4102,7 +4138,8 @@ def _library_service_request(state_dir=None, action='session', saved=False):
     if action not in ('session', 'stop'):
         api.fail('invalid_input', '无效的书架服务操作。')
     try:
-        record = json.loads(_author_read(root, 'service.json', 8192))
+        record_raw = _author_read(root, 'service.json', 8192)
+        record = json.loads(record_raw)
     except FileNotFoundError:
         return {'ok': True, 'running': False, 'status': '书架服务尚未启动。'}
     except (ValueError, UnicodeError, RecursionError):
@@ -4137,8 +4174,14 @@ def _library_service_request(state_dir=None, action='session', saved=False):
         result['outdated'] = runtime is None or result.get('runtime_sha256') != runtime
         result['url'] = origin + '/'
         return result
-    except (OSError, http.client.HTTPException, ValueError) as error:
+    except (OSError, http.client.HTTPException) as error:
+        if _service_exit_verified(root, record, record_raw, 'service.json', 'server.lock'):
+            return {'ok': True, 'running': False, 'exit_verified': True,
+                    'record_sha256': hashlib.sha256(record_raw).hexdigest(),
+                    'status': '已确认原书架进程退出且锁空闲，可重新启动；作品和原服务记录均保留。'}
         return {'ok': True, 'running': None, 'status': '书架服务暂不可达，不能据此判断进程已经退出。', 'reason': str(error)}
+    except (ValueError, UnicodeError, RecursionError):
+        api.fail('workbench_service_mismatch', '书架服务未返回可核对的实例信息，不会替换未确认的服务。')
     finally:
         connection.close()
 

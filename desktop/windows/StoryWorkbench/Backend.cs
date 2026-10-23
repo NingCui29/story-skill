@@ -86,37 +86,3 @@ public static class Backend
         return result.ToString();
     }
 }
-
-public sealed class ThemePreferences
-{
-    private readonly string path;
-    public string Theme { get; private set; } = "system";
-    public ThemePreferences(string? isolatedState)
-    {
-        string directory = isolatedState ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StorySkill", "StoryWorkbench");
-        path = Path.Combine(directory, "desktop-preferences.json");
-        try
-        {
-            if (File.Exists(path) && new FileInfo(path).Length < 4096)
-            {
-                using var stored = JsonDocument.Parse(File.ReadAllText(path));
-                string? theme = stored.RootElement.GetProperty("theme").GetString();
-                if (theme is "system" or "light" or "dark") Theme = theme;
-            }
-        }
-        catch (Exception e) when (e is IOException or JsonException or KeyNotFoundException or InvalidOperationException or UnauthorizedAccessException) { }
-    }
-    public void Save(string theme)
-    {
-        if (theme is not ("system" or "light" or "dark") || theme == Theme) return;
-        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        string temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
-        try
-        {
-            File.WriteAllText(temporary, JsonSerializer.Serialize(new { theme }), new UTF8Encoding(false));
-            File.Move(temporary, path, overwrite: true);
-            Theme = theme;
-        }
-        finally { if (File.Exists(temporary)) File.Delete(temporary); }
-    }
-}

@@ -16,6 +16,11 @@ public sealed class App : Application
             try
             {
                 options = LaunchOptions.Parse(args);
+                if (Mutex.TryOpenExisting(@"Local\StoryWorkbench.InstallLifecycle", out var lifecycle))
+                {
+                    lifecycle.Dispose();
+                    throw new IOException("工作台正在安装、升级或卸载，请等待完成后再打开。");
+                }
                 if (options.StateDirectory is not null) Directory.CreateDirectory(options.StateDirectory);
                 var backend = await Backend.StartAsync(AppContext.BaseDirectory, options);
                 var window = new MainWindow(options, backend);

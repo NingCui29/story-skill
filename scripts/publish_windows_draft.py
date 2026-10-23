@@ -27,8 +27,8 @@ from check_forbidden_technologies import assert_clean_tree
 
 REPOSITORY = 'NingCui29/story-skill'
 STORY_VERSION = '0.6.22'
-CLIENT_VERSION = '0.2.0'
-TAG = 'v' + STORY_VERSION
+CLIENT_VERSION = '0.2.1'
+TAG = 'windows-v' + CLIENT_VERSION
 REPO = Path(__file__).resolve().parents[1]
 SETUP = f'story-workbench-{CLIENT_VERSION}-windows-x86_64-setup.exe'
 PORTABLE = f'story-workbench-{CLIENT_VERSION}-windows-x86_64.zip'
@@ -37,11 +37,17 @@ ASSET_NAMES = (SETUP, SETUP + '.sha256', PORTABLE, PORTABLE + '.sha256')
 NATIVE_FLAGS = ('ok', 'native_window', 'shelf_rendered', 'captured', 'themes_verified',
                 'update_check_available', 'update_progress_verified', 'in_private',
                 'native_close_probe_verified', 'hidden_buffers_verified', 'ime_guard_verified',
-                'buffer_export_verified')
+                'buffer_export_verified', 'failed_tab_recovery_verified', 'unknown_crash_protected',
+                'shelf_state_guard_verified', 'preferences_restored_verified', 'native_system_theme_verified')
 SAFETY_FLAGS = ('ok', 'isolated_payload', 'created_and_registered', 'backup_verified',
                 'restore_identity_preserved', 'candidate_and_binary_preserved',
                 'sqlite_integrity_verified', 'missing_trash_path_refused',
                 'native_trash_bridge_checked')
+LIFECYCLE_FLAGS = ('ok', 'installation_mutex_verified', 'unsaved_service_preserved',
+                   'blocked_upgrade_verified', 'blocked_uninstall_verified',
+                   'authenticated_saved_stop_verified', 'rollback_restore_verified',
+                   'inno_rollback_verified', 'installed_upgrade_verified',
+                   'unknown_file_preserved', 'no_remaining_service')
 
 
 class VerificationError(ValueError):
@@ -121,8 +127,16 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
     native = json.loads(one(root, 'windows-native-smoke.json').read_text(encoding='utf-8-sig'))
     safety = json.loads(one(root, 'windows-runtime-safety.json').read_text(encoding='utf-8-sig'))
     contracts = json.loads(one(root, 'windows-csharp-tests.json').read_text(encoding='utf-8-sig'))
+    lifecycle = json.loads(one(root, 'windows-installation-lifecycle.json').read_text(encoding='utf-8-sig'))
+    previous = json.loads(one(root, 'windows-previous-upgrade.json').read_text(encoding='utf-8-sig'))
+    require(all(lifecycle.get(key) is True for key in LIFECYCLE_FLAGS) and
+            lifecycle.get('scope') == 'isolated-installed-windows-lifecycle',
+            'Native installation lifecycle report is incomplete')
+    require(previous.get('ok') is True and previous.get('previous_version') == '0.2.0' and
+            previous.get('installed_version') == CLIENT_VERSION and previous.get('old_host_preserved') is True,
+            'Previous Windows release upgrade was not verified')
     require(contracts.get('ok') is True and type(contracts.get('total')) is int and
-            contracts['total'] >= 28 and contracts.get('passed') == contracts['total'] and
+            contracts['total'] >= 38 and contracts.get('passed') == contracts['total'] and
             contracts.get('skipped') == 0 and contracts.get('failed') == [],
             'Native C# contract acceptance report is incomplete')
     require(all(native.get(key) is True for key in NATIVE_FLAGS) and
@@ -169,6 +183,7 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
             runtime_hashes[name] = hashlib.sha256(raw).hexdigest()
         mapped_hashes = {}
         for member, original in (('backend_runner.py', 'desktop/macos/backend_runner.py'),
+                                 ('installation_lifecycle.py', 'desktop/windows/installation_lifecycle.py'),
                                  ('StorySkill-LICENSE.txt', 'LICENSE'),
                                  ('README.md', 'desktop/windows/README.md')):
             raw = archive.read(prefix + member)

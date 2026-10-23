@@ -30,12 +30,13 @@ def fixture(area):
     runtime = tuple('runtime%d.py' % n for n in range(20))
     write(source / 'scripts/build_desktop_macos.py', ('RUNTIME_FILES = ' + repr(runtime)).encode())
     write(source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.22"\n')
-    write(source / publish.PROJECT, b'<Project><PropertyGroup><Version>0.2.0</Version><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" /></ItemGroup></Project>')
+    write(source / publish.PROJECT, b'<Project><PropertyGroup><Version>0.2.1</Version><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" /></ItemGroup></Project>')
     files = {}
     for name in runtime:
         files['Scripts/' + name] = ('# runtime fixture ' + name + '\n').encode()
         write(source / 'skills/story-skill/scripts' / name, files['Scripts/' + name])
     for packaged, original in (('backend_runner.py', 'desktop/macos/backend_runner.py'),
+                               ('installation_lifecycle.py', 'desktop/windows/installation_lifecycle.py'),
                                ('StorySkill-LICENSE.txt', 'LICENSE'),
                                ('README.md', 'desktop/windows/README.md')):
         files[packaged] = original.encode()
@@ -91,13 +92,18 @@ def fixture(area):
     for path in (setup, portable):
         path.with_name(path.name + '.sha256').write_text(publish.digest_file(path) + '  ' + path.name + '\n')
     native = dict.fromkeys(publish.NATIVE_FLAGS, True)
-    native.update(client_version='0.2.0', ui_stack='wpf-webview2', self_contained=True, theme_captures={'light': True, 'dark': True})
+    native.update(client_version='0.2.1', ui_stack='wpf-webview2', self_contained=True, theme_captures={'light': True, 'dark': True})
     safety = dict.fromkeys(publish.SAFETY_FLAGS, True)
     safety.update(platform='win32', story_version='0.6.22', existing_book_files_recycled=False)
     write(artifacts / 'windows-native-smoke.json', json.dumps(native).encode())
     write(artifacts / 'windows-runtime-safety.json', json.dumps(safety).encode())
+    lifecycle = dict.fromkeys(publish.LIFECYCLE_FLAGS, True)
+    lifecycle['scope'] = 'isolated-installed-windows-lifecycle'
+    write(artifacts / 'windows-installation-lifecycle.json', json.dumps(lifecycle).encode())
+    write(artifacts / 'windows-previous-upgrade.json', json.dumps({'ok': True, 'previous_version': '0.2.0',
+        'installed_version': '0.2.1', 'old_host_preserved': True}).encode())
     write(artifacts / 'windows-csharp-tests.json', json.dumps(
-        {'ok': True, 'total': 29, 'passed': 29, 'skipped': 0, 'failed': []}).encode())
+        {'ok': True, 'total': 38, 'passed': 38, 'skipped': 0, 'failed': []}).encode())
     installed = area / 'installed'
     for name, data in files.items():
         write(installed / name, data)
@@ -107,7 +113,7 @@ def fixture(area):
 
 class FakeAPI:
     def __init__(self, assets=None):
-        self.release = {'id': 42, 'draft': True, 'tag_name': 'v0.6.22', 'target_commitish': SHA}
+        self.release = {'id': 42, 'draft': True, 'tag_name': 'windows-v0.2.1', 'target_commitish': SHA}
         self.assets = list(assets or [])
         self.calls = []
         self.next_id = 100
@@ -232,7 +238,7 @@ class DistributionTests(unittest.TestCase):
 
     def test_previous_release_source_versions_are_rejected(self):
         for path, old in ((self.source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.20"\n'),
-                          (self.source / publish.PROJECT, (self.source / publish.PROJECT).read_bytes().replace(b'0.2.0', b'0.1.10'))):
+                          (self.source / publish.PROJECT, (self.source / publish.PROJECT).read_bytes().replace(b'0.2.1', b'0.1.10'))):
             original = path.read_bytes()
             path.write_bytes(old)
             with self.subTest(path=path), self.assertRaisesRegex(publish.VerificationError, 'Source versions'):

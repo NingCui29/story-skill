@@ -2,6 +2,7 @@ using System.Text.Json;
 
 var suite = new Suite();
 BrowserSafetyTests.Register(suite);
+DesktopPreferencesTests.Register(suite);
 UpdateServiceTests.Register(suite);
 return await suite.RunAsync(args);
 

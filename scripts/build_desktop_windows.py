@@ -315,6 +315,7 @@ def build(output):
         for name in RUNTIME_FILES:
             shutil.copy2(REPO / 'skills/story-skill/scripts' / name, scripts / name)
         for source, target in (('desktop/macos/backend_runner.py', 'backend_runner.py'),
+                               ('desktop/windows/installation_lifecycle.py', 'installation_lifecycle.py'),
                                ('LICENSE', 'StorySkill-LICENSE.txt'), ('desktop/windows/README.md', 'README.md')):
             shutil.copy2(REPO / source, app / target)
         notice_report = copy_runtime_notices(app, packages, prefix, configuration)

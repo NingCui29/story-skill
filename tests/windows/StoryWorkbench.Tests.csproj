@@ -9,8 +9,11 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="BrowserSafetyTests.cs" />
+    <Compile Include="DesktopPreferencesTests.cs" />
     <Compile Include="UpdateServiceTests.cs" />
     <Compile Include="../../desktop/windows/StoryWorkbench/BrowserSafety.cs" Link="BrowserSafety.cs" />
+    <Compile Include="../../desktop/windows/StoryWorkbench/ThemePreferences.cs" Link="ThemePreferences.cs" />
+    <Compile Include="../../desktop/windows/StoryWorkbench/PageLifecycle.cs" Link="PageLifecycle.cs" />
     <Compile Include="../../desktop/windows/StoryWorkbench/Backend.cs" Link="Backend.cs" />
     <Compile Include="../../desktop/windows/StoryWorkbench/UpdateService.cs" Link="UpdateService.cs" />
   </ItemGroup>

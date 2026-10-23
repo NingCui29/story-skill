@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -24,7 +25,7 @@ public sealed class UpdateWindow : Window
     private readonly ProgressBar bar = new() { Minimum = 0, Maximum = 100, Height = 8, Foreground = new SolidColorBrush(Color.FromRgb(56, 189, 248)) };
     private readonly Button checkButton = Button("重新检查");
     private readonly Button downloadButton = Button("下载更新");
-    private readonly Button installButton = Button("校验并启动安装程序");
+    private readonly Button installButton = Button("校验后退出并安装");
     private readonly Button cancelButton = Button("取消");
     private readonly Button folderButton = Button("打开所在文件夹");
     private readonly Button closeButton = Button("关闭");
@@ -33,7 +34,8 @@ public sealed class UpdateWindow : Window
     private CancellationTokenSource? cancellation;
     private Task? activeTask;
     private bool closeWhenStopped;
-    private bool installerStarted;
+    private UpdateInstallerSession? installer;
+    private UpdateInstallerSession? observedInstaller;
     private bool closed;
     private int operationGeneration;
     public bool IsBusy => activeTask is { IsCompleted: false };
@@ -45,7 +47,8 @@ public sealed class UpdateWindow : Window
         host = owner; Owner = owner;
         Title = "Windows 工作台更新"; Width = 650; MinWidth = 570; SizeToContent = SizeToContent.Height;
         WindowStartupLocation = WindowStartupLocation.CenterOwner; ResizeMode = ResizeMode.CanMinimize;
-        Background = owner.Background; Foreground = owner.Foreground;
+        SetBinding(BackgroundProperty, new Binding(nameof(Background)) { Source = owner });
+        SetBinding(ForegroundProperty, new Binding(nameof(Foreground)) { Source = owner });
         var layout = new StackPanel { Margin = new(24) };
         layout.Children.Add(new TextBlock { Text = "写作工作台 " + UpdateService.ClientVersion, Opacity = 0.65, Margin = new(0, 0, 0, 12) });
         layout.Children.Add(message); layout.Children.Add(bar); layout.Children.Add(details);
@@ -77,7 +80,9 @@ public sealed class UpdateWindow : Window
         if (Windows.TryGetValue(owner, out var existing) && !existing.closed)
         { existing.Show(); existing.Activate(); return; }
         var window = new UpdateWindow(owner); Windows[owner] = window;
-        window.Show(); await window.CheckAsync();
+        window.Show();
+        if (UpdateService.ActiveInstaller is { } running) { window.WatchInstaller(running); return; }
+        await window.CheckAsync();
     }
 
     private async Task RunAsync(Func<CancellationToken, Task> work)
@@ -103,14 +108,14 @@ public sealed class UpdateWindow : Window
         {
             if (closed) return;
             message.Text = "更新操作已取消。";
-            details.Text = "未完成的临时下载已清理。可重新检查或重试下载。";
+            details.Text = "未完成的临时下载已清理；已校验的完整安装包仍可复用。可重新检查或重试。";
             bar.IsIndeterminate = false;
         }
         catch (Exception error)
         {
             if (closed) return;
             message.Text = "更新未完成：" + error.Message;
-            details.Text = "可以重试。下载和安装操作不会结束作品服务。";
+            details.Text = "已保留当前页面和完整下载。可重新校验后重试。";
             bar.IsIndeterminate = false;
             downloadButton.Content = "重试下载";
             if (result?.State == "available") downloadButton.Visibility = Visibility.Visible;
@@ -119,7 +124,8 @@ public sealed class UpdateWindow : Window
 
     private void SetBusy(bool busy)
     {
-        checkButton.IsEnabled = downloadButton.IsEnabled = installButton.IsEnabled = folderButton.IsEnabled = !busy;
+        checkButton.IsEnabled = downloadButton.IsEnabled = installButton.IsEnabled = !busy && UpdateService.ActiveInstaller is null;
+        folderButton.IsEnabled = !busy;
         cancelButton.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;
         cancelButton.IsEnabled = busy;
         closeButton.IsEnabled = true;
@@ -132,14 +138,21 @@ public sealed class UpdateWindow : Window
             verified = null; result = null;
             downloadButton.Visibility = installButton.Visibility = folderButton.Visibility = Visibility.Collapsed;
             message.Text = "正在检查 Windows 工作台更新…";
-            details.Text = "读取官方仓库的最新正式发布。";
+            details.Text = "读取官方 Windows 独立正式发布。";
             bar.Visibility = Visibility.Visible; bar.IsIndeterminate = true;
             var found = await Task.Run(() => service.CheckAsync(token), token); token.ThrowIfCancellationRequested();
             result = found; message.Text = found.Message; bar.IsIndeterminate = false; bar.Visibility = Visibility.Collapsed;
             details.Text = found.State == "available"
                 ? "安装包大小：" + UpdateService.FormatBytes(found.AssetSize) + "。下载完成后核对官方 SHA256。"
                 : "当前客户端版本：" + UpdateService.ClientVersion;
-            if (found.State == "available") { downloadButton.Content = "下载更新"; downloadButton.Visibility = Visibility.Visible; }
+            if (found.State == "available")
+            {
+                downloadButton.Content = "下载更新"; downloadButton.Visibility = Visibility.Visible;
+                verified = await service.ReuseCachedAsync(found, CacheDirectory, Progress(token), token);
+                token.ThrowIfCancellationRequested();
+                if (verified is not null) { ShowReady(verified); message.Text = "已找到本地安装包，重新校验通过。"; }
+            }
+            else UpdateService.PruneCache(CacheDirectory);
         });
     }
 
@@ -159,12 +172,13 @@ public sealed class UpdateWindow : Window
         {
             verified = null; installButton.Visibility = folderButton.Visibility = Visibility.Collapsed;
             bar.Visibility = Visibility.Visible; bar.Value = 0;
-            var cache = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StoryWorkbench", "updates");
             var progress = Progress(token);
-            var download = await Task.Run(() => service.DownloadAsync(selected, cache, progress, token), token);
+            var download = await Task.Run(() => service.DownloadAsync(selected, CacheDirectory, progress, token), token);
             token.ThrowIfCancellationRequested(); verified = download; ShowReady(download);
         });
     }
+
+    private static string CacheDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "StoryWorkbench", "updates");
 
     private void ShowProgress(UpdateProgress progress)
     {
@@ -187,13 +201,14 @@ public sealed class UpdateWindow : Window
         var executable = download.AssetName.EndsWith("-setup.exe", StringComparison.OrdinalIgnoreCase);
         installButton.Visibility = executable ? Visibility.Visible : Visibility.Collapsed;
         details.Text = executable
-            ? "已核对官方大小及 SHA256。启动安装程序前会再次校验文件，并检查全部标签的待保存文字。"
+            ? "已核对官方大小及 SHA256。再次校验并检查全部标签的待保存文字后，将正常退出工作台并启动安装。取消安装后，重新打开工作台可复用此安装包。"
             : "便携 ZIP 已校验。请退出客户端后解压完整目录并手工替换；若文件被占用，请保存并正常停止对应作品服务。";
     }
 
     private async Task InstallAsync()
     {
-        if (verified is null || installerStarted) return;
+        if (verified is null) return;
+        if (UpdateService.ActiveInstaller is { } running) { WatchInstaller(running); return; }
         var download = verified;
         await RunAsync(async token =>
         {
@@ -209,20 +224,46 @@ public sealed class UpdateWindow : Window
                 {
                     token.ThrowIfCancellationRequested();
                     message.Text = "正在最终核验安装包并启动安装向导…";
-                    await service.LaunchInstallerAsync(checkedDownload, token);
-                    installerStarted = true;
+                    installer = await service.LaunchInstallerAsync(checkedDownload, token);
+                    if (installer.Completion.IsCompletedSuccessfully && installer.Completion.Result != 0)
+                        throw new UpdateException("安装向导未能继续，已保留当前页面和下载，可重试。");
+                    WatchInstaller(installer);
+                    host.CloseForUpdate();
                 }
                 catch (Exception error) { launchError = error; }
             });
             bar.IsIndeterminate = false;
             if (launchError is not null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(launchError).Throw();
-            if (!allowed || !installerStarted)
+            if (!allowed || installer is null)
             { message.Text = "已保留当前页面。保存全部文字后可再次启动安装程序。"; return; }
             message.Text = "安装程序已启动，请查看安装向导。";
-            details.Text = "请正常退出客户端后继续安装。若安装器提示文件占用，请保存并正常停止对应作品服务后重试。安装完成后重新打开工作台，核对运行版本。";
+            details.Text = "工作台正在正常退出。安装向导会核对占用及服务状态；安装完成后重新打开工作台，核对运行版本。";
             bar.Visibility = installButton.Visibility = downloadButton.Visibility = Visibility.Collapsed;
             host.ShowStatus("更新安装向导已启动；当前运行版本仍为 " + UpdateService.ClientVersion + "。");
         });
+    }
+
+    private void WatchInstaller(UpdateInstallerSession session)
+    {
+        if (ReferenceEquals(observedInstaller, session)) return;
+        observedInstaller = session;
+        installer = session;
+        message.Text = "安装向导正在运行，请完成或取消该向导。";
+        SetBusy(IsBusy);
+        _ = ObserveInstallerAsync(session);
+    }
+
+    private async Task ObserveInstallerAsync(UpdateInstallerSession session)
+    {
+        int? exit = null;
+        try { exit = await session.Completion; } catch { }
+        if (closed || !ReferenceEquals(installer, session)) return;
+        installer = null;
+        if (verified is not null) ShowReady(verified);
+        message.Text = exit == 0 ? "安装向导已结束。重新打开工作台后核对版本。"
+            : "安装向导已取消或未完成，可使用已下载文件重试。";
+        details.Text = "当前运行版本仍为 " + UpdateService.ClientVersion + "。重新检查时会再次校验并复用完整下载。";
+        SetBusy(IsBusy);
     }
 
     private void OpenFolder()
