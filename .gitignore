@@ -93,3 +93,7 @@ Desktop.ini
 /benchmarks/results/development-20261006-workbench-single-window/native-single-window-installed.png
 /benchmarks/results/development-20261006-workbench-single-window/native-single-window-staged.png
 /benchmarks/results/development-20261006-workbench-writing-status/native-writing-status.png
+
+# .NET local intermediates and published build products
+**/bin/
+**/obj/

@@ -1,2 +1,2 @@
-PySide6==6.10.3
-PyInstaller==6.22.3
+# Python packaging uses only the standard library.
+# Native host: .NET 10 SDK; exact SDK dependency versions are in StoryWorkbench.csproj.

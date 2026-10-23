@@ -1,22 +1,15 @@
 """Returning to retained native shelves sends a scoped event, never a reload."""
-import ast
-import importlib.util
 import json
 from pathlib import Path
 import shutil
 import subprocess
-from types import SimpleNamespace
 import unittest
 
 import test_desktop_native as native
 
 
 ROOT = Path(__file__).resolve().parents[1]
-WINDOWS = ROOT / 'desktop/windows/client.py'
 MACOS = ROOT / 'desktop/macos/StoryWorkbench.swift'
-SPEC = importlib.util.spec_from_file_location('windows_shelf_return_client', WINDOWS)
-client = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(client)
 SHELF = 'http://127.0.0.1:8765/'
 EDITOR = 'http://127.0.0.1:49152/' + 'a' * 32 + '/'
 
@@ -47,42 +40,6 @@ for(const invalid of [page({protocol:'https:'}),page({hostname:'localhost'}),pag
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_windows_tab_switch_notifies_only_loaded_same_shelf(self):
-        tree = ast.parse(WINDOWS.read_text())
-        window = next(node for node in ast.walk(tree)
-                      if isinstance(node, ast.ClassDef) and node.name == 'Window')
-        method = next(node for node in window.body
-                      if isinstance(node, ast.FunctionDef) and node.name == 'notify_shelf_return')
-        isolated = ast.Module(body=[ast.ClassDef(name='Host', bases=[], keywords=[],
-                                               body=[method], decorator_list=[])], type_ignores=[])
-        namespace = {'page_key': client.page_key, 'shelf_return_script': client.shelf_return_script}
-        exec(compile(ast.fix_missing_locations(isolated), str(WINDOWS), 'exec'), namespace)
-        host = namespace['Host']()
-        scripts = []
-
-        def view(address, entry=SHELF, loaded=True):
-            return SimpleNamespace(load_complete=loaded, entry_key=client.page_key(entry),
-                                   url=lambda: SimpleNamespace(toString=lambda: address),
-                                   page=lambda: SimpleNamespace(runJavaScript=scripts.append))
-
-        host.close_pending = False
-        host.tabs = SimpleNamespace(widget=lambda index: current)
-        for current in (None, view(SHELF, loaded=False), view(EDITOR, entry=EDITOR),
-                        view(SHELF, entry=EDITOR), view('http://127.0.0.1:8766/'),
-                        view(SHELF + '?other=1'), view('https://example.com/'),
-                        view('about:blank', entry='about:blank')):
-            host.notify_shelf_return(0)
-            self.assertEqual(scripts, [])
-        current = view(SHELF + '#section')
-        host.close_pending = True
-        host.notify_shelf_return(0)
-        self.assertEqual(scripts, [])
-        host.close_pending = False
-        host.notify_shelf_return(-1)
-        self.assertEqual(scripts, [])
-        host.notify_shelf_return(0)
-        self.assertEqual(len(scripts), 1)
-        self.check_script(scripts[0])
 
     def test_macos_retained_shelf_notifies_only_after_controlled_load(self):
         source = MACOS.read_text()

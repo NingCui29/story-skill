@@ -11,6 +11,7 @@ on:
   push:
     branches:
       - 'codex/desktop-installers*'
+      - 'codex/windows-csharp*'
 
 permissions:
   contents: read
@@ -18,7 +19,7 @@ permissions:
 jobs:
   windows:
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -33,13 +34,21 @@ jobs:
         run: |
           python -I -B tests/desktop_payload_probe.py --scripts skills/story-skill/scripts --area "$env:RUNNER_TEMP\source-payload-safety" --report "$env:RUNNER_TEMP\source-runtime-safety.json"
           if ($LASTEXITCODE -ne 0) { throw "Source runtime safety probe failed" }
-      - run: python -m pip install -r desktop/windows/requirements-build.txt
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Reject prohibited source dependencies
+        run: python -B scripts/check_forbidden_technologies.py --source
+      - name: Verify standard-library-only build requirements
+        run: python -m pip install -r desktop/windows/requirements-build.txt
       - name: Test draft publishing safety
         run: python -B -X utf8 -m unittest discover -s tests -p test_publish_windows_draft.py -v
       - name: Test desktop launcher and Windows paths
         run: python -B -X utf8 -m unittest discover -s tests -p test_desktop*.py -v
       - name: Test book management and native recycle bridge
         run: python -B -X utf8 -m unittest discover -s tests -p test_workbench_books.py -v
+      - name: Test C# desktop contracts
+        run: dotnet run --project tests/windows/StoryWorkbench.Tests.csproj --configuration Release -- --report dist/windows-csharp-tests.json
       - name: Build standalone candidate
         run: python -B -X utf8 scripts/build_desktop_windows.py --output dist/story-workbench-windows-x86_64
       - name: Build installer
@@ -60,7 +69,7 @@ jobs:
         run: |
           $destination = "$env:RUNNER_TEMP\安装验证 空格"
           $installer = Get-Item dist/story-workbench-*-windows-x86_64-setup.exe
-          $process = Start-Process -FilePath $installer.FullName -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/DIR=`"$destination`"") -Wait -PassThru
+          $process = Start-Process -FilePath $installer.FullName -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/DIR=`"$destination`"", "/LOG=`"$pwd\dist\windows-install.log`"") -Wait -PassThru
           if ($process.ExitCode -ne 0) { throw "Installer failed: $($process.ExitCode)" }
           if (!(Test-Path "$destination\StoryWorkbench.exe")) { throw "Installed executable missing" }
           & "$destination\runtime\python.exe" -I -B "$destination\Scripts\story.py" --version
@@ -71,33 +80,37 @@ jobs:
           $report = "$pwd\dist\windows-native-smoke.json"
           $ui = Start-Process -FilePath "$destination\StoryWorkbench.exe" -ArgumentList @('--self-test-report', "`"$report`"", '--state-dir', "`"$state`"", '--port', '18765') -PassThru
           try {
-            if (!$ui.WaitForExit(65000)) { $ui.Kill(); throw "Native window startup timed out" }
+            if (!$ui.WaitForExit(120000)) { $ui.Kill(); throw "Native window startup timed out" }
             if ($ui.ExitCode -ne 0) { throw "Native window failed: $($ui.ExitCode)" }
             $result = Get-Content $report -Raw | ConvertFrom-Json
             Get-Content $report -Raw
-            if (!$result.ok -or !$result.native_window -or !$result.shelf_rendered -or !$result.captured -or !$result.themes_verified -or !$result.update_check_available -or !$result.update_progress_verified) { throw "Native window theme/update progress checks failed" }
+            if (!$result.ok -or !$result.native_window -or !$result.shelf_rendered -or !$result.captured -or !$result.themes_verified -or !$result.update_check_available -or !$result.update_progress_verified -or !$result.in_private -or $result.ui_stack -ne 'wpf-webview2' -or !$result.native_close_probe_verified -or !$result.hidden_buffers_verified -or !$result.ime_guard_verified -or !$result.buffer_export_verified) { throw "Native window theme/update progress checks failed" }
           } finally {
             & "$destination\runtime\python.exe" -I -B "$destination\Scripts\story.py" workbench-library-stop --state-dir "$state" --saved
             if ($LASTEXITCODE -ne 0) { throw "Isolated bookshelf cleanup failed" }
           }
+          python -B scripts/check_forbidden_technologies.py --root "$destination"
+          if ($LASTEXITCODE -ne 0) { throw "Installed payload contains prohibited technology" }
           python -B -X utf8 scripts/publish_windows_draft.py --artifact-root dist --verify-only --installed-root "$destination" --receipt dist/windows-distribution-verification.json
           if ($LASTEXITCODE -ne 0) { throw "Full Windows distribution verification failed" }
           $uninstall = Start-Process -FilePath "$destination\unins000.exe" -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -Wait -PassThru
           if ($uninstall.ExitCode -ne 0) { throw "Uninstaller failed" }
+          if (Test-Path "$destination\StoryWorkbench.exe") { throw "Installed host survived uninstall" }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.12-windows-x86_64-installer
+          name: story-workbench-0.2.0-windows-x86_64-installer
           compression-level: 0
           path: |
             dist/story-workbench-*-windows-x86_64-setup.exe
             dist/story-workbench-*-windows-x86_64-setup.exe.sha256
+            dist/windows-csharp-tests.json
             dist/windows-native-smoke.json
             dist/windows-runtime-safety.json
             dist/windows-native-smoke*.png
           if-no-files-found: error
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.12-windows-x86_64-portable
+          name: story-workbench-0.2.0-windows-x86_64-portable
           compression-level: 0
           path: |
             dist/story-workbench-windows-x86_64.zip
@@ -106,10 +119,12 @@ jobs:
       - name: Preserve standalone distribution verification
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.12-windows-x86_64-verification
+          name: story-workbench-0.2.0-windows-x86_64-verification
           path: |
+            dist/windows-install.log
             dist/windows-distribution-verification.json
             dist/windows-build-manifest.json
+            dist/windows-csharp-tests.json
             dist/windows-native-smoke.json
             dist/windows-runtime-safety.json
             dist/windows-native-smoke*.png
@@ -139,9 +154,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.12-windows-x86_64-installer --dir downloaded/installer
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.2.0-windows-x86_64-installer --dir downloaded/installer
           if ($LASTEXITCODE -ne 0) { throw "Installer artifact download failed" }
-          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.1.12-windows-x86_64-portable --dir downloaded/portable
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.2.0-windows-x86_64-portable --dir downloaded/portable
           if ($LASTEXITCODE -ne 0) { throw "Portable artifact download failed" }
       - name: Upload only to the specified matching draft
         shell: pwsh
@@ -155,6 +170,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.1.12-windows-draft-upload
+          name: story-workbench-0.2.0-windows-draft-upload
           path: windows-draft-upload.json
           if-no-files-found: warn

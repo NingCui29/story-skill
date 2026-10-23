@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import base64
 import hashlib
 import http.client
 import json
@@ -14,12 +15,19 @@ import shutil
 import stat
 import subprocess
 import sys
+import tempfile
 from urllib.parse import quote
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_desktop_windows import (PROJECT, UI_STACK, WEBVIEW_DOWNLOAD, WEBVIEW_INSTALLER,
+    NOTICE_PACKAGES, allowed_microsoft_url, client_source_hashes, project_configuration,
+    verify_microsoft_signature, verify_self_contained_host)
+from check_forbidden_technologies import assert_clean_tree
+
 REPOSITORY = 'NingCui29/story-skill'
 STORY_VERSION = '0.6.22'
-CLIENT_VERSION = '0.1.12'
+CLIENT_VERSION = '0.2.0'
 TAG = 'v' + STORY_VERSION
 REPO = Path(__file__).resolve().parents[1]
 SETUP = f'story-workbench-{CLIENT_VERSION}-windows-x86_64-setup.exe'
@@ -27,7 +35,9 @@ PORTABLE = f'story-workbench-{CLIENT_VERSION}-windows-x86_64.zip'
 ORIGINAL_PORTABLE = 'story-workbench-windows-x86_64.zip'
 ASSET_NAMES = (SETUP, SETUP + '.sha256', PORTABLE, PORTABLE + '.sha256')
 NATIVE_FLAGS = ('ok', 'native_window', 'shelf_rendered', 'captured', 'themes_verified',
-                'update_check_available', 'update_progress_verified')
+                'update_check_available', 'update_progress_verified', 'in_private',
+                'native_close_probe_verified', 'hidden_buffers_verified', 'ime_guard_verified',
+                'buffer_export_verified')
 SAFETY_FLAGS = ('ok', 'isolated_payload', 'created_and_registered', 'backup_verified',
                 'restore_identity_preserved', 'candidate_and_binary_preserved',
                 'sqlite_integrity_verified', 'missing_trash_path_refused',
@@ -100,9 +110,9 @@ def safe_archive(archive):
 
 def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
     root = Path(root).resolve()
+    configuration = project_configuration(source)
     require(literal((source / 'skills/story-skill/scripts/story.py').read_text(encoding='utf-8'), 'VERSION')
-            == STORY_VERSION and literal((source / 'desktop/windows/workbench_updates.py').read_text(encoding='utf-8'),
-                                        'CLIENT_VERSION') == CLIENT_VERSION,
+            == STORY_VERSION and configuration['client_version'] == CLIENT_VERSION,
             'Source versions do not match this release')
     setup = one(root, SETUP)
     portable = one(root, ORIGINAL_PORTABLE)
@@ -110,8 +120,14 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
     verify_sidecar(portable)
     native = json.loads(one(root, 'windows-native-smoke.json').read_text(encoding='utf-8-sig'))
     safety = json.loads(one(root, 'windows-runtime-safety.json').read_text(encoding='utf-8-sig'))
+    contracts = json.loads(one(root, 'windows-csharp-tests.json').read_text(encoding='utf-8-sig'))
+    require(contracts.get('ok') is True and type(contracts.get('total')) is int and
+            contracts['total'] >= 29 and contracts.get('passed') == contracts['total'] and
+            contracts.get('skipped') == 0 and contracts.get('failed') == [],
+            'Native C# contract acceptance report is incomplete')
     require(all(native.get(key) is True for key in NATIVE_FLAGS) and
             native.get('client_version') == CLIENT_VERSION and
+            native.get('ui_stack') == UI_STACK and native.get('self_contained') is True and
             native.get('theme_captures') == {'light': True, 'dark': True},
             'Native Windows acceptance report is incomplete')
     require(all(safety.get(key) is True for key in SAFETY_FLAGS) and
@@ -125,9 +141,13 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
         prefix = 'story-workbench-windows-x86_64/'
         raw_manifest = archive.read(manifest_name)
         manifest = json.loads(raw_manifest)
-        require(manifest.get('platform') == 'windows-x86_64' and
+        require(manifest.get('schema') == 2 and manifest.get('platform') == 'windows-x86_64' and
                 manifest.get('client_version') == CLIENT_VERSION and
-                manifest.get('story_version') == STORY_VERSION, 'Portable build version mismatch')
+                manifest.get('story_version') == STORY_VERSION and
+                all(manifest.get(key) == value for key, value in configuration.items()),
+                'Portable build version or UI stack mismatch')
+        require(manifest.get('client_source_sha256') == client_source_hashes(source),
+                'Compiled client source differs from runner checkout')
         files = manifest.get('files')
         require(isinstance(files, dict) and regular == {prefix + name for name in files} |
                 {manifest_name}, 'Portable manifest inventory mismatch')
@@ -155,31 +175,75 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
             wanted = (source / original).read_bytes()
             require(raw == wanted, 'Packaged desktop source differs from runner checkout')
             mapped_hashes[member] = hashlib.sha256(raw).hexdigest()
-        notice_prefix = prefix + 'ThirdPartyLicenses/Qt/'
-        notice_source = source / 'desktop/windows/licenses'
-        raw_notice = (notice_source / 'manifest.json').read_bytes()
-        require(archive.read(notice_prefix + 'manifest.json') == raw_notice,
-                'Supplementary notice manifest differs from source')
+        notice_prefix = prefix + 'ThirdPartyLicenses/'
+        raw_notice = archive.read(notice_prefix + 'manifest.json')
         notices = json.loads(raw_notice)
-        require(notices.get('schema') == 1 and notices.get('pyside_version') == '6.10.3'
-                and notices.get('qt_version') == '6.10.3' and
-                {'LGPL-3.0-only.txt', 'GPL-2.0-only.txt', 'GPL-3.0-only.txt',
-                 'README.md', 'QtWebEngine/index.html'} <= set(notices.get('files', {})),
-                'Supplementary notice inventory is incomplete')
+        components = notices.get('components', {})
+        require(notices.get('schema') == 2 and notices.get('ui_stack') == UI_STACK and
+                set(components) == set(NOTICE_PACKAGES) | {'Python'},
+                'Runtime notice inventory is incomplete')
+        require(components['microsoft.web.webview2']['version'] ==
+                configuration['packages']['Microsoft.Web.WebView2'], 'WebView2 notice version mismatch')
+        for name in NOTICE_PACKAGES:
+            component = components[name]
+            require(name == 'microsoft.web.webview2' or
+                    re.fullmatch(r'10\.0\.\d+', component.get('version', '')),
+                    'Runtime notice framework mismatch')
+            require(component.get('source') == 'https://api.nuget.org/v3-flatcontainer/' +
+                    name + '/' + component['version'] + '/', 'Runtime notice source mismatch')
+            require(len(base64.b64decode(component.get('nuget_sha512', ''), validate=True)) == 64,
+                    'Runtime package integrity receipt is incomplete')
+            require(any(path.startswith(name + '/') and 'license' in path.rsplit('/', 1)[-1].lower()
+                        for path in notices.get('files', {})), 'Runtime package license is missing')
+        require('Python/LICENSE.txt' in notices.get('files', {}), 'Python license is missing')
         require({name[len(notice_prefix):] for name in regular if name.startswith(notice_prefix)}
-                == set(notices['files']) | {'manifest.json'}, 'Unexpected supplementary notice file')
+                == set(notices['files']) | {'manifest.json'}, 'Unexpected runtime notice file')
         for name, expected in notices['files'].items():
             require(isinstance(expected, str) and re.fullmatch('[0-9a-f]{64}', expected),
-                    'Invalid supplementary notice digest')
+                    'Invalid runtime notice digest')
             raw = archive.read(notice_prefix + name)
-            require(hashlib.sha256(raw).hexdigest() == expected and
-                    raw == (notice_source / name).read_bytes(), 'Supplementary notice checksum mismatch')
-        component_pages = [name for name in notices['files'] if name.startswith('QtWebEngine/')
-                           and name.endswith('.html') and name != 'QtWebEngine/index.html']
-        require(len(component_pages) == 124, 'Expected 124 offline WebEngine component notices')
+            require(hashlib.sha256(raw).hexdigest() == expected, 'Runtime notice checksum mismatch')
+        notice_report = manifest.get('runtime_notices', {})
+        require(notice_report.get('manifest_sha256') == hashlib.sha256(raw_notice).hexdigest() and
+                notice_report.get('components') == components and
+                notice_report.get('files') == len(notices['files']), 'Runtime notice receipt mismatch')
+        webview = manifest.get('webview2_runtime', {})
+        webview_path = 'Prerequisites/' + WEBVIEW_INSTALLER
+        require(webview.get('kind') == 'evergreen-standalone' and webview.get('architecture') == 'x64' and
+                webview.get('path') == webview_path and webview.get('source_url') == WEBVIEW_DOWNLOAD and
+                allowed_microsoft_url(webview.get('resolved_url', '')) and
+                webview.get('resolved_url', '').rsplit('/', 1)[-1].casefold() == WEBVIEW_INSTALLER.casefold() and
+                webview.get('sha256') == files.get(webview_path) and
+                webview.get('bytes') == archive.getinfo(prefix + webview_path).file_size and
+                webview.get('signature', {}).get('status') == 'Valid' and
+                'O=Microsoft Corporation' in webview.get('signature', {}).get('subject', ''),
+                'Offline WebView2 runtime provenance is incomplete')
+        with tempfile.TemporaryDirectory(prefix='story-windows-verify-') as temporary:
+            archive.extractall(temporary)
+            extracted = Path(temporary) / 'story-workbench-windows-x86_64'
+            assert_clean_tree(extracted)
+            runtime_versions = verify_self_contained_host(extracted)
+            require(manifest.get('dotnet_runtime_versions') == runtime_versions,
+                    'Self-contained runtime version receipt differs')
+            for package, framework in (('microsoft.netcore.app.runtime.win-x64', 'Microsoft.NETCore.App'),
+                                       ('microsoft.windowsdesktop.app.runtime.win-x64', 'Microsoft.WindowsDesktop.App')):
+                require(components[package]['version'] == runtime_versions[framework],
+                        'Runtime notices differ from included frameworks')
+            if sys.platform == 'win32':
+                actual_signature = verify_microsoft_signature(extracted / webview_path)
+                require(actual_signature == webview['signature'], 'WebView2 signature differs from build receipt')
         installed_verified = 0
         if installed_root is not None:
             installed_root = Path(installed_root).resolve()
+            assert_clean_tree(installed_root)
+            actual = set()
+            for path in installed_root.rglob('*'):
+                require(not path.is_symlink(), 'Installed tree contains a linked entry')
+                if path.is_file():
+                    actual.add(path.relative_to(installed_root).as_posix())
+            extras = actual - set(files) - {'build-manifest.json'}
+            require(all(re.fullmatch(r'unins\d{3}\.(exe|dat|msg)', name) for name in extras),
+                    'Installed tree contains untracked payload files')
             require((installed_root / 'build-manifest.json').read_bytes() == raw_manifest,
                     'Installed build manifest differs from portable ZIP')
             for name, expected in files.items():
@@ -210,12 +274,16 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
               'manifest_files_verified': len(files), 'runtime_sha256': runtime_hashes,
               'installed_manifest_files_verified': installed_verified,
               'installed_tree_verified': installed_root is not None,
-              'offline_webengine_component_pages': len(component_pages),
+              'ui_stack': UI_STACK, 'self_contained': True,
+              'dotnet_runtime_versions': runtime_versions,
+              'client_source_sha256': manifest['client_source_sha256'],
+              'forbidden_technologies_absent': True, 'webview2_runtime': webview,
               'mapped_source_sha256': mapped_hashes,
-              'supplementary_notice_manifest_sha256': hashlib.sha256(raw_notice).hexdigest(),
-              'supplementary_notice_files_verified': len(notices['files']),
-              'supplementary_notice_sha256': notices['files'],
-              'native_report': native, 'installed_payload_safety_report': safety}
+              'runtime_notice_manifest_sha256': hashlib.sha256(raw_notice).hexdigest(),
+              'runtime_notice_files_verified': len(notices['files']),
+              'runtime_notice_sha256': notices['files'],
+              'native_report': native, 'native_contract_report': contracts,
+              'installed_payload_safety_report': safety}
     return assets, report
 
 
@@ -344,7 +412,8 @@ def main(argv=None):
         source_paths = subprocess.run(
             ['git', 'ls-files', '-z', 'desktop/windows', 'desktop/macos/backend_runner.py',
              'scripts/build_desktop_macos.py', 'scripts/build_desktop_windows.py',
-             'scripts/publish_windows_draft.py', '.github/workflows/desktop-windows.yml',
+             'scripts/publish_windows_draft.py', 'scripts/check_forbidden_technologies.py',
+             '.github/workflows/desktop-windows.yml', 'tests/windows',
              '.gitattributes', 'LICENSE', 'tests/desktop_payload_probe.py',
              'skills/story-skill/scripts'], cwd=REPO, capture_output=True, check=True).stdout
         source_paths = [name.decode('utf-8') for name in source_paths.split(b'\0') if name]

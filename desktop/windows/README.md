@@ -1,52 +1,38 @@
-# 写作工作台 · Windows 独立应用
+# 写作工作台 · Windows
 
-面向 Windows 10/11 x64。客户端使用 PySide6 / Qt WebEngine 桌面窗口，内置 Chromium 和 Python；使用者无需另装 Python、技能或浏览器扩展。完整创作技能在所用助手中另行安装。
+Windows 客户端 **0.2.0** 使用 **C# / WPF / .NET 10 / Microsoft WebView2**，内嵌 Story Skill **0.6.22** Python 作品服务。项目禁止使用 Qt 系列及 PHP，构建和安装验收包含对应检查。界面沿用 HTML、CSS 与 JavaScript，作品数据无需转换。
 
-本目录对应客户端 **0.1.12**，内嵌 Story Skill **0.6.22**。各轮构建、安装验收及实际发布状态见 [v0.6.22 发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.22.md)。Windows 10/11 用户环境的人工验收按实际证据记录；安装程序未做代码签名。
+## 获取和安装
 
-## 下载与安装
+本版本构建产物名为 `story-workbench-0.2.0-windows-x86_64-setup.exe`，校验文件为同名 `.sha256`。从对应的 [Windows 构建记录](https://github.com/NingCui29/story-skill/actions/workflows/desktop-windows.yml) 获取，正式 Release 仅以实际发布的附件为准；旧版 Windows 附件不是本 C# 版本。
 
-本版本的发行文件名如下，以 Release 页面实际可见附件为准；下载后先核对同名校验文件：
+适用 Windows 10/11 x64。安装前保存工作台及外部浏览器中的编辑，退出旧客户端。双击安装程序，按向导为当前用户安装并创建快捷方式；系统应用列表支持卸载。应用未做代码签名。应用目录不用于存放书稿。
 
-- [安装程序 story-workbench-0.1.12-windows-x86_64-setup.exe](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64-setup.exe)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64-setup.exe.sha256)。核对后运行安装向导，为当前用户安装并创建开始菜单快捷方式，可选创建桌面快捷方式；系统应用列表支持卸载。
-- [便携 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64.zip.sha256)。完整解压到可写目录，双击 `StoryWorkbench.exe`；保留同目录的 `_internal`、`runtime`、`Scripts` 等运行文件。
+安装包自带 .NET 与 Python，无需另行安装这两者。WebView2 运行时已有时复用，缺失时使用随包微软签名的 Evergreen x64 离线安装程序安装；安装失败会明确中止。便携 ZIP 需完整解压并保留 `runtime`、`Scripts`、`Prerequisites` 及其余文件；如系统缺少 WebView2，先运行 `Prerequisites` 中的微软安装程序。
 
-升级前保存桌面与外部浏览器全部页面编辑，退出旧客户端，再安装或替换。打开后若复用旧服务，应在保留编辑后按服务管理流程更新；客户端不自动结束作品服务。
+## 日常使用
 
-## 使用
+- 书架搜索、筛选、新建、添加、移出、重新定位、回收站删除、整书备份与恢复仍使用原作品服务。
+- 编辑页在应用标签中打开；重复打开复用原标签。返回书架不会重新载入未保存的编辑页。
+- “外观”支持浅色、深色、跟随系统并保存偏好；主题色为天空蓝。
+- 关闭标签、退出、刷新及启动更新前核对所有页面及隐藏文稿。保存中、恢复中、输入法组合中或状态未知时阻止操作；待保存文字可返回保存或导出完整 ZIP。
+- “复制作品目录”使用系统目录选择器，导出与下载使用系统保存面板。
+- “检查更新”查询官方正式 Windows x64 附件，显示下载进度、大小、速度、预计剩余时间，支持取消和重试；大小、SHA256 与文件身份通过后才允许启动安装程序。
 
-书架与编辑页在应用标签中打开。点击“复制作品目录”选择目录，再将路径粘贴到书架添加栏。下载使用系统保存面板。重复打开作品复用原标签，关闭、退出、重新载入和跳转时核对全部标签及隐藏文稿；保存中或状态不明时阻止关闭，未保存文字可返回保存或导出完整 ZIP。保存继续生成候选，正式采用沿用审稿流程。
+保存候选、自动恢复副本和导出文件不等于正式采用。更新不会自动停止原有书架或作品服务；已有旧服务须在保留编辑后按原流程更新。平台草稿流程及其外部助手依赖保持原边界，不执行提交审核或定时发布。
 
-大量材料目录采用有界分批加载，正式进度独立读取；候选与恢复稿按原准入规则定点安全打开。
+## 构建与验证
 
-本版内嵌运行时新增结构化扫榜、代表作抽样和研究交接命令。完整研究流程通过所用助手中的 Story Skill 进行；工作台界面继续用于书稿与候选管理。采集或研究材料不会自动登记为作品、采用规划或写入正式正文。
-
-天空蓝界面集中书架搜索与筛选，低频操作放在“管理作品”。书架和编辑页顶栏的“外观”支持浅色、深色与跟随系统，记住选择并保留未保存文字。书架可新建、移出、重新定位、删除至系统回收站、整书备份及恢复；编辑页提供恢复中心、保存全部候选、两稿对照和下一章任务。[操作与边界](https://github.com/NingCui29/story-skill/blob/main/docs/工作台需求与进展.md)
-
-“检查更新”在后台查询 GitHub 最新正式发布并比较 Windows x64 安装包版本。下载显示百分比、大小、速度、预计剩余时间和 SHA256 校验状态，支持取消与重试；通过核验后，启动安装向导前检查全部标签编辑状态，便携包打开目录供手工替换。安装交给系统后提示保存、安装与重新打开，不将下载完成视为升级完成。缺少完整性信息、网络失败、超时或没有对应包时明确提示。[更新流程](https://github.com/NingCui29/story-skill/blob/main/docs/工作台更新流程.md)
-
-平台草稿支持配置、预览、受控保存与回读。番茄可显式启动受控的 Codex 工作进程，连接既有已登录 Chrome；此连接使用外部 Codex CLI、Chrome SDK 与账户额度，桌面包不内嵌这些依赖。Windows 自动发现要求 PATH 中存在可执行的 `codex.exe`。浏览器权限拒绝时停止，等待按宿主正常流程授权；不绕过权限、不自动登录。段落编码与尾换行数量容差分别选择，变更后重新预览；未知结果先回读对账。既有实页证据覆盖番茄指定合成稿；本版单元测试不等于新实页保存验收。七猫、起点沿用外部已连接助手流程，实页、多卷与真实分页仍待验收。不执行提交审核或定时发布。[平台草稿说明](https://github.com/NingCui29/story-skill/blob/main/skills/story-skill-publish/references/platform-drafts.md)
-
-## 构建
-
-在 Windows x64 的完整 Python 3.12 环境中，从仓库根目录运行：
+需要 Windows x64、完整 Python 3.12、.NET 10 SDK 和 Inno Setup 6。WebView2 SDK 版本固定在 `StoryWorkbench/StoryWorkbench.csproj`。
 
 ```powershell
-python -m venv .venv-desktop
-.venv-desktop\Scripts\python -m pip install -r desktop/windows/requirements-build.txt
-.venv-desktop\Scripts\python scripts/build_desktop_windows.py --output dist/story-workbench-windows-x86_64
+python scripts/check_forbidden_technologies.py --source
+dotnet run --project tests/windows/StoryWorkbench.Tests.csproj
+python scripts/build_desktop_windows.py --output dist/story-workbench-windows-x86_64
 ```
 
-GitHub Actions 的 `Build Windows desktop candidate` 可对指定源码构建安装程序和便携 ZIP。构建流程覆盖运行时、CLI、安装、原生窗口、外观、合成更新进度、完整 ZIP／安装目录及源码／许可清单核对和卸载，安装程序由 Inno Setup 6 与 `installer.iss` 构建。
+GitHub Actions 完成 C# 测试、作品服务安全探针、独立发布、安装器构建、中文及空格目录安装、原生窗口与外观验证、完整清单校验及卸载。安装包、校验文件、便携 ZIP 和验收回执作为 Actions 产物保存；常规构建不创建或公开 Release。
 
-手动触发的 `draft_release_id` 默认值为 `0`，常规构建不上传 Release。仅在主仓库显式指定已有草稿 ID，且原生构建验收通过后，独立发布任务才会核对草稿的版本标签与确切目标源提交，上传四份指定 Windows 文件；该任务不创建或公开 Release。Actions 产物、草稿上传与正式分发分别核对。
+随包第三方许可来自实际还原的 WebView2 SDK、.NET 与 Python 分发载荷，并记录来源与摘要。完整文件清单包含自带的运行库与先决条件安装器。验收截图中的合成更新进度不代表真实网络升级成功；Windows runner 验收与不同用户系统的人工验收分别记录。
 
-## 验收范围
-
-发行验收须核对安装、原生窗口、完整文件清单、卸载、ZIP 安全路径与 CRC、实际安装目录、源码／许可清单和安全探针；各轮实际回执与范围见[发布记录](https://github.com/NingCui29/story-skill/blob/main/docs/releases/v0.6.22.md)。摘要及 Range 核对与完整回下载分别记录。
-
-在未安装 Python 的 Windows 10/11 用户环境中，首次启动、中文及空格目录、重复启动、添加和打开作品、候选保存重开、版本对照、下载取消、关闭提示、服务重启与非管理员使用仍按实际人工验收分别登记。合成更新进度不证明真实网络下载或升级安装完成。
-
-随包 `ThirdPartyLicenses` 保留上游 Python 分发包的许可文件，并补充与 Qt / PySide 6.10.3 对应的 LGPL/GPL 完整文本及官方 Qt WebEngine 第三方归因清单。离线入口为 `ThirdPartyLicenses/Qt/QtWebEngine/index.html`；[来源与逐文件清单](https://github.com/NingCui29/story-skill/blob/main/desktop/windows/licenses/README.md)记录版本和核对范围，各第三方组件保留自己的许可条款。
-
-Mac 使用 `desktop/macos` 的原生 Swift 客户端。两端都不在安装或更新时迁移真实作品、采用候选或自动停止编辑服务。
+[项目技术约束](../../docs/技术约束.md) · [更新流程](../../docs/工作台更新流程.md)

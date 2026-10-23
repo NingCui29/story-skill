@@ -1,4 +1,6 @@
 import hashlib
+import base64
+import struct
 import contextlib
 import io
 from types import SimpleNamespace
@@ -28,29 +30,58 @@ def fixture(area):
     runtime = tuple('runtime%d.py' % n for n in range(20))
     write(source / 'scripts/build_desktop_macos.py', ('RUNTIME_FILES = ' + repr(runtime)).encode())
     write(source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.22"\n')
-    write(source / 'desktop/windows/workbench_updates.py', b'CLIENT_VERSION = "0.1.12"\n')
+    write(source / publish.PROJECT, b'<Project><PropertyGroup><Version>0.2.0</Version><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" /></ItemGroup></Project>')
     files = {}
     for name in runtime:
-        files['Scripts/' + name] = ('runtime ' + name).encode()
+        files['Scripts/' + name] = ('# runtime fixture ' + name + '\n').encode()
         write(source / 'skills/story-skill/scripts' / name, files['Scripts/' + name])
     for packaged, original in (('backend_runner.py', 'desktop/macos/backend_runner.py'),
                                ('StorySkill-LICENSE.txt', 'LICENSE'),
                                ('README.md', 'desktop/windows/README.md')):
         files[packaged] = original.encode()
         write(source / original, files[packaged])
-    notices = {name: name.encode() for name in ('LGPL-3.0-only.txt', 'GPL-2.0-only.txt',
-               'GPL-3.0-only.txt', 'README.md', 'QtWebEngine/index.html')}
-    notices.update({f'QtWebEngine/component-{n}.html': ('license ' + str(n)).encode() for n in range(124)})
-    notice_manifest = {'schema': 1, 'pyside_version': '6.10.3', 'qt_version': '6.10.3',
+    notices = {}
+    components = {}
+    for name in publish.NOTICE_PACKAGES:
+        version = '1.0.4258.31' if name == 'microsoft.web.webview2' else '10.0.1'
+        components[name] = {'version': version, 'nuget_sha512': base64.b64encode(b'x' * 64).decode(),
+                            'source': 'https://api.nuget.org/v3-flatcontainer/' + name + '/' + version + '/'}
+        for leaf in ('LICENSE.txt', 'NOTICE.txt'):
+            notices[name + '/' + leaf] = (name + ' ' + leaf).encode()
+    components['Python'] = {'version': '3.12.1', 'source': 'https://www.python.org/'}
+    notices['Python/LICENSE.txt'] = b'Python fixture license'
+    notice_manifest = {'schema': 2, 'ui_stack': 'wpf-webview2', 'components': components,
                        'files': {name: hashlib.sha256(data).hexdigest() for name, data in notices.items()}}
     notices['manifest.json'] = json.dumps(notice_manifest).encode()
     for name, data in notices.items():
-        write(source / 'desktop/windows/licenses' / name, data)
-        files['ThirdPartyLicenses/Qt/' + name] = data
+        files['ThirdPartyLicenses/' + name] = data
+    pe = bytearray(256)
+    pe[:2] = b'MZ'; struct.pack_into('<I', pe, 60, 128)
+    pe[128:132] = b'PE\0\0'; struct.pack_into('<H', pe, 132, 0x8664)
+    files['StoryWorkbench.exe'] = bytes(pe)
+    for name in ('coreclr.dll', 'hostfxr.dll', 'hostpolicy.dll', 'PresentationFramework.dll',
+                 'Microsoft.Web.WebView2.Core.dll', 'Microsoft.Web.WebView2.Wpf.dll', 'WebView2Loader.dll'):
+        files[name] = b'synthetic self-contained runtime'
+    frameworks = {'Microsoft.NETCore.App': '10.0.1', 'Microsoft.WindowsDesktop.App': '10.0.1'}
+    files['StoryWorkbench.runtimeconfig.json'] = json.dumps({'runtimeOptions': {'includedFrameworks':
+        [{'name': name, 'version': version} for name, version in frameworks.items()]}}).encode()
+    runtime_path = 'Prerequisites/' + publish.WEBVIEW_INSTALLER
+    files[runtime_path] = bytes(pe)
+    webview = {'kind': 'evergreen-standalone', 'architecture': 'x64', 'path': runtime_path,
+               'source_url': publish.WEBVIEW_DOWNLOAD,
+               'resolved_url': 'https://msedge.sf.dl.delivery.mp.microsoft.com/files/' + publish.WEBVIEW_INSTALLER,
+               'bytes': len(pe), 'sha256': hashlib.sha256(pe).hexdigest(),
+               'signature': {'status': 'Valid', 'subject': 'CN=Microsoft Corporation, O=Microsoft Corporation',
+                             'thumbprint': 'synthetic', 'file_version': '1.0.0.0', 'product_name': 'WebView2'}}
     artifacts.mkdir()
     setup = artifacts / publish.SETUP
     setup.write_bytes(b'MZ synthetic installer')
-    manifest = {'platform': 'windows-x86_64', 'client_version': '0.1.12', 'story_version': '0.6.22',
+    manifest = {'schema': 2, 'platform': 'windows-x86_64',
+                **publish.project_configuration(source), 'story_version': '0.6.22',
+                'client_source_sha256': publish.client_source_hashes(source),
+                'runtime_notices': {'manifest_sha256': hashlib.sha256(notices['manifest.json']).hexdigest(),
+                                    'files': len(notice_manifest['files']), 'components': components},
+                'webview2_runtime': webview, 'dotnet_runtime_versions': frameworks,
                 'files': {name: hashlib.sha256(data).hexdigest() for name, data in files.items()}}
     files['build-manifest.json'] = json.dumps(manifest).encode()
     portable = artifacts / publish.ORIGINAL_PORTABLE
@@ -60,11 +91,13 @@ def fixture(area):
     for path in (setup, portable):
         path.with_name(path.name + '.sha256').write_text(publish.digest_file(path) + '  ' + path.name + '\n')
     native = dict.fromkeys(publish.NATIVE_FLAGS, True)
-    native.update(client_version='0.1.12', theme_captures={'light': True, 'dark': True})
+    native.update(client_version='0.2.0', ui_stack='wpf-webview2', self_contained=True, theme_captures={'light': True, 'dark': True})
     safety = dict.fromkeys(publish.SAFETY_FLAGS, True)
     safety.update(platform='win32', story_version='0.6.22', existing_book_files_recycled=False)
     write(artifacts / 'windows-native-smoke.json', json.dumps(native).encode())
     write(artifacts / 'windows-runtime-safety.json', json.dumps(safety).encode())
+    write(artifacts / 'windows-csharp-tests.json', json.dumps(
+        {'ok': True, 'total': 29, 'passed': 29, 'skipped': 0, 'failed': []}).encode())
     installed = area / 'installed'
     for name, data in files.items():
         write(installed / name, data)
@@ -113,15 +146,80 @@ class DistributionTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.source, self.area, self.installed = fixture(Path(self.temp.name))
+        signature = json.loads((self.installed / 'build-manifest.json').read_text())['webview2_runtime']['signature']
+        patcher = patch.object(publish, 'verify_microsoft_signature', return_value=signature)
+        patcher.start(); self.addCleanup(patcher.stop)
 
     def verified(self):
         return publish.verify_artifacts(self.area, self.source, SHA, self.installed)
+
+    def rewrite_payload(self, edit):
+        portable = self.area / publish.ORIGINAL_PORTABLE
+        prefix = 'story-workbench-windows-x86_64/'
+        with zipfile.ZipFile(portable) as archive:
+            files = {name[len(prefix):]: archive.read(name) for name in archive.namelist()}
+        manifest = json.loads(files.pop('build-manifest.json'))
+        edit(files, manifest)
+        manifest['files'] = {name: hashlib.sha256(data).hexdigest() for name, data in files.items()}
+        files['build-manifest.json'] = json.dumps(manifest).encode()
+        with zipfile.ZipFile(portable, 'w') as archive:
+            for name, data in files.items():
+                archive.writestr(prefix + name, data)
+                write(self.installed / name, data)
+        portable.with_name(portable.name + '.sha256').write_text(
+            publish.digest_file(portable) + '  ' + portable.name + '\n')
+
+    def test_forbidden_payload_is_rejected_even_with_consistent_manifests_and_checksums(self):
+        self.rewrite_payload(lambda files, manifest: files.update({'Qt6Core.dll': b'forbidden fixture'}))
+        with self.assertRaisesRegex(RuntimeError, 'Forbidden technology'):
+            self.verified()
+
+    def test_untracked_installed_file_is_rejected(self):
+        write(self.installed / 'unregistered.dll', b'extra payload')
+        with self.assertRaisesRegex(publish.VerificationError, 'untracked payload'):
+            self.verified()
+
+    def test_compiled_source_receipt_must_match_source_checkout(self):
+        self.rewrite_payload(lambda files, manifest: manifest.update(client_source_sha256={}))
+        with self.assertRaisesRegex(publish.VerificationError, 'Compiled client source'):
+            self.verified()
+
+    def test_offline_runtime_cannot_be_substituted_with_an_online_bootstrapper(self):
+        def change(files, manifest):
+            manifest['webview2_runtime']['resolved_url'] = 'https://msedge.sf.dl.delivery.mp.microsoft.com/MicrosoftEdgeWebview2Setup.exe'
+        self.rewrite_payload(change)
+        with self.assertRaisesRegex(publish.VerificationError, 'runtime provenance'):
+            self.verified()
+
+    def test_framework_dependent_host_is_rejected_even_when_metadata_claims_self_contained(self):
+        def change(files, manifest):
+            files['StoryWorkbench.runtimeconfig.json'] = json.dumps({'runtimeOptions': {
+                'framework': {'name': 'Microsoft.NETCore.App', 'version': '10.0.1'}}}).encode()
+        self.rewrite_payload(change)
+        with self.assertRaisesRegex(RuntimeError, 'external or unsupported'):
+            self.verified()
+
+    def test_windows_rechecks_runtime_signature_instead_of_trusting_manifest(self):
+        with patch.object(publish.sys, 'platform', 'win32'), \
+                patch.object(publish, 'verify_microsoft_signature', return_value={'status': 'Invalid'}), \
+                self.assertRaisesRegex(publish.VerificationError, 'signature differs'):
+            self.verified()
+
+    def test_contract_report_must_cover_all_groups_without_skips(self):
+        path = self.area / 'windows-csharp-tests.json'
+        value = json.loads(path.read_text())
+        value['passed'], value['skipped'] = 28, 1
+        path.write_text(json.dumps(value))
+        with self.assertRaisesRegex(publish.VerificationError, 'C# contract'):
+            self.verified()
 
     def test_verifies_full_manifest_source_notices_and_installed_tree(self):
         assets, report = self.verified()
         self.assertEqual(set(assets), set(publish.ASSET_NAMES))
         self.assertEqual(len(report['runtime_sha256']), 20)
-        self.assertEqual(report['offline_webengine_component_pages'], 124)
+        self.assertEqual(report['ui_stack'], 'wpf-webview2')
+        self.assertTrue(report['self_contained'])
+        self.assertEqual(report['runtime_notice_files_verified'], 7)
         self.assertEqual(report['manifest_files_verified'], report['installed_manifest_files_verified'])
         self.assertTrue(report['installed_tree_verified'])
         self.assertEqual(assets[publish.PORTABLE].read_bytes(), (self.area / publish.ORIGINAL_PORTABLE).read_bytes())
@@ -134,7 +232,7 @@ class DistributionTests(unittest.TestCase):
 
     def test_previous_release_source_versions_are_rejected(self):
         for path, old in ((self.source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.20"\n'),
-                          (self.source / 'desktop/windows/workbench_updates.py', b'CLIENT_VERSION = "0.1.10"\n')):
+                          (self.source / publish.PROJECT, (self.source / publish.PROJECT).read_bytes().replace(b'0.2.0', b'0.1.10'))):
             original = path.read_bytes()
             path.write_bytes(old)
             with self.subTest(path=path), self.assertRaisesRegex(publish.VerificationError, 'Source versions'):
@@ -144,7 +242,7 @@ class DistributionTests(unittest.TestCase):
     def test_rejects_wrong_source_runtime_installed_and_notice_bytes(self):
         for path in (self.source / 'skills/story-skill/scripts/runtime0.py',
                      self.installed / 'Scripts/runtime0.py',
-                     self.source / 'desktop/windows/licenses/GPL-3.0-only.txt'):
+                     self.installed / 'ThirdPartyLicenses/Python/LICENSE.txt'):
             original = path.read_bytes()
             path.write_bytes(b'changed')
             with self.subTest(path=path), self.assertRaises(publish.VerificationError):
