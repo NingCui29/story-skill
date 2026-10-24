@@ -101,12 +101,12 @@ class NativeAtomicSharingTests(unittest.TestCase):
         self.root.mkdir()
 
     @contextmanager
-    def reader(self):
+    def reader(self, directory):
         ready, held = self.area / "reader-ready", self.area / "reader-held"
         for path in (ready, held):
             path.unlink(missing_ok=True)
         process = subprocess.Popen([sys.executable, "-I", "-B", "-X", "utf8", "-c", HOLD_STRICT_DIRECTORY,
-                                    str(fixture.TOOL), str(self.root), str(ready), str(held)],
+                                    str(fixture.TOOL), str(directory), str(ready), str(held)],
                                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                    text=True, encoding="utf-8")
         released = False
@@ -146,7 +146,12 @@ class NativeAtomicSharingTests(unittest.TestCase):
         original = getattr(story.os, operation)
         violations = []
         entered = False
-        with self.reader() as (hold, unlock):
+        # Windows needs write access to the destination directory for a rename.
+        # Moving out of a strict source directory can succeed, so block the
+        # backup parent for displacement and the target parent for publication.
+        # The child opens it only on hold(), after atomic_write created/pinned it.
+        directory = backup.parent if operation == "replace" else target.parent
+        with self.reader(directory) as (hold, unlock):
             def observed(source, destination):
                 nonlocal entered
                 if not entered:
