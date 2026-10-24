@@ -60,15 +60,18 @@ class RankSourceVisibilityTests(unittest.TestCase):
     def test_collection_preserves_raw_html_and_only_visible_books_reach_research(self):
         import test_rank as ranks
         import test_research as research
-        html = fixtures.page(cards='<template>' + fixtures.card('900') + '</template>' + fixtures.card('100'))
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / 'source.html'
-            path.write_text(html, encoding='utf-8')
-            snapshot, raw = sources.collect_qimao(1, [path], [sources.QIMAO_URL.format(page=1)])
-        decision = research.research.initialize(ranks.rank.build_sample([snapshot]))
-        self.assertEqual([book['identity']['value'] for book in decision['sample']['books']], ['100'])
-        self.assertEqual(raw[1], html)
-        self.assertIn('未执行 JavaScript 或计算 CSS', ' '.join(snapshot['source']['limitations']))
+        source = fixtures.page(cards='<template>' + fixtures.card('900') + '</template>' + fixtures.card('100'))
+        for newline in ('\n', '\r\n'):
+            with self.subTest(newline=repr(newline)):
+                html = source.replace('\n', newline)
+                with tempfile.TemporaryDirectory() as directory:
+                    path = Path(directory) / 'source.html'
+                    path.write_bytes(html.encode('utf-8'))
+                    snapshot, raw = sources.collect_qimao(1, [path], [sources.QIMAO_URL.format(page=1)])
+                decision = research.research.initialize(ranks.rank.build_sample([snapshot]))
+                self.assertEqual([book['identity']['value'] for book in decision['sample']['books']], ['100'])
+                self.assertEqual(raw[1], html)
+                self.assertIn('未执行 JavaScript 或计算 CSS', ' '.join(snapshot['source']['limitations']))
 
 
 if __name__ == '__main__':

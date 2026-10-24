@@ -84,7 +84,7 @@ class RankSourceTemplateScopeTests(unittest.TestCase):
         html = fixtures.page(cards="<template></ul>" + fixtures.card("900") + "</template>" + fixtures.card("100"))
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "source.html"
-            path.write_text(html, encoding="utf-8")
+            path.write_bytes(html.encode("utf-8"))
             snapshot, raw = sources.collect_qimao(1, [path], [sources.QIMAO_URL.format(page=1)])
         decision = research.research.initialize(ranks.rank.build_sample([snapshot]))
         self.assertEqual([item["identity"]["value"] for item in decision["sample"]["books"]], ["100"])

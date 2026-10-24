@@ -52,7 +52,7 @@ class RankSourceMarkupTests(unittest.TestCase):
         card = fixtures.card().replace("样本&amp;书名", "样本<span>&amp;</span>书名")
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "source.html"
-            path.write_text(fixtures.page(cards=card), encoding="utf-8")
+            path.write_bytes(fixtures.page(cards=card).encode("utf-8"))
             snapshot, raw = sources.collect_qimao(1, [path], [sources.QIMAO_URL.format(page=1)])
         sample = rank_fixtures.rank.build_sample([snapshot], title_contains="样本&书名")
         decision = research_fixtures.research.initialize(sample)

@@ -19,10 +19,11 @@ drafts = story.platform_drafts
 
 class FakeBrowser:
     """Validation is real; only browser entry and platform observations are fake."""
-    def __init__(self, config, *, validator, remote, entered, release, calls, fail_create=False,
+    def __init__(self, config, *, validator, remote, entered, waiting_login, release, calls, fail_create=False,
                  progress_callback=None, **kwargs):
         validator(config, **kwargs)
         self.remote, self.entered, self.release = remote, entered, release
+        self.waiting_login = waiting_login
         self.calls, self.fail_create, self.callback = calls, fail_create, progress_callback
 
     def __enter__(self):
@@ -37,6 +38,7 @@ class FakeBrowser:
         self.calls.append(("verify", threading.get_ident()))
         if self.callback:
             self.callback({"stage": "waiting_login", "message": "PRIVATE PASSWORD MUST NOT ESCAPE"})
+        self.waiting_login.set()
         if not self.release.wait(5):
             raise RuntimeError("PRIVATE PASSWORD AND FULL MANUSCRIPT")
         if self.callback:
@@ -73,7 +75,7 @@ class WorkbenchPlatformDraftTests(unittest.TestCase):
         self.write_profile()
         self.remote, self.calls = {}, []
         self.browser_login_timeouts = []
-        self.entered, self.release = threading.Event(), threading.Event()
+        self.entered, self.waiting_login, self.release = threading.Event(), threading.Event(), threading.Event()
         self.release.set()
         self.fail_create = False
         self.validator = story.platform_browser.BrowserAdapter
@@ -106,7 +108,8 @@ class WorkbenchPlatformDraftTests(unittest.TestCase):
         if "login_timeout_ms" in kwargs:
             self.browser_login_timeouts.append(kwargs["login_timeout_ms"])
         return FakeBrowser(config, validator=self.validator, remote=self.remote, entered=self.entered,
-                           release=self.release, calls=self.calls, fail_create=self.fail_create, **kwargs)
+                           waiting_login=self.waiting_login, release=self.release, calls=self.calls,
+                           fail_create=self.fail_create, **kwargs)
 
     def preview(self, **kwargs):
         return drafts.workbench_preview(self.root, self.plan["id"], self.profile_path.name,
@@ -358,12 +361,15 @@ class WorkbenchPlatformDraftTests(unittest.TestCase):
         self.assertEqual(sum(call[0] == "create" for call in self.calls), 1)
 
     def test_different_plan_for_busy_target_cannot_start_another_browser(self):
-        self.release.clear()
-        first = self.start()
-        self.assertTrue(self.entered.wait(1))
         self.fixture.commit(2)
         alternate = self.fixture.prepare((1, 2))
         preview = drafts.workbench_preview(self.root, alternate["id"], self.profile_path.name)
+        self.release.clear()
+        first = self.start()
+        self.assertTrue(self.waiting_login.wait(1))
+        observed = drafts.workbench_job(self.root, first["id"])
+        self.assertFalse(observed["done"])
+        self.assertEqual(observed["state"], "waiting_login")
         self.assert_code("platform_draft_busy", self.start, preview)
         self.assertEqual(sum(call[0] == "enter" for call in self.calls), 1)
         self.release.set()

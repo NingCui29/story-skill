@@ -145,8 +145,36 @@ class RecoveryPaginationTests(unittest.TestCase):
             first = self.page()
             self.error('invalid_input', lambda: self.archives.recovery_catalog(
                 self.root, cursor=first['cursor'], offset=100))
+            before = self.root.stat()
             (self.root / '新材料.md').write_text('新增材料。', encoding='utf-8')
-            self.error('workbench_material_cursor_changed', lambda: self.page(first))
+            if os.name == 'nt':
+                # Windows directory pins themselves change mtimes. Ordinary
+                # child additions keep the bound directory's identity valid.
+                continued = self.page(first)
+                self.assertEqual(continued['cursor'], first['cursor'])
+                self.assertEqual(self.w._material_directory_key(before),
+                                 self.w._material_directory_identity(self.root))
+            else:
+                # Keep the genuine POSIX directory-mutation rejection even
+                # on a filesystem with coarse timestamps.
+                os.utime(self.root, ns=(before.st_atime_ns, before.st_mtime_ns + 1_000_000_000))
+                self.error('workbench_material_cursor_changed', lambda: self.page(first))
+        self.w._material_discard(first['cursor'])
+        complete = self.page()
+        self.assertTrue(complete['complete'])
+        # A finished cursor has released its scandir handles, so the real
+        # directory can be replaced on Windows too. Equal copied book contents
+        # and the same book ID must never make this physical replacement safe.
+        old_root = self.root.with_name('old-book')
+        before = self.w._material_directory_identity(self.root)
+        state = (self.root / '.story/state.sqlite3').read_bytes()
+        self.root.rename(old_root)
+        shutil.copytree(old_root, self.root)
+        self.assertNotEqual(before[:2], self.w._material_directory_identity(self.root)[:2])
+        self.assertEqual((self.root / '.story/state.sqlite3').read_bytes(), state)
+        with closing(self.w._ReadOnlyBook(self.root)) as book:
+            self.assertEqual(book.meta('id'), self.book_id)
+        self.error('workbench_material_cursor_changed', lambda: self.page(complete))
         self.assertTrue(self.page()['complete'])
 
     def test_scan_failure_and_hard_limit_never_claim_complete(self):
