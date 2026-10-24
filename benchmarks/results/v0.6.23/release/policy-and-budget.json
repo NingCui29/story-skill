@@ -1,0 +1,408 @@
+{
+  "schema": 1,
+  "source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "ok": true,
+  "checks": [
+    {
+      "check": "technology-policy",
+      "returncode": 0,
+      "duration_seconds": 3.00335833,
+      "passed": true,
+      "report": {
+        "ok": true,
+        "policy": "no-qt-no-php",
+        "errors": []
+      },
+      "log_sha256": "08fb3b1bca1b01c93f7482d74fc005156c1da83f0665125329dee0598696b0c2"
+    },
+    {
+      "check": "instruction-budget",
+      "returncode": 0,
+      "duration_seconds": 0.23105634899999972,
+      "passed": true,
+      "report": {
+        "passed": true,
+        "manifest_sha256": "87a26487cfb654259c70fb272a6a208633577650149034ccd6c330932fa76e6e",
+        "measured": "Explicit cold rule loads only; not tokens, dynamic story context or actual usage",
+        "loads_checked": 301,
+        "calls": [
+          {
+            "scenario": "long_chapter",
+            "call": "writer",
+            "base": {
+              "nonspace_chars": 39568,
+              "utf8_bytes": 107795
+            },
+            "base_limits": {
+              "nonspace_chars": 44000,
+              "utf8_bytes": 121000
+            },
+            "maximum": {
+              "nonspace_chars": 73424,
+              "utf8_bytes": 199887
+            },
+            "maximum_limits": {
+              "nonspace_chars": 76000,
+              "utf8_bytes": 208000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "short_write",
+            "call": "writer",
+            "base": {
+              "nonspace_chars": 55728,
+              "utf8_bytes": 152364
+            },
+            "base_limits": {
+              "nonspace_chars": 66000,
+              "utf8_bytes": 181000
+            },
+            "maximum": {
+              "nonspace_chars": 83761,
+              "utf8_bytes": 232743
+            },
+            "maximum_limits": {
+              "nonspace_chars": 88000,
+              "utf8_bytes": 245000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "short_write",
+            "call": "cover_designer",
+            "base": {
+              "nonspace_chars": 5641,
+              "utf8_bytes": 16211
+            },
+            "base_limits": {
+              "nonspace_chars": 7000,
+              "utf8_bytes": 19000
+            },
+            "maximum": {
+              "nonspace_chars": 5641,
+              "utf8_bytes": 16211
+            },
+            "maximum_limits": {
+              "nonspace_chars": 7000,
+              "utf8_bytes": 19000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "short_write_novel_entry",
+            "call": "writer",
+            "base": {
+              "nonspace_chars": 58133,
+              "utf8_bytes": 159424
+            },
+            "base_limits": {
+              "nonspace_chars": 66000,
+              "utf8_bytes": 181000
+            },
+            "maximum": {
+              "nonspace_chars": 86166,
+              "utf8_bytes": 239803
+            },
+            "maximum_limits": {
+              "nonspace_chars": 88000,
+              "utf8_bytes": 245000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "short_write_unknown_entry",
+            "call": "writer",
+            "base": {
+              "nonspace_chars": 59843,
+              "utf8_bytes": 164426
+            },
+            "base_limits": {
+              "nonspace_chars": 66000,
+              "utf8_bytes": 181000
+            },
+            "maximum": {
+              "nonspace_chars": 87876,
+              "utf8_bytes": 244805
+            },
+            "maximum_limits": {
+              "nonspace_chars": 88000,
+              "utf8_bytes": 245000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "content_review",
+            "call": "reviewer",
+            "base": {
+              "nonspace_chars": 20541,
+              "utf8_bytes": 55952
+            },
+            "base_limits": {
+              "nonspace_chars": 23000,
+              "utf8_bytes": 61000
+            },
+            "maximum": {
+              "nonspace_chars": 67664,
+              "utf8_bytes": 185986
+            },
+            "maximum_limits": {
+              "nonspace_chars": 72000,
+              "utf8_bytes": 195000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "content_rewrite",
+            "call": "rewriter",
+            "base": {
+              "nonspace_chars": 23980,
+              "utf8_bytes": 65588
+            },
+            "base_limits": {
+              "nonspace_chars": 27000,
+              "utf8_bytes": 72000
+            },
+            "maximum": {
+              "nonspace_chars": 71103,
+              "utf8_bytes": 195622
+            },
+            "maximum_limits": {
+              "nonspace_chars": 76000,
+              "utf8_bytes": 206000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "content_rewrite",
+            "call": "independent_reviewer",
+            "base": {
+              "nonspace_chars": 20541,
+              "utf8_bytes": 55952
+            },
+            "base_limits": {
+              "nonspace_chars": 23000,
+              "utf8_bytes": 61000
+            },
+            "maximum": {
+              "nonspace_chars": 44116,
+              "utf8_bytes": 123994
+            },
+            "maximum_limits": {
+              "nonspace_chars": 45000,
+              "utf8_bytes": 124000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "targeted_punctuation",
+            "call": "copyeditor",
+            "base": {
+              "nonspace_chars": 14310,
+              "utf8_bytes": 37544
+            },
+            "base_limits": {
+              "nonspace_chars": 17000,
+              "utf8_bytes": 43000
+            },
+            "maximum": {
+              "nonspace_chars": 14310,
+              "utf8_bytes": 37544
+            },
+            "maximum_limits": {
+              "nonspace_chars": 17000,
+              "utf8_bytes": 43000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "draft_fragment",
+            "call": "writer",
+            "base": {
+              "nonspace_chars": 24066,
+              "utf8_bytes": 66611
+            },
+            "base_limits": {
+              "nonspace_chars": 28000,
+              "utf8_bytes": 79000
+            },
+            "maximum": {
+              "nonspace_chars": 45390,
+              "utf8_bytes": 128335
+            },
+            "maximum_limits": {
+              "nonspace_chars": 47000,
+              "utf8_bytes": 134000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "long_chapter_handoff",
+            "call": "writer",
+            "base": {
+              "nonspace_chars": 41557,
+              "utf8_bytes": 112864
+            },
+            "base_limits": {
+              "nonspace_chars": 48000,
+              "utf8_bytes": 130000
+            },
+            "maximum": {
+              "nonspace_chars": 73424,
+              "utf8_bytes": 199887
+            },
+            "maximum_limits": {
+              "nonspace_chars": 76000,
+              "utf8_bytes": 208000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "short_platform_design",
+            "call": "planner",
+            "base": {
+              "nonspace_chars": 13252,
+              "utf8_bytes": 33430
+            },
+            "base_limits": {
+              "nonspace_chars": 15000,
+              "utf8_bytes": 38000
+            },
+            "maximum": {
+              "nonspace_chars": 27888,
+              "utf8_bytes": 75320
+            },
+            "maximum_limits": {
+              "nonspace_chars": 31000,
+              "utf8_bytes": 83000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "rank_research",
+            "call": "researcher",
+            "base": {
+              "nonspace_chars": 9090,
+              "utf8_bytes": 23049
+            },
+            "base_limits": {
+              "nonspace_chars": 11000,
+              "utf8_bytes": 26000
+            },
+            "maximum": {
+              "nonspace_chars": 11400,
+              "utf8_bytes": 28477
+            },
+            "maximum_limits": {
+              "nonspace_chars": 13000,
+              "utf8_bytes": 32000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "rank_research",
+            "call": "analyst",
+            "base": {
+              "nonspace_chars": 11139,
+              "utf8_bytes": 28728
+            },
+            "base_limits": {
+              "nonspace_chars": 13000,
+              "utf8_bytes": 33000
+            },
+            "maximum": {
+              "nonspace_chars": 11139,
+              "utf8_bytes": 28728
+            },
+            "maximum_limits": {
+              "nonspace_chars": 13000,
+              "utf8_bytes": 33000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "rank_research",
+            "call": "planner",
+            "base": {
+              "nonspace_chars": 14171,
+              "utf8_bytes": 35244
+            },
+            "base_limits": {
+              "nonspace_chars": 17000,
+              "utf8_bytes": 41000
+            },
+            "maximum": {
+              "nonspace_chars": 14171,
+              "utf8_bytes": 35244
+            },
+            "maximum_limits": {
+              "nonspace_chars": 17000,
+              "utf8_bytes": 41000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "reader_feedback",
+            "call": "researcher",
+            "base": {
+              "nonspace_chars": 4994,
+              "utf8_bytes": 14027
+            },
+            "base_limits": {
+              "nonspace_chars": 6000,
+              "utf8_bytes": 16000
+            },
+            "maximum": {
+              "nonspace_chars": 5215,
+              "utf8_bytes": 14691
+            },
+            "maximum_limits": {
+              "nonspace_chars": 6000,
+              "utf8_bytes": 17000
+            },
+            "passed": true,
+            "failed_variants": []
+          },
+          {
+            "scenario": "adopted_book_title",
+            "call": "planner",
+            "base": {
+              "nonspace_chars": 13373,
+              "utf8_bytes": 33762
+            },
+            "base_limits": {
+              "nonspace_chars": 16000,
+              "utf8_bytes": 39000
+            },
+            "maximum": {
+              "nonspace_chars": 17060,
+              "utf8_bytes": 44400
+            },
+            "maximum_limits": {
+              "nonspace_chars": 20000,
+              "utf8_bytes": 52000
+            },
+            "passed": true,
+            "failed_variants": []
+          }
+        ]
+      },
+      "log_sha256": "007c04c38604cdb921ff6fcd61f78dae20fda6ccae4cb640c3413b261b0fb9c2"
+    }
+  ]
+}

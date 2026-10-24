@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "scope": "isolated-installed-windows-lifecycle",
+  "installation_mutex_verified": true,
+  "unsaved_service_preserved": true,
+  "blocked_upgrade_verified": true,
+  "blocked_uninstall_verified": true,
+  "authenticated_saved_stop_verified": true,
+  "rollback_restore_verified": true,
+  "inno_rollback_verified": true,
+  "installed_upgrade_verified": true,
+  "unknown_file_preserved": true,
+  "no_remaining_service": true
+}

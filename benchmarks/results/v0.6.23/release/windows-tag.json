@@ -1,0 +1,9 @@
+{
+  "tag": "windows-v0.2.2",
+  "source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+  "annotated_tag_object": "401fc8509901e07f06e5389c4bbb0784592a7a5a",
+  "ok": true,
+  "remote_annotated_and_peeled_refs_verified": true,
+  "existing_tags_moved": false,
+  "date_utc": "2026-10-24T07:41:36.910454+00:00"
+}

@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "version": "0.6.23",
+  "source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+  "skill_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "fixed_build_inputs": "../build-inputs.json",
+  "scope": "Actual registry HTTP download performed by the Packages workflow; its exported tarball is independently verified locally. This is not a second local registry HTTP download.",
+  "registry_ci_evidence": "packages-ci.json",
+  "bytes": 621827,
+  "sha256": "eaa03a84ec0278f82e7c9fcaf0ee8d710e4a4d52bd6b03fcdec8618cafe48804",
+  "sha512_integrity": "sha512-tRdGfbBr6UiBnytC+aUWp03s96ifbU8AZK+SovNi9Ab8KYS9dC/h5PQ5qIU8wyegB+or8sCX2IAwDJjFQmTkDA==",
+  "payload_files": 69,
+  "wrapper_files": 3,
+  "tar_members": 72,
+  "byte_identical_to_local_build": true,
+  "runtime": {
+    "ok": true,
+    "commands": 4,
+    "skills": [
+      "story-skill",
+      "story-skill-analyze",
+      "story-skill-cover",
+      "story-skill-plan",
+      "story-skill-publish",
+      "story-skill-research",
+      "story-skill-review",
+      "story-skill-write"
+    ],
+    "skill_files": 69,
+    "temporary_book_removed": true
+  }
+}

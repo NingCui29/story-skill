@@ -4,11 +4,11 @@
 
 `写作工作台.app` 将本地书架和作品编辑页面放进独立的 macOS 窗口。它沿用现有工作台服务和保存规则，应用包内携带 Python 运行时与工作台程序。
 
-本轮准备 **0.1.26 / build 27**，内嵌 Story Skill **0.6.23**；恢复分页、桥接会话恢复及研究兼容修复见 [v0.6.23 准备记录](../../docs/releases/v0.6.23.md)。本轮新构建、原生场景和正式分发尚未完成验收，下方保持现有正式下载。
+当前正式版本为 **0.1.26 / build 27**，内嵌 Story Skill **0.6.23** 和20个运行时文件；恢复分页、桥接会话恢复及研究兼容修复见 [v0.6.23 发布记录](../../docs/releases/v0.6.23.md)。完整创作与研究流程通过所用助手中的 Story Skill 进行，工作台界面用于书稿与候选管理。
 
-当前正式版本为 **0.1.25 / build 26**，内含 Story Skill **0.6.22** 和20个运行时文件。新增结构化扫榜、代表作抽样和研究交接命令，完整研究流程通过所用助手中的 Story Skill 进行；工作台界面继续用于书稿与候选管理。新构建、签名、原生场景及分发范围按实际结果记录，见 [v0.6.22 发布记录](../../docs/releases/v0.6.22.md)。
+本次新构建已通过签名、CLI／安全探针、原生合成场景及完整ZIP／DMG核对；公开分发范围按本轮实际回执记录。
 
-本版下载 [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
+本版下载 [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-workbench-0.1.26-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-workbench-0.1.26-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-workbench-0.1.26-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-workbench-0.1.26-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
 
 工作台采用紧凑的天空蓝界面，支持浅色、深色及跟随系统。书架可新建、移出／撤销、重新定位、删除至系统废纸篓、备份和恢复作品；编辑页提供恢复中心、保存全部候选、两稿对照及下一章任务。原有候选与正式稿身份继续保留。操作和边界见[需求与进展](../../docs/工作台需求与进展.md)。
 
@@ -18,9 +18,9 @@
 
 客户端使用临时本地签名，未做 Apple 公证。本轮发布目标为 Intel Mac；最低 macOS 13 是构建配置，Apple Silicon 及其他 macOS 用户环境未据此获得验证。安装包与已运行服务分别更新，替换应用不会让旧服务自动加载新代码。
 
-## 0.1.25 / build 26 发行范围
+## 0.1.26 / build 27 发行范围
 
-内嵌运行时为0.6.22，共20个模块，实际构建源为 `a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e`。已核对固定源码、严格临时签名、隔离 CLI／安全探针、原生合成书架／编辑／双书切换，以及完整 ZIP 和只读挂载 DMG；应用中的1680个文件和9个链接在三种形态一致，三张合成截图已目视检查。公开附件核对的实际下载范围见[本版记录](../../docs/releases/v0.6.22.md)，本轮没有更新本机已安装应用或作者作品服务。
+内嵌运行时为0.6.23，共20个模块，实际构建源为 `2f81943e4d6b2f1092f6f06daf143aa532308989`。最终标签提交 `6a7c203d61eca70a5c4c1ad6607420ef91b985df` 仅修正九份测试，全部分发输入已逐项确认一致，原构建回执保持原样。已核对固定源码、严格临时签名、隔离 CLI／安全探针、原生合成书架／编辑／双书切换，以及完整 ZIP 和只读挂载 DMG；应用中的1680个文件和9个链接在三种形态一致，三张合成截图已目视检查。公开附件核对的实际下载范围见[本版记录](../../docs/releases/v0.6.23.md)，本轮没有更新本机已安装应用或作者作品服务。
 
 ## 0.1.24 / build 25 发行范围（2026-10-22）
 

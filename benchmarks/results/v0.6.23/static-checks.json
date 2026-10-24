@@ -1,0 +1,327 @@
+{
+  "schema": 3,
+  "ok": true,
+  "checked_at_utc": "2026-10-24T08:09:23.107921+00:00",
+  "actual_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "final_candidate_source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+  "scope": "Static snapshot of explicitly public v0.6.23 JSON/Markdown/PNG plus the root-specified distribution documents. No prior release success or failure is inherited. No private development directory contents, ignored raw logs, daily installation or real manuscripts were read or changed.",
+  "public_files_scanned": 65,
+  "distribution_documents_scanned": [
+    "README.md",
+    "INSTALL.md",
+    "docs/README.md",
+    "docs/github-release.md",
+    "docs/codex-plugin.md",
+    "desktop/macos/README.md",
+    "docs/工作台更新流程.md",
+    "docs/工作台需求与进展.md",
+    "docs/目录结构.md",
+    "docs/recovery.md",
+    "docs/evaluation.md",
+    "docs/releases/v0.6.23.md",
+    "docs/releases/windows-v0.2.2.md"
+  ],
+  "json_files_parsed": 56,
+  "snapshot_inventory_sha256": "dfd8b216a3e3d1d855ad5d67d80057460f53a40f9c870f2686039c103ecb14c5",
+  "privacy": {
+    "automated_pattern_findings": 0,
+    "reviewed_existing_documentation_path_examples": [
+      {
+        "file": "docs/目录结构.md",
+        "exact_placeholder_prefix": "/Users/作者/",
+        "expected_matches": 8,
+        "matched": 8,
+        "basis": [
+          {
+            "git_reference": "v0.6.22",
+            "file_sha256": "363e0a7070bb3c1f56d6fb934a3813fbd3c9b16facfe71c84b525dc80419a2ad",
+            "matching_placeholder_occurrences": 8
+          },
+          {
+            "git_reference": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+            "file_sha256": "33beb31967b85658032f73190cfff0362e8c8eb8378a1915d714cb9274ff97df",
+            "matching_placeholder_occurrences": 8
+          }
+        ],
+        "scope": "Existing public documentation example prefix only. Actual usernames and every other home prefix remain subject to the normal privacy rule."
+      }
+    ],
+    "private_development_paths_tracked": 0,
+    "exact_private_directories_checked": 13,
+    "private_development_content_read": false,
+    "explicit_book_title_fields_checked": 2,
+    "quoted_titles_checked": 5,
+    "unchanged_prior_v0622_public_reference_titles": 4,
+    "reviewed_synthetic_research_report_baselines": 0,
+    "exact_synthetic_research_titles_checked": 0,
+    "current_synthetic_fixture_script_sha256": null,
+    "synthetic_report_fixture_provenance": [],
+    "png_metadata_chunks": 3,
+    "numeric_resolution_colorspace_dimensions_only_exif_chunks": 3,
+    "png_text_chunks": 0,
+    "rules": [
+      "personal_home_path",
+      "mac_temporary_home_path",
+      "github_credential",
+      "api_secret",
+      "private_key",
+      "loopback_auth_route",
+      "loopback_auth_path",
+      "windows_personal_forward_slash_home",
+      "literal_bearer_credential",
+      "private_development_reference",
+      "credential_in_url_authority",
+      "signed_or_credential_url_query"
+    ],
+    "scope_limit": "Pattern scanning cannot prove every arbitrary private phrase absent. Public data origins and the recorded visual reviews were also checked."
+  },
+  "markdown_links": {
+    "local_file_links_checked": 632,
+    "missing": [],
+    "remote_urls_and_heading_anchors_checked": false
+  },
+  "source_provenance": {
+    "original_build_reports_checked": 20,
+    "all_actual_build_sources_preserved": true,
+    "all_original_report_hashes_match_equivalence_proof": true,
+    "input_counts": {
+      "conservative": 117,
+      "actual_guarded_union": 113,
+      "local_unique": 87,
+      "windows": 50,
+      "payload": 69,
+      "remote_prepared": 71,
+      "desktop_runtime": 20
+    },
+    "equivalence_report": "build-source-equivalence.json",
+    "equivalence_report_sha256": "52592cb2ecc626cbecff4df411fba77b8b67dc98354847017a22d762f8f8f50b",
+    "build_source_record_sha256": "a4d3dd870af745d4a08adfee5ea94f6768293194501a738a0649e3aa06b23a71",
+    "prior_release_results_reused_as_current_pass": false,
+    "actual_input_byte_verification": {
+      "source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+      "final_candidate_source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+      "actual_guarded_files_checked": 113,
+      "all_fixed_git_and_current_file_sha256_match": true,
+      "non_consumed_documents_excluded": true,
+      "verified_input_map_sha256": "a6b1b99a072aeed0fe3ee5a65431f5273ccd4b07521daf219f07428f081245d5"
+    },
+    "historical_archive_integrity": [],
+    "historical_build_passes_reused_as_current_pass": false,
+    "source_relationship": "explicit_test_only_changes_with_identical_distribution_inputs"
+  },
+  "visual_privacy": {
+    "mac_screenshots": 3,
+    "mac_review": "macos-visual-review.json",
+    "mac_reviewed_png_hashes_unchanged": true,
+    "windows_screenshots": 4,
+    "windows_independently_reviewed_distinct_images": 3,
+    "windows_default_png_is_exact_reviewed_light_alias": true,
+    "windows_review": "release/windows-visual-review.json",
+    "windows_review_receipt_sha256": "3b2def5bef96c01c65e98ae4edc071d39a5f460768af865055e1a3f361dcc4e9",
+    "windows_reviewed_png_hashes_unchanged": true,
+    "reviewed_png_hashes_unchanged": true,
+    "windows_native_evidence": {
+      "ok": true,
+      "review": "release/windows-visual-review.json",
+      "receipt_sha256": "3b2def5bef96c01c65e98ae4edc071d39a5f460768af865055e1a3f361dcc4e9",
+      "source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+      "png_files_checked": 4,
+      "independent_original_png_reviews": 3,
+      "default_png_byte_identical_to_reviewed_light": true,
+      "independent_windows_asset_count": 4,
+      "independent_windows_tag": "windows-v0.2.2",
+      "windows_formal_publication_verified": false,
+      "native_source_mapping_files": 50
+    },
+    "performed_visual_review_by_this_helper": false,
+    "method": "This helper does not inspect pixels. It accepts only recorded actual visual reviews after their source and every exact PNG SHA match. Full mode requires both platforms; current-public-only preflight explicitly lists unavailable Windows coverage as not_checked."
+  },
+  "pending_external_reference_count": 12,
+  "status_refresh_required": [],
+  "not_checked": [],
+  "user_installation_modified": false,
+  "source_files_modified": false,
+  "mode": "final_distribution_audit",
+  "release_ready": true,
+  "release_gate_status": {
+    "final_source_ci": "verified",
+    "annotated_tag_and_fixed_tag_installation": "verified",
+    "public_release_and_anonymous_downloads": "verified",
+    "github_packages_registry_verification": "verified"
+  },
+  "final_release_gate_verification": {
+    "ok": true,
+    "windows_independent_publication": {
+      "ok": true,
+      "tag": "windows-v0.2.2",
+      "source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+      "actual_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+      "release_id": 422544320,
+      "assets": 4,
+      "anonymous_complete_checksum_downloads": 2,
+      "anonymous_binary_head_tail_checks": 2,
+      "full_anonymous_windows_binary_download_claimed": false,
+      "native_full_verification_receipt": "release/windows-ci.json"
+    },
+    "source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+    "actual_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+    "final_source_ci_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+    "tag": "v0.6.23",
+    "annotated_tag_object": "d6232cf4892b0ab37cc4ed9af461eec88dbf5017",
+    "windows_annotated_tag_object": "401fc8509901e07f06e5389c4bbb0784592a7a5a",
+    "receipts": {
+      "source-ci.json": {
+        "file": "release/source-ci.json",
+        "sha256": "145baf7d88c9333c759e0501b51a318c022b600dc890e0f6cfa9d10f17aaebe5",
+        "ok": true
+      },
+      "ci-tag-crosscheck.json": {
+        "file": "release/ci-tag-crosscheck.json",
+        "sha256": "64b7a373783d0256309b5c7c9c6126aab1dbd8b0d9f975d423eba2837fb18f62",
+        "ok": true
+      },
+      "tag.json": {
+        "file": "release/tag.json",
+        "sha256": "2b9d9b4b3d012c1dfb47ce93ff17b55a01a35d49968d8a612fbe2c5971628836",
+        "ok": true
+      },
+      "windows-tag.json": {
+        "file": "release/windows-tag.json",
+        "sha256": "ed58019dcb8de91588b2b614f3db85c3497a0466c534bdba2005f5f1e50f9abb",
+        "ok": true
+      },
+      "remote-tag-install.json": {
+        "file": "release/remote-tag-install.json",
+        "sha256": "58b580f75e188700cfe53e32535aaeb3e906d9ebd2c74451a7ad54f7a524072a",
+        "ok": true
+      },
+      "published.json": {
+        "file": "release/published.json",
+        "sha256": "d81035d9c099755ee007dc19e78edc4aca95626bb2bac82dbd795a9a8af65095",
+        "ok": true
+      },
+      "public-downloads.json": {
+        "file": "release/public-downloads.json",
+        "sha256": "119a37f63bade04f84773e0e0e8c86e5c123d160b7438ebbb3e404f84ef5642c",
+        "ok": true
+      },
+      "packages-ci.json": {
+        "file": "release/packages-ci.json",
+        "sha256": "5ed47126ab29fa72abde85376524f5f06b1c79c67338b62d1601485e124aedf4",
+        "ok": true
+      },
+      "registry-independent-download.json": {
+        "file": "release/registry-independent-download.json",
+        "sha256": "5330343cf9c73f56c45d41ed165b20ffa3b49900373fee773f333024e4374c77",
+        "ok": true
+      },
+      "windows-published.json": {
+        "file": "release/windows-published.json",
+        "sha256": "cc60379783b5c5cb9c2b3a866cdcec28189b8d9d28f9ad2792fcdb431d379adf",
+        "ok": true
+      },
+      "windows-public-downloads.json": {
+        "file": "release/windows-public-downloads.json",
+        "sha256": "ef2d5bf756bb5fa9e787cdee7d27be6940ffa4c2a6262a966b085f9fbffbccc3",
+        "ok": true
+      }
+    },
+    "source_ci_matrices": 3,
+    "required_regressions": 413,
+    "fixed_tag_installed_files": 69,
+    "release_id": 422545506,
+    "anonymous_complete_primary_release_downloads": 10,
+    "primary_anonymous_download_verification": [
+      {
+        "file": "story-skill-claude-desktop-0.6.23.zip.sha256",
+        "method": "full_anonymous_download",
+        "complete_bytes": 104,
+        "complete_sha256": "f3b1058217a6126f4bab9c521f2ffeb3ccab547b28947be1c87e1bed2d8f6639",
+        "recorded_full_download_digest_matches": true
+      },
+      {
+        "file": "story-skill-0.6.23.zip.sha256",
+        "method": "full_anonymous_download",
+        "complete_bytes": 89,
+        "complete_sha256": "9e357c0f60ef22af1f1bb4d3f0f94cd2f7c31d3fb2c3eac833dd70ef990d6ebc",
+        "recorded_full_download_digest_matches": true
+      },
+      {
+        "file": "story-skill-codex-0.6.23.zip.sha256",
+        "method": "full_anonymous_download",
+        "complete_bytes": 95,
+        "complete_sha256": "8e343b0bb6eada02657fe631387447f9294964bc571aa9d1a1f1139b47b31ed9",
+        "recorded_full_download_digest_matches": true
+      },
+      {
+        "file": "story-skill-claude-desktop-0.6.23.zip",
+        "method": "full_anonymous_download",
+        "complete_bytes": 686072,
+        "complete_sha256": "b62a5b2fcec57805a16bddee2e3a3301088ff91f40fa84e3853e04a6c4812a7b",
+        "recorded_full_download_digest_matches": true
+      },
+      {
+        "file": "story-workbench-0.1.26-macos-x86_64.dmg.sha256",
+        "method": "full_anonymous_download",
+        "complete_bytes": 106,
+        "complete_sha256": "ff3f5bfe1c41b8be7cb0c84aac19252be973a5d673e7f96da2b3af71ac4c373e",
+        "recorded_full_download_digest_matches": true
+      },
+      {
+        "file": "story-skill-0.6.23.zip",
+        "method": "full_anonymous_download",
+        "complete_bytes": 679625,
+        "complete_sha256": "6f07736c6a031787f4764813f18f64f2e815c64dfa5f70e32095bde4494c8508",
+        "recorded_full_download_digest_matches": true
+      },
+      {
+        "file": "story-skill-codex-0.6.23.zip",
+        "method": "full_anonymous_download",
+        "complete_bytes": 688498,
+        "complete_sha256": "a7db0475be30bde132f2774cc315123679713f7e05deb861aaacd5654a610c6c",
+        "recorded_full_download_digest_matches": true
+      },
+      {
+        "file": "story-workbench-0.1.26-macos-x86_64.zip.sha256",
+        "method": "full_anonymous_download",
+        "complete_bytes": 106,
+        "complete_sha256": "83d5518f9549e9cb373d684581ef75f81a9116eddfea0cc9a516e20a5d873854",
+        "recorded_full_download_digest_matches": true
+      },
+      {
+        "file": "story-workbench-0.1.26-macos-x86_64.dmg",
+        "method": "full_anonymous_download_parallel_ranges",
+        "complete_bytes": 38028296,
+        "complete_sha256": "02dc20318f5cac1c926066588a9942aa0952c0d740fd41ebc7daacdcc3b288aa",
+        "anonymous_range_files_independently_rehashed": 37,
+        "coverage_start": 0,
+        "coverage_end": 38028295,
+        "contiguous_complete_coverage_without_gaps_or_overlap": true,
+        "every_http_range_status": 206,
+        "streamed_complete_digest_matches_server_and_local_expected": true,
+        "chunk_metadata_sha256": "8cf756471d0ec7d5edcd7f3bb5b1afa7b8dfac41d1ac54570ce2366f2e88072a"
+      },
+      {
+        "file": "story-workbench-0.1.26-macos-x86_64.zip",
+        "method": "full_anonymous_download_parallel_ranges",
+        "complete_bytes": 26842205,
+        "complete_sha256": "7ccdbcdf9bc3a1f575770e9bcebe42e270cbcc5dd00aa9fb42b172434d593d4a",
+        "anonymous_range_files_independently_rehashed": 26,
+        "coverage_start": 0,
+        "coverage_end": 26842204,
+        "contiguous_complete_coverage_without_gaps_or_overlap": true,
+        "every_http_range_status": 206,
+        "streamed_complete_digest_matches_server_and_local_expected": true,
+        "chunk_metadata_sha256": "69e59bbb22abd7bd961a36a619ad51089f5988132f589063ea0f5870d7dd38ea"
+      }
+    ],
+    "independently_rehashed_complete_range_downloads": 2,
+    "mac_binaries_fully_downloaded_anonymously": true,
+    "packages_automatic_run": 40075465932,
+    "registry_export_and_local_independent_sha256": "eaa03a84ec0278f82e7c9fcaf0ee8d710e4a4d52bd6b03fcdec8618cafe48804",
+    "second_local_registry_http_download_claimed": false,
+    "main_release_assets": 10,
+    "independent_windows_release_assets": 4,
+    "scope": "Actual final-source CI, both annotated tags and post-tag API crosscheck, fixed-tag installation, separate channel publications/downloads and registry evidence are bound to their source and hashes. All ten primary release assets were anonymously downloaded in full; full-range Mac transports are independently re-read from every stored response chunk and rehashed as one complete file. Windows checksums were fully downloaded; its two binaries have anonymous head/tail Range evidence bound to full native verification and server digests. The workflow registry HTTP export was independently checked locally; no second local registry HTTP download is claimed."
+  }
+}

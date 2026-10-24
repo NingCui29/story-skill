@@ -1,0 +1,399 @@
+{
+  "schema": 1,
+  "ok": true,
+  "source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+  "actual_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "production_changed": false,
+  "final_diff_is_exactly_nine_test_files": true,
+  "final_frozen_tests": [
+    {
+      "path": "tests/test_platform_browser.py",
+      "sha256": "a1f5ee148abbe6bb6e852a7b7b4569ff8f066544ae790f79afcddf615a7a3c26",
+      "test_methods": [
+        "test_three_templates_are_explicitly_unconfigured",
+        "test_editor_dom_markers_reject_non_dom_sources_before_browser_entry",
+        "test_editor_dom_markers_preserve_implicit_null_and_explicit_dom_sources",
+        "test_strict_https_origin_and_routes",
+        "test_url_fields_capture_only_explicit_templates_and_stable_id_formats",
+        "test_guard_page_is_persistent_and_refreshed_at_sensitive_boundaries",
+        "test_login_guard_polling_never_reopens_or_reload_the_login_page",
+        "test_completed_login_home_is_returned_to_the_fixed_work_route",
+        "test_guard_login_page_is_retained_until_an_observed_home_arrival",
+        "test_manual_login_uses_commit_without_reloading_a_pending_dom",
+        "test_committed_official_login_timeout_waits_without_repeating_navigation",
+        "test_manual_login_deadline_includes_initial_navigation",
+        "test_guard_is_not_opened_until_login_reaches_an_observed_return_route",
+        "test_merged_chapter_fields_are_strict_and_unnumbered_only_when_explicit",
+        "test_all_rows_mode_requires_positive_evidence_and_stable_scroll_endpoints",
+        "test_missing_empty_evidence_refuses_zero_rows_even_when_all_rows_declared",
+        "test_sections_exhaust_all_volumes_and_refuse_dynamic_or_duplicate_entries",
+        "test_scope_constants_need_draft_scope_and_matching_count",
+        "test_editor_draft_evidence_comes_from_complete_lists_not_save_buttons",
+        "test_new_empty_cloud_draft_is_listed_before_fill_and_full_read_reconfirms_state",
+        "test_unnamed_old_rows_cannot_be_assumed_to_have_no_chapter",
+        "test_created_blank_exception_is_bound_to_its_exact_remote_id",
+        "test_other_unnamed_row_after_creation_leaves_durable_unknown_and_prevents_recreation",
+        "test_url_book_identity_rejects_a_row_link_to_another_work",
+        "test_editor_ready_and_exact_blank_checks_prevent_placeholder_or_whitespace_overwrite",
+        "test_login_origins_are_optional_exact_https_roots",
+        "test_login_allowlist_does_not_extend_draft_urls",
+        "test_dynamic_urls_are_limited_to_one_remote_id",
+        "test_css_child_combinators_are_valid_configured_selectors",
+        "test_required_identity_state_and_pagination_fail_early",
+        "test_only_draft_box_does_not_prove_no_published_chapter",
+        "test_forbidden_save_buttons_rejected_before_browser_open",
+        "test_editor_cannot_read_stale_html_value_attributes",
+        "test_dependency_missing_is_optional_and_explicit",
+        "test_runtime_status_is_read_only_and_does_not_claim_browser_availability",
+        "test_chrome_channel_opens_a_fresh_visible_context",
+        "test_unavailable_chrome_is_explicit_and_does_not_fall_back",
+        "test_login_allowlist_only_applies_during_manual_verification",
+        "test_login_timeout_or_wrong_return_identity_never_starts_writes",
+        "test_remaining_login_pages_close_and_identity_rechecks_after_lock",
+        "test_login_origin_navigation_has_a_finite_deadline",
+        "test_login_origin_does_not_allow_neighbor_domains_or_later_account_switch",
+        "test_progress_events_have_no_sensitive_values_and_callback_errors_are_isolated",
+        "test_target_mismatch_and_manual_login_do_not_fill_anything",
+        "test_full_pagination_reopens_actual_draft_and_preserves_text",
+        "test_target_non_draft_in_later_page_blocks",
+        "test_split_drafts_and_non_drafts_are_both_exhausted",
+        "test_scope_marker_or_filter_mismatch_blocks",
+        "test_missing_empty_or_pagination_proof_blocks",
+        "test_initial_empty_placeholder_is_not_a_loaded_empty_list",
+        "test_stuck_or_repeated_pagination_blocks",
+        "test_unknown_or_changed_editor_state_is_not_reported_as_draft",
+        "test_same_target_reverification_preserves_observed_chapter_binding",
+        "test_creating_requires_prior_target_verification",
+        "test_create_does_not_overwrite_existing_manuscript",
+        "test_create_action_profile_rejects_unsafe_labels_and_unknown_window_modes",
+        "test_create_action_is_never_clicked_by_verification_or_listing",
+        "test_popup_and_same_page_actions_fill_the_created_editor_and_reopen_it",
+        "test_create_action_rechecks_label_and_identity_before_clicking",
+        "test_lost_popup_after_empty_draft_allocation_does_not_retry_or_fill",
+        "test_created_popup_cannot_change_origin_or_account_before_filling",
+        "test_an_initial_saved_badge_cannot_hide_changed_or_missing_cloud_content",
+        "test_save_button_rechecks_actual_label_and_accessible_name",
+        "test_changes_during_filling_prevent_explicit_save",
+        "test_button_save_reopens_fresh_page_and_reads_complete_values",
+        "test_contenteditable_and_autosave_need_no_save_click",
+        "test_no_saved_evidence_does_not_claim_success",
+        "test_spa_identity_and_editor_fields_are_waited_for",
+        "test_attached_identity_skeleton_waits_for_actual_attribute",
+        "test_remote_ids_cannot_be_titles_urls_or_credentials",
+        "test_cross_origin_navigation_is_blocked_and_latched",
+        "test_errors_do_not_expose_playwright_text_or_full_manuscript"
+      ],
+      "method_count": 72
+    },
+    {
+      "path": "tests/test_platform_browser_batch.py",
+      "sha256": "a9a35f9e717f6c010ed90dbf11dc8cdbf98f72413f43dab2cd47997a2f61bd2c",
+      "test_methods": [
+        "test_cli_first_save_accepts_bound_policy_and_continues_batch",
+        "test_workbench_first_save_accepts_bound_policy_and_continues_batch",
+        "test_strict_rejects_terminal_lf_and_never_blindly_repeats",
+        "test_preview_load_delay_completes_the_batch_without_another_save",
+        "test_preview_load_timeout_leaves_unknown_and_cannot_blindly_repeat",
+        "test_terminal_policy_rejects_internal_whitespace_and_never_blindly_repeats",
+        "test_terminal_policy_rejects_title_change_and_never_blindly_repeats",
+        "test_missing_preview_blocks_cli_and_workbench_before_any_browser_entry"
+      ],
+      "method_count": 8
+    },
+    {
+      "path": "tests/test_platform_browser_link_base.py",
+      "sha256": "b611052a991c6df507df1ed8c36f2e31e000d1e3078b143d4c1a61c37b71c033",
+      "test_methods": [
+        "test_fixture_ascii_control_link_resolution_matches_actual_whatwg_url",
+        "test_relative_link_base_change_stops_before_actual_click",
+        "test_unchanged_effective_destination_keeps_normal_creation_usable",
+        "test_same_draft_url_alias_keeps_self_links_but_rejects_base_override"
+      ],
+      "method_count": 4
+    },
+    {
+      "path": "tests/test_platform_browser_preview.py",
+      "sha256": "a413a83fbd20a4dbd2b54defbf417d193e59d4c634d7a517380d3c7802024b29",
+      "test_methods": [
+        "test_profile_requires_exact_preview_route_for_both_ids",
+        "test_fanqie_missing_preview_is_rejected_before_browser_entry",
+        "test_saved_preview_uses_explicit_terminal_lf_policy_only",
+        "test_terminal_lf_policy_does_not_relax_editor_input_verification",
+        "test_comparison_policy_rejects_unknown_and_non_fanqie_values",
+        "test_find_and_read_never_open_an_editor_with_readback_configured",
+        "test_header_url_and_body_changes_are_fail_closed",
+        "test_catalog_still_confirms_draft_before_and_after_preview",
+        "test_empty_preview_container_waits_for_complete_body_before_stable_recheck",
+        "test_permanent_empty_preview_container_times_out_with_no_second_create",
+        "test_loaded_body_cannot_reset_or_exceed_the_original_readiness_deadline",
+        "test_pending_preview_rechecks_identity_and_title_before_accepting_loaded_body",
+        "test_pending_only_applies_before_first_complete_body_and_unknown_dom_fails_immediately",
+        "test_create_closes_owned_editor_before_preview_and_keeps_exact_body",
+        "test_final_preview_rechecks_identity_after_last_body_read_without_waiting",
+        "test_final_preview_checks_url_again_after_current_account_dom_read",
+        "test_final_preview_body_is_current_after_account_check_without_waiting",
+        "test_final_preview_current_account_also_supports_page_dom_identity",
+        "test_final_preview_current_dom_failure_is_not_retried",
+        "test_failed_final_preview_of_saved_draft_recovers_by_readback_without_new_write",
+        "test_final_current_value_runs_atomic_dom_reader_without_locator_waits",
+        "test_preserves_every_empty_paragraph_except_one_exact_final_sentinel",
+        "test_unknown_attributes_nodes_breaks_and_missing_sentinel_are_rejected",
+        "test_only_zero_child_nodes_are_a_loading_state_when_explicitly_requested"
+      ],
+      "method_count": 24
+    },
+    {
+      "path": "tests/test_rank_source_markup.py",
+      "sha256": "3f3538f8af38f16524abbed96049ad135cd426bd86d746e41913b9b732b48108",
+      "test_methods": [
+        "test_inline_formatting_preserves_titles_authors_and_categories",
+        "test_inline_formatting_preserves_page_controls_and_card_status",
+        "test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it",
+        "test_explicit_line_and_block_boundaries_do_not_merge_words",
+        "test_collected_inline_title_remains_selectable_in_research_handoff"
+      ],
+      "method_count": 5
+    },
+    {
+      "path": "tests/test_rank_source_template_scope.py",
+      "sha256": "5005111de960430f0c1bd1a7ff0a1cf94440b47674bcc319459b4b61fcbff21f",
+      "test_methods": [
+        "test_self_closed_inert_html_is_rejected_before_accepting_its_contents",
+        "test_foreign_self_closing_decoration_and_void_html_remain_accepted",
+        "test_html_integration_and_breakout_do_not_bypass_inert_self_closing_check",
+        "test_foreign_breakout_keeps_later_inert_siblings_in_html_namespace",
+        "test_template_end_tags_cannot_escape_into_outer_page",
+        "test_template_controls_cannot_escape_their_scope",
+        "test_template_boundaries_preserve_visible_inline_text",
+        "test_nested_templates_close_their_own_children_and_resume_visible_siblings",
+        "test_only_visible_template_sibling_reaches_research_without_changing_raw_source"
+      ],
+      "method_count": 9
+    },
+    {
+      "path": "tests/test_rank_source_visibility.py",
+      "sha256": "ab0169d9917395d329886c1d6a3116ee0e6dba49f76a445f21cd8ab978d311d3",
+      "test_methods": [
+        "test_template_and_hidden_cards_do_not_become_ranked_books",
+        "test_inert_only_cards_are_not_an_empty_success",
+        "test_inert_sort_or_page_controls_cannot_supply_page_evidence",
+        "test_inert_duplicates_do_not_mask_visible_controls_or_card_fields",
+        "test_inert_text_preserves_inline_boundaries_and_visible_contradictions",
+        "test_aria_hidden_is_not_a_visual_visibility_signal",
+        "test_collection_preserves_raw_html_and_only_visible_books_reach_research"
+      ],
+      "method_count": 7
+    },
+    {
+      "path": "tests/test_workbench_platform_drafts.py",
+      "sha256": "eab32248c33a7625e0671ddb30a01bec9a395d5d4f7de964325a9cac6b20f7ac",
+      "test_methods": [
+        "test_catalog_paginates_frozen_plans_without_body_or_selectors",
+        "test_preview_checks_local_sources_without_browser_or_journal",
+        "test_preview_without_profile_lists_required_configuration",
+        "test_missing_browser_dependency_prevents_start_authorization",
+        "test_runtime_eligibility_uses_selected_browser_without_assuming_chromium_missing",
+        "test_reconcile_mode_is_bound_to_preview_authorization",
+        "test_unknown_cancelled_plan_can_reconcile_without_new_creation",
+        "test_start_returns_while_login_waits_and_duplicate_click_reuses_job",
+        "test_workbench_default_login_wait_reaches_adapter_without_changing_general_default",
+        "test_one_click_saves_whole_frozen_batch_and_reconnect_lists_job",
+        "test_status_poll_and_catalog_never_refresh_or_send",
+        "test_catalog_tolerates_unpublished_stage_renamed_during_local_read",
+        "test_configuration_change_invalidates_preview_before_browser_entry",
+        "test_wrong_book_wrong_platform_and_unapproved_execution_are_blocked",
+        "test_expired_preview_and_worker_side_profile_change_stop_without_browser",
+        "test_unsafe_profile_paths_links_and_oversized_files_are_rejected",
+        "test_lost_result_stays_unknown_after_registry_loss_and_no_blind_replay",
+        "test_different_plan_for_busy_target_cannot_start_another_browser"
+      ],
+      "method_count": 18
+    },
+    {
+      "path": "tests/test_workbench_recovery_pagination.py",
+      "sha256": "8a66ba8e0dc801384f5c464cae01923065ea007fbdc92c5f1678e89fae6f1a9e",
+      "test_methods": [
+        "test_real_recovery_after_5001_unrelated_materials_remains_reachable",
+        "test_over_100_recoveries_across_scan_batches_with_reverse_mtimes",
+        "test_pending_metadata_and_private_link_boundaries_are_preserved",
+        "test_expiration_refresh_book_identity_and_mode_binding",
+        "test_invalid_offsets_and_directory_change_require_refresh",
+        "test_scan_failure_and_hard_limit_never_claim_complete",
+        "test_partial_empty_more_error_refresh_and_reopen",
+        "test_completed_warnings_hard_limit_and_late_response_are_not_empty",
+        "test_editor_entry_uses_shared_recovery_api_and_does_not_touch_buffers",
+        "test_shelf_selects_one_book_before_scanning_and_keeps_error_visible",
+        "test_shelf_book_selection_never_starts_thirty_scans_and_forwards_page"
+      ],
+      "method_count": 11
+    }
+  ],
+  "targeted_groups": [
+    {
+      "label": "four browser fixture modules",
+      "original_test_source_commit": "8216d32e7f973fbd2949f90f725186cf285bdeb1",
+      "raw_log_sha256": "63666bc42f9f4f6f06a27ad2609b302fe34178b871adce56658155d318fa7d65",
+      "tests_run": 108,
+      "duration_seconds": 6.955,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "label": "three rank fixture modules",
+      "raw_log_sha256": "62187b8254cf7632176e41b484d814f7e8cefcd40a7e5ecc16c7fa8f09551e8e",
+      "tests_run": 21,
+      "duration_seconds": 0.092,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "label": "recovery pagination module",
+      "raw_log_sha256": "d516f24d7331abe8e87a0badab2964faf5929ea3e32cc30a4ef6cb43f8f727dc",
+      "tests_run": 11,
+      "duration_seconds": 6.835,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "label": "busy-target workbench module",
+      "raw_log_sha256": "5556b5838b21dda08e0ba5abafe5ea4baa94d1d9832dfde7cef51c2d6268ce70",
+      "tests_run": 18,
+      "duration_seconds": 2.612,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "distinct_targeted_test_methods": 158,
+  "first_round_targeted": 108,
+  "second_round_targeted": 50,
+  "timing_and_url_proof": {
+    "schema": 1,
+    "kind": "test-fixture-only-proof",
+    "production_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+    "fixed_test_commit": "8216d32e7f973fbd2949f90f725186cf285bdeb1",
+    "cp31011_parser_url": "https://raw.githubusercontent.com/python/cpython/v3.10.11/Lib/urllib/parse.py",
+    "cp31011_parser_sha256": "1f840c8962b0cef795c67759bd80fe988bfb360e8841da66cb0929048514edad",
+    "parser_comparison": [
+      {
+        "href_repr": "' \\t'",
+        "cpython_31011": "https://example.com/fixture/100/modify/ ",
+        "current_fixture": "https://example.com/fixture/100/modify/new-1?from=edit"
+      },
+      {
+        "href_repr": "'\\x01#save\\x01'",
+        "cpython_31011": "https://example.com/fixture/100/modify/\u0001#save\u0001",
+        "current_fixture": "https://example.com/fixture/100/modify/new-1?from=edit#save"
+      }
+    ],
+    "results": [
+      {
+        "label": "fixed-under-31011-parser-and-quantized-clock",
+        "tests_run": 32,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "ok": true,
+        "raw_sha256": "dad9eaccb8a46413c9721d8af65132825234fbd9f0d8d129dbbdb1d5e0f5da7f"
+      },
+      {
+        "label": "deadline-guard-removed",
+        "tests_run": 1,
+        "failures": 1,
+        "errors": 0,
+        "skips": 0,
+        "ok": false,
+        "raw_sha256": "aacd92b961e791c3b4f4d61a106275581950ad423b49947fdce631a37725bfa5"
+      }
+    ],
+    "deadline_mutation_detected": true,
+    "ok": true,
+    "scope": "Fixture-only tests use the frozen official CPython 3.10.11 urllib parser with a 15.625ms-quantized clock; runtime guard and timeouts are unchanged. Mutation exists only in this isolated Python process."
+  },
+  "rank_fixture_source_contract": {
+    "explicit_utf8_source_bytes": true,
+    "lf_crlf_raw_equality_and_visible_only_research_handoff": true,
+    "final_source_hashes": [
+      {
+        "path": "tests/test_rank_source_markup.py",
+        "sha256": "3f3538f8af38f16524abbed96049ad135cd426bd86d746e41913b9b732b48108",
+        "test_methods": [
+          "test_inline_formatting_preserves_titles_authors_and_categories",
+          "test_inline_formatting_preserves_page_controls_and_card_status",
+          "test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it",
+          "test_explicit_line_and_block_boundaries_do_not_merge_words",
+          "test_collected_inline_title_remains_selectable_in_research_handoff"
+        ],
+        "method_count": 5
+      },
+      {
+        "path": "tests/test_rank_source_template_scope.py",
+        "sha256": "5005111de960430f0c1bd1a7ff0a1cf94440b47674bcc319459b4b61fcbff21f",
+        "test_methods": [
+          "test_self_closed_inert_html_is_rejected_before_accepting_its_contents",
+          "test_foreign_self_closing_decoration_and_void_html_remain_accepted",
+          "test_html_integration_and_breakout_do_not_bypass_inert_self_closing_check",
+          "test_foreign_breakout_keeps_later_inert_siblings_in_html_namespace",
+          "test_template_end_tags_cannot_escape_into_outer_page",
+          "test_template_controls_cannot_escape_their_scope",
+          "test_template_boundaries_preserve_visible_inline_text",
+          "test_nested_templates_close_their_own_children_and_resume_visible_siblings",
+          "test_only_visible_template_sibling_reaches_research_without_changing_raw_source"
+        ],
+        "method_count": 9
+      },
+      {
+        "path": "tests/test_rank_source_visibility.py",
+        "sha256": "ab0169d9917395d329886c1d6a3116ee0e6dba49f76a445f21cd8ab978d311d3",
+        "test_methods": [
+          "test_template_and_hidden_cards_do_not_become_ranked_books",
+          "test_inert_only_cards_are_not_an_empty_success",
+          "test_inert_sort_or_page_controls_cannot_supply_page_evidence",
+          "test_inert_duplicates_do_not_mask_visible_controls_or_card_fields",
+          "test_inert_text_preserves_inline_boundaries_and_visible_contradictions",
+          "test_aria_hidden_is_not_a_visual_visibility_signal",
+          "test_collection_preserves_raw_html_and_only_visible_books_reach_research"
+        ],
+        "method_count": 7
+      }
+    ]
+  },
+  "recovery_fixture_proof": "recovery-fixture-fix.json",
+  "busy_fixture_old_race_reproduction": {
+    "scenario": "Original test, worker held after __enter__ until chapter 2 DB commit reaches pending-export boundary; no production changes",
+    "outcome": "failure reproduced",
+    "assertion": "StoryError not raised",
+    "jobs_before_cleanup": [
+      {
+        "id": "7d1734ad5c904bdd8bee9dc1c4217f2a",
+        "done": true,
+        "state": "failed",
+        "error": "platform_draft_source_changed",
+        "result_reasons": [
+          null
+        ]
+      }
+    ],
+    "browser_enter_count": 1,
+    "verify_target_count": 0,
+    "elapsed_seconds": 0.187
+  },
+  "prior_source_workflows": [
+    {
+      "report": "source-ci-attempt-2f81943.json",
+      "ok": false,
+      "scope": "Windows failures in preflight; no Windows full discovery run."
+    },
+    {
+      "report": "source-ci-attempt-8216d32.json",
+      "ok": false,
+      "scope": "Full Windows source workflow failed; Linux passed. First attempt is never reclassified as success."
+    }
+  ],
+  "final_source_ci": "source-ci.json",
+  "final_source_ci_status": "separately_collected",
+  "scope": "Targeted checks executed on the exact final test bytes (first-round browser bytes are unchanged in the final Git tree). These checks are not a substitute for final three-platform full CI. Production and every released binary input remain the original build source; native Windows evidence is recorded separately."
+}

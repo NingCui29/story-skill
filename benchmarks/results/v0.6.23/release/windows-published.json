@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "release_id": 422544320,
+  "tag": "windows-v0.2.2",
+  "source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+  "actual_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "published_at": "2026-10-24T07:46:31Z",
+  "url": "https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.2",
+  "assets": 4,
+  "source_ci_run": 40072675192,
+  "scope": "Published after complete candidate source CI, native desktop and package checks, build input equivalence, annotated tags and actual fixed-tag installation."
+}

@@ -1,0 +1,124 @@
+{
+  "ok": true,
+  "source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+  "actual_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "scope": "Both existing drafts retargeted after test-only input equivalence; all fourteen server asset IDs, sizes and SHA256 digests retained. Publication is separate.",
+  "releases": [
+    {
+      "tag": "v0.6.23",
+      "release_id": 422545506,
+      "draft": true,
+      "target_commitish": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+      "raw_snapshot_sha256": "68920015d10412585d5734566aa7565cca201ea3b23917349ffd072959477aad",
+      "assets": [
+        {
+          "name": "story-skill-0.6.23.zip",
+          "id": 671426593,
+          "size": 679625,
+          "digest": "sha256:6f07736c6a031787f4764813f18f64f2e815c64dfa5f70e32095bde4494c8508",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-skill-0.6.23.zip.sha256",
+          "id": 671427279,
+          "size": 89,
+          "digest": "sha256:9e357c0f60ef22af1f1bb4d3f0f94cd2f7c31d3fb2c3eac833dd70ef990d6ebc",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-skill-claude-desktop-0.6.23.zip",
+          "id": 671428690,
+          "size": 686072,
+          "digest": "sha256:b62a5b2fcec57805a16bddee2e3a3301088ff91f40fa84e3853e04a6c4812a7b",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-skill-claude-desktop-0.6.23.zip.sha256",
+          "id": 671429489,
+          "size": 104,
+          "digest": "sha256:f3b1058217a6126f4bab9c521f2ffeb3ccab547b28947be1c87e1bed2d8f6639",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-skill-codex-0.6.23.zip",
+          "id": 671430022,
+          "size": 688498,
+          "digest": "sha256:a7db0475be30bde132f2774cc315123679713f7e05deb861aaacd5654a610c6c",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-skill-codex-0.6.23.zip.sha256",
+          "id": 671430804,
+          "size": 95,
+          "digest": "sha256:8e343b0bb6eada02657fe631387447f9294964bc571aa9d1a1f1139b47b31ed9",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-workbench-0.1.26-macos-x86_64.dmg",
+          "id": 671433121,
+          "size": 38028296,
+          "digest": "sha256:02dc20318f5cac1c926066588a9942aa0952c0d740fd41ebc7daacdcc3b288aa",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-workbench-0.1.26-macos-x86_64.dmg.sha256",
+          "id": 671436930,
+          "size": 106,
+          "digest": "sha256:ff3f5bfe1c41b8be7cb0c84aac19252be973a5d673e7f96da2b3af71ac4c373e",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-workbench-0.1.26-macos-x86_64.zip",
+          "id": 671431346,
+          "size": 26842205,
+          "digest": "sha256:7ccdbcdf9bc3a1f575770e9bcebe42e270cbcc5dd00aa9fb42b172434d593d4a",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-workbench-0.1.26-macos-x86_64.zip.sha256",
+          "id": 671432762,
+          "size": 106,
+          "digest": "sha256:83d5518f9549e9cb373d684581ef75f81a9116eddfea0cc9a516e20a5d873854",
+          "state": "uploaded"
+        }
+      ]
+    },
+    {
+      "tag": "windows-v0.2.2",
+      "release_id": 422544320,
+      "draft": true,
+      "target_commitish": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+      "raw_snapshot_sha256": "5090ecae9af3a21c299280245e23e0be98901482621341bf8b1cd22933c4b405",
+      "assets": [
+        {
+          "name": "story-workbench-0.2.2-windows-x86_64-setup.exe",
+          "id": 671422557,
+          "size": 299297827,
+          "digest": "sha256:a1660d77af7748a6997f60b5ed30fc0b376e19506d5eb23c10e9755fd803d89d",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-workbench-0.2.2-windows-x86_64-setup.exe.sha256",
+          "id": 671422888,
+          "size": 114,
+          "digest": "sha256:b958ec64d83229ae042e4c063950477a65209e0edd9920e285745d9327310f86",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-workbench-0.2.2-windows-x86_64.zip",
+          "id": 671422976,
+          "size": 320739469,
+          "digest": "sha256:b34e67518528083bb08ff29f2252349824468bb91f9aa58f01cbf28fbd401a1c",
+          "state": "uploaded"
+        },
+        {
+          "name": "story-workbench-0.2.2-windows-x86_64.zip.sha256",
+          "id": 671423259,
+          "size": 108,
+          "digest": "sha256:c8082c1116a6a9b225371bb3f20c2f3b8991d0e34c7e65f2332bed18a9c1891e",
+          "state": "uploaded"
+        }
+      ]
+    }
+  ]
+}

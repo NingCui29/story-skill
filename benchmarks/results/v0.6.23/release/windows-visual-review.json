@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "run_id": 40067852242,
+  "time_utc": "2026-10-24T06:00:03.545555+00:00",
+  "method": "Model visually inspected the three original native Windows runner PNGs",
+  "images": [
+    {
+      "path": "benchmarks/results/v0.6.23/release/windows/windows-native-smoke-light.png",
+      "sha256": "d07af90f6625ef14b2fa9c87a584efdde3e65035c793a0ac0605cc4086f1420f",
+      "width": 1028,
+      "height": 637,
+      "reviewed": true
+    },
+    {
+      "path": "benchmarks/results/v0.6.23/release/windows/windows-native-smoke-dark.png",
+      "sha256": "db4cab1e57b3812a7c57e031efcd7e1b5c4730ed01c5f6b01038fe76e0928d55",
+      "width": 1028,
+      "height": 637,
+      "reviewed": true
+    },
+    {
+      "path": "benchmarks/results/v0.6.23/release/windows/windows-native-smoke-update-progress.png",
+      "sha256": "4fec7ff8a5b601846a67d92b452fb83a0fa4828e1e373278d10c2d4a8e8682c2",
+      "width": 634,
+      "height": 210,
+      "reviewed": true
+    }
+  ],
+  "findings": [
+    "Light and dark empty bookshelf controls and Chinese text are legible, contained and consistently themed.",
+    "The update window identifies client 0.2.2, displays a visible progress track, 6.0 MiB of 10.0 MiB, 1.0 MiB/s and a four-second estimate.",
+    "The update window visibly labels its progress as synthetic; no real update transfer is claimed."
+  ],
+  "scope": "Synthetic isolated empty bookshelf and progress UI only; no author book content or author-platform state."
+}

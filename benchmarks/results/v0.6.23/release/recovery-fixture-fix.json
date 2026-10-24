@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "ok": true,
+  "base_test_source_commit": "8216d32e7f973fbd2949f90f725186cf285bdeb1",
+  "production_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "production_changed": false,
+  "test_path": "tests/test_workbench_recovery_pagination.py",
+  "working_test_sha256": "8a66ba8e0dc801384f5c464cae01923065ea007fbdc92c5f1678e89fae6f1a9e",
+  "full_module": {
+    "tests_run": 11,
+    "duration_seconds": 6.835,
+    "skips": 0,
+    "failures": 0,
+    "errors": 0,
+    "raw_log_sha256": "d516f24d7331abe8e87a0badab2964faf5929ea3e32cc30a4ef6cb43f8f727dc"
+  },
+  "windows_key_semantics_on_macos": {
+    "tests_run": 1,
+    "ok": true,
+    "raw_log_sha256": "fdd00f9c924412dfe835e271cc131fc45fd6117596007eb7489507d854ce1b4e",
+    "scope": "Test-only OS branch and directory-key platform selection are emulated; actual directory rename/copy, database bytes and book ID are checked on this host. Native Windows verification remains the final source CI."
+  },
+  "checks": {
+    "invalid_offsets_still_rejected": true,
+    "posix_actual_directory_mtime_change_rejects_cursor": true,
+    "windows_child_additions_preserve_same_directory_identity": true,
+    "open_scan_is_discarded_before_directory_rename": true,
+    "real_replacement_has_distinct_device_inode": true,
+    "copied_database_bytes_equal": true,
+    "copied_book_id_equal": true,
+    "old_cursor_rejected_after_real_directory_replacement": true,
+    "fresh_scan_succeeds": true
+  },
+  "original_failed_attempt_report": "source-ci-attempt-8216d32.json"
+}

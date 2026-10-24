@@ -2,7 +2,7 @@
 
 > **历史记录提示：** 本仓库文档和 14 个旧版 Release 的标题、正文已做名称遮盖；28 个旧附件的文件名、旧包身份、固定标签和提交历史仍保留原样，以免现有下载地址与安装依赖失效。旧版路径不能由新技能名推导，历史资料中的来源路径与哈希可能无法用遮盖后的文件复验。v0.6.0 的附件与回下载已核对；安装时仍须检查当前标签与附件状态。
 
-**v0.6.23 正在准备发布。** 主发行计划提供三类技能 ZIP、Intel Mac 0.1.26／build27 的 ZIP 与 DMG及同名校验，共10附件；Windows C#／WPF／WebView2 0.2.2 使用独立 `windows-v0.2.2`，安装程序、便携 ZIP 与各自校验共4附件。Windows 更新检查读取 `windows-v*`，主发行保持 latest；Packages 随主发行自动同步。固定源码、完整 CI、两端原生新构建、标签安装与公开分发须分别登记实际结果，见[主版本准备记录](releases/v0.6.23.md)与[Windows 准备记录](releases/windows-v0.2.2.md)。
+**v0.6.23 与 Windows 0.2.2 已正式发布。** 主发行提供三类技能ZIP、Intel Mac 0.1.26／build27 的ZIP与DMG及同名校验，共10附件；Windows C#／WPF／WebView2使用独立 `windows-v0.2.2`，安装程序、便携ZIP与各自校验共4附件。两标签均固定到 `6a7c203d61eca70a5c4c1ad6607420ef91b985df`，实际构建源保留为 `2f81943e4d6b2f1092f6f06daf143aa532308989`；累计九份测试修正外的分发输入一致。最终完整CI、两端原生验收和真实固定标签安装已通过；两次失败、本地历史基线、公开请求和Packages的实际结果见[主版本记录](releases/v0.6.23.md)、[Windows记录](releases/windows-v0.2.2.md)与[证据索引](../benchmarks/results/v0.6.23/README.md)。Windows更新读取 `windows-v*`，主发行保持latest。
 
 **v0.6.22 已正式发布。** 新增结构化扫榜、代表作抽样及研究交接，八技能69个载荷文件、20个运行时模块；Intel Mac 0.1.25/build 26 与 Windows x64 0.1.12 同步分发，共十四附件。固定标签源码为 `a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e`，版本分支为 `version-0.6.22`。完整 CI、原生新构建、固定标签安装、公开下载及 Packages 的实际范围见[本版记录](releases/v0.6.22.md)。修复前源码 CI 失败、旧 Node 超时及本轮草稿标签修复均保留独立记录，不改写旧结论。
 
@@ -309,11 +309,11 @@ python3 -B -X utf8 scripts/package.py
 
 准备发布固定版本时，在实际通过验证的提交上创建未使用的版本 tag。核对运行时版本、ZIP 文件名、Release tag 和 npm 版本全部一致后，再推送 tag；不要强制移动已经分发的 tag。
 
-在 [创建 GitHub Release](https://github.com/NingCui29/story-skill/releases/new) 选择新 tag，填写本版变化与真实验证范围。 v0.6.19 使用标准套件、Claude r2、Codex 插件、版本化 Mac ZIP／DMG 和 Windows setup.exe／ZIP，各配同名校验文件，共十四附件。先核对最终源码、桌面版本、构建回执、许可和包体，再发布并实际回下载；具体清单见[本版记录](releases/v0.6.19.md)。v0.6.17 上传标准技能、Claude桌面、Codex插件、Intel Mac客户端四个ZIP及各自 `.sha256`，共八附件；逐一核对实际版本和构建回执后再发布。`dist/` 被 Git 忽略，普通 push 不会上传附件。GitHub 自动生成的 Source code ZIP 包含整个仓库，与套件附件用途不同。
+在 [创建 GitHub Release](https://github.com/NingCui29/story-skill/releases/new) 选择新 tag，填写本版变化与真实验证范围。当前主发行与独立Windows发行分别使用自己的固定标签、资产清单和校验；主发行10附件、Windows4附件，Windows发布时不占用latest，主发行保持latest。历史 v0.6.19 使用标准套件、Claude r2、Codex 插件、版本化 Mac ZIP／DMG 和 Windows setup.exe／ZIP，各配同名校验文件，共十四附件。先核对最终源码、桌面版本、构建回执、许可和包体，再发布并实际回下载；具体清单见[本版记录](releases/v0.6.19.md)。v0.6.17 上传标准技能、Claude桌面、Codex插件、Intel Mac客户端四个ZIP及各自 `.sha256`，共八附件；逐一核对实际版本和构建回执后再发布。`dist/` 被 Git 忽略，普通 push 不会上传附件。GitHub 自动生成的 Source code ZIP 包含整个仓库，与套件附件用途不同。
 
 维护已有草稿时，在同一次 PATCH 中同时传入 `tag_name` 和 `target_commitish`，随后重新 GET 同一 Release，逐项核对 `id`、`draft=true`、完整目标版本标签与目标源提交，再 dispatch Windows 的 `draft_release_id`。本轮曾实见仅修改 `target_commitish` 后，草稿标签回读为 `untagged`；原生构建已过，发布器仍正确拒绝上传。恢复标签和实际 Windows 构建源后，只重跑发布任务并保留[失败记录](../benchmarks/results/v0.6.20/before-draft-tag-fix/publisher-failure.json)，不放宽 draft／tag／source 检查。最终标签源与实际构建源不同时，另核对完整构建输入并分别保存来源，不能改写旧回执来冒称重建。
 
-发布后使用固定 tag 在独立临时目录真实安装整套，核对文件与 ZIP 的逐字节一致性、共享依赖和 CLI 启动结果，再记录验证回执和发布状态。技能在宿主应用中的发现和任务路由需要实际使用验证，文件复制和 CLI 测试不能代替这一层。
+发布前使用已实际建立的固定 tag 在独立临时目录真实安装整套，核对文件与 ZIP 的逐字节一致性、共享依赖和 CLI 启动结果，记录安装回执；正式发布后分别核对公开下载与注册表结果。技能在宿主应用中的发现和任务路由需要实际使用验证，文件复制和 CLI 测试不能代替这一层。
 
 ## GitHub Packages 同步
 

@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "source_commit": "8216d32e7f973fbd2949f90f725186cf285bdeb1",
+  "ok": true,
+  "checks": [
+    {
+      "name": "smoke",
+      "returncode": 0,
+      "ok": true,
+      "source_commit": "8216d32e7f973fbd2949f90f725186cf285bdeb1",
+      "duration_seconds": 6.855777734192088,
+      "raw_log_sha256": "ebe369ff00a8f4a914e22203b30dfeb5fa5fd9ad4459513ec7dcc79d2839a300",
+      "summary": {
+        "ok": true,
+        "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+        "commands_executed": [
+          "init",
+          "notes",
+          "plan",
+          "status",
+          "outline-bind",
+          "context",
+          "lint",
+          "commit",
+          "commit",
+          "reconcile",
+          "lint",
+          "reconcile",
+          "reconcile",
+          "ingest",
+          "next",
+          "record",
+          "record",
+          "next",
+          "coverage",
+          "findings",
+          "report",
+          "coverage"
+        ],
+        "export_bytes_verified": true,
+        "chapter_commit_idempotent": true,
+        "literary_quality_tested": false
+      },
+      "raw_report_sha256": "8d4724bd559223be09bcf9f960773894b778db5c4586a137ef709e4fb36b4656"
+    },
+    {
+      "name": "chinese",
+      "returncode": 0,
+      "ok": true,
+      "source_commit": "8216d32e7f973fbd2949f90f725186cf285bdeb1",
+      "duration_seconds": 19.324920179788023,
+      "raw_log_sha256": "0b77bff51461657c23f0901515f11152c5658d37d9ccabbe807054edd7e1c430",
+      "summary": {
+        "ok": true,
+        "method": "Generated minimal Chinese transaction fixtures through real CLI; not novels or literary quality evidence",
+        "runtime_sha256": "480ef77ff9552956e37be95477536d9fabcdd3382a81be51caf3b8262f3530f3",
+        "mode": "synthetic-transactions",
+        "synthetic_books": 2
+      },
+      "raw_report_sha256": "04bd1d518da7c33d9a535e2dc92f084f6b8f6db28a5d8e861b419ba9ad86c993"
+    },
+    {
+      "name": "long",
+      "returncode": 0,
+      "ok": true,
+      "source_commit": "8216d32e7f973fbd2949f90f725186cf285bdeb1",
+      "duration_seconds": 27.037603972945362,
+      "raw_log_sha256": "b8ebd8f82c6cfcbce3158218cda2258cc5d3ec06b0aa8ade697bae3e85d67083",
+      "summary": {
+        "ok": true
+      },
+      "raw_report_sha256": "7d76eb8d7418a948fec651f849b5929e5788d59d2e994a5daf2e429caf26b594"
+    }
+  ],
+  "scope": "Three real CLI workflows on isolated generated synthetic fixtures. No author manuscripts, platform pages, model or API calls; temporary absolute paths are omitted from the public summary."
+}

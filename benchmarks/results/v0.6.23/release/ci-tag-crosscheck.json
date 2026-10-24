@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "ok": true,
+  "checked_at_utc": "2026-10-24T07:43:01.193485+00:00",
+  "source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+  "actual_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "source_ci_run_id": 40072675192,
+  "ci_receipt": "source-ci.json",
+  "ci_receipt_sha256": "145baf7d88c9333c759e0501b51a318c022b600dc890e0f6cfa9d10f17aaebe5",
+  "build_source_equivalence_receipt": "../build-source-equivalence.json",
+  "build_source_equivalence_sha256": "52592cb2ecc626cbecff4df411fba77b8b67dc98354847017a22d762f8f8f50b",
+  "tags": [
+    {
+      "tag": "v0.6.23",
+      "annotated_tag_object": "d6232cf4892b0ab37cc4ed9af461eec88dbf5017",
+      "peeled_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+      "ref_object_type": "tag",
+      "api_ref_and_tag_object_match": true,
+      "root_tag_receipt": "tag.json",
+      "root_tag_receipt_sha256": "2b9d9b4b3d012c1dfb47ce93ff17b55a01a35d49968d8a612fbe2c5971628836",
+      "ref_api_response_sha256": "1340e5334e8c42ff18175983f8f479e046e53320ac82e7c976071cd6e04528af",
+      "tag_object_api_response_sha256": "77ef51c93c732ad3ee7a59bfdb668e7d89e810f827f0146915e62f774cf146b3"
+    },
+    {
+      "tag": "windows-v0.2.2",
+      "annotated_tag_object": "401fc8509901e07f06e5389c4bbb0784592a7a5a",
+      "peeled_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+      "ref_object_type": "tag",
+      "api_ref_and_tag_object_match": true,
+      "root_tag_receipt": "windows-tag.json",
+      "root_tag_receipt_sha256": "ed58019dcb8de91588b2b614f3db85c3497a0466c534bdba2005f5f1e50f9abb",
+      "ref_api_response_sha256": "ff9f6aec32188f312fb110462b824bb558e6c2537e5d9c014a46d398276ae81a",
+      "tag_object_api_response_sha256": "7dd908836dd9ccaf963397567a6846adc04e66b17e673a4df878b7df59c1da50"
+    }
+  ],
+  "full_source_matrices": [
+    {
+      "id": 120809298778,
+      "name": "test (windows-latest, 3.12)",
+      "checkout_source": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+      "checkout_commit_lines": [
+        93
+      ],
+      "log_bytes": 785024,
+      "log_sha256": "40661e1ee687d089a367a4b2833f523899c79b94432e4d9fc09aa58907dca0d2",
+      "log_sha256_verified": true,
+      "full_suite": {
+        "line": 3614,
+        "run": 2680,
+        "duration_seconds": 1301.21,
+        "result": "OK (skipped=70)",
+        "skipped": 70
+      },
+      "observed_log_conclusion": "success",
+      "required_regressions_verified": 413,
+      "technology_policy_verified": true,
+      "instruction_loads_checked": 301,
+      "archive_manifest_contracts_verified": 3,
+      "raw_log_path": "dist/release-v0.6.23-candidate/job-120809298778.log",
+      "fresh_api_summary_verified": true,
+      "job_api_response_sha256": "b8b27395ec65abb4622eb9032aa1130f9200e30f2b1d80ec53c1f547987b7af4"
+    },
+    {
+      "id": 120809298919,
+      "name": "test (ubuntu-latest, 3.10)",
+      "checkout_source": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+      "checkout_commit_lines": [
+        106
+      ],
+      "log_bytes": 445478,
+      "log_sha256": "303aaa9345a9ec0de42a45d2db012fe0938c42c4996e092ee732042a6d379bba",
+      "log_sha256_verified": true,
+      "full_suite": {
+        "line": 2841,
+        "run": 2680,
+        "duration_seconds": 312.709,
+        "result": "OK (skipped=46)",
+        "skipped": 46
+      },
+      "observed_log_conclusion": "success",
+      "required_regressions_verified": 413,
+      "technology_policy_verified": true,
+      "instruction_loads_checked": 301,
+      "archive_manifest_contracts_verified": 3,
+      "raw_log_path": "dist/release-v0.6.23-candidate/job-120809298919.log",
+      "fresh_api_summary_verified": true,
+      "job_api_response_sha256": "5c625d29df79875a86aa81ed2ba80260f6b828b1e85fa3f10a5cf25f0b2d5a98"
+    },
+    {
+      "id": 120809298932,
+      "name": "test (windows-latest, 3.10)",
+      "checkout_source": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+      "checkout_commit_lines": [
+        93
+      ],
+      "log_bytes": 572631,
+      "log_sha256": "f0cfc088c1e902973a5045bed65ccd0badfb5510e5c0e39ce38a9e1dcdf61fa2",
+      "log_sha256_verified": true,
+      "full_suite": {
+        "line": 3664,
+        "run": 2680,
+        "duration_seconds": 1474.535,
+        "result": "OK (skipped=70)",
+        "skipped": 70
+      },
+      "observed_log_conclusion": "success",
+      "required_regressions_verified": 413,
+      "technology_policy_verified": true,
+      "instruction_loads_checked": 301,
+      "archive_manifest_contracts_verified": 3,
+      "raw_log_path": "dist/release-v0.6.23-candidate/job-120809298932.log",
+      "fresh_api_summary_verified": true,
+      "job_api_response_sha256": "402408145f23db27eb64851d8d14b9eeb721bb85a2ffa94df8c815c356d0a0d1"
+    }
+  ],
+  "fresh_authenticated_api_ref_and_tag_objects_match": true,
+  "all_tags_peel_to_final_source": true,
+  "required_regression_count": 413,
+  "source_bindings_compared_to_fixed_final_git": 71,
+  "frozen_distribution_contract": {
+    "version": "0.6.23",
+    "skills": 8,
+    "source_payload_files": 69,
+    "desktop_runtime_files": 20,
+    "standard_members": 69,
+    "claude_members": 71,
+    "codex_plugin_files": 72,
+    "codex_marketplace_members": 74,
+    "npm_members": 72,
+    "source_manifest_sha256": "1c8d8aa2beb3bc0bdf3f3d605e3309e5454f1adeaab51b6274d5cdc10e5b2086",
+    "runtime_manifest_sha256": "4e5eca671b64985ecd7cfe428036e996400966d19f2f6938a5731a34efab45a8",
+    "scope": "Counts are derived from the exact frozen reviewed manifests, not copied from an earlier release."
+  },
+  "canonical_release_archives_match_linux_ci": true,
+  "original_build_receipts_checked": 20,
+  "original_build_receipts_source_fields_modified": false,
+  "api_get_receipts": [
+    {
+      "endpoint": "actions/runs/40072675192",
+      "bytes": 12964,
+      "sha256": "629d4eab7a2cf844b012261cf487472a823eaaf05b6ad3fca29c32a01d5abc8e"
+    },
+    {
+      "endpoint": "actions/jobs/120809298778",
+      "bytes": 4081,
+      "sha256": "b8b27395ec65abb4622eb9032aa1130f9200e30f2b1d80ec53c1f547987b7af4"
+    },
+    {
+      "endpoint": "actions/jobs/120809298919",
+      "bytes": 4079,
+      "sha256": "5c625d29df79875a86aa81ed2ba80260f6b828b1e85fa3f10a5cf25f0b2d5a98"
+    },
+    {
+      "endpoint": "actions/jobs/120809298932",
+      "bytes": 4081,
+      "sha256": "402408145f23db27eb64851d8d14b9eeb721bb85a2ffa94df8c815c356d0a0d1"
+    },
+    {
+      "endpoint": "git/ref/tags/v0.6.23",
+      "bytes": 341,
+      "sha256": "1340e5334e8c42ff18175983f8f479e046e53320ac82e7c976071cd6e04528af"
+    },
+    {
+      "endpoint": "git/tags/d6232cf4892b0ab37cc4ed9af461eec88dbf5017",
+      "bytes": 807,
+      "sha256": "77ef51c93c732ad3ee7a59bfdb668e7d89e810f827f0146915e62f774cf146b3"
+    },
+    {
+      "endpoint": "git/ref/tags/windows-v0.2.2",
+      "bytes": 364,
+      "sha256": "ff9f6aec32188f312fb110462b824bb558e6c2537e5d9c014a46d398276ae81a"
+    },
+    {
+      "endpoint": "git/tags/401fc8509901e07f06e5389c4bbb0784592a7a5a",
+      "bytes": 821,
+      "sha256": "7dd908836dd9ccaf963397567a6846adc04e66b17e673a4df878b7df59c1da50"
+    }
+  ],
+  "raw_api_responses_retained_in_ignored_candidate_area": true,
+  "source_files_modified": false,
+  "tags_created_or_modified": false,
+  "scope": "Fresh authenticated official GitHub GETs confirmed the final source-CI run, three successful matrix API records and both annotated tag objects. Original complete log bytes/SHA, actual checkout lines, full-suite summaries and existing successful checks were independently re-read locally. Original package/Mac/Windows build receipts retain the actual build commit; no CI, build or tag mutation was performed."
+}

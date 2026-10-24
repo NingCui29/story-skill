@@ -1,11 +1,11 @@
 # Story Skill 文档导航
 
-**v0.6.23 正在准备发布。** 采用新书名、草稿核对、恢复分页与研究兼容的本轮变化及验收状态见[主版本记录](releases/v0.6.23.md)；Windows C# 0.2.2 独立分发见[Windows 记录](releases/windows-v0.2.2.md)。目前正式下载仍为 v0.6.22 和 Windows 0.2.1，历史通过结果不替代本轮验收。
+**当前正式版 v0.6.23 已发布。** 提供八技能／69文件、标准ZIP、Claude桌面单入口包、Codex本地插件，以及Intel Mac 0.1.26／build27；Windows C# x64 0.2.2 独立发行。采用新书名、草稿核对、恢复分页、研究兼容及实际验收范围见[技能与Mac记录](releases/v0.6.23.md)和[Windows记录](releases/windows-v0.2.2.md)。
 
-**当前正式版 v0.6.22 已发布。** 提供八技能／69 文件、标准 ZIP、Claude 桌面 r2、Codex 本地插件，以及 Intel Mac 0.1.25/build 26；Windows 当前正式版为独立发行的 C# x64 0.2.1。下载与各项验证的实际范围分别见[技能与 Mac 记录](releases/v0.6.22.md)和[Windows 记录](releases/windows-v0.2.1.md)；[v0.6.21](releases/v0.6.21.md) 附件和证据保持原样。
+[v0.6.22](releases/v0.6.22.md)、[Windows 0.2.1](releases/windows-v0.2.1.md)与更早版本的附件和证据保持原样。历史通过结果不替代本版验收。
 
 
-**v0.6.22 新增研究流程。** 新增结构化扫榜、来源与覆盖校验、同书去重、分口径聚合，以及七猫公开书库点击排序观察样本采集；续增代表作抽样、标签频次、书名字面模式与字数分析，并以研究包衔接拆文验证和选题规划。操作见[结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)和[研究交接](../skills/story-skill-research/references/research-handoff.md)，本轮发行核验见[发布记录](releases/v0.6.22.md)。开发阶段的原始采集与试用材料仅本地保存；七猫样本不是正式排行榜或销量数据，研究交接仍为候选材料。
+**v0.6.22 新增研究流程。** 新增结构化扫榜、来源与覆盖校验、同书去重、分口径聚合，以及七猫公开书库点击排序观察样本采集；续增代表作抽样、标签频次、书名字面模式与字数分析，并以研究包衔接拆文验证和选题规划。操作见[结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)和[研究交接](../skills/story-skill-research/references/research-handoff.md)，原版发行核验见[历史记录](releases/v0.6.22.md)，v0.6.23的样本兼容与解析修复见[本轮记录](releases/v0.6.23.md)。开发阶段的原始采集与试用材料仅本地保存；七猫样本不是正式排行榜或销量数据，研究交接仍为候选材料。
 
 既有[写前交接与偏好召回](../skills/story-skill-write/references/writing-handoff.md)、[关键情节点覆盖与新增事实分级](../skills/story-skill-write/references/chapter-continuity.md)、[短篇平台化设计](../skills/story-skill-plan/references/short-platform.md)、[题材与三平台创作要求](../skills/story-skill-write/references/drama.md#三平台创作要求)、[大纲细纲规范](../skills/story-skill-plan/references/outline.md)和语义审查继续沿用，书库保持 schema 2。[执行审查与序列评估](../benchmarks/skill-execution/README.md)保留失败、超时和语义分歧；程序核验不能代替阅读效果与平台验收。下列旧版记录保持其历史范围。
 
@@ -35,11 +35,11 @@ v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Wi
 
 ## 开始使用
 
-Claude 桌面版使用 [v0.6.22-r2 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-claude-desktop-0.6.22-r2.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-claude-desktop-0.6.22-r2.zip.sha256)。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。也可从本版固定源码运行 `python3 -B -X utf8 scripts/package_claude.py` 构建。
+Claude 桌面版使用 [v0.6.23 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-skill-claude-desktop-0.6.23.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-skill-claude-desktop-0.6.23.zip.sha256)。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。从固定源码自行构建时，按[安装指引](../INSTALL.md#claude-桌面版导入单技能包)显式指定正式附件名称；构建器默认名称仍带 `-r2`。
 
 普通聊天文件环境、Cowork 或统一任务界面的目录权限、作者电脑的本机工作台分别核对。书稿应保存到会话可访问位置，并下载完整书目录备份；技能导入不会自动启动本机 Python 服务。更多桌面与云端边界见[安装指引](../INSTALL.md#书稿保存与桌面能力)。
 
-在 Codex 中需要安装或升级时，可发送以下请求；安装时核对 v0.6.22 固定标签、Release 附件和本地已有修改，检查不符则保留现有安装：
+在 Codex 中需要安装或升级时，可发送以下请求；安装时核对 v0.6.23 固定标签、Release 附件和本地已有修改，检查不符则保留现有安装：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill
@@ -68,8 +68,8 @@ Google Antigravity 使用 `--host antigravity`（2.0／IDE）或 `--host antigra
 | 从参考作品提炼方法，再设计自己的新书 | [从拆书开始，新起一本书](../README.md#从拆书开始) |
 | 查看深读方法、分析稿修订与实际试用 | [作品深读与评估](作品深读与评估.md) |
 | 改善冲突、人物选择、对白和看点 | [中文冲突与看点](中文冲突与看点.md) |
-| 保存榜单或书库样本、核对来源并聚合比较 | [结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)、[v0.6.22 发布记录](releases/v0.6.22.md) |
-| 选择代表作、分析标签与书名模式，再交给拆文和规划 | [抽样与模式分析](../skills/story-skill-research/references/rank-scan.md#代表作抽样与模式分析)、[研究交接](../skills/story-skill-research/references/research-handoff.md)、[v0.6.22 发布记录](releases/v0.6.22.md) |
+| 保存榜单或书库样本、核对来源并聚合比较 | [结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)、[v0.6.23 发布记录](releases/v0.6.23.md) |
+| 选择代表作、分析标签与书名模式，再交给拆文和规划 | [抽样与模式分析](../skills/story-skill-research/references/rank-scan.md#代表作抽样与模式分析)、[研究交接](../skills/story-skill-research/references/research-handoff.md)、[v0.6.23 发布记录](releases/v0.6.23.md) |
 | 审计规则读取、保留改稿失败并准备两臂对照 | [读取预算](../benchmarks/skill-execution/README.md#规则读取预算)、[改稿对照协议](../benchmarks/skill-execution/README.md#改稿失败样例与两臂对照)和[评估边界](evaluation.md#显式读取预算与改稿对照) |
 | 管理百万／千万字长篇的状态与历史修订 | [超长篇实操](超长篇实操.md) |
 | 处理导出失败、外部改稿、迁移或依赖问题 | [恢复指南](recovery.md) |
@@ -81,7 +81,7 @@ Google Antigravity 使用 `--host antigravity`（2.0／IDE）或 `--host antigra
 | 内容 | 已完成的范围与入口 |
 |---|---|
 | 开篇点评、完整深读与分析修订 | [深读入口与评估汇总](作品深读与评估.md)，可直接通过 `story-skill-analyze` 使用 |
-| 代表作抽样与选题证据交接 | [研究交接](../skills/story-skill-research/references/research-handoff.md)：由可重算样本生成候选方向与待验证假设，追加正文证据和反例，再交给规划；[本轮发行验收范围](releases/v0.6.22.md)与首轮实采分开记录，程序不判定文学解释或商业成效 |
+| 代表作抽样与选题证据交接 | [研究交接](../skills/story-skill-research/references/research-handoff.md)：由可重算样本生成候选方向与待验证假设，追加正文证据和反例，再交给规划；[本轮发行验收范围](releases/v0.6.23.md)与首轮实采分开记录，程序不判定文学解释或商业成效 |
 | 合成短文与完整真实短篇 | [第一轮](../benchmarks/results/analysis-depth/README.md) 和 [第二轮](../benchmarks/results/analysis-real/README.md) 保留匿名模型评阅、分歧及原始材料 |
 | 分析稿修订和迁移试用 | [语义修订](../benchmarks/results/analysis-revision/README.md) 与 [恢复试用](../benchmarks/results/analysis-followup/README.md) 保留旧定稿及独立新稿 |
 | 完整九章的跨章分析 | [《阿Q正傳》试用](../benchmarks/results/analysis-crosschapter/README.md)：14 块、64 条逐块引文核对通过；独立模型评阅未提出必须修改项，两项可选措辞另存澄清稿 |

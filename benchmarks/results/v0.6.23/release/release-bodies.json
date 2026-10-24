@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+  "releases": [
+    {
+      "tag": "windows-v0.2.2",
+      "release_id": 422544320,
+      "body_sha256": "31550a7f3a6619c257e35b5ba83f604a6ede9b9e60d1dd6c9e2e684622c73a8e",
+      "assets_unchanged": 4
+    },
+    {
+      "tag": "v0.6.23",
+      "release_id": 422545506,
+      "body_sha256": "3c2ca7784b443f7f0b1db318d7c36c51f3979b23165fb780336b12c137910d7f",
+      "assets_unchanged": 10
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "archive": "<repo>/dist/release-v0.6.23-candidate/codex/story-skill-codex-0.6.23.zip",
+  "checksum": "<repo>/dist/release-v0.6.23-candidate/codex/story-skill-codex-0.6.23.zip.sha256",
+  "marketplace_root": "<repo>/dist/release-v0.6.23-candidate/codex/story-skill-codex-0.6.23",
+  "plugin_root": "<repo>/dist/release-v0.6.23-candidate/codex/story-skill-codex-0.6.23/plugins/story-skill",
+  "version": "0.6.23",
+  "skill_count": 8,
+  "payload_files": 72,
+  "bundle_files": 74,
+  "sha256": "a7db0475be30bde132f2774cc315123679713f7e05deb861aaacd5654a610c6c",
+  "source_payload_files": 69,
+  "adapted_ui_files": 8,
+  "ok": true,
+  "source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989"
+}

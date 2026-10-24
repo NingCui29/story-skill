@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "ok": true,
+  "production_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "test_source_commit": "8216d32e7f973fbd2949f90f725186cf285bdeb1",
+  "production_changed": false,
+  "changed_tests": [
+    "tests/test_platform_browser.py",
+    "tests/test_platform_browser_batch.py",
+    "tests/test_platform_browser_link_base.py",
+    "tests/test_platform_browser_preview.py"
+  ],
+  "targeted": {
+    "tests_run": 108,
+    "duration_seconds": 6.955,
+    "skipped": 0,
+    "failures": 0,
+    "errors": 0,
+    "raw_log_sha256": "63666bc42f9f4f6f06a27ad2609b302fe34178b871adce56658155d318fa7d65"
+  },
+  "proof": {
+    "schema": 1,
+    "kind": "test-fixture-only-proof",
+    "production_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+    "fixed_test_commit": "8216d32e7f973fbd2949f90f725186cf285bdeb1",
+    "cp31011_parser_url": "https://raw.githubusercontent.com/python/cpython/v3.10.11/Lib/urllib/parse.py",
+    "cp31011_parser_sha256": "1f840c8962b0cef795c67759bd80fe988bfb360e8841da66cb0929048514edad",
+    "parser_comparison": [
+      {
+        "href_repr": "' \\t'",
+        "cpython_31011": "https://example.com/fixture/100/modify/ ",
+        "current_fixture": "https://example.com/fixture/100/modify/new-1?from=edit"
+      },
+      {
+        "href_repr": "'\\x01#save\\x01'",
+        "cpython_31011": "https://example.com/fixture/100/modify/\u0001#save\u0001",
+        "current_fixture": "https://example.com/fixture/100/modify/new-1?from=edit#save"
+      }
+    ],
+    "results": [
+      {
+        "label": "fixed-under-31011-parser-and-quantized-clock",
+        "tests_run": 32,
+        "failures": 0,
+        "errors": 0,
+        "skips": 0,
+        "ok": true,
+        "raw_sha256": "dad9eaccb8a46413c9721d8af65132825234fbd9f0d8d129dbbdb1d5e0f5da7f"
+      },
+      {
+        "label": "deadline-guard-removed",
+        "tests_run": 1,
+        "failures": 1,
+        "errors": 0,
+        "skips": 0,
+        "ok": false,
+        "raw_sha256": "aacd92b961e791c3b4f4d61a106275581950ad423b49947fdce631a37725bfa5"
+      }
+    ],
+    "deadline_mutation_detected": true,
+    "ok": true,
+    "scope": "Fixture-only tests use the frozen official CPython 3.10.11 urllib parser with a 15.625ms-quantized clock; runtime guard and timeouts are unchanged. Mutation exists only in this isolated Python process."
+  },
+  "original_failed_workflow": "source-ci-attempt-2f81943.json",
+  "scope": "First Windows source-workflow preflights remain failed. Only test fixture clocks and browser URL simulation changed; all production guards and deadlines are unchanged. The actual full final source workflow is collected independently."
+}

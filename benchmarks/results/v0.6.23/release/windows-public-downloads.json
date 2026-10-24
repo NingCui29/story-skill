@@ -1,0 +1,98 @@
+{
+  "ok": true,
+  "tag": "windows-v0.2.2",
+  "repository": "NingCui29/story-skill",
+  "assets": [
+    {
+      "name": "story-workbench-0.2.2-windows-x86_64.zip.sha256",
+      "size": 108,
+      "sha256": "c8082c1116a6a9b225371bb3f20c2f3b8991d0e34c7e65f2332bed18a9c1891e",
+      "server_digest": "sha256:c8082c1116a6a9b225371bb3f20c2f3b8991d0e34c7e65f2332bed18a9c1891e",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.2/story-workbench-0.2.2-windows-x86_64.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "c8082c1116a6a9b225371bb3f20c2f3b8991d0e34c7e65f2332bed18a9c1891e",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.2.2-windows-x86_64-setup.exe.sha256",
+      "size": 114,
+      "sha256": "b958ec64d83229ae042e4c063950477a65209e0edd9920e285745d9327310f86",
+      "server_digest": "sha256:b958ec64d83229ae042e4c063950477a65209e0edd9920e285745d9327310f86",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.2/story-workbench-0.2.2-windows-x86_64-setup.exe.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "b958ec64d83229ae042e4c063950477a65209e0edd9920e285745d9327310f86",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.2.2-windows-x86_64-setup.exe",
+      "size": 299297827,
+      "sha256": "a1660d77af7748a6997f60b5ed30fc0b376e19506d5eb23c10e9755fd803d89d",
+      "server_digest": "sha256:a1660d77af7748a6997f60b5ed30fc0b376e19506d5eb23c10e9755fd803d89d",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.2/story-workbench-0.2.2-windows-x86_64-setup.exe",
+      "anonymous": true,
+      "method": "anonymous_head_and_tail_ranges_plus_full_build_verification_and_server_digest",
+      "full_file_downloaded_anonymously": false,
+      "samples": [
+        {
+          "start": 0,
+          "end": 65535,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "01520879b2137a22d7d7e8df5c1f14fdd7e2b511414ff4b28988facafabef2a6",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 299232291,
+          "end": 299297826,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "3eba44c3d1aeb746c30c94cf4ebeb3ab2af97f4af7e46540efffba83d21c8577",
+          "final_host": "release-assets.githubusercontent.com"
+        }
+      ]
+    },
+    {
+      "name": "story-workbench-0.2.2-windows-x86_64.zip",
+      "size": 320739469,
+      "sha256": "b34e67518528083bb08ff29f2252349824468bb91f9aa58f01cbf28fbd401a1c",
+      "server_digest": "sha256:b34e67518528083bb08ff29f2252349824468bb91f9aa58f01cbf28fbd401a1c",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.2/story-workbench-0.2.2-windows-x86_64.zip",
+      "anonymous": true,
+      "method": "anonymous_head_and_tail_ranges_plus_full_build_verification_and_server_digest",
+      "full_file_downloaded_anonymously": false,
+      "samples": [
+        {
+          "start": 0,
+          "end": 65535,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "df75eefba1f93db2b7107c84f02223c65ddcc9bccf9ec5d67b32d6c4e80d7606",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 320673933,
+          "end": 320739468,
+          "http_status": 206,
+          "bytes": 65536,
+          "sha256": "86cdc618ecde4d969aae714ce53bcad1d3873d675be6385ad6260e3db7aa9d98",
+          "final_host": "release-assets.githubusercontent.com"
+        }
+      ]
+    }
+  ],
+  "scope": "All primary release assets (skill ZIPs, Mac ZIP/DMG and checksums) downloaded anonymously in full. Windows checksums downloaded in full; Windows installer and portable binaries sampled anonymously at head and tail, bound to full native verification and GitHub server digests. No full anonymous Windows binary download is claimed.",
+  "skill_and_mac_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "windows_build_source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989",
+  "tag_source_commit": "6a7c203d61eca70a5c4c1ad6607420ef91b985df",
+  "fixed_build_inputs": "../build-inputs.json",
+  "release_id": 422544320,
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.2",
+  "published_at": "2026-10-24T07:46:31Z",
+  "latest_tag": "v0.6.23"
+}

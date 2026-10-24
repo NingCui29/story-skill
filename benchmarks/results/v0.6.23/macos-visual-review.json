@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "synthetic_data_only": true,
+  "images": [
+    {
+      "file": "macos-native-shelf.png",
+      "bytes": 218239,
+      "sha256": "c95b079dd0e23f0b81031d96ef4528051cca71de92bd623d7afe9644b4fc8e55"
+    },
+    {
+      "file": "macos-native-editor.png",
+      "bytes": 263389,
+      "sha256": "2a1298488037dc28e4f5abfbfd4a6a3b58146dc459366f585f8295377c26a859"
+    },
+    {
+      "file": "macos-native-switch.png",
+      "bytes": 261349,
+      "sha256": "6dfbf0ff7dad2f6b6cb6060e09fb4b8705b831e0ca350e6ac1f9481bf13a5c2a"
+    }
+  ],
+  "reviewed_by_model": true,
+  "reviewed_at_utc": "2026-10-24T05:52:33.966646+00:00",
+  "observations": "Actually viewed all three freshly captured WebKit PNGs. The shelf shows two synthetic cards with readable search/filter/manage controls; the synthetic candidate body and sidebars render without horizontal clipping; the switched editor retains the selected candidate and readable body. The first editor capture still displays a transient word-count calculation label; the switch capture shows the completed 16-character count. No real manuscript, account information or personal absolute path is visible. Native window/cache behavior is independently recorded in the fresh self-test JSON.",
+  "not_verified": [
+    "Real user manuscripts or installed application replacement",
+    "Platform draft modal interactions or live author-platform browser behavior",
+    "Manual close warnings, update downloads or the default launcher flow"
+  ],
+  "source_commit": "2f81943e4d6b2f1092f6f06daf143aa532308989"
+}
