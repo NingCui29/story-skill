@@ -62,7 +62,7 @@ const starts=()=>requests.filter(row=>row.action.endsWith('/start'));
 const before=JSON.stringify([...docs]);await platformDraftOpen();const p=platformDraftPanel;
 assert.equal(p.preview.can_start,false);assert.equal(p.preview.can_connect,true);
 assert.equal(p.previewExpires,2000000600000);assert.equal(p.run.disabled,false);
-assert.equal(p.run.textContent,'连接并保存到平台草稿');
+assert.equal(p.run.textContent,'连接并保存所选第1—2章（2章）到平台草稿');
 assert.ok(p.status.textContent.includes('Codex 额度'));assert.equal(starts().length,0);
 assert.equal(JSON.stringify([...docs]),before);
 ''')
@@ -98,7 +98,7 @@ assert.equal(p.run.disabled,true);assert.equal(starts().length,1);
         self.js(r'''
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog():action.endsWith('/preview')?ready(payload):job();
 await platformDraftOpen();const p=platformDraftPanel;
-assert.equal(p.run.disabled,false);assert.equal(p.run.textContent,'保存到平台草稿');
+assert.equal(p.run.disabled,false);assert.equal(p.run.textContent,'保存所选第1—2章（2章）到平台草稿');
 assert.equal(starts().length,0);await p.recheck.onclick();assert.equal(starts().length,0);
 const selected=p.preview.preview_token;await p.run.onclick();
 assert.equal(starts().length,1);assert.equal(starts()[0].payload.preview_token,selected);
@@ -152,14 +152,14 @@ await platformDraftOpen();const p=platformDraftPanel;let release;
 handler=async(action,payload)=>payload.profile_id==='old'?new Promise(resolve=>{release=()=>resolve(connect(payload));}):ready(payload);
 p.profile.value='old';const pending=platformDraftPreview(p);p.profile.value='synthetic.json';await platformDraftPreview(p);release();await pending;
 assert.equal(p.preview.profile_id,'synthetic.json');assert.equal(p.preview.can_start,true);
-assert.equal(p.run.textContent,'保存到平台草稿');assert.equal(starts().length,0);
+assert.equal(p.run.textContent,'保存所选第1—2章（2章）到平台草稿');assert.equal(starts().length,0);
 ''')
 
     def test_readonly_connect_click_preserves_mode_and_uses_its_new_token(self):
         self.js(r'''
 await platformDraftOpen();const p=platformDraftPanel;
 p.mode.value='reconcile_only';await p.mode.onchange();
-assert.equal(p.run.textContent,'连接并只读核对平台草稿');const selected=p.preview.connect_token;
+assert.equal(p.run.textContent,'连接并只读核对所选批次');const selected=p.preview.connect_token;
 assert.ok(selected.endsWith('.read-connect'));assert.equal(starts().length,0);
 await p.run.onclick();assert.equal(starts()[0].payload.reconcile_only,true);
 assert.equal(starts()[0].payload.preview_token,selected);assert.equal(starts()[0].payload.auto_connect,true);
@@ -169,7 +169,7 @@ assert.equal(starts()[0].payload.preview_token,selected);assert.equal(starts()[0
         self.js(r'''
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog():{...ready(payload),can_connect:true,connect_token:token('extra',1200)};
 await platformDraftOpen();const p=platformDraftPanel,selected=p.preview.preview_token;
-assert.equal(p.previewExpires,2000000600000);assert.equal(p.run.textContent,'保存到平台草稿');
+assert.equal(p.previewExpires,2000000600000);assert.equal(p.run.textContent,'保存所选第1—2章（2章）到平台草稿');
 await p.run.onclick();assert.equal(starts()[0].payload.preview_token,selected);
 assert.equal(starts()[0].payload.auto_connect,false);
 ''')

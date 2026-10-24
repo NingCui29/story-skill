@@ -388,8 +388,8 @@ testPlans=[plan(),plan('plan-two')];await platformDraftOpen();const p=platformDr
 testJobs=[{...job(),done:true,state:'failed',profile_id:profile.id,comparison_policy:'strict',body_encoding:'verbatim'},
  {...job(),id:'other-done',done:true,state:'failed',plan_id:'plan-two',profile_id:profile.id}];
 await platformDraftCatalog(p);assert.equal(p.plan.value,'plan-one');assert.equal(p.encoding.value,'markdown_paragraphs_v2');
-assert.equal(p.comparison.value,'fanqie_terminal_lf_v1');assert.ok(p.status.textContent.includes('历史任务'));
-assert.equal(p.preview,null);const saved=saves().length;await p.recheck.onclick();
+assert.equal(p.comparison.value,'fanqie_terminal_lf_v1');assert.ok(!p.status.textContent.includes('历史任务'));assert.equal(p.job,null);
+assert.equal(p.preview.body_encoding,'markdown_paragraphs_v2');assert.equal(starts().length,0);const saved=saves().length;await p.recheck.onclick();
 assert.equal(p.preview.body_encoding,'markdown_paragraphs_v2');assert.equal(saves().length,saved);
 testJobs=[testJobs[1]];await platformDraftCatalog(p);assert.equal(p.plan.value,'plan-one');assert.equal(p.encoding.value,'markdown_paragraphs_v2');
 assert.equal(p.preview.body_encoding,'markdown_paragraphs_v2');assert.equal(starts().length,0);
