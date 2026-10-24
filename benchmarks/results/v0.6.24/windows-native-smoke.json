@@ -1,0 +1,47 @@
+{
+  "ok": true,
+  "native_window": true,
+  "shelf_rendered": true,
+  "title": "写作书架",
+  "captured": true,
+  "client_version": "0.2.3",
+  "ui_stack": "wpf-webview2",
+  "self_contained": true,
+  "in_private": true,
+  "update_check_available": true,
+  "update_progress_verified": true,
+  "update_progress_synthetic": true,
+  "update_capture": {
+    "ok": true,
+    "background": "#FFFAFAFA",
+    "foreground": "#E4000000",
+    "opaque_fraction": 1,
+    "alpha_threshold": 254,
+    "minimum_alpha": 254,
+    "exact_opaque_fraction": 0.9747859396124381,
+    "background_pixel_matches": true,
+    "contrast_ratio": 16.593728218688323
+  },
+  "themes_verified": true,
+  "theme_captures": {
+    "light": true,
+    "dark": true
+  },
+  "native_close_probe_verified": true,
+  "hidden_buffers_verified": true,
+  "ime_guard_verified": true,
+  "buffer_export_verified": true,
+  "synthetic_editor_fixture": true,
+  "shelf_state_guard_verified": true,
+  "native_system_theme_verified": true,
+  "preferences_restored_verified": true,
+  "preference_diagnostics": {
+    "bridge_received": true,
+    "disk_reloaded": true,
+    "new_origin_loaded": true,
+    "new_origin_value_matches": true,
+    "response_is_string": true
+  },
+  "failed_tab_recovery_verified": true,
+  "unknown_crash_protected": true
+}

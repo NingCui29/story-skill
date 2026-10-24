@@ -1,0 +1,486 @@
+{
+  "schema": 1,
+  "ok": true,
+  "collected_at_utc": "2026-10-24T10:10:48.945241+00:00",
+  "repository": "NingCui29/story-skill",
+  "tag": "v0.6.24",
+  "event": "release",
+  "manual_dispatch_performed": false,
+  "workflow_run_id": 40084737606,
+  "url": "https://github.com/NingCui29/story-skill/actions/runs/40084737606",
+  "actual_head_sha": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+  "actual_checkout_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+  "published_tag_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+  "workflow_checkout_equals_published_tag": true,
+  "tag_source": {
+    "tag": "v0.6.24",
+    "ref_object": {
+      "sha": "1eb765800a3a9349c5be124eb34f69d746f97eae",
+      "type": "tag",
+      "url": "https://api.github.com/repos/NingCui29/story-skill/git/tags/1eb765800a3a9349c5be124eb34f69d746f97eae"
+    },
+    "peeled_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f"
+  },
+  "run_metadata": {
+    "id": 40084737606,
+    "name": "Sync v0.6.24 to GitHub Packages",
+    "node_id": "WFR_kwLOUR8APM8AAAAJVTyORg",
+    "head_branch": "v0.6.24",
+    "head_sha": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+    "path": ".github/workflows/packages.yml",
+    "display_title": "Sync v0.6.24 to GitHub Packages",
+    "run_number": 46,
+    "event": "release",
+    "status": "completed",
+    "conclusion": "success",
+    "workflow_id": 352925372,
+    "check_suite_id": 108650322972,
+    "check_suite_node_id": "CS_kwDOUR8APM8AAAAZTBBcHA",
+    "url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/40084737606",
+    "html_url": "https://github.com/NingCui29/story-skill/actions/runs/40084737606",
+    "pull_requests": [],
+    "created_at": "2026-10-24T10:08:39Z",
+    "updated_at": "2026-10-24T10:09:17Z",
+    "actor": {
+      "login": "NingCui29",
+      "id": 19723046,
+      "node_id": "MDQ6VXNlcjE5NzIzMDQ2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19723046?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/NingCui29",
+      "html_url": "https://github.com/NingCui29",
+      "followers_url": "https://api.github.com/users/NingCui29/followers",
+      "following_url": "https://api.github.com/users/NingCui29/following{/other_user}",
+      "gists_url": "https://api.github.com/users/NingCui29/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/NingCui29/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/NingCui29/subscriptions",
+      "organizations_url": "https://api.github.com/users/NingCui29/orgs",
+      "repos_url": "https://api.github.com/users/NingCui29/repos",
+      "events_url": "https://api.github.com/users/NingCui29/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/NingCui29/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "run_attempt": 1,
+    "referenced_workflows": [],
+    "run_started_at": "2026-10-24T10:08:39Z",
+    "triggering_actor": {
+      "login": "NingCui29",
+      "id": 19723046,
+      "node_id": "MDQ6VXNlcjE5NzIzMDQ2",
+      "avatar_url": "https://avatars.githubusercontent.com/u/19723046?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/NingCui29",
+      "html_url": "https://github.com/NingCui29",
+      "followers_url": "https://api.github.com/users/NingCui29/followers",
+      "following_url": "https://api.github.com/users/NingCui29/following{/other_user}",
+      "gists_url": "https://api.github.com/users/NingCui29/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/NingCui29/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/NingCui29/subscriptions",
+      "organizations_url": "https://api.github.com/users/NingCui29/orgs",
+      "repos_url": "https://api.github.com/users/NingCui29/repos",
+      "events_url": "https://api.github.com/users/NingCui29/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/NingCui29/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "jobs_url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/40084737606/jobs",
+    "logs_url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/40084737606/logs",
+    "check_suite_url": "https://api.github.com/repos/NingCui29/story-skill/check-suites/108650322972",
+    "artifacts_url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/40084737606/artifacts",
+    "cancel_url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/40084737606/cancel",
+    "rerun_url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/40084737606/rerun",
+    "previous_attempt_url": null,
+    "workflow_url": "https://api.github.com/repos/NingCui29/story-skill/actions/workflows/352925372",
+    "head_commit": {
+      "id": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+      "tree_id": "3cc31ef1af33ecad1f95f8300a11a25204bdf551",
+      "message": "test: align draft UI assertions with live batch and history behavior",
+      "timestamp": "2026-10-24T09:31:25Z",
+      "author": {
+        "name": "Blue",
+        "email": "19723046+NingCui29@users.noreply.github.com"
+      },
+      "committer": {
+        "name": "Blue",
+        "email": "19723046+NingCui29@users.noreply.github.com"
+      }
+    },
+    "repository": {
+      "id": 1360986172,
+      "node_id": "R_kgDOUR8APA",
+      "name": "story-skill",
+      "full_name": "NingCui29/story-skill",
+      "private": false,
+      "owner": {
+        "login": "NingCui29",
+        "id": 19723046,
+        "node_id": "MDQ6VXNlcjE5NzIzMDQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/19723046?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/NingCui29",
+        "html_url": "https://github.com/NingCui29",
+        "followers_url": "https://api.github.com/users/NingCui29/followers",
+        "following_url": "https://api.github.com/users/NingCui29/following{/other_user}",
+        "gists_url": "https://api.github.com/users/NingCui29/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/NingCui29/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/NingCui29/subscriptions",
+        "organizations_url": "https://api.github.com/users/NingCui29/orgs",
+        "repos_url": "https://api.github.com/users/NingCui29/repos",
+        "events_url": "https://api.github.com/users/NingCui29/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/NingCui29/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "html_url": "https://github.com/NingCui29/story-skill",
+      "description": "中文长短篇小说 AI 创作技能与本地写作工作台。提供结构化扫榜、拆书、调研、规划、续写、审稿、封面、投稿材料及受控平台草稿；适配 Codex、Claude、WorkBuddy AI、Qoder CN 等助手，提供 Mac / Windows 客户端，支持候选编辑、版本对照和整书备份恢复。",
+      "fork": false,
+      "url": "https://api.github.com/repos/NingCui29/story-skill",
+      "forks_url": "https://api.github.com/repos/NingCui29/story-skill/forks",
+      "keys_url": "https://api.github.com/repos/NingCui29/story-skill/keys{/key_id}",
+      "collaborators_url": "https://api.github.com/repos/NingCui29/story-skill/collaborators{/collaborator}",
+      "teams_url": "https://api.github.com/repos/NingCui29/story-skill/teams",
+      "hooks_url": "https://api.github.com/repos/NingCui29/story-skill/hooks",
+      "issue_events_url": "https://api.github.com/repos/NingCui29/story-skill/issues/events{/number}",
+      "events_url": "https://api.github.com/repos/NingCui29/story-skill/events",
+      "assignees_url": "https://api.github.com/repos/NingCui29/story-skill/assignees{/user}",
+      "branches_url": "https://api.github.com/repos/NingCui29/story-skill/branches{/branch}",
+      "tags_url": "https://api.github.com/repos/NingCui29/story-skill/tags",
+      "blobs_url": "https://api.github.com/repos/NingCui29/story-skill/git/blobs{/sha}",
+      "git_tags_url": "https://api.github.com/repos/NingCui29/story-skill/git/tags{/sha}",
+      "git_refs_url": "https://api.github.com/repos/NingCui29/story-skill/git/refs{/sha}",
+      "trees_url": "https://api.github.com/repos/NingCui29/story-skill/git/trees{/sha}",
+      "statuses_url": "https://api.github.com/repos/NingCui29/story-skill/statuses/{sha}",
+      "languages_url": "https://api.github.com/repos/NingCui29/story-skill/languages",
+      "stargazers_url": "https://api.github.com/repos/NingCui29/story-skill/stargazers",
+      "contributors_url": "https://api.github.com/repos/NingCui29/story-skill/contributors",
+      "subscribers_url": "https://api.github.com/repos/NingCui29/story-skill/subscribers",
+      "subscription_url": "https://api.github.com/repos/NingCui29/story-skill/subscription",
+      "commits_url": "https://api.github.com/repos/NingCui29/story-skill/commits{/sha}",
+      "git_commits_url": "https://api.github.com/repos/NingCui29/story-skill/git/commits{/sha}",
+      "comments_url": "https://api.github.com/repos/NingCui29/story-skill/comments{/number}",
+      "issue_comment_url": "https://api.github.com/repos/NingCui29/story-skill/issues/comments{/number}",
+      "contents_url": "https://api.github.com/repos/NingCui29/story-skill/contents/{+path}",
+      "compare_url": "https://api.github.com/repos/NingCui29/story-skill/compare/{base}...{head}",
+      "merges_url": "https://api.github.com/repos/NingCui29/story-skill/merges",
+      "archive_url": "https://api.github.com/repos/NingCui29/story-skill/{archive_format}{/ref}",
+      "downloads_url": "https://api.github.com/repos/NingCui29/story-skill/downloads",
+      "issues_url": "https://api.github.com/repos/NingCui29/story-skill/issues{/number}",
+      "pulls_url": "https://api.github.com/repos/NingCui29/story-skill/pulls{/number}",
+      "milestones_url": "https://api.github.com/repos/NingCui29/story-skill/milestones{/number}",
+      "notifications_url": "https://api.github.com/repos/NingCui29/story-skill/notifications{?since,all,participating}",
+      "labels_url": "https://api.github.com/repos/NingCui29/story-skill/labels{/name}",
+      "releases_url": "https://api.github.com/repos/NingCui29/story-skill/releases{/id}",
+      "deployments_url": "https://api.github.com/repos/NingCui29/story-skill/deployments"
+    },
+    "head_repository": {
+      "id": 1360986172,
+      "node_id": "R_kgDOUR8APA",
+      "name": "story-skill",
+      "full_name": "NingCui29/story-skill",
+      "private": false,
+      "owner": {
+        "login": "NingCui29",
+        "id": 19723046,
+        "node_id": "MDQ6VXNlcjE5NzIzMDQ2",
+        "avatar_url": "https://avatars.githubusercontent.com/u/19723046?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/NingCui29",
+        "html_url": "https://github.com/NingCui29",
+        "followers_url": "https://api.github.com/users/NingCui29/followers",
+        "following_url": "https://api.github.com/users/NingCui29/following{/other_user}",
+        "gists_url": "https://api.github.com/users/NingCui29/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/NingCui29/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/NingCui29/subscriptions",
+        "organizations_url": "https://api.github.com/users/NingCui29/orgs",
+        "repos_url": "https://api.github.com/users/NingCui29/repos",
+        "events_url": "https://api.github.com/users/NingCui29/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/NingCui29/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "html_url": "https://github.com/NingCui29/story-skill",
+      "description": "中文长短篇小说 AI 创作技能与本地写作工作台。提供结构化扫榜、拆书、调研、规划、续写、审稿、封面、投稿材料及受控平台草稿；适配 Codex、Claude、WorkBuddy AI、Qoder CN 等助手，提供 Mac / Windows 客户端，支持候选编辑、版本对照和整书备份恢复。",
+      "fork": false,
+      "url": "https://api.github.com/repos/NingCui29/story-skill",
+      "forks_url": "https://api.github.com/repos/NingCui29/story-skill/forks",
+      "keys_url": "https://api.github.com/repos/NingCui29/story-skill/keys{/key_id}",
+      "collaborators_url": "https://api.github.com/repos/NingCui29/story-skill/collaborators{/collaborator}",
+      "teams_url": "https://api.github.com/repos/NingCui29/story-skill/teams",
+      "hooks_url": "https://api.github.com/repos/NingCui29/story-skill/hooks",
+      "issue_events_url": "https://api.github.com/repos/NingCui29/story-skill/issues/events{/number}",
+      "events_url": "https://api.github.com/repos/NingCui29/story-skill/events",
+      "assignees_url": "https://api.github.com/repos/NingCui29/story-skill/assignees{/user}",
+      "branches_url": "https://api.github.com/repos/NingCui29/story-skill/branches{/branch}",
+      "tags_url": "https://api.github.com/repos/NingCui29/story-skill/tags",
+      "blobs_url": "https://api.github.com/repos/NingCui29/story-skill/git/blobs{/sha}",
+      "git_tags_url": "https://api.github.com/repos/NingCui29/story-skill/git/tags{/sha}",
+      "git_refs_url": "https://api.github.com/repos/NingCui29/story-skill/git/refs{/sha}",
+      "trees_url": "https://api.github.com/repos/NingCui29/story-skill/git/trees{/sha}",
+      "statuses_url": "https://api.github.com/repos/NingCui29/story-skill/statuses/{sha}",
+      "languages_url": "https://api.github.com/repos/NingCui29/story-skill/languages",
+      "stargazers_url": "https://api.github.com/repos/NingCui29/story-skill/stargazers",
+      "contributors_url": "https://api.github.com/repos/NingCui29/story-skill/contributors",
+      "subscribers_url": "https://api.github.com/repos/NingCui29/story-skill/subscribers",
+      "subscription_url": "https://api.github.com/repos/NingCui29/story-skill/subscription",
+      "commits_url": "https://api.github.com/repos/NingCui29/story-skill/commits{/sha}",
+      "git_commits_url": "https://api.github.com/repos/NingCui29/story-skill/git/commits{/sha}",
+      "comments_url": "https://api.github.com/repos/NingCui29/story-skill/comments{/number}",
+      "issue_comment_url": "https://api.github.com/repos/NingCui29/story-skill/issues/comments{/number}",
+      "contents_url": "https://api.github.com/repos/NingCui29/story-skill/contents/{+path}",
+      "compare_url": "https://api.github.com/repos/NingCui29/story-skill/compare/{base}...{head}",
+      "merges_url": "https://api.github.com/repos/NingCui29/story-skill/merges",
+      "archive_url": "https://api.github.com/repos/NingCui29/story-skill/{archive_format}{/ref}",
+      "downloads_url": "https://api.github.com/repos/NingCui29/story-skill/downloads",
+      "issues_url": "https://api.github.com/repos/NingCui29/story-skill/issues{/number}",
+      "pulls_url": "https://api.github.com/repos/NingCui29/story-skill/pulls{/number}",
+      "milestones_url": "https://api.github.com/repos/NingCui29/story-skill/milestones{/number}",
+      "notifications_url": "https://api.github.com/repos/NingCui29/story-skill/notifications{?since,all,participating}",
+      "labels_url": "https://api.github.com/repos/NingCui29/story-skill/labels{/name}",
+      "releases_url": "https://api.github.com/repos/NingCui29/story-skill/releases{/id}",
+      "deployments_url": "https://api.github.com/repos/NingCui29/story-skill/deployments"
+    }
+  },
+  "job": {
+    "id": 120845233275,
+    "run_id": 40084737606,
+    "workflow_name": "Sync v0.6.24 to GitHub Packages",
+    "head_branch": "v0.6.24",
+    "run_url": "https://api.github.com/repos/NingCui29/story-skill/actions/runs/40084737606",
+    "run_attempt": 1,
+    "node_id": "CR_kwDOUR8APM8AAAAcIu_sew",
+    "head_sha": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+    "url": "https://api.github.com/repos/NingCui29/story-skill/actions/jobs/120845233275",
+    "html_url": "https://github.com/NingCui29/story-skill/actions/runs/40084737606/job/120845233275",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-24T10:08:39Z",
+    "started_at": "2026-10-24T10:08:41Z",
+    "completed_at": "2026-10-24T10:09:16Z",
+    "name": "publish",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-10-24T10:08:41Z",
+        "completed_at": "2026-10-24T10:08:42Z"
+      },
+      {
+        "name": "Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-10-24T10:08:42Z",
+        "completed_at": "2026-10-24T10:08:44Z"
+      },
+      {
+        "name": "Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-10-24T10:08:44Z",
+        "completed_at": "2026-10-24T10:08:44Z"
+      },
+      {
+        "name": "Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-10-24T10:08:44Z",
+        "completed_at": "2026-10-24T10:08:47Z"
+      },
+      {
+        "name": "Validate package tooling",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-10-24T10:08:47Z",
+        "completed_at": "2026-10-24T10:09:06Z"
+      },
+      {
+        "name": "Verify Claude Desktop skill bundle",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-10-24T10:09:06Z",
+        "completed_at": "2026-10-24T10:09:06Z"
+      },
+      {
+        "name": "Publish and verify the Release payload",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-10-24T10:09:06Z",
+        "completed_at": "2026-10-24T10:09:13Z"
+      },
+      {
+        "name": "Record package association metadata",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-10-24T10:09:13Z",
+        "completed_at": "2026-10-24T10:09:14Z"
+      },
+      {
+        "name": "Preserve synchronization receipt",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-10-24T10:09:14Z",
+        "completed_at": "2026-10-24T10:09:14Z"
+      },
+      {
+        "name": "Post Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-10-24T10:09:14Z",
+        "completed_at": "2026-10-24T10:09:15Z"
+      },
+      {
+        "name": "Post Run actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-10-24T10:09:15Z",
+        "completed_at": "2026-10-24T10:09:15Z"
+      },
+      {
+        "name": "Post Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-10-24T10:09:15Z",
+        "completed_at": "2026-10-24T10:09:15Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-10-24T10:09:15Z",
+        "completed_at": "2026-10-24T10:09:15Z"
+      }
+    ],
+    "check_run_url": "https://api.github.com/repos/NingCui29/story-skill/check-runs/120845233275",
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "runner_id": 1000000777,
+    "runner_name": "GitHub Actions 1000000777",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions"
+  },
+  "test_results": [
+    {
+      "tests": 86,
+      "seconds": 13.499,
+      "result": "OK",
+      "line": 186
+    },
+    {
+      "tests": 35,
+      "seconds": 4.267,
+      "result": "OK",
+      "line": 191
+    }
+  ],
+  "log": {
+    "path": "dist/release-v0.6.24-candidate/job-120845233275.log",
+    "bytes": 28059,
+    "sha256": "cdb575f64671b2cd00613e99ca7419b4a6886aab0222ab85a667eb172d32c969",
+    "actual_checkout_lines": [
+      125
+    ]
+  },
+  "artifact": {
+    "id": 12555659743,
+    "node_id": "MDg6QXJ0aWZhY3QxMjU1NTY1OTc0Mw==",
+    "name": "packages-sync-v0.6.24",
+    "size_in_bytes": 635484,
+    "url": "https://api.github.com/repos/NingCui29/story-skill/actions/artifacts/12555659743",
+    "archive_download_url": "https://api.github.com/repos/NingCui29/story-skill/actions/artifacts/12555659743/zip",
+    "expired": false,
+    "digest": "sha256:93ae909ac7aa99d344e8a9795c12e5c4df8f5676365d8017cbc1e5d9cb8edfdb",
+    "created_at": "2026-10-24T10:09:14Z",
+    "updated_at": "2026-10-24T10:09:14Z",
+    "expires_at": "2026-11-07T10:09:14Z",
+    "workflow_run": {
+      "id": 40084737606,
+      "repository_id": 1360986172,
+      "head_repository_id": 1360986172,
+      "head_branch": "v0.6.24",
+      "head_sha": "d3b934fe8a8b58a93b97673a21d293b0a476392f"
+    }
+  },
+  "artifact_download": {
+    "path": "dist/release-v0.6.24-candidate/packages-verification.zip",
+    "bytes": 635484,
+    "sha256": "93ae909ac7aa99d344e8a9795c12e5c4df8f5676365d8017cbc1e5d9cb8edfdb",
+    "matches_server_digest": true,
+    "original_bytes_preserved": true
+  },
+  "original_artifact_files": {
+    "downloaded-package.tgz": {
+      "path": "dist/release-v0.6.24-candidate/packages-verification/downloaded-package.tgz",
+      "bytes": 630461,
+      "sha256": "830ed5fa51ea672886bcd3e187a4aa78917043ef29cca68f09f85444b45e809b"
+    },
+    "package-association.json": {
+      "path": "dist/release-v0.6.24-candidate/packages-verification/package-association.json",
+      "bytes": 1183,
+      "sha256": "2c9403714adb6cc63418935eab2e48a08e0ff6ed68dbd0d3127326dbd9946359"
+    },
+    "receipt.json": {
+      "path": "dist/release-v0.6.24-candidate/packages-verification/receipt.json",
+      "bytes": 26703,
+      "sha256": "a279ec05f05eec8b531b7a074b7be2a734415a6b99e71f6b27e0dea9935b888a"
+    }
+  },
+  "public_evidence_files": [
+    {
+      "path": "benchmarks/results/v0.6.24/release/packages/receipt.json",
+      "bytes": 26619,
+      "sha256": "6234463289af3e032d8f5e4ce1243724319acf4319e348b219896e9c5782a596"
+    },
+    {
+      "path": "benchmarks/results/v0.6.24/release/packages/package-association.json",
+      "bytes": 1183,
+      "sha256": "2c9403714adb6cc63418935eab2e48a08e0ff6ed68dbd0d3127326dbd9946359"
+    }
+  ],
+  "registry_export_verification": {
+    "ok": true,
+    "bytes": 630461,
+    "sha256": "830ed5fa51ea672886bcd3e187a4aa78917043ef29cca68f09f85444b45e809b",
+    "sha512_integrity": "sha512-MADEuMflGfcsNR3mh/EGLIEcOQqIQnfqTa0Kp24SBr6Q7WJojMscJ+b+00FeApLaGwl4yKXDe+iiNqevIoPwlw==",
+    "payload_files": 69,
+    "wrapper_files": 3,
+    "tar_members": 72,
+    "all_member_sha256_match_receipt": true,
+    "runtime_commands": 4,
+    "scope": "The workflow actually downloaded this registry tarball. This local pass verifies the exported bytes and member hashes; root independently checks the release ZIP and local build."
+  },
+  "package_visibility": "public",
+  "repository_association": {
+    "linked_repository": "NingCui29/story-skill",
+    "status": "verified",
+    "api_versions": [
+      "2026-03-10",
+      "2022-11-28"
+    ]
+  },
+  "privacy_review": {
+    "ok": true,
+    "public_paths": "Known synthetic runner checkout prefixes normalized only in public JSON. Raw ZIP, receipts and tarball are preserved with original hashes.",
+    "private_development_material_included": false,
+    "tgz_copied_to_public_repository": false
+  },
+  "scope": "Actual workflow registry publish/download, exported tarball verification, runtime smoke and public repository association. This collector only makes GET requests and never dispatches or republishes."
+}

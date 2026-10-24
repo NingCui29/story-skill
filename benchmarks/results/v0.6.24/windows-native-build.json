@@ -1,0 +1,109 @@
+{
+  "ok": true,
+  "source_commit": "d2de5f49c5528eac4796683ea152a06a438ae8fc",
+  "tag_target_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+  "build_source_equivalence": "build-source-equivalence.json",
+  "run_id": 40081716567,
+  "run_url": "https://github.com/NingCui29/story-skill/actions/runs/40081716567",
+  "conclusion": "success",
+  "native_checks": {
+    "csharp_tests": 39,
+    "installed_and_portable_manifest_files": 1125,
+    "previous_version": "0.2.2",
+    "upgrade_target": "0.2.3",
+    "update_progress_is_synthetic": true
+  },
+  "artifact_archive_digests_verified": true,
+  "all_runtime_hashes_match_final_tag_exactly": true,
+  "client_source_and_readme_match_after_git_checkout_newlines": [
+    {
+      "path": "desktop/windows/StoryWorkbench/App.cs",
+      "git_blob_sha256": "f6ddab488444f21cc7e2709d37c7abfc7fb97e6aa5ad835acbf8791110004ba6",
+      "native_checkout_sha256": "e4c0970b0db30b5598b5e664f099c7e844f6ca9dc88a941404620568aac28560",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/app.manifest",
+      "git_blob_sha256": "6cd1fcad3f15d156c941a83d5f42a18ba7f1477c6c5937ad869c2be951100e69",
+      "native_checkout_sha256": "b9e7257e0f80686dd0bf08695d6ad2221df0ec42b74d3e8e828330926889ed8d",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/Backend.cs",
+      "git_blob_sha256": "6bdc0f68ff5c6fe6387cecc3464b540b2cac6fccb4aa406e0062a4cd05290c3f",
+      "native_checkout_sha256": "1059cac52fc2548567b0eb65a48ec8c7f566144af7e9b5a71a59171118588efe",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/BrowserSafety.cs",
+      "git_blob_sha256": "34b1dd9ceee2371ba9b83b08571ded3420211e18e4051dad8004304472f8fe33",
+      "native_checkout_sha256": "5317170b51bd568ec5e511d1a117c8c2811fd3c13581307f2a910645e8528b86",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/BrowserTab.cs",
+      "git_blob_sha256": "924e92f8bfc72cbc7df70dd96279aaf23fb45e883a9c84d9cb2f0a19b8cdebd2",
+      "native_checkout_sha256": "5b06e51e5bee5e277f305a86f74cc3d779f1f587b8f72693a290a17645e4fdd5",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/GlobalUsings.cs",
+      "git_blob_sha256": "9eb56b713f4bd450c169f140e74ff7b6d5e456f3742a30188b947223d01628e4",
+      "native_checkout_sha256": "9087a69bb7c9490f6c6505a3cdc3ced73cf0a64d4cd3706b9148292a87bd4000",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/MainWindow.cs",
+      "git_blob_sha256": "a79372e14abc2a02d4152054eff55ec9826fc585d1da15e49bd97dc4b1dd7978",
+      "native_checkout_sha256": "10f35b8ae7caf36be9ee7130e608ee176b85f972b01750451c502f7438f67fc3",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/PageLifecycle.cs",
+      "git_blob_sha256": "ae9e38a9e8a790037e948db2da2afeee8d9c90bcd3b0901ab8d785b4c24051ed",
+      "native_checkout_sha256": "7d3216c9009d7b3780920ceb35dc8cf8404fcd2d2651c0759e77db72a52c546f",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/StoryWorkbench.csproj",
+      "git_blob_sha256": "6b879f7250c18b1ef0dae1ceddb64a4e2209d91d0f90238f446c02d1919e46a7",
+      "native_checkout_sha256": "7b9eaec29eb1d2961b10b38914a7cee19b969698d42417cfd59dc8cedddad5a7",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/ThemePreferences.cs",
+      "git_blob_sha256": "e10d09e26ae96807c52e05c36710a065946bc326fb07c4dc2d05047bb2a12b3e",
+      "native_checkout_sha256": "9d937185104990b5e44cb5328678512117b2f5041ef5120e01a2f9cc19513c2e",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/UpdateService.cs",
+      "git_blob_sha256": "fb775051b8e9e3eb8acded3b0edc808d9710414e9c87e7b66edb8f80f823ef37",
+      "native_checkout_sha256": "fe1cb4acb7cd85caf24f3fdc383edfaac77c7354a39663d2c81516aaa9be5e84",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/UpdateWindow.cs",
+      "git_blob_sha256": "da40671c186a32915bcdadab691745f8bb508ce8b504286916974d0ce65d8ca2",
+      "native_checkout_sha256": "09397a93781bddacf1220444f532973f450c5192c9e5e657746d4ea257e14452",
+      "transformation": "Git Windows checkout CRLF"
+    },
+    {
+      "path": "desktop/windows/README.md",
+      "git_blob_sha256": "5d6be13d97b7b7b92d9233c82b3a5ac0746bc43c0f4e8d1a90c8dddda5f2ec0b",
+      "native_checkout_sha256": "5cced2d40be77c3ac00d6370e84f83dd645c67873140d0232416126b3db113c5",
+      "transformation": "Git Windows checkout CRLF"
+    }
+  ],
+  "native_installed_tree_verification": "windows-distribution-verification.json",
+  "visual_review": {
+    "images": [
+      "windows-native-smoke-light.png",
+      "windows-native-smoke-dark.png",
+      "windows-native-smoke-update-progress.png"
+    ],
+    "light_and_dark_sky_blue_controls_legible": true,
+    "synthetic_update_progress_legible": true
+  },
+  "scope": "Fresh native Windows run, full installer lifecycle and previous public version upgrade. No live author manuscripts or platform writes."
+}

@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "assets": [
+    {
+      "file": "dist/release-v0.6.24-candidate/story-skill-0.6.24.zip",
+      "name": "story-skill-0.6.24.zip",
+      "bytes": 688093,
+      "sha256": "e2764b3622ac8c03a277292c57bc3b0f9795eb61aa2b6757db9861cb715b9ce4",
+      "checksum_file": "dist/release-v0.6.24-candidate/story-skill-0.6.24.zip.sha256",
+      "checksum_sha256": "4ff91baca1f1a96b61262fd907d690b92947a450b0a9a057d2b41182fe79a812"
+    },
+    {
+      "file": "dist/release-v0.6.24-candidate/story-skill-claude-desktop-0.6.24.zip",
+      "name": "story-skill-claude-desktop-0.6.24.zip",
+      "bytes": 694540,
+      "sha256": "9d681d2f3805466640269dee90f6d5cfaef64e9bb893b2eab3a3eb3dbec0494d",
+      "checksum_file": "dist/release-v0.6.24-candidate/story-skill-claude-desktop-0.6.24.zip.sha256",
+      "checksum_sha256": "e960e777a2992967a06ed60a06e9fc940be9a3c5b0c739c22cd128159860d573"
+    },
+    {
+      "file": "dist/release-v0.6.24-candidate/codex/story-skill-codex-0.6.24.zip",
+      "name": "story-skill-codex-0.6.24.zip",
+      "bytes": 696966,
+      "sha256": "4001e896f96053d5512a5a9baa0ac2d9f184ac976874fc36465fc9962dff7a8c",
+      "checksum_file": "dist/release-v0.6.24-candidate/codex/story-skill-codex-0.6.24.zip.sha256",
+      "checksum_sha256": "a2ba4f7518b7ac650d27a4f7cba041a3b93fecd47bbc39af4767951a1299a214"
+    },
+    {
+      "file": "dist/release-v0.6.24-candidate/story-workbench-0.1.29-macos-x86_64.zip",
+      "name": "story-workbench-0.1.29-macos-x86_64.zip",
+      "bytes": 26849937,
+      "sha256": "df02f5abd7d7b8275efdb058d36c96037581386027f5c002d827568a5deaaaf5",
+      "checksum_file": "dist/release-v0.6.24-candidate/story-workbench-0.1.29-macos-x86_64.zip.sha256",
+      "checksum_sha256": "5f566cc2cabafff3499e538fe1dfff6dbdcc430a95c1bbd5d97782f697434d9c"
+    },
+    {
+      "file": "dist/release-v0.6.24-candidate/story-workbench-0.1.29-macos-x86_64.dmg",
+      "name": "story-workbench-0.1.29-macos-x86_64.dmg",
+      "bytes": 38028560,
+      "sha256": "ebe66ab657cb5d8524b24094845d119cafc57a8555f73752b1b911762e33247b",
+      "checksum_file": "dist/release-v0.6.24-candidate/story-workbench-0.1.29-macos-x86_64.dmg.sha256",
+      "checksum_sha256": "d5fff6f33d3a51e16185ed4881b47dc5c4813bf5c15d46450b7d726ea07c1bd0"
+    }
+  ],
+  "checks": [
+    "fixed-source-verification.json",
+    "codex-plugin-verification.json",
+    "macos-build.json",
+    "macos-verification.json",
+    "macos-native-acceptance.json",
+    "macos-distribution.json",
+    "macos-complete-inventory.json",
+    "static-checks.json"
+  ],
+  "build_inputs_unchanged_after_all_local_qa": true,
+  "user_installation_modified": false,
+  "scope": "Fresh fixed-source local artifacts, complete inventories and isolated native/CLI probes. Full source CI and Windows acceptance are separate.",
+  "source_commit": "d2de5f49c5528eac4796683ea152a06a438ae8fc"
+}

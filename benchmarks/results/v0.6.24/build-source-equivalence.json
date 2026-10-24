@@ -1,0 +1,583 @@
+{
+  "ok": true,
+  "actual_build_source_commit": "d2de5f49c5528eac4796683ea152a06a438ae8fc",
+  "proposed_tag_target_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+  "changed_paths": [
+    "tests/test_workbench_auto_connect_ui.py",
+    "tests/test_workbench_draft_preferences.py"
+  ],
+  "production_or_build_input_changes": [],
+  "identical_guarded_input_files": 113,
+  "inputs": [
+    {
+      "path": ".codex-plugin/plugin.json",
+      "sha256": "7b5f0372444a1f6ba70cfda3f3fdeecb3c92b151768817835c11603351cd4970",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "6440ad375efeebba0db051c8dae71f612a9c83aaa844071c17dccf7c420c7965",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": ".github/workflows/desktop-windows.yml",
+      "sha256": "9fce652b99010f24ca68bab945ac29b53bc1be897646a6653ab4a51ffd6f2b46",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "assets/story-skill.svg",
+      "sha256": "08d448771740ea890b25e9786d13a83641c623bef03ef728c3f2361b46b3c2a4",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/macos/AppIcon.swift",
+      "sha256": "3cb9496be39b898fef81a7547214cd760d03c21f174cd36e050b3d70cad0abf9",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/macos/ClientInstance.swift",
+      "sha256": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/macos/Info.plist",
+      "sha256": "89738a43e04fef403132f85ba8e903a576820b9ab5d49ef44773324113696573",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/macos/StoryWorkbench.swift",
+      "sha256": "42ececb4ffb9c62176091aa3a69ad60d6b2b4800556974700e84fe39c0efd779",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/macos/backend_runner.py",
+      "sha256": "93a8d4b43c0b7c476d1e4c88acc23f2eb4a4f22dab77d30282fdbf42cd56c47f",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/macos/editor-appearance.js",
+      "sha256": "0109acb81513bd2a2a533fd8039f33532e00f5c3cdf86875f2f08b71aed0448d",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/README.md",
+      "sha256": "5d6be13d97b7b7b92d9233c82b3a5ac0746bc43c0f4e8d1a90c8dddda5f2ec0b",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/App.cs",
+      "sha256": "f6ddab488444f21cc7e2709d37c7abfc7fb97e6aa5ad835acbf8791110004ba6",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/Backend.cs",
+      "sha256": "6bdc0f68ff5c6fe6387cecc3464b540b2cac6fccb4aa406e0062a4cd05290c3f",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/BrowserSafety.cs",
+      "sha256": "34b1dd9ceee2371ba9b83b08571ded3420211e18e4051dad8004304472f8fe33",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/BrowserTab.cs",
+      "sha256": "924e92f8bfc72cbc7df70dd96279aaf23fb45e883a9c84d9cb2f0a19b8cdebd2",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/GlobalUsings.cs",
+      "sha256": "9eb56b713f4bd450c169f140e74ff7b6d5e456f3742a30188b947223d01628e4",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/MainWindow.cs",
+      "sha256": "a79372e14abc2a02d4152054eff55ec9826fc585d1da15e49bd97dc4b1dd7978",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/PageLifecycle.cs",
+      "sha256": "ae9e38a9e8a790037e948db2da2afeee8d9c90bcd3b0901ab8d785b4c24051ed",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/StoryWorkbench.csproj",
+      "sha256": "6b879f7250c18b1ef0dae1ceddb64a4e2209d91d0f90238f446c02d1919e46a7",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/ThemePreferences.cs",
+      "sha256": "e10d09e26ae96807c52e05c36710a065946bc326fb07c4dc2d05047bb2a12b3e",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/UpdateService.cs",
+      "sha256": "fb775051b8e9e3eb8acded3b0edc808d9710414e9c87e7b66edb8f80f823ef37",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/UpdateWindow.cs",
+      "sha256": "da40671c186a32915bcdadab691745f8bb508ce8b504286916974d0ce65d8ca2",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/StoryWorkbench/app.manifest",
+      "sha256": "6cd1fcad3f15d156c941a83d5f42a18ba7f1477c6c5937ad869c2be951100e69",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/installation_lifecycle.py",
+      "sha256": "e1b16fc99fc9c467ed4f46eebcf0b3e684e9e5b25e31bc202ed8d0a7396ca4b2",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/installer.iss",
+      "sha256": "2f9d223838adb03f1c100d11a01a573903f7f9b1832f6315b6919abb197c10c1",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "desktop/windows/requirements-build.txt",
+      "sha256": "aae02c31ad144e133a2ce37111569aae24f8fe0d782e0da1d69de9f3377f6e30",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/build_desktop_macos.py",
+      "sha256": "4e5eca671b64985ecd7cfe428036e996400966d19f2f6938a5731a34efab45a8",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/build_desktop_windows.py",
+      "sha256": "4452247b3bb8f6b3b4d0c76027a48e3d5567311ef96a38745a7bd6953ca8ebe9",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/check_forbidden_technologies.py",
+      "sha256": "73ce782a32e1845aa587ad4c43f104688ae7ee565e9dc3b1bba368d1b28f3fd9",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/install.py",
+      "sha256": "5e97b42b51380c4651264386855c08059c744cb9dde71de1f4ae75b900e75e19",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/package.py",
+      "sha256": "cbb9b8bf10200eef0fe62b26cf2fda39d94e9dcfec1b5a8e0ff1e1dfd025625f",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/package_claude.py",
+      "sha256": "7c414f26e7fa69b229ffd6cf0e332979cc9c37806dc1b6637414b5a32c6e7d27",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/package_codex.py",
+      "sha256": "c748efd81121ea2fb94a3d4bbe5235c0a0a4e09a7a0f9e5b1bb5dfb07380d693",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/package_npm.py",
+      "sha256": "66ad8d88393e2e91ca00b31bfa404371e5034eb165da359c387bad050704ed01",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/publish_windows_draft.py",
+      "sha256": "b034ffa5bcebb0c1be8690afbf7c74ce35ec454240cecc7f7bb7b5738bb9a9a8",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/sync_packages.py",
+      "sha256": "2c500516b6cc2afa322eb7bf56b6578a0c7eb97b34c491e69633c5f83ad7fc48",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "scripts/verify_codex_plugin.py",
+      "sha256": "1b354d190172a700d2b008e5f00d99028bec1cf359b3fa2b28df30b5f28f076b",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-analyze/LICENSE",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-analyze/SKILL.md",
+      "sha256": "c438ff05fa677f19301c1f2c4e3e73b2c3c23588bb3e0a6912e68fa0a86b2af1",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-analyze/agents/openai.yaml",
+      "sha256": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-analyze/references/deep-reading.md",
+      "sha256": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-analyze/references/examples.md",
+      "sha256": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-cover/LICENSE",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-cover/SKILL.md",
+      "sha256": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-cover/agents/openai.yaml",
+      "sha256": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-plan/LICENSE",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-plan/SKILL.md",
+      "sha256": "746fa349eb06fe82939f383666bd92ae777bc4b1502bc728a43643e01999471d",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-plan/agents/openai.yaml",
+      "sha256": "60d1738ffeb89e0d4685349378401ee7fdb52ae9e85e60ccbf06a41d50101a01",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-plan/references/blurb.md",
+      "sha256": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-plan/references/fanqie-tags.md",
+      "sha256": "533f8cbdc62da3c03dca4dcfa849fe51e4f25e1f8165fe8fd43219bef399460f",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-plan/references/outline.md",
+      "sha256": "0871b7b68f26a382697d9b6ca404bfa0874d30d91a6f141ed3409b28d4393e0b",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-plan/references/qidian-categories.md",
+      "sha256": "eeaaa495baca608a31163f9f3e07f88112ab432b379926fbd2dc37904e1d03e7",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-plan/references/qimao-tags.md",
+      "sha256": "0eebca1c8915efb3a29bea3a2ca39f29d4141c40dc4f8ead67c2efe0d340affb",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-plan/references/short-platform.md",
+      "sha256": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-publish/LICENSE",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-publish/SKILL.md",
+      "sha256": "7bae3b193be5709766c6d85d2d0021534ae9cae360e391a0b251edcfb4a0e446",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-publish/agents/openai.yaml",
+      "sha256": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-publish/references/platform-drafts.md",
+      "sha256": "a62328345fc00bff9a4b75ebb8aeb44b75b7c1b878a28dd35940847f452c0a07",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-research/LICENSE",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-research/SKILL.md",
+      "sha256": "03b9e9d85cc4bff57b0d31944d3cce444d3a7049749dc597aa7a22f53f515a31",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-research/agents/openai.yaml",
+      "sha256": "3fb4cfaded0bf4206c2f3cf7dbc1e6ccf7ee62f5fd4ca1a406b509a0b9bcde28",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-research/references/rank-scan.md",
+      "sha256": "4537af29249b86f56f0717848868250a3a2f48cd332350570395e22e7c46ef80",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-research/references/reader-validation.md",
+      "sha256": "ae0c25a0e81e1ba718ebb44ad6e99aec030b724ef515109833d29be18186c721",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-research/references/research-handoff.md",
+      "sha256": "e010886fd50a4c31be8f933eebd9f4ff7278021310f93a337a0c3de0f2e10b88",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-review/LICENSE",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-review/SKILL.md",
+      "sha256": "7563ef2c5e8a7253f5c975c432a19c2ed1080dcb6013f6a99074a5f40c34d998",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-review/agents/openai.yaml",
+      "sha256": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-review/references/fanqie-content-review.md",
+      "sha256": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-review/references/history.md",
+      "sha256": "00e56c9a2c3757d213dfa555e1571548ba1de05ad38dcda729f5fc8a74430be6",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-review/references/qimao-content-review.md",
+      "sha256": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/LICENSE",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/SKILL.md",
+      "sha256": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/agents/openai.yaml",
+      "sha256": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/references/chapter-continuity.md",
+      "sha256": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/references/chapter.md",
+      "sha256": "3403c904be422998301f8f2e399c207145ca1c86bf93940ee4f6d19208d1c578",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/references/content-review.md",
+      "sha256": "16676244d285becfbf01b1328c0e7c245e97b78a022020df521c1f4decfc37c0",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/references/drama.md",
+      "sha256": "d26a137fa5e3b2917dd1fef1d162bd1b839acc3b081e8738d201792f3e85e378",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/references/long-form.md",
+      "sha256": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/references/punctuation.md",
+      "sha256": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/references/suspense-evidence.md",
+      "sha256": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill-write/references/writing-handoff.md",
+      "sha256": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/LICENSE",
+      "sha256": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/SKILL.md",
+      "sha256": "a2e6f10301f83ae666f390de3c79ddbe3b6fe2e3e9f3afab37820bdb3a9d979f",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/agents/openai.yaml",
+      "sha256": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/references/project-state.md",
+      "sha256": "320fd02bf6b443bc56b18021ef7dfbcdd510659e45c5a8289268e220839fba30",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/references/workbench.md",
+      "sha256": "60d713a3aa81009018ed2c8d210ecd2f40d1ea30c90262b1c1ea67ad3b26dff6",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story.py",
+      "sha256": "27ea42a4c4394aac96921a46145e1db499f94a653e9d003f90bc6961ae48a1d4",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_chrome_bridge.mjs",
+      "sha256": "1d3e2c276178dc3718f8aee568fc6b7be921be928b08d82b6add92ba6f7856b5",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_chrome_worker.mjs",
+      "sha256": "da919e8d04cabebe204cb245d0cb997123d0b1f42bea4c9869306e38dfc65259",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_chrome_worker.py",
+      "sha256": "569c10fc8e80e05f9c828a506aa58cf6e465271f662ccdaeee71bfb8c5acce02",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_history.py",
+      "sha256": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_outline.py",
+      "sha256": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_browser.py",
+      "sha256": "723d5505f405f114c37f5afe160dfdbcf2ab87298ba405071fef49a00c94a8ba",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+      "sha256": "0e6f7319e25a2afdaae2ae71336269689173572dcab9635dbc4472b750ade0c5",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_drafts.py",
+      "sha256": "e6ad80270d0455f059244d588e415b5ed88f479edfecb2dc8950edfde31d6a51",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_publish.py",
+      "sha256": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_punctuation.py",
+      "sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_rank.py",
+      "sha256": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_rank_sources.py",
+      "sha256": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_research.py",
+      "sha256": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_search.py",
+      "sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_storage.py",
+      "sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_workbench.py",
+      "sha256": "7914dfb35a54b0ebbe8a68426612fb318090f17469a2fe09a997fb1c6f3dbf7b",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_workbench_archives.py",
+      "sha256": "f57f3358ec74156d7926bb71a9f1ba016076dd790d0f27357ce12f44c6cdb244",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_workbench_books.py",
+      "sha256": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "skills/story-skill/scripts/story_world.py",
+      "sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "tests/desktop_payload_probe.py",
+      "sha256": "8e7d0a64702be212b5a6a0e33d529801da164b213c4196874b4fa0249e4f306a",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "tests/windows/BrowserSafetyTests.cs",
+      "sha256": "4fe1803bcfbd253eff6202edd790bbe6d8d1aa6339b84f6ac7ed04bd2c97078c",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "tests/windows/DesktopPreferencesTests.cs",
+      "sha256": "9758830e45e6c49d2ec6731f5c06bb8a9bd49b11ac0e903768eff0d80e2da7ce",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "tests/windows/Program.cs",
+      "sha256": "e129f5874e2352dda1b1356031f2b640e78f7b42f440a8998d3014c1d97530ea",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "tests/windows/StoryWorkbench.Tests.csproj",
+      "sha256": "76ab474353dfead0ff251c85793032404b5135d3037873bd64729c1ed11d0d84",
+      "git_mode_and_blob_identical": true
+    },
+    {
+      "path": "tests/windows/UpdateServiceTests.cs",
+      "sha256": "fbd57ce11e010b38fd1ea3e217b6f5cd925ea45a1c2d0a09bb703840adb115e0",
+      "git_mode_and_blob_identical": true
+    }
+  ],
+  "remote_source_preparation": {
+    "files": 71,
+    "downloaded_bytes_and_git_blobs_identical": true
+  },
+  "scope": "Only six stale UI expectations in two test files changed after native packaging. All actual build inputs, modes, blobs, and prepared remote payload bytes are identical."
+}

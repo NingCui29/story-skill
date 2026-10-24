@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "source_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+  "remote_refs": {
+    "refs/heads/main": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+    "refs/tags/v0.6.24": "1eb765800a3a9349c5be124eb34f69d746f97eae",
+    "refs/tags/v0.6.24^{}": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+    "refs/tags/windows-v0.2.3": "f3b3f385a7a410d7fac52b899f8bf4140f51ff4b",
+    "refs/tags/windows-v0.2.3^{}": "d3b934fe8a8b58a93b97673a21d293b0a476392f"
+  },
+  "atomic_push": true,
+  "existing_untracked_development_evidence_preserved": true
+}

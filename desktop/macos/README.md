@@ -4,19 +4,23 @@
 
 `写作工作台.app` 将本地书架和作品编辑页面放进独立的 macOS 窗口。它沿用现有工作台服务和保存规则，应用包内携带 Python 运行时与工作台程序。
 
-当前正式版本为 **0.1.26 / build 27**，内嵌 Story Skill **0.6.23** 和20个运行时文件；恢复分页、桥接会话恢复及研究兼容修复见 [v0.6.23 发布记录](../../docs/releases/v0.6.23.md)。完整创作与研究流程通过所用助手中的 Story Skill 进行，工作台界面用于书稿与候选管理。
+当前正式版本为 **0.1.29 / build 30**，内嵌 Story Skill **0.6.24** 和20个运行时文件；已有草稿同步、正式稿范围与同步状态刷新见 [v0.6.24 发布记录](../../docs/releases/v0.6.24.md)。完整创作与研究流程通过所用助手中的 Story Skill 进行，工作台界面用于书稿与候选管理。
 
 本次新构建已通过签名、CLI／安全探针、原生合成场景及完整ZIP／DMG核对；公开分发范围按本轮实际回执记录。
 
-本版下载 [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-workbench-0.1.26-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-workbench-0.1.26-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-workbench-0.1.26-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-workbench-0.1.26-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
+本版下载 [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-workbench-0.1.29-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-workbench-0.1.29-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-workbench-0.1.29-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-workbench-0.1.29-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
 
 工作台采用紧凑的天空蓝界面，支持浅色、深色及跟随系统。书架可新建、移出／撤销、重新定位、删除至系统废纸篓、备份和恢复作品；编辑页提供恢复中心、保存全部候选、两稿对照及下一章任务。原有候选与正式稿身份继续保留。操作和边界见[需求与进展](../../docs/工作台需求与进展.md)。
 
 应用菜单中的“检查更新…”按本机架构比较 GitHub 最新正式客户端。下载窗口显示百分比、大小、速度和预计剩余时间，支持取消与重试；通过大小和 SHA256 核对后打开安装包，提示保存、手动安装及重新打开。下载完成与安装完成分别处理，不自动替换运行中的应用或停止作品服务。详见[更新流程](../../docs/工作台更新流程.md)。
 
-平台草稿入口可准备配置、预览冻结清单、保存和回读；番茄可显式启动受控 Codex 会话连接既有已登录 Chrome，使用账户额度并依赖已登录的外部 Codex CLI、官方 Chrome 插件（含 SDK）及已连接的 Chrome 会话；权限拒绝即停止，未知结果先回读对账。番茄已有指定合成稿的完整链路证据，七猫、起点、多卷与真实分页待实页验收，不执行审核提交或定时发布。[平台草稿范围](../../skills/story-skill-publish/references/platform-drafts.md)
+平台草稿入口可准备配置、预览冻结清单、保存和回读，并显示当前正式稿范围。选择“同步更新已有草稿（章名和正文）”后，以所选范围的最新正式稿重新预览，点击执行才修改后台草稿；修改前备份，保留原草稿 ID，保存后独立全文回读。同步记录区分最近历史与本次远端观察。番茄可显式启动受控 Codex 会话连接既有已登录 Chrome，使用账户额度并依赖已登录的外部 Codex CLI、官方 Chrome 插件（含 SDK）及已连接的 Chrome 会话；权限拒绝即停止，未知结果先回读对账。番茄已有指定合成稿的完整链路证据，七猫、起点、多卷与真实分页待实页验收，不执行审核提交或定时发布。[平台草稿范围](../../skills/story-skill-publish/references/platform-drafts.md)
 
 客户端使用临时本地签名，未做 Apple 公证。本轮发布目标为 Intel Mac；最低 macOS 13 是构建配置，Apple Silicon 及其他 macOS 用户环境未据此获得验证。安装包与已运行服务分别更新，替换应用不会让旧服务自动加载新代码。
+
+## 0.1.29 / build 30 发行范围
+
+内嵌 Story Skill 0.6.24，共20个运行时文件。本轮完成固定源码比对、严格临时签名、隔离 CLI 与安全探针、原生合成书架／编辑／双书切换，以及完整 ZIP 和只读 DMG 内容核对。构建来源、源码 CI 与公开附件的实际核验范围见[本版发布记录](../../docs/releases/v0.6.24.md)。本次软件发布没有替换日常安装或重启作者作品服务。
 
 ## 0.1.26 / build 27 发行范围
 

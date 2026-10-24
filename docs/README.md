@@ -1,6 +1,6 @@
 # Story Skill 文档导航
 
-**当前正式版 v0.6.23 已发布。** 提供八技能／69文件、标准ZIP、Claude桌面单入口包、Codex本地插件，以及Intel Mac 0.1.26／build27；Windows C# x64 0.2.2 独立发行。采用新书名、草稿核对、恢复分页、研究兼容及实际验收范围见[技能与Mac记录](releases/v0.6.23.md)和[Windows记录](releases/windows-v0.2.2.md)。
+**当前正式版 v0.6.24 已发布。** 提供八技能／69文件、标准ZIP、Claude桌面单入口包、Codex本地插件，以及Intel Mac 0.1.29／build30；Windows C# x64 0.2.3 独立发行。已有草稿章名与正文同步、错字标记读取、正式稿范围与同步状态刷新及实际验收范围见[技能与Mac记录](releases/v0.6.24.md)和[Windows记录](releases/windows-v0.2.3.md)。
 
 [v0.6.22](releases/v0.6.22.md)、[Windows 0.2.1](releases/windows-v0.2.1.md)与更早版本的附件和证据保持原样。历史通过结果不替代本版验收。
 

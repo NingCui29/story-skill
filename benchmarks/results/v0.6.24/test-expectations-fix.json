@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "source_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+  "parent_build_commit": "d2de5f49c5528eac4796683ea152a06a438ae8fc",
+  "changed_files": [
+    "tests/test_workbench_auto_connect_ui.py",
+    "tests/test_workbench_draft_preferences.py"
+  ],
+  "production_changes": false,
+  "initial_failures": 6,
+  "focused_tests": 31,
+  "focused_result": "OK",
+  "focused_log_sha256": "b84475e1ed0a5d722def7cf12e51155a723aafd40966479da365e54a871ec5db",
+  "reason": "Assertions now require chapter-range-aware button labels and the latest durable history after completed jobs, preserving authorization and no-repeat checks.",
+  "final_full_ci_required": true
+}

@@ -1,0 +1,127 @@
+{
+  "ok": true,
+  "source_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+  "latest_tag": "v0.6.24",
+  "releases": [
+    {
+      "id": 422630800,
+      "tag": "windows-v0.2.3",
+      "source_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+      "draft": false,
+      "published_at": "2026-10-24T10:08:32Z",
+      "url": "https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.3",
+      "assets": [
+        {
+          "id": 671845881,
+          "name": "story-workbench-0.2.3-windows-x86_64-setup.exe",
+          "bytes": 299301628,
+          "digest": "sha256:5c2f5d49e00de9e3242618d40bf75d49c11e7b6c25d5327e42868ab4bf9a9903",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.3/story-workbench-0.2.3-windows-x86_64-setup.exe"
+        },
+        {
+          "id": 671846500,
+          "name": "story-workbench-0.2.3-windows-x86_64-setup.exe.sha256",
+          "bytes": 114,
+          "digest": "sha256:57319ccb54d95581da3027cb5ac7b0d09f31e1c92eb1abdba38a23b19a8c1da8",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.3/story-workbench-0.2.3-windows-x86_64-setup.exe.sha256"
+        },
+        {
+          "id": 671846616,
+          "name": "story-workbench-0.2.3-windows-x86_64.zip",
+          "bytes": 320747409,
+          "digest": "sha256:11f40d1a2b89a56516661f8235570ee5814a4e80b98b310a17c24f79147e093b",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.3/story-workbench-0.2.3-windows-x86_64.zip"
+        },
+        {
+          "id": 671847381,
+          "name": "story-workbench-0.2.3-windows-x86_64.zip.sha256",
+          "bytes": 108,
+          "digest": "sha256:1b50485e56fcc1d23efee8cc2c09324814616b1b65f5d51e6bfa8d37144da28f",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.3/story-workbench-0.2.3-windows-x86_64.zip.sha256"
+        }
+      ],
+      "original_uploaded_assets_preserved": true
+    },
+    {
+      "id": 422630775,
+      "tag": "v0.6.24",
+      "source_commit": "d3b934fe8a8b58a93b97673a21d293b0a476392f",
+      "draft": false,
+      "published_at": "2026-10-24T10:08:37Z",
+      "url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.24",
+      "assets": [
+        {
+          "id": 671834825,
+          "name": "story-skill-0.6.24.zip",
+          "bytes": 688093,
+          "digest": "sha256:e2764b3622ac8c03a277292c57bc3b0f9795eb61aa2b6757db9861cb715b9ce4",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-skill-0.6.24.zip"
+        },
+        {
+          "id": 671835109,
+          "name": "story-skill-0.6.24.zip.sha256",
+          "bytes": 89,
+          "digest": "sha256:4ff91baca1f1a96b61262fd907d690b92947a450b0a9a057d2b41182fe79a812",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-skill-0.6.24.zip.sha256"
+        },
+        {
+          "id": 671835396,
+          "name": "story-skill-claude-desktop-0.6.24.zip",
+          "bytes": 694540,
+          "digest": "sha256:9d681d2f3805466640269dee90f6d5cfaef64e9bb893b2eab3a3eb3dbec0494d",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-skill-claude-desktop-0.6.24.zip"
+        },
+        {
+          "id": 671835711,
+          "name": "story-skill-claude-desktop-0.6.24.zip.sha256",
+          "bytes": 104,
+          "digest": "sha256:e960e777a2992967a06ed60a06e9fc940be9a3c5b0c739c22cd128159860d573",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-skill-claude-desktop-0.6.24.zip.sha256"
+        },
+        {
+          "id": 671836105,
+          "name": "story-skill-codex-0.6.24.zip",
+          "bytes": 696966,
+          "digest": "sha256:4001e896f96053d5512a5a9baa0ac2d9f184ac976874fc36465fc9962dff7a8c",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-skill-codex-0.6.24.zip"
+        },
+        {
+          "id": 671836456,
+          "name": "story-skill-codex-0.6.24.zip.sha256",
+          "bytes": 95,
+          "digest": "sha256:a2ba4f7518b7ac650d27a4f7cba041a3b93fecd47bbc39af4767951a1299a214",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-skill-codex-0.6.24.zip.sha256"
+        },
+        {
+          "id": 671837926,
+          "name": "story-workbench-0.1.29-macos-x86_64.dmg",
+          "bytes": 38028560,
+          "digest": "sha256:ebe66ab657cb5d8524b24094845d119cafc57a8555f73752b1b911762e33247b",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-workbench-0.1.29-macos-x86_64.dmg"
+        },
+        {
+          "id": 671838878,
+          "name": "story-workbench-0.1.29-macos-x86_64.dmg.sha256",
+          "bytes": 106,
+          "digest": "sha256:d5fff6f33d3a51e16185ed4881b47dc5c4813bf5c15d46450b7d726ea07c1bd0",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-workbench-0.1.29-macos-x86_64.dmg.sha256"
+        },
+        {
+          "id": 671836793,
+          "name": "story-workbench-0.1.29-macos-x86_64.zip",
+          "bytes": 26849937,
+          "digest": "sha256:df02f5abd7d7b8275efdb058d36c96037581386027f5c002d827568a5deaaaf5",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-workbench-0.1.29-macos-x86_64.zip"
+        },
+        {
+          "id": 671837647,
+          "name": "story-workbench-0.1.29-macos-x86_64.zip.sha256",
+          "bytes": 106,
+          "digest": "sha256:5f566cc2cabafff3499e538fe1dfff6dbdcc430a95c1bbd5d97782f697434d9c",
+          "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.24/story-workbench-0.1.29-macos-x86_64.zip.sha256"
+        }
+      ],
+      "original_uploaded_assets_preserved": true
+    }
+  ]
+}

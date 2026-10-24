@@ -2,6 +2,8 @@
 
 > **历史记录提示：** 本仓库文档和 14 个旧版 Release 的标题、正文已做名称遮盖；28 个旧附件的文件名、旧包身份、固定标签和提交历史仍保留原样，以免现有下载地址与安装依赖失效。旧版路径不能由新技能名推导，历史资料中的来源路径与哈希可能无法用遮盖后的文件复验。v0.6.0 的附件与回下载已核对；安装时仍须检查当前标签与附件状态。
 
+**v0.6.24 与 Windows 0.2.3 已正式发布。** 本版发布已有草稿章名与正文同步、错字标记读取、正式稿范围和同步记录刷新。主发行包含三类技能 ZIP、Intel Mac 0.1.29／build30 的 ZIP 与 DMG，各附校验文件；Windows 独立提供 C# EXE、便携 ZIP 及校验文件。完整源码 CI、构建来源、固定标签安装和公开下载结果见[主版本记录](releases/v0.6.24.md)、[Windows记录](releases/windows-v0.2.3.md)及[证据索引](../benchmarks/results/v0.6.24/README.md)。主发行保持 latest，Windows 使用独立更新通道。
+
 **v0.6.23 与 Windows 0.2.2 已正式发布。** 主发行提供三类技能ZIP、Intel Mac 0.1.26／build27 的ZIP与DMG及同名校验，共10附件；Windows C#／WPF／WebView2使用独立 `windows-v0.2.2`，安装程序、便携ZIP与各自校验共4附件。两标签均固定到 `6a7c203d61eca70a5c4c1ad6607420ef91b985df`，实际构建源保留为 `2f81943e4d6b2f1092f6f06daf143aa532308989`；累计九份测试修正外的分发输入一致。最终完整CI、两端原生验收和真实固定标签安装已通过；两次失败、本地历史基线、公开请求和Packages的实际结果见[主版本记录](releases/v0.6.23.md)、[Windows记录](releases/windows-v0.2.2.md)与[证据索引](../benchmarks/results/v0.6.23/README.md)。Windows更新读取 `windows-v*`，主发行保持latest。
 
 **v0.6.22 已正式发布。** 新增结构化扫榜、代表作抽样及研究交接，八技能69个载荷文件、20个运行时模块；Intel Mac 0.1.25/build 26 与 Windows x64 0.1.12 同步分发，共十四附件。固定标签源码为 `a5ebaa53547d34a5d93d1da30f1b6dde5a73cd6e`，版本分支为 `version-0.6.22`。完整 CI、原生新构建、固定标签安装、公开下载及 Packages 的实际范围见[本版记录](releases/v0.6.22.md)。修复前源码 CI 失败、旧 Node 超时及本轮草稿标签修复均保留独立记录，不改写旧结论。

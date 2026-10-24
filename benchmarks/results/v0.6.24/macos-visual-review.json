@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "source_commit": "d2de5f49c5528eac4796683ea152a06a438ae8fc",
+  "screenshots": [
+    {
+      "name": "macos-native-shelf.png",
+      "sha256": "c95b079dd0e23f0b81031d96ef4528051cca71de92bd623d7afe9644b4fc8e55"
+    },
+    {
+      "name": "macos-native-editor.png",
+      "sha256": "2bd36743df0790a851ee1205efcf550a781ce77214effceb98ce88a31dbbce1a"
+    },
+    {
+      "name": "macos-native-switch.png",
+      "sha256": "6dfbf0ff7dad2f6b6cb6060e09fb4b8705b831e0ca350e6ac1f9481bf13a5c2a"
+    }
+  ],
+  "checked": [
+    "Sky-blue controls and dark theme",
+    "Shelf controls and both synthetic book cards",
+    "Editor material tree and candidate text",
+    "Switch result retains candidate and navigation"
+  ],
+  "scope": "Manual inspection of three native WebKit synthetic screenshots; no real manuscript or platform operation."
+}
