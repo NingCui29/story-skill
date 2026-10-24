@@ -350,6 +350,62 @@ class RankSampleTests(unittest.TestCase):
             self.assertFalse(book["observation"]["conflict"])
         self.assertIn("不是随机抽样", rank.render_sample(result))
 
+    def test_repeated_tags_beyond_display_limit_affect_sampling_but_display_limit_does_not(self):
+        books = [entry(str(i)) for i in range(1, 6)]
+        for i, book in enumerate(books):
+            book.update(rank=i + 1, word_count=100000,
+                        tags=[f"常见标签{j:02d}" for j in range(50)] if i < 3 else ["另一重复标签"])
+        data = snapshot(books)
+        group = rank.aggregate_snapshots([data])["groups"][0]
+        self.assertEqual((len(group["tags"]["rows"]), group["tags"]["truncated_n"]), (50, 1))
+        self.assertNotIn("另一重复标签", {row["tag"] for row in group["tags"]["rows"]})
+        result = rank.build_sample([data], limit=2)
+        self.assertEqual([book["identity"]["value"] for book in result["books"]], ["1", "4"])
+        self.assertIn("补充本组重复标签：另一重复标签", result["books"][1]["reasons"])
+        for display_limit in (0, 1, 51, 80):
+            with self.subTest(display_limit=display_limit), patch.object(rank, "MAX_TAG_ROWS", display_limit):
+                self.assertEqual(rank.build_sample([data], limit=2), result)
+                self.assertEqual(rank.validate_sample(result), result)
+
+    def test_sampling_tag_repetition_uses_full_selected_group_before_filters(self):
+        books = [entry(key) for key in ("a", "b", "c", "d")]
+        for i, book in enumerate(books):
+            book.update(rank=i + 1, title="命中作品" if i < 3 else "筛除作品",
+                        tags=["常见标签"] if i < 2 else ["另一重复标签"])
+        result = rank.build_sample([snapshot(books)], title_contains="命中", limit=2)
+        self.assertEqual((result["counts"]["group_accepted"], result["counts"]["eligible"]), (4, 3))
+        self.assertEqual([book["identity"]["value"] for book in result["books"]], ["a", "c"])
+        self.assertIn("补充本组重复标签：另一重复标签", result["books"][1]["reasons"])
+
+    def test_excluded_or_duplicate_observations_do_not_promote_unique_sampling_tags(self):
+        books = [entry(key) for key in ("a", "b", "c")]
+        for i, book in enumerate(books):
+            book.update(rank=i + 1, tags=["共有标签"] if i < 2 else ["孤例标签"])
+        first = snapshot(books)
+        duplicate = deepcopy(first)
+        duplicate["collected_at"] = "2026-10-22T18:00:00+08:00"
+        duplicate["entries"] = [deepcopy(books[2]), deepcopy(books[2])]
+        conflicted = entry("d")
+        conflicted.update(rank=4, tags=["孤例标签"])
+        changed = deepcopy(conflicted)
+        changed["title"] = "冲突观测"
+        ambiguous = deepcopy(conflicted)
+        ambiguous["book_id"] = "e"
+        another_group = snapshot([conflicted])
+        another_group["source"]["board"] = "另一榜单"
+        cases = {
+            "duplicate": [first, duplicate],
+            "observation_conflict": [snapshot(books + [conflicted, changed])],
+            "identity_conflict": [snapshot(books + [conflicted, ambiguous])],
+            "another_group": [first, another_group],
+        }
+        group_id = rank.aggregate_snapshots([first])["groups"][0]["group_id"]
+        for case, data in cases.items():
+            with self.subTest(case=case):
+                result = rank.build_sample(data, group_id=group_id, limit=2)
+                self.assertEqual([book["identity"]["value"] for book in result["books"]], ["a", "b"])
+                self.assertEqual(result["counts"]["group_accepted"], 3)
+
     def test_filters_are_exact_tags_and_literal_title_with_inclusive_word_bounds(self):
         data = self.diverse()
         result = rank.build_sample([data], category="玄幻", tags=["成长", "复仇"], title_contains="开局0", min_words=0, max_words=0)

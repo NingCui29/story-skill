@@ -12,7 +12,8 @@ import unittest
 from unittest.mock import Mock, patch
 
 from tests import test_publish as fixtures
-from tests.test_platform_browser import profile
+from tests.test_platform_browser import profile as generic_profile
+from tests.test_platform_browser_preview import configuration as profile
 from tests import test_workbench_auto_connect_ui as ui
 
 
@@ -109,7 +110,7 @@ class DraftPreferenceStorageTests(unittest.TestCase):
                                          expected_book_id=self.book.meta('id'), save=True)
         other = self.fixture.prepare(platform='qidian')
         other_profile = self.profile_dir / 'qidian.json'
-        other_profile.write_text(self.api.dumps(profile('qidian')), encoding='utf-8')
+        other_profile.write_text(self.api.dumps(generic_profile('qidian')), encoding='utf-8')
         other_sha = hashlib.sha256(other_profile.read_bytes()).hexdigest()
         self.assert_code('platform_draft_invalid_comparison_policy', self.w._platform_draft_rules,
                          self.root, other['id'], other_profile.name, other_sha, expected_book_id=self.book.meta('id'),

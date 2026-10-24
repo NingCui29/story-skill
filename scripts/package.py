@@ -174,10 +174,12 @@ SUITE_FILES_V0622 = tuple(sorted((*SUITE_FILES_V0621,
     "story-skill-research/references/research-handoff.md",
 )))
 SKILL_NAMES_V0622 = SKILL_NAMES_V0621
+SUITE_FILES_V0623 = SUITE_FILES_V0622
+SKILL_NAMES_V0623 = SKILL_NAMES_V0622
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0622
-SUITE_FILES = SUITE_FILES_V0622
+SKILL_NAMES = SKILL_NAMES_V0623
+SUITE_FILES = SUITE_FILES_V0623
 
 
 def suite_files(version):
@@ -214,6 +216,8 @@ def suite_files(version):
         return SUITE_FILES_V0620
     if version == "0.6.22":
         return SUITE_FILES_V0622
+    if version == "0.6.23":
+        return SUITE_FILES_V0623
     if version == "0.6.21":
         return SUITE_FILES_V0621
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
@@ -253,6 +257,8 @@ def skill_names(version):
         return SKILL_NAMES_V0620
     if version == "0.6.22":
         return SKILL_NAMES_V0622
+    if version == "0.6.23":
+        return SKILL_NAMES_V0623
     if version == "0.6.21":
         return SKILL_NAMES_V0621
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
@@ -344,6 +350,8 @@ def package(output=None):
     version = source_version(runtime)
     output = (Path(output).expanduser() if output is not None else ROOT / f"dist/story-skill-{version}.zip").absolute()
     validate_archive_name(output, version)
+    if output.resolve().is_relative_to(SOURCE.resolve()):
+        raise ValueError("Archive output must be outside the skill source directory")
     output.parent.mkdir(parents=True, exist_ok=True)
     fd, name = tempfile.mkstemp(prefix=".story-skill-package-", suffix=".zip", dir=output.parent)
     stage = Path(name)

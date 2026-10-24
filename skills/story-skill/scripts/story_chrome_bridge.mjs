@@ -60,6 +60,49 @@ export function readDOMValue(el, attribute = null) {
   return el.getAttribute('contenteditable') === 'true' ? el.innerText : el.textContent;
 }
 
+// CUA exposes locators, not ElementHandles. Resolve a supported host selector
+// to a read-only DOM path so a later callback can sample all editor fields in
+// one JS turn without adding page globals or reimplementing selector engines.
+export function readDOMPath(elements) {
+  if (elements.length !== 1) return {count:elements.length};
+  const el=elements[0],doc=el.ownerDocument,path=[];
+  if (!doc || !el.isConnected) return {count:1,connected:false};
+  let node=el;
+  while (node !== doc) {
+    const parent=node.parentNode;
+    if (!parent) {
+      if (node.host?.shadowRoot === node) { path.unshift('shadow');node=node.host;continue; }
+      return {count:1,connected:false};
+    }
+    const index=Array.prototype.indexOf.call(parent.childNodes,node);
+    if (index < 0) return {count:1,connected:false};
+    path.unshift(index);node=parent;
+  }
+  return {count:1,connected:true,path,tag:el.tagName};
+}
+
+export function readActionState(elements) {
+  if (elements.length !== 1) return {count:elements.length};
+  const el=elements[0],doc=el.ownerDocument,focused=doc?.activeElement;
+  const href=el.getAttribute('href');let resolvedHref=null;
+  if (typeof href==='string') {
+    try { resolvedHref=new URL(href,doc?.baseURI||doc?.location?.href).href; } catch { /* An invalid URL has no resolved destination. */ }
+  }
+  let editableFocus=el.getAttribute('contenteditable')==='true'&&!!focused;
+  let cursor=focused;
+  while (cursor?.shadowRoot?.activeElement) cursor=cursor.shadowRoot.activeElement;
+  while (editableFocus&&cursor!==el) {
+    if (!cursor||['INPUT','TEXTAREA','SELECT','BUTTON','IFRAME'].includes(cursor.tagName)||
+        cursor.getAttribute?.('contenteditable')?.toLowerCase()==='false') { editableFocus=false;break; }
+    cursor=cursor.parentNode;
+  }
+  editableFocus=editableFocus&&cursor===el;
+  return {count:1,url:doc?.location?.href,text:(el.innerText??el.textContent??'').trim(),
+    aria:el.getAttribute('aria-label'),title:el.getAttribute('title'),href,resolvedHref,
+    disabled:el.disabled===true||el.getAttribute('aria-disabled')==='true',
+    focused:!!focused&&(focused===el||el.contains(focused)),editableFocus};
+}
+
 export function readRowFields(elements, specs) {
   if (elements.length > 100000) return {ok:false,error:'incomplete_list'};
   const rows = [];
@@ -117,7 +160,56 @@ export function readPreviewParagraphs_v1(el) {
 // This exact read-only serializer is shared with the native adapter's observed
 // Fanqie paragraph format. Exactly one final empty P is an editor sentinel.
 // All other empty paragraphs, spaces and leading/trailing linefeeds survive.
-export function readParagraphs(el) {
+export function readParagraphs(el, currentField = null) {
+  // evaluateAll supplies a currently matched set without attachment waiting.
+  // Keep this branch self-contained for CUA serialization and use the same
+  // paragraph parser for both initial and final editor observations.
+  if (currentField != null) {
+    if (!Array.isArray(el)) return {ok:false};
+    if (el.length !== 1) return {ok:false,count:el.length};
+    const node = el[0];
+    if (currentField.source === 'editor_snapshot') {
+      const doc=node.ownerDocument;
+      if (!doc || node !== doc.documentElement || !node.isConnected) return {ok:false,count:1};
+      const fields={};
+      for (const field of currentField.fields) {
+        let resolved=doc;
+        for (const index of field.path) resolved=index==='shadow'?resolved?.shadowRoot:resolved?.childNodes?.[index];
+        if (!resolved?.isConnected || resolved.ownerDocument !== doc || resolved.tagName !== field.tag) return {ok:false,count:1};
+        const packet=readParagraphs([resolved],field.spec);
+        if (packet.ok !== true || typeof packet.value !== 'string') return {ok:false,count:1};
+        fields[field.name]=packet.value;
+      }
+      return {ok:true,count:1,url:doc.location.href,fields};
+    }
+    if (currentField.source === 'fanqie_preview_paragraphs_v1') {
+      // Keep the final callback self-contained. Parity tests bind this branch
+      // to the standalone preview serializer, including its exact padding.
+      const nodes=Array.from(node.childNodes);
+      const plainP=item=>item?.nodeType===1&&item.tagName==='P'&&typeof item.outerHTML==='string'&&item.outerHTML.startsWith('<p>')&&item.outerHTML.endsWith('</p>');
+      const last=nodes.at(-1);
+      if (!plainP(last)||last.childNodes.length!==0||last.outerHTML!=='<p></p>') return {ok:false,count:1};
+      const paragraphs=[];
+      for (const paragraph of nodes.slice(0,-1)) {
+        if (!plainP(paragraph)) return {ok:false,count:1};
+        const only=paragraph.childNodes[0];
+        if (paragraph.outerHTML==='<p><br></p>'&&paragraph.childNodes.length===1&&only?.nodeType===1&&only.tagName==='BR'&&only.childNodes.length===0&&only.outerHTML==='<br>') { paragraphs.push('');continue; }
+        let value='';
+        for (const child of Array.from(paragraph.childNodes)) {
+          if (child.nodeType!==3||typeof child.textContent!=='string') return {ok:false,count:1};
+          value+=child.textContent;
+        }
+        paragraphs.push(value);
+      }
+      return {ok:true,count:1,value:paragraphs.join('\n')};
+    }
+    const packet = currentField.source === 'prosemirror_paragraphs' ? readParagraphs(node) : {
+      ok:true,value:currentField.attribute != null ? node.getAttribute(currentField.attribute) :
+        ['INPUT','TEXTAREA','SELECT'].includes(node.tagName) ? node.value :
+          node.getAttribute('contenteditable') === 'true' ? node.innerText : node.textContent
+    };
+    return {...packet,count:1,...(currentField.includeURL ? {url:node.ownerDocument?.location?.href} : {})};
+  }
   const reject = () => ({ok: false});
   if (!el || el.getAttribute('contenteditable') !== 'true') return reject();
   const nodes = Array.from(el.childNodes);
@@ -176,6 +268,8 @@ class Driver {
     // Reuse only this command's loaded guard DOM during read-only scans. A
     // fresh Driver is constructed per queue command; sessions never cache IDs.
     this.guardFreshThisOperation = false;
+    this.readbackURLs = new WeakMap();
+    this.createdEditors = new WeakMap();
     this.catalogIndex = 0; this.guardRefreshes = 0;
     this.target = request.binding.target; this.deadline = Date.parse(request.deadline);
     this.comparisonPolicy = Object.hasOwn(request.binding,'comparison_policy') ? request.binding.comparison_policy : 'strict';
@@ -190,6 +284,13 @@ class Driver {
     const binding = JSON.stringify([request.binding_sha256, request.binding.profile_sha256, this.target, this.comparisonPolicy, this.bodyEncoding]);
     if (this.profile.identity?.account?.source !== 'guard_dom' || this.profile.identity?.book?.source !== 'page_url' ||
         this.profile.editor?.remote_id?.source !== 'page_url') fail('invalid_profile');
+    if (!this.profile.editor.ready) fail('invalid_profile');
+    if (['saved','ready','new'].some(name => {
+      const spec = this.profile.editor[name];
+      return spec?.source != null && spec.source !== 'dom';
+    })) fail('invalid_profile');
+    if ((this.profile.chapter_lists || []).some(listing => [listing.chapter,listing.link].some(
+      spec => spec?.source != null && spec.source !== 'dom'))) fail('invalid_profile');
     if (this.target.platform === 'fanqie' && !this.profile.readback) fail('readback_required');
     if (this.profile.readback) {
       const spec = this.profile.readback; const header = spec.header; const body = spec.body;
@@ -237,7 +338,7 @@ class Driver {
     if (required) fail('identity_mismatch');
     return null;
   }
-  async readQuery(tab, query) {
+  async readQuery(tab, query, {retry = true} = {}) {
     const checkURL = async expected => {
       this.check();const current = await this.url(tab);this.check();this.safe(current);
       if (expected != null && current !== expected) fail(expected === this.profile.identity.account.guard_url ? 'login_required' : 'identity_mismatch');
@@ -246,7 +347,7 @@ class Driver {
     const before = await checkURL();let result;
     try { this.check();result = await query(); }
     catch (failure) {
-      if (!['Timed out after 3000ms waiting for CDP command Runtime.evaluate.',
+      if (!retry || !['Timed out after 3000ms waiting for CDP command Runtime.evaluate.',
             'Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.'].includes(failure?.message) ||
           !['Error','TimeoutError'].includes(failure?.name) ||
           (typeof failure.code === 'string' && /auth|permission|denied|disconnect|unattach|closed|cancel|abort|forbid/i.test(failure.code))) throw failure;
@@ -259,6 +360,14 @@ class Driver {
   async url(tab) {
     const value = typeof tab.url === 'function' ? await tab.url() : tab.url;
     if (typeof value !== 'string') fail('unsafe_url');
+    const expected = this.readbackURLs.get(tab);
+    if (expected != null) {
+      this.safe(value);
+      if (value !== expected) fail('identity_mismatch');
+    }
+    const created = this.createdEditors.get(tab);
+    if (created != null && (this.template(value,this.profile.identity.book) !== this.target.remote_book_id ||
+        this.template(value,this.profile.editor.remote_id) !== created)) fail('identity_mismatch');
     return value;
   }
   async tabs() {
@@ -267,7 +376,7 @@ class Driver {
     if (!Array.isArray(tabs)) fail('operation_failed');
     return tabs.map(tab => ({...tab, id: String(tab.id ?? tab.tabId)}));
   }
-  async newTab(url, {readOnly = false} = {}) {
+  async newTab(url, {readOnly = false, pinReadback = false} = {}) {
     this.check(); this.safe(url);
     const before = new Set((await this.tabs()).map(tab => tab.id));
     const context = readOnly === true && this.readOnlyDestination(url) ? {readOnly:true,target:{...this.target}} : {readOnly:false};
@@ -275,12 +384,28 @@ class Driver {
     const tab = result?.tab || result;
     const tabId = result?.id ?? result?.tabId ?? tab?.id ?? tab?.tabId;
     if (tabId == null || before.has(String(tabId))) fail('ambiguous_dom');
+    let arrivalError;
+    let arrivalURL=url;
+    if (pinReadback) {
+      // Capture arrival before inventory or guard awaits can hide a redirect.
+      // Register ownership below before rejecting, so cleanup retains the tab.
+      try {
+        arrivalURL=await this.url(tab);
+        const remoteSpec=this.template(url,this.profile.editor.remote_id,false)!=null ? this.profile.editor.remote_id : this.profile.readback?.remote_id;
+        if (!remoteSpec || this.template(arrivalURL,this.profile.identity.book)!==this.target.remote_book_id ||
+            this.template(arrivalURL,remoteSpec)!==this.template(url,remoteSpec)) fail('identity_mismatch');
+        // Configured aliases for the same document may redirect on arrival.
+        // Every observation after arrival remains pinned to that actual URL.
+        this.readbackURLs.set(tab,arrivalURL);
+      } catch (error) { arrivalError = error; }
+    }
     const candidate = (await this.tabs()).filter(item => item.id === String(tabId));
     if (candidate.length !== 1) fail('ambiguous_dom');
     this.state.owned.add(String(tabId));
+    if (arrivalError) throw arrivalError;
     await this.ax(tab);
     this.safe(await this.url(tab));
-    return {tab, id: String(tabId)};
+    return {tab, id: String(tabId), url:arrivalURL};
   }
   readOnlyDestination(url) {
     if (this.target.platform !== 'fanqie') return false;
@@ -402,7 +527,63 @@ class Driver {
     }
     await this.ax(tab); this.safe(await this.url(tab));
   }
-  async action(tab, operation) { this.check(); await operation(); await this.ax(tab); this.safe(await this.url(tab)); }
+  async action(tab, operation) {
+    this.check(); let before=this.safe(await this.url(tab));
+    // A draft can become published or lose its loaded state without changing
+    // the editor URL. Check the current DOM state before every later write;
+    // disappearance must not restart readiness or be repaired by a retry.
+    const state=this.profile.editor.state;
+    if (this.createdEditors.has(tab)&&state.source!=='listing') {
+      const packet=await tab.playwright.locator(state.selector).evaluateAll(readParagraphs,{
+        source:state.source??'dom',attribute:state.attribute??null,includeURL:true
+      });
+      this.check();
+      if (packet?.count!==1) fail(packet?.count>1?'ambiguous_dom':'editor_changed');
+      if (this.template(packet.url,this.profile.identity.book)!==this.target.remote_book_id||
+          this.template(packet.url,this.profile.editor.remote_id)!==this.createdEditors.get(tab)) fail('identity_mismatch');
+      // Saving/new-draft aliases may settle while state is sampled. Keep the
+      // confirmed document identity and use its currently observed URL.
+      before=packet.url;
+      if (packet.ok!==true||packet.value!==state.expected) fail('not_draft');
+      // This added state query yields too. Keep the bound-target check last
+      // before calling a locator write, as it was before state validation.
+      before=this.safe(await this.url(tab));this.check();
+    }
+    await operation(before); await this.ax(tab); this.safe(await this.url(tab));
+  }
+  async actionState(locator, expectedURL = null) {
+    this.check();const state=await locator.evaluateAll(readActionState);this.check();
+    if (state?.count !== 1) fail(state?.count > 1 ? 'ambiguous_dom' : 'editor_changed');
+    if (expectedURL != null && state.url !== expectedURL) fail('identity_mismatch');
+    return state;
+  }
+  sameActionLink(observed, current, kind) {
+    if (observed.href!==current.href || (current.href!==null&&typeof current.resolvedHref!=='string')) return false;
+    if (observed.resolvedHref===current.resolvedHref) return true;
+    // A newly saved document may change between configured aliases. Keep
+    // links that still resolve to each actual document (ignoring its fragment);
+    // a BASE override changing the effective destination cannot use this case.
+    if (kind!=='save'||!this.createdRemote) return false;
+    try {
+      return [observed,current].every(state=>{
+        const destination=new URL(state.href,state.url),resolved=destination.href,documentURL=new URL(state.url);
+        destination.hash='';documentURL.hash='';
+        // String trim also removes Unicode whitespace that URL parsing keeps
+        // as a path. Only actual URL semantics can establish a self-link.
+        return this.template(state.url,this.profile.identity.book)===this.target.remote_book_id &&
+          this.template(state.url,this.profile.editor.remote_id)===this.createdRemote &&
+          state.resolvedHref===resolved&&destination.href===documentURL.href;
+      });
+    } catch { return false; }
+  }
+  async clickDraftButton(locator, spec, expectedURL, kind, expectedLink) {
+    const state=await this.actionState(locator,expectedURL);
+    const accessible=[state.text,state.aria,state.title].filter(Boolean).join(' ');
+    if (state.disabled || state.text !== spec.expected_text || UNSAFE.test(accessible) ||
+        (kind==='create' ? !CREATE.test(state.text) : !DRAFT.test(state.text)||!SAVE.test(state.text)) ||
+        !this.sameActionLink(expectedLink,state,kind)) fail(kind==='create'?'unsafe_create':'unsafe_save');
+    await locator.click(this.timeoutOptions());
+  }
   async one(tab, spec, root = null) {
     const locator = (root || tab.playwright).locator(spec.selector);
     while (true) {
@@ -424,6 +605,46 @@ class Driver {
     if (typeof value !== 'string') fail('incomplete_dom');
     return value;
   }
+  async currentValue(tab, spec, missing = 'editor_changed') {
+    const locator = tab.playwright.locator(spec.selector);
+    const packet = await this.readQuery(tab,()=>locator.evaluateAll(readParagraphs,{
+      source:spec.source ?? 'dom',attribute:spec.attribute ?? null
+    }),{retry:false});
+    if (packet?.count !== 1) fail(packet?.count > 1 ? 'ambiguous_dom' : missing);
+    if (packet.ok !== true || typeof packet.value !== 'string') fail('editor_changed');
+    return packet.value;
+  }
+  async editorSnapshot(tab, expectedURL, expected, specs=this.profile.editor) {
+    const fields=[];
+    const resolve=async name=>{
+      const spec=specs[name],locator=tab.playwright.locator(spec.selector);
+      const packet=await this.readQuery(tab,()=>locator.evaluateAll(readDOMPath),{retry:false});
+      if (packet?.count !== 1) fail(packet?.count > 1 ? 'ambiguous_dom' : 'editor_changed');
+      if (packet.connected !== true || !Array.isArray(packet.path) || typeof packet.tag !== 'string') fail('editor_changed');
+      return packet;
+    };
+    for (const name of Object.keys(expected)) {
+      const spec=specs[name],packet=await resolve(name);
+      fields.push({name,path:packet.path,tag:packet.tag,spec:{source:spec.source??'dom',attribute:spec.attribute??null}});
+    }
+    const root=tab.playwright.locator(':root');
+    const sample=async()=>{
+      const packet=await this.readQuery(tab,()=>root.evaluateAll(readParagraphs,{source:'editor_snapshot',fields}),{retry:false});
+      if (packet?.ok !== true || packet.count !== 1 || packet.url !== expectedURL) fail('editor_changed');
+      for (const [name,value] of Object.entries(expected)) if (packet.fields?.[name] !== value) fail('editor_changed');
+    };
+    await sample();
+    // A later locator can expose duplicates or retarget an earlier selector
+    // while its old DOM node is still connected. Recheck the supported host
+    // selectors once; observed drift is terminal, never a readiness retry.
+    for (const field of fields) {
+      const current=await resolve(field.name);
+      if (current.tag!==field.tag||JSON.stringify(current.path)!==JSON.stringify(field.path)) fail('editor_changed');
+    }
+    // The selector checks can themselves yield. This last single-turn sample
+    // binds the accepted values to the validated paths at one reading point.
+    await sample();
+  }
   async visible(tab, spec) {
     if (!spec) return false;
     const locator = tab.playwright.locator(spec.selector);
@@ -431,25 +652,37 @@ class Driver {
     if (count > 1) fail('ambiguous_dom');
     return count === 1 && await locator.isVisible();
   }
-  async guard(refresh = false) {
+  async guard(refresh = false, {allowPending = true, current = false} = {}) {
     const spec = this.profile.identity.account;
     if (spec.source !== 'guard_dom') fail('invalid_profile');
     const fresh = !this.state.guard || refresh || !this.guardFreshThisOperation;
+    if (!allowPending && fresh) fail('login_required');
     if (fresh) progress(this.api,{phase:'guard',edge:'begin',guard_refreshes:++this.guardRefreshes});
     if (!this.state.guard) this.state.guard = await this.newTab(spec.guard_url,{readOnly:true});
     else if (fresh) await this.navigate(this.state.guard.tab, spec.guard_url, {readOnly:true});
     if (await this.url(this.state.guard.tab) !== spec.guard_url) fail('login_required');
-    const value = await this.value(this.state.guard.tab, spec);
+    let value;
+    if (current) value = await this.currentValue(this.state.guard.tab,spec,'login_required');
+    else if (allowPending) value = await this.value(this.state.guard.tab, spec);
+    else {
+      // A final identity check reads the already loaded guard once. Missing
+      // DOM or a timed-out read cannot restart readiness after the body check.
+      const tab = this.state.guard.tab, locator = tab.playwright.locator(spec.selector);
+      const count = await this.readQuery(tab,()=>locator.count(),{retry:false});
+      if (count !== 1) fail(count > 1 ? 'ambiguous_dom' : 'login_required');
+      value = await this.readQuery(tab,()=>locator.evaluate(readDOMValue,spec.attribute ?? null),{retry:false});
+      if (typeof value !== 'string') fail('incomplete_dom');
+    }
     if (await this.url(this.state.guard.tab) !== spec.guard_url) fail('login_required');
     if (!value.trim()) fail('login_required');
     if (value.trim() !== this.target.account_id) fail('identity_mismatch');
     this.guardFreshThisOperation = true;
     if (fresh) progress(this.api,{phase:'guard',edge:'end',guard_refreshes:this.guardRefreshes});
   }
-  async identity(tab, refresh = false) {
+  async identity(tab, refresh = false, {allowPending = true, current = false} = {}) {
     this.safe(await this.url(tab));
     if (this.template(await this.url(tab), this.profile.identity.book) !== this.target.remote_book_id) fail('identity_mismatch');
-    await this.guard(refresh);
+    await this.guard(refresh,{allowPending,current});
     this.safe(await this.url(tab));
     if (this.template(await this.url(tab), this.profile.identity.book) !== this.target.remote_book_id) fail('identity_mismatch');
   }
@@ -786,12 +1019,19 @@ class Driver {
     }
     if ((await this.tabs()).some(tab=>this.matchingEditor(tab.url,remote))) fail('editor_in_use');
   }
-  async previewBody(tab, spec) {
-    const locator = await this.one(tab,spec);
+  async previewBody(tab, spec, {allowPending = true} = {}) {
+    const locator = allowPending ? await this.one(tab,spec) : tab.playwright.locator(spec.selector);
+    if (!allowPending) {
+      const count = await this.readQuery(tab,()=>locator.count(),{retry:false});
+      if (count !== 1) fail(count > 1 ? 'ambiguous_dom' : 'editor_changed');
+    }
     while (true) {
-      this.check(); const packet = await this.readQuery(tab,()=>locator.evaluate(readPreviewParagraphs_v1));
+      this.check(); const packet = await this.readQuery(tab,()=>locator.evaluate(readPreviewParagraphs_v1),{retry:allowPending});
       if (packet?.ok === true && typeof packet.value === 'string') return packet.value;
       if (packet?.pending !== true) fail('unsupported_editor');
+      // Once complete text was observed, disappearance is a changed document,
+      // not another initial loading state that may be waited away.
+      if (!allowPending) fail('editor_changed');
       await pause(); await this.ax(tab);
     }
   }
@@ -803,10 +1043,13 @@ class Driver {
     const forceGuard = !(this.target.platform === 'fanqie' && ['find_drafts','read_draft'].includes(this.request.operation));
     await this.guard(forceGuard); await this.ensureEditorFree(remote,true);
     progress(this.api,{phase:'read',edge:'begin'});
-    const {tab,id:tabId} = await this.newTab(spec.url.replace('{remote_id}',remote),{readOnly:true});
+    const requestedURL = spec.url.replace('{remote_id}',remote);
+    // Pin the configured destination across every locator/AX read, including
+    // separate reads on either side of a loading wait or account guard await.
+    const {tab,id:tabId,url:expectedURL} = await this.newTab(requestedURL,{readOnly:true,pinReadback:true});
     this.state.last_readback_tab_id = tabId;
     await this.identity(tab);
-    if (this.template(await this.url(tab),spec.remote_id) !== remote) fail('identity_mismatch');
+    if (await this.url(tab) !== expectedURL || this.template(expectedURL,spec.remote_id) !== remote) fail('identity_mismatch');
     await this.confirm(remote,this.state.chapters.get(remote));
     let header;
     while (!(header=await this.value(tab,spec.header))) { this.check(); await pause(); await this.ax(tab); }
@@ -815,18 +1058,30 @@ class Driver {
     const chapter = Number(matched[1]);
     if (this.state.chapters.has(remote) && this.state.chapters.get(remote)!==chapter) fail('identity_mismatch');
     const body = await this.previewBody(tab,spec.body);
-    const observation = {remote_id:remote,title:matched[2],body,state:'draft',url:await this.url(tab)};
+    const observation = {remote_id:remote,title:matched[2],body,state:'draft',url:expectedURL};
     await this.confirm(remote,chapter); await this.identity(tab,forceGuard);
-    if (this.template(await this.url(tab),spec.remote_id)!==remote) fail('identity_mismatch');
-    if (await this.value(tab,spec.header)!==header || await this.previewBody(tab,spec.body)!==body) fail('editor_changed');
+    if (await this.url(tab)!==expectedURL) fail('identity_mismatch');
+    if (await this.previewBody(tab,spec.body,{allowPending:false})!==body) fail('editor_changed');
     await this.ensureEditorFree(remote);
+    // Read the current account DOM without another read-only guard reload.
+    // Both identity and the complete chapter header must survive the final
+    // body and editor-inventory awaits before this observation is accepted.
+    await this.identity(tab,false,{allowPending:false});
+    if (await this.url(tab)!==expectedURL) fail('identity_mismatch');
+    const finalHeader = tab.playwright.locator(spec.header.selector);
+    const headerCount = await this.readQuery(tab,()=>finalHeader.count(),{retry:false});
+    if (headerCount !== 1) fail(headerCount > 1 ? 'ambiguous_dom' : 'editor_changed');
+    if (await this.readQuery(tab,()=>finalHeader.evaluate(readDOMValue,null),{retry:false})!==header) fail('editor_changed');
+    await this.editorSnapshot(tab,expectedURL,{header,body},spec);
     progress(this.api,{phase:'read',edge:'end'});
     return observation;
   }
   async read(remote) {
     if (this.profile.readback) return this.readPreview(remote);
     progress(this.api,{phase:'read',edge:'begin'});
-    id(remote); const {tab, id: tabId} = await this.newTab(this.profile.urls.edit.replace('{remote_id}', remote));
+    id(remote); const requestedURL = this.profile.urls.edit.replace('{remote_id}', remote);
+    // Pin every observed URL from arrival through all field/guard/list awaits.
+    const {tab, id: tabId, url:expectedURL} = await this.newTab(requestedURL,{pinReadback:true});
     this.state.last_readback_tab_id = tabId;
     await this.identity(tab, true); await this.editorReady(tab); await this.editorState(tab, this.state.chapters.get(remote));
     if (this.remote(await this.url(tab)) !== remote) fail('identity_mismatch');
@@ -834,9 +1089,30 @@ class Driver {
     let raw; while (!(raw = await this.value(tab, editor.chapter)).trim()) { this.check(); await pause(); await this.ax(tab); }
     const chapter = this.chapter(raw);
     if (this.state.chapters.has(remote) && this.state.chapters.get(remote) !== chapter) fail('identity_mismatch');
-    const observation = {remote_id: remote, title: await this.value(tab, editor.title), body: await this.value(tab, editor.body), state: 'draft', url: await this.url(tab)};
+    const observation = {remote_id: remote, title: await this.value(tab, editor.title), body: await this.value(tab, editor.body), state: 'draft', url: expectedURL};
+    const currentIdentity = () => this.identity(tab,false,{allowPending:false,current:true});
+    // A changed loaded account must fail before directory readiness can hide
+    // it. Initial readiness above remains available for a newly opened page.
+    await currentIdentity();
+    // Preserve the ordinary editor's fresh server-account check, but finish
+    // this preparation before any final field snapshot. It cannot repair an
+    // already observed missing/changed loaded account.
+    await this.identity(tab,true);
     if (editor.state.source === 'listing') await this.confirm(remote, chapter);
-    await this.identity(tab, true);
+    if (await this.currentValue(tab,editor.body) !== observation.body) fail('editor_changed');
+    await currentIdentity();
+    // Check the header and DOM state after the final body and guard awaits.
+    // Locator resolution preserves supported host selectors such as :visible;
+    // no final field may restart loading or retry a timed-out read.
+    if (await this.currentValue(tab,editor.chapter) !== raw ||
+        await this.currentValue(tab,editor.title) !== observation.title) fail('editor_changed');
+    if (editor.state.source !== 'listing' && await this.currentValue(tab,editor.state) !== editor.state.expected) fail('not_draft');
+    // Guard and header reads can yield while the body changes. Close the
+    // observation with one current editor sample, rather than chasing changes
+    // through another sequence of separately awaited field reads.
+    await this.editorSnapshot(tab,expectedURL,{chapter:raw,title:observation.title,body:observation.body,
+      ...(editor.state.source === 'listing' ? {} : {state:editor.state.expected})});
+    if (await this.url(tab) !== expectedURL || this.remote(expectedURL) !== remote) fail('identity_mismatch');
     progress(this.api,{phase:'read',edge:'end'});
     return observation;
   }
@@ -868,7 +1144,13 @@ class Driver {
     }) !== true) fail('editor_changed');
     // Plain-text clipboard insertion can consume terminal line breaks. Keep
     // them in the input plan, never infer or repair them after a mismatch.
-    if (core) await this.action(tab, () => tab.pasteText(core));
+    if (core) await this.action(tab, async expectedURL => {
+      // Paste targets the focused element. Sample focus after the action URL
+      // await and do not insert another asynchronous read before the write.
+      const state=await this.actionState(locator,expectedURL);
+      if (!state.editableFocus) fail('editor_changed');
+      await tab.pasteText(core);
+    });
     if (await this.value(tab,spec) !== core) fail('editor_changed');
     for (let index = 0; index < tail; index++) await this.action(tab, () => locator.press('Enter',this.timeoutOptions()));
     if (await this.value(tab, spec) !== normalized) fail('editor_changed');
@@ -883,10 +1165,12 @@ class Driver {
       const accessible = [actual, await locator.getAttribute('aria-label'), await locator.getAttribute('title')].filter(Boolean).join(' ');
       if (action.mode !== 'button' || !CREATE.test(actual) || UNSAFE.test(accessible) || actual !== action.expected_text || !await locator.isVisible() || !await locator.isEnabled()) fail('unsafe_create');
       let popupQuery = null;
+      // The raw attribute alone does not bind a relative link: a changed BASE
+      // element can redirect its destination while both label and href stay.
+      const link = await this.actionState(locator);
       if (action.opens === 'popup') {
-        const href = await locator.getAttribute('href');
-        if (typeof href !== 'string' || !href) fail('unsafe_create');
-        const source = new URL(href, await this.url(tab)); this.safe(source.href);
+        if (typeof link.href !== 'string' || !link.href || typeof link.resolvedHref !== 'string') fail('unsafe_create');
+        const source = new URL(link.resolvedHref); this.safe(source.href);
         // The observed create link and resulting popup share an exact query.
         // This keeps a concurrently opened old draft from being claimed.
         if (!source.search) fail('unsafe_create');
@@ -894,7 +1178,10 @@ class Driver {
       }
       await this.identity(tab, true); const before = new Set((await this.tabs()).map(item => item.id));
       this.check(); // This click can already create an empty cloud draft. Never retry it.
-      await this.action(tab, () => locator.click(this.timeoutOptions()));
+      // Same-page creation consumes the management tab. Future catalog scans
+      // need a separate page, while this owned tab remains the editor.
+      if (action.opens === 'same_page') this.state.list = null;
+      await this.action(tab, expectedURL => this.clickDraftButton(locator,action,expectedURL,'create',link));
       if (action.opens === 'popup') {
         while (true) {
           this.check(); const added = (await this.tabs()).filter(item => !before.has(item.id));
@@ -919,8 +1206,14 @@ class Driver {
     }
     await this.identity(tab); await this.editorReady(tab);
     this.createdRemote = this.remote(await this.url(tab));
+    // Only bind after the platform has allocated an ID and reached readiness.
+    // The same ID may change from its new-draft URL to its saved-editor URL;
+    // another draft or book must fail before the next fill/save action.
+    this.createdEditors.set(tab,this.createdRemote);
+    await this.url(tab);
     await this.editorState(tab);
     const editor = this.profile.editor;
+    if (editor.new && await this.value(tab, editor.new) !== editor.new.expected) fail('not_new_draft');
     if (await this.value(tab, editor.title) !== '' || await this.value(tab, editor.body) !== '') fail('not_new_draft');
     await this.identity(tab, true); await this.fill(tab, editor.chapter, String(chapter)); await this.identity(tab);
     await this.identity(tab, true); await this.fill(tab, editor.title, title); await this.identity(tab);
@@ -930,13 +1223,16 @@ class Driver {
       const locator = await this.one(tab, editor.save); const actual = (await locator.innerText()).trim();
       const accessible = [actual, await locator.getAttribute('aria-label'), await locator.getAttribute('title')].filter(Boolean).join(' ');
       if (actual !== editor.save.expected_text || UNSAFE.test(accessible) || !DRAFT.test(actual) || !SAVE.test(actual)) fail('unsafe_save');
+      const link = await this.actionState(locator);
       await this.identity(tab, true);
-      await this.action(tab, () => locator.click(this.timeoutOptions()));
+      await this.action(tab, expectedURL => this.clickDraftButton(locator,editor.save,expectedURL,'save',link));
     } else if (editor.save.mode !== 'autosave') fail('invalid_profile');
     while (await this.value(tab, editor.saved) !== editor.saved.expected || !await this.visible(tab, editor.saved)) {
       this.check(); await this.identity(tab); await pause(); await this.ax(tab);
     }
-    const remote = this.remote(await this.url(tab)); this.state.chapters.set(remote, chapter);
+    const remote = this.remote(await this.url(tab));
+    if (remote !== this.createdRemote) fail('identity_mismatch');
+    this.state.chapters.set(remote, chapter);
     const observation = await this.read(remote);
     const observedBody = normal(observation.body), frozenBody = normal(body);
     const equalBody = this.comparisonPolicy === 'fanqie_terminal_lf_v1' ?

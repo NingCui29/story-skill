@@ -2,7 +2,7 @@
 
 用于新建、实质调整或审查规划。统一的是人物行动、结果与后续条件的联系，不是固定表格；以下必要内容可合并成自然段或条目，已有等效规划沿用。只处理本次范围，候选方案、已采用规划与正文已发生事实分别标明。
 
-人物、世界规则、场景因果和阅读承诺的具体推演沿用 [冲突与看点](../../story-skill-write/references/drama.md)；平台定位、分类与署名、目录、版本和绑定沿用 [项目状态](../../story-skill/references/project-state.md)，不在这里另设口径。
+人物与世界规则复用入口指导；场景因果按 [剧情设计与优化](../../story-skill-write/references/drama.md#剧情设计与优化)，阅读承诺按 [把读者期待变成可见的戏](../../story-skill-write/references/drama.md#把读者期待变成可见的戏)，只读适用小节。平台定位、分类与署名、目录、版本和绑定沿用 [项目状态](../../story-skill/references/project-state.md)。
 
 新书方向、主线重构或全篇气质的规划，按共享指导中的 [生活观察与核心追问](../../story-skill-write/references/drama.md#生活观察与核心追问)、[作品的复杂性](../../story-skill-write/references/drama.md#作品的复杂性) 和 [作品的观看方式](../../story-skill-write/references/drama.md#作品的观看方式) 把已有关注落实到关键人物、处境与叙述取舍。初稿的新发现按 [在重写中发现故事](../../story-skill-write/references/drama.md#在重写中发现故事) 处理。本书关注可以暂定或在创作中形成，不新增逐章主题字段，也不要求所有题材都保留同一种矛盾或结尾。
 

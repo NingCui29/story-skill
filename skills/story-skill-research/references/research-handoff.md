@@ -11,9 +11,9 @@ python "<tool>" research-init --sample "<抽样目录>/sample.json" --output-dir
 python "<tool>" research-check --input "<研究目录>/decision.json"
 ```
 
-每次生成 `decision.json`、可读的 `analysis-brief.md` 与 `planning-candidate.md`，以及 `evidence-template.json`。在 `decision.json` 中填写本次有意义的候选方向：目标读者、预期阅读回报、作者可用素材与优势、原创差异、风险和下一步验证。每个方向明确选择哪些作品、为什么选择，以及可由正文检验的假设。例如“开篇通过主角主动承担代价建立信任”，比“这类题材容易爆”更适合拆文验证。空白保持待填；程序不根据频次自动编写卖点或评定商业可行性。
+每次生成 `decision.json`、可读的 `analysis-brief.md` 与 `planning-candidate.md`，以及 `evidence-template.json`。自动选择理由过长时仅缩略候选说明并标明位置，完整理由及样本 ID 保留在原样本中。在 `decision.json` 中填写本次有意义的候选方向：目标读者、预期阅读回报、作者可用素材与优势、原创差异、风险和下一步验证。每个方向明确选择哪些作品、为什么选择，以及可由正文检验的假设。例如“开篇通过主角主动承担代价建立信任”，比“这类题材容易爆”更适合拆文验证。空白保持待填；程序不根据频次自动编写卖点或评定商业可行性。
 
-方向和假设分别保留稳定的 `topic_id`、`hypothesis_id`，作品沿用抽样的 `book_key`；同名作品不能互换。需要增补或替换样本时另建研究版本，并重新核对证据关联，不把旧结论直接套到新书或新假设上。
+方向和假设分别保留稳定的 `topic_id`、`hypothesis_id`，作品沿用抽样的 `book_key`；同名作品不能互换。旧研究按样本原算法核验，保留样本与验证 ID。增补、替换样本或选用新算法时另建研究版本，并核对证据关联，不把旧结论直接套到新书或新假设上。
 
 ## 拆文回填
 

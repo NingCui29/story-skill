@@ -118,7 +118,8 @@ def html_for(value):
 @unittest.skipUnless(NODE, "Node.js required for the actual pure DOM serializer")
 class FanqieParagraphBodyTests(unittest.TestCase):
     def setUp(self):
-        self.adapter = browser.BrowserAdapter(fixtures.profile())
+        from tests.test_platform_browser_preview import configuration
+        self.adapter = browser.BrowserAdapter(configuration())
 
     def read(self, html):
         return self.adapter._paragraph_value(ParagraphLocator(html))

@@ -1,6 +1,8 @@
 # Story Skill 文档导航
 
-**当前正式版 v0.6.22 已发布。** 提供八技能／69 文件、标准 ZIP、Claude 桌面 r2、Codex 本地插件，以及 Intel Mac 0.1.25/build 26、Windows x64 0.1.12 客户端。下载与各项验证的实际范围见[发布记录](releases/v0.6.22.md)；[v0.6.21](releases/v0.6.21.md) 附件和证据保持原样。
+**v0.6.23 正在准备发布。** 采用新书名、草稿核对、恢复分页与研究兼容的本轮变化及验收状态见[主版本记录](releases/v0.6.23.md)；Windows C# 0.2.2 独立分发见[Windows 记录](releases/windows-v0.2.2.md)。目前正式下载仍为 v0.6.22 和 Windows 0.2.1，历史通过结果不替代本轮验收。
+
+**当前正式版 v0.6.22 已发布。** 提供八技能／69 文件、标准 ZIP、Claude 桌面 r2、Codex 本地插件，以及 Intel Mac 0.1.25/build 26；Windows 当前正式版为独立发行的 C# x64 0.2.1。下载与各项验证的实际范围分别见[技能与 Mac 记录](releases/v0.6.22.md)和[Windows 记录](releases/windows-v0.2.1.md)；[v0.6.21](releases/v0.6.21.md) 附件和证据保持原样。
 
 
 **v0.6.22 新增研究流程。** 新增结构化扫榜、来源与覆盖校验、同书去重、分口径聚合，以及七猫公开书库点击排序观察样本采集；续增代表作抽样、标签频次、书名字面模式与字数分析，并以研究包衔接拆文验证和选题规划。操作见[结构化扫榜流程](../skills/story-skill-research/references/rank-scan.md)和[研究交接](../skills/story-skill-research/references/research-handoff.md)，本轮发行核验见[发布记录](releases/v0.6.22.md)。开发阶段的原始采集与试用材料仅本地保存；七猫样本不是正式排行榜或销量数据，研究交接仍为候选材料。

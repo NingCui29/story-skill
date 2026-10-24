@@ -168,13 +168,15 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 | `story-skill-write` | 正文创作、续写、长篇连载与短篇完本 |
 | `story-skill-review` | 审稿、修改、排版与历史章节修订 |
 | `story-skill-analyze` | 开篇点评、完整深读与分析续跑 |
-| `story-skill-research` | 榜单与书库样本、代表作抽样、选题研究、素材与事实查证 |
+| `story-skill-research` | 榜单与书库样本、代表作抽样、选题研究、试读设计与追更验证、素材与事实查证 |
 | `story-skill-cover` | 封面生成、修改与规格检查 |
 | `story-skill-publish` | 离线投稿材料、平台草稿保存与回读核对 |
 
 不确定选哪个入口时，直接使用总入口描述需求。手动调用以宿主实际补全为准：Codex 插件入口如 `$story-skill:story-skill-plan`，Codex 目录安装如 `$story-skill-plan`，Claude Code 如 `/story-skill-plan`；Claude 桌面包通过一个总入口读取八个流程。
 
 ## 版本与验证
+
+**v0.6.23 正在准备发布。** 本轮包括采用新书名、草稿操作与回读复核、恢复中心分页、备份恢复后的 Chrome 重连、研究样本兼容及试读设计规则。目标客户端为 Intel Mac 0.1.26／build27 与独立发行的 Windows 0.2.2；尚未完成本轮验收，下载仍使用下列正式版本。详见[准备记录](docs/releases/v0.6.23.md)。
 
 **v0.6.22** 新增结构化扫榜、代表作抽样与研究交接，连接样本观察、正文验证和原创选题。修正独立研究命令在非 UTF-8 环境下的中文输出，保留原文引文的精确匹配规则。各分发包、跨平台源码 CI、固定标签安装与公开分发的实际核验范围见[发布记录](docs/releases/v0.6.22.md)；[v0.6.21 历史记录](docs/releases/v0.6.21.md)继续保留。
 

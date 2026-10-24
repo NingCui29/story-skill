@@ -177,10 +177,12 @@ SUITE_FILES_V0622 = tuple(sorted((*SUITE_FILES_V0621,
     "story-skill-research/references/research-handoff.md",
 )))
 SKILL_NAMES_V0622 = SKILL_NAMES_V0621
+SUITE_FILES_V0623 = SUITE_FILES_V0622
+SKILL_NAMES_V0623 = SKILL_NAMES_V0622
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0622
-SUITE_FILES = SUITE_FILES_V0622
+SKILL_NAMES = SKILL_NAMES_V0623
+SUITE_FILES = SUITE_FILES_V0623
 MARKER = ".story-skill-install.json"
 HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
                     "antigravity": ".agents", "antigravity-cli": ".agents",
@@ -245,6 +247,8 @@ def suite_files(version):
         return SUITE_FILES_V0620
     if version == "0.6.22":
         return SUITE_FILES_V0622
+    if version == "0.6.23":
+        return SUITE_FILES_V0623
     if version == "0.6.21":
         return SUITE_FILES_V0621
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")
@@ -284,6 +288,8 @@ def skill_names(version):
         return SKILL_NAMES_V0620
     if version == "0.6.22":
         return SKILL_NAMES_V0622
+    if version == "0.6.23":
+        return SKILL_NAMES_V0623
     if version == "0.6.21":
         return SKILL_NAMES_V0621
     raise ValueError(f"Source runtime version has no reviewed suite layout: {version}")

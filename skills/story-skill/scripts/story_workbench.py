@@ -1638,12 +1638,12 @@ def _material_discard(cursor):
             _material_close(session)
 
 
-def _material_catalog(root, material_roots=None, cursor=None, advance=False):
+def _material_catalog(root, material_roots=None, cursor=None, advance=False, *, recoveries=False):
     """In-memory, book-bound material inventory; no file or backup is modified."""
     material_roots = material_roots or {}
     if cursor is not None and (not isinstance(cursor, str) or not re.fullmatch(r'[0-9a-f]{64}', cursor)):
         api.fail('invalid_input', '材料分页标识无效，请刷新目录。')
-    if type(advance) is not bool:
+    if type(advance) is not bool or type(recoveries) is not bool:
         api.fail('invalid_input', '材料分页参数无效。')
     binding = _material_binding(root, material_roots)
     now = time.monotonic()
@@ -1658,6 +1658,7 @@ def _material_catalog(root, material_roots=None, cursor=None, advance=False):
             cursor = secrets.token_hex(32)
             warnings = []
             session = {'binding': binding, 'touched': now, 'rows': {}, 'warnings': warnings,
+                       'recoveries': recoveries,
                        'inspected': 0, 'complete': False, 'hard_limit': False}
             session['iterator'] = _material_inventory_walk(root, material_roots, warnings)
             _material_sessions[cursor] = session
@@ -1666,6 +1667,8 @@ def _material_catalog(root, material_roots=None, cursor=None, advance=False):
             session = _material_sessions.get(cursor)
             if session is None:
                 api.fail('workbench_material_cursor_expired', '材料分页已过期，请刷新目录重新加载。')
+            if session['recoveries'] != recoveries:
+                api.fail('invalid_input', '分页标识不属于当前目录，请重新读取。')
             if session['binding'] != binding:
                 _material_close(session); del _material_sessions[cursor]
                 api.fail('workbench_material_cursor_changed', '作品或关联材料目录已变化，请刷新目录重新加载。')
@@ -1680,7 +1683,7 @@ def _material_catalog(root, material_roots=None, cursor=None, advance=False):
                         _material_close(session)
                         break
                     session['inspected'] += 1
-                    if row:
+                    if row and (not recoveries or row['category'] == '自动恢复'):
                         session['rows'][row['id']] = row
                 if session['inspected'] >= MAX_MATERIAL_NODES and not session['complete']:
                     session['hard_limit'] = True
@@ -1695,7 +1698,11 @@ def _material_catalog(root, material_roots=None, cursor=None, advance=False):
             warnings.append('材料数量达到本次目录核对上限，仍有未覆盖文件；原文件与历史备份均保留，可在原目录查看。')
         elif not session['complete']:
             warnings.append('材料目录尚未全部加载，可继续加载其余材料；正式章节和进度已独立读取。')
-        rows = sorted(session['rows'].values(), key=lambda row: (row['category'], row['path']))
+        # Recovery result pages must keep discovery order: a later scan can
+        # find a newer file that would otherwise move ahead of a consumed offset.
+        rows = list(session['rows'].values())
+        if not recoveries:
+            rows.sort(key=lambda row: (row['category'], row['path']))
         return rows, {'cursor': cursor, 'complete': session['complete'],
                       'has_more': not session['complete'] and not session['hard_limit'],
                       'inspected': session['inspected'], 'loaded': len(rows),
@@ -2863,10 +2870,43 @@ function classificationNode(book){
 """
 
 
-def _editor_tools_script():
+def _recovery_list_script():
     return r'''
+async function recoveryList(container,request,open,current){
+ const status=document.createElement('p'),list=document.createElement('div'),more=document.createElement('button'),refresh=document.createElement('button');
+ status.setAttribute('role','status');more.textContent='继续加载恢复记录';more.hidden=true;refresh.textContent='重新读取恢复记录';container.append(status,list,more,refresh);
+ let cursor=null,offset=0,busy=false;const records=new Map();
+ async function load(reset=false){
+  if(busy||!current())return;busy=true;more.disabled=refresh.disabled=true;status.textContent='正在读取恢复记录…';
+  try{
+   const packet=await request({cursor:reset?null:cursor,offset:reset?0:offset});if(!current())return;
+   if(reset){records.clear();list.replaceChildren();}
+   for(const recovery of packet.recoveries){
+    if(records.has(recovery.id))continue;records.set(recovery.id,recovery);
+    const row=document.createElement('div'),button=document.createElement('button'),detail=document.createElement('small');row.className='recovery-row';
+    button.textContent=(recovery.title||recovery.path)+' · '+(recovery.status||'自动恢复稿');
+    button.onclick=async()=>{try{await open(recovery);}catch(error){if(current())status.textContent=error.message;}};
+    const kind=recovery.content_kind==='material'?'材料':recovery.content_kind==='prose'?'正文':'';
+    detail.textContent=(kind?kind+' · ':'')+(recovery.chapter?'关联第'+recovery.chapter+'章 · ':'')+recovery.path+(recovery.modified?' · '+new Date(recovery.modified).toLocaleString():'');row.append(button,detail);list.append(row);
+   }
+   cursor=packet.cursor;offset=packet.next_offset;more.hidden=!packet.has_more;
+   const warnings=Array.isArray(packet.warnings)?packet.warnings:[];
+   if(packet.has_more)status.textContent='已列出 '+records.size+' 条恢复记录，仍有记录或目录未读取，可继续加载。';
+   else if(!packet.complete||warnings.length)status.textContent='已列出 '+records.size+' 条恢复记录；部分目录未完成核对，请检查提示或重新读取。';
+   else status.textContent=records.size?'已列出 '+records.size+' 条恢复记录，扫描已完成。':'没有可列出的磁盘恢复记录。当前页面待保存文字仍请保存候选。';
+   if(warnings.length)status.textContent+='\n'+warnings.join('\n');
+  }catch(error){if(current()){more.hidden=true;status.textContent='恢复记录读取未完成：'+error.message+'。请重新读取；已列出的记录仍可打开核对。';}}
+  finally{busy=false;if(current())more.disabled=refresh.disabled=false;}
+ }
+ more.onclick=()=>load();refresh.onclick=()=>load(true);await load(true);
+}
+'''
+
+
+def _editor_tools_script():
+    return _recovery_list_script() + r'''
 function editorDialog(title){const dialog=document.createElement('dialog');dialog.className='editor-dialog';const heading=document.createElement('h2');heading.textContent=title;const content=document.createElement('div'),close=document.createElement('button');close.textContent='返回稿件';close.onclick=()=>dialog.close();dialog.append(heading,content,close);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();return {dialog,content};}
-$('recoveries-open').onclick=async()=>{const {dialog,content}=editorDialog('恢复中心');const help=document.createElement('p');help.textContent='打开恢复副本核对后，保存为新候选。自动恢复不会替换正式稿。';content.append(help);try{const catalog=await call('catalog',{offset:0,query:''});const rows=catalog.files.filter(row=>row.category==='自动恢复');if(!rows.length){help.textContent='没有可列出的磁盘恢复记录。当前页面待保存文字仍请保存候选。';return;}for(const row of rows){const button=document.createElement('button');button.textContent=displayTitle(row)+' · '+(row.modified?new Date(row.modified).toLocaleString():'待核对')+'\n'+row.path;button.onclick=()=>{dialog.close();openDoc(row.id);};content.append(button);}}catch(error){help.textContent=error.message;}};
+$('recoveries-open').onclick=async()=>{const {dialog,content}=editorDialog('恢复中心');const help=document.createElement('p');help.textContent='打开恢复副本核对后，保存为新候选。自动恢复不会替换正式稿。';content.append(help);await recoveryList(content,data=>call('recoveries',data),async row=>{await openDoc(row.id);dialog.close();},()=>dialog.open);};
 $('writing-task').onclick=async()=>{if([...docs.values()].some(d=>dirty(d)||d.saving||d.needs_recovery)){note('请先保存全部候选，再生成基于正式断点和已采用细纲的下一章任务。');return;}try{const result=await call('writing-task');leaveComparison();$('assistant-task-title').textContent='继续第'+result.chapter+'章';$('review-task-box').hidden=false;$('review-task-status').textContent=result.status+'；请核对简报再执行。';$('review-findings').textContent='来源：现有正式断点、已绑定细纲和写前简报。任务生成后尚未开始写作。';$('review-prompt').value=result.prompt;$('review-task-box').scrollIntoView({block:'start'});}catch(error){note('下一章任务尚未生成：'+error.message+'；请先核对章计划、细纲采用与绑定。');}};
 $('compare-choose').onclick=()=>{const rows=[...new Map([...(currentCatalog?.chapters||[]),...(currentCatalog?.files||[]),...[...docs.values()]].filter(row=>row.id&&!row.image).map(row=>[row.id,row])).values()];if(rows.length<2){note('至少需要两份可读取的文字稿件或材料。');return;}const {dialog,content}=editorDialog('选择两稿对照');const selects=[];for(const labelText of ['左侧稿件','右侧稿件']){const label=document.createElement('label');label.textContent=labelText;const select=document.createElement('select');for(const row of rows){const option=document.createElement('option');option.value=row.id;option.textContent=displayTitle(row)+' · '+versionLabel(row)+(dirty(docs.get(row.id))?' · 含未保存编辑':'');option.title=row.path||row.id;select.append(option);}label.append(select);content.append(label);selects.push(select);}selects[0].value=rows.find(row=>row.kind==='formal'&&chapterNumber(row)===chapterNumber(docs.get(active)||{}))?.id||rows[0].id;selects[1].value=active||rows[1].id;const run=document.createElement('button');run.textContent='对照两稿';content.append(run);const error=document.createElement('p');error.setAttribute('role','status');content.append(error);run.onclick=async()=>{if(selects[0].value===selects[1].value){error.textContent='请选择两份不同稿件。';return;}const id=active,seq=++compareSequence;run.disabled=true;try{const documents=[];for(const select of selects){const cached=docs.get(select.value);documents.push(cached||await call('open',{id:select.value}));}if(active!==id||seq!==compareSequence){error.textContent='当前文件已切换，请重新选择对照。';return;}const texts=documents.map(d=>(d.prefix||'')+(d.value??d.text??''));const d=docs.get(active);if(d&&!d.comparePosition)d.comparePosition={main:document.querySelector('main').scrollTop,editor:$('text').scrollTop,start:$('text').selectionStart,end:$('text').selectionEnd};$('before-label').textContent=displayTitle(documents[0]);$('after-label').textContent=displayTitle(documents[1]);$('compare-label').textContent='两稿文字对照 · 不改变版本或采用关系';drawDiff(...texts);$('review-task-box').hidden=true;$('document-body').hidden=true;$('difference').hidden=false;document.body.classList.add('comparing');$('diff-prev').disabled=true;$('diff-next').disabled=!diffTargets.length;$('compare-back').textContent='返回当前稿件';document.querySelector('main').scrollTop=0;dialog.close();}catch(failure){error.textContent=failure.message;}finally{run.disabled=false;}};};
 '''
@@ -3829,6 +3869,9 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                     result = _editor_catalog(root, payload.get('offset', 0), limit, payload.get('query', ''),
                                              payload.get('focus'), materials, payload.get('context_chapter'),
                                              payload.get('material_cursor'), payload.get('material_more', False))
+                elif action == 'api/recoveries':
+                    result = api.workbench_archives.recovery_catalog(root, identity['book_id'],
+                                                                     payload.get('cursor'), payload.get('offset', 0))
                 elif action == 'api/platform-drafts/catalog':
                     result = api.platform_drafts.workbench_catalog(root, payload.get('offset', 0), payload.get('limit', 50),
                                                                    expected_book_id=identity['book_id'])
@@ -4235,7 +4278,7 @@ html[data-story-workbench] #manager-error{color:var(--wb-danger);background:var(
 
 
 def _library_management_script():
-    return r'''
+    return _recovery_list_script() + r'''
 let undoRemoval=null,managerBusy=false,managerGeneration=0,managerTimer=null,managerStarted=0,managerRequestSent=false;
 const manager=$('book-manager'),managerBody=$('manager-body'),managerActions=$('manager-actions');
 function shelfMenus(){return Array.from(document.querySelectorAll('.library-actions>details,.book-management'));}
@@ -4270,7 +4313,14 @@ manager.addEventListener('cancel',event=>{if(managerBusy)event.preventDefault();
 function managementReceipt(result,message){if(result.books)render(result);manager.close();$('message').textContent=message+(result.warning?'\n'+result.warning:'');if(result.undo_id){undoRemoval=result.undo_id;$('undo-remove').hidden=false;}}
 function rememberShelfBook(key){try{const previous=JSON.parse(localStorage.getItem('story-last-books')||'[]');const keys=Array.isArray(previous)?previous.filter(value=>typeof value==='string'&&value!==key):[];localStorage.setItem('story-last-books',JSON.stringify([key,...keys].slice(0,8)));}catch{}}
 async function openRecoveryBook(key,id){const r=await call('open-book',{key});rememberShelfBook(key);const a=document.createElement('a');a.href=r.url+(id?'#'+encodeURIComponent(id):'');a.target='_blank';a.rel='noopener';a.textContent='打开作品';a.click();}
-async function showRecoveries(book){const generation=openManager(book?'找回文字 · '+bookName(book):'启动恢复中心');managementText('这里列出磁盘上已写入的恢复副本和待核对保存记录。打开后核对文字，再保存为新候选；不会自动替换正式稿。');const result=await call('recoveries',book?{key:book.key}:{});if(!manager.open||generation!==managerGeneration)return;let count=0;for(const group of result.books){if(group.error){managementText(bookName(group)+'：'+group.error);continue;}for(const recovery of group.recoveries||[]){count++;const row=document.createElement('div');row.className='recovery-row';const button=document.createElement('button');button.textContent=bookName(group)+' · '+(recovery.title||recovery.path);button.onclick=async()=>{try{await openRecoveryBook(group.key,recovery.id);}catch(error){$('manager-error').textContent=error.message;}};const detail=document.createElement('small');detail.textContent=recovery.path+(recovery.modified?' · '+recovery.modified:'');row.append(button,detail);managerBody.append(row);}if(group.warnings?.length)managementText(group.warnings.join('\n'));if(group.truncated)managementText('该作品恢复记录较多，列表有截断；请打开作品查看其余记录。');}if(!count)managementText('未发现可列出的恢复副本。尚未写入磁盘的崩溃前输入无法在这里找回。');}
+async function showRecoveries(book){
+ const generation=openManager(book?'找回文字 · '+bookName(book):'启动恢复中心');const current=()=>manager.open&&generation===managerGeneration;
+ managementText('这里列出磁盘上已写入的恢复副本和待核对保存记录。打开后核对文字，再保存为新候选；不会自动替换正式稿。');
+ if(book){if(book.root)managementText('作品目录：'+book.root);await recoveryList(managerBody,async data=>{const result=await call('recoveries',{key:book.key,...data});const group=result.books[0];if(!group||group.error)throw Error(group?.error||'作品恢复记录未返回');return group;},row=>openRecoveryBook(book.key,row.id),current);return;}
+ managementText('请选择需要找回文字的作品，再读取该作品的恢复记录。');
+ try{const result=await call('recoveries',{});if(!current())return;for(const group of bookDisplayRows(result.books)){const button=document.createElement('button');button.textContent=group.label;button.onclick=()=>showRecoveries(group);managerBody.append(button);}if(!result.books.length)managementText('书架尚未登记作品，请先添加已有作品。');}
+ catch(error){if(current())$('manager-error').textContent='作品列表读取未完成：'+error.message;}
+}
 function showCreateBook(){openManager('新建作品');managementText('填写一个尚不存在的新目录。已有目录请用“添加已有作品”。');const path=managementField('作品完整目录'),title=managementField('书名'),kind=managementField('作品类型','select',[['long','长篇'],['short','短篇'],['analysis','作品分析']]);managementButton('创建并加入书架',async()=>{const r=await managementRequest('create-book',{path:path.value,title:title.value,kind:kind.value});managementReceipt(r,'作品已创建。'+(r.registered===false?'书架登记未完成，请按提示添加目录。':'可打开作品继续规划。'));});}
 function showRestoreBackup(){openManager('从整书备份恢复');managementText('备份先核对文件清单与校验值，再恢复到全新的目录。原作品和原备份都会保留。恢复副本沿用原作品身份，请核对后决定使用哪一份。');const archive=managementField('备份 ZIP 完整路径'),destination=managementField('恢复到的新目录');managementButton('核验并恢复副本',async()=>{const r=await managementRequest('restore-backup',{archive:archive.value,destination:destination.value});managementReceipt(r,'备份已核验并恢复：'+r.root+'\n'+(r.warning||r.note||'请打开副本核对稿件。'));});}
 async function showBookService(book){const generation=openManager('保存与停止 · '+bookName(book));const state=await call('book-service',{key:book.key});if(!manager.open||generation!==managerGeneration)return;managementText(state.running===true?'本书编辑服务正在运行。请在所有窗口、浏览器标签页中保存候选或下载文字，再停止服务。停止不会替页面保存。':state.running===false?'本书编辑服务已停止或未登记。':'服务暂不可达，不能确认已退出。请核对原工作台。');if(state.running===true){managementText(state.outdated?'运行服务使用较早代码。保存并停止后，再打开作品才能加载当前代码。':'运行服务与当前源码一致。');const saved=managementField('我已核对本书所有页面，编辑均已保存或下载','checkbox');managementButton('停止本书编辑服务',async()=>{if(!saved.checked)throw Error('请先保存并核对所有页面。');const r=await managementRequest('stop-book',{key:book.key,saved:true});managementText(r.stop_requested?'已请求正常停止。请稍后刷新书架核对；原页面可保留查看。':'停止未确认，请保留当前页面。');});}}
@@ -4643,12 +4693,18 @@ def library_server(state_dir=None, port=8765, library_books=None):
                         if key is not None and (not isinstance(key, str) or key not in registry):
                             api.fail('invalid_input', '请选择已登记作品。')
                         groups = []
+                        if key is None and (payload.get('cursor') is not None or payload.get('offset', 0) != 0):
+                            api.fail('invalid_input', '请先选择需要读取恢复记录的作品。')
                         for entry in ([registry[key]] if key is not None else registry.values()):
-                            group = {k: entry[k] for k in ('key', 'title', 'kind')}
-                            try:
-                                group.update(api.workbench_archives.recovery_catalog(entry['root'], entry['book_id']))
-                            except (api.StoryError, OSError, ValueError) as error:
-                                group['error'] = str(error)
+                            group = {k: entry[k] for k in ('key', 'title', 'kind', 'root')}
+                            if key is None:
+                                group['deferred'] = True
+                            else:
+                                try:
+                                    group.update(api.workbench_archives.recovery_catalog(entry['root'], entry['book_id'],
+                                                                                       payload.get('cursor'), payload.get('offset', 0)))
+                                except (api.StoryError, OSError, ValueError) as error:
+                                    group['error'] = str(error)
                             groups.append(group)
                         result = {'ok': True, 'books': groups}
                     elif self.path == '/api/open-book':

@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {executeChromeBridgeRequest, closeChromeBridgeSession, readParagraphs, readDOMValue, readRowFields, readPreviewParagraphs_v1} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
+import {executeChromeBridgeRequest, closeChromeBridgeSession, readParagraphs, readDOMValue, readDOMPath, readActionState, readRowFields, readPreviewParagraphs_v1} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
 
 const ORIGIN = 'https://fanqienovel.com';
 const field = (selector, extra = {}) => ({selector, ...extra});
@@ -45,6 +45,7 @@ function element(tag, attrs = {}, children = []) {
     classList:{contains:value => (attrs.class || '').split(/\s+/).includes(value)}};
   Object.defineProperty(node,'textContent',{get:() => children.map(child => child.textContent).join('')});
   Object.defineProperty(node,'outerHTML',{get:() => '<'+tag.toLowerCase()+Object.entries(attrs).map(([key,value])=>' '+key+'="'+value+'"').join('')+'>'+children.map(child=>child.nodeType===3?child.textContent:child.outerHTML).join('')+(['br','img'].includes(tag.toLowerCase())?'':'</'+tag.toLowerCase()+'>')});
+  for(const child of children)child.parentNode=node;
   return node;
 }
 const textNode = textContent => ({nodeType:3,textContent});
@@ -75,6 +76,7 @@ function parse(html) {
 class Locator {
   constructor(tab, lookup, selector) { this.tab=tab; this.lookup=lookup; this.selector=selector; }
   async count() {
+    if(this.selector==='#new')this.tab.env.newMarkerChecks=(this.tab.env.newMarkerChecks||0)+1;
     const env=this.tab.env;
     await env.beforeLocatorCount?.(this.tab,this.selector,this);
     if(env.alwaysMissing===this.selector)return 0;
@@ -88,7 +90,7 @@ class Locator {
   node() { const nodes=this.lookup(); assert.equal(nodes.length,1,'unique fake locator '+this.selector); return nodes[0]; }
   async waitFor() { throw new Error('CUA waitFor attached is intentionally unsupported in polling contracts'); }
   async getAttribute(key) { return this.node().attrs?.[key] ?? null; }
-  async innerText() { return this.node().text ?? ''; }
+  async innerText() { const value=this.node().text ?? '';await this.tab.env.afterLocatorInnerText?.(this.tab,this.selector);return value; }
   async textContent() { return this.node().text ?? ''; }
   async isVisible() {
     if(this.selector==='.option'&&(this.tab.env.hiddenOptionReads||0)>0){this.tab.env.hiddenOptionReads--;return false;}
@@ -100,11 +102,12 @@ class Locator {
     const node=this.node();
     if(['.chapter','.state','.link','.chapter:visible'].includes(this.selector))this.tab.env.events.push(['fieldRead',this.selector]);
     const result=node.dom?fn(node.dom()):node.metrics?node.metrics():fn(this.dom(node),arg);
-    await this.tab.env.afterLocatorEvaluate?.(this.tab,this.selector);
+    await this.tab.env.afterLocatorEvaluate?.(this.tab,this.selector,fn);
     return result;
   }
   dom(node) {
     return {tagName:node.tag || 'DIV',value:node.value?.() ?? '',innerText:node.text ?? '',textContent:node.text ?? '',
+      ownerDocument:{location:{href:this.tab.documentURL?this.tab.documentURL():this.tab.current},baseURI:this.tab.env.baseURI},
       getAttribute:key => node.attrs?.[key] ?? null,
       querySelectorAll:selector => {
         if((this.tab.env.cssUnsupported || []).includes(selector))throw new SyntaxError('PRIVATE unsupported selector');
@@ -114,7 +117,17 @@ class Locator {
   }
   async evaluateAll(fn,arg) {
     this.tab.env.events.push(['evaluateAll',this.selector]);
-    return fn(this.lookup().map(node=>this.dom(node)),arg);
+    await this.tab.env.beforeLocatorEvaluateAll?.(this.tab,this.selector,fn,this);
+    let nodes=this.lookup();
+    const count=this.tab.env.currentFieldCounts?.[this.selector];
+    if(fn===readParagraphs&&arg!=null&&count!=null)nodes=Array.from({length:count},()=>nodes[0]);
+    const live=fn===readDOMPath||this.selector===':root'?this.tab.liveDocument():null;
+    let domNodes=live?(this.selector===':root'?[live.documentElement]:[live.fields[this.selector]].filter(Boolean)):
+      nodes.map(node=>node.dom?node.dom():this.dom(node));
+    if(live&&count!=null)domNodes=Array.from({length:count},()=>domNodes[0]);
+    const result=fn(domNodes,arg);
+    await this.tab.env.afterLocatorEvaluateAll?.(this.tab,this.selector,fn,this);
+    return result;
   }
   async click() {
     this.tab.env.events.push(['click',this.selector]);
@@ -124,6 +137,7 @@ class Locator {
   }
   async fill(value) {
     this.tab.env.events.push(['fill',this.selector]); this.node().set(value);
+    await this.tab.env.afterFill?.(this.tab,this.selector,value);
     if(this.tab.env.fillFailure)throw this.tab.env.fillFailure;
     if(this.tab.env.changeAccountAfterFill===this.selector)this.tab.env.account='different-account';
   }
@@ -174,6 +188,21 @@ class Tab {
   }
   rows() { return [...this.env.editors.entries()].filter(([,item]) => item.scope===this.scope() && (item.section || 0)===this.section); }
   scope() { return this.current.endsWith('/chapters')?'non_drafts':'drafts'; }
+  liveDocument() {
+    const fields={},root=element('HTML'),doc={childNodes:[root],documentElement:root,fields,
+      location:{href:this.documentURL?this.documentURL():this.current}};
+    for(const selector of this.preview?['#preview-title','#preview-body']:['#chapter','#title','#body','#state']){
+      const node=this.lookup(selector)[0];if(!node)continue;
+      const dom=node.dom?node.dom():new Locator(this,()=>[node],selector).dom(node);
+      fields[selector]=dom;root.childNodes.push(dom);
+    }
+    if(this.env.retargetChapter&&fields['#chapter']){
+      const alternate={...fields['#chapter']};root.childNodes.push(alternate);fields['#chapter']=alternate;
+    }
+    const link=(node,parent)=>{node.parentNode=parent;node.ownerDocument=doc;node.isConnected=true;
+      for(const child of node.childNodes||[])link(child,node);};
+    link(root,doc);return doc;
+  }
   lookup(selector) {
     const env=this.env; const plain=text => [{text}];
     if(this.current===ORIGIN+'/account') {
@@ -197,8 +226,13 @@ class Tab {
     if(this.data) {
       if(selector==='#body')return [{dom:() => {
         const result=bodyDOM(typeof env.editorBody === 'function' ? env.editorBody(this.data.body) : this.data.body);
-        const focused=this.focusedBody?(env.focusBodyChild?result.childNodes[0]:result):null;
-        result.ownerDocument={activeElement:focused};
+        let focused=this.focusedBody?(env.focusBodyChild?result.childNodes[0]:result):null;
+        if(this.focusedBody&&env.focusBodyControl){
+          focused=element(env.focusBodyControl==='noneditable'?'SPAN':env.focusBodyControl,
+            env.focusBodyControl==='noneditable'?{contenteditable:'false'}:{});
+          result.childNodes.push(focused);focused.parentNode=result;
+        }
+        result.ownerDocument={activeElement:focused,location:{href:this.documentURL?this.documentURL():this.current}};
         result.contains=node=>result.childNodes.includes(node);
         if(env.invalidEditorBody)result.childNodes.push(element('IMG'));
         if(env.bodyNotEditable){const getAttribute=result.getAttribute;result.getAttribute=key=>key==='contenteditable'?'false':getAttribute(key);}
@@ -212,6 +246,8 @@ class Tab {
         if(env.saveFailure)throw env.saveFailure;
       }}];
       if(selector==='#saved')return plain(this.data.saved?'已保存到云端':'尚未保存');
+      if(selector==='#state')return plain('草稿');
+      if(selector==='#new')return env.newMarkerMissing?[]:plain(env.newMarker??'新建草稿');
       return [];
     }
     if(selector==='#scope')return plain(env.wrongDraftScope&&this.scope()==='drafts'?'non_drafts':this.scope());
@@ -241,7 +277,7 @@ class Tab {
       return [{text:'新建草稿',attrs:{href:ORIGIN+'/book/10/edit?enter_from=newdraft'},click:() => {
       env.creates++;if(env.concurrent)env.add('https://example.com/user-tab');
       if(env.concurrentOldDraft)env.add(ORIGIN+'/book/10/edit/11?enter_from=modifydraft');
-      env.editors.set('99',{scope:'drafts',chapter:null,title:'',body:'',saved:false});
+      env.editors.set('99',{scope:'drafts',chapter:null,title:'',body:'',saved:false,...env.createdData});
       env.add(ORIGIN+'/book/10/edit/99?enter_from=newdraft');
       if(env.concurrentTarget)env.add(ORIGIN+'/book/10/edit/98?enter_from=newdraft');
       if(env.changeAccountOnCreate)env.account='different-account';
@@ -340,6 +376,36 @@ test('ordinary find and independent read keep their current management navigatio
   assert.deepEqual((await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}))).result,[]);
   const read=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));assert.equal(read.ok,true,JSON.stringify(read));
   assert.equal(env.catalogRefreshes,0);assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+
+test('configured new-draft marker rejects an existing blank chapter before any input and never retries allocation',async()=>{
+  const env=environment({createdData:{chapter:11,saved:true},newMarker:'已有草稿'}),config=profile();
+  config.editor.new=field('#new',{expected:'新建草稿'});
+  config.editor.state=field('#state',{expected:'草稿'});
+  const base=await verified(env,config),create=next(base,'create_draft',{chapter:12,title:'新草稿',body:'完整正文'});
+  const result=await executeChromeBridgeRequest(env.api,create);
+  assert.equal(result.error,'platform_browser_not_new_draft');assert.equal(env.creates,1);assert.equal(env.saves,0);
+  assert.equal(env.editors.get('99').chapter,11);assert.equal(env.editors.get('99').body,'');
+  assert.ok(!env.events.some(row=>['fill','pasteText'].includes(row[0])));
+  assert.equal((await executeChromeBridgeRequest(env.api,create)).error,'platform_browser_operation_failed');
+  assert.equal(env.creates,1);
+});
+
+test('missing configured new marker expires without filling or saving; exact marker allows one normal save',async()=>{
+  const config=profile();config.editor.new=field('#new',{expected:'新建草稿'});
+  const env=environment({newMarkerMissing:true}),base=await verified(env,config);
+  const now=Date.now;let clock=now();const create=next(base,'create_draft',{chapter:12,title:'新草稿',body:'正文'});
+  create.deadline=new Date(clock+1000).toISOString();env.beforeAX=async()=>{if(env.newMarkerChecks)clock+=500;};
+  Date.now=()=>clock;
+  try{
+    const result=await executeChromeBridgeRequest(env.api,create);
+    assert.equal(result.error,'platform_browser_operation_failed');assert.equal(env.saves,0);assert.equal(env.creates,1);
+    assert.ok(env.newMarkerChecks>0);
+    assert.ok(!env.events.some(row=>['fill','pasteText'].includes(row[0])));
+  }finally{Date.now=now;}
+  const ready=environment(),verifiedReady=await verified(ready,config);
+  const result=await executeChromeBridgeRequest(ready.api,next(verifiedReady,'create_draft',{chapter:12,title:'新草稿',body:'正文'}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.equal(ready.saves,1);assert.equal(ready.creates,1);
 });
 
 test('creation catalog refresh failures never replay allocation or accept an old matching URL and DOM',async()=>{
@@ -1462,9 +1528,8 @@ test('batch duplicate attribute and DOM errors never fall back or hide invalid c
 });
 test('row field sources other than DOM and explicit scope constants are rejected',async () => {
   const env=environment();const config=profile();config.chapter_lists[0].chapter.source='page_url';
-  const base=await verified(env,config);env.events=[];
-  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:12}));
-  assert.equal(result.error,'platform_browser_invalid_profile');assert.ok(!env.events.some(row=>row[0]==='evaluateAll'));
+  const result=await executeChromeBridgeRequest(env.api,request('verify_target',{},undefined,config));
+  assert.equal(result.error,'platform_browser_invalid_profile');assert.deepEqual(env.events,[]);
 });
 test('strict preview paragraphs preserve whitespace and reject attributes BR non-P or missing sentinel',()=>{
   for(const value of ['','正文','\n甲\n\n乙\n\n','  文字　\n末段  '])assert.deepEqual(readPreviewParagraphs_v1(previewDOM(value)),{ok:true,value});
@@ -1511,6 +1576,216 @@ test('preview readiness polls header and empty body but refuses unknown structur
   const failed=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
   assert.equal(failed.error,'platform_browser_unsupported_editor');
   assert.ok(!env.events.some(row=>row[0]==='newTab'&&row[1].includes('/edit/')));
+});
+test('initial preview loading still verifies a newly saved draft without repeating creation or saving',async()=>{
+  const env=environment({previewHeaderPending:2,previewBodyPending:2}),base=await verified(env);
+  const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'新草稿',body:'完整正文'}));
+  assert.equal(response.ok,true,JSON.stringify(response));assert.equal(response.result,'99');
+  assert.equal(env.creates,1);assert.equal(env.saves,1);assert.equal(env.editors.get('99').body,'完整正文');
+});
+test('final preview body disappearance refuses without waiting for the old text to return',async()=>{
+  for(const operation of ['read_draft','create_draft'])for(const change of ['pending','missing','book','remote']){
+    const env=environment(),base=await verified(env);let reads=0,timer;
+    env.beforeLocatorEvaluate=async(tab,selector)=>{
+      if(selector!=='#preview-body')return;
+      if(++reads===1&&change==='missing')env.delayCounts={'#preview-body':1};
+      if(reads===2&&change!=='missing'){
+        env.previewBodyPending=1;
+        if(change==='book'||change==='remote')timer=setTimeout(()=>{
+          env.editors.set('22',{scope:'drafts',chapter:22,title:'另一稿标题',body:tab.data.body,saved:true});
+          tab.load(ORIGIN+'/preview/'+(change==='book'?'20':'10')+'&22');
+        },10);
+      }
+    };
+    try {
+      const params=operation==='read_draft'?{remote_id:'11'}:{chapter:12,title:'新草稿',body:'相同正文'};
+      const response=await executeChromeBridgeRequest(env.api,next(base,operation,params));
+      assert.equal(response.error,'platform_browser_editor_changed',JSON.stringify({operation,change,response}));
+      assert.ok(!Object.hasOwn(response,'result'));
+      assert.equal(reads,change==='missing'?1:2,'final verification never polls the body back into existence');
+      assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    } finally { clearTimeout(timer); }
+  }
+});
+test('final preview body read is followed by live account and complete chapter header verification',async()=>{
+  for(const operation of ['read_draft','create_draft'])for(const change of ['account','chapter','title']){
+    const env=environment(),base=await verified(env);let reads=0;
+    env.onPreviewBody=()=>{
+      if(++reads!==2)return;
+      if(change==='account'){
+        const guard=[...env.tabs.values()].find(tab=>tab.current===ORIGIN+'/account');
+        guard.guardAccount='different-account';
+      } else {
+        const original=operation==='read_draft'?{chapter:11,title:'原稿'}:{chapter:12,title:'新草稿'};
+        env.previewHeader='第'+(change==='chapter'?22:original.chapter)+'章 '+(change==='title'?'已改变标题':original.title);
+      }
+    };
+    const params=operation==='read_draft'?{remote_id:'11'}:{chapter:12,title:'新草稿',body:'相同正文'};
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,params));
+    assert.equal(response.error,'platform_browser_'+(change==='account'?'identity_mismatch':'editor_changed'),JSON.stringify({operation,change,response}));
+    assert.ok(!Object.hasOwn(response,'result'));assert.equal(reads,2);
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+  }
+});
+test('final preview header disappearance cannot start a new readiness wait after the body was verified',async()=>{
+  for(const change of ['missing','duplicate']){
+    const env=environment(),base=await verified(env);let reads=0;
+    env.onPreviewBody=()=>{
+      if(++reads!==2)return;
+      if(change==='missing')env.delayCounts={'#preview-title':1};
+      else env.countOverrides={'#preview-title':2};
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(response.error,'platform_browser_'+(change==='missing'?'editor_changed':'ambiguous_dom'),JSON.stringify(response));
+    assert.ok(!Object.hasOwn(response,'result'));assert.equal(reads,2);assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+for(const operation of ['read_draft','find_drafts','create_draft'])test('final preview account cannot restart readiness for '+operation,async()=>{
+  for(const change of ['missing','empty','duplicate']){
+    const env=environment(),base=await verified(env);let reads=0,finalCounts=0,waited=false;
+    const remote=operation==='create_draft'?'99':'11';
+    env.onPreviewBody=()=>{
+      if(++reads!==2)return;
+      if(change==='missing')env.delayCounts={'#account':1};
+      if(change==='empty')[...env.tabs.values()].find(tab=>tab.current===ORIGIN+'/account').guardAccount='';
+      if(change==='duplicate')env.countOverrides={'#account':2};
+    };
+    env.beforeLocatorCount=async(tab,selector)=>{if(selector==='#account'&&reads===2)finalCounts++;};
+    env.beforeAX=async tab=>{
+      if(reads===2&&tab.current===ORIGIN+'/account'){
+        waited=true;env.editors.get(remote).body='等待期间已经改变的正文';
+      }
+    };
+    const params=operation==='create_draft'?{chapter:12,title:'新草稿',body:'相同正文'}:
+      operation==='find_drafts'?{chapter:11}:{remote_id:'11'};
+    const command=next(base,operation,params);
+    const response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(response.error,'platform_browser_'+(change==='duplicate'?'ambiguous_dom':'login_required'),JSON.stringify({operation,change,response}));
+    assert.ok(!Object.hasOwn(response,'result'));assert.equal(reads,2);assert.equal(finalCounts,1);
+    assert.equal(waited,false,'an observed missing final account must not be polled back into existence');
+    if(operation==='create_draft'){
+      const replay=await executeChromeBridgeRequest(env.api,command);
+      assert.equal(replay.ok,false,'an uncertain create remains consumed');
+    }
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+    assert.deepEqual([...env.tabs.values()].map(tab=>tab.current),['https://example.com/already-open']);
+  }
+});
+test('initial account readiness remains available before read and create final checks',async()=>{
+  for(const operation of ['read_draft','create_draft']){
+    const env=environment(),base=await verified(env);env.events=[];env.delayCounts={'#account':1};
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,operation==='read_draft'?
+      {remote_id:'11'}:{chapter:12,title:'新草稿',body:'新正文'}));
+    assert.equal(response.ok,true,JSON.stringify(response));
+    if(operation==='read_draft')assert.equal(env.events.filter(row=>row[0]==='reload'&&row[1]===ORIGIN+'/account').length,1);
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+test('final preview account and header queries never recover a timeout by retrying after the body',async()=>{
+  for(const operation of ['read_draft','create_draft'])for(const selector of ['#account','#preview-title'])for(const query of ['count','value']){
+    const env=environment(),base=await verified(env);let reads=0,calls=0;
+    const failure=evaluateTimeout();let observed;
+    env.api.onDriverError=error=>{observed=error;};env.onPreviewBody=()=>{reads++;};
+    const timeout=async(tab,actual)=>{
+      if(reads!==2||actual!==selector)return;
+      if(++calls===1){env.editors.get(operation==='create_draft'?'99':'11').body='超时期间已改变正文';throw failure;}
+    };
+    if(query==='count')env.beforeLocatorCount=timeout;else env.beforeLocatorEvaluate=timeout;
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,operation==='read_draft'?
+      {remote_id:'11'}:{chapter:12,title:'新草稿',body:'原正文'}));
+    assert.equal(response.ok,false,JSON.stringify({operation,selector,query,response}));
+    assert.equal(calls,1);assert.equal(observed,failure);assert.equal(reads,2);
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+test('preview identity remains pinned across initial body loading and the final editor inventory await',async()=>{
+  for(const stage of ['initial_header','initial_pending','final_inventory'])for(const change of ['book','remote']){
+    const env=environment(),base=await verified(env);let reads=0,timer,changed=false;
+    const move=tab=>{
+      env.editors.set('22',{scope:'drafts',chapter:11,title:'原稿',body:'原始正文',saved:true});
+      tab.load(ORIGIN+'/preview/'+(change==='book'?'20':'10')+'&22');changed=true;
+    };
+    env.beforeLocatorEvaluate=async(tab,selector)=>{
+      if(selector==='#preview-title'&&stage==='initial_header'&&!timer){
+        env.previewHeaderPending=1;timer=setTimeout(()=>move(tab),10);
+      }
+      if(selector!=='#preview-body')return;
+      if(++reads===1&&stage==='initial_pending'){
+        env.previewBodyPending=1;timer=setTimeout(()=>move(tab),10);
+      }
+    };
+    const list=env.api.listTabs;
+    env.api.listTabs=async()=>{
+      if(stage==='final_inventory'&&reads===2&&!changed)move([...env.tabs.values()].find(tab=>tab.preview));
+      return list();
+    };
+    try {
+      const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+      assert.equal(changed,true);assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify({stage,change,response}));
+      assert.ok(!Object.hasOwn(response,'result'));assert.equal(reads,stage==='initial_header'?0:stage==='initial_pending'?1:2);
+      assert.equal(env.creates,0);assert.equal(env.saves,0);
+    } finally { clearTimeout(timer); }
+  }
+});
+test('preview arrival is pinned before inventory or account checks can conceal an early redirect',async()=>{
+  for(const stage of ['inventory_restore','account_restore','after_inventory']){
+    const env=environment(),base=await verified(env);let preview,inventoryChecked=false,bodyReads=0;
+    const expected=ORIGIN+'/preview/10&11',other=ORIGIN+'/preview/10&22';
+    env.editors.set('22',{scope:'drafts',chapter:22,title:'另一稿',body:'另一稿正文',saved:true});
+    const newTab=env.api.newTab,list=env.api.listTabs;
+    env.api.newTab=async(url,...args)=>{
+      const tab=await newTab(url,...args);
+      if(url===expected){preview=tab;if(stage!=='after_inventory')tab.load(other);}
+      return tab;
+    };
+    env.api.listTabs=async()=>{
+      if(preview&&!inventoryChecked){
+        inventoryChecked=true;
+        if(stage==='inventory_restore')preview.load(expected);
+        if(stage==='after_inventory')preview.load(other);
+      }
+      return list();
+    };
+    env.afterLocatorEvaluate=async(tab,selector)=>{
+      if(selector==='#account'&&preview?.current===other)preview.load(expected);
+    };
+    env.onPreviewBody=()=>{bodyReads++;};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify({stage,response}));
+    assert.ok(!Object.hasOwn(response,'result'));assert.equal(bodyReads,0);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+    assert.ok(env.closed.includes(preview.id),'a refused new preview is still owned for cleanup');
+  }
+});
+test('every observed preview URL rejects a different remote before a later guard can restore it',async()=>{
+  // Arrival and AX use the first three URL reads; exercise the new-tab tail
+  // check and both identity reads immediately before the account guard await.
+  for(const redirectOnRead of [4,5,6]){
+    const env=environment(),base=await verified(env);let preview,reads=0,bodyReads=0,redirected=false;
+    const expected=ORIGIN+'/preview/10&11',other=ORIGIN+'/preview/10&22',newTab=env.api.newTab;
+    env.editors.set('22',{scope:'drafts',chapter:22,title:'另一稿',body:'另一稿正文',saved:true});
+    env.api.newTab=async(url,...args)=>{
+      const tab=await newTab(url,...args);
+      if(url===expected){
+        preview=tab;const readURL=tab.url.bind(tab);
+        tab.url=async()=>{if(++reads===redirectOnRead){tab.load(other);redirected=true;}return readURL();};
+      }
+      return tab;
+    };
+    env.afterLocatorEvaluate=async(tab,selector)=>{
+      if(selector==='#account'&&preview?.current===other)preview.load(expected);
+    };
+    env.onPreviewBody=()=>{bodyReads++;};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(redirected,true);assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify({redirectOnRead,response}));
+    assert.ok(!Object.hasOwn(response,'result'));assert.equal(bodyReads,0);assert.equal(env.creates,0);assert.equal(env.saves,0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+    assert.ok(env.closed.includes(preview.id));
+  }
 });
 test('owned editor inventory may lag one successful close before independent preview readback',async()=>{
   const env=environment();const base=await verified(env,previewProfile());env.events=[];
@@ -1587,4 +1862,681 @@ test('Fanqie host rejects missing or editor-backed readback before any UI operat
   config.readback.remote_id=structuredClone(config.editor.remote_id);
   const response=await executeChromeBridgeRequest(env.api,request('verify_target',{},undefined,config));
   assert.equal(response.error,'platform_browser_invalid_profile');assert.deepEqual(env.events,[]);
+});
+
+test('host identity-source subset rejects standalone DOM modes before any UI operation',async()=>{
+  for(const location of ['account','book','remote_id']){
+    const env=environment(),config=profile();
+    (location==='remote_id'?config.editor:config.identity)[location]=field('#'+location,{source:'dom',attribute:'data-id'});
+    const response=await executeChromeBridgeRequest(env.api,request('verify_target',{},undefined,config));
+    assert.equal(response.error,'platform_browser_invalid_profile',location);assert.deepEqual(env.events,[]);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+
+test('host requires explicit editor readiness before any UI work even with a DOM draft state',async()=>{
+  for(const missing of [undefined,null]){
+    const env=environment(),config=profile();config.editor.state=field('#state',{expected:'草稿'});
+    config.editor.ready=missing;
+    const response=await executeChromeBridgeRequest(env.api,request('verify_target',{},undefined,config));
+    assert.equal(response.error,'platform_browser_invalid_profile');assert.deepEqual(env.events,[]);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+
+test('editor DOM marker sources are rejected before verification or creation touches UI',async()=>{
+  for(const marker of ['saved','ready','new'])for(const source of ['page_url','guard_dom','listing','prosemirror_paragraphs','',false,[]]){
+    const config=profile();config.editor.new=field('#new',{expected:'新建草稿'});config.editor[marker].source=source;
+    for(const operation of ['verify_target','create_draft']){
+      const env=environment();const req=request(operation,{chapter:12,title:'验收',body:'正文'},undefined,config);
+      const response=await executeChromeBridgeRequest(env.api,req);
+      assert.equal(response.error,'platform_browser_invalid_profile',JSON.stringify({marker,source,operation}));
+      assert.deepEqual(env.events,[]);assert.equal(env.creates,0);assert.equal(env.saves,0);
+    }
+  }
+});
+
+test('editor DOM marker sources preserve omitted, null and explicit DOM creation',async()=>{
+  for(const source of [undefined,null,'dom']){
+    const config=profile();config.editor.new=field('#new',{expected:'新建草稿'});
+    for(const marker of ['saved','ready','new'])if(source!==undefined)config.editor[marker].source=source;
+    const env=environment();const base=await verified(env,config);
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}));
+    assert.equal(response.ok,true,JSON.stringify(response));assert.equal(env.creates,1);assert.equal(env.saves,1);
+  }
+});
+
+// Reuse the public-CUA fixture with each ordinary editor's official origin.
+// URL translation stays in the fake host; the driver sees only that platform.
+async function ordinaryFixture(platform,stateSource='dom',{extended=false,bodySource='dom'}={}) {
+  const origin={qimao:'https://zuozhe.qimao.com',qidian:'https://write.qq.com'}[platform];
+  const config=JSON.parse(JSON.stringify(legacyProfile()).replaceAll(ORIGIN,origin));config.platform=platform;
+  if(stateSource==='dom')config.editor.state=field('#state',{expected:'草稿'});
+  config.editor.body=field('#body',{source:bodySource});
+  if(extended)for(const name of ['chapter','title','body'])config.editor[name].selector+=':visible';
+  const env=environment(),add=env.add;
+  const internal=value=>value.replace(origin,ORIGIN),external=value=>value.replace(ORIGIN,origin);
+  env.add=url=>{
+    const tab=add(internal(url)),lookup=tab.lookup.bind(tab),goto=tab.goto.bind(tab);
+    tab.url=async()=>external(tab.current);tab.goto=url=>goto(internal(url));
+    tab.documentURL=()=>external(tab.current);
+    tab.playwright.locator=selector=>new Locator(tab,()=>tab.lookup(selector),selector.replace(/:visible$/,''));
+    tab.lookup=selector=>{
+      selector=selector.replace(/:visible$/,'');
+      if(tab.data&&selector==='#body'&&bodySource==='dom')return [{tag:'TEXTAREA',value:()=>tab.data.body,set:value=>{tab.data.body=value;}}];
+      if(tab.data&&selector==='#state')return [{text:env.editorState??'草稿'}];
+      const nodes=lookup(selector);
+      for(const node of nodes)if(node.attrs?.href)node.attrs.href=external(node.attrs.href);
+      if(selector==='.row')for(const node of nodes)for(const link of node.children['.link'])link.attrs.href=external(link.attrs.href);
+      return nodes;
+    };
+    return tab;
+  };
+  env.api.listTabs=async()=>[...env.tabs.values()].map(tab=>({id:tab.id,url:external(tab.current)}));
+  const base=request('verify_target',{},undefined,config);base.binding.target.platform=platform;
+  const response=await executeChromeBridgeRequest(env.api,base);assert.equal(response.ok,true,JSON.stringify(response));
+  return {env,base,origin};
+}
+function ordinaryParams(operation) {
+  return operation==='create_draft'?{chapter:12,title:'新草稿',body:'相同正文'}:
+    operation==='find_drafts'?{chapter:11}:{remote_id:'11'};
+}
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' editor supports read find create and existing selector/body modes',async()=>{
+  for(const stateSource of ['dom','listing'])for(const bodySource of ['dom','prosemirror_paragraphs'])for(const operation of ['read_draft','find_drafts','create_draft']){
+    const {env,base,origin}=await ordinaryFixture(platform,stateSource,{extended:true,bodySource});
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,ordinaryParams(operation)));
+    assert.equal(response.ok,true,JSON.stringify({stateSource,bodySource,operation,response}));
+    if(operation==='read_draft')assert.deepEqual(response.result,{remote_id:'11',title:'原稿',body:'原始正文',state:'draft',url:origin+'/book/10/edit/11?enter_from=modifydraft'});
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' editor rejects another remote during read find and create readback',async()=>{
+  for(const stateSource of ['dom','listing'])for(const operation of ['read_draft','find_drafts','create_draft']){
+    const {env,base}=await ordinaryFixture(platform,stateSource);let changed=false,armed=false,urlReads=0;
+    env.editors.set('22',{scope:'drafts',chapter:22,title:'另一草稿',body:'另一草稿正文',saved:true});
+    env.afterLocatorEvaluate=async(tab,selector)=>{if(selector==='#title'&&tab.current.includes('enter_from=modifydraft')&&!changed)armed=true;};
+    const add=env.add;env.add=url=>{const tab=add(url),readURL=tab.url.bind(tab);tab.url=async()=>{
+      if(armed&&!changed&&tab.current.includes('/edit/')&&++urlReads===2){changed=true;tab.load(ORIGIN+'/book/10/edit/22?enter_from=modifydraft');}
+      return readURL();
+    };return tab;};
+    const command=next(base,operation,ordinaryParams(operation)),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify({stateSource,operation,response}));
+    assert.ok(!Object.hasOwn(response,'result'));
+    if(operation==='create_draft')assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' editor refuses changed current chapter title body and DOM state after body observation',async()=>{
+  for(const operation of ['read_draft','find_drafts','create_draft'])for(const change of ['chapter','title','body','state','account']){
+    const {env,base}=await ordinaryFixture(platform);let changed=false;
+    env.afterLocatorEvaluate=async(tab,selector)=>{
+      if(selector!=='#body'||!tab.current.includes('enter_from=modifydraft')||changed)return;changed=true;
+      if(change==='state')env.editorState='已发布';
+      else if(change==='account')[...env.tabs.values()].find(opened=>opened.current===ORIGIN+'/account').guardAccount='different-account';
+      else tab.data[change]=change==='chapter'?22:'已改变的文本';
+    };
+    const command=next(base,operation,ordinaryParams(operation)),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({operation,change,response}));
+    assert.ok(!Object.hasOwn(response,'result'));
+    if(operation==='create_draft')assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' final body and guard awaits cannot conceal changed identities or headers',async()=>{
+  for(const operation of ['read_draft','find_drafts','create_draft'])for(const stage of ['body','guard','title'])for(const change of stage==='title'?['remote']:stage==='body'?['remote','chapter','title','state','account']:['remote','chapter','title','state']){
+    const {env,base}=await ordinaryFixture(platform);let changed=false,finalBody=false;
+    env.afterLocatorEvaluateAll=async(tab,selector)=>{
+      if(selector==='#body')finalBody=true;
+      if(changed||!finalBody||selector!=={body:'#body',guard:'#account',title:'#title'}[stage])return;changed=true;
+      const editor=[...env.tabs.values()].find(opened=>opened.current.includes('enter_from=modifydraft'));
+      if(change==='remote'){env.editors.set('22',{...editor.data});editor.load(ORIGIN+'/book/10/edit/22?enter_from=modifydraft');}
+      else if(change==='account')[...env.tabs.values()].find(opened=>opened.current===ORIGIN+'/account').guardAccount='different-account';
+      else if(change==='state')env.editorState='已发布';
+      else editor.data[change]=change==='chapter'?22:'已改变标题';
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,ordinaryParams(operation)));
+    assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({operation,stage,change,response}));
+    assert.ok(!Object.hasOwn(response,'result'));assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' final fields fail once for missing duplicate empty and timeout without readiness restart',async()=>{
+  for(const selector of ['#chapter','#title','#body','#state','#account'])for(const change of ['missing','duplicate','empty','timeout']){
+    const {env,base}=await ordinaryFixture(platform);let calls=0,armed=false,waited=false;const failure=evaluateTimeout();
+    env.afterLocatorEvaluate=async(tab,field)=>{if(field==='#body'&&tab.current.includes('enter_from=modifydraft'))armed=true;};
+    env.beforeAX=async()=>{if(calls)waited=true;};
+    env.beforeLocatorEvaluateAll=async(tab,field)=>{
+      if(!armed||field!==selector)return;calls++;
+      if(change==='missing'||change==='duplicate')env.currentFieldCounts={[selector]:change==='missing'?0:2};
+      if(change==='timeout')throw failure;
+      if(change==='empty'){
+        if(selector==='#account')tab.guardAccount='';
+        else if(selector==='#state')env.editorState='';
+        else tab.data[selector.slice(1)]='';
+      }
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(response.ok,false,JSON.stringify({selector,change,response}));assert.equal(calls,1);
+    assert.equal(waited,false);assert.equal(env.creates,0);assert.equal(env.saves,0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('ordinary initial field readiness still waits before strict final reads',async()=>{
+  for(const platform of ['qimao','qidian'])for(const operation of ['read_draft','create_draft']){
+    const {env,base}=await ordinaryFixture(platform);env.delayCounts={'#chapter':1,'#account':1};
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,ordinaryParams(operation)));
+    assert.equal(response.ok,true,JSON.stringify({platform,operation,response}));
+    assert.equal(env.delayCounts['#chapter'],0);assert.equal(env.delayCounts['#account'],0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('current editor evaluateAll callback is self-contained and preserves the original paragraph contract',()=>{
+  const isolated=Function('return ('+readParagraphs.toString()+')')();
+  assert.deepEqual(isolated(bodyDOM('甲\n\n乙\n')),{ok:true,value:'甲\n\n乙\n'});
+  assert.deepEqual(isolated([bodyDOM('甲\n\n乙\n')],{source:'prosemirror_paragraphs'}),{ok:true,count:1,value:'甲\n\n乙\n'});
+  const input={tagName:'TEXTAREA',value:'正文',getAttribute:()=>null};
+  assert.deepEqual(isolated([input],{source:'dom'}),{ok:true,count:1,value:'正文'});
+  assert.deepEqual(isolated([],{source:'dom'}),{ok:false,count:0});
+  assert.deepEqual(isolated([input,input],{source:'dom'}),{ok:false,count:2});
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' pre-final guard refresh detects server account changes and editor changes during reload',async()=>{
+  for(const operation of ['read_draft','find_drafts','create_draft'])for(const change of ['server_account','remote','chapter','title','body','state']){
+    const {env,base}=await ordinaryFixture(platform,'listing');let armed=false,changed=false;
+    env.afterLocatorEvaluate=async(tab,selector)=>{
+      if(selector==='#body'&&tab.current.includes('enter_from=modifydraft')){
+        armed=true;if(change==='server_account'){env.account='different-account';changed=true;}
+      }
+    };
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(!armed||changed||kind!=='reload'||url!==ORIGIN+'/account')return;changed=true;
+      const editor=[...env.tabs.values()].find(opened=>opened.current.includes('enter_from=modifydraft'));
+      if(change==='remote'){env.editors.set('22',{...editor.data});editor.load(ORIGIN+'/book/10/edit/22?enter_from=modifydraft');}
+      else if(change==='state'){editor.data.scope='non_drafts';editor.data.state='已发布';}
+      else editor.data[change]=change==='chapter'?22:'已经改变文本';
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,ordinaryParams(operation)));
+    assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({operation,change,response}));
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' creation keeps its confirmed remote through saving and readback',async()=>{
+  for(const stage of ['unchanged','before_fill','after_save','saved_marker']){
+    const {env,base}=await ordinaryFixture(platform);let changed=false,armed=false,urlReads=0;
+    const move=tab=>{
+      if(changed)return;changed=true;
+      env.editors.set('22',{...tab.data});
+      tab.load(ORIGIN+'/book/10/edit/22?enter_from=modifydraft');
+    };
+    const add=env.add;env.add=url=>{const tab=add(url),readURL=tab.url.bind(tab);tab.url=async()=>{
+      if(armed&&!changed&&tab.current.includes('enter_from=newdraft')&&++urlReads===2)move(tab);
+      return readURL();
+    };return tab;};
+    env.afterLocatorEvaluate=async(tab,selector)=>{
+      if(!tab.current.includes('enter_from=newdraft'))return;
+      if(stage==='before_fill'&&selector==='#state'&&!env.saves)armed=true;
+      if(stage==='saved_marker'&&selector==='#saved')armed=true;
+    };
+    env.beforeAX=async tab=>{if(stage==='after_save'&&env.saves&&tab.current.includes('enter_from=newdraft'))armed=true;};
+    const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,stage!=='unchanged');
+    if(stage==='unchanged'){assert.equal(response.ok,true,JSON.stringify(response));assert.equal(response.result,'99');}
+    else {assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify({platform,stage,response}));assert.ok(!Object.hasOwn(response,'result'));}
+    assert.equal(env.creates,1);assert.equal(env.saves,stage==='before_fill'?0:1);
+    if(stage==='before_fill')assert.equal(env.events.filter(event=>event[0]==='fill').length,0);
+    assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
+    assert.equal(env.creates,1);assert.equal(env.saves,stage==='before_fill'?0:1);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' creation stops before another fill or save after a confirmed editor switch',async()=>{
+  for(const selector of ['#chapter','#title','#body']){
+    const {env,base}=await ordinaryFixture(platform);const foreign={scope:'drafts',chapter:22,title:'既有稿标题',body:'既有稿正文',saved:true};
+    env.editors.set('22',{...foreign});let changed=false;
+    env.afterFill=async(tab,field)=>{if(field===selector&&!changed){changed=true;tab.load(ORIGIN+'/book/10/edit/22?enter_from=modifydraft');}};
+    const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify({platform,selector,response}));
+    assert.deepEqual(env.editors.get('22'),foreign,'the other draft remains untouched');
+    assert.deepEqual(env.events.filter(event=>event[0]==='fill').map(event=>event[1]),['#chapter','#title','#body'].slice(0,['#chapter','#title','#body'].indexOf(selector)+1));
+    assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
+    assert.deepEqual(env.editors.get('22'),foreign);assert.equal(env.creates,1);assert.equal(env.saves,0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('ordinary creation allows initial ID allocation before binding and same-remote saved URL transitions',async()=>{
+  for(const platform of ['qimao','qidian'])for(const lateAllocation of [false,true]){
+    const {env,base,origin}=await ordinaryFixture(platform);let allocated=!lateAllocation,transitioned=false,armed=false,urlReads=0;
+    const originalAdd=env.add;env.add=url=>{const tab=originalAdd(url),readURL=tab.url.bind(tab);tab.url=async()=>{
+      if(armed&&!transitioned&&tab.current.includes('enter_from=newdraft')&&++urlReads===2){transitioned=true;tab.load(ORIGIN+'/book/10/edit/99?enter_from=modifydraft');}
+      return readURL();
+    };return tab;};
+    if(lateAllocation){
+      delete base.profile.create_action;base.profile.urls.create=origin+'/book/10/new';
+      base.profile.identity.book.templates.push(origin+'/book/{book_id}/new');
+      const add=env.add;env.add=url=>{const tab=add(url);if(url===base.profile.urls.create){
+        env.creates++;env.editors.set('99',{scope:'drafts',chapter:null,title:'',body:'',saved:false});tab.data=env.editors.get('99');
+      }return tab;};
+      env.beforeLocatorEvaluate=async(tab,selector)=>{
+        const creating=[...env.tabs.values()].find(opened=>opened.current.endsWith('/new'));
+        if(!allocated&&selector==='#account'&&creating){allocated=true;creating.load(ORIGIN+'/book/10/edit/99?enter_from=newdraft');}
+      };
+    }
+    env.beforeAX=async tab=>{if(env.saves&&tab.current.includes('enter_from=newdraft'))armed=true;};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',ordinaryParams('create_draft')));
+    assert.equal(response.ok,true,JSON.stringify({platform,lateAllocation,response}));assert.equal(response.result,'99');
+    assert.equal(allocated,true);assert.equal(transitioned,true);assert.equal(env.creates,1);assert.equal(env.saves,1);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' final editor snapshot rejects body changes during later guard or header reads',async()=>{
+  for(const operation of ['read_draft','find_drafts','create_draft'])for(const stage of ['#account','#chapter','#title','#state']){
+    const {env,base}=await ordinaryFixture(platform);let finalBody=false,changed=false;
+    env.afterLocatorEvaluateAll=async(tab,selector)=>{
+      if(selector==='#body')finalBody=true;
+      if(!finalBody||changed||selector!==stage)return;
+      changed=true;const editor=[...env.tabs.values()].find(opened=>opened.current.includes('enter_from=modifydraft'));
+      editor.data.body='已变更的正文';
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,ordinaryParams(operation)));
+    assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({operation,stage,response}));
+    assert.ok(!Object.hasOwn(response,'result'));assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,operation==='create_draft'?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('preview final snapshot rejects body changes during later account and header reads',async()=>{
+  for(const stage of ['#account','#preview-title']){
+    const env=environment(),base=await verified(env);let bodyReads=0,changed=false;
+    env.afterLocatorEvaluate=async(tab,selector)=>{
+      if(selector==='#preview-body')bodyReads++;
+      if(bodyReads<2||changed||selector!==stage)return;changed=true;env.editors.get('11').body='稍后改变正文';
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({stage,response}));
+    assert.equal(env.creates,0);assert.equal(env.saves,0);await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' readback accepts configured same-ID initial redirects and pins the arrival',async()=>{
+  for(const mode of ['same_id','different_id','later_return']){
+    const {env,base,origin}=await ordinaryFixture(platform);let changed=false;
+    const redirected=origin+'/book/10/edit/11?enter_from=canonical';
+    base.profile.identity.book.templates.push(origin+'/book/{book_id}/edit/{remote_id}?enter_from=canonical');
+    base.profile.editor.remote_id.templates.push(origin+'/book/10/edit/{remote_id}?enter_from=canonical');
+    const add=env.add;env.add=url=>{
+      const tab=add(url);if(url===base.profile.urls.edit.replace('{remote_id}','11')){
+        tab.load(ORIGIN+'/book/10/edit/'+(mode==='different_id'?'22':'11')+'?enter_from=canonical');changed=true;
+      }return tab;
+    };
+    env.afterLocatorEvaluate=async(tab,selector)=>{if(mode==='later_return'&&selector==='#title'&&tab.current.includes('enter_from=canonical'))tab.load(ORIGIN+'/book/10/edit/11?enter_from=modifydraft');};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(changed,true);
+    if(mode==='same_id'){assert.equal(response.ok,true,JSON.stringify(response));assert.equal(response.result.url,redirected);assert.equal(response.result.body,'原始正文');}
+    else assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify({mode,response}));
+    assert.equal(env.creates,0);assert.equal(env.saves,0);await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('paragraph paste rechecks focus after the final action URL await without writing another field',async()=>{
+  const env=environment(),base=await verified(env);let checked=false,changed=false,pasted=0;
+  env.afterLocatorEvaluate=async(tab,selector,fn)=>{if(selector==='#body'&&String(fn).includes('activeElement'))checked=true;};
+  const add=env.add;env.add=url=>{const tab=add(url),getURL=tab.url.bind(tab),paste=tab.pasteText.bind(tab);tab.url=async()=>{
+    if(checked&&!changed&&tab.current.includes('enter_from=newdraft')){changed=true;tab.focusedBody=false;}
+    return getURL();
+  };tab.pasteText=async value=>{pasted++;if(!tab.focusedBody)tab.data.title+=value;else await paste(value);};return tab;};
+  const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'完整正文'}));
+  assert.equal(changed,true);assert.equal(response.ok,false);assert.equal(pasted,0);
+  assert.equal(env.editors.get('99').title,'验收');assert.equal(env.creates,1);assert.equal(env.saves,0);
+  await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+});
+
+test('create and save action labels cannot turn into publish during a fresh account guard',async()=>{
+  for(const stage of ['create','save']){
+    const env=environment(),base=await verified(env);let armed=false,changed=false,unsafeClicks=0;
+    const add=env.add;env.add=url=>{const tab=add(url),lookup=tab.lookup.bind(tab);tab.lookup=selector=>{
+      const nodes=lookup(selector);if(selector===(stage==='create'?'#create':'#save'))for(const node of nodes){
+        const click=node.click;node.click=async()=>{if(changed)unsafeClicks++;await click?.();};
+        if(changed)node.text='发布';
+      }return nodes;
+    };return tab;};
+    // The pre-existing list tab also uses the same observable label contract.
+    for(const tab of env.tabs.values())if(tab.current.endsWith('/drafts')){
+      const lookup=tab.lookup.bind(tab);tab.lookup=selector=>{const nodes=lookup(selector);if(stage==='create'&&selector==='#create')for(const node of nodes){const click=node.click;node.click=async()=>{if(changed)unsafeClicks++;await click?.();};if(changed)node.text='发布';}return nodes;};
+    }
+    env.afterLocatorInnerText=async(tab,selector)=>{if(selector===(stage==='create'?'#create':'#save'))armed=true;};
+    env.afterNavigation=async(tab,kind,url)=>{if(url===ORIGIN+'/account'&&armed){changed=true;}};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'完整正文'}));
+    assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({stage,response}));assert.equal(unsafeClicks,0);
+    assert.equal(env.creates,stage==='create'?0:1);assert.equal(env.saves,0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('snapshot callbacks are self-contained and preserve attributes paragraphs and open shadow roots',()=>{
+  const path=Function('return ('+readDOMPath.toString()+')')(),snapshot=Function('return ('+readParagraphs.toString()+')')();
+  const env=environment(),tab=env.add(ORIGIN+'/book/10/edit/11?enter_from=modifydraft'),doc=tab.liveDocument();
+  const fields=Object.entries(doc.fields).map(([selector,node])=>({name:selector,...path([node]),spec:{source:selector==='#body'?'prosemirror_paragraphs':'dom'}}));
+  const packet=snapshot([doc.documentElement],{source:'editor_snapshot',fields});
+  assert.equal(packet.ok,true);assert.equal(packet.url,tab.current);assert.deepEqual(packet.fields,{'#chapter':'11','#title':'原稿','#body':'原始正文','#state':'草稿'});
+  assert.deepEqual(path([]),{count:0});assert.deepEqual(path([doc.fields['#body'],doc.fields['#body']]),{count:2});
+  const body=doc.fields['#body'];body.isConnected=false;assert.equal(path([body]).connected,false);body.isConnected=true;
+  // Move the real node behind an open shadow root; paths traverse its host.
+  const host=element('DIV'),shadow={host,childNodes:[body],ownerDocument:doc};host.shadowRoot=shadow;
+  host.isConnected=true;host.ownerDocument=doc;host.parentNode=doc.documentElement;
+  doc.documentElement.childNodes[2]=host;body.parentNode=shadow;
+  const shadowPath=path([body]);assert.ok(shadowPath.path.includes('shadow'));
+  const shadowPacket=snapshot([doc.documentElement],{source:'editor_snapshot',fields:[{name:'body',...shadowPath,spec:{source:'prosemirror_paragraphs'}}]});
+  assert.equal(shadowPacket.fields.body,'原始正文');host.shadowRoot=null;
+  assert.equal(snapshot([doc.documentElement],{source:'editor_snapshot',fields:[{name:'body',...shadowPath,spec:{source:'prosemirror_paragraphs'}}]}).ok,false);
+  const attr={...doc.fields['#title'],getAttribute:key=>key==='data-title'?'属性标题':null};doc.documentElement.childNodes[1]=attr;
+  assert.equal(snapshot([doc.documentElement],{source:'editor_snapshot',fields:[{name:'title',...path([attr]),spec:{source:'dom',attribute:'data-title'}}]}).fields.title,'属性标题');
+});
+
+test('final snapshot preview serialization matches the standalone strict preview callback',()=>{
+  const snapshot=Function('return ('+readParagraphs.toString()+')')();
+  for(const value of ['', '甲', '\n甲\n\n乙\n', '甲  \n　乙']){
+    const node=previewDOM(value),expected=readPreviewParagraphs_v1(node),actual=snapshot([node],{source:'fanqie_preview_paragraphs_v1'});
+    assert.equal(actual.ok,expected.ok);assert.equal(actual.value,expected.value);
+  }
+  for(const node of [element('DIV'),element('DIV',{},[element('P',{class:'unknown'},[textNode('正文')]),element('P')]),
+    element('DIV',{},[element('P',{},[element('STRONG',{},[textNode('正文')])]),element('P')]),
+    element('DIV',{},[element('P',{},[textNode('无末尾空段')])]),
+    element('DIV',{},[element('P',{},[element('BR')]),element('P')])]){
+    const expected=readPreviewParagraphs_v1(node),actual=snapshot([node],{source:'fanqie_preview_paragraphs_v1'});
+    assert.equal(actual.ok,expected.ok);assert.equal(actual.value,expected.value);
+  }
+});
+
+test('final snapshot failures never restart readiness or retry timed-out field paths',async()=>{
+  for(const preview of [false,true])for(const stage of ['path','snapshot']){
+    const {env,base}=preview?{env:environment()}:await ordinaryFixture('qimao');
+    const requestBase=preview?await verified(env):base;let calls=0;
+    env.beforeLocatorEvaluateAll=async(tab,selector,fn)=>{
+      if(stage==='path'?fn!==readDOMPath:selector!==':root')return;calls++;throw evaluateTimeout();
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(requestBase,'read_draft',{remote_id:'11'}));
+    assert.equal(response.ok,false);assert.equal(calls,1);assert.equal(env.creates,0);assert.equal(env.saves,0);
+    await closeChromeBridgeSession(env.api,requestBase.session_id,{keepReadback:false});
+  }
+});
+
+test('button state callback is self-contained and checks accessible labels href disabled and focus',()=>{
+  const read=Function('return ('+readActionState.toString()+')')(),attrs={'aria-label':'发布','title':'送审','href':'/create','aria-disabled':'true'};
+  const el={innerText:' 存草稿 ',getAttribute:key=>attrs[key]??null,ownerDocument:{location:{href:ORIGIN+'/book/10/drafts'}},contains:()=>false};
+  el.ownerDocument.activeElement=el;
+  assert.deepEqual(read([el]),{count:1,url:ORIGIN+'/book/10/drafts',text:'存草稿',aria:'发布',title:'送审',href:'/create',resolvedHref:ORIGIN+'/create',disabled:true,focused:true,editableFocus:false});
+  assert.deepEqual(read([]),{count:0});assert.deepEqual(read([el,el]),{count:2});
+});
+
+test('snapshot rechecks duplicate and retargeted selectors and changes during that recheck',async()=>{
+  for(const mode of ['duplicate','missing','retarget','body_change']){
+    const {env,base}=await ordinaryFixture('qimao','dom',{extended:true});let changed=false,snapshots=0;
+    env.afterLocatorEvaluateAll=async(tab,selector,fn)=>{
+      if(selector===':root')snapshots++;
+      if(changed||fn!==readDOMPath||selector!=='#title'||(mode==='body_change'&&snapshots===0))return;changed=true;
+      if(mode==='duplicate'||mode==='missing')env.currentFieldCounts={'#chapter':mode==='duplicate'?2:0};
+      if(mode==='retarget')env.retargetChapter=true;
+      if(mode==='body_change')tab.data.body='selector复核期间变更';
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({mode,response}));
+    assert.equal(env.creates,0);assert.equal(env.saves,0);await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('paragraph paste never writes a nested control or noneditable tool after focus moves inside the editor',async()=>{
+  for(const control of ['INPUT','TEXTAREA','SELECT','BUTTON','IFRAME','noneditable']){
+    const env=environment(),base=await verified(env);let changed=false,pasted=0,controlText='原控件文本';
+    env.beforeLocatorEvaluate=async(tab,selector,fn)=>{
+      if(selector==='#body'&&String(fn).includes('activeElement')&&!changed){changed=true;env.focusBodyControl=control;}
+    };
+    const add=env.add;env.add=url=>{const tab=add(url),paste=tab.pasteText.bind(tab);tab.pasteText=async value=>{
+      pasted++;if(env.focusBodyControl)controlText+=value;else await paste(value);
+    };return tab;};
+    const command=next(base,'create_draft',{chapter:12,title:'验收',body:'完整正文'}),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({control,response}));assert.equal(pasted,0);
+    assert.equal(controlText,'原控件文本');assert.equal(env.creates,1);assert.equal(env.saves,0);
+    assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);assert.equal(env.creates,1);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+// Bind every observed draft action link through the account refresh. Popup
+// creation already had this fence; same-page creation and saving need it too.
+async function actionHrefFixture(stage, {changedHref, initialHref=null, opens='popup'}={}) {
+  const env=environment(),config=profile();config.create_action.opens=opens;
+  const base=await verified(env,config);let armed=false,changed=false,unsafeClicks=0;
+  const selector=stage==='create'?'#create':'#save';
+  const decorate=tab=>{
+    const lookup=tab.lookup.bind(tab);tab.lookup=name=>{
+      const nodes=lookup(name);
+      if(name==='#create'&&opens==='same_page')for(const node of nodes)node.click=async()=>{
+        env.creates++;env.editors.set('99',{scope:'drafts',chapter:null,title:'',body:'',saved:false});
+        tab.load(ORIGIN+'/book/10/edit/99?enter_from=newdraft');
+      };
+      if(name!==selector)return nodes;
+      for(const node of nodes){
+        node.attrs={...(node.attrs||{})};
+        const href=changed?changedHref:initialHref;
+        if(href==null)delete node.attrs.href;else node.attrs.href=href;
+        const click=node.click;node.click=async()=>{
+          if(changed)unsafeClicks++;
+          await click?.();
+        };
+      }return nodes;
+    };return tab;
+  };
+  for(const tab of env.tabs.values())decorate(tab);
+  const add=env.add;env.add=url=>decorate(add(url));
+  env.afterLocatorInnerText=async(tab,name)=>{if(name===selector)armed=true;};
+  env.afterNavigation=async(tab,kind,url)=>{
+    if(changedHref!==undefined&&armed&&url===ORIGIN+'/account'&&kind==='reload')changed=true;
+  };
+  return {env,base,state:()=>({changed,unsafeClicks})};
+}
+
+for(const stage of ['create','save'])test('draft action href changes fail before clicking '+stage,async()=>{
+  for(const initialHref of [null,'/book/10/save-draft']){
+    const {env,base,state}=await actionHrefFixture(stage,{initialHref,changedHref:'/book/10/publish',opens:stage==='create'?'same_page':'popup'});
+    const command=next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(state().changed,true);assert.equal(state().unsafeClicks,0,JSON.stringify({stage,initialHref,response}));
+    assert.equal(response.error,'platform_browser_unsafe_'+stage);assert.equal(env.creates,stage==='create'?0:1);assert.equal(env.saves,0);
+    assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);assert.equal(state().unsafeClicks,0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('stable same-page create and save action href forms remain supported',async()=>{
+  for(const stage of ['create','save'])for(const initialHref of [null,'','/book/10/save-draft',ORIGIN+'/book/10/save-draft']){
+    const {env,base}=await actionHrefFixture(stage,{initialHref,opens:'same_page'});
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}));
+    assert.equal(response.ok,true,JSON.stringify({stage,initialHref,response}));assert.equal(env.creates,1);assert.equal(env.saves,1);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const stage of ['create','save'])test('draft action rejects changed effective destination while relative href stays unchanged for '+stage,async()=>{
+  const cases=['next','?mode=draft',''].map(initialHref=>({initialHref,opens:'same_page'}));
+  if(stage==='create')cases.push({initialHref:'edit?enter_from=newdraft',opens:'popup'});
+  for(const {initialHref,opens} of cases){
+    const {env,base}=await actionHrefFixture(stage,{initialHref,opens});
+    env.baseURI=ORIGIN+'/draft/';let armed=false,changed=false,unsafeClicks=0;
+    const selector=stage==='create'?'#create':'#save';
+    env.afterLocatorInnerText=async(tab,name)=>{if(name===selector)armed=true;};
+    env.afterNavigation=async(tab,kind,url)=>{if(armed&&kind==='reload'&&url===ORIGIN+'/account'){changed=true;env.baseURI=ORIGIN+'/publish/';}};
+    const decorate=tab=>{const lookup=tab.lookup.bind(tab);tab.lookup=name=>{
+      const nodes=lookup(name);if(name===selector)for(const node of nodes){const click=node.click;node.click=async()=>{if(changed)unsafeClicks++;await click?.();};}return nodes;
+    };return tab;};
+    for(const tab of env.tabs.values())decorate(tab);const add=env.add;env.add=url=>decorate(add(url));
+    const command=next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);assert.equal(unsafeClicks,0,JSON.stringify({stage,initialHref,response}));
+    assert.equal(response.error,'platform_browser_unsafe_'+stage);assert.equal(env.creates,stage==='create'?0:1);assert.equal(env.saves,0);
+    assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);assert.equal(unsafeClicks,0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('draft action preserves stable effective destinations through irrelevant base changes',async()=>{
+  for(const stage of ['create','save'])for(const initialHref of [null,'/book/10/save-draft',ORIGIN+'/book/10/save-draft']){
+    const {env,base}=await actionHrefFixture(stage,{initialHref,opens:'same_page'});
+    env.baseURI=ORIGIN+'/draft/';let armed=false,changed=false;
+    env.afterLocatorInnerText=async(tab,name)=>{if(name===(stage==='create'?'#create':'#save'))armed=true;};
+    env.afterNavigation=async(tab,kind,url)=>{if(armed&&kind==='reload'&&url===ORIGIN+'/account'){changed=true;env.baseURI=ORIGIN+'/publish/';}};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}));
+    assert.equal(changed,true);assert.equal(response.ok,true,JSON.stringify({stage,initialHref,response}));assert.equal(env.creates,1);assert.equal(env.saves,1);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+  for(const initialHref of ['edit?enter_from=newdraft','?enter_from=newdraft']){
+    const {env,base}=await actionHrefFixture('create',{initialHref,opens:'popup'});
+    env.baseURI=ORIGIN+'/book/10/';
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}));
+    assert.equal(response.ok,true,JSON.stringify({initialHref,response}));assert.equal(env.creates,1);assert.equal(env.saves,1);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('draft save links keep same-document behavior across configured same-ID editor URL aliases',async()=>{
+  for(const href of ['', '#save'])for(const changeBase of [false,true]){
+    const {env,base}=await ordinaryFixture('qimao');let armed=false,changed=false;
+    const add=env.add;env.add=url=>{const tab=add(url),lookup=tab.lookup.bind(tab);tab.lookup=selector=>{
+      const nodes=lookup(selector);if(selector==='#save')for(const node of nodes)node.attrs={href};return nodes;
+    };return tab;};
+    env.afterLocatorInnerText=async(tab,selector)=>{if(selector==='#save')armed=true;};
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(!armed||changed||kind!=='reload'||url!==ORIGIN+'/account')return;changed=true;
+      [...env.tabs.values()].find(opened=>opened.current.includes('enter_from=newdraft')).load(ORIGIN+'/book/10/edit/99?enter_from=modifydraft');
+      if(changeBase)env.baseURI='https://zuozhe.qimao.com/publish/';
+    };
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',ordinaryParams('create_draft')));
+    assert.equal(changed,true);assert.equal(response.ok,!changeBase,JSON.stringify({href,changeBase,response}));assert.equal(env.creates,1);assert.equal(env.saves,changeBase?0:1);
+    if(changeBase)assert.equal(response.error,'platform_browser_unsafe_save');
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('draft save alias exception follows actual URL semantics for ASCII and Unicode whitespace',async()=>{
+  for(const platform of ['qimao','qidian'])for(const [href,self] of [
+    ['\u00a0#save',false],['\u3000#save',false],['\u00a0',false],['\u3000',false],
+    ['#save',true],[' \t\r\n#save ',true],[' \t\r\n',true],['\u0000#save',true],['\u001f#save',true]
+  ]){
+    const {env,base,origin}=await ordinaryFixture(platform);let armed=false,changed=false;
+    base.profile.identity.book.templates.push(origin+'/book/{book_id}/modify/{remote_id}?enter_from=modifydraft');
+    base.profile.editor.remote_id.templates.push(origin+'/book/10/modify/{remote_id}?enter_from=modifydraft');
+    const add=env.add;env.add=url=>{const tab=add(url),lookup=tab.lookup.bind(tab);tab.lookup=selector=>{
+      const nodes=lookup(selector);if(selector==='#save')for(const node of nodes)node.attrs={href};return nodes;
+    };return tab;};
+    env.afterLocatorInnerText=async(tab,selector)=>{if(selector==='#save')armed=true;};
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(!armed||changed||kind!=='reload'||url!==ORIGIN+'/account')return;changed=true;
+      [...env.tabs.values()].find(opened=>opened.current.includes('enter_from=newdraft')).load(ORIGIN+'/book/10/modify/99?enter_from=modifydraft');
+    };
+    const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);assert.equal(env.saves,self?1:0,JSON.stringify({platform,href,self,response}));
+    assert.equal(response.ok,self,JSON.stringify({platform,href,self,response}));assert.equal(env.creates,1);
+    if(!self)assert.equal(response.error,'platform_browser_unsafe_save');
+    assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);assert.equal(env.saves,self?1:0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('draft action rejects unresolved href and retains no-href document fallback semantics',async()=>{
+  for(const stage of ['create','save']){
+    const {env,base}=await actionHrefFixture(stage,{initialHref:'http://[',opens:'same_page'});
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}));
+    assert.equal(response.error,'platform_browser_unsafe_'+stage);assert.equal(env.creates,stage==='create'?0:1);assert.equal(env.saves,0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+  const read=Function('return ('+readActionState.toString()+')')();
+  const el={textContent:'存草稿',getAttribute:key=>key==='href'?'next':null,ownerDocument:{location:{href:ORIGIN+'/draft/'}}};
+  assert.equal(read([el]).resolvedHref,ORIGIN+'/draft/next');
+  delete el.ownerDocument;assert.equal(read([el]).resolvedHref,null);
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' stops subsequent field and save actions when loaded draft state changes',async()=>{
+  for(const stage of ['#chapter','#title','#save'])for(const change of ['published','missing','duplicate']){
+    const {env,base}=await ordinaryFixture(platform);let changed=false;
+    const mutate=()=>{changed=true;if(change==='published')env.editorState='已发布';else env.currentFieldCounts={'#state':change==='duplicate'?2:0};};
+    env.afterFill=async(tab,selector)=>{if(selector===stage&&!changed)mutate();};
+    env.afterLocatorInnerText=async(tab,selector)=>{if(stage==='#save'&&selector==='#save'&&!changed)mutate();};
+    const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({platform,stage,change,response}));
+    assert.deepEqual(env.events.filter(event=>event[0]==='fill').map(event=>event[1]),stage==='#save'?['#chapter','#title','#body']:['#chapter','#title'].slice(0,stage==='#chapter'?1:2));
+    assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
+    assert.equal(env.creates,1);assert.equal(env.saves,0);await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('current draft action state supports attribute fields and all ordinary DOM source forms',async()=>{
+  for(const source of [undefined,null,'dom'])for(const bodySource of ['dom','prosemirror_paragraphs']){
+    const {env,base}=await ordinaryFixture('qimao','dom',{bodySource});
+    base.profile.editor.state.attribute='data-state';
+    if(source===undefined)delete base.profile.editor.state.source;else base.profile.editor.state.source=source;
+    const add=env.add;env.add=url=>{const tab=add(url),lookup=tab.lookup.bind(tab);tab.lookup=selector=>{
+      const nodes=lookup(selector);if(selector==='#state')for(const node of nodes){node.text='非状态展示';node.attrs={'data-state':'草稿'};}return nodes;
+    };return tab;};
+    const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',ordinaryParams('create_draft')));
+    assert.equal(response.ok,true,JSON.stringify({source,bodySource,response}));assert.equal(env.creates,1);assert.equal(env.saves,1);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+test('current draft action state timeout cannot retry or continue a later write',async()=>{
+  const {env,base}=await ordinaryFixture('qidian');let armed=false,calls=0;
+  env.afterFill=async(tab,selector)=>{if(selector==='#chapter')armed=true;};
+  env.beforeLocatorEvaluateAll=async(tab,selector)=>{if(armed&&selector==='#state'){calls++;throw evaluateTimeout();}};
+  const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
+  assert.equal(response.ok,false);assert.equal(calls,1);assert.deepEqual(env.events.filter(event=>event[0]==='fill').map(event=>event[1]),['#chapter']);
+  assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);assert.equal(calls,1);
+  await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+});
+
+test('current draft state snapshot preserves same-ID configured creation URL transitions only',async()=>{
+  for(const mode of ['same_id','other_id','other_book','unknown_url']){
+    const {env,base}=await ordinaryFixture('qimao');let changed=false;
+    env.editors.set('22',{scope:'drafts',chapter:22,title:'既有稿',body:'旧正文',saved:true});
+    env.beforeLocatorEvaluateAll=async(tab,selector)=>{
+      if(selector==='#state'&&!changed&&tab.current.includes('enter_from=newdraft')){
+        changed=true;tab.load(ORIGIN+'/book/'+(mode==='other_book'?'20':'10')+'/edit/'+(mode==='other_id'?'22':'99')+'?enter_from='+(mode==='unknown_url'?'unexpected':'modifydraft'));
+      }
+    };
+    const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);
+    if(mode==='same_id'){assert.equal(response.ok,true,JSON.stringify(response));assert.equal(response.result,'99');assert.equal(env.saves,1);}
+    else{assert.equal(response.ok,false,JSON.stringify({mode,response}));assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fill').length,0);}
+    assert.equal(env.creates,1);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
+    assert.equal(env.editors.get('22').body,'旧正文');await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+for(const platform of ['qimao','qidian'])test('ordinary '+platform+' write rechecks its bound target after the new state-snapshot await',async()=>{
+  for(const priorFills of [0,1])for(const move of ['same_id','other_id']){
+    const {env,base}=await ordinaryFixture(platform);let changed=false;
+    const original={scope:'drafts',chapter:22,title:'已有标题',body:'已有正文',saved:true};env.editors.set('22',{...original});
+    env.afterLocatorEvaluateAll=async(tab,selector,fn,arg)=>{
+      if(selector==='#state'&&!changed&&tab.current.includes('enter_from=newdraft')&&env.events.filter(event=>event[0]==='fill').length===priorFills){
+        changed=true;tab.load(ORIGIN+'/book/10/edit/'+(move==='other_id'?'22':'99')+'?enter_from=modifydraft');
+      }
+    };
+    const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);assert.deepEqual(env.editors.get('22'),original,JSON.stringify({platform,priorFills,move,response}));
+    if(move==='same_id'){assert.equal(response.ok,true,JSON.stringify(response));assert.equal(env.saves,1);}
+    else{assert.equal(response.error,'platform_browser_identity_mismatch');assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fill').length,priorFills);}
+    assert.equal(env.creates,1);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
 });

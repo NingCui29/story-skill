@@ -9,7 +9,8 @@ import unittest
 from unittest.mock import patch
 
 from tests import test_publish as fixtures
-from tests.test_platform_browser import profile
+from tests.test_platform_browser import profile as generic_profile
+from tests.test_platform_browser_preview import configuration as profile
 
 
 story = fixtures.story
@@ -300,7 +301,7 @@ class WorkbenchPlatformDraftTests(unittest.TestCase):
 
     def test_wrong_book_wrong_platform_and_unapproved_execution_are_blocked(self):
         self.assert_code("platform_draft_book_changed", drafts.workbench_catalog, self.root, expected_book_id="other")
-        self.write_profile(profile("qidian"))
+        self.write_profile(generic_profile("qidian"))
         self.assert_code("platform_draft_profile_mismatch", self.preview)
         self.write_profile()
         self.assert_code("platform_draft_execute_required", self.start, execute=False)

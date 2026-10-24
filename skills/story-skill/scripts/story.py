@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.22"
+VERSION = "0.6.23"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -1058,6 +1058,29 @@ class Book:
         self.db.execute("INSERT INTO events(revision,kind,data) VALUES (?,?,?)", (rev, kind, dumps(compact_event(self.db, kind, payload))))
         return rev
 
+    def change_title(self, title, expected):
+        """Adopt a display title without renaming files or rewriting frozen history."""
+        title = text_field(title, "title", 200)
+        integer(expected, "expected revision")
+        with self.transaction(expected):
+            previous = self.meta("title")
+            kind = self.meta("kind")
+            assembly_path = self.short_assembly_path() if kind == "short" else None
+            changed = previous != title
+            if changed:
+                # Legacy short books may derive their path from the title.
+                # Pin the existing path before changing that fallback input.
+                if assembly_path is not None and self.db.execute(
+                        "SELECT 1 FROM meta WHERE key='short_assembly_path'").fetchone() is None:
+                    self.set_meta("short_assembly_path", assembly_path)
+                self.set_meta("title", title)
+                self.event("book_title", {"before": previous, "after": title})
+            result = {"book": str(self.root), "id": self.meta("id"), "kind": kind,
+                      "previous_title": previous, "title": title, "changed": changed,
+                      "revision": self.meta("revision"), "last_chapter": self.meta("last_chapter"),
+                      "short_assembly_path": assembly_path, "paths_changed": False}
+        return result
+
     def change_kind(self, kind, expected):
         """Correct fiction metadata without rewriting narrative state or exports."""
         if kind not in ("long", "short"):
@@ -1691,7 +1714,8 @@ class Book:
         """Record the desired reading copy durably before any filesystem publication."""
         prior_record = self._short_assembly_record()
         preview = self.short_assembly_path()
-        relative = (book_text_filename(self.meta("title")) if Path(preview).suffix.lower() == ".txt"
+        relative = (Path(preview).with_name(book_text_filename(Path(preview).stem)).as_posix()
+                    if Path(preview).suffix.lower() == ".txt"
                     else preview)
         last = self.meta("last_chapter")
         rows = self.db.execute("SELECT chapter,text,sha FROM chapters ORDER BY chapter").fetchall()
@@ -2919,6 +2943,9 @@ def parser():
     s = command("book-kind", "Correct long/short fiction metadata without rewriting chapters or exports", integrity=False)
     s.add_argument("--kind", choices=("long", "short"), required=True)
     s.add_argument("--expect", type=int, required=True)
+    s = command("book-title", "Adopt a book title without moving directories or managed exports", integrity=False)
+    s.add_argument("--title", required=True)
+    s.add_argument("--expect", type=int, required=True)
     command("migrate", "Explicit schema upgrade with a consistent rollback backup")
     s = command("audit", "Strictly check managed exports without repairing or recording them", integrity=False)
     s.add_argument("--integrity", choices=("strict",), default="strict",
@@ -3064,6 +3091,8 @@ def run(args):
             return book.status()
         if cmd == "book-kind":
             return book.change_kind(args.kind, args.expect)
+        if cmd == "book-title":
+            return book.change_title(args.title, args.expect)
         if cmd == "export":
             return book.export(safe_only=args.safe_only)
         if cmd == "assemble-short":

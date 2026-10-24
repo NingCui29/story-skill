@@ -4,7 +4,9 @@
 
 `写作工作台.app` 将本地书架和作品编辑页面放进独立的 macOS 窗口。它沿用现有工作台服务和保存规则，应用包内携带 Python 运行时与工作台程序。
 
-本目录对应已发布的 **0.1.25 / build 26**，内含 Story Skill **0.6.22** 和20个运行时文件。新增结构化扫榜、代表作抽样和研究交接命令，完整研究流程通过所用助手中的 Story Skill 进行；工作台界面继续用于书稿与候选管理。新构建、签名、原生场景及分发范围按实际结果记录，见 [v0.6.22 发布记录](../../docs/releases/v0.6.22.md)。
+本轮准备 **0.1.26 / build 27**，内嵌 Story Skill **0.6.23**；恢复分页、桥接会话恢复及研究兼容修复见 [v0.6.23 准备记录](../../docs/releases/v0.6.23.md)。本轮新构建、原生场景和正式分发尚未完成验收，下方保持现有正式下载。
+
+当前正式版本为 **0.1.25 / build 26**，内含 Story Skill **0.6.22** 和20个运行时文件。新增结构化扫榜、代表作抽样和研究交接命令，完整研究流程通过所用助手中的 Story Skill 进行；工作台界面继续用于书稿与候选管理。新构建、签名、原生场景及分发范围按实际结果记录，见 [v0.6.22 发布记录](../../docs/releases/v0.6.22.md)。
 
 本版下载 [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.dmg)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.dmg.sha256)，另有 [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.25-macos-x86_64.zip.sha256)。核对摘要后，挂载 DMG 或解压 ZIP，将“写作工作台.app”复制到 Applications。升级前先保存全部页面编辑并退出旧客户端，安装后重新打开。
 
@@ -148,7 +150,7 @@
 ```sh
 "$HOME/.local/bin/python3.12" scripts/build_desktop_macos.py \
   --python "$HOME/.local/bin/python3.12" \
-  --output "dist/release-v0.6.22-candidate/写作工作台.app"
+  --output "dist/release-v0.6.23-candidate/写作工作台.app"
 ```
 
 不要将输出路径设为现有作品目录。构建输出与源代码、真实作品数据分开保存；本地构建不包含远程发布、应用商店上架或发行验收。

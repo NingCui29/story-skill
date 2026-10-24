@@ -222,7 +222,12 @@ def create_archive(root, output_path, expected_book_id=None):
                     **identity, 'schema': api.SCHEMA_VERSION, 'files': [], 'excluded': excluded,
                     'scope': 'saved_local_book_files', 'external_materials_included': False,
                     'unsaved_browser_buffers_included': False}
-        with zipfile.ZipFile(staged, 'x', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+        # Reserve the unpublished ZIP with owner-only access before writing any
+        # book or bridge evidence. Publication keeps this inode's permissions;
+        # chmod after ZipFile(path, 'x') would leave a permissive creation gap.
+        fd = os.open(staged, os.O_RDWR | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0), 0o600)
+        with api._owned_fdopen(fd, 'w+b') as archive_stream, \
+                zipfile.ZipFile(archive_stream, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
             for relative in sorted(inventory):
                 with archive.open('book/' + relative, 'w', force_zip64=True) as writer:
                     if relative in snapshots:
@@ -412,9 +417,39 @@ def inspect_archive(path):
             return {key: manifest[key] for key in ('contract', 'book_id', 'revision', 'title', 'kind')} | {
                 'files': len(manifest['files']), 'bytes': total, 'excluded': manifest.get('excluded', []),
                 'manifest_sha256': hashlib.sha256(json.dumps(manifest, ensure_ascii=False, sort_keys=True).encode('utf-8')).hexdigest(),
-                'restore_note': '恢复至新目录并保留原作品身份；核对后再加入书架，避免同时编辑两个副本。'}
+                'restore_note': '恢复至新目录并保留原作品身份；原 Chrome 会话仅保留为恢复证据，需重新连接。核对后再加入书架，避免同时编辑两个副本。'}
     except (zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError, EOFError, NotImplementedError) as error:
         _fail('invalid_zip', '备份压缩包损坏或格式不支持。', reason=str(error))
+
+
+def _isolate_restored_bridge_sessions(root, manifest):
+    """Retain imported queues byte-for-byte, without reviving their leases."""
+    bridge = api.platform_chrome_bridge
+    prefix = bridge.DIRECTORY + '/'
+    sessions = sorted({row['path'][len(prefix):].split('/')[0] for row in manifest['files']
+                       if row['path'].startswith(prefix) and
+                       re.fullmatch(r'[0-9a-f]{32}/.+', row['path'][len(prefix):])})
+    rows = {row['path']: row for row in manifest['files']}
+    markers = []
+    for session_id in sessions:
+        relative = prefix + session_id + '/' + bridge.RESTORED_EVIDENCE
+        if relative not in rows:
+            raw = json.dumps({'contract': 'story.chrome-restored-evidence.v1',
+                              'book_id': manifest['book_id'], 'session_id': session_id,
+                              'note': '仅保留恢复证据；原执行端会话不可在副本中继续使用。'},
+                             ensure_ascii=False, sort_keys=True).encode('utf-8')
+            target = api.safe_path(root, relative)
+            fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0), 0o600)
+            with api._owned_fdopen(fd, 'wb') as writer:
+                writer.write(raw)
+                writer.flush()
+                os.fsync(writer.fileno())
+            rows[relative] = {'path': relative, 'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw)}
+        markers.append(rows[relative])
+    # Publish the guard before any session/lease payload. Existing guards from
+    # an earlier restore keep their exact bytes, including on repeated restores.
+    guarded = {row['path'] for row in markers}
+    return markers + [row for row in manifest['files'] if row['path'] not in guarded], len(sessions)
 
 
 def restore_archive(archive_path, destination_root):
@@ -429,16 +464,21 @@ def restore_archive(archive_path, destination_root):
             archive, manifest, verify = _open_verified_archive(archive_path, stack)
             work = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix='.story-restore-', dir=str(parent.path))))
             staged_root = work / 'book'
-            staged_root.mkdir()
+            staged_root.mkdir(mode=0o700)
             for row in manifest['files']:
                 target = api.safe_path(staged_root, row['path'])
                 target.parent.mkdir(parents=True, exist_ok=True)
-                with archive.open('book/' + row['path']) as source, target.open('xb') as writer:
+                # Archives from earlier versions do not record permissions.
+                # Restore owner-only files instead of trusting ZIP mode bits or
+                # widening private bridge queues/receipts through the umask.
+                fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_BINARY', 0), 0o600)
+                with api._owned_fdopen(fd, 'wb') as writer, archive.open('book/' + row['path']) as source:
                     digest, size = _hash_stream(source, writer)
                     writer.flush()
                     os.fsync(writer.fileno())
                 if (digest, size) != (row['sha256'], row['bytes']):
                     _fail('checksum', '备份文件校验失败，恢复目录未发布。', path=row['path'])
+            restored_files, inactive_sessions = _isolate_restored_bridge_sessions(staged_root, manifest)
             book = api.workbench._ReadOnlyBook(staged_root)
             try:
                 identity = _identity(book, manifest['book_id'])
@@ -456,7 +496,7 @@ def restore_archive(archive_path, destination_root):
             # A failed publish leaves a clearly marked partial directory rather
             # than overwriting an unrelated directory or original manuscript.
             try:
-                destination_root.mkdir()
+                destination_root.mkdir(mode=0o700)
             except FileExistsError:
                 _fail('exists', '恢复目录已被另一操作使用，请选择新目录。')
             try:
@@ -473,7 +513,7 @@ def restore_archive(archive_path, destination_root):
                     finally:
                         if api._bound_exists(marker_stage):
                             api._bound_unlink(marker_stage)
-                    for row in manifest['files']:
+                    for row in restored_files:
                         api._verify_bound_directory(destination)
                         item = api.safe_path(staged_root, row['path'])
                         target = api.safe_path(destination_root, row['path'])
@@ -483,7 +523,7 @@ def restore_archive(archive_path, destination_root):
                             if api._bound_exists(source):
                                 api._bound_unlink(source)
                             api._verify_bound_directory(target_parent)
-                    for row in manifest['files']:
+                    for row in restored_files:
                         if _read_file(destination_root, row['path']) != (row['sha256'], row['bytes']):
                             _fail('checksum', '恢复发布后文件校验失败，请保留目录核对。', path=row['path'])
                     restored_book = api.workbench._ReadOnlyBook(destination_root)
@@ -501,21 +541,29 @@ def restore_archive(archive_path, destination_root):
                 _fail('partial_restore', '恢复发布未完成，已保留临时标记和现有文件，请核对后重试到新目录。',
                       path=str(destination_root), reason=str(error))
             return {'ok': True, 'root': str(destination_root), **identity, 'files': len(manifest['files']),
-                    'note': '已恢复到新目录，保留原作品身份。请先核对内容，避免同时编辑原作与恢复副本。'}
+                    'inactive_bridge_sessions': inactive_sessions,
+                    'note': '已恢复到新目录，保留原作品身份。原 Chrome 会话仅保留为证据，需重新连接。请先核对内容，避免同时编辑原作与恢复副本。'}
         except (zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError, EOFError, NotImplementedError) as error:
             _fail('invalid_zip', '备份压缩包损坏或格式不支持。', reason=str(error))
 
 
-def recovery_catalog(root, expected_book_id=None):
-    """Surface existing disk recoveries using the editor's own document rules."""
+def recovery_catalog(root, expected_book_id=None, cursor=None, offset=0):
+    """Page disk recoveries using the shared safe, book-bound material scanner."""
+    if type(offset) is not int or offset < 0 or (cursor is None and offset != 0):
+        api.fail('invalid_input', '恢复记录分页位置无效，请重新读取。')
     root = _absolute(root)
     book = api.workbench._ReadOnlyBook(root)
     try:
         identity = _identity(book, expected_book_id)
-        warnings = []
-        rows = [row for row in api.workbench._author_files(root, warnings)
-                if row['category'] == '自动恢复']
-        visible = sorted(rows, key=lambda row: (row['modified'], row['path']), reverse=True)[:100]
+        rows, scan, warnings = api.workbench._material_catalog(root, cursor=cursor, recoveries=True)
+        if offset > len(rows):
+            api.fail('invalid_input', '恢复记录分页位置超出已读取范围，请重新读取。')
+        # Drain already discovered result pages before scanning further. Empty
+        # partial pages keep the same offset and can advance another bounded batch.
+        if cursor is not None and offset == len(rows) and scan['has_more']:
+            rows, scan, warnings = api.workbench._material_catalog(root, cursor=cursor,
+                                                                  advance=True, recoveries=True)
+        visible = [api.workbench._navigation_file(root, dict(row)) for row in rows[offset:offset + 100]]
         for row in visible:
             pending = row['id'].startswith('pending:')
             row['status'] = '保存待核对' if pending else '自动恢复稿'
@@ -526,9 +574,12 @@ def recovery_catalog(root, expected_book_id=None):
                 row['status'] = '读取待核对'
                 row['read_error'] = str(error)
         book.verify_state_path()
+        next_offset = offset + len(visible)
+        has_more = next_offset < len(rows) or scan['has_more']
         return {'ok': True, **identity, 'count': len(rows),
-                'recoveries': visible,
-                'truncated': len(rows) > 100, 'warnings': warnings,
+                'recoveries': visible, 'cursor': scan['cursor'], 'offset': offset,
+                'next_offset': next_offset, 'has_more': has_more, 'complete': scan['complete'],
+                'scan': scan, 'truncated': has_more or not scan['complete'], 'warnings': warnings,
                 'note': '恢复稿与保存待核对记录须打开核对；存在恢复稿不表示有未保存页面或已经正式采用。'}
     finally:
         book.close()

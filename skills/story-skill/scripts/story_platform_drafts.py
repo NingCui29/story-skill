@@ -381,37 +381,42 @@ def _retirement_no_active_create(book, target):
     """A target lock does not cancel a previously claimed browser operation."""
     bridge = api.platform_chrome_bridge
     path = api.safe_path(book.root, bridge.DIRECTORY)
-    if not path.exists():
-        return
-    with api._pinned_directory(path) as parent:
-        names = [name for name in os.listdir(parent.path if os.name == "nt" else parent.fd)
-                 if re.fullmatch(r"[0-9a-f]{32}", name)]
-        _retirement_require(len(names) <= bridge.MAX_SESSIONS)
-        for name in names:
-            with bridge._directory(book.root, name) as directory, bridge._lock(directory):
-                session = bridge._session(directory)
-                if session["binding"].get("target") != target:
-                    continue
-                try:
-                    bridge._lease(directory, session)
-                except api.StoryError as error:
-                    if error.code != "platform_chrome_worker_unavailable":
-                        raise
-                else:
-                    _retirement_require(False)
-                for filename in os.listdir(directory.path if os.name == "nt" else directory.fd):
-                    match = re.fullmatch(r"claimed-([0-9a-f]{32})\.json", filename)
-                    if not match:
+    with bridge._attachment_lock(book.root):
+        if not path.exists():
+            return
+        with api._pinned_directory(path) as parent:
+            names = [name for name in os.listdir(parent.path if os.name == "nt" else parent.fd)
+                     if re.fullmatch(r"[0-9a-f]{32}", name)]
+            # MAX_SESSIONS bounds live workers, not retained queue history.
+            # Match attachment discovery only for never-ready initialization;
+            # unknown requests and restored queues still require full checks.
+            for name in names:
+                with bridge._directory(book.root, name) as directory, bridge._lock(directory):
+                    if bridge._uninitialized_session(directory):
                         continue
-                    request = bridge._read(directory, filename)
-                    if request.get("operation") != "create_draft":
+                    session = bridge._session(directory)
+                    if session["binding"].get("target") != target:
                         continue
-                    response = api.publish._bound_stat(api._BoundFile(directory, "response-" + match[1] + ".json"), missing=True)
-                    if response is None:
-                        health = bridge._health_record(directory, session)
-                        _retirement_require(health is not None and
-                            not bridge._owner_alive(book.root, {"owner_pid": health["worker"]["pid"]}))
-        api._verify_bound_directory(parent)
+                    try:
+                        bridge._lease(directory, session)
+                    except api.StoryError as error:
+                        if error.code != "platform_chrome_worker_unavailable":
+                            raise
+                    else:
+                        _retirement_require(False)
+                    for filename in os.listdir(directory.path if os.name == "nt" else directory.fd):
+                        match = re.fullmatch(r"claimed-([0-9a-f]{32})\.json", filename)
+                        if not match:
+                            continue
+                        request = bridge._read(directory, filename)
+                        if request.get("operation") != "create_draft":
+                            continue
+                        response = api.publish._bound_stat(api._BoundFile(directory, "response-" + match[1] + ".json"), missing=True)
+                        if response is None:
+                            health = bridge._health_record(directory, session)
+                            _retirement_require(health is not None and
+                                not bridge._owner_alive(book.root, {"owner_pid": health["worker"]["pid"]}))
+            api._verify_bound_directory(parent)
 
 
 def retire_deleted_attempts(book, packet, *, execute=False, acknowledgement=None):
@@ -1472,8 +1477,6 @@ def _preview_token(binding, expires=None):
 def _runtime_blockers(profile, runtime):
     blockers = []
     if profile is not None and profile.get("execution_mode") == "host_assisted_cua":
-        if profile.get("platform") == "fanqie" and profile.get("readback") is None:
-            blockers.append("platform_browser_readback_required")
         if runtime.get("worker", {}).get("ready") is not True:
             blockers.append("platform_chrome_worker_unavailable")
         return blockers
@@ -1660,7 +1663,7 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
             else:
                 native_profile = {key: value for key, value in profile.items() if key != "execution_mode"}
                 context = api.platform_browser.BrowserAdapter(native_profile, timeout_ms=timeout_ms,
-                    login_timeout_ms=login_timeout_ms, progress_callback=callback)
+                    login_timeout_ms=login_timeout_ms, progress_callback=callback, comparison_policy=policy)
             with context as adapter:
                 result = run_plan(book, binding["plan_id"], adapter, execute=True,
                                   reconcile_only=reconcile_only, progress=callback, comparison_policy=policy, body_encoding=encoding)
@@ -1823,6 +1826,6 @@ def run(book, args):
                             comparison_policy=policy, body_encoding=encoding)
     profile = {key: value for key, value in profile.items() if key != "execution_mode"}
     with api.platform_browser.BrowserAdapter(profile, timeout_ms=args.timeout_ms,
-                                             login_timeout_ms=args.login_timeout_ms) as adapter:
+                                             login_timeout_ms=args.login_timeout_ms, comparison_policy=policy) as adapter:
         return run_plan(book, args.id, adapter, execute=True, reconcile_only=args.reconcile_only,
                         comparison_policy=policy, body_encoding=encoding)

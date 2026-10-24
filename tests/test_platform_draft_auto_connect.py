@@ -13,7 +13,7 @@ import unittest
 from unittest.mock import patch
 
 from tests import test_publish as fixtures
-from tests.test_platform_browser import profile as platform_profile
+from tests import test_platform_browser as browser_fixtures
 from tests.test_platform_browser_preview import configuration
 
 
@@ -208,7 +208,8 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         for platform in ("qimao", "qidian"):
             with self.subTest(platform=platform):
                 self.plan = self.fixture.prepare(platform=platform)
-                self.profile = {**platform_profile(platform), "execution_mode": "host_assisted_cua"}
+                self.profile = {**browser_fixtures.BrowserTests().url_guard_profile(platform), "execution_mode": "host_assisted_cua"}
+                self.profile["editor"]["ready"] = browser_fixtures.field("#save", expected="保存草稿", enabled=True)
                 self.profile_path.write_text(json.dumps(self.profile), encoding="utf-8")
                 self.launcher.calls.clear()
                 preview = self.preview()

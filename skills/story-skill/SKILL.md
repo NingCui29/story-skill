@@ -26,7 +26,7 @@ description: 中文小说任务总入口与共享规则；在需求跨流程或�
 | 新写正文、章中或跨章续写、长短篇连载或短篇完本交付 | [story-skill-write](../story-skill-write/SKILL.md) |
 | 拆文、深读、分析稿修订与续跑 | [story-skill-analyze](../story-skill-analyze/SKILL.md) |
 | 内容审稿、内容改稿、正文润色、仅排版、审校、修改对照、历史改稿或旧库迁移 | [story-skill-review](../story-skill-review/SKILL.md) |
-| 扫榜、商业选题分析、阅读数据诊断、写作素材与资料查证 | [story-skill-research](../story-skill-research/SKILL.md) |
+| 扫榜、商业选题、试读设计与追更验证、阅读数据诊断、素材与资料查证 | [story-skill-research](../story-skill-research/SKILL.md) |
 | 小说封面生成或修改 | [story-skill-cover](../story-skill-cover/SKILL.md) |
 | 准备番茄、七猫、起点章节材料、按已配置入口保存平台草稿、核对草稿结果 | [story-skill-publish](../story-skill-publish/SKILL.md) |
 

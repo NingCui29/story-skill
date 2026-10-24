@@ -26,31 +26,61 @@ MAX_HTML_BYTES = 5 * 1024 * 1024
 REQUEST_TIMEOUT = 15
 PAGE_SIZE = 15
 _VOID_TAGS = frozenset("area base br col embed hr img input link meta param source track wbr".split())
+_INERT_TAGS = frozenset({"script", "style", "template"})
+# These HTML start tags leave SVG/MathML foreign content even when their
+# spelling is followed by '/>'. Used only to reject ambiguous inert markup.
+_FOREIGN_BREAKOUT_TAGS = frozenset(
+    "b big blockquote body br center code dd div dl dt em embed h1 h2 h3 h4 h5 h6 "
+    "head hr i img li listing menu meta nobr ol p pre ruby s small span strong "
+    "strike sub sup table tt u ul var".split()
+)
+_TEXT_BREAK_TAGS = frozenset(
+    "br hr address article aside blockquote dd div dl dt fieldset figcaption figure footer "
+    "form h1 h2 h3 h4 h5 h6 header li main nav ol p pre section table td th tr ul".split()
+)
 
 
 class _Element:
-    def __init__(self, tag: str, attrs=()):
+    def __init__(self, tag: str, attrs=(), namespace="html"):
         self.tag = tag
         self.attrs = dict(attrs)
+        self.namespace = namespace
         self.children: list[_Element | str] = []
 
     def has_classes(self, *names: str) -> bool:
         return set(names).issubset((self.attrs.get("class") or "").split())
 
+    def is_inert(self) -> bool:
+        # A static collector cannot execute templates or resolve CSS overrides.
+        # Treat an explicit hidden attribute conservatively, regardless of value.
+        return ((self.tag in _INERT_TAGS and (self.tag != "template" or self.namespace == "html"))
+                or "hidden" in self.attrs)
+
     def walk(self):
+        if self.is_inert():
+            return
         yield self
         for child in self.children:
             if isinstance(child, _Element):
                 yield from child.walk()
 
-    def text(self) -> str:
-        parts = []
+    def _text_parts(self):
+        if self.is_inert():
+            return
+        # Inline wrappers do not add spaces. Preserve source whitespace until
+        # the whole field is assembled so nested markup cannot change a name.
         for child in self.children:
             if isinstance(child, str):
-                parts.append(child)
-            elif child.tag not in {"script", "style"}:
-                parts.append(child.text())
-        return " ".join(" ".join(parts).split())
+                yield child
+            elif not child.is_inert():
+                if child.tag in _TEXT_BREAK_TAGS:
+                    yield " "
+                yield from child._text_parts()
+                if child.tag in _TEXT_BREAK_TAGS:
+                    yield " "
+
+    def text(self) -> str:
+        return " ".join("".join(self._text_parts()).split())
 
 
 class _Document(HTMLParser):
@@ -64,20 +94,68 @@ class _Document(HTMLParser):
         self.count += 1
         if self.count > 150_000 or len(self.stack) > 150:
             raise ValueError("HTML 结构超过解析上限")
-        element = _Element(tag, attrs)
+        namespace = self._start_namespace(tag, attrs)
+        element = _Element(tag, attrs, namespace)
         self.stack[-1].children.append(element)
-        if tag not in _VOID_TAGS:
+        if tag not in _VOID_TAGS or namespace != "html":
             self.stack.append(element)
 
     def handle_startendtag(self, tag, attrs):
         self.handle_starttag(tag, attrs)
-        if tag not in _VOID_TAGS:
+        element = self.stack[-1]
+        if tag not in _VOID_TAGS and element.namespace == "html" and element.is_inert():
+            # HTML ignores '/' on non-void elements, whereas HTMLParser calls
+            # this handler. Do not silently close an inert container and then
+            # accept its contents as live ranking evidence.
+            raise ValueError("HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML")
+        if element.tag == tag:
             self.handle_endtag(tag)
 
+    @staticmethod
+    def _html_integration(node):
+        return ((node.namespace == "svg" and node.tag in {"foreignobject", "desc", "title"}) or
+                (node.namespace == "math" and node.tag == "annotation-xml" and
+                 (node.attrs.get("encoding") or "").lower() in {"text/html", "application/xhtml+xml"}))
+
+    @staticmethod
+    def _math_text_integration(node):
+        return node.namespace == "math" and node.tag in {"mi", "mo", "mn", "ms", "mtext"}
+
+    def _leave_foreign(self):
+        while (self.stack[-1].namespace != "html" and not self._html_integration(self.stack[-1]) and
+               not self._math_text_integration(self.stack[-1])):
+            self.stack.pop()
+
+    def _start_namespace(self, tag, attrs):
+        # Track only the namespace transitions needed to keep inert containers
+        # and real SVG/MathML self-closing elements distinct. This is not a full
+        # HTML5 tree builder. A breakout must remove foreign ancestors, or a
+        # subsequent HTML sibling would incorrectly inherit their namespace.
+        parent = self.stack[-1]
+        html_context = (parent.namespace == "html" or self._html_integration(parent) or
+                        (self._math_text_integration(parent) and tag not in {"mglyph", "malignmark"}))
+        if not html_context and (tag in _FOREIGN_BREAKOUT_TAGS or
+                                 (tag == "font" and {"color", "face", "size"} & dict(attrs).keys())):
+            self._leave_foreign()
+            html_context = True
+        if html_context:
+            return tag if tag in {"svg", "math"} else "html"
+        if parent.namespace == "math" and parent.tag == "annotation-xml" and tag == "svg":
+            return "svg"
+        return parent.namespace
+
     def handle_endtag(self, tag):
+        # These two legacy end tags also leave foreign content. Retaining an
+        # obsolete SVG/MathML ancestor would misclassify the following sibling.
+        if tag in {"br", "p"} and self.stack[-1].namespace != "html":
+            self._leave_foreign()
         for index in range(len(self.stack) - 1, 0, -1):
             if self.stack[index].tag == tag:
                 del self.stack[index:]
+                break
+            if self.stack[index].tag == "template" and self.stack[index].namespace == "html":
+                # Template fragments have their own parsing scope. An end tag
+                # inside one cannot close an ancestor outside that template.
                 break
 
     def handle_data(self, data):
@@ -257,6 +335,7 @@ def collect_qimao(pages: int, html_files=None, html_urls=None) -> tuple[dict, di
     first_page_title = None
     limitations = [
         "样本仅覆盖所选前几页，不代表全站题材占比或市场规模。",
+        "仅按静态 HTML 的显式结构解析，忽略 template、script、style 和带 hidden 属性的子树；未执行 JavaScript 或计算 CSS，可见性仍需对照实际页面核对。",
         "页面标题包含30万字以下、3天内更新、连载中条件，缺失书卡字段不能进一步验证；不代表作品首次发表在近期。",
         "页面频道筛选未解析，channel 保留为空；不能确认样本覆盖全频道。",
         "rank 是书库按点击量排序的页序；页面没有公开点击数或热度数，不能推算读者人数。",

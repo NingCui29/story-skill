@@ -7,6 +7,7 @@ import time
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
+from urllib.parse import urljoin
 
 
 SCRIPT = Path(__file__).resolve().parents[1] / "skills/story-skill/scripts/story_platform_browser.py"
@@ -19,7 +20,7 @@ def field(selector, attribute=None, **extra):
     return {"selector": selector, "attribute": attribute, **extra}
 
 
-def profile(platform="fanqie"):
+def profile(platform="qimao"):
     """Selectors and paths exist only in the in-memory fixture below."""
     origin = "https://" + browser.OFFICIAL_HOSTS[platform]
     return {
@@ -51,6 +52,13 @@ class Node:
         self.click_action, self.fill_action = click, fill
 
 
+def action_link(node, page):
+    href = node.attrs.get("href")
+    return {"url": page.url, "href": href, "documentHref": None if href is None else urljoin(page.url, href),
+            "resolvedHref": None if href is None else
+            urljoin(page.context.options.get("base_url", page.url), href)}
+
+
 class Locator:
     def __init__(self, lookup, page, selector=""):
         self.lookup, self.page, self.selector = lookup, page, selector
@@ -74,6 +82,8 @@ class Locator:
         return self.node().attrs.get(name)
 
     def evaluate(self, expression, *arguments):
+        if "draftActionLink" in expression:
+            return action_link(self.node(), self.page)
         if "el.scrollTop=bottom" in expression:
             self.page.scroll_top = max(0, self.page.context.options.get("scroll_total", 100) - 100) if arguments[0] else 0
             if arguments[0] and self.page.context.options.get("rows_change_on_scroll"):
@@ -93,6 +103,21 @@ class Locator:
 
     def text_content(self):
         return self.node().text
+
+    def element_handles(self):
+        return [ElementHandle(node, self.page, self.selector) for node in self.lookup()]
+
+    def evaluate_all(self, expression, attribute=None):
+        nodes = self.lookup()
+        if "elements[0] === expected" in expression:
+            return {"count": len(nodes), "same": len(nodes) == 1 and isinstance(attribute, ElementHandle) and
+                    (nodes[0] is attribute.node or self.selector in ("#account", "#book", "#guard-id"))}
+        if len(nodes) != 1:
+            return {"count": len(nodes)}
+        node = nodes[0]
+        value = (node.attrs.get(attribute) if attribute is not None else
+                 node.value if node.tag in ("INPUT", "TEXTAREA", "SELECT") else node.text)
+        return {"count": 1, "value": value}
 
     def is_visible(self):
         return self.node().visible
@@ -122,6 +147,34 @@ class Locator:
             raise RuntimeError("fixture timeout containing PRIVATE FULL MANUSCRIPT")
 
 
+class ElementHandle:
+    def __init__(self, node, page, selector):
+        self.node, self.page, self.selector = node, page, selector
+
+    def dispose(self):
+        pass
+
+    def _locator(self):
+        if self.node not in self.page._lookup(self.selector):
+            raise RuntimeError("fixture element detached")
+        return Locator(lambda: [self.node], self.page, self.selector)
+
+    def fill(self, value):
+        return self._locator().fill(value)
+
+    def click(self):
+        return self._locator().click()
+
+    def evaluate(self, expression):
+        if "currentDraftActionButton" in expression:
+            node = self.node
+            return {"connected": node in self.page._lookup(self.selector) and not self.page.closed,
+                    "text": (node.text or node.value or "").strip(),
+                    "aria": node.attrs.get("aria-label", ""), "title": node.attrs.get("title", ""),
+                    **action_link(node, self.page)}
+        return self._locator().evaluate(expression)
+
+
 class Page:
     def __init__(self, context):
         self.context, self.url, self.nodes = context, "about:blank", {}
@@ -131,10 +184,12 @@ class Page:
         self._popup_info = None
         self.scroll_top = 0
         self.section_index, self.section_menu = 0, False
+        self._create_button = None
 
     def goto(self, url, **kwargs):
         self.context.events.append(("goto", url))
         self.url, self.list_index = url, 0
+        self._create_button = None
         self.delayed = set(self.context.options.get("delayed", []))
         if url == self.context.profile["identity"]["account"].get("guard_url"):
             self.kind = "guard"
@@ -215,6 +270,8 @@ class Page:
                     labels.append("突然新增卷")
                 return [Node(label, click=lambda index=index: select(index)) for index, label in enumerate(labels)]
         if selector == "#create":
+            if self._create_button is not None:
+                return [self._create_button]
             def create():
                 self.context.created_blank += 1
                 self.context.editors["empty-1"] = {"chapter": 0, "title": "", "body": "",
@@ -229,8 +286,9 @@ class Page:
                     self.context.options["account"] = self.context.options["creation_account"]
                 if self._popup_info is not None and not self.context.options.get("lose_popup"):
                     self._popup_info.value = target
-            return [Node(self.context.options.get("create_text", "新建草稿"), tag="BUTTON",
-                         attrs={"aria-label": self.context.options.get("create_aria", "")}, click=create)]
+            self._create_button = Node(self.context.options.get("create_text", "新建草稿"), tag="BUTTON",
+                         attrs={"aria-label": self.context.options.get("create_aria", "")}, click=create)
+            return [self._create_button]
         pages = sections[self.section_index][1] if sections else self.context.lists[self.url]
         rows = pages[self.list_index]
         last = self.list_index + 1 == len(pages)
@@ -290,6 +348,22 @@ class Page:
         self.context.events.append(("loaded", self.url))
 
     def evaluate(self, expression, *arguments):
+        if "editorReadbackSnapshot" in expression:
+            values = {}
+            for name, spec, handles in arguments[0]:
+                if len(handles) != 1:
+                    values[name] = {"count": len(handles)}
+                    continue
+                handle = handles[0]
+                node = handle.node
+                connected = (handle.page is self and not self.closed and
+                             (handle.selector in ("#account", "#book", "#guard-id") or
+                              node in self._lookup(handle.selector)))
+                attribute = spec.get("attribute")
+                value = (node.attrs.get(attribute) if attribute is not None else
+                         node.value if node.tag in ("INPUT", "TEXTAREA", "SELECT") else node.text)
+                values[name] = {"count": 1, "connected": connected, "value": value}
+            return {"url": self.url, "fields": values}
         return {"height": 100, "total": 100, "top": 0}
 
     def wait_for_timeout(self, timeout):
@@ -397,18 +471,44 @@ class BrowserTests(unittest.TestCase):
             self.assertEqual(error.details["field"], "urls.drafts")
         self.assert_code("invalid_profile", browser.template, "other")
 
+    def test_editor_dom_markers_reject_non_dom_sources_before_browser_entry(self):
+        for marker in ("saved", "ready", "new"):
+            for source in ("page_url", "guard_dom", "listing", "prosemirror_paragraphs", "", False, []):
+                with self.subTest(marker=marker, source=source):
+                    configuration = profile()
+                    configuration["editor"][marker] = field("#" + marker, expected="confirmed", source=source)
+                    with patch.object(browser.BrowserAdapter, "__enter__") as enter:
+                        error = self.assert_code("invalid_profile", browser.BrowserAdapter, configuration)
+                    self.assertEqual(error.details["field"], "editor." + marker + ".source")
+                    enter.assert_not_called()
+
+    def test_editor_dom_markers_preserve_implicit_null_and_explicit_dom_sources(self):
+        for source in ("omitted", None, "dom"):
+            with self.subTest(source=source):
+                configuration = profile()
+                configuration["editor"]["ready"] = field("#save", expected="保存草稿", enabled=True)
+                configuration["editor"]["new"] = field("#state", expected="草稿")
+                if source != "omitted":
+                    for marker in ("saved", "ready", "new"):
+                        configuration["editor"][marker]["source"] = source
+                adapter = self.verified(configuration)
+                remote_id = adapter.create_draft(3, "标志兼容", "正文")
+                self.assertEqual(adapter.read_draft(remote_id)["body"], "正文")
+                self.assertEqual(adapter._context.events.count(("click", "#save")), 1)
+
     def test_strict_https_origin_and_routes(self):
+        from tests.test_platform_browser_preview import configuration as preview_profile
         for platform in browser.OFFICIAL_HOSTS:
-            browser.BrowserAdapter(profile(platform))
-        for url in ("http://fanqienovel.com/x", "https://fanqienovel.com:443/x",
-                    "https://user:password@fanqienovel.com/x", "https://fanqienovel.com.evil.test/x",
-                    "https://evil.test/x", "https://fanqienovel.com/x#fragment", "https://fanqienovel.com\\@evil.test/x"):
+            browser.BrowserAdapter(preview_profile() if platform == "fanqie" else profile(platform))
+        for url in ("http://zuozhe.qimao.com/x", "https://zuozhe.qimao.com:443/x",
+                    "https://user:password@zuozhe.qimao.com/x", "https://zuozhe.qimao.com.evil.test/x",
+                    "https://evil.test/x", "https://zuozhe.qimao.com/x#fragment", "https://zuozhe.qimao.com\\@evil.test/x"):
             configuration = profile()
             configuration["urls"]["create"] = url
             self.assert_code("unsafe_url", browser.BrowserAdapter, configuration)
 
-    def url_guard_profile(self):
-        configuration = profile()
+    def url_guard_profile(self, platform="qimao"):
+        configuration = profile(platform)
         origin = configuration["origin"]
         configuration["urls"] = {"drafts": origin + "/fixture/100/list", "create": origin + "/fixture/100/new",
                                  "edit": origin + "/fixture/100/edit/{remote_id}?from=edit"}
@@ -443,7 +543,7 @@ class BrowserTests(unittest.TestCase):
     def test_guard_page_is_persistent_and_refreshed_at_sensitive_boundaries(self):
         configuration = self.url_guard_profile()
         adapter = self.opened(configuration)
-        adapter.verify_target("fanqie", "author-1", "100")
+        adapter.verify_target("qimao", "author-1", "100")
         guard = adapter._guard_page
         self.assertIsNotNone(guard)
         self.assertFalse(guard.closed)
@@ -460,7 +560,7 @@ class BrowserTests(unittest.TestCase):
     def test_login_guard_polling_never_reopens_or_reload_the_login_page(self):
         configuration = self.url_guard_profile()
         adapter = self.opened(configuration, guard_missing=True, guard_ticks=2)
-        adapter.verify_target("fanqie", "author-1", "100")
+        adapter.verify_target("qimao", "author-1", "100")
         # One visit starts the guard; one final post-login fresh identity check.
         self.assertEqual(adapter._context.guard_visits, 2)
         self.assertEqual(sum(page.kind == "guard" for page in adapter._context.pages), 1)
@@ -477,10 +577,10 @@ class BrowserTests(unittest.TestCase):
                 first[0] = False
                 adapter._list_page.url = configuration["identity"]["account"]["login_return_urls"][0]
         with patch.object(adapter._list_page, "goto", side_effect=initial_login):
-            adapter.verify_target("fanqie", "author-1", "100")
+            adapter.verify_target("qimao", "author-1", "100")
         self.assertEqual(adapter._list_page.url, configuration["urls"]["drafts"])
         self.assertEqual(sum(event == ("goto", configuration["urls"]["drafts"]) for event in adapter._context.events), 2)
-        self.assertEqual(adapter._target, ("fanqie", "author-1", "100"))
+        self.assertEqual(adapter._target, ("qimao", "author-1", "100"))
 
     def test_guard_login_page_is_retained_until_an_observed_home_arrival(self):
         configuration = self.url_guard_profile()
@@ -513,7 +613,7 @@ class BrowserTests(unittest.TestCase):
             if adapter._login_active and kwargs["wait_until"] == "domcontentloaded":
                 raise TimeoutError("fixture DCL delayed by manual login")
         with patch.object(Page, "goto", new=navigation):
-            adapter.verify_target("fanqie", "author-1", "100")
+            adapter.verify_target("qimao", "author-1", "100")
         self.assertTrue(all(mode == "commit" for active, mode in modes if active))
         self.assertIn((False, "domcontentloaded"), modes)
         self.assertEqual(adapter._context.guard_visits, 2)
@@ -555,7 +655,7 @@ class BrowserTests(unittest.TestCase):
             raise TimeoutError("fixture committed after total deadline")
         with patch.object(adapter._list_page, "goto", side_effect=delayed), \
                 patch.object(browser.time, "monotonic", side_effect=lambda: clock[0]):
-            self.assert_code("login_required", adapter.verify_target, "fanqie", "author-1", "book-1")
+            self.assert_code("login_required", adapter.verify_target, "qimao", "author-1", "book-1")
         self.assertEqual(len(requested), 1)
         self.assertLessEqual(requested[0], 20)
         self.assertFalse(adapter._login_active)
@@ -565,7 +665,7 @@ class BrowserTests(unittest.TestCase):
         configuration = self.url_guard_profile()
         adapter = self.opened(configuration, redirect=configuration["origin"] + "/fixture/login")
         adapter.login_timeout_ms = 5
-        self.assert_code("login_required", adapter.verify_target, "fanqie", "author-1", "100")
+        self.assert_code("login_required", adapter.verify_target, "qimao", "author-1", "100")
         self.assertEqual(adapter._context.guard_visits, 0)
         self.assertIsNone(adapter._guard_page)
 
@@ -701,7 +801,7 @@ class BrowserTests(unittest.TestCase):
         fixture.setUp()
         self.addCleanup(fixture.tearDown)
         fixture.commit()
-        plan = fixture.prepare()
+        plan = fixture.prepare(platform="qimao")
         configuration = self.listing_evidence_profile()
         configuration["urls"]["create"] = configuration["urls"]["drafts"]
         configuration["create_action"] = {"mode": "button", "selector": "#create", "expected_text": "新建草稿", "opens": "popup"}
@@ -732,7 +832,7 @@ class BrowserTests(unittest.TestCase):
         configuration = self.url_guard_profile()
         configuration["urls"]["edit"] = configuration["urls"]["edit"].replace("/100/", "/200/")
         adapter = self.opened(configuration, lists={configuration["urls"]["drafts"]: [[("draft1", 1, "草稿")]]})
-        adapter.verify_target("fanqie", "author-1", "100")
+        adapter.verify_target("qimao", "author-1", "100")
         self.assert_code("identity_mismatch", adapter.find_drafts, 1)
 
     def test_editor_ready_and_exact_blank_checks_prevent_placeholder_or_whitespace_overwrite(self):
@@ -755,7 +855,7 @@ class BrowserTests(unittest.TestCase):
                        ["https://fixture-login.example?next=x"], ["https://fixture-login.example#hash"],
                        ["https://fixture-login.example:443"], ["https://user:secret@fixture-login.example"],
                        ["https://*.example"], ["https://fixture-login.example", "https://fixture-login.example"],
-                       ["https://fanqienovel.com"]):
+                       ["https://zuozhe.qimao.com"]):
             configuration["login_origins"] = values
             with self.assertRaises(browser.BrowserAdapterError):
                 browser.BrowserAdapter(configuration)
@@ -880,10 +980,10 @@ class BrowserTests(unittest.TestCase):
             self.assertTrue(page.url.startswith(configuration["origin"] + "/"))
             return original(page, spec)
         with patch.object(adapter, "_try_value", side_effect=only_read_work_identity):
-            adapter.verify_target("fanqie", "author-1", "book-1")
+            adapter.verify_target("qimao", "author-1", "book-1")
         self.assertFalse(adapter._login_active)
         self.assertIsNone(adapter._login_deadline)
-        self.assertEqual(adapter._target, ("fanqie", "author-1", "book-1"))
+        self.assertEqual(adapter._target, ("qimao", "author-1", "book-1"))
         self.assertFalse(any(event[0] in ("fill", "click") for event in adapter._context.events))
         # A later redirect back to even the configured SSO origin is refused.
         self.assert_code("unsafe_url", adapter.create_draft, 1, "标题", "正文")
@@ -893,12 +993,12 @@ class BrowserTests(unittest.TestCase):
         configuration = profile()
         configuration["login_origins"] = ["https://fixture-login.example"]
         adapter = self.opened(configuration, redirect="https://fixture-login.example/login")
-        self.assert_code("login_required", adapter.verify_target, "fanqie", "author-1", "book-1")
+        self.assert_code("login_required", adapter.verify_target, "qimao", "author-1", "book-1")
         self.assertFalse(adapter._login_active)
         self.assertIsNone(adapter._target)
         adapter = self.opened(configuration, redirect="https://fixture-login.example/login", login_return_ticks=1, account="someone-else")
         adapter.login_timeout_ms = 100
-        self.assert_code("identity_mismatch", adapter.verify_target, "fanqie", "author-1", "book-1")
+        self.assert_code("identity_mismatch", adapter.verify_target, "qimao", "author-1", "book-1")
         self.assertFalse(adapter._login_active)
         self.assertIsNone(adapter._target)
         self.assertFalse(any(event[0] in ("fill", "click") for event in adapter._context.events))
@@ -914,7 +1014,7 @@ class BrowserTests(unittest.TestCase):
             adapter._context.options["account"] = "changed-author"
             return original(page)
         with patch.object(adapter, "_require_identity", side_effect=after_lock):
-            self.assert_code("identity_mismatch", adapter.verify_target, "fanqie", "author-1", "book-1")
+            self.assert_code("identity_mismatch", adapter.verify_target, "qimao", "author-1", "book-1")
         self.assertIsNone(adapter._target)
 
     def test_login_origin_navigation_has_a_finite_deadline(self):
@@ -942,7 +1042,7 @@ class BrowserTests(unittest.TestCase):
         adapter._route(route)
         self.assertTrue(route.aborted)
         self.assertFalse(route.continued)
-        self.assert_code("unsafe_navigation", adapter.verify_target, "fanqie", "author-1", "book-1")
+        self.assert_code("unsafe_navigation", adapter.verify_target, "qimao", "author-1", "book-1")
 
     def test_login_origin_does_not_allow_neighbor_domains_or_later_account_switch(self):
         configuration = profile()
@@ -965,7 +1065,7 @@ class BrowserTests(unittest.TestCase):
         events = []
         adapter = self.opened()
         adapter._progress_callback = events.append
-        adapter.verify_target("fanqie", "author-1", "book-1")
+        adapter.verify_target("qimao", "author-1", "book-1")
         adapter.find_drafts(1)
         adapter.create_draft(1, "PRIVATE FULL MANUSCRIPT", "PRIVATE FULL MANUSCRIPT")
         self.assertEqual(events, [{"stage": "waiting_login", "status": "running"},
@@ -977,17 +1077,17 @@ class BrowserTests(unittest.TestCase):
             raise RuntimeError("PRIVATE FULL MANUSCRIPT")
         adapter = self.opened()
         adapter._progress_callback = fail_callback
-        adapter.verify_target("fanqie", "author-1", "book-1")
+        adapter.verify_target("qimao", "author-1", "book-1")
         self.assertEqual(adapter.create_draft(1, "标题", "正文"), "new-1")
         self.assertEqual(adapter.read_draft("new-1")["body"], "正文")
         self.assert_code("invalid_profile", browser.BrowserAdapter, profile(), progress_callback="invalid")
 
     def test_target_mismatch_and_manual_login_do_not_fill_anything(self):
         adapter = self.opened(account="someone-else")
-        self.assert_code("identity_mismatch", adapter.verify_target, "fanqie", "author-1", "book-1")
+        self.assert_code("identity_mismatch", adapter.verify_target, "qimao", "author-1", "book-1")
         self.assertFalse(any(event[0] == "fill" for event in adapter._context.events))
         adapter = self.opened(missing=["#account"])
-        self.assert_code("login_required", adapter.verify_target, "fanqie", "author-1", "book-1")
+        self.assert_code("login_required", adapter.verify_target, "qimao", "author-1", "book-1")
         self.assertFalse(any(event[0] == "fill" for event in adapter._context.events))
 
     def test_full_pagination_reopens_actual_draft_and_preserves_text(self):
@@ -1068,7 +1168,7 @@ class BrowserTests(unittest.TestCase):
         adapter = self.verified(configuration, lists={configuration["urls"]["drafts"]: [[("draft1", 1, "草稿")]]},
                                 editors={"draft1": stored})
         self.assertEqual(len(adapter.find_drafts(1)), 1)
-        adapter.verify_target("fanqie", "author-1", "book-1")
+        adapter.verify_target("qimao", "author-1", "book-1")
         adapter._context.editors["draft1"]["chapter"] = 2
         self.assert_code("identity_mismatch", adapter.read_draft, "draft1")
 
@@ -1103,7 +1203,7 @@ class BrowserTests(unittest.TestCase):
     def test_create_action_is_never_clicked_by_verification_or_listing(self):
         adapter = self.verified(self.create_action_profile())
         self.assertEqual(adapter.find_drafts(1), [])
-        adapter.verify_target("fanqie", "author-1", "book-1")
+        adapter.verify_target("qimao", "author-1", "book-1")
         self.assertEqual(adapter._context.created_blank, 0)
         self.assertFalse(any(event[0] == "click" for event in adapter._context.events))
 

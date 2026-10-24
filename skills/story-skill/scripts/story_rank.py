@@ -30,9 +30,18 @@ TITLE_METHOD = ("按 NFKC 规范化后的标题，统计首尾连续文字的 2�
                 "只保留至少 2 本书重复的候选，同一边界且命中作品完全相同的片段保留最长项。"
                 "每书每项只计一次，最多展示 30 项；不是中文分词、情节识别或流行原因证明。")
 SAMPLE_METHOD = ("仅从一个可比分组内去重且无冲突的作品中筛选；优先补充未覆盖分类，再补充本组重复标签，"
-                 "再补充字数区间，最后按页面名次与作品键确定次序。重复标签限本组频次前 50 项且至少出现于 2 本书。"
+                 "再补充字数区间，最后按页面名次与作品键确定次序。重复标签按筛选前本组全部有效作品计票，至少出现于 2 本书，不受报告展示项数限制。"
                  "这是供进一步阅读的覆盖抽样，不是随机抽样、质量排名、市场代表性证明或爆款预测。"
                  "嵌入快照和来源用于重算与核对，不能证明源网页真实或记录完整。")
+# These descriptions are part of historical sample identities. Keep them frozen;
+# an algorithm change gets a new version, never a rewrite of existing evidence.
+LEGACY_SAMPLE_METHOD = ("仅从一个可比分组内去重且无冲突的作品中筛选；优先补充未覆盖分类，再补充本组重复标签，"
+                        "再补充字数区间，最后按页面名次与作品键确定次序。重复标签限本组频次前 50 项且至少出现于 2 本书。"
+                        "这是供进一步阅读的覆盖抽样，不是随机抽样、质量排名、市场代表性证明或爆款预测。"
+                        "嵌入快照和来源用于重算与核对，不能证明源网页真实或记录完整。")
+SAMPLE_METHODS = {1: LEGACY_SAMPLE_METHOD, 2: SAMPLE_METHOD}
+SAMPLE_SCHEMA_VERSION = 2
+SAMPLE_ALGORITHM_VERSION = 2
 
 
 class RankError(ValueError):
@@ -403,6 +412,13 @@ def aggregate_snapshots(snapshots):
 def build_sample(snapshots, group_id=None, category=None, tags=None, title_contains=None,
                  min_words=None, max_words=None, limit=5):
     """Reaggregate evidence and choose reproducible reading candidates from one group."""
+    return _build_sample(snapshots, group_id, category, tags, title_contains, min_words, max_words, limit,
+                         algorithm_version=SAMPLE_ALGORITHM_VERSION, legacy=False)
+
+
+def _build_sample(snapshots, group_id=None, category=None, tags=None, title_contains=None,
+                  min_words=None, max_words=None, limit=5, *, algorithm_version, legacy):
+    """Replay a supported selection algorithm without changing its saved identity."""
     report = aggregate_snapshots(snapshots)
     if group_id is None:
         if len(report["groups"]) != 1:
@@ -427,6 +443,7 @@ def build_sample(snapshots, group_id=None, category=None, tags=None, title_conta
     filters = {"category": category, "tags": tags, "title_contains": title_contains,
                "min_words": min_words, "max_words": max_words}
     identity_conflicts = set(group["identity_conflicted_book_keys"])
+    tag_counts = defaultdict(int)
     candidates = []
     for book in report["books"]:
         observation = next((row for row in book["observations"]
@@ -435,6 +452,9 @@ def build_sample(snapshots, group_id=None, category=None, tags=None, title_conta
             continue
         if book["book_key"] in identity_conflicts:
             continue
+        # Count each accepted identity once, before user filters; report rows are display-only.
+        for tag in observation["tags"]:
+            tag_counts[tag] += 1
         word_count = observation["word_count"]
         if (category is not None and observation["category"] != category
                 or not set(tags).issubset(observation["tags"])
@@ -447,7 +467,11 @@ def build_sample(snapshots, group_id=None, category=None, tags=None, title_conta
     if not candidates:
         raise RankError("筛选后没有可抽样作品；请检查筛选值、字数缺失及身份/观测冲突")
     eligible_n = len(candidates)
-    repeated_tags = {row["tag"] for row in group["tags"]["rows"] if row["book_count"] >= 2}
+    counted_tags = sorted(tag_counts.items(), key=lambda item: (-item[1], item[0]))
+    if algorithm_version == 1:
+        # Freeze the released top-50 selection rule independently of display limits.
+        counted_tags = counted_tags[:50]
+    repeated_tags = {tag for tag, count in counted_tags if count >= 2}
     seen_categories, seen_tags, seen_bands, selected = set(), set(), set(), []
     while candidates and len(selected) < limit:
         def choice_key(book):
@@ -475,14 +499,16 @@ def build_sample(snapshots, group_id=None, category=None, tags=None, title_conta
         seen_tags.update(observation["tags"])
         seen_bands.add(band)
     normalized = {_key(data): data for data in map(validate_snapshot, snapshots)}
-    result = {"schema_version": 1, "kind": "rank_sample", "group_id": group_id,
+    result = {"schema_version": 1 if legacy else SAMPLE_SCHEMA_VERSION, "kind": "rank_sample", "group_id": group_id,
               "dimensions": group["dimensions"], "filters": filters, "limit": limit,
               "counts": {"group_accepted": group["sample_count"], "eligible": eligible_n,
                          "selected": len(selected), "excluded_conflicts": group["excluded_conflicts"],
                          "excluded_identity_conflicts": group["excluded_identity_conflicts"]},
-              "method": SAMPLE_METHOD, "snapshots": [normalized[key] for key in sorted(normalized)],
+              "method": SAMPLE_METHODS[algorithm_version], "snapshots": [normalized[key] for key in sorted(normalized)],
               "sources": [source for source in report["sources"] if source["group_id"] == group_id],
               "warnings": report["warnings"], "books": selected}
+    if not legacy:
+        result["algorithm_version"] = algorithm_version
     result["sample_id"] = hashlib.sha256(_json(result).encode("utf-8")).hexdigest()
     if len(_json(result).encode("utf-8")) > MAX_OUTPUT_BYTES:
         raise RankError("抽样证据超过 32 MiB 上限，请缩小输入快照范围")
@@ -492,9 +518,26 @@ def build_sample(snapshots, group_id=None, category=None, tags=None, title_conta
 def validate_sample(sample):
     """Verify reproducibility against embedded snapshots, not external source authenticity."""
     _fields(sample, ("schema_version", "kind", "sample_id", "group_id", "dimensions", "filters", "limit",
-                     "counts", "method", "snapshots", "sources", "warnings", "books"), "sample")
+                     "counts", "method", "snapshots", "sources", "warnings", "books"), "sample",
+            optional=("algorithm_version",))
+    schema = sample["schema_version"]
+    if type(schema) is not int or schema not in (1, SAMPLE_SCHEMA_VERSION) or sample["kind"] != "rank_sample":
+        raise RankError("sample 必须为支持的 rank_sample schema_version（1 或 2）")
+    if schema == 1:
+        # Both pre-versioning formats were emitted locally. Exact frozen text
+        # selects their algorithm; the complete result and hash still must match.
+        if "algorithm_version" in sample:
+            raise RankError("旧版 sample 不应带 algorithm_version，不能直接修改历史格式")
+        algorithm = next((version for version, method in SAMPLE_METHODS.items() if sample["method"] == method), None)
+        if algorithm is None:
+            raise RankError("未知的旧版抽样方法；请保留原文件并核对生成版本")
+    else:
+        algorithm = sample.get("algorithm_version")
+        if type(algorithm) is not int or algorithm not in SAMPLE_METHODS:
+            raise RankError("不支持的 sample.algorithm_version；请保留原文件并核对生成版本")
     _fields(sample["filters"], ("category", "tags", "title_contains", "min_words", "max_words"), "sample.filters")
-    rebuilt = build_sample(sample["snapshots"], group_id=sample["group_id"], limit=sample["limit"], **sample["filters"])
+    rebuilt = _build_sample(sample["snapshots"], group_id=sample["group_id"], limit=sample["limit"],
+                            algorithm_version=algorithm, legacy=schema == 1, **sample["filters"])
     try:
         consistent = _json(sample) == _json(rebuilt)
     except (TypeError, ValueError, RecursionError) as exc:

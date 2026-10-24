@@ -7,6 +7,8 @@ from pathlib import Path
 from types import SimpleNamespace
 import sqlite3
 import stat
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -82,6 +84,75 @@ class WorkbenchArchivesTests(unittest.TestCase):
         self.assertEqual((self.destination / '.story/state.sqlite3').stat().st_nlink, 1)
         with closing(sqlite3.connect(self.destination / '.story/state.sqlite3')) as db:
             self.assertEqual(db.execute('PRAGMA integrity_check').fetchone()[0], 'ok')
+
+    @unittest.skipIf(os.name == 'nt', 'POSIX permission semantics')
+    def test_archive_is_private_from_creation_through_publication_for_common_umasks(self):
+        original_zip = zipfile.ZipFile
+        original_publish = base.story._publish_no_replace
+        for mask in (0o022, 0):
+            with self.subTest(umask=oct(mask)):
+                self.output = self.directory / ('private-' + str(mask) + '.zip')
+                observed = []
+
+                def open_zip(*args, **kwargs):
+                    archive = original_zip(*args, **kwargs)
+                    if archive.mode in ('w', 'x'):
+                        observed.append(('created', stat.S_IMODE(os.fstat(archive.fp.fileno()).st_mode)))
+                    return archive
+
+                def publish(source, target):
+                    if target.path == self.output:
+                        observed.append(('staged', stat.S_IMODE(source.path.stat().st_mode)))
+                        original_publish(source, target)
+                        observed.append(('published', stat.S_IMODE(target.path.stat().st_mode)))
+                    else:
+                        original_publish(source, target)
+
+                previous_umask = os.umask(mask)
+                try:
+                    with patch.object(self.archives.zipfile, 'ZipFile', side_effect=open_zip), \
+                            patch.object(self.archives.api, '_publish_no_replace', side_effect=publish):
+                        packet = self.archive()
+                finally:
+                    os.umask(previous_umask)
+                self.assertEqual(observed, [('created', 0o600), ('staged', 0o600), ('published', 0o600)])
+                self.assertEqual(stat.S_IMODE(self.output.stat().st_mode), 0o600)
+                self.assertEqual(packet['sha256'], hashlib.sha256(self.output.read_bytes()).hexdigest())
+                with original_zip(self.output) as archive:
+                    self.assertIsNone(archive.testzip())
+                    self.assertEqual(archive.read('book/正文.md'), (self.root / '正文.md').read_bytes())
+                self.assertFalse(any(self.directory.glob('.story-archive-*')))
+
+    def test_private_archive_stage_is_removed_on_write_and_publication_failure(self):
+        original_read = self.archives._read_file
+        original_publish = base.story._publish_no_replace
+        evidence = (self.root / '正文.md').read_bytes()
+
+        def broken_read(root, relative, writer=None):
+            if writer is not None:
+                raise OSError('synthetic archive write failure')
+            return original_read(root, relative, writer)
+
+        def broken_publish(source, target):
+            if target.path == self.output:
+                raise OSError('synthetic archive publication failure')
+            return original_publish(source, target)
+
+        for mask in (0o022, 0):
+            for phase in ('write', 'publication'):
+                with self.subTest(umask=oct(mask), phase=phase):
+                    previous_umask = os.umask(mask)
+                    try:
+                        owner, name, callback = ((self.archives, '_read_file', broken_read) if phase == 'write' else
+                                                 (self.archives.api, '_publish_no_replace', broken_publish))
+                        with patch.object(owner, name, side_effect=callback), \
+                                self.assertRaisesRegex(OSError, 'synthetic archive ' + phase + ' failure'):
+                            self.archive()
+                    finally:
+                        os.umask(previous_umask)
+                    self.assertFalse(self.output.exists())
+                    self.assertFalse(any(self.directory.glob('.story-archive-*')))
+                    self.assertEqual((self.root / '正文.md').read_bytes(), evidence)
 
     def assert_snapshot_connections_closed_before_cleanup(self, failure=None):
         """Retain real handles so garbage collection cannot conceal a leak."""
@@ -179,6 +250,273 @@ class WorkbenchArchivesTests(unittest.TestCase):
         self.archives.restore_archive(self.output, self.destination)
         self.assertTrue((self.destination / '.story/publishing.sqlite3').is_file())
         self.assertGreater(packet['files'], 3)
+
+    def test_restored_bridge_reconnects_and_unknown_save_requires_reconciliation(self):
+        self.assert_bridge_archive_roundtrip(detach=True)
+
+    def test_restored_live_bridge_is_inert_and_old_handle_cannot_resume_requests(self):
+        self.assert_bridge_archive_roundtrip(detach=False)
+
+    def test_restore_reconnects_after_real_process_exit_before_first_session_publication(self):
+        from tests import test_publish as fixtures
+        from tests.test_platform_browser_preview import configuration
+
+        fixture = fixtures.PublishTests()
+        fixture.setUp()
+        self.addCleanup(fixture.tearDown)
+        fixture.commit()
+        story = fixtures.story
+        bridge, drafts = story.platform_chrome_bridge, story.platform_drafts
+        plan = fixture.prepare()
+        profiles = fixture.root / drafts.PROFILE_DIRECTORY
+        profiles.mkdir()
+        (profiles / 'host.json').write_text(json.dumps({**configuration(), 'execution_mode': 'host_assisted_cua'}),
+                                           encoding='utf-8')
+        crash_handle = self.directory / 'unpublished-handle.json'
+        script = '''
+import os, sys
+from contextlib import closing
+from tests import test_publish as fixtures
+story = fixtures.story
+bridge = story.platform_chrome_bridge
+original = bridge._rename
+def crash_before_session_publication(source, target, *, replace=False):
+    if target.name == 'session.json':
+        os._exit(73)
+    return original(source, target, replace=replace)
+bridge._rename = crash_before_session_publication
+with closing(story.Book(sys.argv[1])) as book:
+    bridge.attach(book, sys.argv[2], 'host.json', sys.argv[3])
+'''
+        process = subprocess.run([sys.executable, '-B', '-c', script, str(fixture.root), plan['id'], str(crash_handle)],
+                                 cwd=base.ROOT, env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'},
+                                 capture_output=True, text=True, timeout=30)
+        self.assertEqual(process.returncode, 73, process.stderr)
+        self.assertFalse(crash_handle.exists())
+        queues = [path for path in (fixture.root / bridge.DIRECTORY).iterdir() if path.is_dir()]
+        self.assertEqual(len(queues), 1)
+        queue = queues[0]
+        self.assertFalse((queue / 'session.json').exists())
+        self.assertTrue(list(queue.glob('.chrome-stage-*')))
+        evidence = {path.relative_to(fixture.root): path.read_bytes() for path in queue.rglob('*') if path.is_file()}
+        binding = bridge._binding(fixture.book, plan['id'], 'host.json')[0]
+        story.workbench_archives.create_archive(fixture.root, self.output, fixture.book.meta('id'))
+        restored_packet = story.workbench_archives.restore_archive(self.output, self.destination)
+        self.assertEqual(restored_packet['inactive_bridge_sessions'], 1)
+        restored_queue = self.destination / queue.relative_to(fixture.root)
+        self.assertTrue((restored_queue / bridge.RESTORED_EVIDENCE).is_file())
+        self.assertFalse((restored_queue / 'session.json').exists())
+        self.assertEqual(bridge.worker_status(self.destination, binding),
+                         {'attached': False, 'ready': False, 'state': 'worker_unavailable', 'active_sessions': 0})
+        with closing(story.Book(self.destination)) as restored:
+            handle = self.directory / 'fresh-after-crash-handle.json'
+            attached = bridge.attach(restored, plan['id'], 'host.json', handle)
+            self.assertTrue(attached['ok'])
+            self.assertNotEqual(attached['session_id'], queue.name)
+            self.assertFalse(attached['ready'])
+            self.assertEqual(bridge.worker_status(self.destination, binding)['active_sessions'], 1)
+            bridge.heartbeat(restored, handle, detach=True)
+        for relative, raw in evidence.items():
+            self.assertEqual((fixture.root / relative).read_bytes(), raw)
+            self.assertEqual((self.destination / relative).read_bytes(), raw)
+        self.assertFalse((queue / bridge.RESTORED_EVIDENCE).exists())
+        self.assertFalse((restored_queue / 'session.json').exists())
+
+    def test_restored_old_handles_never_touch_missing_or_empty_locks_and_missing_sessions(self):
+        from tests import test_publish as fixtures
+        from tests.test_platform_browser_preview import configuration
+
+        fixture = fixtures.PublishTests()
+        fixture.setUp()
+        self.addCleanup(fixture.tearDown)
+        fixture.commit()
+        story = fixtures.story
+        bridge, drafts = story.platform_chrome_bridge, story.platform_drafts
+        plan = fixture.prepare()
+        profiles = fixture.root / drafts.PROFILE_DIRECTORY
+        profiles.mkdir()
+        (profiles / 'host.json').write_text(json.dumps({**configuration(), 'execution_mode': 'host_assisted_cua'}),
+                                           encoding='utf-8')
+        handle = self.directory / 'original-unused-handle.json'
+        attached = bridge.attach(fixture.book, plan['id'], 'host.json', handle)
+        queue = fixture.root / bridge.DIRECTORY / attached['session_id']
+        session_path, lock_path = queue / 'session.json', queue / 'session.lock'
+        original_session = session_path.read_bytes()
+        original_handle = json.loads(handle.read_bytes())
+        response = self.directory / 'unused-response.json'
+        bridge._external(response, create_value={})
+
+        def contents(root):
+            return {path.relative_to(root): path.read_bytes() for path in root.rglob('*') if path.is_file()}
+
+        operations = [('heartbeat', bridge.heartbeat, (), {}),
+                      ('detach', bridge.heartbeat, (), {'detach': True}),
+                      ('health_challenge', bridge.health, (), {}),
+                      ('health_response', bridge.health, (response,), {}),
+                      ('next_request', bridge.next_request, (), {}),
+                      ('respond', bridge.respond, ('a' * 32, response), {})]
+        for session_missing in (False, True):
+            for empty_lock in (False, True):
+                case = str(int(session_missing)) + '-' + str(int(empty_lock))
+                with self.subTest(session_missing=session_missing, empty_lock=empty_lock):
+                    if session_missing:
+                        session_path.unlink(missing_ok=True)
+                    else:
+                        session_path.write_bytes(original_session)
+                    lock_path.unlink(missing_ok=True)
+                    if empty_lock:
+                        lock_path.write_bytes(b'')
+                        lock_path.chmod(0o600)
+                    source_evidence = contents(queue)
+                    archive_path = self.directory / ('evidence-' + case + '.zip')
+                    restored_root = self.directory / ('restored-evidence-' + case)
+                    story.workbench_archives.create_archive(fixture.root, archive_path, fixture.book.meta('id'))
+                    story.workbench_archives.restore_archive(archive_path, restored_root)
+                    restored_queue = restored_root / queue.relative_to(fixture.root)
+                    restored_evidence = contents(restored_queue)
+                    relocated_handle = self.directory / ('old-handle-' + case + '.json')
+                    bridge._external(relocated_handle, create_value={**original_handle, 'book_root': str(restored_root)})
+                    with closing(story.Book(restored_root)) as restored:
+                        for name, operation, args, kwargs in operations:
+                            with self.subTest(operation=name):
+                                fixture.assert_code('platform_chrome_worker_unavailable', operation,
+                                                    restored, relocated_handle, *args, **kwargs)
+                                self.assertEqual(contents(restored_queue), restored_evidence)
+                                self.assertEqual(contents(queue), source_evidence)
+
+    def assert_bridge_archive_roundtrip(self, *, detach):
+        from tests import test_publish as fixtures
+        from tests.test_platform_browser_preview import configuration
+        from tests.test_platform_drafts import FakeAdapter
+
+        fixture = fixtures.PublishTests()
+        fixture.setUp()
+        self.addCleanup(fixture.tearDown)
+        fixture.commit()
+        story = fixtures.story
+        bridge, drafts = story.platform_chrome_bridge, story.platform_drafts
+        plan = fixture.prepare()
+        profiles = fixture.root / drafts.PROFILE_DIRECTORY
+        profiles.mkdir()
+        config = {**configuration(), 'execution_mode': 'host_assisted_cua'}
+        (profiles / 'host.json').write_text(json.dumps(config), encoding='utf-8')
+        handle = self.directory / 'original-handle.json'
+        session = bridge.attach(fixture.book, plan['id'], 'host.json', handle)
+        challenge = bridge.health(fixture.book, handle)['challenge']
+        health_packet = {key: challenge[key] for key in ('schema', 'session_id', 'binding_sha256', 'nonce')}
+        health_packet.update(browser={'kind': 'chrome', 'id': 'synthetic-archive-browser'},
+                             capabilities={'list_tabs': True, 'get_tab': True, 'dom_snapshot': True},
+                             worker={'pid': os.getpid(), 'instance': 'b' * 32})
+        health_response = self.directory / 'synthetic-health.json'
+        bridge._external(health_response, create_value=health_packet)
+        bridge.health(fixture.book, handle, health_response)
+        binding = bridge._binding(fixture.book, plan['id'], 'host.json')[0]
+        self.assertTrue(bridge.worker_status(fixture.root, binding)['ready'])
+        if detach:
+            bridge.heartbeat(fixture.book, handle, detach=True)
+        adapter = FakeAdapter(fixture.book)
+        adapter.fail_create = 'after'
+        original_global = self.directory / 'original-draft-locks'
+        original_global.mkdir(mode=0o700)
+        with patch.object(drafts, '_lock_directory', return_value=original_global):
+            result = drafts.run_plan(fixture.book, plan['id'], adapter, execute=True)
+        self.assertEqual(result['results'][0]['state'], 'unknown')
+        queue = fixture.root / bridge.DIRECTORY / session['session_id']
+        # Retain an unacknowledged request as opaque recovery evidence. Restore
+        # must not drop or dispatch it when reconnecting with a fresh session.
+        request = queue / ('claimed-' + 'a' * 32 + '.json')
+        request.write_text(json.dumps({'schema': 1, 'id': 'a' * 32, 'session_id': session['session_id'],
+                                       'operation': 'create_draft', 'params': plan['manifest']['chapters'][0]}),
+                           encoding='utf-8')
+        request.chmod(0o600)
+        evidence = {path.relative_to(fixture.root): path.read_bytes()
+                    for location in (queue, fixture.root / drafts.DIRECTORY)
+                    for path in location.rglob('*') if path.is_file()}
+        story.workbench_archives.create_archive(fixture.root, self.output, fixture.book.meta('id'))
+        previous_umask = os.umask(0o022)
+        try:
+            restored_packet = story.workbench_archives.restore_archive(self.output, self.destination)
+        finally:
+            os.umask(previous_umask)
+        for relative, raw in evidence.items():
+            self.assertEqual((self.destination / relative).read_bytes(), raw)
+        self.assertEqual(restored_packet['inactive_bridge_sessions'], 1)
+        evidence_marker = self.destination / bridge.DIRECTORY / session['session_id'] / bridge.RESTORED_EVIDENCE
+        self.assertTrue(evidence_marker.is_file())
+        self.assertFalse((queue / bridge.RESTORED_EVIDENCE).exists())
+        self.assertEqual(bridge.worker_status(fixture.root, binding)['attached'], not detach)
+        if os.name != 'nt':
+            self.assertEqual(stat.S_IMODE(self.destination.stat().st_mode), 0o700)
+            self.assertEqual(stat.S_IMODE((self.destination / request.relative_to(fixture.root)).stat().st_mode), 0o600)
+        status = bridge.worker_status(self.destination, binding)
+        self.assertFalse(status['attached'])
+        self.assertFalse(status['ready'])
+        self.assertEqual(status['active_sessions'], 0)
+        fixture.assert_code('platform_chrome_worker_unavailable',
+                            bridge.HostAdapter(self.destination, binding, config).__enter__)
+        with closing(story.Book(self.destination)) as restored:
+            # Even if an old handle's path is relocated to the restored book,
+            # its valid token must not renew the imported lease or claim work.
+            relocated_handle = self.directory / 'relocated-old-handle.json'
+            handle_data = json.loads(handle.read_text(encoding='utf-8'))
+            handle_data['book_root'] = str(self.destination)
+            bridge._external(relocated_handle, create_value=handle_data)
+            for operation in (bridge.heartbeat, bridge.health, bridge.next_request):
+                fixture.assert_code('platform_chrome_worker_unavailable', operation, restored, relocated_handle)
+            new_handle = self.directory / 'restored-handle.json'
+            attached = bridge.attach(restored, plan['id'], 'host.json', new_handle)
+            self.assertNotEqual(attached['session_id'], session['session_id'])
+            self.assertFalse(attached['ready'])
+            bridge.heartbeat(restored, new_handle, detach=True)
+            for relative, raw in evidence.items():
+                self.assertEqual((self.destination / relative).read_bytes(), raw)
+            pending = drafts.status(restored, plan['id'])
+            self.assertEqual(pending['results'][0]['state'], 'unknown')
+            # A fresh machine has no external target lock. Its restored journal
+            # must still prevent a second create when remote lookup finds none.
+            restored_global = self.directory / 'restored-draft-locks'
+            restored_global.mkdir(mode=0o700)
+            fresh_adapter = FakeAdapter(restored)
+            with patch.object(drafts, '_lock_directory', return_value=restored_global):
+                retry = drafts.run_plan(restored, plan['id'], fresh_adapter, execute=True)
+                self.assertEqual(retry['results'][0]['state'], 'unknown')
+                self.assertEqual(fresh_adapter.created, 0)
+                fresh_adapter.remote = adapter.remote
+                checked = drafts.run_plan(restored, plan['id'], fresh_adapter, execute=True, reconcile_only=True)
+            self.assertTrue(checked['ok'])
+            self.assertEqual(checked['results'][0]['state'], 'reconciled')
+            self.assertEqual(fresh_adapter.created, 0)
+        if not detach:
+            # A restored copy can itself be backed up without losing the guard
+            # or changing its original queued evidence.
+            second_archive = self.directory / '再次备份.zip'
+            second_root = self.directory / '再次恢复'
+            story.workbench_archives.create_archive(self.destination, second_archive, fixture.book.meta('id'))
+            second_packet = story.workbench_archives.restore_archive(second_archive, second_root)
+            self.assertEqual(second_packet['inactive_bridge_sessions'], 2)
+            marker_relative = evidence_marker.relative_to(self.destination)
+            self.assertEqual((second_root / marker_relative).read_bytes(), evidence_marker.read_bytes())
+            self.assertFalse(bridge.worker_status(second_root, binding)['attached'])
+
+    @unittest.skipIf(os.name == 'nt', 'POSIX permission semantics')
+    def test_restore_uses_private_defaults_even_with_permissive_zip_modes_and_umask(self):
+        self.archive()
+
+        def public_executable_modes(entries):
+            for info, _ in entries:
+                info.external_attr = (stat.S_IFREG | 0o777) << 16
+            return entries
+
+        changed = self.rewrite(public_executable_modes)
+        previous_umask = os.umask(0)
+        try:
+            self.archives.restore_archive(changed, self.destination)
+        finally:
+            os.umask(previous_umask)
+        self.assertEqual(stat.S_IMODE(self.destination.stat().st_mode), 0o700)
+        for path in self.destination.rglob('*'):
+            if path.is_file():
+                self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o600, path)
 
     def test_service_tokens_cache_and_external_link_are_excluded(self):
         self.write('.story/workbench-service.json', b'SECRET-LOOPBACK-TOKEN')
@@ -435,16 +773,22 @@ class WorkbenchArchivesTests(unittest.TestCase):
         self.error('archive_identity', lambda: self.archives.create_archive(self.root, self.output, 'other-book'))
         self.error('archive_path', lambda: self.archives.create_archive(self.root, self.root / '备份.zip'))
         self.output.write_bytes(b'prior backup')
+        self.output.chmod(0o640)
+        previous_mode = stat.S_IMODE(self.output.stat().st_mode)
         self.error('archive_exists', self.archive)
         self.assertEqual(self.output.read_bytes(), b'prior backup')
+        self.assertEqual(stat.S_IMODE(self.output.stat().st_mode), previous_mode)
+        self.assertFalse(any(self.directory.glob('.story-archive-*')))
 
     def test_restore_never_overwrites_existing_destination(self):
         self.archive()
         self.destination.mkdir()
         preserved = self.destination / '正文.md'
         preserved.write_bytes(b'preserved')
+        previous_mode = stat.S_IMODE(self.destination.stat().st_mode)
         self.error('archive_exists', lambda: self.archives.restore_archive(self.output, self.destination))
         self.assertEqual(preserved.read_bytes(), b'preserved')
+        self.assertEqual(stat.S_IMODE(self.destination.stat().st_mode), previous_mode)
 
     def test_competing_backup_filename_is_preserved(self):
         original = base.story._publish_no_replace

@@ -245,7 +245,13 @@
     {
       "id": "flatness",
       "path": "skills/story-skill-write/references/drama.md",
-      "section": "平淡时修哪里"
+      "section": "平淡时修哪里",
+      "scope": "body"
+    },
+    {
+      "id": "payoff_examples",
+      "path": "skills/story-skill-write/references/drama.md",
+      "section": "同一回报的成稿对照"
     },
     {
       "id": "dialogue",
@@ -699,6 +705,32 @@
     {
       "id": "deep_reading",
       "path": "skills/story-skill-analyze/references/deep-reading.md"
+    },
+    {
+      "id": "reader_validation_intro",
+      "path": "skills/story-skill-research/references/reader-validation.md",
+      "section": "选题取舍、试写与阅读反馈",
+      "scope": "body"
+    },
+    {
+      "id": "reader_feedback",
+      "path": "skills/story-skill-research/references/reader-validation.md",
+      "section": "把反馈变成可定位的问题"
+    },
+    {
+      "id": "reader_retention",
+      "path": "skills/story-skill-research/references/reader-validation.md",
+      "section": "分次试读与追更验证"
+    },
+    {
+      "id": "reader_validation_outcome",
+      "path": "skills/story-skill-research/references/reader-validation.md",
+      "section": "修订与结论"
+    },
+    {
+      "id": "project_title_change",
+      "path": "skills/story-skill/references/project-state.md",
+      "section": "已采用书名变更"
     }
   ],
   "scenarios": [
@@ -845,6 +877,14 @@
               "when": "本次专门要求表达、场景或平淡问题诊断，或自审发现相应疑点。",
               "includes": [
                 "scene_diagnosis"
+              ]
+            },
+            {
+              "id": "payoff_comparison",
+              "when": "回报已发生却仍显平，或对兑现判断有分歧，需要比较实际呈现。",
+              "includes": [
+                "scene_diagnosis",
+                "payoff_examples"
               ]
             },
             {
@@ -1088,6 +1128,14 @@
               "when": "本次专门要求表达、场景或平淡问题诊断，或自审发现相应疑点。",
               "includes": [
                 "scene_diagnosis"
+              ]
+            },
+            {
+              "id": "payoff_comparison",
+              "when": "回报已发生却仍显平，或对兑现判断有分歧，需要比较实际呈现。",
+              "includes": [
+                "scene_diagnosis",
+                "payoff_examples"
               ]
             },
             {
@@ -1389,6 +1437,14 @@
               ]
             },
             {
+              "id": "payoff_comparison",
+              "when": "回报已发生却仍显平，或对兑现判断有分歧，需要比较实际呈现。",
+              "includes": [
+                "scene_diagnosis",
+                "payoff_examples"
+              ]
+            },
+            {
               "id": "genre_urban_relations",
               "when": "本场主导阅读期待为都市关系与成长；只读选中主卡，确有交汇时补辅卡有关段。",
               "includes": [
@@ -1654,6 +1710,14 @@
               ]
             },
             {
+              "id": "payoff_comparison",
+              "when": "回报已发生却仍显平，或对兑现判断有分歧，需要比较实际呈现。",
+              "includes": [
+                "scene_diagnosis",
+                "payoff_examples"
+              ]
+            },
+            {
               "id": "genre_urban_relations",
               "when": "本场主导阅读期待为都市关系与成长；只读选中主卡，确有交汇时补辅卡有关段。",
               "includes": [
@@ -1831,6 +1895,14 @@
               "when": "本次要求或审读发现表达、场景、对白、去 AI 味及读感疑点。",
               "includes": [
                 "scene_diagnosis"
+              ]
+            },
+            {
+              "id": "payoff_comparison",
+              "when": "回报已发生却仍显平，或对兑现判断有分歧，需要比较实际呈现。",
+              "includes": [
+                "scene_diagnosis",
+                "payoff_examples"
               ]
             },
             {
@@ -2144,6 +2216,14 @@
               "when": "本次要求或审读发现表达、场景、对白、去 AI 味及读感疑点。",
               "includes": [
                 "scene_diagnosis"
+              ]
+            },
+            {
+              "id": "payoff_comparison",
+              "when": "回报已发生却仍显平，或对兑现判断有分歧，需要比较实际呈现。",
+              "includes": [
+                "scene_diagnosis",
+                "payoff_examples"
               ]
             },
             {
@@ -2468,6 +2548,14 @@
               ]
             },
             {
+              "id": "payoff_comparison",
+              "when": "回报已发生却仍显平，或对兑现判断有分歧，需要比较实际呈现。",
+              "includes": [
+                "scene_diagnosis",
+                "payoff_examples"
+              ]
+            },
+            {
               "id": "platform",
               "when": "The target is Fanqie, Qidian or Qimao.",
               "includes": [
@@ -2771,6 +2859,14 @@
               ]
             },
             {
+              "id": "payoff_comparison",
+              "when": "回报已发生却仍显平，或对兑现判断有分歧，需要比较实际呈现。",
+              "includes": [
+                "scene_diagnosis",
+                "payoff_examples"
+              ]
+            },
+            {
               "id": "genre_urban_relations",
               "when": "本场主导阅读期待为都市关系与成长；只读选中主卡，确有交汇时补辅卡有关段。",
               "includes": [
@@ -3031,6 +3127,14 @@
               "when": "本次专门要求表达、场景或平淡问题诊断，或自审发现相应疑点。",
               "includes": [
                 "scene_diagnosis"
+              ]
+            },
+            {
+              "id": "payoff_comparison",
+              "when": "回报已发生却仍显平，或对兑现判断有分歧，需要比较实际呈现。",
+              "includes": [
+                "scene_diagnosis",
+                "payoff_examples"
               ]
             },
             {
@@ -3366,6 +3470,105 @@
             }
           },
           "limit_basis": "2026-10-22 explicit sampling/validation/planning handoff paths; measured source plus 15%, rounded to 1,000. Ordinary research omits handoff; not runtime usage."
+        }
+      ]
+    },
+    {
+      "id": "reader_feedback",
+      "task": "读者反馈分析与独立试读设计",
+      "assumptions": "可解释已提供的反馈与阅读记录，也可在尚无反馈时仅设计分次追更验证方案；不运行试读、联络读者、改稿或调度。缺少正文时不作文本诊断，设计所需未知条件列为待定；另获内容审稿授权时转相应路径另计。",
+      "calls": [
+        {
+          "id": "researcher",
+          "role": "分析读者意见，或独立设计尚未执行的追更试读",
+          "preload": [
+            "research_entry"
+          ],
+          "required": [
+            "common",
+            "reader_validation_intro",
+            "reader_feedback",
+            "reader_validation_outcome"
+          ],
+          "limits": {
+            "nonspace_chars": 6000,
+            "utf8_bytes": 17000
+          },
+          "base_limits": {
+            "nonspace_chars": 6000,
+            "utf8_bytes": 16000
+          },
+          "branches": [
+            {
+              "id": "spaced_reading",
+              "when": "本次明确要求设计或核对追更验证，包括尚无反馈的独立方案请求；普通反馈分析与创作不附加试读。",
+              "includes": [
+                "reader_retention"
+              ]
+            }
+          ],
+          "baseline": {
+            "base": {
+              "nonspace_chars": 4916,
+              "utf8_bytes": 13863
+            },
+            "registered_maximum": {
+              "nonspace_chars": 5137,
+              "utf8_bytes": 14527
+            }
+          },
+          "limit_basis": "2026-10-23 supplied-feedback and optional spaced-reading paths; measured source plus 15%, rounded to 1,000. No reader trial, text rewrite or full research workflow is implied. Existing scenario ceilings are unchanged."
+        }
+      ]
+    },
+    {
+      "id": "adopted_book_title",
+      "task": "将用户已采用的新书名同步到既有书库及受影响材料",
+      "assumptions": "现有书库；授权范围已明确；目录和已登记全文路径保留；候选与只审稿不调用元数据写入。",
+      "calls": [
+        {
+          "id": "planner",
+          "role": "采用新书名并同步当前作品信息",
+          "preload": [
+            "plan_entry"
+          ],
+          "required": [
+            "common",
+            "naming",
+            "project_title_change",
+            "project_link"
+          ],
+          "branches": [
+            {
+              "id": "affected_cover",
+              "when": "已有封面呈现旧书名，且本次需要核对或按授权更新配套。",
+              "includes": [
+                "cover_entry",
+                "cover_appeal",
+                "project_author"
+              ]
+            }
+          ],
+          "combinations": [],
+          "base_limits": {
+            "nonspace_chars": 16000,
+            "utf8_bytes": 39000
+          },
+          "limits": {
+            "nonspace_chars": 20000,
+            "utf8_bytes": 52000
+          },
+          "baseline": {
+            "base": {
+              "nonspace_chars": 13352,
+              "utf8_bytes": 33723
+            },
+            "registered_maximum": {
+              "nonspace_chars": 17039,
+              "utf8_bytes": 44361
+            }
+          },
+          "limit_basis": "2026-10-23 new adopted-title workflow baseline plus 15%, rounded up to 1,000 units; existing scenario limits unchanged. Cover rules are conditional on affected companion material."
         }
       ]
     }

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       draft_release_id:
-        description: 'Existing windows-v0.2.1 draft release ID; 0 disables all release uploads'
+        description: 'Existing windows-v0.2.2 draft release ID; 0 disables all release uploads'
         required: false
         default: '0'
         type: string
@@ -71,9 +71,9 @@ jobs:
         run: |
           $destination = "$env:RUNNER_TEMP\安装验证 空格"
           $installer = Get-Item dist/story-workbench-*-windows-x86_64-setup.exe
-          $previous = "$env:RUNNER_TEMP\story-workbench-0.2.0-windows-x86_64-setup.exe"
-          Invoke-WebRequest -Uri 'https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.0/story-workbench-0.2.0-windows-x86_64-setup.exe' -OutFile $previous
-          if ((Get-FileHash $previous -Algorithm SHA256).Hash.ToLowerInvariant() -ne '72289c4b08aabbfe6de83408e3414fa2a548c4dd4f801a1fb5234ccde98507ce') { throw 'Previous release checksum mismatch' }
+          $previous = "$env:RUNNER_TEMP\story-workbench-0.2.1-windows-x86_64-setup.exe"
+          Invoke-WebRequest -Uri 'https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.1/story-workbench-0.2.1-windows-x86_64-setup.exe' -OutFile $previous
+          if ((Get-FileHash $previous -Algorithm SHA256).Hash.ToLowerInvariant() -ne '736adaf46845bb72763a77cbe7bc11892f556d676703cdef38a70b69a7ef53dd') { throw 'Previous release checksum mismatch' }
           $prior = Start-Process -FilePath $previous -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/DIR=`"$destination`"") -Wait -PassThru
           if ($prior.ExitCode -ne 0) { throw 'Previous release installation failed' }
           $priorHash = (Get-FileHash "$destination\StoryWorkbench.exe" -Algorithm SHA256).Hash
@@ -84,7 +84,7 @@ jobs:
           if ($backup.Count -ne 1 -or (Get-FileHash "$($backup[0].FullName)\StoryWorkbench.exe" -Algorithm SHA256).Hash -ne $priorHash) { throw 'Previous release backup not preserved' }
           $priorVersion = (Get-Content "$($backup[0].FullName)\build-manifest.json" -Raw | ConvertFrom-Json).client_version
           $newVersion = (Get-Content "$destination\build-manifest.json" -Raw | ConvertFrom-Json).client_version
-          if ($priorVersion -ne '0.2.0' -or $newVersion -ne '0.2.1') { throw 'Cross-version upgrade mismatch' }
+          if ($priorVersion -ne '0.2.1' -or $newVersion -ne '0.2.2') { throw 'Cross-version upgrade mismatch' }
           @{ok=$true; previous_version=$priorVersion; installed_version=$newVersion; old_host_preserved=$true} | ConvertTo-Json | Set-Content dist/windows-previous-upgrade.json
           & "$destination\runtime\python.exe" -I -B "$destination\Scripts\story.py" --version
           if ($LASTEXITCODE -ne 0) { throw "Installed backend failed" }
@@ -121,7 +121,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Installed processes survived uninstall" }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.2.1-windows-x86_64-installer
+          name: story-workbench-0.2.2-windows-x86_64-installer
           compression-level: 0
           path: |
             dist/story-workbench-*-windows-x86_64-setup.exe
@@ -135,7 +135,7 @@ jobs:
           if-no-files-found: error
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.2.1-windows-x86_64-portable
+          name: story-workbench-0.2.2-windows-x86_64-portable
           compression-level: 0
           path: |
             dist/story-workbench-windows-x86_64.zip
@@ -145,7 +145,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.2.1-windows-build-diagnostic
+          name: story-workbench-0.2.2-windows-build-diagnostic
           path: |
             dist/windows-build-diagnostic.json
             dist/windows-installation-lifecycle.json
@@ -159,7 +159,7 @@ jobs:
       - name: Preserve standalone distribution verification
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.2.1-windows-x86_64-verification
+          name: story-workbench-0.2.2-windows-x86_64-verification
           path: |
             dist/windows-install.log
             dist/windows-distribution-verification.json
@@ -196,9 +196,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.2.1-windows-x86_64-installer --dir downloaded/installer
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.2.2-windows-x86_64-installer --dir downloaded/installer
           if ($LASTEXITCODE -ne 0) { throw "Installer artifact download failed" }
-          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.2.1-windows-x86_64-portable --dir downloaded/portable
+          gh run download "${{ github.run_id }}" --repo NingCui29/story-skill --name story-workbench-0.2.2-windows-x86_64-portable --dir downloaded/portable
           if ($LASTEXITCODE -ne 0) { throw "Portable artifact download failed" }
       - name: Upload only to the specified matching draft
         shell: pwsh
@@ -212,6 +212,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: story-workbench-0.2.1-windows-draft-upload
+          name: story-workbench-0.2.2-windows-draft-upload
           path: windows-draft-upload.json
           if-no-files-found: warn

@@ -889,7 +889,7 @@ test('real driver rejects an unclaimed same-book user editor before preview with
   const config={platform:'fanqie',origin,execution_mode:'host_assisted_cua',urls:{drafts:BOOK_URL,edit:origin+'/main/writer/10/publish/{remote_id}/?enter_from=modifydraft'},
     identity:{account:{source:'guard_dom',selector:'#account',guard_url:origin+'/main/writer/user-info?enter_from=avatar'},
       book:{source:'page_url',templates:[origin+'/main/writer/chapter-manage/{book_id}&test?type=2',origin+'/main/writer/{book_id}/publish/{remote_id}/?enter_from=modifydraft',origin+'/preview/{book_id}&{remote_id}'],capture:'book_id',id_kind:'digits'}},
-    chapter_lists:[{scope:'drafts'},{scope:'non_drafts'}],editor:{remote_id:{source:'page_url',templates:[origin+'/main/writer/10/publish/{remote_id}/?enter_from=modifydraft'],capture:'remote_id',id_kind:'digits'}},
+    chapter_lists:[{scope:'drafts'},{scope:'non_drafts'}],editor:{ready:{selector:'#editor-ready',expected:'可编辑'},remote_id:{source:'page_url',templates:[origin+'/main/writer/10/publish/{remote_id}/?enter_from=modifydraft'],capture:'remote_id',id_kind:'digits'}},
     readback:{url:origin+'/preview/10&{remote_id}',remote_id:{source:'page_url',templates:[origin+'/preview/10&{remote_id}'],capture:'remote_id',id_kind:'digits'},
       header:{source:'dom',selector:'#header',format:'chapter_title',title_separator:' '},body:{source:'fanqie_preview_paragraphs_v1',selector:'#body'}}};
   const request={schema:1,id:'read-editor-safety',session_id:'user-editor-safety',binding_sha256:BINDING,binding:{profile_sha256:'profile',target:f.config.target},

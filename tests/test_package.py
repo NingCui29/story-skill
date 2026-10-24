@@ -56,9 +56,49 @@ class PackageVersionTests(unittest.TestCase):
                     package.package(output)
             self.assertEqual(output.read_bytes(), b"existing reviewed artifact")
 
+    def test_output_inside_source_is_rejected_without_creating_files_or_directories(self):
+        with tempfile.TemporaryDirectory(prefix="story-package-source-output-") as directory:
+            root = Path(directory)
+            source = root / "skills"
+            fixture_suite(source)
+            before = {path.relative_to(source): path.read_bytes()
+                      for path in source.rglob("*") if path.is_file()}
+            for parent in (source, source / "story-skill/new-output-directory"):
+                with self.subTest(parent=parent), patch.object(package, "SOURCE", source):
+                    with self.assertRaisesRegex(ValueError, "outside the skill source"):
+                        package.package(parent / "story-skill-0.6.1.zip")
+                self.assertEqual({path.relative_to(source): path.read_bytes()
+                                  for path in source.rglob("*") if path.is_file()}, before)
+            self.assertFalse((source / "story-skill/new-output-directory").exists())
+
+    def test_output_aliases_into_source_are_rejected_and_source_still_packages(self):
+        with tempfile.TemporaryDirectory(prefix="story-package-source-alias-") as directory:
+            root = Path(directory)
+            source = root / "skills"
+            fixture_suite(source)
+            alias = root / "source-alias"
+            output_alias = root / "story-skill-0.6.1.zip"
+            runtime = source / "story-skill/scripts/story.py"
+            before = runtime.read_bytes()
+            try:
+                alias.symlink_to(source, target_is_directory=True)
+                output_alias.symlink_to(runtime)
+            except OSError:
+                self.skipTest("Creating links is unavailable")
+            with patch.object(package, "SOURCE", source):
+                for output in (alias / "story-skill/new-output/story-skill-0.6.1.zip", output_alias):
+                    with self.subTest(output=output), self.assertRaisesRegex(ValueError, "outside the skill source"):
+                        package.package(output)
+                self.assertEqual(runtime.read_bytes(), before)
+                self.assertTrue(output_alias.is_symlink())
+                self.assertFalse((source / "story-skill/new-output").exists())
+                result = package.package(root / "artifacts/story-skill-0.6.1.zip")
+            self.assertTrue(Path(result["archive"]).is_file())
+            self.assertEqual(result["files"], len(package.suite_files("0.6.1")))
+
     def test_manifest_is_bound_to_version_and_unknown_families_are_rejected(self):
-        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061, "0.6.5": package.SUITE_FILES_V065, "0.6.6": package.SUITE_FILES_V065, "0.6.7": package.SUITE_FILES_V065, "0.6.8": package.SUITE_FILES_V065, "0.6.9": package.SUITE_FILES_V069, "0.6.10": package.SUITE_FILES_V0610, "0.6.11": package.SUITE_FILES_V0611, "0.6.12": package.SUITE_FILES_V0612, "0.6.13": package.SUITE_FILES_V0613, "0.6.14": package.SUITE_FILES_V0614, "0.6.15": package.SUITE_FILES_V0615, "0.6.16": package.SUITE_FILES_V0616, "0.6.17": package.SUITE_FILES_V0617, "0.6.18": package.SUITE_FILES_V0618, "0.6.19": package.SUITE_FILES_V0619, "0.6.20": package.SUITE_FILES_V0620, "0.6.21": package.SUITE_FILES_V0621, "0.6.22": package.SUITE_FILES_V0622}
-        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061, "0.6.5": package.SKILL_NAMES_V061, "0.6.6": package.SKILL_NAMES_V061, "0.6.7": package.SKILL_NAMES_V061, "0.6.8": package.SKILL_NAMES_V061, "0.6.9": package.SKILL_NAMES_V069, "0.6.10": package.SKILL_NAMES_V0610, "0.6.11": package.SKILL_NAMES_V0611, "0.6.12": package.SKILL_NAMES_V0612, "0.6.13": package.SKILL_NAMES_V0613, "0.6.14": package.SKILL_NAMES_V0614, "0.6.15": package.SKILL_NAMES_V0615, "0.6.16": package.SKILL_NAMES_V0616, "0.6.17": package.SKILL_NAMES_V0617, "0.6.18": package.SKILL_NAMES_V0618, "0.6.19": package.SKILL_NAMES_V0619, "0.6.20": package.SKILL_NAMES_V0620, "0.6.21": package.SKILL_NAMES_V0621, "0.6.22": package.SKILL_NAMES_V0622}
+        layouts = {"0.6.0": package.SUITE_FILES_V060, "0.6.1": package.SUITE_FILES_V061, "0.6.2": package.SUITE_FILES_V061, "0.6.3": package.SUITE_FILES_V061, "0.6.4": package.SUITE_FILES_V061, "0.6.5": package.SUITE_FILES_V065, "0.6.6": package.SUITE_FILES_V065, "0.6.7": package.SUITE_FILES_V065, "0.6.8": package.SUITE_FILES_V065, "0.6.9": package.SUITE_FILES_V069, "0.6.10": package.SUITE_FILES_V0610, "0.6.11": package.SUITE_FILES_V0611, "0.6.12": package.SUITE_FILES_V0612, "0.6.13": package.SUITE_FILES_V0613, "0.6.14": package.SUITE_FILES_V0614, "0.6.15": package.SUITE_FILES_V0615, "0.6.16": package.SUITE_FILES_V0616, "0.6.17": package.SUITE_FILES_V0617, "0.6.18": package.SUITE_FILES_V0618, "0.6.19": package.SUITE_FILES_V0619, "0.6.20": package.SUITE_FILES_V0620, "0.6.21": package.SUITE_FILES_V0621, "0.6.22": package.SUITE_FILES_V0622, "0.6.23": package.SUITE_FILES_V0623}
+        skill_layouts = {"0.6.0": package.SKILL_NAMES_V060, "0.6.1": package.SKILL_NAMES_V061, "0.6.2": package.SKILL_NAMES_V061, "0.6.3": package.SKILL_NAMES_V061, "0.6.4": package.SKILL_NAMES_V061, "0.6.5": package.SKILL_NAMES_V061, "0.6.6": package.SKILL_NAMES_V061, "0.6.7": package.SKILL_NAMES_V061, "0.6.8": package.SKILL_NAMES_V061, "0.6.9": package.SKILL_NAMES_V069, "0.6.10": package.SKILL_NAMES_V0610, "0.6.11": package.SKILL_NAMES_V0611, "0.6.12": package.SKILL_NAMES_V0612, "0.6.13": package.SKILL_NAMES_V0613, "0.6.14": package.SKILL_NAMES_V0614, "0.6.15": package.SKILL_NAMES_V0615, "0.6.16": package.SKILL_NAMES_V0616, "0.6.17": package.SKILL_NAMES_V0617, "0.6.18": package.SKILL_NAMES_V0618, "0.6.19": package.SKILL_NAMES_V0619, "0.6.20": package.SKILL_NAMES_V0620, "0.6.21": package.SKILL_NAMES_V0621, "0.6.22": package.SKILL_NAMES_V0622, "0.6.23": package.SKILL_NAMES_V0623}
         for version, expected in layouts.items():
             with self.subTest(version=version), tempfile.TemporaryDirectory() as directory:
                 self.assertEqual(package.skill_names(version), skill_layouts[version])
@@ -76,9 +116,10 @@ class PackageVersionTests(unittest.TestCase):
         self.assertEqual(len(package.SUITE_FILES_V069), 44)
         self.assertEqual(package.suite_files("0.6.9"), package.SUITE_FILES_V069)
         self.assertEqual(len(package.SUITE_FILES), 69)
-        self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V0622)
+        self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V0623)
         self.assertEqual(len(package.SUITE_FILES_V0621), 64)
         self.assertEqual(len(package.SUITE_FILES_V0622), 69)
+        self.assertEqual(package.SUITE_FILES_V0623, package.SUITE_FILES_V0622)
         self.assertEqual(set(package.SUITE_FILES_V0622) - set(package.SUITE_FILES_V0621), {
             "story-skill/scripts/story_rank.py",
             "story-skill/scripts/story_rank_sources.py",
@@ -120,7 +161,7 @@ class PackageVersionTests(unittest.TestCase):
         self.assertEqual(set(package.SUITE_FILES_V0613) - set(package.SUITE_FILES_V0612), {
             "story-skill-plan/references/outline.md",
         })
-        self.assertEqual(package.SKILL_NAMES, package.SKILL_NAMES_V0622)
+        self.assertEqual(package.SKILL_NAMES, package.SKILL_NAMES_V0623)
         self.assertEqual(len(package.SUITE_FILES_V0613), 50)
         self.assertNotIn("story-skill/references/workbench.md", package.SUITE_FILES_V0613)
         self.assertEqual(set(package.SUITE_FILES_V0614) - set(package.SUITE_FILES_V0613), {
@@ -148,7 +189,7 @@ class PackageVersionTests(unittest.TestCase):
             "story-skill-write/references/suspense-evidence.md",
         })
         self.assertIn("story-skill/scripts/story_workbench.py", package.SUITE_FILES)
-        for version in ("0.5.11", "0.6.00", "0.6.23", "0.6.99", "1.0.0", "2.4.6"):
+        for version in ("0.5.11", "0.6.00", "0.6.24", "0.6.99", "1.0.0", "2.4.6"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 package.suite_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):

@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import subprocess
+import time
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -92,6 +93,59 @@ class DeletedDraftRetirementTests(unittest.TestCase):
         if journal.exists():
             paths.extend(journal.glob("event-*.json"))
         return {path: path.read_bytes() for path in paths if not path.name.endswith(".retired.json")}
+
+    def bridge_session(self, session_id, *, lease=True, active=False):
+        bridge = base.story.platform_chrome_bridge
+        binding = {"target": self.drafts._target(self.manifest)}
+        session = {"schema": 1, "session_id": session_id, "binding": binding,
+                   "binding_sha256": bridge._digest(binding), "token_sha256": "a" * 64,
+                   "ttl_seconds": 120}
+        with bridge._directory(self.book.root, session_id, create=True) as directory, bridge._lock(directory):
+            bridge._write(directory, "session.json", session)
+            if lease:
+                bridge._write(directory, "lease.json", {"schema": 1, "session_id": session_id,
+                    "expires": time.time() + (120 if active else -120), "detached": not active})
+        return directory.path
+
+    def test_initialization_residue_does_not_block_precise_retirement_or_change_evidence(self):
+        packet = self.packet()
+        bridge = base.story.platform_chrome_bridge
+        self.bridge_session("1" * 32, lease=False)
+        with bridge._directory(self.book.root, "2" * 32, create=True) as directory, bridge._lock(directory):
+            bridge._write(directory, ".chrome-stage-" + "3" * 32, {"unpublished": True})
+        evidence = {path: path.read_bytes() for path in (self.book.root / bridge.DIRECTORY).rglob("*") if path.is_file()}
+        before = self.originals()
+        self.assertTrue(self.retire(packet)["executed"])
+        self.assertEqual(self.originals(), before)
+        self.assertEqual({path: path.read_bytes() for path in evidence}, evidence)
+        self.assertEqual(self.case.adapter.created, 0)
+        self.assertTrue(self.case.execute()["ok"])
+        self.assertEqual(self.case.adapter.created, 1)
+
+    def test_inactive_session_history_is_not_a_live_session_limit_for_retirement(self):
+        packet = self.packet()
+        bridge = base.story.platform_chrome_bridge
+        for session_id in ("1" * 32, "2" * 32, "3" * 32):
+            self.bridge_session(session_id)
+        with patch.object(bridge, "MAX_SESSIONS", 2):
+            self.assertTrue(self.retire(packet)["executed"])
+        self.assertTrue(self.case.execute()["ok"])
+        self.assertEqual(self.case.adapter.created, 1)
+
+    def test_real_live_lease_and_unknown_create_still_block_retirement_among_residue(self):
+        packet = self.packet()
+        bridge = base.story.platform_chrome_bridge
+        self.bridge_session("1" * 32, lease=False)
+        self.bridge_session("2" * 32, active=True)
+        self.assert_invalid(packet)
+        with bridge._directory(self.book.root, "2" * 32) as directory, bridge._lock(directory):
+            bridge._write(directory, "lease.json", {"schema": 1, "session_id": "2" * 32,
+                "expires": time.time() - 1, "detached": True}, replace=True)
+            bridge._write(directory, "claimed-" + "4" * 32 + ".json", {"operation": "create_draft"})
+        before = self.originals()
+        self.assert_invalid(packet)
+        self.assertEqual(self.originals(), before)
+        self.assertEqual(self.case.adapter.created, 0)
 
     def test_dry_run_and_explicit_acknowledgement_do_not_change_any_history(self):
         packet = self.packet(); before = self.originals()
@@ -205,6 +259,7 @@ class DeletedDraftRetirementTests(unittest.TestCase):
         (folder / ("claimed-" + "e" * 32 + ".json")).write_text("{}")
         unavailable = base.story.StoryError("platform_chrome_worker_unavailable", "closed")
         bridge = SimpleNamespace(DIRECTORY=".story/fake-bridge", MAX_SESSIONS=100,
+            _attachment_lock=lambda root: nullcontext(), _uninitialized_session=lambda directory: False,
             _directory=lambda root, name: base.story._pinned_directory(folder),
             _lock=lambda directory: nullcontext(), _session=lambda directory: {"binding": {"target": packet["target"]}},
             _lease=lambda directory, session: {"active": True},

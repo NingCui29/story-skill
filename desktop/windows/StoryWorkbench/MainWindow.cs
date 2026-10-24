@@ -15,7 +15,7 @@ namespace StoryWorkbench;
 
 public sealed class MainWindow : Window
 {
-    public const string ClientVersion = "0.2.1";
+    public const string ClientVersion = "0.2.2";
     private readonly LaunchOptions options;
     private readonly BackendResult backend;
     private readonly ThemePreferences preferences;

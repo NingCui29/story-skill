@@ -295,14 +295,11 @@ class ChromeBridgeTests(unittest.TestCase):
                          self.root, binding, self.config)
 
     def test_obsolete_fanqie_host_profile_cannot_open_editor_for_reconciliation(self):
-        obsolete = {**profile(), "execution_mode": "host_assisted_cua"}
+        obsolete = {**profile("fanqie"), "execution_mode": "host_assisted_cua"}
         self.path.write_text(json.dumps(obsolete))
-        preview = self.preview(reconcile_only=True)
-        self.assertFalse(preview["can_start"])
-        self.assertIn("platform_browser_readback_required", preview["blockers"])
-        self.assertIsNone(preview["preview_token"])
+        self.assert_code("platform_browser_readback_required", self.preview, reconcile_only=True)
         self.assert_code("platform_browser_readback_required", bridge.HostAdapter,
-                         self.root, self.binding(), obsolete)
+                         self.root, {}, obsolete)
 
     def test_attach_requires_real_probe_acknowledgement_before_local_preview_can_start(self):
         result = self.attach(healthy=False)
@@ -468,6 +465,35 @@ class ChromeBridgeTests(unittest.TestCase):
             self.assertFalse(bridge.worker_status(self.root, self.binding())["attached"])
             self.assert_code("platform_chrome_worker_unavailable", bridge.heartbeat, self.book, self.handle)
 
+    def test_restored_incomplete_or_invalid_sessions_are_opaque_and_unmodified(self):
+        preserved = {}
+        for name, content in (("c" * 32, None), ("d" * 32, {"invalid": "restored metadata"})):
+            with bridge._directory(self.root, name, create=True) as directory:
+                bridge._write(directory, bridge.RESTORED_EVIDENCE, {"retained": True})
+                if content is not None:
+                    bridge._write(directory, "session.json", content)
+            queue = self.root / bridge.DIRECTORY / name
+            preserved.update({path: path.read_bytes() for path in queue.iterdir() if path.is_file()})
+        status = bridge.worker_status(self.root, self.binding())
+        self.assertFalse(status["attached"])
+        self.assertEqual(status["active_sessions"], 0)
+        self.assertEqual({path: path.read_bytes() for path in preserved}, preserved)
+        self.assertEqual({path for path in (self.root / bridge.DIRECTORY).rglob('*') if path.is_file()}, set(preserved))
+        self.attach()
+        self.assertTrue(bridge.worker_status(self.root, self.binding())["ready"])
+
+    def test_invalid_session_without_restore_marker_is_still_rejected(self):
+        with bridge._directory(self.root, "c" * 32, create=True) as directory:
+            bridge._write(directory, "session.json", {"invalid": "active metadata"})
+        self.assert_code("platform_chrome_invalid_message", bridge.worker_status, self.root, self.binding())
+
+    def test_linked_restore_marker_cannot_hide_invalid_session(self):
+        with bridge._directory(self.root, "c" * 32, create=True) as directory:
+            bridge._write(directory, "session.json", {"invalid": "active metadata"})
+            marker = directory.path / bridge.RESTORED_EVIDENCE
+            os.link(directory.path / "session.json", marker)
+        self.assert_code("unsafe_publish_path", bridge.worker_status, self.root, self.binding())
+
     def test_detached_session_history_does_not_exhaust_future_attachments(self):
         preserved = {}
         with patch.object(bridge, "MAX_SESSIONS", 2):
@@ -575,6 +601,62 @@ class ChromeBridgeTests(unittest.TestCase):
         config = copy.deepcopy(self.config)
         config["editor"]["body"]["javascript"] = "steal()"
         self.assert_code("platform_chrome_invalid_profile", bridge.validate_profile, config)
+
+    def test_host_profile_rejects_identity_sources_only_supported_by_standalone_before_attach(self):
+        from tests.test_platform_browser import BrowserTests, field
+        for location in ("account", "book", "remote_id"):
+            with self.subTest(location=location):
+                config = BrowserTests().url_guard_profile("qimao")
+                config["editor"]["ready"] = field("#save", expected="保存草稿", enabled=True)
+                if location == "remote_id":
+                    config["editor"][location] = field("#remote-id", attribute="data-id")
+                else:
+                    config["identity"][location] = field("#" + location)
+                self.assertEqual(bridge.validate_profile(config), "playwright")
+                config["execution_mode"] = "host_assisted_cua"
+                self.assert_code("platform_chrome_invalid_profile", bridge.validate_profile, config)
+        self.assertEqual(bridge.validate_profile(self.config), "host_assisted_cua")
+        unsupported = copy.deepcopy(self.config)
+        unsupported["identity"]["account"] = field("#account", attribute="data-id")
+        self.path.write_text(json.dumps(unsupported), encoding="utf-8")
+        self.assert_code("platform_chrome_invalid_profile", bridge.attach,
+                         self.book, self.plan["id"], self.path.name, self.handle)
+        self.assertFalse(self.handle.exists())
+        self.assertFalse((self.root / bridge.DIRECTORY).exists())
+
+    def test_host_required_editor_and_row_contracts_reject_unsupported_profiles_statically(self):
+        from tests.test_platform_browser import field
+        base = copy.deepcopy(self.config)
+        base["editor"]["ready"] = field("#save", expected="保存草稿", enabled=True)
+        for index, change in enumerate((
+            lambda config: config["editor"].pop("ready"),
+            lambda config: config["editor"].update(ready=None),
+            lambda config: config["chapter_lists"][0]["chapter"].update(source="page_url"),
+            lambda config: config["chapter_lists"][0]["link"].update(source="prosemirror_paragraphs"),
+            lambda config: config["readback"]["header"].update(title_separator=""),
+        )):
+            with self.subTest(index=index):
+                config = copy.deepcopy(base)
+                change(config)
+                standalone = {**config, "execution_mode": "playwright"}
+                self.assertEqual(bridge.validate_profile(standalone), "playwright")
+                self.assert_code("platform_chrome_invalid_profile", bridge.validate_profile, config)
+
+    def test_host_management_tab_mapping_is_checked_before_connecting(self):
+        base = story.platform_browser.fanqie_profile_from_book_url(
+            "https://fanqienovel.com/main/writer/chapter-manage/100&test?type=2")["profile"]
+        self.assertEqual(bridge.validate_profile(base), "host_assisted_cua")
+        for index, change in enumerate((
+            lambda config: config["chapter_lists"][0]["coverage"].update(expected="其他页面"),
+            lambda config: config["chapter_lists"][0]["coverage"].update(attribute="title"),
+            lambda config: config["chapter_lists"][0]["coverage"].update(source=None),
+            lambda config: config["chapter_lists"].append(copy.deepcopy(config["chapter_lists"][0])),
+        )):
+            with self.subTest(index=index):
+                config = copy.deepcopy(base)
+                change(config)
+                self.assertEqual(bridge.validate_profile({**config, "execution_mode": "playwright"}), "playwright")
+                self.assert_code("platform_chrome_invalid_profile", bridge.validate_profile, config)
 
     def test_cli_attaches_claims_heartbeats_and_detaches_without_printing_token(self):
         def command(action, *args):

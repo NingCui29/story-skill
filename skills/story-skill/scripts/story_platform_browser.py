@@ -29,6 +29,97 @@ _CREATE_LABEL = re.compile(r"(?:新建|创建|新增).*草稿|\b(?:new|create)\b
 api = None
 
 
+# Shared by ordinary reads and the current editor snapshot; serialization stays exact.
+_EDITOR_PARAGRAPHS_JS = r"""(el) => {
+  const reject = () => ({ok: false, reason: "unsupported_prosemirror_dom"});
+  if (!el || el.getAttribute("contenteditable") !== "true") return reject();
+  const nodes = Array.from(el.childNodes);
+  const element = (node, tag) => node && node.nodeType === 1 && node.tagName === tag;
+  const trailingBreak = node => element(node, "BR") &&
+    node.classList.contains("ProseMirror-trailingBreak");
+  const emptyParagraph = node => element(node, "P") &&
+    node.childNodes.length === 1 && trailingBreak(node.childNodes[0]);
+  // One precisely observed AI suggestion widget replaces the final empty P.
+  // Its fixed UI text is ignored only in this exact final sentinel structure.
+  const classes = (node, expected) => node && node.getAttribute("class") === expected;
+  const aiSentinel = node => {
+    if (!node || node.outerHTML !== '<p><syl-inline __syl_tag="true" ignoreel="true" contenteditable="false" class="ProseMirror-widget"><span class="editor-operability-shadow-wrap"><span class="editor-operability-shadow"><i class="tomato-ai-tool-inspire-v2"></i>暂时没有思路，使用卡文锦囊，AI帮你构思剧情</span></span></syl-inline><img class="ProseMirror-separator" alt=""><br class="ProseMirror-trailingBreak"></p>') return false;
+    if (!element(node, "P") || node.childNodes.length !== 3) return false;
+    const [widget, image, lineBreak] = Array.from(node.childNodes);
+    if (!element(widget, "SYL-INLINE") || widget.getAttribute("__syl_tag") !== "true" ||
+        widget.getAttribute("ignoreel") !== "true" || widget.getAttribute("contenteditable") !== "false" ||
+        !classes(widget, "ProseMirror-widget") || widget.childNodes.length !== 1 ||
+        !element(image, "IMG") || !classes(image, "ProseMirror-separator") || image.getAttribute("alt") !== "" ||
+        !trailingBreak(lineBreak)) return false;
+    const outer = widget.childNodes[0];
+    if (!element(outer, "SPAN") || !classes(outer, "editor-operability-shadow-wrap") || outer.childNodes.length !== 1) return false;
+    const inner = outer.childNodes[0];
+    if (!element(inner, "SPAN") || !classes(inner, "editor-operability-shadow") || inner.childNodes.length !== 2) return false;
+    const [icon, label] = Array.from(inner.childNodes);
+    return element(icon, "I") && classes(icon, "tomato-ai-tool-inspire-v2") && icon.childNodes.length === 0 &&
+      label.nodeType === 3 && label.textContent === "暂时没有思路，使用卡文锦囊，AI帮你构思剧情";
+  };
+  // The one observed empty-editor placeholder is UI chrome, not novel text.
+  if (nodes.length === 1 && element(nodes[0], "P")) {
+    const children = Array.from(nodes[0].childNodes);
+    if (children.length === 3 && element(children[0], "SPAN") &&
+        children[0].classList.contains("syl-placeholder") &&
+        children[0].classList.contains("ProseMirror-widget") &&
+        children[0].getAttribute("ignoreel") === "true" &&
+        children[0].getAttribute("contenteditable") === "false" &&
+        children[0].textContent === "请输入正文" &&
+        Array.from(children[0].childNodes).every(node => node.nodeType === 3) &&
+        element(children[1], "IMG") &&
+        children[1].classList.contains("ProseMirror-separator") &&
+        children[1].getAttribute("alt") === "" && trailingBreak(children[2])) {
+      return {ok: true, value: ""};
+    }
+  }
+  // Exactly one observed final empty paragraph is an editor sentinel.
+  // Never rstrip(), trim(), or remove any other empty paragraph.
+  if (nodes.length < 2 || (!emptyParagraph(nodes[nodes.length - 1]) &&
+      !aiSentinel(nodes[nodes.length - 1]))) return reject();
+  const paragraphs = [];
+  for (const paragraph of nodes.slice(0, -1)) {
+    if (!element(paragraph, "P")) return reject();
+    if (emptyParagraph(paragraph)) {
+      paragraphs.push("");
+      continue;
+    }
+    let text = "";
+    for (const child of Array.from(paragraph.childNodes)) {
+      if (child.nodeType !== 3) return reject();
+      text += child.textContent;
+    }
+    // A zero-child P was not part of the observed saved format.
+    if (paragraph.childNodes.length === 0) return reject();
+    paragraphs.push(text);
+  }
+  return {ok: true, value: paragraphs.join("\n")};
+}"""
+
+# Shared by the loading read and the final current-page snapshot.
+_PREVIEW_PARAGRAPHS_JS = r"""(el) => {
+  const bad = () => ({ok: false});
+  if (!el || el.nodeType !== 1) return bad();
+  const nodes = Array.from(el.childNodes);
+  if (nodes.length === 0) return {ok: false, pending: true};
+  const values = [];
+  for (const p of nodes) {
+    if (p.nodeType !== 1 || p.tagName !== 'P' || !p.outerHTML.startsWith('<p>')) return bad();
+    const children = Array.from(p.childNodes);
+    const blankBreak = children.length === 1 && children[0].nodeType === 1 && children[0].tagName === 'BR' &&
+      children[0].outerHTML === '<br>' && children[0].childNodes.length === 0;
+    if (blankBreak) { values.push(''); continue; }
+    if (children.some(child => child.nodeType !== 3 || typeof child.textContent !== 'string')) return bad();
+    values.push(children.map(child => child.textContent).join(''));
+  }
+  const last = nodes[nodes.length - 1];
+  if (last.childNodes.length !== 0) return bad();
+  values.pop();
+  return {ok: true, value: values.join('\n')};
+}"""
+
 def _normal_text(value):
     return value.replace("\r\n", "\n").replace("\r", "\n")
 
@@ -267,6 +358,13 @@ def _field(value, name, *, expected=False):
     return value
 
 
+def _editor_marker(value, name):
+    value = _field(value, name, expected=True)
+    if value.get("source") not in (None, "dom"):
+        _fail("invalid_profile", "编辑器保存、就绪和新建标志只支持实际DOM字段。", field=name + ".source")
+    return value
+
+
 def _stable_id(value):
     if not isinstance(value, str) or not _ID.fullmatch(value):
         _fail("invalid_remote_id", "未能从后台DOM取得有效的稳定草稿ID。")
@@ -282,7 +380,8 @@ class BrowserAdapter:
     """
 
     @_guard
-    def __init__(self, profile, timeout_ms=15000, login_timeout_ms=180000, progress_callback=None):
+    def __init__(self, profile, timeout_ms=15000, login_timeout_ms=180000, progress_callback=None,
+                 *, comparison_policy="strict"):
         self.profile = deepcopy(_object(profile, "profile"))
         self.timeout_ms, self.login_timeout_ms = timeout_ms, login_timeout_ms
         if (type(timeout_ms) is not int or not 1 <= timeout_ms <= 300000 or
@@ -302,6 +401,10 @@ class BrowserAdapter:
             _fail("invalid_profile", "进度回调必须是可调用对象。")
         self._progress_callback = progress_callback
         self._validate_profile()
+        if (not isinstance(comparison_policy, str) or comparison_policy not in ("strict", "fanqie_terminal_lf_v1") or
+                (comparison_policy != "strict" and self.platform != "fanqie")):
+            _fail("invalid_comparison_policy", "回读比较策略无效；尾换行等价仅适用于番茄的明确授权批次。")
+        self.comparison_policy = comparison_policy
 
     def _progress(self, stage, status="running"):
         # Callbacks receive only fixed workflow states, never URLs, identities,
@@ -488,15 +591,15 @@ class BrowserAdapter:
             _fail("invalid_profile", "编辑器状态只支持真实DOM或完整草稿目录证据。")
         if not _DRAFT_LABEL.search(state["expected"]) or _UNSAFE_SAVE.search(state["expected"]):
             _fail("invalid_profile", "草稿状态的预期值必须明确表示草稿。")
-        _field(editor.get("saved"), "editor.saved", expected=True)
+        _editor_marker(editor.get("saved"), "editor.saved")
         if editor.get("ready") is not None:
-            ready = _field(editor["ready"], "editor.ready", expected=True)
+            ready = _editor_marker(editor["ready"], "editor.ready")
             if type(ready.get("enabled", False)) is not bool:
                 _fail("invalid_profile", "编辑器就绪字段enabled须为布尔值。")
         elif state.get("source") == "listing":
             _fail("invalid_profile", "使用目录草稿证据时，编辑器必须配置独立的正向加载就绪标志。")
         if editor.get("new") is not None:
-            _field(editor["new"], "editor.new", expected=True)
+            _editor_marker(editor["new"], "editor.new")
         save = _object(editor.get("save"), "editor.save")
         if save.get("mode") not in ("button", "autosave"):
             _fail("invalid_profile", "保存方式必须是button或autosave。")
@@ -510,6 +613,8 @@ class BrowserAdapter:
             if state.get("source") == "scope" and ((listing["scope"] == "drafts") != (state["value"] == editor["state"]["expected"])):
                 _fail("incomplete_scope", "专属目录的范围状态与编辑器草稿状态不一致。")
         readback = profile.get("readback")
+        if self.platform == "fanqie" and readback is None:
+            _fail("readback_required", "番茄必须配置独立只读预览回读；不会打开编辑器核对旧稿。")
         if readback is not None:
             readback = _object(readback, "readback")
             if set(readback) != {"url", "remote_id", "header", "body"} or self.platform != "fanqie":
@@ -738,6 +843,9 @@ class BrowserAdapter:
         return locator.count() == 1 and locator.is_visible()
 
     def _guard_account_value(self, spec, *, refresh=False):
+        if getattr(self, "_guard_current_only", False):
+            self._current_editor_guard()
+            return self._target[1]
         if self._guard_page is None or self._guard_page.is_closed():
             self._guard_page = self._context.new_page()
             self._guard_refresh_pending = True
@@ -1114,10 +1222,15 @@ class BrowserAdapter:
                 self._list_page.wait_for_timeout(100)
         _fail("incomplete_list", "草稿列表分页超过安全上限，未能穷尽。")
 
-    def _confirm_listed_draft(self, remote_id, chapter=None):
+    def _confirm_listed_draft(self, remote_id, chapter=None, *, current_guard=False):
         catalog, matches, seen_ids = [], [], set()
-        for listing in self.lists:
-            self._scan_list(listing, chapter, matches, seen_ids, catalog)
+        previous_guard_mode = getattr(self, "_guard_current_only", False)
+        self._guard_current_only = previous_guard_mode or current_guard
+        try:
+            for listing in self.lists:
+                self._scan_list(listing, chapter, matches, seen_ids, catalog)
+        finally:
+            self._guard_current_only = previous_guard_mode
         for url, number, _, scope in catalog:
             if scope == "drafts" and number is None and self._id_from_url(url) != remote_id:
                 _fail("unnumbered_draft", "目录含其他无法核对章号的既有草稿；本次草稿确认已停止，远端结果待核对。")
@@ -1134,6 +1247,36 @@ class BrowserAdapter:
         spec = self.profile["editor"]["remote_id"]
         value = self._value(page, spec)
         return self._id_from_url(urljoin(page.url, value)) if spec.get("attribute") == "href" else _stable_id(value)
+
+    def _bind_created_editor_id(self, page, expected=None, *, source_url=None):
+        spec = self.profile["editor"]["remote_id"]
+        value = self._try_value(page, spec)
+        if value is None or value == "":
+            if expected is not None:
+                _fail("identity_mismatch", "已分配的新草稿ID在保存期间消失；远端结果待核对。")
+            if source_url is not None and page.url != source_url:
+                _fail("identity_mismatch", "尚未取得新草稿ID时创建地址发生变化；未继续填写或保存。")
+            return None
+        actual = (self._id_from_url(urljoin(page.url, value))
+                  if spec.get("attribute") == "href" else _stable_id(value))
+        if expected is not None and actual != expected:
+            _fail("identity_mismatch", "已分配的新草稿ID在保存期间改变；远端结果待核对。")
+        if source_url is not None and page.url != source_url and self._id_from_url(page.url) != actual:
+            _fail("identity_mismatch", "新草稿页面地址与已分配ID不一致；远端结果待核对。")
+        return actual
+
+    def _check_new_editor_anchor(self, page, anchors, source_url, *, allow_allocation=False):
+        self._require_open()
+        self._safe_url(page.url)
+        if not allow_allocation and page.url != source_url:
+            _fail("identity_mismatch", "开始填写前新建页面地址发生变化；未继续填写。")
+        for locator, handle in anchors:
+            stable = locator.evaluate_all("""(elements, expected) => ({
+  count: elements.length, same: elements.length === 1 && elements[0] === expected &&
+    expected.isConnected && expected.ownerDocument === document
+})""", handle)
+            if not isinstance(stable, dict) or stable.get("count") != 1 or stable.get("same") is not True:
+                _fail("editor_changed", "尚未确认草稿ID时原新建字段或文档发生变化；未继续填写。")
 
     def _require_editor_draft(self, page):
         spec = self.profile["editor"]["state"]
@@ -1174,18 +1317,170 @@ class BrowserAdapter:
                 _fail("incomplete_dom", "等待编辑器加载后仍未取得实际章号；已停止。")
             page.wait_for_timeout(100)
 
+    def _current_editor_guard(self):
+        account = self.profile["identity"]["account"]
+        if account.get("source") != "guard_dom":
+            return
+        page = self._guard_page
+        if page is None or page.is_closed():
+            _fail("identity_unavailable", "最终账号核对页已不可用；不会重新加载。")
+        self._safe_url(page.url)
+        if page.url != account["guard_url"]:
+            _fail("identity_mismatch", "最终账号核对页地址发生变化。")
+        actual = self._preview_current_value(page, account).strip()
+        if not actual:
+            _fail("identity_unavailable", "最终账号标识为空；不会重新等待加载。")
+        if page.is_closed() or page.url != account["guard_url"] or actual != self._target[1]:
+            _fail("identity_mismatch", "最终账号或核对页地址与准备目标不符。")
+
+    def _current_editor_snapshot(self, page, expected_url):
+        editor = self.profile["editor"]
+        specs = {name: editor[name] for name in ("remote_id", "chapter", "title", "body", "state")}
+        specs.update(self.profile["identity"])
+        return self._current_readback_snapshot(page, expected_url, specs)
+
+    def _current_readback_snapshot(self, page, expected_url, specs):
+        # Resolve through Playwright so its supported selector engines keep
+        # working. Read every resolved DOM value in one JS turn, rejecting
+        # detached/replaced documents instead of waiting for replacements.
+        fields, handles, locators = [], [], []
+        try:
+            for name, spec in specs.items():
+                if spec.get("source") in ("page_url", "guard_dom", "listing"):
+                    continue
+                locator = page.locator(spec["selector"])
+                elements = locator.element_handles()
+                handles.extend(elements)
+                fields.append([name, spec, elements])
+                locators.append((name, locator, elements))
+            snapshot_script = """fields => {
+  // editorReadbackSnapshot: no awaits or locator retries in this observation.
+  const paragraphValue = """ + _EDITOR_PARAGRAPHS_JS + """;
+  const previewValue = """ + _PREVIEW_PARAGRAPHS_JS + """;
+  const values = {};
+  for (const [name, spec, elements] of fields) {
+    if (elements.length !== 1) { values[name] = {count: elements.length}; continue; }
+    const el = elements[0];
+    if (!el.isConnected || el.ownerDocument !== document) {
+      values[name] = {count: 1, connected: false}; continue;
+    }
+    if (spec.source === 'prosemirror_paragraphs') {
+      values[name] = {count: 1, connected: true, ...paragraphValue(el)}; continue;
+    }
+    if (spec.source === 'fanqie_preview_paragraphs_v1') {
+      values[name] = {count: 1, connected: true, ...previewValue(el)}; continue;
+    }
+    const value = spec.attribute != null ? el.getAttribute(spec.attribute) :
+      ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName) ? el.value :
+      el.isContentEditable ? el.innerText : el.textContent;
+    values[name] = {count: 1, connected: true, value};
+  }
+  return {url: location.href, fields: values};
+}"""
+            packet = page.evaluate(snapshot_script, fields)
+            # Resolving a later locator may allow an earlier selector to gain
+            # another match. Reject that drift without attachment waits.
+            for name, locator, elements in locators:
+                check = locator.evaluate_all("""(elements, expected) => ({
+  count: elements.length, same: elements.length === 1 && elements[0] === expected
+})""", elements[0] if len(elements) == 1 else None)
+                count = check.get("count") if isinstance(check, dict) else None
+                if type(count) is not int or count != 1:
+                    _fail("ambiguous_dom" if type(count) is int and count > 1 else "incomplete_dom",
+                          "最终编辑页字段匹配数发生变化。", field=name)
+                if check.get("same") is not True:
+                    _fail("editor_changed", "最终编辑页字段目标节点发生变化。", field=name)
+            terminal = page.evaluate(snapshot_script, fields)
+            if terminal != packet:
+                _fail("editor_changed", "最终字段定位核对期间回读页内容发生变化。")
+            packet = terminal
+        finally:
+            for handle in handles:
+                try:
+                    handle.dispose()
+                except Exception:
+                    pass
+        self._require_open()
+        self._safe_url(page.url)
+        if (page.is_closed() or page.url != expected_url or not isinstance(packet, dict) or
+                packet.get("url") != expected_url):
+            _fail("identity_mismatch", "最终编辑页地址发生变化；已停止核对。")
+        values = packet.get("fields")
+        if not isinstance(values, dict):
+            _fail("incomplete_dom", "最终编辑页没有完整的当前字段快照。")
+        result = {}
+        for name, spec in specs.items():
+            if spec.get("source") == "page_url":
+                result[name] = self._url_value(packet["url"], spec)
+                continue
+            if spec.get("source") in ("guard_dom", "listing"):
+                continue
+            item = values.get(name)
+            if not isinstance(item, dict) or type(item.get("count")) is not int:
+                _fail("incomplete_dom", "最终编辑页字段缺失。", field=name)
+            if item["count"] > 1:
+                _fail("ambiguous_dom", "最终编辑页字段不唯一。", field=name)
+            if item["count"] != 1 or item.get("connected") is not True:
+                _fail("incomplete_dom", "最终编辑页字段已消失；不会重新等待加载。", field=name)
+            if (spec.get("source") in ("prosemirror_paragraphs", "fanqie_preview_paragraphs_v1") and
+                    item.get("ok") is not True):
+                _fail("unsupported_editor", "正文段落结构与已验收格式不同；未猜测或裁剪文字。")
+            if not isinstance(item.get("value"), str):
+                _fail("incomplete_dom", "最终编辑页字段没有完整值。", field=name)
+            result[name] = item["value"]
+        return result
+
+    def _confirm_editor_snapshot(self, page, expected_url, remote_id, chapter, observed):
+        self._require_open()
+        self._safe_url(page.url)
+        if page.url != expected_url:
+            _fail("identity_mismatch", "读取正文后编辑页地址发生变化；已停止核对。")
+        self._current_editor_guard()
+        final = self._current_editor_snapshot(page, expected_url)
+        self._current_editor_guard()
+        if self.profile["identity"]["account"].get("source") == "guard_dom":
+            after_guard = self._current_editor_snapshot(page, expected_url)
+            if after_guard != final:
+                _fail("editor_changed", "最终账号核对期间编辑页字段发生变化。")
+        # Guard reads use a different page. Bind both sides to the editor URL;
+        # they must never refresh or wait away a changed account.
+        self._require_open()
+        self._safe_url(page.url)
+        if page.is_closed() or page.url != expected_url:
+            _fail("identity_mismatch", "最终账号核对期间编辑页地址发生变化。")
+        for name, expected in zip(("account", "book"), self._target[1:]):
+            if name in final and final[name].strip() != expected:
+                _fail("identity_mismatch", "最终编辑页账号或作品与准备目标不符。", field=name)
+        spec = self.profile["editor"]["remote_id"]
+        actual = (self._id_from_url(urljoin(expected_url, final["remote_id"]))
+                  if spec.get("attribute") == "href" else _stable_id(final["remote_id"]))
+        if actual != remote_id or self._chapter(final["chapter"]) != chapter:
+            _fail("identity_mismatch", "最终编辑页草稿ID或章号与回读目标不符。")
+        if "state" in final and final["state"].strip() != self.profile["editor"]["state"]["expected"]:
+            _fail("not_draft", "最终编辑页状态已不明确为草稿；已停止。")
+        if final["title"] != observed["title"] or final["body"] != observed["body"]:
+            _fail("editor_changed", "编辑页标题或正文在核对期间发生变化。")
+
     def _read_draft(self, remote_id):
         self._require_open()
         if self._target is None:
             _fail("target_unverified", "回读草稿前必须核对平台账号和作品。")
         self._progress("reading_back")
         remote_id = _stable_id(remote_id)
+        if self.platform == "fanqie" and self.profile.get("readback") is None:
+            _fail("readback_required", "番茄必须配置独立只读预览回读；不会打开编辑器核对旧稿。")
         if self.profile.get("readback") is not None:
             return self._read_preview(remote_id)
         page = self._context.new_page()
         try:
             url = self.urls["edit"].replace("{remote_id}", remote_id)
             self._goto(page, url)
+            # A configured same-draft route may redirect to its canonical
+            # editor URL during navigation. Pin that arrival, then reject any
+            # later navigation while reading the editor.
+            readback_url = page.url
+            if self._id_from_url(readback_url) != remote_id:
+                _fail("identity_mismatch", "实际到达的编辑地址与回读草稿ID不符。")
             self._require_identity(page)
             self._wait_editor_ready(page)
             editor = self.profile["editor"]
@@ -1199,8 +1494,9 @@ class BrowserAdapter:
             observed = {"remote_id": remote_id, "title": self._value(page, editor["title"]),
                         "body": self._value(page, editor["body"]), "state": "draft", "url": page.url}
             if editor["state"].get("source") == "listing":
-                self._confirm_listed_draft(remote_id, chapter)
-                self._require_identity(page)
+                self._confirm_listed_draft(remote_id, chapter, current_guard=True)
+            self._confirm_editor_snapshot(page, readback_url, remote_id, chapter, observed)
+            observed["url"] = readback_url
             return observed
         finally:
             page.close()
@@ -1209,35 +1505,44 @@ class BrowserAdapter:
     def read_draft(self, remote_id):
         return self._read_draft(remote_id)
 
-    def _preview_header(self, page):
+    def _preview_current_value(self, page, spec):
+        # evaluate_all reads the current matches without locator attachment
+        # waits. A vanished final field must not become another loading phase.
+        packet = page.locator(spec["selector"]).evaluate_all("""(elements, attribute) => {
+  if (elements.length !== 1) return {count: elements.length};
+  const el = elements[0];
+  const value = attribute != null ? el.getAttribute(attribute) :
+    ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName) ? el.value :
+    el.isContentEditable ? el.innerText : el.textContent;
+  return {count: 1, value};
+}""", spec.get("attribute"))
+        if not isinstance(packet, dict) or type(packet.get("count")) is not int or packet["count"] < 0:
+            _fail("incomplete_dom", "最终预览字段没有可核对的当前节点。")
+        if packet["count"] > 1:
+            _fail("ambiguous_dom", "最终预览字段不唯一；已停止核对。")
+        if packet["count"] != 1 or not isinstance(packet.get("value"), str):
+            _fail("incomplete_dom", "最终预览字段已消失或没有完整值；不会重新等待加载。")
+        return packet["value"]
+
+    def _preview_header(self, page, *, current=False):
         spec = self.profile["readback"]["header"]
-        value = self._value(page, spec)
+        value = self._preview_current_value(page, spec) if current else self._value(page, spec)
+        return self._preview_header_value(value)
+
+    def _preview_header_value(self, value):
+        spec = self.profile["readback"]["header"]
         match = re.fullmatch(r"第([0-9]+)章" + re.escape(spec["title_separator"]) + r"([^\r\n]+)", value)
         if not match or not 1 <= int(match[1]) <= 1000000 or not match[2].strip():
             _fail("invalid_chapter", "只读预览页未提供精确的章号和完整标题。")
         return int(match[1]), match[2]
 
-    def _preview_paragraph_value(self, locator):
-        packet = locator.evaluate(r"""(el) => {
-  const bad = () => ({ok: false});
-  if (!el || el.nodeType !== 1) return bad();
-  const nodes = Array.from(el.childNodes);
-  if (nodes.length === 0) return bad();
-  const values = [];
-  for (const p of nodes) {
-    if (p.nodeType !== 1 || p.tagName !== 'P' || !p.outerHTML.startsWith('<p>')) return bad();
-    const children = Array.from(p.childNodes);
-    const blankBreak = children.length === 1 && children[0].nodeType === 1 && children[0].tagName === 'BR' &&
-      children[0].outerHTML === '<br>' && children[0].childNodes.length === 0;
-    if (blankBreak) { values.push(''); continue; }
-    if (children.some(child => child.nodeType !== 3 || typeof child.textContent !== 'string')) return bad();
-    values.push(children.map(child => child.textContent).join(''));
-  }
-  const last = nodes[nodes.length - 1];
-  if (last.childNodes.length !== 0) return bad();
-  values.pop();
-  return {ok: true, value: values.join('\n')};
-}""")
+    def _preview_paragraph_value(self, locator, *, allow_pending=False):
+        packet = locator.evaluate(_PREVIEW_PARAGRAPHS_JS)
+        # Only a completely unpopulated container is a known loading state.
+        # A partial paragraph tree remains unsupported, and the final stable
+        # recheck must never wait away a disappearance of already read text.
+        if allow_pending and packet == {"ok": False, "pending": True}:
+            return None
         if (not isinstance(packet, dict) or packet.get("ok") is not True or
                 not isinstance(packet.get("value"), str)):
             _fail("unsupported_editor", "只读预览正文结构与已核实的纯段落结构不同；未猜测或裁剪。")
@@ -1245,10 +1550,11 @@ class BrowserAdapter:
 
     def _read_preview(self, remote_id):
         config = self.profile["readback"]
+        expected_url = config["url"].replace("{remote_id}", remote_id)
         self._confirm_listed_draft(remote_id, self._chapter_ids.get(remote_id))
         page = self._context.new_page()
         try:
-            self._goto(page, config["url"].replace("{remote_id}", remote_id))
+            self._goto(page, expected_url)
             self._require_identity(page)
             if self._url_value(page.url, config["remote_id"]) != remote_id:
                 _fail("identity_mismatch", "实际预览页草稿ID与目标不符。")
@@ -1264,118 +1570,216 @@ class BrowserAdapter:
             chapter, title = self._preview_header(page)
             if remote_id in self._chapter_ids and self._chapter_ids[remote_id] != chapter:
                 _fail("identity_mismatch", "只读预览章号与目标不符。")
-            value = self._preview_paragraph_value(body)
+            while True:
+                self._require_identity(page)
+                if self._url_value(page.url, config["remote_id"]) != remote_id:
+                    _fail("identity_mismatch", "等待预览正文时草稿ID发生变化；已停止。")
+                if self._preview_header(page) != (chapter, title):
+                    _fail("editor_changed", "等待预览正文时章号或标题发生变化；已停止。")
+                value = self._preview_paragraph_value(body, allow_pending=True)
+                if time.monotonic() >= deadline:
+                    _fail("incomplete_dom", "只读预览正文尚未完整加载；已停止，需回读对账。")
+                if value is not None:
+                    break
+                page.wait_for_timeout(100)
             self._confirm_listed_draft(remote_id, chapter)
             self._require_identity(page)
             if (self._url_value(page.url, config["remote_id"]) != remote_id or
                     self._preview_header(page) != (chapter, title) or self._preview_paragraph_value(body) != value):
                 _fail("editor_changed", "只读预览身份、标题或正文在核对期间发生变化。")
-            return {"remote_id": remote_id, "title": title, "body": value, "state": "draft", "url": page.url}
+            # Final identity reads must not refresh a guard or poll missing DOM
+            # after the final body was observed. Pin both sides of those reads.
+            self._require_open()
+            self._safe_url(page.url)
+            if page.url != expected_url:
+                _fail("identity_mismatch", "最终正文读取后预览地址发生变化；已停止核对。")
+            account = self.profile["identity"]["account"]
+            account_page = self._guard_page if account.get("source") == "guard_dom" else page
+            if account_page is None or account_page.is_closed():
+                _fail("identity_unavailable", "最终账号核对页已不可用；不会重新加载。")
+            if account.get("source") == "guard_dom":
+                self._safe_url(account_page.url)
+                if account_page.url != account["guard_url"]:
+                    _fail("identity_mismatch", "最终账号核对页地址发生变化。")
+            actual_account = self._preview_current_value(account_page, account).strip()
+            if account.get("source") == "guard_dom" and account_page.url != account["guard_url"]:
+                _fail("identity_mismatch", "读取最终账号时核对页地址发生变化。")
+            if not actual_account:
+                _fail("identity_unavailable", "最终账号标识为空；不会重新等待加载。")
+            if actual_account != self._target[1]:
+                _fail("identity_mismatch", "最终账号与准备目标不符；已停止核对。")
+            self._safe_url(page.url)
+            if page.url != expected_url or self._url_value(page.url, self.profile["identity"]["book"]) != self._target[2]:
+                _fail("identity_mismatch", "读取最终账号时预览作品或地址发生变化。")
+            if self._preview_header(page, current=True) != (chapter, title):
+                _fail("editor_changed", "最终预览章号或标题发生变化。")
+            specs = {name: config[name] for name in ("header", "body")}
+            specs.update(self.profile["identity"])
+            final = self._current_readback_snapshot(page, expected_url, specs)
+            for name, expected in zip(("account", "book"), self._target[1:]):
+                if name in final and final[name].strip() != expected:
+                    _fail("identity_mismatch", "最终预览账号或作品发生变化。", field=name)
+            if self._preview_header_value(final["header"]) != (chapter, title) or final["body"] != value:
+                _fail("editor_changed", "最终预览标题或正文在核对账号期间发生变化。")
+            self._require_open()
+            self._safe_url(page.url)
+            if page.url != expected_url:
+                _fail("identity_mismatch", "读取最终标题时预览地址发生变化。")
+            return {"remote_id": remote_id, "title": title, "body": value, "state": "draft", "url": expected_url}
         finally:
             page.close()
 
     def _paragraph_value(self, locator):
-        packet = locator.evaluate(r"""(el) => {
-  const reject = () => ({ok: false, reason: "unsupported_prosemirror_dom"});
-  if (!el || el.getAttribute("contenteditable") !== "true") return reject();
-  const nodes = Array.from(el.childNodes);
-  const element = (node, tag) => node && node.nodeType === 1 && node.tagName === tag;
-  const trailingBreak = node => element(node, "BR") &&
-    node.classList.contains("ProseMirror-trailingBreak");
-  const emptyParagraph = node => element(node, "P") &&
-    node.childNodes.length === 1 && trailingBreak(node.childNodes[0]);
-  // One precisely observed AI suggestion widget replaces the final empty P.
-  // Its fixed UI text is ignored only in this exact final sentinel structure.
-  const classes = (node, expected) => node && node.getAttribute("class") === expected;
-  const aiSentinel = node => {
-    if (!node || node.outerHTML !== '<p><syl-inline __syl_tag="true" ignoreel="true" contenteditable="false" class="ProseMirror-widget"><span class="editor-operability-shadow-wrap"><span class="editor-operability-shadow"><i class="tomato-ai-tool-inspire-v2"></i>暂时没有思路，使用卡文锦囊，AI帮你构思剧情</span></span></syl-inline><img class="ProseMirror-separator" alt=""><br class="ProseMirror-trailingBreak"></p>') return false;
-    if (!element(node, "P") || node.childNodes.length !== 3) return false;
-    const [widget, image, lineBreak] = Array.from(node.childNodes);
-    if (!element(widget, "SYL-INLINE") || widget.getAttribute("__syl_tag") !== "true" ||
-        widget.getAttribute("ignoreel") !== "true" || widget.getAttribute("contenteditable") !== "false" ||
-        !classes(widget, "ProseMirror-widget") || widget.childNodes.length !== 1 ||
-        !element(image, "IMG") || !classes(image, "ProseMirror-separator") || image.getAttribute("alt") !== "" ||
-        !trailingBreak(lineBreak)) return false;
-    const outer = widget.childNodes[0];
-    if (!element(outer, "SPAN") || !classes(outer, "editor-operability-shadow-wrap") || outer.childNodes.length !== 1) return false;
-    const inner = outer.childNodes[0];
-    if (!element(inner, "SPAN") || !classes(inner, "editor-operability-shadow") || inner.childNodes.length !== 2) return false;
-    const [icon, label] = Array.from(inner.childNodes);
-    return element(icon, "I") && classes(icon, "tomato-ai-tool-inspire-v2") && icon.childNodes.length === 0 &&
-      label.nodeType === 3 && label.textContent === "暂时没有思路，使用卡文锦囊，AI帮你构思剧情";
-  };
-  // The one observed empty-editor placeholder is UI chrome, not novel text.
-  if (nodes.length === 1 && element(nodes[0], "P")) {
-    const children = Array.from(nodes[0].childNodes);
-    if (children.length === 3 && element(children[0], "SPAN") &&
-        children[0].classList.contains("syl-placeholder") &&
-        children[0].classList.contains("ProseMirror-widget") &&
-        children[0].getAttribute("ignoreel") === "true" &&
-        children[0].getAttribute("contenteditable") === "false" &&
-        children[0].textContent === "请输入正文" &&
-        Array.from(children[0].childNodes).every(node => node.nodeType === 3) &&
-        element(children[1], "IMG") &&
-        children[1].classList.contains("ProseMirror-separator") &&
-        children[1].getAttribute("alt") === "" && trailingBreak(children[2])) {
-      return {ok: true, value: ""};
-    }
-  }
-  // Exactly one observed final empty paragraph is an editor sentinel.
-  // Never rstrip(), trim(), or remove any other empty paragraph.
-  if (nodes.length < 2 || (!emptyParagraph(nodes[nodes.length - 1]) &&
-      !aiSentinel(nodes[nodes.length - 1]))) return reject();
-  const paragraphs = [];
-  for (const paragraph of nodes.slice(0, -1)) {
-    if (!element(paragraph, "P")) return reject();
-    if (emptyParagraph(paragraph)) {
-      paragraphs.push("");
-      continue;
-    }
-    let text = "";
-    for (const child of Array.from(paragraph.childNodes)) {
-      if (child.nodeType !== 3) return reject();
-      text += child.textContent;
-    }
-    // A zero-child P was not part of the observed saved format.
-    if (paragraph.childNodes.length === 0) return reject();
-    paragraphs.push(text);
-  }
-  return {ok: true, value: paragraphs.join("\n")};
-}""")
+        packet = locator.evaluate(_EDITOR_PARAGRAPHS_JS)
         if (not isinstance(packet, dict) or packet.get("ok") is not True or
                 not isinstance(packet.get("value"), str)):
             _fail("unsupported_editor", "正文段落结构与已验收格式不同；未猜测或裁剪文字。")
         return packet["value"]
 
-    def _paragraph_fill(self, page, locator, value):
+    def _checked_editor_action(self, locator, action, before_write, *args, before_action=None):
+        if before_write is None:
+            if before_action is not None:
+                before_action(locator)
+            return getattr(locator, action)(*args)
+        handles = locator.element_handles()
+        try:
+            if len(handles) != 1:
+                _fail("incomplete_dom", "实际写入前目标字段缺失或不唯一；未继续写入。")
+            handle = handles[0]
+            before_write()
+            packet = locator.evaluate_all("""(elements, expected) => ({
+  count: elements.length, same: elements.length === 1 && elements[0] === expected &&
+    expected.isConnected && expected.ownerDocument === document
+})""", handle)
+            if not isinstance(packet, dict) or packet.get("count") != 1 or packet.get("same") is not True:
+                _fail("editor_changed", "实际写入前目标字段或文档发生变化；未继续写入。")
+            before_write()
+            if before_action is not None:
+                before_action(handle)
+            # Bind the action to the already inspected element. A Locator
+            # action could wait for a replacement field on a different draft.
+            return getattr(handle, action)(*args)
+        finally:
+            for handle in handles:
+                try:
+                    handle.dispose()
+                except Exception:
+                    pass
+
+    def _paragraph_fill(self, page, locator, value, before_write=None):
         if not isinstance(value, str) or "\x00" in value:
             _fail("invalid_chapter", "正文必须是完整的无NUL纯文本。")
         normalized = value.replace("\r\n", "\n").replace("\r", "\n")
         if locator.evaluate('(el) => el.getAttribute("contenteditable") === "true"') is not True:
             _fail("unsupported_editor", "正文目标不再是可编辑段落容器。")
-        locator.click()
-        locator.press("Meta+A" if sys.platform == "darwin" else "Control+A")
-        locator.press("Backspace")
+        self._checked_editor_action(locator, "click", before_write)
+        self._checked_editor_action(locator, "press", before_write, "Meta+A" if sys.platform == "darwin" else "Control+A")
+        self._checked_editor_action(locator, "press", before_write, "Backspace")
         for index, line in enumerate(normalized.split("\n")):
             if index:
-                locator.press("Enter")
+                self._checked_editor_action(locator, "press", before_write, "Enter")
             if line:
-                locator.focus()
+                self._checked_editor_action(locator, "focus", before_write)
+                if before_write is not None:
+                    before_write()
+                    focused = locator.evaluate_all("""elements => {
+  if (elements.length !== 1) return false;
+  const root = elements[0];
+  let active = document.activeElement;
+  while (active && active.shadowRoot && active.shadowRoot.activeElement) {
+    active = active.shadowRoot.activeElement;
+  }
+  if (!root.isContentEditable || !active) return false;
+  if (active === root) return true;
+  if (!root.contains(active) || !active.isContentEditable) return false;
+  let node = active;
+  for (; node && node !== root; node = node.parentElement) {
+    if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'IFRAME'].includes(node.tagName) ||
+        node.getAttribute('contenteditable') === 'false') return false;
+  }
+  return node === root;
+}""")
+                    if focused is not True:
+                        _fail("editor_changed", "输入正文前焦点已离开当前正文；未继续输入。")
                 page.keyboard.insert_text(line)
         if self._paragraph_value(locator) != normalized:
             _fail("editor_changed", "逐段输入后的完整正文与冻结清单不一致；远端自动保存结果待核对。")
 
 
-    def _fill(self, page, spec, value):
+    def _fill(self, page, spec, value, before_write=None):
         locator = self._one(page, spec)
         if spec.get("attribute") is not None:
             _fail("invalid_profile", "可编辑字段必须读取实际输入值，不能配置属性读取。")
         if spec.get("source") == "prosemirror_paragraphs":
-            return self._paragraph_fill(page, locator, value)
+            return self._paragraph_fill(page, locator, value, before_write)
         kind = locator.evaluate("(el) => ({tag: el.tagName, editable: el.isContentEditable})")
         if kind["tag"] not in ("INPUT", "TEXTAREA") and not kind["editable"]:
             _fail("unsupported_editor", "后台编辑器不是原生输入框或contenteditable；需要另行验收适配。")
-        locator.fill(value)
+        self._checked_editor_action(locator, "fill", before_write, value)
+
+    def _draft_button_link(self, button, operation):
+        packet = button.evaluate("""el => {
+  // draftActionLink: include the effective destination, including <base>.
+  const href = el.getAttribute('href');
+  let resolvedHref = null, documentHref = null;
+  try { if (href !== null) {
+    resolvedHref = new URL(href, el.ownerDocument.baseURI).href;
+    documentHref = new URL(href, el.ownerDocument.URL).href;
+  } } catch {}
+  return {href, resolvedHref, documentHref, url: el.ownerDocument.URL};
+}""")
+        if (not isinstance(packet, dict) or "href" not in packet or "resolvedHref" not in packet or
+                (packet["href"] is not None and
+                 (not isinstance(packet["href"], str) or not isinstance(packet["resolvedHref"], str)))):
+            _fail("unsafe_" + operation, "无法核对草稿按钮的完整链接目的地；未点击。")
+        return packet
+
+    def _same_draft_button_link(self, observed, current, operation, expected_remote):
+        if any(name not in current for name in ("href", "resolvedHref")) or current["href"] != observed["href"]:
+            return False
+        if current["resolvedHref"] == observed["resolvedHref"]:
+            return True
+        href = current["href"]
+        if operation != "save" or not expected_remote or not isinstance(href, str):
+            return False
+        # A configured route alias for the same draft can move a self-link.
+        # A <base> override must never inherit that exception.
+        for packet in (observed, current):
+            if (not isinstance(packet.get("url"), str) or
+                    not isinstance(packet.get("resolvedHref"), str) or
+                    packet["resolvedHref"] != packet.get("documentHref") or
+                    packet["documentHref"].split("#", 1)[0] != packet["url"].split("#", 1)[0] or
+                    self._id_from_url(packet["url"]) != expected_remote):
+                return False
+            book = self.profile["identity"]["book"]
+            if book.get("source") == "page_url" and self._url_value(packet["url"], book) != self._target[2]:
+                return False
+        return True
+
+    def _confirm_draft_button(self, button, specification, operation, expected_link, expected_remote=None):
+        packet = button.evaluate("""el => ({
+  // currentDraftActionButton: inspect the bound button after identity checks.
+  connected: el.isConnected && el.ownerDocument === document,
+  text: (el.innerText || el.value || '').trim(),
+  aria: el.getAttribute('aria-label') || '', title: el.getAttribute('title') || '',
+  href: el.getAttribute('href'), url: el.ownerDocument.URL,
+  documentHref: el.getAttribute('href') === null ? null :
+    new URL(el.getAttribute('href'), el.ownerDocument.URL).href,
+  resolvedHref: el.getAttribute('href') === null ? null :
+    new URL(el.getAttribute('href'), el.ownerDocument.baseURI).href
+})""")
+        if not isinstance(packet, dict) or packet.get("connected") is not True:
+            _fail("editor_changed", "实际操作前按钮或文档发生变化；未点击。")
+        values = [packet.get(name) for name in ("text", "aria", "title")]
+        if any(not isinstance(value, str) for value in values):
+            _fail("unsafe_" + operation, "实际操作前按钮标签不完整；未点击。")
+        if not self._same_draft_button_link(expected_link, packet, operation, expected_remote):
+            _fail("unsafe_" + operation, "实际操作前草稿按钮链接发生变化；未点击。")
+        actual = values[0]
+        permitted = (_CREATE_LABEL.search(actual) if operation == "create" else
+                     _DRAFT_LABEL.search(actual) and _SAVE_LABEL.search(actual))
+        if actual != specification["expected_text"] or _UNSAFE_SAVE.search(" ".join(values)) or not permitted:
+            _fail("unsafe_" + operation, "实际点击前按钮已不是核实过的草稿操作；未点击。")
 
     def _wait_expected(self, page, spec):
         deadline = time.monotonic() + self.timeout_ms / 1000
@@ -1401,16 +1805,20 @@ class BrowserAdapter:
         button = self._one(page, action)
         actual = (button.inner_text() or button.get_attribute("value") or "").strip()
         accessible = " ".join(filter(None, [actual, button.get_attribute("aria-label"), button.get_attribute("title")]))
+        action_link = self._draft_button_link(button, "create")
         if (actual != action["expected_text"] or _UNSAFE_SAVE.search(accessible) or
                 not _CREATE_LABEL.search(actual) or not button.is_visible() or not button.is_enabled()):
             _fail("unsafe_create", "实际入口不是已核实且可用的新建草稿操作；未点击。")
         self._require_identity(page)
+        def click_create():
+            self._checked_editor_action(button, "click", lambda: self._require_identity(page),
+                before_action=lambda handle: self._confirm_draft_button(handle, action, "create", action_link))
         if action["opens"] == "popup":
             with page.expect_popup(timeout=self.timeout_ms) as popup_info:
-                button.click()
+                click_create()
             page = popup_info.value
         else:
-            button.click()
+            click_create()
         page.wait_for_load_state("domcontentloaded", timeout=self.timeout_ms)
         self._require_open()
         self._safe_url(page.url)
@@ -1428,39 +1836,85 @@ class BrowserAdapter:
         # Opening an autosaving route or clicking a create action is itself a
         # possible write, even while the editor remains completely empty.
         previous_pages = list(self._context.pages)
+        creation_anchors = []
         try:
             page = self._open_create_editor(self._context.new_page())
             self._require_identity(page)
             self._wait_editor_ready(page)
             editor = self.profile["editor"]
             self._require_editor_draft(page)
+            created_remote_id = self._bind_created_editor_id(page)
+            creation_url = page.url
+            def before_write():
+                nonlocal created_remote_id
+                self._require_open()
+                self._safe_url(page.url)
+                self._current_editor_guard()
+                for name, expected in zip(("account", "book"), self._target[1:]):
+                    spec = self.profile["identity"][name]
+                    if spec.get("source") == "guard_dom":
+                        continue
+                    actual = (self._url_value(page.url, spec) if spec.get("source") == "page_url" else
+                              self._preview_current_value(page, spec))
+                    if actual.strip() != expected:
+                        _fail("identity_mismatch", "实际写入前账号或作品发生变化；未继续写入。")
+                state = editor["state"]
+                if (state.get("source") != "listing" and
+                        self._preview_current_value(page, state).strip() != state["expected"]):
+                    _fail("not_draft", "实际写入前章节状态已不明确为草稿；未继续填写或保存。")
+                if created_remote_id is None:
+                    self._check_new_editor_anchor(page, creation_anchors, creation_url, allow_allocation=True)
+                created_remote_id = self._bind_created_editor_id(page, created_remote_id, source_url=creation_url)
             if editor.get("new") is not None:
                 if self._value(page, editor["new"]) != editor["new"]["expected"]:
                     _fail("not_new_draft", "后台未显示已核实的新建草稿标志；未开始填写。")
+            for name in ("title", "body"):
+                locator = self._one(page, editor[name])
+                handles = locator.element_handles()
+                for handle in handles:
+                    creation_anchors.append((locator, handle))
+                if len(handles) != 1:
+                    _fail("ambiguous_dom", "开始填写前新建字段不唯一。")
             if self._value(page, editor["title"]) != "" or self._value(page, editor["body"]) != "":
                 _fail("not_new_draft", "新建地址打开了已有文稿；已停止，未覆盖原标题或正文。")
-            self._fill(page, editor["chapter"], str(chapter))
+            self._check_new_editor_anchor(page, creation_anchors, creation_url)
+            created_remote_id = self._bind_created_editor_id(page, created_remote_id, source_url=creation_url)
+            self._fill(page, editor["chapter"], str(chapter), before_write)
             self._require_identity(page)
-            self._fill(page, editor["title"], title)
+            if created_remote_id is None:
+                self._check_new_editor_anchor(page, creation_anchors, creation_url, allow_allocation=True)
+            created_remote_id = self._bind_created_editor_id(page, created_remote_id, source_url=creation_url)
+            self._fill(page, editor["title"], title, before_write)
             self._require_identity(page)
-            self._fill(page, editor["body"], body)
+            if created_remote_id is None:
+                self._check_new_editor_anchor(page, creation_anchors, creation_url, allow_allocation=True)
+            created_remote_id = self._bind_created_editor_id(page, created_remote_id, source_url=creation_url)
+            self._fill(page, editor["body"], body, before_write)
             self._require_identity(page)
+            if created_remote_id is None:
+                self._check_new_editor_anchor(page, creation_anchors, creation_url, allow_allocation=True)
+            created_remote_id = self._bind_created_editor_id(page, created_remote_id, source_url=creation_url)
             self._require_editor_draft(page)
             if (self._chapter(self._value(page, editor["chapter"])) != chapter or
                     _normal_text(self._value(page, editor["title"])) != _normal_text(title) or
                     _normal_text(self._value(page, editor["body"])) != _normal_text(body)):
                 _fail("editor_changed", "保存前编辑器内容或章号发生变化；已停止，远端自动保存状态待核对。")
+            created_remote_id = self._bind_created_editor_id(page, created_remote_id, source_url=creation_url)
             save = editor["save"]
             if save["mode"] == "button":
                 button = self._one(page, save)
                 actual = (button.inner_text() or button.get_attribute("value") or "").strip()
                 accessible = " ".join(filter(None, [actual, button.get_attribute("aria-label"), button.get_attribute("title")]))
+                action_link = self._draft_button_link(button, "save")
                 if (actual != save["expected_text"] or _UNSAFE_SAVE.search(accessible) or
                         not _DRAFT_LABEL.search(actual) or not _SAVE_LABEL.search(actual)):
                     _fail("unsafe_save", "实际按钮不是已核实的存草稿操作；已停止。")
-                button.click()
+                self._checked_editor_action(button, "click", before_write,
+                                            before_action=lambda handle: self._confirm_draft_button(handle, save, "save", action_link, created_remote_id))
             self._wait_expected(page, editor["saved"])
             remote_id = self._editor_remote_id(page)
+            if created_remote_id is not None and remote_id != created_remote_id:
+                _fail("identity_mismatch", "保存后草稿ID与已分配的创建目标不符；远端结果待核对。")
             self._chapter_ids[remote_id] = chapter
             if self.profile.get("readback") is not None:
                 # Closing every page owned by this create attempt prevents an
@@ -1471,12 +1925,22 @@ class BrowserAdapter:
             # A saved badge alone is insufficient. Reopen in a fresh page and
             # read the actual state, ID, chapter, full title and full body.
             # An initially visible saved badge must not suffice for success.
-            # Use the same newline-only normalization as the ledger core.
+            # Apply this batch's explicit policy only to the complete readback.
+            # Input verification above remains exact, and the ledger rereads
+            # and records actual observed content rather than this canonical form.
             observed = self._read_draft(remote_id)
-            if _normal_text(observed["title"]) != _normal_text(title) or _normal_text(observed["body"]) != _normal_text(body):
+            observed_body, expected_body = _normal_text(observed["body"]), _normal_text(body)
+            if self.comparison_policy == "fanqie_terminal_lf_v1":
+                observed_body, expected_body = observed_body.rstrip("\n"), expected_body.rstrip("\n")
+            if _normal_text(observed["title"]) != _normal_text(title) or observed_body != expected_body:
                 _fail("save_unverified", "重新打开云端草稿后完整标题或正文不一致；远端结果待核对。")
             return remote_id
         finally:
+            for _, handle in creation_anchors:
+                try:
+                    handle.dispose()
+                except Exception:
+                    pass
             # Capture and close all pages created by this attempt, including a
             # popup whose wait failed after the server allocated an empty draft.
             for page in list(self._context.pages):

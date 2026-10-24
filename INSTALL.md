@@ -1,5 +1,7 @@
 # 安装或升级 Story Skill
 
+**v0.6.23 正在准备发布。** 本轮包括采用新书名、草稿操作与回读复核、恢复中心分页、备份恢复后的 Chrome 重连、研究样本兼容及试读设计规则。目标客户端为 Intel Mac 0.1.26／build27 与独立发行的 Windows 0.2.2；尚未完成本轮验收，下载仍使用下列正式版本。详见[准备记录](docs/releases/v0.6.23.md)。
+
 **当前正式版：v0.6.22。** 下列附件已发布。八技能源清单为 69 个文件，目录安装的运行时需要 Python 3.10 或更新版本；桌面应用内置 Python。版本变化、固定标签安装、`version-0.6.22` 分支与完整分发记录见[发布记录](docs/releases/v0.6.22.md)；上一版 [v0.6.21](docs/releases/v0.6.21.md) 保持原样。
 
 本版新增[结构化扫榜与抽样](skills/story-skill-research/references/rank-scan.md)及[研究交接](skills/story-skill-research/references/research-handoff.md)，从有来源的市场观察继续拆文验证和原创规划。采集与研究材料保持候选身份，不自动建立书库或写入正式正文；新软件发行不扩大平台草稿的真实后台验收范围。
@@ -256,11 +258,11 @@ python3 -B -X utf8 scripts/install.py --host trae-cn --project "<写作项目根
 
 ## Windows 客户端
 
-本版提供 Windows x64 客户端 **0.1.12**，内含 Python 与 Story Skill 0.6.22。下载[安装程序](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64-setup.exe)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64-setup.exe.sha256)，核对后按向导安装；便携使用可下载[完整 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-workbench-0.1.12-windows-x86_64.zip.sha256)，解压后运行 `StoryWorkbench.exe`。
+当前正式 Windows x64 客户端为 **0.2.1**，使用 C#／WPF／WebView2，内置 .NET 与 Story Skill 0.6.22 Python 作品服务。下载[安装程序](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.1/story-workbench-0.2.1-windows-x86_64-setup.exe)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.1/story-workbench-0.2.1-windows-x86_64-setup.exe.sha256)，核对后按向导安装。该版本使用独立 [windows-v0.2.1 发行页](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.1)，主技能发行的 latest 入口保持独立；0.2.1 起应用内更新读取 `windows-v*`，0.2.0 及更早版本先按固定链接手动升级。
 
-安装程序未做代码签名。本版须分别核对 Windows 原生构建、完整载荷／源码、实际安装、原生窗口与卸载，以及四份资产的大小和摘要；实际结果、公开下载范围与 Windows 10／11 用户人工覆盖见[Windows 说明](desktop/windows/README.md)与[发布记录](docs/releases/v0.6.22.md)。
+建议使用受支持的 Windows 11 x64。安装前保存工作台与外部浏览器的全部编辑并退出客户端，书稿保存在应用目录之外。安装包自带 .NET 与 Python；WebView2 已有时复用，缺失时按向导安装随包微软运行时。便携包须完整解压并保留依赖，缺少 WebView2 时先按说明安装。应用安装程序未签名；原生 CI 与不同用户设备的实际覆盖分别见[Windows 说明](desktop/windows/README.md)和[0.2.1 发布记录](docs/releases/windows-v0.2.1.md)。
 
-升级任一客户端前，保存桌面和外部浏览器全部页面需要保留的文字，退出旧客户端后再安装。已运行的工作台服务可能继续使用旧代码，应在保留编辑后按服务管理流程更新；安装包不会自动结束编辑会话。
+Windows 安装向导在确认编辑已保存后，认证并正常停止相关后台服务，待文件释放后替换；无法核验的占用会阻止操作，静默模式不代填保存确认。覆盖安装保留相邻旧目录，失败时尝试恢复，恢复受阻则保留备份并提示。Mac 更新仍需在保存各处编辑后按原流程正常停止服务、替换应用并重新打开；下载或打开安装包不表示升级完成。
 
 安装或升级只更换技能或客户端程序。已有小说正文和 `.story/` 书籍状态不会自动迁移；书库仍使用 schema 2，本地发布记录另用 schema 1。新版规则见[上手说明](docs/中文小说上手.md)及[目录规范](docs/目录结构.md)。
 

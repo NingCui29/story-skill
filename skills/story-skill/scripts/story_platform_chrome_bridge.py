@@ -20,9 +20,11 @@ import sys
 import threading
 import time
 import uuid
+from urllib.parse import urlsplit
 
 
 DIRECTORY = ".story/platform-chrome-bridge"
+RESTORED_EVIDENCE = "restored-evidence.json"
 COMMANDS = {"publish-chrome-" + name for name in ("attach", "next", "respond", "heartbeat", "health", "detach")}
 MAX_BYTES = 16 * 1024 * 1024
 MAX_SESSIONS = 100
@@ -87,6 +89,42 @@ def validate_profile(profile):
                     inspect(child)
         inspect(profile)
     api.platform_browser.BrowserAdapter(profile)
+    if mode == "host_assisted_cua":
+        # The host driver proves the account on its guard page and both book
+        # and remote identity from URLs. Other DOM sources remain standalone
+        # capabilities; reject them before attaching or queuing any operation.
+        if (profile["identity"]["account"].get("source") != "guard_dom" or
+                profile["identity"]["book"].get("source") != "page_url" or
+                profile["editor"]["remote_id"].get("source") != "page_url"):
+            _fail("invalid_profile", "宿主模式须使用账号核对页DOM、作品URL标识和草稿URL标识。")
+        if profile["editor"].get("ready") is None:
+            _fail("invalid_profile", "宿主模式须配置编辑器的正向加载就绪标志，不能在创建草稿后才判断配置缺失。")
+        for listing in profile["chapter_lists"]:
+            if any(listing[name].get("source") not in (None, "dom") for name in ("chapter", "link")):
+                _fail("invalid_profile", "宿主模式的目录章号和链接只支持DOM字段。")
+        if profile.get("readback") and not profile["readback"]["header"]["title_separator"]:
+            _fail("invalid_profile", "宿主模式的预览章号和标题须配置非空分隔符。")
+        if profile["platform"] == "fanqie":
+            # These exact management routes use the host's observed tab
+            # switch, whose labels and scopes are fixed rather than guessed.
+            groups = {}
+            for url in [profile["urls"]["drafts"]] + [item["url"] for item in profile["chapter_lists"]]:
+                parsed = urlsplit(url)
+                if parsed.path.startswith("/main/writer/chapter-manage/") and parsed.query in ("type=1", "type=2"):
+                    groups.setdefault((parsed.scheme, parsed.netloc, parsed.path), set()).add(url)
+            for urls in groups.values():
+                if len(urls) != 2:
+                    continue
+                for url in urls:
+                    matches = [item for item in profile["chapter_lists"] if item["url"] == url]
+                    if len(matches) != 1:
+                        _fail("invalid_profile", "宿主管理页切换须为每个已核实的页签配置唯一目录。")
+                    listing = matches[0]
+                    scope, label = ("non_drafts", "章节管理") if urlsplit(url).query == "type=1" else ("drafts", "草稿箱")
+                    coverage = listing["coverage"]
+                    if (listing["scope"] != scope or coverage.get("source", "dom") != "dom" or
+                            coverage.get("attribute") is not None or coverage["expected"] != label):
+                        _fail("invalid_profile", "宿主管理页切换的目录范围和DOM页签名称须与已核实的映射一致。")
     return mode
 
 
@@ -260,9 +298,9 @@ def _acquire_windows_lock(stream, verify, native):
 
 
 @contextmanager
-def _lock(directory):
+def _lock(directory, name="session.lock"):
     with _LOCAL_LOCK:
-        file = api._BoundFile(directory, "session.lock")
+        file = api._BoundFile(directory, name)
         flags = os.O_CREAT | os.O_RDWR | getattr(os, "O_NOFOLLOW", 0)
         fd = os.open(file.path, flags, 0o600) if os.name == "nt" else os.open(file.name, flags, 0o600, dir_fd=directory.fd)
         with api._owned_fdopen(fd, "r+b") as stream:
@@ -319,7 +357,39 @@ def _binding(book, plan_id, profile_id, comparison_policy="strict", body_encodin
     return binding, profile
 
 
+def _restored_evidence(directory):
+    return api.publish._bound_stat(api._BoundFile(directory, RESTORED_EVIDENCE), missing=True) is not None
+
+
+@contextmanager
+def _attachment_lock(root):
+    # Serialize discovery and handle publication across processes. A per-session
+    # lock alone cannot prevent two attach calls from both observing no worker.
+    with _LOCAL_LOCK, _pinned(api.safe_path(Path(root), ".story")) as directory:
+        with _lock(directory, ".platform-chrome-attach.lock"):
+            yield
+
+
+def _uninitialized_session(directory):
+    # A handle is published only after session.json and lease.json. Preserve
+    # incomplete metadata, but never ignore a lease, request or unknown payload.
+    if api.publish._bound_stat(api._BoundFile(directory, "lease.json"), missing=True) is not None:
+        return False
+    names = os.listdir(directory.path if os.name == "nt" else directory.fd)
+    for name in names:
+        if re.fullmatch(r"\.story-pin-[0-9a-f]{32}", name):
+            continue
+        if name not in ("session.json", "session.lock") and not re.fullmatch(r"\.chrome-stage-[0-9a-f]{32}", name):
+            return False
+        api.publish._bound_stat(api._BoundFile(directory, name))
+    if "session.json" in names:
+        _session(directory)  # Invalid published metadata is never orphan evidence.
+    return True
+
+
 def _lease(directory, session, *, extend=False, until=None):
+    if _restored_evidence(directory):
+        _fail("worker_unavailable", "备份中的 Chrome 会话仅作为恢复证据保留；请重新连接执行端。")
     lease = _read(directory, "lease.json", maximum=16384)
     if (not isinstance(lease, dict) or lease.get("session_id") != session["session_id"] or lease.get("detached") is not False or
             type(lease.get("expires")) not in (int, float) or not math.isfinite(lease["expires"]) or
@@ -354,14 +424,19 @@ def _authenticated(book, handle_path, *, extend=True):
     if (not isinstance(handle, dict) or handle.get("book_id") != book.meta("id") or
             handle.get("book_root") != str(book.root) or not isinstance(handle.get("token"), str)):
         _fail("invalid_handle", "Chrome 桥接句柄不属于当前作品。")
-    with _directory(book.root, handle.get("session_id")) as directory, _lock(directory):
-        session = _session(directory)
-        actual = hashlib.sha256(handle["token"].encode()).hexdigest()
-        if (not hmac.compare_digest(actual, session.get("token_sha256", "")) or
-                handle.get("binding_sha256") != session.get("binding_sha256")):
-            _fail("invalid_handle", "Chrome 桥接句柄认证失败。")
-        _lease(directory, session, extend=extend)
-        yield directory, session
+    with _directory(book.root, handle.get("session_id")) as directory:
+        # Reject imported evidence before initializing an empty/missing lock or
+        # parsing session metadata that may never have survived the crash.
+        if _restored_evidence(directory):
+            _fail("worker_unavailable", "备份中的 Chrome 会话仅作为恢复证据保留；请重新连接执行端。")
+        with _lock(directory):
+            session = _session(directory)
+            actual = hashlib.sha256(handle["token"].encode()).hexdigest()
+            if (not hmac.compare_digest(actual, session.get("token_sha256", "")) or
+                    handle.get("binding_sha256") != session.get("binding_sha256")):
+                _fail("invalid_handle", "Chrome 桥接句柄认证失败。")
+            _lease(directory, session, extend=extend)
+            yield directory, session
 
 
 def attach(book, plan_id, profile_id, handle_path, ttl_seconds=TTL_SECONDS, *, comparison_policy="strict", body_encoding="verbatim"):
@@ -369,7 +444,28 @@ def attach(book, plan_id, profile_id, handle_path, ttl_seconds=TTL_SECONDS, *, c
     if ttl_seconds > 3600:
         _fail("invalid_handle", "执行端心跳期限超过限制。")
     binding, _ = _binding(book, plan_id, profile_id, comparison_policy=comparison_policy, body_encoding=body_encoding)
-    available = worker_status(book.root, binding)
+    with _attachment_lock(book.root):
+        return _attach(book, binding, handle_path, ttl_seconds)
+
+
+def _retire_initialization(root, session):
+    # Only this failed initialization's exact metadata may be retired. Keep
+    # published handles and queues as evidence; an unknown replacement fails
+    # closed. A hard process exit cannot run this cleanup and retains its TTL.
+    session_id = session["session_id"]
+    with _directory(root, session_id) as directory, _lock(directory):
+        if api.publish._bound_stat(api._BoundFile(directory, "lease.json"), missing=True) is not None:
+            if _session(directory) != session:
+                _fail("invalid_message", "Chrome 初始化元数据发生变化；保留现场待核对。")
+            lease = _read(directory, "lease.json", maximum=16384)
+            if not isinstance(lease, dict) or lease.get("session_id") != session_id:
+                _fail("invalid_message", "Chrome 初始化租约发生变化；保留现场待核对。")
+            _write(directory, "lease.json", {"schema": 1, "session_id": session_id,
+                   "expires": time.time(), "detached": True}, replace=True)
+
+
+def _attach(book, binding, handle_path, ttl_seconds):
+    available = _worker_status(book.root, binding)
     if available["attached"]:
         _fail("worker_busy", "同一目标已有有效执行端，请复用原句柄或先分离。")
     if available["active_sessions"] >= MAX_SESSIONS:
@@ -379,18 +475,28 @@ def attach(book, plan_id, profile_id, handle_path, ttl_seconds=TTL_SECONDS, *, c
                "token_sha256": hashlib.sha256(token.encode()).hexdigest(), "created_at": _stamp(), "ttl_seconds": ttl_seconds}
     with _directory(book.root, create=True):
         pass
-    with _directory(book.root, session_id, create=True) as directory:
-        _write(directory, "session.json", session)
-        _write(directory, "lease.json", {"schema": 1, "session_id": session_id,
-               "expires": time.time() + ttl_seconds, "detached": False})
+    metadata_started = False
+    try:
+        with _directory(book.root, session_id, create=True) as directory:
+            metadata_started = True
+            with _lock(directory):
+                _write(directory, "session.json", session)
+                _write(directory, "lease.json", {"schema": 1, "session_id": session_id,
+                       "expires": time.time() + ttl_seconds, "detached": False})
+    except BaseException:
+        # Include context-exit interruption after metadata publication, before
+        # a handle can escape. Reacquire the released session lock for cleanup.
+        if metadata_started:
+            _retire_initialization(book.root, session)
+        raise
     try:
         _external(handle_path, create_value={"schema": 1, "session_id": session_id, "book_root": str(book.root),
             "book_id": book.meta("id"), "binding_sha256": session["binding_sha256"], "token": token})
-    except Exception:
+    except BaseException as error:
         # An unusable handle must never leave an apparently attached worker.
-        with _directory(book.root, session_id) as directory, _lock(directory):
-            _write(directory, "lease.json", {"schema": 1, "session_id": session_id,
-                "expires": time.time(), "detached": True}, replace=True)
+        _retire_initialization(book.root, session)
+        if not isinstance(error, Exception):
+            raise
         _fail("unsafe_file", "无法安全创建私有执行端句柄；会话未连接。")
     return {"ok": True, "session_id": session_id, "handle_path": str(Path(handle_path).absolute()),
             "ttl_seconds": ttl_seconds, "state": "awaiting_health", "ready": False,
@@ -496,6 +602,11 @@ def health(book, handle_path, input_path=None):
 
 
 def worker_status(root, binding):
+    with _attachment_lock(root):
+        return _worker_status(root, binding)
+
+
+def _worker_status(root, binding):
     path = api.safe_path(Path(root), DIRECTORY)
     if not path.exists():
         return {"attached": False, "ready": False, "state": "worker_unavailable", "active_sessions": 0}
@@ -507,21 +618,28 @@ def worker_status(root, binding):
     # workers; checking the lease must therefore precede counting or binding.
     candidates, active_sessions = [], 0
     for name in names:
-        with _directory(root, name) as directory, _lock(directory):
-            session = _session(directory)
-            try:
-                lease = _lease(directory, session)
-            except api.StoryError as error:
-                if error.code == "platform_chrome_worker_unavailable":
-                    continue
-                raise
-            active_sessions += 1
-            if active_sessions > MAX_SESSIONS:
-                _fail("session_limit", "本书连接中的 Chrome 桥接会话过多。")
-            if session.get("binding") != binding or session.get("binding_sha256") != _digest(binding):
+        with _directory(root, name) as directory:
+            # Imported queues may retain a crash before session.json existed.
+            # They are opaque evidence, so do not parse or lock their payloads.
+            if _restored_evidence(directory):
                 continue
-            candidates.append({"attached": True, "session_id": name, "expires_at": _stamp(lease["expires"]),
-                               **_health_status(root, directory, session)})
+            with _lock(directory):
+                if _uninitialized_session(directory):
+                    continue
+                session = _session(directory)
+                try:
+                    lease = _lease(directory, session)
+                except api.StoryError as error:
+                    if error.code == "platform_chrome_worker_unavailable":
+                        continue
+                    raise
+                active_sessions += 1
+                if active_sessions > MAX_SESSIONS:
+                    _fail("session_limit", "本书连接中的 Chrome 桥接会话过多。")
+                if session.get("binding") != binding or session.get("binding_sha256") != _digest(binding):
+                    continue
+                candidates.append({"attached": True, "session_id": name, "expires_at": _stamp(lease["expires"]),
+                                   **_health_status(root, directory, session)})
     if len(candidates) > 1:
         _fail("worker_busy", "目标存在多个执行端；请先分离多余会话。")
     status = candidates[0] if candidates else {"attached": False, "ready": False, "state": "worker_unavailable"}
@@ -685,8 +803,6 @@ class HostAdapter:
     def __init__(self, root, binding, profile, progress_callback=None):
         if validate_profile(profile) != self.execution_mode:
             _fail("invalid_profile", "此配置未选择已有 Chrome 会话桥接。")
-        if profile.get("platform") == "fanqie" and profile.get("readback") is None:
-            api.fail("platform_browser_readback_required", "番茄已有Chrome会话必须配置独立只读预览回读；不会打开编辑器核对旧稿。")
         api.platform_drafts._comparison_policy(binding.get("comparison_policy", "strict"), binding.get("target", {}).get("platform"))
         api.platform_drafts._body_encoding(binding.get("body_encoding", "verbatim"), binding.get("target", {}).get("platform"))
         self.root, self.binding, self.profile = Path(root), binding, deepcopy(profile)

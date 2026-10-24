@@ -264,11 +264,19 @@ class RepositoryInstructionContractTests(unittest.TestCase):
                         self.assertGreaterEqual(call[limit_key][metric], baseline * 1.15)
                         self.assertLess(call[limit_key][metric], baseline * 1.15 + 1001)
 
+    def test_adopted_title_loads_metadata_workflow_with_conditional_cover_review(self):
+        base = self.base[("adopted_book_title", "planner")]
+        self.assertTrue({"naming", "project_title_change", "project_link"} <= set(base["source_ids"]))
+        self.assertNotIn("cover_entry", base["source_ids"])
+        affected = next(item for item in self.report["loads"]
+                        if item["scenario"] == "adopted_book_title" and item["variant"] == "branch:affected_cover")
+        self.assertTrue({"cover_entry", "cover_appeal", "project_author"} <= set(affected["source_ids"]))
+
     def test_required_loads_cannot_be_dropped_to_make_budgets_pass(self):
         core = {"common", "content_baseline", "content_judgments", "content_outcomes", "content_routing",
                 "characters", "support", "viewpoint", "words", "format"}
         for (scenario, call), row in self.base.items():
-            if scenario not in ("targeted_punctuation", "short_platform_design", "rank_research") and call != "cover_designer":
+            if scenario not in ("targeted_punctuation", "short_platform_design", "rank_research", "reader_feedback", "adopted_book_title") and call != "cover_designer":
                 self.assertTrue(core.issubset(row["source_ids"]), (scenario, call))
         long_sources = set(self.base[("long_chapter", "writer")]["source_ids"])
         self.assertTrue({"write_entry", "tools", "chapter_flow", "length", "outline_quality", "project_binding",
@@ -318,6 +326,36 @@ class RepositoryInstructionContractTests(unittest.TestCase):
                              and item["call"] == "writer" and item["variant"] == "branch:scene_diagnosis")
             self.assertEqual(set(triggered["source_ids"]) - set(base["source_ids"]), {"content_expression", "flatness"}, scenario)
 
+    def test_payoff_examples_are_conditional_without_dropping_diagnosis(self):
+        sources = {item["id"]: item for item in self.report["sources"]}
+        flatness, examples = sources["flatness"], sources["payoff_examples"]
+        self.assertEqual(flatness["byte_end"], examples["byte_start"])
+        for row in self.base.values():
+            self.assertNotIn("payoff_examples", row["source_ids"])
+        for scenario in self.config["scenarios"]:
+            for call in scenario["calls"]:
+                if not any(b["id"] == "scene_diagnosis" for b in call.get("branches", [])):
+                    continue
+                rows = {row["variant"]: row for row in self.report["loads"]
+                        if (row["scenario"], row["call"]) == (scenario["id"], call["id"])}
+                diagnosis = rows["branch:scene_diagnosis"]
+                comparison = rows["branch:payoff_comparison"]
+                self.assertNotIn("payoff_examples", diagnosis["source_ids"])
+                self.assertEqual(set(comparison["source_ids"]) - set(diagnosis["source_ids"]),
+                                 {"payoff_examples"})
+                for metric in budget.METRICS:
+                    self.assertEqual(comparison["totals"][metric] - diagnosis["totals"][metric], examples[metric])
+
+    def test_feedback_analysis_loads_retention_only_when_requested(self):
+        rows = {row["variant"]: row for row in self.report["loads"] if row["scenario"] == "reader_feedback"}
+        base = set(rows["base"]["source_ids"])
+        self.assertEqual(base, {"research_entry", "common", "reader_validation_intro", "reader_feedback",
+                                "reader_validation_outcome"})
+        self.assertEqual(set(rows["branch:spaced_reading"]["source_ids"]) - base, {"reader_retention"})
+        for key, row in self.base.items():
+            if key != ("reader_feedback", "researcher"):
+                self.assertTrue({"reader_feedback", "reader_retention"}.isdisjoint(row["source_ids"]), key)
+
     def test_simple_text_path_avoids_content_and_formal_revision_loads(self):
         row = self.base[("targeted_punctuation", "copyeditor")]
         self.assertEqual(set(row["source_ids"]), {"review_entry", "common", "format", "speaker", "grammar", "punctuation"})
@@ -341,7 +379,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
 
     def test_shared_style_decision_applies_to_body_roles_only(self):
         for (scenario, call), row in self.base.items():
-            applicable = scenario not in ("targeted_punctuation", "short_platform_design", "rank_research") and call != "cover_designer"
+            applicable = scenario not in ("targeted_punctuation", "short_platform_design", "rank_research", "reader_feedback", "adopted_book_title") and call != "cover_designer"
             self.assertEqual("style_resolution" in row["source_ids"], applicable, (scenario, call))
         node = next(item for item in self.config["nodes"] if item["id"] == "style_resolution")
         self.assertEqual((node["path"], node["section"]),
@@ -353,7 +391,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
         index = next(item for item in self.config["nodes"] if item["id"] == "genre_index")
         self.assertEqual((index["section"], index["scope"]), ("题材写法卡", "body"))
         for (scenario, call), base in self.base.items():
-            if scenario in ("targeted_punctuation", "short_platform_design", "rank_research") or call == "cover_designer":
+            if scenario in ("targeted_punctuation", "short_platform_design", "rank_research", "reader_feedback", "adopted_book_title") or call == "cover_designer":
                 self.assertNotIn("genre_index", base["source_ids"])
                 continue
             self.assertTrue(cards.isdisjoint(base["source_ids"]), (scenario, call))

@@ -1,5 +1,7 @@
 # Codex 本地插件
 
+**v0.6.23 插件正在准备，尚未完成本轮分发验收。** 预期仍为八技能、69源载荷文件，实际包体与隔离安装结果见[本轮记录](releases/v0.6.23.md)。下列下载与已通过结果属于正式 v0.6.22；开发源码按自身版本生成包名，不用同一版本号替代逐文件核对。
+
 v0.6.22 已发布 Codex 本地插件，内含八个同级技能、共享 Python 运行时和许可证。插件使用 `.codex-plugin/plugin.json` 格式，不需要 MCP 服务或额外 API 密钥；通过本地市场安装，不表示在公共插件目录上架。
 
 下载已发布的 [story-skill-codex-0.6.22.zip](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-codex-0.6.22.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.22/story-skill-codex-0.6.22.zip.sha256)。源清单为 69 个技能文件，加元数据、图标和根许可证为 72 个插件文件；市场说明与登记文件另占 2 个成员，共 74 个。本轮包体、隔离安装／启用、八技能发现、CLI、HTTP、三组完整源码 CI及插件 ZIP 匿名完整下载均已验收；完整分发记录见 [v0.6.22 发布记录](releases/v0.6.22.md)；这些工程检查不调用模型、不修改日常安装。
@@ -14,7 +16,7 @@ v0.6.22 已发布 Codex 本地插件，内含八个同级技能、共享 Python 
 python3 -B -X utf8 scripts/package_codex.py
 ```
 
-当前版本输出：
+v0.6.22 固定源码输出：
 
 ```text
 dist/

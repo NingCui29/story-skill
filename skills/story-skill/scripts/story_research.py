@@ -23,6 +23,7 @@ MAX_REFERENCE_BYTES = 32 * 1024 * 1024
 MAX_TOPICS = 30
 MAX_HYPOTHESES = 30
 MAX_VERIFICATIONS = 100
+MAX_PROSE_CHARS = 8000
 VERDICTS = ("supports", "contradicts", "mixed", "insufficient")
 VERDICT_LABELS = dict(zip(VERDICTS, ("支持", "反证", "混合", "证据不足")))
 TOPIC_TEXT_FIELDS = ("title", "target_reader", "payoff", "author_strength", "differentiation", "risk", "next_check")
@@ -59,7 +60,7 @@ def _id(value, name):
 
 
 def _prose(value, name, nullable=False):
-    return rank._text(value, name, nullable=nullable, maximum=8000)
+    return rank._text(value, name, nullable=nullable, maximum=MAX_PROSE_CHARS)
 
 
 def _quote(value, nullable):
@@ -223,12 +224,31 @@ def validate_decision(value):
     return data
 
 
+def _initial_reason(book):
+    """Bound only the editable explanation; retain the complete source sample."""
+    reasons = list(book["reasons"])
+    complete = "；".join(reasons)
+    if len(complete) <= MAX_PROSE_CHARS:
+        return complete
+    source = ("选择理由摘要；完整理由见 decision.json 的 sample.books 中 "
+              f"book_key={book['book_key']} 对应的 reasons")
+    # Replace whole oversized clauses, rather than cutting a tag in the middle
+    # or allowing it to consume the category, word-band and ordering reasons.
+    for index in sorted(range(len(reasons)), key=lambda index: len(reasons[index]), reverse=True):
+        if len("；".join([*reasons, source])) <= MAX_PROSE_CHARS:
+            break
+        label, separator, _ = reasons[index].partition("：")
+        label = label if separator and len(label) <= 80 else f"第 {index + 1} 项选择理由"
+        reasons[index] = label + "（内容较长，此处省略）"
+    return "；".join([*reasons, source])
+
+
 def initialize(sample):
     sample = rank.validate_sample(sample)
     if not sample["books"]:
         raise ResearchError("代表作样本为空；请调整筛选后再建立交接")
     topic = {"topic_id": "topic-1", **{field: None for field in TOPIC_TEXT_FIELDS},
-             "books": [{"book_key": book["book_key"], "reason": "；".join(book["reasons"])} for book in sample["books"]],
+             "books": [{"book_key": book["book_key"], "reason": _initial_reason(book)} for book in sample["books"]],
              "hypotheses": [{"hypothesis_id": "hypothesis-1", "claim": None, "verifications": []}]}
     return validate_decision({"schema_version": 1, "kind": "research_decision", "sample": sample, "topics": [topic]})
 
@@ -287,6 +307,7 @@ def _display(value):
 
 def _source_lines(sample):
     lines = [f"样本 ID：{sample['sample_id']}；分组 ID：{sample['group_id']}。",
+             "本样本抽样方法：" + sample["method"],
              "仅针对本次样本；抽样理由不等于作品质量、市场需求或成功概率。", ""]
     for item in sample["sources"]:
         source = item["source"]
