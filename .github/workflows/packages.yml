@@ -9,7 +9,7 @@ on:
       tag:
         description: Published stable Release tag to synchronize
         required: true
-        default: v0.6.23
+        default: v0.6.24
         type: string
 
 permissions:

@@ -132,6 +132,21 @@ export function readRowFields(elements, specs) {
 // Observed Fanqie read-only preview format: plain, attribute-free P elements.
 // Exactly one final zero-child P is UI padding; every other empty P is text.
 export function readPreviewParagraphs_v1(el) {
+  // Only the observed spelling annotation is transparent; never apply its suggestion.
+  const originalText = node => {
+    if (node?.nodeType === 3 && typeof node.textContent === 'string') return node.textContent;
+    if (node?.nodeType !== 1 || node.tagName !== 'TYPO') return null;
+    const names = Array.from(node.attributes || [], attr => attr.name).sort();
+    if (names.join(',') !== 'data-correct,data-source,data-tag,id,ignoretag') return null;
+    const key = /^typo-([0-9]+)$/.exec(node.getAttribute('id') || '');
+    const source = node.getAttribute('data-source'), correction = node.getAttribute('data-correct');
+    if (!key || !source || !correction || node.getAttribute('ignoretag') !== 'true' ||
+        node.getAttribute('data-tag') !== correction + '-' + key[1] ||
+        !Array.from(node.childNodes).every(child => child.nodeType === 3) || node.textContent !== source) return null;
+    annotated = true;
+    return source;
+  };
+  let annotated = false;
   if (!el) return {ok:false};
   const nodes = Array.from(el.childNodes);
   if (!nodes.length) return {ok:false,pending:true};
@@ -149,18 +164,34 @@ export function readPreviewParagraphs_v1(el) {
     }
     let text = '';
     for (const child of Array.from(paragraph.childNodes)) {
-      if (child.nodeType !== 3 || typeof child.textContent !== 'string') return {ok:false};
-      text += child.textContent;
+      const value = originalText(child);
+      if (value === null) return {ok:false};
+      text += value;
     }
     paragraphs.push(text);
   }
-  return {ok:true,value:paragraphs.join('\n')};
+  return {ok:true,value:paragraphs.join('\n'),...(annotated ? {formatting_clean:false} : {})};
 }
 
 // This exact read-only serializer is shared with the native adapter's observed
 // Fanqie paragraph format. Exactly one final empty P is an editor sentinel.
 // All other empty paragraphs, spaces and leading/trailing linefeeds survive.
 export function readParagraphs(el, currentField = null) {
+  // Only the observed spelling annotation is transparent; never apply its suggestion.
+  const originalText = node => {
+    if (node?.nodeType === 3 && typeof node.textContent === 'string') return node.textContent;
+    if (node?.nodeType !== 1 || node.tagName !== 'TYPO') return null;
+    const names = Array.from(node.attributes || [], attr => attr.name).sort();
+    if (names.join(',') !== 'data-correct,data-source,data-tag,id,ignoretag') return null;
+    const key = /^typo-([0-9]+)$/.exec(node.getAttribute('id') || '');
+    const source = node.getAttribute('data-source'), correction = node.getAttribute('data-correct');
+    if (!key || !source || !correction || node.getAttribute('ignoretag') !== 'true' ||
+        node.getAttribute('data-tag') !== correction + '-' + key[1] ||
+        !Array.from(node.childNodes).every(child => child.nodeType === 3) || node.textContent !== source) return null;
+    annotated = true;
+    return source;
+  };
+  let annotated = false;
   // evaluateAll supplies a currently matched set without attachment waiting.
   // Keep this branch self-contained for CUA serialization and use the same
   // paragraph parser for both initial and final editor observations.
@@ -179,8 +210,9 @@ export function readParagraphs(el, currentField = null) {
         const packet=readParagraphs([resolved],field.spec);
         if (packet.ok !== true || typeof packet.value !== 'string') return {ok:false,count:1};
         fields[field.name]=packet.value;
+        if (packet.formatting_clean === false) annotated = true;
       }
-      return {ok:true,count:1,url:doc.location.href,fields};
+      return {ok:true,count:1,url:doc.location.href,fields,...(annotated ? {formatting_clean:false} : {})};
     }
     if (currentField.source === 'fanqie_preview_paragraphs_v1') {
       // Keep the final callback self-contained. Parity tests bind this branch
@@ -196,12 +228,13 @@ export function readParagraphs(el, currentField = null) {
         if (paragraph.outerHTML==='<p><br></p>'&&paragraph.childNodes.length===1&&only?.nodeType===1&&only.tagName==='BR'&&only.childNodes.length===0&&only.outerHTML==='<br>') { paragraphs.push('');continue; }
         let value='';
         for (const child of Array.from(paragraph.childNodes)) {
-          if (child.nodeType!==3||typeof child.textContent!=='string') return {ok:false,count:1};
-          value+=child.textContent;
+          const original=originalText(child);
+          if (original === null) return {ok:false,count:1};
+          value+=original;
         }
         paragraphs.push(value);
       }
-      return {ok:true,count:1,value:paragraphs.join('\n')};
+      return {ok:true,count:1,value:paragraphs.join('\n'),...(annotated ? {formatting_clean:false} : {})};
     }
     const packet = currentField.source === 'prosemirror_paragraphs' ? readParagraphs(node) : {
       ok:true,value:currentField.attribute != null ? node.getAttribute(currentField.attribute) :
@@ -251,12 +284,13 @@ export function readParagraphs(el, currentField = null) {
     if (!p.childNodes.length) return reject();
     let text = '';
     for (const child of Array.from(p.childNodes)) {
-      if (child.nodeType !== 3) return reject();
-      text += child.textContent;
+      const value = originalText(child);
+      if (value === null) return reject();
+      text += value;
     }
     paragraphs.push(text);
   }
-  return {ok: true, value: paragraphs.join('\n')};
+  return {ok: true, value: paragraphs.join('\n'), ...(annotated ? {formatting_clean:false} : {})};
 }
 
 class Driver {
@@ -614,7 +648,7 @@ class Driver {
     if (packet.ok !== true || typeof packet.value !== 'string') fail('editor_changed');
     return packet.value;
   }
-  async editorSnapshot(tab, expectedURL, expected, specs=this.profile.editor) {
+  async editorSnapshot(tab, expectedURL, expected, specs=this.profile.editor, formattingClean=undefined) {
     const fields=[];
     const resolve=async name=>{
       const spec=specs[name],locator=tab.playwright.locator(spec.selector);
@@ -632,6 +666,7 @@ class Driver {
       const packet=await this.readQuery(tab,()=>root.evaluateAll(readParagraphs,{source:'editor_snapshot',fields}),{retry:false});
       if (packet?.ok !== true || packet.count !== 1 || packet.url !== expectedURL) fail('editor_changed');
       for (const [name,value] of Object.entries(expected)) if (packet.fields?.[name] !== value) fail('editor_changed');
+      if (formattingClean !== undefined && (packet.formatting_clean !== false) !== formattingClean) fail('editor_changed');
     };
     await sample();
     // A later locator can expose duplicates or retarget an earlier selector
@@ -1027,7 +1062,7 @@ class Driver {
     }
     while (true) {
       this.check(); const packet = await this.readQuery(tab,()=>locator.evaluate(readPreviewParagraphs_v1),{retry:allowPending});
-      if (packet?.ok === true && typeof packet.value === 'string') return packet.value;
+      if (packet?.ok === true && typeof packet.value === 'string') return packet;
       if (packet?.pending !== true) fail('unsupported_editor');
       // Once complete text was observed, disappearance is a changed document,
       // not another initial loading state that may be waited away.
@@ -1058,10 +1093,10 @@ class Driver {
     const chapter = Number(matched[1]);
     if (this.state.chapters.has(remote) && this.state.chapters.get(remote)!==chapter) fail('identity_mismatch');
     const body = await this.previewBody(tab,spec.body);
-    const observation = {remote_id:remote,title:matched[2],body,state:'draft',url:expectedURL};
+    const observation = {remote_id:remote,title:matched[2],body:body.value,state:'draft',url:expectedURL,...(body.formatting_clean === false ? {formatting_clean:false} : {})};
     await this.confirm(remote,chapter); await this.identity(tab,forceGuard);
     if (await this.url(tab)!==expectedURL) fail('identity_mismatch');
-    if (await this.previewBody(tab,spec.body,{allowPending:false})!==body) fail('editor_changed');
+    if (JSON.stringify(await this.previewBody(tab,spec.body,{allowPending:false}))!==JSON.stringify(body)) fail('editor_changed');
     await this.ensureEditorFree(remote);
     // Read the current account DOM without another read-only guard reload.
     // Both identity and the complete chapter header must survive the final
@@ -1072,7 +1107,7 @@ class Driver {
     const headerCount = await this.readQuery(tab,()=>finalHeader.count(),{retry:false});
     if (headerCount !== 1) fail(headerCount > 1 ? 'ambiguous_dom' : 'editor_changed');
     if (await this.readQuery(tab,()=>finalHeader.evaluate(readDOMValue,null),{retry:false})!==header) fail('editor_changed');
-    await this.editorSnapshot(tab,expectedURL,{header,body},spec);
+    await this.editorSnapshot(tab,expectedURL,{header,body:body.value},spec,body.formatting_clean !== false);
     progress(this.api,{phase:'read',edge:'end'});
     return observation;
   }
@@ -1237,7 +1272,50 @@ class Driver {
     const observedBody = normal(observation.body), frozenBody = normal(body);
     const equalBody = this.comparisonPolicy === 'fanqie_terminal_lf_v1' ?
       observedBody.replace(/\n+$/,'') === frozenBody.replace(/\n+$/,'') : observedBody === frozenBody;
-    if (normal(observation.title) !== normal(title) || !equalBody) fail('save_unverified');
+    if (normal(observation.title) !== normal(title) || !equalBody || observation.formatting_clean === false) fail('save_unverified');
+    return remote;
+  }
+  bodyMatches(a,b) {
+    return this.comparisonPolicy === 'fanqie_terminal_lf_v1' ?
+      normal(a).replace(/\n+$/,'') === normal(b).replace(/\n+$/,'') : normal(a) === normal(b);
+  }
+  async update(remote, chapter, title, body, expectedTitle, expectedBody) {
+    id(remote);
+    if (this.target.platform !== 'fanqie' || !this.profile.readback || !Number.isInteger(chapter) || chapter < 1 ||
+        typeof title !== 'string' || !title || typeof body !== 'string' || !body ||
+        typeof expectedTitle !== 'string' || typeof expectedBody !== 'string') fail('invalid_profile');
+    // Recheck the before-image after queue dispatch; never overwrite concurrent edits.
+    this.state.chapters.set(remote,chapter);
+    const before = await this.readPreview(remote);
+    if (normal(before.title) !== normal(expectedTitle) || normal(before.body) !== normal(expectedBody)) fail('remote_changed');
+    await this.confirm(remote,chapter); await this.guard(true); await this.ensureEditorFree(remote);
+    const {tab} = await this.newTab(this.profile.urls.edit.replace('{remote_id}',remote),{pinReadback:true});
+    this.createdEditors.set(tab,remote);
+    await this.identity(tab,true); await this.editorReady(tab); await this.editorState(tab,chapter);
+    const editor = this.profile.editor;
+    if (this.remote(await this.url(tab)) !== remote || this.chapter(await this.value(tab,editor.chapter)) !== chapter) fail('identity_mismatch');
+    if (normal(await this.value(tab,editor.title)) !== normal(expectedTitle) ||
+        !this.bodyMatches(await this.value(tab,editor.body),expectedBody)) fail('remote_changed');
+    await this.identity(tab,true); await this.fill(tab,editor.title,title);
+    await this.identity(tab,true); await this.fill(tab,editor.body,body);
+    await this.identity(tab,true); await this.editorState(tab,chapter);
+    if (this.remote(await this.url(tab)) !== remote || this.chapter(await this.value(tab,editor.chapter)) !== chapter ||
+        normal(await this.value(tab,editor.title)) !== normal(title) || normal(await this.value(tab,editor.body)) !== normal(body)) fail('editor_changed');
+    // Always reinsert the complete plain body, even for a title-only change.
+    if (editor.body.source === 'prosemirror_paragraphs' &&
+        (await (await this.one(tab,editor.body)).evaluate(readParagraphs)).formatting_clean === false) fail('formatting_metadata');
+    if (editor.save.mode !== 'button') fail('unsafe_save');
+    const button = await this.one(tab,editor.save), actual = (await button.innerText()).trim();
+    const accessible = [actual,await button.getAttribute('aria-label'),await button.getAttribute('title')].filter(Boolean).join(' ');
+    if (actual !== editor.save.expected_text || UNSAFE.test(accessible) || !DRAFT.test(actual) || !SAVE.test(actual) ||
+        !await button.isVisible() || !await button.isEnabled()) fail('unsafe_save');
+    const link = await this.actionState(button);
+    await this.identity(tab,true); await this.action(tab,expectedURL=>this.clickDraftButton(button,editor.save,expectedURL,'save',link));
+    while (await this.value(tab,editor.saved) !== editor.saved.expected || !await this.visible(tab,editor.saved)) {
+      this.check(); await this.identity(tab); await pause(); await this.ax(tab);
+    }
+    const after = await this.readPreview(remote);
+    if (normal(after.title) !== normal(title) || !this.bodyMatches(after.body,body) || after.formatting_clean === false) fail('save_unverified');
     return remote;
   }
   async execute() {
@@ -1245,10 +1323,11 @@ class Driver {
     if (operation === 'verify_target') return this.verify();
     if (!this.state.verified) fail('target_unverified');
     if (operation === 'find_drafts') return this.find(params.chapter);
-    if (operation === 'create_draft') {
+    if (['create_draft','update_draft'].includes(operation)) {
       const key = this.request.session_id + ':' + id(this.request.id);
       if (CONSUMED_CREATES.has(key) || CONSUMED_CREATES.size >= 10000) fail('operation_failed');
       CONSUMED_CREATES.add(key);
+      if (operation === 'update_draft') return this.update(params.remote_id,params.chapter,params.title,params.body,params.expected_title,params.expected_body);
       return this.create(params.chapter, params.title, params.body);
     }
     if (operation === 'read_draft') return this.read(params.remote_id);

@@ -40,7 +40,7 @@ function previewProfile() {
 }
 const profile=previewProfile;
 function element(tag, attrs = {}, children = []) {
-  const node = {nodeType:1, tagName:tag.toUpperCase(), childNodes:children,
+  const node = {nodeType:1, tagName:tag.toUpperCase(), childNodes:children, attributes:Object.keys(attrs).map(name=>({name})),
     getAttribute:key => Object.hasOwn(attrs,key) ? attrs[key] : null,
     classList:{contains:value => (attrs.class || '').split(/\s+/).includes(value)}};
   Object.defineProperty(node,'textContent',{get:() => children.map(child => child.textContent).join('')});
@@ -160,6 +160,7 @@ class Locator {
   }
 }
 class Tab {
+  async pasteText(value) { assert.ok(this.focusedBody);this.env.events.push(['pasteText',this.id,value]);this.data.body+=value;if(this.env.changeAccountAfterBodyText)this.env.account='different-account'; }
   constructor(env,id,url) { this.env=env; this.id=id; this.current=url; this.section=0; this.menu=false; this.playwright={
     locator:selector => new Locator(this,() => this.lookup(selector),selector),
     evaluate:async () => ({height:100,total:100,top:0,width:100})}; this.load(url); }
@@ -2537,6 +2538,63 @@ for(const platform of ['qimao','qidian'])test('ordinary '+platform+' write reche
     if(move==='same_id'){assert.equal(response.ok,true,JSON.stringify(response));assert.equal(env.saves,1);}
     else{assert.equal(response.error,'platform_browser_identity_mismatch');assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fill').length,priorFills);}
     assert.equal(env.creates,1);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
+
+const typo=(source='那里',correct='哪里',extra={})=>element('TYPO',{'id':'typo-1141','data-source':source,'data-correct':correct,'data-tag':correct+'-1141',ignoretag:'true',...extra},[textNode(source)]);
+test('known spelling metadata preserves original characters and marks readback as requiring cleanup',()=>{
+  const preview=element('DIV',{},[element('P',{},[textNode('他在'),typo(),textNode('等。')]),element('P')]);
+  assert.deepEqual(readPreviewParagraphs_v1(preview),{ok:true,value:'他在那里等。',formatting_clean:false});
+  const editor=element('DIV',{contenteditable:'true'},[element('P',{},[typo()]),element('P',{},[br()])]);
+  assert.deepEqual(readParagraphs(editor),{ok:true,value:'那里',formatting_clean:false});
+  const snapshot=Function('return ('+readParagraphs.toString()+')')();
+  assert.deepEqual(snapshot([preview],{source:'fanqie_preview_paragraphs_v1'}),
+    {ok:true,count:1,value:'他在那里等。',formatting_clean:false});
+  assert.deepEqual(snapshot([editor],{source:'prosemirror_paragraphs'}),
+    {ok:true,count:1,value:'那里',formatting_clean:false});
+  for(const bad of [typo('那里','哪里',{onclick:'x'}),typo('那里','哪里',{'data-source':'别处'}),typo('那里','哪里',{'data-tag':'不同'}),element('TYPO',{},[textNode('那里')])]){
+    assert.deepEqual(readPreviewParagraphs_v1(element('DIV',{},[element('P',{},[bad]),element('P')])),{ok:false});
+  }
+});
+test('title body and combined updates preserve remote ID fully replace body and independently read preview',async()=>{
+  for(const [title,body] of [['新标题','原始正文'],['原稿','新正文\n末段\n'],['新标题','新正文']]){
+    const env=environment(),base=await verified(env);env.events=[];
+    const req=next(base,'update_draft',{remote_id:'11',chapter:11,title,body,expected_title:'原稿',expected_body:'原始正文'});
+    const result=await executeChromeBridgeRequest(env.api,req);
+    assert.equal(result.ok,true,JSON.stringify(result));assert.equal(result.result,'11');assert.equal(env.creates,0);assert.equal(env.saves,1);
+    assert.equal(env.editors.get('11').title,title);assert.equal(env.editors.get('11').body,body);
+    assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1,'Title-only updates still replace the full plain body');
+    const previewIndex=env.events.findLastIndex(row=>row[0]==='newTab'&&row[1]===ORIGIN+'/preview/10&11');
+    const writeIndex=env.events.findIndex(row=>row[0]==='click'&&row[1]==='#save');assert.ok(previewIndex>writeIndex);
+    assert.ok(![...env.tabs.values()].some(tab=>tab.current.includes('/edit/11')));
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');assert.equal(env.saves,1);
+  }
+});
+test('changed before-image wrong chapter published chapter and user editor stop updates before writing',async()=>{
+  for(const reason of ['changed','wrong-chapter','published','open-editor']){
+    const env=environment();if(reason==='published')env.editors.get('11').scope='non_drafts';
+    if(reason==='open-editor')env.add(ORIGIN+'/book/10/edit/11?enter_from=modifydraft');
+    const base=await verified(env);
+    const result=await executeChromeBridgeRequest(env.api,next(base,'update_draft',{remote_id:'11',chapter:reason==='wrong-chapter'?12:11,title:'新标题',body:'新正文',expected_title:'原稿',expected_body:reason==='changed'?'过期正文':'原始正文'}));
+    assert.equal(result.ok,false,reason);assert.equal(env.saves,0);assert.equal(env.creates,0);
+    assert.equal(env.editors.get('11').body,'原始正文');assert.equal(env.editors.get('11').title,'原稿');
+  }
+});
+
+test('existing-draft update stays bound to its original editor through field awaits',async()=>{
+  for(const selector of ['#title','#body']){
+    const env=environment(),base=await verified(env),foreign={scope:'drafts',chapter:22,title:'保留标题',body:'保留正文',saved:true};
+    env.editors.set('22',{...foreign});let changed=false;
+    env.afterFill=async(tab,field)=>{if(field===selector&&!changed){changed=true;tab.load(ORIGIN+'/book/10/edit/22?enter_from=modifydraft');}};
+    const add=env.add;env.add=url=>{const tab=add(url),paste=tab.pasteText.bind(tab);tab.pasteText=async value=>{
+      await paste(value);if(selector==='#body'&&!changed){changed=true;tab.load(ORIGIN+'/book/10/edit/22?enter_from=modifydraft');}
+    };return tab;};
+    const command=next(base,'update_draft',{remote_id:'11',chapter:11,title:'新标题',body:'新正文',expected_title:'原稿',expected_body:'原始正文'});
+    const response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(changed,true);assert.equal(response.error,'platform_browser_identity_mismatch');
+    assert.equal(env.saves,0);assert.equal(env.creates,0);assert.deepEqual(env.editors.get('22'),foreign);
+    assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
     await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
   }
 });

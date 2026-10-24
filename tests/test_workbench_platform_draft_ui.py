@@ -93,7 +93,7 @@ await platformDraftOpen();const p=platformDraftPanel;let release;
 handler=async(action,payload)=>payload.profile_id==='old-profile'?new Promise(resolve=>{release=()=>resolve(preview(payload));}):preview(payload);
 p.profile.value='old-profile';const old=platformDraftPreview(p);p.profile.value='本机.json';await platformDraftPreview(p);release();await old;
 assert.equal(p.preview.profile_id,'本机.json');assert.equal(p.run.disabled,false);
-const expiry=[...timers.values()].find(t=>t.delay>1500);expiry.fn();assert.equal(p.run.disabled,true);assert.equal(p.preview,null);
+const expiry=timers.get(p.expiryTimer);expiry.fn();assert.equal(p.run.disabled,true);assert.equal(p.preview,null);
 await p.run.onclick();assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
 ''')
 

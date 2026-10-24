@@ -31,14 +31,14 @@ MAX_SESSIONS = 100
 TTL_SECONDS = 120
 HEALTH_SECONDS = 45
 HEALTH_CHALLENGE_SECONDS = 30
-OP_SECONDS = {"verify_target": 180, "find_drafts": 180, "read_draft": 180, "create_draft": 300}
+OP_SECONDS = {"verify_target": 180, "find_drafts": 180, "read_draft": 180, "create_draft": 300, "update_draft": 300}
 ERROR_CODES = {"platform_browser_" + code for code in (
     "ambiguous_dom", "ambiguous_draft", "chapter_exists_not_draft", "editor_changed", "identity_mismatch",
     "identity_unavailable", "incomplete_dom", "incomplete_list", "incomplete_scope", "invalid_chapter",
     "invalid_identity", "invalid_profile", "invalid_remote_id", "login_required", "navigation_timeout",
     "not_draft", "not_new_draft", "not_open", "operation_failed", "save_unverified", "target_unverified",
     "unnumbered_draft", "unsafe_create", "unsafe_navigation", "unsafe_save", "unsafe_url", "unsupported_editor",
-    "bridge_scope", "bridge_expired", "editor_in_use", "readback_required")}
+    "bridge_scope", "bridge_expired", "editor_in_use", "readback_required", "remote_changed", "formatting_metadata")}
 _LOCAL_LOCK = threading.RLock()
 _LOCK_SECONDS = 10.0
 _LOCK_HANDOFF_SECONDS = .01
@@ -790,8 +790,10 @@ def _validate_result(operation, result, target, params):
             api.platform_drafts._observation(item)
     elif operation == "read_draft":
         api.platform_drafts._observation(result, params["remote_id"])
-    elif operation == "create_draft":
+    elif operation in {"create_draft", "update_draft"}:
         api.platform_drafts._identifier(result, "remote_id")
+        if operation == "update_draft" and result != params["remote_id"]:
+            api.fail("platform_browser_identity_mismatch", "更新回执的远端章节身份已改变。")
     else:
         _fail("invalid_message", "不支持该宿主操作。")
     return result
@@ -800,12 +802,15 @@ def _validate_result(operation, result, target, params):
 class HostAdapter:
     execution_mode = "host_assisted_cua"
 
-    def __init__(self, root, binding, profile, progress_callback=None):
+    def __init__(self, root, binding, profile, progress_callback=None, *, update_existing=False):
         if validate_profile(profile) != self.execution_mode:
             _fail("invalid_profile", "此配置未选择已有 Chrome 会话桥接。")
         api.platform_drafts._comparison_policy(binding.get("comparison_policy", "strict"), binding.get("target", {}).get("platform"))
         api.platform_drafts._body_encoding(binding.get("body_encoding", "verbatim"), binding.get("target", {}).get("platform"))
         self.root, self.binding, self.profile = Path(root), binding, deepcopy(profile)
+        if type(update_existing) is not bool:
+            api.fail("invalid_input", "update_existing must be a boolean")
+        self.update_existing = update_existing
         self.progress = progress_callback
         self.session_id = None
 
@@ -868,6 +873,12 @@ class HostAdapter:
 
     def create_draft(self, chapter, title, body):
         return self._request("create_draft", {"chapter": chapter, "title": title, "body": body})
+
+    def update_draft(self, remote_id, chapter, title, body, *, expected_title, expected_body):
+        if not self.update_existing or self.profile.get("platform") != "fanqie" or not self.profile.get("readback"):
+            api.fail("platform_draft_update_unsupported", "本次任务未授权更新已有草稿。")
+        return self._request("update_draft", {"remote_id": remote_id, "chapter": chapter,
+            "title": title, "body": body, "expected_title": expected_title, "expected_body": expected_body})
 
     def read_draft(self, remote_id):
         return self._request("read_draft", {"remote_id": remote_id})

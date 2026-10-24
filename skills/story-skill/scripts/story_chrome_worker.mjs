@@ -755,7 +755,7 @@ export class ChromeWorker {
       (Object.hasOwn(request.binding,'body_encoding') ? request.binding.body_encoding : 'verbatim') ===
         (this.config.body_encoding || 'verbatim') &&
       ['platform','account_id','remote_book_id'].every(key => request.binding.target[key] === this.config.target[key]) &&
-      ['verify_target','find_drafts','read_draft','create_draft'].includes(request.operation),'platform_chrome_worker_binding_mismatch');
+      ['verify_target','find_drafts','read_draft','create_draft','update_draft'].includes(request.operation),'platform_chrome_worker_binding_mismatch');
     const deadline = Date.parse(request.deadline);
     requireValue(Number.isFinite(deadline),'platform_chrome_worker_invalid_packet');
     this.requestScope = {deadline,operation:request.operation,check:() => {
@@ -781,10 +781,10 @@ export class ChromeWorker {
     if (response.ok) {
       const observation = request.operation === 'read_draft' ? response.result :
         request.operation === 'find_drafts' && Array.isArray(response.result) ? response.result.at(-1) : null;
-      const url = observation?.url || (request.operation === 'create_draft' && typeof response.result === 'string' ?
+      const url = observation?.url || (['create_draft','update_draft'].includes(request.operation) && typeof response.result === 'string' ?
         (request.profile.readback?.url || request.profile.urls.edit).replace('{remote_id}',response.result) : null);
       if (typeof url === 'string') await this.api.rememberReadback(url);
-      if (request.operation === 'create_draft') {
+      if (['create_draft','update_draft'].includes(request.operation)) {
         const tab = await this.api.readbackTab();
         if (tab) {
           try { await writePrivate(path.join(path.dirname(this.config.handle_path),'worker-proof-'+request.id+'.png'),await tab.screenshot({fullPage:false})); }

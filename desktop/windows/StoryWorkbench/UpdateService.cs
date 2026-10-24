@@ -49,7 +49,7 @@ public sealed class UpdateException(string message, Exception? inner = null) : E
 /// <summary>Official-release parsing and bounded transfers. No manuscript or window access.</summary>
 public sealed class UpdateService : IDisposable
 {
-    public const string ClientVersion = "0.2.2";
+    public const string ClientVersion = "0.2.3";
     public const string Repository = "NingCui29/story-skill";
     public const string ReleasesApi = "https://api.github.com/repos/" + Repository + "/releases?per_page=20&page=";
     public const int MaxResponseBytes = 2 * 1024 * 1024;

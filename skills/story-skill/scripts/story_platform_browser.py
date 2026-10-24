@@ -31,93 +31,112 @@ api = None
 
 # Shared by ordinary reads and the current editor snapshot; serialization stays exact.
 _EDITOR_PARAGRAPHS_JS = r"""(el) => {
-  const reject = () => ({ok: false, reason: "unsupported_prosemirror_dom"});
-  if (!el || el.getAttribute("contenteditable") !== "true") return reject();
+  // Only the observed spelling annotation is transparent; never apply its suggestion.
+  const originalText = node => {
+    if (node?.nodeType === 3 && typeof node.textContent === 'string') return node.textContent;
+    if (node?.nodeType !== 1 || node.tagName !== 'TYPO') return null;
+    const names = Array.from(node.attributes || [], attr => attr.name).sort();
+    if (names.join(',') !== 'data-correct,data-source,data-tag,id,ignoretag') return null;
+    const key = /^typo-([0-9]+)$/.exec(node.getAttribute('id') || '');
+    const source = node.getAttribute('data-source'), correction = node.getAttribute('data-correct');
+    if (!key || !source || !correction || node.getAttribute('ignoretag') !== 'true' ||
+        node.getAttribute('data-tag') !== correction + '-' + key[1] ||
+        !Array.from(node.childNodes).every(child => child.nodeType === 3) || node.textContent !== source) return null;
+    annotated = true;
+    return source;
+  };
+  let annotated = false;
+  const reject = () => ({ok: false});
+  if (!el || el.getAttribute('contenteditable') !== 'true') return reject();
   const nodes = Array.from(el.childNodes);
   const element = (node, tag) => node && node.nodeType === 1 && node.tagName === tag;
-  const trailingBreak = node => element(node, "BR") &&
-    node.classList.contains("ProseMirror-trailingBreak");
-  const emptyParagraph = node => element(node, "P") &&
-    node.childNodes.length === 1 && trailingBreak(node.childNodes[0]);
-  // One precisely observed AI suggestion widget replaces the final empty P.
-  // Its fixed UI text is ignored only in this exact final sentinel structure.
-  const classes = (node, expected) => node && node.getAttribute("class") === expected;
+  const br = node => element(node, 'BR') && node.classList.contains('ProseMirror-trailingBreak');
+  const empty = node => element(node, 'P') && node.childNodes.length === 1 && br(node.childNodes[0]);
+  const classes = (node, expected) => node?.getAttribute('class') === expected;
   const aiSentinel = node => {
-    if (!node || node.outerHTML !== '<p><syl-inline __syl_tag="true" ignoreel="true" contenteditable="false" class="ProseMirror-widget"><span class="editor-operability-shadow-wrap"><span class="editor-operability-shadow"><i class="tomato-ai-tool-inspire-v2"></i>暂时没有思路，使用卡文锦囊，AI帮你构思剧情</span></span></syl-inline><img class="ProseMirror-separator" alt=""><br class="ProseMirror-trailingBreak"></p>') return false;
-    if (!element(node, "P") || node.childNodes.length !== 3) return false;
+    if (node?.outerHTML !== '<p><syl-inline __syl_tag="true" ignoreel="true" contenteditable="false" class="ProseMirror-widget"><span class="editor-operability-shadow-wrap"><span class="editor-operability-shadow"><i class="tomato-ai-tool-inspire-v2"></i>暂时没有思路，使用卡文锦囊，AI帮你构思剧情</span></span></syl-inline><img class="ProseMirror-separator" alt=""><br class="ProseMirror-trailingBreak"></p>') return false;
+    if (!element(node, 'P') || node.childNodes.length !== 3) return false;
     const [widget, image, lineBreak] = Array.from(node.childNodes);
-    if (!element(widget, "SYL-INLINE") || widget.getAttribute("__syl_tag") !== "true" ||
-        widget.getAttribute("ignoreel") !== "true" || widget.getAttribute("contenteditable") !== "false" ||
-        !classes(widget, "ProseMirror-widget") || widget.childNodes.length !== 1 ||
-        !element(image, "IMG") || !classes(image, "ProseMirror-separator") || image.getAttribute("alt") !== "" ||
-        !trailingBreak(lineBreak)) return false;
+    if (!element(widget, 'SYL-INLINE') || widget.getAttribute('__syl_tag') !== 'true' ||
+        widget.getAttribute('ignoreel') !== 'true' || widget.getAttribute('contenteditable') !== 'false' ||
+        !classes(widget, 'ProseMirror-widget') || widget.childNodes.length !== 1 ||
+        !element(image, 'IMG') || !classes(image, 'ProseMirror-separator') || image.getAttribute('alt') !== '' || !br(lineBreak)) return false;
     const outer = widget.childNodes[0];
-    if (!element(outer, "SPAN") || !classes(outer, "editor-operability-shadow-wrap") || outer.childNodes.length !== 1) return false;
+    if (!element(outer, 'SPAN') || !classes(outer, 'editor-operability-shadow-wrap') || outer.childNodes.length !== 1) return false;
     const inner = outer.childNodes[0];
-    if (!element(inner, "SPAN") || !classes(inner, "editor-operability-shadow") || inner.childNodes.length !== 2) return false;
+    if (!element(inner, 'SPAN') || !classes(inner, 'editor-operability-shadow') || inner.childNodes.length !== 2) return false;
     const [icon, label] = Array.from(inner.childNodes);
-    return element(icon, "I") && classes(icon, "tomato-ai-tool-inspire-v2") && icon.childNodes.length === 0 &&
-      label.nodeType === 3 && label.textContent === "暂时没有思路，使用卡文锦囊，AI帮你构思剧情";
+    return element(icon, 'I') && classes(icon, 'tomato-ai-tool-inspire-v2') && icon.childNodes.length === 0 &&
+      label.nodeType === 3 && label.textContent === '暂时没有思路，使用卡文锦囊，AI帮你构思剧情';
   };
-  // The one observed empty-editor placeholder is UI chrome, not novel text.
-  if (nodes.length === 1 && element(nodes[0], "P")) {
-    const children = Array.from(nodes[0].childNodes);
-    if (children.length === 3 && element(children[0], "SPAN") &&
-        children[0].classList.contains("syl-placeholder") &&
-        children[0].classList.contains("ProseMirror-widget") &&
-        children[0].getAttribute("ignoreel") === "true" &&
-        children[0].getAttribute("contenteditable") === "false" &&
-        children[0].textContent === "请输入正文" &&
-        Array.from(children[0].childNodes).every(node => node.nodeType === 3) &&
-        element(children[1], "IMG") &&
-        children[1].classList.contains("ProseMirror-separator") &&
-        children[1].getAttribute("alt") === "" && trailingBreak(children[2])) {
-      return {ok: true, value: ""};
+  if (nodes.length === 1 && element(nodes[0], 'P')) {
+    const c = Array.from(nodes[0].childNodes);
+    if (c.length === 3 && element(c[0], 'SPAN') && c[0].classList.contains('syl-placeholder') &&
+        c[0].classList.contains('ProseMirror-widget') && c[0].getAttribute('ignoreel') === 'true' &&
+        c[0].getAttribute('contenteditable') === 'false' && c[0].textContent === '请输入正文' &&
+        Array.from(c[0].childNodes).every(node => node.nodeType === 3) && element(c[1], 'IMG') &&
+        c[1].classList.contains('ProseMirror-separator') && c[1].getAttribute('alt') === '' && br(c[2])) {
+      return {ok: true, value: ''};
     }
   }
-  // Exactly one observed final empty paragraph is an editor sentinel.
-  // Never rstrip(), trim(), or remove any other empty paragraph.
-  if (nodes.length < 2 || (!emptyParagraph(nodes[nodes.length - 1]) &&
-      !aiSentinel(nodes[nodes.length - 1]))) return reject();
+  if (nodes.length < 2 || (!empty(nodes.at(-1)) && !aiSentinel(nodes.at(-1)))) return reject();
   const paragraphs = [];
-  for (const paragraph of nodes.slice(0, -1)) {
-    if (!element(paragraph, "P")) return reject();
-    if (emptyParagraph(paragraph)) {
-      paragraphs.push("");
-      continue;
+  for (const p of nodes.slice(0, -1)) {
+    if (!element(p, 'P')) return reject();
+    if (empty(p)) { paragraphs.push(''); continue; }
+    if (!p.childNodes.length) return reject();
+    let text = '';
+    for (const child of Array.from(p.childNodes)) {
+      const value = originalText(child);
+      if (value === null) return reject();
+      text += value;
     }
-    let text = "";
-    for (const child of Array.from(paragraph.childNodes)) {
-      if (child.nodeType !== 3) return reject();
-      text += child.textContent;
-    }
-    // A zero-child P was not part of the observed saved format.
-    if (paragraph.childNodes.length === 0) return reject();
     paragraphs.push(text);
   }
-  return {ok: true, value: paragraphs.join("\n")};
+  return {ok: true, value: paragraphs.join('\n'), ...(annotated ? {formatting_clean:false} : {})};
 }"""
 
 # Shared by the loading read and the final current-page snapshot.
 _PREVIEW_PARAGRAPHS_JS = r"""(el) => {
-  const bad = () => ({ok: false});
-  if (!el || el.nodeType !== 1) return bad();
+  // Only the observed spelling annotation is transparent; never apply its suggestion.
+  const originalText = node => {
+    if (node?.nodeType === 3 && typeof node.textContent === 'string') return node.textContent;
+    if (node?.nodeType !== 1 || node.tagName !== 'TYPO') return null;
+    const names = Array.from(node.attributes || [], attr => attr.name).sort();
+    if (names.join(',') !== 'data-correct,data-source,data-tag,id,ignoretag') return null;
+    const key = /^typo-([0-9]+)$/.exec(node.getAttribute('id') || '');
+    const source = node.getAttribute('data-source'), correction = node.getAttribute('data-correct');
+    if (!key || !source || !correction || node.getAttribute('ignoretag') !== 'true' ||
+        node.getAttribute('data-tag') !== correction + '-' + key[1] ||
+        !Array.from(node.childNodes).every(child => child.nodeType === 3) || node.textContent !== source) return null;
+    annotated = true;
+    return source;
+  };
+  let annotated = false;
+  if (!el) return {ok:false};
   const nodes = Array.from(el.childNodes);
-  if (nodes.length === 0) return {ok: false, pending: true};
-  const values = [];
-  for (const p of nodes) {
-    if (p.nodeType !== 1 || p.tagName !== 'P' || !p.outerHTML.startsWith('<p>')) return bad();
-    const children = Array.from(p.childNodes);
-    const blankBreak = children.length === 1 && children[0].nodeType === 1 && children[0].tagName === 'BR' &&
-      children[0].outerHTML === '<br>' && children[0].childNodes.length === 0;
-    if (blankBreak) { values.push(''); continue; }
-    if (children.some(child => child.nodeType !== 3 || typeof child.textContent !== 'string')) return bad();
-    values.push(children.map(child => child.textContent).join(''));
+  if (!nodes.length) return {ok:false,pending:true};
+  const plainP = node => node?.nodeType === 1 && node.tagName === 'P' &&
+    typeof node.outerHTML === 'string' && node.outerHTML.startsWith('<p>') && node.outerHTML.endsWith('</p>');
+  const last = nodes[nodes.length-1];
+  if (!plainP(last) || last.childNodes.length !== 0 || last.outerHTML !== '<p></p>') return {ok:false};
+  const paragraphs = [];
+  for (const paragraph of nodes.slice(0,-1)) {
+    if (!plainP(paragraph)) return {ok:false};
+    const only = paragraph.childNodes[0];
+    if (paragraph.outerHTML === '<p><br></p>' && paragraph.childNodes.length === 1 &&
+        only?.nodeType === 1 && only.tagName === 'BR' && only.childNodes.length === 0 && only.outerHTML === '<br>') {
+      paragraphs.push(''); continue;
+    }
+    let text = '';
+    for (const child of Array.from(paragraph.childNodes)) {
+      const value = originalText(child);
+      if (value === null) return {ok:false};
+      text += value;
+    }
+    paragraphs.push(text);
   }
-  const last = nodes[nodes.length - 1];
-  if (last.childNodes.length !== 0) return bad();
-  values.pop();
-  return {ok: true, value: values.join('\n')};
+  return {ok:true,value:paragraphs.join('\n'),...(annotated ? {formatting_clean:false} : {})};
 }"""
 
 def _normal_text(value):
@@ -1428,6 +1447,8 @@ class BrowserAdapter:
             if not isinstance(item.get("value"), str):
                 _fail("incomplete_dom", "最终编辑页字段没有完整值。", field=name)
             result[name] = item["value"]
+            if name == "body" and item.get("formatting_clean") is False:
+                result["body_formatting_clean"] = False
         return result
 
     def _confirm_editor_snapshot(self, page, expected_url, remote_id, chapter, observed):
@@ -1536,7 +1557,7 @@ class BrowserAdapter:
             _fail("invalid_chapter", "只读预览页未提供精确的章号和完整标题。")
         return int(match[1]), match[2]
 
-    def _preview_paragraph_value(self, locator, *, allow_pending=False):
+    def _preview_paragraph_value(self, locator, *, allow_pending=False, evidence=False):
         packet = locator.evaluate(_PREVIEW_PARAGRAPHS_JS)
         # Only a completely unpopulated container is a known loading state.
         # A partial paragraph tree remains unsupported, and the final stable
@@ -1546,7 +1567,7 @@ class BrowserAdapter:
         if (not isinstance(packet, dict) or packet.get("ok") is not True or
                 not isinstance(packet.get("value"), str)):
             _fail("unsupported_editor", "只读预览正文结构与已核实的纯段落结构不同；未猜测或裁剪。")
-        return packet["value"]
+        return packet if evidence else packet["value"]
 
     def _read_preview(self, remote_id):
         config = self.profile["readback"]
@@ -1576,7 +1597,7 @@ class BrowserAdapter:
                     _fail("identity_mismatch", "等待预览正文时草稿ID发生变化；已停止。")
                 if self._preview_header(page) != (chapter, title):
                     _fail("editor_changed", "等待预览正文时章号或标题发生变化；已停止。")
-                value = self._preview_paragraph_value(body, allow_pending=True)
+                value = self._preview_paragraph_value(body, allow_pending=True, evidence=True)
                 if time.monotonic() >= deadline:
                     _fail("incomplete_dom", "只读预览正文尚未完整加载；已停止，需回读对账。")
                 if value is not None:
@@ -1585,7 +1606,7 @@ class BrowserAdapter:
             self._confirm_listed_draft(remote_id, chapter)
             self._require_identity(page)
             if (self._url_value(page.url, config["remote_id"]) != remote_id or
-                    self._preview_header(page) != (chapter, title) or self._preview_paragraph_value(body) != value):
+                    self._preview_header(page) != (chapter, title) or self._preview_paragraph_value(body, evidence=True) != value):
                 _fail("editor_changed", "只读预览身份、标题或正文在核对期间发生变化。")
             # Final identity reads must not refresh a guard or poll missing DOM
             # after the final body was observed. Pin both sides of those reads.
@@ -1619,13 +1640,14 @@ class BrowserAdapter:
             for name, expected in zip(("account", "book"), self._target[1:]):
                 if name in final and final[name].strip() != expected:
                     _fail("identity_mismatch", "最终预览账号或作品发生变化。", field=name)
-            if self._preview_header_value(final["header"]) != (chapter, title) or final["body"] != value:
+            if self._preview_header_value(final["header"]) != (chapter, title) or final["body"] != value["value"] or final.get("body_formatting_clean", True) != value.get("formatting_clean", True):
                 _fail("editor_changed", "最终预览标题或正文在核对账号期间发生变化。")
             self._require_open()
             self._safe_url(page.url)
             if page.url != expected_url:
                 _fail("identity_mismatch", "读取最终标题时预览地址发生变化。")
-            return {"remote_id": remote_id, "title": title, "body": value, "state": "draft", "url": expected_url}
+            return {"remote_id": remote_id, "title": title, "body": value["value"], "state": "draft", "url": expected_url,
+                    **({"formatting_clean": False} if value.get("formatting_clean") is False else {})}
         finally:
             page.close()
 

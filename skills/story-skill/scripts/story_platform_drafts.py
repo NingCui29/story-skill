@@ -241,10 +241,10 @@ def _atomic_publish(source, target):
         raise OSError(error_number, os.strerror(error_number))
 
 
-def _write_record(directory, name, record):
+def _write_record(directory, name, record, *, max_bytes=MAX_EVENT_BYTES):
     """Durably publish a new regular JSON file without replacing any history."""
     data = api.dumps(record).encode("utf-8")
-    if len(data) > MAX_EVENT_BYTES:
+    if len(data) > max_bytes:
         api.fail("platform_draft_journal_limit", "Platform draft event exceeds its size limit")
     file = api._BoundFile(directory, name)
     fd, staged = api._bound_stage(directory, ".draft-stage-")
@@ -409,7 +409,7 @@ def _retirement_no_active_create(book, target):
                         if not match:
                             continue
                         request = bridge._read(directory, filename)
-                        if request.get("operation") != "create_draft":
+                        if request.get("operation") not in {"create_draft", "update_draft"}:
                             continue
                         response = api.publish._bound_stat(api._BoundFile(directory, "response-" + match[1] + ".json"), missing=True)
                         if response is None:
@@ -637,6 +637,8 @@ class _TargetState:
             api.fail("platform_draft_journal_write_failed", "Could not persist the target-level sending intent")
 
     def resolve(self, chapter, observed, *, frozen=None, comparison_policy="strict", body_encoding="verbatim", scope=None):
+        if observed.get("formatting_clean") is False:
+            return False
         intents, resolved = self.attempts(chapter)
         frozen = observed if frozen is None else frozen
         encoded = _encoded_content(frozen, body_encoding, self.platform)
@@ -960,7 +962,9 @@ def _observation(raw, remote_id=None):
         api.fail("platform_draft_invalid_observation", "Readback belongs to a different remote chapter")
     if any(not isinstance(raw.get(name), str) for name in ("title", "body")):
         api.fail("platform_draft_invalid_observation", "Full draft title and body are required")
-    return {name: raw[name] for name in ("remote_id", "title", "body", "state")}
+    if "formatting_clean" in raw and type(raw["formatting_clean"]) is not bool:
+        api.fail("platform_draft_invalid_observation", "Formatting evidence must be boolean")
+    return {name: raw[name] for name in ("remote_id", "title", "body", "state", "formatting_clean") if name in raw}
 
 
 def _packet(plan_id, manifest, plan_status, journal, *, preview=False, remote_accessed=False,
@@ -1046,10 +1050,14 @@ def status(book, plan_id):
 
 
 def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False, progress=None,
-             comparison_policy="strict", body_encoding="verbatim"):
+             comparison_policy="strict", body_encoding="verbatim", update_existing=False):
     """Execute only explicitly requested saves; injected adapters own browser I/O."""
+    if type(update_existing) is not bool or type(reconcile_only) is not bool or (update_existing and reconcile_only):
+        api.fail("invalid_input", "Choose one draft execution mode")
     with _checked_plan(book, plan_id, check_source=not reconcile_only) as (manifest, fingerprint, plan_status):
         _comparison_policy(comparison_policy, manifest["platform"])
+        if update_existing and manifest["platform"] != "fanqie":
+            api.fail("platform_draft_update_unsupported", "当前仅支持核对后更新番茄已有草稿。")
         encoded_chapters = {item["chapter"]: _encoded_content(item, body_encoding, manifest["platform"])
                             for item in manifest["chapters"]}
         # Keep immutable in-memory content and never hold a creative transaction
@@ -1065,7 +1073,7 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                                        "source_content_sha256": _hash(_content(item)),
                                        "encoded_content_sha256": _hash(_content(encoded_chapters[item["chapter"]]))}
                                       for item in manifest["chapters"]]
-                result["requested_mode"] = "reconcile_only" if reconcile_only else "save_draft"
+                result["requested_mode"] = "sync_existing" if update_existing else ("reconcile_only" if reconcile_only else "save_draft")
                 return result
     if adapter is None:
         api.fail("platform_draft_adapter_required", "Execution requires a platform draft adapter")
@@ -1124,17 +1132,58 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                     observed_chapters.add(chapter)
                     rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, manifest["platform"])
                     exact = _content(frozen) == _content(observed)
-                    if not rendered_exact and not terminal_equivalent:
+                    needs_update = (not rendered_exact and not terminal_equivalent) or observed.get("formatting_clean") is False
+                    if needs_update and not update_existing:
                         append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
-                                       observed=observed, reason="remote_content_differs")
+                               observed=observed, reason="remote_formatting_metadata" if observed.get("formatting_clean") is False else "remote_content_differs")
                         break
+                    if needs_update:
+                        intents, resolved = guard.attempts(chapter)
+                        if any(key not in resolved for key in intents):
+                            append(chapter, "unknown", attempt_id=attempt_id, remote_id=remote_id,
+                                   observed=observed, reason="unresolved_previous_content")
+                            break
+                        if not callable(getattr(adapter, "update_draft", None)):
+                            api.fail("platform_draft_update_unsupported", "当前执行端不支持更新已有草稿。")
+                        # Full private before-image must be durable before any editor opens.
+                        backup = api.safe_path(book.root, ".story/platform-draft-update-backups/" + plan_id)
+                        with api._pinned_directory(backup, create=True) as directory:
+                            _write_record(directory, attempt_id + ".json", {
+                                "schema": 1, "at": _now(), **scope, "target": _target(manifest),
+                                "chapter": chapter, "attempt_id": attempt_id, "before": observed,
+                                "desired_content_sha256": _hash(_content(encoded))}, max_bytes=16 * 1024 * 1024)
+                        with _checked_plan(book, plan_id) as (_, current_fingerprint, _):
+                            if current_fingerprint != fingerprint:
+                                api.fail("platform_draft_source_changed", "Publishing plan changed")
+                            guard.intent(chapter, attempt_id, frozen, comparison_policy=comparison_policy,
+                                         body_encoding=body_encoding, scope=scope)
+                            sending = True
+                            append(chapter, "sending", attempt_id=attempt_id, remote_id=remote_id,
+                                   reason="updating_existing_draft")
+                        guard()
+                        updated_id = adapter.update_draft(remote_id, chapter, encoded["title"], encoded["body"],
+                            expected_title=observed["title"], expected_body=observed["body"])
+                        if _identifier(updated_id, "remote_id") != remote_id:
+                            api.fail("platform_draft_invalid_observation", "Update changed the remote chapter identity")
+                        guard()
+                        target_verified = False
+                        adapter.verify_target(**_target(manifest))
+                        target_verified = True
+                        observed = _observation(adapter.read_draft(remote_id), remote_id)
+                        rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, manifest["platform"])
+                        exact = _content(frozen) == _content(observed)
+                        if (not rendered_exact and not terminal_equivalent) or observed.get("formatting_clean") is False:
+                            append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
+                                   observed=observed, reason="saved_formatting_metadata" if observed.get("formatting_clean") is False else "saved_content_differs")
+                            break
                     if not guard.resolve(chapter, observed, frozen=frozen, comparison_policy=comparison_policy,
                                          body_encoding=body_encoding, scope=scope):
                         append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
                                        observed=observed, reason="unresolved_previous_content")
                         break
-                    append(chapter, "reconciled" if exact else "reconciled_equivalent", attempt_id=attempt_id,
-                                   remote_id=remote_id, observed=observed)
+                    event = ("saved" if exact else "saved_equivalent") if needs_update else ("reconciled" if exact else "reconciled_equivalent")
+                    append(chapter, event, attempt_id=attempt_id, remote_id=remote_id, observed=observed,
+                           **({"reason": "existing_draft_updated"} if needs_update else {}))
                     # The original-source match remains distinct from a rendered match.
                     (exact_chapters if exact else equivalent_chapters).add(chapter)
                     report("chapter_verified", chapter)
@@ -1143,8 +1192,10 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                 if journal.may_have_remote(chapter, guard.retired_events(chapter, book.meta("id"), plan_id)) or target_attempts:
                     append(chapter, "unknown", attempt_id=attempt_id, reason="previous_attempt_not_found")
                     break
-                if reconcile_only:
+                if reconcile_only or update_existing:
                     append(chapter, "not_found", attempt_id=attempt_id, reason="remote_draft_not_found")
+                    if update_existing:
+                        continue
                     break
                 guard()
                 target_verified = False
@@ -1169,9 +1220,9 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                 observed_chapters.add(chapter)
                 rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, manifest["platform"])
                 exact = _content(frozen) == _content(observed)
-                if not rendered_exact and not terminal_equivalent:
+                if (not rendered_exact and not terminal_equivalent) or observed.get("formatting_clean") is False:
                     append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
-                                   observed=observed, reason="saved_content_differs")
+                           observed=observed, reason="saved_formatting_metadata" if observed.get("formatting_clean") is False else "saved_content_differs")
                     break
                 append(chapter, "saved" if exact else "saved_equivalent", attempt_id=attempt_id,
                                remote_id=remote_id, observed=observed)
@@ -1196,6 +1247,7 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                          comparison_policy=comparison_policy, body_encoding=body_encoding)
         result["source_matches_current"] = not current_reasons
         result["local_version_changed"] = bool(current_reasons)
+        result["requested_mode"] = "sync_existing" if update_existing else ("reconcile_only" if reconcile_only else "save_draft")
         result["execution_mode"] = getattr(adapter, "execution_mode", "playwright")
         result["backend"] = result["execution_mode"]
         result["remote_evidence_source"] = "host_worker_response" if result["execution_mode"] == "host_assisted_cua" else "browser_adapter"
@@ -1445,17 +1497,103 @@ def workbench_bind(root, account_id, book_management_url, start, end, *, expecte
                 _WORKBENCH_BINDINGS.pop(key, None)
 
 
+def workbench_formal_state(root, *, expected_book_id):
+    """Observe current formal chapter bounds without preparing a publishing plan."""
+    with _workbench_book(root, expected_book_id) as book, book.read_snapshot():
+        api.publish._book_kind(book)
+        formal = book.db.execute("SELECT min(chapter),max(chapter),count(*) FROM chapter_state").fetchone()
+        return {"ok": True, "book_id": book.meta("id"), "revision": book.meta("revision"),
+                "formal_first": formal[0], "formal_last": formal[1], "formal_count": formal[2],
+                "max_batch": 1000, "scope": "local_formal_state_only",
+                "remote_accessed": False, "submission_performed": False}
+
+
+def workbench_refresh_plan(root, plan_id, profile_id, *, expected_book_id, expected_revision,
+                           expected_profile_sha256, start=None, end=None):
+    """Prepare current formal sources for the selected immutable plan's target.
+
+    Old plans and journals remain available for reconciliation. Reusing their
+    target is not an assertion that their old sources or remote drafts match.
+    """
+    api.integer(expected_revision, "expected_revision")
+    api.publish._identity(plan_id, "plan id")
+    if not re.fullmatch(r"[0-9a-f]{32}", plan_id):
+        api.fail("invalid_input", "请选择有效的历史正式稿批次。")
+    profile_id = _profile_name(profile_id)
+    if (not isinstance(expected_profile_sha256, str) or
+            not re.fullmatch(r"[0-9a-f]{64}", expected_profile_sha256)):
+        api.fail("platform_draft_profile_changed", "页面配置摘要无效，请刷新后重新核对。")
+    if start is not None:
+        api.integer(start, "start", 1)
+    if end is not None:
+        api.integer(end, "end", 1)
+    with _workbench_book(root, expected_book_id) as book:
+        root, book_id = book.root, book.meta("id")
+        # Manifest contents are immutable. Read the selected target before
+        # taking the shared job/binding gate, without refreshing its status.
+        with api.publish._ledger(book) as db:
+            manifest = api.publish._validated_manifest(api.publish._plan(db, plan_id), book_id)
+        if manifest["platform"] != "fanqie":
+            api.fail("platform_draft_refresh_unsupported", "当前仅支持更新番茄正式稿批次；其他平台可继续核对原历史清单。")
+        target = _target(manifest)
+        target_hash, key = _hash(target), (str(root), book_id)
+        with _WORKBENCH_LOCK:
+            if (any(not job["done"] and (job["_root"] == str(root) or job["_target_sha256"] == target_hash)
+                    for job in _WORKBENCH_JOBS.values()) or
+                    any(other == key or value == target_hash for other, value in _WORKBENCH_BINDINGS.items())):
+                api.fail("platform_draft_busy", "当前作品或目标已有任务进行中，请等待任务结束后再更新批次。")
+            _WORKBENCH_BINDINGS[key] = target_hash
+        try:
+            with api.storage.operation_lock(book), book.read_snapshot():
+                api.publish._book_kind(book)
+                if book.meta("revision") != expected_revision:
+                    api.fail("stale_revision", "本地正式稿已变化，请刷新章节范围后重新生成批次。")
+                last = book.db.execute("SELECT max(chapter) FROM chapter_state").fetchone()[0]
+                first = min(item["chapter"] for item in manifest["chapters"]) if start is None else start
+                last = last if end is None else end
+                if last is None or first > last or last > 1000000 or last - first + 1 > 1000:
+                    api.fail("platform_draft_invalid_range", "请选择连续的正式章节范围，每批最多1000章。")
+                profile, profile_sha256 = _read_profile(root, profile_id)
+                if profile_sha256 != expected_profile_sha256:
+                    api.fail("platform_draft_profile_changed", "页面配置已经变化，请刷新后重新核对。")
+                if profile["platform"] != target["platform"]:
+                    api.fail("platform_draft_profile_mismatch", "所选页面配置与原批次的平台不一致。")
+                configured = api.platform_browser.fanqie_profile_from_book_url(profile["urls"]["drafts"])
+                if configured["remote_book_id"] != target["remote_book_id"]:
+                    api.fail("platform_draft_profile_mismatch", "所选页面配置属于另一作品，未更改原批次的账号或目标。")
+                request = {**target, "chapters": list(range(first, last + 1)), "mode": "draft"}
+                # prepare checks current reviewed heads and exports under this
+                # same operation lock/snapshot; it never mutates the old plan.
+                plan = api.publish.prepare(book, request, expected_revision, summary=True)
+                _, after_sha256 = _read_profile(root, profile_id)
+                if after_sha256 != expected_profile_sha256:
+                    api.fail("platform_draft_profile_changed", "生成期间页面配置发生变化；请刷新核对本地批次，尚未访问平台。")
+                return {"ok": True, "book_id": book_id, "revision": expected_revision,
+                        **target, "remote_book_title": configured["remote_book_title"],
+                        "base_plan_id": plan_id, "plan_id": plan["id"], "plan": plan,
+                        "profile_id": profile_id, "profile_sha256": profile_sha256,
+                        "plan_reused": plan.get("idempotent", False), "chapters": plan["chapters"],
+                        "start": first, "end": last, "scope": "local_formal_refresh_only",
+                        "remote_accessed": False, "platform_acceptance_verified": False,
+                        "submission_performed": False}
+        except OSError:
+            api.fail("platform_draft_refresh_failed", "无法安全生成本地正式稿批次；请刷新核对，尚未访问平台。")
+        finally:
+            with _WORKBENCH_LOCK:
+                _WORKBENCH_BINDINGS.pop(key, None)
+
+
 def _preflight(root, plan_id, profile_id, expected_book_id=None, reconcile_only=False, comparison_policy="strict",
-               body_encoding="verbatim"):
+               body_encoding="verbatim", update_existing=False):
     if type(reconcile_only) is not bool:
         api.fail("invalid_input", "reconcile_only must be a boolean")
     with _workbench_book(root, expected_book_id) as book:
         result = run_plan(book, plan_id, reconcile_only=reconcile_only, comparison_policy=comparison_policy,
-                          body_encoding=body_encoding)
+                          body_encoding=body_encoding, update_existing=update_existing)
         with _checked_plan(book, plan_id, check_source=not reconcile_only) as (manifest, fingerprint, _):
             binding = {"book_id": book.meta("id"), "plan_id": plan_id,
                        "manifest_sha256": fingerprint, "target_sha256": _hash(_target(manifest)),
-                       "mode": "reconcile_only" if reconcile_only else "save_draft", "comparison_policy": comparison_policy,
+                       "mode": "sync_existing" if update_existing else ("reconcile_only" if reconcile_only else "save_draft"), "comparison_policy": comparison_policy,
                        "body_encoding": body_encoding}
         root = book.root
     profile = None
@@ -1464,6 +1602,8 @@ def _preflight(root, plan_id, profile_id, expected_book_id=None, reconcile_only=
         profile, fingerprint = _read_profile(root, profile_id)
         if profile["platform"] != result["platform"]:
             api.fail("platform_draft_profile_mismatch", "所选配置的平台与冻结清单不一致。")
+        if update_existing and (profile.get("execution_mode") != "host_assisted_cua" or not profile.get("readback")):
+            api.fail("platform_draft_update_unsupported", "更新已有草稿需要番茄 Chrome 会话和独立预览回读配置。")
     binding.update(profile_id=profile_id, profile_sha256=fingerprint)
     return root, result, profile, binding
 
@@ -1518,10 +1658,10 @@ def _automatic_connection(profile, blockers):
 
 
 def workbench_preview(root, plan_id, profile_id=None, *, expected_book_id=None, reconcile_only=False,
-                      comparison_policy="strict", body_encoding="verbatim"):
+                      comparison_policy="strict", body_encoding="verbatim", update_existing=False):
     """Check frozen local sources and profile eligibility; never opens a browser."""
     root, preview, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id, reconcile_only,
-                                               comparison_policy, body_encoding)
+                                               comparison_policy, body_encoding, update_existing)
     runtime = _execution_runtime(root, preview, profile, binding)
     blockers = []
     if profile_id is None:
@@ -1615,10 +1755,11 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
     try:
         # Recheck after thread dispatch, before constructing/opening a browser.
         reconcile_only = binding["mode"] == "reconcile_only"
+        update_existing = binding["mode"] == "sync_existing"
         policy = binding["comparison_policy"]
         encoding = binding["body_encoding"]
         _, preview, profile, current = _preflight(root, binding["plan_id"], binding["profile_id"], binding["book_id"],
-                                                  reconcile_only, policy, encoding)
+                                                  reconcile_only, policy, encoding, update_existing)
         if current != binding:
             api.fail("platform_draft_preview_changed", "冻结清单或平台配置已变化；请重新预览。")
         blockers = _runtime_blockers(profile, _execution_runtime(root, preview, profile, current))
@@ -1653,20 +1794,22 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
             # Connecting runs outside book transactions. Never use the earlier
             # preview if the author edited the source or binding meanwhile.
             _, preview, profile, current = _preflight(root, binding["plan_id"], binding["profile_id"],
-                                                       binding["book_id"], reconcile_only, policy, encoding)
+                                                       binding["book_id"], reconcile_only, policy, encoding, update_existing)
             if current != binding:
                 api.fail("platform_draft_preview_changed", "连接期间正式稿或配置已变化，请重新预览。")
         callback = lambda event: _job_progress(job_id, event)
         with _workbench_book(root, binding["book_id"]) as book:
             if profile.get("execution_mode") == "host_assisted_cua":
-                context = api.platform_chrome_bridge.HostAdapter(root, _host_binding(binding, preview), profile, callback)
+                context = api.platform_chrome_bridge.HostAdapter(root, _host_binding(binding, preview), profile, callback,
+                    **({"update_existing": True} if update_existing else {}))
             else:
                 native_profile = {key: value for key, value in profile.items() if key != "execution_mode"}
                 context = api.platform_browser.BrowserAdapter(native_profile, timeout_ms=timeout_ms,
                     login_timeout_ms=login_timeout_ms, progress_callback=callback, comparison_policy=policy)
             with context as adapter:
                 result = run_plan(book, binding["plan_id"], adapter, execute=True,
-                                  reconcile_only=reconcile_only, progress=callback, comparison_policy=policy, body_encoding=encoding)
+                                  reconcile_only=reconcile_only, progress=callback, comparison_policy=policy, body_encoding=encoding,
+                                  update_existing=update_existing)
     except BaseException as error:
         # Durable intents remain the source of truth even if the worker was
         # interrupted after sending. Status is local-only and never retries.
@@ -1701,7 +1844,7 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
 
 def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_profile_sha256,
                     preview_token, execute=False, timeout_ms=15000, login_timeout_ms=600000, reconcile_only=False,
-                    auto_connect=False, comparison_policy="strict", body_encoding="verbatim"):
+                    auto_connect=False, comparison_policy="strict", body_encoding="verbatim", update_existing=False):
     """Start one explicitly authorized frozen batch; repeat clicks reuse jobs."""
     if execute is not True:
         api.fail("platform_draft_execute_required", "保存平台草稿需要明确点击保存整批草稿。")
@@ -1714,7 +1857,7 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
     if timeout_ms > 300000 or login_timeout_ms > 3600000:
         api.fail("invalid_input", "Browser timeout exceeds the supported limit")
     root, preview, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id, reconcile_only,
-                                               comparison_policy, body_encoding)
+                                               comparison_policy, body_encoding, update_existing)
     if binding["profile_sha256"] != expected_profile_sha256:
         api.fail("platform_draft_profile_changed", "平台配置已变化；请重新预览。")
     try:
@@ -1769,6 +1912,17 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
         return {**_job_packet(job), "reused": False}
 
 
+def workbench_history(root, plan_id, *, expected_book_id=None):
+    """Read latest durable observations, never contacts the platform."""
+    with _workbench_book(root, expected_book_id) as book:
+        packet = status(book, plan_id)
+        with _checked_plan(book, plan_id, check_source=False) as (manifest, _, _):
+            reasons, _ = api.publish._source_comparison(book, manifest)
+        packet["source_matches_current"] = not reasons
+        packet["book_id"] = book.meta("id")
+        return packet
+
+
 def workbench_job(root, job_id, *, expected_book_id=None):
     """Read in-process observations only; polling cannot send or refresh drafts."""
     if not isinstance(job_id, str) or not re.fullmatch(r"[0-9a-f]{32}", job_id):
@@ -1788,6 +1942,7 @@ def register_parser(sub, command):
     parser.add_argument("--profile", help="Required with --execute; local browser profile JSON never copied into the journal")
     parser.add_argument("--execute", action="store_true", help="Allow browser access; omission is a local preview")
     parser.add_argument("--reconcile-only", action="store_true", help="With --execute, read and reconcile only; never creates")
+    parser.add_argument("--update-existing", action="store_true", help="Update existing Fanqie drafts after full readback; never creates or submits")
     parser.add_argument("--comparison-policy", choices=sorted(COMPARISON_POLICIES), default="strict",
                         help="Explicit policy for this frozen batch; strict is the default")
     parser.add_argument("--body-encoding", choices=sorted(BODY_ENCODINGS), default="verbatim",
@@ -1805,13 +1960,14 @@ def run(book, args):
         raise AssertionError(args.command)
     policy = getattr(args, "comparison_policy", "strict")
     encoding = getattr(args, "body_encoding", "verbatim")
+    update_existing = getattr(args, "update_existing", False)
     if not args.execute:
         return run_plan(book, args.id, execute=False, reconcile_only=args.reconcile_only,
-                        comparison_policy=policy, body_encoding=encoding)
+                        comparison_policy=policy, body_encoding=encoding, update_existing=update_existing)
     if not args.profile:
         api.fail("invalid_input", "--execute requires --profile with a local browser profile JSON")
     # Preflight must complete before BrowserAdapter.__enter__ can launch/login.
-    run_plan(book, args.id, execute=False, reconcile_only=args.reconcile_only, comparison_policy=policy, body_encoding=encoding)
+    run_plan(book, args.id, execute=False, reconcile_only=args.reconcile_only, comparison_policy=policy, body_encoding=encoding, update_existing=update_existing)
     api.integer(args.timeout_ms, "timeout_ms", 1)
     api.integer(args.login_timeout_ms, "login_timeout_ms", 1)
     profile = api.read_json(args.profile)
@@ -1821,11 +1977,13 @@ def run(book, args):
             api.fail("platform_draft_invalid_profile_path", "宿主模式只使用本书已保存的平台配置。")
         binding, actual_profile = api.platform_chrome_bridge._binding(book, args.id, saved.name,
                                                                     comparison_policy=policy, body_encoding=encoding)
-        with api.platform_chrome_bridge.HostAdapter(book.root, binding, actual_profile) as adapter:
+        with api.platform_chrome_bridge.HostAdapter(book.root, binding, actual_profile, update_existing=update_existing) as adapter:
             return run_plan(book, args.id, adapter, execute=True, reconcile_only=args.reconcile_only,
-                            comparison_policy=policy, body_encoding=encoding)
+                            comparison_policy=policy, body_encoding=encoding, update_existing=update_existing)
+    if update_existing:
+        api.fail("platform_draft_update_unsupported", "更新已有草稿需要 Chrome 会话执行端。")
     profile = {key: value for key, value in profile.items() if key != "execution_mode"}
     with api.platform_browser.BrowserAdapter(profile, timeout_ms=args.timeout_ms,
                                              login_timeout_ms=args.login_timeout_ms, comparison_policy=policy) as adapter:
         return run_plan(book, args.id, adapter, execute=True, reconcile_only=args.reconcile_only,
-                        comparison_policy=policy, body_encoding=encoding)
+                        comparison_policy=policy, body_encoding=encoding, update_existing=update_existing)

@@ -110,7 +110,7 @@ class SuiteInstallTests(unittest.TestCase):
         package = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(package)
         self.assertEqual(installer.SUITE_FILES, package.SUITE_FILES)
-        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True), ("0.6.3", 39, True), ("0.6.4", 39, True), ("0.6.5", 40, True), ("0.6.6", 40, True), ("0.6.7", 40, True), ("0.6.8", 40, True), ("0.6.9", 44, True), ("0.6.10", 45, True), ("0.6.11", 49, True), ("0.6.12", 49, True), ("0.6.13", 50, True), ("0.6.14", 51, True), ("0.6.15", 51, True), ("0.6.16", 51, True), ("0.6.17", 52, True), ("0.6.18", 55, True), ("0.6.19", 62, True), ("0.6.20", 62, True), ("0.6.21", 64, True), ("0.6.22", 69, True), ("0.6.23", 69, True)):
+        for version, size, has_workbench in (("0.6.0", 38, False), ("0.6.1", 39, True), ("0.6.2", 39, True), ("0.6.3", 39, True), ("0.6.4", 39, True), ("0.6.5", 40, True), ("0.6.6", 40, True), ("0.6.7", 40, True), ("0.6.8", 40, True), ("0.6.9", 44, True), ("0.6.10", 45, True), ("0.6.11", 49, True), ("0.6.12", 49, True), ("0.6.13", 50, True), ("0.6.14", 51, True), ("0.6.15", 51, True), ("0.6.16", 51, True), ("0.6.17", 52, True), ("0.6.18", 55, True), ("0.6.19", 62, True), ("0.6.20", 62, True), ("0.6.21", 64, True), ("0.6.22", 69, True), ("0.6.23", 69, True), ("0.6.24", 69, True)):
             with self.subTest(version=version):
                 files = installer.suite_files(version)
                 self.assertEqual(installer.skill_names(version), package.skill_names(version))
@@ -183,7 +183,7 @@ class SuiteInstallTests(unittest.TestCase):
             "story-skill-write/references/punctuation.md",
             "story-skill/scripts/story_punctuation.py",
         })
-        for version in ("0.5.11", "0.6.24", "0.6.99"):
+        for version in ("0.5.11", "0.6.25", "0.6.99"):
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
                 installer.suite_files(version)
             with self.subTest(version=version), self.assertRaisesRegex(ValueError, "no reviewed suite layout"):
@@ -616,7 +616,7 @@ class SuiteInstallTests(unittest.TestCase):
 
     def test_unknown_suite_version_is_rejected_before_writing_targets(self):
         runtime = self.source / "story-skill/scripts/story.py"
-        for version in ("0.6.00", "0.6.24", "0.6.99", "0.7.0", "1.0.0"):
+        for version in ("0.6.00", "0.6.25", "0.6.99", "0.7.0", "1.0.0"):
             with self.subTest(version=version):
                 runtime.write_text(f'VERSION = "{version}"\n', encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "no reviewed suite layout"):

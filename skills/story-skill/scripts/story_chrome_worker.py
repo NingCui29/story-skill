@@ -234,6 +234,7 @@ def _worker_prompt(module_path, config_path):
         "This consumes the user's configured Codex quota. Use their default model and effort. "
         "The initiating user's requested website is https://fanqienovel.com in their existing, signed-in Google Chrome. "
         "Their request is limited to the single account and work in the validated target binding, and to the selected frozen formal chapter batch. "
+        "An authenticated update_draft request authorizes replacing the title and complete plain-text body of that existing unpublished draft after verifying its before-image. Read back independently; never update published chapters. "
         "They requested account/work identity checks and directory/draft reads. A create_draft request from the authenticated local queue "
         "conveys their explicit request to send those frozen chapter titles and bodies to that bound work as unpublished platform drafts, "
         "followed by independent full readback. A read-only queue never authorizes creating a draft. "
