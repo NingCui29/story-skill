@@ -314,8 +314,9 @@ public sealed class UpdateWindow : Window
             await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
             window.UpdateLayout();
             var dpi = VisualTreeHelper.GetDpi(window.surface);
-            var bitmap = new RenderTargetBitmap((int)Math.Ceiling(window.surface.ActualWidth * dpi.DpiScaleX),
-                (int)Math.Ceiling(window.surface.ActualHeight * dpi.DpiScaleY), dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32);
+            // Capture only whole physical pixels; a ceiled partial edge is naturally translucent.
+            var bitmap = new RenderTargetBitmap((int)Math.Floor(window.surface.ActualWidth * dpi.DpiScaleX),
+                (int)Math.Floor(window.surface.ActualHeight * dpi.DpiScaleY), dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32);
             // Capture the displayed content itself, including its real background, not a synthetic canvas.
             bitmap.Render(window.surface);
             var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
@@ -337,8 +338,16 @@ public sealed class UpdateWindow : Window
         }
         var pixels = new byte[bitmap.PixelWidth * bitmap.PixelHeight * 4];
         bitmap.CopyPixels(pixels, bitmap.PixelWidth * 4, 0);
-        int opaque = 0;
-        for (int i = 3; i < pixels.Length; i += 4) if (pixels[i] == 255) opaque++;
+        // WPF's 8-bit premultiplied antialiasing can round an opaque composited glyph to alpha 254.
+        // Accept exactly that one quantization level; truly translucent pixels still fail the 99% gate.
+        const byte alphaThreshold = 254;
+        int opaque = 0, exactOpaque = 0, minimumAlpha = 255;
+        for (int i = 3; i < pixels.Length; i += 4)
+        {
+            if (pixels[i] >= alphaThreshold) opaque++;
+            if (pixels[i] == 255) exactOpaque++;
+            minimumAlpha = Math.Min(minimumAlpha, pixels[i]);
+        }
         double fraction = opaque / (double)(bitmap.PixelWidth * bitmap.PixelHeight);
         // (1,1) is inside the actual Border padding, outside all text and progress controls.
         int sample = (bitmap.PixelWidth + 1) * 4;
@@ -355,6 +364,8 @@ public sealed class UpdateWindow : Window
         bool passed = fraction >= 0.99 && backgroundMatches && contrast >= 4.5;
         SyntheticCaptureDiagnostics = new Dictionary<string, object> { ["ok"] = passed, ["background"] = background.Color.ToString(),
             ["foreground"] = foreground.Color.ToString(), ["opaque_fraction"] = fraction,
+            ["alpha_threshold"] = alphaThreshold, ["minimum_alpha"] = minimumAlpha,
+            ["exact_opaque_fraction"] = exactOpaque / (double)(bitmap.PixelWidth * bitmap.PixelHeight),
             ["background_pixel_matches"] = backgroundMatches, ["contrast_ratio"] = contrast };
         return passed;
     }

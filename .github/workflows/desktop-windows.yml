@@ -96,9 +96,9 @@ jobs:
           $nativeFailure = $null
           try {
             if (!$ui.WaitForExit(180000)) { $ui.Kill(); throw "Native window startup timed out" }
+            if (Test-Path $report) { Get-Content $report -Raw }
             if ($ui.ExitCode -ne 0) { throw "Native window failed: $($ui.ExitCode)" }
             $result = Get-Content $report -Raw | ConvertFrom-Json
-            Get-Content $report -Raw
             if (!$result.ok -or !$result.native_window -or !$result.shelf_rendered -or !$result.captured -or !$result.themes_verified -or !$result.update_check_available -or !$result.update_progress_verified -or !$result.in_private -or $result.ui_stack -ne 'wpf-webview2' -or !$result.native_close_probe_verified -or !$result.hidden_buffers_verified -or !$result.ime_guard_verified -or !$result.buffer_export_verified) { throw "Native window theme/update progress checks failed" }
           } catch {
             $nativeFailure = $_.Exception.Message
