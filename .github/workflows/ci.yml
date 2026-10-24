@@ -34,7 +34,7 @@ jobs:
       - name: Check Windows paths, CRLF and installation locks first
         if: runner.os == 'Windows'
         run: |
-          python -u -B -X utf8 -c "import sys, unittest; sys.path.insert(0, 'tests'); names = ['test_execution_review', 'test_execution_review_assignment', 'test_execution_sequence', 'test_install_additional_hosts', 'test_install_desktop_hosts', 'test_package_npm', 'test_package_codex', 'test_plan_render', 'test_writing_brief']; result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names)); sys.exit(not result.wasSuccessful())"
+          python -u -B -X utf8 -c "import sys, unittest; sys.path.insert(0, 'tests'); names = ['test_desktop_windows_atomic_sharing', 'test_desktop_backend_runner', 'test_execution_review', 'test_execution_review_assignment', 'test_execution_sequence', 'test_install_additional_hosts', 'test_install_desktop_hosts', 'test_package_npm', 'test_package_codex', 'test_plan_render', 'test_writing_brief']; result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names)); sys.exit(not result.wasSuccessful())"
       - name: Check platform draft and Chrome bridge compatibility first
         if: runner.os == 'Windows'
         run: |

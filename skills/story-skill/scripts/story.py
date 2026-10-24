@@ -526,9 +526,34 @@ def _bound_stage(directory, prefix):
     fail("export_conflict", "Could not reserve an export staging file", path=str(directory.path))
 
 
+def _windows_bound_rename(source, target, *, replace=False):
+    """Retry only a sharing violation while both parents remain pinned.
+
+    A concurrent reader briefly denies directory write sharing while entering
+    its own pin. Windows child renames can fail with ERROR_SHARING_VIOLATION in
+    that interval. Retry the same atomic rename, never the enclosing write or
+    request; no-replace publication and the caller's hash checks remain intact.
+    """
+    import time
+    deadline = None
+    operation = os.replace if replace else os.rename
+    while True:
+        try:
+            return operation(source.path, target.path)
+        except OSError as error:
+            if getattr(error, "winerror", None) != 32:
+                raise
+            if deadline is None:
+                deadline = time.monotonic() + 1.0
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise
+            time.sleep(min(.01, remaining))
+
+
 def _bound_replace(source, target):
     if os.name == "nt":
-        os.replace(source.path, target.path)
+        _windows_bound_rename(source, target, replace=True)
     else:
         os.replace(source.name, target.name, src_dir_fd=source.directory.fd, dst_dir_fd=target.directory.fd)
 
@@ -545,7 +570,7 @@ def _publish_no_replace(source, target):
     """Publish a complete stage without replacing a concurrent editor's path."""
     if isinstance(source, _BoundFile) and isinstance(target, _BoundFile):
         if os.name == "nt":
-            os.rename(source.path, target.path)
+            _windows_bound_rename(source, target)
         else:
             os.link(source.name, target.name, src_dir_fd=source.directory.fd,
                     dst_dir_fd=target.directory.fd, follow_symlinks=False)

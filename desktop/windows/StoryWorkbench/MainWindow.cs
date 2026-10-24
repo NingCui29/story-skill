@@ -368,6 +368,7 @@ public sealed class MainWindow : Window
             captured = captures.Values.All(v => v), client_version = ClientVersion, ui_stack = "wpf-webview2",
             self_contained = true, in_private = pages.All(p => p.IsInPrivate),
             update_check_available = true, update_progress_verified = progress, update_progress_synthetic = true,
+            update_capture = UpdateWindow.SyntheticCaptureDiagnostics,
             themes_verified = restored && captures.Values.All(v => v), theme_captures = captures,
             native_close_probe_verified = safety, hidden_buffers_verified = safety, ime_guard_verified = safety,
             buffer_export_verified = safety, synthetic_editor_fixture = true,

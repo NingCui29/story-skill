@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -20,6 +19,7 @@ public sealed class UpdateWindow : Window
     private static readonly Dictionary<MainWindow, UpdateWindow> Windows = [];
     private readonly MainWindow host;
     private readonly UpdateService service = new();
+    private readonly Border surface = new() { Padding = new Thickness(24) };
     private readonly TextBlock message = new() { TextWrapping = TextWrapping.Wrap, FontSize = 17, Margin = new(0, 0, 0, 14) };
     private readonly TextBlock details = new() { TextWrapping = TextWrapping.Wrap, Margin = new(0, 10, 0, 20), LineHeight = 22 };
     private readonly ProgressBar bar = new() { Minimum = 0, Maximum = 100, Height = 8, Foreground = new SolidColorBrush(Color.FromRgb(56, 189, 248)) };
@@ -39,6 +39,7 @@ public sealed class UpdateWindow : Window
     private bool closed;
     private int operationGeneration;
     public bool IsBusy => activeTask is { IsCompleted: false };
+    public static IReadOnlyDictionary<string, object>? SyntheticCaptureDiagnostics { get; private set; }
 
     private static Button Button(string title) => new() { Content = title, Padding = new(14, 7, 14, 7), Margin = new(0, 4, 8, 0), MinHeight = 34 };
 
@@ -47,14 +48,17 @@ public sealed class UpdateWindow : Window
         host = owner; Owner = owner;
         Title = "Windows 工作台更新"; Width = 650; MinWidth = 570; SizeToContent = SizeToContent.Height;
         WindowStartupLocation = WindowStartupLocation.CenterOwner; ResizeMode = ResizeMode.CanMinimize;
-        SetBinding(BackgroundProperty, new Binding(nameof(Background)) { Source = owner });
-        SetBinding(ForegroundProperty, new Binding(nameof(Foreground)) { Source = owner });
-        var layout = new StackPanel { Margin = new(24) };
+        // Fluent windows default to a transparent Mica backdrop. Paint this actual content surface
+        // with its dynamic theme brush so text remains legible without depending on the compositor.
+        SetResourceReference(BackgroundProperty, "WindowBackground");
+        SetResourceReference(ForegroundProperty, "WindowForeground");
+        surface.SetResourceReference(Border.BackgroundProperty, "WindowBackground");
+        var layout = new StackPanel();
         layout.Children.Add(new TextBlock { Text = "写作工作台 " + UpdateService.ClientVersion, Opacity = 0.65, Margin = new(0, 0, 0, 12) });
         layout.Children.Add(message); layout.Children.Add(bar); layout.Children.Add(details);
         var actions = new WrapPanel();
         foreach (var button in new[] { checkButton, downloadButton, installButton, folderButton, cancelButton, closeButton }) actions.Children.Add(button);
-        layout.Children.Add(actions); Content = layout;
+        layout.Children.Add(actions); surface.Child = layout; Content = surface;
         downloadButton.Background = new SolidColorBrush(Color.FromRgb(56, 189, 248));
         downloadButton.Foreground = Brushes.Black;
         message.Text = "检查 Windows 工作台正式更新";
@@ -299,6 +303,7 @@ public sealed class UpdateWindow : Window
 
     public static async Task<bool> CaptureSyntheticAsync(MainWindow owner, string pngPath)
     {
+        SyntheticCaptureDiagnostics = new Dictionary<string, object> { ["ok"] = false, ["stage"] = "not_captured" };
         var window = new UpdateWindow(owner);
         try
         {
@@ -308,15 +313,49 @@ public sealed class UpdateWindow : Window
             window.message.Text = "界面验证：合成下载进度，不在下载真实更新。";
             await window.Dispatcher.InvokeAsync(() => { }, DispatcherPriority.Render);
             window.UpdateLayout();
-            var dpi = VisualTreeHelper.GetDpi(window);
-            var bitmap = new RenderTargetBitmap((int)Math.Ceiling(window.ActualWidth * dpi.DpiScaleX),
-                (int)Math.Ceiling(window.ActualHeight * dpi.DpiScaleY), dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32);
-            bitmap.Render(window);
+            var dpi = VisualTreeHelper.GetDpi(window.surface);
+            var bitmap = new RenderTargetBitmap((int)Math.Ceiling(window.surface.ActualWidth * dpi.DpiScaleX),
+                (int)Math.Ceiling(window.surface.ActualHeight * dpi.DpiScaleY), dpi.PixelsPerInchX, dpi.PixelsPerInchY, PixelFormats.Pbgra32);
+            // Capture the displayed content itself, including its real background, not a synthetic canvas.
+            bitmap.Render(window.surface);
             var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
             using (var stream = new FileStream(pngPath, FileMode.Create, FileAccess.Write, FileShare.None)) encoder.Save(stream);
             return window.IsVisible && window.bar.Value == 60 && window.details.Text.Contains("MiB/秒", StringComparison.Ordinal)
-                && window.details.Text.Contains("4 秒", StringComparison.Ordinal) && new FileInfo(pngPath).Length > 0;
+                && window.details.Text.Contains("4 秒", StringComparison.Ordinal) && new FileInfo(pngPath).Length > 0
+                && VerifyVisibleCapture(window, bitmap);
         }
         finally { window.Close(); }
+    }
+
+    private static bool VerifyVisibleCapture(UpdateWindow window, BitmapSource bitmap)
+    {
+        if (window.surface.Background is not SolidColorBrush background || background.Color.A != 255 || background.Opacity != 1
+            || window.Foreground is not SolidColorBrush foreground || bitmap.PixelWidth < 10 || bitmap.PixelHeight < 10)
+        {
+            SyntheticCaptureDiagnostics = new Dictionary<string, object> { ["ok"] = false, ["stage"] = "visible_brush_required" };
+            return false;
+        }
+        var pixels = new byte[bitmap.PixelWidth * bitmap.PixelHeight * 4];
+        bitmap.CopyPixels(pixels, bitmap.PixelWidth * 4, 0);
+        int opaque = 0;
+        for (int i = 3; i < pixels.Length; i += 4) if (pixels[i] == 255) opaque++;
+        double fraction = opaque / (double)(bitmap.PixelWidth * bitmap.PixelHeight);
+        // (1,1) is inside the actual Border padding, outside all text and progress controls.
+        int sample = (bitmap.PixelWidth + 1) * 4;
+        bool backgroundMatches = pixels[sample] == background.Color.B && pixels[sample + 1] == background.Color.G
+            && pixels[sample + 2] == background.Color.R && pixels[sample + 3] == 255;
+        double alpha = foreground.Color.A / 255.0 * foreground.Opacity;
+        double Linear(double channel) => channel <= 0.04045 ? channel / 12.92 : Math.Pow((channel + 0.055) / 1.055, 2.4);
+        double Luminance(double r, double g, double b) => 0.2126 * Linear(r) + 0.7152 * Linear(g) + 0.0722 * Linear(b);
+        double backgroundLuminance = Luminance(background.Color.R / 255.0, background.Color.G / 255.0, background.Color.B / 255.0);
+        double textLuminance = Luminance((foreground.Color.R * alpha + background.Color.R * (1 - alpha)) / 255,
+            (foreground.Color.G * alpha + background.Color.G * (1 - alpha)) / 255,
+            (foreground.Color.B * alpha + background.Color.B * (1 - alpha)) / 255);
+        double contrast = (Math.Max(backgroundLuminance, textLuminance) + 0.05) / (Math.Min(backgroundLuminance, textLuminance) + 0.05);
+        bool passed = fraction >= 0.99 && backgroundMatches && contrast >= 4.5;
+        SyntheticCaptureDiagnostics = new Dictionary<string, object> { ["ok"] = passed, ["background"] = background.Color.ToString(),
+            ["foreground"] = foreground.Color.ToString(), ["opaque_fraction"] = fraction,
+            ["background_pixel_matches"] = backgroundMatches, ["contrast_ratio"] = contrast };
+        return passed;
     }
 }
