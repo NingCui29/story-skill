@@ -149,7 +149,8 @@ class NativePreviewTests(unittest.TestCase):
         lists = {config["chapter_lists"][0]["url"]: [[("900", 12, "草稿")]],
                  config["chapter_lists"][1]["url"]: [[]]}
         arguments = {} if comparison_policy is None else {"comparison_policy": comparison_policy}
-        adapter = browser.BrowserAdapter(config, timeout_ms=10, login_timeout_ms=100, **arguments)
+        # Non-timing cases verify DOM/identity semantics, not 10 ms I/O speed.
+        adapter = browser.BrowserAdapter(config, timeout_ms=1000, login_timeout_ms=100, **arguments)
         adapter._context = PreviewContext(config, lists=lists, editors={"900": stored}, **options)
         adapter._list_page = adapter._context.new_page()
         adapter.verify_target("fanqie", "author-1", "100")
@@ -256,6 +257,7 @@ class NativePreviewTests(unittest.TestCase):
 
     def test_permanent_empty_preview_container_times_out_with_no_second_create(self):
         adapter = self.opened(sync_drafts=True, preview_pending_reads=100)
+        adapter.timeout_ms = 10
         with patch.object(browser.time, "monotonic", side_effect=lambda: adapter._context.preview_waits / 100):
             self.assert_code("incomplete_dom", adapter.create_draft, 13, "新完整标题", "新正文")
         self.assertEqual(adapter._context.preview_waits, 1)
@@ -264,6 +266,7 @@ class NativePreviewTests(unittest.TestCase):
 
     def test_loaded_body_cannot_reset_or_exceed_the_original_readiness_deadline(self):
         adapter = self.opened(preview_pending_reads=1)
+        adapter.timeout_ms = 10
         with patch.object(browser.time, "monotonic", side_effect=lambda: adapter._context.preview_waits / 100):
             self.assert_code("incomplete_dom", adapter.read_draft, "900")
         self.assertEqual(adapter._context.preview_waits, 1)

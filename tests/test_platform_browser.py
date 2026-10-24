@@ -54,9 +54,14 @@ class Node:
 
 def action_link(node, page):
     href = node.attrs.get("href")
-    return {"url": page.url, "href": href, "documentHref": None if href is None else urljoin(page.url, href),
+    # DOM new URL() strips edge C0/SPACE and embedded TAB/CR/LF. Python
+    # 3.10.11 urljoin does not, so normalize the fixture's resolution input
+    # explicitly while retaining the raw attribute for production checks.
+    resolved_input = (href.strip("".join(map(chr, range(33))))
+                      .replace("\t", "").replace("\r", "").replace("\n", "")) if href is not None else None
+    return {"url": page.url, "href": href, "documentHref": None if href is None else urljoin(page.url, resolved_input),
             "resolvedHref": None if href is None else
-            urljoin(page.context.options.get("base_url", page.url), href)}
+            urljoin(page.context.options.get("base_url", page.url), resolved_input)}
 
 
 class Locator:

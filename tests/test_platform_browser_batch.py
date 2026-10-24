@@ -7,7 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from tests import test_publish as fixtures
-from tests.test_platform_browser_preview import PreviewContext, configuration
+from tests.test_platform_browser_preview import PreviewContext, PreviewPage, configuration
 
 
 story = fixtures.story
@@ -82,7 +82,7 @@ class BrowserBatchTests(unittest.TestCase):
     def arguments(self, policy=POLICY, reconcile_only=False):
         return SimpleNamespace(command="publish-draft-run", id=self.plan["id"], execute=True,
             profile=str(self.profile_path), comparison_policy=policy, body_encoding="verbatim",
-            reconcile_only=reconcile_only, timeout_ms=10, login_timeout_ms=100)
+            reconcile_only=reconcile_only, timeout_ms=1000, login_timeout_ms=100)
 
     def wait_job(self, job_id):
         deadline = time.monotonic() + 6
@@ -125,7 +125,7 @@ class BrowserBatchTests(unittest.TestCase):
         job = drafts.workbench_start(self.root, self.plan["id"], self.profile_path.name,
             expected_book_id=preview["book_id"], expected_profile_sha256=preview["profile_sha256"],
             preview_token=preview["preview_token"], comparison_policy=POLICY, execute=True,
-            timeout_ms=10, login_timeout_ms=100)
+            timeout_ms=1000, login_timeout_ms=100)
         self.jobs.append(job["id"])
         finished = self.wait_job(job["id"])
         self.assertIsNone(finished["error"], finished)
@@ -140,7 +140,7 @@ class BrowserBatchTests(unittest.TestCase):
         # Reopen the real adapter, but emulate a stale directory hiding the
         # saved chapter. A durable unknown intent must forbid another create.
         adapter = story.platform_browser.BrowserAdapter(self.config, comparison_policy=policy,
-                                                        timeout_ms=10, login_timeout_ms=100)
+                                                        timeout_ms=1000, login_timeout_ms=100)
         adapter._context = self.contexts[-1]
         adapter._list_page = adapter._context.new_page()
         self.addCleanup(adapter.__exit__, None, None, None)
@@ -155,6 +155,7 @@ class BrowserBatchTests(unittest.TestCase):
         self.assertFalse(any(event[0] == "fill" or event == ("click", "#create") or
                              event == ("goto", self.config["urls"]["create"]) for event in new_events))
         self.assertEqual(list(adapter._context.editors), ["saved-1"])
+        return first
 
     def test_strict_rejects_terminal_lf_and_never_blindly_repeats(self):
         self.assert_failed_save_cannot_blindly_repeat("strict")
@@ -167,8 +168,20 @@ class BrowserBatchTests(unittest.TestCase):
 
     def test_preview_load_timeout_leaves_unknown_and_cannot_blindly_repeat(self):
         self.preview_options = {"preview_pending_reads": 100000}
-        self.assert_failed_save_cannot_blindly_repeat(POLICY)
-        self.assertGreater(self.contexts[-1].preview_waits, 0)
+        elapsed_ms = [0]
+        original_wait = PreviewPage.wait_for_timeout
+        def wait(page, milliseconds):
+            original_wait(page, milliseconds)
+            elapsed_ms[0] += milliseconds
+            self.assertLessEqual(elapsed_ms[0], 1000, "Preview exceeded its original deadline")
+        # Advance only the adapter's clock at actual polling boundaries, not
+        # process-global time or filesystem work on a loaded Windows runner.
+        clock = SimpleNamespace(monotonic=lambda: elapsed_ms[0] / 1000)
+        with patch.object(story.platform_browser, "time", clock), patch.object(PreviewPage, "wait_for_timeout", wait):
+            first = self.assert_failed_save_cannot_blindly_repeat(POLICY)
+        self.assertEqual(first["results"][0]["reason"], "platform_browser_incomplete_dom")
+        self.assertEqual(elapsed_ms[0], 1000)
+        self.assertEqual(self.contexts[-1].preview_waits, 10)
         self.assertEqual(sum(event == ("click", "#save") for event in self.contexts[-1].events), 1)
 
     def test_terminal_policy_rejects_internal_whitespace_and_never_blindly_repeats(self):

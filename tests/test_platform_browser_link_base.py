@@ -1,4 +1,7 @@
 """Draft links retain their effective target when document base URI changes."""
+import json
+import shutil
+import subprocess
 import unittest
 from unittest.mock import patch
 from tests import test_platform_browser as fixture
@@ -11,8 +14,33 @@ class DraftLinkBaseTests(unittest.TestCase):
         fixture.browser.api = None
         self.addCleanup(setattr, fixture.browser, 'api', self.old_api)
 
+    @unittest.skipUnless(shutil.which('node'), 'Node.js required for actual WHATWG URL comparison')
+    def test_fixture_ascii_control_link_resolution_matches_actual_whatwg_url(self):
+        url = 'https://example.com/fixture/100/modify/new-1?from=edit'
+        base = 'https://example.com/draft/'
+        hrefs = ['', '#save', ' \t', '\t#save\r\n', 'ne\txt\r\n', '/draft/next']
+        hrefs.extend(chr(code) + '#save' + chr(code) for code in range(33))
+        program = """const fs=require('node:fs');
+const input=JSON.parse(fs.readFileSync(0,'utf8'));
+process.stdout.write(JSON.stringify(input.hrefs.map(href=>({
+  documentHref:new URL(href,input.url).href,resolvedHref:new URL(href,input.base).href
+}))));"""
+        result = subprocess.run([shutil.which('node'), '-e', program],
+            input=json.dumps({'url': url, 'base': base, 'hrefs': hrefs}),
+            capture_output=True, text=True, encoding='utf-8', timeout=15)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        expected = json.loads(result.stdout)
+        page = type('Page', (), {'url': url, 'context': type('Context', (), {'options': {'base_url': base}})()})()
+        for href, wanted in zip(hrefs, expected):
+            with self.subTest(href=href):
+                packet = fixture.action_link(fixture.Node(attrs={'href': href}), page)
+                self.assertEqual(packet['href'], href)
+                self.assertEqual({key: packet[key] for key in wanted}, wanted)
+
     def scenario(self, platform, operation, href, changed_base):
         adapter = reader.EditorReadbackTests().opened(platform, listing=operation != 'save', sync_drafts=operation != 'save')
+        # URL/identity assertions are independent of sub-tick wall-clock speed.
+        adapter.timeout_ms = 1000
         self.addCleanup(adapter.close)
         if operation == 'same_page':
             adapter.profile['create_action']['opens'] = 'same_page'
@@ -78,6 +106,7 @@ class DraftLinkBaseTests(unittest.TestCase):
                         config['editor']['remote_id']['templates'].append(alias)
                         config['identity']['book']['templates'].append(alias)
                         adapter = fixture.BrowserTests().opened(config)
+                        adapter.timeout_ms = 1000
                         self.addCleanup(adapter.close)
                         adapter.verify_target(platform, 'author-1', '100')
                         fill, attr, checked = fixture.Locator.fill, fixture.Locator.get_attribute, adapter._checked_editor_action
