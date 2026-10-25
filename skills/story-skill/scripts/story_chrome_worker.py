@@ -56,7 +56,7 @@ RESULT_CODES = frozenset("platform_chrome_worker_" + value for value in (
     "unsafe_user_tab", "unsupported_sdk", "turn_metadata_missing", "runtime_unavailable", "origin_permission_required")) | frozenset("platform_browser_" + value for value in (
     "ambiguous_dom", "ambiguous_draft", "chapter_exists_not_draft", "editor_changed", "identity_mismatch",
     "identity_unavailable", "incomplete_dom", "incomplete_list", "incomplete_scope", "invalid_chapter",
-    "invalid_identity", "invalid_profile", "invalid_remote_id", "login_required", "navigation_timeout",
+    "invalid_identity", "invalid_profile", "invalid_remote_id", "login_required", "navigation_timeout", "read_timeout",
     "not_draft", "not_new_draft", "not_open", "operation_failed", "save_unverified", "target_unverified",
     "unnumbered_draft", "unsafe_create", "unsafe_navigation", "unsafe_save", "unsafe_url", "unsupported_editor",
     "bridge_scope", "bridge_expired", "editor_in_use", "readback_required"))

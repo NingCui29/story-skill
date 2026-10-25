@@ -26,7 +26,7 @@ function progress(api, event) {
     if (['begin','end','before_scroll','after_scroll','checked'].includes(event.edge)) clean.edge = event.edge;
     if (['all','drafts','non_drafts'].includes(event.scope)) clean.scope = event.scope;
     if (['up','down'].includes(event.direction)) clean.direction = event.direction;
-    for (const key of ['catalog_index','listing_index','section_index','page','row_count','guard_refreshes','line','column']) {
+    for (const key of ['catalog_index','listing_index','section_index','page','row_count','guard_refreshes','read_retry','line','column']) {
       if (Number.isInteger(event[key]) && event[key] >= 0) clean[key] = event[key];
     }
     for (const key of ['ready_equal','rows_equal','count_equal','dimensions_equal','edge_reached','document_valid','document_edge_reached']) {
@@ -302,6 +302,7 @@ class Driver {
     // Reuse only this command's loaded guard DOM during read-only scans. A
     // fresh Driver is constructed per queue command; sessions never cache IDs.
     this.guardFreshThisOperation = false;
+    this.readRecoveryUsed = false;
     this.readbackURLs = new WeakMap();
     this.createdEditors = new WeakMap();
     this.catalogIndex = 0; this.guardRefreshes = 0;
@@ -351,6 +352,27 @@ class Driver {
   }
   check() { if (Date.now() >= this.deadline) fail('operation_failed'); }
   timeoutOptions() { this.check(); return {timeoutMs: Math.max(1, Math.min(15000, this.deadline - Date.now()))}; }
+  readTimeout(error) {
+    if (this.target.platform!=='fanqie' || this.profile.readback?.body?.source!=='fanqie_preview_paragraphs_v1' ||
+        !this.profile.chapter_lists.every(list=>list.pagination?.mode==='fanqie_pages_v1') ||
+        !['Error','TimeoutError'].includes(error?.name) || error.code != null) return null;
+    return ({
+      'Timed out after 10000ms waiting for CDP command Page.navigate.':'navigation_timeout',
+      'Timed out after 3000ms waiting for CDP command Runtime.evaluate.':'read_timeout',
+      'Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.':'read_timeout'
+    })[error.message] || null;
+  }
+  async restartRead() {
+    this.readRecoveryUsed=true;
+    // Fresh pages must establish identity again. Old readable DOM is never
+    // proof that an interrupted navigation or complete-body sample succeeded.
+    for (const page of [this.state.guard,this.state.list].filter(Boolean)) {
+      if (!this.state.owned.has(page.id) || !this.readOnlyDestination(await this.url(page.tab))) fail('identity_mismatch');
+    }
+    this.state.guard=null;this.state.list=null;this.state.verified=false;
+    progress(this.api,{phase:'guard',edge:'begin',read_retry:1});
+    return this.verify();
+  }
   safe(url) {
     if (typeof url !== 'string' || /[\s\\\u0000-\u001f]/.test(url)) fail('unsafe_url');
     let parsed; try { parsed = new URL(url); } catch { fail('unsafe_url'); }
@@ -689,6 +711,22 @@ class Driver {
     return count === 1 && await locator.isVisible();
   }
   async guard(refresh = false, {allowPending = true, current = false} = {}) {
+    try { return await this.guardOnce(refresh,{allowPending,current}); }
+    catch (failure) {
+      if (!allowPending || current || this.readRecoveryUsed || !this.readTimeout(failure) || Date.now()>=this.deadline) throw failure;
+      const guard=this.state.guard;
+      if (!guard) throw failure;
+      this.readRecoveryUsed=true;
+      if (!this.state.owned.has(guard.id) || await this.url(guard.tab)!==this.profile.identity.account.guard_url) fail('identity_mismatch');
+      if (Date.now()>=this.deadline) throw failure;
+      // Replace only the read-only account page. Continue the existing caller;
+      // never restart creation, filling, saving, or a final atomic observation.
+      this.state.guard=null;this.guardFreshThisOperation=false;
+      progress(this.api,{phase:'guard',edge:'begin',read_retry:1});
+      return this.guardOnce(true,{allowPending,current});
+    }
+  }
+  async guardOnce(refresh = false, {allowPending = true, current = false} = {}) {
     const spec = this.profile.identity.account;
     if (spec.source !== 'guard_dom') fail('invalid_profile');
     const fresh = !this.state.guard || refresh || !this.guardFreshThisOperation;
@@ -810,7 +848,7 @@ class Driver {
     if (this.target.platform !== 'fanqie' || listing.scope !== 'drafts' ||
         !await this.visible(tab, listing.empty)) return false;
     const pagination = listing.pagination;
-    if (pagination.mode !== 'all_rows' || pagination.validated !== true ||
+    if (!['all_rows','fanqie_pages_v1'].includes(pagination.mode) || pagination.validated !== true ||
         listing.count?.format !== 'draft_count' || !Array.isArray(pagination.reject_selectors) ||
         !pagination.reject_selectors.length) fail('incomplete_list');
     for (let pass = 0; pass < 2; pass++) {
@@ -912,12 +950,19 @@ class Driver {
     }
   }
   async pages(tab, listing, section, seen) {
-    const result = []; const pages = new Set();
+    const result = []; const pages = new Set(); let expectedCount = null;
+    if (listing.pagination.mode === 'fanqie_pages_v1') await this.resetFanqiePages(tab,listing,section);
     for (let page = 0; page < 10000; page++) {
       this.scan = {...this.scan,page};
       progress(this.api,{...this.scan,phase:'pages',edge:'begin'});
       const rows = await this.readyRows(tab, listing, section); let next = null;
-      if (listing.pagination.mode === 'all_rows') await this.allRows(tab, listing, rows, section);
+      if (listing.pagination.mode === 'fanqie_pages_v1') {
+        const proof = await this.fanqiePage(tab, listing, rows, section, page + 1);
+        next = proof.next;
+        if (expectedCount !== null && expectedCount !== proof.count) fail('incomplete_list');
+        expectedCount = proof.count;
+      }
+      else if (listing.pagination.mode === 'all_rows') await this.allRows(tab, listing, rows, section);
       else {
         const pagination = listing.pagination; const locator = tab.playwright.locator(pagination.next.selector);
         const end = await this.visible(tab, pagination.end);
@@ -936,10 +981,76 @@ class Driver {
       const signature = JSON.stringify(rows); if (pages.has(signature)) fail('incomplete_list'); pages.add(signature);
       for (const row of rows) { if (seen.has(row.url)) fail('incomplete_list'); seen.add(row.url); result.push(row); }
       if (seen.size > 100000) fail('incomplete_list');
-      if (!next) { progress(this.api,{...this.scan,phase:'pages',edge:'end',row_count:result.length}); return result; }
+      if (!next) {
+        if (expectedCount !== null && expectedCount !== result.length) fail('incomplete_list');
+        progress(this.api,{...this.scan,phase:'pages',edge:'end',row_count:result.length}); return result;
+      }
       if (!rows.length) fail('incomplete_list');
       await this.action(tab, () => next.click(this.timeoutOptions()));
       while (JSON.stringify(await this.rows(tab, listing)) === signature) { this.check(); await pause(); await this.ax(tab); }
+    }
+    fail('incomplete_list');
+  }
+  async fanqiePage(tab, listing, rows, section, page) {
+    const pagination = listing.pagination;
+    if (this.target.platform !== 'fanqie' || pagination.validated !== true ||
+        pagination.disabled_class !== 'arco-pagination-item-disabled') fail('invalid_profile');
+    const controls = ['previous','current','next'].map(key=>tab.playwright.locator(pagination[key].selector));
+    const counts = await Promise.all(controls.map(locator=>locator.count()));
+    let next = null;
+    if (counts.every(count=>count === 0)) {
+      if (page !== 1) fail('incomplete_list');
+    } else {
+      if (counts.some(count=>count !== 1)) fail('incomplete_list');
+      for (const control of controls) if (!await control.isVisible()) fail('incomplete_list');
+      const number = (await controls[1].innerText()).trim();
+      const disabled = async locator => (await locator.getAttribute('class') || '').split(/\s+/).includes(pagination.disabled_class);
+      if (!/^[1-9][0-9]*$/.test(number) || Number(number) !== page ||
+          (await disabled(controls[0])) !== (page === 1)) fail('incomplete_list');
+      if (!await disabled(controls[2])) {
+        if (!await controls[2].isEnabled()) fail('incomplete_list');
+        next = controls[2];
+      }
+    }
+    // Exhaust the visible table on each page, then reconcile the total across
+    // pages. A total larger than the visible page is normal pagination.
+    if (next && !rows.length) fail('incomplete_list');
+    if (rows.length || listing.scope !== 'drafts') await this.allRows(tab, {...listing,count:null}, rows, section);
+    else if (next || !await this.emptyDraftRows(tab,listing,section)) fail('incomplete_list');
+    let count = null;
+    if (listing.count) {
+      const match = /^共([0-9]+)篇草稿$/.exec(await this.value(tab,listing.count));
+      if (!match || Number(match[1]) > 100000) fail('incomplete_list');
+      count = Number(match[1]);
+    }
+    return {next,count};
+  }
+  async resetFanqiePages(tab, listing, section) {
+    // Switching the management tabs preserves each table's current page.
+    // Every complete scan must explicitly return to page1 before collecting.
+    const pagination=listing.pagination;
+    const current=tab.playwright.locator(pagination.current.selector);
+    const previous=tab.playwright.locator(pagination.previous.selector);
+    for(let step=0;step<10000;step++) {
+      await this.readyRows(tab,listing,section);
+      const count=await current.count();
+      if(count===0)return; // fanqiePage still validates all controls and totals.
+      if(count!==1||!await current.isVisible())fail('incomplete_list');
+      const raw=(await current.innerText()).trim(),number=Number(raw);
+      if(!/^[1-9][0-9]*$/.test(raw)||number>10000)fail('incomplete_list');
+      if(number===1)return;
+      if(await previous.count()!==1||!await previous.isVisible()||!await previous.isEnabled()||
+          (await previous.getAttribute('class')||'').split(/\s+/).includes(pagination.disabled_class))fail('incomplete_list');
+      const before=JSON.stringify(await this.rows(tab,listing));
+      await this.identity(tab);await this.scope(tab,listing,section);
+      await this.action(tab,()=>previous.click(this.timeoutOptions()));
+      while(true) {
+        this.check();
+        const now=Number((await current.innerText()).trim());
+        if(now!==number&&now!==number-1)fail('incomplete_list');
+        if(now===number-1&&JSON.stringify(await this.rows(tab,listing))!==before)break;
+        await pause();await this.ax(tab);
+      }
     }
     fail('incomplete_list');
   }
@@ -1095,6 +1206,16 @@ class Driver {
     }
   }
   async readPreview(remote) {
+    try { return await this.readPreviewOnce(remote); }
+    catch (failure) {
+      if (this.readRecoveryUsed || !this.readTimeout(failure) || Date.now()>=this.deadline) throw failure;
+      // This wrapper repeats only the independent read, including when it is
+      // the readback after a save. It cannot repeat creation, filling or save.
+      await this.restartRead();
+      return this.readPreviewOnce(remote);
+    }
+  }
+  async readPreviewOnce(remote) {
     id(remote); const spec = this.profile.readback;
     if (spec?.remote_id?.source !== 'page_url' || spec?.header?.source !== 'dom' ||
         spec.header.format !== 'chapter_title' || typeof spec.header.title_separator !== 'string' || !spec.header.title_separator ||
@@ -1265,8 +1386,11 @@ class Driver {
       await this.guard(true); // Direct creation URLs may allocate a cloud draft.
       ({tab} = await this.newTab(this.profile.urls.create));
     }
-    await this.identity(tab); await this.editorReady(tab);
+    await this.identity(tab);
+    // Creation may allocate a cloud draft before the editor becomes ready.
+    // Preserve its identity in a failed receipt without treating it as saved.
     this.createdRemote = this.remote(await this.url(tab));
+    await this.editorReady(tab);
     // Only bind after the platform has allocated an ID and reached readiness.
     // The same ID may change from its new-draft URL to its saved-editor URL;
     // another draft or book must fail before the next fill/save action.
@@ -1363,15 +1487,32 @@ class Driver {
 
 export async function executeChromeBridgeRequest(api, request) {
   const envelope = {schema: 1, id: request?.id, nonce: request?.nonce, session_id: request?.session_id, binding_sha256: request?.binding_sha256};
-  try { return {...envelope, ok: true, result: await new Driver(api, request).execute()}; }
-  catch (error) {
-    const code = /^platform_browser_[a-z_]+$/.test(error?.code || '') ? error.code : 'platform_browser_operation_failed';
+  let driver;
+  for (let attempt=0;attempt<2;attempt++) try {
+    driver = new Driver(api, request);
+    if (attempt) {
+      const target=await driver.restartRead();
+      if (request.operation==='verify_target') return {...envelope,ok:true,result:target};
+    }
+    return {...envelope, ok: true, result: await driver.execute()};
+  } catch (error) {
+    // Only the current paged Fanqie reader may restart a whole read, once,
+    // within its original deadline. Never retry create/update, a policy or
+    // identity refusal, an ambiguous result, or an arbitrary SDK exception.
+    const readScope=driver && ['verify_target','find_drafts','read_draft'].includes(request.operation);
+    // Classify known SDK timeouts for every operation without granting writes
+    // permission to replay. Only readScope below can restart an entire request.
+    const timeout=driver ? driver.readTimeout(error) : null;
+    if (timeout && readScope && !driver.readRecoveryUsed && attempt===0 && Date.now()<driver.deadline) continue;
+    const code = /^platform_browser_[a-z_]+$/.test(error?.code || '') ? error.code :
+      timeout ? 'platform_browser_'+timeout : 'platform_browser_operation_failed';
     try {
       const pending = typeof api?.onDriverError === 'function' ? api.onDriverError(error) : null;
       if (typeof pending?.catch === 'function') pending.catch(() => {});
     } catch { /* Diagnostic callbacks never alter or retry the operation. */ }
     progress(api,{phase:'error',code,...errorLocation(error)});
-    return {...envelope, ok: false, error:code};
+    return {...envelope, ok: false, error:code,
+      ...(request?.operation === 'create_draft' && driver?.createdRemote ? {allocated_remote_id:driver.createdRemote} : {})};
   }
 }
 

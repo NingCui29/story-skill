@@ -36,7 +36,7 @@ for(const invalid of [page({protocol:'https:'}),page({hostname:'localhost'}),pag
  assert.equal(vm.runInNewContext(script,invalid),false);assert.deepEqual(invalid.events,[]);
 }
 '''
-        result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + harness],
+        result = subprocess.run([node, '-'], input='const script=' + json.dumps(script) + ';\n' + harness, encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

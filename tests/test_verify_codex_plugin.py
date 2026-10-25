@@ -1,6 +1,7 @@
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -14,6 +15,48 @@ spec.loader.exec_module(verify)
 
 
 class CodexPluginEvidenceTests(unittest.TestCase):
+    def test_workbench_smoke_closes_its_http_probe_before_normal_stop(self):
+        with tempfile.TemporaryDirectory(prefix="story-plugin-workbench-") as temporary:
+            root = Path(temporary).resolve()
+            tool, book = ROOT / "skills/story-skill/scripts/story.py", root / "book"
+            env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+            verify.run(verify.PYTHON + [tool, "init", "--book", book, "--title", "隔离 HTTP 验证"], root, env)
+            result = verify.workbench_smoke(tool, book, root, env)
+            self.assertEqual(result["status"], "passed")
+            self.assertEqual(result["probe_page_closure"]["counts"]["closed"], 1)
+            stopped = json.loads(result["stop"]["stdout"])
+            self.assertTrue(stopped["automatic_verified"])
+            self.assertFalse(stopped["manual_unknown_confirmation"])
+            self.assertFalse(json.loads(result["final_status"]["stdout"])["running"])
+
+    def test_probe_does_not_invent_missing_page_credentials(self):
+        with patch.object(verify, "build_opener") as opener:
+            with self.assertRaisesRegex(verify.VerificationFailure, "page presence identity"):
+                verify.close_workbench_probe("http://127.0.0.1:1234/token/", b"<html></html>", {})
+            opener.assert_not_called()
+
+    def test_probe_closure_does_not_clear_another_unknown_page(self):
+        import test_workbench_library as library
+        fixture = library.WorkbenchLibraryTests("runTest")
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        book = fixture.book("隔离页面身份")
+        server = fixture.serve(fixture.w.editor_server(book))
+        state = fixture.w._service_request(book)
+        route = verify.urlsplit(server.editor_url).path
+        status, own_html, _ = fixture.request(server, "GET", route)
+        self.assertEqual(status, 200)
+        status, other_html, _ = fixture.request(server, "GET", route)
+        self.assertEqual(status, 200)
+        other = json.loads(verify.re.search(r'const config=(\{"protocol"[^\n]+\});', other_html.decode())[1])
+        with self.assertRaisesRegex(verify.VerificationFailure, "exactly its own empty, closed page"):
+            verify.close_workbench_probe(server.editor_url, own_html, state)
+        summary = fixture.w._service_request(book)["presence"]
+        self.assertEqual(summary["counts"]["closed"], 1)
+        self.assertEqual(summary["counts"]["unknown"], 1)
+        self.assertEqual(next(page for page in summary["pages"] if page["page_id"] == other["page_id"])["state"],
+                         "unknown")
+
     def test_hash_comparison_detects_changed_missing_and_extra_files(self):
         result = verify.compare_files({"same": "a", "changed": "a", "missing": "a"},
                                       {"same": "a", "changed": "b", "extra": "a"})

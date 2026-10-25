@@ -1275,6 +1275,13 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
             except Exception as error:
                 if _error_code(error).startswith("platform_draft_journal"):
                     raise
+                if sending and remote_id is None and isinstance(error, api.StoryError):
+                    allocated = error.details.get("allocated_remote_id")
+                    if allocated is not None:
+                        try:
+                            remote_id = _identifier(allocated, "remote_id")
+                        except api.StoryError:
+                            pass
                 # A write may have reached the platform even if create() raised.
                 # Record only a safe error code; an interrupted sending event is
                 # itself sufficient to prohibit blind replay on the next run.

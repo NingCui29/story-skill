@@ -57,8 +57,8 @@ const chooseStatus=(key,value)=>{const select=statusSelect(key);select.value=val
             original = "const call=async(action,data={})=>{requests.push({action,data});calls++;if(failure)throw Error(failure);if(pending)return pending;return response;};"
             mock = mock.replace(original, call_source)
         result = subprocess.run(
-            [node, '-e', mock + self.source + '\n(async()=>{' + test +
-             '\n})().catch(error=>{console.error(error);process.exitCode=1;});'],
+            [node, '-'], input=mock + self.source + '\n(async()=>{' + test +
+             '\n})().catch(error=>{console.error(error);process.exitCode=1;});', encoding='utf-8',
             capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

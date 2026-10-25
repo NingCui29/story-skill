@@ -194,6 +194,19 @@ class PlatformDraftTests(unittest.TestCase):
         self.assertEqual(self.adapter.created, 1)
         self.assertEqual(self.execute()["results"][0]["state"], "reconciled")
 
+    def test_allocated_draft_id_is_preserved_on_failure_and_not_recreated(self):
+        def allocated():
+            raise story.StoryError("platform_browser_incomplete_list", "private diagnostics", allocated_remote_id="7700440421876367934")
+        self.adapter.on_create = allocated
+        first = self.execute()
+        row = first["results"][0]
+        self.assertEqual(row["state"], "unknown")
+        self.assertEqual(row["remote_id"], "7700440421876367934")
+        self.assertFalse(row["observed_this_run"])
+        self.adapter.on_create = None
+        self.assertEqual(self.execute()["results"][0]["state"], "unknown")
+        self.assertEqual(self.adapter.created, 1)
+
     def test_process_interruption_leaves_sending_then_recovers_as_unknown_before_read(self):
         self.adapter.fail_create = "interrupt"
         with self.assertRaises(KeyboardInterrupt):

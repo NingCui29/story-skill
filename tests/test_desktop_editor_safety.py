@@ -38,7 +38,7 @@ function page(address='http://127.0.0.1:12345/abcdefghijklmnopqrstuvwxyz012345/'
 }
 """
         program = 'const asset=' + json.dumps(builder.editor_safety_payload()) + ';\n' + harness + test
-        result = subprocess.run([node, '-e', program], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input=program, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_legacy_inline_save_installs_without_reading_or_writing_buffers(self):

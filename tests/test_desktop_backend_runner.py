@@ -178,6 +178,97 @@ class DesktopBackendRunnerTests(unittest.TestCase):
         self.assertEqual(error.exception.code, 'client_service_unconfirmed')
         spawn.assert_not_called()
 
+    def windows_file_lock(self, code=32):
+        error = PermissionError('synthetic Windows file lock')
+        error.winerror = code
+        return error
+
+    def test_transient_windows_lock_retries_read_only_probe_and_reuses_service(self):
+        for code in (32, 33):
+            with self.subTest(code=code), \
+                    patch.object(self.w, '_library_service_request',
+                                 side_effect=[self.windows_file_lock(code), self.running()]) as status, \
+                    patch.object(runner.subprocess, 'Popen') as spawn, patch.object(runner.time, 'sleep'):
+                result = self.ensure()
+                self.assertTrue(result['reused'])
+                self.assertEqual(status.call_args_list, [unittest.mock.call(self.state)] * 2)
+                spawn.assert_not_called()
+        self.assertFalse(self.state.exists())
+
+    def test_status_after_file_lock_keeps_unknown_service_protection(self):
+        with patch.object(self.w, '_library_service_request',
+                          side_effect=[self.windows_file_lock(), {'ok': True, 'running': None}]) as status, \
+                patch.object(runner.subprocess, 'Popen') as spawn, patch.object(runner.time, 'sleep'):
+            with self.assertRaises(runner.LauncherError) as error:
+                self.ensure()
+        self.assertEqual(error.exception.code, 'client_service_unconfirmed')
+        self.assertEqual(status.call_count, 2)
+        spawn.assert_not_called()
+
+    def test_non_lock_probe_errors_are_never_retried_or_treated_as_exit(self):
+        for error in (self.windows_file_lock(5), PermissionError('access denied'),
+                      self.story.StoryError('workbench_service_invalid', '记录损坏')):
+            with self.subTest(error=repr(error)), \
+                    patch.object(self.w, '_library_service_request', side_effect=error) as status, \
+                    patch.object(runner.subprocess, 'Popen') as spawn, patch.object(runner.time, 'sleep') as sleep:
+                with self.assertRaises(type(error)) as caught:
+                    self.ensure()
+                self.assertIs(caught.exception, error)
+                status.assert_called_once_with(self.state)
+                spawn.assert_not_called()
+                sleep.assert_not_called()
+
+    def test_persistent_file_lock_is_bounded_and_never_starts_another_service(self):
+        now = [0.0]
+        error = self.windows_file_lock()
+        def advance(seconds):
+            now[0] += seconds
+        with patch.object(self.w, '_library_service_request', side_effect=error) as status, \
+                patch.object(runner.subprocess, 'Popen') as spawn, \
+                patch.object(runner.time, 'monotonic', side_effect=lambda: now[0]), \
+                patch.object(runner.time, 'sleep', side_effect=advance):
+            with self.assertRaises(PermissionError) as caught:
+                self.ensure()
+        self.assertIs(caught.exception, error)
+        self.assertGreater(status.call_count, 1)
+        self.assertAlmostEqual(now[0], 1.0)
+        spawn.assert_not_called()
+
+    def test_start_poll_retries_file_lock_without_replaying_spawn_or_stop(self):
+        states = [{'ok': True, 'running': False}, self.windows_file_lock(), self.running()]
+        with patch.object(self.w, '_library_service_request', side_effect=states) as status, \
+                patch.object(runner.subprocess, 'Popen', return_value=SimpleNamespace(poll=lambda: None)) as spawn, \
+                patch.object(runner.time, 'sleep'):
+            result = self.ensure()
+        self.assertTrue(result['ok'])
+        self.assertFalse(result['reused'])
+        spawn.assert_called_once()
+        self.assertEqual(status.call_args_list, [unittest.mock.call(self.state)] * 3)
+
+    def test_persistent_poll_lock_respects_start_deadline_and_preserves_child(self):
+        now = [0.0]
+        error = self.windows_file_lock()
+        calls = [0]
+        def probe(_state):
+            calls[0] += 1
+            if calls[0] == 1:
+                return {'ok': True, 'running': False}
+            raise error
+        def advance(seconds):
+            now[0] += seconds
+        # This object has no terminate/kill methods: the launcher owns no right
+        # to stop a service merely because a status record is temporarily busy.
+        process = SimpleNamespace(poll=lambda: None)
+        with patch.object(self.w, '_library_service_request', side_effect=probe), \
+                patch.object(runner.subprocess, 'Popen', return_value=process) as spawn, \
+                patch.object(runner.time, 'monotonic', side_effect=lambda: now[0]), \
+                patch.object(runner.time, 'sleep', side_effect=advance):
+            with self.assertRaises(PermissionError) as caught:
+                self.ensure(timeout=0.12)
+        self.assertIs(caught.exception, error)
+        self.assertAlmostEqual(now[0], 0.12)
+        spawn.assert_called_once()
+
     def test_mismatched_instance_or_corrupt_record_is_never_replaced(self):
         for code in ('workbench_service_mismatch', 'workbench_service_invalid'):
             with self.subTest(code=code):

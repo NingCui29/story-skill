@@ -44,7 +44,7 @@ function click(target){emit('pointerdown',target);emit('click',target);const tar
 const open=()=>menus.filter(root=>root.open);
 """
         result = subprocess.run(
-            [node, '-e', fixture + controls + manager_entry + checks],
+            [node, '-'], input=fixture + controls + manager_entry + checks, encoding='utf-8',
             capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

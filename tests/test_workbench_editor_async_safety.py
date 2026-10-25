@@ -114,7 +114,7 @@ assert.equal(document.getElementById('save-all'),null);assert.equal(document.get
         if native:
             program += '\nassert.equal(legacyCalls,0);'
         program += '\n})().catch(error=>{console.error(error);process.exitCode=1;});'
-        result = subprocess.run([node, '-e', program], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input=program, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_late_readback_preserves_opened_candidate_edits_across_switch_and_close_guard(self):
@@ -201,7 +201,7 @@ assert.equal($('text').value,'旧服务的新候选未保存文字');assert.equa
  assert.equal(current.value,'取消后继续写下的新字');assert.strictEqual(docs.get(current.id),current);
 })().catch(error=>{console.error(error);process.exitCode=1;});
 '''.replace('__PAYLOAD__', json.dumps(safety_payload()))
-        result = subprocess.run([node, '-e', "const assert=require('assert');\n" + source + case],
+        result = subprocess.run([node, '-'], input="const assert=require('assert');\n" + source + case, encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

@@ -31,11 +31,14 @@ MAX_SESSIONS = 100
 TTL_SECONDS = 120
 HEALTH_SECONDS = 45
 HEALTH_CHALLENGE_SECONDS = 30
-OP_SECONDS = {"verify_target": 180, "find_drafts": 180, "read_draft": 180, "create_draft": 300, "update_draft": 300}
+# Complete catalog checks now traverse every page. Keep one bounded request
+# alive long enough for repeated identity/catalog checks as the draft box grows;
+# expiration still records an unknown write and never dispatches a retry.
+OP_SECONDS = {"verify_target": 180, "find_drafts": 360, "read_draft": 360, "create_draft": 600, "update_draft": 600}
 ERROR_CODES = {"platform_browser_" + code for code in (
     "ambiguous_dom", "ambiguous_draft", "chapter_exists_not_draft", "editor_changed", "identity_mismatch",
     "identity_unavailable", "incomplete_dom", "incomplete_list", "incomplete_scope", "invalid_chapter",
-    "invalid_identity", "invalid_profile", "invalid_remote_id", "login_required", "navigation_timeout",
+    "invalid_identity", "invalid_profile", "invalid_remote_id", "login_required", "navigation_timeout", "read_timeout",
     "not_draft", "not_new_draft", "not_open", "operation_failed", "save_unverified", "target_unverified",
     "unnumbered_draft", "unsafe_create", "unsafe_navigation", "unsafe_save", "unsafe_url", "unsupported_editor",
     "bridge_scope", "bridge_expired", "editor_in_use", "readback_required", "remote_changed", "formatting_metadata")}
@@ -764,6 +767,11 @@ def _validate_response(response, request):
     if not isinstance(response, dict) or type(response.get("ok")) is not bool:
         _fail("invalid_message", "执行端回执字段无效。")
     expected.add("result" if response["ok"] else "error")
+    if "allocated_remote_id" in response:
+        if response["ok"] or request["operation"] != "create_draft":
+            _fail("invalid_message", "仅创建失败的回执可以记录已分配的草稿标识。")
+        api.platform_drafts._identifier(response["allocated_remote_id"], "remote_id")
+        expected.add("allocated_remote_id")
     if (set(response) != expected or type(response["schema"]) is not int or response["schema"] != 1 or any(response.get(key) != request.get(key)
             for key in ("id", "nonce", "session_id", "binding_sha256"))):
         _fail("invalid_message", "执行端回执与本次随机请求绑定不符。")
@@ -856,7 +864,9 @@ class HostAdapter:
                     response = _read(directory, response_name)
                     _validate_response(response, request)
                     if response["ok"] is False:
-                        api.fail(response["error"], "既有 Chrome 中的操作未能完成；请核对安全错误代码。")
+                        details = ({"allocated_remote_id": response["allocated_remote_id"]}
+                                   if "allocated_remote_id" in response else {})
+                        api.fail(response["error"], "既有 Chrome 中的操作未能完成；请核对安全错误代码。", **details)
                     return _validate_result(operation, response["result"], self.binding["target"], params)
                 session = _session(directory)
                 _lease(directory, session)

@@ -45,7 +45,7 @@ const books=[
 ];
 """
         result = subprocess.run(
-            [node, '-e', mock + self.source + '\n' + test],
+            [node, '-'], input=mock + self.source + '\n' + test, encoding='utf-8',
             capture_output=True, text=True, timeout=15,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

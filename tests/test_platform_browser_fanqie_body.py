@@ -76,7 +76,7 @@ class ParagraphLocator:
         program = DOM_RUNTIME + "\nconst read = (" + expression + ");\n" + (
             "process.stdout.write(JSON.stringify(read(inflate(" + json.dumps(self.dom, ensure_ascii=False) + "))));"
         )
-        completed = subprocess.run([NODE, "-e", program], capture_output=True, text=True, timeout=5)
+        completed = subprocess.run([NODE, '-'], input=program, encoding='utf-8', capture_output=True, text=True, timeout=5)
         if completed.returncode:
             raise AssertionError("DOM reader failed to execute")
         return json.loads(completed.stdout)

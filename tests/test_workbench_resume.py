@@ -139,11 +139,25 @@ class WorkbenchResumeTests(unittest.TestCase):
         self.assertTrue(self.path.is_symlink())
 
     def test_saved_utf16_cursor_is_clamped_and_dirty_flag_does_not_claim_text_recovery(self):
-        saved = self.save(self.payload(buffer_dirty=True, cursor={'start': 100, 'end': 500, 'direction': 'none'}))
-        length = len(self.source.read_text().encode('utf-16-le')) // 2
-        self.assertEqual(saved['state']['cursor'], {'start': length, 'end': length, 'direction': 'none'})
-        self.assertIn('这里只定位已保存文稿', self.read()['note'])
-        self.assertIn('恢复中心', self.read()['note'])
+        fingerprint = None
+        for newline in ('\n', '\r\n'):
+            with self.subTest(newline=repr(newline)):
+                text = '中文😀第一行' + newline + '第二行。'
+                raw = text.encode('utf-8')
+                self.source.write_bytes(raw)
+                saved = self.save(self.payload(fingerprint, buffer_dirty=True,
+                                               cursor={'start': 100, 'end': 500, 'direction': 'none'}))
+                # The service returns exact file text. read_text() would fold
+                # CRLF into LF and silently change this UTF-16 length oracle.
+                length = len(text.encode('utf-16-le')) // 2
+                expected = {'start': length, 'end': length, 'direction': 'none'}
+                self.assertEqual(saved['state']['cursor'], expected)
+                loaded = self.read()
+                self.assertEqual(loaded['state']['cursor'], expected)
+                self.assertIn('这里只定位已保存文稿', loaded['note'])
+                self.assertIn('恢复中心', loaded['note'])
+                self.assertEqual(self.source.read_bytes(), raw)
+                fingerprint = saved['state_sha256']
 
     @unittest.skipIf(os.name == 'nt', 'POSIX descriptor/path replacement race; Windows pins deny rename')
     def test_replaced_book_directory_cannot_receive_original_books_resume_record(self):

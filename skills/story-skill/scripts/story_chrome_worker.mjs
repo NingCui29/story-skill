@@ -32,7 +32,7 @@ const DRIVER_WORKER_CODES = new Set([
 const DRIVER_ERRORS = new Set([
   'ambiguous_dom','ambiguous_draft','chapter_exists_not_draft','editor_changed','identity_mismatch',
   'identity_unavailable','incomplete_dom','incomplete_list','incomplete_scope','invalid_chapter',
-  'invalid_identity','invalid_profile','invalid_remote_id','login_required','navigation_timeout',
+  'invalid_identity','invalid_profile','invalid_remote_id','login_required','navigation_timeout','read_timeout',
   'not_draft','not_new_draft','not_open','operation_failed','save_unverified','target_unverified',
   'unnumbered_draft','unsafe_create','unsafe_navigation','unsafe_save','unsafe_url','unsupported_editor',
   'bridge_scope','bridge_expired','editor_in_use','readback_required'
@@ -536,6 +536,16 @@ export class ChromeWorker {
         {schema:1,operation:this.activeOperation,phase:DRIVER_PHASES.has(this.driverPhase) ? this.driverPhase : null,message:this.activeCatalogMessage});
     } catch { /* Local troubleshooting must not hide the original result. */ }
   }
+  async persistMutationFailure(code) {
+    if (!['create_draft','update_draft'].includes(this.activeOperation) ||
+        !['platform_browser_operation_failed','platform_browser_navigation_timeout','platform_browser_read_timeout'].includes(code) ||
+        typeof this.activeCatalogMessage !== 'string') return;
+    try {
+      await writePrivate(path.join(path.dirname(this.config.handle_path),'worker-mutation-error.private.json'),
+        {schema:1,operation:this.activeOperation,phase:DRIVER_PHASES.has(this.driverPhase) ? this.driverPhase : null,
+          code,message:this.activeCatalogMessage});
+    } catch { /* Diagnostics never authorize or repeat a write. */ }
+  }
   async persistBootstrapFailure(failure) {
     try {
       if (this.initialized || !['sdk_setup','browser_inventory','waiting_for_chrome','browser_documentation','existing_tab_probe'].includes(this.phase) ||
@@ -780,7 +790,7 @@ export class ChromeWorker {
     this.api.onDriverError = failure => {
       this.activeDriverFailure = Object.freeze({error_name:ERROR_NAMES.has(failure?.name) ? failure.name : 'Error',error_marker:errorMarker(failure),
         worker_code:DRIVER_WORKER_CODES.has(failure?.code) ? failure.code : 'none'});
-      if (['verify_target','find_drafts','read_draft'].includes(this.activeOperation) && typeof failure?.message === 'string') {
+      if (['verify_target','find_drafts','read_draft','create_draft','update_draft'].includes(this.activeOperation) && typeof failure?.message === 'string') {
         this.activeCatalogMessage = failure.message.slice(0,4096);
       }
     };
@@ -824,7 +834,10 @@ export class ChromeWorker {
     let response;
     try {
       response = await this.driver.executeChromeBridgeRequest(this.api,request);
-      if (response.ok !== true) { await this.persistDriverFailure(response.error); await this.persistCatalogFailure(response.error); }
+      if (response.ok !== true) {
+        await this.persistDriverFailure(response.error); await this.persistCatalogFailure(response.error);
+        await this.persistMutationFailure(response.error);
+      }
     } finally { this.activeOperation = null; this.activeCatalogMessage = null; }
     const filename = path.join(path.dirname(this.config.handle_path),'worker-response-'+request.id+'.json');
     await writePrivate(filename,response);

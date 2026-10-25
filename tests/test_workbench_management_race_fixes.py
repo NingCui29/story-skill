@@ -5,6 +5,7 @@ fixture. No test in this module accesses the real system Trash or Recycle Bin.
 """
 import http.client
 import json
+import os
 from pathlib import Path
 import shutil
 import struct
@@ -60,6 +61,26 @@ class WorkbenchManagementRaceFixes(unittest.TestCase):
         self.assertEqual(set(entries), {self.entry['key']})
         self.assertEqual(entries[self.entry['key']]['book_id'], self.entry['book_id'])
 
+    def assert_intent_replacement_outcome(self, error, preserved):
+        if os.name == 'nt':
+            # The injected rename runs before trash releases its Windows
+            # directory/writer leases. The OS must reject this attack itself;
+            # the test hook propagates that error without reaching capture.
+            self.assertIsInstance(error, OSError)
+            self.assertEqual(error.winerror, 32)
+            self.assertFalse(preserved.exists())
+            self.assertEqual(self.manager._identity(self.root), self.confirmation['directory_id'])
+            self.assertEqual(self.w._library_entry(self.root)['book_id'], self.entry['book_id'])
+            self.assertEqual((self.root / 'A-only.md').read_text(encoding='utf-8'), '确认的原作品正文。')
+            self.assertFalse((self.root / 'B-only.md').exists())
+        else:
+            # POSIX permits replacing the pinned path. Capture must detect the
+            # changed identity and return it without calling native trash.
+            self.assertEqual(error.code, 'workbench_book_changed')
+            self.assertTrue((preserved / 'A-only.md').is_file())
+        self.assertEqual(list(self.parent.glob('工作台回收暂存-*')), [])
+        self.assert_registered()
+
     def test_replacement_after_intent_is_returned_without_calling_native_trash(self):
         preserved = self.parent / 'A原稿保留'
         receipt = self.manager._receipt
@@ -72,14 +93,12 @@ class WorkbenchManagementRaceFixes(unittest.TestCase):
 
         with patch.object(self.manager, '_receipt', side_effect=replace_after_receipt), \
                 patch.object(self.books, 'move_to_trash') as native:
-            with self.assertRaises(base.story.StoryError) as caught:
+            with self.assertRaises(OSError if os.name == 'nt' else base.story.StoryError) as caught:
                 self.trash()
-        self.assertEqual(caught.exception.code, 'workbench_book_changed')
         native.assert_not_called()
-        self.assertEqual((self.root / 'B-only.md').read_text(), 'B必须保留。')
-        self.assertTrue((preserved / 'A-only.md').is_file())
-        self.assertEqual(list(self.parent.glob('工作台回收暂存-*')), [])
-        self.assert_registered()
+        self.assert_intent_replacement_outcome(caught.exception, preserved)
+        if os.name != 'nt':
+            self.assertEqual((self.root / 'B-only.md').read_text(encoding='utf-8'), 'B必须保留。')
 
     def test_replacement_after_capture_cannot_become_native_target(self):
         def native(target):
@@ -110,13 +129,12 @@ class WorkbenchManagementRaceFixes(unittest.TestCase):
 
         with patch.object(self.manager, '_receipt', side_effect=copy_after_receipt), \
                 patch.object(self.books, 'move_to_trash') as native:
-            with self.assertRaises(base.story.StoryError) as caught:
+            with self.assertRaises(OSError if os.name == 'nt' else base.story.StoryError) as caught:
                 self.trash()
-        self.assertEqual(caught.exception.code, 'workbench_book_changed')
         native.assert_not_called()
+        self.assert_intent_replacement_outcome(caught.exception, preserved)
         self.assertTrue((self.root / 'A-only.md').is_file())
-        self.assertTrue((preserved / 'A-only.md').is_file())
-        self.assert_registered()
+        self.assertEqual(self.w._library_entry(self.root)['book_id'], self.entry['book_id'])
 
     def test_capture_failure_leaves_original_and_never_calls_native(self):
         with patch.object(self.books, '_rename_directory_no_replace', side_effect=OSError('unavailable')), \

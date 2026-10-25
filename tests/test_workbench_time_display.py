@@ -45,7 +45,7 @@ const changeSort=value=>{$('shelf-order').value=value;$('shelf-order').onchange(
 """
         setup = 'let storageValue=' + json.dumps(saved) + ',storageError=' + json.dumps(storage_error) + ';\n'
         result = subprocess.run(
-            [node, '-e', setup + mock + self.source + '\n(async()=>{' + test + '\n})().catch(error=>{console.error(error);process.exitCode=1;});'],
+            [node, '-'], input=setup + mock + self.source + '\n(async()=>{' + test + '\n})().catch(error=>{console.error(error);process.exitCode=1;});', encoding='utf-8',
             capture_output=True, text=True, timeout=15, env={**os.environ, 'TZ': 'Asia/Shanghai'},
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

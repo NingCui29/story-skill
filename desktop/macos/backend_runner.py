@@ -83,13 +83,38 @@ def _process_failure(story, log):
     return LauncherError('client_start_failed', '书架未能启动，请查看客户端启动日志。')
 
 
+def _bookshelf_status(story, state_dir, *, deadline=None):
+    """Retry only a read-only probe blocked by a transient Windows file lock.
+
+    Publication of service.json can briefly conflict with its directory pin.
+    A sharing/lock violation says nothing about whether the service exited;
+    never convert it to running=False or replay a start/stop operation.
+    """
+    retry_deadline = None
+    while True:
+        try:
+            return story.workbench._library_service_request(state_dir)
+        except OSError as error:
+            if getattr(error, 'winerror', None) not in (32, 33):
+                raise
+            now = time.monotonic()
+            if retry_deadline is None:
+                retry_deadline = now + 1.0
+                if deadline is not None:
+                    retry_deadline = min(retry_deadline, deadline)
+            remaining = retry_deadline - now
+            if remaining <= 0:
+                raise
+            time.sleep(min(0.05, remaining))
+
+
 def ensure_bookshelf(story, script, state_dir=None, port=DEFAULT_PORT,
                      timeout=START_TIMEOUT, poll_interval=0.1):
     """Use only the bookshelf's authenticated instance protocol and fixed CLI."""
     if type(port) is not int or not 1 <= port <= 65535:
         raise LauncherError('invalid_input', '客户端书架端口必须是 1 至 65535 的整数。')
     state_dir = story.workbench._library_state_dir(state_dir)
-    state = story.workbench._library_service_request(state_dir)
+    state = _bookshelf_status(story, state_dir)
     if state.get('running') is True:
         return ready_result(state, True)
     if state.get('running') is not False:
@@ -122,7 +147,7 @@ def ensure_bookshelf(story, script, state_dir=None, port=DEFAULT_PORT,
 
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
-        state = story.workbench._library_service_request(state_dir)
+        state = _bookshelf_status(story, state_dir, deadline=deadline)
         if state.get('running') is True:
             # A second client may have won the service lease. The authenticated
             # instance is safe to share regardless of which launcher created it.

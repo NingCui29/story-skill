@@ -63,7 +63,7 @@ const text=node=>[node.textContent,...(node.children||[]).map(text)].join(' ');
 const descendants=node=>[node,...(node.children||[]).flatMap(descendants)];
 """
         setup = 'let storageValue=' + json.dumps(saved) + ';\n'
-        result = subprocess.run([node, '-e', setup + mock + self.source + '\n(async()=>{' + test + '\n})().catch(error=>{console.error(error);process.exitCode=1;});'], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input=setup + mock + self.source + '\n(async()=>{' + test + '\n})().catch(error=>{console.error(error);process.exitCode=1;});', encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_only_verified_valid_writing_values_show_serializing_or_completed(self):

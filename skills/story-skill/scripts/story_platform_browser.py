@@ -284,9 +284,13 @@ def fanqie_profile_from_book_url(value):
             "state": field("td:nth-child(4) .arco-table-cell-wrap-value > span") if scope == "non_drafts" else {"source": "scope", "value": "草稿"},
             "link": field("td:last-child a.link", "href"),
             "empty": None if scope == "non_drafts" else {"selector": active + ':text-is("暂无草稿")'},
-            "pagination": {"mode": "all_rows", "validated": True,
+            "pagination": {"mode": "fanqie_pages_v1", "validated": True,
                            "container": {"selector": active + "." + table + " .arco-table-content-scroll"},
-                           "reject_selectors": [active + '[class*="pagination"]', active + '[class*="virtual"]']}}
+                           "next": field(active + '.arco-pagination-item-next'),
+                           "previous": field(active + '.arco-pagination-item-prev'),
+                           "current": field(active + '.arco-pagination-item[aria-current="true"]'),
+                           "disabled_class": "arco-pagination-item-disabled",
+                           "reject_selectors": [active + '[class*="virtual"]']}}
         if scope == "non_drafts":
             listing["filters"] = [field(active + ".chapter-status-select .byte-select-view-value", expected="全部"),
                                   field(active + ".chapter-search-trigger", expected="搜索章节")]
@@ -561,7 +565,7 @@ class BrowserAdapter:
                 _field(sections.get("selected"), name + ".sections.selected")
                 _configured(sections.get("options"), name + ".sections.options")
             pagination = _object(listing.get("pagination"), name + ".pagination")
-            if pagination.get("mode", "pages") == "all_rows":
+            if pagination.get("mode", "pages") in ("all_rows", "fanqie_pages_v1"):
                 if pagination.get("validated") is not True:
                     _fail("invalid_profile", "无分页完整表格模式必须来自实际后台验证。")
                 _field(pagination.get("container"), name + ".pagination.container")
@@ -570,6 +574,11 @@ class BrowserAdapter:
                     _fail("invalid_profile", "完整表格模式须声明需拒绝的分页或虚拟列表DOM标志。")
                 for value in rejected:
                     _configured(value, name + ".pagination.reject_selectors")
+                if pagination.get("mode") == "fanqie_pages_v1":
+                    if profile["platform"] != "fanqie" or pagination.get("disabled_class") != "arco-pagination-item-disabled":
+                        _fail("invalid_profile", "番茄分页须使用已核实的末页禁用样式。")
+                    for key in ("next", "previous", "current"):
+                        _field(pagination.get(key), name + ".pagination." + key)
             elif pagination.get("mode", "pages") == "pages":
                 _field(pagination.get("next"), name + ".pagination.next")
                 if pagination.get("end") is not None:
@@ -1088,8 +1097,64 @@ class BrowserAdapter:
             if not match or int(match[1]) != len(before):
                 _fail("incomplete_list", "页面草稿总数与完整读取的行数不一致。")
 
-    def _pagination(self, listing):
+    def _reset_fanqie_pages(self, listing):
         pagination = listing["pagination"]
+        current = self._list_page.locator(pagination["current"]["selector"])
+        previous = self._list_page.locator(pagination["previous"]["selector"])
+        for _ in range(MAX_PAGES):
+            self._ready_rows(listing)
+            if current.count() == 0:
+                return
+            if current.count() != 1 or not current.is_visible():
+                _fail("incomplete_list", "起始页码无法核对。")
+            raw = current.inner_text().strip()
+            if not re.fullmatch(r"[1-9][0-9]*", raw) or int(raw) > MAX_PAGES:
+                _fail("incomplete_list", "起始页码无效。")
+            number = int(raw)
+            if number == 1:
+                return
+            if (previous.count() != 1 or not previous.is_visible() or not previous.is_enabled() or
+                    pagination["disabled_class"] in (previous.get_attribute("class") or "").split()):
+                _fail("incomplete_list", "无法返回首页读取完整目录。")
+            before = self._rows(listing)
+            self._require_identity(self._list_page)
+            self._require_scope(listing)
+            previous.click()
+            deadline = time.monotonic() + self.timeout_ms / 1000
+            while True:
+                self._require_open()
+                now = current.inner_text().strip()
+                if now not in (str(number), str(number - 1)):
+                    _fail("incomplete_list", "返回首页时页码变化异常。")
+                if now == str(number - 1) and self._rows(listing) != before:
+                    break
+                if time.monotonic() >= deadline:
+                    _fail("incomplete_list", "返回首页超时。")
+                self._list_page.wait_for_timeout(100)
+        _fail("incomplete_list", "分页超过安全读取上限。")
+
+    def _pagination(self, listing, page_number=1):
+        pagination = listing["pagination"]
+        if pagination.get("mode") == "fanqie_pages_v1":
+            controls = [self._list_page.locator(pagination[key]["selector"]) for key in ("previous", "current", "next")]
+            counts = [control.count() for control in controls]
+            next_locator = None
+            if counts == [0, 0, 0]:
+                if page_number != 1:
+                    _fail("incomplete_list", "翻页后分页控件消失，目录未能确认完整。")
+            else:
+                if counts != [1, 1, 1] or not all(control.is_visible() for control in controls):
+                    _fail("incomplete_list", "分页控件缺失、重复或不可见。")
+                number = controls[1].inner_text().strip()
+                disabled = lambda control: pagination["disabled_class"] in (control.get_attribute("class") or "").split()
+                if not re.fullmatch(r"[1-9][0-9]*", number) or int(number) != page_number or disabled(controls[0]) != (page_number == 1):
+                    _fail("incomplete_list", "当前页码未按顺序前进，或首页状态不一致。")
+                if not disabled(controls[2]):
+                    if not controls[2].is_enabled():
+                        _fail("incomplete_list", "下一页状态无法核对。")
+                    next_locator = controls[2]
+            self._all_rows({**listing, "count": None})
+            return next_locator
         if pagination.get("mode") == "all_rows":
             self._all_rows(listing)
             return None
@@ -1191,9 +1256,17 @@ class BrowserAdapter:
 
     def _scan_pages(self, listing, chapter, matches, seen_ids, catalog=None):
         seen_pages = set()
+        expected_count, collected = None, 0
+        if listing["pagination"].get("mode") == "fanqie_pages_v1":
+            self._reset_fanqie_pages(listing)
         for page_number in range(MAX_PAGES):
             rows = self._ready_rows(listing)
-            next_locator = self._pagination(listing)
+            next_locator = self._pagination(listing, page_number + 1)
+            if listing["pagination"].get("mode") == "fanqie_pages_v1" and listing.get("count"):
+                count = re.fullmatch(r"共([0-9]+)篇草稿", self._value(self._list_page, listing["count"]))
+                if not count or (expected_count is not None and int(count[1]) != expected_count):
+                    _fail("incomplete_list", "翻页期间草稿总数发生变化，未能确认完整目录。")
+                expected_count = int(count[1])
             self._require_identity(self._list_page)
             self._require_scope(listing)
             if not self._list_ready(listing) or self._rows(listing) != rows:
@@ -1206,6 +1279,7 @@ class BrowserAdapter:
                 if url in seen_ids:
                     _fail("incomplete_list", "草稿在分页中重复，无法确认列表完整性。")
                 seen_ids.add(url)
+                collected += 1
                 if len(seen_ids) > MAX_ROWS:
                     _fail("incomplete_list", "草稿列表超过安全读取上限，未能穷尽。")
                 if catalog is not None:
@@ -1219,6 +1293,8 @@ class BrowserAdapter:
                     self._chapter_ids[remote_id] = chapter
                     matches.append(remote_id)
             if next_locator is None:
+                if expected_count is not None and expected_count != collected:
+                    _fail("incomplete_list", "全部分页读取数与草稿总数不一致。")
                 return
             if not rows:
                 _fail("incomplete_list", "空列表仍存在下一页，分页证据不一致。")

@@ -44,7 +44,7 @@ class WorkbenchThemeTests(unittest.TestCase):
         if not node:
             self.skipTest('Node.js required')
         source = 'const theme=' + json.dumps(base.story.workbench._workbench_theme_script()) + ';\n'
-        result = subprocess.run([node, '-e', source + HARNESS + '\n' + test],
+        result = subprocess.run([node, '-'], input=source + HARNESS + '\n' + test, encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

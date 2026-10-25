@@ -4,6 +4,50 @@ from tests import test_workbench_platform_draft_ui as base
 class DraftSyncUITests(unittest.TestCase):
     js = base.PlatformDraftUITests.js
 
+    def test_read_and_navigation_timeouts_have_specific_current_stop_reasons(self):
+        self.js(r'''
+await platformDraftOpen();const p=platformDraftPanel;
+for(const [reason,label] of [['platform_browser_read_timeout','页面读取超时'],['platform_browser_navigation_timeout','页面导航超时']]){
+ platformDraftDrawJob(p,job({done:true,state:'partial_failure',current_chapter:25,total_chapters:35,accepted_chapters:13,
+ result:{results:[{chapter:25,state:'blocked',reason,recorded_this_run:true,observed_this_run:false}]}}));
+ assert.ok(p.status.textContent.includes('第25章'));assert.ok(p.status.textContent.includes(label));
+ assert.ok(p.results.children[0].textContent.includes(label));assert.ok(!p.status.textContent.includes('登录入口'));
+ assert.equal(Number(p.progress.value),13);
+}
+''')
+
+    def test_refresh_retains_completed_run_until_explicit_new_preview(self):
+        self.js(r'''
+await platformDraftOpen();const p=platformDraftPanel;
+const completed=job({profile_id:profile.id,profile_sha256:profile.sha256,done:true,state:'unknown',
+ current_chapter:27,total_chapters:35,accepted_chapters:15,equivalent_chapters:15,
+ result:{results:[{chapter:27,state:'unknown',remote_id:'7700440421876367934',reason:'platform_browser_incomplete_list',recorded_this_run:true}]}});
+platformDraftDrawJob(p,completed);let previews=0;
+handler=async(action,payload)=>{
+ if(action.endsWith('/catalog'))return catalog([plan()],[completed]);
+ if(action.endsWith('/preview')){previews++;return preview(payload);}
+ throw Error(action);
+};
+await p.refresh.onclick();assert.equal(p.job.id,completed.id);assert.equal(Number(p.progress.value),15);
+assert.ok(p.status.textContent.includes('第27章'));assert.ok(!p.status.textContent.includes('历史任务'));assert.ok(p.status.textContent.includes('目录或分页不完整'));
+assert.ok(textTree(p.results).includes('已分配草稿 ID：7700440421876367934'));assert.ok(textTree(p.results).includes('勿重复新建'));
+assert.equal(previews,0);assert.equal(p.run.disabled,true);assert.equal(p.pollTimer,null);
+await platformDraftPreview(p);assert.equal(p.job,null);assert.equal(Number(p.progress.value),0);
+await p.refresh.onclick();assert.equal(p.job,null);assert.equal(Number(p.progress.value),0);
+assert.equal(previews,2);assert.equal(requests.filter(row=>row.action.endsWith('/start')).length,0);
+''')
+
+    def test_refresh_does_not_restore_completed_run_under_changed_profile(self):
+        self.js(r'''
+await platformDraftOpen();const p=platformDraftPanel;
+const completed=job({profile_id:profile.id,profile_sha256:profile.sha256,done:true,state:'unknown'});
+platformDraftDrawJob(p,completed);
+handler=async(action,payload)=>action.endsWith('/catalog')?
+ catalog([plan()],[completed],{profiles:[{...profile,sha256:'changed-profile'}]}):preview(payload);
+await p.refresh.onclick();assert.equal(p.job,null);assert.equal(Number(p.progress.value),0);
+assert.equal(requests.filter(row=>row.action.endsWith('/start')).length,0);
+''')
+
     def test_latest_batch_defaults_to_unified_sync_and_reports_each_outcome(self):
         self.js(r'''
 handler=async(action,payload)=>{

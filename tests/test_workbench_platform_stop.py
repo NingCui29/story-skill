@@ -36,7 +36,10 @@ class WorkbenchPlatformStopTests(unittest.TestCase):
     def test_running_job_blocks_stop_even_with_clean_pages_and_saved_confirmation(self):
         self.fixture.release.clear()
         job = self.fixture.start()
-        self.assertTrue(self.fixture.entered.wait(2))
+        # __enter__ runs before verify_target's waiting_login callback. Wait
+        # until that callback has completed and the fake worker is blocked,
+        # so it cannot overwrite the synthetic stages asserted below.
+        self.assertTrue(self.fixture.waiting_login.wait(2))
         for stage in ('queued', 'waiting_login', 'waiting_host', 'saving_draft', 'reading_back'):
             with self.subTest(stage=stage):
                 fixture.drafts._update_job(job['id'], stage=stage)

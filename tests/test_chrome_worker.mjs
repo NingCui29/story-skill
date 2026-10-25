@@ -1364,6 +1364,29 @@ test('private read diagnostics include generic verify failures with unknown phas
     }finally{await f.cleanup();}
   }
 });
+test('failed draft mutations preserve bounded private diagnostics without public leakage or replay',async()=>{
+  for(const operation of ['create_draft','update_draft'])for(const code of [
+    'platform_browser_operation_failed','platform_browser_navigation_timeout','platform_browser_read_timeout']){
+    const f=await fixture();const filename=path.join(f.run,'worker-mutation-error.private.json');let calls=0;
+    const message='PRIVATE SDK failure '+ '甲'.repeat(5000);
+    f.driver.executeChromeBridgeRequest=async(api,request)=>{
+      calls++;api.onProgress({phase:'guard'});const failure=Error(message);
+      for(const key of ['stack','args','headers','dom'])Object.defineProperty(failure,key,{get(){throw Error('must not inspect '+key);}});
+      api.onDriverError(failure);api.onProgress({phase:'error'});
+      return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:false,error:code};
+    };
+    try{
+      await f.enqueue(operation);await f.worker.checkpoint();await until(()=>f.worker.done);
+      assert.deepEqual(await readPrivateJSON(filename),{schema:1,operation,phase:'guard',code,message:message.slice(0,4096)});
+      if(process.platform!=='win32')assert.equal((await fs.stat(filename)).mode&0o777,0o600);
+      assert.equal(calls,1);assert.equal(f.responses.length,1);
+      assert.equal(f.worker.activeCatalogMessage,null);assert.equal(f.worker.activeOperation,null);
+      assert.ok(!JSON.stringify(await f.worker.checkpoint()).includes('PRIVATE'));
+      assert.ok(!JSON.stringify(f.responses).includes('PRIVATE'));
+      await assert.rejects(fs.lstat(path.join(f.run,'worker-catalog-error.private.json')),{code:'ENOENT'});
+    }finally{await f.cleanup();}
+  }
+});
 test('successful catalog work clears captured messages before a later failure without an original error',async()=>{
   const f=await fixture();let calls=0;
   f.driver.executeChromeBridgeRequest=async(api,request)=>{

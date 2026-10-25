@@ -140,6 +140,17 @@ class ChromeBridgeTests(unittest.TestCase):
         self.response.chmod(0o600)
         return message
 
+    def test_allocated_id_is_only_accepted_on_failed_creation(self):
+        request = {"schema": 1, "id": "r", "nonce": "n", "session_id": "s", "binding_sha256": "b", "operation": "create_draft"}
+        response = {key: request[key] for key in ("schema", "id", "nonce", "session_id", "binding_sha256")}
+        response.update(ok=False, error="platform_browser_incomplete_list", allocated_remote_id="7700440421876367934")
+        bridge._validate_response(response, request)
+        for operation in ("find_drafts", "read_draft", "update_draft"):
+            self.assert_code("platform_chrome_invalid_message", bridge._validate_response, response, {**request, "operation": operation})
+        success = {key: value for key, value in response.items() if key != "error"}
+        success.update(ok=True, result="7700440421876367934")
+        self.assert_code("platform_chrome_invalid_message", bridge._validate_response, success, request)
+
     def enqueue(self, operation="verify_target", params=None):
         """Queue a production request on a thread; no fake browser adapter."""
         result, errors = [], []

@@ -70,7 +70,7 @@ $('book-title').textContent='当前作品';$('book-kind').dataset.kind='long';$(
 const docs=new Map([['formal:1',{text:'正式原文',value:'未保存的当前文字',editable:true,saving:true}]]);
 let active='formal:1';
 """
-        result = subprocess.run([node, '-e', mock + source + '\n' + test],
+        result = subprocess.run([node, '-'], input=mock + source + '\n' + test, encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

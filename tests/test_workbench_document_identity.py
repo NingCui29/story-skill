@@ -21,7 +21,7 @@ class DocumentIdentityTests(unittest.TestCase):
         if not node:
             self.skipTest('Node.js required for manuscript identity checks')
         program = "const assert=require('assert');\n" + self.helpers + '\n' + extra + '\n' + code
-        result = subprocess.run([node, '-e', program], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input=program, encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_edited_formal_text_is_explicitly_unsaved_and_keeps_source(self):

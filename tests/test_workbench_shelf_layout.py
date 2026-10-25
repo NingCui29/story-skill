@@ -48,7 +48,7 @@ const query=value=>{$('shelf-search').value=value;$('shelf-search').oninput();};
 const changeSort=value=>{$('shelf-order').value=value;$('shelf-order').onchange();};
 const labels=()=>$('books').children.map(row=>row.children[0].textContent);
 """
-        result = subprocess.run([node, '-e', mock + self.source + '\n(async()=>{' + test + '\n})().catch(error=>{console.error(error);process.exitCode=1;});'], capture_output=True, text=True, timeout=15)
+        result = subprocess.run([node, '-'], input=mock + self.source + '\n(async()=>{' + test + '\n})().catch(error=>{console.error(error);process.exitCode=1;});', encoding='utf-8', capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_search_applies_inside_current_type_without_changing_counts_or_sort(self):
@@ -163,7 +163,7 @@ assert.equal(fixtures[2].genres.hidden,true);assert.equal(fixtures[2].evidence.p
 decorateBookManagement();for(const {row}of fixtures)assert.equal(row.querySelectorAll('.book-management').length,1);
 fixtures[0].open.onclick();assert.deepEqual(calls,[['open','a']]);
 """
-        result = subprocess.run([node, '-e', fixture + decorator + checks],
+        result = subprocess.run([node, '-'], input=fixture + decorator + checks, encoding='utf-8',
                                 capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 

@@ -20,7 +20,7 @@ import tempfile
 import threading
 import time
 from urllib.parse import unquote, urlsplit
-from urllib.request import ProxyHandler, build_opener
+from urllib.request import ProxyHandler, Request, build_opener
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -247,6 +247,47 @@ def skill_discovery(codex, plugin, cwd, env):
             thread.join(timeout=1)
 
 
+def close_workbench_probe(url, html, state):
+    """Close only the page issued to this HTTP probe, which opened no editor buffers."""
+    matches = re.findall(r'const config=(\{"protocol"[^\n]+\});', html.decode("utf-8"))
+    require(len(matches) == 1, "Workbench probe did not receive one page presence identity")
+    page = json.loads(matches[0])
+    require(all(isinstance(page.get(key), str) and page[key] for key in ("page_id", "page_token")),
+            "Workbench probe did not receive its page presence credentials")
+    parsed = urlsplit(url)
+    require(parsed.scheme == "http" and parsed.hostname == "127.0.0.1" and
+            parsed.port is not None and parsed.path.endswith("/") and parsed.path.strip("/") and
+            not parsed.query and not parsed.fragment,
+            "Workbench probe did not receive a loopback page URL")
+    payload = {"page_id": page["page_id"], "page_token": page["page_token"], "sequence": 0,
+               "initialized": True, "closing": True, "buffers": []}
+    request = Request(url + "api/presence", data=json.dumps(payload).encode("utf-8"), method="POST",
+                      headers={"Origin": f"http://127.0.0.1:{parsed.port}",
+                               "Content-Type": "application/json",
+                               "X-Story-Token": parsed.path.strip("/")})
+    with build_opener(ProxyHandler({})).open(request, timeout=5) as response:
+        raw = response.read(2_000_001)
+        require(response.status == 200 and len(raw) <= 2_000_000,
+                "Workbench did not acknowledge its probe page closure")
+    result = json.loads(raw)
+    require(all(result.get(key) == state.get(key) and state.get(key)
+                for key in ("root", "instance", "book_id")),
+            "Workbench probe closure returned a different service identity")
+    require(result.get("ok") is True and result.get("accepted") is True and result.get("closed") is True,
+            "Workbench did not accept its probe page closure")
+    summary = result.get("summary", {})
+    pages, counts = summary.get("pages", []), summary.get("counts", {})
+    require(len(pages) == 1 and pages[0].get("page_id") == page["page_id"] and
+            pages[0].get("state") == "closed" and pages[0].get("initialized") is True and
+            pages[0].get("sequence") == 0 and pages[0].get("buffers") == [] and
+            counts.get("registered") == 1 and counts.get("closed") == 1 and
+            all(counts.get(key) == 0 for key in ("open", "unknown", "pending_pages")) and
+            summary.get("can_stop") is True and summary.get("automatic_verified") is True,
+            "Workbench probe closure did not leave exactly its own empty, closed page")
+    return {"status": "passed", "accepted": True, "closed": True, "counts": counts,
+            "scope": "Only the verifier's HTTP probe page; no browser buffers or manual confirmation"}
+
+
 def workbench_smoke(tool, book, cwd, env):
     """Start a foreground service, request its loopback HTML, then stop that exact service."""
     command = PYTHON + [str(tool), "workbench-serve", "--book", str(book)]
@@ -275,6 +316,7 @@ def workbench_smoke(tool, book, cwd, env):
                 http_status, content_type = response.status, response.headers.get("Content-Type")
             require(http_status == 200 and b"<html" in html.lower() and len(html) <= 2_000_000,
                     "Workbench did not serve its HTML document")
+            probe_closure = close_workbench_probe(url, html, state)
             stopped = run(PYTHON + [str(tool), "workbench-stop", "--book", str(book), "--saved"], cwd, env)
             process.wait(timeout=8)
             final = run(PYTHON + [str(tool), "workbench-status", "--book", str(book)], cwd, env)
@@ -284,6 +326,7 @@ def workbench_smoke(tool, book, cwd, env):
             return {"status": "passed", "start_command": command, "running": status,
                     "http": {"status": http_status, "content_type": content_type,
                              "bytes": len(html), "sha256": hashlib.sha256(html).hexdigest()},
+                    "probe_page_closure": probe_closure,
                     "stop": stopped, "final_status": final, "process_exit_code": process.returncode,
                     "log": logs.read(), "scope": "Loopback HTTP only; no browser or GUI interaction"}
         finally:

@@ -305,6 +305,338 @@ function request(operation,params={},sid=String(++session),config=profile()) {
 }
 async function verified(env,config=profile()) { const req=request('verify_target',{},undefined,config); const result=await executeChromeBridgeRequest(env.api,req);assert.equal(result.ok,true,JSON.stringify(result));return req; }
 const next=(base,operation,params={}) => ({...base,id:base.id+operation,operation,params});
+function pagedFixture(size=16,options={}) {
+  const env=environment(options),config=profile(),add=env.add;
+  env.editors.delete('11');
+  for(let chapter=11;chapter<11+size;chapter++)env.editors.set(String(chapter),{scope:'drafts',chapter,title:'标题'+chapter,body:'正文'+chapter,saved:true});
+  for(const listing of config.chapter_lists)listing.pagination={mode:'fanqie_pages_v1',validated:true,
+    container:field('#scroll'),previous:field('#previous'),current:field('#page'),next:field('#next'),
+    disabled_class:'arco-pagination-item-disabled',reject_selectors:['.virtual']};
+  env.add=url=>{
+    const tab=add(url),rows=tab.rows.bind(tab),lookup=tab.lookup.bind(tab),load=tab.load.bind(tab);tab.page=0;
+    tab.load=url=>{if(tab.current===config.urls.drafts)tab.draftPage=tab.page;load(url);tab.page=options.preservePage&&url===config.urls.drafts?(tab.draftPage||0):0;};
+    tab.rows=()=>rows().slice(tab.page*15,(tab.page+1)*15);
+    tab.lookup=selector=>{
+      const total=rows().length,pages=Math.ceil(total/15),disabled='arco-pagination-item-disabled';
+      if(selector==='#count')return [{text:'共'+(env.reportedTotal??total)+'篇草稿'}];
+      if(['#previous','#page','#next'].includes(selector)){
+        if(pages<=1)return [];
+        if(selector==='#page')return [{text:String(env.reportedPage??tab.page+1)}];
+        if(selector==='#previous')return [{attrs:{class:tab.page===0?disabled:''},click:()=>{tab.page-=env.reverseJump??1;env.pageResets=(env.pageResets||0)+1;}}];
+        return [{attrs:{class:tab.page===pages-1?disabled:''},click:()=>{
+          tab.page+=env.pageJump??1;env.onPageChange?.(env,tab);
+        }}];
+      }
+      return lookup(selector);
+    };return tab;
+  };return {env,config};
+}
+
+test('Fanqie scans every page and finds a draft beyond the first15 rows',async()=>{
+  const {env,config}=pagedFixture(31);const base=await verified(env,config);
+  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:41}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.equal(result.result.length,1);
+  assert.equal(result.result[0].remote_id,'41');assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+
+test('Fanqie safely creates the sixteenth draft when pagination first appears',async()=>{
+  const {env,config}=pagedFixture(15);const base=await verified(env,config);
+  const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:26,title:'跨页新章',body:'正文\n下一段'}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.equal(result.result,'99');
+  assert.equal(env.creates,1);assert.equal(env.saves,1);assert.equal(env.editors.get('99').chapter,26);
+});
+
+test('paged Fanqie read restarts once with fresh identity pages after a reload acknowledgement timeout',async()=>{
+  const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=0;const progress=[];
+  env.api.onProgress=event=>progress.push(event);env.events=[];
+  env.afterNavigation=async(tab,kind,url)=>{
+    if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted++)throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+  };
+  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:26}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.equal(result.result[0].body,'正文26');
+  assert.equal(progress.filter(event=>event.read_retry===1).length,1);
+  assert.ok(env.events.some(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account'));
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+
+test('paged Fanqie verify_target outer recovery returns a freshly verified target',async()=>{
+  const {env,config}=pagedFixture(),req=request('verify_target',{},undefined,config);let interrupted=false;const progress=[];
+  env.api.onProgress=event=>progress.push(event);
+  env.afterNavigation=async(tab,kind,url)=>{
+    if(kind==='reload'&&url===config.urls.drafts&&!interrupted){
+      interrupted=true;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+    }
+  };
+  const result=await executeChromeBridgeRequest(env.api,req);
+  assert.equal(result.ok,true,JSON.stringify(result));assert.deepEqual(result.result,req.binding.target);
+  assert.equal(interrupted,true);assert.equal(progress.filter(event=>event.read_retry===1).length,1);
+  assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===config.urls.drafts).length,2);
+  assert.ok(env.events.some(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account'));
+  const found=await executeChromeBridgeRequest(env.api,next(req,'find_drafts',{chapter:26}));
+  assert.equal(found.ok,true,JSON.stringify(found));assert.equal(found.result[0].body,'正文26');
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+
+test('paged Fanqie outer catalog recovery cannot restart again after a preview timeout',async()=>{
+  const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false,reads=0;const progress=[];
+  env.api.onProgress=event=>progress.push(event);env.events=[];
+  env.afterNavigation=async(tab,kind,url)=>{
+    if(kind==='reload'&&url===config.urls.drafts&&!interrupted){
+      interrupted=true;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+    }
+  };
+  env.beforeLocatorEvaluate=async(tab,selector)=>{
+    if(selector==='#preview-body'&&++reads===2)throw Error('Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.');
+  };
+  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:26}));
+  assert.equal(result.ok,false);assert.equal(result.error,'platform_browser_read_timeout');
+  assert.equal(interrupted,true);assert.equal(reads,2);assert.equal(progress.filter(event=>event.read_retry===1).length,1);
+  assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===config.urls.drafts).length,1);
+  assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account').length,1);
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+
+test('paged Fanqie discards an interrupted final body sample and accepts only a complete fresh read',async()=>{
+  const {env,config}=pagedFixture(),base=await verified(env,config);let reads=0;const progress=[];
+  env.api.onProgress=event=>progress.push(event);
+  env.beforeLocatorEvaluate=async(tab,selector)=>{
+    if(selector==='#preview-body'&&++reads===2){
+      env.editors.get('26').body='完整的新正文';
+      throw Error('Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.');
+    }
+  };
+  const result=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'26'}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.equal(result.result.body,'完整的新正文');
+  assert.equal(progress.filter(event=>event.read_retry===1).length,1);assert.equal(reads,4);
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+
+test('paged Fanqie transient read recovery is bounded and reports the specific timeout',async()=>{
+  for(const [message,code] of [
+    ['Timed out after 10000ms waiting for CDP command Page.navigate.','navigation_timeout'],
+    ['Timed out after 3000ms waiting for CDP command Runtime.evaluate.','read_timeout'],
+    ['Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.','read_timeout']]){
+    const {env,config}=pagedFixture(),base=await verified(env,config);let calls=0;
+    env.api.newTab=async()=>{calls++;throw Error(message);};
+    const result=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'26'}));
+    assert.equal(result.error,'platform_browser_'+code);assert.equal(calls,2);assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+
+test('paged Fanqie fresh read still rejects changed account and never retries permission or arbitrary errors',async()=>{
+  const {env,config}=pagedFixture(),base=await verified(env,config);let reads=0;
+  env.beforeLocatorEvaluate=async(tab,selector)=>{
+    if(selector==='#preview-body'&&++reads===2){env.account='different-account';throw Error('Timed out after 3000ms waiting for CDP command Runtime.evaluate.');}
+  };
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'26'}))).error,'platform_browser_identity_mismatch');
+  for(const failure of [Error('Debugger unattached'),Error('permission denied'),Error('arbitrary failure'),
+    Object.assign(Error('Timed out after 10000ms waiting for CDP command Page.navigate.'),{code:'permission_denied'})]){
+    const fixture=pagedFixture(),verifiedRequest=await verified(fixture.env,fixture.config);let calls=0;
+    fixture.env.api.newTab=async()=>{calls++;throw failure;};
+    assert.equal((await executeChromeBridgeRequest(fixture.env.api,next(verifiedRequest,'read_draft',{remote_id:'26'}))).error,'platform_browser_operation_failed');
+    assert.equal(calls,1);assert.equal(fixture.env.creates,0);assert.equal(fixture.env.saves,0);
+  }
+});
+
+test('paged Fanqie read recovery cannot extend the original deadline or replay writes',async()=>{
+  const originalNow=Date.now;
+  try{
+    let clock=originalNow();Date.now=()=>clock;
+    const {env,config}=pagedFixture(),base=await verified(env,config);let calls=0;
+    const req=next(base,'read_draft',{remote_id:'26'});req.deadline=new Date(clock+500).toISOString();
+    env.api.newTab=async()=>{calls++;clock+=500;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');};
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_navigation_timeout');assert.equal(calls,1);
+  }finally{Date.now=originalNow;}
+  for(const operation of ['create_draft','update_draft']){
+    const {env,config}=pagedFixture(),base=await verified(env,config);
+    env.fillFailure=Error('Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.');
+    const params=operation==='create_draft'?{chapter:27,title:'新章',body:'新正文'}:
+      {chapter:26,remote_id:'26',title:'新章',body:'新正文',expected_title:'标题26',expected_body:'正文26'};
+    const result=await executeChromeBridgeRequest(env.api,next(base,operation,params));
+    assert.equal(result.error,'platform_browser_read_timeout');assert.equal(env.creates,operation==='create_draft'?1:0);
+    assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fill').length,1);
+  }
+});
+
+const pagedGuardWriteParams=operation=>operation==='create_draft'?{chapter:27,title:'新章',body:'新正文'}:
+  {chapter:26,remote_id:'26',title:'新章',body:'新正文',expected_title:'标题26',expected_body:'正文26'};
+
+test('paged Fanqie guard recovery resumes create and update without repeating any write',async()=>{
+  for(const operation of ['create_draft','update_draft']){
+    const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false;const progress=[];
+    env.events=[];env.api.onProgress=event=>progress.push(event);
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fill'&&event[1]==='#title')){
+        interrupted=true;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+      }
+    };
+    const result=await executeChromeBridgeRequest(env.api,next(base,operation,pagedGuardWriteParams(operation)));
+    assert.equal(result.ok,true,JSON.stringify(result));assert.equal(interrupted,true);
+    assert.equal(progress.filter(event=>event.read_retry===1).length,1);
+    assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account').length,1);
+    assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+    assert.equal(env.events.filter(event=>event[0]==='pasteText').length,1);
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,1);
+    assert.equal(env.editors.get(operation==='create_draft'?'99':'26').body,'新正文');
+    assert.equal([...env.tabs.values()].filter(tab=>tab.current===ORIGIN+'/account').length,2);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+    assert.equal([...env.tabs.values()].filter(tab=>tab.current===ORIGIN+'/account').length,0);
+  }
+});
+
+test('paged Fanqie guard recovery failure remains bounded and classifies create and update timeouts',async()=>{
+  for(const operation of ['create_draft','update_draft']){
+    const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false,guardCreates=0;const progress=[],newTab=env.api.newTab;
+    env.events=[];env.api.onProgress=event=>progress.push(event);
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fill'&&event[1]==='#title')){
+        interrupted=true;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+      }
+    };
+    env.api.newTab=async url=>{
+      if(url===ORIGIN+'/account'){guardCreates++;throw Error('Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.');}
+      return newTab(url);
+    };
+    const req=next(base,operation,pagedGuardWriteParams(operation)),result=await executeChromeBridgeRequest(env.api,req);
+    assert.equal(result.error,'platform_browser_read_timeout');assert.equal(interrupted,true);assert.equal(guardCreates,1);
+    assert.equal(progress.filter(event=>event.read_retry===1).length,1);
+    assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+    assert.equal(env.events.filter(event=>event[0]==='pasteText').length,0);
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,0);
+    if(operation==='create_draft')assert.equal(result.allocated_remote_id,'99');
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');
+    assert.equal(guardCreates,1);assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+  }
+});
+
+test('paged Fanqie guard recovery rejects a changed account before resuming create or update',async()=>{
+  for(const operation of ['create_draft','update_draft']){
+    const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false;
+    env.events=[];
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fill'&&event[1]==='#title')){
+        interrupted=true;env.account='different-account';throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+      }
+    };
+    const result=await executeChromeBridgeRequest(env.api,next(base,operation,pagedGuardWriteParams(operation)));
+    assert.equal(result.error,'platform_browser_identity_mismatch');assert.equal(interrupted,true);
+    assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account').length,1);
+    assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+    assert.equal(env.events.filter(event=>event[0]==='pasteText').length,0);
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,0);
+  }
+});
+
+test('paged Fanqie guard recovery never repairs a changed guard URL or retries refusals',async()=>{
+  const timeout='Timed out after 10000ms waiting for CDP command Page.navigate.';
+  for(const [failure,changedURL,expected] of [
+    [Error(timeout),true,'identity_mismatch'],
+    [Object.assign(Error(timeout),{code:'platform_browser_identity_mismatch'}),false,'identity_mismatch'],
+    [Object.assign(Error(timeout),{code:'permission_denied'}),false,'operation_failed'],
+    [Error('permission denied'),false,'operation_failed'],
+    [Error('arbitrary SDK failure'),false,'operation_failed']]){
+    const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false;const progress=[];
+    env.events=[];env.api.onProgress=event=>progress.push(event);
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(kind==='reload'&&url===ORIGIN+'/account'){
+        interrupted=true;if(changedURL)tab.current=config.urls.drafts;throw failure;
+      }
+    };
+    const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',pagedGuardWriteParams('create_draft')));
+    assert.equal(result.error,'platform_browser_'+expected);assert.equal(interrupted,true);
+    assert.equal(progress.filter(event=>event.read_retry===1).length,0);
+    assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account').length,0);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
+
+test('paged Fanqie guard recovery respects the original deadline before any replacement page',async()=>{
+  const originalNow=Date.now;
+  try{
+    let clock=originalNow();Date.now=()=>clock;
+    const {env,config}=pagedFixture(),base=await verified(env,config);const progress=[];
+    env.events=[];env.api.onProgress=event=>progress.push(event);
+    env.afterNavigation=async(tab,kind,url)=>{
+      if(kind==='reload'&&url===ORIGIN+'/account'){clock+=500;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');}
+    };
+    const req=next(base,'create_draft',pagedGuardWriteParams('create_draft'));req.deadline=new Date(clock+500).toISOString();
+    assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_navigation_timeout');
+    assert.equal(progress.filter(event=>event.read_retry===1).length,0);
+    assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account').length,0);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }finally{Date.now=originalNow;}
+});
+
+test('paged Fanqie final guard timeout requires a new complete body read rather than local account recovery',async()=>{
+  const {env,config}=pagedFixture(),base=await verified(env,config);let reads=0,interrupted=false;const progress=[];
+  env.events=[];env.api.onProgress=event=>progress.push(event);
+  env.beforeLocatorEvaluate=async(tab,selector)=>{
+    if(selector==='#preview-body')reads++;
+    if(selector==='#account'&&reads===2&&!interrupted){
+      interrupted=true;throw Error('Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.');
+    }
+  };
+  const result=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'26'}));
+  assert.equal(result.ok,true,JSON.stringify(result));assert.equal(interrupted,true);assert.equal(reads,4);
+  assert.equal(progress.filter(event=>event.read_retry===1).length,1);
+  assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/preview/10&26').length,2);
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+
+test('paged Fanqie guard recovery and post-save readback share one restart budget',async()=>{
+  const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false;const progress=[];
+  env.events=[];env.api.onProgress=event=>progress.push(event);
+  env.afterNavigation=async(tab,kind,url)=>{
+    if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fill'&&event[1]==='#title')){
+      interrupted=true;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+    }
+  };
+  env.beforeLocatorEvaluate=async(tab,selector)=>{
+    if(selector==='#preview-body'&&env.saves===1)throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+  };
+  const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',pagedGuardWriteParams('create_draft')));
+  assert.equal(result.error,'platform_browser_navigation_timeout');assert.equal(result.allocated_remote_id,'99');
+  assert.equal(progress.filter(event=>event.read_retry===1).length,1);
+  assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account').length,1);
+  assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+  assert.equal(env.events.filter(event=>event[0]==='pasteText').length,1);assert.equal(env.creates,1);assert.equal(env.saves,1);
+});
+
+test('paged Fanqie retries only the independent readback after saving, never the save or create',async()=>{
+  for(const operation of ['create_draft','update_draft']){
+    const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false;const progress=[];
+    env.api.onProgress=event=>progress.push(event);
+    env.beforeLocatorEvaluate=async(tab,selector)=>{
+      if(selector==='#preview-body'&&env.saves===1&&!interrupted){interrupted=true;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');}
+    };
+    const params=operation==='create_draft'?{chapter:27,title:'新章',body:'新正文'}:
+      {chapter:26,remote_id:'26',title:'新章',body:'新正文',expected_title:'标题26',expected_body:'正文26'};
+    const result=await executeChromeBridgeRequest(env.api,next(base,operation,params));
+    assert.equal(result.ok,true,JSON.stringify(result));assert.equal(interrupted,true);assert.equal(progress.filter(event=>event.read_retry===1).length,1);
+    assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,1);
+    assert.equal(env.editors.get(operation==='create_draft'?'99':'26').body,'新正文');
+  }
+});
+
+test('paged Fanqie repeated readback timeout after creation preserves its allocated id without another write',async()=>{
+  const {env,config}=pagedFixture(),base=await verified(env,config);const progress=[];
+  env.api.onProgress=event=>progress.push(event);
+  env.beforeLocatorEvaluate=async(tab,selector)=>{
+    if(selector==='#preview-body'&&env.saves===1)throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
+  };
+  const req=next(base,'create_draft',{chapter:27,title:'新章',body:'新正文'}),result=await executeChromeBridgeRequest(env.api,req);
+  assert.equal(result.error,'platform_browser_navigation_timeout');assert.equal(result.allocated_remote_id,'99');
+  assert.equal(progress.filter(event=>event.read_retry===1).length,1);assert.equal(env.creates,1);assert.equal(env.saves,1);
+  assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');assert.equal(env.creates,1);assert.equal(env.saves,1);
+});
+
+test('Fanqie rejects skipped pages, inconsistent totals, and virtual rows without writes',async()=>{
+  for(const options of [{pageJump:2},{reportedTotal:32},{virtual:true}]){
+    const {env,config}=pagedFixture(31,options);const base=await verified(env,config);
+    const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:41}));
+    assert.equal(result.error,'platform_browser_incomplete_list');assert.equal(env.creates,0);assert.equal(env.saves,0);
+  }
+});
 const MANAGEMENT='https://fanqienovel.com/main/writer/chapter-manage/10&test';
 const MANAGEMENT_COVERAGE='[role=tab][aria-selected=true] .arco-tabs-header-title-text';
 function managementFixture(options={}) {
@@ -2620,4 +2952,25 @@ test('existing-draft update stays bound to its original editor through field awa
     assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
     await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
   }
+});
+
+ test('failed allocated creation returns its exact draft id without success or retry',async()=>{
+  const env=environment();const base=await verified(env);let changed=false;
+  env.afterFill=async(tab,selector)=>{if(selector==='#chapter'&&!changed){changed=true;env.account='changed-account';}};
+  const command=next(base,'create_draft',{chapter:27,title:'恢复标题',body:'正文'});
+  const response=await executeChromeBridgeRequest(env.api,command);
+  assert.equal(response.ok,false);assert.equal(response.allocated_remote_id,'99');assert.ok(!Object.hasOwn(response,'result'));
+  assert.equal(env.creates,1);assert.equal(env.saves,0);
+  assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);assert.equal(env.creates,1);
+  await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+});
+
+test('Fanqie resets preserved page state on every repeated complete scan',async()=>{
+ const {env,config}=pagedFixture(31,{preservePage:true});const base=await verified(env,config);
+ for(let pass=0;pass<2;pass++){
+  const response=await executeChromeBridgeRequest(env.api,{...next(base,'find_drafts',{chapter:41}),id:'repeat-scan-'+pass});
+  assert.equal(response.ok,true,JSON.stringify(response));assert.equal(response.result[0].remote_id,'41');
+ }
+ assert.ok(env.pageResets>=2);assert.equal(env.creates,0);assert.equal(env.saves,0);
+ await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
 });
