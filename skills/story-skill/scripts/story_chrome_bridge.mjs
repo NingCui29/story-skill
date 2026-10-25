@@ -955,9 +955,9 @@ class Driver {
     for (let page = 0; page < 10000; page++) {
       this.scan = {...this.scan,page};
       progress(this.api,{...this.scan,phase:'pages',edge:'begin'});
-      const rows = await this.readyRows(tab, listing, section); let next = null;
+      const rows = await this.readyRows(tab, listing, section); let next = null, proof = null;
       if (listing.pagination.mode === 'fanqie_pages_v1') {
-        const proof = await this.fanqiePage(tab, listing, rows, section, page + 1);
+        proof = await this.fanqiePage(tab, listing, rows, section, page + 1);
         next = proof.next;
         if (expectedCount !== null && expectedCount !== proof.count) fail('incomplete_list');
         expectedCount = proof.count;
@@ -978,6 +978,15 @@ class Driver {
       const emptyDrafts = emptyCandidate && await this.emptyDraftRows(tab, listing, section);
       if (emptyCandidate && !emptyDrafts) fail('incomplete_list');
       if ((!emptyDrafts && await this.value(tab, listing.ready) !== listing.ready.expected) || JSON.stringify(await this.rows(tab, listing)) !== JSON.stringify(rows)) fail('incomplete_list');
+      if (proof) {
+        // Pagination can finish rendering after the table becomes ready or
+        // change during the scroll/identity reads. Never accept an old absent
+        // control or disabled-next observation as proof of a complete list.
+        const current = await this.fanqiePageState(tab, listing, page + 1);
+        if (current.signature !== proof.signature ||
+            (listing.count && await this.value(tab, listing.count) !== '共'+proof.count+'篇草稿')) fail('incomplete_list');
+        next = current.next;
+      }
       const signature = JSON.stringify(rows); if (pages.has(signature)) fail('incomplete_list'); pages.add(signature);
       for (const row of rows) { if (seen.has(row.url)) fail('incomplete_list'); seen.add(row.url); result.push(row); }
       if (seen.size > 100000) fail('incomplete_list');
@@ -991,13 +1000,13 @@ class Driver {
     }
     fail('incomplete_list');
   }
-  async fanqiePage(tab, listing, rows, section, page) {
+  async fanqiePageState(tab, listing, page) {
     const pagination = listing.pagination;
     if (this.target.platform !== 'fanqie' || pagination.validated !== true ||
         pagination.disabled_class !== 'arco-pagination-item-disabled') fail('invalid_profile');
     const controls = ['previous','current','next'].map(key=>tab.playwright.locator(pagination[key].selector));
     const counts = await Promise.all(controls.map(locator=>locator.count()));
-    let next = null;
+    let next = null, state = [counts];
     if (counts.every(count=>count === 0)) {
       if (page !== 1) fail('incomplete_list');
     } else {
@@ -1005,13 +1014,20 @@ class Driver {
       for (const control of controls) if (!await control.isVisible()) fail('incomplete_list');
       const number = (await controls[1].innerText()).trim();
       const disabled = async locator => (await locator.getAttribute('class') || '').split(/\s+/).includes(pagination.disabled_class);
+      const previousDisabled = await disabled(controls[0]), nextDisabled = await disabled(controls[2]);
+      const nextEnabled = await controls[2].isEnabled();
       if (!/^[1-9][0-9]*$/.test(number) || Number(number) !== page ||
-          (await disabled(controls[0])) !== (page === 1)) fail('incomplete_list');
-      if (!await disabled(controls[2])) {
-        if (!await controls[2].isEnabled()) fail('incomplete_list');
+          previousDisabled !== (page === 1)) fail('incomplete_list');
+      if (!nextDisabled) {
+        if (!nextEnabled) fail('incomplete_list');
         next = controls[2];
       }
+      state.push(number, previousDisabled, nextDisabled, nextEnabled);
     }
+    return {next,signature:JSON.stringify(state)};
+  }
+  async fanqiePage(tab, listing, rows, section, page) {
+    const state = await this.fanqiePageState(tab, listing, page), next = state.next;
     // Exhaust the visible table on each page, then reconcile the total across
     // pages. A total larger than the visible page is normal pagination.
     if (next && !rows.length) fail('incomplete_list');
@@ -1023,7 +1039,7 @@ class Driver {
       if (!match || Number(match[1]) > 100000) fail('incomplete_list');
       count = Number(match[1]);
     }
-    return {next,count};
+    return {...state,count};
   }
   async resetFanqiePages(tab, listing, section) {
     // Switching the management tabs preserves each table's current page.

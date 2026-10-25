@@ -1133,26 +1133,34 @@ class BrowserAdapter:
                 self._list_page.wait_for_timeout(100)
         _fail("incomplete_list", "分页超过安全读取上限。")
 
-    def _pagination(self, listing, page_number=1):
+    def _fanqie_page_state(self, listing, page_number):
+        pagination = listing["pagination"]
+        controls = [self._list_page.locator(pagination[key]["selector"]) for key in ("previous", "current", "next")]
+        counts = tuple(control.count() for control in controls)
+        next_locator, state = None, (counts,)
+        if counts == (0, 0, 0):
+            if page_number != 1:
+                _fail("incomplete_list", "翻页后分页控件消失，目录未能确认完整。")
+        else:
+            if counts != (1, 1, 1) or not all(control.is_visible() for control in controls):
+                _fail("incomplete_list", "分页控件缺失、重复或不可见。")
+            number = controls[1].inner_text().strip()
+            disabled = lambda control: pagination["disabled_class"] in (control.get_attribute("class") or "").split()
+            previous_disabled, next_disabled = disabled(controls[0]), disabled(controls[2])
+            next_enabled = controls[2].is_enabled()
+            if not re.fullmatch(r"[1-9][0-9]*", number) or int(number) != page_number or previous_disabled != (page_number == 1):
+                _fail("incomplete_list", "当前页码未按顺序前进，或首页状态不一致。")
+            if not next_disabled:
+                if not next_enabled:
+                    _fail("incomplete_list", "下一页状态无法核对。")
+                next_locator = controls[2]
+            state += (number, previous_disabled, next_disabled, next_enabled)
+        return next_locator, state
+
+    def _pagination(self, listing, page_number=1, *, fanqie_state=None):
         pagination = listing["pagination"]
         if pagination.get("mode") == "fanqie_pages_v1":
-            controls = [self._list_page.locator(pagination[key]["selector"]) for key in ("previous", "current", "next")]
-            counts = [control.count() for control in controls]
-            next_locator = None
-            if counts == [0, 0, 0]:
-                if page_number != 1:
-                    _fail("incomplete_list", "翻页后分页控件消失，目录未能确认完整。")
-            else:
-                if counts != [1, 1, 1] or not all(control.is_visible() for control in controls):
-                    _fail("incomplete_list", "分页控件缺失、重复或不可见。")
-                number = controls[1].inner_text().strip()
-                disabled = lambda control: pagination["disabled_class"] in (control.get_attribute("class") or "").split()
-                if not re.fullmatch(r"[1-9][0-9]*", number) or int(number) != page_number or disabled(controls[0]) != (page_number == 1):
-                    _fail("incomplete_list", "当前页码未按顺序前进，或首页状态不一致。")
-                if not disabled(controls[2]):
-                    if not controls[2].is_enabled():
-                        _fail("incomplete_list", "下一页状态无法核对。")
-                    next_locator = controls[2]
+            next_locator, _ = fanqie_state if fanqie_state is not None else self._fanqie_page_state(listing, page_number)
             self._all_rows({**listing, "count": None})
             return next_locator
         if pagination.get("mode") == "all_rows":
@@ -1261,7 +1269,9 @@ class BrowserAdapter:
             self._reset_fanqie_pages(listing)
         for page_number in range(MAX_PAGES):
             rows = self._ready_rows(listing)
-            next_locator = self._pagination(listing, page_number + 1)
+            page_state = (self._fanqie_page_state(listing, page_number + 1)
+                          if listing["pagination"].get("mode") == "fanqie_pages_v1" else None)
+            next_locator = self._pagination(listing, page_number + 1, fanqie_state=page_state)
             if listing["pagination"].get("mode") == "fanqie_pages_v1" and listing.get("count"):
                 count = re.fullmatch(r"共([0-9]+)篇草稿", self._value(self._list_page, listing["count"]))
                 if not count or (expected_count is not None and int(count[1]) != expected_count):
@@ -1271,6 +1281,13 @@ class BrowserAdapter:
             self._require_scope(listing)
             if not self._list_ready(listing) or self._rows(listing) != rows:
                 _fail("incomplete_list", "读取行与分页期间目录仍在变化；未能确认完整章节列表。")
+            if page_state is not None:
+                # Pagination may render or change after table readiness. An
+                # earlier absent/disabled control cannot prove completeness.
+                next_locator, current_state = self._fanqie_page_state(listing, page_number + 1)
+                if current_state != page_state[1] or (listing.get("count") and
+                        self._value(self._list_page, listing["count"]) != "共" + str(expected_count) + "篇草稿"):
+                    _fail("incomplete_list", "核对完整表格期间分页状态或草稿总数发生变化。")
             signature = tuple(rows)
             if signature in seen_pages:
                 _fail("incomplete_list", "草稿分页重复或未前进；未能穷尽列表。")

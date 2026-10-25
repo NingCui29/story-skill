@@ -637,6 +637,34 @@ test('Fanqie rejects skipped pages, inconsistent totals, and virtual rows withou
     assert.equal(result.error,'platform_browser_incomplete_list');assert.equal(env.creates,0);assert.equal(env.saves,0);
   }
 });
+test('Fanqie rejects pagination appearing or changing during a non-draft table scan',async()=>{
+  for(const change of ['appears','disappears','next_enabled','next_disabled','page']){
+    const {env,config}=pagedFixture(0);env.editors.clear();
+    for(let chapter=1;chapter<=31;chapter++)env.editors.set(String(chapter),{scope:'non_drafts',chapter,title:'已发布'+chapter,body:'正式正文',saved:true});
+    const add=env.add;
+    env.add=url=>{
+      const tab=add(url),lookup=tab.lookup.bind(tab),scroll=tab.scroll.bind(tab),load=tab.load.bind(tab);
+      tab.paginationChanged=false;
+      tab.load=url=>{load(url);tab.paginationChanged=false;};
+      tab.lookup=selector=>{
+        if(tab.scope()==='non_drafts'&&['#previous','#page','#next'].includes(selector)){
+          if((change==='appears'&&!tab.paginationChanged)||(change==='disappears'&&tab.paginationChanged))return [];
+          if(selector==='#page'&&change==='page'&&tab.paginationChanged)return [{text:'2'}];
+          if(selector==='#next'&&['next_enabled','next_disabled'].includes(change))return [{attrs:{class:
+            (change==='next_enabled'?!tab.paginationChanged:tab.paginationChanged)?'arco-pagination-item-disabled':''}}];
+        }
+        return lookup(selector);
+      };
+      tab.scroll=async(...args)=>{await scroll(...args);tab.paginationChanged=true;};
+      return tab;
+    };
+    const base=await verified(env,config);
+    const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:31}));
+    assert.equal(result.error,'platform_browser_incomplete_list',change);
+    assert.equal(env.creates,0);assert.equal(env.saves,0);
+    await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
+  }
+});
 const MANAGEMENT='https://fanqienovel.com/main/writer/chapter-manage/10&test';
 const MANAGEMENT_COVERAGE='[role=tab][aria-selected=true] .arco-tabs-header-title-text';
 function managementFixture(options={}) {
