@@ -996,6 +996,8 @@ html[data-story-workbench] .shelf-add,html[data-story-workbench] #books:not(:has
 html[data-story-workbench] #list>details,html[data-story-workbench] .book-status-editor,html[data-story-workbench] .overview-link,html[data-story-workbench] .reader-controls,html[data-story-workbench] .book:hover{border-color:var(--line)}
 html[data-story-workbench] .genre-tag,html[data-story-workbench] .book-classification .genre-tag,html[data-story-workbench] .identity-badge[data-kind="formal"],html[data-story-workbench] .book-status[data-status="serializing"],html[data-story-workbench] .diff-line.added{color:var(--wb-success);background:var(--wb-success-bg);border-color:var(--wb-success-line)}
 html[data-story-workbench] .genre-tag.pending,html[data-story-workbench] .book-classification .genre-tag.pending,html[data-story-workbench] .identity-badge[data-kind="recovery"],html[data-story-workbench] .identity-badge[data-kind="pending"],html[data-story-workbench] .identity-badge[data-kind="uncertain"],html[data-story-workbench] #document-unsaved,html[data-story-workbench] .book-status,html[data-story-workbench] #history-note,html[data-story-workbench] #pending-box{color:var(--wb-warning);background:var(--wb-warning-bg);border-color:var(--wb-warning-line)}
+html[data-story-workbench] .genre-tag.missing,html[data-story-workbench] .book-classification .genre-tag.missing{color:var(--muted);background:var(--wb-panel);border-color:var(--line)}
+html[data-story-workbench] .classification-record{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;min-width:0;width:100%;margin:0;color:var(--ink);font-size:12px;line-height:1.65}
 html[data-story-workbench] .identity-badge[data-kind="candidate"],html[data-story-workbench] .book-status[data-status="completed"]{background:var(--wb-selected);color:var(--wb-selected-ink);border-color:var(--line)}
 html[data-story-workbench] .book-status[data-status="not_applicable"]{background:var(--wb-tint);color:var(--muted)}
 html[data-story-workbench] #state,html[data-story-workbench] .dirty:after,html[data-story-workbench] #directory-warning,html[data-story-workbench] .error{color:var(--wb-warning)}
@@ -1007,7 +1009,7 @@ html[data-story-workbench] #list>details>summary,html[data-story-workbench] .cha
 html[data-story-workbench] .eyebrow,html[data-story-workbench] .muted,html[data-story-workbench] .brand,html[data-story-workbench] .reader-controls,html[data-story-workbench] h3{color:var(--muted)}
 html[data-story-workbench][data-workbench-view="reader"] summary{color:var(--muted)}
 html[data-story-workbench] .status{color:var(--green)}
-html[data-story-workbench][data-workbench-view="shelf"] #message{background:var(--wb-tint);border-color:var(--line)}
+html[data-story-workbench][data-workbench-view="shelf"] #message,html[data-story-workbench][data-workbench-view="shelf"] #last-books-result{background:var(--wb-tint);border-color:var(--line)}
 @media(max-width:680px){.shelf-header-actions{gap:12px;align-items:flex-end;flex-direction:column}.reader-header-actions{gap:7px}.workbench-theme-control{font-size:11px}.workbench-theme-control select{max-width:115px}}
 """.replace('__DARK__', dark)
 
@@ -1942,7 +1944,9 @@ def _navigation_file(root, row):
             # Keep damaged or incomplete candidates accessible by filename;
             # opening them still reports the existing metadata/recovery state.
         else:
-            row = {**row, 'content_kind': _candidate_content_kind(meta)}
+            row = {**row, 'content_kind': _candidate_content_kind(meta),
+                   'checkpoint': meta.get('checkpoint') is True,
+                   'source': meta.get('source') if isinstance(meta.get('source'), str) else None}
             if meta.get('chapter'):
                 chapter = meta['chapter']
                 relation = '来源记录章号，仅用于导航，采用关系须另核对'
@@ -2010,8 +2014,10 @@ def _editor_document_raw(root, document_id):
                       metadata_error={'code': error.code, 'path': error.details.get('path')}, source=None)
         return result
     result['metadata_sha256'] = meta.get('_metadata_sha256')
+    result['checkpoint'] = meta.get('checkpoint') is True
     if row['category'] in ('候选与草稿', '自动恢复'):
         result.update(kind='candidate', status='候选稿，采用关系待核对；未记录正式基线')
+        result['storage_format'] = 'recovery-body-v1' if meta.get('recovery') else 'candidate-file-v1'
     result['source'] = meta.get('source') if isinstance(meta.get('source'), str) else None
     result['content_kind'] = _candidate_content_kind(meta) if result['kind'] == 'candidate' else 'material'
     if result['content_kind'] == 'material':
@@ -2030,10 +2036,15 @@ def _editor_document_raw(root, document_id):
     if chapter:
         result['chapter'] = chapter
         result['base_sha256'] = base_sha
-        prefix, body = _body_without_heading(result['text'], chapter, Path(row['path']).stem)
-        if meta.get('prefix') and isinstance(meta['prefix'], str) and result['text'].startswith(meta['prefix']):
-            prefix, body = meta['prefix'], result['text'][len(meta['prefix']):]
-        result.update(prefix=meta.get('prefix', '') if meta.get('recovery') else prefix, text=body)
+        if meta.get('recovery'):
+            # Recovery files contain the exact editor body. A matching opening
+            # heading belongs to that body and must not be stripped a second time.
+            prefix, body = meta.get('prefix', ''), result['text']
+        else:
+            prefix, body = _body_without_heading(result['text'], chapter, Path(row['path']).stem)
+            if meta.get('prefix') and isinstance(meta['prefix'], str) and result['text'].startswith(meta['prefix']):
+                prefix, body = meta['prefix'], result['text'][len(meta['prefix']):]
+        result.update(prefix=prefix, text=body)
         try:
             formal = _editor_document(root, f'formal:{chapter}')
             if not prefix and not meta and re.fullmatch(rf'第0*{chapter}章_基线[0-9a-f]{{64}}_修订[0-9a-f]{{32}}', Path(row['path']).stem):
@@ -2054,6 +2065,11 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
     if not isinstance(text, str) or not text.strip() or len(text.encode('utf-8')) > AUTHOR_TEXT_LIMIT:
         api.fail('invalid_input', '请输入不超过 1 MiB 的非空正文。')
     source_id = payload.get('id')
+    save_mode = payload.get('save_mode', 'legacy')
+    if save_mode not in ('legacy', 'working', 'version'):
+        api.fail('invalid_input', '保存方式无效，请重新打开保存入口。')
+    updating = False
+    previous_metadata = None
     if recovery:
         # Recovery can rescue text even when the source has changed or disappeared.
         if not isinstance(source_id, str) or not source_id.startswith(('formal:', 'file:', 'pending:')) or len(source_id) > 2048:
@@ -2113,15 +2129,39 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
         if (payload.get('sha256') != source['sha256'] or payload.get('snapshot') != source['snapshot'] or
                 payload.get('metadata_sha256') != source.get('metadata_sha256')):
             api.fail('stale_snapshot', '来源或正式状态已变化。请保留恢复稿，刷新后重新对照。')
-        if text == source['text'] and not source.get('needs_recovery') and not force_candidate:
+        if text == source['text'] and not source.get('needs_recovery') and not force_candidate and save_mode != 'version':
             return {'ok': True, 'unchanged': True, 'id': source_id, 'path': source['path']}
-        name = '.story/drafts/workbench/' + re.sub(r'[^\w\u4e00-\u9fff -]', '_', source['title'])[:70] + '_候选_' + uuid.uuid4().hex[:12] + '.md'
+        candidate_title = source['title']
+        if source.get('path', '').startswith('.story/drafts/workbench/'):
+            candidate_title = re.sub(r'_(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f-]{27,})$', '', candidate_title, flags=re.I)
+            candidate_title = re.sub(r'(?:_候选_[0-9a-f]{12}(?:_\d+)?)+$', '', candidate_title, flags=re.I)
+        name = '.story/drafts/workbench/' + re.sub(r'[^\w\u4e00-\u9fff -]', '_', candidate_title)[:70] + '_候选_' + uuid.uuid4().hex[:12] + '.md'
         meta = {'source': source_id, 'source_sha256': source['sha256'], 'chapter': source.get('chapter'),
                 'base_sha256': source.get('base_sha256'), 'prefix': source.get('prefix', ''),
                 'created': _utc_now(), 'adopted': False,
                 'content_kind': 'prose' if source['is_prose'] else 'material'}
         content = source.get('prefix', '') + text
         allowed, meta_allowed = set(), set()
+        # A working candidate can be continued in place. Explicitly retained
+        # versions, recovery records and unregistered drafts remain separate.
+        if (save_mode == 'working' and source.get('kind') == 'candidate' and
+                re.fullmatch(r'\.story/drafts/workbench/[^/]+_候选_[0-9a-f]{12}\.md', source.get('path', '')) and
+                source.get('metadata_sha256') and source.get('source') and not source.get('needs_recovery')):
+            current_meta = _candidate_metadata(Path(root), source['path'])
+            if (current_meta.get('_metadata_sha256') != source['metadata_sha256']):
+                api.fail('stale_snapshot', '候选来源在保存前发生变化，请保留当前文字后重新核对。')
+            if (current_meta.get('recovery') is not True and current_meta.get('checkpoint') is not True and
+                    current_meta.get('adopted') is False and current_meta.get('source_sha256')):
+                previous_metadata = _author_read(Path(root), source['path'] + '.meta.json', 16384).decode('utf-8')
+                if hashlib.sha256(previous_metadata.encode('utf-8')).hexdigest() != source['metadata_sha256']:
+                    api.fail('stale_snapshot', '候选来源在保存前发生变化，请保留当前文字后重新核对。')
+                name = source['path']
+                meta = {key: value for key, value in current_meta.items() if not key.startswith('_')}
+                meta.update(updated=_utc_now(), content_sha256=hashlib.sha256(text.encode('utf-8')).hexdigest())
+                allowed, meta_allowed = {source['sha256']}, {source['metadata_sha256']}
+                updating = True
+        if save_mode == 'version':
+            meta['checkpoint'] = True
     if len(content.encode('utf-8')) > AUTHOR_TEXT_LIMIT:
         api.fail('workbench_write_limit', '完整候选文件（含恢复的章名）不得超过 1 MiB，请缩减后保存。',
                  maximum_bytes=AUTHOR_TEXT_LIMIT, actual_bytes=len(content.encode('utf-8')))
@@ -2144,13 +2184,24 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
                 prior = _author_read(Path(root), Path(previous_body).relative_to(root).as_posix()).decode('utf-8')
                 api.atomic_write(target, prior, set(), api.safe_path(Path(root),
                                  '.story/drafts/workbench/.backups/' + uuid.uuid4().hex + '/rollback'))
+            if updating and previous_metadata is not None:
+                metadata_target = api.safe_path(Path(root), name + '.meta.json')
+                actual_metadata = _author_read(Path(root), name + '.meta.json', 16384)
+                old_digest = hashlib.sha256(previous_metadata.encode('utf-8')).hexdigest()
+                current_digest = hashlib.sha256(actual_metadata).hexdigest()
+                new_digest = hashlib.sha256(json.dumps(meta, ensure_ascii=False).encode()).hexdigest()
+                if current_digest != old_digest:
+                    if current_digest != new_digest:
+                        api.fail('stale_snapshot', '候选来源在回退期间被外部修改，保留待核对记录。')
+                    api.atomic_write(metadata_target, previous_metadata, {new_digest}, api.safe_path(Path(root),
+                                     '.story/drafts/workbench/.backups/' + uuid.uuid4().hex + '/metadata-rollback'))
             _finish_pending_save(Path(root), pending)
         except (OSError, api.StoryError, ValueError) as rollback_error:
             api.fail('workbench_partial_save', '来源记录保存失败，回退未完成；请保留编辑并核对文件，勿直接重复保存。',
                      path=name, incomplete_path=str(incomplete), previous_body=previous_body,
                      cause=str(error), rollback_error=str(rollback_error))
         api.fail('workbench_save_rolled_back', '来源记录保存失败，不完整候选已移出目录并保留为暂存文件。'
-                 + ('上一份恢复稿已还原。' if previous_body else '') + '请保留编辑后重试。',
+                 + ('上一份稿件已还原。' if previous_body else '') + '请保留编辑后重试。',
                  path=name, incomplete_path=str(incomplete), cause=str(error))
     metadata_hash = hashlib.sha256(json.dumps(meta, ensure_ascii=False).encode('utf-8')).hexdigest()
     if recovery and (hashlib.sha256(_author_read(Path(root), name)).hexdigest() != meta['content_sha256'] or
@@ -2162,6 +2213,8 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
         api.fail('workbench_partial_save', '正文与来源已写入，保存收尾未确认；请从自动恢复区核对后另存候选。',
                  path=name, incomplete_path=pending[0], cause=str(error))
     result = {'ok': True, 'id': 'file:' + name, 'path': name, 'formal_changed': False}
+    if not recovery:
+        result.update(updated_existing=updating, checkpoint=meta.get('checkpoint') is True, save_mode=save_mode)
     if recovery:
         result.update(recovery_key=key, recovery_sha256=meta['content_sha256'],
                       recovery_metadata_sha256=metadata_hash, conflict=conflict, conflict_reason=conflict_reason)
@@ -2295,6 +2348,308 @@ def _editor_document(root, document_id):
         if result['sha256'] == result['context']['formal_sha256']:
             result['status'] = '内容与当前正式稿逐字一致；不据此推断采用历史'
     return result
+
+
+def _editor_resume_validate(value, *, stored=False):
+    """Validate the small position-only record; never retain arbitrary fields."""
+    fields = {'book_id', 'document_id', 'document_sha256', 'mode', 'cursor', 'scroll', 'buffer_dirty'}
+    allowed = fields | ({'version', 'updated_at'} if stored else {'expected_state_sha256'})
+    if not isinstance(value, dict) or set(value) - allowed or not fields <= set(value):
+        api.fail('workbench_resume_invalid', '上次编辑位置格式无效；不会读取正文或任意路径。')
+    if (not isinstance(value['book_id'], str) or not 1 <= len(value['book_id']) <= 200 or
+            not isinstance(value['document_id'], str) or not 1 <= len(value['document_id']) <= 2048 or
+            re.search(r'[\x00-\x1f\x7f]', value['document_id']) or
+            not isinstance(value['document_sha256'], str) or
+            not re.fullmatch(r'[0-9a-f]{64}', value['document_sha256']) or
+            value['mode'] not in ('reading', 'editing') or type(value['buffer_dirty']) is not bool):
+        api.fail('workbench_resume_invalid', '上次编辑位置的作品、文稿或校验值无效。')
+    document_id = value['document_id']
+    if not re.fullmatch(r'(?:formal|plan):[1-9]\d*', document_id):
+        prefix, separator, relative = document_id.partition(':')
+        if (prefix not in ('file', 'pending') or not separator or not relative or
+                '\\' in relative or Path(relative).is_absolute() or '..' in Path(relative).parts):
+            api.fail('workbench_resume_invalid', '仅能记录本书已列出的文稿标识。')
+    cursor, scroll = value['cursor'], value['scroll']
+    if (not isinstance(cursor, dict) or set(cursor) != {'start', 'end', 'direction'} or
+            any(type(cursor[name]) is not int or not 0 <= cursor[name] <= 2147483647 for name in ('start', 'end')) or
+            cursor['end'] < cursor['start'] or cursor['direction'] not in ('forward', 'backward', 'none') or
+            not isinstance(scroll, dict) or set(scroll) != {'main', 'editor'} or
+            any(type(scroll[name]) not in (int, float) or not 0 <= scroll[name] <= 10000000
+                for name in ('main', 'editor'))):
+        api.fail('workbench_resume_invalid', '上次编辑位置的光标或滚动范围无效。')
+    result = {name: value[name] for name in fields}
+    result['cursor'], result['scroll'] = dict(cursor), dict(scroll)
+    if stored:
+        stamp = value.get('updated_at')
+        if type(value.get('version')) is not int or value['version'] != 1 or not isinstance(stamp, str) or len(stamp) > 48:
+            api.fail('workbench_resume_invalid', '上次编辑位置的版本或时间无效。')
+        try:
+            if datetime.fromisoformat(stamp.replace('Z', '+00:00')).utcoffset() is None:
+                raise ValueError('timezone required')
+        except ValueError:
+            api.fail('workbench_resume_invalid', '上次编辑位置的时间无效。')
+        result.update(version=1, updated_at=stamp)
+    else:
+        expected = value.get('expected_state_sha256')
+        if ('expected_state_sha256' not in value or
+                (expected is not None and (not isinstance(expected, str) or not re.fullmatch(r'[0-9a-f]{64}', expected)))):
+            api.fail('workbench_resume_invalid', '请先读取上次编辑位置，再保存新的位置。')
+    return result
+
+
+def _editor_resume_identity(book, expected_book_id=None):
+    book_id = book.meta('id')
+    if (not isinstance(book_id, str) or not 1 <= len(book_id) <= 200 or
+            (expected_book_id is not None and expected_book_id != book_id)):
+        api.fail('workbench_book_changed', '作品身份已变化，未读取或保存上次编辑位置。')
+    book.verify_state_path()
+    api._verify_bound_directory(book._state_file.directory)
+    return book_id
+
+
+def _editor_resume_read_file(target):
+    try:
+        with api._bound_reader(target) as stream:
+            raw = stream.read(16385)
+    except FileNotFoundError:
+        return None, None
+    if len(raw) > 16384:
+        api.fail('workbench_resume_invalid', '上次编辑位置超过读取范围，请从作品目录重新选择文稿。')
+    return raw, hashlib.sha256(raw).hexdigest()
+
+
+def _editor_resume_read(book):
+    return _editor_resume_read_file(api._BoundFile(book._state_file.directory, 'workbench-resume.json'))
+
+
+def _editor_resume_document(root, record):
+    # Resolve only a registered document ID through the existing safe reader.
+    # The record never grants permission to open an arbitrary filesystem path.
+    document = _editor_document(root, record['document_id'])
+    summary = {name: document.get(name) for name in ('title', 'kind', 'chapter')}
+    if isinstance(summary['title'], str) and document.get('path', '').startswith('.story/drafts/workbench/'):
+        # Match displayTitle: technical suffixes belong to managed storage,
+        # while ordinary author-material filenames remain exactly as written.
+        title = re.sub(r'_(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f-]{27,})$', '', summary['title'], flags=re.I)
+        summary['title'] = re.sub(r'(?:_候选_[0-9a-f]{12}(?:_\d+)?)+$', '', title, flags=re.I)
+    return document, summary
+
+
+def _editor_resume_state(root, expected_book_id=None):
+    """Read a persisted position without changing any draft or resume record."""
+    book = _ReadOnlyBook(root)
+    try:
+        book_id = _editor_resume_identity(book, expected_book_id)
+        packet = {'ok': True, 'book_id': book_id, 'state': None, 'state_sha256': None, 'document': None}
+        try:
+            raw, fingerprint = _editor_resume_read(book)
+            packet['state_sha256'] = fingerprint
+            if raw is None:
+                return {**packet, 'status': 'empty', 'note': '尚无上次编辑位置。'}
+            record = _editor_resume_validate(json.loads(raw), stored=True)
+            if record['book_id'] != book_id:
+                return {**packet, 'status': 'invalid', 'note': '位置记录属于另一作品，已忽略；请从目录选择文稿。'}
+        except (ValueError, UnicodeError, RecursionError, api.StoryError, OSError) as error:
+            return {**packet, 'status': 'invalid', 'note': '上次编辑位置无法核对，原记录保留；请从目录选择文稿。'}
+        try:
+            document, summary = _editor_resume_document(book.root, record)
+        except (api.StoryError, OSError, UnicodeError, ValueError) as error:
+            reason = 'changed' if getattr(error, 'code', None) == 'workbench_changed' else 'missing'
+            _editor_resume_identity(book, book_id)
+            return {**packet, 'state': record, 'status': reason,
+                    'note': '上次文稿已变化或无法安全打开，请从目录重新核对；原稿未改动。'}
+        _editor_resume_identity(book, book_id)
+        if document['sha256'] != record['document_sha256']:
+            return {**packet, 'state': record, 'document': summary, 'status': 'changed',
+                    'note': '上次文稿内容已变化，未自动套用旧位置；请从目录核对新版本。'}
+        state = {**record, 'cursor': dict(record['cursor']), 'scroll': dict(record['scroll'])}
+        length = len(document.get('text', '').encode('utf-16-le')) // 2
+        state['cursor']['start'] = min(length, state['cursor']['start'])
+        state['cursor']['end'] = min(length, state['cursor']['end'])
+        if not document.get('editable') or document.get('needs_recovery'):
+            state['mode'] = 'reading'
+        note = ('上次有未保存输入；这里只定位已保存文稿，未保存文字请到恢复中心核对。'
+                if state['buffer_dirty'] else '可继续上次已保存文稿的位置；不会恢复或覆盖未保存正文。')
+        return {**packet, 'state': state, 'document': summary, 'status': 'ready', 'note': note}
+    finally:
+        book.close()
+
+
+def _editor_resume_summary(root, expected_book_id=None):
+    """Expose current display metadata, never the stored target, hash or cursor."""
+    empty = {'status': 'unavailable', 'document': None, 'updated_at': None, 'buffer_dirty': False}
+    try:
+        packet = _editor_resume_state(root, expected_book_id)
+    except (api.StoryError, OSError, ValueError, UnicodeError):
+        return {**empty, 'note': '上次编辑位置当前无法核对，请从目录选择文稿。'}
+    status = packet.get('status')
+    if status not in ('empty', 'ready', 'changed', 'missing', 'invalid'):
+        return {**empty, 'note': '上次编辑位置当前无法核对，请从目录选择文稿。'}
+    state = packet.get('state') or {}
+    original = packet.get('document') or {}
+    document = None
+    if (isinstance(original.get('title'), str) and 0 < len(original['title']) <= 2048 and
+            original.get('kind') in ('formal', 'plan', 'candidate', 'material')):
+        chapter = original.get('chapter')
+        document = {'title': original['title'], 'kind': original['kind'],
+                    'chapter': chapter if type(chapter) is int and 1 <= chapter <= MAX_EDITOR_CHAPTER else None}
+    if status == 'ready' and document is None:
+        status = 'invalid'
+    notes = {'empty': '尚无上次编辑位置。', 'ready': '继续上次已保存文稿的位置，不代表未保存正文已恢复。',
+             'changed': '上次文稿内容已变化，请从目录核对当前版本。',
+             'missing': '上次文稿已移走或无法安全打开，请从目录重新选择。',
+             'invalid': '上次编辑位置待核对，请从目录重新选择。'}
+    return {'status': status, 'document': document, 'updated_at': state.get('updated_at'),
+            'buffer_dirty': state.get('buffer_dirty') is True,
+            'note': notes[status] + ('上次有未保存输入，请到恢复中心核对。' if state.get('buffer_dirty') is True else '')}
+
+
+def _editor_resume_publish(book, content, expected, expected_book_id):
+    """Descriptor-bound CAS publication; never reopen a replaced book pathname."""
+    directory = book._state_file.directory
+    target = api._BoundFile(directory, 'workbench-resume.json')
+    previous = api._BoundFile(directory, '.workbench-resume-previous-' + uuid.uuid4().hex)
+    fd, staged = api._bound_stage(directory, '.workbench-resume-stage-')
+    displaced = False
+    try:
+        with api._owned_fdopen(fd, 'wb') as stream:
+            stream.write(content.encode('utf-8'))
+            stream.flush()
+            os.fsync(stream.fileno())
+        _editor_resume_identity(book, expected_book_id)
+        exists = api._bound_exists(target)
+        if exists != (expected is not None):
+            api.fail('workbench_resume_conflict', '另一页面已更新继续位置；本次未覆盖，请重新读取。')
+        if exists:
+            api._bound_replace(target, previous)
+            displaced = True
+            if _editor_resume_read_file(previous)[1] != expected:
+                api.fail('workbench_resume_conflict', '继续位置在保存期间变化；新旧记录保留，未覆盖另一页面。')
+        api._publish_no_replace(staged, target)
+        if _editor_resume_read_file(target)[1] != api.digest(content):
+            api.fail('workbench_resume_conflict', '继续位置在发布期间变化，请重新读取核对。')
+        _editor_resume_identity(book, expected_book_id)
+        if displaced:
+            api._bound_unlink(previous)
+            displaced = False
+    except (api.StoryError, OSError) as error:
+        if displaced:
+            try:
+                api._restore_displaced_file(previous, target)
+                # Only our displaced metadata copy is removed after restoration;
+                # concurrent/new target paths are never overwritten or removed.
+                api._bound_unlink(previous)
+                displaced = False
+            except (api.StoryError, OSError):
+                pass
+        if isinstance(error, api.StoryError) and error.code == 'workbench_resume_conflict':
+            raise
+        api.fail('workbench_resume_conflict', '继续位置保存未确认，请重新读取；书稿和编辑缓冲未改动。',
+                 preserved_record=previous.name if displaced else None)
+    finally:
+        if api._bound_exists(staged):
+            api._bound_unlink(staged)
+
+
+def _editor_resume_save(root, payload, expected_book_id=None):
+    """Persist only a verified document identity and position, with file CAS."""
+    record = _editor_resume_validate(payload)
+    book = _ReadOnlyBook(root)
+    try:
+        book_id = _editor_resume_identity(book, expected_book_id)
+        if record['book_id'] != book_id:
+            api.fail('workbench_book_changed', '不能把另一作品的编辑位置写入本书。')
+        document, summary = _editor_resume_document(book.root, record)
+        if document['sha256'] != record['document_sha256']:
+            api.fail('workbench_resume_changed', '文稿内容已变化，未保存旧版本位置；请重新打开核对。')
+        length = len(document.get('text', '').encode('utf-16-le')) // 2
+        record['cursor']['start'] = min(length, record['cursor']['start'])
+        record['cursor']['end'] = min(length, record['cursor']['end'])
+        if not document.get('editable') or document.get('needs_recovery'):
+            record['mode'] = 'reading'
+        record.update(version=1, updated_at=_utc_now())
+        _editor_resume_identity(book, book_id)
+        content = json.dumps(record, ensure_ascii=False, separators=(',', ':'))
+        _editor_resume_publish(book, content, payload['expected_state_sha256'], book_id)
+        return {'ok': True, 'status': 'saved', 'book_id': book_id, 'state': record,
+                'state_sha256': api.digest(content), 'document': summary,
+                'note': '已记住文稿位置；正文保存和自动恢复状态仍需分别核对。'}
+    finally:
+        book.close()
+
+
+def _editor_resume_script():
+    """Factory only: integration supplies safe open/restore and interaction hooks."""
+    return r'''
+function createEditorResume(options){
+ const config=options||{},copy=value=>JSON.parse(JSON.stringify(value));
+ let fingerprint=null,loaded=false,disabled=false,conflicted=false,timer=null,pending=null,inflight=null,interaction=0,loadSequence=0;
+ const initialHash=typeof config.explicitHash==='function'?config.explicitHash():'';
+ const bookId=()=>typeof config.bookId==='function'?config.bookId():config.bookId;
+ const notify=packet=>{if(typeof config.onStatus==='function')config.onStatus(packet);};
+ const hashTarget=value=>{if(!value||value==='#')return '';try{const id=decodeURIComponent(value.replace(/^#/,''));return /^chapter-[1-9]\d*$/.test(id)?'formal:'+id.slice(8):id;}catch{return null;}};
+ // Ordinary navigation writes the current ID into the URL. On refresh that
+ // same target may resume; a different initial or later target still wins.
+ const isExplicit=target=>{const initial=hashTarget(initialHash);if(initial!==''&&initial!==target)return true;const current=hashTarget(typeof config.explicitHash==='function'?config.explicitHash():'');return current!==''&&current!==target;};
+ const supportedError=error=>error?.status===404||error?.status===405||error?.code==='not_found'||error?.code==='unsupported_action'||/^(?:Unexpected|未知|不支持).*resume-/.test(error?.message||'');
+ const stateOnly=value=>{
+  if(!value||typeof value!=='object')return null;
+  const id=value.document_id,sha=value.document_sha256;
+  if(typeof id!=='string'||typeof sha!=='string'||!/^[0-9a-f]{64}$/.test(sha)||!['reading','editing'].includes(value.mode))return null;
+  return {book_id:bookId(),document_id:id,document_sha256:sha,mode:value.mode,
+   cursor:{start:value.cursor?.start??0,end:value.cursor?.end??0,direction:value.cursor?.direction||'none'},
+   scroll:{main:value.scroll?.main??0,editor:value.scroll?.editor??0},buffer_dirty:value.buffer_dirty===true};
+ };
+ async function load(){
+  if(disabled)return {status:'unsupported'};
+  const sequence=++loadSequence,start=interaction,id=bookId();
+  try{const packet=await config.call('resume-state',{});
+   if(sequence!==loadSequence||id!==bookId())return {status:'superseded'};
+   if(packet?.ok!==true||packet.book_id!==id)throw Error('继续位置的作品身份无法确认。');
+   fingerprint=packet.state_sha256??null;loaded=true;conflicted=false;
+   const result={...packet,resumeInteraction:start};notify(result);return result;
+  }catch(error){if(supportedError(error)){disabled=true;return {status:'unsupported'};}notify({status:'error',note:error.message});return {status:'error'};}
+ }
+ function markUserInteraction(){interaction++;return interaction;}
+ async function apply(packet,{manual=false}={}){
+  const state=packet?.state,id=bookId(),epoch=interaction;
+  const valid=()=>!disabled&&(manual||!isExplicit(state?.document_id))&&id===bookId()&&interaction===epoch&&(manual||(epoch===0&&packet?.resumeInteraction===epoch));
+  if(packet?.status!=='ready'||!state||state.book_id!==id||!valid())return false;
+  // open must check guard immediately before showing a late network result;
+  // restore must check it before changing mode/selection/scroll or focus.
+  const opened=await config.open(copy(state),valid);
+  if(!valid()||opened===false)return false;
+  if(typeof config.restore==='function'&&(await config.restore(copy(state),valid))===false)return false;
+  return valid();
+ }
+ function schedule(value){
+  if(disabled||conflicted)return false;
+  const state=stateOnly(value??(typeof config.snapshot==='function'?config.snapshot():null));
+  if(!state||!state.book_id)return false;
+  pending=state;clearTimeout(timer);timer=setTimeout(()=>{timer=null;void flush();},config.delay??500);return true;
+ }
+ async function flush(){
+  clearTimeout(timer);timer=null;
+  if(disabled||conflicted||!pending)return false;
+  if(inflight){const saved=await inflight;return pending?flush():saved;}
+  if(!loaded){const packet=await load();if(!loaded||disabled||packet.status==='error')return false;}
+  if(!pending||conflicted)return false;
+  const value=pending;pending=null;
+  inflight=(async()=>{
+   try{const packet=await config.call('resume-save',{...value,expected_state_sha256:fingerprint});
+    if(packet?.ok!==true||packet.book_id!==value.book_id||value.book_id!==bookId())throw Error('继续位置保存结果无法确认。');
+    fingerprint=packet.state_sha256;notify(packet);return true;
+   }catch(error){
+    if(supportedError(error)){disabled=true;return false;}
+    conflicted=true;pending=null;notify({status:'error',note:error.message,conflict:true});return false;
+   }
+  })();
+  let saved;try{saved=await inflight;}finally{inflight=null;}
+  if(pending&&!conflicted)return flush();return saved;
+ }
+ return {schedule,flush,load,apply,markUserInteraction,get disabled(){return disabled;},get conflicted(){return conflicted;}};
+}
+'''
 
 
 def _markdown_resource_path(root, document):
@@ -2485,52 +2840,109 @@ def _editor_search(root, query, offset=0, limit=30, material_roots=None):
 
 CLASSIFICATION_PATHS = ('创作约定.md', '01_大纲细纲/全书总纲.md', '00_项目策划/开书策划.md')
 CLASSIFICATION_TEXT_LIMIT = 256 * 1024
+# Keep the displayed author-information sources independent from writing-status
+# discovery. These bounded current metadata files cover the verified formats.
+CLASSIFICATION_RECORD_PATHS = tuple(CLASSIFICATION_PATHS)
+CLASSIFICATION_TOTAL_LIMIT = len(CLASSIFICATION_RECORD_PATHS) * CLASSIFICATION_TEXT_LIMIT
 CLASSIFICATION_FIELDS = ('题材', '故事题材', '作品题材', '题材定位', '题材方向', '题材与期待',
                          '题材与读者期待', '类型', '类型定位', '作品类型', '类型与期待',
-                         '类型与阅读期待', '类型与读者期待')
+                         '类型与阅读期待', '类型与读者期待', '类型与承诺', '类型与边界', '核心类型')
 CLASSIFICATION_FIELD_LIMIT = 12
 CLASSIFICATION_TAG_LIMIT = 12
 _CLASSIFICATION_FIELD = re.compile(r'^(' + '|'.join(sorted(CLASSIFICATION_FIELDS, key=len, reverse=True)) + r')\s*[:：]\s*(.*)$')
-_CLASSIFICATION_SKIPPED_SECTION = re.compile(r'历史|旧版|旧规划|候选|草稿|示例|例子|参考|备选|未采用|平台分类|平台定位|平台标签|番茄|七猫|晋江|起点|盐选')
-_CLASSIFICATION_NON_SUBJECT = re.compile(r'平台|番茄|七猫|晋江|起点|盐选|待定|待核对|待确认|未确定|未登记|暂无|不选')
-_CLASSIFICATION_UNCONFIRMED = re.compile(r'^状态\s*[:：].*(?:候选|草稿|未采用|待定|待核对|待确认|未确定)')
+_CLASSIFICATION_SKIPPED_SECTION = re.compile(r'历史|旧版|旧规划|候选|草稿|示例|例子|参考|备选|未采用|平台|番茄|七猫|晋江|起点|盐选')
+_CLASSIFICATION_MIXED_SECTION = re.compile(r'^(?:作品定位|作品题材|创作约定)(?:与|及|和|[／/、])平台分类$')
+_CLASSIFICATION_NON_SUBJECT = re.compile(r'平台|番茄|七猫|晋江|起点|盐选|待定|待核对|待确认|未确定|未登记|暂无|不选|候选|草稿|未采用|备选|旧版|示例|参考')
+_CLASSIFICATION_UNCONFIRMED = re.compile(r'^状态\s*[:：]\s*(.*)$')
+_CLASSIFICATION_PENDING = re.compile(r'候选|草稿|未采用|尚未采用|备选|拟选|拟定|拟用|待定|待核对|待确认|未确认|未确定')
+_CLASSIFICATION_HISTORY_REFERENCE = re.compile(r'^(?:原(?:v?\d|版|候选|方案|规划)|旧(?:版|规划|方案|候选)|历史(?:版本|记录|方案)|此前|曾经|先前)')
+_CLASSIFICATION_SENTENCE = re.compile(r'(?:^|(?<=[。！？!?]))\s*((?:本书|作品)?题材为)\s*([^。！？!?]+)([。！？!?]?)')
+_CLASSIFICATION_SENTENCE_UNCERTAIN = re.compile(r'是否|能否|吗|么|还是|可能|也许|拟为|不是|并非|不属于|不应|不宜|不算|[?？]')
+_CLASSIFICATION_NON_CURRENT_CONTEXT = re.compile(r'历史|旧版|旧规划|示例|例子|参考|不是|并非|非现行|不作为|不代表')
+_CLASSIFICATION_HINT = re.compile(r'^(?:定位\s*[:：]|(?:题材|类型)(?:为|是)|'
+                                  r'\|\s*(?:' + '|'.join(CLASSIFICATION_FIELDS) + r')\s*\||'
+                                  r'\d+[.)、]\s*(?:' + '|'.join(CLASSIFICATION_FIELDS) + r')\s*[:：])')
+
+
+def _classification_is_unconfirmed(value, *, document_status=False):
+    # A later explicit reference to an older candidate does not negate the
+    # current adopted declaration. Its first clause still describes this copy.
+    clauses = re.split(r'[。；;，,]', value)
+    current = [clause for index, clause in enumerate(clauses)
+               if index == 0 or not (_CLASSIFICATION_HISTORY_REFERENCE.match(clause.strip()) or
+                                     (document_status and re.match(r'^(?:后台|平台(?:分类|标签|入口))', clause.strip())))]
+    return (any(_CLASSIFICATION_PENDING.search(clause) for clause in current) or
+            bool(re.search(r'[（(]\s*建议\s*[）)]', clauses[0])))
 
 
 def _classification_unavailable(note):
-    return {'status': 'unavailable', 'tags': [], 'sources': [], 'note': note}
+    return {'status': 'unavailable', 'reason': 'read_error', 'tags': [], 'sources': [],
+            'note': note, 'details': [], 'checked_paths': [], 'records': [],
+            'display_kind': None, 'primary_record': None}
 
 
-def _classification_fields(text):
-    fence, skipped_level, fields = None, None, []
-    for number, line in enumerate(text.splitlines(), 1):
-        marker = re.match(r'^ {0,3}(`{3,}|~{3,})', line)
-        if marker:
-            current = marker.group(1)
-            if fence is None:
-                fence = current
-            elif current[0] == fence[0] and len(current) >= len(fence):
-                fence = None
-            continue
-        if fence is not None:
-            continue
+def _classification_fields(text, diagnostics=None):
+    skipped_level, mixed_level, fields = None, None, []
+    def explain(reason, number, field, note, value=None):
+        if diagnostics is not None and len(diagnostics) <= CLASSIFICATION_FIELD_LIMIT:
+            detail = {'reason': reason, 'line': number, 'field': field, 'note': note}
+            if value is not None:
+                detail['value'] = value[:1000]
+            diagnostics.append(detail)
+    for index, line in api.outline._unfenced_lines(text.splitlines()):
+        number = index + 1
         heading = re.match(r'^ {0,3}(#{1,6})\s+(.+)', line)
         if heading:
             level, title = len(heading.group(1)), heading.group(2)
             if skipped_level is not None and level <= skipped_level:
                 skipped_level = None
-            if _CLASSIFICATION_SKIPPED_SECTION.search(title):
+            if mixed_level is not None and level <= mixed_level:
+                mixed_level = None
+            title = title.replace('**', '').strip().rstrip('#').strip()
+            if skipped_level is None and _CLASSIFICATION_MIXED_SECTION.fullmatch(title):
+                # A known mixed metadata heading can contain an explicit local
+                # core genre. Generic/platform category rows remain excluded.
+                mixed_level = level
+            elif _CLASSIFICATION_SKIPPED_SECTION.search(title):
                 skipped_level = min(skipped_level, level) if skipped_level is not None else level
+            elif skipped_level is None and title in CLASSIFICATION_FIELDS:
+                explain('unsupported_format', number, title, '读到题材字段标题，但未将其后的段落推断为标签。')
             continue
         if skipped_level is not None or line.startswith(('    ', '\t')) or line.lstrip().startswith('>'):
             continue
         plain = re.sub(r'^ {0,3}(?:[-*+]\s+)?', '', line).replace('**', '')
-        if _CLASSIFICATION_UNCONFIRMED.match(plain):
+        state = _CLASSIFICATION_UNCONFIRMED.match(plain)
+        if state and _classification_is_unconfirmed(state.group(1), document_status=True):
             # A document status applies to the whole document, including fields
             # above it; never retain a declaration from an unconfirmed copy.
+            if diagnostics is not None:
+                diagnostics.clear()
+            explain('unconfirmed', number, '状态', '材料明确标记为候选、草稿或尚未确认，未作为现行题材。', state.group(1))
             return []
         match = _CLASSIFICATION_FIELD.fullmatch(plain)
         if match:
-            fields.append((number, match.group(1), match.group(2).strip()))
+            if mixed_level is not None and match.group(1) != '核心类型':
+                continue
+            if len(fields) <= CLASSIFICATION_FIELD_LIMIT:
+                fields.append((number, match.group(1), match.group(2).strip()))
+        elif mixed_level is None:
+            sentences = list(_CLASSIFICATION_SENTENCE.finditer(plain))
+            if sentences:
+                for sentence in sentences:
+                    field, value, terminal = sentence.groups()
+                    value += terminal
+                    context = plain[:sentence.start()]
+                    if _classification_is_unconfirmed(context):
+                        explain('unconfirmed', number, field, '此句前文明确标为候选或尚未采用，未作为现行题材。', plain)
+                    elif (_CLASSIFICATION_NON_CURRENT_CONTEXT.search(context) or
+                          _CLASSIFICATION_SENTENCE_UNCERTAIN.search(value)):
+                        explain('unsupported_format', number, field, '此句含疑问、否定或不确定限定，未作为明确题材。', value)
+                    elif len(fields) <= CLASSIFICATION_FIELD_LIMIT:
+                        fields.append((number, field, value))
+            elif _CLASSIFICATION_HINT.match(plain):
+                hint = re.match(r'^(定位)\s*[:：]\s*(.*)$', plain)
+                field, value = hint.groups() if hint else ('定位或题材叙述', plain)
+                explain('unsupported_format', number, field, '已读取此处定位、题材叙述或其他格式，未推断为明确题材标签。', value)
     return fields
 
 
@@ -2538,11 +2950,14 @@ def _classification_tags(value):
     # A short explicit declaration is displayable. Narrative positioning,
     # platform categories and manuscript length never become guessed subjects.
     first = re.split(r'[；;。]', value, maxsplit=1)[0].strip()
+    if _classification_is_unconfirmed(value):
+        return []
     tags = []
     for item in re.split(r'[＋+、，,/／|｜]', first):
         item = item.strip().strip('`').strip()
         if (not item or _CLASSIFICATION_NON_SUBJECT.search(item) or
-                item.startswith(('兼有', '兼具', '读者', '期待', '依据', '主投', '拟投'))):
+                item.startswith(('兼有', '兼具', '读者', '期待', '依据', '主投', '拟投',
+                                 '不是', '并非', '不属于', '非现行', '不作为', '不算'))):
             continue
         if len(item) > 40 or re.search(r'[。；;:：＝=<>\n]', item):
             continue
@@ -2552,53 +2967,247 @@ def _classification_tags(value):
     return tags
 
 
+def _classification_records(text, diagnostics=None):
+    """Keep current author statements and scoped platform proposals as quotes.
+
+    These records do not infer genre tags, adoption or remote platform state.
+    Platform scopes are read in full before deciding whether a row is a proposal,
+    including qualifications after the category row itself.
+    """
+    archive = re.compile(r'历史|旧版|旧规划|候选|草稿|示例|例子|参考|备选|未采用')
+    platform_scope = re.compile(r'平台|番茄|七猫|起点|晋江|盐选|作品分类|作品标签|阅读标签|内容标签')
+    platforms = {'fanqie': '番茄', 'qimao': '七猫', 'qidian': '起点', 'jinjiang': '晋江', 'yanxuan': '盐选'}
+    proposal = re.compile(r'拟选|拟用|建议分类|分类建议|内容拟选|创作阶段的拟选|本组值为拟选')
+    rejected = re.compile(r'已否决|已经否决|已废弃|已作废|已撤回|已撤销|不再(?:采用|使用)|仅作历史|只作历史')
+    category = re.compile(r'^(?:阅读标签)?主分类$|^[一二]级分类$|^(?:阅读|内容)标签(?:拟选)?$|^平台分类$')
+    rows, headings, stack = [], [], []
+    lines = text.splitlines()
+    for index, line in api.outline._unfenced_lines(lines):
+        number = index + 1
+        heading = re.match(r'^ {0,3}(#{1,6})\s+(.+)', line)
+        if heading:
+            level, title = len(heading.group(1)), heading.group(2).replace('**', '').strip().rstrip('#').strip()
+            while stack and stack[-1]['level'] >= level:
+                stack.pop()['end'] = number
+            frame = {'level': level, 'title': title, 'start': number, 'end': len(lines) + 1}
+            headings.append(frame); stack.append(frame)
+            continue
+        if not line.strip() or any(archive.search(frame['title']) or
+                                  ('建议' in frame['title'] and not platform_scope.search(frame['title'])) for frame in stack):
+            continue
+        plain = re.sub(r'^ {0,3}(?:[-*+]\s+)?', '', line).replace('**', '').strip()
+        field = re.fullmatch(r'([^:：\n]{1,24})\s*[:：]\s*(.*)', plain)
+        row = {'line': number, 'plain': plain, 'ancestors': tuple(stack),
+               'field': field.group(1).strip() if field else None,
+               'value': field.group(2).strip() if field else plain}
+        rows.append(row)
+    # A current document's own candidate status applies to all its records;
+    # platform-section qualifications apply only to platform rows, not the book.
+    for row in rows:
+        if (row['field'] == '状态' and not any(platform_scope.search(frame['title']) for frame in row['ancestors'])
+                and _classification_is_unconfirmed(row['value'], document_status=True)):
+            return []
+    records, paragraph_counts, truncated = [], {}, False
+    def mark_truncated(number):
+        nonlocal truncated
+        if not truncated and diagnostics is not None:
+            diagnostics.append({'reason': 'record_limit', 'line': number,
+                                'note': '原文信息记录达到本轮显示上限，其余记录未列出；已展示内容保留各自来源。'})
+        truncated = True
+    def add(kind, row, *, value=None, field=None, display_text=None, **extra):
+        value = row['value'] if value is None else value
+        if not value.strip() or len(value) > 1000:
+            return
+        if len(records) >= CLASSIFICATION_FIELD_LIMIT:
+            mark_truncated(row['line'])
+            return
+        display_text = display_text if display_text is not None else re.split(r'(?<=[。！？!?])', value, maxsplit=1)[0]
+        records.append({'kind': kind, 'line': row['line'], 'field': field or row['field'] or '创作说明',
+                        'value': value, 'display_text': display_text, 'local_status': 'declared',
+                        'backend_status': 'not_claimed', **extra})
+    # Local information is collected before proposals so a large platform table
+    # cannot consume the bounded record budget before an author's own statement.
+    for row in rows:
+        if len(records) >= CLASSIFICATION_FIELD_LIMIT:
+            mark_truncated(row['line'])
+            break
+        field, value = row['field'], row['value']
+        if _classification_is_unconfirmed(value):
+            continue
+        scoped = any(platform_scope.search(frame['title']) for frame in row['ancestors'])
+        if field and re.fullmatch(r'(?:内容|故事)?关键词(?:[（(]非平台分类[）)])?', field):
+            if not scoped or '非平台分类' in field:
+                add('content_keywords', row)
+        elif field and re.fullmatch(r'(?:作品|创作|故事)?定位', field):
+            if not scoped:
+                add('positioning', row)
+        elif field and re.fullmatch(r'目标读者|读者定位|面向读者', field):
+            if not scoped:
+                add('audience', row)
+        elif field in ('状态', '类型', '作品类型', '篇幅类型') and '题材' in value and not scoped:
+            # Preserve the original creative description, including a genre
+            # statement inside a width/status field, without inventing tags.
+            for sentence in re.findall(r'[^。！？!?]+[。！？!?]?', value):
+                if '题材' in sentence and not re.search(r'没有|未确定|是否|[?？]', sentence):
+                    add('positioning', row, display_text=sentence)
+                    break
+        elif not field and row['ancestors'] and not scoped:
+            section = row['ancestors'][-1]
+            title = section['title']
+            if re.fullmatch(r'一句话故事|作品简介|故事简介|一句话简介', title):
+                add('synopsis', row, field=title)
+            elif re.fullmatch(r'(?:作品|创作|故事)?定位(?:[、，,]读者与持续阅读理由)?|创作方式|故事核心', title):
+                index = paragraph_counts.get(section['start'], 0)
+                paragraph_counts[section['start']] = index + 1
+                add('synopsis' if title == '故事核心' and index == 0 else 'positioning', row, field=title)
+    # Assign each line to its nearest platform/metadata section once. A sibling
+    # section cannot lend its brand, qualifications or denial to another group.
+    groups, row_groups, contexts = {}, {}, {}
+    for row in rows:
+        matching = [frame for frame in row['ancestors'] if platform_scope.search(frame['title'])]
+        section = matching[-1] if matching else (row['ancestors'][-1] if row['ancestors'] else None)
+        key = section['start'] if section else 0
+        groups.setdefault(key, []).append(row)
+        row_groups[row['line']] = (key, section)
+    for row in rows:
+        if len(records) >= CLASSIFICATION_FIELD_LIMIT:
+            mark_truncated(row['line'])
+            break
+        field, value = row['field'], row['value']
+        if field is None or not category.fullmatch(field):
+            continue
+        key, section = row_groups[row['line']]
+        if key not in contexts:
+            context_rows = [other for other in groups[key] if
+                            (other['field'] and re.search(r'平台|投稿参考|分类|标签|核对|来源|选择', other['field'])) or
+                            re.match(r'以上|以下|本组', other['plain']) or rejected.search(other['plain'])]
+            context = '\n'.join([section['title'] if section else ''] + [other['plain'] for other in context_rows])
+            found = [name for name, brand in platforms.items() if brand in context]
+            scopes = ([{'line': section['start'], 'field': '章节标题', 'value': section['title']}]
+                      if section is not None and proposal.search(section['title']) else []) + [
+                          {'line': other['line'], 'field': other['field'] or '分类说明', 'value': other['value']}
+                          for other in context_rows if proposal.search(other['plain'])][:4]
+            contexts[key] = (bool(proposal.search(context) and platform_scope.search(context) and not rejected.search(context)),
+                             found[0] if len(found) == 1 else None, scopes)
+        allowed, platform, scopes = contexts[key]
+        if not allowed:
+            continue
+        # Every returned platform row is explicitly a proposal. Adoption of the
+        # planning document cannot upgrade its categories to chosen/verified.
+        add('platform_suggestion', row, local_status='proposed', backend_status='unverified',
+            platform=platform, scope_sources=scopes)
+    return records
+
+
 def _book_classification(root):
-    sources, declarations, issues = [], [], []
-    for relative in CLASSIFICATION_PATHS:
+    sources, declarations, details, checked_paths, records = [], [], [], [], []
+    read_bytes = 0
+    for relative in CLASSIFICATION_RECORD_PATHS:
         try:
             path = api.safe_path(Path(root), relative)
             if not path.exists():
                 continue
-            text = _author_read(Path(root), relative, CLASSIFICATION_TEXT_LIMIT).decode('utf-8-sig')
-            fields = list(_classification_fields(text))
+            checked_paths.append(relative)
+            raw = _author_read(Path(root), relative, CLASSIFICATION_TEXT_LIMIT)
+            read_bytes += len(raw)
+            if read_bytes > CLASSIFICATION_TOTAL_LIMIT:
+                api.fail('workbench_read_limit', '题材材料超过本轮总读取上限。')
+            text = raw.decode('utf-8-sig')
+            diagnostics = []
+            fields = list(_classification_fields(text, diagnostics))
+            record_diagnostics = []
+            quoted_records = _classification_records(text, record_diagnostics)
+            details.extend({'path': relative, **item} for item in record_diagnostics)
+            quoted_sources = {(item['line'], item['field']) for item in quoted_records}
+            details.extend({'path': relative, **item} for item in diagnostics
+                           if item['reason'] != 'unsupported_format' or (item['line'], item['field']) not in quoted_sources)
+            for item in quoted_records:
+                if 'scope_sources' in item:
+                    item['scope_sources'] = [{'path': relative, **source} for source in item['scope_sources']]
+                records.append({'path': relative, **item})
         except (api.StoryError, OSError, UnicodeError, ValueError) as error:
-            issues.append(relative + '：' + str(error))
+            if relative not in checked_paths:
+                checked_paths.append(relative)
+            reason = 'limit' if getattr(error, 'code', None) == 'workbench_read_limit' else 'read_error'
+            details.append({'reason': reason, 'path': relative, 'note': '题材材料超过读取上限，尚未完整核对。' if reason == 'limit' else
+                            '无法安全读取现行题材材料，请核对文件、编码或读取权限。'})
             continue
         if len(fields) > CLASSIFICATION_FIELD_LIMIT:
-            issues.append(relative + '：明确类型字段超过核对上限')
+            details.append({'reason': 'limit', 'path': relative, 'note': '明确类型字段超过核对上限。'})
         for line, field, value in fields[:CLASSIFICATION_FIELD_LIMIT]:
             if len(value) > 1000:
-                issues.append(relative + '：类型字段过长，待人工核对')
+                details.append({'reason': 'limit', 'path': relative, 'line': line, 'field': field,
+                                'note': '明确类型字段过长，未作为题材标签。'})
                 continue
             tags = _classification_tags(value)
             if not tags:
+                reason = 'unconfirmed' if _classification_is_unconfirmed(value) else 'no_declaration'
+                details.append({'reason': reason, 'path': relative, 'line': line, 'field': field,
+                                'value': value, 'note': '字段未含可直接显示的现行题材标签；未把篇幅形式、平台分类或未确认值作为题材。'})
                 continue
             sources.append({'path': relative, 'field': field, 'value': value, 'line': line})
             if len(tags) > CLASSIFICATION_TAG_LIMIT:
-                issues.append(relative + '：题材标签超过核对上限')
+                details.append({'reason': 'limit', 'path': relative, 'line': line, 'field': field,
+                                'note': '题材标签超过核对上限。'})
             else:
                 declarations.append(tags)
+                records.append({'kind': 'genre', 'path': relative, 'line': line, 'field': field,
+                                'value': value, 'display_text': re.split(r'[；;。]', value, maxsplit=1)[0],
+                                'tags': tags, 'local_status': 'declared', 'backend_status': 'not_claimed'})
     if declarations and any(set(tags) != set(declarations[0]) for tags in declarations[1:]):
-        issues.append('现行材料中的明确题材字段不一致，未自动选择其中一份')
-    if issues:
-        return {'status': 'needs_review', 'tags': [], 'sources': sources, 'note': '；'.join(issues)}
+        details.append({'reason': 'conflict', 'note': '现行材料中的明确题材字段不一致，未自动选择其中一份。'})
+    priority = {'genre': 0, 'positioning': 1, 'content_keywords': 2, 'audience': 3, 'synopsis': 4, 'platform_suggestion': 5}
+    records.sort(key=lambda item: priority[item['kind']])
+    packet = {'tags': [], 'sources': sources, 'details': details, 'checked_paths': checked_paths,
+              'records': records, 'display_kind': records[0]['kind'] if records else None,
+              'primary_record': records[0] if records else None,
+              'records_complete': not any(item['reason'] == 'record_limit' for item in details)}
+    problems = [item for item in details if item['reason'] in ('conflict', 'read_error', 'limit')]
+    if problems:
+        reason = next(reason for reason in ('conflict', 'read_error', 'limit')
+                      if any(item['reason'] == reason for item in problems))
+        return {**packet, 'status': 'needs_review', 'reason': reason,
+                'note': '；'.join((item.get('path', '') + '：' if item.get('path') else '') + item['note'] for item in problems)}
+    if records and not declarations:
+        return {**packet, 'status': 'recorded', 'reason': 'recorded',
+                'note': '展示本书现行材料中的作者原说明或平台拟选信息；记录类型及来源分别标注，不推断为题材或后台已确认。'}
     if not declarations:
-        return {'status': 'missing', 'tags': [], 'sources': [], 'note': '尚无可直接显示的明确题材字段，待分类。'}
-    return {'status': 'recorded', 'tags': declarations[0], 'sources': sources,
+        reason = next((reason for reason in ('unconfirmed', 'unsupported_format')
+                       if any(item['reason'] == reason for item in details)),
+                      'no_declaration' if checked_paths else 'no_sources')
+        notes = {'no_sources': '未找到可读取的现行题材材料；未根据书名或正文推断。',
+                 'no_declaration': '已读取现行材料，未发现可直接显示的明确题材字段。',
+                 'unconfirmed': '材料中的题材尚未确认，未作为现行题材显示。',
+                 'unsupported_format': '已读取题材相关叙述或其他格式，尚不能作为明确题材标签显示。'}
+        return {**packet, 'status': 'missing', 'reason': reason, 'sources': [], 'note': notes[reason]}
+    return {**packet, 'status': 'recorded', 'reason': 'recorded', 'tags': declarations[0],
             'note': '来自本书现行材料的明确题材记录；不表示平台分类已确认。'}
 
 
-_WRITING_STATUS_FIELD = re.compile(r'^(作品状态|写作状态|创作状态|连载状态|完本状态|完结状态|当前状态|当前有效状态|状态)\s*[:：]\s*(.*)$')
+_WRITING_STATUS_FIELD = re.compile(r'^(作品状态|写作状态|创作状态|连载状态|完本状态|完结状态|当前状态|当前有效状态|(?:本书|全书|全文|全本|整书|整篇|整部作品)状态|状态)\s*[:：]\s*(.*)$')
 _WRITING_STATUS_UNCERTAIN = re.compile(r'未完|未完成|未完本|未完结|尚未|没有|还没|未宣布|未确认|未证实|不是|并非|不算|如果|假如|若|是否|历史|旧版|参考|曾经|此前|待定|待核对|待确认|待确定|未确定|候选|草稿|未采用|预计|预期|计划|目标|拟|授权|将|准备|希望')
 _WRITING_STATUS_PLATFORM = re.compile(r'平台|番茄|七猫|晋江|起点|盐选|后台|发布|上架')
+_WRITING_STATUS_WHOLE = re.compile(r'^(?:本书|全书|全文|全本|整书|整篇|整部作品)')
+_WRITING_STATUS_LOCAL = re.compile(
+    r'第[0-9０-９零〇一二三四五六七八九十百千万两]+[卷章节部回集]|'
+    r'[卷章节部回集][0-9０-９零〇一二三四五六七八九十百千万两]+|'
+    r'本[卷章节部回集]|当前[卷章]|分卷|各卷|章节(?:进度|状态)|场景|片段|番外|序章|楔子|尾声')
 
 
 def _unknown_writing_status(note):
     return {'value': 'unknown', 'verified': False, 'source': 'unknown', 'note': note, 'sources': []}
 
 
+def _writing_status_has_local_subject(value):
+    # A trailing note such as “全书已完本（含番外）” does not turn the
+    # completed subject into a local one; “第一卷已完结” does.
+    marker = re.search(r'完本|完结|连载', value)
+    subject = value[:marker.start()] if marker else value
+    return bool(_WRITING_STATUS_LOCAL.search(subject))
+
+
 def _writing_status_fields(text):
-    skipped_level, fields = None, []
+    skipped_level, local_level, fields = None, None, []
     for index, line in api.outline._unfenced_lines(text.splitlines()):
         number = index + 1
         heading = api.outline._heading_parts(line)
@@ -2606,10 +3215,16 @@ def _writing_status_fields(text):
             level, title = heading
             if skipped_level is not None and level <= skipped_level:
                 skipped_level = None
+            if local_level is not None and level <= local_level:
+                local_level = None
+            if _WRITING_STATUS_LOCAL.search(title):
+                local_level = local_level if local_level is not None else level
+            elif _WRITING_STATUS_WHOLE.match(title):
+                local_level = None
             if (_CLASSIFICATION_SKIPPED_SECTION.search(title) or _WRITING_STATUS_PLATFORM.search(title)
                     or re.fullmatch(r'(?:完本|完结)计划|目标状态', title)):
                 skipped_level = min(skipped_level, level) if skipped_level is not None else level
-            elif skipped_level is None and re.fullmatch(r'当前有效状态[（(](?:已)?(?:完本|完结)[）)]', title):
+            elif skipped_level is None and local_level is None and re.fullmatch(r'当前有效状态[（(](?:已)?(?:完本|完结)[）)]', title):
                 fields.append((number, '当前有效状态', title, 'completed'))
             continue
         if skipped_level is not None:
@@ -2621,6 +3236,15 @@ def _writing_status_fields(text):
         field, value = match.group(1), match.group(2).strip()
         first = re.split(r'[；;。]', value, maxsplit=1)[0].strip()
         clauses = [clause.strip() for clause in re.split(r'[，,；;。]', value)]
+        # A completed volume, chapter or scene is not a completed book. Keep an
+        # explicit whole-book statement usable even beside a local progress
+        # note, but never promote the unqualified status of a local section.
+        if _writing_status_has_local_subject(first) or (local_level is not None and not _WRITING_STATUS_WHOLE.match(field)):
+            whole = next((clause for clause in clauses if _WRITING_STATUS_WHOLE.match(clause)
+                          and not _writing_status_has_local_subject(clause)), None)
+            if whole is None:
+                continue
+            first = whole
         # An unconfirmed document is not a current declaration, even when
         # its qualification follows a positive clause. Cover/classification
         # work can still be pending after the manuscript is complete.
@@ -2628,7 +3252,7 @@ def _writing_status_fields(text):
                and (clause_index == 0 or not re.match(r'^(?:封面|(?:平台)?分类|(?:平台)?标签)', clause))
                for clause_index, clause in enumerate(clauses)):
             return []
-        negative = re.fullmatch(r'(?:本书)?(?:正文|故事)?(?:尚未|未|(?:不是|并非|不算)(?:已)?)'
+        negative = re.fullmatch(r'(?:(?:本书|全书|全文|全本|整书|整篇|整部作品))?(?:正文|故事)?(?:尚未|未|(?:不是|并非|不算)(?:已)?)'
                                 r'(完本|完结|连载(?:中)?)', first)
         if len(value) <= 1000 and negative:
             status = 'not_serializing' if negative.group(1).startswith('连载') else 'not_completed'
@@ -2638,7 +3262,7 @@ def _writing_status_fields(text):
             continue
         completed = (re.fullmatch(r'(?:已)?(?:完本|完结)', first) or
                      re.search(r'已完本|已完结|正文完结|故事完结|本书(?:正文)?(?:已)?完本', first))
-        serializing = re.fullmatch(r'(?:正在)?连载(?:中)?', first)
+        serializing = re.fullmatch(r'(?:(?:本书|全书|全文|全本|整书|整篇|整部作品))?(?:正在)?连载(?:中)?', first)
         if completed or serializing:
             fields.append((number, field, value, 'completed' if completed else 'serializing'))
     return fields
@@ -2858,16 +3482,245 @@ function bookDisplayRows(books){
   return {...book,displayTitle:title,kindLabel:bookKindLabel(book),label:title+' · '+bookKindLabel(book)+(directory?' · '+directory:'')};
  });
 }
+function classificationRecordLabel(record,analysis=false){const labels={genre:analysis?'分析对象题材':'题材',positioning:record.field==='故事核心'?'创作定位':analysis?'分析对象定位':'作品定位',content_keywords:'内容关键词',audience:'读者定位',synopsis:'作品简介',platform_suggestion:'分类建议 · 拟选'};return labels[record.kind]||'作者记录';}
+function classificationPresentation(book){
+ const classification=book.classification,status=classification?.status||'missing';
+ const kinds=['genre','positioning','content_keywords','audience','synopsis','platform_suggestion'];
+ const records=(Array.isArray(classification?.records)?classification.records:[]).filter(record=>record&&typeof record==='object'&&kinds.includes(record.kind)&&typeof record.display_text==='string'&&record.display_text.trim());
+ const tags=[...new Set((Array.isArray(classification?.tags)?classification.tags:[]).filter(tag=>typeof tag==='string').map(tag=>tag.trim()).filter(Boolean))];
+ const readable=status==='recorded'&&!['conflict','read_error','limit'].includes(classification?.reason);
+ if(readable&&tags.length)return {kind:'genre',label:book.kind==='analysis'?'分析对象题材':'题材',tags,record:null,records,status,classification};
+ const kind=readable?kinds.slice(1).find(kind=>records.some(record=>record.kind===kind)):null;
+ const preferred=classification?.primary_record,record=kind&&(preferred?.kind===kind&&typeof preferred.display_text==='string'&&records.some(item=>item.kind===kind&&item.path===preferred.path&&item.line===preferred.line&&item.value===preferred.value)?preferred:records.find(item=>item.kind===kind));
+ return {kind:record?kind:null,label:record?classificationRecordLabel(record,book.kind==='analysis'):book.kind==='analysis'?'分析对象题材':'题材',tags:[],record:record||null,records,status,classification};
+}
+function classificationSearchText(book){const display=classificationPresentation(book);return display.kind==='genre'?display.tags.join(' '):display.record?[display.label,display.record.display_text,display.record.field,display.record.value].filter(value=>typeof value==='string').join(' '):'';}
 function classificationNode(book){
- const box=document.createElement('div');box.className='classification';const label=document.createElement('p');label.className='genre-label';label.textContent=book.kind==='analysis'?'分析对象题材':'题材';box.append(label);
- const classification=book.classification,status=classification?.status||'missing',tags=[...new Set((Array.isArray(classification?.tags)?classification.tags:[]).filter(tag=>typeof tag==='string').map(tag=>tag.trim()).filter(Boolean))];const row=document.createElement('div');row.className='genre-tags';
- if(status==='recorded'&&tags.length){for(const text of tags){const tag=document.createElement('span');tag.className='genre-tag';tag.textContent=text;row.append(tag);}}
- else{const tag=document.createElement('span');tag.className='genre-tag pending';tag.textContent=status==='missing'||status==='recorded'?'题材待分类':'题材待核对';row.append(tag);}box.append(row);
- const sources=(Array.isArray(classification?.sources)?classification.sources:[]).filter(source=>source&&typeof source==='object'),note=typeof classification?.note==='string'?classification.note:'';
- if(sources.length||note){const details=document.createElement('details');details.className='classification-sources';const summary=document.createElement('summary');summary.textContent='分类依据';details.append(summary);for(const source of sources){const p=document.createElement('p');p.textContent=(typeof source.path==='string'?source.path:'来源未标注')+(Number.isInteger(source.line)&&source.line>0?' · 第'+source.line+'行':'')+'\n'+(typeof source.field==='string'?source.field:'字段未标注')+'：'+(typeof source.value==='string'?source.value:'原值未提供');details.append(p);}if(note){const p=document.createElement('p');p.textContent=note;details.append(p);}box.append(details);}
+ const display=classificationPresentation(book),{classification,status,records}=display,visible=!!display.kind;
+ const box=document.createElement('div');box.className='classification';const label=document.createElement('p');label.className='genre-label'+(display.record?' record-label':'');label.textContent=display.label;box.append(label);
+ const reason=visible?'recorded':typeof classification?.reason==='string'&&classification.reason!=='recorded'?classification.reason:status==='unavailable'?'read_error':status==='needs_review'?'needs_review':status==='missing'||status==='recorded'?'no_declaration':'unknown';
+ const labels={conflict:'题材记录冲突',read_error:'题材读取失败',limit:'题材读取受限',needs_review:'题材待核对',unknown:'题材待核对'};
+ const notes={no_sources:'未找到现行创作约定或策划材料中的题材或定位记录。',no_declaration:'现行材料中没有可直接展示的题材或定位记录。',unsupported_format:'现行材料中的此处记录尚不能作为明确的作者定位展示。',unconfirmed:'只发现尚未采用或确认的记录。',conflict:'现行材料中的题材记录不一致，未选择其中一份。',read_error:'作品或题材材料当前无法读取。',limit:'题材材料超过读取范围，尚未完整核对。',needs_review:'题材记录暂不能确认。',unknown:'题材记录暂不能确认。'};
+ box.dataset.classificationStatus=visible?'recorded':status;box.dataset.classificationReason=reason;box.dataset.classificationKind=display.kind||'';
+ const empty=!visible&&!labels[reason];box.dataset.classificationEmpty=String(empty);label.hidden=empty;
+ const row=document.createElement('div');row.className='genre-tags';
+ if(display.kind==='genre'){for(const text of display.tags){const tag=document.createElement('span');tag.className='genre-tag';tag.textContent=text;row.append(tag);}}
+ else if(display.record){const text=document.createElement('p');text.className='classification-record';text.textContent=display.record.display_text;text.title=typeof display.record.value==='string'?display.record.value:display.record.display_text;row.append(text);}
+ else if(!empty){const tag=document.createElement('span');tag.className='genre-tag pending';tag.textContent=labels[reason];row.append(tag);}row.hidden=empty;box.append(row);
+ const sources=(Array.isArray(classification?.sources)?classification.sources:[]).filter(source=>source&&typeof source==='object');
+ const issues=(Array.isArray(classification?.details)?classification.details:[]).filter(detail=>detail&&typeof detail==='object');
+ const paths=[...new Set((Array.isArray(classification?.checked_paths)?classification.checked_paths:[]).filter(path=>typeof path==='string'&&path.trim()))];
+ const note=typeof classification?.note==='string'&&classification.note.trim()?classification.note:notes[reason]||'';
+ if(sources.length||records.length||issues.length||note||(!visible&&paths.length)){
+  const details=document.createElement('details');details.className='classification-sources';const summary=document.createElement('summary');summary.textContent=records.some(record=>record.kind!=='genre')?'资料依据':sources.length?'题材依据':'读取详情';details.append(summary);
+  const location=source=>(typeof source.path==='string'?source.path:'')+(Number.isInteger(source.line)&&source.line>0?' · 第'+source.line+'行':'');
+  const append=(text,className)=>{const p=document.createElement('p');p.className=className;p.textContent=text;details.append(p);};
+  const original=source=>(location(source)||'来源未标注')+'\n'+(typeof source.field==='string'?source.field:'字段未标注')+'：'+(typeof source.value==='string'?source.value:'原值未提供');
+  for(const source of sources)append(original(source),'classification-source');
+  for(const record of records){if(sources.some(source=>source.path===record.path&&source.line===record.line&&source.field===record.field&&source.value===record.value))continue;append(classificationRecordLabel(record,book.kind==='analysis')+'\n'+original(record)+(record.kind==='platform_suggestion'?'\n本地状态：拟选；平台后台：未核对':''),'classification-source');}
+  for(const issue of issues){const field=typeof issue.field==='string'?issue.field:'';const value=typeof issue.value==='string'?(field||'原值')+'：'+issue.value:field?'原字段：'+field:'';const parts=[location(issue),value,typeof issue.note==='string'?issue.note:''].filter(Boolean);if(parts.length)append(parts.join('\n'),'classification-issue');}
+  const issueSummary=issues.filter(issue=>typeof issue.note==='string').map(issue=>(typeof issue.path==='string'&&issue.path?issue.path+'：':'')+issue.note).join('；');
+  if(note&&note!==issueSummary&&!issues.some(issue=>issue.note===note))append(note,'classification-note');
+  if(!visible&&paths.length)append('已检查材料：\n'+paths.join('\n'),'classification-paths');
+  box.append(details);
+ }
  return box;
 }
 """
+
+
+class _EditorPresence:
+    """Ephemeral, ordered page observations for one editor service instance.
+
+    Nothing here is a saved-body receipt. Unknown pages require a separate,
+    single-use human confirmation; fresh known pending buffers cannot bypass it.
+    """
+    PROTOCOL = 1
+    FLAGS = ('dirty', 'saving', 'recovering', 'needs_recovery')
+
+    def __init__(self, instance, book_id, *, clock=None, stale_after=15.0,
+                 heartbeat_ms=3000, max_pages=256, max_buffers=1000):
+        import time
+        self.instance, self.book_id = instance, book_id
+        self.clock = clock or time.monotonic
+        self.stale_after, self.heartbeat_ms = stale_after, heartbeat_ms
+        self.max_pages, self.max_buffers = max_pages, max_buffers
+        self._pages, self._confirmations, self._revision = {}, {}, 0
+        self._lock = threading.RLock()
+
+    def register_page(self):
+        with self._lock:
+            if len(self._pages) >= self.max_pages:
+                api.fail('workbench_presence_limit', '页面状态登记达到上限，请核对保存后正常停止并重新打开作品服务。')
+            page_id, page_token = uuid.uuid4().hex, secrets.token_urlsafe(32)
+            self._pages[page_id] = {'page_id': page_id, 'page_token': page_token,
+                                    'sequence': -1, 'initialized': False, 'closed': False,
+                                    'last_seen': self.clock(), 'buffers': []}
+            self._revision += 1
+            return {'protocol': self.PROTOCOL, 'page_id': page_id, 'page_token': page_token,
+                    'heartbeat_ms': self.heartbeat_ms, 'stale_after_ms': int(self.stale_after * 1000)}
+
+    def _buffers(self, values):
+        if not isinstance(values, list) or len(values) > self.max_buffers:
+            api.fail('workbench_presence_invalid', '页面缓冲区状态超过限制或格式不完整。')
+        result, seen = [], set()
+        for value in values:
+            if not isinstance(value, dict) or set(value) != {'id', 'title', *self.FLAGS}:
+                api.fail('workbench_presence_invalid', '页面只可报告文稿标识、标题与保存状态，不能上传正文。')
+            if (not isinstance(value['id'], str) or not 0 < len(value['id']) <= 1024 or
+                    not isinstance(value['title'], str) or len(value['title']) > 240 or
+                    any(type(value[flag]) is not bool for flag in self.FLAGS) or value['id'] in seen):
+                api.fail('workbench_presence_invalid', '页面缓冲区标识、标题或保存状态无效。')
+            seen.add(value['id'])
+            result.append({key: value[key] for key in ('id', 'title', *self.FLAGS)})
+        return result
+
+    def report(self, payload):
+        required = {'page_id', 'page_token', 'sequence', 'initialized', 'buffers'}
+        if (not isinstance(payload, dict) or not required.issubset(payload) or
+                set(payload) - required - {'closing'} or type(payload['initialized']) is not bool or
+                type(payload.get('closing', False)) is not bool or
+                type(payload['sequence']) is not int or not 0 <= payload['sequence'] <= 2**53 - 1):
+            api.fail('workbench_presence_invalid', '页面状态报告格式无效。')
+        buffers = self._buffers(payload['buffers'])
+        with self._lock:
+            page_id, token = payload['page_id'], payload['page_token']
+            page = self._pages.get(page_id) if isinstance(page_id, str) else None
+            if page is None or not isinstance(token, str) or not secrets.compare_digest(token, page['page_token']):
+                api.fail('workbench_presence_page_unknown', '此页面没有本服务签发的状态登记，请保留文字并重新核对工作台。')
+            if payload['sequence'] <= page['sequence']:
+                return {'ok': True, 'accepted': False, 'closed': page['closed'], 'summary': self.summary()}
+            page['sequence'] = payload['sequence']
+            page['last_seen'] = self.clock()
+            page['initialized'] = payload['initialized']
+            # An incomplete/reinitializing report cannot erase a known buffer.
+            if payload['initialized']:
+                page['buffers'] = buffers
+            pending = any(any(buffer[flag] for flag in self.FLAGS) for buffer in page['buffers'])
+            page['closed'] = bool(payload.get('closing') and payload['initialized'] and not pending)
+            self._revision += 1
+            return {'ok': True, 'accepted': True, 'closed': page['closed'], 'summary': self.summary()}
+
+    def summary(self):
+        with self._lock:
+            now, pages = self.clock(), []
+            counts = {'registered': len(self._pages), 'open': 0, 'closed': 0, 'unknown': 0,
+                      'pending_pages': 0, **{flag: 0 for flag in self.FLAGS}}
+            for value in self._pages.values():
+                stale = not value['closed'] and now - value['last_seen'] >= self.stale_after
+                unknown = not value['closed'] and (not value['initialized'] or stale)
+                pending = any(any(buffer[flag] for flag in self.FLAGS) for buffer in value['buffers'])
+                state = 'closed' if value['closed'] else 'unknown' if unknown else 'pending' if pending else 'clean'
+                counts['closed' if value['closed'] else 'open'] += 1
+                counts['unknown'] += int(unknown)
+                if state == 'pending':
+                    counts['pending_pages'] += 1
+                    for flag in self.FLAGS:
+                        counts[flag] += sum(buffer[flag] for buffer in value['buffers'])
+                pages.append({'page_id': value['page_id'], 'sequence': value['sequence'],
+                              'initialized': value['initialized'], 'state': state, 'stale': stale,
+                              'unknown_reason': 'not_initialized' if unknown and not value['initialized'] else 'heartbeat_lost' if unknown else None,
+                              'last_known_pending': bool(unknown and pending),
+                              'buffers': [dict(buffer) for buffer in value['buffers']],
+                              'seconds_since_report': max(0, round(now - value['last_seen'], 1))})
+            state = 'pending' if counts['pending_pages'] else 'unknown' if counts['unknown'] else 'clean' if counts['registered'] else 'no_pages'
+            # Ages are presentation only. Every accepted report changes revision;
+            # a transition into stale changes page state even without a report.
+            fingerprint_data = {'instance': self.instance, 'book_id': self.book_id, 'revision': self._revision,
+                                'pages': [{key: value for key, value in page.items() if key != 'seconds_since_report'}
+                                          for page in pages]}
+            fingerprint = hashlib.sha256(json.dumps(fingerprint_data, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+            return {'protocol': self.PROTOCOL, 'instance': self.instance, 'book_id': self.book_id,
+                    'state': state, 'no_pages': not bool(counts['registered']), 'counts': counts,
+                    'pages': pages, 'fingerprint': fingerprint,
+                    'can_stop': state in ('clean', 'no_pages'),
+                    'automatic_verified': state == 'clean',
+                    'manual_confirmation_required': bool(counts['unknown']),
+                    'coverage': 'server_issued_pages_this_instance', 'legacy_services_covered': False,
+                    'saved_assertion_is_automatic_verification': False}
+
+    def confirm_unknown(self, fingerprint, *, confirmed=False):
+        with self._lock:
+            summary = self.summary()
+            if confirmed is not True or not isinstance(fingerprint, str) or not secrets.compare_digest(fingerprint, summary['fingerprint']):
+                api.fail('workbench_presence_changed', '页面保存状态已变化，请重新核对当前汇总后确认。', presence=summary)
+            if summary['counts']['pending_pages']:
+                api.fail('workbench_presence_pending', '仍有可联系页面未保存或正在保存，不能用手动确认绕过。', presence=summary)
+            if not summary['counts']['unknown']:
+                api.fail('workbench_presence_no_unknown', '当前没有需要手动核对的未知页面，请刷新保存状态。', presence=summary)
+            now = self.clock()
+            self._confirmations = {token: value for token, value in self._confirmations.items() if value['expires'] > now}
+            if len(self._confirmations) >= 16:
+                self._confirmations.clear()
+            token = secrets.token_urlsafe(32)
+            self._confirmations[token] = {'fingerprint': fingerprint, 'expires': now + 30}
+            return {'ok': True, 'unknown_confirmation': token, 'expires_in_seconds': 30,
+                    'automatic_verified': False, 'presence': summary}
+
+    def require_stop(self, saved=False, unknown_confirmation=None):
+        with self._lock:
+            summary = self.summary()
+            if saved is not True:
+                api.fail('workbench_presence_saved_required', '请先核对所有页面中的文字均已保存或下载。', presence=summary)
+            if summary['counts']['pending_pages']:
+                api.fail('workbench_presence_pending', '其他页面仍有未保存、正在保存或待恢复的文稿，请回到相应页面处理。', presence=summary)
+            manual = False
+            if summary['counts']['unknown']:
+                confirmation = self._confirmations.pop(unknown_confirmation, None) if isinstance(unknown_confirmation, str) else None
+                if (confirmation is None or confirmation['expires'] <= self.clock() or
+                        confirmation['fingerprint'] != summary['fingerprint']):
+                    api.fail('workbench_presence_unknown', '有未初始化或失联页面，须逐页核对最后状态后另行确认，不能自动认定已保存。', presence=summary)
+                manual = True
+            return {'allowed': True, 'automatic_verified': summary['automatic_verified'],
+                    'manual_unknown_confirmation': manual, 'presence': summary}
+
+
+def _editor_presence_script():
+    """Independent reporter; config is GET-only and must never enter resume data."""
+    return r'''
+const editorPresence=(()=>{
+ const config=__EDITOR_PRESENCE_CONFIG__;
+ let initialized=false,sequence=0,lastState=null,paused=false,timer=null;
+ const flags=['dirty','saving','recovering','needs_recovery'];
+ const emit=detail=>{try{window.dispatchEvent(new CustomEvent('story-editor-presence-status',{detail}));}catch{}};
+ function capture(){
+  if(!initialized||typeof docs==='undefined'||!(docs instanceof Map))return {initialized:false,buffers:[]};
+  const buffers=[];for(const d of docs.values()){
+   if(buffers.length>=1000)return {initialized:false,buffers:[]};
+   const id=typeof d.id==='string'?d.id:'';if(!id||id.length>1024)return {initialized:false,buffers:[]};
+   let title=typeof displayTitle==='function'?displayTitle(d):d.title||id;
+   buffers.push({id,title:String(title).slice(0,240),dirty:typeof dirty==='function'?!!dirty(d):!!(d.editable&&d.value!==d.text),
+    saving:!!d.saving,recovering:!!d.recovering,needs_recovery:!!(d.needs_recovery||d.pendingSaveReadback||(d.saveError&&d.failedSaveOptions?.newVersion))});
+  }return {initialized:true,buffers};
+ }
+ async function report(force=false,closing=false){
+  if(!config||paused&&!closing)return null;
+  let snapshot;try{snapshot=capture();}catch{snapshot={initialized:false,buffers:[]};}
+  const signature=JSON.stringify(snapshot);if(!force&&!closing&&signature===lastState)return null;lastState=signature;
+  const clean=snapshot.initialized&&!snapshot.buffers.some(d=>flags.some(flag=>d[flag]));
+  const payload={page_id:config.page_id,page_token:config.page_token,sequence:++sequence,...snapshot,closing:!!(closing&&clean)};
+  try{
+   const response=await fetch(location.pathname+'api/presence',{method:'POST',credentials:'same-origin',
+    headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(payload),keepalive:!!closing});
+   const result=await response.json();if(!response.ok||!result.ok)throw Error(result.message||'页面状态报告尚未确认');
+   if(payload.sequence===sequence)emit({state:'reported',summary:result.summary,page_id:config.page_id});return result;
+  }catch(error){if(payload.sequence===sequence){lastState=null;emit({state:'unknown',message:'当前页面保存状态尚未同步，请保留本页并核对其他窗口。',page_id:config.page_id});}return null;}
+ }
+ function ready(){initialized=true;void report(true);}
+ function changed(){void report();}
+ if(config){
+  timer=setInterval(()=>{if(!paused)void report(true);},Math.max(1000,config.heartbeat_ms||3000));
+  document.addEventListener('input',changed);document.addEventListener('change',changed);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)void report(true);});
+  window.addEventListener('focus',()=>{if(!paused)void report(true);});
+  window.addEventListener('beforeunload',()=>{void report(true);});
+  window.addEventListener('pagehide',()=>{void report(true,true);paused=true;});
+  window.addEventListener('pageshow',()=>{paused=false;void report(true);});
+  void report(true);
+ }
+ return {ready,changed,report,capture,dispose:()=>{clearInterval(timer);paused=true;}};
+})();
+'''
 
 
 def _recovery_list_script():
@@ -2885,7 +3738,14 @@ async function recoveryList(container,request,open,current){
     if(records.has(recovery.id))continue;records.set(recovery.id,recovery);
     const row=document.createElement('div'),button=document.createElement('button'),detail=document.createElement('small');row.className='recovery-row';
     button.textContent=(recovery.title||recovery.path)+' · '+(recovery.status||'自动恢复稿');
-    button.onclick=async()=>{try{await open(recovery);}catch(error){if(current())status.textContent=error.message;}};
+    let opening=false;
+    button.onclick=async()=>{
+     if(opening||!current())return;opening=true;button.disabled=true;const label=button.textContent,description=detail.textContent;
+     button.textContent='正在打开…';detail.textContent=description+'\n正在打开恢复稿…';
+     try{const result=await open(recovery);if(current()&&result!==false){detail.textContent=description+'\n已打开恢复稿，请在作品页核对后保存为新候选。';status.textContent='已打开恢复稿。';}}
+     catch(error){if(current()){detail.textContent=description+'\n打开失败：'+error.message;status.textContent='打开恢复稿失败：'+error.message;}}
+     finally{opening=false;if(current()){button.disabled=false;button.textContent=label;}}
+    };
     const kind=recovery.content_kind==='material'?'材料':recovery.content_kind==='prose'?'正文':'';
     detail.textContent=(kind?kind+' · ':'')+(recovery.chapter?'关联第'+recovery.chapter+'章 · ':'')+recovery.path+(recovery.modified?' · '+new Date(recovery.modified).toLocaleString():'');row.append(button,detail);list.append(row);
    }
@@ -2907,8 +3767,52 @@ def _editor_tools_script():
     return _recovery_list_script() + r'''
 function editorDialog(title){const dialog=document.createElement('dialog');dialog.className='editor-dialog';const heading=document.createElement('h2');heading.textContent=title;const content=document.createElement('div'),close=document.createElement('button');close.textContent='返回稿件';close.onclick=()=>dialog.close();dialog.append(heading,content,close);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();return {dialog,content};}
 $('recoveries-open').onclick=async()=>{const {dialog,content}=editorDialog('恢复中心');const help=document.createElement('p');help.textContent='打开恢复副本核对后，保存为新候选。自动恢复不会替换正式稿。';content.append(help);await recoveryList(content,data=>call('recoveries',data),async row=>{await openDoc(row.id);dialog.close();},()=>dialog.open);};
-$('writing-task').onclick=async()=>{if([...docs.values()].some(d=>dirty(d)||d.saving||d.needs_recovery)){note('请先保存全部候选，再生成基于正式断点和已采用细纲的下一章任务。');return;}try{const result=await call('writing-task');leaveComparison();$('assistant-task-title').textContent='继续第'+result.chapter+'章';$('review-task-box').hidden=false;$('review-task-status').textContent=result.status+'；请核对简报再执行。';$('review-findings').textContent='来源：现有正式断点、已绑定细纲和写前简报。任务生成后尚未开始写作。';$('review-prompt').value=result.prompt;$('review-task-box').scrollIntoView({block:'start'});}catch(error){note('下一章任务尚未生成：'+error.message+'；请先核对章计划、细纲采用与绑定。');}};
-$('compare-choose').onclick=()=>{const rows=[...new Map([...(currentCatalog?.chapters||[]),...(currentCatalog?.files||[]),...[...docs.values()]].filter(row=>row.id&&!row.image).map(row=>[row.id,row])).values()];if(rows.length<2){note('至少需要两份可读取的文字稿件或材料。');return;}const {dialog,content}=editorDialog('选择两稿对照');const selects=[];for(const labelText of ['左侧稿件','右侧稿件']){const label=document.createElement('label');label.textContent=labelText;const select=document.createElement('select');for(const row of rows){const option=document.createElement('option');option.value=row.id;option.textContent=displayTitle(row)+' · '+versionLabel(row)+(dirty(docs.get(row.id))?' · 含未保存编辑':'');option.title=row.path||row.id;select.append(option);}label.append(select);content.append(label);selects.push(select);}selects[0].value=rows.find(row=>row.kind==='formal'&&chapterNumber(row)===chapterNumber(docs.get(active)||{}))?.id||rows[0].id;selects[1].value=active||rows[1].id;const run=document.createElement('button');run.textContent='对照两稿';content.append(run);const error=document.createElement('p');error.setAttribute('role','status');content.append(error);run.onclick=async()=>{if(selects[0].value===selects[1].value){error.textContent='请选择两份不同稿件。';return;}const id=active,seq=++compareSequence;run.disabled=true;try{const documents=[];for(const select of selects){const cached=docs.get(select.value);documents.push(cached||await call('open',{id:select.value}));}if(active!==id||seq!==compareSequence){error.textContent='当前文件已切换，请重新选择对照。';return;}const texts=documents.map(d=>(d.prefix||'')+(d.value??d.text??''));const d=docs.get(active);if(d&&!d.comparePosition)d.comparePosition={main:document.querySelector('main').scrollTop,editor:$('text').scrollTop,start:$('text').selectionStart,end:$('text').selectionEnd};$('before-label').textContent=displayTitle(documents[0]);$('after-label').textContent=displayTitle(documents[1]);$('compare-label').textContent='两稿文字对照 · 不改变版本或采用关系';drawDiff(...texts);$('review-task-box').hidden=true;$('document-body').hidden=true;$('difference').hidden=false;document.body.classList.add('comparing');$('diff-prev').disabled=true;$('diff-next').disabled=!diffTargets.length;$('compare-back').textContent='返回当前稿件';document.querySelector('main').scrollTop=0;dialog.close();}catch(failure){error.textContent=failure.message;}finally{run.disabled=false;}};};
+$('writing-task').onclick=async()=>{
+ const box=$('review-task-box'),request=box.taskRequest=(box.taskRequest||0)+1;
+ const pending=()=>[...docs.values()].some(d=>dirty(d)||d.saving||d.needs_recovery);
+ if(pending()){note('请先保存全部候选，再生成基于正式断点和已采用细纲的下一章任务。');return;}
+ const id=active,document=docs.get(id),value=document?.value,sequence=typeof openSequence==='number'?openSequence:null;
+ const workspace=()=>typeof currentCatalog==='undefined'?null:currentCatalog?.workspace;
+ const context=()=>{const w=workspace();return JSON.stringify([w?.book_id,w?.revision,w?.next_chapter]);},baseline=context();
+ const current=()=>box.taskRequest===request&&active===id&&docs.get(id)===document&&document?.value===value&&(sequence===null||openSequence===sequence)&&!pending()&&context()===baseline;
+ try{
+  const result=await call('writing-task');if(!current())return;
+  const w=workspace();
+  if(w&&((w.book_id&&w.book_id!==result.book_id)||(Number.isInteger(w.revision)&&w.revision>result.brief?.revision)||(Number.isInteger(w.next_chapter)&&w.next_chapter!==result.chapter))){note('正式断点或作品状态已变化，请刷新后重新生成下一章任务。');return;}
+  leaveComparison();$('assistant-task-title').textContent='继续第'+result.chapter+'章';box.hidden=false;$('review-task-status').textContent=result.status+'；请核对简报再执行。';$('review-findings').textContent='来源：现有正式断点、已绑定细纲和写前简报。任务生成后尚未开始写作。';$('review-prompt').value=result.prompt;box.scrollIntoView({block:'start'});
+ }catch(error){if(current())note('下一章任务尚未生成：'+error.message+'；请先核对章计划、细纲采用与绑定。');}
+};
+$('compare-choose').onclick=()=>{
+ const rows=[...new Map([...(currentCatalog?.chapters||[]),...(currentCatalog?.files||[]),...[...docs.values()]].filter(row=>row.id&&!row.image).map(row=>[row.id,row])).values()];
+ if(rows.length<2){note('至少需要两份可读取的文字稿件或材料。');return;}
+ const {dialog,content}=editorDialog('选择两稿对照'),selects=[];let generation=0;
+ const cancel=()=>{generation++;};dialog.addEventListener('cancel',cancel);dialog.addEventListener('close',cancel);
+ for(const labelText of ['左侧稿件','右侧稿件']){
+  const label=document.createElement('label');label.textContent=labelText;const select=document.createElement('select');
+  for(const row of rows){const option=document.createElement('option');option.value=row.id;option.textContent=displayTitle(row)+' · '+versionLabel(row)+(dirty(docs.get(row.id))?' · 含未保存编辑':'');option.title=row.path||row.id;select.append(option);}
+  label.append(select);content.append(label);selects.push(select);
+ }
+ selects[0].value=rows.find(row=>row.kind==='formal'&&chapterNumber(row)===chapterNumber(docs.get(active)||{}))?.id||rows[0].id;
+ selects[1].value=active||rows[1].id;
+ const run=document.createElement('button');run.textContent='对照两稿';content.append(run);
+ const error=document.createElement('p');error.setAttribute('role','status');content.append(error);
+ run.onclick=async()=>{
+  const selected=selects.map(select=>select.value);if(selected[0]===selected[1]){error.textContent='请选择两份不同稿件。';return;}
+  const id=active,seq=++compareSequence,request=++generation;
+  const current=()=>dialog.open&&request===generation&&active===id&&seq===compareSequence;
+  run.disabled=true;for(const select of selects)select.disabled=true;
+  try{
+   const documents=[];
+   for(const selectedID of selected){const cached=docs.get(selectedID);if(cached?.recoveryCompatibilityBlocked)throw Error(cached.recoveryCompatibilityBlocked);documents.push(cached||await call('open',{id:selectedID}));if(!current())break;}
+   if(!current()){if(dialog.open&&request===generation)error.textContent='当前文件已切换，请重新选择对照。';return;}
+   const texts=documents.map(d=>(d.prefix||'')+(d.value??d.text??'')),d=docs.get(active);
+   if(d&&!d.comparePosition)d.comparePosition={main:document.querySelector('main').scrollTop,editor:$('text').scrollTop,start:$('text').selectionStart,end:$('text').selectionEnd,direction:$('text').selectionDirection};
+   $('before-label').textContent=displayTitle(documents[0]);$('after-label').textContent=displayTitle(documents[1]);$('compare-label').textContent='两稿文字对照 · 不改变版本或采用关系';drawDiff(...texts);
+   $('review-task-box').hidden=true;$('document-body').hidden=true;$('difference').hidden=false;document.body.classList.add('comparing');$('diff-prev').disabled=true;$('diff-next').disabled=!diffTargets.length;$('compare-back').textContent='返回当前稿件';document.querySelector('main').scrollTop=0;dialog.close();
+  }catch(failure){if(current())error.textContent=failure.message;}
+  finally{if(request===generation){run.disabled=false;for(const select of selects)select.disabled=false;}}
+ };
+};
 '''
 
 
@@ -3010,26 +3914,27 @@ let platformDraftPanel=null,platformDraftSequence=0;
 const platformDraftNames={fanqie:'番茄',qimao:'七猫',qidian:'起点'};
 const platformDraftStates={pending:'尚未处理',saved:'已保存并完整回读',reconciled:'已有一致草稿，完整回读匹配',saved_equivalent:'已保存，按选定格式核对',reconciled_equivalent:'已有草稿，按选定格式核对',conflict:'内容冲突，已停止',unknown:'结果未知，须先只读对账',blocked:'操作受阻',not_found:'未找到可确认的草稿',sending:'结果待核实'};
 const platformDraftStages={queued:'等待执行',connecting_chrome:'正在连接现有 Chrome',waiting_for_chrome:'正在等待现有 Chrome 连接，自动检测中；恢复后将继续核对，尚未开始保存',closing_chrome:'正在安全结束本次 Chrome 连接',local_preflight:'核对正式稿与配置',waiting_login:'请在新打开的浏览器中登录，完成验证后继续',waiting_host:'正在通过 Chrome 执行本次操作',target_verified:'账号与作品已核对',listing_drafts:'读取完整章节目录',saving_draft:'保存平台草稿',reading_back:'重新打开并完整回读',chapter_started:'核对本章',chapter_verified:'本章已完整回读',finished:'任务结束'};
-const platformDraftRuleEncodings=['verbatim','markdown_paragraphs_v1','markdown_paragraphs_v2'],platformDraftRuleComparisons=['strict','fanqie_terminal_lf_v1'],platformDraftRuleWrites=new Map();
-function platformDraftRuleValues(value,platform){return !!(value&&typeof value==='object'&&!Array.isArray(value)&&value.schema===1&&Object.keys(value).sort().join(',')==='body_encoding,comparison_policy,schema'&&platformDraftRuleEncodings.includes(value.body_encoding)&&platformDraftRuleComparisons.includes(value.comparison_policy)&&(platform==='fanqie'||(value.body_encoding==='verbatim'&&value.comparison_policy==='strict')));}
+const platformDraftRequiredEncoding='plain_paragraphs_v1';
+const platformDraftRuleEncodings=['verbatim','markdown_paragraphs_v1','markdown_paragraphs_v2',platformDraftRequiredEncoding],platformDraftRuleComparisons=['strict','fanqie_terminal_lf_v1'],platformDraftRuleWrites=new Map();
+function platformDraftRuleValues(value,platform){return !!(value&&typeof value==='object'&&!Array.isArray(value)&&value.schema===1&&Object.keys(value).sort().join(',')==='body_encoding,comparison_policy,schema'&&platformDraftRuleEncodings.includes(value.body_encoding)&&platformDraftRuleComparisons.includes(value.comparison_policy)&&(platform==='fanqie'||(['verbatim',platformDraftRequiredEncoding].includes(value.body_encoding)&&value.comparison_policy==='strict')));}
 function platformDraftRuleScope(panel){const plan=panel.plans.find(row=>row.id===panel.plan.value),profile=panel.profiles.find(row=>row.id===panel.profile.value&&row.valid&&row.platform===plan?.platform);return plan&&profile&&[panel.bookId,plan.id,profile.sha256].every(value=>typeof value==='string'&&value.length>0&&value.length<=200)?{platform:plan.platform,book_id:panel.bookId,plan_id:plan.id,profile_id:profile.id,profile_sha256:profile.sha256,key:JSON.stringify([panel.bookId,plan.id,profile.sha256])}:null;}
-function platformDraftRuleLabels(encoding,comparison){const format=encoding==='markdown_paragraphs_v2'?'按段落排版，去掉开头空段':encoding==='markdown_paragraphs_v1'?'兼容旧段落排版，保留开头换行':'保留原始换行',check=comparison==='fanqie_terminal_lf_v1'?'允许末尾换行数量增加或减少，其他内容逐字核对':'包括末尾换行在内逐字核对';return format+'；'+check;}
+function platformDraftRuleLabels(encoding,comparison){const format=encoding===platformDraftRequiredEncoding?'去掉所有空白行，保留段落换行和缩进':encoding==='markdown_paragraphs_v2'?'按段落排版，去掉开头空段':encoding==='markdown_paragraphs_v1'?'兼容旧段落排版，保留开头换行':'保留原始换行',check=comparison==='fanqie_terminal_lf_v1'?'允许末尾换行数量增加或减少，其他内容逐字核对':'包括末尾换行在内逐字核对';return format+'；'+check;}
 function platformDraftRuleNote(panel,packet=null){if(!panel.rulesNote)return;let text=panel.rulesMemoryMessage||'排版与核对规则仅按本书、当前清单和当前配置记住；恢复选择后仍须重新预览，不会自动执行。';const plan=panel.plans.find(row=>row.id===panel.plan.value),profile=panel.profiles.find(row=>row.id===panel.profile.value),history=plan?.platform==='fanqie'&&packet?.profile_id===profile?.id&&packet?.profile_sha256===profile?.sha256&&/^[0-9a-f]{64}$/.test(packet?.manifest_sha256)&&/^[0-9a-f]{64}$/.test(packet?.target_sha256)?packet.preview?.recent_events||[]:[],proof=history.slice().reverse().find(row=>row.schema===2&&['saved','reconciled','saved_equivalent','reconciled_equivalent'].includes(row.event)&&row.book_id===panel.bookId&&row.plan_id===packet.plan_id&&row.manifest_sha256===packet.manifest_sha256&&row.target_sha256===packet.target_sha256&&plan.chapters?.includes(row.chapter)&&typeof row.remote_id==='string'&&row.title_matches===true&&platformDraftRuleValues({schema:1,body_encoding:row.body_encoding,comparison_policy:row.comparison_policy},'fanqie')&&(row.body_encoding!=='verbatim'||row.comparison_policy!=='strict')&&((row.body_matches===true&&/^[0-9a-f]{64}$/.test(row.content_sha256)&&row.content_sha256===row.observed_sha256)||(/^[0-9a-f]{64}$/.test(row.canonical_sha256)&&row.canonical_sha256===row.observed_canonical_sha256)));
- if(proof&&(proof.body_encoding!==panel.encoding.value||proof.comparison_policy!==panel.comparison.value))text+=' 历史第'+proof.chapter+'章曾按“'+platformDraftRuleLabels(proof.body_encoding,proof.comparison_policy)+'”核对通过；当前选择与该历史记录不同。若继续核对同一批草稿，请在上方明确选择相同规则并重新预览，再执行只读对账。历史记录不代表本次平台状态，本次尚未访问平台。';panel.rulesNote.textContent=text;}
+ if(proof&&(proof.body_encoding!==panel.encoding.value||proof.comparison_policy!==panel.comparison.value))text+=' 历史第'+proof.chapter+'章曾按“'+platformDraftRuleLabels(proof.body_encoding,proof.comparison_policy)+'”核对通过；当前选择与该历史记录不同。当前统一使用去空行排版，请重新预览后只读对账；若仅有排版差异，仍需明确执行同步草稿。历史记录不代表本次平台状态，本次尚未访问平台。';panel.rulesNote.textContent=text;}
 function platformDraftRuleRequest(scope){return {plan_id:scope.plan_id,profile_id:scope.profile_id,profile_sha256:scope.profile_sha256};}
 function platformDraftRuleResponse(packet,scope){return packet?.ok===true&&packet.book_id===scope.book_id&&packet.plan_id===scope.plan_id&&packet.profile_id===scope.profile_id&&packet.profile_sha256===scope.profile_sha256&&packet.remote_accessed===false&&packet.submission_performed===false;}
 function platformDraftRulesCurrent(panel,scope,request){return platformDraftAlive(panel)&&panel.rulesRequest===request&&platformDraftRuleScope(panel)?.key===scope?.key;}
 function platformDraftRulesInvalidate(panel){++panel.request;panel.preview=null;panel.previewExpires=0;clearTimeout(panel.expiryTimer);platformDraftButtons(panel);}
-async function platformDraftRestoreRules(panel){const request=panel.rulesRequest=(panel.rulesRequest||0)+1;panel.comparison.value='strict';panel.encoding.value='verbatim';panel.rulesMemoryMessage='';panel.rulesLoading=false;panel.rulesSaving=false;platformDraftRulesInvalidate(panel);const scope=platformDraftRuleScope(panel);if(!scope){platformDraftRuleNote(panel);return false;}panel.rulesLoading=true;platformDraftButtons(panel);try{await platformDraftRuleWrites.get(scope.key);if(!platformDraftRulesCurrent(panel,scope,request))return null;const packet=await call('platform-drafts/preferences',platformDraftRuleRequest(scope));if(!platformDraftRulesCurrent(panel,scope,request))return null;if(!platformDraftRuleResponse(packet,scope))throw Error('规则范围无法确认');if(packet.preference!==null&&!platformDraftRuleValues(packet.preference,scope.platform))throw Error('规则内容不受支持');if(packet.preference){panel.comparison.value=packet.preference.comparison_policy;panel.encoding.value=packet.preference.body_encoding;panel.rulesMemoryMessage='已恢复保存在本书内的当前清单和配置规则；重启或端口变化后仍可读取，旧预览令牌不会恢复。';return true;}panel.rulesMemoryMessage=packet.warning?'本地规则记录无效，已使用安全默认值；请明确选择后重新预览。':'';return false;}catch{if(!platformDraftRulesCurrent(panel,scope,request))return null;panel.rulesMemoryMessage='暂时无法读取本书保存的规则，现使用安全默认值；请明确核对上方选择后重新预览。';return false;}finally{if(platformDraftRulesCurrent(panel,scope,request)){panel.rulesLoading=false;platformDraftRuleNote(panel);platformDraftButtons(panel);}}}
-async function platformDraftRememberRules(panel){if(!platformDraftAlive(panel)||panel.starting||panel.binding||panel.loadingCatalog||panel.jobs.some(job=>!job.done))return;const scope=platformDraftRuleScope(panel),value={schema:1,comparison_policy:panel.comparison.value,body_encoding:panel.encoding.value},request=panel.rulesRequest=(panel.rulesRequest||0)+1;panel.rulesLoading=false;panel.rulesSaving=false;platformDraftRulesInvalidate(panel);if(!scope||!platformDraftRuleValues(value,scope.platform)){panel.comparison.value='strict';panel.encoding.value='verbatim';panel.rulesMemoryMessage='规则不受支持，已恢复安全默认值；请重新预览。';platformDraftRuleNote(panel);return platformDraftPreview(panel);}panel.rulesSaving=true;platformDraftButtons(panel);const pending=(platformDraftRuleWrites.get(scope.key)||Promise.resolve()).catch(()=>{}).then(async()=>{const packet=await call('platform-drafts/preferences/save',{...platformDraftRuleRequest(scope),comparison_policy:value.comparison_policy,body_encoding:value.body_encoding});if(!platformDraftRuleResponse(packet,scope)||packet.saved!==true||!platformDraftRuleValues(packet.preference,scope.platform)||packet.preference.comparison_policy!==value.comparison_policy||packet.preference.body_encoding!==value.body_encoding)throw Error('规则保存回执无法确认');});const settled=pending.catch(()=>{});platformDraftRuleWrites.set(scope.key,settled);try{await pending;if(platformDraftRulesCurrent(panel,scope,request))panel.rulesMemoryMessage='已将明确选择的规则保存在本书内，仅用于当前清单和当前配置；恢复后仍需重新预览并明确执行。';}catch{if(platformDraftRulesCurrent(panel,scope,request))panel.rulesMemoryMessage='未能确认规则已保存；当前选择仅用于本面板，下次打开请重新核对。';}finally{if(platformDraftRuleWrites.get(scope.key)===settled)platformDraftRuleWrites.delete(scope.key);if(platformDraftRulesCurrent(panel,scope,request)){panel.rulesSaving=false;platformDraftRuleNote(panel);platformDraftButtons(panel);if(panel.comparison.value===value.comparison_policy&&panel.encoding.value===value.body_encoding)await platformDraftPreview(panel);}}}
+async function platformDraftRestoreRules(panel){const request=panel.rulesRequest=(panel.rulesRequest||0)+1;panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;panel.rulesMemoryMessage='';panel.rulesLoading=false;panel.rulesSaving=false;platformDraftRulesInvalidate(panel);const scope=platformDraftRuleScope(panel);if(!scope){platformDraftRuleNote(panel);return false;}panel.rulesLoading=true;platformDraftButtons(panel);try{await platformDraftRuleWrites.get(scope.key);if(!platformDraftRulesCurrent(panel,scope,request))return null;const packet=await call('platform-drafts/preferences',platformDraftRuleRequest(scope));if(!platformDraftRulesCurrent(panel,scope,request))return null;if(!platformDraftRuleResponse(packet,scope))throw Error('规则范围无法确认');if(packet.preference!==null&&!platformDraftRuleValues(packet.preference,scope.platform))throw Error('规则内容不受支持');if(packet.preference){panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;panel.rulesMemoryMessage='当前统一使用严格核对：仅去除本地 MD 空白行，远端正文原样逐字比较。历史规则不再用于新任务；请重新预览并明确执行。';return true;}panel.rulesMemoryMessage=packet.warning?'本地规则记录无效，已使用安全默认值；请明确选择后重新预览。':'';return false;}catch{if(!platformDraftRulesCurrent(panel,scope,request))return null;panel.rulesMemoryMessage='暂时无法读取本书保存的规则，现使用安全默认值；请明确核对上方选择后重新预览。';return false;}finally{if(platformDraftRulesCurrent(panel,scope,request)){panel.rulesLoading=false;platformDraftRuleNote(panel);platformDraftButtons(panel);}}}
+async function platformDraftRememberRules(panel){panel.comparison.value='strict';if(!platformDraftAlive(panel)||panel.starting||panel.binding||panel.loadingCatalog||panel.jobs.some(job=>!job.done))return;panel.encoding.value=platformDraftRequiredEncoding;const scope=platformDraftRuleScope(panel),value={schema:1,comparison_policy:panel.comparison.value,body_encoding:platformDraftRequiredEncoding},request=panel.rulesRequest=(panel.rulesRequest||0)+1;panel.rulesLoading=false;panel.rulesSaving=false;platformDraftRulesInvalidate(panel);if(!scope||!platformDraftRuleValues(value,scope.platform)){panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;panel.rulesMemoryMessage='规则不受支持，已恢复安全默认值；请重新预览。';platformDraftRuleNote(panel);return platformDraftPreview(panel);}panel.rulesSaving=true;platformDraftButtons(panel);const pending=(platformDraftRuleWrites.get(scope.key)||Promise.resolve()).catch(()=>{}).then(async()=>{const packet=await call('platform-drafts/preferences/save',{...platformDraftRuleRequest(scope),comparison_policy:value.comparison_policy,body_encoding:value.body_encoding});if(!platformDraftRuleResponse(packet,scope)||packet.saved!==true||!platformDraftRuleValues(packet.preference,scope.platform)||packet.preference.comparison_policy!==value.comparison_policy||packet.preference.body_encoding!==value.body_encoding)throw Error('规则保存回执无法确认');});const settled=pending.catch(()=>{});platformDraftRuleWrites.set(scope.key,settled);try{await pending;if(platformDraftRulesCurrent(panel,scope,request))panel.rulesMemoryMessage='已将明确选择的规则保存在本书内，仅用于当前清单和当前配置；恢复后仍需重新预览并明确执行。';}catch{if(platformDraftRulesCurrent(panel,scope,request))panel.rulesMemoryMessage='未能确认规则已保存；当前选择仅用于本面板，下次打开请重新核对。';}finally{if(platformDraftRuleWrites.get(scope.key)===settled)platformDraftRuleWrites.delete(scope.key);if(platformDraftRulesCurrent(panel,scope,request)){panel.rulesSaving=false;platformDraftRuleNote(panel);platformDraftButtons(panel);if(panel.comparison.value===value.comparison_policy&&panel.encoding.value===value.body_encoding)await platformDraftPreview(panel);}}}
 function platformDraftAvailability(){const button=$('platform-drafts-open');button.disabled=currentBookInfo.kind==='analysis'||currentBookInfo.kind_verified===false;button.title=button.disabled?'作品分析不提供平台草稿保存':'预览已审查正式稿，保存到指定平台的草稿箱';}
 function platformDraftChapterRange(chapters){if(!chapters?.length)return '章节待核对';return chapters.length===1?'第'+chapters[0]+'章':'第'+chapters[0]+'—'+chapters.at(-1)+'章（'+chapters.length+'章）';}
 function platformDraftElement(tag,text,id){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(id)node.id=id;return node;}
 function platformDraftPermissionHelp(){const help=platformDraftElement('details',undefined,'platform-draft-permission-help');help.append(platformDraftElement('summary','网站访问授权帮助'),platformDraftElement('p','Codex 官方设置入口：Settings／设置 → Browser／浏览器 → Agent permissions／代理权限 → 添加网站例外。菜单名称以当前桌面版本为准。'),platformDraftElement('p','仅为 fanqienovel.com 添加例外，将 Browse／浏览设为 Always allow／始终允许；Download／下载和 Upload／上传权限保持不变。'),platformDraftElement('p','若找不到该入口，或组织策略限制修改，请反馈当前菜单，由助手核对宿主支持的授权方式，请勿调整全局权限。'));const link=platformDraftElement('a','查看 Codex 官方浏览器权限说明');link.href='https://developers.openai.com/codex/app/settings#browser-use';link.target='_blank';link.rel='noopener noreferrer';help.append(link,platformDraftElement('p','设置完成后，仍需重新预览并发起连接；只有本次实际读取本书页面通过后，才显示连接就绪。'));return help;}
 function platformDraftAlive(panel){return platformDraftPanel===panel&&panel.dialog.open;}
 function platformDraftBusy(panel){return panel.starting||panel.binding||panel.refreshingPlan||panel.formalLoading||panel.loadingCatalog||panel.rulesLoading||panel.rulesSaving||panel.jobs.some(job=>!job.done);}
-function platformDraftCanStart(panel){const preview=panel.preview,profile=panel.profiles.find(row=>row.id===panel.profile.value&&row.valid),plan=panel.plans.find(row=>row.id===panel.plan.value);return !!(plan&&profile&&profile.platform===plan.platform&&preview?.book_id===panel.bookId&&preview.plan_id===plan.id&&preview.profile_id===profile.id&&preview.profile_sha256===profile.sha256&&preview.mode===panel.mode.value&&((preview.can_start&&preview.preview_token)||(preview.can_connect&&preview.connect_token))&&preview.profile_sha256&&!panel.bindingDirty&&!platformDraftBusy(panel)&&Date.now()<panel.previewExpires&&(preview.comparison_policy||'strict')===panel.comparison.value&&(preview.body_encoding||'verbatim')===panel.encoding.value);}
-function platformDraftButtons(panel){const busy=platformDraftBusy(panel);panel.run.disabled=!platformDraftCanStart(panel);panel.refresh.disabled=!!(panel.starting||panel.loadingCatalog||panel.binding||panel.refreshingPlan||panel.formalLoading||panel.rulesLoading||panel.rulesSaving);panel.plan.disabled=busy||!panel.plans.length;panel.profile.disabled=busy||!panel.profile.options.length;panel.mode.disabled=busy;const selected=panel.plans.find(row=>row.id===panel.plan.value),fanqie=selected?.platform==='fanqie';panel.comparison.disabled=busy||!fanqie;panel.encoding.disabled=busy||!fanqie;panel.recheck.disabled=busy||!panel.plan.value;panel.run.textContent=(panel.preview?.can_connect&&!panel.preview?.can_start?'连接并':'')+(panel.mode.value==='sync_existing'?'同步更新已有草稿':panel.mode.value==='reconcile_only'?'只读核对所选批次':'保存所选'+(selected?platformDraftChapterRange(selected.chapters):'批次')+'到平台草稿');if(panel.bindButton){const ready=Number.isInteger(panel.revision)&&panel.formalCount>0;panel.bindButton.disabled=busy||!ready;panel.bindCancel.disabled=busy;for(const input of panel.bindingInputs)input.disabled=busy;}if(panel.generate){const range=platformDraftRefreshRange(panel);panel.generate.disabled=busy||panel.bindingDirty||panel.mode.value==='reconcile_only'||!range||!fanqie||!platformDraftRuleScope(panel);panel.generate.textContent=range?'按第'+range.start+'—'+range.end+'章生成新批次':'填写范围后生成新批次';panel.refreshStart.disabled=busy;panel.refreshEnd.disabled=busy;}}
+function platformDraftCanStart(panel){const preview=panel.preview,profile=panel.profiles.find(row=>row.id===panel.profile.value&&row.valid),plan=panel.plans.find(row=>row.id===panel.plan.value);return !!(panel.comparison.value==='strict'&&panel.encoding.value===platformDraftRequiredEncoding&&plan&&profile&&profile.platform===plan.platform&&preview?.book_id===panel.bookId&&preview.plan_id===plan.id&&preview.profile_id===profile.id&&preview.profile_sha256===profile.sha256&&preview.mode===panel.mode.value&&((preview.can_start&&preview.preview_token)||(preview.can_connect&&preview.connect_token))&&preview.profile_sha256&&!panel.bindingDirty&&!platformDraftBusy(panel)&&Date.now()<panel.previewExpires&&(preview.comparison_policy||'strict')===panel.comparison.value&&(preview.body_encoding||'verbatim')===panel.encoding.value);}
+function platformDraftButtons(panel){const busy=platformDraftBusy(panel);panel.run.disabled=!platformDraftCanStart(panel);panel.refresh.disabled=!!(panel.starting||panel.loadingCatalog||panel.binding||panel.refreshingPlan||panel.formalLoading||panel.rulesLoading||panel.rulesSaving);panel.plan.disabled=busy||!panel.plans.length;panel.profile.disabled=busy||!panel.profile.options.length;panel.mode.disabled=busy;const selected=panel.plans.find(row=>row.id===panel.plan.value),fanqie=selected?.platform==='fanqie';panel.comparison.disabled=busy||!fanqie;panel.encoding.disabled=true;panel.recheck.disabled=busy||!panel.plan.value;panel.run.textContent=(panel.preview?.can_connect&&!panel.preview?.can_start?'连接并':'')+(panel.mode.value==='reconcile_only'?'只读核对所选批次':'同步所选'+(selected?platformDraftChapterRange(selected.chapters):'批次')+'到平台草稿');if(panel.bindButton){const ready=Number.isInteger(panel.revision)&&panel.formalCount>0;panel.bindButton.disabled=busy||!ready;panel.bindCancel.disabled=busy;for(const input of panel.bindingInputs)input.disabled=busy;}if(panel.generate){const range=platformDraftRefreshRange(panel);panel.generate.disabled=busy||panel.bindingDirty||panel.mode.value==='reconcile_only'||!range||!fanqie||!platformDraftRuleScope(panel);panel.generate.textContent=range?'按第'+range.start+'—'+range.end+'章生成新批次':'填写范围后生成新批次';panel.refreshStart.disabled=busy;panel.refreshEnd.disabled=busy;}}
 function platformDraftRefreshRange(panel){const first=panel.refreshStart?.value,last=panel.refreshEnd?.value;if(!first||!last)return null;const start=Number(first),end=Number(last);return Number.isInteger(panel.revision)&&Number.isInteger(start)&&Number.isInteger(end)&&panel.formalCount>0&&start>=panel.formalFirst&&end<=panel.formalLast&&start<=end&&end-start+1<=panel.maxBatch&&end-start+1<=panel.formalCount?{start,end}:null;}
 function platformDraftFormalInvalidate(panel){platformDraftRulesInvalidate(panel);panel.previewBox?.replaceChildren();}
 function platformDraftFormalRange(panel,reset=false){
@@ -3061,34 +3966,49 @@ function platformDraftRefreshFields(panel){
  const row=platformDraftElement('div');row.className='platform-binding-range';for(const [key,label,id] of [['refreshStart','新批次起始章','platform-draft-refresh-start'],['refreshEnd','新批次结束章','platform-draft-refresh-end']]){const wrapper=platformDraftElement('label',label),input=platformDraftElement('input',undefined,id);input.type='number';input.min='1';input.step='1';input.required=true;input.oninput=()=>{panel.refreshRangeDirty=true;platformDraftFormalInvalidate(panel);platformDraftFormalRange(panel);platformDraftButtons(panel);};wrapper.append(input);row.append(wrapper);panel[key]=input;}panel.content.append(row);panel.refreshHint=platformDraftElement('p');panel.generate=platformDraftElement('button','填写范围后生成新批次','platform-draft-generate');panel.generate.type='button';panel.generate.onclick=()=>platformDraftRefreshPlan(panel);panel.content.append(panel.refreshHint,panel.generate);
 }
 async function platformDraftRefreshPlan(panel,syncExisting=false){
+ panel.encoding.value=platformDraftRequiredEncoding;
  if(!platformDraftAlive(panel)||platformDraftBusy(panel)||panel.bindingDirty||panel.mode.value==='reconcile_only')return;
  const scope=platformDraftRuleScope(panel),plan=panel.plans.find(row=>row.id===panel.plan.value),range=syncExisting&&plan?.chapters?.length?{start:plan.chapters[0],end:plan.chapters.at(-1)}:platformDraftRefreshRange(panel),rules={schema:1,body_encoding:panel.encoding.value,comparison_policy:panel.comparison.value};if(!range||!scope||plan.platform!=='fanqie'){platformDraftFormalRange(panel);return;}
  const request=panel.refreshPlanRequest=(panel.refreshPlanRequest||0)+1,revision=panel.revision;panel.refreshingPlan=true;platformDraftFormalInvalidate(panel);platformDraftButtons(panel);panel.formalError=false;panel.formalNote.textContent='正在生成本地新批次…';
  try{const packet=await call('platform-drafts/refresh-plan',{...platformDraftRuleRequest(scope),expected_revision:revision,...range});if(!platformDraftAlive(panel)||request!==panel.refreshPlanRequest)return;if(platformDraftRuleScope(panel)?.key!==scope.key||panel.revision!==revision)throw Error('当前批次或配置已变化，请重新核对本地批次。');if(packet.ok!==true||packet.book_id!==scope.book_id||packet.revision!==revision||packet.base_plan_id!==scope.plan_id||packet.profile_id!==scope.profile_id||packet.profile_sha256!==scope.profile_sha256||packet.platform!==plan.platform||packet.account_id!==plan.account_id||packet.remote_book_id!==plan.remote_book_id||typeof packet.plan_id!=='string'||!packet.plan_id||packet.start!==range.start||packet.end!==range.end||!Array.isArray(packet.chapters)||packet.chapters.length!==range.end-range.start+1||packet.chapters.some((chapter,index)=>chapter!==range.start+index)||packet.scope!=='local_formal_refresh_only'||packet.remote_accessed!==false||packet.submission_performed!==false)throw Error('新批次回执无法确认，请刷新本地状态核对。');
-  panel.refreshingPlan=false;panel.refreshRangeDirty=false;await platformDraftCatalog(panel,{plan_id:packet.plan_id,profile_id:packet.profile_id,profile_sha256:packet.profile_sha256,target:{platform:plan.platform,account_id:plan.account_id,remote_book_id:plan.remote_book_id},chapters:packet.chapters,...(syncExisting?{mode:'sync_existing',rules}: {})});if(!platformDraftAlive(panel)||request!==panel.refreshPlanRequest)return;panel.formalNote.textContent=(packet.plan_reused?'已复用':'已生成')+'第'+range.start+'—'+range.end+'章的本地批次；旧批次保留，尚未访问平台。';
+  panel.refreshingPlan=false;panel.refreshRangeDirty=false;await platformDraftCatalog(panel,{plan_id:packet.plan_id,profile_id:packet.profile_id,profile_sha256:packet.profile_sha256,target:{platform:plan.platform,account_id:plan.account_id,remote_book_id:plan.remote_book_id},chapters:packet.chapters,...(syncExisting?{mode:'sync_drafts',rules}: {})});if(!platformDraftAlive(panel)||request!==panel.refreshPlanRequest)return;panel.formalNote.textContent=(packet.plan_reused?'已复用':'已生成')+'第'+range.start+'—'+range.end+'章的本地批次；旧批次保留，尚未访问平台。';
  }catch(error){if(platformDraftAlive(panel)&&request===panel.refreshPlanRequest)panel.formalNote.textContent='新批次未能确认：'+error.message+'。未启动平台保存，可刷新本地状态核对。';}
  finally{if(platformDraftAlive(panel)&&request===panel.refreshPlanRequest){panel.refreshingPlan=false;platformDraftFormalRange(panel);platformDraftButtons(panel);}}
 }
+function platformDraftStamp(value){const date=new Date(value);return value&&Number.isFinite(date.getTime())?date.toLocaleString():'时间未记录';}
+function platformDraftCurrent(row){return row.recorded_this_run===true||row.observed_this_run===true;}
+function platformDraftHasRecord(row){return !!(row.last_observed_at||row.reason||(row.state&&row.state!=='pending'));}
+function platformDraftNormalizedMatch(row){return row.comparison_policy==='strict'&&row.body_encoding===platformDraftRequiredEncoding&&row.title_matches===true&&row.rendered_body_matches===true&&['saved','reconciled','saved_equivalent','reconciled_equivalent'].includes(row.state);}
+function platformDraftHistoryRows(panel,rows){
+ panel.historyRows=(rows||[]).filter(platformDraftHasRecord);panel.historyResults.replaceChildren();
+ const accepted=panel.historyRows.filter(row=>['saved','reconciled','saved_equivalent','reconciled_equivalent'].includes(row.state)&&row.title_matches===true&&(row.body_matches===true||platformDraftNormalizedMatch(row))).length;
+ panel.historySummary.textContent='历史核对记录 · '+panel.historyRows.length+' 章有记录'+(accepted?'，其中 '+accepted+' 章当时一致':'');
+ panel.historyDetails.hidden=!panel.historyRows.length;
+ for(const row of panel.historyRows){const item=platformDraftElement('li');item.textContent='第'+row.chapter+'章 · 历史状态：'+(platformDraftNormalizedMatch(row)?'同步一致':platformDraftStates[row.state]||'状态待核对')+' · '+platformDraftStamp(row.last_observed_at)+(row.reason?'。当时原因：'+platformDraftErrorCode(row.reason):'')+((row.body_encoding&&row.body_encoding!==platformDraftRequiredEncoding)||(row.comparison_policy&&row.comparison_policy!=='strict')?'。当时规则：'+platformDraftRuleLabels(row.body_encoding||'verbatim',row.comparison_policy||'strict'):'');panel.historyResults.append(item);}
+}
 function platformDraftDrawHistory(panel,packet){
- if(!(packet.history_events_total>0))return;
- const rows=packet.results||[],accepted=rows.filter(row=>['saved','reconciled','saved_equivalent','reconciled_equivalent'].includes(row.state)&&row.title_matches===true).length,total=rows.length;
- const latest=rows.map(row=>row.last_observed_at).filter(Boolean).sort().at(-1),stamp=latest?new Date(latest).toLocaleString():'';
- panel.progress.max=total||1;panel.progress.value=accepted;panel.progressLabel.textContent='最近记录已核对 '+accepted+' / '+total+' 章'+(stamp?' · '+stamp:'');
- panel.history.textContent=(packet.source_matches_current===false?'本地正式稿已变化，以下是旧版核对记录。':'已读取最新保存的核对记录。')+'本次尚未访问平台，执行只读对账可核验当前远端状态。';
+ const rows=packet.results||[];
+ panel.history.textContent=(packet.source_matches_current===false?'本地正式稿已变化，以下记录对应旧版正式稿。':'历史记录只代表各章标注时间的观察。')+'不计入本次进度；本次尚未核对的章节不能据此认定同步成功或失败。';
  platformDraftResults(panel,rows,true);
+ if(!panel.job){const total=packet.chapters?.length||panel.plans.find(row=>row.id===panel.plan.value)?.chapters?.length||rows.length;panel.progress.max=total||1;panel.progress.value=0;panel.progressLabel.textContent='本次尚未开始 · 已核对 0 / '+total+' 章';}
 }
 async function platformDraftHistory(panel){
  if(!platformDraftAlive(panel)||platformDraftBusy(panel)||!panel.plan.value)return;
  const planId=panel.plan.value,request=panel.request,jobId=panel.job?.id;
  try{const packet=await call('platform-drafts/history',{plan_id:planId});if(!platformDraftAlive(panel)||platformDraftBusy(panel)||panel.plan.value!==planId||panel.request!==request||panel.job?.id!==jobId||packet.book_id!==panel.bookId||packet.id!==planId||packet.remote_accessed!==false)return;
   if(panel.historyPlan===planId&&packet.history_events_total<=(panel.historyEvents||0))return;
-  panel.historyPlan=planId;panel.historyEvents=packet.history_events_total||0;platformDraftDrawHistory(panel,packet);panel.status.textContent='同步记录已刷新。需要核验远端时，请执行只读对账。';
- }catch{if(platformDraftAlive(panel)&&panel.plan.value===planId&&panel.request===request)panel.history.textContent='同步记录暂未刷新，保留上次结果；可点击刷新本地状态重试。';}
+  panel.historyPlan=planId;panel.historyEvents=packet.history_events_total||0;platformDraftDrawHistory(panel,packet);
+ }catch{if(platformDraftAlive(panel)&&panel.plan.value===planId&&panel.request===request)panel.history.textContent='历史记录暂未刷新，保留上次结果；可点击刷新本地状态重试。';}
 }
 function platformDraftResults(panel,results,historical=false){
- panel.results.replaceChildren();for(const row of results||[]){const item=platformDraftElement('li');const current=!historical&&row.observed_this_run===true,history=!!(row.last_observed_at||row.reason||row.state!=='pending');
- const checked=row.title_body_verified?'本次完整回读，逐字一致':row.accepted_this_run?(['markdown_paragraphs_v1','markdown_paragraphs_v2'].includes(row.body_encoding)?'本次按段落排版核对，段内文字逐字一致':'本次完整回读，仅末尾换行差异'):'本次观察，内容未匹配';
- item.textContent='第'+row.chapter+'章 · '+(historical&&history?'历史状态：':'')+(platformDraftStates[row.state]||'状态待核对')+(current?' · '+checked:history?' · 历史记录，本次未确认':'')+(row.reason?'。原因：'+platformDraftErrorCode(row.reason):'')+(historical&&history?'。原规则：'+platformDraftRuleLabels(row.body_encoding||'verbatim',row.comparison_policy||'strict')+'。本次尚未访问平台。':'');panel.results.append(item);}
+ const rows=results||[];
+ if(historical){platformDraftHistoryRows(panel,rows);if(panel.job)return;}
+ else{const current=new Set(rows.filter(platformDraftCurrent).map(row=>row.chapter)),older=new Map((panel.historyRows||[]).filter(row=>!current.has(row.chapter)).map(row=>[row.chapter,row]));for(const row of rows)if(!current.has(row.chapter)&&platformDraftHasRecord(row))older.set(row.chapter,row);platformDraftHistoryRows(panel,[...older.values()].sort((a,b)=>a.chapter-b.chapter));}
+ panel.results.replaceChildren();
+ for(const row of rows){const item=platformDraftElement('li'),current=!historical&&platformDraftCurrent(row);
+ if(!current){item.textContent='第'+row.chapter+'章 · 本次未处理';if(!historical&&panel.job?.current_chapter===row.chapter)item.textContent= '第'+row.chapter+'章 · '+(panel.job.done?'本次未完成核对':'本次正在处理，尚未确认结果');panel.results.append(item);continue;}
+ const checked=platformDraftNormalizedMatch(row)&&row.accepted_this_run?'本次完整回读：本地 MD 去空白行后，章名和正文逐字一致':row.title_body_verified?'本次完整回读，逐字一致':row.accepted_this_run?(['markdown_paragraphs_v1','markdown_paragraphs_v2',platformDraftRequiredEncoding].includes(row.body_encoding)?'本次按段落排版核对，段内文字逐字一致':'本次完整回读，仅末尾换行差异'):row.state==='unknown'?'本次保存结果未确认，须先只读核对':row.state==='blocked'?'本次未完成核对':row.state==='not_found'?'本次只读核对未找到可确认的草稿':'本次观察，内容未匹配';
+ item.textContent='第'+row.chapter+'章 · '+(platformDraftNormalizedMatch(row)?'同步一致':platformDraftStates[row.state]||'状态待核对')+' · '+checked+(row.reason?'。原因：'+platformDraftErrorCode(row.reason):'');panel.results.append(item);}
 }
 function platformDraftDrawJob(panel,job,historical=false){
  if(job.result){panel.historyPlan=job.plan_id;panel.historyEvents=job.result.history_events_total||0;}
@@ -3098,32 +4018,34 @@ function platformDraftDrawJob(panel,job,historical=false){
  const exact=bounded(job.verified_chapters),accepted=Number.isInteger(job.accepted_chapters)?bounded(job.accepted_chapters):exact,equivalent=bounded(job.equivalent_chapters);
  panel.progress.max=total||1;panel.progress.value=accepted;panel.progressLabel.textContent=equivalent?'本次已核对 '+accepted+' / '+total+' 章（逐字一致 '+exact+'；按选定格式核对 '+equivalent+'）':'本次已完整回读 '+exact+' / '+total+' 章';
  const complete=total>0&&accepted===total;
- const format=[['markdown_paragraphs_v1','markdown_paragraphs_v2'].includes(job.body_encoding)?'段落排版':'',job.comparison_policy==='fanqie_terminal_lf_v1'?'末尾换行规则':''].filter(Boolean).join('及')||'格式规则';
+ const format=[['markdown_paragraphs_v1','markdown_paragraphs_v2',platformDraftRequiredEncoding].includes(job.body_encoding)?'段落排版':'',job.comparison_policy==='fanqie_terminal_lf_v1'?'末尾换行规则':''].filter(Boolean).join('及')||'格式规则';
  const finished={succeeded:exact===total&&total>0?(job.mode==='reconcile_only'?'本次对账完成':'本批草稿已保存并完整回读'):'任务结束，仍有章节待核实',succeeded_equivalent:complete?(job.mode==='reconcile_only'?'本次对账完成，已按所选'+format+'核对':'本批草稿已保存，已按所选'+format+'核对'):'任务结束，仍有章节待核实',partial_failure:'部分章节完成，其余已停止',unknown:'远端结果未知，请先只读对账',failed:'任务未完成，请核对阻断原因'};
+ if(job.body_encoding===platformDraftRequiredEncoding&&job.comparison_policy==='strict'){panel.progressLabel.textContent='本次同步一致 '+accepted+' / '+total+' 章（本地 MD 去空白行后逐字核对）';if(complete){finished.succeeded=finished.succeeded_equivalent=(job.mode==='reconcile_only'?'本次只读核对完成':'本批草稿同步一致')+'，章名和去空白行后的正文已完整核对';}}
  panel.status.textContent=(job.done?finished[job.state]||'任务结束，结果待核对':platformDraftStages[job.stage]||'正在处理')+(job.current_chapter?' · 第'+job.current_chapter+'章':'');
- if(job.error)panel.status.textContent+=((job.state==='succeeded'||job.state==='succeeded_equivalent')?'。执行端提示：':'。原因：')+platformDraftErrorCode(job.error);
+ if(!historical&&job.done&&job.mode==='sync_drafts'&&['created_chapters','updated_chapters','unchanged_chapters'].every(key=>Number.isInteger(job.result?.[key])))panel.status.textContent+='。本次已确认：新增 '+bounded(job.result.created_chapters)+' 章，更新 '+bounded(job.result.updated_chapters)+' 章，原已一致 '+bounded(job.result.unchanged_chapters)+' 章';
+ const stopRow=job.result?.results?.find(row=>platformDraftCurrent(row)&&['blocked','unknown','conflict','not_found'].includes(row.state));const stopReason=job.error||stopRow?.reason;if(job.done&&stopReason)panel.status.textContent+=((job.state==='succeeded'||job.state==='succeeded_equivalent')?'。执行端提示：':'。停止原因：')+platformDraftErrorCode(stopReason);
  if(job.error==='platform_chrome_worker_origin_permission_required'&&panel.permissionHelp)panel.permissionHelp.open=true;
  if(job.result?.local_version_changed===true||job.result?.source_matches_current===false)panel.status.textContent+='。平台结果对应冻结清单；本地正式稿已有变化，请重新准备清单。';
  panel.jobNote.textContent=(job.execution_mode==='host_assisted_cua'?'通过已登录的 Codex 执行会话连接现有 Chrome，使用当前账号额度。':'')+'任务目标：'+(platformDraftNames[job.platform]||'平台待核对')+'；绑定账号：'+(job.account_id||'待核对')+'；目标作品：'+(job.remote_book_id||'待核对')+'。关闭此面板后任务继续；关闭工作台服务或进程可能中断，重新打开后须先对账。保存草稿不会提交审核或发布。';
- if(historical){panel.status.textContent='历史任务 · '+panel.status.textContent+'。本次尚未访问平台。';}platformDraftResults(panel,job.result?.results,historical);platformDraftButtons(panel);
+ if(historical){panel.status.textContent='历史任务 · '+panel.status.textContent+'。本次尚未访问平台。';}const rows=job.result?.results||panel.plans.find(row=>row.id===job.plan_id)?.chapters?.map(chapter=>({chapter,state:'pending'}))||[];platformDraftResults(panel,rows,historical);platformDraftButtons(panel);
 }
-function platformDraftErrorCode(code){return ({existing_draft_updated:'已有草稿章名和正文已更新并独立回读',updating_existing_draft:'正在更新已有草稿',remote_formatting_metadata:'远端正文含错字标记，可选择同步更新已有草稿清理',saved_formatting_metadata:'回读仍含错字标记，尚未确认同步完成',platform_browser_formatting_metadata:'正文仍含错字标记，已停止并保留待核对状态',platform_browser_remote_changed:'远端草稿在核对后发生变化，未继续覆盖',platform_draft_update_unsupported:'当前配置不支持更新已有草稿，请使用番茄 Chrome 会话配置',platform_chrome_worker_origin_permission_required:'本次会话尚未取得番茄页面访问授权，操作已停止。请查看“网站访问授权帮助”；当前版本没有对应入口时，请由助手核对宿主授权方式',platform_chrome_worker_browser_unattached:'现有 Chrome 的页面控制未连接，请点开官方 Chrome 扩展恢复连接后重新预览，无需重新登录或另开窗口',platform_chrome_worker_codex_unavailable:'未找到可用的 Codex，请先完成本机 Codex 安装和登录',platform_chrome_worker_sdk_unavailable:'未找到官方 Chrome 插件，请在 Codex 中安装并连接 Chrome',platform_chrome_worker_unsupported_platform:'自动连接仅支持番茄；当前平台未启动自动执行会话',platform_chrome_worker_connect_timeout:'连接现有 Chrome 超时，尚未开始保存，请检查扩展连接',platform_chrome_worker_browser_wait_timeout:'自动检测后仍未发现现有 Chrome 连接，本次尚未开始保存。请在现有窗口检查官方 Chrome 扩展，恢复后重新预览并执行',platform_chrome_worker_existing_tab_required:'请在现有 Chrome 中打开本书的番茄作品管理页',platform_chrome_worker_ambiguous_browser:'检测到多个 Chrome 连接，请仅保留本次使用的连接后重试',platform_chrome_worker_ambiguous_tab:'无法唯一确定目标作品管理页，请先核对当前页面',platform_chrome_worker_health_expired:'Chrome 页面连接已失效，请先只读核对，再重新执行',platform_chrome_worker_turn_failed:'Codex 执行会话中断，请先核对草稿记录',platform_chrome_worker_not_ready:'执行会话未能读取 Chrome 页面，未建立可用连接',platform_chrome_worker_failed:'Codex 未能完成页面操作，请核对权限与执行状态，并先核对草稿记录',platform_chrome_worker_unsupported_sdk:'Chrome 插件版本不支持此执行方式，请更新官方插件',platform_browser_readback_required:'请重新保存番茄绑定，生成包含只读回读配置的清单后预览',platform_browser_invalid_book_url:'请粘贴番茄章节管理或草稿箱的完整链接',platform_browser_editor_in_use:'目标草稿仍有其他编辑页打开，请先保存并关闭该编辑页后重新预览',platform_chrome_worker_unavailable:'Chrome 尚未就绪。可自动连接时请点击“连接并保存到平台草稿”；否则请检查 Codex 与 Chrome 扩展',platform_chrome_connector_unavailable:'未找到自动连接组件，请更新完整插件和工作台',platform_chrome_connection_failed:'自动连接未完成，请检查 Chrome 扩展与登录状态',platform_chrome_connection_timeout:'自动连接超时，尚未开始保存，请检查 Chrome 扩展后重试',platform_chrome_worker_unhealthy:'Chrome 执行连接已失效，请重新连接并先只读核对',platform_chrome_codex_unavailable:'未找到可用的 Codex，请先完成本机 Codex 安装和登录',platform_chrome_sdk_unavailable:'未找到官方 Chrome 插件，请在 Codex 中安装并连接 Chrome',platform_chrome_existing_tab_required:'请在现有 Chrome 中打开本书的番茄作品管理页',platform_chrome_browser_unavailable:'当前执行会话未连接 Google Chrome，请检查官方 Chrome 扩展',platform_chrome_request_timeout:'助手操作未在期限内返回，请先只读对账',platform_chrome_worker_busy:'该目标已连接其他执行端，请先核对原会话',platform_chrome_request_expired:'该操作已超时或工作台已退出，请先只读对账',platform_chrome_invalid_message:'执行端回执未通过本次请求核验，请先核对结果',platform_browser_unnumbered_draft:'目录中有无法核对章号的草稿，已停止；请先人工核对',platform_browser_navigation_timeout:'登录入口未能完成导航，请检查后台页面后重试',platform_browser_ambiguous_draft:'同章草稿不唯一，须先核对目录',platform_browser_incomplete_scope:'目录范围或筛选条件与配置不一致，请由助手核对',platform_browser_invalid_chapter:'无法核对章号或完整正文，请由助手检查页面与清单',platform_browser_invalid_identity:'账号或作品标识不完整，请由助手检查绑定',platform_browser_invalid_profile:'页面配置不完整或不受支持，请由助手重新核对',platform_browser_invalid_remote_id:'无法读取有效草稿标识，请由助手检查页面配置',platform_browser_not_open:'浏览器会话已关闭，请刷新本地状态核对结果',platform_browser_target_unverified:'账号和作品尚未核对，已停止',platform_browser_unsafe_create:'新建入口与已核对配置不同，未点击',platform_browser_unsafe_save:'保存入口与已核对配置不同，已停止',platform_browser_unsafe_url:'后台地址不符合已核对范围，请由助手检查',platform_browser_unsupported_editor:'正文编辑结构与已核对格式不同，请由助手检查页面',multiple_remote_drafts:'存在多份同章草稿，须先人工核对',remote_content_differs:'远端草稿内容与冻结清单不同',unresolved_previous_content:'此前发送结果尚未核清',previous_attempt_not_found:'未找到此前尝试的明确结果，不能自动重发',remote_draft_not_found:'没有找到可确认的目标草稿',saved_content_differs:'保存后回读内容不同',interrupted_sending:'此前保存中断，须先只读对账',platform_browser_login_required:'登录或验证尚未完成，请在浏览器中操作',platform_browser_identity_mismatch:'当前登录账号或作品与清单不一致',platform_browser_identity_unavailable:'无法从后台完整核对账号或作品',platform_browser_incomplete_list:'目录或分页不完整，不能继续创建',platform_browser_chapter_exists_not_draft:'同章已存在且并非草稿，已停止',platform_browser_incomplete_dom:'后台关键字段读取不完整',platform_browser_ambiguous_dom:'后台关键控件不唯一，请由助手重新核对配置',platform_browser_editor_changed:'编辑器内容或状态发生变化',platform_browser_not_draft:'目标页面未能确认是草稿',platform_browser_not_new_draft:'页面不是空白的新草稿',platform_browser_save_unverified:'尚未取得明确保存完成状态，请先对账',platform_browser_unsafe_navigation:'后台跳转超出已核对域名，请由助手适配',platform_browser_operation_failed:'浏览器操作未完成，远端结果待核对',platform_browser_browser_unavailable:'浏览器无法启动，请由助手检查运行环境',profile_required:'请先配置番茄账号与作品并生成正式稿清单',platform_browser_dependency_missing:'尚未安装平台浏览器依赖，请由助手完成安装',platform_browser_executable_missing:'指定浏览器尚不可用，请由助手检查安装',platform_browser_chrome_unavailable:'尚未安装可用的 Google Chrome，请由助手检查安装',platform_draft_invalid_comparison_policy:'核对规则不受支持，请重新选择',platform_draft_invalid_body_encoding:'正文排版规则不受支持，请重新选择',platform_draft_unsupported_body_encoding:'正文包含不适用的换行结构，请选择保留原始换行或由助手核对',platform_draft_preview_required:'预览已过期，请重新预览',platform_draft_profile_changed:'页面配置已经变化，请重新预览',platform_draft_preview_changed:'正式稿或页面配置已经变化，请重新预览',platform_draft_busy:'该作品已有任务运行，请等待原任务',platform_draft_job_missing:'本进程已无该任务，请刷新历史并先只读对账',platform_draft_adapter_error:'后台操作未完成；可能已保存，须先只读对账'})[code]||code;}
+function platformDraftErrorCode(code){return ({new_draft_created:'缺失章节已新建草稿并独立回读',existing_draft_updated:'已有草稿章名和正文已更新并独立回读',updating_existing_draft:'正在更新已有草稿',remote_formatting_metadata:'远端正文含错字标记，可选择同步草稿清理',saved_formatting_metadata:'回读仍含错字标记，尚未确认同步完成',platform_browser_formatting_metadata:'正文仍含错字标记，已停止并保留待核对状态',platform_browser_remote_changed:'远端草稿在核对后发生变化，未继续覆盖',platform_draft_update_unsupported:'当前配置不支持更新已有草稿，请使用番茄 Chrome 会话配置',platform_chrome_worker_origin_permission_required:'本次会话尚未取得番茄页面访问授权，操作已停止。请查看“网站访问授权帮助”；当前版本没有对应入口时，请由助手核对宿主授权方式',platform_chrome_worker_browser_unattached:'现有 Chrome 的页面控制未连接，请点开官方 Chrome 扩展恢复连接后重新预览，无需重新登录或另开窗口',platform_chrome_worker_codex_unavailable:'未找到可用的 Codex，请先完成本机 Codex 安装和登录',platform_chrome_worker_sdk_unavailable:'未找到官方 Chrome 插件，请在 Codex 中安装并连接 Chrome',platform_chrome_worker_unsupported_platform:'自动连接仅支持番茄；当前平台未启动自动执行会话',platform_chrome_worker_connect_timeout:'连接现有 Chrome 超时，尚未开始保存，请检查扩展连接',platform_chrome_worker_browser_wait_timeout:'自动检测后仍未发现现有 Chrome 连接，本次尚未开始保存。请在现有窗口检查官方 Chrome 扩展，恢复后重新预览并执行',platform_chrome_worker_existing_tab_required:'未找到本书的章节管理或草稿箱页面。请在现有 Chrome 中打开该作品页面后重新预览',platform_chrome_worker_target_tab_changed:'绑定的 Chrome 标签页已离开本书章节管理或草稿箱，任务已停止。请重新打开本书章节管理或草稿箱，重新预览后先只读核对',platform_chrome_worker_target_tab_closed:'绑定的 Chrome 标签页已关闭或无法找到，任务已停止。请重新打开本书章节管理或草稿箱，重新预览后先只读核对',platform_chrome_worker_ambiguous_browser:'检测到多个 Chrome 连接，请仅保留本次使用的连接后重试',platform_chrome_worker_ambiguous_tab:'无法唯一确定目标作品管理页，请先核对当前页面',platform_chrome_worker_health_expired:'Chrome 页面连接已失效，请先只读核对，再重新执行',platform_chrome_worker_turn_failed:'Codex 执行会话中断，请先核对草稿记录',platform_chrome_worker_not_ready:'执行会话未能读取 Chrome 页面，未建立可用连接',platform_chrome_worker_failed:'Codex 未能完成页面操作，请核对权限与执行状态，并先核对草稿记录',platform_chrome_worker_unsupported_sdk:'Chrome 插件版本不支持此执行方式，请更新官方插件',platform_browser_readback_required:'请重新保存番茄绑定，生成包含只读回读配置的清单后预览',platform_browser_invalid_book_url:'请粘贴番茄章节管理或草稿箱的完整链接',platform_browser_editor_in_use:'目标草稿仍有其他编辑页打开，请先保存并关闭该编辑页后重新预览',platform_chrome_worker_unavailable:'Chrome 执行连接不可用，未完成核对；未取得更具体的停止原因。请检查目标作品页面与 Chrome 连接，重新预览后先只读核对',platform_chrome_connector_unavailable:'未找到自动连接组件，请更新完整插件和工作台',platform_chrome_connection_failed:'自动连接未完成，请检查 Chrome 扩展与登录状态',platform_chrome_connection_timeout:'自动连接超时，尚未开始保存，请检查 Chrome 扩展后重试',platform_chrome_worker_unhealthy:'Chrome 执行连接已失效，请重新连接并先只读核对',platform_chrome_codex_unavailable:'未找到可用的 Codex，请先完成本机 Codex 安装和登录',platform_chrome_sdk_unavailable:'未找到官方 Chrome 插件，请在 Codex 中安装并连接 Chrome',platform_chrome_existing_tab_required:'请在现有 Chrome 中打开本书的番茄作品管理页',platform_chrome_browser_unavailable:'当前执行会话未连接 Google Chrome，请检查官方 Chrome 扩展',platform_chrome_request_timeout:'助手操作未在期限内返回，请先只读对账',platform_chrome_worker_busy:'该目标已连接其他执行端，请先核对原会话',platform_chrome_request_expired:'该操作已超时或工作台已退出，请先只读对账',platform_chrome_invalid_message:'执行端回执未通过本次请求核验，请先核对结果',platform_browser_unnumbered_draft:'目录中有无法核对章号的草稿，已停止；请先人工核对',platform_browser_navigation_timeout:'登录入口未能完成导航，请检查后台页面后重试',platform_browser_ambiguous_draft:'同章草稿不唯一，须先核对目录',platform_browser_incomplete_scope:'目录范围或筛选条件与配置不一致，请由助手核对',platform_browser_invalid_chapter:'无法核对章号或完整正文，请由助手检查页面与清单',platform_browser_invalid_identity:'账号或作品标识不完整，请由助手检查绑定',platform_browser_invalid_profile:'页面配置不完整或不受支持，请由助手重新核对',platform_browser_invalid_remote_id:'无法读取有效草稿标识，请由助手检查页面配置',platform_browser_not_open:'浏览器会话已关闭，请刷新本地状态核对结果',platform_browser_target_unverified:'账号和作品尚未核对，已停止',platform_browser_unsafe_create:'新建入口与已核对配置不同，未点击',platform_browser_unsafe_save:'保存入口与已核对配置不同，已停止',platform_browser_unsafe_url:'后台地址不符合已核对范围，请由助手检查',platform_browser_unsupported_editor:'正文编辑结构与已核对格式不同，请由助手检查页面',multiple_remote_drafts:'存在多份同章草稿，须先人工核对',remote_content_differs:'远端草稿内容与冻结清单不同',unresolved_previous_content:'此前发送结果尚未核清',previous_attempt_not_found:'未找到此前尝试的明确结果，不能自动重发',remote_draft_not_found:'没有找到可确认的目标草稿',saved_content_differs:'保存后回读内容不同',interrupted_sending:'此前保存中断，须先只读对账',platform_browser_login_required:'登录或验证尚未完成，请在浏览器中操作',platform_browser_identity_mismatch:'当前登录账号或作品与清单不一致',platform_browser_identity_unavailable:'无法从后台完整核对账号或作品',platform_browser_incomplete_list:'目录或分页不完整，不能继续创建',platform_browser_chapter_exists_not_draft:'同章已存在且并非草稿，已停止',platform_browser_incomplete_dom:'后台关键字段读取不完整',platform_browser_ambiguous_dom:'后台关键控件不唯一，请由助手重新核对配置',platform_browser_editor_changed:'编辑器内容或状态发生变化',platform_browser_not_draft:'目标页面未能确认是草稿',platform_browser_not_new_draft:'页面不是空白的新草稿',platform_browser_save_unverified:'尚未取得明确保存完成状态，请先对账',platform_browser_unsafe_navigation:'后台跳转超出已核对域名，请由助手适配',platform_browser_operation_failed:'浏览器操作未完成，远端结果待核对',platform_browser_browser_unavailable:'浏览器无法启动，请由助手检查运行环境',profile_required:'请先配置番茄账号与作品并生成正式稿清单',platform_browser_dependency_missing:'尚未安装平台浏览器依赖，请由助手完成安装',platform_browser_executable_missing:'指定浏览器尚不可用，请由助手检查安装',platform_browser_chrome_unavailable:'尚未安装可用的 Google Chrome，请由助手检查安装',platform_draft_invalid_comparison_policy:'核对规则不受支持，请重新选择',platform_draft_invalid_body_encoding:'正文排版规则不受支持，请重新选择',platform_draft_body_encoding_required:'平台正文统一去掉空白行，请刷新并重新预览',platform_draft_comparison_policy_required:'远端正文须严格符合本地去空行后的正文，不能忽略远端空行或末尾换行，请重新预览',platform_draft_empty_body:'正文去掉空白行后没有文字，请核对正式稿',platform_draft_unsupported_body_encoding:'旧版排版不支持该正文格式，请刷新工作台，使用去空行排版，无需修改原稿',platform_draft_preview_required:'预览已过期，请重新预览',platform_draft_profile_changed:'页面配置已经变化，请重新预览',platform_draft_preview_changed:'正式稿或页面配置已经变化，请重新预览',platform_draft_busy:'该作品已有任务运行，请等待原任务',platform_draft_job_missing:'本进程已无该任务，请刷新历史并先只读对账',platform_draft_adapter_error:'后台操作未完成；可能已保存，须先只读对账'})[code]||code;}
 function platformDraftSchedule(panel){clearTimeout(panel.pollTimer);panel.pollTimer=null;if(platformDraftAlive(panel)&&panel.job&&!panel.job.done&&(panel.pollJobId!==panel.job.id||!(panel.pollFailures>5))){const id=panel.job.id;panel.pollTimer=setTimeout(()=>platformDraftPoll(panel,id),1500);}}
 async function platformDraftPoll(panel,id=panel.job?.id){if(!platformDraftAlive(panel)||!panel.job||panel.job.done||panel.job.id!==id)return;clearTimeout(panel.pollTimer);panel.pollTimer=null;if(panel.pollJobId!==id){panel.pollJobId=id;panel.pollFailures=0;}try{const job=await call('platform-drafts/job',{id});if(!platformDraftAlive(panel)||panel.job?.id!==id||panel.job.done)return;if(job.id!==id)throw Error('返回的任务状态与当前任务不一致');panel.pollFailures=0;platformDraftDrawJob(panel,job);platformDraftSchedule(panel);}catch(error){if(!platformDraftAlive(panel)||panel.job?.id!==id||panel.job.done)return;panel.pollFailures+=1;panel.status.textContent=panel.pollFailures<=5?'暂时无法读取任务状态，正在重新读取同一任务（'+panel.pollFailures+'/5）；后台可能仍在执行，请勿重复保存。':'暂时无法读取任务状态；后台可能仍在执行。请刷新本地状态，勿重复保存。'+error.message;panel.refresh.disabled=false;platformDraftButtons(panel);if(panel.pollFailures<=5)platformDraftSchedule(panel);}}
 function platformDraftProfiles(panel){const chosen=panel.profile.value,plan=panel.plans.find(row=>row.id===panel.plan.value);panel.profile.replaceChildren();let generated=0;for(const profile of panel.profiles.filter(row=>row.valid&&row.platform===plan?.platform)){const label=/^fanqie-[0-9a-f]{32}\.json$/i.test(profile.id)?'番茄本地配置 '+(++generated):profile.label;const option=platformDraftElement('option',label);option.value=profile.id;panel.profile.append(option);}if([...panel.profile.options].some(option=>option.value===chosen))panel.profile.value=chosen;panel.configNote.textContent=panel.profile.options.length?'可在上方自行配置番茄绑定；实际保存时仍会核对当前账号、作品和草稿状态。':'请先配置番茄账号与作品，生成正式稿清单；无需填写 JSON。七猫、起点尚未完成真实后台验收。';}
-async function platformDraftPreview(panel,prepared=false){if(panel.mode.value==='sync_existing'&&!prepared){if(!panel.plans.find(row=>row.id===panel.plan.value)?.chapters?.length)return;return platformDraftRefreshPlan(panel,true);}const request=++panel.request;panel.preview=null;panel.previewExpires=0;panel.job=null;clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);panel.progress.value=0;panel.progress.max=1;panel.progressLabel.textContent='本次已完整回读 0 / 0 章';panel.jobNote.textContent='';panel.previewBox.replaceChildren();panel.results.replaceChildren();platformDraftButtons(panel);const plan=panel.plans.find(row=>row.id===panel.plan.value);if(!plan){panel.status.textContent='尚无冻结的正式稿清单。请先在上方配置番茄账号与作品，选择已审查的正式章节并生成清单。';return;}panel.history.textContent=plan.draft_history?.unknown_chapters?'历史有 '+plan.draft_history.unknown_chapters+' 章结果未知，请先选择“只读对账”；不会自动重发。':plan.draft_history?.history_events_total?'历史记录仅代表当时观察，不能代替本次远端核对。':'';panel.status.textContent='正在核对本地正式稿与目标…';try{const packet=await call('platform-drafts/preview',{plan_id:plan.id,profile_id:panel.profile.value||null,reconcile_only:panel.mode.value==='reconcile_only',update_existing:panel.mode.value==='sync_existing',comparison_policy:panel.comparison.value,body_encoding:panel.encoding.value});if(!platformDraftAlive(panel)||request!==panel.request)return;if(packet.book_id!==panel.bookId||packet.plan_id!==panel.plan.value||packet.profile_id!==(panel.profile.value||null)||packet.mode!==panel.mode.value||(packet.comparison_policy||'strict')!==panel.comparison.value||(packet.body_encoding||'verbatim')!==panel.encoding.value)throw Error('目标已变化，请刷新本地状态。');panel.preview=packet;const expires=Number((packet.preview_token||packet.connect_token)?.split('.')[0]);panel.previewExpires=Number.isFinite(expires)?expires*1000:0;const preview=packet.preview,total=preview.chapters?.length||0;panel.progress.max=total||1;panel.progress.value=0;panel.progressLabel.textContent='本次已完整回读 0 / '+total+' 章';panel.previewBox.append(platformDraftElement('p','本地预览 · 尚未访问平台。来源为已审查并冻结的正式稿。'),platformDraftElement('p',(platformDraftNames[preview.platform]||'平台待核对')+' · 《'+(plan.book_title||currentBookInfo.title)+'》'),platformDraftElement('p','绑定账号：'+preview.account_id+'；目标作品：'+preview.remote_book_id));const list=platformDraftElement('ol');for(const chapter of preview.chapters||[])list.append(platformDraftElement('li','第'+chapter.chapter+'章 '+chapter.title+' · '+chapter.body_characters+' 字符'));panel.previewBox.append(list,platformDraftElement('p',panel.encoding.value==='markdown_paragraphs_v2'?'正文排版：去掉正文开头的分隔空段，段间空行转换为一次换段；段内文字和空格原样保留。':panel.encoding.value==='markdown_paragraphs_v1'?'正文排版：兼容旧规则，保留正文开头换行；段间空行转换为一次换段。':'正文排版：保留原始换行。'),platformDraftElement('p',panel.comparison.value==='fanqie_terminal_lf_v1'?'核对规则：允许正文末尾换行数量增加或减少；标题及其他内容逐字核对。':'核对规则：包括末尾换行在内逐字核对。'));platformDraftResults(panel,preview.results,true);panel.historyPlan=plan.id;panel.historyEvents=preview.history_events_total||0;platformDraftDrawHistory(panel,preview);if(panel.mode.value==='sync_existing')panel.previewBox.append(platformDraftElement('p','本次使用该范围的最新正式稿，核对后同步已有草稿的章名和完整正文；缺失的草稿会跳过，已发布章节会阻止更新。'));platformDraftRuleNote(panel,packet);panel.status.textContent=packet.can_start?'Chrome 已就绪，请核对目标后执行本批。':packet.can_connect?'已完成本地预览。点击下方按钮后将通过已登录的 Codex 自动连接现有 Chrome，再核对并执行本批；会使用当前账号的 Codex 额度。':[...(packet.blockers||[]),...(packet.automatic_connection?.reason?[packet.automatic_connection.reason]:[])].map(platformDraftErrorCode).join('；')||'暂不能执行，请由助手核对清单与配置。';if(panel.previewExpires>Date.now())panel.expiryTimer=setTimeout(()=>{if(platformDraftAlive(panel)&&request===panel.request){panel.preview=null;panel.status.textContent='本地预览已过期，请重新预览后再执行。';platformDraftButtons(panel);}},Math.max(1,panel.previewExpires-Date.now()));}catch(error){if(!platformDraftAlive(panel)||request!==panel.request)return;panel.preview=null;panel.status.textContent='本地预览未完成：'+error.message;}finally{if(platformDraftAlive(panel)&&request===panel.request)platformDraftButtons(panel);}}
+async function platformDraftPreview(panel,prepared=false){panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;const request=++panel.request;panel.preview=null;panel.previewExpires=0;panel.job=null;clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);panel.progress.value=0;panel.progress.max=1;panel.progressLabel.textContent='本次已完整回读 0 / 0 章';panel.jobNote.textContent='';panel.previewBox.replaceChildren();panel.results.replaceChildren();platformDraftHistoryRows(panel,[]);platformDraftButtons(panel);const plan=panel.plans.find(row=>row.id===panel.plan.value);if(!plan){panel.status.textContent='尚无冻结的正式稿清单。请先在上方配置番茄账号与作品，选择已审查的正式章节并生成清单。';return;}panel.history.textContent=plan.draft_history?.unknown_chapters?'历史有 '+plan.draft_history.unknown_chapters+' 章结果未知，请先选择“只读对账”；不会自动重发。':plan.draft_history?.history_events_total?'历史记录仅代表当时观察，不能代替本次远端核对。':'';panel.status.textContent='正在核对本地正式稿与目标…';try{const packet=await call('platform-drafts/preview',{plan_id:plan.id,profile_id:panel.profile.value||null,reconcile_only:panel.mode.value==='reconcile_only',sync_drafts:panel.mode.value==='sync_drafts',comparison_policy:panel.comparison.value,body_encoding:panel.encoding.value});if(!platformDraftAlive(panel)||request!==panel.request)return;if(packet.book_id!==panel.bookId||packet.plan_id!==panel.plan.value||packet.profile_id!==(panel.profile.value||null)||packet.mode!==panel.mode.value||(packet.comparison_policy||'strict')!==panel.comparison.value||(packet.body_encoding||'verbatim')!==panel.encoding.value)throw Error('目标已变化，请刷新本地状态。');panel.preview=packet;const expires=Number((packet.preview_token||packet.connect_token)?.split('.')[0]);panel.previewExpires=Number.isFinite(expires)?expires*1000:0;const preview=packet.preview,total=preview.chapters?.length||0;panel.progress.max=total||1;panel.progress.value=0;panel.progressLabel.textContent='本次已完整回读 0 / '+total+' 章';panel.previewBox.append(platformDraftElement('p','本地预览 · 尚未访问平台。来源为已审查并冻结的正式稿。'),platformDraftElement('p',(platformDraftNames[preview.platform]||'平台待核对')+' · 《'+(plan.book_title||currentBookInfo.title)+'》'),platformDraftElement('p','绑定账号：'+preview.account_id+'；目标作品：'+preview.remote_book_id));const list=platformDraftElement('ol');for(const chapter of preview.chapters||[])list.append(platformDraftElement('li','第'+chapter.chapter+'章 '+chapter.title+' · '+chapter.body_characters+' 字符'));panel.previewBox.append(list,platformDraftElement('p',panel.encoding.value===platformDraftRequiredEncoding?'正文排版：统一去掉全部空白行（包括首尾和仅含空格的行），每段只换行一次；正文文字和缩进保留，本地原稿不变。':panel.encoding.value==='markdown_paragraphs_v2'?'正文排版：去掉正文开头的分隔空段，段间空行转换为一次换段；段内文字和空格原样保留。':panel.encoding.value==='markdown_paragraphs_v1'?'正文排版：兼容旧规则，保留正文开头换行；段间空行转换为一次换段。':'正文排版：保留原始换行。'),platformDraftElement('p',panel.comparison.value==='fanqie_terminal_lf_v1'?'核对规则：允许正文末尾换行数量增加或减少；标题及其他内容逐字核对。':'核对规则：包括末尾换行在内逐字核对。'));platformDraftResults(panel,preview.results,true);panel.historyPlan=plan.id;panel.historyEvents=preview.history_events_total||0;platformDraftDrawHistory(panel,preview);if(panel.mode.value==='sync_drafts')panel.previewBox.append(platformDraftElement('p','本次使用该范围的最新正式稿，核对后将已有草稿的章名和完整正文更新为最新正式稿；缺失章节会新建草稿，内容一致则不重复写入。已发布章节会阻止同步。'));platformDraftRuleNote(panel,packet);panel.status.textContent=packet.can_start?'Chrome 已就绪，请核对目标后执行本批。':packet.can_connect?'已完成本地预览。点击下方按钮后将通过已登录的 Codex 自动连接现有 Chrome，再核对并执行本批；会使用当前账号的 Codex 额度。':[...(packet.blockers||[]),...(packet.automatic_connection?.reason?[packet.automatic_connection.reason]:[])].map(platformDraftErrorCode).join('；')||'暂不能执行，请由助手核对清单与配置。';if(panel.previewExpires>Date.now())panel.expiryTimer=setTimeout(()=>{if(platformDraftAlive(panel)&&request===panel.request){panel.preview=null;panel.status.textContent='本地预览已过期，请重新预览后再执行。';platformDraftButtons(panel);}},Math.max(1,panel.previewExpires-Date.now()));}catch(error){if(!platformDraftAlive(panel)||request!==panel.request)return;panel.preview=null;panel.status.textContent='本地预览未完成：'+error.message;}finally{if(platformDraftAlive(panel)&&request===panel.request)platformDraftButtons(panel);}}
 async function platformDraftCatalog(panel,selection=null){
  if(!platformDraftAlive(panel)||(panel.binding&&!selection))return;
- const request=++panel.catalogRequest;++panel.request;panel.preview=null;panel.previewExpires=0;panel.job=null;clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);panel.previewBox.replaceChildren();panel.results.replaceChildren();panel.history.textContent='';panel.jobNote.textContent='';panel.progress.value=0;panel.progress.max=1;panel.progressLabel.textContent='本次已完整回读 0 / 0 章';panel.loadingCatalog=true;panel.refresh.disabled=true;panel.status.textContent='正在读取本地清单与任务状态…';platformDraftButtons(panel);const selected=selection?.plan_id||panel.plan.value;
+ const request=++panel.catalogRequest;++panel.request;panel.preview=null;panel.previewExpires=0;panel.job=null;clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);panel.previewBox.replaceChildren();panel.results.replaceChildren();platformDraftHistoryRows(panel,[]);panel.history.textContent='';panel.jobNote.textContent='';panel.progress.value=0;panel.progress.max=1;panel.progressLabel.textContent='本次已完整回读 0 / 0 章';panel.loadingCatalog=true;panel.refresh.disabled=true;panel.status.textContent='正在读取本地清单与任务状态…';platformDraftButtons(panel);const selected=selection?.plan_id||panel.plan.value;
  try{let offset=0,bookId=null,metadata=null;const plans=[],jobs=new Map();let profiles=[];const seen=new Set();
   do{if(seen.has(offset))throw Error('清单分页没有前进，请重新读取。');seen.add(offset);const packet=await call('platform-drafts/catalog',{offset,limit:50});if(!platformDraftAlive(panel)||request!==panel.catalogRequest)return;if(bookId&&bookId!==packet.book_id)throw Error('作品身份已变化，请关闭后重新打开工作台。');if(metadata&&packet.revision!==metadata.revision)throw Error('正式稿状态已变化，请重新读取本地清单。');bookId=packet.book_id;metadata=metadata||packet;plans.push(...packet.plans);profiles=packet.profiles;for(const job of packet.jobs||[])jobs.set(job.id,job);const next=packet.next_offset;if(next!==null&&(!Number.isInteger(next)||next<=offset))throw Error('清单分页无效，请重新读取。');offset=next;}while(offset!==null);
   panel.loadingCatalog=false;panel.bookId=bookId;panel.revision=metadata.revision;panel.formalFirst=metadata.formal_first;panel.formalLast=metadata.formal_last;panel.formalCount=metadata.formal_count||0;panel.maxBatch=metadata.max_batch||1000;panel.plans=plans;panel.profiles=profiles;panel.jobs=[...jobs.values()];platformDraftBindingRange(panel);panel.plan.replaceChildren();for(const plan of plans){const option=platformDraftElement('option',(platformDraftNames[plan.platform]||'平台待核对')+' · '+platformDraftChapterRange(plan.chapters)+' · 《'+(plan.book_title||currentBookInfo.title)+'》'+(plan.status!=='prepared'?' · 清单已失效':''));option.value=plan.id;panel.plan.append(option);}if(plans.some(row=>row.id===selected))panel.plan.value=selected;else if(plans.length)panel.plan.value=(plans.find(row=>row.status==='prepared')||plans[0]).id;platformDraftProfiles(panel);
-  if(selection){if(!plans.some(row=>row.id===selection.plan_id))throw Error('新清单尚未读到，请刷新本地状态。');panel.plan.value=selection.plan_id;panel.mode.value=selection.mode==='sync_existing'?'sync_existing':'save_draft';platformDraftProfiles(panel);if(![...panel.profile.options].some(option=>option.value===selection.profile_id))throw Error('新绑定页面配置尚未读到，请刷新本地状态。');panel.profile.value=selection.profile_id;if(selection.profile_sha256&&panel.profiles.find(row=>row.id===selection.profile_id)?.sha256!==selection.profile_sha256)throw Error('页面配置在生成后已变化，请重新核对，未自动预览。');const selectedPlan=plans.find(row=>row.id===selection.plan_id);if(selection.target&&(['platform','account_id','remote_book_id'].some(key=>selectedPlan[key]!==selection.target[key])||JSON.stringify(selectedPlan.chapters)!==JSON.stringify(selection.chapters)))throw Error('新批次的目标或章节无法核对，未自动预览。');if(await platformDraftRestoreRules(panel)===null)return;if(selection.mode==='sync_existing'&&platformDraftRuleValues(selection.rules,selectedPlan.platform)){panel.encoding.value=selection.rules.body_encoding;panel.comparison.value=selection.rules.comparison_policy;}await platformDraftPreview(panel,true);}
-  else{const job=panel.jobs.filter(row=>!row.done).at(-1);if(job){if(!job.done&&plans.some(row=>row.id===job.plan_id)){panel.plan.value=job.plan_id;platformDraftProfiles(panel);if([...panel.profile.options].some(option=>option.value===job.profile_id))panel.profile.value=job.profile_id;const remembered=await platformDraftRestoreRules(panel);if(remembered===null)return;const activeRules={schema:1,comparison_policy:job.comparison_policy||'strict',body_encoding:job.body_encoding||'verbatim'},scope=platformDraftRuleScope(panel),profile=panel.profiles.find(row=>row.id===panel.profile.value);if(!remembered&&job.profile_sha256===profile?.sha256&&platformDraftRuleValues(activeRules,scope?.platform)){panel.comparison.value=activeRules.comparison_policy;panel.encoding.value=activeRules.body_encoding;}panel.mode.value=job.mode||'save_draft';}else if(await platformDraftRestoreRules(panel)===null)return;platformDraftDrawJob(panel,job,job.done);platformDraftSchedule(panel);if(job.done)panel.status.textContent+='。可重新预览以核对当前正式稿。';}else{if(await platformDraftRestoreRules(panel)===null)return;await platformDraftPreview(panel);}}
+  if(selection){if(!plans.some(row=>row.id===selection.plan_id))throw Error('新清单尚未读到，请刷新本地状态。');panel.plan.value=selection.plan_id;panel.mode.value=selection.mode==='reconcile_only'?'reconcile_only':'sync_drafts';platformDraftProfiles(panel);if(![...panel.profile.options].some(option=>option.value===selection.profile_id))throw Error('新绑定页面配置尚未读到，请刷新本地状态。');panel.profile.value=selection.profile_id;if(selection.profile_sha256&&panel.profiles.find(row=>row.id===selection.profile_id)?.sha256!==selection.profile_sha256)throw Error('页面配置在生成后已变化，请重新核对，未自动预览。');const selectedPlan=plans.find(row=>row.id===selection.plan_id);if(selection.target&&(['platform','account_id','remote_book_id'].some(key=>selectedPlan[key]!==selection.target[key])||JSON.stringify(selectedPlan.chapters)!==JSON.stringify(selection.chapters)))throw Error('新批次的目标或章节无法核对，未自动预览。');if(await platformDraftRestoreRules(panel)===null)return;if(selection.mode==='sync_drafts'&&platformDraftRuleValues(selection.rules,selectedPlan.platform)){panel.encoding.value=selection.rules.body_encoding;panel.comparison.value='strict';}await platformDraftPreview(panel,true);}
+  else{const job=panel.jobs.filter(row=>!row.done).at(-1);if(job){if(!job.done&&plans.some(row=>row.id===job.plan_id)){panel.plan.value=job.plan_id;platformDraftProfiles(panel);if([...panel.profile.options].some(option=>option.value===job.profile_id))panel.profile.value=job.profile_id;const remembered=await platformDraftRestoreRules(panel);if(remembered===null)return;const activeRules={schema:1,comparison_policy:job.comparison_policy||'strict',body_encoding:job.body_encoding||'verbatim'},scope=platformDraftRuleScope(panel),profile=panel.profiles.find(row=>row.id===panel.profile.value);if(!remembered&&job.profile_sha256===profile?.sha256&&platformDraftRuleValues(activeRules,scope?.platform)){panel.comparison.value=activeRules.comparison_policy;panel.encoding.value=activeRules.body_encoding;}panel.mode.value=job.mode||'sync_drafts';}else if(await platformDraftRestoreRules(panel)===null)return;platformDraftDrawJob(panel,job,job.done);platformDraftSchedule(panel);if(job.done)panel.status.textContent+='。可重新预览以核对当前正式稿。';}else{if(await platformDraftRestoreRules(panel)===null)return;await platformDraftPreview(panel);}}
  }catch(error){if(!platformDraftAlive(panel)||request!==panel.catalogRequest)return;panel.status.textContent='读取清单失败：'+error.message;panel.preview=null;}
  finally{if(platformDraftAlive(panel)&&request===panel.catalogRequest){panel.loadingCatalog=false;panel.refresh.disabled=false;platformDraftBindingRange(panel);platformDraftFormalRange(panel);platformDraftButtons(panel);}}
 }
-async function platformDraftStart(panel){if(!platformDraftAlive(panel)||!platformDraftCanStart(panel))return;const preview=panel.preview;panel.starting=true;panel.preview=null;++panel.request;clearTimeout(panel.expiryTimer);platformDraftButtons(panel);panel.status.textContent=panel.mode.value==='sync_existing'?'正在核对并同步已有草稿…':panel.mode.value==='reconcile_only'?'正在启动只读对账…':'正在启动本批草稿保存…';try{const job=await call('platform-drafts/start',{plan_id:preview.plan_id,profile_id:preview.profile_id,profile_sha256:preview.profile_sha256,preview_token:preview.preview_token||preview.connect_token,execute:true,auto_connect:preview.can_connect===true&&preview.can_start!==true,reconcile_only:preview.mode==='reconcile_only',update_existing:preview.mode==='sync_existing',comparison_policy:preview.comparison_policy||'strict',body_encoding:preview.body_encoding||'verbatim'});if(!platformDraftAlive(panel))return;if(job.book_id!==panel.bookId||job.plan_id!==preview.plan_id||(job.comparison_policy||'strict')!==(preview.comparison_policy||'strict')||(job.body_encoding||'verbatim')!==(preview.body_encoding||'verbatim'))throw Error('任务目标无法确认，请刷新本地状态，勿重复保存。');platformDraftDrawJob(panel,job);platformDraftSchedule(panel);}catch(error){if(!platformDraftAlive(panel))return;panel.status.textContent='未能确认任务启动：'+error.message+'。请刷新本地状态核对；不会自动重试。';}finally{if(platformDraftAlive(panel)){panel.starting=false;platformDraftButtons(panel);}}}
+async function platformDraftStart(panel){if(!platformDraftAlive(panel)||!platformDraftCanStart(panel))return;const preview=panel.preview;panel.starting=true;panel.preview=null;++panel.request;clearTimeout(panel.expiryTimer);platformDraftButtons(panel);panel.status.textContent=panel.mode.value==='sync_drafts'?'正在核对并同步已有草稿…':panel.mode.value==='reconcile_only'?'正在启动只读对账…':'正在启动本批草稿保存…';try{const job=await call('platform-drafts/start',{plan_id:preview.plan_id,profile_id:preview.profile_id,profile_sha256:preview.profile_sha256,preview_token:preview.preview_token||preview.connect_token,execute:true,auto_connect:preview.can_connect===true&&preview.can_start!==true,reconcile_only:preview.mode==='reconcile_only',sync_drafts:preview.mode==='sync_drafts',comparison_policy:preview.comparison_policy||'strict',body_encoding:preview.body_encoding||'verbatim'});if(!platformDraftAlive(panel))return;if(job.book_id!==panel.bookId||job.plan_id!==preview.plan_id||(job.comparison_policy||'strict')!==(preview.comparison_policy||'strict')||(job.body_encoding||'verbatim')!==(preview.body_encoding||'verbatim'))throw Error('任务目标无法确认，请刷新本地状态，勿重复保存。');platformDraftDrawJob(panel,job);platformDraftSchedule(panel);}catch(error){if(!platformDraftAlive(panel))return;panel.status.textContent='未能确认任务启动：'+error.message+'。请刷新本地状态核对；不会自动重试。';}finally{if(platformDraftAlive(panel)){panel.starting=false;platformDraftButtons(panel);}}}
 function platformDraftBindingRange(panel){
  const ready=Number.isInteger(panel.formalFirst)&&Number.isInteger(panel.formalLast)&&panel.formalCount>0;
  panel.bindRange.textContent=ready?'本书正式稿：第'+panel.formalFirst+'—'+panel.formalLast+'章，共'+panel.formalCount+'章；每批最多'+panel.maxBatch+'章。生成时仍会核对正式稿与审查状态。':'本书暂无可生成平台清单的正式章节。';
@@ -3158,17 +4080,81 @@ async function platformDraftBind(panel){
  }catch(error){if(platformDraftAlive(panel)&&request===panel.bindingRequest)panel.bindNote.textContent='本地绑定未完成：'+error.message+'。可刷新本地状态核对；未启动平台保存。';}
  finally{if(platformDraftAlive(panel)&&request===panel.bindingRequest){panel.binding=false;platformDraftButtons(panel);}}
 }
-async function platformDraftOpen(){platformDraftAvailability();if($('platform-drafts-open').disabled)return;if(platformDraftPanel?.dialog.open){platformDraftPanel.dialog.focus();await platformDraftFormalState(platformDraftPanel);return;}const {dialog,content}=editorDialog('保存平台草稿');dialog.classList.add('platform-drafts-dialog');const panel={dialog,content,plans:[],profiles:[],jobs:[],preview:null,previewExpires:0,starting:false,binding:false,bindingDirty:false,bindingRequest:0,bindingDefaultsSet:false,request:0,catalogRequest:0,pollTimer:null,pollJobId:null,pollFailures:0,expiryTimer:null};platformDraftPanel=panel;++platformDraftSequence;const help=platformDraftElement('p','仅使用已审查的正式稿与冻结清单。当前候选和编辑缓冲不会随本操作上传；不会提交审核或发布。');content.append(help);const edits=platformDraftElement('p');edits.textContent=[...docs.values()].some(row=>dirty(row)||row.needs_recovery)?'当前仍有未保存编辑，文字保留在原编辑器中；此次平台操作继续使用正式稿。':'';content.append(edits);platformDraftBindingFields(panel);const field=(name,id)=>{const label=platformDraftElement('label',name),select=platformDraftElement('select',undefined,id);label.append(select);content.append(label);return select;};panel.plan=field('已生成批次','platform-draft-plan');platformDraftRefreshFields(panel);panel.profile=field('平台页面配置','platform-draft-profile');panel.configNote=platformDraftElement('p');content.append(panel.configNote);panel.mode=field('本次操作','platform-draft-mode');for(const [value,label]of [['save_draft','保存平台草稿'],['sync_existing','同步更新已有草稿（章名和正文）'],['reconcile_only','只读对账（不创建草稿）']]){const option=platformDraftElement('option',label);option.value=value;panel.mode.append(option);}panel.encoding=field('正文排版','platform-draft-encoding');for(const [value,label]of [['verbatim','保留原始换行'],['markdown_paragraphs_v2','按段落排版（推荐）：去掉开头空段'],['markdown_paragraphs_v1','兼容旧排版：保留开头换行']]){const option=platformDraftElement('option',label);option.value=value;panel.encoding.append(option);}panel.comparison=field('正文核对规则','platform-draft-comparison');for(const [value,label]of [['strict','包括末尾换行在内逐字核对'],['fanqie_terminal_lf_v1','允许末尾换行数量增加或减少，其他内容逐字核对']]){const option=platformDraftElement('option',label);option.value=value;panel.comparison.append(option);}panel.rulesNote=platformDraftElement('p',undefined,'platform-draft-rules-note');panel.rulesNote.setAttribute('role','status');content.append(panel.rulesNote);panel.history=platformDraftElement('p',undefined,'platform-draft-history');panel.previewBox=platformDraftElement('div',undefined,'platform-draft-preview');panel.status=platformDraftElement('p','正在读取…','platform-draft-status');panel.status.setAttribute('role','status');panel.progressLabel=platformDraftElement('p','本次已完整回读 0 / 0 章');panel.progress=platformDraftElement('progress');panel.progress.max=1;panel.progress.value=0;panel.progress.setAttribute('aria-label','本次完整回读章节进度');panel.results=platformDraftElement('ul',undefined,'platform-draft-results');panel.jobNote=platformDraftElement('p');panel.permissionHelp=platformDraftPermissionHelp();content.append(panel.history,panel.previewBox,panel.status,panel.permissionHelp,panel.progressLabel,panel.progress,panel.results,panel.jobNote);const actions=platformDraftElement('div');actions.className='platform-draft-actions';panel.recheck=platformDraftElement('button','重新预览','platform-draft-recheck');panel.refresh=platformDraftElement('button','刷新本地状态','platform-draft-refresh');panel.run=platformDraftElement('button','保存到平台草稿','platform-draft-start');panel.run.className='primary';actions.append(panel.recheck,panel.refresh,panel.run);content.append(actions);panel.plan.onchange=async()=>{platformDraftProfiles(panel);platformDraftFormalRange(panel,true);if(await platformDraftRestoreRules(panel)===null)return;return platformDraftPreview(panel);};panel.profile.onchange=async()=>{if(await platformDraftRestoreRules(panel)===null)return;return platformDraftPreview(panel);};panel.mode.onchange=()=>{platformDraftFormalRange(panel);return platformDraftPreview(panel);};panel.comparison.onchange=()=>platformDraftRememberRules(panel);panel.encoding.onchange=()=>platformDraftRememberRules(panel);panel.recheck.onclick=()=>platformDraftPreview(panel);panel.refresh.onclick=()=>platformDraftCatalog(panel);panel.run.onclick=()=>platformDraftStart(panel);panel.formalFocus=()=>platformDraftFormalState(panel);if(typeof window!=='undefined'&&typeof window.addEventListener==='function')window.addEventListener('focus',panel.formalFocus);dialog.addEventListener('close',()=>{clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);clearTimeout(panel.formalTimer);panel.formalRequest=(panel.formalRequest||0)+1;panel.refreshPlanRequest=(panel.refreshPlanRequest||0)+1;if(typeof window!=='undefined'&&typeof window.removeEventListener==='function')window.removeEventListener('focus',panel.formalFocus);++panel.request;++panel.catalogRequest;++panel.bindingRequest;panel.rulesRequest=(panel.rulesRequest||0)+1;if(platformDraftPanel===panel)platformDraftPanel=null;});platformDraftButtons(panel);await platformDraftCatalog(panel);await platformDraftFormalState(panel);platformDraftFormalSchedule(panel);}
+async function platformDraftOpen(){platformDraftAvailability();if($('platform-drafts-open').disabled)return;if(platformDraftPanel?.dialog.open){platformDraftPanel.dialog.focus();await platformDraftFormalState(platformDraftPanel);return;}const {dialog,content}=editorDialog('保存平台草稿');dialog.classList.add('platform-drafts-dialog');const panel={dialog,content,plans:[],profiles:[],jobs:[],preview:null,previewExpires:0,starting:false,binding:false,bindingDirty:false,bindingRequest:0,bindingDefaultsSet:false,request:0,catalogRequest:0,pollTimer:null,pollJobId:null,pollFailures:0,expiryTimer:null};platformDraftPanel=panel;++platformDraftSequence;const help=platformDraftElement('p','仅使用已审查的正式稿与冻结清单。当前候选和编辑缓冲不会随本操作上传；不会提交审核或发布。');content.append(help);const edits=platformDraftElement('p');edits.textContent=[...docs.values()].some(row=>dirty(row)||row.needs_recovery)?'当前仍有未保存编辑，文字保留在原编辑器中；此次平台操作继续使用正式稿。':'';content.append(edits);platformDraftBindingFields(panel);const field=(name,id)=>{const label=platformDraftElement('label',name),select=platformDraftElement('select',undefined,id);label.append(select);content.append(label);return select;};panel.plan=field('已生成批次','platform-draft-plan');platformDraftRefreshFields(panel);panel.profile=field('平台页面配置','platform-draft-profile');panel.configNote=platformDraftElement('p');content.append(panel.configNote);panel.mode=field('本次操作','platform-draft-mode');for(const [value,label]of [['sync_drafts','同步草稿（更新已有，补齐缺失）'],['reconcile_only','只读核对（不修改草稿）']]){const option=platformDraftElement('option',label);option.value=value;panel.mode.append(option);}panel.encoding=platformDraftElement('input',undefined,'platform-draft-encoding');panel.encoding.type='hidden';panel.encoding.value=platformDraftRequiredEncoding;content.append(panel.encoding,platformDraftElement('p','平台排版：统一去掉空白行，保留段落换行、文字和缩进。本地原稿不变。','platform-draft-format-note'));panel.comparison=platformDraftElement('input',undefined,'platform-draft-comparison');panel.comparison.type='hidden';panel.comparison.value='strict';content.append(panel.comparison);panel.rulesNote=platformDraftElement('p',undefined,'platform-draft-rules-note');panel.rulesNote.setAttribute('role','status');content.append(panel.rulesNote);panel.history=platformDraftElement('p',undefined,'platform-draft-history');panel.previewBox=platformDraftElement('div',undefined,'platform-draft-preview');panel.status=platformDraftElement('p','正在读取…','platform-draft-status');panel.status.setAttribute('role','status');panel.progressLabel=platformDraftElement('p','本次已完整回读 0 / 0 章');panel.progress=platformDraftElement('progress');panel.progress.max=1;panel.progress.value=0;panel.progress.setAttribute('aria-label','本次完整回读章节进度');panel.results=platformDraftElement('ul',undefined,'platform-draft-results');panel.historyRows=[];panel.historyDetails=platformDraftElement('details',undefined,'platform-draft-history-details');panel.historyDetails.hidden=true;panel.historySummary=platformDraftElement('summary','历史核对记录');panel.historyResults=platformDraftElement('ul',undefined,'platform-draft-history-results');panel.historyDetails.append(panel.historySummary,panel.history,panel.historyResults);panel.jobNote=platformDraftElement('p');panel.permissionHelp=platformDraftPermissionHelp();content.append(panel.previewBox,platformDraftElement('h3','本次同步状态'),panel.status,panel.permissionHelp,panel.progressLabel,panel.progress,panel.results,panel.historyDetails,panel.jobNote);const actions=platformDraftElement('div');actions.className='platform-draft-actions';panel.recheck=platformDraftElement('button','重新预览','platform-draft-recheck');panel.refresh=platformDraftElement('button','刷新本地状态','platform-draft-refresh');panel.run=platformDraftElement('button','保存到平台草稿','platform-draft-start');panel.run.className='primary';actions.append(panel.recheck,panel.refresh,panel.run);content.append(actions);panel.plan.onchange=async()=>{platformDraftProfiles(panel);platformDraftFormalRange(panel,true);if(await platformDraftRestoreRules(panel)===null)return;return platformDraftPreview(panel);};panel.profile.onchange=async()=>{if(await platformDraftRestoreRules(panel)===null)return;return platformDraftPreview(panel);};panel.mode.onchange=()=>{platformDraftFormalRange(panel);return platformDraftPreview(panel);};panel.comparison.onchange=()=>platformDraftRememberRules(panel);panel.encoding.onchange=()=>platformDraftRememberRules(panel);panel.recheck.onclick=()=>panel.mode.value==='sync_drafts'?platformDraftRefreshPlan(panel,true):platformDraftPreview(panel);panel.refresh.onclick=()=>platformDraftCatalog(panel);panel.run.onclick=()=>platformDraftStart(panel);panel.formalFocus=()=>platformDraftFormalState(panel);if(typeof window!=='undefined'&&typeof window.addEventListener==='function')window.addEventListener('focus',panel.formalFocus);dialog.addEventListener('close',()=>{clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);clearTimeout(panel.formalTimer);panel.formalRequest=(panel.formalRequest||0)+1;panel.refreshPlanRequest=(panel.refreshPlanRequest||0)+1;if(typeof window!=='undefined'&&typeof window.removeEventListener==='function')window.removeEventListener('focus',panel.formalFocus);++panel.request;++panel.catalogRequest;++panel.bindingRequest;panel.rulesRequest=(panel.rulesRequest||0)+1;if(platformDraftPanel===panel)platformDraftPanel=null;});platformDraftButtons(panel);await platformDraftCatalog(panel);await platformDraftFormalState(panel);platformDraftFormalSchedule(panel);}
 $('platform-drafts-open').onclick=platformDraftOpen;
 platformDraftAvailability();
 '''
 
-def _editor_page(packet, reading, token):
+def _editor_creator_script():
+    return r'''
+let creatorResume=null,creatorResumeLoading=null,creatorResumeApplied=false,creatorStateTimer;
+function creatorSnapshot(){
+ const d=docs.get(active);if(!d||d.external||d.image||!d.sha256||searchPreview)return null;
+ rememberView(d);const mode=d.editing?'editing':'reading',p=d.positions?.[mode]||{};
+ return {document_id:d.id,document_sha256:d.sha256,mode,
+  cursor:{start:p.start||0,end:p.end||0,direction:p.direction||'none'},
+  scroll:{main:p.main||0,editor:p.editor||0},buffer_dirty:!!(dirty(d)||d.needs_recovery||d.resumeNeedsRecovery)};
+}
+function notifyCreatorState(){
+ if(typeof editorPresence!=='undefined')editorPresence.changed();
+ clearTimeout(creatorStateTimer);creatorStateTimer=setTimeout(()=>{if(!document.hidden)creatorResume?.schedule();},0);
+}
+function setupCreatorWorkspace(){
+ const status=$('resume-status'),presenceStatus=$('presence-status');
+ creatorResume=createEditorResume({bookId:()=>__CREATOR_BOOK_ID__,explicitHash:()=>location.hash,call,snapshot:creatorSnapshot,
+  open:async(state,guard)=>openDoc(state.document_id,'',{guard,expectedSha:state.document_sha256}),
+  restore:(state,guard)=>{
+   const d=docs.get(active);
+   if(!guard()||!d||d.id!==state.document_id||d.sha256!==state.document_sha256||dirty(d)||d.needs_recovery||d.saving)return false;
+   d.editing=state.mode==='editing'&&!!d.editable;d.resumeNeedsRecovery=state.buffer_dirty===true;show(d);
+   d.positions=d.positions||{};d.positions[d.editing?'editing':'reading']={
+    start:state.cursor.start,end:state.cursor.end,direction:state.cursor.direction,
+    main:state.scroll.main,editor:state.scroll.editor};
+   restoreView(d);
+   if(state.buffer_dirty){status.hidden=false;status.textContent='上次关闭前有未保存修改。已定位原稿，请到恢复中心核对恢复副本。';}
+   return true;
+  },
+  onStatus:packet=>{
+   if(['error','changed','missing','invalid'].includes(packet.status)){
+    status.hidden=false;status.textContent=packet.note||'上次编辑位置暂不可用，可从目录打开文稿。';
+   }else if(packet.status==='saved'&&!packet.state?.buffer_dirty){status.hidden=true;status.textContent='';}
+  }});
+ creatorResumeLoading=creatorResume.load();
+ $('resume-remember').onclick=async()=>{
+  const id=active,sequence=openSequence,packet=await creatorResume.load();
+  if(active!==id||openSequence!==sequence||['error','unsupported'].includes(packet.status))return;
+  if(!creatorResume.schedule()){note('当前文件没有可记住的编辑位置。');return;}
+  if(await creatorResume.flush())note('已记住当前编辑位置。');
+ };
+ const interacted=event=>{if(event.isTrusted)creatorResume.markUserInteraction();};
+ document.addEventListener('pointerdown',interacted,{capture:true});
+ document.addEventListener('keydown',interacted,{capture:true});
+ for(const event of ['input','select','keyup','click'])$('text').addEventListener(event,()=>creatorResume.schedule());
+ $('text').addEventListener('scroll',()=>creatorResume.schedule(),{passive:true});
+ document.querySelector('main').addEventListener('scroll',()=>creatorResume.schedule(),{passive:true});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){creatorResume.schedule();void creatorResume.flush();}});
+ window.addEventListener('pagehide',()=>{creatorResume.schedule();void creatorResume.flush();});
+ window.addEventListener('story-editor-presence-status',event=>{
+  const {summary,page_id}=event.detail||{};
+  if(!summary){presenceStatus.hidden=false;presenceStatus.textContent='窗口保存状态尚未同步，请保留本页。';return;}
+  const others=summary.pages.filter(page=>page.page_id!==page_id&&page.state!=='closed');
+  const pending=others.filter(page=>page.state==='pending'),unknown=others.filter(page=>page.state==='unknown');
+  const labels=[];if(pending.length)labels.push(pending.length+' 个其他窗口有待保存内容');
+  if(unknown.length)labels.push(unknown.length+' 个窗口状态待确认');
+  presenceStatus.textContent=labels.join('；');presenceStatus.hidden=!labels.length;
+  presenceStatus.title=others.flatMap(page=>page.buffers.filter(d=>d.dirty||d.saving||d.recovering||d.needs_recovery).map(d=>d.title)).join('\n');
+ });
+ editorPresence.ready();
+}
+'''
+
+
+def _editor_page(packet, reading, token, page_config=None):
     # The editor loads one document at a time; author files are never executable HTML.
     script = r"""const TOKEN=__TOKEN__, LIMIT=__LIMIT__;
 const $=id=>document.getElementById(id), docs=new Map();let active=null,offset=0,loading=false,reloadPending=false,openSequence=0,reloading=false,queryTimer,pendingFocus=false;
 const note=text=>{$('message').textContent=text;$('message').hidden=!text||text.startsWith('已打开：');};
-async function call(action,data={}){const response=await fetch(location.pathname+'api/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(data)});const value=await response.json();if(!response.ok)throw Error((value.message||'请求失败')+(value.details?.path?' 文件：'+value.details.path:'')+(value.details?.incomplete_path?' 暂存：'+value.details.incomplete_path:''));return value;}
+async function call(action,data={}){const response=await fetch(location.pathname+'api/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(data)});const value=await response.json();if(!response.ok){const error=Error((value.message||'请求失败')+(value.details?.path?' 文件：'+value.details.path:'')+(value.details?.incomplete_path?' 暂存：'+value.details.incomplete_path:''));error.status=response.status;error.code=value.error;error.details=value.details;throw error;}if((action==='save'||action==='recover')&&typeof catalog==='function')catalog.materialCursor=null;return value;}
 let currentCatalog=null,viewMode='chapters',metricTimer,metricSequence=0,searchSequence=0,fullSearchOffset=0;
 const readableMethod={visible_nonspace_v1:'非空白可见字符（旧口径）',visible_nonspace_v2:'独立可见字符（含标点）',letters_numbers_v1:'汉字、字母与数字',han_v1:'汉字'};
 __BOOK_DISPLAY__
@@ -3180,7 +4166,7 @@ function simpleCount(text){return [...text].filter(c=>!/[\s\p{Cc}\p{Cf}]/u.test(
 function displayTitle(d){
  const title=d.title||'未命名材料';
  if(!(d.path||'').startsWith('.story/drafts/workbench/'))return title;
- return title.replace(/_候选_[0-9a-f]{12}(?:_\d+)?$/i,'').replace(/_[0-9a-f]{8}-[0-9a-f-]{27,}$/i,'');
+ return title.replace(/_(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f-]{27,})$/i,'').replace(/(?:_候选_[0-9a-f]{12}(?:_\d+)?)+$/i,'');
 }
 function versionLabel(d){return d.category==='自动恢复'||(d.path||'').includes('/自动恢复/')?'恢复副本':d.kind==='candidate'||d.category==='候选与草稿'?'候选':d.kind==='formal'||d.category==='正式正文'?'正式稿':d.kind==='plan'||d.category==='计划'?'章计划':d.external?'只读材料':'材料';}
 function documentIdentity(d){
@@ -3191,8 +4177,21 @@ function documentIdentity(d){
  if(d.kind==='formal'||/^formal:[1-9]\d*$/.test(d.id||''))return {label:changed?'来源：正式正文':'正式正文',kind:'formal',note:changed?'当前文字尚未保存；保存会生成候选稿。':'已登记的正式正文。',changed};
  if(d.kind==='plan'||/^plan:[1-9]\d*$/.test(d.id||''))return {label:'章计划',kind:'plan',note:'已保存的章计划，尚非正文。',changed};
  if(d.category==='自动恢复'||path.includes('/自动恢复/'))return {label:d.content_kind==='material'?'材料恢复稿':'自动恢复稿',kind:'recovery',note:'供找回文字；正式采用前仍须核对和审查。',changed};
- if(d.kind==='candidate'||d.category==='候选与草稿')return {label:d.content_kind==='material'?'材料候选稿':'候选稿',kind:'candidate',note:'候选文件；采用关系须另核对。',changed};
+ if(d.kind==='candidate'||d.category==='候选与草稿')return {label:d.checkpoint===true?(d.content_kind==='material'?'保留材料版本':'保留版本'):d.content_kind==='material'?'材料候选稿':'候选稿',kind:'candidate',note:d.checkpoint===true?'主动保留的候选版本；继续修改会生成工作稿，不改变正式采用。':'候选文件；采用关系须另核对。',changed};
  return {label:d.image?'图片材料':'创作材料',kind:'material',note:'材料文件，不据文件名或目录认定为正式正文。',changed};
+}
+function documentSaveState(d){
+ if(!d)return {kind:'empty',label:'',detail:'',failed:false};
+ const changed=!!(d.editable&&d.value!==undefined&&d.value!==d.text),identity=documentIdentity(d),pending=changed||d.needs_recovery;
+ if(d.saving)return {kind:'saving',label:'保存中'+(d.savingText!==undefined&&d.value!==d.savingText?' · 新输入仍未保存':''),detail:'正在保存点击时的文字；期间新增输入会继续保留。',failed:false};
+ if(d.saveError&&(pending||identity.kind==='recovery'||d.pendingSaveReadback||d.failedSaveOptions?.newVersion))return {kind:'error',label:d.saveResultPending?'候选已写入 · 回读未确认':'保存失败 · 可重试或下载',detail:d.saveError,failed:true,retry:d.saveResultPending?'readback':'save'};
+ if(d.recovering&&pending)return {kind:'recovering',label:'正在保存恢复副本 · 尚未保存候选',detail:'恢复副本完成后仍需手动保存候选；正式稿不会改变。',failed:false};
+ if(d.recoveryError&&pending)return {kind:'error',label:'恢复副本保存失败 · 当前修改未保存',detail:d.recoveryError,failed:true,retry:'recover'};
+ if(d.needs_recovery)return {kind:'pending',label:'保存结果待核对 · 可恢复为新候选',detail:'完整文字已保留；原保存记录尚未确认完成。',failed:false};
+ if(changed)return d.recovered===d.value?{kind:'recovered',label:'恢复副本已保存 · 尚未保存候选',detail:'当前文字已写入恢复副本，尚未手动保存为候选。',failed:false}:{kind:'unsaved',label:'未保存',detail:'当前修改尚未保存为候选，完整恢复副本也尚未确认写入。',failed:false};
+ if(identity.kind==='recovery')return {kind:'recovered',label:'恢复副本已保存 · 尚未保存候选',detail:'这是磁盘上的恢复文字；保存后生成新候选，正式稿不会改变。',failed:false};
+ if(identity.kind==='candidate')return {kind:'saved',label:d.checkpoint===true?'已保存候选 · 保留版本':'已保存候选',detail:'当前候选文字已保存，尚不表示正式采用。'+(d.modified?' 文件时间：'+d.modified:''),failed:false};
+ return {kind:'saved',label:identity.kind==='formal'?'正式稿已保存':d.editable?'文件已保存':'只读材料',detail:d.status||identity.note,failed:false};
 }
 function documentLocation(d){return (d.path||'').replace(/\\/g,'/').replace(/^\.story\/drafts\/workbench\//,'候选保存/').replace(/^\.story\/drafts\//,'草稿/').replace(/^\.story\/analysis\//,'作品分析/');}
 function filePurpose(d){
@@ -3206,18 +4205,25 @@ function filePurpose(d){
 function downloadName(d){return displayTitle(d)+(d.editable&&d.value!==undefined&&d.value!==d.text?'-未保存候选':versionLabel(d)==='候选'?'-候选':versionLabel(d)==='恢复副本'?'-恢复副本':'')+'.txt';}
 function chapterChoices(c,d){
  const n=chapterNumber(d);if(!n)return [];
- const group=c?.workspace?.groups.find(g=>g.chapter===n),rows=[...(group?.items||[])];
+ const group=c?.workspace?.groups?.find(g=>g.chapter===n),rows=[...(group?.items||[])];
  for(const r of c?.related_files||c?.files||[])if(!r.external&&Number(r.chapter||r.path?.split('/').pop().match(/^第(\d+)章(?:\s|_|\.)/)?.[1])===n)rows.push(r);
- rows.push(d);const unique=[...new Map(rows.map(r=>[r.id,r])).values()];
- return unique.map(r=>{const identity=documentIdentity(r),purpose=identity.kind==='material'?filePurpose(r):identity.label;return {...r,label:purpose+' · '+displayTitle({...r,title:r.title==='正式正文'?(group?.title||r.path?.split('/').pop()?.replace(/\.(md|txt)$/i,'')||r.title):r.title})+(r.modified?' · '+new Date(r.modified).toLocaleString():''),manuscript:r.content_kind!=='material'&&['formal','candidate','recovery','pending'].includes(identity.kind)};});
+ if(typeof docs!=='undefined')for(const cached of docs.values())if(chapterNumber(cached)===n)rows.push(cached);
+ rows.push(d);const unique=[...new Map(rows.filter(r=>r.id).map(r=>[r.id,r])).values()];
+ return unique.map(r=>{const identity=documentIdentity(r),purpose=identity.kind==='material'?filePurpose(r):identity.label,manuscript=r.content_kind!=='material'&&['formal','candidate','recovery','pending'].includes(identity.kind),versionGroup=manuscript?(identity.kind==='formal'?'正式稿':['recovery','pending'].includes(identity.kind)?'恢复稿':r.checkpoint===true?'保留版本':'修改稿'):'计划与材料';
+  const date=typeof r.modified==='string'&&Number.isFinite(Date.parse(r.modified))?new Date(r.modified).toLocaleString():'';
+  const source=typeof r.source==='string'?(r.source.startsWith('formal:')?'第'+r.source.slice(7)+'章正式稿':r.source.startsWith('file:')?r.source.slice(5):r.source):'';
+  return {...r,label:purpose+' · '+displayTitle({...r,title:r.title==='正式正文'?(group?.title||r.path?.split('/').pop()?.replace(/\.(md|txt)$/i,'')||r.title):r.title})+(date?' · '+date:'')+(source?' · 来源：'+source:''),manuscript,versionGroup,versionTime:date,versionSource:source};
+ });
 }
 function updateChapterPicker(){
  const d=docs.get(active),box=$('chapter-picker'),select=$('chapter-version');if(!d){box.hidden=true;return;}
  const rows=chapterChoices(currentCatalog,d);box.hidden=!rows.length;select.replaceChildren();
- for(const [label,match]of [['稿件',true],['计划与材料',false]]){const group=document.createElement('optgroup');group.label=label;
-  for(const r of rows.filter(r=>r.manuscript===match)){const o=document.createElement('option');o.value=r.id;o.textContent=r.label+(dirty(docs.get(r.id))?' · 未保存':'');if(rows.filter(x=>x.label===r.label).length>1)o.textContent+=' · '+r.path;o.title=r.path;o.selected=r.id===active;group.append(o);}if(group.children.length)select.append(group);
+ for(const label of ['正式稿','修改稿','保留版本','恢复稿','计划与材料']){const group=document.createElement('optgroup');group.label=label;
+  const versions=rows.filter(r=>r.versionGroup===label).sort((a,b)=>(Date.parse(b.modified)||0)-(Date.parse(a.modified)||0));
+  for(const r of versions){const o=document.createElement('option');o.value=r.id;o.textContent=(r.id===active?'当前 · ':'')+r.label+(dirty(docs.get(r.id))?' · 未保存':'');if(rows.filter(x=>x.label===r.label).length>1)o.textContent+=' · '+r.path;o.title=[r.path,r.versionSource?'来源：'+r.versionSource:'',r.relation].filter(Boolean).join('\n');o.selected=r.id===active;group.append(o);}if(group.children.length)select.append(group);
  }
- $('chapter-picker-help').textContent='同章号文件供切换查看；候选和材料不代表已采用。';
+ const summary=box.parentElement?.querySelector?.('summary');if(summary)summary.textContent='同章版本 · '+rows.length+' 份';
+ $('chapter-picker-help').textContent='正式稿、修改稿、保留版本、恢复稿与材料分别列出；修改稿和恢复稿尚未正式采用。';
 }
 function primaryChapterDocument(group){return group.items.find(r=>r.id==='formal:'+group.chapter)||group.items.find(r=>r.id==='plan:'+group.chapter)||group.items[0];}
 function locateActive(){
@@ -3231,7 +4237,9 @@ let searchPreview=false,searchMarks=[],searchIndex=-1;
 function rememberView(d=docs.get(active)){
  if(!d||searchPreview)return;
  const mode=$('text').hidden?'reading':'editing';d.positions=d.positions||{};
- d.positions[mode]={main:document.querySelector('main').scrollTop,editor:$('text').scrollTop,start:$('text').selectionStart,end:$('text').selectionEnd,direction:$('text').selectionDirection};
+ // Comparison uses the same scrolling container as the document. Preserve
+ // the position captured before entering it, including during save or close.
+ d.positions[mode]=d.comparePosition?{...d.comparePosition}:{main:document.querySelector('main').scrollTop,editor:$('text').scrollTop,start:$('text').selectionStart,end:$('text').selectionEnd,direction:$('text').selectionDirection};
 }
 function restoreView(d){
  const p=d.positions?.[d.editing?'editing':'reading'];
@@ -3275,7 +4283,7 @@ function trapPanelFocus(e){
 let compareSequence=0,diffTargets=[],diffIndex=-1;
 function leaveComparison(){
  ++compareSequence;const d=docs.get(active);document.body.classList.remove('comparing');$('document-body').hidden=false;$('difference').hidden=true;
- if(d?.comparePosition){const p=d.comparePosition;document.querySelector('main').scrollTop=p.main;$('text').scrollTop=p.editor;if(d.editing){$('text').focus({preventScroll:true});$('text').setSelectionRange(p.start,p.end);}delete d.comparePosition;}
+ if(d?.comparePosition){const p=d.comparePosition;document.querySelector('main').scrollTop=p.main;$('text').scrollTop=p.editor;if(d.editing){$('text').focus({preventScroll:true});$('text').setSelectionRange(p.start,p.end,p.direction||'none');}delete d.comparePosition;}
 }
 function stepDiff(delta){diffIndex=Math.max(0,Math.min(diffTargets.length-1,diffIndex+delta));if(diffTargets[diffIndex])diffTargets[diffIndex].scrollIntoView({block:'center'});$('diff-position').textContent=diffTargets.length?'标记片段 '+(diffIndex+1)+' / '+diffTargets.length:'两版文字一致';$('diff-prev').disabled=diffIndex<=0;$('diff-next').disabled=diffIndex>=diffTargets.length-1;}
 function inlineText(parent,text,path){
@@ -3437,7 +4445,7 @@ function diffLines(before,after){const a=before.split('\n'),b=after.split('\n');
  const left=[],right=[];let i=0,j=0;while(i<a.length||j<b.length){if(i<a.length&&j<b.length&&a[i]===b[j]){left.push({text:a[i++],change:''});right.push({text:b[j++],change:''});}else if(i<a.length&&(j===b.length||dp[i+1][j]>=dp[i][j+1]))left.push({text:a[i++],change:'removed'});else right.push({text:b[j++],change:'added'});}return {left,right,coarse:false};}
 function drawDiff(before,after){diffTargets=[];diffIndex=-1;const diff=diffLines(before,after);for(const [id,rows]of [['before',diff.left],['after',diff.right]]){const box=$(id);box.replaceChildren();let lastChange='';for(const r of rows){const span=document.createElement('span');span.className='diff-line '+r.change;span.textContent=r.text;box.append(span);if(r.change&&r.change!==lastChange)diffTargets.push(span);lastChange=r.change;}}
  $('compare-label').textContent+=' · 红色为删除，绿色为新增'+(diff.coarse?'（长文本使用整块高亮）':'');}
-async function fullSearch(){const seq=++searchSequence,q=$('full-query').value.trim();if(!q){fullSearchOffset=0;$('search-results').replaceChildren();$('search-status').textContent='';$('search-prev').disabled=true;$('search-next').disabled=true;return;}$('search-status').textContent='搜索中…';try{const r=await call('search',{query:q,offset:fullSearchOffset});if(seq!==searchSequence)return;$('search-results').replaceChildren();for(const row of r.results){const b=item(row);b.onclick=()=>openDoc(row.id,q);const small=document.createElement('small');small.textContent=row.excerpt;b.append(small);$('search-results').append(b);}$('search-status').textContent=`找到 ${r.total} 份文件 · 已检查 ${r.checked} 份`+(r.complete?' · 本轮覆盖完整':' · 存在未覆盖文件')+(r.warnings.length?'\n'+r.warnings.join('\n'):'');$('search-prev').disabled=!fullSearchOffset;$('search-next').disabled=!r.has_more;}catch(e){if(seq===searchSequence)$('search-status').textContent=e.message;}}
+async function fullSearch(){const seq=++searchSequence,q=$('full-query').value.trim();$('search-results').replaceChildren();$('search-prev').disabled=true;$('search-next').disabled=true;if(!q){fullSearchOffset=0;$('search-status').textContent='';return;}$('search-status').textContent='搜索中…';try{const r=await call('search',{query:q,offset:fullSearchOffset});if(seq!==searchSequence)return;for(const row of r.results){const b=item(row);b.onclick=()=>openDoc(row.id,q);const small=document.createElement('small');small.textContent=row.excerpt;b.append(small);$('search-results').append(b);}$('search-status').textContent=`找到 ${r.total} 份文件 · 已检查 ${r.checked} 份`+(r.complete?' · 本轮覆盖完整':' · 存在未覆盖文件')+(r.warnings.length?'\n'+r.warnings.join('\n'):'');$('search-prev').disabled=!fullSearchOffset;$('search-next').disabled=!r.has_more;}catch(e){if(seq===searchSequence){$('search-results').replaceChildren();$('search-prev').disabled=true;$('search-next').disabled=true;$('search-status').textContent='搜索失败：'+e.message;}}}
 function applyReading(){const size=$('font-size').value,line=$('line-height').value,font=$('font-family').value;document.documentElement.style.setProperty('--reader-size',size+'px');document.documentElement.style.setProperty('--reader-line',line);document.documentElement.style.setProperty('--reader-font',font==='sans'?'system-ui':"'Songti SC','SimSun',serif");document.body.classList.toggle('focus-reading',$('focus-reading').checked);try{localStorage.setItem('story-reading',JSON.stringify({size,line,font,focus:$('focus-reading').checked}));}catch{}}
 async function loadBooks(){try{const r=await call('books');bookChoices=r.books;if(r.current)currentBookInfo.root=r.current;renderBookChoices();$('book-open').disabled=r.books.length<2;$('book-hint').textContent=r.books.length<2?'目前只登记本书；启动服务时可添加其他作品。':'作品会在新标签页打开，当前编辑保留。';}catch(e){$('book-hint').textContent=e.message;}}
 function fitColumns(left,right,width){
@@ -3480,20 +4488,30 @@ function setupWorkspace(){
  for(const id of ['book-info','maintenance','more-actions','reading-options'])$(id).addEventListener('click',e=>{if(e.target.closest('button'))$(id).open=false;});
  $('source-view').onclick=()=>{const d=docs.get(active);d.rawPreview=!d.rawPreview;show(d);};
  $('text').addEventListener('select',scheduleMetrics);$('text').addEventListener('keyup',scheduleMetrics);
- $('review-task').onclick=async()=>{const d=docs.get(active);if(!d?.editable)return;if(dirty(d)||d.needs_recovery){note('请先保存当前候选稿，再生成绑定该文件的审稿任务。');return;}try{const r=await call('review-task',{id:d.id,sha256:d.sha256});if(active!==d.id)return;$('assistant-task-title').textContent='交给助手审稿';leaveComparison();$('review-task-box').hidden=false;$('review-task-box').scrollIntoView({block:'start'});$('review-prompt').value=r.prompt;$('review-task-status').textContent=r.status+'；'+r.check_note+(r.lint?(r.lint.ok?' 未发现工具阻断项。':' 发现 '+r.lint.errors.length+' 项工具问题。'):'');$('review-findings').textContent=r.lint?[...r.lint.errors,...r.lint.warnings].map(x=>x.code+(x.expected?'：目标 '+(Array.isArray(x.expected)?x.expected.join('～'):x.expected):'')+(x.actual!==undefined?'，实际 '+x.actual:'')+(x.message?'：'+x.message:'')).join('\n'):'';}catch(e){note(e.message);}};
+ $('review-task').onclick=async(event,reservedRequest)=>{const box=$('review-task-box'),request=reservedRequest??(box.taskRequest=(box.taskRequest||0)+1),d=docs.get(active);if(!d?.editable)return;if(dirty(d)||d.needs_recovery){note('请先保存当前候选稿，再生成绑定该文件的审稿任务。');return;}const value=d.value,sequence=typeof openSequence==='number'?openSequence:null,current=()=>box.taskRequest===request&&active===d.id&&docs.get(d.id)===d&&d.value===value&&!dirty(d)&&!d.needs_recovery&&(sequence===null||openSequence===sequence);try{const r=await call('review-task',{id:d.id,sha256:d.sha256});if(!current())return;$('assistant-task-title').textContent='交给助手审稿';leaveComparison();box.hidden=false;box.scrollIntoView({block:'start'});$('review-prompt').value=r.prompt;$('review-task-status').textContent=r.status+'；'+r.check_note+(r.lint?(r.lint.ok?' 未发现工具阻断项。':' 发现 '+r.lint.errors.length+' 项工具问题。'):'');$('review-findings').textContent=r.lint?[...r.lint.errors,...r.lint.warnings].map(x=>x.code+(x.expected?'：目标 '+(Array.isArray(x.expected)?x.expected.join('～'):x.expected):'')+(x.actual!==undefined?'，实际 '+x.actual:'')+(x.message?'：'+x.message:'')).join('\n'):'';}catch(e){if(current())note(e.message);}};
  $('copy-review').onclick=async()=>{try{await navigator.clipboard.writeText($('review-prompt').value);$('review-task-status').textContent='已复制，请粘贴给助手执行；任务尚未自动执行，稿件尚未正式采用。';}catch{$('review-prompt').select();note('请复制已选中的审稿任务。');}};
  $('full-go').onclick=()=>{fullSearchOffset=0;fullSearch();};$('full-query').onkeydown=e=>{if(e.key==='Enter'){fullSearchOffset=0;fullSearch();}};$('search-prev').onclick=()=>{fullSearchOffset=Math.max(0,fullSearchOffset-30);fullSearch();};$('search-next').onclick=()=>{fullSearchOffset+=30;fullSearch();};
  try{const p=JSON.parse(localStorage.getItem('story-reading')||'{}');if(['16','19','22','25'].includes(p.size))$('font-size').value=p.size;if(['1.6','1.8','1.9','2.2'].includes(p.line))$('line-height').value=p.line;if(['serif','sans'].includes(p.font))$('font-family').value=p.font;$('focus-reading').checked=p.focus===true;}catch{}
  for(const id of ['font-size','line-height','font-family','focus-reading'])$(id).onchange=()=>{applyReading();syncPanels();};applyReading();syncPanels();
- $('book-open').onclick=async()=>{const key=$('book-select').value,selected=bookChoices.find(book=>book.key===key),title=selected?bookName(selected):'所选作品';try{const r=await call('open-book',{key});const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='打开所选作品';$('book-hint').replaceChildren(a);a.click();if(r.outdated)note('所选作品服务仍使用较早代码；原编辑保留，可另行升级。');}catch(e){$('book-hint').textContent='打开失败（'+title+'）：'+e.message;}};
+ $('book-open').onclick=async()=>{const key=$('book-select').value,selected=bookChoices.find(book=>book.key===key),title=selected?bookName(selected):'所选作品';try{const r=await call('open-book',{key,expected_book_id:selected?.book_id});const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='打开所选作品';$('book-hint').replaceChildren(a);a.click();if(r.outdated)note('所选作品服务仍使用较早代码；原编辑保留，可另行升级。');}catch(e){$('book-hint').textContent='打开失败（'+title+'）：'+e.message;}};
  loadBooks();
 }
 
 function dirty(d){return d&&d.editable&&d.value!==d.text;}
-function badge(){pendingEdits();if(!active)return;const d=docs.get(active),identity=documentIdentity(d);$('document-identity').hidden=false;$('document-role').textContent=identity.label;$('document-role').dataset.kind=identity.kind;$('document-role').title=identity.note;$('document-unsaved').hidden=!identity.changed;$('state').textContent=d.saving?'正在保存候选…':dirty(d)?(d.recovered===d.value?'待保存 · 恢复副本已写入':'待保存 · 恢复副本尚未写入'):d.status;$('save').disabled=(!dirty(d)&&!d.needs_recovery)||d.saving;$('save').textContent=d.needs_recovery?'恢复为新候选':'保存候选稿';$('edit').disabled=!d.editable;$('review-task').disabled=!d.editable;$('compare').disabled=!d.comparison&&d.kind!=='formal';$('download').disabled=!d.editable&&!d.text;$('edit').textContent=d.editing?'返回阅读':'编辑';$('edit').setAttribute('aria-pressed',String(!!d.editing));document.querySelectorAll('[data-doc]').forEach(e=>{const item=docs.get(e.dataset.doc);e.classList.toggle('selected',e.dataset.chapter?Number(e.dataset.chapter)===chapterNumber(d):e.dataset.doc===active);e.classList.toggle('dirty',!!dirty(item));});}
+function badge(){
+ pendingEdits();if(!active)return;const d=docs.get(active);if(!d)return;const identity=documentIdentity(d),state=documentSaveState(d);
+ $('document-identity').hidden=false;$('document-role').textContent=identity.label;$('document-role').dataset.kind=identity.kind;$('document-role').title=identity.note;$('document-unsaved').hidden=!identity.changed;
+ $('state').textContent=state.label;$('state').dataset.saveState=state.kind;$('state').title=state.detail;$('state').setAttribute('role','status');
+ const retry=$('save-retry'),download=$('save-status-download');if(retry){retry.hidden=!state.failed;retry.disabled=!!d.saving||!!d.recovering;retry.textContent=state.retry==='recover'?'重试恢复副本':state.retry==='readback'?'重试核对':'重试保存';}if(download)download.hidden=!state.failed;
+ const newVersion=$('save-new-version');if(newVersion)newVersion.disabled=!d.editable||!!d.saving||!!d.pendingSaveReadback||(typeof reloading==='boolean'&&reloading);
+ $('save').disabled=(!dirty(d)&&!d.needs_recovery&&!d.pendingSaveReadback&&!d.failedSaveOptions?.newVersion&&identity.kind!=='recovery')||d.saving||!d.editable;$('save').textContent=d.needs_recovery?'恢复为新候选':d.saveResultPending?'重试核对保存':d.saveError?'重试保存':'保存修改';$('save').title=d.checkpoint===true?'保存修改会另建工作稿，保留此版本。':'保存当前修改；不会正式采用或发布。';
+ $('edit').disabled=!d.editable;$('review-task').disabled=!d.editable;$('compare').disabled=!d.comparison&&d.kind!=='formal';$('download').disabled=!d.editable&&!d.text;$('edit').textContent=d.editing?'返回阅读':'编辑';$('edit').setAttribute('aria-pressed',String(!!d.editing));
+ document.querySelectorAll('[data-doc]').forEach(e=>{const item=docs.get(e.dataset.doc);e.classList.toggle('selected',e.dataset.chapter?Number(e.dataset.chapter)===chapterNumber(d):e.dataset.doc===active);e.classList.toggle('dirty',!!dirty(item));});
+ if(typeof notifyCreatorState==='function')notifyCreatorState();
+}
 function show(d){leaveComparison();rememberView();searchPreview=false;$('match-view').hidden=true;active=d.id;$('title').textContent=displayTitle(d);$('path').textContent=d.path;$('text').value=d.value;$('text').hidden=!d.editable||!d.editing;$('prose').hidden=!!d.image||!!d.editing;$('prose').textContent=d.value||'';$('cover').hidden=!d.image;if(d.image)$('cover').src=d.image;$('difference').hidden=true;$('detail').textContent=[d.status,d.metadata_error?'来源记录文件：'+d.metadata_error.path:'',d.modified?'文件修改时间：'+new Date(d.modified).toLocaleString():'',d.source?'来源：'+d.source:'',d.summary?'正式稿摘要：'+d.summary:'',d.comparison?'对照对象：'+d.comparison.title:''].filter(Boolean).join('\n\n');readingView(d);badge();updateChapterPicker();restoreView(d);}
-async function openDoc(id,query=''){const sequence=++openSequence;try{if(!docs.has(id)){const d=await call('open',{id});if(sequence!==openSequence)return;d.value=d.text||'';d.editing=false;d.recoveryKey=crypto.randomUUID();if(!docs.has(id))docs.set(id,d);}if(sequence!==openSequence)return;show(docs.get(id));closePanels();location.hash=encodeURIComponent(id);note('已打开：'+displayTitle(docs.get(id))+' · '+versionLabel(docs.get(id)));if(query)previewSearch(query);await catalog(true);}catch(e){if(sequence===openSequence)note('打开失败（'+id+'）：'+e.message);}}
-function pendingEdits(){const pending=[...docs.values()].filter(dirty);$('pending-box').hidden=!pending.length;$('pending-count').textContent='待保存文件 · '+pending.length;$('pending-list').replaceChildren();for(const d of pending){const b=document.createElement('button');b.className='document';b.title=d.path||d.id;b.textContent=displayTitle(d)+' · '+(d.recovered===d.value?'已写入恢复稿':'尚未写入恢复稿');if(d.path&&pending.filter(x=>displayTitle(x)===displayTitle(d)).length>1){const source=document.createElement('small');source.className='document-location';source.textContent=documentLocation(d);b.append(source);}b.onclick=()=>openDoc(d.id);$('pending-list').append(b);}}
+async function openDoc(id,query='',options={}){const sequence=++openSequence,valid=()=>sequence===openSequence&&(!options.guard||options.guard());try{if(!valid())return false;if(!docs.has(id)){const d=await call('open',{id});if(!valid())return false;if(options.expectedSha&&d.sha256!==options.expectedSha)return false;d.value=d.text||'';d.editing=false;d.recoveryKey=crypto.randomUUID();if(!docs.has(id))docs.set(id,d);}if(!valid())return false;const selected=docs.get(id);if(options.expectedSha&&(selected.sha256!==options.expectedSha||dirty(selected)||selected.needs_recovery||selected.saving))return false;show(selected);closePanels();location.hash=encodeURIComponent(id);note('已打开：'+displayTitle(selected)+' · '+versionLabel(selected));if(query)previewSearch(query);await catalog(true);return true;}catch(e){if(valid())note('打开失败（'+id+'）：'+e.message);return false;}}
+function pendingEdits(){const pending=[...docs.values()].filter(d=>dirty(d)||d.saving||d.needs_recovery||d.pendingSaveReadback||(d.saveError&&d.failedSaveOptions?.newVersion));$('pending-box').hidden=!pending.length;$('pending-count').textContent='待保存文件 · '+pending.length;$('pending-list').replaceChildren();for(const d of pending){const b=document.createElement('button');b.className='document';b.title=d.path||d.id;const state=documentSaveState(d);b.textContent=displayTitle(d)+' · '+(state.kind==='recovered'?'已写入恢复稿 · 尚未保存候选':state.label);if(d.path&&pending.filter(x=>displayTitle(x)===displayTitle(d)).length>1){const source=document.createElement('small');source.className='document-location';source.textContent=documentLocation(d);b.append(source);}b.onclick=()=>openDoc(d.id);$('pending-list').append(b);}}
 function item(row){const b=document.createElement('button');b.className='document';b.dataset.doc=row.id;b.title=row.path+(row.modified?'\n修改时间：'+new Date(row.modified).toLocaleString():'');const title=document.createElement('span');title.className='document-name';title.textContent=row.category==='正式正文'||row.category==='计划'?row.title:displayTitle(row);const type=document.createElement('small');type.className='document-type';const identity=documentIdentity(row),purpose=identity.kind==='material'?filePurpose(row):identity.label;type.textContent=purpose;b.append(title);if(title.textContent!==purpose&&title.textContent!=='已保存章计划')b.append(type);if(row.path&&['candidate','recovery','pending','uncertain'].includes(identity.kind)){const source=document.createElement('small');source.className='document-location';source.textContent=documentLocation(row);b.append(source);}b.onclick=()=>openDoc(row.id);return b;}
 async function catalog(focusCurrent=false,navigation=false,loadMaterials=false){
  if(navigation||focusCurrent)clearTimeout(queryTimer);
@@ -3535,6 +4553,10 @@ async function catalog(focusCurrent=false,navigation=false,loadMaterials=false){
   }
   drawCatalog(c,expandedGroups);$('list').parentElement.scrollTop=listScroll;badge();
   if(focusCurrent&&active)locateActive();
+  if(!active&&typeof creatorResumeLoading!=='undefined'&&creatorResumeLoading&&!creatorResumeApplied){
+   creatorResumeApplied=true;const resumePacket=await creatorResumeLoading;
+   if(!active)await creatorResume.apply(resumePacket);
+  }
   if(!active){
    let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{}
    if(/^chapter-\d+$/.test(id||''))id='formal:'+id.slice(8);
@@ -3544,27 +4566,107 @@ async function catalog(focusCurrent=false,navigation=false,loadMaterials=false){
  }catch(e){if(!reloadPending&&query===$('search').value&&mode===viewMode)note(e.message);}
  finally{loading=false;if(reloadPending){reloadPending=false;const focus=pendingFocus,more=!!catalog.pendingMaterialMore;pendingFocus=false;catalog.pendingMaterialMore=false;catalog(focus,false,more);}else if(currentCatalog?.materials?.has_more)$('materials-more').disabled=false;}
 }
-async function recover(d,force=false){if(d.recovering){await d.recovering;if(force||(dirty(d)&&d.value!==d.recovered))return recover(d,force);return;}if(!dirty(d)||(!force&&d.value===d.recovered))return;if(force)d.recovered=undefined;const value=d.value;d.recovering=(async()=>{try{const r=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});d.recovered=value;d.recoveryPath=r.path;d.recoverySha=r.recovery_sha256;d.recoveryMetadataSha=r.recovery_metadata_sha256;if(r.recovery_key)d.recoveryKey=r.recovery_key;pendingEdits();catalog.materialCursor=null;await catalog();if(active===d.id)note(r.conflict?'原恢复稿有变化或保存待核对，本次编辑已另存恢复稿，原文件保留。':'编辑已写入自动恢复稿；正式采用前仍须审查。');}catch(e){if(active===d.id)note('自动恢复保存失败：'+e.message+'，请下载当前文字。');}})();try{await d.recovering;}finally{d.recovering=null;}}
+async function recover(d,force=false){
+ if(!d)return false;
+ if(d.recovering){await d.recovering;if(force||(dirty(d)&&(d.value!==d.recovered||d.recoveryError)))return recover(d,force);return !d.recoveryError;}
+ if(!dirty(d)||(!force&&d.value===d.recovered&&!d.recoveryError))return !d.recoveryError;
+ const value=d.value;d.recoveringText=value;
+ d.recovering=(async()=>{
+  let receipt;try{receipt=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});}
+  catch(e){d.recoveryError=e.message||String(e);if(active===d.id)note('自动恢复保存失败：'+d.recoveryError+'，请重试或下载当前文字。');return false;}
+  d.recovered=value;d.recoveryError='';d.recoveryPath=receipt.path;d.recoverySha=receipt.recovery_sha256;d.recoveryMetadataSha=receipt.recovery_metadata_sha256;d.recoveredAt=new Date().toISOString();if(receipt.recovery_key)d.recoveryKey=receipt.recovery_key;
+  catalog.materialCursor=null;try{await catalog();}catch(e){if(active===d.id)note('恢复副本已保存，目录刷新未完成：'+e.message);return true;}
+  if(active===d.id)note(receipt.conflict?'原恢复稿有变化或保存待核对，本次编辑已另存恢复稿，原文件保留。':'编辑已写入自动恢复稿；尚未手动保存候选。');return true;
+ })();badge();try{return await d.recovering;}finally{d.recovering=null;delete d.recoveringText;badge();}
+}
 $('text').addEventListener('input',()=>{const d=docs.get(active);d.value=$('text').value;clearTimeout(d.timer);d.timer=setTimeout(()=>recover(d),1200);badge();scheduleMetrics();});
 $('edit').onclick=()=>{const d=docs.get(active);d.editing=!d.editing;show(d);if(d.editing)$('text').focus();};
-async function saveDocument(d){if((!dirty(d)&&!d.needs_recovery)||d.saving||reloading)return false;const text=d.value;d.saving=true;badge();try{await recover(d);const r=await call('save',{id:d.id,sha256:d.sha256,snapshot:d.snapshot,metadata_sha256:d.metadata_sha256,text});const fresh=await call('open',{id:r.id});fresh.value=d.value;fresh.editing=d.editing;fresh.recoveryKey=crypto.randomUUID();if(active===d.id)rememberView(d);fresh.positions={...d.positions};docs.set(r.id,fresh);d.value=d.text;d.needs_recovery=false;d.savedCandidate=r.id;clearTimeout(d.timer);if(active===d.id){show(fresh);location.hash=encodeURIComponent(fresh.id);}if(dirty(fresh))fresh.timer=setTimeout(()=>recover(fresh),1200);if(active===fresh.id)note('候选已保存 · '+new Date().toLocaleTimeString()+' · 尚未正式采用');catalog.materialCursor=null;await catalog(active===fresh.id);return true;}catch(e){note(e.message+' 当前文字仍在编辑器中，可下载或从自动恢复稿找回。');return false;}finally{d.saving=false;badge();}}
+async function saveDocument(d,options={}){
+ if(!d||!d.editable)return false;
+ if(d.saveError&&d.failedSaveOptions?.newVersion&&!d.pendingSaveReadback&&!options.newVersion)options=d.failedSaveOptions;
+ if(options.newVersion&&d.pendingSaveReadback){note('请先核对上次保存结果，再保留新的版本；当前文字仍保留。');return false;}
+ if((!dirty(d)&&!d.needs_recovery&&!d.pendingSaveReadback&&documentIdentity(d).kind!=='recovery'&&!options.newVersion)||d.saving||reloading)return false;
+ const pending=d.pendingSaveReadback&&!options.newVersion?d.pendingSaveReadback:null;
+ const saveMode=options.newVersion||d.needs_recovery||documentIdentity(d).kind==='recovery'?'version':'working';
+ d.saveError='';d.saveResultPending=false;const text=pending?pending.text:d.value;d.saving=true;d.savingText=text;let receipt=pending;badge();
+ try{
+  if(!pending)await recover(d);
+  const r=pending||await call('save',{id:d.id,sha256:d.sha256,snapshot:d.snapshot,metadata_sha256:d.metadata_sha256,text,save_mode:saveMode});receipt=r;d.pendingSaveReadback={id:r.id,text};
+  const fresh=await call('open',{id:r.id}),cached=docs.get(r.id);
+  // A refresh can expose the new candidate before this readback completes.
+  // Keep that opened object, including edits, recovery keys and in-flight saves.
+  const existing=cached&&cached!==d,target=existing?cached:fresh;
+  if(!existing){
+   fresh.value=d.value;fresh.editing=d.editing;fresh.recoveryKey=crypto.randomUUID();fresh.savedAt=new Date().toISOString();
+   if(active===d.id)rememberView(d);fresh.positions={...d.positions};docs.set(r.id,fresh);
+  }
+  // If both buffers changed independently, neither can replace the other.
+  // The source keeps post-submit input until it is saved separately.
+  const retained=existing&&d.value!==text;
+  if(!retained){d.value=d.text;d.needs_recovery=false;clearTimeout(d.timer);}
+  d.savedCandidate=r.id;
+  delete d.pendingSaveReadback;d.saveResultPending=false;
+  delete d.failedSaveOptions;
+  if(active===d.id&&!retained){show(target);location.hash=encodeURIComponent(target.id);}
+  if(!existing&&dirty(target))target.timer=setTimeout(()=>recover(target),1200);
+  if(active===target.id)note(dirty(target)||target.needs_recovery||target.saving?'提交时文字已保存为候选；当前文件仍有未完成编辑，请继续保存。':'候选已保存 · '+new Date().toLocaleTimeString()+' · 尚未正式采用');
+  else if(active===d.id&&retained)note('提交时文字已保存为候选；保存期间新增编辑仍在当前文件，尚未保存。');
+  catalog.materialCursor=null;try{await catalog(active===target.id);}catch(e){note('候选已保存，目录刷新未完成：'+e.message);}return true;
+ }catch(e){d.saveError=e.message||String(e);d.saveResultPending=!!receipt;d.failedSaveOptions={newVersion:saveMode==='version'};note(d.saveError+' 当前文字仍在编辑器中；请重试或下载当前文字。');return false;}
+ finally{d.saving=false;delete d.savingText;badge();}
+}
 $('save').onclick=()=>saveDocument(docs.get(active));
-$('save-all').onclick=async()=>{const pending=[...docs.values()].filter(d=>dirty(d)||d.needs_recovery);if([...docs.values()].some(d=>d.saving)){note('候选正在保存，请完成后再保存全部。');return;}let saved=0;for(const d of pending){if(!await saveDocument(d)){note('保存全部已停止；'+saved+' 份已保存，其余文字保留在页面中。请核对失败提示并下载未保存文字。');return;}saved++;}const remaining=[...docs.values()].filter(d=>dirty(d)||d.saving||d.needs_recovery).length;note('已保存 '+saved+' 份候选；尚未正式采用。'+(remaining?' 另有 '+remaining+' 份新增或未完成编辑，请继续保存。':''));};
+if($('save-new-version'))$('save-new-version').onclick=()=>saveDocument(docs.get(active),{newVersion:true});
+$('save-all').onclick=async()=>{
+ const pending=[...docs.values()].filter(d=>dirty(d)||d.needs_recovery||d.pendingSaveReadback||(d.saveError&&d.failedSaveOptions?.newVersion));
+ if([...docs.values()].some(d=>d.saving)){note('候选正在保存，请完成后再保存全部。');return;}
+ let saved=0;
+ for(const d of pending){
+  if(!await saveDocument(d)){note('保存全部已停止；'+saved+' 份已保存，其余文字保留在页面中。'+(d.saveError?'失败原因（'+displayTitle(d)+'）：'+d.saveError+'。':'请核对当前保存状态。')+'请核对失败提示并下载未保存文字。');return;}
+  saved++;
+ }
+ const remaining=[...docs.values()].filter(d=>dirty(d)||d.saving||d.needs_recovery||d.pendingSaveReadback||(d.saveError&&d.failedSaveOptions?.newVersion)).length;
+ note('已保存 '+saved+' 份候选；尚未正式采用。'+(remaining?' 另有 '+remaining+' 份新增或未完成编辑，请继续保存。':''));
+};
 $('compare').onclick=async()=>{$('before-label').textContent='当前正式稿';$('after-label').textContent='当前文字';const d=docs.get(active),id=active,seq=++compareSequence;try{const fresh=await call('open',{id:d.kind==='formal'?id:'formal:'+d.chapter});if(active!==id||seq!==compareSequence)return;
- if(!d.comparePosition)d.comparePosition={main:document.querySelector('main').scrollTop,editor:$('text').scrollTop,start:$('text').selectionStart,end:$('text').selectionEnd};
+ if(!d.comparePosition)d.comparePosition={main:document.querySelector('main').scrollTop,editor:$('text').scrollTop,start:$('text').selectionStart,end:$('text').selectionEnd,direction:$('text').selectionDirection};
  $('compare-label').textContent=d.base_sha256?(d.base_sha256===fresh.sha256?'最新正式稿与当前文字：基线一致':'最新正式稿与当前文字：正式基线已变化'):'最新正式稿对照：未确认版本关系';drawDiff(fresh.text,d.value);
  $('review-task-box').hidden=true;$('document-body').hidden=true;$('difference').hidden=false;document.body.classList.add('comparing');document.querySelector('main').scrollTop=0;
  $('compare-back').textContent=d.editing?'返回编辑':'返回阅读';$('diff-position').textContent=diffTargets.length?'共 '+diffTargets.length+' 个标记片段':'两版文字一致';$('diff-prev').disabled=true;$('diff-next').disabled=!diffTargets.length;
  }catch(e){if(active===id&&seq===compareSequence)note('无法读取最新正式稿：'+e.message);}};
-$('download').onclick=()=>{const d=docs.get(active),a=document.createElement('a');const url=URL.createObjectURL(new Blob([(d.prefix||'')+d.value],{type:'text/plain;charset=utf-8'}));a.href=url;a.download=downloadName(d);a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
-async function reloadDocuments(preserve){if(reloading)return;if([...docs.values()].some(d=>d.saving)){note('候选稿正在保存，请完成后再重新载入。');return;}const changes=[...docs.values()].filter(dirty);if(changes.length&&!preserve){note('有未保存编辑，请使用“保留恢复稿并重新载入”。');return;}reloading=true;const id=active;try{for(const d of changes){await recover(d,true);if(d.value!==d.recovered){note('恢复尚未成功，已停止重新载入，请下载当前文字。');return;}}const fresh=id?await call('open',{id}):null;if(active!==id){note('已切换文件，本次重新载入取消；原编辑仍保留。');return;}for(const d of docs.values()){if(dirty(d)&&d.value!==d.recovered){note('恢复期间又有输入，已保留编辑；请再次操作。');return;}}++openSequence;for(const d of docs.values())clearTimeout(d.timer);docs.clear();active=null;if(fresh){fresh.value=fresh.text||'';fresh.editing=false;fresh.recoveryKey=crypto.randomUUID();docs.set(fresh.id,fresh);show(fresh);}note(changes.length?'恢复稿已保留，来源已重新载入；可从左栏打开恢复稿。':'来源已重新读取。');await catalog();}catch(e){note('重新载入失败：'+e.message+'；原编辑仍保留。');}finally{reloading=false;}}
+function downloadDocument(d){if(!d)return;const a=document.createElement('a');const url=URL.createObjectURL(new Blob([(d.prefix||'')+d.value],{type:'text/plain;charset=utf-8'}));a.href=url;a.download=typeof downloadName==='function'?downloadName(d):displayTitle(d)+'.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$('download').onclick=()=>downloadDocument(docs.get(active));
+if($('save-retry'))$('save-retry').onclick=()=>{const d=docs.get(active);return d?.saveError?saveDocument(d):recover(d,true);};
+if($('save-status-download'))$('save-status-download').onclick=()=>downloadDocument(docs.get(active));
+async function reloadDocuments(preserve){
+ if(reloading)return;
+ if([...docs.values()].some(d=>d.saving)){note('候选稿正在保存，请完成后再重新载入。');return;}
+ const baseline=new Map([...docs].map(([key,d])=>[key,{document:d,value:d.value}])),changes=[...docs.values()].filter(dirty);
+ if(changes.length&&!preserve){note('有未保存编辑，请使用“保留恢复稿并重新载入”。');return;}
+ reloading=true;const id=active,sequence=openSequence;
+ try{
+  for(const d of changes){const recovered=await recover(d,true);if(recovered===false||d.recoveryError||d.value!==d.recovered){note('恢复尚未成功，已停止重新载入，请下载当前文字。');return;}}
+  const fresh=id?await call('open',{id}):null;
+  if(active!==id||openSequence!==sequence){note('已切换文件，本次重新载入取消；原编辑仍保留。');return;}
+  for(const [key,d]of docs){
+   const before=baseline.get(key);
+   if(!before||before.document!==d||before.value!==d.value){note('重新读取期间有新输入或文件变化，已保留当前编辑；请保存后再次操作。');return;}
+   if(dirty(d)&&(!preserve||d.value!==d.recovered)){note('恢复期间又有输入，已保留编辑；请再次操作。');return;}
+  }
+  if(docs.size!==baseline.size){note('打开的文件已变化，本次重新载入取消；原编辑仍保留。');return;}
+  ++openSequence;for(const d of docs.values())clearTimeout(d.timer);docs.clear();active=null;
+  if(fresh){fresh.value=fresh.text||'';fresh.editing=false;fresh.recoveryKey=crypto.randomUUID();docs.set(fresh.id,fresh);show(fresh);}
+  note(changes.length?'恢复稿已保留，来源已重新载入；可从左栏打开恢复稿。':'来源已重新读取。');await catalog();
+ }catch(e){note('重新载入失败：'+e.message+'；原编辑仍保留。');}
+ finally{reloading=false;}
+}
 $('refresh').onclick=()=>{catalog.materialCursor=null;catalog();};
 $('reload-source').onclick=()=>reloadDocuments(false);
 $('recover-reload').onclick=()=>reloadDocuments(true);
 $('search').oninput=()=>{clearTimeout(queryTimer);offset=0;pendingFocus=false;queryTimer=setTimeout(()=>catalog(false,true),300);};$('older').onclick=()=>{offset+=LIMIT;catalog(false,true);};$('newer').onclick=()=>{offset=Math.max(0,offset-LIMIT);catalog(false,true);};
-window.addEventListener('beforeunload',event=>{if([...docs.values()].some(d=>dirty(d)||d.saving||d.needs_recovery)){event.preventDefault();event.returnValue='';}});
+window.addEventListener('beforeunload',event=>{if([...docs.values()].some(d=>dirty(d)||d.saving||d.needs_recovery||d.pendingSaveReadback||(d.saveError&&d.failedSaveOptions?.newVersion))){event.preventDefault();event.returnValue='';}});
 window.addEventListener('hashchange',()=>{let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}if(/^chapter-\d+$/.test(id))id='formal:'+id.slice(8);if(id&&id!==active)openDoc(id);});
-__EDITOR_TOOLS____PLATFORM_DRAFTS__setupWorkspace();catalog();""".replace('__EDITOR_TOOLS__', _editor_tools_script()).replace('__PLATFORM_DRAFTS__', _editor_platform_drafts_script()).replace('__TOKEN__', json.dumps(token)).replace('__LIMIT__', str(packet['chapters']['limit'])).replace('__BOOK_DISPLAY__', _book_display_script())
+__EDITOR_TOOLS____PLATFORM_DRAFTS____RESUME_SCRIPT____PRESENCE_SCRIPT____CREATOR_SCRIPT__setupWorkspace();setupCreatorWorkspace();catalog();""".replace('__EDITOR_TOOLS__', _editor_tools_script()).replace('__PLATFORM_DRAFTS__', _editor_platform_drafts_script()).replace('__RESUME_SCRIPT__', _editor_resume_script()).replace('__PRESENCE_SCRIPT__', _editor_presence_script().replace('__EDITOR_PRESENCE_CONFIG__', json.dumps(page_config))).replace('__CREATOR_SCRIPT__', _editor_creator_script().replace('__CREATOR_BOOK_ID__', json.dumps(packet['book'].get('id')))).replace('__TOKEN__', json.dumps(token)).replace('__LIMIT__', str(packet['chapters']['limit'])).replace('__BOOK_DISPLAY__', _book_display_script())
     # Keep the session-token declaration on its own first line so the interface
     # identifier below remains independent of the current editing session.
     first_line, _, remainder = script.partition('\n')
@@ -3587,8 +4689,9 @@ aside h3{margin:0 0 20px;font-size:13px;font-weight:650}#chapter-info{font:13px/
 .context-closed .desk,.focus-reading .desk{grid-template-columns:var(--nav-width,236px) minmax(0,1fr)}.context-closed aside,.focus-reading aside{display:none}.focus-reading #document-body{max-width:760px}#panel-dismiss,#refresh-compact,.panel-close{display:none}
 #match-tools{position:sticky;top:40px;background:white;padding:10px 0;z-index:3;display:flex;flex-wrap:wrap;gap:8px;align-items:center}#match-query{font:12px/1.7 system-ui}#match-text mark{background:#fff1a6;scroll-margin-top:150px}#match-text mark.current-match{background:#ffc66b;outline:2px solid #a85813}
 @media(max-width:1100px){header{padding:10px 16px;gap:10px}.header-actions{gap:4px}.header-actions>button,.header-actions>details>summary{font-size:12px;padding:6px 8px}main{padding:14px 22px 60px}nav,aside{padding:16px 14px}.tools{gap:4px}.mode-actions,.save-actions{gap:4px}.tools button,.tools summary{padding:6px 8px;font-size:12px}}
-.book-classification{max-width:620px}.book-classification .genre-label{font-size:11px;color:var(--muted);margin:5px 0 2px}.book-classification .genre-tags{display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 4px}.book-classification .genre-tag{font-size:11px;padding:1px 6px;border-radius:4px;background:#edf3ed;color:#41644c}.book-classification .genre-tag.pending{background:#f5f1e7;color:#8a6a3e}.book-classification .classification-sources{font-size:11px;color:var(--muted);margin:4px 0}.book-classification .classification-sources>summary{padding:0;font-size:11px}.book-classification .classification-sources p{font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0;max-width:620px}
+.book-classification{max-width:620px}.book-classification .genre-label{font-size:11px;color:var(--muted);margin:5px 0 2px}.book-classification .genre-tags{display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 4px}.book-classification .genre-tag{font-size:11px;padding:1px 6px;border-radius:4px;background:#edf3ed;color:#41644c}.book-classification .genre-tag.pending{background:#f5f1e7;color:#8a6a3e}.book-classification .classification-sources{font-size:11px;color:var(--muted);margin:4px 0}.book-classification .classification-sources>summary{padding:0;font-size:11px;margin:0;line-height:1.6}.book-classification .classification-sources p{font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0;max-width:620px}
 .identity-badges{display:flex;gap:6px;flex-wrap:wrap;margin:0}.identity-badge{font:11px/1.6 system-ui;padding:1px 7px;border:1px solid #d5dde4;border-radius:5px;background:#f3f6f8;color:#496072}.identity-badge[data-kind="formal"]{background:#eaf3ee;color:#315f48;border-color:#cbded1}.identity-badge[data-kind="candidate"]{background:#edf2fa;color:#365b87;border-color:#d1dced}.identity-badge[data-kind="recovery"],.identity-badge[data-kind="pending"],.identity-badge[data-kind="uncertain"],#document-unsaved{background:#faf1df;color:#7b5a25;border-color:#e9d7ad}.identity-badges[hidden],.identity-badge[hidden]{display:none}.document-location{display:block;font-size:11px;line-height:1.5;margin-top:4px;color:var(--muted);overflow-wrap:anywhere}
+#state[data-save-state="error"],#state[data-save-state="pending"]{color:var(--wb-danger)}#state[data-save-state="unsaved"],#state[data-save-state="recovered"]{color:var(--wb-warning)}#state[data-save-state="saved"]{color:var(--muted)}.save-state-action{font-size:11px;min-height:28px;padding:3px 7px}
 #chapter-picker{display:flex;align-items:center;gap:8px;max-width:100%;flex-basis:100%;font-size:12px;color:var(--muted)}#chapter-version{flex:1;min-width:0;max-width:100%;padding:6px 8px;background:#f8fafb;color:var(--ink);border:1px solid var(--line);border-radius:6px}.chapter-entry{margin:2px 0;padding:10px}.chapter-entry span{display:block}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .column-resizer{position:absolute;top:0;bottom:0;width:8px;z-index:6;cursor:col-resize;touch-action:none}#resize-left{left:calc(var(--nav-width,236px) - 4px)}#resize-right{right:calc(var(--context-width,248px) - 4px)}.column-resizer:hover,.column-resizer:focus-visible{background:#335f8630;outline:1px solid var(--accent)}.resizing{cursor:col-resize;user-select:none}.nav-closed nav,.nav-closed #resize-left,.context-closed #resize-right,.focus-reading #resize-right{display:none}.nav-closed .desk{grid-template-columns:minmax(0,1fr) var(--context-width,248px)}.nav-closed.context-closed .desk,.nav-closed.focus-reading .desk{grid-template-columns:minmax(0,1fr)}
 @media(max-width:820px){.column-resizer{display:none!important}.nav-closed .desk,.nav-closed.context-closed .desk,.nav-closed.focus-reading .desk{grid-template-columns:minmax(0,1fr)}#reading-options .menu-panel{width:200px}header{padding:9px 14px;gap:8px;flex-wrap:wrap}.book-heading{flex-basis:100%}#book-title{font-size:15px}.header-actions{width:100%;justify-content:flex-start;gap:5px}.header-actions>#refresh{display:none}.menu-panel.book-info-panel{position:fixed;top:100px;right:14px;left:14px;width:auto;max-width:none;max-height:calc(100vh - 124px)}#nav-toggle,.panel-close{display:inline-block}.panel-close{margin-bottom:12px}#refresh-compact{display:block}.desk,.context-closed .desk,.focus-reading .desk{grid-template-columns:minmax(0,1fr)}main{padding:12px 18px 60px}.tools{top:-12px}nav,aside{display:none!important;position:absolute;top:0;bottom:0;width:min(320px,85vw);z-index:12;box-shadow:0 8px 35px #24344730}.nav-open nav{display:block!important;left:0}.context-open aside{display:block!important;right:0}.nav-open #panel-dismiss,.context-open #panel-dismiss{display:block;position:absolute;inset:0;border:0;border-radius:0;background:#26344833;z-index:10;width:100%;height:100%}.comparison{grid-template-columns:minmax(0,1fr)}.diff-tools{top:28px}h1{font-size:22px}.document-meta{margin-bottom:14px}#document-body{max-width:700px}}
@@ -3629,6 +4732,13 @@ body.native-compact-editor>header{align-items:center;gap:20px;padding:12px 22px;
 @media(max-width:480px){.native-compact-editor .header-actions>button,.native-compact-editor .header-actions>details>summary{font-size:11px;padding:6px}.native-compact-editor .header-actions>.workbench-theme-control{font-size:10px;gap:4px}.native-compact-editor .workbench-theme-control select{font-size:11px;max-width:91px;min-height:29px}.native-compact-editor main{padding:10px 17px 56px}.native-compact-editor .tools{top:-10px;row-gap:9px}.native-compact-editor .mode-actions{gap:1px}.native-compact-editor .save-actions{margin-left:auto}.native-compact-editor .tools button,.native-compact-editor .tools summary{padding:6px}.native-compact-editor #title{font-size:21px}.native-compact-editor #chapter-picker{flex-wrap:wrap}.native-compact-editor #chapter-picker label{flex-basis:100%}}
 @media(prefers-reduced-motion:reduce){.native-compact-editor button{transition:none}}
 </style><style>__THEME_CSS__</style></head><body class="native-compact-editor"><header><div class="book-heading"><div class="book-identity"><strong id="book-title" title="__TITLE__">__TITLE__</strong><span id="book-kind" class="book-kind" data-kind="__KIND_CODE__">__KIND__</span></div><p id="book-progress" role="status">正在读取当前进度…</p></div><div class="header-actions"><button id="nav-toggle" aria-expanded="false" aria-controls="book-nav">作品目录</button><button id="context-toggle" aria-expanded="true" aria-controls="book-context">收起辅助栏</button>__THEME_CONTROL__<details id="book-info" class="menu"><summary>作品信息</summary><div id="book-info-panel" class="menu-panel book-info-panel"><strong id="book-info-title">__TITLE__</strong><p id="book-progress-detail">正在读取当前进度…</p><div id="book-classification" class="book-classification" hidden></div><details id="current-book-location"><summary>目录位置</summary><p id="current-book-root">__ROOT__</p></details><details id="root-location"><summary>书库与材料位置</summary><span id="root-hint"></span></details></div></details><details id="maintenance" class="menu"><summary>设置</summary><div class="menu-panel"><button id="refresh" title="刷新目录与状态，不丢弃未保存文字">刷新目录</button><button id="refresh-compact" hidden>刷新目录</button><button id="layout-reset">恢复默认布局</button><strong>文件与恢复</strong><button id="reload-source">重新读取文件</button><button id="recover-reload">保留恢复稿并重新载入</button><button id="recoveries-open">恢复中心</button><button id="save-all">保存全部候选</button><small id="build-label" title="用于区分工作台页面更新，不是技能发布版本">界面标识：__BUILD__</small></div></details></div></header><div class="desk"><nav id="book-nav" aria-label="作品目录" tabindex="-1"><button id="nav-close" class="panel-close">关闭目录</button><details><summary>切换作品</summary><select id="book-select" aria-label="选择作品"></select><button id="book-open">打开作品</button><p id="book-hint"></p></details><div class="navigation-mode"><button id="view-chapters">按章查看</button><button id="view-files">按文件查看</button></div><section id="pending-box" hidden><strong id="pending-count"></strong><div id="pending-list"></div></section><input id="search" type="search" placeholder="搜索全书章名或材料路径" aria-label="搜索作品文件"><div class="pager"><button id="newer" disabled>上一页</button><button id="older" disabled>下一页</button></div><p id="range"></p><p id="directory-warning" role="status"></p><p id="materials-status" role="status"></p><button id="materials-more" hidden>继续加载材料</button><div id="list"></div><details><summary>查找与定位</summary><button id="locate">定位当前文件</button><input id="full-query" aria-label="搜索正文与材料内容" placeholder="搜索正文与材料内容"><button id="full-go">搜索内容</button><p id="search-status" role="status"></p><div id="search-results"></div><button id="search-prev" disabled>上一页结果</button><button id="search-next" disabled>下一页结果</button></details></nav><div id="resize-left" class="column-resizer" role="separator" aria-label="调整目录宽度" aria-orientation="vertical" aria-valuemin="180" aria-valuemax="360" tabindex="0"></div><main><div class="tools"><div class="mode-actions"><button id="edit" disabled>编辑</button><button id="compare" disabled>对照正式稿</button><details id="reading-options" class="menu"><summary>阅读设置</summary><div class="menu-panel"><label>字号 <select id="font-size"><option>16</option><option selected>19</option><option>22</option><option>25</option></select></label><label>行距 <select id="line-height"><option>1.6</option><option selected>1.8</option><option>1.9</option><option>2.2</option></select></label><label>字体 <select id="font-family"><option value="serif">宋体</option><option value="sans">黑体</option></select></label><label><input id="focus-reading" type="checkbox">专注阅读</label></div></details></div><div class="save-actions"><button id="save" class="primary" disabled title="保存候选稿（⌘S / Ctrl+S）">保存候选稿</button><button id="platform-drafts-open" __PLATFORM_DISABLED__>平台草稿</button><details id="more-actions" class="menu"><summary>更多</summary><div class="menu-panel"><button id="writing-task">继续下一章</button><button id="review-task" disabled>生成审稿任务</button><button id="compare-choose">选择两稿对照</button><button id="source-view" hidden>查看源码</button><button id="download" disabled>下载当前文字</button></div></details></div></div><p id="message" role="status"></p><h1 id="title">选择章节或材料</h1><div class="document-meta"><div id="document-identity" class="identity-badges" role="status" hidden><span id="document-role" class="identity-badge"></span><span id="document-unsaved" class="identity-badge" hidden>当前文字未保存</span></div><details id="document-options"><summary>稿件与材料</summary><div id="chapter-picker" hidden><label for="chapter-version">本章稿件与材料</label><select id="chapter-version" aria-describedby="chapter-picker-help"></select><span id="chapter-picker-help" class="sr-only"></span></div></details><p id="state"></p><details id="count-details"><summary id="word-count" aria-label="字数与统计口径"></summary><p id="count-method"></p></details></div><p id="history-note"></p><div id="document-body"><section id="match-view" hidden><div id="match-tools"><button id="match-back">返回阅读位置</button><button id="match-prev">上一处命中</button><span id="match-position" role="status"></span><button id="match-next">下一处命中</button></div><p id="match-query"></p><pre id="match-text"></pre></section><div id="formatted" hidden></div><pre id="prose"></pre><textarea id="text" aria-label="候选正文编辑" hidden></textarea><img id="cover" alt="封面预览" hidden></div><section id="review-task-box" hidden><h3 id="assistant-task-title">交给助手审稿</h3><p id="review-task-status"></p><pre id="review-findings"></pre><textarea id="review-prompt" aria-label="审稿任务" readonly></textarea><button id="copy-review">复制审稿任务</button></section><section id="difference" hidden><div class="diff-tools"><button id="compare-back">返回阅读</button><button id="diff-prev">上一处差异</button><span id="diff-position" role="status"></span><button id="diff-next">下一处差异</button></div><p id="compare-label"></p><div class="comparison"><section><h3 id="before-label">当前正式稿</h3><pre id="before"></pre></section><section><h3 id="after-label">当前文字</h3><pre id="after"></pre></section></div></section></main><div id="resize-right" class="column-resizer" role="separator" aria-label="调整辅助栏宽度" aria-orientation="vertical" aria-valuemin="200" aria-valuemax="360" tabindex="0"></div><button id="panel-dismiss" aria-label="关闭侧栏" tabindex="-1"></button><aside id="book-context" aria-label="写作辅助" tabindex="-1"><button id="context-close" class="panel-close">关闭辅助栏</button><h3 id="context-title">本章写作</h3><div id="chapter-info"></div><details id="version-details"><summary>文件与版本</summary><pre id="detail"></pre><details id="file-location"><summary>文件位置</summary><p id="path"></p></details></details><details id="adoption-help"><summary>保存与采用说明</summary><p>保存不会覆盖正式稿。请将候选路径交给助手，按现有审稿和历史修订流程采用。</p><p>旧稿未登记的版本关系会明确标注；自动恢复稿须自行核对后再采用。</p><p>自动恢复在停止输入后写入本书文件；失败会提示。关闭或崩溃前尚未写入的文字仍可能丢失。</p></details></aside></div><script>__SCRIPT__</script></body></html>'''
+    page = page.replace('<summary>稿件与材料</summary>', '<summary>同章版本</summary>').replace(
+        '<p id="state"></p>', '<p id="state" role="status" aria-live="polite"></p>'
+        '<button id="save-retry" class="save-state-action" hidden>重试保存</button>'
+        '<button id="save-status-download" class="save-state-action" hidden>下载当前文字</button>')
+    page = page.replace('<button id="compare-choose">', '<button id="save-new-version">保留为新版本</button><button id="compare-choose">')
+    page = page.replace('<div id="book-classification"', '<p id="resume-status" role="status" hidden></p><p id="presence-status" role="status" hidden></p><div id="book-classification"')
+    page = page.replace('<button id="recoveries-open">', '<button id="resume-remember">记住当前编辑位置</button><button id="recoveries-open">')
     return page.replace('__PLATFORM_DISABLED__', 'disabled' if packet['book'].get('kind') == 'analysis' else '').replace('__THEME_CSS__', _workbench_theme_css()).replace('__THEME_CONTROL__', _workbench_theme_control()).replace('__KIND__', _escape({'long': '长篇', 'short': '短篇', 'analysis': '作品分析'}.get(packet['book'].get('kind'), '类型未确认'))).replace('__KIND_CODE__', _escape(packet['book'].get('kind') or '')).replace('__ROOT__', _escape(packet['book'].get('root') or '目录未提供')).replace('__TITLE__', _escape(packet['book']['title'])).replace('__HASH__', digest).replace('__BUILD__', hashlib.sha256((page + script.partition('\n')[2]).encode()).hexdigest()[:10]).replace('__SCRIPT__', script).encode('utf-8')
 
 
@@ -3750,12 +4860,14 @@ def _service_exit_verified(root, record, raw, record_relative, lock_relative):
         return False
 
 
+
 def _editor_exit_verified(root, record, raw):
     return _service_exit_verified(root, record, raw, '.story/workbench-service.json',
                                   '.story/workbench-server.lock')
 
 
-def _service_request(root, action='session', saved=False):
+def _service_request(root, action='session', saved=False, *, expected_book_id=None,
+                     unknown_confirmation=None, fingerprint=None, confirmed=False):
     root = Path(root).expanduser().resolve()
     try:
         record_raw = _author_read(root, '.story/workbench-service.json', 8192)
@@ -3771,21 +4883,42 @@ def _service_request(root, action='session', saved=False):
         api.fail('workbench_service_invalid', '工作台服务记录无效；不会向未确认的进程发送停止请求。')
     if action == 'stop' and not saved:
         api.fail('workbench_unsaved', '请先保留所有工作台页面的编辑，再使用 --saved 停止服务。')
+    if action not in ('session', 'stop', 'presence-confirm'):
+        api.fail('invalid_input', '未知的工作台服务操作。')
+    if expected_book_id is not None and record.get('book_id') != expected_book_id:
+        api.fail('workbench_book_changed', '登记服务属于另一作品，未发送停止或确认请求。')
     if record.get('stopped') is True:
         return {'ok': True, 'running': False, 'status': '登记服务已正常停止。'}
     connection = http.client.HTTPConnection('127.0.0.1', record['port'], timeout=3)
     try:
         origin = f"http://127.0.0.1:{record['port']}"
+        payload = {'instance': record['instance'], 'saved': saved}
+        if action == 'stop' and unknown_confirmation is not None:
+            payload['unknown_confirmation'] = unknown_confirmation
+        if action == 'presence-confirm':
+            payload.update(fingerprint=fingerprint, confirmed=confirmed)
         connection.request('POST', '/' + record['token'] + '/api/' + action,
-                           json.dumps({'instance': record['instance'], 'saved': saved}),
+                           json.dumps(payload),
                            {'Content-Type': 'application/json', 'Origin': origin, 'X-Story-Token': record['token']})
         response = connection.getresponse()
-        raw = response.read(8193)
-        if response.status != 200 or len(raw) > 8192:
-            api.fail('workbench_service_mismatch', '服务未确认此实例；不会按记录中的 PID 结束进程。')
+        maximum = 8 * 1024 * 1024
+        raw = response.read(maximum + 1)
+        if len(raw) > maximum:
+            api.fail('workbench_service_mismatch', '页面状态汇总超过核对上限，未确认停止。')
         result = json.loads(raw)
-        if not isinstance(result, dict) or result.get('instance') != record['instance'] or result.get('root') != str(root):
+        if (not isinstance(result, dict) or result.get('instance') != record['instance'] or result.get('root') != str(root) or
+                (record.get('book_id') is not None and result.get('book_id') != record['book_id'])):
             api.fail('workbench_service_mismatch', '服务身份不一致，未确认停止。')
+        if response.status != 200:
+            code = result.get('error')
+            if isinstance(code, str) and (code.startswith('workbench_presence_') or code == 'workbench_platform_busy'):
+                details = result.get('details') if isinstance(result.get('details'), dict) else {}
+                api.fail(code, result.get('message') or '页面保存状态尚未通过核对。', **details)
+            api.fail('workbench_service_mismatch', '服务未确认此实例；不会按记录中的 PID 结束进程。')
+        observed = result.get('presence')
+        result['presence_supported'] = isinstance(observed, dict) and observed.get('protocol') == _EditorPresence.PROTOCOL
+        if not result['presence_supported']:
+            result.update(automatic_verified=False, presence_coverage='legacy_service_not_observed')
         try:
             current_runtime = _runtime_digest(_runtime_sources())
         except OSError as error:
@@ -3846,6 +4979,7 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
     identity = {'instance': uuid.uuid4().hex, 'root': str(root), 'book_id': packet['book']['id'], 'pid': os.getpid(),
                 'code_sha256': _loaded_workbench_sha256, 'runtime_sha256': _loaded_runtime_sha256,
                 'started': _utc_now()}
+    presence = _EditorPresence(identity['instance'], identity['book_id'])
 
     def checked_book():
         # An editor belongs to the book it opened, not to a reusable directory
@@ -3883,11 +5017,13 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
             if not self.allowed() or self.path != route:
                 return self.reply(404, b'{}')
             try:
+                if self.server.stopping:
+                    api.fail('workbench_presence_stopping', '服务正在正常停止，请保留已有页面。')
                 checked_book()
                 fresh = _editor_packet(root, limit=limit)
-                self.reply(200, _editor_page(fresh, {}, token), 'text/html; charset=utf-8')
+                self.reply(200, _editor_page(fresh, {}, token, page_config=presence.register_page()), 'text/html; charset=utf-8')
             except api.StoryError as error:
-                self.reply(409, json.dumps({'message': str(error), 'error': error.code, 'details': error.details}, ensure_ascii=False).encode())
+                self.reply(409, json.dumps({'ok': False, **identity, 'message': str(error), 'error': error.code, 'details': error.details}, ensure_ascii=False).encode())
             except (OSError, ValueError) as error:
                 self.reply(409, json.dumps({'message': str(error)}, ensure_ascii=False).encode())
 
@@ -3909,18 +5045,40 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                 if not isinstance(payload, dict):
                     return self.reply(400, b'{}')
                 action = self.path[len(route):]
-                if action not in ('api/session', 'api/stop'):
+                if self.server.stopping and action != 'api/session':
+                    api.fail('workbench_presence_stopping', '服务正在正常停止，请保留已有页面。')
+                if action not in ('api/session', 'api/stop', 'api/presence', 'api/presence-confirm'):
                     checked_book()
-                if action in ('api/session', 'api/stop'):
+                if action in ('api/session', 'api/stop', 'api/presence-confirm'):
                     if payload.get('instance') != identity['instance']:
                         return self.reply(409, b'{}')
-                    if action == 'api/stop' and payload.get('saved') is not True:
-                        return self.reply(409, b'{}')
                     result = {'ok': True, **identity, 'running': True, 'stop_requested': action == 'api/stop'}
+                    result['platform_activity'] = api.platform_drafts.workbench_activity(
+                        root, expected_book_id=identity['book_id'])
+                    if action == 'api/stop':
+                        # HTTPServer serializes starts and stops. Check the registered
+                        # worker before consuming page confirmation, then fence all
+                        # later starts with stopping until this process exits.
+                        if result['platform_activity']['busy']:
+                            api.fail('workbench_platform_busy',
+                                     '平台草稿任务仍在执行，请回到作品查看进度，等待任务结束后再停止服务。',
+                                     platform_activity=result['platform_activity'])
+                        result.update(presence.require_stop(payload.get('saved'), payload.get('unknown_confirmation')))
+                        self.server.stopping = True
+                    elif action == 'api/presence-confirm':
+                        result.update(presence.confirm_unknown(payload.get('fingerprint'), confirmed=payload.get('confirmed')))
+                    else:
+                        result['presence'] = presence.summary()
                     self.reply(200, json.dumps(result, ensure_ascii=False).encode())
                     if action == 'api/stop':
                         threading.Thread(target=self.server.shutdown, daemon=True).start()
                     return
+                elif action == 'api/presence':
+                    result = {**identity, **presence.report(payload)}
+                elif action == 'api/resume-state':
+                    result = _editor_resume_state(root, expected_book_id=identity['book_id'])
+                elif action == 'api/resume-save':
+                    result = _editor_resume_save(root, payload, expected_book_id=identity['book_id'])
                 elif action == 'api/catalog':
                     result = _editor_catalog(root, payload.get('offset', 0), limit, payload.get('query', ''),
                                              payload.get('focus'), materials, payload.get('context_chapter'),
@@ -3963,17 +5121,27 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                         payload.get('profile_sha256'), expected_book_id=identity['book_id'], save=save_rules,
                         comparison_policy=payload.get('comparison_policy', 'strict'), body_encoding=payload.get('body_encoding', 'verbatim'))
                 elif action == 'api/platform-drafts/preview':
+                    if 'update_existing' in payload:
+                        api.fail('invalid_input', '请使用新版工作台的统一同步草稿操作，并重新预览。')
+                    encoding = api.platform_drafts.require_platform_body_encoding(
+                        payload.get('body_encoding', api.platform_drafts.PLATFORM_BODY_ENCODING))
+                    api.platform_drafts.require_platform_comparison_policy(payload.get('comparison_policy', 'strict'))
                     result = api.platform_drafts.workbench_preview(root, payload.get('plan_id'), payload.get('profile_id'),
                         expected_book_id=identity['book_id'], reconcile_only=payload.get('reconcile_only', False),
-                        comparison_policy=payload.get('comparison_policy', 'strict'), body_encoding=payload.get('body_encoding', 'verbatim'),
-                        update_existing=payload.get('update_existing', False))
+                        comparison_policy=payload.get('comparison_policy', 'strict'), body_encoding=encoding,
+                        sync_drafts=payload.get('sync_drafts', False))
                 elif action == 'api/platform-drafts/start':
+                    if 'update_existing' in payload:
+                        api.fail('invalid_input', '请使用新版工作台的统一同步草稿操作，并重新预览。')
+                    encoding = api.platform_drafts.require_platform_body_encoding(
+                        payload.get('body_encoding', api.platform_drafts.PLATFORM_BODY_ENCODING))
+                    api.platform_drafts.require_platform_comparison_policy(payload.get('comparison_policy', 'strict'))
                     result = api.platform_drafts.workbench_start(root, payload.get('plan_id'), payload.get('profile_id'),
                         expected_book_id=identity['book_id'], expected_profile_sha256=payload.get('profile_sha256'),
                         preview_token=payload.get('preview_token'), execute=payload.get('execute', False),
                         reconcile_only=payload.get('reconcile_only', False), auto_connect=payload.get('auto_connect', False),
-                        comparison_policy=payload.get('comparison_policy', 'strict'), body_encoding=payload.get('body_encoding', 'verbatim'),
-                        update_existing=payload.get('update_existing', False))
+                        comparison_policy=payload.get('comparison_policy', 'strict'), body_encoding=encoding,
+                        sync_drafts=payload.get('sync_drafts', False))
                 elif action == 'api/platform-drafts/job':
                     result = api.platform_drafts.workbench_job(root, payload.get('id'), expected_book_id=identity['book_id'])
                 elif action == 'api/metrics':
@@ -3987,6 +5155,8 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                 elif action == 'api/books':
                     result = {'ok': True, 'books': list(library.values()), 'current': str(root)}
                 elif action == 'api/open-book':
+                    if 'expected_book_id' in payload:
+                        _library_expected_entry(library, payload)
                     result = _library_open(library, payload.get('key'), root, self.server.editor_url)
                 elif action == 'api/open':
                     document_id = payload.get('id')
@@ -4000,7 +5170,7 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                     return self.reply(404, b'{}')
                 self.reply(200, json.dumps(result, ensure_ascii=False).encode())
             except api.StoryError as error:
-                self.reply(409, json.dumps({'message': str(error), 'error': error.code, 'details': error.details}, ensure_ascii=False).encode())
+                self.reply(409, json.dumps({'ok': False, **identity, 'message': str(error), 'error': error.code, 'details': error.details}, ensure_ascii=False).encode())
             except (ValueError, UnicodeError, OSError) as error:
                 self.reply(400, json.dumps({'message': str(error)}, ensure_ascii=False).encode())
             except (KeyError, TypeError) as error:
@@ -4038,6 +5208,8 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
     try:
         server = EditorServer(('127.0.0.1', 0), Handler, bind_and_activate=False)
         server.lease = lease
+        server.presence = presence
+        server.stopping = False
         server.server_bind()
         server.server_activate()
         server.editor_url = f'http://127.0.0.1:{server.server_port}' + route
@@ -4170,10 +5342,25 @@ def _library_store(state_dir, entries, expected_hash):
     return hashlib.sha256(content.encode('utf-8')).hexdigest()
 
 
-def _set_shelf_status(state_dir, entries, key, value, expected_hash):
+def _library_expected_entry(entries, payload, allow_confirmation=False):
+    key = payload.get('key')
+    if not isinstance(key, str) or key not in entries:
+        api.fail('invalid_input', '请选择已登记作品。')
+    expected = payload.get('expected_book_id')
+    if allow_confirmation and expected is None and isinstance(payload.get('confirmation'), dict):
+        expected = payload['confirmation'].get('book_id')
+    entry = entries[key]
+    if not isinstance(expected, str) or not expected or entry['book_id'] != expected:
+        api.fail('workbench_book_changed', '作品身份与页面记录不一致，请刷新书架后核对原作品。')
+    return entry
+
+
+def _set_shelf_status(state_dir, entries, key, value, expected_hash, expected_book_id):
     if not isinstance(key, str) or key not in entries or value not in ('serializing', 'completed', 'unknown'):
         api.fail('invalid_input', '请选择已登记作品及有效的本地作品状态。')
     original = entries[key]
+    if not isinstance(expected_book_id, str) or not expected_book_id or original['book_id'] != expected_book_id:
+        api.fail('workbench_book_changed', '作品身份与页面记录不一致，请刷新书架后核对原作品。')
     current = _library_entry(original['root'], original)
     if current['kind'] == 'analysis':
         api.fail('invalid_input', '作品分析不适用连载或完本标记。')
@@ -4202,6 +5389,7 @@ def _library_catalog(entries):
                 status_entry['shelf_status'] = entry['shelf_status']
             current['writing_status'] = _book_writing_status(current['root'], status_entry)
             current.update(_book_update(current['root'], current))
+            current['resume'] = _editor_resume_summary(current['root'], current['book_id'])
             _library_entry(current['root'], current)
             books.append({**current, 'available': True})
         except (api.StoryError, OSError, ValueError) as error:
@@ -4209,6 +5397,8 @@ def _library_catalog(entries):
                           'progress': _unknown_shelf_progress('无法核对原作品，正式章登记暂不可用。'),
                           'classification': _classification_unavailable('无法核对原作品，题材暂不可用。'),
                           'writing_status': _unknown_writing_status('无法核对原作品，本地作品状态暂不可用。'),
+                          'resume': {'status': 'unavailable', 'document': None, 'updated_at': None,
+                                     'buffer_dirty': False, 'note': '作品身份无法核对，未读取上次编辑位置。'},
                           **_unknown_book_update('无法核对原作品，更新时间暂不可用。'),
                           'available': False, 'error': str(error)})
     return {'ok': True, 'books': books, 'current': None}
@@ -4309,6 +5499,41 @@ def _library_service_request(state_dir=None, action='session', saved=False, _rec
         connection.close()
 
 
+def _library_directories(payload):
+    """Read directory names for the authenticated local shelf; never import files."""
+    if set(payload) - {'path', 'offset'}:
+        api.fail('invalid_input', '目录浏览只接受路径和分页位置。')
+    value, offset = payload.get('path', ''), payload.get('offset', 0)
+    if not isinstance(value, str) or len(value) > 8192 or '\x00' in value or type(offset) is not int or not 0 <= offset <= 100000:
+        api.fail('invalid_input', '请选择有效的目录路径。')
+    path = Path(value).expanduser() if value else Path.home()
+    if not path.is_absolute():
+        api.fail('invalid_input', '请填写文件夹的完整路径。')
+    try:
+        path = path.resolve(strict=True)
+        rows = []
+        with os.scandir(path) as entries:
+            for entry in entries:
+                if entry.is_dir():
+                    rows.append({'name': entry.name, 'path': str(path / entry.name)})
+                    if len(rows) > 100000:
+                        api.fail('workbench_directory_large', '此目录的子文件夹过多，请填写更具体的路径。')
+    except (OSError, RuntimeError):
+        api.fail('workbench_directory_unavailable', '无法读取这个文件夹，请核对路径和系统访问权限。')
+    rows.sort(key=lambda row: (row['name'].casefold(), row['name']))
+    home = Path.home()
+    places = [('个人目录', home), ('桌面', home / 'Desktop'), ('文稿', home / 'Documents'), ('下载', home / 'Downloads')]
+    if os.name == 'nt':
+        places += [(letter + ':', Path(letter + ':\\')) for letter in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ']
+    else:
+        places += [('文件系统', Path('/')), ('外接磁盘', Path('/Volumes'))]
+    shortcuts = [{'name': name, 'path': str(folder)} for name, folder in places if folder.is_dir()]
+    return {'ok': True, 'path': str(path), 'parent': str(path.parent) if path.parent != path else None,
+            'directories': rows[offset:offset + 100], 'offset': offset, 'total': len(rows),
+            'next_offset': offset + 100 if offset + 100 < len(rows) else None, 'shortcuts': shortcuts,
+            'scope': 'local_directories_only'}
+
+
 def _library_management_html():
     return '''<style>
 .library-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:22px 0 24px}
@@ -4335,6 +5560,7 @@ html[data-story-workbench] .book-management-panel>button{margin:0;min-height:34p
 .book-management-panel .status-note,.book-management-panel .status-source{font-size:11px;line-height:1.8}
 .book-management-panel .book-status-editor select{font-size:12px}
 dialog{color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:18px;width:min(620px,calc(100vw - 32px));max-height:85vh;padding:28px;overflow:auto;box-shadow:0 24px 80px #10271e33}
+.directory-navigation,.directory-places,.directory-location{display:flex;gap:8px;flex-wrap:wrap}.directory-location input{flex:1;min-width:160px}.directory-places{margin-top:12px}.directory-places button{font-size:12px;padding:6px 10px}.directory-items{display:grid;gap:5px;max-height:32vh;overflow:auto}.directory-items button{text-align:left;overflow-wrap:anywhere}.directory-pick{margin-top:-8px}.add-fields{flex-wrap:wrap}.add-fields input{flex-basis:100%}
 dialog::backdrop{background:#101d2299;backdrop-filter:blur(3px)}dialog h2{font-size:21px;line-height:1.45;overflow-wrap:anywhere}
 dialog label{display:grid;gap:7px;margin:18px 0;font-size:13px}dialog label.check{display:flex;align-items:flex-start;gap:9px;line-height:1.65}dialog input[type=checkbox]{width:auto;flex-shrink:0;margin-top:4px;accent-color:var(--wb-button)}
 dialog select{padding:9px 12px}dialog p{white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0;font-size:13px;color:var(--muted)}
@@ -4346,28 +5572,89 @@ html[data-story-workbench] #manager-error{color:var(--wb-danger);background:var(
 .manager-feedback progress{display:block;width:100%;height:6px;margin:10px 0;accent-color:var(--wb-button)}dialog .manager-feedback p{font-size:12px;line-height:1.75;margin:7px 0 0}.manager-feedback[data-state="success"]{border-color:var(--accent)}
 .recovery-row{border-top:1px solid var(--line);padding:14px 0}.recovery-row button{max-width:100%;text-align:left;overflow-wrap:anywhere}.recovery-row small{display:block;color:var(--muted);overflow-wrap:anywhere;margin-top:5px}
 @media(max-width:680px){.library-actions{gap:7px;margin-bottom:22px}.library-actions #new-book{width:100%;margin:0 0 3px}.library-actions>details{flex:1}.library-actions>details>summary{text-align:center}.library-actions #undo-remove{flex-basis:100%}.library-actions .add-body{width:calc(100vw - 36px);padding:15px}.shelf-tools-panel{left:auto;right:0;min-width:180px}dialog{padding:22px 18px;border-radius:14px}.dialog-actions button{flex:1 1 auto}}
-</style><div class="library-actions" role="group" aria-label="作品与恢复"><button id="new-book" class="primary">新建作品</button><details id="add-book-panel" class="shelf-add"><summary>添加已有作品</summary><div class="add-body"><label for="book-path">已有作品的本地目录</label><div class="add-fields"><input id="book-path" placeholder="粘贴作品文件夹的完整路径" autocomplete="off"><button id="add">添加作品</button></div><p class="add-help">只登记所填目录，稿件保留在原位置；书架最多登记 30 部作品。</p></div></details><details class="shelf-tools"><summary>书架工具</summary><div class="shelf-tools-panel"><button id="refresh">刷新书架</button><button id="restore-backup">从备份恢复</button><button id="recovery-center">恢复中心</button><button id="last-books">重新打开上次作品</button><details class="shelf-help"><summary>使用说明</summary><p id="shelf-footer">打开作品会保留书架和已有编辑页面。关闭书架后，作品编辑服务仍会运行。</p></details></div></details><button id="undo-remove" hidden>撤销移出书架</button></div>
-<dialog id="book-manager" aria-labelledby="manager-title" aria-busy="false"><h2 id="manager-title"></h2><div id="manager-body"></div><section id="manager-feedback" class="manager-feedback" hidden><div class="manager-feedback-heading"><strong id="manager-operation" role="status" aria-live="polite"></strong><span id="manager-elapsed" aria-live="off"></span></div><progress id="manager-progress" aria-label="操作进行中"></progress><p id="manager-detail"></p></section><p id="manager-error" role="alert"></p><div id="manager-actions" class="dialog-actions"></div></dialog>'''
+</style><div class="library-actions" role="group" aria-label="作品与恢复"><button id="new-book" class="primary">新建作品</button><details id="add-book-panel" class="shelf-add"><summary>添加已有作品</summary><div class="add-body"><label for="book-path">已有作品的本地目录</label><div class="add-fields"><input id="book-path" placeholder="选择作品文件夹，或粘贴完整路径" autocomplete="off"><button id="choose-book-directory" type="button">选择文件夹…</button><button id="add">添加作品</button></div><p class="add-help">只登记所填目录，稿件保留在原位置；书架最多登记 30 部作品。</p></div></details><details class="shelf-tools"><summary>书架工具</summary><div class="shelf-tools-panel"><button id="refresh">刷新书架</button><button id="restore-backup">从备份恢复</button><button id="recovery-center">恢复中心</button><button id="last-books">重新打开上次作品</button><details class="shelf-help"><summary>使用说明</summary><p id="shelf-footer">打开作品会保留书架和已有编辑页面。关闭书架后，作品编辑服务仍会运行。</p></details></div></details><button id="undo-remove" hidden>撤销移出书架</button></div>
+<dialog id="book-manager" aria-labelledby="manager-title" aria-busy="false"><h2 id="manager-title"></h2><div id="manager-body"></div><section id="manager-feedback" class="manager-feedback" hidden><div class="manager-feedback-heading"><strong id="manager-operation" role="status" aria-live="polite"></strong><span id="manager-elapsed" aria-live="off"></span></div><progress id="manager-progress" aria-label="操作进行中"></progress><p id="manager-detail"></p></section><p id="manager-error" role="alert"></p><div id="manager-actions" class="dialog-actions"></div></dialog>
+<dialog id="directory-browser" aria-labelledby="directory-title"><h2 id="directory-title">选择文件夹</h2><div class="directory-navigation"><button id="directory-home" type="button">个人目录</button><button id="directory-up" type="button">上一级</button></div><label for="directory-path">当前目录</label><div class="directory-location"><input id="directory-path" autocomplete="off"><button id="directory-go" type="button">打开路径</button></div><div id="directory-places" class="directory-places"></div><p id="directory-note" role="status" aria-live="polite"></p><div id="directory-items" class="directory-items"></div><button id="directory-more" type="button" hidden>加载更多文件夹</button><div class="dialog-actions"><button id="directory-cancel" type="button">取消</button><button id="directory-select" type="button" class="primary" disabled>选择当前文件夹</button></div></dialog>'''
+
+
+def _library_directory_script():
+    return r'''
+let directoryPicking=false;
+function directoryChildPath(parent,name){
+ if(!parent.trim())throw Error('请选择作品的存放位置。');
+ if(!name||name!==name.trim()||name==='.'||name==='..'||/[\\/:*?"<>|\x00-\x1f]/.test(name)||/[. ]$/.test(name)||/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)/i.test(name))throw Error('请填写有效的作品文件夹名，不能包含路径分隔符或系统保留名称。');
+ const separator=parent.includes('\\')?'\\':'/';return parent.replace(/[\\/]+$/,'')+separator+name;
+}
+async function chooseWorkbenchDirectory(purpose,initial=''){
+ if(directoryPicking)throw Error('请先完成当前文件夹选择。');
+ directoryPicking=true;
+ try{
+  const mac=globalThis.webkit?.messageHandlers?.storyDirectory;
+  if(mac){const result=await mac.postMessage({purpose});if(result.error)throw Error(result.error);return result.cancelled?null:result.path;}
+  const bridge=globalThis.chrome?.webview;
+  if(bridge){
+   const id=crypto.randomUUID();
+   return await new Promise((resolve,reject)=>{
+    const receive=event=>{const result=event.data;if(result?.kind!=='directory-result'||result.id!==id)return;bridge.removeEventListener('message',receive);result.error?reject(Error(result.error)):resolve(result.cancelled?null:result.path);};
+    bridge.addEventListener('message',receive);
+    try{bridge.postMessage({kind:'choose-directory',id,purpose});}catch(error){bridge.removeEventListener('message',receive);reject(error);}
+   });
+  }
+  return await browseWorkbenchDirectory(purpose,initial);
+ }finally{directoryPicking=false;}
+}
+function browseWorkbenchDirectory(purpose,initial){
+ const dialog=$('directory-browser'),path=$('directory-path'),items=$('directory-items'),note=$('directory-note'),choose=$('directory-select'),up=$('directory-up'),more=$('directory-more');
+ $('directory-title').textContent=purpose==='create-parent'?'选择新作品的存放位置':'选择已有作品文件夹';
+ return new Promise(resolve=>{
+  let finished=false,request=0,selected=null,next=null;
+  const finish=value=>{if(finished)return;finished=true;request++;dialog.close();resolve(value);};
+  const button=(label,action)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=action;return b;};
+  const load=async(value='',offset=0)=>{
+   const version=++request;selected=null;choose.disabled=true;up.disabled=true;more.hidden=true;note.textContent='正在读取文件夹…';
+   if(!offset)items.replaceChildren();
+   try{
+    const packet=await call('directories',{path:value,offset});if(finished||version!==request)return;
+    selected=packet.path;path.value=packet.path;choose.disabled=false;up.disabled=!packet.parent;up.onclick=()=>load(packet.parent);next=packet.next_offset;
+    $('directory-places').replaceChildren(...packet.shortcuts.map(row=>button(row.name,()=>load(row.path))));
+    for(const row of packet.directories)items.append(button('📁 '+row.name,()=>load(row.path)));
+    more.hidden=next===null;more.onclick=()=>load(selected,next);
+    note.textContent=packet.total?'已显示 '+Math.min(packet.offset+packet.directories.length,packet.total)+' / '+packet.total+' 个子文件夹':'此文件夹没有子文件夹，可以选择当前文件夹。';
+   }catch(error){if(!finished&&version===request)note.textContent=error.message||'文件夹读取失败。';}
+  };
+  $('directory-cancel').onclick=()=>finish(null);dialog.oncancel=event=>{event.preventDefault();finish(null);};dialog.onclose=()=>finish(null);
+  choose.onclick=()=>{if(selected&&path.value===selected)finish(selected);};
+  path.oninput=()=>{request++;selected=null;choose.disabled=true;more.hidden=true;};path.onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();load(path.value);}};
+  $('directory-go').onclick=()=>load(path.value);$('directory-home').onclick=()=>load('');
+  dialog.showModal();load(initial);
+ });
+}
+async function fillDirectoryField(input,purpose,current,error,changed=()=>{}){
+ if(input.disabled)return;const previous=input.value;
+ try{const path=await chooseWorkbenchDirectory(purpose,previous);if(path!==null&&typeof path==='string'&&current()&&!input.disabled&&input.value===previous){input.value=path;changed();input.focus();}}
+ catch(failure){if(current())error(failure.message||'文件夹选择未完成。');}
+}
+'''
 
 
 def _library_management_script():
-    return _recovery_list_script() + r'''
-let undoRemoval=null,managerBusy=false,managerGeneration=0,managerTimer=null,managerStarted=0,managerRequestSent=false;
+    return _recovery_list_script() + _library_directory_script() + r'''
+let undoRemoval=null,undoRemovalBusy=false,managerBusy=false,managerGeneration=0,managerTimer=null,managerStarted=0,managerRequestSent=false;
 const manager=$('book-manager'),managerBody=$('manager-body'),managerActions=$('manager-actions');
 function shelfMenus(){return Array.from(document.querySelectorAll('.library-actions>details,.book-management'));}
 function shelfMenuSummary(menu){return Array.from(menu.children).find(node=>node.tagName==='SUMMARY');}
 function closeShelfMenus(except=null,restoreFocus=false){const closing=shelfMenus().filter(menu=>menu!==except&&menu.open);for(const menu of closing)menu.open=false;if(restoreFocus&&closing.length)shelfMenuSummary(closing[0])?.focus();}
-function closeOutsideShelfMenus(event){const menus=shelfMenus();if(!menus.some(menu=>menu.open&&menu.contains(event.target)))closeShelfMenus();}
+function closeOutsideShelfMenus(event){if(directoryPicking)return;const menus=shelfMenus();if(!menus.some(menu=>menu.open&&menu.contains(event.target)))closeShelfMenus();}
 document.addEventListener('pointerdown',closeOutsideShelfMenus,true);
-document.addEventListener('click',event=>{const menu=shelfMenus().find(menu=>menu.contains(event.target));if(!menu){closeShelfMenus();return;}const summary=shelfMenuSummary(menu);if(summary?.contains(event.target)&&!menu.open)closeShelfMenus(menu);},true);
+document.addEventListener('click',event=>{if(directoryPicking)return;const menu=shelfMenus().find(menu=>menu.contains(event.target));if(!menu){closeShelfMenus();return;}const summary=shelfMenuSummary(menu);if(summary?.contains(event.target)&&!menu.open)closeShelfMenus(menu);},true);
 document.addEventListener('toggle',event=>{if(event.target.open&&shelfMenus().includes(event.target))closeShelfMenus(event.target);},true);
-document.addEventListener('keydown',event=>{if(event.key!=='Escape'||manager.open||!shelfMenus().some(menu=>menu.open))return;event.preventDefault();closeShelfMenus(null,true);},true);
+document.addEventListener('keydown',event=>{if(event.key!=='Escape'||directoryPicking||manager.open||!shelfMenus().some(menu=>menu.open))return;event.preventDefault();closeShelfMenus(null,true);},true);
 function managementText(text){const p=document.createElement('p');p.textContent=text;managerBody.append(p);return p;}
 function managementField(label,type='text',options=[]){const row=document.createElement('label');row.textContent=label;const input=document.createElement(type==='select'?'select':'input');if(type==='select'){for(const [value,text]of options){const option=document.createElement('option');option.value=value;option.textContent=text;input.append(option);}}else input.type=type;if(type==='checkbox')row.className='check';input.autocomplete='off';row.append(input);managerBody.append(row);return input;}
 function managementElapsed(){const seconds=Math.max(0,Math.floor((Date.now()-managerStarted)/1000));$('manager-elapsed').textContent='已用 '+(seconds<60?seconds+' 秒':Math.floor(seconds/60)+' 分 '+seconds%60+' 秒');}
 function managementFeedback(state,title,detail){const feedback=$('manager-feedback');feedback.hidden=false;feedback.dataset.state=state;$('manager-operation').textContent=title;$('manager-detail').textContent=detail;$('manager-progress').hidden=state!=='running';}
 function managementClearTimer(){if(managerTimer!==null){clearInterval(managerTimer);managerTimer=null;}}
-async function managementRequest(action,data={}){managerRequestSent=true;return await call(action,data);}
+async function managementRequest(action,data={}){managerRequestSent=true;return await requestShelfCatalog(action,data);}
 function managementOperation(label){return ({'创建并核验备份':['正在创建并核验备份','备份已创建并核验。'],'核验并恢复副本':['正在核验备份并恢复副本','备份恢复请求已完成。'],'创建并加入书架':['正在创建作品并登记书架','作品创建请求已完成。'],'核对并更新位置':['正在核对作品身份并更新位置','作品位置已核对并更新。'],'停止本书编辑服务':['正在请求正常停止编辑服务','停止请求已处理，请核对下方结果。'],'移出书架':['正在移出书架','书架登记已移除。'],'移入系统回收站':['正在核对并移入系统回收站','回收站操作请求已完成。']})[label]||['正在执行“'+label+'”','操作请求已完成，请核对下方结果。'];}
 function managementButton(label,action,danger=false){
  const b=document.createElement('button');b.textContent=label;if(danger)b.className='danger';
@@ -4376,31 +5663,101 @@ function managementButton(label,action,danger=false){
   managerBusy=true;managerRequestSent=false;managerStarted=Date.now();managementClearTimer();$('manager-error').textContent='';manager.setAttribute('aria-busy','true');
   const controls=Array.from(manager.querySelectorAll('button,input,select,textarea')).map(control=>[control,control.disabled]);for(const [control]of controls)control.disabled=true;
   const [pending,complete]=managementOperation(label);b.textContent='处理中…';managementFeedback('running',pending,'正在等待本机服务返回执行结果。耗时取决于文件数量与大小，请保持窗口打开，勿重复执行。');managementElapsed();managerTimer=setInterval(managementElapsed,1000);
-  try{await action();managementFeedback('success',complete,'已收到本机服务的完成响应。');}
+  try{await action();if($('manager-feedback').dataset.state==='running')managementFeedback('success',complete,'已收到本机服务的完成响应。');}
   catch(error){$('manager-error').textContent=error.message||String(error);if(!managerRequestSent)managementFeedback('error','操作未提交','请按提示修正填写内容后重试。');else if(error.responseReceived)managementFeedback('error','操作未完成','已收到本机服务的错误响应。请按提示核对目录或备份，再决定是否重试。');else managementFeedback('unknown','执行结果待核对','未收到完成确认，操作可能已执行。请先核对目录或备份结果，再决定是否重试，勿直接重复执行。');}
   finally{managementClearTimer();managementElapsed();managerBusy=false;manager.setAttribute('aria-busy','false');for(const [control,disabled]of controls)control.disabled=disabled;b.textContent=label;}
  };managerActions.append(b);return b;
 }
 function openManager(title){closeShelfMenus();if(managerBusy)throw Error('当前操作仍在进行，请等待完成。');managementClearTimer();const generation=++managerGeneration;$('manager-title').textContent=title;managerBody.replaceChildren();managerActions.replaceChildren();$('manager-error').textContent='';$('manager-feedback').hidden=true;$('manager-elapsed').textContent='';manager.setAttribute('aria-busy','false');if(!manager.open)manager.showModal();managementButton('返回书架',()=>manager.close());return generation;}
 manager.addEventListener('cancel',event=>{if(managerBusy)event.preventDefault();});
-function managementReceipt(result,message){if(result.books)render(result);manager.close();$('message').textContent=message+(result.warning?'\n'+result.warning:'');if(result.undo_id){undoRemoval=result.undo_id;$('undo-remove').hidden=false;}}
-function rememberShelfBook(key){try{const previous=JSON.parse(localStorage.getItem('story-last-books')||'[]');const keys=Array.isArray(previous)?previous.filter(value=>typeof value==='string'&&value!==key):[];localStorage.setItem('story-last-books',JSON.stringify([key,...keys].slice(0,8)));}catch{}}
-async function openRecoveryBook(key,id){const r=await call('open-book',{key});rememberShelfBook(key);const a=document.createElement('a');a.href=r.url+(id?'#'+encodeURIComponent(id):'');a.target='_blank';a.rel='noopener';a.textContent='打开作品';a.click();}
+function syncUndoRemoval(){const button=$('undo-remove');button.hidden=!undoRemoval;button.disabled=undoRemovalBusy;button.textContent=undoRemoval?'撤销移出：'+undoRemoval.title:'撤销移出书架';}
+function managementReceipt(result,message,discardStatusDraftBook=null,sourceBook=null){
+ if(result.books&&!shelfCatalogIsCurrent(result)){
+  if(shelfManagerReceiptIsCurrent(result))managementFeedback('unknown','操作已返回较早目录结果','本次操作已收到本机服务响应。当前书架已有较新状态，已保留当前书架、未保存状态和撤销记录；请刷新核对结果后再决定下一步，勿直接重复执行。');
+  return false;
+ }
+ captureShelfStatusDrafts();
+ if(discardStatusDraftBook)shelfStatusDrafts.delete(shelfStatusDraftKey(discardStatusDraftBook));
+ if(result.books)applyShelfCatalog(result,{captureDrafts:false});
+ manager.close();$('message').textContent=message+(result.warning?'\n'+result.warning:'');
+ if(result.undo_id&&sourceBook){undoRemoval={id:result.undo_id,key:sourceBook.key,book_id:sourceBook.book_id,title:bookName(sourceBook)};syncUndoRemoval();}
+ return true;
+}
+function rememberShelfBook(key,book_id,title){try{if(typeof book_id!=='string'||!book_id)return;const previous=JSON.parse(localStorage.getItem('story-last-books')||'[]'),records=Array.isArray(previous)?previous.filter(value=>(typeof value==='string'||(value&&typeof value.key==='string'&&typeof value.book_id==='string'))&&(typeof value==='string'?value:value.key)!==key):[];localStorage.setItem('story-last-books',JSON.stringify([{key,book_id,title:typeof title==='string'?title:'未命名作品'},...records].slice(0,8)));}catch{}}
+async function openRecoveryBook(key,id,isCurrent=()=>true,expected_book_id,title){const r=await call('open-book',{key,expected_book_id});if(!isCurrent())return false;rememberShelfBook(key,expected_book_id,title);const a=document.createElement('a');a.href=r.url+(id?'#'+encodeURIComponent(id):'');a.target='_blank';a.rel='noopener';a.textContent='打开作品';a.click();return true;}
 async function showRecoveries(book){
  const generation=openManager(book?'找回文字 · '+bookName(book):'启动恢复中心');const current=()=>manager.open&&generation===managerGeneration;
  managementText('这里列出磁盘上已写入的恢复副本和待核对保存记录。打开后核对文字，再保存为新候选；不会自动替换正式稿。');
- if(book){if(book.root)managementText('作品目录：'+book.root);await recoveryList(managerBody,async data=>{const result=await call('recoveries',{key:book.key,...data});const group=result.books[0];if(!group||group.error)throw Error(group?.error||'作品恢复记录未返回');return group;},row=>openRecoveryBook(book.key,row.id),current);return;}
+ if(book){if(book.root)managementText('作品目录：'+book.root);await recoveryList(managerBody,async data=>{const result=await call('recoveries',{key:book.key,expected_book_id:book.book_id,...data});const group=result.books[0];if(!group||group.error)throw Error(group?.error||'作品恢复记录未返回');return group;},row=>openRecoveryBook(book.key,row.id,current,book.book_id,bookName(book)),current);return;}
  managementText('请选择需要找回文字的作品，再读取该作品的恢复记录。');
  try{const result=await call('recoveries',{});if(!current())return;for(const group of bookDisplayRows(result.books)){const button=document.createElement('button');button.textContent=group.label;button.onclick=()=>showRecoveries(group);managerBody.append(button);}if(!result.books.length)managementText('书架尚未登记作品，请先添加已有作品。');}
  catch(error){if(current())$('manager-error').textContent='作品列表读取未完成：'+error.message;}
 }
-function showCreateBook(){openManager('新建作品');managementText('填写一个尚不存在的新目录。已有目录请用“添加已有作品”。');const path=managementField('作品完整目录'),title=managementField('书名'),kind=managementField('作品类型','select',[['long','长篇'],['short','短篇'],['analysis','作品分析']]);managementButton('创建并加入书架',async()=>{const r=await managementRequest('create-book',{path:path.value,title:title.value,kind:kind.value});managementReceipt(r,'作品已创建。'+(r.registered===false?'书架登记未完成，请按提示添加目录。':'可打开作品继续规划。'));});}
+function showCreateBook(){
+ const generation=openManager('新建作品'),current=()=>manager.open&&managerGeneration===generation&&!managerBusy;
+ managementText('选择存放位置，再创建独立的作品文件夹。已有作品请使用“添加已有作品”。');
+ const title=managementField('书名'),parent=managementField('存放位置'),pick=document.createElement('button');pick.type='button';pick.textContent='选择文件夹…';pick.className='directory-pick';managerBody.append(pick);
+ parent.placeholder='选择文件夹，或粘贴完整路径';
+ const folder=managementField('作品文件夹名'),kind=managementField('作品类型','select',[['long','长篇'],['short','短篇'],['analysis','作品分析']]),preview=managementText('填写书名并选择存放位置后，将显示完整目录。');preview.setAttribute('aria-live','polite');
+ let automaticName='';
+ const update=()=>{try{preview.textContent='将创建：'+directoryChildPath(parent.value,folder.value);}catch(error){preview.textContent=error.message;}};
+ title.oninput=()=>{if(folder.value===automaticName){automaticName=title.value.trim().replace(/[\\/:*?"<>|\x00-\x1f]/g,'_').replace(/[. ]+$/,'');folder.value=automaticName;}update();};parent.oninput=update;folder.oninput=update;
+ pick.onclick=()=>fillDirectoryField(parent,'create-parent',current,message=>$('manager-error').textContent=message,update);
+ managementButton('创建并加入书架',async()=>{if(directoryPicking)throw Error('请先完成文件夹选择。');const path=directoryChildPath(parent.value,folder.value||title.value.trim());const r=await managementRequest('create-book',{path,title:title.value,kind:kind.value});managementReceipt(r,'作品已创建。'+(r.registered===false?'书架登记未完成，请按提示添加目录。':'可打开作品继续规划。'));});
+}
 function showRestoreBackup(){openManager('从整书备份恢复');managementText('备份先核对文件清单与校验值，再恢复到全新的目录。原作品和原备份都会保留。恢复副本沿用原作品身份，请核对后决定使用哪一份。');const archive=managementField('备份 ZIP 完整路径'),destination=managementField('恢复到的新目录');managementButton('核验并恢复副本',async()=>{const r=await managementRequest('restore-backup',{archive:archive.value,destination:destination.value});managementReceipt(r,'备份已核验并恢复：'+r.root+'\n'+(r.warning||r.note||'请打开副本核对稿件。'));});}
-async function showBookService(book){const generation=openManager('保存与停止 · '+bookName(book));const state=await call('book-service',{key:book.key});if(!manager.open||generation!==managerGeneration)return;managementText(state.running===true?'本书编辑服务正在运行。请在所有窗口、浏览器标签页中保存候选或下载文字，再停止服务。停止不会替页面保存。':state.running===false?'本书编辑服务已停止或未登记。':'服务暂不可达，不能确认已退出。请核对原工作台。');if(state.running===true){managementText(state.outdated?'运行服务使用较早代码。保存并停止后，再打开作品才能加载当前代码。':'运行服务与当前源码一致。');const saved=managementField('我已核对本书所有页面，编辑均已保存或下载','checkbox');managementButton('停止本书编辑服务',async()=>{if(!saved.checked)throw Error('请先保存并核对所有页面。');const r=await managementRequest('stop-book',{key:book.key,saved:true});managementText(r.stop_requested?'已请求正常停止。请稍后刷新书架核对；原页面可保留查看。':'停止未确认，请保留当前页面。');});}}
-function showBookBackup(book){openManager('备份作品 · '+bookName(book));managementText('先保存所有页面。备份包含本书已保存的正文、候选、恢复记录及状态，排除运行服务记录、锁和外部关联材料；不会包含尚未保存的输入。检测到文件变化会停止本次备份。');managementText('作品目录：'+book.root);const path=managementField('新备份 ZIP 完整路径（放在作品目录之外）');managementButton('创建并核验备份',async()=>{const r=await managementRequest('backup-book',{key:book.key,path:path.value});managementText('备份已生成并核验：'+r.path+'\n文件数：'+r.files+'\nSHA-256：'+r.sha256);});}
-function showRelinkBook(book){openManager('重新定位 · '+bookName(book));managementText('选择这部作品迁移后的目录。系统会核对作品身份；不会合并同名作品或搬动文件。');const path=managementField('迁移后的作品完整目录');managementButton('核对并更新位置',async()=>{managementReceipt(await managementRequest('relink-book',{key:book.key,path:path.value}),'作品位置已核对并更新。');});}
-function showRemoveBook(book){openManager('移出书架 · '+bookName(book));managementText('只移除本书架的登记，作品文件和已打开的编辑页面都会保留。\n目录：'+book.root);managementButton('移出书架',async()=>managementReceipt(await managementRequest('remove-book',{key:book.key}),'已移出书架，作品文件保留。可撤销或重新添加。'));}
-async function showTrashBook(book){const generation=openManager('删除作品至回收站 · '+bookName(book));const preview=await call('trash-preview',{key:book.key});if(!manager.open||generation!==managerGeneration)return;managementText('将以下作品的整个本地目录移入系统废纸篓／回收站，成功后移出书架。外部关联材料不会删除。可通过系统回收站恢复目录，再添加回书架。');managementText('书名：'+preview.title+'\n目录：'+preview.root);managementText('请先完成备份并停止本书的编辑服务。任何身份、目录、服务或回收站核对失败都会停止操作。');const title=managementField('输入完整书名以确认'),saved=managementField('本书所有页面均已保存或下载，编辑服务已停止','checkbox');managementButton('移入系统回收站',async()=>{if(title.value!==preview.title||!saved.checked)throw Error('请输入完整书名并核对保存状态。');const r=await managementRequest('trash-book',{key:book.key,confirmation:preview.confirmation,saved:true});managementReceipt(r,'作品已移入系统回收站。'+(r.shelf_removed===false?'书架登记未移除，请刷新核对。':''));},true);}
+async function showBookService(book){
+ const generation=openManager('保存与停止 · '+bookName(book)),target={key:book.key,expected_book_id:book.book_id};
+ let viewed=await call('book-service',target);if(!manager.open||generation!==managerGeneration)return;
+ managementText(viewed.running===true?'本书编辑服务正在运行。请核对所有窗口、浏览器标签页的文字；停止服务不会替页面保存。':viewed.running===false?'本书编辑服务已停止或未登记。':'服务暂不可达，不能确认已退出。请核对原工作台。');
+ if(viewed.running!==true)return;
+ managementText(viewed.outdated?'运行服务使用较早代码。保存并停止后，再打开作品才能加载当前代码。':'运行服务与当前源码一致。');
+ const detail=document.createElement('div');managerBody.append(detail);
+ const saved=managementField('我已核对本书所有页面，编辑均已保存或下载','checkbox');
+ const unknownRow=document.createElement('label');unknownRow.className='check';unknownRow.textContent='我已逐一核对下列未知窗口，最后未保存的文字也已另行保存或下载；这是人工确认。';const unknown=document.createElement('input');unknown.type='checkbox';unknownRow.append(unknown);managerBody.append(unknownRow);
+ const visibleState=value=>JSON.stringify({running:value.running,supported:value.presence_supported,platform_activity:value.platform_activity,
+  presence:value.presence?{instance:value.presence.instance,book_id:value.presence.book_id,no_pages:value.presence.no_pages,
+   pages:(value.presence.pages||[]).map(({page_id,state,initialized,stale,last_known_pending,buffers})=>({page_id,state,initialized,stale,last_known_pending,buffers}))}:null});
+ function showState(value){
+  detail.replaceChildren();const text=value=>{const p=document.createElement('p');p.textContent=value;detail.append(p);};const p=value.presence;
+  const activity=value.platform_activity;
+  if(activity?.supported){
+   const stages={queued:'准备开始',waiting_login:'等待登录',waiting_host:'等待助手连接',target_verified:'目标已核对',listing_drafts:'读取草稿列表',saving_draft:'保存平台草稿',reading_back:'回读核对',chapter_started:'处理章节',chapter_verified:'章节已核对'};
+   if(activity.busy){text('平台草稿任务尚未结束，暂不能停止本书服务。');if(activity.binding)text('正在保存平台配置，请等待完成。');for(const job of activity.jobs||[])text((job.mode==='reconcile_only'?'平台草稿对账':'平台草稿保存')+' · '+(stages[job.stage]||'执行中')+(job.current_chapter?' · 第 '+job.current_chapter+' 章':''));}
+   else text('当前服务没有执行中的平台草稿任务。');
+  }else text('较早服务未提供平台任务状态，请先在作品页确认平台草稿任务已结束。');
+  unknownRow.hidden=!p?.counts?.unknown;
+  if(!p||value.presence_supported===false){text('较早服务不提供跨窗口保存状态；须由你逐页人工核对，不能自动认定旧版页面已保存。');return;}
+  text(p.no_pages?'此服务尚未登记编辑窗口，不能据此核验旧版页面。':p.state==='clean'?'本服务已登记窗口最近报告均已保存或正常关闭。':p.counts.pending_pages?'仍有 '+p.counts.pending_pages+' 个窗口未保存、正在保存或待核对。':'有 '+p.counts.unknown+' 个窗口尚未初始化或已经失联，保存状态未知。');
+  for(const [index,page]of (p.pages||[]).entries()){
+   if(page.state==='closed')continue;const label=page.state==='unknown'?(page.unknown_reason==='not_initialized'?'尚未初始化':'已失联'):page.state==='pending'?'有待处理文字':'最近报告已保存';
+   const pending=(page.buffers||[]).filter(d=>d.dirty||d.saving||d.recovering||d.needs_recovery);
+   text('窗口 '+(index+1)+' · '+label+(pending.length?'\n'+pending.map(d=>(d.title||'未命名文稿')+'：'+[['dirty','未保存'],['saving','保存中'],['recovering','恢复副本写入中'],['needs_recovery','结果待核对']].filter(([key])=>d[key]).map(([,label])=>label).join('、')).join('\n'):''));
+  }
+  text('汇总只覆盖此作品当前服务签发的页面；其他旧版服务仍须另行核对。');
+ }
+ showState(viewed);
+ managementButton('重新读取窗口状态',async()=>{const latest=await call('book-service',target);if(!manager.open||generation!==managerGeneration)return;viewed=latest;showState(viewed);saved.checked=false;unknown.checked=false;});
+ managementButton('停止本书编辑服务',async()=>{
+  if(!saved.checked)throw Error('请先保存并核对所有页面。');const latest=await call('book-service',target);
+  if(!manager.open||generation!==managerGeneration)return;
+  if(visibleState(latest)!==visibleState(viewed)){viewed=latest;showState(viewed);saved.checked=false;unknown.checked=false;throw Error('窗口保存状态已变化，已展示最新状态；请重新逐页核对后勾选。');}
+  if(latest.running!==true)throw Error('当前服务状态不能确认，请保留原页面。');
+  if(latest.platform_activity?.busy)throw Error('平台草稿任务仍在执行，不能停止；请回到作品查看进度，等待任务结束。');
+  if(latest.presence?.counts?.pending_pages)throw Error('仍有可联系窗口未保存或正在处理，不能停止；请先回到对应窗口保存。');
+  let unknown_confirmation;
+  if(latest.presence?.counts?.unknown){
+   if(!unknown.checked)throw Error('请逐一核对未知窗口的最后状态，并明确确认文字已另行保存或下载。');
+   const confirmed=await managementRequest('confirm-book-unknown',{...target,fingerprint:latest.presence.fingerprint,confirmed:true});unknown_confirmation=confirmed.unknown_confirmation;
+  }
+  const r=await managementRequest('stop-book',{...target,saved:true,...(unknown_confirmation?{unknown_confirmation}:{})});
+  managementText(r.stop_requested?'已请求正常停止。请稍后刷新书架核对；原页面可保留查看。':'停止未确认，请保留当前页面。');
+ });
+}
+function showBookBackup(book){openManager('备份作品 · '+bookName(book));managementText('先保存所有页面。备份包含本书已保存的正文、候选、恢复记录及状态，排除运行服务记录、锁和外部关联材料；不会包含尚未保存的输入。检测到文件变化会停止本次备份。');managementText('作品目录：'+book.root);const path=managementField('新备份 ZIP 完整路径（放在作品目录之外）');managementButton('创建并核验备份',async()=>{const r=await managementRequest('backup-book',{key:book.key,expected_book_id:book.book_id,path:path.value});managementText('备份已生成并核验：'+r.path+'\n文件数：'+r.files+'\nSHA-256：'+r.sha256);});}
+function showRelinkBook(book){openManager('重新定位 · '+bookName(book));managementText('选择这部作品迁移后的目录。系统会核对作品身份；不会合并同名作品或搬动文件。');const path=managementField('迁移后的作品完整目录');managementButton('核对并更新位置',async()=>{managementReceipt(await managementRequest('relink-book',{key:book.key,expected_book_id:book.book_id,path:path.value}),'作品位置已核对并更新。',null,book);});}
+function showRemoveBook(book){openManager('移出书架 · '+bookName(book));managementText('只移除本书架的登记，作品文件和已打开的编辑页面都会保留。\n目录：'+book.root);managementButton('移出书架',async()=>{const r=await managementRequest('remove-book',{key:book.key,expected_book_id:book.book_id});managementReceipt(r,'已移出书架，作品文件保留。可撤销或重新添加。',r.removed===true?book:null,book);});}
+async function showTrashBook(book){const generation=openManager('删除作品至回收站 · '+bookName(book));const preview=await call('trash-preview',{key:book.key,expected_book_id:book.book_id});if(!manager.open||generation!==managerGeneration)return;managementText('将以下作品的整个本地目录移入系统废纸篓／回收站，成功后移出书架。外部关联材料不会删除。为绑定已确认的作品，系统还原位置是原目录旁的独立回收暂存目录；还原后核对并移回原位置，再添加回书架。');managementText('书名：'+preview.title+'\n目录：'+preview.root);managementText('请先完成备份并停止本书的编辑服务。任何身份、目录、服务或回收站核对失败都会停止操作。');const title=managementField('输入完整书名以确认'),saved=managementField('本书所有页面均已保存或下载，编辑服务已停止','checkbox');managementButton('移入系统回收站',async()=>{if(title.value!==preview.title||!saved.checked)throw Error('请输入完整书名并核对保存状态。');const r=await managementRequest('trash-book',{key:book.key,expected_book_id:book.book_id,confirmation:preview.confirmation,saved:true});managementReceipt(r,'作品已移入系统回收站。'+(r.restoration_note?'\n'+r.restoration_note:'')+(r.shelf_removed===false?'书架登记未移除，请刷新核对。':''),r.trashed===true?book:null);},true);}
 function decorateBookManagement(){
  for(const row of $('books').querySelectorAll('.book')){
   if(row.querySelector('.book-management'))continue;
@@ -4419,9 +5776,28 @@ function decorateBookManagement(){
   row.append(details);
  }
 }
+$('choose-book-directory').onclick=()=>fillDirectoryField($('book-path'),'existing-book',()=>!busy,message=>$('message').textContent=message);
 $('new-book').onclick=showCreateBook;$('restore-backup').onclick=showRestoreBackup;$('recovery-center').onclick=async()=>{const generation=managerGeneration+1;try{await showRecoveries();}catch(error){if(manager.open&&generation===managerGeneration)$('manager-error').textContent=error.message;}};
-$('undo-remove').onclick=async()=>{try{const r=await call('undo-remove',{receipt_id:undoRemoval});render(r);undoRemoval=null;$('undo-remove').hidden=true;$('message').textContent='已恢复书架登记。';}catch(error){$('message').textContent=error.message;}};
-$('last-books').onclick=async()=>{try{const keys=JSON.parse(localStorage.getItem('story-last-books')||'[]');if(!Array.isArray(keys))throw Error('没有上次打开记录。');const books=keys.map(key=>shelfBooks.find(book=>book.key===key&&book.available)).filter(Boolean);if(!books.length)throw Error('没有可重新打开的上次作品。');for(const book of books)await openRecoveryBook(book.key);$('message').textContent='已重新打开 '+books.length+' 部作品。页面恢复时会重新核对作品身份。';}catch(error){$('message').textContent=error.message;}};
+$('undo-remove').onclick=async()=>{
+ if(undoRemovalBusy||busy||!undoRemoval)return;const receipt=undoRemoval;undoRemovalBusy=true;busy=true;syncUndoRemoval();
+ try{const result=await requestShelfCatalog('undo-remove',{receipt_id:receipt.id});applyShelfCatalog(result);if(undoRemoval===receipt)undoRemoval=null;$('message').textContent='已恢复书架登记：'+receipt.title+'。';}
+ catch(error){$('message').textContent='未能撤销移出（'+receipt.title+'）：'+error.message;}
+ finally{undoRemovalBusy=false;busy=false;syncUndoRemoval();}
+};
+let lastBooksBusy=false;
+async function reopenShelfBooks(entries){
+ if(lastBooksBusy)return;lastBooksBusy=true;const button=$('last-books'),label=button.textContent,disabled=button.disabled,results=document.createElement('div'),progress=document.createElement('p'),opened=[],failed=[],unavailable=[];button.disabled=true;button.textContent='正在重新打开…';closeShelfMenus();results.append(progress);$('last-books-result').replaceChildren(results);
+ try{for(const [index,entry]of entries.entries()){
+  progress.textContent='正在重新打开作品 '+(index+1)+' / '+entries.length+' · '+entry.title;
+  const book=shelfBooks.find(book=>book.key===entry.key);if(typeof entry.book_id!=='string'||!entry.book_id||!book?.available||book.book_id!==entry.book_id){unavailable.push({...entry,error:!entry.book_id?'旧版打开记录没有作品身份，请从书架重新打开作品。':!book?'作品已不在书架中。':!book.available?'作品当前不可用，请核对目录。':'作品身份已变化，请刷新书架核对。'});continue;}
+  try{await openRecoveryBook(entry.key,null,()=>true,entry.book_id,entry.title);opened.push(entry);}catch(error){failed.push({...entry,error:error.message||String(error)});}
+ }
+ progress.textContent='本轮重新打开：已打开 '+opened.length+' 部，失败 '+failed.length+' 部，不可用 '+unavailable.length+' 部。';
+ for(const [title,items]of [['已打开',opened],['打开失败',failed],['未打开（不可用）',unavailable]])if(items.length){const line=document.createElement('p');line.textContent=title+'：\n'+items.map(entry=>entry.title+(entry.error?'：'+entry.error:'')).join('\n');results.append(line);}
+ if(failed.length){const retry=document.createElement('button');retry.textContent='重试失败作品（'+failed.length+'）';const retryEntries=failed.map(({key,book_id,title})=>({key,book_id,title}));retry.onclick=()=>reopenShelfBooks(retryEntries);results.append(retry);}
+ }finally{lastBooksBusy=false;button.disabled=disabled;button.textContent=label;}
+}
+$('last-books').onclick=async()=>{if(lastBooksBusy)return;try{const records=JSON.parse(localStorage.getItem('story-last-books')||'[]');if(!Array.isArray(records))throw Error('没有上次打开记录。');const seen=new Set(),entries=[];for(const record of records){const entry=typeof record==='string'?{key:record,book_id:null,title:'旧版打开记录'}:record;if(!entry||typeof entry.key!=='string'||seen.has(entry.key))continue;seen.add(entry.key);const book=shelfBooks.find(book=>book.key===entry.key&&book.book_id===entry.book_id);entries.push({key:entry.key,book_id:typeof entry.book_id==='string'?entry.book_id:null,title:typeof entry.title==='string'?entry.title:book?bookName(book):'未登记作品'});if(entries.length===8)break;}if(!entries.length)throw Error('没有上次打开记录。');await reopenShelfBooks(entries);}catch(error){$('message').textContent=error.message;}};
 '''
 
 
@@ -4436,10 +5812,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 input{min-width:0;padding:8px 12px;background:var(--surface);width:100%}a{text-underline-offset:3px}h1,h2,p{margin:0}
 .shelf-header{display:flex;justify-content:space-between;gap:20px}
 .shelf-intro,.add-help,.shelf-footer{color:var(--muted)}.shelf-add>summary{cursor:pointer}.add-body label{display:block;font-size:13px;margin-bottom:7px}.add-fields{display:flex;align-items:center}.add-fields input{flex:1}
-#message{font-size:13px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px 15px;border:1px solid var(--line);border-radius:10px;margin:0 0 22px}#message:empty{display:none}
+#message,#last-books-result{font-size:13px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;padding:12px 15px;border:1px solid var(--line);border-radius:10px;margin:0 0 22px}#message:empty,#last-books-result:empty{display:none}
 .type-filters{display:flex;flex-wrap:wrap}.type-filters button{border-color:transparent;background:transparent}.type-filters [aria-pressed="true"]{font-weight:600}
 .shelf-state,.shelf-sort{white-space:nowrap}.shelf-search{position:relative;display:flex;align-items:center;gap:8px}.shelf-search input{padding-right:82px}.search-clear{position:absolute;right:5px;border:0;background:transparent}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}#filter-summary{color:var(--muted);overflow-wrap:anywhere}.shelf-filter-feedback{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.shelf-filter-feedback button{font-size:12px;padding:3px 8px;min-height:30px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}#filter-summary{color:var(--muted);overflow-wrap:anywhere}.shelf-filter-feedback{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.shelf-filter-feedback button{font-size:12px;padding:3px 8px;min-height:30px}#shelf-draft-feedback{margin-bottom:12px;color:var(--muted);font-size:12px}
 #books{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
 .book{position:relative;display:grid;background:var(--surface);border:1px solid var(--line);transition:border-color .15s,box-shadow .15s}
 .book::before{content:"";position:absolute;left:0}.book strong{grid-row:1;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;align-self:start}
@@ -4491,7 +5867,8 @@ html[data-story-workbench] #books:not(:has(.book)){min-height:210px;display:flex
 html[data-story-workbench] .book:hover{border-color:var(--accent);box-shadow:0 5px 18px #12263b0c}
 .book:focus-within{border-color:var(--accent)}
 .genre-label{font-size:10px;margin-bottom:5px;letter-spacing:.035em}.genre-tags{gap:5px}
-.book>.classification>.genre-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.book>.classification>.genre-label:not(.record-label){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.book>.classification[data-classification-empty="true"]{display:none}
 .genre-tag{font-size:11px;border-radius:5px;padding:2px 7px;line-height:1.6}
 .classification-sources{font-size:11px;margin-top:7px}
 .classification-sources summary{width:fit-content;color:var(--muted)}
@@ -4502,6 +5879,10 @@ html[data-story-workbench] .book:hover{border-color:var(--accent);box-shadow:0 5
 .book>details{font-size:11px;line-height:1.65}.book>details>summary{padding:2px 0;width:fit-content}
 .path{padding:8px 10px;background:var(--wb-panel);border-radius:6px;font-size:11px;line-height:1.8;margin-top:5px}
 .book>button{grid-column:1;grid-row:4;align-self:start;justify-self:start;font-size:13px;min-height:38px;margin-top:5px;padding:7px 17px;border-radius:8px;font-weight:500}
+.book[data-has-resume="true"]{grid-template-rows:auto auto auto minmax(24px,1fr) auto}
+.book[data-has-resume="true"]>.book-resume{grid-row:3;font-size:11px;line-height:1.7;color:var(--muted);margin:0;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.book[data-has-resume="true"]>.book-progress,.book[data-has-resume="true"]>.book-status{grid-row:4}
+.book[data-has-resume="true"]>button,html[data-story-workbench] .book[data-has-resume="true"]>details.book-management{grid-row:5}
 html[data-story-workbench] .book>details.book-management{position:relative;grid-column:2;grid-row:4;align-self:start;min-width:0;border:0;padding-top:5px}
 html[data-story-workbench] .book-management>summary{width:100%;margin:0;padding:8px 10px;min-height:38px;border:1px solid var(--line);border-radius:8px;font-size:12px;text-align:center;list-style:none;color:var(--ink)}
 .book-management>summary::-webkit-details-marker{display:none}.book-management>summary::after{content:"⌄";margin-left:7px;color:var(--muted)}
@@ -4520,21 +5901,59 @@ html[data-story-workbench] .book-management button{display:block;width:100%;marg
 </style></head>
 <body><h1 id="library-heading" class="sr-only">写作书架</h1><header class="shelf-header">__MANAGEMENT_HTML__<div class="shelf-header-actions">__THEME_CONTROL__</div></header><p id="shelf-intro" class="sr-only">管理本地作品，打开后继续写作。</p>
 <p id="message" role="status"></p>
+<div id="last-books-result" role="status" aria-live="polite"></div>
+<div id="shelf-draft-feedback" class="shelf-filter-feedback" hidden><p id="shelf-draft-summary" role="status"></p><button id="discard-status-drafts">放弃未保存状态</button></div>
 <main class="shelf-library" aria-labelledby="library-heading"><div class="shelf-toolbar" role="search" aria-label="查找书架作品"><div class="shelf-search"><label class="sr-only" for="shelf-search">搜索当前类型的书名、题材或目录</label><input id="shelf-search" type="search" placeholder="搜索书名、题材或目录" aria-describedby="filter-summary" autocomplete="off"><button id="clear-search" class="search-clear" hidden>清空搜索</button></div><div class="shelf-controls"><div class="type-filters" role="group" aria-label="按作品类型筛选"><button id="filter-all" aria-pressed="true">全部 0</button><button id="filter-long" aria-pressed="false">长篇 0</button><button id="filter-short" aria-pressed="false">短篇 0</button><button id="filter-analysis" aria-pressed="false">作品分析 0</button></div><div class="shelf-options"><label class="shelf-state" for="shelf-status">本地状态<select id="shelf-status" aria-label="按本地作品状态筛选"><option value="all">全部状态 0</option><option value="serializing">连载中 0</option><option value="completed">已完本 0</option><option value="unknown">待确认 0</option></select></label><label class="shelf-sort" for="shelf-order">更新时间<select id="shelf-order" aria-label="按更新时间排序"><option value="newest">最新在前</option><option value="oldest">最早在前</option></select></label></div></div></div><div class="shelf-filter-feedback"><p id="filter-summary" role="status"></p><button id="clear-filters" hidden>清除筛选</button></div><div id="books"></div><div id="search-empty" class="search-empty" hidden><p>可以清空搜索，继续查看当前类型的作品。</p><button id="empty-clear">清空搜索</button></div></main>
 <script>__THEME_SCRIPT__const TOKEN=__TOKEN__;const $=id=>document.getElementById(id);let busy=false;
 async function call(action,data={}){const r=await fetch('/api/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(data)});const v=await r.json();if(!r.ok){const error=Error(v.message||'请求失败');error.responseReceived=true;throw error;}return v;}
 __BOOK_DISPLAY__
-const shelfKinds=[['all','全部'],['long','长篇'],['short','短篇'],['analysis','作品分析']],shelfStatuses=[['all','全部状态'],['serializing','连载中'],['completed','已完本'],['unknown','待确认']];let shelfBooks=[],shelfFilter='all',shelfSort='newest',shelfQuery='',shelfStatusFilter='all',shelfRenderRevision=0;const statusSaving=new Set();
+const shelfKinds=[['all','全部'],['long','长篇'],['short','短篇'],['analysis','作品分析']],shelfStatuses=[['all','全部状态'],['serializing','连载中'],['completed','已完本'],['unknown','待确认']];let shelfBooks=[],shelfFilter='all',shelfSort='newest',shelfQuery='',shelfStatusFilter='all',shelfRenderRevision=0,shelfCatalogGeneration=-1,shelfCatalogInstance=null;const statusSaving=new Set(),shelfStatusDrafts=new Map(),shelfCatalogRequests=new WeakMap();
 function shelfBookKind(book){return book.kind_verified!==false&&book.available!==false&&['long','short','analysis'].includes(book.kind)?book.kind:null;}
 function shelfWritingState(book){if(book.kind==='analysis')return 'not_applicable';const status=book.writing_status;return book.available!==false&&status?.verified===true&&['serializing','completed'].includes(status.value)?status.value:'unknown';}
 function shelfWritingLabel(book){const value=shelfWritingState(book);return value==='not_applicable'?'分析项目':value==='serializing'?'连载中':value==='completed'?'已完本':'状态待确认';}
 function shelfStatusNode(book){const node=document.createElement('span');node.className='book-status';node.setAttribute('data-status',shelfWritingState(book));node.textContent=shelfWritingLabel(book);node.title='本地作品状态。'+(typeof book.writing_status?.note==='string'?book.writing_status.note:'不代表平台发布情况。');return node;}
+function shelfStatusOriginal(book){const state=shelfWritingState(book);return book.writing_status?.source==='author_mark'&&['serializing','completed'].includes(state)?state:'unknown';}
+function shelfStatusDraftKey(book){return book.key+(typeof book.book_id==='string'?':'+book.book_id:'');}
+function moveShelfStatusDraft(original,target){if(original.book_id!==target.book_id)return;const from=shelfStatusDraftKey(original),to=shelfStatusDraftKey(target),draft=shelfStatusDrafts.get(from);if(!draft||from===to||shelfStatusDrafts.has(to))return;shelfStatusDrafts.delete(from);shelfStatusDrafts.set(to,{...draft,key:target.key});}
+function reconcileShelfStatusDrafts(){
+ for(const draft of [...shelfStatusDrafts.values()]){
+  if(typeof draft.book_id!=='string'||!draft.book_id||shelfBooks.some(book=>book.key===draft.key&&book.book_id===draft.book_id))continue;
+  const targets=shelfBooks.filter(book=>book.available!==false&&book.book_id===draft.book_id);if(targets.length===1)moveShelfStatusDraft(draft,targets[0]);
+ }
+}
+function syncShelfStatusDraftNotice(){const count=shelfStatusDrafts.size;$('shelf-draft-feedback').hidden=!count;$('shelf-draft-summary').textContent=count?'有 '+count+' 部作品的本地状态选择尚未保存。放弃只清除这些选择，不修改稿件。'+(statusSaving.size?'请等待当前状态保存完成后再放弃其余选择。':''):'';$('discard-status-drafts').disabled=!!statusSaving.size;}
+function rememberShelfStatusDraft(key,value,original,book_id){
+ if(!['serializing','completed','unknown'].includes(value))return;
+ const identity=shelfStatusDraftKey({key,book_id});
+ if(value===original){shelfStatusDrafts.delete(identity);syncShelfStatusDraftNotice();return;}
+ if(shelfStatusDrafts.get(identity)?.value!==value)shelfStatusDrafts.set(identity,{key,book_id,value,error:''});
+ syncShelfStatusDraftNotice();
+}
+function captureShelfStatusDrafts(){for(const select of document.querySelectorAll?.('.book-status-editor select')||[]){if(select.dataset.bookStatusKey!==undefined)rememberShelfStatusDraft(select.dataset.bookStatusKey,select.value,select.dataset.bookStatusOriginal,select.dataset.bookStatusIdentity);}}
 function shelfStatusEditor(book){
  if(book.available===false||book.kind==='analysis'||!['long','short'].includes(shelfBookKind(book)))return null;
- const details=document.createElement('details');details.className='book-status-editor';const summary=document.createElement('summary');summary.textContent='作品状态';const label=document.createElement('label');label.textContent='本地作品标记';const select=document.createElement('select');select.setAttribute('aria-label','设置本地作品状态：'+bookName(book));for(const [value,text]of [['serializing','连载中'],['completed','已完本'],['unknown','按作品记录显示']]){const option=document.createElement('option');option.value=value;option.textContent=text;select.append(option);}const state=shelfWritingState(book),original=book.writing_status?.source==='author_mark'&&['serializing','completed'].includes(state)?state:'unknown';select.value=original;label.append(select);
+ const details=document.createElement('details');details.className='book-status-editor';const summary=document.createElement('summary');summary.textContent='作品状态';const label=document.createElement('label');label.textContent='本地作品标记';const select=document.createElement('select');select.setAttribute('aria-label','设置本地作品状态：'+bookName(book));for(const [value,text]of [['serializing','连载中'],['completed','已完本'],['unknown','按作品记录显示']]){const option=document.createElement('option');option.value=value;option.textContent=text;select.append(option);}const original=shelfStatusOriginal(book),draftKey=shelfStatusDraftKey(book);select.value=shelfStatusDrafts.get(draftKey)?.value??original;select.dataset.bookStatusKey=book.key;if(typeof book.book_id==='string')select.dataset.bookStatusIdentity=book.book_id;label.append(select);
  select.dataset.bookStatusOriginal=original;const note=document.createElement('p');note.className='status-note';note.textContent='这里只标记本地作品，不代表平台已发布或完本。清除手动标记后，显示作品记录；无明确记录则待确认。';const source=document.createElement('div');source.className='status-source';const origin=document.createElement('p');origin.textContent=book.writing_status?.source==='author_mark'?'书架手动标记':book.writing_status?.source==='recorded'?'作品记录':'尚无明确记录';source.append(origin);if(typeof book.writing_status?.note==='string'){const detail=document.createElement('p');detail.textContent=book.writing_status.note;source.append(detail);}for(const evidence of Array.isArray(book.writing_status?.sources)?book.writing_status.sources:[]){if(!evidence||typeof evidence!=='object')continue;const detail=document.createElement('p');detail.textContent=(typeof evidence.path==='string'?evidence.path:'来源未标注')+(Number.isInteger(evidence.line)&&evidence.line>0?' · 第'+evidence.line+'行':'')+'\n'+(typeof evidence.field==='string'?evidence.field+'：':'')+(typeof evidence.value==='string'?evidence.value:'');source.append(detail);}const save=document.createElement('button');save.textContent='保存状态';select.disabled=save.disabled=statusSaving.has(book.key);
- save.onclick=async()=>{if(statusSaving.has(book.key))return;const value=select.value;if(!['serializing','completed','unknown'].includes(value))return;statusSaving.add(book.key);select.disabled=save.disabled=true;save.textContent='正在保存…';try{const catalog=await call('set-book-status',{key:book.key,value});statusSaving.delete(book.key);render(catalog);const updated=shelfBooks.find(item=>item.key===book.key);$('message').textContent='作品状态已更新（'+bookName(book)+'）：'+(updated?shelfWritingLabel(updated):'请刷新核对')+'。仅表示本地作品状态。';}catch(error){statusSaving.delete(book.key);select.value=original;renderShelf();$('message').textContent='作品状态更新未确认（'+bookName(book)+'）：'+error.message;}finally{statusSaving.delete(book.key);select.disabled=save.disabled=false;save.textContent='保存状态';}};
- details.append(summary,label,note,source,save);return details;
+ const draftNote=document.createElement('p');draftNote.className='status-note';draftNote.setAttribute('role','status');
+ const syncDraft=()=>{const draft=shelfStatusDrafts.get(draftKey);summary.textContent=draft?'作品状态（未保存）':'作品状态';draftNote.hidden=!draft;draftNote.textContent=draft?(draft.error?'保存未确认，当前选择已保留：'+draft.error:'当前选择尚未保存，请点击“保存状态”。'):'';};
+ select.oninput=select.onchange=()=>{rememberShelfStatusDraft(book.key,select.value,original,book.book_id);syncDraft();};syncDraft();
+ save.onclick=async()=>{
+  if(statusSaving.has(book.key))return;const value=select.value;if(!['serializing','completed','unknown'].includes(value))return;
+  rememberShelfStatusDraft(book.key,value,original,book.book_id);const submitted=shelfStatusDrafts.get(draftKey),revision=shelfRenderRevision;
+  statusSaving.add(book.key);syncShelfStatusDraftNotice();select.disabled=save.disabled=true;save.textContent='正在保存…';
+  try{
+   const catalog=await call('set-book-status',{key:book.key,value,expected_book_id:book.book_id}),updated=catalog.books.find(item=>item.key===book.key);
+   if(!updated||updated.book_id!==book.book_id||updated.available===false||shelfStatusOriginal(updated)!==value)throw Error('本机服务未确认所选作品及状态，请核对后重试。');
+   captureShelfStatusDrafts();if(shelfStatusDrafts.get(draftKey)===submitted)shelfStatusDrafts.delete(draftKey);statusSaving.delete(book.key);
+   // An older full catalog must not undo another book's later confirmed save.
+   const next=Number.isSafeInteger(catalog.catalog_generation)||revision===shelfRenderRevision?catalog:{books:shelfBooks.map(item=>item.key===book.key&&item.book_id===book.book_id?{...item,writing_status:updated.writing_status}:item)};
+   render(next,{captureDrafts:false});$('message').textContent='作品状态已更新（'+bookName(book)+'）：'+shelfWritingLabel(updated)+'。仅表示本地作品状态。';
+  }catch(error){
+   captureShelfStatusDrafts();if(submitted&&shelfStatusDrafts.get(draftKey)===submitted)submitted.error=error.message;
+   statusSaving.delete(book.key);renderShelf({captureDrafts:false});$('message').textContent='作品状态更新未确认（'+bookName(book)+'）：'+error.message+'。当前选择已保留，尚未确认保存。';
+  }finally{statusSaving.delete(book.key);syncShelfStatusDraftNotice();select.disabled=save.disabled=false;save.textContent='保存状态';}
+ };
+ details.append(summary,label,note,source,draftNote,save);return details;
 }
 function shelfUpdatedTime(book){
  if(book.available===false||book.updated_at_verified!==true||typeof book.updated_at!=='string')return null;
@@ -4550,17 +5969,26 @@ function sortShelfBooks(books,order='newest'){
 }
 function shelfSearchMatch(book,query){
  const terms=query.trim().normalize('NFKC').toLocaleLowerCase().split(/\s+/).filter(Boolean);if(!terms.length)return true;
- const tags=book.classification?.status==='recorded'&&Array.isArray(book.classification.tags)?book.classification.tags.filter(tag=>typeof tag==='string'):[];
- const text=[bookName(book),typeof book.root==='string'?book.root:'',...tags].join(' ').normalize('NFKC').toLocaleLowerCase();return terms.every(term=>text.includes(term));
+ const text=[bookName(book),typeof book.root==='string'?book.root:'',classificationSearchText(book)].join(' ').normalize('NFKC').toLocaleLowerCase();return terms.every(term=>text.includes(term));
 }
 function shelfProgressNode(book){
  const progress=book.progress;if(book.kind==='analysis'||book.available===false||progress?.verified!==true||!Number.isInteger(progress.formal_chapters)||progress.formal_chapters<0)return null;
  const node=document.createElement('p');node.className='book-progress';node.textContent='已登记正式 '+progress.formal_chapters+' 章';return node;
 }
+function shelfResumeReady(book){return book.available!==false&&book.resume?.status==='ready'&&typeof book.resume.document?.title==='string'&&!!book.resume.document.title.trim()&&['formal','candidate','plan','material'].includes(book.resume.document.kind);}
+function shelfResumeNode(book){
+ if(book.available===false||!book.resume||book.resume.status==='empty'||book.resume.status==='unavailable')return null;
+ const info=book.resume,node=document.createElement('p');node.className='book-resume';
+ if(shelfResumeReady(book)){const kinds={formal:'正式稿',candidate:'候选稿',plan:'章计划',material:'材料'};node.textContent='上次文稿：'+info.document.title+' · '+kinds[info.document.kind]+(info.buffer_dirty===true?' · 有待核对输入':'');}
+ else{const labels={changed:'上次文稿已变化，请从目录核对',missing:'上次文稿暂不可用，请从目录选择',invalid:'上次编辑位置待核对，请从目录选择'};if(!labels[info.status])return null;node.textContent=labels[info.status];}
+ const updated=typeof info.updated_at==='string'?Date.parse(info.updated_at):NaN;node.title=(Number.isFinite(updated)?'上次位置：'+new Date(updated).toLocaleString()+'\n':'')+(typeof info.note==='string'?info.note:'仅恢复已保存文稿位置。');return node;
+}
 function restoreShelfView(){try{const saved=JSON.parse(localStorage.getItem('story-shelf-view')||'null');if(saved&&typeof saved==='object'){if(shelfKinds.some(([kind])=>kind===saved.filter))shelfFilter=saved.filter;if(['newest','oldest'].includes(saved.sort))shelfSort=saved.sort;if(shelfStatuses.some(([value])=>value===saved.status))shelfStatusFilter=saved.status;}}catch(e){}}
 function persistShelfView(){try{localStorage.setItem('story-shelf-view',JSON.stringify({filter:shelfFilter,sort:shelfSort,status:shelfStatusFilter}));}catch(e){}}
 restoreShelfView();
-function renderShelf(){
+function renderShelf(options={}){
+ if(options.captureDrafts!==false)captureShelfStatusDrafts();
+ syncShelfStatusDraftNotice();
  if(shelfFilter==='analysis'&&shelfStatusFilter!=='all'){shelfStatusFilter='all';persistShelfView();}
  const category=shelfFilter==='all'?shelfBooks:shelfBooks.filter(book=>shelfBookKind(book)===shelfFilter),visible=sortShelfBooks(category.filter(book=>(shelfStatusFilter==='all'||shelfWritingState(book)===shelfStatusFilter)&&shelfSearchMatch(book,shelfQuery)),shelfSort);$('shelf-order').value=shelfSort;$('shelf-search').value=shelfQuery;$('clear-search').hidden=!shelfQuery.length;$('search-empty').hidden=true;
  $('shelf-status').replaceChildren();for(const [value,label]of shelfStatuses){const option=document.createElement('option');option.value=value;option.textContent=label+' '+(value==='all'?category.length:category.filter(book=>shelfWritingState(book)===value).length);$('shelf-status').append(option);}$('shelf-status').value=shelfStatusFilter;$('shelf-status').disabled=shelfFilter==='analysis';$('shelf-status').title=shelfFilter==='analysis'?'作品分析不使用连载或完本状态':'';
@@ -4569,10 +5997,35 @@ function renderShelf(){
  $('filter-summary').textContent=(shelfFilter==='all'?'全部作品':label)+' · '+visible.length+' 部'+(shelfStatusFilter!=='all'?' · '+shelfStatuses.find(([value])=>value===shelfStatusFilter)[1]:'')+(shelfQuery.trim()?' · 搜索“'+shelfQuery.trim()+'”':'')+(shelfFilter==='all'&&pending?' · '+pending+' 部类型尚未确认':'');
  $('filter-summary').hidden=!shelfQuery.trim()&&shelfStatusFilter==='all'&&!!visible.length&&!(shelfFilter==='all'&&pending);$('clear-filters').hidden=shelfFilter==='all'&&shelfStatusFilter==='all'&&!shelfQuery.trim();
  $('books').replaceChildren();if(!visible.length){$('books').textContent=!shelfBooks.length?'书架还是空的。新建作品，或添加已有作品，开始写作。':!category.length?'当前分类暂无作品；可在“全部”查看其他作品。':shelfQuery.trim()?(shelfStatusFilter!=='all'?'当前搜索与本地状态筛选没有匹配作品。':'当前分类中没有与“'+shelfQuery.trim()+'”匹配的作品。'):'当前分类有 '+category.length+' 部作品，暂无符合“'+shelfStatuses.find(([value])=>value===shelfStatusFilter)[1]+'”状态的作品。';$('search-empty').hidden=!shelfQuery.trim();return;}
- for(const b of visible){const row=document.createElement('div');row.className='book';row.dataset.bookKey=b.key;row.setAttribute('data-kind',shelfBookKind(b)||'unknown');const title=document.createElement('strong');title.textContent=b.label;title.title=b.label;const updated=shelfUpdatedTime(b),time=document.createElement(updated?'time':'p');time.className='book-updated';time.textContent=updated?'更新时间：'+new Date(updated.value).toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}):'更新时间未确认';if(updated)time.dateTime=b.updated_at;if(typeof b.updated_at_note==='string')time.title=b.updated_at_note;const genres=classificationNode(b);const path=document.createElement('details');const summary=document.createElement('summary');summary.textContent='目录位置';const directory=document.createElement('div');directory.className='path';directory.textContent=b.root||'目录未提供';path.append(summary,directory);const open=document.createElement('button');open.textContent='打开作品';open.setAttribute('aria-label','打开作品：'+b.label);open.disabled=!b.available;open.onclick=async()=>{open.disabled=true;try{const r=await call('open-book',{key:b.key});rememberShelfBook(b.key);const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='点击打开：'+b.label;$('message').replaceChildren(a);a.click();if(r.outdated)$('message').append(document.createTextNode('（此作品服务使用较早代码，升级前请保留原页面编辑。）'));}catch(e){$('message').textContent='打开失败（'+bookName(b)+'）：'+e.message;}finally{open.disabled=!b.available;}};row.append(title,time,genres,path,open);const progress=shelfProgressNode(b);if(progress)row.append(progress);row.append(shelfStatusNode(b));const statusEditor=shelfStatusEditor(b);if(statusEditor)row.append(statusEditor);if(!b.available){const err=document.createElement('p');err.className='error';err.textContent=b.error||'作品暂不可用，请核对目录。';row.append(err);}$('books').append(row);}
+ for(const b of visible){
+  const row=document.createElement('div');row.className='book';row.dataset.bookKey=b.key;row.setAttribute('data-kind',shelfBookKind(b)||'unknown');
+  const title=document.createElement('strong');title.textContent=b.label;title.title=b.label;
+  const updated=shelfUpdatedTime(b),time=document.createElement(updated?'time':'p');time.className='book-updated';time.textContent=updated?'更新时间：'+new Date(updated.value).toLocaleString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}):'更新时间未确认';if(updated)time.dateTime=b.updated_at;if(typeof b.updated_at_note==='string')time.title=b.updated_at_note;
+  const genres=classificationNode(b),path=document.createElement('details'),summary=document.createElement('summary'),directory=document.createElement('div');summary.textContent='目录位置';directory.className='path';directory.textContent=b.root||'目录未提供';path.append(summary,directory);
+  const resume=shelfResumeNode(b),continuing=shelfResumeReady(b);if(resume)row.dataset.hasResume='true';
+  const open=document.createElement('button');open.textContent=continuing?'继续编辑':'打开作品';open.setAttribute('aria-label',(continuing?'继续编辑：':'打开作品：')+b.label);open.disabled=!b.available;
+  open.onclick=async()=>{open.disabled=true;try{const r=await call('open-book',{key:b.key,expected_book_id:b.book_id});rememberShelfBook(b.key,b.book_id,bookName(b));const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='点击打开：'+b.label;$('message').replaceChildren(a);a.click();if(r.outdated)$('message').append(document.createTextNode('（此作品服务使用较早代码，升级前请保留原页面编辑。）'));}catch(e){$('message').textContent='打开失败（'+bookName(b)+'）：'+e.message;}finally{open.disabled=!b.available;}};
+  row.append(title,time,genres,path,open);if(resume)row.append(resume);const progress=shelfProgressNode(b);if(progress)row.append(progress);row.append(shelfStatusNode(b));const statusEditor=shelfStatusEditor(b);if(statusEditor)row.append(statusEditor);
+  if(!b.available){const err=document.createElement('p');err.className='error';err.textContent=b.error||'作品暂不可用，请核对目录。';row.append(err);}$('books').append(row);
+ }
  decorateBookManagement();
 }
-function render(v){shelfRenderRevision++;shelfBooks=bookDisplayRows(v.books);renderShelf();}
+function shelfCatalogIsCurrent(v){
+ if(Number.isSafeInteger(v.catalog_generation)){const instance=typeof v.catalog_instance==='string'&&v.catalog_instance?v.catalog_instance:null;if(shelfCatalogInstance!==null&&instance!==shelfCatalogInstance)return false;return instance!==null&&shelfCatalogInstance===null||v.catalog_generation>shelfCatalogGeneration;}
+ const revision=shelfCatalogRequests.get(v)?.revision;return revision===undefined||revision===shelfRenderRevision;
+}
+function shelfManagerReceiptIsCurrent(result){const generation=shelfCatalogRequests.get(result)?.managerGeneration;return generation===undefined||generation===null||generation===managerGeneration;}
+function render(v,options={}){
+ if(Number.isSafeInteger(v.catalog_generation)){
+  const instance=typeof v.catalog_instance==='string'&&v.catalog_instance?v.catalog_instance:null;
+  if(shelfCatalogInstance!==null&&instance!==shelfCatalogInstance)return false;
+  if(instance!==null&&shelfCatalogInstance===null){shelfCatalogInstance=instance;shelfCatalogGeneration=-1;}
+  if(v.catalog_generation<=shelfCatalogGeneration)return false;shelfCatalogGeneration=v.catalog_generation;
+ }
+ if(options.captureDrafts!==false)captureShelfStatusDrafts();shelfRenderRevision++;shelfBooks=bookDisplayRows(v.books);reconcileShelfStatusDrafts();renderShelf({captureDrafts:false});return true;
+}
+async function requestShelfCatalog(action,data={}){const context={revision:shelfRenderRevision,managerGeneration:typeof managerGeneration==='number'?managerGeneration:null},result=await call(action,data);shelfCatalogRequests.set(result,context);return result;}
+function applyShelfCatalog(result,options={}){if(!shelfCatalogIsCurrent(result)){if(!Number.isSafeInteger(result.catalog_generation))queueShelfRefresh();return false;}return render(result,options);}
 for(const [kind]of shelfKinds)$('filter-'+kind).onclick=()=>{shelfFilter=kind;persistShelfView();renderShelf();};
 $('shelf-order').onchange=()=>{shelfSort=$('shelf-order').value==='oldest'?'oldest':'newest';persistShelfView();renderShelf();};
 $('shelf-status').onchange=()=>{shelfStatusFilter=shelfStatuses.some(([value])=>value===$('shelf-status').value)?$('shelf-status').value:'all';persistShelfView();renderShelf();};
@@ -4580,8 +6033,10 @@ $('shelf-search').oninput=()=>{shelfQuery=$('shelf-search').value;renderShelf();
 function clearShelfSearch(){shelfQuery='';renderShelf();$('shelf-search').focus();}
 $('clear-search').onclick=clearShelfSearch;$('empty-clear').onclick=clearShelfSearch;
 $('clear-filters').onclick=()=>{shelfFilter='all';shelfStatusFilter='all';shelfQuery='';persistShelfView();renderShelf();$('shelf-search').focus();};
+$('discard-status-drafts').onclick=()=>{if(statusSaving.size)return;shelfStatusDrafts.clear();renderShelf({captureDrafts:false});};
 let shelfRefreshRequest=null,shelfRefreshError=null,shelfRefreshTimer=null,shelfRefreshPending=false,shelfRefreshLastStart=0,shelfRefreshManualRequested=false;
 function shelfRefreshBlocked(){
+ captureShelfStatusDrafts();if(shelfStatusDrafts.size)return true;
  if(document.visibilityState==='hidden'||(typeof busy!=='undefined'&&busy)||(typeof managerBusy!=='undefined'&&managerBusy)||statusSaving.size)return true;
  if(document.querySelector?.('details[open],dialog[open]')||$('book-path').value.trim())return true;
  const active=document.activeElement,viewControl=active&&['shelf-search','shelf-status','shelf-order','workbench-theme'].some(id=>active===$(id));if(active&&!viewControl&&(/^(INPUT|SELECT|TEXTAREA)$/.test(active.tagName)||active.isContentEditable))return true;
@@ -4595,6 +6050,7 @@ async function refreshShelfOnReturn(){
  shelfRefreshPending=false;await refresh({automatic:true});
 }
 function installShelfRefreshHooks(){
+ window.addEventListener('beforeunload',event=>{captureShelfStatusDrafts();if((typeof busy!=='undefined'&&busy)||(typeof managerBusy!=='undefined'&&managerBusy)||(typeof lastBooksBusy!=='undefined'&&lastBooksBusy)||statusSaving.size||shelfStatusDrafts.size){event.preventDefault();event.returnValue='';}});
  window.addEventListener('focus',()=>queueShelfRefresh());window.addEventListener('story-shelf-return',()=>queueShelfRefresh());window.addEventListener('pageshow',event=>{if(event.persisted)queueShelfRefresh();});
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='hidden')queueShelfRefresh();});
  for(const type of ['toggle','input','change','focusout'])document.addEventListener(type,()=>{if(shelfRefreshPending)queueShelfRefresh();},true);
@@ -4602,9 +6058,9 @@ function installShelfRefreshHooks(){
 async function refresh(options={}){
  const automatic=options.automatic===true;if(shelfRefreshRequest){if(!automatic)shelfRefreshManualRequested=true;return shelfRefreshRequest;}
  shelfRefreshLastStart=Date.now();shelfRefreshManualRequested=!automatic;const revision=shelfRenderRevision;
- shelfRefreshRequest=(async()=>{try{const catalog=await call('books');if(!shelfRefreshManualRequested&&(shelfRefreshBlocked()||revision!==shelfRenderRevision)){queueShelfRefresh(350);return;}render(catalog);if(shelfRefreshError?.parentNode===$('message'))shelfRefreshError.remove();shelfRefreshError=null;}catch(e){const message=$('message');if(!shelfRefreshManualRequested&&message.textContent&&shelfRefreshError?.parentNode!==message)return;const error=document.createElement('span');error.className='shelf-refresh-error';error.textContent='刷新书架失败：'+e.message;message.replaceChildren(error);shelfRefreshError=error;}finally{shelfRefreshRequest=null;}})();return shelfRefreshRequest;
+ shelfRefreshRequest=(async()=>{try{const catalog=await requestShelfCatalog('books');if((!Number.isSafeInteger(catalog.catalog_generation)&&revision!==shelfRenderRevision)||(!shelfRefreshManualRequested&&shelfRefreshBlocked())){queueShelfRefresh(350);return;}applyShelfCatalog(catalog);if(shelfRefreshError?.parentNode===$('message'))shelfRefreshError.remove();shelfRefreshError=null;}catch(e){const message=$('message');if(!shelfRefreshManualRequested&&message.textContent&&shelfRefreshError?.parentNode!==message)return;const error=document.createElement('span');error.className='shelf-refresh-error';error.textContent='刷新书架失败：'+e.message;message.replaceChildren(error);shelfRefreshError=error;}finally{shelfRefreshRequest=null;}})();return shelfRefreshRequest;
 }
-$('refresh').onclick=()=>refresh();$('add').onclick=async()=>{if(busy)return;busy=true;$('add').disabled=true;try{const value=await call('add-book',{path:$('book-path').value});render(value);$('book-path').value='';$('message').textContent='作品已登记，重新打开书架仍会保留。';}catch(e){$('message').textContent=e.message;}finally{busy=false;$('add').disabled=false;}};__MANAGEMENT_SCRIPT__installShelfRefreshHooks();refresh();</script></body></html>'''
+$('refresh').onclick=()=>refresh();$('add').onclick=async()=>{if(busy||directoryPicking)return;const path=$('book-path').value;busy=true;$('add').disabled=true;try{const value=await requestShelfCatalog('add-book',{path});applyShelfCatalog(value);if($('book-path').value===path)$('book-path').value='';$('message').textContent='作品已登记，重新打开书架仍会保留。';}catch(e){$('message').textContent=e.message;}finally{busy=false;$('add').disabled=false;}};__MANAGEMENT_SCRIPT__installShelfRefreshHooks();refresh();</script></body></html>'''
     return page.replace('__MANAGEMENT_HTML__', _library_management_html()).replace('__MANAGEMENT_SCRIPT__', _library_management_script()).replace('__THEME_CSS__', _workbench_theme_css()).replace('__THEME_CONTROL__', _workbench_theme_control()).replace('__THEME_SCRIPT__', _workbench_theme_script()).replace('__BOOK_DISPLAY__', _book_display_script()).replace('__TOKEN__', json.dumps(token)).encode('utf-8')
 
 
@@ -4632,6 +6088,7 @@ def library_server(state_dir=None, port=8765, library_books=None):
         token = secrets.token_urlsafe(32)
         identity = {'instance': uuid.uuid4().hex, 'state_dir': str(root), 'mode': 'library', 'pid': os.getpid(),
                     'code_sha256': _loaded_workbench_sha256, 'runtime_sha256': _loaded_runtime_sha256, 'started': _utc_now()}
+        catalog_generation = 0
 
         def checked_registry():
             api._verify_bound_directory(directory)
@@ -4674,7 +6131,7 @@ def library_server(state_dir=None, port=8765, library_books=None):
                 self.reply(200, _library_page(token), 'text/html; charset=utf-8')
 
             def do_POST(self):
-                nonlocal registry, registry_hash
+                nonlocal registry, registry_hash, catalog_generation
                 origin = f'http://127.0.0.1:{self.server.server_port}'
                 if (not self.allowed() or self.headers.get('Origin') != origin
                         or self.headers.get('X-Story-Token') != token):
@@ -4700,8 +6157,15 @@ def library_server(state_dir=None, port=8765, library_books=None):
                             threading.Thread(target=self.server.shutdown, daemon=True).start()
                         return
                     checked_registry()
+                    if (self.path in ('/api/open-book', '/api/remove-book', '/api/relink-book',
+                                      '/api/trash-preview', '/api/trash-book', '/api/backup-book',
+                                      '/api/book-service', '/api/stop-book', '/api/confirm-book-unknown')
+                            or (self.path == '/api/recoveries' and payload.get('key') is not None)):
+                        _library_expected_entry(registry, payload, allow_confirmation=self.path == '/api/trash-book')
                     if self.path == '/api/books':
                         result = _library_catalog(registry)
+                    elif self.path == '/api/directories':
+                        result = _library_directories(payload)
                     elif self.path == '/api/add-book':
                         entry = _library_entry(payload.get('path'))
                         if entry['key'] in registry and registry[entry['key']]['book_id'] != entry['book_id']:
@@ -4717,7 +6181,8 @@ def library_server(state_dir=None, port=8765, library_books=None):
                         result = _library_catalog(registry)
                     elif self.path == '/api/set-book-status':
                         registry, registry_hash = _set_shelf_status(
-                            root, registry, payload.get('key'), payload.get('value'), registry_hash)
+                            root, registry, payload.get('key'), payload.get('value'), registry_hash,
+                            payload.get('expected_book_id'))
                         result = _library_catalog(registry)
                     elif self.path in ('/api/create-book', '/api/remove-book', '/api/undo-remove', '/api/relink-book', '/api/trash-book'):
                         manager = api.workbench_books.BookManager(api.workbench)
@@ -4733,7 +6198,7 @@ def library_server(state_dir=None, port=8765, library_books=None):
                             values = manager.trash(root, registry, registry_hash, payload.get('key'), payload.get('confirmation'), payload.get('saved') is True)
                         registry, registry_hash, receipt = values
                         result = {**_library_catalog(registry), **receipt}
-                    elif self.path in ('/api/trash-preview', '/api/backup-book', '/api/book-service', '/api/stop-book'):
+                    elif self.path in ('/api/trash-preview', '/api/backup-book', '/api/book-service', '/api/stop-book', '/api/confirm-book-unknown'):
                         key = payload.get('key')
                         if not isinstance(key, str) or key not in registry:
                             api.fail('invalid_input', '请选择已登记作品。')
@@ -4744,8 +6209,11 @@ def library_server(state_dir=None, port=8765, library_books=None):
                         elif self.path == '/api/backup-book':
                             result = api.workbench_archives.create_archive(entry['root'], payload.get('path'), entry['book_id'])
                         else:
-                            action = 'stop' if self.path == '/api/stop-book' else 'session'
-                            result = _service_request(entry['root'], action, payload.get('saved') is True)
+                            action = 'stop' if self.path == '/api/stop-book' else 'presence-confirm' if self.path == '/api/confirm-book-unknown' else 'session'
+                            result = _service_request(entry['root'], action, payload.get('saved') is True,
+                                                      expected_book_id=entry['book_id'],
+                                                      unknown_confirmation=payload.get('unknown_confirmation'),
+                                                      fingerprint=payload.get('fingerprint'), confirmed=payload.get('confirmed') is True)
                             _library_entry(entry['root'], entry)
                             # Service capabilities stay in their on-disk record.
                             result = {k: value for k, value in result.items() if k not in ('url', 'instance', 'pid', 'root')}
@@ -4769,7 +6237,7 @@ def library_server(state_dir=None, port=8765, library_books=None):
                         if key is None and (payload.get('cursor') is not None or payload.get('offset', 0) != 0):
                             api.fail('invalid_input', '请先选择需要读取恢复记录的作品。')
                         for entry in ([registry[key]] if key is not None else registry.values()):
-                            group = {k: entry[k] for k in ('key', 'title', 'kind', 'root')}
+                            group = {k: entry[k] for k in ('key', 'book_id', 'title', 'kind', 'root')}
                             if key is None:
                                 group['deferred'] = True
                             else:
@@ -4791,6 +6259,14 @@ def library_server(state_dir=None, port=8765, library_books=None):
                         _library_entry(entry['root'], entry)
                     else:
                         return self.reply(404, b'{}')
+                    if self.path in ('/api/books', '/api/add-book', '/api/set-book-status', '/api/create-book',
+                                     '/api/remove-book', '/api/undo-remove', '/api/relink-book',
+                                     '/api/trash-book', '/api/restore-backup'):
+                        # HTTPServer serializes these snapshots. The client must
+                        # keep this order even if promises resolve out of order.
+                        catalog_generation += 1
+                        result['catalog_generation'] = catalog_generation
+                        result['catalog_instance'] = identity['instance']
                     self.reply(200, json.dumps(result, ensure_ascii=False).encode())
                 except api.StoryError as error:
                     self.reply(409, json.dumps({'message': str(error), 'error': error.code, 'details': error.details}, ensure_ascii=False).encode())

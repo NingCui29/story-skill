@@ -1161,7 +1161,7 @@ test('comparison policy is validated before UI and cannot change an existing ses
   assert.equal((await executeChromeBridgeRequest(environment().api,foreign)).error,'platform_browser_invalid_profile');
 });
 test('Markdown paragraph encoding consumes the already encoded body verbatim without another conversion',async()=>{
-  for(const encoding of ['markdown_paragraphs_v1','markdown_paragraphs_v2']){
+  for(const encoding of ['markdown_paragraphs_v1','markdown_paragraphs_v2','plain_paragraphs_v1']){
     const env=environment();const base=request('verify_target');base.binding.body_encoding=encoding;
     assert.equal((await executeChromeBridgeRequest(env.api,base)).ok,true);
     const body=(encoding==='markdown_paragraphs_v1'?'\n':'')+'首段\n第二段\n末段';const req=next(base,'create_draft',{chapter:12,title:'验收',body});
@@ -1183,7 +1183,7 @@ test('body encoding is validated before UI and is isolated from comparison polic
   assert.equal((await executeChromeBridgeRequest(oldEnv.api,old)).ok,true);const oldEvents=oldEnv.events.length;
   const upgrade=next(old,'find_drafts',{chapter:12});upgrade.binding={...old.binding,body_encoding:'markdown_paragraphs_v2'};
   assert.equal((await executeChromeBridgeRequest(oldEnv.api,upgrade)).error,'platform_browser_identity_mismatch');assert.equal(oldEnv.events.length,oldEvents);
-  for(const encoding of ['markdown_paragraphs_v1','markdown_paragraphs_v2']){
+  for(const encoding of ['markdown_paragraphs_v1','markdown_paragraphs_v2','plain_paragraphs_v1']){
     const foreign=request('verify_target');foreign.binding.body_encoding=encoding;foreign.binding.target.platform='qidian';
     assert.equal((await executeChromeBridgeRequest(environment().api,foreign)).error,'platform_browser_invalid_profile');
   }
@@ -1557,6 +1557,29 @@ test('readback mode closes own saved editor before opening preview and never reo
   const observed=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'99'}));
   assert.equal(observed.result.body,body);assert.equal(observed.result.title,title);assert.equal(env.creates,1);
   assert.equal(observed.result.url,ORIGIN+'/preview/10&99');
+});
+test('long readback batches keep one fresh owned preview and preserve user previews',async()=>{
+  const env=environment();const user=env.add(ORIGIN+'/preview/10&11');
+  const base=await verified(env,previewProfile());let previous;
+  for(let index=0;index<40;index++){
+    const response=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}));
+    assert.equal(response.ok,true,JSON.stringify(response));
+    const previews=[...env.tabs.values()].filter(tab=>tab.preview&&tab.id!==user.id);
+    assert.equal(previews.length,1);assert.notEqual(previews[0].id,previous);
+    if(previous)assert.ok(env.closed.includes(previous));
+    previous=previews[0].id;assert.ok(env.tabs.has(user.id));
+  }
+  await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:true});
+  assert.ok(env.tabs.has(previous)&&env.tabs.has(user.id));
+});
+test('retiring previews stops on a changed tab without opening or closing another page',async()=>{
+  const env=environment();const base=await verified(env,previewProfile());
+  assert.equal((await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'11'}))).ok,true);
+  const old=[...env.tabs.values()].find(tab=>tab.preview);old.current=ORIGIN+'/book/10/edit/11?enter_from=modifydraft';
+  const count=env.tabs.size,closed=env.closed.length;
+  const result=await executeChromeBridgeRequest(env.api,next(base,'read_draft',{remote_id:'12'}));
+  assert.equal(result.error,'platform_browser_editor_changed');
+  assert.equal(env.tabs.size,count);assert.equal(env.closed.length,closed);
 });
 test('unowned matching editor with another query blocks preview without touching it or other documents',async()=>{
   const env=environment();const same=env.add(ORIGIN+'/book/10/edit/11?another=entry#caret');

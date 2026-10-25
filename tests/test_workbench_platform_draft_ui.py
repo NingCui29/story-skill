@@ -37,8 +37,8 @@ const call=async(action,payload={})=>{requests.push({action,payload:structuredCl
 const plan=(id='plan-1',extra={})=>({id,platform:'fanqie',status:'prepared',book_title:'验收作品',account_id:'account',remote_book_id:'remote',chapters:[1,2],...extra});
 const profile={id:'本机.json',label:'番茄页面',valid:true,platform:'fanqie',sha256:'profile-sha'};
 const catalog=(plans=[plan()],jobs=[],extra={})=>({book_id:'book-one',revision:7,formal_first:1,formal_last:13,formal_count:13,max_batch:1000,plans,profiles:[profile],jobs,next_offset:null,...extra});
-const preview=payload=>({book_id:'book-one',plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_id?'profile-sha':null,mode:payload.reconcile_only?'reconcile_only':'save_draft',preview_token:payload.profile_id?(Math.floor(Date.now()/1000)+600)+'.signed':null,can_start:!!payload.profile_id,blockers:payload.profile_id?[]:['profile_required'],preview:{platform:'fanqie',account_id:'account',remote_book_id:'remote',chapters:[{chapter:1,title:'标题一',body_characters:100},{chapter:2,title:'标题二',body_characters:200}],results:[{chapter:1,state:'pending',last_observed_at:null,reason:null,observed_this_run:false,title_body_verified:false}]}});
-const job=(extra={})=>({id:'job-one',book_id:'book-one',plan_id:'plan-1',mode:'save_draft',state:'running',stage:'waiting_login',done:false,total_chapters:2,verified_chapters:0,result:null,...extra});
+const preview=payload=>({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding,book_id:'book-one',plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_id?'profile-sha':null,mode:payload.reconcile_only?'reconcile_only':payload.sync_drafts?'sync_drafts':'save_draft',preview_token:payload.profile_id?(Math.floor(Date.now()/1000)+600)+'.signed':null,can_start:!!payload.profile_id,blockers:payload.profile_id?[]:['profile_required'],preview:{platform:'fanqie',account_id:'account',remote_book_id:'remote',chapters:[{chapter:1,title:'标题一',body_characters:100},{chapter:2,title:'标题二',body_characters:200}],results:[{chapter:1,state:'pending',last_observed_at:null,reason:null,observed_this_run:false,title_body_verified:false}]}});
+const job=(extra={})=>({comparison_policy:'strict',body_encoding:'plain_paragraphs_v1',id:'job-one',book_id:'book-one',plan_id:'plan-1',mode:'sync_drafts',state:'running',stage:'waiting_login',done:false,total_chapters:2,verified_chapters:0,result:null,...extra});
 handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog();if(action.endsWith('/preview'))return preview(payload);if(action.endsWith('/start'))return job();if(action.endsWith('/job'))return job();throw Error(action);};
 const textTree=node=>node.textContent+'\n'+node.children.map(textTree).join('\n');
 '''
@@ -58,7 +58,7 @@ handler=async(action,payload)=>{
 };
 const before=JSON.stringify([...docs]);await platformDraftOpen();const p=platformDraftPanel;
 assert.deepEqual(requests.filter(r=>r.action.endsWith('/catalog')).map(r=>r.payload.offset),[0,1]);
-assert.equal(p.plan.options.length,2);assert.equal(p.run.disabled,false);assert.equal(p.preview.preview.chapters.length,2);assert.equal(p.progress.max,2);assert.ok(p.progressLabel.textContent.includes('0 / 2'));assert.equal(p.results.children[0].textContent,'第1章 · 尚未处理');
+assert.equal(p.plan.options.length,2);assert.equal(p.run.disabled,false);assert.equal(p.preview.preview.chapters.length,2);assert.equal(p.progress.max,2);assert.ok(p.progressLabel.textContent.includes('0 / 2'));assert.equal(p.results.children[0].textContent,'第1章 · 本次未处理');
 assert.ok(!p.plan.options.some(o=>o.textContent.includes('plan-')));assert.ok(textTree(p.content).includes('当前仍有未保存编辑'));
 await p.run.onclick();assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,1);
 const sent=requests.find(r=>r.action.endsWith('/start')).payload;
@@ -110,7 +110,7 @@ assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,sent);assert
         self.js(r'''
 await platformDraftOpen();const p=platformDraftPanel;
 platformDraftDrawJob(p,job({done:true,state:'partial_failure',verified_chapters:1,result:{source_matches_current:false,local_version_changed:true,results:[{chapter:1,state:'saved',observed_this_run:false,title_body_verified:false},{chapter:2,state:'conflict',reason:'remote_content_differs',observed_this_run:true,title_body_verified:false}]}}));
-assert.equal(p.progress.value,1);assert.ok(p.results.children[0].textContent.includes('历史记录'));assert.ok(p.results.children[1].textContent.includes('本次观察'));assert.ok(p.results.children[1].textContent.includes('远端草稿内容与冻结清单不同'));assert.ok(p.status.textContent.includes('本地正式稿已有变化'));
+assert.equal(p.progress.value,1);assert.ok(p.results.children[0].textContent.includes('本次未处理'));assert.ok(p.historyResults.children[0].textContent.includes('历史状态'));assert.ok(p.results.children[1].textContent.includes('本次观察'));assert.ok(p.results.children[1].textContent.includes('远端草稿内容与冻结清单不同'));assert.ok(p.status.textContent.includes('本地正式稿已有变化'));
 p.mode.value='reconcile_only';await platformDraftPreview(p);assert.equal(p.run.disabled,false);await p.run.onclick();
 assert.equal(requests.findLast(r=>r.action.endsWith('/start')).payload.reconcile_only,true);
 ''')
@@ -129,7 +129,7 @@ currentBookInfo.kind='long';handler=async()=>catalog([plan()],[],{next_offset:0}
 assert.ok(platformDraftPanel.status.textContent.includes('分页无效'));assert.equal(platformDraftPanel.run.disabled,true);assert.equal(requests.length,1);
 ''')
 
-    def test_format_choices_are_explicit_and_bound_to_preview_and_start(self):
+    def test_fixed_format_and_strict_comparison_are_bound_to_preview_and_start(self):
         self.js(r'''
 handler=async(action,payload)=>{
  if(action.endsWith('/catalog'))return catalog();
@@ -137,41 +137,34 @@ handler=async(action,payload)=>{
  if(action.endsWith('/start'))return job({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding});throw Error(action);
 };
 await platformDraftOpen();const p=platformDraftPanel;
-assert.equal(p.comparison.value,'strict');assert.equal(p.encoding.value,'verbatim');
+assert.equal(p.comparison.value,'strict');assert.equal(p.encoding.value,'plain_paragraphs_v1');
 p.comparison.value='fanqie_terminal_lf_v1';p.encoding.value='markdown_paragraphs_v1';
 assert.equal(platformDraftCanStart(p),false);await p.encoding.onchange();
-assert.ok(textTree(p.previewBox).includes('一次换段'));assert.ok(textTree(p.previewBox).includes('允许正文末尾换行数量增加或减少'));
+assert.ok(textTree(p.previewBox).includes('每段只换行一次'));assert.ok(textTree(p.previewBox).includes('包括末尾换行在内逐字核对'));
 await p.run.onclick();const sent=requests.findLast(r=>r.action.endsWith('/start')).payload;
-assert.equal(sent.comparison_policy,'fanqie_terminal_lf_v1');assert.equal(sent.body_encoding,'markdown_paragraphs_v1');
+assert.equal(sent.comparison_policy,'strict');assert.equal(sent.body_encoding,'plain_paragraphs_v1');
 assert.equal(p.comparison.disabled,true);assert.equal(p.encoding.disabled,true);
 ''')
 
     def test_stale_format_preview_does_not_authorize_changed_selection(self):
         self.js(r'''
 await platformDraftOpen();const p=platformDraftPanel;let release;
-handler=async(action,payload)=>payload.comparison_policy==='fanqie_terminal_lf_v1'?new Promise(resolve=>{release=()=>resolve({...preview(payload),comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding});}):{...preview(payload),comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding};
-p.comparison.value='fanqie_terminal_lf_v1';const stale=p.comparison.onchange();
-p.comparison.value='strict';await p.comparison.onchange();release();await stale;
+let previews=0;handler=async(action,payload)=>++previews===1?new Promise(resolve=>{release=()=>resolve({...preview(payload),comparison_policy:'fanqie_terminal_lf_v1',body_encoding:'verbatim'});}):preview(payload);
+p.comparison.value='fanqie_terminal_lf_v1';const stale=platformDraftPreview(p);
+await platformDraftPreview(p);release();await stale;
 assert.equal(p.preview.comparison_policy,'strict');assert.equal(p.run.disabled,false);
 p.encoding.value='markdown_paragraphs_v1';await p.run.onclick();assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
 ''')
 
-    def test_compact_paragraph_choice_keeps_legacy_choice_and_binds_its_own_preview(self):
-        self.js(r'''
-handler=async(action,payload)=>{
- if(action.endsWith('/catalog'))return catalog();
- if(action.endsWith('/preview'))return {...preview(payload),comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding};
- if(action.endsWith('/start'))return job({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding});throw Error(action);
-};
-await platformDraftOpen();const p=platformDraftPanel;
-assert.equal(p.encoding.value,'verbatim');
-assert.ok(p.encoding.options.some(o=>o.value==='markdown_paragraphs_v1'));
-assert.ok(p.encoding.options.some(o=>o.value==='markdown_paragraphs_v2'));
-p.encoding.value='markdown_paragraphs_v1';await p.encoding.onchange();
+    def test_platform_format_is_fixed_and_stale_selection_cannot_start(self):
+        self.js(r'''await platformDraftOpen();const p=platformDraftPanel;
+assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.encoding.type,'hidden');
+assert.ok(textTree(p.content).includes('统一去掉空白行'));
 p.encoding.value='markdown_paragraphs_v2';await p.run.onclick();
 assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
-await p.encoding.onchange();assert.ok(textTree(p.previewBox).includes('去掉正文开头的分隔空段'));
-await p.run.onclick();assert.equal(requests.findLast(r=>r.action.endsWith('/start')).payload.body_encoding,'markdown_paragraphs_v2');
+await platformDraftPreview(p);assert.equal(p.encoding.value,'plain_paragraphs_v1');
+assert.ok(textTree(p.previewBox).includes('去掉全部空白行'));
+await p.run.onclick();assert.equal(requests.findLast(r=>r.action.endsWith('/start')).payload.body_encoding,'plain_paragraphs_v1');
 ''')
 
     def test_equivalent_results_are_not_labelled_as_exact_success(self):
@@ -189,7 +182,7 @@ platformDraftDrawJob(p,job({done:true,state:'succeeded_equivalent',verified_chap
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog([plan(),plan('another',{platform:'qidian'})],[],{profiles:[profile,{...profile,id:'qidian.json',platform:'qidian'}]}):preview(payload);
 await platformDraftOpen();const p=platformDraftPanel;
 p.comparison.value='fanqie_terminal_lf_v1';p.encoding.value='markdown_paragraphs_v1';p.plan.value='another';await p.plan.onchange();
-assert.equal(p.comparison.value,'strict');assert.equal(p.encoding.value,'verbatim');assert.equal(p.comparison.disabled,true);assert.equal(p.encoding.disabled,true);
+assert.equal(p.comparison.value,'strict');assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.comparison.disabled,true);assert.equal(p.encoding.disabled,true);
 ''')
 
     def test_local_binding_selects_returned_plan_and_profile_without_start_or_editor_change(self):
@@ -307,12 +300,24 @@ class PlatformDraftHTTPTests(unittest.TestCase):
     def test_format_choices_are_forwarded_without_rebinding_the_book(self):
         for action, method in [('preview', 'workbench_preview'), ('start', 'workbench_start')]:
             with self.subTest(action=action), patch.object(base.story.platform_drafts, method, return_value={'ok': True}) as mocked:
-                code, _ = self.post(action, {'comparison_policy': 'fanqie_terminal_lf_v1',
-                                             'body_encoding': 'markdown_paragraphs_v1', 'book_id': 'other'})
+                code, _ = self.post(action, {'comparison_policy': 'strict',
+                                             'body_encoding': 'plain_paragraphs_v1', 'book_id': 'other'})
                 self.assertEqual(code, 200)
-                self.assertEqual(mocked.call_args.kwargs['comparison_policy'], 'fanqie_terminal_lf_v1')
-                self.assertEqual(mocked.call_args.kwargs['body_encoding'], 'markdown_paragraphs_v1')
+                self.assertEqual(mocked.call_args.kwargs['comparison_policy'], 'strict')
+                self.assertEqual(mocked.call_args.kwargs['body_encoding'], 'plain_paragraphs_v1')
                 self.assertEqual(mocked.call_args.kwargs['expected_book_id'], self.fixture.book.meta('id'))
+
+    def test_unified_mode_is_explicit_and_old_update_request_is_rejected(self):
+        for action, method in [('preview', 'workbench_preview'), ('start', 'workbench_start')]:
+            with self.subTest(action=action), patch.object(base.story.platform_drafts, method, return_value={'ok': True}) as mocked:
+                code, result = self.post(action, {'sync_drafts': True, 'body_encoding': 'plain_paragraphs_v1'})
+                self.assertEqual(code, 200, result)
+                self.assertTrue(mocked.call_args.kwargs['sync_drafts'])
+                mocked.reset_mock()
+                code, result = self.post(action, {'update_existing': True, 'body_encoding': 'plain_paragraphs_v1'})
+                self.assertEqual(code, 409, result)
+                self.assertEqual(result['error'], 'invalid_input')
+                mocked.assert_not_called()
 
     def test_bind_route_uses_server_identity_and_rejects_extra_configuration_fields(self):
         data = {'account_id': '123', 'book_management_url': 'official observed URL',

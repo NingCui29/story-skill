@@ -221,19 +221,19 @@ for(const invalid of [nativePage(true,{port:'12346'}),nativePage(true,{pathname:
         if not node:
             self.skipTest('Node.js required')
         source = SOURCE.read_text()
-        script = source.split('let script = "typeof docs', 1)[1].split('"\n', 1)[0]
-        script = 'typeof docs' + script
+        script = source.split('func confirmLeaving(', 1)[1].split('let script = """', 1)[1].split('"""', 1)[0]
         harness = r'''
 const assert=require('assert'),vm=require('vm');
-const evaluate=records=>vm.runInNewContext(script,{docs:new Map(records.map((record,index)=>[String(index),record]))});
-assert.equal(vm.runInNewContext(script,{}),false);
-assert.equal(evaluate([]),false);
-assert.equal(evaluate([{editable:true,text:'saved',value:'saved'}]),false);
-assert.equal(evaluate([{editable:true,text:'saved',value:'saved'},{editable:true,text:'old',value:'inactive edit'}]),true);
-assert.equal(evaluate([{editable:true,text:'saved',value:'saved',saving:true}]),true);
-assert.equal(evaluate([{editable:true,text:'original',value:'edited',recovered:'edited'}]),true);
-assert.equal(evaluate([{editable:false,text:'old',value:'readonly'}]),false);
-assert.equal(evaluate([{editable:true,text:'old'}]),false);
+const document={getElementById:id=>id==='current-book-root'?{}:null};
+const evaluate=records=>vm.runInNewContext(script,{document,Map,docs:new Map(records.map((record,index)=>[String(index),record]))});
+assert.equal(vm.runInNewContext(script,{document}),'unknown');
+assert.equal(evaluate([]),'clean');
+assert.equal(evaluate([{editable:true,text:'saved',value:'saved'}]),'clean');
+assert.equal(evaluate([{editable:true,text:'saved',value:'saved'},{editable:true,text:'old',value:'inactive edit'}]),'pending');
+assert.equal(evaluate([{editable:true,text:'saved',value:'saved',saving:true}]),'busy');
+assert.equal(evaluate([{editable:true,text:'original',value:'edited',recovered:'edited'}]),'pending');
+assert.equal(evaluate([{editable:false,text:'old',value:'readonly'}]),'clean');
+assert.equal(evaluate([{editable:true,text:'old'}]),'unknown');
 '''
         result = subprocess.run([node, '-e', 'const script=' + json.dumps(script) + ';\n' + harness], capture_output=True, text=True, timeout=15)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

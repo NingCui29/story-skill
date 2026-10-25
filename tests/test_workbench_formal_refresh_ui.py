@@ -50,7 +50,15 @@ await platformDraftFormalState(p);assert.equal(p.preview,null);assert.equal(p.pr
 assert.equal(p.refreshStart.value,'1');assert.equal(p.refreshEnd.value,'14');assert.equal(p.bindStart.value,'13');assert.equal(p.bindEnd.value,'14');assert.ok(p.formalNote.textContent.includes('新增已登记正式章'));
 assert.equal(JSON.stringify(p.plans),old);assert.equal(p.plan.value,'plan-1');assert.equal(count('preview'),previews);assert.equal(count('catalog'),catalogs);assert.equal(count('refresh-plan'),0);assert.equal(count('start'),0);
 await p.run.onclick();assert.equal(count('start'),0);
-handler=async(action,payload)=>preview(payload);await p.recheck.onclick();assert.equal(p.run.disabled,false);assert.ok(p.run.textContent.includes('所选第1—2章'));
+handler=async(action,payload)=>{
+ if(action.endsWith('/refresh-plan'))return refreshed(payload);
+ if(action.endsWith('/catalog'))return catalog([plan(),plan('new-plan')],[],{revision:8,formal_last:14,formal_count:14});
+ if(action.endsWith('/preview'))return preview(payload);
+ throw Error(action);
+};await p.recheck.onclick();assert.equal(p.run.disabled,false);assert.ok(p.run.textContent.includes('所选第1—2章'));
+assert.equal(p.plan.value,'new-plan');assert.equal(count('refresh-plan'),1);
+const refreshedRequest=requests.find(row=>row.action.endsWith('/refresh-plan')).payload;
+assert.equal(refreshedRequest.start,1);assert.equal(refreshedRequest.end,2);assert.equal(refreshedRequest.expected_revision,8);assert.equal(count('start'),0);
 ''')
 
     def test_manual_ranges_binding_and_reconciliation_are_not_overwritten(self):

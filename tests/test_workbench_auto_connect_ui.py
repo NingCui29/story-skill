@@ -36,9 +36,9 @@ const plan=(id='plan-one')=>({id,platform:'fanqie',status:'prepared',book_title:
 const profile={id:'synthetic.json',label:'番茄合成配置',valid:true,platform:'fanqie',sha256:'profile-sha'};
 const catalog=(jobs=[])=>({book_id:'book-one',revision:7,formal_first:1,formal_last:2,formal_count:2,max_batch:1000,plans:[plan()],profiles:[profile],jobs,next_offset:null});
 const token=(suffix='connect',seconds=600)=>(Math.floor(Date.now()/1000)+seconds)+'.'+suffix;
-const connect=payload=>({book_id:'book-one',plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:'profile-sha',mode:payload.reconcile_only?'reconcile_only':'save_draft',can_start:false,connection_ready:false,preview_token:null,can_connect:true,connect_token:token(payload.reconcile_only?'read-connect':'connect'),automatic_connection:{available:true,uses_codex_quota:true},blockers:['platform_chrome_worker_unavailable'],preview:{platform:'fanqie',account_id:'synthetic-account',remote_book_id:'synthetic-target',chapters:[{chapter:1,title:'合成标题',body_characters:100}],results:[]}});
+const connect=payload=>({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding,book_id:'book-one',plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:'profile-sha',mode:payload.reconcile_only?'reconcile_only':'sync_drafts',can_start:false,connection_ready:false,preview_token:null,can_connect:true,connect_token:token(payload.reconcile_only?'read-connect':'connect'),automatic_connection:{available:true,uses_codex_quota:true},blockers:['platform_chrome_worker_unavailable'],preview:{platform:'fanqie',account_id:'synthetic-account',remote_book_id:'synthetic-target',chapters:[{chapter:1,title:'合成标题',body_characters:100}],results:[]}});
 const ready=payload=>({...connect(payload),can_start:true,connection_ready:true,preview_token:token('ready'),can_connect:false,connect_token:null,blockers:[]});
-const job=()=>({id:'job-one',book_id:'book-one',plan_id:'plan-one',mode:'save_draft',state:'running',stage:'connecting_chrome',done:false,total_chapters:1,verified_chapters:0,result:null});
+const job=()=>({comparison_policy:'strict',body_encoding:'plain_paragraphs_v1',id:'job-one',book_id:'book-one',plan_id:'plan-one',mode:'sync_drafts',state:'running',stage:'connecting_chrome',done:false,total_chapters:1,verified_chapters:0,result:null});
 handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog();if(action.endsWith('/preview'))return connect(payload);if(action.endsWith('/start'))return job();if(action.endsWith('/job'))return job();throw Error(action);};
 const starts=()=>requests.filter(row=>row.action.endsWith('/start'));
 '''
@@ -62,7 +62,7 @@ const starts=()=>requests.filter(row=>row.action.endsWith('/start'));
 const before=JSON.stringify([...docs]);await platformDraftOpen();const p=platformDraftPanel;
 assert.equal(p.preview.can_start,false);assert.equal(p.preview.can_connect,true);
 assert.equal(p.previewExpires,2000000600000);assert.equal(p.run.disabled,false);
-assert.equal(p.run.textContent,'连接并保存所选第1—2章（2章）到平台草稿');
+assert.equal(p.run.textContent,'连接并同步所选第1—2章（2章）到平台草稿');
 assert.ok(p.status.textContent.includes('Codex 额度'));assert.equal(starts().length,0);
 assert.equal(JSON.stringify([...docs]),before);
 ''')
@@ -98,8 +98,8 @@ assert.equal(p.run.disabled,true);assert.equal(starts().length,1);
         self.js(r'''
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog():action.endsWith('/preview')?ready(payload):job();
 await platformDraftOpen();const p=platformDraftPanel;
-assert.equal(p.run.disabled,false);assert.equal(p.run.textContent,'保存所选第1—2章（2章）到平台草稿');
-assert.equal(starts().length,0);await p.recheck.onclick();assert.equal(starts().length,0);
+assert.equal(p.run.disabled,false);assert.equal(p.run.textContent,'同步所选第1—2章（2章）到平台草稿');
+assert.equal(starts().length,0);await platformDraftPreview(p);assert.equal(starts().length,0);
 const selected=p.preview.preview_token;await p.run.onclick();
 assert.equal(starts().length,1);assert.equal(starts()[0].payload.preview_token,selected);
 assert.equal(starts()[0].payload.auto_connect,false);
@@ -152,7 +152,7 @@ await platformDraftOpen();const p=platformDraftPanel;let release;
 handler=async(action,payload)=>payload.profile_id==='old'?new Promise(resolve=>{release=()=>resolve(connect(payload));}):ready(payload);
 p.profile.value='old';const pending=platformDraftPreview(p);p.profile.value='synthetic.json';await platformDraftPreview(p);release();await pending;
 assert.equal(p.preview.profile_id,'synthetic.json');assert.equal(p.preview.can_start,true);
-assert.equal(p.run.textContent,'保存所选第1—2章（2章）到平台草稿');assert.equal(starts().length,0);
+assert.equal(p.run.textContent,'同步所选第1—2章（2章）到平台草稿');assert.equal(starts().length,0);
 ''')
 
     def test_readonly_connect_click_preserves_mode_and_uses_its_new_token(self):
@@ -169,7 +169,7 @@ assert.equal(starts()[0].payload.preview_token,selected);assert.equal(starts()[0
         self.js(r'''
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog():{...ready(payload),can_connect:true,connect_token:token('extra',1200)};
 await platformDraftOpen();const p=platformDraftPanel,selected=p.preview.preview_token;
-assert.equal(p.previewExpires,2000000600000);assert.equal(p.run.textContent,'保存所选第1—2章（2章）到平台草稿');
+assert.equal(p.previewExpires,2000000600000);assert.equal(p.run.textContent,'同步所选第1—2章（2章）到平台草稿');
 await p.run.onclick();assert.equal(starts()[0].payload.preview_token,selected);
 assert.equal(starts()[0].payload.auto_connect,false);
 ''')

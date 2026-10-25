@@ -48,13 +48,13 @@ class SyncTransportTests(unittest.TestCase):
             self.assertTrue(preview['can_start'])
             self.assert_code('platform_draft_preview_required',drafts.workbench_start,self.root,self.plan['id'],self.path.name,
                 expected_book_id=self.book.meta('id'),expected_profile_sha256=preview['profile_sha256'],
-                preview_token=preview['preview_token'],execute=True,update_existing=True)
-        preview=drafts.workbench_preview(self.root,self.plan['id'],self.path.name,expected_book_id=self.book.meta('id'),update_existing=True)
-        self.assertEqual(preview['mode'],'sync_existing');self.assertTrue(preview['can_start'])
+                preview_token=preview['preview_token'],execute=True,sync_drafts=True)
+        preview=drafts.workbench_preview(self.root,self.plan['id'],self.path.name,expected_book_id=self.book.meta('id'),sync_drafts=True)
+        self.assertEqual(preview['mode'],'sync_drafts');self.assertTrue(preview['can_start'])
         with patch.object(drafts.threading,'Thread') as thread:
             result=drafts.workbench_start(self.root,self.plan['id'],self.path.name,expected_book_id=self.book.meta('id'),
-                expected_profile_sha256=preview['profile_sha256'],preview_token=preview['preview_token'],execute=True,update_existing=True)
-            self.assertEqual(result['mode'],'sync_existing');thread.return_value.start.assert_called_once()
+                expected_profile_sha256=preview['profile_sha256'],preview_token=preview['preview_token'],execute=True,sync_drafts=True)
+            self.assertEqual(result['mode'],'sync_drafts');thread.return_value.start.assert_called_once()
             # No worker runs in this dispatch contract test.
             drafts._finish_job(result['id'],error='platform_draft_worker_unavailable');self.jobs.append(result['id'])
 

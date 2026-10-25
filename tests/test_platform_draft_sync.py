@@ -50,7 +50,7 @@ class ExistingDraftSyncTests(unittest.TestCase):
         for changes in ({'title':'旧标题'}, {'body':'旧正文'}, {'title':'旧标题','body':'旧正文'}):
             self.adapter.seed(self.frozen, **changes)
             before = self.adapter.updated
-            result = self.execute(update_existing=True)
+            result = self.execute(sync_drafts=True)
             self.assertTrue(result['ok'], result)
             self.assertEqual(self.adapter.updated, before+1)
             self.assertEqual(result['results'][0]['remote_id'], 'existing')
@@ -63,34 +63,34 @@ class ExistingDraftSyncTests(unittest.TestCase):
         self.prepare_adapter(title='不同标题')
         self.assertEqual(self.execute()['results'][0]['state'], 'conflict')
         self.assertEqual(self.adapter.updated, 0)
-        self.assert_code('invalid_input', self.execute, update_existing=True, reconcile_only=True)
-        self.assert_code('invalid_input', self.execute, update_existing='true')
+        self.assert_code('invalid_input', self.execute, sync_drafts=True, reconcile_only=True)
+        self.assert_code('invalid_input', self.execute, sync_drafts='true')
 
     def test_unchanged_chapter_is_read_only_and_annotated_chapter_is_cleaned(self):
         self.prepare_adapter()
-        self.assertTrue(self.execute(update_existing=True)['ok'])
+        self.assertTrue(self.execute(sync_drafts=True)['ok'])
         self.assertEqual(self.adapter.updated, 0)
         self.adapter.remote['existing']['formatting_clean'] = False
         self.assertEqual(self.execute(reconcile_only=True)['results'][0]['reason'], 'remote_formatting_metadata')
-        self.assertTrue(self.execute(update_existing=True)['ok'])
+        self.assertTrue(self.execute(sync_drafts=True)['ok'])
         self.assertEqual(self.adapter.updated, 1)
 
     def test_readback_with_remaining_annotation_cannot_be_success_or_resolve_intent(self):
         self.prepare_adapter(title='不同标题')
         self.adapter.dirty_after_write = True
-        result = self.execute(update_existing=True)
+        result = self.execute(sync_drafts=True)
         self.assertFalse(result['ok'])
         self.assertEqual(result['results'][0]['reason'], 'saved_formatting_metadata')
         self.assertEqual(result['accepted_chapters'], 0)
         self.adapter.dirty_after_write = False
-        self.assertFalse(self.execute(update_existing=True)['ok'])
+        self.assertFalse(self.execute(sync_drafts=True)['ok'])
         self.assertEqual(self.adapter.updated, 1, 'Unresolved write must never be repeated')
 
     def test_lost_update_receipt_resolves_by_readback_without_resending(self):
         self.prepare_adapter(body='不同正文')
         self.adapter.after_write_error = True
-        self.assertEqual(self.execute(update_existing=True)['results'][0]['state'], 'unknown')
-        result = self.execute(update_existing=True)
+        self.assertEqual(self.execute(sync_drafts=True)['results'][0]['state'], 'unknown')
+        result = self.execute(sync_drafts=True)
         self.assertTrue(result['ok'], result)
         self.assertEqual(result['results'][0]['state'], 'reconciled')
         self.assertEqual(self.adapter.updated, 1)
@@ -98,28 +98,35 @@ class ExistingDraftSyncTests(unittest.TestCase):
     def test_remote_change_after_backup_is_not_overwritten(self):
         self.prepare_adapter(body='旧正文')
         self.adapter.before_update = lambda: self.adapter.remote['existing'].update(body='他处刚刚修改的正文')
-        result = self.execute(update_existing=True)
+        result = self.execute(sync_drafts=True)
         self.assertFalse(result['ok'])
         self.assertEqual(self.adapter.updated, 0)
         self.assertEqual(self.adapter.remote['existing']['body'], '他处刚刚修改的正文')
 
-    def test_missing_chapters_are_skipped_without_creation_and_later_existing_is_updated(self):
+    def test_missing_chapters_are_created_and_existing_chapters_updated_in_one_batch(self):
         self.fixture.commit(2)
         plan = self.fixture.prepare((1,2))
         self.adapter = UpdateAdapter(self.book)
         self.adapter.seed(plan['manifest']['chapters'][1], title='第二章旧标题')
-        result = self.execute(plan, update_existing=True)
-        self.assertEqual([row['state'] for row in result['results']], ['not_found','saved'])
-        self.assertEqual(self.adapter.created, 0)
+        result = self.execute(plan, sync_drafts=True)
+        self.assertTrue(result['ok'], result)
+        self.assertEqual([row['state'] for row in result['results']], ['saved','saved'])
+        self.assertEqual([row['reason'] for row in result['results']],
+                         ['new_draft_created', 'existing_draft_updated'])
+        self.assertEqual(self.adapter.created, 1)
         self.assertEqual(self.adapter.updated, 1)
+        again = self.execute(plan, sync_drafts=True)
+        self.assertTrue(again['ok'], again)
+        self.assertEqual([row['state'] for row in again['results']], ['reconciled', 'reconciled'])
+        self.assertEqual((self.adapter.created, self.adapter.updated), (1, 1))
 
     def test_published_or_duplicate_chapters_are_not_updated(self):
         self.prepare_adapter(title='旧标题',state='published')
-        self.assertFalse(self.execute(update_existing=True)['ok'])
+        self.assertFalse(self.execute(sync_drafts=True)['ok'])
         self.assertEqual(self.adapter.updated,0)
         self.adapter.seed(self.frozen,title='旧标题')
         self.adapter.seed(self.frozen,remote_id='duplicate')
-        self.assertEqual(self.execute(update_existing=True)['results'][0]['reason'],'multiple_remote_drafts')
+        self.assertEqual(self.execute(sync_drafts=True)['results'][0]['reason'],'multiple_remote_drafts')
         self.assertEqual(self.adapter.updated,0)
 
     def test_stale_source_and_backup_failure_stop_before_update(self):
@@ -130,16 +137,16 @@ class ExistingDraftSyncTests(unittest.TestCase):
                 raise OSError('backup disk unavailable')
             return original(directory,name,record,**kwargs)
         with patch.object(drafts,'_write_record',side_effect=fail_backup):
-            self.assertFalse(self.execute(update_existing=True)['ok'])
+            self.assertFalse(self.execute(sync_drafts=True)['ok'])
         self.assertEqual(self.adapter.updated,0)
         story.publish.cancel(self.book,self.plan['id'])
-        self.assert_code('platform_draft_plan_unusable',self.execute,update_existing=True)
+        self.assert_code('platform_draft_plan_unusable',self.execute,sync_drafts=True)
 
     def test_latest_history_reads_new_receipt_and_is_never_current_remote_confirmation(self):
         self.prepare_adapter(title='旧标题')
         self.execute()
         previous=drafts.workbench_history(self.book.root,self.plan['id'],expected_book_id=self.book.meta('id'))
-        self.execute(update_existing=True)
+        self.execute(sync_drafts=True)
         latest=drafts.workbench_history(self.book.root,self.plan['id'],expected_book_id=self.book.meta('id'))
         self.assertGreater(latest['history_events_total'],previous['history_events_total'])
         self.assertEqual(latest['results'][0]['state'],'saved')

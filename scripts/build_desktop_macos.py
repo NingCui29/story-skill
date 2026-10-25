@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -14,6 +15,11 @@ import subprocess
 import sys
 import tempfile
 
+
+_PAYLOAD_SPEC = importlib.util.spec_from_file_location('story_desktop_editor_payload', Path(__file__).with_name('editor_safety_payload.py'))
+_PAYLOAD_MODULE = importlib.util.module_from_spec(_PAYLOAD_SPEC)
+_PAYLOAD_SPEC.loader.exec_module(_PAYLOAD_MODULE)
+editor_safety_payload = _PAYLOAD_MODULE.editor_safety_payload
 
 REPO = Path(__file__).resolve().parents[1]
 RUNTIME_FILES = (
@@ -82,6 +88,7 @@ def build(output, python):
         shutil.copy2(source / 'Info.plist', contents / 'Info.plist')
         shutil.copy2(source / 'backend_runner.py', resources / 'backend_runner.py')
         shutil.copy2(source / 'editor-appearance.js', resources / 'editor-appearance.js')
+        (resources / 'editor-safety.js').write_text(editor_safety_payload(REPO), encoding='utf-8')
         shutil.copy2(REPO / 'LICENSE', resources / 'StorySkill-LICENSE')
         scripts = resources / 'Scripts'
         scripts.mkdir()
@@ -126,6 +133,7 @@ def build(output, python):
                                        for name in NATIVE_SOURCES},
                     'launcher_sha256': hashlib.sha256((resources / 'backend_runner.py').read_bytes()).hexdigest(),
                     'editor_appearance_sha256': hashlib.sha256((resources / 'editor-appearance.js').read_bytes()).hexdigest(),
+                    'editor_safety_sha256': hashlib.sha256((resources / 'editor-safety.js').read_bytes()).hexdigest(),
                     'local_build': True}
         (resources / 'build-manifest.json').write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')

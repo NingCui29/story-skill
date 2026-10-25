@@ -893,7 +893,7 @@ def register_parser(sub, command):
             parser.add_argument("--profile", required=True, help="Saved profile filename inside this book")
             parser.add_argument("--ttl-seconds", type=int, default=TTL_SECONDS)
             parser.add_argument("--comparison-policy", choices=("strict", "fanqie_terminal_lf_v1"), default="strict")
-            parser.add_argument("--body-encoding", choices=("verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2"), default="verbatim")
+            parser.add_argument("--body-encoding", choices=("verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2", "plain_paragraphs_v1"), default="verbatim")
         elif name.endswith("respond"):
             parser.add_argument("--request-id", required=True)
             parser.add_argument("--input", required=True, help="Private 0600 response JSON file")

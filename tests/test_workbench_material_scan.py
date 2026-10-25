@@ -103,7 +103,7 @@ async function call(action,payload){
     def test_successful_candidate_save_refreshes_material_inventory_for_new_file(self):
         page = self.w._editor_page(self.w.snapshot(self.fixture.book), {}, 'material-ui-save').decode()
         script = page.split('<script>', 1)[1].split('</script>', 1)[0]
-        source = script[script.index('async function saveDocument('):script.index("$('save').onclick=")]
+        source = (script[script.index('function documentIdentity('):script.index('function documentLocation(')] + script[script.index('async function saveDocument('):script.index("$('save').onclick=")])
         self.ui(r"""
 let active='formal:1',reloading=false;
 const original={id:active,text:'正式原文。',value:'本次保存的候选文字。',editable:true,editing:true,positions:{edit:37}};

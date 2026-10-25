@@ -109,7 +109,7 @@ assert.ok(text(shelfStatusEditor(books[0])).includes('书架手动标记'));
     def test_successful_mutation_is_confirmed_by_catalog_and_keeps_view_when_card_leaves_filter(self):
         self.js(r"""
 render({books});$('filter-long').onclick();sort('oldest');filter('serializing');search('连载');const details=editor(card('连载书'));select(details).value='completed';const updated={...books[0],writing_status:state('completed')};response={books:[updated,...books.slice(1)]};await save(details).onclick();
-assert.deepEqual(calls[0],{action:'set-book-status',data:{key:'连载书',value:'completed'}});assert.equal(shelfFilter,'long');assert.equal(shelfStatusFilter,'serializing');assert.equal(shelfSort,'oldest');assert.equal(shelfQuery,'连载');assert.equal(cards().length,0);assert.equal(shelfBooks.find(book=>book.key==='连载书').writing_status.value,'completed');assert.ok($('message').textContent.includes('作品状态已更新（连载书）：已完本'));assert.equal(statusSaving.size,0);
+assert.deepEqual(calls[0],{action:'set-book-status',data:{key:'连载书',value:'completed',expected_book_id:undefined}});assert.equal(shelfFilter,'long');assert.equal(shelfStatusFilter,'serializing');assert.equal(shelfSort,'oldest');assert.equal(shelfQuery,'连载');assert.equal(cards().length,0);assert.equal(shelfBooks.find(book=>book.key==='连载书').writing_status.value,'completed');assert.ok($('message').textContent.includes('作品状态已更新（连载书）：已完本'));assert.equal(statusSaving.size,0);
 """)
 
     def test_clearing_manual_mark_can_restore_recorded_completed_state(self):
@@ -121,7 +121,7 @@ render({books});const details=editor(card('连载书'));select(details).value='u
         self.js(r"""
 render({books});$('filter-long').onclick();sort('oldest');filter('serializing');search('连载');let details=editor(card('连载书'));select(details).value='completed';let reject;pending=new Promise((resolve,deny)=>{reject=deny;});const saving=save(details).onclick();assert.equal(badge(card('连载书')).textContent,'连载中');assert.ok(select(details).disabled);assert.ok(save(details).disabled);assert.ok(!$('message').textContent.includes('已更新'));
 await save(details).onclick();assert.equal(calls.length,1);renderShelf();assert.ok(save(editor(card('连载书'))).disabled);reject(Error('作品目录身份已变化'));await saving;
-assert.equal(badge(card('连载书')).textContent,'连载中');assert.equal(select(editor(card('连载书'))).value,'serializing');assert.equal(save(editor(card('连载书'))).disabled,false);assert.equal(shelfFilter,'long');assert.equal(shelfStatusFilter,'serializing');assert.equal(shelfSort,'oldest');assert.equal(shelfQuery,'连载');assert.ok($('message').textContent.includes('更新未确认（连载书）'));assert.ok(!$('message').textContent.includes('已更新'));assert.equal(statusSaving.size,0);assert.equal(books[0].writing_status.value,'serializing');
+assert.equal(badge(card('连载书')).textContent,'连载中');assert.equal(select(editor(card('连载书'))).value,'completed');assert.equal(save(editor(card('连载书'))).disabled,false);assert.ok(text(editor(card('连载书'))).includes('当前选择已保留'));assert.equal(shelfStatusDrafts.get('连载书').value,'completed');assert.equal(shelfFilter,'long');assert.equal(shelfStatusFilter,'serializing');assert.equal(shelfSort,'oldest');assert.equal(shelfQuery,'连载');assert.ok($('message').textContent.includes('更新未确认（连载书）'));assert.ok(!$('message').textContent.includes('已更新'));assert.equal(statusSaving.size,0);assert.equal(books[0].writing_status.value,'serializing');
 """)
 
     def test_controls_are_accessible_and_open_remains_first_top_level_button(self):

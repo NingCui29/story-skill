@@ -265,10 +265,10 @@ const call=async(action,payload)=>{requests.push({action,payload});return packet
         self.ui(r"""
 await showRecoveries();assert.equal(requests.length,1);assert.deepEqual(requests[0],{});
 assert.equal(buttons(managerBody).length,30);await buttons(managerBody)[12].onclick();
-assert.deepEqual(requests[1],{key:'book12',cursor:null,offset:0});assert.ok(texts(managerBody).includes('选中书的分页已过期'));
+assert.deepEqual(requests[1],{key:'book12',expected_book_id:'identity-12',cursor:null,offset:0});assert.ok(texts(managerBody).includes('选中书的分页已过期'));
 assert.ok(!texts(managerBody).includes('没有可列出的'));
 await buttons(managerBody).find(value=>value.textContent==='重新读取恢复记录').onclick();
-assert.deepEqual(requests[2],{key:'book12',cursor:null,offset:0});assert.ok(texts(managerBody).includes('chosen'));
+assert.deepEqual(requests[2],{key:'book12',expected_book_id:'identity-12',cursor:null,offset:0});assert.ok(texts(managerBody).includes('chosen'));
 """, r"""
 const manager=new Element(),managerBody=new Element(),requests=[];let managerGeneration=0;
 const bookName=book=>book.title,bookDisplayRows=books=>books.map(book=>({...book,label:book.title}));
@@ -276,7 +276,7 @@ const openManager=()=>{managerBody.replaceChildren();return ++managerGeneration;
 const managementText=value=>{const p=new Element('p');p.textContent=value;managerBody.append(p);};
 const openRecoveryBook=async()=>{};
 const call=async(action,data)=>{assert.equal(action,'recoveries');requests.push(data);
- if(!data.key)return {books:Array.from({length:30},(_,index)=>({key:'book'+index,title:'书'+index,deferred:true}))};
+ if(!data.key)return {books:Array.from({length:30},(_,index)=>({key:'book'+index,book_id:'identity-'+index,title:'书'+index,deferred:true}))};
  if(requests.length===2)return {books:[{key:data.key,error:'选中书的分页已过期'}]};
  return {books:[{key:data.key,...packet([row('chosen')])}]};};
 """ + handler)

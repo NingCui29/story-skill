@@ -26,8 +26,8 @@ from build_desktop_windows import (PROJECT, UI_STACK, WEBVIEW_DOWNLOAD, WEBVIEW_
 from check_forbidden_technologies import assert_clean_tree
 
 REPOSITORY = 'NingCui29/story-skill'
-STORY_VERSION = '0.6.24'
-CLIENT_VERSION = '0.2.3'
+STORY_VERSION = '0.6.25'
+CLIENT_VERSION = '0.2.4'
 TAG = 'windows-v' + CLIENT_VERSION
 REPO = Path(__file__).resolve().parents[1]
 SETUP = f'story-workbench-{CLIENT_VERSION}-windows-x86_64-setup.exe'
@@ -132,7 +132,7 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
     require(all(lifecycle.get(key) is True for key in LIFECYCLE_FLAGS) and
             lifecycle.get('scope') == 'isolated-installed-windows-lifecycle',
             'Native installation lifecycle report is incomplete')
-    require(previous.get('ok') is True and previous.get('previous_version') == '0.2.2' and
+    require(previous.get('ok') is True and previous.get('previous_version') == '0.2.3' and
             previous.get('installed_version') == CLIENT_VERSION and previous.get('old_host_preserved') is True,
             'Previous Windows release upgrade was not verified')
     require(contracts.get('ok') is True and type(contracts.get('total')) is int and
@@ -426,7 +426,8 @@ def main(argv=None):
                                                installed_root=args.installed_root)
         source_paths = subprocess.run(
             ['git', 'ls-files', '-z', 'desktop/windows', 'desktop/macos/backend_runner.py',
-             'scripts/build_desktop_macos.py', 'scripts/build_desktop_windows.py',
+             'scripts/build_desktop_macos.py', 'scripts/editor_safety_payload.py',
+             'desktop/macos/editor-safety.js.in', 'scripts/build_desktop_windows.py',
              'scripts/publish_windows_draft.py', 'scripts/check_forbidden_technologies.py',
              '.github/workflows/desktop-windows.yml', 'tests/windows',
              '.gitattributes', 'LICENSE', 'tests/desktop_payload_probe.py',

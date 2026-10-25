@@ -310,8 +310,9 @@ class Driver {
     if (!['strict','fanqie_terminal_lf_v1'].includes(this.comparisonPolicy) ||
         (this.comparisonPolicy !== 'strict' && this.target.platform !== 'fanqie')) fail('invalid_profile');
     this.bodyEncoding = Object.hasOwn(request.binding,'body_encoding') ? request.binding.body_encoding : 'verbatim';
-    if (!['verbatim','markdown_paragraphs_v1','markdown_paragraphs_v2'].includes(this.bodyEncoding) ||
-        (this.bodyEncoding !== 'verbatim' && this.target.platform !== 'fanqie')) fail('invalid_profile');
+    if (!['verbatim','markdown_paragraphs_v1','markdown_paragraphs_v2','plain_paragraphs_v1'].includes(this.bodyEncoding) ||
+        (!['verbatim','plain_paragraphs_v1'].includes(this.bodyEncoding) && this.target.platform !== 'fanqie')) fail('invalid_profile');
+    if (this.bodyEncoding === 'plain_paragraphs_v1' && this.comparisonPolicy !== 'strict') fail('invalid_profile');
     this.origin = OFFICIAL[this.target.platform];
     if (!this.origin || this.profile.origin !== this.origin || this.profile.platform !== this.target.platform ||
         this.profile.execution_mode !== 'host_assisted_cua' || !Number.isFinite(this.deadline)) fail('invalid_profile');
@@ -344,7 +345,7 @@ class Driver {
     }
     const previous = SESSIONS.get(request.session_id);
     if (previous && previous.binding !== binding) fail('identity_mismatch');
-    this.state = previous || {binding, owned: new Set(), chapters: new Map(), verified: false};
+    this.state = previous || {binding, owned: new Set(), previews: new Map(), chapters: new Map(), verified: false};
     SESSIONS.set(request.session_id, this.state);
     this.check();
   }
@@ -1070,6 +1071,29 @@ class Driver {
       await pause(); await this.ax(tab);
     }
   }
+  async retirePreviews() {
+    // Independent readback needs a fresh page, not an ever-growing collection
+    // of old previews. Only retire our own unchanged, read-only destinations.
+    for (const [tabId,expectedURL] of this.state.previews) {
+      this.check();
+      if (!this.state.owned.has(tabId) || !this.readOnlyDestination(expectedURL)) fail('identity_mismatch');
+      const item = (await this.tabs()).find(candidate=>candidate.id===tabId);
+      if (item) {
+        if (item.url !== expectedURL) fail('editor_changed');
+        const tab = await this.api.getTab(tabId);
+        if (await this.url(tab) !== expectedURL || typeof tab.close !== 'function') fail('editor_changed');
+        if (typeof this.api.releaseReadback === 'function') this.api.releaseReadback(tabId);
+        this.check(); await tab.close(); // Never repeat a close with an unknown result.
+        const deadline = Math.min(this.deadline,Date.now()+5000);
+        while ((await this.tabs()).some(candidate=>candidate.id===tabId)) {
+          if (Date.now() >= deadline) fail('operation_failed');
+          await new Promise(resolve=>setTimeout(resolve,Math.max(1,Math.min(100,deadline-Date.now()))));
+        }
+      }
+      this.state.owned.delete(tabId); this.state.previews.delete(tabId);
+      if (this.state.last_readback_tab_id === tabId) delete this.state.last_readback_tab_id;
+    }
+  }
   async readPreview(remote) {
     id(remote); const spec = this.profile.readback;
     if (spec?.remote_id?.source !== 'page_url' || spec?.header?.source !== 'dom' ||
@@ -1077,11 +1101,13 @@ class Driver {
         spec?.body?.source !== 'fanqie_preview_paragraphs_v1') fail('invalid_profile');
     const forceGuard = !(this.target.platform === 'fanqie' && ['find_drafts','read_draft'].includes(this.request.operation));
     await this.guard(forceGuard); await this.ensureEditorFree(remote,true);
+    await this.retirePreviews();
     progress(this.api,{phase:'read',edge:'begin'});
     const requestedURL = spec.url.replace('{remote_id}',remote);
     // Pin the configured destination across every locator/AX read, including
     // separate reads on either side of a loading wait or account guard await.
     const {tab,id:tabId,url:expectedURL} = await this.newTab(requestedURL,{readOnly:true,pinReadback:true});
+    this.state.previews.set(tabId,expectedURL);
     this.state.last_readback_tab_id = tabId;
     await this.identity(tab);
     if (await this.url(tab) !== expectedURL || this.template(expectedURL,spec.remote_id) !== remote) fail('identity_mismatch');

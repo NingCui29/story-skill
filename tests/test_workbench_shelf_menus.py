@@ -27,6 +27,7 @@ class E {
  focus(){this.focused++;document.activeElement=this;}
 }
 const listeners=new Map(),manager={open:false};
+let directoryPicking=false;
 const document={activeElement:null,querySelectorAll:selector=>{
  assert.equal(selector,'.library-actions>details,.book-management');return menus;
 },addEventListener:(type,listener,capture)=>{

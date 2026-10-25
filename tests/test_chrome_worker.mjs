@@ -404,6 +404,18 @@ function cleanupAPI(f,operation='create_draft',time={now:Date.now()}){
   f.worker.clock=()=>time.now;
   return chromeDriverAPI(f.browser,{target:f.config.target,sdkGate:f.worker.sdkGate,sdkScope:()=>({operation}),cleanupSleep:async ms=>{time.now+=ms;}});
 }
+test('retiring a former readback releases its preservation before the one owned close',async()=>{
+  const f=await fixture();try{
+    const api=cleanupAPI(f),tab=await api.newTab(BOOK_URL);
+    assert.equal(await api.rememberReadback(BOOK_URL),tab.id);
+    await tab.close();assert.ok((await f.browser.tabs.list()).some(item=>item.id===tab.id),'ordinary cleanup preserves the selected proof');
+    assert.throws(()=>api.releaseReadback('original'),{code:'platform_chrome_worker_unsafe_user_tab'});
+    api.releaseReadback(tab.id);assert.equal(await api.readbackTab(),null);
+    await tab.close();const remaining=await f.browser.tabs.list();
+    assert.ok(!remaining.some(item=>item.id===tab.id));assert.ok(remaining.some(item=>item.id==='original'));
+    await api.closeCreated();assert.equal(f.events.filter(row=>row[0]==='close'&&row[1]===tab.id).length,1);
+  }finally{await f.cleanup();}
+});
 test('successful driver close tolerates delayed open-tab inventory without a second get or close',async()=>{
   const f=await fixture();try{
     const api=cleanupAPI(f),tab=await api.newTab(BOOK_URL),native=await f.browser.tabs.get(tab.id);
@@ -1514,6 +1526,49 @@ test('health loss after ready closes owned tabs detaches and refuses to silently
     assert.equal(f.events.filter(row=>row[0]==='cli'&&row[1]==='attach').length,1,'a fresh worker must receive a fresh controller run directory');
   }finally{await f.cleanup();}
 });
+test('a changed health tab records bounded private evidence and never grants another health receipt',async()=>{
+  for(const mismatch of ['url','handle']){
+    const f=await fixture();try{
+      await f.worker.checkpoint();const health=f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length>2).length;
+      if(mismatch==='url')await f.original.goto('https://fanqienovel.com/main/writer/preview/10&99');
+      else {const get=f.browser.tabs.get;f.browser.tabs.get=async id=>({...await get(id),id:'changed'});}
+      await assert.rejects(f.worker.refreshHealth(),{code:mismatch==='url'?'platform_chrome_worker_target_tab_changed':'platform_chrome_worker_target_tab_closed'});
+      const filename=path.join(f.run,'worker-probe-error.private.json'),proof=await readPrivateJSON(filename);
+      assert.equal(proof.expected_tab_id,'original');assert.equal(proof.expected_url,BOOK_URL);
+      assert.equal(proof.observed_tab_id,mismatch==='url'?'original':'changed');
+      assert.equal(proof.observed_url,mismatch==='url'?'https://fanqienovel.com/main/writer/preview/10&99':null);
+      assert.equal(proof.attached,true);assert.equal(proof.listed,true);
+      if(process.platform!=='win32')assert.equal((await fs.stat(filename)).mode&0o777,0o600);
+      assert.equal(f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length>2).length,health);
+      const result=await f.worker.checkpoint();assert.equal(result.state,'failed');
+      assert.ok(!JSON.stringify(result).includes('https:'));assert.equal(f.events.filter(row=>row[0]==='new').length,0);
+    }finally{await f.cleanup();}
+  }
+});
+test('health retries only an exact transient snapshot timeout while pinning the same URL',async()=>{
+  for(const mode of ['recover','repeat','denied','changed']){
+    const f=await fixture();try{
+      await f.worker.checkpoint();let calls=0;const snapshot=f.original.playwright.domSnapshot;
+      f.original.playwright.domSnapshot=async()=>{
+        calls++;
+        if(mode==='recover'&&calls===2)return snapshot();
+        if(mode==='changed')await f.original.goto('https://fanqienovel.com/main/writer/preview/10&99');
+        throw Object.assign(Error('Timed out after 3000ms waiting for CDP command Runtime.evaluate.'),
+          mode==='denied'?{code:'permission_denied'}:{});
+      };
+      if(mode==='recover')await f.worker.refreshHealth();
+      else{
+        await assert.rejects(f.worker.refreshHealth());
+        const filename=path.join(f.run,'worker-health-error.private.json'),proof=await readPrivateJSON(filename);
+        assert.equal(proof.phase,'existing_tab_probe');
+        assert.ok(['dom_snapshot','retry_dom_snapshot','retry_url'].includes(proof.step));
+        if(process.platform!=='win32')assert.equal((await fs.stat(filename)).mode&0o777,0o600);
+      }
+      assert.equal(calls,['recover','repeat'].includes(mode)?2:1);
+      assert.equal(f.events.filter(row=>row[0]==='new').length,0);
+    }finally{await f.cleanup();}
+  }
+});
 test('non-Chrome multiple Chrome and unrelated tab inventories refuse health without new tabs',async()=>{
   for(const options of [{inventory:[{id:'cdp',family:'chrome',type:'cdp'}]},
     {inventory:[{id:'one',family:'chrome',type:'extension'},{id:'two',family:'chrome',type:'extension'}]},
@@ -1724,7 +1779,7 @@ test('explicit comparison policy reaches CLI attach and must match each claimed 
   }finally{await f.cleanup();}
 });
 test('explicit body encoding reaches CLI attach and matches the queue independently of comparison policy',async()=>{
-  for(const encoding of ['markdown_paragraphs_v1','markdown_paragraphs_v2']){
+  for(const encoding of ['markdown_paragraphs_v1','markdown_paragraphs_v2','plain_paragraphs_v1']){
     const f=await fixture();f.config.body_encoding=encoding;
     try{
       const claim=await f.enqueue();const packet=await readPrivateJSON(claim.request_path);
@@ -1764,4 +1819,15 @@ test('actual worker private JSON read and initialization succeed in a module rea
         reject(Error('Process-free VM fixture failed: '+stdout+stderr)):resolve(JSON.parse(stdout))));
     assert.deepEqual(result,{ok:true,process_global:'undefined',private_read:true,initialized:true,fallback_closed:true,user_closed:false});
   }finally{await f.cleanup();}
+});
+
+test('closed target health tab has a specific stop cause without navigating or retrying',async()=>{
+ const f=await fixture();try{
+  await f.worker.checkpoint();const count=f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length>2).length;
+  f.browser.tabs.list=async()=>[];f.browser.tabs.get=async()=>{throw Error('No tab');};
+  await assert.rejects(f.worker.refreshHealth(),{code:'platform_chrome_worker_target_tab_closed'});
+  const result=await f.worker.checkpoint();assert.equal(result.code,'platform_chrome_worker_target_tab_closed');
+  assert.equal(f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length>2).length,count);
+  assert.ok(!f.events.some(row=>['new','goto','close'].includes(row[0])));
+ }finally{await f.cleanup();}
 });

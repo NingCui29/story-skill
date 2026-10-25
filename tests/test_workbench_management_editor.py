@@ -156,8 +156,8 @@ class EditorManagementJavascriptTests(unittest.TestCase):
         return r'''
 class E {
  constructor(tag='div'){this.tag=tag;this.children=[];this.listeners={};this.value='';this.textContent='';this.scrollTop=0;this.selectionStart=0;this.selectionEnd=0;this.hidden=false;this.disabled=false;this.classList={values:new Set(),add(...xs){xs.forEach(x=>this.values.add(x));},remove(...xs){xs.forEach(x=>this.values.delete(x));},contains(x){return this.values.has(x);}};}
- append(...children){this.children.push(...children);}setAttribute(key,value){this[key]=value;}addEventListener(name,fn){this.listeners[name]=fn;}
- showModal(){this.open=true;}close(){this.closed=true;this.listeners.close?.();}remove(){this.removed=true;}
+ append(...children){this.children.push(...children);}setAttribute(key,value){this[key]=value;}addEventListener(name,fn){(this.listeners[name]??=[]).push(fn);}
+ showModal(){this.open=true;}close(){this.closed=true;this.open=false;for(const listener of this.listeners.close||[])listener();}remove(){this.removed=true;}
  scrollIntoView(){}focus(){this.focused=true;}setSelectionRange(start,end){this.selectionStart=start;this.selectionEnd=end;}
 }
 const elements=new Map(),$=id=>{if(!elements.has(id))elements.set(id,new E());return elements.get(id);};
@@ -220,6 +220,35 @@ async function flush(){for(let i=0;i<8;i++)await Promise.resolve();}
     def test_comparing_same_document_is_blocked_without_loading(self):
         self.js(self.tools_source(), r'''
 (async()=>{const first=doc('file:one','一稿');doc('file:two','二稿');active=first.id;const comparison=compareDialog(first.id,first.id);await comparison.run.onclick();assert.equal(drawn.length,0);assert.equal(requests.length,0);assert.ok(comparison.error.textContent.includes('不同稿件'));})().catch(error=>{console.error(error);process.exit(1);});
+''')
+
+    def test_closing_comparison_dialog_invalidates_late_response_without_changing_current_edit(self):
+        self.js(self.tools_source(), r'''
+(async()=>{
+ const current=doc('file:current','原稿',{value:'未保存编辑',editing:true});active=current.id;
+ currentCatalog.files=[{id:'file:remote',title:'未缓存稿件'}];let resolve;
+ call=()=>new Promise(done=>{resolve=done;});
+ const comparison=compareDialog('file:remote',current.id),running=comparison.run.onclick();await flush();
+ assert.equal(comparison.run.disabled,true);comparison.dialog.children[2].onclick();assert.equal(comparison.dialog.removed,true);
+ current.value='返回稿件后继续写下的新文字';$('document-body').hidden=false;$('difference').hidden=true;
+ resolve({id:'file:remote',text:'迟到的另稿'});await running;
+ assert.equal(drawn.length,0);assert.equal($('document-body').hidden,false);assert.equal($('difference').hidden,true);
+ assert.equal(active,current.id);assert.equal(current.value,'返回稿件后继续写下的新文字');assert.equal(document.body.classList.contains('comparing'),false);
+})().catch(error=>{console.error(error);process.exit(1);});
+''')
+
+    def test_cancelled_comparison_cannot_replace_a_later_dialog_result(self):
+        self.js(self.tools_source(), r'''
+(async()=>{
+ const current=doc('file:current','原稿'),other=doc('file:other','另一稿');active=current.id;
+ currentCatalog.files=[{id:'file:remote',title:'未缓存稿件'}];let resolve;
+ call=()=>new Promise(done=>{resolve=done;});
+ const old=compareDialog('file:remote',current.id),running=old.run.onclick();await flush();
+ for(const listener of old.dialog.listeners.cancel||[])listener();old.dialog.close();
+ const latest=compareDialog(current.id,other.id);await latest.run.onclick();assert.deepEqual(drawn,[['原稿','另一稿']]);
+ resolve({id:'file:remote',text:'过期响应'});await running;
+ assert.deepEqual(drawn,[['原稿','另一稿']]);assert.equal($('before-label').textContent,current.title);assert.equal($('after-label').textContent,other.title);
+})().catch(error=>{console.error(error);process.exit(1);});
 ''')
 
     def test_failed_comparison_leaves_both_buffers_and_retry_available(self):

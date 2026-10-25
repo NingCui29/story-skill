@@ -210,6 +210,27 @@ def move_to_trash(path):
     raise OSError('当前系统不支持工作台移入系统回收站；作品目录保持不变。')
 
 
+def _rename_directory_no_replace(source, target):
+    """Capture or return one directory atomically without replacing a neighbour."""
+    if os.name == 'nt':
+        # Unlike POSIX rename, Windows rename never replaces an existing target.
+        os.rename(source.path, target.path)
+        return
+    libc = ctypes.CDLL(None, use_errno=True)
+    if sys.platform == 'darwin' and hasattr(libc, 'renameatx_np'):
+        rename, flags = libc.renameatx_np, 0x00000004  # RENAME_EXCL
+    elif sys.platform.startswith('linux') and hasattr(libc, 'renameat2'):
+        rename, flags = libc.renameat2, 1  # RENAME_NOREPLACE
+    else:
+        raise OSError('当前系统不能安全绑定待回收目录，作品目录保持不变。')
+    rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+    rename.restype = ctypes.c_int
+    if rename(source.directory.fd, os.fsencode(source.name), target.directory.fd,
+              os.fsencode(target.name), flags) != 0:
+        number = ctypes.get_errno()
+        raise OSError(number, os.strerror(number))
+
+
 class BookManager:
     def __init__(self, workbench):
         self.w, self.api = workbench, workbench.api
@@ -376,7 +397,83 @@ class BookManager:
         return {'ok': True, 'action': 'trash-preview', 'confirmation': {
             'root': str(root), 'title': current['title'], 'book_id': current['book_id'], 'directory_id': directory_id},
             **counts, 'scope': '整个作品目录及其中正文、候选、恢复稿、规划、状态和本地备份；外部材料原目录不会移动。',
-            'recovery': '移入系统废纸篓或回收站后，可在系统中恢复，再重新添加作品目录。'}
+            'recovery': '可从系统废纸篓或回收站恢复；系统还原位置是原目录旁的独立暂存目录，核对后可移回原位置并重新添加作品。'}
+
+    @contextmanager
+    def _captured_trash_target(self, state_dir, root, original, confirmation, release):
+        """Take the path out of circulation before passing it to native trash.
+
+        A final path check cannot bind a later native API call to that object.
+        Instead atomically capture the directory, validate the captured inode
+        and book, and recycle only the private capture. A replacement at the
+        original path can therefore never become the native trash argument.
+        """
+        with self.api._pinned_directory(root.parent) as parent:
+            name = '工作台回收暂存-' + uuid.uuid4().hex
+            stage = parent.path / name
+            if parent.fd is None:
+                stage.mkdir(mode=0o700)
+            else:
+                os.mkdir(name, mode=0o700, dir_fd=parent.fd)
+            retain_stage = False
+            try:
+                with self.api._pinned_directory(stage) as directory:
+                    source = self.api._BoundFile(parent, root.name)
+                    target = self.api._BoundFile(directory, root.name)
+                    intent_id = self._receipt(state_dir, {
+                        'action': 'trash-intent', 'entry': original, 'confirmation': confirmation,
+                        'original_root': str(root), 'restore_root': str(target.path)})
+                    # Windows leases inside the book would block its rename;
+                    # the outside lifecycle guard remains held throughout.
+                    release()
+                    try:
+                        self.api._verify_bound_directory(parent)
+                        self.api._verify_bound_directory(directory)
+                        _rename_directory_no_replace(source, target)
+                    except OSError as error:
+                        self.api.fail('workbench_trash_failed', '无法安全绑定待回收目录，未执行系统回收；请核对原目录。',
+                                      cause=str(error), operation_id=intent_id)
+                    try:
+                        try:
+                            if self._identity(target.path) != confirmation['directory_id']:
+                                self.api.fail('workbench_book_changed', '删除前作品目录已被替换，未执行系统回收。')
+                            self.w._library_entry(target.path, original)
+                            self._inspect_tree(target.path)
+                        except OSError as error:
+                            self.api.fail('workbench_book_changed', '待回收目录的身份或内容已改变，未执行系统回收。', cause=str(error))
+                        self.api._verify_bound_directory(parent)
+                        self.api._verify_bound_directory(directory)
+                        yield target.path, intent_id
+                    except BaseException:
+                        if self.api._bound_exists(target):
+                            try:
+                                _rename_directory_no_replace(target, source)
+                            except (OSError, self.api.StoryError) as error:
+                                retain_stage = True
+                                self.api.fail('workbench_trash_recovery_required',
+                                              '未确认系统回收，原位置已被占用或无法安全放回；已保留完整目录：' +
+                                              str(target.path) + '。原位置：' + str(root) + '。请勿覆盖现有目录。',
+                                              root=str(root), recovery_root=str(target.path),
+                                              cause=str(error), operation_id=intent_id)
+                        else:
+                            # The native operation may have completed before
+                            # returning an error. Keep its original parent so
+                            # the OS Restore/Put Back target remains valid.
+                            retain_stage = True
+                        raise
+                    else:
+                        retain_stage = True
+            finally:
+                if not retain_stage:
+                    # Only an empty owned stage may be removed. Never recurse
+                    # or remove captured manuscript content on a failed move.
+                    try:
+                        if parent.fd is None:
+                            stage.rmdir()
+                        else:
+                            os.rmdir(name, dir_fd=parent.fd)
+                    except OSError:
+                        pass
 
     def trash(self, state_dir, entries, expected_hash, key, confirmation, saved=False):
         original = self._entry(entries, key)
@@ -400,17 +497,21 @@ class BookManager:
                 windows_handles.enter_context(_writer_lease(self.api, root))
                 if self.trash_preview(state_dir, entries, key)['confirmation'] != confirmation:
                     self.api.fail('workbench_book_changed', '删除前作品目录已改变，未移动任何文件。')
-                intent_id = self._receipt(state_dir, {'action': 'trash-intent', 'entry': original, 'confirmation': confirmation})
-                if os.name == 'nt':
-                    windows_handles.close()
-                try:
-                    native = move_to_trash(root)
-                except OSError as error:
-                    self.api.fail('workbench_trash_failed', '系统未确认移入回收站，请核对原目录；工作台不会改为永久删除。', cause=str(error), operation_id=intent_id)
-            if root.exists() or root.is_symlink():
-                self.api.fail('workbench_trash_unconfirmed', '系统返回后原目录仍存在，请核对原目录与系统回收站；书架登记保留。', operation_id=intent_id)
+                release = windows_handles.close if os.name == 'nt' else lambda: None
+                with self._captured_trash_target(state_dir, root, original, confirmation, release) as (target, intent_id):
+                    try:
+                        native = move_to_trash(target)
+                    except OSError as error:
+                        self.api.fail('workbench_trash_failed', '系统未确认移入回收站，请核对原目录；工作台不会改为永久删除。', cause=str(error), operation_id=intent_id,
+                                      restore_root=str(target))
+                    if target.exists() or target.is_symlink():
+                        self.api.fail('workbench_trash_unconfirmed', '系统返回后待回收目录仍存在，已尝试放回原位置；书架登记保留。', operation_id=intent_id)
+                    restore_root = str(target)
             result = {'ok': True, 'action': 'trash', 'trashed': True, 'root': str(root),
                       'book_id': original['book_id'], 'operation_id': intent_id, **native,
+                      'restore_root': restore_root,
+                      'restoration_note': '从系统废纸篓或回收站还原后，作品位于：' + restore_root +
+                                          '。核对后可移回原位置：' + str(root) + '，再重新添加到书架；请勿覆盖后来占用原位置的目录。',
                       'recovery': preview['recovery']}
             updated = {k: v for k, v in entries.items() if k != key}
             try:

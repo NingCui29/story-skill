@@ -434,7 +434,7 @@ const crypto={randomUUID:()=> 'test-recovery-key'};
 const document={body:{classList:{remove(){}}}},$=()=>({setAttribute(){}});
 let requests=[],shown=[],writes=[];
 const show=d=>{active=d.id;shown.push(d.id);};
-const closePanels=()=>{};const previewSearch=()=>{};const note=()=>{}; const catalog=async()=>{}; const pendingEdits=()=>{};const displayTitle=d=>d.title,versionLabel=()=>'';
+const closePanels=()=>{};const previewSearch=()=>{};const note=()=>{}; const catalog=async()=>{}; const pendingEdits=()=>{};const badge=()=>{};const displayTitle=d=>d.title,versionLabel=()=>'';
 const dirty=d=>d.value!==d.text;
 let call=(action,data)=>new Promise(resolve=>requests.push({data,resolve}));
 eval(process.argv[1]);eval(process.argv[2]);
@@ -464,7 +464,8 @@ eval(process.argv[1]);eval(process.argv[2]);
  requests[2]({path:'recreated'});await forced;
  assert.strictEqual(d.recoveryPath,'recreated');
  call=async()=>{throw Error('disk failure');};
- await recover(d,true);assert.notStrictEqual(d.recovered,d.value);
+ assert.strictEqual(await recover(d,true),false);assert.strictEqual(d.recovered,d.value);
+ assert.strictEqual(d.recoveryError,'disk failure');assert.strictEqual(d.recovering,null);
 })().catch(e=>{console.error(e);process.exitCode=1;});
 """
         result = subprocess.run([node, '-e', program, opening, recovery], capture_output=True,
@@ -486,6 +487,7 @@ eval(process.argv[1]);eval(process.argv[2]);
         page = story.workbench._editor_page(story.workbench.snapshot(self.book), {}, 'test').decode()
         script = page.split('<script>', 1)[1].split('</script>', 1)[0]
         code = script[script.index('function pendingEdits'):script.index('function item')]
+        code = script[script.index('function documentIdentity'):script.index('function documentLocation')] + code
         program = r"""
 const assert=require('assert'),docs=new Map(),elements={};let opened;
 const $=id=>elements[id]||(elements[id]={children:[],replaceChildren(){this.children=[];},append(b){this.children.push(b);}});

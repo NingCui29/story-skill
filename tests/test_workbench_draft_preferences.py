@@ -343,7 +343,7 @@ handler=async(action,payload)=>{
  if(action.endsWith('/job'))return job();
  throw Error(action);
 };
-const chooseRules=async p=>{p.encoding.value='markdown_paragraphs_v2';await p.encoding.onchange();p.comparison.value='fanqie_terminal_lf_v1';await p.comparison.onchange();};
+const chooseRules=async p=>{p.encoding.value='plain_paragraphs_v1';await p.encoding.onchange();p.comparison.value='fanqie_terminal_lf_v1';await p.comparison.onchange();};
 const flush=()=>new Promise(resolve=>setImmediate(resolve));
 const previews=()=>requests.filter(row=>row.action.endsWith('/preview'));
 const saves=()=>requests.filter(row=>row.action.endsWith('/preferences/save'));
@@ -354,6 +354,18 @@ class DraftPreferenceUITests(unittest.TestCase):
     def js(self, assertions):
         ui.WorkbenchAutoConnectUITests.js(self, PREFERENCE_UI + assertions)
 
+    def test_legacy_preferences_cannot_restore_blank_lines_or_automatically_save(self):
+        self.js(r'''
+for(const legacy of ['verbatim','markdown_paragraphs_v1','markdown_paragraphs_v2']){
+ readHook=payload=>preferenceReply(payload,{schema:1,body_encoding:legacy,comparison_policy:'fanqie_terminal_lf_v1'});
+ await platformDraftOpen();const p=platformDraftPanel;
+ assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.encoding.type,'hidden');
+ assert.equal(p.preview.body_encoding,'plain_paragraphs_v1');assert.equal(p.comparison.value,'strict');
+ assert.ok(p.rulesNote.textContent.includes('历史规则不再用于新任务'));
+ assert.equal(starts().length,0);assert.equal(saves().length,0);p.dialog.close();
+}
+''')
+
     def test_reload_new_origin_and_empty_browser_storage_restore_book_rules_with_fresh_preview(self):
         self.js(r'''
 await platformDraftOpen();const first=platformDraftPanel;await chooseRules(first);
@@ -363,22 +375,22 @@ assert.deepEqual(Object.keys(stored).sort(),['body_encoding','comparison_policy'
 assert.ok(!JSON.stringify([...preferenceFiles]).includes(oldToken));assert.equal(browserStorage.size,0);
 first.dialog.close();browserStorage.clear();globalThis.location={origin:'http://127.0.0.1:another-port'};
 await platformDraftOpen();const reopened=platformDraftPanel;
-assert.notEqual(reopened,first);assert.equal(reopened.encoding.value,'markdown_paragraphs_v2');
-assert.equal(reopened.comparison.value,'fanqie_terminal_lf_v1');assert.equal(previews().length,initial+1);
-assert.equal(reopened.preview.body_encoding,'markdown_paragraphs_v2');assert.equal(starts().length,0);
-assert.ok(reopened.rulesNote.textContent.includes('保存在本书内'));assert.equal(JSON.stringify([...docs]),before);
+assert.notEqual(reopened,first);assert.equal(reopened.encoding.value,'plain_paragraphs_v1');
+assert.equal(reopened.comparison.value,'strict');assert.equal(previews().length,initial+1);
+assert.equal(reopened.preview.body_encoding,'plain_paragraphs_v1');assert.equal(starts().length,0);
+assert.ok(reopened.rulesNote.textContent.includes('仅去除本地 MD 空白行'));assert.equal(JSON.stringify([...docs]),before);
 ''')
 
     def test_plan_profile_fingerprint_and_book_changes_never_inherit_another_scope(self):
         self.js(r'''
 testPlans=[plan(),plan('plan-two')];await platformDraftOpen();let p=platformDraftPanel;await chooseRules(p);
-p.plan.value='plan-two';await p.plan.onchange();assert.equal(p.encoding.value,'verbatim');assert.equal(p.comparison.value,'strict');
-p.plan.value='plan-one';await p.plan.onchange();assert.equal(p.encoding.value,'markdown_paragraphs_v2');
+p.plan.value='plan-two';await p.plan.onchange();assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.comparison.value,'strict');
+p.plan.value='plan-one';await p.plan.onchange();assert.equal(p.encoding.value,'plain_paragraphs_v1');
 testProfiles=[{...profile,sha256:'changed-fingerprint'}];await platformDraftCatalog(p);
-assert.equal(p.encoding.value,'verbatim');assert.equal(p.comparison.value,'strict');
-testProfiles=[profile];await platformDraftCatalog(p);assert.equal(p.encoding.value,'markdown_paragraphs_v2');
-p.dialog.close();testBook='book-two';await platformDraftOpen();p=platformDraftPanel;assert.equal(p.encoding.value,'verbatim');
-p.dialog.close();testBook='book-one';await platformDraftOpen();p=platformDraftPanel;assert.equal(p.encoding.value,'markdown_paragraphs_v2');
+assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.comparison.value,'strict');
+testProfiles=[profile];await platformDraftCatalog(p);assert.equal(p.encoding.value,'plain_paragraphs_v1');
+p.dialog.close();testBook='book-two';await platformDraftOpen();p=platformDraftPanel;assert.equal(p.encoding.value,'plain_paragraphs_v1');
+p.dialog.close();testBook='book-one';await platformDraftOpen();p=platformDraftPanel;assert.equal(p.encoding.value,'plain_paragraphs_v1');
 assert.equal(starts().length,0);assert.equal(saves().length,2);
 ''')
 
@@ -387,54 +399,54 @@ assert.equal(starts().length,0);assert.equal(saves().length,2);
 testPlans=[plan(),plan('plan-two')];await platformDraftOpen();const p=platformDraftPanel;await chooseRules(p);
 testJobs=[{...job(),done:true,state:'failed',profile_id:profile.id,comparison_policy:'strict',body_encoding:'verbatim'},
  {...job(),id:'other-done',done:true,state:'failed',plan_id:'plan-two',profile_id:profile.id}];
-await platformDraftCatalog(p);assert.equal(p.plan.value,'plan-one');assert.equal(p.encoding.value,'markdown_paragraphs_v2');
-assert.equal(p.comparison.value,'fanqie_terminal_lf_v1');assert.ok(!p.status.textContent.includes('历史任务'));assert.equal(p.job,null);
-assert.equal(p.preview.body_encoding,'markdown_paragraphs_v2');assert.equal(starts().length,0);const saved=saves().length;await p.recheck.onclick();
-assert.equal(p.preview.body_encoding,'markdown_paragraphs_v2');assert.equal(saves().length,saved);
-testJobs=[testJobs[1]];await platformDraftCatalog(p);assert.equal(p.plan.value,'plan-one');assert.equal(p.encoding.value,'markdown_paragraphs_v2');
-assert.equal(p.preview.body_encoding,'markdown_paragraphs_v2');assert.equal(starts().length,0);
+await platformDraftCatalog(p);assert.equal(p.plan.value,'plan-one');assert.equal(p.encoding.value,'plain_paragraphs_v1');
+assert.equal(p.comparison.value,'strict');assert.ok(!p.status.textContent.includes('历史任务'));assert.equal(p.job,null);
+assert.equal(p.preview.body_encoding,'plain_paragraphs_v1');assert.equal(starts().length,0);const saved=saves().length;await platformDraftPreview(p);
+assert.equal(p.preview.body_encoding,'plain_paragraphs_v1');assert.equal(saves().length,saved);
+testJobs=[testJobs[1]];await platformDraftCatalog(p);assert.equal(p.plan.value,'plan-one');assert.equal(p.encoding.value,'plain_paragraphs_v1');
+assert.equal(p.preview.body_encoding,'plain_paragraphs_v1');assert.equal(starts().length,0);
 ''')
 
     def test_save_invalidates_old_token_and_serializes_explicit_changes_before_preview(self):
         self.js(r'''
 await platformDraftOpen();const p=platformDraftPanel,initial=previews().length;let release;
 saveHook=(payload,save)=>new Promise(resolve=>{release=()=>resolve(save());});
-p.encoding.value='markdown_paragraphs_v2';const first=p.encoding.onchange();await flush();
+p.encoding.value='plain_paragraphs_v1';const first=p.encoding.onchange();await flush();
 assert.equal(p.preview,null);assert.equal(p.previewExpires,0);assert.equal(p.run.disabled,true);
 await p.run.onclick();assert.equal(starts().length,0);assert.equal(saves().length,1);
 p.comparison.value='fanqie_terminal_lf_v1';const second=p.comparison.onchange();await flush();assert.equal(saves().length,1);
 const finishFirst=release;saveHook=null;finishFirst();await first;await second;
 assert.equal(saves().length,2);assert.equal(previews().length,initial+1);
-assert.equal(p.preview.comparison_policy,'fanqie_terminal_lf_v1');assert.equal(p.preview.body_encoding,'markdown_paragraphs_v2');
-assert.deepEqual([...preferenceFiles.values()][0],{schema:1,comparison_policy:'fanqie_terminal_lf_v1',body_encoding:'markdown_paragraphs_v2'});
+assert.equal(p.preview.comparison_policy,'strict');assert.equal(p.preview.body_encoding,'plain_paragraphs_v1');
+assert.deepEqual([...preferenceFiles.values()][0],{schema:1,comparison_policy:'strict',body_encoding:'plain_paragraphs_v1'});
 ''')
 
     def test_late_restore_or_save_receipt_cannot_change_the_new_scope(self):
         self.js(r'''
 testPlans=[plan(),plan('plan-two')];await platformDraftOpen();const p=platformDraftPanel;let release;
-readHook=(payload,read)=>payload.plan_id==='plan-one'?new Promise(resolve=>{release=()=>resolve(preferenceReply(payload,{schema:1,body_encoding:'markdown_paragraphs_v2',comparison_policy:'fanqie_terminal_lf_v1'}));}):read();
+readHook=(payload,read)=>payload.plan_id==='plan-one'?new Promise(resolve=>{release=()=>resolve(preferenceReply(payload,{schema:1,body_encoding:'plain_paragraphs_v1',comparison_policy:'fanqie_terminal_lf_v1'}));}):read();
 const old=p.profile.onchange();await flush();p.plan.value='plan-two';await p.plan.onchange();release();await old;
-assert.equal(p.plan.value,'plan-two');assert.equal(p.encoding.value,'verbatim');assert.equal(p.preview.plan_id,'plan-two');
+assert.equal(p.plan.value,'plan-two');assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.preview.plan_id,'plan-two');
 readHook=null;saveHook=(payload,save)=>new Promise(resolve=>{release=()=>resolve(save());});
-p.encoding.value='markdown_paragraphs_v2';const saving=p.encoding.onchange();await flush();
+p.encoding.value='plain_paragraphs_v1';const saving=p.encoding.onchange();await flush();
 p.plan.value='plan-one';await p.plan.onchange();release();await saving;
-assert.equal(p.plan.value,'plan-one');assert.equal(p.encoding.value,'verbatim');assert.equal(p.preview.plan_id,'plan-one');
+assert.equal(p.plan.value,'plan-one');assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.preview.plan_id,'plan-one');
 assert.equal(starts().length,0);
 ''')
 
     def test_bad_server_preferences_unavailable_storage_and_nonfanqie_use_defaults(self):
         self.js(r'''
-for(const value of [{schema:2,body_encoding:'markdown_paragraphs_v2',comparison_policy:'fanqie_terminal_lf_v1'},
+for(const value of [{schema:2,body_encoding:'plain_paragraphs_v1',comparison_policy:'fanqie_terminal_lf_v1'},
  {schema:1,body_encoding:'trim',comparison_policy:'strict'},
- {schema:1,body_encoding:'markdown_paragraphs_v2',comparison_policy:'fanqie_terminal_lf_v1',token:'bad'}]){
+ {schema:1,body_encoding:'plain_paragraphs_v1',comparison_policy:'fanqie_terminal_lf_v1',token:'bad'}]){
  readHook=(payload)=>preferenceReply(payload,value);await platformDraftOpen();const p=platformDraftPanel;
- assert.equal(p.encoding.value,'verbatim');assert.equal(p.comparison.value,'strict');assert.ok(p.rulesNote.textContent.includes('安全默认值'));p.dialog.close();
+ assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.comparison.value,'strict');assert.ok(p.rulesNote.textContent.includes('安全默认值'));p.dialog.close();
 }
 readHook=()=>{throw Error('storage unavailable');};await platformDraftOpen();let p=platformDraftPanel;
-assert.equal(p.encoding.value,'verbatim');assert.equal(p.comparison.value,'strict');p.dialog.close();
+assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.comparison.value,'strict');p.dialog.close();
 testPlans=[{...plan(),platform:'qidian'}];testProfiles=[{...profile,platform:'qidian'}];
-readHook=payload=>preferenceReply(payload,{schema:1,body_encoding:'markdown_paragraphs_v2',comparison_policy:'fanqie_terminal_lf_v1'});
-await platformDraftOpen();p=platformDraftPanel;assert.equal(p.encoding.value,'verbatim');assert.equal(p.comparison.value,'strict');
+readHook=payload=>preferenceReply(payload,{schema:1,body_encoding:'plain_paragraphs_v1',comparison_policy:'fanqie_terminal_lf_v1'});
+await platformDraftOpen();p=platformDraftPanel;assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.comparison.value,'strict');
 assert.equal(p.encoding.disabled,true);assert.equal(p.comparison.disabled,true);assert.equal(saves().length,0);assert.equal(starts().length,0);
 ''')
 
@@ -443,11 +455,11 @@ assert.equal(p.encoding.disabled,true);assert.equal(p.comparison.disabled,true);
 const old=handler;handler=async(action,payload)=>{const packet=await old(action,payload);if(action.endsWith('/preview'))packet.preview.results=[
  {chapter:12,state:'conflict',reason:'remote_content_differs',observed_this_run:true,body_encoding:'verbatim',comparison_policy:'strict'},
  {chapter:13,state:'unknown',reason:'interrupted_sending',body_encoding:'markdown_paragraphs_v2',comparison_policy:'fanqie_terminal_lf_v1'}];return packet;};
-await platformDraftOpen();const p=platformDraftPanel,rows=p.results.children;
+await platformDraftOpen();const p=platformDraftPanel,rows=p.historyResults.children;
 assert.ok(rows[0].textContent.includes('历史状态：内容冲突'));assert.ok(rows[0].textContent.includes('保留原始换行'));
 assert.ok(rows[1].textContent.includes('历史状态：结果未知'));assert.ok(rows[1].textContent.includes('去掉开头空段'));
-assert.ok(rows.every(row=>row.textContent.includes('本次尚未访问平台')));assert.equal(starts().length,0);
-platformDraftDrawJob(p,{...job(),done:true,state:'partial_failure',result:{results:[{chapter:12,state:'reconciled_equivalent',observed_this_run:true,accepted_this_run:true,body_encoding:'markdown_paragraphs_v2'}]}});
+assert.ok(p.results.children.every(row=>row.textContent.includes('本次未处理')));assert.ok(p.history.textContent.includes('不计入本次进度'));assert.equal(Number(p.progress.value),0);assert.equal(starts().length,0);
+platformDraftDrawJob(p,{...job(),done:true,state:'partial_failure',result:{results:[{chapter:12,state:'reconciled_equivalent',observed_this_run:true,accepted_this_run:true,body_encoding:'plain_paragraphs_v1'}]}});
 assert.ok(p.results.children[0].textContent.includes('本次按段落排版核对'));
 assert.ok(!p.results.children[0].textContent.includes('本次尚未访问平台'));
 ''')
@@ -460,7 +472,7 @@ const old=handler;handler=async(action,payload)=>{const packet=await old(action,
  chapter:1,remote_id:'remote',title_matches:true,body_matches:false,body_encoding:'markdown_paragraphs_v2',comparison_policy:'fanqie_terminal_lf_v1',canonical_sha256:'c'.repeat(64),observed_canonical_sha256:'c'.repeat(64)}];}return packet;};
 await platformDraftOpen();const p=platformDraftPanel;assert.ok(p.rulesNote.textContent.includes('当前选择与该历史记录不同'));
 assert.ok(p.rulesNote.textContent.includes('去掉开头空段'));assert.ok(p.rulesNote.textContent.includes('允许末尾换行数量增加或减少'));
-assert.equal(p.encoding.value,'verbatim');assert.equal(p.comparison.value,'strict');assert.equal(starts().length,0);assert.equal(saves().length,0);
+assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.comparison.value,'strict');assert.equal(starts().length,0);assert.equal(saves().length,0);
 p.rulesMemoryMessage='';const packet=structuredClone(p.preview);packet.preview.recent_events[0].book_id='different-book';platformDraftRuleNote(p,packet);
 assert.ok(!p.rulesNote.textContent.includes('当前选择与该历史记录不同'));
 ''')

@@ -28,7 +28,10 @@ CONNECT_SECONDS = 120
 CONNECT_PROGRESS_SECONDS = 120
 IDLE_SECONDS = 120
 STOP_CHECKPOINT_SECONDS = 400
-STOP_TURN_SECONDS = 10
+# The awaited worker can finish before the official host emits turn/completed.
+# Give that transport handshake a bounded minute; the former 10-second cutoff
+# interrupted clean worker exits and reported unconfirmed cleanup.
+STOP_TURN_SECONDS = 60
 DISCONNECT_WAIT_SECONDS = 1
 RESUME_SECONDS = 120
 MAX_WORKERS = 4
@@ -48,7 +51,7 @@ ERROR_MARKERS = frozenset({"none", "browser_unattached", "missing_turn_metadata"
 DRIVER_PHASES = frozenset({"guard", "catalog", "listing", "pages", "all_rows", "read"})
 RESULT_CODES = frozenset("platform_chrome_worker_" + value for value in (
     "ambiguous_browser", "ambiguous_tab", "binding_mismatch", "browser_changed", "browser_unattached", "cleanup_failed", "cli_failed", "config_changed",
-    "detach_failed", "duplicate_request", "existing_tab_required", "failed", "handle_exists", "invalid_challenge", "connect_timeout", "browser_wait_timeout",
+    "detach_failed", "duplicate_request", "existing_tab_required", "target_tab_changed", "target_tab_closed", "failed", "handle_exists", "invalid_challenge", "connect_timeout", "browser_wait_timeout",
     "invalid_config", "invalid_packet", "invalid_scroll", "invalid_stop", "unavailable", "unsafe_file",
     "unsafe_user_tab", "unsupported_sdk", "turn_metadata_missing", "runtime_unavailable", "origin_permission_required")) | frozenset("platform_browser_" + value for value in (
     "ambiguous_dom", "ambiguous_draft", "chapter_exists_not_draft", "editor_changed", "identity_mismatch",
@@ -672,7 +675,7 @@ class ChromeWorkerController:
     def _binding(self, root, plan_id, profile_id, expected_book_id=None, comparison_policy="strict", body_encoding="verbatim"):
         if not isinstance(comparison_policy, str) or comparison_policy not in ("strict", "fanqie_terminal_lf_v1"):
             raise WorkerError("platform_draft_invalid_comparison_policy")
-        if not isinstance(body_encoding, str) or body_encoding not in ("verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2"):
+        if not isinstance(body_encoding, str) or body_encoding not in ("verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2", "plain_paragraphs_v1"):
             raise WorkerError("platform_draft_invalid_body_encoding")
         with self.core.platform_drafts._workbench_book(root, expected_book_id) as book:
             binding, _ = self.core.platform_chrome_bridge._binding(book, plan_id, profile_id,
@@ -681,7 +684,7 @@ class ChromeWorkerController:
                     comparison_policy != "strict" and binding.get("target", {}).get("platform") != "fanqie"):
                 raise WorkerError("platform_chrome_worker_binding_mismatch")
             if (binding.get("body_encoding", "verbatim") != body_encoding or
-                    body_encoding != "verbatim" and binding.get("target", {}).get("platform") != "fanqie"):
+                    body_encoding not in {"verbatim", "plain_paragraphs_v1"} and binding.get("target", {}).get("platform") != "fanqie"):
                 raise WorkerError("platform_chrome_worker_binding_mismatch")
             return book.root, binding, self.core.platform_chrome_bridge._digest(binding)
 
@@ -727,6 +730,12 @@ class ChromeWorkerController:
                     record["processed"] = fields["processed"]
                 if "code" in fields:
                     record["code"] = fields["code"] if fields["code"] in DIAGNOSTIC_CODES else "platform_chrome_worker_failed"
+                    if phase == "tool_failed" or (phase == "worker_checkpoint" and fields.get("worker_state") == "failed"):
+                        # Publish the bounded cause under the same lock as the
+                        # checkpoint. Health polling may race the client's flag.
+                        entry.setdefault("worker_failure", record["code"])
+                        if entry.get("error") in (None, "platform_chrome_worker_health_expired", "platform_chrome_worker_unavailable"):
+                            entry["error"] = entry["worker_failure"]
                 entry["diagnostics"].append(record)
                 del entry["diagnostics"][:-MAX_DIAGNOSTICS]
                 if phase not in ("stop_requested", "transport_closed", "closed", "connection_failed", "worker_done_confirmed", "cleanup_unconfirmed") and \
@@ -878,10 +887,11 @@ class ChromeWorkerController:
         No lease, request deadline, or browser permission is changed here.
         """
         client = entry.get("client")
-        if client and client.worker_error:
-            entry.update(state="failed", error=client.worker_error, keep_readback=False)
+        worker_failure = entry.get("worker_failure") or (client.worker_error if client else None)
+        if worker_failure:
+            entry.update(state="failed", error=worker_failure, keep_readback=False)
             entry["stop"].set()
-            return ("connection_failed", {"code": client.worker_error})
+            return ("connection_failed", {"code": worker_failure})
         if client and client.worker_done is not None:
             entry["state"] = "stopping"
             entry["stop"].set()
@@ -987,7 +997,7 @@ class ChromeWorkerController:
                    binding_sha256=None, owned_worker_id=None, comparison_policy="strict", body_encoding="verbatim"):
         if not isinstance(comparison_policy, str) or comparison_policy not in ("strict", "fanqie_terminal_lf_v1"):
             raise WorkerError("platform_draft_invalid_comparison_policy")
-        if not isinstance(body_encoding, str) or body_encoding not in ("verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2"):
+        if not isinstance(body_encoding, str) or body_encoding not in ("verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2", "plain_paragraphs_v1"):
             raise WorkerError("platform_draft_invalid_body_encoding")
         if type(keep_readback) is not bool:
             raise WorkerError("platform_chrome_worker_invalid_input")

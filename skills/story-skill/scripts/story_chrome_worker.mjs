@@ -27,7 +27,7 @@ const ERROR_MARKERS = new Set(['none','origin_permission_required','browser_unat
 const DRIVER_PHASES = new Set(['guard','catalog','listing','pages','all_rows','read']);
 const DRIVER_WORKER_CODES = new Set([
   'unsupported_sdk','invalid_scroll','unavailable','ambiguous_tab','unsafe_user_tab',
-  'browser_changed','existing_tab_required','invalid_config','binding_mismatch'
+  'browser_changed','existing_tab_required','target_tab_changed','target_tab_closed','invalid_config','binding_mismatch'
 ].map(code => 'platform_chrome_worker_'+code));
 const DRIVER_ERRORS = new Set([
   'ambiguous_dom','ambiguous_draft','chapter_exists_not_draft','editor_changed','identity_mismatch',
@@ -286,7 +286,7 @@ export function validateWorkerConfig(config) {
   requireValue(own(config.target) && Object.keys(config.target).length === 3 && config.target.platform === 'fanqie' &&
     ['account_id','remote_book_id'].every(key => typeof config.target[key] === 'string' && /^[0-9]{1,200}$/.test(config.target[key])));
   requireValue(!Object.hasOwn(config,'comparison_policy') || ['strict','fanqie_terminal_lf_v1'].includes(config.comparison_policy));
-  requireValue(!Object.hasOwn(config,'body_encoding') || ['verbatim','markdown_paragraphs_v1','markdown_paragraphs_v2'].includes(config.body_encoding));
+  requireValue(!Object.hasOwn(config,'body_encoding') || ['verbatim','markdown_paragraphs_v1','markdown_paragraphs_v2','plain_paragraphs_v1'].includes(config.body_encoding));
   requireValue(config.browser_id == null || typeof config.browser_id === 'string' && config.browser_id.length > 0 && config.browser_id.length <= 200);
   requireValue(!Object.hasOwn(config,'bootstrap_deadline_ms') || Number.isSafeInteger(config.bootstrap_deadline_ms) && config.bootstrap_deadline_ms > 0);
   for (const [key,minimum,maximum] of [['health_interval_seconds',5,30],['idle_timeout_seconds',30,3600],['checkpoint_ms',1,45000],['poll_interval_ms',1,1000]]) {
@@ -444,6 +444,10 @@ export function chromeDriverAPI(browser, {selectAllKey = PLATFORM === 'darwin' ?
         } catch { /* Only an actually readable owned tab can be retained. */ }
       }
       return null;
+    },
+    releaseReadback:id => {
+      requireValue(owned.has(id),'platform_chrome_worker_unsafe_user_tab');
+      if (preserved === id) preserved = null;
     },
     preserveReadback:async () => {
       if (!preserved) return null;
@@ -635,6 +639,7 @@ export class ChromeWorker {
     }};
     const run = (call,cleanup = false,checkAfter = true) => this.sdkGate.run(call,cleanup ? null : scope,checkAfter);
     this.setPhase('browser_inventory',background);
+    this.healthStep = 'browser_inventory';
     const selected = await this.browserInventory(run,allowWait);
     this.setPhase('browser_inventory',background);
     if (this.browser) requireValue(selected.id === this.browser.browserId,'platform_chrome_worker_browser_changed');
@@ -649,6 +654,7 @@ export class ChromeWorker {
       this.browserBootstrapped = true;
     }
     this.setPhase('existing_tab_probe',background);
+    this.healthStep = 'list_tabs';
     const tabs = await browser.tabs.list();
     requireValue(Array.isArray(tabs),'platform_chrome_worker_unavailable');
     let emptyProbe = false;
@@ -671,11 +677,51 @@ export class ChromeWorker {
         }
       }
       requireValue(typeof this.probeTabId === 'string','platform_chrome_worker_unavailable');
-      const tab = await browser.tabs.get(this.probeTabId);
-      requireValue(tab?.id === this.probeTabId && this.probeURL(await tab.url()),'platform_chrome_worker_existing_tab_required');
-      const snapshot = await tab.playwright.domSnapshot();
+      this.healthStep = 'get_tab';
+      let tab;
+      try { tab = await browser.tabs.get(this.probeTabId); }
+      catch (failure) {
+        // A claimed user tab need not appear in the agent inventory. Only
+        // classify it as unavailable when its pinned handle also fails.
+        if (this.attached && !tabs.some(item => item.id === this.probeTabId) &&
+            !permissionDenied(failure) && errorMarker(failure) === 'none') {
+          throw error('platform_chrome_worker_target_tab_closed');
+        }
+        throw failure;
+      }
+      this.healthStep = 'read_url';
+      const observedURL = tab?.id === this.probeTabId ? await tab.url() : null;
+      if (tab?.id !== this.probeTabId || !this.probeURL(observedURL)) {
+        try {
+          await writePrivate(path.join(path.dirname(this.config.handle_path),'worker-probe-error.private.json'),
+            {schema:1,phase:'existing_tab_probe',attached:this.attached,
+              expected_tab_id:this.probeTabId,observed_tab_id:typeof tab?.id === 'string' ? tab.id : null,
+              expected_url:this.probeManagementURL,observed_url:typeof observedURL === 'string' ? observedURL.slice(0,4096) : null,
+              listed:tabs.some(item => item.id === this.probeTabId)});
+        } catch { /* Diagnosis never changes the health result or retries a browser action. */ }
+        throw error(this.attached ? (tab?.id === this.probeTabId ?
+          'platform_chrome_worker_target_tab_changed' : 'platform_chrome_worker_target_tab_closed') :
+          'platform_chrome_worker_existing_tab_required');
+      }
+      this.healthStep = 'dom_snapshot';
+      let snapshot;
+      try { snapshot = await tab.playwright.domSnapshot(); }
+      catch (failure) {
+        // A single read-only retry for the SDK's exact transient CDP timeouts.
+        // Refusals, lost handles, changed URLs and writes never enter this path.
+        if (!['Error','TimeoutError'].includes(failure?.name) || permissionDenied(failure) ||
+            (typeof failure.code === 'string' && /auth|permission|denied|disconnect|unattach|closed|cancel|abort|forbid/i.test(failure.code)) ||
+            !['Timed out after 3000ms waiting for CDP command Runtime.evaluate.',
+              'Timed out after 3000ms waiting for CDP command Emulation.setFocusEmulationEnabled.'].includes(failure?.message)) throw failure;
+        this.healthStep = 'retry_url';
+        requireValue(await tab.url() === observedURL && this.probeURL(observedURL),'platform_chrome_worker_target_tab_changed');
+        this.healthStep = 'retry_dom_snapshot';
+        snapshot = await tab.playwright.domSnapshot();
+      }
       emptyProbe = typeof snapshot === 'string' && !snapshot.trim().length;
       requireValue(typeof snapshot === 'string' && snapshot.trim().length > 0,'platform_chrome_worker_unavailable');
+      this.healthStep = 'final_url';
+      requireValue(await tab.url() === observedURL,'platform_chrome_worker_target_tab_changed');
     } catch (failure) {
       if (permissionDenied(failure) || (!emptyProbe && errorMarker(failure) !== 'browser_unattached') ||
           this.attached || this.probeFallbackUsed || !this.probeURL(this.probeManagementURL)) throw failure;
@@ -688,6 +734,7 @@ export class ChromeWorker {
     if (this.healthPromise) return this.healthPromise;
     this.healthPromise = (async() => {
       this.setPhase('bridge_health',true);
+      this.healthStep = 'challenge';
       const challenge = (await this.command('health')).challenge;
       requireValue(own(challenge) && challenge.schema === 1 && challenge.session_id === this.session &&
         challenge.binding_sha256 === this.config.binding_sha256 && typeof challenge.nonce === 'string' &&
@@ -701,12 +748,21 @@ export class ChromeWorker {
       await writePrivate(filename,{schema:1,session_id:this.session,binding_sha256:this.config.binding_sha256,nonce:challenge.nonce,
         browser:{kind:'chrome',id:browserId},capabilities:{list_tabs:true,get_tab:true,dom_snapshot:true},worker:{...this.config.worker}});
       this.setPhase('bridge_health',true);
+      this.healthStep = 'receipt';
       const receipt = await this.command('health',['--input',filename]);
       requireValue(receipt.ready === true,'platform_chrome_worker_unavailable');
       this.healthAt = this.clock();
     })();
     try { return await this.healthPromise; }
-    catch (failure) { this.recordFailure(failure,this.healthPhase || this.phase); throw failure; }
+    catch (failure) {
+      this.recordFailure(failure,this.healthPhase || this.phase);
+      try {
+        await writePrivate(path.join(path.dirname(this.config.handle_path),'worker-health-error.private.json'),
+          {schema:1,phase:this.healthPhase || this.phase,step:this.healthStep || null,
+            message:typeof failure?.message === 'string' ? failure.message.slice(0,4096) : null});
+      } catch { /* Private diagnostics cannot change health or authorize a retry. */ }
+      throw failure;
+    }
     finally {
       this.healthPromise = null;
       if (this.state === 'ready' && !this.closing) this.phase = 'queue_wait';

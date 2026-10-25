@@ -197,7 +197,7 @@ public static class BrowserSafety
           if(window!==window.top)return null;
           if(document.getElementById('library-heading')){
             const shelfBusy=(typeof busy!=='undefined'&&!!busy)||(typeof managerBusy!=='undefined'&&!!managerBusy)
-              ||(typeof statusSaving!=='undefined'&&statusSaving.size>0);
+              ||(typeof statusSaving!=='undefined'&&statusSaving.size>0)||(typeof directoryPicking!=='undefined'&&directoryPicking);
             const changed=element=>{
               if(element.dataset?.bookStatusOriginal!==undefined)return element.value!==element.dataset.bookStatusOriginal;
               if(element.type==='checkbox'||element.type==='radio')return element.checked!==element.defaultChecked;

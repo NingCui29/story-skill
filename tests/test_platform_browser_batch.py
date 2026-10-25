@@ -12,7 +12,8 @@ from tests.test_platform_browser_preview import PreviewContext, PreviewPage, con
 
 story = fixtures.story
 drafts = story.platform_drafts
-POLICY = "fanqie_terminal_lf_v1"
+POLICY = "strict"
+ENCODING = "plain_paragraphs_v1"
 
 
 class SavedPreviewContext(PreviewContext):
@@ -26,6 +27,8 @@ class SavedPreviewContext(PreviewContext):
         change = self.options.get("saved_change", "terminal_lf")
         if change == "terminal_lf":
             data["body"] = data["body"].rstrip("\n")
+        elif change == "add_terminal_lf":
+            data["body"] += "\n"
         elif change == "internal_whitespace":
             data["body"] = data["body"].replace("\n", "\n ", 1)
         elif change == "title":
@@ -81,7 +84,7 @@ class BrowserBatchTests(unittest.TestCase):
 
     def arguments(self, policy=POLICY, reconcile_only=False):
         return SimpleNamespace(command="publish-draft-run", id=self.plan["id"], execute=True,
-            profile=str(self.profile_path), comparison_policy=policy, body_encoding="verbatim",
+            profile=str(self.profile_path), comparison_policy=policy, body_encoding=ENCODING,
             reconcile_only=reconcile_only, timeout_ms=1000, login_timeout_ms=100)
 
     def wait_job(self, job_id):
@@ -108,7 +111,9 @@ class BrowserBatchTests(unittest.TestCase):
         self.assertEqual(len(saved), 2)
         for frozen, event in zip(self.plan["manifest"]["chapters"], saved):
             actual = self.contexts[-1].editors[event["remote_id"]]
-            self.assertEqual(actual["body"], frozen["body"].rstrip("\n"))
+            self.assertEqual(actual["body"], drafts._encoded_content(frozen, ENCODING, "fanqie")["body"])
+            self.assertEqual(event["body_encoding"], ENCODING)
+            self.assertEqual(event["encoded_content_sha256"], event["observed_sha256"])
             self.assertEqual(event["observed_sha256"], drafts._hash(drafts._content(actual)))
             self.assertEqual(event["content_sha256"], drafts._hash(drafts._content(frozen)))
             self.assertNotEqual(event["observed_sha256"], event["content_sha256"])
@@ -121,10 +126,10 @@ class BrowserBatchTests(unittest.TestCase):
 
     def test_workbench_first_save_accepts_bound_policy_and_continues_batch(self):
         preview = drafts.workbench_preview(self.root, self.plan["id"], self.profile_path.name,
-                                           comparison_policy=POLICY)
+                                           comparison_policy=POLICY, body_encoding=ENCODING)
         job = drafts.workbench_start(self.root, self.plan["id"], self.profile_path.name,
             expected_book_id=preview["book_id"], expected_profile_sha256=preview["profile_sha256"],
-            preview_token=preview["preview_token"], comparison_policy=POLICY, execute=True,
+            preview_token=preview["preview_token"], comparison_policy=POLICY, body_encoding=ENCODING, execute=True,
             timeout_ms=1000, login_timeout_ms=100)
         self.jobs.append(job["id"])
         finished = self.wait_job(job["id"])
@@ -146,7 +151,7 @@ class BrowserBatchTests(unittest.TestCase):
         self.addCleanup(adapter.__exit__, None, None, None)
         adapter._context.lists = {key: [[]] for key in adapter._context.lists}
         before = list(adapter._context.events)
-        second = drafts.run_plan(self.book, self.plan["id"], adapter, execute=True, comparison_policy=policy)
+        second = drafts.run_plan(self.book, self.plan["id"], adapter, execute=True, comparison_policy=policy, body_encoding=ENCODING)
         self.assertFalse(second["ok"])
         self.assertEqual(second["results"][0]["state"], "unknown")
         self.assertEqual(second["results"][0]["reason"], "previous_attempt_not_found")
@@ -158,6 +163,7 @@ class BrowserBatchTests(unittest.TestCase):
         return first
 
     def test_strict_rejects_terminal_lf_and_never_blindly_repeats(self):
+        self.saved_change = "add_terminal_lf"
         self.assert_failed_save_cannot_blindly_repeat("strict")
 
     def test_preview_load_delay_completes_the_batch_without_another_save(self):
@@ -184,11 +190,11 @@ class BrowserBatchTests(unittest.TestCase):
         self.assertEqual(self.contexts[-1].preview_waits, 10)
         self.assertEqual(sum(event == ("click", "#save") for event in self.contexts[-1].events), 1)
 
-    def test_terminal_policy_rejects_internal_whitespace_and_never_blindly_repeats(self):
+    def test_strict_policy_rejects_internal_whitespace_and_never_blindly_repeats(self):
         self.saved_change = "internal_whitespace"
         self.assert_failed_save_cannot_blindly_repeat(POLICY)
 
-    def test_terminal_policy_rejects_title_change_and_never_blindly_repeats(self):
+    def test_strict_policy_rejects_title_change_and_never_blindly_repeats(self):
         self.saved_change = "title"
         self.assert_failed_save_cannot_blindly_repeat(POLICY)
 

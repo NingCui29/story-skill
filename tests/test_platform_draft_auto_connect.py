@@ -72,8 +72,9 @@ class FixedWorker:
 class FixedHost:
     execution_mode = "host_assisted_cua"
 
-    def __init__(self, test, root, binding, profile, callback=None):
+    def __init__(self, test, root, binding, profile, callback=None, update_existing=False):
         self.test, self.binding = test, binding
+        self.update_existing = update_existing
 
     def __enter__(self):
         if not self.test.health_ready:
@@ -104,6 +105,17 @@ class FixedHost:
     def read_draft(self, remote_id):
         self.test.operations.append(("read", remote_id))
         return copy.deepcopy(self.test.remote[remote_id])
+
+    def update_draft(self, remote_id, chapter, title, body, *, expected_title, expected_body):
+        self.test.assertTrue(self.update_existing)
+        before = self.test.remote[remote_id]
+        self.test.assertEqual((before["title"], before["body"]), (expected_title, expected_body))
+        self.test.assertTrue(list((self.test.root / ".story/platform-draft-update-backups").rglob("*.json")))
+        self.test.operations.append(("update", chapter))
+        before.update(title=title, body=body)
+        if self.test.fail_create:
+            raise RuntimeError("Unconfirmed update response")
+        return remote_id
 
 
 class PlatformDraftAutoConnectTests(unittest.TestCase):
@@ -190,6 +202,76 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
 
     def disconnects(self):
         return [item for item in self.launcher.calls if item[0] == "disconnect"]
+
+    def test_no_blank_format_survives_automatic_connect_update_interruption_and_readonly_recovery(self):
+        self.fixture.commit(text=self.fixture.texts[1] + "\n\n", replace_last=True)
+        self.plan = self.fixture.prepare()
+        frozen = self.plan["manifest"]["chapters"][0]
+        self.remote["same-draft"] = {"remote_id": "same-draft", "chapter": 1, "state": "draft",
+                                     "title": "旧章名", "body": "旧正文\n\n第二段"}
+        before = self.fixture.writing_snapshot()
+        encoding = "plain_paragraphs_v1"
+        preview = self.preview(body_encoding=encoding, sync_drafts=True)
+        self.assertFalse(preview["remote_accessed"])
+        self.assertEqual((self.starts(), self.operations), ([], []))
+        self.launcher.ready.clear()
+        self.fail_create = True
+        job = self.start(preview, body_encoding=encoding, sync_drafts=True)
+        duplicate = self.start(preview, body_encoding=encoding, sync_drafts=True)
+        self.assertEqual(job["id"], duplicate["id"])
+        self.launcher.ready.set()
+        result = self.wait_job(job["id"])
+        self.assertEqual(result["state"], "unknown", result)
+        self.assertTrue(self.launcher.disconnected.wait(2))
+        self.assertEqual(self.starts()[0][-1]["body_encoding"], encoding)
+        self.assertEqual(self.remote["same-draft"]["title"], frozen["title"])
+        expected = drafts._encoded_content(frozen, encoding, "fanqie")["body"]
+        self.assertEqual(self.remote["same-draft"]["body"], expected)
+        self.assertTrue(all(line.strip() for line in expected.split("\n")))
+        self.fail_create = False
+        preview = self.preview(body_encoding=encoding, reconcile_only=True)
+        result = self.wait_job(self.start(preview, body_encoding=encoding, reconcile_only=True)["id"])
+        self.assertEqual(result["state"], "succeeded_equivalent", result)
+        self.assertEqual(result["accepted_chapters"], 1)
+        history = drafts.status(self.book, self.plan["id"])
+        self.assertEqual(history["recent_events"][-1]["encoded_content_sha256"],
+                         preview["preview"]["chapters"][0]["encoded_content_sha256"])
+        self.assertEqual([row for row in self.operations if row[0] == "update"], [("update", 1)])
+        self.assertFalse(any(row[0] == "create" for row in self.operations))
+        self.assertEqual(self.fixture.writing_snapshot(), before)
+
+    def test_unified_sync_updates_creates_and_skips_identical_drafts_with_strict_readback(self):
+        self.fixture.commit(2)
+        self.fixture.commit(3)
+        self.plan = self.fixture.prepare((1, 2, 3))
+        frozen = self.plan['manifest']['chapters']
+        encoding = 'plain_paragraphs_v1'
+        self.remote['existing-one'] = {'remote_id': 'existing-one', 'chapter': 1,
+            'state': 'draft', 'title': '旧章名', 'body': '旧正文\n\n第二段'}
+        identical = drafts._encoded_content(frozen[2], encoding, 'fanqie')
+        self.remote['existing-three'] = {'remote_id': 'existing-three', 'chapter': 3,
+            'state': 'draft', **identical}
+        before = self.fixture.writing_snapshot()
+        options = dict(body_encoding=encoding, comparison_policy='strict', sync_drafts=True)
+        preview = self.preview(**options)
+        self.assertEqual(preview['mode'], 'sync_drafts')
+        result = self.wait_job(self.start(preview, **options)['id'])
+        self.assertEqual(result['state'], 'succeeded_equivalent', result)
+        self.assertEqual(result['accepted_chapters'], 3)
+        packet = result['result']
+        self.assertEqual((packet['created_chapters'], packet['updated_chapters'], packet['unchanged_chapters']), (1, 1, 1))
+        self.assertEqual([row for row in self.operations if row[0] in ('update', 'create')],
+                         [('update', 1), ('create', 2)])
+        for chapter in frozen:
+            actual = next(row for row in self.remote.values() if row['chapter'] == chapter['chapter'])
+            encoded = drafts._encoded_content(chapter, encoding, 'fanqie')
+            self.assertEqual((actual['title'], actual['body']), (encoded['title'], encoded['body']))
+        preview = self.preview(**options)
+        again = self.wait_job(self.start(preview, **options)['id'])
+        self.assertEqual(again['result']['unchanged_chapters'], 3)
+        self.assertEqual([row for row in self.operations if row[0] in ('update', 'create')],
+                         [('update', 1), ('create', 2)])
+        self.assertEqual(self.fixture.writing_snapshot(), before)
 
     def test_preview_offers_connect_without_claiming_platform_readiness_or_starting_model(self):
         before = self.fixture.writing_snapshot()
@@ -457,6 +539,39 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         self.assertTrue(completed["result"]["all_chapters_verified_this_run"])
         self.assertEqual(sum(item[0] == "create" for item in self.operations), 1)
         self.assertNotIn("PRIVATE", json.dumps(completed))
+
+
+    def test_specific_owned_stop_is_persisted_without_turning_an_attempt_into_readback(self):
+        for sending in (False, True):
+            with self.subTest(sending=sending):
+                original_disconnect=self.launcher.disconnect
+                def stopped(*args, **kwargs):
+                    packet=original_disconnect(*args, **kwargs)
+                    return {**packet,'owned_worker_id':kwargs['owned_worker_id'],'error':'platform_chrome_worker_target_tab_changed'}
+                operation='create_draft' if sending else 'find_drafts'
+                def fail(*args, **kwargs):
+                    story.fail('platform_chrome_worker_unavailable','PRIVATE target URL')
+                with patch.object(self.launcher,'disconnect',side_effect=stopped), patch.object(FixedHost,operation,side_effect=fail):
+                    completed=self.wait_job(self.start()["id"])
+                self.assertEqual(completed['state'],'unknown' if sending else 'failed')
+                row=completed['result']['results'][0]
+                self.assertTrue(row['recorded_this_run'])
+                self.assertFalse(row['observed_this_run'])
+                self.assertFalse(row['accepted_this_run'])
+                self.assertEqual(row['reason'],'platform_chrome_worker_target_tab_changed')
+                history=drafts.status(self.book,self.plan['id'])
+                self.assertEqual(history['results'][0]['reason'],row['reason'])
+                self.assertFalse(history['results'][0]['recorded_this_run'])
+                self.assertNotIn('PRIVATE',json.dumps(completed))
+
+    def test_unowned_cleanup_receipt_cannot_refine_a_draft_failure(self):
+        original_disconnect=self.launcher.disconnect
+        def stopped(*args, **kwargs):
+            return {**original_disconnect(*args, **kwargs),'owned_worker_id':'e'*32,'error':'platform_chrome_worker_target_tab_changed'}
+        def fail(*args, **kwargs):story.fail('platform_chrome_worker_unavailable','No browser')
+        with patch.object(self.launcher,'disconnect',side_effect=stopped), patch.object(FixedHost,'find_drafts',side_effect=fail):
+            completed=self.wait_job(self.start()["id"])
+        self.assertEqual(completed['result']['results'][0]['reason'],'platform_chrome_worker_unavailable')
 
 
 if __name__ == "__main__":

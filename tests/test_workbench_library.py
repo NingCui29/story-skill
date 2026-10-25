@@ -93,7 +93,15 @@ class WorkbenchLibraryTests(unittest.TestCase):
         value = path.stat()
         return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns
 
-    def post(self, server, action, payload=None, headers=None):
+    def post(self, server, action, payload=None, headers=None, include_identity=True):
+        if (include_identity and payload and isinstance(payload.get('key'), str)
+                and 'expected_book_id' not in payload
+                and action in ('open-book', 'remove-book', 'relink-book', 'trash-preview', 'trash-book',
+                               'backup-book', 'book-service', 'stop-book', 'recoveries')):
+            entries, _ = self.w._library_load(self.state)
+            entry = entries.get(payload['key'])
+            if entry:
+                payload = {**payload, 'expected_book_id': entry['book_id']}
         request_headers = {
             'Content-Type': 'application/json',
             'X-Story-Token': server.library_token,

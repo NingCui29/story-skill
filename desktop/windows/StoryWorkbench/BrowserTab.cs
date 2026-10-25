@@ -15,6 +15,7 @@ public sealed class BrowserTab : IDisposable
     private string? approvedNavigation;
     private ulong? approvedNavigationId;
     private bool guardedNavigation;
+    private bool directoryPicking;
     private TaskCompletionSource? navigationCompletion;
     private readonly TaskCompletionSource ready = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly PageLifecycle lifecycle = new();
@@ -110,6 +111,8 @@ public sealed class BrowserTab : IDisposable
                     await owner.RememberThemeAsync(value.GetProperty("value").GetString());
                 else if (value.GetProperty("kind").GetString() == "preference")
                     await owner.RememberPreferenceAsync(value.GetProperty("key").GetString(), value.GetProperty("value").GetString());
+                else if (value.GetProperty("kind").GetString() == "choose-directory")
+                    ChooseDirectory(value);
             }
             catch (Exception error) when (error is JsonException or KeyNotFoundException or InvalidOperationException) { }
         };
@@ -146,6 +149,31 @@ public sealed class BrowserTab : IDisposable
         if (Disposed || View.CoreWebView2 is null) return;
         if (themeScript is not null) View.CoreWebView2.RemoveScriptToExecuteOnDocumentCreated(themeScript);
         themeScript = await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(BrowserSafety.BootstrapScript(theme, owner.StoredPreferences));
+    }
+
+    private void ChooseDirectory(JsonElement request)
+    {
+        if (Disposed || !LoadComplete || Key.Path != "/" || owner.ClosePending
+            || BrowserSafety.PageKeyFor(View.Source?.AbsoluteUri) != Key) return;
+        string? id = request.GetProperty("id").GetString(), purpose = request.GetProperty("purpose").GetString();
+        if (!Guid.TryParseExact(id, "D", out _) || purpose is not ("existing-book" or "create-parent")) return;
+        long generation = Generation;
+        void Reply(object value)
+        {
+            if (!Disposed && LoadComplete && Generation == generation && BrowserSafety.PageKeyFor(View.Source?.AbsoluteUri) == Key)
+                View.CoreWebView2.PostWebMessageAsJson(JsonSerializer.Serialize(value));
+        }
+        if (directoryPicking) { Reply(new { kind = "directory-result", id, error = "请先完成当前文件夹选择。" }); return; }
+        directoryPicking = true;
+        try
+        {
+            var dialog = new OpenFolderDialog { Title = purpose == "create-parent" ? "选择新作品的存放位置" : "选择已有作品文件夹", Multiselect = false };
+            bool selected = dialog.ShowDialog(owner) == true;
+            Reply(new { kind = "directory-result", id, cancelled = !selected, path = selected ? dialog.FolderName : null });
+        }
+        catch (Exception error) when (error is InvalidOperationException or System.Runtime.InteropServices.COMException)
+        { Reply(new { kind = "directory-result", id, error = "文件夹选择器无法打开，请重试或填写完整路径。" }); }
+        finally { directoryPicking = false; }
     }
 
     public void MarkInitializationFailed()

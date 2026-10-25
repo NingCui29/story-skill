@@ -100,6 +100,28 @@ struct WorkbenchLaunchOptions {
 }
 
 enum WorkbenchAppearance {
+    static func documentScript(for url: URL) -> String? {
+        guard WorkbenchURL.isEditor(url), let port = url.port,
+              let parts = URLComponents(url: url, resolvingAgainstBaseURL: false),
+              let fragment = parts.percentEncodedFragment, !fragment.isEmpty,
+              let encoded = try? JSONSerialization.data(withJSONObject: [parts.path, fragment]),
+              let target = String(data: encoded, encoding: .utf8) else { return nil }
+        return """
+        (() => {
+            const target = \(target);
+            if(window!==window.top || location.protocol!=='http:' || location.hostname!=='127.0.0.1'
+                || Number(location.port)!==\(port) || location.pathname!==target[0] || location.search
+                || typeof openDoc!=='function')return false;
+            let id;try{id=decodeURIComponent(target[1]);}catch{return false;}
+            if(/^chapter-\\d+$/.test(id))id='formal:'+id.slice(8);
+            if(!id)return false;
+            location.hash=encodeURIComponent(id);
+            void openDoc(id);
+            return true;
+        })()
+        """
+    }
+
     static func script(for url: URL, source: String) -> String? {
         guard WorkbenchURL.isEditor(url), let port = url.port,
               let editorPath = URLComponents(url: url, resolvingAgainstBaseURL: false)?.path,
@@ -111,6 +133,26 @@ enum WorkbenchAppearance {
             const appearance = \(source)
             return appearance?.applied === true;
         })()
+        """
+    }
+
+    static func safetyScript(for url: URL, source: String) -> String? {
+        guard WorkbenchURL.isEditor(url), let port = url.port,
+              let editorPath = URLComponents(url: url, resolvingAgainstBaseURL: false)?.path,
+              let encoded = try? JSONSerialization.data(withJSONObject: [editorPath]),
+              let path = String(data: encoded, encoding: .utf8) else { return nil }
+        // callAsyncJavaScript awaits the cache verification before the native
+        // page is revealed. A synchronously installed handler is not readiness.
+        return """
+        if(window!==window.top || location.protocol!=='http:' || location.hostname!=='127.0.0.1' || Number(location.port)!==\(port) || location.pathname!==\(path)[0])return false;
+        const safety = \(source)
+        if(safety?.applied !== true || typeof safety.ready?.then !== 'function')return false;
+        let readinessTimer;
+        try {
+            return (await Promise.race([safety.ready, new Promise(resolve => {
+                readinessTimer = setTimeout(() => resolve(false), 15000);
+            })])) === true;
+        } finally { clearTimeout(readinessTimer); }
         """
     }
 }
@@ -754,6 +796,16 @@ final class BackendLauncher {
 }
 
 @MainActor
+final class WorkbenchDirectoryHandler: NSObject, WKScriptMessageHandlerWithReply {
+    weak var owner: WorkbenchWindow?
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage,
+                               replyHandler: @escaping (Any?, String?) -> Void) {
+        guard let owner else { replyHandler(nil, "书架页面已关闭。"); return }
+        owner.pickDirectory(message, replyHandler: replyHandler)
+    }
+}
+
+@MainActor
 // A page session owns its WebKit process and buffers; it never owns a second
 // native window. Switching the host's content view keeps this session alive.
 final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigationDelegate, WKUIDelegate, WKDownloadDelegate {
@@ -763,9 +815,12 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
     private(set) var entryURL: URL?
     private var titleObservation: NSKeyValueObservation?
     private var loadedPage = false
+    private var editorProcessTerminated = false
+    private var editorSafetyApplied = false
+    private var pendingDocumentURL: URL?
     private(set) var loadCount = 0
     private(set) var navigationCount = 0
-    var isReady: Bool { isControlledPage }
+    var isReady: Bool { isControlledPage && (entryURL.map(WorkbenchURL.isEditor) != true || editorSafetyApplied) }
     private(set) var appearanceApplied = false
     let pageContent = NSView()
     private let statusView = NSView()
@@ -775,6 +830,8 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
     private let saveButton = NSButton(title: "保存候选稿", target: nil, action: nil)
     private let addBookButton = NSButton(title: "添加作品…", target: nil, action: nil)
     private var downloads: [ObjectIdentifier: URL] = [:]
+    private let directoryHandler = WorkbenchDirectoryHandler()
+    private var directoryPanel: NSOpenPanel?
     private static let homeItem = NSToolbarItem.Identifier("workbench.home")
     private static let addBookItem = NSToolbarItem.Identifier("workbench.add-book")
 
@@ -783,9 +840,12 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
         self.entryURL = entryURL
         let settings = WKWebViewConfiguration()
         settings.websiteDataStore = .default()
-        // No file-access preferences, native script bridge, or injected write API.
+        // The only file bridge returns a user-selected directory to the pinned
+        // main-frame shelf. It cannot read files or create/register a work.
+        settings.userContentController.addScriptMessageHandler(directoryHandler, contentWorld: .page, name: "storyDirectory")
         webView = WKWebView(frame: .zero, configuration: settings)
         super.init(window: window)
+        directoryHandler.owner = self
         webView.navigationDelegate = self
         webView.uiDelegate = self
         webView.allowsBackForwardNavigationGestures = false
@@ -912,6 +972,8 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
     func load(_ url: URL) {
         entryURL = url
         loadedPage = false
+        editorSafetyApplied = false
+        webView.isHidden = WorkbenchURL.isEditor(url)
         loadCount += 1
         appearanceApplied = false
         saveButton.isHidden = !WorkbenchURL.isEditor(url)
@@ -926,25 +988,82 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
         return loadedPage && WorkbenchURL.samePage(url, entryURL)
     }
 
+    func openDocumentTarget(_ url: URL) {
+        guard let entryURL, WorkbenchURL.isEditor(url), WorkbenchURL.samePage(url, entryURL),
+              WorkbenchAppearance.documentScript(for: url) != nil else { return }
+        pendingDocumentURL = url
+        openPendingDocument()
+    }
+
+    private func openPendingDocument() {
+        guard isReady, let url = pendingDocumentURL,
+              let script = WorkbenchAppearance.documentScript(for: url) else { return }
+        pendingDocumentURL = nil
+        webView.evaluateJavaScript(script, completionHandler: nil)
+    }
+
     func confirmLeaving(action: String, completion: @escaping (Bool) -> Void) {
+        if directoryPanel != nil { completion(false); return }
+        if editorProcessTerminated, !loadedPage, entryURL.map(WorkbenchURL.isEditor) == true {
+            completion(true)
+            return
+        }
         guard let entryURL, let url = webView.url, WorkbenchURL.samePage(url, entryURL) else { completion(true); return }
-        // The source page keeps every opened buffer in docs, including inactive
-        // documents. Automatic recovery is deliberately not treated as a save.
-        let script = "typeof docs !== 'undefined' && [...docs.values()].some(d => d && (d.saving || (d.editable && d.value !== undefined && d.value !== d.text)))"
+        // Read all retained buffers and the final visible input. Recovery is not
+        // a completed save, and an active write must never be bypassed by quit.
+        let script = """
+        (() => {
+            if(document.getElementById('library-heading')){
+                if(typeof busy!=='boolean' || typeof managerBusy!=='boolean' || typeof lastBooksBusy!=='boolean'
+                    || typeof statusSaving==='undefined' || !(statusSaving instanceof Set)
+                    || typeof shelfStatusDrafts==='undefined' || !(shelfStatusDrafts instanceof Map))return 'unknown';
+                if(busy || managerBusy || lastBooksBusy || statusSaving.size>0 || (typeof directoryPicking!=='undefined'&&directoryPicking))return 'busy';
+                return shelfStatusDrafts.size>0?'shelf-pending':'clean';
+            }
+            if(!document.getElementById('current-book-root') || typeof docs==='undefined'
+                || !(docs instanceof Map) || docs.size>10000)return 'unknown';
+            const records=[...docs];
+            if(records.some(([id,d])=>!d || typeof d!=='object' || typeof d.editable!=='boolean'
+                || typeof d.value!=='string' || (d.editable && typeof d.text!=='string')
+                || (d.saving!==undefined && typeof d.saving!=='boolean')
+                || (d.needs_recovery!==undefined && typeof d.needs_recovery!=='boolean')))return 'unknown';
+            if(records.some(([,d])=>d.saving || d.recovering))return 'busy';
+            const textbox=document.getElementById('text');
+            let pending=false;
+            for(const [id,d]of records){
+                const current=typeof active!=='undefined' && id===active && d.editing;
+                if(current && typeof textbox?.value!=='string')return 'unknown';
+                const value=current?textbox.value:d.value;
+                if(d.needs_recovery || d.pendingSaveReadback || (d.saveError && d.failedSaveOptions?.newVersion)
+                    || (d.editable && value!==d.text))pending=true;
+            }
+            return pending?'pending':'clean';
+        })()
+        """
         webView.evaluateJavaScript(script) { [weak self] result, error in
             guard let self else { completion(false); return }
-            if error == nil && (result as? Bool) == false { completion(true); return }
+            let state = error == nil ? result as? String : nil
+            if state == "clean" { completion(true); return }
             self.app?.activate(self)
             let alert = NSAlert()
-            alert.messageText = error == nil ? "还有未保存的编辑" : "暂时无法核对编辑状态"
-            alert.informativeText = error == nil
-                ? "这部作品包含未保存的文字。请返回保存候选稿或下载文字，再\(action)。自动恢复稿不等于已保存候选。"
-                : "为保留当前文字，建议返回作品检查并保存后再\(action)。"
+            if state == "busy" {
+                alert.messageText = "操作正在进行"
+                alert.informativeText = "候选保存、备份、恢复或其他写入尚未完成，本次\(action)已取消。请等待页面显示执行结果后重试。"
+            } else if state == "shelf-pending" {
+                alert.messageText = "作品状态尚未保存"
+                alert.informativeText = "书架上还有未保存的作品状态，本次\(action)已取消。请先保存状态、改回原状态，或点击书架上的“放弃未保存状态”后重试。"
+            } else if state == "pending" {
+                alert.messageText = "还有未保存的编辑"
+                alert.informativeText = "这部作品包含未保存文字、未完成的保留版本或待核对保存结果。请返回重试核对、保存候选稿或下载文字，再\(action)。自动恢复稿不等于已保存候选。"
+            } else {
+                alert.messageText = "暂时无法核对编辑状态"
+                alert.informativeText = "页面未能返回完整状态，本次\(action)已取消。请返回工作台检查后重试。"
+            }
             alert.alertStyle = .warning
-            alert.addButton(withTitle: "返回作品")
-            alert.addButton(withTitle: "仍然\(action)")
+            alert.addButton(withTitle: "返回工作台")
+            if state == "pending" { alert.addButton(withTitle: "仍然\(action)") }
             if let window = self.window {
-                alert.beginSheetModal(for: window) { completion($0 == .alertSecondButtonReturn) }
+                alert.beginSheetModal(for: window) { completion(state == "pending" && $0 == .alertSecondButtonReturn) }
             } else { completion(false) }
         }
     }
@@ -964,6 +1083,12 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
     }
 
     @objc func reloadPage() {
+        // Only a confirmed WebKit process loss permits bypassing the dead
+        // page's probe. Ordinary load/probe failures still retain their guard.
+        if editorProcessTerminated, !loadedPage, let url = entryURL, WorkbenchURL.isEditor(url) {
+            load(url)
+            return
+        }
         confirmLeaving(action: "重新载入") { [weak self] allowed in
             guard allowed, let self, let url = self.entryURL else { return }
             self.load(url)
@@ -971,7 +1096,7 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
     }
 
     @objc func saveCandidate() {
-        guard isControlledPage else { return }
+        guard isControlledPage, editorSafetyApplied else { return }
         webView.evaluateJavaScript("(() => { const button=document.getElementById('save'); if(button&&!button.disabled)button.click(); })()", completionHandler: nil)
     }
 
@@ -982,6 +1107,30 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
             alert.messageText = "界面外观暂未更新"
             alert.informativeText = "当前页面与编辑仍保留。请核对客户端更新后再试。"
             alert.beginSheetModal(for: window, completionHandler: nil)
+        }
+    }
+
+    private func applyEditorSafety() {
+        guard isControlledPage, let entryURL, let current = webView.url,
+              WorkbenchURL.isEditor(entryURL), WorkbenchURL.samePage(current, entryURL) else { return }
+        guard let resource = Bundle.main.resourceURL?.appendingPathComponent("editor-safety.js"),
+              let source = try? String(contentsOf: resource, encoding: .utf8),
+              let script = WorkbenchAppearance.safetyScript(for: entryURL, source: source) else {
+            showStatus(title: "编辑保护尚未载入", detail: "请核对客户端安装后重试；已有文件和作品服务保留。", retry: true)
+            return
+        }
+        webView.callAsyncJavaScript(script, arguments: [:], in: nil, in: .page) { [weak self] result in
+            guard let self, self.isControlledPage, let current = self.webView.url,
+                  let entry = self.entryURL, WorkbenchURL.samePage(current, entry),
+                  WorkbenchURL.samePage(entry, entryURL) else { return }
+            if case .success(let value) = result, (value as? Bool) == true {
+                self.editorSafetyApplied = true
+                self.webView.isHidden = false
+                self.statusView.isHidden = true
+                self.openPendingDocument()
+            } else {
+                self.showStatus(title: "编辑保护尚未就绪", detail: "当前文件和作品服务保留。请核对恢复提示、服务连接与客户端安装后重试。", retry: true)
+            }
         }
     }
 
@@ -1021,35 +1170,40 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
     }
 
     @objc private func chooseBookDirectory() {
-        guard isControlledPage, let entryURL, WorkbenchURL.isShelf(entryURL), let window else { return }
+        guard isControlledPage, let entryURL, WorkbenchURL.isShelf(entryURL) else { return }
+        webView.evaluateJavaScript("(() => { const panel=document.getElementById('add-book-panel'),button=document.getElementById('choose-book-directory'); if(!panel||!button||button.disabled)return false;panel.open=true;button.click();return true; })()", completionHandler: nil)
+    }
+
+    fileprivate func pickDirectory(_ message: WKScriptMessage, replyHandler: @escaping (Any?, String?) -> Void) {
+        guard message.name == "storyDirectory", message.webView === webView, message.frameInfo.isMainFrame,
+              isControlledPage, let entryURL, WorkbenchURL.isShelf(entryURL),
+              let sender = message.frameInfo.request.url, WorkbenchURL.samePage(sender, entryURL),
+              app?.activePage === self, let window,
+              let body = message.body as? [String: String], Set(body.keys) == ["purpose"],
+              let purpose = body["purpose"], ["existing-book", "create-parent"].contains(purpose) else {
+            replyHandler(nil, "只能从当前书架选择作品文件夹。"); return
+        }
+        guard directoryPanel == nil, window.attachedSheet == nil else {
+            replyHandler(nil, "请先完成当前文件夹选择。"); return
+        }
+        let generation = navigationCount
         let panel = NSOpenPanel()
-        panel.title = "选择已有作品的目录"
-        panel.prompt = "添加作品"
+        directoryPanel = panel
+        panel.title = purpose == "create-parent" ? "选择新作品的存放位置" : "选择已有作品文件夹"
+        panel.prompt = "选择文件夹"
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.canCreateDirectories = false
         panel.allowsMultipleSelection = false
         panel.beginSheetModal(for: window) { [weak self] answer in
-            guard answer == .OK, let url = panel.url, let self,
-                  self.isControlledPage, let entry = self.entryURL, WorkbenchURL.isShelf(entry),
-                  let port = entry.port,
-                  let bytes = try? JSONSerialization.data(withJSONObject: [url.path]),
-                  let encodedPath = String(data: bytes, encoding: .utf8) else { return }
-            // The selected path is data, not executable text. Existing page/API
-            // code still performs registration and book identity validation.
-            let script = """
-            (() => {
-                if(window!==window.top || location.protocol!=='http:' || location.hostname!=='127.0.0.1' || location.pathname!=='/' || Number(location.port)!==\(port))return false;
-                const input=document.getElementById('book-path'),button=document.getElementById('add');
-                if(!input || !button || button.disabled)return false;
-                const panel=document.getElementById('add-book-panel');
-                if(panel)panel.open=true;
-                input.value=\(encodedPath)[0];
-                button.click();
-                return true;
-            })()
-            """
-            self.webView.evaluateJavaScript(script, completionHandler: nil)
+            self?.directoryPanel = nil
+            guard let self, self.isControlledPage, self.app?.activePage === self,
+                  self.navigationCount == generation, let current = self.webView.url,
+                  WorkbenchURL.samePage(current, entryURL) else { replyHandler(nil, "书架页面已变化，请重新选择文件夹。"); return }
+            guard answer == .OK, let url = panel.url, url.isFileURL else {
+                replyHandler(["cancelled": true], nil); return
+            }
+            replyHandler(["cancelled": false, "path": url.path], nil)
         }
     }
 
@@ -1104,12 +1258,14 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         navigationCount += 1
         loadedPage = true
-        statusView.isHidden = true
+        editorProcessTerminated = false
         if let entryURL, WorkbenchURL.isEditor(entryURL) {
+            applyEditorSafety()
             applyEditorAppearance()
             adaptBookHint()
             return
         }
+        statusView.isHidden = true
         guard let entryURL, let current = webView.url, let port = entryURL.port,
               WorkbenchURL.isShelf(current), WorkbenchURL.samePage(current, entryURL) else { return }
         // Adapt only the controlled main-frame shelf. Browser-served HTML and
@@ -1147,6 +1303,7 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
 
     func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
         loadedPage = false
+        editorProcessTerminated = entryURL.map(WorkbenchURL.isEditor) == true
         showStatus(title: "作品页面意外中断", detail: "请重新打开页面，核对候选稿与自动恢复稿。尚未写入文件的文字可能需要重新输入。", retry: true)
     }
 
@@ -1359,12 +1516,17 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
     func showEditor(_ url: URL) -> WorkbenchWindow? {
         guard WorkbenchURL.isEditor(url) else { return nil }
         let window = hostWindow()
+        var created = false
         guard let page = editorPages.resolve(url, create: {
+            created = true
             let page = WorkbenchWindow(app: self, window: window, entryURL: url)
             page.load(url)
             return page
         }) else { return nil }
         activate(page)
+        // A new page already receives the fragment in load(url). Let its
+        // initialization restore a matching saved position before any replay.
+        if !created { page.openDocumentTarget(url) }
         return page
     }
 

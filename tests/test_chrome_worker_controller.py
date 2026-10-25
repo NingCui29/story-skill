@@ -736,15 +736,15 @@ class ControllerTests(unittest.TestCase):
     def test_body_encoding_has_its_own_bound_worker_and_private_config(self):
         self.start()
         self.wait(lambda: self.state()["ready"])
-        for encoding in ("markdown_paragraphs_v1", "markdown_paragraphs_v2"):
+        for encoding in ("markdown_paragraphs_v1", "markdown_paragraphs_v2", "plain_paragraphs_v1"):
             self.controller.start(self.root, "synthetic-plan", "saved.json", expected_book_id="local-book",
                                   body_encoding=encoding)
             self.wait(lambda: self.controller.status(self.root, "synthetic-plan", "saved.json", expected_book_id="local-book",
                 body_encoding=encoding)["ready"])
         configs = [json.loads((path / "config.json").read_text()) for path in self.contexts]
-        self.assertEqual({row["body_encoding"] for row in configs}, {"verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2"})
+        self.assertEqual({row["body_encoding"] for row in configs}, {"verbatim", "markdown_paragraphs_v1", "markdown_paragraphs_v2", "plain_paragraphs_v1"})
         self.assertEqual({row["comparison_policy"] for row in configs}, {"strict"})
-        self.assertEqual(len({row["binding_sha256"] for row in configs}), 3)
+        self.assertEqual(len({row["binding_sha256"] for row in configs}), 4)
         self.controller.disconnect(self.root, "synthetic-plan", "saved.json", expected_book_id="local-book",
                                    body_encoding="markdown_paragraphs_v2")
         self.assertTrue(self.state()["ready"])
@@ -1691,6 +1691,28 @@ class ControllerTests(unittest.TestCase):
         self.assertFalse(self.controller.disconnect(self.root, "synthetic-plan", "saved.json",
             expected_book_id="local-book", owned_worker_id="f"*32)["owned"])
         self.assertIsNone(self.processes[0].poll())
+
+
+    def test_specific_checkpoint_cause_wins_before_client_error_flag_is_published(self):
+        self.start();self.wait(lambda:self.state()["ready"])
+        entry=list(self.controller._workers.values())[-1]
+        self.assertIsNone(entry["client"].worker_error)
+        self.controller._diagnose(entry,"worker_checkpoint",worker_state="failed",worker_phase="cleanup",
+            failure_phase="existing_tab_probe",code="platform_chrome_worker_target_tab_changed")
+        state=self.state()
+        self.assertFalse(state["ready"])
+        self.assertEqual(state["error"],"platform_chrome_worker_target_tab_changed")
+        self.assertTrue(entry["stop"].is_set())
+
+    def test_late_specific_checkpoint_refines_generic_health_failure(self):
+        self.start();self.wait(lambda:self.state()["ready"])
+        entry=list(self.controller._workers.values())[-1]
+        with self.controller._lock:
+            entry.update(state="failed",error="platform_chrome_worker_health_expired")
+            entry["stop"].set()
+        self.controller._diagnose(entry,"worker_checkpoint",worker_state="failed",worker_phase="cleanup",
+            failure_phase="existing_tab_probe",code="platform_chrome_worker_target_tab_closed")
+        self.assertEqual(self.state()["error"],"platform_chrome_worker_target_tab_closed")
 
 
 class FileAndPromptTests(unittest.TestCase):

@@ -49,7 +49,7 @@ handler=async()=>{if(++reads<=5)throw Error('409');return {...job(),done:true,st
 await platformDraftPoll(p);
 for(let retry=0;retry<5;retry++){const id=p.pollTimer,t=timers.get(id);assert.ok(t);timers.delete(id);await t.fn();}
 assert.equal(reads,6);assert.equal(p.job.done,true);assert.equal(p.pollFailures,0);assert.equal(p.pollTimer,null);
-assert.ok(p.status.textContent.includes('已保存并完整回读'));
+assert.ok(p.status.textContent.includes('本批草稿同步一致'));
 await platformDraftPoll(p);platformDraftSchedule(p);assert.equal(reads,6);assert.equal(p.pollTimer,null);
 assert.equal(starts().length,1);
 ''')
