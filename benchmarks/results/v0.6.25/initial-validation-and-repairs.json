@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "initial_local_baseline": {
+    "source_commit": "487b5596546a5a8c7354bde927701e28a9008ae7",
+    "tests_run": 3049,
+    "success_callbacks": 3024,
+    "skipped_events": 25,
+    "failures": 0,
+    "errors": 0,
+    "duration_seconds": 852.3166420608759,
+    "source_files_changed_during_run": [],
+    "raw_log_sha256": "88669d45de72d2ff034f19600f67c500b129cf095a4be89f935ebec649664d3d"
+  },
+  "initial_source_ci_run": 40155960844,
+  "initial_windows_native_run": 40156004531,
+  "initial_ci_passed": false,
+  "initial_failure_categories": [
+    "Windows command-line length for inline Node scripts",
+    "Transient Windows service-record sharing violation",
+    "Codex verifier synthetic page missing its presence closure",
+    "Platform stop fixture callback race",
+    "Fixture LF/CRLF and Windows directory pin semantics"
+  ],
+  "repairs": [
+    "Node stdin or temporary script preserves input protocol",
+    "Bounded read-only launcher retry for Windows sharing/lock violations",
+    "Verifier closes only its own issued empty page",
+    "Cross-platform fixtures preserve exact bytes and native directory protections"
+  ],
+  "supplemental_source_changes": "Completed pagination, bounded read recovery and allocated draft identity work was added before final source freeze; pagination controls and totals are rechecked after table scanning.",
+  "targeted_node_tests": 372,
+  "final_complete_regression_required": true,
+  "scope": "Initial validation is retained as a baseline, not reused as final release acceptance. Final local and three-platform source CI use the new frozen commit.",
+  "source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5"
+}

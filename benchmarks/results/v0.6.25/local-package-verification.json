@@ -1,0 +1,52 @@
+{
+  "ok": true,
+  "assets": [
+    {
+      "file": "dist/release-v0.6.25-candidate/story-skill-0.6.25.zip",
+      "bytes": 731773,
+      "sha256": "071d400f54d3d71310b0506e54111bd5b6b6aa5dd9057a2504171381174f34e3",
+      "checksum_file": "dist/release-v0.6.25-candidate/story-skill-0.6.25.zip.sha256",
+      "checksum_sha256": "abcde966ae6679165a849b75fe97c0d0a47ed19fc68c2775b788af4c4a6be7cf"
+    },
+    {
+      "file": "dist/release-v0.6.25-candidate/story-skill-claude-desktop-0.6.25.zip",
+      "bytes": 738220,
+      "sha256": "7e805a5bd18491d223ffe5161d98184255689a123693745477571c1d4eea8cf0",
+      "checksum_file": "dist/release-v0.6.25-candidate/story-skill-claude-desktop-0.6.25.zip.sha256",
+      "checksum_sha256": "65a3f2a1d16dc55d81ba601839d98448e0e2b975fbd7fa88e5a1ee1ea366f0a0"
+    },
+    {
+      "file": "dist/release-v0.6.25-candidate/codex/story-skill-codex-0.6.25.zip",
+      "bytes": 740646,
+      "sha256": "a23337a131c2c93a2acb4075ab4db2dd683e081aea35a7dc575bbfde490f0f46",
+      "checksum_file": "dist/release-v0.6.25-candidate/codex/story-skill-codex-0.6.25.zip.sha256",
+      "checksum_sha256": "aebf7e58dbf5cd38edf1caace3d1b0cc10664d5f6c2aec1772ef6b9262f002f7"
+    },
+    {
+      "file": "dist/release-v0.6.25-candidate/story-workbench-0.1.37-macos-x86_64.zip",
+      "bytes": 26916725,
+      "sha256": "49f149010962aa73201712c21514453074b5747efea1cb7e1bd8fe7e7991b09c",
+      "checksum_file": "dist/release-v0.6.25-candidate/story-workbench-0.1.37-macos-x86_64.zip.sha256",
+      "checksum_sha256": "049cb78dd84e502099e432d2599487c3889b76933d776430b945a44e16453ae9"
+    },
+    {
+      "file": "dist/release-v0.6.25-candidate/story-workbench-0.1.37-macos-x86_64.dmg",
+      "bytes": 34782979,
+      "sha256": "012e0e3dafe6fced8b8a800b47011bd1ba5aa1af496d7c8af9766f5cfbefeed5",
+      "checksum_file": "dist/release-v0.6.25-candidate/story-workbench-0.1.37-macos-x86_64.dmg.sha256",
+      "checksum_sha256": "a9a7c608d5baa27e6a2c2e20b4a3bb44e15eaf261df981da9f5a55f06182139a"
+    }
+  ],
+  "build_inputs_unchanged_after_all_local_qa": true,
+  "validation_reports": [
+    "fixed-source-verification.json",
+    "codex-plugin-verification.json",
+    "macos-verification.json",
+    "macos-native-acceptance.json",
+    "macos-distribution.json",
+    "macos-complete-inventory.json"
+  ],
+  "user_installation_modified": false,
+  "scope": "Fresh frozen-source package, isolated installation, native Mac acceptance and complete ZIP/DMG inventory. Public downloads and Windows native checks are separate.",
+  "source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5"
+}

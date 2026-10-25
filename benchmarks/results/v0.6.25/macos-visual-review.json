@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "images": [
+    "macos-native-shelf.png",
+    "macos-native-editor.png",
+    "macos-native-switch.png"
+  ],
+  "synthetic_fixtures_only": true,
+  "shelf_controls_and_cards_legible": true,
+  "editor_material_navigation_and_candidate_identity_legible": true,
+  "no_obvious_control_overlap": true,
+  "switch_image_note": "Includes intentional self-test-repeat rejection of an unlisted document; existing candidate remains visible. This is a safety probe, not an author error.",
+  "manual_file_picker_update_and_author_workflows_verified": false,
+  "source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5"
+}

@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "date": "2026-10-25T09:20:51.765351+00:00",
+  "source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5",
+  "app_version": "0.1.37",
+  "build": "38",
+  "story_version": "0.6.25",
+  "architecture": "x86_64",
+  "assets": [
+    {
+      "name": "story-workbench-0.1.37-macos-x86_64.zip",
+      "size": 26916725,
+      "sha256": "49f149010962aa73201712c21514453074b5747efea1cb7e1bd8fe7e7991b09c",
+      "checksum_file": "story-workbench-0.1.37-macos-x86_64.zip.sha256"
+    },
+    {
+      "name": "story-workbench-0.1.37-macos-x86_64.dmg",
+      "size": 34782979,
+      "sha256": "012e0e3dafe6fced8b8a800b47011bd1ba5aa1af496d7c8af9766f5cfbefeed5",
+      "checksum_file": "story-workbench-0.1.37-macos-x86_64.dmg.sha256"
+    }
+  ],
+  "zip_integrity_verified": true,
+  "zip_extracted_app_signature_payload_version_verified": true,
+  "dmg_integrity_verified": true,
+  "dmg_readonly_mounted_app_signature_payload_version_verified": true,
+  "dmg_applications_link": "/Applications",
+  "dmg_detached": true,
+  "signature_kind": "ad-hoc local signature; not notarization",
+  "installed_application_replaced": false,
+  "existing_user_services_touched": false
+}

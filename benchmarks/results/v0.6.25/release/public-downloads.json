@@ -1,0 +1,630 @@
+{
+  "ok": true,
+  "tag": "v0.6.25",
+  "repository": "NingCui29/story-skill",
+  "assets": [
+    {
+      "name": "story-skill-0.6.25.zip.sha256",
+      "size": 89,
+      "sha256": "abcde966ae6679165a849b75fe97c0d0a47ed19fc68c2775b788af4c4a6be7cf",
+      "server_digest": "sha256:abcde966ae6679165a849b75fe97c0d0a47ed19fc68c2775b788af4c4a6be7cf",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-0.6.25.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "abcde966ae6679165a849b75fe97c0d0a47ed19fc68c2775b788af4c4a6be7cf",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.25.zip.sha256",
+      "size": 104,
+      "sha256": "65a3f2a1d16dc55d81ba601839d98448e0e2b975fbd7fa88e5a1ee1ea366f0a0",
+      "server_digest": "sha256:65a3f2a1d16dc55d81ba601839d98448e0e2b975fbd7fa88e5a1ee1ea366f0a0",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-claude-desktop-0.6.25.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "65a3f2a1d16dc55d81ba601839d98448e0e2b975fbd7fa88e5a1ee1ea366f0a0",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-codex-0.6.25.zip.sha256",
+      "size": 95,
+      "sha256": "aebf7e58dbf5cd38edf1caace3d1b0cc10664d5f6c2aec1772ef6b9262f002f7",
+      "server_digest": "sha256:aebf7e58dbf5cd38edf1caace3d1b0cc10664d5f6c2aec1772ef6b9262f002f7",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-codex-0.6.25.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "aebf7e58dbf5cd38edf1caace3d1b0cc10664d5f6c2aec1772ef6b9262f002f7",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-0.6.25.zip",
+      "size": 731773,
+      "sha256": "071d400f54d3d71310b0506e54111bd5b6b6aa5dd9057a2504171381174f34e3",
+      "server_digest": "sha256:071d400f54d3d71310b0506e54111bd5b6b6aa5dd9057a2504171381174f34e3",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-0.6.25.zip",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "071d400f54d3d71310b0506e54111bd5b6b6aa5dd9057a2504171381174f34e3",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.1.37-macos-x86_64.dmg.sha256",
+      "size": 106,
+      "sha256": "a9a7c608d5baa27e6a2c2e20b4a3bb44e15eaf261df981da9f5a55f06182139a",
+      "server_digest": "sha256:a9a7c608d5baa27e6a2c2e20b4a3bb44e15eaf261df981da9f5a55f06182139a",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-workbench-0.1.37-macos-x86_64.dmg.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "a9a7c608d5baa27e6a2c2e20b4a3bb44e15eaf261df981da9f5a55f06182139a",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-codex-0.6.25.zip",
+      "size": 740646,
+      "sha256": "a23337a131c2c93a2acb4075ab4db2dd683e081aea35a7dc575bbfde490f0f46",
+      "server_digest": "sha256:a23337a131c2c93a2acb4075ab4db2dd683e081aea35a7dc575bbfde490f0f46",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-codex-0.6.25.zip",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "a23337a131c2c93a2acb4075ab4db2dd683e081aea35a7dc575bbfde490f0f46",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.25.zip",
+      "size": 738220,
+      "sha256": "7e805a5bd18491d223ffe5161d98184255689a123693745477571c1d4eea8cf0",
+      "server_digest": "sha256:7e805a5bd18491d223ffe5161d98184255689a123693745477571c1d4eea8cf0",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-claude-desktop-0.6.25.zip",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "7e805a5bd18491d223ffe5161d98184255689a123693745477571c1d4eea8cf0",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.1.37-macos-x86_64.zip.sha256",
+      "size": 106,
+      "sha256": "049cb78dd84e502099e432d2599487c3889b76933d776430b945a44e16453ae9",
+      "server_digest": "sha256:049cb78dd84e502099e432d2599487c3889b76933d776430b945a44e16453ae9",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-workbench-0.1.37-macos-x86_64.zip.sha256",
+      "anonymous": true,
+      "method": "full_anonymous_download",
+      "full_file_downloaded_anonymously": true,
+      "http_status": 200,
+      "downloaded_sha256": "049cb78dd84e502099e432d2599487c3889b76933d776430b945a44e16453ae9",
+      "final_host": "release-assets.githubusercontent.com"
+    },
+    {
+      "name": "story-workbench-0.1.37-macos-x86_64.zip",
+      "size": 26916725,
+      "sha256": "49f149010962aa73201712c21514453074b5747efea1cb7e1bd8fe7e7991b09c",
+      "server_digest": "sha256:49f149010962aa73201712c21514453074b5747efea1cb7e1bd8fe7e7991b09c",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-workbench-0.1.37-macos-x86_64.zip",
+      "anonymous": true,
+      "method": "full_anonymous_download_parallel_ranges",
+      "full_file_downloaded_anonymously": true,
+      "downloaded_bytes": 26916725,
+      "downloaded_sha256": "49f149010962aa73201712c21514453074b5747efea1cb7e1bd8fe7e7991b09c",
+      "all_ranges_contiguous_non_overlapping": true,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 1048575,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "09e4d58c60a74e33c178f8e39d3b72d101cc408119c02c6cec5e392180b436af",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 1048576,
+          "end": 2097151,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "d07e2d5ab9f98162d0edaca22c0886b44de33f39ae54a844f97d6efb9771f42d",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 2097152,
+          "end": 3145727,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "e312aeaa872da7f4631b1247b710f589b3639716d7907c73be6f5a8c697a2806",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 3145728,
+          "end": 4194303,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "28e5af134828f2db6b1f64f773695adf55e44e0a2895f190a2a61bd2d89d33c3",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 4194304,
+          "end": 5242879,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "cf0f7d1e9404769f92a75a33b6ef32e944483093bc6274f8780905023769fca1",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 5242880,
+          "end": 6291455,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "cbe172b02d4403ab72eda28592d89404449daae576f7c5f891a3663a10d63752",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 6291456,
+          "end": 7340031,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "ad7710520509e113917b1bce3f26e1b8ab764823ffd0e1cd714980fb64f78562",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 7340032,
+          "end": 8388607,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "7b41010132bd6c0439d30e7769a22308b371c9392267c6dbdddb2105dd682004",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 8388608,
+          "end": 9437183,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "ffb33aac574ef4abeac1c9bd5c0b27f3d287f4063fe7ef281678357ba93e4234",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 9437184,
+          "end": 10485759,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "aaf2a762ae5da035227372bdb3ac4b07b35d57b6bf2212ad8c503adb3e3a9880",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 10485760,
+          "end": 11534335,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "a9b84d28cfbad6f114098872c64ec489a06245e3bbdec7393682cc30c512da47",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 11534336,
+          "end": 12582911,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "5267a524af6ac18e35817d5429e123bb9c4edd756e37b2ca34cfb301523a5e8c",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 12582912,
+          "end": 13631487,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "cc8ababf3efc8f74a56b42d23325ab1593a30d6bec229595ef27e1719f501324",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 13631488,
+          "end": 14680063,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "7aa228b7971fbde848e4d32d652f88d23a558800832596721571768a507a50a2",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 14680064,
+          "end": 15728639,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "84321d925da635f925368497eeeeda6ed550304b9863061e4fa998e86e062208",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 15728640,
+          "end": 16777215,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "b7a374a45fa8432c71eec656a666dc0e836dfb87a5d5a8a5fb6fee5a62340f33",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 16777216,
+          "end": 17825791,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "55864e23fdaf220243a717de312d9edaefc0f956282e7e67dea4ab99dd652f05",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 17825792,
+          "end": 18874367,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "b408707620c40a749641d6820e4ad877fc7ed43483d6a4d1c3c98217b201b222",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 18874368,
+          "end": 19922943,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "b44ba38d9ea764926d07af3dfbc8dacb175c424ec48eb4859adf9102a43028c8",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 19922944,
+          "end": 20971519,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "f419fae44b18362fadeefe5cc0b199b326b106145b0655f8ecc66740150d8c5f",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 20971520,
+          "end": 22020095,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "59d5ed1b3b79fee355b2c71e660753069899fc07963cb141df5f38d35b8224a7",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 22020096,
+          "end": 23068671,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "8c4673109a23f4046aa6e09c0c603d55e8f5edece09697fec6dad40a96724df5",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 23068672,
+          "end": 24117247,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "e178c874f94db2aa2a0688007573b273ad298abd428034fbaf5d1606478df1bf",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 24117248,
+          "end": 25165823,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "faa2b7a5dee315c49920f24a60bf0b0900361fd68a2b2dc0f69963f09e19b9f1",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 25165824,
+          "end": 26214399,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "64e538fcffe70df96084e39dbf7de243863252bfaf46a649bcf47a94600b2308",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 26214400,
+          "end": 26916724,
+          "http_status": 206,
+          "bytes": 702325,
+          "sha256": "53a1808cee70bec0ffe3af574a2d648224df22b1a0307b769cc13e1dfd5fc177",
+          "final_host": "release-assets.githubusercontent.com"
+        }
+      ]
+    },
+    {
+      "name": "story-workbench-0.1.37-macos-x86_64.dmg",
+      "size": 34782979,
+      "sha256": "012e0e3dafe6fced8b8a800b47011bd1ba5aa1af496d7c8af9766f5cfbefeed5",
+      "server_digest": "sha256:012e0e3dafe6fced8b8a800b47011bd1ba5aa1af496d7c8af9766f5cfbefeed5",
+      "url": "https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-workbench-0.1.37-macos-x86_64.dmg",
+      "anonymous": true,
+      "method": "full_anonymous_download_parallel_ranges",
+      "full_file_downloaded_anonymously": true,
+      "downloaded_bytes": 34782979,
+      "downloaded_sha256": "012e0e3dafe6fced8b8a800b47011bd1ba5aa1af496d7c8af9766f5cfbefeed5",
+      "all_ranges_contiguous_non_overlapping": true,
+      "chunks": [
+        {
+          "start": 0,
+          "end": 1048575,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "3fa8dfceba344307d65c659bb19c00644fd7ea397b8f5191ccb531278fe60a25",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 1048576,
+          "end": 2097151,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "70a9630393610521a7f84d2e31d07e469bac4541478ec337dad1abec6223fb44",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 2097152,
+          "end": 3145727,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "2715bd96f46c7a51eade39f2704469f0db706e4cee5c17609bc2ebfaf8dbc4dc",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 3145728,
+          "end": 4194303,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "26e4755db0eff3e6723ab80f94ddabae672216502846a2d63877f8c21620f41c",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 4194304,
+          "end": 5242879,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "303e716f17545095abc80bfa099de892cc64431c5db2e9318ef8bdf5734ff9de",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 5242880,
+          "end": 6291455,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "f4aa251730ee3fa13b5fdccee65292c1cb62d60dd216d08863e682c5cbe5167c",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 6291456,
+          "end": 7340031,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "09d1e60b9e8914bd1a0ff1c9c7bf9ab2789d5c0ed743ceb722d1f2ec9cf42f01",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 7340032,
+          "end": 8388607,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "36a11dfa4e3f62f72f68a851c716d26fa89ec217c25db61ce9da75363dc5d35e",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 8388608,
+          "end": 9437183,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "eeb825dfa12f8ac561f244e0ce4cea01a5f450f769ee7878c96c3e7323db5498",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 9437184,
+          "end": 10485759,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "1a7526b382610b04f5aa2df02f1e0fdefa470c7b624f4edf3283c01a30ac9362",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 10485760,
+          "end": 11534335,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "d35128c13338e090aa9a318090ee51f30fdc6edb016514e8dbd5e199fe6d7300",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 11534336,
+          "end": 12582911,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "ae52e9905bae83647ce17797d7064e2750a75deb0f1e2302c6d274fd8ffd8a08",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 12582912,
+          "end": 13631487,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "95cd10155ef7034fddf758b01c50d881d7c13d74135876bbc84dc77eb11a7e3c",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 13631488,
+          "end": 14680063,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "7b931870baed085264956461a60648181ac5b6d4e277ee43f17765dd39ff32b7",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 14680064,
+          "end": 15728639,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "5a33ae546200cd04841b7ffb709adce33a6f97022d1ebe5c32cce5b1c7b9b6d6",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 15728640,
+          "end": 16777215,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "06855cdee804e450dcf2bc610635865f260e05fb42053cb3a19f067f3b1b4d21",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 16777216,
+          "end": 17825791,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "228558e081bfe0b4bf31b35f857c9cda006a0dafc6ac461a9e41d458cb982e3c",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 17825792,
+          "end": 18874367,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "10ff8fa5b5b35c5f7503ec5ff58038b1103db2334e05fe024d1694acd29adab7",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 18874368,
+          "end": 19922943,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "6a0612b8ede36ef5ea4416ed21dd095d5036b39d751a70abd3d29545e2d20d5d",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 19922944,
+          "end": 20971519,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "ddecc9a07837ec2daef04b7aa052f2f13a707d710a41e0cf3bdbd33a1f3f8e47",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 20971520,
+          "end": 22020095,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "36817ec182899ebdd09dc0c88fb5134cc34c9e2cb4dce09f4b053176fadb22c4",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 22020096,
+          "end": 23068671,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "cfee4d509275f5290509795bfbfd4e1ee2f17c5087face71a760535ba151095f",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 23068672,
+          "end": 24117247,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "976b79e37437005e9e9885dd5961066f569f9682ab778fbe021b64b7de1c3083",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 24117248,
+          "end": 25165823,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "75b91d3972f09bacc87544ec7b499ba2e393aef5e8a46787e4aa4d7c57944698",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 25165824,
+          "end": 26214399,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "9bee617786e164a76ec50b4bce343c0829343cc2a43cb16e96a0febe59adecb0",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 26214400,
+          "end": 27262975,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "96c5b0a5f9000ccb96def8fca6ec2cdd3aec9521a1cf93f64b72c27c46d5664d",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 27262976,
+          "end": 28311551,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "892f906132326eb3b607a16fd1306e8614fb8e68e424899941959e84205f40e4",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 28311552,
+          "end": 29360127,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "2a165cfa18e8f1ac7ed63bf87bde1f9daa015513c60306db8cb2b1ca6bec27d6",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 29360128,
+          "end": 30408703,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "97b9f3c09d6543a190c494496fa3a0dd243aff8e0357c2f3fccf2ab855e20fd0",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 30408704,
+          "end": 31457279,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "740c24463ca3d3afa61dd707d18b210407f1ca72db333db4b1334777a09eb8ab",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 31457280,
+          "end": 32505855,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "9fbccbf72c546d0009c8832b3d2640626d8a1592d6a3e1d0fca3b920f727ac30",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 32505856,
+          "end": 33554431,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "c222c896a24217607983e67876d4515ce7734eee40890cecf487d588e8be1236",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 33554432,
+          "end": 34603007,
+          "http_status": 206,
+          "bytes": 1048576,
+          "sha256": "d5fa96d768025a95cfeae740edd8c650fa1ad37aa3bd4b97c3c27fcb947a29a5",
+          "final_host": "release-assets.githubusercontent.com"
+        },
+        {
+          "start": 34603008,
+          "end": 34782978,
+          "http_status": 206,
+          "bytes": 179971,
+          "sha256": "2a51207a747fe0d2d25b22ffcee6ef3707c08f6e5797411addaa8c0bcbb9440b",
+          "final_host": "release-assets.githubusercontent.com"
+        }
+      ]
+    }
+  ],
+  "scope": "All 10 primary release assets (skill ZIPs, Mac ZIP/DMG and checksums) downloaded anonymously in full with complete SHA256 verification.",
+  "skill_and_mac_build_source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5",
+  "windows_build_source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5",
+  "tag_source_commit": "b344e15dbcfb2c10f70f8d97ad706b9afdf092be",
+  "fixed_build_inputs": "../build-inputs.json",
+  "release_id": 423112219,
+  "release_url": "https://github.com/NingCui29/story-skill/releases/tag/v0.6.25",
+  "published_at": "2026-10-25T10:21:21Z",
+  "latest_tag": "v0.6.25"
+}

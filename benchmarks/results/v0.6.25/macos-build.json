@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "application": "<repo>/dist/release-v0.6.25-candidate/写作工作台.app",
+  "app_version": "0.1.37",
+  "story_version": "0.6.25",
+  "architecture": "x86_64",
+  "minimum_macos": "13.0",
+  "runtime_version": "Python 3.12.14",
+  "runtime_files": {
+    "story.py": "2274f6869f349c9947ab6893f232db1f8b6f9bf387aad50fbba5ff95e7e9f3fe",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+    "story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+    "story_workbench.py": "d4f99c14952723e231c722519d0bd97bafd3786b677f4aafc87c51eae27c14e0",
+    "story_platform_drafts.py": "811f09c4610d024f83612049ca4ce417f7c78f7c981a86ffecde4f64ed00a6ef",
+    "story_platform_browser.py": "1191dc7f0932d8d1df02a0d208f512c84086e4c6723a83002c411c91e8cb776c",
+    "story_platform_chrome_bridge.py": "fa7c9c2f26648f73f591b7947f3e6598e4d7f6452c6f8571be8f133b6187543a",
+    "story_chrome_bridge.mjs": "4669e51f6d521a801033e541c6222464692dd24eb13c9dbf1491170d7f4fee8c",
+    "story_chrome_worker.py": "1f057244f8cb62a2a348d9a6a8b96bedcfb8ba85ca3d9e026c83c6f64e115282",
+    "story_chrome_worker.mjs": "8a989996066f2013094f9818b17288f17bc23e1f37cccf52190c68f26b6346f6",
+    "story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+    "story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+    "story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+    "story_workbench_books.py": "dda3232c90471017c06d097c3032197c2aa7e9f7d916e391adb14d0f99557b63",
+    "story_workbench_archives.py": "718c9b4a2601f63d5e1d558f28a0c713d0d3de911993ac390ad70f0d2f73367b"
+  },
+  "native_source_sha256": "2461e95638279fb4745c46d727e8fafd65bb92eafaf049bc8dcd243cd38b38f5",
+  "native_sources": {
+    "StoryWorkbench.swift": "2461e95638279fb4745c46d727e8fafd65bb92eafaf049bc8dcd243cd38b38f5",
+    "ClientInstance.swift": "0095926b51f72892b8aa91bbf48348ec57d20c7539098d1cfef372385aa641b9"
+  },
+  "launcher_sha256": "857ba35f2842fa23a184fcd908c15e875d81bdcf2586bea788702be8de5ae73a",
+  "editor_appearance_sha256": "2db78cc989b6fa49092a6a9b17fad65b11011b3923fed2ae8d0b638cef6a49c7",
+  "editor_safety_sha256": "9b1487d0e7c9caadda4a001942bedde1280a27b56c2e0236835ae6f3e08404c5",
+  "local_build": true,
+  "source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5"
+}

@@ -1,0 +1,219 @@
+{
+  "ok": true,
+  "synthetic_data_only": true,
+  "explicit_self_test_urls_bypass_default_launcher": true,
+  "existing_user_services_touched": false,
+  "installed_application_replaced": false,
+  "reports": [
+    "macos-native-shelf.json",
+    "macos-native-editor.json",
+    "macos-native-switch.json"
+  ],
+  "isolated_services_http_200": true,
+  "strict_signature_after_native_self_tests": true,
+  "native_webkit_shelf_editor_and_switching": true,
+  "manual_close_warning_download_and_installed_app_workflows": "not exercised by this acceptance",
+  "isolated_service_cleanup": true,
+  "normal_stop_receipts": [
+    {
+      "allowed": true,
+      "automatic_verified": true,
+      "book_id": "2b13d36a-f4a2-454c-9612-fa9ad1b3844f",
+      "code_sha256": "d4f99c14952723e231c722519d0bd97bafd3786b677f4aafc87c51eae27c14e0",
+      "instance": "27dfd94165b444f7b34e839b8a860701",
+      "manual_unknown_confirmation": false,
+      "ok": true,
+      "outdated": false,
+      "pid": 21604,
+      "platform_activity": {
+        "binding": false,
+        "busy": false,
+        "jobs": [],
+        "supported": true
+      },
+      "presence": {
+        "automatic_verified": true,
+        "book_id": "2b13d36a-f4a2-454c-9612-fa9ad1b3844f",
+        "can_stop": true,
+        "counts": {
+          "closed": 1,
+          "dirty": 0,
+          "needs_recovery": 0,
+          "open": 1,
+          "pending_pages": 0,
+          "recovering": 0,
+          "registered": 2,
+          "saving": 0,
+          "unknown": 0
+        },
+        "coverage": "server_issued_pages_this_instance",
+        "fingerprint": "cfc274bf8e5e8727b6d07b7f657c16d5ac879612c12fcdcb42686596273d3c12",
+        "instance": "27dfd94165b444f7b34e839b8a860701",
+        "legacy_services_covered": false,
+        "manual_confirmation_required": false,
+        "no_pages": false,
+        "pages": [
+          {
+            "buffers": [],
+            "initialized": true,
+            "last_known_pending": false,
+            "page_id": "857580642a3145e1a980190dec43f57a",
+            "seconds_since_report": 7.0,
+            "sequence": 0,
+            "stale": false,
+            "state": "closed",
+            "unknown_reason": null
+          },
+          {
+            "buffers": [
+              {
+                "dirty": false,
+                "id": "file:.story/drafts/合成候选.md",
+                "needs_recovery": false,
+                "recovering": false,
+                "saving": false,
+                "title": "合成候选"
+              }
+            ],
+            "initialized": true,
+            "last_known_pending": false,
+            "page_id": "2fe6c2ebc29b4401ba985164797bdcb7",
+            "seconds_since_report": 2.2,
+            "sequence": 5,
+            "stale": false,
+            "state": "clean",
+            "unknown_reason": null
+          }
+        ],
+        "protocol": 1,
+        "saved_assertion_is_automatic_verification": false,
+        "state": "clean"
+      },
+      "presence_supported": true,
+      "root": "<isolated>/probe/合成恢复副本 中文 空格",
+      "running": true,
+      "runtime_sha256": "6cb220b3fb1afbd7476fab11eaf79a9543418eb50eb72a01c48c05851f3cc81b",
+      "started": "2026-10-25T09:20:06.531462Z",
+      "stop_requested": true,
+      "url": "http://127.0.0.1:58286/<ephemeral-route>/"
+    },
+    {
+      "allowed": true,
+      "automatic_verified": true,
+      "book_id": "2b13d36a-f4a2-454c-9612-fa9ad1b3844f",
+      "code_sha256": "d4f99c14952723e231c722519d0bd97bafd3786b677f4aafc87c51eae27c14e0",
+      "instance": "10337a88b90842f5baf4677a4ee43b70",
+      "manual_unknown_confirmation": false,
+      "ok": true,
+      "outdated": false,
+      "pid": 21542,
+      "platform_activity": {
+        "binding": false,
+        "busy": false,
+        "jobs": [],
+        "supported": true
+      },
+      "presence": {
+        "automatic_verified": true,
+        "book_id": "2b13d36a-f4a2-454c-9612-fa9ad1b3844f",
+        "can_stop": true,
+        "counts": {
+          "closed": 1,
+          "dirty": 0,
+          "needs_recovery": 0,
+          "open": 2,
+          "pending_pages": 0,
+          "recovering": 0,
+          "registered": 3,
+          "saving": 0,
+          "unknown": 0
+        },
+        "coverage": "server_issued_pages_this_instance",
+        "fingerprint": "55dcbacb1d036f19b664405107180f1befa66d8fe3d56591f977a82f32da845e",
+        "instance": "10337a88b90842f5baf4677a4ee43b70",
+        "legacy_services_covered": false,
+        "manual_confirmation_required": false,
+        "no_pages": false,
+        "pages": [
+          {
+            "buffers": [],
+            "initialized": true,
+            "last_known_pending": false,
+            "page_id": "86b114f413b64b5fa3de7e7c68999caa",
+            "seconds_since_report": 9.9,
+            "sequence": 0,
+            "stale": false,
+            "state": "closed",
+            "unknown_reason": null
+          },
+          {
+            "buffers": [
+              {
+                "dirty": false,
+                "id": "file:.story/drafts/合成候选.md",
+                "needs_recovery": false,
+                "recovering": false,
+                "saving": false,
+                "title": "合成候选"
+              }
+            ],
+            "initialized": true,
+            "last_known_pending": false,
+            "page_id": "39205c47a8fb47b1b3e51bda1238d5be",
+            "seconds_since_report": 5.6,
+            "sequence": 5,
+            "stale": false,
+            "state": "clean",
+            "unknown_reason": null
+          },
+          {
+            "buffers": [
+              {
+                "dirty": false,
+                "id": "file:.story/drafts/合成候选.md",
+                "needs_recovery": false,
+                "recovering": false,
+                "saving": false,
+                "title": "合成候选"
+              }
+            ],
+            "initialized": true,
+            "last_known_pending": false,
+            "page_id": "646ccbef0acb4a53a0960962088e452b",
+            "seconds_since_report": 3.3,
+            "sequence": 6,
+            "stale": false,
+            "state": "clean",
+            "unknown_reason": null
+          }
+        ],
+        "protocol": 1,
+        "saved_assertion_is_automatic_verification": false,
+        "state": "clean"
+      },
+      "presence_supported": true,
+      "root": "<isolated>/probe/合成作品 中文 空格",
+      "running": true,
+      "runtime_sha256": "6cb220b3fb1afbd7476fab11eaf79a9543418eb50eb72a01c48c05851f3cc81b",
+      "started": "2026-10-25T09:20:05.095086Z",
+      "stop_requested": true,
+      "url": "http://127.0.0.1:58279/<ephemeral-route>/"
+    },
+    {
+      "code_sha256": "d4f99c14952723e231c722519d0bd97bafd3786b677f4aafc87c51eae27c14e0",
+      "instance": "903e17e2b67243e8ac46fb939d1f1697",
+      "mode": "library",
+      "ok": true,
+      "outdated": false,
+      "pid": 21452,
+      "running": true,
+      "runtime_sha256": "6cb220b3fb1afbd7476fab11eaf79a9543418eb50eb72a01c48c05851f3cc81b",
+      "started": "2026-10-25T09:20:03.545641Z",
+      "state_dir": "<isolated>/native-shelf",
+      "stop_requested": true,
+      "url": "http://127.0.0.1:58258/"
+    }
+  ],
+  "normal_stop_commands_succeeded": true,
+  "source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5"
+}

@@ -1,0 +1,268 @@
+{
+  "ok": true,
+  "repository": "NingCui29/story-skill",
+  "release_id": 423112204,
+  "tag": "windows-v0.2.4",
+  "source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5",
+  "draft": true,
+  "assets": [
+    {
+      "id": 674623259,
+      "name": "story-workbench-0.2.4-windows-x86_64-setup.exe",
+      "sha256": "791d7bd00774f66d704199ab52c9af5dfc2f188f068c085b02921fb62490de12",
+      "bytes": 299332749,
+      "action": "uploaded"
+    },
+    {
+      "id": 674623637,
+      "name": "story-workbench-0.2.4-windows-x86_64-setup.exe.sha256",
+      "sha256": "8c38dfdbec14d917409f6102ac23a55d0faba18ea189b52ce949954725984bbe",
+      "bytes": 114,
+      "action": "uploaded"
+    },
+    {
+      "id": 674623701,
+      "name": "story-workbench-0.2.4-windows-x86_64.zip",
+      "sha256": "ac154d9c0b99fcd48359b16985d4fbf2ed47b803abc3bde7fe953c8f9904284c",
+      "bytes": 320793095,
+      "action": "uploaded"
+    },
+    {
+      "id": 674624162,
+      "name": "story-workbench-0.2.4-windows-x86_64.zip.sha256",
+      "sha256": "0327e423ae6ebd45691f4e6c9f47eaa77521725fe99de22c328962fcc3b7e718",
+      "bytes": 108,
+      "action": "uploaded"
+    }
+  ],
+  "verification": {
+    "ok": true,
+    "repository": "NingCui29/story-skill",
+    "source_commit": "45fe93530a3e07975ad5728a7d575ef23f8ae3d5",
+    "story_version": "0.6.25",
+    "client_version": "0.2.4",
+    "assets": {
+      "story-workbench-0.2.4-windows-x86_64-setup.exe": {
+        "bytes": 299332749,
+        "sha256": "791d7bd00774f66d704199ab52c9af5dfc2f188f068c085b02921fb62490de12"
+      },
+      "story-workbench-0.2.4-windows-x86_64-setup.exe.sha256": {
+        "bytes": 114,
+        "sha256": "8c38dfdbec14d917409f6102ac23a55d0faba18ea189b52ce949954725984bbe"
+      },
+      "story-workbench-0.2.4-windows-x86_64.zip": {
+        "bytes": 320793095,
+        "sha256": "ac154d9c0b99fcd48359b16985d4fbf2ed47b803abc3bde7fe953c8f9904284c"
+      },
+      "story-workbench-0.2.4-windows-x86_64.zip.sha256": {
+        "bytes": 108,
+        "sha256": "0327e423ae6ebd45691f4e6c9f47eaa77521725fe99de22c328962fcc3b7e718"
+      }
+    },
+    "portable_crc_and_safe_paths": true,
+    "manifest_sha256": "b61435f07c469d909e2b3a1fe789bfb7203b152312ab487bacd60306a903a681",
+    "manifest_files_verified": 1125,
+    "runtime_sha256": {
+      "story.py": "2274f6869f349c9947ab6893f232db1f8b6f9bf387aad50fbba5ff95e7e9f3fe",
+      "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+      "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+      "story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+      "story_workbench.py": "d4f99c14952723e231c722519d0bd97bafd3786b677f4aafc87c51eae27c14e0",
+      "story_platform_drafts.py": "811f09c4610d024f83612049ca4ce417f7c78f7c981a86ffecde4f64ed00a6ef",
+      "story_platform_browser.py": "1191dc7f0932d8d1df02a0d208f512c84086e4c6723a83002c411c91e8cb776c",
+      "story_platform_chrome_bridge.py": "fa7c9c2f26648f73f591b7947f3e6598e4d7f6452c6f8571be8f133b6187543a",
+      "story_chrome_bridge.mjs": "4669e51f6d521a801033e541c6222464692dd24eb13c9dbf1491170d7f4fee8c",
+      "story_chrome_worker.py": "1f057244f8cb62a2a348d9a6a8b96bedcfb8ba85ca3d9e026c83c6f64e115282",
+      "story_chrome_worker.mjs": "8a989996066f2013094f9818b17288f17bc23e1f37cccf52190c68f26b6346f6",
+      "story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+      "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+      "story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+      "story_workbench_books.py": "dda3232c90471017c06d097c3032197c2aa7e9f7d916e391adb14d0f99557b63",
+      "story_workbench_archives.py": "718c9b4a2601f63d5e1d558f28a0c713d0d3de911993ac390ad70f0d2f73367b"
+    },
+    "installed_manifest_files_verified": 0,
+    "installed_tree_verified": false,
+    "ui_stack": "wpf-webview2",
+    "self_contained": true,
+    "dotnet_runtime_versions": {
+      "Microsoft.NETCore.App": "10.0.13",
+      "Microsoft.WindowsDesktop.App": "10.0.13"
+    },
+    "client_source_sha256": {
+      "desktop/windows/StoryWorkbench/App.cs": "e4c0970b0db30b5598b5e664f099c7e844f6ca9dc88a941404620568aac28560",
+      "desktop/windows/StoryWorkbench/app.manifest": "e59c4d306c8b2ed716335f8ecc7a4465d66c8dfef5474171c9dc2d67dfbbe450",
+      "desktop/windows/StoryWorkbench/Backend.cs": "1059cac52fc2548567b0eb65a48ec8c7f566144af7e9b5a71a59171118588efe",
+      "desktop/windows/StoryWorkbench/BrowserSafety.cs": "df62537b127377d53569287fe94e08b378656bec8551c0817e4c33b4d76cd743",
+      "desktop/windows/StoryWorkbench/BrowserTab.cs": "2c506dcc79e0a4b6cece5bf018bb847bf5aef909bdca0d295d1aa61737b37b05",
+      "desktop/windows/StoryWorkbench/GlobalUsings.cs": "9087a69bb7c9490f6c6505a3cdc3ced73cf0a64d4cd3706b9148292a87bd4000",
+      "desktop/windows/StoryWorkbench/MainWindow.cs": "d657a8de163380d8f6683992eb601f331b9025b70b4cfb7961427e42d7d3d6d0",
+      "desktop/windows/StoryWorkbench/PageLifecycle.cs": "7d3216c9009d7b3780920ceb35dc8cf8404fcd2d2651c0759e77db72a52c546f",
+      "desktop/windows/StoryWorkbench/StoryWorkbench.csproj": "0795952086b88bc7b3c6f37a987d35c15cb807af24934158842184961e60e874",
+      "desktop/windows/StoryWorkbench/ThemePreferences.cs": "9d937185104990b5e44cb5328678512117b2f5041ef5120e01a2f9cc19513c2e",
+      "desktop/windows/StoryWorkbench/UpdateService.cs": "8df9d31f656a60890a929438aadb0969e7008b6995fa0397d09ccf9ac27cd63e",
+      "desktop/windows/StoryWorkbench/UpdateWindow.cs": "09397a93781bddacf1220444f532973f450c5192c9e5e657746d4ea257e14452"
+    },
+    "forbidden_technologies_absent": true,
+    "webview2_runtime": {
+      "kind": "evergreen-standalone",
+      "architecture": "x64",
+      "path": "Prerequisites/MicrosoftEdgeWebView2RuntimeInstallerX64.exe",
+      "source_url": "https://go.microsoft.com/fwlink/?linkid=2124701",
+      "resolved_url": "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d6c50665-06a3-4ebe-8bde-7e408a78f093/MicrosoftEdgeWebView2RuntimeInstallerX64.exe",
+      "bytes": 214823632,
+      "sha256": "9b0142e22e8daa92855d746ae4d1e9eeef561ccaf67d1dd452165c4af3df3191",
+      "pe_machine": 332,
+      "signature": {
+        "status_message": "Signature verified.",
+        "thumbprint": "4028CAD637509D4744B17EC5B42AED8D7A31E6AF",
+        "subject": "CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US",
+        "product_name": "Microsoft Edge Update",
+        "file_version": "1.3.299.15",
+        "status": "Valid"
+      },
+      "distribution_terms": "https://developer.microsoft.com/en-us/microsoft-edge/webview2/"
+    },
+    "mapped_source_sha256": {
+      "backend_runner.py": "73f56599bb47809744865292c35b409ba6c8c5a273b45e7257224b320e8b96d5",
+      "installation_lifecycle.py": "20790e1b270ea1af53ca5c985c4d26bdceb7aa6fdef78b98a8323be76b3dc2f3",
+      "StorySkill-LICENSE.txt": "f34a779bf87b330af68a9f9cbdb84bcf8d32163eddf3345ab3b1bb71e6141ae6",
+      "README.md": "d0edfcbc67b59cb328b9e150e15aad4b8cb9b281d90034d850eb7d43967565f9"
+    },
+    "runtime_notice_manifest_sha256": "f96abddc4c28ba015fd239f646346ef56d9d912b79b293c746e5f0a1ad09ca5b",
+    "runtime_notice_files_verified": 6,
+    "runtime_notice_sha256": {
+      "microsoft.netcore.app.runtime.win-x64/LICENSE.TXT": "d7a68596ab69b06f51ca278a6545148e4269a9381c26d597c13df5d88e08cf5b",
+      "microsoft.netcore.app.runtime.win-x64/THIRD-PARTY-NOTICES.TXT": "6d15e10a101c6bfff2ab4429ed061bf76c456fc4b23ad6b03e0d0f8377148a21",
+      "microsoft.web.webview2/LICENSE.txt": "0af8f1b807512aae39c2ac1aa4d0cae65cabecb6fd554b8439a5162a0d6eca55",
+      "microsoft.web.webview2/NOTICE.txt": "106423785c5b7eba0a8e61d1837f2132e9c828e20ad530f565d981c1df60dd90",
+      "microsoft.windowsdesktop.app.runtime.win-x64/LICENSE": "a89886665765362eb77e0f8e26602c924520041d1711b2eedc136434fe4d01ab",
+      "Python/LICENSE.txt": "e502c6b880ff58d614901495a9009c136539cd0b1e2a2abb8fc00b934c203419"
+    },
+    "native_report": {
+      "ok": true,
+      "native_window": true,
+      "shelf_rendered": true,
+      "title": "写作书架",
+      "captured": true,
+      "client_version": "0.2.4",
+      "ui_stack": "wpf-webview2",
+      "self_contained": true,
+      "in_private": true,
+      "update_check_available": true,
+      "update_progress_verified": true,
+      "update_progress_synthetic": true,
+      "update_capture": {
+        "ok": true,
+        "background": "#FFFAFAFA",
+        "foreground": "#E4000000",
+        "opaque_fraction": 1,
+        "alpha_threshold": 254,
+        "minimum_alpha": 254,
+        "exact_opaque_fraction": 0.9747859396124381,
+        "background_pixel_matches": true,
+        "contrast_ratio": 16.593728218688323
+      },
+      "themes_verified": true,
+      "theme_captures": {
+        "light": true,
+        "dark": true
+      },
+      "native_close_probe_verified": true,
+      "hidden_buffers_verified": true,
+      "ime_guard_verified": true,
+      "buffer_export_verified": true,
+      "synthetic_editor_fixture": true,
+      "shelf_state_guard_verified": true,
+      "native_system_theme_verified": true,
+      "preferences_restored_verified": true,
+      "preference_diagnostics": {
+        "bridge_received": true,
+        "disk_reloaded": true,
+        "new_origin_loaded": true,
+        "new_origin_value_matches": true,
+        "response_is_string": true
+      },
+      "failed_tab_recovery_verified": true,
+      "unknown_crash_protected": true
+    },
+    "native_contract_report": {
+      "ok": true,
+      "total": 39,
+      "passed": 39,
+      "skipped": 0,
+      "failed": []
+    },
+    "installed_payload_safety_report": {
+      "ok": true,
+      "platform": "win32",
+      "story_version": "0.6.25",
+      "isolated_payload": true,
+      "created_and_registered": true,
+      "backup_verified": true,
+      "restore_identity_preserved": true,
+      "candidate_and_binary_preserved": true,
+      "sqlite_integrity_verified": true,
+      "missing_trash_path_refused": true,
+      "native_trash_bridge_checked": true,
+      "existing_book_files_recycled": false
+    },
+    "source_inputs_sha256": {
+      ".gitattributes": "c833bdc7367d69277e8e7bb12a1c5293720e1ccd6051631cdd81d7e2687ef76b",
+      ".github/workflows/desktop-windows.yml": "ad44c48d93d0567c8004a8be9d6e8fd4bb87f3594382175897b87a43de429de9",
+      "LICENSE": "f34a779bf87b330af68a9f9cbdb84bcf8d32163eddf3345ab3b1bb71e6141ae6",
+      "desktop/macos/backend_runner.py": "73f56599bb47809744865292c35b409ba6c8c5a273b45e7257224b320e8b96d5",
+      "desktop/macos/editor-safety.js.in": "86b84c1a9cfb982cac017d6b02e98a6e7408c6a6d731e93eafb0cf31a7bc6036",
+      "desktop/windows/README.md": "d0edfcbc67b59cb328b9e150e15aad4b8cb9b281d90034d850eb7d43967565f9",
+      "desktop/windows/StoryWorkbench/App.cs": "e4c0970b0db30b5598b5e664f099c7e844f6ca9dc88a941404620568aac28560",
+      "desktop/windows/StoryWorkbench/Backend.cs": "1059cac52fc2548567b0eb65a48ec8c7f566144af7e9b5a71a59171118588efe",
+      "desktop/windows/StoryWorkbench/BrowserSafety.cs": "df62537b127377d53569287fe94e08b378656bec8551c0817e4c33b4d76cd743",
+      "desktop/windows/StoryWorkbench/BrowserTab.cs": "2c506dcc79e0a4b6cece5bf018bb847bf5aef909bdca0d295d1aa61737b37b05",
+      "desktop/windows/StoryWorkbench/GlobalUsings.cs": "9087a69bb7c9490f6c6505a3cdc3ced73cf0a64d4cd3706b9148292a87bd4000",
+      "desktop/windows/StoryWorkbench/MainWindow.cs": "d657a8de163380d8f6683992eb601f331b9025b70b4cfb7961427e42d7d3d6d0",
+      "desktop/windows/StoryWorkbench/PageLifecycle.cs": "7d3216c9009d7b3780920ceb35dc8cf8404fcd2d2651c0759e77db72a52c546f",
+      "desktop/windows/StoryWorkbench/StoryWorkbench.csproj": "0795952086b88bc7b3c6f37a987d35c15cb807af24934158842184961e60e874",
+      "desktop/windows/StoryWorkbench/ThemePreferences.cs": "9d937185104990b5e44cb5328678512117b2f5041ef5120e01a2f9cc19513c2e",
+      "desktop/windows/StoryWorkbench/UpdateService.cs": "8df9d31f656a60890a929438aadb0969e7008b6995fa0397d09ccf9ac27cd63e",
+      "desktop/windows/StoryWorkbench/UpdateWindow.cs": "09397a93781bddacf1220444f532973f450c5192c9e5e657746d4ea257e14452",
+      "desktop/windows/StoryWorkbench/app.manifest": "e59c4d306c8b2ed716335f8ecc7a4465d66c8dfef5474171c9dc2d67dfbbe450",
+      "desktop/windows/installation_lifecycle.py": "20790e1b270ea1af53ca5c985c4d26bdceb7aa6fdef78b98a8323be76b3dc2f3",
+      "desktop/windows/installer.iss": "ef2b14d936aa7e01907337de919dfe800983c3a623de0cf02107d237fd534275",
+      "desktop/windows/requirements-build.txt": "7103afaa1aaf24dc1f5ddff008f4243de7a52cb70dd34bddbd743e341b411ac8",
+      "scripts/build_desktop_macos.py": "53e593734826ebe9b73fe0b1949fa89a072908a928076974310c54d3dc97ae15",
+      "scripts/build_desktop_windows.py": "fb4e6639e3926d3fbe93f715dd649fcbadbafc33902f600b114186e4cf1fdfae",
+      "scripts/check_forbidden_technologies.py": "4f4959169973850600c5eec0951509c8c74aef34dd4a9de0cfca1ff9811a51e5",
+      "scripts/editor_safety_payload.py": "2e48270e61d3e572dd22fdd5ced30b575ede0b5e399e66fad14cad987ae4e155",
+      "scripts/publish_windows_draft.py": "daf374758ce19e85799ecbf682236c605e5376d6b72d71e6fa2f0335a266fe37",
+      "skills/story-skill/scripts/story.py": "2274f6869f349c9947ab6893f232db1f8b6f9bf387aad50fbba5ff95e7e9f3fe",
+      "skills/story-skill/scripts/story_chrome_bridge.mjs": "4669e51f6d521a801033e541c6222464692dd24eb13c9dbf1491170d7f4fee8c",
+      "skills/story-skill/scripts/story_chrome_worker.mjs": "8a989996066f2013094f9818b17288f17bc23e1f37cccf52190c68f26b6346f6",
+      "skills/story-skill/scripts/story_chrome_worker.py": "1f057244f8cb62a2a348d9a6a8b96bedcfb8ba85ca3d9e026c83c6f64e115282",
+      "skills/story-skill/scripts/story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+      "skills/story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+      "skills/story-skill/scripts/story_platform_browser.py": "1191dc7f0932d8d1df02a0d208f512c84086e4c6723a83002c411c91e8cb776c",
+      "skills/story-skill/scripts/story_platform_chrome_bridge.py": "fa7c9c2f26648f73f591b7947f3e6598e4d7f6452c6f8571be8f133b6187543a",
+      "skills/story-skill/scripts/story_platform_drafts.py": "811f09c4610d024f83612049ca4ce417f7c78f7c981a86ffecde4f64ed00a6ef",
+      "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+      "skills/story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "skills/story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+      "skills/story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "skills/story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+      "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "skills/story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "skills/story-skill/scripts/story_workbench.py": "d4f99c14952723e231c722519d0bd97bafd3786b677f4aafc87c51eae27c14e0",
+      "skills/story-skill/scripts/story_workbench_archives.py": "718c9b4a2601f63d5e1d558f28a0c713d0d3de911993ac390ad70f0d2f73367b",
+      "skills/story-skill/scripts/story_workbench_books.py": "dda3232c90471017c06d097c3032197c2aa7e9f7d916e391adb14d0f99557b63",
+      "skills/story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+      "tests/desktop_payload_probe.py": "149ef63bfd5aca24134d54f609e7a54647dece9d73ba7d3ac3fb5801817216e7",
+      "tests/windows/BrowserSafetyTests.cs": "8ea9c627fdec3036beed2ec16f39a3114b2d9e5a353df46f64097f7e68f9c852",
+      "tests/windows/DesktopPreferencesTests.cs": "db44df096a5f9f66e04058b73006521b3ca59161ef8c4a79e1b5baf57ad2716b",
+      "tests/windows/Program.cs": "9dcbb8e3bc2600a54cb6c009928b909a71c5d05bb91f66bc960bcff1e43e2c13",
+      "tests/windows/StoryWorkbench.Tests.csproj": "1c1f8e702efedc63af66f26ae724ec021eee843aad3f1fbf688e0d4809a7c09d",
+      "tests/windows/UpdateServiceTests.cs": "adc3f1be2148693050577bb81670b9a6bd70ffbbe20ae86a57c89faac9187391"
+    }
+  }
+}
