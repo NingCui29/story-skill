@@ -180,10 +180,12 @@ SUITE_FILES_V0624 = SUITE_FILES_V0623
 SKILL_NAMES_V0624 = SKILL_NAMES_V0623
 SUITE_FILES_V0625 = SUITE_FILES_V0624
 SKILL_NAMES_V0625 = SKILL_NAMES_V0624
+SUITE_FILES_V0626 = SUITE_FILES_V0625
+SKILL_NAMES_V0626 = SKILL_NAMES_V0625
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0625
-SUITE_FILES = SUITE_FILES_V0625
+SKILL_NAMES = SKILL_NAMES_V0626
+SUITE_FILES = SUITE_FILES_V0626
 
 
 def suite_files(version):
@@ -226,6 +228,8 @@ def suite_files(version):
         return SUITE_FILES_V0624
     if version == "0.6.25":
         return SUITE_FILES_V0625
+    if version == "0.6.26":
+        return SUITE_FILES_V0626
     if version == "0.6.21":
         return SUITE_FILES_V0621
     raise ValueError(f"Release version has no reviewed suite layout: {version}")
@@ -271,6 +275,8 @@ def skill_names(version):
         return SKILL_NAMES_V0624
     if version == "0.6.25":
         return SKILL_NAMES_V0625
+    if version == "0.6.26":
+        return SKILL_NAMES_V0626
     if version == "0.6.21":
         return SKILL_NAMES_V0621
     raise ValueError(f"Release version has no reviewed suite layout: {version}")

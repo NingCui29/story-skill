@@ -5,7 +5,7 @@
 #ifndef InstallerOutput
   #define InstallerOutput "."
 #endif
-#define ClientVersion "0.2.4"
+#define ClientVersion "0.2.5"
 #define WebViewInstaller "MicrosoftEdgeWebView2RuntimeInstallerX64.exe"
 
 [Setup]

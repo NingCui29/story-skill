@@ -136,13 +136,19 @@ class Locator {
     await this.node().click?.();
   }
   async fill(value) {
-    this.tab.env.events.push(['fill',this.selector]); this.node().set(value);
+    this.tab.env.events.push(['fill',this.selector],['fieldInput',this.selector]); this.node().set(value);
     await this.tab.env.afterFill?.(this.tab,this.selector,value);
     if(this.tab.env.fillFailure)throw this.tab.env.fillFailure;
     if(this.tab.env.changeAccountAfterFill===this.selector)this.tab.env.account='different-account';
   }
   async press(value) {
     this.tab.env.events.push(['press',this.selector,value]);
+    if(['#chapter','#title'].includes(this.selector)) {
+      if(value==='Backspace')this.node().set(this.tab.env.clearHeaderResult??'');
+      else if(value==='Tab')await this.tab.env.afterHeaderBlur?.(this.tab,this.selector);
+      else assert.ok(['Meta+A','Control+A'].includes(value));
+      return;
+    }
     assert.equal(this.selector,'#body');
     if (value === 'Backspace') {
       this.tab.data.body=this.tab.env.clearBodyResult??'';
@@ -153,8 +159,17 @@ class Locator {
   }
   async type() { throw new Error('Paste-like CUA type must not write paragraph bodies'); }
   async pressSequentially(value, options) {
-    this.tab.env.events.push(['pressSequentially',this.selector,value,options]); assert.equal(this.selector,'#body');
+    this.tab.env.events.push(['pressSequentially',this.selector,value,options]);
     assert.deepEqual(Object.keys(options),['timeoutMs']); assert.ok(Number.isInteger(options.timeoutMs)&&options.timeoutMs>0);
+    if(['#chapter','#title'].includes(this.selector)) {
+      this.tab.env.events.push(['fieldInput',this.selector]);
+      this.node().set(this.tab.env.typedHeaderResult??value);
+      await this.tab.env.afterFill?.(this.tab,this.selector,value);
+      if(this.tab.env.fillFailure)throw this.tab.env.fillFailure;
+      if(this.tab.env.changeAccountAfterFill===this.selector)this.tab.env.account='different-account';
+      return;
+    }
+    assert.equal(this.selector,'#body');
     assert.ok(!value.includes('\n')); this.tab.data.body+=value;
     if(this.tab.env.changeAccountAfterBodyText)this.tab.env.account='different-account';
   }
@@ -240,7 +255,7 @@ class Tab {
         if(env.changeAccountOnReadBody)env.account='different-account';
         return result;
       }}];
-      if(['#chapter','#title'].includes(selector)) {const key=selector.slice(1);return [{tag:'INPUT',value:() => String(this.data[key] ?? ''),set:value => {this.data[key]=key==='chapter'?Number(value):value;}}];}
+      if(['#chapter','#title'].includes(selector)) {const key=selector.slice(1);return [{tag:'INPUT',value:() => String(this.data[key] ?? ''),set:value => {this.data[key]=key==='chapter'&&value!==''?Number(value):value;}}];}
       if(selector==='#save')return [{text:env.saveLabel || '存草稿',click:() => {
         env.saves++;this.data.saved=true;
         if(env.dropTrailingNewlinesOnSave)this.data.body=this.data.body.replace(/\n\n$/,'');
@@ -454,7 +469,7 @@ test('paged Fanqie read recovery cannot extend the original deadline or replay w
       {chapter:26,remote_id:'26',title:'新章',body:'新正文',expected_title:'标题26',expected_body:'正文26'};
     const result=await executeChromeBridgeRequest(env.api,next(base,operation,params));
     assert.equal(result.error,'platform_browser_read_timeout');assert.equal(env.creates,operation==='create_draft'?1:0);
-    assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fill').length,1);
+    assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fieldInput').length,1);
   }
 });
 
@@ -466,7 +481,7 @@ test('paged Fanqie guard recovery resumes create and update without repeating an
     const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false;const progress=[];
     env.events=[];env.api.onProgress=event=>progress.push(event);
     env.afterNavigation=async(tab,kind,url)=>{
-      if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fill'&&event[1]==='#title')){
+      if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fieldInput'&&event[1]==='#title')){
         interrupted=true;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
       }
     };
@@ -474,7 +489,7 @@ test('paged Fanqie guard recovery resumes create and update without repeating an
     assert.equal(result.ok,true,JSON.stringify(result));assert.equal(interrupted,true);
     assert.equal(progress.filter(event=>event.read_retry===1).length,1);
     assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account').length,1);
-    assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+    assert.equal(env.events.filter(event=>event[0]==='fieldInput'&&event[1]==='#title').length,1);
     assert.equal(env.events.filter(event=>event[0]==='pasteText').length,1);
     assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,1);
     assert.equal(env.editors.get(operation==='create_draft'?'99':'26').body,'新正文');
@@ -489,7 +504,7 @@ test('paged Fanqie guard recovery failure remains bounded and classifies create 
     const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false,guardCreates=0;const progress=[],newTab=env.api.newTab;
     env.events=[];env.api.onProgress=event=>progress.push(event);
     env.afterNavigation=async(tab,kind,url)=>{
-      if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fill'&&event[1]==='#title')){
+      if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fieldInput'&&event[1]==='#title')){
         interrupted=true;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
       }
     };
@@ -500,12 +515,12 @@ test('paged Fanqie guard recovery failure remains bounded and classifies create 
     const req=next(base,operation,pagedGuardWriteParams(operation)),result=await executeChromeBridgeRequest(env.api,req);
     assert.equal(result.error,'platform_browser_read_timeout');assert.equal(interrupted,true);assert.equal(guardCreates,1);
     assert.equal(progress.filter(event=>event.read_retry===1).length,1);
-    assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+    assert.equal(env.events.filter(event=>event[0]==='fieldInput'&&event[1]==='#title').length,1);
     assert.equal(env.events.filter(event=>event[0]==='pasteText').length,0);
     assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,0);
     if(operation==='create_draft')assert.equal(result.allocated_remote_id,'99');
     assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');
-    assert.equal(guardCreates,1);assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+    assert.equal(guardCreates,1);assert.equal(env.events.filter(event=>event[0]==='fieldInput'&&event[1]==='#title').length,1);
   }
 });
 
@@ -514,14 +529,14 @@ test('paged Fanqie guard recovery rejects a changed account before resuming crea
     const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false;
     env.events=[];
     env.afterNavigation=async(tab,kind,url)=>{
-      if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fill'&&event[1]==='#title')){
+      if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fieldInput'&&event[1]==='#title')){
         interrupted=true;env.account='different-account';throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
       }
     };
     const result=await executeChromeBridgeRequest(env.api,next(base,operation,pagedGuardWriteParams(operation)));
     assert.equal(result.error,'platform_browser_identity_mismatch');assert.equal(interrupted,true);
     assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account').length,1);
-    assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+    assert.equal(env.events.filter(event=>event[0]==='fieldInput'&&event[1]==='#title').length,1);
     assert.equal(env.events.filter(event=>event[0]==='pasteText').length,0);
     assert.equal(env.creates,operation==='create_draft'?1:0);assert.equal(env.saves,0);
   }
@@ -587,7 +602,7 @@ test('paged Fanqie guard recovery and post-save readback share one restart budge
   const {env,config}=pagedFixture(),base=await verified(env,config);let interrupted=false;const progress=[];
   env.events=[];env.api.onProgress=event=>progress.push(event);
   env.afterNavigation=async(tab,kind,url)=>{
-    if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fill'&&event[1]==='#title')){
+    if(kind==='reload'&&url===ORIGIN+'/account'&&!interrupted&&env.events.some(event=>event[0]==='fieldInput'&&event[1]==='#title')){
       interrupted=true;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');
     }
   };
@@ -598,7 +613,7 @@ test('paged Fanqie guard recovery and post-save readback share one restart budge
   assert.equal(result.error,'platform_browser_navigation_timeout');assert.equal(result.allocated_remote_id,'99');
   assert.equal(progress.filter(event=>event.read_retry===1).length,1);
   assert.equal(env.events.filter(event=>event[0]==='newTab'&&event[1]===ORIGIN+'/account').length,1);
-  assert.equal(env.events.filter(event=>event[0]==='fill'&&event[1]==='#title').length,1);
+  assert.equal(env.events.filter(event=>event[0]==='fieldInput'&&event[1]==='#title').length,1);
   assert.equal(env.events.filter(event=>event[0]==='pasteText').length,1);assert.equal(env.creates,1);assert.equal(env.saves,1);
 });
 
@@ -837,7 +852,7 @@ test('complete existing-Chrome verify find create read flow uses native paragrap
   assert.equal(observed.result.body,body);assert.equal(observed.result.title,'验收章');
   assert.deepEqual(env.events.filter(row=>row[0]==='pasteText').map(row=>row[2]),[body.replace(/\n+$/,'')]);
   assert.equal(env.events.filter(row=>row[0]==='press'&&row[2]==='Enter').length,2);
-  assert.ok(!env.events.some(row=>row[0]==='pressSequentially'));
+  assert.ok(!env.events.some(row=>row[0]==='pressSequentially'&&row[1]==='#body'));
   assert.ok(env.events.some(row=>row[0]==='reload'));assert.ok(env.events.some(row=>row[0]==='scroll'));
   await closeChromeBridgeSession(env.api,base.session_id);assert.ok(env.tabs.has('1'),'pre-existing user tab survives');
   assert.equal(env.tabs.size,2,'latest readback remains');
@@ -852,8 +867,8 @@ test('bulk body paste preserves encoded characters whitespace and boundary newli
     assert.equal(result.ok,true,JSON.stringify(result));assert.equal(env.editors.get('99').body,normalized);
     const tail=/\n*$/.exec(normalized)[0].length;
     assert.deepEqual(env.events.filter(row=>row[0]==='pasteText').map(row=>row[2]),[normalized.slice(0,normalized.length-tail)]);
-    assert.deepEqual(env.events.filter(row=>row[0]==='press').map(row=>row[2]),['Meta+A','Backspace',...Array(tail).fill('Enter')]);
-    assert.ok(!env.events.some(row=>row[0]==='pressSequentially'));
+    assert.deepEqual(env.events.filter(row=>row[0]==='press'&&row[1]==='#body').map(row=>row[2]),['Meta+A','Backspace',...Array(tail).fill('Enter')]);
+    assert.ok(!env.events.some(row=>row[0]==='pressSequentially'&&row[1]==='#body'));
     assert.equal(env.creates,1);assert.equal(env.saves,1);
     assert.ok(env.events.some(row=>row[0]==='newTab'&&row[1]===ORIGIN+'/preview/10&99'),'independent preview remains required');
   }
@@ -864,7 +879,7 @@ test('bulk paste requires empty serialization supported input and body focus bef
     const env=environment(options),base=await verified(env);
     const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'完整正文'}));
     assert.equal(result.error,'platform_browser_'+code);assert.equal(env.creates,1);assert.equal(env.saves,0);
-    assert.ok(!env.events.some(row=>row[0]==='pasteText'||row[0]==='pressSequentially'||row[0]==='press'&&row[2]==='Enter'));
+    assert.ok(!env.events.some(row=>row[0]==='pasteText'||row[0]==='pressSequentially'&&row[1]==='#body'||row[0]==='press'&&row[2]==='Enter'));
     if(options.clearBodyResult)assert.equal(env.editors.get('99').body,options.clearBodyResult);
     assert.ok(!env.events.some(row=>row[0]==='newTab'&&row[1].includes('/preview/')));
   }
@@ -874,8 +889,8 @@ test('all-LF bodies retain their original input plan without a clipboard call or
     const env=environment({missingPasteSupport:true}),base=await verified(env),normalized=body.replace(/\r\n/g,'\n');
     const result=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body}));
     assert.equal(result.ok,true,JSON.stringify(result));assert.equal(env.editors.get('99').body,normalized);
-    assert.equal(env.events.filter(row=>row[0]==='pasteText'||row[0]==='pressSequentially').length,0);
-    assert.deepEqual(env.events.filter(row=>row[0]==='press').map(row=>row[2]),['Meta+A','Backspace',...Array(normalized.length).fill('Enter')]);
+    assert.equal(env.events.filter(row=>row[0]==='pasteText'||row[0]==='pressSequentially'&&row[1]==='#body').length,0);
+    assert.deepEqual(env.events.filter(row=>row[0]==='press'&&row[1]==='#body').map(row=>row[2]),['Meta+A','Backspace',...Array(normalized.length).fill('Enter')]);
     assert.equal(env.creates,1);assert.equal(env.saves,1);
   }
 });
@@ -901,7 +916,7 @@ test('one partial failing paste or changed serialization stops before save and c
     assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_'+(mode==='throws'?'operation_failed':'editor_changed'));
     if(mode==='throws')assert.equal(observed,original);
     assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1);
-    assert.ok(!env.events.some(row=>row[0]==='pressSequentially'||row[0]==='press'&&row[2]==='Enter'));
+    assert.ok(!env.events.some(row=>row[0]==='pressSequentially'&&row[1]==='#body'||row[0]==='press'&&row[2]==='Enter'));
     assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');
     assert.equal(env.creates,1);assert.equal(env.events.filter(row=>row[0]==='pasteText').length,1);
   }
@@ -1621,7 +1636,7 @@ test('account switch before create click or each fill or final save is rejected 
     const env=environment(options);const base=await verified(env);
     const response=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'验收',body:'正文'}));
     assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify(options));assert.equal(env.saves,0);
-    const fields=env.events.filter(row=>row[0]==='fill').map(row=>row[1]);
+    const fields=env.events.filter(row=>row[0]==='fieldInput').map(row=>row[1]);
     if(options.changeAccountBeforeCreateClick){assert.equal(env.creates,0);assert.deepEqual(fields,[]);}
     if(options.changeAccountOnCreate)assert.deepEqual(fields,[]);
     if(options.changeAccountAfterFill==='#chapter')assert.deepEqual(fields,['#chapter']);
@@ -1760,7 +1775,7 @@ test('either exact read-setup timeout in a write action never repeats click fill
     assert.ok(env.events.filter(row=>row[0]==='click'&&row[1]==='#create').length<=1);
     assert.ok(env.events.filter(row=>row[0]==='pasteText').length<=1);
     if(mode==='press')assert.equal(env.events.filter(row=>row[0]==='press'&&row[2]==='Enter').length,1);
-    if(mode==='fill')assert.equal(env.events.filter(row=>row[0]==='fill').length,1);
+    if(mode==='fill')assert.equal(env.events.filter(row=>row[0]==='fieldInput').length,1);
     assert.equal((await executeChromeBridgeRequest(env.api,req)).ok,false);assert.equal(env.creates,mode==='navigation'?0:1);
   }
 });
@@ -2479,7 +2494,7 @@ for(const platform of ['qimao','qidian'])test('ordinary '+platform+' creation ke
     if(stage==='unchanged'){assert.equal(response.ok,true,JSON.stringify(response));assert.equal(response.result,'99');}
     else {assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify({platform,stage,response}));assert.ok(!Object.hasOwn(response,'result'));}
     assert.equal(env.creates,1);assert.equal(env.saves,stage==='before_fill'?0:1);
-    if(stage==='before_fill')assert.equal(env.events.filter(event=>event[0]==='fill').length,0);
+    if(stage==='before_fill')assert.equal(env.events.filter(event=>event[0]==='fieldInput').length,0);
     assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
     assert.equal(env.creates,1);assert.equal(env.saves,stage==='before_fill'?0:1);
     await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
@@ -2494,7 +2509,7 @@ for(const platform of ['qimao','qidian'])test('ordinary '+platform+' creation st
     const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
     assert.equal(changed,true);assert.equal(response.error,'platform_browser_identity_mismatch',JSON.stringify({platform,selector,response}));
     assert.deepEqual(env.editors.get('22'),foreign,'the other draft remains untouched');
-    assert.deepEqual(env.events.filter(event=>event[0]==='fill').map(event=>event[1]),['#chapter','#title','#body'].slice(0,['#chapter','#title','#body'].indexOf(selector)+1));
+    assert.deepEqual(env.events.filter(event=>event[0]==='fieldInput').map(event=>event[1]),['#chapter','#title','#body'].slice(0,['#chapter','#title','#body'].indexOf(selector)+1));
     assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
     assert.deepEqual(env.editors.get('22'),foreign);assert.equal(env.creates,1);assert.equal(env.saves,0);
     await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
@@ -2859,7 +2874,7 @@ for(const platform of ['qimao','qidian'])test('ordinary '+platform+' stops subse
     env.afterLocatorInnerText=async(tab,selector)=>{if(stage==='#save'&&selector==='#save'&&!changed)mutate();};
     const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
     assert.equal(changed,true);assert.equal(response.ok,false,JSON.stringify({platform,stage,change,response}));
-    assert.deepEqual(env.events.filter(event=>event[0]==='fill').map(event=>event[1]),stage==='#save'?['#chapter','#title','#body']:['#chapter','#title'].slice(0,stage==='#chapter'?1:2));
+    assert.deepEqual(env.events.filter(event=>event[0]==='fieldInput').map(event=>event[1]),stage==='#save'?['#chapter','#title','#body']:['#chapter','#title'].slice(0,stage==='#chapter'?1:2));
     assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
     assert.equal(env.creates,1);assert.equal(env.saves,0);await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
   }
@@ -2884,7 +2899,7 @@ test('current draft action state timeout cannot retry or continue a later write'
   env.afterFill=async(tab,selector)=>{if(selector==='#chapter')armed=true;};
   env.beforeLocatorEvaluateAll=async(tab,selector)=>{if(armed&&selector==='#state'){calls++;throw evaluateTimeout();}};
   const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
-  assert.equal(response.ok,false);assert.equal(calls,1);assert.deepEqual(env.events.filter(event=>event[0]==='fill').map(event=>event[1]),['#chapter']);
+  assert.equal(response.ok,false);assert.equal(calls,1);assert.deepEqual(env.events.filter(event=>event[0]==='fieldInput').map(event=>event[1]),['#chapter']);
   assert.equal(env.creates,1);assert.equal(env.saves,0);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);assert.equal(calls,1);
   await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
 });
@@ -2901,7 +2916,7 @@ test('current draft state snapshot preserves same-ID configured creation URL tra
     const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
     assert.equal(changed,true);
     if(mode==='same_id'){assert.equal(response.ok,true,JSON.stringify(response));assert.equal(response.result,'99');assert.equal(env.saves,1);}
-    else{assert.equal(response.ok,false,JSON.stringify({mode,response}));assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fill').length,0);}
+    else{assert.equal(response.ok,false,JSON.stringify({mode,response}));assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fieldInput').length,0);}
     assert.equal(env.creates,1);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
     assert.equal(env.editors.get('22').body,'旧正文');await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
   }
@@ -2912,14 +2927,14 @@ for(const platform of ['qimao','qidian'])test('ordinary '+platform+' write reche
     const {env,base}=await ordinaryFixture(platform);let changed=false;
     const original={scope:'drafts',chapter:22,title:'已有标题',body:'已有正文',saved:true};env.editors.set('22',{...original});
     env.afterLocatorEvaluateAll=async(tab,selector,fn,arg)=>{
-      if(selector==='#state'&&!changed&&tab.current.includes('enter_from=newdraft')&&env.events.filter(event=>event[0]==='fill').length===priorFills){
+      if(selector==='#state'&&!changed&&tab.current.includes('enter_from=newdraft')&&env.events.filter(event=>event[0]==='fieldInput').length===priorFills){
         changed=true;tab.load(ORIGIN+'/book/10/edit/'+(move==='other_id'?'22':'99')+'?enter_from=modifydraft');
       }
     };
     const command=next(base,'create_draft',ordinaryParams('create_draft')),response=await executeChromeBridgeRequest(env.api,command);
     assert.equal(changed,true);assert.deepEqual(env.editors.get('22'),original,JSON.stringify({platform,priorFills,move,response}));
     if(move==='same_id'){assert.equal(response.ok,true,JSON.stringify(response));assert.equal(env.saves,1);}
-    else{assert.equal(response.error,'platform_browser_identity_mismatch');assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fill').length,priorFills);}
+    else{assert.equal(response.error,'platform_browser_identity_mismatch');assert.equal(env.saves,0);assert.equal(env.events.filter(event=>event[0]==='fieldInput').length,priorFills);}
     assert.equal(env.creates,1);assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
     await closeChromeBridgeSession(env.api,base.session_id,{keepReadback:false});
   }
@@ -2954,6 +2969,60 @@ test('title body and combined updates preserve remote ID fully replace body and 
     assert.equal((await executeChromeBridgeRequest(env.api,req)).error,'platform_browser_operation_failed');assert.equal(env.saves,1);
   }
 });
+test('Fanqie header keyboard events survive a controlled-input rerender that discards a DOM-only fill',async()=>{
+  for(const operation of ['create_draft','update_draft']) {
+    const env=environment(),base=await verified(env);let pendingTitle=null;
+    env.afterFill=async(tab,selector)=>{
+      // A DOM-only fill can be discarded by the controlled input's next render.
+      if(selector==='#title'&&env.events.at(-2)?.[0]==='fill')pendingTitle=tab;
+    };
+    env.beforeAX=async()=>{if(pendingTitle){pendingTitle.data.title=operation==='create_draft'?'':'原稿';pendingTitle=null;}};
+    env.api.selectAllKey='Control+A';env.events=[];
+    const params=operation==='create_draft'?{chapter:12,title:'中文标题  “甲乙”',body:'完整正文'}:
+      {remote_id:'11',chapter:11,title:'中文标题  “甲乙”',body:'完整正文',expected_title:'原稿',expected_body:'原始正文'};
+    const response=await executeChromeBridgeRequest(env.api,next(base,operation,params));
+    assert.equal(response.ok,true,JSON.stringify(response));
+    const data=env.editors.get(operation==='create_draft'?'99':'11');
+    assert.equal(data.title,params.title);assert.equal(data.body,params.body);assert.equal(env.saves,1);
+    assert.ok(!env.events.some(event=>event[0]==='fill'&&['#chapter','#title'].includes(event[1])));
+    const titleEvents=env.events.filter(event=>event[1]==='#title'&&['press','pressSequentially'].includes(event[0]));
+    assert.deepEqual(titleEvents.map(event=>event[2]),['Control+A','Backspace',params.title,'Tab']);
+    assert.ok(env.events.findIndex(event=>event[0]==='pasteText')>env.events.findIndex(event=>event[0]==='press'&&event[1]==='#title'&&event[2]==='Tab'));
+  }
+});
+
+test('a changed Fanqie header after clearing typing or blur stops before body and save without retry',async()=>{
+  for(const stage of ['clear','typing','blur']) {
+    const env=environment(stage==='clear'?{clearHeaderResult:'旧字'}:stage==='typing'?{typedHeaderResult:'截断标题'}:{}),base=await verified(env);
+    if(stage==='blur')env.afterHeaderBlur=async(tab,selector)=>{if(selector==='#title')tab.data.title='原稿';};
+    env.events=[];
+    const command=next(base,'update_draft',{remote_id:'11',chapter:11,title:'完整新标题',body:'新正文',expected_title:'原稿',expected_body:'原始正文'});
+    const response=await executeChromeBridgeRequest(env.api,command);
+    assert.equal(response.error,'platform_browser_editor_changed',JSON.stringify({stage,response}));
+    assert.equal(env.saves,0);assert.equal(env.creates,0);assert.equal(env.editors.get('11').body,'原始正文');
+    assert.equal(env.events.filter(event=>event[0]==='pressSequentially').length,stage==='clear'?0:1);
+    assert.equal((await executeChromeBridgeRequest(env.api,command)).ok,false);
+    assert.equal(env.events.filter(event=>event[0]==='pressSequentially').length,stage==='clear'?0:1);
+  }
+});
+
+test('Fanqie header typing rejects unsupported input controls and missing keyboard support before clearing',async()=>{
+  for(const mode of ['password','missing_keyboard','multiline']) {
+    const env=environment(),base=await verified(env),add=env.add;
+    env.add=url=>{const tab=add(url),lookup=tab.lookup.bind(tab);tab.lookup=selector=>{
+      const nodes=lookup(selector);if(mode==='password'&&selector==='#title')for(const node of nodes)node.attrs={type:'password'};return nodes;
+    };if(mode==='missing_keyboard'){const locator=tab.playwright.locator;tab.playwright.locator=selector=>{
+      const value=locator(selector);if(selector==='#title')value.pressSequentially=undefined;return value;
+    };}return tab;};
+    env.events=[];
+    const response=await executeChromeBridgeRequest(env.api,next(base,'update_draft',{remote_id:'11',chapter:11,
+      title:mode==='multiline'?'新标题\n另一行':'新标题',body:'新正文',expected_title:'原稿',expected_body:'原始正文'}));
+    assert.equal(response.error,'platform_browser_unsupported_editor',JSON.stringify({mode,response}));
+    assert.ok(!env.events.some(event=>['press','pressSequentially','fill','pasteText'].includes(event[0])));
+    assert.equal(env.saves,0);assert.equal(env.editors.get('11').title,'原稿');
+  }
+});
+
 test('changed before-image wrong chapter published chapter and user editor stop updates before writing',async()=>{
   for(const reason of ['changed','wrong-chapter','published','open-editor']){
     const env=environment();if(reason==='published')env.editors.get('11').scope='non_drafts';

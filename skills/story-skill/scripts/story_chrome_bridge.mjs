@@ -1326,6 +1326,28 @@ class Driver {
   }
   async fill(tab, spec, text) {
     const locator = await this.one(tab, spec);
+    const editor=this.profile.editor;
+    if (this.target.platform === 'fanqie' && this.profile.readback?.body?.source === 'fanqie_preview_paragraphs_v1' &&
+        (spec === editor.chapter || spec === editor.title)) {
+      // Fanqie's controlled header fields can show a filled DOM value and then
+      // restore the old value on a later render. Send real input events and
+      // commit blur before touching the body; never retry a changed header.
+      const input = await locator.evaluate(el => ({tag:el.tagName,type:el.getAttribute('type') || 'text',
+        readOnly:el.readOnly === true,disabled:el.disabled === true}));
+      if (input.tag !== 'INPUT' || !['text','number'].includes(input.type) || input.readOnly || input.disabled ||
+          typeof locator.pressSequentially !== 'function' || /[\u0000-\u001f\u007f]/.test(text)) fail('unsupported_editor');
+      const selectAll=this.api.selectAllKey || 'Meta+A';
+      if (!['Meta+A','Control+A'].includes(selectAll)) fail('invalid_profile');
+      await this.action(tab,()=>locator.click(this.timeoutOptions()));
+      await this.action(tab,()=>locator.press(selectAll,this.timeoutOptions()));
+      await this.action(tab,()=>locator.press('Backspace',this.timeoutOptions()));
+      if (await this.currentValue(tab,spec) !== '') fail('editor_changed');
+      await this.action(tab,()=>locator.pressSequentially(text,this.timeoutOptions()));
+      if (await this.currentValue(tab,spec) !== text) fail('editor_changed');
+      await this.action(tab,()=>locator.press('Tab',this.timeoutOptions()));
+      if (await this.currentValue(tab,spec) !== text) fail('editor_changed');
+      return;
+    }
     if (spec.source !== 'prosemirror_paragraphs') return this.action(tab, () => locator.fill(text, this.timeoutOptions()));
     const normalized = normal(text);
     const tail = /\n*$/.exec(normalized)[0].length,core = normalized.slice(0,normalized.length-tail);

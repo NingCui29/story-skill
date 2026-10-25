@@ -1,17 +1,17 @@
 # 写作工作台 · Windows
 
-本目录对应 Windows 客户端 **0.2.4** 使用 **C# / WPF / .NET 10 / Microsoft WebView2**，内嵌 Story Skill **0.6.25** Python 作品服务。项目禁止使用 Qt 系列及 PHP，构建和安装验收包含对应检查。界面沿用 HTML、CSS 与 JavaScript，作品数据无需转换。
+本目录对应 Windows 客户端 **0.2.5** 使用 **C# / WPF / .NET 10 / Microsoft WebView2**，内嵌 Story Skill **0.6.26** Python 作品服务。项目禁止使用 Qt 系列及 PHP，构建和安装验收包含对应检查。界面沿用 HTML、CSS 与 JavaScript，作品数据无需转换。
 
 ## 获取和安装
 
-本版本发行文件使用以下名称，以独立 Release 页面实际可见附件为准；下载后先核对同名校验文件。[EXE 安装包](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.4/story-workbench-0.2.4-windows-x86_64-setup.exe)及同名 [SHA256 校验文件](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.4/story-workbench-0.2.4-windows-x86_64-setup.exe.sha256)。固定发行页为 [windows-v0.2.4](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.4)。
+本版本发行文件使用以下名称，以独立 Release 页面实际可见附件为准；下载后先核对同名校验文件。[EXE 安装包](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.5/story-workbench-0.2.5-windows-x86_64-setup.exe)及同名 [SHA256 校验文件](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.5/story-workbench-0.2.5-windows-x86_64-setup.exe.sha256)。固定发行页为 [windows-v0.2.5](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.5)。
 
 建议使用受支持的 Windows 11 x64。原生 CI 使用 Windows Server 2025 runner，各轮实际结果见发布记录；不能由该环境推定 Windows 10/11 所有用户设备均已验收。安装前保存工作台及外部浏览器中的编辑，退出旧客户端。双击安装程序，按向导为当前用户安装，从开始菜单启动“写作工作台”；系统应用列表支持卸载。应用未做代码签名。应用目录不用于存放书稿。
 
 在下载目录的 PowerShell 中执行以下命令，与 `.sha256` 文件中的摘要比较：
 
 ```powershell
-Get-FileHash .\story-workbench-0.2.4-windows-x86_64-setup.exe -Algorithm SHA256
+Get-FileHash .\story-workbench-0.2.5-windows-x86_64-setup.exe -Algorithm SHA256
 ```
 
 从 0.2.0 或更早版本升级，请使用固定下载链接。0.2.1 起，应用内检查独立的 `windows-v*` 正式发行版，并复用重新校验通过的已下载包。
@@ -55,9 +55,9 @@ dotnet run --project tests/windows/StoryWorkbench.Tests.csproj
 python scripts/build_desktop_windows.py --output dist/story-workbench-windows-x86_64
 ```
 
-GitHub Actions 工作流覆盖 C# 测试、作品服务安全探针、独立发布、安装器构建、中文及空格目录安装、原生窗口与外观验证、完整清单校验及卸载。安装包、校验文件、便携 ZIP 和验收回执作为 Actions 产物保存；常规构建不创建或公开 Release。Windows 正式分发独立使用 `windows-v0.2.4`，提供安装程序、便携 ZIP 与各自 `.sha256`，共四附件；Story Skill 技能包与 Mac 使用主版本发行，保留主版本的 latest 入口。
+GitHub Actions 工作流覆盖 C# 测试、作品服务安全探针、独立发布、安装器构建、中文及空格目录安装、原生窗口与外观验证、完整清单校验及卸载。安装包、校验文件、便携 ZIP 和验收回执作为 Actions 产物保存；常规构建不创建或公开 Release。Windows 正式分发独立使用 `windows-v0.2.5`，提供安装程序、便携 ZIP 与各自 `.sha256`，共四附件；Story Skill 技能包与 Mac 使用主版本发行，保留主版本的 latest 入口。
 
-每次正式发布的实际构建来源、Windows 执行记录和验证边界见 [0.2.4 发布记录](../../docs/releases/windows-v0.2.4.md)。
+每次正式发布的实际构建来源、Windows 执行记录和验证边界见 [0.2.5 发布记录](../../docs/releases/windows-v0.2.5.md)。
 
 随包第三方许可来自实际还原的 WebView2 SDK、.NET 与 Python 分发载荷，并记录来源与摘要。完整文件清单包含自带的运行库与先决条件安装器。验收截图中的合成更新进度不代表真实网络升级成功；Windows runner 验收与不同用户系统的人工验收分别记录。
 
