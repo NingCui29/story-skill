@@ -1,6 +1,6 @@
 {
   "name": "story-skill-dsh",
-  "version": "0.6.26",
+  "version": "0.6.27",
   "private": true,
   "description": "DeepSeek Harness bundle for Story Skill: Chinese fiction planning, writing, review, analysis, research, covers and platform drafts.",
   "type": "module",

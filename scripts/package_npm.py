@@ -187,10 +187,12 @@ SUITE_FILES_V0625 = SUITE_FILES_V0624
 SKILL_NAMES_V0625 = SKILL_NAMES_V0624
 SUITE_FILES_V0626 = SUITE_FILES_V0625
 SKILL_NAMES_V0626 = SKILL_NAMES_V0625
+SUITE_FILES_V0627 = SUITE_FILES_V0626
+SKILL_NAMES_V0627 = SKILL_NAMES_V0626
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0626
-SUITE_FILES = SUITE_FILES_V0626
+SKILL_NAMES = SKILL_NAMES_V0627
+SUITE_FILES = SUITE_FILES_V0627
 UNRELEASED_VERSIONS = frozenset({"0.6.13"})
 MAX_BYTES = 256 * 1024 * 1024
 # Reviewed full license texts, normalized only for BOM, line endings and trailing
@@ -243,6 +245,8 @@ def payload_files(version):
         return SUITE_FILES_V0625
     if version == "0.6.26":
         return SUITE_FILES_V0626
+    if version == "0.6.27":
+        return SUITE_FILES_V0627
     if version == "0.6.21":
         return SUITE_FILES_V0621
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
@@ -290,6 +294,8 @@ def skill_names(version):
         return SKILL_NAMES_V0625
     if version == "0.6.26":
         return SKILL_NAMES_V0626
+    if version == "0.6.27":
+        return SKILL_NAMES_V0627
     if version == "0.6.21":
         return SKILL_NAMES_V0621
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
@@ -434,7 +440,7 @@ def wrapper_files(version, payload=None):
         "complete `LICENSE`.\n"
     )
     # Published wrappers are byte-stable; changed host paths belong only to the new release.
-    workbuddy_directory = ".workbuddy-ai" if version in ("0.6.21", "0.6.22", "0.6.23", "0.6.24", "0.6.25", "0.6.26") else ".workbuddy"
+    workbuddy_directory = ".workbuddy-ai" if version in ("0.6.21", "0.6.22", "0.6.23", "0.6.24", "0.6.25", "0.6.26", "0.6.27") else ".workbuddy"
     skill_installation = (
         "Copy all eight complete skill directories into your project's `.agents/skills/`, "
         "or follow the repository's managed installation instructions. "
@@ -453,7 +459,7 @@ def wrapper_files(version, payload=None):
         "connection additionally requires an installed Codex CLI, its configured Node REPL and "
         "official Chrome SDK, and the signed-in browser; this package does not install them. "
         "It never submits for review, publishes or schedules chapters.\n\n"
-        if version in ("0.6.21", "0.6.22", "0.6.23", "0.6.24", "0.6.25", "0.6.26") else
+        if version in ("0.6.21", "0.6.22", "0.6.23", "0.6.24", "0.6.25", "0.6.26", "0.6.27") else
         "The publication skill prepares local snapshots and records only; it does not log in to "
         "author platforms, upload chapters or publish them remotely.\n\n"
     )

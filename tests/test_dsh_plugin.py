@@ -8,6 +8,7 @@ import re
 import tempfile
 import unittest
 from unittest.mock import patch
+import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -102,6 +103,20 @@ class DshBundleBuildTests(unittest.TestCase):
         self.assertEqual(len(receipt["manifest"]), 77)
         self.assertEqual(receipt["manifest"]["skills/story-skill/SKILL.md"],
                          hashlib.sha256((self.output / "skills/story-skill/SKILL.md").read_bytes()).hexdigest())
+
+    def test_archive_contains_the_package_root(self):
+        archive = self.root / "story-skill-dsh-test.zip"
+        result = bundle.build(self.output, archive=archive)
+        self.assertEqual(result["archive"], str(archive))
+        self.assertTrue(archive.is_file())
+        with zipfile.ZipFile(archive) as bundle_file:
+            names = bundle_file.namelist()
+            self.assertIn("package.json", names)
+            self.assertIn("cordis.patch.yml", names)
+            self.assertIn("skills/story-skill/SKILL.md", names)
+            self.assertEqual(len(names), 77)
+            self.assertEqual(bundle_file.testzip(), None)
+        self.assertEqual(len(result["archive_sha256"]), 64)
 
     def test_existing_output_requires_force_and_rebuild_is_stable(self):
         first = self.build()

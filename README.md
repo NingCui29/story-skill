@@ -6,7 +6,7 @@
 
 支持 **Codex、Claude Code、Claude 桌面版、DeepSeek Harness、WorkBuddy AI、Qoder CN**及其他兼容 Agent Skills 的助手；另提供 **Mac / Windows 写作工作台**。
 
-[下载安装](#安装升级) · [开始写书](#开始写书) · [工作台预览](#使用工作台) · [完整文档](docs/README.md) · [v0.6.25 发布记录](docs/releases/v0.6.25.md)
+[下载安装](#安装升级) · [开始写书](#开始写书) · [工作台预览](#使用工作台) · [完整文档](docs/README.md) · [v0.6.27 发布记录](docs/releases/v0.6.27.md)
 
 ## 它能帮你做什么
 
@@ -23,17 +23,17 @@
 
 ## 安装升级
 
-当前版本为 **[v0.6.25](https://github.com/NingCui29/story-skill/releases/tag/v0.6.25)**。主发行10个附件与 Windows 独立发行4个附件均已正式发布。先选择要使用的部分，再按对应说明安装；两者可以配合使用。变化与完整验收范围见[发布记录](docs/releases/v0.6.25.md)。
+当前版本为 **[v0.6.27](https://github.com/NingCui29/story-skill/releases/tag/v0.6.27)**。主发行8个附件（四个包及各自 SHA256，含 DSH 插件包）与 Windows 独立发行4个附件均已正式发布。先选择要使用的部分，再按对应说明安装；两者可以配合使用。变化与完整验收范围见[发布记录](docs/releases/v0.6.27.md)。
 
 ### 安装创作技能
 
 | 使用环境 | 下载 | 安装方式 |
 |---|---|---|
-| Codex 本地插件 | [插件 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-codex-0.6.25.zip) | 解压后添加本地市场并安装插件，见 [Codex 安装说明](docs/codex-plugin.md) |
-| Claude 桌面版 | [单入口 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-claude-desktop-0.6.25.zip) | 上传并启用专用技能包，见 [桌面导入说明](INSTALL.md#claude-桌面版导入单技能包) |
-| DeepSeek Harness | 八技能目录或本机插件包 | `--host dsh --user` 安装到 `~/.dsh/skills/`；插件包用 `scripts/package_dsh.py` 构建，见 [DSH 安装说明](INSTALL.md#deepseek-harness) |
+| Codex 本地插件 | [插件 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.27/story-skill-codex-0.6.27.zip) | 解压后添加本地市场并安装插件，见 [Codex 安装说明](docs/codex-plugin.md) |
+| Claude 桌面版 | [单入口 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.27/story-skill-claude-desktop-0.6.27.zip) | 上传并启用专用技能包，见 [桌面导入说明](INSTALL.md#claude-桌面版导入单技能包) |
+| DeepSeek Harness | [DSH 插件 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.27/story-skill-dsh-0.6.27.zip) 或八技能目录 | `--host dsh --user` 安装到 `~/.dsh/skills/`；插件包用 `scripts/package_dsh.py` 构建，见 [DSH 安装说明](INSTALL.md#deepseek-harness) |
 | WorkBuddy AI、Qoder CN | 完整八技能目录 | 源码安装器支持个人／项目目录，见 [安装与调用说明](INSTALL.md#workbuddy-ai-与-qoder-cn-快速安装) |
-| Claude Code、Antigravity 等 | [完整八技能 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-0.6.25.zip) | 保留八个同级目录，见 [目录安装说明](INSTALL.md#目录安装的完整套件) |
+| Claude Code、Antigravity 等 | [完整八技能 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.27/story-skill-0.6.27.zip) | 保留八个同级目录，见 [目录安装说明](INSTALL.md#目录安装的完整套件) |
 
 <a id="codex-本地插件"></a>
 <a id="claude-桌面版"></a>
@@ -48,9 +48,9 @@ Codex 插件通过本地市场分发。安装后在宿主中确认技能已加�
 | 系统 | 当前客户端 | 下载 |
 |---|---|---|
 | Intel Mac | 0.1.37 / build 38 | [DMG](https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-workbench-0.1.37-macos-x86_64.dmg) · [ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-workbench-0.1.37-macos-x86_64.zip) · [安装说明](desktop/macos/README.md) |
-| Windows x64 | 0.2.4（C#） | [EXE 安装包](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.4/story-workbench-0.2.4-windows-x86_64-setup.exe) · [EXE SHA256](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.4/story-workbench-0.2.4-windows-x86_64-setup.exe.sha256) · [便携 ZIP](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.4/story-workbench-0.2.4-windows-x86_64.zip) · [安装说明](desktop/windows/README.md) |
+| Windows x64 | 0.2.5（C#） | [EXE 安装包](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.5/story-workbench-0.2.5-windows-x86_64-setup.exe) · [EXE SHA256](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.5/story-workbench-0.2.5-windows-x86_64-setup.exe.sha256) · [便携 ZIP](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.5/story-workbench-0.2.5-windows-x86_64.zip) · [安装说明](desktop/windows/README.md) |
 
-**桌面应用内置 Python 作品服务，无需另装 Python。Windows 0.2.4 使用 C# / WPF / WebView2，安装包内置 .NET，并按需安装随包的微软 WebView2 离线运行时。** 下载后核对同名 `.sha256` 文件。Mac 使用本地临时签名、未经 Apple 公证，Apple Silicon 尚未验证；Windows 应用安装程序未做代码签名。Windows C# 版使用独立的 [windows-v0.2.4 发行页](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.4)，构建与验证范围见 [Windows 发布记录](docs/releases/windows-v0.2.4.md)。
+**桌面应用内置 Python 作品服务，无需另装 Python。Windows 0.2.5 使用 C# / WPF / WebView2，内置 Story Skill 0.6.26，安装包内置 .NET，并按需安装随包的微软 WebView2 离线运行时。** 下载后核对同名 `.sha256` 文件。Mac 使用本地临时签名、未经 Apple 公证，Apple Silicon 尚未验证；Windows 应用安装程序未做代码签名。Windows C# 版使用独立的 [windows-v0.2.5 发行页](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.5)，构建与验证范围见 [Windows 发布记录](docs/releases/windows-v0.2.5.md)。
 
 **Windows 安装：** 建议使用受支持的 Windows 11 x64。下载上方 EXE 与 SHA256 文件，保存所有工作台及外部浏览器中的编辑并正常退出旧客户端，然后双击 EXE，按向导为当前用户安装，从开始菜单启动“写作工作台”。无需另装 Python 或 .NET；书稿请保存在应用目录之外。
 
@@ -66,7 +66,7 @@ Get-FileHash .\story-workbench-0.2.4-windows-x86_64-setup.exe -Algorithm SHA256
 
 升级前保存全部页面编辑并退出旧客户端。已有工作台服务按 [更新流程](docs/工作台更新流程.md)另行更新。GitHub 发版不会自动替换本机技能或应用。
 
-[技能包与 Mac 发行文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.25) · [Windows C# 发行文件](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.4) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（npm 安装不向宿主注册技能）。Packages 已公开发布；工作流完成实际 registry 回下载，本机独立核验工作流导出的 tarball。
+[技能包与 DSH 发行文件](https://github.com/NingCui29/story-skill/releases/tag/v0.6.27) · [Windows C# 发行文件](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.5) · [GitHub Packages 内容包](https://github.com/users/NingCui29/packages/npm/package/story-skill)（npm 安装不向宿主注册技能）。Packages 已公开发布；工作流完成实际 registry 回下载，本机独立核验工作流导出的 tarball。
 
 ## 开始写书
 
@@ -162,7 +162,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 面板分开显示本次同步进度、停止原因与历史核对记录，只有本次完整回读通过的章节计入完成。番茄可在预览后显式连接受控 Codex 工作进程与既有、已登录的 Chrome；浏览器拒绝权限时停止。目录按页读取并核对总数，已知读取超时最多恢复一次；创建和保存动作不重放，结果未知时先只读对账。七猫、起点沿用外部已连接助手流程。
 
-本轮发行验证使用隔离合成材料、离线浏览器夹具和原生客户端自检，不能据此宣称真实作者作品整批同步成功，或番茄、七猫、起点的真实分页、多卷与全部页面均已验收。历史实页记录只适用于记录中的样本和当时页面。审核提交与定时发布由作者在平台后台完成。详细范围见[平台草稿说明](skills/story-skill-publish/references/platform-drafts.md)与[本版验收边界](docs/releases/v0.6.25.md#平台草稿的实际范围)。
+本轮发行验证使用隔离合成材料、离线浏览器夹具和原生客户端自检，不能据此宣称真实作者作品整批同步成功，或番茄、七猫、起点的真实分页、多卷与全部页面均已验收。历史实页记录只适用于记录中的样本和当时页面。审核提交与定时发布由作者在平台后台完成。详细范围见[平台草稿说明](skills/story-skill-publish/references/platform-drafts.md)与[历史平台验收边界](docs/releases/v0.6.25.md#平台草稿的实际范围)。
 
 ## 八个技能入口
 
@@ -181,9 +181,9 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 ## 版本与验证
 
-**v0.6.25** 更新工作台的保存、恢复、继续编辑和关闭保护，统一已有草稿更新与缺失草稿补齐，并区分本次进度和历史核对。新保存去掉正文空白行，严格核对转换后的标题与全文。Intel Mac **0.1.37 / build 38** 随主发行提供，Windows C# **0.2.4** 独立分发。构建来源、完整验收结果及限制见[发布记录](docs/releases/v0.6.25.md)。
+**v0.6.27** 增加 DeepSeek Harness 宿主安装与本地插件包，纳入章节配图确认规则修订。Intel Mac **0.1.37 / build 38**（内置 0.6.25）与 Windows C# **0.2.5**（内置 0.6.26）继续独立分发，本次不重建桌面客户端。构建来源、分发附件及验收边界见[发布记录](docs/releases/v0.6.27.md)。
 
-最终源码 CI 三组任务全部通过；Linux / Python 3.10：3060 项，通过 3012、跳过 48；Windows / Python 3.10：3060 项，通过 2989、跳过 71；Windows / Python 3.12：3060 项，通过 2989、跳过 71。主发行的10个附件（技能 ZIP、Mac ZIP／DMG及各校验文件）已全部匿名回下载并核对完整 SHA256；Windows 二进制匿名核验为首尾采样，完整摘要依据原生核验与 GitHub 服务端记录。
+v0.6.27 的完整源码 CI、附件回下载与 GitHub Packages 同步结果以发布记录和 GitHub Actions 记录为准；本轮未重建 Windows／macOS 客户端，也未扩大平台草稿的真实页面验收范围。
 
 **v0.6.22** 新增结构化扫榜、代表作抽样与研究交接，连接样本观察、正文验证和原创选题。修正独立研究命令在非 UTF-8 环境下的中文输出，保留原文引文的精确匹配规则。各分发包、跨平台源码 CI、固定标签安装与公开分发的实际核验范围见[发布记录](docs/releases/v0.6.22.md)；[v0.6.21 历史记录](docs/releases/v0.6.21.md)继续保留。
 

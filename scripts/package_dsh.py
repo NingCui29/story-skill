@@ -16,6 +16,7 @@ from pathlib import Path
 import re
 import shutil
 import tempfile
+import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -138,7 +139,50 @@ def copy_bundle_sources(stage):
         shutil.copyfile(source, destination)
 
 
-def build(output=None, force=False):
+def write_archive(directory, archive, force=False):
+    archive = Path(archive).expanduser().absolute()
+    if archive.suffix.lower() != ".zip":
+        raise ValueError(f"Bundle archive must be a ZIP file: {archive}")
+    resolved = archive.resolve()
+    if resolved.is_relative_to(BUNDLE.resolve()) or resolved.is_relative_to(SKILLS.resolve()):
+        raise ValueError("Bundle archive must stay outside the source dsh/ and skills/ directories")
+    dsh_home = Path(os.environ.get("DSH_HOME", Path.home() / ".dsh")).expanduser().resolve()
+    if resolved.is_relative_to(dsh_home):
+        raise ValueError("Bundle archive must stay outside DSH_HOME")
+    if archive.exists():
+        if not force:
+            raise ValueError(f"Bundle archive already exists: {archive}; pass --force to rebuild")
+        if archive.is_symlink() or not archive.is_file():
+            raise ValueError(f"Refusing to replace a linked or non-file archive: {archive}")
+    files = {path.relative_to(directory).as_posix(): path.read_bytes()
+             for path in sorted(directory.rglob("*")) if path.is_file()}
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=".story-skill-dsh-", suffix=".zip", dir=archive.parent)
+    stage = Path(temporary)
+    try:
+        os.close(fd)
+        with zipfile.ZipFile(stage, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
+            for relative, raw in sorted(files.items()):
+                info = zipfile.ZipInfo(relative, date_time=(2026, 9, 8, 0, 0, 0))
+                info.compress_type = zipfile.ZIP_DEFLATED
+                info.external_attr = 0o644 << 16
+                bundle.writestr(info, raw)
+        with zipfile.ZipFile(stage) as bundle:
+            if bundle.namelist() != sorted(files) or bundle.testzip() is not None:
+                raise RuntimeError("Bundle archive differs from the built package")
+            for relative, raw in files.items():
+                if bundle.read(relative) != raw:
+                    raise RuntimeError(f"Bundle archive content differs from the built package: {relative}")
+        os.replace(stage, archive)
+    finally:
+        if stage.exists():
+            stage.unlink()
+    raw = archive.read_bytes()
+    return {"archive": str(archive), "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw),
+            "files": len(files)}
+
+
+def build(output=None, force=False, archive=None):
     package = load_package_module()
     entries = package.source_entries()
     runtime = dict(entries).get("story-skill/scripts/story.py")
@@ -178,8 +222,9 @@ def build(output=None, force=False):
             shutil.rmtree(stage, ignore_errors=True)
     package_files = {path.relative_to(output).as_posix(): path.read_bytes()
                      for path in output.rglob("*") if path.is_file()}
+    archive_result = write_archive(output, archive, force) if archive else None
     receipt = output.with_name(output.name + ".json")
-    receipt.write_text(json.dumps({
+    receipt_data = {
         "schema": 1,
         "package": PACKAGE_NAME,
         "version": version,
@@ -190,19 +235,30 @@ def build(output=None, force=False):
         "sha256": digest_files(package_files),
         "manifest": {relative: hashlib.sha256(raw).hexdigest()
                      for relative, raw in sorted(package_files.items())},
-    }, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return {"ok": True, "package": PACKAGE_NAME, "version": version, "path": str(output),
-            "skills": list(names), "files": len(package_files), "skill_files": len(entries),
-            "sha256": digest_files(package_files), "receipt": str(receipt)}
+    }
+    if archive_result is not None:
+        receipt_data["archive"] = archive_result["archive"]
+        receipt_data["archive_sha256"] = archive_result["sha256"]
+        receipt_data["archive_bytes"] = archive_result["bytes"]
+    receipt.write_text(json.dumps(receipt_data, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+                       encoding="utf-8")
+    result = {"ok": True, "package": PACKAGE_NAME, "version": version, "path": str(output),
+              "skills": list(names), "files": len(package_files), "skill_files": len(entries),
+              "sha256": digest_files(package_files), "receipt": str(receipt)}
+    if archive_result is not None:
+        result.update(archive=archive_result["archive"], archive_sha256=archive_result["sha256"],
+                      archive_bytes=archive_result["bytes"])
+    return result
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", help="Bundle directory; defaults to dist/dsh-plugin")
-    parser.add_argument("--force", action="store_true", help="Replace an existing bundle directory")
+    parser.add_argument("--archive", help="Optional ZIP path for the release asset")
+    parser.add_argument("--force", action="store_true", help="Replace an existing bundle directory or archive")
     args = parser.parse_args()
     try:
-        print(json.dumps(build(args.output, args.force), ensure_ascii=False))
+        print(json.dumps(build(args.output, args.force, args.archive), ensure_ascii=False))
         return 0
     except (OSError, ValueError, RuntimeError) as error:
         print(json.dumps({"ok": False, "error": str(error)}, ensure_ascii=False))

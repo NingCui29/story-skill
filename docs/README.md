@@ -1,6 +1,6 @@
 # Story Skill 文档导航
 
-**当前正式版 v0.6.24 已发布。** 提供八技能／69文件、标准ZIP、Claude桌面单入口包、Codex本地插件，以及Intel Mac 0.1.29／build30；Windows C# x64 0.2.3 独立发行。已有草稿章名与正文同步、错字标记读取、正式稿范围与同步状态刷新及实际验收范围见[技能与Mac记录](releases/v0.6.24.md)和[Windows记录](releases/windows-v0.2.3.md)。
+**当前正式版 v0.6.27 已发布。** 提供八技能／69文件、标准ZIP、Claude桌面单入口包、Codex本地插件、DeepSeek Harness本地插件包，以及Intel Mac 0.1.37／build38（内置0.6.25）；Windows C# x64 0.2.5（内置0.6.26）独立发行。DSH宿主、插件包及实际验收范围见[v0.6.27记录](releases/v0.6.27.md)，桌面客户端范围见[Mac记录](releases/v0.6.25.md)和[Windows记录](releases/windows-v0.2.5.md)。
 
 [v0.6.22](releases/v0.6.22.md)、[Windows 0.2.1](releases/windows-v0.2.1.md)与更早版本的附件和证据保持原样。历史通过结果不替代本版验收。
 
@@ -35,11 +35,11 @@ v0.5.10 的短篇完整交付、平台分类、全书审查、中文校对和 Wi
 
 ## 开始使用
 
-Claude 桌面版使用 [v0.6.23 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-skill-claude-desktop-0.6.23.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.23/story-skill-claude-desktop-0.6.23.zip.sha256)。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。从固定源码自行构建时，按[安装指引](../INSTALL.md#claude-桌面版导入单技能包)显式指定正式附件名称；构建器默认名称仍带 `-r2`。
+Claude 桌面版使用 [v0.6.27 单技能导入包](https://github.com/NingCui29/story-skill/releases/download/v0.6.27/story-skill-claude-desktop-0.6.27.zip)及[校验文件](https://github.com/NingCui29/story-skill/releases/download/v0.6.27/story-skill-claude-desktop-0.6.27.zip.sha256)。整个 ZIP 仅一个 `SKILL.md`，八流程作为 `GUIDE.md` 内嵌。按[桌面导入步骤](../INSTALL.md#claude-桌面版导入单技能包)上传并启用，在实际会话核对技能与工具；八目录标准包用于目录安装。从固定源码自行构建时，按[安装指引](../INSTALL.md#claude-桌面版导入单技能包)显式指定正式附件名称；构建器默认名称仍带 `-r2`。
 
 普通聊天文件环境、Cowork 或统一任务界面的目录权限、作者电脑的本机工作台分别核对。书稿应保存到会话可访问位置，并下载完整书目录备份；技能导入不会自动启动本机 Python 服务。更多桌面与云端边界见[安装指引](../INSTALL.md#书稿保存与桌面能力)。
 
-在 Codex 中需要安装或升级时，可发送以下请求；安装时核对 v0.6.23 固定标签、Release 附件和本地已有修改，检查不符则保留现有安装：
+在 Codex 中需要安装或升级时，可发送以下请求；安装时核对 v0.6.27 固定标签、Release 附件和本地已有修改，检查不符则保留现有安装：
 
 ```text
 $skill-installer 按 https://github.com/NingCui29/story-skill/blob/main/INSTALL.md 安装或升级 Story Skill

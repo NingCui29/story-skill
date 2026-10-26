@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "version": "0.6.27",
+  "kind": "local-release-build",
+  "built_date": "2026-10-26",
+  "assets": [
+    {
+      "name": "story-skill-0.6.27.zip",
+      "bytes": 741240,
+      "sha256": "b7bec6564d4d2c3e1957cc7077cf49891066852c3df808856139d66cdc657a74",
+      "members": 69
+    },
+    {
+      "name": "story-skill-claude-desktop-0.6.27.zip",
+      "bytes": 747740,
+      "sha256": "85a929f964d40d228b59b8452c5d1b67fbfaec198033d4f1889a165f1216c9b2",
+      "members": 71
+    },
+    {
+      "name": "story-skill-codex-0.6.27.zip",
+      "bytes": 750144,
+      "sha256": "460433215155434f0786cebeb2ff161aa8cefe5dcc46e1d44cf4cdcc87f7c4de",
+      "members": 74
+    },
+    {
+      "name": "story-skill-dsh-0.6.27.zip",
+      "bytes": 747886,
+      "sha256": "5ac98937ef36285f7e4f23efec2a0ff2f60f651bf2540c4d6945a34370cba1c3",
+      "members": 77
+    }
+  ],
+  "checks": [
+    "packaging, install and DSH bundle regression",
+    "forbidden technology source scan",
+    "instruction load budget"
+  ],
+  "boundary": "Local build receipt only; GitHub Actions CI and registry download results are separate."
+}
