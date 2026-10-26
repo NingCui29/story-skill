@@ -90,8 +90,8 @@ search('没有匹配');assert.equal(cards().length,0);assert.equal(counts().comp
     def test_refresh_and_persisted_preferences_keep_all_selected_filters(self):
         self.js(r"""
 render({books});$('filter-long').onclick();sort('oldest');filter('completed');search('记录');
-response={books:[...books,book('记录新完本','long',state('completed'))]};await refresh();assert.equal(shelfFilter,'long');assert.equal(shelfSort,'oldest');assert.equal(shelfStatusFilter,'completed');assert.equal(shelfQuery,'记录');assert.equal(cards().length,2);assert.equal($('shelf-status').value,'completed');assert.deepEqual(JSON.parse(storageValue),{filter:'long',sort:'oldest',status:'completed'});
-shelfFilter='all';shelfSort='newest';shelfStatusFilter='all';restoreShelfView();assert.equal(shelfFilter,'long');assert.equal(shelfSort,'oldest');assert.equal(shelfStatusFilter,'completed');storageValue=JSON.stringify({status:'constructor'});shelfStatusFilter='all';restoreShelfView();assert.equal(shelfStatusFilter,'all');
+response={books:[...books,book('记录新完本','long',state('completed'))]};await refresh();assert.equal(shelfFilter,'long');assert.equal(shelfSort,'oldest');assert.equal(shelfStatusFilter,'completed');assert.equal(shelfQuery,'记录');assert.equal(cards().length,2);assert.equal($('shelf-status').value,'completed');assert.deepEqual(JSON.parse(storageValue),{filter:'long',sort:'oldest',status:'completed',query:'记录'});
+shelfFilter='all';shelfSort='newest';shelfStatusFilter='all';shelfQuery='';restoreShelfView();assert.equal(shelfFilter,'long');assert.equal(shelfSort,'oldest');assert.equal(shelfStatusFilter,'completed');assert.equal(shelfQuery,'记录');storageValue=JSON.stringify({status:'constructor'});shelfStatusFilter='all';restoreShelfView();assert.equal(shelfStatusFilter,'all');
 """)
 
     def test_old_saved_preferences_load_with_all_statuses_and_valid_saved_status_restores(self):

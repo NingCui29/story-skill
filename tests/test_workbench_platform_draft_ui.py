@@ -33,11 +33,11 @@ const editorDialog=title=>{const dialog=new Element('dialog'),content=new Elemen
 const docs=new Map([['editor',{text:'旧正式稿',value:'用户未保存的全部文字',editable:true}]]),dirty=d=>!!d&&d.text!==d.value;
 const currentBookInfo={kind:'long',kind_verified:true,title:'验收作品'};
 const setTimeout=(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},clearTimeout=id=>timers.delete(id);
-const call=async(action,payload={})=>{requests.push({action,payload:structuredClone(payload)});return handler(action,payload);};
+const call=async(action,payload={})=>{requests.push({action,payload:structuredClone(payload)});try{const response=await handler(action,payload);if(action!=='platform-drafts/refresh-plan'||response?.scope)return response;}catch(error){if(action!=='platform-drafts/refresh-plan'||error.message!==action)throw error;}return {ok:true,book_id:'book-one',revision:7,base_plan_id:payload.plan_id,plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_sha256,platform:'fanqie',account_id:'account',remote_book_id:'remote',start:payload.start,end:payload.end,chapters:Array.from({length:payload.end-payload.start+1},(_,i)=>payload.start+i),scope:'local_formal_refresh_only',remote_accessed:false,submission_performed:false};};
 const plan=(id='plan-1',extra={})=>({id,platform:'fanqie',status:'prepared',book_title:'验收作品',account_id:'account',remote_book_id:'remote',chapters:[1,2],...extra});
 const profile={id:'本机.json',label:'番茄页面',valid:true,platform:'fanqie',sha256:'profile-sha'};
 const catalog=(plans=[plan()],jobs=[],extra={})=>({book_id:'book-one',revision:7,formal_first:1,formal_last:13,formal_count:13,max_batch:1000,plans,profiles:[profile],jobs,next_offset:null,...extra});
-const preview=payload=>({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding,book_id:'book-one',plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_id?'profile-sha':null,mode:payload.reconcile_only?'reconcile_only':payload.sync_drafts?'sync_drafts':'save_draft',preview_token:payload.profile_id?(Math.floor(Date.now()/1000)+600)+'.signed':null,can_start:!!payload.profile_id,blockers:payload.profile_id?[]:['profile_required'],preview:{platform:'fanqie',account_id:'account',remote_book_id:'remote',chapters:[{chapter:1,title:'标题一',body_characters:100},{chapter:2,title:'标题二',body_characters:200}],results:[{chapter:1,state:'pending',last_observed_at:null,reason:null,observed_this_run:false,title_body_verified:false}]}});
+const preview=payload=>({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding,book_id:'book-one',plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_id?'profile-sha':null,mode:payload.inspect_only?'inspect_drafts':payload.reconcile_only?'reconcile_only':payload.sync_drafts?'sync_drafts':'save_draft',preview_token:payload.profile_id?(Math.floor(Date.now()/1000)+600)+'.signed':null,can_start:!!payload.profile_id,blockers:payload.profile_id?[]:['profile_required'],preview:{platform:'fanqie',account_id:'account',remote_book_id:'remote',chapters:[{chapter:1,title:'标题一',body_characters:100},{chapter:2,title:'标题二',body_characters:200}],results:[{chapter:1,state:'pending',last_observed_at:null,reason:null,observed_this_run:false,title_body_verified:false}]}});
 const job=(extra={})=>({comparison_policy:'strict',body_encoding:'plain_paragraphs_v1',id:'job-one',book_id:'book-one',plan_id:'plan-1',mode:'sync_drafts',state:'running',stage:'waiting_login',done:false,total_chapters:2,verified_chapters:0,result:null,...extra});
 handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog();if(action.endsWith('/preview'))return preview(payload);if(action.endsWith('/start'))return job();if(action.endsWith('/job'))return job();throw Error(action);};
 const textTree=node=>node.textContent+'\n'+node.children.map(textTree).join('\n');
@@ -70,8 +70,9 @@ assert.equal(JSON.stringify([...docs]),before);assert.equal(p.progress.value,0);
         self.js(r'''
 let release;handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog([],requests.some(r=>r.action.endsWith('/start'))?[job()]:[]);if(action.endsWith('/preview'))return preview(payload);if(action.endsWith('/start'))return new Promise(resolve=>{release=resolve;});throw Error(action);};
 // Give the initial catalog a plan; reopening will return the active job.
-const previous=handler;let catalogs=0;handler=async(action,payload)=>action.endsWith('/catalog')&&++catalogs===1?catalog():previous(action,payload);
+const previous=handler;let catalogs=0;handler=async(action,payload)=>action.endsWith('/catalog')&&++catalogs<=2?catalog():previous(action,payload);
 await platformDraftOpen();const p=platformDraftPanel;const first=p.run.onclick();await p.run.onclick();
+for(let i=0;i<60&&!release;i++)await Promise.resolve();
 assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,1);p.dialog.close();release(job());await first;
 assert.equal(platformDraftPanel,null);assert.equal([...timers.values()].filter(t=>t.delay===1500).length,0);
 await platformDraftOpen();const reopened=platformDraftPanel;assert.equal(reopened.job.id,'job-one');assert.equal(reopened.run.disabled,true);
@@ -100,7 +101,7 @@ await p.run.onclick();assert.equal(requests.filter(r=>r.action.endsWith('/start'
     def test_failed_start_and_readonly_poll_retry_never_claim_saved_or_resend(self):
         self.js(r'''
 await platformDraftOpen();const p=platformDraftPanel;handler=async()=>{throw Error('预览已经过期');};await p.run.onclick();
-assert.ok(p.status.textContent.includes('未能确认任务启动'));assert.ok(!p.status.textContent.includes('已保存'));assert.equal(p.run.disabled,true);
+assert.ok(/未能确认任务启动|新批次未能确认/.test(p.status.textContent));assert.ok(!p.status.textContent.includes('已保存'));assert.equal(p.run.disabled,true);
 platformDraftDrawJob(p,job());const sent=requests.filter(r=>r.action.endsWith('/start')).length;
 await platformDraftPoll(p);assert.ok(p.status.textContent.includes('后台可能仍在执行'));assert.equal(p.run.disabled,true);
 assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,sent);assert.equal([...timers.values()].filter(t=>t.delay===1500).length,1);
@@ -159,7 +160,7 @@ p.encoding.value='markdown_paragraphs_v1';await p.run.onclick();assert.equal(req
     def test_platform_format_is_fixed_and_stale_selection_cannot_start(self):
         self.js(r'''await platformDraftOpen();const p=platformDraftPanel;
 assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.encoding.type,'hidden');
-assert.ok(textTree(p.content).includes('统一去掉空白行'));
+assert.ok(textTree(p.content).includes('去掉本地 MD 空白行'));
 p.encoding.value='markdown_paragraphs_v2';await p.run.onclick();
 assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
 await platformDraftPreview(p);assert.equal(p.encoding.value,'plain_paragraphs_v1');

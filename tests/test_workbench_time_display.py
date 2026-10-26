@@ -91,7 +91,7 @@ render({books:[newer,short,older]});changeSort('oldest');$('filter-long').onclic
 response={books:[book('middle','2026-10-01T00:00:00Z'),newer,short,older,book('unknown',null)]};await refresh();
 assert.equal(shelfFilter,'long');assert.equal(shelfSort,'oldest');assert.equal($('shelf-order').value,'oldest');assert.equal($('filter-long').attributes['aria-pressed'],'true');assert.equal($('filter-all').textContent,'全部 5');assert.deepEqual(cardKeys(),['older','middle','newer','unknown']);
 $('filter-short').onclick();assert.deepEqual(cardKeys(),['short']);assert.equal(shelfSort,'oldest');$('filter-all').onclick();assert.deepEqual(cardKeys(),['older','middle','short','newer','unknown']);changeSort('newest');assert.deepEqual(cardKeys(),['newer','short','middle','older','unknown']);
-assert.deepEqual(JSON.parse(storageValue),{filter:'all',sort:'newest',status:'all'});
+assert.deepEqual(JSON.parse(storageValue),{filter:'all',sort:'newest',status:'all',query:''});
 """)
 
     def test_preferences_reload_and_invalid_settings_fall_back_to_defaults(self):

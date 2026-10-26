@@ -90,8 +90,8 @@ for(const policy of [undefined,'fanqie_terminal_lf_v1']){
 let refreshed=false;
 handler=async(action,payload)=>{
  if(action.endsWith('/catalog'))return catalog(refreshed?[plan('new-plan')]:[plan()]);
- if(action.endsWith('/preview'))return {...preview(payload),mode:payload.sync_drafts?'sync_drafts':'save_draft',comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding};
- if(action.endsWith('/refresh-plan')){refreshed=true;return {ok:true,book_id:'book-one',revision:7,base_plan_id:'plan-1',plan_id:'new-plan',profile_id:profile.id,profile_sha256:profile.sha256,platform:'fanqie',account_id:'account',remote_book_id:'remote',start:1,end:2,chapters:[1,2],scope:'local_formal_refresh_only',remote_accessed:false,submission_performed:false};}
+ if(action.endsWith('/preview'))return {...preview(payload),mode:payload.inspect_only?'inspect_drafts':payload.sync_drafts?'sync_drafts':'save_draft',comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding};
+ if(action.endsWith('/refresh-plan')){refreshed=true;return {ok:true,book_id:'book-one',revision:7,base_plan_id:payload.plan_id,plan_id:'new-plan',profile_id:profile.id,profile_sha256:profile.sha256,platform:'fanqie',account_id:'account',remote_book_id:'remote',start:1,end:2,chapters:[1,2],scope:'local_formal_refresh_only',remote_accessed:false,submission_performed:false};}
  if(action.endsWith('/start'))return job({plan_id:'new-plan',mode:'sync_drafts',comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding});
  throw Error(action);
 };
@@ -101,7 +101,7 @@ assert.equal(p.plan.value,'new-plan');assert.equal(p.mode.value,'sync_drafts');a
 assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.comparison.value,'strict');
 assert.equal(requests.find(r=>r.action.endsWith('/refresh-plan')).payload.end,2,'Do not silently extend updates to newly added chapters');
 assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
-await p.run.onclick();const sent=requests.find(r=>r.action.endsWith('/start')).payload;assert.equal(sent.sync_drafts,true);assert.equal(sent.reconcile_only,false);assert.equal(sent.plan_id,'new-plan');
+await p.run.onclick();const sent=requests.find(r=>r.action.endsWith('/start')).payload;assert.equal(sent.sync_drafts,false);assert.equal(sent.inspect_only,true);assert.equal(sent.reconcile_only,false);assert.equal(sent.plan_id,'new-plan');
 ''')
 
     def test_latest_durable_success_wins_over_stale_failed_job_and_remains_explicitly_historical(self):

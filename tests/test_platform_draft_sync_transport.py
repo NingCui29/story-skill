@@ -52,11 +52,10 @@ class SyncTransportTests(unittest.TestCase):
         preview=drafts.workbench_preview(self.root,self.plan['id'],self.path.name,expected_book_id=self.book.meta('id'),sync_drafts=True)
         self.assertEqual(preview['mode'],'sync_drafts');self.assertTrue(preview['can_start'])
         with patch.object(drafts.threading,'Thread') as thread:
-            result=drafts.workbench_start(self.root,self.plan['id'],self.path.name,expected_book_id=self.book.meta('id'),
+            self.assert_code('platform_draft_inspection_required',drafts.workbench_start,self.root,self.plan['id'],self.path.name,expected_book_id=self.book.meta('id'),
                 expected_profile_sha256=preview['profile_sha256'],preview_token=preview['preview_token'],execute=True,sync_drafts=True)
-            self.assertEqual(result['mode'],'sync_drafts');thread.return_value.start.assert_called_once()
-            # No worker runs in this dispatch contract test.
-            drafts._finish_job(result['id'],error='platform_draft_worker_unavailable');self.jobs.append(result['id'])
+            # A valid local preview does not replace the full remote inspection.
+            thread.assert_not_called()
 
     def test_update_receipt_must_preserve_remote_identity_and_metadata_evidence(self):
         self.assert_code('platform_browser_identity_mismatch',bridge._validate_result,'update_draft','901',{}, {'remote_id':'900'})

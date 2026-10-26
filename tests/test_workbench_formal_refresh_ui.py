@@ -34,8 +34,8 @@ const idleTimers=()=>[...timers.values()].filter(row=>row.delay===5000);
     def test_open_focus_idle_and_close_read_only_without_polling_leaks(self):
         self.js(r'''
 const before=JSON.stringify([...docs]);await platformDraftOpen();const p=platformDraftPanel;
-assert.ok(textTree(p.content).includes('已生成批次'));assert.ok(p.formalRange.textContent.includes('第1—13章'));assert.ok(p.selectedRange.textContent.includes('第1—2章'));
-assert.equal(p.refreshStart.value,'1');assert.equal(p.refreshEnd.value,'13');assert.equal(p.generate.textContent,'按第1—13章生成新批次');assert.ok(p.run.textContent.includes('所选第1—2章'));
+assert.ok(textTree(p.content).includes('本次章节记录'));assert.ok(p.formalRange.textContent.includes('第1—13章'));assert.ok(p.selectedRange.textContent.includes('第1—2章'));
+assert.equal(p.refreshStart.value,'1');assert.equal(p.refreshEnd.value,'2');assert.equal(p.generate.hidden,true);assert.equal(p.run.textContent,'准备并检查差异');
 assert.equal(count('formal-state'),1);assert.equal(focusListeners.size,1);assert.equal(idleTimers().length,1);
 await [...focusListeners][0]();await idleTimers()[0].fn();assert.equal(count('formal-state'),3);assert.equal(idleTimers().length,1);
 assert.equal(count('refresh-plan'),0);assert.equal(count('bind'),0);assert.equal(count('start'),0);assert.equal(JSON.stringify([...docs]),before);
@@ -47,7 +47,7 @@ p.dialog.close();assert.equal(focusListeners.size,0);assert.equal(idleTimers().l
 await platformDraftOpen();const p=platformDraftPanel,old=JSON.stringify(p.plans),previews=count('preview'),catalogs=count('catalog');assert.equal(p.run.disabled,false);
 handler=async(action)=>{assert.ok(action.endsWith('/formal-state'));return formal({revision:8,formal_last:14,formal_count:14});};
 await platformDraftFormalState(p);assert.equal(p.preview,null);assert.equal(p.previewExpires,0);assert.equal(p.run.disabled,true);assert.equal(p.previewBox.children.length,0);
-assert.equal(p.refreshStart.value,'1');assert.equal(p.refreshEnd.value,'14');assert.equal(p.bindStart.value,'13');assert.equal(p.bindEnd.value,'14');assert.ok(p.formalNote.textContent.includes('新增已登记正式章'));
+assert.equal(p.refreshStart.value,'1');assert.equal(p.refreshEnd.value,'2');assert.equal(p.bindStart.value,'13');assert.equal(p.bindEnd.value,'14');assert.ok(p.formalNote.textContent.includes('新增已登记正式章'));
 assert.equal(JSON.stringify(p.plans),old);assert.equal(p.plan.value,'plan-1');assert.equal(count('preview'),previews);assert.equal(count('catalog'),catalogs);assert.equal(count('refresh-plan'),0);assert.equal(count('start'),0);
 await p.run.onclick();assert.equal(count('start'),0);
 handler=async(action,payload)=>{
@@ -55,7 +55,7 @@ handler=async(action,payload)=>{
  if(action.endsWith('/catalog'))return catalog([plan(),plan('new-plan')],[],{revision:8,formal_last:14,formal_count:14});
  if(action.endsWith('/preview'))return preview(payload);
  throw Error(action);
-};await p.recheck.onclick();assert.equal(p.run.disabled,false);assert.ok(p.run.textContent.includes('所选第1—2章'));
+};await p.recheck.onclick();assert.equal(p.run.disabled,false);assert.ok(p.selectedRange.textContent.includes('第1—2章'));
 assert.equal(p.plan.value,'new-plan');assert.equal(count('refresh-plan'),1);
 const refreshedRequest=requests.find(row=>row.action.endsWith('/refresh-plan')).payload;
 assert.equal(refreshedRequest.start,1);assert.equal(refreshedRequest.end,2);assert.equal(refreshedRequest.expected_revision,8);assert.equal(count('start'),0);
@@ -79,7 +79,7 @@ handler=async(action,payload)=>{
  if(action.endsWith('/preview'))return preview(payload);
  throw Error(action);
 };await p.generate.onclick();assert.ok(created);assert.equal(count('refresh-plan'),1);const sent=requests.find(row=>row.action.endsWith('/refresh-plan')).payload;
-assert.deepEqual(sent,{plan_id:'plan-1',profile_id:profile.id,profile_sha256:profile.sha256,expected_revision:7,start:3,end:13});assert.equal(p.plan.value,'new-plan');assert.equal(p.profile.value,profile.id);assert.equal(p.preview.plan_id,'new-plan');assert.equal(p.run.disabled,false);assert.ok(p.run.textContent.includes('第3—13章'));assert.ok(p.formalNote.textContent.includes('尚未访问平台'));assert.equal(count('start'),0);assert.equal(count('bind'),0);assert.equal(JSON.stringify([...docs]),before);
+assert.deepEqual(sent,{plan_id:'plan-1',profile_id:profile.id,profile_sha256:profile.sha256,expected_revision:7,start:3,end:13});assert.equal(p.plan.value,'new-plan');assert.equal(p.profile.value,profile.id);assert.equal(p.preview.plan_id,'new-plan');assert.equal(p.run.disabled,false);assert.ok(p.selectedRange.textContent.includes('第3—13章'));assert.ok(p.formalNote.textContent.includes('尚未访问平台'));assert.equal(count('start'),0);assert.equal(count('bind'),0);assert.equal(JSON.stringify([...docs]),before);
 ''')
 
     def test_blank_invalid_gapped_or_oversized_ranges_never_generate(self):
@@ -126,7 +126,7 @@ for(const change of ['profile','target','chapters']){
  handler=async(action,payload)=>action.endsWith('/formal-state')?formal():originalHandler(action,payload);await platformDraftOpen();const p=platformDraftPanel,previews=count('preview');
  handler=async(action,payload)=>{
   if(action.endsWith('/refresh-plan'))return refreshed(payload);
-  if(action.endsWith('/catalog'))return catalog([plan(),plan('new-plan',{chapters:change==='chapters'?[1,2]:Array.from({length:13},(_,i)=>i+1),...(change==='target'?{account_id:'other-account'}:{})})],[],{profiles:[{...profile,sha256:change==='profile'?'b'.repeat(64):profile.sha256}]});
+  if(action.endsWith('/catalog'))return catalog([plan(),plan('new-plan',{chapters:change==='chapters'?[1,2,3]:[1,2],...(change==='target'?{account_id:'other-account'}:{})})],[],{profiles:[{...profile,sha256:change==='profile'?'b'.repeat(64):profile.sha256}]});
   throw Error('No automatic preview: '+action);
  };await p.generate.onclick();assert.equal(count('preview'),previews);assert.equal(p.preview,null);assert.equal(p.run.disabled,true);assert.ok(p.status.textContent.includes('未自动预览'));assert.equal(count('start'),0);p.dialog.close();
 }

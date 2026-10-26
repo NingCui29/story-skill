@@ -7,6 +7,7 @@ deliberately injected so the state machine can be tested without an account.
 """
 from contextlib import contextmanager, ExitStack
 from datetime import datetime, timezone
+import difflib
 import hashlib
 import hmac
 import json
@@ -1084,8 +1085,98 @@ def require_platform_comparison_policy(value):
     return value
 
 
+def _remote_signature(observed):
+    return _hash({key: observed.get(key) for key in ("remote_id", "title", "body", "state", "formatting_clean")})
+
+
+def _draft_difference(expected, observed):
+    """Bounded, plain-text display only. Equality always uses the entire body."""
+    before = observed["body"] if observed else ""
+    after = expected["body"]
+    lines = difflib.unified_diff(before.splitlines(), after.splitlines(),
+                                fromfile="平台草稿", tofile="本地正式稿（去空白行）", n=2, lineterm="")
+    text = "\n".join(lines)
+    if observed and before.endswith("\n") != after.endswith("\n"):
+        text += "\n末尾换行：平台" + ("有" if before.endswith("\n") else "无") + "；本地转换正文" + ("有" if after.endswith("\n") else "无")
+    return {"remote_title": observed["title"] if observed else None, "local_title": expected["title"],
+            "title_changed": observed is None or observed["title"] != expected["title"],
+            "body_changed": observed is None or before != after,
+            "remote_characters": len(before), "local_characters": len(after),
+            "body_diff": text[:6000], "diff_truncated": len(text) > 6000}
+
+
+def inspect_plan(book, plan_id, adapter, *, progress=None, stop_requested=None,
+                 comparison_policy="strict", body_encoding=PLATFORM_BODY_ENCODING):
+    """Inspect the whole batch without journal writes, editor fills or saves."""
+    require_platform_comparison_policy(comparison_policy)
+    require_platform_body_encoding(body_encoding)
+    with _checked_plan(book, plan_id) as (manifest, fingerprint, _):
+        frozen_items = manifest["chapters"]
+        encoded = {item["chapter"]: _encoded_content(item, body_encoding, manifest["platform"]) for item in frozen_items}
+    rows, expected_remote = [], {}
+    stopped = False
+    with _target_lock(manifest) as guard, _journal(book, plan_id, manifest, fingerprint) as journal:
+        for item in frozen_items:
+            if stop_requested and stop_requested():
+                stopped = True
+                break
+            chapter = item["chapter"]
+            row = {"chapter": chapter, "title": item["title"], "action": "blocked", "reason": None}
+            if progress:
+                progress({"stage": "inspection_started", "chapter": chapter, "checked_chapters": len(rows)})
+            try:
+                with _checked_plan(book, plan_id) as (_, current, _):
+                    if current != fingerprint:
+                        api.fail("platform_draft_source_changed", "正式稿在检查期间变化，请重新准备。")
+                guard()
+                adapter.verify_target(**_target(manifest))
+                found = adapter.find_drafts(chapter)
+                if not isinstance(found, list):
+                    api.fail("platform_draft_invalid_observation", "需要完整目录。")
+                if len(found) > 1:
+                    row["reason"] = "multiple_remote_drafts"
+                elif found:
+                    listed = _observation(found[0])
+                    guard()
+                    adapter.verify_target(**_target(manifest))
+                    observed = _observation(adapter.read_draft(listed["remote_id"]), listed["remote_id"])
+                    same = _content(encoded[chapter]) == _content(observed) and observed.get("formatting_clean") is not False
+                    intents, resolved = guard.attempts(chapter)
+                    unresolved = any(key not in resolved for key in intents)
+                    row.update(remote_id=observed["remote_id"], action="unchanged" if same else "update",
+                               difference=_draft_difference(encoded[chapter], observed))
+                    if unresolved and not same:
+                        row.update(action="blocked", reason="unresolved_previous_content")
+                    expected_remote[str(chapter)] = _remote_signature(observed)
+                else:
+                    attempts, _ = guard.attempts(chapter)
+                    if attempts or journal.may_have_remote(chapter, guard.retired_events(chapter, book.meta("id"), plan_id)):
+                        row["reason"] = "previous_attempt_not_found"
+                    else:
+                        row.update(action="create", difference=_draft_difference(encoded[chapter], None))
+                        expected_remote[str(chapter)] = None
+            except Exception as error:
+                row["reason"] = _error_code(error)
+                rows.append(row)
+                break
+            rows.append(row)
+            if progress:
+                progress({"stage": "inspection_checked", "chapter": chapter, "checked_chapters": len(rows)})
+        with _checked_plan(book, plan_id, check_source=False):
+            reasons, _ = api.publish._source_comparison(book, manifest)
+    complete = len(rows) == len(frozen_items) and not reasons and not stopped
+    return {"id": plan_id, "inspection": True, "remote_accessed": bool(rows), "submission_performed": False,
+            "source_matches_current": not reasons, "inspection_complete": complete, "stop_requested": stopped,
+            "can_execute": complete and all(row["action"] != "blocked" for row in rows),
+            "checked_chapters": len(rows), "total_chapters": len(frozen_items), "results": [],
+            "changes": rows, "change_counts": {key: sum(row["action"] == key for row in rows)
+                                                for key in ("create", "update", "unchanged", "blocked")},
+            "_expected_remote": expected_remote, "_manifest_sha256": fingerprint}
+
+
 def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False, progress=None,
-             comparison_policy="strict", body_encoding="verbatim", sync_drafts=False):
+             comparison_policy="strict", body_encoding="verbatim", sync_drafts=False,
+             expected_remote=None, stop_requested=None):
     """Execute only explicitly requested saves; injected adapters own browser I/O."""
     if type(sync_drafts) is not bool or type(reconcile_only) is not bool or (sync_drafts and reconcile_only):
         api.fail("invalid_input", "Choose one draft execution mode")
@@ -1121,6 +1212,7 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
         observed_chapters = set()
         attempt_ids = set()
         exact_chapters, equivalent_chapters = set(), set()
+        stopped = False
         scope = {"book_id": book.meta("id"), "plan_id": plan_id, "manifest_sha256": fingerprint}
 
         def append(chapter, event, **kwargs):
@@ -1140,6 +1232,9 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                               attempt_ids=attempt_ids)["results"][0]})
 
         for frozen in manifest["chapters"]:
+            if stop_requested and stop_requested():
+                stopped = True
+                break
             chapter = frozen["chapter"]
             encoded = encoded_chapters[chapter]
             report("chapter_started", chapter)
@@ -1172,6 +1267,8 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                     adapter.verify_target(**_target(manifest))
                     target_verified = True
                     observed = _observation(adapter.read_draft(remote_id), remote_id)
+                    if expected_remote is not None and expected_remote.get(str(chapter)) != _remote_signature(observed):
+                        api.fail("platform_draft_inspection_changed", "草稿在检查后发生变化，请重新检查差异。")
                     observed_chapters.add(chapter)
                     rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, manifest["platform"])
                     exact = _content(frozen) == _content(observed)
@@ -1181,6 +1278,8 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                                observed=observed, reason="remote_formatting_metadata" if observed.get("formatting_clean") is False else "remote_content_differs")
                         break
                     if needs_update:
+                        if stop_requested and stop_requested():
+                            api.fail("platform_draft_stop_requested", "已在写入前安全停止。")
                         intents, resolved = guard.attempts(chapter)
                         if any(key not in resolved for key in intents):
                             append(chapter, "unknown", attempt_id=attempt_id, remote_id=remote_id,
@@ -1232,12 +1331,16 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                     report("chapter_verified", chapter)
                     continue
                 target_attempts, _ = guard.attempts(chapter)
+                if expected_remote is not None and (str(chapter) not in expected_remote or expected_remote[str(chapter)] is not None):
+                    api.fail("platform_draft_inspection_changed", "草稿目录在检查后发生变化，请重新检查差异。")
                 if journal.may_have_remote(chapter, guard.retired_events(chapter, book.meta("id"), plan_id)) or target_attempts:
                     append(chapter, "unknown", attempt_id=attempt_id, reason="previous_attempt_not_found")
                     break
                 if reconcile_only:
                     append(chapter, "not_found", attempt_id=attempt_id, reason="remote_draft_not_found")
                     break
+                if stop_requested and stop_requested():
+                    api.fail("platform_draft_stop_requested", "已在新建前安全停止。")
                 guard()
                 target_verified = False
                 adapter.verify_target(**_target(manifest))
@@ -1273,6 +1376,9 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                 (exact_chapters if exact else equivalent_chapters).add(chapter)
                 report("chapter_verified", chapter)
             except Exception as error:
+                if _error_code(error) == "platform_draft_stop_requested" and not sending:
+                    stopped = True
+                    break
                 if _error_code(error).startswith("platform_draft_journal"):
                     raise
                 if sending and remote_id is None and isinstance(error, api.StoryError):
@@ -1295,6 +1401,7 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                          comparison_policy=comparison_policy, body_encoding=body_encoding, attempt_ids=attempt_ids)
         result["source_matches_current"] = not current_reasons
         result["local_version_changed"] = bool(current_reasons)
+        result["stop_requested"] = stopped
         result["requested_mode"] = "sync_drafts" if sync_drafts else ("reconcile_only" if reconcile_only else "save_draft")
         result["execution_mode"] = getattr(adapter, "execution_mode", "playwright")
         result["backend"] = result["execution_mode"]
@@ -1412,7 +1519,7 @@ def _job_packet(job):
     fields = ("id", "book_id", "plan_id", "platform", "account_id", "remote_book_id", "profile_id", "mode",
               "profile_sha256", "execution_mode", "backend", "state", "stage", "done", "created_at", "updated_at", "finished_at",
               "total_chapters", "verified_chapters", "accepted_chapters", "equivalent_chapters", "comparison_policy",
-              "body_encoding", "rendered_chapters", "current_chapter", "error", "result")
+              "body_encoding", "rendered_chapters", "current_chapter", "error", "result", "checked_chapters", "stop_requested")
     return {"ok": True, **{key: json.loads(json.dumps(job[key])) for key in fields if key in job},
             "scope": "platform_chapter_drafts_only", "submission_performed": False,
             "job_survives_process_exit": False, "durable_attempt_journal": True}
@@ -1674,7 +1781,9 @@ def workbench_refresh_plan(root, plan_id, profile_id, *, expected_book_id, expec
 
 
 def _preflight(root, plan_id, profile_id, expected_book_id=None, reconcile_only=False, comparison_policy="strict",
-               body_encoding="verbatim", sync_drafts=False):
+               body_encoding="verbatim", sync_drafts=False, inspect_only=False):
+    if type(inspect_only) is not bool or (inspect_only and (reconcile_only or sync_drafts)):
+        api.fail("invalid_input", "请选择检查差异、同步或只读核对中的一种操作。")
     if type(reconcile_only) is not bool:
         api.fail("invalid_input", "reconcile_only must be a boolean")
     with _workbench_book(root, expected_book_id) as book:
@@ -1683,7 +1792,7 @@ def _preflight(root, plan_id, profile_id, expected_book_id=None, reconcile_only=
         with _checked_plan(book, plan_id, check_source=not reconcile_only) as (manifest, fingerprint, _):
             binding = {"book_id": book.meta("id"), "plan_id": plan_id,
                        "manifest_sha256": fingerprint, "target_sha256": _hash(_target(manifest)),
-                       "mode": "sync_drafts" if sync_drafts else ("reconcile_only" if reconcile_only else "save_draft"), "comparison_policy": comparison_policy,
+                       "mode": "inspect_drafts" if inspect_only else "sync_drafts" if sync_drafts else ("reconcile_only" if reconcile_only else "save_draft"), "comparison_policy": comparison_policy,
                        "body_encoding": body_encoding}
         root = book.root
     profile = None
@@ -1748,10 +1857,10 @@ def _automatic_connection(profile, blockers):
 
 
 def workbench_preview(root, plan_id, profile_id=None, *, expected_book_id=None, reconcile_only=False,
-                      comparison_policy="strict", body_encoding="verbatim", sync_drafts=False):
+                      comparison_policy="strict", body_encoding="verbatim", sync_drafts=False, inspect_only=False):
     """Check frozen local sources and profile eligibility; never opens a browser."""
     root, preview, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id, reconcile_only,
-                                               comparison_policy, body_encoding, sync_drafts)
+                                               comparison_policy, body_encoding, sync_drafts, inspect_only)
     runtime = _execution_runtime(root, preview, profile, binding)
     blockers = []
     if profile_id is None:
@@ -1781,9 +1890,11 @@ def _job_progress(job_id, event):
         return
     stage = event.get("stage")
     if stage not in {"waiting_login", "waiting_host", "target_verified", "listing_drafts", "saving_draft", "reading_back",
-                     "chapter_started", "chapter_verified"}:
+                     "chapter_started", "chapter_verified", "inspection_started", "inspection_checked"}:
         return
     changes = {"stage": stage, "state": "waiting_login" if stage == "waiting_login" else "running"}
+    if stage in ("inspection_started", "inspection_checked"):
+        changes.update(current_chapter=event.get("chapter"), checked_chapters=event.get("checked_chapters", 0))
     # Only local journal completion events can advance the verified count.
     if stage in ("chapter_started", "chapter_verified"):
         if type(event.get("chapter")) is int:
@@ -1809,7 +1920,9 @@ def _safe_job_result(result):
               "historical_all_title_body_match", "observation_scope", "results", "history_events_total",
               "execution_mode", "backend", "remote_evidence_source", "comparison_policy",
               "all_chapters_accepted_this_run", "exact_verified_chapters", "equivalent_chapters", "accepted_chapters",
-              "body_encoding", "rendered_chapters", "created_chapters", "updated_chapters", "unchanged_chapters")
+              "body_encoding", "rendered_chapters", "created_chapters", "updated_chapters", "unchanged_chapters",
+              "inspection", "inspection_complete", "checked_chapters", "total_chapters", "changes", "change_counts",
+              "can_execute", "stop_requested")
     return {key: result[key] for key in fields if key in result}
 
 
@@ -1819,7 +1932,9 @@ def _finish_job(job_id, result=None, error=None):
     if error is not None:
         with _WORKBENCH_LOCK:
             verified = max(verified, _WORKBENCH_JOBS[job_id]["verified_chapters"])
-    if result and result.get("all_chapters_verified_this_run"):
+    if result and result.get("inspection"):
+        state = "inspection_ready" if result.get("can_execute") and error is None else "inspection_blocked"
+    elif result and result.get("all_chapters_verified_this_run"):
         state = "succeeded"
     elif result and result.get("all_chapters_accepted_this_run"):
         state = "succeeded_equivalent"
@@ -1829,9 +1944,15 @@ def _finish_job(job_id, result=None, error=None):
         state = "partial_failure"
     else:
         state = "failed"
+    if (result and result.get("stop_requested")) or error == "platform_draft_stop_requested":
+        state = "stopped"
     changes = {"state": state, "stage": "finished", "done": True, "finished_at": _now(), "error": error}
     if result is not None:
         changes["result"] = _safe_job_result(result)
+        if result.get("inspection"):
+            changes.update(checked_chapters=result.get("checked_chapters", 0),
+                           _expected_remote=result.get("_expected_remote"), _manifest_sha256=result.get("_manifest_sha256"),
+                           _inspection_expires=time.time() + 600)
     changes["verified_chapters"] = verified
     if result is not None:
         changes["accepted_chapters"] = result.get("accepted_chapters", verified)
@@ -1881,6 +2002,13 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
     with _WORKBENCH_LOCK:
         root = _WORKBENCH_JOBS[job_id]["_root"]
         allow_auto_connect = _WORKBENCH_JOBS[job_id].get("_auto_connect") is True
+        expected_remote = _WORKBENCH_JOBS[job_id].get("_expected_remote")
+    def stopped():
+        with _WORKBENCH_LOCK:
+            return _WORKBENCH_JOBS[job_id].get("stop_requested") is True
+    def check_stop():
+        if stopped():
+            api.fail("platform_draft_stop_requested", "任务已在安全位置停止。")
     _update_job(job_id, state="running", stage="local_preflight")
     connected_automatically = False
     owned_worker_id = None
@@ -1890,10 +2018,12 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
         # Recheck after thread dispatch, before constructing/opening a browser.
         reconcile_only = binding["mode"] == "reconcile_only"
         sync_drafts = binding["mode"] == "sync_drafts"
+        inspect_only = binding["mode"] == "inspect_drafts"
+        check_stop()
         policy = binding["comparison_policy"]
         encoding = binding["body_encoding"]
         _, preview, profile, current = _preflight(root, binding["plan_id"], binding["profile_id"], binding["book_id"],
-                                                  reconcile_only, policy, encoding, sync_drafts)
+                                                  reconcile_only, policy, encoding, sync_drafts, inspect_only)
         if current != binding:
             api.fail("platform_draft_preview_changed", "冻结清单或平台配置已变化；请重新预览。")
         blockers = _runtime_blockers(profile, _execution_runtime(root, preview, profile, current))
@@ -1911,6 +2041,7 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
             deadline = time.monotonic() + connect_seconds + 15
             connection_stage = "connecting_chrome"
             while True:
+                check_stop()
                 state = api.chrome_worker.status(root, binding["plan_id"], binding["profile_id"],
                                                   expected_book_id=binding["book_id"], comparison_policy=policy, body_encoding=encoding)
                 if state.get("ready") is True:
@@ -1928,7 +2059,7 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
             # Connecting runs outside book transactions. Never use the earlier
             # preview if the author edited the source or binding meanwhile.
             _, preview, profile, current = _preflight(root, binding["plan_id"], binding["profile_id"],
-                                                       binding["book_id"], reconcile_only, policy, encoding, sync_drafts)
+                                                       binding["book_id"], reconcile_only, policy, encoding, sync_drafts, inspect_only)
             if current != binding:
                 api.fail("platform_draft_preview_changed", "连接期间正式稿或配置已变化，请重新预览。")
         callback = lambda event: _job_progress(job_id, event)
@@ -1941,9 +2072,11 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
                 context = api.platform_browser.BrowserAdapter(native_profile, timeout_ms=timeout_ms,
                     login_timeout_ms=login_timeout_ms, progress_callback=callback, comparison_policy=policy)
             with context as adapter:
-                result = run_plan(book, binding["plan_id"], adapter, execute=True,
+                check_stop()
+                result = inspect_plan(book, binding["plan_id"], adapter, progress=callback, stop_requested=stopped,
+                                      comparison_policy=policy, body_encoding=encoding) if inspect_only else run_plan(book, binding["plan_id"], adapter, execute=True,
                                   reconcile_only=reconcile_only, progress=callback, comparison_policy=policy, body_encoding=encoding,
-                                  sync_drafts=sync_drafts)
+                                  sync_drafts=sync_drafts, expected_remote=expected_remote, stop_requested=stopped)
     except BaseException as error:
         # Durable intents remain the source of truth even if the worker was
         # interrupted after sending. Status is local-only and never retries.
@@ -1984,7 +2117,8 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
 
 def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_profile_sha256,
                     preview_token, execute=False, timeout_ms=15000, login_timeout_ms=600000, reconcile_only=False,
-                    auto_connect=False, comparison_policy="strict", body_encoding="verbatim", sync_drafts=False):
+                    auto_connect=False, comparison_policy="strict", body_encoding="verbatim", sync_drafts=False,
+                    inspect_only=False, inspection_id=None):
     """Start one explicitly authorized frozen batch; repeat clicks reuse jobs."""
     if execute is not True:
         api.fail("platform_draft_execute_required", "保存平台草稿需要明确点击保存整批草稿。")
@@ -1997,7 +2131,7 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
     if timeout_ms > 300000 or login_timeout_ms > 3600000:
         api.fail("invalid_input", "Browser timeout exceeds the supported limit")
     root, preview, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id, reconcile_only,
-                                               comparison_policy, body_encoding, sync_drafts)
+                                               comparison_policy, body_encoding, sync_drafts, inspect_only)
     if binding["profile_sha256"] != expected_profile_sha256:
         api.fail("platform_draft_profile_changed", "平台配置已变化；请重新预览。")
     try:
@@ -2024,6 +2158,16 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
                         and job["body_encoding"] == binding["body_encoding"]):
                     return {**_job_packet(job), "reused": True}
                 api.fail("platform_draft_busy", "该平台作品已有草稿任务正在运行；请等待原任务结束。")
+        inspection = None
+        if sync_drafts:
+            inspection = _WORKBENCH_JOBS.get(inspection_id) if isinstance(inspection_id, str) else None
+            if (not inspection or inspection.get("state") != "inspection_ready" or not inspection.get("done") or
+                    inspection.get("_inspection_expires", 0) <= time.time() or inspection.get("_inspection_used") or
+                    inspection.get("_root") != str(root) or inspection.get("_manifest_sha256") != binding["manifest_sha256"] or
+                    inspection.get("_target_sha256") != binding["target_sha256"] or
+                    any(inspection.get(key) != binding[key] for key in
+                        ("book_id", "plan_id", "profile_id", "profile_sha256", "comparison_policy", "body_encoding"))):
+                api.fail("platform_draft_inspection_required", "请先完成本次整批差异检查；旧检查、不同目标或已执行检查不能复用。")
         while len(_WORKBENCH_JOBS) >= MAX_WORKBENCH_JOBS:
             retired = next((key for key, job in _WORKBENCH_JOBS.items() if job["done"]), None)
             if retired is None:
@@ -2041,7 +2185,10 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
                "total_chapters": len(preview["results"]), "verified_chapters": 0, "accepted_chapters": 0,
                "equivalent_chapters": 0, "rendered_chapters": 0, "current_chapter": None,
                "error": None, "result": _safe_job_result(preview), "_root": str(root), "_target_sha256": binding["target_sha256"],
-               "_auto_connect": auto_connect}
+               "_auto_connect": auto_connect, "stop_requested": False, "checked_chapters": 0,
+               "_expected_remote": json.loads(json.dumps(inspection["_expected_remote"])) if inspection else None}
+        if inspection:
+            inspection["_inspection_used"] = True
         _WORKBENCH_JOBS[job_id] = job
         worker = threading.Thread(target=_workbench_worker, args=(job_id, binding, timeout_ms, login_timeout_ms),
                                   name="story-platform-draft-" + job_id[:8], daemon=True)
@@ -2050,6 +2197,16 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
         except RuntimeError:
             _finish_job(job_id, error="platform_draft_worker_unavailable")
         return {**_job_packet(job), "reused": False}
+
+
+def workbench_stop(root, job_id, *, expected_book_id):
+    """Cooperative cancellation; never terminate a save or its readback."""
+    workbench_job(root, job_id, expected_book_id=expected_book_id)
+    with _WORKBENCH_LOCK:
+        job = _WORKBENCH_JOBS[job_id]
+        if not job["done"]:
+            job.update(stop_requested=True, updated_at=_now())
+        return _job_packet(job)
 
 
 def workbench_history(root, plan_id, *, expected_book_id=None):

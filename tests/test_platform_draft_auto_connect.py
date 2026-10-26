@@ -203,6 +203,13 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
     def disconnects(self):
         return [item for item in self.launcher.calls if item[0] == "disconnect"]
 
+    def inspect(self, **options):
+        options = {**options, "inspect_only": True}
+        preview = self.preview(**options)
+        result = self.wait_job(self.start(preview, **options)["id"])
+        self.assertEqual(result["state"], "inspection_ready", result)
+        return result["id"]
+
     def test_no_blank_format_survives_automatic_connect_update_interruption_and_readonly_recovery(self):
         self.fixture.commit(text=self.fixture.texts[1] + "\n\n", replace_last=True)
         self.plan = self.fixture.prepare()
@@ -214,10 +221,11 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         preview = self.preview(body_encoding=encoding, sync_drafts=True)
         self.assertFalse(preview["remote_accessed"])
         self.assertEqual((self.starts(), self.operations), ([], []))
+        inspection_id = self.inspect(body_encoding=encoding)
         self.launcher.ready.clear()
         self.fail_create = True
-        job = self.start(preview, body_encoding=encoding, sync_drafts=True)
-        duplicate = self.start(preview, body_encoding=encoding, sync_drafts=True)
+        job = self.start(preview, body_encoding=encoding, sync_drafts=True, inspection_id=inspection_id)
+        duplicate = self.start(preview, body_encoding=encoding, sync_drafts=True, inspection_id=inspection_id)
         self.assertEqual(job["id"], duplicate["id"])
         self.launcher.ready.set()
         result = self.wait_job(job["id"])
@@ -255,7 +263,8 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         options = dict(body_encoding=encoding, comparison_policy='strict', sync_drafts=True)
         preview = self.preview(**options)
         self.assertEqual(preview['mode'], 'sync_drafts')
-        result = self.wait_job(self.start(preview, **options)['id'])
+        inspection_id = self.inspect(body_encoding=encoding, comparison_policy='strict')
+        result = self.wait_job(self.start(preview, inspection_id=inspection_id, **options)['id'])
         self.assertEqual(result['state'], 'succeeded_equivalent', result)
         self.assertEqual(result['accepted_chapters'], 3)
         packet = result['result']
@@ -267,7 +276,8 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
             encoded = drafts._encoded_content(chapter, encoding, 'fanqie')
             self.assertEqual((actual['title'], actual['body']), (encoded['title'], encoded['body']))
         preview = self.preview(**options)
-        again = self.wait_job(self.start(preview, **options)['id'])
+        inspection_id = self.inspect(body_encoding=encoding, comparison_policy='strict')
+        again = self.wait_job(self.start(preview, inspection_id=inspection_id, **options)['id'])
         self.assertEqual(again['result']['unchanged_chapters'], 3)
         self.assertEqual([row for row in self.operations if row[0] in ('update', 'create')],
                          [('update', 1), ('create', 2)])

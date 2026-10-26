@@ -137,11 +137,11 @@ let active='formal:1';
         for identity in ('newer', 'older'):
             self.assertIn('disabled', self.tree.nodes[identity]['attrs'])
 
-    def test_native_compatibility_and_new_page_share_visual_rules(self):
+    def test_native_and_web_share_visual_rules(self):
         asset = (Path(__file__).resolve().parents[1] / 'desktop/macos/editor-appearance.js').read_text()
         css = asset.split('style.textContent = `\n', 1)[1].split('\n`;', 1)[0]
         self.assertIn(css, self.page)
-        self.assertIn('<body class="native-compact-editor">', self.page)
+        self.assertIn('<body class="native-compact-editor" data-workbench-ui="material-v1">', self.page)
 
     def test_primary_action_and_small_text_have_readable_sky_blue_palettes(self):
         def luminance(color):
@@ -154,8 +154,9 @@ let active='formal:1';
         css = self.w._workbench_theme_css()
         for selector in ('html[data-story-workbench]', 'html[data-story-workbench][data-theme="dark"]'):
             tokens = dict(re.findall(r'(--[a-z-]+):([^;}]+)', css.split(selector + '{', 1)[1].split('}', 1)[0]))
-            self.assertEqual(tokens['--wb-button'], '#38bdf8')
-            self.assertEqual(tokens['--wb-button-ink'], '#082f49')
+            self.assertEqual(tokens['--wb-brand'], '#38bdf8')
+            expected = ('#89d1f7', '#003447') if 'dark' in selector else ('#00658a', '#fff')
+            self.assertEqual((tokens['--wb-button'], tokens['--wb-button-ink']), expected)
             for front, back in (('--wb-button-ink', '--wb-button'), ('--muted', '--surface'),
                                 ('--muted', '--paper'), ('--muted', '--wb-panel'),
                                 ('--muted', '--wb-tint'), ('--muted', '--wb-hover')):
