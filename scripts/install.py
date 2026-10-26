@@ -192,7 +192,7 @@ SUITE_FILES = SUITE_FILES_V0626
 MARKER = ".story-skill-install.json"
 HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
                     "antigravity": ".agents", "antigravity-cli": ".agents",
-                    "qoder": ".qoder", "qoder-cn": ".qoder",
+                    "dsh": ".dsh", "qoder": ".qoder", "qoder-cn": ".qoder",
                     "zcode": ".zcode", "workbuddy": ".workbuddy-ai",
                     "trae": ".trae", "trae-cn": ".trae", "trae-cli": ".traecli",
                     "cursor": ".cursor", "codebuddy": ".codebuddy",
@@ -201,7 +201,7 @@ HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
                     "windsurf": ".windsurf", "devin": ".devin"}
 USER_HOST_DIRECTORIES = {"codex": ".agents", "claude-code": ".claude",
                         "antigravity": ".gemini/config", "antigravity-cli": ".gemini/antigravity-cli",
-                        "qoder": ".qoder", "qoder-cn": ".qoder-cn",
+                        "dsh": ".dsh", "qoder": ".qoder", "qoder-cn": ".qoder-cn",
                         "zcode": ".zcode", "workbuddy": ".workbuddy-ai",
                         "trae": ".trae", "trae-cn": ".trae-cn", "trae-cli": ".traecli",
                         "cursor": ".cursor", "codebuddy": ".codebuddy",

@@ -16,6 +16,8 @@ spec.loader.exec_module(installer)
 # Reviewed host locations, independent of the implementation's host mappings.
 # Copilot's VS Code Agent and CLI both consume this same copilot installation.
 HOST_PATHS = {
+    ("dsh", "project"): ".dsh/skills",
+    ("dsh", "user"): ".dsh/skills",
     ("cursor", "project"): ".cursor/skills",
     ("cursor", "user"): ".cursor/skills",
     ("trae", "project"): ".trae/skills",
@@ -134,6 +136,8 @@ class AdditionalHostInstallTests(unittest.TestCase):
                 for name, raw in original.items():
                     self.assertEqual(installed[name], raw)
                 self.assertFalse((root / ".agents").exists())
+                if host != "dsh":
+                    self.assertFalse((root / ".dsh").exists())
 
                 status, repeated = self.run_cli(root, host, scope)
                 self.assertEqual(status, 0)

@@ -1,0 +1,17 @@
+# Story Skill bundle: mount the eight skills from this package's skills/ root.
+- insert:
+    - id: story-skill-bundle
+      name: 'story-skill-dsh'
+    - id: story-skill-filesystem
+      name: '@deepseek-ai/dsh-skill-filesystem'
+      config:
+        providerName: story-skill
+        includeDefaultRoots: false
+        watch: false
+        bundledSkillDir: !!js >-
+          process.getBuiltinModule('node:path').join(
+            process.getBuiltinModule('node:path').dirname(
+              process.getBuiltinModule('node:module').createRequire(baseUrl).resolve('story-skill-dsh/package.json')
+            ),
+            'skills'
+          )

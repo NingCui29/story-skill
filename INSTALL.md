@@ -130,6 +130,51 @@ python3 -B -X utf8 scripts/install.py --host antigravity --user
 
 只在一个项目使用时，把 `--user` 换成 `--project "<写作项目根目录>"`；CLI 把宿主值换成 `antigravity-cli`。同一项目的 Codex 与 Antigravity 共享已核验的 `.agents/skills/` 套件，不需要再次安装同份文件；`--update` 会共同影响这份副本。Antigravity 仍兼容项目旧 `.agent/skills/`，IDE 还兼容旧 `~/.gemini/antigravity/skills/`；本安装器只写表中当前目录，不自动迁移或覆盖旧位置。先核对旧副本与本地修改，避免会话加载到非预期版本。[Antigravity 官方技能位置与调用说明](https://antigravity.google/docs/skills)
 
+### DeepSeek Harness
+
+<a id="deepseek-harness"></a>
+
+DeepSeek Harness（DSH）按目录一层扫描 `SKILL.md`：项目技能根为 `<项目根>/.dsh/skills/`（项目根是最近的 `.git` 祖先；没有 `.git` 时使用会话当前目录），用户技能根为 `~/.dsh/skills/`。DSH 也会扫描 `.agents/skills/` 与 `~/.agents/skills/`；同一套件不要同时安装在 `.dsh` 和 `.agents` 下，同一范围内 `.dsh` 优先，项目副本优先于用户副本。
+
+安装到当前用户，所有 DSH 工作区可见：
+
+```bash
+python3 -B -X utf8 scripts/install.py --host dsh --user
+```
+
+只在一个工作区使用：
+
+```bash
+python3 -B -X utf8 scripts/install.py --host dsh --project "<DSH 工作区根目录>"
+```
+
+`--project` 应指向 DSH 打开的工作区根目录或其 `.git` 祖先，不要指向书稿子目录：DSH 只扫描项目根的 `.dsh/skills/`，装在子目录或书稿目录中的副本可能不会被发现。设置 `DSH_HOME` 时，用户技能根实际为 `$DSH_HOME/skills/`；本安装器只写默认 `~/.dsh/skills/`，自定义环境请按实际扫描目录核对，或改用 `--project`。个人安装与项目安装二选一，保持八个技能同级；已有托管副本升级加 `--update`。
+
+安装后在 DSH 中：
+
+- 技能列表应出现八个 `story-skill*` 入口；DSH 监视技能根，新增、改名或删除后会自动刷新，无需重启会话。
+- 可直接输入 `/story-skill` 或 `/story-skill-plan` 等入口加需求；模型侧用 `skill` 工具按精确名称加载完整正文。会话目录只显示名称和截断描述，不能替代加载正文。
+- 用 `python3 -B -X utf8 scripts/install.py --host dsh --user --check` 只读核对安装；需要 Python 3.10+ 可供实际会话中的命令使用，客户端内置 Python 不等于技能运行时自动可用。
+- 也可使用标准八技能 ZIP：把 ZIP 内的八个目录直接解压到 `~/.dsh/skills/` 或 `<工作区>/.dsh/skills/`，不要再套一层 `story-skill-0.6.x/`；DSH 不扫描嵌套目录中的 `SKILL.md`。
+
+本机按 DeepSeek Harness 0.2.1-rc.3 的 `dsh-skill-filesystem` 规则核对，并在实际会话中确认八个入口出现在技能目录；其他版本按实际扫描根与调用方式复核。
+
+#### DSH 插件包（bundle）
+
+<a id="dsh-plugin-bundle"></a>
+
+若希望 Story Skill 作为独立 bundle 出现在 DSH 的 Plugins 页面，可构建本机插件包：
+
+```bash
+python3 -B -X utf8 scripts/package_dsh.py --output dist/dsh-plugin
+```
+
+`dist/dsh-plugin` 是完整插件目录，包含 `package.json`、`cordis.patch.yml`、`locale/`、`icon.svg` 和 69 个技能文件。用 Harness 的 Plugins 页面安装本地 bundle，选择该目录的绝对路径；也可由助手调用 `plugin_manager` 的 `install_bundle`。插件包是本机私有包，不发布到市场。安装或更新前尽量退出 Harness：Windows 会占用已加载的 bundle 文件，运行中替换可能报 `EPERM`；Plugins 页面提示需要重启时，先重启再更新。
+
+bundle 通过 `bundledSkillDir` 提供技能（发现 rank 600）。项目 `.dsh/skills`、项目 `.agents/skills`、custom 根和用户根里的同名技能会覆盖它；只想用插件包时，先移出其他 `.dsh`/`.agents` 副本；保留项目副本时，以项目副本为准。
+
+修改 `skills/` 后要重新构建并重装 bundle；按 Plugins 页面提示重启。`python3 -B -X utf8 scripts/package_dsh.py --help` 查看输出目录和 `--force` 选项。
+
 ### Qoder、Qoder CN、ZCode 与 WorkBuddy AI
 
 <a id="workbuddy-ai-与-qoder-cn-快速安装"></a>
@@ -178,10 +223,11 @@ python3 -B -X utf8 scripts/install.py --host workbuddy --user
 
 ### 其他 Agent Skills 宿主
 
-以下目标同样由v0.6.24源码安装器提供；标准技能ZIP不含安装器。每个目标复制相同的完整八技能，项目与个人范围任选一个。表中为宿主原生默认目录，路径依据链接的官方说明：
+以下目标同样由当前源码安装器提供；标准技能ZIP不含安装器。每个目标复制相同的完整八技能，项目与个人范围任选一个。表中为宿主原生默认目录；DeepSeek Harness 依据其技能发现规则，其他目标依据链接的官方说明：
 
 | 应用与官方说明 | `--host` | `--project` 的安装位置 | `--user` 的安装位置 |
 |---|---|---|---|
+| DeepSeek Harness（见上文专用说明） | `dsh` | `<项目根目录>/.dsh/skills/` | `~/.dsh/skills/` |
 | [TRAE 国际版 IDE](https://docs.trae.ai/ide/skills) | `trae` | `<项目根目录>/.trae/skills/` | `~/.trae/skills/` |
 | [TRAE 国内版 IDE](https://docs.trae.cn/ide_skills) | `trae-cn` | `<项目根目录>/.trae/skills/` | `~/.trae-cn/skills/` |
 | [TraeCode CLI](https://docs.trae.cn/cli_skills) | `trae-cli` | `<项目根目录>/.traecli/skills/` | `~/.traecli/skills/` |

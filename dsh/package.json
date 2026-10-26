@@ -1,0 +1,30 @@
+{
+  "name": "story-skill-dsh",
+  "version": "0.6.26",
+  "private": true,
+  "description": "DeepSeek Harness bundle for Story Skill: Chinese fiction planning, writing, review, analysis, research, covers and platform drafts.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "LICENSE",
+    "README.md",
+    "skills/**"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}

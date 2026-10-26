@@ -4,7 +4,7 @@
 
 在 AI 助手中拆书、规划、写作和改稿，在本地工作台中阅读书稿、编辑候选、比较版本和备份作品。Story Skill 把这些环节连接起来，让已有书稿、创作约定和写作进度能够在后续任务中继续使用。
 
-支持 **Codex、Claude Code、Claude 桌面版、WorkBuddy AI、Qoder CN**及其他兼容 Agent Skills 的助手；另提供 **Mac / Windows 写作工作台**。
+支持 **Codex、Claude Code、Claude 桌面版、DeepSeek Harness、WorkBuddy AI、Qoder CN**及其他兼容 Agent Skills 的助手；另提供 **Mac / Windows 写作工作台**。
 
 [下载安装](#安装升级) · [开始写书](#开始写书) · [工作台预览](#使用工作台) · [完整文档](docs/README.md) · [v0.6.25 发布记录](docs/releases/v0.6.25.md)
 
@@ -31,6 +31,7 @@
 |---|---|---|
 | Codex 本地插件 | [插件 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-codex-0.6.25.zip) | 解压后添加本地市场并安装插件，见 [Codex 安装说明](docs/codex-plugin.md) |
 | Claude 桌面版 | [单入口 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-claude-desktop-0.6.25.zip) | 上传并启用专用技能包，见 [桌面导入说明](INSTALL.md#claude-桌面版导入单技能包) |
+| DeepSeek Harness | 八技能目录或本机插件包 | `--host dsh --user` 安装到 `~/.dsh/skills/`；插件包用 `scripts/package_dsh.py` 构建，见 [DSH 安装说明](INSTALL.md#deepseek-harness) |
 | WorkBuddy AI、Qoder CN | 完整八技能目录 | 源码安装器支持个人／项目目录，见 [安装与调用说明](INSTALL.md#workbuddy-ai-与-qoder-cn-快速安装) |
 | Claude Code、Antigravity 等 | [完整八技能 ZIP](https://github.com/NingCui29/story-skill/releases/download/v0.6.25/story-skill-0.6.25.zip) | 保留八个同级目录，见 [目录安装说明](INSTALL.md#目录安装的完整套件) |
 
@@ -176,7 +177,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 | `story-skill-cover` | 封面生成、修改与规格检查 |
 | `story-skill-publish` | 离线投稿材料、平台草稿保存与回读核对 |
 
-不确定选哪个入口时，直接使用总入口描述需求。手动调用以宿主实际补全为准：Codex 插件入口如 `$story-skill:story-skill-plan`，Codex 目录安装如 `$story-skill-plan`，Claude Code 如 `/story-skill-plan`；Claude 桌面包通过一个总入口读取八个流程。
+不确定选哪个入口时，直接使用总入口描述需求。手动调用以宿主实际补全为准：Codex 插件入口如 `$story-skill:story-skill-plan`，Codex 目录安装如 `$story-skill-plan`，Claude Code 如 `/story-skill-plan`，DeepSeek Harness 如 `/story-skill-plan`（或由模型用 `skill` 工具按名称加载）；Claude 桌面包通过一个总入口读取八个流程。
 
 ## 版本与验证
 
@@ -192,7 +193,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 [完整文档](docs/README.md) · [安装升级](INSTALL.md) · [中文小说上手](docs/中文小说上手.md) · [作品深读](docs/作品深读与评估.md) · [备份恢复](docs/recovery.md) · [发布维护](docs/github-release.md)
 
-`skills/` 保存技能源码，`scripts/` 提供安装、打包和验证工具，`tests/` 为程序回归。开发检查与分发流程见 [发布维护说明](docs/github-release.md)。
+`skills/` 保存技能源码，`dsh/` 为 DeepSeek Harness 插件包源码，`scripts/` 提供安装、打包和验证工具，`tests/` 为程序回归。开发检查与分发流程见 [发布维护说明](docs/github-release.md)。
 
 ## 许可与参考
 

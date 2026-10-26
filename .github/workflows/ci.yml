@@ -49,6 +49,8 @@ jobs:
         run: python -B -X utf8 scripts/package_claude.py
       - name: Build the Codex plugin marketplace ZIP
         run: python -B -X utf8 scripts/package_codex.py --output-dir dist/ci-codex
+      - name: Build the DeepSeek Harness bundle
+        run: python -B -X utf8 scripts/package_dsh.py --output dist/dsh-plugin
       - name: Exercise the local CLI workflow
         run: python -B -X utf8 scripts/smoke.py --output dist/ci-smoke.json
       - name: Exercise synthetic Chinese transactions

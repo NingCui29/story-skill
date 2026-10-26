@@ -9,7 +9,7 @@ description: 中文小说任务总入口与共享规则；在需求跨流程或�
 
 ## 宿主与路径
 
-本套件共用同一份技能源码，可说“使用 Story Skill”并描述任务，按技能描述匹配。显式调用按宿主能力选择：Codex、ZCode 用 `$story-skill`；Claude Code、Qoder／Qoder CN CLI、Cursor、Copilot VS Code Agent、Cline 用 `/story-skill`；Antigravity 在支持斜杠命令的界面也可用该形式；Windsurf／Devin Desktop Cascade 用 `@story-skill`。专用入口按相同方式调用。TRAE、TraeCode CLI、CodeBuddy、OpenCode、Gemini CLI、WorkBuddy AI 及 Qoder 桌面版按实际技能列表与当前版本规则启用、调用，不套用其他宿主的命令。技能未出现时，刷新列表并确认已启用；需要技能激活或工作区授权的宿主按提示处理。Claude 桌面版导入单包后使用自然语言，由顶层入口按需读取内嵌流程；内嵌文件不代表八个独立桌面命令。
+本套件共用同一份技能源码，可说“使用 Story Skill”并描述任务，按技能描述匹配。显式调用按宿主能力选择：Codex、ZCode 用 `$story-skill`；Claude Code、Qoder／Qoder CN CLI、Cursor、Copilot VS Code Agent、Cline 用 `/story-skill`；DeepSeek Harness 用 `/story-skill`，或由模型用 `skill` 工具按名称加载；Antigravity 在支持斜杠命令的界面也可用该形式；Windsurf／Devin Desktop Cascade 用 `@story-skill`。专用入口按相同方式调用。TRAE、TraeCode CLI、CodeBuddy、OpenCode、Gemini CLI、WorkBuddy AI 及 Qoder 桌面版按实际技能列表与当前版本规则启用、调用，不套用其他宿主的命令。技能未出现时，刷新列表并确认已启用；需要技能激活或工作区授权的宿主按提示处理。Claude 桌面版导入单包后使用自然语言，由顶层入口按需读取内嵌流程；内嵌文件不代表八个独立桌面命令。
 
 八个技能须完整安装为同级目录。资源中的相对路径以包含该路径的技能文件所在目录为基准；从本次实际读取的 `SKILL.md` 位置定位共享运行时并转为绝对路径，不以终端当前目录或另一宿主的安装目录猜测。`agents/openai.yaml` 是 Codex 界面配置，其他宿主使用 `SKILL.md` 中的名称、描述与规则。
 

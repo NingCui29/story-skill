@@ -22,6 +22,7 @@ build/
 # Project-local installed skill copies; canonical sources live in /skills/.
 /.agents/skills/
 /.claude/skills/
+/.dsh/skills/
 /.qoder/skills/
 /.zcode/skills/
 /.workbuddy/skills/
