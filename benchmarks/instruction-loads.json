@@ -1056,7 +1056,7 @@
             },
             {
               "id": "requested_notes",
-              "when": "作者明确要求短篇附言及配图。",
+              "when": "作者明确要求短篇附言或配图。",
               "includes": [
                 "note_delivery"
               ]
@@ -1362,7 +1362,7 @@
             },
             {
               "id": "requested_notes",
-              "when": "作者明确要求短篇附言及配图。",
+              "when": "作者明确要求短篇附言或配图。",
               "includes": [
                 "note_delivery"
               ]
@@ -1635,7 +1635,7 @@
             },
             {
               "id": "requested_notes",
-              "when": "作者明确要求短篇附言及配图。",
+              "when": "作者明确要求短篇附言或配图。",
               "includes": [
                 "note_delivery"
               ]
