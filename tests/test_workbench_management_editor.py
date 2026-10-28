@@ -37,6 +37,15 @@ class WritingTaskManagementTests(unittest.TestCase):
             operation()
         self.assertEqual(error.exception.code, code)
 
+    def assert_only_task_materials_added(self, before):
+        after = self.disk_snapshot()
+        # Existing manuscript, database, plans and saved inputs remain byte-
+        # and timestamp-identical. Only new task records/snapshots are allowed.
+        self.assertEqual(before, {path: value for path, value in after.items() if path in before})
+        added = set(after) - set(before)
+        self.assertTrue(added)
+        self.assertTrue(all(path.startswith('.story/assistant-tasks/') for path in added), added)
+
     def test_task_reuses_bound_brief_sources_revision_and_review_provenance(self):
         self.plan_next()
         before = self.disk_snapshot()
@@ -62,7 +71,7 @@ class WritingTaskManagementTests(unittest.TestCase):
         self.assertIn(source['sha256'], result['prompt'])
         self.assertIn('revision', result['prompt'])
         self.assertIn('不要将此任务已生成视为已执行', result['prompt'])
-        self.assertEqual(before, self.disk_snapshot())
+        self.assert_only_task_materials_added(before)
 
     def test_task_opens_core_in_query_only_mode(self):
         self.plan_next()
@@ -75,11 +84,11 @@ class WritingTaskManagementTests(unittest.TestCase):
             return book
 
         before = self.disk_snapshot()
-        with patch.object(w.api, 'Book', side_effect=opening):
+        with patch.object(w.api, 'Book', side_effect=opening, wraps=original):
             w._editor_writing_task(self.root)
         self.assertTrue(opened)
         self.assertTrue(all(row == (True, 1) for row in opened))
-        self.assertEqual(before, self.disk_snapshot())
+        self.assert_only_task_materials_added(before)
 
     def test_missing_plan_blocks_without_creating_a_plan_or_draft(self):
         before = self.disk_snapshot()

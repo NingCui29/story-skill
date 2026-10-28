@@ -1,6 +1,6 @@
 interface:
-  display_name: "Story Skill · 开书规划"
-  short_description: "中文小说开书与大纲规划、小说改编剧本、根据小说或剧本拆分镜"
-  default_prompt: "使用 $story-skill-plan 为这本中文小说建立设定和近期大纲，先不要写正文。"
+  display_name: "Story Skill · 规划与改编"
+  short_description: "中文小说开书与大纲规划、小说改剧本成稿与审改、小说或剧本拆分镜"
+  default_prompt: "使用 $story-skill-plan 按我指定的产物完成小说规划、剧本改编或分镜；只要规划时不写成稿。"
 policy:
   allow_implicit_invocation: true

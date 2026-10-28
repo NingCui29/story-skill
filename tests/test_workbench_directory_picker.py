@@ -132,6 +132,98 @@ const f=JSON.parse(fs.readFileSync(0,'utf8'));
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertTrue(json.loads(result.stdout)['ok'])
 
+    def test_browser_pending_directory_reads_preserve_path_and_unlock_only_current_request(self):
+        node = shutil.which('node')
+        chrome = next((p for p in [os.environ.get('WORKBENCH_LAYOUT_CHROME', ''),
+                      shutil.which('google-chrome'), shutil.which('chromium'),
+                      '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'] if p and Path(p).is_file()), None)
+        if not node or not chrome:
+            self.skipTest('Installed Node and Chrome required')
+        parent = self.root / '中文 存放位置'
+        parent.mkdir()
+        program = r'''
+const fs=require('fs'),path=require('path'),assert=require('assert');
+let playwright;try{playwright=require(require.resolve('playwright',{paths:[process.cwd(),path.resolve(path.dirname(process.execPath),'..')]}));}
+catch{process.stdout.write('PLAYWRIGHT_UNAVAILABLE');process.exit(77);}
+const f=JSON.parse(fs.readFileSync(0,'utf8'));
+(async()=>{
+ const browser=await playwright.chromium.launch({executablePath:f.chrome,headless:true});
+ try{
+  const page=await browser.newPage({viewport:{width:1100,height:850}}),errors=[],pending=[];
+  page.on('pageerror',error=>errors.push(error.message));
+  // Hold actual directory responses after the server has read them. Observe
+  // JSON consumption in a later task, after the UI's promise continuation.
+  await page.addInitScript(()=>{
+   globalThis.directoryResponsesConsumed=0;const original=globalThis.fetch;
+   globalThis.fetch=async(...args)=>{
+    const response=await original(...args);
+    if(String(args[0]).endsWith('/api/directories')){
+     const json=response.json.bind(response);
+     response.json=async()=>{try{return await json();}finally{setTimeout(()=>directoryResponsesConsumed++,0);}};
+    }return response;
+   };
+  });
+  await page.route('**/*',async route=>{
+   const request=route.request(),url=new URL(request.url());
+   if(url.origin!==f.url)return route.abort();
+   if(!url.pathname.endsWith('/api/directories'))return route.continue();
+   const response=await route.fetch(),entry={payload:request.postDataJSON(),release:null};
+   const gate=new Promise(resolve=>entry.release=resolve);pending.push(entry);await gate;
+   await route.fulfill({response});
+  });
+  async function received(count){
+   const deadline=Date.now()+7000;
+   while(pending.length<count&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,10));
+   assert.equal(pending.length,count,'directory request must reach the held server response');
+   return pending[count-1];
+  }
+  async function consumed(count){await page.waitForFunction(count=>directoryResponsesConsumed>=count,count,{timeout:7000});}
+  const input=page.locator('#directory-path'),choose=page.locator('#directory-select');
+  const readOnly=()=>input.evaluate(element=>element.readOnly);
+  await page.goto(f.url+'/');await page.locator('#new-book').click();await page.getByLabel('书名',{exact:true}).fill('延迟目录合成作品');
+  await page.locator('.directory-pick').click();const cancelled=await received(1);
+  assert.equal(await readOnly(),true);assert.equal(await choose.isDisabled(),true);
+  await page.locator('#directory-cancel').click();assert.equal(await readOnly(),false);
+  assert.equal(await page.getByLabel('存放位置',{exact:true}).inputValue(),'');
+  await page.locator('.directory-pick').click();const superseded=await received(2);
+  assert.equal(await readOnly(),true);
+  cancelled.release();await consumed(1);
+  assert.equal(await page.locator('#directory-browser').isVisible(),true);
+  assert.equal(await readOnly(),true,'a cancelled request cannot unlock a reopened picker');
+  // Navigation remains available while the input is protected. The older
+  // request's finally must not unlock the replacement request either.
+  await page.locator('#directory-home').click();const current=await received(3);
+  superseded.release();await consumed(2);assert.equal(await readOnly(),true);
+  current.release();await consumed(3);await page.waitForFunction(()=>!document.getElementById('directory-path').readOnly);
+  assert.equal(await choose.isDisabled(),false);
+  await input.fill(f.missing);await page.locator('#directory-go').click();const failed=await received(4);
+  assert.equal(await readOnly(),true);assert.equal(await choose.isDisabled(),true);
+  failed.release();await consumed(4);await page.waitForFunction(()=>!document.getElementById('directory-path').readOnly);
+  assert.equal(await choose.isDisabled(),true);assert.ok((await page.locator('#directory-note').innerText()).includes('无法读取'));
+  // A complete absolute path can now replace the input without the delayed
+  // initial HOME response moving the selection to the end during fill.
+  await input.fill(f.parent);await page.locator('#directory-go').click();const selected=await received(5);
+  assert.equal(selected.payload.path,f.parent);assert.equal(await readOnly(),true);
+  selected.release();await consumed(5);await page.waitForFunction(()=>!document.getElementById('directory-path').readOnly);
+  assert.equal(await input.inputValue(),f.parent);assert.equal(await choose.isDisabled(),false);
+  if(f.report)await page.screenshot({path:path.join(f.report,'directory-pending-readback.png')});
+  await choose.click();assert.equal(await page.getByLabel('存放位置',{exact:true}).inputValue(),f.parent);
+  assert.equal(await page.locator('.book').count(),0,'read and selection cannot register or create a book');
+  assert.ok(!fs.existsSync(path.join(f.parent,'延迟目录合成作品')));
+  assert.deepEqual(errors,[]);process.stdout.write(JSON.stringify({ok:true,held_responses:5,cancel_unlocks:true,old_response_cannot_unlock:true,navigation_while_pending:true,success_and_error_unlock:true,absolute_path_preserved:true}));
+ }finally{await browser.close();}
+})().catch(error=>{console.error(error);process.exitCode=1;});
+'''
+        result = subprocess.run([node, '-e', program], input=json.dumps({
+            'chrome': chrome, 'url': f'http://127.0.0.1:{self.shelf.server_port}',
+            'parent': str(parent), 'missing': str(self.root / '不存在'),
+            'report': os.environ.get('WORKBENCH_DIRECTORY_REPORT')}),
+            capture_output=True, text=True, timeout=90)
+        if result.returncode == 77:
+            self.skipTest('Playwright package required')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertTrue(json.loads(result.stdout)['ok'])
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -302,6 +302,19 @@ const call=async(action,payload)=>{if(action==='open'){openCalls++;return fixtur
         self.assertIsNone(counted['target'])
         self.assertEqual(counted['count'], 7)
 
+    def test_metrics_default_minimum_has_no_upper_limit(self):
+        plan = self.book.get_plan(2)
+        plan.update(count_method='visible_nonspace_v2', count_title=False, length=[2000, None])
+        self.book.save_plan(2, plan, self.book.meta('revision'))
+        doc = w._editor_document(self.root, 'formal:2')
+        for count, expected in ((1999, False), (2000, True), (2801, True), (5000, True)):
+            with self.subTest(count=count):
+                result = w._editor_metrics(self.root, {'id': doc['id'], 'text': '甲' * count})
+                self.assertEqual(result['count'], count)
+                self.assertEqual(result['target'], [2000, None])
+                self.assertEqual(result['within_target'], expected)
+                self.assertEqual(result['in_range'], expected)
+
     def test_metrics_do_not_call_combining_mark_padding_within_chapter_length(self):
         plan = json.loads(self.book.db.execute('SELECT data FROM plans WHERE chapter=2').fetchone()[0])
         plan.update(count_method='visible_nonspace_v1', length=[2400, 2800])
@@ -384,21 +397,28 @@ const call=async(action,payload)=>{if(action==='open'){openCalls++;return fixtur
 
     def test_metrics_panel_explains_padding_without_calling_it_out_of_range(self):
         script = self.script()
-        source = script[script.index('function scheduleMetrics'):script.index('function drawCatalog')]
+        source = script[script.index('function readableLength'):script.index('function drawCatalog')]
         mock = r"""
 const elements=new Map(),$=id=>{if(!elements.has(id))elements.set(id,{textContent:''});return elements.get(id);};
 const docs=new Map([['draft',{id:'draft',editable:true,editing:false,value:'甲'}]]);
 const active='draft',readableMethod={visible_nonspace_v1:'可见非空白字符'};
 let metricTimer,metricSequence=0;
 const clearTimeout=()=>{},setTimeout=fn=>{fn();return 1;};
-const call=async()=>({count:2400,target:[2400,2800],in_range:false,within_target:true,
- length_issues:['invisible_padding'],is_prose:true,include_title:false,selection:0,method:'visible_nonspace_v1'});
+let metric={count:2400,target:[2400,2800],in_range:false,within_target:true,
+ length_issues:['invisible_padding'],is_prose:true,include_title:false,selection:0,method:'visible_nonspace_v1'};
+const call=async()=>metric;
 """
         self.js(mock + source, r"""
 (async()=>{scheduleMetrics();await new Promise(setImmediate);
  assert.ok($('word-count').textContent.includes('附着标记和空白填充符不计下限'));
  assert.ok(!$('word-count').textContent.includes('范围外'));
  assert.ok($('count-method').textContent.includes('仅核对章幅，章头等另查'));
+ assert.ok($('count-method').textContent.includes('目标 2400～2800 字'));
+ metric={...metric,count:2801,target:[2000,null],in_range:true,within_target:true,length_issues:[]};
+ scheduleMetrics();await new Promise(setImmediate);
+ assert.ok($('count-method').textContent.includes('目标 至少 2000 字（无上限）'));
+ assert.ok(!$('count-method').textContent.includes('null'));
+ assert.ok($('word-count').textContent.includes('章幅计数通过'));
 })().catch(e=>{console.error(e);process.exit(1);});
 """)
 

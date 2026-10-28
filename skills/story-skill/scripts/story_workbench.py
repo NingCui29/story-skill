@@ -955,7 +955,66 @@ def _workbench_theme_script():
 """
 
 
-def _workbench_theme_css():
+def _workbench_component_css():
+    """Shared UI metrics; manuscript typography remains controlled by the reader."""
+    return r"""
+html[data-story-workbench]{--wb-ui-font:system-ui,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;--wb-ui-size:13px;--wb-label-size:12px;--wb-control-height:36px;--wb-compact-height:32px;--wb-radius-control:8px;--wb-radius-container:12px;--wb-radius-dialog:16px;--wb-radius-tag:6px;--wb-space-1:4px;--wb-space-2:8px;--wb-space-3:12px;--wb-space-4:16px;--wb-space-6:24px;--wb-shadow-menu:0 8px 24px #102a3b1a;--wb-shadow-dialog:0 20px 64px #102a3b2e;--wb-scrim:#10212e66}
+html[data-story-workbench][data-theme="dark"]{--wb-shadow-menu:0 8px 24px #0005;--wb-shadow-dialog:0 20px 64px #0008;--wb-scrim:#0008}
+@media(prefers-color-scheme:dark){html[data-story-workbench]:not([data-theme]){--wb-shadow-menu:0 8px 24px #0005;--wb-shadow-dialog:0 20px 64px #0008;--wb-scrim:#0008}}
+html[data-story-workbench] body{font-family:var(--wb-ui-font)}
+html[data-story-workbench] :is(button,input,select){font-family:var(--wb-ui-font);font-size:var(--wb-ui-size);line-height:1.5;min-height:var(--wb-control-height);border-radius:var(--wb-radius-control)}
+html[data-story-workbench] button{padding:6px 12px;font-weight:500;letter-spacing:normal}
+html[data-story-workbench] :is(.tools,.header-actions,.shelf-header,.book,.dialog-actions) button{font-family:var(--wb-ui-font);font-size:var(--wb-ui-size);line-height:1.5;min-height:var(--wb-control-height);padding:6px 12px;border-radius:var(--wb-radius-control)}
+html[data-story-workbench] :is(.menu,.library-actions>details,.book-management)>summary{font:500 var(--wb-ui-size)/1.5 var(--wb-ui-font);min-height:var(--wb-control-height);padding:7px 12px;border-radius:var(--wb-radius-control)}
+html[data-story-workbench] button.primary,html[data-story-workbench] .book>button{border-radius:var(--wb-radius-control);padding-inline:14px}
+html[data-story-workbench] :is(.header-actions,.menu-panel,.shelf-tools-panel,.book-management-panel,.type-filters,.navigation-mode,.pager) button,html[data-story-workbench] .header-actions>.menu>summary{font-size:var(--wb-label-size);min-height:var(--wb-compact-height);padding:6px 10px;border-radius:var(--wb-radius-control)}
+html[data-story-workbench] :is(#workbench-theme,#search,#full-query,#book-select,#chapter-version){font:var(--wb-label-size)/1.5 var(--wb-ui-font);min-height:var(--wb-compact-height);padding:6px 10px;border:1px solid var(--line);border-radius:var(--wb-radius-control);background:var(--surface);color:var(--ink)}
+html[data-story-workbench] .workbench-theme-control{font:var(--wb-label-size)/1.5 var(--wb-ui-font);gap:var(--wb-space-2)}
+html[data-story-workbench] .shelf-options select{min-height:var(--wb-compact-height);font-size:var(--wb-label-size);border-radius:var(--wb-radius-control)}
+html[data-story-workbench] #save{font:500 var(--wb-ui-size)/1.5 var(--wb-ui-font);min-height:var(--wb-control-height);padding:6px 14px;border-radius:var(--wb-radius-control);letter-spacing:normal}
+html[data-story-workbench] :is(input[type="checkbox"],input[type="radio"]){width:18px;height:18px;min-width:18px;min-height:18px;margin:2px 0 0;padding:0;flex:0 0 18px;accent-color:var(--wb-button)}
+html[data-story-workbench] dialog label.check input{order:-1}
+html[data-story-workbench] :is(button,input,select,textarea,summary,a):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+html[data-story-workbench] :is(.menu-panel,.shelf-tools-panel,.book-management-panel,.library-actions .add-body){border-radius:var(--wb-radius-container);border:1px solid var(--line);background:var(--surface);box-shadow:var(--wb-shadow-menu);padding:var(--wb-space-2)}
+html[data-story-workbench] :is(.menu-panel.book-info-panel,.library-actions .add-body){padding:var(--wb-space-4)}
+html[data-story-workbench] :is(.genre-tag,.identity-badge,.book-status,.book-kind){font:var(--wb-label-size)/1.5 var(--wb-ui-font);border-radius:var(--wb-radius-tag);padding:2px 7px}
+html[data-story-workbench] #book-kind{font:var(--wb-label-size)/1.5 var(--wb-ui-font);border-radius:var(--wb-radius-tag)}
+html[data-story-workbench] #chapter-info{font:var(--wb-ui-size)/1.75 var(--wb-ui-font)}
+html[data-story-workbench] aside h3,html[data-story-workbench] #chapter-info h4{font:600 var(--wb-label-size)/1.5 var(--wb-ui-font);letter-spacing:normal}
+html[data-story-workbench] :is(.book,.shelf-toolbar,.manager-feedback,.platform-draft-settings,.platform-draft-output){border-radius:var(--wb-radius-container)}
+html[data-story-workbench] :is(dialog,.editor-dialog,.platform-drafts-dialog){font:var(--wb-ui-size)/1.65 var(--wb-ui-font);color:var(--ink);border:1px solid var(--line);border-radius:var(--wb-radius-dialog);max-height:85vh;padding:var(--wb-space-6);box-shadow:var(--wb-shadow-dialog)}
+html[data-story-workbench] dialog:not(.platform-drafts-dialog){width:min(620px,calc(100vw - 32px));background:var(--surface)}
+html[data-story-workbench] dialog::backdrop{background:var(--wb-scrim);backdrop-filter:blur(3px)}
+html[data-story-workbench] dialog h2{font:600 20px/1.4 var(--wb-ui-font);margin:0 0 var(--wb-space-4);letter-spacing:normal}
+html[data-story-workbench] dialog h3{font:600 14px/1.5 var(--wb-ui-font);margin:var(--wb-space-4) 0 var(--wb-space-2);color:var(--ink)}
+html[data-story-workbench] dialog p{font:var(--wb-ui-size)/1.65 var(--wb-ui-font);margin:var(--wb-space-3) 0;color:var(--muted)}
+html[data-story-workbench] dialog label{font:var(--wb-ui-size)/1.5 var(--wb-ui-font);gap:var(--wb-space-2);margin:var(--wb-space-4) 0}
+html[data-story-workbench] dialog label.check{display:flex;align-items:flex-start;gap:var(--wb-space-2)}
+html[data-story-workbench] dialog :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){font:var(--wb-ui-size)/1.6 var(--wb-ui-font);padding:8px 10px;border:1px solid var(--line);border-radius:var(--wb-radius-control);background:var(--surface);color:var(--ink)}
+html[data-story-workbench] dialog textarea{min-height:110px;resize:vertical}
+html[data-story-workbench] #review-prompt{font:var(--wb-ui-size)/1.6 var(--wb-ui-font);padding:var(--wb-space-3);border:1px solid var(--line);border-radius:var(--wb-radius-control);background:var(--surface);color:var(--ink)}
+html[data-story-workbench] dialog pre{font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+html[data-story-workbench] dialog .dialog-actions{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:var(--wb-space-2);margin-top:var(--wb-space-6);padding-top:var(--wb-space-4);border-top:1px solid var(--line)}
+html[data-story-workbench] .editor-dialog>button{margin:var(--wb-space-4) 0 0 auto}
+html[data-story-workbench] .platform-drafts-dialog .platform-draft-footer{bottom:calc(-1 * var(--wb-space-6));padding:var(--wb-space-3) 0 0;gap:var(--wb-space-2)}
+html[data-story-workbench] .platform-drafts-dialog .platform-draft-footer button{font-size:var(--wb-ui-size);margin:0}
+html[data-story-workbench] :is(#message,#last-books-result,.manager-feedback){font:var(--wb-ui-size)/1.65 var(--wb-ui-font)}
+html[data-story-workbench] #state{font:var(--wb-label-size)/1.5 var(--wb-ui-font);color:var(--muted)}
+html[data-story-workbench] #state[data-save-state="error"]{color:var(--wb-danger)}
+html[data-story-workbench] #state[data-save-state="pending"],html[data-story-workbench] #state[data-save-state="unsaved"],html[data-story-workbench] #state[data-save-state="recovered"]{color:var(--wb-warning)}
+html[data-story-workbench] #state[data-save-state="saved"]{color:var(--wb-success)}
+html[data-story-workbench] :is(#message,.manager-feedback)[data-state="success"]{color:var(--wb-success);background:var(--wb-success-bg);border-color:var(--wb-success-line)}
+html[data-story-workbench] :is(#message,.manager-feedback)[data-state="error"]{color:var(--wb-danger);background:var(--wb-danger-bg);border-color:var(--wb-danger-line)}
+html[data-story-workbench] :is(#message,.manager-feedback):is([data-state="warning"],[data-state="unknown"]){color:var(--wb-warning);background:var(--wb-warning-bg);border-color:var(--wb-warning-line)}
+html[data-story-workbench] .manager-feedback:is([data-state="success"],[data-state="error"],[data-state="unknown"]) :is(p,span){color:inherit}
+/* Keep native selection and keyboard behavior; normalize only single-line controls. */
+html[data-story-workbench] select:not([multiple]):not([size]),html[data-story-workbench] dialog select:not([multiple]):not([size]),html[data-story-workbench] :is(select#workbench-theme,select#book-select,select#chapter-version):not([multiple]):not([size]){-webkit-appearance:none;appearance:none;box-sizing:border-box;height:var(--wb-control-height);min-height:var(--wb-control-height);line-height:1.5;padding:6px 32px 6px 10px;border:1px solid var(--line);border-radius:var(--wb-radius-control);color:var(--ink);background-color:var(--surface);background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) calc(50% + 1px),calc(100% - 12px) calc(50% + 1px);background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+html[data-story-workbench] :is(select#workbench-theme,select#book-select,select#chapter-version,.shelf-options select):not([multiple]):not([size]){height:var(--wb-compact-height);min-height:var(--wb-compact-height)}
+@media(max-width:680px){html[data-story-workbench] :is(dialog,.editor-dialog,.platform-drafts-dialog){padding:var(--wb-space-4)}html[data-story-workbench] .platform-drafts-dialog .platform-draft-footer{bottom:calc(-1 * var(--wb-space-4))}html[data-story-workbench] .dialog-actions button{flex:0 1 auto}}
+"""
+
+
+def _workbench_theme_css(*, components=True):
     dark = ('color-scheme:dark;--ink:#e1e7ed;--muted:#bac5cf;--line:#3f4952;'
             '--paper:#0f1418;--card:#1c2228;--surface:#1c2228;--accent:#89d1f7;--green:#89d1f7;'
             '--wb-panel:#171c21;--wb-tint:#26313a;--wb-hover:#263e4b;--wb-selected:#004c68;'
@@ -1000,7 +1059,7 @@ html[data-story-workbench] .genre-tag.missing,html[data-story-workbench] .book-c
 html[data-story-workbench] .classification-record{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;min-width:0;width:100%;margin:0;color:var(--ink);font-size:12px;line-height:1.65}
 html[data-story-workbench] .identity-badge[data-kind="candidate"],html[data-story-workbench] .book-status[data-status="completed"]{background:var(--wb-selected);color:var(--wb-selected-ink);border-color:var(--line)}
 html[data-story-workbench] .book-status[data-status="not_applicable"]{background:var(--wb-tint);color:var(--muted)}
-html[data-story-workbench] #state,html[data-story-workbench] .dirty:after,html[data-story-workbench] #directory-warning,html[data-story-workbench] .error{color:var(--wb-warning)}
+html[data-story-workbench] .dirty:after,html[data-story-workbench] #directory-warning,html[data-story-workbench] .error{color:var(--wb-warning)}
 html[data-story-workbench] #review-findings,html[data-story-workbench] .diff-line.removed{color:var(--wb-danger)}
 html[data-story-workbench] .diff-line.removed{background:var(--wb-danger-bg)}
 html[data-story-workbench] #match-text mark{color:var(--wb-mark-ink);background:var(--wb-mark)}
@@ -1037,7 +1096,7 @@ html[data-story-workbench] .platform-drafts-dialog{width:min(1060px,96vw);max-he
 @media(max-width:760px){.platform-draft-layout{grid-template-columns:minmax(0,1fr)}.platform-drafts-dialog[data-has-job="true"] .platform-draft-output{grid-row:1}.platform-drafts-dialog[data-has-job="true"] .platform-draft-settings{grid-row:2}html[data-story-workbench] .platform-drafts-dialog{padding:14px}.platform-drafts-dialog .platform-draft-footer{bottom:-14px}.platform-drafts-dialog .platform-draft-footer button{flex:1 1 auto}.platform-drafts-dialog .platform-draft-footer button.primary{width:100%}}
 html[data-story-workbench][data-workbench-view="shelf"] #message,html[data-story-workbench][data-workbench-view="shelf"] #last-books-result{background:var(--wb-tint);border-color:var(--line)}
 @media(max-width:680px){.shelf-header-actions{gap:12px;align-items:flex-end;flex-direction:column}.reader-header-actions{gap:7px}.workbench-theme-control{font-size:11px}.workbench-theme-control select{max-width:115px}}
-""".replace('__DARK__', dark)
+""".replace('__DARK__', dark) + (_workbench_component_css() if components else '')
 
 
 def _render_desk(packet, reading):
@@ -1386,6 +1445,7 @@ def _pending_document(root, document_id):
               'sha256': hashlib.sha256(raw).hexdigest(), 'snapshot': packet['snapshot']['id'],
               'metadata_sha256': hashlib.sha256(raw).hexdigest(), 'kind': 'candidate',
               'source': meta.get('source'), 'chapter': meta.get('chapter'), 'base_sha256': meta.get('base_sha256'),
+              'writing_scope': meta.get('writing_scope'),
               'editable': True, 'needs_recovery': True,
               'status': '保存尚未确认完成；文字及来源已保留。可另存新候选，原文件留待核对。'}
     result['content_kind'] = _candidate_content_kind(meta)
@@ -1930,6 +1990,8 @@ def _validate_candidate_metadata(value, name):
         api.fail('workbench_metadata_corrupt', '来源记录格式错误，应为对象。', path=name)
     if 'content_kind' in value and value['content_kind'] not in ('material', 'prose'):
         api.fail('workbench_metadata_invalid', '来源记录内容类型无效。', path=name)
+    if 'writing_scope' in value and value['writing_scope'] not in ('fragment', 'complete_chapter', 'legacy'):
+        api.fail('workbench_metadata_invalid', '来源记录写作范围无效。', path=name)
     chapter = value.get('chapter')
     if chapter is not None and (type(chapter) is not int or not 1 <= chapter <= MAX_EDITOR_CHAPTER):
         api.fail('workbench_metadata_invalid', '来源记录章号无效或超出范围。', path=name)
@@ -1972,6 +2034,7 @@ def _navigation_file(root, row):
         else:
             row = {**row, 'content_kind': _candidate_content_kind(meta),
                    'checkpoint': meta.get('checkpoint') is True,
+                   'writing_scope': meta.get('writing_scope'),
                    'source': meta.get('source') if isinstance(meta.get('source'), str) else None}
             if meta.get('chapter'):
                 chapter = meta['chapter']
@@ -2039,6 +2102,7 @@ def _editor_document_raw(root, document_id):
         result.update(editable=False, status=str(error) + ' 当前只读，正文保留。',
                       metadata_error={'code': error.code, 'path': error.details.get('path')}, source=None)
         return result
+    result['writing_scope'] = meta.get('writing_scope')
     result['metadata_sha256'] = meta.get('_metadata_sha256')
     result['checkpoint'] = meta.get('checkpoint') is True
     if row['category'] in ('候选与草稿', '自动恢复'):
@@ -2112,6 +2176,9 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
                 'chapter': payload.get('chapter'), 'base_sha256': payload.get('base_sha256'),
                 'prefix': payload.get('prefix', ''), 'created': _utc_now(), 'adopted': False}
         meta['content_kind'] = payload.get('content_kind', _candidate_content_kind(meta))
+        if payload.get('writing_scope') is not None:
+            meta['writing_scope'] = payload['writing_scope']
+            _validate_candidate_metadata(meta, name)
         if meta['chapter'] is not None:
             _editor_chapter(meta['chapter'])
         if not isinstance(meta['prefix'], str) or len(meta['prefix']) > 8192:
@@ -2166,6 +2233,8 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
                 'base_sha256': source.get('base_sha256'), 'prefix': source.get('prefix', ''),
                 'created': _utc_now(), 'adopted': False,
                 'content_kind': 'prose' if source['is_prose'] else 'material'}
+        if source.get('writing_scope') is not None:
+            meta['writing_scope'] = source['writing_scope']
         content = source.get('prefix', '') + text
         allowed, meta_allowed = set(), set()
         # A working candidate can be continued in place. Explicitly retained
@@ -2721,8 +2790,15 @@ def _editor_metrics(root, payload):
         api.fail('invalid_input', '字数核对文本过大或无效。')
     plan = (doc.get('context') or {}).get('plan') or {}
     method = plan.get('count_method', 'visible_nonspace_v1') if doc['is_prose'] else 'visible_nonspace_v1'
-    counted = doc.get('prefix', '') + text if doc['is_prose'] else '\n' + text
-    target = plan.get('length') if doc['is_prose'] else None
+    fragment = doc['is_prose'] and doc.get('writing_scope') == 'fragment'
+    fragment_text = text
+    if fragment:
+        first = api.tasks._fragment_first_visible_line(text)
+        heading = api.COMPLETE_CHAPTER_HEADING.fullmatch(first.strip())
+        if heading and api.chapter_number(heading[1]) == doc.get('chapter'):
+            fragment_text = text[text.find(first) + len(first):]
+    counted = '\n' + (fragment_text if fragment else text) if fragment or not doc['is_prose'] else doc.get('prefix', '') + text
+    target = plan.get('length') if doc['is_prose'] and not fragment else None
     # The range alone is not a valid chapter-length result: legacy methods
     # also reject attached marks and blank filler glyphs that v2 does not count.
     if target:
@@ -2733,11 +2809,12 @@ def _editor_metrics(root, payload):
         length_issues = [issue['code'] for issue in checked['errors']
                          if issue['code'] in ('length', 'invisible_padding')]
     else:
-        counts = api.manuscript_counts(counted, plan.get('count_title', False) if doc['is_prose'] else True)
+        counts = api.manuscript_counts(counted, True if fragment or not doc['is_prose'] else plan.get('count_title', False))
         value, length_issues = counts[method], []
-    within_target = target[0] <= value <= target[1] if target else None
+    within_target = api.within_chapter_length(value, target) if target else None
     return {'ok': True, 'count': value, 'method': method, 'target': target,
-            'include_title': bool(plan.get('count_title')) if doc['is_prose'] else None,
+            'include_title': (False if fragment else bool(plan.get('count_title'))) if doc['is_prose'] else None,
+            'writing_scope': doc.get('writing_scope'),
             'selection': api.manuscript_counts('\n' + selected, True)[method],
             'within_target': within_target, 'in_range': not length_issues if target else None,
             'length_issues': length_issues,
@@ -2745,6 +2822,7 @@ def _editor_metrics(root, payload):
 
 
 def _editor_review_task(root, document_id, expected_sha=None):
+    selected = _library_entry(root)
     doc = _editor_document(root, document_id)
     if expected_sha is not None and expected_sha != doc['sha256']:
         api.fail('stale_snapshot', '所选文件已变化，请刷新后重新生成审稿任务。')
@@ -2754,7 +2832,10 @@ def _editor_review_task(root, document_id, expected_sha=None):
     lint = None
     check_scope = 'material'
     check_note = '这是材料文件，未运行完整章节检查。'
-    if doc['is_prose'] and not context.get('plan'):
+    if doc['is_prose'] and doc.get('writing_scope') == 'fragment':
+        check_scope = 'fragment'
+        check_note = '这是章中片段，未运行完整章节检查；请结合所属章节上下文审查。'
+    elif doc['is_prose'] and not context.get('plan'):
         check_scope = 'no_plan'
         check_note = '尚无已保存章计划，未运行完整章节检查；请人工核对章号、章名和篇幅。'
     elif doc['is_prose']:
@@ -2786,11 +2867,15 @@ def _editor_review_task(root, document_id, expected_sha=None):
               f'本地工具检查范围：{check_note}\n'
               '先检查叙事、人物行动、连续性、阅读期待、字数与中文格式，指出具体依据。\n'
               '本次只审查，不自动修改或正式采用；需要修改时另存候选。不要将页面格式检查当成人工审稿。')
-    return {'ok': True, 'prompt': prompt, 'lint': lint, 'check_scope': check_scope,
+    source = ({'chapter': doc['chapter'], 'sha256': doc['sha256']} if doc['kind'] == 'formal'
+              else {'path': doc['path'], 'sha256': doc['sha256']})
+    saved = api.tasks.create(root, 'review', prompt, [source], chapter=doc.get('chapter'),
+                             expected_book_id=selected['book_id'], expected_revision=context.get('revision'))
+    return {'ok': True, 'prompt': saved['task']['prompt'], 'task': saved['task'], 'lint': lint, 'check_scope': check_scope,
             'check_note': check_note, 'status': '审稿任务已生成，尚未交给助手执行'}
 
 
-def _editor_writing_task(root):
+def _editor_writing_task(root, request_file=None, style_file=None):
     """Build a handoff using the existing bound-outline writing-brief contract."""
     selected = _library_entry(root)
     book = api.Book(root, read_only=True)
@@ -2798,7 +2883,7 @@ def _editor_writing_task(root):
         if book.meta('id') != selected['book_id']:
             api.fail('workbench_book_changed', '作品身份已变化，请重新打开作品。')
         chapter = book.meta('last_chapter') + 1
-        brief = book.writing_brief(chapter, budget=48000)
+        brief = book.writing_brief(chapter, budget=48000, request_file=request_file, style_file=style_file)
     finally:
         book.close()
     _library_entry(root, selected)
@@ -2816,8 +2901,13 @@ def _editor_writing_task(root):
               '读取本书约定、相邻正式正文和本章细纲，按现有写作流程生成候选、审稿并核对。\n'
               '不要将此任务已生成视为已执行、已保存、已正式提交或已发布；依据实际结果报告状态。\n'
               '本章写前简报：\n' + json.dumps(brief, ensure_ascii=False, indent=2))
+    sources = [{'path': item['path'], 'sha256': item['sha256']}
+               for item in (brief['adopted_outline'], brief['current_request'], brief['book_style_source'])
+               if item.get('status') != 'not_provided']
+    saved = api.tasks.create(root, 'writing', prompt, sources, chapter=chapter, complete_chapter=True,
+                             expected_book_id=selected['book_id'], expected_revision=brief['revision'])
     return {'ok': True, 'chapter': chapter, 'book_id': selected['book_id'], 'brief': brief,
-            'status': '写作任务已生成，等待交给助手执行', 'prompt': prompt}
+            'status': '写作任务已生成，等待交给助手执行', 'prompt': saved['task']['prompt'], 'task': saved['task']}
 
 
 def _editor_search(root, query, offset=0, limit=30, material_roots=None):
@@ -2865,7 +2955,10 @@ def _editor_search(root, query, offset=0, limit=30, material_roots=None):
 
 
 CLASSIFICATION_PATHS = ('创作约定.md', '01_大纲细纲/全书总纲.md', '00_项目策划/开书策划.md')
-CLASSIFICATION_TEXT_LIMIT = 256 * 1024
+# Current planning files can legitimately grow past 256 KiB. Read each known
+# source completely (including late conflicts/statuses) within a 2 MiB bound;
+# never classify from a truncated prefix or enlarge the general editor limit.
+CLASSIFICATION_TEXT_LIMIT = 2 * 1024 * 1024
 # Keep the displayed author-information sources independent from writing-status
 # discovery. These bounded current metadata files cover the verified formats.
 CLASSIFICATION_RECORD_PATHS = tuple(CLASSIFICATION_PATHS)
@@ -2901,8 +2994,8 @@ def _classification_is_unconfirmed(value, *, document_status=False):
             bool(re.search(r'[（(]\s*建议\s*[）)]', clauses[0])))
 
 
-def _classification_unavailable(note):
-    return {'status': 'unavailable', 'reason': 'read_error', 'tags': [], 'sources': [],
+def _classification_unavailable(note, reason='read_error'):
+    return {'status': 'unavailable', 'reason': reason, 'tags': [], 'sources': [],
             'note': note, 'details': [], 'checked_paths': [], 'records': [],
             'display_kind': None, 'primary_record': None}
 
@@ -3525,7 +3618,7 @@ function classificationNode(book){
  const display=classificationPresentation(book),{classification,status,records}=display,visible=!!display.kind;
  const box=document.createElement('div');box.className='classification';const label=document.createElement('p');label.className='genre-label'+(display.record?' record-label':'');label.textContent=display.label;box.append(label);
  const reason=visible?'recorded':typeof classification?.reason==='string'&&classification.reason!=='recorded'?classification.reason:status==='unavailable'?'read_error':status==='needs_review'?'needs_review':status==='missing'||status==='recorded'?'no_declaration':'unknown';
- const labels={conflict:'题材记录冲突',read_error:'题材读取失败',limit:'题材读取受限',needs_review:'题材待核对',unknown:'题材待核对'};
+ const labels={identity_changed:'登记身份待核对',conflict:'题材记录冲突',read_error:'题材读取失败',limit:'题材读取受限',needs_review:'题材待核对',unknown:'题材待核对'};
  const notes={no_sources:'未找到现行创作约定或策划材料中的题材或定位记录。',no_declaration:'现行材料中没有可直接展示的题材或定位记录。',unsupported_format:'现行材料中的此处记录尚不能作为明确的作者定位展示。',unconfirmed:'只发现尚未采用或确认的记录。',conflict:'现行材料中的题材记录不一致，未选择其中一份。',read_error:'作品或题材材料当前无法读取。',limit:'题材材料超过读取范围，尚未完整核对。',needs_review:'题材记录暂不能确认。',unknown:'题材记录暂不能确认。'};
  box.dataset.classificationStatus=visible?'recorded':status;box.dataset.classificationReason=reason;box.dataset.classificationKind=display.kind||'';
  const empty=!visible&&!labels[reason];box.dataset.classificationEmpty=String(empty);label.hidden=empty;
@@ -3555,6 +3648,120 @@ function classificationNode(book){
 """
 
 
+STOP_LEASE_NAME = 'workbench-stop-lease.json'
+
+
+def _stop_lease_read(book):
+    target = api._BoundFile(book._state_file.directory, STOP_LEASE_NAME)
+    try:
+        attributes = api.publish._bound_stat(target)
+        if attributes.st_nlink != 1 or attributes.st_size > 8192:
+            raise ValueError('unsafe stop lease')
+        with api._bound_reader(target) as stream:
+            raw = stream.read(8193)
+    except FileNotFoundError:
+        return None, None
+    try:
+        import math
+        lease = json.loads(raw)
+        if (not isinstance(lease, dict) or set(lease) != {'schema', 'book_id', 'instance', 'challenge_id', 'phase', 'created_monotonic', 'expires_monotonic', 'created_wall'} or
+                type(lease['schema']) is not int or lease['schema'] != 1 or lease['book_id'] != book.meta('id') or
+                not isinstance(lease['instance'], str) or not re.fullmatch(r'[0-9a-f]{32}', lease['instance']) or
+                not isinstance(lease['challenge_id'], str) or not re.fullmatch(r'[0-9a-f]{32}', lease['challenge_id']) or
+                lease['phase'] not in ('preparing', 'committed') or
+                any(type(lease[key]) not in (int, float) or not math.isfinite(lease[key]) or lease[key] < 0
+                    for key in ('created_monotonic', 'expires_monotonic', 'created_wall')) or
+                not 0 < lease['expires_monotonic'] - lease['created_monotonic'] <= 30):
+            raise ValueError('invalid stop lease')
+        return lease, hashlib.sha256(raw).hexdigest()
+    except (ValueError, TypeError, UnicodeError, KeyError, RecursionError):
+        api.fail('workbench_presence_lease_unknown', '停机核对记录无法确认，暂不启动新任务；请核对原服务状态。')
+
+
+def _require_dispatch_not_stopping(book):
+    """Call while holding this book's operation_lock; never acquires it again."""
+    lease, _ = _stop_lease_read(book)
+    if lease is not None:
+        elapsed = time.monotonic() - lease['created_monotonic']
+        wall_elapsed = time.time() - lease['created_wall']
+        if elapsed < 0 or abs(elapsed - wall_elapsed) > 5:
+            api.fail('workbench_presence_lease_unknown', '停机记录的时钟基准已经变化；请核对并正常打开作品服务后再派发任务。')
+        if time.monotonic() < lease['expires_monotonic']:
+            api.fail('workbench_presence_stopping', '本书正在核对停止状态，暂不启动新助手任务。',
+                     stop_instance=lease['instance'], phase=lease['phase'])
+
+
+def _stop_lease_publish(book, lease, expected):
+    directory = book._state_file.directory
+    target = api._BoundFile(directory, STOP_LEASE_NAME)
+    previous = api._BoundFile(directory, '.stop-lease-previous-' + uuid.uuid4().hex)
+    fd, staged = api._bound_stage(directory, '.stop-lease-stage-')
+    displaced = False
+    try:
+        with api._owned_fdopen(fd, 'wb') as stream:
+            stream.write(json.dumps(lease, sort_keys=True, separators=(',', ':')).encode())
+            stream.flush(); os.fsync(stream.fileno())
+        api.tasks._verify_book(book)
+        if api._bound_exists(target):
+            if expected is None:
+                api.fail('workbench_presence_lease_changed', '另一停机核对已经登记，请重新读取。')
+            api._bound_replace(target, previous); displaced = True
+            if api._bound_hash(previous) != expected:
+                api.fail('workbench_presence_lease_changed', '停机核对记录已经变化，未覆盖。')
+        elif expected is not None:
+            api.fail('workbench_presence_lease_changed', '停机核对记录已移走，请重新读取。')
+        api._publish_no_replace(staged, target)
+        api.tasks._verify_book(book)
+        if displaced:
+            api._bound_unlink(previous); displaced = False
+    except (OSError, api.StoryError):
+        if displaced:
+            try:
+                api._restore_displaced_file(previous, target)
+                api._bound_unlink(previous); displaced = False
+            except (OSError, api.StoryError):
+                pass
+        raise
+    finally:
+        if api._bound_exists(staged): api._bound_unlink(staged)
+
+
+def _stop_lease_clear(book, instance, challenge_id):
+    lease, expected = _stop_lease_read(book)
+    if lease is None or lease['instance'] != instance or lease['challenge_id'] != challenge_id:
+        return False
+    directory = book._state_file.directory
+    target = api._BoundFile(directory, STOP_LEASE_NAME)
+    retired = api._BoundFile(directory, '.stop-lease-retired-' + uuid.uuid4().hex)
+    api.tasks._verify_book(book)
+    api._bound_replace(target, retired)
+    if api._bound_hash(retired) != expected:
+        try: api._restore_displaced_file(retired, target)
+        except (OSError, api.StoryError): pass
+        api.fail('workbench_presence_lease_changed', '停机核对记录在清理期间变化，原记录已保留。')
+    api._bound_unlink(retired)
+    api.tasks._verify_book(book)
+    return True
+
+
+def _reconcile_stop_lease_on_start(root, book_id, instance):
+    """Only call after acquiring the exclusive editor-service OS lock.
+
+    That lock proves the prior cooperating service no longer owns this book;
+    it does not certify old buffers saved or any unregistered process stopped.
+    """
+    with api.tasks._book(root, book_id, write=True) as book:
+        lease, _ = _stop_lease_read(book)
+        if lease is None:
+            return
+        receipt = {'schema': 1, 'reason': 'exclusive_editor_service_lock_acquired',
+                   'previous_stop_lease': lease, 'new_instance': instance,
+                   'recorded_at': datetime.now(timezone.utc).isoformat()}
+        api.tasks._publish(book, ('retired-stop-leases',), uuid.uuid4().hex + '.json', api.dumps(receipt))
+        if not _stop_lease_clear(book, lease['instance'], lease['challenge_id']):
+            api.fail('workbench_presence_lease_changed', '旧停机记录在恢复期间变化，请重新核对。')
+
+
 class _EditorPresence:
     """Ephemeral, ordered page observations for one editor service instance.
 
@@ -3565,17 +3772,20 @@ class _EditorPresence:
     FLAGS = ('dirty', 'saving', 'recovering', 'needs_recovery')
 
     def __init__(self, instance, book_id, *, clock=None, stale_after=15.0,
-                 heartbeat_ms=3000, max_pages=256, max_buffers=1000):
+                 heartbeat_ms=3000, max_pages=256, max_buffers=1000, root=None, stop_ttl=12.0):
         import time
         self.instance, self.book_id = instance, book_id
         self.clock = clock or time.monotonic
         self.stale_after, self.heartbeat_ms = stale_after, heartbeat_ms
         self.max_pages, self.max_buffers = max_pages, max_buffers
         self._pages, self._confirmations, self._revision = {}, {}, 0
+        self.root, self.stop_ttl, self._stop, self._lease_id = root, stop_ttl, None, None
         self._lock = threading.RLock()
+        self._story_directory, self._detached_stop_lock = None, None
 
     def register_page(self):
         with self._lock:
+            self.guard_action('new_page')
             if len(self._pages) >= self.max_pages:
                 api.fail('workbench_presence_limit', '页面状态登记达到上限，请核对保存后正常停止并重新打开作品服务。')
             page_id, page_token = uuid.uuid4().hex, secrets.token_urlsafe(32)
@@ -3604,7 +3814,7 @@ class _EditorPresence:
     def report(self, payload):
         required = {'page_id', 'page_token', 'sequence', 'initialized', 'buffers'}
         if (not isinstance(payload, dict) or not required.issubset(payload) or
-                set(payload) - required - {'closing'} or type(payload['initialized']) is not bool or
+                set(payload) - required - {'closing', 'stop_ack'} or type(payload['initialized']) is not bool or
                 type(payload.get('closing', False)) is not bool or
                 type(payload['sequence']) is not int or not 0 <= payload['sequence'] <= 2**53 - 1):
             api.fail('workbench_presence_invalid', '页面状态报告格式无效。')
@@ -3614,8 +3824,17 @@ class _EditorPresence:
             page = self._pages.get(page_id) if isinstance(page_id, str) else None
             if page is None or not isinstance(token, str) or not secrets.compare_digest(token, page['page_token']):
                 api.fail('workbench_presence_page_unknown', '此页面没有本服务签发的状态登记，请保留文字并重新核对工作台。')
+            challenge = self._active_stop()
+            ack = payload.get('stop_ack')
+            if ack is not None and (not isinstance(ack, dict) or set(ack) != {'challenge_id', 'nonce'} or
+                    any(not isinstance(ack[key], str) for key in ack)):
+                api.fail('workbench_presence_invalid', '停机确认格式无效。')
+            if ack is not None and challenge is not None and (ack['challenge_id'] != challenge['id'] or
+                    not secrets.compare_digest(ack['nonce'], challenge['nonces'].get(page_id, ''))):
+                api.fail('workbench_presence_fresh_ack_invalid', '此确认不属于当前页面或停机核对。')
             if payload['sequence'] <= page['sequence']:
-                return {'ok': True, 'accepted': False, 'closed': page['closed'], 'summary': self.summary()}
+                return {'ok': True, 'accepted': False, 'closed': page['closed'], 'summary': self.summary(),
+                        'stop_challenge': self._page_challenge(page_id)}
             page['sequence'] = payload['sequence']
             page['last_seen'] = self.clock()
             page['initialized'] = payload['initialized']
@@ -3625,7 +3844,15 @@ class _EditorPresence:
             pending = any(any(buffer[flag] for flag in self.FLAGS) for buffer in page['buffers'])
             page['closed'] = bool(payload.get('closing') and payload['initialized'] and not pending)
             self._revision += 1
-            return {'ok': True, 'accepted': True, 'closed': page['closed'], 'summary': self.summary()}
+            if challenge is not None:
+                if pending or not payload['initialized']:
+                    challenge['failed'] = '页面状态已变化或仍有待处理文字。'
+                if ack is not None and not pending and payload['initialized']:
+                    challenge['acks'][page_id] = page['sequence']
+                else:
+                    challenge['acks'].pop(page_id, None)
+            return {'ok': True, 'accepted': True, 'closed': page['closed'], 'summary': self.summary(),
+                    'stop_challenge': self._page_challenge(page_id)}
 
     def summary(self):
         with self._lock:
@@ -3663,7 +3890,230 @@ class _EditorPresence:
                     'automatic_verified': state == 'clean',
                     'manual_confirmation_required': bool(counts['unknown']),
                     'coverage': 'server_issued_pages_this_instance', 'legacy_services_covered': False,
-                    'saved_assertion_is_automatic_verification': False}
+                    'saved_assertion_is_automatic_verification': False,
+                    'fresh_stop_supported': True, 'fresh_stop': self._fresh_summary()}
+
+    @contextmanager
+    def _stop_book(self):
+        if self.root is None:
+            yield None
+        else:
+            with ExitStack() as stack:
+                try:
+                    # A retained detached lock must not be acquired twice if the
+                    # original directory is restored while a challenge is open.
+                    book = None if self._detached_stop_lock is not None else stack.enter_context(
+                        api.tasks._book(self.root, self.book_id, write=True))
+                except api.StoryError as error:
+                    if error.code not in ('wrong_book', 'book_missing'):
+                        raise
+                    self._detached_stop_guard()
+                    book = None
+                try:
+                    yield book
+                except BaseException:
+                    if self._stop is None and self._lease_id is None:
+                        self._release_detached_stop_lock()
+                    raise
+
+    def _release_detached_stop_lock(self):
+        if self._detached_stop_lock is not None:
+            import fcntl
+            handle, self._detached_stop_lock = self._detached_stop_lock, None
+            try:
+                fcntl.flock(handle, fcntl.LOCK_UN)
+            finally:
+                os.close(handle)
+
+    def _detached_stop_guard(self):
+        # A renamed book must not redirect shutdown bookkeeping into its
+        # replacement. Keep the original writer lock through cancellation or
+        # server_close, and allow only an original book with no host executions.
+        directory = self._story_directory
+        if os.name == 'nt' or directory is None or directory.fd is None:
+            api.fail('workbench_book_changed', '原作品位置已变化，无法核对停止状态，请先恢复原目录。')
+        import fcntl
+        import stat
+        handle = None
+        try:
+            handle = os.open('operation.lock', os.O_RDWR | os.O_NOFOLLOW, dir_fd=directory.fd)
+            info = os.fstat(handle)
+            if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+                raise OSError('Original writer lock is not a regular single-link file')
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            try:
+                task_dir = os.open('assistant-tasks', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                                   dir_fd=directory.fd)
+            except FileNotFoundError:
+                task_dir = None
+            if task_dir is not None:
+                try:
+                    for name in ('executions', 'execution-heads', 'execution-requests'):
+                        try:
+                            os.stat(name, dir_fd=task_dir, follow_symlinks=False)
+                        except FileNotFoundError:
+                            continue
+                        api.fail('workbench_task_busy', '原作品已移动且存在宿主执行记录；请恢复目录并对账后停止。',
+                                 task_activity={'busy': True, 'state': 'unknown', 'book_moved': True})
+                finally:
+                    os.close(task_dir)
+            self._busy_check(check_host=False)
+            self._detached_stop_lock, handle = handle, None
+        except OSError as error:
+            api.fail('workbench_book_changed', '原作品位置已变化或仍被写入，无法核对停止状态，请先恢复原目录。', reason=str(error))
+        finally:
+            if handle is not None:
+                os.close(handle)
+
+    def _active_stop(self):
+        if self._stop is not None and self.clock() >= self._stop['expires']:
+            self.release_stop()
+        return self._stop
+
+    def _page_evidence(self, page):
+        return {'sequence': page['sequence'], 'initialized': page['initialized'], 'closed': page['closed'],
+                'buffers': page['buffers'],
+                'stale': not page['closed'] and self.clock() - page['last_seen'] >= self.stale_after}
+
+    def _fresh_summary(self):
+        challenge = self._active_stop()
+        if challenge is None:
+            return None
+        waiting, acknowledged, manual = [], [], []
+        for page_id, page in self._pages.items():
+            pending = any(any(buffer[flag] for flag in self.FLAGS) for buffer in page['buffers'])
+            evidence = self._page_evidence(page)
+            unknown = not page['closed'] and (not page['initialized'] or evidence['stale'])
+            if page['closed']:
+                acknowledged.append(page_id)
+            elif unknown and challenge['unknown'].get(page_id) == evidence:
+                manual.append(page_id)
+            elif (not unknown and not pending and challenge['acks'].get(page_id) == page['sequence']):
+                acknowledged.append(page_id)
+            else:
+                waiting.append(page_id)
+        if set(self._pages) != set(challenge['nonces']):
+            challenge['failed'] = '页面集合在停机核对期间变化。'
+        return {'challenge_id': challenge['id'], 'ready': not waiting and not challenge['failed'],
+                'waiting_pages': waiting, 'acknowledged_pages': acknowledged, 'manually_confirmed_pages': manual,
+                'failed': bool(challenge['failed']), 'message': challenge['failed'],
+                'expires_in_ms': max(0, int((challenge['expires'] - self.clock()) * 1000))}
+
+    def _page_challenge(self, page_id):
+        challenge = self._active_stop()
+        if challenge is None:
+            return None
+        nonce = challenge['nonces'].get(page_id)
+        if nonce is None:
+            return None
+        return {'challenge_id': challenge['id'], 'nonce': nonce,
+                'expires_in_ms': max(0, int((challenge['expires'] - self.clock()) * 1000))}
+
+    def guard_action(self, action):
+        with self._lock:
+            if self._active_stop() is not None:
+                api.fail('workbench_presence_preparing', '正在逐页核对停机状态，暂不开始新的编辑或任务；可取消后继续。')
+
+    def _busy_check(self, *, check_host=True):
+        if self.root is None:
+            return
+        activity = api.platform_drafts.workbench_activity(self.root, expected_book_id=self.book_id)
+        if activity.get('busy'):
+            api.fail('workbench_platform_busy', '平台草稿任务尚未结束，不能停止服务。', platform_activity=activity)
+        check = getattr(api.tasks, 'execution_busy', None)
+        if check_host and check is not None:
+            activity = check(self.root, expected_book_id=self.book_id)
+            if activity.get('busy'):
+                api.fail('workbench_task_busy', '助手任务仍在执行或退出状态未知，不能停止服务。', task_activity=activity)
+
+    def prepare_stop(self, saved=False, unknown_confirmation=None):
+        with self._lock:
+            if self._active_stop() is not None:
+                api.fail('workbench_presence_preparing', '已有停机核对进行中，请先完成或取消。', fresh_stop=self._fresh_summary())
+            with self._stop_book() as book:
+                if book is not None:
+                    _require_dispatch_not_stopping(book)
+                    self._busy_check()
+                checked = self._saved_check(saved, unknown_confirmation)
+                now = self.clock()
+                challenge = {'id': uuid.uuid4().hex, 'token': secrets.token_urlsafe(32),
+                             'expires': now + self.stop_ttl, 'failed': None, 'acks': {},
+                             'nonces': {key: secrets.token_urlsafe(32) for key in self._pages}, 'unknown': {}}
+                for page_id, page in self._pages.items():
+                    proof = self._page_evidence(page)
+                    if not page['closed'] and (not page['initialized'] or proof['stale']):
+                        challenge['unknown'][page_id] = proof
+                if book is not None:
+                    old, expected = _stop_lease_read(book)
+                    stamp = time.monotonic()
+                    lease = {'schema': 1, 'book_id': self.book_id, 'instance': self.instance,
+                             'challenge_id': challenge['id'], 'phase': 'preparing',
+                             'created_monotonic': stamp, 'expires_monotonic': stamp + self.stop_ttl,
+                             'created_wall': time.time()}
+                    _stop_lease_publish(book, lease, expected)
+                self._stop, self._lease_id = challenge, challenge['id']
+                return {'ok': True, 'stop_challenge': challenge['token'], 'fresh_stop': self._fresh_summary(),
+                        'manual_unknown_confirmation': checked['manual_unknown_confirmation'], 'presence': self.summary()}
+
+    def stop_status(self, stop_challenge):
+        with self._lock:
+            challenge = self._active_stop()
+            if challenge is None or not isinstance(stop_challenge, str) or not secrets.compare_digest(stop_challenge, challenge['token']):
+                api.fail('workbench_presence_fresh_expired', '停机核对已过期或不属于此实例，请重新核对。', presence=self.summary())
+            return {'ok': True, 'fresh_stop': self._fresh_summary(), 'presence': self.summary()}
+
+    def cancel_stop(self, stop_challenge):
+        with self._lock:
+            challenge = self._active_stop()
+            if challenge is None:
+                return {'ok': True, 'cancelled': False, 'presence': self.summary()}
+            if not isinstance(stop_challenge, str) or not secrets.compare_digest(stop_challenge, challenge['token']):
+                api.fail('workbench_presence_fresh_expired', '不能取消另一停机核对。')
+            self.release_stop()
+            return {'ok': True, 'cancelled': True, 'presence': self.summary()}
+
+    def release_stop(self):
+        with self._lock:
+            try:
+                if self._lease_id is not None:
+                    with self._stop_book() as book:
+                        if book is not None:
+                            _stop_lease_clear(book, self.instance, self._lease_id)
+            finally:
+                self._stop, self._lease_id = None, None
+                self._release_detached_stop_lock()
+
+    def require_stop(self, saved=False, unknown_confirmation=None, stop_challenge=None):
+        with self._lock:
+            if stop_challenge is None:
+                if self._active_stop() is not None:
+                    api.fail('workbench_presence_fresh_required', '当前停机核对需要对应的一次性凭证。')
+                if any(not page['closed'] and page['initialized'] and self.clock() - page['last_seen'] < self.stale_after
+                       for page in self._pages.values()):
+                    self._saved_check(saved, unknown_confirmation)
+                    api.fail('workbench_presence_fresh_required', '须先逐页取得本次停机的新鲜确认。', presence=self.summary())
+                prepared = self.prepare_stop(saved, unknown_confirmation)
+                return self.require_stop(saved, stop_challenge=prepared['stop_challenge'])
+            with self._stop_book() as book:
+                self._busy_check(check_host=book is not None)
+                status = self.stop_status(stop_challenge)
+                if saved is not True:
+                    api.fail('workbench_presence_saved_required', '请先核对所有页面的编辑均已保存。')
+                if not status['fresh_stop']['ready']:
+                    api.fail('workbench_presence_fresh_pending', '仍未取得全部页面的新鲜确认，服务保持运行。',
+                             fresh_stop=status['fresh_stop'], presence=status['presence'])
+                challenge = self._stop
+                if book is not None:
+                    lease, expected = _stop_lease_read(book)
+                    if lease is None or lease['instance'] != self.instance or lease['challenge_id'] != challenge['id']:
+                        api.fail('workbench_presence_lease_changed', '跨进程停机核对已变化，未停止服务。')
+                    lease['phase'] = 'committed'
+                    _stop_lease_publish(book, lease, expected)
+                manual = bool(status['fresh_stop']['manually_confirmed_pages'])
+                self._stop = None
+                return {'allowed': True, 'automatic_verified': bool(self._pages) and not manual,
+                        'manual_unknown_confirmation': manual, 'fresh_verified': True,
+                        'fresh_stop': status['fresh_stop'], 'presence': status['presence']}
 
     def confirm_unknown(self, fingerprint, *, confirmed=False):
         with self._lock:
@@ -3683,7 +4133,7 @@ class _EditorPresence:
             return {'ok': True, 'unknown_confirmation': token, 'expires_in_seconds': 30,
                     'automatic_verified': False, 'presence': summary}
 
-    def require_stop(self, saved=False, unknown_confirmation=None):
+    def _saved_check(self, saved=False, unknown_confirmation=None):
         with self._lock:
             summary = self.summary()
             if saved is not True:
@@ -3706,9 +4156,33 @@ def _editor_presence_script():
     return r'''
 const editorPresence=(()=>{
  const config=__EDITOR_PRESENCE_CONFIG__;
- let initialized=false,sequence=0,lastState=null,paused=false,timer=null;
- const flags=['dirty','saving','recovering','needs_recovery'];
- const emit=detail=>{try{window.dispatchEvent(new CustomEvent('story-editor-presence-status',{detail}));}catch{}};
+ let initialized=false,sequence=0,lastState=null,paused=false,timer=null,frozen=null,resuming=false,omitAck=false;
+ const controls=new Map(),flags=['dirty','saving','recovering','needs_recovery'];
+ const emit=detail=>{try{window.dispatchEvent(new CustomEvent('story-editor-presence-status',{detail,frozen:!!(frozen||resuming)}));}catch{}};
+ function protect(){
+  if(!document.querySelectorAll)return;
+  for(const node of document.querySelectorAll('textarea,input,select,button,[contenteditable]')){
+   if(!controls.has(node))controls.set(node,{readOnly:node.readOnly,disabled:node.disabled,contentEditable:node.contentEditable});
+   if('readOnly'in node)node.readOnly=true;
+   if(node.tagName==='BUTTON'||node.tagName==='SELECT'||node.type==='checkbox'||node.type==='file')node.disabled=true;
+   if(node.isContentEditable)node.contentEditable='false';
+  }
+ }
+ function unfreeze(){
+  frozen=null;resuming=false;
+  for(const [node,state]of controls){if(state.readOnly!==undefined)node.readOnly=state.readOnly;if(state.disabled!==undefined)node.disabled=state.disabled;if(state.contentEditable!==undefined)node.contentEditable=state.contentEditable;}
+  controls.clear();
+ }
+ function block(event){
+  if(!frozen&&!resuming)return;
+  if(event.type==='keydown'){
+   const key=String(event.key||'').toLowerCase();
+   if((event.ctrlKey||event.metaKey)&&['c','a'].includes(key))return;
+   if(['arrowleft','arrowright','arrowup','arrowdown','home','end','pageup','pagedown','shift','control','meta','alt'].includes(key))return;
+  }
+  if(event.type==='click'&&!event.target?.closest?.('button,input,select,[role="button"],summary'))return;
+  event.preventDefault?.();event.stopImmediatePropagation?.();
+ }
  function capture(){
   if(!initialized||typeof docs==='undefined'||!(docs instanceof Map))return {initialized:false,buffers:[]};
   const buffers=[];for(const d of docs.values()){
@@ -3717,34 +4191,51 @@ const editorPresence=(()=>{
    let title=typeof displayTitle==='function'?displayTitle(d):d.title||id;
    buffers.push({id,title:String(title).slice(0,240),dirty:typeof dirty==='function'?!!dirty(d):!!(d.editable&&d.value!==d.text),
     saving:!!d.saving,recovering:!!d.recovering,needs_recovery:!!(d.needs_recovery||d.pendingSaveReadback||(d.saveError&&d.failedSaveOptions?.newVersion))});
-  }return {initialized:true,buffers};
+  }
+  if(typeof assistantTaskFormBuffers==='function')buffers.push(...assistantTaskFormBuffers());
+  if(buffers.length>1000)return {initialized:false,buffers:[]};
+  return {initialized:true,buffers};
  }
  async function report(force=false,closing=false){
   if(!config||paused&&!closing)return null;
+  if(frozen||resuming)protect();
   let snapshot;try{snapshot=capture();}catch{snapshot={initialized:false,buffers:[]};}
   const signature=JSON.stringify(snapshot);if(!force&&!closing&&signature===lastState)return null;lastState=signature;
   const clean=snapshot.initialized&&!snapshot.buffers.some(d=>flags.some(flag=>d[flag]));
   const payload={page_id:config.page_id,page_token:config.page_token,sequence:++sequence,...snapshot,closing:!!(closing&&clean)};
+  if(frozen&&clean&&!omitAck)payload.stop_ack={challenge_id:frozen.challenge_id,nonce:frozen.nonce};
+  omitAck=false;
   try{
    const response=await fetch(location.pathname+'api/presence',{method:'POST',credentials:'same-origin',
     headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(payload),keepalive:!!closing});
    const result=await response.json();if(!response.ok||!result.ok)throw Error(result.message||'页面状态报告尚未确认');
-   if(payload.sequence===sequence)emit({state:'reported',summary:result.summary,page_id:config.page_id});return result;
-  }catch(error){if(payload.sequence===sequence){lastState=null;emit({state:'unknown',message:'当前页面保存状态尚未同步，请保留本页并核对其他窗口。',page_id:config.page_id});}return null;}
+   if(payload.sequence===sequence){
+    const challenge=result.stop_challenge;
+    if(challenge&&typeof challenge.challenge_id==='string'&&typeof challenge.nonce==='string'){
+     const fresh=!frozen||frozen.challenge_id!==challenge.challenge_id||frozen.nonce!==challenge.nonce;
+     frozen=challenge;resuming=false;protect();
+     emit({state:'reported',summary:result.summary,page_id:config.page_id,frozen:true,message:'正在核对停机状态，编辑暂时冻结；可复制文字。'});
+     if(fresh&&!closing)void report(true);
+    }else{
+     unfreeze();emit({state:'reported',summary:result.summary,page_id:config.page_id,frozen:false});
+    }
+   }return result;
+  }catch(error){if(payload.sequence===sequence){lastState=null;if(frozen)omitAck=true;emit({state:'unknown',message:'当前页面保存状态尚未同步，请保留本页并核对其他窗口。',page_id:config.page_id,frozen:!!(frozen||resuming)});}return null;}
  }
  function ready(){initialized=true;void report(true);}
  function changed(){void report();}
  if(config){
   timer=setInterval(()=>{if(!paused)void report(true);},Math.max(1000,config.heartbeat_ms||3000));
+  for(const event of ['beforeinput','keydown','paste','cut','drop','compositionstart','click','input'])document.addEventListener(event,block,{capture:true});
   document.addEventListener('input',changed);document.addEventListener('change',changed);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)void report(true);});
   window.addEventListener('focus',()=>{if(!paused)void report(true);});
   window.addEventListener('beforeunload',()=>{void report(true);});
   window.addEventListener('pagehide',()=>{void report(true,true);paused=true;});
-  window.addEventListener('pageshow',()=>{paused=false;void report(true);});
+  window.addEventListener('pageshow',()=>{if(paused){resuming=true;protect();}paused=false;void report(true);});
   void report(true);
  }
- return {ready,changed,report,capture,dispose:()=>{clearInterval(timer);paused=true;}};
+ return {ready,changed,report,capture,isFrozen:()=>!!(frozen||resuming),dispose:()=>{clearInterval(timer);paused=true;}};
 })();
 '''
 
@@ -3791,6 +4282,167 @@ async function recoveryList(container,request,open,current,compare=null){
 '''
 
 
+def _assistant_task_host_script():
+    return r'''
+function assistantHostPending(execution){return !!execution&&['intent','starting','running','cancel_requested','unknown','result_conflict'].includes(execution.state);}
+function assistantHostClear(panel){if(panel.hostTimer){clearTimeout(panel.hostTimer);panel.hostTimer=null;}}
+function assistantTaskFormBuffers(){
+ const panel=assistantTaskPanel;if(!panel?.dialog.open||!panel.task)return [];
+ const changed=!!panel.retainedDraft?.values?.length||(panel.draftFields||[]).some(row=>row.element.value!==row.baseline);
+ if(!changed&&!panel.formSaving&&!panel.formSaveUnknown)return [];
+ return [{id:'task-form:'+panel.task.id,title:'助手任务回执与核对说明',dirty:changed,saving:!!panel.formSaving,recovering:false,needs_recovery:!!panel.formSaveUnknown}];
+}
+function assistantHostRender(panel,task){
+ const execution=task.host_execution,box=assistantTaskElement('section');box.setAttribute('aria-label','本机助手执行');
+ if(execution?.can_start&&panel.hostIntent?.request_id===execution.request_id)panel.hostIntent=null;
+ box.append(assistantTaskElement('h4','本机助手执行'),assistantTaskElement('p',execution?.status_label||'可在本机 Codex 助手中执行本次任务。'));
+ box.append(assistantTaskElement('small','使用当前 Codex 账号和已配置模型，可能消耗宿主用量。执行使用只读隔离输入；结果仍须核对，正式采用另行完成。'));
+ if(execution?.error)box.append(assistantTaskElement('p',String(execution.error)));
+ if(execution?.evidence_available===false)box.append(assistantTaskElement('p','原始执行材料当前不可回读；历史退出状态与本次结果核验分别记录。'));
+ const stale=!!task.stale_reasons?.length;
+ const start=assistantTaskElement('button',execution?.can_start?'重新在本机助手中执行':'在本机助手中执行'),refresh=assistantTaskElement('button','刷新执行状态');refresh.dataset.taskRefresh='true';
+ start.disabled=stale||!!task.result||assistantHostPending(execution)||!!execution&&!execution.can_start;
+ const current=()=>assistantTaskCurrent(panel)&&panel.task===task;
+ const request=async(action,data={},mutation=false)=>{
+  if(!current()||panel.busy)return;assistantHostClear(panel);panel.busy=true;
+  const sequence=++panel.request;panel.status.textContent=mutation?'正在提交执行操作…':'正在读取本机执行状态…';
+  for(const button of panel.detail.querySelectorAll('button'))button.disabled=true;
+  try{
+   const packet=await assistantTaskRequest(action,{task_id:task.id,...data});
+   if(!current()||panel.request!==sequence)return;
+   panel.task=assistantTaskPacket(packet);assistantTaskRender(panel);
+   panel.status.textContent=panel.task.host_execution?.status_label||'已读取执行状态。';
+  }catch(error){
+   if(current()&&panel.request===sequence){
+    panel.status.textContent=(mutation?'执行操作是否生效尚未确认：':'执行状态未读到：')+error.message+'。请重新读取本任务，勿重复派发。';
+    for(const button of panel.detail.querySelectorAll('button'))button.disabled=button.dataset.taskRefresh!=='true';
+   }
+  }finally{if(assistantTaskCurrent(panel)&&panel.request===sequence)panel.busy=false;}
+ };
+ start.onclick=()=>{
+  if(start.disabled||!current())return;
+  if(assistantTaskFormBuffers().length){panel.status.textContent='当前还有未提交的回执或核对说明，请先保存或保留这些输入。';return;}
+  const intent=panel.hostIntent;
+  if(!intent||intent.task_id!==task.id||intent.version!==task.version)panel.hostIntent={task_id:task.id,version:task.version,request_id:crypto.randomUUID().replace(/-/g,'')};
+  return request('start',{version:task.version,request_id:panel.hostIntent.request_id,execute:true},true);
+ };
+ refresh.onclick=()=>request('execution');box.append(start,refresh);
+ if(execution?.can_cancel){const cancel=assistantTaskElement('button','请求取消本次执行');cancel.onclick=()=>request('cancel',{execution_id:execution.id},true);box.append(cancel);}
+ if(execution?.can_reconcile){const reconcile=assistantTaskElement('button','核对已有执行回执');reconcile.onclick=()=>request('reconcile',{execution_id:execution.id},true);box.append(reconcile);}
+ if(execution&&['unknown','result_conflict'].includes(execution.state))box.append(assistantTaskElement('p','本次不自动重试；先读取并核对已有记录。'));
+ panel.detail.append(box);
+ if(execution&&['intent','starting','running','cancel_requested'].includes(execution.state))panel.hostTimer=setTimeout(()=>{panel.hostTimer=null;if(current())void request('execution');},2000);
+}
+'''
+
+
+def _assistant_tasks_script():
+    """Task receipts are separate from manuscript buffers and formal adoption."""
+    return _assistant_task_host_script() + r'''
+const assistantTaskBookId=__TASK_BOOK_ID__;
+let assistantTaskPanel=null,assistantTaskSequence=0;
+const assistantTaskSources={request_file:'',style_file:''};
+function assistantWritingSources(){return Object.fromEntries(Object.entries(assistantTaskSources).filter(([,value])=>value));}
+function assistantTaskPacket(packet){const task=packet?.task||packet;if(!task||task.book_id!==assistantTaskBookId||typeof task.id!=='string')throw Error('任务不属于当前作品，请刷新后核对。');return task;}
+function assistantTaskRemember(packet){if(!packet?.task)return;const task=assistantTaskPacket(packet);$('review-task-box').assistantTaskId=task.id;}
+function assistantTaskCurrent(panel){return assistantTaskPanel===panel&&panel.dialog.open&&panel.sequence===assistantTaskSequence;}
+function assistantTaskName(task){return task.kind==='writing'?'续写任务':task.kind==='review'?'审稿任务':task.kind;}
+function assistantTaskState(task){if(task.applied?.verified||task.applied===true)return '正式稿已匹配';if(task.status_label)return task.status_label;return ({generated:'已生成',handed_off:'已交接，执行待核验',failed:'执行失败',pending_review:'结果待核对',returned:'结果待核对',needs_review:'结果待核对',reviewed:'已核对',applied:'正式稿已匹配',stale:'来源已变化'})[task.status]||task.status||'状态待核验';}
+async function assistantTaskRequest(action,data={}){return call('tasks/'+action,{...data,expected_book_id:assistantTaskBookId});}
+function assistantTaskElement(tag,text){const element=document.createElement(tag);if(text!==undefined)element.textContent=text;return element;}
+async function assistantTasksOpen(preferred=null){
+ if(assistantTaskPanel?.dialog.open)assistantTaskPanel.dialog.close();
+ const {dialog,content}=editorDialog('助手任务与结果'),panel={dialog,content,sequence:++assistantTaskSequence,request:0,task:null,busy:false,offset:0};assistantTaskPanel=panel;
+ dialog.addEventListener('close',()=>{assistantHostClear(panel);if(assistantTaskPanel===panel){assistantTaskPanel=null;++assistantTaskSequence;}});
+ const help=assistantTaskElement('p','复制任务交给助手，完成后由助手回填结果；也可导入回执。核对结果不会正式采用正文。关闭任务窗口前，请先提交或复制尚未保存的回执与核对说明。');
+ panel.status=assistantTaskElement('p');panel.status.setAttribute('role','status');panel.list=assistantTaskElement('div');panel.detail=assistantTaskElement('section');
+ const sources=assistantTaskElement('details'),sourceTitle=assistantTaskElement('summary','下一章使用的材料（可选）');sources.append(sourceTitle);
+ const rows=(currentCatalog?.files||[]).filter(row=>typeof row.path==='string'&&row.id?.startsWith('file:')&&/\.(md|txt)$/i.test(row.path));
+ for(const [key,labelText] of [['request_file','本次要求'],['style_file','文风材料']]){
+  const label=assistantTaskElement('label',labelText),select=assistantTaskElement('select');select.setAttribute('aria-label',labelText);const empty=assistantTaskElement('option','不指定额外材料');empty.value='';select.append(empty);
+  for(const row of rows){const option=assistantTaskElement('option',row.path);option.value=row.path;select.append(option);}
+  if(assistantTaskSources[key]&&!rows.some(row=>row.path===assistantTaskSources[key])){const option=assistantTaskElement('option',assistantTaskSources[key]+'（须重新核对）');option.value=assistantTaskSources[key];select.append(option);}
+  select.value=assistantTaskSources[key];select.onchange=()=>{if(assistantTaskCurrent(panel))assistantTaskSources[key]=select.value;};label.append(select);sources.append(label);
+ }
+ const sourceNote=assistantTaskElement('small','仅列出已加载的本书文字材料；需要其他材料时先在目录中加载。选择将在下次生成续写任务时绑定版本。');sources.append(sourceNote);
+ const refresh=assistantTaskElement('button','刷新任务'),more=assistantTaskElement('button','继续加载');panel.more=more;more.hidden=true;
+ refresh.onclick=()=>assistantTasksList(panel,true);more.onclick=()=>assistantTasksList(panel,false);
+ content.append(help,sources,refresh,panel.status,panel.list,more,panel.detail);
+ await assistantTasksList(panel,true);if(preferred&&assistantTaskCurrent(panel))await assistantTaskShow(panel,preferred);
+}
+async function assistantTasksList(panel,reset){
+ if(!assistantTaskCurrent(panel)||panel.busy)return;
+ const request=++panel.request;panel.busy=true;panel.more.disabled=true;panel.status.textContent='正在读取任务…';
+ try{
+  const result=await assistantTaskRequest('list',{offset:reset?0:panel.offset,limit:20});if(!assistantTaskCurrent(panel)||panel.request!==request)return;
+  if(reset)panel.list.replaceChildren();
+  for(const raw of result.tasks||[]){const task=assistantTaskPacket(raw),button=assistantTaskElement('button',assistantTaskName(task)+(task.chapter?' · 第'+task.chapter+'章':'')+' · '+assistantTaskState(task));button.onclick=()=>assistantTaskShow(panel,task.id);panel.list.append(button);}
+  panel.offset=result.next_offset??((reset?0:panel.offset)+(result.tasks||[]).length);panel.more.hidden=!result.has_more;
+  panel.status.textContent=(result.tasks||[]).length?'选择任务查看结果与原文依据。':'当前没有可显示的任务。';
+ }catch(error){if(assistantTaskCurrent(panel))panel.status.textContent='读取未完成：'+error.message;}
+ finally{if(assistantTaskCurrent(panel)&&panel.request===request){panel.busy=false;panel.more.disabled=false;}}
+}
+async function assistantTaskShow(panel,id){
+ if(!assistantTaskCurrent(panel)||panel.busy)return;
+ assistantHostClear(panel);
+ if(panel.task?.id===id){const values=(panel.draftFields||[]).filter(row=>row.element.value!==row.baseline).map(row=>[row.key,row.element.value]);if(values.length)panel.retainedDraft={task_id:id,version:panel.task.version,values};}
+ const request=++panel.request;panel.busy=true;panel.status.textContent='正在核对任务来源…';
+ try{const packet=await assistantTaskRequest('get',{task_id:id});if(!assistantTaskCurrent(panel)||request!==panel.request)return;panel.task=assistantTaskPacket(packet);panel.formSaveUnknown=false;assistantTaskRender(panel);panel.status.textContent='已读取任务，结果采用状态以当前稿件核对为准。';}
+ catch(error){if(assistantTaskCurrent(panel)&&request===panel.request)panel.status.textContent='任务读取失败：'+error.message;}
+ finally{if(assistantTaskCurrent(panel)&&request===panel.request)panel.busy=false;}
+}
+function assistantTaskRender(panel){
+ assistantHostClear(panel);
+ const task=panel.task,section=panel.detail;section.replaceChildren();
+ const title=assistantTaskElement('h3',assistantTaskName(task)+' · '+assistantTaskState(task)),summary=assistantTaskElement('p',task.summary||task.result?.summary||'尚无已返回的结果。');section.append(title,summary);
+ const stale=Array.isArray(task.stale_reasons)&&task.stale_reasons.length>0;
+ if(stale)section.append(assistantTaskElement('p','来源或结果已变化：'+task.stale_reasons.map(value=>typeof value==='string'?value:(value.message||value.code||'版本变化')).join('；')+'。请重新生成任务或核对新版本。'));
+ section.append(assistantTaskElement('small','执行来源：'+(task.execution?.source||task.provenance?.source||'待核验')+'；回填内容和文件匹配不代表助手实际完成独立审稿。'));
+ const prompt=assistantTaskElement('textarea');prompt.readOnly=true;prompt.value=task.prompt||'';prompt.setAttribute('aria-label','助手任务内容');section.append(prompt);
+ const copy=assistantTaskElement('button','复制任务'),handoff=assistantTaskElement('button','确认已交给助手');section.append(copy,handoff);
+ copy.onclick=async()=>{try{await navigator.clipboard.writeText(prompt.value);if(assistantTaskCurrent(panel)&&panel.task?.id===task.id)panel.status.textContent='已复制任务；请交给助手执行。';}catch{prompt.select();}};
+ const mutate=async(action,data)=>{
+  if(!assistantTaskCurrent(panel)||panel.busy||panel.task!==task)return;panel.busy=true;panel.formSaving=true;const request=++panel.request;panel.status.textContent='正在核对并保存…';
+  for(const button of section.querySelectorAll('button'))button.disabled=true;
+  try{const packet=await assistantTaskRequest(action,{task_id:task.id,version:task.version,...data});if(!assistantTaskCurrent(panel)||panel.request!==request)return;panel.task=assistantTaskPacket(packet);panel.retainedDraft=null;assistantTaskRender(panel);panel.status.textContent='任务记录已保存，正文未自动正式采用。';}
+  catch(error){if(assistantTaskCurrent(panel)&&panel.request===request){panel.formSaveUnknown=true;panel.status.textContent='尚未确认保存：'+error.message+'。请重新读取任务后核对，勿直接重复导入。';for(const button of section.querySelectorAll('button'))button.disabled=button.dataset.taskRefresh!=='true';}}
+  finally{if(assistantTaskCurrent(panel)&&panel.request===request){panel.busy=false;panel.formSaving=false;}}
+ };
+ const hostPending=assistantHostPending(task.host_execution);
+ handoff.disabled=stale||hostPending||!['generated','handed_off'].includes(task.status);handoff.onclick=()=>mutate('handoff',{});
+ const output=task.output||task.result?.output;
+ if(output?.path){const open=assistantTaskElement('button','打开返回的候选稿');section.append(open);open.onclick=async()=>{if(!assistantTaskCurrent(panel)||panel.busy)return;try{const opened=await openDoc('file:'+output.path,'',{guard:()=>assistantTaskCurrent(panel)&&panel.task===task,expectedSha:output.sha256});if(assistantTaskCurrent(panel)&&panel.task===task){if(opened===true)dialogClose();else panel.status.textContent='候选稿未打开：版本已变化、存在未保存编辑或读取失败。请先核对当前稿件，任务窗口与未保存文字已保留。';}}catch(error){if(assistantTaskCurrent(panel))panel.status.textContent='候选稿打开失败：'+error.message;}};}
+ const issues=task.issues||task.result?.issues||[],selections=[],statuses=new Map((task.issue_statuses||[]).map(row=>[row.id,row]));
+ for(const issue of issues){const row=assistantTaskElement('section'),label=assistantTaskElement('p',(issue.severity==='blocker'?'需处理：':'建议：')+issue.issue),select=assistantTaskElement('select');select.setAttribute('aria-label','问题 '+issue.id+' 的处理状态');
+  for(const [value,text] of [['open','待处理'],['resolved','已解决并复查'],['dismissed','保留原文，已核对理由']]){const option=assistantTaskElement('option',text);option.value=value;select.append(option);}const previous=statuses.get(issue.id);select.value=previous?.status||'open';select.disabled=stale||task.status!=='needs_review';const explanation=assistantTaskElement('textarea');explanation.setAttribute('aria-label','问题 '+issue.id+' 的核对说明');explanation.value=previous?.note||'';explanation.placeholder='记录修改或保留的原文依据';explanation.disabled=select.disabled;
+  row.append(label,select,explanation);selections.push([issue.id,select,explanation]);
+  for(const [index,reference] of (issue.evidence||[]).entries()){const button=assistantTaskElement('button','查看依据 '+(index+1)+(reference.chapter?' · 第'+reference.chapter+'章':''));row.append(button);button.onclick=async()=>{
+   if(!assistantTaskCurrent(panel)||panel.busy||panel.task!==task)return;button.disabled=true;
+   try{const proof=await assistantTaskRequest('evidence',{task_id:task.id,issue_id:issue.id,evidence_index:index});if(!assistantTaskCurrent(panel)||panel.task!==task)return;const view=editorDialog('审稿原文依据'),source=proof.path||proof.evidence?.path||(reference.chapter?'第'+reference.chapter+'章':'来源待核对'),location=Number.isInteger(proof.line)?' · 第'+proof.line+'行':'';view.content.append(assistantTaskElement('p',source+location+' · '+(proof.stale?'任务生成时的旧版快照，当前来源已变化':'所引版本与当前来源一致')),assistantTaskElement('p','所引原句：'),assistantTaskElement('pre',proof.evidence?.quote||reference.quote||'未提供摘录'),assistantTaskElement('p','所引版本全文：'),assistantTaskElement('pre',proof.text||proof.evidence?.text||''));}
+   catch(error){if(assistantTaskCurrent(panel))panel.status.textContent='依据读取失败：'+error.message;}
+   finally{if(assistantTaskCurrent(panel))button.disabled=false;}
+  };}section.append(row);
+ }
+ if(task.result||output||issues.length){const reviewed=assistantTaskElement('button','保存逐项核对结果');reviewed.disabled=stale||task.status!=='needs_review';reviewed.onclick=()=>{if(selections.some(([,select,explanation])=>select.value!=='open'&&!explanation.value.trim())){panel.status.textContent='请为已解决或保留的问题填写核对依据。';return;}return mutate('review',{issue_statuses:selections.map(([id,select,explanation])=>({id,status:select.value,note:explanation.value||'尚未完成核对'}))});};section.append(reviewed);}
+ const imports=assistantTaskElement('details');imports.append(assistantTaskElement('summary','导入助手回执'));const input=assistantTaskElement('textarea');input.setAttribute('aria-label','助手结果 JSON');input.placeholder='粘贴助手返回的 JSON 回执';const file=assistantTaskElement('input');file.type='file';file.accept='.json,application/json';file.setAttribute('aria-label','选择助手回执文件');
+ file.onchange=async()=>{const chosen=file.files?.[0];if(!chosen)return;if(chosen.size>1024*1024){panel.status.textContent='回执超过 1 MiB，请核对所选文件。';return;}const value=await chosen.text();if(assistantTaskCurrent(panel)&&panel.task===task)input.value=value;};
+ const load=assistantTaskElement('button','核对并导入'),template=assistantTaskElement('button','查看回执格式');template.onclick=()=>{input.value=JSON.stringify(task.result_template||{},null,2);};load.disabled=stale||task.status==='reviewed';load.onclick=()=>{let result;try{result=JSON.parse(input.value);}catch{panel.status.textContent='回执不是有效 JSON，尚未导入。';return;}return mutate('import',{result});};imports.append(file,input,load,template);section.append(imports);
+ if(hostPending){input.readOnly=true;file.disabled=true;template.disabled=true;for(const select of section.querySelectorAll('select'))select.disabled=true;for(const [,select,explanation]of selections)explanation.readOnly=true;for(const button of section.querySelectorAll('button'))if(['核对并导入','保存逐项核对结果'].includes(button.textContent))button.disabled=true;}
+ const retry=assistantTaskElement('button','重新读取本任务');retry.dataset.taskRefresh='true';retry.onclick=()=>assistantTaskShow(panel,task.id);section.append(retry);
+ panel.draftFields=[{key:'result_json',element:input,baseline:input.value},...selections.flatMap(([id,select,explanation])=>[{key:id+':status',element:select,baseline:select.value},{key:id+':note',element:explanation,baseline:explanation.value}])];
+ const retained=panel.retainedDraft;
+ if(retained?.task_id===task.id){
+  if(retained.version===task.version){for(const [key,value]of retained.values){const row=panel.draftFields.find(row=>row.key===key);if(row)row.element.value=value;}panel.retainedDraft=null;}
+  else{const recovery=assistantTaskElement('details');recovery.append(assistantTaskElement('summary','刷新前尚未提交的输入（可复制）'),assistantTaskElement('pre',JSON.stringify(Object.fromEntries(retained.values),null,2)));const discard=assistantTaskElement('button','清除此处保留的输入');discard.onclick=()=>{if(assistantTaskCurrent(panel)){panel.retainedDraft=null;assistantTaskRender(panel);}};recovery.append(discard);section.append(recovery);}
+ }
+ assistantHostRender(panel,task);
+ function dialogClose(){panel.dialog.close();}
+}
+if($('assistant-tasks-open'))$('assistant-tasks-open').onclick=()=>assistantTasksOpen();
+if($('assistant-task-current'))$('assistant-task-current').onclick=()=>assistantTasksOpen($('review-task-box').assistantTaskId||null);
+'''
+
+
 def _editor_tools_script():
     return _recovery_list_script() + r'''
 function editorDialog(title){const dialog=document.createElement('dialog');dialog.className='editor-dialog';const heading=document.createElement('h2');heading.textContent=title;const content=document.createElement('div'),close=document.createElement('button');close.textContent='返回稿件';close.onclick=()=>dialog.close();dialog.append(heading,content,close);dialog.addEventListener('close',()=>dialog.remove());document.body.append(dialog);dialog.showModal();return {dialog,content};}
@@ -3804,7 +4456,8 @@ $('writing-task').onclick=async()=>{
  const context=()=>{const w=workspace();return JSON.stringify([w?.book_id,w?.revision,w?.next_chapter]);},baseline=context();
  const current=()=>box.taskRequest===request&&active===id&&docs.get(id)===document&&document?.value===value&&(sequence===null||openSequence===sequence)&&!pending()&&context()===baseline;
  try{
-  const result=await call('writing-task');if(!current())return;
+  const result=await call('writing-task',typeof assistantWritingSources==='function'?assistantWritingSources():{});if(!current())return;
+  if(typeof assistantTaskRemember==='function')assistantTaskRemember(result);
   const w=workspace();
   if(w&&((w.book_id&&w.book_id!==result.book_id)||(Number.isInteger(w.revision)&&w.revision>result.brief?.revision)||(Number.isInteger(w.next_chapter)&&w.next_chapter!==result.chapter))){note('正式断点或作品状态已变化，请刷新后重新生成下一章任务。');return;}
   leaveComparison();$('assistant-task-title').textContent='继续第'+result.chapter+'章';box.hidden=false;$('review-task-status').textContent=result.status+'；请核对简报再执行。';$('review-findings').textContent='来源：现有正式断点、已绑定细纲和写前简报。任务生成后尚未开始写作。';$('review-prompt').value=result.prompt;box.scrollIntoView({block:'start'});
@@ -4296,6 +4949,7 @@ function setupCreatorWorkspace(){
  document.addEventListener('visibilitychange',()=>{if(document.hidden){creatorResume.schedule();void creatorResume.flush();}});
  window.addEventListener('pagehide',()=>{creatorResume.schedule();void creatorResume.flush();});
  window.addEventListener('story-editor-presence-status',event=>{
+  if(event.detail?.frozen){presenceStatus.hidden=false;presenceStatus.textContent='正在核对停机状态，编辑暂时冻结；可复制文字。';return;}
   const {summary,page_id}=event.detail||{};
   if(!summary){presenceStatus.hidden=false;presenceStatus.textContent='窗口保存状态尚未同步，请保留本页。';return;}
   const others=summary.pages.filter(page=>page.page_id!==page_id&&page.state!=='closed');
@@ -4567,13 +5221,14 @@ function showChapterInfo(d){$('context-title').textContent=d.image?'封面信息
  if(ctx.review){const reviewBox=document.createElement('details');const summary=document.createElement('summary');summary.textContent='正式稿审查记录';reviewBox.append(summary);box.append(reviewBox);add('记录范围','以下记录只对应本次载入的已提交正式稿，不能代替对当前候选的审查。',reviewBox);for(const [key,label]of Object.entries({causality:'因果',continuity:'连续性',constraints:'约束',style:'文风'})){add(label,ctx.review.checks?.[key]?.note,reviewBox);}for(const issue of ctx.review.issues||[])add('审查问题',issue.issue,reviewBox);}
  else add('审查状态',ctx.formal_sha256?'暂无可展示的审查记录。':'尚无正式提交的审查记录。');
 }
+function readableLength(target){return target[1]===null?'至少 '+target[0]+' 字（无上限）':target.join('～')+' 字';}
 function scheduleMetrics(){clearTimeout(metricTimer);++metricSequence;const d=docs.get(active);if(!d||!d.editable){$('word-count').textContent='暂无字数统计';$('count-method').textContent='当前文件不提供字数统计。';return;}
  $('word-count').textContent='正在核对字数…';$('count-method').textContent='正在读取本文件计数口径…';const seq=metricSequence;metricTimer=setTimeout(async()=>{try{
   const selected=d.editing?$('text').value.slice($('text').selectionStart,$('text').selectionEnd):'';
   const m=await call('metrics',{id:d.id,text:d.value,selection:selected});if(seq!==metricSequence||active!==d.id)return;
   const lengthState=!m.target?'':m.in_range?'章幅计数通过':!m.within_target?'范围外':m.length_issues?.includes('invisible_padding')?'章幅检查未通过：附着标记和空白填充符不计下限':'章幅检查未通过';
   $('word-count').textContent=m.count+' 字符'+(lengthState?' · '+lengthState:'')+(m.selection?' · 已选 '+m.selection:'');
-  $('count-method').textContent=(m.is_prose?'正文':'材料')+' '+m.count+' 字符 · '+readableMethod[m.method]+(m.is_prose?(m.include_title?' · 含章名':' · 不含章名'):'')+(m.target?' · 目标 '+m.target.join('～')+' · '+lengthState+'（仅核对章幅，章头等另查）':'')+(m.selection?' · 已选 '+m.selection:'');
+  $('count-method').textContent=(m.writing_scope==='fragment'?'片段正文':m.is_prose?'正文':'材料')+' '+m.count+' 字符 · '+readableMethod[m.method]+(m.is_prose?(m.include_title?' · 含章名':' · 不含章名'):'')+(m.target?' · 目标 '+readableLength(m.target)+' · '+lengthState+'（仅核对章幅，章头等另查）':'')+(m.selection?' · 已选 '+m.selection:'');
  }catch(e){if(seq===metricSequence)$('word-count').textContent='字数核对失败：'+e.message;}},350);
 }
 function drawCatalog(c,expanded){currentCatalog=c;const w=c.workspace;
@@ -4649,7 +5304,7 @@ function setupWorkspace(){
  for(const id of ['book-info','maintenance','more-actions','reading-options'])$(id).addEventListener('click',e=>{if(e.target.closest('button'))$(id).open=false;});
  $('source-view').onclick=()=>{const d=docs.get(active);d.rawPreview=!d.rawPreview;show(d);};
  $('text').addEventListener('select',scheduleMetrics);$('text').addEventListener('keyup',scheduleMetrics);
- $('review-task').onclick=async(event,reservedRequest)=>{const box=$('review-task-box'),request=reservedRequest??(box.taskRequest=(box.taskRequest||0)+1),d=docs.get(active);if(!d?.editable)return;if(dirty(d)||d.needs_recovery){note('请先保存当前候选稿，再生成绑定该文件的审稿任务。');return;}const value=d.value,sequence=typeof openSequence==='number'?openSequence:null,current=()=>box.taskRequest===request&&active===d.id&&docs.get(d.id)===d&&d.value===value&&!dirty(d)&&!d.needs_recovery&&(sequence===null||openSequence===sequence);try{const r=await call('review-task',{id:d.id,sha256:d.sha256});if(!current())return;$('assistant-task-title').textContent='交给助手审稿';leaveComparison();box.hidden=false;box.scrollIntoView({block:'start'});$('review-prompt').value=r.prompt;$('review-task-status').textContent=r.status+'；'+r.check_note+(r.lint?(r.lint.ok?' 未发现工具阻断项。':' 发现 '+r.lint.errors.length+' 项工具问题。'):'');$('review-findings').textContent=r.lint?[...r.lint.errors,...r.lint.warnings].map(x=>x.code+(x.expected?'：目标 '+(Array.isArray(x.expected)?x.expected.join('～'):x.expected):'')+(x.actual!==undefined?'，实际 '+x.actual:'')+(x.message?'：'+x.message:'')).join('\n'):'';}catch(e){if(current())note(e.message);}};
+ $('review-task').onclick=async(event,reservedRequest)=>{const box=$('review-task-box'),request=reservedRequest??(box.taskRequest=(box.taskRequest||0)+1),d=docs.get(active);if(!d?.editable)return;if(dirty(d)||d.needs_recovery){note('请先保存当前候选稿，再生成绑定该文件的审稿任务。');return;}const value=d.value,sequence=typeof openSequence==='number'?openSequence:null,current=()=>box.taskRequest===request&&active===d.id&&docs.get(d.id)===d&&d.value===value&&!dirty(d)&&!d.needs_recovery&&(sequence===null||openSequence===sequence);try{const r=await call('review-task',{id:d.id,sha256:d.sha256});if(!current())return;if(typeof assistantTaskRemember==='function')assistantTaskRemember(r);$('assistant-task-title').textContent='交给助手审稿';leaveComparison();box.hidden=false;box.scrollIntoView({block:'start'});$('review-prompt').value=r.prompt;$('review-task-status').textContent=r.status+'；'+r.check_note+(r.lint?(r.lint.ok?' 未发现工具阻断项。':' 发现 '+r.lint.errors.length+' 项工具问题。'):'');$('review-findings').textContent=r.lint?[...r.lint.errors,...r.lint.warnings].map(x=>x.code+(x.expected?'：目标 '+(Array.isArray(x.expected)?readableLength(x.expected):x.expected):'')+(x.actual!==undefined?'，实际 '+x.actual:'')+(x.message?'：'+x.message:'')).join('\n'):'';}catch(e){if(current())note(e.message);}};
  $('copy-review').onclick=async()=>{try{await navigator.clipboard.writeText($('review-prompt').value);$('review-task-status').textContent='已复制，请粘贴给助手执行；任务尚未自动执行，稿件尚未正式采用。';}catch{$('review-prompt').select();note('请复制已选中的审稿任务。');}};
  $('full-go').onclick=()=>{fullSearchOffset=0;fullSearch();};$('full-query').onkeydown=e=>{if(e.key==='Enter'){fullSearchOffset=0;fullSearch();}};$('search-prev').onclick=()=>{fullSearchOffset=Math.max(0,fullSearchOffset-30);fullSearch();};$('search-next').onclick=()=>{fullSearchOffset+=30;fullSearch();};
  try{const p=JSON.parse(localStorage.getItem('story-reading')||'{}');if(['16','19','22','25'].includes(p.size))$('font-size').value=p.size;if(['1.6','1.8','1.9','2.2'].includes(p.line))$('line-height').value=p.line;if(['serif','sans'].includes(p.font))$('font-family').value=p.font;$('focus-reading').checked=p.focus===true;}catch{}
@@ -4733,7 +5388,7 @@ async function recover(d,force=false){
  if(!dirty(d)||(!force&&d.value===d.recovered&&!d.recoveryError))return !d.recoveryError;
  const value=d.value;d.recoveringText=value;
  d.recovering=(async()=>{
-  let receipt;try{receipt=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});}
+  let receipt;try{receipt=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,writing_scope:d.writing_scope,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});}
   catch(e){d.recoveryError=e.message||String(e);if(active===d.id)note('自动恢复保存失败：'+d.recoveryError+'，请重试或下载当前文字。');return false;}
   d.recovered=value;d.recoveryError='';d.recoveryPath=receipt.path;d.recoverySha=receipt.recovery_sha256;d.recoveryMetadataSha=receipt.recovery_metadata_sha256;d.recoveredAt=new Date().toISOString();if(receipt.recovery_key)d.recoveryKey=receipt.recovery_key;
   catalog.materialCursor=null;try{await catalog();}catch(e){if(active===d.id)note('恢复副本已保存，目录刷新未完成：'+e.message);return true;}
@@ -4827,7 +5482,7 @@ $('recover-reload').onclick=()=>reloadDocuments(true);
 $('search').oninput=()=>{clearTimeout(queryTimer);offset=0;pendingFocus=false;queryTimer=setTimeout(()=>catalog(false,true),300);};$('older').onclick=()=>{offset+=LIMIT;catalog(false,true);};$('newer').onclick=()=>{offset=Math.max(0,offset-LIMIT);catalog(false,true);};
 window.addEventListener('beforeunload',event=>{if([...docs.values()].some(d=>dirty(d)||d.saving||d.needs_recovery||d.pendingSaveReadback||(d.saveError&&d.failedSaveOptions?.newVersion))){event.preventDefault();event.returnValue='';}});
 window.addEventListener('hashchange',()=>{let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}if(/^chapter-\d+$/.test(id))id='formal:'+id.slice(8);if(id&&id!==active)openDoc(id);});
-__EDITOR_TOOLS____PLATFORM_DRAFTS____RESUME_SCRIPT____PRESENCE_SCRIPT____CREATOR_SCRIPT__setupWorkspace();setupCreatorWorkspace();catalog();""".replace('__EDITOR_TOOLS__', _editor_tools_script()).replace('__PLATFORM_DRAFTS__', _editor_platform_drafts_script()).replace('__RESUME_SCRIPT__', _editor_resume_script()).replace('__PRESENCE_SCRIPT__', _editor_presence_script().replace('__EDITOR_PRESENCE_CONFIG__', json.dumps(page_config))).replace('__CREATOR_SCRIPT__', _editor_creator_script().replace('__CREATOR_BOOK_ID__', json.dumps(packet['book'].get('id')))).replace('__TOKEN__', json.dumps(token)).replace('__LIMIT__', str(packet['chapters']['limit'])).replace('__BOOK_DISPLAY__', _book_display_script())
+__EDITOR_TOOLS____ASSISTANT_TASKS____PLATFORM_DRAFTS____RESUME_SCRIPT____PRESENCE_SCRIPT____CREATOR_SCRIPT__setupWorkspace();setupCreatorWorkspace();catalog();""".replace('__EDITOR_TOOLS__', _editor_tools_script()).replace('__ASSISTANT_TASKS__', _assistant_tasks_script().replace('__TASK_BOOK_ID__', json.dumps(packet['book'].get('id')))).replace('__PLATFORM_DRAFTS__', _editor_platform_drafts_script()).replace('__RESUME_SCRIPT__', _editor_resume_script()).replace('__PRESENCE_SCRIPT__', _editor_presence_script().replace('__EDITOR_PRESENCE_CONFIG__', json.dumps(page_config))).replace('__CREATOR_SCRIPT__', _editor_creator_script().replace('__CREATOR_BOOK_ID__', json.dumps(packet['book'].get('id')))).replace('__TOKEN__', json.dumps(token)).replace('__LIMIT__', str(packet['chapters']['limit'])).replace('__BOOK_DISPLAY__', _book_display_script())
     # Keep the session-token declaration on its own first line so the interface
     # identifier below remains independent of the current editing session.
     first_line, _, remainder = script.partition('\n')
@@ -4846,6 +5501,7 @@ h1{font-size:24px;line-height:1.45;font-weight:650;margin:14px 0 7px;overflow-wr
 .navigation-mode{display:flex;gap:4px;flex-wrap:wrap;margin:14px 0}.navigation-mode button{font-size:12px}.navigation-mode [aria-pressed="true"]{background:#e8eef5;border-color:#c4d2e2;color:#28547a}#locate{border-color:transparent;color:var(--muted)}#search,#full-query,#book-select{width:100%;max-width:100%;padding:9px;border:1px solid var(--line);border-radius:7px;background:white}.pager{display:flex;gap:8px;margin:12px 0 4px}.pager button{font-size:12px}#range{font-size:11px;color:var(--muted);margin:6px 0 18px}.document{display:block;width:100%;text-align:left;margin:4px 0;padding:9px 10px;border:1px solid transparent;border-radius:7px;background:transparent;overflow-wrap:anywhere;font-size:12px}.selected{background:#e6eef7!important;border-color:#d1dfef;color:#244f77;font-weight:600}.dirty:after{content:' · 未保存';color:#9b582e}#list>details{padding-bottom:8px;border-bottom:1px solid #e8edf2}#list>details>summary{font-size:12px;line-height:1.8;color:#43546a}#directory-warning{font-size:12px;color:#936333;overflow-wrap:anywhere}#pending-box{border:1px solid #e8d6ad;border-radius:8px;padding:10px;margin-bottom:14px;background:#fffaf0}#pending-count{font-size:12px}#pending-list{max-height:180px;overflow:auto}#search-results small{display:block;font-size:12px;color:var(--muted);margin-top:6px}#search-status,#book-hint{white-space:pre-wrap;font:12px/1.7 system-ui}
 aside h3{margin:0 0 20px;font-size:13px;font-weight:650}#chapter-info{font:13px/1.9 system-ui;white-space:pre-wrap}#chapter-info h4{font-size:11px;color:var(--muted);font-weight:500;margin:22px 0 5px}#chapter-info h4:first-child{margin-top:0}#chapter-info p{margin:0 0 12px}#version-details,#adoption-help{border-top:1px solid var(--line);margin-top:22px;font-size:12px}#detail,#path{font:12px/1.8 system-ui;overflow-wrap:anywhere;white-space:pre-wrap}#reading-options{font-size:12px;color:var(--muted)}#reading-options>summary{margin:0}#reading-options label{display:inline-block;margin:8px 12px 8px 0}#reading-options select{font:inherit}
 #formatted{overflow-wrap:anywhere}#formatted h1{font-size:1.35em}#formatted h2{font-size:1.18em}#formatted h3{font-size:1.05em}#formatted pre{font:14px/1.6 monospace;background:#f5f7fa;padding:12px}#formatted code{font-size:.85em;background:#f1f4f8}#formatted table{border-collapse:collapse;font:14px/1.7 system-ui;width:100%}#formatted td,#formatted th{border:1px solid var(--line);padding:8px;text-align:left}.table-scroll{overflow:auto}.markdown-image{display:block;margin:12px 0}.markdown-image img{display:block;max-width:100%;max-height:75vh;height:auto}.markdown-image>[role="status"]{font:13px/1.6 system-ui;color:var(--muted)}
+.editor-dialog textarea{width:100%;min-height:110px;box-sizing:border-box}.editor-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere}.editor-dialog section{margin:12px 0}.editor-dialog label{display:block;margin:8px 0}.editor-dialog select{max-width:100%}
 #review-task-box{padding:18px;background:#eef4fa;border-radius:10px;margin:20px 0;scroll-margin-top:85px}#review-prompt{min-height:220px;font:13px/1.8 system-ui}#review-findings{font:13px/1.6 system-ui;color:#8a392b}.comparison{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.comparison section{min-width:0}.comparison h3{font-size:12px;color:var(--muted)}.comparison pre{font:15px/1.9 var(--reader-font);background:#f7f8fa;padding:12px;border-radius:8px}.diff-line{display:block;white-space:pre-wrap;min-height:1em;scroll-margin-top:135px}.diff-line.removed{background:#ffe3df;color:#882f26}.diff-line.added{background:#ddf4e4;color:#215b36}.diff-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;position:sticky;top:30px;background:white;z-index:3;padding:10px 0;font-size:12px}.diff-tools button{font-size:12px}#compare-label{font-size:12px;color:var(--muted)}.comparing #reading-options,.comparing #word-count,.comparing #history-note,.comparing #edit,.comparing #source-view{display:none}
 .context-closed .desk,.focus-reading .desk{grid-template-columns:var(--nav-width,236px) minmax(0,1fr)}.context-closed aside,.focus-reading aside{display:none}.focus-reading #document-body{max-width:760px}#panel-dismiss,#refresh-compact,.panel-close{display:none}
 #match-tools{position:sticky;top:40px;background:white;padding:10px 0;z-index:3;display:flex;flex-wrap:wrap;gap:8px;align-items:center}#match-query{font:12px/1.7 system-ui}#match-text mark{background:#fff1a6;scroll-margin-top:150px}#match-text mark.current-match{background:#ffc66b;outline:2px solid #a85813}
@@ -4890,7 +5546,7 @@ body.native-compact-editor>header{align-items:center;gap:20px;padding:12px 22px;
 @media(max-width:820px){body.native-compact-editor>header{padding:11px 14px;gap:9px;flex-wrap:wrap}.native-compact-editor .book-heading{flex-basis:100%}.native-compact-editor #book-title{font-size:15px}.native-compact-editor .header-actions{width:100%;max-width:none;justify-content:flex-start;flex-wrap:wrap;gap:4px}.native-compact-editor .header-actions>.workbench-theme-control{margin-left:auto;border-left:0;padding-left:0}.native-compact-editor .header-actions>#refresh{display:none}.native-compact-editor .workbench-theme-control select{max-width:100px}.native-compact-editor .menu-panel.book-info-panel{position:fixed;top:112px;right:14px;left:14px;width:auto;max-width:none;max-height:calc(100vh - 138px)}.native-compact-editor main{padding:12px 20px 64px}.native-compact-editor .tools{top:-12px;padding:8px 0 10px;gap:6px}.native-compact-editor .tools button,.native-compact-editor .tools summary{font-size:11px;padding:7px}.native-compact-editor #save{padding:7px 12px}.native-compact-editor #title{font-size:23px;margin-top:22px}.native-compact-editor .document-meta{margin-bottom:22px}.native-compact-editor nav,.native-compact-editor aside{width:min(340px,88vw);padding:20px 18px}}
 @media(max-width:480px){.native-compact-editor .header-actions>button,.native-compact-editor .header-actions>details>summary{font-size:11px;padding:6px}.native-compact-editor .header-actions>.workbench-theme-control{font-size:10px;gap:4px}.native-compact-editor .workbench-theme-control select{font-size:11px;max-width:91px;min-height:29px}.native-compact-editor main{padding:10px 17px 56px}.native-compact-editor .tools{top:-10px;row-gap:9px}.native-compact-editor .mode-actions{gap:1px}.native-compact-editor .save-actions{margin-left:auto}.native-compact-editor .tools button,.native-compact-editor .tools summary{padding:6px}.native-compact-editor #title{font-size:21px}.native-compact-editor #chapter-picker{flex-wrap:wrap}.native-compact-editor #chapter-picker label{flex-basis:100%}}
 @media(prefers-reduced-motion:reduce){.native-compact-editor button{transition:none}}
-</style><style>__THEME_CSS__</style></head><body class="native-compact-editor" data-workbench-ui="material-v1"><header><div class="book-heading"><div class="book-identity"><strong id="book-title" title="__TITLE__">__TITLE__</strong><span id="book-kind" class="book-kind" data-kind="__KIND_CODE__">__KIND__</span></div><p id="book-progress" role="status">正在读取当前进度…</p></div><div class="header-actions"><button id="nav-toggle" aria-expanded="false" aria-controls="book-nav">作品目录</button><button id="context-toggle" aria-expanded="true" aria-controls="book-context">收起辅助栏</button>__THEME_CONTROL__<details id="book-info" class="menu"><summary>作品信息</summary><div id="book-info-panel" class="menu-panel book-info-panel"><strong id="book-info-title">__TITLE__</strong><p id="book-progress-detail">正在读取当前进度…</p><div id="book-classification" class="book-classification" hidden></div><details id="current-book-location"><summary>目录位置</summary><p id="current-book-root">__ROOT__</p></details><details id="root-location"><summary>书库与材料位置</summary><span id="root-hint"></span></details></div></details><details id="maintenance" class="menu"><summary>设置</summary><div class="menu-panel"><button id="refresh" title="刷新目录与状态，不丢弃未保存文字">刷新目录</button><button id="refresh-compact" hidden>刷新目录</button><button id="layout-reset">恢复默认布局</button><strong>文件与恢复</strong><button id="reload-source">重新读取文件</button><button id="recover-reload">保留恢复稿并重新载入</button><button id="recoveries-open">恢复中心</button><button id="save-all">保存全部候选</button><small id="build-label" title="用于区分工作台页面更新，不是技能发布版本">界面标识：__BUILD__</small></div></details></div></header><div class="desk"><nav id="book-nav" aria-label="作品目录" tabindex="-1"><button id="nav-close" class="panel-close">关闭目录</button><details><summary>切换作品</summary><select id="book-select" aria-label="选择作品"></select><button id="book-open">打开作品</button><p id="book-hint"></p></details><div class="navigation-mode"><button id="view-chapters">按章查看</button><button id="view-files">按文件查看</button></div><section id="pending-box" hidden><strong id="pending-count"></strong><div id="pending-list"></div></section><input id="search" type="search" placeholder="搜索全书章名或材料路径" aria-label="搜索作品文件"><div class="pager"><button id="newer" disabled>上一页</button><button id="older" disabled>下一页</button></div><p id="range"></p><p id="directory-warning" role="status"></p><p id="materials-status" role="status"></p><button id="materials-more" hidden>继续加载材料</button><div id="list"></div><details><summary>查找与定位</summary><button id="locate">定位当前文件</button><input id="full-query" aria-label="搜索正文与材料内容" placeholder="搜索正文与材料内容"><button id="full-go">搜索内容</button><p id="search-status" role="status"></p><div id="search-results"></div><button id="search-prev" disabled>上一页结果</button><button id="search-next" disabled>下一页结果</button></details></nav><div id="resize-left" class="column-resizer" role="separator" aria-label="调整目录宽度" aria-orientation="vertical" aria-valuemin="180" aria-valuemax="360" tabindex="0"></div><main><div class="tools"><div class="mode-actions"><button id="edit" disabled>编辑</button><button id="compare" disabled>对照正式稿</button><details id="reading-options" class="menu"><summary>阅读设置</summary><div class="menu-panel"><label>字号 <select id="font-size"><option>16</option><option selected>19</option><option>22</option><option>25</option></select></label><label>行距 <select id="line-height"><option>1.6</option><option selected>1.8</option><option>1.9</option><option>2.2</option></select></label><label>字体 <select id="font-family"><option value="serif">宋体</option><option value="sans">黑体</option></select></label><label><input id="focus-reading" type="checkbox">专注阅读</label></div></details></div><div class="save-actions"><button id="save" class="primary" disabled title="保存候选稿（⌘S / Ctrl+S）">保存候选稿</button><button id="platform-drafts-open" __PLATFORM_DISABLED__>平台草稿</button><details id="more-actions" class="menu"><summary>更多</summary><div class="menu-panel"><button id="writing-task">继续下一章</button><button id="review-task" disabled>生成审稿任务</button><button id="compare-choose">选择两稿对照</button><button id="source-view" hidden>查看源码</button><button id="download" disabled>下载当前文字</button></div></details></div></div><p id="message" role="status"></p><h1 id="title">选择章节或材料</h1><div class="document-meta"><div id="document-identity" class="identity-badges" role="status" hidden><span id="document-role" class="identity-badge"></span><span id="document-unsaved" class="identity-badge" hidden>当前文字未保存</span></div><details id="document-options"><summary>稿件与材料</summary><div id="chapter-picker" hidden><label for="chapter-version">本章稿件与材料</label><select id="chapter-version" aria-describedby="chapter-picker-help"></select><span id="chapter-picker-help" class="sr-only"></span></div></details><p id="state"></p><details id="count-details"><summary id="word-count" aria-label="字数与统计口径"></summary><p id="count-method"></p></details></div><p id="history-note"></p><div id="document-body"><section id="match-view" hidden><div id="match-tools"><button id="match-back">返回阅读位置</button><button id="match-prev">上一处命中</button><span id="match-position" role="status"></span><button id="match-next">下一处命中</button></div><p id="match-query"></p><pre id="match-text"></pre></section><div id="formatted" hidden></div><pre id="prose"></pre><textarea id="text" aria-label="候选正文编辑" hidden></textarea><img id="cover" alt="封面预览" hidden></div><section id="review-task-box" hidden><h3 id="assistant-task-title">交给助手审稿</h3><p id="review-task-status"></p><pre id="review-findings"></pre><textarea id="review-prompt" aria-label="审稿任务" readonly></textarea><button id="copy-review">复制审稿任务</button></section><section id="difference" hidden><div class="diff-tools"><button id="compare-back">返回阅读</button><button id="diff-prev">上一处差异</button><span id="diff-position" role="status"></span><button id="diff-next">下一处差异</button></div><p id="compare-label"></p><div class="comparison"><section><h3 id="before-label">当前正式稿</h3><pre id="before"></pre></section><section><h3 id="after-label">当前文字</h3><pre id="after"></pre></section></div></section></main><div id="resize-right" class="column-resizer" role="separator" aria-label="调整辅助栏宽度" aria-orientation="vertical" aria-valuemin="200" aria-valuemax="360" tabindex="0"></div><button id="panel-dismiss" aria-label="关闭侧栏" tabindex="-1"></button><aside id="book-context" aria-label="写作辅助" tabindex="-1"><button id="context-close" class="panel-close">关闭辅助栏</button><h3 id="context-title">本章写作</h3><div id="chapter-info"></div><details id="version-details"><summary>文件与版本</summary><pre id="detail"></pre><details id="file-location"><summary>文件位置</summary><p id="path"></p></details></details><details id="adoption-help"><summary>保存与采用说明</summary><p>保存不会覆盖正式稿。请将候选路径交给助手，按现有审稿和历史修订流程采用。</p><p>旧稿未登记的版本关系会明确标注；自动恢复稿须自行核对后再采用。</p><p>自动恢复在停止输入后写入本书文件；失败会提示。关闭或崩溃前尚未写入的文字仍可能丢失。</p></details></aside></div><script>__SCRIPT__</script></body></html>'''
+</style><style>__THEME_CSS__</style></head><body class="native-compact-editor" data-workbench-ui="material-v2"><header><div class="book-heading"><div class="book-identity"><strong id="book-title" title="__TITLE__">__TITLE__</strong><span id="book-kind" class="book-kind" data-kind="__KIND_CODE__">__KIND__</span></div><p id="book-progress" role="status">正在读取当前进度…</p></div><div class="header-actions"><button id="nav-toggle" aria-expanded="false" aria-controls="book-nav">作品目录</button><button id="context-toggle" aria-expanded="true" aria-controls="book-context">收起辅助栏</button>__THEME_CONTROL__<details id="book-info" class="menu"><summary>作品信息</summary><div id="book-info-panel" class="menu-panel book-info-panel"><strong id="book-info-title">__TITLE__</strong><p id="book-progress-detail">正在读取当前进度…</p><div id="book-classification" class="book-classification" hidden></div><details id="current-book-location"><summary>目录位置</summary><p id="current-book-root">__ROOT__</p></details><details id="root-location"><summary>书库与材料位置</summary><span id="root-hint"></span></details></div></details><details id="maintenance" class="menu"><summary>设置</summary><div class="menu-panel"><button id="refresh" title="刷新目录与状态，不丢弃未保存文字">刷新目录</button><button id="refresh-compact" hidden>刷新目录</button><button id="layout-reset">恢复默认布局</button><strong>文件与恢复</strong><button id="reload-source">重新读取文件</button><button id="recover-reload">保留恢复稿并重新载入</button><button id="recoveries-open">恢复中心</button><button id="save-all">保存全部候选</button><small id="build-label" title="用于区分工作台页面更新，不是技能发布版本">界面标识：__BUILD__</small></div></details></div></header><div class="desk"><nav id="book-nav" aria-label="作品目录" tabindex="-1"><button id="nav-close" class="panel-close">关闭目录</button><details><summary>切换作品</summary><select id="book-select" aria-label="选择作品"></select><button id="book-open">打开作品</button><p id="book-hint"></p></details><div class="navigation-mode"><button id="view-chapters">按章查看</button><button id="view-files">按文件查看</button></div><section id="pending-box" hidden><strong id="pending-count"></strong><div id="pending-list"></div></section><input id="search" type="search" placeholder="搜索全书章名或材料路径" aria-label="搜索作品文件"><div class="pager"><button id="newer" disabled>上一页</button><button id="older" disabled>下一页</button></div><p id="range"></p><p id="directory-warning" role="status"></p><p id="materials-status" role="status"></p><button id="materials-more" hidden>继续加载材料</button><div id="list"></div><details><summary>查找与定位</summary><button id="locate">定位当前文件</button><input id="full-query" aria-label="搜索正文与材料内容" placeholder="搜索正文与材料内容"><button id="full-go">搜索内容</button><p id="search-status" role="status"></p><div id="search-results"></div><button id="search-prev" disabled>上一页结果</button><button id="search-next" disabled>下一页结果</button></details></nav><div id="resize-left" class="column-resizer" role="separator" aria-label="调整目录宽度" aria-orientation="vertical" aria-valuemin="180" aria-valuemax="360" tabindex="0"></div><main><div class="tools"><div class="mode-actions"><button id="edit" disabled>编辑</button><button id="compare" disabled>对照正式稿</button><details id="reading-options" class="menu"><summary>阅读设置</summary><div class="menu-panel"><label>字号 <select id="font-size"><option>16</option><option selected>19</option><option>22</option><option>25</option></select></label><label>行距 <select id="line-height"><option>1.6</option><option selected>1.8</option><option>1.9</option><option>2.2</option></select></label><label>字体 <select id="font-family"><option value="serif">宋体</option><option value="sans">黑体</option></select></label><label><input id="focus-reading" type="checkbox">专注阅读</label></div></details></div><div class="save-actions"><button id="save" class="primary" disabled title="保存候选稿（⌘S / Ctrl+S）">保存候选稿</button><button id="platform-drafts-open" __PLATFORM_DISABLED__>平台草稿</button><details id="more-actions" class="menu"><summary>更多</summary><div class="menu-panel"><button id="writing-task">继续下一章</button><button id="assistant-tasks-open">助手任务与结果</button><button id="review-task" disabled>生成审稿任务</button><button id="compare-choose">选择两稿对照</button><button id="source-view" hidden>查看源码</button><button id="download" disabled>下载当前文字</button></div></details></div></div><p id="message" role="status"></p><h1 id="title">选择章节或材料</h1><div class="document-meta"><div id="document-identity" class="identity-badges" role="status" hidden><span id="document-role" class="identity-badge"></span><span id="document-unsaved" class="identity-badge" hidden>当前文字未保存</span></div><details id="document-options"><summary>稿件与材料</summary><div id="chapter-picker" hidden><label for="chapter-version">本章稿件与材料</label><select id="chapter-version" aria-describedby="chapter-picker-help"></select><span id="chapter-picker-help" class="sr-only"></span></div></details><p id="state"></p><details id="count-details"><summary id="word-count" aria-label="字数与统计口径"></summary><p id="count-method"></p></details></div><p id="history-note"></p><div id="document-body"><section id="match-view" hidden><div id="match-tools"><button id="match-back">返回阅读位置</button><button id="match-prev">上一处命中</button><span id="match-position" role="status"></span><button id="match-next">下一处命中</button></div><p id="match-query"></p><pre id="match-text"></pre></section><div id="formatted" hidden></div><pre id="prose"></pre><textarea id="text" aria-label="候选正文编辑" hidden></textarea><img id="cover" alt="封面预览" hidden></div><section id="review-task-box" hidden><h3 id="assistant-task-title">交给助手审稿</h3><p id="review-task-status"></p><pre id="review-findings"></pre><textarea id="review-prompt" aria-label="审稿任务" readonly></textarea><button id="copy-review">复制助手任务</button><button id="assistant-task-current">查看任务与结果</button></section><section id="difference" hidden><div class="diff-tools"><button id="compare-back">返回阅读</button><button id="diff-prev">上一处差异</button><span id="diff-position" role="status"></span><button id="diff-next">下一处差异</button></div><p id="compare-label"></p><div class="comparison"><section><h3 id="before-label">当前正式稿</h3><pre id="before"></pre></section><section><h3 id="after-label">当前文字</h3><pre id="after"></pre></section></div></section></main><div id="resize-right" class="column-resizer" role="separator" aria-label="调整辅助栏宽度" aria-orientation="vertical" aria-valuemin="200" aria-valuemax="360" tabindex="0"></div><button id="panel-dismiss" aria-label="关闭侧栏" tabindex="-1"></button><aside id="book-context" aria-label="写作辅助" tabindex="-1"><button id="context-close" class="panel-close">关闭辅助栏</button><h3 id="context-title">本章写作</h3><div id="chapter-info"></div><details id="version-details"><summary>文件与版本</summary><pre id="detail"></pre><details id="file-location"><summary>文件位置</summary><p id="path"></p></details></details><details id="adoption-help"><summary>保存与采用说明</summary><p>保存不会覆盖正式稿。请将候选路径交给助手，按现有审稿和历史修订流程采用。</p><p>旧稿未登记的版本关系会明确标注；自动恢复稿须自行核对后再采用。</p><p>自动恢复在停止输入后写入本书文件；失败会提示。关闭或崩溃前尚未写入的文字仍可能丢失。</p></details></aside></div><script>__SCRIPT__</script></body></html>'''
     page = page.replace('<summary>稿件与材料</summary>', '<summary>同章版本</summary>').replace(
         '<p id="state"></p>', '<p id="state" role="status" aria-live="polite"></p>'
         '<button id="save-retry" class="save-state-action" hidden>重试保存</button>'
@@ -4924,7 +5580,7 @@ def _editor_lease(root):
             except OSError:
                 api.fail('workbench_running', '本书已有工作台运行。请用 workbench-status 查看；升级前保留所有页面编辑，再用 workbench-stop --saved 停止。')
             try:
-                yield
+                yield directory
             finally:
                 handle.seek(0)
                 if os.name == 'nt':
@@ -5026,8 +5682,49 @@ def _editor_exit_verified(root, record, raw):
 
 
 def _service_request(root, action='session', saved=False, *, expected_book_id=None,
-                     unknown_confirmation=None, fingerprint=None, confirmed=False):
+                     unknown_confirmation=None, fingerprint=None, confirmed=False,
+                     _stop_challenge=None, _fresh_timeout=6.0):
     root = Path(root).expanduser().resolve()
+    if action == 'stop' and _stop_challenge is None:
+        if saved is not True:
+            api.fail('workbench_unsaved', '请先保留所有工作台页面的编辑，再使用 --saved 停止服务。')
+        observed = _service_request(root, expected_book_id=expected_book_id)
+        if observed.get('running') is not True:
+            return observed
+        if observed.get('presence', {}).get('fresh_stop_supported') is not True:
+            api.fail('workbench_presence_fresh_unsupported', '旧服务不支持本次逐页确认；请先用原版本入口保存并正常停止，不会自动降级停止保护。',
+                     presence=observed.get('presence'))
+        prepared = _service_request(root, 'stop-prepare', saved, expected_book_id=expected_book_id,
+                                    unknown_confirmation=unknown_confirmation)
+        if prepared.get('running') is not True:
+            return prepared
+        token = prepared.get('stop_challenge')
+        if not isinstance(token, str):
+            api.fail('workbench_presence_fresh_unsupported', '此服务未提供新鲜停机确认，请保留编辑并核对服务版本。')
+        completed = False
+        try:
+            deadline = time.monotonic() + max(0.05, min(float(_fresh_timeout), 6.0))
+            current = prepared
+            while not current.get('fresh_stop', {}).get('ready'):
+                if current.get('fresh_stop', {}).get('failed'):
+                    api.fail('workbench_presence_fresh_pending', '停机核对期间页面状态变化，服务保持运行。',
+                             fresh_stop=current.get('fresh_stop'), presence=current.get('presence'))
+                if time.monotonic() >= deadline:
+                    api.fail('workbench_presence_fresh_timeout', '仍有页面未响应本次停机核对，请回到窗口后重试；服务保持运行。',
+                             fresh_stop=current.get('fresh_stop'), presence=current.get('presence'))
+                time.sleep(0.05)
+                current = _service_request(root, 'stop-status', expected_book_id=expected_book_id,
+                                           _stop_challenge=token)
+                if current.get('running') is not True:
+                    return current
+            result = _service_request(root, 'stop', saved, expected_book_id=expected_book_id,
+                                      _stop_challenge=token)
+            completed = result.get('stop_requested') is True
+            return result
+        finally:
+            if not completed:
+                try: _service_request(root, 'stop-cancel', expected_book_id=expected_book_id, _stop_challenge=token)
+                except (OSError, api.StoryError): pass
     try:
         record_raw = _author_read(root, '.story/workbench-service.json', 8192)
         record = json.loads(record_raw)
@@ -5042,7 +5739,7 @@ def _service_request(root, action='session', saved=False, *, expected_book_id=No
         api.fail('workbench_service_invalid', '工作台服务记录无效；不会向未确认的进程发送停止请求。')
     if action == 'stop' and not saved:
         api.fail('workbench_unsaved', '请先保留所有工作台页面的编辑，再使用 --saved 停止服务。')
-    if action not in ('session', 'stop', 'presence-confirm'):
+    if action not in ('session', 'stop', 'presence-confirm', 'stop-prepare', 'stop-status', 'stop-cancel'):
         api.fail('invalid_input', '未知的工作台服务操作。')
     if expected_book_id is not None and record.get('book_id') != expected_book_id:
         api.fail('workbench_book_changed', '登记服务属于另一作品，未发送停止或确认请求。')
@@ -5052,8 +5749,10 @@ def _service_request(root, action='session', saved=False, *, expected_book_id=No
     try:
         origin = f"http://127.0.0.1:{record['port']}"
         payload = {'instance': record['instance'], 'saved': saved}
-        if action == 'stop' and unknown_confirmation is not None:
+        if action in ('stop', 'stop-prepare') and unknown_confirmation is not None:
             payload['unknown_confirmation'] = unknown_confirmation
+        if _stop_challenge is not None:
+            payload['stop_challenge'] = _stop_challenge
         if action == 'presence-confirm':
             payload.update(fingerprint=fingerprint, confirmed=confirmed)
         connection.request('POST', '/' + record['token'] + '/api/' + action,
@@ -5070,7 +5769,7 @@ def _service_request(root, action='session', saved=False, *, expected_book_id=No
             api.fail('workbench_service_mismatch', '服务身份不一致，未确认停止。')
         if response.status != 200:
             code = result.get('error')
-            if isinstance(code, str) and (code.startswith('workbench_presence_') or code == 'workbench_platform_busy'):
+            if isinstance(code, str) and (code.startswith('workbench_presence_') or code in ('workbench_platform_busy', 'workbench_task_busy')):
                 details = result.get('details') if isinstance(result.get('details'), dict) else {}
                 api.fail(code, result.get('message') or '页面保存状态尚未通过核对。', **details)
             api.fail('workbench_service_mismatch', '服务未确认此实例；不会按记录中的 PID 结束进程。')
@@ -5138,7 +5837,7 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
     identity = {'instance': uuid.uuid4().hex, 'root': str(root), 'book_id': packet['book']['id'], 'pid': os.getpid(),
                 'code_sha256': _loaded_workbench_sha256, 'runtime_sha256': _loaded_runtime_sha256,
                 'started': _utc_now()}
-    presence = _EditorPresence(identity['instance'], identity['book_id'])
+    presence = _EditorPresence(identity['instance'], identity['book_id'], root=root)
 
     def checked_book():
         # An editor belongs to the book it opened, not to a reusable directory
@@ -5178,6 +5877,7 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
             try:
                 if self.server.stopping:
                     api.fail('workbench_presence_stopping', '服务正在正常停止，请保留已有页面。')
+                presence.guard_action('new_page')
                 checked_book()
                 fresh = _editor_packet(root, limit=limit)
                 self.reply(200, _editor_page(fresh, {}, token, page_config=presence.register_page()), 'text/html; charset=utf-8')
@@ -5206,9 +5906,14 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                 action = self.path[len(route):]
                 if self.server.stopping and action != 'api/session':
                     api.fail('workbench_presence_stopping', '服务正在正常停止，请保留已有页面。')
-                if action not in ('api/session', 'api/stop', 'api/presence', 'api/presence-confirm'):
+                stop_actions = ('api/session', 'api/stop', 'api/presence-confirm', 'api/stop-prepare', 'api/stop-status', 'api/stop-cancel')
+                fresh_allowed = {*stop_actions, 'api/presence', 'api/tasks/list', 'api/tasks/get', 'api/tasks/evidence',
+                                 'api/tasks/execution', 'api/tasks/cancel'}
+                if action not in fresh_allowed:
+                    presence.guard_action(action)
+                if action not in (*stop_actions, 'api/presence'):
                     checked_book()
-                if action in ('api/session', 'api/stop', 'api/presence-confirm'):
+                if action in stop_actions:
                     if payload.get('instance') != identity['instance']:
                         return self.reply(409, b'{}')
                     result = {'ok': True, **identity, 'running': True, 'stop_requested': action == 'api/stop'}
@@ -5222,10 +5927,16 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                             api.fail('workbench_platform_busy',
                                      '平台草稿任务仍在执行，请回到作品查看进度，等待任务结束后再停止服务。',
                                      platform_activity=result['platform_activity'])
-                        result.update(presence.require_stop(payload.get('saved'), payload.get('unknown_confirmation')))
+                        result.update(presence.require_stop(payload.get('saved'), payload.get('unknown_confirmation'), payload.get('stop_challenge')))
                         self.server.stopping = True
                     elif action == 'api/presence-confirm':
                         result.update(presence.confirm_unknown(payload.get('fingerprint'), confirmed=payload.get('confirmed')))
+                    elif action == 'api/stop-prepare':
+                        result.update(presence.prepare_stop(payload.get('saved'), payload.get('unknown_confirmation')))
+                    elif action == 'api/stop-status':
+                        result.update(presence.stop_status(payload.get('stop_challenge')))
+                    elif action == 'api/stop-cancel':
+                        result.update(presence.cancel_stop(payload.get('stop_challenge')))
                     else:
                         result['presence'] = presence.summary()
                     self.reply(200, json.dumps(result, ensure_ascii=False).encode())
@@ -5311,7 +6022,58 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                 elif action == 'api/review-task':
                     result = _editor_review_task(root, payload.get('id'), payload.get('sha256'))
                 elif action == 'api/writing-task':
-                    result = _editor_writing_task(root)
+                    if set(payload) - {'request_file', 'style_file'}:
+                        api.fail('invalid_input', '写作任务只接受本书请求与文风材料路径。')
+                    result = _editor_writing_task(root, payload.get('request_file'), payload.get('style_file'))
+                elif action.startswith('api/tasks/'):
+                    operation = action[len('api/tasks/'):]
+                    fields = {
+                        'list': ({'offset', 'limit'}, set()),
+                        'get': ({'task_id'}, {'task_id'}),
+                        'handoff': ({'task_id', 'version'}, {'task_id', 'version'}),
+                        'import': ({'task_id', 'version', 'result'}, {'task_id', 'version', 'result'}),
+                        'review': ({'task_id', 'version', 'issue_statuses'}, {'task_id', 'version'}),
+                        'evidence': ({'task_id', 'issue_id', 'evidence_index'}, {'task_id', 'issue_id', 'evidence_index'}),
+                        'fail': ({'task_id', 'version', 'reason'}, {'task_id', 'version', 'reason'}),
+                        'start': ({'task_id', 'version', 'request_id', 'execute', 'timeout_seconds'}, {'task_id', 'version', 'request_id', 'execute'}),
+                        'execution': ({'task_id'}, {'task_id'}),
+                        'cancel': ({'task_id', 'execution_id'}, {'task_id', 'execution_id'}),
+                        'reconcile': ({'task_id', 'execution_id'}, {'task_id', 'execution_id'}),
+                    }
+                    if operation not in fields:
+                        return self.reply(404, b'{}')
+                    allowed_fields, required_fields = fields[operation]
+                    allowed_fields = allowed_fields | {'expected_book_id'}
+                    if set(payload) - allowed_fields or required_fields - set(payload):
+                        api.fail('invalid_input', '助手任务参数不完整或包含不支持的字段。')
+                    if 'expected_book_id' in payload and payload['expected_book_id'] != identity['book_id']:
+                        api.fail('wrong_book', '助手任务请求与当前作品身份不一致。')
+                    scope = {'expected_book_id': identity['book_id']}
+                    if operation == 'list':
+                        result = api.tasks.list_tasks(root, payload.get('offset', 0), payload.get('limit', 20), **scope)
+                    elif operation == 'get':
+                        result = api.tasks.get(root, payload['task_id'], **scope)
+                    elif operation == 'start':
+                        if payload['execute'] is not True:
+                            api.fail('task_execution_execute_required', '请明确发起本次本机助手执行。')
+                        result = api.tasks.execution_start(root, payload['task_id'], payload['version'],
+                            payload['request_id'], timeout_seconds=payload.get('timeout_seconds', 900), **scope)
+                    elif operation == 'execution':
+                        result = api.tasks.execution_get(root, payload['task_id'], **scope)
+                    elif operation == 'cancel':
+                        result = api.tasks.execution_cancel(root, payload['task_id'], payload['execution_id'], **scope)
+                    elif operation == 'reconcile':
+                        result = api.tasks.execution_reconcile(root, payload['task_id'], payload['execution_id'], **scope)
+                    elif operation == 'handoff':
+                        result = api.tasks.mark_handoff(root, payload['task_id'], payload['version'], **scope)
+                    elif operation == 'import':
+                        result = api.tasks.import_result(root, payload['task_id'], payload['version'], payload['result'], **scope)
+                    elif operation == 'review':
+                        result = api.tasks.review(root, payload['task_id'], payload['version'], payload.get('issue_statuses'), **scope)
+                    elif operation == 'evidence':
+                        result = api.tasks.evidence(root, payload['task_id'], payload['issue_id'], payload['evidence_index'], **scope)
+                    else:
+                        result = api.tasks.mark_failed(root, payload['task_id'], payload['version'], payload['reason'], **scope)
                 elif action == 'api/search':
                     result = _editor_search(root, payload.get('query'), payload.get('offset', 0), material_roots=materials)
                 elif action == 'api/books':
@@ -5343,6 +6105,8 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
         def server_close(self):
             try:
                 super().server_close()
+                try: presence.release_stop()
+                except (OSError, api.StoryError): pass
                 if getattr(self, 'lease', None) is not None:
                     try:
                         checked_book()
@@ -5365,9 +6129,10 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
     # inside the book immediately before the native recycle operation.
     with api.workbench_books.lifecycle_guard(api, root):
         checked_book()
-        lease.enter_context(_editor_lease(root))
+        presence._story_directory = lease.enter_context(_editor_lease(root))
     server = None
     try:
+        _reconcile_stop_lease_on_start(root, identity['book_id'], identity['instance'])
         server = EditorServer(('127.0.0.1', 0), Handler, bind_and_activate=False)
         server.lease = lease
         server.presence = presence
@@ -5444,7 +6209,8 @@ def _library_entry(value, expected=None):
                 not isinstance(title, str) or kind not in ('long', 'short', 'analysis')):
             api.fail('state_corrupt', '作品身份、书名或类型无效。', path=str(root))
         if expected is not None and expected['book_id'] != book_id:
-            api.fail('workbench_book_changed', '此目录的作品身份已改变；保留原登记，请核对原作品目录。', path=str(root))
+            api.fail('workbench_book_changed', '此目录的作品身份已改变；保留原登记，请核对原作品目录。',
+                     path=str(root), expected_book_id=expected['book_id'], actual_book_id=book_id)
         book.verify_state_path()
         return {'key': hashlib.sha256(str(root).encode()).hexdigest()[:20],
                 'root': str(root), 'book_id': book_id, 'title': title,
@@ -5555,9 +6321,14 @@ def _library_catalog(entries):
             _library_entry(current['root'], current)
             books.append({**current, 'available': True})
         except (api.StoryError, OSError, ValueError) as error:
+            changed = (getattr(error, 'code', None) == 'workbench_book_changed'
+                       and isinstance(getattr(error, 'details', {}).get('actual_book_id'), str))
             books.append({**entry, 'kind': entry.get('kind'), 'kind_verified': False,
+                          'identity_status': 'changed' if changed else 'unavailable',
                           'progress': _unknown_shelf_progress('无法核对原作品，正式章登记暂不可用。'),
-                          'classification': _classification_unavailable('无法核对原作品，题材暂不可用。'),
+                          'classification': _classification_unavailable(
+                              '书架登记与目录内书库身份不一致，请在“管理作品 → 核对登记”中核对。' if changed else
+                              '无法核对原作品，题材暂不可用。', 'identity_changed' if changed else 'read_error'),
                           'writing_status': _unknown_writing_status('无法核对原作品，本地作品状态暂不可用。'),
                           'resume': {'status': 'unavailable', 'document': None, 'updated_at': None,
                                      'buffer_dirty': False, 'note': '作品身份无法核对，未读取上次编辑位置。'},
@@ -5770,10 +6541,10 @@ function browseWorkbenchDirectory(purpose,initial){
  $('directory-title').textContent=purpose==='create-parent'?'选择新作品的存放位置':'选择已有作品文件夹';
  return new Promise(resolve=>{
   let finished=false,request=0,selected=null,next=null;
-  const finish=value=>{if(finished)return;finished=true;request++;dialog.close();resolve(value);};
+  const finish=value=>{if(finished)return;finished=true;request++;path.readOnly=false;dialog.close();resolve(value);};
   const button=(label,action)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=action;return b;};
   const load=async(value='',offset=0)=>{
-   const version=++request;selected=null;choose.disabled=true;up.disabled=true;more.hidden=true;note.textContent='正在读取文件夹…';
+   const version=++request;selected=null;path.readOnly=true;choose.disabled=true;up.disabled=true;more.hidden=true;note.textContent='正在读取文件夹…';
    if(!offset)items.replaceChildren();
    try{
     const packet=await call('directories',{path:value,offset});if(finished||version!==request)return;
@@ -5783,6 +6554,7 @@ function browseWorkbenchDirectory(purpose,initial){
     more.hidden=next===null;more.onclick=()=>load(selected,next);
     note.textContent=packet.total?'已显示 '+Math.min(packet.offset+packet.directories.length,packet.total)+' / '+packet.total+' 个子文件夹':'此文件夹没有子文件夹，可以选择当前文件夹。';
    }catch(error){if(!finished&&version===request)note.textContent=error.message||'文件夹读取失败。';}
+   finally{if(!finished&&version===request)path.readOnly=false;}
   };
   $('directory-cancel').onclick=()=>finish(null);dialog.oncancel=event=>{event.preventDefault();finish(null);};dialog.onclose=()=>finish(null);
   choose.onclick=()=>{if(selected&&path.value===selected)finish(selected);};
@@ -5819,7 +6591,7 @@ function managementClearTimer(){if(managerTimer!==null){clearInterval(managerTim
 async function managementRequest(action,data={}){managerRequestSent=true;return await requestShelfCatalog(action,data);}
 function managementOperation(label){return ({'创建并核验备份':['正在创建并核验备份','备份已创建并核验。'],'核验并恢复副本':['正在核验备份并恢复副本','备份恢复请求已完成。'],'创建并加入书架':['正在创建作品并登记书架','作品创建请求已完成。'],'核对并更新位置':['正在核对作品身份并更新位置','作品位置已核对并更新。'],'停止本书编辑服务':['正在请求正常停止编辑服务','停止请求已处理，请核对下方结果。'],'移出书架':['正在移出书架','书架登记已移除。'],'移入系统回收站':['正在核对并移入系统回收站','回收站操作请求已完成。']})[label]||['正在执行“'+label+'”','操作请求已完成，请核对下方结果。'];}
 function managementButton(label,action,danger=false){
- const b=document.createElement('button');b.textContent=label;if(danger)b.className='danger';
+ const b=document.createElement('button');b.textContent=label;if(danger)b.className='danger';else if(['创建并加入书架','核验并恢复副本','创建并核验备份','核对并更新位置','确认更新登记'].includes(label))b.className='primary';
  b.onclick=async()=>{
   if(managerBusy)return;if(label==='返回书架'){await action();return;}
   managerBusy=true;managerRequestSent=false;managerStarted=Date.now();managementClearTimer();$('manager-error').textContent='';manager.setAttribute('aria-busy','true');
@@ -5841,7 +6613,7 @@ function managementReceipt(result,message,discardStatusDraftBook=null,sourceBook
  captureShelfStatusDrafts();
  if(discardStatusDraftBook)shelfStatusDrafts.delete(shelfStatusDraftKey(discardStatusDraftBook));
  if(result.books)applyShelfCatalog(result,{captureDrafts:false});
- manager.close();$('message').textContent=message+(result.warning?'\n'+result.warning:'');
+ manager.close();$('message').dataset.state=result.warning||result.registered===false?'warning':'success';$('message').textContent=message+(result.warning?'\n'+result.warning:'');
  if(result.registered!==false&&result.root&&result.book_id){const book=(result.books||[]).find(row=>row.root===result.root&&row.book_id===result.book_id);if(book)offerOpenBook(book);}
  if(result.undo_id&&sourceBook){undoRemoval={id:result.undo_id,key:sourceBook.key,book_id:sourceBook.book_id,title:bookName(sourceBook)};syncUndoRemoval();}
  return true;
@@ -5924,6 +6696,21 @@ async function showBookService(book){
 }
 function showBookBackup(book){openManager('备份作品 · '+bookName(book));managementText('先保存所有页面。备份包含本书已保存的正文、候选、恢复记录及状态，排除运行服务记录、锁和外部关联材料；不会包含尚未保存的输入。检测到文件变化会停止本次备份。');managementText('作品目录：'+book.root);const path=managementField('新备份 ZIP 完整路径（放在作品目录之外）');managementButton('创建并核验备份',async()=>{const r=await managementRequest('backup-book',{key:book.key,expected_book_id:book.book_id,path:path.value});managementText('备份已生成并核验：'+r.path+'\n文件数：'+r.files+'\nSHA-256：'+r.sha256);});}
 function showRelinkBook(book){openManager('重新定位 · '+bookName(book));managementText('选择这部作品迁移后的目录。系统会核对作品身份；不会合并同名作品或搬动文件。');const path=managementField('迁移后的作品完整目录');managementButton('核对并更新位置',async()=>{managementReceipt(await managementRequest('relink-book',{key:book.key,expected_book_id:book.book_id,path:path.value}),'作品位置已核对并更新。',null,book);});}
+async function showRegistrationRepair(book){
+ const generation=openManager('核对书架登记 · '+bookName(book));
+ const preview=await call('registration-preview',{key:book.key,expected_book_id:book.book_id});
+ if(!manager.open||generation!==managerGeneration)return;
+ const current=preview.current;
+ managementText('请核对原登记与当前目录中的书库。确认后仅更新书架登记，当前书库的正文、身份和历史记录保持原样；本地作品状态将按现有书库重新读取。');
+ managementText('原登记：'+preview.registered.title+'\n书库标识末八位：'+preview.registered.book_id.slice(-8));
+ managementText('现有书库：'+current.title+'\n书库标识末八位：'+current.book_id.slice(-8)+'\n目录：'+current.root+'\n正式稿：'+(current.progress?.formal_chapters??'未确认')+' 章');
+ const title=managementField('输入现有书库的完整书名'),confirmed=managementField('我已核对目录和书名，这是要使用的书库','checkbox');
+ managementButton('确认更新登记',async()=>{
+  if(title.value!==current.title||!confirmed.checked)throw Error('请输入现有完整书名，并确认已核对书库。');
+  const result=await managementRequest('repair-registration',{key:book.key,expected_book_id:book.book_id,confirmation:preview.confirmation,title:title.value,confirmed:true});
+  managementReceipt(result,'书架登记已更新为：'+current.title+'。正文及书库历史记录保持原样。',book);
+ });
+}
 function showRemoveBook(book){openManager('移出书架 · '+bookName(book));managementText('只移除本书架的登记，作品文件和已打开的编辑页面都会保留。\n目录：'+book.root);managementButton('移出书架',async()=>{const r=await managementRequest('remove-book',{key:book.key,expected_book_id:book.book_id});managementReceipt(r,'已移出书架，作品文件保留。可撤销或重新添加。',r.removed===true?book:null,book);});}
 async function showTrashBook(book){const generation=openManager('删除作品至回收站 · '+bookName(book));const preview=await call('trash-preview',{key:book.key,expected_book_id:book.book_id});if(!manager.open||generation!==managerGeneration)return;managementText('将以下作品的整个本地目录移入系统废纸篓／回收站，成功后移出书架。外部关联材料不会删除。为绑定已确认的作品，系统还原位置是原目录旁的独立回收暂存目录；还原后核对并移回原位置，再添加回书架。');managementText('书名：'+preview.title+'\n目录：'+preview.root);managementText('请先完成备份并停止本书的编辑服务。任何身份、目录、服务或回收站核对失败都会停止操作。');const title=managementField('输入完整书名以确认'),saved=managementField('本书所有页面均已保存或下载，编辑服务已停止','checkbox');managementButton('移入系统回收站',async()=>{if(title.value!==preview.title||!saved.checked)throw Error('请输入完整书名并核对保存状态。');const r=await managementRequest('trash-book',{key:book.key,expected_book_id:book.book_id,confirmation:preview.confirmation,saved:true});managementReceipt(r,'作品已移入系统回收站。'+(r.restoration_note?'\n'+r.restoration_note:'')+(r.shelf_removed===false?'书架登记未移除，请刷新核对。':''),r.trashed===true?book:null);},true);}
 function decorateBookManagement(){
@@ -5937,19 +6724,21 @@ function decorateBookManagement(){
   for(const detail of [row.querySelector('.classification-sources'),location,row.querySelector('.book-status-editor')])if(detail)panel.append(detail);
   const updated=row.querySelector('.book-updated');if(updated)panel.append(updated);
   details.append(summary,panel);
-  for(const [label,action,requiresBook]of [['备份',showBookBackup,true],['找回文字',showRecoveries,true],['保存与停止',showBookService,true],['重新定位',showRelinkBook,false],['移出书架',showRemoveBook,false],['删除至回收站',showTrashBook,true]]){
+  const actions=[['备份',showBookBackup,true],['找回文字',showRecoveries,true],['保存与停止',showBookService,true],['重新定位',showRelinkBook,false],['移出书架',showRemoveBook,false],['删除至回收站',showTrashBook,true]];
+  if(book.identity_status==='changed')actions.unshift(['核对登记',showRegistrationRepair,false]);
+  for(const [label,action,requiresBook]of actions){
    const button=document.createElement('button');button.textContent=label;button.disabled=requiresBook&&!book.available;
    button.onclick=async()=>{const generation=managerGeneration+1;try{await action(book);}catch(error){if(manager.open&&generation===managerGeneration)$('manager-error').textContent=error.message;}};panel.append(button);
   }
   row.append(details);
  }
 }
-$('choose-book-directory').onclick=()=>fillDirectoryField($('book-path'),'existing-book',()=>!busy,message=>$('message').textContent=message);
+$('choose-book-directory').onclick=()=>fillDirectoryField($('book-path'),'existing-book',()=>!busy,message=>{$('message').dataset.state='error';$('message').textContent=message;});
 $('new-book').onclick=showCreateBook;$('restore-backup').onclick=showRestoreBackup;$('recovery-center').onclick=async()=>{const generation=managerGeneration+1;try{await showRecoveries();}catch(error){if(manager.open&&generation===managerGeneration)$('manager-error').textContent=error.message;}};
 $('undo-remove').onclick=async()=>{
  if(undoRemovalBusy||busy||!undoRemoval)return;const receipt=undoRemoval;undoRemovalBusy=true;busy=true;syncUndoRemoval();
- try{const result=await requestShelfCatalog('undo-remove',{receipt_id:receipt.id});applyShelfCatalog(result);if(undoRemoval===receipt)undoRemoval=null;$('message').textContent='已恢复书架登记：'+receipt.title+'。';}
- catch(error){$('message').textContent='未能撤销移出（'+receipt.title+'）：'+error.message;}
+ try{const result=await requestShelfCatalog('undo-remove',{receipt_id:receipt.id});applyShelfCatalog(result);if(undoRemoval===receipt)undoRemoval=null;$('message').dataset.state='success';$('message').textContent='已恢复书架登记：'+receipt.title+'。';}
+ catch(error){$('message').dataset.state='error';$('message').textContent='未能撤销移出（'+receipt.title+'）：'+error.message;}
  finally{undoRemovalBusy=false;busy=false;syncUndoRemoval();}
 };
 let lastBooksBusy=false;
@@ -5965,7 +6754,7 @@ async function reopenShelfBooks(entries){
  if(failed.length){const retry=document.createElement('button');retry.textContent='重试失败作品（'+failed.length+'）';const retryEntries=failed.map(({key,book_id,title})=>({key,book_id,title}));retry.onclick=()=>reopenShelfBooks(retryEntries);results.append(retry);}
  }finally{lastBooksBusy=false;button.disabled=disabled;button.textContent=label;}
 }
-$('last-books').onclick=async()=>{if(lastBooksBusy)return;try{const records=JSON.parse(localStorage.getItem('story-last-books')||'[]');if(!Array.isArray(records))throw Error('没有上次打开记录。');const seen=new Set(),entries=[];for(const record of records){const entry=typeof record==='string'?{key:record,book_id:null,title:'旧版打开记录'}:record;if(!entry||typeof entry.key!=='string'||seen.has(entry.key))continue;seen.add(entry.key);const book=shelfBooks.find(book=>book.key===entry.key&&book.book_id===entry.book_id);entries.push({key:entry.key,book_id:typeof entry.book_id==='string'?entry.book_id:null,title:typeof entry.title==='string'?entry.title:book?bookName(book):'未登记作品'});if(entries.length===8)break;}if(!entries.length)throw Error('没有上次打开记录。');await reopenShelfBooks(entries);}catch(error){$('message').textContent=error.message;}};
+$('last-books').onclick=async()=>{if(lastBooksBusy)return;try{const records=JSON.parse(localStorage.getItem('story-last-books')||'[]');if(!Array.isArray(records))throw Error('没有上次打开记录。');const seen=new Set(),entries=[];for(const record of records){const entry=typeof record==='string'?{key:record,book_id:null,title:'旧版打开记录'}:record;if(!entry||typeof entry.key!=='string'||seen.has(entry.key))continue;seen.add(entry.key);const book=shelfBooks.find(book=>book.key===entry.key&&book.book_id===entry.book_id);entries.push({key:entry.key,book_id:typeof entry.book_id==='string'?entry.book_id:null,title:typeof entry.title==='string'?entry.title:book?bookName(book):'未登记作品'});if(entries.length===8)break;}if(!entries.length)throw Error('没有上次打开记录。');await reopenShelfBooks(entries);}catch(error){$('message').dataset.state='error';$('message').textContent=error.message;}};
 '''
 
 
@@ -6072,6 +6861,7 @@ html[data-story-workbench] .book-management button{display:block;width:100%;marg
 <div id="last-books-result" role="status" aria-live="polite"></div>
 <div id="shelf-draft-feedback" class="shelf-filter-feedback" hidden><p id="shelf-draft-summary" role="status"></p><button id="discard-status-drafts">放弃未保存状态</button></div>
 <main class="shelf-library" aria-labelledby="library-heading"><div class="shelf-toolbar" role="search" aria-label="查找书架作品"><div class="shelf-search"><label class="sr-only" for="shelf-search">搜索当前类型的书名、题材或目录</label><input id="shelf-search" type="search" placeholder="搜索书名、题材或目录" aria-describedby="filter-summary" autocomplete="off"><button id="clear-search" class="search-clear" hidden>清空搜索</button></div><div class="shelf-controls"><div class="type-filters" role="group" aria-label="按作品类型筛选"><button id="filter-all" aria-pressed="true">全部 0</button><button id="filter-long" aria-pressed="false">长篇 0</button><button id="filter-short" aria-pressed="false">短篇 0</button><button id="filter-analysis" aria-pressed="false">作品分析 0</button></div><div class="shelf-options"><label class="shelf-state" for="shelf-status">本地状态<select id="shelf-status" aria-label="按本地作品状态筛选"><option value="all">全部状态 0</option><option value="serializing">连载中 0</option><option value="completed">已完本 0</option><option value="unknown">待确认 0</option></select></label><label class="shelf-sort" for="shelf-order">更新时间<select id="shelf-order" aria-label="按更新时间排序"><option value="newest">最新在前</option><option value="oldest">最早在前</option></select></label></div></div></div><div class="shelf-filter-feedback"><p id="filter-summary" role="status"></p><button id="clear-filters" hidden>清除筛选</button></div><div id="books"></div><div id="search-empty" class="search-empty" hidden><p>可以清空搜索，继续查看当前类型的作品。</p><button id="empty-clear">清空搜索</button></div></main>
+<style id="workbench-components">__COMPONENT_CSS__</style>
 <script>__THEME_SCRIPT__const TOKEN=__TOKEN__;const $=id=>document.getElementById(id);let busy=false;
 async function call(action,data={}){const r=await fetch('/api/'+action,{method:'POST',headers:{'Content-Type':'application/json','X-Story-Token':TOKEN},body:JSON.stringify(data)});const v=await r.json();if(!r.ok){const error=Error(v.message||'请求失败');error.responseReceived=true;throw error;}return v;}
 __BOOK_DISPLAY__
@@ -6115,10 +6905,10 @@ function shelfStatusEditor(book){
    captureShelfStatusDrafts();if(shelfStatusDrafts.get(draftKey)===submitted)shelfStatusDrafts.delete(draftKey);statusSaving.delete(book.key);
    // An older full catalog must not undo another book's later confirmed save.
    const next=Number.isSafeInteger(catalog.catalog_generation)||revision===shelfRenderRevision?catalog:{books:shelfBooks.map(item=>item.key===book.key&&item.book_id===book.book_id?{...item,writing_status:updated.writing_status}:item)};
-   render(next,{captureDrafts:false});$('message').textContent='作品状态已更新（'+bookName(book)+'）：'+shelfWritingLabel(updated)+'。仅表示本地作品状态。';
+   render(next,{captureDrafts:false});$('message').dataset.state='success';$('message').textContent='作品状态已更新（'+bookName(book)+'）：'+shelfWritingLabel(updated)+'。仅表示本地作品状态。';
   }catch(error){
    captureShelfStatusDrafts();if(submitted&&shelfStatusDrafts.get(draftKey)===submitted)submitted.error=error.message;
-   statusSaving.delete(book.key);renderShelf({captureDrafts:false});$('message').textContent='作品状态更新未确认（'+bookName(book)+'）：'+error.message+'。当前选择已保留，尚未确认保存。';
+   statusSaving.delete(book.key);renderShelf({captureDrafts:false});$('message').dataset.state='warning';$('message').textContent='作品状态更新未确认（'+bookName(book)+'）：'+error.message+'。当前选择已保留，尚未确认保存。';
   }finally{statusSaving.delete(book.key);syncShelfStatusDraftNotice();select.disabled=save.disabled=false;save.textContent='保存状态';}
  };
  details.append(summary,label,note,source,draftNote,save);return details;
@@ -6172,7 +6962,7 @@ function renderShelf(options={}){
   const genres=classificationNode(b),path=document.createElement('details'),summary=document.createElement('summary'),directory=document.createElement('div');summary.textContent='目录位置';directory.className='path';directory.textContent=b.root||'目录未提供';path.append(summary,directory);
   const resume=shelfResumeNode(b),continuing=shelfResumeReady(b);if(resume)row.dataset.hasResume='true';
   const open=document.createElement('button');open.textContent=continuing?'继续编辑':'打开作品';open.setAttribute('aria-label',(continuing?'继续编辑：':'打开作品：')+b.label);open.disabled=!b.available;
-  open.onclick=async()=>{open.disabled=true;try{const r=await call('open-book',{key:b.key,expected_book_id:b.book_id});rememberShelfBook(b.key,b.book_id,bookName(b));const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='点击打开：'+b.label;$('message').replaceChildren(a);a.click();if(r.outdated)$('message').append(document.createTextNode('（此作品服务使用较早代码，升级前请保留原页面编辑。）'));}catch(e){$('message').textContent='打开失败（'+bookName(b)+'）：'+e.message;}finally{open.disabled=!b.available;}};
+  open.onclick=async()=>{open.disabled=true;try{const r=await call('open-book',{key:b.key,expected_book_id:b.book_id});rememberShelfBook(b.key,b.book_id,bookName(b));const a=document.createElement('a');a.href=r.url;a.target='_blank';a.rel='noopener';a.textContent='点击打开：'+b.label;$('message').dataset.state=r.outdated?'warning':'info';$('message').replaceChildren(a);a.click();if(r.outdated)$('message').append(document.createTextNode('（此作品服务使用较早代码，升级前请保留原页面编辑。）'));}catch(e){$('message').dataset.state='error';$('message').textContent='打开失败（'+bookName(b)+'）：'+e.message;}finally{open.disabled=!b.available;}};
   row.append(title,time,genres,path,open);if(resume)row.append(resume);const progress=shelfProgressNode(b);if(progress)row.append(progress);row.append(shelfStatusNode(b));const statusEditor=shelfStatusEditor(b);if(statusEditor)row.append(statusEditor);
   if(!b.available){const err=document.createElement('p');err.className='error';err.textContent=b.error||'作品暂不可用，请核对目录。';row.append(err);}$('books').append(row);
  }
@@ -6226,10 +7016,10 @@ function installShelfRefreshHooks(){
 async function refresh(options={}){
  const automatic=options.automatic===true;if(shelfRefreshRequest){if(!automatic)shelfRefreshManualRequested=true;return shelfRefreshRequest;}
  shelfRefreshLastStart=Date.now();shelfRefreshManualRequested=!automatic;const revision=shelfRenderRevision;
- shelfRefreshRequest=(async()=>{try{const catalog=await requestShelfCatalog('books');if((!Number.isSafeInteger(catalog.catalog_generation)&&revision!==shelfRenderRevision)||(!shelfRefreshManualRequested&&shelfRefreshBlocked())){queueShelfRefresh(350);return;}applyShelfCatalog(catalog);if(shelfRefreshError?.parentNode===$('message'))shelfRefreshError.remove();shelfRefreshError=null;}catch(e){const message=$('message');if(!shelfRefreshManualRequested&&message.textContent&&shelfRefreshError?.parentNode!==message)return;const error=document.createElement('span');error.className='shelf-refresh-error';error.textContent='刷新书架失败：'+e.message;message.replaceChildren(error);shelfRefreshError=error;}finally{shelfRefreshRequest=null;}})();return shelfRefreshRequest;
+ shelfRefreshRequest=(async()=>{try{const catalog=await requestShelfCatalog('books');if((!Number.isSafeInteger(catalog.catalog_generation)&&revision!==shelfRenderRevision)||(!shelfRefreshManualRequested&&shelfRefreshBlocked())){queueShelfRefresh(350);return;}applyShelfCatalog(catalog);if(shelfRefreshError?.parentNode===$('message'))shelfRefreshError.remove();shelfRefreshError=null;}catch(e){const message=$('message');if(!shelfRefreshManualRequested&&message.textContent&&shelfRefreshError?.parentNode!==message)return;const error=document.createElement('span');error.className='shelf-refresh-error';error.textContent='刷新书架失败：'+e.message;message.dataset.state='error';message.replaceChildren(error);shelfRefreshError=error;}finally{shelfRefreshRequest=null;}})();return shelfRefreshRequest;
 }
-$('refresh').onclick=()=>refresh();$('add').onclick=async()=>{if(busy||directoryPicking)return;const path=$('book-path').value;busy=true;$('add').disabled=true;try{const value=await requestShelfCatalog('add-book',{path});applyShelfCatalog(value);if($('book-path').value===path)$('book-path').value='';$('message').textContent='作品已登记，重新打开书架仍会保留。';const added=value.books?.find(row=>row.key===value.added_book?.key&&row.book_id===value.added_book?.book_id);if(added)offerOpenBook(added);}catch(e){$('message').textContent=e.message;}finally{busy=false;$('add').disabled=false;}};__MANAGEMENT_SCRIPT__installShelfRefreshHooks();refresh();</script></body></html>'''
-    return page.replace('__MANAGEMENT_HTML__', _library_management_html()).replace('__MANAGEMENT_SCRIPT__', _library_management_script()).replace('__THEME_CSS__', _workbench_theme_css()).replace('__THEME_CONTROL__', _workbench_theme_control()).replace('__THEME_SCRIPT__', _workbench_theme_script()).replace('__BOOK_DISPLAY__', _book_display_script()).replace('__TOKEN__', json.dumps(token)).encode('utf-8')
+$('refresh').onclick=()=>refresh();$('add').onclick=async()=>{if(busy||directoryPicking)return;const path=$('book-path').value;busy=true;$('add').disabled=true;try{const value=await requestShelfCatalog('add-book',{path});applyShelfCatalog(value);if($('book-path').value===path)$('book-path').value='';$('message').dataset.state='success';$('message').textContent='作品已登记，重新打开书架仍会保留。';const added=value.books?.find(row=>row.key===value.added_book?.key&&row.book_id===value.added_book?.book_id);if(added)offerOpenBook(added);}catch(e){$('message').dataset.state='error';$('message').textContent=e.message;}finally{busy=false;$('add').disabled=false;}};__MANAGEMENT_SCRIPT__installShelfRefreshHooks();refresh();</script></body></html>'''
+    return page.replace('__MANAGEMENT_HTML__', _library_management_html()).replace('__MANAGEMENT_SCRIPT__', _library_management_script()).replace('__THEME_CSS__', _workbench_theme_css(components=False)).replace('__COMPONENT_CSS__', _workbench_component_css()).replace('__THEME_CONTROL__', _workbench_theme_control()).replace('__THEME_SCRIPT__', _workbench_theme_script()).replace('__BOOK_DISPLAY__', _book_display_script()).replace('__TOKEN__', json.dumps(token)).encode('utf-8')
 
 
 def library_server(state_dir=None, port=8765, library_books=None):
@@ -6327,13 +7117,22 @@ def library_server(state_dir=None, port=8765, library_books=None):
                     checked_registry()
                     if (self.path in ('/api/open-book', '/api/remove-book', '/api/relink-book',
                                       '/api/trash-preview', '/api/trash-book', '/api/backup-book',
-                                      '/api/book-service', '/api/stop-book', '/api/confirm-book-unknown')
+                                      '/api/book-service', '/api/stop-book', '/api/confirm-book-unknown',
+                                      '/api/registration-preview', '/api/repair-registration')
                             or (self.path == '/api/recoveries' and payload.get('key') is not None)):
                         _library_expected_entry(registry, payload, allow_confirmation=self.path == '/api/trash-book')
                     if self.path == '/api/books':
                         result = _library_catalog(registry)
                     elif self.path == '/api/directories':
                         result = _library_directories(payload)
+                    elif self.path == '/api/registration-preview':
+                        result = api.workbench_books.BookManager(api.workbench).registration_preview(
+                            root, registry, registry_hash, payload.get('key'))
+                    elif self.path == '/api/repair-registration':
+                        registry, registry_hash, receipt = api.workbench_books.BookManager(api.workbench).repair_registration(
+                            root, registry, registry_hash, payload.get('key'), payload.get('confirmation'),
+                            payload.get('title'), payload.get('confirmed'))
+                        result = {**_library_catalog(registry), **receipt}
                     elif self.path == '/api/add-book':
                         entry = _library_entry(payload.get('path'))
                         if entry['key'] in registry and registry[entry['key']]['book_id'] != entry['book_id']:

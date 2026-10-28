@@ -18,7 +18,7 @@ import uuid
 import importlib.util
 from types import SimpleNamespace
 
-VERSION = "0.6.27"
+VERSION = "0.6.29"
 SCHEMA_VERSION = 2
 CHECKS = ("causality", "continuity", "constraints", "style")
 KINDS = ("fact", "character", "world", "hook", "preference", "contract")
@@ -27,7 +27,7 @@ COUNT_METHODS = ("visible_nonspace_v1", "visible_nonspace_v2", "letters_numbers_
 # Hangul choseong/jungseong filler, braille pattern blank, Hangul filler,
 # and halfwidth Hangul filler. Exclude only these, not their Unicode blocks.
 V2_EMPTY_GLYPHS = frozenset("\u115f\u1160\u2800\u3164\uffa0")
-DEFAULT_CHAPTER_LENGTH = (2400, 2800)
+DEFAULT_CHAPTER_LENGTH = (2000, None)
 
 
 class StoryError(Exception):
@@ -768,9 +768,10 @@ def valid_plan(raw):
                                 for key in ("choice", "change")})
     length = raw.get("length")
     if not isinstance(length, list) or len(length) != 2:
-        fail("invalid_input", "plan.length needs [minimum_visible_chars, maximum_visible_chars]")
-    lo, hi = (integer(x, "plan.length", 1) for x in length)
-    if lo > hi or hi > 200000:
+        fail("invalid_input", "plan.length needs [minimum_visible_chars, maximum_visible_chars_or_null]")
+    lo = integer(length[0], "plan.length.minimum", 1)
+    hi = None if length[1] is None else integer(length[1], "plan.length.maximum", 1)
+    if lo > 200000 or (hi is not None and (lo > hi or hi > 200000)):
         fail("invalid_input", "Invalid plan length range")
     result["length"] = [lo, hi]
     method = raw.get("count_method", "visible_nonspace_v2")
@@ -819,6 +820,11 @@ def valid_plan(raw):
     return result
 
 
+def within_chapter_length(count, length):
+    minimum, maximum = length
+    return count >= minimum and (maximum is None or count <= maximum)
+
+
 def needs_length_exception(plan):
     return (plan["length"] != list(DEFAULT_CHAPTER_LENGTH)
             or plan.get("count_method", "visible_nonspace_v1") != "visible_nonspace_v2"
@@ -857,7 +863,7 @@ def lint_text(text, plan, chapter=None, warn_nondefault=False, *, require_plain_
     counts = manuscript_counts(text, plan.get("count_title", False))
     count = counts[method]
     errors, warnings = [], []
-    if not plan["length"][0] <= count <= plan["length"][1]:
+    if not within_chapter_length(count, plan["length"]):
         errors.append({"code": "length", "actual": count, "expected": plan["length"]})
     # A saved v1 chapter is not remeasured against the new visible minimum
     # while its exact body remains unchanged. New or changed text still is.
@@ -2138,6 +2144,14 @@ class Book:
             if adopted["status"] != "adopted":
                 fail("outline_unbound", "Review and bind the adopted outline before building a writing brief",
                      chapter=chapter, recovery_command="outline-bind")
+            # New-chapter dispatch must use the same current length agreement
+            # as commit. Legacy saved defaults are not a fresh writing request.
+            if not (self.meta("kind") == "short" and 0 < chapter < self.meta("imported_through")):
+                issue = self._length_exception_issue(context["plan"])
+                if issue:
+                    fail(issue["code"], issue["message"], chapter=chapter,
+                         saved_length=context["plan"]["length"], default_length=list(DEFAULT_CHAPTER_LENGTH),
+                         recovery_commands=["plan", "outline-bind"])
             actual_outline = self._brief_source(adopted["path"], "adopted_outline")
             if actual_outline["sha256"] != adopted["sha256"]:
                 fail("outline_plan_drift", "Adopted outline changed while building the brief", chapter=chapter,
@@ -2927,6 +2941,7 @@ def parser():
     t = sub.add_parser("template", help="Print just one JSON input example")
     rank.register_parser(sub)
     research.register_parser(sub)
+    reader_feedback.register_parser(sub)
     t.add_argument("kind", choices=TEMPLATES)
     def command(name, help_text, budget=None, integrity=True):
         s = sub.add_parser(name, help=help_text)
@@ -2936,6 +2951,31 @@ def parser():
         if budget:
             s.add_argument("--budget-bytes", type=int, default=budget, help="Hard limit on compact JSON UTF-8 bytes")
         return s
+    for name in ("task-list", "task-get", "task-handoff", "task-return", "task-review", "task-fail", "task-evidence", "task-execute", "task-execution", "task-cancel", "task-reconcile"):
+        s = command(name, "Version-bound assistant task receipts; never adopt manuscript text", integrity=False)
+        s.add_argument("--expect-book-id")
+        if name == "task-list":
+            s.add_argument("--offset", type=int, default=0)
+            s.add_argument("--limit", type=int, default=20)
+        else:
+            s.add_argument("--task-id", required=True)
+        if name in ("task-handoff", "task-return", "task-review", "task-fail", "task-execute"):
+            s.add_argument("--version", type=int, required=True)
+        if name == "task-execute":
+            s.add_argument("--request-id", required=True, help="Stable idempotency key for this explicit launch")
+            s.add_argument("--execute", action="store_true", required=True, help="Start the isolated local host; never adopts text")
+            s.add_argument("--timeout-seconds", type=int, default=900)
+        if name in ("task-cancel", "task-reconcile"):
+            s.add_argument("--execution-id", required=True)
+        if name == "task-return":
+            s.add_argument("--result-file", required=True, help="Book-relative JSON below .story/drafts/")
+        if name == "task-review":
+            s.add_argument("--issues-file", help="Book-relative JSON array below .story/drafts/")
+        if name == "task-fail":
+            s.add_argument("--reason", required=True)
+        if name == "task-evidence":
+            s.add_argument("--issue-id", required=True)
+            s.add_argument("--index", type=int, required=True)
     s = command("init", "Create state once; never overwrite an existing book")
     s.add_argument("--title", required=True)
     s.add_argument("--kind", choices=("long", "short", "analysis"), default="long")
@@ -3056,6 +3096,34 @@ def run(args):
     cmd = args.command
     if cmd == "template":
         return TEMPLATES[args.kind]
+    if cmd in reader_feedback.COMMANDS:
+        return reader_feedback.run(args)
+    if cmd.startswith("task-"):
+        root, expected = args.book, args.expect_book_id
+        if cmd == "task-list":
+            return tasks.list_tasks(root, args.offset, args.limit, expected_book_id=expected)
+        if cmd == "task-get":
+            return tasks.get(root, args.task_id, expected_book_id=expected)
+        if cmd == "task-execute":
+            return tasks.execution_start(root, args.task_id, args.version, args.request_id,
+                                         expected_book_id=expected, timeout_seconds=args.timeout_seconds)
+        if cmd == "task-execution":
+            return tasks.execution_get(root, args.task_id, expected_book_id=expected)
+        if cmd == "task-cancel":
+            return tasks.execution_cancel(root, args.task_id, args.execution_id, expected_book_id=expected)
+        if cmd == "task-reconcile":
+            return tasks.execution_reconcile(root, args.task_id, args.execution_id, expected_book_id=expected)
+        if cmd == "task-handoff":
+            return tasks.mark_handoff(root, args.task_id, args.version, expected_book_id=expected)
+        if cmd == "task-return":
+            return tasks.import_result(root, args.task_id, args.version, tasks.read_result_file(root, args.result_file),
+                                       expected_book_id=expected, source="local_cli")
+        if cmd == "task-review":
+            statuses = tasks.read_result_file(root, args.issues_file) if args.issues_file else None
+            return tasks.review(root, args.task_id, args.version, statuses, expected_book_id=expected)
+        if cmd == "task-fail":
+            return tasks.mark_failed(root, args.task_id, args.version, args.reason, expected_book_id=expected)
+        return tasks.evidence(root, args.task_id, args.issue_id, args.index, expected_book_id=expected)
     if cmd.startswith("research-"):
         return research.run(args)
     if cmd.startswith("rank-"):
@@ -3177,11 +3245,11 @@ def _load_extension(name):
     return module
 
 
-storage, search, world, history, publish, workbench, outline, punctuation, workbench_books, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge, chrome_worker, rank, rank_sources, research = (_load_extension(name) for name in (
+storage, search, world, history, publish, workbench, outline, punctuation, workbench_books, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge, chrome_worker, rank, rank_sources, research, reader_feedback, tasks, task_worker = (_load_extension(name) for name in (
     "storage", "search", "world", "history", "publish", "workbench", "outline", "punctuation",
-    "workbench_books", "workbench_archives", "platform_browser", "platform_drafts", "platform_chrome_bridge", "chrome_worker", "rank", "rank_sources", "research"))
+    "workbench_books", "workbench_archives", "platform_browser", "platform_drafts", "platform_chrome_bridge", "chrome_worker", "rank", "rank_sources", "research", "reader_feedback", "tasks", "task_worker"))
 CORE = SimpleNamespace(**globals())
-for extension in (search, world, history, publish, workbench, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge, chrome_worker):
+for extension in (search, world, history, publish, workbench, workbench_archives, platform_browser, platform_drafts, platform_chrome_bridge, chrome_worker, tasks, task_worker):
     extension.inject(CORE)
 TEMPLATES["publish"] = publish.template()
 TEMPLATES["platform-browser"] = platform_browser.template()

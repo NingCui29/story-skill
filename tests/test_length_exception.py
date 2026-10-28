@@ -236,14 +236,14 @@ class LengthExceptionTests(unittest.TestCase):
         self.assertEqual(self.book.meta("last_chapter"), 0)
 
     def test_count_method_and_title_count_are_also_nondefault(self):
-        for changed in ({"length": [2400, 2800], "count_method": "han_v1"},
-                        {"length": [2400, 2800], "count_title": True}):
+        for changed in ({"length": [2000, None], "count_method": "han_v1"},
+                        {"length": [2000, None], "count_title": True}):
             with self.subTest(changed=changed):
                 self.assert_error("length_exception_required", lambda: self.book.save_plan(
                     1, self.plan(**changed), self.book.meta("revision")))
 
     def test_default_count_needs_no_exception(self):
-        self.book.save_plan(1, self.plan(length=[2400, 2800],
+        self.book.save_plan(1, self.plan(length=[2000, None],
                                          count_method="visible_nonspace_v2"),
                             self.book.meta("revision"))
         bind_adopted_outline(story, self.book, 1)
@@ -252,14 +252,14 @@ class LengthExceptionTests(unittest.TestCase):
         self.assertTrue(self.book.commit(1, self.draft, self.delta(text))["exports_complete"])
 
     def test_new_default_v2_requires_no_exception_but_explicit_v1_does(self):
-        fresh = self.plan(length=[2400, 2800])
+        fresh = self.plan(length=[2000, None])
         fresh.pop("count_method")
         self.book.save_plan(1, fresh, self.book.meta("revision"))
         self.assertEqual(self.book.get_plan(1)["count_method"], "visible_nonspace_v2")
         self.assertFalse(story.needs_length_exception(self.book.get_plan(1)))
-        self.assertTrue(story.needs_length_exception(self.plan(length=[2400, 2800])))
+        self.assertTrue(story.needs_length_exception(self.plan(length=[2000, None])))
         self.assert_error("length_exception_required", lambda: self.book.save_plan(
-            2, self.plan(length=[2400, 2800]), self.book.meta("revision")))
+            2, self.plan(length=[2000, None]), self.book.meta("revision")))
 
     def test_preexisting_uncommitted_default_v1_must_be_reconciled_before_commit(self):
         old = self.plan(length=[2400, 2800])
@@ -272,7 +272,8 @@ class LengthExceptionTests(unittest.TestCase):
         self.assertIn("length_exception_required", {item["code"] for item in lint["errors"]})
         self.assert_error("lint_failed", lambda: self.book.commit(
             1, self.draft, self.delta(text)))
-        self.book.save_plan(1, {**old, "count_method": "visible_nonspace_v2"},
+        self.book.save_plan(1, {**old, "length": [2000, None],
+                                "count_method": "visible_nonspace_v2"},
                             self.book.meta("revision"))
         bind_adopted_outline(story, self.book, 1)
         self.assertTrue(self.book.lint(1, self.draft)["ok"])

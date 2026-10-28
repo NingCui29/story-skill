@@ -144,6 +144,20 @@ const ids=p.document.querySelectorAll('[id]').map(n=>n.id);assert.equal(new Set(
     def test_modern_editor_retains_all_existing_controls(self):
         self.js("const p=page({modern:true}),nodes=p.document.querySelectorAll('[id]'),desk=JSON.stringify(p.serialize(p.desk)),result=p.run();assert.equal(result.applied,true);assert.equal(result.legacy,false);for(const n of nodes)assert.strictEqual(p.document.getElementById(n.id),n);assert.ok(p.maintenance.contains(p.refresh));assert.ok(p.compact.hidden);assert.equal(JSON.stringify(p.serialize(p.desk)),desk);assert.equal(p.observers.length,1);assert.equal(p.styles().length,1);const after=p.tree();p.run();assert.equal(p.tree(),after);")
 
+    def test_current_shared_page_does_not_receive_native_styles_or_hooks(self):
+        self.js(r"""
+const p=page({modern:true,theme:true,picker:true,navigation:true});
+p.body.setAttribute('data-workbench-ui','material-v2');
+p.main.scrollTop=456;p.text.selectionStart=17;p.text.selectionEnd=29;
+const before=p.tree(),focus=p.document.activeElement;
+for(let index=0;index<3;index++){
+ const result=p.run();assert.equal(result.applied,true);assert.equal(result.shared,true);
+ assert.equal(p.tree(),before);assert.equal(p.styles().length,0);assert.equal(p.observers.length,0);
+}
+assert.strictEqual(p.document.activeElement,focus);assert.equal(p.main.scrollTop,456);
+assert.equal(p.text.selectionStart,17);assert.equal(p.text.selectionEnd,29);
+""")
+
     def test_complete_progress_survives_compaction_refresh_and_unknown_status(self):
         self.js(r"""
 for(const modern of [false,true]){

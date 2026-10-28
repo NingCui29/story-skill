@@ -152,7 +152,7 @@ class ChapterLayoutTests(unittest.TestCase):
         self.assertTrue(lint["ok"])
         warning = next(item for item in lint["warnings"] if item["code"] == "nondefault_plan_length")
         self.assertEqual(warning["saved"], [20, 120])
-        self.assertEqual(warning["default"], [2400, 2800])
+        self.assertEqual(warning["default"], [2000, None])
         prepared = self.book.prepare(1, self.draft)
         self.assertTrue(prepared["lint"]["ok"])
         self.assertTrue(self.book.commit(1, self.draft, self.delta(self.draft.read_text()))["exports_complete"])

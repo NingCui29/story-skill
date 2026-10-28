@@ -44,6 +44,84 @@ class WritingBriefTests(unittest.TestCase):
                                 capture_output=True, text=True, encoding="utf-8")
         return result.returncode, json.loads(result.stdout or result.stderr)
 
+    def test_legacy_unsubmitted_default_is_read_only_blocked_until_plan_sync_and_rebind(self):
+        # Install a pre-upgrade plan directly: current save_plan correctly
+        # rejects this unexcepted finite range before it could enter the book.
+        legacy = self.book.get_plan(1)
+        legacy.update(length=[2400, 2800], count_method="visible_nonspace_v2", count_title=False)
+        legacy.pop("length_exception", None)
+        with self.book.transaction():
+            self.book.db.execute("UPDATE plans SET data=? WHERE chapter=1", (story.dumps(legacy),))
+        self.bind()
+        before = self.snapshot()
+        error = self.assert_error("length_exception_required", self.book.writing_brief, 1)
+        self.assertEqual(error.details["saved_length"], [2400, 2800])
+        self.assertEqual(error.details["default_length"], [2000, None])
+        self.assertEqual(error.details["recovery_commands"], ["plan", "outline-bind"])
+        self.assertEqual(self.book.get_plan(1), legacy)
+        self.assertEqual(self.snapshot(), before)
+
+        binding = story.outline.binding_for(self.book, 1)
+        self.book.save_plan(1, {**legacy, "length": [2000, None]}, self.book.meta("revision"))
+        before_rebind = self.snapshot()
+        self.assert_error("outline_plan_drift", self.book.writing_brief, 1)
+        self.assertEqual(self.snapshot(), before_rebind)
+        story.outline.bind(self.book, 1, binding["path"], self.book.meta("revision"), binding["sha256"])
+        before = self.snapshot()
+        packet = self.book.writing_brief(1)
+        self.assertEqual(packet["context"]["plan"]["length"], [2000, None])
+        self.assertNotIn("length_exception", packet["context"]["plan"])
+        self.assertEqual(self.snapshot(), before)
+
+    def test_explicit_user_finite_agreement_remains_available_in_the_brief(self):
+        current = self.book.get_plan(1)
+        current.update(length=[2400, 2800], count_method="visible_nonspace_v2", count_title=False,
+                       length_exception={"source": "user_request", "quote": "本章明确按2400到2800字写作。"})
+        self.book.save_plan(1, current, self.book.meta("revision"))
+        self.bind()
+        before = self.snapshot()
+        packet = self.book.writing_brief(1)
+        self.assertEqual(packet["context"]["plan"]["length"], [2400, 2800])
+        self.assertEqual(packet["context"]["plan"]["length_exception"], current["length_exception"])
+        self.assertEqual(self.snapshot(), before)
+
+    def test_brief_rechecks_current_book_agreement_without_repairing_changed_sources(self):
+        quote = "本章采用2400到2800字的明确篇幅约定。"
+        agreement = self.root / "创作约定.md"
+        agreement.write_text(quote + "\n", encoding="utf-8")
+        current = self.book.get_plan(1)
+        current.update(length=[2400, 2800], count_method="visible_nonspace_v2", count_title=False,
+                       length_exception={"source": "book_agreement", "path": "创作约定.md", "quote": quote})
+        self.book.save_plan(1, current, self.book.meta("revision"))
+        self.bind()
+        for replacement in (None, "原有篇幅原句已被移除。\n"):
+            with self.subTest(replacement=replacement):
+                agreement.write_text(quote + "\n", encoding="utf-8")
+                self.assertEqual(self.book.writing_brief(1)["context"]["plan"]["length"], [2400, 2800])
+                if replacement is None:
+                    agreement.unlink()
+                else:
+                    agreement.write_text(replacement, encoding="utf-8")
+                before, revision = self.snapshot(), self.book.meta("revision")
+                self.assert_error("length_exception_source_missing", self.book.writing_brief, 1)
+                self.assertEqual(self.book.meta("revision"), revision)
+                self.assertEqual(self.book.get_plan(1), current)
+                self.assertEqual(self.snapshot(), before)
+
+    def test_default_minimum_only_plan_survives_api_and_cli_brief_readback(self):
+        current = self.book.get_plan(1)
+        current.update(length=[2000, None], count_method="visible_nonspace_v2", count_title=False)
+        current.pop("length_exception", None)
+        self.book.save_plan(1, current, self.book.meta("revision"))
+        self.bind()
+        before = self.snapshot()
+        packet = self.book.writing_brief(1)
+        self.assertEqual(packet["context"]["plan"]["length"], [2000, None])
+        code, actual = self.command()
+        self.assertEqual(code, 0, actual)
+        self.assertEqual(actual["context"]["plan"]["length"], [2000, None])
+        self.assertEqual(self.snapshot(), before)
+
     def test_complete_sources_are_identified_and_not_adopted_as_style_decisions(self):
         self.bind()
         request_raw = b"\xef\xbb\xbf" + "只写到进门；这不是采用新剧情。\r\n".encode("utf-8")

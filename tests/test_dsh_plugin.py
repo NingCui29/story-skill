@@ -59,8 +59,8 @@ class DshBundleBuildTests(unittest.TestCase):
         result = self.build()
         self.assertTrue(result["ok"])
         self.assertEqual(result["package"], "story-skill-dsh")
-        self.assertEqual(result["files"], 77)
-        self.assertEqual(result["skill_files"], 69)
+        self.assertEqual(result["files"], 81)
+        self.assertEqual(result["skill_files"], 73)
         self.assertEqual(len(result["skills"]), 8)
         self.assertTrue(Path(result["path"]).is_dir())
         self.assertTrue(Path(result["receipt"]).is_file())
@@ -88,7 +88,7 @@ class DshBundleBuildTests(unittest.TestCase):
         skills = self.output / "skills"
         self.assertEqual({path.name for path in skills.iterdir() if path.is_dir()}, set(result["skills"]))
         self.assertEqual(len(list(skills.rglob("SKILL.md"))), 8)
-        self.assertEqual(sum(path.is_file() for path in skills.rglob("*")), 69)
+        self.assertEqual(sum(path.is_file() for path in skills.rglob("*")), 73)
         for path in skills.glob("*/SKILL.md"):
             fields = frontmatter(path)
             self.assertEqual(fields["name"], path.parent.name)
@@ -100,7 +100,7 @@ class DshBundleBuildTests(unittest.TestCase):
         receipt = json.loads(Path(result["receipt"]).read_text(encoding="utf-8"))
         self.assertEqual(receipt["schema"], 1)
         self.assertEqual(receipt["sha256"], result["sha256"])
-        self.assertEqual(len(receipt["manifest"]), 77)
+        self.assertEqual(len(receipt["manifest"]), 81)
         self.assertEqual(receipt["manifest"]["skills/story-skill/SKILL.md"],
                          hashlib.sha256((self.output / "skills/story-skill/SKILL.md").read_bytes()).hexdigest())
 
@@ -114,7 +114,7 @@ class DshBundleBuildTests(unittest.TestCase):
             self.assertIn("package.json", names)
             self.assertIn("cordis.patch.yml", names)
             self.assertIn("skills/story-skill/SKILL.md", names)
-            self.assertEqual(len(names), 77)
+            self.assertEqual(len(names), 81)
             self.assertEqual(bundle_file.testzip(), None)
         self.assertEqual(len(result["archive_sha256"]), 64)
 

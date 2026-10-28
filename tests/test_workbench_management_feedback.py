@@ -127,9 +127,31 @@ assert.ok(managerBody.children.some(node=>node.textContent.includes('停止未�
 showRestoreBackup();const [archive,destination]=fields();archive.value='/fixture/archive.zip';destination.value='/fixture/restored';
 response={root:'/fixture/restored',books:[book],note:'请核对副本'};await action('核验并恢复副本').onclick();
 assert.equal(manager.open,false);assert.deepEqual(renders,[response]);assert.ok($('message').textContent.includes('/fixture/restored'));
+assert.equal($('message').dataset.state,'success');
 assert.equal(managerBusy,false);assert.equal(manager.attributes['aria-busy'],'false');assert.equal(timers.size,0);
 openManager('重新打开');assert.equal($('manager-feedback').hidden,true);assert.equal($('manager-error').textContent,'');assert.equal($('manager-elapsed').textContent,'');
 await action('返回书架').onclick();assert.equal(manager.open,false);assert.equal(timers.size,0);
+''')
+
+    def test_registration_primary_action_preserves_confirmation_and_reports_success(self):
+        self.js(r'''
+const original={...book,book_id:'old-identity'},current={title:'当前作品',book_id:'current-identity',root:'/fixture/book',progress:{formal_chapters:18}};
+response={registered:original,current,confirmation:{book_id:current.book_id}};
+await showRegistrationRepair(original);const [title,confirmed]=fields(),run=action('确认更新登记');
+assert.equal(run.className,'primary');assert.notEqual(action('返回书架').className,'primary');
+title.value='尚未核对';confirmed.checked=true;await run.onclick();assert.equal(requests.length,1);assert.equal(manager.open,true);
+title.value=current.title;confirmed.checked=false;await run.onclick();assert.equal(requests.length,1);assert.equal(manager.open,true);
+confirmed.checked=true;response={books:[],registered:true};await run.onclick();
+assert.equal(requests.length,2);assert.equal(requests[1].action,'repair-registration');
+assert.equal(requests[1].title,current.title);assert.equal(requests[1].confirmed,true);
+assert.equal(manager.open,false);assert.equal($('message').dataset.state,'success');assert.equal(managerBusy,false);
+''')
+
+    def test_incomplete_registration_receipt_is_warning_instead_of_success(self):
+        self.js(r'''
+openManager('操作结果');managementReceipt({registered:false,warning:'目录已恢复，书架登记待核对'},'已恢复目录。');
+assert.equal($('message').dataset.state,'warning');assert.ok($('message').textContent.includes('登记待核对'));
+assert.equal(manager.open,false);
 ''')
 
     def test_create_and_relink_keep_operation_identity_while_awaiting_service(self):

@@ -80,11 +80,11 @@ class StoryTests(unittest.TestCase):
 
     def test_complete_chapter_template_length_and_explicit_override(self):
         template = story.TEMPLATES["plan"]
-        self.assertEqual(template["length"], [2400, 2800])
+        self.assertEqual(template["length"], [2000, None])
         self.assertEqual(template["count_method"], "visible_nonspace_v2")
         self.assertIs(template["count_title"], False)
         self.assertEqual(story.valid_plan(plan(length=[1200, 1500]))["length"], [1200, 1500])
-        for count, expected in ((2399, False), (2400, True), (2800, True), (2801, False)):
+        for count, expected in ((1999, False), (2000, True), (2800, True), (2801, True), (10000, True), (200001, True)):
             with self.subTest(count=count):
                 result = story.lint_text("第1章 雨夜\n" + "雨" * count, template)
                 self.assertEqual(result["length_count"], count)

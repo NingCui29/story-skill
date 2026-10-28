@@ -4,6 +4,8 @@
 
 源码开发版本为 **0.3.0**：新增经过校验的分块下载、暂停续传、跨版本内容缓存及精简更新安装包。检测到已有 WebView2 时优先精简包，否则选择完整离线包；精简包仍包含 .NET、Python 和全部许可文件。最多 3 路下载，合并后重新核对完整安装包摘要。Windows 原生安装及窗口须由 Windows runner 单独验收；公开下载仍使用下方已发行版本。详见[快速更新设计与验收边界](../../docs/工作台快速更新.md)。
 
+版本更新遵循[统一版本管理规则](../../docs/版本管理.md)。客户端独立升版，包含仅更新内置 Python 服务的重新分发；项目版本、程序集／文件版本及界面和更新服务的版本常量保持一致。
+
 ## 获取和安装
 
 本版本发行文件使用以下名称，以独立 Release 页面实际可见附件为准；下载后先核对同名校验文件。[EXE 安装包](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.5/story-workbench-0.2.5-windows-x86_64-setup.exe)及同名 [SHA256 校验文件](https://github.com/NingCui29/story-skill/releases/download/windows-v0.2.5/story-workbench-0.2.5-windows-x86_64-setup.exe.sha256)。固定发行页为 [windows-v0.2.5](https://github.com/NingCui29/story-skill/releases/tag/windows-v0.2.5)。

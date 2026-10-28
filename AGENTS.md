@@ -10,3 +10,11 @@
 - Historical release receipts and external source links may name old or external
   technologies. They must not become current build inputs or dependencies.
 - See `docs/技术约束.md` for the policy and desktop validation boundaries.
+
+# Versioning
+
+- Follow `docs/版本管理.md` for version decisions and release preparation.
+- Keep host skill packages aligned with the core version; version Mac and Windows
+  clients independently, including changes to their bundled manuscript service.
+- Preserve published tags, artifacts, and historical receipts. Record development,
+  build, release, installation, and running-service states separately.

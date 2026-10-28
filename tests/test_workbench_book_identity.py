@@ -314,6 +314,130 @@ class WorkbenchBookIdentityTests(unittest.TestCase):
         self.assertFalse(server.test_thread.is_alive())
         self.assertEqual(files(), before)
 
+    @unittest.skipIf(os.name == 'nt', 'Windows keeps the original directory pinned against rename')
+    def test_detached_stop_holds_original_writer_lock_until_cancel_and_never_touches_replacement(self):
+        import fcntl
+        root = self.book('同名目录', 'long')
+        server = self.serve(self.w.editor_server(root))
+        record = json.loads((root / '.story/workbench-service.json').read_bytes())
+        moved = self.area / '原作品已移动'
+        root.rename(moved)
+        self.book('同名目录', 'short')
+        before = {p.relative_to(root).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns)
+                  for p in root.rglob('*') if p.is_file()}
+        payload = {'instance': record['instance'], 'saved': True}
+        status, prepared = self.editor_post(server, 'stop-prepare', payload)
+        self.assertEqual(status, 200, prepared)
+        self.assertTrue(prepared['fresh_stop']['ready'])
+        with (moved / '.story/operation.lock').open('r+b') as handle:
+            with self.assertRaises(BlockingIOError):
+                fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            status, cancelled = self.editor_post(server, 'stop-cancel', {
+                'instance': record['instance'], 'stop_challenge': prepared['stop_challenge']})
+            self.assertEqual(status, 200, cancelled)
+            self.assertTrue(cancelled['cancelled'])
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(handle, fcntl.LOCK_UN)
+        after = {p.relative_to(root).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns)
+                 for p in root.rglob('*') if p.is_file()}
+        self.assertEqual(after, before)
+
+    @unittest.skipIf(os.name == 'nt', 'Windows keeps the original directory pinned against rename')
+    def test_detached_stop_never_bypasses_unknown_host_executions(self):
+        for namespace in ('executions', 'execution-heads', 'execution-requests'):
+            with self.subTest(namespace=namespace):
+                root = self.book('作品-' + namespace, 'long')
+                server = self.serve(self.w.editor_server(root))
+                record = json.loads((root / '.story/workbench-service.json').read_bytes())
+                path = root / '.story/assistant-tasks' / namespace
+                path.mkdir(parents=True)
+                root.rename(self.area / ('原作品-' + namespace))
+                self.book(root.name, 'short')
+                before = self.state_bytes([root])
+                status, stopped = self.editor_post(server, 'stop', {
+                    'instance': record['instance'], 'saved': True})
+                self.assertEqual(status, 409, stopped)
+                self.assertEqual(stopped['error'], 'workbench_task_busy')
+                self.assertTrue(stopped['details']['task_activity']['busy'])
+                self.assertFalse(server.stopping)
+                self.assertIsNone(server.presence._detached_stop_lock)
+                self.assertEqual(self.state_bytes([root]), before)
+
+    @unittest.skipIf(os.name == 'nt', 'Windows keeps the original directory pinned against rename')
+    def test_detached_stop_rejection_and_server_close_release_original_writer_lock(self):
+        import fcntl
+        root = self.book('同名目录', 'long')
+        server = self.serve(self.w.editor_server(root))
+        record = json.loads((root / '.story/workbench-service.json').read_bytes())
+        moved = self.area / '原作品已移动'
+        root.rename(moved)
+        self.book('同名目录', 'short')
+        status, rejected = self.editor_post(server, 'stop', {
+            'instance': record['instance'], 'saved': False})
+        self.assertEqual(status, 409, rejected)
+        self.assertEqual(rejected['error'], 'workbench_presence_saved_required')
+        self.assertIsNone(server.presence._detached_stop_lock)
+        with (moved / '.story/operation.lock').open('r+b') as handle:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(handle, fcntl.LOCK_UN)
+        status, prepared = self.editor_post(server, 'stop-prepare', {
+            'instance': record['instance'], 'saved': True})
+        self.assertEqual(status, 200, prepared)
+        server.shutdown()
+        server.test_thread.join(timeout=5)
+        self.assertFalse(server.test_thread.is_alive())
+        self.assertIsNone(server.presence._detached_stop_lock)
+        with (moved / '.story/operation.lock').open('r+b') as handle:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(handle, fcntl.LOCK_UN)
+
+    @unittest.skipIf(os.name == 'nt', 'Windows keeps the original directory pinned against rename')
+    def test_detached_stop_expiry_check_releases_original_writer_lock(self):
+        import fcntl
+        root = self.book('同名目录', 'long')
+        server = self.serve(self.w.editor_server(root))
+        record = json.loads((root / '.story/workbench-service.json').read_bytes())
+        moved = self.area / '原作品已移动'
+        root.rename(moved)
+        self.book('同名目录', 'short')
+        now = [100.0]
+        server.presence.clock = lambda: now[0]
+        status, prepared = self.editor_post(server, 'stop-prepare', {
+            'instance': record['instance'], 'saved': True})
+        self.assertEqual(status, 200, prepared)
+        now[0] += server.presence.stop_ttl + 1
+        status, session = self.editor_post(server, 'session', {'instance': record['instance']})
+        self.assertEqual(status, 200, session)
+        self.assertIsNone(session['presence']['fresh_stop'])
+        self.assertIsNone(server.presence._detached_stop_lock)
+        with (moved / '.story/operation.lock').open('r+b') as handle:
+            fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.flock(handle, fcntl.LOCK_UN)
+
+    @unittest.skipIf(os.name == 'nt', 'Windows keeps the original directory pinned against rename')
+    def test_detached_stop_restored_directory_does_not_acquire_writer_lock_twice(self):
+        root = self.book('同名目录', 'long')
+        server = self.serve(self.w.editor_server(root))
+        record = json.loads((root / '.story/workbench-service.json').read_bytes())
+        moved, replacement = self.area / '原作品已移动', self.area / '替换作品另存'
+        root.rename(moved)
+        self.book('同名目录', 'short')
+        status, prepared = self.editor_post(server, 'stop-prepare', {
+            'instance': record['instance'], 'saved': True})
+        self.assertEqual(status, 200, prepared)
+        root.rename(replacement)
+        moved.rename(root)
+        before = {p.relative_to(replacement).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns)
+                  for p in replacement.rglob('*') if p.is_file()}
+        status, stopped = self.editor_post(server, 'stop', {
+            'instance': record['instance'], 'saved': True, 'stop_challenge': prepared['stop_challenge']})
+        self.assertEqual(status, 200, stopped)
+        server.test_thread.join(timeout=5)
+        self.assertFalse(server.test_thread.is_alive())
+        self.assertIsNone(server.presence._detached_stop_lock)
+        self.assertEqual({p.relative_to(replacement).as_posix(): (p.read_bytes(), p.stat().st_mtime_ns)
+                          for p in replacement.rglob('*') if p.is_file()}, before)
+
     def test_editor_startup_rejects_a_book_replaced_after_initial_snapshot(self):
         root = self.book('同名目录', 'long')
         library_roots = self.w._library_roots

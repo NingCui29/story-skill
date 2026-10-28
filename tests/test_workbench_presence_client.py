@@ -21,7 +21,7 @@ class CustomEvent{constructor(type,options){this.type=type;this.detail=options.d
 const add=(scope,type,callback)=>{if(!events[scope].has(type))events[scope].set(type,[]);events[scope].get(type).push(callback);};
 const window={addEventListener:(type,callback)=>add('window',type,callback),dispatchEvent:event=>announcements.push(event)};
 const document={hidden:false,addEventListener:(type,callback)=>add('document',type,callback)};
-const emit=(scope,type,event={})=>{for(const callback of events[scope].get(type)||[])callback(event);};
+const emit=(scope,type,event={})=>{event.type=type;for(const callback of events[scope].get(type)||[])callback(event);};
 const setInterval=(callback,delay)=>{timers.push({callback,delay});return timers.length;},clearInterval=()=>{};
 const dirty=d=>!!(d.editable&&d.value!==d.text),displayTitle=d=>d.title||d.id;
 const requests=[];let handler=async body=>({ok:true,json:async()=>({ok:true,accepted:true,summary:{sequence:body.sequence}})});
@@ -103,6 +103,51 @@ assert.equal(editorPresence.capture().buffers[0].needs_recovery,true);
 
     def test_static_page_without_server_configuration_does_not_claim_presence(self):
         self.js("editorPresence.ready();await settle();assert.equal(requests.length,0);assert.equal(timers.length,0);", config=False)
+
+    def test_fresh_challenge_freezes_controls_before_ack_and_keeps_copy_available(self):
+        self.js(r'''
+const text={tagName:'TEXTAREA',readOnly:false,disabled:false},button={tagName:'BUTTON',disabled:false},locked={tagName:'TEXTAREA',readOnly:true,disabled:false};
+const controls=[text,button,locked];document.querySelectorAll=()=>controls;
+const d=doc('candidate:1','候选');docs.set(d.id,d);
+const challenge={challenge_id:'fresh-challenge',nonce:'this-page-nonce',expires_in_ms:10000};
+handler=async()=>({ok:true,json:async()=>({ok:true,stop_challenge:challenge,summary:{}})});
+editorPresence.ready();await settle();assert.equal(editorPresence.isFrozen(),true);
+assert.equal(text.readOnly,true);assert.equal(button.disabled,true);
+assert.deepEqual(requests.at(-1).body.stop_ack,{challenge_id:'fresh-challenge',nonce:'this-page-nonce'});
+let prevented=0;emit('document','keydown',{key:'s',metaKey:true,preventDefault:()=>prevented++,stopImmediatePropagation:()=>{}});assert.equal(prevented,1);
+emit('document','keydown',{key:'c',metaKey:true,preventDefault:()=>prevented++,stopImmediatePropagation:()=>{}});assert.equal(prevented,1);
+const dynamic={tagName:'TEXTAREA',readOnly:false,disabled:false};controls.push(dynamic);
+await editorPresence.report(true);assert.equal(dynamic.readOnly,true);
+assert.equal(d.value,'PRIVATE ORIGINAL BODY');
+handler=async()=>({ok:true,json:async()=>({ok:true,stop_challenge:null,summary:{}})});
+await editorPresence.report(true);assert.equal(editorPresence.isFrozen(),false);
+assert.equal(text.readOnly,false);assert.equal(button.disabled,false);assert.equal(locked.readOnly,true);assert.equal(dynamic.readOnly,false);
+''')
+
+    def test_lost_transport_keeps_freeze_and_resynchronizes_before_resending_ack(self):
+        self.js(r'''
+const d=doc('candidate:1','候选');docs.set(d.id,d);
+const challenge={challenge_id:'fresh-challenge',nonce:'this-page-nonce'};
+handler=async()=>({ok:true,json:async()=>({ok:true,stop_challenge:challenge,summary:{}})});
+editorPresence.ready();await settle();assert.equal(editorPresence.isFrozen(),true);
+handler=async()=>{throw Error('offline');};await editorPresence.report(true);
+assert.equal(editorPresence.isFrozen(),true);assert.equal(announcements.at(-1).detail.state,'unknown');
+handler=async()=>({ok:true,json:async()=>({ok:true,stop_challenge:challenge,summary:{}})});
+await editorPresence.report(true);assert.equal(requests.at(-1).body.stop_ack,undefined);
+await editorPresence.report(true);assert.deepEqual(requests.at(-1).body.stop_ack,{challenge_id:'fresh-challenge',nonce:'this-page-nonce'});
+assert.equal(d.value,'PRIVATE ORIGINAL BODY');
+''')
+
+    def test_bfcache_resume_stays_frozen_until_server_confirms_current_state(self):
+        self.js(r'''
+const text={tagName:'TEXTAREA',readOnly:false,disabled:false};document.querySelectorAll=()=>[text];
+const d=doc('candidate:1','候选');docs.set(d.id,d);editorPresence.ready();await settle();
+emit('window','pagehide');await settle();handler=async()=>{throw Error('suspended transport');};
+emit('window','pageshow');await settle();assert.equal(editorPresence.isFrozen(),true);assert.equal(text.readOnly,true);
+handler=async()=>({ok:true,json:async()=>({ok:true,stop_challenge:null,summary:{}})});
+await editorPresence.report(true);assert.equal(editorPresence.isFrozen(),false);assert.equal(text.readOnly,false);
+assert.equal(d.value,'PRIVATE ORIGINAL BODY');
+''')
 
 
 if __name__ == '__main__':

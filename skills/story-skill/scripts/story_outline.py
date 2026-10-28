@@ -687,7 +687,8 @@ def _readable_plan_fields(plan):
                        ("tags", "标签"), ("entities", "相关实体引用")):
         if key in plan:
             field(label, "\n".join(plan[key]) if plan[key] else "无")
-    field("字数范围", f"{plan['length'][0]}—{plan['length'][1]}")
+    minimum, maximum = plan["length"]
+    field("字数范围", f"至少 {minimum} 字（无上限）" if maximum is None else f"{minimum}—{maximum}")
     field("计数口径", plan.get("count_method", "visible_nonspace_v1"))
     field("章名计数", "计入" if plan.get("count_title", False) else "不计入")
     if "length_exception" in plan:

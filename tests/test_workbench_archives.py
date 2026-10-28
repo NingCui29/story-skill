@@ -240,6 +240,8 @@ class WorkbenchArchivesTests(unittest.TestCase):
 
     def test_service_tokens_cache_and_external_link_are_excluded(self):
         self.write('.story/workbench-service.json', b'SECRET-LOOPBACK-TOKEN')
+        self.write('.story/workbench-stop-lease.json', b'SECRET-STOP-LEASE')
+        self.write('.story/.backups/old/workbench-stop-lease.json', b'SECRET-OLD-STOP-LEASE')
         self.write('.story/.workbench-backups/one/service.json', b'OLD-SECRET-TOKEN')
         self.write('.backups/old/service.json', b'OLD-SECRET-LIBRARY-TOKEN')
         self.write('.story/.backups/old/service.json', b'OLD-SECRET-SERVICE-TOKEN')
@@ -263,6 +265,7 @@ class WorkbenchArchivesTests(unittest.TestCase):
             self.assertFalse(any(b'SECRET-' in archive.read(name) for name in names))
             self.assertIn('book/.story/drafts/workbench/.backups/old/completed.json', names)
             self.assertFalse(any(name.endswith('server.lock') for name in names))
+            self.assertFalse(any(name.endswith('workbench-stop-lease.json') for name in names))
         self.assertIn({'path': '链接资料', 'reason': 'linked_material'}, packet['excluded'])
 
     def test_hardlinked_local_file_blocks_backup(self):

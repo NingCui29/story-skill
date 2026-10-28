@@ -19,8 +19,8 @@ class WorkbenchPlatformStopTests(unittest.TestCase):
         self.thread = threading.Thread(target=self.server.serve_forever, kwargs={'poll_interval': .01}, daemon=True)
         self.thread.start()
         self.addCleanup(self.close_server)
-        page = self.server.presence.register_page()
-        self.server.presence.report({**{key: page[key] for key in ('page_id', 'page_token')},
+        self.page = self.server.presence.register_page()
+        self.server.presence.report({**{key: self.page[key] for key in ('page_id', 'page_token')},
                                      'sequence': 1, 'initialized': True, 'buffers': []})
 
     def close_server(self):
@@ -32,6 +32,52 @@ class WorkbenchPlatformStopTests(unittest.TestCase):
 
     def status(self):
         return self.w._service_request(self.fixture.root)
+
+    def stop_with_fresh_ack(self):
+        """Keep the synthetic clean page responsive to this stop's challenge."""
+        route = urlsplit(self.server.editor_url).path
+        done, errors = threading.Event(), []
+
+        def heartbeat():
+            sequence, challenge = 1, None
+            try:
+                while not done.wait(.03):
+                    sequence += 1
+                    payload = {key: self.page[key] for key in ('page_id', 'page_token')}
+                    payload.update(sequence=sequence, initialized=True, buffers=[])
+                    if challenge is not None:
+                        payload['stop_ack'] = {key: challenge[key] for key in ('challenge_id', 'nonce')}
+                    connection = http.client.HTTPConnection('127.0.0.1', self.server.server_port, timeout=1)
+                    try:
+                        connection.request('POST', route + 'api/presence', json.dumps(payload),
+                            {'Content-Type': 'application/json',
+                             'Origin': f'http://127.0.0.1:{self.server.server_port}',
+                             'X-Story-Token': route.strip('/')})
+                        response = connection.getresponse()
+                        result = json.loads(response.read())
+                        if response.status == 409 and result.get('error') == 'workbench_presence_stopping':
+                            return
+                        if response.status != 200:
+                            errors.append(result)
+                            return
+                        challenge = result.get('stop_challenge')
+                    finally:
+                        connection.close()
+            except OSError:
+                if not done.is_set() and not self.server.stopping:
+                    errors.append('Page transport ended before stop completed')
+
+        reporter = threading.Thread(target=heartbeat, daemon=True)
+        reporter.start()
+        try:
+            result = self.w._service_request(self.fixture.root, 'stop', True, _fresh_timeout=3)
+            self.assertTrue(result['fresh_verified'])
+            return result
+        finally:
+            done.set()
+            reporter.join(3)
+            self.assertFalse(reporter.is_alive())
+            self.assertEqual(errors, [])
 
     def test_running_job_blocks_stop_even_with_clean_pages_and_saved_confirmation(self):
         self.fixture.release.clear()
@@ -55,7 +101,7 @@ class WorkbenchPlatformStopTests(unittest.TestCase):
         self.fixture.release.set()
         self.fixture.wait_job(job['id'])
         self.assertFalse(self.status()['platform_activity']['busy'])
-        self.assertTrue(self.w._service_request(self.fixture.root, 'stop', True)['stop_requested'])
+        self.assertTrue(self.stop_with_fresh_ack()['stop_requested'])
         self.thread.join(2)
         self.assertFalse(self.thread.is_alive())
 
@@ -79,11 +125,11 @@ class WorkbenchPlatformStopTests(unittest.TestCase):
         result = self.fixture.wait_job(job['id'])
         self.assertEqual(result['state'], 'unknown')
         self.assertFalse(self.status()['platform_activity']['busy'])
-        self.assertTrue(self.w._service_request(self.fixture.root, 'stop', True)['stop_requested'])
+        self.assertTrue(self.stop_with_fresh_ack()['stop_requested'])
 
     def test_after_stop_authorization_new_start_is_rejected_before_creating_a_job(self):
         with patch.object(self.server, 'shutdown', return_value=None):
-            self.assertTrue(self.w._service_request(self.fixture.root, 'stop', True)['stop_requested'])
+            self.assertTrue(self.stop_with_fresh_ack()['stop_requested'])
             route = urlsplit(self.server.editor_url).path
             connection = http.client.HTTPConnection('127.0.0.1', self.server.server_port, timeout=3)
             try:

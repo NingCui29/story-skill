@@ -141,7 +141,14 @@ let active='formal:1';
         asset = (Path(__file__).resolve().parents[1] / 'desktop/macos/editor-appearance.js').read_text()
         css = asset.split('style.textContent = `\n', 1)[1].split('\n`;', 1)[0]
         self.assertIn(css, self.page)
-        self.assertIn('<body class="native-compact-editor" data-workbench-ui="material-v1">', self.page)
+        self.assertIn('<body class="native-compact-editor" data-workbench-ui="material-v2">', self.page)
+
+    def test_shared_components_follow_all_editor_and_shelf_local_styles(self):
+        component = self.w._workbench_component_css().strip()
+        for page in (self.page, self.w._library_page('fixture').decode()):
+            styles = re.findall(r'<style(?:\s[^>]*)?>(.*?)</style>', page, re.S)
+            self.assertTrue(styles[-1].strip().endswith(component))
+            self.assertEqual(sum(component in style for style in styles), 1)
 
     def test_primary_action_and_small_text_have_readable_sky_blue_palettes(self):
         def luminance(color):

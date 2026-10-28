@@ -202,7 +202,33 @@ python3 -B scripts/execution_metrics.py \
 
 报告列出原生工具事件、明确失败及未完成记录；重试数保留 `null`，不从错误或重复命令推断。它不判断读取全文、文学质量、计费或节省比例，也不认证日志来源。退出码0表示解析完成，仍须查看 `status`、字段覆盖与 `issues`；格式损坏或不支持返回1，文件或调用错误返回2。完整任务用量及成本比较仍需相同条件和覆盖完整的供应商记录。
 
+需要按准备、起草、审稿与提交阶段核对真实读取时，可用 [活动映射](activity-mapping.md) 和 [execution_activity.py](../../scripts/execution_activity.py)。阶段由开发者明确标注；只有成功原生返回、输出摘录、字面读路径和来源哈希同时对应，才计入选定摘录。它还关联已捕获的原生分派与子日志会话身份，不据此认证独立审稿、完整子任务覆盖或总用量。
+
 ## 扩充案例
+
+正常章幅的两套技能比较可用 [paired_sequence.py](paired_sequence.py) 冻结同一原创输入及两套技能目录。它接受不同的写作入口，复用现有文件快照、原生轨迹与用量检查；每臂一次序列、2—6个阶段，每章按预登记的2000—6000字区间检查，不将旧六章短事务样本换名作正常长篇证据。原始任务、正文和评阅仍存仓库外或 `.local-writing-samples/`。
+
+```bash
+python3 -B benchmarks/skill-execution/paired_sequence.py prepare \
+  --protocol "<protocol.json>" \
+  --baseline-skills "<baseline-skills>" --baseline-entry "<writing-entry>/SKILL.md" \
+  --candidate-skills skills --candidate-entry story-skill-write/SKILL.md \
+  --output "<new-run-directory>"
+python3 -B benchmarks/skill-execution/paired_sequence.py inspect \
+  --run "<run>" --arm candidate --number 1
+python3 -B benchmarks/skill-execution/paired_sequence.py complete \
+  --run "<run>" --arm candidate --number 1
+python3 -B benchmarks/skill-execution/paired_sequence.py phase \
+  --run "<run>" --arm candidate --number 2
+```
+
+协议含 `schema: 1`、`id`、原创合成开发材料的 `provenance`、与两臂改稿试验相同的 `configuration`、不可改写的文本 `fixtures`，以及 `phases`。每个阶段指定 `prompt`、唯一新正文 `output`、`length: {min, max, count_method: "visible_nonspace_v2", count_title: false}` 和不交给写手的 `review_required`。输入、前章和技能均受快照保护，后续任务不能覆盖前稿。源树复制前后或冻结内容发生变化时拒绝继续；该检查仍不是并发锁。
+
+准备器不启动模型。实际执行由授权的宿主另行完成，将原始 `launch.json`、`process-result.json`（整数 `exit_code` 与布尔 `timed_out`）、`trace.jsonl`、`stderr.log` 和 `final.txt` 存在对应 `phase-N` 目录。每阶段结束、下一阶段开始前执行 `inspect` 只读检查，或用 `complete` 独占保存报告与原稿副本；最后一阶段也应归档。下一阶段准备时会在写手工作区外保留前章原稿，既有副本不一致则拒绝覆盖。检查针对当时的工作区，推进后历史报告保留其原有时间与覆盖范围。下一阶段仅在前阶段轨迹、产物和已记录启动条件完整时生成；篇幅偏差照实保留，可带着原章继续观察，不自动重抽或把偏差改成通过。程序通过仍是 `needs_content_review`。
+
+同一份预登记任务交给两臂，各阶段另开会话；记录实际模型设置、超时和失败。匿名评阅只提供输入与未修改正文，不提供技能名、版本映射、生成自评和既有反馈；允许持平、两稿均不想继续或无法判断。候选正文比较不验证正式采用、宿主自动发现和平台发布，也不替代真人试读。实际试验结果、已知反馈后的修复与新样本复验分别报告。
+
+`inspect`／`complete` 退出码0只表示当前阶段证据及篇幅检查通过、等待内容评阅；未完成或篇幅不符返回1，配置、路径或冻结完整性错误返回2。进程回执若自带任务或阶段绑定字段，显式矛盾会阻止继续；旧简式回执缺少绑定时保持未认证，不通过后补声明追认来源。
 
 优先将实际失误变成可重现的案例，例如审查后更改稿件、导出外改冲突、只得到封面提示词或图片生成失败。先固定预期行为和独立可观察结果，再运行；缺少相应工具或原文时保留未完成范围。没有运行过的案例不列为通过。新用例参与修复后不再当独立留出；单次模型试跑不代表稳定成功率或文学质量提升。
 

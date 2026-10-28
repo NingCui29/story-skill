@@ -19,7 +19,7 @@ TOOL = ROOT / "skills/story-skill/scripts/story.py"
 OUTPUT = ROOT / "benchmarks/results/v0.5.0/long-acceptance.json"
 SHORT_SCENE_LENGTH_EXCEPTION = {
     "source": "user_request",
-    "quote": "本次仅验收十一段短景的真实 CLI 流程，短景按 40—800 或 80—800 字计划保存，不要求达到完整章节 2400—2800 字。",
+    "quote": "本次仅验收十一段短景的真实 CLI 流程，短景按 40—800 或 80—800 字计划保存，不要求达到完整章节至少2000字的下限。",
 }
 
 SCENES = {

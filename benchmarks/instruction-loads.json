@@ -731,6 +731,25 @@
       "id": "project_title_change",
       "path": "skills/story-skill/references/project-state.md",
       "section": "已采用书名变更"
+    },
+    {
+      "id": "reader_records",
+      "path": "skills/story-skill-research/references/reader-records.md"
+    },
+    {
+      "id": "workbench_tasks",
+      "path": "skills/story-skill/references/workbench.md",
+      "section": "助手任务与结果"
+    },
+    {
+      "id": "workbench_stop_fresh",
+      "path": "skills/story-skill/references/workbench.md",
+      "section": "本次停机的逐页确认"
+    },
+    {
+      "id": "workbench_host_execution",
+      "path": "skills/story-skill/references/workbench.md",
+      "section": "本机助手的受控执行"
     }
   ],
   "scenarios": [
@@ -1852,18 +1871,18 @@
             }
           ],
           "limits": {
-            "nonspace_chars": 88000,
-            "utf8_bytes": 245000
+            "nonspace_chars": 102000,
+            "utf8_bytes": 283000
           },
-          "limit_basis": "Retains the original short_write source baseline and unchanged limits as a conservative ceiling; the new entry-specific scenarios are not claimed as separately measured pre-change baselines. Re-audit changed reading obligations; do not raise limits merely to silence a failure.",
+          "limit_basis": "Retains the original short_write source baseline and unchanged limits as a conservative ceiling; the new entry-specific scenarios are not claimed as separately measured pre-change baselines. Re-audit changed reading obligations; do not raise limits merely to silence a failure. 2026-10-27: optional payoff comparison now includes three additional concrete cases; the complete registered branch union was remeasured and its ceiling set to that measurement plus 15%, rounded to 1,000. Previous branch ceiling {'nonspace_chars': 88000, 'utf8_bytes': 245000}. Base ceiling unchanged; this is an increased optional reading scope, not a saving.",
           "baseline": {
             "base": {
               "nonspace_chars": 56916,
               "utf8_bytes": 157203
             },
             "registered_maximum": {
-              "nonspace_chars": 76008,
-              "utf8_bytes": 212727
+              "nonspace_chars": 88286,
+              "utf8_bytes": 245915
             }
           },
           "base_limits": {
@@ -2700,18 +2719,18 @@
             }
           ],
           "limits": {
-            "nonspace_chars": 45000,
-            "utf8_bytes": 124000
+            "nonspace_chars": 52000,
+            "utf8_bytes": 144000
           },
-          "limit_basis": "2026-10-17 source baseline plus 15%, rounded up to 1,000 units. Base is gated separately; branch-union ceiling only bounds registered additive branches. Re-audit changed reading obligations; do not raise limits merely to silence a failure.",
+          "limit_basis": "2026-10-17 source baseline plus 15%, rounded up to 1,000 units. Base is gated separately; branch-union ceiling only bounds registered additive branches. Re-audit changed reading obligations; do not raise limits merely to silence a failure. 2026-10-27: optional payoff comparison now includes three additional concrete cases; the complete registered branch union was remeasured and its ceiling set to that measurement plus 15%, rounded to 1,000. Previous branch ceiling {'nonspace_chars': 45000, 'utf8_bytes': 124000}. Base ceiling unchanged; this is an increased optional reading scope, not a saving.",
           "baseline": {
             "base": {
               "nonspace_chars": 19347,
               "utf8_bytes": 52638
             },
             "registered_maximum": {
-              "nonspace_chars": 38339,
-              "utf8_bytes": 107717
+              "nonspace_chars": 44520,
+              "utf8_bytes": 125072
             }
           },
           "base_limits": {
@@ -3569,6 +3588,156 @@
             }
           },
           "limit_basis": "2026-10-23 new adopted-title workflow baseline plus 15%, rounded up to 1,000 units; existing scenario limits unchanged. Cover rules are conditional on affected companion material."
+        }
+      ]
+    },
+    {
+      "id": "reader_records",
+      "task": "保存、核对或比较分次阅读记录",
+      "assumptions": "用户已要求本地研究记录；不联络读者、运行模型、安排后续或修改小说正文。",
+      "calls": [
+        {
+          "id": "researcher",
+          "role": "保存、核对或比较分次阅读记录",
+          "preload": [
+            "research_entry"
+          ],
+          "required": [
+            "common",
+            "tools",
+            "reader_validation_intro",
+            "reader_retention",
+            "reader_records",
+            "reader_validation_outcome"
+          ],
+          "base_limits": {
+            "nonspace_chars": 11000,
+            "utf8_bytes": 27000
+          },
+          "limits": {
+            "nonspace_chars": 11000,
+            "utf8_bytes": 27000
+          },
+          "baseline": {
+            "base": {
+              "nonspace_chars": 9277,
+              "utf8_bytes": 22713
+            },
+            "registered_maximum": {
+              "nonspace_chars": 9277,
+              "utf8_bytes": 22713
+            }
+          },
+          "limit_basis": "2026-10-27 newly registered optional record/return workflow; measured source plus 15%, rounded to 1,000. Existing scenario ceilings are unchanged. No fiction execution or complete runtime usage is implied."
+        }
+      ]
+    },
+    {
+      "id": "workbench_task_return",
+      "task": "回填和核对已生成的工作台助手任务",
+      "assumptions": "已有明确任务与结果；这里只覆盖回填、版本与证据核对，正文创作或改稿另按相应入口读取，不视为正式采用。",
+      "calls": [
+        {
+          "id": "task_reviewer",
+          "role": "回填和核对已生成的工作台助手任务",
+          "preload": [],
+          "required": [
+            "common",
+            "tools",
+            "workbench_tasks"
+          ],
+          "base_limits": {
+            "nonspace_chars": 5000,
+            "utf8_bytes": 13000
+          },
+          "limits": {
+            "nonspace_chars": 5000,
+            "utf8_bytes": 13000
+          },
+          "baseline": {
+            "base": {
+              "nonspace_chars": 4066,
+              "utf8_bytes": 10989
+            },
+            "registered_maximum": {
+              "nonspace_chars": 4066,
+              "utf8_bytes": 10989
+            }
+          },
+          "limit_basis": "2026-10-27 newly registered optional record/return workflow; measured source plus 15%, rounded to 1,000. Existing scenario ceilings are unchanged. No fiction execution or complete runtime usage is implied."
+        }
+      ]
+    },
+    {
+      "id": "workbench_stop_fresh",
+      "task": "明确要求停止或更新已登记作品服务",
+      "assumptions": "仅本次明确要求的服务控制或任务执行；不自动更新实际安装、采用正文、操作平台或扩大到未知服务。",
+      "calls": [
+        {
+          "id": "operator",
+          "role": "明确要求停止或更新已登记作品服务",
+          "preload": [],
+          "required": [
+            "common",
+            "tools",
+            "workbench_stop_fresh"
+          ],
+          "base_limits": {
+            "nonspace_chars": 5000,
+            "utf8_bytes": 12000
+          },
+          "limits": {
+            "nonspace_chars": 5000,
+            "utf8_bytes": 12000
+          },
+          "baseline": {
+            "base": {
+              "nonspace_chars": 3827,
+              "utf8_bytes": 10266
+            },
+            "registered_maximum": {
+              "nonspace_chars": 3827,
+              "utf8_bytes": 10266
+            }
+          },
+          "limit_basis": "2026-10-27 explicit fresh-stop and managed-host operations; measured source plus 15%, rounded to 1,000. Ordinary creation and existing scenario ceilings are unchanged. No platform execution or total-token claim."
+        }
+      ]
+    },
+    {
+      "id": "workbench_host_execution",
+      "task": "显式派发和核对本机助手任务",
+      "assumptions": "仅本次明确要求的服务控制或任务执行；不自动更新实际安装、采用正文、操作平台或扩大到未知服务。",
+      "calls": [
+        {
+          "id": "operator",
+          "role": "显式派发和核对本机助手任务",
+          "preload": [],
+          "required": [
+            "common",
+            "tools",
+            "workbench_tasks",
+            "workbench_host_execution"
+          ],
+          "base_limits": {
+            "nonspace_chars": 6000,
+            "utf8_bytes": 16000
+          },
+          "limits": {
+            "nonspace_chars": 6000,
+            "utf8_bytes": 16000
+          },
+          "baseline": {
+            "base": {
+              "nonspace_chars": 5098,
+              "utf8_bytes": 13257
+            },
+            "registered_maximum": {
+              "nonspace_chars": 5098,
+              "utf8_bytes": 13257
+            }
+          },
+          "limit_basis": "2026-10-27 explicit fresh-stop and managed-host operations; measured source plus 15%, rounded to 1,000. Ordinary creation and existing scenario ceilings are unchanged. No platform execution or total-token claim."
         }
       ]
     }

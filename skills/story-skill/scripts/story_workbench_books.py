@@ -297,6 +297,54 @@ class BookManager:
             self.api._verify_bound_directory(directory)
             return '%s:%s' % (info.st_dev, info.st_ino)
 
+    def _registration_preview(self, state_dir, entries, expected_hash, key):
+        self._current_registry(state_dir, expected_hash)
+        registered = self._entry(entries, key)
+        current = self.w._library_entry(registered['root'])
+        if current['book_id'] == registered['book_id']:
+            self.api.fail('workbench_registration_unchanged', '登记身份与当前书库一致，无需重新绑定。')
+        if any(row['book_id'] == current['book_id'] for other, row in entries.items() if other != key):
+            self.api.fail('workbench_registration_duplicate', '当前书库身份已登记在其他位置，请先核对两处目录。')
+        confirmation = {
+            'key': key, 'root': current['root'], 'registry_sha256': expected_hash,
+            'old_book_id': registered['book_id'], 'book_id': current['book_id'],
+            'title': current['title'], 'kind': current['kind'],
+            'directory_id': self._identity(Path(current['root'])),
+            'progress': current['progress'],
+        }
+        return {'ok': True, 'registered': {k: registered[k] for k in ('title', 'book_id', 'kind', 'root')},
+                'current': current, 'confirmation': confirmation, 'book_files_changed': False}
+
+    def registration_preview(self, state_dir, entries, expected_hash, key):
+        root = Path(self._entry(entries, key)['root'])
+        with lifecycle_guard(self.api, root):
+            return self._registration_preview(state_dir, entries, expected_hash, key)
+
+    def repair_registration(self, state_dir, entries, expected_hash, key, confirmation,
+                            title, confirmed=False):
+        root = Path(self._entry(entries, key)['root'])
+        with lifecycle_guard(self.api, root):
+            preview = self._registration_preview(state_dir, entries, expected_hash, key)
+            if (confirmed is not True or not isinstance(confirmation, dict)
+                    or confirmation != preview['confirmation'] or title != preview['current']['title']):
+                self.api.fail('workbench_registration_confirmation', '请重新核对登记与现有书库，并输入现有完整书名确认。')
+            current = preview['current']
+            # Do not carry a status belonging to the old identity into a newly
+            # confirmed book. Actual book IDs, manuscript files and resume data
+            # remain unchanged. Ordinary open/relink guards stay strict.
+            updated = {**entries, key: current}
+            self.w._library_entry(root, current)
+            new_hash = self.w._library_store(state_dir, updated, expected_hash)
+            result = {'ok': True, 'action': 'repair-registration', 'registered': True,
+                      'root': current['root'], 'book_id': current['book_id'],
+                      'old_book_id': entries[key]['book_id'], 'book_files_changed': False}
+            try:
+                result['receipt_id'] = self._receipt(state_dir, {
+                    'action': 'repair-registration', 'previous_entry': entries[key], 'entry': current})
+            except (OSError, self.api.StoryError) as error:
+                result['warning'] = '登记已更新；原登记的备份已保留，操作回执未写入：' + str(error)
+            return updated, new_hash, result
+
     def create(self, state_dir, entries, expected_hash, path, title, kind):
         title = self.api.text_field(title, 'title', 200)
         if kind not in ('long', 'short', 'analysis') or not isinstance(path, str) or not path.strip() or len(path) > 4096:

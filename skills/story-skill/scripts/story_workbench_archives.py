@@ -68,10 +68,10 @@ def _excluded(relative):
         return True
     if any(part in ('.git', '__pycache__', '.DS_Store') for part in parts):
         return True
-    if relative in ('service.json', 'server.lock', '.story/workbench-server.lock'):
+    if relative in ('service.json', 'server.lock', '.story/workbench-server.lock', '.story/workbench-stop-lease.json'):
         return True
     if parts[-1] in ('service.json', 'workbench-service.json', 'library-service.json',
-                     'workbench-server.lock', 'server.lock') and '.backups' in parts:
+                     'workbench-server.lock', 'server.lock', 'workbench-stop-lease.json') and '.backups' in parts:
         return True
     if any(relative in (database + '-wal', database + '-shm', database + '-journal') for database in DATABASES):
         return True

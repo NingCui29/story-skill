@@ -2,6 +2,7 @@
 import hashlib
 import json
 import re
+import threading
 import unittest
 from unittest.mock import patch
 from urllib.parse import urlsplit
@@ -37,11 +38,14 @@ class WorkbenchPresenceHTTPTests(unittest.TestCase):
         self.assertIsNotNone(match)
         return json.loads(match[1])
 
-    def report(self, page, sequence=0, closing=False, **flags):
-        return self.post('presence', {'page_id': page['page_id'], 'page_token': page['page_token'],
-                                     'sequence': sequence, 'initialized': True, 'closing': closing,
-                                     'buffers': [{'id': 'file:候选.md', 'title': '合成候选',
-                                                  **dict.fromkeys(self.server.presence.FLAGS, False), **flags}]})
+    def report(self, page, sequence=0, closing=False, stop_ack=None, **flags):
+        payload = {'page_id': page['page_id'], 'page_token': page['page_token'],
+                   'sequence': sequence, 'initialized': True, 'closing': closing,
+                   'buffers': [{'id': 'file:候选.md', 'title': '合成候选',
+                                **dict.fromkeys(self.server.presence.FLAGS, False), **flags}]}
+        if stop_ack is not None:
+            payload['stop_ack'] = {key: stop_ack[key] for key in ('challenge_id', 'nonce')}
+        return self.post('presence', payload)
 
     def session(self):
         return self.w._service_request(self.root, expected_book_id=self.entry['book_id'])
@@ -133,6 +137,70 @@ class WorkbenchPresenceHTTPTests(unittest.TestCase):
                                            {**target, 'saved': True, 'unknown_confirmation': consent['unknown_confirmation']})
         self.assertEqual(status, 200, stopped); self.assertTrue(stopped['stop_requested'])
         self.assertFalse(stopped['automatic_verified'])
+
+    def test_http_prepare_freezes_writes_until_each_page_has_its_own_fresh_ack(self):
+        first, second = self.page(), self.page()
+        self.report(first); self.report(second)
+        status, prepared = self.post('stop-prepare', {'instance': self.identity['instance'], 'saved': True})
+        self.assertEqual(status, 200, prepared)
+        self.assertFalse(prepared['fresh_stop']['ready'])
+        token = prepared['stop_challenge']
+        status, blocked = self.post('save', {'chapter': 1, 'text': '不得写入的正文'})
+        self.assertEqual(status, 409, blocked)
+        self.assertEqual(blocked['error'], 'workbench_presence_preparing')
+        ack_first = self.report(first, 1)[1]['stop_challenge']
+        ack_second = self.report(second, 1)[1]['stop_challenge']
+        self.assertNotEqual(ack_first['nonce'], ack_second['nonce'])
+        status, denied = self.report(first, 2, stop_ack=ack_second)
+        self.assertEqual(status, 409, denied)
+        self.assertEqual(denied['error'], 'workbench_presence_fresh_ack_invalid')
+        self.report(first, 2, stop_ack=ack_first)
+        status, waiting = self.post('stop-status', {'instance': self.identity['instance'], 'stop_challenge': token})
+        self.assertEqual(status, 200, waiting)
+        self.assertFalse(waiting['fresh_stop']['ready'])
+        self.report(second, 2, stop_ack=ack_second)
+        self.assertTrue(self.server.presence.stop_status(token)['fresh_stop']['ready'])
+        observed = json.dumps(self.session(), ensure_ascii=False)
+        self.assertNotIn(ack_first['nonce'], observed)
+        self.assertNotIn(first['page_token'], observed)
+        status, cancelled = self.post('stop-cancel', {'instance': self.identity['instance'], 'stop_challenge': token})
+        self.assertEqual(status, 200, cancelled)
+        self.assertTrue(cancelled['cancelled'])
+        self.assertFalse((self.root / '.story/workbench-stop-lease.json').exists())
+
+    def test_service_stop_round_trip_releases_http_between_nonce_and_ack(self):
+        page = self.page(); self.report(page)
+        done, errors = threading.Event(), []
+
+        def heartbeat():
+            sequence, challenge = 0, None
+            try:
+                while not done.wait(0.03):
+                    sequence += 1
+                    status, response = self.report(page, sequence, stop_ack=challenge)
+                    if status == 409 and response.get('error') == 'workbench_presence_stopping':
+                        return
+                    if status != 200:
+                        errors.append(response)
+                        return
+                    challenge = response.get('stop_challenge')
+            except OSError:
+                # Once the successful stop closes the listener, a final
+                # already-scheduled read-only report may lose its transport.
+                if not done.is_set() and not self.server.stopping:
+                    errors.append('Heartbeat transport ended before stop completed')
+
+        thread = threading.Thread(target=heartbeat, daemon=True)
+        thread.start()
+        try:
+            result = self.w._service_request(self.root, 'stop', True, _fresh_timeout=3)
+            self.assertTrue(result['stop_requested'])
+            self.assertTrue(result['fresh_verified'])
+            self.assertTrue(result['automatic_verified'])
+        finally:
+            done.set(); thread.join(3)
+        self.assertFalse(thread.is_alive())
+        self.assertEqual(errors, [])
 
     def test_resume_http_routes_use_the_current_service_book_and_never_persist_body_or_tokens(self):
         source = self.root / '创作约定.md'; source.write_text('中文😀原文。', encoding='utf-8')

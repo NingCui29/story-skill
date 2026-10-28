@@ -27,14 +27,14 @@ class ChineseCountTests(unittest.TestCase):
             "letters_numbers_v1": 2, "han_v1": 2})
         self.assertEqual(story.manuscript_counts(text, True)["visible_nonspace_v2"], 9)
         self.assertEqual(story.visible_count("甲\ufe0f乙"), 3)  # Frozen v1 publishing manifests.
-        forged = "第1章 雨夜\n" + "雨" * 2399 + "\ufe0f"
+        forged = "第1章 雨夜\n" + "雨" * 1999 + "\ufe0f"
         result = story.lint_text(forged, story.TEMPLATES["plan"])
         self.assertFalse(result["ok"])
-        self.assertEqual(result["length_count"], 2399)
+        self.assertEqual(result["length_count"], 1999)
         self.assertIn("length", {item["code"] for item in result["errors"]})
         legacy = story.lint_text(forged, {**story.TEMPLATES["plan"],
                                           "count_method": "visible_nonspace_v1"})
-        self.assertEqual(legacy["length_count"], 2400)
+        self.assertEqual(legacy["length_count"], 2000)
         self.assertIn("invisible_padding", {item["code"] for item in legacy["errors"]})
 
     def test_named_blank_glyphs_do_not_pad_v2_or_legacy_chapter_minimum(self):
@@ -42,16 +42,16 @@ class ChineseCountTests(unittest.TestCase):
         # non-Chinese text. Historical v1 counts must remain byte-compatible.
         for char in "\u115f\u1160\u2800\u3164\uffa0":
             with self.subTest(codepoint=f"U+{ord(char):04X}"):
-                text = "第1章 雨夜\n" + "雨" * 2399 + char
+                text = "第1章 雨夜\n" + "雨" * 1999 + char
                 counts = story.manuscript_counts(text)
-                self.assertEqual(counts["visible_nonspace_v1"], 2400)
-                self.assertEqual(counts["visible_nonspace_v2"], 2399)
+                self.assertEqual(counts["visible_nonspace_v1"], 2000)
+                self.assertEqual(counts["visible_nonspace_v2"], 1999)
                 checked = story.lint_text(text, story.TEMPLATES["plan"])
-                self.assertEqual(checked["length_count"], 2399)
+                self.assertEqual(checked["length_count"], 1999)
                 self.assertIn("length", {issue["code"] for issue in checked["errors"]})
                 legacy = story.lint_text(text, {**story.TEMPLATES["plan"],
                                                 "count_method": "visible_nonspace_v1"})
-                self.assertEqual(legacy["length_count"], 2400)
+                self.assertEqual(legacy["length_count"], 2000)
                 self.assertIn("invisible_padding", {issue["code"] for issue in legacy["errors"]})
         meaningful = "甲한가⠁🙂。"
         self.assertEqual(story.manuscript_counts(meaningful)["visible_nonspace_v2"], len(meaningful))
@@ -60,14 +60,14 @@ class ChineseCountTests(unittest.TestCase):
         self.assertEqual(story.manuscript_counts("\u115f\u1161")["visible_nonspace_v2"], 1)
 
     def test_legacy_letters_numbers_cannot_use_hangul_filler_to_pad_minimum(self):
-        text = "第1章 雨夜\n" + "雨" * 2399 + "\u3164"
+        text = "第1章 雨夜\n" + "雨" * 1999 + "\u3164"
         checked = story.lint_text(text, {**story.TEMPLATES["plan"],
                                          "count_method": "letters_numbers_v1"})
-        self.assertEqual(checked["length_count"], 2400)
+        self.assertEqual(checked["length_count"], 2000)
         self.assertIn("invisible_padding", {issue["code"] for issue in checked["errors"]})
 
     def test_only_unchanged_saved_v1_body_keeps_its_historical_minimum(self):
-        legacy = {**story.TEMPLATES["plan"], "title": "雨夜",
+        legacy = {**story.TEMPLATES["plan"], "title": "雨夜", "length": [2400, 2800],
                   "count_method": "visible_nonspace_v1"}
         for suffix in ("\ufe0f", "\u3164"):
             text = "第1章 雨夜\n" + "雨" * 2399 + suffix
@@ -109,11 +109,11 @@ class ChineseWorkflowTests(unittest.TestCase):
     assert_error = base.StoryTests.assert_error
 
     def test_blank_filler_padding_cannot_be_committed_as_new_default_chapter(self):
-        current = plan(length=[2400, 2800], count_method="visible_nonspace_v2")
+        current = plan(length=[2000, None], count_method="visible_nonspace_v2")
         current.pop("length_exception")
         self.book.save_plan(1, current, self.book.meta("revision"))
         quote = "沈禾把唯一的钥匙交给守门人。"
-        text = "第1章 门后的雨\n" + quote + "\u3164" * (2400 - len(quote))
+        text = "第1章 门后的雨\n" + quote + "\u3164" * (2000 - len(quote))
         self.draft.write_bytes(text.encode("utf-8"))
         before_revision = self.book.meta("revision")
         result = self.book.lint(1, self.draft)
@@ -127,12 +127,14 @@ class ChineseWorkflowTests(unittest.TestCase):
 
         # A legitimately excepted v1 plan retains its old published count,
         # but that count alone cannot authorize a padded new chapter.
+        legacy_text = "第1章 门后的雨\n" + quote + "\u3164" * (2400 - len(quote))
+        self.draft.write_bytes(legacy_text.encode("utf-8"))
         self.book.save_plan(1, plan(length=[2400, 2800], count_method="visible_nonspace_v1"),
                             self.book.meta("revision"))
         legacy_check = self.book.lint(1, self.draft)
         self.assertEqual(legacy_check["length_count"], 2400)
         self.assertIn("invisible_padding", {issue["code"] for issue in legacy_check["errors"]})
-        self.assert_error("lint_failed", self.book.commit, 1, self.draft, self.delta(text))
+        self.assert_error("lint_failed", self.book.commit, 1, self.draft, self.delta(legacy_text))
         self.assertEqual(self.book.meta("last_chapter"), 0)
 
     def test_prepare_is_read_only_and_cannot_be_mistaken_for_completed_review(self):

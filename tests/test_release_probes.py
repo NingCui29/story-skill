@@ -90,7 +90,7 @@ class ReleaseProbeTests(unittest.TestCase):
             book = story.Book(root)
             try:
                 plan = json.loads(book.db.execute("SELECT data FROM plans WHERE chapter=2").fetchone()[0])
-                self.assertEqual(plan["length"], [2400, 2800])
+                self.assertEqual(plan["length"], [2000, None])
             finally:
                 book.close()
 

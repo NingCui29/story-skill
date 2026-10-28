@@ -189,11 +189,21 @@ SUITE_FILES_V0626 = SUITE_FILES_V0625
 SKILL_NAMES_V0626 = SKILL_NAMES_V0625
 SUITE_FILES_V0627 = SUITE_FILES_V0626
 SKILL_NAMES_V0627 = SKILL_NAMES_V0626
+SUITE_FILES_V0628 = tuple(sorted((*SUITE_FILES_V0627,
+    "story-skill/scripts/story_tasks.py",
+    "story-skill/scripts/story_reader_feedback.py",
+    "story-skill-research/references/reader-records.md",
+)))
+SKILL_NAMES_V0628 = SKILL_NAMES_V0627
+SUITE_FILES_V0629 = tuple(sorted((*SUITE_FILES_V0628,
+    "story-skill/scripts/story_task_worker.py",
+)))
+SKILL_NAMES_V0629 = SKILL_NAMES_V0628
 
 # Compatibility aliases mean "current source candidate", not every future 0.6.x release.
-SKILL_NAMES = SKILL_NAMES_V0627
-SUITE_FILES = SUITE_FILES_V0627
-UNRELEASED_VERSIONS = frozenset({"0.6.13"})
+SKILL_NAMES = SKILL_NAMES_V0629
+SUITE_FILES = SUITE_FILES_V0629
+UNRELEASED_VERSIONS = frozenset({"0.6.13", "0.6.28", "0.6.29"})
 MAX_BYTES = 256 * 1024 * 1024
 # Reviewed full license texts, normalized only for BOM, line endings and trailing
 # whitespace. The package still preserves every original license byte.
@@ -247,6 +257,10 @@ def payload_files(version):
         return SUITE_FILES_V0626
     if version == "0.6.27":
         return SUITE_FILES_V0627
+    if version == "0.6.28":
+        return SUITE_FILES_V0628
+    if version == "0.6.29":
+        return SUITE_FILES_V0629
     if version == "0.6.21":
         return SUITE_FILES_V0621
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
@@ -296,6 +310,10 @@ def skill_names(version):
         return SKILL_NAMES_V0626
     if version == "0.6.27":
         return SKILL_NAMES_V0627
+    if version == "0.6.28":
+        return SKILL_NAMES_V0628
+    if version == "0.6.29":
+        return SKILL_NAMES_V0629
     if version == "0.6.21":
         return SKILL_NAMES_V0621
     raise ValueError(f"Release version has no reviewed payload layout: {version}")
@@ -440,7 +458,7 @@ def wrapper_files(version, payload=None):
         "complete `LICENSE`.\n"
     )
     # Published wrappers are byte-stable; changed host paths belong only to the new release.
-    workbuddy_directory = ".workbuddy-ai" if version in ("0.6.21", "0.6.22", "0.6.23", "0.6.24", "0.6.25", "0.6.26", "0.6.27") else ".workbuddy"
+    workbuddy_directory = ".workbuddy-ai" if version in ("0.6.21", "0.6.22", "0.6.23", "0.6.24", "0.6.25", "0.6.26", "0.6.27", "0.6.28", "0.6.29") else ".workbuddy"
     skill_installation = (
         "Copy all eight complete skill directories into your project's `.agents/skills/`, "
         "or follow the repository's managed installation instructions. "
@@ -459,7 +477,7 @@ def wrapper_files(version, payload=None):
         "connection additionally requires an installed Codex CLI, its configured Node REPL and "
         "official Chrome SDK, and the signed-in browser; this package does not install them. "
         "It never submits for review, publishes or schedules chapters.\n\n"
-        if version in ("0.6.21", "0.6.22", "0.6.23", "0.6.24", "0.6.25", "0.6.26", "0.6.27") else
+        if version in ("0.6.21", "0.6.22", "0.6.23", "0.6.24", "0.6.25", "0.6.26", "0.6.27", "0.6.28", "0.6.29") else
         "The publication skill prepares local snapshots and records only; it does not log in to "
         "author platforms, upload chapters or publish them remotely.\n\n"
     )

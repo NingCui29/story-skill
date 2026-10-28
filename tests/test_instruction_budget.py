@@ -276,7 +276,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
         core = {"common", "content_baseline", "content_judgments", "content_outcomes", "content_routing",
                 "characters", "support", "viewpoint", "words", "format"}
         for (scenario, call), row in self.base.items():
-            if scenario not in ("targeted_punctuation", "short_platform_design", "rank_research", "reader_feedback", "adopted_book_title") and call != "cover_designer":
+            if scenario not in ("targeted_punctuation", "short_platform_design", "rank_research", "reader_feedback", "reader_records", "workbench_task_return", "workbench_stop_fresh", "workbench_host_execution", "adopted_book_title") and call != "cover_designer":
                 self.assertTrue(core.issubset(row["source_ids"]), (scenario, call))
         long_sources = set(self.base[("long_chapter", "writer")]["source_ids"])
         self.assertTrue({"write_entry", "tools", "chapter_flow", "length", "outline_quality", "project_binding",
@@ -287,6 +287,13 @@ class RepositoryInstructionContractTests(unittest.TestCase):
         self.assertTrue({"author_note", "note_save"}.isdisjoint(short_sources))
         self.assertEqual(set(self.base[("short_write", "cover_designer")]["source_ids"]),
                          {"cover_entry", "common", "project_author", "cover_appeal"})
+
+    def test_optional_records_and_task_return_have_explicit_scoped_loads(self):
+        records = self.base[("reader_records", "researcher")]
+        self.assertTrue({"common", "tools", "reader_retention", "reader_records"} <= set(records["source_ids"]))
+        self.assertNotIn("reader_records", self.base[("reader_feedback", "researcher")]["source_ids"])
+        returned = self.base[("workbench_task_return", "task_reviewer")]
+        self.assertEqual(set(returned["source_ids"]), {"common", "tools", "workbench_tasks"})
 
     def test_fanqie_entry_routes_preserve_three_platforms_and_unknown_fallback(self):
         shared = {"fanqie_category_route", "qimao_categories", "qidian_categories", "project_platform_fields",
@@ -353,7 +360,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
                                 "reader_validation_outcome"})
         self.assertEqual(set(rows["branch:spaced_reading"]["source_ids"]) - base, {"reader_retention"})
         for key, row in self.base.items():
-            if key != ("reader_feedback", "researcher"):
+            if key not in (("reader_feedback", "researcher"), ("reader_records", "researcher")):
                 self.assertTrue({"reader_feedback", "reader_retention"}.isdisjoint(row["source_ids"]), key)
 
     def test_simple_text_path_avoids_content_and_formal_revision_loads(self):
@@ -379,7 +386,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
 
     def test_shared_style_decision_applies_to_body_roles_only(self):
         for (scenario, call), row in self.base.items():
-            applicable = scenario not in ("targeted_punctuation", "short_platform_design", "rank_research", "reader_feedback", "adopted_book_title") and call != "cover_designer"
+            applicable = scenario not in ("targeted_punctuation", "short_platform_design", "rank_research", "reader_feedback", "reader_records", "workbench_task_return", "workbench_stop_fresh", "workbench_host_execution", "adopted_book_title") and call != "cover_designer"
             self.assertEqual("style_resolution" in row["source_ids"], applicable, (scenario, call))
         node = next(item for item in self.config["nodes"] if item["id"] == "style_resolution")
         self.assertEqual((node["path"], node["section"]),
@@ -391,7 +398,7 @@ class RepositoryInstructionContractTests(unittest.TestCase):
         index = next(item for item in self.config["nodes"] if item["id"] == "genre_index")
         self.assertEqual((index["section"], index["scope"]), ("题材写法卡", "body"))
         for (scenario, call), base in self.base.items():
-            if scenario in ("targeted_punctuation", "short_platform_design", "rank_research", "reader_feedback", "adopted_book_title") or call == "cover_designer":
+            if scenario in ("targeted_punctuation", "short_platform_design", "rank_research", "reader_feedback", "reader_records", "workbench_task_return", "workbench_stop_fresh", "workbench_host_execution", "adopted_book_title") or call == "cover_designer":
                 self.assertNotIn("genre_index", base["source_ids"])
                 continue
             self.assertTrue(cards.isdisjoint(base["source_ids"]), (scenario, call))

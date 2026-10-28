@@ -65,7 +65,7 @@ class WorkbenchRuntimeRegressions(unittest.TestCase):
                     'story_outline.py', 'story_punctuation.py', 'story_workbench_books.py', 'story_workbench_archives.py',
                     'story_platform_drafts.py', 'story_platform_browser.py', 'story_platform_chrome_bridge.py',
                     'story_chrome_bridge.mjs', 'story_chrome_worker.py', 'story_chrome_worker.mjs',
-                    'story_rank.py', 'story_rank_sources.py', 'story_research.py'}
+                    'story_rank.py', 'story_rank_sources.py', 'story_research.py', 'story_tasks.py', 'story_task_worker.py', 'story_reader_feedback.py'}
         self.assertEqual({source.name for source in story.workbench._runtime_paths}, expected)
         initial = story.workbench._service_request(self.root)
         self.assertFalse(initial['outdated'])

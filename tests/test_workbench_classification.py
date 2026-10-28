@@ -210,6 +210,32 @@ class WorkbenchClassificationTests(unittest.TestCase):
         self.source('题材：都市\n' * (self.w.CLASSIFICATION_FIELD_LIMIT + 1))
         self.assertEqual(self.classify()['reason'], 'limit')
 
+    def large_material(self, ending):
+        padding = ('容量验证材料，不作为题材声明。' * 25 + '\n') * 250
+        text = padding + ending
+        self.assertGreater(len(text.encode('utf-8')), 256 * 1024)
+        return text
+
+    def test_current_metadata_larger_than_old_cap_is_read_completely(self):
+        self.source(self.large_material('题材：都市悬疑\n'))
+        before = self.file_state(self.root)
+        result = self.classify()
+        self.assertEqual((result['status'], result['tags']), ('recorded', ['都市悬疑']))
+        self.assertEqual(result['sources'][0]['line'], 251)
+        self.assertEqual(self.file_state(self.root), before)
+
+    def test_large_material_late_conflict_cannot_be_hidden_by_prefix_read(self):
+        self.source('题材：都市悬疑\n' + self.large_material('题材：修仙\n'))
+        result = self.classify()
+        self.assertEqual((result['status'], result['reason']), ('needs_review', 'conflict'))
+        self.assertEqual(result['tags'], [])
+
+    def test_large_material_late_unadopted_status_is_respected(self):
+        self.source('题材：都市悬疑\n' + self.large_material('状态：尚未采用的候选\n'))
+        result = self.classify()
+        self.assertEqual((result['status'], result['reason']), ('missing', 'unconfirmed'))
+        self.assertEqual(result['tags'], [])
+
     def test_mixed_local_core_and_current_declaration_conflict_is_reported(self):
         self.source('题材：都市悬疑\n')
         self.source('# 作品定位与平台分类\n核心类型：修仙\n', '01_大纲细纲/全书总纲.md')
@@ -256,7 +282,7 @@ class WorkbenchClassificationTests(unittest.TestCase):
         self.assertEqual(result['status'], 'recorded')
         self.assertEqual(reader.call_count, 3)
         self.assertEqual({call.args[1] for call in reader.call_args_list}, set(self.w.CLASSIFICATION_PATHS))
-        self.assertTrue(all(call.args[2] == 256 * 1024 for call in reader.call_args_list))
+        self.assertTrue(all(call.args[2] == 2 * 1024 * 1024 for call in reader.call_args_list))
 
     def test_code_blocks_indentation_and_quotes_are_not_live_declarations(self):
         self.source('```md\n题材：都市\n状态：草稿\n```\n'
@@ -336,7 +362,7 @@ class WorkbenchClassificationTests(unittest.TestCase):
 
     def test_invalid_utf8_and_oversized_source_require_review(self):
         path = self.source('题材：都市\n')
-        for raw in (b'\xff\xfe', b'x' * (256 * 1024 + 1)):
+        for raw in (b'\xff\xfe', b'x' * (2 * 1024 * 1024 + 1)):
             with self.subTest(size=len(raw)):
                 path.write_bytes(raw)
                 result = self.classify()

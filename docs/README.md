@@ -1,5 +1,7 @@
 # Story Skill 文档导航
 
+[版本号与更新规则](版本管理.md)：统一各端递增原则、版本来源、发布状态、内置运行时记录和正式附件不可覆盖要求；Mac／Windows 客户端继续独立编号。
+
 **当前正式版 v0.6.27 已发布。** 提供八技能／69文件、标准ZIP、Claude桌面单入口包、Codex本地插件、DeepSeek Harness本地插件包，以及Intel Mac 0.1.37／build38（内置0.6.25）；Windows C# x64 0.2.5（内置0.6.26）独立发行。DSH宿主、插件包及实际验收范围见[v0.6.27记录](releases/v0.6.27.md)，桌面客户端范围见[Mac记录](releases/v0.6.25.md)和[Windows记录](releases/windows-v0.2.5.md)。
 
 [v0.6.22](releases/v0.6.22.md)、[Windows 0.2.1](releases/windows-v0.2.1.md)与更早版本的附件和证据保持原样。历史通过结果不替代本版验收。

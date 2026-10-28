@@ -7,6 +7,11 @@
       url.username || url.password || url.search || !/^\/[A-Za-z0-9_-]{20,128}\/$/.test(url.pathname)) {
     return {applied: false, reason: 'outside-editor'};
   }
+  // Current pages own their complete component styles and presentation hooks.
+  // Do not append a second native stylesheet after the shared design system.
+  if (document.body?.getAttribute('data-workbench-ui') === 'material-v2') {
+    return {applied: true, legacy: false, shared: true};
+  }
   const modern = !!document.getElementById('book-info');
   if (document.getElementById('story-editor-appearance')) return {applied: true, legacy: !modern};
   const header = document.querySelector('body > header');
