@@ -81,6 +81,20 @@ class InstallationLifecycleTests(unittest.TestCase):
         self.assertTrue(self.app.exists())
         self.assertFalse(self.journal.exists())
 
+    def test_current_and_future_three_part_client_versions_remain_installable(self):
+        for version in ('0.3.0', '0.3.1', '1.0.0', '10.20.300'):
+            self.manifest['client_version'] = version
+            self.write_manifest()
+            with self.subTest(version=version):
+                self.assertTrue(lifecycle.verify_install(self.app, self.registration))
+        for version in ('0.3', 'v0.3.0', '0.3.0-rc1', '0.3.0.1', '0.3.0\n', '０.３.０', '1' * 129, None):
+            self.manifest['client_version'] = version
+            self.write_manifest()
+            with self.subTest(version=version), self.assertRaises(lifecycle.LifecycleError):
+                lifecycle.verify_install(self.app, self.registration)
+        self.assertTrue(self.app.exists())
+        self.assertFalse(self.journal.exists())
+
     def test_manifest_escape_and_linked_unknown_file_are_rejected(self):
         self.manifest['files']['../outside'] = 'a' * 64
         self.write_manifest()

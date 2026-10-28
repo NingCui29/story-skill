@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify Windows CI payloads and optionally upload four assets to one existing draft."""
+"""Verify offline/update Windows payloads and download plans before uploading one draft."""
 from __future__ import annotations
 
 import argparse
@@ -24,16 +24,18 @@ from build_desktop_windows import (PROJECT, UI_STACK, WEBVIEW_DOWNLOAD, WEBVIEW_
     NOTICE_PACKAGES, allowed_microsoft_url, client_source_hashes, project_configuration,
     verify_microsoft_signature, verify_self_contained_host)
 from check_forbidden_technologies import assert_clean_tree
+from package_update_manifest import describe as describe_download
 
 REPOSITORY = 'NingCui29/story-skill'
-STORY_VERSION = '0.6.26'
-CLIENT_VERSION = '0.2.5'
+CLIENT_VERSION = '0.3.0'
 TAG = 'windows-v' + CLIENT_VERSION
 REPO = Path(__file__).resolve().parents[1]
 SETUP = f'story-workbench-{CLIENT_VERSION}-windows-x86_64-setup.exe'
+UPDATE_SETUP = f'story-workbench-{CLIENT_VERSION}-windows-x86_64-update-setup.exe'
 PORTABLE = f'story-workbench-{CLIENT_VERSION}-windows-x86_64.zip'
 ORIGINAL_PORTABLE = 'story-workbench-windows-x86_64.zip'
-ASSET_NAMES = (SETUP, SETUP + '.sha256', PORTABLE, PORTABLE + '.sha256')
+ASSET_NAMES = tuple(name + suffix for name in (SETUP, UPDATE_SETUP, PORTABLE)
+                    for suffix in ('', '.sha256', '.download.json', '.download.json.sha256'))
 NATIVE_FLAGS = ('ok', 'native_window', 'shelf_rendered', 'captured', 'themes_verified',
                 'update_check_available', 'update_progress_verified', 'in_private',
                 'native_close_probe_verified', 'hidden_buffers_verified', 'ime_guard_verified',
@@ -73,6 +75,9 @@ def literal(source, name):
               t.id == name for t in node.targets)]
     require(len(values) == 1, 'Source version declaration is ambiguous')
     return ast.literal_eval(values[0])
+
+
+STORY_VERSION = literal((REPO / 'skills/story-skill/scripts/story.py').read_text(encoding='utf-8'), 'VERSION')
 
 
 def one(root, name):
@@ -121,8 +126,10 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
             == STORY_VERSION and configuration['client_version'] == CLIENT_VERSION,
             'Source versions do not match this release')
     setup = one(root, SETUP)
+    update_setup = one(root, UPDATE_SETUP)
     portable = one(root, ORIGINAL_PORTABLE)
     verify_sidecar(setup)
+    verify_sidecar(update_setup)
     verify_sidecar(portable)
     native = json.loads(one(root, 'windows-native-smoke.json').read_text(encoding='utf-8-sig'))
     safety = json.loads(one(root, 'windows-runtime-safety.json').read_text(encoding='utf-8-sig'))
@@ -136,7 +143,7 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
             previous.get('installed_version') == CLIENT_VERSION and previous.get('old_host_preserved') is True,
             'Previous Windows release upgrade was not verified')
     require(contracts.get('ok') is True and type(contracts.get('total')) is int and
-            contracts['total'] >= 39 and contracts.get('passed') == contracts['total'] and
+            contracts['total'] >= 48 and contracts.get('passed') == contracts['total'] and
             contracts.get('skipped') == 0 and contracts.get('failed') == [],
             'Native C# contract acceptance report is incomplete')
     require(all(native.get(key) is True for key in NATIVE_FLAGS) and
@@ -278,8 +285,32 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
     sidecar = versioned.with_name(versioned.name + '.sha256')
     require(not sidecar.is_symlink(), 'Versioned checksum path is linked')
     sidecar.write_text(checksum + '  ' + versioned.name + '\n', encoding='ascii')
-    assets = {name: setup if name == SETUP else setup.with_name(name) if name == SETUP + '.sha256'
-              else versioned if name == PORTABLE else sidecar for name in ASSET_NAMES}
+    update = json.loads(one(root, 'windows-update-install.json').read_text(encoding='utf-8-sig'))
+    require(update.get('ok') is True and update.get('scope') == 'isolated-installed-windows-update'
+            and update.get('client_version') == CLIENT_VERSION
+            and update.get('installer_sha256') == digest_file(update_setup)
+            and update.get('native_report', {}).get('client_version') == CLIENT_VERSION
+            and update.get('native_report', {}).get('ui_stack') == UI_STACK
+            and all(update.get(key) is True for key in ('offline_browser_absent', 'forbidden_technologies_absent', 'uninstall_verified'))
+            and all(update.get('native_report', {}).get(key) is True for key in NATIVE_FLAGS),
+            'Lean update installation/native acceptance is incomplete')
+    expected_update = dict(manifest)
+    expected_update['files'] = {name: value for name, value in files.items() if name != 'Prerequisites/' + WEBVIEW_INSTALLER}
+    expected_update['distribution'] = 'update-existing-webview2'
+    expected_update['webview2_runtime'] = {'kind': 'existing', 'architecture': 'x64', 'required': True}
+    encoded_update = (json.dumps(expected_update, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
+    require(update.get('installed_manifest_sha256') == hashlib.sha256(encoded_update).hexdigest()
+            and update.get('manifest_files_verified') == len(expected_update['files']),
+            'Lean update manifest differs from verified complete payload')
+    assets = {}
+    for binary in (setup, update_setup, versioned):
+        plan_path = one(root, binary.name + '.download.json')
+        verify_sidecar(plan_path)
+        require(plan_path.stat().st_size <= 1024 * 1024
+                and json.loads(plan_path.read_text(encoding='ascii')) == describe_download(binary),
+                'Download plan differs from exact verified installer bytes')
+        for suffix in ('', '.sha256', '.download.json', '.download.json.sha256'):
+            assets[binary.name + suffix] = binary.with_name(binary.name + suffix) if suffix in ('', '.sha256') else plan_path.with_name(binary.name + suffix)
     asset_info = {name: {'bytes': path.stat().st_size, 'sha256': digest_file(path)}
                   for name, path in assets.items()}
     report = {'ok': True, 'repository': REPOSITORY, 'source_commit': source_sha,
@@ -298,7 +329,7 @@ def verify_artifacts(root, source=REPO, source_sha=None, installed_root=None):
               'runtime_notice_files_verified': len(notices['files']),
               'runtime_notice_sha256': notices['files'],
               'native_report': native, 'native_contract_report': contracts,
-              'installed_payload_safety_report': safety}
+              'installed_payload_safety_report': safety, 'update_installation_report': update}
     return assets, report
 
 
@@ -353,7 +384,7 @@ def release_check(api, release_id, source_sha):
 def publish(api, release_id, source_sha, assets, verification):
     require(re.fullmatch('[0-9a-f]{40}', source_sha) is not None, 'Invalid source commit')
     require(set(assets) == set(ASSET_NAMES) and verification.get('ok') is True,
-            'Only the four verified Windows assets may be uploaded')
+            'Only the verified Windows installers and download plans may be uploaded')
     release_check(api, release_id, source_sha)
     existing = []
     for page in range(1, 101):

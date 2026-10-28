@@ -142,8 +142,10 @@ def verify_install(app, registration):
     if not isinstance(registered, str) or os.path.normcase(os.path.abspath(registered)) != os.path.normcase(str(app)):
         raise LifecycleError('目标不是已登记的写作工作台安装目录。请选择空目录；原目录未改动。')
     manifest = _json(app / 'build-manifest.json')
+    version = manifest.get('client_version') if isinstance(manifest, dict) else None
     if (not isinstance(manifest, dict) or manifest.get('platform') != 'windows-x86_64' or
-            not re.fullmatch(r'0\.(?:1|2)\.\d+', str(manifest.get('client_version', '')))):
+            not isinstance(version, str) or len(version) > 128 or
+            not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+', version)):
         raise LifecycleError('旧安装清单无法确认，原目录未改动。')
     files = manifest.get('files')
     required = {'StoryWorkbench.exe', 'backend_runner.py', 'runtime/python.exe', 'Scripts/story.py'}

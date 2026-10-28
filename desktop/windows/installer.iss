@@ -5,7 +5,7 @@
 #ifndef InstallerOutput
   #define InstallerOutput "."
 #endif
-#define ClientVersion "0.2.5"
+#define ClientVersion "0.3.0"
 #define WebViewInstaller "MicrosoftEdgeWebView2RuntimeInstallerX64.exe"
 
 [Setup]
@@ -23,10 +23,18 @@ OutputDir={#InstallerOutput}
 #ifdef LifecycleFailureProbe
 OutputBaseFilename=story-workbench-lifecycle-failure-probe
 #else
+#ifdef UpdateOnly
+OutputBaseFilename=story-workbench-{#ClientVersion}-windows-x86_64-update-setup
+#else
 OutputBaseFilename=story-workbench-{#ClientVersion}-windows-x86_64-setup
 #endif
+#endif
 Compression=lzma2
+#ifdef UpdateOnly
+SolidCompression=no
+#else
 SolidCompression=yes
+#endif
 WizardStyle=modern
 UninstallDisplayIcon={app}\StoryWorkbench.exe
 CloseApplications=no
@@ -40,7 +48,9 @@ Name: "desktopicon"; Description: "创建桌面快捷方式"; Flags: unchecked
 ; its runtime without locking it with the lifecycle helper itself.
 Source: "{#AppSource}\runtime\*"; DestDir: "{tmp}\lifecycle\runtime"; Flags: dontcopy recursesubdirs createallsubdirs
 Source: "{#AppSource}\installation_lifecycle.py"; DestDir: "{tmp}\lifecycle"; Flags: dontcopy
+#ifndef UpdateOnly
 Source: "{#AppSource}\Prerequisites\{#WebViewInstaller}"; Flags: dontcopy
+#endif
 Source: "{#AppSource}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
@@ -160,7 +170,7 @@ end;
 
 function WebViewRuntimeInstalled: Boolean;
 begin
-  Result := RuntimeAt(HKCU32) or RuntimeAt(HKCU64) or RuntimeAt(HKLM32);
+  Result := RuntimeAt(HKCU32) or RuntimeAt(HKCU64) or RuntimeAt(HKLM32) or RuntimeAt(HKLM64);
 end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;
@@ -169,6 +179,11 @@ var
   Installed: Boolean;
 begin
   Result := '';
+#ifdef UpdateOnly
+  if not WebViewRuntimeInstalled then begin
+    Result := '本更新包需要已有的 WebView2 运行时。请下载完整离线安装包（文件名以 -setup.exe 结尾且不含 -update），安装后再打开工作台。'; exit;
+  end;
+#endif
   if not LifecycleReady then begin
     ExtractTemporaryFiles('{tmp}\lifecycle\*');
     LifecycleReady := True;
@@ -176,6 +191,7 @@ begin
   Result := CheckLifecycle(False);
   if Result <> '' then exit;
   if not WebViewRuntimeInstalled then begin
+#ifndef UpdateOnly
     ExtractTemporaryFile('{#WebViewInstaller}');
     Installed := ExecAsOriginalUser(ExpandConstant('{tmp}\{#WebViewInstaller}'),
       '/silent /install', '', SW_HIDE, ewWaitUntilTerminated, ExitCode);
@@ -187,6 +203,7 @@ begin
       Result := Format('WebView2 运行时安装未完成（代码 %d）。安装已停止，请重试。', [ExitCode]); exit;
     end;
     NeedsRestart := (ExitCode = 3010) or (ExitCode = 1641);
+#endif
   end;
 end;
 

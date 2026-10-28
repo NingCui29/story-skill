@@ -131,6 +131,16 @@ case .available(let package):precondition(package.name == "story-workbench-0.1.1
 default:fatalError("Stable selection should prefer disk images and native architecture")
 }
 let session=URLSession(configuration:.ephemeral), task=session.dataTask(with:WorkbenchUpdate.request())
+// A download manifest is authenticated by the selected release; ZIP then wins
+// over DMG so stable per-file compressed data can be reused across updates.
+let zipPlan=asset("0.1.10","x86_64","zip.download.json",["size":200])
+let dmgPlan=asset("0.1.10","x86_64","dmg.download.json",["size":200])
+switch check(bytes([asset(),asset("0.1.10","x86_64","dmg"),zipPlan,dmgPlan])) {
+case .available(let package):precondition(package.name.hasSuffix(".zip") && package.planSize==200 && package.planDigest != nil)
+default:fatalError("Verified plans should enable stable compressed ZIP preference")
+}
+unavailable(check(bytes([asset(),asset("0.1.10","x86_64","zip.download.json",["digest":"unverified"])])),"分块清单")
+unavailable(check(bytes([asset(),zipPlan,zipPlan])),"分块清单")
 let redirect=HTTPURLResponse(url:WorkbenchUpdate.endpoint,statusCode:302,httpVersion:nil,headerFields:nil)!
 var redirectRejected=false
 WorkbenchUpdateRedirectPolicy().urlSession(session,task:task,willPerformHTTPRedirection:redirect,
@@ -211,6 +221,7 @@ func attempt(_ mode:String, sidecar:Bool=false, cancellation:Bool=false)->String
     var transfer: WorkbenchUpdateDownload!
     transfer = WorkbenchUpdateDownload(package:package(sidecar:sidecar),configuration:config,stagingParent:sandbox) { event in
         switch event {
+        case .stage:break
         case .preparingChecksum:checking=true
         case .progress(let sample):
             progress.append(sample.fraction)

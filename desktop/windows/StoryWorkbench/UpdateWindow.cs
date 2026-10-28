@@ -111,9 +111,10 @@ public sealed class UpdateWindow : Window
         catch (OperationCanceledException)
         {
             if (closed) return;
-            message.Text = "更新操作已取消。";
-            details.Text = "未完成的临时下载已清理；已校验的完整安装包仍可复用。可重新检查或重试。";
+            message.Text = result?.State == "available" ? "下载已暂停。" : "更新检查已取消。";
+            details.Text = "已验证分块和完整安装包均保留。继续下载时会重新校验缓存，只补齐缺少的分块；无分块清单时重新完整下载。";
             bar.IsIndeterminate = false;
+            if (result?.State == "available") { downloadButton.Content = "继续下载"; downloadButton.Visibility = Visibility.Visible; }
         }
         catch (Exception error)
         {
@@ -142,12 +143,14 @@ public sealed class UpdateWindow : Window
             verified = null; result = null;
             downloadButton.Visibility = installButton.Visibility = folderButton.Visibility = Visibility.Collapsed;
             message.Text = "正在检查 Windows 工作台更新…";
+            cancelButton.Content = "取消检查";
             details.Text = "读取官方 Windows 独立正式发布。";
             bar.Visibility = Visibility.Visible; bar.IsIndeterminate = true;
             var found = await Task.Run(() => service.CheckAsync(token), token); token.ThrowIfCancellationRequested();
             result = found; message.Text = found.Message; bar.IsIndeterminate = false; bar.Visibility = Visibility.Collapsed;
             details.Text = found.State == "available"
-                ? "安装包大小：" + UpdateService.FormatBytes(found.AssetSize) + "。下载完成后核对官方 SHA256。"
+                ? (found.AssetName.Contains("-update-setup", StringComparison.Ordinal) ? "精简更新包（复用已有 WebView2）：" : "完整安装包：")
+                    + UpdateService.FormatBytes(found.AssetSize) + (found.PlanUrl.Length > 0 ? "。支持分块续传，准备后显示本次需下载大小。" : "。下载完成后核对官方 SHA256。")
                 : "当前客户端版本：" + UpdateService.ClientVersion;
             if (found.State == "available")
             {
@@ -186,11 +189,17 @@ public sealed class UpdateWindow : Window
 
     private void ShowProgress(UpdateProgress progress)
     {
-        bar.Visibility = Visibility.Visible; bar.IsIndeterminate = progress.Stage == "checksum";
+        bar.Visibility = Visibility.Visible; bar.IsIndeterminate = progress.Stage is "checksum" or "planning" or "fallback";
+        cancelButton.Content = "暂停下载";
         if (progress.Stage == "checksum")
         { message.Text = "正在取得官方 SHA256 校验信息…"; details.Text = "核对与此安装包同名的官方校验文件。"; return; }
+        if (progress.Stage == "planning")
+        { message.Text = "正在核对分块清单与下载缓存…"; details.Text = "核对官方摘要和本地缓存，完成后显示本次需下载大小。"; return; }
+        if (progress.Stage == "fallback")
+        { message.Text = "服务器不支持分块，正在改用完整下载…"; details.Text = "已验证分块保留；本次完整下载从头开始，并重新校验整体摘要。"; return; }
         bar.Value = progress.Total > 0 ? Math.Clamp(progress.Received * 100.0 / progress.Total, 0, 100) : 0;
         message.Text = progress.Stage switch {
+            "assembling" => "正在合并并校验完整安装包…",
             "verifying" => "正在校验已下载文件的 SHA256…",
             "ready" => "下载完成，SHA256 校验通过。",
             _ => "正在下载 Windows 工作台 " + (result?.Version ?? UpdateService.ClientVersion) + "…"
@@ -285,7 +294,7 @@ public sealed class UpdateWindow : Window
     private void Cancel()
     {
         cancellation?.Cancel(); cancelButton.IsEnabled = false;
-        message.Text = "正在取消，等待当前操作结束并清理临时文件…";
+        message.Text = "正在停止当前操作，保留已验证分块…";
     }
 
     public async Task CancelAndWaitAsync()

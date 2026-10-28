@@ -4,6 +4,7 @@ var suite = new Suite();
 BrowserSafetyTests.Register(suite);
 DesktopPreferencesTests.Register(suite);
 UpdateServiceTests.Register(suite);
+UpdateBlockTests.Register(suite);
 return await suite.RunAsync(args);
 
 public sealed class Suite

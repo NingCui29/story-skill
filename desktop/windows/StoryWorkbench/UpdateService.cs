@@ -20,10 +20,11 @@ namespace StoryWorkbench;
 
 public sealed record UpdateResult(string State, string Message, string Version = "",
     string DownloadUrl = "", string AssetName = "", long AssetSize = 0,
-    string Sha256 = "", string ChecksumUrl = "", long ChecksumSize = 0);
+    string Sha256 = "", string ChecksumUrl = "", long ChecksumSize = 0,
+    string PlanUrl = "", long PlanSize = 0, string PlanSha256 = "");
 
 public sealed record UpdateProgress(string Stage, long Received = 0, long Total = 0,
-    double Speed = 0, double? Remaining = null);
+    double Speed = 0, double? Remaining = null, long Reused = 0);
 
 public sealed record UpdateFileIdentity(uint Volume, ulong Index, long Length, long Created, long Written);
 
@@ -47,9 +48,9 @@ public sealed class UpdateInstallerSession
 public sealed class UpdateException(string message, Exception? inner = null) : Exception(message, inner) { }
 
 /// <summary>Official-release parsing and bounded transfers. No manuscript or window access.</summary>
-public sealed class UpdateService : IDisposable
+public sealed partial class UpdateService : IDisposable
 {
-    public const string ClientVersion = "0.2.5";
+    public const string ClientVersion = "0.3.0";
     public const string Repository = "NingCui29/story-skill";
     public const string ReleasesApi = "https://api.github.com/repos/" + Repository + "/releases?per_page=20&page=";
     public const int MaxResponseBytes = 2 * 1024 * 1024;
@@ -59,7 +60,7 @@ public sealed class UpdateService : IDisposable
     private static readonly TimeSpan NetworkTimeout = TimeSpan.FromSeconds(10);
     private static readonly TimeSpan TotalTimeout = TimeSpan.FromMinutes(30);
     private static readonly Regex AssetPattern = new(
-        @"\Astory-workbench-([0-9]+\.[0-9]+\.[0-9]+)-windows-(?:x86_64|x64)(-setup\.exe|\.zip)\z",
+        @"\Astory-workbench-([0-9]+\.[0-9]+\.[0-9]+)-windows-(?:x86_64|x64)(-update-setup\.exe|-setup\.exe|\.zip)\z",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     private static readonly HashSet<string> CdnHosts = ["release-assets.githubusercontent.com",
         "objects.githubusercontent.com", "github-releases.githubusercontent.com"];
@@ -139,7 +140,7 @@ public sealed class UpdateService : IDisposable
         && value.ValueKind == JsonValueKind.Number && value.TryGetInt64(out var result) ? result : 0;
     private static UpdateResult Error(string message) => new("error", message);
 
-    public static UpdateResult EvaluateReleaseResponse(int status, ReadOnlyMemory<byte> data, string currentVersion = ClientVersion)
+    public static UpdateResult EvaluateReleaseResponse(int status, ReadOnlyMemory<byte> data, string currentVersion = ClientVersion, bool preferLightweight = false)
     {
         CompareVersions(currentVersion, currentVersion);
         if (status == 404) return new("unavailable", "官方仓库尚未发布正式版本，暂时无法检查 Windows 工作台更新。");
@@ -157,22 +158,24 @@ public sealed class UpdateService : IDisposable
                 || !release.TryGetProperty("assets", out var assets) || assets.ValueKind != JsonValueKind.Array)
                 return Error("无法验证正式版本信息，请稍后重试。");
             var releaseTag = Uri.UnescapeDataString(Text(release, "html_url").Split('/')[^1]);
-            var candidates = new List<(string Version, bool Installer, string Url, JsonElement Asset)>();
+            var candidates = new List<(string Version, int Preference, string Url, JsonElement Asset)>();
             foreach (var asset in assets.EnumerateArray())
             {
                 if (Text(asset, "state") != "uploaded") continue;
                 var name = Text(asset, "name"); var match = AssetPattern.Match(name);
                 if (!match.Success) continue;
+                bool lightweight = match.Groups[2].Value.Equals("-update-setup.exe", StringComparison.OrdinalIgnoreCase);
+                if (lightweight && !preferLightweight) continue;
                 var url = Text(asset, "browser_download_url");
                 if (!OfficialReleaseUrl(url, true) || Uri.UnescapeDataString(url.Split('/')[^1]) != name
                     || Uri.UnescapeDataString(url.Split('/')[^2]) != releaseTag)
                     return Error("无法验证 Windows 工作台安装包下载信息，请稍后重试。");
                 CompareVersions(match.Groups[1].Value, currentVersion);
-                candidates.Add((match.Groups[1].Value, match.Groups[2].Value.Equals("-setup.exe", StringComparison.OrdinalIgnoreCase), url, asset));
+                candidates.Add((match.Groups[1].Value, lightweight ? 2 : name.EndsWith("-setup.exe", StringComparison.OrdinalIgnoreCase) ? 1 : 0, url, asset));
             }
             if (candidates.Count == 0) return new("unavailable", $"最新正式发布中没有可验证版本的 Windows x64 工作台安装包。当前客户端：{currentVersion}。");
             candidates.Sort((a, b) => { var c = CompareVersions(a.Version, b.Version); if (c != 0) return c;
-                c = a.Installer.CompareTo(b.Installer); return c != 0 ? c : string.CompareOrdinal(a.Url, b.Url); });
+                c = a.Preference.CompareTo(b.Preference); return c != 0 ? c : string.CompareOrdinal(a.Url, b.Url); });
             var best = candidates[^1]; var comparison = CompareVersions(best.Version, currentVersion);
             if (comparison == 0) return new("current", $"当前 Windows 工作台 {currentVersion} 已是最新正式版本。", best.Version);
             if (comparison < 0) return new("ahead", $"当前 Windows 工作台 {currentVersion} 高于最新正式安装包 {best.Version}，无需降级。", best.Version);
@@ -194,14 +197,27 @@ public sealed class UpdateService : IDisposable
                     || checksumUrl != best.Url + ".sha256" || !OfficialReleaseUrl(checksumUrl, true))
                     return Error("无法验证此安装包的 SHA256 校验文件，无法安全下载。");
             }
+            var plans = assets.EnumerateArray().Where(a => Text(a, "name") == Text(best.Asset, "name") + ".download.json").ToArray();
+            string planUrl = "", planDigest = ""; long planSize = 0;
+            if (plans.Length > 0)
+            {
+                if (plans.Length != 1) return Error("更新分块清单重复，已停止。");
+                var plan = plans[0]; planUrl = Text(plan, "browser_download_url"); planSize = Size(plan, "size");
+                var supplied = Text(plan, "digest");
+                if (Text(plan, "state") != "uploaded" || planUrl != best.Url + ".download.json"
+                    || planSize <= 0 || planSize > UpdateDownloadPlan.MaxBytes
+                    || !Regex.IsMatch(supplied, @"\Asha256:[0-9a-fA-F]{64}\z"))
+                    return Error("更新分块清单缺少可核对的官方摘要，已停止。");
+                planDigest = supplied[7..].ToLowerInvariant();
+            }
             return new("available", $"发现 Windows 工作台 {best.Version}，当前版本 {currentVersion}。可在应用内下载并校验。",
-                best.Version, best.Url, Text(best.Asset, "name"), assetSize, sha, checksumUrl, checksumSize);
+                best.Version, best.Url, Text(best.Asset, "name"), assetSize, sha, checksumUrl, checksumSize, planUrl, planSize, planDigest);
         }
         catch (Exception error) when (error is JsonException or FormatException or InvalidOperationException)
         { return Error("更新信息格式无效，请稍后重试。"); }
     }
 
-    public static UpdateResult EvaluateWindowsReleases(ReadOnlyMemory<byte> data, string currentVersion = ClientVersion)
+    public static UpdateResult EvaluateWindowsReleases(ReadOnlyMemory<byte> data, string currentVersion = ClientVersion, bool preferLightweight = false)
     {
         if (data.Length > MaxResponseBytes) return Error("更新信息超过大小限制，请稍后重试。");
         try
@@ -225,7 +241,7 @@ public sealed class UpdateService : IDisposable
             if (selected is not JsonElement item) return new("unavailable", "尚未找到正式 Windows 独立发行版，请稍后重试或查看官方下载页。");
             if (Text(item, "html_url") != $"https://github.com/{Repository}/releases/tag/windows-v{version}")
                 return Error("Windows 发布标签与官方页面不一致，已停止。");
-            var result = EvaluateReleaseResponse(200, Encoding.UTF8.GetBytes(item.GetRawText()), currentVersion);
+            var result = EvaluateReleaseResponse(200, Encoding.UTF8.GetBytes(item.GetRawText()), currentVersion, preferLightweight);
             if ((result.State is "available" or "current" or "ahead") && result.Version != version)
                 return Error("Windows 发布标签与安装包版本不一致，已停止。");
             return result;
@@ -257,7 +273,7 @@ public sealed class UpdateService : IDisposable
                 releases.AddRange(document.RootElement.EnumerateArray().Select(item => item.Clone()));
                 if (document.RootElement.GetArrayLength() < 20
                     || !response.Headers.TryGetValues("Link", out var links) || !links.Any(link => link.Contains("rel=\"next\"", StringComparison.Ordinal)))
-                    return EvaluateWindowsReleases(JsonSerializer.SerializeToUtf8Bytes(releases));
+                    return EvaluateWindowsReleases(JsonSerializer.SerializeToUtf8Bytes(releases), preferLightweight: HasWebViewRuntime());
             }
             return Error("发布记录超出自动检查范围，请查看官方下载页。");
         }
@@ -279,12 +295,13 @@ public sealed class UpdateService : IDisposable
         return request;
     }
 
-    private async Task<HttpResponseMessage> OpenAsync(string url, long size, CancellationToken token)
+    private async Task<HttpResponseMessage> OpenAsync(string url, long size, CancellationToken token, UpdateBlock? block = null)
     {
         if (!OfficialReleaseUrl(url, true)) throw new UpdateException("下载必须从官方发布链接开始。");
         for (var redirects = 0; ; redirects++)
         {
             using var request = Request(url);
+            if (block is not null) request.Headers.Range = new(block.Offset, block.Offset + block.Size - 1);
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token); timeout.CancelAfter(NetworkTimeout);
             var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token).ConfigureAwait(false);
             try
@@ -298,11 +315,19 @@ public sealed class UpdateService : IDisposable
                     if (redirects >= 5 || !PermittedTransferUrl(next)) throw new UpdateException("下载重定向不在官方 HTTPS 资源范围内，已停止。");
                     url = next; response.Dispose(); continue;
                 }
-                if (response.StatusCode != HttpStatusCode.OK || !PermittedTransferUrl(url))
+                if (block is not null && response.StatusCode == HttpStatusCode.OK) throw new UpdateRangeUnsupportedException();
+                if (response.StatusCode != (block is null ? HttpStatusCode.OK : HttpStatusCode.PartialContent) || !PermittedTransferUrl(url))
                     throw new UpdateException("官方资源未返回有效下载内容，请稍后重试。");
+                if (block is not null)
+                {
+                    var range = response.Content.Headers.ContentRange;
+                    if (range is null || range.Unit != "bytes" || range.From != block.Offset
+                        || range.To != block.Offset + block.Size - 1 || range.Length != size)
+                        throw new UpdateException("更新分块范围与官方清单不一致，已停止。");
+                }
                 if (response.Content.Headers.NonValidated.TryGetValues("Content-Encoding", out var encodings)
                         && (encodings.Count() != 1 || !encodings.Single().Equals("identity", StringComparison.OrdinalIgnoreCase))
-                    || DeclaredLength(response) is long length && length != size)
+                    || DeclaredLength(response) is long length && length != (block?.Size ?? size))
                     throw new UpdateException("下载大小或编码与官方发布信息不符，已停止。");
                 return response;
             }
@@ -363,6 +388,10 @@ public sealed class UpdateService : IDisposable
                     || result.ChecksumSize <= 0 || result.ChecksumSize > MaxChecksumBytes))
             throw new UpdateException("缺少可验证的官方安装包信息，请重新检查更新。");
         CompareVersions(result.Version, ClientVersion);
+        if (result.PlanUrl.Length != 0 && (result.PlanUrl != result.DownloadUrl + ".download.json"
+            || result.PlanSize <= 0 || result.PlanSize > UpdateDownloadPlan.MaxBytes
+            || !Regex.IsMatch(result.PlanSha256, @"\A[0-9a-f]{64}\z")))
+            throw new UpdateException("更新分块清单信息无效，请重新检查。");
     }
 
     public async Task<UpdateDownloaded> DownloadAsync(UpdateResult result, string cacheDirectory,
@@ -386,10 +415,25 @@ public sealed class UpdateService : IDisposable
             temporary = Path.Combine(directory, result.AssetName + ".part"); target = Path.Combine(directory, result.AssetName);
             long received = 0; var clock = Stopwatch.StartNew(); var lastReport = TimeSpan.Zero;
             progress?.Report(new("downloading", 0, result.AssetSize));
-            using (var response = await OpenAsync(result.DownloadUrl, result.AssetSize, token).ConfigureAwait(false))
-            using (var source = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false))
             using (var output = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None, ChunkBytes, FileOptions.Asynchronous))
             {
+                bool chunked = false;
+                if (result.PlanUrl.Length != 0)
+                {
+                    progress?.Report(new("planning"));
+                    using var planResponse = await OpenAsync(result.PlanUrl, result.PlanSize, token).ConfigureAwait(false);
+                    var planBytes = await ReadBoundedAsync(planResponse, UpdateDownloadPlan.MaxBytes, result.PlanSize, token).ConfigureAwait(false);
+                    var plan = UpdateDownloadPlan.Parse(planBytes, result with { Sha256 = digest });
+                    using var cache = new UpdateDiskBlockCache(Path.Combine(cacheDirectory, "chunks-v1"));
+                    try { await DownloadBlocksAsync(result, plan, cache, output, progress, token).ConfigureAwait(false); chunked = true; }
+                    catch (UpdateRangeUnsupportedException)
+                    { output.SetLength(0); output.Position = 0; progress?.Report(new("fallback")); }
+                }
+                if (!chunked)
+                {
+                using var response = await OpenAsync(result.DownloadUrl, result.AssetSize, token).ConfigureAwait(false);
+                using var source = await response.Content.ReadAsStreamAsync(token).ConfigureAwait(false);
+                clock.Restart(); lastReport = TimeSpan.Zero;
                 var buffer = new byte[ChunkBytes]; int count;
                 while ((count = await ReadAsync(source, buffer, token).ConfigureAwait(false)) != 0)
                 {
@@ -403,6 +447,7 @@ public sealed class UpdateService : IDisposable
                     }
                 }
                 if (received != result.AssetSize) throw new UpdateException("安装包下载不完整，请重试。");
+                }
                 token.ThrowIfCancellationRequested(); await output.FlushAsync(token).ConfigureAwait(false); output.Flush(true);
             }
             File.Move(temporary, target);
@@ -592,6 +637,7 @@ public sealed class UpdateService : IDisposable
     public static string ProgressText(UpdateProgress progress)
     {
         var result = FormatBytes(progress.Received) + " / " + FormatBytes(progress.Total);
+        if (progress.Reused > 0) result += " · 已复用 " + FormatBytes(progress.Reused) + " · 本次需下载 " + FormatBytes(progress.Total - progress.Reused);
         if (progress.Stage == "downloading" && progress.Speed > 0)
         {
             var seconds = (long)Math.Clamp(progress.Remaining ?? 0, 0, 86400 * 365);
@@ -634,6 +680,19 @@ internal static class UpdateFileAccess
         var handle = CreateFileW(path, 0x80000000, 1, IntPtr.Zero, 3, 0x00200000 | 0x08000000, IntPtr.Zero);
         if (handle.IsInvalid) { var error = Marshal.GetLastWin32Error(); handle.Dispose(); throw new Win32Exception(error); }
         try { Identity(handle); return new FileStream(handle, FileAccess.Read, 128 * 1024, false); }
+        catch { handle.Dispose(); throw; }
+    }
+
+    internal static FileStream OpenExclusive(string path)
+    {
+        var handle = CreateFileW(path, 0xC0000000, 0, IntPtr.Zero, 4, 0x00200000, IntPtr.Zero);
+        if (handle.IsInvalid)
+        {
+            var error = Marshal.GetLastWin32Error(); handle.Dispose();
+            throw new UpdateException(error is 32 or 33 ? "另一个更新正在使用下载缓存，请稍后重试。"
+                : "无法创建或锁定下载缓存，请检查磁盘空间和权限。");
+        }
+        try { Identity(handle); return new FileStream(handle, FileAccess.ReadWrite, 4096, false); }
         catch { handle.Dispose(); throw; }
     }
 }

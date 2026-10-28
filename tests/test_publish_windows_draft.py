@@ -29,8 +29,8 @@ def fixture(area):
     artifacts = area / 'artifacts'
     runtime = tuple('runtime%d.py' % n for n in range(20))
     write(source / 'scripts/build_desktop_macos.py', ('RUNTIME_FILES = ' + repr(runtime)).encode())
-    write(source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.26"\n')
-    write(source / publish.PROJECT, b'<Project><PropertyGroup><Version>0.2.5</Version><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" /></ItemGroup></Project>')
+    write(source / 'skills/story-skill/scripts/story.py', ('VERSION = ' + repr(publish.STORY_VERSION) + '\n').encode())
+    write(source / publish.PROJECT, b'<Project><PropertyGroup><Version>0.3.0</Version><TargetFramework>net10.0-windows</TargetFramework></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" /></ItemGroup></Project>')
     files = {}
     for name in runtime:
         files['Scripts/' + name] = ('# runtime fixture ' + name + '\n').encode()
@@ -77,33 +77,50 @@ def fixture(area):
     artifacts.mkdir()
     setup = artifacts / publish.SETUP
     setup.write_bytes(b'MZ synthetic installer')
+    update_setup = artifacts / publish.UPDATE_SETUP
+    update_setup.write_bytes(b'MZ synthetic lean update installer')
     manifest = {'schema': 2, 'platform': 'windows-x86_64',
-                **publish.project_configuration(source), 'story_version': '0.6.26',
+                **publish.project_configuration(source), 'story_version': publish.STORY_VERSION,
                 'client_source_sha256': publish.client_source_hashes(source),
                 'runtime_notices': {'manifest_sha256': hashlib.sha256(notices['manifest.json']).hexdigest(),
                                     'files': len(notice_manifest['files']), 'components': components},
                 'webview2_runtime': webview, 'dotnet_runtime_versions': frameworks,
                 'files': {name: hashlib.sha256(data).hexdigest() for name, data in files.items()}}
     files['build-manifest.json'] = json.dumps(manifest).encode()
+    update_manifest = dict(manifest)
+    update_manifest['files'] = {name: value for name, value in manifest['files'].items() if name != runtime_path}
+    update_manifest['distribution'] = 'update-existing-webview2'
+    update_manifest['webview2_runtime'] = {'kind': 'existing', 'architecture': 'x64', 'required': True}
+    raw_update = (json.dumps(update_manifest, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
     portable = artifacts / publish.ORIGINAL_PORTABLE
     with zipfile.ZipFile(portable, 'w') as archive:
         for name, data in files.items():
             archive.writestr('story-workbench-windows-x86_64/' + name, data)
-    for path in (setup, portable):
+    versioned = artifacts / publish.PORTABLE
+    versioned.write_bytes(portable.read_bytes())
+    for path in (setup, update_setup, portable, versioned):
         path.with_name(path.name + '.sha256').write_text(publish.digest_file(path) + '  ' + path.name + '\n')
+    from package_update_manifest import write_manifest
+    for path in (setup, update_setup, versioned): write_manifest(path)
     native = dict.fromkeys(publish.NATIVE_FLAGS, True)
-    native.update(client_version='0.2.5', ui_stack='wpf-webview2', self_contained=True, theme_captures={'light': True, 'dark': True})
+    native.update(client_version='0.3.0', ui_stack='wpf-webview2', self_contained=True, theme_captures={'light': True, 'dark': True})
+    write(artifacts / 'windows-update-install.json', json.dumps({'ok': True,
+        'scope': 'isolated-installed-windows-update', 'client_version': publish.CLIENT_VERSION,
+        'installer_sha256': publish.digest_file(update_setup),
+        'installed_manifest_sha256': hashlib.sha256(raw_update).hexdigest(),
+        'manifest_files_verified': len(update_manifest['files']), 'offline_browser_absent': True,
+        'forbidden_technologies_absent': True, 'uninstall_verified': True, 'native_report': native}).encode())
     safety = dict.fromkeys(publish.SAFETY_FLAGS, True)
-    safety.update(platform='win32', story_version='0.6.26', existing_book_files_recycled=False)
+    safety.update(platform='win32', story_version=publish.STORY_VERSION, existing_book_files_recycled=False)
     write(artifacts / 'windows-native-smoke.json', json.dumps(native).encode())
     write(artifacts / 'windows-runtime-safety.json', json.dumps(safety).encode())
     lifecycle = dict.fromkeys(publish.LIFECYCLE_FLAGS, True)
     lifecycle['scope'] = 'isolated-installed-windows-lifecycle'
     write(artifacts / 'windows-installation-lifecycle.json', json.dumps(lifecycle).encode())
     write(artifacts / 'windows-previous-upgrade.json', json.dumps({'ok': True, 'previous_version': '0.2.4',
-        'installed_version': '0.2.5', 'old_host_preserved': True}).encode())
+        'installed_version': '0.3.0', 'old_host_preserved': True}).encode())
     write(artifacts / 'windows-csharp-tests.json', json.dumps(
-        {'ok': True, 'total': 39, 'passed': 39, 'skipped': 0, 'failed': []}).encode())
+        {'ok': True, 'total': 48, 'passed': 48, 'skipped': 0, 'failed': []}).encode())
     installed = area / 'installed'
     for name, data in files.items():
         write(installed / name, data)
@@ -113,7 +130,7 @@ def fixture(area):
 
 class FakeAPI:
     def __init__(self, assets=None):
-        self.release = {'id': 42, 'draft': True, 'tag_name': 'windows-v0.2.5', 'target_commitish': SHA}
+        self.release = {'id': 42, 'draft': True, 'tag_name': 'windows-v0.3.0', 'target_commitish': SHA}
         self.assets = list(assets or [])
         self.calls = []
         self.next_id = 100
@@ -236,9 +253,26 @@ class DistributionTests(unittest.TestCase):
         with self.assertRaisesRegex(publish.VerificationError, 'checksum'):
             self.verified()
 
+    def test_download_plan_and_lean_native_receipt_are_required_and_pinned(self):
+        plan = self.area / (publish.SETUP + '.download.json')
+        original = plan.read_bytes()
+        plan.write_bytes(original.replace(b'"schema":1', b'"schema":2'))
+        with self.assertRaisesRegex(publish.VerificationError, 'checksum'):
+            self.verified()
+        plan.write_bytes(original)
+        native = self.area / 'windows-update-install.json'
+        report = json.loads(native.read_text())
+        for key, value in [('installer_sha256', '0' * 64), ('installed_manifest_sha256', '0' * 64),
+                           ('offline_browser_absent', False), ('uninstall_verified', False)]:
+            changed = dict(report); changed[key] = value
+            native.write_text(json.dumps(changed))
+            with self.subTest(key=key), self.assertRaises(publish.VerificationError):
+                self.verified()
+        native.write_text(json.dumps(report))
+
     def test_previous_release_source_versions_are_rejected(self):
         for path, old in ((self.source / 'skills/story-skill/scripts/story.py', b'VERSION = "0.6.20"\n'),
-                          (self.source / publish.PROJECT, (self.source / publish.PROJECT).read_bytes().replace(b'0.2.5', b'0.1.10'))):
+                          (self.source / publish.PROJECT, (self.source / publish.PROJECT).read_bytes().replace(b'0.3.0', b'0.1.10'))):
             original = path.read_bytes()
             path.write_bytes(old)
             with self.subTest(path=path), self.assertRaisesRegex(publish.VerificationError, 'Source versions'):
@@ -300,7 +334,7 @@ class DistributionTests(unittest.TestCase):
         self.assertTrue(result['ok'])
         self.assertEqual([path for method, path in api.writes() if method == 'DELETE'],
                          ['/repos/NingCui29/story-skill/releases/assets/5'])
-        self.assertEqual(len([row for row in api.writes() if row[0] == 'POST']), 4)
+        self.assertEqual(len([row for row in api.writes() if row[0] == 'POST']), len(publish.ASSET_NAMES))
         self.assertGreaterEqual(api.checks, 7)
 
     def test_matching_server_digests_skip_all_uploads(self):

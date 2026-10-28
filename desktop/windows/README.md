@@ -1,6 +1,8 @@
 # 写作工作台 · Windows
 
-本目录对应 Windows 客户端 **0.2.5** 使用 **C# / WPF / .NET 10 / Microsoft WebView2**，内嵌 Story Skill **0.6.26** Python 作品服务。项目禁止使用 Qt 系列及 PHP，构建和安装验收包含对应检查。界面沿用 HTML、CSS 与 JavaScript，作品数据无需转换。
+当前已公开的 Windows 客户端 **0.2.5** 使用 **C# / WPF / .NET 10 / Microsoft WebView2**，内嵌 Story Skill **0.6.26** Python 作品服务。项目禁止使用 Qt 系列及 PHP，构建和安装验收包含对应检查。界面沿用 HTML、CSS 与 JavaScript，作品数据无需转换。
+
+源码开发版本为 **0.3.0**：新增经过校验的分块下载、暂停续传、跨版本内容缓存及精简更新安装包。检测到已有 WebView2 时优先精简包，否则选择完整离线包；精简包仍包含 .NET、Python 和全部许可文件。最多 3 路下载，合并后重新核对完整安装包摘要。Windows 原生安装及窗口须由 Windows runner 单独验收；公开下载仍使用下方已发行版本。详见[快速更新设计与验收边界](../../docs/工作台快速更新.md)。
 
 ## 获取和安装
 

@@ -208,6 +208,9 @@ struct WorkbenchUpdatePackage {
     let digest: String?
     let checksumURL: URL?
     let checksumSize: Int64?
+    var planURL: URL? = nil
+    var planSize: Int64 = 0
+    var planDigest: String? = nil
 
     static func validDigest(_ text: String) -> Bool {
         text.range(of: "^[A-Fa-f0-9]{64}$", options: .regularExpression) != nil
@@ -345,15 +348,32 @@ enum WorkbenchUpdate {
                     } else {
                         return .unavailable("Mac 安装包尚未提供可核对的 SHA256 校验信息，请稍后重试。")
                     }
-                    packages.append((version, WorkbenchUpdatePackage(version: version.text, releaseURL: releaseURL,
+                    var package = WorkbenchUpdatePackage(version: version.text, releaseURL: releaseURL,
                         name: asset.name, url: download, size: size, digest: digest,
-                        checksumURL: checksumURL, checksumSize: checksumSize)))
+                        checksumURL: checksumURL, checksumSize: checksumSize)
+                    let plans = release.assets.filter { $0.name == asset.name + ".download.json" }
+                    if !plans.isEmpty {
+                        guard plans.count == 1, let plan = plans.first, plan.state == "uploaded",
+                              plan.browser_download_url == download.absoluteString + ".download.json",
+                              let bytes = plan.size, (1...1_048_576).contains(bytes),
+                              let supplied = plan.digest, supplied.hasPrefix("sha256:"),
+                              WorkbenchUpdatePackage.validDigest(String(supplied.dropFirst(7))) else {
+                            return .unavailable("更新分块清单缺少可核对的官方摘要，已停止。")
+                        }
+                        package.planURL = URL(string: plan.browser_download_url)
+                        package.planSize = bytes
+                        package.planDigest = String(supplied.dropFirst(7)).lowercased()
+                    }
+                    packages.append((version, package))
                 }
             }
         }
-        // Stable tie-break: prefer a disk image, then the current CPU architecture.
+        // For equal versions prefer a verified block plan, then ZIP's stable
+        // per-file compressed regions. Releases without plans keep DMG priority.
         let sorted = packages.sorted {
             if $0.0 != $1.0 { return $0.0 > $1.0 }
+            if ($0.1.planURL != nil) != ($1.1.planURL != nil) { return $0.1.planURL != nil }
+            if $0.1.planURL != nil && $0.1.name.hasSuffix(".zip") != $1.1.name.hasSuffix(".zip") { return $0.1.name.hasSuffix(".zip") }
             if $0.1.name.hasSuffix(".dmg") != $1.1.name.hasSuffix(".dmg") { return $0.1.name.hasSuffix(".dmg") }
             return $0.1.name.contains("-" + architecture + ".") && !$1.1.name.contains("-" + architecture + ".")
         }
@@ -375,6 +395,131 @@ final class WorkbenchUpdateRedirectPolicy: NSObject, URLSessionTaskDelegate {
 }
 
 import Darwin
+
+struct WorkbenchDownloadPlan: Decodable {
+    struct Block: Decodable { let offset: Int64; let size: Int; let sha256: String }
+    let schema: Int
+    let file: String
+    let size: Int64
+    let sha256: String
+    let chunks: [Block]
+    static func hash(_ data: Data) -> String { SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined() }
+    static func parse(_ data: Data, package: WorkbenchUpdatePackage, digest: String) throws -> WorkbenchDownloadPlan {
+        guard data.count <= 1_048_576, Int64(data.count) == package.planSize,
+              hash(data) == package.planDigest,
+              let plan = try? JSONDecoder().decode(Self.self, from: data), plan.schema == 1,
+              plan.file == package.name, plan.size == package.size, plan.sha256 == digest,
+              (1...4096).contains(plan.chunks.count) else { throw WorkbenchBlockCache.invalid() }
+        var offset: Int64 = 0
+        for block in plan.chunks {
+            guard block.offset == offset, (1...4_194_304).contains(block.size),
+                  Int64(block.size) <= plan.size - offset,
+                  block.sha256.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil else {
+                throw WorkbenchBlockCache.invalid()
+            }
+            offset += Int64(block.size)
+        }
+        guard offset == plan.size else { throw WorkbenchBlockCache.invalid() }
+        return plan
+    }
+}
+
+// Cache operations use a pinned directory descriptor and O_NOFOLLOW. A process
+// lease prevents one updater pruning another updater's blocks during assembly.
+final class WorkbenchBlockCache {
+    private var root: Int32 = -1
+    private var lease: Int32 = -1
+    private let location: URL
+    static func invalid() -> NSError { NSError(domain: "StoryWorkbench.UpdateCache", code: 1) }
+    init(_ location: URL) throws {
+        self.location = location
+        guard location.isFileURL, location.path.hasPrefix("/") else { throw Self.invalid() }
+        var current = Darwin.open("/", O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
+        guard current >= 0 else { throw Self.invalid() }
+        do {
+            // Foundation abbreviates the system /private/var and /private/tmp
+            // aliases even after resolving a URL. Keep the descriptor walk on
+            // those physical system paths; other symlinks are still rejected.
+            let path = location.path.hasPrefix("/var/") || location.path.hasPrefix("/tmp/")
+                ? "/private" + location.path : location.path
+            for part in path.split(separator: "/").map(String.init) {
+                guard part != ".", part != ".." else { throw Self.invalid() }
+                if mkdirat(current, part, 0o700) != 0 && errno != EEXIST { throw Self.invalid() }
+                let next = openat(current, part, O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
+                guard next >= 0 else { throw Self.invalid() }
+                Darwin.close(current); current = next
+            }
+            root = current
+            lease = openat(root, "cache.lock", O_CREAT | O_RDWR | O_NOFOLLOW, 0o600)
+            var info = stat()
+            guard lease >= 0, fstat(lease, &info) == 0, (info.st_mode & S_IFMT) == S_IFREG,
+                  info.st_nlink == 1, flock(lease, LOCK_EX | LOCK_NB) == 0 else { throw Self.invalid() }
+            prune()
+        } catch {
+            if lease >= 0 { Darwin.close(lease); lease = -1 }
+            if root >= 0 { Darwin.close(root); root = -1 } else { Darwin.close(current) }
+            throw error
+        }
+    }
+    deinit { prune(); if lease >= 0 { Darwin.close(lease) }; if root >= 0 { Darwin.close(root) } }
+    private func filename(_ block: WorkbenchDownloadPlan.Block) -> String? {
+        guard block.sha256.range(of: "^[0-9a-f]{64}$", options: .regularExpression) != nil,
+              (1...4_194_304).contains(block.size) else { return nil }
+        return block.sha256 + ".chunk"
+    }
+    func read(_ block: WorkbenchDownloadPlan.Block) -> Data? {
+        guard let name = filename(block) else { return nil }
+        let fd = openat(root, name, O_RDONLY | O_NOFOLLOW | O_NONBLOCK)
+        guard fd >= 0 else { return nil }
+        let handle = FileHandle(fileDescriptor: fd, closeOnDealloc: true)
+        defer { try? handle.close() }
+        var info = stat()
+        guard fstat(fd, &info) == 0, (info.st_mode & S_IFMT) == S_IFREG,
+              info.st_nlink == 1, info.st_size == block.size,
+              let data = try? handle.read(upToCount: block.size), data.count == block.size,
+              WorkbenchDownloadPlan.hash(data) == block.sha256 else { return nil }
+        return data
+    }
+    func save(_ block: WorkbenchDownloadPlan.Block, data: Data) throws {
+        guard let name = filename(block), data.count == block.size,
+              WorkbenchDownloadPlan.hash(data) == block.sha256 else { throw Self.invalid() }
+        let temporary = UUID().uuidString + ".part"
+        let fd = openat(root, temporary, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW, 0o600)
+        guard fd >= 0 else { throw Self.invalid() }
+        let handle = FileHandle(fileDescriptor: fd, closeOnDealloc: true)
+        defer { try? handle.close(); unlinkat(root, temporary, 0) }
+        try handle.write(contentsOf: data); try handle.synchronize()
+        guard renameat(root, temporary, root, name) == 0 else { throw Self.invalid() }
+    }
+    private func prune() {
+        guard root >= 0, lease >= 0, let names = try? FileManager.default.contentsOfDirectory(atPath: location.path) else { return }
+        var records: [(String, Int64, Int64)] = []
+        for name in names where name.range(of: "^[0-9a-f]{64}\\.chunk$", options: .regularExpression) != nil {
+            var info = stat()
+            if fstatat(root, name, &info, AT_SYMLINK_NOFOLLOW) == 0, (info.st_mode & S_IFMT) == S_IFREG, info.st_nlink == 1 {
+                records.append((name, info.st_size, Int64(info.st_mtimespec.tv_sec)))
+            }
+        }
+        records.sort { $0.2 > $1.2 }
+        var retained: Int64 = 0
+        for (index, record) in records.enumerated() {
+            retained += record.1
+            if index >= 2048 || retained > 536_870_912 || record.2 < Int64(Date().timeIntervalSince1970) - 2_592_000 {
+                unlinkat(root, record.0, 0)
+            }
+        }
+    }
+}
+
+final class WorkbenchBlockTransfer {
+    let block: WorkbenchDownloadPlan.Block
+    let task: URLSessionDataTask
+    var data = Data()
+    var accepted = false
+    var redirects = 0
+    var range: String { "bytes=\(block.offset)-\(block.offset + Int64(block.size) - 1)" }
+    init(_ block: WorkbenchDownloadPlan.Block, task: URLSessionDataTask) { self.block = block; self.task = task }
+}
 
 enum WorkbenchUpdateFile {
     static func verify(_ url: URL, size: Int64, digest: String, cancelled: () -> Bool = { false }) throws {
@@ -413,20 +558,24 @@ struct WorkbenchUpdateProgress {
     let received: Int64
     let total: Int64
     let elapsed: TimeInterval
+    var reused: Int64 = 0
     var fraction: Double { total > 0 ? min(1, max(0, Double(received) / Double(total))) : 0 }
-    var bytesPerSecond: Double { elapsed > 0 ? Double(received) / elapsed : 0 }
+    var bytesPerSecond: Double { elapsed > 0 ? Double(max(0, received - reused)) / elapsed : 0 }
     var remaining: TimeInterval? { bytesPerSecond > 0 ? Double(max(0, total - received)) / bytesPerSecond : nil }
     var detail: String {
         let receivedText = ByteCountFormatter.string(fromByteCount: received, countStyle: .file)
         let totalText = ByteCountFormatter.string(fromByteCount: total, countStyle: .file)
         let speed = ByteCountFormatter.string(fromByteCount: Int64(max(0, bytesPerSecond)), countStyle: .file)
         let eta = remaining.map { "约 \(max(1, Int(ceil($0)))) 秒" } ?? "估算中"
-        return "\(Int(fraction * 100))% · \(receivedText) / \(totalText)\n\(speed)/秒 · 剩余\(eta)"
+        let cached = ByteCountFormatter.string(fromByteCount: reused, countStyle: .file)
+        let required = ByteCountFormatter.string(fromByteCount: max(0, total - reused), countStyle: .file)
+        return "\(Int(fraction * 100))% · \(receivedText) / \(totalText)\n已复用 \(cached) · 本次需下载 \(required)\n\(speed)/秒 · 剩余\(eta)"
     }
 }
 
 enum WorkbenchUpdateDownloadEvent {
     case preparingChecksum
+    case stage(String)
     case progress(WorkbenchUpdateProgress)
     case verifying
     case completed(URL, digest: String)
@@ -435,7 +584,7 @@ enum WorkbenchUpdateDownloadEvent {
 }
 
 // Each attempt owns one private staging directory and a serial delegate queue.
-// Cancellation and failures delete partial bytes; only a fully verified package
+// Cancellation keeps only independently verified cached blocks; only a fully verified package
 // is handed to Finder. No application pages or book services are modified.
 final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecked Sendable {
     private let package: WorkbenchUpdatePackage
@@ -460,12 +609,26 @@ final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecke
     private let cancellationLock = NSLock()
     private var cancellationRequested = false
     private var lastProgress: TimeInterval = 0
+    private var planPhase = false
+    private var planData = Data()
+    private var plan: WorkbenchDownloadPlan?
+    private var blockCache: WorkbenchBlockCache?
+    private let cacheParent: URL
+    private var blockTransfers: [Int: WorkbenchBlockTransfer] = [:]
+    private var retiredTasks: Set<Int> = []
+    private var missingBlocks: [WorkbenchDownloadPlan.Block] = []
+    private var nextBlock = 0
+    private var reused: Int64 = 0
+    private var deadline: TimeInterval = 0
 
     init(package: WorkbenchUpdatePackage, configuration: URLSessionConfiguration = .ephemeral,
-         stagingParent: URL = FileManager.default.temporaryDirectory, notify: @escaping (WorkbenchUpdateDownloadEvent) -> Void) {
+         stagingParent: URL = FileManager.default.temporaryDirectory, cacheParent: URL? = nil,
+         notify: @escaping (WorkbenchUpdateDownloadEvent) -> Void) {
         self.package = package
         self.configuration = configuration
         self.stagingParent = stagingParent
+        self.cacheParent = cacheParent ?? FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("StoryWorkbench/updates/chunks-v1", isDirectory: true)
         self.notify = notify
         queue = OperationQueue()
         queue.maxConcurrentOperationCount = 1
@@ -476,6 +639,7 @@ final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecke
     func begin() {
         queue.addOperation { [self] in
             guard !finished, session == nil else { return }
+            deadline = ProcessInfo.processInfo.systemUptime + 1_800
             if isCancelled() { finish(.cancelled); return }
             guard (1...WorkbenchUpdatePackage.maximumBytes).contains(package.size),
                   WorkbenchUpdate.githubURL(package.url.absoluteString, prefix: "download/") != nil,
@@ -503,7 +667,7 @@ final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecke
                 checksumPhase = true
                 emit(.preparingChecksum)
                 request(checksumURL)
-            } else { beginPackage() }
+            } else { preparePackage() }
         }
     }
 
@@ -533,8 +697,90 @@ final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecke
         task?.resume()
     }
 
-    private func beginPackage() {
+    private func preparePackage() {
         checksumPhase = false
+        if let address = package.planURL {
+            guard address.absoluteString == package.url.absoluteString + ".download.json",
+                  WorkbenchUpdate.githubURL(address.absoluteString, prefix: "download/") != nil,
+                  (1...1_048_576).contains(package.planSize), let expected = package.planDigest,
+                  WorkbenchUpdatePackage.validDigest(expected) else {
+                finish(.failed("更新分块清单信息无效，请重新检查更新。")); return
+            }
+            planPhase = true
+            emit(.stage("正在核对分块清单与下载缓存"))
+            request(address)
+        } else { beginPackage() }
+    }
+
+    private func startBlocks() {
+        guard !finished, let session else { return }
+        if isCancelled() { finish(.cancelled); return }
+        guard ProcessInfo.processInfo.systemUptime < deadline else { finish(.failed("本次下载已超时，已验证分块保留，可继续下载。")); return }
+        while blockTransfers.count < 3 && nextBlock < missingBlocks.count {
+            let block = missingBlocks[nextBlock]; nextBlock += 1
+            var request = URLRequest(url: package.url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
+            request.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
+            request.setValue("StoryWorkbench-VerifiedUpdate", forHTTPHeaderField: "User-Agent")
+            request.setValue("bytes=\(block.offset)-\(block.offset + Int64(block.size) - 1)", forHTTPHeaderField: "Range")
+            let task = session.dataTask(with: request)
+            blockTransfers[task.taskIdentifier] = WorkbenchBlockTransfer(block, task: task)
+            task.resume()
+        }
+        if blockTransfers.isEmpty && nextBlock == missingBlocks.count { assembleBlocks() }
+    }
+
+    private func receiveBlockResponse(_ transfer: WorkbenchBlockTransfer, response: URLResponse,
+                                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        guard !finished, let response = response as? HTTPURLResponse, let url = response.url,
+              WorkbenchUpdatePackage.allowsDownloadURL(url, initial: package.url),
+              response.value(forHTTPHeaderField: "Content-Encoding").map({ $0.lowercased() == "identity" }) ?? true else {
+            completionHandler(.cancel); finish(.failed("更新分块地址或编码无法核对，已停止。")); return
+        }
+        if response.statusCode == 200 {
+            for (identifier, item) in blockTransfers { retiredTasks.insert(identifier); item.task.cancel() }
+            blockTransfers.removeAll(); plan = nil; blockCache = nil
+            completionHandler(.cancel)
+            emit(.stage("服务器不支持分块，正在改用完整下载"))
+            reused = 0; beginPackage(); return
+        }
+        let block = transfer.block
+        guard response.statusCode == 206,
+              response.value(forHTTPHeaderField: "Content-Range") == "bytes \(block.offset)-\(block.offset + Int64(block.size) - 1)/\(package.size)",
+              response.expectedContentLength < 0 || response.expectedContentLength == block.size else {
+            completionHandler(.cancel); finish(.failed("更新分块范围或大小不一致，已停止。")); return
+        }
+        transfer.accepted = true; completionHandler(.allow)
+    }
+
+    private func assembleBlocks() {
+        guard let plan, let output, let blockCache else { finish(.failed("缺少完整分块，已停止。")); return }
+        emit(.stage("正在合并并校验完整安装包"))
+        do {
+            guard FileManager.default.createFile(atPath: output.path, contents: nil, attributes: [.posixPermissions: 0o600]) else {
+                throw WorkbenchBlockCache.invalid()
+            }
+            let file = try FileHandle(forWritingTo: output)
+            defer { try? file.close() }
+            var digest = SHA256()
+            for block in plan.chunks {
+                if isCancelled() { finish(.cancelled); return }
+                guard let data = blockCache.read(block) else { throw WorkbenchBlockCache.invalid() }
+                try file.write(contentsOf: data); digest.update(data: data)
+            }
+            try file.synchronize(); try file.close()
+            let actual = digest.finalize().map { String(format: "%02x", $0) }.joined()
+            guard actual == plan.sha256 else { throw WorkbenchBlockCache.invalid() }
+            emit(.verifying)
+            try FileManager.default.setAttributes([.posixPermissions: 0o400], ofItemAtPath: output.path)
+            try WorkbenchUpdateFile.verify(output, size: package.size, digest: actual, cancelled: isCancelled)
+            finish(isCancelled() ? .cancelled : .completed(output, digest: actual))
+        } catch { finish(.failed("合并后的完整安装包未通过校验，请重试；已验证分块保留。")) }
+    }
+
+    private func beginPackage() {
+        planPhase = false
+        checksumPhase = false
+        hasher = SHA256()
         received = 0
         started = ProcessInfo.processInfo.systemUptime
         emit(.progress(WorkbenchUpdateProgress(received: 0, total: package.size, elapsed: 0)))
@@ -550,13 +796,27 @@ final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecke
         task = nil
         try? handle?.close()
         handle = nil
+        blockCache = nil
         if case .completed = event {} else if let directory { try? FileManager.default.removeItem(at: directory) }
         emit(event)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
                     newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
-        let initial = checksumPhase ? package.checksumURL! : package.url
+        if retiredTasks.contains(task.taskIdentifier) { completionHandler(nil); return }
+        if let transfer = blockTransfers[task.taskIdentifier] {
+            transfer.redirects += 1
+            guard !finished, transfer.redirects <= 5, let url = request.url,
+                  WorkbenchUpdatePackage.allowsDownloadURL(url, initial: package.url) else {
+                completionHandler(nil); finish(.failed("更新分块跳转到未经核对的地址，已停止。")); return
+            }
+            var clean = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
+            clean.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
+            clean.setValue("StoryWorkbench-VerifiedUpdate", forHTTPHeaderField: "User-Agent")
+            clean.setValue(transfer.range, forHTTPHeaderField: "Range")
+            completionHandler(clean); return
+        }
+        let initial = checksumPhase ? package.checksumURL! : planPhase ? package.planURL! : package.url
         redirects += 1
         guard !finished, redirects <= 5, let url = request.url,
               WorkbenchUpdatePackage.allowsDownloadURL(url, initial: initial) else {
@@ -571,15 +831,19 @@ final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecke
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-        let initial = checksumPhase ? package.checksumURL! : package.url
-        let limit = checksumPhase ? package.checksumSize! : package.size
+        if retiredTasks.contains(dataTask.taskIdentifier) { completionHandler(.cancel); return }
+        if let transfer = blockTransfers[dataTask.taskIdentifier] {
+            receiveBlockResponse(transfer, response: response, completionHandler: completionHandler); return
+        }
+        let initial = checksumPhase ? package.checksumURL! : planPhase ? package.planURL! : package.url
+        let limit = checksumPhase ? package.checksumSize! : planPhase ? package.planSize : package.size
         guard !finished, let response = response as? HTTPURLResponse, response.statusCode == 200,
               let url = response.url, WorkbenchUpdatePackage.allowsDownloadURL(url, initial: initial),
               response.expectedContentLength < 0 || response.expectedContentLength == limit else {
             completionHandler(.cancel)
             finish(.failed("更新服务器返回的地址、状态或文件大小不匹配，已停止并清理下载。")); return
         }
-        if !checksumPhase {
+        if !checksumPhase && !planPhase {
             do {
                 guard let output, FileManager.default.createFile(atPath: output.path, contents: nil,
                     attributes: [.posixPermissions: 0o600]) else { throw NSError(domain: "StoryWorkbench.Update", code: 1) }
@@ -594,8 +858,31 @@ final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecke
     }
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        if retiredTasks.contains(dataTask.taskIdentifier) || finished { return }
+        if isCancelled() { finish(.cancelled); return }
+        if ProcessInfo.processInfo.systemUptime >= deadline {
+            finish(.failed("本次下载已超时，已验证分块保留，可继续下载。")); return
+        }
+        if let transfer = blockTransfers[dataTask.taskIdentifier] {
+            guard transfer.accepted, data.count <= transfer.block.size - transfer.data.count else {
+                finish(.failed("更新分块超过清单大小，已停止。")); return
+            }
+            transfer.data.append(data); received += Int64(data.count)
+            let now = ProcessInfo.processInfo.systemUptime
+            if now - lastProgress >= 0.15 || received == package.size {
+                lastProgress = now
+                emit(.progress(WorkbenchUpdateProgress(received: received, total: package.size,
+                    elapsed: now - started, reused: reused)))
+            }
+            return
+        }
         guard !finished, acceptedResponse else { return }
-        if checksumPhase {
+        if planPhase {
+            guard Int64(planData.count + data.count) <= package.planSize else {
+                finish(.failed("更新分块清单超过预期大小，已停止。")); return
+            }
+            planData.append(data)
+        } else if checksumPhase {
             guard Int64(checksumData.count) + Int64(data.count) <= package.checksumSize!, checksumData.count + data.count <= 4_096 else {
                 finish(.failed("校验文件超过预期大小，已清理下载。")); return
             }
@@ -617,19 +904,45 @@ final class WorkbenchUpdateDownload: NSObject, URLSessionDataDelegate, @unchecke
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        guard !finished else { return }
+        guard !finished, !retiredTasks.contains(task.taskIdentifier) else { return }
+        if let transfer = blockTransfers.removeValue(forKey: task.taskIdentifier) {
+            guard error == nil, transfer.accepted, transfer.data.count == transfer.block.size,
+                  WorkbenchDownloadPlan.hash(transfer.data) == transfer.block.sha256 else {
+                finish(.failed("更新分块中断或校验失败；已验证分块保留，可继续下载。")); return
+            }
+            do { try blockCache?.save(transfer.block, data: transfer.data); startBlocks() }
+            catch { finish(.failed("无法保存已验证分块，请检查下载缓存及磁盘空间。")) }
+            return
+        }
         if let error {
             let code = (error as NSError).code
             finish(.failed(code == NSURLErrorTimedOut ? "更新下载超时，可重试；未完成的文件已清理。" : "更新下载中断，可重试；未完成的文件已清理。")); return
         }
         guard acceptedResponse else { finish(.failed("更新服务器没有返回可核对的文件。")); return }
+        if planPhase {
+            do {
+                guard let digest else { throw WorkbenchBlockCache.invalid() }
+                plan = try WorkbenchDownloadPlan.parse(planData, package: package, digest: digest)
+                blockCache = try WorkbenchBlockCache(cacheParent)
+                received = 0; reused = 0; missingBlocks = []; nextBlock = 0
+                for block in plan!.chunks {
+                    if isCancelled() { finish(.cancelled); return }
+                    if blockCache?.read(block) != nil { reused += Int64(block.size) }
+                    else { missingBlocks.append(block) }
+                }
+                received = reused; started = ProcessInfo.processInfo.systemUptime
+                emit(.progress(WorkbenchUpdateProgress(received: received, total: package.size, elapsed: 0, reused: reused)))
+                planPhase = false; startBlocks()
+            } catch { finish(.failed("分块清单或下载缓存无法核对，请重新检查更新；当前应用保持原样。")) }
+            return
+        }
         if checksumPhase {
             guard Int64(checksumData.count) == package.checksumSize!,
                   let expected = WorkbenchUpdatePackage.checksum(checksumData, name: package.name) else {
                 finish(.failed("SHA256 校验文件内容或文件名不匹配，已清理下载。")); return
             }
             digest = expected
-            beginPackage()
+            preparePackage()
             return
         }
         guard received == package.size else { finish(.failed("安装包下载不完整，可重试；未完成的文件已清理。")); return }
@@ -1651,7 +1964,7 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
         updateDownloadedDigest = nil
         updateActionMode = "cancel"
         updateMenuItem?.title = "更新下载进度…"
-        updateActionButton?.title = "取消下载"
+        updateActionButton?.title = "暂停下载"
         updateActionButton?.isEnabled = true
         updateRecheckButton?.isHidden = true
         updatePanel().makeKeyAndOrderFront(nil)
@@ -1668,6 +1981,11 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
     private func showUpdateEvent(_ event: WorkbenchUpdateDownloadEvent) {
         _ = updatePanel()
         switch event {
+        case .stage(let message):
+            updateStage?.stringValue = message
+            updateDetail?.stringValue = "已验证分块可在下次继续下载。\n下载期间可继续编辑作品。"
+            updateProgress?.isIndeterminate = true
+            updateProgress?.startAnimation(nil)
         case .preparingChecksum:
             updateStage?.stringValue = "正在获取 SHA256 校验信息"
             updateDetail?.stringValue = "\(updatePackage?.name ?? "安装包")\n正在核对官方同名校验文件；可继续编辑作品。"
@@ -1702,12 +2020,12 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
             updateDownloader = nil
             updateActionMode = "retry"
             updateRecheckButton?.isHidden = false
-            updateStage?.stringValue = "下载已取消"
-            updateDetail?.stringValue = "未完成的安装包已清理。作品编辑和后台服务继续保留，可重新下载。"
+            updateStage?.stringValue = "下载已暂停"
+            updateDetail?.stringValue = "已验证分块保留，继续时会重新校验并补齐缺少的分块。未提供分块清单的完整下载需要重新开始。作品编辑和后台服务继续保留。"
             updateProgress?.stopAnimation(nil)
             updateProgress?.isIndeterminate = false
             updateProgress?.doubleValue = 0
-            updateActionButton?.title = "重新下载"
+            updateActionButton?.title = "继续下载"
             updateActionButton?.isEnabled = true
             updateMenuItem?.title = "查看更新进度…"
         case .failed(let message):
@@ -1747,12 +2065,12 @@ final class WorkbenchApp: NSObject, NSApplicationDelegate, NSWindowDelegate, NSM
         case "check": checkForUpdates()
         case "cancel":
             updateActionButton?.isEnabled = false
-            updateStage?.stringValue = "正在取消并清理下载…"
+            updateStage?.stringValue = "正在暂停，保留已验证分块…"
             updateDownloader?.cancel()
         case "retry":
             if let updatePackage {
                 updateActionButton?.isEnabled = true
-                updateActionButton?.title = "取消下载"
+                updateActionButton?.title = "暂停下载"
                 beginUpdateDownload(updatePackage)
             }
         case "open":
