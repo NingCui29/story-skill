@@ -1,0 +1,12 @@
+✔ ordinary qimao editor supports read find create and existing selector/body modes (321.501495ms)
+✔ ordinary qidian editor supports read find create and existing selector/body modes (248.683511ms)
+✔ paragraph paste rechecks focus after the final action URL await without writing another field (24.895953ms)
+✔ create and save action labels cannot turn into publish during a fresh account guard (35.837302ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 799.660657

@@ -1,0 +1,734 @@
+{
+  "ok": true,
+  "checks": 181,
+  "random_inline_checks": 160,
+  "seed": 2026102406,
+  "source_sha256": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+  "boundaries": "Isolated local Chromium DOM parsing; no live site/account, CSS visibility or JavaScript page effects validated",
+  "rows": [
+    {
+      "label": "template ancestor </ul>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "template ancestor </body>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "template ancestor </html>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "template ancestor </ul></body></html>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "nested templates",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "inert selfclose template",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "inert selfclose div hidden",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "inert selfclose span hidden=\"false\"",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "inert selfclose script",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "inert selfclose style",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "legal foreign/void <svg hidden/>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "legal foreign/void <math hidden/>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "legal foreign/void <svg><path hidden/><circle/></svg>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "legal foreign/void <math><mspace hidden/><mi>x</mi></math>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "legal foreign/void <svg><foreignObject><svg><path hidden/></svg></foreignObject></svg>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "legal foreign/void <img hidden/><br/>",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "HTML integration <svg><foreignObject>",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "HTML integration <svg><desc>",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "HTML integration <math><mtext>",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "HTML integration <math><annotation-xml encoding=\"text/html\">",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "HTML integration <svg>",
+      "outcome": "rejected ambiguous HTML; browser only exposes book 100"
+    },
+    {
+      "label": "random inline 0",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 1",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 2",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 3",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 4",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 5",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 6",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 7",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 8",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 9",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 10",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 11",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 12",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 13",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 14",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 15",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 16",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 17",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 18",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 19",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 20",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 21",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 22",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 23",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 24",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 25",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 26",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 27",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 28",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 29",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 30",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 31",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 32",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 33",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 34",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 35",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 36",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 37",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 38",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 39",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 40",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 41",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 42",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 43",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 44",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 45",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 46",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 47",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 48",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 49",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 50",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 51",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 52",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 53",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 54",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 55",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 56",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 57",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 58",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 59",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 60",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 61",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 62",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 63",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 64",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 65",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 66",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 67",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 68",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 69",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 70",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 71",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 72",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 73",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 74",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 75",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 76",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 77",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 78",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 79",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 80",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 81",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 82",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 83",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 84",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 85",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 86",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 87",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 88",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 89",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 90",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 91",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 92",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 93",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 94",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 95",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 96",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 97",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 98",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 99",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 100",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 101",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 102",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 103",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 104",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 105",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 106",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 107",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 108",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 109",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 110",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 111",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 112",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 113",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 114",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 115",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 116",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 117",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 118",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 119",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 120",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 121",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 122",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 123",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 124",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 125",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 126",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 127",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 128",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 129",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 130",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 131",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 132",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 133",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 134",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 135",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 136",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 137",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 138",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 139",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 140",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 141",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 142",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 143",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 144",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 145",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 146",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 147",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 148",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 149",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 150",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 151",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 152",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 153",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 154",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 155",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 156",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 157",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 158",
+      "outcome": "matches Chromium DOM"
+    },
+    {
+      "label": "random inline 159",
+      "outcome": "matches Chromium DOM"
+    }
+  ]
+}

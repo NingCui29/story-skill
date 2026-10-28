@@ -1,0 +1,335 @@
+{
+  "app": "Qoder CN",
+  "source": "AppleScript Accessibility snapshot, current Story Skill规则问答 task only; unrelated task sidebar excluded",
+  "elements": [
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.0.0.0",
+      "role": "AXCheckBox",
+      "name": null,
+      "value": 0,
+      "description": "打开终端面板"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.0.0.1",
+      "role": "AXCheckBox",
+      "name": null,
+      "value": 0,
+      "description": "打开侧边栏"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.0.0",
+      "role": "AXHeading",
+      "name": "Story Skill规则问答",
+      "value": 1,
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.0.1",
+      "role": "AXPopUpButton",
+      "name": null,
+      "value": "",
+      "description": "任务 Story Skill规则问答 操作"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.0.2.0.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "用 访达 打开工作区"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.0.2.0.1",
+      "role": "AXPopUpButton",
+      "name": null,
+      "value": "",
+      "description": "选择打开应用"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.0.3.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "添加 Workspace Action"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.0.4",
+      "role": "AXCheckBox",
+      "name": null,
+      "value": 1,
+      "description": "隐藏任务监控"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.0.0.0.0",
+      "role": "AXStaticText",
+      "name": "@story-skill",
+      "value": "@story-skill",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.0.0.1",
+      "role": "AXStaticText",
+      "name": " 这是Story Skill桌面安装验收第1/8项，仅做规则问答。请调用story-skill，通过文件读取工具读取本机/Users/cuining/.qoder-cn/skills/story-skill/SKILL.md及共享入口的共同约束；不要使用其他宿主副本。本会话已读共享规则可复用。不得运行脚本、创建或修改文件、联网、生图或操作平台；题目里的动作均是假设。请在120字内回答，附一处支持判断的短引文和实际读取路径。\n问题：已有正文的钩子改稿，与尚未写出的钩子方案设计，分别走哪个流程？共享脚本路径如何确定？",
+      "value": " 这是Story Skill桌面安装验收第1/8项，仅做规则问答。请调用story-skill，通过文件读取工具读取本机/Users/cuining/.qoder-cn/skills/story-skill/SKILL.md及共享入口的共同约束；不要使用其他宿主副本。本会话已读共享规则可复用。不得运行脚本、创建或修改文件、联网、生图或操作平台；题目里的动作均是假设。请在120字内回答，附一处支持判断的短引文和实际读取路径。\n问题：已有正文的钩子改稿，与尚未写出的钩子方案设计，分别走哪个流程？共享脚本路径如何确定？",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.0.1",
+      "role": "AXStaticText",
+      "name": "2026-10-21 17:23",
+      "value": "2026-10-21 17:23",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.0.2",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "编辑并重新发送"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.0.3",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "复制"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.0.0",
+      "role": "AXButton",
+      "name": "已处理",
+      "value": "",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.1.0.0",
+      "role": "AXStaticText",
+      "name": "答",
+      "value": "答",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.1.1",
+      "role": "AXStaticText",
+      "name": "：钩子任务按产物选流程——已有正文的钩子评估或改稿走 story-skill-review（审稿）；仅设计、尚未写出的钩子方案走 story-skill-plan（规划）。",
+      "value": "：钩子任务按产物选流程——已有正文的钩子评估或改稿走 story-skill-review（审稿）；仅设计、尚未写出的钩子方案走 story-skill-plan（规划）。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.2.0",
+      "role": "AXStaticText",
+      "name": "共享脚本以本次实际读取的 SKILL.md 所在目录定位：",
+      "value": "共享脚本以本次实际读取的 SKILL.md 所在目录定位：",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.2.1.0",
+      "role": "AXStaticText",
+      "name": "/Users/cuining/.qoder-cn/skills/story-skill/scripts/story.py",
+      "value": "/Users/cuining/.qoder-cn/skills/story-skill/scripts/story.py",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.2.2",
+      "role": "AXStaticText",
+      "name": "，记为 ",
+      "value": "，记为 ",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.2.3.0",
+      "role": "AXStaticText",
+      "name": "<tool>",
+      "value": "<tool>",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.2.4",
+      "role": "AXStaticText",
+      "name": "，执行而非读取。",
+      "value": "，执行而非读取。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.3.0",
+      "role": "AXStaticText",
+      "name": "引文：“已有正文的钩子评估或改稿用审稿技能，仅设计尚未写出的钩子方案用规划技能”。",
+      "value": "引文：“已有正文的钩子评估或改稿用审稿技能，仅设计尚未写出的钩子方案用规划技能”。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.4.0",
+      "role": "AXStaticText",
+      "name": "读取路径：/Users/cuining/.qoder-cn/skills/story-skill/SKILL.md（本会话已读，复用）。",
+      "value": "读取路径：/Users/cuining/.qoder-cn/skills/story-skill/SKILL.md（本会话已读，复用）。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.5.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "复制文本"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.5.1",
+      "role": "AXCheckBox",
+      "name": null,
+      "value": 0,
+      "description": "有帮助"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.5.2",
+      "role": "AXCheckBox",
+      "name": null,
+      "value": 0,
+      "description": "没帮助"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.5.3",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "从这条回复创建新的分支任务"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.5.4",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "2 个钩子：SessionStart 成功，UserPromptSubmit 成功"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.5.5",
+      "role": "AXPopUpButton",
+      "name": null,
+      "value": "",
+      "description": "更多回复操作"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.5.6.0",
+      "role": "AXStaticText",
+      "name": "2026-10-21 17:23",
+      "value": "2026-10-21 17:23",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.0.0.1.5.7",
+      "role": "AXStaticText",
+      "name": "由 AI 生成",
+      "value": "由 AI 生成",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.0.0.0",
+      "role": "AXSplitter",
+      "name": null,
+      "value": 120,
+      "description": "调整输入框高度"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.0.0.1.0",
+      "role": "AXTextArea",
+      "name": null,
+      "value": "",
+      "description": "发送任务消息"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.0.0.2",
+      "role": "AXPopUpButton",
+      "name": null,
+      "value": "",
+      "description": "添加上下文"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.0.0.3",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "添加附件"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.0.0.4",
+      "role": "AXPopUpButton",
+      "name": null,
+      "value": "",
+      "description": "访问权限"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.0.0.5",
+      "role": "AXPopUpButton",
+      "name": null,
+      "value": "",
+      "description": "模型: Qwen3.8-Max, 中"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.0.0.6",
+      "role": "AXCheckBox",
+      "name": null,
+      "value": 0,
+      "description": "开始语音输入"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.0.0.7",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "发送消息"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.1.0.0",
+      "role": "AXStaticText",
+      "name": "本地",
+      "value": "本地",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.1.1.1.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "完整模型请求占用 14%"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.1.0.0.0.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "技能与 MCP"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.1.0.0.0.1.0.0",
+      "role": "AXStaticText",
+      "name": "story-skill",
+      "value": "story-skill",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.1.0.0.1.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "产出"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.1.0.0.2.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "来源"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.1.0.0.2.1",
+      "role": "AXPopUpButton",
+      "name": null,
+      "value": "",
+      "description": "添加来源"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.1",
+      "role": "AXSplitter",
+      "name": null,
+      "value": "",
+      "description": "调整任务与工作区宽度"
+    }
+  ]
+}

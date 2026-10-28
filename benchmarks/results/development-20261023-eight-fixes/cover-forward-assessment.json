@@ -1,0 +1,52 @@
+{
+  "method": "Independent agent received only scenarios and applicable local rules, without expected answers or prior findings; root assessed the returned action decisions.",
+  "cases": [
+    {
+      "id": "formal-person-count",
+      "passed": true,
+      "observed": "识别人物数量和钥匙失配；在已有配套授权内修正且保留旧版。"
+    },
+    {
+      "id": "formal-relationship",
+      "passed": true,
+      "observed": "识别同阵营构图和题字与敌对关系冲突；按历史修订后联动。"
+    },
+    {
+      "id": "formal-reading-promise",
+      "passed": true,
+      "observed": "识别重逢相守与告别独守的阅读承诺冲突。"
+    },
+    {
+      "id": "formal-copyedit",
+      "passed": true,
+      "observed": "错字正式修正并同步已有全文，沿用不受影响封面。"
+    },
+    {
+      "id": "review-only",
+      "passed": true,
+      "observed": "区分现行正式稿与候选，只有问题与待联动项，不写正式产物。"
+    },
+    {
+      "id": "history-candidate",
+      "passed": true,
+      "observed": "保存比较候选，不发布、不刷新正式全文及封面。"
+    },
+    {
+      "id": "single-unit-no-products",
+      "passed": true,
+      "observed": "停在第2章授权内，不生成首次全文或封面，不续写。"
+    },
+    {
+      "id": "formal-symbolic-cover",
+      "passed": true,
+      "observed": "核对道具变化实际影响后沿用无相关物件的象征封面。"
+    }
+  ],
+  "passed": 8,
+  "total": 8,
+  "response_sha256": "e38c416ee9b35191a8554376a81b86b42365b0e5cbf5dbf4b301152a8e40bc51",
+  "limitations": [
+    "离线合成场景，只验证规则路由和授权判断。",
+    "没有生成或修改实际图片；不证明视觉质量、文学效果或读者反馈。"
+  ]
+}

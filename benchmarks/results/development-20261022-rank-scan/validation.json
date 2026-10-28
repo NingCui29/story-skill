@@ -1,0 +1,85 @@
+{
+  "version": "0.6.22",
+  "release_status": "unreleased working tree",
+  "base_commit": "b657be2253244b62b31331964d7ad55b711b02db",
+  "python": "3.12.14",
+  "full_regression": {
+    "command": "python3 -B -X utf8 -m unittest discover -s tests -q",
+    "tests_run": 2504,
+    "passed_non_skipped": 2259,
+    "skipped": 245,
+    "failures": 0,
+    "errors": 0,
+    "elapsed_seconds": 575.972,
+    "log": "full-python312-tests.log"
+  },
+  "targeted": {
+    "command": "python3 -B -m unittest tests.test_rank tests.test_rank_sources tests.test_instruction_budget tests.test_desktop_runtime_payload -q",
+    "tests_run": 81,
+    "failed": 0,
+    "skipped": 0
+  },
+  "skill_frontmatter_validation": "quick_validate.py: Skill is valid; PyYAML supplied by isolated uv environment",
+  "independent_review": {
+    "new_agent_context": true,
+    "rank_tests": 43,
+    "blocking_findings_initial": 2,
+    "blocking_findings_remaining": 0
+  },
+  "independent_forward_trial": {
+    "new_agent_context": true,
+    "synthetic_snapshots": 2,
+    "checks_passed": 29,
+    "final_replay_equal_except_expanded_method_note": true
+  },
+  "instruction_budget": {
+    "passed": true,
+    "loads_checked": 282,
+    "rank_research": {
+      "scenario": "rank_research",
+      "call": "researcher",
+      "base": {
+        "nonspace_chars": 7621,
+        "utf8_bytes": 19528
+      },
+      "base_limits": {
+        "nonspace_chars": 9000,
+        "utf8_bytes": 23000
+      },
+      "maximum": {
+        "nonspace_chars": 7621,
+        "utf8_bytes": 19528
+      },
+      "maximum_limits": {
+        "nonspace_chars": 9000,
+        "utf8_bytes": 23000
+      },
+      "passed": true,
+      "failed_variants": []
+    }
+  },
+  "distribution": "Standard, Claude and Codex archives built in a resolved temporary directory; extracted rank-template/rank-check/rank-aggregate passed for all three. No install or publication. npm wrapper tests only; npm executable unavailable for npm pack.",
+  "live_source_validation": "Qimao two-page public browser HTML import, 30 records, passed; direct HTTP remains WAF-blocked. Fanqie and Qidian direct collectors are not implemented.",
+  "novel_or_installation_modified": false,
+  "source_sha256": {
+    ".codex-plugin/plugin.json": "8d2702292ac2067c15e71eea2db2f6dc3e4241b2e145cf59c22fb04ae9c65845",
+    "skills/story-skill/scripts/story.py": "73baa77e8a5e1354a201017fbcdfe41c42122aad9bf44dbdd270d6b0c383a27d",
+    "skills/story-skill/scripts/story_rank.py": "ca40aa7500d75955a194de758285efb7388317858776ea22667e72ea07e28f6a",
+    "skills/story-skill/scripts/story_rank_sources.py": "3632c5f7a9f62f31751a496ffa2e97149fa658266d6e6ce0c4c60c3eee8f4a05",
+    "skills/story-skill-research/SKILL.md": "3a0ef62a86708433f16287e1dd29842d588180d56262570410e4bc2deefec00e",
+    "skills/story-skill-research/agents/openai.yaml": "3fb4cfaded0bf4206c2f3cf7dbc1e6ccf7ee62f5fd4ca1a406b509a0b9bcde28",
+    "skills/story-skill-research/references/rank-scan.md": "95c5baf89a171fbdf97c07bedd9ec06a380ba5bbeb7066bd7a0fe09fccc3788d",
+    "scripts/package.py": "b25d166a5da42d61f57ed7146a9d378274f63b039318148e47b17fcb1b5ea90e",
+    "scripts/package_npm.py": "bd27cf21932427702d00364c880597844007b36330dd627e1d98b4b7e19b2a6c",
+    "scripts/install.py": "79e63b665297bc57295915f3933767a89f3630e58fb1abadc9bbdf6403079ff2",
+    "scripts/build_desktop_macos.py": "ee2bf3dbdc52642569db6ab3c6540fbab048936450d0a6fa85505fd5ff7f2518",
+    "benchmarks/instruction-loads.json": "fceb30519d54aecc1d71780e568b9ab35d5b8d503f20d95c88046e9c46b02384",
+    "tests/test_rank.py": "94555462ade71611fefb5968618f9fe2fe634d29dde5f6125e213cf42b027c17",
+    "tests/test_rank_sources.py": "6a545734017df2db386de8e32bf593ca4fe5067b69689c26b4759e1f139bd593",
+    "tests/test_package.py": "b6da8995e17ef6f6ab222d6059a01917155486cac5f26cdb2e0e92e1ddf7153b",
+    "tests/test_package_npm.py": "626e62680f1fe4f55c49ac611c9ec2354b22e3c3f7390b779e835160965977c2",
+    "tests/test_install_suite.py": "6cc3f7bcc1c9c9d480c46b4c74379cd12c57183f23e176a37d0b9a0b677f6b44",
+    "tests/test_instruction_budget.py": "51e5640868a6970a4be6c7836a497114fc650f0c58398e4a6d9e13ef8ffdc157",
+    "tests/test_workbench_runtime_regressions.py": "0cfb65b4bed89b7f9edd37848fac832e7e1ad56d4005edb3b33d08acc061a0db"
+  }
+}

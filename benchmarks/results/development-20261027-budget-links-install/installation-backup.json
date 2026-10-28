@@ -1,0 +1,9 @@
+{
+  "backup": "/Users/cuining/.codex/backups/story-skill-local/20261027-122719",
+  "cache_backup": "/Users/cuining/.codex/backups/story-skill-local/20261027-122719/installed-plugin",
+  "config_backup": "/Users/cuining/.codex/backups/story-skill-local/20261027-122719/config.toml",
+  "previous_marketplace": "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261026-142503",
+  "config_except_story_sha256": "1a896cd95f3bf4d760ce09f0f11b653a5016f25b701a7c15c89a97df01e14c7c",
+  "new_marketplace_parent": "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261027-122719",
+  "condition": "Installation not yet changed; update is conditional on successful tests"
+}

@@ -1,0 +1,198 @@
+{
+  "date": "2026-10-21",
+  "installation_source": "Frozen source snapshot used for first isolated verification and local installation; separate platform-draft source development continued afterward",
+  "installation_snapshot_sha256": "5804bc53fd9f1cbab120b386c8a8907bb5761b5ab12e312b52193dbd7df48a6a",
+  "matches_original_verification_snapshot": true,
+  "host_payloads_identical": true,
+  "eight_entry_files_match_current_source": true,
+  "installation_attempts": [
+    {
+      "status": "historical_file_snapshot_verified_unused_target",
+      "host": "workbuddy",
+      "scope": "user",
+      "path": "/Users/cuining/.workbuddy/skills",
+      "skills": [
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover",
+        "story-skill-publish"
+      ],
+      "managed_skills": [
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover",
+        "story-skill-publish"
+      ],
+      "files": 64,
+      "application": "WorkBuddy AI",
+      "application_version": "5.7.6",
+      "installation_result": "installed",
+      "skill_md_sha256": {
+        "story-skill": "66335db1b9f2340450a37e185f543fccaecfb78c6e81cf718ec681bbd219906b",
+        "story-skill-plan": "0f1f8cf09e85130e1dfd2371e71c2c80bed816e00c70e69a0a6ed65708745474",
+        "story-skill-write": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+        "story-skill-analyze": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+        "story-skill-review": "7563ef2c5e8a7253f5c975c432a19c2ed1080dcb6013f6a99074a5f40c34d998",
+        "story-skill-research": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9",
+        "story-skill-cover": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+        "story-skill-publish": "8ab985beb7c7d65a3f4318cddd3adb49c9b1adcd63f97933d6fbe866227669d8"
+      },
+      "superseded_by": "/Users/cuining/.workbuddy-ai/skills",
+      "recoverable_backup": "/Users/cuining/.workbuddy/story-skill-install-backups/20261021-unused-target/skills"
+    },
+    {
+      "status": "verified",
+      "host": "qoder-cn",
+      "scope": "user",
+      "path": "/Users/cuining/.qoder-cn/skills",
+      "skills": [
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover",
+        "story-skill-publish"
+      ],
+      "managed_skills": [
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover",
+        "story-skill-publish"
+      ],
+      "files": 64,
+      "application": "Qoder CN",
+      "application_version": "0.4.8",
+      "installation_result": "installed",
+      "skill_md_sha256": {
+        "story-skill": "66335db1b9f2340450a37e185f543fccaecfb78c6e81cf718ec681bbd219906b",
+        "story-skill-plan": "0f1f8cf09e85130e1dfd2371e71c2c80bed816e00c70e69a0a6ed65708745474",
+        "story-skill-write": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+        "story-skill-analyze": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+        "story-skill-review": "7563ef2c5e8a7253f5c975c432a19c2ed1080dcb6013f6a99074a5f40c34d998",
+        "story-skill-research": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9",
+        "story-skill-cover": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+        "story-skill-publish": "8ab985beb7c7d65a3f4318cddd3adb49c9b1adcd63f97933d6fbe866227669d8"
+      }
+    }
+  ],
+  "installations": [
+    {
+      "host": "workbuddy",
+      "scope": "user",
+      "path": "/Users/cuining/.workbuddy-ai/skills",
+      "application": "WorkBuddy AI",
+      "bundle_version": "5.7.6",
+      "status": "managed_snapshot_verified",
+      "skills": [
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover",
+        "story-skill-publish"
+      ],
+      "files": 64,
+      "skill_md_sha256": {
+        "story-skill": "66335db1b9f2340450a37e185f543fccaecfb78c6e81cf718ec681bbd219906b",
+        "story-skill-plan": "0f1f8cf09e85130e1dfd2371e71c2c80bed816e00c70e69a0a6ed65708745474",
+        "story-skill-write": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+        "story-skill-analyze": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+        "story-skill-review": "7563ef2c5e8a7253f5c975c432a19c2ed1080dcb6013f6a99074a5f40c34d998",
+        "story-skill-research": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9",
+        "story-skill-cover": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+        "story-skill-publish": "8ab985beb7c7d65a3f4318cddd3adb49c9b1adcd63f97933d6fbe866227669d8"
+      }
+    },
+    {
+      "host": "qoder-cn",
+      "scope": "user",
+      "path": "/Users/cuining/.qoder-cn/skills",
+      "application": "Qoder CN",
+      "bundle_version": "0.4.8",
+      "status": "managed_snapshot_verified",
+      "skills": [
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover",
+        "story-skill-publish"
+      ],
+      "files": 64,
+      "skill_md_sha256": {
+        "story-skill": "66335db1b9f2340450a37e185f543fccaecfb78c6e81cf718ec681bbd219906b",
+        "story-skill-plan": "0f1f8cf09e85130e1dfd2371e71c2c80bed816e00c70e69a0a6ed65708745474",
+        "story-skill-write": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+        "story-skill-analyze": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f",
+        "story-skill-review": "7563ef2c5e8a7253f5c975c432a19c2ed1080dcb6013f6a99074a5f40c34d998",
+        "story-skill-research": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9",
+        "story-skill-cover": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+        "story-skill-publish": "8ab985beb7c7d65a3f4318cddd3adb49c9b1adcd63f97933d6fbe866227669d8"
+      }
+    }
+  ],
+  "directory_correction_report": "workbuddy-directory-correction.json",
+  "desktop_validation": {
+    "status": "native_loading_and_eight_rule_invocations_complete_with_documented_deviations",
+    "native_catalogs": {
+      "workbuddy": {
+        "eight_present": true,
+        "eight_enabled": true,
+        "evidence": "workbuddy-installed-ax.json",
+        "slash_menu_evidence": "workbuddy-available-skills-ax.json",
+        "later_native_selection_version": "5.8.4"
+      },
+      "qoder-cn": {
+        "eight_present": true,
+        "slash_menu_evidence": "qoder-available-skills-ax.json"
+      }
+    },
+    "permission_history": [
+      "cua native API unavailable",
+      "User explicitly authorized AppleScript",
+      "macOS initially denied Accessibility",
+      "User enabled Accessibility; native AX read and interaction now working"
+    ],
+    "invocation_scope": "Manual native Skill selection and read-only rule Q&A; no manuscript, image or publishing workflow",
+    "qoder_core": "All eight native selections, full prompts and correct rule judgments completed. Case 8 read-only violation remains recorded; cleanup verified.",
+    "workbuddy_core": "All eight native selections, full prompts and correct rule judgments completed on 5.8.4. No additional writes observed in captured completed-turn UI.",
+    "version_history": {
+      "workbuddy": {
+        "installation_and_initial_catalog": "5.7.6",
+        "desktop_invocation": "5.8.4",
+        "change": "Application updated in background and rebuilt its process; no update was requested or executed by this task"
+      },
+      "qoder-cn": {
+        "initial_parser": "0.4.4",
+        "desktop_invocation": "0.4.8"
+      }
+    },
+    "results": {
+      "workbuddy": "workbuddy-desktop/results.json",
+      "qoder-cn": "qoder-desktop/results.json"
+    },
+    "summary_evidence": "desktop-validation.json",
+    "readable_report": "desktop-validation.md",
+    "independent_file_source_paths": "Not fully expanded or independently verified per case; model self-reports are not accepted as proof."
+  },
+  "integrity_evidence": "final-installation-integrity.json",
+  "directory_regression_evidence": "directory-regression.json"
+}

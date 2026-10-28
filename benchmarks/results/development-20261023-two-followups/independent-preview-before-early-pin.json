@@ -1,0 +1,27 @@
+{
+  "stage": "Intermediate fix before pinPreview was moved into newTab",
+  "source_hash_recorded": false,
+  "probe": "newTab requested remote 11, returned remote 22 in the same book; the first guard DOM await restored remote 11",
+  "fixture": "Remote 22 used chapter 22, to avoid an unrelated duplicate-chapter rejection",
+  "observed": {
+    "redirected": true,
+    "returned": true,
+    "reads": 2,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget1read_draft",
+      "nonce": "nonce",
+      "session_id": "1",
+      "binding_sha256": "binding",
+      "ok": true,
+      "result": {
+        "remote_id": "11",
+        "title": "原稿",
+        "body": "原始正文",
+        "state": "draft",
+        "url": "https://fanqienovel.com/preview/10&11"
+      }
+    }
+  },
+  "interpretation": "The returned text happened to belong to requested remote 11, but the intermediate fix forgot an already observed navigation to remote 22. This is evidence of a lost identity boundary, not evidence of a wrong remote write."
+}

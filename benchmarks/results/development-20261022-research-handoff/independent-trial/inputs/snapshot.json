@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "platform": "synthetic",
+  "collected_at": "2026-10-22T10:00:00+08:00",
+  "source": {
+    "url": "https://example.invalid/fiction/library",
+    "board": "合成开发样本",
+    "channel": "综合",
+    "category": null,
+    "period": null,
+    "metric": null,
+    "cohort": "new",
+    "sample_method": "原创合成数据，仅开发试用",
+    "pages": [
+      1
+    ],
+    "coverage": "partial",
+    "expected_count": null,
+    "limitations": [
+      "不是真实榜单，不用于市场结论"
+    ]
+  },
+  "entries": [
+    {
+      "book_id": "a",
+      "book_url": "https://example.invalid/book/a",
+      "title": "开局：雨夜修表铺",
+      "author": "原创合成作者",
+      "rank": 1,
+      "category": "都市",
+      "tags": [
+        "经营",
+        "邻里"
+      ],
+      "word_count": 80000,
+      "status": "连载",
+      "metric_value": null,
+      "metric_raw": null
+    },
+    {
+      "book_id": "b",
+      "book_url": "https://example.invalid/book/b",
+      "title": "开局：河畔修车行",
+      "author": "原创合成作者",
+      "rank": 2,
+      "category": "都市",
+      "tags": [
+        "经营",
+        "邻里"
+      ],
+      "word_count": 180000,
+      "status": "连载",
+      "metric_value": null,
+      "metric_raw": null
+    },
+    {
+      "book_id": "c",
+      "book_url": "https://example.invalid/book/c",
+      "title": "开局：最后一班船",
+      "author": "原创合成作者",
+      "rank": 3,
+      "category": "都市",
+      "tags": [
+        "经营",
+        "远行"
+      ],
+      "word_count": 0,
+      "status": "连载",
+      "metric_value": null,
+      "metric_raw": null
+    },
+    {
+      "book_id": "d",
+      "book_url": "https://example.invalid/book/d",
+      "title": "山城送信人",
+      "author": "原创合成作者",
+      "rank": 4,
+      "category": "现实",
+      "tags": [],
+      "word_count": null,
+      "status": "连载",
+      "metric_value": null,
+      "metric_raw": null
+    },
+    {
+      "book_id": "a",
+      "book_url": "https://example.invalid/book/a",
+      "title": "开局：雨夜修表铺",
+      "author": "原创合成作者",
+      "rank": 1,
+      "category": "都市",
+      "tags": [
+        "经营",
+        "邻里"
+      ],
+      "word_count": 80000,
+      "status": "连载",
+      "metric_value": null,
+      "metric_raw": null
+    }
+  ]
+}

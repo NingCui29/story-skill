@@ -1,0 +1,78 @@
+{
+  "scope": "Replay of independent authored evidence with archived file paths; not a second independent semantic assessment.",
+  "checks": {
+    "topics": 2,
+    "verifications": 5,
+    "all_quotes_checked": true,
+    "all_scopes_partial": true,
+    "verdicts": [
+      "contradicts",
+      "insufficient",
+      "mixed",
+      "supports"
+    ],
+    "created_novel_state": false
+  },
+  "commands": [
+    {
+      "argv": [
+        "research-verify",
+        "--input",
+        "<REPLAY>/decision.json",
+        "--evidence",
+        "<REPLAY>/evidence.json",
+        "--output-dir",
+        "<REPLAY>/verified"
+      ],
+      "result": {
+        "added_verifications": 5,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<REPLAY>/verified",
+        "sample_id": "0ef8a4c9ad2ba08c9d65469db7c3919a839b90c9634aca112ccf796c540fca16",
+        "status": "candidate"
+      }
+    },
+    {
+      "argv": [
+        "research-check",
+        "--input",
+        "<REPLAY>/verified/decision.json"
+      ],
+      "result": {
+        "ok": true,
+        "sample_id": "0ef8a4c9ad2ba08c9d65469db7c3919a839b90c9634aca112ccf796c540fca16",
+        "status": "candidate",
+        "topics": 2,
+        "verifications": 5
+      }
+    },
+    {
+      "argv": [
+        "research-render",
+        "--input",
+        "<REPLAY>/verified/decision.json",
+        "--output-dir",
+        "<REPLAY>/handoff"
+      ],
+      "result": {
+        "added_verifications": 0,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<REPLAY>/handoff",
+        "sample_id": "0ef8a4c9ad2ba08c9d65469db7c3919a839b90c9634aca112ccf796c540fca16",
+        "status": "candidate"
+      }
+    }
+  ]
+}

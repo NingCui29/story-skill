@@ -1,0 +1,81 @@
+.............................................................................................................................................................----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 57160)
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 6011, in do_POST
+    self.reply(200, json.dumps(result, ensure_ascii=False).encode())
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5782, in reply
+    self.wfile.write(data)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 6015, in do_POST
+    self.reply(400, json.dumps({'message': str(error)}, ensure_ascii=False).encode())
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5781, in reply
+    self.end_headers()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 542, in end_headers
+    self.flush_headers()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 546, in flush_headers
+    self.wfile.write(b"".join(self._headers_buffer))
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 57172)
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 6011, in do_POST
+    self.reply(200, json.dumps(result, ensure_ascii=False).encode())
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5782, in reply
+    self.wfile.write(data)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 6015, in do_POST
+    self.reply(400, json.dumps({'message': str(error)}, ensure_ascii=False).encode())
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5781, in reply
+    self.end_headers()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 542, in end_headers
+    self.flush_headers()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 546, in flush_headers
+    self.wfile.write(b"".join(self._headers_buffer))
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+.............................................................................ss...............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 1035 tests in 267.273s
+
+OK (skipped=2)

@@ -1,0 +1,62 @@
+{
+  "app": "Qoder CN",
+  "source": "Native slash Skill suggestion list",
+  "skills": [
+    {
+      "path": "0.0.0.0.0.0.0.0.0.2.0.0.0.4",
+      "role": "AXMenuItem",
+      "name": null,
+      "value": "Skill story-skill-cover，制作、优化或局部修改中文小说封面，以吸引目标读者点开为设计目标，根据书名、署名、题材和发布规格生成图像，检查视觉钩子、缩略图表现、文字与尺寸。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.2.0.0.0.5",
+      "role": "AXMenuItem",
+      "name": null,
+      "value": "Skill story-skill-review，中文小说审稿、修改、整书打磨、去 AI 味及已提交章节修订，处理外部改稿、历史依赖复核和旧版状态库迁移。不用于软件代码审查。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.2.0.0.0.6",
+      "role": "AXMenuItem",
+      "name": null,
+      "value": "Skill story-skill-analyze，中文小说开篇点评、精彩度与平淡原因分析、长短篇深读、全量证据分析、分析稿修订与断点续跑。用于分析已有作品，不把参考剧情当原创书事实。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.2.0.0.0.7",
+      "role": "AXMenuItem",
+      "name": null,
+      "value": "Skill story-skill-publish，为番茄、七猫或起点准备已审查正式章节的离线材料，导出并复核 ZIP；按已核对的页面配置执行草稿保存与回读，区分成功、冲突和未知。不执行提交审核或定时发布。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.2.0.0.0.8",
+      "role": "AXMenuItem",
+      "name": null,
+      "value": "Skill story-skill-plan，中文小说书名、卷名、章名、简介拟写与优化、钩子与剧情设计、小说架构搭建与重构、大纲优化、开书、人物与世界设定、平台分类、近期细纲，以及把既有作品建立为可续写基线。支持根据小说规划剧本，以及根据小说或剧本拆分镜。规划请求不自动写小说正文。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.2.0.0.0.9",
+      "role": "AXMenuItem",
+      "name": null,
+      "value": "Skill story-skill，中文小说任务总入口与共享规则；在需求跨流程或尚未明确是规划、剧本改编、分镜、正文、拆文、审稿、调研、封面还是发布材料与平台草稿时使用。不用于软件开发或普通文案。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.2.0.0.0.10",
+      "role": "AXMenuItem",
+      "name": null,
+      "value": "Skill story-skill-research，为中文小说创作查询榜单、题材市场和写作素材，分析商业选题与阅读数据，核对来源与样本。用于调研、选题取舍和事实查证，不改写正文或生成封面。",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.2.0.0.0.11",
+      "role": "AXMenuItem",
+      "name": null,
+      "value": "Skill story-skill-write，中文长短篇正文创作与续写，包括逐章提交、短篇完本全文与封面交付、人物状态衔接和长距伏笔。已有章节修订用 story-skill-review。",
+      "description": ""
+    }
+  ]
+}

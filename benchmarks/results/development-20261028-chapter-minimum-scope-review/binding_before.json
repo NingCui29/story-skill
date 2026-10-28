@@ -1,0 +1,17 @@
+{
+  "method": "Isolated fake-native receipt; no model/GUI/platform",
+  "frozen_chapter": 3,
+  "current_record_chapter": 4,
+  "frozen_complete_chapter": true,
+  "current_complete_chapter": false,
+  "old_binding_sha256": "9d5741113079230c66b2880fcd8169597ec2999408924a0cb64f0fa1b35e0760",
+  "current_binding_sha256": "25821957edbd023379d11595df4a684945d9f32bcbb7978ada8cef1eed44d00a",
+  "record_version": 1,
+  "ledger_task_version": 1,
+  "result_state": "completed",
+  "error": null,
+  "result_verified": true,
+  "task_status": "needs_review",
+  "result_binding_sha256": "25821957edbd023379d11595df4a684945d9f32bcbb7978ada8cef1eed44d00a",
+  "authoritative_unchanged": true
+}

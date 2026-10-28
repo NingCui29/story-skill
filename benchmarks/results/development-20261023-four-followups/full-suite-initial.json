@@ -1,0 +1,20 @@
+{
+  "started_at_utc": "2026-10-23T09:16:46.711561+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:22) [Clang 22.1.3 ]",
+  "platform": "macOS-15.8.1-x86_64-i386-64bit",
+  "node": "v24.19.0",
+  "tests_run": 145,
+  "passed": 144,
+  "skipped": [],
+  "failures": [
+    {
+      "test": "test_chrome_worker_controller.ControllerTests.test_75_second_model_gap_is_not_ready_until_the_same_next_call_has_fresh_health",
+      "traceback": "Traceback (most recent call last):\n  File \"/Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_worker_controller.py\", line 1062, in test_75_second_model_gap_is_not_ready_until_the_same_next_call_has_fresh_health\n    self.wait(lambda: self.state()[\"ready\"])\n  File \"/Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_worker_controller.py\", line 707, in wait\n    self.fail(\"fake worker did not reach expected state\")\nAssertionError: fake worker did not reach expected state\n"
+    }
+  ],
+  "errors": [],
+  "elapsed_seconds": 56.64,
+  "source_changed_during_run": [],
+  "successful": false,
+  "failfast": true
+}

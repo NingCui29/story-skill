@@ -1,0 +1,10 @@
+✔ draft action href changes fail before clicking same-page create or save (95.811299ms)
+✔ stable same-page create and save action href forms remain supported (446.913959ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 717.420565

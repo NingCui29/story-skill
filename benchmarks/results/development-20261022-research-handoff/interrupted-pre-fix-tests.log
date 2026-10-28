@@ -1,0 +1,53 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/__main__.py", line 18, in <module>
+    main(module=None)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/main.py", line 105, in __init__
+    self.runTests()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/main.py", line 281, in runTests
+    self.result = testRunner.run(self.test)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/runner.py", line 240, in run
+    test(result)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/suite.py", line 122, in run
+    test(result)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/suite.py", line 122, in run
+    test(result)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/suite.py", line 84, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/suite.py", line 122, in run
+    test(result)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/case.py", line 690, in __call__
+    return self.run(*args, **kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/case.py", line 634, in run
+    self._callTestMethod(testMethod)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/unittest/case.py", line 589, in _callTestMethod
+    if method() is not None:
+       ^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_install_suite.py", line 249, in test_v0612_upgrades_v0611_in_every_host_scope_with_exact_backup
+    installer.install(root, False, self.source, host=host, scope=scope)
+  File "/Users/cuining/Documents/GitHub/story-skill/scripts/install.py", line 645, in install
+    return install_suite_locked(project, source, files, update, host=host, scope=scope)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/scripts/install.py", line 541, in install_suite_locked
+    if managed_snapshot(targets[prior]) != expected[prior]:
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/scripts/install.py", line 379, in managed_snapshot
+    if inventory(directory) != managed["files"]:
+       ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/scripts/install.py", line 335, in inventory
+    if "__pycache__" in rel.parts or path.suffix == ".pyc" or rel.as_posix() == MARKER:
+                                     ^^^^^^^^^^^
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/pathlib.py", line 599, in suffix
+    i = name.rfind('.')
+        ^^^^^^^^^^^^^^^
+KeyboardInterrupt

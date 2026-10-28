@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": "initial header and body pending",
+      "ok": true
+    },
+    {
+      "case": "remote switch during final account guard",
+      "reads": 2,
+      "error": "platform_browser_identity_mismatch"
+    },
+    {
+      "case": "newTab wrong remote then restore at guard",
+      "redirected": true,
+      "returned": false,
+      "reads": 0,
+      "error": "platform_browser_identity_mismatch",
+      "owned_tab_cleaned": true,
+      "user_tab_retained": true
+    },
+    {
+      "case": "newTab wrong remote then restore at first_ax",
+      "redirected": true,
+      "returned": false,
+      "reads": 0,
+      "error": "platform_browser_identity_mismatch",
+      "owned_tab_cleaned": true,
+      "user_tab_retained": true
+    },
+    {
+      "case": "newTab wrong remote then restore at inventory",
+      "redirected": true,
+      "returned": true,
+      "reads": 0,
+      "error": "platform_browser_identity_mismatch",
+      "owned_tab_cleaned": true,
+      "user_tab_retained": true
+    }
+  ],
+  "source_sha256": "939cc1eb0a2c79065765c58ce962e42305dcd58b6ff6e779da069d799d6a4ab2"
+}

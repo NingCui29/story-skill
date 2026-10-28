@@ -1,0 +1,304 @@
+{
+  "date": "2026-10-20",
+  "scope": "只读审计Antigravity/Story下直接有.story/state.sqlite3的8个书根，读取现行约定、总纲及开书策划的分类相关段；未读正文、未修改作品",
+  "counts": {
+    "books": 8,
+    "books_with_platform_classification": 6,
+    "books_without_platform_classification": 2,
+    "local_status_not_separately_stated": 4,
+    "explicit_unresolved_content_fit": 1,
+    "historical_alternatives_not_reselected": 1
+  },
+  "interpretation": "有选词和内容依据不等于作者已采用；不能批量删除拟选或把后台未核变已确认。按作品和平台区分标签措辞、真实未决与历史方案。",
+  "books": [
+    {
+      "directory": "/Users/cuining/Documents/Antigravity/Story/剑来_城头拔剑十万里",
+      "classification_kind": "local_selection_status_not_separated",
+      "platforms": {
+        "fanqie": {
+          "local": "完整内容选词仍总标拟选；未单列本地是否采用",
+          "backend": "主分类动漫衍生/男频衍生待实际后台核对",
+          "content_fit": "已有逐项内容依据；本轮未做正文适配评估"
+        },
+        "qimao": {
+          "local": "现行总纲未列平台分类"
+        },
+        "qidian": {
+          "local": "约定提及兼顾/目标，但现行总纲未列该平台分类"
+        }
+      },
+      "project_status": "目录现行约定仍写初始化；未证实本周仍活跃，不能当作新改稿已采用",
+      "evidence": [
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/剑来_城头拔剑十万里/01_大纲细纲/全书总纲.md",
+          "line": 12,
+          "evidence": "番茄长篇标签（拟选）"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/剑来_城头拔剑十万里/01_大纲细纲/全书总纲.md",
+          "line": 14,
+          "evidence": "动漫衍生；大佬、天才"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/剑来_城头拔剑十万里/01_大纲细纲/全书总纲.md",
+          "line": 19,
+          "evidence": "若实际开放男频衍生，以后台展示为准；无其他未核对项"
+        }
+      ],
+      "notes": [
+        "飞卢仅在城头拔剑创作约定目标中出现，但未列分类"
+      ]
+    },
+    {
+      "directory": "/Users/cuining/Documents/Antigravity/Story/剑来_天庭复辟人神第一剑",
+      "classification_kind": "local_selection_status_not_separated",
+      "platforms": {
+        "fanqie": {
+          "local": "完整内容选词仍总标拟选；未单列本地是否采用",
+          "backend": "主分类动漫衍生/男频衍生待实际后台核对",
+          "content_fit": "已有逐项内容依据；本轮未做正文适配评估"
+        },
+        "qimao": {
+          "local": "现行总纲未列平台分类"
+        },
+        "qidian": {
+          "local": "约定提及兼顾/目标，但现行总纲未列该平台分类"
+        }
+      },
+      "project_status": "目录现行约定仍写初始化；未证实本周仍活跃，不能当作新改稿已采用",
+      "evidence": [
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/剑来_天庭复辟人神第一剑/01_大纲细纲/全书总纲.md",
+          "line": 12,
+          "evidence": "番茄长篇标签（拟选）"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/剑来_天庭复辟人神第一剑/01_大纲细纲/全书总纲.md",
+          "line": 14,
+          "evidence": "动漫衍生；位尊权重、大佬"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/剑来_天庭复辟人神第一剑/01_大纲细纲/全书总纲.md",
+          "line": 19,
+          "evidence": "若实际开放男频衍生，以后台展示为准；无其他未核对项"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "directory": "/Users/cuining/Documents/Antigravity/Story/剑来_我与齐先生换人间",
+      "classification_kind": "local_selection_status_not_separated",
+      "platforms": {
+        "fanqie": {
+          "local": "完整内容选词仍总标拟选；未单列本地是否采用",
+          "backend": "主分类动漫衍生/男频衍生待实际后台核对",
+          "content_fit": "已有逐项内容依据；本轮未做正文适配评估"
+        },
+        "qimao": {
+          "local": "现行总纲未列平台分类"
+        },
+        "qidian": {
+          "local": "约定提及兼顾/目标，但现行总纲未列该平台分类"
+        }
+      },
+      "project_status": "目录现行约定仍写初始化；未证实本周仍活跃，不能当作新改稿已采用",
+      "evidence": [
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/剑来_我与齐先生换人间/01_大纲细纲/全书总纲.md",
+          "line": 12,
+          "evidence": "番茄长篇标签（拟选）"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/剑来_我与齐先生换人间/01_大纲细纲/全书总纲.md",
+          "line": 14,
+          "evidence": "动漫衍生；天才、扮猪吃虎"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/剑来_我与齐先生换人间/01_大纲细纲/全书总纲.md",
+          "line": 19,
+          "evidence": "若实际开放男频衍生，以后台展示为准；无其他未核对项"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "directory": "/Users/cuining/Documents/Antigravity/Story/天降横财",
+      "classification_kind": "local_selection_status_not_separated",
+      "platforms": {
+        "fanqie": {
+          "local": "男生生活；打脸逆袭/婚恋；爽文/先虐后甜；现代/家庭/职场；整表仍标拟选",
+          "backend": "角色留空是否可行未确认；没有独立后台核验栏",
+          "content_fit": "已有依据；角色暂无匹配项"
+        },
+        "qimao": {
+          "local": "未列"
+        },
+        "qidian": {
+          "local": "未列"
+        }
+      },
+      "project_status": "现行约定仍是基础规划/初始化；总纲题名为《中奖四千万，我装穷去上班》，目录名不同，未推断其当前活跃性",
+      "evidence": [
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/天降横财/01_大纲细纲/全书总纲.md",
+          "line": 1,
+          "evidence": "《中奖四千万，我装穷去上班》全书总纲"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/天降横财/01_大纲细纲/全书总纲.md",
+          "line": 10,
+          "evidence": "番茄短篇作品分类（拟选）"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/天降横财/01_大纲细纲/全书总纲.md",
+          "line": 18,
+          "evidence": "角色选项无完全契合标签，暂且留空"
+        }
+      ]
+    },
+    {
+      "directory": "/Users/cuining/Documents/Antigravity/Story/我把天灾摆满了客厅",
+      "classification_kind": "mixed_ready_alternatives_and_unresolved_content_choice",
+      "platforms": {
+        "fanqie": {
+          "local": "都市脑洞及逐栏具体选词是备选分析，实际投向未定",
+          "backend": "入口、现值、数量、世界观能否留空、署名待核"
+        },
+        "qimao": {
+          "local": "都市高武暂保留拟选，明确内容适配存疑；都市高手仅比较项",
+          "backend": "实际分类、分支数量、署名、创建条件待核",
+          "content_fit": "没有传统武道体系，不能因异能就等同高武"
+        },
+        "qidian": {
+          "local": "起点-男生/都市/异术超能有明确内容依据，为备选分析",
+          "backend": "当前分类、标签、署名待核"
+        }
+      },
+      "project_status": "当前有效作品，约定已到4章；本轮不读取正文",
+      "evidence": [
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/我把天灾摆满了客厅/01_大纲细纲/全书总纲.md",
+          "line": 41,
+          "evidence": "作备选分析；未确定实际投向"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/我把天灾摆满了客厅/01_大纲细纲/全书总纲.md",
+          "line": 60,
+          "evidence": "都市高武暂保留拟选，内容适配存疑；都市高手只作比较项"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/我把天灾摆满了客厅/01_大纲细纲/全书总纲.md",
+          "line": 62,
+          "evidence": "没有传统武道或修炼体系，不能因有异能就等同高武"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/我把天灾摆满了客厅/01_大纲细纲/全书总纲.md",
+          "line": 78,
+          "evidence": "起点都市/异术超能拟选"
+        }
+      ]
+    },
+    {
+      "directory": "/Users/cuining/Documents/Antigravity/Story/龙令归位_退婚当天千亿绝色带十里红妆堵门",
+      "classification_kind": "historical_alternatives_not_reselected",
+      "platforms": {
+        "fanqie": {
+          "local": "都市修真及逐栏选词，明确历史备选未据本轮重新选定",
+          "backend": "实际现值、词项与数量、署名、建书条件待核"
+        },
+        "qimao": {
+          "local": "都市/都市高手，沿用历史主投拟选",
+          "backend": "用户曾提供驳回；实际阶段、分类、数量、署名待核"
+        },
+        "qidian": {
+          "local": "起点-男生/都市/异术超能，历史资料内容拟选",
+          "backend": "实际分类、数量、署名、作品阶段与创建条件待核"
+        }
+      },
+      "project_status": "当前独立有效工程；不是被天灾替代的旧项目。全案策划明确《整体重推规划》是另一部天灾的历史候选，未并入本书",
+      "evidence": [
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/龙令归位_退婚当天千亿绝色带十里红妆堵门/01_大纲细纲/全书总纲.md",
+          "line": 15,
+          "evidence": "沿用旧稿历史拟选记录，未重新核对后台"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/龙令归位_退婚当天千亿绝色带十里红妆堵门/01_大纲细纲/全书总纲.md",
+          "line": 21,
+          "evidence": "历史备选未据本轮重新选定"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/龙令归位_退婚当天千亿绝色带十里红妆堵门/01_大纲细纲/全书总纲.md",
+          "line": 38,
+          "evidence": "沿用历史主投拟选；曾提供七猫驳回"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/龙令归位_退婚当天千亿绝色带十里红妆堵门/01_大纲细纲/全书总纲.md",
+          "line": 55,
+          "evidence": "历史资料内容拟选，后台未确认"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/龙令归位_退婚当天千亿绝色带十里红妆堵门/全案策划与架构大纲.md",
+          "line": 16,
+          "evidence": "《整体重推规划.md》是另一部天灾历史候选，未并入本书"
+        }
+      ]
+    },
+    {
+      "directory": "/Users/cuining/Documents/Antigravity/Story/中奖八千万，我立下装穷十律",
+      "classification_kind": "classification_missing_in_current_entrypoints",
+      "platforms": {
+        "fanqie": {
+          "local": "现行约定与总纲未列"
+        },
+        "qimao": {
+          "local": "现行约定与总纲未列"
+        },
+        "qidian": {
+          "local": "现行约定与总纲未列"
+        }
+      },
+      "project_status": "目录现行约定自述完本，但本次未核查正文或数据库，不把自述作为完成证据",
+      "evidence": [
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/中奖八千万，我立下装穷十律/创作约定.md",
+          "line": 24,
+          "evidence": "当前状态自述完本；无平台分类"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/中奖八千万，我立下装穷十律/01_大纲细纲/全书总纲.md",
+          "line": 5,
+          "evidence": "总纲存在，但未列平台分类"
+        }
+      ]
+    },
+    {
+      "directory": "/Users/cuining/Documents/Antigravity/Story/中奖六千万，我立下装穷十一律",
+      "classification_kind": "classification_missing_in_current_entrypoints",
+      "platforms": {
+        "fanqie": {
+          "local": "现行约定与总纲未列"
+        },
+        "qimao": {
+          "local": "现行约定与总纲未列"
+        },
+        "qidian": {
+          "local": "现行约定与总纲未列"
+        }
+      },
+      "project_status": "目录现行约定自述完本，但本次未核查正文或数据库，不把自述作为完成证据",
+      "evidence": [
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/中奖六千万，我立下装穷十一律/创作约定.md",
+          "line": 29,
+          "evidence": "当前状态自述完本；无平台分类"
+        },
+        {
+          "path": "/Users/cuining/Documents/Antigravity/Story/中奖六千万，我立下装穷十一律/01_大纲细纲/全书总纲.md",
+          "line": 3,
+          "evidence": "总纲存在，但未列平台分类"
+        }
+      ]
+    }
+  ]
+}

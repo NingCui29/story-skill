@@ -1,0 +1,342 @@
+{
+  "passed": true,
+  "manifest_sha256": "2d06c76f3e44f4b99a76fb37b8e772934ca2ac07d01708979b3f67e648dd28ef",
+  "measured": "Explicit cold rule loads only; not tokens, dynamic story context or actual usage",
+  "loads_checked": 286,
+  "calls": [
+    {
+      "scenario": "long_chapter",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 39517,
+        "utf8_bytes": 107763
+      },
+      "base_limits": {
+        "nonspace_chars": 44000,
+        "utf8_bytes": 121000
+      },
+      "maximum": {
+        "nonspace_chars": 73350,
+        "utf8_bytes": 199816
+      },
+      "maximum_limits": {
+        "nonspace_chars": 76000,
+        "utf8_bytes": 208000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 55578,
+        "utf8_bytes": 152035
+      },
+      "base_limits": {
+        "nonspace_chars": 66000,
+        "utf8_bytes": 181000
+      },
+      "maximum": {
+        "nonspace_chars": 83588,
+        "utf8_bytes": 232375
+      },
+      "maximum_limits": {
+        "nonspace_chars": 88000,
+        "utf8_bytes": 245000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write",
+      "call": "cover_designer",
+      "base": {
+        "nonspace_chars": 5641,
+        "utf8_bytes": 16211
+      },
+      "base_limits": {
+        "nonspace_chars": 7000,
+        "utf8_bytes": 19000
+      },
+      "maximum": {
+        "nonspace_chars": 5641,
+        "utf8_bytes": 16211
+      },
+      "maximum_limits": {
+        "nonspace_chars": 7000,
+        "utf8_bytes": 19000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write_novel_entry",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 57983,
+        "utf8_bytes": 159095
+      },
+      "base_limits": {
+        "nonspace_chars": 66000,
+        "utf8_bytes": 181000
+      },
+      "maximum": {
+        "nonspace_chars": 85993,
+        "utf8_bytes": 239435
+      },
+      "maximum_limits": {
+        "nonspace_chars": 88000,
+        "utf8_bytes": 245000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write_unknown_entry",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 59693,
+        "utf8_bytes": 164097
+      },
+      "base_limits": {
+        "nonspace_chars": 66000,
+        "utf8_bytes": 181000
+      },
+      "maximum": {
+        "nonspace_chars": 87703,
+        "utf8_bytes": 244437
+      },
+      "maximum_limits": {
+        "nonspace_chars": 88000,
+        "utf8_bytes": 245000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "content_review",
+      "call": "reviewer",
+      "base": {
+        "nonspace_chars": 20541,
+        "utf8_bytes": 55952
+      },
+      "base_limits": {
+        "nonspace_chars": 23000,
+        "utf8_bytes": 61000
+      },
+      "maximum": {
+        "nonspace_chars": 67584,
+        "utf8_bytes": 185905
+      },
+      "maximum_limits": {
+        "nonspace_chars": 72000,
+        "utf8_bytes": 195000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "content_rewrite",
+      "call": "rewriter",
+      "base": {
+        "nonspace_chars": 23980,
+        "utf8_bytes": 65588
+      },
+      "base_limits": {
+        "nonspace_chars": 27000,
+        "utf8_bytes": 72000
+      },
+      "maximum": {
+        "nonspace_chars": 71023,
+        "utf8_bytes": 195541
+      },
+      "maximum_limits": {
+        "nonspace_chars": 76000,
+        "utf8_bytes": 206000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "content_rewrite",
+      "call": "independent_reviewer",
+      "base": {
+        "nonspace_chars": 20541,
+        "utf8_bytes": 55952
+      },
+      "base_limits": {
+        "nonspace_chars": 23000,
+        "utf8_bytes": 61000
+      },
+      "maximum": {
+        "nonspace_chars": 44042,
+        "utf8_bytes": 123923
+      },
+      "maximum_limits": {
+        "nonspace_chars": 45000,
+        "utf8_bytes": 124000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "targeted_punctuation",
+      "call": "copyeditor",
+      "base": {
+        "nonspace_chars": 14310,
+        "utf8_bytes": 37544
+      },
+      "base_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 43000
+      },
+      "maximum": {
+        "nonspace_chars": 14310,
+        "utf8_bytes": 37544
+      },
+      "maximum_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 43000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "draft_fragment",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 24056,
+        "utf8_bytes": 66581
+      },
+      "base_limits": {
+        "nonspace_chars": 28000,
+        "utf8_bytes": 79000
+      },
+      "maximum": {
+        "nonspace_chars": 45357,
+        "utf8_bytes": 128266
+      },
+      "maximum_limits": {
+        "nonspace_chars": 47000,
+        "utf8_bytes": 134000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "long_chapter_handoff",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 41506,
+        "utf8_bytes": 112832
+      },
+      "base_limits": {
+        "nonspace_chars": 48000,
+        "utf8_bytes": 130000
+      },
+      "maximum": {
+        "nonspace_chars": 73350,
+        "utf8_bytes": 199816
+      },
+      "maximum_limits": {
+        "nonspace_chars": 76000,
+        "utf8_bytes": 208000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_platform_design",
+      "call": "planner",
+      "base": {
+        "nonspace_chars": 13241,
+        "utf8_bytes": 33577
+      },
+      "base_limits": {
+        "nonspace_chars": 15000,
+        "utf8_bytes": 38000
+      },
+      "maximum": {
+        "nonspace_chars": 27877,
+        "utf8_bytes": 75467
+      },
+      "maximum_limits": {
+        "nonspace_chars": 31000,
+        "utf8_bytes": 83000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "rank_research",
+      "call": "researcher",
+      "base": {
+        "nonspace_chars": 8901,
+        "utf8_bytes": 22580
+      },
+      "base_limits": {
+        "nonspace_chars": 11000,
+        "utf8_bytes": 26000
+      },
+      "maximum": {
+        "nonspace_chars": 11148,
+        "utf8_bytes": 27824
+      },
+      "maximum_limits": {
+        "nonspace_chars": 13000,
+        "utf8_bytes": 32000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "rank_research",
+      "call": "analyst",
+      "base": {
+        "nonspace_chars": 11076,
+        "utf8_bytes": 28544
+      },
+      "base_limits": {
+        "nonspace_chars": 13000,
+        "utf8_bytes": 33000
+      },
+      "maximum": {
+        "nonspace_chars": 11076,
+        "utf8_bytes": 28544
+      },
+      "maximum_limits": {
+        "nonspace_chars": 13000,
+        "utf8_bytes": 33000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "rank_research",
+      "call": "planner",
+      "base": {
+        "nonspace_chars": 14097,
+        "utf8_bytes": 35207
+      },
+      "base_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 41000
+      },
+      "maximum": {
+        "nonspace_chars": 14097,
+        "utf8_bytes": 35207
+      },
+      "maximum_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 41000
+      },
+      "passed": true,
+      "failed_variants": []
+    }
+  ],
+  "reports": [
+    "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261022-research-handoff/budget/instruction-loads.json",
+    "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261022-research-handoff/budget/instruction-loads.md"
+  ]
+}

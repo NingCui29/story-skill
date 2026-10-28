@@ -1,0 +1,12 @@
+✔ preview readiness polls header and empty body but refuses unknown structure without editor fallback (359.251497ms)
+✔ final preview body disappearance refuses without waiting for the old text to return (240.130938ms)
+✔ final preview body read is followed by live account and complete chapter header verification (169.204746ms)
+✔ preview identity remains pinned across initial body loading and the final editor inventory await (251.068959ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1163.356415

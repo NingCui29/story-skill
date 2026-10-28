@@ -1,0 +1,45 @@
+{
+  "read_only": true,
+  "findings": [
+    {
+      "priority": 2,
+      "origin": "introduced_by_latest_two_fixes",
+      "title": "Final account check can restart loading wait after body verification",
+      "file": "skills/story-skill/scripts/story_chrome_bridge.mjs",
+      "line": 857,
+      "trigger": "Final body complete, account locator count=0 once; body changes during 100ms polling pause with URL and title unchanged",
+      "observed": "ok=true returns original body while actual body changed",
+      "expected": "Reject unstable final observation without restarting readiness polling",
+      "probe": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-platform-reaudit-ufz6260g/current-guard-states.mjs"
+    },
+    {
+      "priority": 2,
+      "origin": "pre_existing_omission",
+      "title": "Standalone preview identity is unchecked after final body evaluation",
+      "file": "skills/story-skill/scripts/story_platform_browser.py",
+      "line": 1302,
+      "trigger": "Navigate during second body evaluation",
+      "observed": "Successful observation remote_id=900 but URL points to book200/remote901; upstream observation parser discards URL",
+      "expected": "Bind expected target through final read and recheck identity before accepting result",
+      "probe": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-platform-reaudit-ufz6260g/native-final-preview.py"
+    },
+    {
+      "priority": 2,
+      "origin": "pre_existing_omission",
+      "title": "Recovery centers do not consume the paginated material contract",
+      "file": "skills/story-skill/scripts/story_workbench.py",
+      "line": 2869,
+      "related_file": "skills/story-skill/scripts/story_workbench_archives.py",
+      "related_line": 557,
+      "trigger": "Production-saved recovery follows 5001 unrelated draft files",
+      "observed": "Editor claims no disk recoveries after incomplete first scan; shelf raises workbench_scan_limit; second catalog batch and direct open find intact recovery",
+      "expected": "Enumerate recovery records with pagination and report incomplete coverage instead of empty state",
+      "probe": "/tmp/story-workbench-recovery-coverage-probe.py",
+      "root_independent_result": "/tmp/story-workbench-recovery-coverage-root-result.json"
+    }
+  ],
+  "research_boundary_samples": 108,
+  "local_skill_links_checked": 414,
+  "instruction_loads_checked": 301,
+  "scope": "Eight skill entrypoints, core commands, platform drivers, workbench/archives, desktop/service and distribution; native Windows and real remote platforms not exercised"
+}

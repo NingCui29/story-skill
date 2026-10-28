@@ -1,0 +1,538 @@
+[
+  {
+    "platform": "qimao",
+    "timing": "before",
+    "change": "same",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget1create_draft",
+      "nonce": "nonce",
+      "session_id": "1",
+      "binding_sha256": "binding",
+      "ok": true,
+      "result": "99"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ],
+      [
+        "fill",
+        "#title"
+      ],
+      [
+        "fill",
+        "#body"
+      ],
+      [
+        "click",
+        "#save"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qimao",
+    "timing": "before",
+    "change": "remote",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget2create_draft",
+      "nonce": "nonce",
+      "session_id": "2",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qimao",
+    "timing": "before",
+    "change": "book",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget3create_draft",
+      "nonce": "nonce",
+      "session_id": "3",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qimao",
+    "timing": "before",
+    "change": "unknown",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget4create_draft",
+      "nonce": "nonce",
+      "session_id": "4",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qimao",
+    "timing": "after",
+    "change": "same",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget5create_draft",
+      "nonce": "nonce",
+      "session_id": "5",
+      "binding_sha256": "binding",
+      "ok": true,
+      "result": "99"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ],
+      [
+        "fill",
+        "#title"
+      ],
+      [
+        "fill",
+        "#body"
+      ],
+      [
+        "click",
+        "#save"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qimao",
+    "timing": "after",
+    "change": "remote",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget6create_draft",
+      "nonce": "nonce",
+      "session_id": "6",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 12,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qimao",
+    "timing": "after",
+    "change": "book",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget7create_draft",
+      "nonce": "nonce",
+      "session_id": "7",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qimao",
+    "timing": "after",
+    "change": "unknown",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget8create_draft",
+      "nonce": "nonce",
+      "session_id": "8",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qidian",
+    "timing": "before",
+    "change": "same",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget9create_draft",
+      "nonce": "nonce",
+      "session_id": "9",
+      "binding_sha256": "binding",
+      "ok": true,
+      "result": "99"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ],
+      [
+        "fill",
+        "#title"
+      ],
+      [
+        "fill",
+        "#body"
+      ],
+      [
+        "click",
+        "#save"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qidian",
+    "timing": "before",
+    "change": "remote",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget10create_draft",
+      "nonce": "nonce",
+      "session_id": "10",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qidian",
+    "timing": "before",
+    "change": "book",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget11create_draft",
+      "nonce": "nonce",
+      "session_id": "11",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qidian",
+    "timing": "before",
+    "change": "unknown",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget12create_draft",
+      "nonce": "nonce",
+      "session_id": "12",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qidian",
+    "timing": "after",
+    "change": "same",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget13create_draft",
+      "nonce": "nonce",
+      "session_id": "13",
+      "binding_sha256": "binding",
+      "ok": true,
+      "result": "99"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ],
+      [
+        "fill",
+        "#title"
+      ],
+      [
+        "fill",
+        "#body"
+      ],
+      [
+        "click",
+        "#save"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qidian",
+    "timing": "after",
+    "change": "remote",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget14create_draft",
+      "nonce": "nonce",
+      "session_id": "14",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 12,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qidian",
+    "timing": "after",
+    "change": "book",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget15create_draft",
+      "nonce": "nonce",
+      "session_id": "15",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  },
+  {
+    "platform": "qidian",
+    "timing": "after",
+    "change": "unknown",
+    "changed": true,
+    "response": {
+      "schema": 1,
+      "id": "verifytarget16create_draft",
+      "nonce": "nonce",
+      "session_id": "16",
+      "binding_sha256": "binding",
+      "ok": false,
+      "error": "platform_browser_identity_mismatch"
+    },
+    "writes": [
+      [
+        "click",
+        "#create"
+      ],
+      [
+        "fill",
+        "#chapter"
+      ]
+    ],
+    "old": {
+      "scope": "drafts",
+      "chapter": 88,
+      "title": "OLD TITLE",
+      "body": "OLD BODY",
+      "saved": true
+    }
+  }
+]

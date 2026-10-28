@@ -1,0 +1,8 @@
+{
+  "skills/story-skill/scripts/story.py": "c427f4f6a08c767313c92a5d9c93a84d0f7185d9f5b7ee8648560e1d35b77b1c",
+  "skills/story-skill/scripts/story_tasks.py": "35070711e589fd700cba7f91646cf0c4ea934b56911866fa664bdb41d45fc51b",
+  "skills/story-skill/scripts/story_workbench.py": "0d1508c81267fb7f38eee6aac9dcb0ab9b9fd2ab9f7a1e7128e31f0fee124f3a",
+  "skills/story-skill-write/references/writing-handoff.md": "1710334a4ff604e39f926ab0eed5fac586e7323f51004fa1db4dbf344d74a9e9",
+  "tests/test_minimum_chapter_length.py": "31db6e0b9fa2919e9b65779a1df93a44f8756b55a1b40589908b24655b74592a",
+  "tests/test_writing_brief.py": "8b5fda84377000ed083a999e6901244eac91e114c75baeb62317069325c0ae5f"
+}

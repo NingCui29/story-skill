@@ -1,0 +1,17 @@
+✔ button state callback is self-contained and checks accessible labels href disabled and focus (7.491711ms)
+✔ draft action href changes fail before clicking create (29.996844ms)
+✔ draft action href changes fail before clicking save (92.692384ms)
+✔ stable same-page create and save action href forms remain supported (397.485676ms)
+✔ draft action rejects changed effective destination while relative href stays unchanged for create (8.48388ms)
+✔ draft action rejects changed effective destination while relative href stays unchanged for save (78.416067ms)
+✔ draft action preserves stable effective destinations through irrelevant base changes (278.854563ms)
+✔ draft save links keep same-document behavior across configured same-ID editor URL aliases (47.351274ms)
+✔ draft action rejects unresolved href and retains no-href document fallback semantics (23.923958ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1142.132514

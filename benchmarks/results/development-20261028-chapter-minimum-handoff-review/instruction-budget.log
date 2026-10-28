@@ -1,0 +1,474 @@
+{
+  "passed": true,
+  "manifest_sha256": "20b1026fe512ad7666e39c09cf98865bce9d66e1f35c12342e87bafcdd19e75c",
+  "measured": "Explicit cold rule loads only; not tokens, dynamic story context or actual usage",
+  "loads_checked": 305,
+  "calls": [
+    {
+      "scenario": "long_chapter",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 39560,
+        "utf8_bytes": 107666
+      },
+      "base_limits": {
+        "nonspace_chars": 44000,
+        "utf8_bytes": 121000
+      },
+      "maximum": {
+        "nonspace_chars": 74050,
+        "utf8_bytes": 201597
+      },
+      "maximum_limits": {
+        "nonspace_chars": 76000,
+        "utf8_bytes": 208000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 55832,
+        "utf8_bytes": 152531
+      },
+      "base_limits": {
+        "nonspace_chars": 66000,
+        "utf8_bytes": 181000
+      },
+      "maximum": {
+        "nonspace_chars": 84348,
+        "utf8_bytes": 234391
+      },
+      "maximum_limits": {
+        "nonspace_chars": 88000,
+        "utf8_bytes": 245000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write",
+      "call": "cover_designer",
+      "base": {
+        "nonspace_chars": 5641,
+        "utf8_bytes": 16211
+      },
+      "base_limits": {
+        "nonspace_chars": 7000,
+        "utf8_bytes": 19000
+      },
+      "maximum": {
+        "nonspace_chars": 5641,
+        "utf8_bytes": 16211
+      },
+      "maximum_limits": {
+        "nonspace_chars": 7000,
+        "utf8_bytes": 19000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write_novel_entry",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 58237,
+        "utf8_bytes": 159591
+      },
+      "base_limits": {
+        "nonspace_chars": 66000,
+        "utf8_bytes": 181000
+      },
+      "maximum": {
+        "nonspace_chars": 86753,
+        "utf8_bytes": 241451
+      },
+      "maximum_limits": {
+        "nonspace_chars": 88000,
+        "utf8_bytes": 245000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_write_unknown_entry",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 59947,
+        "utf8_bytes": 164593
+      },
+      "base_limits": {
+        "nonspace_chars": 66000,
+        "utf8_bytes": 181000
+      },
+      "maximum": {
+        "nonspace_chars": 88463,
+        "utf8_bytes": 246453
+      },
+      "maximum_limits": {
+        "nonspace_chars": 102000,
+        "utf8_bytes": 283000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "content_review",
+      "call": "reviewer",
+      "base": {
+        "nonspace_chars": 20610,
+        "utf8_bytes": 55995
+      },
+      "base_limits": {
+        "nonspace_chars": 23000,
+        "utf8_bytes": 61000
+      },
+      "maximum": {
+        "nonspace_chars": 68141,
+        "utf8_bytes": 187213
+      },
+      "maximum_limits": {
+        "nonspace_chars": 72000,
+        "utf8_bytes": 195000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "content_rewrite",
+      "call": "rewriter",
+      "base": {
+        "nonspace_chars": 23855,
+        "utf8_bytes": 65043
+      },
+      "base_limits": {
+        "nonspace_chars": 27000,
+        "utf8_bytes": 72000
+      },
+      "maximum": {
+        "nonspace_chars": 71386,
+        "utf8_bytes": 196261
+      },
+      "maximum_limits": {
+        "nonspace_chars": 76000,
+        "utf8_bytes": 206000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "content_rewrite",
+      "call": "independent_reviewer",
+      "base": {
+        "nonspace_chars": 20610,
+        "utf8_bytes": 55995
+      },
+      "base_limits": {
+        "nonspace_chars": 23000,
+        "utf8_bytes": 61000
+      },
+      "maximum": {
+        "nonspace_chars": 44548,
+        "utf8_bytes": 125153
+      },
+      "maximum_limits": {
+        "nonspace_chars": 52000,
+        "utf8_bytes": 144000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "targeted_punctuation",
+      "call": "copyeditor",
+      "base": {
+        "nonspace_chars": 14157,
+        "utf8_bytes": 36915
+      },
+      "base_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 43000
+      },
+      "maximum": {
+        "nonspace_chars": 14157,
+        "utf8_bytes": 36915
+      },
+      "maximum_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 43000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "draft_fragment",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 24037,
+        "utf8_bytes": 66440
+      },
+      "base_limits": {
+        "nonspace_chars": 28000,
+        "utf8_bytes": 79000
+      },
+      "maximum": {
+        "nonspace_chars": 45807,
+        "utf8_bytes": 129484
+      },
+      "maximum_limits": {
+        "nonspace_chars": 47000,
+        "utf8_bytes": 134000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "long_chapter_handoff",
+      "call": "writer",
+      "base": {
+        "nonspace_chars": 41697,
+        "utf8_bytes": 113181
+      },
+      "base_limits": {
+        "nonspace_chars": 48000,
+        "utf8_bytes": 130000
+      },
+      "maximum": {
+        "nonspace_chars": 74050,
+        "utf8_bytes": 201597
+      },
+      "maximum_limits": {
+        "nonspace_chars": 76000,
+        "utf8_bytes": 208000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "short_platform_design",
+      "call": "planner",
+      "base": {
+        "nonspace_chars": 13427,
+        "utf8_bytes": 33827
+      },
+      "base_limits": {
+        "nonspace_chars": 15000,
+        "utf8_bytes": 38000
+      },
+      "maximum": {
+        "nonspace_chars": 28063,
+        "utf8_bytes": 75717
+      },
+      "maximum_limits": {
+        "nonspace_chars": 31000,
+        "utf8_bytes": 83000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "rank_research",
+      "call": "researcher",
+      "base": {
+        "nonspace_chars": 9090,
+        "utf8_bytes": 23049
+      },
+      "base_limits": {
+        "nonspace_chars": 11000,
+        "utf8_bytes": 26000
+      },
+      "maximum": {
+        "nonspace_chars": 11400,
+        "utf8_bytes": 28477
+      },
+      "maximum_limits": {
+        "nonspace_chars": 13000,
+        "utf8_bytes": 32000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "rank_research",
+      "call": "analyst",
+      "base": {
+        "nonspace_chars": 11139,
+        "utf8_bytes": 28728
+      },
+      "base_limits": {
+        "nonspace_chars": 13000,
+        "utf8_bytes": 33000
+      },
+      "maximum": {
+        "nonspace_chars": 11139,
+        "utf8_bytes": 28728
+      },
+      "maximum_limits": {
+        "nonspace_chars": 13000,
+        "utf8_bytes": 33000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "rank_research",
+      "call": "planner",
+      "base": {
+        "nonspace_chars": 14346,
+        "utf8_bytes": 35641
+      },
+      "base_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 41000
+      },
+      "maximum": {
+        "nonspace_chars": 14346,
+        "utf8_bytes": 35641
+      },
+      "maximum_limits": {
+        "nonspace_chars": 17000,
+        "utf8_bytes": 41000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "reader_feedback",
+      "call": "researcher",
+      "base": {
+        "nonspace_chars": 4994,
+        "utf8_bytes": 14027
+      },
+      "base_limits": {
+        "nonspace_chars": 6000,
+        "utf8_bytes": 16000
+      },
+      "maximum": {
+        "nonspace_chars": 5328,
+        "utf8_bytes": 14992
+      },
+      "maximum_limits": {
+        "nonspace_chars": 6000,
+        "utf8_bytes": 17000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "adopted_book_title",
+      "call": "planner",
+      "base": {
+        "nonspace_chars": 13548,
+        "utf8_bytes": 34159
+      },
+      "base_limits": {
+        "nonspace_chars": 16000,
+        "utf8_bytes": 39000
+      },
+      "maximum": {
+        "nonspace_chars": 17235,
+        "utf8_bytes": 44797
+      },
+      "maximum_limits": {
+        "nonspace_chars": 20000,
+        "utf8_bytes": 52000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "reader_records",
+      "call": "researcher",
+      "base": {
+        "nonspace_chars": 9277,
+        "utf8_bytes": 22713
+      },
+      "base_limits": {
+        "nonspace_chars": 11000,
+        "utf8_bytes": 27000
+      },
+      "maximum": {
+        "nonspace_chars": 9277,
+        "utf8_bytes": 22713
+      },
+      "maximum_limits": {
+        "nonspace_chars": 11000,
+        "utf8_bytes": 27000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "workbench_task_return",
+      "call": "task_reviewer",
+      "base": {
+        "nonspace_chars": 4066,
+        "utf8_bytes": 10990
+      },
+      "base_limits": {
+        "nonspace_chars": 5000,
+        "utf8_bytes": 13000
+      },
+      "maximum": {
+        "nonspace_chars": 4066,
+        "utf8_bytes": 10990
+      },
+      "maximum_limits": {
+        "nonspace_chars": 5000,
+        "utf8_bytes": 13000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "workbench_stop_fresh",
+      "call": "operator",
+      "base": {
+        "nonspace_chars": 3922,
+        "utf8_bytes": 10553
+      },
+      "base_limits": {
+        "nonspace_chars": 5000,
+        "utf8_bytes": 12000
+      },
+      "maximum": {
+        "nonspace_chars": 3922,
+        "utf8_bytes": 10553
+      },
+      "maximum_limits": {
+        "nonspace_chars": 5000,
+        "utf8_bytes": 12000
+      },
+      "passed": true,
+      "failed_variants": []
+    },
+    {
+      "scenario": "workbench_host_execution",
+      "call": "operator",
+      "base": {
+        "nonspace_chars": 5211,
+        "utf8_bytes": 13598
+      },
+      "base_limits": {
+        "nonspace_chars": 6000,
+        "utf8_bytes": 16000
+      },
+      "maximum": {
+        "nonspace_chars": 5211,
+        "utf8_bytes": 13598
+      },
+      "maximum_limits": {
+        "nonspace_chars": 6000,
+        "utf8_bytes": 16000
+      },
+      "passed": true,
+      "failed_variants": []
+    }
+  ],
+  "reports": [
+    "/private/tmp/story-handoff-review-budget-final/instruction-loads.json",
+    "/private/tmp/story-handoff-review-budget-final/instruction-loads.md"
+  ]
+}

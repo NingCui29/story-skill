@@ -1,0 +1,88 @@
+✔ ordinary qimao editor supports read find create and existing selector/body modes (253.961684ms)
+✔ ordinary qidian editor supports read find create and existing selector/body modes (184.714209ms)
+✖ ordinary qimao editor rejects another remote during read find and create readback (3.252467ms)
+✖ ordinary qidian editor rejects another remote during read find and create readback (1.859075ms)
+✖ ordinary qimao editor refuses changed current chapter title body and DOM state after body observation (2.225734ms)
+✖ ordinary qidian editor refuses changed current chapter title body and DOM state after body observation (1.42616ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 2
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 605.303883
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:1922:42
+✖ ordinary qimao editor rejects another remote during read find and create readback (3.252467ms)
+  AssertionError [ERR_ASSERTION]: {"stateSource":"dom","operation":"read_draft","response":{"schema":1,"id":"verifytarget25read_draft","nonce":"nonce","session_id":"25","binding_sha256":"binding","ok":true,"result":{"remote_id":"11","title":"原稿","body":"另一草稿正文","state":"draft","url":"https://zuozhe.qimao.com/book/10/edit/22?enter_from=modifydraft"}}}
+  + actual - expected
+  
+  + undefined
+  - 'platform_browser_identity_mismatch'
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:1932:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'platform_browser_identity_mismatch',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:1922:42
+✖ ordinary qidian editor rejects another remote during read find and create readback (1.859075ms)
+  AssertionError [ERR_ASSERTION]: {"stateSource":"dom","operation":"read_draft","response":{"schema":1,"id":"verifytarget26read_draft","nonce":"nonce","session_id":"26","binding_sha256":"binding","ok":true,"result":{"remote_id":"11","title":"原稿","body":"另一草稿正文","state":"draft","url":"https://write.qq.com/book/10/edit/22?enter_from=modifydraft"}}}
+  + actual - expected
+  
+  + undefined
+  - 'platform_browser_identity_mismatch'
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:1932:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'platform_browser_identity_mismatch',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:1940:42
+✖ ordinary qimao editor refuses changed current chapter title body and DOM state after body observation (2.225734ms)
+  AssertionError [ERR_ASSERTION]: {"operation":"read_draft","change":"chapter","response":{"schema":1,"id":"verifytarget27read_draft","nonce":"nonce","session_id":"27","binding_sha256":"binding","ok":true,"result":{"remote_id":"11","title":"原稿","body":"原始正文","state":"draft","url":"https://zuozhe.qimao.com/book/10/edit/11?enter_from=modifydraft"}}}
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:1950:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:1940:42
+✖ ordinary qidian editor refuses changed current chapter title body and DOM state after body observation (1.42616ms)
+  AssertionError [ERR_ASSERTION]: {"operation":"read_draft","change":"chapter","response":{"schema":1,"id":"verifytarget28read_draft","nonce":"nonce","session_id":"28","binding_sha256":"binding","ok":true,"result":{"remote_id":"11","title":"原稿","body":"原始正文","state":"draft","url":"https://write.qq.com/book/10/edit/11?enter_from=modifydraft"}}}
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:1950:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

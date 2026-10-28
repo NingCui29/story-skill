@@ -1,0 +1,164 @@
+{
+  "scope": "Two platform preview fixes only; offline fixtures and temporary books, no platform, installation or release operations.",
+  "working_directory": "/Users/cuining/Documents/GitHub/story-skill",
+  "runtime": {
+    "python": "3.12.14",
+    "node": "v24.19.0",
+    "platform": "macOS-15.8.1-x86_64-i386-64bit"
+  },
+  "source_hashes_stage": "Four platform source/test files frozen after final complete related module runs.",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "a4a2d72b113e5dc7b13f11f72a9aaab4421fe0f69bb5710acbd92688691b6bff",
+    "skills/story-skill/scripts/story_platform_browser.py": "0e39dbab506cf889467e031693866d38aededb54d52c982426c936bb6213fb60",
+    "tests/test_chrome_bridge_driver.mjs": "533f35bf8d9b7c0c525695784e0407818517e06a70b338c6274bb180e599df5e",
+    "tests/test_platform_browser_preview.py": "6ca285a9484a3a05b37c6798b1fbc74e6cda3e56320686a14b0ab20d8d459b10"
+  },
+  "design": [
+    "Chrome final account/header/body checks do not poll missing fields or retry CDP read setup timeouts; initial readiness and its bounded read retry remain unchanged.",
+    "Chrome read-only guard refresh remains one initial refresh per operation; create retains its forced guard refreshes and consumed create command semantics.",
+    "Python final account/header use evaluate_all for one current DOM snapshot with count and value, without locator attachment waiting; final preview URL is checked after body, account, and header reads and returned as the fixed expected URL.",
+    "Python supports existing guard_dom and page DOM account identities; missing/empty/duplicate/current-account changes fail, preview closes in finally, saved drafts recover by readback without another save."
+  ],
+  "new_tests": {
+    "node_top_level_tests": 5,
+    "python_test_methods": 6,
+    "node_cases": {
+      "read_find_create_account_missing_empty_duplicate": 9,
+      "initial_account_read_create_delay": 2,
+      "final_account_header_count_value_timeout_read_create": 8
+    },
+    "python_cases": {
+      "read_create_final_identity_and_field_changes": 20,
+      "navigation_during_final_account_snapshot": 1,
+      "page_dom_account_identity_success_and_change": 2,
+      "final_account_header_snapshot_timeout": 2,
+      "saved_draft_readback_recovery": 1,
+      "actual_current_dom_javascript_reader": 7
+    }
+  },
+  "final_related_totals": {
+    "tests": 397,
+    "passed": 396,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0,
+    "note": "Only the three final related runs are summed. Root final full-repository run and prior turn results are separate; Python Node wrappers were not run here."
+  },
+  "runs": [
+    {
+      "stage": "red-before-fix",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test --test-name-pattern='final preview account cannot restart readiness|initial account readiness remains available' tests/test_chrome_bridge_driver.mjs",
+      "log": "red-chrome-final-account.log",
+      "tests": 4,
+      "passed": 1,
+      "failed": 3,
+      "exit_code": 1,
+      "note": "read/find/create each incorrectly succeeded after final account count=0; initial-readiness positive passed."
+    },
+    {
+      "stage": "red-timeout-variant-before-fix",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test --test-name-pattern='final preview account and header queries' tests/test_chrome_bridge_driver.mjs",
+      "log": "red-chrome-final-timeout.log",
+      "tests": 1,
+      "passed": 0,
+      "failed": 1,
+      "exit_code": 1,
+      "note": "Final account count Runtime.evaluate timeout retried and returned stale success."
+    },
+    {
+      "stage": "red-native-before-fix",
+      "command": "PYTHONDONTWRITEBYTECODE=1 /Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B -m unittest -v tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_checks_url_again_after_current_account_dom_read tests.test_platform_browser_preview.NativePreviewTests.test_failed_final_preview_of_saved_draft_can_only_be_recovered_by_readback",
+      "log": "red-python-final-current-dom.log",
+      "tests": 3,
+      "failed_methods": 3,
+      "failed_subtests_and_methods": 22,
+      "exit_code": 1,
+      "note": "20 read/create changed-final-field cases plus final account-await navigation and create/readback recovery failed. Recovery test was subsequently renamed; direct-create counter assertion was corrected after production rejection worked."
+    },
+    {
+      "stage": "targeted-green",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test --test-name-pattern='final preview account cannot restart readiness|initial account readiness remains available|final preview account and header queries' tests/test_chrome_bridge_driver.mjs",
+      "log": "green-chrome-final-account.log",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "exit_code": 0,
+      "counted_in_final": false
+    },
+    {
+      "stage": "intermediate-preview-green",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PATH=/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin:$PATH /Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B -m unittest -v tests.test_platform_browser_preview",
+      "log": "green-python-preview.log",
+      "tests": 21,
+      "passed": 21,
+      "failed": 0,
+      "exit_code": 0,
+      "counted_in_final": false,
+      "note": "Before two additional page-DOM-account and no-retry positive/negative boundary methods; final related Python run contains all 23 preview tests."
+    },
+    {
+      "stage": "final-node-driver",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/test_chrome_bridge_driver.mjs",
+      "log": "green-chrome-driver.log",
+      "tests": 118,
+      "passed": 118,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "counted_in_final": true
+    },
+    {
+      "stage": "final-node-worker",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/test_chrome_worker.mjs",
+      "log": "green-chrome-worker.log",
+      "tests": 94,
+      "passed": 94,
+      "failed": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "counted_in_final": true
+    },
+    {
+      "stage": "final-python-related",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PATH=/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin:$PATH /Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B -m unittest -v tests.test_platform_browser tests.test_platform_browser_preview tests.test_platform_browser_fanqie_body tests.test_platform_browser_batch tests.test_platform_profile_markers tests.test_platform_chrome_bridge",
+      "modules": [
+        "tests.test_platform_browser",
+        "tests.test_platform_browser_preview",
+        "tests.test_platform_browser_fanqie_body",
+        "tests.test_platform_browser_batch",
+        "tests.test_platform_profile_markers",
+        "tests.test_platform_chrome_bridge"
+      ],
+      "log": "green-python-platform.log",
+      "tests": 185,
+      "passed": 184,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 1,
+      "exit_code": 0,
+      "counted_in_final": true,
+      "skip_reason": "test_native_windows_current_and_exited_child_without_signals requires a real Windows process handle"
+    }
+  ],
+  "other_retained_logs": [
+    {
+      "log": "red-python-fixture-draft.log",
+      "note": "Initial test draft: guard redirect used an unsupported fake login route; two assertions failed for that fixture cause. Not used as proof."
+    },
+    {
+      "log": "red-python-final-identity.log",
+      "command": "PYTHONDONTWRITEBYTECODE=1 /Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B -m unittest -v tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_checks_url_again_after_current_account_dom_read tests.test_platform_browser_preview.NativePreviewTests.test_failed_final_preview_of_saved_draft_can_only_be_recovered_by_readback",
+      "note": "Corrected pre-production native red run before switching the fake current-read hooks to evaluate_all. Same 22 missing-rejection failures."
+    },
+    {
+      "log": "intermediate-python-create-counter.log",
+      "note": "Production final rejections worked; 11 assertions used popup-only created_blank instead of direct-create navigation count. Corrected the test metric; excluded from final results."
+    }
+  ],
+  "boundaries": [
+    "Offline public browser API fixtures and JavaScript DOM execution only; no real Chrome, native Playwright platform navigation, account or cloud save was exercised.",
+    "No claim of an atomic transaction across browser tabs or of remote contents remaining unchanged after observation.",
+    "Current loaded account DOM is checked; hidden server-side account changes without a loaded-DOM change retain the existing refresh boundary.",
+    "Native Windows process-handle test remains skipped on this macOS host."
+  ]
+}

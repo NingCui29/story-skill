@@ -1,0 +1,13 @@
+{
+  "method": "Isolated fake-native receipt; no model/GUI/platform",
+  "legacy_record": true,
+  "binding_unchanged": true,
+  "version_unchanged": true,
+  "frozen_complete_scope": true,
+  "current_complete_scope": false,
+  "result_state": "completed",
+  "result_verified": true,
+  "task_status": "needs_review",
+  "current_prompt_is_fragment": true,
+  "authoritative_unchanged": true
+}

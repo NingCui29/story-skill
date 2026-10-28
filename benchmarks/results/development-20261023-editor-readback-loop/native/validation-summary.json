@@ -1,0 +1,74 @@
+{
+  "scope": "Native ordinary editor identity-bound readback and adjacent create identity binding",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_platform_browser.py": "e775880fc9c6a9ab6f6ca5518205d80387cb01954e81a98a34f6628bf42a478a",
+    "tests/test_platform_browser.py": "56f59e72b74dd5b03f31e5e065fbf6003eb5f48c487e456143f046cdcf6cba26",
+    "tests/test_platform_browser_editor_readback.py": "2048a3989fe2dfaacb90681f8b4dc3af74b2cc50b842372ba9c9903ae29835ac",
+    "tests/test_platform_browser_preview.py": "598b7a1dffa23d6632cc2bc1d6dd4203579b0c7140852f7e72047e8ead7fd9d8"
+  },
+  "paragraph_serializer_unchanged": true,
+  "paragraph_serializer_sha256": "28eeee25214290a9a5afacdb704fe35c9e4a204d1b087fed9f5e70168acbcde0",
+  "red": {
+    "initial_readback": {
+      "methods": 7,
+      "failed_subtests": 65,
+      "errors": 0,
+      "log": "red.log"
+    },
+    "allocated_create": {
+      "methods": 2,
+      "failed_subtests": 5,
+      "errors": 0,
+      "log": "create-red.log"
+    },
+    "unallocated_create": {
+      "methods": 2,
+      "log": "create-unallocated-red.log"
+    },
+    "inside_write_helpers": {
+      "methods": 2,
+      "failed_subtests": 3,
+      "log": "pre-write-red.log"
+    }
+  },
+  "green": {
+    "core": {
+      "executed": 89,
+      "passed": 89,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": "green.log",
+      "stage": "superseded by final_combined after inner-write-guard regression"
+    },
+    "preview_neighbor": {
+      "executed": 31,
+      "passed": 31,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": "preview-neighbor.log",
+      "stage": "also included in final_combined"
+    },
+    "final_combined": {
+      "executed": 123,
+      "passed": 123,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": "final-green.log"
+    }
+  },
+  "new_regression_test_methods": 20,
+  "boundaries": [
+    "Offline browser and platform fixtures; no real platform operation",
+    "Node executes actual snapshot JavaScript against synthetic DOM objects",
+    "Guard and editor pages are separate observations, not a distributed atomic transaction",
+    "First ID allocation is accepted within the observed creation document and fields; no claim to infer arbitrary unseen server causality"
+  ],
+  "commands": [
+    "PATH=<bundled-node>/bin:$PATH PYTHONDONTWRITEBYTECODE=1 <bundled-python>/bin/python3 -B -m unittest tests.test_platform_browser_editor_readback tests.test_platform_browser",
+    "PATH=<bundled-node>/bin:$PATH PYTHONDONTWRITEBYTECODE=1 <bundled-python>/bin/python3 -B -m unittest tests.test_platform_browser_preview tests.test_platform_browser_fanqie_body",
+    "PATH=<bundled-node>/bin:$PATH PYTHONDONTWRITEBYTECODE=1 <bundled-python>/bin/python3 -B -m unittest tests.test_platform_browser_editor_readback tests.test_platform_browser tests.test_platform_browser_preview tests.test_platform_browser_fanqie_body"
+  ]
+}

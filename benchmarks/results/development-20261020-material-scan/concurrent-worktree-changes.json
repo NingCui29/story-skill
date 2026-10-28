@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "date": "2026-10-20",
+  "validated_source_sha256": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+  "observed_later_working_tree_sha256": "d30d8ba4d971b3aea326b1cde00d1a6ca2e54aacde045d893a832945f065f4d3",
+  "later_changed_functions": [
+    "_classification_fields",
+    "_classification_tags"
+  ],
+  "all_material_functions_unchanged": true,
+  "scope": "A separate concurrent classification task changed the working tree after the validated installation snapshot. Changes were preserved and are outside this material-scan test/install report; the installed plugin remains the validated snapshot."
+}

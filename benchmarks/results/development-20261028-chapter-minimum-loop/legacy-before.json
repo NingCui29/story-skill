@@ -1,0 +1,18 @@
+{
+  "scope": "Synthetic legacy-state replay; freeze sentinel only, no model/controller spawn, no UI/platform",
+  "checks": {
+    "writing_brief_keeps_legacy_ceiling": true,
+    "writing_task_generated_with_legacy_ceiling": true,
+    "legacy_task_handoff_allowed": true,
+    "legacy_task_execution_reaches_freeze": true,
+    "no_model_or_controller_spawn": true,
+    "formal_chapter_unchanged": true
+  },
+  "known_plan_policy_issue": {
+    "code": "length_exception_required",
+    "message": "New complete chapters need an explicit user or book agreement for a nondefault length or count method"
+  },
+  "formal_revision": 1,
+  "formal_last_chapter": 0,
+  "issue_reproduced": true
+}

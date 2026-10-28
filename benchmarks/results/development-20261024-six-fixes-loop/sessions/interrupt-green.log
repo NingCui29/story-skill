@@ -1,0 +1,13 @@
+test_active_initialization_serializes_other_process_status_and_attach (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_active_initialization_serializes_other_process_status_and_attach) ... ok
+test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) ... ok
+test_catchable_metadata_lock_exit_interrupt_retires_unpublished_handle_session (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_metadata_lock_exit_interrupt_retires_unpublished_handle_session) ... ok
+test_error_after_initial_metadata_publication_does_not_leave_a_live_orphan (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_error_after_initial_metadata_publication_does_not_leave_a_live_orphan) ... ok
+test_failed_first_metadata_publication_preserves_evidence_and_can_reconnect (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_failed_first_metadata_publication_preserves_evidence_and_can_reconnect) ... ok
+test_invalid_published_metadata_is_not_silently_skipped (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_invalid_published_metadata_is_not_silently_skipped) ... ok
+test_unknown_requests_health_or_lease_never_become_initialization_residue (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_unknown_requests_health_or_lease_never_become_initialization_residue) ... ok
+test_unpublished_stage_is_preserved_but_not_counted_as_an_active_session (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_unpublished_stage_is_preserved_but_not_counted_as_an_active_session) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 3.249s
+
+OK

@@ -1,0 +1,245 @@
+{
+  "suite": {
+    "archive": "<TEMP_BUILD>/story-skill-0.6.22.zip",
+    "version": "0.6.22",
+    "files": 69,
+    "sha256": "a6e2b03d751b23cf15eab031eeb4458f0f70711d9e2eb87aeda94185b49bc9e2",
+    "bytes": 659202,
+    "cli_smoke": {
+      "sample": {
+        "counts": {
+          "eligible": 1,
+          "excluded_conflicts": 0,
+          "excluded_identity_conflicts": 0,
+          "group_accepted": 1,
+          "selected": 1
+        },
+        "files": [
+          "sample.json",
+          "sample.md"
+        ],
+        "group_id": "713091a35c70e146e01a",
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/suite-sample",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "warnings": []
+      },
+      "init": {
+        "added_verifications": 0,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/suite-initial",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate"
+      },
+      "render": {
+        "added_verifications": 0,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/suite-prepared",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate"
+      },
+      "verify": {
+        "added_verifications": 1,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/suite-verified",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate"
+      },
+      "check": {
+        "ok": true,
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate",
+        "topics": 1,
+        "verifications": 1
+      },
+      "novel_state_created": false
+    }
+  },
+  "claude": {
+    "archive": "<TEMP_BUILD>/story-skill-claude-desktop-0.6.22-r2.zip",
+    "version": "0.6.22",
+    "files": 71,
+    "source_files": 69,
+    "skill_name": "story-skill",
+    "bundle_revision": 2,
+    "skill_entry_count": 1,
+    "entry_path_mapping": {
+      "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+      "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+      "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+      "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+      "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+      "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+      "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+      "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+    },
+    "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+    "sha256": "a878942459de5bf06e234013149115d55f9134c4c3ab77e89a6c5bc317bc9653",
+    "bytes": 665650,
+    "cli_smoke": {
+      "sample": {
+        "counts": {
+          "eligible": 1,
+          "excluded_conflicts": 0,
+          "excluded_identity_conflicts": 0,
+          "group_accepted": 1,
+          "selected": 1
+        },
+        "files": [
+          "sample.json",
+          "sample.md"
+        ],
+        "group_id": "713091a35c70e146e01a",
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/claude-sample",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "warnings": []
+      },
+      "init": {
+        "added_verifications": 0,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/claude-initial",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate"
+      },
+      "render": {
+        "added_verifications": 0,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/claude-prepared",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate"
+      },
+      "verify": {
+        "added_verifications": 1,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/claude-verified",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate"
+      },
+      "check": {
+        "ok": true,
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate",
+        "topics": 1,
+        "verifications": 1
+      },
+      "novel_state_created": false
+    }
+  },
+  "codex": {
+    "archive": "<TEMP_BUILD>/codex/story-skill-codex-0.6.22.zip",
+    "checksum": "<TEMP_BUILD>/codex/story-skill-codex-0.6.22.zip.sha256",
+    "marketplace_root": "<TEMP_BUILD>/codex/story-skill-codex-0.6.22",
+    "plugin_root": "<TEMP_BUILD>/codex/story-skill-codex-0.6.22/plugins/story-skill",
+    "version": "0.6.22",
+    "skill_count": 8,
+    "payload_files": 72,
+    "bundle_files": 74,
+    "sha256": "e2eb8eced95cc5a5bdd9a4303a79d88fba79084d18d26053b2cc895608ee62d2",
+    "source_payload_files": 69,
+    "adapted_ui_files": 8,
+    "cli_smoke": {
+      "sample": {
+        "counts": {
+          "eligible": 1,
+          "excluded_conflicts": 0,
+          "excluded_identity_conflicts": 0,
+          "group_accepted": 1,
+          "selected": 1
+        },
+        "files": [
+          "sample.json",
+          "sample.md"
+        ],
+        "group_id": "713091a35c70e146e01a",
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/codex-sample",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "warnings": []
+      },
+      "init": {
+        "added_verifications": 0,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/codex-initial",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate"
+      },
+      "render": {
+        "added_verifications": 0,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/codex-prepared",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate"
+      },
+      "verify": {
+        "added_verifications": 1,
+        "files": [
+          "analysis-brief.md",
+          "decision.json",
+          "evidence-template.json",
+          "planning-candidate.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/codex-verified",
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate"
+      },
+      "check": {
+        "ok": true,
+        "sample_id": "b243ac77052c1bd99e63df820188f27f2a9ead272e86d39768ed73215e7c6c17",
+        "status": "candidate",
+        "topics": 1,
+        "verifications": 1
+      },
+      "novel_state_created": false
+    }
+  }
+}

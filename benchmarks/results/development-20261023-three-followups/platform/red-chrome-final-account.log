@@ -1,0 +1,71 @@
+✖ final preview account cannot restart readiness for read_draft (161.909909ms)
+✖ final preview account cannot restart readiness for find_drafts (138.075713ms)
+✖ final preview account cannot restart readiness for create_draft (152.98778ms)
+✔ initial account readiness remains available before read and create final checks (277.247008ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 1
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 923.490305
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:1610:68
+✖ final preview account cannot restart readiness for read_draft (161.909909ms)
+  AssertionError [ERR_ASSERTION]: {"operation":"read_draft","change":"missing","response":{"schema":1,"id":"verifytarget1read_draft","nonce":"nonce","session_id":"1","binding_sha256":"binding","ok":true,"result":{"remote_id":"11","title":"原稿","body":"原始正文","state":"draft","url":"https://fanqienovel.com/preview/10&11"}}}
+  + actual - expected
+  
+  + undefined
+  - 'platform_browser_login_required'
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:1630:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'platform_browser_login_required',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:1610:68
+✖ final preview account cannot restart readiness for find_drafts (138.075713ms)
+  AssertionError [ERR_ASSERTION]: {"operation":"find_drafts","change":"missing","response":{"schema":1,"id":"verifytarget2find_drafts","nonce":"nonce","session_id":"2","binding_sha256":"binding","ok":true,"result":[{"remote_id":"11","title":"原稿","body":"原始正文","state":"draft","url":"https://fanqienovel.com/preview/10&11"}]}}
+  + actual - expected
+  
+  + undefined
+  - 'platform_browser_login_required'
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:1630:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'platform_browser_login_required',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:1610:68
+✖ final preview account cannot restart readiness for create_draft (152.98778ms)
+  AssertionError [ERR_ASSERTION]: {"operation":"create_draft","change":"missing","response":{"schema":1,"id":"verifytarget3create_draft","nonce":"nonce","session_id":"3","binding_sha256":"binding","ok":true,"result":"99"}}
+  + actual - expected
+  
+  + undefined
+  - 'platform_browser_login_required'
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:1630:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'platform_browser_login_required',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

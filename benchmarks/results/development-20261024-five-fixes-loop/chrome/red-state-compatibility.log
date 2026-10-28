@@ -1,0 +1,30 @@
+✔ current draft action state supports attribute fields and all ordinary DOM source forms (111.585292ms)
+✔ current draft action state timeout cannot retry or continue a later write (9.279247ms)
+✖ current draft state snapshot preserves same-ID configured creation URL transitions (5.398218ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 280.920211
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:2411:1
+✖ current draft state snapshot preserves same-ID configured creation URL transitions (5.398218ms)
+  AssertionError [ERR_ASSERTION]: {"schema":1,"id":"verifytarget8create_draft","nonce":"nonce","session_id":"8","binding_sha256":"binding","ok":false,"error":"platform_browser_identity_mismatch"}
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2417:37)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,202 @@
+test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) ... 
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='between-fields', fault='published') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='between-fields', fault='missing') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='between-fields', fault='duplicate') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='before-save', fault='published') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='before-save', fault='missing') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='before-save', fault='duplicate') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='between-fields', fault='published') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='between-fields', fault='missing') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='between-fields', fault='duplicate') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='before-save', fault='published') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='before-save', fault='missing') ... FAIL
+  test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='before-save', fault='duplicate') ... FAIL
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='between-fields', fault='published')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')] != [('fill', '#chapter')]
+
+First list contains 2 additional elements.
+First extra element 1:
+('fill', '#title')
+
+- [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
++ [('fill', '#chapter')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='between-fields', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')] != [('fill', '#chapter')]
+
+First list contains 2 additional elements.
+First extra element 1:
+('fill', '#title')
+
+- [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
++ [('fill', '#chapter')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='between-fields', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')] != [('fill', '#chapter')]
+
+First list contains 2 additional elements.
+First extra element 1:
+('fill', '#title')
+
+- [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
++ [('fill', '#chapter')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='before-save', fault='published')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fi[13 chars]r'), ('fill', '#title'), ('fill', '#body'), ('click', '#save')] != [('fi[13 chars]r'), ('fill', '#title'), ('fill', '#body')]
+
+First list contains 1 additional elements.
+First extra element 3:
+('click', '#save')
+
++ [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
+- [('fill', '#chapter'),
+-  ('fill', '#title'),
+-  ('fill', '#body'),
+-  ('click', '#save')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='before-save', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fi[13 chars]r'), ('fill', '#title'), ('fill', '#body'), ('click', '#save')] != [('fi[13 chars]r'), ('fill', '#title'), ('fill', '#body')]
+
+First list contains 1 additional elements.
+First extra element 3:
+('click', '#save')
+
++ [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
+- [('fill', '#chapter'),
+-  ('fill', '#title'),
+-  ('fill', '#body'),
+-  ('click', '#save')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qimao', trigger='before-save', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 595, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='between-fields', fault='published')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')] != [('fill', '#chapter')]
+
+First list contains 2 additional elements.
+First extra element 1:
+('fill', '#title')
+
+- [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
++ [('fill', '#chapter')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='between-fields', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')] != [('fill', '#chapter')]
+
+First list contains 2 additional elements.
+First extra element 1:
+('fill', '#title')
+
+- [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
++ [('fill', '#chapter')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='between-fields', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')] != [('fill', '#chapter')]
+
+First list contains 2 additional elements.
+First extra element 1:
+('fill', '#title')
+
+- [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
++ [('fill', '#chapter')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='before-save', fault='published')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fi[13 chars]r'), ('fill', '#title'), ('fill', '#body'), ('click', '#save')] != [('fi[13 chars]r'), ('fill', '#title'), ('fill', '#body')]
+
+First list contains 1 additional elements.
+First extra element 3:
+('click', '#save')
+
++ [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
+- [('fill', '#chapter'),
+-  ('fill', '#title'),
+-  ('fill', '#body'),
+-  ('click', '#save')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='before-save', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 600, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.assertEqual([event for event in adapter._context.events if event[0] in ("fill", "click")], expected)
+AssertionError: Lists differ: [('fi[13 chars]r'), ('fill', '#title'), ('fill', '#body'), ('click', '#save')] != [('fi[13 chars]r'), ('fill', '#title'), ('fill', '#body')]
+
+First list contains 1 additional elements.
+First extra element 3:
+('click', '#save')
+
++ [('fill', '#chapter'), ('fill', '#title'), ('fill', '#body')]
+- [('fill', '#chapter'),
+-  ('fill', '#title'),
+-  ('fill', '#body'),
+-  ('click', '#save')]
+
+======================================================================
+FAIL: test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) (platform='qidian', trigger='before-save', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 595, in test_create_stops_before_next_write_when_current_draft_state_is_lost
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.023s
+
+FAILED (failures=12)

@@ -1,0 +1,68 @@
+{
+  "scope": "Research long sampling reason follow-up; offline temporary source and evidence fixtures only",
+  "working_directory": "/Users/cuining/Documents/GitHub/story-skill",
+  "runtime": {
+    "python": "3.12.14",
+    "platform": "macOS-15.8.1-x86_64-i386-64bit"
+  },
+  "source_hashes_stage": "Final frozen source after green and targeted runs; red log was captured before the production fix",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+    "tests/test_research_long_reasons.py": "85ea324faa5e1089725f6f2e7a0830600d4ad56be99511f6798941a19f6a4b68",
+    "skills/story-skill-research/references/research-handoff.md": "e010886fd50a4c31be8f933eebd9f4ff7278021310f93a337a0c3de0f2e10b88"
+  },
+  "runs": [
+    {
+      "stage": "red",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=\"$PWD/tests:$PWD\" /Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B -m unittest test_research_long_reasons -v > /tmp/story-research-long-reasons-red.log 2>&1; tail -60 /tmp/story-research-long-reasons-red.log",
+      "log": "research-red.log",
+      "tests_run": 5,
+      "successful": false,
+      "failures": 3,
+      "errors": 2,
+      "skipped": 0,
+      "successful_test_methods": 3,
+      "failing_test_methods": 2,
+      "count_note": "unittest reports 3 failing schema subtests within one method and 2 error subtests within another; 5 methods ran, 3 passed. Shell tail exit status is not the test result.",
+      "elapsed_seconds": 2.765
+    },
+    {
+      "stage": "green",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=\"$PWD/tests:$PWD\" /Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B -m unittest test_research_long_reasons -v > /tmp/story-research-long-reasons-green.log 2>&1; tail -15 /tmp/story-research-long-reasons-green.log",
+      "log": "research-green.log",
+      "tests_run": 5,
+      "passed": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "successful": true,
+      "elapsed_seconds": 7.619
+    },
+    {
+      "stage": "targeted",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=\"$PWD/tests:$PWD\" /Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B -m unittest test_rank test_rank_sources test_rank_compatibility test_research test_research_long_reasons -v > /tmp/story-research-long-reasons-targeted.log 2>&1; tail -12 /tmp/story-research-long-reasons-targeted.log",
+      "log": "research-targeted.log",
+      "tests_run": 100,
+      "passed": 100,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "successful": true,
+      "elapsed_seconds": 10.328
+    }
+  ],
+  "counting": "The 5 new test methods are included in the 100-test targeted run. Do not add these counts together.",
+  "coverage": [
+    "schema 2 and both historical schema 1 sample formats",
+    "real CLI rank-sample/research-init/check/verify/render",
+    "8000 and 8001 Unicode character boundary",
+    "single oversized reason and retained other clauses",
+    "original sample objects/IDs/input bytes unchanged",
+    "existing verified historical decision unchanged",
+    "hand-authored oversized reasons still rejected"
+  ],
+  "limits": [
+    "No live ranking website, platform, installation or release operation",
+    "Historical long samples generated through the supported replay helper; independent frozen historical algorithm equivalence is covered by test_rank_compatibility"
+  ]
+}

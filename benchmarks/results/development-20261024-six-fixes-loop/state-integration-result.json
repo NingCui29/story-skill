@@ -1,0 +1,173 @@
+{
+  "ok": true,
+  "cases": 18,
+  "results": [
+    {
+      "platform": "fanqie",
+      "case": "existing_read_rejected",
+      "first": "blocked",
+      "second": "reconciled",
+      "creates": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "fanqie",
+      "case": "created_read_rejected",
+      "first": "unknown",
+      "second": "reconciled",
+      "creates": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "fanqie",
+      "case": "wrong_read_id",
+      "first": "blocked",
+      "second": "reconciled",
+      "creates": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "fanqie",
+      "case": "wrong_read_body",
+      "first": "conflict",
+      "second": "reconciled",
+      "creates": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "fanqie",
+      "case": "create_result_lost",
+      "first": "unknown",
+      "second": "reconciled",
+      "creates": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "fanqie",
+      "case": "create_rejected_before_remote",
+      "first": "unknown",
+      "second": "unknown",
+      "creates": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "existing_read_rejected",
+      "first": "blocked",
+      "second": "reconciled",
+      "creates": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "created_read_rejected",
+      "first": "unknown",
+      "second": "reconciled",
+      "creates": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "wrong_read_id",
+      "first": "blocked",
+      "second": "reconciled",
+      "creates": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "wrong_read_body",
+      "first": "conflict",
+      "second": "reconciled",
+      "creates": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "create_result_lost",
+      "first": "unknown",
+      "second": "reconciled",
+      "creates": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "create_rejected_before_remote",
+      "first": "unknown",
+      "second": "unknown",
+      "creates": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "existing_read_rejected",
+      "first": "blocked",
+      "second": "reconciled",
+      "creates": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "created_read_rejected",
+      "first": "unknown",
+      "second": "reconciled",
+      "creates": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "wrong_read_id",
+      "first": "blocked",
+      "second": "reconciled",
+      "creates": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "wrong_read_body",
+      "first": "conflict",
+      "second": "reconciled",
+      "creates": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "create_result_lost",
+      "first": "unknown",
+      "second": "reconciled",
+      "creates": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "create_rejected_before_remote",
+      "first": "unknown",
+      "second": "unknown",
+      "creates": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    }
+  ],
+  "scope": "offline injected adapter at the durable journal boundary",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_platform_drafts.py": "2288612168214650cafe4afe7651c7fc26bfa07b47ce79b9ae3f783619de7bd2",
+    "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11"
+  }
+}

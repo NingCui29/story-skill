@@ -1,0 +1,5 @@
+{
+  "exit_code": 0,
+  "stdout": "{\"ok\":false,\"state\":{\"path\":\"/Users/cuining/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-wbc9efg3/中文 存放位置\",\"select_disabled\":true,\"note\":\"无法读取这个文件夹，请核对路径和系统访问权限。\",\"dialog_open\":true,\"title\":\"选择新作品的存放位置\",\"items\":\"\",\"manager\":\"选择存放位置，再创建独立的作品文件夹。已有作品请使用“添加已有作品”。\\n\\n书名\\n存放位置\\n选择文件夹…\\n作品文件夹名\\n作品类型\\n长篇\\n短篇\\n作品分析\\n\\n请选择作品的存放位置。\"},\"expected_parent\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-wbc9efg3/中文 存放位置\",\"network_requests\":10}",
+  "stderr": ""
+}

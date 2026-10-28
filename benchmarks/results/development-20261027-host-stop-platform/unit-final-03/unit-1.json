@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "run": 102,
+  "passed": 102,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "modules": [
+    "test_dsh_plugin",
+    "test_host_stop_distribution",
+    "test_package",
+    "test_package_claude",
+    "test_package_codex",
+    "test_package_npm",
+    "test_six_priorities_distribution"
+  ],
+  "duration_seconds": 34.557
+}

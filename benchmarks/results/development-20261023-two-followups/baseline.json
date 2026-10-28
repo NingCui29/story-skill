@@ -1,0 +1,9 @@
+{
+  "source_hash_manifest": "benchmarks/results/development-20261023-four-followups/validated-source-hashes.json",
+  "complete_suite": "benchmarks/results/development-20261023-four-followups/full-suite.json",
+  "tests_run": 2613,
+  "passed": 2592,
+  "skipped": 21,
+  "scope": "Prior full-suite baseline; not a full-suite result for the current two fixes.",
+  "current_validation": "New failing regressions, complete affected modules, independent boundary review and instruction budget. No real platform operations, installation or publication."
+}

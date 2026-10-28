@@ -1,0 +1,59 @@
+{
+  "ok": true,
+  "diagnosis_reproduced": true,
+  "scope": "Delayed initial directory response is released after focus/select and before typing an absolute directory. No source/test changes, model or platform calls.",
+  "before_focus_input": "",
+  "expected_parent": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-o3tutc6q/中文 存放位置",
+  "server_initial_path": "/Users/cuining",
+  "malformed": "/Users/cuining/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-o3tutc6q/中文 存放位置",
+  "server_status": 409,
+  "server_error": "workbench_directory_unavailable",
+  "state": {
+    "value": "/Users/cuining/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-o3tutc6q/中文 存放位置",
+    "disabled": true,
+    "note": "无法读取这个文件夹，请核对路径和系统访问权限。",
+    "dialog_open": true,
+    "directoryPicking": true,
+    "events": [
+      {
+        "type": "focusin",
+        "value": "",
+        "start": 0,
+        "end": 0,
+        "at": 1793150677715,
+        "data": null
+      },
+      {
+        "type": "script-value-before",
+        "value": "",
+        "start": 0,
+        "end": 0,
+        "at": 1793150677759,
+        "next": "/Users/cuining"
+      },
+      {
+        "type": "script-value-after",
+        "value": "/Users/cuining",
+        "start": 14,
+        "end": 14,
+        "at": 1793150677759
+      },
+      {
+        "type": "beforeinput",
+        "value": "/Users/cuining",
+        "start": 14,
+        "end": 14,
+        "at": 1793150677774,
+        "data": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-o3tutc6q/中文 存放位置"
+      },
+      {
+        "type": "input",
+        "value": "/Users/cuining/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-o3tutc6q/中文 存放位置",
+        "start": 109,
+        "end": 109,
+        "at": 1793150677775,
+        "data": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-o3tutc6q/中文 存放位置"
+      }
+    ]
+  }
+}

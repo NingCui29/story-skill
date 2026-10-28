@@ -1,0 +1,58 @@
+{
+  "scope": "offline public-CUA driver and worker contract fixtures; no real platforms/accounts/writes",
+  "result": "passed",
+  "new_top_level_driver_tests": 13,
+  "driver_tests": 150,
+  "worker_tests": 94,
+  "combined_node_counts": {
+    "tests": 244,
+    "pass": 244,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "command": "node --test tests/test_chrome_bridge_driver.mjs tests/test_chrome_worker.mjs",
+  "production_and_test_sha256": {
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "003419c8bcf62c67c2e40dade596b1f113ba02c736cec7a86e133baf93e3a5d1",
+    "tests/test_chrome_bridge_driver.mjs": "79c879badc6bd227e72c8b21311ca95f6b9b67e1900f26e5f261b787339ac365"
+  },
+  "red_logs": [
+    "red-final-body.log",
+    "red-preview-redirect.log",
+    "red-action-boundaries.log",
+    "previous-final-redirect-red.log",
+    "previous-final-nested-control-red.log"
+  ],
+  "green_log": "full-driver-worker.log",
+  "repairs": [
+    "ordinary read final body changes during later guard/header/state awaits",
+    "preview final body changes during later guard/header awaits",
+    "accept configured same-ID arrival redirects then pin actual URL",
+    "paragraph paste rechecks actual focus after final action URL await",
+    "recheck safe create/save labels and href after fresh account guard immediately before click",
+    "reject independent form controls iframe and noneditable descendants as paragraph paste targets while preserving editable paragraph descendants",
+    "independent audit closed an in-flight snapshot gap: revalidate locator count/path then sample current complete fields once more"
+  ],
+  "boundaries": [
+    "A final snapshot is one current-page DOM value observation, not cross-tab atomicity or permanent state.",
+    "DOM paths preserve locator resolution including open shadow roots, without page mutations or ElementHandles.",
+    "UI actions are public CUA operations; last DOM checks add no later URL/account await before invocation.",
+    "This component result is not the root full Python suite, real site acceptance, native Windows validation, package installation or a release."
+  ],
+  "previous_final_package_source_sha256": "565df7ac89a22ba4437deadeec437841d5ec1a7278c825c6f166a22a8486cf7d",
+  "previous_final_redirect_reproduction": {
+    "tests": 2,
+    "fail": 2,
+    "expected": "old exact source rejects configured same-ID arrival aliases"
+  },
+  "independent_selector_probe": "../independent/chrome-snapshot-selector-result.json",
+  "nested_control_matrix": [
+    "INPUT",
+    "TEXTAREA",
+    "SELECT",
+    "BUTTON",
+    "IFRAME",
+    "contenteditable=false"
+  ]
+}

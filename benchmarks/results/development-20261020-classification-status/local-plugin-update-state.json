@@ -1,0 +1,15 @@
+{
+  "state_path": "/Users/cuining/.codex/backups/story-skill-plugin-update/20261020-classification-2cffc36b66/update-state.json",
+  "backup": "/Users/cuining/.codex/backups/story-skill-plugin-update/20261020-classification-2cffc36b66",
+  "marketplace_root": "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/20261020-classification-2cffc36b66/story-skill-codex-0.6.19",
+  "changed_files": [
+    "skills/story-skill-plan/SKILL.md",
+    "skills/story-skill-plan/references/fanqie-tags.md",
+    "skills/story-skill-plan/references/qidian-categories.md",
+    "skills/story-skill-plan/references/qimao-tags.md",
+    "skills/story-skill-publish/SKILL.md",
+    "skills/story-skill-write/references/chapter.md",
+    "skills/story-skill/references/project-state.md",
+    "skills/story-skill/scripts/story_outline.py"
+  ]
+}

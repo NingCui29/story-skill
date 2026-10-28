@@ -1,0 +1,18 @@
+✔ draft action href changes fail before clicking create (26.602369ms)
+✔ draft action href changes fail before clicking save (89.808844ms)
+✔ stable same-page create and save action href forms remain supported (447.781236ms)
+✔ ordinary qimao stops subsequent field and save actions when loaded draft state changes (71.763872ms)
+✔ ordinary qidian stops subsequent field and save actions when loaded draft state changes (60.771106ms)
+✔ current draft action state supports attribute fields and all ordinary DOM source forms (86.377652ms)
+✔ current draft action state timeout cannot retry or continue a later write (6.358709ms)
+✔ current draft state snapshot preserves same-ID configured creation URL transitions only (21.497786ms)
+✔ ordinary qimao write rechecks its bound target after the new state-snapshot await (34.718805ms)
+✔ ordinary qidian write rechecks its bound target after the new state-snapshot await (36.236135ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1080.285947

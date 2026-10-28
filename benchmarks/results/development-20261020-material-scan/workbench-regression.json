@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "date": "2026-10-20",
+  "status": "passed",
+  "run": 565,
+  "passed": 563,
+  "skipped": 2,
+  "failed": 0,
+  "errors": 0,
+  "elapsed_seconds": 101.929,
+  "command": [
+    "/Users/cuining/.local/bin/python3.12",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_workbench*.py"
+  ],
+  "node_on_path": true,
+  "source_workbench_sha256": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+  "scope": "All test_workbench*.py modules, including 16 material pagination tests; not a completed whole-repository run."
+}

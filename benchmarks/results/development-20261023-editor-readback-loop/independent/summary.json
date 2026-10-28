@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "checks": {
+    "search-oracle.json": {
+      "ok": true,
+      "cases": 266
+    },
+    "anchor-audit.json": {
+      "ok": true,
+      "cases": 315
+    },
+    "native-late-races.json": {
+      "ok": true,
+      "cases": 8
+    },
+    "real-dom-result.json": {
+      "ok": true,
+      "cases": 30
+    },
+    "chrome-create-result.json": {
+      "ok": true,
+      "cases": 32
+    },
+    "native-create-result.json": {
+      "ok": true,
+      "cases": 58
+    }
+  },
+  "source_sha256": {
+    "skills/story-skill/scripts/story_platform_browser.py": "e775880fc9c6a9ab6f6ca5518205d80387cb01954e81a98a34f6628bf42a478a",
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "565df7ac89a22ba4437deadeec437841d5ec1a7278c825c6f166a22a8486cf7d"
+  },
+  "unresolved_confirmed_findings": [],
+  "full_suite": "delegated to root; not executed by independent reviewer"
+}

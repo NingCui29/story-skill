@@ -1,0 +1,38 @@
+{
+  "source_sha256": "8dee92f95f7f753e5d64ae8d4754dbd00e0ddebb960761fc22a0fce7a0ed8156",
+  "results": [
+    {
+      "index": 1,
+      "ok": true,
+      "response": {
+        "ok": true,
+        "session_id": "ed5a092598a34cbca2a33acb92ab9b93",
+        "handle_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-publish-npn1jqa7/中文书根/handle1.json",
+        "ttl_seconds": 120,
+        "state": "awaiting_health",
+        "ready": false,
+        "remote_accessed": false,
+        "browser_started": false
+      }
+    },
+    {
+      "index": 2,
+      "ok": true,
+      "response": {
+        "ok": true,
+        "session_id": "a7dda49c1c394e4c8188ed5fde8e95a6",
+        "handle_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-publish-npn1jqa7/中文书根/handle2.json",
+        "ttl_seconds": 120,
+        "state": "awaiting_health",
+        "ready": false,
+        "remote_accessed": false,
+        "browser_started": false
+      }
+    }
+  ],
+  "status": {
+    "error": "platform_chrome_worker_busy"
+  },
+  "live_sessions": 2,
+  "passed": false
+}

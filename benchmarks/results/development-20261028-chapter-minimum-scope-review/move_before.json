@@ -1,0 +1,10 @@
+{
+  "method": "Isolated fake-native receipt; copied synthetic book; no model/GUI/platform",
+  "restored_same_book_id": true,
+  "stale_reasons": [],
+  "normalized_request_equal": false,
+  "result_state": "result_conflict",
+  "error": "任务或输入版本已变化，结果已保留，未自动回流。",
+  "task_status": "generated",
+  "task_has_result": false
+}

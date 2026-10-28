@@ -1,0 +1,190 @@
+.........................................................................................................................................................................................................................................................................................................................................................s........................................sss........................................................................................................................................................................................................................................................................................................................................................................s......F..........................................................................................................................................................................................................................................................................................................F....................................................................F..............................................................................................................................................................................................................................................................................................................................................s................................................................................................................................................sssss........................................................................................................................................s.................................................................................................................................................................................................................................................................s........................................................................................................................................................................sssssssss...............................................................................................................................----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 54195)
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5944, in do_POST
+    self.reply(200, json.dumps(result, ensure_ascii=False).encode())
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5715, in reply
+    self.wfile.write(data)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5948, in do_POST
+    self.reply(400, json.dumps({'message': str(error)}, ensure_ascii=False).encode())
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5714, in reply
+    self.end_headers()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 542, in end_headers
+    self.flush_headers()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 546, in flush_headers
+    self.wfile.write(b"".join(self._headers_buffer))
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 54208)
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5944, in do_POST
+    self.reply(200, json.dumps(result, ensure_ascii=False).encode())
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5715, in reply
+    self.wfile.write(data)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 766, in __init__
+    self.handle()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 440, in handle
+    self.handle_one_request()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 428, in handle_one_request
+    method()
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5948, in do_POST
+    self.reply(400, json.dumps({'message': str(error)}, ensure_ascii=False).encode())
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5714, in reply
+    self.end_headers()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 542, in end_headers
+    self.flush_headers()
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/http/server.py", line 546, in flush_headers
+    self.wfile.write(b"".join(self._headers_buffer))
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+.................................F....F.................................ss..................................................................................................................................................................................................................................................................................................................................................................................................................................................................................EEE...........................................................................................................................................................................................................................................................................................................................................................................................................s................
+======================================================================
+ERROR: test_after_stop_authorization_new_start_is_rejected_before_creating_a_job (test_workbench_platform_stop.WorkbenchPlatformStopTests.test_after_stop_authorization_new_start_is_rejected_before_creating_a_job)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_platform_stop.py", line 86, in test_after_stop_authorization_new_start_is_rejected_before_creating_a_job
+    self.assertTrue(self.w._service_request(self.fixture.root, 'stop', True)['stop_requested'])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5562, in _service_request
+    api.fail('workbench_presence_fresh_timeout', '仍有页面未响应本次停机核对，请回到窗口后重试；服务保持运行。',
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+offline_publishing_story.StoryError: 仍有页面未响应本次停机核对，请回到窗口后重试；服务保持运行。
+
+======================================================================
+ERROR: test_failed_finished_job_does_not_permanently_block_shutdown (test_workbench_platform_stop.WorkbenchPlatformStopTests.test_failed_finished_job_does_not_permanently_block_shutdown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_platform_stop.py", line 82, in test_failed_finished_job_does_not_permanently_block_shutdown
+    self.assertTrue(self.w._service_request(self.fixture.root, 'stop', True)['stop_requested'])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5562, in _service_request
+    api.fail('workbench_presence_fresh_timeout', '仍有页面未响应本次停机核对，请回到窗口后重试；服务保持运行。',
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+offline_publishing_story.StoryError: 仍有页面未响应本次停机核对，请回到窗口后重试；服务保持运行。
+
+======================================================================
+ERROR: test_running_job_blocks_stop_even_with_clean_pages_and_saved_confirmation (test_workbench_platform_stop.WorkbenchPlatformStopTests.test_running_job_blocks_stop_even_with_clean_pages_and_saved_confirmation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_platform_stop.py", line 58, in test_running_job_blocks_stop_even_with_clean_pages_and_saved_confirmation
+    self.assertTrue(self.w._service_request(self.fixture.root, 'stop', True)['stop_requested'])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 5562, in _service_request
+    api.fail('workbench_presence_fresh_timeout', '仍有页面未响应本次停机核对，请回到窗口后重试；服务保持运行。',
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+offline_publishing_story.StoryError: 仍有页面未响应本次停机核对，请回到窗口后重试；服务保持运行。
+
+======================================================================
+FAIL: test_install_and_archive_share_current_manifest (test_install_suite.SuiteInstallTests.test_install_and_archive_share_current_manifest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_install_suite.py", line 124, in test_install_and_archive_share_current_manifest
+    self.assertEqual(installer.SUITE_FILES, installer.SUITE_FILES_V0628)
+AssertionError: Tuples differ: ('sto[2815 chars]_task_worker.py', 'story-skill/scripts/story_t[183 chars].py') != ('sto[2815 chars]_tasks.py', 'story-skill/scripts/story_workben[139 chars].py')
+
+First differing element 67:
+'story-skill/scripts/story_task_worker.py'
+'story-skill/scripts/story_tasks.py'
+
+First tuple contains 1 additional elements.
+First extra element 72:
+'story-skill/scripts/story_world.py'
+
+Diff is 3273 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_manifest_is_bound_to_version_and_unknown_families_are_rejected (test_package.PackageVersionTests.test_manifest_is_bound_to_version_and_unknown_families_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_package.py", line 119, in test_manifest_is_bound_to_version_and_unknown_families_are_rejected
+    self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V0628)
+AssertionError: Tuples differ: ('sto[2815 chars]_task_worker.py', 'story-skill/scripts/story_t[183 chars].py') != ('sto[2815 chars]_tasks.py', 'story-skill/scripts/story_workben[139 chars].py')
+
+First differing element 67:
+'story-skill/scripts/story_task_worker.py'
+'story-skill/scripts/story_tasks.py'
+
+First tuple contains 1 additional elements.
+First extra element 72:
+'story-skill/scripts/story_world.py'
+
+Diff is 3273 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_only_current_release_family_has_reviewed_layout (test_package_npm.NpmSuiteTests.test_only_current_release_family_has_reviewed_layout)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_package_npm.py", line 698, in test_only_current_release_family_has_reviewed_layout
+    self.assertEqual(npm.SUITE_FILES, npm.SUITE_FILES_V0628)
+AssertionError: Tuples differ: ('sto[2815 chars]_task_worker.py', 'story-skill/scripts/story_t[183 chars].py') != ('sto[2815 chars]_tasks.py', 'story-skill/scripts/story_workben[139 chars].py')
+
+First differing element 67:
+'story-skill/scripts/story_task_worker.py'
+'story-skill/scripts/story_tasks.py'
+
+First tuple contains 1 additional elements.
+First extra element 72:
+'story-skill/scripts/story_world.py'
+
+Diff is 3273 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop (test_workbench_book_identity.WorkbenchBookIdentityTests.test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_book_identity.py", line 311, in test_open_editor_rejects_replacement_book_reads_and_recovery_but_can_stop
+    self.assertEqual(status, 200, stopped)
+AssertionError: 409 != 200 : {'ok': False, 'instance': '113710f574664911bfc45bf90277dced', 'root': '/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/workbench-book-identity-pyq9dkyl/同名目录', 'book_id': 'ba039ad9-3adb-415e-ab70-23421062b474', 'pid': 97475, 'code_sha256': '23d1f2a097ba88d0a0d22e90dd5e9c496a01f764b665ac920c0a915883c1b295', 'runtime_sha256': 'dc8a3411e3ff0aa7a09cf40c6fc4cf43f6eee7f7ba288e61033aadade4f467be', 'started': '2026-10-27T09:12:35.105463Z', 'message': '任务与当前作品身份不一致。', 'error': 'wrong_book', 'details': {}}
+
+======================================================================
+FAIL: test_stopping_old_editor_does_not_update_copied_record_in_replacement_book (test_workbench_book_identity.WorkbenchBookIdentityTests.test_stopping_old_editor_does_not_update_copied_record_in_replacement_book)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_book_identity.py", line 362, in test_stopping_old_editor_does_not_update_copied_record_in_replacement_book
+    self.assertEqual(status, 200, stopped)
+AssertionError: 409 != 200 : {'ok': False, 'instance': '3527cf51c8004bddad3f885c76e28be1', 'root': '/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/workbench-book-identity-remw9t4v/同名目录', 'book_id': '4f7f8204-e641-4aca-8f95-11aa831109c9', 'pid': 97475, 'code_sha256': '23d1f2a097ba88d0a0d22e90dd5e9c496a01f764b665ac920c0a915883c1b295', 'runtime_sha256': 'dc8a3411e3ff0aa7a09cf40c6fc4cf43f6eee7f7ba288e61033aadade4f467be', 'started': '2026-10-27T09:12:35.469239Z', 'message': '任务与当前作品身份不一致。', 'error': 'wrong_book', 'details': {}}
+
+----------------------------------------------------------------------
+Ran 3263 tests in 929.913s
+
+FAILED (failures=5, errors=3, skipped=25)

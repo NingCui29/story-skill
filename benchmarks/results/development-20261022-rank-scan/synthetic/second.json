@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "platform": "synthetic",
+  "collected_at": "2026-10-22T14:10:00+08:00",
+  "source": {
+    "url": "https://example.invalid/month",
+    "board": "合成月票榜",
+    "channel": "男频",
+    "category": null,
+    "period": "2026-10",
+    "metric": {
+      "name": "月票",
+      "unit": "票",
+      "window": "2026-10"
+    },
+    "sample_method": "top_n",
+    "cohort": "mixed",
+    "pages": [
+      1
+    ],
+    "coverage": "partial",
+    "expected_count": null,
+    "limitations": [
+      "隔离合成测试数据，不代表真实市场。"
+    ]
+  },
+  "entries": [
+    {
+      "book_id": "a",
+      "book_url": "https://example.invalid/books/a",
+      "title": "夜班维修员",
+      "author": "合成作者",
+      "rank": 1,
+      "category": "科幻",
+      "tags": [],
+      "word_count": 200000,
+      "status": "连载",
+      "metric_value": 120,
+      "metric_raw": "120"
+    },
+    {
+      "book_id": "b",
+      "book_url": "https://example.invalid/books/b",
+      "title": "旧城书店",
+      "author": "合成作者",
+      "rank": 2,
+      "category": "都市",
+      "tags": [],
+      "word_count": 200000,
+      "status": "连载",
+      "metric_value": null,
+      "metric_raw": null
+    },
+    {
+      "book_id": "c",
+      "book_url": "https://example.invalid/books/c",
+      "title": "山海邮局",
+      "author": "合成作者",
+      "rank": 3,
+      "category": null,
+      "tags": [],
+      "word_count": 200000,
+      "status": "连载",
+      "metric_value": 0,
+      "metric_raw": "0"
+    },
+    {
+      "book_id": "d",
+      "book_url": "https://example.invalid/books/d",
+      "title": "夜班维修员",
+      "author": "合成作者",
+      "rank": 4,
+      "category": "悬疑",
+      "tags": [],
+      "word_count": 200000,
+      "status": "连载",
+      "metric_value": 20,
+      "metric_raw": "20"
+    }
+  ]
+}

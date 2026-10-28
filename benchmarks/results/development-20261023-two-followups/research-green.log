@@ -1,0 +1,10 @@
+test_8001_and_single_oversized_reason_keep_other_reasons_and_source (test_research_long_reasons.LongSamplingReasonTests.test_8001_and_single_oversized_reason_keep_other_reasons_and_source) ... ok
+test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification (test_research_long_reasons.LongSamplingReasonTests.test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification) ... ok
+test_existing_verified_decision_is_preserved_by_check_and_render (test_research_long_reasons.LongSamplingReasonTests.test_existing_verified_decision_is_preserved_by_check_and_render) ... ok
+test_hand_authored_oversized_reasons_are_still_rejected (test_research_long_reasons.LongSamplingReasonTests.test_hand_authored_oversized_reasons_are_still_rejected) ... ok
+test_short_and_exact_8000_character_reasons_are_preserved (test_research_long_reasons.LongSamplingReasonTests.test_short_and_exact_8000_character_reasons_are_preserved) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 7.619s
+
+OK

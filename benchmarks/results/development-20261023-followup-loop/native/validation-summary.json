@@ -1,0 +1,84 @@
+{
+  "scope": "Native browser adapter; source repair only; offline fixture and Node callback tests",
+  "source_frozen": true,
+  "files": {
+    "skills/story-skill/scripts/story_platform_browser.py": "09b4fa2bd6409f49f74c519181dffea0acaee4594a2990f5f06b0d63a84c7362",
+    "tests/test_platform_browser.py": "2a8a245b97d3dea075e4a7cce776e87097ffb6aa79b45a7bc59c31ed0bc4d4bd",
+    "tests/test_platform_browser_editor_readback.py": "770daadc66fea9b7029415cd0eab57af9f8db176faf1f1b62843d98d3d90aec3",
+    "tests/test_platform_browser_preview.py": "6cdaf44880d21154e364a33d8e8c2427d09f388a565fbe7b7769f8b5ccf8c06d"
+  },
+  "targeted_tests": {
+    "methods": 131,
+    "passed": 131,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed_seconds": 9.148,
+    "new_methods_this_turn": 8,
+    "log": "final-green.log"
+  },
+  "repairs": [
+    {
+      "issue": "pin the actual configured same-draft redirect arrival, not the requested edit URL",
+      "red": "redirect-red.log",
+      "red_failures": 2,
+      "red_errors": 2,
+      "regression_scenarios": 8
+    },
+    {
+      "issue": "reject data changes during final selector identity checks by terminal same-page snapshot",
+      "red": "../independent/native-snapshot-tail-red.json",
+      "regression_scenarios": 10
+    },
+    {
+      "issue": "reject preview body changes after final account observation with complete header/body/identity snapshot",
+      "red": "preview-red.log",
+      "red_failures": 20,
+      "regression_scenarios": 20
+    },
+    {
+      "issue": "revalidate bound create/save button text and accessible labels after the last identity observation",
+      "red": [
+        "write-action-red.log",
+        "create-action-red.log"
+      ],
+      "regression_scenarios": 24
+    },
+    {
+      "issue": "perform the final focus observation after the last identity check before paragraph insertion",
+      "red": "write-action-red.log",
+      "regression_scenarios": 1
+    },
+    {
+      "issue": "reject independent tool controls, noneditable boundaries, and shadow input while retaining editable descendants",
+      "red": [
+        "focus-owner-red.log",
+        "shadow-focus-red.log",
+        "../independent/native-shadow-focus-red.json"
+      ],
+      "regression_scenarios": 10
+    }
+  ],
+  "serializer_unchanged": {
+    "editor": {
+      "byte_identical": true,
+      "sha256": "28eeee25214290a9a5afacdb704fe35c9e4a204d1b087fed9f5e70168acbcde0"
+    },
+    "preview": {
+      "original_sha256": "6598d906c8806c6e480e03bcfe289a81f22bf7a0c2c3d9205a5d748007cf06fc",
+      "extracted_sha256": "6598d906c8806c6e480e03bcfe289a81f22bf7a0c2c3d9205a5d748007cf06fc",
+      "byte_identical": true,
+      "source": "benchmarks/results/development-20261023-editor-readback-loop/distribution-final/codex-final/story-skill-codex-0.6.22/plugins/story-skill/skills/story-skill/scripts/story_platform_browser.py",
+      "source_hash_matches_before_turn_manifest": true
+    }
+  },
+  "boundaries": [
+    "No real website or account saves performed",
+    "No native Windows execution claimed",
+    "No installed plugin updated",
+    "No release or commit performed",
+    "Same-page observations are not cross-page or server atomic transactions",
+    "Open shadow focus is observed; closed shadow roots are not introspected"
+  ],
+  "full_suite": "Root agent runs the full stable-source regression separately; targeted methods must not be added to its total."
+}

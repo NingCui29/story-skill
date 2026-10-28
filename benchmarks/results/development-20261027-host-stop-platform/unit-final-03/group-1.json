@@ -1,0 +1,9 @@
+[
+  "test_dsh_plugin",
+  "test_host_stop_distribution",
+  "test_package",
+  "test_package_claude",
+  "test_package_codex",
+  "test_package_npm",
+  "test_six_priorities_distribution"
+]

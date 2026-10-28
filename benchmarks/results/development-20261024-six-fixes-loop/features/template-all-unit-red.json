@@ -1,0 +1,7 @@
+{
+  "baseline_sha256": "34c9726746d7ccb3f956899ebc381d93547e5340f87d483f3a7748c24484c711",
+  "source_origin": "reverse only this turn patch and verify against recorded baseline hash",
+  "executed": 8,
+  "failures": 19,
+  "errors": 0
+}

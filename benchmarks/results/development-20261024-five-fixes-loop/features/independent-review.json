@@ -1,0 +1,12 @@
+{
+  "resolved_new_regression": 1,
+  "unresolved_confirmed_findings": [],
+  "chrome_scenarios": 16,
+  "native_scenarios": 28,
+  "same_page_full_flows": 2,
+  "source_sha256": {
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "fcb0c94d43b9a6865621731a5d88c974b87367642081e9cede29fb730baf2768",
+    "skills/story-skill/scripts/story_platform_browser.py": "06760945d77a9ddb94d64e2936c344d918365763bc24735ab6913b123f641bc2"
+  },
+  "report": "independent-review.md"
+}

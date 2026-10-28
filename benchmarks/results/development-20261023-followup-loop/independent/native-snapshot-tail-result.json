@@ -1,0 +1,51 @@
+{
+  "ok": true,
+  "results": [
+    {
+      "platform": "qimao",
+      "mutate": false,
+      "mutation_observed": false,
+      "accepted": true,
+      "body_returned": "原稿正文\n\n",
+      "current_body": null,
+      "error": null,
+      "expected_acceptance": true,
+      "writes": []
+    },
+    {
+      "platform": "qimao",
+      "mutate": true,
+      "mutation_observed": true,
+      "accepted": false,
+      "body_returned": null,
+      "current_body": "最终选择器核验期间改变的正文",
+      "error": "platform_browser_editor_changed",
+      "expected_acceptance": false,
+      "writes": []
+    },
+    {
+      "platform": "qidian",
+      "mutate": false,
+      "mutation_observed": false,
+      "accepted": true,
+      "body_returned": "原稿正文\n\n",
+      "current_body": null,
+      "error": null,
+      "expected_acceptance": true,
+      "writes": []
+    },
+    {
+      "platform": "qidian",
+      "mutate": true,
+      "mutation_observed": true,
+      "accepted": false,
+      "body_returned": null,
+      "current_body": "最终选择器核验期间改变的正文",
+      "error": "platform_browser_editor_changed",
+      "expected_acceptance": false,
+      "writes": []
+    }
+  ],
+  "source_sha256": "09b4fa2bd6409f49f74c519181dffea0acaee4594a2990f5f06b0d63a84c7362",
+  "scope": "Production adapter read_draft with offline fixture and mutation during later selector-check callback; no real platform."
+}

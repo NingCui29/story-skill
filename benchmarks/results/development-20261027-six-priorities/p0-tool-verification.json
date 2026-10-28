@@ -1,0 +1,78 @@
+{
+  "recorded_at": "2026-10-27T06:38:13.180974+00:00",
+  "scope": "Tool-observed unittest results; synthetic traces do not certify a real model run",
+  "checks": [
+    {
+      "argv": [
+        "python3.12",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_paired_sequence.py",
+        "-q"
+      ],
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3.12",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_prose_trial*.py",
+        "-q"
+      ],
+      "tests": 35,
+      "failures": 0,
+      "errors": 0,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_paired_sequence.py",
+        "-q"
+      ],
+      "runtime": "Python 3.9.6",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "exit_code": 0
+    }
+  ],
+  "file_sha256": {
+    "benchmarks/skill-execution/paired_sequence.py": "2bcad4563115b13493bd07376521fef6f069911675b27763fd8fa54af9922cb0",
+    "tests/test_paired_sequence.py": "68f800cd75524de499b642647afd319fdc4387a7942afd44d2ba73279fb4393b",
+    "benchmarks/skill-execution/README.md": "cce3b83b345c839650b9fbd833f146b7c90885920f0ed5dcba874043e7281f28"
+  },
+  "independent_review": {
+    "finding": "Explicit contradictory process receipt arm/phase/task bindings were ignored",
+    "fixed": "Present binding fields now checked; old receipts retain unverified binding scope",
+    "forward_reproduction": "Original independent synthetic reproduction rerun after fix; continuation_ready false and mismatch fields reported"
+  },
+  "other_corrections": [
+    "Boolean process exit code is not accepted as integer zero",
+    "Overlapping fixture file paths rejected before freezing",
+    "Preserve observed original chapter outside subsequent writer workspace",
+    "Inspection incomplete/out-of-range does not exit zero"
+  ],
+  "real_generation": "See separate writing comparison; currently running, not certified by unit tests"
+}

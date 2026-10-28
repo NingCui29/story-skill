@@ -1,0 +1,142 @@
+{
+  "scope": "Preview observation identity and final stable read; offline fake public browser API and temporary books only",
+  "working_directory": "/Users/cuining/Documents/GitHub/story-skill",
+  "runtime": {
+    "python": "3.12.14",
+    "node": "v24.19.0",
+    "platform": "macOS-15.8.1-x86_64-i386-64bit"
+  },
+  "source_hashes_stage": "Final frozen source after the final complete affected-module runs; root backend validation separately checks before/after hashes",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "939cc1eb0a2c79065765c58ce962e42305dcd58b6ff6e779da069d799d6a4ab2",
+    "tests/test_chrome_bridge_driver.mjs": "4e3f5f28ac09eb7518763e907d59338b4f1363e7d9e8383c98492bac849824c2"
+  },
+  "new_node_test_methods": 7,
+  "new_parameter_cases": 29,
+  "new_python_test_methods": 0,
+  "final_totals": {
+    "tests_run": 298,
+    "passed": 297,
+    "skipped": 1,
+    "failures": 0,
+    "errors": 0
+  },
+  "runs": [
+    {
+      "stage": "red-before-production-fix",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test --test-name-pattern='final preview body|preview identity remains pinned' tests/test_chrome_bridge_driver.mjs",
+      "log": "platform-red.log",
+      "tests_run": 3,
+      "passed": 0,
+      "failures": 3,
+      "successful": false,
+      "note": "The first two failures returned success for changed final observations. The third did not reject a navigation at the pinned reading boundary."
+    },
+    {
+      "stage": "intermediate-targeted-green",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test --test-name-pattern='final preview body|preview identity remains pinned|preview readiness' tests/test_chrome_bridge_driver.mjs",
+      "log": "platform-first-green-targeted.log",
+      "tests_run": 4,
+      "passed": 4,
+      "failures": 0,
+      "successful": true,
+      "counted_in_final": false
+    },
+    {
+      "stage": "red-early-arrival-gap",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test --test-name-pattern='preview arrival is pinned' tests/test_chrome_bridge_driver.mjs",
+      "log": "platform-early-redirect-red.log",
+      "tests_run": 1,
+      "passed": 0,
+      "failures": 1,
+      "successful": false
+    },
+    {
+      "stage": "intermediate-full-driver-green",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/test_chrome_bridge_driver.mjs",
+      "log": "platform-intermediate-driver-112.log",
+      "tests_run": 112,
+      "passed": 112,
+      "failures": 0,
+      "successful": true,
+      "counted_in_final": false,
+      "note": "Before centralizing all observed preview URLs; later independent review found the final URL-observation gap."
+    },
+    {
+      "stage": "red-final-observed-url-gap",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test --test-name-pattern='every observed preview URL' tests/test_chrome_bridge_driver.mjs",
+      "log": "platform-observed-url-red.log",
+      "tests_run": 1,
+      "passed": 0,
+      "failures": 1,
+      "successful": false
+    },
+    {
+      "stage": "final-driver",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/test_chrome_bridge_driver.mjs",
+      "log": "platform-driver.log",
+      "tests_run": 113,
+      "passed": 113,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "successful": true,
+      "elapsed_seconds": 16.9064268
+    },
+    {
+      "stage": "final-worker",
+      "command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/test_chrome_worker.mjs",
+      "log": "platform-worker.log",
+      "tests_run": 94,
+      "passed": 94,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "exit_code": 0,
+      "successful": true,
+      "elapsed_seconds": 13.070854458
+    },
+    {
+      "stage": "final-python",
+      "command": "PATH=\"/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin:$PATH\" PYTHONDONTWRITEBYTECODE=1 /Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 -B -m unittest tests.test_platform_profile_markers tests.test_platform_browser_preview tests.test_platform_chrome_bridge -q",
+      "modules": [
+        "tests.test_platform_profile_markers",
+        "tests.test_platform_browser_preview",
+        "tests.test_platform_chrome_bridge"
+      ],
+      "log": "platform-python.log",
+      "tests_run": 91,
+      "passed": 90,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "skip_reason": "Native Windows process-liveness test on macOS",
+      "exit_code": 0,
+      "successful": true,
+      "elapsed_seconds": 24.898
+    }
+  ],
+  "counting": "Only final-driver, final-worker and final-python counts contribute to final_totals. New 7 Node tests are included in driver 113. Intermediate and red runs are not added. These three Python modules do not run the Node driver/worker wrappers.",
+  "intermediate_history": {
+    "first_full_driver": 111,
+    "first_full_worker": 94,
+    "first_python": 91,
+    "note": "The initial 111-test green run was superseded by the arrival and observed-URL regressions. Its complete /tmp logs were overwritten during the next run; statistics remain in conversation tool output, and it is not counted as final evidence."
+  },
+  "coverage": [
+    "Final body pending or missing refuses immediately for read and create readback",
+    "Same body with changed account, chapter or title refuses after final body",
+    "Final header missing or duplicate refuses without a new loading wait",
+    "Preview URL pinned across initial header/body waits and final editor inventory",
+    "Early wrong-remote arrival cannot be concealed by inventory or account guard awaits; owned cleanup retained",
+    "Each observed preview URL remains exact, including new-tab tail and identity pre-guard reads",
+    "Initial loading delays still succeed after one create and one save",
+    "Existing full driver guard-refresh semantics and worker transport remain passing"
+  ],
+  "limits": [
+    "No real browser, account, remote platform, installation or release operations",
+    "One native Windows test skipped; no claim of native Windows validation",
+    "Current affected-module checks are distinct from the preceding 2613-test full-suite baseline"
+  ]
+}

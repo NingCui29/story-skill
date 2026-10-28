@@ -1,0 +1,312 @@
+{
+  "application": "Qoder CN",
+  "application_version_observed": "0.4.8",
+  "test_conversation": "Story Skill规则问答",
+  "model_setting_observed": "Qwen3.8-Max, 中",
+  "scope": "Native selection and rules-only QA for eight locally installed skills; this is not full creative, image-generation or platform-workflow acceptance.",
+  "summary": {
+    "native_selected_and_full_prompt_sent": 8,
+    "semantic_pass": 8,
+    "semantic_fail": 0,
+    "exact_file_source_path_independently_verified": 0,
+    "native_tool_record_visible_cases": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "read_only_scope": "failed_in_case_8",
+    "full_answer_character_limit": "Per-case deviations from 120 characters are preserved; they do not negate an observed native invocation.",
+    "core_plan_supplement_sent": false
+  },
+  "criteria": "../expected-results.md",
+  "evidence_privacy": "Only test-task rows, native selections, tool titles and test-memory paths/diffs were exported. Reasoning was not opened and native reasoning-preview buttons were filtered. Other tasks, novels and account sidebars were excluded.",
+  "cleanup_evidence": "../qoder-memory-cleanup.json",
+  "cases": [
+    {
+      "case": 1,
+      "skill": "story-skill",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "audit-core-task-ax.json"
+      ],
+      "full_prompt_sent": true,
+      "semantic_result": "pass",
+      "semantic_notes": "Existing-prose hook revision routes to review; unwritten hook design routes to plan; shared runtime is resolved from the actual installed SKILL location.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": false,
+        "file": [
+          "audit-core-task-ax.json"
+        ],
+        "expected_installed_source": "/Users/cuining/.qoder-cn/skills/story-skill/SKILL.md",
+        "limitation": "Native skill invocation and independent source-file verification are recorded separately; self-reported paths were not used as proof."
+      },
+      "result_evidence": "audit-core-task-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 303,
+        "body_before_quote_characters": 194,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText values for the case, excluding timestamps and the AI label. Includes quotes and paths; case 8 includes the additional memory-edit narration."
+      },
+      "read_only_scope_result": "no_write_observed_in_captured_case",
+      "notes": [
+        "Model-reported paths are not accepted as independent source evidence. The full public SKILL read parameters and returned payload were not expanded for each case, so the exact source location remains unverified.",
+        "The initial prompt allowed same-version shared-content reuse. No separate file-read tool record is visible in the captured core case. The later core/plan supplement was not sent.",
+        "The complete visible answer including quote and path exceeds 120 characters; record this formatting deviation separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 2,
+      "skill": "story-skill-plan",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "audit-plan-native-selection.json",
+        "case2-result-ax.json"
+      ],
+      "full_prompt_sent": true,
+      "semantic_result": "pass",
+      "semantic_notes": "Compare naming candidates and reasons only; do not initialize a book, change its formal title or generate a cover automatically.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": true,
+        "file": [
+          "case2-result-ax.json"
+        ],
+        "expected_installed_source": "/Users/cuining/.qoder-cn/skills/story-skill-plan/SKILL.md",
+        "limitation": "Native skill invocation and independent source-file verification are recorded separately; self-reported paths were not used as proof."
+      },
+      "result_evidence": "case2-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 198,
+        "body_before_quote_characters": 68,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText values for the case, excluding timestamps and the AI label. Includes quotes and paths; case 8 includes the additional memory-edit narration."
+      },
+      "read_only_scope_result": "no_write_observed_in_captured_case",
+      "notes": [
+        "Model-reported paths are not accepted as independent source evidence. The full public SKILL read parameters and returned payload were not expanded for each case, so the exact source location remains unverified.",
+        "This prompt required a new target-SKILL read and allowed shared-rule reuse. A native tool count is visible, but that alone is not treated as proof of the complete source path.",
+        "The complete visible answer including quote and path exceeds 120 characters; record this formatting deviation separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 3,
+      "skill": "story-skill-write",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case3-native-selection.json",
+        "case3-prompt-input.json",
+        "case3-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "semantic_result": "pass",
+      "semantic_notes": "Long-form complete chapter candidates include an author note and one 9:16 image; short-form chapters omit notes and their images by default.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": true,
+        "file": [
+          "case3-tools-ax.json"
+        ],
+        "expected_installed_source": "/Users/cuining/.qoder-cn/skills/story-skill-write/SKILL.md",
+        "limitation": "Native skill invocation and independent source-file verification are recorded separately; self-reported paths were not used as proof."
+      },
+      "result_evidence": "case3-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 216,
+        "body_before_quote_characters": 94,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText values for the case, excluding timestamps and the AI label. Includes quotes and paths; case 8 includes the additional memory-edit narration."
+      },
+      "read_only_scope_result": "no_write_observed_in_captured_case",
+      "notes": [
+        "Model-reported paths are not accepted as independent source evidence. The full public SKILL read parameters and returned payload were not expanded for each case, so the exact source location remains unverified.",
+        "This prompt required a new target-SKILL read and allowed shared-rule reuse. A native tool count is visible, but that alone is not treated as proof of the complete source path.",
+        "The complete visible answer including quote and path exceeds 120 characters; record this formatting deviation separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 4,
+      "skill": "story-skill-analyze",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case4-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "semantic_result": "pass",
+      "semantic_notes": "Preserve a finalized analysis report and save a separate revision; report_path alone does not prove an exported file was delivered.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": true,
+        "file": [
+          "case4-result-ax.json"
+        ],
+        "expected_installed_source": "/Users/cuining/.qoder-cn/skills/story-skill-analyze/SKILL.md",
+        "limitation": "Native skill invocation and independent source-file verification are recorded separately; self-reported paths were not used as proof."
+      },
+      "result_evidence": "case4-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 268,
+        "body_before_quote_characters": 132,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText values for the case, excluding timestamps and the AI label. Includes quotes and paths; case 8 includes the additional memory-edit narration."
+      },
+      "read_only_scope_result": "no_write_observed_in_captured_case",
+      "notes": [
+        "Model-reported paths are not accepted as independent source evidence. The full public SKILL read parameters and returned payload were not expanded for each case, so the exact source location remains unverified.",
+        "This prompt required a new target-SKILL read and allowed shared-rule reuse. A native tool count is visible, but that alone is not treated as proof of the complete source path.",
+        "The complete visible answer including quote and path exceeds 120 characters; record this formatting deviation separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 5,
+      "skill": "story-skill-review",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case5-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "semantic_result": "pass",
+      "semantic_notes": "Formatting-only permission preserves typos and punctuation; report conflicts separately and verify only authorized whitespace changes by Unicode codepoint diff.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": true,
+        "file": [
+          "case5-result-ax.json"
+        ],
+        "expected_installed_source": "/Users/cuining/.qoder-cn/skills/story-skill-review/SKILL.md",
+        "limitation": "Native skill invocation and independent source-file verification are recorded separately; self-reported paths were not used as proof."
+      },
+      "result_evidence": "case5-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 247,
+        "body_before_quote_characters": 123,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText values for the case, excluding timestamps and the AI label. Includes quotes and paths; case 8 includes the additional memory-edit narration."
+      },
+      "read_only_scope_result": "no_write_observed_in_captured_case",
+      "notes": [
+        "Model-reported paths are not accepted as independent source evidence. The full public SKILL read parameters and returned payload were not expanded for each case, so the exact source location remains unverified.",
+        "This prompt required a new target-SKILL read and allowed shared-rule reuse. A native tool count is visible, but that alone is not treated as proof of the complete source path.",
+        "The complete visible answer including quote and path exceeds 120 characters; record this formatting deviation separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 6,
+      "skill": "story-skill-research",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case6-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "semantic_result": "pass",
+      "semantic_notes": "Favorites are not sales, and the visible top 20 are not the complete ranking; document sources, filters, sorting, pages, truncation, deduplication and missing coverage.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": true,
+        "file": [
+          "case6-result-ax.json"
+        ],
+        "expected_installed_source": "/Users/cuining/.qoder-cn/skills/story-skill-research/SKILL.md",
+        "limitation": "Native skill invocation and independent source-file verification are recorded separately; self-reported paths were not used as proof."
+      },
+      "result_evidence": "case6-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 238,
+        "body_before_quote_characters": 119,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText values for the case, excluding timestamps and the AI label. Includes quotes and paths; case 8 includes the additional memory-edit narration."
+      },
+      "read_only_scope_result": "no_write_observed_in_captured_case",
+      "notes": [
+        "Model-reported paths are not accepted as independent source evidence. The full public SKILL read parameters and returned payload were not expanded for each case, so the exact source location remains unverified.",
+        "This prompt required a new target-SKILL read and allowed shared-rule reuse. A native tool count is visible, but that alone is not treated as proof of the complete source path.",
+        "The complete visible answer including quote and path exceeds 120 characters; record this formatting deviation separately from semantic correctness.",
+        "The first attempt failed before questionPaste because no window was temporarily visible (visited=0). Nothing was entered or sent; after confirming an empty input, the retry succeeded."
+      ]
+    },
+    {
+      "case": 7,
+      "skill": "story-skill-cover",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case7-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "semantic_result": "pass",
+      "semantic_notes": "A byline-only edit preserves characters, style, composition and original dimensions; prompts do not constitute a generated cover.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": true,
+        "file": [
+          "case7-result-ax.json"
+        ],
+        "expected_installed_source": "/Users/cuining/.qoder-cn/skills/story-skill-cover/SKILL.md",
+        "limitation": "Native skill invocation and independent source-file verification are recorded separately; self-reported paths were not used as proof."
+      },
+      "result_evidence": "case7-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 206,
+        "body_before_quote_characters": 84,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText values for the case, excluding timestamps and the AI label. Includes quotes and paths; case 8 includes the additional memory-edit narration."
+      },
+      "read_only_scope_result": "no_write_observed_in_captured_case",
+      "notes": [
+        "Model-reported paths are not accepted as independent source evidence. The full public SKILL read parameters and returned payload were not expanded for each case, so the exact source location remains unverified.",
+        "This prompt required a new target-SKILL read and allowed shared-rule reuse. A native tool count is visible, but that alone is not treated as proof of the complete source path.",
+        "The complete visible answer including quote and path exceeds 120 characters; record this formatting deviation separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 8,
+      "skill": "story-skill-publish",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case8-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "semantic_result": "pass",
+      "semantic_notes": "A matching user-supplied copy does not prove platform saving; ZIP technical verification does not establish submission-material completeness.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": true,
+        "file": [
+          "case8-result-ax.json"
+        ],
+        "expected_installed_source": "/Users/cuining/.qoder-cn/skills/story-skill-publish/SKILL.md",
+        "limitation": "Native skill invocation and independent source-file verification are recorded separately; self-reported paths were not used as proof."
+      },
+      "result_evidence": "case8-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 360,
+        "body_before_quote_characters": 152,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText values for the case, excluding timestamps and the AI label. Includes quotes and paths; case 8 includes the additional memory-edit narration."
+      },
+      "read_only_scope_result": "failed",
+      "notes": [
+        "Model-reported paths are not accepted as independent source evidence. The full public SKILL read parameters and returned payload were not expanded for each case, so the exact source location remains unverified.",
+        "This prompt required a new target-SKILL read and allowed shared-rule reuse. A native tool count is visible, but that alone is not treated as proof of the complete source path.",
+        "The complete visible answer including quote and path exceeds 120 characters; record this formatting deviation separately from semantic correctness.",
+        "After the correct answer, Qoder read test memory and performed four edits despite the explicit read-only restriction. Cleanup does not turn this scope failure into a pass; no further supplement was sent."
+      ],
+      "scope_violation_evidence": [
+        "case8-scope-violation-ax.json",
+        "case8-scope-violation.json"
+      ],
+      "cleanup_evidence": "../qoder-memory-cleanup.json"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-21",
+  "execution_surface": "Local terminal; supplementary to desktop invocation evidence",
+  "python_version": "3.9.6",
+  "runs": [
+    {
+      "command": "python3 -B -X utf8 /Users/cuining/.workbuddy-ai/skills/story-skill/scripts/story.py --help",
+      "exit_code": 0,
+      "help_displayed": true
+    },
+    {
+      "command": "python3 -B -X utf8 /Users/cuining/.qoder-cn/skills/story-skill/scripts/story.py --help",
+      "exit_code": 0,
+      "help_displayed": true
+    }
+  ],
+  "limitation": "Help startup only. Documented runtime requirement remains Python 3.10+; this does not verify all commands on Python 3.9 or execution from either desktop model session."
+}

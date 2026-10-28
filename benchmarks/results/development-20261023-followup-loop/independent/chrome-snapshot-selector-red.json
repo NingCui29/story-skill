@@ -1,0 +1,41 @@
+{
+  "ok": false,
+  "results": [
+    {
+      "mode": "unchanged",
+      "changed": false,
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "current_chapter_values": [
+        "11"
+      ],
+      "old_chapter_still_connected": true
+    },
+    {
+      "mode": "duplicate",
+      "changed": true,
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": false,
+      "current_chapter_values": [
+        "11",
+        "22"
+      ],
+      "old_chapter_still_connected": true
+    },
+    {
+      "mode": "retarget",
+      "changed": true,
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": false,
+      "current_chapter_values": [
+        "22"
+      ],
+      "old_chapter_still_connected": true
+    }
+  ],
+  "source_sha256": "62840c015a821e38bf956890065afd4ec7fbfcb7c612a717ee63088ee7a08a3d",
+  "scope": "Exact production editorSnapshot method; isolated synthetic DOM and public locator contract; no real browser/network/write action."
+}

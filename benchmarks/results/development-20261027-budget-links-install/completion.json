@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-27",
+  "ok": true,
+  "checks": {
+    "full_regression": true,
+    "instruction_budget": true,
+    "skills": true,
+    "source_technology": true,
+    "package_technology": true,
+    "installed_technology": true,
+    "isolated_plugin": true,
+    "local_installation": true,
+    "repository_markdown_links": true
+  },
+  "tests": {
+    "run": 3087,
+    "passed": 3062,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 25
+  },
+  "instruction_loads": 301,
+  "installation": {
+    "selector": "story-skill@story-skill-local",
+    "version": "0.6.27",
+    "files": 72,
+    "skills": 8,
+    "backup": "/Users/cuining/.codex/backups/story-skill-local/20261027-122719",
+    "other_configuration_unchanged": true
+  },
+  "source_payload_unchanged_since_validation": true,
+  "not_verified": [
+    "Desktop app GUI after restart",
+    "Windows native GUI",
+    "Real novels or publishing platforms"
+  ],
+  "release_created": false,
+  "markdown_links_checked": 5165
+}

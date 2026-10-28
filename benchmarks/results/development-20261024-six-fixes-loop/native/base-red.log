@@ -1,0 +1,103 @@
+test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) ... 
+  test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qimao', operation='save') ... FAIL
+  test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qimao', operation='same_page') ... FAIL
+  test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qimao', operation='popup') ... FAIL
+  test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qidian', operation='save') ... FAIL
+  test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qidian', operation='same_page') ... FAIL
+  test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qidian', operation='popup') ... FAIL
+test_unchanged_effective_destination_keeps_normal_creation_usable (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_unchanged_effective_destination_keeps_normal_creation_usable) ... ok
+
+======================================================================
+FAIL: test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qimao', operation='save')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 56, in test_relative_link_base_change_stops_before_actual_click
+    self.assertEqual(destinations, [])
+AssertionError: Lists differ: ['https://zuozhe.qimao.com/publish/next'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'https://zuozhe.qimao.com/publish/next'
+
+- ['https://zuozhe.qimao.com/publish/next']
++ []
+
+======================================================================
+FAIL: test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qimao', operation='same_page')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 56, in test_relative_link_base_change_stops_before_actual_click
+    self.assertEqual(destinations, [])
+AssertionError: Lists differ: ['https://zuozhe.qimao.com/publish/next'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'https://zuozhe.qimao.com/publish/next'
+
+- ['https://zuozhe.qimao.com/publish/next']
++ []
+
+======================================================================
+FAIL: test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qimao', operation='popup')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 56, in test_relative_link_base_change_stops_before_actual_click
+    self.assertEqual(destinations, [])
+AssertionError: Lists differ: ['https://zuozhe.qimao.com/publish/next'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'https://zuozhe.qimao.com/publish/next'
+
+- ['https://zuozhe.qimao.com/publish/next']
++ []
+
+======================================================================
+FAIL: test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qidian', operation='save')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 56, in test_relative_link_base_change_stops_before_actual_click
+    self.assertEqual(destinations, [])
+AssertionError: Lists differ: ['https://write.qq.com/publish/next'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'https://write.qq.com/publish/next'
+
+- ['https://write.qq.com/publish/next']
++ []
+
+======================================================================
+FAIL: test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qidian', operation='same_page')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 56, in test_relative_link_base_change_stops_before_actual_click
+    self.assertEqual(destinations, [])
+AssertionError: Lists differ: ['https://write.qq.com/publish/next'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'https://write.qq.com/publish/next'
+
+- ['https://write.qq.com/publish/next']
++ []
+
+======================================================================
+FAIL: test_relative_link_base_change_stops_before_actual_click (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_relative_link_base_change_stops_before_actual_click) (platform='qidian', operation='popup')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 56, in test_relative_link_base_change_stops_before_actual_click
+    self.assertEqual(destinations, [])
+AssertionError: Lists differ: ['https://write.qq.com/publish/next'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'https://write.qq.com/publish/next'
+
+- ['https://write.qq.com/publish/next']
++ []
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.229s
+
+FAILED (failures=6)

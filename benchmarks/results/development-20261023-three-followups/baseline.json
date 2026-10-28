@@ -1,0 +1,8 @@
+{
+  "scope": "Full regression completed before these three fixes; not validation of the new implementation",
+  "source": "read-only audit after the previous two fixes",
+  "report": "before-full-suite.json",
+  "log": "before-full-suite.log",
+  "hashes": "before-source-hashes.json",
+  "findings": "before-audit-findings.json"
+}

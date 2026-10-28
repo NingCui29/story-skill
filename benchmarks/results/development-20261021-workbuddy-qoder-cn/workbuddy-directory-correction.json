@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-21",
+  "installation": {
+    "status": "installed",
+    "host": "workbuddy",
+    "scope": "user",
+    "path": "/Users/cuining/.workbuddy-ai/skills",
+    "skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "changed_skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "backup": null,
+    "files": 64
+  },
+  "verification": {
+    "status": "verified",
+    "verification_basis": "Frozen installation snapshot; current source development continued separately",
+    "installation_snapshot_sha256": "5804bc53fd9f1cbab120b386c8a8907bb5761b5ab12e312b52193dbd7df48a6a",
+    "host": "workbuddy",
+    "scope": "user",
+    "path": "/Users/cuining/.workbuddy-ai/skills",
+    "skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "managed_skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-write",
+      "story-skill-analyze",
+      "story-skill-review",
+      "story-skill-research",
+      "story-skill-cover",
+      "story-skill-publish"
+    ],
+    "files": 64
+  },
+  "preexisting_skill_names": [
+    "story-skill-open-book",
+    "story-skill-write-chapter"
+  ],
+  "preexisting_skills_unchanged": true,
+  "directory_correction": {
+    "reason": "WorkBuddy AI product.json dataFolderName is injected into actual daemon configDir",
+    "previous_unused_target": "/Users/cuining/.workbuddy/skills",
+    "recoverable_backup": "/Users/cuining/.workbuddy/story-skill-install-backups/20261021-unused-target/skills"
+  },
+  "desktop_status": "eight_native_selections_full_questions_and_correct_rule_answers_completed",
+  "desktop_results": "workbuddy-desktop/results.json",
+  "desktop_invocation_version": "5.8.4"
+}

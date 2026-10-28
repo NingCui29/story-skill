@@ -8,7 +8,7 @@
 
 v0.6.23将试读设计与追更验证明确纳入调研入口，方法见[分次试读](../skills/story-skill-research/references/reader-validation.md#分次试读与追更验证)。当场满意、口头续读意愿与后续实际返回分别记录；先对齐正文版本、已读范围、更新机会和是否提醒，未获后续阅读机会不算流失。只设计方案不代表试读已执行；意见冲突按正文证据和目标读者解释，保留分歧，不用多数票替代缺陷判断。本轮发行回执见[发布记录](releases/v0.6.23.md)，不会以程序回归证明文学效果。
 
-2026-10-27 的 本地六项开发验收（`benchmarks/results/development-20261027-six-priorities/assessment.md`，未随源码提交） 将正常章幅连续写作对照与源码功能回归分开登记。新增[分次阅读记录](../skills/story-skill-research/references/reader-records.md)保存版本、条件、原话和修正历史；合成工具验证不冒充真人试读。新增[执行活动核对](../benchmarks/skill-execution/activity-mapping.md)将开发者阶段标注关联原生成功读取摘录及分派证据；只有选定摘录可追溯，不证明完整读取或全部任务用量。
+2026-10-27 的 [六项开发验收](../benchmarks/results/development-20261027-six-priorities/assessment.md) 将正常章幅连续写作对照与源码功能回归分开登记。新增[分次阅读记录](../skills/story-skill-research/references/reader-records.md)保存版本、条件、原话和修正历史；合成工具验证不冒充真人试读。新增[执行活动核对](../benchmarks/skill-execution/activity-mapping.md)将开发者阶段标注关联原生成功读取摘录及分派证据；只有选定摘录可追溯，不证明完整读取或全部任务用量。
 
 ## 等条件比较
 
@@ -130,7 +130,7 @@ v0.6.22 的结构化扫榜见[本轮发布记录](releases/v0.6.22.md)与[当前
 | v0.5.1 开发过程的分析新旧比较 | 合成短文和两部完整真实短篇的探索性匿名模型评阅；结果与语义分歧逐轮保留，不代表稳定优势 |
 | 分析修订与续跑 | 修订稿、教学迁移和一次恢复试用分别保存；已知意见后的修订复核不计为新的匿名胜率 |
 | 《阿Q正傳》完整九章 | 固定最终技能的一次完整生成、独立模型评阅与两项可选澄清；无旧版对照和重复采样 |
-| 2026年10月27日正常章幅上游比较 | 同一合成题，两臂各三章、共15,044字符；两份匿名模型评阅整体轻微偏本地，第3章分别偏上游和持平；一次生成、相同首读顺序、无真人或稳定优势结论。见本地本轮比较（`benchmarks/results/development-20261027-six-priorities/p0-writing-comparison.md`，未随源码提交） |
+| 2026年10月27日正常章幅上游比较 | 同一合成题，两臂各三章、共15,044字符；两份匿名模型评阅整体轻微偏[，第3章分别偏上游和持平；一次生成、相同首读顺序、无真人或稳定优势结论。见本地本轮比较](../benchmarks/results/development-20261027-six-priorities/p0-writing-comparison.md) |
 | 与上游的多题重复采样、人类评阅及完整账户用量对照 | 尚未执行 |
 
 ## 作品分析专项

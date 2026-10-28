@@ -1,0 +1,127 @@
+{
+  "suite": {
+    "archive": "<TEMP_BUILD>/story-skill-0.6.22.zip",
+    "version": "0.6.22",
+    "files": 67,
+    "sha256": "30ac07ad14ef20e23cef7632c301e7aabff0dcbb4017c05aae186c070c640485",
+    "bytes": 642125,
+    "cli_smoke": {
+      "check": {
+        "counts": {
+          "books": 1,
+          "groups": 1,
+          "snapshots": 1
+        },
+        "entries": 1,
+        "ok": true,
+        "platform": "example",
+        "warnings": []
+      },
+      "aggregate": {
+        "counts": {
+          "books": 1,
+          "groups": 1,
+          "snapshots": 1
+        },
+        "files": [
+          "report.json",
+          "report.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/suite-report",
+        "warnings": []
+      }
+    }
+  },
+  "claude": {
+    "archive": "<TEMP_BUILD>/story-skill-claude-desktop-0.6.22-r2.zip",
+    "version": "0.6.22",
+    "files": 69,
+    "source_files": 67,
+    "skill_name": "story-skill",
+    "bundle_revision": 2,
+    "skill_entry_count": 1,
+    "entry_path_mapping": {
+      "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+      "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+      "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+      "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+      "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+      "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+      "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+      "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+    },
+    "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+    "sha256": "e01b5a896ea88ae41620ad74287f779cb7e36d71db0f07a4b34981dc7a4fe9b4",
+    "bytes": 648502,
+    "cli_smoke": {
+      "check": {
+        "counts": {
+          "books": 1,
+          "groups": 1,
+          "snapshots": 1
+        },
+        "entries": 1,
+        "ok": true,
+        "platform": "example",
+        "warnings": []
+      },
+      "aggregate": {
+        "counts": {
+          "books": 1,
+          "groups": 1,
+          "snapshots": 1
+        },
+        "files": [
+          "report.json",
+          "report.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/claude-report",
+        "warnings": []
+      }
+    }
+  },
+  "codex": {
+    "archive": "<TEMP_BUILD>/codex/story-skill-codex-0.6.22.zip",
+    "checksum": "<TEMP_BUILD>/codex/story-skill-codex-0.6.22.zip.sha256",
+    "marketplace_root": "<TEMP_BUILD>/codex/story-skill-codex-0.6.22",
+    "plugin_root": "<TEMP_BUILD>/codex/story-skill-codex-0.6.22/plugins/story-skill",
+    "version": "0.6.22",
+    "skill_count": 8,
+    "payload_files": 70,
+    "bundle_files": 72,
+    "sha256": "ffe3fea94ff7e42574b8ae47c815c484da596c1c7868573e75081ffd5f6d9bc6",
+    "source_payload_files": 67,
+    "adapted_ui_files": 8,
+    "cli_smoke": {
+      "check": {
+        "counts": {
+          "books": 1,
+          "groups": 1,
+          "snapshots": 1
+        },
+        "entries": 1,
+        "ok": true,
+        "platform": "example",
+        "warnings": []
+      },
+      "aggregate": {
+        "counts": {
+          "books": 1,
+          "groups": 1,
+          "snapshots": 1
+        },
+        "files": [
+          "report.json",
+          "report.md"
+        ],
+        "ok": true,
+        "output_dir": "<TEMP_BUILD>/codex-report",
+        "warnings": []
+      }
+    }
+  },
+  "isolated_stage": "<TEMP_BUILD>",
+  "book_state_created": false
+}

@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "run": 88,
+  "passed": 87,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 1,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "modules": [
+    "test_install",
+    "test_install_additional_hosts",
+    "test_install_antigravity",
+    "test_install_check",
+    "test_install_claude",
+    "test_install_desktop_hosts",
+    "test_install_dsh",
+    "test_install_races",
+    "test_install_source_boundary",
+    "test_install_suite"
+  ],
+  "duration_seconds": 281.119
+}

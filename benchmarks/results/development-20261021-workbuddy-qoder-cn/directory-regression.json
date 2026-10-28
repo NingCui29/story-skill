@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-21",
+  "command": "python3 -m unittest discover -s tests -p 'test_install_desktop_hosts.py'",
+  "python_version": "3.12.14",
+  "tests_run": 4,
+  "result": "OK",
+  "coverage": [
+    "Desktop host project/user directory mappings and full suite installation",
+    "Qoder and Qoder CN project suite sharing",
+    "WorkBuddy AI legacy directories preserved during initial installation and a real managed update"
+  ],
+  "scope": "Installation behavior only; desktop model invocation is recorded separately"
+}

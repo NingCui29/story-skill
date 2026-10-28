@@ -1,0 +1,54 @@
+test_initialization_residue_does_not_block_precise_retirement_or_change_evidence (tests.test_platform_draft_retirement.DeletedDraftRetirementTests.test_initialization_residue_does_not_block_precise_retirement_or_change_evidence) ... ERROR
+test_inactive_session_history_is_not_a_live_session_limit_for_retirement (tests.test_platform_draft_retirement.DeletedDraftRetirementTests.test_inactive_session_history_is_not_a_live_session_limit_for_retirement) ... ERROR
+test_real_live_lease_and_unknown_create_still_block_retirement_among_residue (tests.test_platform_draft_retirement.DeletedDraftRetirementTests.test_real_live_lease_and_unknown_create_still_block_retirement_among_residue) ... ok
+
+======================================================================
+ERROR: test_initialization_residue_does_not_block_precise_retirement_or_change_evidence (tests.test_platform_draft_retirement.DeletedDraftRetirementTests.test_initialization_residue_does_not_block_precise_retirement_or_change_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_draft_retirement.py", line 118, in test_initialization_residue_does_not_block_precise_retirement_or_change_evidence
+    self.assertTrue(self.retire(packet)["executed"])
+                    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_draft_retirement.py", line 84, in retire
+    return self.drafts.retire_deleted_attempts(self.book, packet, execute=execute,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_drafts.py", line 465, in retire_deleted_attempts
+    _retirement_no_active_create(book, packet["target"])
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_drafts.py", line 392, in _retirement_no_active_create
+    session = bridge._session(directory)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_chrome_bridge.py", line 405, in _session
+    session = _read(directory, "session.json", maximum=32768)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_chrome_bridge.py", line 172, in _read
+    before = api.publish._bound_stat(file)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_publish.py", line 105, in _bound_stat
+    os.stat(file.name, dir_fd=file.directory.fd, follow_symlinks=False))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'session.json'
+
+======================================================================
+ERROR: test_inactive_session_history_is_not_a_live_session_limit_for_retirement (tests.test_platform_draft_retirement.DeletedDraftRetirementTests.test_inactive_session_history_is_not_a_live_session_limit_for_retirement)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_draft_retirement.py", line 131, in test_inactive_session_history_is_not_a_live_session_limit_for_retirement
+    self.assertTrue(self.retire(packet)["executed"])
+                    ^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_draft_retirement.py", line 84, in retire
+    return self.drafts.retire_deleted_attempts(self.book, packet, execute=execute,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_drafts.py", line 465, in retire_deleted_attempts
+    _retirement_no_active_create(book, packet["target"])
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_drafts.py", line 389, in _retirement_no_active_create
+    _retirement_require(len(names) <= bridge.MAX_SESSIONS)
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_drafts.py", line 302, in _retirement_require
+    api.fail("platform_draft_retirement_invalid", "Deleted-draft retirement evidence is incomplete or changed")
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+offline_publishing_story.StoryError: Deleted-draft retirement evidence is incomplete or changed
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.355s
+
+FAILED (errors=2)

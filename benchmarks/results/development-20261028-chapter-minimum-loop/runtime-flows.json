@@ -1,0 +1,9 @@
+{
+  "scope": "Synthetic Python/API only; no UI, model, platform, installation or real book",
+  "checks": {
+    "plan_context_brief_task_commit_3000_5000_and_short_assembly": true,
+    "reconcile_6000": true,
+    "history_3000_to_5000_publish": true
+  },
+  "ok": true
+}

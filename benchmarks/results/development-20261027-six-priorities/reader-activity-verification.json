@@ -1,0 +1,48 @@
+{
+  "scope": "Reader research materials, optional writing examples, and execution activity inspection. Program tests and synthetic CLI records are not human or literary validation.",
+  "checks": [
+    {
+      "command": "python3 -B -m unittest discover -s tests -p 'test_reader_feedback.py'",
+      "passed": 21
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tests -p 'test_research*.py'",
+      "passed": 26
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tests -p 'test_execution*.py'",
+      "passed": 166,
+      "scope": "Before final additional conflicting-phase regression; existing modules unchanged."
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tests -p 'test_execution_activity.py'",
+      "passed": 18,
+      "scope": "Final activity implementation, including added regression."
+    }
+  ],
+  "followup_fixes": [
+    {
+      "kind": "test_fixture",
+      "detail": "Resolved macOS /var alias to /private/var for temporary paths; kept runtime linked-path rejection."
+    },
+    {
+      "kind": "runtime",
+      "detail": "One native read event cannot be counted in multiple phases by citing different excerpts; new regression checks this."
+    }
+  ],
+  "forward_receipts": [
+    "reader-feedback/forward-cli.json",
+    "execution-activity/forward-cli.json",
+    "execution-activity/forward-cli-final.json"
+  ],
+  "files": {
+    "skills/story-skill/scripts/story_reader_feedback.py": "4aae20a2e1c035f5ad38ba99daba9fbd4bd5332cb465dd302b2382808172b5ca",
+    "skills/story-skill-research/references/reader-records.md": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+    "skills/story-skill-research/references/reader-validation.md": "16a02d840c87d3f4e80aad3998b11854fece0e86eb7b6f3f35bc6a7500e4f5bc",
+    "skills/story-skill-write/references/drama.md": "b3c54bd737a56a02ac7b415c5b455d01b35b1f89ae5a3534b19782fe33697cb1",
+    "scripts/execution_activity.py": "3912d3217304d0dfdb0f5bf8e44f3ad72183d61ee476b5c998901fcbc51bccb4",
+    "tests/test_reader_feedback.py": "9b4375e5f903b1947b34a4e5c72880856fb8a982ec6eb27da77ba5816cd9aa87",
+    "tests/test_execution_activity.py": "377509e072f6ca40daca6a32cba6f7627505bbe046abc2d597c7becf44a2b48a",
+    "benchmarks/skill-execution/activity-mapping.md": "3478ab04b8b4f7c9bde6b7eb6893367b535092f3e3bca1a8cf951e78a3edb4f6"
+  }
+}

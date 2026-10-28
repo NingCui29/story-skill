@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-21",
+  "completed_at": "2026-10-21T20:30:39.167942+08:00",
+  "status": "native_loading_and_rule_invocation_completed_with_documented_deviations",
+  "scope": "Native skill discovery, selection, actual test-message delivery and rule-question answers. Not complete creative, image-generation or publishing workflows.",
+  "hosts": {
+    "workbuddy": {
+      "application": "WorkBuddy AI",
+      "desktop_version": "5.8.4",
+      "model": "Deepseek-V4.1-Flash",
+      "standard_skills_present": 8,
+      "native_rule_cases_completed": 8,
+      "rule_judgments_correct": 8,
+      "independent_file_source_path_verification": 0,
+      "results": "workbuddy-desktop/results.json"
+    },
+    "qoder-cn": {
+      "application": "Qoder CN",
+      "desktop_version": "0.4.8",
+      "model": "Qwen3.8-Max, 中",
+      "standard_skills_present": 8,
+      "native_rule_cases_completed": 8,
+      "rule_judgments_correct": 8,
+      "independent_file_source_path_verification": 0,
+      "results": "qoder-desktop/results.json"
+    }
+  },
+  "totals": {
+    "tested_skill_cases": 16,
+    "native_selection_and_full_prompt_sent": 16,
+    "correct_rule_judgments": 16
+  },
+  "installation_integrity": "final-installation-integrity.json",
+  "directory_regression": "directory-regression.json",
+  "deviations": [
+    {
+      "host": "qoder-cn",
+      "case": 8,
+      "kind": "Read-only scope violation: additional test-memory edits after the correct rule answer",
+      "status": "Test memory moved to recoverable backup and its sole index reference removed; scope failure remains recorded",
+      "evidence": "qoder-desktop/case8-scope-violation.json",
+      "cleanup": "qoder-memory-cleanup.json"
+    },
+    {
+      "kind": "Answers including quotations and paths exceeded the requested 120 characters; per-case counts retained"
+    },
+    {
+      "host": "workbuddy",
+      "case": 1,
+      "kind": "Input-automation residue and duplicate question preserved in evidence; cases 2-8 had clean single questions"
+    }
+  ],
+  "not_verified": [
+    "Full independent tool-read source paths for each case",
+    "Complete novel creation, revision, market browsing, image generation or platform draft workflows",
+    "Current concurrent platform-development files beyond the frozen installation snapshot"
+  ]
+}

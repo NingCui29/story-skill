@@ -1,0 +1,150 @@
+{
+  "app": "WorkBuddy AI",
+  "source": "macOS accessibility snapshot of native Installed skills page",
+  "skills": [
+    {
+      "skill": "story-skill",
+      "native_name_element": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.4.0.1.0.0",
+        "role": "AXStaticText",
+        "name": "story-skill",
+        "value": "story-skill",
+        "description": ""
+      },
+      "native_enabled_toggle": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.4.0.3.0.0.0",
+        "role": "AXCheckBox",
+        "name": null,
+        "value": 1,
+        "description": "关闭"
+      },
+      "enabled": true
+    },
+    {
+      "skill": "story-skill-plan",
+      "native_name_element": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.8.0.1.0.0",
+        "role": "AXStaticText",
+        "name": "story-skill-plan",
+        "value": "story-skill-plan",
+        "description": ""
+      },
+      "native_enabled_toggle": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.8.0.3.0.0.0",
+        "role": "AXCheckBox",
+        "name": null,
+        "value": 1,
+        "description": "关闭"
+      },
+      "enabled": true
+    },
+    {
+      "skill": "story-skill-write",
+      "native_name_element": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.12.0.1.0.0",
+        "role": "AXStaticText",
+        "name": "story-skill-write",
+        "value": "story-skill-write",
+        "description": ""
+      },
+      "native_enabled_toggle": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.12.0.3.0.0.0",
+        "role": "AXCheckBox",
+        "name": null,
+        "value": 1,
+        "description": "关闭"
+      },
+      "enabled": true
+    },
+    {
+      "skill": "story-skill-analyze",
+      "native_name_element": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.5.0.1.0.0",
+        "role": "AXStaticText",
+        "name": "story-skill-analyze",
+        "value": "story-skill-analyze",
+        "description": ""
+      },
+      "native_enabled_toggle": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.5.0.3.0.0.0",
+        "role": "AXCheckBox",
+        "name": null,
+        "value": 1,
+        "description": "关闭"
+      },
+      "enabled": true
+    },
+    {
+      "skill": "story-skill-review",
+      "native_name_element": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.11.0.1.0.0",
+        "role": "AXStaticText",
+        "name": "story-skill-review",
+        "value": "story-skill-review",
+        "description": ""
+      },
+      "native_enabled_toggle": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.11.0.3.0.0.0",
+        "role": "AXCheckBox",
+        "name": null,
+        "value": 1,
+        "description": "关闭"
+      },
+      "enabled": true
+    },
+    {
+      "skill": "story-skill-research",
+      "native_name_element": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.10.0.1.0.0",
+        "role": "AXStaticText",
+        "name": "story-skill-research",
+        "value": "story-skill-research",
+        "description": ""
+      },
+      "native_enabled_toggle": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.10.0.3.0.0.0",
+        "role": "AXCheckBox",
+        "name": null,
+        "value": 1,
+        "description": "关闭"
+      },
+      "enabled": true
+    },
+    {
+      "skill": "story-skill-cover",
+      "native_name_element": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.6.0.1.0.0",
+        "role": "AXStaticText",
+        "name": "story-skill-cover",
+        "value": "story-skill-cover",
+        "description": ""
+      },
+      "native_enabled_toggle": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.6.0.3.0.0.0",
+        "role": "AXCheckBox",
+        "name": null,
+        "value": 1,
+        "description": "关闭"
+      },
+      "enabled": true
+    },
+    {
+      "skill": "story-skill-publish",
+      "native_name_element": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.9.0.1.0.0",
+        "role": "AXStaticText",
+        "name": "story-skill-publish",
+        "value": "story-skill-publish",
+        "description": ""
+      },
+      "native_enabled_toggle": {
+        "path": "0.0.0.0.0.0.0.0.0.0.0.1.0.1.0.9.0.3.0.0.0",
+        "role": "AXCheckBox",
+        "name": null,
+        "value": 1,
+        "description": "关闭"
+      },
+      "enabled": true
+    }
+  ]
+}

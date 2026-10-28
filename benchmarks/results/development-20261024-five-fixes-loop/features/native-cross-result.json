@@ -1,0 +1,373 @@
+{
+  "ok": true,
+  "scenarios": 28,
+  "source_sha256": "06760945d77a9ddb94d64e2936c344d918365763bc24735ab6913b123f641bc2",
+  "results": [
+    {
+      "platform": "qimao",
+      "operation": "create",
+      "initial_href": null,
+      "changed": false,
+      "returned": "empty-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#create"
+        ],
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "operation": "create",
+      "initial_href": null,
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_create",
+      "clicks": []
+    },
+    {
+      "platform": "qimao",
+      "operation": "create",
+      "initial_href": "",
+      "changed": false,
+      "returned": "empty-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#create"
+        ],
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "operation": "create",
+      "initial_href": "",
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_create",
+      "clicks": []
+    },
+    {
+      "platform": "qimao",
+      "operation": "create",
+      "initial_href": "/draft/action",
+      "changed": false,
+      "returned": "empty-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#create"
+        ],
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "operation": "create",
+      "initial_href": "/draft/action",
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_create",
+      "clicks": []
+    },
+    {
+      "platform": "qimao",
+      "operation": "save",
+      "initial_href": null,
+      "changed": false,
+      "returned": "new-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "operation": "save",
+      "initial_href": null,
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "clicks": []
+    },
+    {
+      "platform": "qimao",
+      "operation": "save",
+      "initial_href": "",
+      "changed": false,
+      "returned": "new-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "operation": "save",
+      "initial_href": "",
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "clicks": []
+    },
+    {
+      "platform": "qimao",
+      "operation": "save",
+      "initial_href": "/draft/action",
+      "changed": false,
+      "returned": "new-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "operation": "save",
+      "initial_href": "/draft/action",
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "clicks": []
+    },
+    {
+      "platform": "qidian",
+      "operation": "create",
+      "initial_href": null,
+      "changed": false,
+      "returned": "empty-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#create"
+        ],
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "operation": "create",
+      "initial_href": null,
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_create",
+      "clicks": []
+    },
+    {
+      "platform": "qidian",
+      "operation": "create",
+      "initial_href": "",
+      "changed": false,
+      "returned": "empty-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#create"
+        ],
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "operation": "create",
+      "initial_href": "",
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_create",
+      "clicks": []
+    },
+    {
+      "platform": "qidian",
+      "operation": "create",
+      "initial_href": "/draft/action",
+      "changed": false,
+      "returned": "empty-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#create"
+        ],
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "operation": "create",
+      "initial_href": "/draft/action",
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_create",
+      "clicks": []
+    },
+    {
+      "platform": "qidian",
+      "operation": "save",
+      "initial_href": null,
+      "changed": false,
+      "returned": "new-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "operation": "save",
+      "initial_href": null,
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "clicks": []
+    },
+    {
+      "platform": "qidian",
+      "operation": "save",
+      "initial_href": "",
+      "changed": false,
+      "returned": "new-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "operation": "save",
+      "initial_href": "",
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "clicks": []
+    },
+    {
+      "platform": "qidian",
+      "operation": "save",
+      "initial_href": "/draft/action",
+      "changed": false,
+      "returned": "new-1",
+      "error": null,
+      "clicks": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "operation": "save",
+      "initial_href": "/draft/action",
+      "changed": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "clicks": []
+    },
+    {
+      "platform": "qimao",
+      "during": "state_read",
+      "allocation": false,
+      "returned": null,
+      "error": "platform_browser_identity_mismatch",
+      "writes": []
+    },
+    {
+      "platform": "qimao",
+      "during": "state_read",
+      "allocation": true,
+      "returned": "new-1",
+      "error": null,
+      "writes": [
+        [
+          "fill",
+          "#chapter"
+        ],
+        [
+          "fill",
+          "#title"
+        ],
+        [
+          "fill",
+          "#body"
+        ],
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "during": "state_read",
+      "allocation": false,
+      "returned": null,
+      "error": "platform_browser_identity_mismatch",
+      "writes": []
+    },
+    {
+      "platform": "qidian",
+      "during": "state_read",
+      "allocation": true,
+      "returned": "new-1",
+      "error": null,
+      "writes": [
+        [
+          "fill",
+          "#chapter"
+        ],
+        [
+          "fill",
+          "#title"
+        ],
+        [
+          "fill",
+          "#body"
+        ],
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    }
+  ]
+}

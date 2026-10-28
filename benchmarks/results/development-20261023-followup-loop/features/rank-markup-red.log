@@ -1,0 +1,76 @@
+test_collected_inline_title_remains_selectable_in_research_handoff (test_rank_source_markup.RankSourceMarkupTests.test_collected_inline_title_remains_selectable_in_research_handoff) ... ERROR
+test_explicit_line_and_block_boundaries_do_not_merge_words (test_rank_source_markup.RankSourceMarkupTests.test_explicit_line_and_block_boundaries_do_not_merge_words) ... ok
+test_inline_formatting_preserves_page_controls_and_card_status (test_rank_source_markup.RankSourceMarkupTests.test_inline_formatting_preserves_page_controls_and_card_status) ... ERROR
+test_inline_formatting_preserves_titles_authors_and_categories (test_rank_source_markup.RankSourceMarkupTests.test_inline_formatting_preserves_titles_authors_and_categories) ... FAIL
+test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it (test_rank_source_markup.RankSourceMarkupTests.test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it) ... 
+  test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it (test_rank_source_markup.RankSourceMarkupTests.test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it) (markup='左<span>门</span>右') ... FAIL
+  test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it (test_rank_source_markup.RankSourceMarkupTests.test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it) (markup='左<span>门</span><script>bad</script><style>bad</style>右') ... FAIL
+
+======================================================================
+ERROR: test_collected_inline_title_remains_selectable_in_research_handoff (test_rank_source_markup.RankSourceMarkupTests.test_collected_inline_title_remains_selectable_in_research_handoff)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_markup.py", line 57, in test_collected_inline_title_remains_selectable_in_research_handoff
+    sample = rank_fixtures.rank.build_sample([snapshot], title_contains="样本&书名")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_rank.py", line 415, in build_sample
+    return _build_sample(snapshots, group_id, category, tags, title_contains, min_words, max_words, limit,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_rank.py", line 468, in _build_sample
+    raise RankError("筛选后没有可抽样作品；请检查筛选值、字数缺失及身份/观测冲突")
+rank.RankError: 筛选后没有可抽样作品；请检查筛选值、字数缺失及身份/观测冲突
+
+======================================================================
+ERROR: test_inline_formatting_preserves_page_controls_and_card_status (test_rank_source_markup.RankSourceMarkupTests.test_inline_formatting_preserves_page_controls_and_card_status)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_markup.py", line 24, in test_inline_formatting_preserves_page_controls_and_card_status
+    entry = sources.parse_qimao_page(html, 1)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_rank_sources.py", line 190, in parse_qimao_page
+    return _parse_qimao_page(html, requested_page)[1]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_rank_sources.py", line 139, in _parse_qimao_page
+    raise ValueError(f"第 {requested_page} 页无法验证当前排序为按点击量")
+ValueError: 第 1 页无法验证当前排序为按点击量
+
+======================================================================
+FAIL: test_inline_formatting_preserves_titles_authors_and_categories (test_rank_source_markup.RankSourceMarkupTests.test_inline_formatting_preserves_titles_authors_and_categories)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_markup.py", line 17, in test_inline_formatting_preserves_titles_authors_and_categories
+    self.assertEqual(entry["title"], "样本&书名")
+AssertionError: '样本 & 书名' != '样本&书名'
+- 样本 & 书名
+?   - -
++ 样本&书名
+
+
+======================================================================
+FAIL: test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it (test_rank_source_markup.RankSourceMarkupTests.test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it) (markup='左<span>门</span>右')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_markup.py", line 40, in test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it
+    self.assertEqual(sources.parse_qimao_page(fixtures.page(cards=card), 1)[0]["title"], expected)
+AssertionError: '左 门 右' != '左门右'
+- 左 门 右
+?  - -
++ 左门右
+
+
+======================================================================
+FAIL: test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it (test_rank_source_markup.RankSourceMarkupTests.test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it) (markup='左<span>门</span><script>bad</script><style>bad</style>右')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_markup.py", line 40, in test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it
+    self.assertEqual(sources.parse_qimao_page(fixtures.page(cards=card), 1)[0]["title"], expected)
+AssertionError: '左 门 右' != '左门右'
+- 左 门 右
+?  - -
++ 左门右
+
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.151s
+
+FAILED (failures=3, errors=2)

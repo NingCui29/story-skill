@@ -1,0 +1,10 @@
+test_collected_inline_title_remains_selectable_in_research_handoff (test_rank_source_markup.RankSourceMarkupTests.test_collected_inline_title_remains_selectable_in_research_handoff) ... ok
+test_explicit_line_and_block_boundaries_do_not_merge_words (test_rank_source_markup.RankSourceMarkupTests.test_explicit_line_and_block_boundaries_do_not_merge_words) ... ok
+test_inline_formatting_preserves_page_controls_and_card_status (test_rank_source_markup.RankSourceMarkupTests.test_inline_formatting_preserves_page_controls_and_card_status) ... ok
+test_inline_formatting_preserves_titles_authors_and_categories (test_rank_source_markup.RankSourceMarkupTests.test_inline_formatting_preserves_titles_authors_and_categories) ... ok
+test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it (test_rank_source_markup.RankSourceMarkupTests.test_real_whitespace_is_preserved_and_inline_edges_do_not_add_it) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.074s
+
+OK

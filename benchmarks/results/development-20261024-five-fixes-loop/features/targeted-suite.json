@@ -1,0 +1,19 @@
+{
+  "successful": true,
+  "tests_run": 163,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "modules": [
+    "test_rank_source_visibility",
+    "test_rank_source_markup",
+    "test_rank_sources",
+    "test_rank",
+    "test_rank_compatibility",
+    "test_research",
+    "test_research_long_reasons",
+    "test_instruction_budget",
+    "test_skill_audit_fixes"
+  ],
+  "loader_errors": []
+}

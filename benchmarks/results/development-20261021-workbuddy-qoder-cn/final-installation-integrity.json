@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-21",
+  "verified_at": "2026-10-21T20:23:06.062496+08:00",
+  "verification_basis": "Frozen installation snapshot and per-skill managed manifests after all desktop rule questions; current source development tracked separately",
+  "hosts": {
+    "workbuddy": {
+      "path": "/Users/cuining/.workbuddy-ai/skills",
+      "managed_manifests_match": true,
+      "skills": 8,
+      "files": 64,
+      "inventory_sha256": "5804bc53fd9f1cbab120b386c8a8907bb5761b5ab12e312b52193dbd7df48a6a",
+      "entry_files_match_current_source": true,
+      "current_source_differences": [
+        "story-skill/scripts/story_chrome_bridge.mjs",
+        "story-skill/scripts/story_chrome_worker.mjs",
+        "story-skill/scripts/story_chrome_worker.py",
+        "story-skill/scripts/story_platform_drafts.py",
+        "story-skill/scripts/story_workbench.py",
+        "story-skill-publish/references/platform-drafts.md"
+      ]
+    },
+    "qoder-cn": {
+      "path": "/Users/cuining/.qoder-cn/skills",
+      "managed_manifests_match": true,
+      "skills": 8,
+      "files": 64,
+      "inventory_sha256": "5804bc53fd9f1cbab120b386c8a8907bb5761b5ab12e312b52193dbd7df48a6a",
+      "entry_files_match_current_source": true,
+      "current_source_differences": [
+        "story-skill/scripts/story_chrome_bridge.mjs",
+        "story-skill/scripts/story_chrome_worker.mjs",
+        "story-skill/scripts/story_chrome_worker.py",
+        "story-skill/scripts/story_platform_drafts.py",
+        "story-skill/scripts/story_workbench.py",
+        "story-skill-publish/references/platform-drafts.md"
+      ]
+    }
+  },
+  "host_payloads_identical": true,
+  "original_snapshot_sha256": "5804bc53fd9f1cbab120b386c8a8907bb5761b5ab12e312b52193dbd7df48a6a",
+  "matches_original_snapshot": true,
+  "current_source_inventory_sha256": "2f99d488d3843aea612aa6d97e13c256d9bb76360e0fab9b9d5b058b54d9efab"
+}

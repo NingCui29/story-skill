@@ -1,0 +1,79 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "platform": "qimao",
+      "case": "unchanged",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "mutation_fired": false,
+      "writes": 0
+    },
+    {
+      "platform": "qimao",
+      "case": "duplicate_after_handle",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_ambiguous_dom",
+      "mutation_fired": true,
+      "writes": 0
+    },
+    {
+      "platform": "qimao",
+      "case": "unique_retarget_after_handle",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "mutation_fired": true,
+      "writes": 0
+    },
+    {
+      "platform": "qimao",
+      "case": "mutate_after_last_guard",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "mutation_fired": true,
+      "writes": 0
+    },
+    {
+      "platform": "qidian",
+      "case": "unchanged",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "mutation_fired": false,
+      "writes": 0
+    },
+    {
+      "platform": "qidian",
+      "case": "duplicate_after_handle",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_ambiguous_dom",
+      "mutation_fired": true,
+      "writes": 0
+    },
+    {
+      "platform": "qidian",
+      "case": "unique_retarget_after_handle",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "mutation_fired": true,
+      "writes": 0
+    },
+    {
+      "platform": "qidian",
+      "case": "mutate_after_last_guard",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "mutation_fired": true,
+      "writes": 0
+    }
+  ],
+  "source_sha256": "e775880fc9c6a9ab6f6ca5518205d80387cb01954e81a98a34f6628bf42a478a",
+  "scope": "Offline public adapter fixtures; no real website or account; unique-retarget fixture explicitly preserves old node connectedness."
+}

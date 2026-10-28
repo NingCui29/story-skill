@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "source_sha256": {
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py": "76fad6940eedf5d69aa2241278c2dd0de3d84c68f79336522d2ca33576946dee",
+    "tests/test_platform_chrome_initialization.py": "c153a65d7865c8fe00a70d83ee6cd99bb6fe5776bc5565cb63b485888e411385"
+  },
+  "new_test_methods": 6,
+  "issues": [
+    {
+      "id": "incomplete-initialization-blocks-reconnect",
+      "fixed": true,
+      "description": "Interrupted first session/lease publication previously left original-book discovery and attachment blocked."
+    },
+    {
+      "id": "concurrent-attachment-duplicates-live-workers",
+      "fixed": true,
+      "description": "Discovery and initial metadata/handle publication are serialized by one book-root cross-process lock; initialization also takes the session lock."
+    },
+    {
+      "id": "initial-lease-error-after-publication",
+      "fixed": true,
+      "description": "If initial lease publication succeeds but its fsync/verification reports failure before a handle escapes, only the current initialization lease is detached."
+    }
+  ],
+  "verification": {
+    "tests_run": 82,
+    "passed": 81,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 1,
+    "skip_reason": "requires a real Windows process handle",
+    "log": "bridge-recovery-green.log",
+    "command": "PYTHONPATH=tests PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest tests.test_platform_chrome_initialization tests.test_platform_chrome_bridge tests.test_workbench_archives.WorkbenchArchivesTests.test_restored_bridge_reconnects_and_unknown_save_requires_reconciliation tests.test_workbench_archives.WorkbenchArchivesTests.test_restored_live_bridge_is_inert_and_old_handle_cannot_resume_requests tests.test_workbench_archives.WorkbenchArchivesTests.test_restore_reconnects_after_real_process_exit_before_first_session_publication tests.test_workbench_archives.WorkbenchArchivesTests.test_restored_old_handles_never_touch_missing_or_empty_locks_and_missing_sessions -v"
+  },
+  "baseline": {
+    "source_sha256": "8dee92f95f7f753e5d64ae8d4754dbd00e0ddebb960761fc22a0fce7a0ed8156",
+    "log": "bridge-initialization-baseline-red.log",
+    "independent_red_and_green": "../chrome/independent-python-session/"
+  },
+  "independent_review": {
+    "initialization_failure_and_unknown_payload_scenarios": 12,
+    "concurrent_attach_probe_passed": true,
+    "reviewer": "round3_chrome",
+    "total_scenarios": 14,
+    "active_claimed_create_timeout_preserved": true
+  },
+  "boundaries": [
+    "Only incomplete, never-ready metadata with no published lease or request/health/unknown payload may be ignored; files are preserved.",
+    "Existing live leases and unknown request evidence are never erased or reused.",
+    "Restored evidence remains inert and old handles remain rejected.",
+    "No real platform, installed plugin, release or native Windows validation performed.",
+    "A hard process exit after lease publication but before handle publication cannot run cleanup: the valid lease remains until normal expiry and is never treated as empty initialization residue. Immediate recovery of that case is not claimed."
+  ],
+  "unresolved_confirmed_findings": []
+}

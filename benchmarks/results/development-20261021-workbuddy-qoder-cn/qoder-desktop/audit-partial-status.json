@@ -1,0 +1,29 @@
+{
+  "scope": "Qoder CN read-only Story Skill test conversation",
+  "core_case_1": {
+    "native_loaded_label_visible": true,
+    "response_visible": true,
+    "file_read_tool_record_visible": false,
+    "note": "The current conversation contains the parent-run first test. Clicking its loaded skill label exposed no content/source detail; model-reported reading is not treated as tool evidence."
+  },
+  "plan_case_2": {
+    "native_selected": true,
+    "sent": false,
+    "current_input": "@story-skill-plan ",
+    "note": "Do not count this as completed invocation. Compiled AppleScript keyboard reopened the native menu; selecting the exact native menu item produced the correct @ chip. Chinese question insertion was unsuccessful."
+  },
+  "cases_3_through_8": {
+    "sent_by_this_agent": false
+  },
+  "handoff": {
+    "ui_control_returned_to_root": true
+  },
+  "input_findings": {
+    "jxa_command_shortcuts": "Unreliable; text lost characters or commands did not execute",
+    "compiled_applescript": "Reopened the native slash skill suggestion list",
+    "AXValue": "Changes visible text but did not independently open skill suggestions",
+    "AXSelectedText": "Reported writable; setting Chinese question text did not alter visible input"
+  },
+  "superseded_by": "results.json",
+  "note": "Earlier input-failure stage record. Later native rules QA succeeded; see final results including the case 8 read-only-scope failure."
+}

@@ -1,0 +1,13 @@
+✔ ordinary qimao creation keeps its confirmed remote through saving and readback (49.749249ms)
+✔ ordinary qidian creation keeps its confirmed remote through saving and readback (29.497804ms)
+✔ ordinary qimao creation stops before another fill or save after a confirmed editor switch (18.822528ms)
+✔ ordinary qidian creation stops before another fill or save after a confirmed editor switch (11.524183ms)
+✔ ordinary creation allows initial ID allocation before binding and same-remote saved URL transitions (39.372297ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 303.338914

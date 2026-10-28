@@ -1,0 +1,24 @@
+{
+  "method": "Isolated synthetic book + existing fake-native receipt fixture; no model/GUI/platform",
+  "model_dispatched": false,
+  "binding_complete_chapter": false,
+  "chapter": 3,
+  "input_has_complete_chapter": false,
+  "frozen_prompt_forces_complete_body": true,
+  "native_return_state": "result_conflict",
+  "native_return_error": "返回候选章号不属于本次任务，未保存候选文件。",
+  "task_status": "generated",
+  "task_has_result": false,
+  "authoritative_unchanged": true,
+  "candidate_is_headingless": true,
+  "source_files": {
+    "story_tasks.py": "35070711e589fd700cba7f91646cf0c4ea934b56911866fa664bdb41d45fc51b",
+    "story_task_worker.py": "dd654937130e010b938074af7fd315455507c9b0f7c99b3e59a5caa2d3581788"
+  },
+  "manual_return": {
+    "manual_return_error": "task_output_scope",
+    "record_unchanged": true,
+    "authoritative_unchanged": true,
+    "no_model_gui_or_platform": true
+  }
+}

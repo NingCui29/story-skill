@@ -1,0 +1,60 @@
+test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) ... 
+  test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qimao', href='\xa0#save', override=False) ... FAIL
+  test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qimao', href='\u3000#save', override=False) ... FAIL
+  test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qimao', href='\xa0', override=False) ... FAIL
+  test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qidian', href='\xa0#save', override=False) ... FAIL
+  test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qidian', href='\u3000#save', override=False) ... FAIL
+  test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qidian', href='\xa0', override=False) ... FAIL
+
+======================================================================
+FAIL: test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qimao', href='\xa0#save', override=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 113, in test_same_draft_url_alias_keeps_self_links_but_rejects_base_override
+    self.assertEqual(adapter._context.events.count(('click', '#save')), 0 if rejected else 1)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qimao', href='\u3000#save', override=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 113, in test_same_draft_url_alias_keeps_self_links_but_rejects_base_override
+    self.assertEqual(adapter._context.events.count(('click', '#save')), 0 if rejected else 1)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qimao', href='\xa0', override=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 113, in test_same_draft_url_alias_keeps_self_links_but_rejects_base_override
+    self.assertEqual(adapter._context.events.count(('click', '#save')), 0 if rejected else 1)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qidian', href='\xa0#save', override=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 113, in test_same_draft_url_alias_keeps_self_links_but_rejects_base_override
+    self.assertEqual(adapter._context.events.count(('click', '#save')), 0 if rejected else 1)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qidian', href='\u3000#save', override=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 113, in test_same_draft_url_alias_keeps_self_links_but_rejects_base_override
+    self.assertEqual(adapter._context.events.count(('click', '#save')), 0 if rejected else 1)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_same_draft_url_alias_keeps_self_links_but_rejects_base_override (tests.test_platform_browser_link_base.DraftLinkBaseTests.test_same_draft_url_alias_keeps_self_links_but_rejects_base_override) (platform='qidian', href='\xa0', override=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_link_base.py", line 113, in test_same_draft_url_alias_keeps_self_links_but_rejects_base_override
+    self.assertEqual(adapter._context.events.count(('click', '#save')), 0 if rejected else 1)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 1 test in 0.101s
+
+FAILED (failures=6)

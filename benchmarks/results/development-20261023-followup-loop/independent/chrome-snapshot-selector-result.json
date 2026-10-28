@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "results": [
+    {
+      "mode": "unchanged",
+      "changed": false,
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "current_chapter_values": [
+        "11"
+      ],
+      "old_chapter_still_connected": true
+    },
+    {
+      "mode": "duplicate",
+      "changed": true,
+      "accepted": false,
+      "error": "platform_browser_ambiguous_dom",
+      "expected_acceptance": false,
+      "current_chapter_values": [
+        "11",
+        "22"
+      ],
+      "old_chapter_still_connected": true
+    },
+    {
+      "mode": "retarget",
+      "changed": true,
+      "accepted": false,
+      "error": "platform_browser_editor_changed",
+      "expected_acceptance": false,
+      "current_chapter_values": [
+        "22"
+      ],
+      "old_chapter_still_connected": true
+    }
+  ],
+  "source_sha256": "003419c8bcf62c67c2e40dade596b1f113ba02c736cec7a86e133baf93e3a5d1",
+  "scope": "Exact production editorSnapshot method; isolated synthetic DOM and public locator contract; no real browser/network/write action."
+}

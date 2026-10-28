@@ -1,0 +1,22 @@
+✔ ordinary qimao editor supports read find create and existing selector/body modes (245.287755ms)
+✔ ordinary qidian editor supports read find create and existing selector/body modes (218.903304ms)
+✔ ordinary qimao editor rejects another remote during read find and create readback (75.751305ms)
+✔ ordinary qidian editor rejects another remote during read find and create readback (73.794464ms)
+✔ ordinary qimao editor refuses changed current chapter title body and DOM state after body observation (99.727755ms)
+✔ ordinary qidian editor refuses changed current chapter title body and DOM state after body observation (95.919635ms)
+✔ ordinary qimao final body and guard awaits cannot conceal changed identities or headers (185.058002ms)
+✔ ordinary qidian final body and guard awaits cannot conceal changed identities or headers (165.93944ms)
+✔ ordinary qimao final fields fail once for missing duplicate empty and timeout without readiness restart (48.661247ms)
+✔ ordinary qidian final fields fail once for missing duplicate empty and timeout without readiness restart (43.612258ms)
+✔ ordinary initial field readiness still waits before strict final reads (830.967438ms)
+✔ current editor evaluateAll callback is self-contained and preserves the original paragraph contract (1.163411ms)
+✔ ordinary qimao pre-final guard refresh detects server account changes and editor changes during reload (594.178218ms)
+✔ ordinary qidian pre-final guard refresh detects server account changes and editor changes during reload (499.167753ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3337.681392

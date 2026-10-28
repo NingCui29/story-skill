@@ -1,0 +1,1080 @@
+{
+  "schema": 1,
+  "date": "2026-10-28T01:03:16.961180+00:00",
+  "version": "0.6.29",
+  "scope": "Unreleased source verification after compatibility stop fix; isolated books and temporary installation only. Platform live acceptance paused by user. No model invocation.",
+  "checks": {
+    "local_markdown_links": {
+      "status": "passed",
+      "files_scanned": 680,
+      "links_checked": 5216,
+      "missing": [],
+      "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+    },
+    "forbidden_technologies": {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "scripts/check_forbidden_technologies.py",
+        "--source"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"ok\": true,\n  \"policy\": \"no-qt-no-php\",\n  \"errors\": []\n}\n",
+      "stderr": "",
+      "duration_seconds": 6.238,
+      "status": "passed"
+    },
+    "skill_frontmatter": {
+      "story-skill": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill"
+        ],
+        "exit_code": 0,
+        "stdout": "Skill is valid!\n",
+        "stderr": "",
+        "duration_seconds": 0.122,
+        "status": "passed",
+        "validation_dependencies": "Existing isolated validation dependency directory via subprocess PYTHONPATH; no installation"
+      },
+      "story-skill-plan": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-plan"
+        ],
+        "exit_code": 0,
+        "stdout": "Skill is valid!\n",
+        "stderr": "",
+        "duration_seconds": 0.118,
+        "status": "passed",
+        "validation_dependencies": "Existing isolated validation dependency directory via subprocess PYTHONPATH; no installation"
+      },
+      "story-skill-write": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-write"
+        ],
+        "exit_code": 0,
+        "stdout": "Skill is valid!\n",
+        "stderr": "",
+        "duration_seconds": 0.103,
+        "status": "passed",
+        "validation_dependencies": "Existing isolated validation dependency directory via subprocess PYTHONPATH; no installation"
+      },
+      "story-skill-analyze": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-analyze"
+        ],
+        "exit_code": 0,
+        "stdout": "Skill is valid!\n",
+        "stderr": "",
+        "duration_seconds": 0.111,
+        "status": "passed",
+        "validation_dependencies": "Existing isolated validation dependency directory via subprocess PYTHONPATH; no installation"
+      },
+      "story-skill-review": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-review"
+        ],
+        "exit_code": 0,
+        "stdout": "Skill is valid!\n",
+        "stderr": "",
+        "duration_seconds": 0.113,
+        "status": "passed",
+        "validation_dependencies": "Existing isolated validation dependency directory via subprocess PYTHONPATH; no installation"
+      },
+      "story-skill-research": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-research"
+        ],
+        "exit_code": 0,
+        "stdout": "Skill is valid!\n",
+        "stderr": "",
+        "duration_seconds": 0.13,
+        "status": "passed",
+        "validation_dependencies": "Existing isolated validation dependency directory via subprocess PYTHONPATH; no installation"
+      },
+      "story-skill-cover": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-cover"
+        ],
+        "exit_code": 0,
+        "stdout": "Skill is valid!\n",
+        "stderr": "",
+        "duration_seconds": 0.112,
+        "status": "passed",
+        "validation_dependencies": "Existing isolated validation dependency directory via subprocess PYTHONPATH; no installation"
+      },
+      "story-skill-publish": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/skills/.system/skill-creator/scripts/quick_validate.py",
+          "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill-publish"
+        ],
+        "exit_code": 0,
+        "stdout": "Skill is valid!\n",
+        "stderr": "",
+        "duration_seconds": 0.116,
+        "status": "passed",
+        "validation_dependencies": "Existing isolated validation dependency directory via subprocess PYTHONPATH; no installation"
+      },
+      "status": "passed"
+    },
+    "cli_smoke": {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "/Users/cuining/Documents/GitHub/story-skill/scripts/smoke.py",
+        "--output",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-host-stop-functional-final02-tl0gypy3/smoke.json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"ok\": true, \"method\": \"Synthetic fixture via real CLI subprocesses; no model or API calls\", \"commands_executed\": [\"init\", \"notes\", \"plan\", \"status\", \"outline-bind\", \"context\", \"lint\", \"commit\", \"commit\", \"reconcile\", \"lint\", \"reconcile\", \"reconcile\", \"ingest\", \"next\", \"record\", \"record\", \"next\", \"coverage\", \"findings\", \"report\", \"coverage\"], \"visible_chars\": 213, \"draft_sha256\": \"6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be\", \"reconciled_draft_sha256\": \"ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562\", \"context_bytes\": 1114, \"context_budget_bytes\": 4000, \"chapter_commit_idempotent\": true, \"export_bytes_verified\": true, \"reconcile_idempotent\": true, \"external_backup_verified\": true, \"non_content_chunks_completed\": 1, \"analysis_coverage\": {\"analyzed\": 3, \"chunks_total\": 3, \"complete_for_imported_text\": true, \"next_chunk\": null, \"pending\": 0, \"report_path\": \".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md\", \"source\": \"a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7\", \"source_coverage\": \"partial\", \"text_coverage_contiguous\": true}, \"finding_pages_returned\": 3, \"final_report_exported\": true, \"literary_quality_tested\": false}\n",
+      "stderr": "",
+      "duration_seconds": 11.332,
+      "status": "passed",
+      "evidence": {
+        "ok": true,
+        "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+        "commands_executed": [
+          "init",
+          "notes",
+          "plan",
+          "status",
+          "outline-bind",
+          "context",
+          "lint",
+          "commit",
+          "commit",
+          "reconcile",
+          "lint",
+          "reconcile",
+          "reconcile",
+          "ingest",
+          "next",
+          "record",
+          "record",
+          "next",
+          "coverage",
+          "findings",
+          "report",
+          "coverage"
+        ],
+        "visible_chars": 213,
+        "draft_sha256": "6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be",
+        "reconciled_draft_sha256": "ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562",
+        "context_bytes": 1114,
+        "context_budget_bytes": 4000,
+        "chapter_commit_idempotent": true,
+        "export_bytes_verified": true,
+        "reconcile_idempotent": true,
+        "external_backup_verified": true,
+        "non_content_chunks_completed": 1,
+        "analysis_coverage": {
+          "analyzed": 3,
+          "chunks_total": 3,
+          "complete_for_imported_text": true,
+          "next_chunk": null,
+          "pending": 0,
+          "report_path": ".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md",
+          "source": "a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7",
+          "source_coverage": "partial",
+          "text_coverage_contiguous": true
+        },
+        "finding_pages_returned": 3,
+        "final_report_exported": true,
+        "literary_quality_tested": false
+      }
+    },
+    "isolated_source_install": {
+      "status": "passed",
+      "files": 73,
+      "skills": 8,
+      "installed_files_match": true,
+      "installation": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/Documents/GitHub/story-skill/scripts/install.py",
+          "--project",
+          "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-host-stop-functional-final02-tl0gypy3/安装验证项目"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"status\": \"installed\", \"host\": \"codex\", \"scope\": \"project\", \"path\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-host-stop-functional-final02-tl0gypy3/安装验证项目/.agents/skills\", \"skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"changed_skills\": [\"story-skill\", \"story-skill-plan\", \"story-skill-write\", \"story-skill-analyze\", \"story-skill-review\", \"story-skill-research\", \"story-skill-cover\", \"story-skill-publish\"], \"backup\": null, \"files\": 73}\n",
+        "stderr": "",
+        "duration_seconds": 3.327,
+        "status": "passed"
+      },
+      "receipt": {
+        "status": "installed",
+        "host": "codex",
+        "scope": "project",
+        "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-host-stop-functional-final02-tl0gypy3/安装验证项目/.agents/skills",
+        "skills": [
+          "story-skill",
+          "story-skill-plan",
+          "story-skill-write",
+          "story-skill-analyze",
+          "story-skill-review",
+          "story-skill-research",
+          "story-skill-cover",
+          "story-skill-publish"
+        ],
+        "changed_skills": [
+          "story-skill",
+          "story-skill-plan",
+          "story-skill-write",
+          "story-skill-analyze",
+          "story-skill-review",
+          "story-skill-research",
+          "story-skill-cover",
+          "story-skill-publish"
+        ],
+        "backup": null,
+        "files": 73
+      },
+      "cli_help": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-host-stop-functional-final02-tl0gypy3/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+          "--help"
+        ],
+        "exit_code": 0,
+        "stdout": "usage: story.py [-h] [--version]\n                {template,rank-template,rank-check,rank-aggregate,rank-sample,rank-collect,research-init,research-check,research-verify,research-render,reader-init,reader-record,reader-check,reader-render,task-list,task-get,task-handoff,task-return,task-review,task-fail,task-evidence,task-execute,task-execution,task-cancel,task-reconcile,init,status,book-kind,book-title,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,publish-draft-run,publish-draft-status,publish-chrome-attach,publish-chrome-detach,publish-chrome-health,publish-chrome-heartbeat,publish-chrome-next,publish-chrome-respond,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n                ...\n\nStory Skill: local, bounded context and transactional writing state. No API\ncalls.\n\npositional arguments:\n  {template,rank-template,rank-check,rank-aggregate,rank-sample,rank-collect,research-init,research-check,research-verify,research-render,reader-init,reader-record,reader-check,reader-render,task-list,task-get,task-handoff,task-return,task-review,task-fail,task-evidence,task-execute,task-execution,task-cancel,task-reconcile,init,status,book-kind,book-title,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,publish-draft-run,publish-draft-status,publish-chrome-attach,publish-chrome-detach,publish-chrome-health,publish-chrome-heartbeat,publish-chrome-next,publish-chrome-respond,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n    template            Print just one JSON input example\n    rank-template       输出结构化扫榜快照示例\n    rank-check          校验离线扫榜快照与覆盖声明\n    rank-aggregate      去重聚合结构化扫榜快照\n    rank-sample         按同一可比分组抽取代表作阅读候选与来源证据\n    rank-collect        采集七猫公开书库样本（含本地 HTML 导入）\n    research-init       从代表作样本生成待填写的拆文与选题交接\n    research-check      只读核验研究交接与本地引用版本\n    research-verify     按显式假设与作品身份追加拆文证据\n    research-render     导出当前拆文任务与规划候选\n    reader-init         冻结分次试读研究计划与稿件版本；不邀读\n    reader-record       追加阅读观察并另存新研究目录\n    reader-check        只读核对来源并按条件汇总\n    reader-render       导出阅读观察与修正历史\n    task-list           Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-get            Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-handoff        Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-return         Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-review         Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-fail           Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-evidence       Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-execute        Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-execution      Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-cancel         Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-reconcile      Version-bound assistant task receipts; never adopt\n                        manuscript text\n    init                Create state once; never overwrite an existing book\n    status              Compact checkpoint and export health\n    book-kind           Correct long/short fiction metadata without rewriting\n                        chapters or exports\n    book-title          Adopt a book title without moving directories or\n                        managed exports\n    migrate             Explicit schema upgrade with a consistent rollback\n                        backup\n    audit               Strictly check managed exports without repairing or\n                        recording them\n    outline-audit       Read-only structural check of a whole-book outline,\n                        including candidates\n    world-save          Save structured story state with cited evidence\n    world-check         Check recorded rules, knowledge and continuity\n    world-read          Inspect one stored narrative record, including stale\n                        evidence for reviewed repair\n    cache-get           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    cache-put           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-dependencies\n                        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-deps        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-inspect     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-publish     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-refresh     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-saved       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-snapshot    Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-start       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-state       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-update      Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    publish-backup      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-cancel      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-check       Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-history\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-inspect\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-record\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export-list\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-inspect     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-list        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-prepare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-recover     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-verify-export\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-draft-run   Preview or explicitly save existing-work chapter\n                        drafts; never submits\n    publish-draft-status\n                        Read recorded platform draft observations without\n                        contacting a platform\n    publish-chrome-attach\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-detach\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-health\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-heartbeat\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-next\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-respond\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    workbench-snapshot  Read one bounded, non-mutating local workbench\n                        snapshot\n    workbench-export    Generate a self-contained, read-only local author\n                        workbench\n    workbench-serve     Open a loopback editor that saves candidate drafts\n                        only\n    workbench-status    Check the registered local editor instance\n    workbench-stop      Stop the registered editor after preserving edits in\n                        all its pages\n    workbench-library-serve\n                        Open the independent local bookshelf at a fixed\n                        address\n    workbench-library-status\n                        Check the independent bookshelf service\n    workbench-library-stop\n                        Stop the bookshelf without stopping book editors\n    export              Repair exports without replacing outside edits\n    assemble-short      Assemble all committed short-story chapters into one\n                        book-title Markdown file\n    notes               Save cards or a chapter plan with optimistic\n                        concurrency\n    plan                Save cards or a chapter plan with optimistic\n                        concurrency\n    plan-read           Read a complete saved chapter plan for recovery\n                        without verifying adoption\n    plan-render         Render candidate planning Markdown or inspect its\n                        saved-plan source\n    outline-bind        Bind one reviewed, adopted readable outline to its\n                        saved chapter plan\n    context             Build a bounded chapter context packet\n    writing-brief       Read-only evidence packet for a bound next-chapter\n                        plan\n    prepare             Read-only review scaffold bound to the current book,\n                        state and draft\n    reconcile           Inspect an outside edit of the latest native chapter,\n                        or apply its reviewed draft\n    recall              Bounded literal substring search of cards, summaries\n                        and chapter prose\n    chapter-read        Read a bounded excerpt of a current or immutable\n                        historical chapter\n    dependencies        Resolve candidate evidence hashes for a reviewed\n                        chapter dependency declaration\n    sources             Find saved source IDs and analysis checkpoints after a\n                        new session\n    lint                Check, commit, or import one last complete chapter\n    commit              Check, commit, or import one last complete chapter\n    adopt               Check, commit, or import one last complete chapter\n    adopt-backfill      Check, commit, or import one last complete chapter\n    ingest              Snapshot source text and split without losing bonus\n                        chapters\n    coverage            Incremental source analysis and evidence-backed\n                        checkpoints\n    next                Incremental source analysis and evidence-backed\n                        checkpoints\n    record              Incremental source analysis and evidence-backed\n                        checkpoints\n    findings            Incremental source analysis and evidence-backed\n                        checkpoints\n    source-read         Incremental source analysis and evidence-backed\n                        checkpoints\n    report              Incremental source analysis and evidence-backed\n                        checkpoints\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
+        "stderr": "",
+        "duration_seconds": 1.262,
+        "status": "passed"
+      },
+      "cli_smoke": {
+        "command": [
+          "/Users/cuining/.local/bin/python3.12",
+          "-B",
+          "-X",
+          "utf8",
+          "-c",
+          "import importlib.util,pathlib,sys; spec=importlib.util.spec_from_file_location('release_smoke',sys.argv[1]); module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module); module.TOOL=pathlib.Path(sys.argv[2]); sys.argv=[sys.argv[1],'--output',sys.argv[3]]; module.main()",
+          "/Users/cuining/Documents/GitHub/story-skill/scripts/smoke.py",
+          "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-host-stop-functional-final02-tl0gypy3/安装验证项目/.agents/skills/story-skill/scripts/story.py",
+          "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-host-stop-functional-final02-tl0gypy3/installed-smoke.json"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"ok\": true, \"method\": \"Synthetic fixture via real CLI subprocesses; no model or API calls\", \"commands_executed\": [\"init\", \"notes\", \"plan\", \"status\", \"outline-bind\", \"context\", \"lint\", \"commit\", \"commit\", \"reconcile\", \"lint\", \"reconcile\", \"reconcile\", \"ingest\", \"next\", \"record\", \"record\", \"next\", \"coverage\", \"findings\", \"report\", \"coverage\"], \"visible_chars\": 213, \"draft_sha256\": \"6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be\", \"reconciled_draft_sha256\": \"ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562\", \"context_bytes\": 1114, \"context_budget_bytes\": 4000, \"chapter_commit_idempotent\": true, \"export_bytes_verified\": true, \"reconcile_idempotent\": true, \"external_backup_verified\": true, \"non_content_chunks_completed\": 1, \"analysis_coverage\": {\"analyzed\": 3, \"chunks_total\": 3, \"complete_for_imported_text\": true, \"next_chunk\": null, \"pending\": 0, \"report_path\": \".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md\", \"source\": \"a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7\", \"source_coverage\": \"partial\", \"text_coverage_contiguous\": true}, \"finding_pages_returned\": 3, \"final_report_exported\": true, \"literary_quality_tested\": false}\n",
+        "stderr": "",
+        "duration_seconds": 10.742,
+        "status": "passed",
+        "evidence": {
+          "ok": true,
+          "method": "Synthetic fixture via real CLI subprocesses; no model or API calls",
+          "commands_executed": [
+            "init",
+            "notes",
+            "plan",
+            "status",
+            "outline-bind",
+            "context",
+            "lint",
+            "commit",
+            "commit",
+            "reconcile",
+            "lint",
+            "reconcile",
+            "reconcile",
+            "ingest",
+            "next",
+            "record",
+            "record",
+            "next",
+            "coverage",
+            "findings",
+            "report",
+            "coverage"
+          ],
+          "visible_chars": 213,
+          "draft_sha256": "6fe3595ccebae8a0422c1ec6c5dfe589808d84b8bda379fbcde34720972089be",
+          "reconciled_draft_sha256": "ea45037b249390fe8b479788d1cc187c01e5842dcc503d068b26942dcc371562",
+          "context_bytes": 1114,
+          "context_budget_bytes": 4000,
+          "chapter_commit_idempotent": true,
+          "export_bytes_verified": true,
+          "reconcile_idempotent": true,
+          "external_backup_verified": true,
+          "non_content_chunks_completed": 1,
+          "analysis_coverage": {
+            "analyzed": 3,
+            "chunks_total": 3,
+            "complete_for_imported_text": true,
+            "next_chunk": null,
+            "pending": 0,
+            "report_path": ".story/analysis/a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7/report.md",
+            "source": "a2dd7ad1021f65afdc2fab9c6b9b8dd48f078edfbb91427741eb1bda3ddb00f7",
+            "source_coverage": "partial",
+            "text_coverage_contiguous": true
+          },
+          "finding_pages_returned": 3,
+          "final_report_exported": true,
+          "literary_quality_tested": false
+        }
+      }
+    },
+    "chinese_manuscript_replay": {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "/Users/cuining/Documents/GitHub/story-skill/scripts/chinese_acceptance.py",
+        "--output",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-host-stop-functional-final02-tl0gypy3/chinese.json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"ok\": true, \"books\": [\"合成中文事务long\", \"合成中文事务short\"], \"retained_workdir\": null}\n",
+      "stderr": "",
+      "duration_seconds": 27.863,
+      "status": "passed",
+      "result": {
+        "ok": true,
+        "method": "Generated minimal Chinese transaction fixtures through real CLI; not novels or literary quality evidence",
+        "mode": "synthetic-transactions",
+        "retained_workdir": null,
+        "runtime_sha256": "c807252b03720f6300c29fc3ba8b9a9add7824b542a79765c8bbc3d83af11eaa",
+        "books": [
+          {
+            "title": "合成中文事务long",
+            "kind": "long",
+            "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务long",
+            "chapters": [
+              {
+                "draft": "unit-1.md",
+                "chapter": 1,
+                "mode": "next",
+                "sha256": "4f51b9e8cd93f4fcf6f03c14d384e321026a23d22f75c3cf62fee8bb364e953d",
+                "lint": {
+                  "count_method": "visible_nonspace_v2",
+                  "count_scope": "body_and_lead_without_first_title",
+                  "counts": {
+                    "han_v1": 27,
+                    "letters_numbers_v1": 28,
+                    "visible_nonspace_v1": 31,
+                    "visible_nonspace_v2": 31
+                  },
+                  "draft_sha256": "4f51b9e8cd93f4fcf6f03c14d384e321026a23d22f75c3cf62fee8bb364e953d",
+                  "errors": [],
+                  "length_count": 31,
+                  "ok": true,
+                  "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务long/chapters/第一卷 合成中文事务long/第1章 测试单元1.md",
+                  "unicode_version": "15.0.0",
+                  "visible_chars": 31,
+                  "warnings": [
+                    {
+                      "code": "nondefault_plan_length",
+                      "default": [
+                        2400,
+                        2800
+                      ],
+                      "note": "完整新章请先核对当前用户要求或书内篇幅约定；明确例外仍有效",
+                      "saved": [
+                        10,
+                        200
+                      ]
+                    }
+                  ]
+                },
+                "context_bytes": 1018,
+                "revision": 8,
+                "idempotent_retry": true,
+                "resumed_committed_export": false
+              },
+              {
+                "draft": "unit-2.md",
+                "chapter": 2,
+                "mode": "next",
+                "sha256": "1e86181e1eed3444e962a08183d44386ca1621a850f0fbb62cff49151cb3fbd5",
+                "lint": {
+                  "count_method": "visible_nonspace_v2",
+                  "count_scope": "body_and_lead_without_first_title",
+                  "counts": {
+                    "han_v1": 27,
+                    "letters_numbers_v1": 28,
+                    "visible_nonspace_v1": 31,
+                    "visible_nonspace_v2": 31
+                  },
+                  "draft_sha256": "1e86181e1eed3444e962a08183d44386ca1621a850f0fbb62cff49151cb3fbd5",
+                  "errors": [],
+                  "length_count": 31,
+                  "ok": true,
+                  "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务long/chapters/第一卷 合成中文事务long/第2章 测试单元2.md",
+                  "unicode_version": "15.0.0",
+                  "visible_chars": 31,
+                  "warnings": [
+                    {
+                      "code": "nondefault_plan_length",
+                      "default": [
+                        2400,
+                        2800
+                      ],
+                      "note": "完整新章请先核对当前用户要求或书内篇幅约定；明确例外仍有效",
+                      "saved": [
+                        10,
+                        200
+                      ]
+                    }
+                  ]
+                },
+                "context_bytes": 1248,
+                "revision": 9,
+                "idempotent_retry": true,
+                "resumed_committed_export": false
+              },
+              {
+                "draft": "unit-3.md",
+                "chapter": 3,
+                "mode": "next",
+                "sha256": "99b774923e468041d0d314ebfddc5b9d515867588d4c13d53ed9c09351da488e",
+                "lint": {
+                  "count_method": "visible_nonspace_v2",
+                  "count_scope": "body_and_lead_without_first_title",
+                  "counts": {
+                    "han_v1": 27,
+                    "letters_numbers_v1": 28,
+                    "visible_nonspace_v1": 31,
+                    "visible_nonspace_v2": 31
+                  },
+                  "draft_sha256": "99b774923e468041d0d314ebfddc5b9d515867588d4c13d53ed9c09351da488e",
+                  "errors": [],
+                  "length_count": 31,
+                  "ok": true,
+                  "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
+                  "unicode_version": "15.0.0",
+                  "visible_chars": 31,
+                  "warnings": [
+                    {
+                      "code": "nondefault_plan_length",
+                      "default": [
+                        2400,
+                        2800
+                      ],
+                      "note": "完整新章请先核对当前用户要求或书内篇幅约定；明确例外仍有效",
+                      "saved": [
+                        10,
+                        200
+                      ]
+                    }
+                  ]
+                },
+                "context_bytes": 1248,
+                "revision": 10,
+                "idempotent_retry": true,
+                "resumed_committed_export": false
+              },
+              {
+                "draft": "revision-1.md",
+                "chapter": 3,
+                "mode": "replace_last",
+                "sha256": "62d0cdcc4819214b80f8aaa193bcd0962e7d3b3f893abfbcaa9f2f4ac3e7d9d7",
+                "lint": {
+                  "count_method": "visible_nonspace_v2",
+                  "count_scope": "body_and_lead_without_first_title",
+                  "counts": {
+                    "han_v1": 27,
+                    "letters_numbers_v1": 28,
+                    "visible_nonspace_v1": 31,
+                    "visible_nonspace_v2": 31
+                  },
+                  "draft_sha256": "62d0cdcc4819214b80f8aaa193bcd0962e7d3b3f893abfbcaa9f2f4ac3e7d9d7",
+                  "errors": [],
+                  "length_count": 31,
+                  "ok": true,
+                  "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
+                  "unicode_version": "15.0.0",
+                  "visible_chars": 31,
+                  "warnings": []
+                },
+                "context_bytes": 1257,
+                "revision": 11,
+                "idempotent_retry": true,
+                "resumed_committed_export": false
+              },
+              {
+                "draft": "revision-2.md",
+                "chapter": 3,
+                "mode": "reconcile_last",
+                "sha256": "a39c783ad957c097a0dbf614a24e08369975400a2721f7b9d2e7ea6fcce4b596",
+                "lint": {
+                  "count_method": "visible_nonspace_v2",
+                  "count_scope": "body_and_lead_without_first_title",
+                  "counts": {
+                    "han_v1": 27,
+                    "letters_numbers_v1": 28,
+                    "visible_nonspace_v1": 31,
+                    "visible_nonspace_v2": 31
+                  },
+                  "draft_sha256": "a39c783ad957c097a0dbf614a24e08369975400a2721f7b9d2e7ea6fcce4b596",
+                  "errors": [],
+                  "length_count": 31,
+                  "ok": true,
+                  "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务long/chapters/第一卷 合成中文事务long/第3章 测试单元3.md",
+                  "unicode_version": "15.0.0",
+                  "visible_chars": 31,
+                  "warnings": []
+                },
+                "context_bytes": 1532,
+                "revision": 12,
+                "idempotent_retry": true,
+                "resumed_committed_export": false
+              }
+            ],
+            "recovery": {
+              "missing_chapter_restored": true,
+              "outside_draft_preserved": true,
+              "remaining_changes": [
+                "chapters/第一卷 合成中文事务long/第3章 测试单元3.md"
+              ]
+            },
+            "analysis": null,
+            "status": {
+              "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务long",
+              "cards": 1,
+              "changed_export_count": 0,
+              "changed_exports": [],
+              "id": "c6e68e8f-a682-43d0-babb-6755981297bb",
+              "imported_through": 0,
+              "integrity": {
+                "full_book_verified": true,
+                "last_full_audit_revision": 12,
+                "mode": "strict",
+                "note": "Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.",
+                "unverified_archive_count": 0,
+                "verified_file_count": 3
+              },
+              "kind": "long",
+              "last_chapter": 3,
+              "more_sources": false,
+              "next_chapter": 4,
+              "pending_export_count": 0,
+              "pending_exports": [],
+              "recent_sources": [],
+              "revision": 12,
+              "short_assembly": null,
+              "short_assembly_path": null,
+              "sources": 0,
+              "title": "合成中文事务long"
+            },
+            "commands": [
+              {
+                "command": "init",
+                "exit_code": 0
+              },
+              {
+                "command": "notes",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              },
+              {
+                "command": "plan",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              },
+              {
+                "command": "outline-bind",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              },
+              {
+                "command": "plan",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              },
+              {
+                "command": "outline-bind",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              },
+              {
+                "command": "plan",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              },
+              {
+                "command": "outline-bind",
+                "exit_code": 0
+              },
+              {
+                "command": "context",
+                "exit_code": 0
+              },
+              {
+                "command": "prepare",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "recall",
+                "exit_code": 0
+              },
+              {
+                "command": "context",
+                "exit_code": 0
+              },
+              {
+                "command": "prepare",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "recall",
+                "exit_code": 0
+              },
+              {
+                "command": "context",
+                "exit_code": 0
+              },
+              {
+                "command": "prepare",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "recall",
+                "exit_code": 0
+              },
+              {
+                "command": "context",
+                "exit_code": 0
+              },
+              {
+                "command": "prepare",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "recall",
+                "exit_code": 0
+              },
+              {
+                "command": "reconcile",
+                "exit_code": 2
+              },
+              {
+                "command": "export",
+                "exit_code": 2
+              },
+              {
+                "command": "export",
+                "exit_code": 2
+              },
+              {
+                "command": "reconcile",
+                "exit_code": 0
+              },
+              {
+                "command": "prepare",
+                "exit_code": 0
+              },
+              {
+                "command": "reconcile",
+                "exit_code": 0
+              },
+              {
+                "command": "reconcile",
+                "exit_code": 0
+              },
+              {
+                "command": "recall",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              }
+            ],
+            "scenario_sha256": "0832d1e3f856a75d20e29a1a5b978c99e0aa3306408b07f1fd87ff5fd1ab6232"
+          },
+          {
+            "title": "合成中文事务short",
+            "kind": "short",
+            "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务short",
+            "chapters": [
+              {
+                "draft": "unit-1.md",
+                "chapter": 1,
+                "mode": "next",
+                "sha256": "4f51b9e8cd93f4fcf6f03c14d384e321026a23d22f75c3cf62fee8bb364e953d",
+                "lint": {
+                  "count_method": "visible_nonspace_v2",
+                  "count_scope": "body_and_lead_without_first_title",
+                  "counts": {
+                    "han_v1": 27,
+                    "letters_numbers_v1": 28,
+                    "visible_nonspace_v1": 31,
+                    "visible_nonspace_v2": 31
+                  },
+                  "draft_sha256": "4f51b9e8cd93f4fcf6f03c14d384e321026a23d22f75c3cf62fee8bb364e953d",
+                  "errors": [],
+                  "length_count": 31,
+                  "ok": true,
+                  "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务short/chapters/第一卷 合成中文事务short/第1章 测试单元1.md",
+                  "unicode_version": "15.0.0",
+                  "visible_chars": 31,
+                  "warnings": [
+                    {
+                      "code": "nondefault_plan_length",
+                      "default": [
+                        2400,
+                        2800
+                      ],
+                      "note": "完整新章请先核对当前用户要求或书内篇幅约定；明确例外仍有效",
+                      "saved": [
+                        10,
+                        200
+                      ]
+                    }
+                  ]
+                },
+                "context_bytes": 1019,
+                "revision": 4,
+                "idempotent_retry": true,
+                "resumed_committed_export": false
+              }
+            ],
+            "recovery": null,
+            "analysis": {
+              "coverage": {
+                "analyzed": 2,
+                "chunks_total": 2,
+                "complete_for_imported_text": true,
+                "next_chunk": null,
+                "pending": 0,
+                "report_path": ".story/analysis/3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c/report.md",
+                "source": "3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c",
+                "source_coverage": "complete",
+                "text_coverage_contiguous": true
+              },
+              "resumed_ordinals": [
+                1,
+                2
+              ],
+              "source_sha256": "3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c",
+              "report_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务short_拆文/.story/analysis/3904b5dc5af82006fbc2074a8e803647fef1ad8cb9d500ad0899524989b8846c/report.md",
+              "report_sha256": "d5ec27bf4488a3e1f0858929b80444b3530d24a6a2a2a481db46bba15d8bc984"
+            },
+            "status": {
+              "book": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-chinese-j0falbsm/合成中文事务short",
+              "cards": 1,
+              "changed_export_count": 0,
+              "changed_exports": [],
+              "id": "01d963c0-160d-464f-9166-c99b769f6d23",
+              "imported_through": 0,
+              "integrity": {
+                "full_book_verified": true,
+                "last_full_audit_revision": 4,
+                "mode": "strict",
+                "note": "Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.",
+                "unverified_archive_count": 0,
+                "verified_file_count": 1
+              },
+              "kind": "short",
+              "last_chapter": 1,
+              "more_sources": false,
+              "next_chapter": 2,
+              "pending_export_count": 0,
+              "pending_exports": [],
+              "recent_sources": [],
+              "revision": 4,
+              "short_assembly": null,
+              "short_assembly_path": "合成中文事务short.md",
+              "sources": 0,
+              "title": "合成中文事务short"
+            },
+            "commands": [
+              {
+                "command": "init",
+                "exit_code": 0
+              },
+              {
+                "command": "notes",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              },
+              {
+                "command": "plan",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              },
+              {
+                "command": "outline-bind",
+                "exit_code": 0
+              },
+              {
+                "command": "context",
+                "exit_code": 0
+              },
+              {
+                "command": "prepare",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "commit",
+                "exit_code": 0
+              },
+              {
+                "command": "recall",
+                "exit_code": 0
+              },
+              {
+                "command": "status",
+                "exit_code": 0
+              },
+              {
+                "command": "init",
+                "exit_code": 0
+              },
+              {
+                "command": "ingest",
+                "exit_code": 0
+              },
+              {
+                "command": "next",
+                "exit_code": 0
+              },
+              {
+                "command": "record",
+                "exit_code": 0
+              },
+              {
+                "command": "next",
+                "exit_code": 0
+              },
+              {
+                "command": "record",
+                "exit_code": 0
+              },
+              {
+                "command": "next",
+                "exit_code": 0
+              },
+              {
+                "command": "findings",
+                "exit_code": 0
+              },
+              {
+                "command": "report",
+                "exit_code": 0
+              },
+              {
+                "command": "coverage",
+                "exit_code": 0
+              }
+            ],
+            "scenario_sha256": "955e109e60b55afbcfaa20f128419772ad2d94993f3c813790cae1424cbb7595"
+          }
+        ]
+      }
+    },
+    "long_form_cli_replay": {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "-X",
+        "utf8",
+        "/Users/cuining/Documents/GitHub/story-skill/scripts/long_acceptance.py",
+        "--output",
+        "/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-host-stop-functional-final02-tl0gypy3/long.json"
+      ],
+      "exit_code": 1,
+      "stdout": "{\"step\": \"创建独立中文书\", \"ok\": true, \"revision\": 0}\n{\"step\": \"保存创作限制与物件卡\", \"ok\": true, \"revision\": 1}\n{\"step\": \"建立人物身份、分线化名及待证命题\", \"ok\": true, \"revision\": 2}\n{\"step\": \"保存第1章计划\", \"ok\": true, \"revision\": 3}\n{\"step\": \"绑定第1章验收细纲\", \"ok\": true, \"revision\": 4}\n{\"step\": \"读取第1章上下文\", \"ok\": true, \"revision\": 4}\n{\"step\": \"准备第1章审查\", \"ok\": true, \"revision\": 4}\n{\"step\": \"提交第1章\", \"ok\": true, \"revision\": 5}\n{\"step\": \"确认已有工程不能靠adopt静默跳号\", \"ok\": true, \"revision\": 5}\n{\"step\": \"保存第2章计划\", \"ok\": true, \"revision\": 6}\n{\"step\": \"绑定第2章验收细纲\", \"ok\": true, \"revision\": 7}\n{\"step\": \"读取第2章上下文\", \"ok\": true, \"revision\": 7}\n{\"step\": \"准备第2章审查\", \"ok\": true, \"revision\": 7}\n{\"step\": \"提交第2章\", \"ok\": true, \"revision\": 8}\n{\"step\": \"保存第3章计划\", \"ok\": true, \"revision\": 9}\n{\"step\": \"绑定第3章验收细纲\", \"ok\": true, \"revision\": 10}\n{\"step\": \"读取第3章上下文\", \"ok\": true, \"revision\": 10}\n{\"step\": \"准备第3章审查\", \"ok\": true, \"revision\": 10}\n{\"step\": \"提交第3章\", \"ok\": true, \"revision\": 11}\n{\"step\": \"保存第4章计划\", \"ok\": true, \"revision\": 12}\n{\"step\": \"绑定第4章验收细纲\", \"ok\": true, \"revision\": 13}\n{\"step\": \"读取第4章上下文\", \"ok\": true, \"revision\": 13}\n{\"step\": \"准备第4章审查\", \"ok\": true, \"revision\": 13}\n{\"step\": \"提交第4章\", \"ok\": true, \"revision\": 14}\n{\"step\": \"保存第5章计划\", \"ok\": true, \"revision\": 15}\n{\"step\": \"绑定第5章验收细纲\", \"ok\": true, \"revision\": 16}\n{\"step\": \"读取第5章上下文\", \"ok\": true, \"revision\": 16}\n{\"step\": \"准备第5章审查\", \"ok\": true, \"revision\": 16}\n{\"step\": \"提交第5章\", \"ok\": true, \"revision\": 17}\n{\"step\": \"保存第6章计划\", \"ok\": true, \"revision\": 18}\n{\"step\": \"绑定第6章验收细纲\", \"ok\": true, \"revision\": 19}\n{\"step\": \"读取第6章上下文\", \"ok\": true, \"revision\": 19}\n{\"step\": \"准备第6章审查\", \"ok\": true, \"revision\": 19}\n{\"step\": \"提交第6章\", \"ok\": true, \"revision\": 20}\n{\"step\": \"保存第7章计划\", \"ok\": true, \"revision\": 21}\n{\"step\": \"绑定第7章验收细纲\", \"ok\": true, \"revision\": 22}\n{\"step\": \"读取第7章上下文\", \"ok\": true, \"revision\": 22}\n{\"step\": \"准备第7章审查\", \"ok\": true, \"revision\": 22}\n{\"step\": \"提交第7章\", \"ok\": true, \"revision\": 23}\n{\"step\": \"保存第8章计划\", \"ok\": true, \"revision\": 24}\n{\"step\": \"绑定第8章验收细纲\", \"ok\": true, \"revision\": 25}\n{\"step\": \"读取第8章上下文\", \"ok\": true, \"revision\": 25}\n{\"step\": \"准备第8章审查\", \"ok\": true, \"revision\": 25}\n{\"step\": \"提交第8章\", \"ok\": true, \"revision\": 26}\n{\"step\": \"保存第9章计划\", \"ok\": true, \"revision\": 27}\n{\"step\": \"绑定第9章验收细纲\", \"ok\": true, \"revision\": 28}\n{\"step\": \"读取第9章上下文\", \"ok\": true, \"revision\": 28}\n{\"step\": \"准备第9章审查\", \"ok\": true, \"revision\": 28}\n{\"step\": \"提交第9章\", \"ok\": true, \"revision\": 29}\n{\"step\": \"保存第10章计划\", \"ok\": true, \"revision\": 30}\n{\"step\": \"绑定第10章验收细纲\", \"ok\": true, \"revision\": 31}\n{\"step\": \"读取第10章上下文\", \"ok\": true, \"revision\": 31}\n{\"step\": \"准备第10章审查\", \"ok\": true, \"revision\": 31}\n{\"step\": \"提交第10章\", \"ok\": true, \"revision\": 32}\n{\"step\": \"保存第11章计划\", \"ok\": true, \"revision\": 33}\n{\"step\": \"绑定第11章验收细纲\", \"ok\": true, \"revision\": 34}\n{\"step\": \"读取第11章上下文\", \"ok\": true, \"revision\": 34}\n{\"step\": \"准备第11章审查\", \"ok\": true, \"revision\": 34}\n{\"step\": \"提交第11章\", \"ok\": true, \"revision\": 35}\n{\"step\": \"检验已提交双线与伏笔状态\", \"ok\": true, \"revision\": 35}\n{\"step\": \"检索早期物件的精确原文\", \"ok\": true, \"revision\": 35}\n{\"step\": \"保存历史复核所需的下一章取材计划\", \"ok\": true, \"revision\": 36}\n{\"step\": \"读取历史复核实际使用的现态卡片\", \"ok\": true, \"revision\": 36}\n{\"step\": \"记录第1章实际复核的依赖\", \"ok\": true, \"revision\": 37}\n{\"step\": \"记录第2章实际复核的依赖\", \"ok\": true, \"revision\": 38}\n{\"step\": \"记录第3章实际复核的依赖\", \"ok\": true, \"revision\": 39}\n{\"step\": \"记录第4章实际复核的依赖\", \"ok\": true, \"revision\": 40}\n{\"step\": \"记录第5章实际复核的依赖\", \"ok\": true, \"revision\": 41}\n{\"step\": \"记录第6章实际复核的依赖\", \"ok\": true, \"revision\": 42}\n{\"step\": \"记录第7章实际复核的依赖\", \"ok\": true, \"revision\": 43}\n{\"step\": \"记录第8章实际复核的依赖\", \"ok\": true, \"revision\": 44}\n{\"step\": \"记录第9章实际复核的依赖\", \"ok\": true, \"revision\": 45}\n{\"step\": \"记录第10章实际复核的依赖\", \"ok\": true, \"revision\": 46}\n{\"step\": \"记录第11章实际复核的依赖\", \"ok\": true, \"revision\": 47}\n{\"step\": \"保存修订前状态快照\", \"ok\": true, \"revision\": 48}\n{\"step\": \"创建钥匙颜色修正的历史分支\", \"ok\": true, \"revision\": 49}\n{\"step\": \"读取候选范围与状态修订要求\", \"ok\": true, \"revision\": 49}\n{\"step\": \"保存两章候选、最终卡片决策及全部受影响领域证据\", \"ok\": true, \"revision\": 50}\n{\"step\": \"读取第1章前后对照与审查模板\", \"ok\": true, \"revision\": 50}\n{\"step\": \"读取第11章前后对照与审查模板\", \"ok\": true, \"revision\": 50}\n{\"step\": \"保存逐章对读后的四项审查\", \"ok\": true, \"revision\": 51}\n{\"step\": \"读取最新整包审查指纹\", \"ok\": true, \"revision\": 51}\n{\"step\": \"保存整个历史分支的真实覆盖与状态审查\", \"ok\": true, \"revision\": 52}\n{\"step\": \"发布已审查历史分支\", \"ok\": true, \"revision\": 53}\n{\"step\": \"保存发布后的下一章计划\", \"ok\": true, \"revision\": 53}\n{\"step\": \"读取历史修订后的相关资料\", \"ok\": true, \"revision\": 53}\n{\"step\": \"检查已撤回颜色不再作为当前正文命中\", \"ok\": true, \"revision\": 53}\n{\"step\": \"复核分支发布后的领域一致性\", \"ok\": true, \"revision\": 53}\n",
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/cuining/Documents/GitHub/story-skill/scripts/long_acceptance.py\", line 443, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/Users/cuining/Documents/GitHub/story-skill/scripts/long_acceptance.py\", line 437, in main\n    output = writer.write_report(report, args.output)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/cuining/Documents/GitHub/story-skill/scripts/verify.py\", line 348, in write_report\n    output = report_path(output)\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/Users/cuining/Documents/GitHub/story-skill/scripts/verify.py\", line 342, in report_path\n    raise ValueError(f\"Refusing linked report output path: {current}\")\nValueError: Refusing linked report output path: /var\n",
+      "duration_seconds": 37.48,
+      "status": "failed"
+    },
+    "skill_input_stability": {
+      "status": "passed",
+      "files": 73,
+      "changed": []
+    }
+  },
+  "not_verified": [
+    "Windows/macOS native installed-client upgrade",
+    "Other host providers than local Codex CLI",
+    "Cross-machine lifecycle authentication without controller keys",
+    "New platform live cases",
+    "Literary quality or account cost savings"
+  ],
+  "supersedes": "functional-before-compatibility-fix.json",
+  "source_manifest": {
+    "story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill/SKILL.md": "4eb292df99b7a09eaa12e31c9689d4fd9fcfff6c123fd175ba67a5a4359b2c53",
+    "story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+    "story-skill/references/project-state.md": "320fd02bf6b443bc56b18021ef7dfbcdd510659e45c5a8289268e220839fba30",
+    "story-skill/references/workbench.md": "9406955422418e8653c13ca6c9e4dead4244a5827719e1415fb72940601e8c93",
+    "story-skill/scripts/story.py": "c807252b03720f6300c29fc3ba8b9a9add7824b542a79765c8bbc3d83af11eaa",
+    "story-skill/scripts/story_chrome_bridge.mjs": "3510e41f3a4acdfb7a06c8264d50e7bbff7f7ba7d21eb04b1419dfd9af75105a",
+    "story-skill/scripts/story_chrome_worker.mjs": "8a989996066f2013094f9818b17288f17bc23e1f37cccf52190c68f26b6346f6",
+    "story-skill/scripts/story_chrome_worker.py": "1f057244f8cb62a2a348d9a6a8b96bedcfb8ba85ca3d9e026c83c6f64e115282",
+    "story-skill/scripts/story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+    "story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+    "story-skill/scripts/story_platform_browser.py": "1191dc7f0932d8d1df02a0d208f512c84086e4c6723a83002c411c91e8cb776c",
+    "story-skill/scripts/story_platform_chrome_bridge.py": "fa7c9c2f26648f73f591b7947f3e6598e4d7f6452c6f8571be8f133b6187543a",
+    "story-skill/scripts/story_platform_drafts.py": "847ffb61f03488f1860eaa0cc15ef4521a8ea6be378c915d7c5110d02fb142c4",
+    "story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+    "story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+    "story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+    "story-skill/scripts/story_reader_feedback.py": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+    "story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+    "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story-skill/scripts/story_task_worker.py": "dd654937130e010b938074af7fd315455507c9b0f7c99b3e59a5caa2d3581788",
+    "story-skill/scripts/story_tasks.py": "b9d13a3bf255520186264b57b0caea5ac9ee73a722de408b5ba45d6533acfd3f",
+    "story-skill/scripts/story_workbench.py": "24da1164bc25d41ca9bbfa8ce78de6ac64c1fb72bc63e2b0254dd5de18e2bb10",
+    "story-skill/scripts/story_workbench_archives.py": "bfde106f94cdbed502b9d713abbe5f2e75f1bbf5111748eab1f9b1008cf3cb10",
+    "story-skill/scripts/story_workbench_books.py": "dda3232c90471017c06d097c3032197c2aa7e9f7d916e391adb14d0f99557b63",
+    "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5",
+    "story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-analyze/SKILL.md": "c438ff05fa677f19301c1f2c4e3e73b2c3c23588bb3e0a6912e68fa0a86b2af1",
+    "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+    "story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+    "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+    "story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+    "story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+    "story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-plan/SKILL.md": "12b1ffab62554dc07ed899c822b4e8818e057cb8507c8e55ced407b6a1c54bb8",
+    "story-skill-plan/agents/openai.yaml": "66152a131e86a4252ce27842e89195a353b40bc642427d2918ad18bc88cdd81a",
+    "story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+    "story-skill-plan/references/fanqie-tags.md": "533f8cbdc62da3c03dca4dcfa849fe51e4f25e1f8165fe8fd43219bef399460f",
+    "story-skill-plan/references/outline.md": "29a503a7f6d9c0ecd6b214262000b085d2093d15c360a4aa02d2339db4bb0898",
+    "story-skill-plan/references/qidian-categories.md": "eeaaa495baca608a31163f9f3e07f88112ab432b379926fbd2dc37904e1d03e7",
+    "story-skill-plan/references/qimao-tags.md": "0eebca1c8915efb3a29bea3a2ca39f29d4141c40dc4f8ead67c2efe0d340affb",
+    "story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+    "story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-publish/SKILL.md": "f2f7e7fd8acfea1cc2df245d458d2ce3f1f3ca816e3695e15a3917239d65df41",
+    "story-skill-publish/agents/openai.yaml": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+    "story-skill-publish/references/platform-drafts.md": "161f85a55c6831b0d8ba22fd0a23bcffb3e24e2410ee634d41caefb00d011a68",
+    "story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-research/SKILL.md": "03b9e9d85cc4bff57b0d31944d3cce444d3a7049749dc597aa7a22f53f515a31",
+    "story-skill-research/agents/openai.yaml": "3fb4cfaded0bf4206c2f3cf7dbc1e6ccf7ee62f5fd4ca1a406b509a0b9bcde28",
+    "story-skill-research/references/rank-scan.md": "4537af29249b86f56f0717848868250a3a2f48cd332350570395e22e7c46ef80",
+    "story-skill-research/references/reader-records.md": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+    "story-skill-research/references/reader-validation.md": "16a02d840c87d3f4e80aad3998b11854fece0e86eb7b6f3f35bc6a7500e4f5bc",
+    "story-skill-research/references/research-handoff.md": "e010886fd50a4c31be8f933eebd9f4ff7278021310f93a337a0c3de0f2e10b88",
+    "story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-review/SKILL.md": "50526925c440adc71ce87254a57300b78cb2c113481ca6ac8ce8313a7e1839ae",
+    "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+    "story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+    "story-skill-review/references/history.md": "00e56c9a2c3757d213dfa555e1571548ba1de05ad38dcda729f5fc8a74430be6",
+    "story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+    "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+    "story-skill-write/SKILL.md": "244d8bf8c512f4f57b17714ae17460a18c761406b1369562e9a2ad44e35486e6",
+    "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+    "story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+    "story-skill-write/references/chapter.md": "0600340ea9ff9f3957f2b608e8f82cae97531d23daca18e0066b8ebece0e5cb2",
+    "story-skill-write/references/content-review.md": "62a1fc4da3aefd6ba95aeabe73acb14b1114efd79d360b2519a57a103ea3fcac",
+    "story-skill-write/references/drama.md": "b3c54bd737a56a02ac7b415c5b455d01b35b1f89ae5a3534b19782fe33697cb1",
+    "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+    "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+    "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+    "story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850"
+  },
+  "ok_without_archive": false,
+  "archive_status": "Awaiting newly rebuilt canonical archive; not counted as passed"
+}

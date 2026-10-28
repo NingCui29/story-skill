@@ -1,0 +1,15 @@
+test_paragraph_focus_keeps_editable_descendants_but_never_types_into_tool_controls (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_paragraph_focus_keeps_editable_descendants_but_never_types_into_tool_controls) ... 
+  test_paragraph_focus_keeps_editable_descendants_but_never_types_into_tool_controls (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_paragraph_focus_keeps_editable_descendants_but_never_types_into_tool_controls) (tag='shadow-INPUT', editable=True) ... FAIL
+
+======================================================================
+FAIL: test_paragraph_focus_keeps_editable_descendants_but_never_types_into_tool_controls (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_paragraph_focus_keeps_editable_descendants_but_never_types_into_tool_controls) (tag='shadow-INPUT', editable=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 731, in test_paragraph_focus_keeps_editable_descendants_but_never_types_into_tool_controls
+    self.assertNotIn("tool-control", written)
+AssertionError: 'tool-control' unexpectedly found in ['tool-control']
+
+----------------------------------------------------------------------
+Ran 1 test in 1.014s
+
+FAILED (failures=1)

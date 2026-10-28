@@ -1,0 +1,10 @@
+{
+  "app": "Qoder CN",
+  "action": "selectExisting",
+  "skill": "story-skill-plan",
+  "nativeMenuItem": {
+    "role": "AXMenuItem",
+    "value": "Skill story-skill-plan，中文小说书名、卷名、章名、简介拟写与优化、钩子与剧情设计、小说架构搭建与重构、大纲优化、开书、人物与世界设定、平台分类、近期细纲，以及把既有作品建立为可续写基线。支持根据小说规划剧本，以及根据小说或剧本拆分镜。规划请求不自动写小说正文。"
+  },
+  "selectedInput": "@story-skill-plan "
+}

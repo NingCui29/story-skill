@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "scope": "Real CLI with isolated synthetic book; no UI/model/platform",
+  "template_length": [
+    2000,
+    null
+  ],
+  "render_label": "至少 2000 字（无上限）",
+  "cases": [
+    {
+      "characters": 1999,
+      "length_passed": false
+    },
+    {
+      "characters": 2000,
+      "length_passed": true
+    },
+    {
+      "characters": 2801,
+      "length_passed": true
+    },
+    {
+      "characters": 5000,
+      "length_passed": true
+    }
+  ],
+  "commands": [
+    {
+      "command": "init",
+      "exit_code": 0
+    },
+    {
+      "command": "template",
+      "exit_code": 0
+    },
+    {
+      "command": "plan",
+      "exit_code": 0
+    },
+    {
+      "command": "plan-render",
+      "exit_code": 0
+    },
+    {
+      "command": "lint",
+      "exit_code": 2
+    },
+    {
+      "command": "lint",
+      "exit_code": 0
+    },
+    {
+      "command": "lint",
+      "exit_code": 0
+    },
+    {
+      "command": "lint",
+      "exit_code": 0
+    }
+  ]
+}

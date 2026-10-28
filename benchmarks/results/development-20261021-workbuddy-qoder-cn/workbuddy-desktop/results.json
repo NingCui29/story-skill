@@ -1,0 +1,345 @@
+{
+  "application": "WorkBuddy AI",
+  "process_identity": {
+    "bundle_identifier": "com.workbuddy.workbuddy-ai",
+    "process_name_observed": "Electron"
+  },
+  "application_version_observed": "5.8.4",
+  "runtime_build_observed": "73952edb",
+  "runtime_version_evidence": "runtime-about-version-ax.json",
+  "version_boundary": {
+    "initial_installation_and_static_discovery_version": "5.7.6",
+    "native_rules_QA_runtime_version": "5.8.4",
+    "note": "The application updated in the background before the native QA sequence. No agent-initiated application upgrade was performed. Native About after case 8 independently confirmed 5.8.4 (73952edb).",
+    "current_static_directory_evidence": "../workbuddy-directory-chain-5.8.4.json"
+  },
+  "model_setting_observed": "Deepseek-V4.1-Flash",
+  "scope": "Eight installed skills were selected in the native skill menu, then answered the actual rules-only questions in a dedicated test chat. No actual novel/project content was used.",
+  "criteria": "../expected-results.md",
+  "summary": {
+    "native_selected_and_full_prompt_sent": 8,
+    "semantic_pass": 8,
+    "semantic_fail": 0,
+    "exact_file_source_path_independently_verified": 0,
+    "clean_single_question_cases": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "first_case_input_residue_and_duplicate_question": true,
+    "additional_write_actions_observed": false,
+    "scope_limit": "This is an observation of the public completed-turn UI, not an independent audit of hidden application state.",
+    "character_limit_deviations": "Preserved per case, including quotes and source paths."
+  },
+  "evidence_privacy": "Only dedicated test-message pairs, native-selection receipts and the public About panel were exported. Reasoning was not opened; unrelated account/task/novel sidebars were excluded.",
+  "cases": [
+    {
+      "case": 1,
+      "skill": "story-skill",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case1-native-selection-and-input.json",
+        "case1-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "input_quality": {
+        "clean_single_question": false,
+        "full_prompt_occurrences_in_successful_receipt": null
+      },
+      "semantic_result": "pass",
+      "semantic_notes": "Existing-prose hook revision routes to review; unwritten hook design routes to plan; shared runtime is resolved from the actual installed SKILL location.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": false,
+        "file": "case1-result-ax.json",
+        "expected_installed_source": "/Users/cuining/.workbuddy-ai/skills/story-skill/SKILL.md",
+        "limitation": "Source path and line citations in the answer are model claims; no independently visible exact read payload was archived."
+      },
+      "result_evidence": "case1-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 293,
+        "body_before_quote_characters": 183,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText, excluding app/model names, completion timer and timestamps; zero-width presentation characters removed."
+      },
+      "read_only_scope_result": "no_extra_actions_observed",
+      "notes": [
+        "Native selection plus the full posted test question and actual answer demonstrate rules-only desktop invocation. Model-reported read paths and line numbers are not accepted as independent source-file proof.",
+        "No separate public file-read payload/source path was expanded. The test does not establish creative-writing, image-generation or platform-publishing functionality.",
+        "No additional write/report/memory-update action was visible in this captured completed turn; hidden host-side state was not independently audited.",
+        "This first submitted message retained the earlier input experiment prefix and repeated the same question twice. Both the native selection/input artifact and actual posted message are preserved; it is not classified as a clean single-question input.",
+        "The complete visible answer including quote and source path exceeds 120 characters. This formatting deviation is recorded separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 2,
+      "skill": "story-skill-plan",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case2-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "input_quality": {
+        "clean_single_question": true,
+        "full_prompt_occurrences_in_successful_receipt": 1
+      },
+      "semantic_result": "pass",
+      "semantic_notes": "Compare naming candidates and reasons only; do not initialize a book, change its formal title or generate a cover automatically.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": false,
+        "file": "case2-result-ax.json",
+        "expected_installed_source": "/Users/cuining/.workbuddy-ai/skills/story-skill-plan/SKILL.md",
+        "limitation": "Source path and line citations in the answer are model claims; no independently visible exact read payload was archived."
+      },
+      "result_evidence": "case2-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 204,
+        "body_before_quote_characters": 29,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText, excluding app/model names, completion timer and timestamps; zero-width presentation characters removed."
+      },
+      "read_only_scope_result": "no_extra_actions_observed",
+      "notes": [
+        "Native selection plus the full posted test question and actual answer demonstrate rules-only desktop invocation. Model-reported read paths and line numbers are not accepted as independent source-file proof.",
+        "No separate public file-read payload/source path was expanded. The test does not establish creative-writing, image-generation or platform-publishing functionality.",
+        "No additional write/report/memory-update action was visible in this captured completed turn; hidden host-side state was not independently audited.",
+        "The complete visible answer including quote and source path exceeds 120 characters. This formatting deviation is recorded separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 3,
+      "skill": "story-skill-write",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case3-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "input_quality": {
+        "clean_single_question": true,
+        "full_prompt_occurrences_in_successful_receipt": 1
+      },
+      "semantic_result": "pass",
+      "semantic_notes": "Long-form complete chapter candidates include an author note and one 9:16 image; short-form chapters omit notes and their images by default.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": false,
+        "file": "case3-result-ax.json",
+        "expected_installed_source": "/Users/cuining/.workbuddy-ai/skills/story-skill-write/SKILL.md",
+        "limitation": "Source path and line citations in the answer are model claims; no independently visible exact read payload was archived."
+      },
+      "result_evidence": "case3-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 205,
+        "body_before_quote_characters": 90,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText, excluding app/model names, completion timer and timestamps; zero-width presentation characters removed."
+      },
+      "read_only_scope_result": "no_extra_actions_observed",
+      "notes": [
+        "Native selection plus the full posted test question and actual answer demonstrate rules-only desktop invocation. Model-reported read paths and line numbers are not accepted as independent source-file proof.",
+        "No separate public file-read payload/source path was expanded. The test does not establish creative-writing, image-generation or platform-publishing functionality.",
+        "No additional write/report/memory-update action was visible in this captured completed turn; hidden host-side state was not independently audited.",
+        "The complete visible answer including quote and source path exceeds 120 characters. This formatting deviation is recorded separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 4,
+      "skill": "story-skill-analyze",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case4-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "input_quality": {
+        "clean_single_question": true,
+        "full_prompt_occurrences_in_successful_receipt": 1
+      },
+      "semantic_result": "pass",
+      "semantic_notes": "Preserve a finalized analysis report and save a separate revision; report_path alone does not prove an exported file was delivered.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": false,
+        "file": "case4-result-ax.json",
+        "expected_installed_source": "/Users/cuining/.workbuddy-ai/skills/story-skill-analyze/SKILL.md",
+        "limitation": "Source path and line citations in the answer are model claims; no independently visible exact read payload was archived."
+      },
+      "result_evidence": "case4-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 236,
+        "body_before_quote_characters": 105,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText, excluding app/model names, completion timer and timestamps; zero-width presentation characters removed."
+      },
+      "read_only_scope_result": "no_extra_actions_observed",
+      "notes": [
+        "Native selection plus the full posted test question and actual answer demonstrate rules-only desktop invocation. Model-reported read paths and line numbers are not accepted as independent source-file proof.",
+        "No separate public file-read payload/source path was expanded. The test does not establish creative-writing, image-generation or platform-publishing functionality.",
+        "No additional write/report/memory-update action was visible in this captured completed turn; hidden host-side state was not independently audited.",
+        "The complete visible answer including quote and source path exceeds 120 characters. This formatting deviation is recorded separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 5,
+      "skill": "story-skill-review",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case5-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "input_quality": {
+        "clean_single_question": true,
+        "full_prompt_occurrences_in_successful_receipt": 1
+      },
+      "semantic_result": "pass",
+      "semantic_notes": "Formatting-only permission preserves typos and punctuation; report conflicts separately and verify only authorized whitespace changes by Unicode codepoint diff.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": false,
+        "file": "case5-result-ax.json",
+        "expected_installed_source": "/Users/cuining/.workbuddy-ai/skills/story-skill-review/SKILL.md",
+        "limitation": "Source path and line citations in the answer are model claims; no independently visible exact read payload was archived."
+      },
+      "result_evidence": "case5-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 224,
+        "body_before_quote_characters": 129,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText, excluding app/model names, completion timer and timestamps; zero-width presentation characters removed."
+      },
+      "read_only_scope_result": "no_extra_actions_observed",
+      "notes": [
+        "Native selection plus the full posted test question and actual answer demonstrate rules-only desktop invocation. Model-reported read paths and line numbers are not accepted as independent source-file proof.",
+        "No separate public file-read payload/source path was expanded. The test does not establish creative-writing, image-generation or platform-publishing functionality.",
+        "No additional write/report/memory-update action was visible in this captured completed turn; hidden host-side state was not independently audited.",
+        "Three pre-send lookup failures are preserved. The full question was pasted once; the existing draft was observed, resumed by verified composer/menu paths, then natively selected and sent once. No blind full retry or duplicate submission occurred.",
+        "The complete visible answer including quote and source path exceeds 120 characters. This formatting deviation is recorded separately from semantic correctness."
+      ],
+      "pre_send_failure_evidence": [
+        "case5-submit-attempt1-error.json",
+        "case5-submit-attempt2-afterpaste-error.json",
+        "case5-submit-attempt3-existingdraft-error.json"
+      ]
+    },
+    {
+      "case": 6,
+      "skill": "story-skill-research",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case6-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "input_quality": {
+        "clean_single_question": true,
+        "full_prompt_occurrences_in_successful_receipt": 1
+      },
+      "semantic_result": "pass",
+      "semantic_notes": "Favorites are not sales, and the visible top 20 are not the complete ranking; document sources, filters, sorting, pages, truncation, deduplication and missing coverage.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": false,
+        "file": "case6-result-ax.json",
+        "expected_installed_source": "/Users/cuining/.workbuddy-ai/skills/story-skill-research/SKILL.md",
+        "limitation": "Source path and line citations in the answer are model claims; no independently visible exact read payload was archived."
+      },
+      "result_evidence": "case6-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 229,
+        "body_before_quote_characters": 125,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText, excluding app/model names, completion timer and timestamps; zero-width presentation characters removed."
+      },
+      "read_only_scope_result": "no_extra_actions_observed",
+      "notes": [
+        "Native selection plus the full posted test question and actual answer demonstrate rules-only desktop invocation. Model-reported read paths and line numbers are not accepted as independent source-file proof.",
+        "No separate public file-read payload/source path was expanded. The test does not establish creative-writing, image-generation or platform-publishing functionality.",
+        "No additional write/report/memory-update action was visible in this captured completed turn; hidden host-side state was not independently audited.",
+        "The complete visible answer including quote and source path exceeds 120 characters. This formatting deviation is recorded separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 7,
+      "skill": "story-skill-cover",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case7-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "input_quality": {
+        "clean_single_question": true,
+        "full_prompt_occurrences_in_successful_receipt": 1
+      },
+      "semantic_result": "pass",
+      "semantic_notes": "A byline-only edit preserves characters, style, composition and original dimensions; prompts do not constitute a generated cover.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": false,
+        "file": "case7-result-ax.json",
+        "expected_installed_source": "/Users/cuining/.workbuddy-ai/skills/story-skill-cover/SKILL.md",
+        "limitation": "Source path and line citations in the answer are model claims; no independently visible exact read payload was archived."
+      },
+      "result_evidence": "case7-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 219,
+        "body_before_quote_characters": 103,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText, excluding app/model names, completion timer and timestamps; zero-width presentation characters removed."
+      },
+      "read_only_scope_result": "no_extra_actions_observed",
+      "notes": [
+        "Native selection plus the full posted test question and actual answer demonstrate rules-only desktop invocation. Model-reported read paths and line numbers are not accepted as independent source-file proof.",
+        "No separate public file-read payload/source path was expanded. The test does not establish creative-writing, image-generation or platform-publishing functionality.",
+        "No additional write/report/memory-update action was visible in this captured completed turn; hidden host-side state was not independently audited.",
+        "The complete visible answer including quote and source path exceeds 120 characters. This formatting deviation is recorded separately from semantic correctness."
+      ]
+    },
+    {
+      "case": 8,
+      "skill": "story-skill-publish",
+      "native_selection": true,
+      "native_selection_evidence": [
+        "case8-submit.json"
+      ],
+      "full_prompt_sent": true,
+      "input_quality": {
+        "clean_single_question": true,
+        "full_prompt_occurrences_in_successful_receipt": 1
+      },
+      "semantic_result": "pass",
+      "semantic_notes": "A matching user-supplied copy does not prove platform saving; ZIP technical verification does not establish submission-material completeness.",
+      "source_read_evidence": {
+        "verified": false,
+        "native_tool_record_visible": false,
+        "file": "case8-result-ax.json",
+        "expected_installed_source": "/Users/cuining/.workbuddy-ai/skills/story-skill-publish/SKILL.md",
+        "limitation": "Source path and line citations in the answer are model claims; no independently visible exact read payload was archived."
+      },
+      "result_evidence": "case8-result-ax.json",
+      "format": {
+        "requested_max_characters": 120,
+        "visible_answer_characters": 246,
+        "body_before_quote_characters": 151,
+        "full_answer_within_limit": false,
+        "count_method": "Concatenated visible assistant AXStaticText, excluding app/model names, completion timer and timestamps; zero-width presentation characters removed."
+      },
+      "read_only_scope_result": "no_extra_actions_observed",
+      "notes": [
+        "Native selection plus the full posted test question and actual answer demonstrate rules-only desktop invocation. Model-reported read paths and line numbers are not accepted as independent source-file proof.",
+        "No separate public file-read payload/source path was expanded. The test does not establish creative-writing, image-generation or platform-publishing functionality.",
+        "No additional write/report/memory-update action was visible in this captured completed turn; hidden host-side state was not independently audited.",
+        "The complete visible answer including quote and source path exceeds 120 characters. This formatting deviation is recorded separately from semantic correctness."
+      ]
+    }
+  ]
+}

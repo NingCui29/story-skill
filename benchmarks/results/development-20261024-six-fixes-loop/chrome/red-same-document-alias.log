@@ -1,0 +1,28 @@
+✖ draft save links keep same-document behavior across configured same-ID editor URL aliases (29.812397ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 173.214308
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:2404:1
+✖ draft save links keep same-document behavior across configured same-ID editor URL aliases (29.812397ms)
+  AssertionError [ERR_ASSERTION]: {"href":"","response":{"schema":1,"id":"verifytarget1create_draft","nonce":"nonce","session_id":"1","binding_sha256":"binding","ok":false,"error":"platform_browser_unsafe_save"}}
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2416:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

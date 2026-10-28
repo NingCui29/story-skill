@@ -1,0 +1,9 @@
+test_browse_auth_and_invalid_paths_fail_before_disclosing_names (test_workbench_directory_picker.WorkbenchDirectoryPickerTests.test_browse_auth_and_invalid_paths_fail_before_disclosing_names) ... ok
+test_browse_is_paginated_read_only_and_returns_directories_not_files (test_workbench_directory_picker.WorkbenchDirectoryPickerTests.test_browse_is_paginated_read_only_and_returns_directories_not_files) ... ok
+test_browser_pending_directory_reads_preserve_path_and_unlock_only_current_request (test_workbench_directory_picker.WorkbenchDirectoryPickerTests.test_browser_pending_directory_reads_preserve_path_and_unlock_only_current_request) ... ok
+test_browser_select_cancel_create_and_native_callbacks (test_workbench_directory_picker.WorkbenchDirectoryPickerTests.test_browser_select_cancel_create_and_native_callbacks) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 8.505s
+
+OK

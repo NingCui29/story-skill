@@ -1,0 +1,16 @@
+test_shelf_book_selection_never_starts_thirty_scans_and_forwards_page (test_workbench_recovery_pagination.RecoveryPaginationHTTPTests.test_shelf_book_selection_never_starts_thirty_scans_and_forwards_page) ... ok
+test_expiration_refresh_book_identity_and_mode_binding (test_workbench_recovery_pagination.RecoveryPaginationTests.test_expiration_refresh_book_identity_and_mode_binding) ... ok
+test_invalid_offsets_and_directory_change_require_refresh (test_workbench_recovery_pagination.RecoveryPaginationTests.test_invalid_offsets_and_directory_change_require_refresh) ... ok
+test_over_100_recoveries_across_scan_batches_with_reverse_mtimes (test_workbench_recovery_pagination.RecoveryPaginationTests.test_over_100_recoveries_across_scan_batches_with_reverse_mtimes) ... ok
+test_pending_metadata_and_private_link_boundaries_are_preserved (test_workbench_recovery_pagination.RecoveryPaginationTests.test_pending_metadata_and_private_link_boundaries_are_preserved) ... ok
+test_real_recovery_after_5001_unrelated_materials_remains_reachable (test_workbench_recovery_pagination.RecoveryPaginationTests.test_real_recovery_after_5001_unrelated_materials_remains_reachable) ... ok
+test_scan_failure_and_hard_limit_never_claim_complete (test_workbench_recovery_pagination.RecoveryPaginationTests.test_scan_failure_and_hard_limit_never_claim_complete) ... ok
+test_completed_warnings_hard_limit_and_late_response_are_not_empty (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_completed_warnings_hard_limit_and_late_response_are_not_empty) ... ok
+test_editor_entry_uses_shared_recovery_api_and_does_not_touch_buffers (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_editor_entry_uses_shared_recovery_api_and_does_not_touch_buffers) ... ok
+test_partial_empty_more_error_refresh_and_reopen (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_partial_empty_more_error_refresh_and_reopen) ... ok
+test_shelf_selects_one_book_before_scanning_and_keeps_error_visible (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_shelf_selects_one_book_before_scanning_and_keeps_error_visible) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 6.640s
+
+OK

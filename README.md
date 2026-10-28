@@ -202,7 +202,7 @@ python3 -B -X utf8 "<核心技能目录>/scripts/story.py" workbench-library-ser
 
 版本更新统一遵循[版本管理规则](docs/版本管理.md)：修复升 PATCH、新增兼容能力升 MINOR，稳定版不兼容变更升 MAJOR；技能分发同号，Mac／Windows 客户端独立升版，数据库 schema 单独管理。
 
-当前源码正在开发 **0.6.29，尚未发布**：包含助手任务回流、跨章审稿依据、分次阅读记录、执行活动核对及任务执行进程。下载链接仍指向已发布版本；前期范围和实际验证见本地六项改进记录（`benchmarks/results/development-20261027-six-priorities/assessment.md`，未随源码提交），0.6.29 须按本版清单单独核验。逐页停机与宿主执行回执的本轮验收及平台实页暂缓范围见本地开发记录（`benchmarks/results/development-20261027-host-stop-platform/assessment.md`，未随源码提交）。
+当前源码正在开发 **0.6.29，尚未发布**：包含助手任务回流、跨章审稿依据、分次阅读记录、执行活动核对及任务执行进程。下载链接仍指向已发布版本；前期范围和实际验证见[六项改进记录](benchmarks/results/development-20261027-six-priorities/assessment.md)，0.6.29 须按本版清单单独核验。逐页停机与宿主执行回执的本轮验收及平台实页暂缓范围见[开发记录](benchmarks/results/development-20261027-host-stop-platform/assessment.md)。
 
 **v0.6.27** 增加 DeepSeek Harness 宿主安装与本地插件包，纳入章节配图确认规则修订。Intel Mac **0.1.37 / build 38**（内置 0.6.25）与 Windows C# **0.2.5**（内置 0.6.26）继续独立分发，本次不重建桌面客户端。构建来源、分发附件及验收边界见[发布记录](docs/releases/v0.6.27.md)。
 

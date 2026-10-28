@@ -1,0 +1,122 @@
+{
+  "ok": true,
+  "cases": 10,
+  "results": [
+    {
+      "platform": "qimao",
+      "case": "normal",
+      "first": "saved",
+      "second": "reconciled",
+      "create_entries": 1,
+      "field_writes": 3,
+      "save_clicks": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "published",
+      "first": "unknown",
+      "second": "unknown",
+      "create_entries": 1,
+      "field_writes": 1,
+      "save_clicks": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "missing_state",
+      "first": "unknown",
+      "second": "unknown",
+      "create_entries": 1,
+      "field_writes": 1,
+      "save_clicks": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "duplicate_state",
+      "first": "unknown",
+      "second": "unknown",
+      "create_entries": 1,
+      "field_writes": 1,
+      "save_clicks": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qimao",
+      "case": "unbound_url_change",
+      "first": "unknown",
+      "second": "unknown",
+      "create_entries": 1,
+      "field_writes": 1,
+      "save_clicks": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "normal",
+      "first": "saved",
+      "second": "reconciled",
+      "create_entries": 1,
+      "field_writes": 3,
+      "save_clicks": 1,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "published",
+      "first": "unknown",
+      "second": "unknown",
+      "create_entries": 1,
+      "field_writes": 1,
+      "save_clicks": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "missing_state",
+      "first": "unknown",
+      "second": "unknown",
+      "create_entries": 1,
+      "field_writes": 1,
+      "save_clicks": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "duplicate_state",
+      "first": "unknown",
+      "second": "unknown",
+      "create_entries": 1,
+      "field_writes": 1,
+      "save_clicks": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    },
+    {
+      "platform": "qidian",
+      "case": "unbound_url_change",
+      "first": "unknown",
+      "second": "unknown",
+      "create_entries": 1,
+      "field_writes": 1,
+      "save_clicks": 0,
+      "creative_state_unchanged": true,
+      "ok": true
+    }
+  ],
+  "source_sha256": {
+    "skills/story-skill/scripts/story_platform_browser.py": "06760945d77a9ddb94d64e2936c344d918365763bc24735ab6913b123f641bc2",
+    "skills/story-skill/scripts/story_platform_drafts.py": "a145101afcf1a8d6e8ec91fb4099606896ef439a2f9b013880fb1d515a853d72",
+    "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11"
+  },
+  "scope": "Production native adapter plus durable journal on isolated synthetic books and fake DOM transport; no platform/account or native Playwright session."
+}

@@ -1,0 +1,420 @@
+{
+  "status": "passed",
+  "date": "2026-10-24",
+  "scope": "All-feature review with targeted repairs, independent counterexample replay, local DOM checks and one final stable-source repository suite.",
+  "full_suite": {
+    "scope": "Complete repository suite after the all-feature follow-up repair loop; offline fixtures on macOS",
+    "started_at_utc": "2026-10-23T16:39:47.363787+00:00",
+    "python": "3.12.14 (main, Aug 25 2026, 13:50:22) [Clang 22.1.3 ]",
+    "platform": "macOS-15.8.1-x86_64-i386-64bit",
+    "node": "v24.19.0",
+    "tests_discovered": 2686,
+    "tests_run": 2686,
+    "passed": 2665,
+    "skipped": [
+      {
+        "test": "test_install_races.InstallationRaceTests.test_windows_publication_refuses_an_empty_target_created_inside_rename",
+        "reason": "Windows rename provides the no-replace guarantee tested here"
+      },
+      {
+        "test": "test_platform_chrome_bridge.WindowsProcessLivenessTests.test_native_windows_current_and_exited_child_without_signals",
+        "reason": "requires a real Windows process handle"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_editor_save_during_restore_is_preserved_with_backup",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_failed_publication_restores_a_copy_and_retains_backup_for_retry",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_first_export_succeeds_without_hard_links",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_recreated_target_wins_over_publication_and_restore",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_revision_preserves_old_backup_without_hard_links",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_publish_paths.PublishingConnectionPathTests.test_windows_database_pin_blocks_replacement_for_connection_lifetime",
+        "reason": "Native Windows delete-sharing protection"
+      },
+      {
+        "test": "test_retirement_path_race.RetirementPathRaceTests.test_windows_parent_pin_blocks_rename_but_allows_child_publication",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_atomic_first_publication_and_revision_preserve_unicode_bytes",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_changed_target_is_restored_and_retained_in_backup",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_empty_pinned_directory_rejects_junction_conversion_until_released",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_process_cannot_swap_pinned_leaf_or_ancestor",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_recreated_target_wins_over_backup_restore",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_target_wins_over_first_publication",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_nested_directory_guards_leave_no_files_on_normal_or_exception_exit",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_pinned_directories_allow_cross_directory_backup_and_copy_restore",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_root_report_update_and_nested_backup_restore_share_ancestors",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_workbench_books.WorkbenchBookManagementTests.test_windows_shell_missing_path_errors_without_moving_any_directory",
+        "reason": "requires Windows Shell"
+      },
+      {
+        "test": "test_workbench_books.WorkbenchBookManagementTests.test_windows_shell_recycles_only_owned_synthetic_directory",
+        "reason": "requires Windows Shell"
+      },
+      {
+        "test": "test_writing_brief.WritingBriefTests.test_path_ctime_semantics_do_not_reject_a_stable_source",
+        "reason": "Native Windows path/handle timestamp semantics"
+      }
+    ],
+    "failures": [],
+    "errors": [],
+    "elapsed_seconds": 753.52,
+    "source_changed_during_run": [],
+    "successful": true
+  },
+  "changed_this_round": [
+    "skills/story-skill/scripts/story_chrome_bridge.mjs",
+    "skills/story-skill/scripts/story_platform_browser.py",
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+    "skills/story-skill/scripts/story_rank_sources.py",
+    "tests/test_chrome_bridge_driver.mjs",
+    "tests/test_platform_browser.py",
+    "tests/test_platform_browser_editor_readback.py",
+    "tests/test_platform_chrome_initialization.py",
+    "tests/test_rank_source_visibility.py"
+  ],
+  "validated_source_file_count": 338,
+  "native": {
+    "status": "passed",
+    "production_before_sha256": "09b4fa2bd6409f49f74c519181dffea0acaee4594a2990f5f06b0d63a84c7362",
+    "files_sha256": {
+      "skills/story-skill/scripts/story_platform_browser.py": "06760945d77a9ddb94d64e2936c344d918365763bc24735ab6913b123f641bc2",
+      "tests/test_platform_browser_editor_readback.py": "c4fbe734fea033fa37b635de0c127991d3914d99cd31bc3c91238f2850d05fba",
+      "tests/test_platform_browser.py": "a40d8cc0ade0a7369145a7c5b4b5dec5a888d68bc7fb3f8b4bf3a3afcda391ed"
+    },
+    "new_test_methods": 5,
+    "targeted_suite": {
+      "tests_run": 136,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": "native-green.log"
+    },
+    "fixes": [
+      {
+        "id": "unallocated-create-url",
+        "red_counterexamples": 8,
+        "positive_scenarios": 2,
+        "red_log": "unallocated-url-red.log",
+        "green_log": "unallocated-url-green.log"
+      },
+      {
+        "id": "current-dom-draft-state",
+        "red_counterexamples": 12,
+        "red_log": "current-state-red.log",
+        "green_log": "current-state-green.log"
+      },
+      {
+        "id": "draft-action-href",
+        "red_counterexamples": 9,
+        "positive_scenarios": 6,
+        "red_log": "action-href-red.log",
+        "green_log": "action-href-green.log"
+      }
+    ],
+    "unresolved_confirmed_findings": [],
+    "scope": "Offline adapter fixtures plus executed existing JavaScript serializer/focus predicates. No live platform, install, publication or native Windows validation. Full suite and independent checks recorded by root separately."
+  },
+  "chrome": {
+    "schema": 1,
+    "status": "passed",
+    "scope": "offline public CUA contract; no real website/account action",
+    "initial_source_sha256": "003419c8bcf62c67c2e40dade596b1f113ba02c736cec7a86e133baf93e3a5d1",
+    "files": {
+      "skills/story-skill/scripts/story_chrome_bridge.mjs": "fcb0c94d43b9a6865621731a5d88c974b87367642081e9cede29fb730baf2768",
+      "tests/test_chrome_bridge_driver.mjs": "92b2b00da4d8739c39af555b0fd69ed87a8946df612d7f37a7d1ff22a3bf07f6",
+      "tests/test_chrome_worker.mjs": "64b499eede952c2cc1ed700fb46ca3af4f5cabc1ff2b6c9c2bd08daa075ca9fc"
+    },
+    "full_component_suite": {
+      "command": "node --test tests/test_chrome_bridge_driver.mjs tests/test_chrome_worker.mjs",
+      "driver": 160,
+      "worker": 94,
+      "total": 254,
+      "passed": 254,
+      "failed": 0,
+      "skipped": 0,
+      "log": "full-driver-worker.log"
+    },
+    "new_regressions": {
+      "top_level_tests": 10,
+      "parameter_scenarios": 49,
+      "note": "parameter scenarios are not added to suite total"
+    },
+    "findings_fixed": [
+      "href drift on same-page create or save after account refresh",
+      "same-page creation reuses cached management tab",
+      "DOM draft state drift before later write/save"
+    ],
+    "intermediate_regressions_fixed": [
+      "state snapshot exact URL rejected configured same-ID transition",
+      "new state await moved final bound-target check too early"
+    ],
+    "evidence": {
+      "baseline_replay": "red-original-source-replay.log",
+      "same_id_regression_red": "red-state-compatibility.log",
+      "post_snapshot_target_regression_red": "red-state-await-target.log",
+      "final_targeted_green": "green-state-target.log"
+    },
+    "limits": [
+      "No actual platform, account or book accessed",
+      "No installer or plugin cache changes",
+      "DOM state checks are per configured DOM marker; listing-based state retains catalog boundaries",
+      "No claim of atomicity against arbitrary changes after a public CUA operation starts",
+      "Root owns final full repository regression and independent final review"
+    ]
+  },
+  "features": {
+    "status": "frozen",
+    "confirmed_findings": 1,
+    "resolved_findings": 1,
+    "unresolved_confirmed_findings": [],
+    "tests_added": 7,
+    "targeted_validation": {
+      "successful": true,
+      "tests_run": 163,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "modules": [
+        "test_rank_source_visibility",
+        "test_rank_source_markup",
+        "test_rank_sources",
+        "test_rank",
+        "test_rank_compatibility",
+        "test_research",
+        "test_research_long_reasons",
+        "test_instruction_budget",
+        "test_skill_audit_fixes"
+      ],
+      "loader_errors": []
+    },
+    "probe_validation": {
+      "ok": true,
+      "seed": 20261024,
+      "inline_and_inert_invariance_cases": 240,
+      "inert_only_evidence_rejection_cases": 12,
+      "distribution": {
+        "version": "0.6.22",
+        "members": 69,
+        "skill_entries": 8,
+        "modified_source_present_byte_exact": true
+      },
+      "source_sha256": {
+        "skills/story-skill/scripts/story_rank_sources.py": "34c9726746d7ccb3f956899ebc381d93547e5340f87d483f3a7748c24484c711",
+        "skills/story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+        "skills/story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+        "scripts/package.py": "1887da1a39b5aeef89864893706895da3ecf48cb2d69dcf45bc7fd37d5981e39",
+        "scripts/install.py": "40bbdd3a12c9026f3919571317c84196c4c3c2634cf9ccd1b4470a877dfc7a02",
+        "scripts/package_npm.py": "639f22cffed56fa7d2fba23dedc0bed08fe5e447fef735002c53c6c611cb5701"
+      }
+    },
+    "changed_files_sha256": {
+      "skills/story-skill/scripts/story_rank_sources.py": "34c9726746d7ccb3f956899ebc381d93547e5340f87d483f3a7748c24484c711",
+      "tests/test_rank_source_visibility.py": "afc489b51a821b3e6d7c919ce8bb23f957b0e995186ef2c79926425b557f0aec"
+    },
+    "full_suite": "root responsibility",
+    "independent_browser_cross_review": {
+      "resolved_new_regression": 1,
+      "unresolved_confirmed_findings": [],
+      "chrome_scenarios": 16,
+      "native_scenarios": 28,
+      "same_page_full_flows": 2,
+      "source_sha256": {
+        "skills/story-skill/scripts/story_chrome_bridge.mjs": "fcb0c94d43b9a6865621731a5d88c974b87367642081e9cede29fb730baf2768",
+        "skills/story-skill/scripts/story_platform_browser.py": "06760945d77a9ddb94d64e2936c344d918365763bc24735ab6913b123f641bc2"
+      },
+      "report": "independent-review.md"
+    }
+  },
+  "session_recovery": {
+    "ok": true,
+    "source_sha256": {
+      "skills/story-skill/scripts/story_platform_chrome_bridge.py": "76fad6940eedf5d69aa2241278c2dd0de3d84c68f79336522d2ca33576946dee",
+      "tests/test_platform_chrome_initialization.py": "c153a65d7865c8fe00a70d83ee6cd99bb6fe5776bc5565cb63b485888e411385"
+    },
+    "new_test_methods": 6,
+    "issues": [
+      {
+        "id": "incomplete-initialization-blocks-reconnect",
+        "fixed": true,
+        "description": "Interrupted first session/lease publication previously left original-book discovery and attachment blocked."
+      },
+      {
+        "id": "concurrent-attachment-duplicates-live-workers",
+        "fixed": true,
+        "description": "Discovery and initial metadata/handle publication are serialized by one book-root cross-process lock; initialization also takes the session lock."
+      },
+      {
+        "id": "initial-lease-error-after-publication",
+        "fixed": true,
+        "description": "If initial lease publication succeeds but its fsync/verification reports failure before a handle escapes, only the current initialization lease is detached."
+      }
+    ],
+    "verification": {
+      "tests_run": 82,
+      "passed": 81,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 1,
+      "skip_reason": "requires a real Windows process handle",
+      "log": "bridge-recovery-green.log",
+      "command": "PYTHONPATH=tests PYTHONDONTWRITEBYTECODE=1 python3 -B -m unittest tests.test_platform_chrome_initialization tests.test_platform_chrome_bridge tests.test_workbench_archives.WorkbenchArchivesTests.test_restored_bridge_reconnects_and_unknown_save_requires_reconciliation tests.test_workbench_archives.WorkbenchArchivesTests.test_restored_live_bridge_is_inert_and_old_handle_cannot_resume_requests tests.test_workbench_archives.WorkbenchArchivesTests.test_restore_reconnects_after_real_process_exit_before_first_session_publication tests.test_workbench_archives.WorkbenchArchivesTests.test_restored_old_handles_never_touch_missing_or_empty_locks_and_missing_sessions -v"
+    },
+    "baseline": {
+      "source_sha256": "8dee92f95f7f753e5d64ae8d4754dbd00e0ddebb960761fc22a0fce7a0ed8156",
+      "log": "bridge-initialization-baseline-red.log",
+      "independent_red_and_green": "../chrome/independent-python-session/"
+    },
+    "independent_review": {
+      "initialization_failure_and_unknown_payload_scenarios": 12,
+      "concurrent_attach_probe_passed": true,
+      "reviewer": "round3_chrome",
+      "total_scenarios": 14,
+      "active_claimed_create_timeout_preserved": true
+    },
+    "boundaries": [
+      "Only incomplete, never-ready metadata with no published lease or request/health/unknown payload may be ignored; files are preserved.",
+      "Existing live leases and unknown request evidence are never erased or reused.",
+      "Restored evidence remains inert and old handles remain rejected.",
+      "No real platform, installed plugin, release or native Windows validation performed.",
+      "A hard process exit after lease publication but before handle publication cannot run cleanup: the valid lease remains until normal expiry and is never treated as empty initialization residue. Immediate recovery of that case is not claimed."
+    ],
+    "unresolved_confirmed_findings": []
+  },
+  "independent_session_review": {
+    "schema": 1,
+    "ok": true,
+    "source_sha256": {
+      "skills/story-skill/scripts/story_platform_chrome_bridge.py": "76fad6940eedf5d69aa2241278c2dd0de3d84c68f79336522d2ca33576946dee"
+    },
+    "scenarios": 14,
+    "baseline_failed_scenarios": 5,
+    "results": [
+      "concurrent-final.json",
+      "recovery-final.json",
+      "active-final.json"
+    ],
+    "probes": [
+      "probe.py",
+      "recovery_probe.py",
+      "active_probe.py"
+    ],
+    "baseline_results": [
+      "concurrent-before.json",
+      "recovery-before.json"
+    ],
+    "coverage": [
+      "same-book concurrent attach permits exactly one live session",
+      "session initial publication before/after failure reconnects",
+      "lease initial publication before/after failure reconnects",
+      "outbox/claimed/response/health/challenge/lease/unknown/stage-lookalike orphan payloads remain blocking and unchanged",
+      "valid active claimed create remains attached before/after request timeout; duplicate attach rejected; no claim replay"
+    ],
+    "review_notes": [
+      "Production source was not edited by this independent reviewer",
+      "The concurrency hook follows the same availability check; renamed worker_status to _worker_status after lock factoring",
+      "Observed after-publish lease failure baseline left a live session without handle; fixed source retires only this initialization lease"
+    ],
+    "limits": [
+      "Independent concurrent probe uses two threads on macOS; owner adds separate cross-process coverage",
+      "Only local temporary books and synthetic Chrome health, with no browser or platform operation",
+      "No native Windows execution",
+      "No tests claim recovery from externally destroyed evidence or arbitrary post-operation mutation"
+    ]
+  },
+  "independent_browser_review": {
+    "resolved_new_regression": 1,
+    "unresolved_confirmed_findings": [],
+    "chrome_scenarios": 16,
+    "native_scenarios": 28,
+    "same_page_full_flows": 2,
+    "source_sha256": {
+      "skills/story-skill/scripts/story_chrome_bridge.mjs": "fcb0c94d43b9a6865621731a5d88c974b87367642081e9cede29fb730baf2768",
+      "skills/story-skill/scripts/story_platform_browser.py": "06760945d77a9ddb94d64e2936c344d918365763bc24735ab6913b123f641bc2"
+    },
+    "report": "independent-review.md"
+  },
+  "local_dom_checks": 79,
+  "rank_rendered_static_boundary_cases": 16,
+  "native_adapter_journal_cases": 10,
+  "journal_boundary_cases": 18,
+  "distribution": {
+    "version": "0.6.22",
+    "source_members": 69,
+    "artifacts": [
+      {
+        "kind": "standard",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-five-fixes-loop/distribution/story-skill-0.6.22.zip",
+        "members": 69,
+        "source_members_verified": 69,
+        "latest_six_runtime_modules_exact": true
+      },
+      {
+        "kind": "claude",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-five-fixes-loop/distribution/claude.zip",
+        "members": 71,
+        "source_members_verified": 69,
+        "latest_six_runtime_modules_exact": true
+      },
+      {
+        "kind": "codex",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-five-fixes-loop/distribution/codex-final/story-skill-codex-0.6.22.zip",
+        "members": 74,
+        "source_members_verified": 69,
+        "latest_six_runtime_modules_exact": true
+      }
+    ],
+    "manifest_sets_equal": true,
+    "host_scope_mappings": 38,
+    "no_installation": true
+  },
+  "unresolved_confirmed_findings": [],
+  "limits": [
+    "The Node driver/worker suites are two Python wrapper tests; nested cases are not added to Python totals.",
+    "Local synthetic browser DOM and fake public transports do not prove live platform or native Playwright/CUA integration.",
+    "Native Windows tests skipped on macOS remain unverified here.",
+    "Static rank extraction conservatively ignores hidden nodes without CSS/JavaScript rendering equivalence.",
+    "No real manuscripts, platform accounts, installed plugin caches, releases or commits were changed."
+  ]
+}

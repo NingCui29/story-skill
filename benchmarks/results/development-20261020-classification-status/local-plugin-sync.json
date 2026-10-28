@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "date_utc": "2026-10-20T05:32:41.587381+00:00",
+  "ok": true,
+  "selector": "story-skill@story-skill-local",
+  "version": "0.6.19",
+  "scope": "Eight classification fix files only",
+  "backup": "/Users/cuining/.codex/backups/story-skill-plugin-update/20261020-classification-2cffc36b66",
+  "old_marketplace": "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/0.6.19-bbfc13d99011",
+  "new_marketplace": "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/20261020-classification-2cffc36b66/story-skill-codex-0.6.19",
+  "commands": [
+    {
+      "arguments": [
+        "plugin",
+        "list",
+        "--marketplace",
+        "story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"installed\": [\n    {\n      \"pluginId\": \"story-skill@story-skill-local\",\n      \"name\": \"story-skill\",\n      \"marketplaceName\": \"story-skill-local\",\n      \"version\": \"0.6.19\",\n      \"installed\": true,\n      \"enabled\": true,\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/0.6.19-bbfc13d99011/plugins/story-skill\"\n      },\n      \"marketplaceSource\": {\n        \"sourceType\": \"local\",\n        \"source\": \"/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/0.6.19-bbfc13d99011\"\n      },\n      \"installPolicy\": \"AVAILABLE\",\n      \"authPolicy\": \"ON_INSTALL\"\n    }\n  ],\n  \"available\": []\n}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "plugin",
+        "remove",
+        "story-skill@story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"pluginId\": \"story-skill@story-skill-local\",\n  \"name\": \"story-skill\",\n  \"marketplaceName\": \"story-skill-local\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "plugin",
+        "marketplace",
+        "remove",
+        "story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"marketplaceName\": \"story-skill-local\",\n  \"installedRoot\": null\n}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "plugin",
+        "marketplace",
+        "add",
+        "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/20261020-classification-2cffc36b66/story-skill-codex-0.6.19",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"marketplaceName\": \"story-skill-local\",\n  \"installedRoot\": \"/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/20261020-classification-2cffc36b66/story-skill-codex-0.6.19\",\n  \"alreadyAdded\": false\n}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "plugin",
+        "add",
+        "story-skill@story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"pluginId\": \"story-skill@story-skill-local\",\n  \"name\": \"story-skill\",\n  \"marketplaceName\": \"story-skill-local\",\n  \"version\": \"0.6.19\",\n  \"installedPath\": \"/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.19\",\n  \"authPolicy\": \"ON_INSTALL\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "plugin",
+        "list",
+        "--marketplace",
+        "story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"installed\": [\n    {\n      \"pluginId\": \"story-skill@story-skill-local\",\n      \"name\": \"story-skill\",\n      \"marketplaceName\": \"story-skill-local\",\n      \"version\": \"0.6.19\",\n      \"installed\": true,\n      \"enabled\": true,\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/20261020-classification-2cffc36b66/story-skill-codex-0.6.19/plugins/story-skill\"\n      },\n      \"marketplaceSource\": {\n        \"sourceType\": \"local\",\n        \"source\": \"/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/20261020-classification-2cffc36b66/story-skill-codex-0.6.19\"\n      },\n      \"installPolicy\": \"AVAILABLE\",\n      \"authPolicy\": \"ON_INSTALL\"\n    }\n  ],\n  \"available\": []\n}\n",
+      "stderr": ""
+    }
+  ],
+  "changed_files": [
+    "skills/story-skill-plan/SKILL.md",
+    "skills/story-skill-plan/references/fanqie-tags.md",
+    "skills/story-skill-plan/references/qidian-categories.md",
+    "skills/story-skill-plan/references/qimao-tags.md",
+    "skills/story-skill-publish/SKILL.md",
+    "skills/story-skill-write/references/chapter.md",
+    "skills/story-skill/references/project-state.md",
+    "skills/story-skill/scripts/story_outline.py"
+  ],
+  "model_turn_started": false,
+  "desktop_restarted": false,
+  "installed_path": "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.19",
+  "enabled": true,
+  "authored_files_verified": 65,
+  "unchanged_authored_files": 57,
+  "unrelated_configuration_unchanged": true,
+  "old_marketplace_preserved": true,
+  "classification_smoke": {
+    "ok": true,
+    "covered_platforms": [
+      "fanqie",
+      "qidian",
+      "qimao"
+    ],
+    "issues": [],
+    "manual_review_required": true,
+    "synthetic_book_only": true
+  }
+}

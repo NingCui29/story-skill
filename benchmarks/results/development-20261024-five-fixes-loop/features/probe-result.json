@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "seed": 20261024,
+  "inline_and_inert_invariance_cases": 240,
+  "inert_only_evidence_rejection_cases": 12,
+  "distribution": {
+    "version": "0.6.22",
+    "members": 69,
+    "skill_entries": 8,
+    "modified_source_present_byte_exact": true
+  },
+  "source_sha256": {
+    "skills/story-skill/scripts/story_rank_sources.py": "34c9726746d7ccb3f956899ebc381d93547e5340f87d483f3a7748c24484c711",
+    "skills/story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+    "skills/story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+    "scripts/package.py": "1887da1a39b5aeef89864893706895da3ecf48cb2d69dcf45bc7fd37d5981e39",
+    "scripts/install.py": "40bbdd3a12c9026f3919571317c84196c4c3c2634cf9ccd1b4470a877dfc7a02",
+    "scripts/package_npm.py": "639f22cffed56fa7d2fba23dedc0bed08fe5e447fef735002c53c6c611cb5701"
+  }
+}

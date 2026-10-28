@@ -1,0 +1,332 @@
+{
+  "schema_version": 1,
+  "kind": "research_decision",
+  "sample": {
+    "schema_version": 1,
+    "kind": "rank_sample",
+    "group_id": "65df9d06b8af8e2e6a50",
+    "dimensions": {
+      "platform": "synthetic",
+      "date": "2026-10-22",
+      "url": "https://example.invalid/fiction/library",
+      "board": "合成开发样本",
+      "channel": "综合",
+      "category": null,
+      "period": null,
+      "metric": null,
+      "cohort": "new",
+      "sample_method": "原创合成数据，仅开发试用"
+    },
+    "filters": {
+      "category": null,
+      "tags": [
+        "经营"
+      ],
+      "title_contains": null,
+      "min_words": null,
+      "max_words": null
+    },
+    "limit": 3,
+    "counts": {
+      "group_accepted": 4,
+      "eligible": 3,
+      "selected": 3,
+      "excluded_conflicts": 0,
+      "excluded_identity_conflicts": 0
+    },
+    "method": "仅从一个可比分组内去重且无冲突的作品中筛选；优先补充未覆盖分类，再补充本组重复标签，再补充字数区间，最后按页面名次与作品键确定次序。重复标签限本组频次前 50 项且至少出现于 2 本书。这是供进一步阅读的覆盖抽样，不是随机抽样、质量排名、市场代表性证明或爆款预测。嵌入快照和来源用于重算与核对，不能证明源网页真实或记录完整。",
+    "snapshots": [
+      {
+        "schema_version": 1,
+        "platform": "synthetic",
+        "collected_at": "2026-10-22T10:00:00+08:00",
+        "source": {
+          "url": "https://example.invalid/fiction/library",
+          "board": "合成开发样本",
+          "channel": "综合",
+          "category": null,
+          "period": null,
+          "metric": null,
+          "cohort": "new",
+          "sample_method": "原创合成数据，仅开发试用",
+          "pages": [
+            1
+          ],
+          "coverage": "partial",
+          "expected_count": null,
+          "limitations": [
+            "不是真实榜单，不用于市场结论"
+          ]
+        },
+        "entries": [
+          {
+            "book_id": "a",
+            "book_url": "https://example.invalid/book/a",
+            "title": "开局：雨夜修表铺",
+            "author": "原创合成作者",
+            "rank": 1,
+            "category": "都市",
+            "tags": [
+              "经营",
+              "邻里"
+            ],
+            "word_count": 80000,
+            "status": "连载",
+            "metric_value": null,
+            "metric_raw": null
+          },
+          {
+            "book_id": "a",
+            "book_url": "https://example.invalid/book/a",
+            "title": "开局：雨夜修表铺",
+            "author": "原创合成作者",
+            "rank": 1,
+            "category": "都市",
+            "tags": [
+              "经营",
+              "邻里"
+            ],
+            "word_count": 80000,
+            "status": "连载",
+            "metric_value": null,
+            "metric_raw": null
+          },
+          {
+            "book_id": "b",
+            "book_url": "https://example.invalid/book/b",
+            "title": "开局：河畔修车行",
+            "author": "原创合成作者",
+            "rank": 2,
+            "category": "都市",
+            "tags": [
+              "经营",
+              "邻里"
+            ],
+            "word_count": 180000,
+            "status": "连载",
+            "metric_value": null,
+            "metric_raw": null
+          },
+          {
+            "book_id": "c",
+            "book_url": "https://example.invalid/book/c",
+            "title": "开局：最后一班船",
+            "author": "原创合成作者",
+            "rank": 3,
+            "category": "都市",
+            "tags": [
+              "经营",
+              "远行"
+            ],
+            "word_count": 0,
+            "status": "连载",
+            "metric_value": null,
+            "metric_raw": null
+          },
+          {
+            "book_id": "d",
+            "book_url": "https://example.invalid/book/d",
+            "title": "山城送信人",
+            "author": "原创合成作者",
+            "rank": 4,
+            "category": "现实",
+            "tags": [],
+            "word_count": null,
+            "status": "连载",
+            "metric_value": null,
+            "metric_raw": null
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "source_id": "d6f3bca59770f72dcb80",
+        "group_id": "65df9d06b8af8e2e6a50",
+        "platform": "synthetic",
+        "collected_at": "2026-10-22T10:00:00+08:00",
+        "source": {
+          "url": "https://example.invalid/fiction/library",
+          "board": "合成开发样本",
+          "channel": "综合",
+          "category": null,
+          "period": null,
+          "metric": null,
+          "cohort": "new",
+          "sample_method": "原创合成数据，仅开发试用",
+          "pages": [
+            1
+          ],
+          "coverage": "partial",
+          "expected_count": null,
+          "limitations": [
+            "不是真实榜单，不用于市场结论"
+          ]
+        },
+        "raw_entries": 5,
+        "unique_books": 4
+      }
+    ],
+    "warnings": [],
+    "books": [
+      {
+        "book_key": "4e3cb61dd858ac0d2682",
+        "identity": {
+          "platform": "synthetic",
+          "kind": "id",
+          "value": "a"
+        },
+        "observation": {
+          "group_id": "65df9d06b8af8e2e6a50",
+          "variant_id": "a79d300708c874ab5b17",
+          "source_ids": [
+            "d6f3bca59770f72dcb80"
+          ],
+          "conflict": false,
+          "title": "开局：雨夜修表铺",
+          "author": "原创合成作者",
+          "rank": 1,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "邻里"
+          ],
+          "word_count": 80000,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        },
+        "reasons": [
+          "补充尚未覆盖的分类：都市",
+          "补充本组重复标签：经营、邻里",
+          "补充尚未覆盖的字数区间：不足 10 万字",
+          "覆盖条件相同时按页面名次 1、作品键稳定排序；名次不代表文学质量"
+        ]
+      },
+      {
+        "book_key": "be9199f781adff7dc44f",
+        "identity": {
+          "platform": "synthetic",
+          "kind": "id",
+          "value": "b"
+        },
+        "observation": {
+          "group_id": "65df9d06b8af8e2e6a50",
+          "variant_id": "031ca5e765d27217d404",
+          "source_ids": [
+            "d6f3bca59770f72dcb80"
+          ],
+          "conflict": false,
+          "title": "开局：河畔修车行",
+          "author": "原创合成作者",
+          "rank": 2,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "邻里"
+          ],
+          "word_count": 180000,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        },
+        "reasons": [
+          "补充尚未覆盖的字数区间：10 万至不足 30 万字",
+          "覆盖条件相同时按页面名次 2、作品键稳定排序；名次不代表文学质量"
+        ]
+      },
+      {
+        "book_key": "25b4362aba8fa7c508f7",
+        "identity": {
+          "platform": "synthetic",
+          "kind": "id",
+          "value": "c"
+        },
+        "observation": {
+          "group_id": "65df9d06b8af8e2e6a50",
+          "variant_id": "07f6b21378b7fe201e7d",
+          "source_ids": [
+            "d6f3bca59770f72dcb80"
+          ],
+          "conflict": false,
+          "title": "开局：最后一班船",
+          "author": "原创合成作者",
+          "rank": 3,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "远行"
+          ],
+          "word_count": 0,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        },
+        "reasons": [
+          "覆盖条件相同时按页面名次 3、作品键稳定排序；名次不代表文学质量"
+        ]
+      }
+    ],
+    "sample_id": "0ef8a4c9ad2ba08c9d65469db7c3919a839b90c9634aca112ccf796c540fca16"
+  },
+  "topics": [
+    {
+      "topic_id": "topic-1",
+      "title": "候选一：共享厨房的小单承诺",
+      "target_reader": "暂定偏好日常经营、具体手艺和邻里信任逐步增长的读者；这是创作定位假设，没有真实读者反馈。",
+      "payoff": "主角在资金紧张时选择兑现既有小单，付出可见机会成本；后续获得有边界的协作机会，能力和信用逐步扩大可接订单范围。回报先落实为可执行的帮助，不把一次好意写成自动发财。",
+      "author_strength": "待作者补充餐饮、备货、排班和社区关系经验；目前仅有合成样本，不推定作者具备相应实务知识。",
+      "differentiation": "拟用共享厨房档期与小单交付的冲突驱动选择，让主角自己决定客户取舍并承担后果；不沿用旧表、少年母亲、备件赔付、药房门牌或交钥匙桥段。",
+      "risk": "单向让利若反复自动获奖，会失去经营压力；a 的信任委托还不足以证明长期经营合作，b、c 则提供直接受助者未回报的反例；厨房实务和持续展开均待核。",
+      "next_check": "规划时先明确主角为何珍惜小单、可承受的最大损失与合作者独立动机，再设计能检验双方是否真正履约的阶段；作者确认素材后再补实务，取得正文授权后才试写。没有市场验证。",
+      "books": [
+        {
+          "book_key": "4e3cb61dd858ac0d2682",
+          "reason": "观察可见代价之后出现的第三方信任委托，并核对是否真的已有合作兑现。"
+        },
+        {
+          "book_key": "be9199f781adff7dc44f",
+          "reason": "以相同经营、邻里标签的让利落空，检查善意是否足以换来合作。"
+        },
+        {
+          "book_key": "25b4362aba8fa7c508f7",
+          "reason": "补充受助者没有资金回援的情况，避免把全部落空归结为恶意。"
+        }
+      ],
+      "hypotheses": [
+        {
+          "hypothesis_id": "hypothesis-1",
+          "claim": "主角牺牲眼前收益能够换来后续合作。",
+          "verifications": []
+        }
+      ]
+    },
+    {
+      "topic_id": "topic-2",
+      "title": "候选二：旧影院的分时合伙",
+      "target_reader": "暂定偏好伙伴共同经营、利益与关系同时成长、主角能调整做法的读者；尚未接触目标读者。",
+      "payoff": "主角曾无条件给出场地却没有得到帮助，随后以场地时段、布景、人手等互补投入形成合伙；看点是学会选择伙伴、协商边界并一起完成活动。",
+      "author_strength": "待作者说明活动组织、场地经营和团队协作素材；现有证据只能支撑抽象机制。",
+      "differentiation": "拟围绕旧影院闲置时段与社区演出的多方需求展开，合作收益来自各自承担任务与完成活动；不复用洪水、抽水泵、废车电机、女工合修等桥段。",
+      "risk": "投入和分账若成为记账说明，会挤掉人物欲望和行动；b 只出现开工，尚未证明合伙能持续或成功；c 没有后续伙伴。",
+      "next_check": "先在规划中确定双方各自想保住什么、第一次必须共同承担的失败风险以及合作中一次真实分歧；后续获得授权后观察行动与关系是否承载规则，而非用说明段替代情节。",
+      "books": [
+        {
+          "book_key": "be9199f781adff7dc44f",
+          "reason": "直接读取未被回报后的新合作，区分原受助者回报与另找互补伙伴。"
+        },
+        {
+          "book_key": "25b4362aba8fa7c508f7",
+          "reason": "区分重新利用现有资源的自救与真正的双向合作，不将自救误标为合伙。"
+        }
+      ],
+      "hypotheses": [
+        {
+          "hypothesis_id": "hypothesis-2",
+          "claim": "当单向付出没有获得回报时，主角可以通过互补投入与明确分工建立新的合作。",
+          "verifications": []
+        }
+      ]
+    }
+  ]
+}

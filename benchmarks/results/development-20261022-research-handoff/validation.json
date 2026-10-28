@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "version": "0.6.22-unreleased",
+  "python": "3.12.14",
+  "full_tests": {
+    "command": "python3.12 -B -X utf8 -m unittest discover -s tests -q",
+    "tests": 2543,
+    "passed": 2298,
+    "skipped": 245,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 568.22,
+    "log": "full-python312-tests.log"
+  },
+  "focused_rank_sources_research": {
+    "tests": 81,
+    "passed": 81
+  },
+  "packaging_and_install_tests": {
+    "tests": 115,
+    "passed": 115,
+    "log": "packaging-tests.log"
+  },
+  "budget_tests": {
+    "tests": 37,
+    "passed": 37
+  },
+  "instruction_budget": {
+    "variants": 286,
+    "passed": true,
+    "receipt": "instruction-budget.json"
+  },
+  "skill_format": {
+    "validator": "skill-creator/scripts/quick_validate.py",
+    "passed": [
+      "story-skill-research",
+      "story-skill-analyze",
+      "story-skill-plan"
+    ],
+    "environment": "uv Python3.12 with isolated PyYAML"
+  },
+  "relative_links": {
+    "checked": 319,
+    "missing": []
+  },
+  "package_smoke": "packaging.json",
+  "independent_trial": "independent-trial/assessment.md",
+  "final_replay": "final-replay.json",
+  "runtime_unchanged": true,
+  "runtime_sha256": {
+    "story.py": "fde9694899a90cd9dbc40a1afdaa29ae34ac4d4e9c242595a34f10b5a659c313",
+    "story_chrome_bridge.mjs": "dedc29c2155e3f6e197fc9bbd7304548d0d2179414181ef251ad06399e14200e",
+    "story_chrome_worker.mjs": "98ef4a876eb26992a1ce0421b786a384803afe9e3b0efe47ace1675effd25966",
+    "story_chrome_worker.py": "1b7dea128f3e481e7a3f38240d2ad3dee275c7aaa431b055c3e6c82678cd662e",
+    "story_history.py": "40c1364da4f591e98fc19810cbb202c47f1991a47e18fcf48699826a82f878cd",
+    "story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+    "story_platform_browser.py": "627eb88cddffc59b209f8a26df090518b8a78a1356d389ab839e9a9325354b65",
+    "story_platform_chrome_bridge.py": "0fd9c733aa4bee7eff9f98d171bdefb4aa5803b41ea31b4c4fce110a8cfad5e9",
+    "story_platform_drafts.py": "aef1b3e200f677877e98cf095c5785882d494da9e7bc4601f324d01ba506547d",
+    "story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+    "story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+    "story_rank.py": "4dbaf3d9b065730578f3f2f3373aad679f1e7a933271b14c81fcac46324b359a",
+    "story_rank_sources.py": "3632c5f7a9f62f31751a496ffa2e97149fa658266d6e6ce0c4c60c3eee8f4a05",
+    "story_research.py": "9ea128836bfae886b2d28da5d5fec4565933fada8758674ce88d57b458646489",
+    "story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+    "story_workbench.py": "aeffe0781ef725b0fbd05e7d417fcf618e3228cb0b85ba3b82c1cc803787cf26",
+    "story_workbench_archives.py": "16184deb63405cecb86a51a65cc3b2d5b48c32d25b930c18bb888a4cdb3461c7",
+    "story_workbench_books.py": "68b07007e67861a20dc8134dc486de1508806d4ed52b2b6383230a37e7aa43a4",
+    "story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+  },
+  "source_sha256": {
+    "skills/story-skill-research/SKILL.md": "e49d0b2a0150bb9f1bd093c049602e04bad10d31151282cf261fe12bda55d949",
+    "skills/story-skill-analyze/SKILL.md": "c438ff05fa677f19301c1f2c4e3e73b2c3c23588bb3e0a6912e68fa0a86b2af1",
+    "skills/story-skill-plan/SKILL.md": "bc71ff5f6e985fc851440d54665a714b05b0595360d0067463ba1da66580f085",
+    "skills/story-skill-research/references/rank-scan.md": "aae1e73e8542d9f49b66333759064d43084667a551189021ecd886d4f98e6378",
+    "skills/story-skill-research/references/research-handoff.md": "155712269a6db16359e28124d281eedab3dbfde378897ff04cc30507a35038f3",
+    "scripts/package.py": "ac7cf1305ad40731366562fae36da0b16cd5675014912315cd149c2a1902ba4a",
+    "scripts/install.py": "40bbdd3a12c9026f3919571317c84196c4c3c2634cf9ccd1b4470a877dfc7a02",
+    "scripts/package_npm.py": "10d6f64b79f8913d6ee0dfa9532fabc75772ece535439bf57150de3d9501977c",
+    "scripts/build_desktop_macos.py": "4e5eca671b64985ecd7cfe428036e996400966d19f2f6938a5731a34efab45a8",
+    "tests/test_rank.py": "9b550c1a35538b6f182aed9849817940072a74934087f623d80f890f3b563033",
+    "tests/test_rank_sources.py": "6a545734017df2db386de8e32bf593ca4fe5067b69689c26b4759e1f139bd593",
+    "tests/test_research.py": "97e0fbfb055f7c90aeb5622fbe8bef4096567f99f8344d07368c11e7b59312db",
+    "tests/test_instruction_budget.py": "67e2f2b35cf2ae038292bd8e1d7744c046efd3d854dabf66c1b36cae835946cd",
+    "tests/test_package.py": "40e14587b77b0acd387a0f71139ed54f8f27c9eda02200f4f45c31581e35f8ae",
+    "tests/test_install_suite.py": "805e3b4cda49b5590e9288b97bec0767650a34045fedefdbb8bedd799b8dc578",
+    "tests/test_package_npm.py": "59420e5594cc04551118da4b2048b054d418f44e7b70fd144119917a67c1c451",
+    "tests/test_workbench_runtime_regressions.py": "9807a5f2e05276a067d3d8112355e3465b8f3b71714bd911535b4b1519a7ce53",
+    "benchmarks/instruction-loads.json": "2d06c76f3e44f4b99a76fb37b8e772934ca2ac07d01708979b3f67e648dd28ef"
+  },
+  "limitations": [
+    "No new live platform collection",
+    "No install, release or native desktop build",
+    "No human reader or market validation",
+    "Title patterns are bounded literal features; no semantic theme inference",
+    "One independent development trial, not a held-out quality benchmark"
+  ]
+}

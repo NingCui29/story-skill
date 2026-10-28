@@ -1,0 +1,271 @@
+{
+  "date": "2026-10-21",
+  "scope": "Current source candidate; isolated installation and extracted native parser helpers, no model or desktop UI execution",
+  "python_version": "3.12.14",
+  "source_inventory_sha256": "5804bc53fd9f1cbab120b386c8a8907bb5761b5ab12e312b52193dbd7df48a6a",
+  "skills": [
+    "story-skill",
+    "story-skill-plan",
+    "story-skill-write",
+    "story-skill-analyze",
+    "story-skill-review",
+    "story-skill-research",
+    "story-skill-cover",
+    "story-skill-publish"
+  ],
+  "files": 64,
+  "installations": [
+    {
+      "host": "workbuddy",
+      "scope": "project",
+      "relative_target": ".workbuddy/skills",
+      "skills": 8,
+      "files": 64,
+      "first_status": "installed",
+      "check_status": "verified",
+      "repeated_status": "unchanged",
+      "repeated_bytes_unchanged": true,
+      "runtime_commands": [
+        {
+          "arguments": [
+            "--help"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "0f677b9226a03b94789afda4e5d788d1e855bab91d900fae1cb98d0a227b9125"
+        },
+        {
+          "arguments": [
+            "template",
+            "--help"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "1a39f591415c346082c716a2ad4356308b6333223c5dce9827844ac034509e31"
+        }
+      ]
+    },
+    {
+      "host": "workbuddy",
+      "scope": "user",
+      "relative_target": ".workbuddy/skills",
+      "skills": 8,
+      "files": 64,
+      "first_status": "installed",
+      "check_status": "verified",
+      "repeated_status": "unchanged",
+      "repeated_bytes_unchanged": true,
+      "runtime_commands": [
+        {
+          "arguments": [
+            "--help"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "0f677b9226a03b94789afda4e5d788d1e855bab91d900fae1cb98d0a227b9125"
+        },
+        {
+          "arguments": [
+            "template",
+            "--help"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "1a39f591415c346082c716a2ad4356308b6333223c5dce9827844ac034509e31"
+        }
+      ]
+    },
+    {
+      "host": "qoder-cn",
+      "scope": "project",
+      "relative_target": ".qoder/skills",
+      "skills": 8,
+      "files": 64,
+      "first_status": "installed",
+      "check_status": "verified",
+      "repeated_status": "unchanged",
+      "repeated_bytes_unchanged": true,
+      "runtime_commands": [
+        {
+          "arguments": [
+            "--help"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "0f677b9226a03b94789afda4e5d788d1e855bab91d900fae1cb98d0a227b9125"
+        },
+        {
+          "arguments": [
+            "template",
+            "--help"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "1a39f591415c346082c716a2ad4356308b6333223c5dce9827844ac034509e31"
+        }
+      ]
+    },
+    {
+      "host": "qoder-cn",
+      "scope": "user",
+      "relative_target": ".qoder-cn/skills",
+      "skills": 8,
+      "files": 64,
+      "first_status": "installed",
+      "check_status": "verified",
+      "repeated_status": "unchanged",
+      "repeated_bytes_unchanged": true,
+      "runtime_commands": [
+        {
+          "arguments": [
+            "--help"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "0f677b9226a03b94789afda4e5d788d1e855bab91d900fae1cb98d0a227b9125"
+        },
+        {
+          "arguments": [
+            "template",
+            "--help"
+          ],
+          "exit_code": 0,
+          "stdout_sha256": "1a39f591415c346082c716a2ad4356308b6333223c5dce9827844ac034509e31"
+        }
+      ]
+    }
+  ],
+  "native_parsers": [
+    {
+      "app": "WorkBuddy AI",
+      "version": "5.7.6",
+      "public_resource": "main/log-acl-guard.js",
+      "resource_sha256": "e80a6f5ca2ed33232ff1ce0d0bcfccdfc4e856de22e4753782df0b1bae5781d8",
+      "extracted_helpers": [
+        "Vk",
+        "Hk",
+        "Uk",
+        "Wk"
+      ],
+      "helpers_sha256": "a46f9a160cfdca3987b5431635a27a37ba18f29178b01acd9b3cd22b22d943e8",
+      "mode": "Only extracted helpers executed; no application module loaded",
+      "dependency": "Native fast frontmatter path; YAML fallback throws if reached",
+      "results": [
+        {
+          "name": "story-skill",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "66335db1b9f2340450a37e185f543fccaecfb78c6e81cf718ec681bbd219906b"
+        },
+        {
+          "name": "story-skill-plan",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "0f1f8cf09e85130e1dfd2371e71c2c80bed816e00c70e69a0a6ed65708745474"
+        },
+        {
+          "name": "story-skill-write",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518"
+        },
+        {
+          "name": "story-skill-analyze",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f"
+        },
+        {
+          "name": "story-skill-review",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "7563ef2c5e8a7253f5c975c432a19c2ed1080dcb6013f6a99074a5f40c34d998"
+        },
+        {
+          "name": "story-skill-research",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9"
+        },
+        {
+          "name": "story-skill-cover",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209"
+        },
+        {
+          "name": "story-skill-publish",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "8ab985beb7c7d65a3f4318cddd3adb49c9b1adcd63f97933d6fbe866227669d8"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "app": "Qoder CN",
+      "version": "0.4.4",
+      "public_resource": "out/main/index.js",
+      "resource_sha256": "bde1638bf284e9c2816fd5b03ac8c654b0a02f8e036336b96d2b55fc169bd487",
+      "extracted_helpers": [
+        "pz",
+        "Dme",
+        "zjt",
+        "s9",
+        "$jt",
+        "eHt"
+      ],
+      "helpers_sha256": "4574a0f62c072176e75299a5a7dd321dfe0d2de10ac795ffbe1fe2088283dc03",
+      "mode": "Only extracted helpers executed; no application module loaded",
+      "dependency": "Original bundled yaml dependency and Node filesystem; no replacements",
+      "results": [
+        {
+          "name": "story-skill",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "66335db1b9f2340450a37e185f543fccaecfb78c6e81cf718ec681bbd219906b"
+        },
+        {
+          "name": "story-skill-plan",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "0f1f8cf09e85130e1dfd2371e71c2c80bed816e00c70e69a0a6ed65708745474"
+        },
+        {
+          "name": "story-skill-write",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518"
+        },
+        {
+          "name": "story-skill-analyze",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "aa84a1a2791c3aa382ebea55073b38042733c7a4c49495f170cedff64417718f"
+        },
+        {
+          "name": "story-skill-review",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "7563ef2c5e8a7253f5c975c432a19c2ed1080dcb6013f6a99074a5f40c34d998"
+        },
+        {
+          "name": "story-skill-research",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "ae983bfcc2492542167bf439b01dde556f694ed72a6d057f24a2deda3ee8d9b9"
+        },
+        {
+          "name": "story-skill-cover",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209"
+        },
+        {
+          "name": "story-skill-publish",
+          "metadata_and_body_match": true,
+          "skill_md_sha256": "8ab985beb7c7d65a3f4318cddd3adb49c9b1adcd63f97933d6fbe866227669d8"
+        }
+      ],
+      "status": "passed"
+    }
+  ],
+  "regression": {
+    "modules": [
+      "test_install_desktop_hosts",
+      "test_install_check",
+      "test_install_suite",
+      "test_install_antigravity",
+      "test_install_additional_hosts"
+    ],
+    "tests": 47,
+    "failures": 0,
+    "errors": 0,
+    "status": "passed",
+    "python_version": "3.9.6"
+  },
+  "limitations": [
+    "No installation written to actual user or project host roots",
+    "No model calls, account settings or author manuscripts accessed",
+    "Desktop skill list, automatic selection, native upload ZIP and long-form writing not exercised",
+    "Current source includes pre-existing uncommitted platform-draft work; these checks do not constitute a release"
+  ]
+}

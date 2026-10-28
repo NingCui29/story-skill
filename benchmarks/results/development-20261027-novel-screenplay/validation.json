@@ -1,0 +1,180 @@
+{
+  "date": "2026-10-27",
+  "scope": "Local source development; synthetic skill execution and packaging, no release or real work mutation",
+  "source_sha256": {
+    "README.md": "a3388b3edfef604118c8c7950af1645b8f39348ab0bc26d595e98b87af6b18bd",
+    "docs/中文小说上手.md": "4251de5362c7f3224846d4e0955623499abf07bad96466e2a243122ffa749b99",
+    "skills/story-skill/SKILL.md": "cd3f9eca32041f5fc43849a26a0730b30ff8394d96699b7d537fc40702ec5b9c",
+    "skills/story-skill-plan/SKILL.md": "12b1ffab62554dc07ed899c822b4e8818e057cb8507c8e55ced407b6a1c54bb8",
+    "skills/story-skill-plan/agents/openai.yaml": "66152a131e86a4252ce27842e89195a353b40bc642427d2918ad18bc88cdd81a",
+    "skills/story-skill-plan/references/outline.md": "29a503a7f6d9c0ecd6b214262000b085d2093d15c360a4aa02d2339db4bb0898",
+    "skills/story-skill-review/SKILL.md": "26ab2e733dda33e6ea8b2d527164f979b1566b00795aa43568c75d21fa0ecf04",
+    "skills/story-skill-write/SKILL.md": "244d8bf8c512f4f57b17714ae17460a18c761406b1369562e9a2ad44e35486e6"
+  },
+  "regression": {
+    "tests": 73,
+    "passed": 73,
+    "modules": [
+      "test_install_suite",
+      "test_package_codex",
+      "test_package_claude",
+      "test_verify_codex_plugin"
+    ]
+  },
+  "quick_validate": {
+    "passed_skills": [
+      "story-skill",
+      "story-skill-plan",
+      "story-skill-review",
+      "story-skill-write"
+    ],
+    "dependencies": "Ephemeral uv environment with PyYAML; no project dependency change"
+  },
+  "forbidden_technologies_source_scan": "passed",
+  "changed_file_markdown_links": {
+    "files": 8,
+    "targets_checked": 291,
+    "anchors_checked": 191,
+    "missing": []
+  },
+  "repository_wide_links": {
+    "status": "failed",
+    "preexisting_missing_targets": 3,
+    "source": "benchmarks/results/development-20261020-classification-status/assessment.md"
+  },
+  "instruction_budget": {
+    "before": {
+      "passed": false,
+      "loads_checked": 301,
+      "failed": [
+        {
+          "scenario": "short_write_unknown_entry",
+          "call": "writer",
+          "variant": "registered_branch_union",
+          "totals": {
+            "nonspace_chars": 88298,
+            "utf8_bytes": 245979
+          },
+          "limits": {
+            "nonspace_chars": 88000,
+            "utf8_bytes": 245000
+          }
+        },
+        {
+          "scenario": "content_rewrite",
+          "call": "independent_reviewer",
+          "variant": "registered_branch_union",
+          "totals": {
+            "nonspace_chars": 44277,
+            "utf8_bytes": 124471
+          },
+          "limits": {
+            "nonspace_chars": 45000,
+            "utf8_bytes": 124000
+          }
+        }
+      ]
+    },
+    "after": {
+      "passed": false,
+      "loads_checked": 301,
+      "failed": [
+        {
+          "scenario": "short_write_unknown_entry",
+          "call": "writer",
+          "variant": "registered_branch_union",
+          "totals": {
+            "nonspace_chars": 88394,
+            "utf8_bytes": 246206
+          },
+          "limits": {
+            "nonspace_chars": 88000,
+            "utf8_bytes": 245000
+          }
+        },
+        {
+          "scenario": "content_rewrite",
+          "call": "independent_reviewer",
+          "variant": "registered_branch_union",
+          "totals": {
+            "nonspace_chars": 44419,
+            "utf8_bytes": 124749
+          },
+          "limits": {
+            "nonspace_chars": 45000,
+            "utf8_bytes": 124000
+          }
+        }
+      ]
+    }
+  },
+  "input_integrity": {
+    "source.txt": {
+      "sha256": "6a3407de221b5f269423f3c6fb8dc1307ef64c7e33e57f01005a8aa097f46ac7",
+      "unchanged": true
+    },
+    "review/input-script.txt": {
+      "sha256": "dd44ffe6af43b210c97ea584fe12b98fbaac9ab26011cbb84ec183b8e29875ce",
+      "unchanged": true
+    }
+  },
+  "forward_cases": [
+    {
+      "case": "novel-to-script",
+      "status": "completed",
+      "output": "draft",
+      "first_pass_findings": [
+        "Unnecessary archive for an unpublished self-review draft; rule clarified"
+      ]
+    },
+    {
+      "case": "planning-only",
+      "status": "completed",
+      "output": "planning"
+    },
+    {
+      "case": "review-only",
+      "status": "completed",
+      "output": "review/report.txt"
+    },
+    {
+      "case": "direct-storyboard",
+      "status": "completed",
+      "output": "storyboard"
+    },
+    {
+      "case": "rewrite",
+      "status": "completed_after_targeted_feedback",
+      "output": "rewrite",
+      "finding": "Ten oclock key handover deadline omitted; source constraint check clarified and one line repaired"
+    }
+  ],
+  "limits": [
+    "Five synthetic execution cases do not establish universal literary quality, production feasibility, platform acceptance or reader response.",
+    "No full regression discovery, Windows native validation, cross-host skill execution, installation update, release, upload or media generation.",
+    "The registered instruction budget manifest is not an adaptation-specific runtime or token measurement."
+  ],
+  "development_bundles": [
+    {
+      "path": "/private/tmp/story-screenplay-20261027-74yexc/package-final/codex/story-skill-codex-0.6.27.zip",
+      "sha256": "5404d290b8f89068a5d39b5591cb3bfb43c2ac7afce691dde8137906776f0827",
+      "files": 74
+    },
+    {
+      "path": "/private/tmp/story-screenplay-20261027-74yexc/package-final/story-skill-0.6.27.zip",
+      "sha256": "1435dcfbf0d3c168d8c7acb442e084662db5dea7bbf7d4baea2c9be7323b9905",
+      "files": 69
+    },
+    {
+      "path": "/private/tmp/story-screenplay-20261027-74yexc/package-final/story-skill-claude-desktop-0.6.27-r2.zip",
+      "sha256": "d51a5c00551c3a83522be41ee084742e53dc9515dec0351b346ee7d063339e9a",
+      "files": 71
+    }
+  ],
+  "source_hashes_still_match": true,
+  "codex_plugin_validation": {
+    "ok": true,
+    "scope": "Disposable local Codex home; no model turn and no user installation update",
+    "receipt": "/private/tmp/story-screenplay-20261027-74yexc/codex-plugin-final-validation.json"
+  }
+}

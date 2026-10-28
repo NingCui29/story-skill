@@ -1,0 +1,38 @@
+{
+  "version": "5.7.6",
+  "scope": "static public application resources only; no account files, log files, credentials or app mutation",
+  "conclusion": {
+    "user_default": ".workbuddy-ai/skills",
+    "project_default": ".workbuddy-ai/skills",
+    "config_override": "WORKBUDDY_CONFIG_DIR",
+    "project_directory_input": "WORKBUDDY_DATA_FOLDER_NAME initialized from packaged product.dataFolderName at desktop startup"
+  },
+  "evidence": [
+    {
+      "entry": "cli/product.json",
+      "sha256": "a33e6fc59732d387202a8a70979afaac3b8b8d55d7a34c1e1fae9d7aba0dd5fc"
+    },
+    {
+      "entry": "main/code-cache.js",
+      "sha256": "bd50cca17ec76dcb8063cdc45719d0df18887a7bc5a4559e48cc947cd0fd1f17"
+    },
+    {
+      "entry": "main/desktop-monitor-service.js",
+      "sha256": "e40b279387eef11d48afd0183348a3d05350cf4c5ba0add9ef3cd98308396343"
+    },
+    {
+      "entry": "main/index.js",
+      "sha256": "49fa9b2b0495f9439844d644d231d2aad99fc59a32a0b3c89f76fccaa71d8406"
+    },
+    {
+      "entry": "main/server.js",
+      "sha256": "ea34950748468888c7b7a7467364f562abb5e91ded104455c5761bbf5e6ddab7"
+    }
+  ],
+  "chain_summary": [
+    "cli/product.json.dataFolderName=.workbuddy-ai",
+    "Desktop configuration resolves platform.configDir and injects WORKBUDDY_CONFIG_DIR into daemon environment",
+    "desktop-monitor-service initializes WORKBUDDY_DATA_FOLDER_NAME from product dataFolderName; spawned daemon inherits process.env",
+    "server resolves user skills under configDir and project skills under WORKBUDDY_DATA_FOLDER_NAME"
+  ]
+}

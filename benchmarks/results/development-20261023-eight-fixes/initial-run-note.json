@@ -1,0 +1,5 @@
+{
+  "complete": false,
+  "passed": false,
+  "reason": "Interrupted after a reproducible Chrome worker fixture failure; fixture omitted required editor.ready. The user-editor protection assertion was retained, and the full suite will be rerun on the corrected fixture."
+}

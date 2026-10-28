@@ -1,0 +1,819 @@
+{
+  "ok": false,
+  "cases": [
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": false,
+      "stage": "control",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "fired": false,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": false,
+      "stage": "after_chapter",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": false,
+      "stage": "after_title",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": false,
+      "stage": "after_body",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": false,
+      "stage": "inside_title_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#title"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": false,
+      "stage": "inside_body_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#body"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": false,
+      "stage": "save_label",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": true,
+      "stage": "control",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "fired": false,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": true,
+      "stage": "after_chapter",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": true,
+      "stage": "after_title",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": true,
+      "stage": "after_body",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": true,
+      "stage": "inside_title_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": false,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#title"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": true,
+      "stage": "inside_body_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": false,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#body"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": false,
+      "autosave": true,
+      "stage": "save_label",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": false,
+      "stage": "control",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "fired": false,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": false,
+      "stage": "after_chapter",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": false,
+      "stage": "after_title",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": false,
+      "stage": "after_body",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": false,
+      "stage": "inside_title_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#title"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": false,
+      "stage": "inside_body_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#body"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": false,
+      "stage": "save_label",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": true,
+      "stage": "control",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "fired": false,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": true,
+      "stage": "after_chapter",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": true,
+      "stage": "after_title",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": true,
+      "stage": "after_body",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": true,
+      "stage": "inside_title_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": false,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#title"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": true,
+      "stage": "inside_body_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": false,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#body"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "listing": true,
+      "autosave": true,
+      "stage": "save_label",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": false,
+      "stage": "control",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "fired": false,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": false,
+      "stage": "after_chapter",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": false,
+      "stage": "after_title",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": false,
+      "stage": "after_body",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": false,
+      "stage": "inside_title_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#title"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": false,
+      "stage": "inside_body_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#body"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": false,
+      "stage": "save_label",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": true,
+      "stage": "control",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "fired": false,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": true,
+      "stage": "after_chapter",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_editor_changed",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": true,
+      "stage": "after_title",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": true,
+      "stage": "after_body",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": true,
+      "stage": "inside_title_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": false,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#title"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": true,
+      "stage": "inside_body_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": false,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#body"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": false,
+      "autosave": true,
+      "stage": "save_label",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": false,
+      "stage": "control",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "fired": false,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": false,
+      "stage": "after_chapter",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": false,
+      "stage": "after_title",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": false,
+      "stage": "after_body",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": false,
+      "stage": "inside_title_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#title"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": false,
+      "stage": "inside_body_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#body"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": false,
+      "stage": "save_label",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": true,
+      "stage": "control",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "fired": false,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": true,
+      "stage": "after_chapter",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": true,
+      "stage": "after_title",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": true,
+      "stage": "after_body",
+      "ok": true,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": []
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": true,
+      "stage": "inside_title_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": false,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#title"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": true,
+      "stage": "inside_body_kind",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": false,
+      "writes_after_switch": [
+        [
+          "fill",
+          "#body"
+        ]
+      ]
+    },
+    {
+      "platform": "qidian",
+      "listing": true,
+      "autosave": true,
+      "stage": "save_label",
+      "ok": false,
+      "accepted": false,
+      "code": "platform_browser_identity_mismatch",
+      "fired": true,
+      "existing_unchanged": true,
+      "writes_after_switch": [
+        [
+          "click",
+          "#save"
+        ]
+      ]
+    },
+    {
+      "platform": "qimao",
+      "stage": "first_allocation_same_document_url_transition",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "allocated": [
+        "new-1"
+      ]
+    },
+    {
+      "platform": "qidian",
+      "stage": "first_allocation_same_document_url_transition",
+      "ok": true,
+      "accepted": true,
+      "code": null,
+      "allocated": [
+        "new-1"
+      ]
+    }
+  ],
+  "source_sha256": "66816567378cf9b284efc8de1946acb07286388fa3c8ac8d43fb181917348f37",
+  "scope": "Offline adapter fixture. Direct/popup editors, button + fixture autosave, per-field and internal locator-read races; no real account or platform."
+}

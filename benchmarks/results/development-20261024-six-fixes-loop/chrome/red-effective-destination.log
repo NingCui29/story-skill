@@ -1,0 +1,47 @@
+✖ draft action rejects changed effective destination while relative href stays unchanged for create (109.123787ms)
+✖ draft action rejects changed effective destination while relative href stays unchanged for save (56.118506ms)
+✔ draft action preserves stable effective destinations through irrelevant base changes (286.519476ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 1
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 631.839232
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:2373:38
+✖ draft action rejects changed effective destination while relative href stays unchanged for create (109.123787ms)
+  AssertionError [ERR_ASSERTION]: {"stage":"create","initialHref":"next","response":{"schema":1,"id":"verifytarget1create_draft","nonce":"nonce","session_id":"1","binding_sha256":"binding","ok":true,"result":"99"}}
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2385:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:2373:38
+✖ draft action rejects changed effective destination while relative href stays unchanged for save (56.118506ms)
+  AssertionError [ERR_ASSERTION]: {"stage":"save","initialHref":"next","response":{"schema":1,"id":"verifytarget2create_draft","nonce":"nonce","session_id":"2","binding_sha256":"binding","ok":true,"result":"99"}}
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2385:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,23 @@
+{
+  "scope": "Read-only UI test-script corrections; no model invocation or author-state mutation.",
+  "attempts": [
+    {
+      "attempt": 1,
+      "ui_api_assertions_reached": [
+        "same execution id",
+        "completed",
+        "exit_code 0",
+        "same native session id",
+        "evidence_available",
+        "result_verified"
+      ],
+      "failure": "Test expected UI phrase 结果待核对 while actual heading matched 待核对. The initial JSON was accidentally overwritten by the next refused run; this entry is a summary of retained tool output, not the original report.",
+      "cleanup": "Own server closed and stopped record retained; test incorrectly expected service metadata deletion."
+    },
+    {
+      "attempt": 2,
+      "report": "same-receipt-ui-readback-attempt-02.json",
+      "failure": "Guard refused existing stopped service record before any browser operation."
+    }
+  ]
+}

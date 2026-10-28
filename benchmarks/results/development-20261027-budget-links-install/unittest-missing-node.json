@@ -1,0 +1,12 @@
+{
+  "ok": false,
+  "status": "failed",
+  "run": 3081,
+  "passed": 2623,
+  "failed": 42,
+  "errors": 0,
+  "skipped": 437,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "counting": "Successful test cases use addSuccess; failure/error/skip counts may include subtests"
+}

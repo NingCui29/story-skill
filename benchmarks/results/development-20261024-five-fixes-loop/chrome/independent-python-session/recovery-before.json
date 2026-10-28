@@ -1,0 +1,155 @@
+{
+  "source_sha256": "8dee92f95f7f753e5d64ae8d4754dbd00e0ddebb960761fc22a0fce7a0ed8156",
+  "cases": [
+    {
+      "case": "initial_session.json_before",
+      "first": {
+        "ok": false,
+        "error": "OSError"
+      },
+      "status": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "next_attach": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_files_retained": true,
+      "passed": false
+    },
+    {
+      "case": "initial_session.json_after",
+      "first": {
+        "ok": false,
+        "error": "OSError"
+      },
+      "status": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "next_attach": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_files_retained": true,
+      "passed": false
+    },
+    {
+      "case": "initial_lease.json_before",
+      "first": {
+        "ok": false,
+        "error": "OSError"
+      },
+      "status": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "next_attach": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_files_retained": true,
+      "passed": false
+    },
+    {
+      "case": "initial_lease.json_after",
+      "first": {
+        "ok": false,
+        "error": "OSError"
+      },
+      "status": {
+        "ok": true,
+        "value": {
+          "attached": true,
+          "session_id": "0382a796943a44f9997b6aa49635e576",
+          "expires_at": "2026-10-23T16:38:12.923266+00:00",
+          "ready": false,
+          "state": "awaiting_health",
+          "health_state": "awaiting_health",
+          "active_sessions": 1
+        }
+      },
+      "next_attach": {
+        "ok": false,
+        "error": "platform_chrome_worker_busy"
+      },
+      "original_files_retained": true,
+      "passed": false
+    },
+    {
+      "case": "uninitialized_with_outbox-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_claimed-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_response-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_health.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_health-challenge.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_lease.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_unknown.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_.chrome-stage-not_uuid",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    }
+  ],
+  "passed": false,
+  "count": 12
+}

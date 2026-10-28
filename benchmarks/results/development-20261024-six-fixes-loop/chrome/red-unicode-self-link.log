@@ -1,0 +1,28 @@
+✖ draft save alias exception follows actual URL semantics for ASCII and Unicode whitespace (47.0388ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 211.019821
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:2432:1
+✖ draft save alias exception follows actual URL semantics for ASCII and Unicode whitespace (47.0388ms)
+  AssertionError [ERR_ASSERTION]: {"platform":"qimao","href":" #save","self":false,"response":{"schema":1,"id":"verifytarget1create_draft","nonce":"nonce","session_id":"1","binding_sha256":"binding","ok":true,"result":"99"}}
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2449:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

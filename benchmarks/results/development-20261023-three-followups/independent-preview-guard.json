@@ -1,0 +1,18 @@
+{
+  "successful": true,
+  "response": {
+    "schema": 1,
+    "id": "verifytarget1read_draft",
+    "nonce": "nonce",
+    "session_id": "1",
+    "binding_sha256": "binding",
+    "ok": false,
+    "error": "platform_browser_login_required"
+  },
+  "changed": false,
+  "reads": 2,
+  "creates": 0,
+  "saves": 0,
+  "cleanup": true,
+  "user_tabs_retained": 1
+}

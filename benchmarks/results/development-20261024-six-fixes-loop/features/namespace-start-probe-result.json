@@ -1,0 +1,19 @@
+{
+  "ok": true,
+  "seed": 2026102406,
+  "search_oracle_checks": 1120,
+  "distribution": {
+    "version": "0.6.22",
+    "members": 69,
+    "skill_entries": 8,
+    "modified_source_present_byte_exact": true,
+    "installed": false
+  },
+  "source_sha256": {
+    "skills/story-skill/scripts/story_rank_sources.py": "515cf3c8b1233ed1b7520499d7fbaccf422bc87c038a6be8adb080491c6b7ea7",
+    "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+    "scripts/package.py": "1887da1a39b5aeef89864893706895da3ecf48cb2d69dcf45bc7fd37d5981e39",
+    "scripts/install.py": "40bbdd3a12c9026f3919571317c84196c4c3c2634cf9ccd1b4470a877dfc7a02",
+    "scripts/package_npm.py": "639f22cffed56fa7d2fba23dedc0bed08fe5e447fef735002c53c6c611cb5701"
+  }
+}

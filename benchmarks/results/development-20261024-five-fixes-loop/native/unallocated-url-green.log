@@ -1,0 +1,7 @@
+test_unallocated_create_url_change_cannot_reuse_the_original_fields (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_unallocated_create_url_change_cannot_reuse_the_original_fields) ... ok
+test_first_allocated_id_allows_matching_route_change_with_original_fields (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_first_allocated_id_allows_matching_route_change_with_original_fields) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.013s
+
+OK

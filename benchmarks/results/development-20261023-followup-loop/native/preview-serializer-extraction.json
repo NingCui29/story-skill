@@ -1,0 +1,7 @@
+{
+  "original_sha256": "6598d906c8806c6e480e03bcfe289a81f22bf7a0c2c3d9205a5d748007cf06fc",
+  "extracted_sha256": "6598d906c8806c6e480e03bcfe289a81f22bf7a0c2c3d9205a5d748007cf06fc",
+  "byte_identical": true,
+  "source": "benchmarks/results/development-20261023-editor-readback-loop/distribution-final/codex-final/story-skill-codex-0.6.22/plugins/story-skill/skills/story-skill/scripts/story_platform_browser.py",
+  "source_hash_matches_before_turn_manifest": true
+}

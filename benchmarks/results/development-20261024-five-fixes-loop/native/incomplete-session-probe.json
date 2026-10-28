@@ -1,0 +1,20 @@
+{
+  "case": "original_book_first_session_publication_failure",
+  "events": [
+    {
+      "stage": "first_attach",
+      "error": "OSError"
+    },
+    {
+      "stage": "status",
+      "error": "FileNotFoundError"
+    },
+    {
+      "stage": "second_attach",
+      "error": "FileNotFoundError"
+    }
+  ],
+  "incomplete_sessions": 1,
+  "remote_accessed": false,
+  "production_changed": false
+}

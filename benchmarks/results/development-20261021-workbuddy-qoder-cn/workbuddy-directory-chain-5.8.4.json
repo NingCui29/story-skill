@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-21",
+  "version": "5.8.4",
+  "bundle_version": "5.8.4",
+  "bundle_identifier": "com.workbuddy.workbuddy-ai",
+  "scope": "Static public application resources only; no account files, log files, credentials, UI interaction or application mutation",
+  "conclusion": {
+    "product_dataFolderName": ".workbuddy-ai",
+    "user_default": ".workbuddy-ai/skills",
+    "project_default": ".workbuddy-ai/skills",
+    "config_override": "WORKBUDDY_CONFIG_DIR",
+    "project_directory_input": "WORKBUDDY_DATA_FOLDER_NAME initialized from packaged product.dataFolderName at desktop startup",
+    "same_default_directory_names_as_5_7_6": true
+  },
+  "evidence": [
+    {
+      "entry": "Contents/Info.plist",
+      "sha256": "2baaa0c1beff002d7ac723f1f2984f418d6ae0e3fb3745fc85536cbb391cccf6"
+    },
+    {
+      "entry": "cli/product.json",
+      "storage": "app.asar.unpacked/cli/product.json",
+      "sha256": "d1f445fedf4bf4bd7532eb13e267fd404a19618b045fdb3accea1ebefe596c69"
+    },
+    {
+      "entry": "main/app-instance.js",
+      "storage": "app.asar:main/app-instance.js",
+      "sha256": "cab2224fabfc944449c9c66bcbb78579089c27cc9178637ef0435f02d3c4d1b3"
+    },
+    {
+      "entry": "main/workbuddy-paths.js",
+      "storage": "app.asar:main/workbuddy-paths.js",
+      "sha256": "10dd8da358a8ed4c55f50c0b3e43d858a31d7e3c8e81159e49a7de94969bf8f7"
+    },
+    {
+      "entry": "main/workbuddy-product-config.js",
+      "storage": "app.asar:main/workbuddy-product-config.js",
+      "sha256": "735971f3c0e5f6ee3196795fef507a913a93f93bcf5702cb3bc1166dff419278"
+    },
+    {
+      "entry": "main/main-bootstrap.js",
+      "storage": "app.asar:main/main-bootstrap.js",
+      "sha256": "6cb0525f329a44cae259fbaec3f6d73d21c34cae326d82c6bdf5df32e4b48147"
+    },
+    {
+      "entry": "main/server.js",
+      "storage": "app.asar:main/server.js",
+      "sha256": "913bc9ad1e301b6dedee2c7fbd3252025c66025cff6db44765760495255392c1"
+    }
+  ],
+  "chain_summary": [
+    "cli/product.json.dataFolderName remains .workbuddy-ai; this file is unpacked in the 5.8.4 bundle",
+    "workbuddy-product-config resolves the default data-folder name from packaged product configuration; workbuddy-paths delegates its default dirname to that resolver",
+    "app-instance initializes WORKBUDDY_CONFIG_DIR and WORKBUDDY_DATA_FOLDER_NAME from workbuddy-paths before desktop startup",
+    "main-bootstrap resolves platform.configDir from explicit environment or the packaged dataFolderName and passes platform.configDir as WORKBUDDY_CONFIG_DIR in daemon environment",
+    "server resolves userSkillsDir under configDir/skills; project skill scanning joins cwd, WORKBUDDY_DATA_FOLDER_NAME and skills"
+  ],
+  "previous_version_record": "workbuddy-directory-chain.json",
+  "limitations": [
+    "This is a separate 5.8.4 static audit; the existing 5.7.6 evidence record is preserved",
+    "No native parser retest, model call or desktop invocation was performed by this audit",
+    "Explicit environment overrides and instance-specific configuration can change the default paths"
+  ]
+}

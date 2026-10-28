@@ -1,0 +1,520 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "native-input",
+      "ok": true,
+      "actual": " current value ",
+      "expected": " current value "
+    },
+    {
+      "name": "bridge-input",
+      "ok": true,
+      "actual": " current value ",
+      "expected": " current value "
+    },
+    {
+      "name": "native-textarea",
+      "ok": true,
+      "actual": "首行\n\n尾行\n",
+      "expected": "首行\n\n尾行\n"
+    },
+    {
+      "name": "bridge-textarea",
+      "ok": true,
+      "actual": "首行\n\n尾行\n",
+      "expected": "首行\n\n尾行\n"
+    },
+    {
+      "name": "native-select",
+      "ok": true,
+      "actual": "raw-value",
+      "expected": "raw-value"
+    },
+    {
+      "name": "bridge-select",
+      "ok": true,
+      "actual": "raw-value",
+      "expected": "raw-value"
+    },
+    {
+      "name": "native-plain",
+      "ok": true,
+      "actual": " ordinary text ",
+      "expected": " ordinary text "
+    },
+    {
+      "name": "bridge-plain",
+      "ok": true,
+      "actual": " ordinary text ",
+      "expected": " ordinary text "
+    },
+    {
+      "name": "native-editable",
+      "ok": true,
+      "actual": "甲\n乙",
+      "expected": "甲\n乙"
+    },
+    {
+      "name": "bridge-editable",
+      "ok": true,
+      "actual": "甲\n乙",
+      "expected": "甲\n乙"
+    },
+    {
+      "name": "native-attribute",
+      "ok": true,
+      "actual": "account-1",
+      "expected": "account-1"
+    },
+    {
+      "name": "bridge-attribute",
+      "ok": true,
+      "actual": "account-1",
+      "expected": "account-1"
+    },
+    {
+      "name": "native-empty-match",
+      "ok": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "bridge-empty-match",
+      "ok": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "native-duplicate-match",
+      "ok": true,
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "name": "bridge-duplicate-match",
+      "ok": true,
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "name": "native-detached",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-prosemirror",
+      "ok": true,
+      "actual": " 首段 \n\n末段",
+      "expected": " 首段 \n\n末段"
+    },
+    {
+      "name": "bridge-prosemirror",
+      "ok": true,
+      "actual": " 首段 \n\n末段",
+      "expected": " 首段 \n\n末段"
+    },
+    {
+      "name": "native-prosemirror-reject-richtext",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "bridge-prosemirror-reject-richtext",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-identity-unchanged",
+      "ok": true,
+      "actual": {
+        "count": 1,
+        "same": true
+      },
+      "expected": {
+        "count": 1,
+        "same": true
+      }
+    },
+    {
+      "name": "native-identity-duplicate",
+      "ok": true,
+      "actual": {
+        "count": 2,
+        "same": false
+      },
+      "expected": {
+        "count": 2,
+        "same": false
+      }
+    },
+    {
+      "name": "native-identity-retarget-connected",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "native-identity-retarget-rejected",
+      "ok": true,
+      "actual": {
+        "count": 1,
+        "same": false
+      },
+      "expected": {
+        "count": 1,
+        "same": false
+      }
+    },
+    {
+      "name": "native-focus-body",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "native-focus-descendant",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "native-focus-outside",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-focus-no-match",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-focus-duplicate-match",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "preview-snapshot-header",
+      "ok": true,
+      "actual": "第1章 当前标题",
+      "expected": "第1章 当前标题"
+    },
+    {
+      "name": "preview-snapshot-body",
+      "ok": true,
+      "actual": " 首行 \n\n尾行",
+      "expected": " 首行 \n\n尾行"
+    },
+    {
+      "name": "native-preview-snapshot",
+      "ok": true,
+      "actual": " 首行 \n\n尾行",
+      "expected": " 首行 \n\n尾行"
+    },
+    {
+      "name": "preview-snapshot-changed-body",
+      "ok": true,
+      "actual": "后改正文\n\n尾行",
+      "expected": "后改正文\n\n尾行"
+    },
+    {
+      "name": "preview-snapshot-url",
+      "ok": true,
+      "actual": "file:///private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-followup-real-dom-cww02ujv/probe.html",
+      "expected": "file:///private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-followup-real-dom-cww02ujv/probe.html"
+    },
+    {
+      "name": "preview-snapshot-reject-richtext",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "path-empty",
+      "ok": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "path-duplicate",
+      "ok": true,
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "name": "path-detached",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "current-combined-values",
+      "ok": true,
+      "actual": {
+        "input": " current value ",
+        "textarea": "首行\n\n尾行\n",
+        "attribute": "account-1"
+      },
+      "expected": {
+        "input": " current value ",
+        "textarea": "首行\n\n尾行\n",
+        "attribute": "account-1"
+      }
+    },
+    {
+      "name": "current-combined-live-value",
+      "ok": true,
+      "actual": "实时值\n",
+      "expected": "实时值\n"
+    },
+    {
+      "name": "shadow-path-connected",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "shadow-path-hop",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "shadow-snapshot-value",
+      "ok": true,
+      "actual": "影子正文",
+      "expected": "影子正文"
+    },
+    {
+      "name": "nested-shadow-snapshot",
+      "ok": true,
+      "actual": "嵌套影子\n",
+      "expected": "嵌套影子\n"
+    },
+    {
+      "name": "native-shadow-snapshot",
+      "ok": true,
+      "actual": "嵌套影子\n",
+      "expected": "嵌套影子\n"
+    },
+    {
+      "name": "snapshot-missing-path",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "closed-shadow-not-reachable",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "same-path-replacement-values-current",
+      "ok": true,
+      "actual": "新值",
+      "expected": "新值"
+    },
+    {
+      "name": "action-label",
+      "ok": true,
+      "actual": "保存草稿",
+      "expected": "保存草稿"
+    },
+    {
+      "name": "action-url",
+      "ok": true,
+      "actual": "file:///private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-followup-real-dom-cww02ujv/probe.html",
+      "expected": "file:///private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-followup-real-dom-cww02ujv/probe.html"
+    },
+    {
+      "name": "action-enabled",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "action-native-disabled",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "action-aria-disabled",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "action-accessible-fields",
+      "ok": true,
+      "actual": [
+        "发布章节",
+        "提交",
+        "/different"
+      ],
+      "expected": [
+        "发布章节",
+        "提交",
+        "/different"
+      ]
+    },
+    {
+      "name": "action-focus-body",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "action-focus-outside",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "action-missing",
+      "ok": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "action-ambiguous",
+      "ok": true,
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "name": "native-editable-root",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "chrome-editable-root",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "native-editable-paragraph",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "chrome-editable-paragraph",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "native-reject-contained-input",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "chrome-reject-contained-input",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-reject-contained-textarea",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "chrome-reject-contained-textarea",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-reject-contained-select",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "chrome-reject-contained-select",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-reject-contained-button",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "chrome-reject-contained-button",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-reject-contained-iframe",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "chrome-reject-contained-iframe",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-reject-toolbar",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "chrome-reject-toolbar",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-reject-shadow-input",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "chrome-reject-shadow-input",
+      "ok": true,
+      "actual": false,
+      "expected": false
+    },
+    {
+      "name": "native-editable-root-in-shadow",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    },
+    {
+      "name": "chrome-editable-root-in-shadow",
+      "ok": true,
+      "actual": true,
+      "expected": true
+    }
+  ],
+  "location": "file:",
+  "domEngine": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+  "source_hashes": {
+    "skills/story-skill/scripts/story_platform_browser.py": "09b4fa2bd6409f49f74c519181dffea0acaee4594a2990f5f06b0d63a84c7362",
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "003419c8bcf62c67c2e40dade596b1f113ba02c736cec7a86e133baf93e3a5d1"
+  },
+  "scope": "Production DOM functions on local HTML only. Isolated ephemeral profile; no website, account, CUA locator transport or native Playwright integration exercised."
+}

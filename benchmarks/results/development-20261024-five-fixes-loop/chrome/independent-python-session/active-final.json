@@ -1,0 +1,38 @@
+{
+  "source_sha256": "76fad6940eedf5d69aa2241278c2dd0de3d84c68f79336522d2ca33576946dee",
+  "during": {
+    "attached": true,
+    "session_id": "da80df6cd0414e1d8eee0ac29ecac097",
+    "expires_at": "2026-10-23T16:41:28.083122+00:00",
+    "browser_id": "fixture-connected-chrome",
+    "worker_pid": 7961,
+    "worker_instance": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "health_checked_at": "2026-10-23T16:39:28.050894+00:00",
+    "health_expires_at": "2026-10-23T16:40:13.050894+00:00",
+    "ready": true,
+    "state": "connected",
+    "health_state": "healthy",
+    "active_sessions": 1
+  },
+  "after_timeout": {
+    "attached": true,
+    "session_id": "da80df6cd0414e1d8eee0ac29ecac097",
+    "expires_at": "2026-10-23T16:41:28.083122+00:00",
+    "browser_id": "fixture-connected-chrome",
+    "worker_pid": 7961,
+    "worker_instance": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "health_checked_at": "2026-10-23T16:39:28.050894+00:00",
+    "health_expires_at": "2026-10-23T16:40:13.050894+00:00",
+    "ready": true,
+    "state": "connected",
+    "health_state": "healthy",
+    "active_sessions": 1
+  },
+  "duplicate_attach": "platform_chrome_worker_busy",
+  "request_errors": [
+    "platform_chrome_request_timeout"
+  ],
+  "claimed_evidence_retained": true,
+  "claim_replayed": false,
+  "passed": true
+}

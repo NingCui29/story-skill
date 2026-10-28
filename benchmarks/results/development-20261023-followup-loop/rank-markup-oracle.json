@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "cases": 160,
+  "scope": "Equivalent inline markup versus independently constructed plain HTML; offline fixtures",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_rank_sources.py": "ed7e5af20eaa454e2fd7dec481cca51e3b6e4da4c6ded5e2c1092dfb9c71ce3f"
+  }
+}

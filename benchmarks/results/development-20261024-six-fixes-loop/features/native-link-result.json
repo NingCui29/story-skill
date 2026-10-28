@@ -1,0 +1,490 @@
+{
+  "ok": true,
+  "scenarios": 48,
+  "source_sha256": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1",
+  "scope": "Synthetic public create_draft full flow with actual fixture click recording, no real account or browser transport",
+  "results": [
+    {
+      "platform": "qimao",
+      "href": "",
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+          "href": "",
+          "documentHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+          "resolvedHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit"
+        }
+      ]
+    },
+    {
+      "platform": "qimao",
+      "href": "",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "#save",
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+          "href": "#save",
+          "documentHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save",
+          "resolvedHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save"
+        }
+      ]
+    },
+    {
+      "platform": "qimao",
+      "href": "#save",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": " \t#save\r\n",
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+          "href": " \t#save\r\n",
+          "documentHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save",
+          "resolvedHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save"
+        }
+      ]
+    },
+    {
+      "platform": "qimao",
+      "href": " \t#save\r\n",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": " #save",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": " #save",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "　#save",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "　#save",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": " #save",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": " #save",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": " ",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": " ",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "　",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "　",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "?draft=1",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "?draft=1",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "next",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "next",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qimao",
+      "href": "/draft/next",
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+          "href": "/draft/next",
+          "documentHref": "https://zuozhe.qimao.com/draft/next",
+          "resolvedHref": "https://zuozhe.qimao.com/draft/next"
+        }
+      ]
+    },
+    {
+      "platform": "qimao",
+      "href": "/draft/next",
+      "base_override": true,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+          "href": "/draft/next",
+          "documentHref": "https://zuozhe.qimao.com/draft/next",
+          "resolvedHref": "https://zuozhe.qimao.com/draft/next"
+        }
+      ]
+    },
+    {
+      "platform": "qimao",
+      "href": null,
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+          "href": null,
+          "documentHref": null,
+          "resolvedHref": null
+        }
+      ]
+    },
+    {
+      "platform": "qimao",
+      "href": null,
+      "base_override": true,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+          "href": null,
+          "documentHref": null,
+          "resolvedHref": null
+        }
+      ]
+    },
+    {
+      "platform": "qidian",
+      "href": "",
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+          "href": "",
+          "documentHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+          "resolvedHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit"
+        }
+      ]
+    },
+    {
+      "platform": "qidian",
+      "href": "",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "#save",
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+          "href": "#save",
+          "documentHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit#save",
+          "resolvedHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit#save"
+        }
+      ]
+    },
+    {
+      "platform": "qidian",
+      "href": "#save",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": " \t#save\r\n",
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+          "href": " \t#save\r\n",
+          "documentHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit#save",
+          "resolvedHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit#save"
+        }
+      ]
+    },
+    {
+      "platform": "qidian",
+      "href": " \t#save\r\n",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": " #save",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": " #save",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "　#save",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "　#save",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": " #save",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": " #save",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": " ",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": " ",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "　",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "　",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "?draft=1",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "?draft=1",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "next",
+      "base_override": false,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "next",
+      "base_override": true,
+      "returned": null,
+      "error": "platform_browser_unsafe_save",
+      "actual_click_destinations": []
+    },
+    {
+      "platform": "qidian",
+      "href": "/draft/next",
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+          "href": "/draft/next",
+          "documentHref": "https://write.qq.com/draft/next",
+          "resolvedHref": "https://write.qq.com/draft/next"
+        }
+      ]
+    },
+    {
+      "platform": "qidian",
+      "href": "/draft/next",
+      "base_override": true,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+          "href": "/draft/next",
+          "documentHref": "https://write.qq.com/draft/next",
+          "resolvedHref": "https://write.qq.com/draft/next"
+        }
+      ]
+    },
+    {
+      "platform": "qidian",
+      "href": null,
+      "base_override": false,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+          "href": null,
+          "documentHref": null,
+          "resolvedHref": null
+        }
+      ]
+    },
+    {
+      "platform": "qidian",
+      "href": null,
+      "base_override": true,
+      "returned": "new-1",
+      "error": null,
+      "actual_click_destinations": [
+        {
+          "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+          "href": null,
+          "documentHref": null,
+          "resolvedHref": null
+        }
+      ]
+    }
+  ]
+}

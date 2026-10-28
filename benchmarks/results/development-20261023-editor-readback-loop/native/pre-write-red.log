@@ -1,0 +1,49 @@
+FFF
+======================================================================
+FAIL: test_internal_fill_type_read_cannot_redirect_the_actual_write (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_internal_fill_type_read_cannot_redirect_the_actual_write) (platform='qimao')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 459, in test_internal_fill_type_read_cannot_redirect_the_actual_write
+    self.assertEqual(adapter._context.editors["900"], previous)
+AssertionError: {'cha[15 chars]e': '不得覆盖旧标题', 'body': '原稿正文\n\n', 'state': '草[18 chars]900'} != {'cha[15 chars]e': '原稿标题', 'body': '原稿正文\n\n', 'state': '草稿',[15 chars]900'}
+  {'body': '原稿正文\n\n',
+   'chapter': 1,
+   'remote_id': '900',
+   'state': '草稿',
+-  'title': '不得覆盖旧标题'}
+?            ^^^^^
+
++  'title': '原稿标题'}
+?            ^^
+
+
+======================================================================
+FAIL: test_internal_fill_type_read_cannot_redirect_the_actual_write (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_internal_fill_type_read_cannot_redirect_the_actual_write) (platform='qidian')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 459, in test_internal_fill_type_read_cannot_redirect_the_actual_write
+    self.assertEqual(adapter._context.editors["900"], previous)
+AssertionError: {'cha[15 chars]e': '不得覆盖旧标题', 'body': '原稿正文\n\n', 'state': '草[18 chars]900'} != {'cha[15 chars]e': '原稿标题', 'body': '原稿正文\n\n', 'state': '草稿',[15 chars]900'}
+  {'body': '原稿正文\n\n',
+   'chapter': 1,
+   'remote_id': '900',
+   'state': '草稿',
+-  'title': '不得覆盖旧标题'}
+?            ^^^^^
+
++  'title': '原稿标题'}
+?            ^^
+
+
+======================================================================
+FAIL: test_internal_save_label_read_cannot_redirect_the_save_click (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_internal_save_label_read_cannot_redirect_the_save_click)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 477, in test_internal_save_label_read_cannot_redirect_the_save_click
+    self.assertNotIn(("click", "#save"), adapter._context.events)
+AssertionError: ('click', '#save') unexpectedly found in [('goto', 'https://zuozhe.qimao.com/fixture/list'), ('wait', '#account'), ('wait', '#book'), ('goto', 'https://zuozhe.qimao.com/fixture/list'), ('wait', '#account'), ('wait', '#book'), ('wait', '#account'), ('wait', '#book'), ('click', '#create'), ('goto', 'https://zuozhe.qimao.com/fixture/edit/empty-1'), ('loaded', 'https://zuozhe.qimao.com/fixture/edit/empty-1'), ('wait', '#account'), ('wait', '#book'), ('wait', '#account'), ('wait', '#book'), ('wait', '#save'), ('wait', '#account'), ('wait', '#book'), ('goto', 'https://zuozhe.qimao.com/fixture/list'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('goto', 'https://zuozhe.qimao.com/fixture/submitted'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('fill', '#chapter'), ('wait', '#account'), ('wait', '#book'), ('fill', '#title'), ('wait', '#account'), ('wait', '#book'), ('fill', '#body'), ('wait', '#account'), ('wait', '#book'), ('goto', 'https://zuozhe.qimao.com/fixture/list'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('goto', 'https://zuozhe.qimao.com/fixture/submitted'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('wait', '#account'), ('wait', '#book'), ('wait', '#tab'), ('wait', '#search'), ('wait', '#filter'), ('goto', 'https://zuozhe.qimao.com/fixture/edit/900'), ('click', '#save'), ('wait', '#account'), ('wait', '#book')]
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.068s
+
+FAILED (failures=3)

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Story Skill · 草稿与发布准备"
+  short_description: "准备番茄、七猫、起点正式章节材料，按已配置入口保存草稿并核对结果"
+  default_prompt: "使用 $story-skill:story-skill-publish 为指定作品准备章节材料，或按已配置的平台入口保存草稿，检查正式稿资格并说明实际保存及核对状态。"

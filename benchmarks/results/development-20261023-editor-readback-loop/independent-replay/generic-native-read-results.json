@@ -1,0 +1,122 @@
+[
+  {
+    "version": "current",
+    "platform": "qimao",
+    "change": "same_book_other_draft",
+    "status": "rejected",
+    "observation": {
+      "error": "platform_browser_identity_mismatch"
+    },
+    "switched": 1,
+    "fills": 0,
+    "saves": 0,
+    "editor_closed": true
+  },
+  {
+    "version": "current",
+    "platform": "qimao",
+    "change": "account_switch",
+    "status": "rejected",
+    "observation": {
+      "error": "platform_browser_identity_mismatch"
+    },
+    "switched": 1,
+    "fills": 0,
+    "saves": 0,
+    "editor_closed": true
+  },
+  {
+    "version": "current",
+    "platform": "qidian",
+    "change": "same_book_other_draft",
+    "status": "rejected",
+    "observation": {
+      "error": "platform_browser_identity_mismatch"
+    },
+    "switched": 1,
+    "fills": 0,
+    "saves": 0,
+    "editor_closed": true
+  },
+  {
+    "version": "current",
+    "platform": "qidian",
+    "change": "account_switch",
+    "status": "rejected",
+    "observation": {
+      "error": "platform_browser_identity_mismatch"
+    },
+    "switched": 1,
+    "fills": 0,
+    "saves": 0,
+    "editor_closed": true
+  },
+  {
+    "version": "HEAD",
+    "platform": "qimao",
+    "change": "same_book_other_draft",
+    "status": "accepted",
+    "observation": {
+      "remote_id": "900",
+      "title": "目标原稿",
+      "body": "另一草稿正文",
+      "state": "draft",
+      "url": "https://zuozhe.qimao.com/fixture/edit/901"
+    },
+    "switched": 1,
+    "fills": 0,
+    "saves": 0,
+    "editor_closed": true
+  },
+  {
+    "version": "HEAD",
+    "platform": "qimao",
+    "change": "account_switch",
+    "status": "accepted",
+    "observation": {
+      "remote_id": "900",
+      "title": "目标原稿",
+      "body": "目标原稿正文",
+      "state": "draft",
+      "url": "https://zuozhe.qimao.com/fixture/edit/900"
+    },
+    "switched": 1,
+    "fills": 0,
+    "saves": 0,
+    "editor_closed": true
+  },
+  {
+    "version": "HEAD",
+    "platform": "qidian",
+    "change": "same_book_other_draft",
+    "status": "accepted",
+    "observation": {
+      "remote_id": "900",
+      "title": "目标原稿",
+      "body": "另一草稿正文",
+      "state": "draft",
+      "url": "https://write.qq.com/fixture/edit/901"
+    },
+    "switched": 1,
+    "fills": 0,
+    "saves": 0,
+    "editor_closed": true
+  },
+  {
+    "version": "HEAD",
+    "platform": "qidian",
+    "change": "account_switch",
+    "status": "accepted",
+    "observation": {
+      "remote_id": "900",
+      "title": "目标原稿",
+      "body": "目标原稿正文",
+      "state": "draft",
+      "url": "https://write.qq.com/fixture/edit/900"
+    },
+    "switched": 1,
+    "fills": 0,
+    "saves": 0,
+    "editor_closed": true
+  }
+]

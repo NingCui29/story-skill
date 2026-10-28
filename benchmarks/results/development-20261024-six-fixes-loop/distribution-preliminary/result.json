@@ -1,0 +1,30 @@
+{
+  "version": "0.6.22",
+  "source_members": 69,
+  "artifacts": [
+    {
+      "kind": "standard",
+      "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-six-fixes-loop/distribution/story-skill-0.6.22.zip",
+      "members": 69,
+      "source_members_verified": 69,
+      "latest_seven_runtime_modules_exact": true
+    },
+    {
+      "kind": "claude",
+      "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-six-fixes-loop/distribution/claude.zip",
+      "members": 71,
+      "source_members_verified": 69,
+      "latest_seven_runtime_modules_exact": true
+    },
+    {
+      "kind": "codex",
+      "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-six-fixes-loop/distribution/codex-final/story-skill-codex-0.6.22.zip",
+      "members": 74,
+      "source_members_verified": 69,
+      "latest_seven_runtime_modules_exact": true
+    }
+  ],
+  "manifest_sets_equal": true,
+  "host_scope_mappings": 38,
+  "no_installation": true
+}

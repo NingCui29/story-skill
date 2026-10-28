@@ -1,0 +1,66 @@
+ M README.md
+ M benchmarks/instruction-loads.json
+ M "docs/\345\267\245\344\275\234\345\217\260\346\233\264\346\226\260\346\265\201\347\250\213.md"
+ M "docs/\345\267\245\344\275\234\345\217\260\351\234\200\346\261\202\344\270\216\350\277\233\345\261\225.md"
+ M "docs/\347\233\256\345\275\225\347\273\223\346\236\204.md"
+ M scripts/package.py
+ M skills/story-skill-plan/SKILL.md
+ M skills/story-skill-plan/references/outline.md
+ M skills/story-skill-publish/references/platform-drafts.md
+ M skills/story-skill-research/SKILL.md
+ M skills/story-skill-research/references/rank-scan.md
+ M skills/story-skill-research/references/reader-validation.md
+ M skills/story-skill-research/references/research-handoff.md
+ M skills/story-skill-review/references/history.md
+ M skills/story-skill-write/references/chapter.md
+ M skills/story-skill-write/references/drama.md
+ M skills/story-skill/SKILL.md
+ M skills/story-skill/references/project-state.md
+ M skills/story-skill/scripts/story.py
+ M skills/story-skill/scripts/story_chrome_bridge.mjs
+ M skills/story-skill/scripts/story_history.py
+ M skills/story-skill/scripts/story_platform_browser.py
+ M skills/story-skill/scripts/story_platform_chrome_bridge.py
+ M skills/story-skill/scripts/story_platform_drafts.py
+ M skills/story-skill/scripts/story_rank.py
+ M skills/story-skill/scripts/story_rank_sources.py
+ M skills/story-skill/scripts/story_research.py
+ M skills/story-skill/scripts/story_workbench.py
+ M skills/story-skill/scripts/story_workbench_archives.py
+ M tests/test_chrome_bridge_driver.mjs
+ M tests/test_chrome_worker.mjs
+ M tests/test_instruction_budget.py
+ M tests/test_package.py
+ M tests/test_platform_browser.py
+ M tests/test_platform_browser_fanqie_body.py
+ M tests/test_platform_browser_preview.py
+ M tests/test_platform_chrome_bridge.py
+ M tests/test_platform_draft_auto_connect.py
+ M tests/test_rank.py
+ M tests/test_workbench_archives.py
+ M tests/test_workbench_draft_preferences.py
+ M tests/test_workbench_platform_drafts.py
+?? benchmarks/results/development-20261020-classification-status/
+?? benchmarks/results/development-20261020-material-scan/
+?? benchmarks/results/development-20261021-workbuddy-qoder-cn/
+?? benchmarks/results/development-20261022-rank-scan/
+?? benchmarks/results/development-20261022-research-handoff/
+?? benchmarks/results/development-20261023-editor-readback-loop/
+?? benchmarks/results/development-20261023-eight-fixes/
+?? benchmarks/results/development-20261023-followup-loop/
+?? benchmarks/results/development-20261023-four-followups/
+?? benchmarks/results/development-20261023-three-followups/
+?? benchmarks/results/development-20261023-two-followups/
+?? benchmarks/results/development-20261024-five-fixes-loop/
+?? benchmarks/results/development-20261024-six-fixes-loop/
+?? tests/fixtures/rank-samples/
+?? tests/test_book_title.py
+?? tests/test_platform_browser_batch.py
+?? tests/test_platform_browser_editor_readback.py
+?? tests/test_platform_chrome_initialization.py
+?? tests/test_platform_profile_markers.py
+?? tests/test_rank_compatibility.py
+?? tests/test_rank_source_markup.py
+?? tests/test_rank_source_visibility.py
+?? tests/test_research_long_reasons.py
+?? tests/test_workbench_recovery_pagination.py

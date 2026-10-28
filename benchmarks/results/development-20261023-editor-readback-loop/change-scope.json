@@ -1,0 +1,19 @@
+{
+  "changed_baseline_files": [
+    "skills/story-skill/scripts/story_chrome_bridge.mjs",
+    "skills/story-skill/scripts/story_platform_browser.py",
+    "tests/test_chrome_bridge_driver.mjs",
+    "tests/test_platform_browser.py",
+    "tests/test_platform_browser_preview.py"
+  ],
+  "added_regression_file": "tests/test_platform_browser_editor_readback.py",
+  "added_python_methods": 20,
+  "added_node_top_level_tests": 19,
+  "source_hashes": {
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "565df7ac89a22ba4437deadeec437841d5ec1a7278c825c6f166a22a8486cf7d",
+    "skills/story-skill/scripts/story_platform_browser.py": "e775880fc9c6a9ab6f6ca5518205d80387cb01954e81a98a34f6628bf42a478a",
+    "tests/test_chrome_bridge_driver.mjs": "5fa32f8b695766292263be296af5f91870bd0f27c3aeea83db6a6a51e672b7f2",
+    "tests/test_platform_browser.py": "56f59e72b74dd5b03f31e5e065fbf6003eb5f48c487e456143f046cdcf6cba26",
+    "tests/test_platform_browser_preview.py": "598b7a1dffa23d6632cc2bc1d6dd4203579b0c7140852f7e72047e8ead7fd9d8"
+  }
+}

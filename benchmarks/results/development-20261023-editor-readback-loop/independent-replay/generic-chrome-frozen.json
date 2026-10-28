@@ -1,0 +1,16 @@
+{
+  "version": "final-frozen",
+  "result": {
+    "schema": 1,
+    "id": "verifytarget1read_draft",
+    "nonce": "nonce",
+    "session_id": "1",
+    "binding_sha256": "binding",
+    "ok": false,
+    "error": "platform_browser_identity_mismatch"
+  },
+  "switched": true,
+  "urlReads": 2,
+  "creates": 0,
+  "saves": 0
+}

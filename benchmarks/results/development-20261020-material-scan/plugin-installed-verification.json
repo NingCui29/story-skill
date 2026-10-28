@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "date": "2026-10-20",
+  "status": "passed",
+  "plugin_version": "0.6.19",
+  "build_scope": "local development update; no public release",
+  "source_workbench_sha256": "03252f37c3f628eba5bccde4ab43632c8893472e870150ddc4af5078051525e8",
+  "bundle_sha256": "bbfc13d99011c2ff818ce1c4b1152b68fb44f2e1f6e9547453057bfc462ddbff",
+  "previous_installation_fully_backed_up": true,
+  "actual_default_codex_home_verified": true,
+  "installed_files": 65,
+  "installed_bytes_exact_match": true,
+  "loaded_skills": 8,
+  "skill_load_errors": 0,
+  "model_turn_started": false,
+  "isolated_plugin_verification": "passed",
+  "actual_installed_runtime_smoke": "passed",
+  "actual_loopback_http_status": 200,
+  "unrelated_codex_configuration_unchanged": true,
+  "installed_bytes_unchanged_after_runtime": true,
+  "privacy": "Raw account information, document content, IDs, local session URLs and tokens omitted."
+}

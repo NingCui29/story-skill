@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "date": "2026-10-28T02:00:49.475038+00:00",
+  "ok": true,
+  "scope": "Unreleased source change; no live books, installations, model dispatch, platform pages, browser or native UI used",
+  "default_length": [
+    2000,
+    null
+  ],
+  "minimum_includes_punctuation": true,
+  "count_title": false,
+  "count_method": "visible_nonspace_v2",
+  "default_maximum_removed": true,
+  "preserves_explicit_user_ranges_and_committed_history": true,
+  "tests": {
+    "backend": {
+      "run": 240,
+      "passed": 239,
+      "skipped": 1,
+      "failed": 0,
+      "errors": 0,
+      "seconds": 18.067,
+      "log": "backend.log"
+    },
+    "workbench": {
+      "run": 62,
+      "passed": 62,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0,
+      "seconds": 16.297,
+      "log": "workbench.log"
+    }
+  },
+  "run": 302,
+  "passed": 301,
+  "skipped": 1,
+  "instruction_variants": 305,
+  "cli_report": "cli.json",
+  "skill_frontmatter": [
+    "story-skill-plan",
+    "story-skill-write"
+  ],
+  "source_sha256": {
+    "skills/story-skill/scripts/story.py": "f1beb4278d581b9a1ff041c550c2deaccaa5f628827f6aad77cae2b1fa663ff9",
+    "skills/story-skill/scripts/story_workbench.py": "68b213bd76d804230c5888afbfc49adb1dc4ad1acec465f1367f8e2b5d5a873c",
+    "skills/story-skill/scripts/story_outline.py": "88a4f7937a35061c4a93ead949fe151d3f7b5806ba3997187bb6164dd9e1f032",
+    "skills/story-skill-write/references/chapter.md": "1a379f5e2ce0573bf66d79ac1ae2a07046f69027b369cdc0e996a84d4ec1c8d5",
+    "skills/story-skill-plan/SKILL.md": "c7206911995c1b0de9502a8106a6d483676366cb023dbdf2e3aabc47bcf05d8c",
+    "skills/story-skill/references/project-state.md": "c37a6667d427b6448e0911ccd6a84fb6814a98dae35f493eafb791f4495ab116",
+    "tests/test_minimum_chapter_length.py": "1066d92ca9792f683c93198de295d7aec71619fa9e18c64b03402b9a2e2133c5",
+    "tests/test_workbench_flow.py": "7a8312006f1503bcd57cbfdff595678fde7420d84224897168ac5345c7ab9ca1"
+  },
+  "packages_rebuilt": false,
+  "installation_updated": false
+}

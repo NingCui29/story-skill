@@ -1,0 +1,41 @@
+[
+  {
+    "href": " #save",
+    "remote": "new-1",
+    "error": null,
+    "destinations": [
+      {
+        "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+        "href": " #save",
+        "documentHref": "https://zuozhe.qimao.com/fixture/100/modify/ #save",
+        "resolvedHref": "https://zuozhe.qimao.com/fixture/100/modify/ #save"
+      }
+    ]
+  },
+  {
+    "href": "　#save",
+    "remote": "new-1",
+    "error": null,
+    "destinations": [
+      {
+        "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+        "href": "　#save",
+        "documentHref": "https://zuozhe.qimao.com/fixture/100/modify/　#save",
+        "resolvedHref": "https://zuozhe.qimao.com/fixture/100/modify/　#save"
+      }
+    ]
+  },
+  {
+    "href": "#save",
+    "remote": "new-1",
+    "error": null,
+    "destinations": [
+      {
+        "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+        "href": "#save",
+        "documentHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save",
+        "resolvedHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save"
+      }
+    ]
+  }
+]

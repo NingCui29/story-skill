@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "date": "2026-10-28T04:40:43.102577+00:00",
+  "ok": true,
+  "version": "0.6.29",
+  "default_length": [
+    2000,
+    null
+  ],
+  "fixes": [
+    "Deep current-plan JSON returns a structured error",
+    "V2-invisible prefixes cannot hide a wrong fragment chapter",
+    "Native dispatch rechecks frozen binding, request, scope and cancellation under the book lock",
+    "Known no-invocation and completed attempts cannot redispatch; existing native evidence stays unresolved",
+    "Native candidates preserve chapter and scope through workbench editing, recovery and archive",
+    "Fragment counts include the first body line and exclude headings after ignored prefixes",
+    "Candidate publication and task-attachment checkpoints resume only identical interrupted results",
+    "Malformed receipt timestamps cannot corrupt a saved task"
+  ],
+  "related_compatibility": [
+    "Original full-chapter default remains minimum 2000 with no ceiling",
+    "Explicit fragments do not inherit the full-chapter minimum",
+    "Legacy plans, authentic exceptions, committed chapters and imported baselines remain protected",
+    "Legacy launches without raw request hashes and input scope retain their fallback checks",
+    "Same-key calls only read back; unknown outcomes never automatically retry"
+  ],
+  "tests": {
+    "backend": {
+      "run": 490,
+      "passed": 489,
+      "skipped": 1,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 116.604,
+      "log": "backend.log"
+    },
+    "host": {
+      "run": 51,
+      "passed": 51,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 23.558,
+      "log": "host.log"
+    },
+    "workbench": {
+      "run": 129,
+      "passed": 129,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 25.799,
+      "log": "workbench.log"
+    }
+  },
+  "unique_tests": {
+    "run": 670,
+    "passed": 669,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0,
+    "counting": "490 backend + 51 host + 129 workbench; all test IDs verified unique"
+  },
+  "final_integration_repeat": {
+    "run": 8,
+    "passed": 8,
+    "duplicated_with": "workbench",
+    "log": "workbench-final-integration.log"
+  },
+  "skipped_test": "test_writing_brief native Windows path/handle timestamp semantics on macOS",
+  "instruction_variants": 305,
+  "markdown_links": {
+    "status": "passed",
+    "files_scanned": 689,
+    "links_checked": 5249,
+    "missing": [],
+    "scope": "Inline local Markdown file targets; remote URLs and heading anchors are not checked"
+  },
+  "source_sha256": {
+    "skills/story-skill/scripts/story.py": "c427f4f6a08c767313c92a5d9c93a84d0f7185d9f5b7ee8648560e1d35b77b1c",
+    "skills/story-skill/scripts/story_tasks.py": "2efc7b656f8b183f43cba8571aaa9eddbcb839df083c680c9b6e5e8eb504cb3e",
+    "skills/story-skill/scripts/story_task_worker.py": "a09971b7ca65033a0392b6e0278440425608d408fce734edd2c8fd3cd37be11f",
+    "skills/story-skill/scripts/story_workbench.py": "3e77900cd48e8cb27bd456f3e3384e8431e89cc1ada5b75ee73f3cda2af413e5",
+    "skills/story-skill/references/workbench.md": "15170c064cb8c0e5af5cb29973ced01741d5c25e64b3434f4d9bbe706450e236",
+    "tests/test_host_execution.py": "91fed4e5302b55115813d065a3ed4fb64115f2606033692c524ba45e56a9426e",
+    "tests/test_task_scope_compatibility.py": "79c652eaeedebeda22c7399571ddcebfc65c1a265b5f33493590e5e281a810c2",
+    "tests/test_workbench_writing_scope.py": "3355f3752128b1cb4229f0aa7d89b9b1415ac76215630472b10ce060a13fa2c4"
+  },
+  "checks": {
+    "syntax": "passed",
+    "git_diff_check": "passed",
+    "forbidden_source": {
+      "ok": true,
+      "policy": "no-qt-no-php",
+      "errors": []
+    }
+  },
+  "boundaries": {
+    "real_model_calls": false,
+    "graphical_browser_acceptance": false,
+    "platform_real_page_acceptance": "deferred_by_user",
+    "installed_or_packaged": false,
+    "real_author_books_changed": false,
+    "automatic_retry": false
+  }
+}

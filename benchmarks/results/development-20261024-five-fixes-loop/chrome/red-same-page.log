@@ -1,0 +1,46 @@
+✖ draft action href changes fail before clicking same-page create or save (32.117205ms)
+✖ stable same-page create and save action href forms remain supported (3.87185ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 226.235546
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:2353:1
+✖ draft action href changes fail before clicking same-page create or save (32.117205ms)
+  AssertionError [ERR_ASSERTION]: {"stage":"create","initialHref":null,"response":{"schema":1,"id":"verifytarget1create_draft","nonce":"nonce","session_id":"1","binding_sha256":"binding","ok":false,"error":"platform_browser_unsafe_navigation"}}
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2357:47)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:2364:1
+✖ stable same-page create and save action href forms remain supported (3.87185ms)
+  AssertionError [ERR_ASSERTION]: {"stage":"create","initialHref":null,"response":{"schema":1,"id":"verifytarget2create_draft","nonce":"nonce","session_id":"2","binding_sha256":"binding","ok":false,"error":"platform_browser_unsafe_navigation"}}
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2368:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

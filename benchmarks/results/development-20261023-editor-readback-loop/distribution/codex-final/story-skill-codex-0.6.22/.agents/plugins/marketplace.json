@@ -1,0 +1,20 @@
+{
+  "name": "story-skill-local",
+  "interface": {
+    "displayName": "Story Skill Local"
+  },
+  "plugins": [
+    {
+      "name": "story-skill",
+      "source": {
+        "source": "local",
+        "path": "./plugins/story-skill"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+FF
+======================================================================
+FAIL: test_rebound_task_cannot_attach_a_frozen_host_result_to_a_different_scope (test_host_execution.ManagedHostTests.test_rebound_task_cannot_attach_a_frozen_host_result_to_a_different_scope)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_host_execution.py", line 336, in test_rebound_task_cannot_attach_a_frozen_host_result_to_a_different_scope
+    self.assertEqual(done['execution']['state'], 'result_conflict')
+AssertionError: 'completed' != 'result_conflict'
+- completed
++ result_conflict
+
+
+======================================================================
+FAIL: test_legacy_prompt_scope_change_cannot_relabel_a_frozen_host_result (test_host_execution.ManagedHostTests.test_legacy_prompt_scope_change_cannot_relabel_a_frozen_host_result)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_host_execution.py", line 369, in test_legacy_prompt_scope_change_cannot_relabel_a_frozen_host_result
+    self.assertEqual(done['execution']['state'], 'result_conflict')
+AssertionError: 'completed' != 'result_conflict'
+- completed
++ result_conflict
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.688s
+
+FAILED (failures=2)

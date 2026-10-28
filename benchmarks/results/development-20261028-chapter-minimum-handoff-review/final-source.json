@@ -1,0 +1,13 @@
+{
+  "captured_at": "2026-10-28T04:40:41.226789+00:00",
+  "sha256": {
+    "skills/story-skill/scripts/story.py": "c427f4f6a08c767313c92a5d9c93a84d0f7185d9f5b7ee8648560e1d35b77b1c",
+    "skills/story-skill/scripts/story_tasks.py": "2efc7b656f8b183f43cba8571aaa9eddbcb839df083c680c9b6e5e8eb504cb3e",
+    "skills/story-skill/scripts/story_task_worker.py": "a09971b7ca65033a0392b6e0278440425608d408fce734edd2c8fd3cd37be11f",
+    "skills/story-skill/scripts/story_workbench.py": "3e77900cd48e8cb27bd456f3e3384e8431e89cc1ada5b75ee73f3cda2af413e5",
+    "skills/story-skill/references/workbench.md": "15170c064cb8c0e5af5cb29973ced01741d5c25e64b3434f4d9bbe706450e236",
+    "tests/test_host_execution.py": "91fed4e5302b55115813d065a3ed4fb64115f2606033692c524ba45e56a9426e",
+    "tests/test_task_scope_compatibility.py": "79c652eaeedebeda22c7399571ddcebfc65c1a265b5f33493590e5e281a810c2",
+    "tests/test_workbench_writing_scope.py": "3355f3752128b1cb4229f0aa7d89b9b1415ac76215630472b10ce060a13fa2c4"
+  }
+}

@@ -1,0 +1,3062 @@
+{
+  "schema": 1,
+  "started_at": "2026-10-27T06:48:24.826675+00:00",
+  "version": "0.6.28",
+  "ok": true,
+  "scope": "Local development distribution validation; no publication or real host installation",
+  "isolation": {
+    "output_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z",
+    "output_root_git_ignored": true,
+    "published": false,
+    "installed_to_real_host": false,
+    "modified_real_host_configuration": false,
+    "model_turn_started": false,
+    "real_novel_modified": false,
+    "npm_install_executed": false,
+    "npm_publish_executed": false,
+    "full_test_suite_repeated": false
+  },
+  "environment": {
+    "python": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "python_version": "3.12.14",
+    "platform": "macOS-15.8.1-x86_64-i386-64bit",
+    "node": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+    "npm_cli": "/Users/cuining/Documents/GitHub/story-skill/dist/release-v0.6.25-candidate/build-tools/npm-11.6.4/package/bin/npm-cli.js",
+    "node_version": "v24.19.0\n",
+    "npm_version": "11.6.4\n"
+  },
+  "commands": {
+    "build_standard": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/package.py",
+        "--output",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-0.6.28.zip"
+      ],
+      "exit_code": 0,
+      "seconds": 0.463,
+      "stdout_sha256": "e2fe5e28754dee27284edb386fbf9bf678b0024bfd9c80d89be14d562f0b8913",
+      "stderr": "",
+      "json": {
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-0.6.28.zip",
+        "version": "0.6.28",
+        "files": 72,
+        "sha256": "b4cfc0e8e0d0030079098fa4fa0f92ee3257b43790271a6a3acefae7508faed4",
+        "bytes": 768759
+      }
+    },
+    "build_claude": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/package_claude.py",
+        "--output",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-claude-desktop-0.6.28-r2.zip"
+      ],
+      "exit_code": 0,
+      "seconds": 0.466,
+      "stdout_sha256": "40c5af187a7c1f8dc790f1d4d3c2c61050cfa388c5d441bd4b0329dc032425aa",
+      "stderr": "",
+      "json": {
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-claude-desktop-0.6.28-r2.zip",
+        "version": "0.6.28",
+        "files": 74,
+        "source_files": 72,
+        "skill_name": "story-skill",
+        "bundle_revision": 2,
+        "skill_entry_count": 1,
+        "entry_path_mapping": {
+          "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+          "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+          "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+          "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+          "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+          "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+          "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+          "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+        },
+        "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+        "sha256": "11be5a7277b7109e692cf2c824aba94ec4f24fae549c77b72793fb4fb0ed0241",
+        "bytes": 775310
+      }
+    },
+    "build_codex": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/package_codex.py",
+        "--output-dir",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex"
+      ],
+      "exit_code": 0,
+      "seconds": 0.511,
+      "stdout_sha256": "afe5a7900ad1181c8eb4a72a37372772d8504b8da395cacbe54ab7d1a8a7e645",
+      "stderr": "",
+      "json": {
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28.zip",
+        "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28.zip.sha256",
+        "marketplace_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28",
+        "plugin_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill",
+        "version": "0.6.28",
+        "skill_count": 8,
+        "payload_files": 75,
+        "bundle_files": 77,
+        "sha256": "d531c0233dcea6dc8f13244c534f0e2ce148dbd268570e8e55013c9f442a2ce5",
+        "source_payload_files": 72,
+        "adapted_ui_files": 8
+      }
+    },
+    "build_dsh": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/package_dsh.py",
+        "--output",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin",
+        "--archive",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-dsh-0.6.28.zip"
+      ],
+      "exit_code": 0,
+      "seconds": 0.561,
+      "stdout_sha256": "ff160eaa1914a701d7dafc6bcbf2f858237cbd566c5357fac763d7ef84acbea6",
+      "stderr": "",
+      "json": {
+        "ok": true,
+        "package": "story-skill-dsh",
+        "version": "0.6.28",
+        "path": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin",
+        "skills": [
+          "story-skill",
+          "story-skill-plan",
+          "story-skill-write",
+          "story-skill-analyze",
+          "story-skill-review",
+          "story-skill-research",
+          "story-skill-cover",
+          "story-skill-publish"
+        ],
+        "files": 80,
+        "skill_files": 72,
+        "sha256": "61ad80bfb54a4dc4b4fc523d68b9593a0b3a79002219d739a50c93ed7abeb949",
+        "receipt": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin.json",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-dsh-0.6.28.zip",
+        "archive_sha256": "3de9f9b36081e0d1576b20dbb74a50e8f3cad9b700bc3be96904cfaff0c3f851",
+        "archive_bytes": 775450
+      }
+    },
+    "node_version": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.052,
+      "stdout_sha256": "b7677d3ec37ee1897ba07dc2cfe8292fe421c9ac93396cca5bbece486d1a2a41",
+      "stderr": "",
+      "stdout": "v24.19.0\n"
+    },
+    "npm_version": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.947,
+      "stdout_sha256": "01c0dc536fca6ccdd306ef4ec03080c8942f028f63bb41869a6ceea2884f190e",
+      "stderr": "",
+      "stdout": "0.6.28\n"
+    },
+    "build_npm": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/package_npm.py",
+        "build",
+        "--archive",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-0.6.28.zip",
+        "--sha256-file",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-0.6.28.zip.sha256",
+        "--output-dir",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/npm"
+      ],
+      "exit_code": 0,
+      "seconds": 3.116,
+      "stdout_sha256": "05db2a5e7a1191e105d0bd8c17d410062402ece0cb253a94cf13d022fbea7be9",
+      "stderr": "",
+      "json": {
+        "ok": true,
+        "name": "@ningcui29/story-skill",
+        "version": "0.6.28",
+        "tarball": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/npm/ningcui29-story-skill-0.6.28.tgz",
+        "sha256": "81e52c2d0f57ecfd99de47737d7adbb149e7ed5990bf174962044d9b54d3a44c",
+        "integrity": "sha512-KpIM/iCn+uOghD9KDpXK6jlsM6kvqqNldz73i/qMy5jBF5WGCEhQGlRk/yNCu0//McwduPn9Cve4qOiGsA8a2Q==",
+        "bytes": 708804,
+        "registry": "https://npm.pkg.github.com",
+        "archive_sha256": "b4cfc0e8e0d0030079098fa4fa0f92ee3257b43790271a6a3acefae7508faed4",
+        "payload_manifest": {
+          "story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-analyze/SKILL.md": "c438ff05fa677f19301c1f2c4e3e73b2c3c23588bb3e0a6912e68fa0a86b2af1",
+          "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+          "story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+          "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+          "story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+          "story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+          "story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-plan/SKILL.md": "12b1ffab62554dc07ed899c822b4e8818e057cb8507c8e55ced407b6a1c54bb8",
+          "story-skill-plan/agents/openai.yaml": "66152a131e86a4252ce27842e89195a353b40bc642427d2918ad18bc88cdd81a",
+          "story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+          "story-skill-plan/references/fanqie-tags.md": "533f8cbdc62da3c03dca4dcfa849fe51e4f25e1f8165fe8fd43219bef399460f",
+          "story-skill-plan/references/outline.md": "29a503a7f6d9c0ecd6b214262000b085d2093d15c360a4aa02d2339db4bb0898",
+          "story-skill-plan/references/qidian-categories.md": "eeaaa495baca608a31163f9f3e07f88112ab432b379926fbd2dc37904e1d03e7",
+          "story-skill-plan/references/qimao-tags.md": "0eebca1c8915efb3a29bea3a2ca39f29d4141c40dc4f8ead67c2efe0d340affb",
+          "story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+          "story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-publish/SKILL.md": "f2f7e7fd8acfea1cc2df245d458d2ce3f1f3ca816e3695e15a3917239d65df41",
+          "story-skill-publish/agents/openai.yaml": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+          "story-skill-publish/references/platform-drafts.md": "161f85a55c6831b0d8ba22fd0a23bcffb3e24e2410ee634d41caefb00d011a68",
+          "story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-research/SKILL.md": "03b9e9d85cc4bff57b0d31944d3cce444d3a7049749dc597aa7a22f53f515a31",
+          "story-skill-research/agents/openai.yaml": "3fb4cfaded0bf4206c2f3cf7dbc1e6ccf7ee62f5fd4ca1a406b509a0b9bcde28",
+          "story-skill-research/references/rank-scan.md": "4537af29249b86f56f0717848868250a3a2f48cd332350570395e22e7c46ef80",
+          "story-skill-research/references/reader-records.md": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+          "story-skill-research/references/reader-validation.md": "16a02d840c87d3f4e80aad3998b11854fece0e86eb7b6f3f35bc6a7500e4f5bc",
+          "story-skill-research/references/research-handoff.md": "e010886fd50a4c31be8f933eebd9f4ff7278021310f93a337a0c3de0f2e10b88",
+          "story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-review/SKILL.md": "50526925c440adc71ce87254a57300b78cb2c113481ca6ac8ce8313a7e1839ae",
+          "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+          "story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+          "story-skill-review/references/history.md": "00e56c9a2c3757d213dfa555e1571548ba1de05ad38dcda729f5fc8a74430be6",
+          "story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+          "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-write/SKILL.md": "244d8bf8c512f4f57b17714ae17460a18c761406b1369562e9a2ad44e35486e6",
+          "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+          "story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+          "story-skill-write/references/chapter.md": "0600340ea9ff9f3957f2b608e8f82cae97531d23daca18e0066b8ebece0e5cb2",
+          "story-skill-write/references/content-review.md": "62a1fc4da3aefd6ba95aeabe73acb14b1114efd79d360b2519a57a103ea3fcac",
+          "story-skill-write/references/drama.md": "b3c54bd737a56a02ac7b415c5b455d01b35b1f89ae5a3534b19782fe33697cb1",
+          "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+          "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+          "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+          "story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+          "story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill/SKILL.md": "4eb292df99b7a09eaa12e31c9689d4fd9fcfff6c123fd175ba67a5a4359b2c53",
+          "story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+          "story-skill/references/project-state.md": "320fd02bf6b443bc56b18021ef7dfbcdd510659e45c5a8289268e220839fba30",
+          "story-skill/references/workbench.md": "7620379d4e40df5421d096b50df372c79951aa04341b98085a0df4e337f381b3",
+          "story-skill/scripts/story.py": "a9c4c6c38405217394bc7f71460a1ba0b609dc4ff608ac3176a9032b0c22f0a5",
+          "story-skill/scripts/story_chrome_bridge.mjs": "3510e41f3a4acdfb7a06c8264d50e7bbff7f7ba7d21eb04b1419dfd9af75105a",
+          "story-skill/scripts/story_chrome_worker.mjs": "8a989996066f2013094f9818b17288f17bc23e1f37cccf52190c68f26b6346f6",
+          "story-skill/scripts/story_chrome_worker.py": "1f057244f8cb62a2a348d9a6a8b96bedcfb8ba85ca3d9e026c83c6f64e115282",
+          "story-skill/scripts/story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+          "story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+          "story-skill/scripts/story_platform_browser.py": "1191dc7f0932d8d1df02a0d208f512c84086e4c6723a83002c411c91e8cb776c",
+          "story-skill/scripts/story_platform_chrome_bridge.py": "fa7c9c2f26648f73f591b7947f3e6598e4d7f6452c6f8571be8f133b6187543a",
+          "story-skill/scripts/story_platform_drafts.py": "847ffb61f03488f1860eaa0cc15ef4521a8ea6be378c915d7c5110d02fb142c4",
+          "story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+          "story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+          "story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+          "story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+          "story-skill/scripts/story_reader_feedback.py": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+          "story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+          "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+          "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+          "story-skill/scripts/story_tasks.py": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+          "story-skill/scripts/story_workbench.py": "242f7f87c5c503cee9d9024e82d82889d0de4d714f453e1128271fe66e52c495",
+          "story-skill/scripts/story_workbench_archives.py": "718c9b4a2601f63d5e1d558f28a0c713d0d3de911993ac390ad70f0d2f73367b",
+          "story-skill/scripts/story_workbench_books.py": "dda3232c90471017c06d097c3032197c2aa7e9f7d916e391adb14d0f99557b63",
+          "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+        },
+        "wrapper_manifest": {
+          "package.json": "c09b423566421b673b109ff49a19c68219507a80f4c5752b9974b03d960b67da",
+          "README.md": "a4586c22dc0f6276b9083660475e3700a34a8def51bec71463bbc67ba6c4a990",
+          "LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+        },
+        "package_manifest": {
+          "name": "@ningcui29/story-skill",
+          "version": "0.6.28",
+          "description": "Eight Story Skill skills for Chinese novel writing, review and publication preparation",
+          "license": "SEE LICENSE IN LICENSE",
+          "repository": {
+            "type": "git",
+            "url": "https://github.com/NingCui29/story-skill.git"
+          },
+          "homepage": "https://github.com/NingCui29/story-skill#readme",
+          "publishConfig": {
+            "registry": "https://npm.pkg.github.com"
+          },
+          "files": [
+            "story-skill-analyze/LICENSE",
+            "story-skill-analyze/SKILL.md",
+            "story-skill-analyze/agents/openai.yaml",
+            "story-skill-analyze/references/deep-reading.md",
+            "story-skill-analyze/references/examples.md",
+            "story-skill-cover/LICENSE",
+            "story-skill-cover/SKILL.md",
+            "story-skill-cover/agents/openai.yaml",
+            "story-skill-plan/LICENSE",
+            "story-skill-plan/SKILL.md",
+            "story-skill-plan/agents/openai.yaml",
+            "story-skill-plan/references/blurb.md",
+            "story-skill-plan/references/fanqie-tags.md",
+            "story-skill-plan/references/outline.md",
+            "story-skill-plan/references/qidian-categories.md",
+            "story-skill-plan/references/qimao-tags.md",
+            "story-skill-plan/references/short-platform.md",
+            "story-skill-publish/LICENSE",
+            "story-skill-publish/SKILL.md",
+            "story-skill-publish/agents/openai.yaml",
+            "story-skill-publish/references/platform-drafts.md",
+            "story-skill-research/LICENSE",
+            "story-skill-research/SKILL.md",
+            "story-skill-research/agents/openai.yaml",
+            "story-skill-research/references/rank-scan.md",
+            "story-skill-research/references/reader-records.md",
+            "story-skill-research/references/reader-validation.md",
+            "story-skill-research/references/research-handoff.md",
+            "story-skill-review/LICENSE",
+            "story-skill-review/SKILL.md",
+            "story-skill-review/agents/openai.yaml",
+            "story-skill-review/references/fanqie-content-review.md",
+            "story-skill-review/references/history.md",
+            "story-skill-review/references/qimao-content-review.md",
+            "story-skill-write/LICENSE",
+            "story-skill-write/SKILL.md",
+            "story-skill-write/agents/openai.yaml",
+            "story-skill-write/references/chapter-continuity.md",
+            "story-skill-write/references/chapter.md",
+            "story-skill-write/references/content-review.md",
+            "story-skill-write/references/drama.md",
+            "story-skill-write/references/long-form.md",
+            "story-skill-write/references/punctuation.md",
+            "story-skill-write/references/suspense-evidence.md",
+            "story-skill-write/references/writing-handoff.md",
+            "story-skill/LICENSE",
+            "story-skill/SKILL.md",
+            "story-skill/agents/openai.yaml",
+            "story-skill/references/project-state.md",
+            "story-skill/references/workbench.md",
+            "story-skill/scripts/story.py",
+            "story-skill/scripts/story_chrome_bridge.mjs",
+            "story-skill/scripts/story_chrome_worker.mjs",
+            "story-skill/scripts/story_chrome_worker.py",
+            "story-skill/scripts/story_history.py",
+            "story-skill/scripts/story_outline.py",
+            "story-skill/scripts/story_platform_browser.py",
+            "story-skill/scripts/story_platform_chrome_bridge.py",
+            "story-skill/scripts/story_platform_drafts.py",
+            "story-skill/scripts/story_publish.py",
+            "story-skill/scripts/story_punctuation.py",
+            "story-skill/scripts/story_rank.py",
+            "story-skill/scripts/story_rank_sources.py",
+            "story-skill/scripts/story_reader_feedback.py",
+            "story-skill/scripts/story_research.py",
+            "story-skill/scripts/story_search.py",
+            "story-skill/scripts/story_storage.py",
+            "story-skill/scripts/story_tasks.py",
+            "story-skill/scripts/story_workbench.py",
+            "story-skill/scripts/story_workbench_archives.py",
+            "story-skill/scripts/story_workbench_books.py",
+            "story-skill/scripts/story_world.py",
+            "LICENSE"
+          ]
+        }
+      }
+    },
+    "verify_npm": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/package_npm.py",
+        "verify",
+        "--archive",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-0.6.28.zip",
+        "--sha256-file",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-0.6.28.zip.sha256",
+        "--tarball",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/npm/ningcui29-story-skill-0.6.28.tgz",
+        "--expected-manifest",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/npm-build.json"
+      ],
+      "exit_code": 0,
+      "seconds": 0.201,
+      "stdout_sha256": "05db2a5e7a1191e105d0bd8c17d410062402ece0cb253a94cf13d022fbea7be9",
+      "stderr": "",
+      "json": {
+        "ok": true,
+        "name": "@ningcui29/story-skill",
+        "version": "0.6.28",
+        "tarball": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/npm/ningcui29-story-skill-0.6.28.tgz",
+        "sha256": "81e52c2d0f57ecfd99de47737d7adbb149e7ed5990bf174962044d9b54d3a44c",
+        "integrity": "sha512-KpIM/iCn+uOghD9KDpXK6jlsM6kvqqNldz73i/qMy5jBF5WGCEhQGlRk/yNCu0//McwduPn9Cve4qOiGsA8a2Q==",
+        "bytes": 708804,
+        "registry": "https://npm.pkg.github.com",
+        "archive_sha256": "b4cfc0e8e0d0030079098fa4fa0f92ee3257b43790271a6a3acefae7508faed4",
+        "payload_manifest": {
+          "story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-analyze/SKILL.md": "c438ff05fa677f19301c1f2c4e3e73b2c3c23588bb3e0a6912e68fa0a86b2af1",
+          "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+          "story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+          "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+          "story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+          "story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+          "story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-plan/SKILL.md": "12b1ffab62554dc07ed899c822b4e8818e057cb8507c8e55ced407b6a1c54bb8",
+          "story-skill-plan/agents/openai.yaml": "66152a131e86a4252ce27842e89195a353b40bc642427d2918ad18bc88cdd81a",
+          "story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+          "story-skill-plan/references/fanqie-tags.md": "533f8cbdc62da3c03dca4dcfa849fe51e4f25e1f8165fe8fd43219bef399460f",
+          "story-skill-plan/references/outline.md": "29a503a7f6d9c0ecd6b214262000b085d2093d15c360a4aa02d2339db4bb0898",
+          "story-skill-plan/references/qidian-categories.md": "eeaaa495baca608a31163f9f3e07f88112ab432b379926fbd2dc37904e1d03e7",
+          "story-skill-plan/references/qimao-tags.md": "0eebca1c8915efb3a29bea3a2ca39f29d4141c40dc4f8ead67c2efe0d340affb",
+          "story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+          "story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-publish/SKILL.md": "f2f7e7fd8acfea1cc2df245d458d2ce3f1f3ca816e3695e15a3917239d65df41",
+          "story-skill-publish/agents/openai.yaml": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+          "story-skill-publish/references/platform-drafts.md": "161f85a55c6831b0d8ba22fd0a23bcffb3e24e2410ee634d41caefb00d011a68",
+          "story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-research/SKILL.md": "03b9e9d85cc4bff57b0d31944d3cce444d3a7049749dc597aa7a22f53f515a31",
+          "story-skill-research/agents/openai.yaml": "3fb4cfaded0bf4206c2f3cf7dbc1e6ccf7ee62f5fd4ca1a406b509a0b9bcde28",
+          "story-skill-research/references/rank-scan.md": "4537af29249b86f56f0717848868250a3a2f48cd332350570395e22e7c46ef80",
+          "story-skill-research/references/reader-records.md": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+          "story-skill-research/references/reader-validation.md": "16a02d840c87d3f4e80aad3998b11854fece0e86eb7b6f3f35bc6a7500e4f5bc",
+          "story-skill-research/references/research-handoff.md": "e010886fd50a4c31be8f933eebd9f4ff7278021310f93a337a0c3de0f2e10b88",
+          "story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-review/SKILL.md": "50526925c440adc71ce87254a57300b78cb2c113481ca6ac8ce8313a7e1839ae",
+          "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+          "story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+          "story-skill-review/references/history.md": "00e56c9a2c3757d213dfa555e1571548ba1de05ad38dcda729f5fc8a74430be6",
+          "story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+          "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill-write/SKILL.md": "244d8bf8c512f4f57b17714ae17460a18c761406b1369562e9a2ad44e35486e6",
+          "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+          "story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+          "story-skill-write/references/chapter.md": "0600340ea9ff9f3957f2b608e8f82cae97531d23daca18e0066b8ebece0e5cb2",
+          "story-skill-write/references/content-review.md": "62a1fc4da3aefd6ba95aeabe73acb14b1114efd79d360b2519a57a103ea3fcac",
+          "story-skill-write/references/drama.md": "b3c54bd737a56a02ac7b415c5b455d01b35b1f89ae5a3534b19782fe33697cb1",
+          "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+          "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+          "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+          "story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+          "story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+          "story-skill/SKILL.md": "4eb292df99b7a09eaa12e31c9689d4fd9fcfff6c123fd175ba67a5a4359b2c53",
+          "story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+          "story-skill/references/project-state.md": "320fd02bf6b443bc56b18021ef7dfbcdd510659e45c5a8289268e220839fba30",
+          "story-skill/references/workbench.md": "7620379d4e40df5421d096b50df372c79951aa04341b98085a0df4e337f381b3",
+          "story-skill/scripts/story.py": "a9c4c6c38405217394bc7f71460a1ba0b609dc4ff608ac3176a9032b0c22f0a5",
+          "story-skill/scripts/story_chrome_bridge.mjs": "3510e41f3a4acdfb7a06c8264d50e7bbff7f7ba7d21eb04b1419dfd9af75105a",
+          "story-skill/scripts/story_chrome_worker.mjs": "8a989996066f2013094f9818b17288f17bc23e1f37cccf52190c68f26b6346f6",
+          "story-skill/scripts/story_chrome_worker.py": "1f057244f8cb62a2a348d9a6a8b96bedcfb8ba85ca3d9e026c83c6f64e115282",
+          "story-skill/scripts/story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+          "story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+          "story-skill/scripts/story_platform_browser.py": "1191dc7f0932d8d1df02a0d208f512c84086e4c6723a83002c411c91e8cb776c",
+          "story-skill/scripts/story_platform_chrome_bridge.py": "fa7c9c2f26648f73f591b7947f3e6598e4d7f6452c6f8571be8f133b6187543a",
+          "story-skill/scripts/story_platform_drafts.py": "847ffb61f03488f1860eaa0cc15ef4521a8ea6be378c915d7c5110d02fb142c4",
+          "story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+          "story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+          "story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+          "story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+          "story-skill/scripts/story_reader_feedback.py": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+          "story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+          "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+          "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+          "story-skill/scripts/story_tasks.py": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+          "story-skill/scripts/story_workbench.py": "242f7f87c5c503cee9d9024e82d82889d0de4d714f453e1128271fe66e52c495",
+          "story-skill/scripts/story_workbench_archives.py": "718c9b4a2601f63d5e1d558f28a0c713d0d3de911993ac390ad70f0d2f73367b",
+          "story-skill/scripts/story_workbench_books.py": "dda3232c90471017c06d097c3032197c2aa7e9f7d916e391adb14d0f99557b63",
+          "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+        },
+        "wrapper_manifest": {
+          "package.json": "c09b423566421b673b109ff49a19c68219507a80f4c5752b9974b03d960b67da",
+          "README.md": "a4586c22dc0f6276b9083660475e3700a34a8def51bec71463bbc67ba6c4a990",
+          "LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+        },
+        "package_manifest": {
+          "name": "@ningcui29/story-skill",
+          "version": "0.6.28",
+          "description": "Eight Story Skill skills for Chinese novel writing, review and publication preparation",
+          "license": "SEE LICENSE IN LICENSE",
+          "repository": {
+            "type": "git",
+            "url": "https://github.com/NingCui29/story-skill.git"
+          },
+          "homepage": "https://github.com/NingCui29/story-skill#readme",
+          "publishConfig": {
+            "registry": "https://npm.pkg.github.com"
+          },
+          "files": [
+            "story-skill-analyze/LICENSE",
+            "story-skill-analyze/SKILL.md",
+            "story-skill-analyze/agents/openai.yaml",
+            "story-skill-analyze/references/deep-reading.md",
+            "story-skill-analyze/references/examples.md",
+            "story-skill-cover/LICENSE",
+            "story-skill-cover/SKILL.md",
+            "story-skill-cover/agents/openai.yaml",
+            "story-skill-plan/LICENSE",
+            "story-skill-plan/SKILL.md",
+            "story-skill-plan/agents/openai.yaml",
+            "story-skill-plan/references/blurb.md",
+            "story-skill-plan/references/fanqie-tags.md",
+            "story-skill-plan/references/outline.md",
+            "story-skill-plan/references/qidian-categories.md",
+            "story-skill-plan/references/qimao-tags.md",
+            "story-skill-plan/references/short-platform.md",
+            "story-skill-publish/LICENSE",
+            "story-skill-publish/SKILL.md",
+            "story-skill-publish/agents/openai.yaml",
+            "story-skill-publish/references/platform-drafts.md",
+            "story-skill-research/LICENSE",
+            "story-skill-research/SKILL.md",
+            "story-skill-research/agents/openai.yaml",
+            "story-skill-research/references/rank-scan.md",
+            "story-skill-research/references/reader-records.md",
+            "story-skill-research/references/reader-validation.md",
+            "story-skill-research/references/research-handoff.md",
+            "story-skill-review/LICENSE",
+            "story-skill-review/SKILL.md",
+            "story-skill-review/agents/openai.yaml",
+            "story-skill-review/references/fanqie-content-review.md",
+            "story-skill-review/references/history.md",
+            "story-skill-review/references/qimao-content-review.md",
+            "story-skill-write/LICENSE",
+            "story-skill-write/SKILL.md",
+            "story-skill-write/agents/openai.yaml",
+            "story-skill-write/references/chapter-continuity.md",
+            "story-skill-write/references/chapter.md",
+            "story-skill-write/references/content-review.md",
+            "story-skill-write/references/drama.md",
+            "story-skill-write/references/long-form.md",
+            "story-skill-write/references/punctuation.md",
+            "story-skill-write/references/suspense-evidence.md",
+            "story-skill-write/references/writing-handoff.md",
+            "story-skill/LICENSE",
+            "story-skill/SKILL.md",
+            "story-skill/agents/openai.yaml",
+            "story-skill/references/project-state.md",
+            "story-skill/references/workbench.md",
+            "story-skill/scripts/story.py",
+            "story-skill/scripts/story_chrome_bridge.mjs",
+            "story-skill/scripts/story_chrome_worker.mjs",
+            "story-skill/scripts/story_chrome_worker.py",
+            "story-skill/scripts/story_history.py",
+            "story-skill/scripts/story_outline.py",
+            "story-skill/scripts/story_platform_browser.py",
+            "story-skill/scripts/story_platform_chrome_bridge.py",
+            "story-skill/scripts/story_platform_drafts.py",
+            "story-skill/scripts/story_publish.py",
+            "story-skill/scripts/story_punctuation.py",
+            "story-skill/scripts/story_rank.py",
+            "story-skill/scripts/story_rank_sources.py",
+            "story-skill/scripts/story_reader_feedback.py",
+            "story-skill/scripts/story_research.py",
+            "story-skill/scripts/story_search.py",
+            "story-skill/scripts/story_storage.py",
+            "story-skill/scripts/story_tasks.py",
+            "story-skill/scripts/story_workbench.py",
+            "story-skill/scripts/story_workbench_archives.py",
+            "story-skill/scripts/story_workbench_books.py",
+            "story-skill/scripts/story_world.py",
+            "LICENSE"
+          ]
+        }
+      }
+    },
+    "standard_task-list_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "task-list",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.039,
+      "stdout_sha256": "e95e44861900f6137a80b9e96681b199471f09bf41b4f618d3cbb40a4f285e8e",
+      "stderr": "",
+      "stdout": "usage: story.py task-list [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          [--offset OFFSET] [--limit LIMIT]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --offset OFFSET\n  --limit LIMIT\n"
+    },
+    "dsh_task-list_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "task-list",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.022,
+      "stdout_sha256": "e95e44861900f6137a80b9e96681b199471f09bf41b4f618d3cbb40a4f285e8e",
+      "stderr": "",
+      "stdout": "usage: story.py task-list [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          [--offset OFFSET] [--limit LIMIT]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --offset OFFSET\n  --limit LIMIT\n"
+    },
+    "npm_task-list_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "task-list",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.007,
+      "stdout_sha256": "e95e44861900f6137a80b9e96681b199471f09bf41b4f618d3cbb40a4f285e8e",
+      "stderr": "",
+      "stdout": "usage: story.py task-list [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          [--offset OFFSET] [--limit LIMIT]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --offset OFFSET\n  --limit LIMIT\n"
+    },
+    "claude_task-list_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "task-list",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.026,
+      "stdout_sha256": "e95e44861900f6137a80b9e96681b199471f09bf41b4f618d3cbb40a4f285e8e",
+      "stderr": "",
+      "stdout": "usage: story.py task-list [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          [--offset OFFSET] [--limit LIMIT]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --offset OFFSET\n  --limit LIMIT\n"
+    },
+    "codex_task-list_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "task-list",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.023,
+      "stdout_sha256": "e95e44861900f6137a80b9e96681b199471f09bf41b4f618d3cbb40a4f285e8e",
+      "stderr": "",
+      "stdout": "usage: story.py task-list [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          [--offset OFFSET] [--limit LIMIT]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --offset OFFSET\n  --limit LIMIT\n"
+    },
+    "standard_task-get_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "task-get",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.007,
+      "stdout_sha256": "cccc1e9d6d31d5d9350b7b08b52192ddc64c69b0a8bc20350d3edfa39cb417e5",
+      "stderr": "",
+      "stdout": "usage: story.py task-get [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                         --task-id TASK_ID\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n"
+    },
+    "dsh_task-get_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "task-get",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.016,
+      "stdout_sha256": "cccc1e9d6d31d5d9350b7b08b52192ddc64c69b0a8bc20350d3edfa39cb417e5",
+      "stderr": "",
+      "stdout": "usage: story.py task-get [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                         --task-id TASK_ID\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n"
+    },
+    "npm_task-get_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "task-get",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.008,
+      "stdout_sha256": "cccc1e9d6d31d5d9350b7b08b52192ddc64c69b0a8bc20350d3edfa39cb417e5",
+      "stderr": "",
+      "stdout": "usage: story.py task-get [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                         --task-id TASK_ID\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n"
+    },
+    "claude_task-get_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "task-get",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.002,
+      "stdout_sha256": "cccc1e9d6d31d5d9350b7b08b52192ddc64c69b0a8bc20350d3edfa39cb417e5",
+      "stderr": "",
+      "stdout": "usage: story.py task-get [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                         --task-id TASK_ID\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n"
+    },
+    "codex_task-get_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "task-get",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.004,
+      "stdout_sha256": "cccc1e9d6d31d5d9350b7b08b52192ddc64c69b0a8bc20350d3edfa39cb417e5",
+      "stderr": "",
+      "stdout": "usage: story.py task-get [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                         --task-id TASK_ID\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n"
+    },
+    "standard_task-handoff_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "task-handoff",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.014,
+      "stdout_sha256": "dd9adb3f279ef981b0987dd87782866db05bae8eae1b28218fb1b72bebc81ae8",
+      "stderr": "",
+      "stdout": "usage: story.py task-handoff [-h] --book BOOK\n                             [--expect-book-id EXPECT_BOOK_ID] --task-id\n                             TASK_ID --version VERSION\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n"
+    },
+    "dsh_task-handoff_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "task-handoff",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.015,
+      "stdout_sha256": "dd9adb3f279ef981b0987dd87782866db05bae8eae1b28218fb1b72bebc81ae8",
+      "stderr": "",
+      "stdout": "usage: story.py task-handoff [-h] --book BOOK\n                             [--expect-book-id EXPECT_BOOK_ID] --task-id\n                             TASK_ID --version VERSION\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n"
+    },
+    "npm_task-handoff_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "task-handoff",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.007,
+      "stdout_sha256": "dd9adb3f279ef981b0987dd87782866db05bae8eae1b28218fb1b72bebc81ae8",
+      "stderr": "",
+      "stdout": "usage: story.py task-handoff [-h] --book BOOK\n                             [--expect-book-id EXPECT_BOOK_ID] --task-id\n                             TASK_ID --version VERSION\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n"
+    },
+    "claude_task-handoff_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "task-handoff",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.994,
+      "stdout_sha256": "dd9adb3f279ef981b0987dd87782866db05bae8eae1b28218fb1b72bebc81ae8",
+      "stderr": "",
+      "stdout": "usage: story.py task-handoff [-h] --book BOOK\n                             [--expect-book-id EXPECT_BOOK_ID] --task-id\n                             TASK_ID --version VERSION\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n"
+    },
+    "codex_task-handoff_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "task-handoff",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.003,
+      "stdout_sha256": "dd9adb3f279ef981b0987dd87782866db05bae8eae1b28218fb1b72bebc81ae8",
+      "stderr": "",
+      "stdout": "usage: story.py task-handoff [-h] --book BOOK\n                             [--expect-book-id EXPECT_BOOK_ID] --task-id\n                             TASK_ID --version VERSION\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n"
+    },
+    "npm_task-return_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "task-return",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.027,
+      "stdout_sha256": "207131d4f35610d4f3f8a10cc0922a46d838956685858778bf88f9e6c3ad58a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-return [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION --result-file\n                            RESULT_FILE\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --result-file RESULT_FILE\n                        Book-relative JSON below .story/drafts/\n"
+    },
+    "dsh_task-return_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "task-return",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.034,
+      "stdout_sha256": "207131d4f35610d4f3f8a10cc0922a46d838956685858778bf88f9e6c3ad58a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-return [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION --result-file\n                            RESULT_FILE\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --result-file RESULT_FILE\n                        Book-relative JSON below .story/drafts/\n"
+    },
+    "standard_task-return_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "task-return",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.044,
+      "stdout_sha256": "207131d4f35610d4f3f8a10cc0922a46d838956685858778bf88f9e6c3ad58a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-return [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION --result-file\n                            RESULT_FILE\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --result-file RESULT_FILE\n                        Book-relative JSON below .story/drafts/\n"
+    },
+    "claude_task-return_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "task-return",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.037,
+      "stdout_sha256": "207131d4f35610d4f3f8a10cc0922a46d838956685858778bf88f9e6c3ad58a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-return [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION --result-file\n                            RESULT_FILE\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --result-file RESULT_FILE\n                        Book-relative JSON below .story/drafts/\n"
+    },
+    "codex_task-return_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "task-return",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.037,
+      "stdout_sha256": "207131d4f35610d4f3f8a10cc0922a46d838956685858778bf88f9e6c3ad58a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-return [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION --result-file\n                            RESULT_FILE\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --result-file RESULT_FILE\n                        Book-relative JSON below .story/drafts/\n"
+    },
+    "npm_task-review_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "task-review",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.986,
+      "stdout_sha256": "1fea4d2665b42aa12cadd2665270e74dcc149dfd921f8adab8464cc6097f67a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-review [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION\n                            [--issues-file ISSUES_FILE]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --issues-file ISSUES_FILE\n                        Book-relative JSON array below .story/drafts/\n"
+    },
+    "dsh_task-review_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "task-review",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.999,
+      "stdout_sha256": "1fea4d2665b42aa12cadd2665270e74dcc149dfd921f8adab8464cc6097f67a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-review [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION\n                            [--issues-file ISSUES_FILE]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --issues-file ISSUES_FILE\n                        Book-relative JSON array below .story/drafts/\n"
+    },
+    "standard_task-review_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "task-review",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 1.004,
+      "stdout_sha256": "1fea4d2665b42aa12cadd2665270e74dcc149dfd921f8adab8464cc6097f67a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-review [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION\n                            [--issues-file ISSUES_FILE]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --issues-file ISSUES_FILE\n                        Book-relative JSON array below .story/drafts/\n"
+    },
+    "claude_task-review_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "task-review",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.99,
+      "stdout_sha256": "1fea4d2665b42aa12cadd2665270e74dcc149dfd921f8adab8464cc6097f67a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-review [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION\n                            [--issues-file ISSUES_FILE]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --issues-file ISSUES_FILE\n                        Book-relative JSON array below .story/drafts/\n"
+    },
+    "codex_task-review_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "task-review",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.988,
+      "stdout_sha256": "1fea4d2665b42aa12cadd2665270e74dcc149dfd921f8adab8464cc6097f67a4",
+      "stderr": "",
+      "stdout": "usage: story.py task-review [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                            --task-id TASK_ID --version VERSION\n                            [--issues-file ISSUES_FILE]\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --issues-file ISSUES_FILE\n                        Book-relative JSON array below .story/drafts/\n"
+    },
+    "npm_task-fail_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "task-fail",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.96,
+      "stdout_sha256": "c52bd0b3d6f66e0856145df9d36995955a386748384825cb9d42e66c0c4fb9fb",
+      "stderr": "",
+      "stdout": "usage: story.py task-fail [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          --task-id TASK_ID --version VERSION --reason REASON\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --reason REASON\n"
+    },
+    "dsh_task-fail_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "task-fail",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.964,
+      "stdout_sha256": "c52bd0b3d6f66e0856145df9d36995955a386748384825cb9d42e66c0c4fb9fb",
+      "stderr": "",
+      "stdout": "usage: story.py task-fail [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          --task-id TASK_ID --version VERSION --reason REASON\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --reason REASON\n"
+    },
+    "standard_task-fail_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "task-fail",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.971,
+      "stdout_sha256": "c52bd0b3d6f66e0856145df9d36995955a386748384825cb9d42e66c0c4fb9fb",
+      "stderr": "",
+      "stdout": "usage: story.py task-fail [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          --task-id TASK_ID --version VERSION --reason REASON\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --reason REASON\n"
+    },
+    "claude_task-fail_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "task-fail",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.979,
+      "stdout_sha256": "c52bd0b3d6f66e0856145df9d36995955a386748384825cb9d42e66c0c4fb9fb",
+      "stderr": "",
+      "stdout": "usage: story.py task-fail [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          --task-id TASK_ID --version VERSION --reason REASON\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --reason REASON\n"
+    },
+    "codex_task-fail_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "task-fail",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.964,
+      "stdout_sha256": "c52bd0b3d6f66e0856145df9d36995955a386748384825cb9d42e66c0c4fb9fb",
+      "stderr": "",
+      "stdout": "usage: story.py task-fail [-h] --book BOOK [--expect-book-id EXPECT_BOOK_ID]\n                          --task-id TASK_ID --version VERSION --reason REASON\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --version VERSION\n  --reason REASON\n"
+    },
+    "npm_task-evidence_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "task-evidence",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.902,
+      "stdout_sha256": "49a355f44116f6177c5ff9b1c57296a656e41bc6517816f644eaa99d32e552ba",
+      "stderr": "",
+      "stdout": "usage: story.py task-evidence [-h] --book BOOK\n                              [--expect-book-id EXPECT_BOOK_ID] --task-id\n                              TASK_ID --issue-id ISSUE_ID --index INDEX\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --issue-id ISSUE_ID\n  --index INDEX\n"
+    },
+    "dsh_task-evidence_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "task-evidence",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.911,
+      "stdout_sha256": "49a355f44116f6177c5ff9b1c57296a656e41bc6517816f644eaa99d32e552ba",
+      "stderr": "",
+      "stdout": "usage: story.py task-evidence [-h] --book BOOK\n                              [--expect-book-id EXPECT_BOOK_ID] --task-id\n                              TASK_ID --issue-id ISSUE_ID --index INDEX\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --issue-id ISSUE_ID\n  --index INDEX\n"
+    },
+    "standard_task-evidence_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "task-evidence",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.908,
+      "stdout_sha256": "49a355f44116f6177c5ff9b1c57296a656e41bc6517816f644eaa99d32e552ba",
+      "stderr": "",
+      "stdout": "usage: story.py task-evidence [-h] --book BOOK\n                              [--expect-book-id EXPECT_BOOK_ID] --task-id\n                              TASK_ID --issue-id ISSUE_ID --index INDEX\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --issue-id ISSUE_ID\n  --index INDEX\n"
+    },
+    "codex_task-evidence_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "task-evidence",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.904,
+      "stdout_sha256": "49a355f44116f6177c5ff9b1c57296a656e41bc6517816f644eaa99d32e552ba",
+      "stderr": "",
+      "stdout": "usage: story.py task-evidence [-h] --book BOOK\n                              [--expect-book-id EXPECT_BOOK_ID] --task-id\n                              TASK_ID --issue-id ISSUE_ID --index INDEX\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --issue-id ISSUE_ID\n  --index INDEX\n"
+    },
+    "claude_task-evidence_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "task-evidence",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.914,
+      "stdout_sha256": "49a355f44116f6177c5ff9b1c57296a656e41bc6517816f644eaa99d32e552ba",
+      "stderr": "",
+      "stdout": "usage: story.py task-evidence [-h] --book BOOK\n                              [--expect-book-id EXPECT_BOOK_ID] --task-id\n                              TASK_ID --issue-id ISSUE_ID --index INDEX\n\noptions:\n  -h, --help            show this help message and exit\n  --book BOOK           Explicit, isolated book directory\n  --expect-book-id EXPECT_BOOK_ID\n  --task-id TASK_ID\n  --issue-id ISSUE_ID\n  --index INDEX\n"
+    },
+    "npm_reader-init_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "reader-init",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.895,
+      "stdout_sha256": "bd048b1e5aadb7785b7857f1e0eda215ad655c7ae146f38a67604fe7544a5f9b",
+      "stderr": "",
+      "stdout": "usage: story.py reader-init [-h] --plan PLAN --output-dir OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --plan PLAN\n  --output-dir OUTPUT_DIR\n"
+    },
+    "dsh_reader-init_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "reader-init",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.897,
+      "stdout_sha256": "bd048b1e5aadb7785b7857f1e0eda215ad655c7ae146f38a67604fe7544a5f9b",
+      "stderr": "",
+      "stdout": "usage: story.py reader-init [-h] --plan PLAN --output-dir OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --plan PLAN\n  --output-dir OUTPUT_DIR\n"
+    },
+    "standard_reader-init_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "reader-init",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.902,
+      "stdout_sha256": "bd048b1e5aadb7785b7857f1e0eda215ad655c7ae146f38a67604fe7544a5f9b",
+      "stderr": "",
+      "stdout": "usage: story.py reader-init [-h] --plan PLAN --output-dir OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --plan PLAN\n  --output-dir OUTPUT_DIR\n"
+    },
+    "codex_reader-init_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "reader-init",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.898,
+      "stdout_sha256": "bd048b1e5aadb7785b7857f1e0eda215ad655c7ae146f38a67604fe7544a5f9b",
+      "stderr": "",
+      "stdout": "usage: story.py reader-init [-h] --plan PLAN --output-dir OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --plan PLAN\n  --output-dir OUTPUT_DIR\n"
+    },
+    "claude_reader-init_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "reader-init",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.897,
+      "stdout_sha256": "bd048b1e5aadb7785b7857f1e0eda215ad655c7ae146f38a67604fe7544a5f9b",
+      "stderr": "",
+      "stdout": "usage: story.py reader-init [-h] --plan PLAN --output-dir OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --plan PLAN\n  --output-dir OUTPUT_DIR\n"
+    },
+    "npm_reader-record_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "reader-record",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.939,
+      "stdout_sha256": "89cf56f29317845178ac03cb289d6a5616c8267ece09cb8e8efe008d8f2c89fa",
+      "stderr": "",
+      "stdout": "usage: story.py reader-record [-h] --input INPUT [--as-of AS_OF]\n                              --observations OBSERVATIONS --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --observations OBSERVATIONS\n  --output-dir OUTPUT_DIR\n"
+    },
+    "dsh_reader-record_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "reader-record",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.936,
+      "stdout_sha256": "89cf56f29317845178ac03cb289d6a5616c8267ece09cb8e8efe008d8f2c89fa",
+      "stderr": "",
+      "stdout": "usage: story.py reader-record [-h] --input INPUT [--as-of AS_OF]\n                              --observations OBSERVATIONS --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --observations OBSERVATIONS\n  --output-dir OUTPUT_DIR\n"
+    },
+    "standard_reader-record_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "reader-record",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.932,
+      "stdout_sha256": "89cf56f29317845178ac03cb289d6a5616c8267ece09cb8e8efe008d8f2c89fa",
+      "stderr": "",
+      "stdout": "usage: story.py reader-record [-h] --input INPUT [--as-of AS_OF]\n                              --observations OBSERVATIONS --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --observations OBSERVATIONS\n  --output-dir OUTPUT_DIR\n"
+    },
+    "claude_reader-record_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "reader-record",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.935,
+      "stdout_sha256": "89cf56f29317845178ac03cb289d6a5616c8267ece09cb8e8efe008d8f2c89fa",
+      "stderr": "",
+      "stdout": "usage: story.py reader-record [-h] --input INPUT [--as-of AS_OF]\n                              --observations OBSERVATIONS --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --observations OBSERVATIONS\n  --output-dir OUTPUT_DIR\n"
+    },
+    "codex_reader-record_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "reader-record",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.945,
+      "stdout_sha256": "89cf56f29317845178ac03cb289d6a5616c8267ece09cb8e8efe008d8f2c89fa",
+      "stderr": "",
+      "stdout": "usage: story.py reader-record [-h] --input INPUT [--as-of AS_OF]\n                              --observations OBSERVATIONS --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --observations OBSERVATIONS\n  --output-dir OUTPUT_DIR\n"
+    },
+    "npm_reader-check_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "reader-check",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.938,
+      "stdout_sha256": "b3a5fdcb8a564c7d045ed368c9951824616e317fc3ca0a53a7397d231fc11dfc",
+      "stderr": "",
+      "stdout": "usage: story.py reader-check [-h] --input INPUT [--as-of AS_OF]\n\noptions:\n  -h, --help     show this help message and exit\n  --input INPUT\n  --as-of AS_OF  带时区的观察截止；不填使用当前 UTC 时间\n"
+    },
+    "dsh_reader-check_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "reader-check",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.934,
+      "stdout_sha256": "b3a5fdcb8a564c7d045ed368c9951824616e317fc3ca0a53a7397d231fc11dfc",
+      "stderr": "",
+      "stdout": "usage: story.py reader-check [-h] --input INPUT [--as-of AS_OF]\n\noptions:\n  -h, --help     show this help message and exit\n  --input INPUT\n  --as-of AS_OF  带时区的观察截止；不填使用当前 UTC 时间\n"
+    },
+    "standard_reader-check_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "reader-check",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.945,
+      "stdout_sha256": "b3a5fdcb8a564c7d045ed368c9951824616e317fc3ca0a53a7397d231fc11dfc",
+      "stderr": "",
+      "stdout": "usage: story.py reader-check [-h] --input INPUT [--as-of AS_OF]\n\noptions:\n  -h, --help     show this help message and exit\n  --input INPUT\n  --as-of AS_OF  带时区的观察截止；不填使用当前 UTC 时间\n"
+    },
+    "claude_reader-check_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "reader-check",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.942,
+      "stdout_sha256": "b3a5fdcb8a564c7d045ed368c9951824616e317fc3ca0a53a7397d231fc11dfc",
+      "stderr": "",
+      "stdout": "usage: story.py reader-check [-h] --input INPUT [--as-of AS_OF]\n\noptions:\n  -h, --help     show this help message and exit\n  --input INPUT\n  --as-of AS_OF  带时区的观察截止；不填使用当前 UTC 时间\n"
+    },
+    "codex_reader-check_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "reader-check",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.946,
+      "stdout_sha256": "b3a5fdcb8a564c7d045ed368c9951824616e317fc3ca0a53a7397d231fc11dfc",
+      "stderr": "",
+      "stdout": "usage: story.py reader-check [-h] --input INPUT [--as-of AS_OF]\n\noptions:\n  -h, --help     show this help message and exit\n  --input INPUT\n  --as-of AS_OF  带时区的观察截止；不填使用当前 UTC 时间\n"
+    },
+    "npm_reader-render_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "reader-render",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.947,
+      "stdout_sha256": "b041e68489995f5f35d79d74dbf4fa1e88fbf2f099adf5be1635c6f3129d47f7",
+      "stderr": "",
+      "stdout": "usage: story.py reader-render [-h] --input INPUT [--as-of AS_OF] --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --output-dir OUTPUT_DIR\n"
+    },
+    "dsh_reader-render_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "reader-render",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.944,
+      "stdout_sha256": "b041e68489995f5f35d79d74dbf4fa1e88fbf2f099adf5be1635c6f3129d47f7",
+      "stderr": "",
+      "stdout": "usage: story.py reader-render [-h] --input INPUT [--as-of AS_OF] --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --output-dir OUTPUT_DIR\n"
+    },
+    "standard_reader-render_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "reader-render",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.94,
+      "stdout_sha256": "b041e68489995f5f35d79d74dbf4fa1e88fbf2f099adf5be1635c6f3129d47f7",
+      "stderr": "",
+      "stdout": "usage: story.py reader-render [-h] --input INPUT [--as-of AS_OF] --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --output-dir OUTPUT_DIR\n"
+    },
+    "codex_reader-render_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "reader-render",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.934,
+      "stdout_sha256": "b041e68489995f5f35d79d74dbf4fa1e88fbf2f099adf5be1635c6f3129d47f7",
+      "stderr": "",
+      "stdout": "usage: story.py reader-render [-h] --input INPUT [--as-of AS_OF] --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --output-dir OUTPUT_DIR\n"
+    },
+    "claude_reader-render_help": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "reader-render",
+        "--help"
+      ],
+      "exit_code": 0,
+      "seconds": 0.948,
+      "stdout_sha256": "b041e68489995f5f35d79d74dbf4fa1e88fbf2f099adf5be1635c6f3129d47f7",
+      "stderr": "",
+      "stdout": "usage: story.py reader-render [-h] --input INPUT [--as-of AS_OF] --output-dir\n                              OUTPUT_DIR\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --as-of AS_OF         带时区的观察截止；不填使用当前 UTC 时间\n  --output-dir OUTPUT_DIR\n"
+    },
+    "npm_init": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "init",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/npm",
+        "--title",
+        "分发隔离验收"
+      ],
+      "exit_code": 0,
+      "seconds": 0.968,
+      "stdout_sha256": "24027250df342d6d3564beacc6ac433af5db3bdb9614957997410493fd0b5483",
+      "stderr": "",
+      "json": {
+        "created": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/npm",
+        "id": "101653ee-0b51-40a5-93fc-2ec55f00fbcf",
+        "imported_through": 0,
+        "kind": "long",
+        "last_chapter": 0,
+        "revision": 0,
+        "schema": 2,
+        "title": "分发隔离验收"
+      }
+    },
+    "dsh_init": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "init",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/dsh",
+        "--title",
+        "分发隔离验收"
+      ],
+      "exit_code": 0,
+      "seconds": 0.952,
+      "stdout_sha256": "d1108e8d345a2a56d9b9bde2331dab3a61b8860db7094e0da7eb9b1e0d9da909",
+      "stderr": "",
+      "json": {
+        "created": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/dsh",
+        "id": "53e76c24-358b-444e-a878-e12a612a6fd9",
+        "imported_through": 0,
+        "kind": "long",
+        "last_chapter": 0,
+        "revision": 0,
+        "schema": 2,
+        "title": "分发隔离验收"
+      }
+    },
+    "standard_init": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "init",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/standard",
+        "--title",
+        "分发隔离验收"
+      ],
+      "exit_code": 0,
+      "seconds": 0.947,
+      "stdout_sha256": "802de0c24e3ce952d9d2f2440ff77459e07ccd956bd52ac7ebcc92e5dcbdc8f3",
+      "stderr": "",
+      "json": {
+        "created": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/standard",
+        "id": "e9089a70-d0c0-4f54-aa16-3a336f250c98",
+        "imported_through": 0,
+        "kind": "long",
+        "last_chapter": 0,
+        "revision": 0,
+        "schema": 2,
+        "title": "分发隔离验收"
+      }
+    },
+    "codex_init": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "init",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/codex",
+        "--title",
+        "分发隔离验收"
+      ],
+      "exit_code": 0,
+      "seconds": 0.935,
+      "stdout_sha256": "556bd37093ef27921b1373e80feeb60364637a2c9a16473d551417da511744d5",
+      "stderr": "",
+      "json": {
+        "created": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/codex",
+        "id": "24389cb5-085f-495f-9f7f-13b242c4e7cf",
+        "imported_through": 0,
+        "kind": "long",
+        "last_chapter": 0,
+        "revision": 0,
+        "schema": 2,
+        "title": "分发隔离验收"
+      }
+    },
+    "claude_init": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "init",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/claude",
+        "--title",
+        "分发隔离验收"
+      ],
+      "exit_code": 0,
+      "seconds": 0.939,
+      "stdout_sha256": "1444dee69a32019a171a4bbb3096617bba937b12808162903247acde87e1e621",
+      "stderr": "",
+      "json": {
+        "created": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/claude",
+        "id": "f1f52d44-ae98-48e6-b2bd-a0933e4bf160",
+        "imported_through": 0,
+        "kind": "long",
+        "last_chapter": 0,
+        "revision": 0,
+        "schema": 2,
+        "title": "分发隔离验收"
+      }
+    },
+    "npm_task_list": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+        "task-list",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/npm"
+      ],
+      "exit_code": 0,
+      "seconds": 0.95,
+      "stdout_sha256": "cfb897f66c3cba282774288c57f1a8d796da39d17967b707b7271a663d1b2130",
+      "stderr": "",
+      "json": {
+        "book_id": "101653ee-0b51-40a5-93fc-2ec55f00fbcf",
+        "has_more": false,
+        "limit": 20,
+        "offset": 0,
+        "ok": true,
+        "tasks": [],
+        "total": 0
+      }
+    },
+    "dsh_task_list": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "task-list",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/dsh"
+      ],
+      "exit_code": 0,
+      "seconds": 0.943,
+      "stdout_sha256": "5231e44d07fbd99c4377867b105c1042d6091f4f445714d80acf31d432bb690b",
+      "stderr": "",
+      "json": {
+        "book_id": "53e76c24-358b-444e-a878-e12a612a6fd9",
+        "has_more": false,
+        "limit": 20,
+        "offset": 0,
+        "ok": true,
+        "tasks": [],
+        "total": 0
+      }
+    },
+    "standard_task_list": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "task-list",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/standard"
+      ],
+      "exit_code": 0,
+      "seconds": 0.941,
+      "stdout_sha256": "67d000326e245a0660f205938494790c464afaddf7e604f2ec31da77b4112a7f",
+      "stderr": "",
+      "json": {
+        "book_id": "e9089a70-d0c0-4f54-aa16-3a336f250c98",
+        "has_more": false,
+        "limit": 20,
+        "offset": 0,
+        "ok": true,
+        "tasks": [],
+        "total": 0
+      }
+    },
+    "codex_task_list": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "task-list",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/codex"
+      ],
+      "exit_code": 0,
+      "seconds": 0.941,
+      "stdout_sha256": "920cd2e8b8202be91c2fef812e07c3f7b083a13195a64cfb842ee355146e3086",
+      "stderr": "",
+      "json": {
+        "book_id": "24389cb5-085f-495f-9f7f-13b242c4e7cf",
+        "has_more": false,
+        "limit": 20,
+        "offset": 0,
+        "ok": true,
+        "tasks": [],
+        "total": 0
+      }
+    },
+    "claude_task_list": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "task-list",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/smoke-books/claude"
+      ],
+      "exit_code": 0,
+      "seconds": 0.933,
+      "stdout_sha256": "f698843c6f3b69d6f3e543a5bfed5f0caa5c810122e19499f28132d326979034",
+      "stderr": "",
+      "json": {
+        "book_id": "f1f52d44-ae98-48e6-b2bd-a0933e4bf160",
+        "has_more": false,
+        "limit": 20,
+        "offset": 0,
+        "ok": true,
+        "tasks": [],
+        "total": 0
+      }
+    },
+    "standard_version": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.936,
+      "stdout_sha256": "01c0dc536fca6ccdd306ef4ec03080c8942f028f63bb41869a6ceea2884f190e",
+      "stderr": "",
+      "stdout": "0.6.28\n"
+    },
+    "dsh_version": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.952,
+      "stdout_sha256": "01c0dc536fca6ccdd306ef4ec03080c8942f028f63bb41869a6ceea2884f190e",
+      "stderr": "",
+      "stdout": "0.6.28\n"
+    },
+    "claude_version": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.94,
+      "stdout_sha256": "01c0dc536fca6ccdd306ef4ec03080c8942f028f63bb41869a6ceea2884f190e",
+      "stderr": "",
+      "stdout": "0.6.28\n"
+    },
+    "codex_version": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+        "--version"
+      ],
+      "exit_code": 0,
+      "seconds": 0.942,
+      "stdout_sha256": "01c0dc536fca6ccdd306ef4ec03080c8942f028f63bb41869a6ceea2884f190e",
+      "stderr": "",
+      "stdout": "0.6.28\n"
+    },
+    "verify_codex_plugin": {
+      "argv": [
+        "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "scripts/verify_codex_plugin.py",
+        "--marketplace-root",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28",
+        "--report",
+        "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex-plugin-verification.json"
+      ],
+      "exit_code": 0,
+      "seconds": 8.027,
+      "stdout_sha256": "42f205957c390b68af2dfe2c072788d1efedf06815e1d6b5b9dbe8a3be74845b",
+      "stderr": "",
+      "json": {
+        "ok": true,
+        "report": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex-plugin-verification.json",
+        "error": null
+      }
+    }
+  },
+  "builds": {
+    "standard": {
+      "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-0.6.28.zip",
+      "version": "0.6.28",
+      "files": 72,
+      "sha256": "b4cfc0e8e0d0030079098fa4fa0f92ee3257b43790271a6a3acefae7508faed4",
+      "bytes": 768759
+    },
+    "claude": {
+      "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-claude-desktop-0.6.28-r2.zip",
+      "version": "0.6.28",
+      "files": 74,
+      "source_files": 72,
+      "skill_name": "story-skill",
+      "bundle_revision": 2,
+      "skill_entry_count": 1,
+      "entry_path_mapping": {
+        "story-skill-analyze/SKILL.md": "story-skill/suite/story-skill-analyze/GUIDE.md",
+        "story-skill-cover/SKILL.md": "story-skill/suite/story-skill-cover/GUIDE.md",
+        "story-skill-plan/SKILL.md": "story-skill/suite/story-skill-plan/GUIDE.md",
+        "story-skill-publish/SKILL.md": "story-skill/suite/story-skill-publish/GUIDE.md",
+        "story-skill-research/SKILL.md": "story-skill/suite/story-skill-research/GUIDE.md",
+        "story-skill-review/SKILL.md": "story-skill/suite/story-skill-review/GUIDE.md",
+        "story-skill-write/SKILL.md": "story-skill/suite/story-skill-write/GUIDE.md",
+        "story-skill/SKILL.md": "story-skill/suite/story-skill/GUIDE.md"
+      },
+      "path_transformation": "Embedded SKILL.md files become GUIDE.md; embedded Markdown references and path descriptions use GUIDE.md. Non-Markdown source bytes are unchanged.",
+      "sha256": "11be5a7277b7109e692cf2c824aba94ec4f24fae549c77b72793fb4fb0ed0241",
+      "bytes": 775310
+    },
+    "codex": {
+      "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28.zip",
+      "checksum": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28.zip.sha256",
+      "marketplace_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28",
+      "plugin_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill",
+      "version": "0.6.28",
+      "skill_count": 8,
+      "payload_files": 75,
+      "bundle_files": 77,
+      "sha256": "d531c0233dcea6dc8f13244c534f0e2ce148dbd268570e8e55013c9f442a2ce5",
+      "source_payload_files": 72,
+      "adapted_ui_files": 8
+    },
+    "dsh": {
+      "ok": true,
+      "package": "story-skill-dsh",
+      "version": "0.6.28",
+      "path": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin",
+      "skills": [
+        "story-skill",
+        "story-skill-plan",
+        "story-skill-write",
+        "story-skill-analyze",
+        "story-skill-review",
+        "story-skill-research",
+        "story-skill-cover",
+        "story-skill-publish"
+      ],
+      "files": 80,
+      "skill_files": 72,
+      "sha256": "61ad80bfb54a4dc4b4fc523d68b9593a0b3a79002219d739a50c93ed7abeb949",
+      "receipt": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin.json",
+      "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/story-skill-dsh-0.6.28.zip",
+      "archive_sha256": "3de9f9b36081e0d1576b20dbb74a50e8f3cad9b700bc3be96904cfaff0c3f851",
+      "archive_bytes": 775450
+    },
+    "npm": {
+      "ok": true,
+      "name": "@ningcui29/story-skill",
+      "version": "0.6.28",
+      "tarball": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/npm/ningcui29-story-skill-0.6.28.tgz",
+      "sha256": "81e52c2d0f57ecfd99de47737d7adbb149e7ed5990bf174962044d9b54d3a44c",
+      "integrity": "sha512-KpIM/iCn+uOghD9KDpXK6jlsM6kvqqNldz73i/qMy5jBF5WGCEhQGlRk/yNCu0//McwduPn9Cve4qOiGsA8a2Q==",
+      "bytes": 708804,
+      "registry": "https://npm.pkg.github.com",
+      "archive_sha256": "b4cfc0e8e0d0030079098fa4fa0f92ee3257b43790271a6a3acefae7508faed4",
+      "payload_manifest": {
+        "story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-analyze/SKILL.md": "c438ff05fa677f19301c1f2c4e3e73b2c3c23588bb3e0a6912e68fa0a86b2af1",
+        "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+        "story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+        "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+        "story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+        "story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+        "story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-plan/SKILL.md": "12b1ffab62554dc07ed899c822b4e8818e057cb8507c8e55ced407b6a1c54bb8",
+        "story-skill-plan/agents/openai.yaml": "66152a131e86a4252ce27842e89195a353b40bc642427d2918ad18bc88cdd81a",
+        "story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+        "story-skill-plan/references/fanqie-tags.md": "533f8cbdc62da3c03dca4dcfa849fe51e4f25e1f8165fe8fd43219bef399460f",
+        "story-skill-plan/references/outline.md": "29a503a7f6d9c0ecd6b214262000b085d2093d15c360a4aa02d2339db4bb0898",
+        "story-skill-plan/references/qidian-categories.md": "eeaaa495baca608a31163f9f3e07f88112ab432b379926fbd2dc37904e1d03e7",
+        "story-skill-plan/references/qimao-tags.md": "0eebca1c8915efb3a29bea3a2ca39f29d4141c40dc4f8ead67c2efe0d340affb",
+        "story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+        "story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-publish/SKILL.md": "f2f7e7fd8acfea1cc2df245d458d2ce3f1f3ca816e3695e15a3917239d65df41",
+        "story-skill-publish/agents/openai.yaml": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+        "story-skill-publish/references/platform-drafts.md": "161f85a55c6831b0d8ba22fd0a23bcffb3e24e2410ee634d41caefb00d011a68",
+        "story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-research/SKILL.md": "03b9e9d85cc4bff57b0d31944d3cce444d3a7049749dc597aa7a22f53f515a31",
+        "story-skill-research/agents/openai.yaml": "3fb4cfaded0bf4206c2f3cf7dbc1e6ccf7ee62f5fd4ca1a406b509a0b9bcde28",
+        "story-skill-research/references/rank-scan.md": "4537af29249b86f56f0717848868250a3a2f48cd332350570395e22e7c46ef80",
+        "story-skill-research/references/reader-records.md": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+        "story-skill-research/references/reader-validation.md": "16a02d840c87d3f4e80aad3998b11854fece0e86eb7b6f3f35bc6a7500e4f5bc",
+        "story-skill-research/references/research-handoff.md": "e010886fd50a4c31be8f933eebd9f4ff7278021310f93a337a0c3de0f2e10b88",
+        "story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-review/SKILL.md": "50526925c440adc71ce87254a57300b78cb2c113481ca6ac8ce8313a7e1839ae",
+        "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+        "story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+        "story-skill-review/references/history.md": "00e56c9a2c3757d213dfa555e1571548ba1de05ad38dcda729f5fc8a74430be6",
+        "story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+        "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill-write/SKILL.md": "244d8bf8c512f4f57b17714ae17460a18c761406b1369562e9a2ad44e35486e6",
+        "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+        "story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+        "story-skill-write/references/chapter.md": "0600340ea9ff9f3957f2b608e8f82cae97531d23daca18e0066b8ebece0e5cb2",
+        "story-skill-write/references/content-review.md": "62a1fc4da3aefd6ba95aeabe73acb14b1114efd79d360b2519a57a103ea3fcac",
+        "story-skill-write/references/drama.md": "b3c54bd737a56a02ac7b415c5b455d01b35b1f89ae5a3534b19782fe33697cb1",
+        "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+        "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+        "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+        "story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+        "story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+        "story-skill/SKILL.md": "4eb292df99b7a09eaa12e31c9689d4fd9fcfff6c123fd175ba67a5a4359b2c53",
+        "story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+        "story-skill/references/project-state.md": "320fd02bf6b443bc56b18021ef7dfbcdd510659e45c5a8289268e220839fba30",
+        "story-skill/references/workbench.md": "7620379d4e40df5421d096b50df372c79951aa04341b98085a0df4e337f381b3",
+        "story-skill/scripts/story.py": "a9c4c6c38405217394bc7f71460a1ba0b609dc4ff608ac3176a9032b0c22f0a5",
+        "story-skill/scripts/story_chrome_bridge.mjs": "3510e41f3a4acdfb7a06c8264d50e7bbff7f7ba7d21eb04b1419dfd9af75105a",
+        "story-skill/scripts/story_chrome_worker.mjs": "8a989996066f2013094f9818b17288f17bc23e1f37cccf52190c68f26b6346f6",
+        "story-skill/scripts/story_chrome_worker.py": "1f057244f8cb62a2a348d9a6a8b96bedcfb8ba85ca3d9e026c83c6f64e115282",
+        "story-skill/scripts/story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+        "story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+        "story-skill/scripts/story_platform_browser.py": "1191dc7f0932d8d1df02a0d208f512c84086e4c6723a83002c411c91e8cb776c",
+        "story-skill/scripts/story_platform_chrome_bridge.py": "fa7c9c2f26648f73f591b7947f3e6598e4d7f6452c6f8571be8f133b6187543a",
+        "story-skill/scripts/story_platform_drafts.py": "847ffb61f03488f1860eaa0cc15ef4521a8ea6be378c915d7c5110d02fb142c4",
+        "story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+        "story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+        "story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+        "story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+        "story-skill/scripts/story_reader_feedback.py": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+        "story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+        "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "story-skill/scripts/story_tasks.py": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+        "story-skill/scripts/story_workbench.py": "242f7f87c5c503cee9d9024e82d82889d0de4d714f453e1128271fe66e52c495",
+        "story-skill/scripts/story_workbench_archives.py": "718c9b4a2601f63d5e1d558f28a0c713d0d3de911993ac390ad70f0d2f73367b",
+        "story-skill/scripts/story_workbench_books.py": "dda3232c90471017c06d097c3032197c2aa7e9f7d916e391adb14d0f99557b63",
+        "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+      },
+      "wrapper_manifest": {
+        "package.json": "c09b423566421b673b109ff49a19c68219507a80f4c5752b9974b03d960b67da",
+        "README.md": "a4586c22dc0f6276b9083660475e3700a34a8def51bec71463bbc67ba6c4a990",
+        "LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+      },
+      "package_manifest": {
+        "name": "@ningcui29/story-skill",
+        "version": "0.6.28",
+        "description": "Eight Story Skill skills for Chinese novel writing, review and publication preparation",
+        "license": "SEE LICENSE IN LICENSE",
+        "repository": {
+          "type": "git",
+          "url": "https://github.com/NingCui29/story-skill.git"
+        },
+        "homepage": "https://github.com/NingCui29/story-skill#readme",
+        "publishConfig": {
+          "registry": "https://npm.pkg.github.com"
+        },
+        "files": [
+          "story-skill-analyze/LICENSE",
+          "story-skill-analyze/SKILL.md",
+          "story-skill-analyze/agents/openai.yaml",
+          "story-skill-analyze/references/deep-reading.md",
+          "story-skill-analyze/references/examples.md",
+          "story-skill-cover/LICENSE",
+          "story-skill-cover/SKILL.md",
+          "story-skill-cover/agents/openai.yaml",
+          "story-skill-plan/LICENSE",
+          "story-skill-plan/SKILL.md",
+          "story-skill-plan/agents/openai.yaml",
+          "story-skill-plan/references/blurb.md",
+          "story-skill-plan/references/fanqie-tags.md",
+          "story-skill-plan/references/outline.md",
+          "story-skill-plan/references/qidian-categories.md",
+          "story-skill-plan/references/qimao-tags.md",
+          "story-skill-plan/references/short-platform.md",
+          "story-skill-publish/LICENSE",
+          "story-skill-publish/SKILL.md",
+          "story-skill-publish/agents/openai.yaml",
+          "story-skill-publish/references/platform-drafts.md",
+          "story-skill-research/LICENSE",
+          "story-skill-research/SKILL.md",
+          "story-skill-research/agents/openai.yaml",
+          "story-skill-research/references/rank-scan.md",
+          "story-skill-research/references/reader-records.md",
+          "story-skill-research/references/reader-validation.md",
+          "story-skill-research/references/research-handoff.md",
+          "story-skill-review/LICENSE",
+          "story-skill-review/SKILL.md",
+          "story-skill-review/agents/openai.yaml",
+          "story-skill-review/references/fanqie-content-review.md",
+          "story-skill-review/references/history.md",
+          "story-skill-review/references/qimao-content-review.md",
+          "story-skill-write/LICENSE",
+          "story-skill-write/SKILL.md",
+          "story-skill-write/agents/openai.yaml",
+          "story-skill-write/references/chapter-continuity.md",
+          "story-skill-write/references/chapter.md",
+          "story-skill-write/references/content-review.md",
+          "story-skill-write/references/drama.md",
+          "story-skill-write/references/long-form.md",
+          "story-skill-write/references/punctuation.md",
+          "story-skill-write/references/suspense-evidence.md",
+          "story-skill-write/references/writing-handoff.md",
+          "story-skill/LICENSE",
+          "story-skill/SKILL.md",
+          "story-skill/agents/openai.yaml",
+          "story-skill/references/project-state.md",
+          "story-skill/references/workbench.md",
+          "story-skill/scripts/story.py",
+          "story-skill/scripts/story_chrome_bridge.mjs",
+          "story-skill/scripts/story_chrome_worker.mjs",
+          "story-skill/scripts/story_chrome_worker.py",
+          "story-skill/scripts/story_history.py",
+          "story-skill/scripts/story_outline.py",
+          "story-skill/scripts/story_platform_browser.py",
+          "story-skill/scripts/story_platform_chrome_bridge.py",
+          "story-skill/scripts/story_platform_drafts.py",
+          "story-skill/scripts/story_publish.py",
+          "story-skill/scripts/story_punctuation.py",
+          "story-skill/scripts/story_rank.py",
+          "story-skill/scripts/story_rank_sources.py",
+          "story-skill/scripts/story_reader_feedback.py",
+          "story-skill/scripts/story_research.py",
+          "story-skill/scripts/story_search.py",
+          "story-skill/scripts/story_storage.py",
+          "story-skill/scripts/story_tasks.py",
+          "story-skill/scripts/story_workbench.py",
+          "story-skill/scripts/story_workbench_archives.py",
+          "story-skill/scripts/story_workbench_books.py",
+          "story-skill/scripts/story_world.py",
+          "LICENSE"
+        ]
+      }
+    }
+  },
+  "packages": {
+    "standard": {
+      "package_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard",
+      "tool": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/standard/story-skill/scripts/story.py",
+      "new_files": {
+        "story-skill-research/references/reader-records.md": {
+          "sha256": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_reader_feedback.py": {
+          "sha256": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_tasks.py": {
+          "sha256": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+          "matches_source": true
+        }
+      },
+      "markdown_links": {
+        "ok": true,
+        "files_scanned": 34,
+        "links_checked": 360,
+        "missing": [],
+        "escaped": [],
+        "scope": "Local Markdown file links; excludes remote URLs and heading-anchor validation"
+      },
+      "commands": [
+        "standard_task-list_help",
+        "standard_task-get_help",
+        "standard_task-handoff_help",
+        "standard_task-return_help",
+        "standard_task-review_help",
+        "standard_task-fail_help",
+        "standard_task-evidence_help",
+        "standard_reader-init_help",
+        "standard_reader-record_help",
+        "standard_reader-check_help",
+        "standard_reader-render_help"
+      ],
+      "task_list_on_isolated_book": {
+        "ok": true,
+        "tasks": 0,
+        "database_only_in_temporary_book": true
+      },
+      "version": "0.6.28\n",
+      "package_unchanged_after_cli": true,
+      "ok": true
+    },
+    "npm": {
+      "package_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package",
+      "tool": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/npm/package/story-skill/scripts/story.py",
+      "new_files": {
+        "story-skill-research/references/reader-records.md": {
+          "sha256": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_reader_feedback.py": {
+          "sha256": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_tasks.py": {
+          "sha256": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+          "matches_source": true
+        }
+      },
+      "markdown_links": {
+        "ok": true,
+        "files_scanned": 35,
+        "links_checked": 360,
+        "missing": [],
+        "escaped": [],
+        "scope": "Local Markdown file links; excludes remote URLs and heading-anchor validation"
+      },
+      "commands": [
+        "npm_task-list_help",
+        "npm_task-get_help",
+        "npm_task-handoff_help",
+        "npm_task-return_help",
+        "npm_task-review_help",
+        "npm_task-fail_help",
+        "npm_task-evidence_help",
+        "npm_reader-init_help",
+        "npm_reader-record_help",
+        "npm_reader-check_help",
+        "npm_reader-render_help"
+      ],
+      "task_list_on_isolated_book": {
+        "ok": true,
+        "tasks": 0,
+        "database_only_in_temporary_book": true
+      },
+      "version": "0.6.28\n",
+      "package_unchanged_after_cli": true,
+      "ok": true
+    },
+    "dsh": {
+      "package_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin",
+      "tool": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/dsh-plugin/skills/story-skill/scripts/story.py",
+      "new_files": {
+        "story-skill-research/references/reader-records.md": {
+          "sha256": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_reader_feedback.py": {
+          "sha256": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_tasks.py": {
+          "sha256": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+          "matches_source": true
+        }
+      },
+      "markdown_links": {
+        "ok": true,
+        "files_scanned": 34,
+        "links_checked": 360,
+        "missing": [],
+        "escaped": [],
+        "scope": "Local Markdown file links; excludes remote URLs and heading-anchor validation"
+      },
+      "commands": [
+        "dsh_task-list_help",
+        "dsh_task-get_help",
+        "dsh_task-handoff_help",
+        "dsh_task-return_help",
+        "dsh_task-review_help",
+        "dsh_task-fail_help",
+        "dsh_task-evidence_help",
+        "dsh_reader-init_help",
+        "dsh_reader-record_help",
+        "dsh_reader-check_help",
+        "dsh_reader-render_help"
+      ],
+      "task_list_on_isolated_book": {
+        "ok": true,
+        "tasks": 0,
+        "database_only_in_temporary_book": true
+      },
+      "version": "0.6.28\n",
+      "package_unchanged_after_cli": true,
+      "ok": true
+    },
+    "claude": {
+      "package_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude",
+      "tool": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/extracted/claude/story-skill/suite/story-skill/scripts/story.py",
+      "new_files": {
+        "story-skill-research/references/reader-records.md": {
+          "sha256": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_reader_feedback.py": {
+          "sha256": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_tasks.py": {
+          "sha256": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+          "matches_source": true
+        }
+      },
+      "markdown_links": {
+        "ok": true,
+        "files_scanned": 34,
+        "links_checked": 360,
+        "missing": [],
+        "escaped": [],
+        "scope": "Local Markdown file links; excludes remote URLs and heading-anchor validation"
+      },
+      "commands": [
+        "claude_task-list_help",
+        "claude_task-get_help",
+        "claude_task-handoff_help",
+        "claude_task-return_help",
+        "claude_task-review_help",
+        "claude_task-fail_help",
+        "claude_task-evidence_help",
+        "claude_reader-init_help",
+        "claude_reader-record_help",
+        "claude_reader-check_help",
+        "claude_reader-render_help"
+      ],
+      "task_list_on_isolated_book": {
+        "ok": true,
+        "tasks": 0,
+        "database_only_in_temporary_book": true
+      },
+      "version": "0.6.28\n",
+      "package_unchanged_after_cli": true,
+      "ok": true
+    },
+    "codex": {
+      "package_root": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill",
+      "tool": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill/skills/story-skill/scripts/story.py",
+      "new_files": {
+        "story-skill-research/references/reader-records.md": {
+          "sha256": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_reader_feedback.py": {
+          "sha256": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+          "matches_source": true
+        },
+        "story-skill/scripts/story_tasks.py": {
+          "sha256": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+          "matches_source": true
+        }
+      },
+      "markdown_links": {
+        "ok": true,
+        "files_scanned": 34,
+        "links_checked": 360,
+        "missing": [],
+        "escaped": [],
+        "scope": "Local Markdown file links; excludes remote URLs and heading-anchor validation"
+      },
+      "commands": [
+        "codex_task-list_help",
+        "codex_task-get_help",
+        "codex_task-handoff_help",
+        "codex_task-return_help",
+        "codex_task-review_help",
+        "codex_task-fail_help",
+        "codex_task-evidence_help",
+        "codex_reader-init_help",
+        "codex_reader-record_help",
+        "codex_reader-check_help",
+        "codex_reader-render_help"
+      ],
+      "task_list_on_isolated_book": {
+        "ok": true,
+        "tasks": 0,
+        "database_only_in_temporary_book": true
+      },
+      "version": "0.6.28\n",
+      "package_unchanged_after_cli": true,
+      "ok": true
+    }
+  },
+  "errors": [],
+  "not_verified": [
+    "Windows native host execution",
+    "Claude or DSH host UI loading",
+    "Codex desktop GUI interactions",
+    "Model quality, reader retention, platform acceptance",
+    "Remote package installation or registry publication"
+  ],
+  "snapshot": {
+    "started_at": "2026-10-27T06:48:25.042292+00:00",
+    "files": {
+      ".codex-plugin/plugin.json": "f27bda640fcd0a3d61504af2a26efac0cf3607323d3d378e421a51626fe6714a",
+      "LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "assets/story-skill.svg": "08d448771740ea890b25e9786d13a83641c623bef03ef728c3f2361b46b3c2a4",
+      "dsh/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "dsh/README.md": "05b3055770d074ab0799cf65f48ab1a7deed04bcf454ed96ebe3b1f980d5cc01",
+      "dsh/cordis.patch.yml": "9bf1a787df9c7be43bcc3361e743640df86f9088352df1e385a70db35506fcf9",
+      "dsh/icon.svg": "6863f629a96291a44e497439eb0f8e0b3855d99d0f2fecb4cbfecc89101e0241",
+      "dsh/index.js": "5701ceeeb73b0667d41d7b59ac571ebd931c86e46b97eb8a18f75ff231365ed5",
+      "dsh/locale/en.json": "5f7c4b3a57fd91bc7113f2c44196c099a2874f1f9f88c8859465ab4db34ebf5a",
+      "dsh/locale/zh.json": "28c3cf547e0e69e90fe9c181ee1ef8a4901499c9b809187a9efd43e63a478efa",
+      "dsh/package.json": "65ba7504ac3bbee7d7e8641ca58cb1557892969c0b17a986ff845ffc08f7b23e",
+      "scripts/install.py": "a91a915ab1b2f514609775487fd8d11d66caa6520f44421ee4213aaacf3ee050",
+      "scripts/package.py": "49d36a0fcc491c7f384cf9ea67189cf7f9ff559cc8c2d1a62c30e67a3e25b0ce",
+      "scripts/package_claude.py": "7c414f26e7fa69b229ffd6cf0e332979cc9c37806dc1b6637414b5a32c6e7d27",
+      "scripts/package_codex.py": "c748efd81121ea2fb94a3d4bbe5235c0a0a4e09a7a0f9e5b1bb5dfb07380d693",
+      "scripts/package_dsh.py": "1c5cdb206d1879d9c2db2135f86fd75b07f5493b623bfe9a4690b2fe4c4a666c",
+      "scripts/package_npm.py": "30475590a40724196ca5c6d4508a0e3da68bdb8a8e8625ac8d77f37fcc569a2d",
+      "scripts/verify_codex_plugin.py": "4daf9ef37a489ecb910027b12ff5b0438b44f35d91cd70661418263bc792d022",
+      "skills/story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "skills/story-skill-analyze/SKILL.md": "c438ff05fa677f19301c1f2c4e3e73b2c3c23588bb3e0a6912e68fa0a86b2af1",
+      "skills/story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+      "skills/story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+      "skills/story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+      "skills/story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "skills/story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+      "skills/story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+      "skills/story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "skills/story-skill-plan/SKILL.md": "12b1ffab62554dc07ed899c822b4e8818e057cb8507c8e55ced407b6a1c54bb8",
+      "skills/story-skill-plan/agents/openai.yaml": "66152a131e86a4252ce27842e89195a353b40bc642427d2918ad18bc88cdd81a",
+      "skills/story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+      "skills/story-skill-plan/references/fanqie-tags.md": "533f8cbdc62da3c03dca4dcfa849fe51e4f25e1f8165fe8fd43219bef399460f",
+      "skills/story-skill-plan/references/outline.md": "29a503a7f6d9c0ecd6b214262000b085d2093d15c360a4aa02d2339db4bb0898",
+      "skills/story-skill-plan/references/qidian-categories.md": "eeaaa495baca608a31163f9f3e07f88112ab432b379926fbd2dc37904e1d03e7",
+      "skills/story-skill-plan/references/qimao-tags.md": "0eebca1c8915efb3a29bea3a2ca39f29d4141c40dc4f8ead67c2efe0d340affb",
+      "skills/story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+      "skills/story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "skills/story-skill-publish/SKILL.md": "f2f7e7fd8acfea1cc2df245d458d2ce3f1f3ca816e3695e15a3917239d65df41",
+      "skills/story-skill-publish/agents/openai.yaml": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+      "skills/story-skill-publish/references/platform-drafts.md": "161f85a55c6831b0d8ba22fd0a23bcffb3e24e2410ee634d41caefb00d011a68",
+      "skills/story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "skills/story-skill-research/SKILL.md": "03b9e9d85cc4bff57b0d31944d3cce444d3a7049749dc597aa7a22f53f515a31",
+      "skills/story-skill-research/agents/openai.yaml": "3fb4cfaded0bf4206c2f3cf7dbc1e6ccf7ee62f5fd4ca1a406b509a0b9bcde28",
+      "skills/story-skill-research/references/rank-scan.md": "4537af29249b86f56f0717848868250a3a2f48cd332350570395e22e7c46ef80",
+      "skills/story-skill-research/references/reader-records.md": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+      "skills/story-skill-research/references/reader-validation.md": "16a02d840c87d3f4e80aad3998b11854fece0e86eb7b6f3f35bc6a7500e4f5bc",
+      "skills/story-skill-research/references/research-handoff.md": "e010886fd50a4c31be8f933eebd9f4ff7278021310f93a337a0c3de0f2e10b88",
+      "skills/story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "skills/story-skill-review/SKILL.md": "50526925c440adc71ce87254a57300b78cb2c113481ca6ac8ce8313a7e1839ae",
+      "skills/story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+      "skills/story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+      "skills/story-skill-review/references/history.md": "00e56c9a2c3757d213dfa555e1571548ba1de05ad38dcda729f5fc8a74430be6",
+      "skills/story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+      "skills/story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "skills/story-skill-write/SKILL.md": "244d8bf8c512f4f57b17714ae17460a18c761406b1369562e9a2ad44e35486e6",
+      "skills/story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+      "skills/story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+      "skills/story-skill-write/references/chapter.md": "0600340ea9ff9f3957f2b608e8f82cae97531d23daca18e0066b8ebece0e5cb2",
+      "skills/story-skill-write/references/content-review.md": "62a1fc4da3aefd6ba95aeabe73acb14b1114efd79d360b2519a57a103ea3fcac",
+      "skills/story-skill-write/references/drama.md": "b3c54bd737a56a02ac7b415c5b455d01b35b1f89ae5a3534b19782fe33697cb1",
+      "skills/story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+      "skills/story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+      "skills/story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+      "skills/story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+      "skills/story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "skills/story-skill/SKILL.md": "4eb292df99b7a09eaa12e31c9689d4fd9fcfff6c123fd175ba67a5a4359b2c53",
+      "skills/story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+      "skills/story-skill/references/project-state.md": "320fd02bf6b443bc56b18021ef7dfbcdd510659e45c5a8289268e220839fba30",
+      "skills/story-skill/references/workbench.md": "7620379d4e40df5421d096b50df372c79951aa04341b98085a0df4e337f381b3",
+      "skills/story-skill/scripts/story.py": "a9c4c6c38405217394bc7f71460a1ba0b609dc4ff608ac3176a9032b0c22f0a5",
+      "skills/story-skill/scripts/story_chrome_bridge.mjs": "3510e41f3a4acdfb7a06c8264d50e7bbff7f7ba7d21eb04b1419dfd9af75105a",
+      "skills/story-skill/scripts/story_chrome_worker.mjs": "8a989996066f2013094f9818b17288f17bc23e1f37cccf52190c68f26b6346f6",
+      "skills/story-skill/scripts/story_chrome_worker.py": "1f057244f8cb62a2a348d9a6a8b96bedcfb8ba85ca3d9e026c83c6f64e115282",
+      "skills/story-skill/scripts/story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+      "skills/story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+      "skills/story-skill/scripts/story_platform_browser.py": "1191dc7f0932d8d1df02a0d208f512c84086e4c6723a83002c411c91e8cb776c",
+      "skills/story-skill/scripts/story_platform_chrome_bridge.py": "fa7c9c2f26648f73f591b7947f3e6598e4d7f6452c6f8571be8f133b6187543a",
+      "skills/story-skill/scripts/story_platform_drafts.py": "847ffb61f03488f1860eaa0cc15ef4521a8ea6be378c915d7c5110d02fb142c4",
+      "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+      "skills/story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "skills/story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+      "skills/story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "skills/story-skill/scripts/story_reader_feedback.py": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+      "skills/story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+      "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "skills/story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "skills/story-skill/scripts/story_tasks.py": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+      "skills/story-skill/scripts/story_workbench.py": "242f7f87c5c503cee9d9024e82d82889d0de4d714f453e1128271fe66e52c495",
+      "skills/story-skill/scripts/story_workbench_archives.py": "718c9b4a2601f63d5e1d558f28a0c713d0d3de911993ac390ad70f0d2f73367b",
+      "skills/story-skill/scripts/story_workbench_books.py": "dda3232c90471017c06d097c3032197c2aa7e9f7d916e391adb14d0f99557b63",
+      "skills/story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+    },
+    "sha256": "ec472785bb96f13b23d5dad540ce12993e2878a5b2279acb55c2170c8986a7c6",
+    "git_head": "854fb304096b31f187ab799fb94981a7592dd2b4",
+    "finished_at": "2026-10-27T06:48:52.347394+00:00",
+    "changed_files": [],
+    "unchanged": true,
+    "rebuild_required": false
+  },
+  "manifests": {
+    "scripts/package.py": {
+      "old_file_count": 69,
+      "current_file_count": 72,
+      "v0627_identical_to_git_head": true,
+      "v0627_manifest_sha256": "9c9af366aca8f30f7338568dff61ab98fe8d52abce358aa7260474f5c7c1c25b",
+      "additions": [
+        "story-skill-research/references/reader-records.md",
+        "story-skill/scripts/story_reader_feedback.py",
+        "story-skill/scripts/story_tasks.py"
+      ]
+    },
+    "scripts/package_npm.py": {
+      "old_file_count": 69,
+      "current_file_count": 72,
+      "v0627_identical_to_git_head": true,
+      "v0627_manifest_sha256": "9c9af366aca8f30f7338568dff61ab98fe8d52abce358aa7260474f5c7c1c25b",
+      "additions": [
+        "story-skill-research/references/reader-records.md",
+        "story-skill/scripts/story_reader_feedback.py",
+        "story-skill/scripts/story_tasks.py"
+      ]
+    },
+    "scripts/install.py": {
+      "old_file_count": 69,
+      "current_file_count": 72,
+      "v0627_identical_to_git_head": true,
+      "v0627_manifest_sha256": "9c9af366aca8f30f7338568dff61ab98fe8d52abce358aa7260474f5c7c1c25b",
+      "additions": [
+        "story-skill-research/references/reader-records.md",
+        "story-skill/scripts/story_reader_feedback.py",
+        "story-skill/scripts/story_tasks.py"
+      ]
+    }
+  },
+  "npm_tarball_verification": {
+    "ok": true,
+    "name": "@ningcui29/story-skill",
+    "version": "0.6.28",
+    "tarball": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/npm/ningcui29-story-skill-0.6.28.tgz",
+    "sha256": "81e52c2d0f57ecfd99de47737d7adbb149e7ed5990bf174962044d9b54d3a44c",
+    "integrity": "sha512-KpIM/iCn+uOghD9KDpXK6jlsM6kvqqNldz73i/qMy5jBF5WGCEhQGlRk/yNCu0//McwduPn9Cve4qOiGsA8a2Q==",
+    "bytes": 708804,
+    "registry": "https://npm.pkg.github.com",
+    "archive_sha256": "b4cfc0e8e0d0030079098fa4fa0f92ee3257b43790271a6a3acefae7508faed4",
+    "payload_manifest": {
+      "story-skill-analyze/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "story-skill-analyze/SKILL.md": "c438ff05fa677f19301c1f2c4e3e73b2c3c23588bb3e0a6912e68fa0a86b2af1",
+      "story-skill-analyze/agents/openai.yaml": "6279ea5e630a0df2c913120009447e590bb9ec55234bb940dc9d898440d55a43",
+      "story-skill-analyze/references/deep-reading.md": "e04ab8d3ae7f737a3e33ec6b71b40f121bd34fb69d88fd8eb4e907f7ad381caf",
+      "story-skill-analyze/references/examples.md": "dc8d82c391e1eed941d6d80680368229ef86b6b894840402381c6df8185fa1c2",
+      "story-skill-cover/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "story-skill-cover/SKILL.md": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+      "story-skill-cover/agents/openai.yaml": "deb797dbdb45ee30137870f0a44e71bf53b5dd6b51238db4e6ec85730176bfac",
+      "story-skill-plan/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "story-skill-plan/SKILL.md": "12b1ffab62554dc07ed899c822b4e8818e057cb8507c8e55ced407b6a1c54bb8",
+      "story-skill-plan/agents/openai.yaml": "66152a131e86a4252ce27842e89195a353b40bc642427d2918ad18bc88cdd81a",
+      "story-skill-plan/references/blurb.md": "de192db194dc21663614892360077b218902b3a44953864f914e5c81a46f131d",
+      "story-skill-plan/references/fanqie-tags.md": "533f8cbdc62da3c03dca4dcfa849fe51e4f25e1f8165fe8fd43219bef399460f",
+      "story-skill-plan/references/outline.md": "29a503a7f6d9c0ecd6b214262000b085d2093d15c360a4aa02d2339db4bb0898",
+      "story-skill-plan/references/qidian-categories.md": "eeaaa495baca608a31163f9f3e07f88112ab432b379926fbd2dc37904e1d03e7",
+      "story-skill-plan/references/qimao-tags.md": "0eebca1c8915efb3a29bea3a2ca39f29d4141c40dc4f8ead67c2efe0d340affb",
+      "story-skill-plan/references/short-platform.md": "7ed233d1df1711532be6d465b8af517b9539d0d502af1604216581102fe8bdfe",
+      "story-skill-publish/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "story-skill-publish/SKILL.md": "f2f7e7fd8acfea1cc2df245d458d2ce3f1f3ca816e3695e15a3917239d65df41",
+      "story-skill-publish/agents/openai.yaml": "347dcf9c3bc348f7fc408b04d61b8d89a0003ca511f6a4c221d4e52687ffb742",
+      "story-skill-publish/references/platform-drafts.md": "161f85a55c6831b0d8ba22fd0a23bcffb3e24e2410ee634d41caefb00d011a68",
+      "story-skill-research/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "story-skill-research/SKILL.md": "03b9e9d85cc4bff57b0d31944d3cce444d3a7049749dc597aa7a22f53f515a31",
+      "story-skill-research/agents/openai.yaml": "3fb4cfaded0bf4206c2f3cf7dbc1e6ccf7ee62f5fd4ca1a406b509a0b9bcde28",
+      "story-skill-research/references/rank-scan.md": "4537af29249b86f56f0717848868250a3a2f48cd332350570395e22e7c46ef80",
+      "story-skill-research/references/reader-records.md": "baac4fba234cea358f95dd74d97e2761fa74e0ed553a4d5c2ced656562304c98",
+      "story-skill-research/references/reader-validation.md": "16a02d840c87d3f4e80aad3998b11854fece0e86eb7b6f3f35bc6a7500e4f5bc",
+      "story-skill-research/references/research-handoff.md": "e010886fd50a4c31be8f933eebd9f4ff7278021310f93a337a0c3de0f2e10b88",
+      "story-skill-review/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "story-skill-review/SKILL.md": "50526925c440adc71ce87254a57300b78cb2c113481ca6ac8ce8313a7e1839ae",
+      "story-skill-review/agents/openai.yaml": "fa411f5a751077766638e99703ae73408c9a0ba33ecc376c9853f9922e56d4fe",
+      "story-skill-review/references/fanqie-content-review.md": "cd1035f809a9309bd3ec99a19c33dfb30a982bdd286db9bd51d2312a4b8a79f1",
+      "story-skill-review/references/history.md": "00e56c9a2c3757d213dfa555e1571548ba1de05ad38dcda729f5fc8a74430be6",
+      "story-skill-review/references/qimao-content-review.md": "38b9b00fe46164048006401693d041a85dfe6c5f97ecf49bea95aec23bfd4565",
+      "story-skill-write/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "story-skill-write/SKILL.md": "244d8bf8c512f4f57b17714ae17460a18c761406b1369562e9a2ad44e35486e6",
+      "story-skill-write/agents/openai.yaml": "5d3ec4b9473ba98c08f8f3a27a63fda5bd246504131d0dcbaf32b39ce1ee455d",
+      "story-skill-write/references/chapter-continuity.md": "7fcc4de9341887fda6a57774eefcf84c5d0c13b15c64170ee80cd27e473a816d",
+      "story-skill-write/references/chapter.md": "0600340ea9ff9f3957f2b608e8f82cae97531d23daca18e0066b8ebece0e5cb2",
+      "story-skill-write/references/content-review.md": "62a1fc4da3aefd6ba95aeabe73acb14b1114efd79d360b2519a57a103ea3fcac",
+      "story-skill-write/references/drama.md": "b3c54bd737a56a02ac7b415c5b455d01b35b1f89ae5a3534b19782fe33697cb1",
+      "story-skill-write/references/long-form.md": "ef8cb2369c0805df2cda4d8afa27e5a9fed27f60c08f1a69623bfebe5377edde",
+      "story-skill-write/references/punctuation.md": "8ebbf9c1768c946e55f37441590402455c32ac4798e01a08dee7f28c3395359a",
+      "story-skill-write/references/suspense-evidence.md": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8",
+      "story-skill-write/references/writing-handoff.md": "da2b94b11791c3dc172726b36cd02ed7f61bef80ba8bc7b060180991d8965850",
+      "story-skill/LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad",
+      "story-skill/SKILL.md": "4eb292df99b7a09eaa12e31c9689d4fd9fcfff6c123fd175ba67a5a4359b2c53",
+      "story-skill/agents/openai.yaml": "4fde39c3eea724eb9497f34e4eacab59c637780e11b017b2c5f97d677018186a",
+      "story-skill/references/project-state.md": "320fd02bf6b443bc56b18021ef7dfbcdd510659e45c5a8289268e220839fba30",
+      "story-skill/references/workbench.md": "7620379d4e40df5421d096b50df372c79951aa04341b98085a0df4e337f381b3",
+      "story-skill/scripts/story.py": "a9c4c6c38405217394bc7f71460a1ba0b609dc4ff608ac3176a9032b0c22f0a5",
+      "story-skill/scripts/story_chrome_bridge.mjs": "3510e41f3a4acdfb7a06c8264d50e7bbff7f7ba7d21eb04b1419dfd9af75105a",
+      "story-skill/scripts/story_chrome_worker.mjs": "8a989996066f2013094f9818b17288f17bc23e1f37cccf52190c68f26b6346f6",
+      "story-skill/scripts/story_chrome_worker.py": "1f057244f8cb62a2a348d9a6a8b96bedcfb8ba85ca3d9e026c83c6f64e115282",
+      "story-skill/scripts/story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+      "story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+      "story-skill/scripts/story_platform_browser.py": "1191dc7f0932d8d1df02a0d208f512c84086e4c6723a83002c411c91e8cb776c",
+      "story-skill/scripts/story_platform_chrome_bridge.py": "fa7c9c2f26648f73f591b7947f3e6598e4d7f6452c6f8571be8f133b6187543a",
+      "story-skill/scripts/story_platform_drafts.py": "847ffb61f03488f1860eaa0cc15ef4521a8ea6be378c915d7c5110d02fb142c4",
+      "story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11",
+      "story-skill/scripts/story_punctuation.py": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee",
+      "story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+      "story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "story-skill/scripts/story_reader_feedback.py": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd",
+      "story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+      "story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "story-skill/scripts/story_tasks.py": "e6db0b0512d1a24179a83adfa827e32f0cc31bc4fca8ebd6f8e57ad82986b01d",
+      "story-skill/scripts/story_workbench.py": "242f7f87c5c503cee9d9024e82d82889d0de4d714f453e1128271fe66e52c495",
+      "story-skill/scripts/story_workbench_archives.py": "718c9b4a2601f63d5e1d558f28a0c713d0d3de911993ac390ad70f0d2f73367b",
+      "story-skill/scripts/story_workbench_books.py": "dda3232c90471017c06d097c3032197c2aa7e9f7d916e391adb14d0f99557b63",
+      "story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+    },
+    "wrapper_manifest": {
+      "package.json": "c09b423566421b673b109ff49a19c68219507a80f4c5752b9974b03d960b67da",
+      "README.md": "a4586c22dc0f6276b9083660475e3700a34a8def51bec71463bbc67ba6c4a990",
+      "LICENSE": "d3ce7b1d7bf7c901919a4cc3e92b4b65bcc832e278124e77354a3492746f62ad"
+    },
+    "package_manifest": {
+      "name": "@ningcui29/story-skill",
+      "version": "0.6.28",
+      "description": "Eight Story Skill skills for Chinese novel writing, review and publication preparation",
+      "license": "SEE LICENSE IN LICENSE",
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/NingCui29/story-skill.git"
+      },
+      "homepage": "https://github.com/NingCui29/story-skill#readme",
+      "publishConfig": {
+        "registry": "https://npm.pkg.github.com"
+      },
+      "files": [
+        "story-skill-analyze/LICENSE",
+        "story-skill-analyze/SKILL.md",
+        "story-skill-analyze/agents/openai.yaml",
+        "story-skill-analyze/references/deep-reading.md",
+        "story-skill-analyze/references/examples.md",
+        "story-skill-cover/LICENSE",
+        "story-skill-cover/SKILL.md",
+        "story-skill-cover/agents/openai.yaml",
+        "story-skill-plan/LICENSE",
+        "story-skill-plan/SKILL.md",
+        "story-skill-plan/agents/openai.yaml",
+        "story-skill-plan/references/blurb.md",
+        "story-skill-plan/references/fanqie-tags.md",
+        "story-skill-plan/references/outline.md",
+        "story-skill-plan/references/qidian-categories.md",
+        "story-skill-plan/references/qimao-tags.md",
+        "story-skill-plan/references/short-platform.md",
+        "story-skill-publish/LICENSE",
+        "story-skill-publish/SKILL.md",
+        "story-skill-publish/agents/openai.yaml",
+        "story-skill-publish/references/platform-drafts.md",
+        "story-skill-research/LICENSE",
+        "story-skill-research/SKILL.md",
+        "story-skill-research/agents/openai.yaml",
+        "story-skill-research/references/rank-scan.md",
+        "story-skill-research/references/reader-records.md",
+        "story-skill-research/references/reader-validation.md",
+        "story-skill-research/references/research-handoff.md",
+        "story-skill-review/LICENSE",
+        "story-skill-review/SKILL.md",
+        "story-skill-review/agents/openai.yaml",
+        "story-skill-review/references/fanqie-content-review.md",
+        "story-skill-review/references/history.md",
+        "story-skill-review/references/qimao-content-review.md",
+        "story-skill-write/LICENSE",
+        "story-skill-write/SKILL.md",
+        "story-skill-write/agents/openai.yaml",
+        "story-skill-write/references/chapter-continuity.md",
+        "story-skill-write/references/chapter.md",
+        "story-skill-write/references/content-review.md",
+        "story-skill-write/references/drama.md",
+        "story-skill-write/references/long-form.md",
+        "story-skill-write/references/punctuation.md",
+        "story-skill-write/references/suspense-evidence.md",
+        "story-skill-write/references/writing-handoff.md",
+        "story-skill/LICENSE",
+        "story-skill/SKILL.md",
+        "story-skill/agents/openai.yaml",
+        "story-skill/references/project-state.md",
+        "story-skill/references/workbench.md",
+        "story-skill/scripts/story.py",
+        "story-skill/scripts/story_chrome_bridge.mjs",
+        "story-skill/scripts/story_chrome_worker.mjs",
+        "story-skill/scripts/story_chrome_worker.py",
+        "story-skill/scripts/story_history.py",
+        "story-skill/scripts/story_outline.py",
+        "story-skill/scripts/story_platform_browser.py",
+        "story-skill/scripts/story_platform_chrome_bridge.py",
+        "story-skill/scripts/story_platform_drafts.py",
+        "story-skill/scripts/story_publish.py",
+        "story-skill/scripts/story_punctuation.py",
+        "story-skill/scripts/story_rank.py",
+        "story-skill/scripts/story_rank_sources.py",
+        "story-skill/scripts/story_reader_feedback.py",
+        "story-skill/scripts/story_research.py",
+        "story-skill/scripts/story_search.py",
+        "story-skill/scripts/story_storage.py",
+        "story-skill/scripts/story_tasks.py",
+        "story-skill/scripts/story_workbench.py",
+        "story-skill/scripts/story_workbench_archives.py",
+        "story-skill/scripts/story_workbench_books.py",
+        "story-skill/scripts/story_world.py",
+        "LICENSE"
+      ]
+    }
+  },
+  "claude_single_entry": {
+    "ok": true,
+    "skill_md_count": 1,
+    "embedded_guide_count": 8,
+    "source_files_compared": 72,
+    "non_markdown_bytes_preserved": true
+  },
+  "codex_payload_matches_adapted_source": true,
+  "codex_isolated_host_verification": {
+    "schema": 1,
+    "date": "2026-10-27T06:48:44.413935+00:00",
+    "ok": true,
+    "environment": {
+      "platform": "macOS-15.8.1-x86_64-i386-64bit",
+      "python": "3.12.14"
+    },
+    "isolation": {
+      "temporary_codex_home": true,
+      "temporary_working_directory": true,
+      "real_user_config_modified": false,
+      "model_turn_started": false
+    },
+    "not_verified": [
+      "Codex desktop GUI loading and interaction",
+      "Model skill selection, prose quality, or platform acceptance"
+    ],
+    "checks": {
+      "current_source_payload": {
+        "status": "passed",
+        "files": 72,
+        "missing": [],
+        "extra": [],
+        "changed": [],
+        "adapted_ui_files": [
+          "story-skill-analyze/agents/openai.yaml",
+          "story-skill-cover/agents/openai.yaml",
+          "story-skill-plan/agents/openai.yaml",
+          "story-skill-publish/agents/openai.yaml",
+          "story-skill-research/agents/openai.yaml",
+          "story-skill-review/agents/openai.yaml",
+          "story-skill-write/agents/openai.yaml",
+          "story-skill/agents/openai.yaml"
+        ],
+        "adapted_ui_file_count": 8
+      },
+      "source_payload_files": 72,
+      "codex_version": {
+        "command": [
+          "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "codex-cli 0.164.0-alpha.11.1\n",
+        "stderr": "",
+        "duration_seconds": 0.026,
+        "status": "passed"
+      },
+      "marketplace_add": {
+        "command": [
+          "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+          "plugin",
+          "marketplace",
+          "add",
+          "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28",
+          "--json"
+        ],
+        "exit_code": 0,
+        "stdout": "{\n  \"marketplaceName\": \"story-skill-local\",\n  \"installedRoot\": \"/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28\",\n  \"alreadyAdded\": false\n}\n",
+        "stderr": "",
+        "duration_seconds": 0.039,
+        "status": "passed",
+        "json": {
+          "marketplaceName": "story-skill-local",
+          "installedRoot": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28",
+          "alreadyAdded": false
+        }
+      },
+      "available_plugins": {
+        "command": [
+          "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+          "plugin",
+          "list",
+          "--available",
+          "--json"
+        ],
+        "exit_code": 0,
+        "stdout": "{\n  \"installed\": [],\n  \"available\": [\n    {\n      \"pluginId\": \"story-skill@story-skill-local\",\n      \"name\": \"story-skill\",\n      \"marketplaceName\": \"story-skill-local\",\n      \"version\": \"0.6.28\",\n      \"installed\": false,\n      \"enabled\": false,\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill\"\n      },\n      \"marketplaceSource\": {\n        \"sourceType\": \"local\",\n        \"source\": \"/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28\"\n      },\n      \"installPolicy\": \"AVAILABLE\",\n      \"authPolicy\": \"ON_INSTALL\"\n    }\n  ]\n}\n",
+        "stderr": "",
+        "duration_seconds": 0.037,
+        "status": "passed",
+        "json": {
+          "installed": [],
+          "available": [
+            {
+              "pluginId": "story-skill@story-skill-local",
+              "name": "story-skill",
+              "marketplaceName": "story-skill-local",
+              "version": "0.6.28",
+              "installed": false,
+              "enabled": false,
+              "source": {
+                "source": "local",
+                "path": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill"
+              },
+              "marketplaceSource": {
+                "sourceType": "local",
+                "source": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28"
+              },
+              "installPolicy": "AVAILABLE",
+              "authPolicy": "ON_INSTALL"
+            }
+          ]
+        }
+      },
+      "plugin_add": {
+        "command": [
+          "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+          "plugin",
+          "add",
+          "story-skill@story-skill-local",
+          "--json"
+        ],
+        "exit_code": 0,
+        "stdout": "{\n  \"pluginId\": \"story-skill@story-skill-local\",\n  \"name\": \"story-skill\",\n  \"marketplaceName\": \"story-skill-local\",\n  \"version\": \"0.6.28\",\n  \"installedPath\": \"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28\",\n  \"authPolicy\": \"ON_INSTALL\"\n}\n",
+        "stderr": "",
+        "duration_seconds": 0.062,
+        "status": "passed",
+        "json": {
+          "pluginId": "story-skill@story-skill-local",
+          "name": "story-skill",
+          "marketplaceName": "story-skill-local",
+          "version": "0.6.28",
+          "installedPath": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28",
+          "authPolicy": "ON_INSTALL"
+        }
+      },
+      "installed_plugins": {
+        "command": [
+          "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+          "plugin",
+          "list",
+          "--json"
+        ],
+        "exit_code": 0,
+        "stdout": "{\n  \"installed\": [\n    {\n      \"pluginId\": \"story-skill@story-skill-local\",\n      \"name\": \"story-skill\",\n      \"marketplaceName\": \"story-skill-local\",\n      \"version\": \"0.6.28\",\n      \"installed\": true,\n      \"enabled\": true,\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill\"\n      },\n      \"marketplaceSource\": {\n        \"sourceType\": \"local\",\n        \"source\": \"/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28\"\n      },\n      \"installPolicy\": \"AVAILABLE\",\n      \"authPolicy\": \"ON_INSTALL\"\n    }\n  ],\n  \"available\": []\n}\n",
+        "stderr": "",
+        "duration_seconds": 0.035,
+        "status": "passed",
+        "json": {
+          "installed": [
+            {
+              "pluginId": "story-skill@story-skill-local",
+              "name": "story-skill",
+              "marketplaceName": "story-skill-local",
+              "version": "0.6.28",
+              "installed": true,
+              "enabled": true,
+              "source": {
+                "source": "local",
+                "path": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28/plugins/story-skill"
+              },
+              "marketplaceSource": {
+                "sourceType": "local",
+                "source": "/Users/cuining/Documents/GitHub/story-skill/dist/distribution-20261027-lvptbs4z/codex/story-skill-codex-0.6.28"
+              },
+              "installPolicy": "AVAILABLE",
+              "authPolicy": "ON_INSTALL"
+            }
+          ],
+          "available": []
+        }
+      },
+      "installed_bytes": {
+        "status": "passed",
+        "files": 75,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "skill_entries": {
+        "status": "passed",
+        "names": [
+          "story-skill",
+          "story-skill-analyze",
+          "story-skill-cover",
+          "story-skill-plan",
+          "story-skill-publish",
+          "story-skill-research",
+          "story-skill-review",
+          "story-skill-write"
+        ],
+        "count": 8
+      },
+      "markdown_dependencies": {
+        "status": "passed",
+        "files_scanned": 34,
+        "links_checked": 360,
+        "missing": [],
+        "outside_plugin": [],
+        "scope": "Local inline/reference Markdown file targets; remote URLs and heading anchors are excluded"
+      },
+      "app_server_skill_discovery": {
+        "status": "passed",
+        "method": "skills/list",
+        "skills": [
+          {
+            "name": "story-skill:story-skill",
+            "description": "中文小说任务总入口与共享规则；在需求跨流程或尚未明确是规划、剧本改编、分镜、正文、拆文、审稿、调研、封面还是发布材料与平台草稿时使用。不用于软件开发或普通文案。",
+            "interface": {
+              "displayName": "Story Skill · 小说入口",
+              "shortDescription": "中文小说技能总入口，按任务选择规划、剧本、分镜、写作、拆文、审稿、调研或封面",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "使用 $story-skill:story-skill 读取这本书的约定和断点，按我的要求选择本次流程。"
+            },
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "story-skill@story-skill-local"
+          },
+          {
+            "name": "story-skill:story-skill-analyze",
+            "description": "中文小说开篇点评、精彩度与平淡原因分析、长短篇深读、全量证据分析、分析稿修订与断点续跑。用于分析已有作品，不把参考剧情当原创书事实。",
+            "interface": {
+              "displayName": "Story Skill · 小说拆解",
+              "shortDescription": "中文小说逐段拆解与证据聚合，记录来源覆盖范围，支持长篇分析断点续跑",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "使用 $story-skill:story-skill-analyze 从现有分析断点继续拆解这部小说，保存证据和进度。"
+            },
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill-analyze/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "story-skill@story-skill-local"
+          },
+          {
+            "name": "story-skill:story-skill-cover",
+            "description": "制作、优化或局部修改中文小说封面，以吸引目标读者点开为设计目标，根据书名、署名、题材和发布规格生成图像，检查视觉钩子、缩略图表现、文字与尺寸。",
+            "interface": {
+              "displayName": "Story Skill · 小说封面",
+              "shortDescription": "制作或优化吸睛的中文小说封面，强化视觉钩子与标题主次，复核实际成图和缩略图",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "使用 $story-skill:story-skill-cover 制作或优化这本书的封面，以吸睛为优先设计目标，按已采用书名、对应署名和题材强化吸睛看点、视觉焦点与标题主次，并检查实际成图与缩略图。"
+            },
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill-cover/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "story-skill@story-skill-local"
+          },
+          {
+            "name": "story-skill:story-skill-plan",
+            "description": "中文小说书名、卷名、章名、简介拟写与优化、钩子与剧情设计、小说架构搭建与重构、大纲优化、开书、人物与世界设定、平台分类、近期细纲，以及把既有作品建立为可续写基线。支持小说改剧本、剧本规划与成稿、已有改编剧本续写和审改，以及根据小说或剧本拆分镜。规划请求不自动写小说正文。",
+            "interface": {
+              "displayName": "Story Skill · 规划与改编",
+              "shortDescription": "中文小说开书与大纲规划、小说改剧本成稿与审改、小说或剧本拆分镜",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "使用 $story-skill:story-skill-plan 按我指定的产物完成小说规划、剧本改编或分镜；只要规划时不写成稿。"
+            },
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill-plan/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "story-skill@story-skill-local"
+          },
+          {
+            "name": "story-skill:story-skill-publish",
+            "description": "为番茄、七猫或起点准备已审查正式章节的离线材料，导出并复核 ZIP；按已核对的页面配置执行草稿保存与回读，区分成功、冲突和未知。不执行提交审核或定时发布。",
+            "interface": {
+              "displayName": "Story Skill · 草稿与发布准备",
+              "shortDescription": "准备番茄、七猫、起点正式章节材料，按已配置入口保存草稿并核对结果",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "使用 $story-skill:story-skill-publish 为指定作品准备章节材料，或按已配置的平台入口保存草稿，检查正式稿资格并说明实际保存及核对状态。"
+            },
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill-publish/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "story-skill@story-skill-local"
+          },
+          {
+            "name": "story-skill:story-skill-research",
+            "description": "为中文小说做结构化扫榜、选题与素材调研、事实查证、试读设计与追更验证，分析读者反馈与阅读数据，核对来源与样本。不改写正文或生成封面。",
+            "interface": {
+              "displayName": "Story Skill · 写作调研",
+              "shortDescription": "围绕中文小说创作决策做结构化扫榜和资料查证，保留来源、样本口径与选题依据",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "使用 $story-skill:story-skill-research 调研这个小说题材的当前榜单与写作资料，注明来源和样本限制。"
+            },
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill-research/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "story-skill@story-skill-local"
+          },
+          {
+            "name": "story-skill:story-skill-review",
+            "description": "中文小说审稿、修改、整书打磨、去 AI 味及已提交章节修订，处理外部改稿、历史依赖复核和旧版状态库迁移。不用于软件代码审查。",
+            "interface": {
+              "displayName": "Story Skill · 审稿修订",
+              "shortDescription": "中文小说审稿、最小修改与去 AI 味，支持外部改稿协调和历史章节修订",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "使用 $story-skill:story-skill-review 审查指定章节，以证据说明问题并完成我授权的修改。"
+            },
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill-review/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "story-skill@story-skill-local"
+          },
+          {
+            "name": "story-skill:story-skill-write",
+            "description": "中文长短篇正文创作与续写，包括逐章提交、短篇完本全文与封面交付、人物状态衔接和长距伏笔。已有章节修订用 story-skill-review。",
+            "interface": {
+              "displayName": "Story Skill · 正文写作",
+              "shortDescription": "中文长短篇正文与连载续写，按章召回人物状态、核对证据并保存创作断点",
+              "iconSmall": null,
+              "iconLarge": null,
+              "iconSmallUrl": null,
+              "iconLargeUrl": null,
+              "brandColor": null,
+              "defaultPrompt": "使用 $story-skill:story-skill-write 按这本书已确认的细纲继续下一章，并完成审查和保存。"
+            },
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill-write/SKILL.md",
+            "scope": "user",
+            "enabled": true,
+            "pluginId": "story-skill@story-skill-local"
+          }
+        ],
+        "errors": [],
+        "initialization": {
+          "userAgent": "Codex Desktop/0.164.0-alpha.11.1 (Mac OS 15.8.1; x86_64) dumb (story-skill-local-verifier; 1)",
+          "codexHome": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home",
+          "platformFamily": "unix",
+          "platformOs": "macos"
+        },
+        "notification_methods": [
+          "remoteControl/status/changed"
+        ],
+        "ui_default_prompts": {
+          "status": "passed",
+          "adapted_ui_files": 8,
+          "references": {
+            "story-skill:story-skill": [
+              "$story-skill:story-skill"
+            ],
+            "story-skill:story-skill-analyze": [
+              "$story-skill:story-skill-analyze"
+            ],
+            "story-skill:story-skill-cover": [
+              "$story-skill:story-skill-cover"
+            ],
+            "story-skill:story-skill-plan": [
+              "$story-skill:story-skill-plan"
+            ],
+            "story-skill:story-skill-publish": [
+              "$story-skill:story-skill-publish"
+            ],
+            "story-skill:story-skill-research": [
+              "$story-skill:story-skill-research"
+            ],
+            "story-skill:story-skill-review": [
+              "$story-skill:story-skill-review"
+            ],
+            "story-skill:story-skill-write": [
+              "$story-skill:story-skill-write"
+            ]
+          },
+          "scope": "Codex-parsed UI defaultPrompt references; no model routing turn was started"
+        },
+        "model_turn_started": false
+      },
+      "runtime": {
+        "version": {
+          "command": [
+            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-X",
+            "utf8",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/scripts/story.py",
+            "--version"
+          ],
+          "exit_code": 0,
+          "stdout": "0.6.28\n",
+          "stderr": "",
+          "duration_seconds": 0.738,
+          "status": "passed"
+        },
+        "help": {
+          "command": [
+            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-X",
+            "utf8",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/scripts/story.py",
+            "--help"
+          ],
+          "exit_code": 0,
+          "stdout": "usage: story.py [-h] [--version]\n                {template,rank-template,rank-check,rank-aggregate,rank-sample,rank-collect,research-init,research-check,research-verify,research-render,reader-init,reader-record,reader-check,reader-render,task-list,task-get,task-handoff,task-return,task-review,task-fail,task-evidence,init,status,book-kind,book-title,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,publish-draft-run,publish-draft-status,publish-chrome-attach,publish-chrome-detach,publish-chrome-health,publish-chrome-heartbeat,publish-chrome-next,publish-chrome-respond,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n                ...\n\nStory Skill: local, bounded context and transactional writing state. No API\ncalls.\n\npositional arguments:\n  {template,rank-template,rank-check,rank-aggregate,rank-sample,rank-collect,research-init,research-check,research-verify,research-render,reader-init,reader-record,reader-check,reader-render,task-list,task-get,task-handoff,task-return,task-review,task-fail,task-evidence,init,status,book-kind,book-title,migrate,audit,outline-audit,world-save,world-check,world-read,cache-get,cache-put,history-dependencies,history-deps,history-inspect,history-publish,history-refresh,history-saved,history-snapshot,history-start,history-state,history-update,publish-backup,publish-cancel,publish-check,publish-compare,publish-compare-history,publish-compare-inspect,publish-compare-record,publish-export,publish-export-list,publish-inspect,publish-list,publish-prepare,publish-recover,publish-verify-export,publish-draft-run,publish-draft-status,publish-chrome-attach,publish-chrome-detach,publish-chrome-health,publish-chrome-heartbeat,publish-chrome-next,publish-chrome-respond,workbench-snapshot,workbench-export,workbench-serve,workbench-status,workbench-stop,workbench-library-serve,workbench-library-status,workbench-library-stop,export,assemble-short,notes,plan,plan-read,plan-render,outline-bind,context,writing-brief,prepare,reconcile,recall,chapter-read,dependencies,sources,lint,commit,adopt,adopt-backfill,ingest,coverage,next,record,findings,source-read,report}\n    template            Print just one JSON input example\n    rank-template       输出结构化扫榜快照示例\n    rank-check          校验离线扫榜快照与覆盖声明\n    rank-aggregate      去重聚合结构化扫榜快照\n    rank-sample         按同一可比分组抽取代表作阅读候选与来源证据\n    rank-collect        采集七猫公开书库样本（含本地 HTML 导入）\n    research-init       从代表作样本生成待填写的拆文与选题交接\n    research-check      只读核验研究交接与本地引用版本\n    research-verify     按显式假设与作品身份追加拆文证据\n    research-render     导出当前拆文任务与规划候选\n    reader-init         冻结分次试读研究计划与稿件版本；不邀读\n    reader-record       追加阅读观察并另存新研究目录\n    reader-check        只读核对来源并按条件汇总\n    reader-render       导出阅读观察与修正历史\n    task-list           Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-get            Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-handoff        Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-return         Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-review         Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-fail           Version-bound assistant task receipts; never adopt\n                        manuscript text\n    task-evidence       Version-bound assistant task receipts; never adopt\n                        manuscript text\n    init                Create state once; never overwrite an existing book\n    status              Compact checkpoint and export health\n    book-kind           Correct long/short fiction metadata without rewriting\n                        chapters or exports\n    book-title          Adopt a book title without moving directories or\n                        managed exports\n    migrate             Explicit schema upgrade with a consistent rollback\n                        backup\n    audit               Strictly check managed exports without repairing or\n                        recording them\n    outline-audit       Read-only structural check of a whole-book outline,\n                        including candidates\n    world-save          Save structured story state with cited evidence\n    world-check         Check recorded rules, knowledge and continuity\n    world-read          Inspect one stored narrative record, including stale\n                        evidence for reviewed repair\n    cache-get           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    cache-put           Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-dependencies\n                        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-deps        Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-inspect     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-publish     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-refresh     Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-saved       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-snapshot    Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-start       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-state       Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    history-update      Versioned dependencies, reviewed historical branches,\n                        and evidence-bound caches\n    publish-backup      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-cancel      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-check       Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-history\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-inspect\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-compare-record\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export      Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-export-list\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-inspect     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-list        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-prepare     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-recover     Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-verify-export\n                        Prepare and inspect offline chapter publishing\n                        material; never uploads\n    publish-draft-run   Preview or explicitly save existing-work chapter\n                        drafts; never submits\n    publish-draft-status\n                        Read recorded platform draft observations without\n                        contacting a platform\n    publish-chrome-attach\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-detach\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-health\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-heartbeat\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-next\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    publish-chrome-respond\n                        Authenticate an existing-Chrome host bridge; never\n                        starts a browser\n    workbench-snapshot  Read one bounded, non-mutating local workbench\n                        snapshot\n    workbench-export    Generate a self-contained, read-only local author\n                        workbench\n    workbench-serve     Open a loopback editor that saves candidate drafts\n                        only\n    workbench-status    Check the registered local editor instance\n    workbench-stop      Stop the registered editor after preserving edits in\n                        all its pages\n    workbench-library-serve\n                        Open the independent local bookshelf at a fixed\n                        address\n    workbench-library-status\n                        Check the independent bookshelf service\n    workbench-library-stop\n                        Stop the bookshelf without stopping book editors\n    export              Repair exports without replacing outside edits\n    assemble-short      Assemble all committed short-story chapters into one\n                        book-title Markdown file\n    notes               Save cards or a chapter plan with optimistic\n                        concurrency\n    plan                Save cards or a chapter plan with optimistic\n                        concurrency\n    plan-read           Read a complete saved chapter plan for recovery\n                        without verifying adoption\n    plan-render         Render candidate planning Markdown or inspect its\n                        saved-plan source\n    outline-bind        Bind one reviewed, adopted readable outline to its\n                        saved chapter plan\n    context             Build a bounded chapter context packet\n    writing-brief       Read-only evidence packet for a bound next-chapter\n                        plan\n    prepare             Read-only review scaffold bound to the current book,\n                        state and draft\n    reconcile           Inspect an outside edit of the latest native chapter,\n                        or apply its reviewed draft\n    recall              Bounded literal substring search of cards, summaries\n                        and chapter prose\n    chapter-read        Read a bounded excerpt of a current or immutable\n                        historical chapter\n    dependencies        Resolve candidate evidence hashes for a reviewed\n                        chapter dependency declaration\n    sources             Find saved source IDs and analysis checkpoints after a\n                        new session\n    lint                Check, commit, or import one last complete chapter\n    commit              Check, commit, or import one last complete chapter\n    adopt               Check, commit, or import one last complete chapter\n    adopt-backfill      Check, commit, or import one last complete chapter\n    ingest              Snapshot source text and split without losing bonus\n                        chapters\n    coverage            Incremental source analysis and evidence-backed\n                        checkpoints\n    next                Incremental source analysis and evidence-backed\n                        checkpoints\n    record              Incremental source analysis and evidence-backed\n                        checkpoints\n    findings            Incremental source analysis and evidence-backed\n                        checkpoints\n    source-read         Incremental source analysis and evidence-backed\n                        checkpoints\n    report              Incremental source analysis and evidence-backed\n                        checkpoints\n\noptions:\n  -h, --help            show this help message and exit\n  --version             show program's version number and exit\n",
+          "stderr": "",
+          "duration_seconds": 0.734,
+          "status": "passed"
+        },
+        "init": {
+          "command": [
+            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-X",
+            "utf8",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/scripts/story.py",
+            "init",
+            "--book",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book",
+            "--title",
+            "Codex 插件隔离验收"
+          ],
+          "exit_code": 0,
+          "stdout": "{\"created\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book\",\"id\":\"56dcae15-61b5-4b01-a994-67c7b667e47d\",\"imported_through\":0,\"kind\":\"long\",\"last_chapter\":0,\"revision\":0,\"schema\":2,\"title\":\"Codex 插件隔离验收\"}\n",
+          "stderr": "",
+          "duration_seconds": 0.736,
+          "status": "passed"
+        },
+        "status": {
+          "command": [
+            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-X",
+            "utf8",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/scripts/story.py",
+            "status",
+            "--book",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book"
+          ],
+          "exit_code": 0,
+          "stdout": "{\"book\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book\",\"cards\":0,\"changed_export_count\":0,\"changed_exports\":[],\"id\":\"56dcae15-61b5-4b01-a994-67c7b667e47d\",\"imported_through\":0,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"kind\":\"long\",\"last_chapter\":0,\"more_sources\":false,\"next_chapter\":1,\"pending_export_count\":0,\"pending_exports\":[],\"recent_sources\":[],\"revision\":0,\"short_assembly\":null,\"short_assembly_path\":null,\"sources\":0,\"title\":\"Codex 插件隔离验收\"}\n",
+          "stderr": "",
+          "duration_seconds": 0.739,
+          "status": "passed"
+        },
+        "audit": {
+          "command": [
+            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-X",
+            "utf8",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/scripts/story.py",
+            "audit",
+            "--book",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book"
+          ],
+          "exit_code": 0,
+          "stdout": "{\"changed_export_count\":0,\"changed_exports\":[],\"checked_revision\":0,\"exports_complete\":true,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"pending_export_count\":0,\"pending_exports\":[],\"read_only\":true,\"read_only_scope\":\"managed_book_records_and_exports\",\"scope_exports_complete\":true}\n",
+          "stderr": "",
+          "duration_seconds": 0.755,
+          "status": "passed"
+        },
+        "health_check_command": "audit (this Story Skill version has no doctor subcommand)"
+      },
+      "workbench": {
+        "status": "passed",
+        "start_command": [
+          "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "-B",
+          "-X",
+          "utf8",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/scripts/story.py",
+          "workbench-serve",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book"
+        ],
+        "running": {
+          "command": [
+            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-X",
+            "utf8",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/scripts/story.py",
+            "workbench-status",
+            "--book",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book"
+          ],
+          "exit_code": 0,
+          "stdout": "{\"book_id\":\"56dcae15-61b5-4b01-a994-67c7b667e47d\",\"code_sha256\":\"242f7f87c5c503cee9d9024e82d82889d0de4d714f453e1128271fe66e52c495\",\"instance\":\"707ba066e74c488bb3219356368dde39\",\"ok\":true,\"outdated\":false,\"pid\":83537,\"platform_activity\":{\"binding\":false,\"busy\":false,\"jobs\":[],\"supported\":true},\"presence\":{\"automatic_verified\":false,\"book_id\":\"56dcae15-61b5-4b01-a994-67c7b667e47d\",\"can_stop\":true,\"counts\":{\"closed\":0,\"dirty\":0,\"needs_recovery\":0,\"open\":0,\"pending_pages\":0,\"recovering\":0,\"registered\":0,\"saving\":0,\"unknown\":0},\"coverage\":\"server_issued_pages_this_instance\",\"fingerprint\":\"4f54e9a2e1dcb978c751dedf73978fc34db8a2805daed7870208d00b6947ea30\",\"instance\":\"707ba066e74c488bb3219356368dde39\",\"legacy_services_covered\":false,\"manual_confirmation_required\":false,\"no_pages\":true,\"pages\":[],\"protocol\":1,\"saved_assertion_is_automatic_verification\":false,\"state\":\"no_pages\"},\"presence_supported\":true,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book\",\"running\":true,\"runtime_sha256\":\"0641b0f8633bd71905329c4f456b0806b73ec7bea89ca270f18b36b0854c5ae9\",\"started\":\"2026-10-27T06:48:49.691394Z\",\"stop_requested\":false,\"url\":\"http://127.0.0.1:63203/REDACTED-LOCAL-TOKEN/\"}\n",
+          "stderr": "",
+          "duration_seconds": 0.776,
+          "status": "passed"
+        },
+        "http": {
+          "status": 200,
+          "content_type": "text/html; charset=utf-8",
+          "bytes": 246287,
+          "sha256": "e17c7b4b488c048f992b333a3ee03f954473720d475a0d7557b8b5f93a4709b3"
+        },
+        "probe_page_closure": {
+          "status": "passed",
+          "accepted": true,
+          "closed": true,
+          "counts": {
+            "registered": 1,
+            "open": 0,
+            "closed": 1,
+            "unknown": 0,
+            "pending_pages": 0,
+            "dirty": 0,
+            "saving": 0,
+            "recovering": 0,
+            "needs_recovery": 0
+          },
+          "scope": "Only the verifier's HTTP probe page; no browser buffers or manual confirmation"
+        },
+        "stop": {
+          "command": [
+            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-X",
+            "utf8",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/scripts/story.py",
+            "workbench-stop",
+            "--book",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book",
+            "--saved"
+          ],
+          "exit_code": 0,
+          "stdout": "{\"allowed\":true,\"automatic_verified\":true,\"book_id\":\"56dcae15-61b5-4b01-a994-67c7b667e47d\",\"code_sha256\":\"242f7f87c5c503cee9d9024e82d82889d0de4d714f453e1128271fe66e52c495\",\"instance\":\"707ba066e74c488bb3219356368dde39\",\"manual_unknown_confirmation\":false,\"ok\":true,\"outdated\":false,\"pid\":83537,\"platform_activity\":{\"binding\":false,\"busy\":false,\"jobs\":[],\"supported\":true},\"presence\":{\"automatic_verified\":true,\"book_id\":\"56dcae15-61b5-4b01-a994-67c7b667e47d\",\"can_stop\":true,\"counts\":{\"closed\":1,\"dirty\":0,\"needs_recovery\":0,\"open\":0,\"pending_pages\":0,\"recovering\":0,\"registered\":1,\"saving\":0,\"unknown\":0},\"coverage\":\"server_issued_pages_this_instance\",\"fingerprint\":\"dff03e45cf25ff27e4d09b3a7602aeec14688b9276b275e5b0670f33c4d0f70c\",\"instance\":\"707ba066e74c488bb3219356368dde39\",\"legacy_services_covered\":false,\"manual_confirmation_required\":false,\"no_pages\":false,\"pages\":[{\"buffers\":[],\"initialized\":true,\"last_known_pending\":false,\"page_id\":\"5a2246a8574c4df99693dc7dae53ef6e\",\"seconds_since_report\":0.7,\"sequence\":0,\"stale\":false,\"state\":\"closed\",\"unknown_reason\":null}],\"protocol\":1,\"saved_assertion_is_automatic_verification\":false,\"state\":\"clean\"},\"presence_supported\":true,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book\",\"running\":true,\"runtime_sha256\":\"0641b0f8633bd71905329c4f456b0806b73ec7bea89ca270f18b36b0854c5ae9\",\"started\":\"2026-10-27T06:48:49.691394Z\",\"stop_requested\":true,\"url\":\"http://127.0.0.1:63203/REDACTED-LOCAL-TOKEN/\"}\n",
+          "stderr": "",
+          "duration_seconds": 0.782,
+          "status": "passed"
+        },
+        "final_status": {
+          "command": [
+            "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-X",
+            "utf8",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/codex-home/plugins/cache/story-skill-local/story-skill/0.6.28/skills/story-skill/scripts/story.py",
+            "workbench-status",
+            "--book",
+            "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-codex-plugin-verify-ahw6uiym/book"
+          ],
+          "exit_code": 0,
+          "stdout": "{\"ok\":true,\"running\":false,\"status\":\"登记服务已正常停止。\"}\n",
+          "stderr": "",
+          "duration_seconds": 0.776,
+          "status": "passed"
+        },
+        "process_exit_code": 0,
+        "log": "{\"url\": \"http://127.0.0.1:63203/REDACTED-LOCAL-TOKEN/\", \"mode\": \"candidate-editing\"}\n{\"ok\":true,\"stopped\":true}\n",
+        "scope": "Loopback HTTP only; no browser or GUI interaction"
+      },
+      "plugin_unchanged_after_runtime": {
+        "status": "passed",
+        "files": 75,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      },
+      "book_state_location": {
+        "status": "passed",
+        "explicit_book_argument": true,
+        "database_exists": true,
+        "cwd_book_state_created": false
+      },
+      "marketplace_unchanged": {
+        "status": "passed",
+        "files": 77,
+        "missing": [],
+        "extra": [],
+        "changed": []
+      }
+    }
+  },
+  "finished_at": "2026-10-27T06:48:52.347431+00:00",
+  "historical_snapshot": {
+    "historical": true,
+    "superseded_by": "distribution-verification.json",
+    "reason": "Task catalog changed after this verification: streaming metadata pagination replaced the 2000-task hard limit. This receipt does not validate the final source.",
+    "preserved_at": "2026-10-27T07:11:10.874685+00:00",
+    "original_receipt_sha256": "8d856449d4d153b412f5c6e2ad8d7f76b66a7edb11f5ba6c048620c0cd8c219a"
+  }
+}

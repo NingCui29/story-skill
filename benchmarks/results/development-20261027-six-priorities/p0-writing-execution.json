@@ -1,0 +1,220 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-27T06:54:26.830099+00:00",
+  "scope": "One original synthetic development sequence, three normal-length candidate chapters per arm; not formal adoption or a long-term quality comparison",
+  "upstream": {
+    "tag": "v0.9.1",
+    "commit": "70d1cf426f8cbe3d374e2b06e4c2cbdbd986da06",
+    "git_blob_verification": {
+      "fixed_commit": "70d1cf426f8cbe3d374e2b06e4c2cbdbd986da06",
+      "checked_files": 438,
+      "mismatches": [],
+      "method": "git blob object SHA-1 from GitHub fixed-commit tree compared with frozen extracted bytes"
+    }
+  },
+  "local": {
+    "label": "0.6.27 working-tree writing snapshot; final 0.6.28 tool/workbench validation is separate",
+    "frozen_at": "2026-10-27T06:18:20.509209+00:00"
+  },
+  "skills_snapshot_sha256": {
+    "baseline": "d49e6a706777c20804f8493fa073cdb24fd79048b9a6c405e6709d40b3c589bb",
+    "candidate": "b7fb944748d10a7f2fdc535cb6ef4b8c092e6498ad6d9a6781c94b1e947b2568"
+  },
+  "protocol_sha256": "e31a6fe6f37eafa93dbd6b81d828a3e306b2b6eb26228a043a3657c1f62017af",
+  "conditions": {
+    "conditions": {
+      "baseline": {
+        "model": "gpt-6.1-sol",
+        "settings": {
+          "reasoning_effort": "ultra",
+          "host_version": "codex-cli 0.164.0-alpha.11.1",
+          "model_revision": null,
+          "seed": null
+        },
+        "repetitions": 1
+      },
+      "candidate": {
+        "model": "gpt-6.1-sol",
+        "settings": {
+          "reasoning_effort": "ultra",
+          "host_version": "codex-cli 0.164.0-alpha.11.1",
+          "model_revision": null,
+          "seed": null
+        },
+        "repetitions": 1
+      }
+    },
+    "assessment_mode": "blind"
+  },
+  "actual_serving_model_revision": null,
+  "fresh_session_count": 6,
+  "model_invocations": 6,
+  "additional_generation_invocations": 0,
+  "internal_rewrite_count": null,
+  "original_inputs_and_prose_preserved": true,
+  "latest_phase_rechecked_with_final_tool": true,
+  "process_binding_scope": "Original process receipts are minimal exit/time records; task/phase receipt fields were not retroactively added. Native trace and captured launch records are preserved.",
+  "rows": [
+    {
+      "arm": "baseline",
+      "phase": 1,
+      "count": 2534,
+      "within_length": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 639.168,
+      "mechanical_ok": true,
+      "trace_status": "complete",
+      "launch_binding": "matches_recorded_launch",
+      "original_prose_sha256": "c24c447939442df9121b257c996055f469b33c8b8a6271d59b63979bcf6efeeb",
+      "trace_sha256": "cb863e62ad980695335ae7db78f6b58cfeb1dc1f6b075c8d70a640369e15b072",
+      "task_sha256": "82615c066350e88e1a86b965dce9c829856dcee01157743539ce929de7a30323",
+      "reported_per_turn_usage": {
+        "input_tokens": 875026,
+        "cached_input_tokens": 824960,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 15898,
+        "reasoning_output_tokens": 8053,
+        "total_tokens": null
+      },
+      "full_task_total": null,
+      "cost": null
+    },
+    {
+      "arm": "baseline",
+      "phase": 2,
+      "count": 2498,
+      "within_length": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 409.117,
+      "mechanical_ok": true,
+      "trace_status": "complete",
+      "launch_binding": "matches_recorded_launch",
+      "original_prose_sha256": "9aa714e27f294c94c986477ad1a5451261bf0abb75bf5b4eacd3b2cd09b36c68",
+      "trace_sha256": "d28b79ca33efabfe41b333aec2931d28020f806299ab8bd4ead6851b81b7b4f9",
+      "task_sha256": "88b617024e69bd2bb1977be84011ed93578249843f4369d780561b1c6df2ebdf",
+      "reported_per_turn_usage": {
+        "input_tokens": 588941,
+        "cached_input_tokens": 533504,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 10727,
+        "reasoning_output_tokens": 5299,
+        "total_tokens": null
+      },
+      "full_task_total": null,
+      "cost": null
+    },
+    {
+      "arm": "baseline",
+      "phase": 3,
+      "count": 2552,
+      "within_length": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 523.28,
+      "mechanical_ok": true,
+      "trace_status": "complete",
+      "launch_binding": "matches_recorded_launch",
+      "original_prose_sha256": "b47a3aa8f51b95c0b389b7ef85ceb54e1e3169d1b6dd4bba49d1998407c4a539",
+      "trace_sha256": "6fe2dc507dd1373a00ae89ea60ecc60e657a8135919c3326db4e7827e345e593",
+      "task_sha256": "d02e0580e812f8b52b98a31c120e75c5cc2f1ed504a7a460053525ab153b998f",
+      "reported_per_turn_usage": {
+        "input_tokens": 868459,
+        "cached_input_tokens": 817792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 11330,
+        "reasoning_output_tokens": 5524,
+        "total_tokens": null
+      },
+      "full_task_total": null,
+      "cost": null
+    },
+    {
+      "arm": "candidate",
+      "phase": 1,
+      "count": 2496,
+      "within_length": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 544.053,
+      "mechanical_ok": true,
+      "trace_status": "complete",
+      "launch_binding": "matches_recorded_launch",
+      "original_prose_sha256": "cd26a7fb5daf2fb6a6feb315fc2bfa6f58daee966bfe38792fe0abb19a689991",
+      "trace_sha256": "975b0df16aeacdd53ba45f18663a43853083f60bf6725e1a9536b6c63b62c0b3",
+      "task_sha256": "514cf2240ba458f417ac40c614f4f7094c8bf0abf3fe726b3cf60b097532bd68",
+      "reported_per_turn_usage": {
+        "input_tokens": 523993,
+        "cached_input_tokens": 474240,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 12202,
+        "reasoning_output_tokens": 5506,
+        "total_tokens": null
+      },
+      "full_task_total": null,
+      "cost": null
+    },
+    {
+      "arm": "candidate",
+      "phase": 2,
+      "count": 2478,
+      "within_length": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 624.38,
+      "mechanical_ok": true,
+      "trace_status": "complete",
+      "launch_binding": "matches_recorded_launch",
+      "original_prose_sha256": "f360eb05230f6b3dd287b8dc42a1ee4c85f66862b101dcb909a5b7a6fd59061f",
+      "trace_sha256": "26c6d9262012ae6b54545e613b8da487cce7e627198f4d47814fd3380f24a0b3",
+      "task_sha256": "442d8fefde8b746507542fea3a433b316a610740478808d66f23f412cba3b8e1",
+      "reported_per_turn_usage": {
+        "input_tokens": 695738,
+        "cached_input_tokens": 641920,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 14049,
+        "reasoning_output_tokens": 6900,
+        "total_tokens": null
+      },
+      "full_task_total": null,
+      "cost": null
+    },
+    {
+      "arm": "candidate",
+      "phase": 3,
+      "count": 2486,
+      "within_length": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 614.225,
+      "mechanical_ok": true,
+      "trace_status": "complete",
+      "launch_binding": "matches_recorded_launch",
+      "original_prose_sha256": "f937a7c923bfa7ddc0170f829655e804070a84f8b8fb5d79b8b3e8a71a85fd35",
+      "trace_sha256": "9be42ba9a81a2c8d4417e4d606a46094b7d9b97ce4f001e57df8bf6866956021",
+      "task_sha256": "c4d049ed996c6141730ffb2d5ee2d5ee78a5117ae306d786ef7251c1c4fe554c",
+      "reported_per_turn_usage": {
+        "input_tokens": 577989,
+        "cached_input_tokens": 523648,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 14164,
+        "reasoning_output_tokens": 7461,
+        "total_tokens": null
+      },
+      "full_task_total": null,
+      "cost": null
+    }
+  ],
+  "literary_assessment": "pending independent anonymous model reviews; not certified by these checks",
+  "human_reader_feedback": "not performed",
+  "local_archive": ".local-writing-samples/p0-comparison-20261027",
+  "measurement_source": "original source hashes and helper copies preserved under local archive measurement-source; final helper checks separately recorded",
+  "limits": [
+    "one synthetic story and one generation per phase; no success-rate estimate",
+    "normal-length three-chapter scope does not establish full novel or long-term continuity",
+    "same requested model/settings; actual server revision and seed unverified",
+    "per-turn reported usage only; no authenticated billing or complete-task saving claim",
+    "candidate workflow only; no native skill discovery, formal commit or platform run"
+  ]
+}

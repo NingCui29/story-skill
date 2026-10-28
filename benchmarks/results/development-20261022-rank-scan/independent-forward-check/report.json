@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "counts": {
+    "snapshots": 2,
+    "groups": 1,
+    "books": 4
+  },
+  "method": "按平台、来源、榜名、频道、分类、周期、记录日期、采样方式、指标及新老书群体分组；同书去重，冲突排除；占比只描述有效样本。日期仅描述记录时点，HTML 导入时间不证明页面当日状态。",
+  "sources": [
+    {
+      "source_id": "9257a412cf67a0f6343d",
+      "group_id": "b370b9bece10c7903fa2",
+      "platform": "synthetic",
+      "collected_at": "2026-10-22T14:10:00+08:00",
+      "source": {
+        "url": "https://example.invalid/month",
+        "board": "合成月票榜",
+        "channel": "男频",
+        "category": null,
+        "period": "2026-10",
+        "metric": {
+          "name": "月票",
+          "unit": "票",
+          "window": "2026-10"
+        },
+        "sample_method": "top_n",
+        "cohort": "mixed",
+        "pages": [
+          1
+        ],
+        "coverage": "partial",
+        "expected_count": null,
+        "limitations": [
+          "隔离合成测试数据，不代表真实市场。"
+        ]
+      },
+      "raw_entries": 4,
+      "unique_books": 4
+    },
+    {
+      "source_id": "b360b2f47f07406f7d7e",
+      "group_id": "b370b9bece10c7903fa2",
+      "platform": "synthetic",
+      "collected_at": "2026-10-22T14:00:00+08:00",
+      "source": {
+        "url": "https://example.invalid/month",
+        "board": "合成月票榜",
+        "channel": "男频",
+        "category": null,
+        "period": "2026-10",
+        "metric": {
+          "name": "月票",
+          "unit": "票",
+          "window": "2026-10"
+        },
+        "sample_method": "top_n",
+        "cohort": "mixed",
+        "pages": [
+          1
+        ],
+        "coverage": "partial",
+        "expected_count": null,
+        "limitations": [
+          "隔离合成测试数据，不代表真实市场。"
+        ]
+      },
+      "raw_entries": 3,
+      "unique_books": 3
+    }
+  ],
+  "groups": [
+    {
+      "group_id": "b370b9bece10c7903fa2",
+      "dimensions": {
+        "platform": "synthetic",
+        "date": "2026-10-22",
+        "url": "https://example.invalid/month",
+        "board": "合成月票榜",
+        "channel": "男频",
+        "category": null,
+        "period": "2026-10",
+        "metric": {
+          "name": "月票",
+          "unit": "票",
+          "window": "2026-10"
+        },
+        "cohort": "mixed",
+        "sample_method": "top_n"
+      },
+      "source_ids": [
+        "9257a412cf67a0f6343d",
+        "b360b2f47f07406f7d7e"
+      ],
+      "unique_books": 4,
+      "sample_count": 3,
+      "excluded_conflicts": 1,
+      "conflicted_book_keys": [
+        "4e3cb61dd858ac0d2682"
+      ],
+      "duplicate_observations": 2,
+      "metric_valid_n": 2,
+      "metric_missing_n": 1,
+      "metric_median": 10.0,
+      "categories": [
+        {
+          "category": "悬疑",
+          "sample_count": 1,
+          "sample_share": 0.3333333333333333,
+          "metric_valid_n": 1,
+          "metric_missing_n": 0,
+          "metric_median": 20
+        },
+        {
+          "category": "都市",
+          "sample_count": 1,
+          "sample_share": 0.3333333333333333,
+          "metric_valid_n": 0,
+          "metric_missing_n": 1,
+          "metric_median": null
+        },
+        {
+          "category": null,
+          "sample_count": 1,
+          "sample_share": 0.3333333333333333,
+          "metric_valid_n": 1,
+          "metric_missing_n": 0,
+          "metric_median": 0
+        }
+      ],
+      "book_keys": [
+        "25b4362aba8fa7c508f7",
+        "27338b875aa7e43c0f5a",
+        "4e3cb61dd858ac0d2682",
+        "be9199f781adff7dc44f"
+      ]
+    }
+  ],
+  "books": [
+    {
+      "book_key": "25b4362aba8fa7c508f7",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "c"
+      },
+      "titles": [
+        "山海邮局"
+      ],
+      "urls": [
+        "https://example.invalid/books/c"
+      ],
+      "observations": [
+        {
+          "group_id": "b370b9bece10c7903fa2",
+          "variant_id": "5b6866e3956feec3ab46",
+          "source_ids": [
+            "9257a412cf67a0f6343d",
+            "b360b2f47f07406f7d7e"
+          ],
+          "conflict": false,
+          "title": "山海邮局",
+          "author": "合成作者",
+          "rank": 3,
+          "category": null,
+          "tags": [],
+          "word_count": 200000,
+          "status": "连载",
+          "metric_value": 0,
+          "metric_raw": "0"
+        }
+      ]
+    },
+    {
+      "book_key": "27338b875aa7e43c0f5a",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "d"
+      },
+      "titles": [
+        "夜班维修员"
+      ],
+      "urls": [
+        "https://example.invalid/books/d"
+      ],
+      "observations": [
+        {
+          "group_id": "b370b9bece10c7903fa2",
+          "variant_id": "3aa9df5616b43639c955",
+          "source_ids": [
+            "9257a412cf67a0f6343d"
+          ],
+          "conflict": false,
+          "title": "夜班维修员",
+          "author": "合成作者",
+          "rank": 4,
+          "category": "悬疑",
+          "tags": [],
+          "word_count": 200000,
+          "status": "连载",
+          "metric_value": 20,
+          "metric_raw": "20"
+        }
+      ]
+    },
+    {
+      "book_key": "4e3cb61dd858ac0d2682",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "a"
+      },
+      "titles": [
+        "夜班维修员"
+      ],
+      "urls": [
+        "https://example.invalid/books/a"
+      ],
+      "observations": [
+        {
+          "group_id": "b370b9bece10c7903fa2",
+          "variant_id": "5b0b4cf3bc856d17d02b",
+          "source_ids": [
+            "9257a412cf67a0f6343d"
+          ],
+          "conflict": true,
+          "title": "夜班维修员",
+          "author": "合成作者",
+          "rank": 1,
+          "category": "科幻",
+          "tags": [],
+          "word_count": 200000,
+          "status": "连载",
+          "metric_value": 120,
+          "metric_raw": "120"
+        },
+        {
+          "group_id": "b370b9bece10c7903fa2",
+          "variant_id": "6a0689ef3915d5f69dee",
+          "source_ids": [
+            "b360b2f47f07406f7d7e"
+          ],
+          "conflict": true,
+          "title": "夜班维修员",
+          "author": "合成作者",
+          "rank": 1,
+          "category": "科幻",
+          "tags": [],
+          "word_count": 200000,
+          "status": "连载",
+          "metric_value": 100,
+          "metric_raw": "100"
+        }
+      ]
+    },
+    {
+      "book_key": "be9199f781adff7dc44f",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "b"
+      },
+      "titles": [
+        "旧城书店"
+      ],
+      "urls": [
+        "https://example.invalid/books/b"
+      ],
+      "observations": [
+        {
+          "group_id": "b370b9bece10c7903fa2",
+          "variant_id": "551c3a4ffd0e717e98eb",
+          "source_ids": [
+            "9257a412cf67a0f6343d",
+            "b360b2f47f07406f7d7e"
+          ],
+          "conflict": false,
+          "title": "旧城书店",
+          "author": "合成作者",
+          "rank": 2,
+          "category": "都市",
+          "tags": [],
+          "word_count": 200000,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "code": "observation_conflict",
+      "group_id": "b370b9bece10c7903fa2",
+      "book_key": "4e3cb61dd858ac0d2682",
+      "message": "同源同日同书观测不一致，保留全部版本并从本组统计排除"
+    }
+  ]
+}

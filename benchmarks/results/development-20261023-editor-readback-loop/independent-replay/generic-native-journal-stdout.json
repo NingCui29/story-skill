@@ -1,0 +1,54 @@
+[
+  {
+    "platform": "qimao",
+    "cross_draft_navigation": false,
+    "ok": false,
+    "all_chapters_verified_this_run": false,
+    "state": "conflict",
+    "remote_id": "900",
+    "observed_hash_matches_target": false,
+    "actual_target_body_matches": false,
+    "switched": 0,
+    "saves": 0,
+    "fills": 0
+  },
+  {
+    "platform": "qimao",
+    "cross_draft_navigation": true,
+    "ok": false,
+    "all_chapters_verified_this_run": false,
+    "state": "blocked",
+    "remote_id": null,
+    "observed_hash_matches_target": false,
+    "actual_target_body_matches": false,
+    "switched": 1,
+    "saves": 0,
+    "fills": 0
+  },
+  {
+    "platform": "qidian",
+    "cross_draft_navigation": false,
+    "ok": false,
+    "all_chapters_verified_this_run": false,
+    "state": "conflict",
+    "remote_id": "900",
+    "observed_hash_matches_target": false,
+    "actual_target_body_matches": false,
+    "switched": 0,
+    "saves": 0,
+    "fills": 0
+  },
+  {
+    "platform": "qidian",
+    "cross_draft_navigation": true,
+    "ok": false,
+    "all_chapters_verified_this_run": false,
+    "state": "blocked",
+    "remote_id": null,
+    "observed_hash_matches_target": false,
+    "actual_target_body_matches": false,
+    "switched": 1,
+    "saves": 0,
+    "fills": 0
+  }
+]

@@ -1,0 +1,116 @@
+test_expiration_refresh_book_identity_and_mode_binding (test_workbench_recovery_pagination.RecoveryPaginationTests.test_expiration_refresh_book_identity_and_mode_binding) ... ERROR
+test_invalid_offsets_and_directory_change_require_refresh (test_workbench_recovery_pagination.RecoveryPaginationTests.test_invalid_offsets_and_directory_change_require_refresh) ... ERROR
+test_over_100_recoveries_across_scan_batches_with_reverse_mtimes (test_workbench_recovery_pagination.RecoveryPaginationTests.test_over_100_recoveries_across_scan_batches_with_reverse_mtimes) ... ERROR
+test_pending_metadata_and_private_link_boundaries_are_preserved (test_workbench_recovery_pagination.RecoveryPaginationTests.test_pending_metadata_and_private_link_boundaries_are_preserved) ... ok
+test_real_recovery_after_5001_unrelated_materials_remains_reachable (test_workbench_recovery_pagination.RecoveryPaginationTests.test_real_recovery_after_5001_unrelated_materials_remains_reachable) ... ERROR
+test_scan_failure_and_hard_limit_never_claim_complete (test_workbench_recovery_pagination.RecoveryPaginationTests.test_scan_failure_and_hard_limit_never_claim_complete) ... FAIL
+test_completed_warnings_hard_limit_and_late_response_are_not_empty (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_completed_warnings_hard_limit_and_late_response_are_not_empty) ... ERROR
+test_editor_entry_uses_shared_recovery_api_and_does_not_touch_buffers (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_editor_entry_uses_shared_recovery_api_and_does_not_touch_buffers) ... ERROR
+test_partial_empty_more_error_refresh_and_reopen (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_partial_empty_more_error_refresh_and_reopen) ... ERROR
+
+======================================================================
+ERROR: test_expiration_refresh_book_identity_and_mode_binding (test_workbench_recovery_pagination.RecoveryPaginationTests.test_expiration_refresh_book_identity_and_mode_binding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 128, in test_expiration_refresh_book_identity_and_mode_binding
+    self.w._material_discard(first['cursor'])
+                             ~~~~~^^^^^^^^^^
+KeyError: 'cursor'
+
+======================================================================
+ERROR: test_invalid_offsets_and_directory_change_require_refresh (test_workbench_recovery_pagination.RecoveryPaginationTests.test_invalid_offsets_and_directory_change_require_refresh)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 142, in test_invalid_offsets_and_directory_change_require_refresh
+    self.error('invalid_input', lambda: self.archives.recovery_catalog(self.root, offset=offset))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 40, in error
+    operation()
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 142, in <lambda>
+    self.error('invalid_input', lambda: self.archives.recovery_catalog(self.root, offset=offset))
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: recovery_catalog() got an unexpected keyword argument 'offset'
+
+======================================================================
+ERROR: test_over_100_recoveries_across_scan_batches_with_reverse_mtimes (test_workbench_recovery_pagination.RecoveryPaginationTests.test_over_100_recoveries_across_scan_batches_with_reverse_mtimes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 81, in test_over_100_recoveries_across_scan_batches_with_reverse_mtimes
+    page, found = self.page(), []
+                  ^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 36, in page
+    return self.archives.recovery_catalog(self.root, self.book_id, **options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench_archives.py", line 557, in recovery_catalog
+    rows = [row for row in api.workbench._author_files(root, warnings)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 1439, in _author_files
+    api.fail('workbench_scan_limit', '创作材料超过扫描上限，请先整理归档。', maximum=AUTHOR_LIMIT)
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+workbench_contract_story.StoryError: 创作材料超过扫描上限，请先整理归档。
+
+======================================================================
+ERROR: test_real_recovery_after_5001_unrelated_materials_remains_reachable (test_workbench_recovery_pagination.RecoveryPaginationTests.test_real_recovery_after_5001_unrelated_materials_remains_reachable)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 50, in test_real_recovery_after_5001_unrelated_materials_remains_reachable
+    page = self.page()
+           ^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 36, in page
+    return self.archives.recovery_catalog(self.root, self.book_id, **options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench_archives.py", line 557, in recovery_catalog
+    rows = [row for row in api.workbench._author_files(root, warnings)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_workbench.py", line 1439, in _author_files
+    api.fail('workbench_scan_limit', '创作材料超过扫描上限，请先整理归档。', maximum=AUTHOR_LIMIT)
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py", line 40, in fail
+    raise StoryError(code, message, **details)
+workbench_contract_story.StoryError: 创作材料超过扫描上限，请先整理归档。
+
+======================================================================
+ERROR: test_completed_warnings_hard_limit_and_late_response_are_not_empty (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_completed_warnings_hard_limit_and_late_response_are_not_empty)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 212, in test_completed_warnings_hard_limit_and_late_response_are_not_empty
+    self.ui(r"""
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 184, in ui
+    """ + base.story.workbench._recovery_list_script() + extra
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'story_skill_workbench' has no attribute '_recovery_list_script'
+
+======================================================================
+ERROR: test_editor_entry_uses_shared_recovery_api_and_does_not_touch_buffers (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_editor_entry_uses_shared_recovery_api_and_does_not_touch_buffers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 224, in test_editor_entry_uses_shared_recovery_api_and_does_not_touch_buffers
+    self.ui(r"""
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 184, in ui
+    """ + base.story.workbench._recovery_list_script() + extra
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'story_skill_workbench' has no attribute '_recovery_list_script'
+
+======================================================================
+ERROR: test_partial_empty_more_error_refresh_and_reopen (test_workbench_recovery_pagination.RecoveryPaginationUITests.test_partial_empty_more_error_refresh_and_reopen)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 191, in test_partial_empty_more_error_refresh_and_reopen
+    self.ui(r"""
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 184, in ui
+    """ + base.story.workbench._recovery_list_script() + extra
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'story_skill_workbench' has no attribute '_recovery_list_script'
+
+======================================================================
+FAIL: test_scan_failure_and_hard_limit_never_claim_complete (test_workbench_recovery_pagination.RecoveryPaginationTests.test_scan_failure_and_hard_limit_never_claim_complete)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_recovery_pagination.py", line 154, in test_scan_failure_and_hard_limit_never_claim_complete
+    with self.assertRaisesRegex(OSError, 'synthetic scan failure'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+----------------------------------------------------------------------
+Ran 9 tests in 4.067s
+
+FAILED (failures=1, errors=7)

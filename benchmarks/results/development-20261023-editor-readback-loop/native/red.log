@@ -1,0 +1,714 @@
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF.
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qimao', field='remote_id')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qimao', field='chapter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qimao', field='title')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qimao', field='body')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qimao', field='state')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qimao', field='account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qimao', field='book')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qidian', field='remote_id')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qidian', field='chapter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qidian', field='title')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qidian', field='body')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qidian', field='state')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qidian', field='account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_current_dom_identity_and_content_changes_are_rejected (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_current_dom_identity_and_content_changes_are_rejected) (platform='qidian', field='book')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 98, in test_current_dom_identity_and_content_changes_are_rejected
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#account', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#account', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#account', fault='empty')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#book', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#book', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#book', fault='empty')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#remote-id', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#remote-id', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#remote-id', fault='empty')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#chapter', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#chapter', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#chapter', fault='empty')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#title', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#title', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#title', fault='empty')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#body', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#body', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#body', fault='empty')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#state', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#state', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_missing_empty_duplicate_fields_do_not_wait_to_recover (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_final_missing_empty_duplicate_fields_do_not_wait_to_recover) (selector='#state', fault='empty')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 123, in test_final_missing_empty_duplicate_fields_do_not_wait_to_recover
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qimao', fault='account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qimao', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qimao', fault='closed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qimao', fault='url')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qimao', fault='book')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qimao', fault='draft')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qidian', fault='account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qidian', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qidian', fault='closed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qidian', fault='url')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qidian', fault='book')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_guard_and_url_identity_are_checked_without_refresh_after_body (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_guard_and_url_identity_are_checked_without_refresh_after_body) (platform='qidian', fault='draft')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 149, in test_guard_and_url_identity_are_checked_without_refresh_after_body
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_journal_never_reconciles_body_from_another_draft (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_journal_never_reconciles_body_from_another_draft) (platform='qimao', switch=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 207, in test_journal_never_reconciles_body_from_another_draft
+    self.assertFalse(result["ok"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_journal_never_reconciles_body_from_another_draft (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_journal_never_reconciles_body_from_another_draft) (platform='qidian', switch=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 207, in test_journal_never_reconciles_body_from_another_draft
+    self.assertFalse(result["ok"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_listing_refresh_cannot_hide_a_changed_editor (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_listing_refresh_cannot_hide_a_changed_editor) (fault='draft')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 170, in test_listing_refresh_cannot_hide_a_changed_editor
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_listing_refresh_cannot_hide_a_changed_editor (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_listing_refresh_cannot_hide_a_changed_editor) (fault='chapter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 170, in test_listing_refresh_cannot_hide_a_changed_editor
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_listing_refresh_cannot_hide_a_changed_editor (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_listing_refresh_cannot_hide_a_changed_editor) (fault='title')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 170, in test_listing_refresh_cannot_hide_a_changed_editor
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_listing_refresh_cannot_hide_a_changed_editor (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_listing_refresh_cannot_hide_a_changed_editor) (fault='body')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 170, in test_listing_refresh_cannot_hide_a_changed_editor
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qimao', listing=False, operation='read')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qimao', listing=False, operation='find')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qimao', listing=False, operation='create')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qimao', listing=True, operation='read')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qimao', listing=True, operation='find')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qimao', listing=True, operation='create')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qidian', listing=False, operation='read')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qidian', listing=False, operation='find')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qidian', listing=False, operation='create')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qidian', listing=True, operation='read')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qidian', listing=True, operation='find')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_navigation_during_body_is_rejected_by_read_find_and_create (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_navigation_during_body_is_rejected_by_read_find_and_create) (platform='qidian', listing=True, operation='create')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 75, in test_navigation_during_body_is_rejected_by_read_find_and_create
+    self.rejected(call)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 57, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.809s
+
+FAILED (failures=65)

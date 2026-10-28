@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "scope": "offline public CUA contract; no real website/account action",
+  "initial_source_sha256": "003419c8bcf62c67c2e40dade596b1f113ba02c736cec7a86e133baf93e3a5d1",
+  "files": {
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "fcb0c94d43b9a6865621731a5d88c974b87367642081e9cede29fb730baf2768",
+    "tests/test_chrome_bridge_driver.mjs": "92b2b00da4d8739c39af555b0fd69ed87a8946df612d7f37a7d1ff22a3bf07f6",
+    "tests/test_chrome_worker.mjs": "64b499eede952c2cc1ed700fb46ca3af4f5cabc1ff2b6c9c2bd08daa075ca9fc"
+  },
+  "full_component_suite": {
+    "command": "node --test tests/test_chrome_bridge_driver.mjs tests/test_chrome_worker.mjs",
+    "driver": 160,
+    "worker": 94,
+    "total": 254,
+    "passed": 254,
+    "failed": 0,
+    "skipped": 0,
+    "log": "full-driver-worker.log"
+  },
+  "new_regressions": {
+    "top_level_tests": 10,
+    "parameter_scenarios": 49,
+    "note": "parameter scenarios are not added to suite total"
+  },
+  "findings_fixed": [
+    "href drift on same-page create or save after account refresh",
+    "same-page creation reuses cached management tab",
+    "DOM draft state drift before later write/save"
+  ],
+  "intermediate_regressions_fixed": [
+    "state snapshot exact URL rejected configured same-ID transition",
+    "new state await moved final bound-target check too early"
+  ],
+  "evidence": {
+    "baseline_replay": "red-original-source-replay.log",
+    "same_id_regression_red": "red-state-compatibility.log",
+    "post_snapshot_target_regression_red": "red-state-await-target.log",
+    "final_targeted_green": "green-state-target.log"
+  },
+  "limits": [
+    "No actual platform, account or book accessed",
+    "No installer or plugin cache changes",
+    "DOM state checks are per configured DOM marker; listing-based state retains catalog boundaries",
+    "No claim of atomicity against arbitrary changes after a public CUA operation starts",
+    "Root owns final full repository regression and independent final review"
+  ]
+}

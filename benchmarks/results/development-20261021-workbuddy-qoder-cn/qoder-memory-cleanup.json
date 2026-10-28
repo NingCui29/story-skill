@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-21",
+  "reason": "Qoder created/updated test acceptance memory despite read-only test restriction",
+  "test_memory_path": "/Users/cuining/.qoder-cn/projects/-Users-cuining-Documents-Qoder-2026-10-21-2814978d/memory/project-story-skill-acceptance.md",
+  "recoverable_backup": "/Users/cuining/.qoder-cn/story-skill-validation-backups/20261021-191738",
+  "test_memory_sha256": "f62c0a145c6dc0f14be1ef19a8d79e1f458fc81f4d9a945d4ef1e9592ca7f6d4",
+  "index_path": "/Users/cuining/.qoder-cn/projects/-Users-cuining-Documents-Qoder-2026-10-21-2814978d/memory/MEMORY.md",
+  "index_before_sha256": "d06c23d9e9cf92c58d5903fd0b25b40e2e25400e7992496fbd89570618a15cc6",
+  "index_after_sha256": "da60f78d74c95a95d4e7c516f38705e807483fc8a265ffa2baa758e0c3497e15",
+  "index_change": "Removed exactly the one reference to this test memory; generic index header and blank line preserved",
+  "active_test_memory_removed": true,
+  "other_memory_files_modified": false,
+  "scope_violation_retained_in_results": true,
+  "rechecked_at": "2026-10-21T20:23:06.168748+08:00",
+  "test_memory_still_absent": true,
+  "test_reference_still_absent": true
+}

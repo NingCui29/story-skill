@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "oracle_checks": 266,
+  "seed": 20261023,
+  "sources_initial": 63,
+  "sources_final": 50,
+  "scope": "fresh in-memory SQLite; Unicode literal matches, source identity, update/remove, kind isolation and transaction rollback; no real book"
+}

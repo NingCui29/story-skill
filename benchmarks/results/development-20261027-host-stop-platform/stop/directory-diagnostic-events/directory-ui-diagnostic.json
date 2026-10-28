@@ -1,0 +1,392 @@
+{
+  "ok": true,
+  "error": null,
+  "state": {
+    "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+    "select_disabled": false,
+    "note": "已显示 1 / 1 个子文件夹",
+    "dialog_open": true,
+    "title": "选择新作品的存放位置",
+    "items": "📁 已有作品",
+    "manager": "选择存放位置，再创建独立的作品文件夹。已有作品请使用“添加已有作品”。\n\n书名\n存放位置\n选择文件夹…\n作品文件夹名\n作品类型\n长篇\n短篇\n作品分析\n\n请选择作品的存放位置。",
+    "events": [
+      {
+        "type": "script-value-before",
+        "value": "",
+        "start": 0,
+        "end": 0,
+        "at": 1793150615272,
+        "next": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置"
+      },
+      {
+        "type": "script-value-after",
+        "value": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "start": 95,
+        "end": 95,
+        "at": 1793150615272
+      },
+      {
+        "type": "script-value-before",
+        "value": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "start": 95,
+        "end": 95,
+        "at": 1793150615416,
+        "next": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品"
+      },
+      {
+        "type": "script-value-after",
+        "value": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品",
+        "start": 100,
+        "end": 100,
+        "at": 1793150615416
+      },
+      {
+        "type": "script-value-before",
+        "value": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品",
+        "start": 100,
+        "end": 100,
+        "at": 1793150615841,
+        "next": "/Users/cuining"
+      },
+      {
+        "type": "script-value-after",
+        "value": "/Users/cuining",
+        "start": 14,
+        "end": 14,
+        "at": 1793150615841
+      },
+      {
+        "type": "focusin",
+        "value": "/Users/cuining",
+        "start": 0,
+        "end": 0,
+        "at": 1793150615846,
+        "data": null,
+        "inputType": null
+      },
+      {
+        "type": "select",
+        "value": "/Users/cuining",
+        "start": 0,
+        "end": 14,
+        "at": 1793150615848,
+        "data": null,
+        "inputType": null
+      },
+      {
+        "type": "beforeinput",
+        "value": "/Users/cuining",
+        "start": 0,
+        "end": 14,
+        "at": 1793150615849,
+        "data": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "inputType": "insertText"
+      },
+      {
+        "type": "input",
+        "value": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "start": 95,
+        "end": 95,
+        "at": 1793150615850,
+        "data": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "inputType": "insertText"
+      },
+      {
+        "type": "selectionchange",
+        "value": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "start": 95,
+        "end": 95,
+        "at": 1793150615851
+      },
+      {
+        "type": "script-value-before",
+        "value": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "start": 95,
+        "end": 95,
+        "at": 1793150615915,
+        "next": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置"
+      },
+      {
+        "type": "script-value-after",
+        "value": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "start": 95,
+        "end": 95,
+        "at": 1793150615915
+      }
+    ],
+    "directoryPicking": true
+  },
+  "network": [
+    {
+      "type": "request",
+      "body": {
+        "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "offset": 0
+      },
+      "time": 1793150615264
+    },
+    {
+      "type": "response",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "parent": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm",
+        "directories": [
+          {
+            "name": "已有作品",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品"
+          }
+        ],
+        "offset": 0,
+        "total": 1,
+        "next_offset": null,
+        "shortcuts": [
+          {
+            "name": "个人目录",
+            "path": "/Users/cuining"
+          },
+          {
+            "name": "桌面",
+            "path": "/Users/cuining/Desktop"
+          },
+          {
+            "name": "文稿",
+            "path": "/Users/cuining/Documents"
+          },
+          {
+            "name": "下载",
+            "path": "/Users/cuining/Downloads"
+          },
+          {
+            "name": "文件系统",
+            "path": "/"
+          },
+          {
+            "name": "外接磁盘",
+            "path": "/Volumes"
+          }
+        ],
+        "scope": "local_directories_only"
+      },
+      "time": 1793150615277
+    },
+    {
+      "type": "request",
+      "body": {
+        "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品",
+        "offset": 0
+      },
+      "time": 1793150615400
+    },
+    {
+      "type": "response",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品",
+        "parent": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "directories": [
+          {
+            "name": ".story",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品/.story"
+          }
+        ],
+        "offset": 0,
+        "total": 1,
+        "next_offset": null,
+        "shortcuts": [
+          {
+            "name": "个人目录",
+            "path": "/Users/cuining"
+          },
+          {
+            "name": "桌面",
+            "path": "/Users/cuining/Desktop"
+          },
+          {
+            "name": "文稿",
+            "path": "/Users/cuining/Documents"
+          },
+          {
+            "name": "下载",
+            "path": "/Users/cuining/Downloads"
+          },
+          {
+            "name": "文件系统",
+            "path": "/"
+          },
+          {
+            "name": "外接磁盘",
+            "path": "/Volumes"
+          }
+        ],
+        "scope": "local_directories_only"
+      },
+      "time": 1793150615455
+    },
+    {
+      "type": "request",
+      "body": {
+        "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品",
+        "offset": 0
+      },
+      "time": 1793150615577
+    },
+    {
+      "type": "response",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品",
+        "parent": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "directories": [
+          {
+            "name": ".story",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品/.story"
+          }
+        ],
+        "offset": 0,
+        "total": 1,
+        "next_offset": null,
+        "shortcuts": [
+          {
+            "name": "个人目录",
+            "path": "/Users/cuining"
+          },
+          {
+            "name": "桌面",
+            "path": "/Users/cuining/Desktop"
+          },
+          {
+            "name": "文稿",
+            "path": "/Users/cuining/Documents"
+          },
+          {
+            "name": "下载",
+            "path": "/Users/cuining/Downloads"
+          },
+          {
+            "name": "文件系统",
+            "path": "/"
+          },
+          {
+            "name": "外接磁盘",
+            "path": "/Volumes"
+          }
+        ],
+        "scope": "local_directories_only"
+      },
+      "time": 1793150615606
+    },
+    {
+      "type": "request",
+      "body": {
+        "path": "",
+        "offset": 0
+      },
+      "time": 1793150615830
+    },
+    {
+      "type": "response",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "path": "/Users/cuining",
+        "parent": "/Users",
+        "directories": [],
+        "offset": 0,
+        "total": 40,
+        "next_offset": null,
+        "shortcuts": [
+          {
+            "name": "个人目录",
+            "path": "/Users/cuining"
+          },
+          {
+            "name": "桌面",
+            "path": "/Users/cuining/Desktop"
+          },
+          {
+            "name": "文稿",
+            "path": "/Users/cuining/Documents"
+          },
+          {
+            "name": "下载",
+            "path": "/Users/cuining/Downloads"
+          },
+          {
+            "name": "文件系统",
+            "path": "/"
+          },
+          {
+            "name": "外接磁盘",
+            "path": "/Volumes"
+          }
+        ],
+        "scope": "local_directories_only",
+        "directories_redacted_count": 40
+      },
+      "time": 1793150615856
+    },
+    {
+      "type": "request",
+      "body": {
+        "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "offset": 0
+      },
+      "time": 1793150615906
+    },
+    {
+      "type": "response",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+        "parent": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm",
+        "directories": [
+          {
+            "name": "已有作品",
+            "path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品"
+          }
+        ],
+        "offset": 0,
+        "total": 1,
+        "next_offset": null,
+        "shortcuts": [
+          {
+            "name": "个人目录",
+            "path": "/Users/cuining"
+          },
+          {
+            "name": "桌面",
+            "path": "/Users/cuining/Desktop"
+          },
+          {
+            "name": "文稿",
+            "path": "/Users/cuining/Documents"
+          },
+          {
+            "name": "下载",
+            "path": "/Users/cuining/Downloads"
+          },
+          {
+            "name": "文件系统",
+            "path": "/"
+          },
+          {
+            "name": "外接磁盘",
+            "path": "/Volumes"
+          }
+        ],
+        "scope": "local_directories_only"
+      },
+      "time": 1793150615919
+    }
+  ],
+  "errors": [],
+  "expected_parent": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置",
+  "expected_existing": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-management-http-df5mnuvm/中文 存放位置/已有作品",
+  "unrelated_home_directory_names_redacted": true,
+  "original_unmodified_capture_retained_locally": "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/host-stop-platform-20261027/directory-diagnostic-raw/directory-diagnostic-events.json"
+}

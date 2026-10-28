@@ -1,0 +1,14 @@
+✔ ordinary qimao editor supports read find create and existing selector/body modes (246.39508ms)
+✔ ordinary qidian editor supports read find create and existing selector/body modes (212.578303ms)
+✔ ordinary qimao editor rejects another remote during read find and create readback (72.88332ms)
+✔ ordinary qidian editor rejects another remote during read find and create readback (67.179824ms)
+✔ ordinary qimao editor refuses changed current chapter title body and DOM state after body observation (86.312833ms)
+✔ ordinary qidian editor refuses changed current chapter title body and DOM state after body observation (85.859828ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 927.624025

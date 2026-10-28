@@ -1,0 +1,101 @@
+{
+  "source_sha256": {
+    "story_platform_chrome_bridge.py": "3d97931af2efbab336ed87a4a7156e2f404a26bc94b2e7fd471a88383b77a83d",
+    "story_platform_drafts.py": "2288612168214650cafe4afe7651c7fc26bfa07b47ce79b9ae3f783619de7bd2"
+  },
+  "checks": 15,
+  "passed": 15,
+  "results": [
+    {
+      "case": "KeyboardInterrupt:before_handle",
+      "pass": true,
+      "unrelated_lease_unchanged": true,
+      "published_handle_preserved": false
+    },
+    {
+      "case": "KeyboardInterrupt:after_handle",
+      "pass": true,
+      "unrelated_lease_unchanged": true,
+      "published_handle_preserved": true
+    },
+    {
+      "case": "KeyboardInterrupt:session_replaced",
+      "pass": true,
+      "unrelated_lease_unchanged": true,
+      "published_handle_preserved": true
+    },
+    {
+      "case": "KeyboardInterrupt:lease_replaced",
+      "pass": true,
+      "unrelated_lease_unchanged": true,
+      "published_handle_preserved": true
+    },
+    {
+      "case": "SystemExit:before_handle",
+      "pass": true,
+      "unrelated_lease_unchanged": true,
+      "published_handle_preserved": false
+    },
+    {
+      "case": "SystemExit:after_handle",
+      "pass": true,
+      "unrelated_lease_unchanged": true,
+      "published_handle_preserved": true
+    },
+    {
+      "case": "SystemExit:session_replaced",
+      "pass": true,
+      "unrelated_lease_unchanged": true,
+      "published_handle_preserved": true
+    },
+    {
+      "case": "SystemExit:lease_replaced",
+      "pass": true,
+      "unrelated_lease_unchanged": true,
+      "published_handle_preserved": true
+    },
+    {
+      "case": "retirement:empty",
+      "pass": true,
+      "retired": true,
+      "evidence_unchanged": true
+    },
+    {
+      "case": "retirement:stage",
+      "pass": true,
+      "retired": true,
+      "evidence_unchanged": true
+    },
+    {
+      "case": "retirement:session_only",
+      "pass": true,
+      "retired": true,
+      "evidence_unchanged": true
+    },
+    {
+      "case": "retirement:unknown_outbox",
+      "pass": true,
+      "retired": false,
+      "evidence_unchanged": true
+    },
+    {
+      "case": "retirement:unknown_claim",
+      "pass": true,
+      "retired": false,
+      "evidence_unchanged": true
+    },
+    {
+      "case": "retirement:unknown_response",
+      "pass": true,
+      "retired": false,
+      "evidence_unchanged": true
+    },
+    {
+      "case": "retirement:expired_claim",
+      "pass": true,
+      "retired": false,
+      "evidence_unchanged": true
+    }
+  ],
+  "scope": "Independent local production APIs with interruption injection and fixture journals; no platform or live books"
+}

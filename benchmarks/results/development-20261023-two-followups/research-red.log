@@ -1,0 +1,88 @@
+test_8001_and_single_oversized_reason_keep_other_reasons_and_source (test_research_long_reasons.LongSamplingReasonTests.test_8001_and_single_oversized_reason_keep_other_reasons_and_source) ... 
+  test_8001_and_single_oversized_reason_keep_other_reasons_and_source (test_research_long_reasons.LongSamplingReasonTests.test_8001_and_single_oversized_reason_keep_other_reasons_and_source) (length=8001) ... ERROR
+  test_8001_and_single_oversized_reason_keep_other_reasons_and_source (test_research_long_reasons.LongSamplingReasonTests.test_8001_and_single_oversized_reason_keep_other_reasons_and_source) (length=18873) ... ERROR
+test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification (test_research_long_reasons.LongSamplingReasonTests.test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification) ... 
+  test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification (test_research_long_reasons.LongSamplingReasonTests.test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification) (format='current') ... FAIL
+  test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification (test_research_long_reasons.LongSamplingReasonTests.test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification) (format='released') ... FAIL
+  test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification (test_research_long_reasons.LongSamplingReasonTests.test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification) (format='unversioned-full-tags') ... FAIL
+test_existing_verified_decision_is_preserved_by_check_and_render (test_research_long_reasons.LongSamplingReasonTests.test_existing_verified_decision_is_preserved_by_check_and_render) ... ok
+test_hand_authored_oversized_reasons_are_still_rejected (test_research_long_reasons.LongSamplingReasonTests.test_hand_authored_oversized_reasons_are_still_rejected) ... ok
+test_short_and_exact_8000_character_reasons_are_preserved (test_research_long_reasons.LongSamplingReasonTests.test_short_and_exact_8000_character_reasons_are_preserved) ... ok
+
+======================================================================
+ERROR: test_8001_and_single_oversized_reason_keep_other_reasons_and_source (test_research_long_reasons.LongSamplingReasonTests.test_8001_and_single_oversized_reason_keep_other_reasons_and_source) (length=8001)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_research_long_reasons.py", line 93, in test_8001_and_single_oversized_reason_keep_other_reasons_and_source
+    decision = research.initialize(source)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_research.py", line 233, in initialize
+    return validate_decision({"schema_version": 1, "kind": "research_decision", "sample": sample, "topics": [topic]})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_research.py", line 196, in validate_decision
+    book["reason"] = _prose(book["reason"], "reason", nullable=True)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_research.py", line 62, in _prose
+    return rank._text(value, name, nullable=nullable, maximum=8000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_rank.py", line 74, in _text
+    raise RankError(f"{name} 必须是非空文本（最多 {maximum} 字符）" + ("或 null" if nullable else ""))
+story_research_rank.RankError: reason 必须是非空文本（最多 8000 字符）或 null
+
+======================================================================
+ERROR: test_8001_and_single_oversized_reason_keep_other_reasons_and_source (test_research_long_reasons.LongSamplingReasonTests.test_8001_and_single_oversized_reason_keep_other_reasons_and_source) (length=18873)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_research_long_reasons.py", line 93, in test_8001_and_single_oversized_reason_keep_other_reasons_and_source
+    decision = research.initialize(source)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_research.py", line 233, in initialize
+    return validate_decision({"schema_version": 1, "kind": "research_decision", "sample": sample, "topics": [topic]})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_research.py", line 196, in validate_decision
+    book["reason"] = _prose(book["reason"], "reason", nullable=True)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_research.py", line 62, in _prose
+    return rank._text(value, name, nullable=nullable, maximum=8000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_rank.py", line 74, in _text
+    raise RankError(f"{name} 必须是非空文本（最多 {maximum} 字符）" + ("或 null" if nullable else ""))
+story_research_rank.RankError: reason 必须是非空文本（最多 8000 字符）或 null
+
+======================================================================
+FAIL: test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification (test_research_long_reasons.LongSamplingReasonTests.test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification) (format='current')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_research_long_reasons.py", line 123, in test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification
+    self.cli("research-init", "--sample", path, "--output-dir", initialized)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_research_long_reasons.py", line 55, in cli
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : {"error":"io_or_input_error","message":"reason 必须是非空文本（最多 8000 字符）或 null","ok":false}
+
+
+======================================================================
+FAIL: test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification (test_research_long_reasons.LongSamplingReasonTests.test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification) (format='released')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_research_long_reasons.py", line 123, in test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification
+    self.cli("research-init", "--sample", path, "--output-dir", initialized)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_research_long_reasons.py", line 55, in cli
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : {"error":"io_or_input_error","message":"reason 必须是非空文本（最多 8000 字符）或 null","ok":false}
+
+
+======================================================================
+FAIL: test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification (test_research_long_reasons.LongSamplingReasonTests.test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification) (format='unversioned-full-tags')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_research_long_reasons.py", line 123, in test_current_and_both_legacy_formats_complete_real_cli_handoff_and_verification
+    self.cli("research-init", "--sample", path, "--output-dir", initialized)
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_research_long_reasons.py", line 55, in cli
+    self.assertEqual(result.returncode, 0, result.stderr)
+AssertionError: 2 != 0 : {"error":"io_or_input_error","message":"reason 必须是非空文本（最多 8000 字符）或 null","ok":false}
+
+
+----------------------------------------------------------------------
+Ran 5 tests in 2.765s
+
+FAILED (failures=3, errors=2)

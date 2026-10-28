@@ -1,0 +1,25 @@
+{
+  "complete": false,
+  "passed": false,
+  "reason": "The fail-fast initial run stopped after 145 tests with a controller initial-readiness timeout. A SIGINT was also requested when independent review identified an adjacent restored-evidence mutation; the timeout is retained as a real failed result, not attributed to interruption. The adjacent mutation is now fixed and full validation will be rerun.",
+  "failed_test": "test_chrome_worker_controller.ControllerTests.test_75_second_model_gap_is_not_ready_until_the_same_next_call_has_fresh_health",
+  "tests_run": 145,
+  "isolated_repeat": {
+    "tests_run": 1,
+    "passed": 1,
+    "elapsed_seconds": 0.29
+  },
+  "diagnosis": "Confirmed validation-runner import-path defect, not a production readiness regression. Running a script under the benchmark output directory omitted repository ROOT from sys.path; chdir alone did not add it. FakeCore._pinned_directory lazily imported tests.test_publish, failed before starting a process, and the test timed out waiting for ready. Reproducing that sys.path gave a 4.048s failure, 2286 discovered cases with loader errors; retaining ROOT yielded 2613 cases and all first 145 tests passing. The runner now inserts ROOT explicitly to match python -m unittest and aborts immediately on discovery errors. Production and test timeouts were not changed.",
+  "module_repeat": {
+    "tests_run": 97,
+    "passed": 97,
+    "elapsed_seconds": 8.32,
+    "log": "controller-repeat.log"
+  },
+  "corrected_import_path_verification": {
+    "tests_run": 145,
+    "passed": 145,
+    "discovered": 2613,
+    "description": "Independent diagnostic runner, complete discovery followed by the first 145 tests"
+  }
+}

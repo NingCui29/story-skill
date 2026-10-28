@@ -1,0 +1,28 @@
+✖ final preview account and header queries never recover a timeout by retrying after the body (49.031366ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 208.031197
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:1653:1
+✖ final preview account and header queries never recover a timeout by retrying after the body (49.031366ms)
+  AssertionError [ERR_ASSERTION]: {"operation":"read_draft","selector":"#account","query":"count","response":{"schema":1,"id":"verifytarget1read_draft","nonce":"nonce","session_id":"1","binding_sha256":"binding","ok":true,"result":{"remote_id":"11","title":"原稿","body":"原始正文","state":"draft","url":"https://fanqienovel.com/preview/10&11"}}}
+  
+  true !== false
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:1665:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

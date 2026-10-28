@@ -1,0 +1,195 @@
+{
+  "app": "Qoder CN",
+  "scope": "case 8 native tool titles, test memory path and test-only diff; unrelated memory contents omitted",
+  "elements": [
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.0",
+      "role": "AXButton",
+      "name": "执行工具 5 次",
+      "value": "",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.0.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "查看 project-story-skill-acceptance.md 的读取详情"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.0.2",
+      "role": "AXStaticText",
+      "name": "读取文件",
+      "value": "读取文件",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.0.3",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "打开 project-story-skill-acceptance.md"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.1.1.0",
+      "role": "AXStaticText",
+      "name": "{\n  \"file_path\": \"/Users/cuining/.qoder-cn/projects/-Users-cuining-Documents-Qoder-2026-10-21-2814978d/memory/project-story-skill-acceptance.md\"\n}",
+      "value": "{\n  \"file_path\": \"/Users/cuining/.qoder-cn/projects/-Users-cuining-Documents-Qoder-2026-10-21-2814978d/memory/project-story-skill-acceptance.md\"\n}",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.3.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "查看 project-story-skill-acceptance.md 的本次修改"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.3.2",
+      "role": "AXStaticText",
+      "name": "编辑文件",
+      "value": "编辑文件",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.3.3",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "打开 project-story-skill-acceptance.md"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.0",
+      "role": "AXStaticText",
+      "name": "project-story-skill-acceptance.md",
+      "value": "project-story-skill-acceptance.md",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.1",
+      "role": "AXStaticText",
+      "name": "+",
+      "value": "+",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.2",
+      "role": "AXStaticText",
+      "name": "1",
+      "value": "1",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.3",
+      "role": "AXStaticText",
+      "name": "−",
+      "value": "−",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.4",
+      "role": "AXStaticText",
+      "name": "1",
+      "value": "1",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.5.0.0.0",
+      "role": "AXStaticText",
+      "name": "变更片段",
+      "value": "变更片段",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.5.0.1.0",
+      "role": "AXStaticText",
+      "name": "1",
+      "value": "1",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.5.0.1.1",
+      "role": "AXStaticText",
+      "name": "description: 用户正在进行 Story Skill 桌面安装验收（共 8 项），第 1–5 项规则问答已于 2026-10-21 完成",
+      "value": "description: 用户正在进行 Story Skill 桌面安装验收（共 8 项），第 1–5 项规则问答已于 2026-10-21 完成",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.5.0.2.0",
+      "role": "AXStaticText",
+      "name": "1",
+      "value": "1",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.4.5.0.2.1",
+      "role": "AXStaticText",
+      "name": "description: 用户已完成 Story Skill 桌面安装验收全部 8 项规则问答（2026-10-21）",
+      "value": "description: 用户已完成 Story Skill 桌面安装验收全部 8 项规则问答（2026-10-21）",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.5.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "查看 project-story-skill-acceptance.md 的本次修改"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.5.2",
+      "role": "AXStaticText",
+      "name": "编辑文件",
+      "value": "编辑文件",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.5.3",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "打开 project-story-skill-acceptance.md"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.6.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "查看 project-story-skill-acceptance.md 的本次修改"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.6.2",
+      "role": "AXStaticText",
+      "name": "编辑文件",
+      "value": "编辑文件",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.6.3",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "打开 project-story-skill-acceptance.md"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.8.0",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "查看 MEMORY.md 的本次修改"
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.8.2",
+      "role": "AXStaticText",
+      "name": "编辑文件",
+      "value": "编辑文件",
+      "description": ""
+    },
+    {
+      "path": "0.0.0.0.0.0.0.0.0.0.0.0.1.2.0.0.1.0.0.0.0.0.1.0.0.0.0.0.0.0.3.0.1.5.1.8.3",
+      "role": "AXButton",
+      "name": null,
+      "value": "",
+      "description": "打开 MEMORY.md"
+    }
+  ]
+}

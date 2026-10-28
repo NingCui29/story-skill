@@ -1,0 +1,351 @@
+{
+  "ok": false,
+  "passed": 23,
+  "source_sha256": "515cf3c8b1233ed1b7520499d7fbaccf422bc87c038a6be8adb080491c6b7ea7",
+  "checks": 27,
+  "matches": 11,
+  "rejected": 12,
+  "accepted_hidden_cases": 4,
+  "rows": [
+    {
+      "label": "visible baseline",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "ordinary hidden template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "ordinary hidden attribute",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "template outer end tags",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg selfclosed hidden node",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math selfclosed hidden node",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg nested integration",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math integration html",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg p breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg p breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg div breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg div breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg font breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg font breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math p breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math p breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math div breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math div breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math font breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math font breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg end p breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "passed": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "svg end br breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "passed": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "math end p breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "passed": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "math end br breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "passed": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "SVG mi is foreign",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "SVG annotation-xml is foreign",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "MathML foreignObject is foreign",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "passed": true,
+      "unsafe_extra_ids": []
+    }
+  ],
+  "scope": "Local synthetic HTML, isolated Chromium DOMParser; no live platform or CSS execution."
+}

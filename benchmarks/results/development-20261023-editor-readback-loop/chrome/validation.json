@@ -1,0 +1,51 @@
+{
+  "scope": "Offline public-CUA ordinary editor readback and confirmed create-target regressions; no real platform or browser",
+  "red": {
+    "top_level_tests": 6,
+    "passed": 2,
+    "failed": 4,
+    "log": "red.log"
+  },
+  "targeted": {
+    "top_level_tests": 14,
+    "parameterized_cases": 206,
+    "passed": 14,
+    "failed": 0,
+    "log": "green-expanded.log"
+  },
+  "full_driver": {
+    "top_level_tests": 137,
+    "passed": 137,
+    "failed": 0,
+    "skipped": 0,
+    "log": "driver-full.log"
+  },
+  "node_command": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node --test tests/test_chrome_bridge_driver.mjs",
+  "sha256": {
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "565df7ac89a22ba4437deadeec437841d5ec1a7278c825c6f166a22a8486cf7d",
+    "tests/test_chrome_bridge_driver.mjs": "5fa32f8b695766292263be296af5f91870bd0f27c3aeea83db6a6a51e672b7f2"
+  },
+  "limitations": [
+    "Offline host fixture only; no real Chrome/network/account usage",
+    "Final locator fields are strict individual snapshots, not a cross-tab transaction",
+    "Existing startup readiness and pre-final server-account refresh remain; final field reads never wait or retry"
+  ],
+  "create_target_red": {
+    "top_level_tests": 2,
+    "passed": 0,
+    "failed": 2,
+    "log": "create-target-red.log"
+  },
+  "create_target_targeted": {
+    "top_level_tests": 5,
+    "parameterized_cases": 18,
+    "passed": 5,
+    "failed": 0,
+    "log": "create-target-green.log"
+  },
+  "new_tests_total": {
+    "top_level_tests": 19,
+    "parameterized_cases": 224,
+    "self_contained_callback_contract": true
+  }
+}

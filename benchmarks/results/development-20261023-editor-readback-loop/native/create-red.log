@@ -1,0 +1,60 @@
+FFFFF
+======================================================================
+FAIL: test_create_does_not_replace_an_already_allocated_draft_id_after_save (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_does_not_replace_an_already_allocated_draft_id_after_save) (platform='qimao', listing=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 394, in test_create_does_not_replace_an_already_allocated_draft_id_after_save
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_create_does_not_replace_an_already_allocated_draft_id_after_save (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_does_not_replace_an_already_allocated_draft_id_after_save) (platform='qimao', listing=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 394, in test_create_does_not_replace_an_already_allocated_draft_id_after_save
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_create_does_not_replace_an_already_allocated_draft_id_after_save (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_does_not_replace_an_already_allocated_draft_id_after_save) (platform='qidian', listing=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 394, in test_create_does_not_replace_an_already_allocated_draft_id_after_save
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_create_does_not_replace_an_already_allocated_draft_id_after_save (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_does_not_replace_an_already_allocated_draft_id_after_save) (platform='qidian', listing=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 394, in test_create_does_not_replace_an_already_allocated_draft_id_after_save
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_autosave_allocated_id_is_bound_before_filling_the_next_field (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_autosave_allocated_id_is_bound_before_filling_the_next_field)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 410, in test_autosave_allocated_id_is_bound_before_filling_the_next_field
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.142s
+
+FAILED (failures=5)

@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "archive": "/Users/cuining/Documents/GitHub/story-skill/dist/story-skill-0.6.29.zip",
+  "version": "0.6.29",
+  "sha256": "f196f4b44c9ad491a699918d9c2f9571495586083351ba3e55b88f9d226baff6",
+  "bytes": 793894,
+  "files": 73,
+  "contents_match_current_skill": true,
+  "missing": [],
+  "extra": [],
+  "changed": [],
+  "duplicate_entries": [],
+  "corrupt_entry": null,
+  "non_regular_entries": []
+}

@@ -1,0 +1,106 @@
+{
+  "status": "frozen",
+  "confirmed_initial_findings": 1,
+  "introduced_regressions_resolved": 1,
+  "confirmed_findings": 2,
+  "resolved_findings": 2,
+  "unresolved_confirmed_findings": [],
+  "finding_paths": [
+    "template ancestor closing tags escape inert scope",
+    "HTML non-void inert self-closing syntax leaks evidence",
+    "candidate namespace heuristic leaked after start/end breakout and rejected legal foreign content; independently found and resolved"
+  ],
+  "tests_added": 9,
+  "targeted_validation": {
+    "successful": true,
+    "tests_run": 294,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "modules": [
+      "test_rank_source_template_scope",
+      "test_rank_source_visibility",
+      "test_rank_source_markup",
+      "test_rank_sources",
+      "test_rank",
+      "test_rank_compatibility",
+      "test_research",
+      "test_research_long_reasons",
+      "test_instruction_budget",
+      "test_skill_audit_fixes",
+      "test_history_state_scope",
+      "test_history_saved_read",
+      "test_plan_outline_sync",
+      "test_outline_example_boundaries",
+      "test_short_assembly_history",
+      "test_analysis_read_snapshots",
+      "test_world_rules_regressions",
+      "test_long_storage"
+    ],
+    "loader_errors": [],
+    "duration_seconds": 22.08,
+    "source_sha256": {
+      "skills/story-skill/scripts/story.py": "fe4defd8bf14f5bcfee255fabed3947415208ebc263fb3df90d57652b8b4592b",
+      "skills/story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "skills/story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+      "skills/story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+      "skills/story-skill/scripts/story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+      "skills/story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+      "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "skills/story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+      "skills/story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+    },
+    "source_unchanged_during_run": true
+  },
+  "dom_validation": {
+    "ok": true,
+    "checks": 181,
+    "random_inline_checks": 160,
+    "seed": 2026102406,
+    "source_sha256": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+    "boundaries": "Isolated local Chromium DOM parsing; no live site/account, CSS visibility or JavaScript page effects validated"
+  },
+  "probe_validation": {
+    "ok": true,
+    "seed": 2026102406,
+    "search_oracle_checks": 1120,
+    "distribution": {
+      "version": "0.6.22",
+      "members": 69,
+      "skill_entries": 8,
+      "modified_source_present_byte_exact": true,
+      "installed": false
+    },
+    "source_sha256": {
+      "skills/story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+      "scripts/package.py": "1887da1a39b5aeef89864893706895da3ecf48cb2d69dcf45bc7fd37d5981e39",
+      "scripts/install.py": "40bbdd3a12c9026f3919571317c84196c4c3c2634cf9ccd1b4470a877dfc7a02",
+      "scripts/package_npm.py": "639f22cffed56fa7d2fba23dedc0bed08fe5e447fef735002c53c6c611cb5701"
+    }
+  },
+  "independent_rank_validation": {
+    "ok": true,
+    "passed": 27,
+    "source_sha256": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+    "checks": 27,
+    "matches": 11,
+    "rejected": 16,
+    "accepted_hidden_cases": 0,
+    "scope": "Local synthetic HTML, isolated Chromium DOMParser; no live platform or CSS execution."
+  },
+  "independent_browser_cross_review": {
+    "resolved_new_regression": 1,
+    "unresolved_confirmed_findings": [],
+    "native_scenarios": 48,
+    "source_sha256": {
+      "skills/story-skill/scripts/story_platform_browser.py": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1"
+    },
+    "report": "README.md#native-链接修复的独立交叉复核"
+  },
+  "changed_files_sha256": {
+    "skills/story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+    "tests/test_rank_source_template_scope.py": "00ab35e119ee0665c3bfbde32f646d2b8e59ab15060ff26c423d173c6e81a0f5"
+  },
+  "full_suite": "root responsibility; targeted and generated probes are not added to full suite test count"
+}

@@ -1,0 +1,38 @@
+{
+  "changed": [
+    78
+  ],
+  "error": "platform_browser_identity_mismatch",
+  "old_before": {
+    "chapter": 1,
+    "title": "原稿标题",
+    "body": "原稿正文\n\n",
+    "state": "草稿",
+    "remote_id": "900"
+  },
+  "old_after": {
+    "chapter": 1,
+    "title": "待创建标题",
+    "body": "原稿正文\n\n",
+    "state": "草稿",
+    "remote_id": "900"
+  },
+  "events_after": [
+    [
+      "goto",
+      "https://zuozhe.qimao.com/fixture/edit/900"
+    ],
+    [
+      "fill",
+      "#title"
+    ],
+    [
+      "wait",
+      "#account"
+    ],
+    [
+      "wait",
+      "#book"
+    ]
+  ]
+}

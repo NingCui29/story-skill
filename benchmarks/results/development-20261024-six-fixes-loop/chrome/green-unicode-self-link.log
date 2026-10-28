@@ -1,0 +1,14 @@
+✔ draft action rejects changed effective destination while relative href stays unchanged for create (26.77375ms)
+✔ draft action rejects changed effective destination while relative href stays unchanged for save (101.916955ms)
+✔ draft action preserves stable effective destinations through irrelevant base changes (353.284088ms)
+✔ draft save links keep same-document behavior across configured same-ID editor URL aliases (41.733899ms)
+✔ draft save alias exception follows actual URL semantics for ASCII and Unicode whitespace (129.174423ms)
+✔ draft action rejects unresolved href and retains no-href document fallback semantics (31.15424ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 838.635932

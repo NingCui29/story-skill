@@ -1,0 +1,205 @@
+{
+  "ok": true,
+  "cases": 16,
+  "results": [
+    {
+      "case": 1,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 2,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 3,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 4,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 5,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 6,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 7,
+      "ok": true,
+      "marker_visible": true,
+      "expected_visible": true,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 8,
+      "ok": true,
+      "marker_visible": true,
+      "expected_visible": true,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 9,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 10,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见 书名"
+      ],
+      "expected_titles": [
+        "可见 书名"
+      ]
+    },
+    {
+      "case": 11,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 12,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 13,
+      "ok": true,
+      "marker_visible": true,
+      "expected_visible": true,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 14,
+      "ok": true,
+      "marker_visible": true,
+      "expected_visible": true,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 15,
+      "ok": true,
+      "marker_visible": true,
+      "expected_visible": true,
+      "titles": [
+        "仍然可见书名"
+      ],
+      "expected_titles": [
+        "仍然可见书名"
+      ]
+    },
+    {
+      "case": 16,
+      "ok": true,
+      "marker_visible": true,
+      "expected_visible": true,
+      "titles": [
+        "仍然可见书名"
+      ],
+      "expected_titles": [
+        "仍然可见书名"
+      ]
+    }
+  ],
+  "engine": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_rank_sources.py": "34c9726746d7ccb3f956899ebc381d93547e5340f87d483f3a7748c24484c711"
+  },
+  "scope": "Local synthetic HTML rendered in an isolated Chrome profile; no network or live rank page.",
+  "limit_observed": "Production deliberately excludes hidden attributes without CSS computation. Chrome may render inline hidden=until-found content and explicit display overrides; extraction is conservative static evidence, not exact rendered visibility.",
+  "initial_oracle_correction": "Initial probe incorrectly treated inline until-found as visually hidden and omitted a real block boundary around an empty template; initial JSON is preserved. No production changes were made to match the oracle."
+}

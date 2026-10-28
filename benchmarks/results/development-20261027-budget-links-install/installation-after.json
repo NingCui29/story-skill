@@ -1,0 +1,467 @@
+{
+  "ok": true,
+  "selector": "story-skill@story-skill-local",
+  "version": "0.6.27",
+  "backup": "/Users/cuining/.codex/backups/story-skill-local/20261027-122719",
+  "previous_marketplace": "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261026-142503",
+  "marketplace": "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261027-122719",
+  "checks": {
+    "installed_bytes": {
+      "status": "passed",
+      "files": 72,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    },
+    "enabled_installation": {
+      "pluginId": "story-skill@story-skill-local",
+      "name": "story-skill",
+      "marketplaceName": "story-skill-local",
+      "version": "0.6.27",
+      "installed": true,
+      "enabled": true,
+      "source": {
+        "source": "local",
+        "path": "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261027-122719/plugins/story-skill"
+      },
+      "marketplaceSource": {
+        "sourceType": "local",
+        "source": "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261027-122719"
+      },
+      "installPolicy": "AVAILABLE",
+      "authPolicy": "ON_INSTALL"
+    },
+    "markdown_dependencies": {
+      "status": "passed",
+      "files_scanned": 33,
+      "links_checked": 358,
+      "missing": [],
+      "outside_plugin": [],
+      "scope": "Local inline/reference Markdown file targets; remote URLs and heading anchors are excluded"
+    },
+    "skill_discovery": {
+      "status": "passed",
+      "method": "skills/list",
+      "skills": [
+        {
+          "name": "story-skill:story-skill",
+          "description": "中文小说任务总入口与共享规则；在需求跨流程或尚未明确是规划、剧本改编、分镜、正文、拆文、审稿、调研、封面还是发布材料与平台草稿时使用。不用于软件开发或普通文案。",
+          "interface": {
+            "displayName": "Story Skill · 小说入口",
+            "shortDescription": "中文小说技能总入口，按任务选择规划、剧本、分镜、写作、拆文、审稿、调研或封面",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill 读取这本书的约定和断点，按我的要求选择本次流程。"
+          },
+          "path": "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-analyze",
+          "description": "中文小说开篇点评、精彩度与平淡原因分析、长短篇深读、全量证据分析、分析稿修订与断点续跑。用于分析已有作品，不把参考剧情当原创书事实。",
+          "interface": {
+            "displayName": "Story Skill · 小说拆解",
+            "shortDescription": "中文小说逐段拆解与证据聚合，记录来源覆盖范围，支持长篇分析断点续跑",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-analyze 从现有分析断点继续拆解这部小说，保存证据和进度。"
+          },
+          "path": "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill-analyze/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-cover",
+          "description": "制作、优化或局部修改中文小说封面，以吸引目标读者点开为设计目标，根据书名、署名、题材和发布规格生成图像，检查视觉钩子、缩略图表现、文字与尺寸。",
+          "interface": {
+            "displayName": "Story Skill · 小说封面",
+            "shortDescription": "制作或优化吸睛的中文小说封面，强化视觉钩子与标题主次，复核实际成图和缩略图",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-cover 制作或优化这本书的封面，以吸睛为优先设计目标，按已采用书名、对应署名和题材强化吸睛看点、视觉焦点与标题主次，并检查实际成图与缩略图。"
+          },
+          "path": "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill-cover/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-plan",
+          "description": "中文小说书名、卷名、章名、简介拟写与优化、钩子与剧情设计、小说架构搭建与重构、大纲优化、开书、人物与世界设定、平台分类、近期细纲，以及把既有作品建立为可续写基线。支持小说改剧本、剧本规划与成稿、已有改编剧本续写和审改，以及根据小说或剧本拆分镜。规划请求不自动写小说正文。",
+          "interface": {
+            "displayName": "Story Skill · 规划与改编",
+            "shortDescription": "中文小说开书与大纲规划、小说改剧本成稿与审改、小说或剧本拆分镜",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-plan 按我指定的产物完成小说规划、剧本改编或分镜；只要规划时不写成稿。"
+          },
+          "path": "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill-plan/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-publish",
+          "description": "为番茄、七猫或起点准备已审查正式章节的离线材料，导出并复核 ZIP；按已核对的页面配置执行草稿保存与回读，区分成功、冲突和未知。不执行提交审核或定时发布。",
+          "interface": {
+            "displayName": "Story Skill · 草稿与发布准备",
+            "shortDescription": "准备番茄、七猫、起点正式章节材料，按已配置入口保存草稿并核对结果",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-publish 为指定作品准备章节材料，或按已配置的平台入口保存草稿，检查正式稿资格并说明实际保存及核对状态。"
+          },
+          "path": "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill-publish/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-research",
+          "description": "为中文小说做结构化扫榜、选题与素材调研、事实查证、试读设计与追更验证，分析读者反馈与阅读数据，核对来源与样本。不改写正文或生成封面。",
+          "interface": {
+            "displayName": "Story Skill · 写作调研",
+            "shortDescription": "围绕中文小说创作决策做结构化扫榜和资料查证，保留来源、样本口径与选题依据",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-research 调研这个小说题材的当前榜单与写作资料，注明来源和样本限制。"
+          },
+          "path": "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill-research/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-review",
+          "description": "中文小说审稿、修改、整书打磨、去 AI 味及已提交章节修订，处理外部改稿、历史依赖复核和旧版状态库迁移。不用于软件代码审查。",
+          "interface": {
+            "displayName": "Story Skill · 审稿修订",
+            "shortDescription": "中文小说审稿、最小修改与去 AI 味，支持外部改稿协调和历史章节修订",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-review 审查指定章节，以证据说明问题并完成我授权的修改。"
+          },
+          "path": "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill-review/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        },
+        {
+          "name": "story-skill:story-skill-write",
+          "description": "中文长短篇正文创作与续写，包括逐章提交、短篇完本全文与封面交付、人物状态衔接和长距伏笔。已有章节修订用 story-skill-review。",
+          "interface": {
+            "displayName": "Story Skill · 正文写作",
+            "shortDescription": "中文长短篇正文与连载续写，按章召回人物状态、核对证据并保存创作断点",
+            "iconSmall": null,
+            "iconLarge": null,
+            "iconSmallUrl": null,
+            "iconLargeUrl": null,
+            "brandColor": null,
+            "defaultPrompt": "使用 $story-skill:story-skill-write 按这本书已确认的细纲继续下一章，并完成审查和保存。"
+          },
+          "path": "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill-write/SKILL.md",
+          "scope": "user",
+          "enabled": true,
+          "pluginId": "story-skill@story-skill-local"
+        }
+      ],
+      "errors": [],
+      "initialization": {
+        "userAgent": "Codex Desktop/0.164.0-alpha.11.1 (Mac OS 15.8.1; x86_64) dumb (story-skill-local-verifier; 1)",
+        "codexHome": "/Users/cuining/.codex",
+        "platformFamily": "unix",
+        "platformOs": "macos"
+      },
+      "notification_methods": [
+        "remoteControl/status/changed"
+      ],
+      "ui_default_prompts": {
+        "status": "passed",
+        "adapted_ui_files": 8,
+        "references": {
+          "story-skill:story-skill": [
+            "$story-skill:story-skill"
+          ],
+          "story-skill:story-skill-analyze": [
+            "$story-skill:story-skill-analyze"
+          ],
+          "story-skill:story-skill-cover": [
+            "$story-skill:story-skill-cover"
+          ],
+          "story-skill:story-skill-plan": [
+            "$story-skill:story-skill-plan"
+          ],
+          "story-skill:story-skill-publish": [
+            "$story-skill:story-skill-publish"
+          ],
+          "story-skill:story-skill-research": [
+            "$story-skill:story-skill-research"
+          ],
+          "story-skill:story-skill-review": [
+            "$story-skill:story-skill-review"
+          ],
+          "story-skill:story-skill-write": [
+            "$story-skill:story-skill-write"
+          ]
+        },
+        "scope": "Codex-parsed UI defaultPrompt references; no model routing turn was started"
+      },
+      "model_turn_started": false
+    },
+    "runtime": {
+      "version": {
+        "command": [
+          "/Users/cuining/.local/bin/python",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill/scripts/story.py",
+          "--version"
+        ],
+        "exit_code": 0,
+        "stdout": "0.6.27\n",
+        "stderr": "",
+        "duration_seconds": 0.591,
+        "status": "passed"
+      },
+      "init": {
+        "command": [
+          "/Users/cuining/.local/bin/python",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill/scripts/story.py",
+          "init",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book",
+          "--title",
+          "Local installation acceptance"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"created\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book\",\"id\":\"de7531c4-0881-4cc7-ae3d-1d0cffbae9dc\",\"imported_through\":0,\"kind\":\"long\",\"last_chapter\":0,\"revision\":0,\"schema\":2,\"title\":\"Local installation acceptance\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.608,
+        "status": "passed"
+      },
+      "status": {
+        "command": [
+          "/Users/cuining/.local/bin/python",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill/scripts/story.py",
+          "status",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"book\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book\",\"cards\":0,\"changed_export_count\":0,\"changed_exports\":[],\"id\":\"de7531c4-0881-4cc7-ae3d-1d0cffbae9dc\",\"imported_through\":0,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"kind\":\"long\",\"last_chapter\":0,\"more_sources\":false,\"next_chapter\":1,\"pending_export_count\":0,\"pending_exports\":[],\"recent_sources\":[],\"revision\":0,\"short_assembly\":null,\"short_assembly_path\":null,\"sources\":0,\"title\":\"Local installation acceptance\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.575,
+        "status": "passed"
+      },
+      "audit": {
+        "command": [
+          "/Users/cuining/.local/bin/python",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill/scripts/story.py",
+          "audit",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"changed_export_count\":0,\"changed_exports\":[],\"checked_revision\":0,\"exports_complete\":true,\"integrity\":{\"full_book_verified\":false,\"last_full_audit_revision\":null,\"mode\":\"strict\",\"note\":\"Only registered exports are hash-checked at this instant; this is not literary completion, cover review, or platform approval. No registered exports means unverified.\",\"unverified_archive_count\":0,\"verified_file_count\":0},\"pending_export_count\":0,\"pending_exports\":[],\"read_only\":true,\"read_only_scope\":\"managed_book_records_and_exports\",\"scope_exports_complete\":true}\n",
+        "stderr": "",
+        "duration_seconds": 0.583,
+        "status": "passed"
+      }
+    },
+    "workbench": {
+      "status": "passed",
+      "start_command": [
+        "/Users/cuining/.local/bin/python",
+        "-B",
+        "-X",
+        "utf8",
+        "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill/scripts/story.py",
+        "workbench-serve",
+        "--book",
+        "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book"
+      ],
+      "running": {
+        "command": [
+          "/Users/cuining/.local/bin/python",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill/scripts/story.py",
+          "workbench-status",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"book_id\":\"de7531c4-0881-4cc7-ae3d-1d0cffbae9dc\",\"code_sha256\":\"f7d5a6259549c9e94aa4ff50543fa6e8554d0a740dc0a6b8f64fad76b0f6ad04\",\"instance\":\"d0025f78bcb1420aac27a6d1a3666a5f\",\"ok\":true,\"outdated\":false,\"pid\":77782,\"platform_activity\":{\"binding\":false,\"busy\":false,\"jobs\":[],\"supported\":true},\"presence\":{\"automatic_verified\":false,\"book_id\":\"de7531c4-0881-4cc7-ae3d-1d0cffbae9dc\",\"can_stop\":true,\"counts\":{\"closed\":0,\"dirty\":0,\"needs_recovery\":0,\"open\":0,\"pending_pages\":0,\"recovering\":0,\"registered\":0,\"saving\":0,\"unknown\":0},\"coverage\":\"server_issued_pages_this_instance\",\"fingerprint\":\"689acc26224e0c4204a2ea69b9f494e94b67b6a253dc125657d0a7614de1ff92\",\"instance\":\"d0025f78bcb1420aac27a6d1a3666a5f\",\"legacy_services_covered\":false,\"manual_confirmation_required\":false,\"no_pages\":true,\"pages\":[],\"protocol\":1,\"saved_assertion_is_automatic_verification\":false,\"state\":\"no_pages\"},\"presence_supported\":true,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book\",\"running\":true,\"runtime_sha256\":\"49091a380e5238a8ed9332825616878e0b343a9ebcfc9e173991892b6205101e\",\"started\":\"2026-10-27T05:18:46.487765Z\",\"stop_requested\":false,\"url\":\"http://127.0.0.1:51779/REDACTED-LOCAL-TOKEN/\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.596,
+        "status": "passed"
+      },
+      "http": {
+        "status": 200,
+        "content_type": "text/html; charset=utf-8",
+        "bytes": 231535,
+        "sha256": "9fc650955fda868b120a6aefe4ffea92a020d22653d570089c141d57e4fc0dd3"
+      },
+      "probe_page_closure": {
+        "status": "passed",
+        "accepted": true,
+        "closed": true,
+        "counts": {
+          "registered": 1,
+          "open": 0,
+          "closed": 1,
+          "unknown": 0,
+          "pending_pages": 0,
+          "dirty": 0,
+          "saving": 0,
+          "recovering": 0,
+          "needs_recovery": 0
+        },
+        "scope": "Only the verifier's HTTP probe page; no browser buffers or manual confirmation"
+      },
+      "stop": {
+        "command": [
+          "/Users/cuining/.local/bin/python",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill/scripts/story.py",
+          "workbench-stop",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book",
+          "--saved"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"allowed\":true,\"automatic_verified\":true,\"book_id\":\"de7531c4-0881-4cc7-ae3d-1d0cffbae9dc\",\"code_sha256\":\"f7d5a6259549c9e94aa4ff50543fa6e8554d0a740dc0a6b8f64fad76b0f6ad04\",\"instance\":\"d0025f78bcb1420aac27a6d1a3666a5f\",\"manual_unknown_confirmation\":false,\"ok\":true,\"outdated\":false,\"pid\":77782,\"platform_activity\":{\"binding\":false,\"busy\":false,\"jobs\":[],\"supported\":true},\"presence\":{\"automatic_verified\":true,\"book_id\":\"de7531c4-0881-4cc7-ae3d-1d0cffbae9dc\",\"can_stop\":true,\"counts\":{\"closed\":1,\"dirty\":0,\"needs_recovery\":0,\"open\":0,\"pending_pages\":0,\"recovering\":0,\"registered\":1,\"saving\":0,\"unknown\":0},\"coverage\":\"server_issued_pages_this_instance\",\"fingerprint\":\"728fe9d63d444172cdb78ba0fc811135b299fb57c20d4a4e9f6d35596400197b\",\"instance\":\"d0025f78bcb1420aac27a6d1a3666a5f\",\"legacy_services_covered\":false,\"manual_confirmation_required\":false,\"no_pages\":false,\"pages\":[{\"buffers\":[],\"initialized\":true,\"last_known_pending\":false,\"page_id\":\"94923466391d4a09818366998e711dd7\",\"seconds_since_report\":0.6,\"sequence\":0,\"stale\":false,\"state\":\"closed\",\"unknown_reason\":null}],\"protocol\":1,\"saved_assertion_is_automatic_verification\":false,\"state\":\"clean\"},\"presence_supported\":true,\"root\":\"/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book\",\"running\":true,\"runtime_sha256\":\"49091a380e5238a8ed9332825616878e0b343a9ebcfc9e173991892b6205101e\",\"started\":\"2026-10-27T05:18:46.487765Z\",\"stop_requested\":true,\"url\":\"http://127.0.0.1:51779/REDACTED-LOCAL-TOKEN/\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.599,
+        "status": "passed"
+      },
+      "final_status": {
+        "command": [
+          "/Users/cuining/.local/bin/python",
+          "-B",
+          "-X",
+          "utf8",
+          "/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27/skills/story-skill/scripts/story.py",
+          "workbench-status",
+          "--book",
+          "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-real-install-acceptance-8t9gt1ea/synthetic-book"
+        ],
+        "exit_code": 0,
+        "stdout": "{\"ok\":true,\"running\":false,\"status\":\"登记服务已正常停止。\"}\n",
+        "stderr": "",
+        "duration_seconds": 0.583,
+        "status": "passed"
+      },
+      "process_exit_code": 0,
+      "log": "{\"url\": \"http://127.0.0.1:51779/REDACTED-LOCAL-TOKEN/\", \"mode\": \"candidate-editing\"}\n{\"ok\":true,\"stopped\":true}\n",
+      "scope": "Loopback HTTP only; no browser or GUI interaction"
+    },
+    "plugin_unchanged_after_runtime": {
+      "status": "passed",
+      "files": 72,
+      "missing": [],
+      "extra": [],
+      "changed": []
+    },
+    "other_configuration_unchanged": true,
+    "previous_marketplace_preserved": true
+  },
+  "commands": [
+    {
+      "arguments": [
+        "plugin",
+        "remove",
+        "story-skill@story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"pluginId\": \"story-skill@story-skill-local\",\n  \"name\": \"story-skill\",\n  \"marketplaceName\": \"story-skill-local\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "plugin",
+        "marketplace",
+        "remove",
+        "story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"marketplaceName\": \"story-skill-local\",\n  \"installedRoot\": null\n}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "plugin",
+        "marketplace",
+        "add",
+        "/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261027-122719",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"marketplaceName\": \"story-skill-local\",\n  \"installedRoot\": \"/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261027-122719\",\n  \"alreadyAdded\": false\n}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "plugin",
+        "add",
+        "story-skill@story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"pluginId\": \"story-skill@story-skill-local\",\n  \"name\": \"story-skill\",\n  \"marketplaceName\": \"story-skill-local\",\n  \"version\": \"0.6.27\",\n  \"installedPath\": \"/Users/cuining/.codex/plugins/cache/story-skill-local/story-skill/0.6.27\",\n  \"authPolicy\": \"ON_INSTALL\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "arguments": [
+        "plugin",
+        "list",
+        "--marketplace",
+        "story-skill-local",
+        "--json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"installed\": [\n    {\n      \"pluginId\": \"story-skill@story-skill-local\",\n      \"name\": \"story-skill\",\n      \"marketplaceName\": \"story-skill-local\",\n      \"version\": \"0.6.27\",\n      \"installed\": true,\n      \"enabled\": true,\n      \"source\": {\n        \"source\": \"local\",\n        \"path\": \"/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261027-122719/plugins/story-skill\"\n      },\n      \"marketplaceSource\": {\n        \"sourceType\": \"local\",\n        \"source\": \"/Users/cuining/.codex/plugins/local-marketplaces/story-skill-local/v0.6.27-local-20261027-122719\"\n      },\n      \"installPolicy\": \"AVAILABLE\",\n      \"authPolicy\": \"ON_INSTALL\"\n    }\n  ],\n  \"available\": []\n}\n",
+      "stderr": ""
+    }
+  ],
+  "model_turn_started": false,
+  "real_manuscripts_modified": false
+}

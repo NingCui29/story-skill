@@ -1,0 +1,81 @@
+{
+  "method": "quick_validate.py format validation only; no behavioral or literary-quality claim",
+  "timestamp_utc": "2026-10-23T08:32:01.777925+00:00",
+  "python": "3.12.14",
+  "validator_sha256": "ee6dba90f44d37171c5a6edb8095979c54919ff6822c1a907afca2e78c48738c",
+  "results": [
+    {
+      "skill": "story-skill",
+      "path": "skills/story-skill/SKILL.md",
+      "sha256": "a2e6f10301f83ae666f390de3c79ddbe3b6fe2e3e9f3afab37820bdb3a9d979f",
+      "source_unchanged": true,
+      "passed": true,
+      "output": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-analyze",
+      "path": "skills/story-skill-analyze/SKILL.md",
+      "sha256": "c438ff05fa677f19301c1f2c4e3e73b2c3c23588bb3e0a6912e68fa0a86b2af1",
+      "source_unchanged": true,
+      "passed": true,
+      "output": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-cover",
+      "path": "skills/story-skill-cover/SKILL.md",
+      "sha256": "f68297317518a387c61732105dfac66937a18f11467ffdc131a615107d46a209",
+      "source_unchanged": true,
+      "passed": true,
+      "output": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-plan",
+      "path": "skills/story-skill-plan/SKILL.md",
+      "sha256": "746fa349eb06fe82939f383666bd92ae777bc4b1502bc728a43643e01999471d",
+      "source_unchanged": true,
+      "passed": true,
+      "output": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-publish",
+      "path": "skills/story-skill-publish/SKILL.md",
+      "sha256": "7bae3b193be5709766c6d85d2d0021534ae9cae360e391a0b251edcfb4a0e446",
+      "source_unchanged": true,
+      "passed": true,
+      "output": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-research",
+      "path": "skills/story-skill-research/SKILL.md",
+      "sha256": "03b9e9d85cc4bff57b0d31944d3cce444d3a7049749dc597aa7a22f53f515a31",
+      "source_unchanged": true,
+      "passed": true,
+      "output": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-review",
+      "path": "skills/story-skill-review/SKILL.md",
+      "sha256": "7563ef2c5e8a7253f5c975c432a19c2ed1080dcb6013f6a99074a5f40c34d998",
+      "source_unchanged": true,
+      "passed": true,
+      "output": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-write",
+      "path": "skills/story-skill-write/SKILL.md",
+      "sha256": "194b429480e9cba9f85becade02a767f1b37dcc90112ee436da655d998eff518",
+      "source_unchanged": true,
+      "passed": true,
+      "output": "Skill is valid!",
+      "stderr": ""
+    }
+  ],
+  "successful": true
+}

@@ -1,0 +1,12 @@
+test_aria_hidden_is_not_a_visual_visibility_signal (test_rank_source_visibility.RankSourceVisibilityTests.test_aria_hidden_is_not_a_visual_visibility_signal) ... ok
+test_collection_preserves_raw_html_and_only_visible_books_reach_research (test_rank_source_visibility.RankSourceVisibilityTests.test_collection_preserves_raw_html_and_only_visible_books_reach_research) ... ok
+test_inert_duplicates_do_not_mask_visible_controls_or_card_fields (test_rank_source_visibility.RankSourceVisibilityTests.test_inert_duplicates_do_not_mask_visible_controls_or_card_fields) ... ok
+test_inert_only_cards_are_not_an_empty_success (test_rank_source_visibility.RankSourceVisibilityTests.test_inert_only_cards_are_not_an_empty_success) ... ok
+test_inert_sort_or_page_controls_cannot_supply_page_evidence (test_rank_source_visibility.RankSourceVisibilityTests.test_inert_sort_or_page_controls_cannot_supply_page_evidence) ... ok
+test_inert_text_preserves_inline_boundaries_and_visible_contradictions (test_rank_source_visibility.RankSourceVisibilityTests.test_inert_text_preserves_inline_boundaries_and_visible_contradictions) ... ok
+test_template_and_hidden_cards_do_not_become_ranked_books (test_rank_source_visibility.RankSourceVisibilityTests.test_template_and_hidden_cards_do_not_become_ranked_books) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.099s
+
+OK

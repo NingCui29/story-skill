@@ -1,0 +1,38 @@
+{
+  "scope": "Final affected-module regression only; prior full repository baseline is recorded separately in baseline.json",
+  "checked_at_utc": "2026-10-23T11:30:05.268821+00:00",
+  "final_totals": {
+    "tests_run": 559,
+    "passed": 558,
+    "skipped": 1,
+    "failures": 0,
+    "errors": 0
+  },
+  "new_regression_test_methods": {
+    "python": 5,
+    "node_driver": 7
+  },
+  "groups": {
+    "research": 100,
+    "platform": 298,
+    "backend_related": 161
+  },
+  "counting": "Disjoint final groups. New tests are included; red, intermediate, independent probes and instruction measurements are not added.",
+  "instruction_loads": {
+    "checked": 301,
+    "passed": 301,
+    "limits_raised": false
+  },
+  "source_files_checked": 332,
+  "source_drift": [],
+  "component_hashes_match": true,
+  "independent_probe_hashes_match": true,
+  "local_report_links_valid": true,
+  "git_diff_check_passed": true,
+  "limits": [
+    "One native Windows case skipped on macOS",
+    "Offline platform fixtures only",
+    "No installation or release performed",
+    "No new full-repository test run"
+  ]
+}

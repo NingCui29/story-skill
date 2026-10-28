@@ -1,0 +1,10 @@
+{
+  "skills/story-skill/scripts/story.py": "f1beb4278d581b9a1ff041c550c2deaccaa5f628827f6aad77cae2b1fa663ff9",
+  "skills/story-skill/scripts/story_outline.py": "88a4f7937a35061c4a93ead949fe151d3f7b5806ba3997187bb6164dd9e1f032",
+  "skills/story-skill/scripts/story_workbench.py": "ab1480ba5b166ceb08a762163327ab044033b7957782d8232f76ab87ff189052",
+  "skills/story-skill-write/references/chapter.md": "1a379f5e2ce0573bf66d79ac1ae2a07046f69027b369cdc0e996a84d4ec1c8d5",
+  "skills/story-skill/references/project-state.md": "c37a6667d427b6448e0911ccd6a84fb6814a98dae35f493eafb791f4495ab116",
+  "skills/story-skill-plan/SKILL.md": "c7206911995c1b0de9502a8106a6d483676366cb023dbdf2e3aabc47bcf05d8c",
+  "tests/test_minimum_chapter_length.py": "1066d92ca9792f683c93198de295d7aec71619fa9e18c64b03402b9a2e2133c5",
+  "tests/test_workbench_flow.py": "7a8312006f1503bcd57cbfdff595678fde7420d84224897168ac5345c7ab9ca1"
+}

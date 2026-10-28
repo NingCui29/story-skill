@@ -1,0 +1,35 @@
+{
+  "source_sha256": "76fad6940eedf5d69aa2241278c2dd0de3d84c68f79336522d2ca33576946dee",
+  "results": [
+    {
+      "index": 1,
+      "ok": true,
+      "response": {
+        "ok": true,
+        "session_id": "198e090b8d534c81b44174f51a6f5c9d",
+        "handle_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-publish-s9c_vbt8/中文书根/handle1.json",
+        "ttl_seconds": 120,
+        "state": "awaiting_health",
+        "ready": false,
+        "remote_accessed": false,
+        "browser_started": false
+      }
+    },
+    {
+      "index": 2,
+      "ok": false,
+      "error": "platform_chrome_worker_busy"
+    }
+  ],
+  "status": {
+    "attached": true,
+    "session_id": "198e090b8d534c81b44174f51a6f5c9d",
+    "expires_at": "2026-10-23T16:40:02.480249+00:00",
+    "ready": false,
+    "state": "awaiting_health",
+    "health_state": "awaiting_health",
+    "active_sessions": 1
+  },
+  "live_sessions": 1,
+  "passed": true
+}

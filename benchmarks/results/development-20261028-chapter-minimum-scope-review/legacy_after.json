@@ -1,0 +1,25 @@
+{
+  "generic_scope": "legacy",
+  "generic_correct_heading_headingless_wrong_heading": [
+    "allowed",
+    "task_output_scope",
+    "task_output_scope"
+  ],
+  "corrupt_scope_get_stale": [
+    "task_scope_unknown"
+  ],
+  "same_key": {
+    "unchanged": true,
+    "same_execution": true,
+    "record_unchanged": true,
+    "executable_total": 1,
+    "spawn_total": 1
+  },
+  "unknown_same_key": {
+    "unchanged": true,
+    "same_execution": true,
+    "executable_total": 1,
+    "spawn_total": 1
+  },
+  "different_key": "task_execution_unresolved"
+}

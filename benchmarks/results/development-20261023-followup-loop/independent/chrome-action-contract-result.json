@@ -1,0 +1,138 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "kind": "serialized_focus",
+      "mode": "root",
+      "actual": true,
+      "expected": true,
+      "ok": true
+    },
+    {
+      "kind": "serialized_focus",
+      "mode": "span",
+      "actual": true,
+      "expected": true,
+      "ok": true
+    },
+    {
+      "kind": "serialized_focus",
+      "mode": "input",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "kind": "serialized_focus",
+      "mode": "textarea",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "kind": "serialized_focus",
+      "mode": "select",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "kind": "serialized_focus",
+      "mode": "button",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "kind": "serialized_focus",
+      "mode": "iframe",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "kind": "serialized_focus",
+      "mode": "false_boundary",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "kind": "serialized_focus",
+      "mode": "nested_true_in_false",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "kind": "serialized_focus",
+      "mode": "outside",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "kind": "last_button_check",
+      "mode": "safe",
+      "clicked": true,
+      "error": null,
+      "events": [
+        "final-state",
+        "click"
+      ],
+      "ok": true
+    },
+    {
+      "kind": "last_button_check",
+      "mode": "text",
+      "clicked": false,
+      "error": "platform_browser_unsafe_create",
+      "events": [
+        "final-state"
+      ],
+      "ok": true
+    },
+    {
+      "kind": "last_button_check",
+      "mode": "aria",
+      "clicked": false,
+      "error": "platform_browser_unsafe_create",
+      "events": [
+        "final-state"
+      ],
+      "ok": true
+    },
+    {
+      "kind": "last_button_check",
+      "mode": "title",
+      "clicked": false,
+      "error": "platform_browser_unsafe_create",
+      "events": [
+        "final-state"
+      ],
+      "ok": true
+    },
+    {
+      "kind": "last_button_check",
+      "mode": "disabled",
+      "clicked": false,
+      "error": "platform_browser_unsafe_create",
+      "events": [
+        "final-state"
+      ],
+      "ok": true
+    },
+    {
+      "kind": "last_button_check",
+      "mode": "href",
+      "clicked": false,
+      "error": "platform_browser_unsafe_create",
+      "events": [
+        "final-state"
+      ],
+      "ok": true
+    }
+  ],
+  "source_sha256": "003419c8bcf62c67c2e40dade596b1f113ba02c736cec7a86e133baf93e3a5d1",
+  "scope": "Exact serialized readActionState callback and production clickDraftButton; local model DOM and recorded click method only."
+}

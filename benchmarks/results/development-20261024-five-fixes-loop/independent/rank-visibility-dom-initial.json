@@ -1,0 +1,155 @@
+{
+  "ok": false,
+  "cases": 12,
+  "results": [
+    {
+      "case": 1,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 2,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 3,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 4,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 5,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 6,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 7,
+      "ok": false,
+      "marker_visible": true,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 8,
+      "ok": false,
+      "marker_visible": true,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 9,
+      "ok": true,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 10,
+      "ok": false,
+      "marker_visible": false,
+      "expected_visible": false,
+      "titles": [
+        "可见 书名"
+      ],
+      "expected_titles": [
+        "可见书名"
+      ]
+    },
+    {
+      "case": 11,
+      "ok": true,
+      "marker_visible": true,
+      "expected_visible": true,
+      "titles": [
+        "仍然可见书名"
+      ],
+      "expected_titles": [
+        "仍然可见书名"
+      ]
+    },
+    {
+      "case": 12,
+      "ok": true,
+      "marker_visible": true,
+      "expected_visible": true,
+      "titles": [
+        "仍然可见书名"
+      ],
+      "expected_titles": [
+        "仍然可见书名"
+      ]
+    }
+  ],
+  "engine": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_rank_sources.py": "34c9726746d7ccb3f956899ebc381d93547e5340f87d483f3a7748c24484c711"
+  },
+  "scope": "Local synthetic HTML rendered in an isolated Chrome profile; no network, live rank page, or arbitrary CSS/JS evaluation by the production collector."
+}

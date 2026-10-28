@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "date": "2026-10-27T08:26:26.161186+00:00",
+  "version": "0.6.29",
+  "scope": "One actual Codex invocation on an isolated synthetic review fixture; no user manuscripts, formal adoption or platform operation. No automatic model retry.",
+  "observations": [
+    {
+      "state": "starting",
+      "observed_at": "2026-10-27T08:26:27.759795+00:00"
+    },
+    {
+      "state": "running",
+      "observed_at": "2026-10-27T08:26:30.871617+00:00"
+    }
+  ],
+  "task_id": "2a95bfb72bed46f9a2d73a034b13037f",
+  "execution_id": "689a2fa95c27466a9a05765171a22466",
+  "model_requested": "gpt-6.1-sol",
+  "same_key_reused_attempt": true,
+  "ok": false,
+  "error": "Publishing files must be regular files with no links or aliases",
+  "error_type": "StoryError"
+}

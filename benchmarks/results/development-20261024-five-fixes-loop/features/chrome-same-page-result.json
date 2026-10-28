@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "flows": 2,
+  "results": [
+    {
+      "cached": false,
+      "responses": [
+        "99",
+        "100"
+      ],
+      "consumed": [
+        "2",
+        "4"
+      ],
+      "creates": 2,
+      "saves": 2
+    },
+    {
+      "cached": true,
+      "responses": [
+        "99",
+        "100"
+      ],
+      "consumed": [
+        "2",
+        "4"
+      ],
+      "creates": 2,
+      "saves": 2
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "scope": "Independent synthetic fixture probes and read-only incremental implementation review. No real browser, platform, or book operations. Full repository regression is owned by the parent agent.",
+  "probes": [
+    {
+      "probe": "story_recovery_boundary_probe.py",
+      "exit_code": 0,
+      "results": [
+        {
+          "pages": 10,
+          "empty_partial_pages": 4,
+          "returned": 7,
+          "complete": true,
+          "cross_mode": "rejected; recovery cursor retained"
+        }
+      ],
+      "stderr": ""
+    },
+    {
+      "probe": "story_preview_boundary_probe.py",
+      "exit_code": 0,
+      "results": [
+        {
+          "operation": "read",
+          "post_final_header_redirect": "rejected",
+          "saves": 0,
+          "reconcile_without_rewrite": false
+        },
+        {
+          "operation": "find",
+          "post_final_header_redirect": "rejected",
+          "saves": 0,
+          "reconcile_without_rewrite": false
+        },
+        {
+          "operation": "create",
+          "post_final_header_redirect": "rejected",
+          "saves": 1,
+          "reconcile_without_rewrite": true
+        }
+      ],
+      "stderr": ""
+    }
+  ],
+  "source_sha256": {
+    "story_chrome_bridge.mjs": "a4a2d72b113e5dc7b13f11f72a9aaab4421fe0f69bb5710acbd92688691b6bff",
+    "story_platform_browser.py": "0e39dbab506cf889467e031693866d38aededb54d52c982426c936bb6213fb60",
+    "story_workbench.py": "330ccc5187d75bc9a9ab274645736b3a8ed7381c2bb28c19388fb670240a1875",
+    "story_workbench_archives.py": "f57f3358ec74156d7926bb71a9f1ba016076dd790d0f27357ce12f44c6cdb244"
+  },
+  "review_findings": []
+}

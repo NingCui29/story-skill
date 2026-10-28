@@ -1,0 +1,30 @@
+======================================================================
+FAIL: test_service_single_instance_status_stop_and_restart (test_workbench.WorkbenchTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>/tests/test_workbench.py", line 590, in test_service_single_instance_status_stop_and_restart
+    self.assertFalse(status['outdated'])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_empty_library_starts_without_a_book_and_serves_root_url (test_workbench_library.WorkbenchLibraryTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>/tests/test_workbench_library.py", line 133, in test_empty_library_starts_without_a_book_and_serves_root_url
+    self.assertFalse(state['outdated'])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_runtime_identity_covers_core_and_every_loaded_story_extension (test_workbench_runtime_regressions.WorkbenchRuntimeRegressions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPO>/tests/test_workbench_runtime_regressions.py", line 68, in test_runtime_identity_covers_core_and_every_loaded_story_extension
+    self.assertEqual({source.name for source in story.workbench._runtime_paths}, expected)
+AssertionError: Items in the first set but not the second:
+'story_rank_sources.py'
+'story_rank.py'
+
+----------------------------------------------------------------------
+Ran 2498 tests in 551.088s
+
+FAILED (failures=3, skipped=245)

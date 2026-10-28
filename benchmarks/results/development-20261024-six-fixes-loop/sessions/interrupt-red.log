@@ -1,0 +1,51 @@
+test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) ... 
+  test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) (interrupted='KeyboardInterrupt', published=False) ... FAIL
+  test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) (interrupted='KeyboardInterrupt', published=True) ... FAIL
+  test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) (interrupted='SystemExit', published=False) ... FAIL
+  test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) (interrupted='SystemExit', published=True) ... FAIL
+test_catchable_metadata_lock_exit_interrupt_retires_unpublished_handle_session (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_metadata_lock_exit_interrupt_retires_unpublished_handle_session) ... FAIL
+
+======================================================================
+FAIL: test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) (interrupted='KeyboardInterrupt', published=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_chrome_initialization.py", line 104, in test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence
+    self.assertFalse(state["attached"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) (interrupted='KeyboardInterrupt', published=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_chrome_initialization.py", line 104, in test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence
+    self.assertFalse(state["attached"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) (interrupted='SystemExit', published=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_chrome_initialization.py", line 104, in test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence
+    self.assertFalse(state["attached"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence) (interrupted='SystemExit', published=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_chrome_initialization.py", line 104, in test_catchable_handle_interrupt_retires_lease_and_preserves_published_evidence
+    self.assertFalse(state["attached"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_catchable_metadata_lock_exit_interrupt_retires_unpublished_handle_session (tests.test_platform_chrome_initialization.ChromeInitializationTests.test_catchable_metadata_lock_exit_interrupt_retires_unpublished_handle_session)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_chrome_initialization.py", line 131, in test_catchable_metadata_lock_exit_interrupt_retires_unpublished_handle_session
+    self.assertFalse(bridge.worker_status(helper.root, helper.binding())["attached"])
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.504s
+
+FAILED (failures=5)

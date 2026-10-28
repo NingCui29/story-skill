@@ -1,0 +1,31 @@
+✔ ordinary find and independent read keep their current management navigation without proactive creation refreshes (80.860607ms)
+✔ other management paths retain ordinary navigation and never infer a role click across routes or books (19.494862ms)
+✔ ordinary qimao editor supports read find create and existing selector/body modes (299.188493ms)
+✔ ordinary qidian editor supports read find create and existing selector/body modes (261.107318ms)
+✔ ordinary qimao editor rejects another remote during read find and create readback (92.986753ms)
+✔ ordinary qidian editor rejects another remote during read find and create readback (88.538011ms)
+✔ ordinary qimao editor refuses changed current chapter title body and DOM state after body observation (120.658496ms)
+✔ ordinary qidian editor refuses changed current chapter title body and DOM state after body observation (142.848245ms)
+✔ ordinary qimao final body and guard awaits cannot conceal changed identities or headers (211.79757ms)
+✔ ordinary qidian final body and guard awaits cannot conceal changed identities or headers (253.551772ms)
+✔ ordinary qimao final fields fail once for missing duplicate empty and timeout without readiness restart (54.26404ms)
+✔ ordinary qidian final fields fail once for missing duplicate empty and timeout without readiness restart (41.261073ms)
+✔ ordinary initial field readiness still waits before strict final reads (843.693091ms)
+✔ current editor evaluateAll callback is self-contained and preserves the original paragraph contract (1.187492ms)
+✔ ordinary qimao pre-final guard refresh detects server account changes and editor changes during reload (458.421838ms)
+✔ ordinary qidian pre-final guard refresh detects server account changes and editor changes during reload (510.644329ms)
+✔ ordinary qimao creation keeps its confirmed remote through saving and readback (35.930025ms)
+✔ ordinary qidian creation keeps its confirmed remote through saving and readback (35.460627ms)
+✔ ordinary qimao creation stops before another fill or save after a confirmed editor switch (13.298774ms)
+✔ ordinary qidian creation stops before another fill or save after a confirmed editor switch (20.367124ms)
+✔ ordinary creation allows initial ID allocation before binding and same-remote saved URL transitions (36.66681ms)
+✔ ordinary qimao final editor snapshot rejects body changes during later guard or header reads (102.151944ms)
+✔ ordinary qidian final editor snapshot rejects body changes during later guard or header reads (93.286056ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3996.657655

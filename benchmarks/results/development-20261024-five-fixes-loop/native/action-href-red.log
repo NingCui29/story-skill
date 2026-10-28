@@ -1,0 +1,115 @@
+test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) ... 
+  test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='save', initial=None, final='/publish') ... FAIL
+  test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='save', initial='/draft/new', final='/publish') ... FAIL
+  test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='save', initial='/draft/new', final=None) ... FAIL
+  test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-same-page', initial=None, final='/publish') ... FAIL
+  test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-same-page', initial='/draft/new', final='/publish') ... FAIL
+  test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-same-page', initial='/draft/new', final=None) ... FAIL
+  test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-popup', initial=None, final='/publish') ... FAIL
+  test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-popup', initial='/draft/new', final='/publish') ... FAIL
+  test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-popup', initial='/draft/new', final=None) ... FAIL
+test_stable_link_and_nonlink_draft_buttons_remain_usable (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_stable_link_and_nonlink_draft_buttons_remain_usable) ... ok
+
+======================================================================
+FAIL: test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='save', initial=None, final='/publish')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 788, in test_draft_action_link_destination_cannot_change_after_initial_checks
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='save', initial='/draft/new', final='/publish')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 788, in test_draft_action_link_destination_cannot_change_after_initial_checks
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='save', initial='/draft/new', final=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 788, in test_draft_action_link_destination_cannot_change_after_initial_checks
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-same-page', initial=None, final='/publish')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 788, in test_draft_action_link_destination_cannot_change_after_initial_checks
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-same-page', initial='/draft/new', final='/publish')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 788, in test_draft_action_link_destination_cannot_change_after_initial_checks
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-same-page', initial='/draft/new', final=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 788, in test_draft_action_link_destination_cannot_change_after_initial_checks
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-popup', initial=None, final='/publish')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 788, in test_draft_action_link_destination_cannot_change_after_initial_checks
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-popup', initial='/draft/new', final='/publish')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 788, in test_draft_action_link_destination_cannot_change_after_initial_checks
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_draft_action_link_destination_cannot_change_after_initial_checks (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_draft_action_link_destination_cannot_change_after_initial_checks) (operation='create-popup', initial='/draft/new', final=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 788, in test_draft_action_link_destination_cannot_change_after_initial_checks
+    self.rejected(lambda: adapter.create_draft(2, "新标题", "新正文"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.640s
+
+FAILED (failures=9)

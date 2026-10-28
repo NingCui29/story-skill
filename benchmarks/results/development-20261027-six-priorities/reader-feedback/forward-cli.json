@@ -1,0 +1,61 @@
+{
+  "scope": "Synthetic CLI execution only; no human reader study, model literary trial or novel state writes.",
+  "work_dir": "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo",
+  "source_sha256": "4aae20a2e1c035f5ad38ba99daba9fbd4bd5332cb465dd302b2382808172b5ca",
+  "checks": {
+    "no_opportunity_not_dropout": true,
+    "prior_snapshot_preserved": true,
+    "changed_source_reported": true,
+    "no_novel_database": true
+  },
+  "receipts": [
+    {
+      "args": [
+        "reader-init",
+        "--plan",
+        "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/plan.json",
+        "--output-dir",
+        "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/v1"
+      ],
+      "returncode": 0,
+      "stdout": "{\"added_records\":0,\"files\":[\"observation-template.json\",\"study.json\",\"summary.json\",\"summary.md\"],\"limits\":\"仅核对材料关联、文件版本、摘录与所填观察；不证明实际阅读或参与者身份。不计算留存率、文学分数或因果效果；不同来源、版本、轮次、人群与提醒条件分别列计数。不邀读、不联网、不调度、不修改小说事实库；原话与修改假设分别保留。\",\"ok\":true,\"output_dir\":\"/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/v1\",\"plan_sha256\":\"2d8841ce6e33a5c7465552c7e22adfef00e39630e5584452c75bb0ef0401c494\",\"source_warnings\":[],\"status\":\"recorded_materials\"}\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "reader-record",
+        "--input",
+        "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/v1/study.json",
+        "--observations",
+        "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/events.json",
+        "--output-dir",
+        "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/v2"
+      ],
+      "returncode": 0,
+      "stdout": "{\"added_records\":2,\"files\":[\"observation-template.json\",\"study.json\",\"summary.json\",\"summary.md\"],\"limits\":\"仅核对材料关联、文件版本、摘录与所填观察；不证明实际阅读或参与者身份。不计算留存率、文学分数或因果效果；不同来源、版本、轮次、人群与提醒条件分别列计数。不邀读、不联网、不调度、不修改小说事实库；原话与修改假设分别保留。\",\"ok\":true,\"output_dir\":\"/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/v2\",\"plan_sha256\":\"2d8841ce6e33a5c7465552c7e22adfef00e39630e5584452c75bb0ef0401c494\",\"source_warnings\":[],\"status\":\"recorded_materials\"}\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "reader-check",
+        "--input",
+        "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/v2/study.json",
+        "--as-of",
+        "2026-10-05T00:00:00Z"
+      ],
+      "returncode": 0,
+      "stdout": "{\"as_of\":\"2026-10-05T00:00:00+00:00\",\"groups\":[{\"cohort\":\"合成参与者声明，非真人试读\",\"counts\":{\"completed\":1,\"planned_pairs\":1,\"provided\":1,\"recorded_pairs\":1,\"started\":1},\"manuscript_sha256\":\"2ecc9b8bd16f6521d64b34c05321586ab35c88866c77321647388e582a160f15\",\"opportunity\":\"provided\",\"opportunity_timing\":\"in_window\",\"reminder\":\"none\",\"round_id\":\"r1\",\"source_kind\":\"human\"},{\"cohort\":\"合成参与者声明，非真人试读\",\"counts\":{\"no_opportunity\":1,\"planned_pairs\":1,\"recorded_pairs\":1},\"manuscript_sha256\":\"e3c7252d84a77465d12a2f06e5552d43d76fec92aa7fd6b61a37387841b51588\",\"opportunity\":\"not_provided\",\"opportunity_timing\":\"not_confirmed\",\"reminder\":\"none\",\"round_id\":\"r2\",\"source_kind\":\"human\"}],\"limits\":\"仅核对材料关联、文件版本、摘录与所填观察；不证明实际阅读或参与者身份。不计算留存率、文学分数或因果效果；不同来源、版本、轮次、人群与提醒条件分别列计数。不邀读、不联网、不调度、不修改小说事实库；原话与修改假设分别保留。\",\"ok\":true,\"plan_sha256\":\"2d8841ce6e33a5c7465552c7e22adfef00e39630e5584452c75bb0ef0401c494\",\"records\":2,\"source_warnings\":[],\"status\":\"recorded_materials\",\"study_id\":\"synthetic-forward-01\"}\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "reader-check",
+        "--input",
+        "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/v2/study.json"
+      ],
+      "returncode": 0,
+      "stdout": "{\"as_of\":\"2026-10-27T06:23:27.153635+00:00\",\"groups\":[{\"cohort\":\"合成参与者声明，非真人试读\",\"counts\":{\"completed\":1,\"planned_pairs\":1,\"provided\":1,\"recorded_pairs\":1,\"started\":1},\"manuscript_sha256\":\"2ecc9b8bd16f6521d64b34c05321586ab35c88866c77321647388e582a160f15\",\"opportunity\":\"provided\",\"opportunity_timing\":\"in_window\",\"reminder\":\"none\",\"round_id\":\"r1\",\"source_kind\":\"human\"},{\"cohort\":\"合成参与者声明，非真人试读\",\"counts\":{\"no_opportunity\":1,\"planned_pairs\":1,\"recorded_pairs\":1},\"manuscript_sha256\":\"e3c7252d84a77465d12a2f06e5552d43d76fec92aa7fd6b61a37387841b51588\",\"opportunity\":\"not_provided\",\"opportunity_timing\":\"not_confirmed\",\"reminder\":\"none\",\"round_id\":\"r2\",\"source_kind\":\"human\"}],\"limits\":\"仅核对材料关联、文件版本、摘录与所填观察；不证明实际阅读或参与者身份。不计算留存率、文学分数或因果效果；不同来源、版本、轮次、人群与提醒条件分别列计数。不邀读、不联网、不调度、不修改小说事实库；原话与修改假设分别保留。\",\"ok\":true,\"plan_sha256\":\"2d8841ce6e33a5c7465552c7e22adfef00e39630e5584452c75bb0ef0401c494\",\"records\":2,\"source_warnings\":[{\"expected_sha256\":\"e3c7252d84a77465d12a2f06e5552d43d76fec92aa7fd6b61a37387841b51588\",\"owner\":\"round:r2\",\"path\":\"/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/reader-records-jwl9tzmo/round2.txt\",\"status\":\"changed\"}],\"status\":\"source_changed\",\"study_id\":\"synthetic-forward-01\"}\n",
+      "stderr": ""
+    }
+  ]
+}

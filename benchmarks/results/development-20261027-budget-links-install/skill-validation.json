@@ -1,0 +1,53 @@
+{
+  "passed": true,
+  "skills": [
+    {
+      "skill": "story-skill",
+      "exit_code": 0,
+      "result": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-analyze",
+      "exit_code": 0,
+      "result": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-cover",
+      "exit_code": 0,
+      "result": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-plan",
+      "exit_code": 0,
+      "result": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-publish",
+      "exit_code": 0,
+      "result": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-research",
+      "exit_code": 0,
+      "result": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-review",
+      "exit_code": 0,
+      "result": "Skill is valid!",
+      "stderr": ""
+    },
+    {
+      "skill": "story-skill-write",
+      "exit_code": 0,
+      "result": "Skill is valid!",
+      "stderr": ""
+    }
+  ]
+}

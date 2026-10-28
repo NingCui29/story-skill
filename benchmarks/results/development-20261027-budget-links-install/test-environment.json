@@ -1,0 +1,6 @@
+{
+  "node": "/Users/cuining/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "node_version": "v24.19.0",
+  "adjustment": "Prepend the existing bundled Node directory to PATH only in test child processes; no global configuration or project dependency changes",
+  "first_run": "unittest-missing-node.json"
+}

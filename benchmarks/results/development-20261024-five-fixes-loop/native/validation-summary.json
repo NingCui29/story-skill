@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "production_before_sha256": "09b4fa2bd6409f49f74c519181dffea0acaee4594a2990f5f06b0d63a84c7362",
+  "files_sha256": {
+    "skills/story-skill/scripts/story_platform_browser.py": "06760945d77a9ddb94d64e2936c344d918365763bc24735ab6913b123f641bc2",
+    "tests/test_platform_browser_editor_readback.py": "c4fbe734fea033fa37b635de0c127991d3914d99cd31bc3c91238f2850d05fba",
+    "tests/test_platform_browser.py": "a40d8cc0ade0a7369145a7c5b4b5dec5a888d68bc7fb3f8b4bf3a3afcda391ed"
+  },
+  "new_test_methods": 5,
+  "targeted_suite": {
+    "tests_run": 136,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": "native-green.log"
+  },
+  "fixes": [
+    {
+      "id": "unallocated-create-url",
+      "red_counterexamples": 8,
+      "positive_scenarios": 2,
+      "red_log": "unallocated-url-red.log",
+      "green_log": "unallocated-url-green.log"
+    },
+    {
+      "id": "current-dom-draft-state",
+      "red_counterexamples": 12,
+      "red_log": "current-state-red.log",
+      "green_log": "current-state-green.log"
+    },
+    {
+      "id": "draft-action-href",
+      "red_counterexamples": 9,
+      "positive_scenarios": 6,
+      "red_log": "action-href-red.log",
+      "green_log": "action-href-green.log"
+    }
+  ],
+  "unresolved_confirmed_findings": [],
+  "scope": "Offline adapter fixtures plus executed existing JavaScript serializer/focus predicates. No live platform, install, publication or native Windows validation. Full suite and independent checks recorded by root separately."
+}

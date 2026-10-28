@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "kind": "research_evidence",
+  "sample_id": "0ef8a4c9ad2ba08c9d65469db7c3919a839b90c9634aca112ccf796c540fca16",
+  "items": [
+    {
+      "topic_id": "topic-1",
+      "hypothesis_id": "hypothesis-1",
+      "book_key": "4e3cb61dd858ac0d2682",
+      "hypothesis_claim": "主角牺牲眼前收益能够换来后续合作。",
+      "text_ref": "<TRIAL>/inputs/a.txt",
+      "report_ref": "<TRIAL>/trial-output/analysis-report.md",
+      "read_scope": {
+        "coverage": "partial",
+        "description": "第一章《雨夜》，正文第 3–4 行；本地文件全读，全文未提供。"
+      },
+      "locators": {
+        "text": [
+          "a.txt：第 3–4 行"
+        ],
+        "report": [
+          "A：开局：雨夜修表铺"
+        ]
+      },
+      "quote": "店门要关时，少年把一只停走的旧表递过来，说只剩十五块。周砚看见表背刻着出院日期。换轴要拆掉他留给大客户的那只备件。他把报价单翻过去，收下十五块，叫少年明天再来。\n第二天，大客户站在柜前等。他没有拿少年母亲的事做借口，退了订金，又赔上自己的工钱。傍晚少年带着隔壁药房老板来了。老板把门牌交给他：明早帮我开门，钥匙先放你这。",
+      "conclusion": "supports",
+      "finding": "可见赔款之后，受助少年参与引荐，药房老板发起开门委托；支持付出之后出现信任与具体协作邀请的局部读法。",
+      "limitations": [
+        "委托未履行；没有长期合作、报酬或经营增长证据。",
+        "因果为叙事顺序与引荐所提示的解释，老板动机未明说。",
+        "原创合成片段；没有真实市场数据或真人阅读反馈。"
+      ]
+    },
+    {
+      "topic_id": "topic-1",
+      "hypothesis_id": "hypothesis-1",
+      "book_key": "be9199f781adff7dc44f",
+      "hypothesis_claim": "主角牺牲眼前收益能够换来后续合作。",
+      "text_ref": "<TRIAL>/inputs/b.txt",
+      "report_ref": "<TRIAL>/trial-output/analysis-report.md",
+      "read_scope": {
+        "coverage": "partial",
+        "description": "第一章《借工具》，正文第 3–4 行；本地文件全读，全文未提供。"
+      },
+      "locators": {
+        "text": [
+          "b.txt：第 3–4 行"
+        ],
+        "report": [
+          "B：开局：河畔修车行"
+        ]
+      },
+      "quote": "河水淹过门槛，田野把唯一的抽水泵借给邻铺。答应来帮他的工人半路改去了高价工地。水退后，邻铺老板说泵已经转借走了，连借条也不肯写。田野捏着账本，没有得到一句谢。\n第二天，他从废车里拆出电机，和隔壁女工约好按工时合伙修一台泵。两人先把各自要出的东西摆在桌上，再一起开工。",
+      "conclusion": "mixed",
+      "finding": "原受助者没有回报；后续另与女工协商投入并开工。支持出现后续合作，但不支持让利必然换回受助者合作或二者有已明示的因果。",
+      "limitations": [
+        "借泵是资源机会成本，未量化收益损失。",
+        "新合作者并非借泵者；原付出与新合伙之间没有明示因果。",
+        "合伙是否成功或持久未知。",
+        "原创合成片段；没有真实市场数据或真人阅读反馈。"
+      ]
+    },
+    {
+      "topic_id": "topic-1",
+      "hypothesis_id": "hypothesis-1",
+      "book_key": "25b4362aba8fa7c508f7",
+      "hypothesis_claim": "主角牺牲眼前收益能够换来后续合作。",
+      "text_ref": "<TRIAL>/inputs/c.txt",
+      "report_ref": "<TRIAL>/trial-output/analysis-report.md",
+      "read_scope": {
+        "coverage": "partial",
+        "description": "第一章《船票》，正文第 3 行；本地文件全读，全文未提供。"
+      },
+      "locators": {
+        "text": [
+          "c.txt：第 3 行"
+        ],
+        "report": [
+          "C：开局：最后一班船"
+        ]
+      },
+      "quote": "末班船开了，江白把买发动机的存款取出来，给码头老人搭了一间能挡雨的棚。第二天他的船坏在半途。他向老人借钱，老人说钱已经寄回家。江白先把船拖回岸边，再把棚拆成木板，给自己垫出修理台。",
+      "conclusion": "contradicts",
+      "finding": "在已读范围，动用发动机存款援助之后并未获得资金回援或合作，结束于主角自己拆棚做修理台；反驳本段已经以牺牲换来合作的解释。",
+      "limitations": [
+        "限于开篇截止处；不能断言后文永无合作，也不否定其他作品存在这种可能。",
+        "老人钱已寄回家是人物说法；无法核实真实财务能力或道德动机。",
+        "动用存款并不等于已量化的营业利润损失。",
+        "原创合成片段；没有真实市场数据或真人阅读反馈。"
+      ]
+    },
+    {
+      "topic_id": "topic-2",
+      "hypothesis_id": "hypothesis-2",
+      "book_key": "be9199f781adff7dc44f",
+      "hypothesis_claim": "当单向付出没有获得回报时，主角可以通过互补投入与明确分工建立新的合作。",
+      "text_ref": "<TRIAL>/inputs/b.txt",
+      "report_ref": "<TRIAL>/trial-output/analysis-report.md",
+      "read_scope": {
+        "coverage": "partial",
+        "description": "第一章《借工具》，正文第 3–4 行；本地文件全读，全文未提供。"
+      },
+      "locators": {
+        "text": [
+          "b.txt：第 3–4 行"
+        ],
+        "report": [
+          "B：开局：河畔修车行"
+        ]
+      },
+      "quote": "河水淹过门槛，田野把唯一的抽水泵借给邻铺。答应来帮他的工人半路改去了高价工地。水退后，邻铺老板说泵已经转借走了，连借条也不肯写。田野捏着账本，没有得到一句谢。\n第二天，他从废车里拆出电机，和隔壁女工约好按工时合伙修一台泵。两人先把各自要出的东西摆在桌上，再一起开工。",
+      "conclusion": "supports",
+      "finding": "单向借泵未得到回报后，主角取得电机，与女工按工时约定合伙，双方摆出各自投入再共同开工，支持互补投入与明确分工建立新合作。",
+      "limitations": [
+        "只证明新合作开始，尚无成果、分账或长期关系证据。",
+        "不能从模型解释推出真实读者喜欢此机制。",
+        "原创合成片段；没有真实市场数据或真人阅读反馈。"
+      ]
+    },
+    {
+      "topic_id": "topic-2",
+      "hypothesis_id": "hypothesis-2",
+      "book_key": "25b4362aba8fa7c508f7",
+      "hypothesis_claim": "当单向付出没有获得回报时，主角可以通过互补投入与明确分工建立新的合作。",
+      "text_ref": "<TRIAL>/inputs/c.txt",
+      "report_ref": "<TRIAL>/trial-output/analysis-report.md",
+      "read_scope": {
+        "coverage": "partial",
+        "description": "第一章《船票》，正文第 3 行；本地文件全读，全文未提供。"
+      },
+      "locators": {
+        "text": [
+          "c.txt：第 3 行"
+        ],
+        "report": [
+          "C：开局：最后一班船"
+        ]
+      },
+      "quote": "末班船开了，江白把买发动机的存款取出来，给码头老人搭了一间能挡雨的棚。第二天他的船坏在半途。他向老人借钱，老人说钱已经寄回家。江白先把船拖回岸边，再把棚拆成木板，给自己垫出修理台。",
+      "conclusion": "insufficient",
+      "finding": "所读内容只有主角自救，没有新的合作伙伴、分工或共同开工，不能据此检验互补合作的成立。",
+      "limitations": [
+        "未读后续；不能因为开篇未出现就判定这种机制在全书不存在。",
+        "原创合成片段；没有真实市场数据或真人阅读反馈。"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "versions": {
+    "runtime": "0.6.22",
+    "windows": "0.1.12",
+    "mac": "0.1.25",
+    "mac_build": "26"
+  },
+  "release_record": "docs/releases/v0.6.22.md",
+  "documents": [
+    {
+      "path": "docs/工作台需求与进展.md",
+      "versions_match_source": true,
+      "local_links_checked": 10,
+      "sha256": "e6da8b470632f71c3a5b562f85b5c7d156a8b0c9598d58247018efd05389143a"
+    },
+    {
+      "path": "docs/工作台更新流程.md",
+      "versions_match_source": true,
+      "local_links_checked": 5,
+      "sha256": "1519034441e56f9e8c279766e87f1c8e95d1bd22c570a5d1de27a8a3e92f2359"
+    }
+  ],
+  "remote_release_checked": false
+}

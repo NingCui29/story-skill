@@ -1,0 +1,56 @@
+✖ ordinary qimao stops subsequent field and save actions when loaded draft state changes (48.430837ms)
+✖ ordinary qidian stops subsequent field and save actions when loaded draft state changes (10.339412ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 278.69502
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:2373:42
+✖ ordinary qimao stops subsequent field and save actions when loaded draft state changes (48.430837ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      '#chapter',
+  +   '#title',
+  +   '#body'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2381:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '#chapter', '#title', '#body' ],
+    expected: [ '#chapter' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:2373:42
+✖ ordinary qidian stops subsequent field and save actions when loaded draft state changes (10.339412ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      '#chapter',
+  +   '#title',
+  +   '#body'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2381:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '#chapter', '#title', '#body' ],
+    expected: [ '#chapter' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

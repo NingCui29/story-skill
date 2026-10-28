@@ -1,0 +1,71 @@
+{
+  "ok": true,
+  "source_sha256": {
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py": "3d97931af2efbab336ed87a4a7156e2f404a26bc94b2e7fd471a88383b77a83d",
+    "skills/story-skill/scripts/story_platform_drafts.py": "2288612168214650cafe4afe7651c7fc26bfa07b47ce79b9ae3f783619de7bd2",
+    "tests/test_platform_chrome_initialization.py": "2fefff5a163a0d90efbb2b22b2b2c539e970df120acf4300755480579ed311f1",
+    "tests/test_platform_draft_retirement.py": "bf71934e199696827ed33506f50e99b6b1998291dee0fb4282cd90ba4c6dd63e"
+  },
+  "baseline_source_sha256": {
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py": "76fad6940eedf5d69aa2241278c2dd0de3d84c68f79336522d2ca33576946dee",
+    "skills/story-skill/scripts/story_platform_drafts.py": "a145101afcf1a8d6e8ec91fb4099606896ef439a2f9b013880fb1d515a853d72",
+    "tests/test_platform_chrome_initialization.py": "c153a65d7865c8fe00a70d83ee6cd99bb6fe5776bc5565cb63b485888e411385",
+    "tests/test_platform_draft_retirement.py": "2444f7c73f58a1c75bf9ce3f07325971f9376c0ae258a47b280d1aab80d7b551"
+  },
+  "new_test_methods": 6,
+  "issues": [
+    {
+      "id": "catchable-initialization-exit-leaves-live-lease",
+      "fixed": true,
+      "red_log": "interrupt-red.log",
+      "red_assertions": 5,
+      "description": "Handle publication before/after KeyboardInterrupt or SystemExit and metadata-lock exit interruption left a live lease after catchable failure. Exact own-session cleanup now covers these exits, preserves evidence and rethrows BaseException."
+    },
+    {
+      "id": "retirement-rejects-proven-inactive-initialization-history",
+      "fixed": true,
+      "red_log": "retirement-red.log",
+      "red_errors": 2,
+      "description": "Explicit deleted-draft retirement previously parsed never-ready initialization as a complete session and applied live MAX_SESSIONS to all historical folders. It now shares attachment serialization and strict residue classification while preserving unknown queue guards."
+    }
+  ],
+  "verification": {
+    "tests_run": 283,
+    "passed": 281,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 2,
+    "seconds": 44.274,
+    "log": "targeted-green.log",
+    "modules": [
+      "tests.test_platform_chrome_initialization",
+      "tests.test_platform_chrome_bridge",
+      "tests.test_platform_draft_retirement",
+      "tests.test_retirement_path_race",
+      "tests.test_chrome_worker_controller",
+      "tests.test_platform_draft_auto_connect",
+      "tests.test_workbench_platform_binding",
+      "tests.test_workbench_archives"
+    ]
+  },
+  "new_boundary_verification": [
+    "Actual child os._exit after initial lease before handle keeps lease live, blocks immediate attach and permits a new session only after normal expiry.",
+    "Unknown/claimed create and actual live lease continue blocking explicit retirement even beside ignored initialization residue.",
+    "Authorized retirement from incomplete initialization or inactive lifetime history preserves old queue/journal bytes and permits exactly one subsequent current-content fixture create."
+  ],
+  "boundaries": [
+    "All operations use temporary local fixture books and fake adapters. No real platform/account/installed plugin touched.",
+    "Hard kill cannot clean up; effective lease remains until normal expiry.",
+    "Unknown or restored queue payloads are not treated as initialization residue.",
+    "Windows process and directory share-lock tests skipped on macOS; Windows lock retry unit contracts ran.",
+    "Full frozen-source validation and independent cross-review are coordinated by root; their counts are not included here."
+  ],
+  "unresolved_confirmed_findings": [],
+  "independent_review": {
+    "reviewer": "round4_chrome",
+    "checks": 15,
+    "passed": 15,
+    "result": "../chrome/independent-session-result.json",
+    "unresolved_confirmed_findings": []
+  }
+}

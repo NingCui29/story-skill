@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "flow": "two-page-dirty-task-metadata-freeze-ack-cancel-cli-stop",
+  "pages": 2,
+  "dirty_stop_denied": true,
+  "unimported_json_stop_denied": true,
+  "metadata_contains_body": false,
+  "frozen_ack_pages": 2,
+  "cancel_restores_editing": true,
+  "final_stop_fresh_verified": true,
+  "final_stop_automatic_verified": true,
+  "cancelled_challenge_reused": false,
+  "presence_coverage": "server_issued_pages_this_instance",
+  "legacy_services_covered": false,
+  "authoritative_database_and_exports_unchanged": true,
+  "authoritative_database_sha256": "a76d884fe05a79ffbb95a8e60f8f8ca273243f3124906fc5351122019c7d83d8",
+  "publishing_database_sha256": "091aba634a89f2af341b37ad78a2a34d20239212f677f506a276320a06126a21",
+  "formal_export_sha256": [
+    "fac2371b5168fbdee07b0571f872cb7cdca87d77b5f78f83c285ed8430a38252",
+    "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+  ],
+  "existing_candidate_unchanged": true,
+  "saved_working_candidate_preserved": true,
+  "saved_candidate_sha256": "6c3466e7f9435392898fd89f21db73199b1a88717816be48ed1db1d43d8b62d1",
+  "synthetic_input_only": true,
+  "external_platform_access": false,
+  "assistant_model_execution": false
+}

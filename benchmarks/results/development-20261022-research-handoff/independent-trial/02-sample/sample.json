@@ -1,0 +1,268 @@
+{
+  "schema_version": 1,
+  "kind": "rank_sample",
+  "group_id": "65df9d06b8af8e2e6a50",
+  "dimensions": {
+    "platform": "synthetic",
+    "date": "2026-10-22",
+    "url": "https://example.invalid/fiction/library",
+    "board": "合成开发样本",
+    "channel": "综合",
+    "category": null,
+    "period": null,
+    "metric": null,
+    "cohort": "new",
+    "sample_method": "原创合成数据，仅开发试用"
+  },
+  "filters": {
+    "category": null,
+    "tags": [
+      "经营"
+    ],
+    "title_contains": null,
+    "min_words": null,
+    "max_words": null
+  },
+  "limit": 3,
+  "counts": {
+    "group_accepted": 4,
+    "eligible": 3,
+    "selected": 3,
+    "excluded_conflicts": 0,
+    "excluded_identity_conflicts": 0
+  },
+  "method": "仅从一个可比分组内去重且无冲突的作品中筛选；优先补充未覆盖分类，再补充本组重复标签，再补充字数区间，最后按页面名次与作品键确定次序。重复标签限本组频次前 50 项且至少出现于 2 本书。这是供进一步阅读的覆盖抽样，不是随机抽样、质量排名、市场代表性证明或爆款预测。嵌入快照和来源用于重算与核对，不能证明源网页真实或记录完整。",
+  "snapshots": [
+    {
+      "schema_version": 1,
+      "platform": "synthetic",
+      "collected_at": "2026-10-22T10:00:00+08:00",
+      "source": {
+        "url": "https://example.invalid/fiction/library",
+        "board": "合成开发样本",
+        "channel": "综合",
+        "category": null,
+        "period": null,
+        "metric": null,
+        "cohort": "new",
+        "sample_method": "原创合成数据，仅开发试用",
+        "pages": [
+          1
+        ],
+        "coverage": "partial",
+        "expected_count": null,
+        "limitations": [
+          "不是真实榜单，不用于市场结论"
+        ]
+      },
+      "entries": [
+        {
+          "book_id": "a",
+          "book_url": "https://example.invalid/book/a",
+          "title": "开局：雨夜修表铺",
+          "author": "原创合成作者",
+          "rank": 1,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "邻里"
+          ],
+          "word_count": 80000,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        },
+        {
+          "book_id": "a",
+          "book_url": "https://example.invalid/book/a",
+          "title": "开局：雨夜修表铺",
+          "author": "原创合成作者",
+          "rank": 1,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "邻里"
+          ],
+          "word_count": 80000,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        },
+        {
+          "book_id": "b",
+          "book_url": "https://example.invalid/book/b",
+          "title": "开局：河畔修车行",
+          "author": "原创合成作者",
+          "rank": 2,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "邻里"
+          ],
+          "word_count": 180000,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        },
+        {
+          "book_id": "c",
+          "book_url": "https://example.invalid/book/c",
+          "title": "开局：最后一班船",
+          "author": "原创合成作者",
+          "rank": 3,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "远行"
+          ],
+          "word_count": 0,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        },
+        {
+          "book_id": "d",
+          "book_url": "https://example.invalid/book/d",
+          "title": "山城送信人",
+          "author": "原创合成作者",
+          "rank": 4,
+          "category": "现实",
+          "tags": [],
+          "word_count": null,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "d6f3bca59770f72dcb80",
+      "group_id": "65df9d06b8af8e2e6a50",
+      "platform": "synthetic",
+      "collected_at": "2026-10-22T10:00:00+08:00",
+      "source": {
+        "url": "https://example.invalid/fiction/library",
+        "board": "合成开发样本",
+        "channel": "综合",
+        "category": null,
+        "period": null,
+        "metric": null,
+        "cohort": "new",
+        "sample_method": "原创合成数据，仅开发试用",
+        "pages": [
+          1
+        ],
+        "coverage": "partial",
+        "expected_count": null,
+        "limitations": [
+          "不是真实榜单，不用于市场结论"
+        ]
+      },
+      "raw_entries": 5,
+      "unique_books": 4
+    }
+  ],
+  "warnings": [],
+  "books": [
+    {
+      "book_key": "4e3cb61dd858ac0d2682",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "a"
+      },
+      "observation": {
+        "group_id": "65df9d06b8af8e2e6a50",
+        "variant_id": "a79d300708c874ab5b17",
+        "source_ids": [
+          "d6f3bca59770f72dcb80"
+        ],
+        "conflict": false,
+        "title": "开局：雨夜修表铺",
+        "author": "原创合成作者",
+        "rank": 1,
+        "category": "都市",
+        "tags": [
+          "经营",
+          "邻里"
+        ],
+        "word_count": 80000,
+        "status": "连载",
+        "metric_value": null,
+        "metric_raw": null
+      },
+      "reasons": [
+        "补充尚未覆盖的分类：都市",
+        "补充本组重复标签：经营、邻里",
+        "补充尚未覆盖的字数区间：不足 10 万字",
+        "覆盖条件相同时按页面名次 1、作品键稳定排序；名次不代表文学质量"
+      ]
+    },
+    {
+      "book_key": "be9199f781adff7dc44f",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "b"
+      },
+      "observation": {
+        "group_id": "65df9d06b8af8e2e6a50",
+        "variant_id": "031ca5e765d27217d404",
+        "source_ids": [
+          "d6f3bca59770f72dcb80"
+        ],
+        "conflict": false,
+        "title": "开局：河畔修车行",
+        "author": "原创合成作者",
+        "rank": 2,
+        "category": "都市",
+        "tags": [
+          "经营",
+          "邻里"
+        ],
+        "word_count": 180000,
+        "status": "连载",
+        "metric_value": null,
+        "metric_raw": null
+      },
+      "reasons": [
+        "补充尚未覆盖的字数区间：10 万至不足 30 万字",
+        "覆盖条件相同时按页面名次 2、作品键稳定排序；名次不代表文学质量"
+      ]
+    },
+    {
+      "book_key": "25b4362aba8fa7c508f7",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "c"
+      },
+      "observation": {
+        "group_id": "65df9d06b8af8e2e6a50",
+        "variant_id": "07f6b21378b7fe201e7d",
+        "source_ids": [
+          "d6f3bca59770f72dcb80"
+        ],
+        "conflict": false,
+        "title": "开局：最后一班船",
+        "author": "原创合成作者",
+        "rank": 3,
+        "category": "都市",
+        "tags": [
+          "经营",
+          "远行"
+        ],
+        "word_count": 0,
+        "status": "连载",
+        "metric_value": null,
+        "metric_raw": null
+      },
+      "reasons": [
+        "覆盖条件相同时按页面名次 3、作品键稳定排序；名次不代表文学质量"
+      ]
+    }
+  ],
+  "sample_id": "0ef8a4c9ad2ba08c9d65469db7c3919a839b90c9634aca112ccf796c540fca16"
+}

@@ -1,0 +1,203 @@
+{
+  "source_sha256": "76fad6940eedf5d69aa2241278c2dd0de3d84c68f79336522d2ca33576946dee",
+  "cases": [
+    {
+      "case": "initial_session.json_before",
+      "first": {
+        "ok": false,
+        "error": "OSError"
+      },
+      "status": {
+        "ok": true,
+        "value": {
+          "attached": false,
+          "ready": false,
+          "state": "worker_unavailable",
+          "active_sessions": 0
+        }
+      },
+      "next_attach": {
+        "ok": true,
+        "value": {
+          "ok": true,
+          "session_id": "671598393da04b9d8e4f45c598ce848d",
+          "handle_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-publish-eihh9o84/中文书根/new-handle.json",
+          "ttl_seconds": 120,
+          "state": "awaiting_health",
+          "ready": false,
+          "remote_accessed": false,
+          "browser_started": false
+        }
+      },
+      "original_files_retained": true,
+      "passed": true
+    },
+    {
+      "case": "initial_session.json_after",
+      "first": {
+        "ok": false,
+        "error": "OSError"
+      },
+      "status": {
+        "ok": true,
+        "value": {
+          "attached": false,
+          "ready": false,
+          "state": "worker_unavailable",
+          "active_sessions": 0
+        }
+      },
+      "next_attach": {
+        "ok": true,
+        "value": {
+          "ok": true,
+          "session_id": "90f2cd8baad74c5790972eafdff93092",
+          "handle_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-publish-2l5dutyz/中文书根/new-handle.json",
+          "ttl_seconds": 120,
+          "state": "awaiting_health",
+          "ready": false,
+          "remote_accessed": false,
+          "browser_started": false
+        }
+      },
+      "original_files_retained": true,
+      "passed": true
+    },
+    {
+      "case": "initial_lease.json_before",
+      "first": {
+        "ok": false,
+        "error": "OSError"
+      },
+      "status": {
+        "ok": true,
+        "value": {
+          "attached": false,
+          "ready": false,
+          "state": "worker_unavailable",
+          "active_sessions": 0
+        }
+      },
+      "next_attach": {
+        "ok": true,
+        "value": {
+          "ok": true,
+          "session_id": "59db39d45b294e3d92af824086e46f9a",
+          "handle_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-publish-t4vqbka9/中文书根/new-handle.json",
+          "ttl_seconds": 120,
+          "state": "awaiting_health",
+          "ready": false,
+          "remote_accessed": false,
+          "browser_started": false
+        }
+      },
+      "original_files_retained": true,
+      "passed": true
+    },
+    {
+      "case": "initial_lease.json_after",
+      "first": {
+        "ok": false,
+        "error": "OSError"
+      },
+      "status": {
+        "ok": true,
+        "value": {
+          "attached": false,
+          "ready": false,
+          "state": "worker_unavailable",
+          "active_sessions": 0
+        }
+      },
+      "next_attach": {
+        "ok": true,
+        "value": {
+          "ok": true,
+          "session_id": "5161cb244c574cceab08187a2ff4241e",
+          "handle_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-publish-f7up0xod/中文书根/new-handle.json",
+          "ttl_seconds": 120,
+          "state": "awaiting_health",
+          "ready": false,
+          "remote_accessed": false,
+          "browser_started": false
+        }
+      },
+      "original_files_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_outbox-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_claimed-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_response-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_health.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_health-challenge.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_lease.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_unknown.json",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    },
+    {
+      "case": "uninitialized_with_.chrome-stage-not_uuid",
+      "result": {
+        "ok": false,
+        "error": "FileNotFoundError"
+      },
+      "original_file_retained": true,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "count": 12
+}

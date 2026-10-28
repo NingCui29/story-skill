@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "ok": true,
+  "source_sha256": {
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py": "76fad6940eedf5d69aa2241278c2dd0de3d84c68f79336522d2ca33576946dee"
+  },
+  "scenarios": 14,
+  "baseline_failed_scenarios": 5,
+  "results": [
+    "concurrent-final.json",
+    "recovery-final.json",
+    "active-final.json"
+  ],
+  "probes": [
+    "probe.py",
+    "recovery_probe.py",
+    "active_probe.py"
+  ],
+  "baseline_results": [
+    "concurrent-before.json",
+    "recovery-before.json"
+  ],
+  "coverage": [
+    "same-book concurrent attach permits exactly one live session",
+    "session initial publication before/after failure reconnects",
+    "lease initial publication before/after failure reconnects",
+    "outbox/claimed/response/health/challenge/lease/unknown/stage-lookalike orphan payloads remain blocking and unchanged",
+    "valid active claimed create remains attached before/after request timeout; duplicate attach rejected; no claim replay"
+  ],
+  "review_notes": [
+    "Production source was not edited by this independent reviewer",
+    "The concurrency hook follows the same availability check; renamed worker_status to _worker_status after lock factoring",
+    "Observed after-publish lease failure baseline left a live session without handle; fixed source retires only this initialization lease"
+  ],
+  "limits": [
+    "Independent concurrent probe uses two threads on macOS; owner adds separate cross-process coverage",
+    "Only local temporary books and synthetic Chrome health, with no browser or platform operation",
+    "No native Windows execution",
+    "No tests claim recovery from externally destroyed evidence or arbitrary post-operation mutation"
+  ]
+}

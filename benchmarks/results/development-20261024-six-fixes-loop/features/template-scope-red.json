@@ -1,0 +1,32 @@
+[
+  {
+    "case": "ancestor-ul",
+    "parser_ids": [
+      "900",
+      "100"
+    ],
+    "chrome_links": [
+      "/shuku/100/?from=sample"
+    ]
+  },
+  {
+    "case": "ancestor-body",
+    "parser_ids": [
+      "900",
+      "100"
+    ],
+    "chrome_links": [
+      "/shuku/100/?from=sample"
+    ]
+  },
+  {
+    "case": "nested-template",
+    "parser_ids": [
+      "900",
+      "100"
+    ],
+    "chrome_links": [
+      "/shuku/100/?from=sample"
+    ]
+  }
+]

@@ -1,0 +1,510 @@
+{
+  "schema": 1,
+  "date": "2026-10-28T01:29:27.512227+00:00",
+  "version": "0.6.29",
+  "scope": "Read-only latest-runtime task and execution getters for an existing completed native invocation. The model invocation belongs to the earlier frozen launch; no new dispatch or model/native-client/platform acceptance.",
+  "prior_execution_id": "689a2fa95c27466a9a05765171a22466",
+  "checks": {
+    "task-execution": {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
+        "task-execution",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/host-stop-platform-20261027/real-host-fixture",
+        "--task-id",
+        "2a95bfb72bed46f9a2d73a034b13037f"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "execution": {
+          "binding_sha256": "e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968",
+          "book_id": "0ee02fb3-a884-4cdf-afca-40122c8f5d0a",
+          "can_cancel": false,
+          "can_reconcile": false,
+          "can_start": false,
+          "created": "2026-10-27T08:26:26.295240Z",
+          "error": null,
+          "evidence_available": true,
+          "execution_observed": true,
+          "exit_code": 0,
+          "finished": "2026-10-27T08:28:37.239592Z",
+          "id": "689a2fa95c27466a9a05765171a22466",
+          "literary_review_verified": false,
+          "model_requested": "gpt-6.1-sol",
+          "model_revision": null,
+          "note": "本机受控只读调用及文件回执；不证明文学判断、真人反馈或正式采用。",
+          "provider": "codex_cli",
+          "request_id": "forward-1793089586",
+          "result_sha256": "feb4da8eaf68a142320e96733390ec14dfe3b829fa9b563f7f93d69d018e0159",
+          "result_verified": true,
+          "session_id": "01a17c77-d1b1-7493-a306-969f473a528e",
+          "started": "2026-10-27T08:26:29.667693Z",
+          "state": "completed",
+          "status_label": "执行已结束，结果已回流",
+          "task_id": "2a95bfb72bed46f9a2d73a034b13037f",
+          "trace_sha256": "24fd7ce9fa4b162c18d91a27eb979d8dc67209af34e9b8b7b683c0212bb84c75"
+        },
+        "ok": true,
+        "task": {
+          "applied": null,
+          "binding_sha256": "e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968",
+          "book_id": "0ee02fb3-a884-4cdf-afca-40122c8f5d0a",
+          "can_review": true,
+          "chapter": 2,
+          "created": "2026-10-27T08:26:26.262195Z",
+          "execution": {
+            "source": "none",
+            "status": "unverified"
+          },
+          "failure": null,
+          "host_execution": {
+            "binding_sha256": "e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968",
+            "book_id": "0ee02fb3-a884-4cdf-afca-40122c8f5d0a",
+            "can_cancel": false,
+            "can_reconcile": false,
+            "can_start": false,
+            "created": "2026-10-27T08:26:26.295240Z",
+            "error": null,
+            "evidence_available": true,
+            "execution_observed": true,
+            "exit_code": 0,
+            "finished": "2026-10-27T08:28:37.239592Z",
+            "id": "689a2fa95c27466a9a05765171a22466",
+            "literary_review_verified": false,
+            "model_requested": "gpt-6.1-sol",
+            "model_revision": null,
+            "note": "本机受控只读调用及文件回执；不证明文学判断、真人反馈或正式采用。",
+            "provider": "codex_cli",
+            "request_id": "forward-1793089586",
+            "result_sha256": "feb4da8eaf68a142320e96733390ec14dfe3b829fa9b563f7f93d69d018e0159",
+            "result_verified": true,
+            "session_id": "01a17c77-d1b1-7493-a306-969f473a528e",
+            "started": "2026-10-27T08:26:29.667693Z",
+            "state": "completed",
+            "status_label": "执行已结束，结果已回流",
+            "task_id": "2a95bfb72bed46f9a2d73a034b13037f",
+            "trace_sha256": "24fd7ce9fa4b162c18d91a27eb979d8dc67209af34e9b8b7b683c0212bb84c75"
+          },
+          "id": "2a95bfb72bed46f9a2d73a034b13037f",
+          "input_sources": [
+            {
+              "chapter": 2,
+              "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+            }
+          ],
+          "issue_statuses": [
+            {
+              "id": "R1",
+              "note": "",
+              "status": "open"
+            },
+            {
+              "id": "R2",
+              "note": "",
+              "status": "open"
+            },
+            {
+              "id": "R3",
+              "note": "",
+              "status": "open"
+            }
+          ],
+          "issues": [
+            {
+              "evidence": [
+                {
+                  "chapter": 2,
+                  "line": 4,
+                  "quote": "FULL-CHAPTER-2-MUST-NOT-BE-EMBEDDED，这句只用于证明工作台没有嵌入整章。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                }
+              ],
+              "id": "R1",
+              "issue": "所供文本混入英文测试标记和工作台说明，在人物承诺之后直接中断叙事。需核实该行属于提取材料中的占位说明，还是已进入正式稿；若在正式稿中，应移出正文。",
+              "severity": "blocker"
+            },
+            {
+              "evidence": [
+                {
+                  "chapter": 2,
+                  "line": 2,
+                  "quote": "沈禾把唯一的钥匙交给守门人。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                },
+                {
+                  "chapter": 2,
+                  "line": 3,
+                  "quote": "她答应在天亮之前带回账本。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                },
+                {
+                  "chapter": 2,
+                  "line": 4,
+                  "quote": "这句只用于证明工作台没有嵌入整章。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                }
+              ],
+              "id": "R2",
+              "issue": "当前材料仅有两句情节，未提供本书约定、相关细纲及前文，无法完成整章叙事、人物连续性、伏笔承接和篇幅达标审查。两句情节共27个字符（含标点），只能描述本次片段长度，不能据此判定正式章字数不足。",
+              "severity": "blocker"
+            },
+            {
+              "evidence": [
+                {
+                  "chapter": 2,
+                  "line": 2,
+                  "quote": "沈禾把唯一的钥匙交给守门人。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                },
+                {
+                  "chapter": 2,
+                  "line": 3,
+                  "quote": "她答应在天亮之前带回账本。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                }
+              ],
+              "id": "R3",
+              "issue": "“唯一的钥匙”和“天亮之前”建立了稀缺性与期限，具备悬念。需结合前文核对钥匙的用途、交付守门人的动机，以及交钥匙与取账本的关系；若此前均未交代，读者可能难以判断人物行动的代价。目前不能认定存在逻辑矛盾。",
+              "severity": "advice"
+            }
+          ],
+          "kind": "review",
+          "output": null,
+          "prompt": "请审查以下已保存文件，先核对文件仍与本次校验值一致，再读取本书约定及相关细纲、前文。\n书目录：/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/host-stop-platform-20261027/real-host-fixture\n文件：chapters/第一卷 雨#夜%/第2章 雨夜 & 账本#2%.md\n校验值：7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5\n文件状态：正式稿\n本地工具检查范围：已对保存文件运行只读完整章节工具检查；若本文件只是章中片段，章头和整章字数提示仅供参考。工具结果不代表语义审查通过。\n先检查叙事、人物行动、连续性、阅读期待、字数与中文格式，指出具体依据。\n本次只审查，不自动修改或正式采用；需要修改时另存候选。不要将页面格式检查当成人工审稿。\n\n助手任务回流：本任务不授权额外修改或正式采用。完成既定工作后，将下面 JSON 模板填为实际结果，保存到命令所示的书内结果文件，再执行回填命令。正文另存本书 .story/drafts/ 下候选，不放进回执。有候选时添加 output: {path: \"书内候选相对路径\", sha256: \"实际文件SHA-256\"}；审稿问题用 issues: [{id, severity: \"blocker或advice\", issue, evidence: [{chapter或path, sha256, quote, line}]}]，引文可连到前文正式章和当前候选；行号从1开始。没有完成的内容如实记录，不宣称真人反馈或平台状态。\n{\n  \"schema\": 1,\n  \"task_id\": \"2a95bfb72bed46f9a2d73a034b13037f\",\n  \"book_id\": \"0ee02fb3-a884-4cdf-afca-40122c8f5d0a\",\n  \"binding_sha256\": \"e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968\",\n  \"summary\": \"填写实际完成内容及未解决事项\",\n  \"issues\": []\n}\n回填命令（POSIX shell）：\n/Users/cuining/.local/bin/python3.12 /Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py task-return --book /Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/host-stop-platform-20261027/real-host-fixture --task-id 2a95bfb72bed46f9a2d73a034b13037f --version 1 --result-file .story/drafts/assistant-result-2a95bfb72bed46f9a2d73a034b13037f.json\n若任务版本变化，先 task-get --book <同一书根> --task-id 2a95bfb72bed46f9a2d73a034b13037f 核对当前版本；不要改写绑定值。",
+          "result": {
+            "binding_sha256": "e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968",
+            "book_id": "0ee02fb3-a884-4cdf-afca-40122c8f5d0a",
+            "issues": [
+              {
+                "evidence": [
+                  {
+                    "chapter": 2,
+                    "line": 4,
+                    "quote": "FULL-CHAPTER-2-MUST-NOT-BE-EMBEDDED，这句只用于证明工作台没有嵌入整章。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  }
+                ],
+                "id": "R1",
+                "issue": "所供文本混入英文测试标记和工作台说明，在人物承诺之后直接中断叙事。需核实该行属于提取材料中的占位说明，还是已进入正式稿；若在正式稿中，应移出正文。",
+                "severity": "blocker"
+              },
+              {
+                "evidence": [
+                  {
+                    "chapter": 2,
+                    "line": 2,
+                    "quote": "沈禾把唯一的钥匙交给守门人。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  },
+                  {
+                    "chapter": 2,
+                    "line": 3,
+                    "quote": "她答应在天亮之前带回账本。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  },
+                  {
+                    "chapter": 2,
+                    "line": 4,
+                    "quote": "这句只用于证明工作台没有嵌入整章。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  }
+                ],
+                "id": "R2",
+                "issue": "当前材料仅有两句情节，未提供本书约定、相关细纲及前文，无法完成整章叙事、人物连续性、伏笔承接和篇幅达标审查。两句情节共27个字符（含标点），只能描述本次片段长度，不能据此判定正式章字数不足。",
+                "severity": "blocker"
+              },
+              {
+                "evidence": [
+                  {
+                    "chapter": 2,
+                    "line": 2,
+                    "quote": "沈禾把唯一的钥匙交给守门人。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  },
+                  {
+                    "chapter": 2,
+                    "line": 3,
+                    "quote": "她答应在天亮之前带回账本。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  }
+                ],
+                "id": "R3",
+                "issue": "“唯一的钥匙”和“天亮之前”建立了稀缺性与期限，具备悬念。需结合前文核对钥匙的用途、交付守门人的动机，以及交钥匙与取账本的关系；若此前均未交代，读者可能难以判断人物行动的代价。目前不能认定存在逻辑矛盾。",
+                "severity": "advice"
+              }
+            ],
+            "schema": 1,
+            "summary": "已计算 source-0.text 的 UTF-8 SHA-256，结果为7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5，与请求校验值一致；此结果仅验证所供文本，未独立核验隔离路径中的原文件。已完成四行材料的局部语义与格式审查：两句叙事中文标点未见明确错误，章名中的 &、#、% 是否符合约定无法确认。因正文含工作台说明且缺少完整章节及上下文，整章审查未完成。未修改、回填、提交、发布或正式采用任何内容。",
+            "task_id": "2a95bfb72bed46f9a2d73a034b13037f"
+          },
+          "result_template": {
+            "binding_sha256": "e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968",
+            "book_id": "0ee02fb3-a884-4cdf-afca-40122c8f5d0a",
+            "issues": [],
+            "schema": 1,
+            "summary": "填写实际完成内容及未解决事项",
+            "task_id": "2a95bfb72bed46f9a2d73a034b13037f"
+          },
+          "revision": 6,
+          "sources_checked": true,
+          "stale_reasons": [],
+          "status": "needs_review",
+          "status_label": "结果已回流，待核对",
+          "updated": "2026-10-27T08:28:37.264466Z",
+          "version": 2
+        }
+      }
+    },
+    "task-get": {
+      "command": [
+        "/Users/cuining/.local/bin/python3.12",
+        "-B",
+        "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py",
+        "task-get",
+        "--book",
+        "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/host-stop-platform-20261027/real-host-fixture",
+        "--task-id",
+        "2a95bfb72bed46f9a2d73a034b13037f"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "result": {
+        "ok": true,
+        "task": {
+          "applied": null,
+          "binding_sha256": "e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968",
+          "book_id": "0ee02fb3-a884-4cdf-afca-40122c8f5d0a",
+          "can_review": true,
+          "chapter": 2,
+          "created": "2026-10-27T08:26:26.262195Z",
+          "execution": {
+            "source": "none",
+            "status": "unverified"
+          },
+          "failure": null,
+          "host_execution": {
+            "binding_sha256": "e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968",
+            "book_id": "0ee02fb3-a884-4cdf-afca-40122c8f5d0a",
+            "can_cancel": false,
+            "can_reconcile": false,
+            "can_start": false,
+            "created": "2026-10-27T08:26:26.295240Z",
+            "error": null,
+            "evidence_available": true,
+            "execution_observed": true,
+            "exit_code": 0,
+            "finished": "2026-10-27T08:28:37.239592Z",
+            "id": "689a2fa95c27466a9a05765171a22466",
+            "literary_review_verified": false,
+            "model_requested": "gpt-6.1-sol",
+            "model_revision": null,
+            "note": "本机受控只读调用及文件回执；不证明文学判断、真人反馈或正式采用。",
+            "provider": "codex_cli",
+            "request_id": "forward-1793089586",
+            "result_sha256": "feb4da8eaf68a142320e96733390ec14dfe3b829fa9b563f7f93d69d018e0159",
+            "result_verified": true,
+            "session_id": "01a17c77-d1b1-7493-a306-969f473a528e",
+            "started": "2026-10-27T08:26:29.667693Z",
+            "state": "completed",
+            "status_label": "执行已结束，结果已回流",
+            "task_id": "2a95bfb72bed46f9a2d73a034b13037f",
+            "trace_sha256": "24fd7ce9fa4b162c18d91a27eb979d8dc67209af34e9b8b7b683c0212bb84c75"
+          },
+          "id": "2a95bfb72bed46f9a2d73a034b13037f",
+          "input_sources": [
+            {
+              "chapter": 2,
+              "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+            }
+          ],
+          "issue_statuses": [
+            {
+              "id": "R1",
+              "note": "",
+              "status": "open"
+            },
+            {
+              "id": "R2",
+              "note": "",
+              "status": "open"
+            },
+            {
+              "id": "R3",
+              "note": "",
+              "status": "open"
+            }
+          ],
+          "issues": [
+            {
+              "evidence": [
+                {
+                  "chapter": 2,
+                  "line": 4,
+                  "quote": "FULL-CHAPTER-2-MUST-NOT-BE-EMBEDDED，这句只用于证明工作台没有嵌入整章。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                }
+              ],
+              "id": "R1",
+              "issue": "所供文本混入英文测试标记和工作台说明，在人物承诺之后直接中断叙事。需核实该行属于提取材料中的占位说明，还是已进入正式稿；若在正式稿中，应移出正文。",
+              "severity": "blocker"
+            },
+            {
+              "evidence": [
+                {
+                  "chapter": 2,
+                  "line": 2,
+                  "quote": "沈禾把唯一的钥匙交给守门人。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                },
+                {
+                  "chapter": 2,
+                  "line": 3,
+                  "quote": "她答应在天亮之前带回账本。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                },
+                {
+                  "chapter": 2,
+                  "line": 4,
+                  "quote": "这句只用于证明工作台没有嵌入整章。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                }
+              ],
+              "id": "R2",
+              "issue": "当前材料仅有两句情节，未提供本书约定、相关细纲及前文，无法完成整章叙事、人物连续性、伏笔承接和篇幅达标审查。两句情节共27个字符（含标点），只能描述本次片段长度，不能据此判定正式章字数不足。",
+              "severity": "blocker"
+            },
+            {
+              "evidence": [
+                {
+                  "chapter": 2,
+                  "line": 2,
+                  "quote": "沈禾把唯一的钥匙交给守门人。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                },
+                {
+                  "chapter": 2,
+                  "line": 3,
+                  "quote": "她答应在天亮之前带回账本。",
+                  "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                }
+              ],
+              "id": "R3",
+              "issue": "“唯一的钥匙”和“天亮之前”建立了稀缺性与期限，具备悬念。需结合前文核对钥匙的用途、交付守门人的动机，以及交钥匙与取账本的关系；若此前均未交代，读者可能难以判断人物行动的代价。目前不能认定存在逻辑矛盾。",
+              "severity": "advice"
+            }
+          ],
+          "kind": "review",
+          "output": null,
+          "prompt": "请审查以下已保存文件，先核对文件仍与本次校验值一致，再读取本书约定及相关细纲、前文。\n书目录：/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/host-stop-platform-20261027/real-host-fixture\n文件：chapters/第一卷 雨#夜%/第2章 雨夜 & 账本#2%.md\n校验值：7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5\n文件状态：正式稿\n本地工具检查范围：已对保存文件运行只读完整章节工具检查；若本文件只是章中片段，章头和整章字数提示仅供参考。工具结果不代表语义审查通过。\n先检查叙事、人物行动、连续性、阅读期待、字数与中文格式，指出具体依据。\n本次只审查，不自动修改或正式采用；需要修改时另存候选。不要将页面格式检查当成人工审稿。\n\n助手任务回流：本任务不授权额外修改或正式采用。完成既定工作后，将下面 JSON 模板填为实际结果，保存到命令所示的书内结果文件，再执行回填命令。正文另存本书 .story/drafts/ 下候选，不放进回执。有候选时添加 output: {path: \"书内候选相对路径\", sha256: \"实际文件SHA-256\"}；审稿问题用 issues: [{id, severity: \"blocker或advice\", issue, evidence: [{chapter或path, sha256, quote, line}]}]，引文可连到前文正式章和当前候选；行号从1开始。没有完成的内容如实记录，不宣称真人反馈或平台状态。\n{\n  \"schema\": 1,\n  \"task_id\": \"2a95bfb72bed46f9a2d73a034b13037f\",\n  \"book_id\": \"0ee02fb3-a884-4cdf-afca-40122c8f5d0a\",\n  \"binding_sha256\": \"e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968\",\n  \"summary\": \"填写实际完成内容及未解决事项\",\n  \"issues\": []\n}\n回填命令（POSIX shell）：\n/Users/cuining/.local/bin/python3.12 /Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story.py task-return --book /Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/host-stop-platform-20261027/real-host-fixture --task-id 2a95bfb72bed46f9a2d73a034b13037f --version 1 --result-file .story/drafts/assistant-result-2a95bfb72bed46f9a2d73a034b13037f.json\n若任务版本变化，先 task-get --book <同一书根> --task-id 2a95bfb72bed46f9a2d73a034b13037f 核对当前版本；不要改写绑定值。",
+          "result": {
+            "binding_sha256": "e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968",
+            "book_id": "0ee02fb3-a884-4cdf-afca-40122c8f5d0a",
+            "issues": [
+              {
+                "evidence": [
+                  {
+                    "chapter": 2,
+                    "line": 4,
+                    "quote": "FULL-CHAPTER-2-MUST-NOT-BE-EMBEDDED，这句只用于证明工作台没有嵌入整章。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  }
+                ],
+                "id": "R1",
+                "issue": "所供文本混入英文测试标记和工作台说明，在人物承诺之后直接中断叙事。需核实该行属于提取材料中的占位说明，还是已进入正式稿；若在正式稿中，应移出正文。",
+                "severity": "blocker"
+              },
+              {
+                "evidence": [
+                  {
+                    "chapter": 2,
+                    "line": 2,
+                    "quote": "沈禾把唯一的钥匙交给守门人。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  },
+                  {
+                    "chapter": 2,
+                    "line": 3,
+                    "quote": "她答应在天亮之前带回账本。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  },
+                  {
+                    "chapter": 2,
+                    "line": 4,
+                    "quote": "这句只用于证明工作台没有嵌入整章。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  }
+                ],
+                "id": "R2",
+                "issue": "当前材料仅有两句情节，未提供本书约定、相关细纲及前文，无法完成整章叙事、人物连续性、伏笔承接和篇幅达标审查。两句情节共27个字符（含标点），只能描述本次片段长度，不能据此判定正式章字数不足。",
+                "severity": "blocker"
+              },
+              {
+                "evidence": [
+                  {
+                    "chapter": 2,
+                    "line": 2,
+                    "quote": "沈禾把唯一的钥匙交给守门人。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  },
+                  {
+                    "chapter": 2,
+                    "line": 3,
+                    "quote": "她答应在天亮之前带回账本。",
+                    "sha256": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+                  }
+                ],
+                "id": "R3",
+                "issue": "“唯一的钥匙”和“天亮之前”建立了稀缺性与期限，具备悬念。需结合前文核对钥匙的用途、交付守门人的动机，以及交钥匙与取账本的关系；若此前均未交代，读者可能难以判断人物行动的代价。目前不能认定存在逻辑矛盾。",
+                "severity": "advice"
+              }
+            ],
+            "schema": 1,
+            "summary": "已计算 source-0.text 的 UTF-8 SHA-256，结果为7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5，与请求校验值一致；此结果仅验证所供文本，未独立核验隔离路径中的原文件。已完成四行材料的局部语义与格式审查：两句叙事中文标点未见明确错误，章名中的 &、#、% 是否符合约定无法确认。因正文含工作台说明且缺少完整章节及上下文，整章审查未完成。未修改、回填、提交、发布或正式采用任何内容。",
+            "task_id": "2a95bfb72bed46f9a2d73a034b13037f"
+          },
+          "result_template": {
+            "binding_sha256": "e8b2bbd053a196cf225f8e3ee932f4cb140b995cc381957b68f5eeb4384cb968",
+            "book_id": "0ee02fb3-a884-4cdf-afca-40122c8f5d0a",
+            "issues": [],
+            "schema": 1,
+            "summary": "填写实际完成内容及未解决事项",
+            "task_id": "2a95bfb72bed46f9a2d73a034b13037f"
+          },
+          "revision": 6,
+          "sources_checked": true,
+          "stale_reasons": [],
+          "status": "needs_review",
+          "status_label": "结果已回流，待核对",
+          "updated": "2026-10-27T08:28:37.264466Z",
+          "version": 2
+        }
+      }
+    }
+  },
+  "formal_files_unchanged_during_this_readback": true,
+  "formal_files_before_this_readback": {
+    ".story/state.sqlite3": "26634a2bf134f5067804fbf10579254977f015531e75d9b01a693866b694cd19",
+    "chapters/第一卷 雨#夜%/第1章 雨夜 & 账本#1%.md": "fac2371b5168fbdee07b0571f872cb7cdca87d77b5f78f83c285ed8430a38252",
+    "chapters/第一卷 雨#夜%/第2章 雨夜 & 账本#2%.md": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+  },
+  "formal_files_after_this_readback": {
+    ".story/state.sqlite3": "26634a2bf134f5067804fbf10579254977f015531e75d9b01a693866b694cd19",
+    "chapters/第一卷 雨#夜%/第1章 雨夜 & 账本#1%.md": "fac2371b5168fbdee07b0571f872cb7cdca87d77b5f78f83c285ed8430a38252",
+    "chapters/第一卷 雨#夜%/第2章 雨夜 & 账本#2%.md": "7ea2b08c695dcf450dc453f92df36fc09383f22bb5686fb01228e29249e504d5"
+  },
+  "model_restarted": false,
+  "platform_operation": false,
+  "source_snapshot_reference": "final-source-snapshot.json",
+  "ok": true,
+  "verification": {
+    "same_existing_execution": true,
+    "completed_exit_zero": true,
+    "raw_evidence_available_and_result_verified": true,
+    "manual_provenance_unverified": true,
+    "not_formally_applied": true,
+    "no_new_dispatch": true
+  }
+}

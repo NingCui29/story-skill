@@ -1,0 +1,29 @@
+{
+  "status": "independent closure complete",
+  "ok": true,
+  "checks": {
+    "native-snapshot-tail-result.json": {
+      "ok": true,
+      "cases": 4,
+      "source": "skills/story-skill/scripts/story_platform_browser.py",
+      "source_sha256": "09b4fa2bd6409f49f74c519181dffea0acaee4594a2990f5f06b0d63a84c7362"
+    },
+    "chrome-snapshot-selector-result.json": {
+      "ok": true,
+      "cases": 3,
+      "source": "skills/story-skill/scripts/story_chrome_bridge.mjs",
+      "source_sha256": "003419c8bcf62c67c2e40dade596b1f113ba02c736cec7a86e133baf93e3a5d1"
+    },
+    "chrome-action-contract-result.json": {
+      "ok": true,
+      "cases": 16,
+      "source": "skills/story-skill/scripts/story_chrome_bridge.mjs",
+      "source_sha256": "003419c8bcf62c67c2e40dade596b1f113ba02c736cec7a86e133baf93e3a5d1"
+    }
+  },
+  "independently_confirmed_and_resolved_findings": 2,
+  "unresolved_confirmed_findings": [],
+  "production_edits_by_reviewer": false,
+  "full_suite": "not run; root responsibility",
+  "native_shadow_focus": "root live DOM finding repaired by Native agent; this reviewer reran its readback probes on final source"
+}

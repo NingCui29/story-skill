@@ -1,0 +1,12 @@
+{
+  "skills/story-skill/scripts/story.py": "c427f4f6a08c767313c92a5d9c93a84d0f7185d9f5b7ee8648560e1d35b77b1c",
+  "skills/story-skill/scripts/story_tasks.py": "669a83523084e5f29eb4adaef1fb68e1b1742a9cb02a1afa08d431975905431b",
+  "skills/story-skill/scripts/story_task_worker.py": "9e1b4f3d681a902e618c586b95e1730d0f9b9ae6504b5a8a5940be0e20e73fc6",
+  "skills/story-skill/scripts/story_workbench.py": "dc90e72e9473416f74250abd55106de8ca779a585a5e5a9a5f9ed98de8186817",
+  "skills/story-skill-write/references/writing-handoff.md": "d8b39be35ae7ebf4c70d8c865a20e2d01d7f189fa24f94a200be4299121405e6",
+  "tests/test_minimum_chapter_length.py": "31db6e0b9fa2919e9b65779a1df93a44f8756b55a1b40589908b24655b74592a",
+  "tests/test_writing_brief.py": "8b5fda84377000ed083a999e6901244eac91e114c75baeb62317069325c0ae5f",
+  "tests/test_assistant_tasks.py": "1f4edb4630a7f1327ba9959bc8137070d60ac91c91b3f9f180d607bdb1f6aa25",
+  "tests/test_host_execution.py": "b7ddfe5bf27209c5a29cda6c664f750b091d880af18e7d72c0e045c5d599e426",
+  "tests/test_task_scope_compatibility.py": "e5ccc2861148707e1f4c827b27495d7bb6c853c1c47b63830088fe3b0003848e"
+}

@@ -1,0 +1,246 @@
+test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) ... 
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='changed') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='missing') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='duplicate') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='pending') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='unsupported') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='changed') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='missing') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='duplicate') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='pending') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='unsupported') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='changed') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='missing') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='duplicate') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='pending') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='unsupported') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='changed') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='missing') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='duplicate') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='pending') ... FAIL
+  test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='unsupported') ... FAIL
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='changed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='read', fault='unsupported')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='changed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=True, operation='create', fault='unsupported')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='changed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='read', fault='unsupported')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 401, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.read_draft, "900")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='changed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='missing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='duplicate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_final_preview_body_is_current_after_account_check_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_body_is_current_after_account_check_without_waiting) (guard=False, operation='create', fault='unsupported')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 399, in test_final_preview_body_is_current_after_account_check_without_waiting
+    self.assert_code(code, adapter.create_draft, 13, "新完整标题", "新正文")
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 128, in assert_code
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.158s
+
+FAILED (failures=20)

@@ -1,0 +1,625 @@
+{
+  "baseline_source_sha256": "fcb0c94d43b9a6865621731a5d88c974b87367642081e9cede29fb730baf2768",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "beb02754e55e6b55a7bbd57042b949e4761125d0dc313bf0ddf8cc749984705f",
+    "tests/test_chrome_bridge_driver.mjs": "f2a71cef9180617021ae1e4706547b5fef5f1e12b3181b62810843a9f79320dc",
+    "tests/test_chrome_worker.mjs": "64b499eede952c2cc1ed700fb46ca3af4f5cabc1ff2b6c9c2bd08daa075ca9fc"
+  },
+  "findings": [
+    {
+      "id": "effective_link_destination_drift",
+      "fixed": true,
+      "baseline_red": "red-effective-destination.log",
+      "candidate_compatibility_red": "red-same-document-alias.log",
+      "candidate_unicode_self_link_red": "red-unicode-self-link.log"
+    }
+  ],
+  "tests": {
+    "driver": 166,
+    "worker": 94,
+    "total": 260,
+    "passed": 260,
+    "failed": 0,
+    "skipped": 0,
+    "new_top_level": 6,
+    "new_action_parameter_scenarios": 39,
+    "new_callback_fallback_checks": 2
+  },
+  "local_chrome_dom": {
+    "source_sha256": "beb02754e55e6b55a7bbd57042b949e4761125d0dc313bf0ddf8cc749984705f",
+    "checks": 18,
+    "passed": 18,
+    "results": [
+      {
+        "name": "path",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "next",
+          "resolvedHref": "https://example.test/draft/next",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "next",
+          "resolvedHref": "https://example.test/publish/next",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/publish/next"
+      },
+      {
+        "name": "query",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "?mode=draft",
+          "resolvedHref": "https://example.test/draft/?mode=draft",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "?mode=draft",
+          "resolvedHref": "https://example.test/publish/?mode=draft",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/publish/?mode=draft"
+      },
+      {
+        "name": "empty",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "",
+          "resolvedHref": "https://example.test/draft/",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "",
+          "resolvedHref": "https://example.test/publish/",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/publish/"
+      },
+      {
+        "name": "fragment",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "#save",
+          "resolvedHref": "https://example.test/draft/#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "#save",
+          "resolvedHref": "https://example.test/publish/#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/publish/#save"
+      },
+      {
+        "name": "root",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "/draft/save",
+          "resolvedHref": "https://example.test/draft/save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "/draft/save",
+          "resolvedHref": "https://example.test/draft/save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/draft/save"
+      },
+      {
+        "name": "absolute",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "https://example.test/draft/save",
+          "resolvedHref": "https://example.test/draft/save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "https://example.test/draft/save",
+          "resolvedHref": "https://example.test/draft/save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/draft/save"
+      },
+      {
+        "name": "protocol-relative",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "//example.test/draft/save",
+          "resolvedHref": "https://example.test/draft/save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "//example.test/draft/save",
+          "resolvedHref": "https://example.test/draft/save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/draft/save"
+      },
+      {
+        "name": "no-link",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": null,
+          "resolvedHref": null,
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": null,
+          "resolvedHref": null,
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": ""
+      },
+      {
+        "name": "stable-base",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "next",
+          "resolvedHref": "https://example.test/draft/next",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "next",
+          "resolvedHref": "https://example.test/draft/next",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/draft/next"
+      },
+      {
+        "name": "unicode",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "下一步?草稿=是",
+          "resolvedHref": "https://example.test/draft/%E4%B8%8B%E4%B8%80%E6%AD%A5?%E8%8D%89%E7%A8%BF=%E6%98%AF",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "下一步?草稿=是",
+          "resolvedHref": "https://example.test/publish/%E4%B8%8B%E4%B8%80%E6%AD%A5?%E8%8D%89%E7%A8%BF=%E6%98%AF",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/publish/%E4%B8%8B%E4%B8%80%E6%AD%A5?%E8%8D%89%E7%A8%BF=%E6%98%AF"
+      },
+      {
+        "name": "encoded",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "%E8%8D%89%E7%A8%BF",
+          "resolvedHref": "https://example.test/draft/%E8%8D%89%E7%A8%BF",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "%E8%8D%89%E7%A8%BF",
+          "resolvedHref": "https://example.test/publish/%E8%8D%89%E7%A8%BF",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/publish/%E8%8D%89%E7%A8%BF"
+      },
+      {
+        "name": "base-host",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "/save",
+          "resolvedHref": "https://example.test/save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "/save",
+          "resolvedHref": "https://other.test/save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://other.test/save"
+      },
+      {
+        "name": "nbsp-path",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": " #save",
+          "resolvedHref": "https://example.test/edit/%C2%A0#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": " #save",
+          "resolvedHref": "https://example.test/modify/%C2%A0#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/modify/%C2%A0#save"
+      },
+      {
+        "name": "ideographic-space-path",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "　#save",
+          "resolvedHref": "https://example.test/edit/%E3%80%80#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "　#save",
+          "resolvedHref": "https://example.test/modify/%E3%80%80#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/modify/%E3%80%80#save"
+      },
+      {
+        "name": "ascii-fragment",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": " \t\r\n#save ",
+          "resolvedHref": "https://example.test/edit/99#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": " \t\r\n#save ",
+          "resolvedHref": "https://example.test/modify/99#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/modify/99#save"
+      },
+      {
+        "name": "ascii-control-fragment",
+        "pass": true,
+        "before": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "\u0000#save",
+          "resolvedHref": "https://example.test/edit/99#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "after": {
+          "count": 1,
+          "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+          "text": "存草稿",
+          "aria": null,
+          "title": null,
+          "href": "\u0000#save",
+          "resolvedHref": "https://example.test/modify/99#save",
+          "disabled": false,
+          "focused": false,
+          "editableFocus": false
+        },
+        "clickedHref": "https://example.test/modify/99#save"
+      },
+      {
+        "name": "document-default-base",
+        "pass": true
+      },
+      {
+        "name": "invalid-link",
+        "pass": true
+      }
+    ],
+    "scope": "Production serialized callback in local isolated Chrome; clicks prevented from navigating; no platform/account."
+  },
+  "independent_sessions": {
+    "source_sha256": {
+      "story_platform_chrome_bridge.py": "3d97931af2efbab336ed87a4a7156e2f404a26bc94b2e7fd471a88383b77a83d",
+      "story_platform_drafts.py": "2288612168214650cafe4afe7651c7fc26bfa07b47ce79b9ae3f783619de7bd2"
+    },
+    "checks": 15,
+    "passed": 15,
+    "results": [
+      {
+        "case": "KeyboardInterrupt:before_handle",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": false
+      },
+      {
+        "case": "KeyboardInterrupt:after_handle",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "KeyboardInterrupt:session_replaced",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "KeyboardInterrupt:lease_replaced",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "SystemExit:before_handle",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": false
+      },
+      {
+        "case": "SystemExit:after_handle",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "SystemExit:session_replaced",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "SystemExit:lease_replaced",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "retirement:empty",
+        "pass": true,
+        "retired": true,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:stage",
+        "pass": true,
+        "retired": true,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:session_only",
+        "pass": true,
+        "retired": true,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:unknown_outbox",
+        "pass": true,
+        "retired": false,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:unknown_claim",
+        "pass": true,
+        "retired": false,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:unknown_response",
+        "pass": true,
+        "retired": false,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:expired_claim",
+        "pass": true,
+        "retired": false,
+        "evidence_unchanged": true
+      }
+    ],
+    "scope": "Independent local production APIs with interruption injection and fixture journals; no platform or live books"
+  },
+  "commands": [
+    "node --test tests/test_chrome_bridge_driver.mjs tests/test_chrome_worker.mjs",
+    "python3 -B benchmarks/results/development-20261024-six-fixes-loop/chrome/effective_destination_dom.py",
+    "python3 -B benchmarks/results/development-20261024-six-fixes-loop/chrome/independent_session_probe.py"
+  ],
+  "limits": [
+    "Offline CUA fixture does not prove real CUA transport or platform acceptance",
+    "Local Chrome anchor.click default navigation prevented; no network/account",
+    "Independent session probes use real local APIs and fixture journals, not real books",
+    "No arbitrary post-RPC atomicity guarantee"
+  ],
+  "unresolved_confirmed_findings": 0,
+  "candidate_snapshots": {
+    "before-unicode-self-link.mjs": "e75277ca8a2ba3723ef5db1bfdb15b2bea0f813cabb8b76e2d2f2b17b0af4d72",
+    "after-effective-destination.mjs": "e75277ca8a2ba3723ef5db1bfdb15b2bea0f813cabb8b76e2d2f2b17b0af4d72"
+  }
+}

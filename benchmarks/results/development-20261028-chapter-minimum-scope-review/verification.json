@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "date": "2026-10-28T03:53:44.617606+00:00",
+  "ok": true,
+  "version": "0.6.29",
+  "default_length": [
+    2000,
+    null
+  ],
+  "fixes": [
+    "Explicit fragments preserve scope in frozen prompts and both manual/native candidate returns; no mandatory heading or 2000-character floor",
+    "Known legacy complete envelopes with broken or unknown briefs remain scope-unknown and cannot launch",
+    "Deep inner JSON is handled as scope-unknown rather than uncaught RecursionError",
+    "Native result attachment verifies original binding, frozen request and scope; private raw-request hash permits same-machine restore without masking prompt drift"
+  ],
+  "related_compatibility": [
+    "Blank or invisible-only fragment rejected without creating candidate",
+    "Explicit wrong chapter heading, including after leading blank lines, and conflicting candidate metadata rejected",
+    "Generic old associated-chapter tasks retain their original heading protection",
+    "Same-key existing and unknown attempts only read back; no automatic retry",
+    "Legacy launches lacking raw-request hash remain supported at original location",
+    "Quoted handoff marker inside user request does not truncate later instructions"
+  ],
+  "tests": {
+    "backend": {
+      "run": 523,
+      "passed": 522,
+      "skipped": 1,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 126.316,
+      "log": "backend.log"
+    },
+    "workbench_and_manual": {
+      "run": 108,
+      "passed": 108,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 30.006,
+      "log": "workbench_and_manual.log"
+    },
+    "host_scope": {
+      "run": 38,
+      "passed": 38,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 12.346,
+      "log": "host_scope.log"
+    },
+    "legacy_scope": {
+      "run": 8,
+      "passed": 8,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0,
+      "duration_seconds": 0.83,
+      "log": "legacy_scope.log"
+    }
+  },
+  "unique_tests": {
+    "run": 600,
+    "passed": 599,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0,
+    "counting": "Backend523 + workbench/manual108 - duplicated assistant-task31; specialist reports overlap and are not added"
+  },
+  "instruction_variants": 305,
+  "source_sha256": {
+    "skills/story-skill/scripts/story.py": "c427f4f6a08c767313c92a5d9c93a84d0f7185d9f5b7ee8648560e1d35b77b1c",
+    "skills/story-skill/scripts/story_tasks.py": "669a83523084e5f29eb4adaef1fb68e1b1742a9cb02a1afa08d431975905431b",
+    "skills/story-skill/scripts/story_task_worker.py": "9e1b4f3d681a902e618c586b95e1730d0f9b9ae6504b5a8a5940be0e20e73fc6",
+    "skills/story-skill/scripts/story_workbench.py": "dc90e72e9473416f74250abd55106de8ca779a585a5e5a9a5f9ed98de8186817",
+    "skills/story-skill-write/references/writing-handoff.md": "d8b39be35ae7ebf4c70d8c865a20e2d01d7f189fa24f94a200be4299121405e6",
+    "tests/test_minimum_chapter_length.py": "31db6e0b9fa2919e9b65779a1df93a44f8756b55a1b40589908b24655b74592a",
+    "tests/test_writing_brief.py": "8b5fda84377000ed083a999e6901244eac91e114c75baeb62317069325c0ae5f",
+    "tests/test_assistant_tasks.py": "1f4edb4630a7f1327ba9959bc8137070d60ac91c91b3f9f180d607bdb1f6aa25",
+    "tests/test_host_execution.py": "b7ddfe5bf27209c5a29cda6c664f750b091d880af18e7d72c0e045c5d599e426",
+    "tests/test_task_scope_compatibility.py": "e5ccc2861148707e1f4c827b27495d7bb6c853c1c47b63830088fe3b0003848e"
+  },
+  "source_stable_after_final_tests": true,
+  "real_books_modified": false,
+  "model_dispatch": false,
+  "platform_access": false,
+  "browser_or_native_ui_used": false,
+  "packages_rebuilt": false,
+  "installation_updated": false
+}

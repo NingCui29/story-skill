@@ -1,0 +1,113 @@
+{
+  "successful": true,
+  "scope": "Synthetic book through actual local HTTP servers; no real author books or platform",
+  "unrelated_history_files": 5001,
+  "recovery_files_saved_with_production_entry": 103,
+  "pending_records": 1,
+  "expected_recovery_count": 104,
+  "shelf_initial_request_deferred": true,
+  "editor_pages": [
+    {
+      "offset": 0,
+      "next_offset": 100,
+      "has_more": true,
+      "complete": false,
+      "count": 104,
+      "scan": {
+        "cursor": "90b8529a8bfafade249a35a0998edcdc2e25a1f25f3281fd59dd79aa3e588831",
+        "complete": false,
+        "has_more": true,
+        "inspected": 5000,
+        "loaded": 104,
+        "hard_limit": false
+      },
+      "returned": 100
+    },
+    {
+      "offset": 100,
+      "next_offset": 104,
+      "has_more": true,
+      "complete": false,
+      "count": 104,
+      "scan": {
+        "cursor": "90b8529a8bfafade249a35a0998edcdc2e25a1f25f3281fd59dd79aa3e588831",
+        "complete": false,
+        "has_more": true,
+        "inspected": 5000,
+        "loaded": 104,
+        "hard_limit": false
+      },
+      "returned": 4
+    },
+    {
+      "offset": 104,
+      "next_offset": 104,
+      "has_more": false,
+      "complete": true,
+      "count": 104,
+      "scan": {
+        "cursor": "90b8529a8bfafade249a35a0998edcdc2e25a1f25f3281fd59dd79aa3e588831",
+        "complete": true,
+        "has_more": false,
+        "inspected": 5222,
+        "loaded": 104,
+        "hard_limit": false
+      },
+      "returned": 0
+    }
+  ],
+  "shelf_pages": [
+    {
+      "offset": 0,
+      "next_offset": 100,
+      "has_more": true,
+      "complete": false,
+      "count": 104,
+      "scan": {
+        "cursor": "8f0d03ac01444db698f7f89de59dde9f22a584524626324cbe3f22d368bc0ba5",
+        "complete": false,
+        "has_more": true,
+        "inspected": 5000,
+        "loaded": 104,
+        "hard_limit": false
+      },
+      "returned": 100
+    },
+    {
+      "offset": 100,
+      "next_offset": 104,
+      "has_more": true,
+      "complete": false,
+      "count": 104,
+      "scan": {
+        "cursor": "8f0d03ac01444db698f7f89de59dde9f22a584524626324cbe3f22d368bc0ba5",
+        "complete": false,
+        "has_more": true,
+        "inspected": 5000,
+        "loaded": 104,
+        "hard_limit": false
+      },
+      "returned": 4
+    },
+    {
+      "offset": 104,
+      "next_offset": 104,
+      "has_more": false,
+      "complete": true,
+      "count": 104,
+      "scan": {
+        "cursor": "8f0d03ac01444db698f7f89de59dde9f22a584524626324cbe3f22d368bc0ba5",
+        "complete": true,
+        "has_more": false,
+        "inspected": 5222,
+        "loaded": 104,
+        "hard_limit": false
+      },
+      "returned": 0
+    }
+  ],
+  "open_recovery_preserves_material_source": true,
+  "open_pending_preserves_text": true,
+  "foreign_token_status": 403,
+  "formal_state_and_all_protected_files_unchanged": true
+}

@@ -1,0 +1,133 @@
+{
+  "completed_at_utc": "2026-10-23T14:50:41.680687+00:00",
+  "status": "verified_with_documented_platform_limits",
+  "confirmed_problems_fixed": [
+    "Ordinary editor readback mixed identity and body from different drafts, permitting false reconciled success",
+    "Create flow continued writing or returned another draft identity after an observable target change"
+  ],
+  "changed_existing_files_this_turn": [
+    "skills/story-skill/scripts/story_chrome_bridge.mjs",
+    "skills/story-skill/scripts/story_platform_browser.py",
+    "tests/test_chrome_bridge_driver.mjs",
+    "tests/test_platform_browser.py",
+    "tests/test_platform_browser_preview.py"
+  ],
+  "added_regression_file": "tests/test_platform_browser_editor_readback.py",
+  "new_regressions": {
+    "python_methods": 20,
+    "node_top_level_tests": 19
+  },
+  "full_suite": {
+    "report": "full-suite.json",
+    "log": "full-suite.log",
+    "discovered": 2655,
+    "executed": 2655,
+    "passed": 2634,
+    "skipped_native_windows": 21,
+    "failures": 0,
+    "errors": 0,
+    "elapsed_seconds": 817.28,
+    "source_drift": []
+  },
+  "source_manifest": {
+    "file": "validated-source-hashes.json",
+    "sha256": "1cb28e4b6c861b075105003ed70a51b8fd3f06ebd0a71a76e2b8ed186bf53fcf",
+    "entries": 335,
+    "final_recheck_matches": true
+  },
+  "component_evidence": {
+    "native/validation-summary.json": {
+      "hashes_match_full_suite": true
+    },
+    "chrome/validation.json": {
+      "hashes_match_full_suite": true
+    },
+    "independent/summary.json": {
+      "hashes_match_full_suite": true
+    },
+    "independent-replay/summary.json": {
+      "hashes_match_full_suite": true
+    }
+  },
+  "independent_checks": {
+    "search-oracle.json": {
+      "ok": true,
+      "cases": 266
+    },
+    "anchor-audit.json": {
+      "ok": true,
+      "cases": 315
+    },
+    "native-late-races.json": {
+      "ok": true,
+      "cases": 8
+    },
+    "real-dom-result.json": {
+      "ok": true,
+      "cases": 30
+    },
+    "chrome-create-result.json": {
+      "ok": true,
+      "cases": 32
+    },
+    "native-create-result.json": {
+      "ok": true,
+      "cases": 58
+    }
+  },
+  "original_repro_replay": {
+    "ok": true,
+    "scenarios": 15,
+    "head_old_failures_preserved": true,
+    "current_wrong_observations_rejected": true,
+    "journal_false_success_rejected": true,
+    "duplicate_saves": 0,
+    "source_hashes": {
+      "skills/story-skill/scripts/story_platform_browser.py": "e775880fc9c6a9ab6f6ca5518205d80387cb01954e81a98a34f6628bf42a478a",
+      "skills/story-skill/scripts/story_chrome_bridge.mjs": "565df7ac89a22ba4437deadeec437841d5ec1a7278c825c6f166a22a8486cf7d"
+    }
+  },
+  "final_distribution": {
+    "version": "0.6.22",
+    "source_members": 69,
+    "artifacts": [
+      {
+        "kind": "standard",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261023-editor-readback-loop/distribution-final/story-skill-0.6.22.zip",
+        "members": 69,
+        "source_members_verified": 69,
+        "latest_four_runtime_modules_exact": true,
+        "archive_sha256": "030fbd1373ecb42d564f7cd4337e4c765570978b2a9adb821e8d85e71760fe3d"
+      },
+      {
+        "kind": "claude",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261023-editor-readback-loop/distribution-final/claude.zip",
+        "members": 71,
+        "source_members_verified": 69,
+        "latest_four_runtime_modules_exact": true,
+        "archive_sha256": "3c6fe7454ee627e3a3159cde80ce425b9d66d8027d302580914761ee60682684"
+      },
+      {
+        "kind": "codex",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261023-editor-readback-loop/distribution-final/codex-final/story-skill-codex-0.6.22.zip",
+        "members": 74,
+        "source_members_verified": 69,
+        "latest_four_runtime_modules_exact": true,
+        "archive_sha256": "34ee29085ea9efce57bd4f8476d91b984085147bc26f1c377f15ffc3a2142089"
+      }
+    ],
+    "manifest_sets_equal": true,
+    "host_scope_mappings": 38,
+    "no_installation": true
+  },
+  "counting_note": "Node driver and worker are each invoked by one Python wrapper in the complete suite; do not add their nested counts or probe assertions to 2655.",
+  "interrupted_preliminary_run": "interrupted-run.json records a deliberate stop before the final inner-write fix. It is not a completed or passing full-suite result.",
+  "unresolved_confirmed_findings": [],
+  "limitations": [
+    "macOS offline fixtures plus isolated local HTML in real headless Chrome; no live platform account or saving acceptance",
+    "21 tests require native Windows and remain skipped",
+    "Static rule review and passing contracts do not measure actual reader satisfaction or literary quality",
+    "No installed plugin synchronization, version release, commit, or real book/platform modifications"
+  ],
+  "git_diff_check": "passed"
+}

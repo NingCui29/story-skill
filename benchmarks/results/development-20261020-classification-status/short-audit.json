@@ -1,0 +1,1666 @@
+{
+  "scope": {
+    "audit_date": "2026-10-20",
+    "root": "/Users/cuining/Documents/ChatGPT/小说-短篇",
+    "book_count": 18,
+    "inclusion": "direct child with .story/state.sqlite3; database was not opened",
+    "files_allowed": [
+      "创作约定.md",
+      "01_大纲细纲/全书总纲.md",
+      "00_项目策划/开书策划.md",
+      "current offline classification document when explicitly linked"
+    ],
+    "excluded": "99/history/historical references/candidate/old versions/body text; replaced generic offline materials excluded",
+    "body_text_read": false,
+    "book_files_modified": false
+  },
+  "interpretation": {
+    "legacy_ambiguous": "同一套拟选/待核状态未独立说明本地是否定稿，属于表达风险而非已证实分类错误；不授权升级或修改。",
+    "content_fit_unresolved": "材料明确留有内容映射/分类适配/标签取舍未决；单纯后台菜单、数量、收稿资格、签约/IP未知不自动计入。",
+    "no_matching_role_term": "仅按现行材料明确陈述无贴合词统计；不自行猜词或视作后台已允许留空。",
+    "clear_local_final": "必须明确本地已选定或定稿且与后台核验分开，不由正文完本或总纲已采用推定。"
+  },
+  "summary": {
+    "books": 18,
+    "primary_and_current_offline_sources": 44,
+    "platform_presence": {
+      "detailed": 26,
+      "not_recorded": 24,
+      "coarse_positioning_only": 3,
+      "target_only_no_classification": 1
+    },
+    "platform_status_patterns": {
+      "legacy_ambiguous": 21,
+      "not_assessable": 28,
+      "clear_selected": 1,
+      "clear_candidate_unresolved": 1,
+      "clear_backup_proposal": 1,
+      "proposal_backend_distinguished": 2
+    },
+    "mixing_risk_books": [
+      "中奖一亿后，前公司成了我的乙方",
+      "中奖三千万那晚，我买下了最后一班车",
+      "中奖三百万，我给爸妈补了一场蜜月",
+      "中奖五百万后，我成了广场舞团唯一男主角",
+      "中奖八千万，我立下装穷十律",
+      "中奖后，我雇了个比我还会享福的助理",
+      "五十八岁，我被全家认定失智",
+      "他的单身人设里，住着我",
+      "出嫁那日，婚帖写我为妾",
+      "剑来：明日簿上没有陈平安",
+      "在自家店干了十年，妈妈说我没工作",
+      "妈妈，把那段录音关掉",
+      "病房里，他说我只是顺手照顾",
+      "系统让我每天得罪一个人，月底结算奖金",
+      "莲花楼：说好搭伙，你怎么又想跑路"
+    ],
+    "mixing_risk_platform_segments": 21,
+    "content_fit_unresolved_books": [
+      "中奖五百万后，我成了广场舞团唯一男主角",
+      "中奖后，我雇了个比我还会享福的助理",
+      "他们造神，我捏泥狗",
+      "妈妈，把那段录音关掉",
+      "系统让我每天得罪一个人，月底结算奖金",
+      "莲花楼：说好搭伙，你怎么又想跑路"
+    ],
+    "content_fit_unresolved_platform_segments": 6,
+    "no_matching_role_books": [
+      "中奖一亿后，前公司成了我的乙方",
+      "中奖三千万那晚，我买下了最后一班车",
+      "中奖三百万，我给爸妈补了一场蜜月",
+      "中奖五百万后，我成了广场舞团唯一男主角",
+      "中奖八千万，我立下装穷十律",
+      "中奖后，我雇了个比我还会享福的助理",
+      "五十八岁，我被全家认定失智",
+      "他们造神，我捏泥狗",
+      "他的单身人设里，住着我",
+      "出嫁那日，婚帖写我为妾",
+      "剑来：明日簿除名陈平安，宁姚一剑劈天榜",
+      "在自家店干了十年，妈妈说我没工作",
+      "妈妈，把那段录音关掉",
+      "病房里，他说我只是顺手照顾",
+      "莲花楼：说好搭伙，你怎么又想跑路"
+    ],
+    "no_matching_role_platform_segments": 15,
+    "clear_local_final_books": [
+      "他们造神，我捏泥狗"
+    ],
+    "clear_local_final_platform_segments": 1
+  },
+  "books": [
+    {
+      "index": 1,
+      "title": "中奖一亿后，前公司成了我的乙方",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖一亿后，前公司成了我的乙方",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖一亿后，前公司成了我的乙方/创作约定.md",
+          "sha256": "39418f093c0c4987ced2c585bf7accdc61a72d9c9f31269f635e59660311c481"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖一亿后，前公司成了我的乙方/01_大纲细纲/全书总纲.md",
+          "sha256": "29e9a44c68805a4e1a8c3029a8c1e02f2ef44d91c60b1e50eef36b132b5a87f5"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖一亿后，前公司成了我的乙方/01_大纲细纲/全书总纲.md",
+              "line": 5,
+              "quote": "## 番茄短篇作品分类（拟选；核对日期：2026-09-20）"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖一亿后，前公司成了我的乙方/01_大纲细纲/全书总纲.md",
+              "line": 13,
+              "quote": "- 待核对：这些词来自用户提供页面截图的本地转录，并非平台已确认值；截图未显示各栏可选数量与签约后的修改规则。创建作品时以实际页面选项为准，不把此处拟选项写进 Story Codex 章计划的检索 `tags`。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖一亿后，前公司成了我的乙方/01_大纲细纲/全书总纲.md",
+              "line": 9,
+              "quote": "- 角色：暂不选择。截图可见的角色词中，“首富”不符；林昭虽持有剧场运营公司和制作公司，用“女总裁”容易让读者期待大集团经营。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 2,
+      "title": "中奖三千万那晚，我买下了最后一班车",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三千万那晚，我买下了最后一班车",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三千万那晚，我买下了最后一班车/创作约定.md",
+          "sha256": "5d6f3e1df589b407297d4581da7b62a2d326b0cb5f60a738e89d7c6c52c03426"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三千万那晚，我买下了最后一班车/01_大纲细纲/全书总纲.md",
+          "sha256": "6777b6f94c0c3c8381347cbe9e1ca53c51c4da8bee45ac421efb72ae643caa67"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三千万那晚，我买下了最后一班车/01_大纲细纲/全书总纲.md",
+              "line": 7,
+              "quote": "投稿参考：番茄短篇作品分类（拟选，2026-09-21；依据本书已完成的正文与人物结局）。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三千万那晚，我买下了最后一班车/01_大纲细纲/全书总纲.md",
+              "line": 17,
+              "quote": "以上是创作阶段的拟选项；投稿时应以平台实际分类页面核对可用词与选择数量。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三千万那晚，我买下了最后一班车/01_大纲细纲/全书总纲.md",
+              "line": 11,
+              "quote": "- 角色：暂不选。本地可见选项中没有准确对应谢晴身份的词，不以“女总裁”等称谓替代。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 3,
+      "title": "中奖三百万，我给爸妈补了一场蜜月",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三百万，我给爸妈补了一场蜜月",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三百万，我给爸妈补了一场蜜月/创作约定.md",
+          "sha256": "466fe106af477d9b528de0e02f8c36c72e8ef45e954240e0aa9cde489f71ecd7"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三百万，我给爸妈补了一场蜜月/01_大纲细纲/全书总纲.md",
+          "sha256": "70efaa63d25015c2ddea457a70cb0428168baa013ff6720a933ac8dfddcbbbcf"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三百万，我给爸妈补了一场蜜月/00_项目策划/开书策划.md",
+          "sha256": "0c4705cd97612e172d02af126d07f13870be6f294cfb3deddcf8d43d32cfe3bd"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "planning_proposal_not_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三百万，我给爸妈补了一场蜜月/01_大纲细纲/全书总纲.md",
+              "line": 28,
+              "quote": "- 主分类：婚姻家庭（拟选1个）；依据：女儿为结婚三十周年的父母补蜜月，家庭互动和稳定夫妻关系为主线，规划中。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三百万，我给爸妈补了一场蜜月/01_大纲细纲/全书总纲.md",
+              "line": 35,
+              "quote": "- 待核对：本书实际创建入口、角色栏能否留空、今天选项与数量规则、平台作品现状、番茄署名；没有后台已确认分类。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三百万，我给爸妈补了一场蜜月/01_大纲细纲/全书总纲.md",
+              "line": 30,
+              "quote": "- 角色：待核对；依据：旧词表没有适合“普通女儿及中年父母”的准确角色项，拟留空，但须在本书当前后台核实能否留空，暂不标“不选”。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "planning_proposal_not_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三百万，我给爸妈补了一场蜜月/01_大纲细纲/全书总纲.md",
+              "line": 50,
+              "quote": "- 一级分类：现实主义（拟选）；依据：普通职业家庭、有限奖金与合理旅行规模，规划中。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖三百万，我给爸妈补了一场蜜月/01_大纲细纲/全书总纲.md",
+              "line": 57,
+              "quote": "- 待核对：本书实际入口与作品现状、今天分类父子关系及标签选项、现实题材“仅选1个”的作用范围与最终数量校验、七猫署名；没有后台已确认分类。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 4,
+      "title": "中奖五百万后，我成了广场舞团唯一男主角",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角/创作约定.md",
+          "sha256": "c85997ad2a9eb99e50bf2dea64b2df55d5b235dd921c9dc3b0ae35ea86d8a721"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角/01_大纲细纲/全书总纲.md",
+          "sha256": "364b107132040efe27755c4182731579b1e71bb8ca7017b0ee3693a5a5820608"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角/00_项目策划/开书策划.md",
+          "sha256": "77c84c38a9e0987deec6aecda1dea0d71bcc5797b3e7c4db7e52e343bfd79ac8"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "planning_proposal_not_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角/01_大纲细纲/全书总纲.md",
+              "line": 37,
+              "quote": "- 主分类：都市日常（拟选，选1项）。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角/01_大纲细纲/全书总纲.md",
+              "line": 43,
+              "quote": "- 待核对：入口与账号创建条件、情节与角色栏可空性、五栏当前数量与词项、书名校验及本平台署名。现有拟选5个词，不把技能旧截图的五栏合计8个上限冒充本书当前确认。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": true,
+          "content_fit_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角/01_大纲细纲/全书总纲.md",
+              "line": 38,
+              "quote": "- 情节：待核对；已采用主线暂无准确对应的词，不为偶然中奖贴“金手指”，本书当前入口是否允许留空未核。"
+            }
+          ],
+          "content_fit_note": "仅情节栏缺准确内容映射；主分类并未明确悬而未定，不应强贴金手指。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角/01_大纲细纲/全书总纲.md",
+              "line": 39,
+              "quote": "- 角色：待核对；普通青年、母亲与社区舞者不对应现有首富、霸总、影帝等词，当前入口是否允许留空未核。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "planning_proposal_not_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角/01_大纲细纲/全书总纲.md",
+              "line": 56,
+              "quote": "- 一级分类：都市（拟选）。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖五百万后，我成了广场舞团唯一男主角/01_大纲细纲/全书总纲.md",
+              "line": 63,
+              "quote": "- 待核对：本书后台入口及分类现值、都市分支各栏当前可选数量、标签实际可选性、书名校验和本平台署名。沿技能普通分支“逐栏1—3个”的旧实测拟列词项，未执行最终创建，不称投稿就绪；不使用现实题材分支有歧义的数量提示。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 5,
+      "title": "中奖八千万，我立下装穷十律",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖八千万，我立下装穷十律",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖八千万，我立下装穷十律/创作约定.md",
+          "sha256": "0370f8fff4c965cea5a5063ac6e152812afe92cb53852f4c68d5f5c426b97097"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖八千万，我立下装穷十律/01_大纲细纲/全书总纲.md",
+          "sha256": "5d24069449c0e4b76a447332cd6c51682d05a88443e9e0d78187a9bb11260eb0"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖八千万，我立下装穷十律/01_大纲细纲/全书总纲.md",
+              "line": 5,
+              "quote": "## 番茄短篇作品分类（拟选；核对日期：2026-09-19）"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖八千万，我立下装穷十律/01_大纲细纲/全书总纲.md",
+              "line": 13,
+              "quote": "- 待核对：这些是依现有短篇截图作出的拟选分类，尚非平台已确认值；截图未显示各栏可选数量或签约后的修改规则，投稿时须按实际页面复核。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖八千万，我立下装穷十律/01_大纲细纲/全书总纲.md",
+              "line": 9,
+              "quote": "- 角色：暂不选择；截图可见的角色词中，没有准确对应乔南枝或许小满的选项。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 6,
+      "title": "中奖后，我雇了个比我还会享福的助理",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理/创作约定.md",
+          "sha256": "4b18409ce61bba2b8d735288cd89406976e92b996f07183cb15aac6ca46c05ef"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理/01_大纲细纲/全书总纲.md",
+          "sha256": "ba8653a8164809900929aa2c2cf65bb33010a1c6acb7a6b9f067217dd56944a6"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理/00_项目策划/开书策划.md",
+          "sha256": "db2316be5791080120f54296e51f9cda1dd240d1f81e0a149319290ce1246abd"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "planning_proposal_with_emotion_recheck",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理/01_大纲细纲/全书总纲.md",
+              "line": 31,
+              "quote": "- 情绪：爽文、沙雕搞笑（拟选；须完稿后回核具体喜剧与享受比例）。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理/01_大纲细纲/全书总纲.md",
+              "line": 35,
+              "quote": "- 待核对：本书后台现状、作者署名、当前栏目与词项、角色能否留空、各栏数量及五栏总限额。资料记录五栏合计最多8个，本方案已有5个拟选词，角色待核，不据此称投稿就绪。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": true,
+          "content_fit_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理/01_大纲细纲/全书总纲.md",
+              "line": 31,
+              "quote": "- 情绪：爽文、沙雕搞笑（拟选；须完稿后回核具体喜剧与享受比例）。"
+            }
+          ],
+          "content_fit_note": "情绪组合明确要求完稿后再核，不能仅凭现有规划批量定稿。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理/01_大纲细纲/全书总纲.md",
+              "line": 30,
+              "quote": "- 角色：待核对；已有短故事词表无准确对应普通中奖者或生活助理的词，当前角色栏可否留空尚未核实。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "planning_proposal_not_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理/01_大纲细纲/全书总纲.md",
+              "line": 45,
+              "quote": "- 一级分类：现实主义（拟选）。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/中奖后，我雇了个比我还会享福的助理/01_大纲细纲/全书总纲.md",
+              "line": 52,
+              "quote": "- 来源与核对日期：当前安装技能的[七猫词表](/Users/cuining/.codex/skills/story-skill-plan/references/qimao-tags.md)记录的[七猫新建短故事页](https://zuozhe.qimao.com/front/book-manage/short/information)，2026-09-30、2026-10-01登录态复核；本次2026-10-06读取本地技能资料，未核对本书后台。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 7,
+      "title": "五十八岁，我被全家认定失智",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/五十八岁，我被全家认定失智",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/五十八岁，我被全家认定失智/创作约定.md",
+          "sha256": "fa00be1eb346bf5886bbffa4e7c252ffc117a85d596832061bfa2595e6c6945a"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/五十八岁，我被全家认定失智/01_大纲细纲/全书总纲.md",
+          "sha256": "6a8729528a2c39a7f2096f305b6faab71c8f4c348a4960f34bfc844deed4db7e"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/五十八岁，我被全家认定失智/01_大纲细纲/全书总纲.md",
+              "line": 17,
+              "quote": "- 主分类：女性成长（必选，投稿前拟选）；依据：正式第3、4、9、10章中周岚搬回旧房、停止无偿带娃、拒绝用签字换澄清并取得自己的工资。主线落点是女性的居住、劳动及生活决定权，而非夫妻复合，因此优先于“婚姻家庭”。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/五十八岁，我被全家认定失智/01_大纲细纲/全书总纲.md",
+              "line": 24,
+              "quote": "- 待核对：本书后台是否已建作品及实际阶段；短故事入口五栏当前词项、合计及各栏数量限制；角色是否可留空；封面实时尺寸、格式及署名要求。以上均不表示平台已确认或审核通过。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/五十八岁，我被全家认定失智/01_大纲细纲/全书总纲.md",
+              "line": 19,
+              "quote": "- 角色：待核对，拟留空；依据：现有角色选项中没有能准确代表五十八岁母亲周岚的标签，婆媳、萌宝、医生均非主线角色卖点。须先核实本书页面允许留空，再标为“不选”，不跨用小说入口的人设标签。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 8,
+      "title": "他们造神，我捏泥狗",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/创作约定.md",
+          "sha256": "b48f204e2623017672b10b57fec29e4b28cb208cc52f61d24668cb27620456a5"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/01_大纲细纲/全书总纲.md",
+          "sha256": "684155692d930684c484659ee0577f46a43cf214d21e8cd9700c8306504d4437"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/00_项目策划/开书策划.md",
+          "sha256": "e56621bf62f0cfa1713a2417b6196bfba57a0e0105ec2506bc415fadf2c661a4"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/05_离线投稿材料/2026-10-18_R54_番茄短故事_未明昼/03_分类标签与作品资料.md",
+          "sha256": "27ac1785bf23f039e1ed73b010d5d9343cc7633b2c1c0e235bc65b332ea5eea6"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "clear_selected",
+          "local_decision": "selected_five_terms",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/01_大纲细纲/全书总纲.md",
+              "line": 29,
+              "quote": "- 本地选择结论（2026-10-20）：主分类女频脑洞；情节大女主、金手指；情绪励志；背景古代。角色暂无适配词，本地不推荐凑选。后台菜单、必填规则及本书实际保存状态未核对。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/05_离线投稿材料/2026-10-18_R54_番茄短故事_未明昼/03_分类标签与作品资料.md",
+              "line": 39,
+              "quote": "| 主分类 | 女频脑洞 | 当前菜单及本书设置未核对 | 点活泥偶是贯穿救人、署名争执与独立接单的奇幻机制，女主有主动选择 |"
+            }
+          ],
+          "status_note": "本轮已完成修正；五词本地选定与菜单/本书设置待核明确分开。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/01_大纲细纲/全书总纲.md",
+              "line": 32,
+              "quote": "- 角色：暂无适配词（待核对：后台是否必填及能否留空）；本地不推荐凑选，不用“女配”“魔法”等词补栏。"
+            }
+          ],
+          "clear_local_final": true
+        },
+        "qimao": {
+          "classification_presence": "detailed",
+          "status_pattern": "clear_candidate_unresolved",
+          "local_decision": "explicitly_not_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/01_大纲细纲/全书总纲.md",
+              "line": 49,
+              "quote": "- 一级分类：幻想言情（核验候选，适配待核对，尚未定稿）。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/01_大纲细纲/全书总纲.md",
+              "line": 57,
+              "quote": "- 适配结论与待调整：短故事入口保留为备选，分类暂不定稿。先核验幻想言情→异世幻想的接收范围；若不容纳，再核验古代言情→种田经商这一备选映射，不把后者写成已采用分类。不得为了凑类加爱情、穿越、修仙升级或大量经营支线。"
+            }
+          ],
+          "status_note": "明确标为核验候选和未定稿，不能把此处拟选批量升级为已选定。",
+          "content_fit_unresolved": true,
+          "content_fit_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/01_大纲细纲/全书总纲.md",
+              "line": 50,
+              "quote": "- 二级分类：异世幻想（核验候选，属于该一级分类；本书无穿越或另入异世设定，须核实无主爱情的古风幻想是否归入此栏）。"
+            }
+          ],
+          "content_fit_note": "本书没有主要爱情/穿越异世设定，幻想言情→异世幻想接收范围明确未决。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "detailed",
+          "status_pattern": "clear_backup_proposal",
+          "local_decision": "backup_proposal",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/01_大纲细纲/全书总纲.md",
+              "line": 64,
+              "quote": "- 目标平台：起点；作品阶段：备选（未创建），未查看本书后台。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他们造神，我捏泥狗/01_大纲细纲/全书总纲.md",
+              "line": 74,
+              "quote": "- 适配结论与待调整：有分类父子关系依据，可作备选；不等于短篇签约、流量或推荐适配已验证。第3—4章已写合作形成，第6章写出迟疑、砸像与协作，第7章承接余工钱、失去旧窑和小炉首单的后果；未扩成修仙升级或更多灾难。"
+            }
+          ],
+          "status_note": "备选映射与后台未核有说明，未声称本地定稿；不因番茄已定而改变。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 9,
+      "title": "他的单身人设里，住着我",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/他的单身人设里，住着我",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他的单身人设里，住着我/创作约定.md",
+          "sha256": "2de39f0f403893a668143c0bc7ee40d7da7724ca184a13193ae37fab6661e03c"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他的单身人设里，住着我/01_大纲细纲/全书总纲.md",
+          "sha256": "8f0a0d80df7d2d9f021fd9e957b86d191865938dc2aac2694954b7dd8c33899b"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他的单身人设里，住着我/01_大纲细纲/全书总纲.md",
+              "line": 12,
+              "quote": "- 番茄短故事作品分类（跨平台备用拟选，非七猫标签；据 2026-09-19 整理的短故事选择表）：主分类＝女性成长；情节＝直播；角色＝暂不选择；情绪＝励志；背景＝现代、职场。依据是直播中的公开否认触发听南终止隐秘关系，她履行旧约后用独立样本获得署名工作；截图可见角色词没有准确对应她的选项。投稿前须按实际页面复核选项与数量限制，当前并非平台已确认值。"
+            }
+          ],
+          "status_note": "同一条备用拟选记录同时说明内容依据和平台未确认，本地是否定稿未单列；备用建议本身不能自动采用。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他的单身人设里，住着我/01_大纲细纲/全书总纲.md",
+              "line": 12,
+              "quote": "截图可见角色词没有准确对应她的选项。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "coarse_positioning_only",
+          "status_pattern": "not_assessable",
+          "local_decision": "female_short_story_positioning_only",
+          "backend_verification": "detailed_tags_unverified",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/他的单身人设里，住着我/01_大纲细纲/全书总纲.md",
+              "line": 11,
+              "quote": "- 七猫作品类型：女频·短故事；期待为“公开被否认”立刻发生、女主有现实工作代价、最终不是靠男友宣布‘她是我女友’才恢复身份。参考样本不构成题材热度证明；七猫站内细分标签仍待投稿页面核对。"
+            }
+          ],
+          "status_note": "仅有女频短故事总体定位及细分标签待投稿页面核对，未见原生一二级分类/四栏完整记录，不凭总体定位补造细项。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 10,
+      "title": "出嫁那日，婚帖写我为妾",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/出嫁那日，婚帖写我为妾",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/出嫁那日，婚帖写我为妾/创作约定.md",
+          "sha256": "9686ad88f00751fce5e37b4950147166e8f24242d21b4d5a7cb0ab8b7e919551"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/出嫁那日，婚帖写我为妾/01_大纲细纲/全书总纲.md",
+          "sha256": "870790833be57c2c0cb5372ee26ca3beb4c13fff692c953f77a31d1e55b73e22"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/出嫁那日，婚帖写我为妾/01_大纲细纲/全书总纲.md",
+              "line": 12,
+              "quote": "- 番茄短故事作品分类（跨平台备用拟选，非七猫标签；据 2026-09-19 整理的短故事选择表）：主分类＝古风世情；情节＝大女主；角色＝暂不选择；情绪＝励志；背景＝古代。依据是知漪当场拒作妾、独立处理茶货与工钱，结尾以自己的名字经营，胜利伴随当季收益损失；截图可见角色词没有准确对应她的选项。投稿前须按实际页面复核选项与数量限制，当前并非平台已确认值。"
+            }
+          ],
+          "status_note": "同一条备用拟选记录同时说明内容依据和平台未确认，本地是否定稿未单列；备用建议本身不能自动采用。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/出嫁那日，婚帖写我为妾/01_大纲细纲/全书总纲.md",
+              "line": 12,
+              "quote": "截图可见角色词没有准确对应她的选项。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "coarse_positioning_only",
+          "status_pattern": "not_assessable",
+          "local_decision": "female_short_story_positioning_only",
+          "backend_verification": "detailed_tags_unverified",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/出嫁那日，婚帖写我为妾/01_大纲细纲/全书总纲.md",
+              "line": 11,
+              "quote": "- 七猫作品类型：女频·短故事；看点为花轿前的即时反抗、家庭与生意双重代价、可见的自救过程。榜单只支持相邻情绪参考，不证明这个选题的市场成绩；七猫站内细分标签仍待投稿页面核对。"
+            }
+          ],
+          "status_note": "仅有女频短故事总体定位及细分标签待投稿页面核对，未见原生一二级分类/四栏完整记录，不凭总体定位补造细项。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 11,
+      "title": "剑来：明日簿上没有陈平安",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿上没有陈平安",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿上没有陈平安/创作约定.md",
+          "sha256": "09948c915ff8ae202967a50a9a704643989bef96065567f3ae40c0ec109c4d22"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿上没有陈平安/01_大纲细纲/全书总纲.md",
+          "sha256": "b2ca46b665ab14e06214e9f8e9a38aaa2e4c49350445f23f581a94ad0c58f942"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿上没有陈平安/01_大纲细纲/全书总纲.md",
+              "line": 11,
+              "quote": "- 七猫后台拟选：作品类型一“衍生言情”；作品类型二“经典衍生”；风格“悬疑、热血、短故事”；角色“少年、智商在线、强强”；情节“同人、剑道、HE”；背景“仙侠、传统玄幻、衍生言情”。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿上没有陈平安/01_大纲细纲/全书总纲.md",
+              "line": 12,
+              "quote": "- 边界：上述分类来自既有后台选项截图，投稿前仍须在本书实际创建页复核；读者端“N次元 → 衍生同人”不是后台填写值。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 12,
+      "title": "剑来：明日簿除名陈平安，宁姚一剑劈天榜",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿除名陈平安，宁姚一剑劈天榜",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿除名陈平安，宁姚一剑劈天榜/创作约定.md",
+          "sha256": "c96f832d5f897abd38c871f25b27bd3f5200f42dca6de32b90a6d0fd13dcaadf"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿除名陈平安，宁姚一剑劈天榜/01_大纲细纲/全书总纲.md",
+          "sha256": "86993325a2c54de789de337c69c2a7965ee436d89cc0cf73bbb6bdacd2c44bd9"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "proposal_backend_distinguished",
+          "local_decision": "explicit_offline_proposal",
+          "backend_verification": "historical_menu_checked_2026_10_01_book_not_saved",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿除名陈平安，宁姚一剑劈天榜/01_大纲细纲/全书总纲.md",
+              "line": 29,
+              "quote": "- 数量与状态：合计拟选4项，未超过页面所示8项上限；主分类必选，其他栏只选有充分正文依据的词。均未在番茄后台保存、提交或发布。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿除名陈平安，宁姚一剑劈天榜/01_大纲细纲/全书总纲.md",
+              "line": 30,
+              "quote": "- 待核对：投稿当日的可选项、同人授权、内容声明与跨平台签约／独家约束；本地拟选不代表平台认可。"
+            }
+          ],
+          "status_note": "菜单历史核对、离线方案和本书未保存分别说明；仍未明确为本地定稿，不能自行升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿除名陈平安，宁姚一剑劈天榜/01_大纲细纲/全书总纲.md",
+              "line": 26,
+              "quote": "- 角色：暂不选。当前短故事角色栏无贴合宁姚、陈平安这组双强剑修的词，不以“女配”“魔法”等不符标签填栏。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "detailed",
+          "status_pattern": "proposal_backend_distinguished",
+          "local_decision": "explicit_offline_proposal",
+          "backend_verification": "historical_menu_checked_2026_10_01_book_not_saved",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿除名陈平安，宁姚一剑劈天榜/01_大纲细纲/全书总纲.md",
+              "line": 19,
+              "quote": "- 数量与状态：四栏各拟选3项，符合该入口通常每栏1—3项提示；这是规划选择，不等于后台已保存或审核通过。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/剑来：明日簿除名陈平安，宁姚一剑劈天榜/01_大纲细纲/全书总纲.md",
+              "line": 9,
+              "quote": "- 七猫页面来源与核对日期：2026-10-01 在登录态[七猫新建短故事页面](https://zuozhe.qimao.com/front/book-manage/short/information)复核女频一二级分类、四栏标签和每栏必选1—3项提示。"
+            }
+          ],
+          "status_note": "虽仍使用拟选，但已明确“规划选择不等于后台保存”，不据拟选一词认定为错误。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 13,
+      "title": "在自家店干了十年，妈妈说我没工作",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/在自家店干了十年，妈妈说我没工作",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/在自家店干了十年，妈妈说我没工作/创作约定.md",
+          "sha256": "9ed1c679bcc728510be5c7acd0c9a44f13d12a6946ed5464ea9534a108cc8c61"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/在自家店干了十年，妈妈说我没工作/01_大纲细纲/全书总纲.md",
+          "sha256": "9bf7acdca7c5346797129f50760bdf7f8db08ed6d4000a46d6e0acba46678511"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/在自家店干了十年，妈妈说我没工作/00_项目策划/开书策划.md",
+          "sha256": "e67bff33579ae40e98fc93254b038ea3ded7c04445f623955ad4319c882b4d38"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/在自家店干了十年，妈妈说我没工作/01_大纲细纲/全书总纲.md",
+              "line": 30,
+              "quote": "| 栏目 | 原词拟选与状态 | 内容依据（正式正文） |"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/在自家店干了十年，妈妈说我没工作/01_大纲细纲/全书总纲.md",
+              "line": 40,
+              "quote": "- 待核对：当前账号入口、栏目选项及上限、角色留空是否允许、平台计数字段及创建校验。正文支持已作本地复核。全部为本地拟选，不能称后台已确认、已签约或审核通过。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/在自家店干了十年，妈妈说我没工作/01_大纲细纲/全书总纲.md",
+              "line": 34,
+              "quote": "| 角色 | 待核对 | 参考所列26项没有烘焙师、普通从业者或姐姐，不硬套女总裁、女配等；拟留空，须先确认本书入口允许留空。 |"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/在自家店干了十年，妈妈说我没工作/01_大纲细纲/全书总纲.md",
+              "line": 55,
+              "quote": "| 一级分类 | 现实主义（拟选） | 第1—8章普通现实职业与家庭资源冲突。 |"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/在自家店干了十年，妈妈说我没工作/01_大纲细纲/全书总纲.md",
+              "line": 62,
+              "quote": "- 选择依据：逐栏已对照八章现行正式正文，备用记录不改变主投番茄方向；后台选项与实际创建校验仍待核对。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 14,
+      "title": "夫君为我立碑那日，我活着回来了",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/夫君为我立碑那日，我活着回来了",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/夫君为我立碑那日，我活着回来了/创作约定.md",
+          "sha256": "8779d4b60ada70529870a59ddccafb691e3d6e8674b605af4ff4c4be016697da"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/夫君为我立碑那日，我活着回来了/01_大纲细纲/全书总纲.md",
+          "sha256": "b239df97f231049e3254096dd404a081f2ca736da49e97bf940b62b28ba0c3da"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "target_only_no_classification",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/夫君为我立碑那日，我活着回来了/创作约定.md",
+              "line": 7,
+              "quote": "采用依据：用户要求“扫榜-七猫-短篇，选最热的一本拆解开书”，并要求直接操作、继续访问官网。本轮自行选定以下工作方案，后续可按创作需要修订；未把这些设计记为已发生的正文事实。"
+            }
+          ],
+          "status_note": "创作约定涉及七猫，但允许读取的当前三文件没有具体平台分类；不将书名、背景或目标读者猜作分类。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 15,
+      "title": "妈妈，把那段录音关掉",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/创作约定.md",
+          "sha256": "4248e81b6335e07e6692ef227a525187b155efd6f64452c42ed5ad3be981a59e"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/01_大纲细纲/全书总纲.md",
+          "sha256": "7009016f57b4a4c718bd7ab13ba26977ecb9b672c7c86b7478d5007fdbad53b9"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/00_项目策划/开书策划.md",
+          "sha256": "56492b50cdbdca93da75478c623df0fea75a97a959ad5946361147752e36956a"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/01_大纲细纲/全书总纲.md",
+              "line": 29,
+              "quote": "- 主分类：女性成长（拟选）。依据：成稿中女儿从拒绝被公开，到接受母亲也有拒绝权；母亲完成母职之外的工友展。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/01_大纲细纲/全书总纲.md",
+              "line": 35,
+              "quote": "- 待核对：本书后台入口和五栏现有词项、可留空栏目、数量及实际设置；情节与角色最终取舍；番茄署名。任何拟选值均非后台已确认，已按成稿复核内容适配，后台尚未确认。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": true,
+          "content_fit_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/01_大纲细纲/全书总纲.md",
+              "line": 30,
+              "quote": "- 情节：待核对，暂不硬贴。母女与工友合作是本书情节，但不因此把一般合作升格为“女性互助”主承诺；没有恋爱、系统或复仇。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/01_大纲细纲/全书总纲.md",
+              "line": 35,
+              "quote": "- 待核对：本书后台入口和五栏现有词项、可留空栏目、数量及实际设置；情节与角色最终取舍；番茄署名。任何拟选值均非后台已确认，已按成稿复核内容适配，后台尚未确认。"
+            }
+          ],
+          "content_fit_note": "情节/角色最终取舍明确待定；内容不支撑把一般合作直接改为女性互助，不能凑词。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/01_大纲细纲/全书总纲.md",
+              "line": 31,
+              "quote": "- 角色：待核对，无准确拟选。已安装词表没有自然对应本书母女及声音剪辑者的词项，不自造“母女”官方标签。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/01_大纲细纲/全书总纲.md",
+              "line": 49,
+              "quote": "- 一级分类：现实主义（拟选）。依据：成稿围绕现实母女关系与有限职业选择，无幻想机制或爱情主线。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/妈妈，把那段录音关掉/01_大纲细纲/全书总纲.md",
+              "line": 56,
+              "quote": "- 待核对：本书登录页面全部分类与四栏词项、现实主义分支数量的准确含义及最终创建校验、后台署名；仍未确认后台值，已按成稿复核内容适配。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 16,
+      "title": "病房里，他说我只是顺手照顾",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/病房里，他说我只是顺手照顾",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/病房里，他说我只是顺手照顾/创作约定.md",
+          "sha256": "0606b8454c6a99c1c5bfe7b3bab14fdde1679c7b789366b1bdfe7b1a97e86e99"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/病房里，他说我只是顺手照顾/01_大纲细纲/全书总纲.md",
+          "sha256": "e66ed069431eca2d6a44a27015fc81d2386c0c4d2c45921ff01a75645621d57d"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/病房里，他说我只是顺手照顾/01_大纲细纲/全书总纲.md",
+              "line": 12,
+              "quote": "- 番茄短故事作品分类（跨平台备用拟选，非七猫标签；据 2026-09-19 整理的短故事选择表）：主分类＝婚姻家庭；情节＝婚恋；角色＝暂不选择；情绪＝励志；背景＝现代、家庭、职场。依据是四年无偿照护引发婚姻决裂，见秋完成照护交接后离婚、复工；截图可见角色词没有准确对应她的选项。投稿前须按实际页面复核选项与数量限制，当前并非平台已确认值。"
+            }
+          ],
+          "status_note": "同一条备用拟选记录同时说明内容依据和平台未确认，本地是否定稿未单列；备用建议本身不能自动采用。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/病房里，他说我只是顺手照顾/01_大纲细纲/全书总纲.md",
+              "line": 12,
+              "quote": "截图可见角色词没有准确对应她的选项。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "coarse_positioning_only",
+          "status_pattern": "not_assessable",
+          "local_decision": "female_short_story_positioning_only",
+          "backend_verification": "detailed_tags_unverified",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/病房里，他说我只是顺手照顾/01_大纲细纲/全书总纲.md",
+              "line": 11,
+              "quote": "- 七猫作品类型：女频·短故事；阅读期待是日常劳动被看见、女主不以伤害老人证明决心、离婚后生活真的发生变化。来自榜单的只是相邻情绪观察，未获短故事热度证明；七猫站内细分标签仍待投稿页面核对。"
+            }
+          ],
+          "status_note": "仅有女频短故事总体定位及细分标签待投稿页面核对，未见原生一二级分类/四栏完整记录，不凭总体定位补造细项。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 17,
+      "title": "系统让我每天得罪一个人，月底结算奖金",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/系统让我每天得罪一个人，月底结算奖金",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/系统让我每天得罪一个人，月底结算奖金/创作约定.md",
+          "sha256": "d63c7f75c7cd2bd4d0976157fb3da158132829f9c6da08c47dc485d63dce8875"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/系统让我每天得罪一个人，月底结算奖金/01_大纲细纲/全书总纲.md",
+          "sha256": "c72ce0d8a5bfb797fcebc5541f8ec7a2f0194d22385d84bfd548bbd74de8bcfd"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/系统让我每天得罪一个人，月底结算奖金/01_大纲细纲/全书总纲.md",
+              "line": 7,
+              "quote": "- 平台分类：番茄短篇「作品分类」，逐栏拟选值如下。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/系统让我每天得罪一个人，月底结算奖金/01_大纲细纲/全书总纲.md",
+              "line": 15,
+              "quote": "- 待核对：截图未显示短篇各栏的可选数量与签约后修改规则；本组值为拟选，未经后台确认；「角色」栏是否需要随正文调整待定。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": true,
+          "content_fit_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/系统让我每天得罪一个人，月底结算奖金/01_大纲细纲/全书总纲.md",
+              "line": 15,
+              "quote": "- 待核对：截图未显示短篇各栏的可选数量与签约后修改规则；本组值为拟选，未经后台确认；「角色」栏是否需要随正文调整待定。"
+            }
+          ],
+          "content_fit_note": "女总裁虽有候选值和内容依据，但现行材料明确仍需决定是否调整，不能批量升级。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    },
+    {
+      "index": 18,
+      "title": "莲花楼：说好搭伙，你怎么又想跑路",
+      "root": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路",
+      "sources": [
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路/创作约定.md",
+          "sha256": "dbc45da572df4559e64c39efefcbee47a0aea9bb7e4958e15c4297103d1dd258"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路/01_大纲细纲/全书总纲.md",
+          "sha256": "29f4431e3107f1c2a1582edcc629ae340da3173de89c499e5294806e2d8bcb1b"
+        },
+        {
+          "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路/00_项目策划/开书策划.md",
+          "sha256": "ba81d658bb21ceb2c7b661fc1b0e891aa478fc8041d07dda0620ae398cc858d8"
+        }
+      ],
+      "platforms": {
+        "fanqie": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路/01_大纲细纲/全书总纲.md",
+              "line": 34,
+              "quote": "- 情绪：爽文、救赎、沙雕搞笑（均拟选）；第3/8章破鬼、第4章反勒索、第5/7/9/10章相互分担，费用与饭桌斗嘴提供轻喜。沙雕搞笑为次选：成稿以轻喜为主，未验证读者效果，投稿时可据入口调整，不以标签保证效果。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路/01_大纲细纲/全书总纲.md",
+              "line": 36,
+              "quote": "- 选择依据：以上依据已用实际第1—10章复核，平台选项仍是本地拟选、未确认。共7个拟选词；参考记录五栏合计最多8，但本书当前账号、单栏数量及角色能否留空仍待投稿页复核。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": true,
+          "content_fit_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路/01_大纲细纲/全书总纲.md",
+              "line": 34,
+              "quote": "沙雕搞笑为次选：成稿以轻喜为主，未验证读者效果，投稿时可据入口调整，不以标签保证效果。"
+            }
+          ],
+          "content_fit_note": "情绪组合里沙雕搞笑只列次选，成稿以轻喜为主；主分类收稿资格/IP授权另属平台/权利核验，不等于内容一定不适配。",
+          "no_matching_role_term": true,
+          "role_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路/01_大纲细纲/全书总纲.md",
+              "line": 33,
+              "quote": "- 角色：待核对；五栏词表没有适合木匠或非全能假名医的准确角色词，不硬贴神医；当前入口是否可留空及可用选项未核，暂不拟选。"
+            }
+          ],
+          "clear_local_final": false
+        },
+        "qimao": {
+          "classification_presence": "detailed",
+          "status_pattern": "legacy_ambiguous",
+          "local_decision": "proposal_not_explicitly_final",
+          "backend_verification": "actual_book_settings_unverified",
+          "local_backend_mixing_risk": true,
+          "status_evidence": [
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路/01_大纲细纲/全书总纲.md",
+              "line": 51,
+              "quote": "- 一级分类：N次元（拟选）。"
+            },
+            {
+              "path": "/Users/cuining/Documents/ChatGPT/小说-短篇/莲花楼：说好搭伙，你怎么又想跑路/01_大纲细纲/全书总纲.md",
+              "line": 57,
+              "quote": "- 选择依据：已经由本书实际第1—10章核对内容，仍未在本书后台确认；本书拟用男频分支，不沿用番茄五栏或女频分类。"
+            }
+          ],
+          "status_note": "同一组“拟选/待核对”承载本地建议与后台事实，本地是否已定稿未单独说明；这是表达风险，不能自动升级。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        },
+        "qidian": {
+          "classification_presence": "not_recorded",
+          "status_pattern": "not_assessable",
+          "local_decision": "not_recorded",
+          "backend_verification": "not_recorded",
+          "local_backend_mixing_risk": false,
+          "status_evidence": [],
+          "status_note": "本轮允许读取的现行材料未见本平台分类；不据此推定不适合该平台。",
+          "content_fit_unresolved": false,
+          "content_fit_evidence": [],
+          "content_fit_note": "未发现超出后台菜单/数量核验的明确内容适配未决表述；不等于适配已验证。",
+          "no_matching_role_term": false,
+          "role_evidence": [],
+          "clear_local_final": false
+        }
+      }
+    }
+  ]
+}

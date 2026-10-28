@@ -1,0 +1,110 @@
+✖ draft action href changes fail before clicking create (20.948488ms)
+✖ draft action href changes fail before clicking save (70.114935ms)
+✖ stable same-page create and save action href forms remain supported (4.215535ms)
+✖ ordinary qimao stops subsequent field and save actions when loaded draft state changes (10.748384ms)
+✖ ordinary qidian stops subsequent field and save actions when loaded draft state changes (7.12192ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 0
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 264.645035
+
+✖ failing tests:
+
+test at benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2353:38
+✖ draft action href changes fail before clicking create (20.948488ms)
+  AssertionError [ERR_ASSERTION]: {"stage":"create","initialHref":null,"response":{"schema":1,"id":"verifytarget1create_draft","nonce":"nonce","session_id":"1","binding_sha256":"binding","ok":false,"error":"platform_browser_unsafe_navigation"}}
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2357:47)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2353:38
+✖ draft action href changes fail before clicking save (70.114935ms)
+  AssertionError [ERR_ASSERTION]: {"stage":"save","initialHref":null,"response":{"schema":1,"id":"verifytarget2create_draft","nonce":"nonce","session_id":"2","binding_sha256":"binding","ok":true,"result":"99"}}
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2357:47)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2364:1
+✖ stable same-page create and save action href forms remain supported (4.215535ms)
+  AssertionError [ERR_ASSERTION]: {"stage":"create","initialHref":null,"response":{"schema":1,"id":"verifytarget3create_draft","nonce":"nonce","session_id":"3","binding_sha256":"binding","ok":false,"error":"platform_browser_unsafe_navigation"}}
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2368:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2373:42
+✖ ordinary qimao stops subsequent field and save actions when loaded draft state changes (10.748384ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      '#chapter',
+  +   '#title',
+  +   '#body'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2381:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '#chapter', '#title', '#body' ],
+    expected: [ '#chapter' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2373:42
+✖ ordinary qidian stops subsequent field and save actions when loaded draft state changes (7.12192ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      '#chapter',
+  +   '#title',
+  +   '#body'
+    ]
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-five-fixes-loop/chrome/before-source-replay.mjs:2381:12)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '#chapter', '#title', '#body' ],
+    expected: [ '#chapter' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,6 @@
+{
+  "completed": false,
+  "reason": "Stopped by SIGINT after independent audit confirmed a late native pre-fill target change; no full-suite result claimed",
+  "exit_code": 130,
+  "log": "interrupted-before-final-write-guard.log"
+}

@@ -1,0 +1,14 @@
+test_foreign_breakout_keeps_later_inert_siblings_in_html_namespace (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_foreign_breakout_keeps_later_inert_siblings_in_html_namespace) ... ok
+test_foreign_self_closing_decoration_and_void_html_remain_accepted (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_foreign_self_closing_decoration_and_void_html_remain_accepted) ... ok
+test_html_integration_and_breakout_do_not_bypass_inert_self_closing_check (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_html_integration_and_breakout_do_not_bypass_inert_self_closing_check) ... ok
+test_nested_templates_close_their_own_children_and_resume_visible_siblings (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_nested_templates_close_their_own_children_and_resume_visible_siblings) ... ok
+test_only_visible_template_sibling_reaches_research_without_changing_raw_source (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_only_visible_template_sibling_reaches_research_without_changing_raw_source) ... ok
+test_self_closed_inert_html_is_rejected_before_accepting_its_contents (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_self_closed_inert_html_is_rejected_before_accepting_its_contents) ... ok
+test_template_boundaries_preserve_visible_inline_text (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_boundaries_preserve_visible_inline_text) ... ok
+test_template_controls_cannot_escape_their_scope (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_controls_cannot_escape_their_scope) ... ok
+test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.078s
+
+OK

@@ -1,0 +1,46 @@
+✖ ordinary qimao readback accepts configured same-ID initial redirects and pins the arrival (15.207651ms)
+✖ ordinary qidian readback accepts configured same-ID initial redirects and pins the arrival (2.306569ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 183.219669
+
+✖ failing tests:
+
+test at benchmarks/results/development-20261023-followup-loop/chrome/previous-final-redirect-probe.mjs:2170:42
+✖ ordinary qimao readback accepts configured same-ID initial redirects and pins the arrival (15.207651ms)
+  AssertionError [ERR_ASSERTION]: {"schema":1,"id":"verifytarget1read_draft","nonce":"nonce","session_id":"1","binding_sha256":"binding","ok":false,"error":"platform_browser_identity_mismatch"}
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261023-followup-loop/chrome/previous-final-redirect-probe.mjs:2184:33)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at benchmarks/results/development-20261023-followup-loop/chrome/previous-final-redirect-probe.mjs:2170:42
+✖ ordinary qidian readback accepts configured same-ID initial redirects and pins the arrival (2.306569ms)
+  AssertionError [ERR_ASSERTION]: {"schema":1,"id":"verifytarget2read_draft","nonce":"nonce","session_id":"2","binding_sha256":"binding","ok":false,"error":"platform_browser_identity_mismatch"}
+  
+  false !== true
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261023-followup-loop/chrome/previous-final-redirect-probe.mjs:2184:33)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

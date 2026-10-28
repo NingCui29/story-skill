@@ -1,0 +1,15 @@
+{
+  "protected_inputs_unchanged": {
+    "source.txt": true,
+    "continuation/第01集.txt": true,
+    "format/原稿.txt": true
+  },
+  "format_only_allowed_leading_indent_and_blank_lines_changed": true,
+  "preserved_nbsp": true,
+  "preserved_typo": true,
+  "no_novel_state_created": true,
+  "episodes_written": [
+    "第03集.txt",
+    "第02集.txt"
+  ]
+}

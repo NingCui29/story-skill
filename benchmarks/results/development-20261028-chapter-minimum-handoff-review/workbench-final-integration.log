@@ -1,0 +1,13 @@
+test_native_receipt_to_editor_for_each_scope (test_workbench_writing_scope.NativeCandidateIntegrationTests.test_native_receipt_to_editor_for_each_scope) ... ok
+test_archive_roundtrip_preserves_scope_sidecar (test_workbench_writing_scope.WorkbenchWritingScopeTests.test_archive_roundtrip_preserves_scope_sidecar) ... ok
+test_complete_chapter_target_and_navigation (test_workbench_writing_scope.WorkbenchWritingScopeTests.test_complete_chapter_target_and_navigation) ... ok
+test_fragment_counts_all_body_lines_and_excludes_chapter_heading (test_workbench_writing_scope.WorkbenchWritingScopeTests.test_fragment_counts_all_body_lines_and_excludes_chapter_heading) ... ok
+test_fragment_edit_save_recovery_and_review_keep_scope (test_workbench_writing_scope.WorkbenchWritingScopeTests.test_fragment_edit_save_recovery_and_review_keep_scope) ... ok
+test_fragment_heading_after_invisible_prefix_is_not_counted (test_workbench_writing_scope.WorkbenchWritingScopeTests.test_fragment_heading_after_invisible_prefix_is_not_counted) ... ok
+test_invalid_scope_is_not_silently_reinterpreted (test_workbench_writing_scope.WorkbenchWritingScopeTests.test_invalid_scope_is_not_silently_reinterpreted) ... ok
+test_pending_recovery_retains_scope (test_workbench_writing_scope.WorkbenchWritingScopeTests.test_pending_recovery_retains_scope) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 3.765s
+
+OK

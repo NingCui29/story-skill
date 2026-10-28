@@ -1,0 +1,3229 @@
+{
+  "status": "passed",
+  "date": "2026-10-24",
+  "scope": "All-feature follow-up on six previous repair categories and two Chrome regressions, with direct repair, red/green reproduction, independent review, local browser DOM and final stable-source whole repository suite.",
+  "full_suite": {
+    "scope": "Complete repository suite after the all-feature follow-up repair loop; offline fixtures on macOS",
+    "started_at_utc": "2026-10-23T17:13:27.299782+00:00",
+    "python": "3.12.14 (main, Aug 25 2026, 13:50:22) [Clang 22.1.3 ]",
+    "platform": "macOS-15.8.1-x86_64-i386-64bit",
+    "node": "v24.19.0",
+    "tests_discovered": 2704,
+    "tests_run": 2704,
+    "passed": 2683,
+    "skipped": [
+      {
+        "test": "test_install_races.InstallationRaceTests.test_windows_publication_refuses_an_empty_target_created_inside_rename",
+        "reason": "Windows rename provides the no-replace guarantee tested here"
+      },
+      {
+        "test": "test_platform_chrome_bridge.WindowsProcessLivenessTests.test_native_windows_current_and_exited_child_without_signals",
+        "reason": "requires a real Windows process handle"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_editor_save_during_restore_is_preserved_with_backup",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_failed_publication_restores_a_copy_and_retains_backup_for_retry",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_first_export_succeeds_without_hard_links",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_recreated_target_wins_over_publication_and_restore",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_portable_export.PortableWindowsExportTests.test_revision_preserves_old_backup_without_hard_links",
+        "reason": "Windows publication without hard links"
+      },
+      {
+        "test": "test_publish_paths.PublishingConnectionPathTests.test_windows_database_pin_blocks_replacement_for_connection_lifetime",
+        "reason": "Native Windows delete-sharing protection"
+      },
+      {
+        "test": "test_retirement_path_race.RetirementPathRaceTests.test_windows_parent_pin_blocks_rename_but_allows_child_publication",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_atomic_first_publication_and_revision_preserve_unicode_bytes",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_changed_target_is_restored_and_retained_in_backup",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_empty_pinned_directory_rejects_junction_conversion_until_released",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_process_cannot_swap_pinned_leaf_or_ancestor",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_recreated_target_wins_over_backup_restore",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_external_target_wins_over_first_publication",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_nested_directory_guards_leave_no_files_on_normal_or_exception_exit",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_pinned_directories_allow_cross_directory_backup_and_copy_restore",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_windows_directory_pins.WindowsDirectoryPinTests.test_root_report_update_and_nested_backup_restore_share_ancestors",
+        "reason": "Requires native Windows directory share locks"
+      },
+      {
+        "test": "test_workbench_books.WorkbenchBookManagementTests.test_windows_shell_missing_path_errors_without_moving_any_directory",
+        "reason": "requires Windows Shell"
+      },
+      {
+        "test": "test_workbench_books.WorkbenchBookManagementTests.test_windows_shell_recycles_only_owned_synthetic_directory",
+        "reason": "requires Windows Shell"
+      },
+      {
+        "test": "test_writing_brief.WritingBriefTests.test_path_ctime_semantics_do_not_reject_a_stable_source",
+        "reason": "Native Windows path/handle timestamp semantics"
+      }
+    ],
+    "failures": [],
+    "errors": [],
+    "elapsed_seconds": 1088.61,
+    "source_changed_during_run": [],
+    "successful": true
+  },
+  "validated_source_file_count": 340,
+  "changed_this_round": [
+    "skills/story-skill/scripts/story_chrome_bridge.mjs",
+    "skills/story-skill/scripts/story_platform_browser.py",
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+    "skills/story-skill/scripts/story_platform_drafts.py",
+    "skills/story-skill/scripts/story_rank_sources.py",
+    "tests/test_chrome_bridge_driver.mjs",
+    "tests/test_platform_browser.py",
+    "tests/test_platform_browser_link_base.py",
+    "tests/test_platform_chrome_initialization.py",
+    "tests/test_platform_draft_retirement.py",
+    "tests/test_rank_source_template_scope.py"
+  ],
+  "native": {
+    "ok": true,
+    "files_sha256": {
+      "skills/story-skill/scripts/story_platform_browser.py": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1",
+      "tests/test_platform_browser.py": "1c15878b6d331232cd8143f1f695463f882e84b25929ac6da3c7864f819618de",
+      "tests/test_platform_browser_link_base.py": "2fe324a56dca1d52848bc2b2172c8ede976da49f01a5350e0d0f8f6f1dee5270"
+    },
+    "new_test_methods": 3,
+    "targeted_tests_run": 147,
+    "passed": 147,
+    "skipped": 0,
+    "failures": 0,
+    "errors": 0,
+    "new_action_scenarios": 62,
+    "findings": [
+      "Unchanged relative href with a changed document base sent an actual create/save click to a different destination. Effective href is now checked in the final bound button snapshot."
+    ],
+    "candidate_regressions_fixed": [
+      "Configured same-draft aliases with empty or fragment save links were initially over-rejected. Both snapshot document identities and actual self-targets now prove eligibility.",
+      "Unicode whitespace classified a path as a self-link. Eligibility now uses browser-resolved document URL equality without fragment, preserving real ASCII/C0 self-links."
+    ],
+    "red_evidence": {
+      "base-red.log": 6,
+      "alias-red.log": 4,
+      "unicode-red.log": 6
+    },
+    "unresolved_confirmed_findings": [],
+    "limits": [
+      "Full adapter tests use local fake DOM and public Playwright-shaped transport; actual DOM callbacks are verified separately in isolated local Chromium.",
+      "No real platform, account, novel content, installation or release modified."
+    ]
+  },
+  "chrome": {
+    "baseline_source_sha256": "fcb0c94d43b9a6865621731a5d88c974b87367642081e9cede29fb730baf2768",
+    "source_sha256": {
+      "skills/story-skill/scripts/story_chrome_bridge.mjs": "beb02754e55e6b55a7bbd57042b949e4761125d0dc313bf0ddf8cc749984705f",
+      "tests/test_chrome_bridge_driver.mjs": "f2a71cef9180617021ae1e4706547b5fef5f1e12b3181b62810843a9f79320dc",
+      "tests/test_chrome_worker.mjs": "64b499eede952c2cc1ed700fb46ca3af4f5cabc1ff2b6c9c2bd08daa075ca9fc"
+    },
+    "findings": [
+      {
+        "id": "effective_link_destination_drift",
+        "fixed": true,
+        "baseline_red": "red-effective-destination.log",
+        "candidate_compatibility_red": "red-same-document-alias.log",
+        "candidate_unicode_self_link_red": "red-unicode-self-link.log"
+      }
+    ],
+    "tests": {
+      "driver": 166,
+      "worker": 94,
+      "total": 260,
+      "passed": 260,
+      "failed": 0,
+      "skipped": 0,
+      "new_top_level": 6,
+      "new_action_parameter_scenarios": 39,
+      "new_callback_fallback_checks": 2
+    },
+    "local_chrome_dom": {
+      "source_sha256": "beb02754e55e6b55a7bbd57042b949e4761125d0dc313bf0ddf8cc749984705f",
+      "checks": 18,
+      "passed": 18,
+      "results": [
+        {
+          "name": "path",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "next",
+            "resolvedHref": "https://example.test/draft/next",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "next",
+            "resolvedHref": "https://example.test/publish/next",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/publish/next"
+        },
+        {
+          "name": "query",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "?mode=draft",
+            "resolvedHref": "https://example.test/draft/?mode=draft",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "?mode=draft",
+            "resolvedHref": "https://example.test/publish/?mode=draft",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/publish/?mode=draft"
+        },
+        {
+          "name": "empty",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "",
+            "resolvedHref": "https://example.test/draft/",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "",
+            "resolvedHref": "https://example.test/publish/",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/publish/"
+        },
+        {
+          "name": "fragment",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "#save",
+            "resolvedHref": "https://example.test/draft/#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "#save",
+            "resolvedHref": "https://example.test/publish/#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/publish/#save"
+        },
+        {
+          "name": "root",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "/draft/save",
+            "resolvedHref": "https://example.test/draft/save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "/draft/save",
+            "resolvedHref": "https://example.test/draft/save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/draft/save"
+        },
+        {
+          "name": "absolute",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "https://example.test/draft/save",
+            "resolvedHref": "https://example.test/draft/save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "https://example.test/draft/save",
+            "resolvedHref": "https://example.test/draft/save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/draft/save"
+        },
+        {
+          "name": "protocol-relative",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "//example.test/draft/save",
+            "resolvedHref": "https://example.test/draft/save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "//example.test/draft/save",
+            "resolvedHref": "https://example.test/draft/save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/draft/save"
+        },
+        {
+          "name": "no-link",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": null,
+            "resolvedHref": null,
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": null,
+            "resolvedHref": null,
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": ""
+        },
+        {
+          "name": "stable-base",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "next",
+            "resolvedHref": "https://example.test/draft/next",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "next",
+            "resolvedHref": "https://example.test/draft/next",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/draft/next"
+        },
+        {
+          "name": "unicode",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "下一步?草稿=是",
+            "resolvedHref": "https://example.test/draft/%E4%B8%8B%E4%B8%80%E6%AD%A5?%E8%8D%89%E7%A8%BF=%E6%98%AF",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "下一步?草稿=是",
+            "resolvedHref": "https://example.test/publish/%E4%B8%8B%E4%B8%80%E6%AD%A5?%E8%8D%89%E7%A8%BF=%E6%98%AF",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/publish/%E4%B8%8B%E4%B8%80%E6%AD%A5?%E8%8D%89%E7%A8%BF=%E6%98%AF"
+        },
+        {
+          "name": "encoded",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "%E8%8D%89%E7%A8%BF",
+            "resolvedHref": "https://example.test/draft/%E8%8D%89%E7%A8%BF",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "%E8%8D%89%E7%A8%BF",
+            "resolvedHref": "https://example.test/publish/%E8%8D%89%E7%A8%BF",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/publish/%E8%8D%89%E7%A8%BF"
+        },
+        {
+          "name": "base-host",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "/save",
+            "resolvedHref": "https://example.test/save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "/save",
+            "resolvedHref": "https://other.test/save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://other.test/save"
+        },
+        {
+          "name": "nbsp-path",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": " #save",
+            "resolvedHref": "https://example.test/edit/%C2%A0#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": " #save",
+            "resolvedHref": "https://example.test/modify/%C2%A0#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/modify/%C2%A0#save"
+        },
+        {
+          "name": "ideographic-space-path",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "　#save",
+            "resolvedHref": "https://example.test/edit/%E3%80%80#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "　#save",
+            "resolvedHref": "https://example.test/modify/%E3%80%80#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/modify/%E3%80%80#save"
+        },
+        {
+          "name": "ascii-fragment",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": " \t\r\n#save ",
+            "resolvedHref": "https://example.test/edit/99#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": " \t\r\n#save ",
+            "resolvedHref": "https://example.test/modify/99#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/modify/99#save"
+        },
+        {
+          "name": "ascii-control-fragment",
+          "pass": true,
+          "before": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "\u0000#save",
+            "resolvedHref": "https://example.test/edit/99#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "after": {
+            "count": 1,
+            "url": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-link-dom-ix8iwdlb/test.html",
+            "text": "存草稿",
+            "aria": null,
+            "title": null,
+            "href": "\u0000#save",
+            "resolvedHref": "https://example.test/modify/99#save",
+            "disabled": false,
+            "focused": false,
+            "editableFocus": false
+          },
+          "clickedHref": "https://example.test/modify/99#save"
+        },
+        {
+          "name": "document-default-base",
+          "pass": true
+        },
+        {
+          "name": "invalid-link",
+          "pass": true
+        }
+      ],
+      "scope": "Production serialized callback in local isolated Chrome; clicks prevented from navigating; no platform/account."
+    },
+    "independent_sessions": {
+      "source_sha256": {
+        "story_platform_chrome_bridge.py": "3d97931af2efbab336ed87a4a7156e2f404a26bc94b2e7fd471a88383b77a83d",
+        "story_platform_drafts.py": "2288612168214650cafe4afe7651c7fc26bfa07b47ce79b9ae3f783619de7bd2"
+      },
+      "checks": 15,
+      "passed": 15,
+      "results": [
+        {
+          "case": "KeyboardInterrupt:before_handle",
+          "pass": true,
+          "unrelated_lease_unchanged": true,
+          "published_handle_preserved": false
+        },
+        {
+          "case": "KeyboardInterrupt:after_handle",
+          "pass": true,
+          "unrelated_lease_unchanged": true,
+          "published_handle_preserved": true
+        },
+        {
+          "case": "KeyboardInterrupt:session_replaced",
+          "pass": true,
+          "unrelated_lease_unchanged": true,
+          "published_handle_preserved": true
+        },
+        {
+          "case": "KeyboardInterrupt:lease_replaced",
+          "pass": true,
+          "unrelated_lease_unchanged": true,
+          "published_handle_preserved": true
+        },
+        {
+          "case": "SystemExit:before_handle",
+          "pass": true,
+          "unrelated_lease_unchanged": true,
+          "published_handle_preserved": false
+        },
+        {
+          "case": "SystemExit:after_handle",
+          "pass": true,
+          "unrelated_lease_unchanged": true,
+          "published_handle_preserved": true
+        },
+        {
+          "case": "SystemExit:session_replaced",
+          "pass": true,
+          "unrelated_lease_unchanged": true,
+          "published_handle_preserved": true
+        },
+        {
+          "case": "SystemExit:lease_replaced",
+          "pass": true,
+          "unrelated_lease_unchanged": true,
+          "published_handle_preserved": true
+        },
+        {
+          "case": "retirement:empty",
+          "pass": true,
+          "retired": true,
+          "evidence_unchanged": true
+        },
+        {
+          "case": "retirement:stage",
+          "pass": true,
+          "retired": true,
+          "evidence_unchanged": true
+        },
+        {
+          "case": "retirement:session_only",
+          "pass": true,
+          "retired": true,
+          "evidence_unchanged": true
+        },
+        {
+          "case": "retirement:unknown_outbox",
+          "pass": true,
+          "retired": false,
+          "evidence_unchanged": true
+        },
+        {
+          "case": "retirement:unknown_claim",
+          "pass": true,
+          "retired": false,
+          "evidence_unchanged": true
+        },
+        {
+          "case": "retirement:unknown_response",
+          "pass": true,
+          "retired": false,
+          "evidence_unchanged": true
+        },
+        {
+          "case": "retirement:expired_claim",
+          "pass": true,
+          "retired": false,
+          "evidence_unchanged": true
+        }
+      ],
+      "scope": "Independent local production APIs with interruption injection and fixture journals; no platform or live books"
+    },
+    "commands": [
+      "node --test tests/test_chrome_bridge_driver.mjs tests/test_chrome_worker.mjs",
+      "python3 -B benchmarks/results/development-20261024-six-fixes-loop/chrome/effective_destination_dom.py",
+      "python3 -B benchmarks/results/development-20261024-six-fixes-loop/chrome/independent_session_probe.py"
+    ],
+    "limits": [
+      "Offline CUA fixture does not prove real CUA transport or platform acceptance",
+      "Local Chrome anchor.click default navigation prevented; no network/account",
+      "Independent session probes use real local APIs and fixture journals, not real books",
+      "No arbitrary post-RPC atomicity guarantee"
+    ],
+    "unresolved_confirmed_findings": 0,
+    "candidate_snapshots": {
+      "before-unicode-self-link.mjs": "e75277ca8a2ba3723ef5db1bfdb15b2bea0f813cabb8b76e2d2f2b17b0af4d72",
+      "after-effective-destination.mjs": "e75277ca8a2ba3723ef5db1bfdb15b2bea0f813cabb8b76e2d2f2b17b0af4d72"
+    }
+  },
+  "sessions": {
+    "ok": true,
+    "source_sha256": {
+      "skills/story-skill/scripts/story_platform_chrome_bridge.py": "3d97931af2efbab336ed87a4a7156e2f404a26bc94b2e7fd471a88383b77a83d",
+      "skills/story-skill/scripts/story_platform_drafts.py": "2288612168214650cafe4afe7651c7fc26bfa07b47ce79b9ae3f783619de7bd2",
+      "tests/test_platform_chrome_initialization.py": "2fefff5a163a0d90efbb2b22b2b2c539e970df120acf4300755480579ed311f1",
+      "tests/test_platform_draft_retirement.py": "bf71934e199696827ed33506f50e99b6b1998291dee0fb4282cd90ba4c6dd63e"
+    },
+    "baseline_source_sha256": {
+      "skills/story-skill/scripts/story_platform_chrome_bridge.py": "76fad6940eedf5d69aa2241278c2dd0de3d84c68f79336522d2ca33576946dee",
+      "skills/story-skill/scripts/story_platform_drafts.py": "a145101afcf1a8d6e8ec91fb4099606896ef439a2f9b013880fb1d515a853d72",
+      "tests/test_platform_chrome_initialization.py": "c153a65d7865c8fe00a70d83ee6cd99bb6fe5776bc5565cb63b485888e411385",
+      "tests/test_platform_draft_retirement.py": "2444f7c73f58a1c75bf9ce3f07325971f9376c0ae258a47b280d1aab80d7b551"
+    },
+    "new_test_methods": 6,
+    "issues": [
+      {
+        "id": "catchable-initialization-exit-leaves-live-lease",
+        "fixed": true,
+        "red_log": "interrupt-red.log",
+        "red_assertions": 5,
+        "description": "Handle publication before/after KeyboardInterrupt or SystemExit and metadata-lock exit interruption left a live lease after catchable failure. Exact own-session cleanup now covers these exits, preserves evidence and rethrows BaseException."
+      },
+      {
+        "id": "retirement-rejects-proven-inactive-initialization-history",
+        "fixed": true,
+        "red_log": "retirement-red.log",
+        "red_errors": 2,
+        "description": "Explicit deleted-draft retirement previously parsed never-ready initialization as a complete session and applied live MAX_SESSIONS to all historical folders. It now shares attachment serialization and strict residue classification while preserving unknown queue guards."
+      }
+    ],
+    "verification": {
+      "tests_run": 283,
+      "passed": 281,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 2,
+      "seconds": 44.274,
+      "log": "targeted-green.log",
+      "modules": [
+        "tests.test_platform_chrome_initialization",
+        "tests.test_platform_chrome_bridge",
+        "tests.test_platform_draft_retirement",
+        "tests.test_retirement_path_race",
+        "tests.test_chrome_worker_controller",
+        "tests.test_platform_draft_auto_connect",
+        "tests.test_workbench_platform_binding",
+        "tests.test_workbench_archives"
+      ]
+    },
+    "new_boundary_verification": [
+      "Actual child os._exit after initial lease before handle keeps lease live, blocks immediate attach and permits a new session only after normal expiry.",
+      "Unknown/claimed create and actual live lease continue blocking explicit retirement even beside ignored initialization residue.",
+      "Authorized retirement from incomplete initialization or inactive lifetime history preserves old queue/journal bytes and permits exactly one subsequent current-content fixture create."
+    ],
+    "boundaries": [
+      "All operations use temporary local fixture books and fake adapters. No real platform/account/installed plugin touched.",
+      "Hard kill cannot clean up; effective lease remains until normal expiry.",
+      "Unknown or restored queue payloads are not treated as initialization residue.",
+      "Windows process and directory share-lock tests skipped on macOS; Windows lock retry unit contracts ran.",
+      "Full frozen-source validation and independent cross-review are coordinated by root; their counts are not included here."
+    ],
+    "unresolved_confirmed_findings": [],
+    "independent_review": {
+      "reviewer": "round4_chrome",
+      "checks": 15,
+      "passed": 15,
+      "result": "../chrome/independent-session-result.json",
+      "unresolved_confirmed_findings": []
+    }
+  },
+  "features": {
+    "status": "frozen",
+    "confirmed_initial_findings": 1,
+    "introduced_regressions_resolved": 1,
+    "confirmed_findings": 2,
+    "resolved_findings": 2,
+    "unresolved_confirmed_findings": [],
+    "finding_paths": [
+      "template ancestor closing tags escape inert scope",
+      "HTML non-void inert self-closing syntax leaks evidence",
+      "candidate namespace heuristic leaked after start/end breakout and rejected legal foreign content; independently found and resolved"
+    ],
+    "tests_added": 9,
+    "targeted_validation": {
+      "successful": true,
+      "tests_run": 294,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "modules": [
+        "test_rank_source_template_scope",
+        "test_rank_source_visibility",
+        "test_rank_source_markup",
+        "test_rank_sources",
+        "test_rank",
+        "test_rank_compatibility",
+        "test_research",
+        "test_research_long_reasons",
+        "test_instruction_budget",
+        "test_skill_audit_fixes",
+        "test_history_state_scope",
+        "test_history_saved_read",
+        "test_plan_outline_sync",
+        "test_outline_example_boundaries",
+        "test_short_assembly_history",
+        "test_analysis_read_snapshots",
+        "test_world_rules_regressions",
+        "test_long_storage"
+      ],
+      "loader_errors": [],
+      "duration_seconds": 22.08,
+      "source_sha256": {
+        "skills/story-skill/scripts/story.py": "fe4defd8bf14f5bcfee255fabed3947415208ebc263fb3df90d57652b8b4592b",
+        "skills/story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+        "skills/story-skill/scripts/story_rank.py": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a",
+        "skills/story-skill/scripts/story_research.py": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9",
+        "skills/story-skill/scripts/story_history.py": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17",
+        "skills/story-skill/scripts/story_outline.py": "b2397f5e9bf7cfb88e0ab01a19f743d2195cf822aee28e4ce666d0fef6456c52",
+        "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "skills/story-skill/scripts/story_storage.py": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb",
+        "skills/story-skill/scripts/story_world.py": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+      },
+      "source_unchanged_during_run": true
+    },
+    "dom_validation": {
+      "ok": true,
+      "checks": 181,
+      "random_inline_checks": 160,
+      "seed": 2026102406,
+      "source_sha256": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "boundaries": "Isolated local Chromium DOM parsing; no live site/account, CSS visibility or JavaScript page effects validated"
+    },
+    "probe_validation": {
+      "ok": true,
+      "seed": 2026102406,
+      "search_oracle_checks": 1120,
+      "distribution": {
+        "version": "0.6.22",
+        "members": 69,
+        "skill_entries": 8,
+        "modified_source_present_byte_exact": true,
+        "installed": false
+      },
+      "source_sha256": {
+        "skills/story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+        "skills/story-skill/scripts/story_search.py": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6",
+        "scripts/package.py": "1887da1a39b5aeef89864893706895da3ecf48cb2d69dcf45bc7fd37d5981e39",
+        "scripts/install.py": "40bbdd3a12c9026f3919571317c84196c4c3c2634cf9ccd1b4470a877dfc7a02",
+        "scripts/package_npm.py": "639f22cffed56fa7d2fba23dedc0bed08fe5e447fef735002c53c6c611cb5701"
+      }
+    },
+    "independent_rank_validation": {
+      "ok": true,
+      "passed": 27,
+      "source_sha256": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "checks": 27,
+      "matches": 11,
+      "rejected": 16,
+      "accepted_hidden_cases": 0,
+      "scope": "Local synthetic HTML, isolated Chromium DOMParser; no live platform or CSS execution."
+    },
+    "independent_browser_cross_review": {
+      "resolved_new_regression": 1,
+      "unresolved_confirmed_findings": [],
+      "native_scenarios": 48,
+      "source_sha256": {
+        "skills/story-skill/scripts/story_platform_browser.py": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1"
+      },
+      "report": "README.md#native-链接修复的独立交叉复核"
+    },
+    "changed_files_sha256": {
+      "skills/story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+      "tests/test_rank_source_template_scope.py": "00ab35e119ee0665c3bfbde32f646d2b8e59ab15060ff26c423d173c6e81a0f5"
+    },
+    "full_suite": "root responsibility; targeted and generated probes are not added to full suite test count"
+  },
+  "independent_sessions": {
+    "source_sha256": {
+      "story_platform_chrome_bridge.py": "3d97931af2efbab336ed87a4a7156e2f404a26bc94b2e7fd471a88383b77a83d",
+      "story_platform_drafts.py": "2288612168214650cafe4afe7651c7fc26bfa07b47ce79b9ae3f783619de7bd2"
+    },
+    "checks": 15,
+    "passed": 15,
+    "results": [
+      {
+        "case": "KeyboardInterrupt:before_handle",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": false
+      },
+      {
+        "case": "KeyboardInterrupt:after_handle",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "KeyboardInterrupt:session_replaced",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "KeyboardInterrupt:lease_replaced",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "SystemExit:before_handle",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": false
+      },
+      {
+        "case": "SystemExit:after_handle",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "SystemExit:session_replaced",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "SystemExit:lease_replaced",
+        "pass": true,
+        "unrelated_lease_unchanged": true,
+        "published_handle_preserved": true
+      },
+      {
+        "case": "retirement:empty",
+        "pass": true,
+        "retired": true,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:stage",
+        "pass": true,
+        "retired": true,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:session_only",
+        "pass": true,
+        "retired": true,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:unknown_outbox",
+        "pass": true,
+        "retired": false,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:unknown_claim",
+        "pass": true,
+        "retired": false,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:unknown_response",
+        "pass": true,
+        "retired": false,
+        "evidence_unchanged": true
+      },
+      {
+        "case": "retirement:expired_claim",
+        "pass": true,
+        "retired": false,
+        "evidence_unchanged": true
+      }
+    ],
+    "scope": "Independent local production APIs with interruption injection and fixture journals; no platform or live books"
+  },
+  "independent_rank": {
+    "ok": true,
+    "passed": 27,
+    "source_sha256": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab",
+    "checks": 27,
+    "matches": 11,
+    "rejected": 16,
+    "accepted_hidden_cases": 0,
+    "rows": [
+      {
+        "label": "visible baseline",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "ordinary hidden template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "ordinary hidden attribute",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "template outer end tags",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg selfclosed hidden node",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math selfclosed hidden node",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg nested integration",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math integration html",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg p breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg p breakout then hidden custom",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg div breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg div breakout then hidden custom",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg font breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg font breakout then hidden custom",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math p breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math p breakout then hidden custom",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math div breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math div breakout then hidden custom",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math font breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math font breakout then hidden custom",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg end p breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "svg end br breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math end p breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "math end br breakout then template",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": null,
+        "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+        "same": false,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "SVG mi is foreign",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "SVG annotation-xml is foreign",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      },
+      {
+        "label": "MathML foreignObject is foreign",
+        "chromium_ids": [
+          "100"
+        ],
+        "parsed_ids": [
+          "100"
+        ],
+        "error": null,
+        "same": true,
+        "passed": true,
+        "unsafe_extra_ids": []
+      }
+    ],
+    "scope": "Local synthetic HTML, isolated Chromium DOMParser; no live platform or CSS execution."
+  },
+  "independent_native": {
+    "ok": true,
+    "scenarios": 48,
+    "source_sha256": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1",
+    "scope": "Synthetic public create_draft full flow with actual fixture click recording, no real account or browser transport",
+    "results": [
+      {
+        "platform": "qimao",
+        "href": "",
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+            "href": "",
+            "documentHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+            "resolvedHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit"
+          }
+        ]
+      },
+      {
+        "platform": "qimao",
+        "href": "",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "#save",
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+            "href": "#save",
+            "documentHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save",
+            "resolvedHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save"
+          }
+        ]
+      },
+      {
+        "platform": "qimao",
+        "href": "#save",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": " \t#save\r\n",
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+            "href": " \t#save\r\n",
+            "documentHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save",
+            "resolvedHref": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit#save"
+          }
+        ]
+      },
+      {
+        "platform": "qimao",
+        "href": " \t#save\r\n",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": " #save",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": " #save",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "　#save",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "　#save",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": " #save",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": " #save",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": " ",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": " ",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "　",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "　",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "?draft=1",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "?draft=1",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "next",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "next",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qimao",
+        "href": "/draft/next",
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+            "href": "/draft/next",
+            "documentHref": "https://zuozhe.qimao.com/draft/next",
+            "resolvedHref": "https://zuozhe.qimao.com/draft/next"
+          }
+        ]
+      },
+      {
+        "platform": "qimao",
+        "href": "/draft/next",
+        "base_override": true,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+            "href": "/draft/next",
+            "documentHref": "https://zuozhe.qimao.com/draft/next",
+            "resolvedHref": "https://zuozhe.qimao.com/draft/next"
+          }
+        ]
+      },
+      {
+        "platform": "qimao",
+        "href": null,
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+            "href": null,
+            "documentHref": null,
+            "resolvedHref": null
+          }
+        ]
+      },
+      {
+        "platform": "qimao",
+        "href": null,
+        "base_override": true,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://zuozhe.qimao.com/fixture/100/modify/new-1?from=edit",
+            "href": null,
+            "documentHref": null,
+            "resolvedHref": null
+          }
+        ]
+      },
+      {
+        "platform": "qidian",
+        "href": "",
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+            "href": "",
+            "documentHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+            "resolvedHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit"
+          }
+        ]
+      },
+      {
+        "platform": "qidian",
+        "href": "",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "#save",
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+            "href": "#save",
+            "documentHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit#save",
+            "resolvedHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit#save"
+          }
+        ]
+      },
+      {
+        "platform": "qidian",
+        "href": "#save",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": " \t#save\r\n",
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+            "href": " \t#save\r\n",
+            "documentHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit#save",
+            "resolvedHref": "https://write.qq.com/fixture/100/modify/new-1?from=edit#save"
+          }
+        ]
+      },
+      {
+        "platform": "qidian",
+        "href": " \t#save\r\n",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": " #save",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": " #save",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "　#save",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "　#save",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": " #save",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": " #save",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": " ",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": " ",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "　",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "　",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "?draft=1",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "?draft=1",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "next",
+        "base_override": false,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "next",
+        "base_override": true,
+        "returned": null,
+        "error": "platform_browser_unsafe_save",
+        "actual_click_destinations": []
+      },
+      {
+        "platform": "qidian",
+        "href": "/draft/next",
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+            "href": "/draft/next",
+            "documentHref": "https://write.qq.com/draft/next",
+            "resolvedHref": "https://write.qq.com/draft/next"
+          }
+        ]
+      },
+      {
+        "platform": "qidian",
+        "href": "/draft/next",
+        "base_override": true,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+            "href": "/draft/next",
+            "documentHref": "https://write.qq.com/draft/next",
+            "resolvedHref": "https://write.qq.com/draft/next"
+          }
+        ]
+      },
+      {
+        "platform": "qidian",
+        "href": null,
+        "base_override": false,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+            "href": null,
+            "documentHref": null,
+            "resolvedHref": null
+          }
+        ]
+      },
+      {
+        "platform": "qidian",
+        "href": null,
+        "base_override": true,
+        "returned": "new-1",
+        "error": null,
+        "actual_click_destinations": [
+          {
+            "url": "https://write.qq.com/fixture/100/modify/new-1?from=edit",
+            "href": null,
+            "documentHref": null,
+            "resolvedHref": null
+          }
+        ]
+      }
+    ]
+  },
+  "independent_integration": {
+    "independent/real-dom-result.json": {
+      "ok": true,
+      "checks": [
+        {
+          "name": "native-input",
+          "ok": true,
+          "actual": " current value ",
+          "expected": " current value "
+        },
+        {
+          "name": "bridge-input",
+          "ok": true,
+          "actual": " current value ",
+          "expected": " current value "
+        },
+        {
+          "name": "native-textarea",
+          "ok": true,
+          "actual": "首行\n\n尾行\n",
+          "expected": "首行\n\n尾行\n"
+        },
+        {
+          "name": "bridge-textarea",
+          "ok": true,
+          "actual": "首行\n\n尾行\n",
+          "expected": "首行\n\n尾行\n"
+        },
+        {
+          "name": "native-select",
+          "ok": true,
+          "actual": "raw-value",
+          "expected": "raw-value"
+        },
+        {
+          "name": "bridge-select",
+          "ok": true,
+          "actual": "raw-value",
+          "expected": "raw-value"
+        },
+        {
+          "name": "native-plain",
+          "ok": true,
+          "actual": " ordinary text ",
+          "expected": " ordinary text "
+        },
+        {
+          "name": "bridge-plain",
+          "ok": true,
+          "actual": " ordinary text ",
+          "expected": " ordinary text "
+        },
+        {
+          "name": "native-editable",
+          "ok": true,
+          "actual": "甲\n乙",
+          "expected": "甲\n乙"
+        },
+        {
+          "name": "bridge-editable",
+          "ok": true,
+          "actual": "甲\n乙",
+          "expected": "甲\n乙"
+        },
+        {
+          "name": "native-attribute",
+          "ok": true,
+          "actual": "account-1",
+          "expected": "account-1"
+        },
+        {
+          "name": "bridge-attribute",
+          "ok": true,
+          "actual": "account-1",
+          "expected": "account-1"
+        },
+        {
+          "name": "native-empty-match",
+          "ok": true,
+          "actual": 0,
+          "expected": 0
+        },
+        {
+          "name": "bridge-empty-match",
+          "ok": true,
+          "actual": 0,
+          "expected": 0
+        },
+        {
+          "name": "native-duplicate-match",
+          "ok": true,
+          "actual": 2,
+          "expected": 2
+        },
+        {
+          "name": "bridge-duplicate-match",
+          "ok": true,
+          "actual": 2,
+          "expected": 2
+        },
+        {
+          "name": "native-detached",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-prosemirror",
+          "ok": true,
+          "actual": " 首段 \n\n末段",
+          "expected": " 首段 \n\n末段"
+        },
+        {
+          "name": "bridge-prosemirror",
+          "ok": true,
+          "actual": " 首段 \n\n末段",
+          "expected": " 首段 \n\n末段"
+        },
+        {
+          "name": "native-prosemirror-reject-richtext",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "bridge-prosemirror-reject-richtext",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-identity-unchanged",
+          "ok": true,
+          "actual": {
+            "count": 1,
+            "same": true
+          },
+          "expected": {
+            "count": 1,
+            "same": true
+          }
+        },
+        {
+          "name": "native-identity-duplicate",
+          "ok": true,
+          "actual": {
+            "count": 2,
+            "same": false
+          },
+          "expected": {
+            "count": 2,
+            "same": false
+          }
+        },
+        {
+          "name": "native-identity-retarget-connected",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "native-identity-retarget-rejected",
+          "ok": true,
+          "actual": {
+            "count": 1,
+            "same": false
+          },
+          "expected": {
+            "count": 1,
+            "same": false
+          }
+        },
+        {
+          "name": "native-focus-body",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "native-focus-descendant",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "native-focus-outside",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-focus-no-match",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-focus-duplicate-match",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "preview-snapshot-header",
+          "ok": true,
+          "actual": "第1章 当前标题",
+          "expected": "第1章 当前标题"
+        },
+        {
+          "name": "preview-snapshot-body",
+          "ok": true,
+          "actual": " 首行 \n\n尾行",
+          "expected": " 首行 \n\n尾行"
+        },
+        {
+          "name": "native-preview-snapshot",
+          "ok": true,
+          "actual": " 首行 \n\n尾行",
+          "expected": " 首行 \n\n尾行"
+        },
+        {
+          "name": "preview-snapshot-changed-body",
+          "ok": true,
+          "actual": "后改正文\n\n尾行",
+          "expected": "后改正文\n\n尾行"
+        },
+        {
+          "name": "preview-snapshot-url",
+          "ok": true,
+          "actual": "file:///private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-followup-real-dom-_1sbnkb7/probe.html",
+          "expected": "file:///private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-followup-real-dom-_1sbnkb7/probe.html"
+        },
+        {
+          "name": "preview-snapshot-reject-richtext",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "path-empty",
+          "ok": true,
+          "actual": 0,
+          "expected": 0
+        },
+        {
+          "name": "path-duplicate",
+          "ok": true,
+          "actual": 2,
+          "expected": 2
+        },
+        {
+          "name": "path-detached",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "current-combined-values",
+          "ok": true,
+          "actual": {
+            "input": " current value ",
+            "textarea": "首行\n\n尾行\n",
+            "attribute": "account-1"
+          },
+          "expected": {
+            "input": " current value ",
+            "textarea": "首行\n\n尾行\n",
+            "attribute": "account-1"
+          }
+        },
+        {
+          "name": "current-combined-live-value",
+          "ok": true,
+          "actual": "实时值\n",
+          "expected": "实时值\n"
+        },
+        {
+          "name": "shadow-path-connected",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "shadow-path-hop",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "shadow-snapshot-value",
+          "ok": true,
+          "actual": "影子正文",
+          "expected": "影子正文"
+        },
+        {
+          "name": "nested-shadow-snapshot",
+          "ok": true,
+          "actual": "嵌套影子\n",
+          "expected": "嵌套影子\n"
+        },
+        {
+          "name": "native-shadow-snapshot",
+          "ok": true,
+          "actual": "嵌套影子\n",
+          "expected": "嵌套影子\n"
+        },
+        {
+          "name": "snapshot-missing-path",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "closed-shadow-not-reachable",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "same-path-replacement-values-current",
+          "ok": true,
+          "actual": "新值",
+          "expected": "新值"
+        },
+        {
+          "name": "action-label",
+          "ok": true,
+          "actual": "保存草稿",
+          "expected": "保存草稿"
+        },
+        {
+          "name": "action-url",
+          "ok": true,
+          "actual": "file:///private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-followup-real-dom-_1sbnkb7/probe.html",
+          "expected": "file:///private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-followup-real-dom-_1sbnkb7/probe.html"
+        },
+        {
+          "name": "action-enabled",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "action-native-disabled",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "action-aria-disabled",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "action-accessible-fields",
+          "ok": true,
+          "actual": [
+            "发布章节",
+            "提交",
+            "/different"
+          ],
+          "expected": [
+            "发布章节",
+            "提交",
+            "/different"
+          ]
+        },
+        {
+          "name": "action-focus-body",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "action-focus-outside",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "action-missing",
+          "ok": true,
+          "actual": 0,
+          "expected": 0
+        },
+        {
+          "name": "action-ambiguous",
+          "ok": true,
+          "actual": 2,
+          "expected": 2
+        },
+        {
+          "name": "native-editable-root",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "chrome-editable-root",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "native-editable-paragraph",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "chrome-editable-paragraph",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "native-reject-contained-input",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "chrome-reject-contained-input",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-reject-contained-textarea",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "chrome-reject-contained-textarea",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-reject-contained-select",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "chrome-reject-contained-select",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-reject-contained-button",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "chrome-reject-contained-button",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-reject-contained-iframe",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "chrome-reject-contained-iframe",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-reject-toolbar",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "chrome-reject-toolbar",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-reject-shadow-input",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "chrome-reject-shadow-input",
+          "ok": true,
+          "actual": false,
+          "expected": false
+        },
+        {
+          "name": "native-editable-root-in-shadow",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        },
+        {
+          "name": "chrome-editable-root-in-shadow",
+          "ok": true,
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "location": "file:",
+      "domEngine": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "source_hashes": {
+        "skills/story-skill/scripts/story_platform_browser.py": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1",
+        "skills/story-skill/scripts/story_chrome_bridge.mjs": "beb02754e55e6b55a7bbd57042b949e4761125d0dc313bf0ddf8cc749984705f"
+      },
+      "scope": "Production DOM functions on local HTML only. Isolated ephemeral profile; no website, account, CUA locator transport or native Playwright integration exercised."
+    },
+    "independent/native-link-dom-result.json": {
+      "ok": true,
+      "checks": [
+        {
+          "name": "empty-initial-document-target",
+          "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+          "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+          "ok": true
+        },
+        {
+          "name": "empty-final-equals-initial",
+          "actual": [
+            "",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "expected": [
+            "",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "ok": true
+        },
+        {
+          "name": "empty-actual-self",
+          "actual": true,
+          "expected": true,
+          "ok": true
+        },
+        {
+          "name": "fragment-initial-document-target",
+          "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+          "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+          "ok": true
+        },
+        {
+          "name": "fragment-final-equals-initial",
+          "actual": [
+            "#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "expected": [
+            "#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "ok": true
+        },
+        {
+          "name": "fragment-actual-self",
+          "actual": true,
+          "expected": true,
+          "ok": true
+        },
+        {
+          "name": "ASCII-initial-document-target",
+          "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+          "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+          "ok": true
+        },
+        {
+          "name": "ASCII-final-equals-initial",
+          "actual": [
+            "\t#save\r\n",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "expected": [
+            "\t#save\r\n",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "ok": true
+        },
+        {
+          "name": "ASCII-actual-self",
+          "actual": true,
+          "expected": true,
+          "ok": true
+        },
+        {
+          "name": "ASCII-empty-initial-document-target",
+          "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+          "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+          "ok": true
+        },
+        {
+          "name": "ASCII-empty-final-equals-initial",
+          "actual": [
+            " \t",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "expected": [
+            " \t",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "ok": true
+        },
+        {
+          "name": "ASCII-empty-actual-self",
+          "actual": true,
+          "expected": true,
+          "ok": true
+        },
+        {
+          "name": "NBSP-initial-document-target",
+          "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+          "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+          "ok": true
+        },
+        {
+          "name": "NBSP-final-equals-initial",
+          "actual": [
+            " #save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "expected": [
+            " #save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "ok": true
+        },
+        {
+          "name": "NBSP-actual-self",
+          "actual": false,
+          "expected": false,
+          "ok": true
+        },
+        {
+          "name": "ideographic-initial-document-target",
+          "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+          "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+          "ok": true
+        },
+        {
+          "name": "ideographic-final-equals-initial",
+          "actual": [
+            "　#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "expected": [
+            "　#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "ok": true
+        },
+        {
+          "name": "ideographic-actual-self",
+          "actual": false,
+          "expected": false,
+          "ok": true
+        },
+        {
+          "name": "NBSP-path-initial-document-target",
+          "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+          "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+          "ok": true
+        },
+        {
+          "name": "NBSP-path-final-equals-initial",
+          "actual": [
+            " ",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "expected": [
+            " ",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "ok": true
+        },
+        {
+          "name": "NBSP-path-actual-self",
+          "actual": false,
+          "expected": false,
+          "ok": true
+        },
+        {
+          "name": "relative-initial-document-target",
+          "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+          "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+          "ok": true
+        },
+        {
+          "name": "relative-final-equals-initial",
+          "actual": [
+            "next",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "expected": [
+            "next",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+            "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+          ],
+          "ok": true
+        },
+        {
+          "name": "relative-actual-self",
+          "actual": false,
+          "expected": false,
+          "ok": true
+        },
+        {
+          "name": "unchanged-raw",
+          "actual": [
+            "next",
+            "next"
+          ],
+          "expected": [
+            "next",
+            "next"
+          ],
+          "ok": true
+        },
+        {
+          "name": "effective-destination-mutation",
+          "actual": [
+            "https://example.test/draft/next",
+            "https://example.test/publish/next"
+          ],
+          "expected": [
+            "https://example.test/draft/next",
+            "https://example.test/publish/next"
+          ],
+          "ok": true
+        },
+        {
+          "name": "base-not-document",
+          "actual": false,
+          "expected": false,
+          "ok": true
+        },
+        {
+          "name": "changed-link-has-no-click",
+          "actual": [],
+          "expected": [],
+          "ok": true
+        },
+        {
+          "name": "stable-link-null",
+          "actual": null,
+          "expected": null,
+          "ok": true
+        },
+        {
+          "name": "stable-link-https://example.test/draft/fixed",
+          "actual": "https://example.test/draft/fixed",
+          "expected": "https://example.test/draft/fixed",
+          "ok": true
+        },
+        {
+          "name": "stable-link-/draft/fixed",
+          "actual": "https://example.test/draft/fixed",
+          "expected": "https://example.test/draft/fixed",
+          "ok": true
+        }
+      ],
+      "engine": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "source_sha256": {
+        "skills/story-skill/scripts/story_platform_browser.py": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1"
+      },
+      "scope": "Production JavaScript callbacks, isolated local Chromium; no website/account, no Native Playwright transport. Combined with full adapter fixture tests, not live end-to-end proof."
+    },
+    "independent/native-journal.json": {
+      "ok": true,
+      "cases": 10,
+      "results": [
+        {
+          "platform": "qimao",
+          "case": "normal",
+          "first": "saved",
+          "second": "reconciled",
+          "create_entries": 1,
+          "field_writes": 3,
+          "save_clicks": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "published",
+          "first": "unknown",
+          "second": "unknown",
+          "create_entries": 1,
+          "field_writes": 1,
+          "save_clicks": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "missing_state",
+          "first": "unknown",
+          "second": "unknown",
+          "create_entries": 1,
+          "field_writes": 1,
+          "save_clicks": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "duplicate_state",
+          "first": "unknown",
+          "second": "unknown",
+          "create_entries": 1,
+          "field_writes": 1,
+          "save_clicks": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "unbound_url_change",
+          "first": "unknown",
+          "second": "unknown",
+          "create_entries": 1,
+          "field_writes": 1,
+          "save_clicks": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "normal",
+          "first": "saved",
+          "second": "reconciled",
+          "create_entries": 1,
+          "field_writes": 3,
+          "save_clicks": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "published",
+          "first": "unknown",
+          "second": "unknown",
+          "create_entries": 1,
+          "field_writes": 1,
+          "save_clicks": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "missing_state",
+          "first": "unknown",
+          "second": "unknown",
+          "create_entries": 1,
+          "field_writes": 1,
+          "save_clicks": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "duplicate_state",
+          "first": "unknown",
+          "second": "unknown",
+          "create_entries": 1,
+          "field_writes": 1,
+          "save_clicks": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "unbound_url_change",
+          "first": "unknown",
+          "second": "unknown",
+          "create_entries": 1,
+          "field_writes": 1,
+          "save_clicks": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        }
+      ],
+      "source_sha256": {
+        "skills/story-skill/scripts/story_platform_browser.py": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1",
+        "skills/story-skill/scripts/story_platform_drafts.py": "2288612168214650cafe4afe7651c7fc26bfa07b47ce79b9ae3f783619de7bd2",
+        "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11"
+      },
+      "scope": "Production native adapter plus durable journal on isolated synthetic books and fake DOM transport; no platform/account or native Playwright session."
+    },
+    "independent/rank-visibility-dom.json": {
+      "ok": true,
+      "cases": 16,
+      "results": [
+        {
+          "case": 1,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 2,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 3,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 4,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 5,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 6,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 7,
+          "ok": true,
+          "marker_visible": true,
+          "expected_visible": true,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 8,
+          "ok": true,
+          "marker_visible": true,
+          "expected_visible": true,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 9,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 10,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见 书名"
+          ],
+          "expected_titles": [
+            "可见 书名"
+          ]
+        },
+        {
+          "case": 11,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 12,
+          "ok": true,
+          "marker_visible": false,
+          "expected_visible": false,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 13,
+          "ok": true,
+          "marker_visible": true,
+          "expected_visible": true,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 14,
+          "ok": true,
+          "marker_visible": true,
+          "expected_visible": true,
+          "titles": [
+            "可见书名"
+          ],
+          "expected_titles": [
+            "可见书名"
+          ]
+        },
+        {
+          "case": 15,
+          "ok": true,
+          "marker_visible": true,
+          "expected_visible": true,
+          "titles": [
+            "仍然可见书名"
+          ],
+          "expected_titles": [
+            "仍然可见书名"
+          ]
+        },
+        {
+          "case": 16,
+          "ok": true,
+          "marker_visible": true,
+          "expected_visible": true,
+          "titles": [
+            "仍然可见书名"
+          ],
+          "expected_titles": [
+            "仍然可见书名"
+          ]
+        }
+      ],
+      "engine": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+      "source_sha256": {
+        "skills/story-skill/scripts/story_rank_sources.py": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab"
+      },
+      "scope": "Local synthetic HTML rendered in an isolated Chrome profile; no network or live rank page.",
+      "limit_observed": "Production deliberately excludes hidden attributes without CSS computation. Chrome may render inline hidden=until-found content and explicit display overrides; extraction is conservative static evidence, not exact rendered visibility.",
+      "initial_oracle_correction": "Initial probe incorrectly treated inline until-found as visually hidden and omitted a real block boundary around an empty template; initial JSON is preserved. No production changes were made to match the oracle."
+    },
+    "state-integration-result.json": {
+      "ok": true,
+      "cases": 18,
+      "results": [
+        {
+          "platform": "fanqie",
+          "case": "existing_read_rejected",
+          "first": "blocked",
+          "second": "reconciled",
+          "creates": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "fanqie",
+          "case": "created_read_rejected",
+          "first": "unknown",
+          "second": "reconciled",
+          "creates": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "fanqie",
+          "case": "wrong_read_id",
+          "first": "blocked",
+          "second": "reconciled",
+          "creates": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "fanqie",
+          "case": "wrong_read_body",
+          "first": "conflict",
+          "second": "reconciled",
+          "creates": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "fanqie",
+          "case": "create_result_lost",
+          "first": "unknown",
+          "second": "reconciled",
+          "creates": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "fanqie",
+          "case": "create_rejected_before_remote",
+          "first": "unknown",
+          "second": "unknown",
+          "creates": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "existing_read_rejected",
+          "first": "blocked",
+          "second": "reconciled",
+          "creates": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "created_read_rejected",
+          "first": "unknown",
+          "second": "reconciled",
+          "creates": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "wrong_read_id",
+          "first": "blocked",
+          "second": "reconciled",
+          "creates": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "wrong_read_body",
+          "first": "conflict",
+          "second": "reconciled",
+          "creates": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "create_result_lost",
+          "first": "unknown",
+          "second": "reconciled",
+          "creates": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qimao",
+          "case": "create_rejected_before_remote",
+          "first": "unknown",
+          "second": "unknown",
+          "creates": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "existing_read_rejected",
+          "first": "blocked",
+          "second": "reconciled",
+          "creates": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "created_read_rejected",
+          "first": "unknown",
+          "second": "reconciled",
+          "creates": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "wrong_read_id",
+          "first": "blocked",
+          "second": "reconciled",
+          "creates": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "wrong_read_body",
+          "first": "conflict",
+          "second": "reconciled",
+          "creates": 0,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "create_result_lost",
+          "first": "unknown",
+          "second": "reconciled",
+          "creates": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        },
+        {
+          "platform": "qidian",
+          "case": "create_rejected_before_remote",
+          "first": "unknown",
+          "second": "unknown",
+          "creates": 1,
+          "creative_state_unchanged": true,
+          "ok": true
+        }
+      ],
+      "scope": "offline injected adapter at the durable journal boundary",
+      "source_sha256": {
+        "skills/story-skill/scripts/story_platform_drafts.py": "2288612168214650cafe4afe7651c7fc26bfa07b47ce79b9ae3f783619de7bd2",
+        "skills/story-skill/scripts/story_publish.py": "af7cf71d1ea1b49c3809ccdc6ed93cf398d85778849d3ac84f970c819cbafb11"
+      }
+    }
+  },
+  "distribution": {
+    "version": "0.6.22",
+    "source_members": 69,
+    "artifacts": [
+      {
+        "kind": "standard",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-six-fixes-loop/distribution/story-skill-0.6.22.zip",
+        "members": 69,
+        "source_members_verified": 69,
+        "latest_seven_runtime_modules_exact": true,
+        "archive_sha256": "f903a337ef410a6f47bf99dda4a86817f08058588390ee93f7dfdff5c39c81b7"
+      },
+      {
+        "kind": "claude",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-six-fixes-loop/distribution/claude.zip",
+        "members": 71,
+        "source_members_verified": 69,
+        "latest_seven_runtime_modules_exact": true,
+        "archive_sha256": "41f50242ea763c74449a4ce91dda6ed208b0a16b783505a9df8bf93f1eb0f28a"
+      },
+      {
+        "kind": "codex",
+        "archive": "/Users/cuining/Documents/GitHub/story-skill/benchmarks/results/development-20261024-six-fixes-loop/distribution/codex-final/story-skill-codex-0.6.22.zip",
+        "members": 74,
+        "source_members_verified": 69,
+        "latest_seven_runtime_modules_exact": true,
+        "archive_sha256": "7d3d72d537c1049602d73fb246dacea07fd04ec05c675bd498caa9eaefefe066"
+      }
+    ],
+    "manifest_sets_equal": true,
+    "host_scope_mappings": 38,
+    "no_installation": true
+  },
+  "new_python_test_methods": 18,
+  "new_node_top_level_tests": 6,
+  "unresolved_confirmed_findings": [],
+  "limits": [
+    "Node driver and worker are two Python wrapper tests; nested scenarios and overlapping targeted tests are not added to full-suite totals.",
+    "Native Windows-only tests skipped on macOS are not verified here.",
+    "Isolated local Chromium and fixture transports do not establish live website, native Playwright/CUA or arbitrary post-RPC atomicity.",
+    "Static HTML parsing is conservative and is not a complete HTML5/CSS/JavaScript rendering engine.",
+    "No installed skill caches, real book content, account, release, commit or platform operation was changed."
+  ]
+}

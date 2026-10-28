@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "scenarios": 16,
+  "same_id_alias_accepted": 4,
+  "other_target_rejected_before_fill": 12,
+  "source_sha256": "fcb0c94d43b9a6865621731a5d88c974b87367642081e9cede29fb730baf2768"
+}

@@ -1,0 +1,159 @@
+test_nested_templates_close_their_own_children_and_resume_visible_siblings (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_nested_templates_close_their_own_children_and_resume_visible_siblings) ... FAIL
+test_only_visible_template_sibling_reaches_research_without_changing_raw_source (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_only_visible_template_sibling_reaches_research_without_changing_raw_source) ... FAIL
+test_template_boundaries_preserve_visible_inline_text (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_boundaries_preserve_visible_inline_text) ... FAIL
+test_template_controls_cannot_escape_their_scope (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_controls_cannot_escape_their_scope) ... 
+  test_template_controls_cannot_escape_their_scope (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_controls_cannot_escape_their_scope) (message='排序') ... FAIL
+  test_template_controls_cannot_escape_their_scope (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_controls_cannot_escape_their_scope) (message='页码') ... FAIL
+test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) ... 
+  test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) (closing='</ul>') ... FAIL
+  test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) (closing='</body>') ... FAIL
+  test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) (closing='</html>') ... FAIL
+  test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) (closing='</ul></body></html>') ... FAIL
+
+======================================================================
+FAIL: test_nested_templates_close_their_own_children_and_resume_visible_siblings (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_nested_templates_close_their_own_children_and_resume_visible_siblings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_template_scope.py", line 35, in test_nested_templates_close_their_own_children_and_resume_visible_siblings
+    self.assertEqual([item["book_id"] for item in entries], ["100"])
+AssertionError: Lists differ: ['900', '901', '100'] != ['100']
+
+First differing element 0:
+'900'
+'100'
+
+First list contains 2 additional elements.
+First extra element 1:
+'901'
+
+- ['900', '901', '100']
++ ['100']
+
+======================================================================
+FAIL: test_only_visible_template_sibling_reaches_research_without_changing_raw_source (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_only_visible_template_sibling_reaches_research_without_changing_raw_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_template_scope.py", line 50, in test_only_visible_template_sibling_reaches_research_without_changing_raw_source
+    self.assertEqual([item["identity"]["value"] for item in decision["sample"]["books"]], ["100"])
+AssertionError: Lists differ: ['900', '100'] != ['100']
+
+First differing element 0:
+'900'
+'100'
+
+First list contains 1 additional elements.
+First extra element 1:
+'100'
+
+- ['900', '100']
++ ['100']
+
+======================================================================
+FAIL: test_template_boundaries_preserve_visible_inline_text (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_boundaries_preserve_visible_inline_text)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_template_scope.py", line 29, in test_template_boundaries_preserve_visible_inline_text
+    self.assertEqual(sources.parse_qimao_page(fixtures.page(cards=card), 1)[0]["title"], "样本&书名")
+AssertionError: '样本' != '样本&书名'
+- 样本
++ 样本&书名
+
+
+======================================================================
+FAIL: test_template_controls_cannot_escape_their_scope (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_controls_cannot_escape_their_scope) (message='排序')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_template_scope.py", line 23, in test_template_controls_cannot_escape_their_scope
+    with self.subTest(message=message), self.assertRaisesRegex(ValueError, message):
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_template_controls_cannot_escape_their_scope (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_controls_cannot_escape_their_scope) (message='页码')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_template_scope.py", line 23, in test_template_controls_cannot_escape_their_scope
+    with self.subTest(message=message), self.assertRaisesRegex(ValueError, message):
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) (closing='</ul>')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_template_scope.py", line 17, in test_template_end_tags_cannot_escape_into_outer_page
+    self.assertEqual([(item["book_id"], item["rank"]) for item in entries], [("100", 1)])
+AssertionError: Lists differ: [('900', 1), ('100', 2)] != [('100', 1)]
+
+First differing element 0:
+('900', 1)
+('100', 1)
+
+First list contains 1 additional elements.
+First extra element 1:
+('100', 2)
+
+- [('900', 1), ('100', 2)]
++ [('100', 1)]
+
+======================================================================
+FAIL: test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) (closing='</body>')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_template_scope.py", line 17, in test_template_end_tags_cannot_escape_into_outer_page
+    self.assertEqual([(item["book_id"], item["rank"]) for item in entries], [("100", 1)])
+AssertionError: Lists differ: [('900', 1), ('100', 2)] != [('100', 1)]
+
+First differing element 0:
+('900', 1)
+('100', 1)
+
+First list contains 1 additional elements.
+First extra element 1:
+('100', 2)
+
+- [('900', 1), ('100', 2)]
++ [('100', 1)]
+
+======================================================================
+FAIL: test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) (closing='</html>')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_template_scope.py", line 17, in test_template_end_tags_cannot_escape_into_outer_page
+    self.assertEqual([(item["book_id"], item["rank"]) for item in entries], [("100", 1)])
+AssertionError: Lists differ: [('900', 1), ('100', 2)] != [('100', 1)]
+
+First differing element 0:
+('900', 1)
+('100', 1)
+
+First list contains 1 additional elements.
+First extra element 1:
+('100', 2)
+
+- [('900', 1), ('100', 2)]
++ [('100', 1)]
+
+======================================================================
+FAIL: test_template_end_tags_cannot_escape_into_outer_page (test_rank_source_template_scope.RankSourceTemplateScopeTests.test_template_end_tags_cannot_escape_into_outer_page) (closing='</ul></body></html>')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_rank_source_template_scope.py", line 17, in test_template_end_tags_cannot_escape_into_outer_page
+    self.assertEqual([(item["book_id"], item["rank"]) for item in entries], [("100", 1)])
+AssertionError: Lists differ: [('900', 1), ('100', 2)] != [('100', 1)]
+
+First differing element 0:
+('900', 1)
+('100', 1)
+
+First list contains 1 additional elements.
+First extra element 1:
+('100', 2)
+
+- [('900', 1), ('100', 2)]
++ [('100', 1)]
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.083s
+
+FAILED (failures=9)

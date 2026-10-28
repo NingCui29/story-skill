@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "maximum_legal_tags": [
+    {
+      "legacy": false,
+      "algorithm": 2,
+      "complete_reason_chars": 101169,
+      "summary_chars": 1166,
+      "sample_id": "816c74c3924bd335d9f0ebfca27addd27a1dc5291f2c9627beb3ec8b55cfe3b0",
+      "source_identical": true
+    },
+    {
+      "legacy": true,
+      "algorithm": 1,
+      "complete_reason_chars": 51119,
+      "summary_chars": 1166,
+      "sample_id": "70526fa8933714f651c5950a526a2159603300004e81ed51659a8375888951f3",
+      "source_identical": true
+    },
+    {
+      "legacy": true,
+      "algorithm": 2,
+      "complete_reason_chars": 101169,
+      "summary_chars": 1166,
+      "sample_id": "be0b814985f4851b67fbae2792127ee4722ad3dea0598b38258ce6eab835eb81",
+      "source_identical": true
+    }
+  ],
+  "legacy_verified_decision_unchanged": true,
+  "source_sha256": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9"
+}

@@ -1,0 +1,13 @@
+✔ final preview account cannot restart readiness for read_draft (90.274039ms)
+✔ final preview account cannot restart readiness for find_drafts (94.702547ms)
+✔ final preview account cannot restart readiness for create_draft (151.14604ms)
+✔ initial account readiness remains available before read and create final checks (262.103862ms)
+✔ final preview account and header queries never recover a timeout by retrying after the body (251.052258ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1010.350522

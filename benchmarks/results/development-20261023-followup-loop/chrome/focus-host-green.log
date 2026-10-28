@@ -1,0 +1,29 @@
+✔ actual observed paragraph samples and exact AI sentinel preserve content (7.427549ms)
+✔ complete existing-Chrome verify find create read flow uses native paragraphs and fresh readback (108.485482ms)
+✔ bulk body paste preserves encoded characters whitespace and boundary newlines with one paste independent of paragraph count (195.57598ms)
+✔ observed paste-like type extra-paragraph counterexample never compares equal to intended text (0.381161ms)
+✔ Markdown paragraph encoding consumes the already encoded body verbatim without another conversion (116.308033ms)
+✔ recovered reads still reject ambiguous counts wrong or blank accounts and unsupported paragraph structure (21.14486ms)
+✔ post-action AX recovery rereads only the snapshot while create paste Enter and save each execute once (157.264711ms)
+✔ strict preview paragraphs preserve whitespace and reject attributes BR non-P or missing sentinel (0.571539ms)
+✔ ordinary qimao editor supports read find create and existing selector/body modes (229.896424ms)
+✔ ordinary qidian editor supports read find create and existing selector/body modes (217.201065ms)
+✔ current editor evaluateAll callback is self-contained and preserves the original paragraph contract (0.985894ms)
+✔ ordinary qimao final editor snapshot rejects body changes during later guard or header reads (82.853866ms)
+✔ ordinary qidian final editor snapshot rejects body changes during later guard or header reads (80.515472ms)
+✔ preview final snapshot rejects body changes during later account and header reads (41.374371ms)
+✔ paragraph paste rechecks focus after the final action URL await without writing another field (10.465306ms)
+✔ snapshot callbacks are self-contained and preserve attributes paragraphs and open shadow roots (1.290215ms)
+✔ final snapshot preview serialization matches the standalone strict preview callback (0.686747ms)
+✔ final snapshot failures never restart readiness or retry timed-out field paths (48.12901ms)
+✔ button state callback is self-contained and checks accessible labels href disabled and focus (0.450178ms)
+✔ snapshot rechecks duplicate and retargeted selectors and changes during that recheck (8.567309ms)
+✔ paragraph paste never writes a nested control or noneditable tool after focus moves inside the editor (82.678529ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1571.450997

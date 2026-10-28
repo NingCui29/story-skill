@@ -1,0 +1,87 @@
+{
+  "root": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-recovery-coverage-cw7imz80/book",
+  "created_with": "story.workbench._editor_save(..., recovery=True)",
+  "source_id": "file:素材.md",
+  "recovery_id": "file:.story/drafts/workbench/自动恢复/素材_independent-key-20261023.txt",
+  "recovery_path": "/private/var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-recovery-coverage-cw7imz80/book/.story/drafts/workbench/自动恢复/素材_independent-key-20261023.txt",
+  "recovery_metadata": {
+    "source": "file:素材.md",
+    "recovery": true,
+    "source_sha256": "d7f014228b3add7d859e36160e551f5751aadb34dfb7db4a4a9dcb6cbf076609",
+    "chapter": null,
+    "base_sha256": null,
+    "prefix": "",
+    "created": "2026-10-23T12:10:05.462962Z",
+    "adopted": false,
+    "content_kind": "material",
+    "content_sha256": "41ff7915ae1d91c2199e137d8dcaf676546387f51f25589ee69f3006dec6dbf0"
+  },
+  "material_files": 5001,
+  "actual_author_limit": 5000,
+  "draft_directory_order": [
+    "000-历史归档",
+    "workbench"
+  ],
+  "first_scan": {
+    "cursor": "122af9cb6b82ba6ea649d41b37581e8ac8584ccb6b21aca15801e968025b4921",
+    "complete": false,
+    "has_more": true,
+    "inspected": 5000,
+    "loaded": 4998,
+    "hard_limit": false
+  },
+  "first_recoveries": [],
+  "next_scan": {
+    "cursor": "122af9cb6b82ba6ea649d41b37581e8ac8584ccb6b21aca15801e968025b4921",
+    "complete": true,
+    "has_more": false,
+    "inspected": 5011,
+    "loaded": 5003,
+    "hard_limit": false
+  },
+  "next_recoveries": [
+    {
+      "id": "file:.story/drafts/workbench/自动恢复/素材_independent-key-20261023.txt",
+      "path": ".story/drafts/workbench/自动恢复/素材_independent-key-20261023.txt",
+      "title": "素材_independent-key-20261023",
+      "category": "自动恢复",
+      "modified": "2026-10-23T12:10:05.469193+00:00",
+      "bytes": 51,
+      "content_kind": "material"
+    }
+  ],
+  "editor_ui": {
+    "requests": [
+      {
+        "action": "catalog",
+        "payload": {
+          "offset": 0,
+          "query": ""
+        }
+      }
+    ],
+    "displayed": [
+      "没有可列出的磁盘恢复记录。当前页面待保存文字仍请保存候选。"
+    ],
+    "ignored_incomplete_materials": {
+      "cursor": "122af9cb6b82ba6ea649d41b37581e8ac8584ccb6b21aca15801e968025b4921",
+      "complete": false,
+      "has_more": true,
+      "inspected": 5000,
+      "loaded": 4998,
+      "hard_limit": false
+    },
+    "ignored_warnings": [
+      "材料目录尚未全部加载，可继续加载其余材料；正式章节和进度已独立读取。"
+    ]
+  },
+  "shelf_recovery_center": {
+    "error": "workbench_scan_limit",
+    "message": "创作材料超过扫描上限，请先整理归档。",
+    "details": {
+      "maximum": 5000
+    }
+  },
+  "direct_open_text": "由生产恢复入口保存的实际恢复正文。",
+  "files_lost": false
+}

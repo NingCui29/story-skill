@@ -1,0 +1,50 @@
+✖ ordinary qimao creation keeps its confirmed remote through saving and readback (42.256311ms)
+✖ ordinary qidian creation keeps its confirmed remote through saving and readback (18.347544ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 223.200253
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:2047:42
+✖ ordinary qimao creation keeps its confirmed remote through saving and readback (42.256311ms)
+  AssertionError [ERR_ASSERTION]: {"platform":"qimao","stage":"before_fill","response":{"schema":1,"id":"verifytarget2create_draft","nonce":"nonce","session_id":"2","binding_sha256":"binding","ok":true,"result":"22"}}
+  + actual - expected
+  
+  + undefined
+  - 'platform_browser_identity_mismatch'
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2068:18)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'platform_browser_identity_mismatch',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:2047:42
+✖ ordinary qidian creation keeps its confirmed remote through saving and readback (18.347544ms)
+  AssertionError [ERR_ASSERTION]: {"platform":"qidian","stage":"before_fill","response":{"schema":1,"id":"verifytarget4create_draft","nonce":"nonce","session_id":"4","binding_sha256":"binding","ok":true,"result":"22"}}
+  + actual - expected
+  
+  + undefined
+  - 'platform_browser_identity_mismatch'
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2068:18)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'platform_browser_identity_mismatch',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,62 @@
+✖ ordinary qimao write rechecks its bound target after the new state-snapshot await (48.049526ms)
+✖ ordinary qidian write rechecks its bound target after the new state-snapshot await (18.558935ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 236.145787
+
+✖ failing tests:
+
+test at tests/test_chrome_bridge_driver.mjs:2429:42
+✖ ordinary qimao write rechecks its bound target after the new state-snapshot await (48.049526ms)
+  AssertionError [ERR_ASSERTION]: {"platform":"qimao","priorFills":0,"move":"other_id","response":{"schema":1,"id":"verifytarget2create_draft","nonce":"nonce","session_id":"2","binding_sha256":"binding","ok":false,"error":"platform_browser_identity_mismatch"}}
+  + actual - expected
+  
+    {
+      body: '已有正文',
+  +   chapter: 12,
+  -   chapter: 22,
+      saved: true,
+      scope: 'drafts',
+      title: '已有标题'
+    }
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2439:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { scope: 'drafts', chapter: 12, title: '已有标题', body: '已有正文', saved: true },
+    expected: { scope: 'drafts', chapter: 22, title: '已有标题', body: '已有正文', saved: true },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/test_chrome_bridge_driver.mjs:2429:42
+✖ ordinary qidian write rechecks its bound target after the new state-snapshot await (18.558935ms)
+  AssertionError [ERR_ASSERTION]: {"platform":"qidian","priorFills":0,"move":"other_id","response":{"schema":1,"id":"verifytarget4create_draft","nonce":"nonce","session_id":"4","binding_sha256":"binding","ok":false,"error":"platform_browser_identity_mismatch"}}
+  + actual - expected
+  
+    {
+      body: '已有正文',
+  +   chapter: 12,
+  -   chapter: 22,
+      saved: true,
+      scope: 'drafts',
+      title: '已有标题'
+    }
+  
+      at TestContext.<anonymous> (file:///Users/cuining/Documents/GitHub/story-skill/tests/test_chrome_bridge_driver.mjs:2439:39)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:960:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { scope: 'drafts', chapter: 12, title: '已有标题', body: '已有正文', saved: true },
+    expected: { scope: 'drafts', chapter: 22, title: '已有标题', body: '已有正文', saved: true },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

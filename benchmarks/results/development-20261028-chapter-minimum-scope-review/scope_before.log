@@ -1,0 +1,141 @@
+E.FFFFF.FFFFFF
+======================================================================
+ERROR: test_deeply_nested_inner_json_is_caught_without_losing_the_original_task (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_deeply_nested_inner_json_is_caught_without_losing_the_original_task)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 104, in test_deeply_nested_inner_json_is_caught_without_losing_the_original_task
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 40, in assert_unknown_readable_and_not_dispatched
+    observed = story.tasks.get(fixture.root, task["id"])["task"]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_tasks.py", line 560, in get
+    return {'ok': True, 'task': _view(book, record)}
+                                ^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_tasks.py", line 457, in _view
+    stale = (_stale(book, record) if detail else
+             ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_tasks.py", line 425, in _stale
+    complete_chapter=_complete_writing_task(record))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_tasks.py", line 388, in _complete_writing_task
+    brief, _ = json.JSONDecoder().raw_decode(suffix.lstrip())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/.local/share/uv/python/cpython-3.12.14-macos-x86_64-none/lib/python3.12/json/decoder.py", line 354, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+RecursionError: maximum recursion depth exceeded while decoding a JSON array from a unicode string
+
+======================================================================
+FAIL: test_invalid_legacy_brief_structures_are_unknown (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_invalid_legacy_brief_structures_are_unknown) (shape=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 99, in test_invalid_legacy_brief_structures_are_unknown
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in set()
+
+======================================================================
+FAIL: test_invalid_legacy_brief_structures_are_unknown (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_invalid_legacy_brief_structures_are_unknown) (shape=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 99, in test_invalid_legacy_brief_structures_are_unknown
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in set()
+
+======================================================================
+FAIL: test_invalid_legacy_brief_structures_are_unknown (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_invalid_legacy_brief_structures_are_unknown) (shape=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 99, in test_invalid_legacy_brief_structures_are_unknown
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in set()
+
+======================================================================
+FAIL: test_invalid_legacy_brief_structures_are_unknown (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_invalid_legacy_brief_structures_are_unknown) (shape=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 99, in test_invalid_legacy_brief_structures_are_unknown
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in {'length_exception_required'}
+
+======================================================================
+FAIL: test_invalid_legacy_brief_structures_are_unknown (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_invalid_legacy_brief_structures_are_unknown) (shape=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 99, in test_invalid_legacy_brief_structures_are_unknown
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in {'length_exception_required'}
+
+======================================================================
+FAIL: test_mismatched_legacy_identity_is_unknown (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_mismatched_legacy_identity_is_unknown) (field='book_id')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 86, in test_mismatched_legacy_identity_is_unknown
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in set()
+
+======================================================================
+FAIL: test_mismatched_legacy_identity_is_unknown (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_mismatched_legacy_identity_is_unknown) (field='revision')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 86, in test_mismatched_legacy_identity_is_unknown
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in set()
+
+======================================================================
+FAIL: test_mismatched_legacy_identity_is_unknown (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_mismatched_legacy_identity_is_unknown) (field='chapter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 86, in test_mismatched_legacy_identity_is_unknown
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in set()
+
+======================================================================
+FAIL: test_missing_legacy_brief_marker_is_not_a_manual_scope_declaration (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_missing_legacy_brief_marker_is_not_a_manual_scope_declaration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 74, in test_missing_legacy_brief_marker_is_not_a_manual_scope_declaration
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in set()
+
+======================================================================
+FAIL: test_truncated_legacy_json_stays_readable_but_cannot_be_dispatched (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_truncated_legacy_json_stays_readable_but_cannot_be_dispatched)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 70, in test_truncated_legacy_json_stays_readable_but_cannot_be_dispatched
+    self.assert_unknown_readable_and_not_dispatched(
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in set()
+
+======================================================================
+FAIL: test_unknown_legacy_delivery_mode_is_not_downgraded_to_a_fragment (test_task_scope_compatibility.TaskScopeCompatibilityTests.test_unknown_legacy_delivery_mode_is_not_downgraded_to_a_fragment)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 66, in test_unknown_legacy_delivery_mode_is_not_downgraded_to_a_fragment
+    self.assert_unknown_readable_and_not_dispatched(lambda prompt: self.replace_brief(prompt, change))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_task_scope_compatibility.py", line 42, in assert_unknown_readable_and_not_dispatched
+    self.assertIn("task_scope_unknown", {row["code"] for row in observed["stale_reasons"]})
+AssertionError: 'task_scope_unknown' not found in set()
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.785s
+
+FAILED (failures=11, errors=1)

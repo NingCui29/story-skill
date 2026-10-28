@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "scenarios": 15,
+  "head_old_failures_preserved": true,
+  "current_wrong_observations_rejected": true,
+  "journal_false_success_rejected": true,
+  "duplicate_saves": 0,
+  "source_hashes": {
+    "skills/story-skill/scripts/story_platform_browser.py": "e775880fc9c6a9ab6f6ca5518205d80387cb01954e81a98a34f6628bf42a478a",
+    "skills/story-skill/scripts/story_chrome_bridge.mjs": "565df7ac89a22ba4437deadeec437841d5ec1a7278c825c6f166a22a8486cf7d"
+  }
+}

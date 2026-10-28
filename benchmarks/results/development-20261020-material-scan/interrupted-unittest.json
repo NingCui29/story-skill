@@ -1,0 +1,6 @@
+{
+  "status": "interrupted_not_counted_as_pass",
+  "reason": "A legacy permission-injection test still patched Path.iterdir after streaming enumeration moved to pinned scandir; corrected its permission boundary before a fresh complete run.",
+  "runtime_source_changed": false,
+  "verification_process_only": true
+}

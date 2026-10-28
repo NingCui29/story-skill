@@ -1,0 +1,10 @@
+{
+  "scope": "isolated synthetic book; no GUI/model/platform; no source changes",
+  "unknown_mode_stale": [],
+  "handoff": "handed_off",
+  "start_result": "no-dispatch sentinel",
+  "freeze_calls": 1,
+  "spawn_calls": 0,
+  "deep_record_bytes": 41016,
+  "deep_get": "RecursionError: maximum recursion depth exceeded while decoding a JSON array from a unicode string"
+}

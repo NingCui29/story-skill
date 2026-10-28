@@ -1,0 +1,429 @@
+..............................................................................................................................................ss.................................................................................................................................sssssssssssssssssssss.sss..................s....ss.s.s............s..............sss...................................................................................................................................................................................................................................................................................................................s.......................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................s..............s..........ssssssss..s.......................ssss.......................................................................s................................................................................................................................................sssss.....................................................................................................................................s..........................................................................................................................................................................................................................................s................................................................................................................................................................sssssssss.......................s.................................s............s........................................................ssssssssssssss.ssss............................................ss...................................ssss.sss.sssssss.sssss...................sssssss.sFFFFFFFFFFFFFFFFFFFFFFFFFFF..s.sssssssssssss...........ssssssssssssssssssssssssssssssssssssssss..sss..s......ssssss.s.sssss.s.....s..sssssssss.....s..sss.ssssss.ss.....s.sssss.......................ssssssssssssssss.............................ssssssssss.......sssssssssssssssssss.............ssssssss..........s...s.s..........................sssssssssssssssss....................................sssssssss.......sssssss.......ssssss.sss.ssssss...........FFFFFFFFFFF...s...sss.........ssssssssssssssssssssss.sssssss..............s.........sssssssssssssssssssssssssssss.sssssssssss..............ssssssssssssssssssss..sssssssssss.sss.s.s....................sssss...........FFFF...............................................................................................s................
+======================================================================
+FAIL: test_cached_dirty_text_and_mode_are_never_overwritten_by_resume (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_cached_dirty_text_and_mode_are_never_overwritten_by_resume)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 276, in test_cached_dirty_text_and_mode_are_never_overwritten_by_resume
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_changed_sha_refuses_resume_but_normal_default_document_remains_available (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_changed_sha_refuses_resume_but_normal_default_document_remains_available)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 290, in test_changed_sha_refuses_resume_but_normal_default_document_remains_available
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_comparison_close_persists_document_position_instead_of_diff_scroll (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_comparison_close_persists_document_position_instead_of_diff_scroll) (mode='reading', compare='formal')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 208, in test_comparison_close_persists_document_position_instead_of_diff_scroll
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_comparison_close_persists_document_position_instead_of_diff_scroll (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_comparison_close_persists_document_position_instead_of_diff_scroll) (mode='reading', compare='two-documents')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 208, in test_comparison_close_persists_document_position_instead_of_diff_scroll
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_comparison_close_persists_document_position_instead_of_diff_scroll (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_comparison_close_persists_document_position_instead_of_diff_scroll) (mode='editing', compare='formal')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 208, in test_comparison_close_persists_document_position_instead_of_diff_scroll
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_comparison_close_persists_document_position_instead_of_diff_scroll (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_comparison_close_persists_document_position_instead_of_diff_scroll) (mode='editing', compare='two-documents')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 208, in test_comparison_close_persists_document_position_instead_of_diff_scroll
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_delayed_resume_load_cannot_replace_user_open (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_delayed_resume_load_cannot_replace_user_open)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 269, in test_delayed_resume_load_cannot_replace_user_open
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_delayed_resume_open_cannot_replace_later_navigation (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_delayed_resume_open_cannot_replace_later_navigation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 261, in test_delayed_resume_open_cannot_replace_later_navigation
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_dirty_previous_session_is_a_persistent_recovery_reminder_without_dirtying_disk_text (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_dirty_previous_session_is_a_persistent_recovery_reminder_without_dirtying_disk_text)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 297, in test_dirty_previous_session_is_a_persistent_recovery_reminder_without_dirtying_disk_text
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_explicit_chapter_hash_wins_over_resume (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_explicit_chapter_hash_wins_over_resume)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 257, in test_explicit_chapter_hash_wins_over_resume
+    self.js("await catalog();assert.equal(active,other.id);assert.equal(docs.get(active).editing,false);",
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_explicit_remember_reloads_conflicted_position_before_saving_current_position (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_explicit_remember_reloads_conflicted_position_before_saving_current_position)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 315, in test_explicit_remember_reloads_conflicted_position_before_saving_current_position
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_first_catalog_restores_actual_document_mode_selection_scroll_and_book_identity (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_first_catalog_restores_actual_document_mode_selection_scroll_and_book_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 113, in test_first_catalog_restores_actual_document_mode_selection_scroll_and_book_identity
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_initial_hash_wins_over_resume_and_does_not_apply_its_positions (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_initial_hash_wins_over_resume_and_does_not_apply_its_positions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 127, in test_initial_hash_wins_over_resume_and_does_not_apply_its_positions
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_native_guarded_opener_forwards_hash_check_result_and_late_interaction_guard (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_native_guarded_opener_forwards_hash_check_result_and_late_interaction_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 180, in test_native_guarded_opener_forwards_hash_check_result_and_late_interaction_guard
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_native_resume_still_yields_to_explicit_other_target (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_native_resume_still_yields_to_explicit_other_target)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 192, in test_native_resume_still_yields_to_explicit_other_target
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_native_safety_does_not_cancel_current_page_inflight_resume_open (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_native_safety_does_not_cancel_current_page_inflight_resume_open)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 170, in test_native_safety_does_not_cancel_current_page_inflight_resume_open
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_native_safety_does_not_take_initial_hash_away_from_delayed_resume (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_native_safety_does_not_take_initial_hash_away_from_delayed_resume) (fragment="''")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 158, in test_native_safety_does_not_take_initial_hash_away_from_delayed_resume
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_native_safety_does_not_take_initial_hash_away_from_delayed_resume (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_native_safety_does_not_take_initial_hash_away_from_delayed_resume) (fragment="'#'+encodeURIComponent(target.id)")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 158, in test_native_safety_does_not_take_initial_hash_away_from_delayed_resume
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_native_safety_does_not_take_initial_hash_away_from_delayed_resume (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_native_safety_does_not_take_initial_hash_away_from_delayed_resume) (fragment="'#chapter-1'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 158, in test_native_safety_does_not_take_initial_hash_away_from_delayed_resume
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_reading_resume_restores_reading_scroll_without_turning_on_editing (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_reading_resume_restores_reading_scroll_without_turning_on_editing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 242, in test_reading_resume_restores_reading_scroll_without_turning_on_editing
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_readonly_document_never_enters_editing_when_saved_mode_requested_it (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_readonly_document_never_enters_editing_when_saved_mode_requested_it)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 250, in test_readonly_document_never_enters_editing_when_saved_mode_requested_it
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_refresh_with_same_document_hash_preserves_editing_selection_and_scroll (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_refresh_with_same_document_hash_preserves_editing_selection_and_scroll) (initial="'#'+encodeURIComponent(target.id)")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 136, in test_refresh_with_same_document_hash_preserves_editing_selection_and_scroll
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_refresh_with_same_document_hash_preserves_editing_selection_and_scroll (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_refresh_with_same_document_hash_preserves_editing_selection_and_scroll) (initial="'#chapter-1'")
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 136, in test_refresh_with_same_document_hash_preserves_editing_selection_and_scroll
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_refreshed_hash_still_yields_to_navigation_during_delayed_restore (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_refreshed_hash_still_yields_to_navigation_during_delayed_restore)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 147, in test_refreshed_hash_still_yields_to_navigation_during_delayed_restore
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_save_from_comparison_keeps_document_position_for_the_new_candidate (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_save_from_comparison_keeps_document_position_for_the_new_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 222, in test_save_from_comparison_keeps_document_position_for_the_new_candidate
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_saving_a_new_candidate_updates_resume_identity_and_clears_old_recovery_reminder (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_saving_a_new_candidate_updates_resume_identity_and_clears_old_recovery_reminder)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 305, in test_saving_a_new_candidate_updates_resume_identity_and_clears_old_recovery_reminder
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_search_preview_still_cannot_overwrite_document_resume_position (test_workbench_creator_integration.WorkbenchCreatorIntegrationTests.test_search_preview_still_cannot_overwrite_document_resume_position)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 233, in test_search_preview_still_cannot_overwrite_document_resume_position
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_creator_integration.py", line 28, in js
+    self.fail('Node.js is required for creator integration acceptance')
+AssertionError: Node.js is required for creator integration acceptance
+
+======================================================================
+FAIL: test_conflicts_do_not_silently_overwrite_or_retry_other_window (test_workbench_resume_script.WorkbenchResumeScriptTests.test_conflicts_do_not_silently_overwrite_or_retry_other_window)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 111, in test_conflicts_do_not_silently_overwrite_or_retry_other_window
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_inflight_save_retains_latest_position_and_uses_returned_cas (test_workbench_resume_script.WorkbenchResumeScriptTests.test_inflight_save_retains_latest_position_and_uses_returned_cas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 100, in test_inflight_save_retains_latest_position_and_uses_returned_cas
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_initial_hash_user_interaction_before_load_and_interaction_during_load_all_win (test_workbench_resume_script.WorkbenchResumeScriptTests.test_initial_hash_user_interaction_before_load_and_interaction_during_load_all_win)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 43, in test_initial_hash_user_interaction_before_load_and_interaction_during_load_all_win
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_interaction_during_delayed_open_prevents_target_show_and_restore (test_workbench_resume_script.WorkbenchResumeScriptTests.test_interaction_during_delayed_open_prevents_target_show_and_restore)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 76, in test_interaction_during_delayed_open_prevents_target_show_and_restore
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_load_and_apply_preserve_original_mode_positions_and_own_hash (test_workbench_resume_script.WorkbenchResumeScriptTests.test_load_and_apply_preserve_original_mode_positions_and_own_hash)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 36, in test_load_and_apply_preserve_original_mode_positions_and_own_hash
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_manual_continue_requires_intent_and_still_yields_to_newer_interaction (test_workbench_resume_script.WorkbenchResumeScriptTests.test_manual_continue_requires_intent_and_still_yields_to_newer_interaction)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 84, in test_manual_continue_requires_intent_and_still_yields_to_newer_interaction
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_matching_legacy_chapter_hash_resumes_only_its_own_chapter (test_workbench_resume_script.WorkbenchResumeScriptTests.test_matching_legacy_chapter_hash_resumes_only_its_own_chapter)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 68, in test_matching_legacy_chapter_hash_resumes_only_its_own_chapter
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_older_backend_and_missing_target_do_not_interfere_with_editor (test_workbench_resume_script.WorkbenchResumeScriptTests.test_older_backend_and_missing_target_do_not_interfere_with_editor)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 120, in test_older_backend_and_missing_target_do_not_interfere_with_editor
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_only_whitelisted_position_fields_are_sent_with_loaded_cas (test_workbench_resume_script.WorkbenchResumeScriptTests.test_only_whitelisted_position_fields_are_sent_with_loaded_cas)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 91, in test_only_whitelisted_position_fields_are_sent_with_loaded_cas
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_restore_adapter_can_refuse_changed_hash_or_existing_dirty_buffer (test_workbench_resume_script.WorkbenchResumeScriptTests.test_restore_adapter_can_refuse_changed_hash_or_existing_dirty_buffer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 128, in test_restore_adapter_can_refuse_changed_hash_or_existing_dirty_buffer
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_same_document_hash_resumes_but_other_malformed_or_later_targets_do_not (test_workbench_resume_script.WorkbenchResumeScriptTests.test_same_document_hash_resumes_but_other_malformed_or_later_targets_do_not)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 52, in test_same_document_hash_resumes_but_other_malformed_or_later_targets_do_not
+    self.js(r'''
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_resume_script.py", line 13, in js
+    self.fail('Node.js is required for resume async acceptance')
+AssertionError: Node.js is required for resume async acceptance
+
+======================================================================
+FAIL: test_ordinary_material_title_that_resembles_an_internal_suffix_is_not_stripped (test_workbench_working_candidate_races.WorkingCandidateRaceTests.test_ordinary_material_title_that_resembles_an_internal_suffix_is_not_stripped)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_working_candidate_races.py", line 89, in test_ordinary_material_title_that_resembles_an_internal_suffix_is_not_stripped
+    self.assertEqual(self.displayed_titles([original]), [title])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_working_candidate_races.py", line 43, in displayed_titles
+    self.fail('Node.js is required for actual title presentation acceptance')
+AssertionError: Node.js is required for actual title presentation acceptance
+
+======================================================================
+FAIL: test_recovery_uuid_and_repeated_candidate_suffixes_are_removed_before_retaining_a_version (test_workbench_working_candidate_races.WorkingCandidateRaceTests.test_recovery_uuid_and_repeated_candidate_suffixes_are_removed_before_retaining_a_version) (recovery_key='11111111-2222-4333-8444-555555555555')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_working_candidate_races.py", line 75, in test_recovery_uuid_and_repeated_candidate_suffixes_are_removed_before_retaining_a_version
+    self.assertEqual(self.displayed_titles([opened]), ['雨夜定位'])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_working_candidate_races.py", line 43, in displayed_titles
+    self.fail('Node.js is required for actual title presentation acceptance')
+AssertionError: Node.js is required for actual title presentation acceptance
+
+======================================================================
+FAIL: test_recovery_uuid_and_repeated_candidate_suffixes_are_removed_before_retaining_a_version (test_workbench_working_candidate_races.WorkingCandidateRaceTests.test_recovery_uuid_and_repeated_candidate_suffixes_are_removed_before_retaining_a_version) (recovery_key='abcdef0123456789abcdef0123456789')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_working_candidate_races.py", line 75, in test_recovery_uuid_and_repeated_candidate_suffixes_are_removed_before_retaining_a_version
+    self.assertEqual(self.displayed_titles([opened]), ['雨夜定位'])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_working_candidate_races.py", line 43, in displayed_titles
+    self.fail('Node.js is required for actual title presentation acceptance')
+AssertionError: Node.js is required for actual title presentation acceptance
+
+======================================================================
+FAIL: test_repeated_checkpoints_use_one_internal_suffix_and_a_stable_display_title (test_workbench_working_candidate_races.WorkingCandidateRaceTests.test_repeated_checkpoints_use_one_internal_suffix_and_a_stable_display_title)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_working_candidate_races.py", line 54, in test_repeated_checkpoints_use_one_internal_suffix_and_a_stable_display_title
+    original_title = self.displayed_titles([self.candidate])[0]
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_workbench_working_candidate_races.py", line 43, in displayed_titles
+    self.fail('Node.js is required for actual title presentation acceptance')
+AssertionError: Node.js is required for actual title presentation acceptance
+
+----------------------------------------------------------------------
+Ran 3081 tests in 634.811s
+
+FAILED (failures=42, skipped=437)

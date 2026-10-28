@@ -1,0 +1,75 @@
+test_configured_same_draft_redirect_is_pinned_at_arrival (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_configured_same_draft_redirect_is_pinned_at_arrival) ... 
+  test_configured_same_draft_redirect_is_pinned_at_arrival (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_configured_same_draft_redirect_is_pinned_at_arrival) (platform='qimao', late_navigation=False) ... ERROR
+  test_configured_same_draft_redirect_is_pinned_at_arrival (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_configured_same_draft_redirect_is_pinned_at_arrival) (platform='qimao', late_navigation=True) ... FAIL
+  test_configured_same_draft_redirect_is_pinned_at_arrival (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_configured_same_draft_redirect_is_pinned_at_arrival) (platform='qidian', late_navigation=False) ... ERROR
+  test_configured_same_draft_redirect_is_pinned_at_arrival (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_configured_same_draft_redirect_is_pinned_at_arrival) (platform='qidian', late_navigation=True) ... FAIL
+test_unconfigured_or_other_draft_redirect_cannot_supply_editor_readback (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_unconfigured_or_other_draft_redirect_cannot_supply_editor_readback) ... ok
+
+======================================================================
+ERROR: test_configured_same_draft_redirect_is_pinned_at_arrival (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_configured_same_draft_redirect_is_pinned_at_arrival) (platform='qimao', late_navigation=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 208, in test_configured_same_draft_redirect_is_pinned_at_arrival
+    result = adapter.read_draft("900")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 268, in guarded
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 1463, in read_draft
+    return self._read_draft(remote_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 1455, in _read_draft
+    self._confirm_editor_snapshot(page, url, remote_id, chapter, observed)
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 1400, in _confirm_editor_snapshot
+    _fail("identity_mismatch", "读取正文后编辑页地址发生变化；已停止核对。")
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 163, in _fail
+    raise BrowserAdapterError(code, message, details)
+tested_story_platform_browser.BrowserAdapterError: 读取正文后编辑页地址发生变化；已停止核对。
+
+======================================================================
+ERROR: test_configured_same_draft_redirect_is_pinned_at_arrival (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_configured_same_draft_redirect_is_pinned_at_arrival) (platform='qidian', late_navigation=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 208, in test_configured_same_draft_redirect_is_pinned_at_arrival
+    result = adapter.read_draft("900")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 268, in guarded
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 1463, in read_draft
+    return self._read_draft(remote_id)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 1455, in _read_draft
+    self._confirm_editor_snapshot(page, url, remote_id, chapter, observed)
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 1400, in _confirm_editor_snapshot
+    _fail("identity_mismatch", "读取正文后编辑页地址发生变化；已停止核对。")
+  File "/Users/cuining/Documents/GitHub/story-skill/skills/story-skill/scripts/story_platform_browser.py", line 163, in _fail
+    raise BrowserAdapterError(code, message, details)
+tested_story_platform_browser.BrowserAdapterError: 读取正文后编辑页地址发生变化；已停止核对。
+
+======================================================================
+FAIL: test_configured_same_draft_redirect_is_pinned_at_arrival (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_configured_same_draft_redirect_is_pinned_at_arrival) (platform='qimao', late_navigation=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 206, in test_configured_same_draft_redirect_is_pinned_at_arrival
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+======================================================================
+FAIL: test_configured_same_draft_redirect_is_pinned_at_arrival (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_configured_same_draft_redirect_is_pinned_at_arrival) (platform='qidian', late_navigation=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 206, in test_configured_same_draft_redirect_is_pinned_at_arrival
+    self.rejected(lambda: adapter.read_draft("900"))
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_editor_readback.py", line 59, in rejected
+    with self.assertRaises(browser.BrowserAdapterError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: BrowserAdapterError not raised
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.028s
+
+FAILED (failures=2, errors=2)

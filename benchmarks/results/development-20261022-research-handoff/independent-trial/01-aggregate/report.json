@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "counts": {
+    "snapshots": 1,
+    "groups": 1,
+    "books": 4
+  },
+  "method": "按平台、来源、榜名、频道、分类、周期、记录日期、采样方式、指标及新老书群体分组；同书去重，冲突排除；占比只描述有效样本。日期仅描述记录时点，HTML 导入时间不证明页面当日状态。同日不同时点也可能因正常变化产生冲突；合并后的统计不代表某一时点的完整榜单，排除冲突也会改变分类分布。",
+  "sources": [
+    {
+      "source_id": "d6f3bca59770f72dcb80",
+      "group_id": "65df9d06b8af8e2e6a50",
+      "platform": "synthetic",
+      "collected_at": "2026-10-22T10:00:00+08:00",
+      "source": {
+        "url": "https://example.invalid/fiction/library",
+        "board": "合成开发样本",
+        "channel": "综合",
+        "category": null,
+        "period": null,
+        "metric": null,
+        "cohort": "new",
+        "sample_method": "原创合成数据，仅开发试用",
+        "pages": [
+          1
+        ],
+        "coverage": "partial",
+        "expected_count": null,
+        "limitations": [
+          "不是真实榜单，不用于市场结论"
+        ]
+      },
+      "raw_entries": 5,
+      "unique_books": 4
+    }
+  ],
+  "groups": [
+    {
+      "group_id": "65df9d06b8af8e2e6a50",
+      "dimensions": {
+        "platform": "synthetic",
+        "date": "2026-10-22",
+        "url": "https://example.invalid/fiction/library",
+        "board": "合成开发样本",
+        "channel": "综合",
+        "category": null,
+        "period": null,
+        "metric": null,
+        "cohort": "new",
+        "sample_method": "原创合成数据，仅开发试用"
+      },
+      "source_ids": [
+        "d6f3bca59770f72dcb80"
+      ],
+      "unique_books": 4,
+      "sample_count": 4,
+      "excluded_conflicts": 0,
+      "conflicted_book_keys": [],
+      "duplicate_observations": 1,
+      "metric_valid_n": 0,
+      "metric_missing_n": 4,
+      "metric_median": null,
+      "categories": [
+        {
+          "category": "现实",
+          "sample_count": 1,
+          "sample_share": 0.25,
+          "metric_valid_n": 0,
+          "metric_missing_n": 1,
+          "metric_median": null
+        },
+        {
+          "category": "都市",
+          "sample_count": 3,
+          "sample_share": 0.75,
+          "metric_valid_n": 0,
+          "metric_missing_n": 3,
+          "metric_median": null
+        }
+      ],
+      "book_keys": [
+        "25b4362aba8fa7c508f7",
+        "27338b875aa7e43c0f5a",
+        "4e3cb61dd858ac0d2682",
+        "be9199f781adff7dc44f"
+      ],
+      "tags": {
+        "method": "按去重且无冲突作品计票；占比分母为全部有效样本。空标签数组表示未获得标签，不推断为作品没有题材标签。最多展示频次前 50 项。",
+        "tagged_n": 3,
+        "missing_n": 1,
+        "distinct_n": 3,
+        "truncated_n": 0,
+        "rows": [
+          {
+            "tag": "经营",
+            "book_count": 3,
+            "sample_share": 0.75,
+            "book_keys": [
+              "25b4362aba8fa7c508f7",
+              "4e3cb61dd858ac0d2682",
+              "be9199f781adff7dc44f"
+            ]
+          },
+          {
+            "tag": "邻里",
+            "book_count": 2,
+            "sample_share": 0.5,
+            "book_keys": [
+              "4e3cb61dd858ac0d2682",
+              "be9199f781adff7dc44f"
+            ]
+          },
+          {
+            "tag": "远行",
+            "book_count": 1,
+            "sample_share": 0.25,
+            "book_keys": [
+              "25b4362aba8fa7c508f7"
+            ]
+          }
+        ]
+      },
+      "title_patterns": {
+        "method": "按 NFKC 规范化后的标题，统计首尾连续文字的 2、4、6 字片段，以及冒号、逗号、问号结构；只保留至少 2 本书重复的候选，同一边界且命中作品完全相同的片段保留最长项。每书每项只计一次，最多展示 30 项；不是中文分词、情节识别或流行原因证明。",
+        "candidate_n": 2,
+        "truncated_n": 0,
+        "rows": [
+          {
+            "kind": "prefix",
+            "pattern": "开局",
+            "book_count": 3,
+            "sample_share": 0.75,
+            "book_keys": [
+              "25b4362aba8fa7c508f7",
+              "4e3cb61dd858ac0d2682",
+              "be9199f781adff7dc44f"
+            ]
+          },
+          {
+            "kind": "structure",
+            "pattern": "含冒号",
+            "book_count": 3,
+            "sample_share": 0.75,
+            "book_keys": [
+              "25b4362aba8fa7c508f7",
+              "4e3cb61dd858ac0d2682",
+              "be9199f781adff7dc44f"
+            ]
+          }
+        ]
+      },
+      "word_counts": {
+        "valid_n": 3,
+        "missing_n": 1,
+        "zero_n": 1,
+        "min": 0,
+        "max": 180000,
+        "median": 80000,
+        "bands": [
+          {
+            "band": "10 万至不足 30 万字",
+            "book_count": 1,
+            "book_keys": [
+              "be9199f781adff7dc44f"
+            ]
+          },
+          {
+            "band": "不足 10 万字",
+            "book_count": 2,
+            "book_keys": [
+              "25b4362aba8fa7c508f7",
+              "4e3cb61dd858ac0d2682"
+            ]
+          },
+          {
+            "band": "字数未知",
+            "book_count": 1,
+            "book_keys": [
+              "27338b875aa7e43c0f5a"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "books": [
+    {
+      "book_key": "25b4362aba8fa7c508f7",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "c"
+      },
+      "titles": [
+        "开局：最后一班船"
+      ],
+      "urls": [
+        "https://example.invalid/book/c"
+      ],
+      "observations": [
+        {
+          "group_id": "65df9d06b8af8e2e6a50",
+          "variant_id": "07f6b21378b7fe201e7d",
+          "source_ids": [
+            "d6f3bca59770f72dcb80"
+          ],
+          "conflict": false,
+          "title": "开局：最后一班船",
+          "author": "原创合成作者",
+          "rank": 3,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "远行"
+          ],
+          "word_count": 0,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        }
+      ]
+    },
+    {
+      "book_key": "27338b875aa7e43c0f5a",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "d"
+      },
+      "titles": [
+        "山城送信人"
+      ],
+      "urls": [
+        "https://example.invalid/book/d"
+      ],
+      "observations": [
+        {
+          "group_id": "65df9d06b8af8e2e6a50",
+          "variant_id": "c45a96665132ddd72df0",
+          "source_ids": [
+            "d6f3bca59770f72dcb80"
+          ],
+          "conflict": false,
+          "title": "山城送信人",
+          "author": "原创合成作者",
+          "rank": 4,
+          "category": "现实",
+          "tags": [],
+          "word_count": null,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        }
+      ]
+    },
+    {
+      "book_key": "4e3cb61dd858ac0d2682",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "a"
+      },
+      "titles": [
+        "开局：雨夜修表铺"
+      ],
+      "urls": [
+        "https://example.invalid/book/a"
+      ],
+      "observations": [
+        {
+          "group_id": "65df9d06b8af8e2e6a50",
+          "variant_id": "a79d300708c874ab5b17",
+          "source_ids": [
+            "d6f3bca59770f72dcb80"
+          ],
+          "conflict": false,
+          "title": "开局：雨夜修表铺",
+          "author": "原创合成作者",
+          "rank": 1,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "邻里"
+          ],
+          "word_count": 80000,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        }
+      ]
+    },
+    {
+      "book_key": "be9199f781adff7dc44f",
+      "identity": {
+        "platform": "synthetic",
+        "kind": "id",
+        "value": "b"
+      },
+      "titles": [
+        "开局：河畔修车行"
+      ],
+      "urls": [
+        "https://example.invalid/book/b"
+      ],
+      "observations": [
+        {
+          "group_id": "65df9d06b8af8e2e6a50",
+          "variant_id": "031ca5e765d27217d404",
+          "source_ids": [
+            "d6f3bca59770f72dcb80"
+          ],
+          "conflict": false,
+          "title": "开局：河畔修车行",
+          "author": "原创合成作者",
+          "rank": 2,
+          "category": "都市",
+          "tags": [
+            "经营",
+            "邻里"
+          ],
+          "word_count": 180000,
+          "status": "连载",
+          "metric_value": null,
+          "metric_raw": null
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

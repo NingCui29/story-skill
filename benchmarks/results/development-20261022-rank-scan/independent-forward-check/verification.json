@@ -1,0 +1,158 @@
+{
+  "input_hashes": {
+    "first.json": "f04daa076f4678508da2c87c961c2c4f5455dd5cc7d581d93298bc4cbd4ea6e6",
+    "second.json": "0a17523201bc2277f2732f34d3249fef1f2e45f8311c7844a100b9ecea7f178d"
+  },
+  "checks_passed": 29,
+  "checks": [
+    {
+      "name": "snapshot/group/book counts",
+      "passed": true
+    },
+    {
+      "name": "distinct IDs a and d survive same-title deduplication",
+      "passed": true
+    },
+    {
+      "name": "first.json: source metadata preserved",
+      "passed": true
+    },
+    {
+      "name": "first.json: raw entry count preserved",
+      "passed": true
+    },
+    {
+      "name": "first.json/a: full observation retrievable",
+      "passed": true
+    },
+    {
+      "name": "first.json/a: URL preserved",
+      "passed": true
+    },
+    {
+      "name": "first.json/b: full observation retrievable",
+      "passed": true
+    },
+    {
+      "name": "first.json/b: URL preserved",
+      "passed": true
+    },
+    {
+      "name": "first.json/c: full observation retrievable",
+      "passed": true
+    },
+    {
+      "name": "first.json/c: URL preserved",
+      "passed": true
+    },
+    {
+      "name": "second.json: source metadata preserved",
+      "passed": true
+    },
+    {
+      "name": "second.json: raw entry count preserved",
+      "passed": true
+    },
+    {
+      "name": "second.json/a: full observation retrievable",
+      "passed": true
+    },
+    {
+      "name": "second.json/a: URL preserved",
+      "passed": true
+    },
+    {
+      "name": "second.json/b: full observation retrievable",
+      "passed": true
+    },
+    {
+      "name": "second.json/b: URL preserved",
+      "passed": true
+    },
+    {
+      "name": "second.json/c: full observation retrievable",
+      "passed": true
+    },
+    {
+      "name": "second.json/c: URL preserved",
+      "passed": true
+    },
+    {
+      "name": "second.json/d: full observation retrievable",
+      "passed": true
+    },
+    {
+      "name": "second.json/d: URL preserved",
+      "passed": true
+    },
+    {
+      "name": "a retains both values and marks both variants conflicted",
+      "passed": true
+    },
+    {
+      "name": "b preserves missing metric",
+      "passed": true
+    },
+    {
+      "name": "c preserves actual zero and missing classification",
+      "passed": true
+    },
+    {
+      "name": "b/c each point back to both sources after duplicate folding",
+      "passed": true
+    },
+    {
+      "name": "effective sample excludes one conflicting book",
+      "passed": true
+    },
+    {
+      "name": "effective metrics use 0 and 20, with one missing value",
+      "passed": true
+    },
+    {
+      "name": "all effective categories use denominator 3 including unknown",
+      "passed": true
+    },
+    {
+      "name": "missing metrics do not turn into zero",
+      "passed": true
+    },
+    {
+      "name": "conflict warning points to a",
+      "passed": true
+    }
+  ],
+  "manual_snapshot_stats": [
+    {
+      "file": "first.json",
+      "collected_at": "2026-10-22T14:00:00+08:00",
+      "books": 3,
+      "categories": {
+        "科幻": 1,
+        "都市": 1,
+        "分类缺失": 1
+      },
+      "metric_valid_n": 2,
+      "metric_missing_n": 1,
+      "metric_median": 50.0,
+      "note": "按单份输入人工口径复算，用于说明汇总排冲突后的数值不是任一时点原榜统计。"
+    },
+    {
+      "file": "second.json",
+      "collected_at": "2026-10-22T14:10:00+08:00",
+      "books": 4,
+      "categories": {
+        "科幻": 1,
+        "都市": 1,
+        "分类缺失": 1,
+        "悬疑": 1
+      },
+      "metric_valid_n": 3,
+      "metric_missing_n": 1,
+      "metric_median": 20,
+      "note": "按单份输入人工口径复算，用于说明汇总排冲突后的数值不是任一时点原榜统计。"
+    }
+  ],
+  "repository_modified": false,
+  "network_used": false
+}

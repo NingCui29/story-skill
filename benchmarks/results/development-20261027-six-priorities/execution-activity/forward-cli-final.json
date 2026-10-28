@@ -1,0 +1,58 @@
+{
+  "scope": "Read-only forward inspection of a completed real Codex CLI trace. Three selected rule excerpts; developer-labelled preparation stage. No manuscript review, whole-read coverage, child-trace verification or cost savings claim.",
+  "trace": {
+    "path": "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/p0-comparison-20261027/run/candidate/phase-1/trace.jsonl",
+    "sha256": "975b0df16aeacdd53ba45f18663a43853083f60bf6725e1a9536b6c63b62c0b3"
+  },
+  "process_result": "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/p0-comparison-20261027/run/candidate/phase-1/process-result.json",
+  "map": {
+    "path": "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/p0-comparison-20261027/run/activity-observation/phase1-map.json",
+    "sha256": "d3ef9ed3bc8f624ca15221a6d21000c5d7bfc0d0eceb839da6838711d5766b54"
+  },
+  "report": {
+    "path": "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/p0-comparison-20261027/run/activity-observation/phase1-activity-final.json",
+    "sha256": "2585943e1aa29c257648e485f6980f91fb7f4b020f8d79e3c114863d2898de6b"
+  },
+  "script_sha256": "3912d3217304d0dfdb0f5bf8e44f3ad72183d61ee476b5c998901fcbc51bccb4",
+  "returncode": 0,
+  "status": "selected_evidence_checked",
+  "phases": {
+    "preparation": {
+      "observed_excerpts": 3,
+      "quoted_characters": 265
+    }
+  },
+  "observed_annotations": [
+    {
+      "line": 5,
+      "source": {
+        "path": "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/p0-comparison-20261027/run/candidate/skills/story-skill-write/SKILL.md",
+        "sha256": "244d8bf8c512f4f57b17714ae17460a18c761406b1369562e9a2ad44e35486e6"
+      },
+      "quote_sha256": "b6f2ff71aed84d92526b9d9f68101963aa2a4fd260f4793d97bdfe7317cbc417",
+      "coverage": "cited_excerpt_only"
+    },
+    {
+      "line": 11,
+      "source": {
+        "path": "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/p0-comparison-20261027/run/candidate/skills/story-skill/SKILL.md",
+        "sha256": "4eb292df99b7a09eaa12e31c9689d4fd9fcfff6c123fd175ba67a5a4359b2c53"
+      },
+      "quote_sha256": "45f175d178e7005288806b36b36141f723dd1294c4246eacddc1221dc5a8cd5a",
+      "coverage": "cited_excerpt_only"
+    },
+    {
+      "line": 26,
+      "source": {
+        "path": "/Users/cuining/Documents/GitHub/story-skill/.local-writing-samples/p0-comparison-20261027/run/candidate/skills/story-skill-write/references/suspense-evidence.md",
+        "sha256": "5b35a599647abbd66ab6eeea55b46eeab57784d975b18908bf700afecd65f3c8"
+      },
+      "quote_sha256": "895f6df7fcbc0fbe3c6e0aea023cfb6b1537725cb6766afc7923f03a66211869",
+      "coverage": "cited_excerpt_only"
+    }
+  ],
+  "native_task_links": [],
+  "full_task_total": null,
+  "source_trace_unchanged": true,
+  "revision_note": "After same-event conflicting-phase correction; original forward receipt retained."
+}

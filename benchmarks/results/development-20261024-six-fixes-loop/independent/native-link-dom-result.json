@@ -1,0 +1,288 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "empty-initial-document-target",
+      "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+      "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+      "ok": true
+    },
+    {
+      "name": "empty-final-equals-initial",
+      "actual": [
+        "",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "expected": [
+        "",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "ok": true
+    },
+    {
+      "name": "empty-actual-self",
+      "actual": true,
+      "expected": true,
+      "ok": true
+    },
+    {
+      "name": "fragment-initial-document-target",
+      "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+      "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+      "ok": true
+    },
+    {
+      "name": "fragment-final-equals-initial",
+      "actual": [
+        "#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "expected": [
+        "#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "ok": true
+    },
+    {
+      "name": "fragment-actual-self",
+      "actual": true,
+      "expected": true,
+      "ok": true
+    },
+    {
+      "name": "ASCII-initial-document-target",
+      "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+      "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+      "ok": true
+    },
+    {
+      "name": "ASCII-final-equals-initial",
+      "actual": [
+        "\t#save\r\n",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "expected": [
+        "\t#save\r\n",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "ok": true
+    },
+    {
+      "name": "ASCII-actual-self",
+      "actual": true,
+      "expected": true,
+      "ok": true
+    },
+    {
+      "name": "ASCII-empty-initial-document-target",
+      "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+      "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+      "ok": true
+    },
+    {
+      "name": "ASCII-empty-final-equals-initial",
+      "actual": [
+        " \t",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "expected": [
+        " \t",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "ok": true
+    },
+    {
+      "name": "ASCII-empty-actual-self",
+      "actual": true,
+      "expected": true,
+      "ok": true
+    },
+    {
+      "name": "NBSP-initial-document-target",
+      "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+      "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+      "ok": true
+    },
+    {
+      "name": "NBSP-final-equals-initial",
+      "actual": [
+        " #save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "expected": [
+        " #save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "ok": true
+    },
+    {
+      "name": "NBSP-actual-self",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "name": "ideographic-initial-document-target",
+      "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+      "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+      "ok": true
+    },
+    {
+      "name": "ideographic-final-equals-initial",
+      "actual": [
+        "　#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "expected": [
+        "　#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%E3%80%80#save",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "ok": true
+    },
+    {
+      "name": "ideographic-actual-self",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "name": "NBSP-path-initial-document-target",
+      "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+      "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+      "ok": true
+    },
+    {
+      "name": "NBSP-path-final-equals-initial",
+      "actual": [
+        " ",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "expected": [
+        " ",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/%C2%A0",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "ok": true
+    },
+    {
+      "name": "NBSP-path-actual-self",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "name": "relative-initial-document-target",
+      "actual": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+      "expected": "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+      "ok": true
+    },
+    {
+      "name": "relative-final-equals-initial",
+      "actual": [
+        "next",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "expected": [
+        "next",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/next",
+        "file:///var/folders/4f/b4ym6s71655dtqvxqhrp4dx00000gn/T/story-native-link-dom-_n7kwgj6/probe.html"
+      ],
+      "ok": true
+    },
+    {
+      "name": "relative-actual-self",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "name": "unchanged-raw",
+      "actual": [
+        "next",
+        "next"
+      ],
+      "expected": [
+        "next",
+        "next"
+      ],
+      "ok": true
+    },
+    {
+      "name": "effective-destination-mutation",
+      "actual": [
+        "https://example.test/draft/next",
+        "https://example.test/publish/next"
+      ],
+      "expected": [
+        "https://example.test/draft/next",
+        "https://example.test/publish/next"
+      ],
+      "ok": true
+    },
+    {
+      "name": "base-not-document",
+      "actual": false,
+      "expected": false,
+      "ok": true
+    },
+    {
+      "name": "changed-link-has-no-click",
+      "actual": [],
+      "expected": [],
+      "ok": true
+    },
+    {
+      "name": "stable-link-null",
+      "actual": null,
+      "expected": null,
+      "ok": true
+    },
+    {
+      "name": "stable-link-https://example.test/draft/fixed",
+      "actual": "https://example.test/draft/fixed",
+      "expected": "https://example.test/draft/fixed",
+      "ok": true
+    },
+    {
+      "name": "stable-link-/draft/fixed",
+      "actual": "https://example.test/draft/fixed",
+      "expected": "https://example.test/draft/fixed",
+      "ok": true
+    }
+  ],
+  "engine": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+  "source_sha256": {
+    "skills/story-skill/scripts/story_platform_browser.py": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1"
+  },
+  "scope": "Production JavaScript callbacks, isolated local Chromium; no website/account, no Native Playwright transport. Combined with full adapter fixture tests, not live end-to-end proof."
+}

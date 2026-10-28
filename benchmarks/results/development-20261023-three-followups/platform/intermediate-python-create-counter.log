@@ -1,0 +1,106 @@
+test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) ... 
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='remote') ... FAIL
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='book') ... FAIL
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='account') ... FAIL
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='title') ... FAIL
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='missing_account') ... FAIL
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='empty_account') ... FAIL
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='duplicate_account') ... FAIL
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='guard_redirect') ... FAIL
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='missing_header') ... FAIL
+  test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='duplicate_header') ... FAIL
+test_final_preview_checks_url_again_after_current_account_dom_read (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_checks_url_again_after_current_account_dom_read) ... ok
+test_failed_final_preview_of_saved_draft_can_only_be_recovered_by_readback (tests.test_platform_browser_preview.NativePreviewTests.test_failed_final_preview_of_saved_draft_can_only_be_recovered_by_readback) ... FAIL
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='remote')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='book')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='title')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='missing_account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='empty_account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='duplicate_account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='guard_redirect')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='missing_header')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_final_preview_rechecks_identity_after_last_body_read_without_waiting (tests.test_platform_browser_preview.NativePreviewTests.test_final_preview_rechecks_identity_after_last_body_read_without_waiting) (operation='create', change='duplicate_header')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 340, in test_final_preview_rechecks_identity_after_last_body_read_without_waiting
+    self.assertEqual(context.created_blank, 1 if operation == "create" else 0)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_failed_final_preview_of_saved_draft_can_only_be_recovered_by_readback (tests.test_platform_browser_preview.NativePreviewTests.test_failed_final_preview_of_saved_draft_can_only_be_recovered_by_readback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/cuining/Documents/GitHub/story-skill/tests/test_platform_browser_preview.py", line 374, in test_failed_final_preview_of_saved_draft_can_only_be_recovered_by_readback
+    self.assertEqual(context.created_blank, 1)
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.147s
+
+FAILED (failures=11)

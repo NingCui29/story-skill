@@ -1,0 +1,25 @@
+{
+  "scope": "Complete affected backend modules; not the full repository suite",
+  "modules": [
+    "test_platform_drafts",
+    "test_platform_draft_equivalence",
+    "test_platform_browser_batch",
+    "test_workbench_platform_drafts",
+    "test_platform_draft_auto_connect",
+    "test_workbench_draft_preferences",
+    "test_instruction_budget"
+  ],
+  "started_at_utc": "2026-10-23T11:27:47.938912+00:00",
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:22) [Clang 22.1.3 ]",
+  "platform": "macOS-15.8.1-x86_64-i386-64bit",
+  "node": "v24.19.0",
+  "tests_discovered": 161,
+  "tests_run": 161,
+  "passed": 161,
+  "skipped": [],
+  "failures": [],
+  "errors": [],
+  "elapsed_seconds": 18.17,
+  "source_changed_during_run": [],
+  "successful": true
+}

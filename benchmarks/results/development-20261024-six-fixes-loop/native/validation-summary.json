@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "files_sha256": {
+    "skills/story-skill/scripts/story_platform_browser.py": "a9affde3aa73ae6e3dd851687f0b2be512b5c00d15991f6701f8c869c87aedd1",
+    "tests/test_platform_browser.py": "1c15878b6d331232cd8143f1f695463f882e84b25929ac6da3c7864f819618de",
+    "tests/test_platform_browser_link_base.py": "2fe324a56dca1d52848bc2b2172c8ede976da49f01a5350e0d0f8f6f1dee5270"
+  },
+  "new_test_methods": 3,
+  "targeted_tests_run": 147,
+  "passed": 147,
+  "skipped": 0,
+  "failures": 0,
+  "errors": 0,
+  "new_action_scenarios": 62,
+  "findings": [
+    "Unchanged relative href with a changed document base sent an actual create/save click to a different destination. Effective href is now checked in the final bound button snapshot."
+  ],
+  "candidate_regressions_fixed": [
+    "Configured same-draft aliases with empty or fragment save links were initially over-rejected. Both snapshot document identities and actual self-targets now prove eligibility.",
+    "Unicode whitespace classified a path as a self-link. Eligibility now uses browser-resolved document URL equality without fragment, preserving real ASCII/C0 self-links."
+  ],
+  "red_evidence": {
+    "base-red.log": 6,
+    "alias-red.log": 4,
+    "unicode-red.log": 6
+  },
+  "unresolved_confirmed_findings": [],
+  "limits": [
+    "Full adapter tests use local fake DOM and public Playwright-shaped transport; actual DOM callbacks are verified separately in isolated local Chromium.",
+    "No real platform, account, novel content, installation or release modified."
+  ]
+}

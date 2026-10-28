@@ -1,0 +1,35 @@
+{
+  "scope": "Independent read-only review of durable draft journals, workbench result/poll/retry flow, restored bridge sessions; synthetic local tests only.",
+  "production_edits": false,
+  "source_sha256": {
+    "skills/story-skill/scripts/story_platform_drafts.py": "a145101afcf1a8d6e8ec91fb4099606896ef439a2f9b013880fb1d515a853d72",
+    "skills/story-skill/scripts/story_workbench.py": "330ccc5187d75bc9a9ab274645736b3a8ed7381c2bb28c19388fb670240a1875",
+    "skills/story-skill/scripts/story_workbench_archives.py": "f57f3358ec74156d7926bb71a9f1ba016076dd790d0f27357ce12f44c6cdb244",
+    "skills/story-skill/scripts/story_platform_chrome_bridge.py": "8dee92f95f7f753e5d64ae8d4754dbd00e0ddebb960761fc22a0fce7a0ed8156"
+  },
+  "targeted_lifecycle_tests": {
+    "run": 12,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "log": "journal-workbench-recovery-green.log"
+  },
+  "verified_contracts": [
+    "create rejection after durable sending remains unknown and cannot automatically resend",
+    "read rejection before sending becomes blocked without this-run title/body verification",
+    "status and catalog read historical journal only and polling never calls create",
+    "duplicate running job start is reused; changed binding or target conflicts are refused",
+    "history successes do not count as current-run observations",
+    "restored queues retain bytes and publish an inert marker before leases; old handles cannot poll/respond/heartbeat",
+    "restored first-session publication crash permits a fresh connection while leaving old evidence intact"
+  ],
+  "finding": {
+    "id": "original-incomplete-bridge-session",
+    "severity": "P2",
+    "status": "fixed_and_verified",
+    "evidence": "incomplete-session-probe.json",
+    "description": "Original book attach interrupted before first session.json publication leaves an incomplete directory; worker_status and next attach fail with FileNotFoundError. Restore correctly isolates it, but ordinary original-book reconnect lacks equivalent recovery.",
+    "resolution": "session-recovery-summary.json"
+  },
+  "remaining_unconfirmed_findings": []
+}

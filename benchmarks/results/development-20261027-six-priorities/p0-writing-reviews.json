@@ -1,0 +1,109 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-27T07:06:08.289479+00:00",
+  "status": "two_independent_anonymous_model_reviews_completed",
+  "mapping_revealed_after_reviews": {
+    "A": "candidate",
+    "B": "baseline"
+  },
+  "reports": [
+    {
+      "kind": "fresh_cli",
+      "preferences": [
+        {
+          "chapter": 1,
+          "anonymous_choice": "A",
+          "decoded_choice": "candidate"
+        },
+        {
+          "chapter": 2,
+          "anonymous_choice": "A",
+          "decoded_choice": "candidate"
+        },
+        {
+          "chapter": 3,
+          "anonymous_choice": "B",
+          "decoded_choice": "baseline"
+        }
+      ],
+      "overall_decoded_choice": "candidate",
+      "strength": "slight",
+      "quote_references": 112,
+      "quote_errors": [],
+      "input_files_unchanged": true,
+      "report_sha256": "894910ef42d1c88f0caca99055109b27e2e06455825fddcdd486637b7696c795",
+      "trace_sha256": "d8e6ac0ad204ec43b0d90c6e28116bc84c302fbd6a69eb278381da17fe8be0b3",
+      "model_requested": "gpt-6.1-sol",
+      "model_revision": null,
+      "reading_order": "A1-A3 then B1-B3, followed by targeted rereads (native trace)"
+    },
+    {
+      "kind": "fresh_agent",
+      "preferences": [
+        {
+          "chapter": 1,
+          "anonymous_choice": "A",
+          "decoded_choice": "candidate"
+        },
+        {
+          "chapter": 2,
+          "anonymous_choice": "A",
+          "decoded_choice": "candidate"
+        },
+        {
+          "chapter": 3,
+          "anonymous_choice": "持平",
+          "decoded_choice": "持平"
+        }
+      ],
+      "overall_decoded_choice": "candidate",
+      "strength": "slight",
+      "quote_references": 17,
+      "quote_errors": [],
+      "input_files_unchanged": true,
+      "report_sha256": "04743a88703fb6a90509a6b84a3de6f1dfb0643097444c2ecfb56c9f2f18b2f2",
+      "trace_sha256": null,
+      "model_requested": null,
+      "model_revision": null,
+      "dispatch": {
+        "tool": "collaboration.spawn_agent",
+        "agent": "/root/anonymous_sequence_reader",
+        "fork_turns": "none",
+        "model_override": null,
+        "model_settings": "inherited from host; actual model/version unverified",
+        "task_material_root": ".local-writing-samples/p0-comparison-20261027/blind-review",
+        "exported_native_trace": null
+      },
+      "reading_order": "A1-A3 then B1-B3, followed by targeted rereads (reviewer record)"
+    }
+  ],
+  "agreement": "Both slightly preferred local candidate for the first two chapters and overall, citing customer participation, experienced everyday reward and relationship accumulation.",
+  "disagreement": "For chapter 3 the CLI reviewer slightly preferred upstream; the fresh-agent reviewer judged a tie. Both preserved upstream strengths in reciprocal work arrangements and concrete follow-up conditions.",
+  "findings": [
+    {
+      "source": "fresh_cli",
+      "arm": "baseline",
+      "severity": "low",
+      "status": "confirmed",
+      "summary": "One phrase miscounts a four-character label as five; original retained."
+    },
+    {
+      "source": "fresh_agent",
+      "arm": "baseline",
+      "severity": "low",
+      "status": "ambiguous",
+      "summary": "A water-mark attribution may refer to a different person across chapters; possibly separate marks, not a confirmed contradiction."
+    }
+  ],
+  "no_edits_to_originals_or_rules_after_review": true,
+  "human_reader_feedback": "not performed",
+  "limits": [
+    "One synthetic story, three chapters per arm, one generation each",
+    "Two model judgments are not independent human reader samples",
+    "No success-rate calculation or stable literary advantage claim",
+    "Different full skill packages; cannot attribute preference to one new example or rule",
+    "Reference matching establishes location, not semantic correctness",
+    "Candidate prose only, no formal commit or publication certification",
+    "Both reviews first read A1-A3 then B1-B3; no presentation-order reversal trial was performed"
+  ]
+}

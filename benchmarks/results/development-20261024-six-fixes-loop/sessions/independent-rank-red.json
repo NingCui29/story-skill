@@ -1,0 +1,316 @@
+{
+  "source_sha256": "def7c706ac51e7c02ddbe4ba092e605961d6eca87a9ba03b8927541bd4ad7f12",
+  "checks": 23,
+  "matches": 8,
+  "rejected": 3,
+  "accepted_hidden_cases": 12,
+  "rows": [
+    {
+      "label": "visible baseline",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "ordinary hidden template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "ordinary hidden attribute",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "template outer end tags",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg selfclosed hidden node",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math selfclosed hidden node",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg nested integration",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "math integration html",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "100"
+      ],
+      "error": null,
+      "same": true,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "svg p breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "svg p breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "svg div breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "svg div breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "svg font breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "svg font breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "math p breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "math p breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "math div breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "math div breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "math font breakout then template",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "math font breakout then hidden custom",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": [
+        "900",
+        "100"
+      ],
+      "error": null,
+      "same": false,
+      "unsafe_extra_ids": [
+        "900"
+      ]
+    },
+    {
+      "label": "SVG mi is foreign",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "SVG annotation-xml is foreign",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "unsafe_extra_ids": []
+    },
+    {
+      "label": "MathML foreignObject is foreign",
+      "chromium_ids": [
+        "100"
+      ],
+      "parsed_ids": null,
+      "error": "HTML 惰性容器使用无法确认的自闭合写法，请重新导出含完整结束标签的 HTML",
+      "same": false,
+      "unsafe_extra_ids": []
+    }
+  ],
+  "scope": "Local synthetic HTML, isolated Chromium DOMParser; no live platform or CSS execution."
+}

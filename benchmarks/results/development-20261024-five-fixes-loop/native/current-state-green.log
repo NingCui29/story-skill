@@ -1,0 +1,6 @@
+test_create_stops_before_next_write_when_current_draft_state_is_lost (tests.test_platform_browser_editor_readback.EditorReadbackTests.test_create_stops_before_next_write_when_current_draft_state_is_lost) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.015s
+
+OK

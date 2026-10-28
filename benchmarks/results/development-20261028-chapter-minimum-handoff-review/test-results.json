@@ -1,0 +1,29 @@
+{
+  "backend": {
+    "run": 490,
+    "passed": 489,
+    "skipped": 1,
+    "failed": 0,
+    "errors": 0,
+    "duration_seconds": 116.604,
+    "log": "backend.log"
+  },
+  "host": {
+    "run": 51,
+    "passed": 51,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "duration_seconds": 23.558,
+    "log": "host.log"
+  },
+  "workbench": {
+    "run": 129,
+    "passed": 129,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "duration_seconds": 25.799,
+    "log": "workbench.log"
+  }
+}

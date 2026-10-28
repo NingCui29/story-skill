@@ -1,0 +1,1030 @@
+--- before/skills/story-skill/scripts/story_tasks.py
++++ after/skills/story-skill/scripts/story_tasks.py
+@@ -404,6 +404,17 @@
+     return _writing_scope(record) == 'complete_chapter'
+ 
+ 
++def _fragment_first_visible_line(text):
++    # Apply the v2 visibility rule only to heading recognition, never to the
++    # saved candidate: an invisible prefix must not hide an explicit chapter.
++    for offset, char in enumerate(text):
++        category = api.unicodedata.category(char)
++        if (not char.isspace() and category not in ('Cc', 'Cf')
++                and not category.startswith('M') and char not in api.V2_EMPTY_GLYPHS):
++            return text[offset:].splitlines()[0]
++    return ''
++
++
+ def _check_output_scope(record, text, meta=None):
+     """Enforce chapter association without expanding an explicit fragment."""
+     scope = _writing_scope(record)
+@@ -418,8 +429,7 @@
+     heading = api.first_chapter_heading(text) or ''
+     match = api.COMPLETE_CHAPTER_HEADING.fullmatch(heading)
+     if scope == 'fragment':
+-        lines = text.lstrip('\ufeff').splitlines()
+-        first_line = next((line.strip() for line in lines if line.strip()), '')
++        first_line = _fragment_first_visible_line(text)
+         explicit = re.match(r'^(?:#\s+)?第([0-9０-９零〇一二三四五六七八九十百千万两]+)章(?:$|[ \t　:：、.．-])',
+                             first_line)
+         wrong_heading = bool(explicit and api.chapter_number(explicit[1]) != chapter)
+@@ -448,7 +458,7 @@
+         # This validator only needs the pinned facade's root; it reads the same
+         # current author agreement as the manuscript service's commit gate.
+         return api.Book._length_exception_issue(book, plan)
+-    except (api.StoryError, ValueError, TypeError, AttributeError, KeyError):
++    except (api.StoryError, ValueError, TypeError, AttributeError, KeyError, RecursionError):
+         return {'code': 'writing_plan_invalid', 'message': '当前写作章计划无法核对，请先读取并修正计划。'}
+ 
+ 
+--- before/skills/story-skill/scripts/story_task_worker.py
++++ after/skills/story-skill/scripts/story_task_worker.py
+@@ -338,8 +338,8 @@
+                   trace_sha256=None, result_sha256=None, result_verified=False,
+                   finished=_now(), updated_epoch=time.time(),
+                   error='本机调用未能启动，未自动重试：' + str(error))
+-    # This branch is reached only when Popen returned no child handle. It is
+-    # a signed no-invocation receipt, never a fabricated process exit code.
++    # Only exclusive preflight rejection or Popen returning no child handle
++    # reaches here. This never fabricates a process exit code.
+     _sign_lifecycle(book, ledger, {'state': 'failed'}, {})
+ 
+ 
+@@ -775,6 +775,8 @@
+         api.fail('task_execution_record_invalid', '进程回执不属于此执行。')
+     if type(receipt.get('exit_code')) is not int or receipt.get('state') not in TERMINAL:
+         api.fail('task_execution_record_invalid', '进程退出尚未核验。')
++    if not isinstance(receipt.get('finished'), str) or not 1 <= len(receipt['finished']) <= 80:
++        api.fail('task_execution_record_invalid', '进程退出时间格式无效，未回流结果。')
+     if ledger['state'] in TERMINAL and ledger['state'] != receipt['state']:
+         api.fail('task_execution_record_invalid', '执行状态与私有进程回执不一致。')
+     native = _native(workspace)
+@@ -798,6 +800,53 @@
+                 _json(native['final_text']) != _json(final_raw)):
+             api.fail('task_execution_trace_invalid', '缺少相符的原生完成事件与最终结果。')
+     return receipt, native
++
++
++def _candidate_file(book, path, raw):
++    try:
++        existing = _tasks()._read(book.root, path, MAX_FINAL)
++    except FileNotFoundError:
++        with api._pinned_directory(api.safe_path(book.root, '.story/drafts/workbench'), create=True) as directory:
++            _tasks()._verify_book(book)
++            fd, staged = api._bound_stage(directory, '.assistant-')
++            try:
++                with api._owned_fdopen(fd, 'wb') as stream:
++                    stream.write(raw); stream.flush(); os.fsync(stream.fileno())
++                api._publish_no_replace(staged, api._BoundFile(directory, Path(path).name))
++            finally:
++                if api._bound_exists(staged):
++                    api._bound_unlink(staged)
++    else:
++        if existing != raw:
++            api.fail('task_execution_result_conflict', '专属候选或来源记录已存在不同内容，未覆盖。')
++
++
++def _candidate_publish(book, record, ledger, candidate):
++    _tasks()._verify_book(book)
++    path = '.story/drafts/workbench/助手候选-' + ledger['task_id'] + '-' + ledger['id'] + '.md'
++    raw = candidate.encode()
++    meta = {'chapter': record['binding']['chapter'], 'content_kind': 'prose',
++            'created': ledger['created'], 'adopted': False,
++            'base_sha256': record['binding']['initial_formal_sha256'], 'content_sha256': _hash(raw)}
++    if meta['chapter'] is not None:
++        meta['writing_scope'] = _tasks()._writing_scope(record)
++    # Preserve both text and provenance before publishing either file. A crash
++    # leaves a recoverable pending item; reconciliation only resumes identical
++    # content and never replaces an author's edits.
++    expected = {'version': 1, 'target': path, 'text': candidate, 'meta': meta, 'content_sha256': _hash(raw)}
++    pending_name = path + '.pending.json'
++    try:
++        pending_raw = _tasks()._read(book.root, pending_name, api.workbench.PENDING_SAVE_LIMIT)
++    except FileNotFoundError:
++        pending = api.workbench._start_pending_save(book.root, path, candidate, candidate, meta)
++    else:
++        if _json(pending_raw) != expected:
++            api.fail('task_execution_result_conflict', '专属候选已有不同待核对记录，未覆盖。')
++        pending = (pending_name, _hash(pending_raw))
++    _candidate_file(book, path, raw)
++    _candidate_file(book, path + '.meta.json', api.dumps(meta).encode())
++    api.workbench._finish_pending_save(book.root, pending)
++    return {'path': path, 'sha256': _hash(raw)}
+ 
+ 
+ def _mapped_result(book, record, ledger, workspace):
+@@ -826,25 +875,39 @@
+         if not isinstance(candidate, str) or not candidate or len(candidate.encode()) > MAX_FINAL:
+             api.fail('task_execution_result_invalid', '返回候选为空或超出范围。')
+         _tasks()._check_output_scope(record, candidate)
+-        path = '.story/drafts/助手候选-' + ledger['task_id'] + '-' + ledger['id'] + '.md'
+-        try:
+-            existing = _tasks()._read(book.root, path, MAX_FINAL)
+-        except FileNotFoundError:
+-            with api._pinned_directory(api.safe_path(book.root, '.story/drafts'), create=True) as directory:
+-                _tasks()._verify_book(book)
+-                fd, staged = api._bound_stage(directory, '.assistant-')
+-                try:
+-                    with api._owned_fdopen(fd, 'wb') as stream:
+-                        stream.write(candidate.encode()); stream.flush(); os.fsync(stream.fileno())
+-                    api._publish_no_replace(staged, api._BoundFile(directory, Path(path).name))
+-                finally:
+-                    if api._bound_exists(staged):
+-                        api._bound_unlink(staged)
+-        else:
+-            if existing != candidate.encode():
+-                api.fail('task_execution_result_conflict', '专属候选文件已存在不同文字，未覆盖。')
+-        result['output'] = {'path': path, 'sha256': _hash(candidate.encode())}
++        result['output'] = _candidate_publish(book, record, ledger, candidate)
+     return _tasks()._result(book, record, result)
++
++
++def _attachment_identity(ledger, record):
++    return {key: ledger[key] for key in ('id', 'task_id', 'book_id', 'binding_sha256', 'nonce')} | {
++        'record_sha256': _hash(api.dumps(record).encode())}
++
++
++def _attached_record(ledger, record, workspace):
++    if record['version'] != ledger['task_version'] + 1 or record.get('result') is None:
++        return False
++    try:
++        attachment = _json(_local_read(workspace, 'attachment.json'))
++    except FileNotFoundError:
++        return False
++    return attachment == _attachment_identity(ledger, record)
++
++
++def _inputs_changed(book, record, ledger, workspace, manifest=None, *, allow_attached=False):
++    frozen = _json(_local_read(workspace, 'input.json', MAX_INPUT))
++    manifest = manifest if manifest is not None else _manifest(ledger, workspace)
++    # A private hash survives same-machine book moves. Older launches retain
++    # their original normalized request comparison.
++    request_matches = (_hash(_raw_request(record).encode()) == manifest['task_request_sha256']
++                       if 'task_request_sha256' in manifest else
++                       frozen.get('request') == _request_text(book, record))
++    return ((record['version'] != ledger['task_version']
++             and not (allow_attached and _attached_record(ledger, record, workspace)))
++            or record['binding_sha256'] != ledger['binding_sha256']
++            or not request_matches
++            or ('writing_scope' in frozen and frozen['writing_scope'] != _tasks()._writing_scope(record))
++            or bool(_tasks()._stale(book, record)))
+ 
+ 
+ def _finish(book, record, ledger, sha, workspace):
+@@ -865,18 +928,7 @@
+         ledger.update(state='result_conflict', error='取消请求后完成的迟到结果已保留，未自动回流。', result_verified=False)
+         _sign_lifecycle(book, ledger, receipt, native)
+         _save_ledger(book, ledger, sha); return
+-    frozen = _json(_local_read(workspace, 'input.json', MAX_INPUT))
+-    manifest = _manifest(ledger, workspace)
+-    # A private hash of the original request survives a same-machine book move.
+-    # Older launches without it still compare their original normalized input.
+-    request_matches = (_hash(_raw_request(record).encode()) == manifest['task_request_sha256']
+-                       if 'task_request_sha256' in manifest else
+-                       frozen.get('request') == _request_text(book, record))
+-    if (record['version'] != ledger['task_version']
+-            or record['binding_sha256'] != ledger['binding_sha256']
+-            or not request_matches
+-            or ('writing_scope' in frozen and frozen['writing_scope'] != _tasks()._writing_scope(record))
+-            or _tasks()._stale(book, record)):
++    if _inputs_changed(book, record, ledger, workspace, allow_attached=True):
+         ledger.update(state='result_conflict', error='任务或输入版本已变化，结果已保留，未自动回流。', result_verified=False)
+         _sign_lifecycle(book, ledger, receipt, native)
+         _save_ledger(book, ledger, sha); return
+@@ -889,7 +941,15 @@
+             if latest != record:
+                 api.fail('task_version_changed', '任务在返回期间变化，未覆盖。')
+             record.update(result=result, state='needs_review', issue_statuses=[{'id': v['id'], 'status': 'open', 'note': ''} for v in result['issues']],
+-                          version=record['version'] + 1, updated=_now())
++                          version=record['version'] + 1, updated=receipt['finished'])
++            attachment = _attachment_identity(ledger, record)
++            try:
++                old = _json(_local_read(workspace, 'attachment.json'))
++            except FileNotFoundError:
++                _write_new(workspace, 'attachment.json', api.dumps(attachment).encode())
++            else:
++                if old != attachment:
++                    api.fail('task_execution_result_conflict', '任务附着记录不同，未覆盖。')
+             for ref in ([result['output']] if result.get('output') else []) + [ref for issue in result['issues'] for ref in issue['evidence']]:
+                 _tasks()._source_snapshot(book, ref)
+             _tasks()._save(book, record, previous)
+@@ -970,44 +1030,72 @@
+         workspace = _private(ledger); launch = _manifest(ledger, workspace)
+         if _file_hash(launch['command'][0]) != launch['executable_sha256']:
+             api.fail('task_host_changed', '本机助手程序已变化，未执行。')
+-        if _tasks()._stale(book, record) or record['version'] != ledger['task_version']:
+-            ledger.update(state='unknown', error='启动前任务已变化，未调用宿主。', updated_epoch=time.time())
+-            _save_ledger(book, ledger, sha); return 2
+     env = dict(os.environ); env.pop('CODEX_THREAD_ID', None)
+     process, failure = None, None
+     try:
+-        with (workspace / 'trace.jsonl').open('xb') as out, (workspace / 'stderr.log').open('xb') as err:
++        # Hold the book operation lock across the last check and Popen. A
++        # queued cancellation or task edit cannot slip between those steps.
++        with _tasks()._book(root, book_id, write=True) as book:
++            record, _ = _tasks()._record(book, task_id)
++            ledger, sha = _read_ledger(book, task_id, execution_id)
++            if ledger['nonce'] != nonce or ledger.get('worker_pid') != os.getpid():
++                api.fail('task_execution_owner_changed', '执行工作进程的身份不匹配。')
++            workspace = _private(ledger); launch = _manifest(ledger, workspace)
++            if ledger['state'] in TERMINAL:
++                # A known failed/no-invocation attempt is still a consumed
++                # execution key. A worker re-entry never dispatches it again.
++                _lifecycle(book, ledger)
++                return 2
++            if (ledger.get('child_pid') is not None or ledger.get('session_id') is not None
++                    or any(ledger.get(field) is not None for field in ('exit_code', 'trace_sha256', 'result_sha256', 'finished'))
++                    or any(os.path.lexists(workspace / name) for name in ('trace.jsonl', 'stderr.log', 'process.json', 'final.json'))):
++                ledger.update(state='unknown', error='已存在调用线索，须对账，未再次调用宿主。', updated_epoch=time.time())
++                _save_ledger(book, ledger, sha)
++                return 2
++            rejection = None
++            # Exclusive files reserve this invocation before any child can
++            # exist. Existing evidence never becomes a not_started receipt.
++            with (workspace / 'trace.jsonl').open('xb') as out, (workspace / 'stderr.log').open('xb') as err:
++                head = _head(book, task_id)
++                if ledger.get('cancel_requested'):
++                    rejection = '调用前已收到取消请求。'
++                elif head is None or head['id'] != execution_id or _inputs_changed(book, record, ledger, workspace, launch):
++                    rejection = '启动前任务或冻结输入已变化。'
++                elif _file_hash(launch['command'][0]) != launch['executable_sha256']:
++                    rejection = '本机助手程序在启动前已变化。'
++                if rejection is None:
++                    try:
++                        process = subprocess.Popen(launch['command'], cwd=workspace, stdin=subprocess.PIPE, stdout=out, stderr=err,
++                                                   env=env, start_new_session=os.name != 'nt', close_fds=True)
++                    except OSError as error:
++                        rejection = error
++            if rejection is not None:
++                (workspace / 'trace.jsonl').unlink(); (workspace / 'stderr.log').unlink()
++                _not_started(book, ledger, rejection)
++                _save_ledger(book, ledger, sha)
++                return 1
++        if _file_hash(launch['command'][0]) != launch['executable_sha256']:
++            _terminate(process)
++            api.fail('task_host_changed', '本机助手启动期间程序发生变化，已停止该受控调用。')
++        process.stdin.write(_local_read(workspace, 'prompt.txt')); process.stdin.close()
++        _worker_update(root, task_id, execution_id, nonce, {'state': 'starting', 'child_pid': process.pid, 'started': _now()})
++        deadline = time.monotonic() + ledger['params']['timeout_seconds']
++        cancelled = False
++        while process.poll() is None:
++            time.sleep(0.5)
++            with _tasks()._book(root, book_id) as book:
++                current, _ = _read_ledger(book, task_id, execution_id)
++            if current.get('cancel_requested'):
++                cancelled = True; _terminate(process); break
++            if time.monotonic() >= deadline:
++                failure = '本次执行达到时限，已停止该受控进程；未自动重试。'; _terminate(process); break
+             try:
+-                process = subprocess.Popen(launch['command'], cwd=workspace, stdin=subprocess.PIPE, stdout=out, stderr=err,
+-                                           env=env, start_new_session=os.name != 'nt', close_fds=True)
+-            except OSError as error:
+-                with _tasks()._book(root, book_id, write=True) as book:
+-                    current, sha = _read_ledger(book, task_id, execution_id)
+-                    _not_started(book, current, error)
+-                    _save_ledger(book, current, sha)
+-                return 1
+-            if _file_hash(launch['command'][0]) != launch['executable_sha256']:
+-                _terminate(process)
+-                api.fail('task_host_changed', '本机助手启动期间程序发生变化，已停止该受控调用。')
+-            process.stdin.write(_local_read(workspace, 'prompt.txt')); process.stdin.close()
+-            _worker_update(root, task_id, execution_id, nonce, {'state': 'starting', 'child_pid': process.pid, 'started': _now()})
+-            deadline = time.monotonic() + ledger['params']['timeout_seconds']
+-            cancelled = False
+-            while process.poll() is None:
+-                time.sleep(0.5)
+-                with _tasks()._book(root, book_id) as book:
+-                    current, _ = _read_ledger(book, task_id, execution_id)
+-                if current.get('cancel_requested'):
+-                    cancelled = True; _terminate(process); break
+-                if time.monotonic() >= deadline:
+-                    failure = '本次执行达到时限，已停止该受控进程；未自动重试。'; _terminate(process); break
+-                try:
+-                    native = _native(workspace)
+-                except (api.StoryError, OSError):
+-                    native = {}
+-                _worker_update(root, task_id, execution_id, nonce, {'state': 'running' if native.get('session_id') else 'starting',
+-                               'session_id': native.get('session_id')})
+-            exit_code = process.wait()
++                native = _native(workspace)
++            except (api.StoryError, OSError):
++                native = {}
++            _worker_update(root, task_id, execution_id, nonce, {'state': 'running' if native.get('session_id') else 'starting',
++                           'session_id': native.get('session_id')})
++        exit_code = process.wait()
+         native = _native(workspace)
+         final_raw = _local_read(workspace, 'final.json') if (workspace / 'final.json').exists() else None
+         state = 'cancelled' if cancelled else 'completed' if exit_code == 0 and failure is None else 'failed'
+--- before/skills/story-skill/scripts/story_workbench.py
++++ after/skills/story-skill/scripts/story_workbench.py
+@@ -1007,6 +1007,9 @@
+ html[data-story-workbench] :is(#message,.manager-feedback)[data-state="error"]{color:var(--wb-danger);background:var(--wb-danger-bg);border-color:var(--wb-danger-line)}
+ html[data-story-workbench] :is(#message,.manager-feedback):is([data-state="warning"],[data-state="unknown"]){color:var(--wb-warning);background:var(--wb-warning-bg);border-color:var(--wb-warning-line)}
+ html[data-story-workbench] .manager-feedback:is([data-state="success"],[data-state="error"],[data-state="unknown"]) :is(p,span){color:inherit}
++/* Keep native selection and keyboard behavior; normalize only single-line controls. */
++html[data-story-workbench] select:not([multiple]):not([size]),html[data-story-workbench] dialog select:not([multiple]):not([size]),html[data-story-workbench] :is(select#workbench-theme,select#book-select,select#chapter-version):not([multiple]):not([size]){-webkit-appearance:none;appearance:none;box-sizing:border-box;height:var(--wb-control-height);min-height:var(--wb-control-height);line-height:1.5;padding:6px 32px 6px 10px;border:1px solid var(--line);border-radius:var(--wb-radius-control);color:var(--ink);background-color:var(--surface);background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 17px) calc(50% + 1px),calc(100% - 12px) calc(50% + 1px);background-size:5px 5px,5px 5px;background-repeat:no-repeat}
++html[data-story-workbench] :is(select#workbench-theme,select#book-select,select#chapter-version,.shelf-options select):not([multiple]):not([size]){height:var(--wb-compact-height);min-height:var(--wb-compact-height)}
+ @media(max-width:680px){html[data-story-workbench] :is(dialog,.editor-dialog,.platform-drafts-dialog){padding:var(--wb-space-4)}html[data-story-workbench] .platform-drafts-dialog .platform-draft-footer{bottom:calc(-1 * var(--wb-space-4))}html[data-story-workbench] .dialog-actions button{flex:0 1 auto}}
+ """
+ 
+@@ -1442,6 +1445,7 @@
+               'sha256': hashlib.sha256(raw).hexdigest(), 'snapshot': packet['snapshot']['id'],
+               'metadata_sha256': hashlib.sha256(raw).hexdigest(), 'kind': 'candidate',
+               'source': meta.get('source'), 'chapter': meta.get('chapter'), 'base_sha256': meta.get('base_sha256'),
++              'writing_scope': meta.get('writing_scope'),
+               'editable': True, 'needs_recovery': True,
+               'status': '保存尚未确认完成；文字及来源已保留。可另存新候选，原文件留待核对。'}
+     result['content_kind'] = _candidate_content_kind(meta)
+@@ -1986,6 +1990,8 @@
+         api.fail('workbench_metadata_corrupt', '来源记录格式错误，应为对象。', path=name)
+     if 'content_kind' in value and value['content_kind'] not in ('material', 'prose'):
+         api.fail('workbench_metadata_invalid', '来源记录内容类型无效。', path=name)
++    if 'writing_scope' in value and value['writing_scope'] not in ('fragment', 'complete_chapter', 'legacy'):
++        api.fail('workbench_metadata_invalid', '来源记录写作范围无效。', path=name)
+     chapter = value.get('chapter')
+     if chapter is not None and (type(chapter) is not int or not 1 <= chapter <= MAX_EDITOR_CHAPTER):
+         api.fail('workbench_metadata_invalid', '来源记录章号无效或超出范围。', path=name)
+@@ -2028,6 +2034,7 @@
+         else:
+             row = {**row, 'content_kind': _candidate_content_kind(meta),
+                    'checkpoint': meta.get('checkpoint') is True,
++                   'writing_scope': meta.get('writing_scope'),
+                    'source': meta.get('source') if isinstance(meta.get('source'), str) else None}
+             if meta.get('chapter'):
+                 chapter = meta['chapter']
+@@ -2095,6 +2102,7 @@
+         result.update(editable=False, status=str(error) + ' 当前只读，正文保留。',
+                       metadata_error={'code': error.code, 'path': error.details.get('path')}, source=None)
+         return result
++    result['writing_scope'] = meta.get('writing_scope')
+     result['metadata_sha256'] = meta.get('_metadata_sha256')
+     result['checkpoint'] = meta.get('checkpoint') is True
+     if row['category'] in ('候选与草稿', '自动恢复'):
+@@ -2168,6 +2176,9 @@
+                 'chapter': payload.get('chapter'), 'base_sha256': payload.get('base_sha256'),
+                 'prefix': payload.get('prefix', ''), 'created': _utc_now(), 'adopted': False}
+         meta['content_kind'] = payload.get('content_kind', _candidate_content_kind(meta))
++        if payload.get('writing_scope') is not None:
++            meta['writing_scope'] = payload['writing_scope']
++            _validate_candidate_metadata(meta, name)
+         if meta['chapter'] is not None:
+             _editor_chapter(meta['chapter'])
+         if not isinstance(meta['prefix'], str) or len(meta['prefix']) > 8192:
+@@ -2222,6 +2233,8 @@
+                 'base_sha256': source.get('base_sha256'), 'prefix': source.get('prefix', ''),
+                 'created': _utc_now(), 'adopted': False,
+                 'content_kind': 'prose' if source['is_prose'] else 'material'}
++        if source.get('writing_scope') is not None:
++            meta['writing_scope'] = source['writing_scope']
+         content = source.get('prefix', '') + text
+         allowed, meta_allowed = set(), set()
+         # A working candidate can be continued in place. Explicitly retained
+@@ -2777,8 +2790,15 @@
+         api.fail('invalid_input', '字数核对文本过大或无效。')
+     plan = (doc.get('context') or {}).get('plan') or {}
+     method = plan.get('count_method', 'visible_nonspace_v1') if doc['is_prose'] else 'visible_nonspace_v1'
+-    counted = doc.get('prefix', '') + text if doc['is_prose'] else '\n' + text
+-    target = plan.get('length') if doc['is_prose'] else None
++    fragment = doc['is_prose'] and doc.get('writing_scope') == 'fragment'
++    fragment_text = text
++    if fragment:
++        first = api.tasks._fragment_first_visible_line(text)
++        heading = api.COMPLETE_CHAPTER_HEADING.fullmatch(first.strip())
++        if heading and api.chapter_number(heading[1]) == doc.get('chapter'):
++            fragment_text = text[text.find(first) + len(first):]
++    counted = '\n' + (fragment_text if fragment else text) if fragment or not doc['is_prose'] else doc.get('prefix', '') + text
++    target = plan.get('length') if doc['is_prose'] and not fragment else None
+     # The range alone is not a valid chapter-length result: legacy methods
+     # also reject attached marks and blank filler glyphs that v2 does not count.
+     if target:
+@@ -2789,11 +2809,12 @@
+         length_issues = [issue['code'] for issue in checked['errors']
+                          if issue['code'] in ('length', 'invisible_padding')]
+     else:
+-        counts = api.manuscript_counts(counted, plan.get('count_title', False) if doc['is_prose'] else True)
++        counts = api.manuscript_counts(counted, True if fragment or not doc['is_prose'] else plan.get('count_title', False))
+         value, length_issues = counts[method], []
+     within_target = api.within_chapter_length(value, target) if target else None
+     return {'ok': True, 'count': value, 'method': method, 'target': target,
+-            'include_title': bool(plan.get('count_title')) if doc['is_prose'] else None,
++            'include_title': (False if fragment else bool(plan.get('count_title'))) if doc['is_prose'] else None,
++            'writing_scope': doc.get('writing_scope'),
+             'selection': api.manuscript_counts('\n' + selected, True)[method],
+             'within_target': within_target, 'in_range': not length_issues if target else None,
+             'length_issues': length_issues,
+@@ -2811,7 +2832,10 @@
+     lint = None
+     check_scope = 'material'
+     check_note = '这是材料文件，未运行完整章节检查。'
+-    if doc['is_prose'] and not context.get('plan'):
++    if doc['is_prose'] and doc.get('writing_scope') == 'fragment':
++        check_scope = 'fragment'
++        check_note = '这是章中片段，未运行完整章节检查；请结合所属章节上下文审查。'
++    elif doc['is_prose'] and not context.get('plan'):
+         check_scope = 'no_plan'
+         check_note = '尚无已保存章计划，未运行完整章节检查；请人工核对章号、章名和篇幅。'
+     elif doc['is_prose']:
+@@ -5204,7 +5228,7 @@
+   const m=await call('metrics',{id:d.id,text:d.value,selection:selected});if(seq!==metricSequence||active!==d.id)return;
+   const lengthState=!m.target?'':m.in_range?'章幅计数通过':!m.within_target?'范围外':m.length_issues?.includes('invisible_padding')?'章幅检查未通过：附着标记和空白填充符不计下限':'章幅检查未通过';
+   $('word-count').textContent=m.count+' 字符'+(lengthState?' · '+lengthState:'')+(m.selection?' · 已选 '+m.selection:'');
+-  $('count-method').textContent=(m.is_prose?'正文':'材料')+' '+m.count+' 字符 · '+readableMethod[m.method]+(m.is_prose?(m.include_title?' · 含章名':' · 不含章名'):'')+(m.target?' · 目标 '+readableLength(m.target)+' · '+lengthState+'（仅核对章幅，章头等另查）':'')+(m.selection?' · 已选 '+m.selection:'');
++  $('count-method').textContent=(m.writing_scope==='fragment'?'片段正文':m.is_prose?'正文':'材料')+' '+m.count+' 字符 · '+readableMethod[m.method]+(m.is_prose?(m.include_title?' · 含章名':' · 不含章名'):'')+(m.target?' · 目标 '+readableLength(m.target)+' · '+lengthState+'（仅核对章幅，章头等另查）':'')+(m.selection?' · 已选 '+m.selection:'');
+  }catch(e){if(seq===metricSequence)$('word-count').textContent='字数核对失败：'+e.message;}},350);
+ }
+ function drawCatalog(c,expanded){currentCatalog=c;const w=c.workspace;
+@@ -5364,7 +5388,7 @@
+  if(!dirty(d)||(!force&&d.value===d.recovered&&!d.recoveryError))return !d.recoveryError;
+  const value=d.value;d.recoveringText=value;
+  d.recovering=(async()=>{
+-  let receipt;try{receipt=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});}
++  let receipt;try{receipt=await call('recover',{id:d.id,text:value,title:d.title,recovery_key:d.recoveryKey,sha256:d.sha256,chapter:d.chapter,content_kind:d.content_kind,writing_scope:d.writing_scope,base_sha256:d.base_sha256,prefix:d.prefix,recovery_sha256:d.recoverySha,recovery_metadata_sha256:d.recoveryMetadataSha});}
+   catch(e){d.recoveryError=e.message||String(e);if(active===d.id)note('自动恢复保存失败：'+d.recoveryError+'，请重试或下载当前文字。');return false;}
+   d.recovered=value;d.recoveryError='';d.recoveryPath=receipt.path;d.recoverySha=receipt.recovery_sha256;d.recoveryMetadataSha=receipt.recovery_metadata_sha256;d.recoveredAt=new Date().toISOString();if(receipt.recovery_key)d.recoveryKey=receipt.recovery_key;
+   catalog.materialCursor=null;try{await catalog();}catch(e){if(active===d.id)note('恢复副本已保存，目录刷新未完成：'+e.message);return true;}
+--- before/tests/test_host_execution.py
++++ after/tests/test_host_execution.py
+@@ -178,6 +178,10 @@
+         self.spawn.side_effect = OSError('outcome cannot be established')
+         failed = self.start()
+         self.assertEqual(failed['execution']['state'], 'unknown')
++        repeated = self.start()
++        self.assertTrue(repeated['unchanged'])
++        self.assertEqual(repeated['execution']['id'], failed['execution']['id'])
++        self.assertEqual(repeated['execution']['state'], 'unknown')
+         self.expect('task_execution_unresolved', lambda: self.start('another-request'))
+         self.assertEqual(self.spawn.call_count, 1)
+ 
+@@ -273,6 +277,209 @@
+             '按计划写第三章完整正文。' if complete else '只写第三章一个片段，不添加完整章头。',
+             [], chapter=3, complete_chapter=complete)['task']
+         self.before = self.fixture.authoritative_state()
++
++    def _assert_controller_refuses_native_dispatch(self, response):
++        execution = response['execution']; ledger = self.ledger(execution['id'])
++        with patch.object(self.worker, '_process_identity', return_value=ledger['worker_identity']), \
++                patch.object(self.worker.subprocess, 'Popen',
++                          side_effect=OSError('regression sentinel: no native child')) as native:
++            returned = self.worker.run(self.root, self.task['id'], execution['id'],
++                                       ledger['book_id'], ledger['nonce'])
++        native.assert_not_called()
++        self.assertNotEqual(returned, 0)
++        refused = self.tasks.execution_get(self.root, self.task['id'])['execution']
++        self.assertEqual(refused['state'], 'failed')
++        self.assertTrue(self.ledger(execution['id'])['not_started'])
++        self.assertIsNone(refused['exit_code'])
++        self.assertIsNone(refused['session_id'])
++        self.assertFalse(refused['execution_observed'])
++        self.assertFalse(refused['result_verified'])
++        self.assertTrue(refused['can_start'])
++        workspace = self.worker._workspace(execution['id'])
++        self.assertFalse((workspace / 'process.json').exists())
++        self.assertFalse((workspace / 'trace.jsonl').exists())
++        self.assertFalse(self.tasks.execution_busy(self.root)['busy'])
++        reconciled = self.tasks.execution_reconcile(self.root, self.task['id'], execution['id'])
++        self.assertTrue(reconciled['unchanged'])
++        self.assertEqual(reconciled['execution']['state'], 'failed')
++        repeated = self.start(execution['request_id'])
++        self.assertTrue(repeated['unchanged'])
++        self.assertEqual(repeated['execution']['id'], execution['id'])
++        self.assertEqual(repeated['execution']['state'], 'failed')
++        self.assertEqual(self.spawn.call_count, 1)
++
++    def test_controller_rechecks_frozen_binding_before_native_dispatch(self):
++        self._writing_scope_task(complete=True)
++        response = self.start('queued-binding-change')
++        path = self.root / self.tasks.DIRECTORY / (self.task['id'] + '.json')
++        record = json.loads(path.read_text(encoding='utf-8'))
++        record['binding'].update(chapter=4, complete_chapter=False)
++        record['binding_sha256'] = story.digest(story.dumps(record['binding']))
++        path.write_bytes(story.dumps(record).encode('utf-8'))
++        self.assertEqual(record['version'], self.task['version'])
++        with self.tasks._book(self.root) as book:
++            self.assertEqual(self.tasks._stale(book, record), [])
++        self._assert_controller_refuses_native_dispatch(response)
++        next_attempt = self.start('explicit-new-binding')
++        self.assertNotEqual(next_attempt['execution']['id'], response['execution']['id'])
++        self.assertEqual(self.spawn.call_count, 2)
++        self.assertEqual(self.before, self.fixture.authoritative_state())
++
++    def test_controller_rechecks_frozen_request_before_native_dispatch(self):
++        self._writing_scope_task(complete=True)
++        response = self.start('queued-request-change')
++        path = self.root / self.tasks.DIRECTORY / (self.task['id'] + '.json')
++        record = json.loads(path.read_text(encoding='utf-8'))
++        record['prompt'] = '本次请把第三章对话改为更克制的语气。\n' + record['prompt']
++        path.write_bytes(story.dumps(record).encode('utf-8'))
++        self.assertEqual(record['version'], self.task['version'])
++        self.assertEqual(record['binding_sha256'], self.task['binding_sha256'])
++        with self.tasks._book(self.root) as book:
++            self.assertEqual(self.tasks._stale(book, record), [])
++        self._assert_controller_refuses_native_dispatch(response)
++        next_attempt = self.start('explicit-new-request')
++        self.assertNotEqual(next_attempt['execution']['id'], response['execution']['id'])
++        self.assertEqual(self.spawn.call_count, 2)
++        self.assertEqual(self.before, self.fixture.authoritative_state())
++
++    def test_controller_honors_queued_cancel_before_native_dispatch(self):
++        self._writing_scope_task(complete=False)
++        response = self.start('queued-then-cancelled')
++        cancelled = self.tasks.execution_cancel(self.root, self.task['id'], response['execution']['id'])
++        self.assertEqual(cancelled['execution']['state'], 'cancel_requested')
++        self._assert_controller_refuses_native_dispatch(response)
++        next_attempt = self.start('explicit-after-queued-cancel')
++        self.assertNotEqual(next_attempt['execution']['id'], response['execution']['id'])
++        self.assertEqual(self.spawn.call_count, 2)
++        self.assertEqual(self.before, self.fixture.authoritative_state())
++
++    def test_controller_records_known_no_invocation_after_plan_revision_changes(self):
++        self._writing_scope_task(complete=True)
++        response = self.start('queued-plan-revision')
++        plan = copy.deepcopy(self.book.get_plan(3)); plan['stop'] = '修订后停在门内'
++        self.book.save_plan(3, plan, self.book.meta('revision'))
++        self.before = self.fixture.authoritative_state()
++        self._assert_controller_refuses_native_dispatch(response)
++        self.expect('stale_snapshot', lambda: self.start('stale-task-still-refused'))
++        self.assertEqual(self.spawn.call_count, 1)
++        self.task = self.tasks.create(self.root, 'writing', '按当前计划写第三章完整正文。',
++                                      [], chapter=3, complete_chapter=True)['task']
++        next_attempt = self.start('explicit-current-revision')
++        self.assertNotEqual(next_attempt['execution']['id'], response['execution']['id'])
++        self.assertEqual(self.spawn.call_count, 2)
++        self.assertEqual(self.before, self.fixture.authoritative_state())
++
++    def test_controller_cannot_redispatch_signed_not_started_after_request_is_restored(self):
++        self._writing_scope_task(complete=False)
++        response = self.start('consumed-no-invocation-key')
++        path = self.root / self.tasks.DIRECTORY / (self.task['id'] + '.json')
++        original = path.read_bytes()
++        record = json.loads(original)
++        record['prompt'] = '把这个片段的语气改为更克制。\n' + record['prompt']
++        path.write_bytes(story.dumps(record).encode('utf-8'))
++        self._assert_controller_refuses_native_dispatch(response)
++        # Removing the original reason for refusal does not replenish the
++        # consumed execution key or authorize another invocation.
++        path.write_bytes(original)
++        execution = response['execution']; ledger = self.ledger(execution['id'])
++        with patch.object(self.worker, '_process_identity', return_value=ledger['worker_identity']), \
++                patch.object(self.worker.subprocess, 'Popen',
++                             side_effect=OSError('regression sentinel: no native child')) as native:
++            returned = self.worker.run(self.root, self.task['id'], execution['id'],
++                                       ledger['book_id'], ledger['nonce'])
++        native.assert_not_called()
++        self.assertNotEqual(returned, 0)
++        observed = self.tasks.execution_get(self.root, self.task['id'])['execution']
++        self.assertEqual(observed['state'], 'failed')
++        self.assertTrue(self.ledger(execution['id'])['not_started'])
++        self.assertFalse(self.tasks.execution_busy(self.root)['busy'])
++        self.assertEqual(self.spawn.call_count, 1)
++        self.assertEqual(self.before, self.fixture.authoritative_state())
++
++    def test_controller_reentry_preserves_a_completed_native_execution(self):
++        response = self.start('completed-execution-reentry')
++        completed = self.finish(response)
++        execution = completed['execution']; ledger = self.ledger(execution['id'])
++        with patch.object(self.worker, '_process_identity', return_value=ledger['worker_identity']), \
++                patch.object(self.worker.subprocess, 'Popen',
++                             side_effect=OSError('regression sentinel: no native child')) as native:
++            returned = self.worker.run(self.root, self.task['id'], execution['id'],
++                                       ledger['book_id'], ledger['nonce'])
++        native.assert_not_called()
++        self.assertNotEqual(returned, 0)
++        observed = self.tasks.execution_get(self.root, self.task['id'])['execution']
++        self.assertEqual(observed, execution)
++        self.assertTrue(observed['result_verified'])
++        self.assertFalse(self.tasks.execution_busy(self.root)['busy'])
++        self.assertEqual(self.spawn.call_count, 1)
++        self.assertEqual(self.before, self.fixture.authoritative_state())
++
++    def test_controller_keeps_prior_invocation_signals_unknown_without_redispatch(self):
++        ledger_signals = {'child_pid': os.getpid(), 'session_id': 'prior-native-session', 'exit_code': 0,
++                          'trace_sha256': '0' * 64, 'result_sha256': '0' * 64, 'finished': self.worker._now()}
++        signals = ('trace.jsonl', 'stderr.log', 'process.json', 'final.json', *ledger_signals)
++        before = self.fixture.authoritative_state()
++        for index, signal in enumerate(signals):
++            with self.subTest(signal=signal):
++                self.task = self.tasks.create(self.root, 'writing', '只写第三章一个片段。',
++                                              [], chapter=3, complete_chapter=False)['task']
++                response = self.start('prior-signal-' + str(index))
++                execution = response['execution']; ledger = self.ledger(execution['id'])
++                workspace = self.worker._workspace(execution['id'])
++                if signal in ledger_signals:
++                    self.ledger_id = execution['id']
++                    self.update({signal: ledger_signals[signal]})
++                else:
++                    # Even an interrupted reservation is uncertain, not proof
++                    # that no native invocation could have occurred.
++                    self.worker._write_new(workspace, signal, b'{}' if signal.endswith('.json') else b'')
++                self.tasks.execution_cancel(self.root, self.task['id'], execution['id'])
++                with patch.object(self.worker, '_process_identity', return_value=ledger['worker_identity']), \
++                        patch.object(self.worker.subprocess, 'Popen',
++                                     side_effect=OSError('regression sentinel: no native child')) as native:
++                    returned = self.worker.run(self.root, self.task['id'], execution['id'],
++                                               ledger['book_id'], ledger['nonce'])
++                native.assert_not_called()
++                self.assertNotEqual(returned, 0)
++                current = self.ledger(execution['id'])
++                self.assertEqual(current['state'], 'unknown')
++                self.assertFalse(current.get('not_started', False))
++                self.assertTrue(self.tasks.execution_busy(self.root)['busy'])
++                repeated = self.start(execution['request_id'])
++                self.assertTrue(repeated['unchanged'])
++                self.assertEqual(repeated['execution']['id'], execution['id'])
++                self.assertEqual(repeated['execution']['state'], 'unknown')
++                self.expect('task_execution_unresolved', lambda: self.start('new-request-' + str(index)))
++                self.assertEqual(self.spawn.call_count, index + 1)
++        self.assertEqual(before, self.fixture.authoritative_state())
++
++    def test_controller_preserves_existing_native_receipt_for_reconciliation(self):
++        self._writing_scope_task(complete=False)
++        response = self.start('native-exited-before-reentry')
++        execution = response['execution']; ledger = self.ledger(execution['id'])
++        workspace = self.native_receipt(execution, value={
++            'summary': '已返回片段，随后收到取消。', 'issues': [], 'candidate_text': '她停在门边。'})
++        evidence = {name: (workspace / name).read_bytes() for name in ('trace.jsonl', 'final.json', 'process.json')}
++        self.tasks.execution_cancel(self.root, self.task['id'], execution['id'])
++        with patch.object(self.worker, '_process_identity', return_value=ledger['worker_identity']), \
++                patch.object(self.worker.subprocess, 'Popen',
++                             side_effect=OSError('regression sentinel: no native child')) as native:
++            returned = self.worker.run(self.root, self.task['id'], execution['id'],
++                                       ledger['book_id'], ledger['nonce'])
++        native.assert_not_called()
++        self.assertNotEqual(returned, 0)
++        self.assertEqual(self.ledger(execution['id'])['state'], 'unknown')
++        self.assertFalse(self.ledger(execution['id']).get('not_started', False))
++        self.assertEqual({name: (workspace / name).read_bytes() for name in evidence}, evidence)
++        self.assertTrue(self.tasks.execution_busy(self.root)['busy'])
++        done = self.tasks.execution_reconcile(self.root, self.task['id'], execution['id'])
++        self.assertEqual(done['execution']['state'], 'result_conflict')
++        self.assertEqual(done['execution']['exit_code'], 0)
++        self.assertEqual(done['execution']['session_id'], 'synthetic-native-session')
++        self.assertIsNone(done['task']['result'])
++        self.assertFalse(self.tasks.execution_busy(self.root)['busy'])
++        self.assertEqual(self.spawn.call_count, 1)
++        self.assertEqual(self.before, self.fixture.authoritative_state())
+ 
+     def test_native_fragment_scope_freezes_and_returns_headingless_text_without_expansion(self):
+         self._writing_scope_task(complete=False)
+@@ -317,6 +524,193 @@
+         self.assertIsNone(done['task']['result'])
+         self.assertEqual(before, set((self.root / '.story/drafts').glob('*')))
+         self.assertEqual(self.before, self.fixture.authoritative_state())
++
++    def test_native_candidate_never_overwrites_conflicting_text_meta_or_pending(self):
++        before = self.fixture.authoritative_state()
++        for index, suffix in enumerate(('', '.meta.json', '.pending.json')):
++            with self.subTest(existing=suffix or 'text'):
++                self._writing_scope_task(complete=False)
++                response = self.start('candidate-conflict-' + str(index))
++                execution = response['execution']
++                path = self.root / '.story/drafts/workbench' / (
++                    '助手候选-' + self.task['id'] + '-' + execution['id'] + '.md')
++                target = Path(str(path) + suffix)
++                target.parent.mkdir(parents=True, exist_ok=True)
++                original = '作者已有材料，不能被助手回流覆盖。'.encode('utf-8')
++                target.write_bytes(original)
++                done = self.finish(response, value={
++                    'summary': '返回指定片段。', 'issues': [], 'candidate_text': '她在门边停下。'})
++                self.assertEqual(done['execution']['state'], 'result_conflict')
++                self.assertFalse(done['execution']['result_verified'])
++                self.assertIsNone(done['task']['result'])
++                self.assertEqual(target.read_bytes(), original)
++                self.assertFalse(self.tasks.execution_busy(self.root)['busy'])
++                repeated = self.tasks.execution_reconcile(self.root, self.task['id'], execution['id'])
++                self.assertEqual(repeated['execution']['state'], 'result_conflict')
++                self.assertEqual(target.read_bytes(), original)
++                self.assertEqual(self.spawn.call_count, index + 1)
++        self.assertEqual(before, self.fixture.authoritative_state())
++
++    def test_native_candidate_publication_resumes_identical_interrupted_save(self):
++        before = self.fixture.authoritative_state()
++        for index, interrupted_at in enumerate(('meta', 'pending_cleanup')):
++            with self.subTest(interrupted_at=interrupted_at):
++                self._writing_scope_task(complete=False)
++                response = self.start('candidate-interrupted-' + str(index))
++                execution = response['execution']
++                path = self.root / '.story/drafts/workbench' / (
++                    '助手候选-' + self.task['id'] + '-' + execution['id'] + '.md')
++                candidate = '她在门边停下，没有再把钥匙交出去。'
++                value = {'summary': '返回指定片段。', 'issues': [], 'candidate_text': candidate}
++                if interrupted_at == 'meta':
++                    original = self.worker._candidate_file
++                    def interrupted_meta(book, name, raw):
++                        if name.endswith('.meta.json'):
++                            raise OSError('synthetic metadata publication interruption')
++                        return original(book, name, raw)
++                    with patch.object(self.worker, '_candidate_file', side_effect=interrupted_meta):
++                        interrupted = self.finish(response, value=value)
++                    self.assertFalse(Path(str(path) + '.meta.json').exists())
++                else:
++                    with patch.object(story.workbench, '_finish_pending_save',
++                                      side_effect=OSError('synthetic pending cleanup interruption')):
++                        interrupted = self.finish(response, value=value)
++                    self.assertTrue(Path(str(path) + '.meta.json').exists())
++                self.assertEqual(interrupted['execution']['state'], 'result_conflict')
++                self.assertIsNone(interrupted['task']['result'])
++                self.assertEqual(path.read_text(encoding='utf-8'), candidate)
++                self.assertTrue(Path(str(path) + '.pending.json').exists())
++                done = self.tasks.execution_reconcile(self.root, self.task['id'], execution['id'])
++                self.assertEqual(done['execution']['state'], 'completed')
++                self.assertTrue(done['execution']['result_verified'])
++                self.assertEqual((self.root / done['task']['output']['path']).read_text(encoding='utf-8'), candidate)
++                meta = json.loads(Path(str(path) + '.meta.json').read_text(encoding='utf-8'))
++                self.assertEqual(meta['chapter'], 3)
++                self.assertEqual(meta['writing_scope'], 'fragment')
++                self.assertFalse(meta['adopted'])
++                self.assertFalse(Path(str(path) + '.pending.json').exists())
++                self.assertEqual(self.spawn.call_count, index + 1)
++        self.assertEqual(before, self.fixture.authoritative_state())
++
++    def test_native_task_attachment_recovers_without_duplicate_task_or_dispatch(self):
++        before = self.fixture.authoritative_state()
++        for index, interrupted_at in enumerate(('task_save', 'publication')):
++            with self.subTest(interrupted_at=interrupted_at):
++                self._writing_scope_task(complete=False)
++                response = self.start('task-attachment-interrupted-' + str(index))
++                execution = response['execution']; original_version = self.task['version']
++                candidate = '她收回手，终于听见门后的应答。'
++                value = {'summary': '已返回指定片段。', 'issues': [], 'candidate_text': candidate}
++                if interrupted_at == 'task_save':
++                    with patch.object(self.tasks, '_save', side_effect=OSError('synthetic task attachment failure')):
++                        interrupted = self.finish(response, value=value)
++                    self.assertIsNone(interrupted['task']['result'])
++                    self.assertEqual(interrupted['task']['version'], original_version)
++                else:
++                    original_write = self.worker._write_new
++                    def interrupted_publication(workspace, name, raw):
++                        if name == 'publication.json':
++                            raise OSError('synthetic final publication receipt failure')
++                        return original_write(workspace, name, raw)
++                    with patch.object(self.worker, '_write_new', side_effect=interrupted_publication):
++                        interrupted = self.finish(response, value=value)
++                    self.assertIsNotNone(interrupted['task']['result'])
++                    self.assertEqual(interrupted['task']['version'], original_version + 1)
++                self.assertEqual(interrupted['execution']['state'], 'result_conflict')
++                workspace = self.worker._workspace(execution['id'])
++                self.assertTrue((workspace / 'attachment.json').exists())
++                self.assertFalse((workspace / 'publication.json').exists())
++                drafts = set((self.root / '.story/drafts/workbench').glob('助手候选-*.md'))
++                with patch.object(self.worker, '_now', return_value='2099-01-01T00:00:00Z'):
++                    done = self.tasks.execution_reconcile(self.root, self.task['id'], execution['id'])
++                self.assertEqual(done['execution']['state'], 'completed')
++                self.assertTrue(done['execution']['result_verified'])
++                self.assertEqual(done['task']['version'], original_version + 1)
++                self.assertEqual((self.root / done['task']['output']['path']).read_text(encoding='utf-8'), candidate)
++                self.assertEqual(set((self.root / '.story/drafts/workbench').glob('助手候选-*.md')), drafts)
++                self.assertTrue((workspace / 'publication.json').exists())
++                repeated = self.tasks.execution_reconcile(self.root, self.task['id'], execution['id'])
++                self.assertTrue(repeated['unchanged'])
++                self.assertEqual(repeated['task']['version'], original_version + 1)
++                self.assertFalse(self.tasks.execution_busy(self.root)['busy'])
++                self.assertEqual(self.spawn.call_count, index + 1)
++        self.assertEqual(before, self.fixture.authoritative_state())
++
++    def test_native_attachment_checkpoint_cannot_authorize_changed_task_or_result(self):
++        before = self.fixture.authoritative_state()
++        for index, changed in enumerate(('prompt', 'result')):
++            with self.subTest(changed=changed):
++                self._writing_scope_task(complete=False)
++                response = self.start('task-attachment-changed-' + str(index))
++                execution = response['execution']
++                original_write = self.worker._write_new
++                def interrupted_publication(workspace, name, raw):
++                    if name == 'publication.json':
++                        raise OSError('synthetic final publication receipt failure')
++                    return original_write(workspace, name, raw)
++                with patch.object(self.worker, '_write_new', side_effect=interrupted_publication):
++                    interrupted = self.finish(response, value={
++                        'summary': '已返回指定片段。', 'issues': [], 'candidate_text': '她听见门后的应答。'})
++                self.assertEqual(interrupted['execution']['state'], 'result_conflict')
++                self.assertIsNotNone(interrupted['task']['result'])
++                path = self.root / self.tasks.DIRECTORY / (self.task['id'] + '.json')
++                record = json.loads(path.read_text(encoding='utf-8'))
++                if changed == 'prompt':
++                    record['prompt'] = '作者另补的要求。\n' + record['prompt']
++                else:
++                    record['result']['summary'] = '作者已修改此任务的结果摘要。'
++                self.assertEqual(record['version'], response['task']['version'] + 1)
++                path.write_bytes(story.dumps(record).encode('utf-8'))
++                changed_raw = path.read_bytes()
++                done = self.tasks.execution_reconcile(self.root, self.task['id'], execution['id'])
++                self.assertEqual(done['execution']['state'], 'result_conflict')
++                self.assertFalse(done['execution']['result_verified'])
++                self.assertEqual(path.read_bytes(), changed_raw)
++                self.assertFalse((self.worker._workspace(execution['id']) / 'publication.json').exists())
++                self.assertFalse(self.tasks.execution_busy(self.root)['busy'])
++                self.assertEqual(self.spawn.call_count, index + 1)
++        self.assertEqual(before, self.fixture.authoritative_state())
++
++    def test_malformed_native_finished_never_mutates_task_or_publishes_candidate(self):
++        before = self.fixture.authoritative_state()
++        malformed = (('missing', None), ('null', None), ('true', True), ('false', False),
++                     ('empty', ''), ('too_long', 'x' * 81), ('object', {}), ('array', []), ('number', 1))
++        for index, (label, finished) in enumerate(malformed):
++            with self.subTest(finished=label):
++                self._writing_scope_task(complete=False)
++                response = self.start('malformed-finished-' + str(index))
++                execution = response['execution']
++                task_path = self.root / self.tasks.DIRECTORY / (self.task['id'] + '.json')
++                original_task = task_path.read_bytes()
++                workspace = self.native_receipt(execution, value={
++                    'summary': '返回指定片段。', 'issues': [], 'candidate_text': '她轻轻敲了两下门。'})
++                receipt_path = workspace / 'process.json'
++                receipt = json.loads(receipt_path.read_text(encoding='utf-8'))
++                if label == 'missing':
++                    receipt.pop('finished')
++                else:
++                    receipt['finished'] = finished
++                receipt_path.write_bytes(story.dumps(receipt).encode('utf-8'))
++                result = self.tasks.execution_reconcile(self.root, self.task['id'], execution['id'])
++                self.assertEqual(result['execution']['state'], 'unknown')
++                self.assertFalse(result['execution']['result_verified'])
++                self.assertIsNone(result['task']['result'])
++                self.assertEqual(task_path.read_bytes(), original_task)
++                readable = self.tasks.get(self.root, self.task['id'])
++                self.assertTrue(readable['ok'])
++                self.assertEqual(readable['task']['id'], self.task['id'])
++                self.assertEqual(readable['task']['version'], self.task['version'])
++                self.assertIsNone(readable['task']['result'])
++                self.assertFalse((workspace / 'attachment.json').exists())
++                self.assertFalse((workspace / 'publication.json').exists())
++                candidate = self.root / '.story/drafts/workbench' / (
++                    '助手候选-' + self.task['id'] + '-' + execution['id'] + '.md')
++                self.assertFalse(candidate.exists())
++                self.assertFalse(Path(str(candidate) + '.meta.json').exists())
++                self.assertFalse(Path(str(candidate) + '.pending.json').exists())
++                self.assertTrue(self.tasks.execution_busy(self.root)['busy'])
++                self.assertEqual(self.spawn.call_count, index + 1)
++        self.assertEqual(before, self.fixture.authoritative_state())
+ 
+     def test_rebound_task_cannot_attach_a_frozen_host_result_to_a_different_scope(self):
+         self._writing_scope_task(complete=True)
+@@ -409,7 +803,7 @@
+         self.assertEqual(self.before, self.fixture.authoritative_state())
+         self.assertEqual(self.spawn.call_count, 1)
+ 
+-    def test_old_launch_without_raw_request_hash_still_reconciles_at_original_path(self):
++    def test_old_launch_without_raw_request_hash_or_scope_still_reconciles_at_original_path(self):
+         from outline_fixture import bind_adopted_outline
+         self._writing_scope_task(complete=True)
+         bind_adopted_outline(story, self.book, 3)
+@@ -419,9 +813,14 @@
+ 
+         def old_launch(book, record, ledger, executable):
+             workspace = original_freeze(book, record, ledger, executable)
++            input_path = workspace / 'input.json'
++            frozen = json.loads(input_path.read_text(encoding='utf-8'))
++            self.assertIsNotNone(frozen.pop('writing_scope'))
++            input_path.write_bytes(story.dumps(frozen).encode('utf-8'))
+             path = workspace / 'launch.json'
+             launch = json.loads(path.read_text(encoding='utf-8'))
+             self.assertIsNotNone(launch.pop('task_request_sha256'))
++            launch['input_sha256'] = ledger['input_sha256'] = hashlib.sha256(input_path.read_bytes()).hexdigest()
+             path.write_bytes(story.dumps(launch).encode('utf-8'))
+             ledger['launch_sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+             return workspace
+--- before/tests/test_task_scope_compatibility.py
++++ after/tests/test_task_scope_compatibility.py
+@@ -1,10 +1,13 @@
+-"""Unknown legacy complete-task scope must stay readable without dispatching."""
++"""Writing scope survives legacy records and rejects malformed or mismatched returns."""
+ from contextlib import contextmanager
+ import json
++import subprocess
++import sys
+ import unittest
+ from unittest.mock import patch
+ 
+ import test_minimum_chapter_length as base
++from test_story import TOOL
+ 
+ 
+ story = base.story
+@@ -104,6 +107,127 @@
+         self.assert_unknown_readable_and_not_dispatched(
+             lambda prompt: prompt.partition(marker)[0] + marker + "[" * 20000 + "0" + "]" * 20000)
+ 
++    def test_deeply_nested_current_plan_is_readable_but_cannot_be_dispatched(self):
++        with self.legacy_task() as (fixture, task, path, record):
++            plan = '{"length":[2000,null],"extra":' + "[" * 20000 + "0" + "]" * 20000 + "}"
++            fixture.book.db.execute("UPDATE plans SET data=? WHERE chapter=1", (plan,))
++            fixture.book.db.commit()
++            before, revision = path.read_bytes(), fixture.book.meta("revision")
++            observed = story.tasks.get(fixture.root, task["id"])["task"]
++            self.assertEqual({row["code"] for row in observed["stale_reasons"]}, {"writing_plan_invalid"})
++            with self.assertRaises(story.StoryError) as handoff:
++                story.tasks.mark_handoff(fixture.root, task["id"], task["version"])
++            self.assertEqual(handoff.exception.code, "stale_snapshot")
++            with patch.object(story.task_worker, "_executable") as executable, \
++                    patch.object(story.task_worker, "_freeze") as freeze, \
++                    patch.object(story.task_worker, "_spawn") as spawn:
++                with self.assertRaises(story.StoryError) as launch:
++                    story.tasks.execution_start(fixture.root, task["id"], task["version"], "deep-plan")
++                self.assertEqual(launch.exception.code, "stale_snapshot")
++                executable.assert_not_called()
++                freeze.assert_not_called()
++                spawn.assert_not_called()
++            self.assertEqual(path.read_bytes(), before)
++            self.assertEqual(fixture.book.db.execute("SELECT data FROM plans WHERE chapter=1").fetchone()[0], plan)
++            self.assertEqual(fixture.book.meta("revision"), revision)
++            self.assertEqual(fixture.book.meta("last_chapter"), 0)
++
++    def test_deeply_nested_task_and_result_files_return_structured_errors(self):
++        with self.legacy_task() as (fixture, task, path, record):
++            nested = "[" * 20000 + "0" + "]" * 20000
++            raw = path.read_bytes().rstrip()
++            self.assertTrue(raw.endswith(b"}"))
++            invalid_record = raw[:-1] + b',"extra":' + nested.encode("ascii") + b"}"
++            path.write_bytes(invalid_record)
++            revision = fixture.book.meta("revision")
++            with self.assertRaises(story.StoryError) as error:
++                story.tasks.get(fixture.root, task["id"])
++            self.assertEqual(error.exception.code, "task_record_invalid")
++            self.assertEqual(path.read_bytes(), invalid_record)
++            result = fixture.root / ".story/drafts/deep-result.json"
++            result.write_bytes(nested.encode("ascii"))
++            with self.assertRaises(story.StoryError) as error:
++                story.tasks.read_result_file(fixture.root, ".story/drafts/deep-result.json")
++            self.assertEqual(error.exception.code, "invalid_input")
++            self.assertEqual(result.read_bytes(), nested.encode("ascii"))
++            self.assertEqual(fixture.book.meta("revision"), revision)
++            self.assertEqual(fixture.book.meta("last_chapter"), 0)
++
++    def test_invisible_fragment_prefix_cannot_hide_an_explicit_wrong_chapter(self):
++        with self.legacy_task() as (fixture, task, path, record):
++            revision = fixture.book.meta("revision")
++            output = fixture.root / ".story/drafts/fragment.md"
++            for prefix in ("\u200b", "\u200b\n", "\u2060\n", "\u0301", "\u0301\n", "\ufe0f\n",
++                           "\u115f", "\u1160", "\u2800", "\u3164\n", "\uffa0", "\x01\n",
++                           "\u200b\u0301\u3164\n \t"):
++                for heading in ("第9章", "# 第９章 错章"):
++                    with self.subTest(prefix=repr(prefix), heading=heading):
++                        fragment = story.tasks.create(
++                            fixture.root, "writing", "只写第1章的一个片段。", [], chapter=1)["task"]
++                        task_path = fixture.root / story.tasks.DIRECTORY / (fragment["id"] + ".json")
++                        before = task_path.read_bytes()
++                        text = prefix + heading + "\n她推开门。\n"
++                        output.write_bytes(text.encode("utf-8"))
++                        result = {**fragment["result_template"], "summary": "返回一个待核对片段。", "issues": [],
++                                  "output": {"path": ".story/drafts/fragment.md", "sha256": story.digest(text)}}
++                        with self.assertRaises(story.StoryError) as error:
++                            story.tasks.import_result(fixture.root, fragment["id"], fragment["version"], result)
++                        self.assertEqual(error.exception.code, "task_output_scope")
++                        self.assertEqual(task_path.read_bytes(), before)
++                        self.assertEqual(output.read_bytes(), text.encode("utf-8"))
++            self.assertEqual(fixture.book.meta("revision"), revision)
++            self.assertEqual(fixture.book.meta("last_chapter"), 0)
++
++    def test_fragment_heading_recognition_preserves_short_unicode_body_bytes(self):
++        with self.legacy_task() as (fixture, task, path, record):
++            revision = fixture.book.meta("revision")
++            for number, text in enumerate((
++                "\u200b\u0301\u3164\n第1章 当前片段\n她推开门。e\u0301🥳⠁한\n",
++                "\u200b\n她推开门。e\u0301🥳⠁한\n",
++                "한第9章只是台词的一部分。\n她推开门。\n",
++            )):
++                with self.subTest(number=number):
++                    fragment = story.tasks.create(
++                        fixture.root, "writing", "只写第1章的一个片段。", [], chapter=1)["task"]
++                    relative = f".story/drafts/fragment-{number}.md"
++                    output = fixture.root / relative
++                    output.write_bytes(text.encode("utf-8"))
++                    result = {**fragment["result_template"], "summary": "返回一个待核对片段。", "issues": [],
++                              "output": {"path": relative, "sha256": story.digest(text)}}
++                    observed = story.tasks.import_result(
++                        fixture.root, fragment["id"], fragment["version"], result)["task"]
++                    self.assertEqual(observed["status"], "needs_review")
++                    self.assertEqual(observed["result"]["output"]["sha256"], story.digest(text))
++                    self.assertLess(story.manuscript_counts(text, True)["visible_nonspace_v2"], 2000)
++                    self.assertEqual(output.read_bytes(), text.encode("utf-8"))
++            self.assertEqual(fixture.book.meta("revision"), revision)
++            self.assertEqual(fixture.book.meta("last_chapter"), 0)
++
++    def test_cli_fragment_return_rejects_an_invisible_wrong_heading_prefix(self):
++        with self.legacy_task() as (fixture, task, path, record):
++            for number, prefix in enumerate(("\u200b\n", "\u0301", "\u3164\n")):
++                with self.subTest(prefix=repr(prefix)):
++                    fragment = story.tasks.create(
++                        fixture.root, "writing", "只写第1章的一个片段。", [], chapter=1)["task"]
++                    task_path = fixture.root / story.tasks.DIRECTORY / (fragment["id"] + ".json")
++                    before = task_path.read_bytes()
++                    relative = f".story/drafts/cli-fragment-{number}.md"
++                    text = prefix + "第9章 错章\n她推开门。\n"
++                    output = fixture.root / relative
++                    output.write_bytes(text.encode("utf-8"))
++                    result = {**fragment["result_template"], "summary": "返回一个待核对片段。", "issues": [],
++                              "output": {"path": relative, "sha256": story.digest(text)}}
++                    result_file = f".story/drafts/cli-result-{number}.json"
++                    (fixture.root / result_file).write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
++                    completed = subprocess.run(
++                        [sys.executable, "-B", str(TOOL), "task-return", "--book", str(fixture.root),
++                         "--task-id", fragment["id"], "--version", str(fragment["version"]),
++                         "--result-file", result_file], capture_output=True, text=True, timeout=30)
++                    self.assertNotEqual(completed.returncode, 0)
++                    self.assertEqual(json.loads(completed.stdout or completed.stderr)["error"], "task_output_scope")
++                    self.assertEqual(task_path.read_bytes(), before)
++                    self.assertEqual(output.read_bytes(), text.encode("utf-8"))
++
+     def test_legacy_manual_fragment_without_generated_envelope_remains_handoffable(self):
+         with self.legacy_task() as (fixture, task, path, record):
+             record["prompt"] = "只拟一个局部片段，关联章号不表示交付完整章。\n" + record["prompt"]
