@@ -45,10 +45,70 @@ class PlatformBindingTests(unittest.TestCase):
     def profiles(self):
         return sorted(self.profile_dir.glob("*.json")) if self.profile_dir.exists() else []
 
+    def test_generated_empty_chapter_marker_is_local_to_active_volume_and_rebinding_preserves_old_profile(self):
+        original = story.platform_browser.fanqie_profile_from_book_url
+        def previous_profile(value):
+            generated = original(value)
+            generated["profile"]["chapter_lists"][0]["empty"] = None
+            return generated
+        with patch.object(story.platform_browser, "fanqie_profile_from_book_url", side_effect=previous_profile):
+            first = self.bind()
+        before = {path: path.read_bytes() for path in self.profiles()}
+        second = self.bind()
+        self.assertEqual(second["plan_id"], first["plan_id"])
+        self.assertTrue(second["plan_reused"])
+        self.assertEqual(second["remote_book_id"], first["remote_book_id"])
+        self.assertNotEqual(second["profile_id"], first["profile_id"])
+        self.assertEqual({path: path.read_bytes() for path in before}, before)
+        config = json.loads((self.profile_dir / second["profile_id"]).read_text())
+        listing = config["chapter_lists"][0]
+        self.assertEqual(listing["scope"], "non_drafts")
+        self.assertEqual(listing["empty"]["expected"], "暂无章节内容")
+        self.assertEqual(listing["empty"]["selector"], '.arco-tabs-content-item-active .author-empty.author-empty-default.empty > span.author-empty-description.font-4:text-is("暂无章节内容")')
+        self.assertTrue(listing["sections"])
+        self.assertEqual(len(listing["filters"]), 2)
+        self.assertEqual(config["schema_version"], 1)
+        self.assertEqual(story.platform_chrome_bridge.validate_profile(config), "host_assisted_cua")
+        listing["empty"]["expected"] = ""
+        self.fixture.assert_code("platform_browser_invalid_profile", story.platform_browser.BrowserAdapter, config)
+
     def test_catalog_exposes_revision_and_formal_range_for_local_setup(self):
         packet = drafts.workbench_catalog(self.root)
         self.assertEqual(packet["revision"], self.book.meta("revision"))
         self.assertEqual((packet["formal_first"], packet["formal_last"], packet["formal_count"], packet["max_batch"]), (1, 1, 1, 1000))
+
+    def test_catalog_distinguishes_same_title_profiles_by_explicit_remote_id_without_mutation(self):
+        first = self.bind()
+        second = self.bind(book_management_url=URL.replace("1234567890&", "9876543210&"))
+        before = {path: path.read_bytes() for path in self.profiles()}
+        writing = self.fixture.writing_snapshot()
+        rows = {row["id"]: row for row in drafts._profile_catalog(self.root)}
+        for binding in (first, second):
+            row = rows[binding["profile_id"]]
+            self.assertEqual(row["remote_book_id"], binding["remote_book_id"])
+            self.assertEqual(row["remote_book_title"], "测试")
+            self.assertEqual(row["sha256"], binding["profile_sha256"])
+            self.assertNotIn("urls", row)
+            self.assertNotIn("account_id", row)
+        self.assertEqual(len(rows), 2)
+        self.assertEqual({path: path.read_bytes() for path in self.profiles()}, before)
+        self.assertEqual(self.fixture.writing_snapshot(), writing)
+
+    def test_unknown_profile_target_never_guesses_from_title_or_another_profile(self):
+        for profile in ({"platform": "fanqie", "urls": {"drafts": "https://fanqienovel.com/drafts"}},
+                        {"platform": "qidian"}):
+            self.assertEqual(drafts._profile_target(profile), {"remote_book_id": None, "remote_book_title": None})
+
+    def test_preview_rejects_a_different_remote_target_before_connection(self):
+        first = self.bind()
+        second = self.bind(book_management_url=URL.replace("1234567890&", "9876543210&"))
+        with patch.object(drafts, "_execution_runtime", side_effect=AssertionError("No connection for wrong target")):
+            error = self.fixture.assert_code("platform_draft_profile_mismatch", drafts.workbench_preview,
+                                            self.root, second["plan_id"], first["profile_id"])
+        self.assertIn("1234567890", error.message)
+        self.assertIn("9876543210", error.message)
+        self.assertEqual(story.publish.inspect(self.book, second["plan_id"])["manifest"]["remote_book_id"], "9876543210")
+        self.assertFalse((self.root / drafts.DIRECTORY).exists())
 
     def test_bind_creates_private_profile_and_frozen_plan_without_browser_or_writing_prose(self):
         before = self.fixture.writing_snapshot()

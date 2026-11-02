@@ -17,7 +17,7 @@ public sealed record DocumentBuffer(string Id, string Title, string Path, bool D
 }
 
 public sealed record CloseState(string Kind, IReadOnlyList<DocumentBuffer> Documents,
-    bool Busy, bool Composing, string Fingerprint, bool PendingForm = false)
+    bool Busy, bool Composing, string Fingerprint, bool PendingForm = false, bool PendingTask = false)
 {
     public IReadOnlyList<DocumentBuffer> Pending => Documents.Where(d => d.Pending).ToArray();
     public bool Saving => Documents.Any(d => d.Saving || d.Recovering);
@@ -51,10 +51,10 @@ public static class BrowserSafety
     }
 
     public static bool CanProceed(CloseState? state) => state is not null && !state.Busy && !state.Composing
-        && !state.Saving && !state.PendingForm && state.Pending.Count == 0;
+        && !state.Saving && !state.PendingForm && !state.PendingTask && state.Pending.Count == 0;
     public static bool SameSnapshot(CloseState before, CloseState after) => before.Fingerprint == after.Fingerprint;
     public static bool CanCommit(SafetySnapshot before, SafetySnapshot after) => before.Generation == after.Generation
-        && before.Key == after.Key && !after.State.Busy && !after.State.Composing && !after.State.Saving && !after.State.PendingForm
+        && before.Key == after.Key && !after.State.Busy && !after.State.Composing && !after.State.Saving && !after.State.PendingForm && !after.State.PendingTask
         && SameSnapshot(before.State, after.State);
 
     public static string? ParseScriptString(string json)
@@ -98,10 +98,12 @@ public static class BrowserSafety
             }
             bool pendingForm = false;
             if (root.TryGetProperty("pending_form", out _) && !Bool(root, "pending_form", out pendingForm)) return null;
-            if (kind == "shelf" && documents.Count != 0 || kind == "editor" && pendingForm) return null;
+            bool pendingTask = false;
+            if (root.TryGetProperty("pending_task", out _) && !Bool(root, "pending_task", out pendingTask)) return null;
+            if (kind == "shelf" && (documents.Count != 0 || pendingTask) || kind == "editor" && pendingForm) return null;
             // Canonical typed representation avoids property-order differences between probes.
-            string canonical = JsonSerializer.Serialize(new { kind, busy, composing, documents, pendingForm });
-            return new(kind!, documents, busy, composing, Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(canonical))), pendingForm);
+            string canonical = JsonSerializer.Serialize(new { kind, busy, composing, documents, pendingForm, pendingTask });
+            return new(kind!, documents, busy, composing, Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(canonical))), pendingForm, pendingTask);
         }
         catch (Exception error) when (error is JsonException or InvalidOperationException or ArgumentException) { return null; }
     }
@@ -196,6 +198,9 @@ public static class BrowserSafety
         (()=>{
           if(window!==window.top)return null;
           if(document.getElementById('library-heading')){
+            if(typeof shelfStatusDrafts!=='undefined' && !(shelfStatusDrafts instanceof Map))return null;
+            if(typeof shelfStatusDrafts==='undefined' && document.getElementById('shelf-draft-feedback'))return null;
+            const retainedStatus=typeof shelfStatusDrafts!=='undefined' && shelfStatusDrafts.size>0;
             const shelfBusy=(typeof busy!=='undefined'&&!!busy)||(typeof managerBusy!=='undefined'&&!!managerBusy)
               ||(typeof statusSaving!=='undefined'&&statusSaving.size>0)||(typeof directoryPicking!=='undefined'&&directoryPicking);
             const changed=element=>{
@@ -208,14 +213,22 @@ public static class BrowserSafety
               return element.value!==element.defaultValue;
             };
             const fields=[...(document.querySelectorAll('#book-manager[open] input,#book-manager[open] select,#book-manager[open] textarea,.book-status-editor select')||[])];
-            const pendingForm=!!document.getElementById('book-path')?.value?.trim()||fields.some(changed);
+            const pendingForm=retainedStatus||!!document.getElementById('book-path')?.value?.trim()||fields.some(changed);
             return {kind:'shelf',documents:[],busy:!!shelfBusy,composing:window.__storyNativeComposing===true,pending_form:pendingForm};
           }
           if(!document.getElementById('current-book-root') || typeof docs==='undefined' || !(docs instanceof Map))return null;
+          let taskBuffers=[];
+          if(typeof assistantTaskFormBuffers==='function'){
+            try{taskBuffers=assistantTaskFormBuffers();}catch{return null;}
+            if(!Array.isArray(taskBuffers) || taskBuffers.length>1000
+                || taskBuffers.some(d=>!d || typeof d!=='object' || typeof d.id!=='string' || !d.id
+                    || ['dirty','saving','recovering','needs_recovery'].some(key=>typeof d[key]!=='boolean'))
+                || new Set(taskBuffers.map(d=>d.id)).size!==taskBuffers.length)return null;
+          }else if(typeof assistantTaskFormBuffers!=='undefined' || document.getElementById('assistant-tasks-open'))return null;
           if([...docs.values()].some(d=>!d || typeof d!=='object' || typeof d.editable!=='boolean'
               || typeof d.value!=='string' || (d.editable && typeof d.text!=='string')))return null;
           const editorBusy=(typeof loading!=='undefined' && !!loading)||(typeof reloading!=='undefined' && !!reloading)
-              ||(typeof reloadPending!=='undefined' && !!reloadPending);
+              ||(typeof reloadPending!=='undefined' && !!reloadPending)||taskBuffers.some(d=>d.saving||d.recovering);
           const documents=[...docs].map(([id,d])=>{
             const textbox=document.getElementById('text');
             const value=typeof active!=='undefined' && id===active && d.editing && typeof textbox?.value==='string'?textbox.value:d.value;
@@ -227,14 +240,15 @@ public static class BrowserSafety
               pending_readback,failed_new_version,recovery_current:dirty&&d.recovered===value,
               text:__TEXT__&&pending?value:null};
           });
-          return {kind:'editor',documents,busy:editorBusy,composing:window.__storyNativeComposing===true};
+          return {kind:'editor',documents,busy:editorBusy,composing:window.__storyNativeComposing===true,
+            pending_task:taskBuffers.some(d=>d.dirty||d.needs_recovery)};
         })()
         """.Replace("__TEXT__", includeText ? "true" : "false");
 
     public static void ExportPendingBuffers(string destination, IEnumerable<CloseState> states)
     {
         var snapshots = states.ToArray();
-        if (snapshots.Length == 0 || snapshots.Any(s => s is null || s.Busy || s.Composing || s.Saving))
+        if (snapshots.Length == 0 || snapshots.Any(s => s is null || s.Busy || s.Composing || s.Saving || s.PendingForm || s.PendingTask))
             throw new InvalidOperationException("无法确认全部文字已读取；请返回作品保存。");
         var documents = snapshots.SelectMany(s => s.Pending).ToArray();
         if (documents.Length == 0 || documents.Any(d => d.Text is null))

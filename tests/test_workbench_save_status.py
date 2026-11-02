@@ -57,6 +57,7 @@ const original={...copy(backend.original),value:backend.submitted,editing:true};
 const note=text=>notes.push(text),rememberView=()=>{},scheduleMetrics=()=>{},leaveComparison=()=>{},closePanels=()=>{},previewSearch=()=>{};
 const displayTitle=d=>d.title||d.id,documentLocation=d=>d.path||d.id,versionLabel=()=>'',downloadName=d=>d.id+'.txt';
 const notifyCreatorState=()=>notifications++;
+const assistantTaskFormBuffers=()=>[];
 const show=d=>{active=d.id;badge();};
 async function openDoc(id){active=id;badge();}
 async function catalog(){if(mode.failCatalog)throw Error('目录暂不可读');}
@@ -68,7 +69,7 @@ const call=async(action,data={})=>{
  }
  if(action==='save'){
   if(mode.holdSave)await new Promise(done=>{releaseSave=done;});
-  if(mode.failSave)throw Error('候选保存被拒绝');lastSaved=data;return {...copy(backend.saved),id:mode.sameID?data.id:backend.saved.id};
+  if(mode.failSave)throw Object.assign(Error('候选保存被拒绝'),{code:'invalid_input'});lastSaved=data;return {...copy(backend.saved),id:mode.sameID?data.id:backend.saved.id};
  }
  if(action==='open'){if(mode.holdRead)await new Promise(done=>{releaseRead=done;});if(mode.failRead)throw Error('候选回读暂不可用');return {...copy(backend.candidate),id:data.id,text:lastSaved?.text??backend.candidate.text};}
  throw Error('Unexpected action '+action);

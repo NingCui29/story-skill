@@ -65,6 +65,27 @@ public static class BrowserSafetyTests
             Suite.Check(!BrowserSafety.CanProceed(BrowserSafety.ParseState(State([], composing: true))));
             Suite.Check(BrowserSafety.CanProceed(Parsed()));
         });
+        suite.Test("task drafts block exit, final commit and manuscript-only export", () =>
+        {
+            string StateWithTask(object? pendingValue) => JsonSerializer.Serialize(new {
+                kind = "editor", documents = new[] { Buffer() }, busy = false, composing = false, pending_task = pendingValue
+            });
+            var pending = BrowserSafety.ParseState(StateWithTask(true));
+            Suite.Check(pending is not null && pending.PendingTask && !BrowserSafety.CanProceed(pending));
+            var snapshot = new SafetySnapshot(7, BrowserSafety.PageKeyFor(Editor)!, pending!);
+            Suite.Check(!BrowserSafety.CanCommit(snapshot, snapshot));
+            Suite.Check(!BrowserSafety.SameSnapshot(pending!, BrowserSafety.ParseState(StateWithTask(false))!));
+            foreach (object? invalid in new object?[] { 1, "false", null })
+                Suite.Check(BrowserSafety.ParseState(StateWithTask(invalid)) is null);
+            string folder = Temporary();
+            try
+            {
+                string target = Path.Combine(folder, "must-not-export.zip");
+                Suite.Throws<InvalidOperationException>(() => BrowserSafety.ExportPendingBuffers(target, [pending!]));
+                Suite.Check(!File.Exists(target));
+            }
+            finally { Directory.Delete(folder, true); }
+        });
         suite.Test("final snapshot prevents navigation and concurrent-text loss", () =>
         {
             var initial = new SafetySnapshot(7, BrowserSafety.PageKeyFor(Editor)!, Parsed(Buffer()));

@@ -35,7 +35,7 @@ const currentBookInfo={kind:'long',kind_verified:true,title:'验收作品'};
 const setTimeout=(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},clearTimeout=id=>timers.delete(id);
 const call=async(action,payload={})=>{requests.push({action,payload:structuredClone(payload)});try{const response=await handler(action,payload);if(action!=='platform-drafts/refresh-plan'||response?.scope)return response;}catch(error){if(action!=='platform-drafts/refresh-plan'||error.message!==action)throw error;}return {ok:true,book_id:'book-one',revision:7,base_plan_id:payload.plan_id,plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_sha256,platform:'fanqie',account_id:'account',remote_book_id:'remote',start:payload.start,end:payload.end,chapters:Array.from({length:payload.end-payload.start+1},(_,i)=>payload.start+i),scope:'local_formal_refresh_only',remote_accessed:false,submission_performed:false};};
 const plan=(id='plan-1',extra={})=>({id,platform:'fanqie',status:'prepared',book_title:'验收作品',account_id:'account',remote_book_id:'remote',chapters:[1,2],...extra});
-const profile={id:'本机.json',label:'番茄页面',valid:true,platform:'fanqie',sha256:'profile-sha'};
+const profile={id:'本机.json',label:'番茄页面',valid:true,platform:'fanqie',sha256:'profile-sha',remote_book_id:'remote',remote_book_title:'验收作品'};
 const catalog=(plans=[plan()],jobs=[],extra={})=>({book_id:'book-one',revision:7,formal_first:1,formal_last:13,formal_count:13,max_batch:1000,plans,profiles:[profile],jobs,next_offset:null,...extra});
 const preview=payload=>({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding,book_id:'book-one',plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_id?'profile-sha':null,mode:payload.inspect_only?'inspect_drafts':payload.reconcile_only?'reconcile_only':payload.sync_drafts?'sync_drafts':'save_draft',preview_token:payload.profile_id?(Math.floor(Date.now()/1000)+600)+'.signed':null,can_start:!!payload.profile_id,blockers:payload.profile_id?[]:['profile_required'],preview:{platform:'fanqie',account_id:'account',remote_book_id:'remote',chapters:[{chapter:1,title:'标题一',body_characters:100},{chapter:2,title:'标题二',body_characters:200}],results:[{chapter:1,state:'pending',last_observed_at:null,reason:null,observed_this_run:false,title_body_verified:false}]}});
 const job=(extra={})=>({comparison_policy:'strict',body_encoding:'plain_paragraphs_v1',id:'job-one',book_id:'book-one',plan_id:'plan-1',mode:'sync_drafts',state:'running',stage:'waiting_login',done:false,total_chapters:2,verified_chapters:0,result:null,...extra});
@@ -83,7 +83,7 @@ reopened.dialog.close();assert.equal([...timers.values()].filter(t=>t.delay===15
     def test_missing_configuration_and_dependency_disable_start(self):
         self.js(r'''
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog([plan()],[],{profiles:[]}):preview(payload);
-await platformDraftOpen();let p=platformDraftPanel;assert.equal(p.run.disabled,true);assert.ok(p.configNote.textContent.includes('无需填写 JSON'));await p.run.onclick();assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
+await platformDraftOpen();let p=platformDraftPanel;assert.equal(p.run.disabled,true);assert.ok(p.configNote.textContent.includes('重新绑定该作品'));await p.run.onclick();assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
 p.dialog.close();handler=async(action,payload)=>action.endsWith('/catalog')?catalog():{...preview(payload),can_start:false,blockers:['platform_browser_dependency_missing'],preview_token:null};
 await platformDraftOpen();p=platformDraftPanel;assert.equal(p.run.disabled,true);assert.ok(p.status.textContent.includes('浏览器依赖'));assert.ok(platformDraftErrorCode('platform_browser_unsupported_editor').includes('正文编辑结构'));assert.ok(platformDraftErrorCode('platform_browser_navigation_timeout').includes('页面导航超时'));assert.ok(platformDraftErrorCode('platform_browser_navigation_timeout').includes('本章核对未完成'));assert.ok(platformDraftErrorCode('platform_browser_unnumbered_draft').includes('无法核对章号的草稿'));assert.ok(platformDraftErrorCode('platform_browser_incomplete_scope').includes('筛选条件'));assert.ok(platformDraftErrorCode('platform_browser_ambiguous_draft').includes('同章草稿不唯一'));
 ''')
@@ -92,6 +92,7 @@ await platformDraftOpen();p=platformDraftPanel;assert.equal(p.run.disabled,true)
         self.js(r'''
 await platformDraftOpen();const p=platformDraftPanel;let release;
 handler=async(action,payload)=>payload.profile_id==='old-profile'?new Promise(resolve=>{release=()=>resolve(preview(payload));}):preview(payload);
+p.profiles.push({...profile,id:'old-profile'});platformDraftProfiles(p);
 p.profile.value='old-profile';const old=platformDraftPreview(p);p.profile.value='本机.json';await platformDraftPreview(p);release();await old;
 assert.equal(p.preview.profile_id,'本机.json');assert.equal(p.run.disabled,false);
 const expiry=timers.get(p.expiryTimer);expiry.fn();assert.equal(p.run.disabled,true);assert.equal(p.preview,null);
@@ -224,7 +225,7 @@ assert.equal(platformDraftPanel,null);assert.equal(requests.filter(r=>r.action.e
 const generatedId='fanqie-'+ 'a'.repeat(32)+'.json';
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog([plan()],[],{profiles:[{...profile,id:generatedId,label:generatedId}]}):preview(payload);
 await platformDraftOpen();let p=platformDraftPanel;
-assert.equal(p.profile.value,generatedId);assert.equal(p.profile.options[0].textContent,'番茄本地配置 1');assert.ok(!textTree(p.content).includes(generatedId));
+assert.equal(p.profile.value,generatedId);assert.equal(p.profile.options[0].textContent,'番茄本地配置 1 · 《验收作品》 · 作品 ID remote');assert.ok(!textTree(p.content).includes(generatedId));
 p.dialog.close();handler=async()=>catalog([]);await platformDraftOpen();p=platformDraftPanel;
 assert.ok(p.status.textContent.includes('上方配置番茄账号与作品'));assert.ok(!p.status.textContent.includes('请让助手'));assert.equal(p.bindDetails.open,true);
 ''')

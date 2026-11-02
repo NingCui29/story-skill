@@ -57,7 +57,8 @@ class FixedWorker:
         if ready:
             self.test.health_ready = True
         return {"ready": ready, "state": "ready" if ready else "connecting", "owned": self.owned,
-                "worker_phase": self.worker_phase}
+                "worker_phase": self.worker_phase, "requested_model": "gpt-6.1-terra",
+                "resolved_model": "gpt-6.1-terra", "model_verified": True}
 
     def disconnect(self, root, plan_id, profile_id, **kwargs):
         self.calls.append(("disconnect", str(root), plan_id, profile_id, kwargs))
@@ -440,6 +441,97 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         self.host_factory.assert_not_called()
         self.assertTrue(self.launcher.disconnected.wait(1))
 
+    def test_connection_model_failure_is_exposed_without_entering_platform(self):
+        details = {"ready": False, "state": "failed", "owned": True,
+                   "error": "platform_chrome_worker_model_unavailable",
+                   "requested_model": "gpt-6.1-terra", "resolved_model": None,
+                   "model_verified": False, "error_kind": "modelNotFound",
+                   "rpc_error_code": -32602, "http_status": 404,
+                   "message": "PRIVATE PROVIDER MESSAGE", "token": "PRIVATE TOKEN"}
+        with patch.object(self.launcher, "status", return_value=details):
+            preview = self.preview(inspect_only=True)
+            job = self.wait_job(self.start(preview, inspect_only=True)["id"])
+        self.assertEqual(job["error"], details["error"])
+        self.assertEqual(self.operations, [])
+        self.host_factory.assert_not_called()
+        diagnostic = job["connection_diagnostics"]
+        self.assertEqual(diagnostic, {"stage": "connecting_chrome", "ready": False,
+            "reason": details["error"], "requested_model": "gpt-6.1-terra",
+            "resolved_model": None, "model_verified": False, "error_kind": "modelNotFound",
+            "rpc_error_code": -32602, "http_status": 404})
+        self.assertNotIn("PRIVATE", json.dumps(job))
+        diagnostic["model_verified"] = True
+        self.assertFalse(drafts.workbench_job(self.root, job["id"])["connection_diagnostics"]["model_verified"])
+
+    def test_connection_diagnostics_reject_unbounded_or_malformed_fields(self):
+        diagnostic = drafts._connection_diagnostics({
+            "ready": True, "requested_model": "PRIVATE MODEL", "resolved_model": "gpt-6.1-terra",
+            "model_verified": True, "error": ["PRIVATE"], "error_kind": "PRIVATE",
+            "rpc_error_code": True, "http_status": 600, "message": "PRIVATE"})
+        self.assertEqual(diagnostic, {"stage": "connecting_chrome", "ready": False,
+            "requested_model": None, "resolved_model": "gpt-6.1-terra", "model_verified": False})
+        for invalid in (-(2 ** 31) - 1, 2 ** 31, "-32602", None):
+            self.assertNotIn("rpc_error_code", drafts._connection_diagnostics({"rpc_error_code": invalid}))
+
+    def test_verified_model_does_not_establish_browser_readiness(self):
+        diagnostic = drafts._connection_diagnostics({"requested_model": "gpt-6.1-terra",
+            "resolved_model": "gpt-6.1-terra", "model_verified": True, "ready": False,
+            "error": "platform_chrome_worker_tool_not_started"})
+        self.assertTrue(diagnostic["model_verified"])
+        self.assertFalse(diagnostic["ready"])
+        self.assertEqual(diagnostic["reason"], "platform_chrome_worker_tool_not_started")
+
+    def test_suspended_connection_has_no_new_token_and_rejects_old_token_before_job(self):
+        preview = self.preview(inspect_only=True)
+        prior_jobs = set(drafts._WORKBENCH_JOBS)
+        suspension = {"available": False, "uses_codex_quota": True, "retry_blocked": True,
+            "reason": "platform_chrome_worker_connection_suspended",
+            "cause": "platform_chrome_worker_browser_transport_closed", "failure_phase": "browser_inventory"}
+        with patch.object(self.launcher, "availability", return_value=suspension):
+            blocked = self.preview(inspect_only=True)
+            self.assertFalse(blocked["can_start"])
+            self.assertFalse(blocked["can_connect"])
+            self.assertIsNone(blocked["connect_token"])
+            self.assertTrue(blocked["automatic_connection"]["retry_blocked"])
+            with self.assertRaisesRegex(Exception, "尚未连接|不可用"):
+                self.start(preview, inspect_only=True)
+        self.assertEqual(set(drafts._WORKBENCH_JOBS), prior_jobs)
+        self.assertFalse(self.launcher.started.is_set())
+        self.assertEqual(self.operations, [])
+        self.host_factory.assert_not_called()
+
+    def test_retry_suspension_is_bounded_and_cannot_grant_readiness(self):
+        value = drafts._connection_diagnostics({"retry_blocked": True, "ready": False,
+            "error": "platform_chrome_worker_connection_suspended"})
+        self.assertTrue(value["retry_blocked"])
+        self.assertFalse(value["ready"])
+        self.assertEqual(value["reason"], "platform_chrome_worker_connection_suspended")
+        for invalid in (1, "true", {"secret": "PRIVATE"}):
+            self.assertNotIn("retry_blocked", drafts._connection_diagnostics({"retry_blocked": invalid}))
+        ready = drafts._connection_diagnostics({"retry_blocked": True, "ready": True, "owned": True,
+            "requested_model": "gpt-6.1-terra", "resolved_model": "gpt-6.1-terra", "model_verified": True})
+        self.assertTrue(ready["ready"])
+        self.assertNotIn("retry_blocked", ready)
+
+    def test_external_healthy_bridge_cannot_bypass_model_verification(self):
+        self.health_ready = True
+        with patch.object(self.launcher, "status", return_value={"ready": True, "owned": False,
+                "requested_model": "gpt-6.1-terra", "resolved_model": "gpt-6.1-terra", "model_verified": True}):
+            preview = self.preview(inspect_only=True)
+        self.assertFalse(preview["connection_ready"])
+        self.assertIsNone(preview["preview_token"])
+        self.assertEqual(preview["browser_runtime"]["worker"]["error"], "platform_chrome_worker_model_unverified")
+        self.assertEqual(self.operations, [])
+
+    def test_ready_reply_without_model_identity_never_enters_platform(self):
+        with patch.object(self.launcher, "status", return_value={"ready": True, "owned": True}):
+            preview = self.preview(inspect_only=True)
+            completed = self.wait_job(self.start(preview, inspect_only=True)["id"])
+        self.assertEqual(completed["error"], "platform_chrome_worker_model_unverified")
+        self.assertFalse(completed["connection_diagnostics"]["ready"])
+        self.assertEqual(self.operations, [])
+        self.host_factory.assert_not_called()
+
     def test_profile_changed_during_connection_is_rechecked_before_host_entry(self):
         def changed():
             profile = copy.deepcopy(self.profile)
@@ -478,7 +570,8 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         self.assertTrue(self.launcher.disconnected.wait(1))
 
     def test_controller_ready_claim_cannot_replace_real_bridge_health(self):
-        self.launcher.status = lambda *args, **kwargs: {"ready": True, "state": "ready", "owned": True}
+        self.launcher.status = lambda *args, **kwargs: {"ready": True, "state": "ready", "owned": True,
+            "requested_model": "gpt-6.1-terra", "resolved_model": "gpt-6.1-terra", "model_verified": True}
         self.host_factory.side_effect = self.actual_host
         completed = self.wait_job(self.start()["id"])
         self.assertEqual((completed["state"], completed["error"]), ("failed", "platform_chrome_worker_unavailable"))
@@ -518,7 +611,7 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         self.assertEqual(self.remote, remote_before)
         self.assertEqual(self.fixture.writing_snapshot(), before)
 
-    def test_existing_healthy_manual_worker_is_used_without_model_launch_or_disconnect(self):
+    def test_existing_healthy_owned_terra_worker_is_used_without_model_launch_or_disconnect(self):
         self.health_ready = True
         preview = self.preview()
         self.assertEqual((preview["can_start"], preview["can_connect"]), (True, False))

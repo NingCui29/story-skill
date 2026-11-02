@@ -192,6 +192,8 @@ python3 -B -X utf8 scripts/install.py --host qoder-cn --user
 
 已有托管安装升级时加 `--update`；只核对本机文件是否与当前源码一致时加 `--check`。核对不会安装或刷新应用。项目安装将 `--user` 换成 `--project "<写作项目根目录>"`。Windows 可将 `python3` 换成 `python`。
 
+平台草稿的工具选择与原生接入另见[草稿执行工具选择](docs/宿主原生草稿接入.md)。技能安装、公开浏览器组件安装、连接成功与完整草稿回读分别验收，不能互相替代。
+
 - **WorkBuddy AI：** 打开“专家·技能·连接器 → 技能 → 已安装”，确认八个 `story-skill*` 技能并启用，再开新任务，通过编辑器“更多操作 → 技能”选择总入口或具体流程，再描述需求；也可说“使用 Story Skill，帮我规划一本中文小说，本轮只做规划”。自行上传技能需走“添加技能 → 上传技能”，对话安装仅适用于市场技能；本库完整八技能 ZIP 尚未作为单技能上传包验证。关闭技能后，当前会话已加载的内容仍可使用，另开会话后才完全生效。见[官方技能说明](https://www.workbuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Skills-Market)。
 - **Qoder CN 桌面版：** 打开“扩展 → 技能 → 已安装”，新任务通过“添加上下文 → 技能”选择 `story-skill` 或具体流程，再补充任务；也可输入 `/` 从建议中选择。也可直接用自然语言请求。见[桌面版官方技能说明](https://docs.qoder.cn/qoder/skills)。CLI 使用 `/skills reload`、`/skills` 核对，再用 `/story-skill` 加需求，见[官方加载排查](https://docs.qoder.cn/cli/troubleshoot-loading)。
 

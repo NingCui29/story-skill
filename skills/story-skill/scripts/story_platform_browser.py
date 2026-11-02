@@ -283,7 +283,8 @@ def fanqie_profile_from_book_url(value):
                              unnumbered_values=[] if scope == "non_drafts" else ["未命名草稿"]),
             "state": field("td:nth-child(4) .arco-table-cell-wrap-value > span") if scope == "non_drafts" else {"source": "scope", "value": "草稿"},
             "link": field("td:last-child a.link", "href"),
-            "empty": None if scope == "non_drafts" else {"selector": active + ':text-is("暂无草稿")'},
+            "empty": field(active + '.author-empty.author-empty-default.empty > span.author-empty-description.font-4:text-is("暂无章节内容")',
+                           expected="暂无章节内容") if scope == "non_drafts" else {"selector": active + ':text-is("暂无草稿")'},
             "pagination": {"mode": "fanqie_pages_v1", "validated": True,
                            "container": {"selector": active + "." + table + " .arco-table-content-scroll"},
                            "next": field(active + '.arco-pagination-item-next'),
@@ -554,7 +555,9 @@ class BrowserAdapter:
             if _field(listing.get("link"), name + ".link").get("attribute") != "href":
                 _fail("invalid_profile", "章节列表链接必须读取真实DOM的href属性。")
             if listing.get("empty") is not None:
-                _field(listing["empty"], name + ".empty")
+                empty = _field(listing["empty"], name + ".empty")
+                if "expected" in empty:
+                    _configured(empty["expected"], name + ".empty.expected")
             if listing.get("count") is not None:
                 count = _field(listing["count"], name + ".count")
                 if count.get("format") != "draft_count" or scope != "drafts":

@@ -33,7 +33,7 @@ const currentBookInfo={kind:'long',kind_verified:true,title:'合成验收作品'
 const setTimeout=(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},clearTimeout=id=>timers.delete(id);
 const call=async(action,payload={})=>{requests.push({action,payload:structuredClone(payload)});try{const response=await handler(action,payload);if(action!=='platform-drafts/refresh-plan'||response?.scope)return response;}catch(error){if(action!=='platform-drafts/refresh-plan'||error.message!==action)throw error;}return {ok:true,book_id:'book-one',revision:7,base_plan_id:payload.plan_id,plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_sha256,platform:'fanqie',account_id:'account',remote_book_id:'remote',start:payload.start,end:payload.end,chapters:Array.from({length:payload.end-payload.start+1},(_,i)=>payload.start+i),scope:'local_formal_refresh_only',remote_accessed:false,submission_performed:false};};
 const plan=(id='plan-one')=>({id,platform:'fanqie',status:'prepared',book_title:'合成验收作品',account_id:'account',remote_book_id:'remote',chapters:[1,2]});
-const profile={id:'synthetic.json',label:'番茄合成配置',valid:true,platform:'fanqie',sha256:'profile-sha'};
+const profile={id:'synthetic.json',label:'番茄合成配置',valid:true,platform:'fanqie',sha256:'profile-sha',remote_book_id:'remote',remote_book_title:'验收作品'};
 const catalog=(jobs=[])=>({book_id:'book-one',revision:7,formal_first:1,formal_last:2,formal_count:2,max_batch:1000,plans:[plan()],profiles:[profile],jobs,next_offset:null});
 const token=(suffix='connect',seconds=600)=>(Math.floor(Date.now()/1000)+seconds)+'.'+suffix;
 const connect=payload=>({comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding,book_id:'book-one',plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:'profile-sha',mode:payload.inspect_only?'inspect_drafts':payload.reconcile_only?'reconcile_only':'sync_drafts',can_start:false,connection_ready:false,preview_token:null,can_connect:true,connect_token:token(payload.reconcile_only?'read-connect':'connect'),automatic_connection:{available:true,uses_codex_quota:true},blockers:['platform_chrome_worker_unavailable'],preview:{platform:'fanqie',account_id:'synthetic-account',remote_book_id:'synthetic-target',chapters:[{chapter:1,title:'合成标题',body_characters:100}],results:[]}});
@@ -62,7 +62,7 @@ const starts=()=>requests.filter(row=>row.action.endsWith('/start'));
 const before=JSON.stringify([...docs]);await platformDraftOpen();const p=platformDraftPanel;
 assert.equal(p.preview.can_start,false);assert.equal(p.preview.can_connect,true);
 assert.equal(p.previewExpires,2000000600000);assert.equal(p.run.disabled,false);
-assert.equal(p.run.textContent,'准备并检查差异');
+assert.equal(p.run.textContent,'检查差异');
 assert.ok(p.status.textContent.includes('Codex 额度'));assert.equal(starts().length,0);
 assert.equal(JSON.stringify([...docs]),before);
 ''')
@@ -98,7 +98,7 @@ assert.equal(p.run.disabled,true);assert.equal(starts().length,1);
         self.js(r'''
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog():action.endsWith('/preview')?ready(payload):job();
 await platformDraftOpen();const p=platformDraftPanel;
-assert.equal(p.run.disabled,false);assert.equal(p.run.textContent,'准备并检查差异');
+assert.equal(p.run.disabled,false);assert.equal(p.run.textContent,'检查差异');
 assert.equal(starts().length,0);await platformDraftPreview(p);assert.equal(starts().length,0);
 const selected=p.preview.preview_token;await p.run.onclick();
 assert.equal(starts().length,1);assert.equal(starts()[0].payload.preview_token,selected);
@@ -150,9 +150,10 @@ assert.equal([...timers.values()].filter(item=>item.delay===1500).length,0);
         self.js(r'''
 await platformDraftOpen();const p=platformDraftPanel;let release;
 handler=async(action,payload)=>payload.profile_id==='old'?new Promise(resolve=>{release=()=>resolve(connect(payload));}):ready(payload);
+p.profiles.push({...profile,id:'old'});platformDraftProfiles(p);
 p.profile.value='old';const pending=platformDraftPreview(p);p.profile.value='synthetic.json';await platformDraftPreview(p);release();await pending;
 assert.equal(p.preview.profile_id,'synthetic.json');assert.equal(p.preview.can_start,true);
-assert.equal(p.run.textContent,'准备并检查差异');assert.equal(starts().length,0);
+assert.equal(p.run.textContent,'检查差异');assert.equal(starts().length,0);
 ''')
 
     def test_readonly_connect_click_preserves_mode_and_uses_its_new_token(self):
@@ -169,7 +170,7 @@ assert.equal(starts()[0].payload.preview_token,selected);assert.equal(starts()[0
         self.js(r'''
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog():{...ready(payload),can_connect:true,connect_token:token('extra',1200)};
 await platformDraftOpen();const p=platformDraftPanel,selected=p.preview.preview_token;
-assert.equal(p.previewExpires,2000000600000);assert.equal(p.run.textContent,'准备并检查差异');
+assert.equal(p.previewExpires,2000000600000);assert.equal(p.run.textContent,'检查差异');
 await p.run.onclick();assert.equal(starts()[0].payload.preview_token,selected);
 assert.equal(starts()[0].payload.auto_connect,false);
 ''')

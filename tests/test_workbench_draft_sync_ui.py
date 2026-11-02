@@ -85,36 +85,90 @@ for(const policy of [undefined,'fanqie_terminal_lf_v1']){
 }
 ''')
 
-    def test_sync_mode_prepares_current_formal_range_and_carries_explicit_rules_without_sending(self):
+    def test_recheck_prepares_current_formal_range_once_with_strict_rules_and_only_inspects(self):
         self.js(r'''
 let refreshed=false;
 handler=async(action,payload)=>{
+ if(action.endsWith('/formal-state'))return catalog();
  if(action.endsWith('/catalog'))return catalog(refreshed?[plan('new-plan')]:[plan()]);
  if(action.endsWith('/preview'))return {...preview(payload),mode:payload.inspect_only?'inspect_drafts':payload.sync_drafts?'sync_drafts':'save_draft',comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding};
  if(action.endsWith('/refresh-plan')){refreshed=true;return {ok:true,book_id:'book-one',revision:7,base_plan_id:payload.plan_id,plan_id:'new-plan',profile_id:profile.id,profile_sha256:profile.sha256,platform:'fanqie',account_id:'account',remote_book_id:'remote',start:1,end:2,chapters:[1,2],scope:'local_formal_refresh_only',remote_accessed:false,submission_performed:false};}
- if(action.endsWith('/start'))return job({plan_id:'new-plan',mode:'sync_drafts',comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding});
+ if(action.endsWith('/start'))return job({plan_id:'new-plan',mode:'inspect_drafts',comparison_policy:payload.comparison_policy,body_encoding:payload.body_encoding});
  throw Error(action);
 };
 await platformDraftOpen();const p=platformDraftPanel;
 p.encoding.value='plain_paragraphs_v1';p.comparison.value='fanqie_terminal_lf_v1';p.mode.value='sync_drafts';await p.recheck.onclick();
-assert.equal(p.plan.value,'new-plan');assert.equal(p.mode.value,'sync_drafts');assert.equal(p.preview.mode,'sync_drafts');assert.equal(p.run.disabled,false);
+assert.equal(p.plan.value,'new-plan');assert.equal(p.mode.value,'sync_drafts');assert.equal(p.job.mode,'inspect_drafts');assert.equal(p.run.disabled,true);
 assert.equal(p.encoding.value,'plain_paragraphs_v1');assert.equal(p.comparison.value,'strict');
 assert.equal(requests.find(r=>r.action.endsWith('/refresh-plan')).payload.end,2,'Do not silently extend updates to newly added chapters');
-assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,0);
-await p.run.onclick();const sent=requests.find(r=>r.action.endsWith('/start')).payload;assert.equal(sent.sync_drafts,false);assert.equal(sent.inspect_only,true);assert.equal(sent.reconcile_only,false);assert.equal(sent.plan_id,'new-plan');
+assert.equal(requests.filter(r=>r.action.endsWith('/refresh-plan')).length,1);assert.equal(requests.filter(r=>r.action.endsWith('/start')).length,1);
+const sent=requests.find(r=>r.action.endsWith('/start')).payload;assert.equal(sent.sync_drafts,false);assert.equal(sent.inspect_only,true);assert.equal(sent.reconcile_only,false);assert.equal(sent.plan_id,'new-plan');
 ''')
 
     def test_latest_durable_success_wins_over_stale_failed_job_and_remains_explicitly_historical(self):
         self.js(r'''
 const records=[1,2].map(chapter=>({chapter,state:'saved',title_matches:true,body_matches:true,last_observed_at:'2026-10-24T00:00:00Z',observed_this_run:false}));
+const old=job({done:true,state:'failed',profile_id:profile.id,profile_sha256:profile.sha256,finished_at:'2026-10-23T00:00:00Z',result:{source_matches_current:true,history_events_total:1,results:[{chapter:1,state:'unknown',recorded_this_run:true,reason:'platform_chrome_worker_target_tab_closed'}]}});
 handler=async(action,payload)=>{
- if(action.endsWith('/catalog'))return catalog([plan()],[job({done:true,state:'failed',profile_id:profile.id,result:{history_events_total:1,results:[{chapter:1,state:'unknown'}]}})]);
- if(action.endsWith('/preview')){const p=preview(payload);p.preview={...p.preview,history_events_total:6,results:records};return p;}throw Error(action);
+ if(action.endsWith('/catalog'))return catalog([plan('plan-1',{draft_history:{history_events_total:6}})],[old]);
+ if(action.endsWith('/history'))return {id:'plan-1',book_id:'book-one',remote_accessed:false,source_matches_current:true,history_events_total:6,results:records};
+ if(action.endsWith('/formal-state'))return catalog();throw Error(action);
 };
 await platformDraftOpen();const p=platformDraftPanel;
 assert.equal(Number(p.progress.value),0);assert.ok(p.progressLabel.textContent.includes('本次尚未开始'));assert.equal(p.historyResults.children.length,2);
 assert.ok(p.history.textContent.includes('不计入本次进度'));assert.ok(!p.status.textContent.includes('任务未完成'));
-assert.ok(p.results.children.every(row=>row.textContent.includes('本次未处理')));assert.ok(p.historyResults.children.every(row=>row.textContent.includes('历史状态')));assert.equal(p.job,null);
+assert.ok(p.status.textContent.includes('更新的核对记录'));assert.ok(p.historyJob.textContent.includes('历史任务'));assert.ok(p.historyJob.textContent.includes(platformDraftStamp(old.finished_at)));assert.ok(p.historyJob.textContent.includes('标签页已关闭'));
+assert.ok(p.results.children.every(row=>row.textContent.includes('本次未处理')));assert.ok(p.historyResults.children.every(row=>row.textContent.includes('历史状态')));assert.equal(p.job.id,old.id);assert.equal(p.jobHistorical,true);
+await p.refresh.onclick();assert.equal(p.jobHistorical,true);assert.equal(Number(p.progress.value),0);assert.ok(p.status.textContent.includes('更新的核对记录'));assert.equal(requests.filter(row=>row.action.endsWith('/start')||row.action.endsWith('/preview')).length,0);
+''')
+
+    def test_reopened_completed_success_is_history_and_cannot_fill_current_progress(self):
+        self.js(r'''
+const records=[1,2].map(chapter=>({chapter,state:'saved',title_matches:true,body_matches:true,accepted_this_run:true,title_body_verified:true,observed_this_run:true,last_observed_at:'2026-10-24T00:00:00Z'}));
+const completed=job({done:true,state:'succeeded',profile_id:profile.id,profile_sha256:profile.sha256,finished_at:'2026-10-24T00:00:01Z',verified_chapters:2,accepted_chapters:2,result:{history_events_total:6,results:records}});
+handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog([plan()],[completed]);if(action.endsWith('/formal-state'))return catalog();if(action.endsWith('/history'))return {id:'plan-1',book_id:'book-one',remote_accessed:false,history_events_total:6,results:records};throw Error(action);};
+await platformDraftOpen();const p=platformDraftPanel;assert.equal(p.jobHistorical,true);assert.equal(Number(p.progress.value),0);assert.ok(p.progressLabel.textContent.includes('0 / 2'));assert.ok(p.status.textContent.includes('本次尚未开始'));assert.ok(!p.status.textContent.includes('同步一致'));assert.ok(p.historyJob.textContent.includes('同步一致'));assert.ok(p.historyJob.textContent.includes(platformDraftStamp(completed.finished_at)));assert.ok(p.results.children.every(row=>row.textContent.includes('本次未处理')));assert.equal(requests.filter(row=>row.action.endsWith('/start')).length,0);
+''')
+
+    def test_reopened_unknown_result_keeps_allocated_draft_id_and_stop_reason_in_history(self):
+        self.js(r'''
+const rows=[{chapter:1,state:'unknown',remote_id:'existing-draft-1',recorded_this_run:true,reason:'platform_browser_read_timeout',last_observed_at:'2026-10-24T00:00:00Z'}];
+const stopped=job({done:true,state:'unknown',profile_id:profile.id,profile_sha256:profile.sha256,finished_at:'2026-10-24T00:00:01Z',result:{history_events_total:1,results:rows}});
+handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog([plan()],[stopped]);if(action.endsWith('/formal-state'))return catalog();if(action.endsWith('/history'))return {id:'plan-1',book_id:'book-one',remote_accessed:false,history_events_total:1,results:rows};if(action.endsWith('/preview'))return preview(payload);throw Error(action);};
+await platformDraftOpen();const p=platformDraftPanel;assert.equal(p.jobHistorical,true);assert.equal(Number(p.progress.value),0);assert.ok(p.historyJob.textContent.includes('页面读取超时'));assert.ok(textTree(p.historyResults).includes('已分配草稿 ID：existing-draft-1'));assert.ok(textTree(p.historyResults).includes('勿重复新建'));assert.equal(p.recoveryAction.textContent,'只读核对历史结果');assert.equal(p.recoveryAction.hidden,false);assert.ok(p.nextHint.textContent.includes('上次任务'));assert.ok(p.nextHint.textContent.includes('先只读核对'));assert.ok(p.nextHint.textContent.includes('勿重复新建'));assert.ok(p.jobNote.textContent.includes('已结束的历史任务'));assert.ok(!p.jobNote.textContent.includes('关闭此面板后任务继续'));
+await p.recoveryAction.onclick();assert.equal(p.mode.value,'reconcile_only');assert.equal(requests.filter(row=>row.action.endsWith('/start')).length,0);
+''')
+
+    def test_finished_history_does_not_prompt_current_chrome_repair_or_claim_running(self):
+        self.js(r'''
+const stopped=job({done:true,state:'failed',profile_id:profile.id,profile_sha256:profile.sha256,finished_at:'2026-10-24T00:00:01Z',execution_mode:'host_assisted_cua',error:'platform_chrome_worker_origin_permission_required',result:{history_events_total:0,results:[]}});
+handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog([plan()],[stopped]);if(action.endsWith('/formal-state'))return catalog();if(action.endsWith('/history'))return {id:'plan-1',book_id:'book-one',remote_accessed:false,history_events_total:0,results:[]};throw Error(action);};
+await platformDraftOpen();const p=platformDraftPanel;assert.equal(p.jobHistorical,true);assert.equal(p.permissionHelp.open,false);assert.ok(p.historyJob.textContent.includes('尚未取得番茄页面访问授权'));assert.ok(p.nextHint.textContent.includes('仅反映当时情况'));assert.ok(!p.nextHint.textContent.includes('请检查现有 Chrome'));assert.ok(p.jobNote.textContent.includes('已结束的历史任务，不会继续执行'));assert.ok(!p.jobNote.textContent.includes('使用当前账号额度'));assert.equal($('platform-drafts-open').textContent,'平台草稿 · 历史记录');p.dialog.close();assert.equal($('platform-drafts-open').textContent,'平台草稿 · 历史记录');
+''')
+
+    def test_restored_active_task_remains_current_when_poll_finishes_and_catalog_refreshes(self):
+        self.js(r'''
+const running=job({profile_id:profile.id,profile_sha256:profile.sha256,verified_chapters:1,accepted_chapters:1});
+const completed={...running,done:true,state:'succeeded',finished_at:'2026-10-24T00:00:00Z',verified_chapters:2,accepted_chapters:2,result:{history_events_total:6,results:[]}};let latest=running;
+handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog([plan()],[latest]);if(action.endsWith('/formal-state'))return catalog();if(action.endsWith('/job'))return completed;throw Error(action);};
+await platformDraftOpen();const p=platformDraftPanel;assert.equal(p.jobHistorical,false);assert.equal(Number(p.progress.value),1);assert.ok(p.jobNote.textContent.includes('关闭此面板后任务继续'));await platformDraftPoll(p);latest=completed;
+assert.equal(p.jobHistorical,false);assert.equal(Number(p.progress.value),2);assert.ok(p.status.textContent.includes('本批草稿同步一致'));assert.equal(p.historyJob.textContent,'');assert.ok(p.jobNote.textContent.includes('本次任务已结束，不会继续执行'));assert.ok(!p.jobNote.textContent.includes('关闭此面板后任务继续'));
+await p.refresh.onclick();assert.equal(p.jobHistorical,false);assert.equal(Number(p.progress.value),2);assert.ok(p.status.textContent.includes('本批草稿同步一致'));assert.equal(requests.filter(row=>row.action.endsWith('/start')).length,0);
+''')
+
+    def test_current_panel_start_that_returns_completed_job_keeps_current_result(self):
+        self.js(r'''
+handler=async(action,payload)=>{if(action.endsWith('/catalog'))return catalog();if(action.endsWith('/formal-state'))return catalog();if(action.endsWith('/preview'))return preview(payload);if(action.endsWith('/start'))return job({profile_id:profile.id,profile_sha256:profile.sha256,mode:'reconcile_only',done:true,state:'succeeded',verified_chapters:2,accepted_chapters:2,result:{history_events_total:6,results:[]}});throw Error(action);};
+await platformDraftOpen();const p=platformDraftPanel;p.mode.value='reconcile_only';await p.mode.onchange();await p.run.onclick();assert.equal(p.jobHistorical,false);assert.equal(Number(p.progress.value),2);assert.ok(p.status.textContent.includes('本次只读核对完成'));assert.equal(p.historyJob.textContent,'');assert.equal(requests.filter(row=>row.action.endsWith('/start')).length,1);
+''')
+
+    def test_later_history_does_not_replace_current_completed_result(self):
+        self.js(r'''
+await platformDraftOpen();const p=platformDraftPanel;
+platformDraftDrawJob(p,job({done:true,state:'partial_failure',current_chapter:2,accepted_chapters:1,finished_at:'2026-10-23T00:00:00Z',result:{history_events_total:2,results:[{chapter:2,state:'blocked',recorded_this_run:true,reason:'platform_browser_read_timeout'}]}}));
+const status=p.status.textContent,progress=p.progressLabel.textContent;
+platformDraftDrawHistory(p,{history_events_total:6,results:[1,2].map(chapter=>({chapter,state:'reconciled',title_matches:true,body_matches:true,last_observed_at:'2026-10-24T00:00:00Z'}))});
+assert.equal(p.status.textContent,status);assert.equal(p.progressLabel.textContent,progress);assert.equal(Number(p.progress.value),1);assert.ok(p.history.textContent.includes('更新核对记录'));assert.equal(p.jobHistorical,false);
 ''')
 
     def test_poll_reads_new_journal_only_and_ignores_stale_selection_response(self):
@@ -161,5 +215,5 @@ assert.equal(p.historyResults.children.length,0);assert.equal(p.historyDetails.h
     def test_historical_body_match_does_not_count_a_formatting_conflict_as_success(self):
         self.js(r'''await platformDraftOpen();const p=platformDraftPanel;
 platformDraftDrawHistory(p,{results:[{chapter:1,state:'conflict',title_matches:true,body_matches:true,reason:'remote_formatting_metadata',last_observed_at:'2026-10-25T00:00:00Z'}],history_events_total:1});
-assert.equal(p.historySummary.textContent,'历史核对记录 · 1 章有记录');assert.equal(Number(p.progress.value),0);assert.ok(p.results.children[0].textContent.includes('本次未处理'));
+assert.equal(p.historySummary.textContent,'历史核对记录 · 账号 account · 作品 ID remote · 1 章有记录');assert.equal(Number(p.progress.value),0);assert.ok(p.results.children[0].textContent.includes('本次未处理'));
 ''')

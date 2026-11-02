@@ -1335,6 +1335,16 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
             }
             if(!document.getElementById('current-book-root') || typeof docs==='undefined'
                 || !(docs instanceof Map) || docs.size>10000)return 'unknown';
+            let taskBuffers=[];
+            if(typeof assistantTaskFormBuffers==='function'){
+                try{taskBuffers=assistantTaskFormBuffers();}catch{return 'unknown';}
+                if(!Array.isArray(taskBuffers) || taskBuffers.length>1000
+                    || taskBuffers.some(d=>!d || typeof d!=='object' || typeof d.id!=='string' || !d.id
+                        || ['dirty','saving','recovering','needs_recovery'].some(key=>typeof d[key]!=='boolean'))
+                    || new Set(taskBuffers.map(d=>d.id)).size!==taskBuffers.length)return 'unknown';
+            }else if(typeof assistantTaskFormBuffers!=='undefined' || document.getElementById('assistant-tasks-open'))return 'unknown';
+            if(taskBuffers.some(d=>d.saving || d.recovering))return 'busy';
+            if(taskBuffers.some(d=>d.dirty || d.needs_recovery))return 'task-pending';
             const records=[...docs];
             if(records.some(([id,d])=>!d || typeof d!=='object' || typeof d.editable!=='boolean'
                 || typeof d.value!=='string' || (d.editable && typeof d.text!=='string')
@@ -1365,6 +1375,9 @@ final class WorkbenchWindow: NSWindowController, NSToolbarDelegate, WKNavigation
             } else if state == "shelf-pending" {
                 alert.messageText = "作品状态尚未保存"
                 alert.informativeText = "书架上还有未保存的作品状态，本次\(action)已取消。请先保存状态、改回原状态，或点击书架上的“放弃未保存状态”后重试。"
+            } else if state == "task-pending" {
+                alert.messageText = "助手任务输入尚未处理"
+                alert.informativeText = "助手任务还有未提交输入或待核对的保存结果，本次\(action)已取消。请重新打开相应任务，核对并保存；不再需要的输入可在任务中明确放弃。"
             } else if state == "pending" {
                 alert.messageText = "还有未保存的编辑"
                 alert.informativeText = "这部作品包含未保存文字、未完成的保留版本或待核对保存结果。请返回重试核对、保存候选稿或下载文字，再\(action)。自动恢复稿不等于已保存候选。"

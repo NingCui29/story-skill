@@ -7,6 +7,7 @@
 const OFFICIAL = {fanqie: 'https://fanqienovel.com', qimao: 'https://zuozhe.qimao.com', qidian: 'https://write.qq.com'};
 const SESSIONS = new Map();
 const CONSUMED_CREATES = new Set();
+const CONSUMED_EMPTY_RECOVERIES = new Set();
 const UNSAFE = /发布|送审|审核|下一步|定时|提交|删除|移除|放弃|取消|publish|submit|schedule|next|delete|remove|discard|cancel/i;
 const DRAFT = /草稿|\bdraft\b/i;
 const SAVE = /保存|存草稿|\bsave\b/i;
@@ -29,7 +30,7 @@ function progress(api, event) {
     for (const key of ['catalog_index','listing_index','section_index','page','row_count','guard_refreshes','read_retry','line','column']) {
       if (Number.isInteger(event[key]) && event[key] >= 0) clean[key] = event[key];
     }
-    for (const key of ['ready_equal','rows_equal','count_equal','dimensions_equal','edge_reached','document_valid','document_edge_reached']) {
+    for (const key of ['ready_equal','rows_equal','count_equal','dimensions_equal','edge_reached','document_before_valid','document_valid','document_edge_reached']) {
       if (typeof event[key] === 'boolean') clean[key] = event[key];
     }
     for (const key of ['container_before','container_after','document_before','document_after']) {
@@ -131,7 +132,7 @@ export function readRowFields(elements, specs) {
 
 // Observed Fanqie read-only preview format: plain, attribute-free P elements.
 // Exactly one final zero-child P is UI padding; every other empty P is text.
-export function readPreviewParagraphs_v1(el) {
+export function readPreviewParagraphs_v1(el, allowCompletelyEmpty = false) {
   // Only the observed spelling annotation is transparent; never apply its suggestion.
   const originalText = node => {
     if (node?.nodeType === 3 && typeof node.textContent === 'string') return node.textContent;
@@ -149,6 +150,7 @@ export function readPreviewParagraphs_v1(el) {
   let annotated = false;
   if (!el) return {ok:false};
   const nodes = Array.from(el.childNodes);
+  if (allowCompletelyEmpty === true && !nodes.length) return el.tagName==='DIV' && el.outerHTML==='<div></div>' ? {ok:true,value:''} : {ok:false};
   if (!nodes.length) return {ok:false,pending:true};
   const plainP = node => node?.nodeType === 1 && node.tagName === 'P' &&
     typeof node.outerHTML === 'string' && node.outerHTML.startsWith('<p>') && node.outerHTML.endsWith('</p>');
@@ -218,6 +220,7 @@ export function readParagraphs(el, currentField = null) {
       // Keep the final callback self-contained. Parity tests bind this branch
       // to the standalone preview serializer, including its exact padding.
       const nodes=Array.from(node.childNodes);
+      if (currentField.allow_empty_preview===true && !nodes.length) return node.tagName==='DIV' && node.outerHTML==='<div></div>' ? {ok:true,count:1,value:''} : {ok:false,count:1};
       const plainP=item=>item?.nodeType===1&&item.tagName==='P'&&typeof item.outerHTML==='string'&&item.outerHTML.startsWith('<p>')&&item.outerHTML.endsWith('</p>');
       const last=nodes.at(-1);
       if (!plainP(last)||last.childNodes.length!==0||last.outerHTML!=='<p></p>') return {ok:false,count:1};
@@ -251,7 +254,8 @@ export function readParagraphs(el, currentField = null) {
   const empty = node => element(node, 'P') && node.childNodes.length === 1 && br(node.childNodes[0]);
   const classes = (node, expected) => node?.getAttribute('class') === expected;
   const aiSentinel = node => {
-    if (node?.outerHTML !== '<p><syl-inline __syl_tag="true" ignoreel="true" contenteditable="false" class="ProseMirror-widget"><span class="editor-operability-shadow-wrap"><span class="editor-operability-shadow"><i class="tomato-ai-tool-inspire-v2"></i>暂时没有思路，使用卡文锦囊，AI帮你构思剧情</span></span></syl-inline><img class="ProseMirror-separator" alt=""><br class="ProseMirror-trailingBreak"></p>') return false;
+    const labels = ['暂时没有思路，使用卡文锦囊，AI帮你构思剧情', '开新书没思路？试试AI开书灵感，帮你生成大纲'];
+    if (!labels.some(label => node?.outerHTML === '<p><syl-inline __syl_tag="true" ignoreel="true" contenteditable="false" class="ProseMirror-widget"><span class="editor-operability-shadow-wrap"><span class="editor-operability-shadow"><i class="tomato-ai-tool-inspire-v2"></i>'+label+'</span></span></syl-inline><img class="ProseMirror-separator" alt=""><br class="ProseMirror-trailingBreak"></p>')) return false;
     if (!element(node, 'P') || node.childNodes.length !== 3) return false;
     const [widget, image, lineBreak] = Array.from(node.childNodes);
     if (!element(widget, 'SYL-INLINE') || widget.getAttribute('__syl_tag') !== 'true' ||
@@ -264,8 +268,11 @@ export function readParagraphs(el, currentField = null) {
     if (!element(inner, 'SPAN') || !classes(inner, 'editor-operability-shadow') || inner.childNodes.length !== 2) return false;
     const [icon, label] = Array.from(inner.childNodes);
     return element(icon, 'I') && classes(icon, 'tomato-ai-tool-inspire-v2') && icon.childNodes.length === 0 &&
-      label.nodeType === 3 && label.textContent === '暂时没有思路，使用卡文锦囊，AI帮你构思剧情';
+      label.nodeType === 3 && labels.includes(label.textContent);
   };
+  // Observed new-book editors contain only this non-editable platform widget.
+  // Its exact subtree carries no author text; arbitrary widgets still fail.
+  if (nodes.length === 1 && aiSentinel(nodes[0])) return {ok:true,value:''};
   if (nodes.length === 1 && element(nodes[0], 'P')) {
     const c = Array.from(nodes[0].childNodes);
     if (c.length === 3 && element(c[0], 'SPAN') && c[0].classList.contains('syl-placeholder') &&
@@ -348,9 +355,25 @@ class Driver {
     if (previous && previous.binding !== binding) fail('identity_mismatch');
     this.state = previous || {binding, owned: new Set(), previews: new Map(), chapters: new Map(), verified: false};
     SESSIONS.set(request.session_id, this.state);
+    this.catalogProof = null;
+    if (request.params?.catalog_proof_id != null) {
+      const proof = this.state.catalogProof;
+      if (!proof || proof.id !== request.params.catalog_proof_id || Date.now() >= proof.expires) fail('bridge_expired');
+      // Only a continuing operation in this exact authenticated session can
+      // extend its batch proof. Expired proof is never revived by a request.
+      proof.expires = Math.max(proof.expires, this.deadline);
+      this.catalogProof = proof;
+    }
     this.check();
   }
   check() { if (Date.now() >= this.deadline) fail('operation_failed'); }
+  async boundedObservation(callback) {
+    // Enter before the local timer starts. A checkpoint may yield here, but
+    // never in the middle of a short observation window. The request deadline
+    // remains wall-clock based and is checked on both sides of the window.
+    const observe = async() => { this.check();const result=await callback();this.check();return result; };
+    return typeof this.api.boundedObservation === 'function' ? this.api.boundedObservation(observe) : observe();
+  }
   timeoutOptions() { this.check(); return {timeoutMs: Math.max(1, Math.min(15000, this.deadline - Date.now()))}; }
   readTimeout(error) {
     if (this.target.platform!=='fanqie' || this.profile.readback?.body?.source!=='fanqie_preview_paragraphs_v1' ||
@@ -523,35 +546,39 @@ class Driver {
         await new Promise(resolve=>setTimeout(resolve,Math.min(100,remaining())));
       }
     };
-    const sourceDeadline = Math.min(this.deadline,Date.now()+5000);
-    const sourceRemaining = () => { this.check();const value=sourceDeadline-Date.now();if (value <= 0) fail('incomplete_scope');return value; };
-    this.check();await selected(transition.source.coverage,beforeURL,sourceRemaining);
-    if (typeof tab.playwright.getByRole !== 'function') fail('invalid_profile');
-    const locator = tab.playwright.getByRole('tab',{name:transition.target.coverage.expected,exact:true});
-    if (await locator.count() !== 1 || !await locator.isVisible() || !await locator.isEnabled() ||
-        await locator.getAttribute('aria-selected') !== 'false') fail('incomplete_scope');
-    const listed = (await this.tabs()).filter(item=>item.id === this.state.list.id);
-    if (listed.length !== 1 || listed[0].url !== beforeURL || await this.url(tab) !== beforeURL) fail('identity_mismatch');
-    await selected(transition.source.coverage,beforeURL,sourceRemaining);this.check();
-    await locator.click(this.timeoutOptions()); // One observed UI action; never retry or fall back to goto.
-    const deadline = Math.min(this.deadline,Date.now()+5000);
-    const remaining = () => { this.check();const value=deadline-Date.now();if (value <= 0) fail('navigation_timeout');return value; };
-    while (true) {
-      remaining();const current = await this.url(tab);remaining();
-      if (current !== beforeURL && current !== url) fail('unsafe_navigation');
-      if (current === url) {
-        const snapshot = await tab.getAXState({emit:false});remaining();
-        const after = await this.url(tab);remaining();
-        if (after !== beforeURL && after !== url) fail('unsafe_navigation');
-        if (typeof snapshot !== 'string') fail('incomplete_dom');
-        if (after === url && snapshot.trim().length) {
-          await selected(transition.target.coverage,url,remaining);remaining();
-          if (await this.url(tab) !== url) fail('identity_mismatch');
-          remaining();return;
+    await this.boundedObservation(async() => {
+      const sourceDeadline = Math.min(this.deadline,Date.now()+5000);
+      const sourceRemaining = () => { this.check();const value=sourceDeadline-Date.now();if (value <= 0) fail('incomplete_scope');return value; };
+      this.check();await selected(transition.source.coverage,beforeURL,sourceRemaining);
+      if (typeof tab.playwright.getByRole !== 'function') fail('invalid_profile');
+      const locator = tab.playwright.getByRole('tab',{name:transition.target.coverage.expected,exact:true});
+      if (await locator.count() !== 1 || !await locator.isVisible() || !await locator.isEnabled() ||
+          await locator.getAttribute('aria-selected') !== 'false') fail('incomplete_scope');
+      const listed = (await this.tabs()).filter(item=>item.id === this.state.list.id);
+      if (listed.length !== 1 || listed[0].url !== beforeURL || await this.url(tab) !== beforeURL) fail('identity_mismatch');
+      await selected(transition.source.coverage,beforeURL,sourceRemaining);this.check();
+      await locator.click(this.timeoutOptions()); // One observed UI action; never retry or fall back to goto.
+    });
+    return this.boundedObservation(async() => {
+      const deadline = Math.min(this.deadline,Date.now()+5000);
+      const remaining = () => { this.check();const value=deadline-Date.now();if (value <= 0) fail('navigation_timeout');return value; };
+      while (true) {
+        remaining();const current = await this.url(tab);remaining();
+        if (current !== beforeURL && current !== url) fail('unsafe_navigation');
+        if (current === url) {
+          const snapshot = await tab.getAXState({emit:false});remaining();
+          const after = await this.url(tab);remaining();
+          if (after !== beforeURL && after !== url) fail('unsafe_navigation');
+          if (typeof snapshot !== 'string') fail('incomplete_dom');
+          if (after === url && snapshot.trim().length) {
+            await selected(transition.target.coverage,url,remaining);remaining();
+            if (await this.url(tab) !== url) fail('identity_mismatch');
+            remaining();return;
+          }
         }
+        await new Promise(resolve=>setTimeout(resolve,Math.min(100,remaining())));
       }
-      await new Promise(resolve=>setTimeout(resolve,Math.min(100,remaining())));
-    }
+    });
   }
   async navigate(tab, url, {readOnly = false} = {}) {
     this.check(); this.safe(url);
@@ -567,20 +594,22 @@ class Driver {
       // A timed-out SDK acknowledgement is not a second navigation attempt.
       // Only an already-arrived read-only page can proceed to the normal
       // identity, scope, readiness and complete-content checks at the caller.
-      try {
-        const arrivalDeadline = Math.min(this.deadline,Date.now()+5000);
-        const remaining = () => { this.check();const value = arrivalDeadline-Date.now();if (value <= 0) throw failure;return value; };
-        while (true) {
-          remaining();const current = await this.url(tab);remaining();
-          if (current !== beforeURL && current !== url) throw failure;
-          const snapshot = await tab.getAXState({emit:false});remaining();
-          const after = await this.url(tab);remaining();
-          if (after !== beforeURL && after !== url) throw failure;
-          if (current === url && after === url && typeof snapshot === 'string' && snapshot.trim().length) return;
-          if (typeof snapshot !== 'string' || snapshot.trim().length) throw failure;
-          await new Promise(resolve=>setTimeout(resolve,Math.min(100,remaining())));
-        }
-      } catch { throw failure; }
+      return this.boundedObservation(async() => {
+        try {
+          const arrivalDeadline = Math.min(this.deadline,Date.now()+5000);
+          const remaining = () => { this.check();const value = arrivalDeadline-Date.now();if (value <= 0) throw failure;return value; };
+          while (true) {
+            remaining();const current = await this.url(tab);remaining();
+            if (current !== beforeURL && current !== url) throw failure;
+            const snapshot = await tab.getAXState({emit:false});remaining();
+            const after = await this.url(tab);remaining();
+            if (after !== beforeURL && after !== url) throw failure;
+            if (current === url && after === url && typeof snapshot === 'string' && snapshot.trim().length) return;
+            if (typeof snapshot !== 'string' || snapshot.trim().length) throw failure;
+            await new Promise(resolve=>setTimeout(resolve,Math.min(100,remaining())));
+          }
+        } catch { throw failure; }
+      });
     }
     await this.ax(tab); this.safe(await this.url(tab));
   }
@@ -682,7 +711,8 @@ class Driver {
     };
     for (const name of Object.keys(expected)) {
       const spec=specs[name],packet=await resolve(name);
-      fields.push({name,path:packet.path,tag:packet.tag,spec:{source:spec.source??'dom',attribute:spec.attribute??null}});
+      fields.push({name,path:packet.path,tag:packet.tag,spec:{source:spec.source??'dom',attribute:spec.attribute??null,
+        ...(spec.allow_empty_preview===true?{allow_empty_preview:true}:{})}});
     }
     const root=tab.playwright.locator(':root');
     const sample=async()=>{
@@ -777,7 +807,16 @@ class Driver {
     if (section != null && await this.value(tab, listing.sections.selected) !== section) fail('incomplete_scope');
   }
   chapter(raw, spec = {}) {
-    if ((spec.unnumbered_values || []).includes(raw)) return null;
+    const unnumbered = spec.unnumbered_values || [];
+    const text = typeof raw === 'string' ? raw.trim() : '';
+    // Platform may render placeholder rows as "第 章 未命名草稿"; strip the
+    // empty chapter prefix so the configured unnumbered marker still matches.
+    const numberless = text.replace(/^第\s*章\s*/, '');
+    if (unnumbered.includes(raw) ||
+        (spec.format === 'chapter_title' && numberless !== text && unnumbered.includes(numberless))) return null;
+    // A blank draft cell renders as "第 章" with neither number nor title.
+    // Only a listing that declares unnumbered drafts may treat it as such.
+    if (spec.format === 'chapter_title' && unnumbered.length && /^第\s*章\s*$/.test(text)) return null;
     const matched = spec.format === 'chapter_title' ?
       new RegExp('^第([0-9]+)章' + escape(spec.title_separator) + '([^\\r\\n]+)$').exec(raw.trim()) :
       /^\s*(?:第\s*)?([0-9]+)(?:\s*章)?\s*$/.exec(raw);
@@ -827,7 +866,7 @@ class Driver {
   async readyRows(tab, listing, section) {
     while (true) {
       this.check(); await this.identity(tab); await this.scope(tab, listing, section);
-      if (await this.emptyDraftRows(tab, listing, section)) return [];
+      if (await this.emptyListingRows(tab, listing, section)) return [];
       if (await this.listReady(tab, listing)) {
         const rows = await this.rows(tab, listing);
         if ((rows.length || await this.visible(tab, listing.empty)) &&
@@ -867,16 +906,97 @@ class Driver {
     }
     return true;
   }
+  emptyTableListing(listing) {
+    return this.target.platform === 'fanqie' && (listing.scope === 'drafts' ||
+      (listing.scope === 'non_drafts' && listing.empty?.expected === '暂无章节内容'));
+  }
+  async emptyListingRows(tab, listing, section) {
+    return listing.scope === 'drafts' ? this.emptyDraftRows(tab,listing,section) :
+      this.emptyNonDraftRows(tab,listing,section);
+  }
+  async emptyNonDraftRows(tab, listing, section) {
+    // Fanqie's empty *selected volume* omits the chapter table. The volume
+    // menu and all filters remain mandatory; catalog still scans every volume.
+    if (this.target.platform !== 'fanqie' || listing.scope !== 'non_drafts' ||
+        listing.empty?.expected !== '暂无章节内容' || !await this.visible(tab,listing.empty)) return false;
+    const pagination=listing.pagination;
+    if (!listing.sections || section == null || pagination.mode !== 'fanqie_pages_v1' ||
+        pagination.validated !== true || !Array.isArray(pagination.reject_selectors) ||
+        !pagination.reject_selectors.length) fail('incomplete_list');
+    for (let pass=0;pass<2;pass++) {
+      this.check();await this.identity(tab);await this.scope(tab,listing,section);
+      if (!await this.visible(tab,listing.empty)) return false;
+      if (await this.value(tab,listing.empty) !== listing.empty.expected ||
+          (await this.rows(tab,listing)).length) fail('incomplete_list');
+      for (const spec of [pagination.container,pagination.previous,pagination.current,pagination.next]) {
+        if (!spec?.selector || await tab.playwright.locator(spec.selector).count()) fail('incomplete_list');
+      }
+      for (const selector of pagination.reject_selectors) if (await tab.playwright.locator(selector).count()) fail('incomplete_list');
+      const ready=tab.playwright.locator(listing.ready.selector),readyCount=await ready.count();
+      if (readyCount>1) fail('ambiguous_dom');
+      if (readyCount) return false;
+      await this.identity(tab);await this.scope(tab,listing,section);
+      if (!pass) { await pause();await this.ax(tab); }
+    }
+    return true;
+  }
   async metrics(locator) {
     return locator.evaluate(el => { const r = el.getBoundingClientRect(); return {
       height: el.clientHeight, total: el.scrollHeight, width: el.clientWidth, wide: el.scrollWidth,
       top: el.scrollTop, x: r.left + r.width / 2, y: r.top + r.height / 2}; });
   }
+  async documentMetrics(tab) {
+    // Qoder host page-level evaluate returns null; locator-level reads work.
+    // A page may scroll on body instead of html, so read its actual scroller.
+    return tab.playwright.locator('html').evaluate(el => {
+      const scroller = el.ownerDocument?.scrollingElement || el;
+      return {height: scroller.clientHeight, total: scroller.scrollHeight, top: scroller.scrollTop, width: el.clientWidth};
+    });
+  }
+  async scrollToEdge(locator, direction) {
+    // One host scroll action can consume the whole REPL cell budget. Move the
+    // observed scroll container in bounded viewport steps instead.
+    const sign = direction === 'down' ? 1 : -1;
+    for (let step = 0; step < 512; step++) {
+      this.check();
+      const metrics = await this.metrics(locator);
+      if (![metrics.height, metrics.total, metrics.top].every(Number.isFinite) ||
+          metrics.height <= 0 || metrics.total < metrics.height) fail('incomplete_list');
+      if (sign > 0 ? metrics.top + metrics.height >= metrics.total - 1 : metrics.top <= 1) return;
+      const delta = sign * Math.max(1, Math.floor(metrics.height * 0.9));
+      const moved = await locator.evaluate((el, amount) => {
+        const before = el.scrollTop;
+        el.scrollTop = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, before + amount));
+        return el.scrollTop !== before;
+      }, delta);
+      if (!moved) return;
+    }
+    fail('incomplete_list');
+  }
+  async scrollDocumentToEdge(tab, direction) {
+    const sign = direction === 'down' ? 1 : -1;
+    for (let step = 0; step < 512; step++) {
+      this.check();
+      const metrics = await this.documentMetrics(tab);
+      if (![metrics.height, metrics.total, metrics.top].every(Number.isFinite) ||
+          metrics.height <= 0 || metrics.total < metrics.height) fail('incomplete_list');
+      if (sign > 0 ? metrics.top + metrics.height >= metrics.total - 1 : metrics.top <= 1) return;
+      const delta = sign * Math.max(1, Math.floor(metrics.height * 0.9));
+      const moved = await tab.playwright.locator('html').evaluate((el, amount) => {
+        const scroller = el.ownerDocument?.scrollingElement || el;
+        const before = scroller.scrollTop;
+        scroller.scrollTop = Math.max(0, Math.min(scroller.scrollHeight - scroller.clientHeight, before + amount));
+        return scroller.scrollTop !== before;
+      }, delta);
+      if (!moved) return;
+    }
+    fail('incomplete_list');
+  }
   async allRows(tab, listing, rows, section) {
     const pagination = listing.pagination;
     if (pagination.validated !== true) fail('incomplete_list');
-    if (!rows.length && this.target.platform === 'fanqie' && listing.scope === 'drafts') {
-      if (!await this.emptyDraftRows(tab, listing, section)) fail('incomplete_list');
+    if (!rows.length && this.emptyTableListing(listing)) {
+      if (!await this.emptyListingRows(tab, listing, section)) fail('incomplete_list');
       return;
     }
     const container = await this.one(tab, pagination.container);
@@ -889,19 +1009,19 @@ class Driver {
       const current = JSON.stringify([metrics.height, metrics.total, metrics.width, metrics.wide]);
       progress(this.api,{...this.scan,phase:'all_rows',edge:'checked',direction:down?'down':'up',container_before:metrics,dimensions_equal:!dimensions||current===dimensions});
       if (dimensions && current !== dimensions) fail('incomplete_list'); dimensions = current;
-      const docMetrics = await tab.playwright.evaluate(() => { const el = document.scrollingElement; return {
-        height: el.clientHeight, total: el.scrollHeight, top: el.scrollTop,
-        width: document.documentElement.clientWidth}; });
-      progress(this.api,{...this.scan,phase:'all_rows',edge:'before_scroll',direction:down?'down':'up',container_before:metrics,document_before:docMetrics});
-      const x = Math.max(1, Math.min(docMetrics.width - 1, metrics.x));
-      const y = Math.max(1, Math.min(docMetrics.height - 1, metrics.y));
-      await this.action(tab, () => tab.scroll([x, y], down ? 'down' : 'up', Math.max(1, Math.ceil(metrics.total / metrics.height))));
-      await this.action(tab, () => tab.scroll([Math.max(1, docMetrics.width / 2), Math.max(1, docMetrics.height / 2)], down ? 'down' : 'up', Math.max(1, Math.ceil(docMetrics.total / docMetrics.height))));
+      const docMetrics = await this.documentMetrics(tab);
+      const documentBeforeValid = [docMetrics?.height,docMetrics?.total,docMetrics?.width].every(Number.isFinite) && docMetrics.height > 0;
+      progress(this.api,{...this.scan,phase:'all_rows',edge:'before_scroll',direction:down?'down':'up',container_before:metrics,document_before:docMetrics,document_before_valid:documentBeforeValid});
+      if (!documentBeforeValid) fail('incomplete_list');
+      await this.action(tab, async () => {
+        await this.scrollToEdge(container, down ? 'down' : 'up');
+        await this.scrollDocumentToEdge(tab, down ? 'down' : 'up');
+      });
       metrics = await this.metrics(container);
       const dimensionsEqual = JSON.stringify([metrics.height, metrics.total, metrics.width, metrics.wide]) === dimensions;
       const edgeReached = down ? metrics.top + metrics.height >= metrics.total - 1 : metrics.top <= 1;
-      const afterDocument = await tab.playwright.evaluate(() => { const el = document.scrollingElement; return {height: el.clientHeight, total: el.scrollHeight, top: el.scrollTop}; });
-      const documentValid = [afterDocument.height,afterDocument.total,afterDocument.top].every(Number.isFinite) && afterDocument.height > 0;
+      const afterDocument = await this.documentMetrics(tab);
+      const documentValid = [afterDocument?.height,afterDocument?.total,afterDocument?.top].every(Number.isFinite) && afterDocument.height > 0;
       const documentEdgeReached = documentValid && (down ? afterDocument.top + afterDocument.height >= afterDocument.total - 1 : afterDocument.top <= 1);
       progress(this.api,{...this.scan,phase:'all_rows',edge:'after_scroll',direction:down?'down':'up',container_after:metrics,document_after:afterDocument,dimensions_equal:dimensionsEqual,edge_reached:edgeReached,document_valid:documentValid,document_edge_reached:documentEdgeReached});
       if (!dimensionsEqual || !edgeReached) fail('incomplete_list');
@@ -954,7 +1074,7 @@ class Driver {
     if (listing.pagination.mode === 'fanqie_pages_v1') await this.resetFanqiePages(tab,listing,section);
     for (let page = 0; page < 10000; page++) {
       this.scan = {...this.scan,page};
-      progress(this.api,{...this.scan,phase:'pages',edge:'begin'});
+      progress(this.api,{...this.scan,phase:'pages',edge:'begin',page:page+1});
       const rows = await this.readyRows(tab, listing, section); let next = null, proof = null;
       if (listing.pagination.mode === 'fanqie_pages_v1') {
         proof = await this.fanqiePage(tab, listing, rows, section, page + 1);
@@ -974,10 +1094,10 @@ class Driver {
         }
       }
       await this.identity(tab); await this.scope(tab, listing, section);
-      const emptyCandidate = !rows.length && this.target.platform === 'fanqie' && listing.scope === 'drafts';
-      const emptyDrafts = emptyCandidate && await this.emptyDraftRows(tab, listing, section);
-      if (emptyCandidate && !emptyDrafts) fail('incomplete_list');
-      if ((!emptyDrafts && await this.value(tab, listing.ready) !== listing.ready.expected) || JSON.stringify(await this.rows(tab, listing)) !== JSON.stringify(rows)) fail('incomplete_list');
+      const emptyCandidate = !rows.length && this.emptyTableListing(listing);
+      const emptyListing = emptyCandidate && await this.emptyListingRows(tab, listing, section);
+      if (emptyCandidate && !emptyListing) fail('incomplete_list');
+      if ((!emptyListing && await this.value(tab, listing.ready) !== listing.ready.expected) || JSON.stringify(await this.rows(tab, listing)) !== JSON.stringify(rows)) fail('incomplete_list');
       if (proof) {
         // Pagination can finish rendering after the table becomes ready or
         // change during the scroll/identity reads. Never accept an old absent
@@ -1031,8 +1151,8 @@ class Driver {
     // Exhaust the visible table on each page, then reconcile the total across
     // pages. A total larger than the visible page is normal pagination.
     if (next && !rows.length) fail('incomplete_list');
-    if (rows.length || listing.scope !== 'drafts') await this.allRows(tab, {...listing,count:null}, rows, section);
-    else if (next || !await this.emptyDraftRows(tab,listing,section)) fail('incomplete_list');
+    if (rows.length || !this.emptyTableListing(listing)) await this.allRows(tab, {...listing,count:null}, rows, section);
+    else if (next || !await this.emptyListingRows(tab,listing,section)) fail('incomplete_list');
     let count = null;
     if (listing.count) {
       const match = /^共([0-9]+)篇草稿$/.exec(await this.value(tab,listing.count));
@@ -1097,26 +1217,94 @@ class Driver {
         result.push(...await this.pages(tab, listing, null, seen));
         progress(this.api,{...this.scan,phase:'listing',edge:'end'}); continue;
       }
-      let {options, labels} = await this.options(tab, listing);
+      let {options, labels} = await this.options(tab, listing);let lastSectionRows=null;
       for (let index = 0; index < labels.length; index++) {
         this.scan = {...this.scan,section_index:index};
         if (index) { const current = await this.options(tab, listing); if (JSON.stringify(current.labels) !== JSON.stringify(labels)) fail('incomplete_list'); options = current.options; }
         await this.action(tab, () => options.nth(index).click(this.timeoutOptions()));
         while (await this.value(tab, listing.sections.selected) !== labels[index]) { this.check(); await pause(); await this.ax(tab); }
-        result.push(...await this.pages(tab, listing, labels[index], seen));
+        lastSectionRows=await this.pages(tab, listing, labels[index], seen);result.push(...lastSectionRows);
       }
       const rows = await this.rows(tab, listing); const current = await this.options(tab, listing);
       if (JSON.stringify(current.labels) !== JSON.stringify(labels)) fail('incomplete_list');
       const trigger = await this.one(tab, listing.sections.trigger); await this.action(tab, () => trigger.click(this.timeoutOptions()));
       await this.scope(tab, listing, labels.at(-1));
+      if (lastSectionRows?.length===0 && this.emptyTableListing(listing) &&
+          !await this.emptyListingRows(tab,listing,labels.at(-1))) fail('incomplete_list');
       if (JSON.stringify(await this.rows(tab, listing)) !== JSON.stringify(rows)) fail('incomplete_list');
       progress(this.api,{...this.scan,phase:'listing',edge:'end'});
     }
     progress(this.api,{phase:'catalog',edge:'end',catalog_index:catalogIndex,row_count:result.length});
     return result;
   }
+  async inspectCatalog() {
+    // Each explicit inspection or sync-entry check reads the full directory.
+    // Later per-chapter calls use only this session's returned proof ID.
+    this.state.catalogProof = null;
+    const rows = await this.catalog();
+    const entries = rows.map(row => {
+      if (row.scope === 'non_drafts') {
+        if (row.chapter == null) fail('invalid_chapter');
+        return {chapter:row.chapter,remote_id:null,state:'non_draft'};
+      }
+      if (row.scope !== 'drafts' || row.state !== this.profile.editor.state.expected) fail('not_draft');
+      return {chapter:row.chapter,remote_id:this.remote(row.url),state:'draft'};
+    });
+    const remotes = entries.filter(row=>row.state==='draft').map(row=>row.remote_id);
+    if (new Set(remotes).size !== remotes.length) fail('ambiguous_draft');
+    for (const row of entries) if (row.chapter != null && row.state==='draft') this.state.chapters.set(row.remote_id,row.chapter);
+    this.state.catalogProof = {id:this.request.id,expires:this.deadline,entries,allocated:new Map()};
+    return {target:{...this.target},complete:true,entries:entries.map(row=>({...row})),proof_id:this.request.id};
+  }
+  async catalogVisibleConflicts(tab, chapter, remote = null) {
+    if (!this.catalogProof || !tab) return;
+    const url = await this.url(tab),listing = this.profile.chapter_lists.find(row=>row.url===url);
+    if (!listing) return; // The same-page create flow now owns an editor.
+    await this.identity(tab); await this.scope(tab,listing);
+    const rows = await this.rows(tab,listing);
+    for (const row of rows) {
+      if (row.chapter === chapter && row.scope === 'non_drafts') fail('chapter_exists_not_draft');
+      if (row.scope !== 'drafts') continue;
+      const observed = this.remote(row.url);
+      if (row.chapter == null && observed !== remote && !this.catalogProof.allocated.has(observed)) fail('unnumbered_draft');
+      if (row.chapter === chapter && observed !== remote) fail('ambiguous_draft');
+      if (observed === remote && (row.state !== this.profile.editor.state.expected ||
+          (row.chapter != null && chapter != null && row.chapter !== chapter))) fail('not_draft');
+    }
+    await this.identity(tab); await this.scope(tab,listing);
+  }
+  async checkCatalogCreate(tab, chapter) {
+    if (!this.catalogProof) return;
+    if (this.catalogProof.entries.some(row=>row.chapter==null)) fail('unnumbered_draft');
+    if (this.catalogProof.entries.some(row=>row.chapter===chapter)) fail('ambiguous_draft');
+    await this.catalogVisibleConflicts(tab,chapter);
+  }
+  registerCatalogCreated(remote, chapter) {
+    if (!this.catalogProof) return;
+    if (this.catalogProof.entries.some(row=>row.chapter===chapter || row.remote_id===remote)) fail('ambiguous_draft');
+    this.catalogProof.entries.push({chapter:null,remote_id:remote,state:'draft'});
+    this.catalogProof.allocated.set(remote,chapter);
+  }
+  markCatalogSaved(remote, chapter) {
+    if (!this.catalogProof) return;
+    const found=this.catalogProof.entries.filter(row=>row.remote_id===remote && row.state==='draft');
+    if (found.length!==1 || (found[0].chapter!==chapter && this.catalogProof.allocated.get(remote)!==chapter)) fail('identity_mismatch');
+    if (this.catalogProof.entries.some(row=>row!==found[0] && row.chapter===chapter)) fail('ambiguous_draft');
+    found[0].chapter=chapter; this.catalogProof.allocated.delete(remote);
+    this.state.chapters.set(remote,chapter);
+  }
   remote(url) { return this.template(url, this.profile.editor.remote_id); }
   async confirm(remote, chapter = null) {
+    if (this.catalogProof) {
+      const entries=this.catalogProof.entries,found=entries.filter(row=>row.remote_id===remote && row.state==='draft');
+      if (found.length!==1) fail('not_draft');
+      const allocated=this.catalogProof.allocated.get(remote);
+      if (chapter!=null && found[0].chapter!==chapter && allocated!==chapter) fail('identity_mismatch');
+      const number=chapter ?? found[0].chapter ?? allocated;
+      if (number!=null && entries.some(row=>row!==found[0] && row.chapter===number)) fail('ambiguous_draft');
+      await this.catalogVisibleConflicts(this.state.list?.tab,number,remote);
+      return;
+    }
     const catalog = await this.catalog({fresh:this.target.platform === 'fanqie' && this.request.operation === 'create_draft' && this.createdRemote === remote});
     for (const row of catalog) if (row.scope === 'drafts' && row.chapter == null && this.remote(row.url) !== remote) fail('unnumbered_draft');
     const evidence = catalog.filter(row => row.scope === 'drafts' && this.remote(row.url) === remote);
@@ -1169,27 +1357,29 @@ class Driver {
       this.check(); const tab = await this.api.getTab(item.id);
       if (!this.matchingEditor(await this.url(tab),remote) || typeof tab.close !== 'function') fail('editor_in_use');
       await tab.close();
-      const closeDeadline = Math.min(this.deadline,Date.now()+5000);
-      while (true) {
-        if (Date.now() >= closeDeadline) fail('editor_in_use');
-        const current = await this.tabs();
-        if (Date.now() >= closeDeadline || current.some(candidate=>this.matchingEditor(candidate.url,remote) && !this.state.owned.has(candidate.id))) fail('editor_in_use');
-        const remaining = current.find(candidate=>candidate.id===item.id);
-        if (!remaining) { this.state.owned.delete(item.id); break; }
-        if (!this.matchingEditor(remaining.url,remote)) fail('editor_in_use');
-        await new Promise(resolve=>setTimeout(resolve,Math.max(1,Math.min(100,closeDeadline-Date.now()))));
-      }
+      await this.boundedObservation(async() => {
+        const closeDeadline = Math.min(this.deadline,Date.now()+5000);
+        while (true) {
+          if (Date.now() >= closeDeadline) fail('editor_in_use');
+          const current = await this.tabs();
+          if (Date.now() >= closeDeadline || current.some(candidate=>this.matchingEditor(candidate.url,remote) && !this.state.owned.has(candidate.id))) fail('editor_in_use');
+          const remaining = current.find(candidate=>candidate.id===item.id);
+          if (!remaining) { this.state.owned.delete(item.id); break; }
+          if (!this.matchingEditor(remaining.url,remote)) fail('editor_in_use');
+          await new Promise(resolve=>setTimeout(resolve,Math.max(1,Math.min(100,closeDeadline-Date.now()))));
+        }
+      });
     }
     if ((await this.tabs()).some(tab=>this.matchingEditor(tab.url,remote))) fail('editor_in_use');
   }
-  async previewBody(tab, spec, {allowPending = true} = {}) {
+  async previewBody(tab, spec, {allowPending = true, allowEmpty = false} = {}) {
     const locator = allowPending ? await this.one(tab,spec) : tab.playwright.locator(spec.selector);
     if (!allowPending) {
       const count = await this.readQuery(tab,()=>locator.count(),{retry:false});
       if (count !== 1) fail(count > 1 ? 'ambiguous_dom' : 'editor_changed');
     }
     while (true) {
-      this.check(); const packet = await this.readQuery(tab,()=>locator.evaluate(readPreviewParagraphs_v1),{retry:allowPending});
+      this.check(); const packet = await this.readQuery(tab,()=>locator.evaluate(readPreviewParagraphs_v1,allowEmpty),{retry:allowPending});
       if (packet?.ok === true && typeof packet.value === 'string') return packet;
       if (packet?.pending !== true) fail('unsupported_editor');
       // Once complete text was observed, disappearance is a changed document,
@@ -1211,27 +1401,32 @@ class Driver {
         if (await this.url(tab) !== expectedURL || typeof tab.close !== 'function') fail('editor_changed');
         if (typeof this.api.releaseReadback === 'function') this.api.releaseReadback(tabId);
         this.check(); await tab.close(); // Never repeat a close with an unknown result.
-        const deadline = Math.min(this.deadline,Date.now()+5000);
-        while ((await this.tabs()).some(candidate=>candidate.id===tabId)) {
-          if (Date.now() >= deadline) fail('operation_failed');
-          await new Promise(resolve=>setTimeout(resolve,Math.max(1,Math.min(100,deadline-Date.now()))));
-        }
+        await this.boundedObservation(async() => {
+          const deadline = Math.min(this.deadline,Date.now()+5000);
+          while (true) {
+            this.check();if (Date.now() >= deadline) fail('operation_failed');
+            const remaining = (await this.tabs()).some(candidate=>candidate.id===tabId);
+            this.check();if (Date.now() >= deadline) fail('operation_failed');
+            if (!remaining) break;
+            await new Promise(resolve=>setTimeout(resolve,Math.max(1,Math.min(100,deadline-Date.now()))));
+          }
+        });
       }
       this.state.owned.delete(tabId); this.state.previews.delete(tabId);
       if (this.state.last_readback_tab_id === tabId) delete this.state.last_readback_tab_id;
     }
   }
-  async readPreview(remote) {
-    try { return await this.readPreviewOnce(remote); }
+  async readPreview(remote, options = {}) {
+    try { return await this.readPreviewOnce(remote,options); }
     catch (failure) {
       if (this.readRecoveryUsed || !this.readTimeout(failure) || Date.now()>=this.deadline) throw failure;
       // This wrapper repeats only the independent read, including when it is
       // the readback after a save. It cannot repeat creation, filling or save.
       await this.restartRead();
-      return this.readPreviewOnce(remote);
+      return this.readPreviewOnce(remote,options);
     }
   }
-  async readPreviewOnce(remote) {
+  async readPreviewOnce(remote, {allowEmptyAfterSave = false} = {}) {
     id(remote); const spec = this.profile.readback;
     if (spec?.remote_id?.source !== 'page_url' || spec?.header?.source !== 'dom' ||
         spec.header.format !== 'chapter_title' || typeof spec.header.title_separator !== 'string' || !spec.header.title_separator ||
@@ -1250,16 +1445,24 @@ class Driver {
     if (await this.url(tab) !== expectedURL || this.template(expectedURL,spec.remote_id) !== remote) fail('identity_mismatch');
     await this.confirm(remote,this.state.chapters.get(remote));
     let header;
-    while (!(header=await this.value(tab,spec.header))) { this.check(); await pause(); await this.ax(tab); }
+    while (!(header=await this.value(tab,spec.header))) {
+      if (allowEmptyAfterSave) break;
+      this.check(); await pause(); await this.ax(tab);
+    }
     const matched = new RegExp('^第([0-9]+)章'+escape(spec.header.title_separator)+'([^\\r\\n]+)$').exec(header);
-    if (!matched || Number(matched[1])<1 || Number(matched[1])>1000000 || !matched[2].trim()) fail('invalid_chapter');
-    const chapter = Number(matched[1]);
+    const pendingEmpty = allowEmptyAfterSave && header==='';
+    if (pendingEmpty && (!await this.visible(tab,spec.header) || !await this.visible(tab,spec.body))) fail('editor_changed');
+    if (!pendingEmpty && (!matched || Number(matched[1])<1 || Number(matched[1])>1000000 || !matched[2].trim())) fail('invalid_chapter');
+    const chapter = pendingEmpty ? this.state.chapters.get(remote) : Number(matched[1]);
+    if (!Number.isInteger(chapter) || chapter<1) fail('invalid_chapter');
     if (this.state.chapters.has(remote) && this.state.chapters.get(remote)!==chapter) fail('identity_mismatch');
-    const body = await this.previewBody(tab,spec.body);
-    const observation = {remote_id:remote,title:matched[2],body:body.value,state:'draft',url:expectedURL,...(body.formatting_clean === false ? {formatting_clean:false} : {})};
+    const body = await this.previewBody(tab,spec.body,{allowEmpty:pendingEmpty});
+    if (pendingEmpty && (body.value!=='' || body.formatting_clean===false)) fail('invalid_chapter');
+    const observation = {remote_id:remote,title:pendingEmpty?'':matched[2],body:body.value,state:'draft',url:expectedURL,
+      ...(pendingEmpty?{pending_empty:true}:{}),...(body.formatting_clean === false ? {formatting_clean:false} : {})};
     await this.confirm(remote,chapter); await this.identity(tab,forceGuard);
     if (await this.url(tab)!==expectedURL) fail('identity_mismatch');
-    if (JSON.stringify(await this.previewBody(tab,spec.body,{allowPending:false}))!==JSON.stringify(body)) fail('editor_changed');
+    if (JSON.stringify(await this.previewBody(tab,spec.body,{allowPending:false,allowEmpty:pendingEmpty}))!==JSON.stringify(body)) fail('editor_changed');
     await this.ensureEditorFree(remote);
     // Read the current account DOM without another read-only guard reload.
     // Both identity and the complete chapter header must survive the final
@@ -1270,7 +1473,7 @@ class Driver {
     const headerCount = await this.readQuery(tab,()=>finalHeader.count(),{retry:false});
     if (headerCount !== 1) fail(headerCount > 1 ? 'ambiguous_dom' : 'editor_changed');
     if (await this.readQuery(tab,()=>finalHeader.evaluate(readDOMValue,null),{retry:false})!==header) fail('editor_changed');
-    await this.editorSnapshot(tab,expectedURL,{header,body:body.value},spec,body.formatting_clean !== false);
+    await this.editorSnapshot(tab,expectedURL,{header,body:body.value},pendingEmpty?{...spec,body:{...spec.body,allow_empty_preview:true}}:spec,body.formatting_clean !== false);
     progress(this.api,{phase:'read',edge:'end'});
     return observation;
   }
@@ -1352,11 +1555,19 @@ class Driver {
     const normalized = normal(text);
     const tail = /\n*$/.exec(normalized)[0].length,core = normalized.slice(0,normalized.length-tail);
     if ((core && typeof tab.pasteText !== 'function') || await locator.evaluate(el => el.getAttribute('contenteditable')) !== 'true') fail('unsupported_editor');
+    // Clearing Fanqie's already-empty widget can leave an unsupported
+    // transient DOM. Prove emptiness before focus and again below, then paste
+    // once without deleting anything. Nonempty and other-platform edits keep
+    // their existing clear-and-verify path.
+    const alreadyEmpty=this.target.platform==='fanqie' && spec===editor.body &&
+      this.profile.readback?.body?.source==='fanqie_preview_paragraphs_v1' && await this.value(tab,spec)==='';
     await this.action(tab, () => locator.click(this.timeoutOptions()));
     const selectAll = this.api.selectAllKey || 'Meta+A';
     if (!['Meta+A', 'Control+A'].includes(selectAll)) fail('invalid_profile');
-    await this.action(tab, () => locator.press(selectAll, this.timeoutOptions()));
-    await this.action(tab, () => locator.press('Backspace', this.timeoutOptions()));
+    if (!alreadyEmpty) {
+      await this.action(tab, () => locator.press(selectAll, this.timeoutOptions()));
+      await this.action(tab, () => locator.press('Backspace', this.timeoutOptions()));
+    }
     if (await this.value(tab,spec) !== '') fail('editor_changed');
     if (await locator.evaluate(el => {
       const focused = el.ownerDocument?.activeElement;
@@ -1374,6 +1585,121 @@ class Driver {
     if (await this.value(tab,spec) !== core) fail('editor_changed');
     for (let index = 0; index < tail; index++) await this.action(tab, () => locator.press('Enter',this.timeoutOptions()));
     if (await this.value(tab, spec) !== normalized) fail('editor_changed');
+  }
+  async savedReadback(tab, remote, title, body) {
+    const spec=this.profile.editor.saved;
+    const readbackWait=this.target.platform==='fanqie' && this.profile.readback?.body?.source==='fanqie_preview_paragraphs_v1' &&
+      spec.selector==='.publish-maintain-info-status > span:first-child' && ['已保存到云端','已保存'].includes(spec.expected);
+    const matches=observation=>!observation.pending_empty && normal(observation.title)===normal(title) &&
+      this.bodyMatches(observation.body,body) && observation.formatting_clean!==false;
+    if (!readbackWait) {
+      while (await this.value(tab,spec)!==spec.expected || !await this.visible(tab,spec)) {
+        this.check();await this.identity(tab);await pause();await this.ax(tab);
+      }
+      // Keep the original post-marker pin: marker reads can yield while the
+      // creating editor switches to another remote document.
+      if (this.remote(await this.url(tab))!==remote) fail('identity_mismatch');
+      const observation=await this.read(remote);
+      if (!matches(observation)) fail('save_unverified');
+      return observation;
+    }
+    // The observed editor says "已保存" even before input. Do not treat that
+    // stale label as this click's acknowledgement. Only fresh independent full
+    // readbacks can finish this wait; no fill/save operation is here. Thirty
+    // seconds only bounds starting another read of stale content. A complete
+    // read already underway retains the original request deadline.
+    const retryDeadline=Math.min(this.deadline,Date.now()+30000);let first=true;
+    try {
+      while (true) {
+        this.check();
+        if (!first && Date.now()>=retryDeadline) fail('save_unverified');
+        const observation=await this.readPreview(remote,{allowEmptyAfterSave:true});
+        this.check();
+        if (matches(observation)) return observation;
+        if (observation.formatting_clean===false || Date.now()>=retryDeadline) fail('save_unverified');
+        first=false;
+        await pause();
+      }
+    } catch (error) {
+      if (Date.now()>=this.deadline && ['platform_browser_operation_failed','platform_browser_read_timeout','platform_browser_navigation_timeout'].includes(error?.code)) fail('save_unverified');
+      throw error;
+    }
+  }
+  catalogRecoveryEntry(remote, chapter) {
+    if (!this.catalogProof) fail('bridge_expired');
+    const entries=this.catalogProof.entries,found=entries.filter(row=>row.remote_id===remote && row.state==='draft');
+    if (found.length!==1 || found[0].chapter!==null) fail('remote_changed');
+    if (entries.some(row=>row.chapter===chapter && row.state==='non_draft')) fail('chapter_exists_not_draft');
+    if (entries.some(row=>row.chapter===chapter)) fail('ambiguous_draft');
+    if (entries.some(row=>row!==found[0] && row.chapter==null)) fail('unnumbered_draft');
+    return found[0];
+  }
+  registerCatalogRecovery(remote, chapter) {
+    this.catalogRecoveryEntry(remote,chapter);
+    const previous=this.catalogProof.allocated.get(remote);
+    if (previous!=null && previous!==chapter) fail('identity_mismatch');
+    this.catalogProof.allocated.set(remote,chapter);
+  }
+  async emptyDraftPage(remote, chapter) {
+    id(remote);
+    if (this.target.platform!=='fanqie' || !this.profile.readback || !Number.isInteger(chapter) || chapter<1 ||
+        this.profile.editor.state.source!=='listing') fail('invalid_profile');
+    this.catalogRecoveryEntry(remote,chapter);
+    await this.catalogVisibleConflicts(this.state.list?.tab,chapter,remote);
+    await this.guard(true);await this.ensureEditorFree(remote,true);
+    const {tab,url:expectedURL}=await this.newTab(this.profile.urls.edit.replace('{remote_id}',remote),{pinReadback:true});
+    await this.identity(tab,true);await this.editorReady(tab);
+    if (this.remote(await this.url(tab))!==remote) fail('identity_mismatch');
+    const editor=this.profile.editor,empty={chapter:'',title:'',body:''};
+    for (const name of Object.keys(empty)) if (await this.value(tab,editor[name])!=='') fail('remote_changed');
+    await this.catalogVisibleConflicts(this.state.list?.tab,chapter,remote);
+    await this.identity(tab,false,{allowPending:false});
+    await this.editorSnapshot(tab,expectedURL,empty);
+    // This exact remote and chapter were just verified empty. Register it in
+    // the batch proof so reads and updates of other known chapters are not
+    // blocked by this one declared target; new chapter creation still
+    // requires a catalog with no unnumbered rows.
+    this.registerCatalogRecovery(remote,chapter);
+    return {tab,expectedURL,observation:{remote_id:remote,chapter:null,title:'',body:'',state:'draft',empty:true,url:expectedURL}};
+  }
+  async inspectEmpty(remote, chapter) {
+    return (await this.emptyDraftPage(remote,chapter)).observation;
+  }
+  async resumeEmpty(remote, chapter, title, body, recovery) {
+    id(remote);
+    const fields=['schema','attempt_id','remote_id','chapter','platform','account_id','remote_book_id','title_sha256','body_sha256'];
+    if (!recovery || typeof recovery!=='object' || Array.isArray(recovery) ||
+        JSON.stringify(Object.keys(recovery).sort())!==JSON.stringify(fields.sort()) || recovery.schema!==1 ||
+        !/^[a-f0-9]{32}$/.test(recovery.attempt_id||'') || recovery.remote_id!==remote || recovery.chapter!==chapter ||
+        ['platform','account_id','remote_book_id'].some(key=>recovery[key]!==this.target[key]) ||
+        !Number.isInteger(chapter) || chapter<1 || typeof title!=='string' || !title || typeof body!=='string' || !body ||
+        !['title_sha256','body_sha256'].every(key=>/^[a-f0-9]{64}$/.test(recovery[key]||'')) || !globalThis.crypto?.subtle) fail('invalid_profile');
+    const digest=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(normal(value)))),byte=>byte.toString(16).padStart(2,'0')).join('');
+    if (await digest(title)!==recovery.title_sha256 || await digest(body)!==recovery.body_sha256) fail('identity_mismatch');
+    const key=this.request.session_id+':'+recovery.attempt_id+':'+remote;
+    if (CONSUMED_EMPTY_RECOVERIES.has(key) || CONSUMED_EMPTY_RECOVERIES.size>=10000) fail('operation_failed');
+    CONSUMED_EMPTY_RECOVERIES.add(key);
+    const {tab,expectedURL}=await this.emptyDraftPage(remote,chapter),editor=this.profile.editor;
+    this.registerCatalogRecovery(remote,chapter);this.createdRemote=remote;this.createdEditors.set(tab,remote);
+    const expected={chapter:'',title:'',body:''};
+    for (const [name,value] of [['chapter',String(chapter)],['title',title],['body',body]]) {
+      await this.identity(tab,true);
+      if ((await this.tabs()).some(item=>this.matchingEditor(item.url,remote)&&!this.state.owned.has(item.id))) fail('editor_in_use');
+      await this.editorSnapshot(tab,expectedURL,expected);
+      await this.fill(tab,editor[name],value);expected[name]=normal(value);
+    }
+    await this.editorState(tab,chapter);await this.identity(tab,true);
+    await this.editorSnapshot(tab,expectedURL,expected);
+    if (editor.save.mode!=='button') fail('unsafe_save');
+    const button=await this.one(tab,editor.save),actual=(await button.innerText()).trim();
+    const accessible=[actual,await button.getAttribute('aria-label'),await button.getAttribute('title')].filter(Boolean).join(' ');
+    if (actual!==editor.save.expected_text || UNSAFE.test(accessible) || !DRAFT.test(actual) || !SAVE.test(actual) ||
+        !await button.isVisible() || !await button.isEnabled()) fail('unsafe_save');
+    const link=await this.actionState(button);
+    await this.identity(tab,true);await this.action(tab,url=>this.clickDraftButton(button,editor.save,url,'save',link));
+    this.state.chapters.set(remote,chapter);this.markCatalogSaved(remote,chapter);
+    await this.savedReadback(tab,remote,title,body);
+    return remote;
   }
   async create(chapter, title, body) {
     if (!Number.isInteger(chapter) || chapter < 1 || typeof title !== 'string' || !title || typeof body !== 'string' || !body) fail('invalid_chapter');
@@ -1397,6 +1723,7 @@ class Driver {
         popupQuery = source.search;
       }
       await this.identity(tab, true); const before = new Set((await this.tabs()).map(item => item.id));
+      await this.checkCatalogCreate(tab,chapter);
       this.check(); // This click can already create an empty cloud draft. Never retry it.
       // Same-page creation consumes the management tab. Future catalog scans
       // need a separate page, while this owned tab remains the editor.
@@ -1421,6 +1748,7 @@ class Driver {
         }
       } else if (action.opens !== 'same_page') fail('invalid_profile');
     } else {
+      await this.checkCatalogCreate(this.state.list?.tab,chapter);
       await this.guard(true); // Direct creation URLs may allocate a cloud draft.
       ({tab} = await this.newTab(this.profile.urls.create));
     }
@@ -1428,6 +1756,7 @@ class Driver {
     // Creation may allocate a cloud draft before the editor becomes ready.
     // Preserve its identity in a failed receipt without treating it as saved.
     this.createdRemote = this.remote(await this.url(tab));
+    this.registerCatalogCreated(this.createdRemote,chapter);
     await this.editorReady(tab);
     // Only bind after the platform has allocated an ID and reached readiness.
     // The same ID may change from its new-draft URL to its saved-editor URL;
@@ -1450,13 +1779,11 @@ class Driver {
       await this.identity(tab, true);
       await this.action(tab, expectedURL => this.clickDraftButton(locator,editor.save,expectedURL,'save',link));
     } else if (editor.save.mode !== 'autosave') fail('invalid_profile');
-    while (await this.value(tab, editor.saved) !== editor.saved.expected || !await this.visible(tab, editor.saved)) {
-      this.check(); await this.identity(tab); await pause(); await this.ax(tab);
-    }
     const remote = this.remote(await this.url(tab));
     if (remote !== this.createdRemote) fail('identity_mismatch');
     this.state.chapters.set(remote, chapter);
-    const observation = await this.read(remote);
+    this.markCatalogSaved(remote,chapter);
+    const observation = await this.savedReadback(tab,remote,title,body);
     const observedBody = normal(observation.body), frozenBody = normal(body);
     const equalBody = this.comparisonPolicy === 'fanqie_terminal_lf_v1' ?
       observedBody.replace(/\n+$/,'') === frozenBody.replace(/\n+$/,'') : observedBody === frozenBody;
@@ -1499,10 +1826,8 @@ class Driver {
         !await button.isVisible() || !await button.isEnabled()) fail('unsafe_save');
     const link = await this.actionState(button);
     await this.identity(tab,true); await this.action(tab,expectedURL=>this.clickDraftButton(button,editor.save,expectedURL,'save',link));
-    while (await this.value(tab,editor.saved) !== editor.saved.expected || !await this.visible(tab,editor.saved)) {
-      this.check(); await this.identity(tab); await pause(); await this.ax(tab);
-    }
-    const after = await this.readPreview(remote);
+    this.markCatalogSaved(remote,chapter);
+    const after = await this.savedReadback(tab,remote,title,body);
     if (normal(after.title) !== normal(title) || !this.bodyMatches(after.body,body) || after.formatting_clean === false) fail('save_unverified');
     return remote;
   }
@@ -1510,11 +1835,14 @@ class Driver {
     const operation = this.request.operation; const params = this.request.params || {};
     if (operation === 'verify_target') return this.verify();
     if (!this.state.verified) fail('target_unverified');
+    if (operation === 'inspect_catalog') return this.inspectCatalog();
+    if (operation === 'inspect_empty_draft') return this.inspectEmpty(params.remote_id,params.chapter);
     if (operation === 'find_drafts') return this.find(params.chapter);
-    if (['create_draft','update_draft'].includes(operation)) {
+    if (['create_draft','update_draft','resume_empty_draft'].includes(operation)) {
       const key = this.request.session_id + ':' + id(this.request.id);
       if (CONSUMED_CREATES.has(key) || CONSUMED_CREATES.size >= 10000) fail('operation_failed');
       CONSUMED_CREATES.add(key);
+      if (operation === 'resume_empty_draft') return this.resumeEmpty(params.remote_id,params.chapter,params.title,params.body,params.recovery);
       if (operation === 'update_draft') return this.update(params.remote_id,params.chapter,params.title,params.body,params.expected_title,params.expected_body);
       return this.create(params.chapter, params.title, params.body);
     }
@@ -1537,7 +1865,7 @@ export async function executeChromeBridgeRequest(api, request) {
     // Only the current paged Fanqie reader may restart a whole read, once,
     // within its original deadline. Never retry create/update, a policy or
     // identity refusal, an ambiguous result, or an arbitrary SDK exception.
-    const readScope=driver && ['verify_target','find_drafts','read_draft'].includes(request.operation);
+    const readScope=driver && ['verify_target','inspect_catalog','inspect_empty_draft','find_drafts','read_draft'].includes(request.operation);
     // Classify known SDK timeouts for every operation without granting writes
     // permission to replay. Only readScope below can restart an entire request.
     const timeout=driver ? driver.readTimeout(error) : null;

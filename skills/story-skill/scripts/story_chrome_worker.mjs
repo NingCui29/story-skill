@@ -23,7 +23,7 @@ const hex = (value, length) => typeof value === 'string' && new RegExp('^[0-9a-f
 const error = code => { const failure = new Error(code); failure.code = code; return failure; };
 const requireValue = (value, code = 'platform_chrome_worker_invalid_config') => { if (!value) throw error(code); };
 const ERROR_NAMES = new Set(['Error','ReferenceError','TypeError','RangeError','SyntaxError','AggregateError','URIError','EvalError','AbortError','TimeoutError']);
-const ERROR_MARKERS = new Set(['none','origin_permission_required','browser_unattached','missing_turn_metadata','missing_browser_service','missing_runtime_global']);
+const ERROR_MARKERS = new Set(['none','origin_permission_required','browser_unattached','missing_turn_metadata','missing_browser_service','missing_runtime_global','native_pipe_closed']);
 const DRIVER_PHASES = new Set(['guard','catalog','listing','pages','all_rows','read']);
 const DRIVER_WORKER_CODES = new Set([
   'unsupported_sdk','invalid_scroll','unavailable','ambiguous_tab','unsafe_user_tab',
@@ -90,6 +90,7 @@ const originPermissionDenied = message => {
 const errorMarker = failure => {
   const message = typeof failure?.message === 'string' ? failure.message : '';
   if (deniedByCode(failure) || originPermissionDenied(message)) return 'origin_permission_required';
+  if (message === 'native pipe closed before response') return 'native_pipe_closed';
   if (message.includes('Debugger unattached')) return 'browser_unattached';
   if (/missing required codex turn metadata/i.test(message)) return 'missing_turn_metadata';
   if (message.includes('Browser use requires a trusted Node REPL browser service')) return 'missing_browser_service';
@@ -102,8 +103,13 @@ const cleanError = failure => {
   if (marker === 'browser_unattached') return 'platform_chrome_worker_browser_unattached';
   if (marker === 'missing_turn_metadata') return 'platform_chrome_worker_turn_metadata_missing';
   if (marker === 'missing_browser_service') return 'platform_chrome_worker_runtime_unavailable';
+  if (marker === 'native_pipe_closed') return 'platform_chrome_worker_browser_transport_closed';
   return /^platform_(?:chrome|browser)_[a-z_]+$/.test(failure?.code || '') ? failure.code : 'platform_chrome_worker_failed';
 };
+const BOOTSTRAP_CODES = new Set([...DRIVER_WORKER_CODES,...[
+  'failed','origin_permission_required','browser_unattached','turn_metadata_missing','runtime_unavailable',
+  'browser_transport_closed','connect_timeout','browser_wait_timeout','ambiguous_browser','unsafe_file'
+].map(code=>'platform_chrome_worker_'+code)]);
 const absolute = value => typeof value === 'string' && value.length > 0 && path.isAbsolute(value) && path.resolve(value) === value;
 const fanqieManagementURL = (url,target) => {
   if (typeof url !== 'string' || /[\\\u0000-\u0020\u007f]/.test(url) || target?.platform !== 'fanqie' || !/^[0-9]{1,200}$/.test(target.remote_book_id)) return false;
@@ -128,13 +134,13 @@ const navigationTimeout = (failure,url) => {
   const waiting = /^Timed out waiting for tab [0-9]{1,30} to navigate to (.+)\.$/.exec(failure.message);
   return failure.message === 'Timed out after 10000ms waiting for CDP command Page.navigate.' || waiting?.[1] === url;
 };
-async function gotoNewTab(tab,url,{readOnly = false,beforeURL} = {}) {
+async function gotoNewTab(tab,url,{readOnly = false,beforeURL,boundedObservation = body=>body(),clock = Date.now,sleep = wait} = {}) {
   try { await tab.goto(url); }
   catch (failure) {
     if (readOnly !== true || beforeURL !== 'about:blank' || beforeURL === url || !navigationTimeout(failure,url)) throw failure;
-    try {
-      const deadline = Date.now()+5000;
-      const remaining = () => { const value=deadline-Date.now();if (value <= 0) throw failure;return value; };
+    try { await boundedObservation(async()=>{
+      const deadline = clock()+5000;
+      const remaining = () => { const value=deadline-clock();if (value <= 0) throw failure;return value; };
       while (true) {
         remaining();const current = await tab.url();remaining();
         if (current !== beforeURL && current !== url) throw failure;
@@ -144,9 +150,9 @@ async function gotoNewTab(tab,url,{readOnly = false,beforeURL} = {}) {
           if ((after !== beforeURL && after !== url) || typeof snapshot !== 'string') throw failure;
           if (after === url && snapshot.trim().length) return;
         }
-        await wait(Math.min(100,remaining()));
+        await sleep(Math.min(100,remaining()));
       }
-    } catch { throw failure; }
+    }); } catch { throw failure; }
   }
 }
 
@@ -154,13 +160,65 @@ async function gotoNewTab(tab,url,{readOnly = false,beforeURL} = {}) {
 // driver calls without overlapping the SDK's focus/setup/read work. Started
 // calls are always awaited; this queue never retries a call or races its result.
 class SDKCallGate {
-  constructor(clock = Date.now) { this.clock = clock; this.tail = Promise.resolve(); }
-  run(call,scope = null,checkAfter = true) {
-    const check = () => {
-      if (scope?.check) scope.check();
-      if (scope?.deadline != null && this.clock() >= scope.deadline) throw error(scope.expiredCode || 'platform_browser_operation_failed');
+  constructor(clock = Date.now, beforeCall = null, diagnostic = null, contextual = false) {
+    this.clock = clock; this.tail = Promise.resolve(); this.beforeCall = beforeCall; this.diagnostic = diagnostic;
+    this.contextual = contextual; this.contextActive = false; this.jobs = []; this.wake = null; this.observationDepth = 0;
+  }
+  async inContext(body) {
+    if (!this.contextual) return body();
+    requireValue(!this.contextActive,'platform_chrome_worker_concurrent_checkpoint');
+    this.contextActive = true;
+    let settled=false,value,failure,rejected=false;
+    const notify=()=>{const wake=this.wake;this.wake=null;wake?.();};
+    // Start the body and pump in this checkpoint's execution context. The
+    // parked driver may resume in an older async context; it can only enqueue.
+    Promise.resolve().then(body).then(result=>{value=result;settled=true;notify();},error=>{
+      failure=error;rejected=true;settled=true;notify();
+    });
+    try {
+      while (!settled || this.jobs.length) {
+        const job=this.jobs.shift();
+        if (!job) { await new Promise(resolve=>{this.wake=resolve;});continue; }
+        // Invoke here, never in job.promise.then(): callable closures do not
+        // choose the async execution context, this current checkpoint does.
+        try { job.resolve(await job.invoke()); } catch (error) { job.reject(error); }
+      }
+    } finally { this.contextActive=false;this.wake=null; }
+    if (rejected) throw failure;
+    return value;
+  }
+  checkScope(scope) {
+    if (scope?.check) scope.check();
+    if (scope?.deadline != null && this.clock() >= scope.deadline) throw error(scope.expiredCode || 'platform_browser_operation_failed');
+  }
+  async boundedObservation(scope,body) {
+    requireValue(typeof body === 'function','platform_chrome_worker_invalid_config');
+    this.checkScope(scope);
+    // Callers place their existing short wall-clock deadline inside body. A
+    // tool gap can happen before that window, never between its observations.
+    if (this.beforeCall && scope?.operation && !this.observationDepth) await this.beforeCall(scope);
+    this.checkScope(scope);
+    if (this.contextual) requireValue(this.contextActive,'platform_chrome_worker_checkpoint_required');
+    this.observationDepth++;
+    try { const result=await body();this.checkScope(scope);return result; }
+    finally { this.observationDepth--; }
+  }
+  async run(call,scope = null,checkAfter = true,method = null) {
+    // Pause before joining the SDK queue, never while a browser call is in flight.
+    const check = () => this.checkScope(scope);
+    check();
+    if (this.beforeCall && scope?.operation && !this.observationDepth) await this.beforeCall(scope);
+    const invoke = async() => {
+      check(); const started=this.clock();
+      if (this.diagnostic) await this.diagnostic({method,edge:'begin'});
+      try { const result=await call(); if (checkAfter) check(); return result; }
+      finally { if (this.diagnostic) await this.diagnostic({method,edge:'end',duration_ms:Math.max(0,this.clock()-started)}); }
     };
-    const pending = this.tail.then(async() => { check(); const result = await call(); if (checkAfter) check(); return result; });
+    let pending;
+    if (this.contextual) {
+      requireValue(this.contextActive,'platform_chrome_worker_checkpoint_required');
+      pending=new Promise((resolve,reject)=>{this.jobs.push({invoke,resolve,reject});const wake=this.wake;this.wake=null;wake?.();});
+    } else pending=this.tail.then(invoke);
     this.tail = pending.catch(() => {});
     return pending;
   }
@@ -168,23 +226,27 @@ class SDKCallGate {
 }
 
 // Only the public methods used by this adapter/driver are exposed. Locator
-// builders stay synchronous; every asynchronous leaf shares the same gate.
+// builders return local recipes. Both the real builder and asynchronous leaf
+// execute in the current SDK dispatcher, never a parked driver's old context.
 function sdkBrowser(browser,run) {
-  const tabs = new WeakMap(),locators = new WeakMap();
+  const tabs = new WeakMap();
   const leaf = (source,name,output,transform = value => value,cleanup = false,checkAfter = true) => {
-    if (typeof source?.[name] === 'function') output[name] = (...args) => run(() => source[name](...args),cleanup,checkAfter).then(transform);
+    if (typeof source?.[name] === 'function') output[name] = (...args) => run(async() => transform(await source[name](...args)),cleanup,checkAfter,name);
   };
-  const locator = source => {
-    requireValue(source && typeof source === 'object','platform_chrome_worker_unsupported_sdk');
-    if (locators.has(source)) return locators.get(source);
-    const output = {};locators.set(source,output);
-    for (const name of ['locator','nth']) if (typeof source[name] === 'function') output[name] = (...args) => locator(source[name](...args));
-    for (const name of ['count','evaluate','evaluateAll','isVisible','isEnabled','getAttribute','innerText','click','fill','press','pressSequentially']) leaf(source,name,output);
+  const locator = resolve => {
+    const output = {};
+    const invoke=(name,args)=>{
+      const source=resolve();requireValue(typeof source?.[name] === 'function','platform_chrome_worker_unsupported_sdk');
+      return source[name](...args);
+    };
+    for (const name of ['locator','nth']) output[name] = (...args) => locator(()=>invoke(name,args));
+    for (const name of ['count','evaluate','evaluateAll','isVisible','isEnabled','getAttribute','innerText','click','fill','press','pressSequentially'])
+      output[name] = (...args) => run(()=>invoke(name,args),false,true,name);
     return output;
   };
   const playwright = source => {
     const output = {};
-    for (const name of ['locator','getByRole']) if (typeof source?.[name] === 'function') output[name] = (...args) => locator(source[name](...args));
+    for (const name of ['locator','getByRole']) if (typeof source?.[name] === 'function') output[name] = (...args) => locator(()=>source[name](...args));
     for (const name of ['domSnapshot','evaluate']) leaf(source,name,output);
     return output;
   };
@@ -273,14 +335,33 @@ async function writePrivate(filename, value) {
 export function validateWorkerConfig(config) {
   const required = ['schema','book_root','book_id','plan_id','profile_id','handle_path','binding_sha256','target','worker',
     'python_executable','story_cli','sdk_path','driver_path','health_interval_seconds','idle_timeout_seconds','stop_path'];
-  const allowed = new Set([...required,'checkpoint_ms','poll_interval_ms','browser_id','comparison_policy','body_encoding','bootstrap_deadline_ms']);
+  const allowed = new Set([...required,'checkpoint_ms','poll_interval_ms','browser_id','comparison_policy','body_encoding','bootstrap_deadline_ms',
+    'execution_host','native_model_authorized','workbuddy_cli_path','workbuddy_cli_sha256',
+    'workbuddy_session','workbuddy_state_directory']);
   requireValue(own(config) && required.every(key => Object.hasOwn(config,key)) && Object.keys(config).every(key => allowed.has(key)) && config.schema === 1);
   for (const key of ['book_root','handle_path','python_executable','story_cli','sdk_path','driver_path','stop_path']) requireValue(absolute(config[key]));
   for (const key of ['book_id','plan_id','profile_id']) requireValue(typeof config[key] === 'string' && config[key].length > 0 &&
     config[key].length <= 200 && !/[\u0000-\u001f\u007f]/.test(config[key]));
   requireValue(path.basename(config.profile_id) === config.profile_id && !['.','..'].includes(config.profile_id));
   requireValue(config.story_cli === path.join(HERE,'story.py') && config.driver_path === path.join(HERE,'story_chrome_bridge.mjs'));
-  requireValue(/[/\\]openai-bundled[/\\]chrome[/\\][^/\\]+[/\\]scripts[/\\]browser-client\.mjs$/.test(config.sdk_path));
+  const host=config.execution_host ?? 'codex';
+  requireValue(['codex','qoder-cn','workbuddy'].includes(host));
+  const workbuddyKeys=['workbuddy_cli_path','workbuddy_cli_sha256','workbuddy_session','workbuddy_state_directory'];
+  if (host !== 'workbuddy') requireValue(workbuddyKeys.every(key=>!Object.hasOwn(config,key)));
+  if (host === 'codex') {
+    requireValue(!Object.hasOwn(config,'native_model_authorized') || config.native_model_authorized === false);
+    requireValue(/[/\\]openai-bundled[/\\]chrome[/\\][^/\\]+[/\\]scripts[/\\]browser-client\.mjs$/.test(config.sdk_path));
+  } else {
+    requireValue(config.native_model_authorized === true,'platform_chrome_worker_native_model_not_authorized');
+    if (host === 'workbuddy') {
+      requireValue(config.sdk_path === path.join(HERE,'story_workbuddy_browser.mjs') &&
+        absolute(config.workbuddy_cli_path) && hex(config.workbuddy_cli_sha256,64) &&
+        typeof config.workbuddy_session === 'string' && /^story-wb-[0-9a-f]{24}$/.test(config.workbuddy_session) &&
+        absolute(config.workbuddy_state_directory) && path.basename(config.workbuddy_state_directory) === config.workbuddy_session);
+    } else {
+      requireValue(/\/Qoder CN\.app\/Contents\/Resources\/node-repl\/node_modules\/@qoder-space\/browser-use\/index\.js$/.test(config.sdk_path));
+    }
+  }
   requireValue(hex(config.binding_sha256,64) && own(config.worker) && Object.keys(config.worker).length === 2 &&
     Number.isSafeInteger(config.worker.pid) && config.worker.pid > 0 && hex(config.worker.instance,32));
   requireValue(own(config.target) && Object.keys(config.target).length === 3 && config.target.platform === 'fanqie' &&
@@ -300,9 +381,10 @@ export function validateWorkerConfig(config) {
 // Use an effective public AX or CUA scroll API. The driver independently verifies
 // table and document edges, dimensions, row stability, scope and identity.
 export function chromeDriverAPI(browser, {selectAllKey = PLATFORM === 'darwin' ? 'Meta+A' : 'Control+A', target = null,
-  sdkGate = new SDKCallGate(),sdkScope = () => null,cleanupSleep = wait} = {}) {
+  sdkGate = new SDKCallGate(),sdkScope = () => null,cleanupSleep = wait,onOwnership = null} = {}) {
   const nativeBrowser=browser,cleanupList=()=>sdkGate.run(()=>nativeBrowser.tabs.list());
-  browser = sdkBrowser(browser,(call,cleanup,checkAfter) => sdkGate.run(call,cleanup ? null : sdkScope(),checkAfter));
+  const boundedObservation=body=>sdkGate.boundedObservation(sdkScope(),body);
+  browser = sdkBrowser(browser,(call,cleanup,checkAfter,method) => sdkGate.run(call,cleanup ? null : sdkScope(),checkAfter,method));
   const tabs = new Map(); const created = new Set(); const userTabs = new Map();
   const owned = new Map();let initialTabs=null,latestControlled=[];
   const aliases = new Map(); const claimedUsers = new Map(); let preserved = null;
@@ -317,14 +399,17 @@ export function chromeDriverAPI(browser, {selectAllKey = PLATFORM === 'darwin' ?
         parsed.search === '?enter_from=newdraft';
     } catch { return false; }
   };
-  const register = tab => {
-    if (!owned.has(tab.id)) owned.set(tab.id,{id:tab.id,tab,attempted:false,absent:false,failure:null,promise:null});
+  const register = async tab => {
+    if (!owned.has(tab.id)) {
+      owned.set(tab.id,{id:tab.id,tab,attempted:false,absent:false,failure:null,promise:null});
+      if (onOwnership) await onOwnership([...owned.keys()]);
+    }
     return owned.get(tab.id);
   };
-  const registerPopup = (tab,descriptor) => {
+  const registerPopup = async (tab,descriptor) => {
     if (owned.has(tab.id) || !initialTabs || sdkScope()?.operation !== 'create_draft' || !popupAllowed(descriptor?.url)) return;
     if (initialTabs.some(item=>item.id === tab.id || sameIdentity(item,descriptor))) return;
-    register(tab);
+    await register(tab);
   };
   const attemptClose = async record => {
     if (record.promise) return record.promise;
@@ -338,7 +423,7 @@ export function chromeDriverAPI(browser, {selectAllKey = PLATFORM === 'darwin' ?
     if (record.failure && !closeFailureCanUseAbsence(record.failure)) throw record.failure;
     if (preserved === id || record.absent) return;
     await attemptClose(record);
-    if (record.failure) await waitForClosedTabs(cleanupList,[record],sdkGate.clock,cleanupSleep);
+    if (record.failure) await sdkGate.boundedObservation(null,()=>waitForClosedTabs(cleanupList,[record],sdkGate.clock,cleanupSleep));
   };
   const listTabs = async() => {
     const controlled = await browser.tabs.list(); const available = await browser.user.openTabs();
@@ -395,22 +480,27 @@ export function chromeDriverAPI(browser, {selectAllKey = PLATFORM === 'darwin' ?
       }};
     tabs.set(alias,wrapped); return wrapped;
   };
-  return {selectAllKey,
+  return {selectAllKey,boundedObservation,
+    ownedRemaining:() => [...owned.values()].filter(record=>!record.absent && record.id !== preserved).length,
     listTabs,
     getTab:async id => {
       id = String(id);
       if (claimedUsers.has(id)) return wrap(await browser.tabs.get(claimedUsers.get(id)),id);
       if (!userTabs.has(id)) {
-        const tab=await browser.tabs.get(id);registerPopup(tab,latestControlled.find(item=>item.id === id));return wrap(tab);
+        const tab=await browser.tabs.get(id);await registerPopup(tab,latestControlled.find(item=>item.id === id));return wrap(tab);
       }
       const previous = userTabs.get(id);
       requireValue(popupAllowed(previous.url),'platform_chrome_worker_unsafe_user_tab');
       const fresh = await browser.user.openTabs();
+      // A fresh draft page rewrites its own title while it loads, so the title
+      // is never a tab identity binding. The opaque and provider IDs plus the
+      // exact publish URL are re-checked here and again by the driver after the
+      // claim.
       const candidates = fresh.filter(tab => tab.id === previous.id && tab.providerTabId === previous.providerTabId &&
-        tab.url === previous.url && tab.title === previous.title);
+        tab.url === previous.url);
       requireValue(candidates.length === 1,'platform_chrome_worker_ambiguous_tab');
       const tab = await browser.user.claimTab(candidates[0]);
-      registerPopup(tab,candidates[0]);
+      await registerPopup(tab,candidates[0]);
       aliases.set(tab.id,id); claimedUsers.set(id,tab.id);
       return wrap(tab,id);
     },
@@ -431,8 +521,8 @@ export function chromeDriverAPI(browser, {selectAllKey = PLATFORM === 'darwin' ?
       const tab = await browser.tabs.new();
       requireValue(typeof tab?.id === 'string' && !before.some(item => item.id === tab.id) && !tabs.has(tab.id),
         'platform_chrome_worker_ambiguous_tab');
-      created.add(tab.id);register(tab);
-      try { wrap(tab);const beforeURL = await tab.url();await gotoNewTab(tab,url,{readOnly,beforeURL});return wrap(tab); }
+      created.add(tab.id);await register(tab);
+      try { wrap(tab);const beforeURL = await tab.url();await gotoNewTab(tab,url,{readOnly,beforeURL,boundedObservation,clock:sdkGate.clock,sleep:cleanupSleep});return wrap(tab); }
       catch (failure) { try { await closeOwned(tab.id); } catch {} throw failure; }
     },
     rememberReadback:async url => {
@@ -458,14 +548,17 @@ export function chromeDriverAPI(browser, {selectAllKey = PLATFORM === 'darwin' ?
     closeCreated:async() => {
       const records=[...owned.values()].filter(record=>record.id !== preserved);
       if (!records.length) return;
-      const deadline=sdkGate.clock()+5000;
-      const check=()=>{if (sdkGate.clock() >= deadline) throw error('platform_chrome_worker_cleanup_failed');};
-      check();const opened=await cleanupList();check();
+      const opened=await sdkGate.boundedObservation(null,async()=>{
+        const deadline=sdkGate.clock()+5000;
+        const check=()=>{if (sdkGate.clock() >= deadline) throw error('platform_chrome_worker_cleanup_failed');};
+        check();const listed=await cleanupList();check();return listed;
+      });
       requireValue(Array.isArray(opened) && opened.every(tab=>typeof tab?.id === 'string'),'platform_chrome_worker_unavailable');
       for (const record of records) if (!opened.some(tab=>tab.id === record.id)) record.absent=true;
       for (const record of records) await attemptClose(record);
-      // Five seconds bounds read-only disappearance confirmation, not close calls.
-      await waitForClosedTabs(cleanupList,records,sdkGate.clock,cleanupSleep);
+      // Only the bounded disappearance observation is protected; the number
+      // of owned close attempts never makes the entire cleanup an atomic slice.
+      await sdkGate.boundedObservation(null,()=>waitForClosedTabs(cleanupList,records,sdkGate.clock,cleanupSleep));
     }
   };
 }
@@ -491,7 +584,41 @@ export class ChromeWorker {
     this.state = 'connecting'; this.phase = 'config_validated'; this.processed = 0; this.consumed = new Set(); this.lastActivity = clock();
     this.stopRequested = false; this.done = false; this.attached = false; this.closing = false; this.healthPromise = null;
     this.keepReadback = false; this.readbackApproved = false;
-    this.sdkGate = new SDKCallGate(() => this.clock());this.requestScope = null;
+    this.sdkGate = new SDKCallGate(() => this.clock(),scope=>this.sdkBoundary(scope),event=>this.sdkDiagnostic(event),true);
+    this.requestScope = null; this.diagnosticSequence = 0; this.ownershipSequence = 0;
+  }
+  async sdkBoundary(scope) {
+    if (this.closing || !this.sliceDeadline || this.clock() < this.sliceDeadline) return;
+    if (!this.pausedCall) {
+      let resume;
+      const waiting=new Promise(resolve=>{resume=resolve;});
+      this.pausedCall={waiting,resume};
+      this.signalPause?.();
+    }
+    await this.pausedCall.waiting;
+    scope.check?.();
+  }
+  async sdkDiagnostic(event) {
+    if (!this.activeOperation || !['begin','end'].includes(event.edge)) return;
+    const methods=new Set(['count','evaluate','evaluateAll','isVisible','isEnabled','getAttribute','innerText','click','fill','press','pressSequentially','domSnapshot','url','goto','reload','screenshot','close','markDeliverable','paste','scroll','list','get','new','openTabs','claimTab']);
+    const packet={schema:1,worker:{...this.config.worker},binding_sha256:this.config.binding_sha256,
+      session_id:this.session,operation:this.activeOperation,phase:this.driverPhase || null,
+      method:methods.has(event.method)?event.method:'other',edge:event.edge,observed_at_ms:this.clock(),
+      ...(Number.isFinite(event.duration_ms)?{duration_ms:event.duration_ms}:{}),...this.driverProgress};
+    // A bounded ring of metadata only. No selectors, URLs, DOM or manuscript text.
+    await this.replaceDiagnostic('worker-progress-'+(this.diagnosticSequence++ % 64)+'.json',packet);
+  }
+  async replaceDiagnostic(name,packet) {
+    try {
+      const directory=path.dirname(this.config.handle_path),filename=path.join(directory,name);
+      const temporary=path.join(directory,'.'+name+'-'+this.config.worker.instance+'-'+Date.now());
+      await writePrivate(temporary,packet); await fs.rename(temporary,filename);
+    } catch { /* Diagnostic loss does not authorize a retry or change an observed outcome. */ }
+  }
+  async persistOwnership(ids) {
+    await writePrivate(path.join(path.dirname(this.config.handle_path),'worker-ownership-'+(++this.ownershipSequence)+'.json'),
+      {schema:1,worker:{...this.config.worker},binding_sha256:this.config.binding_sha256,
+        session_id:this.session || null,browser_id:this.browser?.browserId || null,owned_tab_ids:ids,observed_at_ms:this.clock()});
   }
   setPhase(phase, background = false) {
     if (background) this.healthPhase = phase;
@@ -507,6 +634,9 @@ export class ChromeWorker {
   }
   recordDriverProgress(event) {
     if (DRIVER_PHASES.has(event?.phase)) this.driverPhase = event.phase;
+    this.driverProgress={};
+    for (const key of ['catalog_index','listing_index','section_index','page','row_count'])
+      if (Number.isSafeInteger(event?.[key]) && event[key]>=0 && event[key]<=1000000) this.driverProgress[key]=event[key];
     if (event?.phase !== 'error') return;
     const diagnostics = {};
     if (DRIVER_PHASES.has(this.driverPhase)) diagnostics.driver_phase = this.driverPhase;
@@ -529,7 +659,7 @@ export class ChromeWorker {
     catch { /* Diagnostics cannot replace an observed outcome or repeat a write. */ }
   }
   async persistCatalogFailure(code) {
-    if (!['verify_target','find_drafts','read_draft'].includes(this.activeOperation) ||
+    if (!['verify_target','inspect_catalog','inspect_empty_draft','find_drafts','read_draft'].includes(this.activeOperation) ||
         code !== 'platform_browser_operation_failed' || typeof this.activeCatalogMessage !== 'string') return;
     try {
       await writePrivate(path.join(path.dirname(this.config.handle_path),'worker-catalog-error.private.json'),
@@ -537,7 +667,7 @@ export class ChromeWorker {
     } catch { /* Local troubleshooting must not hide the original result. */ }
   }
   async persistMutationFailure(code) {
-    if (!['create_draft','update_draft'].includes(this.activeOperation) ||
+    if (!['create_draft','update_draft','resume_empty_draft'].includes(this.activeOperation) ||
         !['platform_browser_operation_failed','platform_browser_navigation_timeout','platform_browser_read_timeout'].includes(code) ||
         typeof this.activeCatalogMessage !== 'string') return;
     try {
@@ -549,9 +679,11 @@ export class ChromeWorker {
   async persistBootstrapFailure(failure) {
     try {
       if (this.initialized || !['sdk_setup','browser_inventory','waiting_for_chrome','browser_documentation','existing_tab_probe'].includes(this.phase) ||
-          typeof failure?.message !== 'string') return;
+          !failure) return;
+      const code = cleanError(failure);
       await writePrivate(path.join(path.dirname(this.config.handle_path),'worker-bootstrap-error.private.json'),
-        {schema:1,phase:this.phase,message:failure.message.slice(0,4096)});
+        {schema:1,phase:this.phase,code:BOOTSTRAP_CODES.has(code) ? code : 'platform_chrome_worker_failed',
+          error_name:ERROR_NAMES.has(failure.name) ? failure.name : 'Error',error_marker:errorMarker(failure)});
     } catch { /* Diagnostic refusal preserves the original failure and cleanup. */ }
   }
   probeURL(url) {
@@ -584,8 +716,9 @@ export class ChromeWorker {
         requireValue(Array.isArray(listed) && listed.every(item => own(item) && typeof item.id === 'string' && item.id.length > 0 &&
           (!Object.hasOwn(item,'family') || typeof item.family === 'string') &&
           ['iab','extension','cdp','mcpapps'].includes(item.type)),'platform_chrome_worker_unavailable');
-        const chrome = listed.filter(item => item.family === 'chrome');
-        requireValue(chrome.every(item => item.type === 'extension'),'platform_chrome_worker_unsupported_sdk');
+        const workbuddy = this.config.execution_host === 'workbuddy';
+        const chrome = listed.filter(item => item.family === (workbuddy ? 'chromium' : 'chrome'));
+        requireValue(chrome.every(item => item.type === (workbuddy ? 'cdp' : 'extension')),'platform_chrome_worker_unsupported_sdk');
         requireValue(chrome.length <= 1,'platform_chrome_worker_ambiguous_browser');
         if (waiting || allowWait) await check();
         if (chrome.length) {
@@ -623,8 +756,10 @@ export class ChromeWorker {
     requireValue(typeof tab?.id === 'string' && !existing.has(tab.id) && tab.id !== this.probeTabId,
       'platform_chrome_worker_ambiguous_tab');
     this.fallbackProbeTab = tab; this.probeTabId = tab.id;
+    await this.persistOwnership([tab.id]);
     const beforeURL = await tab.url();
-    if (beforeURL !== this.probeManagementURL) await gotoNewTab(tab,this.probeManagementURL,{readOnly:true,beforeURL});
+    if (beforeURL !== this.probeManagementURL) await gotoNewTab(tab,this.probeManagementURL,{readOnly:true,beforeURL,
+      boundedObservation:body=>this.sdkGate.boundedObservation(null,body),clock:()=>this.clock(),sleep:ms=>this.sleep(ms)});
     const deadline = this.clock()+15000;
     while (!this.closing && !this.stopRequested) {
       requireValue(this.clock() < deadline,'platform_chrome_worker_unavailable');
@@ -647,7 +782,7 @@ export class ChromeWorker {
       expiredCode:deadline != null ? 'platform_chrome_worker_invalid_challenge' : 'platform_chrome_worker_connect_timeout',check:() => {
       requireValue(!this.closing && !this.fatalCode,'platform_chrome_worker_unavailable');
     }};
-    const run = (call,cleanup = false,checkAfter = true) => this.sdkGate.run(call,cleanup ? null : scope,checkAfter);
+    const run = (call,cleanup = false,checkAfter = true,method = null) => this.sdkGate.run(call,cleanup ? null : scope,checkAfter,method);
     this.setPhase('browser_inventory',background);
     this.healthStep = 'browser_inventory';
     const selected = await this.browserInventory(run,allowWait);
@@ -737,6 +872,13 @@ export class ChromeWorker {
           this.attached || this.probeFallbackUsed || !this.probeURL(this.probeManagementURL)) throw failure;
       await this.freshProbeTab(browser);
     }
+    if (!background && !this.attached && !this.fallbackProbeTab) {
+      // Validate the user's original target first, then isolate task health
+      // from normal navigation in that tab. The dedicated read-only page is
+      // owned before navigation and is never shared with the driver's catalog.
+      this.healthStep = 'dedicated_probe';
+      await this.freshProbeTab(browser);
+    }
     return selected.id;
   }
   async refreshHealth() {
@@ -783,14 +925,16 @@ export class ChromeWorker {
     try { await fs.lstat(this.config.handle_path); throw error('platform_chrome_worker_handle_exists'); }
     catch (failure) { if (failure.code !== 'ENOENT') throw failure; }
     this.phase = 'sdk_setup';
+    requireValue((this.config.execution_host ?? 'codex') === 'codex' || typeof this.sdkFactory === 'function',
+      'platform_chrome_worker_native_runtime_required');
     this.agent = this.sdkFactory ? await this.sdkFactory() : await (await import(pathToFileURL(this.config.sdk_path).href)).setupBrowserRuntime();
     await this.probe();
-    this.api = chromeDriverAPI(this.browser,{target:this.config.target,sdkGate:this.sdkGate,sdkScope:() => this.requestScope,cleanupSleep:ms=>this.sleep(ms)});
+    this.api = chromeDriverAPI(this.browser,{target:this.config.target,sdkGate:this.sdkGate,sdkScope:() => this.requestScope,cleanupSleep:ms=>this.sleep(ms),onOwnership:ids=>this.persistOwnership([...ids,...(this.fallbackProbeTab?[this.fallbackProbeTab.id]:[])])});
     this.api.onProgress = event => this.recordDriverProgress(event);
     this.api.onDriverError = failure => {
       this.activeDriverFailure = Object.freeze({error_name:ERROR_NAMES.has(failure?.name) ? failure.name : 'Error',error_marker:errorMarker(failure),
         worker_code:DRIVER_WORKER_CODES.has(failure?.code) ? failure.code : 'none'});
-      if (['verify_target','find_drafts','read_draft','create_draft','update_draft'].includes(this.activeOperation) && typeof failure?.message === 'string') {
+      if (['verify_target','inspect_catalog','inspect_empty_draft','find_drafts','read_draft','create_draft','update_draft','resume_empty_draft'].includes(this.activeOperation) && typeof failure?.message === 'string') {
         this.activeCatalogMessage = failure.message.slice(0,4096);
       }
     };
@@ -821,7 +965,7 @@ export class ChromeWorker {
       (Object.hasOwn(request.binding,'body_encoding') ? request.binding.body_encoding : 'verbatim') ===
         (this.config.body_encoding || 'verbatim') &&
       ['platform','account_id','remote_book_id'].every(key => request.binding.target[key] === this.config.target[key]) &&
-      ['verify_target','find_drafts','read_draft','create_draft','update_draft'].includes(request.operation),'platform_chrome_worker_binding_mismatch');
+      ['verify_target','inspect_catalog','inspect_empty_draft','find_drafts','read_draft','create_draft','update_draft','resume_empty_draft'].includes(request.operation),'platform_chrome_worker_binding_mismatch');
     const deadline = Date.parse(request.deadline);
     requireValue(Number.isFinite(deadline),'platform_chrome_worker_invalid_packet');
     this.requestScope = {deadline,operation:request.operation,check:() => {
@@ -850,10 +994,10 @@ export class ChromeWorker {
     if (response.ok) {
       const observation = request.operation === 'read_draft' ? response.result :
         request.operation === 'find_drafts' && Array.isArray(response.result) ? response.result.at(-1) : null;
-      const url = observation?.url || (['create_draft','update_draft'].includes(request.operation) && typeof response.result === 'string' ?
+      const url = observation?.url || (['create_draft','update_draft','resume_empty_draft'].includes(request.operation) && typeof response.result === 'string' ?
         (request.profile.readback?.url || request.profile.urls.edit).replace('{remote_id}',response.result) : null);
       if (typeof url === 'string') await this.api.rememberReadback(url);
-      if (['create_draft','update_draft'].includes(request.operation)) {
+      if (['create_draft','update_draft','resume_empty_draft'].includes(request.operation)) {
         const tab = await this.api.readbackTab();
         if (tab) {
           try { await writePrivate(path.join(path.dirname(this.config.handle_path),'worker-proof-'+request.id+'.png'),await tab.screenshot({fullPage:false})); }
@@ -868,8 +1012,9 @@ export class ChromeWorker {
   async finish() {
     if (this.done) return;
     this.closing = true; this.phase = 'cleanup';
+    let detached=false,cleaned=true,probeRemaining=0;
     if (this.healthPromise) { try { await this.healthPromise; } catch (failure) { this.recordFailure(failure,this.healthPhase || this.phase); } }
-    if (this.attached) { try { await this.command('detach'); } catch (failure) { this.recordFailure(failure,this.phase,'platform_chrome_worker_detach_failed'); } }
+    if (this.attached) { try { await this.command('detach'); detached=true; } catch (failure) { this.recordFailure(failure,this.phase,'platform_chrome_worker_detach_failed'); } }
     if (this.api) {
       if (this.keepReadback && this.readbackApproved && !this.fatalCode) {
         try { await this.api.preserveReadback(); } catch (failure) { this.recordFailure(failure); }
@@ -877,21 +1022,28 @@ export class ChromeWorker {
       if (!this.keepReadback || !this.readbackApproved || this.fatalCode) this.api.discardReadback();
       if (this.session) {
         try { await this.driver.closeChromeBridgeSession(this.api,this.session,{keepReadback:false}); }
-        catch (failure) { this.recordFailure(failure,this.phase,'platform_chrome_worker_cleanup_failed'); this.api.discardReadback(); }
+        catch (failure) { cleaned=false; this.recordFailure(failure,this.phase,'platform_chrome_worker_cleanup_failed'); this.api.discardReadback(); }
       }
       try { await this.api.closeCreated(); }
-      catch (failure) { this.recordFailure(failure,this.phase,'platform_chrome_worker_cleanup_failed'); }
+      catch (failure) { cleaned=false; this.recordFailure(failure,this.phase,'platform_chrome_worker_cleanup_failed'); }
     }
     if (this.fallbackProbeTab) {
       const record={id:this.fallbackProbeTab.id,absent:false,failure:null};
       try {
         try { await this.fallbackProbeTab.close(); } catch (failure) { record.failure=failure; }
-        await waitForClosedTabs(()=>this.sdkGate.run(()=>this.browser.tabs.list()),[record],()=>this.clock(),ms=>this.sleep(ms));
+        await this.sdkGate.boundedObservation(null,()=>waitForClosedTabs(()=>this.sdkGate.run(()=>this.browser.tabs.list()),[record],()=>this.clock(),ms=>this.sleep(ms)));
       }
-      catch (failure) { this.recordFailure(failure,this.phase,'platform_chrome_worker_cleanup_failed'); }
+      catch (failure) { cleaned=false; this.recordFailure(failure,this.phase,'platform_chrome_worker_cleanup_failed'); }
+      probeRemaining=record.absent?0:1;
       this.fallbackProbeTab = null;
     }
+    await this.sdkGate.drain();
     this.done = true;
+    try { await writePrivate(path.join(path.dirname(this.config.handle_path),'worker-final.json'),
+      {schema:1,worker:{...this.config.worker},binding_sha256:this.config.binding_sha256,
+        session_id:this.session || null,done:true,attached:this.attached,bridge_detached:detached,cleanup_complete:cleaned && (!this.attached || detached),
+        state:this.fatalCode?'failed':this.state,owned_tabs_remaining:(this.api?.ownedRemaining?.() || 0)+probeRemaining,completed_at_ms:this.clock()}); }
+    catch { /* Missing durable proof must remain cleanup-unconfirmed to the controller. */ }
   }
   async checkStop() {
     try {
@@ -912,9 +1064,21 @@ export class ChromeWorker {
         if (this.clock() - this.healthAt >= this.config.health_interval_seconds * 1000) await this.refreshHealth();
         this.phase = 'queue_wait';
         const claim = await this.command('next');
-        if (claim.request_id != null) await this.executeClaim(claim);
-        else await this.sleep(this.config.poll_interval_ms || 250);
+        if (claim.request_id != null) {
+          this.pendingClaim=this.executeClaim(claim);
+          await this.waitClaimSlice();
+          if (this.pausedCall) break;
+        } else await this.sleep(this.config.poll_interval_ms || 250);
       } while (this.clock() < deadline);
+  }
+  async waitClaimSlice() {
+    if (!this.pendingClaim) return;
+    const pending=this.pendingClaim;
+    const completed=pending.then(()=>{this.pendingClaim=null;return true;},failure=>{this.pendingClaim=null;throw failure;});
+    const paused=new Promise(resolve=>{this.signalPause=()=>resolve(false);});
+    try {
+      if (await Promise.race([completed,paused])) this.pendingClaim=null;
+    } finally { this.signalPause=null; }
   }
   snapshot() {
     return {done:this.done,state:this.state,phase:this.phase,processed:this.processed,...(this.done && this.state === 'failed' && this.fatalCode ? {
@@ -924,25 +1088,40 @@ export class ChromeWorker {
   async checkpoint() {
     if (this.checkpointPromise) return this.checkpointPromise;
     if (this.done) return this.snapshot();
-    this.checkpointPromise = (async() => {
+    this.checkpointPromise = this.sdkGate.inContext(async() => {
       let healthTimer,active=true;
       try {
         if (!this.stopRequested && !this.fatalCode) {
           await this.checkStop();
-          if (!this.stopRequested && this.clock()-this.lastActivity >= this.config.idle_timeout_seconds*1000) this.state='idle_timeout';
+          // A parked operation still owns its original request deadline; only
+          // an empty queue can exhaust the idle budget.
+          if (!this.stopRequested && !this.pendingClaim && this.clock()-this.lastActivity >= this.config.idle_timeout_seconds*1000) this.state='idle_timeout';
         }
-        if (!this.stopRequested && !this.fatalCode && this.state !== 'idle_timeout') {
+        if (this.pendingClaim || (!this.stopRequested && !this.fatalCode && this.state !== 'idle_timeout')) {
           if (!this.initialized) { await this.initialize(); this.initialized = true; }
           else await this.refreshHealth();
           healthTimer = this.interval(() => {
             if (active && !this.closing && !this.stopRequested) this.refreshHealth().catch(failure => this.recordFailure(failure,this.healthPhase || this.phase));
           },this.config.health_interval_seconds * 1000);
-          // Yield only between complete operations. An in-flight browser call
-          // must stay awaited by this actual Node REPL tool invocation.
-          await this.loop(this.clock()+(this.config.checkpoint_ms || 20000));
+          this.sliceDeadline=this.clock()+Math.max(1000,this.config.checkpoint_ms || 20000);
+          if (this.pendingClaim) {
+            const paused=this.pausedCall; this.pausedCall=null;
+            const continuation=this.waitClaimSlice();
+            paused?.resume();
+            await continuation;
+          }
+          if (!this.pendingClaim) await this.loop(this.clock()+(this.config.checkpoint_ms || 20000));
         }
       } catch (failure) {
         if (failure !== BOOTSTRAP_CANCELLED || !this.stopRequested) { this.recordFailure(failure);await this.persistBootstrapFailure(failure); }
+        // A failed resume health check must settle the parked continuation.
+        // Its original request scope now rejects before any next SDK call.
+        if (this.pendingClaim && this.pausedCall) {
+          const pending=this.pendingClaim,paused=this.pausedCall;this.pausedCall=null;
+          paused.resume();
+          try { await pending; } catch (settled) { this.recordFailure(settled); }
+          this.pendingClaim=null;
+        }
       }
       finally {
         active=false;this.cancelInterval(healthTimer);
@@ -951,34 +1130,40 @@ export class ChromeWorker {
           catch (failure) { this.recordFailure(failure,this.healthPhase || this.phase); }
         }
         await this.sdkGate.drain();
-        if (this.stopRequested) this.state = 'stopped';
-        if (this.stopRequested || this.fatalCode || this.state === 'idle_timeout') {
+        if (this.stopRequested && !this.pendingClaim) this.state = 'stopped';
+        if (!this.pendingClaim && (this.stopRequested || this.fatalCode || this.state === 'idle_timeout')) {
           await this.finish();
           if (this.fatalCode) this.state = 'failed';
         }
       }
       return this.snapshot();
-    })();
+    });
     try { return await this.checkpointPromise; }
     finally { this.checkpointPromise = null; }
   }
   async stop() {
     this.keepReadback = false; this.readbackApproved = false; this.stopRequested = true;
-    await (this.checkpointPromise || this.checkpoint());
+    do { await (this.checkpointPromise || this.checkpoint()); } while (!this.done);
   }
 }
 
-export async function runChromeWorker(configPath) {
+export async function runChromeWorker(configPath, options = {}) {
   let worker;
   try {
     const config = validateWorkerConfig(await readPrivateJSON(configPath,65536));
+    requireValue(own(options) && Object.keys(options).every(key=>key === 'sdkFactory'));
+    const native=(config.execution_host ?? 'codex') !== 'codex';
+    requireValue(native ? typeof options.sdkFactory === 'function' : !Object.hasOwn(options,'sdkFactory'),
+      'platform_chrome_worker_native_runtime_required');
     requireValue(path.dirname(configPath) === path.dirname(config.handle_path),'platform_chrome_worker_unsafe_file');
     const signature = createHash('sha256').update(JSON.stringify(config)).digest('hex');
     const previous = WORKERS.get(configPath);
     if (previous) {
       worker = previous.worker;
       requireValue(previous.signature === signature,'platform_chrome_worker_config_changed');
-    } else { worker = new ChromeWorker(config); WORKERS.set(configPath,{signature,worker}); }
+      requireValue(previous.sdkFactory === options.sdkFactory,'platform_chrome_worker_config_changed');
+    } else { worker = new ChromeWorker(config, native ? {sdkFactory:options.sdkFactory} : {});
+      WORKERS.set(configPath,{signature,worker,sdkFactory:options.sdkFactory}); }
     return await worker.checkpoint();
   } catch (failure) {
     worker ||= WORKERS.get(configPath)?.worker;
@@ -989,3 +1174,214 @@ export async function runChromeWorker(configPath) {
 }
 
 export const runWorker = runChromeWorker;
+
+
+/* Qoder's public Browser Use SDK qoderHostFacade for the existing draft worker.
+ * Load @qoder-space/browser-use in Qoder's official persistent Node REPL and
+ * pass that module namespace here. The caller must verify the SDK provenance.
+ * No registry, token, transport, host context or model assertion is accepted.
+ * Qoder itself authenticates each command against the current REPL turn.
+ */
+
+function qoderHostFail(code) {
+  throw Object.assign(new TypeError(code), {code});
+}
+
+const qoderHostUnsupported = () => qoderHostFail('platform_chrome_worker_unsupported_sdk');
+const qoderHostObject = value => value !== null && typeof value === 'object';
+const qoderHostMethods = (value, names) => qoderHostObject(value) && names.every(name => typeof value[name] === 'function');
+
+// Bind public qoderHostMethods to their original SDK instance: Browser/Tab use private
+// fields. Neither the current signal nor Session/Turn context is captured here.
+function qoderHostFacade(source, overrides) {
+  return new Proxy(source, {
+    get(target, name) {
+      if (Object.hasOwn(overrides, name)) return overrides[name];
+      const value = Reflect.get(target, name, target);
+      return typeof value === 'function' ? value.bind(target) : value;
+    }
+  });
+}
+
+/** Bootstrap only. Inventory, authorization and readiness remain worker/host checks. */
+export async function setupQoderBrowserRuntime(sdk) {
+  if (arguments.length !== 1 || !qoderHostMethods(sdk, ['createBrowserAgent'])) qoderHostUnsupported();
+  // This documented no-options entrypoint resolves the current Qoder host and
+  // signal itself. In particular, do not inject a fabricated context/transport.
+  const agent = await sdk.createBrowserAgent();
+  if (!qoderHostObject(agent) || !qoderHostMethods(agent.browsers, ['list', 'get'])) qoderHostUnsupported();
+  const browsers = new WeakMap(), tabs = new WeakMap();
+  let inventoryClient;
+  const currentSignal = () => {
+    const signal = globalThis.nodeRepl?.signal;
+    if (!qoderHostObject(signal)) qoderHostFail('platform_chrome_worker_native_runtime_required');
+    return signal;
+  };
+  const listBrowsers = async(...args) => {
+    const listed = await agent.browsers.list(...args);
+    // The public Agent descriptor makes family optional. Names and connector
+    // labels do not identify a browser family; correlate the other documented
+    // public inventory by exact ID instead, using the current official turn.
+    if (!Array.isArray(listed) || !listed.some(item => qoderHostObject(item) &&
+        item.type === 'extension' && !Object.hasOwn(item, 'family'))) return listed;
+    if (typeof sdk.BrowserUse?.create !== 'function') qoderHostUnsupported();
+    inventoryClient ??= await sdk.BrowserUse.create({signal:currentSignal()});
+    if (!qoderHostMethods(inventoryClient, ['getState'])) qoderHostUnsupported();
+    const state = await inventoryClient.getState({signal:currentSignal()});
+    if (!qoderHostObject(state) || typeof state.enabled !== 'boolean' ||
+        typeof state.phase !== 'string' || !Array.isArray(state.browsers) ||
+        state.browsers.some(item => !qoderHostObject(item) || typeof item.id !== 'string' || !item.id ||
+          typeof item.status !== 'string' ||
+          (item.browserType != null && typeof item.browserType !== 'string')) ||
+        new Set(state.browsers.map(item => item.id)).size !== state.browsers.length) qoderHostUnsupported();
+    if (!state.enabled) return listed;
+    const byId = new Map(state.browsers.map(item => [item.id,item]));
+    return listed.map(item => {
+      if (!qoderHostObject(item) || item.type !== 'extension' || Object.hasOwn(item, 'family')) return item;
+      const observed = byId.get(item.id);
+      return observed?.status === 'ready' && observed.browserType?.toLowerCase() === 'chrome'
+        ? {...item,family:'chrome'} : item;
+    });
+  };
+
+  const locators = new WeakMap(), rawLocators = new WeakMap();
+  let emptyReaders;
+  const emptyMatch = (failure, locator) => typeof locator.selector === 'string' && !!locator.selector &&
+    (failure?.name === 'Error' || (failure?.name === 'BrowserAgentRuntimeError' && failure.code === 'LOCATOR_NOT_FOUND')) &&
+    failure.message === 'No element matched locator: '+locator.selector &&
+    !/permission|denied|unauthori[sz]ed|timeout|timed_out|cancel|abort|closed|disconnect|unreachable|context|unknown/i.test(String(failure.code || ''));
+  const wrapLocator = source => {
+    if (!qoderHostObject(source)) qoderHostUnsupported();
+    if (locators.has(source)) return locators.get(source);
+    const overrides = {};
+    const count = async(...args) => {
+      try {
+        const total = await source.count(...args);
+        if (!Number.isSafeInteger(total) || total < 0) qoderHostUnsupported();
+        return total;
+      }
+      catch (failure) { if (emptyMatch(failure,source)) return 0; throw failure; }
+    };
+    if (typeof source.count === 'function') overrides.count = count;
+    if (typeof source.all === 'function' && typeof source.nth === 'function') overrides.all = async() => {
+      const total = await count();
+      if (!Number.isSafeInteger(total) || total < 0 || total > 100000) qoderHostUnsupported();
+      return Array.from({length:total},(_,index)=>wrapLocator(source.nth(index)));
+    };
+    if (typeof source.evaluateAll === 'function') overrides.evaluateAll = async(fn,arg,...options) => {
+      try { return await source.evaluateAll(fn,arg,...options); }
+      catch (failure) {
+        if (!emptyMatch(failure,source)) throw failure;
+        // The connector rejects an empty collection before invoking its callback.
+        // Only the four shared driver's pure readers have an audited empty-array
+        // result. Use the exact exported function, never a name, source string,
+        // page evaluation, or generic host callback supplied by a caller.
+        emptyReaders ??= import('./story_chrome_bridge.mjs').then(module=>new Set([
+          module.readRowFields,module.readParagraphs,module.readDOMPath,module.readActionState
+        ]));
+        if (!(await emptyReaders).has(fn)) throw failure;
+        return fn([],arg);
+      }
+    };
+    for (const name of ['locator','nth','first','last','getByRole','getByText','getByLabel','getByPlaceholder','getByTestId']) {
+      if (typeof source[name] === 'function') overrides[name] = (...args)=>wrapLocator(source[name](...args));
+    }
+    if (typeof source.filter === 'function') overrides.filter = (options={}) => {
+      const normalized = qoderHostObject(options) && !Array.isArray(options) ? {...options} : options;
+      for (const key of ['has','hasNot']) if (normalized?.[key]) normalized[key] = rawLocators.get(normalized[key]) || normalized[key];
+      return wrapLocator(source.filter(normalized));
+    };
+    const output = qoderHostFacade(source,overrides);
+    locators.set(source,output);rawLocators.set(output,source);
+    return output;
+  };
+
+  const locate = (playwright, args) => {
+    const [selector] = args;
+    if (typeof selector !== 'string' || !selector.includes(':text-is(')) return playwright.locator(...args);
+    // Qoder exposes public locator filters, but does not translate Playwright's
+    // :text-is CSS extension. Translate only the three verified profile forms.
+    // These remain live SDK locators: no DOM handles/paths or matches are cached.
+    if (args.length !== 1) qoderHostUnsupported();
+    const exact = text => new RegExp('^\\s*'+text.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*$','u');
+    const filter = (locator, options) => {
+      if (!qoderHostMethods(locator,['filter'])) qoderHostUnsupported();
+      return locator.filter(options);
+    };
+    if (selector === '.user-info-line:has(> label:text-is("番茄小说网ID")) > div > span') {
+      const label = filter(playwright.locator(':scope > label'),{hasText:exact('番茄小说网ID')});
+      const row = filter(playwright.locator('.user-info-line'),{has:label});
+      if (!qoderHostMethods(row,['locator'])) qoderHostUnsupported();
+      return row.locator(':scope > div > span',{});
+    }
+    if (selector === '.arco-tabs-content-item-active .author-empty.author-empty-default.empty > span.author-empty-description.font-4:text-is("暂无章节内容")') {
+      return filter(playwright.locator('.arco-tabs-content-item-active .author-empty.author-empty-default.empty > span.author-empty-description.font-4'),
+        {hasText:exact('暂无章节内容')});
+    }
+    if (selector === '.arco-tabs-content-item-active :text-is("暂无草稿")') {
+      const panel = playwright.locator('.arco-tabs-content-item-active');
+      if (!qoderHostMethods(panel,['getByText'])) qoderHostUnsupported();
+      return panel.getByText('暂无草稿',{exact:true});
+    }
+    qoderHostUnsupported();
+  };
+
+  const wrapTab = tab => {
+    if (!qoderHostObject(tab) || typeof tab.id !== 'string' || !tab.id) qoderHostUnsupported();
+    if (tabs.has(tab)) return tabs.get(tab);
+    const ax = qoderHostFacade(qoderHostObject(tab.ax) ? tab.ax : {}, {
+      paste: async function(target, text, options) {
+        if (arguments.length !== 3 || target !== null || typeof text !== 'string' ||
+            !qoderHostObject(options) || Array.isArray(options) || Object.keys(options).length !== 1 ||
+            options.format !== 'text' || !Object.hasOwn(options, 'format')) {
+          qoderHostFail('platform_chrome_worker_invalid_config');
+        }
+        if (!qoderHostMethods(tab.playwright, ['locator'])) qoderHostUnsupported();
+        // Both native AX/CUA text actions dropped line feeds in validation.
+        // Restrict the public replacement action to a focused body editor;
+        // never match INPUT (titles), cache a target, normalize, or retry.
+        const body = tab.playwright.locator('textarea:focus, [contenteditable="true"]:focus');
+        if (!qoderHostMethods(body, ['count', 'fill'])) qoderHostUnsupported();
+        if (await body.count() !== 1) qoderHostFail('platform_browser_ambiguous_dom');
+        // The same :focus locator is resolved again by this one write. Driver
+        // focus checks and strict independent readback remain mandatory.
+        return await body.fill(text, {timeoutMs:10000});
+      }
+    });
+    const locatorBuilders = {locator:(...args)=>wrapLocator(locate(tab.playwright,args))};
+    for (const name of ['getByRole','getByText','getByLabel','getByPlaceholder','getByTestId']) {
+      if (typeof tab.playwright?.[name] === 'function') locatorBuilders[name] = (...args)=>wrapLocator(tab.playwright[name](...args));
+    }
+    const playwright = qoderHostMethods(tab.playwright,['locator'])
+      ? qoderHostFacade(tab.playwright,locatorBuilders) : tab.playwright;
+    const output = qoderHostFacade(tab, {ax,playwright});
+    tabs.set(tab, output);
+    return output;
+  };
+
+  const wrapBrowser = browser => {
+    if (!qoderHostMethods(browser, ['documentation', 'nameSession']) ||
+        typeof browser.browserId !== 'string' || !browser.browserId ||
+        !qoderHostMethods(browser.tabs, ['list', 'get', 'new']) ||
+        !qoderHostMethods(browser.user, ['openTabs', 'claimTab'])) qoderHostUnsupported();
+    if (browsers.has(browser)) return browsers.get(browser);
+    const output = qoderHostFacade(browser, {
+      tabs: qoderHostFacade(browser.tabs, {
+        get: async(...args) => wrapTab(await browser.tabs.get(...args)),
+        new: async(...args) => wrapTab(await browser.tabs.new(...args))
+      }),
+      user: qoderHostFacade(browser.user, {
+        claimTab: async(...args) => wrapTab(await browser.user.claimTab(...args))
+      })
+    });
+    browsers.set(browser, output);
+    return output;
+  };
+
+  return qoderHostFacade(agent, {
+    browsers: qoderHostFacade(agent.browsers, {
+      list:listBrowsers,
+      get: async(...args) => wrapBrowser(await agent.browsers.get(...args))
+    })
+  });
+}

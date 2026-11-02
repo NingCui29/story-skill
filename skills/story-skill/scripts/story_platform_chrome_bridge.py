@@ -34,7 +34,9 @@ HEALTH_CHALLENGE_SECONDS = 30
 # Complete catalog checks now traverse every page. Keep one bounded request
 # alive long enough for repeated identity/catalog checks as the draft box grows;
 # expiration still records an unknown write and never dispatches a retry.
-OP_SECONDS = {"verify_target": 180, "find_drafts": 360, "read_draft": 360, "create_draft": 600, "update_draft": 600}
+OP_SECONDS = {"verify_target": 180, "inspect_catalog": 900, "inspect_empty_draft": 900,
+              "find_drafts": 900, "read_draft": 900, "create_draft": 1200,
+              "update_draft": 1200, "resume_empty_draft": 1200}
 ERROR_CODES = {"platform_browser_" + code for code in (
     "ambiguous_dom", "ambiguous_draft", "chapter_exists_not_draft", "editor_changed", "identity_mismatch",
     "identity_unavailable", "incomplete_dom", "incomplete_list", "incomplete_scope", "invalid_chapter",
@@ -391,6 +393,8 @@ def _uninitialized_session(directory):
 
 
 def _lease(directory, session, *, extend=False, until=None):
+    if api.publish._bound_stat(api._BoundFile(directory, "operator-retired.json"), missing=True) is not None:
+        _fail("worker_unavailable", "此旧会话已由操作者隔离撤销，不能续期、领取或回传请求。")
     if _restored_evidence(directory):
         _fail("worker_unavailable", "备份中的 Chrome 会话仅作为恢复证据保留；请重新连接执行端。")
     lease = _read(directory, "lease.json", maximum=16384)
@@ -399,7 +403,9 @@ def _lease(directory, session, *, extend=False, until=None):
             lease["expires"] <= time.time()):
         _fail("worker_unavailable", "没有仍在心跳有效期内的已连接 Chrome 执行端；未启动操作。")
     if extend:
-        lease["expires"] = max(time.time() + session["ttl_seconds"], until or 0)
+        # A heartbeat cannot shorten the lease already granted to a claimed
+        # operation. The validity check above still refuses expired sessions.
+        lease["expires"] = max(lease["expires"], time.time() + session["ttl_seconds"], until or 0)
         _write(directory, "lease.json", lease, replace=True)
     return lease
 
@@ -777,6 +783,9 @@ def _validate_response(response, request):
         _fail("invalid_message", "执行端回执与本次随机请求绑定不符。")
     if response["ok"] is False and (not isinstance(response["error"], str) or response["error"] not in ERROR_CODES):
         _fail("invalid_message", "执行端错误代码不在允许范围。")
+    if (response["ok"] and request["operation"] == "inspect_catalog" and
+            (not isinstance(response["result"], dict) or response["result"].get("proof_id") != request["id"])):
+        _fail("invalid_message", "目录证明不属于本次完整目录请求。")
 
 
 def heartbeat(book, handle_path, detach=False):
@@ -791,6 +800,15 @@ def _validate_result(operation, result, target, params):
     if operation == "verify_target":
         if result != target:
             api.fail("platform_browser_identity_mismatch", "宿主回读的账号或作品与冻结目标不一致。")
+    elif operation == "inspect_catalog":
+        api.platform_drafts._inspection_catalog(result, target)
+    elif operation == "inspect_empty_draft":
+        if (not isinstance(result, dict) or
+                set(result) != {"remote_id", "chapter", "title", "body", "state", "empty", "url"} or
+                result.get("remote_id") != params.get("remote_id") or result.get("chapter") is not None or
+                result.get("title") != "" or result.get("body") != "" or result.get("state") != "draft" or
+                result.get("empty") is not True or not isinstance(result.get("url"), str)):
+            api.fail("platform_draft_invalid_observation", "原草稿未提供完整且一致的空态回读。")
     elif operation == "find_drafts":
         if not isinstance(result, list) or len(result) > 10000:
             _fail("invalid_message", "完整草稿观察列表无效。")
@@ -798,9 +816,9 @@ def _validate_result(operation, result, target, params):
             api.platform_drafts._observation(item)
     elif operation == "read_draft":
         api.platform_drafts._observation(result, params["remote_id"])
-    elif operation in {"create_draft", "update_draft"}:
+    elif operation in {"create_draft", "update_draft", "resume_empty_draft"}:
         api.platform_drafts._identifier(result, "remote_id")
-        if operation == "update_draft" and result != params["remote_id"]:
+        if operation in {"update_draft", "resume_empty_draft"} and result != params["remote_id"]:
             api.fail("platform_browser_identity_mismatch", "更新回执的远端章节身份已改变。")
     else:
         _fail("invalid_message", "不支持该宿主操作。")
@@ -821,6 +839,7 @@ class HostAdapter:
         self.update_existing = update_existing
         self.progress = progress_callback
         self.session_id = None
+        self.catalog_proof_id = None
 
     def __enter__(self):
         status = worker_status(self.root, self.binding)
@@ -836,6 +855,9 @@ class HostAdapter:
         if self.session_id is None:
             _fail("worker_unavailable", "宿主执行端尚未连接。")
         request_id, nonce = uuid.uuid4().hex, secrets.token_urlsafe(32)
+        params = dict(params)
+        if self.catalog_proof_id is not None and operation != "inspect_catalog":
+            params["catalog_proof_id"] = self.catalog_proof_id
         deadline = time.time() + OP_SECONDS[operation]
         service_instance = None
         service_path = api.safe_path(self.root, ".story/workbench-service.json")
@@ -880,6 +902,23 @@ class HostAdapter:
 
     def find_drafts(self, chapter):
         return self._request("find_drafts", {"chapter": chapter})
+
+    def inspect_catalog(self):
+        # A new call always reads a new complete catalog. The proof lives only
+        # in this adapter and worker session, never in a restored inspection.
+        self.catalog_proof_id = None
+        result = self._request("inspect_catalog", {})
+        self.catalog_proof_id = result["proof_id"]
+        return result
+
+    def inspect_empty_draft(self, remote_id, chapter):
+        return self._request("inspect_empty_draft", {"remote_id": remote_id, "chapter": chapter})
+
+    def resume_empty_draft(self, remote_id, chapter, title, body, *, recovery):
+        if not self.update_existing or self.profile.get("platform") != "fanqie":
+            api.fail("platform_draft_update_unsupported", "本次任务未授权恢复原有空草稿。")
+        return self._request("resume_empty_draft", {"remote_id": remote_id, "chapter": chapter,
+            "title": title, "body": body, "recovery": recovery})
 
     def create_draft(self, chapter, title, body):
         return self._request("create_draft", {"chapter": chapter, "title": title, "body": body})

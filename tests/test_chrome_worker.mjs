@@ -5,6 +5,7 @@ import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import {execFile} from 'node:child_process';
+import {AsyncLocalStorage} from 'node:async_hooks';
 import {fileURLToPath} from 'node:url';
 import {ChromeWorker,chromeDriverAPI,readPrivateJSON,validateWorkerConfig,runChromeWorker} from '../skills/story-skill/scripts/story_chrome_worker.mjs';
 import {executeChromeBridgeRequest,closeChromeBridgeSession} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
@@ -89,6 +90,23 @@ async function fixture(options={}){
 async function until(predicate){const deadline=Date.now()+2000;while(!predicate()){if(Date.now()>deadline)throw Error('condition timed out');await sleep(2);}}
 
 const noChromeInventory=[{id:'iab-one',type:'iab'},{id:'apps-one',type:'mcpapps'}];
+test('batch catalog and owned empty recovery operations retain their exact queue scope',async()=>{
+  const f=await fixture(),seen=[];
+  try {
+    f.driver.executeChromeBridgeRequest=async(_api,request)=>{
+      seen.push({operation:request.operation,params:request.params});
+      return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:{}};
+    };
+    for(const operation of ['inspect_catalog','inspect_empty_draft','resume_empty_draft']){
+      await f.enqueue(operation,{chapter:1,remote_id:'allocated',catalog_proof_id:'same-batch'});
+      let result;do {result=await f.worker.checkpoint();}while(f.worker.processed<seen.length || f.worker.processed<['inspect_catalog','inspect_empty_draft','resume_empty_draft'].indexOf(operation)+1);
+      assert.equal(result.done,false,JSON.stringify(result));
+    }
+    assert.deepEqual(seen.map(row=>row.operation),['inspect_catalog','inspect_empty_draft','resume_empty_draft']);
+    assert.ok(seen.every(row=>row.params.catalog_proof_id==='same-batch'&&row.params.remote_id==='allocated'));
+    assert.equal(f.responses.length,3);
+  }finally{await f.cleanup();}
+});
 function bootstrapClock(f,budget=120000){
   const state={now:Date.now(),start:Date.now(),delays:[]};state.start=state.now;
   if(budget!=null)f.config.bootstrap_deadline_ms=state.start+budget;
@@ -234,10 +252,10 @@ test('an attached or already claimed worker never waits for Chrome or replays it
   for(const claimed of [false,true]){
     const f=await fixture();const time=bootstrapClock(f);let calls=0;
     try{
-      if(claimed)f.worker.consumed.add('a'.repeat(32));else{await f.worker.initialize();f.worker.initialized=true;}
+      if(claimed)f.worker.consumed.add('a'.repeat(32));else{await f.worker.sdkGate.inContext(()=>f.worker.initialize());f.worker.initialized=true;}
       f.agent.browsers.list=async()=>{calls++;return noChromeInventory;};
       if(claimed){const result=await f.worker.checkpoint();assert.equal(result.code,'platform_chrome_worker_unavailable');}
-      else await assert.rejects(f.worker.refreshHealth(),{code:'platform_chrome_worker_unavailable'});
+      else await assert.rejects(f.worker.sdkGate.inContext(()=>f.worker.refreshHealth()),{code:'platform_chrome_worker_unavailable'});
       assert.equal(calls,1);assert.equal(time.delays.length,0);assert.equal(f.worker.processed,0);
       await assert.rejects(fs.lstat(path.join(f.run,'bootstrap-state.json')),{code:'ENOENT'});
     }finally{await f.cleanup();}
@@ -288,7 +306,7 @@ test('health and driver public SDK leaves share one FIFO including synchronous L
   };
   f.original.playwright.locator=()=>nativeLocator();f.original.playwright.getByRole=()=>nativeLocator();
   try{
-    await f.worker.initialize();f.worker.initialized=true;
+    await f.worker.sdkGate.inContext(()=>f.worker.initialize());f.worker.initialized=true;
     f.agent.browsers.list=observed('health.inventory',f.agent.browsers.list);
     f.browser.tabs.list=observed('tabs.list',async()=>[{id:'original',url:BOOK_URL}]);
     f.browser.tabs.get=observed('tabs.get',f.browser.tabs.get);
@@ -315,8 +333,10 @@ test('health and driver public SDK leaves share one FIFO including synchronous L
       return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:[]};
     };
     const claim=await f.enqueue('find_drafts');f.requests.shift();
-    const operation=f.worker.executeClaim(claim);await until(()=>order.includes('driver.count'));
-    await Promise.all([operation,f.worker.refreshHealth()]);
+    await f.worker.sdkGate.inContext(async()=>{
+      const operation=f.worker.executeClaim(claim);await until(()=>order.includes('driver.count'));
+      await Promise.all([operation,f.worker.refreshHealth()]);
+    });
     assert.equal(maximum,1,'focus/setup/read calls cannot overlap between health and driver');
     assert.equal(healthDuringDriver,true,'health runs between leaves instead of waiting for the entire operation');
     assert.equal(order.filter(name=>name==='paste').length,1);assert.equal(order.filter(name=>name==='driver.click').length,1);
@@ -328,19 +348,19 @@ test('SDK FIFO releases after refused writes and never replays paste click or pr
   const f=await fixture();const counts={paste:0,click:0,press:0};const denied=Error('PRIVATE SDK refusal');
   f.original.ax.paste=async()=>{counts.paste++;throw denied;};
   f.original.playwright.locator=()=>({click:async()=>{counts.click++;throw denied;},press:async()=>{counts.press++;throw denied;}});
-  try{
+  try{await f.worker.sdkGate.inContext(async()=>{
     const api=chromeDriverAPI(f.browser,{sdkGate:f.worker.sdkGate});const tab=await api.getTab('original');
     const outcomes=await Promise.allSettled([tab.pasteText('正文'),tab.playwright.locator('#body').click(),tab.playwright.locator('#body').press('Enter'),tab.getAXState()]);
     for(const result of outcomes.slice(0,3))assert.equal(result.reason,denied);
     assert.equal(outcomes[3].value,'visible management page');assert.deepEqual(counts,{paste:1,click:1,press:1});
     await f.worker.sdkGate.drain();
-  }finally{await f.cleanup();}
+  });}finally{await f.cleanup();}
 });
 
 test('queued writes recheck the original deadline before SDK entry while owned cleanup remains possible',async()=>{
   const f=await fixture();let now=1000,release,entered=false,writes=0,closed=0;
   f.worker.clock=()=>now;
-  try{
+  try{await f.worker.sdkGate.inContext(async()=>{
     const api=chromeDriverAPI(f.browser,{sdkGate:f.worker.sdkGate,sdkScope:()=>({deadline:2000})});
     const tab=await api.newTab(BOOK_URL),native=await f.browser.tabs.get(tab.id);
     native.ax.paste=async()=>{writes++;};native.playwright.locator=()=>({click:async()=>{writes++;}});
@@ -353,7 +373,7 @@ test('queued writes recheck the original deadline before SDK entry while owned c
     assert.equal(outcomes[0].reason.code,'platform_browser_operation_failed');assert.equal(outcomes[1].reason.code,'platform_browser_operation_failed');
     assert.equal(outcomes[2].status,'fulfilled');assert.equal(writes,0);assert.equal(closed,1);
     await f.worker.sdkGate.drain();
-  }finally{release?.();await f.cleanup();}
+  });}finally{release?.();await f.cleanup();}
 });
 
 test('request deadline and invalid deadline are checked by the worker even when the driver is queued',async()=>{
@@ -376,7 +396,8 @@ test('request deadline and invalid deadline are checked by the worker even when 
 test('an expired health challenge cannot enter the SDK after waiting in the shared queue',async()=>{
   const f=await fixture();let release,entered=false;
   try{
-    await f.worker.initialize();f.worker.initialized=true;
+    await f.worker.sdkGate.inContext(()=>f.worker.initialize());f.worker.initialized=true;
+    await f.worker.sdkGate.inContext(async()=>{
     const before=f.events.filter(row=>row[0]==='browsers').length;
     const held=f.worker.sdkGate.run(async()=>{entered=true;await new Promise(resolve=>{release=resolve;});});
     await until(()=>entered);
@@ -385,14 +406,15 @@ test('an expired health challenge cannot enter the SDK after waiting in the shar
     f.worker.clock=()=>Date.now()+31000;release();await held;await rejection;
     assert.equal(f.events.filter(row=>row[0]==='browsers').length,before);
     assert.equal(f.worker.healthPromise,null);await f.worker.sdkGate.drain();
+    });
   }finally{release?.();await f.cleanup();}
 });
 
 test('failed owned close is reported after the gate drains rather than returning a clean stop',async()=>{
   const f=await fixture();let closes=0;
   try{
-    await f.worker.initialize();f.worker.initialized=true;
-    const tab=await f.worker.api.newTab(BOOK_URL);
+    await f.worker.sdkGate.inContext(()=>f.worker.initialize());f.worker.initialized=true;
+    const tab=await f.worker.sdkGate.inContext(()=>f.worker.api.newTab(BOOK_URL));
     const native=await f.browser.tabs.get(tab.id);native.close=async()=>{closes++;throw Error('PRIVATE close failed');};
     let clock=Date.now();f.worker.clock=()=>clock;f.worker.sleep=async ms=>{clock+=ms;};
     await f.worker.stop();
@@ -402,7 +424,7 @@ test('failed owned close is reported after the gate drains rather than returning
 
 function cleanupAPI(f,operation='create_draft',time={now:Date.now()}){
   f.worker.clock=()=>time.now;
-  return chromeDriverAPI(f.browser,{target:f.config.target,sdkGate:f.worker.sdkGate,sdkScope:()=>({operation}),cleanupSleep:async ms=>{time.now+=ms;}});
+  return chromeDriverAPI(f.browser,{target:f.config.target,sdkGate:new f.worker.sdkGate.constructor(()=>time.now),sdkScope:()=>({operation}),cleanupSleep:async ms=>{time.now+=ms;}});
 }
 test('retiring a former readback releases its preservation before the one owned close',async()=>{
   const f=await fixture();try{
@@ -589,6 +611,7 @@ test('the independently owned fallback probe also confirms disappearance and acc
 test('a driver new-tab allocation crossing its deadline or fatal boundary is owned and closed before refusal',async()=>{
   for(const mode of ['deadline','fatal']){
     const f=await fixture();let allocated,allocatedReads=0;
+    await f.worker.checkpoint();f.events.length=0;
     const create=f.browser.tabs.new;
     f.browser.tabs.new=async()=>{
       allocated=await create();
@@ -627,11 +650,11 @@ test('a fresh-probe allocation crossing its scope is registered before failure c
       return allocated;
     };
     try{
-      await assert.rejects(f.worker.probe({deadline}),mode==='duplicate'?{code:'platform_chrome_worker_ambiguous_tab'}:
+      await assert.rejects(f.worker.sdkGate.inContext(()=>f.worker.probe({deadline})),mode==='duplicate'?{code:'platform_chrome_worker_ambiguous_tab'}:
         mode==='deadline'?{code:'platform_chrome_worker_invalid_challenge'}:{code:'platform_chrome_worker_unavailable'});
       if(mode==='duplicate')assert.equal(f.worker.fallbackProbeTab,undefined);
       else assert.equal(f.worker.fallbackProbeTab.id,allocated.id);
-      await f.worker.finish();
+      await f.worker.sdkGate.inContext(()=>f.worker.finish());
       assert.equal(f.events.filter(row=>row[0]==='close'&&row[1]===allocated.id).length,mode==='duplicate'?0:1);
       assert.ok(!f.events.some(row=>row[0]==='close'&&row[1]==='original'));
       assert.equal(f.events.filter(row=>row[0]==='goto').length,0);
@@ -891,6 +914,37 @@ test('only a newly selected target popup is claimed with its fresh public object
     await tab.close();assert.equal(f.events.filter(row=>row[0]==='close'&&row[1]==='sdk-popup').length,1);
   }finally{await f.cleanup();}
 });
+test('a draft page that renames itself while loading is still claimed once by url and provider identity',async()=>{
+  const f=await fixture();try{
+    const url='https://fanqienovel.com/main/writer/10/publish/99?enter_from=newdraft';
+    let visible=0,claimed=false,opened=false;const popup=f.makeTab(url,'sdk-popup');
+    f.browser.tabs.list=async()=>claimed?[{id:'sdk-popup',url}]:[];
+    f.browser.user.openTabs=async()=>{if(!opened)return [];visible++;
+      return [{id:'user-popup',providerTabId:'provider-popup',url,title:visible>1?'第 12 章 验收':'加载页'}];};
+    f.browser.user.claimTab=async item=>{assert.equal(item.url,url);assert.equal(item.title,'第 12 章 验收');
+      claimed=true;f.events.push(['claim',item]);return popup;};
+    const api=chromeDriverAPI(f.browser,{target:f.config.target,sdkScope:()=>({operation:'create_draft'})});
+    assert.deepEqual(await api.listTabs(),[]);opened=true;const before=(await api.listTabs())[0];
+    const tab=await api.getTab(before.id);assert.equal(tab.id,before.id);
+    assert.equal(f.events.filter(row=>row[0]==='claim').length,1);
+    assert.equal((await api.listTabs())[0].id,before.id);
+    await tab.close();assert.equal(f.events.filter(row=>row[0]==='close'&&row[1]==='sdk-popup').length,1);
+  }finally{await f.cleanup();}
+});
+test('a user popup that changed url between listings is never claimed',async()=>{
+  const f=await fixture();try{
+    const url='https://fanqienovel.com/main/writer/10/publish/99?enter_from=newdraft';
+    let visible=0,opened=false;
+    f.browser.tabs.list=async()=>[];
+    f.browser.user.openTabs=async()=>{if(!opened)return [];visible++;
+      return [{id:'user-popup',providerTabId:'provider-popup',title:'t',url:visible>1?'https://example.com/away':url}];};
+    f.browser.user.claimTab=async()=>{f.events.push(['claim']);return f.makeTab(url,'claimed');};
+    const api=chromeDriverAPI(f.browser,{target:f.config.target,sdkScope:()=>({operation:'create_draft'})});
+    await api.listTabs();opened=true;const before=(await api.listTabs())[0];
+    await assert.rejects(api.getTab(before.id),{code:'platform_chrome_worker_ambiguous_tab'});
+    assert.equal(f.events.filter(row=>row[0]==='claim').length,0);
+  }finally{await f.cleanup();}
+});
 test('real driver rejects an unclaimed same-book user editor before preview without claiming or closing it',async()=>{
   const origin='https://fanqienovel.com';
   const editorURL=origin+'/main/writer/10/publish/11/?enter_from=modifydraft';
@@ -922,16 +976,67 @@ test('health requires target management page get and successful DOM snapshot bef
     assert.equal(f.events.filter(row=>row[0]==='documentation').length,1);
     assert.deepEqual(f.events.filter(row=>row[0]==='nameSession'),[['nameSession','📝 番茄草稿']]);
     assert.ok(f.events.filter(row=>row[0]==='snapshot').length>=2);assert.equal(f.events.filter(row=>row[0]==='cli'&&row[1]==='attach').length,1);
-    assert.equal(f.events.filter(row=>row[0]==='new').length,0);
+    assert.equal(f.events.filter(row=>row[0]==='new').length,1);
     await f.worker.stop();assert.equal(f.worker.state,'stopped');assert.equal(f.events.filter(row=>row[0]==='cli'&&row[1]==='detach').length,1);
   }finally{await f.cleanup();}
+});
+test('dedicated health page survives the original user tab returning to the book list',async()=>{
+  const f=await fixture();try{
+    await f.worker.checkpoint();const dedicated=f.worker.fallbackProbeTab;
+    assert.ok(dedicated);assert.notEqual(dedicated.id,'original');assert.equal(f.worker.probeTabId,dedicated.id);
+    assert.equal(f.events.filter(row=>row[0]==='new').length,1);
+    const initialSnapshot=f.events.findIndex(row=>row[0]==='snapshot'&&row[1]==='original');
+    assert.ok(initialSnapshot>=0&&initialSnapshot<f.events.findIndex(row=>row[0]==='new'));
+    const ownership=await readPrivateJSON(path.join(f.run,'worker-ownership-1.json'));
+    assert.deepEqual(ownership.owned_tab_ids,[dedicated.id]);assert.equal(ownership.binding_sha256,BINDING);
+    await f.original.goto('https://fanqienovel.com/main/writer/book-manage');
+    await f.worker.sdkGate.inContext(()=>f.worker.refreshHealth());
+    await f.enqueue();await f.worker.checkpoint();await until(()=>f.worker.processed===1);
+    assert.equal(f.worker.fatalCode,undefined);assert.equal(f.worker.probeTabId,dedicated.id);
+    assert.equal(f.events.filter(row=>row[0]==='new').length,1);
+    await f.worker.stop();const final=await readPrivateJSON(path.join(f.run,'worker-final.json'));
+    assert.equal(final.cleanup_complete,true);assert.equal(final.owned_tabs_remaining,0);
+    assert.ok(f.events.some(row=>row[0]==='close'&&row[1]===dedicated.id));
+    assert.ok(!f.events.some(row=>row[0]==='close'&&row[1]==='original'));
+  }finally{await f.cleanup();}
+});
+test('dedicated health cleanup reports a still-present page instead of claiming zero owned tabs',async()=>{
+  const f=await fixture();try{
+    await f.worker.checkpoint();const probe=await f.browser.tabs.get(f.worker.probeTabId);let clock=Date.now();
+    f.worker.clock=()=>clock;f.worker.sleep=async ms=>{clock+=ms;};
+    probe.close=async()=>f.events.push(['close-unconfirmed',probe.id]);
+    await f.worker.stop();const final=await readPrivateJSON(path.join(f.run,'worker-final.json'));
+    assert.equal(final.cleanup_complete,false);assert.equal(final.owned_tabs_remaining,1);
+    assert.equal(final.state,'failed');assert.ok(!f.events.some(row=>row[0]==='close'&&row[1]==='original'));
+  }finally{await f.cleanup();}
+});
+test('initial identity refusal cannot create a dedicated probe and a failed dedicated navigation is cleaned',async()=>{
+  for(const failure of ['initial_url','initial_permission','dedicated_url','dedicated_permission']){
+    const f=await fixture();let created;
+    if(failure==='initial_url')await f.original.goto('https://fanqienovel.com/main/writer/book-manage');
+    if(failure==='initial_permission')f.original.playwright.domSnapshot=async()=>{throw Object.assign(Error('denied'),{code:'permission_denied'});};
+    const make=f.browser.tabs.new;f.browser.tabs.new=async()=>{
+      created=await make();
+      if(failure==='dedicated_url'){const goto=created.goto;created.goto=()=>goto('https://fanqienovel.com/main/writer/chapter-manage/999&other?type=2');}
+      if(failure==='dedicated_permission')created.playwright.domSnapshot=async()=>{throw Object.assign(Error('denied'),{code:'permission_denied'});};
+      return created;
+    };
+    try{
+      const result=await f.worker.checkpoint();assert.equal(result.done,true);assert.equal(result.state,'failed');
+      assert.equal(f.worker.processed,0);assert.ok(!f.events.some(row=>row[0]==='cli'&&['attach','next','respond'].includes(row[1])));
+      assert.equal(f.events.filter(row=>row[0]==='new').length,failure.startsWith('initial_')?0:1);
+      const final=await readPrivateJSON(path.join(f.run,'worker-final.json'));assert.equal(final.cleanup_complete,true);assert.equal(final.owned_tabs_remaining,0);
+      if(created)assert.ok(f.events.some(row=>row[0]==='close'&&row[1]===created.id));
+      assert.ok(!f.events.some(row=>row[0]==='close'&&row[1]==='original'));
+    }finally{await f.cleanup();}
+  }
 });
 test('first health claims the exact existing target management tab when no agent tab is available',async()=>{
   const f=await fixture({noAgentTabs:true});try{
     await f.worker.checkpoint();await until(()=>f.worker.state==='ready');
-    assert.equal(f.events.filter(row=>row[0]==='claim').length,1);assert.equal(f.events.filter(row=>row[0]==='new'||row[0]==='goto').length,0);
+    assert.equal(f.events.filter(row=>row[0]==='claim').length,1);assert.equal(f.events.filter(row=>row[0]==='new'||row[0]==='goto').length,2);
     assert.ok(f.events.findIndex(row=>row[0]==='nameSession')<f.events.findIndex(row=>row[0]==='claim'));
-    await f.worker.refreshHealth();assert.equal(f.events.filter(row=>row[0]==='claim').length,1,'subsequent probes reuse the checked tab');
+    await f.worker.sdkGate.inContext(()=>f.worker.refreshHealth());assert.equal(f.events.filter(row=>row[0]==='claim').length,1,'subsequent probes use the dedicated page without claiming the user again');
   }finally{await f.cleanup();}
 });
 test('initial stale-tab get claim URL snapshot or empty DOM uses at most one owned read-only fallback',async()=>{
@@ -949,7 +1054,7 @@ test('initial stale-tab get claim URL snapshot or empty DOM uses at most one own
       assert.equal(f.events.filter(row=>row[0]==='new').length,1);
       assert.deepEqual(f.events.filter(row=>row[0]==='goto').map(row=>row[2]),[BOOK_URL]);
       assert.equal(f.worker.probeTabId,fresh.id);assert.equal(f.worker.probeFallbackUsed,true);
-      await f.worker.refreshHealth();assert.equal(f.events.filter(row=>row[0]==='new').length,1);
+      await f.worker.sdkGate.inContext(()=>f.worker.refreshHealth());assert.equal(f.events.filter(row=>row[0]==='new').length,1);
       await f.worker.stop();assert.ok(f.events.some(row=>row[0]==='close'&&row[1]===fresh.id));
       assert.ok(!f.events.some(row=>row[0]==='close'&&row[1]==='original'));
     }finally{await f.cleanup();}
@@ -966,7 +1071,7 @@ test('fresh fallback waits for initial empty DOM and cannot open another tab aft
     await f.worker.checkpoint();await until(()=>f.worker.state==='ready');assert.ok(reads>=3);
     assert.equal(f.events.filter(row=>row[0]==='new').length,1);
     fresh.playwright.domSnapshot=async()=>{throw Error('Debugger unattached');};
-    await assert.rejects(f.worker.refreshHealth());await f.worker.checkpoint();assert.equal(f.worker.done,true);
+    await assert.rejects(f.worker.sdkGate.inContext(()=>f.worker.refreshHealth()));await f.worker.checkpoint();assert.equal(f.worker.done,true);
     assert.equal(f.events.filter(row=>row[0]==='new').length,1);
     assert.ok(f.events.some(row=>row[0]==='close'&&row[1]===fresh.id));assert.ok(!f.events.some(row=>row[0]==='close'&&row[1]==='original'));
   }finally{await f.cleanup();}
@@ -985,7 +1090,7 @@ test('initial fresh probe can become healthy after an exact timeout only when it
     }finally{await f.cleanup();}
   }
 });
-test('fresh probe timeout without arrival or DOM proof keeps the original private diagnostic and never attaches',async()=>{
+test('fresh probe timeout without arrival or DOM proof keeps a bounded private diagnostic and never attaches',async()=>{
   for(const mode of ['not_arrived','empty','dom_failed']){
     const f=await fixture();f.original.playwright.domSnapshot=async()=>'';const create=f.browser.tabs.new;let fresh;
     const now=Date.now;let clock=now();Date.now=()=>clock;
@@ -995,7 +1100,8 @@ test('fresh probe timeout without arrival or DOM proof keeps the original privat
       fresh.goto=async url=>{if(mode!=='not_arrived')await goto(url);else f.events.push(['goto',fresh.id,url]);throw original;};
       fresh.playwright.domSnapshot=async()=>{if(mode==='dom_failed')throw Error('PRIVATE DOM unavailable');clock+=1000;return '';};return fresh;};
     try{const result=await f.worker.checkpoint();assert.equal(result.state,'failed');assert.equal(result.done,true);
-      assert.equal((await readPrivateJSON(path.join(f.run,'worker-bootstrap-error.private.json'))).message,original.message);
+      assert.deepEqual(await readPrivateJSON(path.join(f.run,'worker-bootstrap-error.private.json')),
+        {schema:1,phase:'existing_tab_probe',code:'platform_chrome_worker_failed',error_name:'Error',error_marker:'none'});
       assert.equal(f.events.filter(row=>row[0]==='new').length,1);assert.equal(f.events.filter(row=>row[0]==='goto').length,1);
       assert.ok(!f.events.some(row=>row[0]==='cli'));assert.ok(f.events.some(row=>row[0]==='close'&&row[1]===fresh.id));
       assert.ok(!f.events.some(row=>row[0]==='close'&&row[1]==='original'));
@@ -1175,7 +1281,7 @@ test('bootstrap SDK and probe errors are bounded private and synced before clean
     if(phase==='existing_tab_probe')f.browser.tabs.list=reject;
     const filename=path.join(f.run,'worker-bootstrap-error.private.json'),finish=f.worker.finish.bind(f.worker);let persisted=false;
     f.worker.finish=async()=>{
-      assert.deepEqual(await readPrivateJSON(filename),{schema:1,phase,message:message.slice(0,4096)});
+      assert.deepEqual(await readPrivateJSON(filename),{schema:1,phase,code:'platform_chrome_worker_failed',error_name:'Error',error_marker:'none'});
       if(process.platform!=='win32')assert.equal((await fs.stat(filename)).mode&0o777,0o600);
       persisted=true;return finish();
     };
@@ -1184,6 +1290,33 @@ test('bootstrap SDK and probe errors are bounded private and synced before clean
       assert.equal(result.failure_phase,phase);assert.equal(persisted,true);
       assert.ok(!JSON.stringify(result).includes('PRIVATE'));assert.equal(f.events.filter(row=>row[0]==='cli').length,0);
       assert.equal(f.worker.processed,0);
+    }finally{await f.cleanup();}
+  }
+});
+test('native browser transport closure is a fixed failure without inventory retry or private prose',async()=>{
+  const f=await fixture();let calls=0;
+  f.agent.browsers.list=async()=>{calls++;throw Error('native pipe closed before response');};
+  try{
+    const result=await f.worker.checkpoint();
+    assert.equal(result.done,true);assert.equal(result.state,'failed');assert.equal(result.failure_phase,'browser_inventory');
+    assert.equal(result.code,'platform_chrome_worker_browser_transport_closed');assert.equal(result.error_marker,'native_pipe_closed');
+    assert.equal(calls,1);assert.equal(result.processed,0);
+    assert.equal(f.events.filter(row=>row[0]==='cli').length,0);
+    assert.deepEqual(await readPrivateJSON(path.join(f.run,'worker-bootstrap-error.private.json')),
+      {schema:1,phase:'browser_inventory',code:result.code,error_name:'Error',error_marker:'native_pipe_closed'});
+    await f.worker.checkpoint();assert.equal(calls,1,'a transport error never authorizes an automatic retry');
+  }finally{await f.cleanup();}
+});
+test('native pipe text cannot override a permission denial or persist arbitrary platform codes',async()=>{
+  for(const code of ['permission_denied','platform_chrome_private_token']){
+    const f=await fixture();let calls=0;
+    f.agent.browsers.list=async()=>{calls++;const error=Error(code==='permission_denied'?'native pipe closed before response':'PRIVATE_BODY');error.code=code;throw error;};
+    try{
+      const result=await f.worker.checkpoint();
+      const packet=await readPrivateJSON(path.join(f.run,'worker-bootstrap-error.private.json'));
+      assert.equal(result.done,true);assert.equal(calls,1);
+      assert.equal(packet.code,code==='permission_denied'?'platform_chrome_worker_origin_permission_required':'platform_chrome_worker_failed');
+      assert.ok(!JSON.stringify(packet).includes('private_token'));assert.ok(!JSON.stringify(packet).includes('PRIVATE'));
     }finally{await f.cleanup();}
   }
 });
@@ -1441,7 +1574,7 @@ test('driver diagnostic fields are independently bounded and successful work can
     await f.enqueue('find_drafts');await f.worker.checkpoint();await until(()=>f.worker.processed===1&&f.worker.state==='ready');
     assert.ok(!Object.keys(await f.worker.checkpoint()).some(key=>key.startsWith('driver_')));
     await assert.rejects(fs.lstat(path.join(f.run,'worker-driver-error.json')),{code:'ENOENT'});
-    f.original.playwright.domSnapshot=async()=>{throw Error('Debugger unattached');};f.worker.clock=()=>Date.now()+20000;
+    (await f.browser.tabs.get(f.worker.probeTabId)).playwright.domSnapshot=async()=>{throw Error('Debugger unattached');};f.worker.clock=()=>Date.now()+20000;
     await f.worker.checkpoint();assert.equal(f.worker.done,true);assert.ok(!Object.keys(await f.worker.checkpoint()).some(key=>key.startsWith('driver_')));
   }finally{await f.cleanup();}
 });
@@ -1536,11 +1669,11 @@ test('health loss after ready closes owned tabs detaches and refuses to silently
   };
   try{
     await f.enqueue();await f.worker.checkpoint();await until(()=>f.worker.processed===1);
-    f.original.playwright.domSnapshot=async()=>{throw Error('PRIVATE debugger lost after ready');};
+    (await f.browser.tabs.get(f.worker.probeTabId)).playwright.domSnapshot=async()=>{throw Error('PRIVATE debugger lost after ready');};
     f.worker.clock=()=>Date.now()+20000;
     await f.worker.checkpoint();assert.equal(f.worker.done,true);assert.equal(f.worker.state,'failed');
-    assert.equal(f.worker.probeFallbackUsed,undefined,'an already attached worker never opens a replacement health tab');
-    assert.equal(f.events.filter(row=>row[0]==='new').length,1,'the only new tab belongs to the previously queued operation');
+    assert.equal(f.worker.probeFallbackUsed,true,'an already attached worker never opens a replacement health tab');
+    assert.equal(f.events.filter(row=>row[0]==='new').length,2,'only the dedicated probe and queued operation page were created');
     assert.ok(f.events.some(row=>row[0]==='close'&&row[1]===owned.id));
     assert.ok(!f.events.some(row=>row[0]==='close'&&row[1]==='original'));
     assert.equal(f.events.filter(row=>row[0]==='cli'&&row[1]==='detach').length,1);
@@ -1552,43 +1685,43 @@ test('health loss after ready closes owned tabs detaches and refuses to silently
 test('a changed health tab records bounded private evidence and never grants another health receipt',async()=>{
   for(const mismatch of ['url','handle']){
     const f=await fixture();try{
-      await f.worker.checkpoint();const health=f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length>2).length;
-      if(mismatch==='url')await f.original.goto('https://fanqienovel.com/main/writer/preview/10&99');
+      await f.worker.checkpoint();const probe=await f.browser.tabs.get(f.worker.probeTabId);const health=f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length>2).length;
+      if(mismatch==='url')await probe.goto('https://fanqienovel.com/main/writer/preview/10&99');
       else {const get=f.browser.tabs.get;f.browser.tabs.get=async id=>({...await get(id),id:'changed'});}
-      await assert.rejects(f.worker.refreshHealth(),{code:mismatch==='url'?'platform_chrome_worker_target_tab_changed':'platform_chrome_worker_target_tab_closed'});
+      await assert.rejects(f.worker.sdkGate.inContext(()=>f.worker.refreshHealth()),{code:mismatch==='url'?'platform_chrome_worker_target_tab_changed':'platform_chrome_worker_target_tab_closed'});
       const filename=path.join(f.run,'worker-probe-error.private.json'),proof=await readPrivateJSON(filename);
-      assert.equal(proof.expected_tab_id,'original');assert.equal(proof.expected_url,BOOK_URL);
-      assert.equal(proof.observed_tab_id,mismatch==='url'?'original':'changed');
+      assert.equal(proof.expected_tab_id,probe.id);assert.equal(proof.expected_url,BOOK_URL);
+      assert.equal(proof.observed_tab_id,mismatch==='url'?probe.id:'changed');
       assert.equal(proof.observed_url,mismatch==='url'?'https://fanqienovel.com/main/writer/preview/10&99':null);
       assert.equal(proof.attached,true);assert.equal(proof.listed,true);
       if(process.platform!=='win32')assert.equal((await fs.stat(filename)).mode&0o777,0o600);
       assert.equal(f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length>2).length,health);
       const result=await f.worker.checkpoint();assert.equal(result.state,'failed');
-      assert.ok(!JSON.stringify(result).includes('https:'));assert.equal(f.events.filter(row=>row[0]==='new').length,0);
+      assert.ok(!JSON.stringify(result).includes('https:'));assert.equal(f.events.filter(row=>row[0]==='new').length,1);
     }finally{await f.cleanup();}
   }
 });
 test('health retries only an exact transient snapshot timeout while pinning the same URL',async()=>{
   for(const mode of ['recover','repeat','denied','changed']){
     const f=await fixture();try{
-      await f.worker.checkpoint();let calls=0;const snapshot=f.original.playwright.domSnapshot;
-      f.original.playwright.domSnapshot=async()=>{
+      await f.worker.checkpoint();const probe=await f.browser.tabs.get(f.worker.probeTabId);let calls=0;const snapshot=probe.playwright.domSnapshot;
+      probe.playwright.domSnapshot=async()=>{
         calls++;
         if(mode==='recover'&&calls===2)return snapshot();
-        if(mode==='changed')await f.original.goto('https://fanqienovel.com/main/writer/preview/10&99');
+        if(mode==='changed')await probe.goto('https://fanqienovel.com/main/writer/preview/10&99');
         throw Object.assign(Error('Timed out after 3000ms waiting for CDP command Runtime.evaluate.'),
           mode==='denied'?{code:'permission_denied'}:{});
       };
-      if(mode==='recover')await f.worker.refreshHealth();
+      if(mode==='recover')await f.worker.sdkGate.inContext(()=>f.worker.refreshHealth());
       else{
-        await assert.rejects(f.worker.refreshHealth());
+        await assert.rejects(f.worker.sdkGate.inContext(()=>f.worker.refreshHealth()));
         const filename=path.join(f.run,'worker-health-error.private.json'),proof=await readPrivateJSON(filename);
         assert.equal(proof.phase,'existing_tab_probe');
         assert.ok(['dom_snapshot','retry_dom_snapshot','retry_url'].includes(proof.step));
         if(process.platform!=='win32')assert.equal((await fs.stat(filename)).mode&0o777,0o600);
       }
       assert.equal(calls,['recover','repeat'].includes(mode)?2:1);
-      assert.equal(f.events.filter(row=>row[0]==='new').length,0);
+      assert.equal(f.events.filter(row=>row[0]==='new').length,1);
     }finally{await f.cleanup();}
   }
 });
@@ -1649,6 +1782,7 @@ test('long operations renew health within the active call and drain an in-flight
     if(holdHealth)await new Promise(resolve=>{releaseHealth=resolve;});
     return snapshot();
   };
+  const create=f.browser.tabs.new;f.browser.tabs.new=async()=>{const tab=await create();tab.playwright.domSnapshot=f.original.playwright.domSnapshot;return tab;};
   f.driver.executeChromeBridgeRequest=async(_api,request)=>{
     executions++;await new Promise(resolve=>{releaseOperation=resolve;});
     return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:[]};
@@ -1747,7 +1881,7 @@ test('a previously verified readback is never marked or kept after health loss f
       assert.equal(f.events.filter(row=>row[0]==='screenshot').length,1);
       assert.equal(f.events.filter(row=>row[0]==='deliverable').length,0,'per-chapter success is not terminal batch approval');
       if(failure==='health'){
-        f.original.playwright.domSnapshot=async()=>{throw Error('Debugger unattached');};f.worker.clock=()=>Date.now()+20000;
+        (await f.browser.tabs.get(f.worker.probeTabId)).playwright.domSnapshot=async()=>{throw Error('Debugger unattached');};f.worker.clock=()=>Date.now()+20000;
       }else{options.respondFails=failure==='respond';await f.enqueue('read_draft',{remote_id:'100'});}
       await f.worker.checkpoint();assert.equal(f.worker.done,true);assert.equal(f.worker.state,'failed');
       for(const tab of owned)assert.ok(f.events.some(row=>row[0]==='close'&&row[1]===tab.id));
@@ -1847,10 +1981,318 @@ test('actual worker private JSON read and initialization succeed in a module rea
 test('closed target health tab has a specific stop cause without navigating or retrying',async()=>{
  const f=await fixture();try{
   await f.worker.checkpoint();const count=f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length>2).length;
+  const boundary=f.events.length,probeId=f.worker.probeTabId;
   f.browser.tabs.list=async()=>[];f.browser.tabs.get=async()=>{throw Error('No tab');};
-  await assert.rejects(f.worker.refreshHealth(),{code:'platform_chrome_worker_target_tab_closed'});
+  await assert.rejects(f.worker.sdkGate.inContext(()=>f.worker.refreshHealth()),{code:'platform_chrome_worker_target_tab_closed'});
   const result=await f.worker.checkpoint();assert.equal(result.code,'platform_chrome_worker_target_tab_closed');
   assert.equal(f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length>2).length,count);
-  assert.ok(!f.events.some(row=>['new','goto','close'].includes(row[0])));
+  assert.ok(!f.events.slice(boundary).some(row=>['new','goto'].includes(row[0])));
+  assert.ok(f.events.slice(boundary).filter(row=>row[0]==='close').every(row=>row[1]===probeId));
  }finally{await f.cleanup();}
+});
+
+test('long SDK work yields only at completed-call boundaries and resumes the same claimed stack',async()=>{
+  const f=await fixture();let now=Date.now(),toolActive=false,inflight=0,reads=0,executions=0;
+  f.worker.clock=()=>now;f.worker.sleep=async ms=>{now+=ms;await sleep(1);};
+  const create=f.browser.tabs.new;
+  f.browser.tabs.new=async()=>{const tab=await create();if(!f.worker.api)return tab;tab.playwright.domSnapshot=async()=>{
+    assert.equal(toolActive,true);inflight++;await sleep(1);now+=400;reads++;inflight--;return 'visible';};return tab;};
+  f.driver.executeChromeBridgeRequest=async(api,request)=>{
+    executions++;const tab=await api.newTab(BOOK_URL,{readOnly:true,target:f.config.target});
+    for(let index=0;index<8;index++)await tab.getAXState();
+    return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:[]};
+  };
+  const checkpoint=async()=>{toolActive=true;try{return await f.worker.checkpoint();}finally{toolActive=false;}};
+  try{
+    await f.enqueue('find_drafts');let result=await checkpoint();
+    assert.equal(result.done,false);assert.equal(result.state,'busy');assert.ok(f.worker.pausedCall);assert.equal(inflight,0);
+    const count=reads;await sleep(10);assert.equal(reads,count,'parked continuation must not run outside a tool call');
+    for(let slice=0;f.worker.pendingClaim&&slice<10;slice++){result=await checkpoint();assert.equal(inflight,0);}
+    assert.equal(f.worker.pendingClaim,null);assert.equal(executions,1);assert.equal(f.worker.consumed.size,1);
+    assert.equal(reads,8);assert.equal(f.responses.length,1);assert.equal(result.processed,1);
+    toolActive=true;await f.worker.stop();toolActive=false;
+    const final=await readPrivateJSON(path.join(f.run,'worker-final.json'));
+    assert.equal(final.cleanup_complete,true);assert.equal(final.attached,true);assert.equal(final.owned_tabs_remaining,0);
+    const metadata=(await fs.readdir(f.run)).filter(name=>/^worker-progress-/.test(name));assert.ok(metadata.length>0&&metadata.length<=64);
+    for(const name of metadata)assert.ok(!JSON.stringify(await readPrivateJSON(path.join(f.run,name))).includes('visible'));
+    const ownership=(await fs.readdir(f.run)).filter(name=>/^worker-ownership-/.test(name));assert.equal(ownership.length,2);
+    for(const name of ownership)assert.ok(!(await readPrivateJSON(path.join(f.run,name))).owned_tab_ids.includes('original'));
+  }finally{toolActive=true;await f.cleanup();}
+});
+
+test('an active claim longer than the idle budget stays busy across checkpoints and becomes idle only after completion',async()=>{
+  const f=await fixture();let now=Date.now(),reads=0,executions=0;
+  f.worker.clock=()=>now;f.worker.sleep=async ms=>{now+=ms;await sleep(1);};
+  const command=f.worker.command;
+  f.worker.command=async(action,args)=>{
+    const packet=await command(action,args);
+    if(action==='health'&&!args?.length)packet.challenge.deadline_epoch=now/1000+30;
+    return packet;
+  };
+  f.original.playwright.locator=()=>({count:async()=>{reads++;now+=40000;return 1;}});
+  f.driver.executeChromeBridgeRequest=async(api,request)=>{
+    executions++;const tab=await api.getTab('original');
+    for(let index=0;index<5;index++)await tab.playwright.locator('synthetic').count();
+    return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:[]};
+  };
+  try{
+    await f.enqueue('find_drafts');let result;
+    for(let slice=0;slice<10;slice++){
+      result=await f.worker.checkpoint();
+      assert.equal(result.done,false);
+      if(!f.worker.pendingClaim)break;
+      assert.equal(result.state,'busy','elapsed time in an active operation is not queue idleness');
+      assert.equal(result.processed,0);
+    }
+    assert.equal(f.worker.pendingClaim,null);assert.equal(reads,5);assert.equal(executions,1);
+    assert.equal(f.responses.length,1);assert.equal(f.worker.consumed.size,1);assert.equal(result.processed,1);
+    assert.equal(result.state,'ready');
+    now+=121000;const idle=await f.worker.checkpoint();
+    assert.equal(idle.done,true);assert.equal(idle.state,'idle_timeout');
+    assert.equal(executions,1);assert.equal(f.responses.length,1);
+  }finally{await f.cleanup();}
+});
+
+test('resume health refusal settles a parked request before cleanup without replay or a hanging stop',async()=>{
+  const f=await fixture();let now=Date.now(),executions=0,second=0;
+  f.worker.clock=()=>now;f.worker.sleep=async ms=>{now+=ms;await sleep(1);};
+  f.driver.executeChromeBridgeRequest=async(api,request)=>{
+    executions++;const tab=await api.newTab(BOOK_URL,{readOnly:true,target:f.config.target});
+    now+=2000;await tab.getAXState();second++;
+    return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:[]};
+  };
+  try{
+    await f.enqueue('find_drafts');const first=await f.worker.checkpoint();assert.equal(first.state,'busy');assert.ok(f.worker.pausedCall);
+    const refresh=f.worker.refreshHealth.bind(f.worker);f.worker.refreshHealth=async()=>{throw Error('PRIVATE refusal');};
+    const result=await f.worker.checkpoint();assert.equal(result.done,true);assert.equal(result.state,'failed');
+    assert.equal(f.worker.pendingClaim,null);assert.equal(f.worker.pausedCall,null);assert.equal(second,0);assert.equal(executions,1);
+    f.worker.refreshHealth=refresh;await f.worker.stop();await f.worker.checkpoint();assert.equal(executions,1);
+  }finally{await f.cleanup();}
+});
+
+test('a resumed mutation performs each SDK action once and stop finishes the consumed request before cleanup',async()=>{
+  const f=await fixture();let now=Date.now(),clicks=0,executions=0;
+  f.worker.clock=()=>now;f.worker.sleep=async ms=>{now+=ms;await sleep(1);};
+  const create=f.browser.tabs.new;
+  f.browser.tabs.new=async()=>{const tab=await create();tab.playwright.locator=()=>({click:async()=>{clicks++;now+=1200;}});return tab;};
+  f.driver.executeChromeBridgeRequest=async(api,request)=>{
+    executions++;const tab=await api.newTab(BOOK_URL,{readOnly:true,target:f.config.target});
+    await tab.playwright.locator('synthetic').click();await tab.playwright.locator('synthetic').click();
+    return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:'99'};
+  };
+  try{
+    await f.enqueue('update_draft');await f.worker.checkpoint();assert.ok(f.worker.pendingClaim);assert.equal(clicks,1);
+    await f.worker.stop();assert.equal(f.worker.done,true);assert.equal(f.worker.state,'stopped');
+    assert.equal(clicks,2);assert.equal(executions,1);assert.equal(f.responses.length,1);assert.equal(f.worker.processed,1);
+  }finally{await f.cleanup();}
+});
+
+test('checkpoint pump invokes all SDK work in the fresh tool context while a claimed driver retains its old async context',async()=>{
+  const f=await fixture(),contexts=new AsyncLocalStorage();let epoch=0,activeEpoch=null,now=Date.now(),active=0,maximum=0,executions=0,clicks=0;
+  const calls=[],driverContexts=[],tabs=new Map([['original',f.original]]);
+  f.worker.clock=()=>now;f.worker.sleep=async ms=>{now+=ms;await sleep(1);};
+  const verifyContext=name=>{
+    assert.notEqual(activeEpoch,null,'SDK cannot run between tools: '+name);
+    assert.equal(contexts.getStore(),activeEpoch,'stale exec context at '+name);
+    calls.push({name,epoch:activeEpoch});
+  };
+  const observed=(name,fn)=>async(...args)=>{
+    verifyContext(name);active++;maximum=Math.max(maximum,active);
+    try{await sleep(1);const value=await fn(...args);assert.equal(contexts.getStore(),activeEpoch);return value;}
+    finally{active--;}
+  };
+  const nativeLocator=()=>{
+    const result={};
+    for(const name of ['locator','nth'])result[name]=()=>{verifyContext('builder.'+name);return nativeLocator();};
+    result.count=observed('locator.count',async()=>{now+=400;return 1;});
+    result.click=observed('locator.click',async()=>{clicks++;now+=1200;});
+    return result;
+  };
+  const decorateTab=tab=>{
+    for(const name of ['url','goto','reload','close','markDeliverable','screenshot']){
+      const original=tab[name];tab[name]=observed('tab.'+name,original);
+    }
+    tab.playwright.domSnapshot=observed('tab.snapshot',async()=>{f.events.push(['snapshot',tab.id]);now+=400;return 'visible';});
+    tab.playwright.evaluate=observed('tab.evaluate',tab.playwright.evaluate);
+    for(const name of ['locator','getByRole'])tab.playwright[name]=()=>{verifyContext('builder.'+name);return nativeLocator();};
+    for(const name of ['paste','scroll'])tab.ax[name]=observed('ax.'+name,tab.ax[name]);
+    return tab;
+  };
+  decorateTab(f.original);
+  f.browser.tabs.list=observed('tabs.list',async()=>[...tabs.keys()].map(id=>({id,url:BOOK_URL})));
+  f.browser.tabs.get=observed('tabs.get',async id=>tabs.get(id));
+  const create=f.browser.tabs.new;
+  f.browser.tabs.new=observed('tabs.new',async()=>{
+    const tab=decorateTab(await create()),close=tab.close;
+    // Remove from the synthetic inventory when the one real close completes.
+    tab.close=async()=>{await close();tabs.delete(tab.id);};tabs.set(tab.id,tab);return tab;
+  });
+  for(const name of ['documentation','nameSession'])f.browser[name]=observed('browser.'+name,f.browser[name]);
+  for(const name of ['openTabs','claimTab'])f.browser.user[name]=observed('user.'+name,f.browser.user[name]);
+  for(const name of ['list','get'])f.agent.browsers[name]=observed('inventory.'+name,f.agent.browsers[name]);
+  f.driver.executeChromeBridgeRequest=async(api,request)=>{
+    executions++;const tab=await api.newTab(BOOK_URL,{readOnly:true,target:f.config.target});
+    const locator=tab.playwright.getByRole('textbox').nth(0).locator('p');
+    for(let index=0;index<6;index++){driverContexts.push(contexts.getStore());await locator.count();}
+    await locator.click();await locator.click();
+    return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:'99'};
+  };
+  const tool=async action=>{
+    activeEpoch=++epoch;
+    try{return await contexts.run(activeEpoch,action);}
+    finally{assert.equal(active,0,'no SDK remains in flight at tool return');activeEpoch=null;}
+  };
+  try{
+    await f.enqueue('update_draft');let result=await tool(()=>f.worker.checkpoint());
+    assert.equal(result.state,'busy');assert.ok(f.worker.pausedCall);assert.equal(f.worker.sdkGate.contextActive,false);
+    const pausedCalls=calls.length;await sleep(15);assert.equal(calls.length,pausedCalls);
+    for(let slice=0;f.worker.pendingClaim&&slice<12;slice++)result=await tool(()=>f.worker.checkpoint());
+    assert.equal(f.worker.pendingClaim,null);assert.equal(executions,1);assert.equal(f.worker.consumed.size,1);
+    assert.equal(f.responses.length,1);assert.equal(clicks,2);assert.equal(maximum,1);
+    assert.ok(epoch>=3,'the same operation spans multiple expired tool contexts');
+    assert.deepEqual([...new Set(driverContexts)],[1],'retained driver stack deliberately keeps the first tool context');
+    assert.ok(new Set(calls.filter(call=>call.name==='locator.count').map(call=>call.epoch)).size>1);
+    assert.ok(calls.some(call=>call.name==='inventory.list'&&call.epoch>1),'resume health uses a fresh context');
+    await tool(()=>f.worker.stop());
+    assert.equal(calls.filter(call=>call.name==='tab.close').length,2);assert.ok(calls.filter(call=>call.name==='tab.close').every(call=>call.epoch===epoch));
+    assert.equal(f.worker.sdkGate.jobs.length,0);assert.equal(f.worker.sdkGate.contextActive,false);
+    const final=await readPrivateJSON(path.join(f.run,'worker-final.json'));assert.equal(final.cleanup_complete,true);
+  }finally{await tool(()=>f.cleanup());}
+});
+
+test('worker SDK gate refuses execution outside an explicit checkpoint context',async()=>{
+  const f=await fixture();try{
+    const api=chromeDriverAPI(f.browser,{sdkGate:f.worker.sdkGate});
+    await assert.rejects(api.getTab('original'),{code:'platform_chrome_worker_checkpoint_required'});
+    assert.ok(!f.events.some(row=>row[0]==='get'));
+    const tab=await f.worker.sdkGate.inContext(()=>api.getTab('original'));assert.equal(tab.id,'original');
+  }finally{await f.cleanup();}
+});
+
+test('stop in a new tool context settles the parked mutation once and cleans in that same context',async()=>{
+  const f=await fixture(),contexts=new AsyncLocalStorage();let now=Date.now(),activeEpoch=1,clicks=0,closed=0,executions=0;
+  f.worker.clock=()=>now;f.worker.sleep=async ms=>{now+=ms;await sleep(1);};
+  const create=f.browser.tabs.new;
+  f.browser.tabs.new=async()=>{
+    assert.equal(contexts.getStore(),activeEpoch);const tab=await create(),close=tab.close;
+    tab.playwright.locator=()=>{
+      assert.equal(contexts.getStore(),activeEpoch);
+      return {click:async()=>{assert.equal(contexts.getStore(),activeEpoch);clicks++;now+=1200;}};
+    };
+    tab.close=async()=>{assert.equal(contexts.getStore(),activeEpoch);closed++;return close();};return tab;
+  };
+  f.driver.executeChromeBridgeRequest=async(api,request)=>{
+    executions++;const tab=await api.newTab(BOOK_URL,{readOnly:true,target:f.config.target}),control=tab.playwright.locator('synthetic');
+    await control.click();await control.click();
+    return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:'99'};
+  };
+  try{
+    await f.enqueue('update_draft');await contexts.run(activeEpoch,()=>f.worker.checkpoint());
+    assert.ok(f.worker.pendingClaim);assert.equal(clicks,1);activeEpoch=2;
+    await contexts.run(activeEpoch,()=>f.worker.stop());
+    assert.equal(f.worker.done,true);assert.equal(f.worker.state,'stopped');assert.equal(executions,1);
+    assert.equal(clicks,2);assert.equal(closed,2);assert.equal(f.responses.length,1);assert.equal(f.worker.sdkGate.jobs.length,0);
+    assert.equal((await readPrivateJSON(path.join(f.run,'worker-final.json'))).cleanup_complete,true);
+  }finally{await contexts.run(activeEpoch,()=>f.cleanup());}
+});
+
+test('bounded observations yield before and after the window while tool gaps never consume its local deadline',async()=>{
+  const f=await fixture(),contexts=new AsyncLocalStorage();let now=Date.now(),epoch=0,entered=false,finished=false,reads=0;
+  const readEpochs=[],originalCommand=f.worker.command;
+  f.worker.clock=()=>now;f.worker.sleep=async ms=>{now+=ms;await sleep(1);};
+  f.worker.command=async(action,args)=>{
+    const packet=await originalCommand(action,args);
+    if(action==='health'&&!args?.length)packet.challenge.deadline_epoch=now/1000+30;
+    return packet;
+  };
+  f.driver.executeChromeBridgeRequest=async(api,request)=>{
+    const tab=await api.getTab('original');now+=2000;
+    await api.boundedObservation(async()=>{
+      entered=true;const deadline=now+5000;
+      for(let index=0;index<3;index++){
+        await tab.playwright.locator('synthetic').count();assert.ok(now<deadline);
+      }
+      finished=true;
+    });
+    await tab.playwright.locator('synthetic').count();
+    return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:[]};
+  };
+  f.original.playwright.locator=()=>({count:async()=>{reads++;readEpochs.push(contexts.getStore());now+=700;return 1;}});
+  const checkpoint=()=>contexts.run(++epoch,()=>f.worker.checkpoint());
+  try{
+    const claim=await f.enqueue('find_drafts'),deadline=(await readPrivateJSON(claim.request_path)).deadline;
+    await checkpoint();assert.equal(entered,false);assert.equal(reads,0);assert.ok(f.worker.pausedCall);
+    now+=52850;await checkpoint();
+    assert.equal(entered,true);assert.equal(finished,true);assert.equal(reads,3);assert.deepEqual(readEpochs,[2,2,2]);
+    assert.ok(f.worker.pausedCall,'ordinary yield resumes immediately after the bounded window');
+    assert.equal(f.worker.sdkGate.observationDepth,0);
+    now+=52850;await checkpoint();assert.equal(reads,4);assert.equal(f.responses.length,1);assert.equal(f.worker.pendingClaim,null);
+    assert.equal((await readPrivateJSON(claim.request_path)).deadline,deadline,'global request deadline was not extended');
+  }finally{await contexts.run(++epoch,()=>f.cleanup());}
+});
+
+test('bounded observations preserve actual local expiry original request deadline and fatal checks',async()=>{
+  for(const mode of ['local_expiry','request_expiry','fatal']){
+    const f=await fixture();let now=Date.now(),reads=0,entered=false;
+    f.worker.clock=()=>now;f.worker.sleep=async ms=>{now+=ms;await sleep(1);};
+    f.original.playwright.locator=()=>({count:async()=>{
+      reads++;now+=3000;
+      if(mode==='fatal')f.worker.recordFailure(Object.assign(Error('synthetic fatal'),{code:'platform_chrome_worker_unavailable'}));
+      return 1;
+    }});
+    f.driver.executeChromeBridgeRequest=async(api,request)=>{
+      const tab=await api.getTab('original');
+      await api.boundedObservation(async()=>{
+        entered=true;const deadline=now+5000;
+        for(let index=0;index<3;index++){
+          await tab.playwright.locator('synthetic').count();
+          if(now>=deadline)throw Object.assign(Error('expired local observation'),{code:'platform_browser_navigation_timeout'});
+        }
+      });
+      throw Error('an expired observation cannot reach this point');
+    };
+    try{
+      const claim=await f.enqueue('find_drafts');
+      if(mode==='request_expiry'){
+        const request=await readPrivateJSON(claim.request_path);request.deadline=new Date(now+2500).toISOString();
+        await fs.writeFile(claim.request_path,JSON.stringify(request));
+      }
+      const result=await f.worker.checkpoint();assert.equal(result.done,true);assert.equal(result.state,'failed');assert.equal(entered,true);
+      assert.equal(reads,mode==='local_expiry'?2:1);assert.equal(f.worker.sdkGate.observationDepth,0);assert.equal(f.responses.length,0);
+      assert.equal(result.code,mode==='local_expiry'?'platform_browser_navigation_timeout':mode==='request_expiry'?'platform_browser_operation_failed':'platform_chrome_worker_unavailable');
+    }finally{await f.cleanup();}
+  }
+});
+
+test('new-tab read-only arrival recovery starts its five-second window after a tool pause and never repeats navigation',async()=>{
+  const f=await fixture();let now=Date.now(),navigations=0,arrivalReads=0,returned=false,owned=null;
+  await f.worker.checkpoint();const probeId=f.worker.probeTabId;
+  const create=f.browser.tabs.new,originalCommand=f.worker.command;
+  f.worker.clock=()=>now;f.worker.sleep=async ms=>{now+=ms;await sleep(1);};
+  f.worker.command=async(action,args)=>{
+    const packet=await originalCommand(action,args);
+    if(action==='health'&&!args?.length)packet.challenge.deadline_epoch=now/1000+30;
+    return packet;
+  };
+  f.browser.tabs.list=async()=>[{id:'original',url:BOOK_URL},...(!f.events.some(row=>row[0]==='close'&&row[1]===probeId)?[{id:probeId,url:BOOK_URL}]:[]),...(owned?[{id:owned.id,url:BOOK_URL}]:[])];
+  f.browser.tabs.new=async()=>{
+    const tab=await create(),goto=tab.goto,url=tab.url,close=tab.close;let arrived=false;owned=tab;
+    tab.close=async()=>{await close();owned=null;};
+    tab.goto=async value=>{navigations++;await goto(value);arrived=true;now+=1200;throw Error('Timed out after 10000ms waiting for CDP command Page.navigate.');};
+    tab.url=async()=>{if(arrived){arrivalReads++;now+=1200;}return url();};
+    tab.playwright.domSnapshot=async()=>{arrivalReads++;now+=1200;return 'visible';};return tab;
+  };
+  f.driver.executeChromeBridgeRequest=async(api,request)=>{
+    const tab=await api.newTab(BOOK_URL,{readOnly:true,target:f.config.target});returned=true;
+    await tab.getAXState();
+    return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:[]};
+  };
+  try{
+    await f.enqueue('find_drafts');await f.worker.checkpoint();assert.equal(navigations,1);assert.equal(arrivalReads,0);
+    assert.equal(returned,false);assert.ok(f.worker.pausedCall);
+    now+=52850;await f.worker.checkpoint();assert.equal(returned,true);assert.equal(arrivalReads,3);
+    assert.ok(f.worker.pausedCall,'the first ordinary read after arrival can pause again');
+    now+=52850;await f.worker.checkpoint();assert.equal(f.responses.length,1);assert.equal(navigations,1);assert.equal(arrivalReads,4);
+    assert.equal(f.worker.sdkGate.observationDepth,0);
+  }finally{await f.cleanup();}
 });

@@ -28,7 +28,7 @@ handler=async(action,payload)=>{
 withFormal();await platformDraftOpen();const p=platformDraftPanel;await p.run.onclick();
 assert.equal(starts().length,1);assert.equal(starts()[0].payload.inspect_only,true);
 assert.equal(starts()[0].payload.sync_drafts,false);
-assert.equal(p.run.textContent,'确认同步这些变更');assert.equal(p.run.disabled,false);
+assert.equal(p.run.textContent,'确认同步 2 章');assert.equal(p.run.disabled,false);
 assert.ok(textTree(p.results).includes('平台章名'));assert.ok(textTree(p.results).includes('-旧正文'));
 assert.ok(p.progressLabel.textContent.includes('未写入平台'));
 await p.run.onclick();assert.equal(starts().length,2);
@@ -39,7 +39,7 @@ assert.equal(starts()[1].payload.sync_drafts,true);assert.equal(starts()[1].payl
         self.js(self.fixture + r'''
 handler=async(action,payload)=>action.endsWith('/catalog')?catalog([plan()],[inspected()]):preview(payload);
 withFormal();await platformDraftOpen();const p=platformDraftPanel;
-assert.equal(p.inspection.id,'inspection-one');assert.equal(p.run.textContent,'确认同步这些变更');
+assert.equal(p.inspection.id,'inspection-one');assert.equal(p.run.textContent,'确认同步 2 章');
 p.dialog.close();await platformDraftOpen();assert.equal(starts().length,0);
 assert.equal(platformDraftPanel.inspection.id,'inspection-one');
 assert.ok(platformDraftPanel.progressLabel.textContent.includes('差异检查 2 / 2'));
@@ -51,7 +51,7 @@ withFormal();await platformDraftOpen();const p=platformDraftPanel;platformDraftD
 const expiry=timers.get(p.expiryTimer);assert.ok(expiry);expiry.fn();
 assert.equal(p.inspection,null);assert.ok(p.status.textContent.includes('已过期'));
 platformDraftDrawJob(p,inspected());p.refreshEnd.value='3';p.refreshEnd.oninput();
-assert.equal(p.inspection,null);assert.equal(p.run.disabled,true);assert.equal(starts().length,0);
+assert.equal(p.inspection,null);assert.equal(p.run.disabled,false);assert.equal(p.run.textContent,'检查差异');assert.equal(starts().length,0);
 ''')
 
     def test_all_identical_needs_no_write_and_blocked_inspection_explains_chapter(self):

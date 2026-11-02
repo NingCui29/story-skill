@@ -273,6 +273,8 @@ public sealed class MainWindow : Window
             }
             if (snapshot.State.PendingForm)
             { Block(page, "书架还有未提交内容", "请返回书架完成或清空填写内容，或恢复尚未保存的作品状态选择，再重试。"); return null; }
+            if (snapshot.State.PendingTask)
+            { Block(page, "助手任务输入尚未处理", "请重新打开相应任务，核对并保存未提交输入或待核对结果；不再需要的输入可在任务中明确放弃。本次操作已取消。"); return null; }
             snapshots.Add(snapshot);
         }
         return snapshots.ToArray();

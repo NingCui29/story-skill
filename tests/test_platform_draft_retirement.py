@@ -146,6 +146,10 @@ class DeletedDraftRetirementTests(unittest.TestCase):
         self.assert_invalid(packet)
         self.assertEqual(self.originals(), before)
         self.assertEqual(self.case.adapter.created, 0)
+        with bridge._directory(self.book.root, "2" * 32) as directory, bridge._lock(directory):
+            bridge._write(directory, "claimed-" + "4" * 32 + ".json", {"operation": "resume_empty_draft"}, replace=True)
+        self.assert_invalid(packet)
+        self.assertEqual(self.case.adapter.created, 0)
 
     def test_dry_run_and_explicit_acknowledgement_do_not_change_any_history(self):
         packet = self.packet(); before = self.originals()

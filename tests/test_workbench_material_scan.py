@@ -73,7 +73,7 @@ class WorkbenchMaterialScanTests(unittest.TestCase):
         script = page.split('<script>', 1)[1].split('</script>', 1)[0]
         source = script[script.index('async function catalog('):script.index('async function recover(')]
         self.ui(r"""
-const elements={},$=id=>elements[id]||(elements[id]={value:'',hidden:false,disabled:false,textContent:'',
+const elements={},$=id=>elements[id]||(elements[id]={value:'',hidden:false,disabled:false,textContent:'',dataset:{},
  parentElement:{scrollTop:19},querySelectorAll:()=>[],replaceChildren(){}});
 let active='formal:1',loading=false,reloadPending=false,pendingFocus=false,currentCatalog=null;
 let viewMode='chapters',offset=0,queryTimer=null;

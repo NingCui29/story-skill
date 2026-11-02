@@ -11,10 +11,12 @@ import difflib
 import hashlib
 import hmac
 import json
+import math
 import os
 from pathlib import Path
 import re
 import secrets
+import shlex
 import stat
 import sys
 import threading
@@ -23,7 +25,7 @@ import uuid
 from urllib.parse import urlsplit
 
 
-COMMANDS = {"publish-draft-run", "publish-draft-status"}
+COMMANDS = {"publish-draft-run", "publish-draft-status", "publish-draft-assist-run"}
 DIRECTORY = ".story/platform-drafts"
 MAX_EVENTS = 10000
 MAX_EVENT_BYTES = 16384
@@ -51,6 +53,14 @@ _WORKBENCH_LOCK = threading.RLock()
 _WORKBENCH_JOBS = {}
 _WORKBENCH_BINDINGS = {}
 _PREVIEW_SECRET = secrets.token_bytes(32)
+ASSISTANT_DIRECTORY = ".story/platform-assistant-tasks"
+ASSISTANT_SECONDS = 600
+_ASSISTANT_MODES = {"inspect_drafts", "reconcile_only", "sync_drafts"}
+_ASSISTANT_STATES = {"prepared", "running", "inspection_ready", "inspection_blocked", "succeeded",
+                     "unknown", "failed", "cancelled", "stopped", "interrupted", "expired", "partial_failure"}
+_ASSISTANT_STAGES = {"awaiting_assistant", "connecting_assistant", "waiting_assistant_bridge", "running_assistant",
+                     "finished", "cleanup_pending", "waiting_login", "waiting_host", "target_verified", "listing_drafts", "saving_draft",
+                     "reading_back", "chapter_started", "chapter_verified", "inspection_started", "inspection_checked"}
 
 
 def inject(core):
@@ -430,7 +440,7 @@ def _retirement_no_active_create(book, target):
                         if not match:
                             continue
                         request = bridge._read(directory, filename)
-                        if request.get("operation") not in {"create_draft", "update_draft"}:
+                        if request.get("operation") not in {"create_draft", "update_draft", "resume_empty_draft"}:
                             continue
                         response = api.publish._bound_stat(api._BoundFile(directory, "response-" + match[1] + ".json"), missing=True)
                         if response is None:
@@ -659,29 +669,42 @@ class _TargetState:
         except Exception:
             api.fail("platform_draft_journal_write_failed", "Could not persist the target-level sending intent")
 
-    def resolve(self, chapter, observed, *, frozen=None, comparison_policy="strict", body_encoding="verbatim", scope=None):
+    def _resolution(self, chapter, observed, *, frozen=None, comparison_policy="strict", body_encoding="verbatim", scope=None):
+        """Read compatible resolution evidence without changing any intent."""
         if observed.get("formatting_clean") is False:
-            return False
+            return None
         intents, resolved = self.attempts(chapter)
         frozen = observed if frozen is None else frozen
         encoded = _encoded_content(frozen, body_encoding, self.platform)
         rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, self.platform)
         if not rendered_exact and not terminal_equivalent:
-            return False
+            return None
         equivalent = _content(frozen) != _content(observed)
         content_hash = _hash(_content(frozen))
         # Do not settle a different, potentially still in-flight version merely
         # because this new plan happens to match the currently visible chapter.
         if any(item["content_sha256"] != content_hash for key, item in intents.items() if key not in resolved):
-            return False
+            return None
         if any(item["schema"] == 2 and {name: item[name] for name in SCOPE_FIELDS} != scope
                for key, item in intents.items() if key not in resolved):
-            return False
+            return None
         if any(item["schema"] == 2 and not _valid_attempt(item, self.platform, frozen)
                for key, item in intents.items() if key not in resolved):
-            return False
+            return None
         if (equivalent or comparison_policy != "strict" or body_encoding != "verbatim") and not _valid_scope(scope):
             api.fail("platform_draft_journal_invalid", "Platform equivalence requires an authorized frozen batch")
+        return intents, resolved, frozen, encoded, rendered_exact, equivalent
+
+    def can_resolve(self, chapter, observed, *, frozen=None, comparison_policy="strict", body_encoding="verbatim", scope=None):
+        return self._resolution(chapter, observed, frozen=frozen, comparison_policy=comparison_policy,
+                                body_encoding=body_encoding, scope=scope) is not None
+
+    def resolve(self, chapter, observed, *, frozen=None, comparison_policy="strict", body_encoding="verbatim", scope=None):
+        evidence = self._resolution(chapter, observed, frozen=frozen, comparison_policy=comparison_policy,
+                                    body_encoding=body_encoding, scope=scope)
+        if evidence is None:
+            return False
+        intents, resolved, frozen, encoded, rendered_exact, equivalent = evidence
         for key, intent in intents.items():
             if key in resolved:
                 continue
@@ -979,6 +1002,196 @@ def _journal(book, plan_id, manifest, fingerprint, create=False):
         api._verify_bound_directory(directory)
 
 
+def _empty_recovery_claim_name(target_hash, chapter, attempt_id):
+    # Deliberately outside the <target>-<chapter>- attempt namespace: ordinary
+    # intent/resolution readers must continue to reject unrecognized records.
+    return f"empty-recovery-{target_hash}-{chapter}-{attempt_id}.claim.json"
+
+
+_ATTRIBUTION_FIELDS = {"schema", "kind", "book_id", "plan_id", "manifest_sha256", "target_sha256",
+                       "chapter", "attempt_id", "remote_id", "sending_sha256", "unknown_sha256",
+                       "authorized_by_user"}
+
+
+def _event_epoch(value):
+    return datetime.fromisoformat(value).timestamp()
+
+
+def _attribution_used(attributed, expected_remote):
+    return (isinstance(attributed, dict) and isinstance(expected_remote, dict) and any(
+        isinstance(value, dict) and value.get("kind") == "empty_draft_recovery" and
+        value.get("remote_id") == attributed.get("remote_id") and isinstance(value.get("candidate"), dict) and
+        value["candidate"].get("attribution_sha256") == attributed.get("sha256")
+        for value in expected_remote.values()))
+
+
+def _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, evidence_path):
+    """Read one private operator attestation of a failed allocation's remote ID.
+
+    The attestation never proves the editor is blank; a live read-only
+    inspection of this exact ID is still required before any claim. It names
+    the one unresolved attempt it attributes and both its sending and unknown
+    event, so it cannot be replayed against another attempt or journal state.
+    """
+    if evidence_path is None:
+        return None
+    path = Path(evidence_path)
+    if not path.is_absolute():
+        api.fail("platform_draft_attribution_invalid", "归属授权必须是绝对路径的私有证据文件。")
+    try:
+        with api.platform_chrome_bridge._pinned(path.parent) as directory:
+            raw = api.platform_chrome_bridge._read(directory, path.name, maximum=16384)
+    except (api.StoryError, OSError, ValueError):
+        api.fail("platform_draft_attribution_invalid", "归属授权证据不可读取或权限不安全。")
+    authorization = raw.get("authorized_by_user") if isinstance(raw, dict) else None
+    now = time.time()
+    if (not isinstance(raw, dict) or set(raw) != _ATTRIBUTION_FIELDS or type(raw.get("schema")) is not int or
+            raw["schema"] != 1 or raw.get("kind") != "operator_attributed_empty_draft" or
+            raw.get("book_id") != book.meta("id") or raw.get("plan_id") != plan_id or
+            raw.get("manifest_sha256") != fingerprint or raw.get("target_sha256") != _hash(_target(manifest)) or
+            type(raw.get("chapter")) is not int or raw["chapter"] < 1 or
+            not _retirement_hex(raw.get("attempt_id"), 32) or
+            not isinstance(raw.get("remote_id"), str) or not re.fullmatch(r"[0-9A-Za-z_-]{1,200}", raw["remote_id"]) or
+            not _retirement_hex(raw.get("sending_sha256")) or not _retirement_hex(raw.get("unknown_sha256")) or
+            not isinstance(authorization, dict) or set(authorization) != {"text", "confirmed_at"} or
+            not isinstance(authorization.get("text"), str) or not 1 <= len(authorization["text"].strip()) <= 2000 or
+            type(authorization.get("confirmed_at")) not in (int, float) or
+            not math.isfinite(authorization["confirmed_at"]) or not 0 < authorization["confirmed_at"] <= now):
+        api.fail("platform_draft_attribution_invalid", "归属授权证据不完整、不安全或不属于本批次。")
+    events = [item for item in journal.events
+              if item["chapter"] == raw["chapter"] and item["attempt_id"] == raw["attempt_id"]]
+    if (len(events) < 2 or events[0]["event"] != "sending" or events[0]["remote_id"] is not None or
+            events[-1]["event"] != "unknown" or events[-1]["remote_id"] is not None or
+            any(item["event"] != "unknown" or item["remote_id"] is not None for item in events[1:]) or
+            _hash(events[0]) != raw["sending_sha256"] or _hash(events[-1]) != raw["unknown_sha256"] or
+            authorization["confirmed_at"] < _event_epoch(events[-1]["at"]) - 1):
+        api.fail("platform_draft_attribution_stale", "归属授权的原始未完成记录已变化或早于授权时间。")
+    return {"chapter": raw["chapter"], "attempt_id": raw["attempt_id"], "remote_id": raw["remote_id"],
+            "sending_sha256": raw["sending_sha256"], "unknown_sha256": raw["unknown_sha256"],
+            "sha256": _hash(raw)}
+
+
+def _empty_recovery_candidate(book, plan_id, manifest, fingerprint, journal, guard, chapter, *,
+                              comparison_policy, body_encoding, attributed=None):
+    """Prove ownership of one failed allocation, never that its editor is empty.
+
+    A caller must independently inspect the exact remote ID, bind that empty
+    observation to a fresh inspection, and recheck it before claiming a write.
+    An unknown write to an existing draft is intentionally ineligible. An
+    allocation that recorded no remote ID is eligible only through the
+    operator's journal-bound attribution, which still requires that live check.
+    """
+    guard()
+    scope = {"book_id": book.meta("id"), "plan_id": plan_id, "manifest_sha256": fingerprint}
+    if (not _valid_scope(scope) or type(chapter) is not int or chapter < 1
+            or journal.directory is None or journal.plan_id != plan_id or journal.fingerprint != fingerprint
+            or journal.book.meta("id") != scope["book_id"] or journal.manifest != manifest
+            or guard.target_hash != _hash(_target(manifest)) or guard.platform != manifest["platform"]):
+        return None
+    frozen = next((item for item in manifest["chapters"] if item["chapter"] == chapter), None)
+    if frozen is None or journal.chapters.get(chapter) != frozen:
+        return None
+    evidence = _attempt_evidence(frozen, comparison_policy, body_encoding, manifest["platform"])
+    intents, resolved = guard.attempts(chapter)
+    unresolved = [item for key, item in intents.items() if key not in resolved]
+    if len(unresolved) != 1:
+        return None
+    intent = unresolved[0]
+    attempt_id = intent["attempt_id"]
+    if (intent["schema"] != 2
+            or {name: intent[name] for name in SCOPE_FIELDS} != scope
+            or {name: intent[name] for name in ATTEMPT_FIELDS} != evidence
+            or not _valid_attempt(intent, manifest["platform"], frozen)):
+        return None
+    events = [item for item in journal.events if item["chapter"] == chapter and item["attempt_id"] == attempt_id]
+    latest = events[-1] if events else None
+    if (len(events) < 2 or latest["event"] != "unknown" or
+            events[0]["event"] != "sending" or events[0]["remote_id"] is not None
+            or any(item["event"] != "unknown" or item["remote_id"] != latest["remote_id"] for item in events[1:])
+            or any(item["schema"] != 2 or _record_attempt_metadata(item) != evidence
+                   or any(item[name] is not None for name in
+                          ("observed_sha256", "title_matches", "body_matches", "rendered_body_matches"))
+                   for item in events)):
+        return None
+    if latest["remote_id"] is None:
+        if (not isinstance(attributed, dict) or attributed.get("chapter") != chapter
+                or attributed.get("attempt_id") != attempt_id
+                or attributed.get("sending_sha256") != _hash(events[0])
+                or attributed.get("unknown_sha256") != _hash(latest)
+                or not _retirement_hex(attributed.get("sha256"))):
+            return None
+        remote_id, attribution_sha256 = attributed["remote_id"], attributed["sha256"]
+    else:
+        # An operator attribution never renames a draft that already identified
+        # itself; that would be a new, unreviewed write target.
+        if attributed is not None:
+            return None
+        remote_id, attribution_sha256 = latest["remote_id"], None
+    # A later connection or read-only empty-state failure may record a blocked
+    # attempt before any write. Its only permitted identity is the original
+    # allocation; it cannot erase that ownership. Other events remain a stop.
+    later = [item for item in journal.events if item["chapter"] == chapter
+             and item["sequence"] > latest["sequence"]]
+    if any(item["event"] != "blocked" or item["attempt_id"] in guard.all_intents
+           or item["schema"] != 2 or _record_attempt_metadata(item) != evidence
+           or item["remote_id"] not in (None, remote_id)
+           or any(item[name] is not None for name in
+                  ("observed_sha256", "title_matches", "body_matches", "rendered_body_matches"))
+           for item in later):
+        return None
+    # A source allocation has exactly one destination. A second intent/event
+    # claiming the same ID is ambiguity, even when the desired content matches.
+    no_write_sequences = {item["sequence"] for item in later}
+    if any(item["remote_id"] == remote_id and item["sequence"] not in no_write_sequences and
+           (item["chapter"] != chapter or item["attempt_id"] != attempt_id) for item in journal.events):
+        return None
+    claim_name = _empty_recovery_claim_name(guard.target_hash, chapter, attempt_id)
+    if api.publish._bound_stat(api._BoundFile(guard.directory, claim_name), missing=True) is not None:
+        return None
+    encoded = _encoded_content(frozen, body_encoding, manifest["platform"])
+    api._verify_bound_directory(journal.directory)
+    guard()
+    return {"schema": 1, "kind": "empty_draft_recovery", **scope, **_target(manifest),
+            "target_sha256": guard.target_hash, "chapter": chapter, "attempt_id": attempt_id,
+            "remote_id": remote_id, "content_sha256": intent["content_sha256"], **evidence,
+            "intent_sha256": _hash(intent), "sending_sha256": _hash(events[0]), "unknown_sha256": _hash(latest),
+            "attribution_sha256": attribution_sha256,
+            "title_sha256": _hash_bytes(_normal(encoded["title"]).encode("utf-8")),
+            "body_sha256": _hash_bytes(_normal(encoded["body"]).encode("utf-8"))}
+
+
+def _claim_empty_recovery(book, plan_id, manifest, fingerprint, journal, guard, chapter, candidate, *,
+                          comparison_policy, body_encoding, recovery_attempt_id, attributed=None):
+    """Consume a fresh, caller-verified empty observation before any remote write.
+
+    Keep the original sending/unknown evidence intact. The immutable claim is
+    never reusable, including after a crash before the subsequent sending event.
+    The target lock must remain held through claim, intent, and browser operation.
+    """
+    guard()
+    if (not _retirement_hex(recovery_attempt_id, 32) or not isinstance(candidate, dict)
+            or recovery_attempt_id == candidate.get("attempt_id") or journal.directory is None):
+        api.fail("platform_draft_empty_recovery_changed", "Empty-draft recovery evidence is no longer usable")
+    # Reopen the committed journal instead of trusting an inspection's in-memory
+    # event snapshot. Target intents and the one-use marker are reread as well.
+    current_journal = _Journal(book, plan_id, manifest, fingerprint, journal.directory)
+    current = _empty_recovery_candidate(book, plan_id, manifest, fingerprint, current_journal, guard, chapter,
+                                       comparison_policy=comparison_policy, body_encoding=body_encoding,
+                                       attributed=attributed)
+    if current is None or current != candidate or recovery_attempt_id in guard.all_intents:
+        api.fail("platform_draft_empty_recovery_changed", "Empty-draft recovery evidence is no longer usable")
+    record = {"schema": 1, "kind": "empty_draft_recovery_claim", "at": _now(),
+              "recovery_attempt_id": recovery_attempt_id, "candidate": current}
+    try:
+        _write_record(guard.directory,
+                      _empty_recovery_claim_name(guard.target_hash, chapter, current["attempt_id"]), record)
+    except Exception:
+        api.fail("platform_draft_journal_write_failed", "Could not persist the one-use empty-draft recovery claim")
+    guard()
+    return {name: current[name] for name in ("schema", "attempt_id", "remote_id", "chapter", "platform",
+                                             "account_id", "remote_book_id", "title_sha256", "body_sha256")}
+
+
 def _observation(raw, remote_id=None):
     if not isinstance(raw, dict) or raw.get("state") != "draft":
         api.fail("platform_draft_invalid_observation", "A complete draft observation is required")
@@ -1055,7 +1268,7 @@ def _packet(plan_id, manifest, plan_status, journal, *, preview=False, remote_ac
             "rendered_chapters": sum(item["rendered"] for item in results),
             "accepted_chapters": sum(item["accepted_this_run"] for item in results),
             "created_chapters": sum(item["accepted_this_run"] and item["reason"] == "new_draft_created" for item in results),
-            "updated_chapters": sum(item["accepted_this_run"] and item["reason"] == "existing_draft_updated" for item in results),
+            "updated_chapters": sum(item["accepted_this_run"] and item["reason"] in {"existing_draft_updated", "empty_draft_recovered"} for item in results),
             "unchanged_chapters": sum(item["accepted_this_run"] and item["state"] in {"reconciled", "reconciled_equivalent"} for item in results),
             "historical_all_title_body_match": all(item["historical_title_body_match"] for item in results),
             "observation_scope": "recorded_history" if not remote_accessed else "this_run_and_recorded_history",
@@ -1089,6 +1302,33 @@ def _remote_signature(observed):
     return _hash({key: observed.get(key) for key in ("remote_id", "title", "body", "state", "formatting_clean")})
 
 
+def _inspection_recovery_plans(book, manifest, pending):
+    """Link pending writes only to locally validated original frozen batches."""
+    grouped = {}
+    for chapter, intent in pending:
+        if intent["schema"] == 2 and intent["book_id"] == book.meta("id"):
+            grouped.setdefault((intent["plan_id"], intent["manifest_sha256"]), []).append((chapter, intent))
+    plans = []
+    for (plan_id, fingerprint), attempts in grouped.items():
+        try:
+            with _checked_plan(book, plan_id, check_source=False) as (original, actual, _):
+                if actual != fingerprint or _target(original) != _target(manifest):
+                    continue
+                chapters = {item["chapter"]: item for item in original["chapters"]}
+                recoverable = sorted({chapter for chapter, intent in attempts if chapter in chapters
+                    and intent["content_sha256"] == _hash(_content(chapters[chapter]))
+                    and _valid_attempt(intent, original["platform"], chapters[chapter])})
+                if recoverable:
+                    plans.append({"book_id": book.meta("id"), "plan_id": plan_id,
+                        "manifest_sha256": actual, "target": _target(original),
+                        "chapters": sorted(chapters), "pending_chapters": recoverable})
+        except (api.StoryError, OSError):
+            # Missing, restored or damaged history is not a trustworthy route.
+            # The inspection remains blocked; no historical intent is changed.
+            continue
+    return sorted(plans, key=lambda item: (item["pending_chapters"][0], item["plan_id"]))
+
+
 def _draft_difference(expected, observed):
     """Bounded, plain-text display only. Equality always uses the entire body."""
     before = observed["body"] if observed else ""
@@ -1105,17 +1345,52 @@ def _draft_difference(expected, observed):
             "body_diff": text[:6000], "diff_truncated": len(text) > 6000}
 
 
+def _inspection_catalog(raw, target):
+    """Validate one complete, target-bound observation; never a persisted cache."""
+    if (not isinstance(raw, dict) or set(raw) != {"target", "complete", "entries", "proof_id"} or
+            raw.get("target") != target or raw.get("complete") is not True or
+            not isinstance(raw.get("entries"), list) or len(raw["entries"]) > 100000):
+        api.fail("platform_draft_invalid_observation", "需要当前目标的完整平台目录。")
+    _identifier(raw["proof_id"], "proof_id")
+    remotes = set()
+    for entry in raw["entries"]:
+        if (not isinstance(entry, dict) or set(entry) != {"chapter", "remote_id", "state"} or
+                not (type(entry.get("chapter")) is int and 1 <= entry["chapter"] <= 1000000 or
+                     entry.get("chapter") is None and entry.get("state") == "draft") or
+                entry.get("state") not in {"draft", "non_draft"}):
+            api.fail("platform_draft_invalid_observation", "平台目录章节信息不完整。")
+        if entry["state"] == "draft":
+            remote = _identifier(entry["remote_id"], "remote_id")
+            if remote in remotes:
+                api.fail("platform_draft_invalid_observation", "平台目录重复列出同一草稿。")
+            remotes.add(remote)
+        elif entry["remote_id"] is not None:
+            api.fail("platform_draft_invalid_observation", "非草稿条目不能作为草稿写入目标。")
+    return raw["entries"]
+
+
+def _catalog_chapter(entries, chapter):
+    found = [entry for entry in entries if entry["chapter"] == chapter]
+    if any(entry["state"] != "draft" for entry in found):
+        api.fail("platform_browser_chapter_exists_not_draft", "该章已在非草稿目录中，不能创建或覆盖。")
+    return found
+
+
 def inspect_plan(book, plan_id, adapter, *, progress=None, stop_requested=None,
-                 comparison_policy="strict", body_encoding=PLATFORM_BODY_ENCODING):
+                 comparison_policy="strict", body_encoding=PLATFORM_BODY_ENCODING, attribution_path=None):
     """Inspect the whole batch without journal writes, editor fills or saves."""
     require_platform_comparison_policy(comparison_policy)
     require_platform_body_encoding(body_encoding)
     with _checked_plan(book, plan_id) as (manifest, fingerprint, _):
         frozen_items = manifest["chapters"]
         encoded = {item["chapter"]: _encoded_content(item, body_encoding, manifest["platform"]) for item in frozen_items}
-    rows, expected_remote = [], {}
+    rows, expected_remote, pending_recovery = [], {}, []
     stopped = False
+    catalog = None
+    empty_recoveries = {}
+    inspect_catalog = getattr(adapter, "inspect_catalog", None)
     with _target_lock(manifest) as guard, _journal(book, plan_id, manifest, fingerprint) as journal:
+        attributed = _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, attribution_path)
         for item in frozen_items:
             if stop_requested and stop_requested():
                 stopped = True
@@ -1129,29 +1404,74 @@ def inspect_plan(book, plan_id, adapter, *, progress=None, stop_requested=None,
                     if current != fingerprint:
                         api.fail("platform_draft_source_changed", "正式稿在检查期间变化，请重新准备。")
                 guard()
-                adapter.verify_target(**_target(manifest))
-                found = adapter.find_drafts(chapter)
+                if callable(inspect_catalog):
+                    if catalog is None:
+                        adapter.verify_target(**_target(manifest))
+                        catalog = _inspection_catalog(inspect_catalog(), _target(manifest))
+                        unnumbered = [entry for entry in catalog if entry["chapter"] is None]
+                        if unnumbered:
+                            candidates = [_empty_recovery_candidate(book, plan_id, manifest, fingerprint, journal, guard,
+                                item["chapter"], comparison_policy=comparison_policy, body_encoding=body_encoding,
+                                attributed=attributed)
+                                for item in frozen_items]
+                            for entry in unnumbered:
+                                matches = [candidate for candidate in candidates if candidate and candidate["remote_id"] == entry["remote_id"]]
+                                if len(matches) != 1 or not callable(getattr(adapter, "inspect_empty_draft", None)):
+                                    api.fail("platform_browser_unnumbered_draft", "无法确认无章号草稿属于本次未完成的新建操作。")
+                                candidate = matches[0]
+                                if candidate["chapter"] in empty_recoveries or _catalog_chapter(catalog, candidate["chapter"]):
+                                    api.fail("platform_browser_ambiguous_draft", "恢复目标与目录中已有章节冲突。")
+                                empty = adapter.inspect_empty_draft(entry["remote_id"], candidate["chapter"])
+                                api.platform_chrome_bridge._validate_result("inspect_empty_draft", empty, _target(manifest),
+                                                                           {"remote_id": entry["remote_id"]})
+                                empty_recoveries[candidate["chapter"]] = candidate
+                    found = _catalog_chapter(catalog, chapter)
+                else:
+                    adapter.verify_target(**_target(manifest))
+                    found = adapter.find_drafts(chapter)
                 if not isinstance(found, list):
                     api.fail("platform_draft_invalid_observation", "需要完整目录。")
-                if len(found) > 1:
+                if chapter in empty_recoveries:
+                    candidate = empty_recoveries[chapter]
+                    row.update(action="update", reason="resume_empty_draft", remote_id=candidate["remote_id"],
+                               difference=_draft_difference(encoded[chapter], {"title": "", "body": ""}))
+                    expected_remote[str(chapter)] = {"kind": "empty_draft_recovery", "remote_id": candidate["remote_id"],
+                                                     "candidate": candidate}
+                elif len(found) > 1:
                     row["reason"] = "multiple_remote_drafts"
                 elif found:
-                    listed = _observation(found[0])
+                    listed = found[0] if catalog is not None else _observation(found[0])
                     guard()
                     adapter.verify_target(**_target(manifest))
                     observed = _observation(adapter.read_draft(listed["remote_id"]), listed["remote_id"])
                     same = _content(encoded[chapter]) == _content(observed) and observed.get("formatting_clean") is not False
                     intents, resolved = guard.attempts(chapter)
-                    unresolved = any(key not in resolved for key in intents)
+                    unresolved = [intent for key, intent in intents.items() if key not in resolved]
                     row.update(remote_id=observed["remote_id"], action="unchanged" if same else "update",
                                difference=_draft_difference(encoded[chapter], observed))
-                    if unresolved and not same:
+                    # A same-batch lost receipt does not require a separate
+                    # reconciliation pass after this independent full read.
+                    # Inspection remains read-only; sync re-reads this exact ID
+                    # and only then publishes the original resolution records.
+                    current_attempt = _attempt_evidence(item, comparison_policy, body_encoding, manifest["platform"])
+                    unresolved_ids = {intent["attempt_id"] for intent in unresolved}
+                    known_remotes = {event["remote_id"] for event in journal.events
+                                     if event["chapter"] == chapter and event["attempt_id"] in unresolved_ids
+                                     and event["remote_id"] is not None}
+                    compatible = same and all(_record_attempt_metadata(intent) == current_attempt for intent in unresolved)
+                    compatible = compatible and known_remotes <= {observed["remote_id"]} and guard.can_resolve(
+                        chapter, observed, frozen=item, comparison_policy=comparison_policy, body_encoding=body_encoding,
+                        scope={"book_id": book.meta("id"), "plan_id": plan_id, "manifest_sha256": fingerprint})
+                    if unresolved and not compatible:
                         row.update(action="blocked", reason="unresolved_previous_content")
-                    expected_remote[str(chapter)] = _remote_signature(observed)
+                        pending_recovery.extend((chapter, intent) for intent in unresolved)
+                    expected_remote[str(chapter)] = {"remote_id": observed["remote_id"],
+                                                     "signature": _remote_signature(observed)}
                 else:
-                    attempts, _ = guard.attempts(chapter)
+                    attempts, resolved = guard.attempts(chapter)
                     if attempts or journal.may_have_remote(chapter, guard.retired_events(chapter, book.meta("id"), plan_id)):
                         row["reason"] = "previous_attempt_not_found"
+                        pending_recovery.extend((chapter, intent) for key, intent in attempts.items() if key not in resolved)
                     else:
                         row.update(action="create", difference=_draft_difference(encoded[chapter], None))
                         expected_remote[str(chapter)] = None
@@ -1164,22 +1484,33 @@ def inspect_plan(book, plan_id, adapter, *, progress=None, stop_requested=None,
                 progress({"stage": "inspection_checked", "chapter": chapter, "checked_chapters": len(rows)})
         with _checked_plan(book, plan_id, check_source=False):
             reasons, _ = api.publish._source_comparison(book, manifest)
+        recovery_plans = _inspection_recovery_plans(book, manifest, pending_recovery)
     complete = len(rows) == len(frozen_items) and not reasons and not stopped
+    can_execute = complete and all(row["action"] != "blocked" for row in rows)
+    used = attributed is not None and _attribution_used(attributed, expected_remote)
+    if attributed is not None and can_execute and not used:
+        # A supplied authorization that the live catalog did not need must never
+        # authorize a write on the strength of an untouched attribution.
+        api.fail("platform_draft_attribution_unused", "归属授权未能唯一对上目录中的无章号空草稿。")
     return {"id": plan_id, "inspection": True, "remote_accessed": bool(rows), "submission_performed": False,
             "source_matches_current": not reasons, "inspection_complete": complete, "stop_requested": stopped,
-            "can_execute": complete and all(row["action"] != "blocked" for row in rows),
+            "can_execute": can_execute,
             "checked_chapters": len(rows), "total_chapters": len(frozen_items), "results": [],
             "changes": rows, "change_counts": {key: sum(row["action"] == key for row in rows)
                                                 for key in ("create", "update", "unchanged", "blocked")},
+            "recovery_plans": recovery_plans,
+            "attribution_sha256": attributed["sha256"] if used else None,
             "_expected_remote": expected_remote, "_manifest_sha256": fingerprint}
 
 
 def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False, progress=None,
              comparison_policy="strict", body_encoding="verbatim", sync_drafts=False,
-             expected_remote=None, stop_requested=None):
+             expected_remote=None, stop_requested=None, attribution_path=None):
     """Execute only explicitly requested saves; injected adapters own browser I/O."""
     if type(sync_drafts) is not bool or type(reconcile_only) is not bool or (sync_drafts and reconcile_only):
         api.fail("invalid_input", "Choose one draft execution mode")
+    if attribution_path is not None and not sync_drafts:
+        api.fail("platform_draft_attribution_invalid", "归属授权只用于核对后的同步。")
     with _checked_plan(book, plan_id, check_source=not reconcile_only) as (manifest, fingerprint, plan_status):
         _comparison_policy(comparison_policy, manifest["platform"])
         if body_encoding == PLATFORM_BODY_ENCODING:
@@ -1207,6 +1538,9 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
         api.fail("platform_draft_adapter_required", "Execution requires a platform draft adapter")
     with _target_lock(manifest) as guard, _journal(book, plan_id, manifest, fingerprint, create=True) as journal:
         journal.recover()
+        attributed = _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, attribution_path)
+        if attributed is not None and not _attribution_used(attributed, expected_remote):
+            api.fail("platform_draft_inspection_changed", "本次同步未绑定这份归属授权的检查结果，请重新检查差异。")
         target_verified = False
         remote_accessed = False
         observed_chapters = set()
@@ -1214,6 +1548,14 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
         exact_chapters, equivalent_chapters = set(), set()
         stopped = False
         scope = {"book_id": book.meta("id"), "plan_id": plan_id, "manifest_sha256": fingerprint}
+        # A sync consumes an unexpired inspection selected by its caller. Read
+        # the whole directory once at batch entry, then address known IDs and
+        # create only chapters that this fresh directory proves are absent.
+        # Keep reconciliation and adapters without a catalog protocol on their
+        # existing path; an unknown write is never a missing-chapter shortcut.
+        catalog = None
+        inspect_catalog = getattr(adapter, "inspect_catalog", None)
+        batch_catalog = sync_drafts and expected_remote is not None and callable(inspect_catalog)
 
         def append(chapter, event, **kwargs):
             return journal.append(chapter, event, comparison_policy=comparison_policy, body_encoding=body_encoding, **kwargs)
@@ -1253,21 +1595,103 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
                 target_verified = False
                 adapter.verify_target(**_target(manifest))
                 target_verified = True
-                found = adapter.find_drafts(chapter)
+                if batch_catalog:
+                    if catalog is None:
+                        catalog = _inspection_catalog(inspect_catalog(), _target(manifest))
+                        if set(expected_remote) != {str(item["chapter"]) for item in manifest["chapters"]}:
+                            api.fail("platform_draft_inspection_changed", "检查范围与本次清单不一致，请重新检查差异。")
+                        recovery_ids = {value["remote_id"] for value in expected_remote.values()
+                            if isinstance(value, dict) and value.get("kind") == "empty_draft_recovery"}
+                        if any(entry["chapter"] is None and entry["remote_id"] not in recovery_ids for entry in catalog):
+                            api.fail("platform_browser_unnumbered_draft", "目录出现未确认归属的无章号草稿。")
+                        for item in manifest["chapters"]:
+                            listed = _catalog_chapter(catalog, item["chapter"])
+                            previous = expected_remote[str(item["chapter"])]
+                            if isinstance(previous, dict) and previous.get("kind") == "empty_draft_recovery":
+                                empty = [entry for entry in catalog if entry["chapter"] is None and
+                                         entry["remote_id"] == previous.get("remote_id")]
+                                if listed or len(empty) != 1:
+                                    api.fail("platform_draft_inspection_changed", "原空草稿在检查后发生变化，请重新检查差异。")
+                                continue
+                            if (len(listed) > 1 or (not listed) != (previous is None) or
+                                    (listed and (not isinstance(previous, dict) or
+                                     listed[0]["remote_id"] != previous.get("remote_id")))):
+                                api.fail("platform_draft_inspection_changed", "平台目录在检查后发生变化，请重新检查差异。")
+                        # Recovery targets must be re-verified empty before their
+                        # own turn so earlier chapter reads and updates in this
+                        # same batch are not blocked by the declared blank row.
+                        for number, previous in expected_remote.items():
+                            if isinstance(previous, dict) and previous.get("kind") == "empty_draft_recovery":
+                                empty = adapter.inspect_empty_draft(previous["remote_id"], int(number))
+                                api.platform_chrome_bridge._validate_result(
+                                    "inspect_empty_draft", empty, _target(manifest),
+                                    {"remote_id": previous["remote_id"]})
+                    found = _catalog_chapter(catalog, chapter)
+                else:
+                    found = adapter.find_drafts(chapter)
                 if not isinstance(found, list):
                     api.fail("platform_draft_invalid_observation", "The complete remote draft list is required")
+                previous = expected_remote.get(str(chapter)) if batch_catalog else None
+                if isinstance(previous, dict) and previous.get("kind") == "empty_draft_recovery":
+                    candidate = _empty_recovery_candidate(book, plan_id, manifest, fingerprint, journal, guard, chapter,
+                        comparison_policy=comparison_policy, body_encoding=body_encoding, attributed=attributed)
+                    if not candidate or candidate != previous.get("candidate") or candidate["remote_id"] != previous.get("remote_id"):
+                        api.fail("platform_draft_inspection_changed", "空草稿恢复资格已改变，请重新检查差异。")
+                    remote_id = candidate["remote_id"]
+                    empty = adapter.inspect_empty_draft(remote_id, chapter)
+                    api.platform_chrome_bridge._validate_result("inspect_empty_draft", empty, _target(manifest), {"remote_id": remote_id})
+                    if stop_requested and stop_requested():
+                        api.fail("platform_draft_stop_requested", "已在恢复空草稿前安全停止。")
+                    with _checked_plan(book, plan_id) as (_, current_fingerprint, _):
+                        if current_fingerprint != fingerprint:
+                            api.fail("platform_draft_source_changed", "Publishing plan changed")
+                        recovery = _claim_empty_recovery(book, plan_id, manifest, fingerprint, journal, guard, chapter,
+                            candidate, comparison_policy=comparison_policy, body_encoding=body_encoding,
+                            recovery_attempt_id=attempt_id, attributed=attributed)
+                        guard.intent(chapter, attempt_id, frozen, comparison_policy=comparison_policy,
+                                     body_encoding=body_encoding, scope=scope)
+                        sending = True
+                        append(chapter, "sending", attempt_id=attempt_id, remote_id=remote_id, reason="recovering_empty_draft")
+                    guard()
+                    actual_id = adapter.resume_empty_draft(remote_id, chapter, encoded["title"], encoded["body"], recovery=recovery)
+                    if _identifier(actual_id, "remote_id") != remote_id:
+                        api.fail("platform_draft_invalid_observation", "恢复回执的远端章节身份已改变。")
+                    guard()
+                    target_verified = False
+                    adapter.verify_target(**_target(manifest))
+                    target_verified = True
+                    observed = _observation(adapter.read_draft(remote_id), remote_id)
+                    observed_chapters.add(chapter)
+                    rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, manifest["platform"])
+                    exact = _content(frozen) == _content(observed)
+                    if (not rendered_exact and not terminal_equivalent) or observed.get("formatting_clean") is False:
+                        append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
+                               observed=observed, reason="saved_content_differs")
+                        break
+                    if not guard.resolve(chapter, observed, frozen=frozen, comparison_policy=comparison_policy,
+                                         body_encoding=body_encoding, scope=scope):
+                        append(chapter, "conflict", attempt_id=attempt_id, remote_id=remote_id,
+                               observed=observed, reason="unresolved_previous_content")
+                        break
+                    append(chapter, "saved" if exact else "saved_equivalent", attempt_id=attempt_id,
+                           remote_id=remote_id, observed=observed, reason="empty_draft_recovered")
+                    (exact_chapters if exact else equivalent_chapters).add(chapter)
+                    report("chapter_verified", chapter)
+                    continue
                 if len(found) > 1:
                     append(chapter, "conflict", attempt_id=attempt_id, reason="multiple_remote_drafts")
                     break
                 if found:
-                    listed = _observation(found[0])
+                    listed = found[0] if batch_catalog else _observation(found[0])
                     remote_id = listed["remote_id"]
                     guard()
                     target_verified = False
                     adapter.verify_target(**_target(manifest))
                     target_verified = True
                     observed = _observation(adapter.read_draft(remote_id), remote_id)
-                    if expected_remote is not None and expected_remote.get(str(chapter)) != _remote_signature(observed):
+                    expected = expected_remote.get(str(chapter)) if expected_remote is not None else None
+                    if expected_remote is not None and (not isinstance(expected, dict) or
+                            expected.get("remote_id") != remote_id or expected.get("signature") != _remote_signature(observed)):
                         api.fail("platform_draft_inspection_changed", "草稿在检查后发生变化，请重新检查差异。")
                     observed_chapters.add(chapter)
                     rendered_exact, terminal_equivalent = _comparison(encoded, observed, comparison_policy, manifest["platform"])
@@ -1470,6 +1894,18 @@ def _read_profile(root, name):
         api.fail("platform_draft_invalid_profile_file", "无法安全读取已保存的平台 JSON 配置。")
 
 
+def _profile_target(profile):
+    """Describe an explicit local route; never infer identity from a book title."""
+    target = {"remote_book_id": None, "remote_book_title": None}
+    if profile["platform"] == "fanqie":
+        try:
+            configured = api.platform_browser.fanqie_profile_from_book_url(profile["urls"]["drafts"])
+        except api.StoryError:
+            return target
+        target.update({key: configured[key] for key in target})
+    return target
+
+
 def _profile_catalog(root):
     path = api.safe_path(root, PROFILE_DIRECTORY)
     if not path.exists():
@@ -1489,6 +1925,7 @@ def _profile_catalog(root):
             profile, fingerprint = _read_profile(root, name)
             results.append({"id": name, "label": name[:-5], "valid": True,
                             "platform": profile["platform"], "sha256": fingerprint,
+                            **_profile_target(profile),
                             "browser_channel": profile.get("browser_channel", "chromium"),
                             "execution_mode": profile.get("execution_mode", "playwright")})
         except api.StoryError as error:
@@ -1497,10 +1934,119 @@ def _profile_catalog(root):
     return results
 
 
+def _profile_selection_scope(book, target):
+    # Page configuration belongs to an exact account/remote target, not a
+    # chapter range. New immutable plans for that target inherit this choice.
+    return {"book_id": book.meta("id"),
+            **{key: target[key] for key in ("platform", "account_id", "remote_book_id")}}
+
+
+def _profile_selection_read(directory, name):
+    """Keep exact displaced bytes even when an explicit rebind repairs bad JSON."""
+    file = api._BoundFile(directory, name)
+    before = api.publish._bound_stat(file, missing=True)
+    if before is None:
+        return None, None, True
+    if (before.st_nlink != 1 or before.st_size > MAX_EVENT_BYTES
+            or (os.name != "nt" and before.st_uid != os.getuid())):
+        api.fail("platform_draft_preferences_unsafe", "本地配置选择记录不安全，请保留后核对。")
+    with api._bound_reader(file) as stream:
+        opened = os.fstat(stream.fileno())
+        raw = stream.read(MAX_EVENT_BYTES + 1)
+        after_read = os.fstat(stream.fileno())
+    after = api.publish._bound_stat(file)
+    if (not os.path.samestat(before, opened) or not os.path.samestat(before, after)
+            or opened.st_nlink != 1 or before.st_size != len(raw)
+            or before.st_mtime_ns != after.st_mtime_ns or opened.st_mtime_ns != after_read.st_mtime_ns):
+        api.fail("platform_draft_preferences_unsafe", "本地配置选择记录在读取时变化，请重新核对。")
+    api._verify_bound_directory(directory)
+    fingerprint = _hash_bytes(raw)
+    try:
+        record = json.loads(raw.decode("utf-8"))
+        canonical = api.dumps(record).encode("utf-8") == raw
+    except (UnicodeError, ValueError, TypeError, RecursionError):
+        record, canonical = None, False
+    return record, fingerprint, canonical
+
+
+def _profile_selection(book, target, profiles=None, *, profile_id=None, profile_sha256=None):
+    """Remember only a successful local binding; never mutate remote evidence."""
+    scope = _profile_selection_scope(book, target)
+    path = api.safe_path(book.root, ".story/platform-draft-preferences")
+    name = "profile-" + _hash(scope) + ".json"
+    saving = profile_id is not None
+    try:
+        with api._pinned_directory(path, create=saving) as directory:
+            if os.name != "nt":
+                if os.fstat(directory.fd).st_uid != os.getuid():
+                    api.fail("platform_draft_preferences_unsafe", "本地配置选择目录身份不安全。")
+                if saving:
+                    os.fchmod(directory.fd, 0o700)
+            record, previous_hash, canonical = _profile_selection_read(directory, name)
+            api._verify_bound_directory(directory)
+            if saving:
+                # The caller holds the book operation lock and has finished
+                # preparing the plan and validating the immutable profile.
+                record = {"schema": 1, **scope, "source_plan_id": target["id"],
+                          "profile_id": profile_id, "profile_sha256": profile_sha256}
+                api.atomic_write(path / name, api.dumps(record),
+                                 {previous_hash} if previous_hash else set(),
+                                 path / ".backups" / uuid.uuid4().hex / name)
+                api._verify_bound_directory(directory)
+                return
+            if previous_hash is None:
+                return None
+            fields = {"schema", "source_plan_id", "profile_id", "profile_sha256"} | set(scope)
+            if (not canonical or not isinstance(record, dict) or set(record) != fields or type(record["schema"]) is not int
+                    or record["schema"] != 1 or any(record[key] != value for key, value in scope.items())
+                    or not isinstance(record["source_plan_id"], str)
+                    or not re.fullmatch(r"[0-9a-f]{32}", record["source_plan_id"])
+                    or not isinstance(record["profile_id"], str)
+                    or not isinstance(record["profile_sha256"], str)
+                    or not re.fullmatch(r"[0-9a-f]{64}", record["profile_sha256"])):
+                return {"status": "invalid"}
+            try:
+                _profile_name(record["profile_id"])
+            except api.StoryError:
+                return {"status": "invalid"}
+            selection = {"profile_id": record["profile_id"], "profile_sha256": record["profile_sha256"]}
+            profile = next((row for row in profiles or [] if row["id"] == record["profile_id"]), None)
+            if profile is None:
+                return {"status": "missing", **selection}
+            if (not profile.get("valid") or profile.get("platform") != scope["platform"]
+                    or (scope["platform"] == "fanqie" and profile.get("remote_book_id") != scope["remote_book_id"])):
+                return {"status": "invalid", **selection}
+            if profile.get("sha256") != record["profile_sha256"]:
+                return {"status": "changed", **selection}
+            return {"status": "selected", **selection}
+    except FileNotFoundError:
+        if saving:
+            raise
+        return None
+
+
 def _browser_runtime():
     helper = getattr(api.platform_browser, "browser_runtime_status", None)
-    return helper() if helper is not None else {"status": "browser_unverified",
+    packet = helper() if helper is not None else {"status": "browser_unverified",
                                                 "playwright_installed": None, "chromium_installed": None}
+    hosts = []
+    for host, label in (("codex", "Codex"), ("qoder-cn", "Qoder CN"), ("workbuddy", "WorkBuddy AI")):
+        available, reason = False, None
+        try:
+            if host == "codex":
+                api.chrome_worker._sdk_path()
+            elif host == "workbuddy":
+                api.chrome_worker._workbuddy_cli_path()
+                api.chrome_worker._workbuddy_node_path()
+            else:
+                api.chrome_worker._native_sdk_path(host)
+            available = True
+        except Exception as error:
+            reason = _error_code(error)
+        hosts.append({"id": host, "label": label, "sdk_available": available, "reason": reason,
+                      "model_policy": "terra_required" if host == "codex" else "explicit_native_authorization",
+                      "browser_ready": False, "platform_verified": False})
+    return {**packet, "execution_hosts": hosts}
 
 
 def _history_summary(result):
@@ -1519,7 +2065,8 @@ def _job_packet(job):
     fields = ("id", "book_id", "plan_id", "platform", "account_id", "remote_book_id", "profile_id", "mode",
               "profile_sha256", "execution_mode", "backend", "state", "stage", "done", "created_at", "updated_at", "finished_at",
               "total_chapters", "verified_chapters", "accepted_chapters", "equivalent_chapters", "comparison_policy",
-              "body_encoding", "rendered_chapters", "current_chapter", "error", "result", "checked_chapters", "stop_requested")
+              "body_encoding", "rendered_chapters", "current_chapter", "error", "result", "checked_chapters", "stop_requested",
+              "connection_diagnostics")
     return {"ok": True, **{key: json.loads(json.dumps(job[key])) for key in fields if key in job},
             "scope": "platform_chapter_drafts_only", "submission_performed": False,
             "job_survives_process_exit": False, "durable_attempt_journal": True}
@@ -1533,6 +2080,14 @@ def workbench_activity(root, *, expected_book_id):
                 for job in _WORKBENCH_JOBS.values()
                 if job['_root'] == root and job['book_id'] == expected_book_id and not job['done']]
         binding = (root, expected_book_id) in _WORKBENCH_BINDINGS
+    if api.safe_path(Path(root), ASSISTANT_DIRECTORY).exists():
+        with _assistant_directory(root) as directory:
+            for record in _assistant_records(directory):
+                effective = _assistant_effective(record, root)
+                if record["binding"]["book_id"] == expected_book_id and effective.get("execution_active") is True:
+                    jobs.append({"id": record["request_id"], "stage": effective["stage"],
+                                 "mode": record["binding"]["mode"], "current_chapter": record.get("current_chapter"),
+                                 "execution_origin": "assistant_session"})
     return {'supported': True, 'jobs': jobs, 'binding': binding, 'busy': bool(jobs or binding)}
 
 
@@ -1552,6 +2107,8 @@ def workbench_catalog(root, offset=0, limit=50, *, expected_book_id=None):
         for plan in packet["results"]:
             plan["draft_history"] = _history_summary(status(book, plan["id"]))
         profiles = _profile_catalog(root)
+        for plan in packet["results"]:
+            plan["profile_selection"] = _profile_selection(book, plan, profiles)
     with _WORKBENCH_LOCK:
         jobs = [_job_packet(job) for job in _WORKBENCH_JOBS.values()
                 if job["_root"] == str(root) and job["book_id"] == book_id]
@@ -1680,6 +2237,7 @@ def workbench_bind(root, account_id, book_management_url, start, end, *, expecte
                     api.publish._source(book, chapter)
                 with _binding_profile(root, profile) as (profile_id, profile_sha256):
                     plan = api.publish.prepare(book, request, expected_revision, summary=True)
+                _profile_selection(book, plan, profile_id=profile_id, profile_sha256=profile_sha256)
                 return {"ok": True, "book_id": book_id, "revision": expected_revision,
                         "platform": "fanqie", "account_id": account_id,
                         "remote_book_id": generated["remote_book_id"], "remote_book_title": generated["remote_book_title"],
@@ -1757,7 +2315,10 @@ def workbench_refresh_plan(root, plan_id, profile_id, *, expected_book_id, expec
                     api.fail("platform_draft_profile_mismatch", "所选页面配置与原批次的平台不一致。")
                 configured = api.platform_browser.fanqie_profile_from_book_url(profile["urls"]["drafts"])
                 if configured["remote_book_id"] != target["remote_book_id"]:
-                    api.fail("platform_draft_profile_mismatch", "所选页面配置属于另一作品，未更改原批次的账号或目标。")
+                    api.fail("platform_draft_profile_mismatch",
+                             "页面配置的番茄作品 ID（" + configured["remote_book_id"] +
+                             "）与本批次目标（" + target["remote_book_id"] +
+                             "）不一致；原批次账号和目标未更改。")
                 request = {**target, "chapters": list(range(first, last + 1)), "mode": "draft"}
                 # prepare checks current reviewed heads and exports under this
                 # same operation lock/snapshot; it never mutates the old plan.
@@ -1801,6 +2362,12 @@ def _preflight(root, plan_id, profile_id, expected_book_id=None, reconcile_only=
         profile, fingerprint = _read_profile(root, profile_id)
         if profile["platform"] != result["platform"]:
             api.fail("platform_draft_profile_mismatch", "所选配置的平台与冻结清单不一致。")
+        configured = _profile_target(profile)
+        if configured["remote_book_id"] is not None and configured["remote_book_id"] != result["remote_book_id"]:
+            api.fail("platform_draft_profile_mismatch",
+                     "页面配置的番茄作品 ID（" + configured["remote_book_id"] +
+                     "）与本批次目标（" + result["remote_book_id"] +
+                     "）不一致；请选择与本批次目标匹配的配置。")
         if sync_drafts and (profile.get("execution_mode") != "host_assisted_cua" or not profile.get("readback")):
             api.fail("platform_draft_update_unsupported", "更新已有草稿需要番茄 Chrome 会话和独立预览回读配置。")
     binding.update(profile_id=profile_id, profile_sha256=fingerprint)
@@ -1834,8 +2401,22 @@ def _host_binding(binding, preview):
 
 def _execution_runtime(root, preview, profile, binding):
     if profile is not None and profile.get("execution_mode") == "host_assisted_cua":
+        worker = api.platform_chrome_bridge.worker_status(root, _host_binding(binding, preview))
+        if worker.get("ready") is True:
+            # A bridge lease proves browser health, not the executing model.
+            # Only the owning controller can attest its verified Terra session;
+            # old/manual leases cannot bypass the automatic launcher's check.
+            launcher = getattr(api, "chrome_worker", None)
+            controlled = launcher.status(root, binding["plan_id"], binding["profile_id"],
+                expected_book_id=binding["book_id"], comparison_policy=binding["comparison_policy"],
+                body_encoding=binding["body_encoding"]) if launcher is not None else {}
+            verified = (controlled.get("ready") is True and controlled.get("owned") is True and
+                        controlled.get("model_verified") is True and
+                        controlled.get("requested_model") == controlled.get("resolved_model") == "gpt-6.1-terra")
+            worker = {**worker, "ready": verified, "model_verified": verified,
+                      "error": None if verified else "platform_chrome_worker_model_unverified"}
         return {"execution_mode": "host_assisted_cua", "playwright_required": False,
-                "worker": api.platform_chrome_bridge.worker_status(root, _host_binding(binding, preview))}
+                "worker": worker}
     return _browser_runtime()
 
 
@@ -1853,6 +2434,12 @@ def _automatic_connection(profile, blockers):
                 "reason": "platform_chrome_connector_unavailable"}
     result = launcher.availability()
     return {"available": result.get("available") is True, "uses_codex_quota": True,
+            **({"retry_blocked": True, "cause": "platform_chrome_worker_browser_transport_closed",
+                "failure_phase": result["failure_phase"]}
+               if result.get("retry_blocked") is True and result.get("available") is False and
+                  result.get("reason") == "platform_chrome_worker_connection_suspended" and
+                  result.get("cause") == "platform_chrome_worker_browser_transport_closed" and
+                  result.get("failure_phase") in ("sdk_setup", "browser_inventory") else {}),
             **({"reason": result["reason"]} if isinstance(result.get("reason"), str) else {})}
 
 
@@ -1922,7 +2509,7 @@ def _safe_job_result(result):
               "all_chapters_accepted_this_run", "exact_verified_chapters", "equivalent_chapters", "accepted_chapters",
               "body_encoding", "rendered_chapters", "created_chapters", "updated_chapters", "unchanged_chapters",
               "inspection", "inspection_complete", "checked_chapters", "total_chapters", "changes", "change_counts",
-              "can_execute", "stop_requested")
+              "can_execute", "stop_requested", "recovery_plans")
     return {key: result[key] for key in fields if key in result}
 
 
@@ -1966,7 +2553,10 @@ _CONNECTION_FALLBACKS = frozenset({"platform_chrome_worker_unavailable", "platfo
 _SPECIFIC_WORKER_STOPS = frozenset({"platform_chrome_worker_target_tab_changed", "platform_chrome_worker_target_tab_closed",
     "platform_chrome_worker_existing_tab_required", "platform_chrome_worker_origin_permission_required",
     "platform_chrome_worker_browser_unattached", "platform_chrome_worker_browser_changed",
-    "platform_chrome_worker_turn_failed", "platform_chrome_worker_runtime_unavailable"})
+    "platform_chrome_worker_turn_failed", "platform_chrome_worker_runtime_unavailable",
+    "platform_chrome_worker_model_unverified", "platform_chrome_worker_model_mismatch",
+    "platform_chrome_worker_model_rerouted", "platform_chrome_worker_model_unavailable",
+    "platform_chrome_worker_browser_transport_closed"})
 
 
 def _record_worker_stop(root, binding, result, cause):
@@ -1996,6 +2586,45 @@ def _record_worker_stop(root, binding, result, cause):
                         refined[row["chapter"]] = {**row, "reason": cause, "last_observed_at": record["at"]}
                 return {**result, "results": [refined.get(row["chapter"], row) for row in result["results"]],
                         "history_events_total": len(journal.events)}
+
+
+_CONNECTION_ERROR_KINDS = frozenset({
+    "contextWindowExceeded", "sessionBudgetExceeded", "usageLimitExceeded", "rateLimitExceeded",
+    "flexUnavailable", "serverOverloaded", "modelNotFound", "cyberPolicy", "misalignmentPolicyViolation",
+    "tooManyDenials", "internalServerError", "unauthorized", "badRequest", "threadRollbackFailed",
+    "sandboxError", "other", "httpConnectionFailed", "responseStreamConnectionFailed",
+    "responseStreamDisconnected", "responseTooManyFailedAttempts", "activeTurnNotSteerable"})
+_CONNECTION_DIAGNOSTIC_REASONS = _SPECIFIC_WORKER_STOPS | _CONNECTION_FALLBACKS | frozenset(
+    "platform_chrome_worker_" + suffix for suffix in (
+        "model_unverified", "model_mismatch", "model_rerouted", "model_unavailable",
+        "tool_not_started", "tool_discovery_failed", "not_ready", "rpc_error", "rpc_timeout",
+        "connect_timeout", "browser_wait_timeout", "tool_failed", "unexpected_tool", "connection_suspended"))
+
+
+def _connection_diagnostics(state):
+    """Expose bounded connection facts, never provider prose or credentials.
+
+    These are startup observations, not evidence of platform identity or saved
+    chapters. In particular model verification never establishes browser health.
+    """
+    packet = {"stage": "connecting_chrome"}
+    model = "gpt-6.1-terra"
+    packet["requested_model"] = model if state.get("requested_model") == model else None
+    packet["resolved_model"] = model if state.get("resolved_model") == model else None
+    packet["model_verified"] = (state.get("model_verified") is True and
+                                packet["requested_model"] == packet["resolved_model"] == model)
+    packet["ready"] = state.get("ready") is True and state.get("owned") is True and packet["model_verified"]
+    if state.get("retry_blocked") is True and not packet["ready"]:
+        packet["retry_blocked"] = True
+    for key, allowed in (("reason", _CONNECTION_DIAGNOSTIC_REASONS), ("error_kind", _CONNECTION_ERROR_KINDS)):
+        value = state.get("error" if key == "reason" else key)
+        if isinstance(value, str) and value in allowed:
+            packet[key] = value
+    for key, lower, upper in (("rpc_error_code", -(2 ** 31), 2 ** 31 - 1), ("http_status", 100, 599)):
+        value = state.get(key)
+        if type(value) is int and lower <= value <= upper:
+            packet[key] = value
+    return packet
 
 
 def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
@@ -2028,12 +2657,15 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
             api.fail("platform_draft_preview_changed", "冻结清单或平台配置已变化；请重新预览。")
         blockers = _runtime_blockers(profile, _execution_runtime(root, preview, profile, current))
         if blockers:
-            if not allow_auto_connect or not _automatic_connection(profile, blockers)["available"]:
-                api.fail(blockers[0], "Chrome 执行连接不可用，请核对连接状态。")
+            connection = _automatic_connection(profile, blockers)
+            if not allow_auto_connect or not connection["available"]:
+                api.fail(connection["reason"] if connection.get("retry_blocked") else blockers[0],
+                         "Chrome 执行连接不可用，请核对连接状态。")
             _update_job(job_id, stage="connecting_chrome")
             connected_automatically = True
             connection = api.chrome_worker.start(root, binding["plan_id"], binding["profile_id"],
                                                  expected_book_id=binding["book_id"], comparison_policy=policy, body_encoding=encoding)
+            _update_job(job_id, connection_diagnostics=_connection_diagnostics(connection))
             owned_worker_id = connection.get("owned_worker_id")
             connect_seconds = connection.get("connect_timeout_seconds", 60)
             if type(connect_seconds) is not int or not 1 <= connect_seconds <= 120:
@@ -2044,7 +2676,12 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
                 check_stop()
                 state = api.chrome_worker.status(root, binding["plan_id"], binding["profile_id"],
                                                   expected_book_id=binding["book_id"], comparison_policy=policy, body_encoding=encoding)
+                _update_job(job_id, connection_diagnostics=_connection_diagnostics(state))
                 if state.get("ready") is True:
+                    if (state.get("owned") is not True or state.get("model_verified") is not True or
+                            state.get("requested_model") != "gpt-6.1-terra" or
+                            state.get("resolved_model") != "gpt-6.1-terra"):
+                        api.fail("platform_chrome_worker_model_unverified", "未核验浏览器执行模型，未开始平台操作。")
                     break
                 if state.get("state") in ("failed", "closed", "stopped", "disconnected", "stopping"):
                     api.fail(state.get("error") or "platform_chrome_connection_failed", "自动连接 Chrome 未完成。")
@@ -2144,9 +2781,13 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
     if not valid:
         api.fail("platform_draft_preview_required", "预览已失效或目标发生改变；请重新预览并核对。")
     blockers = _runtime_blockers(profile, _execution_runtime(root, preview, profile, binding))
-    if blockers and (not auto_connect or not _automatic_connection(profile, blockers)["available"]):
-        api.fail(blockers[0], "所选执行端尚未连接或本地依赖不可用；请完成连接后重新预览。")
+    connection = _automatic_connection(profile, blockers)
+    if blockers and (not auto_connect or not connection["available"]):
+        api.fail(connection["reason"] if connection.get("retry_blocked") else blockers[0],
+                 "所选执行端尚未连接或本地依赖不可用；请完成连接后重新预览。")
     with _WORKBENCH_LOCK:
+        if _assistant_active(root, binding["book_id"]):
+            api.fail("platform_draft_busy", "当前作品已有助手协助任务运行，请等待完成。")
         if any((other[0] == str(root) and other[1] == binding["book_id"]) or value == binding["target_sha256"]
                for other, value in _WORKBENCH_BINDINGS.items()):
             api.fail("platform_draft_busy", "正在保存本地平台配置，请等待完成后重新预览。")
@@ -2233,7 +2874,669 @@ def workbench_job(root, job_id, *, expected_book_id=None):
         return _job_packet(job)
 
 
+@contextmanager
+def _assistant_directory(root, *, create=False):
+    """Private, pinned task records; never a model or browser credential."""
+    bridge = api.platform_chrome_bridge
+    path = api.safe_path(Path(root), ASSISTANT_DIRECTORY)
+    with _WORKBENCH_LOCK, bridge._LOCAL_LOCK, bridge._pinned(path, create=create) as directory:
+        if create:
+            if os.name == "nt":
+                os.chmod(directory.path, 0o700)
+            else:
+                os.fchmod(directory.fd, 0o700)
+        with bridge._lock(directory, "assistant.lock"):
+            yield directory
+
+
+def _assistant_id(value):
+    if not isinstance(value, str) or not re.fullmatch(r"[0-9a-f]{32}", value):
+        api.fail("platform_draft_assistant_request_invalid", "助手任务编号无效。")
+    return value
+
+
+def _assistant_host(execution_host="codex", native_model_authorized=False):
+    if (execution_host not in ("codex", "qoder-cn", "workbuddy") or
+            type(native_model_authorized) is not bool or
+            (execution_host == "codex" and native_model_authorized)):
+        api.fail("invalid_input", "请选择 Codex、Qoder CN 或 WorkBuddy AI 的实际执行宿主。")
+    if execution_host != "codex" and not native_model_authorized:
+        api.fail("platform_draft_native_model_not_authorized", "原生宿主执行须有本次明确授权；默认仍要求 Terra。")
+    return execution_host
+
+
+def _assistant_read(directory, request_id):
+    request_id = _assistant_id(request_id)
+    try:
+        record = api.platform_chrome_bridge._read(directory, request_id + ".json", maximum=4 * 1024 * 1024)
+    except FileNotFoundError:
+        api.fail("platform_draft_assistant_request_missing", "未找到本书的助手协助任务。")
+    binding = record.get("binding") if isinstance(record, dict) else None
+    binding_keys = {"book_id", "plan_id", "manifest_sha256", "target_sha256", "mode", "comparison_policy",
+                    "body_encoding", "profile_id", "profile_sha256"}
+    if (not isinstance(record, dict) or type(record.get("schema")) is not int or record.get("schema") != 1 or record.get("request_id") != request_id or
+            record.get("execution_origin") != "assistant_session" or
+            record.get("model_verification") != "executor_runtime_required" or
+            not isinstance(record.get("book_root"), str) or not Path(record["book_root"]).is_absolute() or
+            not isinstance(record.get("state"), str) or record["state"] not in _ASSISTANT_STATES or
+            not isinstance(record.get("stage"), str) or record["stage"] not in _ASSISTANT_STAGES or
+            not isinstance(binding, dict) or set(binding) != binding_keys or
+            any(not isinstance(value, str) for value in binding.values()) or binding["mode"] not in _ASSISTANT_MODES or
+            any(not re.fullmatch(r"[0-9a-f]{64}", binding[key]) for key in ("manifest_sha256", "target_sha256", "profile_sha256")) or
+            record.get("binding_sha256") != _hash(binding) or
+            not isinstance(record.get("target"), dict) or _hash(record["target"]) != binding["target_sha256"] or
+            type(record.get("expires_epoch")) not in (float, int) or
+            not math.isfinite(record["expires_epoch"]) or
+            type(record.get("stop_requested")) is not bool or type(record.get("done")) is not bool or
+            record["done"] != (record["state"] not in {"prepared", "running"}) or
+            any(type(record.get(key)) is not int or not 0 <= record[key] <= 1000
+                for key in ("checked_chapters", "verified_chapters", "total_chapters")) or
+            record["checked_chapters"] > record["total_chapters"] or record["verified_chapters"] > record["total_chapters"] or
+            ("inspection_expires_epoch" in record and
+             (type(record["inspection_expires_epoch"]) not in (int, float) or not math.isfinite(record["inspection_expires_epoch"])))):
+        api.fail("platform_draft_assistant_request_invalid", "助手任务记录不完整，已停止。")
+    _assistant_host(record.get("execution_host", "codex"), record.get("native_model_authorized", False))
+    return record
+
+
+def _assistant_write(directory, record, *, new=False):
+    if len(api.dumps(record).encode("utf-8")) > 4 * 1024 * 1024:
+        api.fail("platform_draft_assistant_result_limit", "助手记录超过本地大小限制，保留生产日志供核对。")
+    api.platform_chrome_bridge._write(directory, _assistant_id(record["request_id"]) + ".json", record, replace=not new)
+
+
+def _assistant_records(directory):
+    names = [name for name in os.listdir(directory.path if os.name == "nt" else directory.fd)
+             if re.fullmatch(r"[0-9a-f]{32}\.json", name)]
+    if len(names) > 1000:
+        api.fail("platform_draft_assistant_request_limit", "助手任务记录超过限制，请先归档历史记录。")
+    return [_assistant_read(directory, name[:-5]) for name in names]
+
+
+def _assistant_global_record(kind, request_id, binding_sha256, *, claim=False):
+    """Small local anchors survive restoring a book's prepared request files."""
+    name = "assistant-" + kind + "-" + _assistant_id(request_id) + ".json"
+    expected = {"schema": 1, "request_id": request_id, "binding_sha256": binding_sha256}
+    with api._pinned_directory(_lock_directory()) as directory:
+        file = api._BoundFile(directory, name)
+        if claim:
+            try:
+                _write_record(directory, name, expected)
+            except FileExistsError:
+                api.fail("platform_draft_assistant_request_consumed", "本机已消费该助手请求或检查；恢复旧文件不能重新执行。")
+            return True
+        if api.publish._bound_stat(file, missing=True) is None:
+            return False
+        if _read_record(directory, name) != expected:
+            api.fail("platform_draft_assistant_request_invalid", "助手任务全局消费记录不一致，已停止。")
+        return True
+
+
+def _assistant_cleanup(record, root):
+    """Only the bound local worker protocol can prove execution has drained.
+
+    A business result, expired lease or dead queue controller is insufficient:
+    the existing host may still own an awaited browser call.
+    """
+    pending = {"worker_done": False, "bridge_detached": record.get("bridge_detached") is True,
+               "cleanup_complete": False, "cleanup_pending": True, "cleanup_status": "unverified"}
+    if record.get("_claimed_record_restored"):
+        return pending  # A rolled-back pre-claim file cannot prove no handoff.
+    context = record.get("assistant_context")
+    if context is None and record.get("remote_accessed") is not True:
+        return {"worker_done": None, "bridge_detached": None, "cleanup_complete": True,
+                "cleanup_pending": False, "cleanup_status": "not_started"}
+    if not isinstance(context, dict):
+        return pending
+    never = getattr(api.chrome_worker, "assistant_session_never_started", None)
+    if record.get("remote_accessed") is not True and callable(never) and never(
+            root, _host_binding(record["binding"], record["target"]), context):
+        return {"worker_done": None, "bridge_detached": None, "cleanup_complete": True,
+                "cleanup_pending": False, "cleanup_status": "not_started"}
+    retired = getattr(api.chrome_worker, "assistant_retirement_status", None)
+    if callable(retired) and retired(root, _host_binding(record["binding"], record["target"]), context,
+            request_id=record["request_id"], request_binding_sha256=record["binding_sha256"]):
+        return {"worker_done": False, "bridge_detached": False, "cleanup_complete": False,
+                "cleanup_pending": False, "cleanup_status": "external_session_reset",
+                "execution_retired_by_operator": True, "bridge_revoked": True}
+    inspect = getattr(api.chrome_worker, "assistant_cleanup_status", None)
+    if not callable(inspect):
+        return pending
+    try:
+        value = inspect(root, _host_binding(record["binding"], record["target"]), context,
+                        request_id=record["request_id"],
+                        request_binding_sha256=record["binding_sha256"],
+                        mode=record["binding"].get("mode"))
+    except (api.StoryError, OSError, ValueError, TypeError):
+        return pending
+    if not isinstance(value, dict):
+        return pending
+    complete = (value.get("worker_done") is True and
+                value.get("cleanup_complete") is True and value.get("cleanup_status") == "complete")
+    reconciled = (value.get("worker_done") is False and
+                  value.get("cleanup_complete") is True and
+                  value.get("cleanup_status") == "reconciled_absent")
+    return {"worker_done": value.get("worker_done") is True,
+            "bridge_detached": value.get("bridge_detached") is True,
+            "cleanup_complete": complete or reconciled, "cleanup_pending": not (complete or reconciled),
+            "cleanup_status": "complete" if complete else "reconciled_absent" if reconciled else
+            "pending" if value.get("cleanup_status") == "pending" else "unverified"}
+
+
+def _assistant_blocks_execution(record):
+    return record["state"] in {"prepared", "running"} or record.get("execution_active") is True
+
+
+def _assistant_effective(record, root):
+    record = dict(record)
+    if record["book_root"] != str(Path(root).resolve()):
+        record["origin_mismatch"] = True
+        if record["state"] in {"prepared", "running"}:
+            record.update(state="interrupted", stage="finished", done=True, error="platform_draft_book_changed")
+    elif record["state"] == "prepared" and _assistant_global_record("claim", record["request_id"], record["binding_sha256"]):
+        record.update(state="interrupted", stage="finished", done=True,
+                      error="platform_draft_assistant_request_consumed", _claimed_record_restored=True)
+    elif record["state"] == "prepared" and record["expires_epoch"] <= time.time():
+        record.update(state="expired", stage="finished", done=True, error="platform_draft_assistant_request_expired")
+    elif record["state"] == "running":
+        alive = api.platform_chrome_bridge._owner_alive(root, record)
+        identity = api.task_worker._process_identity(record.get("owner_pid")) if alive else None
+        if not alive or (identity is not None and identity != record.get("owner_identity")):
+            record.update(state="interrupted", stage="finished", done=True,
+                          error="platform_draft_assistant_interrupted")
+    if record.get("origin_mismatch"):
+        record.update(execution_active=False, cleanup_pending=False, cleanup_complete=False,
+                      cleanup_status="historical_other_root", worker_done=False)
+    else:
+        cleanup = _assistant_cleanup(record, root)
+        record.update(cleanup)
+        record["execution_active"] = record["state"] == "running" or cleanup["cleanup_pending"]
+        if record["done"] and cleanup["cleanup_pending"]:
+            record["stage"] = "cleanup_pending"
+        elif record["done"] and record["stage"] == "cleanup_pending":
+            record["stage"] = "finished"
+    return record
+
+
+def _assistant_active(root, book_id):
+    if not api.safe_path(Path(root), ASSISTANT_DIRECTORY).exists():
+        return False
+    with _assistant_directory(root) as directory:
+        return any(r["binding"]["book_id"] == book_id and _assistant_effective(r, root).get("execution_active") is True
+                   for r in _assistant_records(directory))
+
+
+def _assistant_preflight(root, binding):
+    return _preflight(root, binding["plan_id"], binding["profile_id"], binding["book_id"],
+        binding["mode"] == "reconcile_only", binding["comparison_policy"], binding["body_encoding"],
+        binding["mode"] == "sync_drafts", binding["mode"] == "inspect_drafts")
+
+
+def _assistant_command(argv, *, windows=False):
+    # list2cmdline quotes CreateProcess argv, not a shell command. Explicit
+    # PowerShell literal arguments also protect &, $, backticks and percent.
+    return ("& " + " ".join("'" + arg.replace("'", "''") + "'" for arg in argv)) if windows else shlex.join(argv)
+
+
+def _assistant_prompt(root, request_id, mode, execution_host="codex", *, binding=None):
+    cli = str(Path(__file__).resolve().with_name("story.py"))
+    argv = [str(Path(sys.executable).absolute()), cli, "publish-draft-assist-run", "--book", str(root), "--request", request_id]
+    command = _assistant_command(argv, windows=os.name == "nt")
+    if execution_host == "workbuddy":
+        setup = "本机需要已安装工作台支持的官方 agent-browser 与 Node 运行时；缺失时停止并显示具体原因。\n"
+        try:
+            browser_cli = api.chrome_worker._workbuddy_cli_path()
+            node = api.chrome_worker._workbuddy_node_path()
+            if binding is not None:
+                profile, _ = _read_profile(root, binding["profile_id"])
+                session = api.chrome_worker._workbuddy_session(binding)
+                state = Path.home() / ".story-skill/workbuddy-browser-sessions" / session
+                runner = str(Path(__file__).resolve().with_name("story_workbuddy_worker.mjs"))
+                setup_argv = [str(node), runner, "--prepare-login", "--cli", str(browser_cli), "--session", session,
+                              "--state", str(state), "--url", profile["urls"]["drafts"]]
+                setup = ("先检查本任务专属 agent-browser 会话；仅在未打开所选作品管理页时运行以下准备命令。"
+                    "首次使用请让用户在该独立窗口登录；无需退出个人 Chrome。等待用户完成登录后再启动下面的队列。\n"
+                    + _assistant_command(setup_argv, windows=os.name == "nt") + "\n")
+        except Exception:
+            pass  # Handoff remains local and unconsumed when runtime is absent.
+        return ("这是工作台准备的单次 WorkBuddy AI 原生任务；复制说明不会执行。\n"
+            "用户已允许本次使用 WorkBuddy 原生模型；只能在 WorkBuddy 自己的任务中执行官方 agent-browser CLI，"
+            "不借用 Codex/Qoder SDK，不复制个人 profile、cookie 或认证文件。\n" + setup +
+            ("本请求只检查差异或只读对账，不新建或修改草稿。\n" if mode != "sync_drafts" else
+             "本请求仅按同工具已确认的检查同步草稿，保持已有 ID，并独立全文回读；不送审、不发布。\n") +
+            "登录和目标页面就绪后异步启动以下本地控制器，读取 assistant_context；"
+            "在同一 WorkBuddy 原生任务的 shell 中按 runner_argv 启动一次，持续等待该进程完成。"
+            "不要使用 Node REPL 的 first_call/next_call。未知写入不重发；失败保留回执，不切换工具。"
+            "完成后只清理任务自建页，保留登录页。\n" + command)
+    if execution_host != "codex":
+        label = {"qoder-cn": "Qoder CN", "workbuddy": "WorkBuddy AI"}[execution_host]
+        return ("这是工作台准备的单次助手协助任务；复制这段文字不会运行任务。\n"
+            f"本次任务已明确允许 {label} 原生模型执行电脑操控，其他任务的 Terra 约定不变。\n"
+            f"只能在 {label} 官方当前会话的 Node REPL 和公开 Browser Use SDK 中执行；"
+            "不能借用其他宿主、读取认证文件、自填 transport/context 或将配置中的模型名称当成运行证明。\n"
+            "启动控制器前，先确认官方 Chrome 中已打开本请求配置 urls.drafts 的目标作品管理页并完成登录。"
+            "缺少页面时可在同一浏览器按该配置打开本书草稿箱；不得换书、伪造 attach handle，或先启动控制器等待登录。\n"
+            + ("本请求仅检查差异或只读对账，不得新建或修改平台草稿。\n" if mode != "sync_drafts" else
+               "仅按本次已确认检查同步草稿；保留已有 ID、修改前备份与独立全文回读，不送审、不发布。\n")
+            + "未知写入先只读核对，已消费或中断请求不得重放。异步启动以下 CLI，读取 assistant_context，"
+            "然后在同一官方 Node REPL 中连续执行 first_call/next_call，复用同一 SDK、模块与 factory。"
+            "SDK、扩展或宿主能力不可用时停止，不改用私有接口；结束后清理自建标签并保留用户页面。\n" + command)
+    return ("这是工作台准备的单次助手协助任务；复制这段文字不会运行任务。\n"
+        "必须先依据当前运行环境确认实际 computer use 执行者为 gpt-6.1-terra；非 Terra 或模型无法确认时停止，不得回退。\n"
+        "先读取本任务及本书的冻结清单、配置和范围。不得自填模型认证、借用旧健康记录或启动自动执行器。\n"
+        + ("本请求仅检查差异或只读对账，不得新建或修改平台草稿。检查完成后须由作者另行明确确认同步。\n"
+           if mode != "sync_drafts" else
+           "本请求已绑定作者明确确认的本次检查；仅同步该范围的草稿，保留已有 ID、修改前备份和独立全文回读，不送审、不发布。\n")
+        + "未知写入先只读对账，已消费或中断请求不得重放。先异步启动下面的显式 CLI（Windows 使用 PowerShell），读取它返回的 assistant_context。"
+        "再由已确认 Terra 助手在官方 node_repl 中按 first_call／next_call 驱动同一运行时的 Chrome 工作者；"
+        "CLI 会等待本任务的真实健康回执并处理认证队列。复制代码不等于执行，不得通过其他脚本或浏览器绕过模型限制。\n" + command)
+
+
+def _assistant_packet(record, root, *, check_source=True):
+    record = _assistant_effective(record, root)
+    binding = record["binding"]
+    current = False
+    if check_source and not record.get("origin_mismatch"):
+        try:
+            # Polling must not acquire the operation journal lock held by the
+            # running core; otherwise progress and status can deadlock.
+            with _workbench_book(root, binding["book_id"]) as book:
+                with _checked_plan(book, binding["plan_id"], check_source=False) as (manifest, fingerprint, _):
+                    reasons, _ = api.publish._source_comparison(book, manifest)
+                _, profile_hash = _read_profile(root, binding["profile_id"])
+                current = (not reasons and fingerprint == binding["manifest_sha256"] and
+                           _hash(_target(manifest)) == binding["target_sha256"] and profile_hash == binding["profile_sha256"])
+        except (api.StoryError, OSError, ValueError):
+            pass
+    result = record.get("result")
+    can_sync = (current and record["state"] == "inspection_ready" and record.get("cleanup_complete") is True and
+                record.get("execution_active") is not True and
+                record.get("inspection_expires_epoch", 0) > time.time() and
+                not record.get("inspection_used") and isinstance(result, dict) and result.get("can_execute") is True and
+                not _assistant_global_record("inspection", record["request_id"], record["binding_sha256"]))
+    fields = ("request_id", "execution_origin", "model_verification", "state", "stage", "done", "created_at",
+              "expires_at", "claimed_at", "finished_at", "error", "checked_chapters", "verified_chapters",
+              "total_chapters", "result", "remote_accessed", "stop_requested", "target", "binding_sha256",
+              "inspection_id", "inspection_expires_at", "current_chapter", "assistant_context", "bridge_detached",
+              "book_root", "origin_mismatch", "execution_active", "cleanup_pending", "cleanup_complete",
+              "cleanup_status", "worker_done", "execution_retired_by_operator", "bridge_revoked",
+              "attribution_path")
+    return {"ok": True, **{key: json.loads(json.dumps(record.get(key))) for key in fields}, **binding,
+            "execution_host": record.get("execution_host", "codex"),
+            "native_model_authorized": record.get("native_model_authorized", False),
+            "model_policy": "terra_required" if record.get("execution_host", "codex") == "codex" else "user_authorized_native",
+            "execution_mode": "host_assisted_cua", "source_matches_current": current, "can_sync": can_sync,
+            "submission_performed": False,
+            "handoff_prompt": _assistant_prompt(root, record["request_id"], binding["mode"], record.get("execution_host", "codex"), binding=binding) if record["state"] == "prepared" else None}
+
+
+def workbench_assistant_prepare(root, plan_id, profile_id, *, expected_book_id, expected_profile_sha256,
+                                mode="inspect_drafts", comparison_policy="strict", body_encoding=PLATFORM_BODY_ENCODING,
+                                inspection_id=None, confirmed=False, execution_host="codex", native_model_authorized=False,
+                                attribution_path=None):
+    """Prepare a bounded local handoff, without connecting or running any host."""
+    _assistant_host(execution_host, native_model_authorized)
+    if (not isinstance(mode, str) or mode not in _ASSISTANT_MODES or type(confirmed) is not bool or
+            not isinstance(expected_book_id, str) or not expected_book_id or
+            (mode != "sync_drafts" and inspection_id is not None)):
+        api.fail("invalid_input", "助手协助只支持检查差异、只读对账或明确确认后的同步。")
+    if attribution_path is not None and (
+            not isinstance(attribution_path, str) or not attribution_path or mode == "reconcile_only" or
+            not Path(attribution_path).is_absolute()):
+        api.fail("platform_draft_attribution_invalid", "归属授权只接受检查差异或已确认同步的私有绝对路径证据。")
+    if mode == "sync_drafts" and confirmed is not True:
+        api.fail("platform_draft_assistant_confirmation_required", "请先查看本次检查结果，再明确确认同步。")
+    if mode != "reconcile_only":
+        require_platform_comparison_policy(comparison_policy)
+        require_platform_body_encoding(body_encoding)
+    root, preview, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id,
+        mode == "reconcile_only", comparison_policy, body_encoding, mode == "sync_drafts", mode == "inspect_drafts")
+    if not profile or profile.get("execution_mode") != "host_assisted_cua" or profile.get("platform") != "fanqie":
+        api.fail("platform_draft_assistant_unsupported", "助手协助目前只支持番茄 Chrome 草稿配置。")
+    if binding["profile_sha256"] != expected_profile_sha256:
+        api.fail("platform_draft_profile_changed", "页面配置已变化，请重新核对。")
+    with _assistant_directory(root, create=True) as directory:
+        if any(not job["done"] and (job["_root"] == str(root) or job["_target_sha256"] == binding["target_sha256"])
+               for job in _WORKBENCH_JOBS.values()) or any(
+                   key[0] == str(root) or target == binding["target_sha256"] for key, target in _WORKBENCH_BINDINGS.items()):
+            api.fail("platform_draft_busy", "当前作品或平台目标已有运行任务。")
+        records = _assistant_records(directory)
+        for other in records:
+            active = _assistant_effective(other, root)
+            if (active["state"] == "prepared" and active["binding"] == binding and active.get("inspection_id") == inspection_id
+                    and active.get("execution_host", "codex") == execution_host
+                    and active.get("native_model_authorized", False) == native_model_authorized
+                    and active.get("attribution_path") == attribution_path):
+                return {**_assistant_packet(active, root), "reused": True}
+            if _assistant_blocks_execution(active):
+                api.fail("platform_draft_busy", "本书已有助手任务或浏览器收尾尚未确认，请等待完成后再执行。")
+        if len(records) >= 1000:
+            api.fail("platform_draft_assistant_request_limit", "助手任务记录已达限制，请先归档。")
+        inspection = None
+        if mode == "sync_drafts":
+            inspection = _assistant_read(directory, inspection_id)
+            expected = {**binding, "mode": "inspect_drafts"}
+            if (inspection["binding"] != expected or inspection["state"] != "inspection_ready" or
+                    inspection.get("execution_host", "codex") != execution_host or
+                    inspection.get("native_model_authorized", False) != native_model_authorized or
+                    _assistant_effective(inspection, root).get("cleanup_complete") is not True or
+                    inspection["book_root"] != str(root) or
+                    inspection.get("inspection_used") or inspection.get("inspection_expires_epoch", 0) <= time.time() or
+                    inspection.get("result", {}).get("can_execute") is not True or
+                    not isinstance(inspection.get("expected_remote"), dict) or
+                    _assistant_global_record("inspection", inspection["request_id"], inspection["binding_sha256"])):
+                api.fail("platform_draft_inspection_required", "需要本助手流程刚完成、目标一致且未使用的整批检查。")
+            if inspection.get("attribution_path") != attribution_path:
+                api.fail("platform_draft_attribution_changed", "本次同步必须沿用检查时使用的同一份归属授权。")
+        now, request_id = time.time(), uuid.uuid4().hex
+        stamp = api.platform_chrome_bridge._stamp
+        record = {"schema": 1, "request_id": request_id, "book_root": str(root), "binding": binding, "binding_sha256": _hash(binding),
+                  "target": {key: preview[key] for key in ("platform", "account_id", "remote_book_id")},
+                  "execution_origin": "assistant_session", "model_verification": "executor_runtime_required",
+                  "execution_host": execution_host, "native_model_authorized": native_model_authorized,
+                  "state": "prepared", "stage": "awaiting_assistant", "done": False,
+                  "created_at": stamp(now), "expires_at": stamp(now + ASSISTANT_SECONDS), "expires_epoch": now + ASSISTANT_SECONDS,
+                  "claimed_at": None, "finished_at": None, "error": None, "checked_chapters": 0,
+                  "verified_chapters": 0, "total_chapters": len(preview["results"]), "result": None,
+                  "remote_accessed": False, "stop_requested": False, "inspection_id": inspection_id,
+                  "attribution_path": attribution_path, "expected_remote": inspection.get("expected_remote") if inspection else None}
+        if inspection:
+            # Consume the inspection before publishing a write request. A crash
+            # may require a fresh read-only check but cannot authorize two writes.
+            inspection["inspection_used"] = request_id
+            _assistant_write(directory, inspection)
+        _assistant_write(directory, record, new=True)
+    return {**_assistant_packet(record, root), "reused": False}
+
+
+def workbench_assistant_status(root, request_id, *, expected_book_id):
+    with _workbench_book(root, expected_book_id) as book:
+        root = book.root
+    try:
+        with _assistant_directory(root) as directory:
+            record = _assistant_read(directory, request_id)
+    except FileNotFoundError:
+        api.fail("platform_draft_assistant_request_missing", "未找到本书的助手协助任务。")
+    if record["binding"]["book_id"] != expected_book_id:
+        api.fail("platform_draft_book_changed", "助手任务不属于当前作品。")
+    return _assistant_packet(record, root)
+
+
+def workbench_assistant_latest(root, plan_id, profile_id, *, expected_book_id):
+    with _workbench_book(root, expected_book_id) as book:
+        root = book.root
+    if not api.safe_path(root, ASSISTANT_DIRECTORY).exists():
+        return {"ok": True, "request": None, "active_request": None}
+    with _assistant_directory(root) as directory:
+        all_rows = _assistant_records(directory)
+        rows = [r for r in all_rows if r["binding"]["book_id"] == expected_book_id and
+                r["binding"]["plan_id"] == plan_id and r["binding"]["profile_id"] == profile_id]
+        active = next((r for r in all_rows if r["binding"]["book_id"] == expected_book_id and
+                       _assistant_blocks_execution(_assistant_effective(r, root))), None)
+    # A previous version could create a newer result before an older worker
+    # drained. Surface the unresolved task for this scope instead of hiding it
+    # behind a newer terminal result.
+    latest = None
+    if rows:
+        latest = active if active is not None and active in rows else max(
+            rows, key=lambda r: (r["created_at"], r["request_id"]))
+    return {"ok": True, "request": _assistant_packet(latest, root) if latest else None,
+            "active_request": _assistant_packet(active, root) if active else None}
+
+
+def workbench_assistant_cancel(root, request_id, *, expected_book_id):
+    with _workbench_book(root, expected_book_id) as book:
+        root = book.root
+    with _assistant_directory(root) as directory:
+        record = _assistant_read(directory, request_id)
+        if record["binding"]["book_id"] != expected_book_id or record["book_root"] != str(root):
+            api.fail("platform_draft_book_changed", "助手任务不属于当前作品。")
+        effective = _assistant_effective(record, root)
+        if effective["state"] != record["state"]:
+            return _assistant_packet(effective, root)
+        if record["state"] == "prepared":
+            record.update(state="cancelled", stage="finished", done=True, stop_requested=True, finished_at=_now())
+        elif record["state"] == "running":
+            record["stop_requested"] = True
+        else:
+            # Completion may win the race with this request. Preserve its exact
+            # result and do not re-label or rewrite a finished record as cancel.
+            return _assistant_packet(effective, root)
+        _assistant_write(directory, record)
+    return _assistant_packet(record, root)
+
+
+def assistant_reset(root, request_id, evidence_path, *, expected_book_id=None, confirmed=False):
+    """Explicit local operator recovery for an expired read-only host session."""
+    if confirmed is not True:
+        api.fail("platform_draft_assistant_reset_confirmation_required", "需确认已保存、正常退出 Chrome 并完成官方内核重置。")
+    with _workbench_book(root, expected_book_id) as book:
+        root, book_id = book.root, book.meta("id")
+    with _assistant_directory(root) as directory:
+        record = _assistant_read(directory, request_id)
+        if (record["book_root"] != str(root) or record["binding"]["book_id"] != book_id or
+                record["binding"]["mode"] not in {"inspect_drafts", "reconcile_only"} or
+                record["state"] == "prepared" or not isinstance(record.get("assistant_context"), dict)):
+            api.fail("platform_draft_assistant_reset_not_readonly", "只允许隔离已停止的只读助手任务；保存任务必须保留未知状态。")
+        if api.platform_chrome_bridge._owner_alive(root, record):
+            api.fail("platform_draft_assistant_reset_process_alive", "原队列控制器仍在运行，不能隔离恢复。")
+        effective = _assistant_effective(record, root)
+        if effective.get("execution_retired_by_operator") is not True:
+            try:
+                api.chrome_worker.assistant_retire_readonly_session(root, _host_binding(record["binding"], record["target"]),
+                    record["assistant_context"], request_id=request_id, request_binding_sha256=record["binding_sha256"],
+                    evidence_path=evidence_path)
+            except Exception as error:
+                api.fail(_error_code(error), "外部会话隔离证据未通过；保留原任务，不启动新操作。")
+        # Preserve the original failure/result and request bytes. Retirement is
+        # separate protocol evidence, never a successful task or retry grant.
+    return _assistant_packet(record, root)
+
+
+def assistant_reconcile(root, request_id, evidence_path, *, expected_book_id=None, confirmed=False):
+    """Explicit local recovery for a finished read-only session with no final receipt.
+
+    The host inventory is accepted only after the worker binding proves the
+    queue controller is dead, the lease is not live, every dispatched request
+    is read-only and expired, and the session's own ownership record lists the
+    exact tabs observed absent. This never marks the worker as completed.
+    """
+    if confirmed is not True:
+        api.fail("platform_draft_assistant_reconcile_confirmation_required",
+                 "需确认只核验终止会话的标签缺失，不声称工作器正常完成。")
+    with _workbench_book(root, expected_book_id) as book:
+        root, book_id = book.root, book.meta("id")
+    with _assistant_directory(root) as directory:
+        record = _assistant_read(directory, request_id)
+        if (record["book_root"] != str(root) or record["binding"]["book_id"] != book_id or
+                record["binding"]["mode"] not in {"inspect_drafts", "reconcile_only"} or
+                record["state"] == "prepared" or not isinstance(record.get("assistant_context"), dict)):
+            api.fail("platform_draft_assistant_reconcile_not_readonly", "只允许核验已停止的只读助手任务。")
+        if api.platform_chrome_bridge._owner_alive(root, record):
+            api.fail("platform_draft_assistant_reconcile_process_alive", "原队列控制器仍在运行，不能核验收尾。")
+        effective = _assistant_effective(record, root)
+        if effective.get("cleanup_complete") is not True:
+            try:
+                api.chrome_worker.assistant_reconcile_session(
+                    root, _host_binding(record["binding"], record["target"]), record["assistant_context"],
+                    request_id=request_id, request_binding_sha256=record["binding_sha256"],
+                    evidence_path=evidence_path)
+            except Exception as error:
+                api.fail(_error_code(error), "标签缺失核验证据未通过；保留原任务，不启动新操作。")
+        # Preserve the original result and request bytes. Reconciliation is
+        # separate terminal evidence, never a successful task or replay grant.
+    return _assistant_packet(record, root)
+
+
+def assistant_run(root, request_id, *, expected_book_id=None, on_context=None):
+    """Explicit host-assisted execution. Model compliance belongs to the caller's
+    verified runtime, never to a caller-supplied model field or a health lease.
+    No automatic model process, browser launch or shared-host cleanup occurs.
+    """
+    with _workbench_book(root, expected_book_id) as book:
+        root, book_id = book.root, book.meta("id")
+    with _assistant_directory(root) as directory:
+        record = _assistant_read(directory, request_id)
+        if record["binding"]["book_id"] != book_id or record["book_root"] != str(root):
+            api.fail("platform_draft_book_changed", "助手任务不属于当前作品。")
+        current = _assistant_effective(record, root)
+        if current["state"] != "prepared":
+            api.fail("platform_draft_assistant_request_consumed", "请求已执行、取消、中断或过期，不能再次执行；未知结果请只读核对。")
+        execution_host = _assistant_host(record.get("execution_host", "codex"), record.get("native_model_authorized", False))
+        if execution_host != "codex":
+            # Missing native runtime is a local preparation failure, not a
+            # consumed browser request. Never launch a substitute host.
+            if execution_host == "workbuddy":
+                api.chrome_worker._workbuddy_cli_path()
+                api.chrome_worker._workbuddy_node_path()
+            else:
+                api.chrome_worker._native_sdk_path(execution_host)
+        if any(_assistant_effective(r, root).get("execution_active") is True for r in _assistant_records(directory)):
+            api.fail("platform_draft_busy", "本书已有助手任务运行。")
+        _, preview, profile, binding = _assistant_preflight(root, record["binding"])
+        if binding != record["binding"]:
+            api.fail("platform_draft_preview_changed", "请求的正式稿、配置或目标已变化。")
+        if binding["mode"] == "sync_drafts":
+            inspection = _assistant_read(directory, record.get("inspection_id"))
+            if (inspection["binding"] != {**binding, "mode": "inspect_drafts"} or
+                    inspection.get("execution_host", "codex") != execution_host or
+                    inspection.get("native_model_authorized", False) != record.get("native_model_authorized", False) or
+                    inspection["book_root"] != str(root) or
+                    inspection["state"] != "inspection_ready" or
+                    inspection.get("attribution_path") != record.get("attribution_path") or
+                    _assistant_effective(inspection, root).get("cleanup_complete") is not True or
+                    inspection.get("inspection_used") != request_id or
+                    inspection.get("inspection_expires_epoch", 0) <= time.time() or
+                    inspection.get("expected_remote") != record.get("expected_remote")):
+                api.fail("platform_draft_inspection_required", "本次检查已失效，请重新只读检查后确认同步。")
+        if any(not job["done"] and (job["_root"] == str(root) or job["_target_sha256"] == binding["target_sha256"])
+               for job in _WORKBENCH_JOBS.values()):
+            api.fail("platform_draft_busy", "当前作品或目标已有自动任务运行。")
+        # Persist the single claim before probing a browser bridge. Even a
+        # failed or crashed invocation cannot replay this request.
+        owner_identity = api.task_worker._process_identity(os.getpid())
+        if not owner_identity:
+            api.fail("platform_draft_assistant_process_unverified", "无法核对本次本地任务进程，未执行。")
+        _assistant_global_record("claim", request_id, record["binding_sha256"], claim=True)
+        if binding["mode"] == "sync_drafts":
+            _assistant_global_record("inspection", inspection["request_id"], inspection["binding_sha256"], claim=True)
+        record.update(state="running", stage="connecting_assistant", claimed_at=_now(),
+                      owner_pid=os.getpid(), owner_identity=owner_identity)
+        _assistant_write(directory, record)
+
+    def update(**changes):
+        with _assistant_directory(root) as directory:
+            latest = _assistant_read(directory, request_id)
+            latest.update(changes)
+            _assistant_write(directory, latest)
+            return latest
+
+    def stopped():
+        with _assistant_directory(root) as directory:
+            return _assistant_read(directory, request_id)["stop_requested"]
+
+    def progress(event):
+        allowed = {key: event[key] for key in ("stage", "checked_chapters", "verified_chapters") if key in event}
+        if allowed.get("stage") not in _ASSISTANT_STAGES:
+            allowed.pop("stage", None)
+        if type(event.get("chapter")) is int:
+            allowed["current_chapter"] = event["chapter"]
+        update(**allowed)
+
+    def context_ready(packet):
+        update(stage="waiting_assistant_bridge", assistant_context=packet)
+        if on_context is not None:
+            on_context({"request_id": request_id, "assistant_context": packet})
+
+    result, error, session = None, None, None
+    try:
+        _, preview, profile, current = _assistant_preflight(root, binding)
+        if current != binding:
+            api.fail("platform_draft_preview_changed", "任务认领后本地材料发生变化，未执行。")
+        if stopped():
+            api.fail("platform_draft_stop_requested", "助手任务已取消。")
+        host_binding = _host_binding(binding, preview)
+        session_options = ({"execution_host": execution_host, "native_model_authorized": True}
+                           if execution_host != "codex" else {})
+        with api.chrome_worker.assistant_session(root, host_binding, on_context=context_ready, stop_requested=stopped,
+                                                **session_options) as session:
+            update(stage="running_assistant")
+            with _workbench_book(root, book_id) as book:
+                with api.platform_chrome_bridge.HostAdapter(root, host_binding, profile, progress,
+                        update_existing=binding["mode"] == "sync_drafts") as adapter:
+                    if adapter.session_id != session.session_id:
+                        api.fail("platform_draft_assistant_bridge_changed", "等待期间桥接会话改变，未发送平台操作。")
+                    update(remote_accessed=True)
+                    if binding["mode"] == "inspect_drafts":
+                        result = inspect_plan(book, binding["plan_id"], adapter, progress=progress, stop_requested=stopped,
+                            comparison_policy=binding["comparison_policy"], body_encoding=binding["body_encoding"],
+                            attribution_path=record.get("attribution_path"))
+                    else:
+                        result = run_plan(book, binding["plan_id"], adapter, execute=True,
+                            reconcile_only=binding["mode"] == "reconcile_only", sync_drafts=binding["mode"] == "sync_drafts",
+                            progress=progress, stop_requested=stopped, expected_remote=record.get("expected_remote"),
+                            comparison_policy=binding["comparison_policy"], body_encoding=binding["body_encoding"],
+                            attribution_path=record.get("attribution_path"))
+            update(stage="cleanup_pending")
+    except Exception as failure:
+        error = _error_code(failure)
+    if result and result.get("inspection"):
+        state = "inspection_ready" if result.get("can_execute") and error is None else "inspection_blocked"
+    elif result and result.get("all_chapters_accepted_this_run"):
+        state = "succeeded"
+    elif result and any(row.get("state") == "unknown" and row.get("recorded_this_run") for row in result.get("results", [])):
+        state = "unknown"
+    elif result and result.get("accepted_chapters", 0):
+        state = "partial_failure"
+    else:
+        state = "failed"
+    if error is not None and result is None and binding["mode"] == "sync_drafts":
+        with _assistant_directory(root) as directory:
+            observed = _assistant_read(directory, request_id)
+        if observed.get("remote_accessed") is True:
+            # In particular a journal write failure can follow a remote save.
+            # Without the core's completed result do not claim no write occurred.
+            state = "unknown"
+    if state != "unknown" and (error == "platform_draft_stop_requested" or (result and result.get("stop_requested"))):
+        state = "stopped"
+    changes = {"state": state, "stage": "finished", "done": True, "finished_at": _now(), "error": error,
+               "result": _safe_job_result(result) if result else None,
+               "bridge_detached": getattr(session, "bridge_detached", False) is True}
+    if result:
+        changes.update(checked_chapters=result.get("checked_chapters", 0),
+                       verified_chapters=result.get("accepted_chapters", 0))
+        if result.get("inspection"):
+            expiry = time.time() + ASSISTANT_SECONDS
+            changes.update(expected_remote=result.get("_expected_remote"), inspection_expires_epoch=expiry,
+                           inspection_expires_at=api.platform_chrome_bridge._stamp(expiry))
+    record = update(**changes)
+    return _assistant_packet(record, root)
+
+
 def register_parser(sub, command):
+    parser = command("publish-draft-assist-prepare", "Prepare a local, single-use host task; no browser access")
+    parser.add_argument("--id", required=True)
+    parser.add_argument("--profile", required=True, help="Saved profile filename within this book")
+    parser.add_argument("--mode", choices=sorted(_ASSISTANT_MODES), default="inspect_drafts")
+    parser.add_argument("--host", choices=("codex", "qoder-cn", "workbuddy"), default="codex")
+    parser.add_argument("--allow-native-host-model", action="store_true", help="Only with explicit user authorization for this native-host task")
+    parser.add_argument("--inspection", help="Completed, unused inspection from the same host and target")
+    parser.add_argument("--attribution", help="Private operator attribution JSON for one interrupted unnumbered empty draft")
+    parser.add_argument("--confirm-sync", action="store_true", help="Explicitly confirm syncing the inspected draft changes")
+    for name, description in (("status", "Read local task state; never browser access"),
+                              ("cancel", "Request a stop at the existing safe boundary; never replay")):
+        parser = command("publish-draft-assist-" + name, description)
+        parser.add_argument("--request", required=True)
+    parser = command("publish-draft-assist-reset", "Explicit operator isolation of an expired read-only assistant session")
+    parser.add_argument("--request", required=True)
+    parser.add_argument("--evidence", required=True, help="Private operator evidence JSON; never a worker completion proof")
+    parser.add_argument("--confirm-external-session-reset", action="store_true")
+    parser = command("publish-draft-assist-reconcile", "Machine-verified terminal recovery of a read-only session without a worker receipt")
+    parser.add_argument("--request", required=True)
+    parser.add_argument("--evidence", required=True, help="Private host-observed tab inventory JSON; never a worker completion proof")
+    parser.add_argument("--confirm-reconcile", action="store_true")
+    parser = command("publish-draft-assist-run", "Execute one explicitly prepared assistant task; requires a verified Terra host")
+    parser.add_argument("--request", required=True, help="Single-use local assistant request ID; never a model proof")
     parser = command("publish-draft-run", "Preview or explicitly save existing-work chapter drafts; never submits")
     parser.add_argument("--id", required=True, help="Frozen publishing plan ID")
     parser.add_argument("--profile", help="Required with --execute; local browser profile JSON never copied into the journal")
@@ -2251,6 +3554,26 @@ def register_parser(sub, command):
 
 
 def run(book, args):
+    if args.command == "publish-draft-assist-prepare":
+        _assistant_host(args.host, args.allow_native_host_model)
+        _, profile_sha256 = _read_profile(book.root, args.profile)
+        return workbench_assistant_prepare(book.root, args.id, args.profile,
+            expected_book_id=book.meta("id"), expected_profile_sha256=profile_sha256,
+            mode=args.mode, inspection_id=args.inspection, confirmed=args.confirm_sync,
+            execution_host=args.host, native_model_authorized=args.allow_native_host_model,
+            attribution_path=args.attribution)
+    if args.command in ("publish-draft-assist-status", "publish-draft-assist-cancel"):
+        operation = workbench_assistant_status if args.command.endswith("-status") else workbench_assistant_cancel
+        return operation(book.root, args.request, expected_book_id=book.meta("id"))
+    if args.command == "publish-draft-assist-reset":
+        return assistant_reset(book.root, args.request, args.evidence, expected_book_id=book.meta("id"),
+                               confirmed=args.confirm_external_session_reset)
+    if args.command == "publish-draft-assist-reconcile":
+        return assistant_reconcile(book.root, args.request, args.evidence, expected_book_id=book.meta("id"),
+                                   confirmed=args.confirm_reconcile)
+    if args.command == "publish-draft-assist-run":
+        return assistant_run(book.root, args.request, expected_book_id=book.meta("id"),
+                             on_context=lambda packet: print(api.dumps(packet), flush=True))
     if args.command == "publish-draft-status":
         return status(book, args.id)
     if args.command != "publish-draft-run":

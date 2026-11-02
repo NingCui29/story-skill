@@ -66,12 +66,13 @@ class Output:
 class FakeProcess:
     sequence = 8000
 
-    def __init__(self, on_turn=None, drop=None, before_ack=False):
+    def __init__(self, on_turn=None, drop=None, before_ack=False, thread_result=None, thread_error=None, on_thread=None):
         FakeProcess.sequence += 1
         self.pid, self.returncode = FakeProcess.sequence, None
         self.stdout, self.stdin = Output(), Input(self)
         self.messages, self.on_turn, self.drop = [], on_turn, drop
         self.before_ack = before_ack
+        self.thread_result, self.thread_error, self.on_thread = thread_result, thread_error, on_thread
 
     def receive(self, message):
         self.messages.append(message)
@@ -80,7 +81,13 @@ class FakeProcess:
             return
         result = {}
         if method == "thread/start":
-            result = {"thread": {"id": "ephemeral-thread", "ephemeral": True, "path": None}}
+            if self.on_thread:
+                self.on_thread(self)
+            if self.thread_error is not None:
+                self.stdout.put({"id": message["id"], "error": self.thread_error})
+                return
+            result = self.thread_result if self.thread_result is not None else {
+                "model": worker.WORKER_MODEL, "thread": {"id": "ephemeral-thread", "ephemeral": True, "path": None}}
         elif method == "turn/start":
             result = {"turn": {"id": "real-fake-wire-turn"}}
         if method == "turn/start" and self.on_turn and self.before_ack:
@@ -131,7 +138,7 @@ class ProtocolTests(unittest.TestCase):
         self.addCleanup(client.close)
         return process, client
 
-    def test_real_turn_contract_uses_ephemeral_and_inherits_model(self):
+    def test_real_turn_contract_verifies_terra_and_inherits_effort_without_fallback(self):
         process, client = self.client()
         self.initialize(client)
         methods = [message.get("method") for message in process.messages]
@@ -139,7 +146,10 @@ class ProtocolTests(unittest.TestCase):
         start = process.messages[2]["params"]
         self.assertIs(start["ephemeral"], True)
         self.assertEqual(start["sandbox"], "read-only")
-        self.assertFalse(any(key in start for key in ("model", "effort", "reasoningEffort")))
+        self.assertEqual(start["model"], "gpt-6.1-terra")
+        self.assertIs(start["allowProviderModelFallback"], False)
+        self.assertFalse(any(key in start for key in ("effort", "reasoningEffort", "config")))
+        self.assertTrue(client.model_verified)
         turn = process.messages[3]["params"]
         self.assertEqual(turn["input"], [{"type": "text", "text": "fixed prompt"}])
         self.assertEqual(set(turn), {"threadId", "input", "sandboxPolicy"})
@@ -158,6 +168,144 @@ class ProtocolTests(unittest.TestCase):
                                ("mcpServer/tool/call", {})):
             with self.subTest(method=method, params=params), self.assertRaises(worker.WorkerError):
                 client.request(method, params)
+
+    def test_missing_or_mismatched_model_never_starts_turn_and_does_not_leak_identity(self):
+        for model, suffix in ((None, "unverified"), ("", "unverified"), ({"secret": "PRIVATE"}, "unverified"),
+                              ("gpt-6.1-sol", "mismatch"), ("gpt-6.1-terra-latest", "mismatch"),
+                              ("PRIVATE_MODEL_TOKEN", "mismatch")):
+            with self.subTest(model=model):
+                records = []
+                process, client = self.client(thread_result={"model": model, "thread": {
+                    "id": "ephemeral-thread", "ephemeral": True, "path": None}})
+                client.diagnostic = lambda phase, **fields: records.append({"phase": phase, **fields})
+                with self.assertRaises(worker.WorkerError) as error:
+                    self.initialize(client)
+                self.assertEqual(error.exception.code, "platform_chrome_worker_model_" + suffix)
+                self.assertNotIn("turn/start", [message.get("method") for message in process.messages])
+                self.assertFalse(client.model_verified)
+                self.assertNotIn("PRIVATE", json.dumps(records))
+                client.close()
+
+    def test_early_thread_reroute_prevents_turn_start_even_when_reply_claims_terra(self):
+        def route(process):
+            process.stdout.put({"method": "model/rerouted", "params": {
+                "threadId": "ephemeral-thread", "turnId": "early-turn", "fromModel": worker.WORKER_MODEL,
+                "toModel": "PRIVATE_MODEL", "reason": "highRiskCyberActivity"}})
+        process, client = self.client(on_thread=route)
+        with self.assertRaises(worker.WorkerError) as error:
+            self.initialize(client)
+        self.assertEqual(error.exception.code, "platform_chrome_worker_model_rerouted")
+        self.assertFalse(client.model_verified)
+        self.assertNotIn("turn/start", [message.get("method") for message in process.messages])
+
+    def test_owned_reroute_revokes_model_and_interrupts_exact_turn_without_fallback(self):
+        process, client = self.client()
+        self.initialize(client)
+        params = {"threadId": client.thread_id, "turnId": client.turn_id,
+                  "fromModel": worker.WORKER_MODEL, "toModel": worker.WORKER_MODEL, "reason": "highRiskCyberActivity"}
+        for replacement in ({"threadId": "other"}, {"turnId": "other"}):
+            client._observe({"method": "model/rerouted", "params": {**params, **replacement}})
+            self.assertTrue(client.model_verified)
+        client._observe({"method": "model/rerouted", "params": params})
+        self.assertFalse(client.model_verified)
+        self.assertEqual(client.worker_error, "platform_chrome_worker_model_rerouted")
+        interrupts = [message for message in process.messages if message.get("method") == "turn/interrupt"]
+        self.assertEqual(len(interrupts), 1)
+        self.assertEqual(interrupts[0]["params"], {"threadId": client.thread_id, "turnId": client.turn_id})
+        with self.assertRaises(worker.WorkerError):
+            client.request("turn/start", process.messages[3]["params"])
+        self.assertEqual(sum(message.get("method") == "turn/start" for message in process.messages), 1)
+
+    def test_reroute_before_turn_ack_still_interrupts_pinned_turn(self):
+        def route(process):
+            process.stdout.put({"method": "model/rerouted", "params": {
+                "threadId": "ephemeral-thread", "turnId": "real-fake-wire-turn",
+                "fromModel": worker.WORKER_MODEL, "toModel": "gpt-6.1-sol"}})
+        process, client = self.client(on_turn=route, before_ack=True)
+        with self.assertRaises(worker.WorkerError) as error:
+            self.initialize(client)
+        self.assertEqual(error.exception.code, "platform_chrome_worker_model_rerouted")
+        self.assertEqual(client.worker_error, "platform_chrome_worker_model_rerouted")
+        self.assertFalse(client.model_verified)
+        self.assertTrue(any(message.get("method") == "turn/interrupt" for message in process.messages))
+
+    def test_rpc_model_unavailable_preserves_only_structured_category_and_numeric_code(self):
+        records = []
+        process, client = self.client(thread_error={"code": -32602, "message": "PRIVATE_TOKEN PRIVATE_PATH",
+            "data": {"codexErrorInfo": "modelNotFound", "private": "PRIVATE_BODY"}})
+        client.diagnostic = lambda phase, **fields: records.append({"phase": phase, **fields})
+        with self.assertRaises(worker.WorkerError) as error:
+            self.initialize(client)
+        self.assertEqual(error.exception.code, "platform_chrome_worker_model_unavailable")
+        self.assertNotIn("turn/start", [message.get("method") for message in process.messages])
+        self.assertTrue(any(r.get("error_kind") == "modelNotFound" and r.get("rpc_error_code") == -32602 for r in records))
+        self.assertNotIn("PRIVATE", json.dumps(records))
+
+    def test_provider_notification_and_turn_error_keep_bounded_causes_without_prose(self):
+        for method in ("error", "turn/completed"):
+            with self.subTest(method=method):
+                records = []
+                process, client = self.client()
+                self.initialize(client)
+                client.diagnostic = lambda phase, **fields: records.append({"phase": phase, **fields})
+                error = {"message": "PRIVATE_TOKEN", "additionalDetails": "PRIVATE_BODY", "codexErrorInfo": {
+                    "responseStreamConnectionFailed": {"httpStatusCode": 403, "extra": "PRIVATE"}}}
+                message = (owned_message(method, turn={"status": "failed", "error": error}) if method == "turn/completed"
+                           else {"method": method, "params": {"threadId": client.thread_id, "turnId": client.turn_id,
+                                 "error": error, "willRetry": True}})
+                client._observe(message)
+                self.assertEqual(client.worker_error, "platform_chrome_worker_turn_failed")
+                self.assertTrue(any(r.get("error_kind") == "responseStreamConnectionFailed" and r.get("http_status") == 403 for r in records))
+                self.assertNotIn("PRIVATE", json.dumps(records))
+                self.assertEqual(sum(message.get("method") == "turn/start" for message in process.messages), 1)
+                client.close()
+
+    def test_provider_fields_reject_unknown_strings_booleans_and_unbounded_codes(self):
+        for error in ({"codexErrorInfo": "PRIVATE_TOKEN", "code": True},
+                      {"codexErrorInfo": {"PRIVATE_TOKEN": {}}, "code": 2**31},
+                      {"codexErrorInfo": {"httpConnectionFailed": {"httpStatusCode": True}}},
+                      {"codexErrorInfo": {"httpConnectionFailed": {"httpStatusCode": 600}}}):
+            fields = worker._provider_error(error)
+            self.assertNotIn("PRIVATE", json.dumps(fields))
+            self.assertNotIn("rpc_error_code", fields)
+            self.assertNotIn("http_status", fields)
+
+    def test_bootstrap_failures_are_exact_bounded_tags_and_never_grant_readiness(self):
+        for code in worker.BOOTSTRAP_ERRORS:
+            process, client = self.client()
+            self.initialize(client)
+            client._observe(owned_message("item/completed", item={"type": "agentMessage", "text":
+                worker.BOOTSTRAP_PREFIX + json.dumps({"code": code})}))
+            self.assertEqual(client.worker_error, code)
+            self.assertIsNone(client.tool_started_at)
+            self.assertIsNone(client.worker_done)
+            client.close()
+        _, client = self.client()
+        self.initialize(client)
+        for text in ("PRIVATE_BODY", worker.BOOTSTRAP_PREFIX + '{"code":"PRIVATE_TOKEN"}',
+                     worker.BOOTSTRAP_PREFIX + '{"code":"platform_chrome_worker_tool_discovery_failed","extra":"PRIVATE"}'):
+            client._observe(owned_message("item/completed", item={"type": "agentMessage", "text": text}))
+            self.assertIsNone(client.worker_error)
+
+    def test_tagged_bootstrap_prose_cannot_replace_a_real_tools_failure(self):
+        _, client = self.client()
+        self.initialize(client)
+        observe_tool(client, {}, status="failed", error={"message": "Debugger unattached PRIVATE"})
+        client._observe(owned_message("item/completed", item={"type": "agentMessage", "text":
+            worker.BOOTSTRAP_PREFIX + '{"code":"platform_chrome_worker_tool_discovery_failed"}'}))
+        self.assertEqual(client.worker_error, "platform_chrome_worker_browser_unattached")
+
+    def test_native_transport_checkpoint_preserves_fixed_cause_without_claiming_browser_permission(self):
+        records = []
+        _, client = self.client()
+        self.initialize(client)
+        client.diagnostic = lambda phase, **fields: records.append({"phase": phase, **fields})
+        observe_tool(client, checkpoint_result({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+            "failure_phase": "browser_inventory", "code": "platform_chrome_worker_browser_transport_closed",
+            "error_name": "Error", "error_marker": "native_pipe_closed"}))
+        self.assertEqual(client.worker_error, "platform_chrome_worker_browser_transport_closed")
+        self.assertTrue(any(row.get("error_marker") == "native_pipe_closed" for row in records))
+        self.assertNotIn("origin_permission_required", json.dumps(records))
 
     def test_turn_cannot_broaden_storage_network_temp_or_owned_context(self):
         process, client = self.client()
@@ -687,7 +835,8 @@ class ControllerTests(unittest.TestCase):
             if self.tool_progress:
                 process.stdout.put(owned_message("item/started", item={
                     "id": "worker-progress", "type": "mcpToolCall", "server": "node_repl", "tool": "js", "status": "inProgress"}))
-        process = FakeProcess(on_turn=turn)
+        process = FakeProcess(on_turn=turn, thread_result=getattr(self, "thread_result", None),
+                              thread_error=getattr(self, "thread_error", None))
         self.processes.append(process)
         return process
 
@@ -712,6 +861,124 @@ class ControllerTests(unittest.TestCase):
         self.assertTrue(self.start()["ready"])
         self.assertEqual(len(self.processes), 1)
         self.assertTrue(self.state()["uses_codex_quota"])
+
+    def test_bootstrap_transport_failure_suspends_new_launches_across_bindings(self):
+        self.health_mode = "lease-only"
+        self.start()
+        self.wait(lambda: self.state()["model_verified"])
+        self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+            "failure_phase": "browser_inventory", "error_name": "Error", "error_marker": "native_pipe_closed",
+            "code": "platform_chrome_worker_browser_transport_closed"})
+        self.wait(lambda: self.state().get("retry_blocked") is True and
+                  next(iter(self.controller._workers.values()))["done"].is_set())
+        self.assertEqual(self.state()["error"], "platform_chrome_worker_browser_transport_closed")
+        self.assertFalse(self.state()["ready"])
+        for plan, profile in [("synthetic-plan", "saved.json"), ("new-range", "saved.json"),
+                              ("new-range", "other.json")]:
+            with self.assertRaisesRegex(worker.WorkerError, worker.CONNECTION_SUSPENDED):
+                self.controller.start(self.root, plan, profile, expected_book_id="local-book")
+        self.assertEqual(len(self.processes), 1)
+        self.assertEqual(len(self.contexts), 1)
+        with patch.object(worker, "_CONTROLLER", self.controller), \
+             patch.object(worker, "_codex_executable", side_effect=AssertionError("no new process probe")):
+            value = worker.availability()
+        self.assertFalse(value["available"])
+        self.assertTrue(value["retry_blocked"])
+        self.assertEqual(value["reason"], worker.CONNECTION_SUSPENDED)
+        value["retry_blocked"] = False
+        self.assertTrue(self.controller.connection_suspension()["retry_blocked"])
+
+    def test_transport_loss_after_ready_does_not_claim_bootstrap_suspension(self):
+        self.start()
+        self.wait(lambda: self.state()["ready"])
+        self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+            "failure_phase": "browser_inventory", "error_name": "Error", "error_marker": "native_pipe_closed",
+            "code": "platform_chrome_worker_browser_transport_closed"})
+        self.wait(lambda: next(iter(self.controller._workers.values()))["done"].is_set())
+        self.assertIsNone(self.controller.connection_suspension())
+        self.assertNotIn("retry_blocked", self.state())
+
+    def test_queue_failure_with_zero_completed_requests_is_not_bootstrap(self):
+        self.health_mode = "lease-only"
+        self.start()
+        self.wait(lambda: self.state()["model_verified"])
+        self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+            "failure_phase": "queue_operation", "error_name": "Error", "error_marker": "native_pipe_closed",
+            "code": "platform_chrome_worker_browser_transport_closed"})
+        self.wait(lambda: next(iter(self.controller._workers.values()))["done"].is_set())
+        self.assertIsNone(self.controller.connection_suspension())
+
+    def test_successful_checkpoint_cannot_be_erased_by_later_zero_bootstrap_failure(self):
+        self.health_mode = "lease-only"
+        self.start()
+        self.wait(lambda: self.state()["model_verified"])
+        self.processes[0].checkpoint({"done": False, "state": "busy", "phase": "queue_operation", "processed": 1})
+        self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+            "failure_phase": "sdk_setup", "error_name": "Error", "error_marker": "native_pipe_closed",
+            "code": "platform_chrome_worker_browser_transport_closed"})
+        self.wait(lambda: next(iter(self.controller._workers.values()))["done"].is_set())
+        self.assertIsNone(self.controller.connection_suspension())
+
+    def test_ready_transition_is_monotonic_before_delayed_diagnostic(self):
+        entered, release = threading.Event(), threading.Event()
+        self.addCleanup(release.set)
+        diagnose = self.controller._diagnose
+        def delayed(entry, phase, **fields):
+            if phase == "bridge_ready":
+                entered.set()
+                release.wait(3)
+            diagnose(entry, phase, **fields)
+        with patch.object(self.controller, "_diagnose", side_effect=delayed):
+            self.start()
+            self.assertTrue(entered.wait(3))
+            self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+                "failure_phase": "browser_inventory", "error_name": "Error", "error_marker": "native_pipe_closed",
+                "code": "platform_chrome_worker_browser_transport_closed"})
+            self.wait(lambda: next(iter(self.controller._workers.values())).get("worker_failure"))
+            self.assertIsNone(self.controller.connection_suspension())
+            release.set()
+            self.wait(lambda: next(iter(self.controller._workers.values()))["done"].is_set())
+
+    def test_suspension_during_local_validation_prevents_the_pending_process_launch(self):
+        self.health_mode = "lease-only"
+        self.start()
+        self.wait(lambda: self.state()["model_verified"])
+        entered, release = threading.Event(), threading.Event()
+        self.addCleanup(release.set)
+        validate = self.controller._validated_storage
+        @contextmanager
+        def delayed(entry):
+            with validate(entry) as value:
+                if entry["binding"]["profile_id"] == "pending.json":
+                    entered.set()
+                    release.wait(3)
+                yield value
+        with patch.object(self.controller, "_validated_storage", side_effect=delayed):
+            self.start("pending.json")
+            self.assertTrue(entered.wait(3))
+            self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+                "failure_phase": "browser_inventory", "error_name": "Error", "error_marker": "native_pipe_closed",
+                "code": "platform_chrome_worker_browser_transport_closed"})
+            self.wait(lambda: self.controller.connection_suspension())
+            release.set()
+            self.wait(lambda: all(row["done"].is_set() for row in self.controller._workers.values()))
+        self.assertEqual(len(self.processes), 1)
+        self.assertEqual(self.state("pending.json")["error"], worker.CONNECTION_SUSPENDED)
+
+    def test_suspension_does_not_revoke_an_already_healthy_owned_worker(self):
+        self.start()
+        self.wait(lambda: self.state()["ready"])
+        self.health_mode = "lease-only"
+        self.start("broken.json")
+        self.wait(lambda: self.state("broken.json")["model_verified"])
+        self.processes[1].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+            "failure_phase": "browser_inventory", "error_name": "Error", "error_marker": "native_pipe_closed",
+            "code": "platform_chrome_worker_browser_transport_closed"})
+        self.wait(lambda: self.controller.connection_suspension())
+        self.assertTrue(self.state()["ready"])
+        self.assertNotIn("retry_blocked", self.state())
+        self.assertTrue(self.start()["ready"])
+        self.assertEqual(len(self.processes), 2)
 
     def test_explicit_comparison_policy_is_bound_and_passed_to_private_config(self):
         self.start()
@@ -1017,7 +1284,87 @@ class ControllerTests(unittest.TestCase):
         self.start()
         self.wait(lambda: next(iter(self.controller._workers.values()))["done"].is_set())
         self.assertFalse(self.state()["ready"])
-        self.assertEqual(self.state()["error"], "platform_chrome_worker_not_ready")
+        self.assertEqual(self.state()["error"], "platform_chrome_worker_tool_not_started")
+
+    def test_model_mismatch_reaches_private_diagnostics_and_status_without_starting_turn(self):
+        self.thread_result = {"model": "PRIVATE_MODEL_TOKEN", "thread": {
+            "id": "ephemeral-thread", "ephemeral": True, "path": None}}
+        self.start()
+        self.wait(lambda: next(iter(self.controller._workers.values()))["done"].is_set())
+        view = self.state()
+        self.assertEqual(view["error"], "platform_chrome_worker_model_mismatch")
+        self.assertEqual(view["requested_model"], "gpt-6.1-terra")
+        self.assertIsNone(view["resolved_model"])
+        self.assertFalse(view["model_verified"])
+        self.assertFalse(view["ready"])
+        self.assertNotIn("turn/start", [m.get("method") for m in self.processes[0].messages])
+        entry = next(iter(self.controller._workers.values()))
+        snapshot = (entry["context"] / "diagnostics.json").read_text()
+        self.assertIn("model_mismatch", snapshot)
+        self.assertNotIn("PRIVATE", snapshot + json.dumps(view))
+
+    def test_verified_model_and_provider_fields_are_visible_but_unknown_diagnostic_fields_are_dropped(self):
+        self.start()
+        self.wait(lambda: self.state()["ready"])
+        view = self.state()
+        self.assertEqual(view["resolved_model"], "gpt-6.1-terra")
+        self.assertTrue(view["model_verified"])
+        entry = next(iter(self.controller._workers.values()))
+        self.controller._diagnose(entry, "rpc_failed", error_kind="rateLimitExceeded", rpc_error_code=-32600,
+                                  http_status=429, message="PRIVATE_TOKEN", data="PRIVATE_BODY", model="PRIVATE_MODEL")
+        self.controller._diagnose(entry, "rpc_failed", error_kind="PRIVATE_TOKEN", rpc_error_code=True,
+                                  http_status=999, message="PRIVATE")
+        view = self.state()
+        self.assertEqual((view["error_kind"], view["rpc_error_code"], view["http_status"]), ("rateLimitExceeded", -32600, 429))
+        snapshot = (entry["context"] / "diagnostics.json").read_text()
+        self.assertNotIn("PRIVATE", snapshot + json.dumps(view))
+
+    def test_reroute_revokes_a_healthy_owned_worker_without_confirming_cleanup(self):
+        self.start()
+        self.wait(lambda: self.state()["ready"])
+        entry = next(iter(self.controller._workers.values()))
+        client = entry["client"]
+        client._observe({"method": "model/rerouted", "params": {"threadId": client.thread_id,
+            "turnId": client.turn_id, "fromModel": worker.WORKER_MODEL, "toModel": "PRIVATE_MODEL"}})
+        self.assertFalse(self.state()["ready"])
+        self.wait(entry["done"].is_set)
+        view = self.state()
+        self.assertEqual(view["error"], "platform_chrome_worker_model_rerouted")
+        self.assertFalse(view["model_verified"])
+        self.assertIsNone(view["resolved_model"])
+        self.assertFalse(view["worker_done_confirmed"])
+        self.assertTrue(view["cleanup_unconfirmed"])
+        self.assertEqual(len(self.processes), 1)
+
+    def test_reroute_revokes_reuse_even_while_diagnostic_persistence_is_blocked(self):
+        self.start()
+        self.wait(lambda: self.state()["ready"])
+        entry = next(iter(self.controller._workers.values()))
+        client = entry["client"]
+        entered, release = threading.Event(), threading.Event()
+        original = client.diagnostic
+        def diagnostic(phase, **fields):
+            if phase == "model_rejected":
+                entered.set()
+                release.wait(4)
+            original(phase, **fields)
+        client.diagnostic = diagnostic
+        sender = threading.Thread(target=lambda: client._observe({"method": "model/rerouted", "params": {
+            "threadId": client.thread_id, "turnId": client.turn_id, "toModel": "gpt-6.1-sol"}}), daemon=True)
+        sender.start()
+        try:
+            self.assertTrue(entered.wait(2))
+            # start() may reuse the entry before the diagnostic callback has
+            # persisted the model_rejected event. Live identity still revokes it.
+            with self.controller._lock:
+                view = self.controller._view(entry)
+            self.assertFalse(view["model_verified"])
+            self.assertFalse(view["ready"])
+            self.assertIsNone(view["resolved_model"])
+        finally:
+            release.set()
+            sender.join(4)
+        self.assertFalse(sender.is_alive())
 
     def test_health_expiry_revokes_readiness_and_stops_owned_turn(self):
         self.start()
@@ -1448,13 +1795,17 @@ class ControllerTests(unittest.TestCase):
         self.assertTrue(self.state()["worker_done_confirmed"])
         self.assertTrue(self.state()["turn_completed_normally"])
 
-    def test_external_healthy_worker_reused_without_starting_model(self):
+    def test_external_healthy_worker_without_model_proof_is_not_reused_or_stopped(self):
         binding, _ = self.core.binding(SimpleNamespace(root=self.root), "synthetic-plan", "saved.json")
         self.core.health[self.core.digest(binding)] = {"ready": True, "attached": True}
         result = self.start()
-        self.assertTrue(result["ready"])
+        self.assertFalse(result["ready"])
+        self.assertEqual(result["error"], "platform_chrome_worker_model_unverified")
+        self.assertIs(result["model_verified"], False)
         self.assertFalse(result["owned"])
         self.assertEqual(self.processes, [])
+        self.assertTrue(self.core.health[self.core.digest(binding)]["ready"])
+        self.assertEqual(self.state()["error"], result["error"])
 
     def test_external_unhealthy_lease_is_not_hijacked(self):
         binding, _ = self.core.binding(SimpleNamespace(root=self.root), "synthetic-plan", "saved.json")
@@ -1810,8 +2161,8 @@ class FileAndPromptTests(unittest.TestCase):
     def test_prompt_uses_fixed_module_and_path_without_book_or_profile_content(self):
         text = worker._worker_prompt(Path("/official/story_chrome_worker.mjs").resolve(),
                                      Path("/private").resolve() / 'config-"quoted".json')
-        self.assertIn("timeout_ms=420000", text)
-        self.assertIn("never leave browser work running after a tool call returns", text)
+        self.assertIn("timeout_ms=240000", text)
+        self.assertIn("never performs browser work", text)
         self.assertIn("Do not reimport", text)
         self.assertIn("Never repeat an individual queue operation", text)
         self.assertIn("https://fanqienovel.com", text)
@@ -1821,6 +2172,11 @@ class FileAndPromptTests(unittest.TestCase):
         self.assertIn('config-\\"quoted\\".json', text)
         self.assertNotIn("synthetic-account", text)
         self.assertNotIn("synthetic-remote-book", text)
+        self.assertNotIn("Use their default model", text)
+        self.assertIn("pinned and verified gpt-6.1-terra", text)
+        self.assertIn("text(ALL_TOOLS.filter(t => t.name === 'mcp__node_repl__js'));", text)
+        self.assertIn("Tool discovery is not browser permission", text)
+        self.assertIn("platform_chrome_worker_tool_discovery_failed", text)
 
     def test_availability_never_starts_model_or_creates_context(self):
         with patch.object(worker, "_codex_executable", return_value=Path("/official/codex")), \

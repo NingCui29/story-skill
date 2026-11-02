@@ -48,6 +48,13 @@ class ChromeBridgeTests(unittest.TestCase):
                                          side_effect=AssertionError("native browser must never start"))
         self.native_patch.start()
         self.addCleanup(self.native_patch.stop)
+        # Browser/transport evidence below remains real local protocol data.
+        # Only the separate model-identity attestation is synthetic in this suite.
+        self.model_patch = patch.object(story.chrome_worker, "status", return_value={
+            "ready": True, "owned": True, "requested_model": "gpt-6.1-terra",
+            "resolved_model": "gpt-6.1-terra", "model_verified": True})
+        self.model_patch.start()
+        self.addCleanup(self.model_patch.stop)
         self.jobs = []
         self.handles = []
         self.request_threads = []
@@ -151,6 +158,34 @@ class ChromeBridgeTests(unittest.TestCase):
         success.update(ok=True, result="7700440421876367934")
         self.assert_code("platform_chrome_invalid_message", bridge._validate_response, success, request)
 
+    def test_catalog_response_requires_current_request_target_complete_and_unique_remote(self):
+        self.attach()
+        thread, results, errors, claim, request = self.enqueue("inspect_catalog")
+        valid = {"target": request["binding"]["target"], "complete": True, "entries": [], "proof_id": request["id"]}
+        variants = [dict(valid, complete=False), dict(valid, proof_id="stale-proof"),
+                    dict(valid, target={**valid["target"], "remote_book_id": "different"}),
+                    dict(valid, entries=[{"chapter": 1, "remote_id": "x", "state": "draft"}] * 2)]
+        for value in variants:
+            self.write_response(request, value)
+            with self.assertRaises(story.StoryError):
+                bridge.respond(self.book, self.handle, claim["request_id"], self.response)
+        self.write_response(request, valid)
+        bridge.respond(self.book, self.handle, claim["request_id"], self.response)
+        thread.join(5)
+        self.assertEqual(errors, [])
+        self.assertEqual(results, [valid])
+
+    def test_adapter_catalog_proof_is_local_and_carried_only_after_new_scan(self):
+        adapter = bridge.HostAdapter(self.root, self.binding(), self.config)
+        packet = {"target": adapter.binding["target"], "complete": True, "entries": [], "proof_id": "fresh"}
+        with patch.object(adapter, "_request", return_value=packet) as request:
+            self.assertEqual(adapter.inspect_catalog(), packet)
+        self.assertEqual(adapter.catalog_proof_id, "fresh")
+        self.assertEqual(bridge.HostAdapter(self.root, self.binding(), self.config).catalog_proof_id, None)
+        with patch.object(adapter, "_request", side_effect=RuntimeError("scan failed")):
+            with self.assertRaises(RuntimeError): adapter.inspect_catalog()
+        self.assertIsNone(adapter.catalog_proof_id)
+
     def enqueue(self, operation="verify_target", params=None):
         """Queue a production request on a thread; no fake browser adapter."""
         result, errors = [], []
@@ -192,6 +227,10 @@ class ChromeBridgeTests(unittest.TestCase):
                     calls.append(op)
                     if op == "verify_target":
                         result = request["binding"]["target"]
+                    elif op == "inspect_catalog":
+                        result = {"target": request["binding"]["target"], "complete": True,
+                            "entries": [{"chapter": row["chapter"], "remote_id": remote_id, "state": "draft"}
+                                        for remote_id, row in remote.items()], "proof_id": request["id"]}
                     elif op == "find_drafts":
                         result = [copy.deepcopy(row) for row in remote.values() if row["chapter"] == params["chapter"]]
                     elif op == "create_draft":
@@ -469,6 +508,34 @@ class ChromeBridgeTests(unittest.TestCase):
         self.write_response(request, request["binding"]["target"])
         self.assert_code("platform_chrome_worker_unavailable", bridge.respond, self.book, self.handle,
                          claim["request_id"], self.response)
+
+    def test_heartbeat_preserves_claimed_operation_lease_and_expiry_cannot_be_revived(self):
+        self.attach()
+        handle = json.loads(self.handle.read_text())
+        session_id = handle["session_id"]
+        lease_path = self.root / bridge.DIRECTORY / session_id / "lease.json"
+        now = time.time()
+        operation_end = now + 930
+        with bridge._directory(self.root, session_id) as directory:
+            session = bridge._session(directory)
+            bridge._lease(directory, session, extend=True, until=operation_end)
+        self.assertEqual(json.loads(lease_path.read_text())["expires"], operation_end)
+        with patch.object(bridge.time, "time", return_value=now + 15):
+            bridge.heartbeat(self.book, self.handle)
+        self.assertEqual(json.loads(lease_path.read_text())["expires"], operation_end,
+                         "Health renewal must not truncate the already claimed operation lease")
+        with patch.object(bridge.time, "time", return_value=now + 920):
+            bridge.heartbeat(self.book, self.handle)
+        extended = now + 920 + bridge.TTL_SECONDS
+        self.assertEqual(json.loads(lease_path.read_text())["expires"], extended)
+        before = lease_path.read_bytes()
+        with patch.object(bridge.time, "time", return_value=extended + 1):
+            self.assert_code("platform_chrome_worker_unavailable", bridge.heartbeat, self.book, self.handle)
+            with bridge._directory(self.root, session_id) as directory:
+                session = bridge._session(directory)
+                self.assert_code("platform_chrome_worker_unavailable", bridge._lease,
+                                 directory, session, extend=True, until=extended + 1000)
+        self.assertEqual(lease_path.read_bytes(), before, "Expired leases must not be revived")
 
     def test_expired_lease_blocks_even_if_handle_remains(self):
         self.attach()

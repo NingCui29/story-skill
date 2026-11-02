@@ -981,6 +981,19 @@ html[data-story-workbench] :is(.genre-tag,.identity-badge,.book-status,.book-kin
 html[data-story-workbench] #book-kind{font:var(--wb-label-size)/1.5 var(--wb-ui-font);border-radius:var(--wb-radius-tag)}
 html[data-story-workbench] #chapter-info{font:var(--wb-ui-size)/1.75 var(--wb-ui-font)}
 html[data-story-workbench] aside h3,html[data-story-workbench] #chapter-info h4{font:600 var(--wb-label-size)/1.5 var(--wb-ui-font);letter-spacing:normal}
+html[data-story-workbench] #book-nav .navigation-mode{margin:var(--wb-space-2) 0}
+html[data-story-workbench] #book-nav :is(#range,#materials-status){font:var(--wb-label-size)/1.5 var(--wb-ui-font);margin:var(--wb-space-2) 0;color:var(--muted)}
+html[data-story-workbench] #book-nav #materials-status[data-state="error"]{color:var(--wb-warning)}
+html[data-story-workbench] #book-nav .document{padding:6px 8px;margin:2px 0;line-height:1.5;min-height:var(--wb-compact-height)}
+html[data-story-workbench] #book-nav .chapter-entry{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--wb-space-2);align-items:start}
+html[data-story-workbench] #book-nav .chapter-entry>.document-type{margin:0;line-height:inherit;white-space:nowrap;font-size:var(--wb-label-size)}
+html[data-story-workbench] #book-context>h3{margin-bottom:var(--wb-space-3)}
+html[data-story-workbench] #chapter-info>details.context-summary{margin:var(--wb-space-2) 0;padding:var(--wb-space-2) 0;border-top:0;border-bottom:1px solid var(--line)}
+html[data-story-workbench] #chapter-info .context-summary>summary{margin:0;color:var(--ink);font-weight:600}
+html[data-story-workbench] #chapter-info .context-preview{display:block;margin-top:var(--wb-space-1);font-weight:400;color:var(--muted);overflow-wrap:anywhere}
+html[data-story-workbench] #chapter-info .context-expand-label{display:block;font-size:var(--wb-label-size);font-weight:400;color:var(--wb-link)}
+html[data-story-workbench] #chapter-info .context-summary[open]>summary :is(.context-preview,.context-expand-label){display:none}
+html[data-story-workbench] #chapter-info .context-summary>p{margin:var(--wb-space-2) 0 0;overflow-wrap:anywhere}
 html[data-story-workbench] :is(.book,.shelf-toolbar,.manager-feedback,.platform-draft-settings,.platform-draft-output){border-radius:var(--wb-radius-container)}
 html[data-story-workbench] :is(dialog,.editor-dialog,.platform-drafts-dialog){font:var(--wb-ui-size)/1.65 var(--wb-ui-font);color:var(--ink);border:1px solid var(--line);border-radius:var(--wb-radius-dialog);max-height:85vh;padding:var(--wb-space-6);box-shadow:var(--wb-shadow-dialog)}
 html[data-story-workbench] dialog:not(.platform-drafts-dialog){width:min(620px,calc(100vw - 32px));background:var(--surface)}
@@ -1091,6 +1104,7 @@ html[data-story-workbench] .platform-drafts-dialog{width:min(1060px,96vw);max-he
 .platform-drafts-dialog #platform-draft-history-details{background:var(--wb-panel);padding:10px;border-radius:10px}.platform-drafts-dialog #platform-draft-history-results{padding-left:18px;font-size:12px}
 .platform-drafts-dialog .platform-draft-footer{position:sticky;bottom:-20px;z-index:2;margin:16px -4px -4px;padding:12px 4px 4px;background:var(--paper);border-top:1px solid var(--line);justify-content:flex-end;gap:8px}
 .platform-drafts-dialog .platform-draft-footer button{flex:0 1 auto;margin:0;font-size:12px}.platform-drafts-dialog .platform-draft-footer button.primary{margin-left:auto}
+.platform-drafts-dialog .platform-draft-confirmation{flex:1 0 100%;margin:0;color:var(--ink);font-weight:600;overflow-wrap:anywhere}
 .platform-drafts-dialog progress{display:block;height:7px;border:0;border-radius:8px;overflow:hidden;width:100%;background:var(--wb-tint);accent-color:var(--accent)}
 .platform-drafts-dialog progress::-webkit-progress-bar{background:var(--wb-tint)}.platform-drafts-dialog progress::-webkit-progress-value{background:var(--accent);border-radius:8px}
 @media(max-width:760px){.platform-draft-layout{grid-template-columns:minmax(0,1fr)}.platform-drafts-dialog[data-has-job="true"] .platform-draft-output{grid-row:1}.platform-drafts-dialog[data-has-job="true"] .platform-draft-settings{grid-row:2}html[data-story-workbench] .platform-drafts-dialog{padding:14px}.platform-drafts-dialog .platform-draft-footer{bottom:-14px}.platform-drafts-dialog .platform-draft-footer button{flex:1 1 auto}.platform-drafts-dialog .platform-draft-footer button.primary{width:100%}}
@@ -2150,6 +2164,75 @@ def _editor_document_raw(root, document_id):
     return result
 
 
+def _editor_save_request(root, payload):
+    request_id = payload.get('request_id')
+    if not isinstance(request_id, str) or not re.fullmatch(r'[a-zA-Z0-9-]{16,80}', request_id):
+        api.fail('invalid_input', '保存操作标识无效，请保留文字后重新打开保存入口。')
+    fields = {key: payload.get(key) for key in ('id', 'sha256', 'snapshot', 'metadata_sha256', 'text')}
+    fields['save_mode'] = payload.get('save_mode', 'legacy')
+    return {'request_id': request_id, 'book_id': _library_entry(root)['book_id'],
+            'payload_sha256': hashlib.sha256(json.dumps(fields, ensure_ascii=False, sort_keys=True).encode()).hexdigest()}
+
+
+def _editor_save_status(root, payload, request=None):
+    """Reconcile a durable save intent without writing or replaying it."""
+    root = Path(root)
+    request_id = payload.get('request_id')
+    if not isinstance(request_id, str) or not re.fullmatch(r'[a-zA-Z0-9-]{16,80}', request_id):
+        api.fail('invalid_input', '保存操作标识无效。')
+    result = {'ok': True, 'request_id': request_id}
+    try:
+        raw = _author_read(root, '.story/workbench-save-requests/' + request_id + '.json', 16384)
+    except FileNotFoundError:
+        return {**result, 'state': 'not_started'}
+    try:
+        record = json.loads(raw)
+        if (not isinstance(record, dict) or record.get('version') != 1 or
+                record.get('request_id') != request_id or record.get('book_id') != _library_entry(root)['book_id'] or
+                not isinstance(record.get('receipt'), dict) or not isinstance(record.get('target'), str) or
+                record['receipt'].get('path') != record['target'] or
+                record['receipt'].get('id') not in ('file:' + record['target'], record.get('source_id'))):
+            raise ValueError('invalid save intent')
+        for key in ('payload_sha256', 'sha256', 'text_sha256'):
+            if not isinstance(record.get(key), str) or not re.fullmatch(r'[0-9a-f]{64}', record[key]):
+                raise ValueError('invalid digest')
+        if record.get('metadata_sha256') is not None and (not isinstance(record['metadata_sha256'], str) or
+                not re.fullmatch(r'[0-9a-f]{64}', record['metadata_sha256'])):
+            raise ValueError('invalid metadata digest')
+        api.safe_path(root, record['target'])
+    except (ValueError, TypeError, RecursionError) as error:
+        api.fail('workbench_save_record_invalid', '保存记录无法核对，请保留文字并检查恢复中心，勿重复保存。', cause=str(error))
+    if request is not None and request['payload_sha256'] != record['payload_sha256']:
+        api.fail('workbench_save_request_conflict', '同一次保存操作的文字或来源发生变化；原保存记录保留，请先核对。')
+    try:
+        # A surviving transaction marker is not a completed save, even if its
+        # body happens to match. Leave partial-save recovery to its own flow.
+        try:
+            _author_read(root, record['target'] + '.pending.json', PENDING_SAVE_LIMIT)
+        except FileNotFoundError:
+            pass
+        else:
+            return {**result, 'state': 'pending', 'path': record['target']}
+        actual = hashlib.sha256(_author_read(root, record['target'])).hexdigest()
+        actual_meta = (hashlib.sha256(_author_read(root, record['target'] + '.meta.json', 16384)).hexdigest()
+                       if record.get('metadata_sha256') else None)
+    except (FileNotFoundError, OSError, api.StoryError):
+        return {**result, 'state': 'pending', 'path': record['target']}
+    if actual != record['sha256'] or actual_meta != record.get('metadata_sha256'):
+        return {**result, 'state': 'changed', 'path': record['target']}
+    return {**record['receipt'], **result, 'state': 'saved', 'sha256': actual,
+            'metadata_sha256': actual_meta, 'text_sha256': record['text_sha256']}
+
+
+def _editor_save_intent(root, request, payload, receipt, content_sha256, metadata_sha256):
+    record = {**request, 'version': 1, 'source_id': payload.get('id'), 'target': receipt['path'],
+              'receipt': receipt, 'sha256': content_sha256, 'metadata_sha256': metadata_sha256,
+              'text_sha256': hashlib.sha256(payload['text'].encode('utf-8')).hexdigest()}
+    api.atomic_write(api.safe_path(Path(root), '.story/workbench-save-requests/' + request['request_id'] + '.json'),
+                     json.dumps(record, ensure_ascii=False), set(),
+                     api.safe_path(Path(root), '.story/workbench-save-requests/.backups/' + uuid.uuid4().hex))
+
+
 def _editor_save(root, payload, recovery=False, force_candidate=False):
     text = payload.get('text')
     if not isinstance(text, str) or not text.strip() or len(text.encode('utf-8')) > AUTHOR_TEXT_LIMIT:
@@ -2158,6 +2241,14 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
     save_mode = payload.get('save_mode', 'legacy')
     if save_mode not in ('legacy', 'working', 'version'):
         api.fail('invalid_input', '保存方式无效，请重新打开保存入口。')
+    request = _editor_save_request(root, payload) if not recovery and 'request_id' in payload else None
+    if request:
+        previous = _editor_save_status(root, payload, request)
+        if previous['state'] == 'saved':
+            return previous
+        if previous['state'] != 'not_started':
+            api.fail('workbench_save_unconfirmed', '上次保存结果仍待核对，请保留文字并检查恢复中心，勿重复写入。',
+                     state=previous['state'], path=previous.get('path'))
     updating = False
     previous_metadata = None
     if recovery:
@@ -2223,7 +2314,11 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
                 payload.get('metadata_sha256') != source.get('metadata_sha256')):
             api.fail('stale_snapshot', '来源或正式状态已变化。请保留恢复稿，刷新后重新对照。')
         if text == source['text'] and not source.get('needs_recovery') and not force_candidate and save_mode != 'version':
-            return {'ok': True, 'unchanged': True, 'id': source_id, 'path': source['path']}
+            unchanged = {'ok': True, 'unchanged': True, 'id': source_id, 'path': source['path']}
+            if request:
+                _editor_save_intent(root, request, payload, unchanged, source['sha256'], source.get('metadata_sha256'))
+                return _editor_save_status(root, payload, request)
+            return unchanged
         candidate_title = source['title']
         if source.get('path', '').startswith('.story/drafts/workbench/'):
             candidate_title = re.sub(r'_(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f-]{27,})$', '', candidate_title, flags=re.I)
@@ -2261,6 +2356,14 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
         api.fail('workbench_write_limit', '完整候选文件（含恢复的章名）不得超过 1 MiB，请缩减后保存。',
                  maximum_bytes=AUTHOR_TEXT_LIMIT, actual_bytes=len(content.encode('utf-8')))
     target = api.safe_path(Path(root), name)
+    result = {'ok': True, 'id': 'file:' + name, 'path': name, 'formal_changed': False}
+    if not recovery:
+        result.update(updated_existing=updating, checkpoint=meta.get('checkpoint') is True, save_mode=save_mode)
+    if request:
+        # Persist the fixed destination and both expected digests before the
+        # first manuscript write. A lost reply must not allocate another file.
+        _editor_save_intent(root, request, payload, result, hashlib.sha256(content.encode('utf-8')).hexdigest(),
+                            hashlib.sha256(json.dumps(meta, ensure_ascii=False).encode('utf-8')).hexdigest())
     pending = _start_pending_save(Path(root), name, text, content, meta)
     try:
         previous_body = api.atomic_write(target, content, allowed, api.safe_path(Path(root), '.story/drafts/workbench/.backups/' + uuid.uuid4().hex + '/previous'))
@@ -2307,13 +2410,10 @@ def _editor_save(root, payload, recovery=False, force_candidate=False):
     except (OSError, api.StoryError, ValueError) as error:
         api.fail('workbench_partial_save', '正文与来源已写入，保存收尾未确认；请从自动恢复区核对后另存候选。',
                  path=name, incomplete_path=pending[0], cause=str(error))
-    result = {'ok': True, 'id': 'file:' + name, 'path': name, 'formal_changed': False}
-    if not recovery:
-        result.update(updated_existing=updating, checkpoint=meta.get('checkpoint') is True, save_mode=save_mode)
     if recovery:
         result.update(recovery_key=key, recovery_sha256=meta['content_sha256'],
                       recovery_metadata_sha256=metadata_hash, conflict=conflict, conflict_reason=conflict_reason)
-    return result
+    return _editor_save_status(root, payload, request) if request else result
 
 
 def _chapter_hint(path):
@@ -4287,10 +4387,8 @@ def _assistant_task_host_script():
 function assistantHostPending(execution){return !!execution&&['intent','starting','running','cancel_requested','unknown','result_conflict'].includes(execution.state);}
 function assistantHostClear(panel){if(panel.hostTimer){clearTimeout(panel.hostTimer);panel.hostTimer=null;}}
 function assistantTaskFormBuffers(){
- const panel=assistantTaskPanel;if(!panel?.dialog.open||!panel.task)return [];
- const changed=!!panel.retainedDraft?.values?.length||(panel.draftFields||[]).some(row=>row.element.value!==row.baseline);
- if(!changed&&!panel.formSaving&&!panel.formSaveUnknown)return [];
- return [{id:'task-form:'+panel.task.id,title:'助手任务回执与核对说明',dirty:changed,saving:!!panel.formSaving,recovering:false,needs_recovery:!!panel.formSaveUnknown}];
+ if(assistantTaskPanel?.dialog.open)assistantTaskCaptureDraft(assistantTaskPanel);
+ return [...assistantTaskDrafts.values()].map(draft=>({id:'task-form:'+draft.task_id,title:'助手任务回执与核对说明',dirty:draft.versions.size>0,saving:!!draft.saving,recovering:false,needs_recovery:!!draft.unknown}));
 }
 function assistantHostRender(panel,task){
  const execution=task.host_execution,box=assistantTaskElement('section');box.setAttribute('aria-label','本机助手执行');
@@ -4304,13 +4402,13 @@ function assistantHostRender(panel,task){
  start.disabled=stale||!!task.result||assistantHostPending(execution)||!!execution&&!execution.can_start;
  const current=()=>assistantTaskCurrent(panel)&&panel.task===task;
  const request=async(action,data={},mutation=false)=>{
-  if(!current()||panel.busy)return;assistantHostClear(panel);panel.busy=true;
+  if(!current()||panel.busy)return;assistantTaskCaptureDraft(panel);assistantHostClear(panel);panel.busy=true;
   const sequence=++panel.request;panel.status.textContent=mutation?'正在提交执行操作…':'正在读取本机执行状态…';
   for(const button of panel.detail.querySelectorAll('button'))button.disabled=true;
   try{
    const packet=await assistantTaskRequest(action,{task_id:task.id,...data});
    if(!current()||panel.request!==sequence)return;
-   panel.task=assistantTaskPacket(packet);assistantTaskRender(panel);
+   assistantTaskCaptureDraft(panel);panel.task=assistantTaskPacket(packet);assistantTaskRender(panel);
    panel.status.textContent=panel.task.host_execution?.status_label||'已读取执行状态。';
   }catch(error){
    if(current()&&panel.request===sequence){
@@ -4321,7 +4419,7 @@ function assistantHostRender(panel,task){
  };
  start.onclick=()=>{
   if(start.disabled||!current())return;
-  if(assistantTaskFormBuffers().length){panel.status.textContent='当前还有未提交的回执或核对说明，请先保存或保留这些输入。';return;}
+  if(assistantTaskFormBuffers().some(buffer=>buffer.id==='task-form:'+task.id)){panel.status.textContent='当前还有未提交的回执或核对说明，请先保存或保留这些输入。';return;}
   const intent=panel.hostIntent;
   if(!intent||intent.task_id!==task.id||intent.version!==task.version)panel.hostIntent={task_id:task.id,version:task.version,request_id:crypto.randomUUID().replace(/-/g,'')};
   return request('start',{version:task.version,request_id:panel.hostIntent.request_id,execute:true},true);
@@ -4331,7 +4429,13 @@ function assistantHostRender(panel,task){
  if(execution?.can_reconcile){const reconcile=assistantTaskElement('button','核对已有执行回执');reconcile.onclick=()=>request('reconcile',{execution_id:execution.id},true);box.append(reconcile);}
  if(execution&&['unknown','result_conflict'].includes(execution.state))box.append(assistantTaskElement('p','本次不自动重试；先读取并核对已有记录。'));
  panel.detail.append(box);
- if(execution&&['intent','starting','running','cancel_requested'].includes(execution.state))panel.hostTimer=setTimeout(()=>{panel.hostTimer=null;if(current())void request('execution');},2000);
+ const schedule=()=>{
+  assistantHostClear(panel);
+  if(!current()||!execution||!['intent','starting','running','cancel_requested'].includes(execution.state))return;
+  panel.hostTimer=setTimeout(()=>{panel.hostTimer=null;if(!current())return;if(panel.busy){schedule();return;}void request('execution');},2000);
+ };
+ panel.hostSchedule=schedule;
+ schedule();
 }
 '''
 
@@ -4342,6 +4446,27 @@ def _assistant_tasks_script():
 const assistantTaskBookId=__TASK_BOOK_ID__;
 let assistantTaskPanel=null,assistantTaskSequence=0;
 const assistantTaskSources={request_file:'',style_file:''};
+const assistantTaskDrafts=new Map();
+function assistantTaskDraftCleanup(id){const draft=assistantTaskDrafts.get(id);if(draft&&!draft.versions.size&&!draft.saving&&!draft.unknown)assistantTaskDrafts.delete(id);}
+function assistantTaskCaptureDraft(panel){
+ if(!panel?.task||!panel.draftFields)return;
+ const task=panel.task,values=panel.draftFields.filter(row=>row.element.value!==row.baseline).map(row=>[row.key,row.element.value]);
+ let draft=assistantTaskDrafts.get(task.id);
+ if(!draft&&(values.length||panel.formSaving||panel.formSaveUnknown)){draft={task_id:task.id,versions:new Map()};assistantTaskDrafts.set(task.id,draft);}
+ if(!draft)return;
+ if(values.length)draft.versions.set(task.version,values);else draft.versions.delete(task.version);
+ draft.saving=!!panel.formSaving||!!draft.saving;draft.unknown=!!panel.formSaveUnknown||!!draft.unknown;assistantTaskDraftCleanup(task.id);
+ if(panel.draftNotice){panel.draftNotice.hidden=!assistantTaskDrafts.has(task.id);panel.draftDiscard.hidden=panel.draftNotice.hidden;panel.draftDiscard.disabled=!!draft.saving||!!draft.unknown;}
+}
+function assistantTaskDraftAcknowledge(panel,task,action,submitted){
+ if(panel?.task?.id!==task.id||panel.task.version!==task.version)return;
+ const values=new Map(submitted);for(const row of panel.draftFields||[])if((action==='import'&&row.key==='result_json'||action==='review'&&row.key!=='result_json')&&values.has(row.key))row.baseline=values.get(row.key);
+}
+function assistantTaskDraftSettled(task,action,submitted,unknown=false){
+ const draft=assistantTaskDrafts.get(task.id);if(!draft)return;draft.saving=false;draft.unknown=unknown;
+ if(!unknown){const saved=new Map(submitted),values=(draft.versions.get(task.version)||[]).filter(([key,value])=>!((action==='import'&&key==='result_json'||action==='review'&&key!=='result_json')&&saved.get(key)===value));if(values.length)draft.versions.set(task.version,values);else draft.versions.delete(task.version);}
+ assistantTaskDraftCleanup(task.id);
+}
 function assistantWritingSources(){return Object.fromEntries(Object.entries(assistantTaskSources).filter(([,value])=>value));}
 function assistantTaskPacket(packet){const task=packet?.task||packet;if(!task||task.book_id!==assistantTaskBookId||typeof task.id!=='string')throw Error('任务不属于当前作品，请刷新后核对。');return task;}
 function assistantTaskRemember(packet){if(!packet?.task)return;const task=assistantTaskPacket(packet);$('review-task-box').assistantTaskId=task.id;}
@@ -4353,8 +4478,8 @@ function assistantTaskElement(tag,text){const element=document.createElement(tag
 async function assistantTasksOpen(preferred=null){
  if(assistantTaskPanel?.dialog.open)assistantTaskPanel.dialog.close();
  const {dialog,content}=editorDialog('助手任务与结果'),panel={dialog,content,sequence:++assistantTaskSequence,request:0,task:null,busy:false,offset:0};assistantTaskPanel=panel;
- dialog.addEventListener('close',()=>{assistantHostClear(panel);if(assistantTaskPanel===panel){assistantTaskPanel=null;++assistantTaskSequence;}});
- const help=assistantTaskElement('p','复制任务交给助手，完成后由助手回填结果；也可导入回执。核对结果不会正式采用正文。关闭任务窗口前，请先提交或复制尚未保存的回执与核对说明。');
+ dialog.addEventListener('close',()=>{assistantTaskCaptureDraft(panel);assistantHostClear(panel);if(assistantTaskPanel===panel){assistantTaskPanel=null;++assistantTaskSequence;if(assistantTaskDrafts.size&&typeof note==='function')note('助手任务输入仅在当前页面内保留，重新打开相应任务可继续；关闭页面或停止服务前请先保存或复制。');}});
+ const help=assistantTaskElement('p','复制任务交给助手，完成后由助手回填结果；也可导入回执。核对结果不会正式采用正文。切换任务或返回稿件会在当前页面内保留未提交输入；关闭页面或停止服务前仍须保存或复制。');
  panel.status=assistantTaskElement('p');panel.status.setAttribute('role','status');panel.list=assistantTaskElement('div');panel.detail=assistantTaskElement('section');
  const sources=assistantTaskElement('details'),sourceTitle=assistantTaskElement('summary','下一章使用的材料（可选）');sources.append(sourceTitle);
  const rows=(currentCatalog?.files||[]).filter(row=>typeof row.path==='string'&&row.id?.startsWith('file:')&&/\.(md|txt)$/i.test(row.path));
@@ -4376,7 +4501,7 @@ async function assistantTasksList(panel,reset){
  try{
   const result=await assistantTaskRequest('list',{offset:reset?0:panel.offset,limit:20});if(!assistantTaskCurrent(panel)||panel.request!==request)return;
   if(reset)panel.list.replaceChildren();
-  for(const raw of result.tasks||[]){const task=assistantTaskPacket(raw),button=assistantTaskElement('button',assistantTaskName(task)+(task.chapter?' · 第'+task.chapter+'章':'')+' · '+assistantTaskState(task));button.onclick=()=>assistantTaskShow(panel,task.id);panel.list.append(button);}
+  for(const raw of result.tasks||[]){const task=assistantTaskPacket(raw),button=assistantTaskElement('button',assistantTaskName(task)+(task.chapter?' · 第'+task.chapter+'章':'')+' · '+assistantTaskState(task)+(assistantTaskDrafts.has(task.id)?' · 有本页保留输入':''));button.onclick=()=>assistantTaskShow(panel,task.id);panel.list.append(button);}
   panel.offset=result.next_offset??((reset?0:panel.offset)+(result.tasks||[]).length);panel.more.hidden=!result.has_more;
   panel.status.textContent=(result.tasks||[]).length?'选择任务查看结果与原文依据。':'当前没有可显示的任务。';
  }catch(error){if(assistantTaskCurrent(panel))panel.status.textContent='读取未完成：'+error.message;}
@@ -4384,12 +4509,13 @@ async function assistantTasksList(panel,reset){
 }
 async function assistantTaskShow(panel,id){
  if(!assistantTaskCurrent(panel)||panel.busy)return;
+ const previousTask=panel.task,resumeHost=panel.hostSchedule;let readFailed=false;
  assistantHostClear(panel);
- if(panel.task?.id===id){const values=(panel.draftFields||[]).filter(row=>row.element.value!==row.baseline).map(row=>[row.key,row.element.value]);if(values.length)panel.retainedDraft={task_id:id,version:panel.task.version,values};}
+ assistantTaskCaptureDraft(panel);
  const request=++panel.request;panel.busy=true;panel.status.textContent='正在核对任务来源…';
- try{const packet=await assistantTaskRequest('get',{task_id:id});if(!assistantTaskCurrent(panel)||request!==panel.request)return;panel.task=assistantTaskPacket(packet);panel.formSaveUnknown=false;assistantTaskRender(panel);panel.status.textContent='已读取任务，结果采用状态以当前稿件核对为准。';}
- catch(error){if(assistantTaskCurrent(panel)&&request===panel.request)panel.status.textContent='任务读取失败：'+error.message;}
- finally{if(assistantTaskCurrent(panel)&&request===panel.request)panel.busy=false;}
+ try{const packet=await assistantTaskRequest('get',{task_id:id});if(!assistantTaskCurrent(panel)||request!==panel.request)return;panel.task=assistantTaskPacket(packet);panel.formSaveUnknown=false;const draft=assistantTaskDrafts.get(id);if(draft){draft.unknown=false;assistantTaskDraftCleanup(id);}assistantTaskRender(panel);panel.status.textContent='已读取任务，结果采用状态以当前稿件核对为准。';}
+ catch(error){readFailed=true;if(assistantTaskCurrent(panel)&&request===panel.request)panel.status.textContent='任务读取失败：'+error.message;}
+ finally{if(assistantTaskCurrent(panel)&&request===panel.request){panel.busy=false;if(readFailed&&panel.task===previousTask)resumeHost?.();}}
 }
 function assistantTaskRender(panel){
  assistantHostClear(panel);
@@ -4402,11 +4528,12 @@ function assistantTaskRender(panel){
  const copy=assistantTaskElement('button','复制任务'),handoff=assistantTaskElement('button','确认已交给助手');section.append(copy,handoff);
  copy.onclick=async()=>{try{await navigator.clipboard.writeText(prompt.value);if(assistantTaskCurrent(panel)&&panel.task?.id===task.id)panel.status.textContent='已复制任务；请交给助手执行。';}catch{prompt.select();}};
  const mutate=async(action,data)=>{
-  if(!assistantTaskCurrent(panel)||panel.busy||panel.task!==task)return;panel.busy=true;panel.formSaving=true;const request=++panel.request;panel.status.textContent='正在核对并保存…';
+  if(!assistantTaskCurrent(panel)||panel.busy||panel.task!==task||assistantTaskDrafts.get(task.id)?.saving)return;panel.busy=true;panel.formSaving=true;const request=++panel.request;panel.status.textContent='正在核对并保存…';
+  assistantTaskCaptureDraft(panel);const submitted=(panel.draftFields||[]).map(row=>[row.key,row.element.value]);
   for(const button of section.querySelectorAll('button'))button.disabled=true;
-  try{const packet=await assistantTaskRequest(action,{task_id:task.id,version:task.version,...data});if(!assistantTaskCurrent(panel)||panel.request!==request)return;panel.task=assistantTaskPacket(packet);panel.retainedDraft=null;assistantTaskRender(panel);panel.status.textContent='任务记录已保存，正文未自动正式采用。';}
-  catch(error){if(assistantTaskCurrent(panel)&&panel.request===request){panel.formSaveUnknown=true;panel.status.textContent='尚未确认保存：'+error.message+'。请重新读取任务后核对，勿直接重复导入。';for(const button of section.querySelectorAll('button'))button.disabled=button.dataset.taskRefresh!=='true';}}
-  finally{if(assistantTaskCurrent(panel)&&panel.request===request){panel.busy=false;panel.formSaving=false;}}
+  try{const packet=await assistantTaskRequest(action,{task_id:task.id,version:task.version,...data}),updated=assistantTaskPacket(packet);const visible=assistantTaskPanel;if(visible?.task?.id===task.id&&visible.task.version===task.version)assistantTaskCaptureDraft(visible);assistantTaskDraftAcknowledge(panel,task,action,submitted);if(visible!==panel)assistantTaskDraftAcknowledge(visible,task,action,submitted);panel.formSaving=false;panel.formSaveUnknown=false;assistantTaskDraftSettled(task,action,submitted);if(!assistantTaskCurrent(panel)||panel.request!==request)return;panel.task=updated;assistantTaskRender(panel);panel.status.textContent='任务记录已保存，正文未自动正式采用。';}
+  catch(error){panel.formSaving=false;panel.formSaveUnknown=true;assistantTaskDraftSettled(task,action,submitted,true);if(assistantTaskCurrent(panel)&&panel.request===request){panel.status.textContent='尚未确认保存：'+error.message+'。请重新读取任务后核对，勿直接重复导入。';for(const button of section.querySelectorAll('button'))button.disabled=button.dataset.taskRefresh!=='true';}}
+  finally{if(panel.request===request){panel.busy=false;panel.formSaving=false;}}
  };
  const hostPending=assistantHostPending(task.host_execution);
  handoff.disabled=stale||hostPending||!['generated','handed_off'].includes(task.status);handoff.onclick=()=>mutate('handoff',{});
@@ -4425,17 +4552,31 @@ function assistantTaskRender(panel){
  }
  if(task.result||output||issues.length){const reviewed=assistantTaskElement('button','保存逐项核对结果');reviewed.disabled=stale||task.status!=='needs_review';reviewed.onclick=()=>{if(selections.some(([,select,explanation])=>select.value!=='open'&&!explanation.value.trim())){panel.status.textContent='请为已解决或保留的问题填写核对依据。';return;}return mutate('review',{issue_statuses:selections.map(([id,select,explanation])=>({id,status:select.value,note:explanation.value||'尚未完成核对'}))});};section.append(reviewed);}
  const imports=assistantTaskElement('details');imports.append(assistantTaskElement('summary','导入助手回执'));const input=assistantTaskElement('textarea');input.setAttribute('aria-label','助手结果 JSON');input.placeholder='粘贴助手返回的 JSON 回执';const file=assistantTaskElement('input');file.type='file';file.accept='.json,application/json';file.setAttribute('aria-label','选择助手回执文件');
- file.onchange=async()=>{const chosen=file.files?.[0];if(!chosen)return;if(chosen.size>1024*1024){panel.status.textContent='回执超过 1 MiB，请核对所选文件。';return;}const value=await chosen.text();if(assistantTaskCurrent(panel)&&panel.task===task)input.value=value;};
- const load=assistantTaskElement('button','核对并导入'),template=assistantTaskElement('button','查看回执格式');template.onclick=()=>{input.value=JSON.stringify(task.result_template||{},null,2);};load.disabled=stale||task.status==='reviewed';load.onclick=()=>{let result;try{result=JSON.parse(input.value);}catch{panel.status.textContent='回执不是有效 JSON，尚未导入。';return;}return mutate('import',{result});};imports.append(file,input,load,template);section.append(imports);
+ let fileRead=0;
+ file.onchange=async()=>{
+  const request=++fileRead,chosen=file.files?.[0];file.value='';
+  if(!chosen||!assistantTaskCurrent(panel)||panel.task!==task||panel.busy||file.disabled)return;
+  if(chosen.size>1024*1024){panel.status.textContent='回执超过 1 MiB，请核对所选文件。';return;}
+  const original=input.value,current=()=>assistantTaskCurrent(panel)&&panel.task===task&&request===fileRead&&panel.draftFields?.some(row=>row.element===input);
+  try{
+   const value=await chosen.text();if(!current())return;
+   if(input.value!==original||panel.busy||input.readOnly){panel.status.textContent='文件读取期间输入或任务状态已变化，已保留当前输入；需要导入时请重新选择文件。';return;}
+   input.value=value;assistantTaskCaptureDraft(panel);panel.status.textContent='回执文件已读入，请核对后导入。';
+  }catch(error){if(current())panel.status.textContent='回执文件读取失败，原输入已保留：'+error.message;}
+ };
+ const load=assistantTaskElement('button','核对并导入'),template=assistantTaskElement('button','查看回执格式'),format=assistantTaskElement('pre',JSON.stringify(task.result_template||{},null,2));format.hidden=true;format.setAttribute('aria-label','助手回执格式示例');template.setAttribute('aria-expanded','false');template.onclick=()=>{format.hidden=!format.hidden;template.textContent=format.hidden?'查看回执格式':'收起回执格式';template.setAttribute('aria-expanded',String(!format.hidden));};load.disabled=stale||task.status==='reviewed';load.onclick=()=>{let result;try{result=JSON.parse(input.value);}catch{panel.status.textContent='回执不是有效 JSON，尚未导入。';return;}return mutate('import',{result});};imports.append(file,input,load,template,format);section.append(imports);
  if(hostPending){input.readOnly=true;file.disabled=true;template.disabled=true;for(const select of section.querySelectorAll('select'))select.disabled=true;for(const [,select,explanation]of selections)explanation.readOnly=true;for(const button of section.querySelectorAll('button'))if(['核对并导入','保存逐项核对结果'].includes(button.textContent))button.disabled=true;}
  const retry=assistantTaskElement('button','重新读取本任务');retry.dataset.taskRefresh='true';retry.onclick=()=>assistantTaskShow(panel,task.id);section.append(retry);
  panel.draftFields=[{key:'result_json',element:input,baseline:input.value},...selections.flatMap(([id,select,explanation])=>[{key:id+':status',element:select,baseline:select.value},{key:id+':note',element:explanation,baseline:explanation.value}])];
- const retained=panel.retainedDraft;
- if(retained?.task_id===task.id){
-  if(retained.version===task.version){for(const [key,value]of retained.values){const row=panel.draftFields.find(row=>row.key===key);if(row)row.element.value=value;}panel.retainedDraft=null;}
-  else{const recovery=assistantTaskElement('details');recovery.append(assistantTaskElement('summary','刷新前尚未提交的输入（可复制）'),assistantTaskElement('pre',JSON.stringify(Object.fromEntries(retained.values),null,2)));const discard=assistantTaskElement('button','清除此处保留的输入');discard.onclick=()=>{if(assistantTaskCurrent(panel)){panel.retainedDraft=null;assistantTaskRender(panel);}};recovery.append(discard);section.append(recovery);}
- }
+ const retained=assistantTaskDrafts.get(task.id);
+ for(const [key,value]of retained?.versions.get(task.version)||[]){const row=panel.draftFields.find(row=>row.key===key);if(row)row.element.value=value;}
+ for(const [version,values]of retained?.versions||[]){if(version===task.version)continue;const recovery=assistantTaskElement('details');recovery.append(assistantTaskElement('summary','版本 '+version+' 尚未提交的输入（可复制）'),assistantTaskElement('p','任务版本已经变化，以下输入未自动填入新版本；请核对后自行使用。'),assistantTaskElement('pre',JSON.stringify(Object.fromEntries(values),null,2)));const discard=assistantTaskElement('button','清除此处保留的输入');discard.onclick=()=>{if(assistantTaskCurrent(panel)&&panel.task===task&&!panel.busy){assistantTaskCaptureDraft(panel);assistantTaskDrafts.get(task.id)?.versions.delete(version);assistantTaskDraftCleanup(task.id);assistantTaskRender(panel);}};recovery.append(discard);section.append(recovery);}
+ panel.draftNotice=assistantTaskElement('p','未提交输入仅在当前页面内保留，关闭页面或停止服务前请先保存或复制。放弃输入只清除本页副本，不删除已保存的任务记录。');panel.draftNotice.hidden=!retained;
+ panel.draftDiscard=assistantTaskElement('button','放弃本任务在本页的未提交输入');panel.draftDiscard.hidden=!retained;panel.draftDiscard.disabled=!!panel.formSaving;panel.draftDiscard.onclick=()=>{if(assistantTaskCurrent(panel)&&panel.task===task&&!panel.busy&&!panel.formSaveUnknown&&!assistantTaskDrafts.get(task.id)?.saving&&!assistantTaskDrafts.get(task.id)?.unknown){assistantTaskDrafts.delete(task.id);assistantTaskRender(panel);}};
+ section.append(panel.draftNotice,panel.draftDiscard);
+ for(const row of panel.draftFields)for(const event of ['input','change'])row.element.addEventListener(event,()=>{if(assistantTaskCurrent(panel)&&panel.task===task)assistantTaskCaptureDraft(panel);});
  assistantHostRender(panel,task);
+ if(retained?.saving){panel.draftNotice.textContent='此前提交仍在等待回执，输入已在当前页面保留。请稍后重新读取本任务核对，勿重复提交；关闭页面或停止服务前仍须处理这些输入。';for(const button of section.querySelectorAll('button'))if(['确认已交给助手','保存逐项核对结果','核对并导入','放弃本任务在本页的未提交输入','清除此处保留的输入'].includes(button.textContent))button.disabled=true;}
  function dialogClose(){panel.dialog.close();}
 }
 if($('assistant-tasks-open'))$('assistant-tasks-open').onclick=()=>assistantTasksOpen();
@@ -4598,43 +4739,272 @@ const platformDraftStages={inspection_started:'正在读取章节差异',inspect
 const platformDraftRequiredEncoding='plain_paragraphs_v1';
 const platformDraftRuleEncodings=['verbatim','markdown_paragraphs_v1','markdown_paragraphs_v2',platformDraftRequiredEncoding],platformDraftRuleComparisons=['strict','fanqie_terminal_lf_v1'],platformDraftRuleWrites=new Map();
 function platformDraftRuleValues(value,platform){return !!(value&&typeof value==='object'&&!Array.isArray(value)&&value.schema===1&&Object.keys(value).sort().join(',')==='body_encoding,comparison_policy,schema'&&platformDraftRuleEncodings.includes(value.body_encoding)&&platformDraftRuleComparisons.includes(value.comparison_policy)&&(platform==='fanqie'||(['verbatim',platformDraftRequiredEncoding].includes(value.body_encoding)&&value.comparison_policy==='strict')));}
-function platformDraftRuleScope(panel){const plan=panel.plans.find(row=>row.id===panel.plan.value),profile=panel.profiles.find(row=>row.id===panel.profile.value&&row.valid&&row.platform===plan?.platform);return plan&&profile&&[panel.bookId,plan.id,profile.sha256].every(value=>typeof value==='string'&&value.length>0&&value.length<=200)?{platform:plan.platform,book_id:panel.bookId,plan_id:plan.id,profile_id:profile.id,profile_sha256:profile.sha256,key:JSON.stringify([panel.bookId,plan.id,profile.sha256])}:null;}
+function platformDraftProfileMatches(profile,plan){return !!(plan&&profile?.valid&&profile.platform===plan.platform&&(plan.platform!=='fanqie'||(typeof profile.remote_book_id==='string'&&profile.remote_book_id.length>0&&profile.remote_book_id===plan.remote_book_id)));}
+function platformDraftTargetKey(plan){return plan&&['platform','account_id','remote_book_id'].every(key=>typeof plan[key]==='string'&&plan[key].length>0)?JSON.stringify([plan.platform,plan.account_id,plan.remote_book_id]):null;}
+function platformDraftTargetLabel(plan){return plan?'账号 '+plan.account_id+' · 作品 ID '+plan.remote_book_id:'目标待核对';}
+function platformDraftTargetNote(panel,plan){
+ const key=platformDraftTargetKey(plan);if(!key)return '平台目标尚未核对。';
+ const same=panel.plans.filter(row=>platformDraftTargetKey(row)===key),other=new Set(panel.plans.map(platformDraftTargetKey).filter(value=>value&&value!==key));
+ const success=same.some(row=>(row.draft_history?.matched_chapters||0)>0||(row.draft_history?.equivalent_chapters||0)>0);
+ return (success?'本目标已有历史核对记录，仍须检查本次平台状态。':'当前本地记录未确认本目标同步成功，请先检查平台草稿；不能据此认定平台草稿为空。')+'当前范围：'+platformDraftChapterRange(plan.chapters)+'。'+(other.size?'另有 '+other.size+' 个不同平台目标的历史批次，按账号和作品 ID 分开保留，可在批次列表中查看；不计入本目标进度。':'');
+}
+function platformDraftSelectReadbackTarget(panel,plan){
+ const key=platformDraftTargetKey(plan);if(!key||key===panel.readbackTarget)return;
+ panel.readbackByTarget=panel.readbackByTarget||new Map();
+ if(panel.readbackTarget)panel.readbackByTarget.set(panel.readbackTarget,!!panel.connectionReadbackPending);
+ panel.connectionReadbackPending=panel.readbackByTarget.get(key)===true;panel.readbackTarget=key;
+}
+function platformDraftProfileMissing(plan){return '未找到与当前批次作品 ID '+plan.remote_book_id+' 一致的页面配置。请在上方重新绑定该作品，或选择目标一致的历史批次；未启动平台检查。';}
+function platformDraftRuleScope(panel){const plan=panel.plans.find(row=>row.id===panel.plan.value),profile=panel.profiles.find(row=>row.id===panel.profile.value&&platformDraftProfileMatches(row,plan));return plan&&profile&&[panel.bookId,plan.id,profile.sha256].every(value=>typeof value==='string'&&value.length>0&&value.length<=200)?{platform:plan.platform,book_id:panel.bookId,plan_id:plan.id,profile_id:profile.id,profile_sha256:profile.sha256,key:JSON.stringify([panel.bookId,plan.id,profile.sha256])}:null;}
 function platformDraftRuleLabels(encoding,comparison){const format=encoding===platformDraftRequiredEncoding?'去掉所有空白行，保留段落换行和缩进':encoding==='markdown_paragraphs_v2'?'按段落排版，去掉开头空段':encoding==='markdown_paragraphs_v1'?'兼容旧段落排版，保留开头换行':'保留原始换行',check=comparison==='fanqie_terminal_lf_v1'?'允许末尾换行数量增加或减少，其他内容逐字核对':'包括末尾换行在内逐字核对';return format+'；'+check;}
 function platformDraftRuleNote(panel,packet=null){if(!panel.rulesNote)return;let text=panel.rulesMemoryMessage||'排版与核对规则仅按本书、当前清单和当前配置记住；恢复选择后仍须重新预览，不会自动执行。';const plan=panel.plans.find(row=>row.id===panel.plan.value),profile=panel.profiles.find(row=>row.id===panel.profile.value),history=plan?.platform==='fanqie'&&packet?.profile_id===profile?.id&&packet?.profile_sha256===profile?.sha256&&/^[0-9a-f]{64}$/.test(packet?.manifest_sha256)&&/^[0-9a-f]{64}$/.test(packet?.target_sha256)?packet.preview?.recent_events||[]:[],proof=history.slice().reverse().find(row=>row.schema===2&&['saved','reconciled','saved_equivalent','reconciled_equivalent'].includes(row.event)&&row.book_id===panel.bookId&&row.plan_id===packet.plan_id&&row.manifest_sha256===packet.manifest_sha256&&row.target_sha256===packet.target_sha256&&plan.chapters?.includes(row.chapter)&&typeof row.remote_id==='string'&&row.title_matches===true&&platformDraftRuleValues({schema:1,body_encoding:row.body_encoding,comparison_policy:row.comparison_policy},'fanqie')&&(row.body_encoding!=='verbatim'||row.comparison_policy!=='strict')&&((row.body_matches===true&&/^[0-9a-f]{64}$/.test(row.content_sha256)&&row.content_sha256===row.observed_sha256)||(/^[0-9a-f]{64}$/.test(row.canonical_sha256)&&row.canonical_sha256===row.observed_canonical_sha256)));
  if(proof&&(proof.body_encoding!==panel.encoding.value||proof.comparison_policy!==panel.comparison.value))text+=' 历史第'+proof.chapter+'章曾按“'+platformDraftRuleLabels(proof.body_encoding,proof.comparison_policy)+'”核对通过；当前选择与该历史记录不同。当前统一使用去空行排版，请重新预览后只读对账；若仅有排版差异，仍需明确执行同步草稿。历史记录不代表本次平台状态，本次尚未访问平台。';panel.rulesNote.textContent=text;}
 function platformDraftRuleRequest(scope){return {plan_id:scope.plan_id,profile_id:scope.profile_id,profile_sha256:scope.profile_sha256};}
 function platformDraftRuleResponse(packet,scope){return packet?.ok===true&&packet.book_id===scope.book_id&&packet.plan_id===scope.plan_id&&packet.profile_id===scope.profile_id&&packet.profile_sha256===scope.profile_sha256&&packet.remote_accessed===false&&packet.submission_performed===false;}
 function platformDraftRulesCurrent(panel,scope,request){return platformDraftAlive(panel)&&panel.rulesRequest===request&&platformDraftRuleScope(panel)?.key===scope?.key;}
-function platformDraftRulesInvalidate(panel){panel.inspection=null;++panel.request;panel.preview=null;panel.previewExpires=0;clearTimeout(panel.expiryTimer);platformDraftButtons(panel);}
+function platformDraftClearTaskFeedback(panel){
+ if(panel.changeSummary)panel.changeSummary.textContent='';
+ if(panel.nextHint)panel.nextHint.textContent='';
+ if(panel.recoveryAction){panel.recoveryAction.hidden=true;panel.recoveryAction.onclick=null;}
+ if(panel.permissionHelp)panel.permissionHelp.open=false;
+}
+function platformDraftRulesInvalidate(panel){panel.inspection=null;++panel.request;panel.preview=null;panel.previewExpires=0;clearTimeout(panel.expiryTimer);platformDraftClearTaskFeedback(panel);platformDraftButtons(panel);}
 async function platformDraftRestoreRules(panel){const request=panel.rulesRequest=(panel.rulesRequest||0)+1;panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;panel.rulesMemoryMessage='';panel.rulesLoading=false;panel.rulesSaving=false;platformDraftRulesInvalidate(panel);const scope=platformDraftRuleScope(panel);if(!scope){platformDraftRuleNote(panel);return false;}panel.rulesLoading=true;platformDraftButtons(panel);try{await platformDraftRuleWrites.get(scope.key);if(!platformDraftRulesCurrent(panel,scope,request))return null;const packet=await call('platform-drafts/preferences',platformDraftRuleRequest(scope));if(!platformDraftRulesCurrent(panel,scope,request))return null;if(!platformDraftRuleResponse(packet,scope))throw Error('规则范围无法确认');if(packet.preference!==null&&!platformDraftRuleValues(packet.preference,scope.platform))throw Error('规则内容不受支持');if(packet.preference){panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;panel.rulesMemoryMessage='当前统一使用严格核对：仅去除本地 MD 空白行，远端正文原样逐字比较。历史规则不再用于新任务；请重新预览并明确执行。';return true;}panel.rulesMemoryMessage=packet.warning?'本地规则记录无效，已使用安全默认值；请明确选择后重新预览。':'';return false;}catch{if(!platformDraftRulesCurrent(panel,scope,request))return null;panel.rulesMemoryMessage='暂时无法读取本书保存的规则，现使用安全默认值；请明确核对上方选择后重新预览。';return false;}finally{if(platformDraftRulesCurrent(panel,scope,request)){panel.rulesLoading=false;platformDraftRuleNote(panel);platformDraftButtons(panel);}}}
 async function platformDraftRememberRules(panel){panel.comparison.value='strict';if(!platformDraftAlive(panel)||panel.starting||panel.binding||panel.loadingCatalog||panel.jobs.some(job=>!job.done))return;panel.encoding.value=platformDraftRequiredEncoding;const scope=platformDraftRuleScope(panel),value={schema:1,comparison_policy:panel.comparison.value,body_encoding:platformDraftRequiredEncoding},request=panel.rulesRequest=(panel.rulesRequest||0)+1;panel.rulesLoading=false;panel.rulesSaving=false;platformDraftRulesInvalidate(panel);if(!scope||!platformDraftRuleValues(value,scope.platform)){panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;panel.rulesMemoryMessage='规则不受支持，已恢复安全默认值；请重新预览。';platformDraftRuleNote(panel);return platformDraftPreview(panel);}panel.rulesSaving=true;platformDraftButtons(panel);const pending=(platformDraftRuleWrites.get(scope.key)||Promise.resolve()).catch(()=>{}).then(async()=>{const packet=await call('platform-drafts/preferences/save',{...platformDraftRuleRequest(scope),comparison_policy:value.comparison_policy,body_encoding:value.body_encoding});if(!platformDraftRuleResponse(packet,scope)||packet.saved!==true||!platformDraftRuleValues(packet.preference,scope.platform)||packet.preference.comparison_policy!==value.comparison_policy||packet.preference.body_encoding!==value.body_encoding)throw Error('规则保存回执无法确认');});const settled=pending.catch(()=>{});platformDraftRuleWrites.set(scope.key,settled);try{await pending;if(platformDraftRulesCurrent(panel,scope,request))panel.rulesMemoryMessage='已将明确选择的规则保存在本书内，仅用于当前清单和当前配置；恢复后仍需重新预览并明确执行。';}catch{if(platformDraftRulesCurrent(panel,scope,request))panel.rulesMemoryMessage='未能确认规则已保存；当前选择仅用于本面板，下次打开请重新核对。';}finally{if(platformDraftRuleWrites.get(scope.key)===settled)platformDraftRuleWrites.delete(scope.key);if(platformDraftRulesCurrent(panel,scope,request)){panel.rulesSaving=false;platformDraftRuleNote(panel);platformDraftButtons(panel);if(panel.comparison.value===value.comparison_policy&&panel.encoding.value===value.body_encoding)await platformDraftPreview(panel);}}}
 function platformDraftAvailability(){const button=$('platform-drafts-open');button.disabled=currentBookInfo.kind==='analysis'||currentBookInfo.kind_verified===false;button.title=button.disabled?'作品分析不提供平台草稿保存':'预览已审查正式稿，保存到指定平台的草稿箱';}
 function platformDraftChapterRange(chapters){if(!chapters?.length)return '章节待核对';return chapters.length===1?'第'+chapters[0]+'章':'第'+chapters[0]+'—'+chapters.at(-1)+'章（'+chapters.length+'章）';}
 function platformDraftElement(tag,text,id){const node=document.createElement(tag);if(text!==undefined)node.textContent=text;if(id)node.id=id;return node;}
-function platformDraftPermissionHelp(){const help=platformDraftElement('details',undefined,'platform-draft-permission-help');help.append(platformDraftElement('summary','网站访问授权帮助'),platformDraftElement('p','Codex 官方设置入口：Settings／设置 → Browser／浏览器 → Agent permissions／代理权限 → 添加网站例外。菜单名称以当前桌面版本为准。'),platformDraftElement('p','仅为 fanqienovel.com 添加例外，将 Browse／浏览设为 Always allow／始终允许；Download／下载和 Upload／上传权限保持不变。'),platformDraftElement('p','若找不到该入口，或组织策略限制修改，请反馈当前菜单，由助手核对宿主支持的授权方式，请勿调整全局权限。'));const link=platformDraftElement('a','查看 Codex 官方浏览器权限说明');link.href='https://developers.openai.com/codex/app/settings#browser-use';link.target='_blank';link.rel='noopener noreferrer';help.append(link,platformDraftElement('p','设置完成后，仍需重新预览并发起连接；只有本次实际读取本书页面通过后，才显示连接就绪。'));return help;}
-function platformDraftAlive(panel){return platformDraftPanel===panel&&panel.dialog.open;}
-function platformDraftBusy(panel){return panel.starting||panel.binding||panel.refreshingPlan||panel.formalLoading||panel.loadingCatalog||panel.rulesLoading||panel.rulesSaving||panel.jobs.some(job=>!job.done);}
-let platformDraftTaskTimer=null;
-function platformDraftInspectionValid(panel){
- const job=panel.inspection,profile=panel.profiles.find(row=>row.id===panel.profile.value);
- return !!(job?.done&&job.state==='inspection_ready'&&job.result?.can_execute&&job.book_id===panel.bookId&&job.plan_id===panel.plan.value&&job.profile_id===panel.profile.value&&job.profile_sha256===profile?.sha256&&Date.now()-Date.parse(job.finished_at)<600000&&!panel.bindingDirty&&!panel.formalError);
+function platformDraftPermissionHelp(host='codex',help=null){
+ help=help||platformDraftElement('details',undefined,'platform-draft-permission-help');help.replaceChildren(platformDraftElement('summary','网站访问授权帮助'));
+ if(host==='workbuddy'){help.append(platformDraftElement('p','WorkBuddy AI 使用官方 agent-browser 的独立浏览器窗口。首次执行时，请在该窗口登录番茄 fanqienovel.com 并打开本书草稿箱，再继续检查。'),platformDraftElement('p','该窗口的登录状态用于 WorkBuddy 任务。执行说明会指定本书专属会话；未登录或组件不可用时会明确停止，不会改用其他工具。'),platformDraftElement('p','检查通过后才能同步；已存在的草稿保持原 ID 更新，并独立完整回读。'));return help;}
+ if(host!=='codex'){
+  const label=platformDraftHostNames[host];help.append(platformDraftElement('p','请在 '+label+' 官方浏览器或连接器中确认当前浏览器已连接，并按该工具实际显示的授权提示允许访问 fanqienovel.com。'),platformDraftElement('p','授权入口以 '+label+' 当前版本为准；若没有可用的官方浏览器组件或授权入口，请先在该工具中核对，不会改用其他工具。'),platformDraftElement('p','授权后重新生成所选工具的检查任务；只有本次实际读取账号、目标作品和章节通过，才能继续确认同步。'));return help;
+ }
+ help.append(platformDraftElement('p','Codex 官方设置入口：Settings／设置 → Browser／浏览器 → Agent permissions／代理权限 → 添加网站例外。菜单名称以当前桌面版本为准。'),platformDraftElement('p','仅为 fanqienovel.com 添加例外，将 Browse／浏览设为 Always allow／始终允许；Download／下载和 Upload／上传权限保持不变。'),platformDraftElement('p','若找不到该入口，或组织策略限制修改，请反馈当前菜单，由助手核对宿主支持的授权方式，请勿调整全局权限。'));const link=platformDraftElement('a','查看 Codex 官方浏览器权限说明');link.href='https://developers.openai.com/codex/app/settings#browser-use';link.target='_blank';link.rel='noopener noreferrer';help.append(link,platformDraftElement('p','设置完成后，仍需重新预览并发起连接；只有本次实际读取本书页面通过后，才显示连接就绪。'));return help;
 }
-function platformDraftDrawInspection(panel,job){
+function platformDraftAlive(panel){return platformDraftPanel===panel&&panel.dialog.open;}
+const platformDraftHostNames={codex:'Codex','qoder-cn':'Qoder CN',workbuddy:'WorkBuddy AI'};
+function platformDraftHost(panel){return panel.executionHost||'codex';}
+function platformDraftTaskHost(task){const host=task?.execution_host??'codex';return Object.hasOwn(platformDraftHostNames,host)?host:null;}
+function platformDraftHostInfo(panel){
+ const id=platformDraftHost(panel),rows=panel.executionHosts;
+ if(!Array.isArray(rows))return {id,sdk_available:id==='codex',reason:id==='codex'?null:'platform_chrome_worker_native_sdk_unavailable'};
+ const matches=rows.filter(row=>row?.id===id);return matches.length===1?matches[0]:{id,sdk_available:false,reason:'platform_chrome_worker_native_sdk_unavailable'};
+}
+function platformDraftHostReady(panel){return platformDraftHostInfo(panel).sdk_available===true;}
+function platformDraftNativeIdleStatus(panel){const label=platformDraftHostNames[platformDraftHost(panel)],action=panel.mode.value==='reconcile_only'?'只读核对':'检查差异';return !platformDraftHostReady(panel)?'所选 '+label+' 的公开浏览器组件不可用；请查看执行工具说明。尚未生成交接任务，也未启动检查或保存。':panel.assistantTask||panel.assistantForeignActive?'本地预览已准备；当前执行工具为 '+label+'。已有助手任务的进度与结果请查看“助手协助”；准备本地章节不会自动执行。':'已选择 '+label+'；本次尚未连接、检查或保存。请点击“交给 '+label+action+'”生成交接说明，再交给该工具执行。';}
+function platformDraftAssistantRemember(panel,task){
+ if(!task||platformDraftAssistantActive(task))return;panel.assistantHistory=panel.assistantHistory||new Map();panel.assistantHistory.set(task.request_id,task);
+ while(panel.assistantHistory.size>20)panel.assistantHistory.delete(panel.assistantHistory.keys().next().value);
+}
+function platformDraftHostRender(panel,busy){
+ if(!panel.assistantHost)return;const host=platformDraftHost(panel),info=platformDraftHostInfo(panel),label=platformDraftHostNames[host];panel.assistantHost.value=host;panel.assistantHost.disabled=!!busy;
+ if(panel.permissionHelp&&panel.permissionHost!==host){platformDraftPermissionHelp(host,panel.permissionHelp);panel.permissionHost=host;}
+ panel.assistantHostNote.textContent=(host==='codex'?'Codex 浏览器执行固定使用 GPT-6.1 Terra。':'将使用 '+label+' 当前模型执行；生成任务即允许本次使用其原生模型。')+(info.sdk_available===true?(host==='workbuddy'?'本地官方 agent-browser 已找到；首次在独立窗口登录后继续检查。':'本地公开浏览器组件已找到；扩展连接和网站授权仍须实际核验。'):'当前不能执行：'+platformDraftErrorCode(info.reason||'platform_chrome_worker_native_sdk_unavailable')+'。可保留此选择查看说明，不会自动改用其他工具。')+(busy?'已有待执行、运行中或收尾待确认的任务，暂不能切换执行工具。':'');
+ panel.assistantHistoryResults.replaceChildren();for(const task of panel.assistantHistory?.values()||[]){const label=platformDraftHostNames[platformDraftTaskHost(task)]||'未知工具';panel.assistantHistoryResults.append(platformDraftElement('li',label+' · '+(task.mode==='inspect_drafts'?'差异检查':'草稿核对/同步')+' · '+(task.error?platformDraftErrorCode(task.error):task.state==='inspection_ready'?'历史检查完成':task.state==='succeeded'?'历史任务完成':'历史任务已结束')+' · 已核对 '+(task.checked_chapters||task.verified_chapters||0)+' / '+task.total_chapters+' 章；不授权当前工具执行。'));}
+ panel.assistantHistoryDetails.hidden=!panel.assistantHistoryResults.children.length;
+}
+function platformDraftHostChange(panel){
+ const next=panel.assistantHost.value;if(!platformDraftAlive(panel)||platformDraftBusy(panel)||!Object.hasOwn(platformDraftHostNames,next)){panel.assistantHost.value=platformDraftHost(panel);return;}
+ if(next===platformDraftHost(panel))return;platformDraftAssistantRemember(panel,panel.assistantTask);panel.executionHost=next;
+ panel.selectionGeneration=(panel.selectionGeneration||0)+1;panel.assistantSequence=(panel.assistantSequence||0)+1;panel.assistantTask=null;panel.assistantCurrentId=null;panel.assistantForeignActive=null;panel.assistantUncertain=false;
+ platformDraftRulesInvalidate(panel);panel.previewBox?.replaceChildren();if(panel.job?.done)platformDraftDrawJob(panel,panel.job,true);
+ if(!panel.job&&!panel.catalogError&&!panel.formalError&&panel.status.textContent===panel.idlePreviewText){panel.status.textContent=next==='codex'?(panel.codexIdlePreviewText||'已选择 Codex，请刷新本地状态后重新检查。'):platformDraftNativeIdleStatus(panel);panel.idlePreviewText=panel.status.textContent;}
+ panel.assistantArea.open=true;panel.assistantMessage.textContent='已选择 '+platformDraftHostNames[next]+'；请使用该工具重新检查差异，之前的检查只保留为历史。';platformDraftButtons(panel);
+}
+function platformDraftAssistantActive(task){return !!task&&(task.done===false||task.execution_active===true||task.cleanup_pending===true);}
+function platformDraftBusy(panel){return panel.starting||panel.binding||panel.refreshingPlan||panel.formalLoading||panel.loadingCatalog||panel.rulesLoading||panel.rulesSaving||panel.assistantWorking||panel.assistantUncertain||panel.assistantForeignActive||platformDraftAssistantActive(panel.assistantTask)||panel.jobs.some(job=>!job.done);}
+function platformDraftObserveConnection(panel,detail){if(detail?.retry_blocked===true)panel.connectionRetryBlocked=true;}
+function platformDraftNeedsReadback(job){const rows=job?.result?.results||[],changes=job?.result?.changes||[];return !!(job&&(['unknown','sending'].includes(job.state)||rows.some(row=>['unknown','sending'].includes(row.state))||[job.error,...rows.map(row=>row.reason),...changes.map(row=>row.reason)].some(reason=>/unresolved|previous_attempt|request_timeout|read_timeout/.test(reason||''))));}
+function platformDraftAssistantInspectionBlocked(task){return platformDraftNeedsReadback(task)&&!(task.done===true&&task.cleanup_complete===true&&!platformDraftAssistantActive(task));}
+function platformDraftShowConnectionHelp(panel){if(platformDraftAlive(panel)&&platformDraftHost(panel)==='codex'&&panel.connectionHelp){panel.connectionHelp.hidden=false;panel.connectionHelp.open=true;}}
+function platformDraftBlockedActions(panel,busy){
+ if(platformDraftHost(panel)!=='codex'){if(panel.connectionHelp){panel.connectionHelp.hidden=true;panel.connectionHelp.open=false;}return;}
+ if(!panel.connectionRetryBlocked)return;
+ if(panel.connectionHelp)panel.connectionHelp.hidden=false;
+ if(!panel.recoveryAction||busy)return;
+ const unknown=panel.connectionReadbackPending||platformDraftNeedsReadback(panel.job)||platformDraftNeedsReadback({result:panel.preview?.preview})||panel.plans.find(row=>row.id===panel.plan.value)?.draft_history?.unknown_chapters>0;if(unknown)panel.connectionReadbackPending=true;
+ panel.recoveryAction.hidden=false;panel.recoveryAction.textContent=unknown?'查看核对与连接说明':'查看连接说明';
+ const explain=()=>{if(panel.recoveryAction.onclick===explain)platformDraftShowConnectionHelp(panel);};panel.recoveryAction.onclick=explain;
+ const historical=!panel.job||panel.jobHistorical||panel.job.mode==='inspect_drafts';
+ panel.nextHint.textContent=(unknown?(historical?'历史批次有待核对的保存记录，不代表本次发生了保存；应先只读核对历史结果，不能重复发送。当前尚未执行核对。':'原批次仍有待核对结果，远端可能已保存；应先只读核对，不能重复发送。当前尚未执行核对。'):'')+'当前服务已暂停新的自动浏览器连接。请交给 GPT-6.1 Terra 助手核验宿主接入；当前尚未实现经核验的桌面会话交接，本面板仍等待核验，不会新建自动连接。可以继续阅读和准备本地章节；在“助手协助”中'+(unknown?'准备只读核对任务。':'准备助手检查任务。');
+}
+function platformDraftAssistantScope(panel){
+ const plan=panel.plans.find(row=>row.id===panel.plan.value),profile=panel.profiles.find(row=>row.id===panel.profile.value);
+ return platformDraftProfileMatches(profile,plan)&&profile?.sha256?{book_id:panel.bookId,plan_id:plan.id,profile_id:profile.id,profile_sha256:profile.sha256,execution_host:platformDraftHost(panel),target:{platform:plan.platform,account_id:plan.account_id,remote_book_id:plan.remote_book_id},chapters:[...plan.chapters],generation:panel.selectionGeneration||0,revision:panel.revision}:null;
+}
+function platformDraftAssistantScopeCurrent(panel,scope){const current=platformDraftAssistantScope(panel);return platformDraftAlive(panel)&&scope&&current&&JSON.stringify(current)===JSON.stringify(scope);}
+function platformDraftAssistantPacket(panel,packet,scope,previous=null){
+ const hash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+ if(!packet||packet.ok!==true||typeof packet.request_id!=='string'||!packet.request_id||packet.execution_origin!=='assistant_session'||packet.model_verification!=='executor_runtime_required'||packet.execution_mode!=='host_assisted_cua'||!['inspect_drafts','sync_drafts','reconcile_only'].includes(packet.mode)||typeof packet.done!=='boolean'||['execution_active','cleanup_pending','cleanup_complete'].some(key=>typeof packet[key]!=='boolean')||packet.comparison_policy!=='strict'||packet.body_encoding!==platformDraftRequiredEncoding||!hash(packet.manifest_sha256)||!hash(packet.binding_sha256)||['book_id','plan_id','profile_id','profile_sha256'].some(key=>packet[key]!==scope[key])||['platform','account_id','remote_book_id'].some(key=>packet.target?.[key]!==scope.target[key])||packet.total_chapters!==scope.chapters.length)throw Error('助手任务的作品、批次或内容身份无法核对，请重新读取。');
+ if(!Object.hasOwn(platformDraftHostNames,scope.execution_host)||platformDraftTaskHost(packet)!==scope.execution_host||(scope.execution_host!=='codex'&&(packet.native_model_authorized!==true||packet.model_policy!=='user_authorized_native')))throw Error('助手任务的执行工具或本次原生模型授权不一致，请使用所选工具重新检查。');
+ if(previous&&(platformDraftTaskHost(previous)!==platformDraftTaskHost(packet)||['request_id','manifest_sha256','binding_sha256','mode','created_at'].some(key=>previous[key]!==packet[key])))throw Error('助手任务回执身份发生变化，保留原任务等待核对。');
+ return packet;
+}
+function platformDraftAssistantMatches(panel,packet){const scope=platformDraftAssistantScope(panel);if(!scope)return false;try{platformDraftAssistantPacket(panel,packet,scope);return true;}catch{return false;}}
+function platformDraftAssistantConflict(panel,latest,scope){
+ const active=latest.active_request;if(!active||active.plan_id===scope.plan_id&&active.profile_id===scope.profile_id&&platformDraftTaskHost(active)===scope.execution_host)return false;
+ if(active.book_id!==scope.book_id||active.execution_origin!=='assistant_session'||!platformDraftAssistantActive(active)||typeof active.request_id!=='string'||!/^[a-f0-9]{32}$/.test(active.request_id))throw Error('其他批次的助手任务身份无法核对。');
+ if(!platformDraftTaskHost(active))throw Error('其他助手任务的执行工具无法核对。');panel.assistantForeignActive=active;panel.assistantMessage.textContent='本书另一批次或执行工具已有助手任务或浏览器收尾待确认；请先查看该任务并等待结束或请求停止，未生成第二份任务。';return true;
+}
+async function platformDraftAssistantReturn(panel){
+ const task=panel.assistantForeignActive;if(!task||panel.assistantWorking||!platformDraftAlive(panel))return;
+ panel.selectionGeneration=(panel.selectionGeneration||0)+1;platformDraftAssistantRemember(panel,panel.assistantTask);panel.assistantTask=null;panel.executionHost=platformDraftTaskHost(task);
+ await platformDraftCatalog(panel,{plan_id:task.plan_id,profile_id:task.profile_id,profile_sha256:task.profile_sha256,mode:task.mode==='reconcile_only'?'reconcile_only':'sync_drafts'});
+ if(!platformDraftAlive(panel)||panel.assistantForeignActive!==task)return;if(panel.catalogError){platformDraftButtons(panel);return;}
+ panel.assistantForeignActive=null;await platformDraftAssistantRefresh(panel);
+}
+function platformDraftAssistantCanSync(panel){
+ const task=panel.assistantTask,counts=task?.result?.change_counts,expires=Date.parse(task?.inspection_expires_at);
+ return !!(platformDraftHostReady(panel)&&platformDraftAssistantMatches(panel,task)&&task.mode==='inspect_drafts'&&task.done&&task.state==='inspection_ready'&&task.can_sync===true&&!platformDraftAssistantActive(task)&&task.cleanup_complete===true&&task.source_matches_current===true&&task.result?.can_execute===true&&task.result.source_matches_current!==false&&task.checked_chapters===task.total_chapters&&Number.isFinite(expires)&&expires>Date.now()&&!panel.bindingDirty&&!panel.formalError&&!panel.needsPreparation&&counts&&['create','update','unchanged','blocked'].every(key=>Number.isInteger(counts[key])&&counts[key]>=0)&&counts.blocked===0&&counts.create+counts.update>0&&counts.create+counts.update+counts.unchanged===task.total_chapters);
+}
+function platformDraftAssistantRender(panel){
+ if(!panel.assistantArea)return;
+ const task=panel.assistantTask,matched=platformDraftAssistantMatches(panel,task),busy=platformDraftBusy(panel),unknown=matched&&platformDraftNeedsReadback(task),scope=platformDraftAssistantScope(panel);
+ platformDraftHostRender(panel,busy);const hostReady=platformDraftHostReady(panel),hostLabel=platformDraftHostNames[platformDraftHost(panel)];
+ const unavailable=panel.connectionRetryBlocked||(panel.preview?.can_start===false&&panel.preview?.can_connect!==true);
+ if(unavailable)panel.assistantArea.open=true;
+ panel.assistantReturn.hidden=!panel.assistantForeignActive;panel.assistantReturn.disabled=!!(panel.assistantWorking||panel.loadingCatalog);
+ panel.assistantInspect.disabled=!!(busy||!hostReady||!scope||panel.bindingDirty||panel.formalError||panel.mode.value==='reconcile_only'||platformDraftAssistantInspectionBlocked(task));
+ panel.assistantReadback.disabled=!!(busy||!hostReady||!scope||panel.bindingDirty||panel.formalError);
+ panel.assistantRefresh.disabled=!!(panel.assistantWorking||panel.loadingCatalog||!scope);
+ panel.assistantCancel.hidden=!matched||(task.done&&!task.cleanup_pending);panel.assistantCancel.disabled=!!panel.assistantWorking||task?.stop_requested===true||task?.done===true;
+ panel.assistantCancel.textContent=task?.done&&task?.cleanup_pending?'等待收尾确认':task?.stop_requested?'等待安全停止…':task?.state==='prepared'?'撤销待执行任务':'请求安全停止';
+ panel.assistantSync.hidden=!matched||task.mode!=='inspect_drafts'||task.state!=='inspection_ready';panel.assistantSync.disabled=busy||!platformDraftAssistantCanSync(panel);
+ panel.assistantPrompt.value=matched&&typeof task.handoff_prompt==='string'?task.handoff_prompt:'';panel.assistantPrompt.hidden=!panel.assistantPrompt.value;panel.assistantCopy.hidden=panel.assistantPrompt.hidden;panel.assistantCopy.disabled=!matched||!hostReady||task.state!=='prepared'||task.source_matches_current!==true||!(Date.parse(task.expires_at)>Date.now());
+ panel.assistantSummary.textContent='';panel.assistantStateNote.textContent='';panel.assistantResults.replaceChildren();
+ if(!matched){panel.assistantProgress.textContent='助手本次尚未开始';panel.assistantStateNote.textContent='当前选择 '+hostLabel+'；'+(hostReady?'可准备助手检查任务；':'请先处理上方组件不可用原因；')+'生成和复制说明都不会连接浏览器或执行任务。';return;}
+ const historical=panel.assistantCurrentId!==task.request_id,label=historical?'上次助手任务':'本次助手任务',names={prepared:'等待助手认领',running:task.stage==='waiting_assistant_bridge'?'已认领，等待连接浏览器':'助手执行中',inspection_ready:'只读检查完成',inspection_blocked:'检查遇到阻断',succeeded:'任务完成',unknown:'保存结果未知，先只读核对',failed:'任务未完成',expired:'任务已过期',interrupted:'执行已中断，先核对记录',cancelled:'任务已撤销',stopped:'任务已安全停止'};
+ panel.assistantProgress.textContent=label+' · '+hostLabel+' · '+(names[task.state]||'状态待核对')+' · '+(task.mode==='inspect_drafts'?(task.state==='inspection_ready'?'已完成差异检查 ':'已尝试检查 ')+(task.checked_chapters||0):'已完整回读 '+(task.verified_chapters||0))+' / '+task.total_chapters+' 章'+(historical?'；历史结果不计入本次进度。':'。');
+ const counts=task.result?.change_counts;panel.assistantSummary.textContent=(historical?'历史目标：':'任务目标：')+(platformDraftNames[scope.target.platform]||'平台')+' · 账号 '+scope.target.account_id+' · 作品 '+scope.target.remote_book_id+' · '+platformDraftChapterRange(scope.chapters)+(counts?'；待新建 '+counts.create+'、待更新 '+counts.update+'、一致 '+counts.unchanged+'、阻断 '+counts.blocked:'')+'。'+(task.finished_at?'结束时间：'+task.finished_at+'。':'');
+ for(const row of task.result?.changes||task.result?.results||[]){const text='第'+row.chapter+'章 · '+({create:'待新建',update:'待更新',unchanged:'一致',blocked:'须先处理',unknown:'结果未知',sending:'保存待核对',succeeded:'已回读'}[row.action||row.state]||'待核对')+(row.reason?' · '+platformDraftErrorCode(row.reason):'');panel.assistantResults.append(platformDraftElement('li',text));}
+ if(task.cleanup_status==='external_session_reset')panel.assistantStateNote.textContent=(task.error?'原停止原因：'+platformDraftErrorCode(task.error)+'。':'')+'旧浏览器会话已按操作者的保存退出与内核重置记录隔离撤销；未将旧执行标为自动收尾成功，原任务结果保留。可准备新的只读检查，不能重放旧任务。';
+ else if(task.cleanup_pending&&(task.done||task.stage==='cleanup_pending'||task.stop_requested))panel.assistantStateNote.textContent=(task.error?'停止原因：'+platformDraftErrorCode(task.error)+'。':'')+'任务结果与浏览器收尾分开确认：'+(task.done?'本次处理已结束，但':'正在停止或结束本次处理；')+'尚未确认执行端完成及浏览器收尾，暂不能开始新任务。请读取助手状态，保留原会话等待收尾。'+(unknown?'远端可能已保存；收尾确认后仍须先只读核对，不能重复发送。':'');
+ else if(unknown)panel.assistantStateNote.textContent=platformDraftAssistantInspectionBlocked(task)?'远端可能已保存，执行端完成和浏览器收尾尚未确认；请先读取状态，不能重复发送。':'远端可能已保存；可以先“检查差异”只读核对，也可准备只读核对任务，不能重复发送。只有本次同一工具的完整检查通过，才能再确认同步。';
+ else if(task.error)panel.assistantStateNote.textContent='停止原因：'+platformDraftErrorCode(task.error)+'。请读取最新状态后处理。';
+ else if(task.state==='prepared')panel.assistantStateNote.textContent=task.source_matches_current!==true?'任务绑定的正式稿或配置已变化，请先撤销待执行任务，再重新准备。':'任务已在本地准备，尚未执行。请复制交接说明给 '+hostLabel+'；'+(platformDraftHost(panel)==='codex'?'实际操作前须由运行环境确认 GPT-6.1 Terra。':'使用该工具自己的官方浏览器上下文和当前模型，仍须取得网站访问授权。');
+ else if(task.state==='running'&&task.stage==='waiting_assistant_bridge')panel.assistantStateNote.textContent='助手任务已认领，等待连接浏览器；'+(task.mode==='inspect_drafts'?'尚未开始章节检查。':task.mode==='sync_drafts'?'尚未开始本次保存。':'尚未开始本次只读核对。');
+ else if(task.mode==='inspect_drafts'&&task.state==='inspection_ready')panel.assistantStateNote.textContent=platformDraftAssistantCanSync(panel)?'只读检查完成；核对目标和差异后，明确确认才能生成同步任务。':'此检查当前不能授权同步；请重新准备只读检查，或先核对未决记录。';
+}
+async function platformDraftAssistantRefresh(panel){
+ const scope=platformDraftAssistantScope(panel);if(!scope||!platformDraftAlive(panel)||panel.assistantWorking)return;
+ const sequence=panel.assistantSequence=(panel.assistantSequence||0)+1,previous=!panel.assistantUncertain&&platformDraftAssistantMatches(panel,panel.assistantTask)?panel.assistantTask:null;panel.assistantWorking=true;panel.assistantMessage.textContent='正在只读读取助手任务状态…';platformDraftButtons(panel);
+ try{const reply=await call(previous?'platform-drafts/assistant-status':'platform-drafts/assistant-latest',previous?{request_id:previous.request_id}:{plan_id:scope.plan_id,profile_id:scope.profile_id});if(sequence!==panel.assistantSequence||!platformDraftAssistantScopeCurrent(panel,scope))return;
+  const packet=previous?reply:reply?.ok===true?reply.request:undefined;if(packet===undefined)throw Error('助手状态回执无法确认。');if(!previous&&platformDraftAssistantConflict(panel,reply,scope))return;
+  if(packet&&platformDraftTaskHost(packet)!==scope.execution_host){platformDraftAssistantPacket(panel,packet,{...scope,execution_host:platformDraftTaskHost(packet)});platformDraftAssistantRemember(panel,packet);panel.assistantTask=null;panel.assistantMessage.textContent='另一工具的结果已保留为历史；当前工具需重新检查。';}
+  else{panel.assistantTask=packet===null?null:platformDraftAssistantPacket(panel,packet,scope,previous);panel.assistantMessage.textContent=packet?'':'当前批次没有助手任务；可准备只读检查任务。';}if(!previous)panel.assistantForeignActive=null;panel.assistantUncertain=false;
+ }catch(error){if(sequence===panel.assistantSequence&&platformDraftAssistantScopeCurrent(panel,scope))panel.assistantMessage.textContent='助手状态尚未确认：'+error.message+'。保留原任务，请再次读取；不会自动执行。';}
+ finally{if(platformDraftAlive(panel)&&sequence===panel.assistantSequence){panel.assistantWorking=false;platformDraftButtons(panel);}}
+}
+async function platformDraftAssistantPrepare(panel,mode,inspectionId=null){
+ if(!platformDraftAlive(panel)||platformDraftBusy(panel)||!platformDraftHostReady(panel)||!platformDraftAssistantScope(panel))return;
+ if(platformDraftHost(panel)!=='codex'&&panel.nativeInspectionPreparing)return;
+ if(mode==='inspect_drafts'&&platformDraftAssistantInspectionBlocked(panel.assistantTask))return;
+ if(mode==='sync_drafts'&&(!platformDraftAssistantCanSync(panel)||panel.assistantTask.request_id!==inspectionId))return;
+ if(mode==='inspect_drafts'){
+  if(platformDraftHost(panel)==='codex'){if(panel.mode.value==='reconcile_only'||!await platformDraftRefreshPlan(panel,false)||!platformDraftAlive(panel)||platformDraftBusy(panel))return;}
+  else{if(panel.mode.value==='reconcile_only')return;const intent={host:platformDraftHost(panel),bookId:panel.bookId,revision:panel.revision,generation:panel.selectionGeneration||0};panel.nativeInspectionPreparing=intent;let prepared;
+   try{prepared=await platformDraftRefreshPlan(panel,false);}finally{if(panel.nativeInspectionPreparing===intent)panel.nativeInspectionPreparing=null;}
+   if(!prepared||!platformDraftAlive(panel)||platformDraftHost(panel)!==intent.host||panel.bookId!==intent.bookId||panel.revision!==intent.revision||(panel.selectionGeneration||0)!==intent.generation||platformDraftBusy(panel))return;
+  }
+ }
+ const scope=platformDraftAssistantScope(panel);if(!scope)return;const sequence=panel.assistantSequence=(panel.assistantSequence||0)+1;panel.assistantWorking=true;let submitted=false;panel.assistantMessage.textContent='正在核对本批助手任务…';platformDraftButtons(panel);
+ try{const latest=await call('platform-drafts/assistant-latest',{plan_id:scope.plan_id,profile_id:scope.profile_id});if(sequence!==panel.assistantSequence||!platformDraftAssistantScopeCurrent(panel,scope))return;if(latest?.ok!==true||!Object.hasOwn(latest,'request'))throw Error('助手任务目录无法确认。');
+  if(platformDraftAssistantConflict(panel,latest,scope))return;
+  if(latest.request){const sameHost=platformDraftTaskHost(latest.request)===scope.execution_host,previous=platformDraftAssistantPacket(panel,latest.request,sameHost?scope:{...scope,execution_host:platformDraftTaskHost(latest.request)});if(sameHost)panel.assistantTask=previous;else platformDraftAssistantRemember(panel,previous);if(platformDraftAssistantActive(previous)||(mode==='inspect_drafts'&&platformDraftAssistantInspectionBlocked(previous))||(mode==='sync_drafts'&&(!sameHost||previous.request_id!==inspectionId||!platformDraftAssistantCanSync(panel))))return;}
+  else if(mode==='sync_drafts')throw Error('原检查任务已无法读取，未生成同步任务。');
+  submitted=true;const packet=await call('platform-drafts/assistant-prepare',{plan_id:scope.plan_id,profile_id:scope.profile_id,profile_sha256:scope.profile_sha256,execution_host:scope.execution_host,...(scope.execution_host==='codex'?{}:{native_model_authorized:true}),mode,comparison_policy:'strict',body_encoding:platformDraftRequiredEncoding,...(mode==='sync_drafts'?{inspection_id:inspectionId,confirmed:true}:{})});
+  if(sequence!==panel.assistantSequence||!platformDraftAssistantScopeCurrent(panel,scope))return;platformDraftAssistantPacket(panel,packet,scope);if(packet.mode!==mode)throw Error('助手任务类型无法确认。');panel.assistantTask=packet;panel.assistantCurrentId=packet.request_id;panel.assistantUncertain=false;panel.assistantMessage.textContent='已生成本地交接任务；尚未连接浏览器或执行。';
+ }catch(error){if(sequence===panel.assistantSequence&&platformDraftAssistantScopeCurrent(panel,scope)){if(submitted)panel.assistantUncertain=true;panel.assistantMessage.textContent=(submitted?'生成回执尚未确认，请先读取助手状态；不会重复生成。':'尚未生成助手任务：')+error.message;}}
+ finally{if(platformDraftAlive(panel)&&sequence===panel.assistantSequence){panel.assistantWorking=false;platformDraftButtons(panel);}}
+}
+function platformDraftAssistantConfirm(panel){
+ if(platformDraftBusy(panel)||!platformDraftAssistantCanSync(panel))return;const task=panel.assistantTask,scope=platformDraftAssistantScope(panel),counts=task.result.change_counts,{dialog,content}=editorDialog('确认生成助手同步任务');
+ content.append(platformDraftElement('p','执行工具：'+platformDraftHostNames[scope.execution_host]+'。'+(platformDraftNames[scope.target.platform]||'平台')+' · 《'+(panel.plans.find(row=>row.id===scope.plan_id)?.book_title||currentBookInfo.title)+'》 · 账号 '+scope.target.account_id+' · 作品 '+scope.target.remote_book_id+' · '+platformDraftChapterRange(scope.chapters)),platformDraftElement('p','本次已检查 '+task.checked_chapters+' / '+task.total_chapters+' 章；将新建 '+counts.create+' 章，更新 '+counts.update+' 章。只保存草稿，不提交审核或发布。'));
+ const confirm=platformDraftElement('button','确认并生成同步任务');confirm.className='primary';content.append(confirm);confirm.onclick=async()=>{if(!dialog.open||!platformDraftAssistantScopeCurrent(panel,scope)||panel.assistantTask!==task||!platformDraftAssistantCanSync(panel)){confirm.disabled=true;return;}confirm.disabled=true;dialog.close();await platformDraftAssistantPrepare(panel,'sync_drafts',task.request_id);};
+}
+async function platformDraftAssistantCancel(panel){
+ const task=panel.assistantTask,scope=platformDraftAssistantScope(panel);if(!scope||panel.assistantWorking||!platformDraftAssistantMatches(panel,task)||task.done)return;const sequence=panel.assistantSequence=(panel.assistantSequence||0)+1;panel.assistantWorking=true;platformDraftButtons(panel);
+ try{const packet=await call('platform-drafts/assistant-cancel',{request_id:task.request_id});if(sequence!==panel.assistantSequence||!platformDraftAssistantScopeCurrent(panel,scope))return;panel.assistantTask=platformDraftAssistantPacket(panel,packet,scope,task);panel.assistantMessage.textContent=packet.state==='cancelled'?'待执行任务已撤销；该任务未执行平台操作。':!packet.done?'已请求在安全边界停止，请读取状态确认。':packet.cleanup_pending?'本次处理已结束；浏览器收尾仍待确认，未将原结果改为撤销。':packet.state==='stopped'?'任务已在安全边界停止，收尾已确认。':'收到停止请求时，本次处理已经结束；保留原结果，请查看状态和具体原因。';}
+ catch(error){if(sequence===panel.assistantSequence&&platformDraftAssistantScopeCurrent(panel,scope))panel.assistantMessage.textContent='停止回执尚未确认，请读取助手状态：'+error.message;}
+ finally{if(platformDraftAlive(panel)&&sequence===panel.assistantSequence){panel.assistantWorking=false;platformDraftButtons(panel);}}
+}
+function platformDraftAssistantFields(panel,parent,settings){
+ panel.assistantArea=platformDraftElement('details',undefined,'platform-draft-assistant');panel.assistantArea.append(platformDraftElement('summary','助手协助'),platformDraftElement('p','自行选择执行工具，本地准备交接说明，由所选工具执行并读取结果；不会自动切换工具。生成说明不代表已连接、已检查或已保存。'));
+ panel.assistantHost=platformDraftElement('select',undefined,'platform-draft-assistant-host');panel.assistantHost.setAttribute('aria-label','草稿执行工具');for(const [id,label]of Object.entries(platformDraftHostNames)){const option=platformDraftElement('option',label);option.value=id;panel.assistantHost.append(option);}panel.assistantHost.value=platformDraftHost(panel);panel.assistantHost.onchange=()=>platformDraftHostChange(panel);const hostLabel=platformDraftElement('label','执行工具');hostLabel.append(panel.assistantHost);panel.assistantHostNote=platformDraftElement('p');panel.assistantHostNote.setAttribute('role','status');settings.append(hostLabel,panel.assistantHostNote);
+ panel.assistantHistoryDetails=platformDraftElement('details');panel.assistantHistoryDetails.hidden=true;panel.assistantHistoryResults=platformDraftElement('ul');panel.assistantHistoryDetails.append(platformDraftElement('summary','其他工具与先前任务的历史结果'),panel.assistantHistoryResults);
+ panel.assistantMessage=platformDraftElement('p',undefined,'platform-draft-assistant-message');panel.assistantMessage.setAttribute('role','status');panel.assistantStateNote=platformDraftElement('p');panel.assistantProgress=platformDraftElement('p');panel.assistantSummary=platformDraftElement('p');panel.assistantResults=platformDraftElement('ul');
+ const actions=platformDraftElement('div');actions.className='platform-draft-actions';for(const [key,label,fn]of [['assistantInspect','准备助手检查任务',()=>platformDraftAssistantPrepare(panel,'inspect_drafts')],['assistantReadback','准备只读核对任务',()=>platformDraftAssistantPrepare(panel,'reconcile_only')],['assistantRefresh','读取助手状态',()=>platformDraftAssistantRefresh(panel)],['assistantSync','确认并生成同步任务',()=>platformDraftAssistantConfirm(panel)],['assistantCancel','撤销待执行任务',()=>platformDraftAssistantCancel(panel)]]){panel[key]=platformDraftElement('button',label);panel[key].onclick=fn;actions.append(panel[key]);}
+ panel.assistantPrompt=platformDraftElement('textarea',undefined,'platform-draft-assistant-prompt');panel.assistantPrompt.readOnly=true;panel.assistantPrompt.rows=5;panel.assistantPrompt.setAttribute('aria-label','助手交接说明');panel.assistantCopy=platformDraftElement('button','复制交接说明');panel.assistantCopy.onclick=async()=>{const task=panel.assistantTask,scope=platformDraftAssistantScope(panel),text=panel.assistantPrompt.value;if(panel.assistantCopy.disabled||!text)return;try{if(typeof navigator==='undefined'||!navigator.clipboard?.writeText)throw Error('clipboard');await navigator.clipboard.writeText(text);if(platformDraftAssistantScopeCurrent(panel,scope)&&panel.assistantTask===task)panel.assistantMessage.textContent='已复制交接说明；尚未连接浏览器或执行任务。';}catch{if(platformDraftAssistantScopeCurrent(panel,scope)&&panel.assistantTask===task){panel.assistantPrompt.focus();if(typeof panel.assistantPrompt.select==='function')panel.assistantPrompt.select();panel.assistantMessage.textContent='自动复制不可用，请手动复制已选中的交接说明；任务尚未执行。';}}};
+ panel.assistantReturn=platformDraftElement('button','查看未完成任务批次');panel.assistantReturn.onclick=()=>platformDraftAssistantReturn(panel);actions.append(panel.assistantReturn);
+ panel.assistantArea.append(panel.assistantMessage,panel.assistantStateNote,panel.assistantProgress,panel.assistantSummary,panel.assistantResults,actions,panel.assistantPrompt,panel.assistantCopy,panel.assistantHistoryDetails);parent.append(panel.assistantArea);
+}
+let platformDraftTaskTimer=null;
+function platformDraftInspectionValid(panel,job=panel.inspection){
+ const plan=panel.plans.find(row=>row.id===panel.plan.value),profile=panel.profiles.find(row=>row.id===panel.profile.value),age=Date.now()-Date.parse(job?.finished_at);
+ return !!(platformDraftProfileMatches(profile,plan)&&job?.done&&job.state==='inspection_ready'&&job.result?.can_execute&&job.result.source_matches_current!==false&&job.book_id===panel.bookId&&job.plan_id===panel.plan.value&&job.profile_id===panel.profile.value&&job.profile_sha256===profile?.sha256&&age>=0&&age<600000&&!panel.bindingDirty&&!panel.formalError);
+}
+function platformDraftConnectionIssue(job){
+ const code=job.error||job.connection_diagnostics?.reason||'';
+ const model=['model_unverified','model_mismatch','model_rerouted','model_unavailable'];
+ const executor=['tool_not_started','tool_discovery_failed','not_ready','tool_failed','unexpected_tool','runtime_unavailable','turn_metadata_missing','module_unavailable','turn_failed','codex_unavailable','sdk_unavailable','unsupported_sdk','rpc_error','rpc_timeout','thread_start_failed'];
+ if(model.some(value=>code==='platform_chrome_worker_'+value))return {kind:'model',hint:'请确认 Codex 中 GPT-6.1 Terra 可用，并由助手核对工作台的模型配置；处理后再重新检查差异。'};
+ if(executor.some(value=>code==='platform_chrome_worker_'+value))return {kind:'executor',hint:'请由助手核对工作台与 Codex 的浏览器执行工具是否可用；处理后再重新检查差异。'};
+ if(code==='platform_chrome_worker_browser_transport_closed')return {kind:'transport',hint:'请在 Codex 中检查官方 Chrome 连接状态，并核对本书页面能否读取；连接恢复后再重新检查。若保存结果未知，请先只读核对。'};
+ if(code==='platform_chrome_worker_origin_permission_required')return {kind:'permission',hint:'请展开“网站访问授权帮助”核对本网站授权，完成后再重新检查差异。'};
+ return null;
+}
+function platformDraftConnectionNote(job){
+ const detail=job.connection_diagnostics;if(!detail||typeof detail!=='object'||Array.isArray(detail))return '';
+ const named=value=>value==='gpt-6.1-terra'?'GPT-6.1 Terra':null,requested=named(detail.requested_model),resolved=named(detail.resolved_model);
+ const verified=detail.model_verified===true&&requested&&resolved;
+ const reasons={modelNotFound:'指定模型不可用或未找到',usageLimitExceeded:'当前 Codex 账号达到用量上限',rateLimitExceeded:'模型服务限制了请求频率',unauthorized:'Codex 服务身份认证未通过',httpConnectionFailed:'模型服务连接失败',responseStreamConnectionFailed:'未能建立模型响应通道',responseStreamDisconnected:'模型响应通道中断',responseTooManyFailedAttempts:'模型响应多次未能完成',serverOverloaded:'模型服务当前繁忙',flexUnavailable:'当前模型服务容量不可用',badRequest:'模型服务未接受本次请求参数',internalServerError:'模型服务发生内部错误',contextWindowExceeded:'执行会话超出模型上下文限制',sessionBudgetExceeded:'执行会话达到预算上限',sandboxError:'执行会话的受限运行环境发生错误'};
+ const reason=typeof detail.error_kind==='string'&&Object.hasOwn(reasons,detail.error_kind)?reasons[detail.error_kind]:null;
+ return '执行模型：指定 '+(requested||'未确认')+'；会话回执 '+(resolved||'未确认')+'；'+(verified?'模型身份已核验':'模型身份尚未核验')+'。模型身份不代表浏览器连接已就绪。'+(reason?' 连接诊断：'+reason+'。':'');
+}
+function platformDraftConnectionErrorCode(code){return ({
+ platform_chrome_worker_model_unverified:'无法核验指定的 GPT-6.1 Terra 模型，已停止执行',
+ platform_chrome_worker_model_mismatch:'会话返回的模型与指定的 GPT-6.1 Terra 不匹配，已停止执行',
+ platform_chrome_worker_model_rerouted:'执行会话发生模型切换，已停止执行；须重新核验 GPT-6.1 Terra',
+ platform_chrome_worker_model_unavailable:'指定的 GPT-6.1 Terra 模型当前不可用，未继续执行',
+ platform_chrome_worker_tool_not_started:'未启动受认可的浏览器执行器，尚未建立页面连接',
+ platform_chrome_worker_tool_discovery_failed:'未能找到本次需要的浏览器执行工具，尚未建立页面连接',
+ platform_chrome_worker_not_ready:'执行会话已结束，但未确认浏览器执行器和页面连接就绪',
+ platform_chrome_worker_unexpected_tool:'执行会话使用了不受本次流程支持的工具，已停止；请核对执行工具配置',
+ platform_chrome_worker_tool_failed:'浏览器执行工具返回失败，请核对执行工具与运行环境',
+ platform_chrome_worker_runtime_unavailable:'浏览器执行工具所需的运行环境不可用',
+ platform_chrome_worker_turn_metadata_missing:'浏览器执行工具缺少本次会话身份，已停止执行',
+ platform_chrome_worker_module_unavailable:'浏览器执行组件未能加载，请核对工作台安装',
+ platform_chrome_worker_turn_failed:'Codex 执行会话未正常完成，请核对会话错误与账号可用状态',
+ platform_chrome_worker_rpc_error:'Codex 执行通道返回错误，请核对工作台与 Codex 的连接',
+ platform_chrome_worker_rpc_timeout:'Codex 执行通道未及时返回，请核对执行会话状态',
+ platform_chrome_worker_browser_transport_closed:'官方浏览器通信通道在收到响应前断开，本次连接或操作结果尚未确认',
+ platform_chrome_worker_connection_suspended:'当前服务已暂停新的自动浏览器连接，请查看连接说明',
+ platform_chrome_worker_thread_start_failed:'未能创建本次浏览器执行会话，请核对 Codex 运行状态'
+})[code]||null;}
+function platformDraftDrawInspection(panel,job,historical=false){
+ platformDraftObserveConnection(panel,job.connection_diagnostics);
  panel.dialog.setAttribute('data-has-job','true');
+ panel.preview=null;panel.previewExpires=0;
+ historical=historical||!!(job.done&&job.state==='inspection_ready'&&!platformDraftInspectionValid(panel,job));
+ panel.jobHistorical=historical;panel.historicalJobSummary='';if(panel.historyJob)panel.historyJob.textContent='';
+ panel.historyInspection?.replaceChildren();platformDraftClearTaskFeedback(panel);
  clearTimeout(panel.pollTimer);panel.pollTimer=null;panel.job=job;panel.jobs=panel.jobs.filter(row=>row.id!==job.id).concat(job);
- platformDraftTrack(job);
- panel.inspection=job.done&&job.state==='inspection_ready'?job:null;
- clearTimeout(panel.expiryTimer);if(panel.inspection){const remaining=600000-(Date.now()-Date.parse(job.finished_at));if(remaining>0)panel.expiryTimer=setTimeout(()=>{if(platformDraftAlive(panel)&&panel.inspection?.id===job.id){panel.inspection=null;panel.status.textContent='差异检查已过期，请重新准备并检查。尚未执行同步。';platformDraftButtons(panel);}},remaining);}
+ platformDraftTrack(job,historical);
+ panel.inspection=!historical&&platformDraftInspectionValid(panel,job)?job:null;
+ clearTimeout(panel.expiryTimer);panel.expiryTimer=null;if(panel.inspection){const remaining=600000-(Date.now()-Date.parse(job.finished_at));panel.expiryTimer=setTimeout(()=>{if(platformDraftAlive(panel)&&panel.inspection?.id===job.id)platformDraftDrawInspection(panel,job,true);},Math.max(1,remaining));}
  const total=job.total_chapters||0,checked=job.checked_chapters||0;
  panel.progress.max=total||1;panel.progress.value=Math.min(total,checked);panel.progressLabel.textContent='本次差异检查 '+checked+' / '+total+' 章 · 未写入平台';
  panel.status.textContent=job.done?(job.state==='inspection_ready'?'差异检查完成，请核对下面的变更后执行':job.state==='stopped'?'检查已停止，尚未写入平台':'差异检查未完成，未写入平台'):(platformDraftStages[job.stage]||'正在只读检查')+(job.current_chapter?' · 第'+job.current_chapter+'章':'');
  if(job.stop_requested&&!job.done)panel.status.textContent+=' · 正在完成当前只读操作后停止';
  const blocked=(job.result?.changes||[]).find(row=>row.reason),reason=job.error||blocked?.reason;
- if(reason)panel.status.textContent+='。停止原因：'+(blocked?'第'+blocked.chapter+'章 · ':'')+platformDraftErrorCode(reason);
+ const beforeInspection=job.done&&job.state!=='inspection_ready'&&checked===0&&!job.current_chapter&&job.connection_diagnostics?.stage==='connecting_chrome'&&job.connection_diagnostics.ready===false;
+ if(beforeInspection)panel.status.textContent='连接阶段未完成，尚未开始章节检查；未写入平台';
+ if(reason)panel.status.textContent+='。停止原因：'+(blocked?'第'+blocked.chapter+'章 · ':'')+(beforeInspection&&reason==='platform_chrome_worker_browser_transport_closed'?'官方浏览器通信通道在初始化时断开，未建立可用连接':platformDraftErrorCode(reason));
  if(job.state==='inspection_ready'&&!(job.result.change_counts.create+job.result.change_counts.update))panel.status.textContent='本次检查全部一致，无需同步';
  if(job.result?.source_matches_current===false)panel.status.textContent+='。正式稿已有变化，请重新准备。';
  panel.results.replaceChildren();
- const labels={create:'待新建',update:'待更新',unchanged:'本次检查一致',blocked:'无法确认'};
+ const labels=historical?{create:'当时待新建',update:'当时待更新',unchanged:'当时检查一致',blocked:'当时无法确认'}:{create:'待新建',update:'待更新',unchanged:'本次检查一致',blocked:'无法确认'};
  for(const row of job.result?.changes||[]){
   const li=platformDraftElement('li');li.setAttribute('data-state',row.action);li.append(platformDraftElement('strong','第'+row.chapter+'章 · '+row.title),platformDraftElement('span',labels[row.action]||'待检查'));
   if(row.reason)li.append(platformDraftElement('p',platformDraftErrorCode(row.reason)));
@@ -4643,71 +5013,131 @@ function platformDraftDrawInspection(panel,job){
    if(diff.title_changed)details.append(platformDraftElement('p','平台章名：'+(diff.remote_title??'尚无草稿')),platformDraftElement('p','本地章名：'+diff.local_title));
    if(diff.body_changed){details.append(platformDraftElement('pre',diff.body_diff||'正文换行或末尾字符有差异'),platformDraftElement('p','平台 '+diff.remote_characters+' 字符 → 本地 '+diff.local_characters+' 字符'+(diff.diff_truncated?' · 差异较长，仅展示前段；比较已覆盖全文':'')));}
    li.append(details);
-  }panel.results.append(li);
+  }(historical?panel.historyInspection:panel.results).append(li);
  }
- const counts=job.result?.change_counts;if(panel.changeSummary)panel.changeSummary.textContent=counts?'待新建 '+counts.create+' 章 · 待更新 '+counts.update+' 章 · 原已一致 '+counts.unchanged+' 章 · 无法确认 '+counts.blocked+' 章':'';if(counts)panel.jobNote.textContent='待新建 '+counts.create+' 章 · 待更新 '+counts.update+' 章 · 原已一致 '+counts.unchanged+' 章 · 无法确认 '+counts.blocked+' 章。检查结果 10 分钟内有效，实际写入前仍会再次核验。';
+ const counts=job.result?.change_counts;if(panel.changeSummary)panel.changeSummary.textContent=counts?'待新建 '+counts.create+' 章 · 待更新 '+counts.update+' 章 · 原已一致 '+counts.unchanged+' 章 · 无法确认 '+counts.blocked+' 章':'';panel.jobNote.textContent=(counts?'待新建 '+counts.create+' 章 · 待更新 '+counts.update+' 章 · 原已一致 '+counts.unchanged+' 章 · 无法确认 '+counts.blocked+' 章。检查结果 10 分钟内有效，实际写入前仍会再次核验。':'')+platformDraftConnectionNote(job);
+ if(!historical&&job.error==='platform_chrome_worker_origin_permission_required'&&panel.permissionHelp)panel.permissionHelp.open=true;
  platformDraftActionHelp(panel,job);platformDraftButtons(panel);
+ if(historical){
+  panel.historicalJobSummary='历史差异检查 · 结束时间：'+platformDraftStamp(job.finished_at||job.updated_at)+' · '+panel.status.textContent.replaceAll('本次','当次');
+  panel.historyJob.textContent=panel.historicalJobSummary;panel.historyDetails.hidden=false;panel.historySummary.textContent='历史差异检查与核对记录';
+  panel.status.textContent=job.state==='inspection_ready'?'上次差异检查已过期或失效，请重新准备并检查。本次尚未开始。':'本次尚未开始；上次差异检查未完成，时间和原因保留在历史记录中。';
+  panel.changeSummary.textContent='';panel.progress.value=0;panel.progressLabel.textContent=total?'本次尚未开始 · 已核对 0 / '+total+' 章':'本次尚未开始';
+  for(const chapter of panel.plans.find(row=>row.id===job.plan_id)?.chapters||[])panel.results.append(platformDraftElement('li','第'+chapter+'章 · 本次未处理'));
+  panel.jobNote.textContent='这是已结束的历史差异检查，仅代表当时观察；不能用于本次同步，请重新准备并检查。'+(platformDraftConnectionNote(job)?'当时的'+platformDraftConnectionNote(job):'');
+  panel.nextHint.textContent='历史检查不代表平台当前内容，重新检查后再确认同步。';
+  panel.recoveryAction.hidden=false;panel.recoveryAction.textContent='重新检查差异';
+  const recover=async()=>{if(panel.recoveryAction.onclick!==recover||!platformDraftAlive(panel)||panel.job!==job||platformDraftBusy(panel))return;panel.mode.value='sync_drafts';await platformDraftRecheck(panel);};panel.recoveryAction.onclick=recover;
+  if(job.result?.changes?.some(row=>/unresolved|previous_attempt/.test(row.reason||'')))platformDraftActionHelp(panel,job);
+  platformDraftButtons(panel);
+ }
+}
+function platformDraftRecoveryPlan(panel,job){
+ const target=panel.plans.find(row=>row.id===job.plan_id);
+ return (job.result?.recovery_plans||[]).find(row=>row.book_id===panel.bookId&&/^[0-9a-f]{64}$/.test(row.manifest_sha256)&&row.target&&target&&['platform','account_id','remote_book_id'].every(key=>row.target[key]===target[key])&&Array.isArray(row.chapters)&&row.chapters.length>0&&row.chapters.every(chapter=>Number.isInteger(chapter)&&chapter>0)&&panel.plans.some(plan=>plan.id===row.plan_id&&['platform','account_id','remote_book_id'].every(key=>plan[key]===row.target[key])&&JSON.stringify(plan.chapters)===JSON.stringify(row.chapters)));
+}
+async function platformDraftReturnToCurrent(panel,inspect=false){
+ const saved=panel.returnSelection;if(!saved||!platformDraftAlive(panel)||platformDraftBusy(panel)||saved.book_id!==panel.bookId)return;
+ const selectionGeneration=panel.selectionGeneration||0,catalogRequest=panel.catalogRequest+1;
+ await platformDraftCatalog(panel,saved);
+ if(!platformDraftAlive(panel)||panel.returnSelection!==saved||(panel.selectionGeneration||0)!==selectionGeneration||panel.catalogRequest!==catalogRequest||panel.catalogError||panel.plan.value!==saved.plan_id||panel.profile.value!==saved.profile_id||panel.profiles.find(row=>row.id===saved.profile_id)?.sha256!==saved.profile_sha256)return;
+ panel.returnSelection=null;panel.mode.value='sync_drafts';panel.refreshStart.value=String(saved.range.start);panel.refreshEnd.value=String(saved.range.end);panel.refreshRangeDirty=true;platformDraftFormalInvalidate(panel);platformDraftFormalRange(panel);panel.status.textContent='已返回原先选择的章节范围，请重新检查差异。';platformDraftButtons(panel);
+ if(inspect)await platformDraftRecheck(panel);
 }
 function platformDraftActionHelp(panel,job){
  if(!panel.recoveryAction)return;
- const rows=job.result?.results||[],reason=job.error||rows.find(row=>platformDraftCurrent(row)&&row.reason)?.reason||job.result?.changes?.find(row=>row.reason)?.reason;
+ const rows=job.result?.results||[],reason=job.error||rows.find(row=>platformDraftCurrent(row)&&row.reason)?.reason||job.result?.changes?.find(row=>row.reason)?.reason,connectionIssue=platformDraftConnectionIssue(job);
+ const recovery=platformDraftRecoveryPlan(panel,job),returned=!!(panel.returnSelection&&job.done&&job.mode==='reconcile_only'&&['succeeded','succeeded_equivalent'].includes(job.state));
  panel.recoveryAction.hidden=!job.done||['succeeded','succeeded_equivalent','inspection_ready'].includes(job.state);
- const unknown=job.state==='unknown'||/unresolved|previous_attempt|request_timeout|read_timeout/.test(reason||'');
- panel.recoveryAction.textContent=unknown?'先只读核对结果':'重新准备并检查';
- panel.recoveryAction.onclick=async()=>{panel.inspection=null;if(unknown){panel.mode.value='reconcile_only';await platformDraftPreview(panel);}else{panel.mode.value='sync_drafts';await platformDraftPreview(panel);}};
- if(panel.nextHint)panel.nextHint.textContent=panel.recoveryAction.hidden?'':unknown?'远端可能已发生保存。请先核对，再决定是否同步。':/unnumbered|ambiguous|multiple_remote/.test(reason||'')?'请先在平台核对空草稿或重复章号与本地章节的对应关系；不会猜测并覆盖。':/login|chrome|permission/.test(reason||'')?'请检查现有 Chrome 中的账号、作品页面及扩展连接，然后重新准备。':'请处理上方原因后重新检查；已完成的章节记录会保留。';
+ const unknown=platformDraftNeedsReadback(job);
+ panel.recoveryAction.textContent=returned?'返回原范围并检查':unknown?(recovery?'核对原批次未知结果':panel.jobHistorical?'只读核对历史结果':'先只读核对结果'):'重新检查差异';
+ if(returned)panel.recoveryAction.hidden=false;
+ const recover=async()=>{if(panel.recoveryAction.onclick!==recover||!platformDraftAlive(panel)||panel.job!==job||platformDraftBusy(panel))return;panel.inspection=null;if(returned)return platformDraftReturnToCurrent(panel,true);if(unknown){if(recovery){const scope=platformDraftRuleScope(panel),plan=panel.plans.find(row=>row.id===panel.plan.value),range=platformDraftRefreshRange(panel);if(!scope||!plan||!range)return;panel.returnSelection=panel.returnSelection||{book_id:panel.bookId,plan_id:plan.id,profile_id:scope.profile_id,profile_sha256:scope.profile_sha256,target:{platform:plan.platform,account_id:plan.account_id,remote_book_id:plan.remote_book_id},chapters:[...plan.chapters],range,mode:'sync_drafts'};await platformDraftCatalog(panel,{plan_id:recovery.plan_id,profile_id:scope.profile_id,profile_sha256:scope.profile_sha256,target:recovery.target,chapters:recovery.chapters,mode:'reconcile_only'});}else{panel.mode.value='reconcile_only';await platformDraftPreview(panel);}}else{panel.mode.value='sync_drafts';await platformDraftRecheck(panel);}};panel.recoveryAction.onclick=recover;
+ if(panel.nextHint)panel.nextHint.textContent=panel.recoveryAction.hidden?'':panel.jobHistorical?(unknown?'上次任务曾留下未确认的保存结果，较新记录见历史区。继续同步前请先只读核对，勿重复新建草稿。':'上次任务未完成的原因仅反映当时情况。需要继续同步时，可重新准备并检查。'):unknown?'远端可能已发生保存。请先核对，再决定是否同步。':/unnumbered|ambiguous|multiple_remote/.test(reason||'')?'请先在平台核对空草稿或重复章号与本地章节的对应关系；不会猜测并覆盖。':/login|chrome|permission/.test(reason||'')?'请检查现有 Chrome 中的账号、作品页面及扩展连接，然后重新准备。':'请处理上方原因后重新检查；已完成的章节记录会保留。';
+ if(panel.nextHint&&!panel.recoveryAction.hidden&&!panel.jobHistorical&&!unknown&&connectionIssue)panel.nextHint.textContent=connectionIssue.hint;
+ if(panel.nextHint&&recovery)panel.nextHint.textContent='原批次 '+platformDraftChapterRange(recovery.chapters)+' 有未确认的保存结果。将切回该批次，只读核对后再返回当前范围；不会自动重发。'+((job.result.recovery_plans?.length||0)>1?'本次涉及多个原批次，按检查结果逐批核对。':'');
+ if(panel.nextHint&&returned)panel.nextHint.textContent='原批次只读核对已完成。返回后重新检查当前范围，仍需确认变更才会写入。';
+ if(panel.nextHint&&unknown&&!recovery&&reason==='unresolved_previous_content'){panel.recoveryAction.hidden=true;panel.nextHint.textContent='未能验证原批次的恢复信息。请在历史批次中找到原任务并只读核对；当前批次不能解除这条未知记录。';}
 }
 async function platformDraftStop(panel){
- if(!panel.job||panel.job.done||panel.job.stop_requested)return;
- const id=panel.job.id;panel.stop.disabled=true;
- try{const job=await call('platform-drafts/stop',{id});if(platformDraftAlive(panel)&&panel.job?.id===id){platformDraftDrawJob(panel,job);platformDraftSchedule(panel);}}
- catch(error){if(platformDraftAlive(panel)){panel.status.textContent='停止请求未确认：'+error.message+'。任务可能仍在运行，请刷新状态。';panel.stop.disabled=false;}}
+ if(!platformDraftAlive(panel)||!panel.job||panel.job.done||panel.job.stop_requested||panel.stopRequest)return;
+ const observed=panel.job,id=observed.id,request={};panel.stopRequest=request;panel.stop.disabled=true;
+ const current=()=>platformDraftAlive(panel)&&panel.stopRequest===request&&panel.job===observed&&!observed.done;
+ try{const job=await call('platform-drafts/stop',{id});if(!current())return;if(job?.id!==id)throw Error('返回的停止状态与当前任务不一致');platformDraftDrawJob(panel,job);platformDraftSchedule(panel);}
+ catch(error){if(current()){panel.status.textContent='停止请求未确认：'+error.message+'。任务可能仍在运行，请刷新状态。';panel.stop.disabled=false;}}
+ finally{if(panel.stopRequest===request)panel.stopRequest=null;}
 }
-function platformDraftTrack(job){
+function platformDraftTrack(job,historical=false){
  clearTimeout(platformDraftTaskTimer);const button=$('platform-drafts-open');
- button.textContent=job.done?(job.state==='inspection_ready'?'平台草稿 · 等待确认':['succeeded','succeeded_equivalent'].includes(job.state)?'平台草稿':'平台草稿 · 需处理'):job.stop_requested?'平台草稿 · 正在停止':'平台草稿 · 任务进行中';
+ button.textContent=job.done?(historical?'平台草稿 · 历史记录':job.state==='inspection_ready'?'平台草稿 · 等待确认':['succeeded','succeeded_equivalent'].includes(job.state)?'平台草稿':'平台草稿 · 需处理'):job.stop_requested?'平台草稿 · 正在停止':'平台草稿 · 任务进行中';
  if(job.done)return;
  platformDraftTaskTimer=setTimeout(async()=>{try{const current=await call('platform-drafts/job',{id:job.id});if(!platformDraftPanel)platformDraftTrack(current);}catch{button.textContent='平台草稿 · 状态待核对';}},4000);
 }
-function platformDraftCanStart(panel){
- if(platformDraftBusy(panel))return false;
- if(panel.mode.value==='sync_drafts'&&platformDraftInspectionValid(panel))return (panel.inspection.result.change_counts.create+panel.inspection.result.change_counts.update)>0;
+function platformDraftPreviewReady(panel){
  const preview=panel.preview,profile=panel.profiles.find(row=>row.id===panel.profile.value&&row.valid),plan=panel.plans.find(row=>row.id===panel.plan.value);
- return !!(panel.comparison.value==='strict'&&panel.encoding.value===platformDraftRequiredEncoding&&plan&&profile&&profile.platform===plan.platform&&preview?.book_id===panel.bookId&&preview.plan_id===plan.id&&preview.profile_id===profile.id&&preview.profile_sha256===profile.sha256&&preview.mode===panel.mode.value&&((preview.can_start&&preview.preview_token)||(preview.can_connect&&preview.connect_token))&&!panel.bindingDirty&&Date.now()<panel.previewExpires);
+ return !!(panel.comparison.value==='strict'&&panel.encoding.value===platformDraftRequiredEncoding&&platformDraftProfileMatches(profile,plan)&&preview?.book_id===panel.bookId&&preview.plan_id===plan.id&&preview.profile_id===profile.id&&preview.profile_sha256===profile.sha256&&preview.mode===panel.mode.value&&((preview.can_start&&preview.preview_token)||(preview.can_connect&&preview.connect_token))&&!panel.bindingDirty&&Date.now()<panel.previewExpires);
+}
+function platformDraftCanPrepare(panel){return !!(!panel.bindingDirty&&!panel.formalError&&!panel.catalogError&&panel.mode.value==='sync_drafts'&&platformDraftRuleScope(panel)?.platform==='fanqie'&&platformDraftRefreshRange(panel)&&panel.comparison.value==='strict'&&panel.encoding.value===platformDraftRequiredEncoding);}
+function platformDraftCanStart(panel){
+ if(platformDraftHost(panel)!=='codex')return !!(!platformDraftBusy(panel)&&platformDraftHostReady(panel)&&platformDraftAssistantScope(panel)&&!panel.bindingDirty&&!panel.formalError&&(panel.mode.value==='reconcile_only'||!platformDraftAssistantInspectionBlocked(panel.assistantTask)));
+ if(platformDraftBusy(panel)||panel.connectionRetryBlocked)return false;
+ if(panel.mode.value==='sync_drafts'&&platformDraftInspectionValid(panel))return (panel.inspection.result.change_counts.create+panel.inspection.result.change_counts.update)>0;
+ return panel.mode.value==='sync_drafts'&&panel.needsPreparation?platformDraftCanPrepare(panel):platformDraftPreviewReady(panel);
+}
+async function platformDraftRecheck(panel){
+ if(!platformDraftAlive(panel)||platformDraftBusy(panel))return;
+ if(panel.connectionRetryBlocked){platformDraftShowConnectionHelp(panel);return;}
+ if(panel.mode.value==='reconcile_only')return platformDraftPreview(panel);
+ panel.inspection=null;panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;panel.needsPreparation=true;platformDraftButtons(panel);return platformDraftStart(panel);
 }
 function platformDraftButtons(panel){
  const busy=platformDraftBusy(panel),inspected=platformDraftInspectionValid(panel),readonly=panel.mode.value==='reconcile_only';
+ platformDraftBlockedActions(panel,busy);
  panel.run.disabled=!platformDraftCanStart(panel);
- panel.run.textContent=readonly?'开始只读核对':inspected?((panel.inspection.result.change_counts.create+panel.inspection.result.change_counts.update)?'确认同步这些变更':'本次检查全部一致'):'准备并检查差异';
- panel.refresh.disabled=!!(panel.starting||panel.loadingCatalog||panel.binding||panel.refreshingPlan||panel.formalLoading||panel.rulesLoading||panel.rulesSaving);
+ const changes=inspected?panel.inspection.result.change_counts.create+panel.inspection.result.change_counts.update:0;
+ panel.run.textContent=readonly?'开始只读核对':inspected?(changes?'确认同步 '+changes+' 章':'本次检查全部一致'):'检查差异';
+ panel.run.hidden=!!(!busy&&panel.recoveryAction&&!panel.recoveryAction.hidden);
+ if(panel.returnAction){panel.returnAction.hidden=!panel.returnSelection||!!(panel.job?.done&&panel.job.mode==='reconcile_only'&&['succeeded','succeeded_equivalent'].includes(panel.job.state));panel.returnAction.disabled=busy;}
+ if(panel.confirmationSummary){const plan=panel.plans.find(row=>row.id===panel.plan.value);panel.confirmationSummary.hidden=!inspected||!changes;panel.confirmationSummary.textContent=inspected&&plan?'即将同步到 '+(platformDraftNames[plan.platform]||'平台')+' · 《'+(plan.book_title||currentBookInfo.title)+'》 · 账号 '+plan.account_id+' · 作品 '+plan.remote_book_id+' · '+platformDraftChapterRange(plan.chapters)+'；新建 '+panel.inspection.result.change_counts.create+' 章，更新 '+panel.inspection.result.change_counts.update+' 章':'';}
+ panel.refresh.disabled=!!(panel.starting||panel.loadingCatalog||panel.binding||panel.refreshingPlan||panel.formalLoading||panel.rulesLoading||panel.rulesSaving||panel.assistantWorking||panel.assistantUncertain||platformDraftAssistantActive(panel.assistantTask));
  panel.plan.disabled=busy||!panel.plans.length;panel.profile.disabled=busy||!panel.profile.options.length;panel.mode.disabled=busy;
- panel.comparison.disabled=true;panel.encoding.disabled=true;panel.recheck.disabled=busy||!panel.plan.value;
- panel.recheck.textContent=readonly?'重新准备核对':'重新准备';
+ if(panel.batchDetails&&readonly)panel.batchDetails.open=true;
+ panel.comparison.disabled=true;panel.encoding.disabled=true;panel.recheck.disabled=busy||!panel.plan.value||!!panel.connectionRetryBlocked;
+ panel.recheck.textContent=readonly?'重新准备核对':'重新检查差异';
+ panel.recheck.hidden=readonly?!!panel.preview:!inspected&&(!panel.plan.value||!!panel.preview||!!panel.needsPreparation||!!panel.job);
+ if(panel.progress)panel.progress.hidden=!panel.job&&!panel.plans.find(row=>row.id===panel.plan.value)?.chapters?.length;
+ if(panel.stageLabel){const job=panel.job;panel.stageLabel.textContent=panel.refreshingPlan?'1 / 4 · 准备本地章节':panel.starting?(readonly?'只读核对 · 准备连接':inspected?'4 / 4 · 核验并同步':'2 / 4 · 准备只读检查'):job&&!panel.jobHistorical?(job.mode==='inspect_drafts'?(job.done?(job.state==='inspection_ready'?(changes?'3 / 4 · 确认同步':'检查完成 · 无需写入'):'检查暂停 · 处理原因'):'2 / 4 · 只读检查差异'):readonly?(job.done?'只读核对已结束':'正在只读核对'):(job.done?(['succeeded','succeeded_equivalent'].includes(job.state)?'4 / 4 · 同步完成':'同步暂停 · 处理原因'):'4 / 4 · 同步并完整回读')):'1 / 4 · 选择目标与范围';}
  if(panel.stop){panel.stop.hidden=!panel.job||panel.job.done;panel.stop.disabled=panel.job?.stop_requested===true;panel.stop.textContent=panel.job?.stop_requested?'等待安全停止…':'停止任务';}
  if(panel.bindButton){const ready=Number.isInteger(panel.revision)&&panel.formalCount>0;panel.bindButton.disabled=busy||!ready;panel.bindCancel.disabled=busy;for(const input of panel.bindingInputs)input.disabled=busy;}
- if(panel.generate){panel.generate.hidden=true;panel.generate.disabled=true;panel.refreshStart.disabled=busy||readonly;panel.refreshEnd.disabled=busy||readonly;}
+ if(panel.generate){panel.generate.hidden=false;panel.generate.disabled=busy||!platformDraftCanPrepare(panel);panel.refreshStart.disabled=busy||readonly;panel.refreshEnd.disabled=busy||readonly;}
  if(panel.bindingSummary){const plan=panel.plans.find(row=>row.id===panel.plan.value);panel.bindingSummary.textContent=plan?(platformDraftNames[plan.platform]||'平台')+' · '+(plan.book_title||currentBookInfo.title)+' · 账号 '+plan.account_id:'首次使用：先绑定平台账号与作品';if(panel.bindDetails&&panel.bookId&&!panel.bindingInitialized){panel.bindDetails.open=!plan;panel.bindingInitialized=true;}else if(panel.bindDetails&&panel.bookId&&!plan)panel.bindDetails.open=true;}
+ platformDraftAssistantRender(panel);
+ if(platformDraftHost(panel)!=='codex'){
+  const label=platformDraftHostNames[platformDraftHost(panel)],sync=platformDraftAssistantCanSync(panel);panel.run.hidden=false;panel.run.disabled=!platformDraftCanStart(panel);panel.run.textContent=sync?'生成 '+label+' 同步任务':'交给 '+label+(readonly?'只读核对':'检查差异');panel.recheck.hidden=true;panel.recoveryAction.hidden=true;
+  if(!busy)panel.nextHint.textContent=platformDraftHostReady(panel)?'点击“'+panel.run.textContent+'”生成本地交接说明，再复制给 '+label+' 执行；不会自动启动或切换工具。':'所选 '+label+' 的浏览器组件不可用，请查看“执行工具”下方的原因；未改用其他工具。';
+ }
 }
 function platformDraftRefreshRange(panel){const first=panel.refreshStart?.value,last=panel.refreshEnd?.value;if(!first||!last)return null;const start=Number(first),end=Number(last);return Number.isInteger(panel.revision)&&Number.isInteger(start)&&Number.isInteger(end)&&panel.formalCount>0&&start>=panel.formalFirst&&end<=panel.formalLast&&start<=end&&end-start+1<=panel.maxBatch&&end-start+1<=panel.formalCount?{start,end}:null;}
-function platformDraftFormalInvalidate(panel){panel.inspection=null;platformDraftRulesInvalidate(panel);panel.previewBox?.replaceChildren();}
+function platformDraftFormalInvalidate(panel){panel.inspection=null;panel.needsPreparation=true;if(panel.job?.done)panel.job=null;platformDraftRulesInvalidate(panel);panel.previewBox?.replaceChildren();if(panel.progress){panel.progress.value=0;panel.progressLabel.textContent='本次尚未开始';panel.results.replaceChildren();panel.status.textContent='范围或正式稿已变化，请检查所选章节的最新差异。';}}
 function platformDraftFormalRange(panel,reset=false){
  const plan=panel.plans.find(row=>row.id===panel.plan.value),ready=Number.isInteger(panel.formalFirst)&&Number.isInteger(panel.formalLast)&&panel.formalCount>0;
  if(panel.formalRange)panel.formalRange.textContent=ready?'当前正式稿：第'+panel.formalFirst+'—'+panel.formalLast+'章，共'+panel.formalCount+'章。':'当前暂无已登记的正式章节。';
- if(panel.selectedRange)panel.selectedRange.textContent=plan?'所选批次：'+platformDraftChapterRange(plan.chapters)+' · '+(platformDraftNames[plan.platform]||'平台待核对')+' · 账号 '+plan.account_id+' · 作品 '+plan.remote_book_id+'。':'尚无已生成批次，请先配置账号与作品。';
+ if(panel.selectedRange)panel.selectedRange.textContent=plan?'所选批次：'+platformDraftChapterRange(plan.chapters)+' · '+(platformDraftNames[plan.platform]||'平台待核对')+' · '+platformDraftTargetLabel(plan)+'。':'尚无已生成批次，请先配置账号与作品。';
  if(!panel.refreshStart)return;
  if(reset)panel.refreshRangeDirty=false;
  if(ready){for(const input of [panel.refreshStart,panel.refreshEnd]){input.min=String(panel.formalFirst);input.max=String(panel.formalLast);}if(!panel.refreshRangeDirty&&!panel.bindingDirty&&!platformDraftBusy(panel)&&panel.mode.value!=='reconcile_only'){panel.refreshStart.value=String(plan?.chapters?.[0]??panel.formalLast);panel.refreshEnd.value=String(plan?.chapters?.at(-1)??panel.formalLast);}}
- const range=platformDraftRefreshRange(panel);panel.refreshHint.textContent=plan&&plan.platform!=='fanqie'?'当前仅支持为番茄生成新批次；其他平台可继续核对历史批次。':panel.mode.value==='reconcile_only'?'只读对账保留所选历史批次；生成新批次请切回保存平台草稿。':!ready?'请先登记并审查正式章节。':!range?'请填写正式稿范围内的起止章号，每批最多'+panel.maxBatch+'章。':'新批次仅在本地生成，旧批次保留；生成时核对连续章节与审查状态。';
+ const range=platformDraftRefreshRange(panel);panel.refreshHint.textContent=plan&&plan.platform!=='fanqie'?'当前仅支持为番茄生成新批次；其他平台可继续核对历史批次。':panel.mode.value==='reconcile_only'?'只读对账保留所选历史批次；生成新批次请切回保存平台草稿。':!ready?'请先登记并审查正式章节。':!range?'请填写正式稿范围内的起止章号，每批最多'+panel.maxBatch+'章。':panel.connectionRetryBlocked?'可先准备本地章节；新的自动浏览器连接已暂停，尚未开始新的平台检查。':'可先准备本地章节，或点击“检查差异”自动准备并只读核对；确认变更前不会写入平台。';
 }
 function platformDraftApplyFormal(panel,packet){
  if(packet.book_id!==panel.bookId||!Number.isInteger(packet.revision)||packet.revision<0||!Number.isInteger(packet.formal_count)||packet.formal_count<0||!Number.isInteger(packet.max_batch)||packet.max_batch<1||(packet.formal_count>0&&(!Number.isInteger(packet.formal_first)||!Number.isInteger(packet.formal_last)||packet.formal_first<1||packet.formal_last<packet.formal_first))||(packet.formal_count===0&&(packet.formal_first!==null||packet.formal_last!==null)))throw Error('正式稿范围无法核对，请刷新本地状态。');
  const known=Number.isInteger(panel.revision),changed=known&&(packet.revision!==panel.revision||packet.formal_first!==panel.formalFirst||packet.formal_last!==panel.formalLast||packet.formal_count!==panel.formalCount),oldLast=panel.formalLast,oldCount=panel.formalCount;
  panel.revision=packet.revision;panel.formalFirst=packet.formal_first;panel.formalLast=packet.formal_last;panel.formalCount=packet.formal_count;panel.maxBatch=packet.max_batch;
- if(changed){platformDraftFormalInvalidate(panel);panel.formalError=false;panel.formalNote.textContent=packet.formal_last>oldLast&&packet.formal_count>oldCount?'新增已登记正式章，当前至第'+packet.formal_last+'章；旧批次保持原范围。请生成新批次，或明确重新预览所选批次。':'本地正式稿状态已变化，旧预览已清除；请核对范围后生成新批次或重新预览所选批次。';}
+ if(changed){platformDraftFormalInvalidate(panel);panel.formalError=false;panel.formalNote.textContent=packet.formal_last>oldLast&&packet.formal_count>oldCount?'新增已登记正式章，当前至第'+packet.formal_last+'章；旧批次保持原范围。请核对起止章号后点击“检查差异”。':'本地正式稿状态已变化，旧预览已清除；请核对范围后点击“检查差异”。';}
  platformDraftBindingRange(panel);platformDraftFormalRange(panel);platformDraftButtons(panel);return changed;
 }
 function platformDraftFormalSchedule(panel){clearTimeout(panel.formalTimer);panel.formalTimer=null;if(platformDraftAlive(panel))panel.formalTimer=setTimeout(async()=>{try{await platformDraftFormalState(panel);await platformDraftHistory(panel);}finally{platformDraftFormalSchedule(panel);}},5000);}
 async function platformDraftFormalState(panel){
+ if(platformDraftHost(panel)!=='codex'&&panel.nativeInspectionPreparing)return;
  if(!platformDraftAlive(panel)||!panel.bookId||platformDraftBusy(panel))return;
  const request=panel.formalRequest=(panel.formalRequest||0)+1,catalogRequest=panel.catalogRequest;panel.formalLoading=true;platformDraftButtons(panel);
  try{const packet=await call('platform-drafts/formal-state',{});if(!platformDraftAlive(panel)||request!==panel.formalRequest||catalogRequest!==panel.catalogRequest)return;panel.formalLoading=false;if(Number.isInteger(packet.revision)&&packet.revision<panel.revision)return;platformDraftApplyFormal(panel,packet);if(panel.formalError){panel.formalError=false;panel.formalNote.textContent='';}}
@@ -4716,34 +5146,40 @@ async function platformDraftFormalState(panel){
 }
 function platformDraftRefreshFields(panel){
  panel.formalRange=platformDraftElement('p',undefined,'platform-draft-formal-range');panel.selectedRange=platformDraftElement('p',undefined,'platform-draft-selected-range');panel.formalNote=platformDraftElement('p',undefined,'platform-draft-formal-note');panel.formalNote.setAttribute('role','status');panel.content.append(panel.formalRange,panel.selectedRange,panel.formalNote);
- const row=platformDraftElement('div');row.className='platform-binding-range';for(const [key,label,id] of [['refreshStart','新批次起始章','platform-draft-refresh-start'],['refreshEnd','新批次结束章','platform-draft-refresh-end']]){const wrapper=platformDraftElement('label',label),input=platformDraftElement('input',undefined,id);input.type='number';input.min='1';input.step='1';input.required=true;input.oninput=()=>{panel.refreshRangeDirty=true;platformDraftFormalInvalidate(panel);platformDraftFormalRange(panel);platformDraftButtons(panel);};wrapper.append(input);row.append(wrapper);panel[key]=input;}panel.content.append(row);panel.refreshHint=platformDraftElement('p');panel.generate=platformDraftElement('button','填写范围后生成新批次','platform-draft-generate');panel.generate.type='button';panel.generate.onclick=()=>platformDraftRefreshPlan(panel);panel.content.append(panel.refreshHint,panel.generate);
+ const row=platformDraftElement('div');row.className='platform-binding-range';for(const [key,label,id] of [['refreshStart','起始章','platform-draft-refresh-start'],['refreshEnd','结束章','platform-draft-refresh-end']]){const wrapper=platformDraftElement('label',label),input=platformDraftElement('input',undefined,id);input.type='number';input.min='1';input.step='1';input.required=true;input.oninput=()=>{panel.selectionGeneration=(panel.selectionGeneration||0)+1;panel.refreshRangeDirty=true;platformDraftFormalInvalidate(panel);platformDraftFormalRange(panel);platformDraftButtons(panel);};wrapper.append(input);row.append(wrapper);panel[key]=input;}panel.content.append(row);panel.refreshHint=platformDraftElement('p');panel.generate=platformDraftElement('button','准备本地章节','platform-draft-generate');panel.generate.type='button';panel.generate.onclick=()=>platformDraftRefreshPlan(panel);panel.content.append(panel.refreshHint,panel.generate);
 }
 async function platformDraftRefreshPlan(panel,syncExisting=false){
  panel.encoding.value=platformDraftRequiredEncoding;
- if(!platformDraftAlive(panel)||platformDraftBusy(panel)||panel.bindingDirty||panel.mode.value==='reconcile_only')return;
- const scope=platformDraftRuleScope(panel),plan=panel.plans.find(row=>row.id===panel.plan.value),range=syncExisting&&plan?.chapters?.length?{start:plan.chapters[0],end:plan.chapters.at(-1)}:platformDraftRefreshRange(panel),rules={schema:1,body_encoding:panel.encoding.value,comparison_policy:panel.comparison.value};if(!range||!scope||plan.platform!=='fanqie'){platformDraftFormalRange(panel);return;}
- const request=panel.refreshPlanRequest=(panel.refreshPlanRequest||0)+1,revision=panel.revision;panel.refreshingPlan=true;platformDraftFormalInvalidate(panel);platformDraftButtons(panel);panel.formalError=false;panel.formalNote.textContent='正在生成本地新批次…';
+ if(!platformDraftAlive(panel)||platformDraftBusy(panel)||panel.bindingDirty||panel.mode.value==='reconcile_only')return false;
+ const scope=platformDraftRuleScope(panel),plan=panel.plans.find(row=>row.id===panel.plan.value),range=syncExisting&&plan?.chapters?.length?{start:plan.chapters[0],end:plan.chapters.at(-1)}:platformDraftRefreshRange(panel),rules={schema:1,body_encoding:panel.encoding.value,comparison_policy:panel.comparison.value};if(!range||!scope||plan.platform!=='fanqie'){platformDraftFormalRange(panel);return false;}
+ const request=panel.refreshPlanRequest=(panel.refreshPlanRequest||0)+1,revision=panel.revision,selectionGeneration=panel.selectionGeneration||0;panel.refreshingPlan=true;platformDraftFormalInvalidate(panel);platformDraftButtons(panel);panel.formalError=false;panel.formalNote.textContent='正在准备所选正式章节；本步骤不会访问平台…';
  try{const packet=await call('platform-drafts/refresh-plan',{...platformDraftRuleRequest(scope),expected_revision:revision,...range});if(!platformDraftAlive(panel)||request!==panel.refreshPlanRequest)return;if(platformDraftRuleScope(panel)?.key!==scope.key||panel.revision!==revision)throw Error('当前批次或配置已变化，请重新核对本地批次。');if(packet.ok!==true||packet.book_id!==scope.book_id||packet.revision!==revision||packet.base_plan_id!==scope.plan_id||packet.profile_id!==scope.profile_id||packet.profile_sha256!==scope.profile_sha256||packet.platform!==plan.platform||packet.account_id!==plan.account_id||packet.remote_book_id!==plan.remote_book_id||typeof packet.plan_id!=='string'||!packet.plan_id||packet.start!==range.start||packet.end!==range.end||!Array.isArray(packet.chapters)||packet.chapters.length!==range.end-range.start+1||packet.chapters.some((chapter,index)=>chapter!==range.start+index)||packet.scope!=='local_formal_refresh_only'||packet.remote_accessed!==false||packet.submission_performed!==false)throw Error('新批次回执无法确认，请刷新本地状态核对。');
-  panel.refreshingPlan=false;panel.refreshRangeDirty=false;await platformDraftCatalog(panel,{plan_id:packet.plan_id,profile_id:packet.profile_id,profile_sha256:packet.profile_sha256,target:{platform:plan.platform,account_id:plan.account_id,remote_book_id:plan.remote_book_id},chapters:packet.chapters,...(syncExisting?{mode:'sync_drafts',rules}: {})});if(!platformDraftAlive(panel)||request!==panel.refreshPlanRequest)return;panel.formalNote.textContent=(packet.plan_reused?'已复用':'已生成')+'第'+range.start+'—'+range.end+'章的本地批次；旧批次保留，尚未访问平台。';
- }catch(error){if(platformDraftAlive(panel)&&request===panel.refreshPlanRequest){panel.formalNote.textContent='新批次未能确认：'+error.message+'。未启动平台保存，可刷新本地状态核对。';panel.status.textContent=panel.formalNote.textContent;}}
- finally{if(platformDraftAlive(panel)&&request===panel.refreshPlanRequest){panel.refreshingPlan=false;platformDraftFormalRange(panel);platformDraftButtons(panel);}}
+  if((panel.selectionGeneration||0)!==selectionGeneration)return false;
+  panel.refreshingPlan=false;panel.refreshRangeDirty=false;const catalogRequest=panel.catalogRequest+1;await platformDraftCatalog(panel,{plan_id:packet.plan_id,profile_id:packet.profile_id,profile_sha256:packet.profile_sha256,target:{platform:plan.platform,account_id:plan.account_id,remote_book_id:plan.remote_book_id},chapters:packet.chapters,...(syncExisting?{mode:'sync_drafts',rules}: {})});if(!platformDraftAlive(panel)||request!==panel.refreshPlanRequest||(panel.selectionGeneration||0)!==selectionGeneration||panel.catalogRequest!==catalogRequest)return false;
+  const selected=panel.plans.find(row=>row.id===panel.plan.value);if(panel.catalogError||panel.plan.value!==packet.plan_id||panel.profile.value!==packet.profile_id||platformDraftRuleScope(panel)?.profile_sha256!==packet.profile_sha256||!selected||['platform','account_id','remote_book_id'].some(key=>selected[key]!==packet[key])||JSON.stringify(selected.chapters)!==JSON.stringify(packet.chapters))return false;
+  panel.formalNote.textContent=(packet.plan_reused?'已复用':'已生成')+'第'+range.start+'—'+range.end+'章的本地批次；旧批次保留，尚未访问平台。准备完成不代表已检查或已同步。';return true;
+ }catch(error){if(platformDraftAlive(panel)&&request===panel.refreshPlanRequest){panel.needsPreparation=false;panel.formalNote.textContent='新批次未能确认：'+String(error.message||'本地准备未完成').replace(/[。.!！?？；;\s]+$/u,'')+'。未启动平台保存，可刷新本地状态核对。';panel.status.textContent=panel.formalNote.textContent;}}
+ finally{if(platformDraftAlive(panel)&&request===panel.refreshPlanRequest){panel.refreshingPlan=false;if(panel.formalNote.textContent==='正在准备所选正式章节；本步骤不会访问平台…')panel.formalNote.textContent='本地准备已结束，尚未启动新的平台检查。';platformDraftFormalRange(panel);platformDraftButtons(panel);}}
 }
 function platformDraftStamp(value){const date=new Date(value);return value&&Number.isFinite(date.getTime())?date.toLocaleString():'时间未记录';}
 function platformDraftCurrent(row){return row.recorded_this_run===true||row.observed_this_run===true;}
 function platformDraftHasRecord(row){return !!(row.last_observed_at||row.reason||(row.state&&row.state!=='pending'));}
 function platformDraftNormalizedMatch(row){return row.comparison_policy==='strict'&&row.body_encoding===platformDraftRequiredEncoding&&row.title_matches===true&&row.rendered_body_matches===true&&['saved','reconciled','saved_equivalent','reconciled_equivalent'].includes(row.state);}
 function platformDraftHistoryRows(panel,rows){
+ if(!panel.job){panel.historicalJobSummary='';if(panel.historyJob)panel.historyJob.textContent='';panel.historyInspection?.replaceChildren();}
  panel.historyRows=(rows||[]).filter(platformDraftHasRecord);panel.historyResults.replaceChildren();
  const accepted=panel.historyRows.filter(row=>['saved','reconciled','saved_equivalent','reconciled_equivalent'].includes(row.state)&&row.title_matches===true&&(row.body_matches===true||platformDraftNormalizedMatch(row))).length;
- panel.historySummary.textContent='历史核对记录 · '+panel.historyRows.length+' 章有记录'+(accepted?'，其中 '+accepted+' 章当时一致':'');
- panel.historyDetails.hidden=!panel.historyRows.length;
- for(const row of panel.historyRows){const item=platformDraftElement('li');item.textContent='第'+row.chapter+'章 · 历史状态：'+(platformDraftNormalizedMatch(row)?'同步一致':platformDraftStates[row.state]||'状态待核对')+' · '+platformDraftStamp(row.last_observed_at)+(row.reason?'。当时原因：'+platformDraftErrorCode(row.reason):'')+((row.body_encoding&&row.body_encoding!==platformDraftRequiredEncoding)||(row.comparison_policy&&row.comparison_policy!=='strict')?'。当时规则：'+platformDraftRuleLabels(row.body_encoding||'verbatim',row.comparison_policy||'strict'):'');panel.historyResults.append(item);}
+ panel.historySummary.textContent=(panel.jobHistorical&&panel.job?.mode==='inspect_drafts'?'历史差异检查与核对记录':'历史核对记录')+' · '+platformDraftTargetLabel(panel.plans.find(row=>row.id===panel.plan.value))+' · '+panel.historyRows.length+' 章有记录'+(accepted?'，其中 '+accepted+' 章当时一致':'');
+ panel.historyDetails.hidden=!panel.historyRows.length&&!panel.historicalJobSummary;
+ for(const row of panel.historyRows){const item=platformDraftElement('li');item.textContent='第'+row.chapter+'章 · 历史状态：'+(platformDraftNormalizedMatch(row)?'同步一致':platformDraftStates[row.state]||'状态待核对')+' · '+platformDraftStamp(row.last_observed_at)+(row.reason?'。当时原因：'+platformDraftErrorCode(row.reason):'')+((row.body_encoding&&row.body_encoding!==platformDraftRequiredEncoding)||(row.comparison_policy&&row.comparison_policy!=='strict')?'。当时规则：'+platformDraftRuleLabels(row.body_encoding||'verbatim',row.comparison_policy||'strict'):'')+(row.state==='unknown'&&row.remote_id?'。已分配草稿 ID：'+row.remote_id+'；请核对并恢复这篇草稿，勿重复新建':'');panel.historyResults.append(item);}
 }
 function platformDraftDrawHistory(panel,packet){
  const rows=packet.results||[];
- panel.history.textContent=(packet.source_matches_current===false?'本地正式稿已变化，以下记录对应旧版正式稿。':'历史记录只代表各章标注时间的观察。')+'不计入本次进度；本次尚未核对的章节不能据此认定同步成功或失败。';
+ panel.history.textContent='记录归属：'+platformDraftTargetLabel(panel.plans.find(row=>row.id===panel.plan.value))+'。'+(packet.source_matches_current===false?'本地正式稿已变化，以下记录对应旧版正式稿。':'历史记录只代表各章标注时间的观察。')+'不计入本次进度；本次尚未核对的章节不能据此认定同步成功或失败。';
+ const job=panel.job,finished=Date.parse(job?.finished_at||job?.updated_at||''),newer=job?.done&&((Number.isInteger(packet.history_events_total)&&packet.history_events_total>(job.result?.history_events_total||0))||rows.some(row=>Number.isFinite(finished)&&Date.parse(row.last_observed_at)>finished));
+ if(newer){panel.history.textContent+='已有该任务结束后的更新核对记录，旧任务的停止原因仅表示当时情况。';if(panel.jobHistorical&&job.mode!=='inspect_drafts')panel.status.textContent='本次尚未开始；已有比上次任务更新的核对记录，请查看历史记录。';}
  platformDraftResults(panel,rows,true);
- if(!panel.job){const total=packet.chapters?.length||panel.plans.find(row=>row.id===panel.plan.value)?.chapters?.length||rows.length;panel.progress.max=total||1;panel.progress.value=0;panel.progressLabel.textContent='本次尚未开始 · 已核对 0 / '+total+' 章';}
+ if(!panel.job||panel.jobHistorical){const total=packet.chapters?.length||panel.plans.find(row=>row.id===panel.plan.value)?.chapters?.length||rows.length;panel.progress.max=total||1;panel.progress.value=0;panel.progressLabel.textContent=total?'本次尚未开始 · 已核对 0 / '+total+' 章':'本次尚未开始';}
 }
 async function platformDraftHistory(panel){
  if(!platformDraftAlive(panel)||platformDraftBusy(panel)||!panel.plan.value)return;
@@ -4755,7 +5191,7 @@ async function platformDraftHistory(panel){
 }
 function platformDraftResults(panel,results,historical=false){
  const rows=results||[];
- if(historical){platformDraftHistoryRows(panel,rows);if(panel.job)return;}
+ if(historical){platformDraftHistoryRows(panel,rows);if(panel.job&&!panel.jobHistorical)return;}
  else{const current=new Set(rows.filter(platformDraftCurrent).map(row=>row.chapter)),older=new Map((panel.historyRows||[]).filter(row=>!current.has(row.chapter)).map(row=>[row.chapter,row]));for(const row of rows)if(!current.has(row.chapter)&&platformDraftHasRecord(row))older.set(row.chapter,row);platformDraftHistoryRows(panel,[...older.values()].sort((a,b)=>a.chapter-b.chapter));}
  panel.results.replaceChildren();
  for(const row of rows){const item=platformDraftElement('li'),current=!historical&&platformDraftCurrent(row);
@@ -4764,10 +5200,13 @@ function platformDraftResults(panel,results,historical=false){
  item.textContent='第'+row.chapter+'章 · '+(platformDraftNormalizedMatch(row)?'同步一致':platformDraftStates[row.state]||'状态待核对')+' · '+checked+(row.reason?'。原因：'+platformDraftErrorCode(row.reason):'')+(row.state==='unknown'&&row.remote_id?'。已分配草稿 ID：'+row.remote_id+'；请核对并恢复这篇草稿，勿重复新建':'');panel.results.append(item);}
 }
 function platformDraftDrawJob(panel,job,historical=false){
+ platformDraftObserveConnection(panel,job.connection_diagnostics);
  panel.dialog.setAttribute('data-has-job','true');
- if(job.mode==='inspect_drafts'){platformDraftDrawInspection(panel,job);return;}
+ if(job.mode==='inspect_drafts'){platformDraftDrawInspection(panel,job,historical);return;}
+ panel.jobHistorical=historical;panel.historicalJobSummary='';if(panel.historyJob)panel.historyJob.textContent='';
+ panel.historyInspection?.replaceChildren();
  if(panel.changeSummary)panel.changeSummary.textContent='';
- platformDraftTrack(job);
+ platformDraftTrack(job,historical);
  if(job.result){panel.historyPlan=job.plan_id;panel.historyEvents=job.result.history_events_total||0;}
  if(panel.job?.id!==job.id||job.done){clearTimeout(panel.pollTimer);panel.pollTimer=null;panel.pollJobId=job.id;panel.pollFailures=0;}panel.job=job;panel.jobs=panel.jobs.filter(row=>row.id!==job.id).concat(job);
  const total=Number.isInteger(job.total_chapters)&&job.total_chapters>0?job.total_chapters:0;
@@ -4782,43 +5221,55 @@ function platformDraftDrawJob(panel,job,historical=false){
  if(!historical&&job.done&&job.mode==='sync_drafts'&&['created_chapters','updated_chapters','unchanged_chapters'].every(key=>Number.isInteger(job.result?.[key])))panel.status.textContent+='。本次已确认：新增 '+bounded(job.result.created_chapters)+' 章，更新 '+bounded(job.result.updated_chapters)+' 章，原已一致 '+bounded(job.result.unchanged_chapters)+' 章';
  if(job.stop_requested&&!job.done)panel.status.textContent+=' · 已请求停止，等待当前保存与回读完成';
  const stopRow=job.result?.results?.find(row=>platformDraftCurrent(row)&&['blocked','unknown','conflict','not_found'].includes(row.state));const stopReason=job.error||stopRow?.reason;if(job.done&&stopReason)panel.status.textContent+=((job.state==='succeeded'||job.state==='succeeded_equivalent')?'。执行端提示：':'。停止原因：')+platformDraftErrorCode(stopReason);
- if(job.error==='platform_chrome_worker_origin_permission_required'&&panel.permissionHelp)panel.permissionHelp.open=true;
+ if(!historical&&job.error==='platform_chrome_worker_origin_permission_required'&&panel.permissionHelp)panel.permissionHelp.open=true;
  if(job.result?.local_version_changed===true||job.result?.source_matches_current===false)panel.status.textContent+='。平台结果对应冻结清单；本地正式稿已有变化，请重新准备清单。';
- panel.jobNote.textContent=(job.execution_mode==='host_assisted_cua'?'通过已登录的 Codex 执行会话连接现有 Chrome，使用当前账号额度。':'')+'任务目标：'+(platformDraftNames[job.platform]||'平台待核对')+'；绑定账号：'+(job.account_id||'待核对')+'；目标作品：'+(job.remote_book_id||'待核对')+'。关闭此面板后任务继续；关闭工作台服务或进程可能中断，重新打开后须先对账。保存草稿不会提交审核或发布。';
- if(historical){panel.status.textContent='历史任务 · '+panel.status.textContent+'。本次尚未访问平台。';}const rows=job.result?.results||panel.plans.find(row=>row.id===job.plan_id)?.chapters?.map(chapter=>({chapter,state:'pending'}))||[];platformDraftResults(panel,rows,historical);platformDraftActionHelp(panel,job);platformDraftButtons(panel);
+ panel.jobNote.textContent=(job.execution_mode==='host_assisted_cua'?(job.done?(job.connection_diagnostics?.ready===false?'该任务在连接执行会话阶段停止。':'该任务通过 Codex 执行会话连接 Chrome。'):'通过已登录的 Codex 执行会话连接现有 Chrome，使用当前账号额度。'):'')+'任务目标：'+(platformDraftNames[job.platform]||'平台待核对')+'；绑定账号：'+(job.account_id||'待核对')+'；目标作品：'+(job.remote_book_id||'待核对')+'。'+(job.done?(historical?'这是已结束的历史任务，不会继续执行；结果仅表示当时情况。':'本次任务已结束，不会继续执行；结果保留供核对。'):'关闭此面板后任务继续；关闭工作台服务或进程可能中断，重新打开后须先对账。')+'保存草稿不会提交审核或发布。'+(historical&&platformDraftConnectionNote(job)?'当时的':'')+platformDraftConnectionNote(job);
+ if(historical){panel.historicalJobSummary='历史任务 · 结束时间：'+platformDraftStamp(job.finished_at||job.updated_at)+' · '+panel.status.textContent.replaceAll('本次','当次');if(panel.historyJob)panel.historyJob.textContent=panel.historicalJobSummary;panel.status.textContent='本次尚未开始；上次已结束任务的时间和原因保留在历史记录中。';panel.progress.value=0;panel.progressLabel.textContent=total?'本次尚未开始 · 已核对 0 / '+total+' 章':'本次尚未开始';}
+ const rows=job.result?.results||panel.plans.find(row=>row.id===job.plan_id)?.chapters?.map(chapter=>({chapter,state:'pending'}))||[];platformDraftResults(panel,rows,historical);platformDraftActionHelp(panel,job);platformDraftButtons(panel);
 }
-function platformDraftErrorCode(code){return ({platform_draft_inspection_required:'本次差异检查缺失或已过期，请重新检查后执行',platform_draft_inspection_changed:'草稿在检查后又有变化，未继续覆盖，请重新检查差异',platform_draft_stop_requested:'任务已在安全位置停止',new_draft_created:'缺失章节已新建草稿并独立回读',existing_draft_updated:'已有草稿章名和正文已更新并独立回读',updating_existing_draft:'正在更新已有草稿',remote_formatting_metadata:'远端正文含错字标记，可选择同步草稿清理',saved_formatting_metadata:'回读仍含错字标记，尚未确认同步完成',platform_browser_formatting_metadata:'正文仍含错字标记，已停止并保留待核对状态',platform_browser_remote_changed:'远端草稿在核对后发生变化，未继续覆盖',platform_draft_update_unsupported:'当前配置不支持更新已有草稿，请使用番茄 Chrome 会话配置',platform_chrome_worker_origin_permission_required:'本次会话尚未取得番茄页面访问授权，操作已停止。请查看“网站访问授权帮助”；当前版本没有对应入口时，请由助手核对宿主授权方式',platform_chrome_worker_browser_unattached:'现有 Chrome 的页面控制未连接，请点开官方 Chrome 扩展恢复连接后重新预览，无需重新登录或另开窗口',platform_chrome_worker_codex_unavailable:'未找到可用的 Codex，请先完成本机 Codex 安装和登录',platform_chrome_worker_sdk_unavailable:'未找到官方 Chrome 插件，请在 Codex 中安装并连接 Chrome',platform_chrome_worker_unsupported_platform:'自动连接仅支持番茄；当前平台未启动自动执行会话',platform_chrome_worker_connect_timeout:'连接现有 Chrome 超时，尚未开始保存，请检查扩展连接',platform_chrome_worker_browser_wait_timeout:'自动检测后仍未发现现有 Chrome 连接，本次尚未开始保存。请在现有窗口检查官方 Chrome 扩展，恢复后重新预览并执行',platform_chrome_worker_existing_tab_required:'未找到本书的章节管理或草稿箱页面。请在现有 Chrome 中打开该作品页面后重新预览',platform_chrome_worker_target_tab_changed:'绑定的 Chrome 标签页已离开本书章节管理或草稿箱，任务已停止。请重新打开本书章节管理或草稿箱，重新预览后先只读核对',platform_chrome_worker_target_tab_closed:'绑定的 Chrome 标签页已关闭或无法找到，任务已停止。请重新打开本书章节管理或草稿箱，重新预览后先只读核对',platform_chrome_worker_ambiguous_browser:'检测到多个 Chrome 连接，请仅保留本次使用的连接后重试',platform_chrome_worker_ambiguous_tab:'无法唯一确定目标作品管理页，请先核对当前页面',platform_chrome_worker_health_expired:'Chrome 页面连接已失效，请先只读核对，再重新执行',platform_chrome_worker_turn_failed:'Codex 执行会话中断，请先核对草稿记录',platform_chrome_worker_not_ready:'执行会话未能读取 Chrome 页面，未建立可用连接',platform_chrome_worker_failed:'Codex 未能完成页面操作，请核对权限与执行状态，并先核对草稿记录',platform_chrome_worker_unsupported_sdk:'Chrome 插件版本不支持此执行方式，请更新官方插件',platform_browser_readback_required:'请重新保存番茄绑定，生成包含只读回读配置的清单后预览',platform_browser_invalid_book_url:'请粘贴番茄章节管理或草稿箱的完整链接',platform_browser_editor_in_use:'目标草稿仍有其他编辑页打开，请先保存并关闭该编辑页后重新预览',platform_chrome_worker_unavailable:'Chrome 执行连接不可用，未完成核对；未取得更具体的停止原因。请检查目标作品页面与 Chrome 连接，重新预览后先只读核对',platform_chrome_connector_unavailable:'未找到自动连接组件，请更新完整插件和工作台',platform_chrome_connection_failed:'自动连接未完成，请检查 Chrome 扩展与登录状态',platform_chrome_connection_timeout:'自动连接超时，尚未开始保存，请检查 Chrome 扩展后重试',platform_chrome_worker_unhealthy:'Chrome 执行连接已失效，请重新连接并先只读核对',platform_chrome_codex_unavailable:'未找到可用的 Codex，请先完成本机 Codex 安装和登录',platform_chrome_sdk_unavailable:'未找到官方 Chrome 插件，请在 Codex 中安装并连接 Chrome',platform_chrome_existing_tab_required:'请在现有 Chrome 中打开本书的番茄作品管理页',platform_chrome_browser_unavailable:'当前执行会话未连接 Google Chrome，请检查官方 Chrome 扩展',platform_chrome_request_timeout:'助手操作未在期限内返回，请先只读对账',platform_chrome_worker_busy:'该目标已连接其他执行端，请先核对原会话',platform_chrome_request_expired:'该操作已超时或工作台已退出，请先只读对账',platform_chrome_invalid_message:'执行端回执未通过本次请求核验，请先核对结果',platform_browser_unnumbered_draft:'目录中有无法核对章号的草稿，已停止；请先人工核对',platform_browser_navigation_timeout:'浏览器页面导航超时，本章核对未完成；请检查页面连接后重新预览',platform_browser_read_timeout:'浏览器页面读取超时，本章完整回读未完成；请检查页面连接后重新预览',platform_browser_ambiguous_draft:'同章草稿不唯一，须先核对目录',platform_browser_incomplete_scope:'目录范围或筛选条件与配置不一致，请由助手核对',platform_browser_invalid_chapter:'无法核对章号或完整正文，请由助手检查页面与清单',platform_browser_invalid_identity:'账号或作品标识不完整，请由助手检查绑定',platform_browser_invalid_profile:'页面配置不完整或不受支持，请由助手重新核对',platform_browser_invalid_remote_id:'无法读取有效草稿标识，请由助手检查页面配置',platform_browser_not_open:'浏览器会话已关闭，请刷新本地状态核对结果',platform_browser_target_unverified:'账号和作品尚未核对，已停止',platform_browser_unsafe_create:'新建入口与已核对配置不同，未点击',platform_browser_unsafe_save:'保存入口与已核对配置不同，已停止',platform_browser_unsafe_url:'后台地址不符合已核对范围，请由助手检查',platform_browser_unsupported_editor:'正文编辑结构与已核对格式不同，请由助手检查页面',multiple_remote_drafts:'存在多份同章草稿，须先人工核对',remote_content_differs:'远端草稿内容与冻结清单不同',unresolved_previous_content:'此前发送结果尚未核清',previous_attempt_not_found:'未找到此前尝试的明确结果，不能自动重发',remote_draft_not_found:'没有找到可确认的目标草稿',saved_content_differs:'保存后回读内容不同',interrupted_sending:'此前保存中断，须先只读对账',platform_browser_login_required:'登录或验证尚未完成，请在浏览器中操作',platform_browser_identity_mismatch:'当前登录账号或作品与清单不一致',platform_browser_identity_unavailable:'无法从后台完整核对账号或作品',platform_browser_incomplete_list:'目录或分页不完整，不能继续创建',platform_browser_chapter_exists_not_draft:'同章已存在且并非草稿，已停止',platform_browser_incomplete_dom:'后台关键字段读取不完整',platform_browser_ambiguous_dom:'后台关键控件不唯一，请由助手重新核对配置',platform_browser_editor_changed:'编辑器内容或状态发生变化',platform_browser_not_draft:'目标页面未能确认是草稿',platform_browser_not_new_draft:'页面不是空白的新草稿',platform_browser_save_unverified:'尚未取得明确保存完成状态，请先对账',platform_browser_unsafe_navigation:'后台跳转超出已核对域名，请由助手适配',platform_browser_operation_failed:'浏览器操作未完成，远端结果待核对',platform_browser_browser_unavailable:'浏览器无法启动，请由助手检查运行环境',profile_required:'请先配置番茄账号与作品并生成正式稿清单',platform_browser_dependency_missing:'尚未安装平台浏览器依赖，请由助手完成安装',platform_browser_executable_missing:'指定浏览器尚不可用，请由助手检查安装',platform_browser_chrome_unavailable:'尚未安装可用的 Google Chrome，请由助手检查安装',platform_draft_invalid_comparison_policy:'核对规则不受支持，请重新选择',platform_draft_invalid_body_encoding:'正文排版规则不受支持，请重新选择',platform_draft_body_encoding_required:'平台正文统一去掉空白行，请刷新并重新预览',platform_draft_comparison_policy_required:'远端正文须严格符合本地去空行后的正文，不能忽略远端空行或末尾换行，请重新预览',platform_draft_empty_body:'正文去掉空白行后没有文字，请核对正式稿',platform_draft_unsupported_body_encoding:'旧版排版不支持该正文格式，请刷新工作台，使用去空行排版，无需修改原稿',platform_draft_preview_required:'预览已过期，请重新预览',platform_draft_profile_changed:'页面配置已经变化，请重新预览',platform_draft_preview_changed:'正式稿或页面配置已经变化，请重新预览',platform_draft_busy:'该作品已有任务运行，请等待原任务',platform_draft_job_missing:'本进程已无该任务，请刷新历史并先只读对账',platform_draft_adapter_error:'后台操作未完成；可能已保存，须先只读对账'})[code]||code;}
+function platformDraftErrorCode(code){return platformDraftConnectionErrorCode(code)||({platform_chrome_worker_native_sdk_unavailable:'未找到所选工具的公开浏览器组件，请先在该工具中完成官方浏览器组件安装',platform_chrome_worker_native_model_not_authorized:'本次尚未授权所选工具使用其原生模型',platform_draft_native_model_not_authorized:'本次尚未授权所选工具使用其原生模型，请重新确认所选执行工具',platform_chrome_worker_native_runtime_required:'请在所选工具自己的官方浏览器会话中执行交接任务',resume_empty_draft:'恢复上次未完成的空草稿',recovering_empty_draft:'正在恢复上次未完成的空草稿',empty_draft_recovered:'已恢复原空草稿并完整回读',platform_draft_inspection_required:'本次差异检查缺失或已过期，请重新检查后执行',platform_draft_inspection_changed:'草稿在检查后又有变化，未继续覆盖，请重新检查差异',platform_draft_stop_requested:'任务已在安全位置停止',new_draft_created:'缺失章节已新建草稿并独立回读',existing_draft_updated:'已有草稿章名和正文已更新并独立回读',updating_existing_draft:'正在更新已有草稿',remote_formatting_metadata:'远端正文含错字标记，可选择同步草稿清理',saved_formatting_metadata:'回读仍含错字标记，尚未确认同步完成',platform_browser_formatting_metadata:'正文仍含错字标记，已停止并保留待核对状态',platform_browser_remote_changed:'远端草稿在核对后发生变化，未继续覆盖',platform_draft_update_unsupported:'当前配置不支持更新已有草稿，请使用番茄 Chrome 会话配置',platform_chrome_worker_origin_permission_required:'本次会话尚未取得番茄页面访问授权，操作已停止。请查看“网站访问授权帮助”；当前版本没有对应入口时，请由助手核对宿主授权方式',platform_chrome_worker_browser_unattached:'现有 Chrome 的页面控制未连接，请点开官方 Chrome 扩展恢复连接后重新预览，无需重新登录或另开窗口',platform_chrome_worker_codex_unavailable:'未找到可用的 Codex，请先完成本机 Codex 安装和登录',platform_chrome_worker_sdk_unavailable:'未找到官方 Chrome 插件，请在 Codex 中安装并连接 Chrome',platform_chrome_worker_unsupported_platform:'自动连接仅支持番茄；当前平台未启动自动执行会话',platform_chrome_worker_connect_timeout:'连接现有 Chrome 超时，尚未开始保存，请检查扩展连接',platform_chrome_worker_browser_wait_timeout:'自动检测后仍未发现现有 Chrome 连接，本次尚未开始保存。请在现有窗口检查官方 Chrome 扩展，恢复后重新预览并执行',platform_chrome_worker_existing_tab_required:'未找到本书的章节管理或草稿箱页面。请在现有 Chrome 中打开该作品页面后重新预览',platform_chrome_worker_target_tab_changed:'绑定的 Chrome 标签页已离开本书章节管理或草稿箱，任务已停止。请重新打开本书章节管理或草稿箱，重新预览后先只读核对',platform_chrome_worker_target_tab_closed:'绑定的 Chrome 标签页已关闭或无法找到，任务已停止。请重新打开本书章节管理或草稿箱，重新预览后先只读核对',platform_chrome_worker_ambiguous_browser:'检测到多个 Chrome 连接，请仅保留本次使用的连接后重试',platform_chrome_worker_ambiguous_tab:'无法唯一确定目标作品管理页，请先核对当前页面',platform_chrome_worker_health_expired:'Chrome 页面连接已失效，请先只读核对，再重新执行',platform_chrome_worker_turn_failed:'Codex 执行会话中断，请先核对草稿记录',platform_chrome_worker_not_ready:'执行会话未能读取 Chrome 页面，未建立可用连接',platform_chrome_worker_failed:'Codex 未能完成页面操作，请核对权限与执行状态，并先核对草稿记录',platform_chrome_worker_unsupported_sdk:'Chrome 插件版本不支持此执行方式，请更新官方插件',platform_browser_readback_required:'请重新保存番茄绑定，生成包含只读回读配置的清单后预览',platform_browser_invalid_book_url:'请粘贴番茄章节管理或草稿箱的完整链接',platform_browser_editor_in_use:'目标草稿仍有其他编辑页打开，请先保存并关闭该编辑页后重新预览',platform_chrome_worker_unavailable:'Chrome 执行连接不可用，未完成核对；未取得更具体的停止原因。请检查目标作品页面与 Chrome 连接，重新预览后先只读核对',platform_chrome_connector_unavailable:'未找到自动连接组件，请更新完整插件和工作台',platform_chrome_connection_failed:'自动连接未完成，请检查 Chrome 扩展与登录状态',platform_chrome_connection_timeout:'自动连接超时，尚未开始保存，请检查 Chrome 扩展后重试',platform_chrome_worker_unhealthy:'Chrome 执行连接已失效，请重新连接并先只读核对',platform_chrome_codex_unavailable:'未找到可用的 Codex，请先完成本机 Codex 安装和登录',platform_chrome_sdk_unavailable:'未找到官方 Chrome 插件，请在 Codex 中安装并连接 Chrome',platform_chrome_existing_tab_required:'请在现有 Chrome 中打开本书的番茄作品管理页',platform_chrome_browser_unavailable:'当前执行会话未连接 Google Chrome，请检查官方 Chrome 扩展',platform_chrome_request_timeout:'助手操作未在期限内返回，请先只读对账',platform_chrome_worker_busy:'该目标已连接其他执行端，请先核对原会话',platform_chrome_request_expired:'该操作已超时或工作台已退出，请先只读对账',platform_chrome_invalid_message:'执行端回执未通过本次请求核验，请先核对结果',platform_browser_unnumbered_draft:'目录中有无法核对章号的草稿，已停止；请先人工核对',platform_browser_navigation_timeout:'浏览器页面导航超时，本章核对未完成；请检查页面连接后重新预览',platform_browser_read_timeout:'浏览器页面读取超时，本章完整回读未完成；请检查页面连接后重新预览',platform_browser_ambiguous_draft:'同章草稿不唯一，须先核对目录',platform_browser_incomplete_scope:'目录范围或筛选条件与配置不一致，请由助手核对',platform_browser_invalid_chapter:'无法核对章号或完整正文，请由助手检查页面与清单',platform_browser_invalid_identity:'账号或作品标识不完整，请由助手检查绑定',platform_browser_invalid_profile:'页面配置不完整或不受支持，请由助手重新核对',platform_browser_invalid_remote_id:'无法读取有效草稿标识，请由助手检查页面配置',platform_browser_not_open:'浏览器会话已关闭，请刷新本地状态核对结果',platform_browser_target_unverified:'账号和作品尚未核对，已停止',platform_browser_unsafe_create:'新建入口与已核对配置不同，未点击',platform_browser_unsafe_save:'保存入口与已核对配置不同，已停止',platform_browser_unsafe_url:'后台地址不符合已核对范围，请由助手检查',platform_browser_unsupported_editor:'正文编辑结构与已核对格式不同，请由助手检查页面',multiple_remote_drafts:'存在多份同章草稿，须先人工核对',remote_content_differs:'远端草稿内容与冻结清单不同',unresolved_previous_content:'此前发送结果尚未核清',previous_attempt_not_found:'未找到此前尝试的明确结果，不能自动重发',remote_draft_not_found:'没有找到可确认的目标草稿',saved_content_differs:'保存后回读内容不同',interrupted_sending:'此前保存中断，须先只读对账',platform_browser_login_required:'登录或验证尚未完成，请在浏览器中操作',platform_browser_identity_mismatch:'当前登录账号或作品与清单不一致',platform_browser_identity_unavailable:'无法从后台完整核对账号或作品',platform_browser_incomplete_list:'目录或分页不完整，不能继续创建',platform_browser_chapter_exists_not_draft:'同章已存在且并非草稿，已停止',platform_browser_incomplete_dom:'后台关键字段读取不完整',platform_browser_ambiguous_dom:'后台关键控件不唯一，请由助手重新核对配置',platform_browser_editor_changed:'编辑器内容或状态发生变化',platform_browser_not_draft:'目标页面未能确认是草稿',platform_browser_not_new_draft:'页面不是空白的新草稿',platform_browser_save_unverified:'尚未取得明确保存完成状态，请先对账',platform_browser_unsafe_navigation:'后台跳转超出已核对域名，请由助手适配',platform_browser_operation_failed:'浏览器操作未完成，远端结果待核对',platform_browser_browser_unavailable:'浏览器无法启动，请由助手检查运行环境',profile_required:'请先配置番茄账号与作品并生成正式稿清单',platform_browser_dependency_missing:'尚未安装平台浏览器依赖，请由助手完成安装',platform_browser_executable_missing:'指定浏览器尚不可用，请由助手检查安装',platform_browser_chrome_unavailable:'尚未安装可用的 Google Chrome，请由助手检查安装',platform_draft_invalid_comparison_policy:'核对规则不受支持，请重新选择',platform_draft_invalid_body_encoding:'正文排版规则不受支持，请重新选择',platform_draft_body_encoding_required:'平台正文统一去掉空白行，请刷新并重新预览',platform_draft_comparison_policy_required:'远端正文须严格符合本地去空行后的正文，不能忽略远端空行或末尾换行，请重新预览',platform_draft_empty_body:'正文去掉空白行后没有文字，请核对正式稿',platform_draft_unsupported_body_encoding:'旧版排版不支持该正文格式，请刷新工作台，使用去空行排版，无需修改原稿',platform_draft_preview_required:'预览已过期，请重新预览',platform_draft_profile_changed:'页面配置已经变化，请重新预览',platform_draft_preview_changed:'正式稿或页面配置已经变化，请重新预览',platform_draft_busy:'该作品已有任务运行，请等待原任务',platform_draft_job_missing:'本进程已无该任务，请刷新历史并先只读对账',platform_draft_adapter_error:'后台操作未完成；可能已保存，须先只读对账'})[code]||code;}
 function platformDraftSchedule(panel){clearTimeout(panel.pollTimer);panel.pollTimer=null;if(platformDraftAlive(panel)&&panel.job&&!panel.job.done&&(panel.pollJobId!==panel.job.id||!(panel.pollFailures>5))){const id=panel.job.id;panel.pollTimer=setTimeout(()=>platformDraftPoll(panel,id),1500);}}
 async function platformDraftPoll(panel,id=panel.job?.id){if(!platformDraftAlive(panel)||!panel.job||panel.job.done||panel.job.id!==id)return;clearTimeout(panel.pollTimer);panel.pollTimer=null;if(panel.pollJobId!==id){panel.pollJobId=id;panel.pollFailures=0;}try{const job=await call('platform-drafts/job',{id});if(!platformDraftAlive(panel)||panel.job?.id!==id||panel.job.done)return;if(job.id!==id)throw Error('返回的任务状态与当前任务不一致');panel.pollFailures=0;platformDraftDrawJob(panel,job);platformDraftSchedule(panel);}catch(error){if(!platformDraftAlive(panel)||panel.job?.id!==id||panel.job.done)return;panel.pollFailures+=1;panel.status.textContent=panel.pollFailures<=5?'暂时无法读取任务状态，正在重新读取同一任务（'+panel.pollFailures+'/5）；后台可能仍在执行，请勿重复保存。':'暂时无法读取任务状态；后台可能仍在执行。请刷新本地状态，勿重复保存。'+error.message;panel.refresh.disabled=false;platformDraftButtons(panel);if(panel.pollFailures<=5)platformDraftSchedule(panel);}}
-function platformDraftProfiles(panel){const chosen=panel.profile.value,plan=panel.plans.find(row=>row.id===panel.plan.value);panel.profile.replaceChildren();let generated=0;for(const profile of panel.profiles.filter(row=>row.valid&&row.platform===plan?.platform)){const label=/^fanqie-[0-9a-f]{32}\.json$/i.test(profile.id)?'番茄本地配置 '+(++generated):profile.label;const option=platformDraftElement('option',label);option.value=profile.id;panel.profile.append(option);}if([...panel.profile.options].some(option=>option.value===chosen))panel.profile.value=chosen;panel.configNote.textContent=panel.profile.options.length?'可在上方自行配置番茄绑定；实际保存时仍会核对当前账号、作品和草稿状态。':'请先配置番茄账号与作品，生成正式稿清单；无需填写 JSON。七猫、起点尚未完成真实后台验收。';}
-async function platformDraftPreview(panel,prepared=false){panel.dialog.setAttribute('data-has-job','false');panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;const request=++panel.request;panel.preview=null;panel.previewExpires=0;panel.job=null;clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);panel.progress.value=0;panel.progress.max=1;panel.progressLabel.textContent='本次已完整回读 0 / 0 章';panel.jobNote.textContent='';panel.previewBox.replaceChildren();panel.results.replaceChildren();platformDraftHistoryRows(panel,[]);platformDraftButtons(panel);const plan=panel.plans.find(row=>row.id===panel.plan.value);if(!plan){panel.status.textContent='尚无冻结的正式稿清单。请先在上方配置番茄账号与作品，选择已审查的正式章节并生成清单。';return;}panel.history.textContent=plan.draft_history?.unknown_chapters?'历史有 '+plan.draft_history.unknown_chapters+' 章结果未知，请先选择“只读对账”；不会自动重发。':plan.draft_history?.history_events_total?'历史记录仅代表当时观察，不能代替本次远端核对。':'';panel.status.textContent='正在核对本地正式稿与目标…';try{const packet=await call('platform-drafts/preview',{plan_id:plan.id,profile_id:panel.profile.value||null,reconcile_only:panel.mode.value==='reconcile_only',sync_drafts:panel.mode.value==='sync_drafts',comparison_policy:panel.comparison.value,body_encoding:panel.encoding.value});if(!platformDraftAlive(panel)||request!==panel.request)return;if(packet.book_id!==panel.bookId||packet.plan_id!==panel.plan.value||packet.profile_id!==(panel.profile.value||null)||packet.mode!==panel.mode.value||(packet.comparison_policy||'strict')!==panel.comparison.value||(packet.body_encoding||'verbatim')!==panel.encoding.value)throw Error('目标已变化，请刷新本地状态。');panel.preview=packet;const expires=Number((packet.preview_token||packet.connect_token)?.split('.')[0]);panel.previewExpires=Number.isFinite(expires)?expires*1000:0;const preview=packet.preview,total=preview.chapters?.length||0;panel.progress.max=total||1;panel.progress.value=0;panel.progressLabel.textContent='本次已完整回读 0 / '+total+' 章';panel.previewBox.append(platformDraftElement('p','本地预览 · 尚未访问平台。来源为已审查并冻结的正式稿。'),platformDraftElement('p',(platformDraftNames[preview.platform]||'平台待核对')+' · 《'+(plan.book_title||currentBookInfo.title)+'》'),platformDraftElement('p','绑定账号：'+preview.account_id+'；目标作品：'+preview.remote_book_id));const list=platformDraftElement('ol');for(const chapter of preview.chapters||[])list.append(platformDraftElement('li','第'+chapter.chapter+'章 '+chapter.title+' · '+chapter.body_characters+' 字符'));panel.previewBox.append(list,platformDraftElement('p',panel.encoding.value===platformDraftRequiredEncoding?'正文排版：统一去掉全部空白行（包括首尾和仅含空格的行），每段只换行一次；正文文字和缩进保留，本地原稿不变。':panel.encoding.value==='markdown_paragraphs_v2'?'正文排版：去掉正文开头的分隔空段，段间空行转换为一次换段；段内文字和空格原样保留。':panel.encoding.value==='markdown_paragraphs_v1'?'正文排版：兼容旧规则，保留正文开头换行；段间空行转换为一次换段。':'正文排版：保留原始换行。'),platformDraftElement('p',panel.comparison.value==='fanqie_terminal_lf_v1'?'核对规则：允许正文末尾换行数量增加或减少；标题及其他内容逐字核对。':'核对规则：包括末尾换行在内逐字核对。'));platformDraftResults(panel,preview.results,true);panel.historyPlan=plan.id;panel.historyEvents=preview.history_events_total||0;platformDraftDrawHistory(panel,preview);if(panel.mode.value==='sync_drafts')panel.previewBox.append(platformDraftElement('p','本次使用该范围的最新正式稿，核对后将已有草稿的章名和完整正文更新为最新正式稿；缺失章节会新建草稿，内容一致则不重复写入。已发布章节会阻止同步。'));platformDraftRuleNote(panel,packet);panel.status.textContent=packet.can_start?'Chrome 已就绪，请核对目标后执行本批。':packet.can_connect?'已完成本地预览。点击下方按钮后将通过已登录的 Codex 自动连接现有 Chrome，先只读核对本批，确认差异后才会同步；会使用当前账号的 Codex 额度。':[...(packet.blockers||[]),...(packet.automatic_connection?.reason?[packet.automatic_connection.reason]:[])].map(platformDraftErrorCode).join('；')||'暂不能执行，请由助手核对清单与配置。';if(panel.previewExpires>Date.now())panel.expiryTimer=setTimeout(()=>{if(platformDraftAlive(panel)&&request===panel.request){panel.preview=null;panel.status.textContent='本地预览已过期，请重新预览后再执行。';platformDraftButtons(panel);}},Math.max(1,panel.previewExpires-Date.now()));}catch(error){if(!platformDraftAlive(panel)||request!==panel.request)return;panel.preview=null;panel.status.textContent='本地预览未完成：'+error.message;}finally{if(platformDraftAlive(panel)&&request===panel.request)platformDraftButtons(panel);}}
+function platformDraftProfiles(panel){
+ const chosen=panel.profile.value,plan=panel.plans.find(row=>row.id===panel.plan.value),matching=panel.profiles.filter(row=>platformDraftProfileMatches(row,plan)).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0),saved=plan?.profile_selection,choice=panel.profileChoice?.target===platformDraftTargetKey(plan)?panel.profileChoice:null,preferred=saved?.status==='selected'&&matching.find(row=>row.id===saved.profile_id&&row.sha256===saved.profile_sha256),explicit=choice&&matching.find(row=>row.id===choice.id&&row.sha256===choice.sha256);panel.profile.replaceChildren();let generated=0;
+ panel.profileSelectionProblem=(choice&&!explicit)||(saved&&!preferred&&!explicit)?'最近绑定或本面板选定的页面配置已缺失、失效或变化。请明确重新选择可用配置并重新检查，或在上方重新配置；不会沿用旧检查结果。':'';
+ if(panel.profileSelectionProblem){const empty=platformDraftElement('option','请重新选择页面配置');empty.value='';empty.disabled=true;panel.profile.append(empty);}
+ for(const profile of matching){const name=/^fanqie-[0-9a-f]{32}\.json$/i.test(profile.id)?'番茄本地配置 '+(++generated):profile.label,title=typeof profile.remote_book_title==='string'?profile.remote_book_title.replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g,' ').trim().slice(0,60):'',label=(profile.platform==='fanqie'?name+(title?' · 《'+title+'》':'')+' · 作品 ID '+profile.remote_book_id:name)+(profile===preferred?' · 最近绑定':''),option=platformDraftElement('option',label);option.value=profile.id;panel.profile.append(option);}
+ panel.profile.value=explicit?.id||(panel.profileSelectionProblem?'':preferred?.id||(matching.some(row=>row.id===chosen)?chosen:matching[0]?.id||''));
+ panel.configNote.textContent=panel.profileSelectionProblem||(matching.length?(plan.platform==='fanqie'?'仅列出与当前批次目标一致的页面配置；默认使用此账号与作品最近成功绑定的配置。手动选择仅用于本面板，实际保存仍核对账号、作品和草稿状态。':'可在上方自行配置番茄绑定；实际保存时仍会核对当前账号、作品和草稿状态。'):plan?.platform==='fanqie'?platformDraftProfileMissing(plan):'请先配置番茄账号与作品，生成正式稿清单；无需填写 JSON。七猫、起点尚未完成真实后台验收。');
+}
+async function platformDraftPreview(panel,prepared=false){panel.inspection=null;panel.needsPreparation=false;panel.jobHistorical=false;panel.dialog.setAttribute('data-has-job','false');panel.comparison.value='strict';panel.encoding.value=platformDraftRequiredEncoding;const request=++panel.request;panel.preview=null;panel.previewExpires=0;panel.job=null;platformDraftClearTaskFeedback(panel);clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);panel.progress.value=0;panel.progress.max=1;panel.progressLabel.textContent='本次尚未开始';panel.jobNote.textContent='';panel.previewBox.replaceChildren();panel.results.replaceChildren();platformDraftHistoryRows(panel,[]);platformDraftButtons(panel);const plan=panel.plans.find(row=>row.id===panel.plan.value);if(!plan){panel.status.textContent='尚无冻结的正式稿清单。请先在上方配置番茄账号与作品，选择已审查的正式章节并生成清单。';return;}platformDraftSelectReadbackTarget(panel,plan);if(plan.platform==='fanqie'&&!panel.profiles.some(row=>row.id===panel.profile.value&&platformDraftProfileMatches(row,plan))){panel.status.textContent=panel.profileSelectionProblem||platformDraftProfileMissing(plan);return;}panel.history.textContent=plan.draft_history?.unknown_chapters?'历史有 '+plan.draft_history.unknown_chapters+' 章结果未知，请先选择“只读对账”；不会自动重发。':plan.draft_history?.history_events_total?'历史记录仅代表当时观察，不能代替本次远端核对。':'';panel.status.textContent='正在核对本地正式稿与目标…';try{const packet=await call('platform-drafts/preview',{plan_id:plan.id,profile_id:panel.profile.value||null,reconcile_only:panel.mode.value==='reconcile_only',sync_drafts:panel.mode.value==='sync_drafts',comparison_policy:panel.comparison.value,body_encoding:panel.encoding.value});if(!platformDraftAlive(panel)||request!==panel.request)return;if(packet.book_id!==panel.bookId||packet.plan_id!==panel.plan.value||packet.profile_id!==(panel.profile.value||null)||packet.mode!==panel.mode.value||(packet.comparison_policy||'strict')!==panel.comparison.value||(packet.body_encoding||'verbatim')!==panel.encoding.value)throw Error('目标已变化，请刷新本地状态。');platformDraftObserveConnection(panel,packet.automatic_connection);panel.preview=packet;const expires=Number((packet.preview_token||packet.connect_token)?.split('.')[0]);panel.previewExpires=Number.isFinite(expires)?expires*1000:0;const preview=packet.preview,total=preview.chapters?.length||0;panel.progress.max=total||1;panel.progress.value=0;panel.progressLabel.textContent=total?'本次尚未开始 · 已核对 0 / '+total+' 章':'本次尚未开始';panel.previewBox.append(platformDraftElement('p','本地预览 · 尚未访问平台。来源为已审查并冻结的正式稿。'),platformDraftElement('p',(platformDraftNames[preview.platform]||'平台待核对')+' · 《'+(plan.book_title||currentBookInfo.title)+'》'),platformDraftElement('p','绑定账号：'+preview.account_id+'；目标作品 ID：'+preview.remote_book_id),platformDraftElement('p',platformDraftTargetNote(panel,plan)));const list=platformDraftElement('ol');for(const chapter of preview.chapters||[])list.append(platformDraftElement('li','第'+chapter.chapter+'章 '+chapter.title+' · '+chapter.body_characters+' 字符'));panel.previewBox.append(list,platformDraftElement('p',panel.encoding.value===platformDraftRequiredEncoding?'正文排版：统一去掉全部空白行（包括首尾和仅含空格的行），每段只换行一次；正文文字和缩进保留，本地原稿不变。':panel.encoding.value==='markdown_paragraphs_v2'?'正文排版：去掉正文开头的分隔空段，段间空行转换为一次换段；段内文字和空格原样保留。':panel.encoding.value==='markdown_paragraphs_v1'?'正文排版：兼容旧规则，保留正文开头换行；段间空行转换为一次换段。':'正文排版：保留原始换行。'),platformDraftElement('p',panel.comparison.value==='fanqie_terminal_lf_v1'?'核对规则：允许正文末尾换行数量增加或减少；标题及其他内容逐字核对。':'核对规则：包括末尾换行在内逐字核对。'));platformDraftResults(panel,preview.results,true);panel.historyPlan=plan.id;panel.historyEvents=preview.history_events_total||0;platformDraftDrawHistory(panel,preview);if(panel.mode.value==='sync_drafts')panel.previewBox.append(platformDraftElement('p','本次使用该范围的最新正式稿，核对后将已有草稿的章名和完整正文更新为最新正式稿；缺失章节会新建草稿，内容一致则不重复写入。已发布章节会阻止同步。'));platformDraftRuleNote(panel,packet);panel.status.textContent=platformDraftHost(panel)!=='codex'?platformDraftNativeIdleStatus(panel):panel.connectionRetryBlocked?'本地预览已准备；新的自动浏览器连接已暂停。尚未开始本次检查或保存，可准备本地章节，或在“助手协助”中准备助手检查任务。':packet.can_start?(panel.mode.value==='reconcile_only'?'Chrome 已就绪，请确认所选批次后开始只读核对。':'Chrome 已就绪，请核对目标与范围后检查差异。'):packet.can_connect?'已完成本地预览。点击下方按钮后将通过已登录的 Codex 自动连接现有 Chrome，先只读核对本批，确认差异后才会同步；会使用当前账号的 Codex 额度。':[...(packet.blockers||[]),...(packet.automatic_connection?.reason?[packet.automatic_connection.reason]:[])].map(platformDraftErrorCode).join('；')||'暂不能执行，请由助手核对清单与配置。';panel.idlePreviewText=panel.status.textContent;if(platformDraftHost(panel)==='codex')panel.codexIdlePreviewText=panel.idlePreviewText;if(panel.previewExpires>Date.now())panel.expiryTimer=setTimeout(()=>{if(platformDraftAlive(panel)&&request===panel.request){panel.preview=null;panel.status.textContent='本地预览已过期，请重新检查。';platformDraftButtons(panel);}},Math.max(1,panel.previewExpires-Date.now()));}catch(error){if(!platformDraftAlive(panel)||request!==panel.request)return;panel.preview=null;panel.status.textContent='本地预览未完成：'+error.message;}finally{if(platformDraftAlive(panel)&&request===panel.request)platformDraftButtons(panel);}}
 async function platformDraftCatalog(panel,selection=null){
  if(!platformDraftAlive(panel)||(panel.binding&&!selection))return;
- const previousJob=panel.job;const request=++panel.catalogRequest;++panel.request;panel.preview=null;panel.previewExpires=0;panel.job=null;clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);panel.previewBox.replaceChildren();panel.results.replaceChildren();platformDraftHistoryRows(panel,[]);panel.history.textContent='';panel.jobNote.textContent='';panel.progress.value=0;panel.progress.max=1;panel.progressLabel.textContent='本次已完整回读 0 / 0 章';panel.loadingCatalog=true;panel.refresh.disabled=true;panel.status.textContent='正在读取本地清单与任务状态…';platformDraftButtons(panel);const selected=selection?.plan_id||panel.plan.value;
+ const previousJob=panel.job;panel.inspection=null;panel.needsPreparation=false;panel.catalogError=false;const request=++panel.catalogRequest;++panel.request;panel.preview=null;panel.previewExpires=0;panel.job=null;platformDraftClearTaskFeedback(panel);clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);panel.previewBox.replaceChildren();panel.results.replaceChildren();platformDraftHistoryRows(panel,[]);panel.history.textContent='';panel.jobNote.textContent='';panel.progress.value=0;panel.progress.max=1;panel.progressLabel.textContent='本次尚未开始';panel.loadingCatalog=true;panel.refresh.disabled=true;panel.status.textContent='正在读取本地清单与任务状态…';platformDraftButtons(panel);const selected=selection?.plan_id||panel.plan.value;
  try{let offset=0,bookId=null,metadata=null;const plans=[],jobs=new Map();let profiles=[];const seen=new Set();
   do{if(seen.has(offset))throw Error('清单分页没有前进，请重新读取。');seen.add(offset);const packet=await call('platform-drafts/catalog',{offset,limit:50});if(!platformDraftAlive(panel)||request!==panel.catalogRequest)return;if(bookId&&bookId!==packet.book_id)throw Error('作品身份已变化，请关闭后重新打开工作台。');if(metadata&&packet.revision!==metadata.revision)throw Error('正式稿状态已变化，请重新读取本地清单。');bookId=packet.book_id;metadata=metadata||packet;plans.push(...packet.plans);profiles=packet.profiles;for(const job of packet.jobs||[])jobs.set(job.id,job);const next=packet.next_offset;if(next!==null&&(!Number.isInteger(next)||next<=offset))throw Error('清单分页无效，请重新读取。');offset=next;}while(offset!==null);
-  panel.loadingCatalog=false;panel.bookId=bookId;panel.revision=metadata.revision;panel.formalFirst=metadata.formal_first;panel.formalLast=metadata.formal_last;panel.formalCount=metadata.formal_count||0;panel.maxBatch=metadata.max_batch||1000;panel.plans=plans;panel.profiles=profiles;panel.jobs=[...jobs.values()];platformDraftBindingRange(panel);panel.plan.replaceChildren();for(const [planIndex,plan] of plans.entries()){const option=platformDraftElement('option',(planIndex===0?'最新批次 · ':'历史批次 · ')+(platformDraftNames[plan.platform]||'平台待核对')+' · '+platformDraftChapterRange(plan.chapters)+' · 《'+(plan.book_title||currentBookInfo.title)+'》'+(plan.status!=='prepared'?' · 清单已失效':''));option.value=plan.id;panel.plan.append(option);}if(plans.some(row=>row.id===selected))panel.plan.value=selected;else if(plans.length)panel.plan.value=(plans.find(row=>row.status==='prepared')||plans[0]).id;platformDraftProfiles(panel);
-  if(selection){if(!plans.some(row=>row.id===selection.plan_id))throw Error('新清单尚未读到，请刷新本地状态。');panel.plan.value=selection.plan_id;panel.mode.value=selection.mode==='reconcile_only'?'reconcile_only':'sync_drafts';platformDraftProfiles(panel);if(![...panel.profile.options].some(option=>option.value===selection.profile_id))throw Error('新绑定页面配置尚未读到，请刷新本地状态。');panel.profile.value=selection.profile_id;if(selection.profile_sha256&&panel.profiles.find(row=>row.id===selection.profile_id)?.sha256!==selection.profile_sha256)throw Error('页面配置在生成后已变化，请重新核对，未自动预览。');const selectedPlan=plans.find(row=>row.id===selection.plan_id);if(selection.target&&(['platform','account_id','remote_book_id'].some(key=>selectedPlan[key]!==selection.target[key])||JSON.stringify(selectedPlan.chapters)!==JSON.stringify(selection.chapters)))throw Error('新批次的目标或章节无法核对，未自动预览。');if(await platformDraftRestoreRules(panel)===null)return;if(selection.mode==='sync_drafts'&&platformDraftRuleValues(selection.rules,selectedPlan.platform)){panel.encoding.value=selection.rules.body_encoding;panel.comparison.value='strict';}await platformDraftPreview(panel,true);}
-  else{const retained=previousJob&&panel.jobs.find(row=>row.id===previousJob.id&&row.book_id===bookId&&row.plan_id===panel.plan.value&&row.profile_id===panel.profile.value&&row.profile_sha256===panel.profiles.find(item=>item.id===panel.profile.value)?.sha256);const job=panel.jobs.filter(row=>!row.done).at(-1)||retained||(panel.justOpened?panel.jobs.filter(row=>row.plan_id===panel.plan.value&&row.profile_id===panel.profile.value&&row.profile_sha256===panel.profiles.find(item=>item.id===panel.profile.value)?.sha256).at(-1):null);panel.justOpened=false;if(job){if(plans.some(row=>row.id===job.plan_id)){panel.plan.value=job.plan_id;platformDraftProfiles(panel);if([...panel.profile.options].some(option=>option.value===job.profile_id))panel.profile.value=job.profile_id;const remembered=await platformDraftRestoreRules(panel);if(remembered===null)return;const activeRules={schema:1,comparison_policy:job.comparison_policy||'strict',body_encoding:job.body_encoding||'verbatim'},scope=platformDraftRuleScope(panel),profile=panel.profiles.find(row=>row.id===panel.profile.value);if(!remembered&&job.profile_sha256===profile?.sha256&&platformDraftRuleValues(activeRules,scope?.platform)){panel.comparison.value=activeRules.comparison_policy;panel.encoding.value=activeRules.body_encoding;}panel.mode.value=job.mode==='reconcile_only'?'reconcile_only':'sync_drafts';}else if(await platformDraftRestoreRules(panel)===null)return;platformDraftDrawJob(panel,job);platformDraftSchedule(panel);if(job.done)panel.status.textContent+='。可重新预览以核对当前正式稿。';}else{if(await platformDraftRestoreRules(panel)===null)return;await platformDraftPreview(panel);}}
- }catch(error){if(!platformDraftAlive(panel)||request!==panel.catalogRequest)return;panel.status.textContent='读取清单失败：'+error.message;panel.preview=null;}
+  panel.loadingCatalog=false;panel.executionHosts=metadata.browser_runtime?.execution_hosts;panel.bookId=bookId;panel.revision=metadata.revision;panel.formalFirst=metadata.formal_first;panel.formalLast=metadata.formal_last;panel.formalCount=metadata.formal_count||0;panel.maxBatch=metadata.max_batch||1000;panel.plans=plans;panel.profiles=profiles;panel.jobs=[...jobs.values()];platformDraftBindingRange(panel);panel.plan.replaceChildren();for(const [planIndex,plan] of plans.entries()){const option=platformDraftElement('option',(planIndex===0?'最新批次 · ':'历史批次 · ')+(platformDraftNames[plan.platform]||'平台待核对')+' · '+platformDraftChapterRange(plan.chapters)+' · 《'+(plan.book_title||currentBookInfo.title)+'》 · '+platformDraftTargetLabel(plan)+(plan.status!=='prepared'?' · 清单已失效':''));option.value=plan.id;panel.plan.append(option);}if(plans.some(row=>row.id===selected))panel.plan.value=selected;else if(plans.length)panel.plan.value=(plans.find(row=>row.status==='prepared')||plans[0]).id;platformDraftProfiles(panel);
+  if(selection){if(panel.jobs.some(row=>!row.done))throw Error('已有草稿任务正在运行，请刷新任务状态接续该任务；未开始新的检查。');if(!plans.some(row=>row.id===selection.plan_id))throw Error('新清单尚未读到，请刷新本地状态。');panel.plan.value=selection.plan_id;panel.mode.value=selection.mode==='reconcile_only'?'reconcile_only':'sync_drafts';platformDraftProfiles(panel);if(![...panel.profile.options].some(option=>option.value===selection.profile_id))throw Error('新绑定页面配置尚未读到，请刷新本地状态。');panel.profile.value=selection.profile_id;if(selection.profile_sha256&&panel.profiles.find(row=>row.id===selection.profile_id)?.sha256!==selection.profile_sha256)throw Error('页面配置在生成后已变化，请重新核对，未自动预览。');const selectedPlan=plans.find(row=>row.id===selection.plan_id);if(selection.mode==='reconcile_only'&&selectedPlan.chapters?.length){panel.refreshStart.value=String(selectedPlan.chapters[0]);panel.refreshEnd.value=String(selectedPlan.chapters.at(-1));panel.refreshRangeDirty=false;}if(selection.target&&(['platform','account_id','remote_book_id'].some(key=>selectedPlan[key]!==selection.target[key])||JSON.stringify(selectedPlan.chapters)!==JSON.stringify(selection.chapters)))throw Error('新批次的目标或章节无法核对，未自动预览。');if(await platformDraftRestoreRules(panel)===null)return;if(selection.mode==='sync_drafts'&&platformDraftRuleValues(selection.rules,selectedPlan.platform)){panel.encoding.value=selection.rules.body_encoding;panel.comparison.value='strict';}await platformDraftPreview(panel,true);}
+  else{const retained=previousJob&&panel.jobs.find(row=>row.id===previousJob.id&&row.book_id===bookId&&row.plan_id===panel.plan.value&&row.profile_id===panel.profile.value&&row.profile_sha256===panel.profiles.find(item=>item.id===panel.profile.value)?.sha256);const job=panel.jobs.filter(row=>!row.done).at(-1)||retained||(panel.justOpened?panel.jobs.filter(row=>row.plan_id===panel.plan.value&&row.profile_id===panel.profile.value&&row.profile_sha256===panel.profiles.find(item=>item.id===panel.profile.value)?.sha256).at(-1):null);panel.justOpened=false;if(job){const historical=job.done&&!(job.mode==='inspect_drafts'&&platformDraftInspectionValid(panel,job))&&!(previousJob?.id===job.id&&panel.jobHistorical!==true);if(plans.some(row=>row.id===job.plan_id)){panel.plan.value=job.plan_id;platformDraftProfiles(panel);if([...panel.profile.options].some(option=>option.value===job.profile_id))panel.profile.value=job.profile_id;const remembered=await platformDraftRestoreRules(panel);if(remembered===null)return;const activeRules={schema:1,comparison_policy:job.comparison_policy||'strict',body_encoding:job.body_encoding||'verbatim'},scope=platformDraftRuleScope(panel),profile=panel.profiles.find(row=>row.id===panel.profile.value);if(!remembered&&job.profile_sha256===profile?.sha256&&platformDraftRuleValues(activeRules,scope?.platform)){panel.comparison.value=activeRules.comparison_policy;panel.encoding.value=activeRules.body_encoding;}panel.mode.value=job.mode==='reconcile_only'?'reconcile_only':'sync_drafts';}else if(await platformDraftRestoreRules(panel)===null)return;platformDraftDrawJob(panel,job,historical);platformDraftSchedule(panel);if(historical)await platformDraftHistory(panel);else if(job.done)panel.status.textContent+='。可重新预览以核对当前正式稿。';}else{if(await platformDraftRestoreRules(panel)===null)return;await platformDraftPreview(panel);}}
+ }catch(error){if(!platformDraftAlive(panel)||request!==panel.catalogRequest)return;panel.catalogError=true;panel.status.textContent='读取清单失败：'+error.message;panel.preview=null;}
  finally{if(platformDraftAlive(panel)&&request===panel.catalogRequest){panel.loadingCatalog=false;panel.refresh.disabled=false;platformDraftBindingRange(panel);platformDraftFormalRange(panel);platformDraftButtons(panel);}}
 }
 async function platformDraftStart(panel){
  if(!platformDraftAlive(panel)||!platformDraftCanStart(panel))return;
+ if(platformDraftHost(panel)!=='codex'){panel.assistantArea.open=true;return platformDraftAssistantCanSync(panel)?platformDraftAssistantConfirm(panel):platformDraftAssistantPrepare(panel,panel.mode.value==='reconcile_only'?'reconcile_only':'inspect_drafts');}
  const readonly=panel.mode.value==='reconcile_only',inspection=platformDraftInspectionValid(panel)?panel.inspection:null;
- if(!readonly&&!inspection){await platformDraftRefreshPlan(panel,false);if(!platformDraftAlive(panel)||!platformDraftCanStart(panel))return;}
+ if(!readonly&&!inspection){if(!await platformDraftRefreshPlan(panel,false)||!platformDraftAlive(panel)||!platformDraftCanStart(panel))return;}
  const bookId=panel.bookId,planId=panel.plan.value,profileId=panel.profile.value,inspectOnly=!readonly&&!inspection;
  panel.starting=true;panel.preview=null;++panel.request;clearTimeout(panel.expiryTimer);platformDraftButtons(panel);panel.status.textContent=inspectOnly?'正在连接并只读检查本次章节…':readonly?'正在启动只读核对…':'正在核验已确认的变更并同步…';
  try{
   const request={plan_id:planId,profile_id:profileId,reconcile_only:readonly,sync_drafts:!readonly&&!inspectOnly,inspect_only:inspectOnly,comparison_policy:'strict',body_encoding:platformDraftRequiredEncoding};
   const preview=await call('platform-drafts/preview',request);
   if(!platformDraftAlive(panel)||panel.bookId!==bookId||panel.plan.value!==planId||panel.profile.value!==profileId)return;
-  if(preview.book_id!==bookId||preview.plan_id!==planId||preview.profile_id!==profileId||preview.profile_sha256!==panel.profiles.find(row=>row.id===profileId)?.sha256||preview.mode!==(inspectOnly?'inspect_drafts':readonly?'reconcile_only':'sync_drafts')||preview.comparison_policy!=='strict'||preview.body_encoding!==platformDraftRequiredEncoding||!preview.profile_sha256||!(preview.can_start||preview.can_connect))throw Error('本次目标或连接状态尚未确认，请重新准备。');
+  if(preview.book_id!==bookId||preview.plan_id!==planId||preview.profile_id!==profileId||preview.profile_sha256!==panel.profiles.find(row=>row.id===profileId)?.sha256||preview.mode!==(inspectOnly?'inspect_drafts':readonly?'reconcile_only':'sync_drafts')||preview.comparison_policy!=='strict'||preview.body_encoding!==platformDraftRequiredEncoding||!preview.profile_sha256)throw Error('本次目标或连接状态尚未确认，请重新准备。');
+  platformDraftObserveConnection(panel,preview.automatic_connection);
+  if(panel.connectionRetryBlocked)throw Object.assign(Error('新的自动浏览器连接已暂停'),{code:'platform_chrome_worker_connection_suspended'});
+  if(!(preview.can_start||preview.can_connect))throw Error('本次目标或连接状态尚未确认，请重新准备。');
   const job=await call('platform-drafts/start',{...request,profile_sha256:preview.profile_sha256,preview_token:preview.preview_token||preview.connect_token,execute:true,auto_connect:preview.can_connect===true&&preview.can_start!==true,...(inspection?{inspection_id:inspection.id}:{})});
   if(job.book_id!==bookId||job.plan_id!==planId||job.comparison_policy!=='strict'||job.body_encoding!==platformDraftRequiredEncoding)throw Error('任务目标无法确认，请刷新任务状态，勿重复保存。');
   if(!platformDraftAlive(panel)){platformDraftTrack(job);return;}
   panel.inspection=null;panel.formalNote.textContent='';platformDraftDrawJob(panel,job);platformDraftSchedule(panel);
- }catch(error){if(platformDraftAlive(panel)){panel.inspection=null;panel.status.textContent='未能确认任务启动：'+error.message+'。请刷新本地状态核对；不会自动重试。';}}
+ }catch(error){if(platformDraftAlive(panel)){panel.inspection=null;const suspended=error.code==='platform_chrome_worker_connection_suspended';if(suspended)platformDraftObserveConnection(panel,{retry_blocked:true});panel.status.textContent=suspended?'新的自动浏览器连接已暂停；本次未启动新的检查或保存。请查看连接说明。':'未能确认任务启动：'+error.message+'。请刷新本地状态核对；不会自动重试。';}}
  finally{if(platformDraftAlive(panel)){panel.starting=false;platformDraftButtons(panel);}}
 }
 function platformDraftBindingRange(panel){
@@ -4828,7 +5279,7 @@ function platformDraftBindingRange(panel){
  if(!panel.plans.length)panel.bindDetails.open=true;
 }
 function platformDraftBindingChanged(panel){
- panel.bindingDirty=true;++panel.request;panel.preview=null;panel.previewExpires=0;clearTimeout(panel.expiryTimer);if(panel.previewBox)panel.previewBox.replaceChildren();panel.bindNote.textContent='绑定信息尚未保存，请先保存绑定并生成清单，或取消本次配置。';platformDraftButtons(panel);
+ panel.selectionGeneration=(panel.selectionGeneration||0)+1;panel.bindingDirty=true;++panel.request;panel.preview=null;panel.previewExpires=0;clearTimeout(panel.expiryTimer);if(panel.previewBox)panel.previewBox.replaceChildren();panel.bindNote.textContent='绑定信息尚未保存，请先保存绑定并生成清单，或取消本次配置。';platformDraftButtons(panel);
 }
 function platformDraftBindingFields(panel){
  const details=platformDraftElement('details',undefined,'platform-draft-binding');details.className='platform-draft-binding';details.append(platformDraftElement('summary','配置番茄账号与作品'));const form=platformDraftElement('form');form.autocomplete='off';panel.bindDetails=details;panel.bindForm=form;panel.bindingInputs=[];
@@ -4850,7 +5301,7 @@ async function platformDraftBind(panel){
  const request=++panel.bindingRequest;panel.binding=true;++panel.request;panel.preview=null;panel.previewExpires=0;clearTimeout(panel.expiryTimer);platformDraftButtons(panel);panel.bindNote.textContent='正在保存本地绑定并生成正式稿清单…';
  try{const packet=await call('platform-drafts/bind',{account_id:account,book_management_url:url,start,end,expected_revision:panel.revision});if(!platformDraftAlive(panel)||request!==panel.bindingRequest)return;
   if(packet.book_id!==panel.bookId||packet.platform!=='fanqie'||packet.account_id!==account||!packet.plan_id||!packet.profile_id||packet.remote_accessed!==false||packet.submission_performed!==false||packet.scope!=='local_binding_and_frozen_plan_only')throw Error('绑定结果无法确认，请刷新本地状态核对。');
-  panel.bindingDirty=false;await platformDraftCatalog(panel,{plan_id:packet.plan_id,profile_id:packet.profile_id});if(!platformDraftAlive(panel)||request!==panel.bindingRequest)return;
+  panel.bindingDirty=false;panel.profileChoice=null;await platformDraftCatalog(panel,{plan_id:packet.plan_id,profile_id:packet.profile_id,profile_sha256:packet.profile_sha256});if(!platformDraftAlive(panel)||request!==panel.bindingRequest)return;
   panel.bindNote.textContent='已保存本地绑定：番茄 · 《'+packet.remote_book_title+'》。'+(packet.plan_reused?'相同目标与正文的冻结清单已复用。':'已生成新的冻结清单。')+'尚未访问平台，请继续核对下方预览。';
  }catch(error){if(platformDraftAlive(panel)&&request===panel.bindingRequest)panel.bindNote.textContent='本地绑定未完成：'+error.message+'。可刷新本地状态核对；未启动平台保存。';}
  finally{if(platformDraftAlive(panel)&&request===panel.bindingRequest){panel.binding=false;platformDraftButtons(panel);}}
@@ -4868,32 +5319,34 @@ async function platformDraftOpen(){
  const settings=platformDraftElement('section'),result=platformDraftElement('section');settings.className='platform-draft-settings';result.className='platform-draft-output';layout.append(settings,result);content.append(layout);
  panel.content=settings;settings.append(platformDraftElement('h3','目标与范围'));
  panel.bindingSummary=platformDraftElement('p',undefined,'platform-binding-summary');settings.append(panel.bindingSummary);platformDraftBindingFields(panel);
- const field=(name,id)=>{const label=platformDraftElement('label',name),select=platformDraftElement('select',undefined,id);label.append(select);settings.append(label);return select;};
- panel.plan=field('本次章节记录','platform-draft-plan');platformDraftRefreshFields(panel);
+ const field=(name,id,parent=settings)=>{const label=platformDraftElement('label',name),select=platformDraftElement('select',undefined,id);label.append(select);parent.append(label);return select;};
+ panel.batchDetails=platformDraftElement('details',undefined,'platform-draft-batch-selection');panel.batchDetails.append(platformDraftElement('summary','切换已有批次（含历史）'));settings.append(panel.batchDetails);
+ panel.plan=field('本次章节记录','platform-draft-plan',panel.batchDetails);platformDraftRefreshFields(panel);
  panel.profile=field('已绑定的平台配置','platform-draft-profile');panel.configNote=platformDraftElement('p');settings.append(panel.configNote);
  panel.mode=field('本次操作','platform-draft-mode');for(const [value,label]of [['sync_drafts','检查差异并同步草稿'],['reconcile_only','只读核对已有记录']]){const option=platformDraftElement('option',label);option.value=value;panel.mode.append(option);}
  panel.encoding=platformDraftElement('input',undefined,'platform-draft-encoding');panel.encoding.type='hidden';panel.encoding.value=platformDraftRequiredEncoding;
  panel.comparison=platformDraftElement('input',undefined,'platform-draft-comparison');panel.comparison.type='hidden';panel.comparison.value='strict';settings.append(panel.encoding,panel.comparison,platformDraftElement('p','只去掉本地 MD 空白行，再逐字核对章名和远端正文。本地文件不变。','platform-draft-format-note'));
  panel.rulesNote=platformDraftElement('p',undefined,'platform-draft-rules-note');panel.rulesNote.setAttribute('role','status');
  const localDetails=platformDraftElement('details');localDetails.append(platformDraftElement('summary','本次章节与排版详情'));panel.previewBox=platformDraftElement('div',undefined,'platform-draft-preview');localDetails.append(panel.previewBox,panel.rulesNote);settings.append(localDetails);
- panel.content=content;result.append(platformDraftElement('h3','本次同步状态'));
+ panel.content=content;result.append(platformDraftElement('h3','本次同步状态'));panel.stageLabel=platformDraftElement('p','1 / 4 · 选择目标与范围','platform-draft-stage');panel.stageLabel.setAttribute('role','status');result.append(panel.stageLabel);
  panel.status=platformDraftElement('p','正在读取…','platform-draft-status');panel.status.setAttribute('role','status');
  panel.changeSummary=platformDraftElement('p',undefined,'platform-draft-change-summary');panel.progressLabel=platformDraftElement('p','本次尚未开始');panel.progress=platformDraftElement('progress');panel.progress.max=1;panel.progress.value=0;panel.progress.setAttribute('aria-label','本次章节进度');
  panel.results=platformDraftElement('ul',undefined,'platform-draft-results');
- panel.recoveryAction=platformDraftElement('button','先只读核对结果');panel.recoveryAction.hidden=true;panel.nextHint=platformDraftElement('p');
- panel.historyRows=[];panel.history=platformDraftElement('p',undefined,'platform-draft-history');panel.historyDetails=platformDraftElement('details',undefined,'platform-draft-history-details');panel.historyDetails.hidden=true;panel.historySummary=platformDraftElement('summary','历史核对记录');panel.historyResults=platformDraftElement('ul',undefined,'platform-draft-history-results');panel.historyDetails.append(panel.historySummary,panel.history,panel.historyResults);
+ panel.recoveryAction=platformDraftElement('button','先只读核对结果');panel.recoveryAction.className='primary';panel.recoveryAction.hidden=true;panel.nextHint=platformDraftElement('p');
+ panel.historyRows=[];panel.history=platformDraftElement('p',undefined,'platform-draft-history');panel.historyDetails=platformDraftElement('details',undefined,'platform-draft-history-details');panel.historyDetails.hidden=true;panel.historySummary=platformDraftElement('summary','历史核对记录');panel.historyJob=platformDraftElement('p',undefined,'platform-draft-history-job');panel.historyInspection=platformDraftElement('div',undefined,'platform-draft-history-inspection');panel.historyResults=platformDraftElement('ul',undefined,'platform-draft-history-results');panel.historyDetails.append(panel.historySummary,panel.historyJob,panel.historyInspection,panel.history,panel.historyResults);
  panel.jobNote=platformDraftElement('p');const jobDetails=platformDraftElement('details');jobDetails.append(platformDraftElement('summary','任务详情'),panel.jobNote);
- panel.permissionHelp=platformDraftPermissionHelp();result.append(panel.status,panel.changeSummary,panel.progressLabel,panel.progress,panel.nextHint,panel.recoveryAction,panel.results,panel.historyDetails,jobDetails,panel.permissionHelp);
- const actions=platformDraftElement('div');actions.className='platform-draft-actions platform-draft-footer';panel.recheck=platformDraftElement('button','重新检查差异','platform-draft-recheck');panel.refresh=platformDraftElement('button','刷新任务状态','platform-draft-refresh');panel.stop=platformDraftElement('button','停止任务','platform-draft-stop');panel.stop.hidden=true;panel.run=platformDraftElement('button','准备并检查差异','platform-draft-start');panel.run.className='primary';const close=platformDraftElement('button','返回稿件');close.onclick=()=>dialog.close();actions.append(close,panel.refresh,panel.recheck,panel.stop,panel.run);content.append(actions);
- panel.plan.onchange=async()=>{panel.inspection=null;platformDraftProfiles(panel);platformDraftFormalRange(panel,true);if(await platformDraftRestoreRules(panel)===null)return;return platformDraftPreview(panel);};
- panel.profile.onchange=async()=>{panel.inspection=null;if(await platformDraftRestoreRules(panel)===null)return;return platformDraftPreview(panel);};
- panel.mode.onchange=()=>{panel.inspection=null;platformDraftFormalRange(panel);return platformDraftPreview(panel);};
+ panel.connectionHelp=platformDraftElement('details',undefined,'platform-draft-connection-help');panel.connectionHelp.hidden=true;panel.connectionHelp.append(platformDraftElement('summary','连接说明'),platformDraftElement('p','当前服务已暂停新的自动浏览器连接，重复检查不会恢复通道。请由 GPT-6.1 Terra 助手核验宿主接入及模型身份。当前版本尚无可核验的桌面会话交接，本面板仍等待核验，不会新建自动连接；已有健康任务的状态仍以任务回执为准。'),platformDraftElement('p','仍可阅读、准备本地章节和查看历史。准备完成不代表已检查或已同步；若有未知保存结果，应先只读核对，不能重复发送。此说明不会连接浏览器或启动任务。'));result.append(panel.connectionHelp);panel.permissionHelp=platformDraftPermissionHelp();result.append(panel.status,panel.changeSummary,panel.progressLabel,panel.progress,panel.nextHint,panel.recoveryAction,panel.results,panel.historyDetails,jobDetails,panel.permissionHelp);
+ platformDraftAssistantFields(panel,result,settings);
+ const actions=platformDraftElement('div');actions.className='platform-draft-actions platform-draft-footer';panel.recheck=platformDraftElement('button','重新检查差异','platform-draft-recheck');panel.refresh=platformDraftElement('button','刷新任务状态','platform-draft-refresh');panel.stop=platformDraftElement('button','停止任务','platform-draft-stop');panel.stop.hidden=true;panel.run=platformDraftElement('button','检查差异','platform-draft-start');panel.run.className='primary';panel.confirmationSummary=platformDraftElement('p',undefined,'platform-draft-confirmation');panel.confirmationSummary.className='platform-draft-confirmation';panel.confirmationSummary.hidden=true;panel.returnAction=platformDraftElement('button','返回原先范围','platform-draft-return');panel.returnAction.hidden=true;panel.returnAction.onclick=()=>platformDraftReturnToCurrent(panel);const close=platformDraftElement('button','返回稿件');close.onclick=()=>dialog.close();actions.append(panel.confirmationSummary,close,panel.returnAction,panel.refresh,panel.recheck,panel.stop,panel.run);content.append(actions);
+ panel.plan.onchange=async()=>{panel.selectionGeneration=(panel.selectionGeneration||0)+1;panel.returnSelection=null;panel.inspection=null;panel.profileChoice=null;platformDraftProfiles(panel);platformDraftFormalRange(panel,true);if(await platformDraftRestoreRules(panel)===null)return;return platformDraftPreview(panel);};
+ panel.profile.onchange=async()=>{panel.selectionGeneration=(panel.selectionGeneration||0)+1;panel.returnSelection=null;panel.inspection=null;const profile=panel.profiles.find(row=>row.id===panel.profile.value),plan=panel.plans.find(row=>row.id===panel.plan.value);panel.profileChoice=profile?{target:platformDraftTargetKey(plan),id:profile.id,sha256:profile.sha256}:null;platformDraftProfiles(panel);if(await platformDraftRestoreRules(panel)===null)return;return platformDraftPreview(panel);};
+ panel.mode.onchange=()=>{panel.selectionGeneration=(panel.selectionGeneration||0)+1;panel.inspection=null;platformDraftFormalRange(panel);return platformDraftPreview(panel);};
  panel.comparison.onchange=()=>platformDraftRememberRules(panel);panel.encoding.onchange=()=>platformDraftRememberRules(panel);
- panel.recheck.onclick=async()=>{panel.inspection=null;return panel.mode.value==='sync_drafts'?platformDraftRefreshPlan(panel,false):platformDraftPreview(panel);};
+ panel.recheck.onclick=()=>platformDraftRecheck(panel);
  panel.refresh.onclick=()=>platformDraftCatalog(panel);panel.run.onclick=()=>platformDraftStart(panel);panel.stop.onclick=()=>platformDraftStop(panel);
  panel.formalFocus=()=>platformDraftFormalState(panel);if(typeof window!=='undefined'&&typeof window.addEventListener==='function')window.addEventListener('focus',panel.formalFocus);
- dialog.addEventListener('close',()=>{clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);clearTimeout(panel.formalTimer);panel.formalRequest=(panel.formalRequest||0)+1;panel.refreshPlanRequest=(panel.refreshPlanRequest||0)+1;if(typeof window!=='undefined'&&typeof window.removeEventListener==='function')window.removeEventListener('focus',panel.formalFocus);++panel.request;++panel.catalogRequest;++panel.bindingRequest;panel.rulesRequest=(panel.rulesRequest||0)+1;if(platformDraftPanel===panel)platformDraftPanel=null;if(panel.job)platformDraftTrack(panel.job);});
- platformDraftButtons(panel);await platformDraftCatalog(panel);await platformDraftFormalState(panel);platformDraftFormalSchedule(panel);
+ dialog.addEventListener('close',()=>{clearTimeout(panel.pollTimer);clearTimeout(panel.expiryTimer);clearTimeout(panel.formalTimer);panel.formalRequest=(panel.formalRequest||0)+1;panel.refreshPlanRequest=(panel.refreshPlanRequest||0)+1;if(typeof window!=='undefined'&&typeof window.removeEventListener==='function')window.removeEventListener('focus',panel.formalFocus);++panel.request;++panel.catalogRequest;++panel.bindingRequest;panel.rulesRequest=(panel.rulesRequest||0)+1;if(platformDraftPanel===panel)platformDraftPanel=null;if(panel.job)platformDraftTrack(panel.job,panel.jobHistorical===true);});
+ platformDraftButtons(panel);await platformDraftCatalog(panel);await platformDraftFormalState(panel);if(platformDraftAlive(panel)&&panel.assistantArea.open)await platformDraftAssistantRefresh(panel);platformDraftFormalSchedule(panel);
 }
 $('platform-drafts-open').onclick=platformDraftOpen;
 platformDraftAvailability();
@@ -4999,7 +5452,7 @@ function documentSaveState(d){
  if(!d)return {kind:'empty',label:'',detail:'',failed:false};
  const changed=!!(d.editable&&d.value!==undefined&&d.value!==d.text),identity=documentIdentity(d),pending=changed||d.needs_recovery;
  if(d.saving)return {kind:'saving',label:'保存中'+(d.savingText!==undefined&&d.value!==d.savingText?' · 新输入仍未保存':''),detail:'正在保存点击时的文字；期间新增输入会继续保留。',failed:false};
- if(d.saveError&&(pending||identity.kind==='recovery'||d.pendingSaveReadback||d.failedSaveOptions?.newVersion))return {kind:'error',label:d.saveResultPending?'候选已写入 · 回读未确认':'保存失败 · 可重试或下载',detail:d.saveError,failed:true,retry:d.saveResultPending?'readback':'save'};
+ if(d.saveError&&(pending||identity.kind==='recovery'||d.pendingSaveReadback||d.failedSaveOptions?.newVersion))return {kind:'error',label:d.saveResultPending?(d.pendingSaveReadback?.id?'候选已写入 · 回读未确认':'保存结果未知 · 请先核对'):d.pendingSaveReadback?.not_started?'保存尚未执行 · 可重试':'保存失败 · 可重试或下载',detail:d.saveError,failed:true,retry:d.saveResultPending?'readback':'save'};
  if(d.recovering&&pending)return {kind:'recovering',label:'正在保存恢复副本 · 尚未保存候选',detail:'恢复副本完成后仍需手动保存候选；正式稿不会改变。',failed:false};
  if(d.recoveryError&&pending)return {kind:'error',label:'恢复副本保存失败 · 当前修改未保存',detail:d.recoveryError,failed:true,retry:'recover'};
  if(d.needs_recovery)return {kind:'pending',label:'保存结果待核对 · 可恢复为新候选',detail:'完整文字已保留；原保存记录尚未确认完成。',failed:false};
@@ -5214,7 +5667,15 @@ function showChapterInfo(d){$('context-title').textContent=d.image?'封面信息
  const checked=d.context_check,stale=checked?.chapter===ctx.chapter&&checked.revision>=ctx.revision&&checked.context_sha256!==ctx.context_sha256;
  if(stale)add('辅助信息已过期',d.kind==='plan'?'已保存章计划或相关正式状态已变化；中栏计划和以下辅助信息仍为载入时版本。请用“重新读取文件”核对。':'本章计划、前章衔接或正式稿记录已变化；以下辅助信息仍为载入时版本。当前文字和未保存编辑已保留，请用“重新读取文件”或“保留恢复稿并重新载入”核对。');
  const fold=(label)=>{const section=document.createElement('details');section.dataset.section=label;section.open=expanded.has(label);const summary=document.createElement('summary');summary.textContent=label;section.append(summary);box.append(section);return section;};
- add('第'+ctx.chapter+'章 · 目标',p?.goal||'尚未保存工具章计划');add('停笔点',p?.stop);
+ const compact=(label,text)=>{
+  if(!text)return;const characters=Array.from(text);
+  if(characters.length<=100&&text.split('\n').length<=3){add(label,text);return;}
+  const section=fold(label);section.className='context-summary';
+  const preview=document.createElement('span'),previewText=Array.from(text.replace(/\s+/g,' ').trim());preview.className='context-preview';preview.textContent=previewText.slice(0,64).join('')+(previewText.length>64?'…':'');
+  const hint=document.createElement('span');hint.className='context-expand-label';hint.textContent='展开全文';
+  section.firstElementChild.append(preview,hint);const full=document.createElement('p');full.textContent=text;section.append(full);
+ };
+ compact('第'+ctx.chapter+'章 · 目标',p?.goal||'尚未保存工具章计划');compact('停笔点',p?.stop);
  add('前章摘要',ctx.previous_summary||'没有已提交的前章摘要',fold('前章衔接'));add('完整约束',(p?.constraints||[]).join('\n'),fold('本章约束'));
  const related=(currentCatalog?.related_files||currentCatalog?.files||[]).filter(r=>!r.external&&Number(r.chapter||r.path.split('/').pop().match(/^第(\d+)章(?:\s|_|\.)/)?.[1])===ctx.chapter);
  if(related.length){const relatedBox=fold('相关材料 · '+related.length);add('关联说明','同章号匹配仅用于导航，不代表已经采用。',relatedBox);related.slice(0,30).forEach(r=>relatedBox.append(item(r)));}
@@ -5289,7 +5750,7 @@ function setupWorkspace(){
  $('locate').onclick=()=>{$('search').value='';catalog(true,true);};
  $('compare-back').onclick=leaveComparison;$('diff-prev').onclick=()=>stepDiff(-1);$('diff-next').onclick=()=>stepDiff(1);
  $('refresh-compact').onclick=()=>{catalog.materialCursor=null;catalog();};
- $('materials-more').onclick=()=>catalog(false,false,true);
+ $('materials-more').onclick=()=>{if(catalog.materialsNeedReload){catalog.materialCursor=null;return catalog();}return catalog(false,false,true);};
  const narrow=matchMedia('(max-width:820px)');let panelOpener=null;
  const syncPanels=()=>{const opened=narrow.matches?document.body.classList.contains('context-open'):!document.body.classList.contains('context-closed')&&!document.body.classList.contains('focus-reading');$('context-toggle').textContent=opened?'收起辅助栏':'辅助信息';$('context-toggle').setAttribute('aria-expanded',String(opened));const navOpened=narrow.matches?document.body.classList.contains('nav-open'):!document.body.classList.contains('nav-closed');$('nav-toggle').textContent=navOpened?'收起目录':'作品目录';$('nav-toggle').setAttribute('aria-expanded',String(navOpened));};
  closePanels=(restore=true)=>{document.body.classList.remove('nav-open','context-open');document.querySelector('main').inert=false;document.querySelector('header').inert=false;$('book-nav').inert=false;$('book-context').inert=false;syncPanels();const opener=panelOpener;panelOpener=null;if(restore&&opener)opener.focus({preventScroll:true});};
@@ -5337,14 +5798,17 @@ async function catalog(focusCurrent=false,navigation=false,loadMaterials=false){
  if(loading){reloadPending=true;pendingFocus=pendingFocus||focusCurrent;catalog.pendingMaterialMore=catalog.pendingMaterialMore||loadMaterials;return;}
  loading=true;pendingFocus=focusCurrent;
  $('materials-more').disabled=true;
- const query=$('search').value,mode=viewMode;
+ const query=$('search').value,mode=viewMode,restartingMaterials=!!catalog.materialsNeedReload&&!catalog.materialCursor;
  try{
   const c=await call('catalog',{offset,query,focus:focusCurrent?chapterNumber(docs.get(active)||{}):null,context_chapter:chapterNumber(docs.get(active)||{})||null,material_cursor:catalog.materialCursor||null,material_more:loadMaterials});
   // A queued operation owns the current offset. Never replace it with an old response.
   if(reloadPending||query!==$('search').value||mode!==viewMode)return;
   catalog.materialCursor=c.materials?.cursor||null;
+  catalog.materialsNeedReload=false;
+  $('materials-more').textContent='继续加载材料';
   $('materials-more').hidden=!c.materials?.has_more;
   $('materials-more').disabled=!c.materials?.has_more;
+  $('materials-status').dataset.state='';
   $('materials-status').textContent=c.materials?'已加载 '+c.materials.loaded+' 份材料'+(c.materials.complete?' · 目录扫描已完成':c.materials.hard_limit?' · 已达本轮核对上限，仍有未覆盖文件':' · 尚有材料未加载'):'';
   $('directory-warning').textContent=(c.warnings||[]).join('\n');
   const expandedGroups=new Map([...$('list').querySelectorAll('details')].map(g=>[g.dataset.group,g.open]));
@@ -5368,6 +5832,7 @@ async function catalog(focusCurrent=false,navigation=false,loadMaterials=false){
    $('older').disabled=!c.has_more;$('newer').disabled=offset===0;
   }
   drawCatalog(c,expandedGroups);$('list').parentElement.scrollTop=listScroll;badge();
+  if(restartingMaterials)note('材料目录已重新加载，当前稿件与未保存文字已保留。');
   if(focusCurrent&&active)locateActive();
   if(!active&&typeof creatorResumeLoading!=='undefined'&&creatorResumeLoading&&!creatorResumeApplied){
    creatorResumeApplied=true;const resumePacket=await creatorResumeLoading;
@@ -5379,8 +5844,15 @@ async function catalog(focusCurrent=false,navigation=false,loadMaterials=false){
    id=id||c.chapters[0]?.id||c.files[0]?.id||c.workspace?.groups[0]?.items[0]?.id;
    if(id)await openDoc(id);
   }
- }catch(e){if(!reloadPending&&query===$('search').value&&mode===viewMode)note(e.message);}
- finally{loading=false;if(reloadPending){reloadPending=false;const focus=pendingFocus,more=!!catalog.pendingMaterialMore;pendingFocus=false;catalog.pendingMaterialMore=false;catalog(focus,false,more);}else if(currentCatalog?.materials?.has_more)$('materials-more').disabled=false;}
+ }catch(e){if(!reloadPending&&query===$('search').value&&mode===viewMode){
+  if(['workbench_material_cursor_expired','workbench_material_cursor_changed'].includes(e.code)){
+   catalog.materialsNeedReload=true;$('materials-status').dataset.state='error';
+   $('materials-status').textContent=e.message+' 已显示的目录和编辑内容已保留。';
+   $('materials-more').textContent='重新加载材料目录';$('materials-more').hidden=false;
+  }
+  note(e.message);
+ }}
+ finally{loading=false;if(reloadPending){reloadPending=false;const focus=pendingFocus,more=!!catalog.pendingMaterialMore;pendingFocus=false;catalog.pendingMaterialMore=false;catalog(focus,false,more);}else if(catalog.materialsNeedReload||currentCatalog?.materials?.has_more)$('materials-more').disabled=false;}
 }
 async function recover(d,force=false){
  if(!d)return false;
@@ -5403,12 +5875,30 @@ async function saveDocument(d,options={}){
  if(options.newVersion&&d.pendingSaveReadback){note('请先核对上次保存结果，再保留新的版本；当前文字仍保留。');return false;}
  if((!dirty(d)&&!d.needs_recovery&&!d.pendingSaveReadback&&documentIdentity(d).kind!=='recovery'&&!options.newVersion)||d.saving||reloading)return false;
  const pending=d.pendingSaveReadback&&!options.newVersion?d.pendingSaveReadback:null;
- const saveMode=options.newVersion||d.needs_recovery||documentIdentity(d).kind==='recovery'?'version':'working';
- d.saveError='';d.saveResultPending=false;const text=pending?pending.text:d.value;d.saving=true;d.savingText=text;let receipt=pending;badge();
+ const saveMode=pending?.payload?.save_mode||(options.newVersion||d.needs_recovery||documentIdentity(d).kind==='recovery'?'version':'working');
+ d.saveError='';d.saveResultPending=false;const text=pending?pending.text:d.value;d.saving=true;d.savingText=text;let receipt=pending,submitting=false;badge();
  try{
   if(!pending)await recover(d);
-  const r=pending||await call('save',{id:d.id,sha256:d.sha256,snapshot:d.snapshot,metadata_sha256:d.metadata_sha256,text,save_mode:saveMode});receipt=r;d.pendingSaveReadback={id:r.id,text};
+  let r=pending;
+  if(pending?.request_id&&!pending.id&&!pending.not_started){
+   r=await call('save-status',{request_id:pending.request_id});
+   if(r.request_id!==pending.request_id)throw Error('保存核对回执不匹配，请保留文字后重试核对。');
+   if(r.state==='not_started'){
+    pending.not_started=true;d.saveResultPending=false;d.saveError='已确认上次保存尚未开始；再次点击保存会重试上次提交的文字，后续输入仍保留。';
+    note(d.saveError);return false;
+   }
+   if(r.state!=='saved')throw Error(r.state==='changed'?'保存目标后来发生变化，不能将其当作本次保存成功；请下载当前文字并到恢复中心核对。':'保存仍未完整确认；请保留当前文字并到恢复中心核对，尚未重复写入。');
+  }
+  if(!pending||pending.not_started){
+   const request_id=pending?.request_id||crypto.randomUUID(),payload=pending?.payload||{id:d.id,sha256:d.sha256,snapshot:d.snapshot,metadata_sha256:d.metadata_sha256,text,save_mode:saveMode,request_id};
+   d.pendingSaveReadback={request_id,text,payload};receipt=d.pendingSaveReadback;
+   submitting=true;r=await call('save',payload);submitting=false;
+   if(r.request_id&&r.request_id!==request_id)throw Error('保存回执不匹配，请先核对本次保存结果。');
+  }
+  if(!r?.id||(r.state&&r.state!=='saved'))throw Error('保存结果尚未确认，请先核对，勿重复写入。');
+  receipt=r;d.pendingSaveReadback={...r,text};
   const fresh=await call('open',{id:r.id}),cached=docs.get(r.id);
+  if(fresh.text!==text||(r.sha256&&fresh.sha256!==r.sha256)||(r.metadata_sha256&&fresh.metadata_sha256!==r.metadata_sha256))throw Error('保存后的文件或来源已变化；当前输入仍保留，请下载文字并核对恢复记录。');
   // A refresh can expose the new candidate before this readback completes.
   // Keep that opened object, including edits, recovery keys and in-flight saves.
   const existing=cached&&cached!==d,target=existing?cached:fresh;
@@ -5428,7 +5918,13 @@ async function saveDocument(d,options={}){
   if(active===target.id)note(dirty(target)||target.needs_recovery||target.saving?'提交时文字已保存为候选；当前文件仍有未完成编辑，请继续保存。':'候选已保存 · '+new Date().toLocaleTimeString()+' · 尚未正式采用');
   else if(active===d.id&&retained)note('提交时文字已保存为候选；保存期间新增编辑仍在当前文件，尚未保存。');
   catalog.materialCursor=null;try{await catalog(active===target.id);}catch(e){note('候选已保存，目录刷新未完成：'+e.message);}return true;
- }catch(e){d.saveError=e.message||String(e);d.saveResultPending=!!receipt;d.failedSaveOptions={newVersion:saveMode==='version'};note(d.saveError+' 当前文字仍在编辑器中；请重试或下载当前文字。');return false;}
+ }catch(e){
+  // These rejections occur before an intent or manuscript write. Transport
+  // failures and partial writes keep the operation for read-only reconciliation.
+  if(submitting&&['invalid_input','stale_snapshot','workbench_changed'].includes(e.code)){delete d.pendingSaveReadback;receipt=null;}
+  d.saveError=e.message||String(e);d.saveResultPending=!!receipt;d.failedSaveOptions={newVersion:saveMode==='version'};
+  note(d.saveError+(d.saveResultPending?' 当前文字仍在编辑器中；请先重试核对或下载文字，不会自动重复保存。':' 当前文字仍在编辑器中；请重试或下载当前文字。'));return false;
+ }
  finally{d.saving=false;delete d.savingText;badge();}
 }
 $('save').onclick=()=>saveDocument(docs.get(active));
@@ -5480,7 +5976,7 @@ $('refresh').onclick=()=>{catalog.materialCursor=null;catalog();};
 $('reload-source').onclick=()=>reloadDocuments(false);
 $('recover-reload').onclick=()=>reloadDocuments(true);
 $('search').oninput=()=>{clearTimeout(queryTimer);offset=0;pendingFocus=false;queryTimer=setTimeout(()=>catalog(false,true),300);};$('older').onclick=()=>{offset+=LIMIT;catalog(false,true);};$('newer').onclick=()=>{offset=Math.max(0,offset-LIMIT);catalog(false,true);};
-window.addEventListener('beforeunload',event=>{if([...docs.values()].some(d=>dirty(d)||d.saving||d.needs_recovery||d.pendingSaveReadback||(d.saveError&&d.failedSaveOptions?.newVersion))){event.preventDefault();event.returnValue='';}});
+window.addEventListener('beforeunload',event=>{if([...docs.values()].some(d=>dirty(d)||d.saving||d.needs_recovery||d.pendingSaveReadback||(d.saveError&&d.failedSaveOptions?.newVersion))||(typeof assistantTaskFormBuffers==='function'&&assistantTaskFormBuffers().some(d=>d.dirty||d.saving||d.recovering||d.needs_recovery))){event.preventDefault();event.returnValue='';}});
 window.addEventListener('hashchange',()=>{let id;try{id=decodeURIComponent(location.hash.slice(1));}catch{return;}if(/^chapter-\d+$/.test(id))id='formal:'+id.slice(8);if(id&&id!==active)openDoc(id);});
 __EDITOR_TOOLS____ASSISTANT_TASKS____PLATFORM_DRAFTS____RESUME_SCRIPT____PRESENCE_SCRIPT____CREATOR_SCRIPT__setupWorkspace();setupCreatorWorkspace();catalog();""".replace('__EDITOR_TOOLS__', _editor_tools_script()).replace('__ASSISTANT_TASKS__', _assistant_tasks_script().replace('__TASK_BOOK_ID__', json.dumps(packet['book'].get('id')))).replace('__PLATFORM_DRAFTS__', _editor_platform_drafts_script()).replace('__RESUME_SCRIPT__', _editor_resume_script()).replace('__PRESENCE_SCRIPT__', _editor_presence_script().replace('__EDITOR_PRESENCE_CONFIG__', json.dumps(page_config))).replace('__CREATOR_SCRIPT__', _editor_creator_script().replace('__CREATOR_BOOK_ID__', json.dumps(packet['book'].get('id')))).replace('__TOKEN__', json.dumps(token)).replace('__LIMIT__', str(packet['chapters']['limit'])).replace('__BOOK_DISPLAY__', _book_display_script())
     # Keep the session-token declaration on its own first line so the interface
@@ -6013,6 +6509,31 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                         comparison_policy=payload.get('comparison_policy', 'strict'), body_encoding=encoding,
                         sync_drafts=payload.get('sync_drafts', False), inspect_only=payload.get('inspect_only', False),
                         inspection_id=payload.get('inspection_id'))
+                elif action == 'api/platform-drafts/assistant-prepare':
+                    fields = {'plan_id', 'profile_id', 'profile_sha256', 'mode', 'comparison_policy', 'body_encoding'}
+                    optional = {'inspection_id', 'confirmed', 'execution_host', 'native_model_authorized'}
+                    if not fields <= set(payload) or set(payload) - fields - optional:
+                        api.fail('invalid_input', '助手任务仅接受当前批次、配置摘要、固定规则及明确同步确认。')
+                    if 'confirmed' in payload and type(payload['confirmed']) is not bool:
+                        api.fail('invalid_input', '同步确认必须为布尔值。')
+                    if 'native_model_authorized' in payload and type(payload['native_model_authorized']) is not bool:
+                        api.fail('invalid_input', '本次原生模型授权必须为布尔值。')
+                    result = api.platform_drafts.workbench_assistant_prepare(root, payload.get('plan_id'), payload.get('profile_id'),
+                        expected_book_id=identity['book_id'], expected_profile_sha256=payload.get('profile_sha256'),
+                        mode=payload.get('mode'), comparison_policy=payload.get('comparison_policy'),
+                        body_encoding=payload.get('body_encoding'), inspection_id=payload.get('inspection_id'),
+                        confirmed=payload.get('confirmed', False), execution_host=payload.get('execution_host', 'codex'),
+                        native_model_authorized=payload.get('native_model_authorized', False))
+                elif action == 'api/platform-drafts/assistant-latest':
+                    if set(payload) != {'plan_id', 'profile_id'}:
+                        api.fail('invalid_input', '仅接受当前作品的批次和配置标识。')
+                    result = api.platform_drafts.workbench_assistant_latest(root, payload.get('plan_id'), payload.get('profile_id'),
+                        expected_book_id=identity['book_id'])
+                elif action in ('api/platform-drafts/assistant-status', 'api/platform-drafts/assistant-cancel'):
+                    if set(payload) != {'request_id'}:
+                        api.fail('invalid_input', '仅接受助手任务标识，不接受执行结果或模型证明。')
+                    operation = api.platform_drafts.workbench_assistant_cancel if action.endswith('/assistant-cancel') else api.platform_drafts.workbench_assistant_status
+                    result = operation(root, payload.get('request_id'), expected_book_id=identity['book_id'])
                 elif action == 'api/platform-drafts/job':
                     result = api.platform_drafts.workbench_job(root, payload.get('id'), expected_book_id=identity['book_id'])
                 elif action == 'api/platform-drafts/stop':
@@ -6086,6 +6607,10 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                     document_id = payload.get('id')
                     result = (_linked_material_document(materials, document_id) if isinstance(document_id, str) and document_id.startswith('linked:')
                               else _editor_document(root, document_id))
+                elif action == 'api/save-status':
+                    if set(payload) != {'request_id'}:
+                        api.fail('invalid_input', '保存核对仅接受本次保存操作标识。')
+                    result = _editor_save_status(root, payload)
                 elif action in ('api/save', 'api/recover'):
                     result = _editor_save(root, payload, recovery=action.endswith('recover'))
                 elif action == 'candidate':
@@ -7185,16 +7710,34 @@ def library_server(state_dir=None, port=8765, library_books=None):
                             # Service capabilities stay in their on-disk record.
                             result = {k: value for k, value in result.items() if k not in ('url', 'instance', 'pid', 'root')}
                     elif self.path == '/api/restore-backup':
-                        if len(registry) >= 30:
+                        destination = payload.get('destination')
+                        if not isinstance(destination, str) or not destination.strip():
+                            api.fail('archive_path', '请填写明确的本地文件或目录。')
+                        destination = _library_state_dir(destination)
+                        destination_key = hashlib.sha256(str(destination).encode()).hexdigest()[:20]
+                        previous = registry.get(destination_key)
+                        if previous is None and len(registry) >= 30:
                             api.fail('invalid_input', '书架已满，请先移出一部作品。')
-                        result = api.workbench_archives.restore_archive(payload.get('archive'), payload.get('destination'))
-                        entry = _library_entry(result['root'], {'book_id': result['book_id']})
+                        if previous is not None:
+                            inspected = api.workbench_archives.inspect_archive(payload.get('archive'))
+                            if inspected['book_id'] != previous['book_id']:
+                                api.fail('workbench_book_changed', '恢复目标仍登记着另一作品，未创建恢复目录；请使用新的目录，原书架登记保留。')
+                        result = api.workbench_archives.restore_archive(payload.get('archive'), str(destination))
                         try:
+                            entry = _library_entry(result['root'], {'book_id': result['book_id']})
+                            previous = registry.get(entry['key'])
+                            # The archive may have changed after inspection.
+                            # Never let automatic registration rebind a book.
+                            if previous is not None:
+                                if previous['book_id'] != entry['book_id']:
+                                    api.fail('workbench_book_changed', '恢复出的书库与原登记身份不同，请保留两者并核对。')
+                                entry = {**previous, **entry}
                             updated = {**registry, entry['key']: entry}
                             registry_hash = _library_store(root, updated, registry_hash)
                             registry = updated
+                            result['registered'] = True
                         except (api.StoryError, OSError) as error:
-                            result.update(registered=False, warning='副本已恢复，书架登记未完成；请添加已有作品：' + str(error))
+                            result.update(registered=False, warning='副本已恢复，书架登记未完成；原登记保持不变，请核对恢复目录后重新登记：' + str(error))
                         result = {**_library_catalog(registry), **result}
                     elif self.path == '/api/recoveries':
                         key = payload.get('key')
@@ -7228,7 +7771,7 @@ def library_server(state_dir=None, port=8765, library_books=None):
                         return self.reply(404, b'{}')
                     if self.path in ('/api/books', '/api/add-book', '/api/set-book-status', '/api/create-book',
                                      '/api/remove-book', '/api/undo-remove', '/api/relink-book',
-                                     '/api/trash-book', '/api/restore-backup'):
+                                     '/api/trash-book', '/api/restore-backup', '/api/repair-registration'):
                         # HTTPServer serializes these snapshots. The client must
                         # keep this order even if promises resolve out of order.
                         catalog_generation += 1
