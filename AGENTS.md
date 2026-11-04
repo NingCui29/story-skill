@@ -18,3 +18,30 @@
   clients independently, including changes to their bundled manuscript service.
 - Preserve published tags, artifacts, and historical receipts. Record development,
   build, release, installation, and running-service states separately.
+
+# Project management and traceability
+
+- Treat the user's project-management, incident-review, and GitHub version-control
+  requirements as hard project constraints. Explain the exact intended changes
+  before modifying code, configuration, or the installed application.
+- Record each change and incident: symptoms, scope, observed evidence, confirmed
+  root cause or explicit uncertainty, prior occurrences, previous working version,
+  affected versions, remedy, validation, residual risk, and rollback. Preserve
+  success records as well as failure records; distinguish similar errors from
+  proven identical root causes. Do not store manuscripts, credentials, tokens,
+  or private browser/session data in project or diagnostic records.
+- Give errors stable queryable codes and an incident identifier. Unknown failures
+  must remain distinguishable as unknown; do not invent a root cause or treat a
+  structural fingerprint as proof that two errors have the same cause.
+- For every fix, run relevant regression checks for previously observed failures,
+  retain failed or flaky results, and verify the complete authorized workflow.
+  Distinguish source tests from build, installation, running-service and real
+  platform verification. Never declare end-to-end success from an intermediate
+  checkpoint, and do not bypass host authorization or replay uncertain writes.
+- Sync verified changes promptly to GitHub through a reviewable branch and commit;
+  preserve unrelated existing changes, historical tags and artifacts. If a change
+  cannot yet be safely isolated, tested or synchronized, record its exact state
+  and blocker rather than claiming it was pushed or silently mixing work.
+- Apply these rules separately to Windows and Mac. Prefer the web workbench unless
+  the user asks to open or validate a particular client. See
+  `docs/Windows草稿项目管理.md` and `docs/Windows草稿连接故障复盘.md`.
