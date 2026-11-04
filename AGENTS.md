@@ -24,6 +24,7 @@
 - Treat the user's project-management, incident-review, and GitHub version-control
   requirements as hard project constraints. Explain the exact intended changes
   before modifying code, configuration, or the installed application.
+- Do not add or expand product features beyond the user's requested scope.
 - Record each change and incident: symptoms, scope, observed evidence, confirmed
   root cause or explicit uncertainty, prior occurrences, previous working version,
   affected versions, remedy, validation, residual risk, and rollback. Preserve
