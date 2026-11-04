@@ -38,7 +38,10 @@
   Distinguish source tests from build, installation, running-service and real
   platform verification. Never declare end-to-end success from an intermediate
   checkpoint, and do not bypass host authorization or replay uncertain writes.
-- Sync verified changes promptly to GitHub through a reviewable branch and commit;
+- Sync changes promptly to GitHub only after the relevant working behavior has
+  been verified, through a reviewable branch and commit; do not represent an
+  unverified or failing candidate as a usable version. Project rules and incident
+  records may be synchronized separately when they accurately disclose status;
   preserve unrelated existing changes, historical tags and artifacts. If a change
   cannot yet be safely isolated, tested or synchronized, record its exact state
   and blocker rather than claiming it was pushed or silently mixing work.
