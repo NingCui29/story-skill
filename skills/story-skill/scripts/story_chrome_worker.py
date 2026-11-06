@@ -816,7 +816,8 @@ def _assistant_readonly_queue(directory, binding, worker_pid, *, reset_after=Non
     return rows
 
 
-def assistant_retire_readonly_session(root, binding, context, *, request_id, request_binding_sha256, evidence_path):
+def assistant_retire_readonly_session(root, binding, context, *, request_id, request_binding_sha256, evidence_path,
+                                      expected_snapshot=None):
     """Explicit operator isolation, never a claim that a worker promise finished.
 
     The operator attests the official kernel reset and the user's save/quit
@@ -865,6 +866,11 @@ def assistant_retire_readonly_session(root, binding, context, *, request_id, req
             any(bridge._owner_alive(root, {"owner_pid": row["pid"]}) for row in processes)):
         raise WorkerError("platform_draft_assistant_reset_process_alive")
     with bridge._directory(Path(root).resolve(), handle["session_id"]) as directory, bridge._lock(directory):
+        if expected_snapshot is not None:
+            with _assistant_bound_evidence(root, binding, context) as bound:
+                current = _assistant_reconcile_snapshot(root, binding, context, bound, directory, handle, expected)
+            if any(current.get(key) != value for key, value in expected_snapshot.items() if key != "lease_sha256"):
+                raise WorkerError("platform_draft_assistant_reconcile_changed")
         session = bridge._session(directory)
         if (bridge._restored_evidence(directory) or session["binding"] != binding or
                 not hmac.compare_digest(session["token_sha256"], hashlib.sha256(handle["token"].encode()).hexdigest())):
@@ -895,7 +901,52 @@ def assistant_retire_readonly_session(root, binding, context, *, request_id, req
     return receipt
 
 
-def assistant_reconcile_session(root, binding, context, *, request_id, request_binding_sha256, evidence_path):
+def _assistant_reconcile_snapshot(root, binding, context, bound, session_dir, handle, expected):
+    """Read the existing reconciliation gates under the caller's pinned locks."""
+    core, bridge = api, api.platform_chrome_bridge
+    if bound is None or bound["receipt"] is not None or bridge._restored_evidence(session_dir):
+        raise WorkerError("platform_draft_assistant_reconcile_invalid")
+    if bridge._owner_alive(root, {"owner_pid": expected["pid"]}):
+        raise WorkerError("platform_draft_assistant_reconcile_process_alive")
+    session = bridge._session(session_dir)
+    if (session["binding"] != binding or not hmac.compare_digest(
+            session["token_sha256"], hashlib.sha256(handle["token"].encode()).hexdigest())):
+        raise WorkerError("platform_draft_assistant_reconcile_invalid")
+    health = bridge._health_record(session_dir, session)
+    if health is not None and health["worker"] != expected:
+        raise WorkerError("platform_draft_assistant_reconcile_invalid")
+    lease = bridge._read(session_dir, "lease.json", maximum=16384)
+    if (not isinstance(lease, dict) or lease.get("session_id") != handle["session_id"] or
+            type(lease.get("detached")) is not bool or type(lease.get("expires")) not in (int, float) or
+            not math.isfinite(lease["expires"]) or
+            (lease["expires"] > time.time() and lease["detached"] is not True)):
+        raise WorkerError("platform_draft_assistant_reconcile_invalid")
+    queue = _assistant_readonly_queue(session_dir, binding, expected["pid"])
+    latest = _assistant_ownership_snapshot(bound["directory"], handle["session_id"], bound["fingerprint"], expected)
+    if _assistant_health_browser(bound["directory"], handle["session_id"], bound["fingerprint"], expected) != latest["browser_id"]:
+        raise WorkerError("platform_draft_assistant_reconcile_invalid")
+    return {"config_path": context["config_path"], "controller_instance": context["controller_instance"],
+            "session_id": handle["session_id"], "browser_id": latest["browser_id"],
+            "owned_tab_ids": list(latest["owned_tab_ids"]), "ownership_observed_at_ms": latest["observed_at_ms"],
+            "binding_sha256": bound["fingerprint"], "config_sha256": bridge._digest(bound["config"]),
+            "handle_sha256": bridge._digest(handle), "session_sha256": bridge._digest(session),
+            "lease_sha256": bridge._digest(lease), "queue_sha256": bridge._digest(queue),
+            "ownership_sha256": bridge._digest(latest)}
+
+
+def assistant_reconcile_preflight(root, binding, context):
+    """Read-only eligibility and immutable identities; never renew or detach a lease."""
+    bridge = api.platform_chrome_bridge
+    _, handle, expected, _ = _assistant_reset_metadata(root, binding, context)
+    with _assistant_bound_evidence(root, binding, context) as bound:
+        if bound is None:
+            raise WorkerError("platform_draft_assistant_reconcile_invalid")
+        with bridge._directory(Path(root).resolve(), handle["session_id"]) as session_dir, bridge._lock(session_dir):
+            return _assistant_reconcile_snapshot(root, binding, context, bound, session_dir, handle, expected)
+
+
+def assistant_reconcile_session(root, binding, context, *, request_id, request_binding_sha256, evidence_path,
+                                expected_snapshot=None):
     """Record a machine-verified absent read-only session; never a worker success.
 
     The host supplies only the observed tab inventory. This function
@@ -926,6 +977,9 @@ def assistant_reconcile_session(root, binding, context, *, request_id, request_b
             raise WorkerError("platform_draft_assistant_reconcile_process_alive")
         with bridge._directory(Path(root).resolve(), handle["session_id"]) as session_dir, \
                 bridge._lock(session_dir):
+            if expected_snapshot is not None and _assistant_reconcile_snapshot(
+                    root, binding, context, bound, session_dir, handle, expected) != expected_snapshot:
+                raise WorkerError("platform_draft_assistant_reconcile_changed")
             if bridge._restored_evidence(session_dir):
                 raise WorkerError("platform_draft_assistant_reconcile_invalid")
             session = bridge._session(session_dir)

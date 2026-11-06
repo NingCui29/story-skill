@@ -67,6 +67,7 @@ Google Antigravity 使用 `--host antigravity`（2.0／IDE）或 `--host antigra
 | 使用工作台、管理作品与备份恢复 | [工作台操作与进展](工作台需求与进展.md)、[实现与限制](本地工作台分析.md) |
 | 安装双端客户端、检查更新与下载 | [Mac](../desktop/macos/README.md)、[Windows](../desktop/windows/README.md)、[更新流程](工作台更新流程.md)、[分块续传与精简更新](工作台快速更新.md) |
 | 准备离线材料、配置与核对平台草稿 | [发布流程](platform-publishing.md)、[平台草稿范围](../skills/story-skill-publish/references/platform-drafts.md) |
+| 排查工作台草稿阻塞、复核修复与防复发记录 | [工作台草稿问题追踪](工作台草稿问题追踪.md) |
 | 从参考作品提炼方法，再设计自己的新书 | [从拆书开始，新起一本书](../README.md#从拆书开始) |
 | 查看深读方法、分析稿修订与实际试用 | [作品深读与评估](作品深读与评估.md) |
 | 改善冲突、人物选择、对白和看点 | [中文冲突与看点](中文冲突与看点.md) |

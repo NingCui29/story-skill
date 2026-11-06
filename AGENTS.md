@@ -18,3 +18,14 @@
   clients independently, including changes to their bundled manuscript service.
 - Preserve published tags, artifacts, and historical receipts. Record development,
   build, release, installation, and running-service states separately.
+
+# Issue records and regression prevention
+
+- Record discovered defects in the relevant repository issue log before closing
+  the work: trigger, observed failure, root cause, fix, regression coverage, and
+  the actual verification boundary. Preserve failed attempts and unresolved steps.
+- Track workbench platform-draft defects in `docs/工作台草稿问题追踪.md`.
+  Add focused regression checks for reproducible functional failures.
+- Validate requested workbench flows through the workbench. Keep source tests,
+  installed files, running services, and real platform results distinct; a passing
+  simulation or file comparison must not close an unverified UI or platform step.

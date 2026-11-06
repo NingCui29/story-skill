@@ -54,7 +54,11 @@ _WORKBENCH_JOBS = {}
 _WORKBENCH_BINDINGS = {}
 _PREVIEW_SECRET = secrets.token_bytes(32)
 ASSISTANT_DIRECTORY = ".story/platform-assistant-tasks"
+ASSISTANT_ARCHIVE_DIRECTORY = "archive-never-started"
 ASSISTANT_SECONDS = 600
+ASSISTANT_RECOVERY_DIRECTORY = ".story/platform-assistant-recovery"
+ASSISTANT_RECOVERY_SECONDS = 600
+ASSISTANT_OBSERVATION_SECONDS = 120
 _ASSISTANT_MODES = {"inspect_drafts", "reconcile_only", "sync_drafts"}
 _ASSISTANT_STATES = {"prepared", "running", "inspection_ready", "inspection_blocked", "succeeded",
                      "unknown", "failed", "cancelled", "stopped", "interrupted", "expired", "partial_failure"}
@@ -2907,10 +2911,19 @@ def _assistant_host(execution_host="codex", native_model_authorized=False):
 
 def _assistant_read(directory, request_id):
     request_id = _assistant_id(request_id)
+    archived = False
     try:
         record = api.platform_chrome_bridge._read(directory, request_id + ".json", maximum=4 * 1024 * 1024)
     except FileNotFoundError:
-        api.fail("platform_draft_assistant_request_missing", "未找到本书的助手协助任务。")
+        try:
+            with _assistant_archive_directory(directory) as archive:
+                record = api.platform_chrome_bridge._read(archive, request_id + ".json", maximum=4 * 1024 * 1024)
+                _assistant_archive_receipt(archive, request_id, record)
+                archived = True
+        except FileNotFoundError:
+            api.fail("platform_draft_assistant_request_missing", "未找到本书的助手协助任务。")
+    if isinstance(record, dict) and {"archived_never_started", "archive_path", "origin_mismatch"}.intersection(record):
+        api.fail("platform_draft_assistant_request_invalid", "任务文件不能自行声明归档或作品迁移身份；派生状态必须重新验证。")
     binding = record.get("binding") if isinstance(record, dict) else None
     binding_keys = {"book_id", "plan_id", "manifest_sha256", "target_sha256", "mode", "comparison_policy",
                     "body_encoding", "profile_id", "profile_sha256"}
@@ -2936,10 +2949,16 @@ def _assistant_read(directory, request_id):
              (type(record["inspection_expires_epoch"]) not in (int, float) or not math.isfinite(record["inspection_expires_epoch"])))):
         api.fail("platform_draft_assistant_request_invalid", "助手任务记录不完整，已停止。")
     _assistant_host(record.get("execution_host", "codex"), record.get("native_model_authorized", False))
+    if archived:
+        record = {**record, "archived_never_started": True,
+                  "archive_path": str(directory.path / ASSISTANT_ARCHIVE_DIRECTORY / (request_id + ".json"))}
     return record
 
 
 def _assistant_write(directory, record, *, new=False):
+    if (record.get("archived_never_started") is True or
+            (directory.path / ASSISTANT_ARCHIVE_DIRECTORY / (_assistant_id(record["request_id"]) + ".json")).exists()):
+        api.fail("platform_draft_assistant_request_archived", "已原样归档的旧任务仅供历史读取，不能修改或重跑。")
     if len(api.dumps(record).encode("utf-8")) > 4 * 1024 * 1024:
         api.fail("platform_draft_assistant_result_limit", "助手记录超过本地大小限制，保留生产日志供核对。")
     api.platform_chrome_bridge._write(directory, _assistant_id(record["request_id"]) + ".json", record, replace=not new)
@@ -2948,6 +2967,13 @@ def _assistant_write(directory, record, *, new=False):
 def _assistant_records(directory):
     names = [name for name in os.listdir(directory.path if os.name == "nt" else directory.fd)
              if re.fullmatch(r"[0-9a-f]{32}\.json", name)]
+    if (directory.path / ASSISTANT_ARCHIVE_DIRECTORY).exists():
+        with _assistant_archive_directory(directory) as archive:
+            archived = [name for name in os.listdir(archive.path if os.name == "nt" else archive.fd)
+                        if re.fullmatch(r"[0-9a-f]{32}\.json", name)]
+        if set(names).intersection(archived):
+            api.fail("platform_draft_assistant_request_invalid", "原任务和归档重复，保留阻断并核对。")
+        names += archived
     if len(names) > 1000:
         api.fail("platform_draft_assistant_request_limit", "助手任务记录超过限制，请先归档历史记录。")
     return [_assistant_read(directory, name[:-5]) for name in names]
@@ -3029,6 +3055,10 @@ def _assistant_blocks_execution(record):
 
 def _assistant_effective(record, root):
     record = dict(record)
+    if record.get("archived_never_started") is True:
+        record.update(execution_active=False, cleanup_pending=False, cleanup_complete=True,
+                      cleanup_status="not_started", worker_done=False)
+        return record
     if record["book_root"] != str(Path(root).resolve()):
         record["origin_mismatch"] = True
         if record["state"] in {"prepared", "running"}:
@@ -3160,7 +3190,7 @@ def _assistant_packet(record, root, *, check_source=True):
               "inspection_id", "inspection_expires_at", "current_chapter", "assistant_context", "bridge_detached",
               "book_root", "origin_mismatch", "execution_active", "cleanup_pending", "cleanup_complete",
               "cleanup_status", "worker_done", "execution_retired_by_operator", "bridge_revoked",
-              "attribution_path")
+              "attribution_path", "archived_never_started", "archive_path")
     return {"ok": True, **{key: json.loads(json.dumps(record.get(key))) for key in fields}, **binding,
             "execution_host": record.get("execution_host", "codex"),
             "native_model_authorized": record.get("native_model_authorized", False),
@@ -3306,7 +3336,7 @@ def workbench_assistant_cancel(root, request_id, *, expected_book_id):
     return _assistant_packet(record, root)
 
 
-def assistant_reset(root, request_id, evidence_path, *, expected_book_id=None, confirmed=False):
+def assistant_reset(root, request_id, evidence_path, *, expected_book_id=None, confirmed=False, _recovery_binding=None):
     """Explicit local operator recovery for an expired read-only host session."""
     if confirmed is not True:
         api.fail("platform_draft_assistant_reset_confirmation_required", "需确认已保存、正常退出 Chrome 并完成官方内核重置。")
@@ -3320,12 +3350,15 @@ def assistant_reset(root, request_id, evidence_path, *, expected_book_id=None, c
             api.fail("platform_draft_assistant_reset_not_readonly", "只允许隔离已停止的只读助手任务；保存任务必须保留未知状态。")
         if api.platform_chrome_bridge._owner_alive(root, record):
             api.fail("platform_draft_assistant_reset_process_alive", "原队列控制器仍在运行，不能隔离恢复。")
+        if _recovery_binding is not None:
+            _assistant_recovery_check(directory, record, root, _recovery_binding)
         effective = _assistant_effective(record, root)
         if effective.get("execution_retired_by_operator") is not True:
             try:
                 api.chrome_worker.assistant_retire_readonly_session(root, _host_binding(record["binding"], record["target"]),
                     record["assistant_context"], request_id=request_id, request_binding_sha256=record["binding_sha256"],
-                    evidence_path=evidence_path)
+                    evidence_path=evidence_path,
+                    **({"expected_snapshot": _recovery_binding["session"]} if _recovery_binding is not None else {}))
             except Exception as error:
                 api.fail(_error_code(error), "外部会话隔离证据未通过；保留原任务，不启动新操作。")
         # Preserve the original failure/result and request bytes. Retirement is
@@ -3333,7 +3366,8 @@ def assistant_reset(root, request_id, evidence_path, *, expected_book_id=None, c
     return _assistant_packet(record, root)
 
 
-def assistant_reconcile(root, request_id, evidence_path, *, expected_book_id=None, confirmed=False):
+def assistant_reconcile(root, request_id, evidence_path, *, expected_book_id=None, confirmed=False,
+                        _recovery_binding=None):
     """Explicit local recovery for a finished read-only session with no final receipt.
 
     The host inventory is accepted only after the worker binding proves the
@@ -3354,18 +3388,484 @@ def assistant_reconcile(root, request_id, evidence_path, *, expected_book_id=Non
             api.fail("platform_draft_assistant_reconcile_not_readonly", "只允许核验已停止的只读助手任务。")
         if api.platform_chrome_bridge._owner_alive(root, record):
             api.fail("platform_draft_assistant_reconcile_process_alive", "原队列控制器仍在运行，不能核验收尾。")
+        if _recovery_binding is not None:
+            _assistant_recovery_check(directory, record, root, _recovery_binding)
         effective = _assistant_effective(record, root)
         if effective.get("cleanup_complete") is not True:
             try:
                 api.chrome_worker.assistant_reconcile_session(
                     root, _host_binding(record["binding"], record["target"]), record["assistant_context"],
                     request_id=request_id, request_binding_sha256=record["binding_sha256"],
-                    evidence_path=evidence_path)
+                    evidence_path=evidence_path,
+                    **({"expected_snapshot": _recovery_binding["session"]} if _recovery_binding is not None else {}))
             except Exception as error:
                 api.fail(_error_code(error), "标签缺失核验证据未通过；保留原任务，不启动新操作。")
         # Preserve the original result and request bytes. Reconciliation is
         # separate terminal evidence, never a successful task or replay grant.
     return _assistant_packet(record, root)
+
+
+@contextmanager
+def _assistant_recovery_directory(root, *, create=False):
+    bridge = api.platform_chrome_bridge
+    path = api.safe_path(Path(root), ASSISTANT_RECOVERY_DIRECTORY)
+    with _WORKBENCH_LOCK, bridge._LOCAL_LOCK, bridge._pinned(path, create=create) as directory:
+        if create:
+            if os.name == "nt":
+                os.chmod(directory.path, 0o700)
+            else:
+                os.fchmod(directory.fd, 0o700)
+        attributes = directory.path.stat() if os.name == "nt" else os.fstat(directory.fd)
+        if (os.name != "nt" and attributes.st_mode & 0o077) or (
+                hasattr(os, "getuid") and attributes.st_uid != os.getuid()):
+            api.fail("platform_draft_assistant_reconcile_invalid", "收尾核验目录必须为本机用户私有目录。")
+        with bridge._lock(directory, "recovery.lock"):
+            yield directory
+
+
+def _assistant_request_hash(directory, request_id):
+    with api._bound_reader(api._BoundFile(directory, _assistant_id(request_id) + ".json")) as stream:
+        content = stream.read(4 * 1024 * 1024 + 1)
+    if len(content) > 4 * 1024 * 1024:
+        api.fail("platform_draft_assistant_reconcile_invalid", "原助手任务超过大小限制。")
+    return hashlib.sha256(content).hexdigest()
+
+
+def _assistant_recovery_session(record, root, book_id):
+    if (record["book_root"] != str(root) or record["binding"]["book_id"] != book_id or
+            record["binding"]["mode"] not in {"inspect_drafts", "reconcile_only"} or
+            record["state"] == "prepared" or not isinstance(record.get("assistant_context"), dict)):
+        api.fail("platform_draft_assistant_reconcile_not_readonly", "只允许核验已停止的只读助手任务；未知保存结果必须保留。")
+    if api.platform_chrome_bridge._owner_alive(root, record):
+        api.fail("platform_draft_assistant_reconcile_process_alive", "原队列控制器仍在运行，不能核验收尾。")
+    try:
+        return api.chrome_worker.assistant_reconcile_preflight(
+            root, _host_binding(record["binding"], record["target"]), record["assistant_context"])
+    except Exception as error:
+        api.fail(_error_code(error), "原会话、只读队列或浏览器归属证据不完整，保留阻断。")
+
+
+def _assistant_recovery_check(directory, record, root, recovery):
+    current = _assistant_recovery_session(record, root, recovery["book_id"])
+    ignored = {"lease_sha256"} if recovery["recovery_mode"] == "external_session_reset" else set()
+    if (_assistant_request_hash(directory, record["request_id"]) != recovery["request_sha256"] or
+            any(current.get(key) != value for key, value in recovery["session"].items() if key not in ignored)):
+        api.fail("platform_draft_assistant_reconcile_changed", "原任务或会话证据已变化，请重新核对；本次核验不生效。")
+
+
+def _assistant_recovery_read(directory, recovery_id, root, book_id):
+    recovery_id = _assistant_id(recovery_id)
+    try:
+        value = api.platform_chrome_bridge._read(directory, recovery_id + ".json", maximum=65536)
+    except FileNotFoundError:
+        api.fail("platform_draft_assistant_reconcile_missing", "未找到本次工作台收尾核验。")
+    fields = {"schema", "recovery_id", "request_id", "book_root", "book_id", "state", "created_epoch",
+              "expires_epoch", "expires_at", "request_sha256", "session", "observation_sha256", "receipt",
+              "recovery_mode", "authorization", "old_processes"}
+    if (not isinstance(value, dict) or set(value) != fields or type(value.get("schema")) is not int or
+            value["schema"] != 1 or value.get("recovery_id") != recovery_id or
+            value.get("book_root") != str(root) or value.get("book_id") != book_id or
+            value.get("state") not in {"prepared", "completed"} or
+            value.get("recovery_mode") not in {"reconciled_absent", "external_session_reset"} or
+            any(type(value.get(key)) not in (int, float) or not math.isfinite(value[key])
+                for key in ("created_epoch", "expires_epoch")) or
+            value["expires_epoch"] != value["created_epoch"] + ASSISTANT_RECOVERY_SECONDS or
+            not isinstance(value.get("request_sha256"), str) or
+            not re.fullmatch(r"[0-9a-f]{64}", value["request_sha256"]) or
+            not isinstance(value.get("session"), dict)):
+        api.fail("platform_draft_assistant_reconcile_invalid", "收尾核验记录身份或内容无效。")
+    _assistant_id(value.get("request_id"))
+    session = value["session"]
+    session_fields = {"config_path", "controller_instance", "session_id", "browser_id", "owned_tab_ids",
+                      "ownership_observed_at_ms", "binding_sha256", "config_sha256", "handle_sha256",
+                      "session_sha256", "lease_sha256", "queue_sha256", "ownership_sha256"}
+    resetting = value["recovery_mode"] == "external_session_reset"
+    expected_receipt = {"cleanup_status": value["recovery_mode"], "cleanup_complete": not resetting,
+                        "worker_done": False, "platform_written": False, "execution_retired_by_operator": resetting}
+    if (set(session) != session_fields or
+            any(not isinstance(session[key], str) or not re.fullmatch(r"[0-9a-f]{64}", session[key])
+                for key in session_fields if key.endswith("sha256")) or
+            any(not isinstance(session[key], str) or not re.fullmatch(r"[0-9a-f]{32}", session[key])
+                for key in ("controller_instance", "session_id")) or
+            not isinstance(session["config_path"], str) or not Path(session["config_path"]).is_absolute() or
+            not isinstance(session["browser_id"], str) or not session["browser_id"] or
+            type(session["ownership_observed_at_ms"]) is not int or not isinstance(session["owned_tab_ids"], list) or
+            any(not isinstance(tab, str) or not 1 <= len(tab) <= 200 for tab in session["owned_tab_ids"]) or
+            len(session["owned_tab_ids"]) != len(set(session["owned_tab_ids"])) or
+            (value["state"] == "prepared" and (value["receipt"] is not None or value["observation_sha256"] is not None)) or
+            (value["state"] == "completed" and (value["receipt"] != expected_receipt or
+                not isinstance(value["observation_sha256"], str) or
+                not re.fullmatch(r"[0-9a-f]{64}", value["observation_sha256"])))):
+        api.fail("platform_draft_assistant_reconcile_invalid", "收尾核验的固定会话或完成回执无效。")
+    authorization, processes = value["authorization"], value["old_processes"]
+    if resetting:
+        if (not isinstance(authorization, dict) or set(authorization) != {"text", "confirmed_at"} or
+                not isinstance(authorization["text"], str) or not 1 <= len(authorization["text"].strip()) <= 2000 or
+                authorization["confirmed_at"] != value["created_epoch"] or not isinstance(processes, list) or
+                not 1 <= len(processes) <= 512 or any(not isinstance(row, dict) or set(row) != {"pid", "start_identity"} or
+                    type(row["pid"]) is not int or row["pid"] <= 0 or not isinstance(row["start_identity"], str) or
+                    not 1 <= len(row["start_identity"]) <= 1000 for row in processes) or
+                len({row["pid"] for row in processes}) != len(processes)):
+            api.fail("platform_draft_assistant_reconcile_invalid", "正常退出授权或原始进程清单无效。")
+    elif authorization is not None or processes != []:
+        api.fail("platform_draft_assistant_reconcile_invalid", "标签核验不能混入退出授权。")
+    return value
+
+
+def _assistant_recovery_rows(directory, root, book_id):
+    names = [name for name in os.listdir(directory.path if os.name == "nt" else directory.fd)
+             if re.fullmatch(r"[0-9a-f]{32}\.json", name)]
+    if len(names) > 1000:
+        api.fail("platform_draft_assistant_reconcile_limit", "收尾核验记录超过限制，请先归档。")
+    return [_assistant_recovery_read(directory, name[:-5], root, book_id) for name in sorted(names)]
+
+
+def _assistant_recovery_packet(value):
+    state = "expired" if value["state"] == "prepared" and value["expires_epoch"] <= time.time() else value["state"]
+    return {"recovery_id": value["recovery_id"], "request_id": value["request_id"],
+            "state": state, "expires_at": value["expires_at"], "recovery_mode": value["recovery_mode"]}
+
+
+@contextmanager
+def _assistant_archive_directory(tasks, *, create=False):
+    """The enclosing assistant.lock protects both live and archived records."""
+    bridge = api.platform_chrome_bridge
+    with bridge._pinned(tasks.path / ASSISTANT_ARCHIVE_DIRECTORY, create=create) as directory:
+        if create:
+            if os.name == "nt":
+                os.chmod(directory.path, 0o700)
+            else:
+                os.fchmod(directory.fd, 0o700)
+        attributes = directory.path.stat() if os.name == "nt" else os.fstat(directory.fd)
+        if (os.name != "nt" and attributes.st_mode & 0o077) or (
+                hasattr(os, "getuid") and attributes.st_uid != os.getuid()):
+            api.fail("platform_draft_assistant_archive_invalid", "旧任务归档必须为本机用户私有目录。")
+        yield directory
+
+
+def _assistant_archive_receipt(directory, request_id, record):
+    receipt = api.platform_chrome_bridge._read(directory, request_id + ".receipt.json", maximum=16384)
+    fields = {"schema", "kind", "request_id", "book_root", "book_id", "original_sha256", "archived_at",
+              "context_sha256", "mode"}
+    if (not isinstance(receipt, dict) or set(receipt) != fields or type(receipt.get("schema")) is not int or
+            receipt["schema"] != 1 or receipt.get("kind") != "archived_proven_never_started_readonly" or
+            receipt.get("request_id") != request_id or receipt.get("book_root") != record.get("book_root") or
+            receipt.get("book_id") != record.get("binding", {}).get("book_id") or
+            receipt.get("mode") != record.get("binding", {}).get("mode") or
+            receipt["mode"] not in {"inspect_drafts", "reconcile_only"} or
+            record.get("state") in {"prepared", "running"} or record.get("done") is not True or
+            record.get("remote_accessed") is not False or
+            receipt.get("context_sha256") != _hash(record.get("assistant_context")) or
+            receipt.get("original_sha256") != _assistant_request_hash(directory, request_id)):
+        api.fail("platform_draft_assistant_archive_invalid", "旧任务归档与原始字节或只读身份不一致。")
+    return receipt
+
+
+def _assistant_never_started_archivable(record, root, book_id):
+    return (record.get("archived_never_started") is not True and record["book_root"] == str(root) and
+            record["binding"]["book_id"] == book_id and
+            record["binding"]["mode"] in {"inspect_drafts", "reconcile_only"} and
+            record["state"] not in {"prepared", "running"} and record["done"] is True and
+            record.get("remote_accessed") is False and isinstance(record.get("assistant_context"), dict) and
+            not api.platform_chrome_bridge._owner_alive(root, record) and
+            api.chrome_worker.assistant_session_never_started(
+                root, _host_binding(record["binding"], record["target"]), record["assistant_context"]))
+
+
+def workbench_assistant_archive_never_started(root, request_id, *, expected_book_id, confirmed=False):
+    """Archive exact bytes of a proven unstarted task so an old service can stop.
+
+    No terminal result is rewritten. Current readers retain the history, while
+    older services that only scan the top level no longer misclassify it busy.
+    """
+    if confirmed is not True:
+        api.fail("platform_draft_assistant_archive_confirmation_required", "请确认原样归档已证实未启动的旧只读任务，以便旧版服务正常停止。")
+    with _workbench_book(root, expected_book_id) as book:
+        root, book_id = book.root, book.meta("id")
+    with _assistant_directory(root) as tasks:
+        record = _assistant_read(tasks, request_id)
+        if record["book_root"] != str(root) or record["binding"]["book_id"] != book_id:
+            api.fail("platform_draft_book_changed", "旧任务不属于当前作品。")
+        if record.get("archived_never_started") is True:
+            with _assistant_archive_directory(tasks) as archive:
+                receipt = _assistant_archive_receipt(archive, request_id, record)
+                path = archive.path / (request_id + ".json")
+        else:
+            if not _assistant_never_started_archivable(record, root, book_id):
+                api.fail("platform_draft_assistant_archive_not_unstarted", "仅能归档已证实从未启动的终止只读任务；活动任务、已访问平台或未知保存结果必须保留。")
+            receipt = {"schema": 1, "kind": "archived_proven_never_started_readonly", "request_id": request_id,
+                       "book_root": str(root), "book_id": book_id, "original_sha256": _assistant_request_hash(tasks, request_id),
+                       "archived_at": _now(), "context_sha256": _hash(record["assistant_context"]), "mode": record["binding"]["mode"]}
+            bridge = api.platform_chrome_bridge
+            with _assistant_archive_directory(tasks, create=True) as archive:
+                receipt_name = request_id + ".receipt.json"
+                if api.publish._bound_stat(api._BoundFile(archive, receipt_name), missing=True) is None:
+                    bridge._write(archive, receipt_name, receipt, replace=False)
+                else:
+                    previous = bridge._read(archive, receipt_name, maximum=16384)
+                    if any(previous.get(key) != value for key, value in receipt.items() if key != "archived_at"):
+                        api.fail("platform_draft_assistant_archive_invalid", "归档准备回执不一致，拒绝替换。")
+                    receipt = previous
+                # Recheck immediately before the no-replace rename. The task
+                # lock stays held across proof, identity verification and move.
+                if (not _assistant_never_started_archivable(record, root, book_id) or
+                        _assistant_request_hash(tasks, request_id) != receipt["original_sha256"]):
+                    api.fail("platform_draft_assistant_archive_not_unstarted", "归档前任务或会话证据已变化，保留原文件。")
+                source = api._BoundFile(tasks, request_id + ".json")
+                if api.publish._bound_stat(source).st_nlink != 1:
+                    api.fail("platform_draft_assistant_archive_invalid", "旧任务存在链接别名，拒绝归档。")
+                target = api._BoundFile(archive, request_id + ".json")
+                _atomic_publish(source, target)
+                api._verify_bound_directory(tasks)
+                api._verify_bound_directory(archive)
+                if os.name != "nt":
+                    os.fsync(tasks.fd)
+                    os.fsync(archive.fd)
+                path = archive.path / target.name
+                _assistant_archive_receipt(archive, request_id, record)
+    return {"ok": True, "book_id": book_id, "request_id": request_id, "state": "archived_never_started",
+            "archive_path": str(path), "original_sha256": receipt["original_sha256"],
+            **workbench_assistant_blockers(root, expected_book_id=book_id)}
+
+
+def workbench_assistant_blockers(root, *, expected_book_id):
+    """Surface every effective blocker, without changing a task, lease or host."""
+    with _workbench_book(root, expected_book_id) as book:
+        root, book_id = book.root, book.meta("id")
+    blockers, recoveries, legacy = [], [], []
+    if api.safe_path(root, ASSISTANT_DIRECTORY).exists():
+        with _assistant_directory(root) as directory:
+            for record in _assistant_records(directory):
+                if _assistant_never_started_archivable(record, root, book_id):
+                    row = _assistant_packet(record, root, check_source=False)
+                    row.pop("assistant_context", None)
+                    row.pop("handoff_prompt", None)
+                    row.update(chapters=[], legacy_service_blocker=True, not_started_archive_eligible=True,
+                               not_started_archive_reason="已证实未启动；旧版服务可能仍误判占用，可原样归档以便正常停止旧服务。")
+                    legacy.append(row)
+                effective = _assistant_effective(record, root)
+                if record["binding"]["book_id"] != book_id or not _assistant_blocks_execution(effective):
+                    continue
+                packet = _assistant_packet(record, root, check_source=False)
+                packet.pop("assistant_context", None)
+                packet.pop("handoff_prompt", None)
+                packet["chapters"] = []  # Old records do not necessarily retain chapter numbers.
+                packet["cleanup_recovery_eligible"] = False
+                packet["cleanup_reset_eligible"] = False
+                try:
+                    if not effective.get("cleanup_pending"):
+                        api.fail("platform_draft_assistant_reconcile_not_pending", "任务仍待执行或正在执行，请使用原任务的等待或停止入口。")
+                    _assistant_recovery_session(record, root, book_id)
+                    packet.update(cleanup_recovery_eligible=True,
+                                  cleanup_recovery_reason="只读队列已过期；仍需核验原浏览器中的任务标签全部缺失。",
+                                  cleanup_reset_eligible=sys.platform == "darwin",
+                                  cleanup_reset_reason="原浏览器不可访问时，须先保存 Chrome 中所有工作并明确授权正常退出及重置官方内核。")
+                except Exception as error:
+                    packet["cleanup_recovery_code"] = _error_code(error)
+                    packet["cleanup_recovery_reason"] = "此旧任务未满足停止且只读的完整证据条件，继续保留阻断。"
+                    packet["cleanup_reset_reason"] = "无法安全隔离；未知保存结果、活动队列或缺失身份凭据不能通过重置解锁。"
+                blockers.append(packet)
+    if api.safe_path(root, ASSISTANT_RECOVERY_DIRECTORY).exists():
+        with _assistant_recovery_directory(root) as directory:
+            recoveries = [_assistant_recovery_packet(row) for row in _assistant_recovery_rows(directory, root, book_id)]
+    return {"ok": True, "book_id": book_id, "blockers": blockers, "recoveries": recoveries, "legacy_blockers": legacy}
+
+
+def _assistant_recovery_handoff(value):
+    session = value["session"]
+    if value["recovery_mode"] == "external_session_reset":
+        return ("在当前写作工作台隔离旧只读会话。复制此文字不会执行；必须依据实际运行环境确认模型为 gpt-6.1-terra。"
+                "本次作者已确认保存 Chrome 内工作并授权正常退出整个 Chrome 及重置官方内核；不得把助手自点确认当作作者授权。"
+                "核对下面完整旧进程身份后，用正常退出操作关闭 Chrome；禁止强制杀进程。"
+                "真实确认所有 Chrome/Chromium 进程消失，再调用官方 node_repl 内核重置工具；不能以普通重连代替重置。\n"
+                f"作品：{value['book_id']}；原任务：{value['request_id']}；核验：{value['recovery_id']}；有效期至：{value['expires_at']}。\n"
+                f"作者授权原文：{value['authorization']['text']}\n"
+                f"准备时全部 Chrome 进程身份：{json.dumps(value['old_processes'], ensure_ascii=False)}\n"
+                "通过工作台完成入口提交 observation，字段严格为 schema=1、recovery_id、source='official_node_repl_browser_use'、"
+                "chrome_quit={old_processes:上述原始完整进程清单,observed_none_at:真实确认进程全无的秒时间戳}、"
+                "official_kernel_reset={tool:实际官方重置工具名称,completed_at:重置完成的秒时间戳}。"
+                "支持工具名 mcp__node_repl__js_reset 或 mcp__node-repl__node_repl_reset。"
+                "原任务和未知写入保持原样；隔离不表示工作器完成或平台保存成功。")
+    return ("在当前写作工作台完成旧只读任务的收尾核验。复制这段文字不会运行任务。"
+            "必须先依据执行环境确认 computer use 模型为 gpt-6.1-terra；不能由请求字段自证模型。"
+            "仅由该助手使用官方 node_repl 浏览器工具真实列出指定浏览器的完整标签清单。"
+            "不要启动写入、重发任务、关闭任何页面或替换浏览器；原浏览器不可访问或清单不完整时保持阻断。\n"
+            f"作品：{value['book_id']}；原任务：{value['request_id']}；核验：{value['recovery_id']}；"
+            f"有效期至：{value['expires_at']}。\n"
+            f"原浏览器 ID：{session['browser_id']}；原会话：{session['session_id']}。\n"
+            "通过工作台提供的完成入口回传刚刚取得的原始观测："
+            "observation 只含 schema=1、recovery_id、source='official_node_repl_browser_use'、"
+            "browser_id、observed_at_ms（此次清单观测的毫秒时间戳）、tabs（完整清单的 [{id:字符串}]）。"
+            "不得回传 cleanup=true、present=false 或自行声明完成；服务端负责逐项核验。"
+            "观测须在准备后生成且不超过 120 秒；提交后在工作台刷新收尾状态，未通过不能开始新检查。")
+
+
+def workbench_assistant_reconcile_prepare(root, request_id, *, expected_book_id, confirmed=False,
+                                          recovery_mode="reconciled_absent", authorization_text=None):
+    """Create a private bounded handoff, not a retry or a cleanup assertion."""
+    if confirmed is not True:
+        api.fail("platform_draft_assistant_reconcile_confirmation_required", "请确认仅核验旧只读任务的收尾，不启动新的平台操作。")
+    if not isinstance(recovery_mode, str) or recovery_mode not in {"reconciled_absent", "external_session_reset"}:
+        api.fail("invalid_input", "未知的收尾核验方式。")
+    if recovery_mode == "external_session_reset" and (
+            not isinstance(authorization_text, str) or not 1 <= len(authorization_text.strip()) <= 2000):
+        api.fail("platform_draft_assistant_reset_confirmation_required", "须先由作者确认已保存 Chrome 内工作，并明确授权正常退出及官方内核重置。")
+    if recovery_mode == "reconciled_absent" and authorization_text is not None:
+        api.fail("invalid_input", "标签缺失核验不接受退出浏览器授权。")
+    with _workbench_book(root, expected_book_id) as book:
+        root, book_id = book.root, book.meta("id")
+    with _assistant_recovery_directory(root, create=True) as recovery_dir:
+        with _assistant_directory(root) as directory:
+            record = _assistant_read(directory, request_id)
+            if _assistant_effective(record, root).get("cleanup_pending") is not True:
+                api.fail("platform_draft_assistant_reconcile_not_pending", "此任务没有待核验的浏览器收尾。")
+            snapshot = _assistant_recovery_session(record, root, book_id)
+            digest = _assistant_request_hash(directory, request_id)
+        rows = _assistant_recovery_rows(recovery_dir, root, book_id)
+        value = next((row for row in rows if row["request_id"] == request_id and
+                      row["recovery_mode"] == recovery_mode and row["state"] == "prepared" and
+                      row["expires_epoch"] > time.time()), None)
+        reused = value is not None
+        if value is not None and recovery_mode == "external_session_reset" and value["authorization"]["text"] != authorization_text:
+            api.fail("platform_draft_assistant_reconcile_conflict", "已准备的核验保留原作者授权，不能替换授权文本。")
+        if value is not None and (value["request_sha256"] != digest or value["session"] != snapshot):
+            api.fail("platform_draft_assistant_reconcile_changed", "已准备的核验与当前任务不一致，请保留原证据。")
+        if value is None:
+            if len(rows) >= 1000:
+                api.fail("platform_draft_assistant_reconcile_limit", "收尾核验记录已达限制，请先归档。")
+            created = time.time()
+            processes = []
+            if recovery_mode == "external_session_reset":
+                try:
+                    processes = [{"pid": pid, "start_identity": api.task_worker._process_identity(pid)}
+                                 for pid in api.chrome_worker._assistant_chrome_processes()]
+                except Exception as error:
+                    api.fail(_error_code(error), "无法完整读取 Chrome 进程身份，不能准备正常退出核验。")
+                if (not 1 <= len(processes) <= 512 or any(not isinstance(row["start_identity"], str) or
+                        not 1 <= len(row["start_identity"]) <= 1000 for row in processes)):
+                    api.fail("platform_draft_assistant_reset_invalid", "未取得完整旧 Chrome 进程身份，不能准备隔离。")
+            value = {"schema": 1, "recovery_id": uuid.uuid4().hex, "request_id": request_id,
+                     "book_root": str(root), "book_id": book_id, "state": "prepared", "created_epoch": created,
+                     "expires_epoch": created + ASSISTANT_RECOVERY_SECONDS,
+                     "expires_at": datetime.fromtimestamp(created + ASSISTANT_RECOVERY_SECONDS, timezone.utc).isoformat(),
+                     "request_sha256": digest, "session": snapshot, "observation_sha256": None, "receipt": None,
+                     "recovery_mode": recovery_mode, "old_processes": processes,
+                     "authorization": {"text": authorization_text, "confirmed_at": created}
+                        if recovery_mode == "external_session_reset" else None}
+            if len(api.dumps(value).encode("utf-8")) > 65536:
+                api.fail("platform_draft_assistant_reconcile_limit", "固定会话和进程清单超过私有记录大小限制。")
+            api.platform_chrome_bridge._write(recovery_dir, value["recovery_id"] + ".json", value, replace=False)
+    return {"ok": True, "book_id": book_id, **_assistant_recovery_packet(value), "reused": reused,
+            "handoff_prompt": _assistant_recovery_handoff(value)}
+
+
+def _assistant_recovery_observation(value, observation):
+    fields = {"schema", "recovery_id", "source", "browser_id", "observed_at_ms", "tabs"}
+    try:
+        size = len(json.dumps(observation, ensure_ascii=False, allow_nan=False).encode("utf-8"))
+    except (TypeError, ValueError, RecursionError):
+        size = 32769
+    if value["recovery_mode"] == "external_session_reset":
+        reset_fields = {"schema", "recovery_id", "source", "chrome_quit", "official_kernel_reset"}
+        if (size > 32768 or not isinstance(observation, dict) or set(observation) != reset_fields or
+                type(observation.get("schema")) is not int or observation["schema"] != 1 or
+                observation.get("recovery_id") != value["recovery_id"] or
+                observation.get("source") != "official_node_repl_browser_use"):
+            api.fail("platform_draft_assistant_reconcile_observation_invalid", "仅接受本次正常退出和官方内核重置的原始观测。")
+        quit_info, reset = observation["chrome_quit"], observation["official_kernel_reset"]
+        if (not isinstance(quit_info, dict) or set(quit_info) != {"old_processes", "observed_none_at"} or
+                quit_info["old_processes"] != value["old_processes"] or
+                not isinstance(reset, dict) or set(reset) != {"tool", "completed_at"} or
+                reset["tool"] not in {"mcp__node_repl__js_reset", "mcp__node-repl__node_repl_reset"} or
+                any(type(stamp) not in (int, float) or not math.isfinite(stamp) for stamp in
+                    (quit_info["observed_none_at"], reset["completed_at"])) or
+                not value["created_epoch"] <= quit_info["observed_none_at"] <= reset["completed_at"]):
+            api.fail("platform_draft_assistant_reconcile_observation_invalid", "进程清单、授权时序或官方重置工具不匹配。")
+        return _hash(observation)
+    if (size > 32768 or not isinstance(observation, dict) or set(observation) != fields or
+            type(observation.get("schema")) is not int or observation["schema"] != 1 or
+            observation.get("recovery_id") != value["recovery_id"] or
+            observation.get("source") != "official_node_repl_browser_use" or
+            observation.get("browser_id") != value["session"]["browser_id"] or
+            type(observation.get("observed_at_ms")) is not int or not isinstance(observation.get("tabs"), list) or
+            len(observation["tabs"]) > 1000):
+        api.fail("platform_draft_assistant_reconcile_observation_invalid", "仅接受原浏览器的完整、大小受限的官方实时观测。")
+    tabs = observation["tabs"]
+    if any(not isinstance(row, dict) or set(row) != {"id"} or not isinstance(row.get("id"), str) or
+           not 0 < len(row["id"]) <= 200 or any(ord(char) < 32 for char in row["id"]) for row in tabs):
+        api.fail("platform_draft_assistant_reconcile_observation_invalid", "标签清单格式无效。")
+    ids = [row["id"] for row in tabs]
+    if len(ids) != len(set(ids)):
+        api.fail("platform_draft_assistant_reconcile_observation_invalid", "标签清单存在重复编号。")
+    if set(ids).intersection(value["session"]["owned_tab_ids"]):
+        api.fail("platform_draft_assistant_reconcile_tabs_present", "原任务仍有标签存在，继续保留收尾阻断。")
+    return _hash(observation)
+
+
+def workbench_assistant_reconcile_complete(root, recovery_id, observation, *, expected_book_id):
+    """Consume raw inventory only after rechecking every original evidence gate."""
+    with _workbench_book(root, expected_book_id) as book:
+        root, book_id = book.root, book.meta("id")
+    with _assistant_recovery_directory(root) as directory:
+        value = _assistant_recovery_read(directory, recovery_id, root, book_id)
+        observation_hash = _assistant_recovery_observation(value, observation)
+        if value["observation_sha256"] not in (None, observation_hash):
+            api.fail("platform_draft_assistant_reconcile_conflict", "此一次性核验已有不同观测，拒绝重放。")
+        if value["state"] != "completed":
+            now = time.time()
+            if now >= value["expires_epoch"]:
+                api.fail("platform_draft_assistant_reconcile_expired", "收尾核验已过期，请在工作台重新准备。")
+            observed = (observation["official_kernel_reset"]["completed_at"] * 1000
+                        if value["recovery_mode"] == "external_session_reset" else observation["observed_at_ms"])
+            if (observed < int(value["created_epoch"] * 1000) or
+                    observed < int((now - ASSISTANT_OBSERVATION_SECONDS) * 1000) or observed > int(now * 1000) + 1000):
+                api.fail("platform_draft_assistant_reconcile_observation_expired", "请提交本次准备之后刚刚取得的完整标签观测。")
+        session = value["session"]
+        resetting = value["recovery_mode"] == "external_session_reset"
+        evidence = {"schema": 1, "request_id": value["request_id"], "config_path": session["config_path"],
+                    "controller_instance": session["controller_instance"], "session_id": session["session_id"],
+                    **({"binding_sha256": None, "operator": "confirmed_terra",
+                        "chrome_quit": observation["chrome_quit"], "official_kernel_reset": observation["official_kernel_reset"],
+                        "authorized_by_user": value["authorization"]} if resetting else
+                       {"request_binding_sha256": None, "browser_id": session["browser_id"],
+                        "source": observation["source"], "observed_at_ms": observation["observed_at_ms"],
+                        "checked_tabs": [{"id": tab_id, "present": False} for tab_id in session["owned_tab_ids"]]})}
+        with _assistant_directory(root) as tasks:
+            record = _assistant_read(tasks, value["request_id"])
+            _assistant_recovery_check(tasks, record, root, value)
+            evidence["binding_sha256" if resetting else "request_binding_sha256"] = record["binding_sha256"]
+        evidence_name = recovery_id + "-observation.json"
+        inventory_name = recovery_id + "-inventory.json"
+        bridge = api.platform_chrome_bridge
+        if api.publish._bound_stat(api._BoundFile(directory, inventory_name), missing=True) is None:
+            bridge._write(directory, inventory_name, observation, replace=False)
+        elif bridge._read(directory, inventory_name, maximum=32768) != observation:
+            api.fail("platform_draft_assistant_reconcile_conflict", "此一次性核验的完整原始清单已固定，拒绝不同观测。")
+        if api.publish._bound_stat(api._BoundFile(directory, evidence_name), missing=True) is None:
+            bridge._write(directory, evidence_name, evidence, replace=False)
+        elif bridge._read(directory, evidence_name, maximum=32768) != evidence:
+            api.fail("platform_draft_assistant_reconcile_conflict", "本次核验的原始证据已固定，拒绝不同观测。")
+        packet = (assistant_reset if resetting else assistant_reconcile)(root, value["request_id"], directory.path / evidence_name,
+            expected_book_id=book_id, confirmed=True, _recovery_binding=value)
+        if ((not resetting and (packet.get("cleanup_status") != "reconciled_absent" or packet.get("cleanup_complete") is not True)) or
+                (resetting and (packet.get("cleanup_status") != "external_session_reset" or
+                               packet.get("execution_retired_by_operator") is not True))):
+            api.fail("platform_draft_assistant_reconcile_invalid", "严格核验未完成，继续保留阻断。")
+        # Another recovery may have finished while this handoff was pending.
+        # Only its own immutable evidence can complete this one-time record.
+        with bridge._directory(root, session["session_id"]) as session_dir, bridge._lock(session_dir):
+            proof = bridge._read(session_dir, "operator-retired.json" if resetting else "worker-reconciled.json", maximum=65536)
+            if (proof.get("request_id") != value["request_id"] or proof.get("evidence") != evidence or
+                    proof.get("evidence_sha256") != bridge._digest(evidence)):
+                api.fail("platform_draft_assistant_reconcile_conflict", "原会话已有另一份核验回执，本次交接不能冒用。")
+        if value["state"] != "completed":
+            value.update(state="completed", observation_sha256=observation_hash,
+                         receipt={"cleanup_status": value["recovery_mode"], "cleanup_complete": not resetting,
+                                  "worker_done": False, "platform_written": False,
+                                  "execution_retired_by_operator": resetting})
+            bridge._write(directory, recovery_id + ".json", value, replace=True)
+        receipt = {"ok": True, "book_id": book_id, **_assistant_recovery_packet(value), **value["receipt"]}
+    return {**receipt, **workbench_assistant_blockers(root, expected_book_id=book_id)}
 
 
 def assistant_run(root, request_id, *, expected_book_id=None, on_context=None):

@@ -17,7 +17,7 @@ class PlatformDraftUITests(unittest.TestCase):
             self.skipTest('Node.js required')
         mock = r'''
 const assert=require('assert');
-const controls={},timers=new Map(),requests=[];let timerId=0,handler;
+const controls={},timers=new Map(),requests=[];let timerId=0,handler,blockerHandler=null;
 class Element {
  constructor(tag){this.tagName=tag;this.children=[];this._value='';this.listeners={};this.disabled=false;this.textContent='';this.classList={add:()=>{}};this.open=false;}
  set id(value){this._id=value;controls[value]=this;}get id(){return this._id;}
@@ -33,7 +33,7 @@ const editorDialog=title=>{const dialog=new Element('dialog'),content=new Elemen
 const docs=new Map([['editor',{text:'旧正式稿',value:'用户未保存的全部文字',editable:true}]]),dirty=d=>!!d&&d.text!==d.value;
 const currentBookInfo={kind:'long',kind_verified:true,title:'验收作品'};
 const setTimeout=(fn,delay)=>{const id=++timerId;timers.set(id,{fn,delay});return id;},clearTimeout=id=>timers.delete(id);
-const call=async(action,payload={})=>{requests.push({action,payload:structuredClone(payload)});try{const response=await handler(action,payload);if(action!=='platform-drafts/refresh-plan'||response?.scope)return response;}catch(error){if(action!=='platform-drafts/refresh-plan'||error.message!==action)throw error;}return {ok:true,book_id:'book-one',revision:7,base_plan_id:payload.plan_id,plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_sha256,platform:'fanqie',account_id:'account',remote_book_id:'remote',start:payload.start,end:payload.end,chapters:Array.from({length:payload.end-payload.start+1},(_,i)=>payload.start+i),scope:'local_formal_refresh_only',remote_accessed:false,submission_performed:false};};
+const call=async(action,payload={})=>{requests.push({action,payload:structuredClone(payload)});if(action==='platform-drafts/assistant-blockers')return blockerHandler?blockerHandler(payload):{ok:true,book_id:'book-one',blockers:[],recoveries:[]};try{const response=await handler(action,payload);if(action!=='platform-drafts/refresh-plan'||response?.scope)return response;}catch(error){if(action!=='platform-drafts/refresh-plan'||error.message!==action)throw error;}return {ok:true,book_id:'book-one',revision:7,base_plan_id:payload.plan_id,plan_id:payload.plan_id,profile_id:payload.profile_id,profile_sha256:payload.profile_sha256,platform:'fanqie',account_id:'account',remote_book_id:'remote',start:payload.start,end:payload.end,chapters:Array.from({length:payload.end-payload.start+1},(_,i)=>payload.start+i),scope:'local_formal_refresh_only',remote_accessed:false,submission_performed:false};};
 const plan=(id='plan-1',extra={})=>({id,platform:'fanqie',status:'prepared',book_title:'验收作品',account_id:'account',remote_book_id:'remote',chapters:[1,2],...extra});
 const profile={id:'本机.json',label:'番茄页面',valid:true,platform:'fanqie',sha256:'profile-sha',remote_book_id:'remote',remote_book_title:'验收作品'};
 const catalog=(plans=[plan()],jobs=[],extra={})=>({book_id:'book-one',revision:7,formal_first:1,formal_last:13,formal_count:13,max_batch:1000,plans,profiles:[profile],jobs,next_offset:null,...extra});
