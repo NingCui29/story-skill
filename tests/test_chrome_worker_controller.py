@@ -557,6 +557,8 @@ class ProtocolTests(unittest.TestCase):
     def test_wrapped_runtime_failures_keep_only_fixed_name_and_marker(self):
         _, client = self.client()
         for text, code, marker in (
+                ("MCP tool call requires approval, but approval policy is never", "tool_approval_required", "tool_approval_unavailable"),
+                ("Error: Local browser use is disabled in Work settings PRIVATE_SECRET", "host_access_denied", "local_browser_access_denied"),
                 ("ReferenceError: process is not defined PRIVATE_PATH", "runtime_unavailable", "missing_runtime_global"),
                 ("Error: Browser use requires a trusted Node REPL browser service PRIVATE_SECRET", "runtime_unavailable", "missing_browser_service"),
                 ("Error: Wrapped Missing required Codex turn metadata: session_id, turn_id PRIVATE_IDS", "turn_metadata_missing", "missing_turn_metadata")):
@@ -565,6 +567,27 @@ class ProtocolTests(unittest.TestCase):
                 self.assertEqual(result["code"], "platform_chrome_worker_" + code)
                 self.assertEqual(result["error_marker"], marker)
                 self.assertNotIn("PRIVATE_", json.dumps(result))
+
+    def test_unknown_tool_error_fingerprint_uses_only_bounded_structure(self):
+        _, client = self.client()
+        first = client._tool_error({"status": "failed", "error": {"code": -1, "message": "PRIVATE_BODY_A"}})
+        same_shape = client._tool_error({"status": "failed", "error": {"code": -1, "message": "PRIVATE_SECRET_B"}})
+        other_shape = client._tool_error({"status": "failed", "result": {"isError": True, "content": []}})
+        self.assertEqual(first["tool_error_fingerprint"], same_shape["tool_error_fingerprint"])
+        self.assertNotEqual(first["tool_error_fingerprint"], other_shape["tool_error_fingerprint"])
+        self.assertEqual(first["tool_error_channel"], "error_object")
+        self.assertEqual(first["tool_error_rpc_code"], -1)
+        self.assertEqual(other_shape["tool_error_channel"], "error_result")
+        self.assertNotIn("PRIVATE", json.dumps([first, same_shape, other_shape]))
+
+    def test_tool_error_hints_are_bounded_evidence_without_exception_text(self):
+        _, client = self.client()
+        item = {"status": "failed", "error": {"message": "PRIVATE_BODY: spawn failed; ENOENT; timed out"}}
+        result = client._tool_error(item)
+        self.assertEqual(result["code"], "platform_chrome_worker_tool_failed")
+        self.assertEqual(result["tool_error_hints"], ["timeout", "missing_file", "process"])
+        self.assertEqual(result["tool_error_terms"], ["enoent", "failed", "spawn", "timed"])
+        self.assertNotIn("PRIVATE", json.dumps(result))
 
     def test_runtime_error_classification_drops_dom_and_credentials(self):
         process = FakeProcess()
@@ -752,6 +775,26 @@ class FakeCore:
 
 
 class ControllerTests(unittest.TestCase):
+    def test_wait_owned_cleanup_only_waits_for_own_stopping_worker(self):
+        stopping = threading.Event()
+        done = threading.Event()
+        stopping.set()
+        entry = {'root': self.root, 'instance': 'a' * 32, 'binding': {'book_id': 'book'},
+                 'stop': stopping, 'done': done}
+        self.controller._workers[('test', 'binding')] = entry
+        self.addCleanup(self.controller._workers.pop, ('test', 'binding'), None)
+        with patch.object(self.controller, '_view', side_effect=lambda item: {'cleanup_pending': not item['done'].is_set()}):
+            self.assertTrue(self.controller.wait_owned_cleanup(self.root, 'a' * 32, expected_book_id='book', timeout=0)['cleanup_pending'])
+            done.set()
+            self.assertFalse(self.controller.wait_owned_cleanup(self.root, 'a' * 32, expected_book_id='book', timeout=0)['cleanup_pending'])
+            with self.assertRaisesRegex(worker.WorkerError, 'platform_chrome_worker_cleanup_unconfirmed'):
+                self.controller.wait_owned_cleanup(self.root, 'b' * 32, expected_book_id='book', timeout=0)
+            with self.assertRaisesRegex(worker.WorkerError, 'platform_chrome_worker_cleanup_unconfirmed'):
+                self.controller.wait_owned_cleanup(self.root, 'a' * 32, expected_book_id='other', timeout=0)
+            stopping.clear()
+            with self.assertRaisesRegex(worker.WorkerError, 'platform_chrome_worker_cleanup_unconfirmed'):
+                self.controller.wait_owned_cleanup(self.root, 'a' * 32, expected_book_id='book', timeout=0)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -862,10 +905,35 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(len(self.processes), 1)
         self.assertTrue(self.state()["uses_codex_quota"])
 
+    def test_bootstrap_host_denial_suspends_only_new_automatic_sessions(self):
+        self.health_mode = "lease-only"
+        self.start()
+        self.wait(lambda: self.state()["model_verified"] and next(iter(self.controller._workers.values())).get("client") and next(iter(self.controller._workers.values()))["client"].turn_id)
+        self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+            "failure_phase": "browser_inventory", "error_name": "Error", "error_marker": "local_browser_access_denied",
+            "code": "platform_chrome_worker_host_access_denied"})
+        self.wait(lambda: self.state().get("retry_blocked") is True and
+                  next(iter(self.controller._workers.values()))["done"].is_set())
+        self.assertEqual(self.state()["error"], "platform_chrome_worker_host_access_denied")
+        self.assertEqual(self.controller.connection_suspension()["cause"], "platform_chrome_worker_host_access_denied")
+        with self.assertRaisesRegex(worker.WorkerError, worker.CONNECTION_SUSPENDED):
+            self.controller.start(self.root, "other-plan", "other.json", expected_book_id="local-book")
+        self.assertEqual(len(self.processes), 1)
+
+    def test_host_denial_after_ready_preserves_unknown_operations_without_bootstrap_suspension(self):
+        self.start()
+        self.wait(lambda: self.state()["ready"])
+        self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
+            "failure_phase": "queue_operation", "error_name": "Error", "error_marker": "local_browser_access_denied",
+            "code": "platform_chrome_worker_host_access_denied"})
+        self.wait(lambda: next(iter(self.controller._workers.values()))["done"].is_set())
+        self.assertIsNone(self.controller.connection_suspension())
+        self.assertEqual(self.state()["error"], "platform_chrome_worker_host_access_denied")
+
     def test_bootstrap_transport_failure_suspends_new_launches_across_bindings(self):
         self.health_mode = "lease-only"
         self.start()
-        self.wait(lambda: self.state()["model_verified"])
+        self.wait(lambda: self.state()["model_verified"] and next(iter(self.controller._workers.values())).get("client") and next(iter(self.controller._workers.values()))["client"].turn_id)
         self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
             "failure_phase": "browser_inventory", "error_name": "Error", "error_marker": "native_pipe_closed",
             "code": "platform_chrome_worker_browser_transport_closed"})
@@ -901,7 +969,7 @@ class ControllerTests(unittest.TestCase):
     def test_queue_failure_with_zero_completed_requests_is_not_bootstrap(self):
         self.health_mode = "lease-only"
         self.start()
-        self.wait(lambda: self.state()["model_verified"])
+        self.wait(lambda: self.state()["model_verified"] and next(iter(self.controller._workers.values())).get("client") and next(iter(self.controller._workers.values()))["client"].turn_id)
         self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
             "failure_phase": "queue_operation", "error_name": "Error", "error_marker": "native_pipe_closed",
             "code": "platform_chrome_worker_browser_transport_closed"})
@@ -911,7 +979,7 @@ class ControllerTests(unittest.TestCase):
     def test_successful_checkpoint_cannot_be_erased_by_later_zero_bootstrap_failure(self):
         self.health_mode = "lease-only"
         self.start()
-        self.wait(lambda: self.state()["model_verified"])
+        self.wait(lambda: self.state()["model_verified"] and next(iter(self.controller._workers.values())).get("client") and next(iter(self.controller._workers.values()))["client"].turn_id)
         self.processes[0].checkpoint({"done": False, "state": "busy", "phase": "queue_operation", "processed": 1})
         self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
             "failure_phase": "sdk_setup", "error_name": "Error", "error_marker": "native_pipe_closed",
@@ -942,7 +1010,7 @@ class ControllerTests(unittest.TestCase):
     def test_suspension_during_local_validation_prevents_the_pending_process_launch(self):
         self.health_mode = "lease-only"
         self.start()
-        self.wait(lambda: self.state()["model_verified"])
+        self.wait(lambda: self.state()["model_verified"] and next(iter(self.controller._workers.values())).get("client") and next(iter(self.controller._workers.values()))["client"].turn_id)
         entered, release = threading.Event(), threading.Event()
         self.addCleanup(release.set)
         validate = self.controller._validated_storage
@@ -970,7 +1038,7 @@ class ControllerTests(unittest.TestCase):
         self.wait(lambda: self.state()["ready"])
         self.health_mode = "lease-only"
         self.start("broken.json")
-        self.wait(lambda: self.state("broken.json")["model_verified"])
+        self.wait(lambda: self.state("broken.json")["model_verified"] and len(self.processes) > 1 and any(entry.get("client") and entry["client"].turn_id and entry.get("binding", {}).get("profile_id") == "broken.json" for entry in self.controller._workers.values()))
         self.processes[1].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
             "failure_phase": "browser_inventory", "error_name": "Error", "error_marker": "native_pipe_closed",
             "code": "platform_chrome_worker_browser_transport_closed"})
@@ -1913,7 +1981,24 @@ class ControllerTests(unittest.TestCase):
         snapshot = json.loads((entry["context"] / "diagnostics.json").read_text())
         self.assertLessEqual(len(snapshot["events"]), worker.MAX_DIAGNOSTICS)
         self.assertNotIn("PRIVATE_", json.dumps(snapshot))
+        self.assertIn("bridge_ready", [event["phase"] for event in snapshot["milestones"]])
+        self.assertEqual(snapshot["model"], worker.WORKER_MODEL)
+        self.assertFalse(snapshot["milestones_truncated"])
+        self.assertTrue(snapshot["started_at"])
+        self.assertRegex(snapshot["runtime_sha256"]["story_chrome_worker.py"], r"^[0-9a-f]{64}$")
         self.assertEqual(self.state()["worker_phase"], "queue_wait")
+
+    def test_failed_tool_structure_and_incident_reference_are_retained(self):
+        self.start()
+        self.wait(lambda: self.state()["ready"])
+        entry = next(iter(self.controller._workers.values()))
+        self.controller._diagnose(entry, "tool_failed", code="platform_chrome_worker_tool_failed",
+                                  tool_error_fingerprint="0123456789abcdef", body="PRIVATE_BODY")
+        snapshot = json.loads((entry["context"] / "diagnostics.json").read_text())
+        failure = next(event for event in snapshot["milestones"] if event["phase"] == "tool_failed")
+        self.assertEqual(failure["tool_error_fingerprint"], "0123456789abcdef")
+        self.assertEqual(self.state()["diagnostic_id"], entry["context"].name)
+        self.assertNotIn("PRIVATE_BODY", json.dumps(snapshot))
 
     def test_cleanup_checkpoint_does_not_erase_first_sdk_failure_phase(self):
         self.health_mode = "lease-only"
@@ -1931,6 +2016,11 @@ class ControllerTests(unittest.TestCase):
         self.assertEqual(view["worker_phase"], "cleanup")
         self.assertEqual(view["error_marker"], "missing_browser_service")
         self.assertEqual(view["error"], "platform_chrome_worker_runtime_unavailable")
+        snapshot = json.loads((entry["context"] / "diagnostics.json").read_text())
+        failure = next(event for event in snapshot["milestones"]
+                       if event["phase"] == "worker_checkpoint" and event.get("worker_state") == "failed")
+        self.assertEqual(failure["failure_phase"], "sdk_setup")
+        self.assertEqual(failure["error_marker"], "missing_browser_service")
 
     def test_paused_failure_diagnostic_cannot_expose_error_or_terminal_before_specific_phase(self):
         self.health_mode = 'lease-only'

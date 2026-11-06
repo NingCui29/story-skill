@@ -23,7 +23,7 @@ const hex = (value, length) => typeof value === 'string' && new RegExp('^[0-9a-f
 const error = code => { const failure = new Error(code); failure.code = code; return failure; };
 const requireValue = (value, code = 'platform_chrome_worker_invalid_config') => { if (!value) throw error(code); };
 const ERROR_NAMES = new Set(['Error','ReferenceError','TypeError','RangeError','SyntaxError','AggregateError','URIError','EvalError','AbortError','TimeoutError']);
-const ERROR_MARKERS = new Set(['none','origin_permission_required','browser_unattached','missing_turn_metadata','missing_browser_service','missing_runtime_global','native_pipe_closed']);
+const ERROR_MARKERS = new Set(['none','origin_permission_required','browser_unattached','missing_turn_metadata','missing_browser_service','missing_runtime_global','native_pipe_closed','local_browser_access_denied']);
 const DRIVER_PHASES = new Set(['guard','catalog','listing','pages','all_rows','read']);
 const DRIVER_WORKER_CODES = new Set([
   'unsupported_sdk','invalid_scroll','unavailable','ambiguous_tab','unsafe_user_tab',
@@ -89,6 +89,10 @@ const originPermissionDenied = message => {
 };
 const errorMarker = failure => {
   const message = typeof failure?.message === 'string' ? failure.message : '';
+  // The host uses this refusal for policy and executor/session admission. It
+  // does not establish that a visible Chrome or website toggle is switched off.
+  if (message === 'Local browser use is disabled in Work settings' ||
+      failure?.code === 'platform_chrome_worker_host_access_denied') return 'local_browser_access_denied';
   if (deniedByCode(failure) || originPermissionDenied(message)) return 'origin_permission_required';
   if (message === 'native pipe closed before response') return 'native_pipe_closed';
   if (message.includes('Debugger unattached')) return 'browser_unattached';
@@ -99,6 +103,7 @@ const errorMarker = failure => {
 };
 const cleanError = failure => {
   const marker = errorMarker(failure);
+  if (marker === 'local_browser_access_denied') return 'platform_chrome_worker_host_access_denied';
   if (marker === 'origin_permission_required') return 'platform_chrome_worker_origin_permission_required';
   if (marker === 'browser_unattached') return 'platform_chrome_worker_browser_unattached';
   if (marker === 'missing_turn_metadata') return 'platform_chrome_worker_turn_metadata_missing';
@@ -107,7 +112,7 @@ const cleanError = failure => {
   return /^platform_(?:chrome|browser)_[a-z_]+$/.test(failure?.code || '') ? failure.code : 'platform_chrome_worker_failed';
 };
 const BOOTSTRAP_CODES = new Set([...DRIVER_WORKER_CODES,...[
-  'failed','origin_permission_required','browser_unattached','turn_metadata_missing','runtime_unavailable',
+  'failed','host_access_denied','origin_permission_required','browser_unattached','turn_metadata_missing','runtime_unavailable',
   'browser_transport_closed','connect_timeout','browser_wait_timeout','ambiguous_browser','unsafe_file'
 ].map(code=>'platform_chrome_worker_'+code)]);
 const absolute = value => typeof value === 'string' && value.length > 0 && path.isAbsolute(value) && path.resolve(value) === value;
@@ -457,6 +462,17 @@ export function chromeDriverAPI(browser, {selectAllKey = PLATFORM === 'darwin' ?
   const wrap = (tab,alias = tab?.id) => {
     requireValue(tab && typeof tab.id === 'string' && tab.playwright && typeof tab.playwright.domSnapshot === 'function', 'platform_chrome_worker_unsupported_sdk');
     if (tabs.has(alias)) return tabs.get(alias);
+    const validateScroll = (coords,direction,pages) => requireValue(
+      Array.isArray(coords) && coords.length === 2 && coords.every(Number.isFinite) &&
+      ['up','down'].includes(direction) && Number.isSafeInteger(pages) && pages > 0 && pages <= 100000,
+      'platform_chrome_worker_invalid_scroll');
+    const scrollDelta = async(direction,pages) => {
+      const viewport = await tab.playwright.locator('html').evaluate(el => ({height:el.clientHeight}));
+      requireValue(Number.isSafeInteger(viewport?.height) && viewport.height > 0,'platform_chrome_worker_invalid_scroll');
+      const delta = viewport.height * pages;
+      requireValue(Number.isSafeInteger(delta) && delta > 0 && delta <= 100000000,'platform_chrome_worker_invalid_scroll');
+      return direction === 'down' ? delta : -delta;
+    };
     const wrapped = {id:alias, playwright:tab.playwright,
       url:() => tab.url(), goto:url => tab.goto(url), reload:() => tab.reload(),
       getAXState:() => tab.playwright.domSnapshot(),
@@ -467,16 +483,10 @@ export function chromeDriverAPI(browser, {selectAllKey = PLATFORM === 'darwin' ?
         await tab.ax.paste(null,text,{format:'text'});
       },
       scroll:async(coords,direction,pages) => {
-        requireValue(Array.isArray(coords) && coords.length === 2 && coords.every(Number.isFinite) &&
-          ['up','down'].includes(direction) && Number.isSafeInteger(pages) && pages > 0 && pages <= 100000,
-          'platform_chrome_worker_invalid_scroll');
+        validateScroll(coords,direction,pages);
         if (typeof tab.ax?.scroll === 'function') { await tab.ax.scroll(coords,direction,pages); return; }
         requireValue(typeof tab.cua?.scroll === 'function','platform_chrome_worker_unsupported_sdk');
-        const viewport = await tab.playwright.evaluate(() => ({height:document.documentElement.clientHeight}));
-        requireValue(Number.isSafeInteger(viewport?.height) && viewport.height > 0,'platform_chrome_worker_invalid_scroll');
-        const delta = viewport.height * pages;
-        requireValue(Number.isSafeInteger(delta) && delta > 0 && delta <= 100000000,'platform_chrome_worker_invalid_scroll');
-        await tab.cua.scroll({x:coords[0],y:coords[1],scrollX:0,scrollY:direction === 'down' ? delta : -delta});
+        await tab.cua.scroll({x:coords[0],y:coords[1],scrollX:0,scrollY:await scrollDelta(direction,pages)});
       }};
     tabs.set(alias,wrapped); return wrapped;
   };

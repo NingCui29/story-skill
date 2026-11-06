@@ -28,24 +28,22 @@ const localHandler=async(action,payload)=>{
 };handler=localHandler;
 '''
 
-    def test_bootstrap_failure_has_specific_no_write_status_and_readonly_explanation(self):
+    def test_explicit_retry_prepares_new_check_without_saving(self):
         self.js(self.fixture + r'''
-await platformDraftOpen();const p=platformDraftPanel;platformDraftDrawJob(p,failed());const before=requests.length;
-assert.ok(p.status.textContent.includes('尚未开始章节检查'));assert.ok(p.status.textContent.includes('初始化时断开'));
-assert.ok(!p.status.textContent.includes('操作结果尚未确认'));assert.ok(p.progressLabel.textContent.includes('0 / 30'));
-assert.equal(p.recoveryAction.textContent,'查看连接说明');assert.equal(p.run.disabled,true);assert.equal(p.recheck.disabled,true);
-await p.recoveryAction.onclick();assert.equal(p.connectionHelp.open,true);assert.equal(requests.length,before);
-assert.ok(textTree(p.connectionHelp).includes('GPT-6.1 Terra'));assert.ok(textTree(p.connectionHelp).includes('本面板仍等待核验'));
-assert.ok(textTree(p.connectionHelp).includes('已有健康任务的状态仍以任务回执为准'));
-await p.run.onclick();await p.recheck.onclick();assert.equal(starts().length,0);assert.equal(count('refresh-plan'),0);
+await platformDraftOpen();const p=platformDraftPanel;
+assert.equal(p.recoveryAction.textContent,'重新连接');
+handler=async(action,payload)=>action.endsWith('/reconnect')?{ok:true,retry_allowed:true,ready:false}:action.endsWith('/preview')?preview(payload):localHandler(action,payload);
+await p.recoveryAction.onclick();
+assert.equal(p.connectionRetryBlocked,false);assert.equal(starts().length,0);
+assert.ok(p.status.textContent.includes('尚未访问平台'));
 ''')
 
     def test_preview_block_persists_across_refresh_reopen_and_range_changes(self):
         self.js(self.fixture + r'''
 await platformDraftOpen();let p=platformDraftPanel;assert.equal(p.connectionRetryBlocked,true);
-assert.ok(p.status.textContent.includes('自动浏览器连接已暂停'));assert.equal(p.recoveryAction.textContent,'查看连接说明');
+assert.ok(p.status.textContent.includes('自动浏览器连接已暂停'));assert.equal(p.recoveryAction.textContent,'重新连接');
 p.refreshEnd.value='3';p.refreshEnd.oninput();assert.equal(p.run.disabled,true);assert.equal(p.generate.disabled,false);
-await p.refresh.onclick();assert.equal(p.run.disabled,true);assert.equal(p.recoveryAction.textContent,'查看连接说明');
+await p.refresh.onclick();assert.equal(p.run.disabled,true);assert.equal(p.recoveryAction.textContent,'重新连接');
 p.dialog.close();await platformDraftOpen();p=platformDraftPanel;assert.equal(p.connectionRetryBlocked,true);
 await p.recoveryAction.onclick();await p.run.onclick();assert.equal(starts().length,0);assert.equal(count('refresh-plan'),0);
 ''')
@@ -81,8 +79,8 @@ assert.equal(starts().length,0);
         self.js(self.fixture + r'''
 await platformDraftOpen();const p=platformDraftPanel;platformDraftDrawJob(p,failed(),true);
 assert.ok(p.status.textContent.includes('本次尚未开始'));assert.ok(p.historyJob.textContent.includes('初始化时断开'));
-assert.equal(p.recoveryAction.textContent,'查看连接说明');const before=requests.length;await p.recoveryAction.onclick();
-assert.equal(requests.length,before);assert.equal(p.run.disabled,true);assert.equal(starts().length,0);
+assert.equal(p.recoveryAction.textContent,'重新连接');const before=requests.length;await p.recoveryAction.onclick();
+assert.equal(requests.length,before+1);assert.equal(p.run.disabled,true);assert.equal(starts().length,0);
 ''')
 
     def test_historical_unknown_metadata_is_preserved_in_blocked_preview(self):
@@ -174,9 +172,9 @@ for(const matching of [false,true]){
  await p.run.onclick();assert.equal(count('refresh-plan'),prepares+1);assert.equal(inspectPreviews,1);assert.equal(starts().length,0);
  if(matching){
   assert.equal(p.connectionRetryBlocked,true);assert.equal(p.run.disabled,true);assert.equal(p.recheck.disabled,true);
-  assert.ok(p.status.textContent.includes('本次未启动新的检查或保存'));assert.equal(p.recoveryAction.textContent,'查看连接说明');
+  assert.ok(p.status.textContent.includes('本次未启动新的检查或保存'));assert.equal(p.recoveryAction.textContent,'重新连接');
   const before=requests.length;await p.run.onclick();await p.recheck.onclick();await p.recoveryAction.onclick();
-  assert.equal(requests.length,before);assert.equal(p.connectionHelp.open,true);
+  assert.equal(requests.length,before+1);assert.equal(p.connectionHelp.open,true);
  }else{
   assert.equal(p.connectionRetryBlocked,undefined);assert.ok(p.status.textContent.includes('本次目标或连接状态尚未确认'));
   assert.ok(!p.status.textContent.includes('本次未启动新的检查或保存'));
@@ -193,9 +191,9 @@ handler=async(action,payload)=>{
  return localHandler(action,payload);
 };await platformDraftOpen();const p=platformDraftPanel;assert.equal(p.run.disabled,false);await p.run.onclick();
 assert.equal(starts().length,1);assert.equal(p.connectionRetryBlocked,true);assert.equal(p.run.disabled,true);
-assert.ok(p.status.textContent.includes('本次未启动新的检查或保存'));assert.equal(p.recoveryAction.textContent,'查看连接说明');
+assert.ok(p.status.textContent.includes('本次未启动新的检查或保存'));assert.equal(p.recoveryAction.textContent,'重新连接');
 const before=requests.length;await p.run.onclick();await p.recheck.onclick();await p.recoveryAction.onclick();
-assert.equal(requests.length,before);assert.equal(p.connectionHelp.open,true);
+assert.equal(requests.length,before+1);assert.equal(p.connectionHelp.open,true);
 await platformDraftPreview(p);assert.equal(p.preview.can_start,true);assert.equal(p.run.disabled,true);assert.equal(starts().length,1);
 ''')
 

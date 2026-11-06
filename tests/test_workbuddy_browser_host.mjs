@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
-import {readDOMValue,readDOMPath,readRowFields} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
+import {readDOMValue,readDocumentScrollPoint,readDOMPath,readRowFields} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
 import {chromeDriverAPI} from '../skills/story-skill/scripts/story_chrome_worker.mjs';
 import {createWorkBuddyBrowserFacade,WORKBUDDY_CLI_VERSION} from '../skills/story-skill/scripts/story_workbuddy_browser.mjs';
 
@@ -229,7 +229,16 @@ test('real input key sequence remains native and a lost focus cannot press a dif
 
 test('shared worker driver facade accepts CLI read/input contracts without changing Codex code',async()=>{
   const f=fixture(),{browser}=await open(f),api=chromeDriverAPI(browser,{target:TARGET});
+  f.registry.set('html',[f.document.documentElement]);f.document.documentElement.ownerDocument=f.document;
   const tab=await api.getTab('TARGET1');assert.equal(await tab.getAXState(),'- document: complete');
+  const metrics=await tab.playwright.locator('html').evaluate(el=>{const scroller=el.ownerDocument?.scrollingElement||el;return {height:scroller.clientHeight,total:scroller.scrollHeight,top:scroller.scrollTop,width:el.clientWidth};});
+  assert.equal(metrics.height,800);assert.equal(metrics.total,1000);assert.equal(metrics.top,0);
+  f.document.scrollingElement=f.document.documentElement;f.document.elementFromPoint=()=>f.editor;
+  f.title.getBoundingClientRect=()=>({left:300,right:500,top:200,bottom:230});
+  const point=await tab.playwright.locator('#title').evaluate(readDocumentScrollPoint);
+  assert.equal(point.x,400);assert.equal(point.y,100);
+  await tab.scroll([30,40],'down',1);
+  assert.ok(f.calls.some(call=>call.kind==='batch'&&call.args[0].join(',')==='mouse,wheel,800,0'));
   await tab.pasteText('一\n二');assert.equal(f.editor.textContent,'一\n二');
   const created=await api.newTab('https://fanqienovel.com/read');await created.close();
   assert.ok(f.pages.has('TARGET1'));assert.equal(writes(f).length,1);

@@ -15,6 +15,22 @@ const failedInspection=(code='platform_chrome_worker_tool_not_started',extra={})
 const starts=()=>requests.filter(row=>row.action.endsWith('/start'));
 '''
 
+    def test_host_denial_has_exact_stage_and_does_not_prescribe_changing_permissions(self):
+        self.js(self.fixture + r'''
+await platformDraftOpen();const p=platformDraftPanel;
+platformDraftDrawJob(p,failedInspection('platform_chrome_worker_host_access_denied',{
+ connection_diagnostics:connection('platform_chrome_worker_host_access_denied',{
+  failure_phase:'browser_inventory',error_name:'Error',error_marker:'local_browser_access_denied',
+  resolved_model:'gpt-6.1-terra',model_verified:true})}));
+assert.ok(p.status.textContent.includes('宿主未授权'));assert.ok(p.jobNote.textContent.includes('获取浏览器列表'));
+assert.ok(p.nextHint.textContent.includes('重新连接'));assert.ok(!p.nextHint.textContent.includes('请检查现有 Chrome 中的账号'));
+assert.equal(p.permissionHelp.open,false);assert.equal(starts().length,0);
+for(const value of ['PRIVATE','constructor','__proto__',{},['browser_inventory']]){
+ const note=platformDraftConnectionNote({connection_diagnostics:connection(null,{failure_phase:value})});
+ assert.ok(!note.includes('停止阶段：'));assert.ok(!note.includes('PRIVATE'));assert.ok(!note.includes('function'));
+}
+''')
+
     def test_missing_executor_stops_at_connection_without_claiming_page_failure(self):
         self.js(self.fixture + r'''
 await platformDraftOpen();const p=platformDraftPanel,before=JSON.stringify([...docs]),calls=requests.length;
@@ -26,6 +42,35 @@ assert.ok(p.nextHint.textContent.includes('浏览器执行工具'));assert.ok(!p
 assert.ok(!p.status.textContent.includes('未能读取 Chrome 页面'));assert.equal(p.permissionHelp.open,false);
 assert.equal(p.run.disabled,true);assert.equal(starts().length,0);assert.equal(requests.length,calls);
 assert.equal(JSON.stringify([...docs]),before);
+''')
+
+    def test_failure_displays_bounded_code_and_incident_reference(self):
+        self.js(self.fixture + r'''
+await platformDraftOpen();const p=platformDraftPanel;
+platformDraftDrawJob(p,failedInspection('platform_chrome_worker_tool_failed',{
+ id:'c'.repeat(32),audit_saved:true,
+ connection_diagnostics:connection('platform_chrome_worker_tool_failed',{
+  tool_error_fingerprint:'0123456789abcdef',diagnostic_id:'0123456789abcdef0123456789abcdef'})}));
+assert.ok(p.status.textContent.includes('故障码：platform_chrome_worker_tool_failed'));
+assert.ok(p.status.textContent.includes('错误结构：0123456789abcdef'));
+assert.ok(p.status.textContent.includes('记录编号：0123456789abcdef0123456789abcdef'));
+assert.ok(p.status.textContent.includes('任务记录：'+'c'.repeat(32)));
+platformDraftDrawJob(p,failedInspection('platform_chrome_worker_tool_failed',{
+ audit_saved:false,audit_started_saved:false,
+ connection_diagnostics:connection('platform_chrome_worker_tool_failed',{
+  tool_error_fingerprint:'PRIVATE_BODY',diagnostic_id:'PRIVATE_TOKEN'})}));
+assert.ok(!textTree(p.content).includes('PRIVATE_'));
+assert.ok(p.status.textContent.includes('本地任务记录保存失败'));assert.ok(p.status.textContent.includes('任务开始记录未能保存'));
+''')
+
+    def test_audit_lookup_shows_interrupted_without_claiming_no_write(self):
+        self.js(self.fixture + r'''
+await platformDraftOpen();const p=platformDraftPanel,id='a'.repeat(32);
+const findButton=node=>node.textContent==='查询记录'?node:node.children.map(findButton).find(Boolean);
+const button=findButton(p.content);assert.ok(button);controls['platform-draft-audit-id'].value=id;
+handler=async(action,payload)=>{assert.ok(action.endsWith('/audit-lookup'));assert.equal(payload.record_id,id);return {ok:true,id,records:[{kind:'started',state:'started'}]};};
+await button.onclick();assert.ok(controls['platform-draft-audit-result'].textContent.includes('没有终态记录'));
+assert.ok(!controls['platform-draft-audit-result'].textContent.includes('未写入'));assert.equal(starts().length,0);
 ''')
 
     def test_model_failures_have_specific_messages_and_model_help(self):
@@ -40,7 +85,7 @@ for(const [suffix,expected]of [['model_unverified','无法核验'],['model_misma
 
     def test_discovery_and_old_not_ready_are_executor_issues(self):
         self.js(self.fixture + r'''
-for(const code of ['tool_discovery_failed','not_ready','unexpected_tool','runtime_unavailable','turn_metadata_missing']){
+ for(const code of ['tool_discovery_failed','tool_approval_required','not_ready','unexpected_tool','runtime_unavailable','turn_metadata_missing']){
  await platformDraftOpen();const p=platformDraftPanel;platformDraftDrawJob(p,failedInspection('platform_chrome_worker_'+code));
  assert.ok(p.nextHint.textContent.includes('浏览器执行工具'));assert.ok(!p.nextHint.textContent.includes('请检查现有 Chrome'));
  assert.ok(!p.status.textContent.includes('未能读取 Chrome 页面'));assert.equal(starts().length,0);p.dialog.close();

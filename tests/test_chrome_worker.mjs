@@ -34,7 +34,7 @@ async function fixture(options={}){
       reload:async()=>events.push(['reload',tabId]),close:async()=>{events.push(['close',tabId]);nativeTabs.delete(tabId);},
       markDeliverable:async()=>events.push(['deliverable',tabId]),screenshot:async options=>{events.push(['screenshot',tabId,options]);return Uint8Array.from([137,80,78,71]);},
       playwright:{domSnapshot:async()=>{events.push(['snapshot',tabId]);if(options.debuggerUnattached)throw Error(options.debuggerMessage??'PRIVATE Debugger unattached');return 'visible management page';},
-        evaluate:async()=>({height:800}),locator:selector=>({selector,press:async(value,options)=>events.push(['press',selector,value,options]),
+        evaluate:async()=>({height:800}),locator:selector=>({selector,evaluate:async fn=>fn({clientHeight:800}),press:async(value,options)=>events.push(['press',selector,value,options]),
           pressSequentially:async(value,options)=>events.push(['pressSequentially',selector,value,options])})},
       ax:{scroll:async(target,direction,pages)=>events.push(['scroll',tabId,target,direction,pages]),
         paste:async(element,text,options)=>events.push(['paste',tabId,element,text,options])}};
@@ -686,17 +686,20 @@ test('public Chrome adapter maps snapshots creation and AX-only scrolling withou
   }finally{await f.cleanup();}
 });
 test('effective CUA-only scrolling uses documented scrollX and scrollY with bounded actual viewport pixels',async()=>{
-  const f=await fixture();delete f.original.ax;const calls=[];
+  const f=await fixture();delete f.original.ax;const calls=[];let height=800;
+  f.original.playwright.evaluate=async()=>null;
+  const locate=f.original.playwright.locator;
+  f.original.playwright.locator=selector=>selector==='html'?{evaluate:async fn=>fn({clientHeight:height})}:locate(selector);
   f.original.cua={scroll:async options=>calls.push(options)};
   try{
     const tab=await chromeDriverAPI(f.browser).getTab('original');
     await tab.scroll([30,40],'down',3);await tab.scroll([30,40],'up',1);
     assert.deepEqual(calls,[{x:30,y:40,scrollX:0,scrollY:2400},{x:30,y:40,scrollX:0,scrollY:-800}]);
-    for(const height of [0,-1,NaN,1.2,Infinity,100000001]){
-      f.original.playwright.evaluate=async()=>({height});
+    for(const invalidHeight of [0,-1,NaN,1.2,Infinity,100000001]){
+      height=invalidHeight;
       await assert.rejects(tab.scroll([30,40],'down',1),{code:'platform_chrome_worker_invalid_scroll'});
     }
-    f.original.playwright.evaluate=async()=>({height:2000});
+    height=2000;
     await assert.rejects(tab.scroll([30,40],'down',100000),{code:'platform_chrome_worker_invalid_scroll'});
     assert.equal(calls.length,2,'invalid viewport or excessive delta never scrolls');
   }finally{await f.cleanup();}
@@ -1293,6 +1296,22 @@ test('bootstrap SDK and probe errors are bounded private and synced before clean
     }finally{await f.cleanup();}
   }
 });
+test('Work local-browser refusal is a host denial, with no queue, retry or website permission claim',async()=>{
+  const f=await fixture();let calls=0;
+  f.agent.browsers.list=async()=>{calls++;throw Error('Local browser use is disabled in Work settings');};
+  try{
+    const result=await f.worker.checkpoint();
+    assert.equal(result.code,'platform_chrome_worker_host_access_denied');
+    assert.equal(result.error_marker,'local_browser_access_denied');assert.equal(result.failure_phase,'browser_inventory');
+    assert.equal(result.done,true);assert.equal(result.processed,0);assert.equal(calls,1);
+    assert.equal(f.events.filter(row=>row[0]==='cli').length,0);
+    assert.deepEqual(await readPrivateJSON(path.join(f.run,'worker-bootstrap-error.private.json')),
+      {schema:1,phase:'browser_inventory',code:result.code,error_name:'Error',error_marker:'local_browser_access_denied'});
+    await f.worker.checkpoint();assert.equal(calls,1);
+    assert.ok(!JSON.stringify(result).includes('Work settings'));
+  }finally{await f.cleanup();}
+});
+
 test('native browser transport closure is a fixed failure without inventory retry or private prose',async()=>{
   const f=await fixture();let calls=0;
   f.agent.browsers.list=async()=>{calls++;throw Error('native pipe closed before response');};

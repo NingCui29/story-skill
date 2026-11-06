@@ -64,14 +64,38 @@ WORKER_PHASES = frozenset({"config_validated", "sdk_setup", "browser_inventory",
 ERROR_NAMES = frozenset({"Error", "ReferenceError", "TypeError", "RangeError", "SyntaxError", "AggregateError",
     "URIError", "EvalError", "AbortError", "TimeoutError"})
 ERROR_MARKERS = frozenset({"none", "browser_unattached", "missing_turn_metadata", "missing_browser_service",
-    "missing_runtime_global", "origin_permission_required", "native_pipe_closed"})
+    "missing_runtime_global", "origin_permission_required", "native_pipe_closed", "local_browser_access_denied",
+    "tool_approval_unavailable"})
+# These are evidence tags, not root-cause conclusions. Never retain the
+# exception text, paths, identifiers, arguments, or page content.
+TOOL_ERROR_HINTS = {
+    "timeout": r"\b(?:timeout|timed out|deadline exceeded)\b",
+    "permission": r"\b(?:permission denied|access denied|not authorized|unauthorized|forbidden|eacces|eperm)\b",
+    "missing_file": r"\b(?:enoent|no such file|file not found|cannot find module|err_module_not_found)\b",
+    "missing_tool": r"\b(?:tool not found|unknown tool|method not found|server not found)\b",
+    "connection": r"\b(?:connection closed|connection refused|connection reset|broken pipe|transport closed|unexpected eof)\b",
+    "session": r"\b(?:missing required codex turn metadata|session not found|thread not found|turn not found|session expired)\b",
+    "sandbox": r"\b(?:sandbox|untrusted|not trusted)\b",
+    "process": r"\b(?:failed to spawn|failed to start|process exited|process terminated|spawn failed)\b",
+    "invalid_request": r"\b(?:invalid params|invalid arguments|invalid request|parse error|syntaxerror)\b",
+    "resource_limit": r"\b(?:out of memory|resource exhausted|too many open files|rate limit)\b",
+}
+TOOL_ERROR_TERMS = frozenset((
+    "access permission authorization authentication disabled denied invalid missing required unavailable "
+    "failed failure error internal unexpected unknown timeout timed closed shutdown connection transport broken "
+    "socket pipe process spawn terminated exited file path module sandbox work settings limit blocked cancelled "
+    "refused reset configured support cannot could not bad rejected output input request response empty read "
+    "write resource retry javascript script syntax exception typeerror referenceerror node repl node_repl "
+    "tool function server mcp call execution execute running start initialized initialization thread turn session "
+    "context metadata no such directory enoent eacces eperm network host use operation invoking reported message"
+).split())
 DRIVER_PHASES = frozenset({"guard", "catalog", "listing", "pages", "all_rows", "read"})
 RESULT_CODES = frozenset("platform_chrome_worker_" + value for value in (
     "ambiguous_browser", "ambiguous_tab", "binding_mismatch", "browser_changed", "browser_unattached", "cleanup_failed", "cli_failed", "config_changed",
     "detach_failed", "duplicate_request", "existing_tab_required", "target_tab_changed", "target_tab_closed", "failed", "handle_exists", "invalid_challenge", "connect_timeout", "browser_wait_timeout",
     "invalid_config", "invalid_packet", "invalid_scroll", "invalid_stop", "unavailable", "unsafe_file",
     "native_model_not_authorized", "native_sdk_unavailable", "native_runtime_required",
-    "unsafe_user_tab", "unsupported_sdk", "turn_metadata_missing", "runtime_unavailable", "origin_permission_required", "browser_transport_closed")) | frozenset("platform_browser_" + value for value in (
+    "unsafe_user_tab", "unsupported_sdk", "turn_metadata_missing", "runtime_unavailable", "origin_permission_required", "browser_transport_closed", "host_access_denied")) | frozenset("platform_browser_" + value for value in (
     "ambiguous_dom", "ambiguous_draft", "chapter_exists_not_draft", "editor_changed", "identity_mismatch",
     "identity_unavailable", "incomplete_dom", "incomplete_list", "incomplete_scope", "invalid_chapter",
     "invalid_identity", "invalid_profile", "invalid_remote_id", "login_required", "navigation_timeout", "read_timeout",
@@ -79,7 +103,7 @@ RESULT_CODES = frozenset("platform_chrome_worker_" + value for value in (
     "unnumbered_draft", "unsafe_create", "unsafe_navigation", "unsafe_save", "unsafe_url", "unsupported_editor",
     "bridge_scope", "bridge_expired", "editor_in_use", "readback_required"))
 DIAGNOSTIC_CODES = RESULT_CODES | frozenset("platform_chrome_worker_" + value for value in (
-    "tool_failed", "unexpected_tool", "host_context_missing", "debugger_unavailable", "module_unavailable",
+    "tool_failed", "tool_approval_required", "unexpected_tool", "host_context_missing", "debugger_unavailable", "module_unavailable",
     "disconnected", "invalid_message", "message_limit", "rpc_error", "rpc_timeout", "connect_timeout",
     "health_expired", "exited", "turn_failed", "not_ready", "unsafe_runtime", "unsafe_stop", "invalid_context",
     "thread_start_failed", "cleanup_unconfirmed", "model_unverified", "model_mismatch", "model_rerouted",
@@ -89,6 +113,10 @@ DIAGNOSTIC_PHASES = frozenset({"created", "app_server_started", "rpc_sent", "rpc
     "tool_failed", "worker_checkpoint", "awaiting_health", "bridge_ready", "connection_failed", "stop_requested",
     "transport_closed", "closed", "connect_budget_extended", "worker_done_confirmed", "cleanup_unconfirmed",
     "resume_wait", "bridge_resumed", "model_verified", "model_rejected", "provider_error", "bootstrap_failed"})
+AUDIT_PHASES = frozenset({"created", "app_server_started", "model_verified", "model_rejected", "model_turn_started",
+    "model_turn_completed", "tool_started", "tool_failed", "bridge_ready", "bridge_resumed", "connection_failed",
+    "bootstrap_failed", "provider_error", "stop_requested", "worker_done_confirmed", "cleanup_unconfirmed", "closed"})
+MAX_AUDIT_EVENTS = 256
 _CONTROLLER = None
 _CONTROLLER_LOCK = threading.RLock()
 
@@ -159,8 +187,51 @@ def _regular(path, *, executable=False):
     return path
 
 
+def _windows_codex_candidates():
+    """Known CLI installations, independent of a desktop launcher's stale PATH.
+
+    The desktop app extracts its CLI into version-addressed directories. Do
+    not inspect running sessions, native-host registries or browser channels
+    to find it. Discovery grants no browser access.
+    """
+    candidates = []
+    custom = os.environ.get("CODEX_INSTALL_DIR")
+    if custom and Path(custom).is_absolute():
+        candidates.append(Path(custom) / "codex.exe")
+    local = os.environ.get("LOCALAPPDATA")
+    if not local or not Path(local).is_absolute():
+        return candidates
+    local = Path(local)
+    candidates.append(local / "Programs/OpenAI/Codex/bin/codex.exe")
+    cache = local / "OpenAI/Codex/bin"
+    try:
+        root = cache.resolve(strict=True)
+        versions = []
+        # A bounded, single-directory scan; never search all of AppData.
+        with os.scandir(cache) as entries:
+            for index, entry in enumerate(entries):
+                if index >= 100:
+                    return candidates
+                if not re.fullmatch(r"[0-9a-f]{16}", entry.name):
+                    continue
+                try:
+                    info = entry.stat(follow_symlinks=False)
+                    if (not stat.S_ISDIR(info.st_mode) or entry.is_symlink() or
+                            getattr(info, "st_file_attributes", 0) & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0)):
+                        continue
+                    candidate = Path(entry.path) / "codex.exe"
+                    candidate.resolve(strict=True).relative_to(root)
+                    versions.append((candidate.stat().st_mtime_ns, entry.name, candidate))
+                except (OSError, ValueError):
+                    continue
+        candidates.extend(value[2] for value in sorted(versions, reverse=True)[:8])
+    except (OSError, ValueError):
+        pass
+    return candidates
+
+
 def _codex_executable():
-    """Prefer the installed desktop CLI; no executable comes from an HTTP form."""
+    """Resolve an installed CLI; no executable comes from an HTTP form."""
     candidates = []
     if sys.platform == "darwin":
         for parent in (Path("/Applications"), Path.home() / "Applications"):
@@ -169,13 +240,23 @@ def _codex_executable():
     located = shutil.which("codex")
     if located:
         candidates.append(Path(located))
+    if sys.platform == "win32":
+        candidates.extend(_windows_codex_candidates())
+    seen = set()
+    deadline = time.monotonic() + 6
     for candidate in candidates:
         try:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                break
             path = _regular(candidate, executable=True)
+            if path in seen:
+                continue
+            seen.add(path)
             if path.name not in ("codex", "codex.exe", "codex-x86_64-apple-darwin", "codex-aarch64-apple-darwin"):
                 continue
             result = subprocess.run([str(path), "--version"], stdin=subprocess.DEVNULL,
-                stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=3, check=False)
+                stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, timeout=min(3, remaining), check=False)
             if result.returncode == 0 and re.fullmatch(rb"codex-cli [0-9][0-9A-Za-z.+_-]*\s*", result.stdout):
                 return path
         except (OSError, ValueError, subprocess.SubprocessError, WorkerError):
@@ -377,6 +458,19 @@ def _persist_diagnostics(core, context, snapshot):
     bridge = core.platform_chrome_bridge
     with bridge._pinned(context) as directory:
         bridge._write(directory, "diagnostics.json", snapshot, replace=True)
+
+
+def _audit_runtime_hashes():
+    """Identify installed source files without recording paths or source text."""
+    result = {}
+    root = Path(__file__).resolve().parent
+    for name in ("story_chrome_worker.py", "story_chrome_worker.mjs", "story_chrome_bridge.mjs",
+                 "story_platform_drafts.py", "story_publish.py", "story_workbench.py"):
+        try:
+            result[name] = hashlib.sha256((root / name).read_bytes()).hexdigest()
+        except OSError:
+            result[name] = None
+    return result
 
 
 def _replace_stop(core, context, record):
@@ -1387,18 +1481,45 @@ class AppServerClient:
         if isinstance(error, dict) and isinstance(error.get("message"), str):
             parts.append(error["message"][:8192])
         result = item.get("result")
+        content = result.get("content", []) if isinstance(result, dict) else []
+        content = content if isinstance(content, list) else []
+        error_code = error.get("code") if isinstance(error, dict) else None
+        if type(error_code) is not int or not -(2**31) <= error_code < 2**31:
+            error_code = None
+        # Fingerprint only a bounded structural summary; never hash or retain
+        # provider prose, arguments, paths, page content or credentials.
+        shape = {"status": item.get("status") if item.get("status") in ("failed", "completed", "inProgress") else "other",
+                 "error_object": isinstance(error, dict), "error_message": isinstance(error, dict) and isinstance(error.get("message"), str),
+                 "error_code": error_code, "result_object": isinstance(result, dict),
+                 "result_is_error": isinstance(result, dict) and result.get("isError") is True,
+                 "text_blocks": min(8, sum(isinstance(part, dict) and isinstance(part.get("text"), str) for part in content[:8]))}
+        fingerprint = hashlib.sha256(json.dumps(shape, sort_keys=True, separators=(",", ":")).encode()).hexdigest()[:16]
+        channel = ("error_object" if shape["error_object"] else
+                   "error_result" if shape["result_is_error"] else "tool_status")
+        evidence = {"tool_error_fingerprint": fingerprint, "tool_error_channel": channel,
+                    "tool_error_status": shape["status"]}
+        if error_code is not None:
+            evidence["tool_error_rpc_code"] = error_code
         if isinstance(result, dict):
             content = result.get("content", [])
             if isinstance(content, list):
                 parts.extend(part["text"][:8192] for part in content[:8]
                              if isinstance(part, dict) and isinstance(part.get("text"), str))
+        evidence["tool_error_hints"] = [hint for hint, pattern in TOOL_ERROR_HINTS.items()
+                                        if any(re.search(pattern, text, re.IGNORECASE) for text in parts)]
+        # An unordered set of fixed technical words provides a little more
+        # diagnostic evidence without retaining arbitrary text or identifiers.
+        terms = {word.casefold() for text in parts for word in re.findall(r"[A-Za-z_]+", text)}
+        evidence["tool_error_terms"] = sorted(terms & TOOL_ERROR_TERMS)
         name = "Error"
         for text in parts:
             candidate = text.split(":", 1)[0].strip()
             if candidate in ERROR_NAMES:
                 name = candidate
                 break
-        fixed = (("Missing required Codex turn metadata", "turn_metadata_missing", "missing_turn_metadata"),
+        fixed = (("MCP tool call requires approval, but approval policy is never", "tool_approval_required", "tool_approval_unavailable"),
+                 ("Local browser use is disabled in Work settings", "host_access_denied", "local_browser_access_denied"),
+                 ("Missing required Codex turn metadata", "turn_metadata_missing", "missing_turn_metadata"),
                  ("native pipe closed before response", "browser_transport_closed", "native_pipe_closed"),
                  ("Debugger unattached", "browser_unattached", "browser_unattached"),
                  ("Browser use requires a trusted Node REPL browser service", "runtime_unavailable", "missing_browser_service"),
@@ -1409,8 +1530,10 @@ class AppServerClient:
         for text in parts:
             for marker, code, error_marker in fixed:
                 if marker in text:
-                    return {"code": "platform_chrome_worker_" + code, "error_name": name, "error_marker": error_marker}
-        return {"code": "platform_chrome_worker_tool_failed", "error_name": name, "error_marker": "none"}
+                    return {"code": "platform_chrome_worker_" + code, "error_name": name, "error_marker": error_marker,
+                            **evidence}
+        return {"code": "platform_chrome_worker_tool_failed", "error_name": name, "error_marker": "none",
+                **evidence}
 
     def _observe(self, message):
         method, params = message.get("method"), message.get("params", {})
@@ -1750,6 +1873,16 @@ class ChromeWorkerController:
         # user-supplied reset/model-verified flag; host recovery remains separate.
         self._connection_suspension = None
 
+    def retry_connection(self):
+        """Permit one user-requested fresh launch; never establish host authorization."""
+        with self._lock:
+            for entry in self._workers.values():
+                if (not entry["done"].is_set() or entry.get("cleanup_unconfirmed") or
+                        entry.get("cleanup_error") or not entry.get("worker_done_confirmed")):
+                    raise WorkerError("platform_chrome_worker_cleanup_unconfirmed")
+            self._connection_suspension = None
+            return {"ok": True, "retry_allowed": True, "ready": False}
+
     def connection_suspension(self):
         with self._lock:
             return dict(self._connection_suspension) if self._connection_suspension else None
@@ -1790,6 +1923,28 @@ class ChromeWorkerController:
                         record[key] = fields[key]
                         if not entry.get(key):
                             entry[key] = fields[key]
+                fingerprint = fields.get("tool_error_fingerprint")
+                if phase == "tool_failed" and isinstance(fingerprint, str) and re.fullmatch(r"[0-9a-f]{16}", fingerprint):
+                    record["tool_error_fingerprint"] = fingerprint
+                    entry["tool_error_fingerprint"] = fingerprint
+                if phase == "tool_failed":
+                    hints = fields.get("tool_error_hints")
+                    if isinstance(hints, list) and len(hints) <= len(TOOL_ERROR_HINTS) and all(
+                            isinstance(hint, str) and hint in TOOL_ERROR_HINTS for hint in hints):
+                        record["tool_error_hints"] = list(hints)
+                        entry["tool_error_hints"] = list(hints)
+                    terms = fields.get("tool_error_terms")
+                    if isinstance(terms, list) and len(terms) <= len(TOOL_ERROR_TERMS) and all(
+                            isinstance(term, str) and term in TOOL_ERROR_TERMS for term in terms):
+                        record["tool_error_terms"] = list(terms)
+                        entry["tool_error_terms"] = list(terms)
+                    for key, allowed in (("tool_error_channel", {"error_object", "error_result", "tool_status"}),
+                                         ("tool_error_status", {"failed", "completed", "inProgress", "other"})):
+                        if isinstance(fields.get(key), str) and fields[key] in allowed:
+                            record[key] = entry[key] = fields[key]
+                    value = fields.get("tool_error_rpc_code")
+                    if type(value) is int and -(2**31) <= value < 2**31:
+                        record["tool_error_rpc_code"] = entry["tool_error_rpc_code"] = value
                 if ("cli_exit_code" in fields and (fields["cli_exit_code"] is None or
                         (type(fields["cli_exit_code"]) is int and 0 <= fields["cli_exit_code"] <= 255))):
                     record["cli_exit_code"] = fields["cli_exit_code"]
@@ -1823,9 +1978,10 @@ class ChromeWorkerController:
                 if (phase in ("bridge_ready", "bridge_resumed") or
                         fields.get("worker_state") in ("ready", "busy") or record.get("processed", 0) > 0):
                     entry["execution_seen"] = True
-                if (phase == "worker_checkpoint" and fields.get("worker_state") == "failed" and
-                        fields.get("code") == "platform_chrome_worker_browser_transport_closed" and
-                        fields.get("error_marker") == "native_pipe_closed" and
+                bootstrap_refusal = (fields.get("code"), fields.get("error_marker")) in {
+                    ("platform_chrome_worker_browser_transport_closed", "native_pipe_closed"),
+                    ("platform_chrome_worker_host_access_denied", "local_browser_access_denied")}
+                if (phase == "worker_checkpoint" and fields.get("worker_state") == "failed" and bootstrap_refusal and
                         fields.get("failure_phase") in ("sdk_setup", "browser_inventory") and
                         type(fields.get("processed")) is int and fields["processed"] == 0 and
                         not entry.get("execution_seen") and entry["state"] != "ready" and
@@ -1843,12 +1999,30 @@ class ChromeWorkerController:
                         entry.setdefault("worker_failure", record["code"])
                         if entry.get("error") in (None, "platform_chrome_worker_health_expired", "platform_chrome_worker_unavailable"):
                             entry["error"] = entry["worker_failure"]
+                if phase in AUDIT_PHASES or (phase == "worker_checkpoint" and fields.get("worker_state") in
+                                              ("failed", "stopped", "idle_timeout")):
+                    audit = entry.setdefault("audit_events", [])
+                    # Repeated checkpoints/tool calls are represented by the
+                    # first occurrence; distinct failures remain visible.
+                    if phase != "tool_started" or not any(event["phase"] == phase for event in audit):
+                        if len(audit) < MAX_AUDIT_EVENTS:
+                            audit.append(dict(record))
+                        else:
+                            entry["audit_truncated"] = True
                 entry["diagnostics"].append(record)
                 del entry["diagnostics"][:-MAX_DIAGNOSTICS]
                 if phase not in ("stop_requested", "transport_closed", "closed", "connection_failed", "worker_done_confirmed", "cleanup_unconfirmed") and \
                         fields.get("rpc") not in ("turn/interrupt", "thread/unsubscribe"):
                     entry["connection_phase"] = phase
-                snapshot = {"schema": 1, "events": [dict(item) for item in entry["diagnostics"]]}
+                if "audit_runtime_sha256" not in entry:
+                    entry["audit_runtime_sha256"] = _audit_runtime_hashes()
+                snapshot = {"schema": 1, "events": [dict(item) for item in entry["diagnostics"]],
+                            "milestones": [dict(item) for item in entry.get("audit_events", [])],
+                            "milestones_truncated": entry.get("audit_truncated", False),
+                            "started_at": entry.setdefault("audit_started_at", datetime.now().astimezone().isoformat(timespec="seconds")),
+                            "runtime_version": getattr(self.core, "VERSION", None), "model": WORKER_MODEL,
+                            "platform": platform.system(),
+                            "runtime_sha256": entry["audit_runtime_sha256"]}
             try:
                 _persist_diagnostics(self.core, entry["context"], snapshot)
             except Exception:
@@ -1864,6 +2038,7 @@ class ChromeWorkerController:
         return {"ok": True, "state": state, "ready": entry["state"] == "ready" and not pending and verified,
                 "owned": True, "uses_codex_quota": True, "binding_sha256": entry["fingerprint"],
                 "owned_worker_id": entry["instance"],
+                "diagnostic_id": entry["context"].name,
                 "requested_model": WORKER_MODEL,
                 "resolved_model": WORKER_MODEL if verified else None,
                 "model_verified": verified,
@@ -1876,6 +2051,12 @@ class ChromeWorkerController:
                 "resume_remaining_seconds": max(0, round(entry.get("resume_deadline", 0) - time.monotonic(), 1)) if resuming else 0,
                 "waiting_for_chrome": waiting is not None,
                 "error_name": entry.get("error_name"), "error_marker": entry.get("error_marker"),
+                "tool_error_fingerprint": entry.get("tool_error_fingerprint"),
+                "tool_error_channel": entry.get("tool_error_channel"),
+                "tool_error_status": entry.get("tool_error_status"),
+                "tool_error_rpc_code": entry.get("tool_error_rpc_code"),
+                "tool_error_hints": entry.get("tool_error_hints"),
+                "tool_error_terms": entry.get("tool_error_terms"),
                 "cli_exit_code": entry.get("cli_exit_code"), "cli_known_error": entry.get("cli_known_error"),
                 "cli_errno": entry.get("cli_errno"),
                 "driver_phase": entry.get("driver_phase"), "driver_line": entry.get("driver_line"),
@@ -2189,6 +2370,23 @@ class ChromeWorkerController:
                     _replace_stop(self.core, entry["context"], {**record, "keep_readback": False})
             entry["keep_readback"] = desired
 
+    def wait_owned_cleanup(self, root, owned_worker_id, *, expected_book_id, timeout=None):
+        """Wait only for this controller's already-stopping worker, without sending another operation."""
+        if not isinstance(owned_worker_id, str) or not re.fullmatch(r"[0-9a-f]{32}", owned_worker_id):
+            raise WorkerError("platform_chrome_worker_invalid_input")
+        root = os.path.abspath(Path(root).expanduser())
+        with self._lock:
+            matches = [entry for entry in self._workers.values() if str(entry["root"]) == root and
+                       entry["instance"] == owned_worker_id and entry["binding"]["book_id"] == expected_book_id]
+            if len(matches) != 1 or not matches[0]["stop"].is_set():
+                raise WorkerError("platform_chrome_worker_cleanup_unconfirmed")
+            entry = matches[0]
+        maximum = STOP_CHECKPOINT_SECONDS + STOP_TURN_SECONDS + 30
+        delay = maximum if timeout is None else max(0, min(float(timeout), maximum))
+        entry["done"].wait(delay)
+        with self._lock:
+            return self._view(entry)
+
     def _detach(self, entry):
         handle = entry["context"] / "handle.json"
         if not handle.exists():
@@ -2399,7 +2597,7 @@ def _controller():
 
 
 def availability():
-    """Check admission and dependencies. Never creates a model/tool context."""
+    """Check dependencies and remembered refusal, never browser readiness."""
     with _CONTROLLER_LOCK:
         suspension = _CONTROLLER.connection_suspension() if _CONTROLLER is not None else None
     if suspension:
@@ -2433,3 +2631,7 @@ def disconnect(root, plan_id, profile_id, *, expected_book_id=None, keep_readbac
     return _controller().disconnect(root, plan_id, profile_id, expected_book_id=expected_book_id,
                                     keep_readback=keep_readback, binding_sha256=binding_sha256,
                                     owned_worker_id=owned_worker_id, comparison_policy=comparison_policy, body_encoding=body_encoding)
+
+
+def wait_owned_cleanup(root, owned_worker_id, *, expected_book_id, timeout=None):
+    return _controller().wait_owned_cleanup(root, owned_worker_id, expected_book_id=expected_book_id, timeout=timeout)

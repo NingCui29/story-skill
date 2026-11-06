@@ -2,7 +2,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {executeChromeBridgeRequest, closeChromeBridgeSession, readParagraphs, readDOMValue, readDOMPath, readActionState, readRowFields, readPreviewParagraphs_v1} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
+import {runInNewContext} from 'node:vm';
+import {executeChromeBridgeRequest, closeChromeBridgeSession, readParagraphs, readDOMValue, readDocumentScrollPoint, readDOMPath, readActionState, readRowFields, readPreviewParagraphs_v1} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
+
+function documentScrollPointFixture(rect={left:30,right:140,top:25,bottom:125},style={position:'static',overflowY:'visible',overscrollBehaviorY:'auto'}){
+  const root={clientWidth:100,clientHeight:100},outside={parentElement:root,clientHeight:100,scrollHeight:100};
+  const inside={catalog:true},doc={documentElement:root,scrollingElement:root,
+    elementFromPoint:(x,y)=>x>=rect.left&&x<rect.right&&y>=rect.top&&y<rect.bottom?inside:outside};
+  const element={ownerDocument:doc,getBoundingClientRect:()=>rect,contains:node=>node===inside};
+  return runInNewContext('('+readDocumentScrollPoint.toString()+')(element)',{element,getComputedStyle:()=>style});
+}
 
 const ORIGIN = 'https://fanqienovel.com';
 const field = (selector, extra = {}) => ({selector, ...extra});
@@ -99,14 +108,14 @@ class Locator {
   async isEnabled() { return this.node().enabled !== false; }
   async evaluate(fn,arg) {
     await this.tab.env.beforeLocatorEvaluate?.(this.tab,this.selector,fn,this);
+    if(fn===readDocumentScrollPoint)return documentScrollPointFixture(undefined,
+      this.tab.env.noDocumentScrollPoint?{position:'fixed'}:undefined);
     if((this.selector==='#scroll'||this.selector==='html')&&typeof arg==='number'){
       const key=this.selector==='html'?'html':'scroll';
-      const before=this.tab.scrollTop[key]||0;
-      const next=this.tab.env.stuckScroll?before:Math.max(0,Math.min(300,before+arg));
-      this.tab.scrollTop[key]=next;
-      this.tab.env.events.push(['domscroll',this.selector,arg]);
-      this.tab.onDomScroll?.(this.selector,arg);
-      return next!==before;
+      this.tab.env.events.push(['writeEvaluate',this.selector]);
+      const element={clientHeight:100,scrollHeight:400,get scrollTop(){return 0;}};
+      if(key==='html')element.ownerDocument={scrollingElement:element};
+      return fn(element,arg);
     }
     const node=this.node();
     if(['.chapter','.state','.link','.chapter:visible'].includes(this.selector))this.tab.env.events.push(['fieldRead',this.selector]);
@@ -205,7 +214,18 @@ class Tab {
     if(this.env.changeAccountAfterBodyText)this.env.account='different-account';
     if(this.env.pasteFailure)throw this.env.pasteFailure;
   }
-  async scroll(coords,direction,pages) { assert.ok(Array.isArray(coords) && coords.length===2);assert.ok(['up','down'].includes(direction));assert.ok(pages>=1);this.env.events.push(['scroll',coords]); }
+  async scroll(coords,direction,pages) {
+    assert.ok(Array.isArray(coords) && coords.length===2);assert.ok(['up','down'].includes(direction));assert.ok(pages>=1);
+    const key=coords[0]>=30&&coords[0]<140&&coords[1]>=25&&coords[1]<125?'scroll':'html',before=this.scrollTop[key];
+    this.env.events.push(['scroll',coords,direction,pages,before]);
+    if(this.env.scrollFailure)throw this.env.scrollFailure;
+    const moved=Math.max(0,Math.min(300,before+(direction==='down'?1:-1)*100*pages));
+    if(!this.env.stuckScroll){
+      if(this.env.scrollDelayMs)setTimeout(()=>{this.scrollTop[key]=moved;},this.env.scrollDelayMs);
+      else this.scrollTop[key]=moved;
+    }
+    this.onScroll?.(key,direction,pages);
+  }
   async close() {
     this.env.closed.push(this.id);
     if(this.env.closeEditorFailure&&this.current.includes('/edit/'))return;
@@ -286,7 +306,7 @@ class Tab {
       env.draftCountReads=(env.draftCountReads||0)+1;env.onDraftCountRead?.(env);
       return plain(env.draftCountText??('共'+this.rows().length+'篇草稿'));
     }
-    if(selector==='#scroll')return env.emptyDraftTableOmitted&&this.scope()==='drafts'&&!this.rows().length?[]:[{metrics:() => ({height:100,total:400,width:100,wide:100,top:this.scrollTop.scroll,x:50,y:50})}];
+    if(selector==='#scroll')return env.emptyDraftTableOmitted&&this.scope()==='drafts'&&!this.rows().length?[]:[{metrics:() => ({height:100,total:400,width:100,wide:100,top:this.scrollTop.scroll,x:85,y:75})}];
     if(selector==='.virtual')return env.virtual?[{}]:[];
     if(selector==='.pagination')return env.pagination?[{}]:[];
     if(selector==='#sections')return [{click:() => {this.menu=!this.menu;}}];
@@ -683,7 +703,7 @@ test('Fanqie rejects pagination appearing or changing during a non-draft table s
         }
         return lookup(selector);
       };
-      tab.onDomScroll=()=>{tab.paginationChanged=true;};
+      tab.onScroll=()=>{tab.paginationChanged=true;};
       return tab;
     };
     const base=await verified(env,config);
@@ -1085,7 +1105,7 @@ test('complete existing-Chrome verify find create read flow uses native paragrap
   assert.deepEqual(env.events.filter(row=>row[0]==='pasteText').map(row=>row[2]),[body.replace(/\n+$/,'')]);
   assert.equal(env.events.filter(row=>row[0]==='press'&&row[2]==='Enter').length,2);
   assert.ok(!env.events.some(row=>row[0]==='pressSequentially'&&row[1]==='#body'));
-  assert.ok(env.events.some(row=>row[0]==='reload'));assert.ok(env.events.some(row=>row[0]==='domscroll'));
+  assert.ok(env.events.some(row=>row[0]==='reload'));assert.ok(env.events.some(row=>row[0]==='scroll'));
   await closeChromeBridgeSession(env.api,base.session_id);assert.ok(env.tabs.has('1'),'pre-existing user tab survives');
   assert.equal(env.tabs.size,2,'latest readback remains');
 });
@@ -1310,7 +1330,7 @@ test('observed empty Fanqie draft box with no table spinner or scroll container 
   const created=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'首篇草稿',body:'正式正文'}));
   assert.equal(created.ok,true,JSON.stringify(created));assert.equal(created.result,'99');
   assert.equal(env.creates,1);assert.equal(env.saves,1);
-  assert.ok(env.events.some(row=>row[0]==='domscroll'),'nonempty saved draft uses the original table completeness checks');
+  assert.ok(env.events.some(row=>row[0]==='scroll'),'nonempty saved draft uses the original table completeness checks');
 });
 test('empty Fanqie catalog rejects absent ambiguous malformed or nonzero count and contradictory rows',async()=>{
   const cases=[
@@ -2213,24 +2233,52 @@ test('allRows reads document metrics through a locator when host page evaluate r
   const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
   assert.equal(result.ok,true,JSON.stringify(result));
   assert.equal(result.result.length,1);assert.equal(result.result[0].remote_id,'11');
-  assert.ok(env.events.some(row=>row[0]==='domscroll'));
+  assert.ok(env.events.some(row=>row[0]==='scroll'));
   assert.equal(env.creates,0);assert.equal(env.saves,0);
 });
-test('allRows scrolls in bounded DOM steps and never issues a host AX scroll',async () => {
+test('allRows uses bounded public scrolling while evaluation exposes read-only scroll properties',async () => {
   const env=environment({pageEvaluateNull:true});const base=await verified(env);
   const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
   assert.equal(result.ok,true,JSON.stringify(result));
-  assert.ok(!env.events.some(row=>row[0]==='scroll'),'host AX scroll can exceed the REPL cell budget');
-  const steps=env.events.filter(row=>row[0]==='domscroll');
+  assert.ok(!env.events.some(row=>row[0]==='writeEvaluate'),'read-only evaluation cannot mutate scrollTop');
+  const steps=env.events.filter(row=>row[0]==='scroll');
   assert.ok(steps.length>=2,'bounded scrolling needs several movements');
-  assert.ok(steps.every(([,selector,delta])=>['#scroll','html'].includes(selector)&&
-    Number.isInteger(delta)&&Math.abs(delta)<=100),'each step is one viewport-sized DOM movement');
+  assert.ok(steps.every(([,coords,direction,pages])=>coords.every(Number.isFinite)&&
+    ['up','down'].includes(direction)&&pages===1),'each step is one public scroll page');
+  assert.ok(steps.some(([,coords])=>coords[1]===75));assert.ok(steps.some(([,coords])=>coords[1]<25));
   let run=0,longest=0,previous=null;
-  for(const [,selector,delta] of steps){
-    const key=`${selector}:${delta>0?'down':'up'}`;
+  for(const [,coords,direction] of steps){
+    const key=`${coords[1]}:${direction}`;
     run=key===previous?run+1:1;previous=key;longest=Math.max(longest,run);
   }
   assert.ok(longest<64,`one edge traversal must stay bounded, saw ${longest}`);
+});
+test('allRows public scroll refusal is terminal without a write-evaluate fallback or another action',async()=>{
+  const failure=Error('PUBLIC_SCROLL_REFUSED'),env=environment({scrollFailure:failure}),base=await verified(env);
+  let observed;env.api.onDriverError=error=>{observed=error;};env.events=[];
+  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
+  assert.equal(result.error,'platform_browser_operation_failed');assert.equal(observed,failure);
+  assert.equal(env.events.filter(row=>row[0]==='scroll').length,1);
+  assert.ok(!env.events.some(row=>row[0]==='writeEvaluate'));
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
+});
+test('document scroll points exclude the wide catalog fixed overlays and contained wheel regions',()=>{
+  for(const rect of [{left:30,right:140,top:25,bottom:125},{left:30,right:140,top:-70,bottom:30},
+    {left:30,right:140,top:-20,bottom:120}]){
+    const point=documentScrollPointFixture(rect);assert.ok(point);
+    assert.ok(point.x>0&&point.x<100&&point.y>0&&point.y<100);
+    assert.ok(point.x<rect.left||point.x>=rect.right||point.y<rect.top||point.y>=rect.bottom);
+  }
+  for(const style of [{position:'fixed'},{position:'sticky'},{overscrollBehaviorY:'contain'},{overscrollBehaviorY:'none'}])
+    assert.equal(documentScrollPointFixture(undefined,style),null);
+  assert.equal(documentScrollPointFixture({left:0,right:100,top:0,bottom:100}),null);
+});
+test('allRows cannot invent a page point when the observed outside area is blocked',async()=>{
+  const env=environment({noDocumentScrollPoint:true}),base=await verified(env);
+  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
+  assert.equal(result.error,'platform_browser_incomplete_list');
+  assert.ok(!env.events.some(row=>row[0]==='scroll'&&row[1][1]<25));
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
 });
 test('allRows fails quickly when the list cannot move instead of looping',async () => {
   const env=environment({stuckScroll:true});const base=await verified(env);
@@ -2238,6 +2286,15 @@ test('allRows fails quickly when the list cannot move instead of looping',async 
   const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
   assert.equal(result.error,'platform_browser_incomplete_list');
   assert.ok(Date.now()-started<5000);
+});
+test('allRows observes delayed native scroll rendering without resending accepted input',async()=>{
+  const env=environment({scrollDelayMs:50}),base=await verified(env);
+  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
+  assert.equal(result.ok,true,JSON.stringify(result));
+  const actions=env.events.filter(row=>row[0]==='scroll');
+  for(let index=1;index<actions.length;index++)assert.notDeepEqual(actions[index],actions[index-1],
+    'a continued traversal changes position even when its public input parameters repeat');
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
 });
 test('throwing or rejected diagnostic callbacks cannot change a successful create or retry protection',async () => {
   for(const callback of [()=>{throw new Error('PRIVATE callback failure');},()=>Promise.reject(new Error('PRIVATE rejection'))]) {

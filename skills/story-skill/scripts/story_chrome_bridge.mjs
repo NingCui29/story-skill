@@ -61,6 +61,36 @@ export function readDOMValue(el, attribute = null) {
   return el.getAttribute('contenteditable') === 'true' ? el.innerText : el.textContent;
 }
 
+// A wide catalog can cover the viewport's right edge and capture wheel input.
+// Select an observed page point outside it, without writing through evaluate.
+export function readDocumentScrollPoint(el) {
+  const doc=el.ownerDocument,root=doc?.documentElement,scroller=doc?.scrollingElement;
+  if (!root || !scroller || typeof doc.elementFromPoint!=='function') return null;
+  const width=root.clientWidth,height=root.clientHeight,r=el.getBoundingClientRect();
+  if (![width,height,r.left,r.right,r.top,r.bottom].every(Number.isFinite) || width<=2 || height<=2) return null;
+  const x=Math.max(1,Math.min(width-1,(r.left+r.right)/2));
+  const y=Math.max(1,Math.min(height-1,(r.top+r.bottom)/2));
+  const points=[];
+  if(r.top>2)points.push([x,Math.min(100,r.top/2,height-1)]);
+  if(r.bottom<height-2)points.push([x,(Math.max(0,r.bottom)+height)/2]);
+  if(r.left>2)points.push([Math.min(width-1,r.left-2),y]);
+  if(r.right<width-2)points.push([Math.max(1,r.right+2),y]);
+  for(const [px,py] of points){
+    if(px<=0||py<=0||px>=width||py>=height)continue;
+    const hit=doc.elementFromPoint(px,py);
+    if(!hit||el.contains(hit))continue;
+    let node=hit,valid=false;
+    for(let depth=0;node&&depth<128;depth++,node=node.parentElement){
+      if(node===scroller){valid=true;break;}
+      const style=getComputedStyle(node);
+      if(['fixed','sticky'].includes(style.position)||['contain','none'].includes(style.overscrollBehaviorY)||
+          (/^(auto|scroll|overlay|hidden|clip)$/.test(style.overflowY)&&node.scrollHeight>node.clientHeight+1))break;
+    }
+    if(valid)return {x:px,y:py};
+  }
+  return null;
+}
+
 // CUA exposes locators, not ElementHandles. Resolve a supported host selector
 // to a read-only DOM path so a later callback can sample all editor fields in
 // one JS turn without adding page globals or reimplementing selector engines.
@@ -953,9 +983,26 @@ class Driver {
       return {height: scroller.clientHeight, total: scroller.scrollHeight, top: scroller.scrollTop, width: el.clientWidth};
     });
   }
-  async scrollToEdge(locator, direction) {
-    // One host scroll action can consume the whole REPL cell budget. Move the
-    // observed scroll container in bounded viewport steps instead.
+  async observeScroll(tab, read, before) {
+    // Public input may acknowledge before the next rendering frame. Observe
+    // the one accepted action under a local deadline; never send it again.
+    this.check();const immediate=await read();this.check();
+    if(!Number.isFinite(immediate.top))fail('incomplete_list');
+    if(immediate.top!==before.top)return immediate;
+    return this.boundedObservation(async()=>{
+      const deadline=Date.now()+2000;
+      while(true){
+        this.check();const after=await read();this.check();
+        if(!Number.isFinite(after.top))fail('incomplete_list');
+        if(after.top!==before.top)return after;
+        if(Date.now()>=deadline)fail('incomplete_list');
+        await pause();await this.ax(tab);
+      }
+    });
+  }
+  async scrollToEdge(tab, locator, direction) {
+    // evaluate is read-only in the public browser SDK. Use one public scroll
+    // page per call, then independently observe progress and the final edge.
     const sign = direction === 'down' ? 1 : -1;
     for (let step = 0; step < 512; step++) {
       this.check();
@@ -963,17 +1010,14 @@ class Driver {
       if (![metrics.height, metrics.total, metrics.top].every(Number.isFinite) ||
           metrics.height <= 0 || metrics.total < metrics.height) fail('incomplete_list');
       if (sign > 0 ? metrics.top + metrics.height >= metrics.total - 1 : metrics.top <= 1) return;
-      const delta = sign * Math.max(1, Math.floor(metrics.height * 0.9));
-      const moved = await locator.evaluate((el, amount) => {
-        const before = el.scrollTop;
-        el.scrollTop = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, before + amount));
-        return el.scrollTop !== before;
-      }, delta);
-      if (!moved) return;
+      if (![metrics.x,metrics.y].every(Number.isFinite)) fail('incomplete_list');
+      await tab.scroll([metrics.x,metrics.y], direction, 1);
+      this.check();
+      await this.observeScroll(tab,()=>this.metrics(locator),metrics);
     }
     fail('incomplete_list');
   }
-  async scrollDocumentToEdge(tab, direction) {
+  async scrollDocumentToEdge(tab, container, direction) {
     const sign = direction === 'down' ? 1 : -1;
     for (let step = 0; step < 512; step++) {
       this.check();
@@ -981,14 +1025,12 @@ class Driver {
       if (![metrics.height, metrics.total, metrics.top].every(Number.isFinite) ||
           metrics.height <= 0 || metrics.total < metrics.height) fail('incomplete_list');
       if (sign > 0 ? metrics.top + metrics.height >= metrics.total - 1 : metrics.top <= 1) return;
-      const delta = sign * Math.max(1, Math.floor(metrics.height * 0.9));
-      const moved = await tab.playwright.locator('html').evaluate((el, amount) => {
-        const scroller = el.ownerDocument?.scrollingElement || el;
-        const before = scroller.scrollTop;
-        scroller.scrollTop = Math.max(0, Math.min(scroller.scrollHeight - scroller.clientHeight, before + amount));
-        return scroller.scrollTop !== before;
-      }, delta);
-      if (!moved) return;
+      if (!Number.isFinite(metrics.width) || metrics.width <= 0) fail('incomplete_list');
+      const point=await container.evaluate(readDocumentScrollPoint);
+      if(!point||![point.x,point.y].every(Number.isFinite))fail('incomplete_list');
+      await tab.scroll([point.x,point.y], direction, 1);
+      this.check();
+      await this.observeScroll(tab,()=>this.documentMetrics(tab),metrics);
     }
     fail('incomplete_list');
   }
@@ -1014,8 +1056,8 @@ class Driver {
       progress(this.api,{...this.scan,phase:'all_rows',edge:'before_scroll',direction:down?'down':'up',container_before:metrics,document_before:docMetrics,document_before_valid:documentBeforeValid});
       if (!documentBeforeValid) fail('incomplete_list');
       await this.action(tab, async () => {
-        await this.scrollToEdge(container, down ? 'down' : 'up');
-        await this.scrollDocumentToEdge(tab, down ? 'down' : 'up');
+        await this.scrollToEdge(tab, container, down ? 'down' : 'up');
+        await this.scrollDocumentToEdge(tab, container, down ? 'down' : 'up');
       });
       metrics = await this.metrics(container);
       const dimensionsEqual = JSON.stringify([metrics.height, metrics.total, metrics.width, metrics.wide]) === dimensions;

@@ -604,6 +604,43 @@ docs.get('outside-page').value='old';pendingEdits();assert.strictEqual($('pendin
                 server.shutdown(); thread.join(timeout=5)
             server.server_close()
 
+    def test_platform_api_error_is_recorded_and_can_be_looked_up(self):
+        import http.client
+        import threading
+        server = story.workbench.editor_server(self.root)
+        thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+        try:
+            record = json.loads((self.root / '.story/workbench-service.json').read_text(encoding='utf-8'))
+            origin = f"http://127.0.0.1:{record['port']}"
+            def post(action, payload):
+                conn = http.client.HTTPConnection('127.0.0.1', record['port'], timeout=5)
+                try:
+                    conn.request('POST', '/' + record['token'] + '/api/platform-drafts/' + action,
+                                 json.dumps(payload), {'Content-Type': 'application/json', 'Origin': origin,
+                                                       'X-Story-Token': record['token']})
+                    response = conn.getresponse()
+                    return response.status, json.loads(response.read())
+                finally:
+                    conn.close()
+            status, failure = post('audit-lookup', {'record_id': 'bad'})
+            self.assertEqual(status, 409)
+            self.assertEqual(failure['error'], 'platform_draft_audit_invalid_id')
+            self.assertTrue(failure['audit_saved'])
+            status, found = post('audit-lookup', {'record_id': failure['audit_id']})
+            self.assertEqual(status, 200)
+            self.assertEqual(found['records'][0]['error'], failure['error'])
+            self.assertNotIn(record['token'], json.dumps(found))
+            server.shutdown(); thread.join(timeout=5); server.server_close()
+            server = story.workbench.editor_server(self.root)
+            thread = threading.Thread(target=server.serve_forever, daemon=True); thread.start()
+            record = json.loads((self.root / '.story/workbench-service.json').read_text(encoding='utf-8'))
+            origin = f"http://127.0.0.1:{record['port']}"
+            status, found = post('audit-lookup', {'record_id': failure['audit_id']})
+            self.assertEqual(status, 200)
+            self.assertEqual(found['records'][0]['error'], failure['error'])
+        finally:
+            server.shutdown(); thread.join(timeout=5); server.server_close()
+
     def test_service_rejects_forged_identity_and_releases_lease_after_start_failure(self):
         import threading
         w = story.workbench

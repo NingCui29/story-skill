@@ -215,7 +215,7 @@ class FormalRefreshTests(unittest.TestCase):
         self.assertEqual(story.publish.list_plans(self.book)["total"], 1)
         self.assertEqual(drafts._WORKBENCH_BINDINGS, {})
 
-    def test_unreviewed_import_is_visible_but_cannot_be_included_in_a_refreshed_range(self):
+    def test_unreviewed_import_can_be_included_in_a_refreshed_draft_range(self):
         imported = self.root / "imported.md"
         imported.write_text("第1章 未审查的导入章\n" + fixtures.BODY, encoding="utf-8")
         self.book.adopt(1, imported, "隔离的未审查导入测试。", self.book.meta("revision"), volume_dir="第一卷 雨夜")
@@ -223,8 +223,10 @@ class FormalRefreshTests(unittest.TestCase):
         old = self.bind(2, 2)
         current = drafts.workbench_formal_state(self.root, expected_book_id=self.book_id)
         self.assertEqual(current["formal_last"], 2)
-        self.code("review_required", old, start=1)
-        self.assertEqual(story.publish.list_plans(self.book)["total"], 1)
+        refreshed = self.refresh(old, start=1)
+        self.assertEqual(refreshed["chapters"], [1, 2])
+        self.assertEqual(refreshed["plan"]["source_policy"], "workbench_formal_draft")
+        self.assertEqual(story.publish.list_plans(self.book)["total"], 2)
 
     def test_non_fanqie_refresh_is_explicitly_unsupported_without_affecting_history(self):
         old = self.seed()

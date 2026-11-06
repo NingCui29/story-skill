@@ -42,6 +42,16 @@ class PlatformBindingTests(unittest.TestCase):
     def code(self, code, **overrides):
         return self.fixture.assert_code(code, self.bind, **overrides)
 
+    def test_shared_account_persists_for_another_book_and_can_be_changed(self):
+        workbench = story.workbench
+        with patch.object(workbench, '_library_state_dir', return_value=self.global_state):
+            self.assertIsNone(workbench._shared_fanqie_account())
+            self.assertEqual(workbench._shared_fanqie_account('12345'), '12345')
+            self.assertEqual(workbench._shared_fanqie_account(), '12345')
+            self.assertIsNone(workbench._shared_fanqie_account('not-an-id'))
+            self.assertEqual(workbench._shared_fanqie_account('67890'), '67890')
+            self.assertEqual(workbench._shared_fanqie_account(), '67890')
+
     def profiles(self):
         return sorted(self.profile_dir.glob("*.json")) if self.profile_dir.exists() else []
 
@@ -186,7 +196,7 @@ class PlatformBindingTests(unittest.TestCase):
         self.code("exports_unresolved")
         self.assertEqual(self.profiles(), [])
 
-    def test_imported_unreviewed_formal_chapter_cannot_be_frozen(self):
+    def test_imported_unreviewed_formal_chapter_can_be_frozen_for_draft(self):
         root = self.root.parent / "unreviewed-import"
         story.Book.create(root, "未审查导入测试", "long")
         with closing(story.Book(root)) as book:
@@ -195,9 +205,13 @@ class PlatformBindingTests(unittest.TestCase):
             imported = root / "imported.md"
             imported.write_text("第1章 未审查的导入章\n" + fixtures.BODY, encoding="utf-8")
             book.adopt(1, imported, "隔离的未审查导入测试。", book.meta("revision"), volume_dir=plan["volume_dir"])
-            self.fixture.assert_code("review_required", drafts.workbench_bind, root, "123", URL, 1, 1,
-                                     expected_book_id=book.meta("id"), expected_revision=book.meta("revision"))
-        self.assertFalse((root / drafts.PROFILE_DIRECTORY).exists())
+            result = drafts.workbench_bind(root, "123", URL, 1, 1,
+                                          expected_book_id=book.meta("id"), expected_revision=book.meta("revision"))
+            self.assertEqual(result["plan"]["source_policy"], "workbench_formal_draft")
+            self.assertTrue(story.publish.check(book, result["plan_id"])["source_matches_current"])
+            request = {"platform": "fanqie", "account_id": "123", "remote_book_id": result["remote_book_id"],
+                       "chapters": [1], "mode": "draft"}
+            self.fixture.assert_code("review_required", story.publish.prepare, book, request, book.meta("revision"))
 
     def test_publication_io_failure_is_sanitized_and_cleans_its_staging_file(self):
         with patch.object(drafts, "_atomic_publish", side_effect=OSError("PRIVATE SECRET BODY")):

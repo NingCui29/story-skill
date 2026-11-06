@@ -6,7 +6,7 @@ import * as fs from 'node:fs/promises';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
-import {readDOMValue,readDOMPath,readActionState,readRowFields,readParagraphs,
+import {readDOMValue,readDocumentScrollPoint,readDOMPath,readActionState,readRowFields,readParagraphs,
   readPreviewParagraphs_v1} from './story_chrome_bridge.mjs';
 
 export const WORKBUDDY_CLI_VERSION='0.41.0';
@@ -24,11 +24,13 @@ const sessionID=v=>typeof v==='string'&&/^story-wb-[0-9a-f]{24,64}$/.test(v);
 const compact=fn=>Function.prototype.toString.call(fn).replace(/\s+/g,'');
 // These are the existing driver's fixed, read-only callbacks. Matching source
 // is necessary for its inline callbacks; arbitrary caller scripts fail closed.
-const READ_FUNCTIONS=new Set([readDOMValue,readDOMPath,readActionState,readRowFields,readParagraphs,readPreviewParagraphs_v1,
+const READ_FUNCTIONS=new Set([readDOMValue,readDocumentScrollPoint,readDOMPath,readActionState,readRowFields,readParagraphs,readPreviewParagraphs_v1,
   el=>el.getAttribute('contenteditable'),
   el=>({tag:el.tagName,type:el.getAttribute('type')||'text',readOnly:el.readOnly===true,disabled:el.disabled===true}),
   el=>{const focused=el.ownerDocument?.activeElement;return !!focused&&(focused===el||el.contains(focused));},
   el=>{const r=el.getBoundingClientRect();return {height:el.clientHeight,total:el.scrollHeight,width:el.clientWidth,wide:el.scrollWidth,top:el.scrollTop,x:r.left+r.width/2,y:r.top+r.height/2};},
+  el=>({height:el.clientHeight}),
+  el=>{const scroller=el.ownerDocument?.scrollingElement||el;return {height:scroller.clientHeight,total:scroller.scrollHeight,top:scroller.scrollTop,width:el.clientWidth};},
   ()=>{const el=document.scrollingElement;return {height:el.clientHeight,total:el.scrollHeight,top:el.scrollTop};},
   ()=>{const el=document.scrollingElement;return {height:el.clientHeight,total:el.scrollHeight,top:el.scrollTop,width:document.documentElement.clientWidth};},
   ()=>({height:document.documentElement.clientHeight})

@@ -13,6 +13,24 @@ import test_workbench as base
 
 
 class WorkbenchBookIdentityTests(unittest.TestCase):
+    def test_editor_exits_if_stop_response_disconnects(self):
+        root = self.book('停止回执断开', 'long')
+        server = self.serve(self.w.editor_server(root))
+        record = json.loads((root / '.story/workbench-service.json').read_bytes())
+        handler = server.RequestHandlerClass
+        original = handler.reply
+
+        def disconnected(instance, status, *args, **kwargs):
+            if instance.path.endswith('/api/stop'):
+                raise BrokenPipeError('stop client disconnected')
+            return original(instance, status, *args, **kwargs)
+
+        with patch.object(handler, 'reply', disconnected):
+            with self.assertRaises((http.client.RemoteDisconnected, ConnectionResetError)):
+                self.editor_post(server, 'stop', {'instance': record['instance'], 'saved': True})
+            server.test_thread.join(timeout=5)
+            self.assertFalse(server.test_thread.is_alive())
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='workbench-book-identity-')
         self.addCleanup(self.temp.cleanup)

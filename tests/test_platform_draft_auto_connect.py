@@ -463,6 +463,32 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         diagnostic["model_verified"] = True
         self.assertFalse(drafts.workbench_job(self.root, job["id"])["connection_diagnostics"]["model_verified"])
 
+    def test_host_denial_and_bootstrap_phase_survive_job_diagnostics_without_raw_content(self):
+        details = {
+            "ready": False, "state": "failed", "owned": True,
+            "error": "platform_chrome_worker_host_access_denied", "retry_blocked": True,
+            "requested_model": "gpt-6.1-terra", "resolved_model": "gpt-6.1-terra", "model_verified": True,
+            "failure_phase": "browser_inventory", "worker_phase": "cleanup", "error_name": "Error",
+            "error_marker": "local_browser_access_denied", "message": "PRIVATE_MESSAGE"}
+        with patch.object(self.launcher, "status", return_value=details):
+            preview = self.preview(inspect_only=True)
+            job = self.wait_job(self.start(preview, inspect_only=True)["id"])
+        self.assertEqual(job["error"], details["error"])
+        self.assertEqual(job["checked_chapters"], 0)
+        self.assertEqual(self.operations, [])
+        self.host_factory.assert_not_called()
+        diagnostic = job["connection_diagnostics"]
+        self.assertEqual(diagnostic["reason"], "platform_chrome_worker_host_access_denied")
+        self.assertEqual(diagnostic["failure_phase"], "browser_inventory")
+        self.assertEqual(diagnostic["worker_phase"], "cleanup")
+        self.assertEqual(diagnostic["error_marker"], "local_browser_access_denied")
+        self.assertTrue(diagnostic["retry_blocked"])
+        self.assertFalse(diagnostic["ready"])
+        self.assertNotIn("PRIVATE", json.dumps(diagnostic))
+        for key in ("failure_phase", "worker_phase", "error_name", "error_marker"):
+            for value in ("PRIVATE", ["browser_inventory"], {}, True):
+                self.assertNotIn(key, drafts._connection_diagnostics({key: value}))
+
     def test_connection_diagnostics_reject_unbounded_or_malformed_fields(self):
         diagnostic = drafts._connection_diagnostics({
             "ready": True, "requested_model": "PRIVATE MODEL", "resolved_model": "gpt-6.1-terra",
@@ -472,6 +498,112 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
             "requested_model": None, "resolved_model": "gpt-6.1-terra", "model_verified": False})
         for invalid in (-(2 ** 31) - 1, 2 ** 31, "-32602", None):
             self.assertNotIn("rpc_error_code", drafts._connection_diagnostics({"rpc_error_code": invalid}))
+        for key, valid in (("diagnostic_id", "a" * 32), ("tool_error_fingerprint", "b" * 16)):
+            self.assertEqual(drafts._connection_diagnostics({key: valid})[key], valid)
+            for invalid in ("PRIVATE_TOKEN", {}, True, "a" * 100):
+                self.assertNotIn(key, drafts._connection_diagnostics({key: invalid}))
+
+    def test_finished_job_audit_is_immutable_and_contains_no_manuscript_or_account(self):
+        job = {"id": "a" * 32, "_root": str(self.root), "created_at": "2026-11-04T00:00:00Z",
+               "mode": "inspect_drafts", "total_chapters": 2, "account_id": "PRIVATE_ACCOUNT",
+               "connection_diagnostics": {"message": "PRIVATE_BODY", "diagnostic_id": "b" * 32}}
+        changes = {"finished_at": "2026-11-04T00:01:00Z", "state": "failed",
+                   "error": "platform_chrome_worker_tool_failed", "verified_chapters": 0}
+        result = {"remote_accessed": False, "inspection": True,
+                  "changes": [{"chapter": 86, "action": "create", "remote_id": "PRIVATE_REMOTE"},
+                              {"chapter": 87, "action": "unchanged", "body": "PRIVATE_BODY"}],
+                  "change_counts": {"create": 1, "update": 0, "unchanged": 1, "blocked": 0}, "body": "PRIVATE_BODY"}
+        self.assertTrue(drafts._save_job_start_audit(job))
+        start_path = self.root / ".story/platform-draft-audit" / (job["id"] + ".started.json")
+        self.assertNotIn("PRIVATE", start_path.read_text(encoding="utf-8"))
+        start_only = drafts.workbench_audit_lookup(self.root, job['id'], expected_book_id=self.book.meta('id'))
+        self.assertEqual([entry['kind'] for entry in start_only['records']], ['started'])
+        self.assertFalse(drafts._save_job_start_audit(job))
+        self.assertTrue(drafts._save_job_audit(job, changes, result))
+        path = self.root / ".story/platform-draft-audit" / (job["id"] + ".json")
+        saved = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(saved["error"], changes["error"])
+        self.assertEqual(saved["connection_diagnostics"]["diagnostic_id"], "b" * 32)
+        self.assertNotIn("PRIVATE", json.dumps(saved))
+        found = drafts.workbench_audit_lookup(self.root, job['id'], expected_book_id=self.book.meta('id'))
+        self.assertEqual([entry['kind'] for entry in found['records']], ['started', 'finished'])
+        self.assertEqual(found['records'][1]['error'], changes['error'])
+        self.assertEqual(found['records'][1]['change_counts'], result['change_counts'])
+        self.assertEqual(found['records'][1]['chapters'], [{'chapter': 86, 'action': 'create'},
+                                                           {'chapter': 87, 'action': 'unchanged'}])
+        self.assertNotIn('PRIVATE', json.dumps(found))
+        self.assertFalse(drafts._save_job_audit(job, changes, result))
+        self.assertEqual(json.loads(path.read_text(encoding="utf-8")), saved)
+        for key, valid in (("tool_error_channel", "error_object"), ("tool_error_status", "failed"),
+                           ("tool_error_rpc_code", -32603)):
+            self.assertEqual(drafts._connection_diagnostics({key: valid})[key], valid)
+            for invalid in ("PRIVATE_TOKEN", {}, True):
+                self.assertNotIn(key, drafts._connection_diagnostics({key: invalid}))
+        self.assertEqual(drafts._connection_diagnostics({"tool_error_hints": ["timeout", "session"]})["tool_error_hints"], ["timeout", "session"])
+        for invalid in (["PRIVATE_BODY"], ["timeout", {}], "timeout", ["timeout"] * 11):
+            self.assertNotIn("tool_error_hints", drafts._connection_diagnostics({"tool_error_hints": invalid}))
+        self.assertEqual(drafts._connection_diagnostics({"tool_error_terms": ["tool", "error"]})["tool_error_terms"], ["tool", "error"])
+        for invalid in (["PRIVATE_BODY"], ["tool", {}], "tool"):
+            self.assertNotIn("tool_error_terms", drafts._connection_diagnostics({"tool_error_terms": invalid}))
+
+    def test_preflight_error_receives_durable_safe_incident_id(self):
+        fault = story.workbench._platform_api_fault(self.root, 'api/platform-drafts/preview',
+                                                     'platform_draft_preview_required', 'StoryError')
+        self.assertTrue(fault['audit_saved'])
+        path = self.root / '.story/platform-draft-audit' / (fault['audit_id'] + '.api.json')
+        saved = json.loads(path.read_text(encoding='utf-8'))
+        self.assertEqual(saved['operation'], 'preview')
+        self.assertEqual(saved['error'], 'platform_draft_preview_required')
+        self.assertEqual(saved['id'], fault['audit_id'])
+        self.assertNotIn(str(self.root), json.dumps(saved))
+        found = drafts.workbench_audit_lookup(self.root, fault['audit_id'], expected_book_id=self.book.meta('id'))
+        self.assertEqual(found['records'][0]['kind'], 'api_error')
+        self.assertEqual(found['records'][0]['error'], fault['error'])
+
+    def test_audit_retains_full_thousand_chapter_range(self):
+        job = {'id': 'c' * 32, '_root': str(self.root), 'created_at': '2026-11-04T00:00:00Z',
+               'mode': 'inspect_drafts', 'total_chapters': 1000}
+        changes = {'finished_at': '2026-11-04T00:01:00Z', 'state': 'inspection_ready',
+                   'error': None, 'verified_chapters': 0, 'checked_chapters': 1000}
+        result = {'inspection': True, 'remote_accessed': True,
+                  'changes': [{'chapter': n, 'action': 'unchanged', 'body': 'PRIVATE_BODY'} for n in range(1, 1001)]}
+        self.assertTrue(drafts._save_job_audit(job, changes, result))
+        found = drafts.workbench_audit_lookup(self.root, job['id'], expected_book_id=self.book.meta('id'))
+        self.assertEqual(len(found['records'][0]['chapters']), 1000)
+        self.assertNotIn('PRIVATE', json.dumps(found))
+
+    def test_audit_does_not_claim_no_remote_access_when_outcome_is_unknown(self):
+        job = {'id': 'e' * 32, '_root': str(self.root), 'created_at': '2026-11-04T00:00:00Z',
+               'mode': 'sync_drafts', 'total_chapters': 1}
+        changes = {'finished_at': '2026-11-04T00:01:00Z', 'state': 'unknown',
+                   'error': 'interrupted_sending', 'verified_chapters': 0}
+        self.assertTrue(drafts._save_job_audit(job, changes, None))
+        path = self.root / '.story/platform-draft-audit' / (job['id'] + '.json')
+        self.assertIsNone(json.loads(path.read_text(encoding='utf-8'))['remote_accessed'])
+        found = drafts.workbench_audit_lookup(self.root, job['id'], expected_book_id=self.book.meta('id'))
+        self.assertNotIn('remote_accessed', found['records'][0])
+
+    def test_audit_storage_exception_never_hides_finished_job_or_api_error(self):
+        job_id = 'd' * 32
+        with drafts._WORKBENCH_LOCK:
+            drafts._WORKBENCH_JOBS[job_id] = {'id': job_id, '_root': str(self.root), 'verified_chapters': 0}
+        try:
+            with patch.object(drafts, '_save_job_audit', side_effect=RuntimeError('PRIVATE_BODY')):
+                drafts._finish_job(job_id, error='platform_chrome_worker_tool_failed')
+            with drafts._WORKBENCH_LOCK:
+                job = drafts._WORKBENCH_JOBS[job_id]
+                self.assertTrue(job['done'])
+                self.assertEqual(job['error'], 'platform_chrome_worker_tool_failed')
+                self.assertFalse(job['audit_saved'])
+            with patch.object(drafts, '_write_job_audit', side_effect=RuntimeError('PRIVATE_BODY')):
+                fault = story.workbench._platform_api_fault(self.root, 'api/platform-drafts/preview',
+                                                           'platform_draft_preview_required', 'StoryError')
+            self.assertFalse(fault['audit_saved'])
+            self.assertIsNone(fault['audit_id'])
+            self.assertNotIn('PRIVATE', json.dumps(fault))
+        finally:
+            with drafts._WORKBENCH_LOCK:
+                drafts._WORKBENCH_JOBS.pop(job_id, None)
 
     def test_verified_model_does_not_establish_browser_readiness(self):
         diagnostic = drafts._connection_diagnostics({"requested_model": "gpt-6.1-terra",
@@ -512,6 +644,27 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
             "requested_model": "gpt-6.1-terra", "resolved_model": "gpt-6.1-terra", "model_verified": True})
         self.assertTrue(ready["ready"])
         self.assertNotIn("retry_blocked", ready)
+
+    def test_host_denial_suspension_survives_preview_refresh_without_a_new_attempt(self):
+        suspension = {"available": False, "uses_codex_quota": True, "retry_blocked": True,
+            "reason": "platform_chrome_worker_connection_suspended",
+            "cause": "platform_chrome_worker_host_access_denied", "failure_phase": "browser_inventory"}
+        with patch.object(self.launcher, "availability", return_value=suspension):
+            blocked = self.preview(inspect_only=True)
+        self.assertTrue(blocked["automatic_connection"]["retry_blocked"])
+        self.assertEqual(blocked["automatic_connection"]["cause"], suspension["cause"])
+        self.assertEqual(blocked["automatic_connection"]["failure_phase"], "browser_inventory")
+        self.assertFalse(blocked["can_connect"])
+        self.assertIsNone(blocked["connect_token"])
+        self.assertFalse(self.launcher.started.is_set())
+        self.assertEqual(self.operations, [])
+        self.host_factory.assert_not_called()
+        for invalid in ("PRIVATE", None, [], {"secret": "PRIVATE"}):
+            with self.subTest(cause=invalid), patch.object(self.launcher, "availability",
+                    return_value={**suspension, "cause": invalid}):
+                detail = self.preview(inspect_only=True)["automatic_connection"]
+                self.assertNotIn("cause", detail)
+                self.assertNotIn("retry_blocked", detail)
 
     def test_external_healthy_bridge_cannot_bypass_model_verification(self):
         self.health_ready = True
@@ -627,6 +780,62 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         self.assertFalse(observed["done"], "A new job must not reuse a worker while its owner is disconnecting it")
         self.launcher.disconnect_release.set()
         self.assertTrue(self.wait_job(job["id"])["done"])
+
+    def test_inspection_waits_for_pending_owned_cleanup_before_becoming_actionable(self):
+        entered, release = threading.Event(), threading.Event()
+        def pending(*args, **kwargs):
+            self.launcher.disconnecting.set()
+            return {"owned": True, "owned_worker_id": kwargs["owned_worker_id"], "cleanup_pending": True}
+        def wait(root, worker_id, *, expected_book_id):
+            self.assertEqual(worker_id, "f" * 32)
+            entered.set()
+            if not release.wait(5):
+                raise RuntimeError("cleanup wait did not release")
+            self.launcher.disconnected.set()
+            self.health_ready = False
+            return {"owned": True, "owned_worker_id": worker_id, "cleanup_pending": False}
+        try:
+            with patch.object(self.launcher, 'disconnect', side_effect=pending), \
+                 patch.object(self.launcher, 'wait_owned_cleanup', side_effect=wait, create=True):
+                job = self.start(self.preview(inspect_only=True, body_encoding='plain_paragraphs_v1'),
+                                 inspect_only=True, body_encoding='plain_paragraphs_v1')
+                self.assertTrue(entered.wait(3))
+                during = drafts.workbench_job(self.root, job['id'])
+                self.assertFalse(during['done'])
+                self.assertEqual(during['stage'], 'closing_chrome')
+                sync_preview = self.preview(sync_drafts=True, body_encoding='plain_paragraphs_v1')
+                self.assert_code('platform_draft_busy', self.start, sync_preview, sync_drafts=True,
+                                 body_encoding='plain_paragraphs_v1', inspection_id=job['id'])
+                self.assertFalse(any(item[0] in ('create', 'update') for item in self.operations))
+                release.set()
+                completed = self.wait_job(job['id'])
+                self.assertEqual(completed['state'], 'inspection_ready', completed)
+        finally:
+            release.set()
+
+    def test_unconfirmed_owned_cleanup_blocks_inspection(self):
+        def pending(*args, **kwargs):
+            self.launcher.disconnecting.set()
+            self.launcher.disconnected.set()
+            return {'owned': True, 'owned_worker_id': kwargs['owned_worker_id'], 'cleanup_pending': True}
+        with patch.object(self.launcher, 'disconnect', side_effect=pending), \
+             patch.object(self.launcher, 'wait_owned_cleanup', return_value={
+                 'owned': True, 'owned_worker_id': 'f' * 32, 'cleanup_pending': True}, create=True):
+            completed = self.wait_job(self.start(self.preview(inspect_only=True, body_encoding='plain_paragraphs_v1'),
+                                                  inspect_only=True, body_encoding='plain_paragraphs_v1')['id'])
+        self.assertEqual(completed['state'], 'inspection_blocked', completed)
+        self.assertEqual(completed['error'], 'platform_chrome_worker_cleanup_unconfirmed')
+
+    def test_immediately_unconfirmed_cleanup_blocks_inspection(self):
+        original = self.launcher.disconnect
+        def unconfirmed(*args, **kwargs):
+            packet = original(*args, **kwargs)
+            return {**packet, 'cleanup_unconfirmed': True}
+        with patch.object(self.launcher, 'disconnect', side_effect=unconfirmed):
+            completed = self.wait_job(self.start(self.preview(inspect_only=True, body_encoding='plain_paragraphs_v1'),
+                                                  inspect_only=True, body_encoding='plain_paragraphs_v1')['id'])
+        self.assertEqual(completed['state'], 'inspection_blocked')
+        self.assertEqual(completed['error'], 'platform_chrome_worker_cleanup_unconfirmed')
 
     def test_cleanup_exception_still_finishes_recorded_result_without_retry(self):
         original = self.launcher.disconnect

@@ -304,16 +304,16 @@ def _write_record(directory, name, record, *, max_bytes=MAX_EVENT_BYTES):
             api._bound_unlink(staged)
 
 
-def _read_record(directory, name):
+def _read_record(directory, name, *, max_bytes=MAX_EVENT_BYTES):
     file = api._BoundFile(directory, name)
     before = api.publish._bound_stat(file)
-    if before.st_size > MAX_EVENT_BYTES:
+    if before.st_size > max_bytes:
         api.fail("platform_draft_journal_invalid", "Platform draft event exceeds its size limit")
     with api._bound_reader(file) as stream:
         opened = os.fstat(stream.fileno())
         if not os.path.samestat(before, opened) or opened.st_nlink != 1:
             api.fail("unsafe_platform_draft_path", "Platform draft event changed while opening")
-        data = stream.read(MAX_EVENT_BYTES + 1)
+        data = stream.read(max_bytes + 1)
         after_read = os.fstat(stream.fileno())
     after = api.publish._bound_stat(file)
     if (not os.path.samestat(before, after) or before.st_size != after.st_size or
@@ -2066,7 +2066,7 @@ def _job_packet(job):
               "profile_sha256", "execution_mode", "backend", "state", "stage", "done", "created_at", "updated_at", "finished_at",
               "total_chapters", "verified_chapters", "accepted_chapters", "equivalent_chapters", "comparison_policy",
               "body_encoding", "rendered_chapters", "current_chapter", "error", "result", "checked_chapters", "stop_requested",
-              "connection_diagnostics")
+              "connection_diagnostics", "audit_saved", "audit_started_saved")
     return {"ok": True, **{key: json.loads(json.dumps(job[key])) for key in fields if key in job},
             "scope": "platform_chapter_drafts_only", "submission_performed": False,
             "job_survives_process_exit": False, "durable_attempt_journal": True}
@@ -2234,9 +2234,9 @@ def workbench_bind(root, account_id, book_management_url, start, end, *, expecte
                 # profile, then let prepare recheck them under the same lock.
                 api.publish._health(book)
                 for chapter in request["chapters"]:
-                    api.publish._source(book, chapter)
+                    api.publish._source(book, chapter, require_review=False)
                 with _binding_profile(root, profile) as (profile_id, profile_sha256):
-                    plan = api.publish.prepare(book, request, expected_revision, summary=True)
+                    plan = api.publish.prepare(book, request, expected_revision, summary=True, workbench_formal_draft=True)
                 _profile_selection(book, plan, profile_id=profile_id, profile_sha256=profile_sha256)
                 return {"ok": True, "book_id": book_id, "revision": expected_revision,
                         "platform": "fanqie", "account_id": account_id,
@@ -2322,7 +2322,7 @@ def workbench_refresh_plan(root, plan_id, profile_id, *, expected_book_id, expec
                 request = {**target, "chapters": list(range(first, last + 1)), "mode": "draft"}
                 # prepare checks current reviewed heads and exports under this
                 # same operation lock/snapshot; it never mutates the old plan.
-                plan = api.publish.prepare(book, request, expected_revision, summary=True)
+                plan = api.publish.prepare(book, request, expected_revision, summary=True, workbench_formal_draft=True)
                 _, after_sha256 = _read_profile(root, profile_id)
                 if after_sha256 != expected_profile_sha256:
                     api.fail("platform_draft_profile_changed", "生成期间页面配置发生变化；请刷新核对本地批次，尚未访问平台。")
@@ -2434,11 +2434,12 @@ def _automatic_connection(profile, blockers):
                 "reason": "platform_chrome_connector_unavailable"}
     result = launcher.availability()
     return {"available": result.get("available") is True, "uses_codex_quota": True,
-            **({"retry_blocked": True, "cause": "platform_chrome_worker_browser_transport_closed",
+            **({"retry_blocked": True, "cause": result["cause"],
                 "failure_phase": result["failure_phase"]}
                if result.get("retry_blocked") is True and result.get("available") is False and
                   result.get("reason") == "platform_chrome_worker_connection_suspended" and
-                  result.get("cause") == "platform_chrome_worker_browser_transport_closed" and
+                  result.get("cause") in ("platform_chrome_worker_browser_transport_closed",
+                                          "platform_chrome_worker_host_access_denied") and
                   result.get("failure_phase") in ("sdk_setup", "browser_inventory") else {}),
             **({"reason": result["reason"]} if isinstance(result.get("reason"), str) else {})}
 
@@ -2513,6 +2514,136 @@ def _safe_job_result(result):
     return {key: result[key] for key in fields if key in result}
 
 
+def _write_job_audit(job, suffix, record):
+    job_id = job.get("id")
+    if not isinstance(job_id, str) or not re.fullmatch(r"[0-9a-f]{32}", job_id):
+        return False
+    runtime_sha = getattr(getattr(api, "workbench", None), "_loaded_runtime_sha256", None)
+    if isinstance(runtime_sha, str) and re.fullmatch(r"[0-9a-f]{64}", runtime_sha):
+        record["runtime_sha256"] = runtime_sha
+    try:
+        path = api.safe_path(Path(job["_root"]), ".story/platform-draft-audit")
+        with api._pinned_directory(path, create=True) as directory:
+            _write_record(directory, job_id + suffix + ".json", record, max_bytes=256 * 1024)
+        return True
+    except (OSError, api.StoryError, ValueError, TypeError):
+        return False
+
+
+def _save_job_start_audit(job):
+    record = {"schema": 1, "id": job.get("id"), "created_at": job.get("created_at"),
+              "mode": job.get("mode"), "state": "started", "runtime_version": getattr(api, "VERSION", None),
+              "total_chapters": job.get("total_chapters", 0)}
+    return _write_job_audit(job, ".started", record)
+
+
+def _audit_chapter(row):
+    if not isinstance(row, dict) or type(row.get("chapter")) is not int or not 1 <= row["chapter"] <= 1000000:
+        return None
+    result = {"chapter": row["chapter"]}
+    if row.get("action") in ("create", "update", "unchanged", "blocked"):
+        result["action"] = row["action"]
+    if isinstance(row.get("state"), str) and row["state"] in EVENTS | {"pending"}:
+        result["state"] = row["state"]
+    reason = row.get("reason")
+    if isinstance(reason, str) and re.fullmatch(r"[a-z][a-z0-9_]{1,100}", reason):
+        result["reason"] = reason
+    return result
+
+
+def workbench_audit_lookup(root, record_id, *, expected_book_id):
+    """Read a single bounded incident record without trusting local file text."""
+    if not isinstance(record_id, str) or not re.fullmatch(r"[0-9a-f]{32}", record_id):
+        api.fail("platform_draft_audit_invalid_id", "请输入 32 位记录编号。")
+    with _workbench_book(root, expected_book_id) as book:
+        path = api.safe_path(book.root, ".story/platform-draft-audit")
+        try:
+            with api._pinned_directory(path) as directory:
+                records = []
+                for suffix, kind in ((".started", "started"), ("", "finished"), (".api", "api_error")):
+                    name = record_id + suffix + ".json"
+                    if api.publish._bound_stat(api._BoundFile(directory, name), missing=True) is None:
+                        continue
+                    raw = _read_record(directory, name, max_bytes=256 * 1024)
+                    if not isinstance(raw, dict) or raw.get("schema") != 1 or raw.get("id") != record_id:
+                        api.fail("platform_draft_audit_invalid", "本地任务记录格式无效，请保留原记录核对。")
+                    value = {"kind": kind}
+                    for field in ("created_at", "finished_at", "at"):
+                        item = raw.get(field)
+                        if isinstance(item, str) and re.fullmatch(r"[0-9TZ:+.\-]{10,40}", item):
+                            value[field] = item
+                    runtime_sha = raw.get("runtime_sha256")
+                    if isinstance(runtime_sha, str) and re.fullmatch(r"[0-9a-f]{64}", runtime_sha):
+                        value["runtime_sha256"] = runtime_sha
+                    for field in ("mode", "state", "error"):
+                        item = raw.get(field)
+                        if isinstance(item, str) and re.fullmatch(r"[a-z][a-z0-9_]{0,100}", item):
+                            value[field] = item
+                    operation = raw.get("operation")
+                    if isinstance(operation, str) and re.fullmatch(r"[a-z][a-z-]{0,60}", operation):
+                        value["operation"] = operation
+                    error_name = raw.get("error_name")
+                    if error_name in ("StoryError", "ValueError", "UnicodeError", "OSError", "KeyError", "TypeError", "Exception"):
+                        value["error_name"] = error_name
+                    for field in ("total_chapters", "checked_chapters", "verified_chapters"):
+                        item = raw.get(field)
+                        if type(item) is int and 0 <= item <= 1000000:
+                            value[field] = item
+                    counts = raw.get("change_counts")
+                    if isinstance(counts, dict):
+                        value["change_counts"] = {key: counts[key] for key in ("create", "update", "unchanged", "blocked")
+                                                  if type(counts.get(key)) is int and 0 <= counts[key] <= 1000000}
+                    chapters = raw.get("chapters")
+                    if isinstance(chapters, list) and len(chapters) <= 1000:
+                        value["chapters"] = [_audit_chapter(row) for row in chapters if _audit_chapter(row) is not None]
+                    if type(raw.get("remote_accessed")) is bool:
+                        value["remote_accessed"] = raw["remote_accessed"]
+                    diag = raw.get("connection_diagnostics")
+                    if isinstance(diag, dict):
+                        value["connection_diagnostics"] = _connection_diagnostics(
+                            {**diag, "owned": diag.get("ready") is True, "error": diag.get("reason")})
+                    records.append(value)
+                api._verify_bound_directory(directory)
+        except FileNotFoundError:
+            records = []
+    if not records:
+        api.fail("platform_draft_audit_missing", "本书没有找到该记录编号。")
+    return {"ok": True, "id": record_id, "records": records, "remote_accessed": False}
+
+
+def _save_job_audit(job, changes, result):
+    """Write one immutable, content-free outcome per finished workbench job."""
+    job_id = job.get("id")
+    if not isinstance(job_id, str) or not re.fullmatch(r"[0-9a-f]{32}", job_id):
+        return False
+    error = changes.get("error")
+    if error is not None and (not isinstance(error, str) or not re.fullmatch(r"[a-z][a-z0-9_]{1,100}", error)):
+        error = "platform_draft_unclassified_error"
+    diagnostic = job.get("connection_diagnostics")
+    diagnostic = diagnostic if isinstance(diagnostic, dict) else {}
+    diagnostic_source = {**diagnostic, "owned": diagnostic.get("ready") is True,
+                         "error": diagnostic.get("reason")}
+    record = {"schema": 1, "id": job_id, "created_at": job.get("created_at"),
+              "finished_at": changes["finished_at"], "mode": job.get("mode"), "state": changes["state"],
+              "error": error, "runtime_version": getattr(api, "VERSION", None),
+              "total_chapters": job.get("total_chapters", 0),
+              "checked_chapters": changes.get("checked_chapters", job.get("checked_chapters", 0)),
+              "verified_chapters": changes.get("verified_chapters", 0),
+              "remote_accessed": result.get("remote_accessed") if isinstance(result, dict) and
+                                 type(result.get("remote_accessed")) is bool else None}
+    if diagnostic:
+        record["connection_diagnostics"] = _connection_diagnostics(diagnostic_source)
+    counts = result.get("change_counts") if isinstance(result, dict) else None
+    if isinstance(counts, dict):
+        record["change_counts"] = {key: counts[key] for key in ("create", "update", "unchanged", "blocked")
+                                   if type(counts.get(key)) is int and 0 <= counts[key] <= 1000000}
+    if isinstance(result, dict):
+        entries = result.get("changes") if result.get("inspection") else result.get("results")
+        if isinstance(entries, list) and len(entries) <= 1000:
+            record["chapters"] = [_audit_chapter(row) for row in entries if _audit_chapter(row) is not None]
+    return _write_job_audit(job, "", record)
+
+
 def _finish_job(job_id, result=None, error=None):
     states = [item["state"] for item in result["results"] if item.get("recorded_this_run") is True or item.get("observed_this_run") is True] if result else []
     verified = sum(item.get("title_body_verified") is True for item in result["results"]) if result else 0
@@ -2545,6 +2676,14 @@ def _finish_job(job_id, result=None, error=None):
         changes["accepted_chapters"] = result.get("accepted_chapters", verified)
         changes["equivalent_chapters"] = result.get("equivalent_chapters", 0)
         changes["rendered_chapters"] = result.get("rendered_chapters", 0)
+    with _WORKBENCH_LOCK:
+        job = dict(_WORKBENCH_JOBS[job_id])
+    try:
+        changes["audit_saved"] = _save_job_audit(job, changes, result)
+    except Exception:
+        # Audit failures must never hide the platform outcome or leave a job
+        # indefinitely running after a completed or uncertain operation.
+        changes["audit_saved"] = False
     _update_job(job_id, **changes)
 
 
@@ -2552,6 +2691,7 @@ _CONNECTION_FALLBACKS = frozenset({"platform_chrome_worker_unavailable", "platfo
     "platform_chrome_health_expired", "platform_chrome_request_timeout", "platform_chrome_connection_failed"})
 _SPECIFIC_WORKER_STOPS = frozenset({"platform_chrome_worker_target_tab_changed", "platform_chrome_worker_target_tab_closed",
     "platform_chrome_worker_existing_tab_required", "platform_chrome_worker_origin_permission_required",
+    "platform_chrome_worker_host_access_denied",
     "platform_chrome_worker_browser_unattached", "platform_chrome_worker_browser_changed",
     "platform_chrome_worker_turn_failed", "platform_chrome_worker_runtime_unavailable",
     "platform_chrome_worker_model_unverified", "platform_chrome_worker_model_mismatch",
@@ -2598,7 +2738,14 @@ _CONNECTION_DIAGNOSTIC_REASONS = _SPECIFIC_WORKER_STOPS | _CONNECTION_FALLBACKS 
     "platform_chrome_worker_" + suffix for suffix in (
         "model_unverified", "model_mismatch", "model_rerouted", "model_unavailable",
         "tool_not_started", "tool_discovery_failed", "not_ready", "rpc_error", "rpc_timeout",
-        "connect_timeout", "browser_wait_timeout", "tool_failed", "unexpected_tool", "connection_suspended"))
+        "connect_timeout", "browser_wait_timeout", "tool_failed", "tool_approval_required", "unexpected_tool", "connection_suspended"))
+_CONNECTION_WORKER_PHASES = frozenset({"config_validated", "sdk_setup", "browser_inventory", "browser_documentation",
+    "waiting_for_chrome", "existing_tab_probe", "bridge_attach", "bridge_health", "queue_wait", "queue_operation", "cleanup"})
+_CONNECTION_ERROR_NAMES = frozenset({"Error", "ReferenceError", "TypeError", "RangeError", "SyntaxError", "AggregateError",
+    "URIError", "EvalError", "AbortError", "TimeoutError"})
+_CONNECTION_ERROR_MARKERS = frozenset({"none", "browser_unattached", "missing_turn_metadata", "missing_browser_service",
+    "missing_runtime_global", "origin_permission_required", "native_pipe_closed", "local_browser_access_denied",
+    "tool_approval_unavailable"})
 
 
 def _connection_diagnostics(state):
@@ -2620,10 +2767,46 @@ def _connection_diagnostics(state):
         value = state.get("error" if key == "reason" else key)
         if isinstance(value, str) and value in allowed:
             packet[key] = value
+    for key, allowed in (("failure_phase", _CONNECTION_WORKER_PHASES),
+                         ("worker_phase", _CONNECTION_WORKER_PHASES),
+                         ("error_name", _CONNECTION_ERROR_NAMES),
+                         ("error_marker", _CONNECTION_ERROR_MARKERS)):
+        value = state.get(key)
+        if isinstance(value, str) and value in allowed:
+            packet[key] = value
     for key, lower, upper in (("rpc_error_code", -(2 ** 31), 2 ** 31 - 1), ("http_status", 100, 599)):
         value = state.get(key)
         if type(value) is int and lower <= value <= upper:
             packet[key] = value
+    fingerprint = state.get("tool_error_fingerprint")
+    if isinstance(fingerprint, str) and re.fullmatch(r"[0-9a-f]{16}", fingerprint):
+        packet["tool_error_fingerprint"] = fingerprint
+    diagnostic_id = state.get("diagnostic_id")
+    if isinstance(diagnostic_id, str) and re.fullmatch(r"[0-9a-f]{32}", diagnostic_id):
+        packet["diagnostic_id"] = diagnostic_id
+    for key, allowed in (("tool_error_channel", {"error_object", "error_result", "tool_status"}),
+                         ("tool_error_status", {"failed", "completed", "inProgress", "other"})):
+        if isinstance(state.get(key), str) and state[key] in allowed:
+            packet[key] = state[key]
+    error_code = state.get("tool_error_rpc_code")
+    if type(error_code) is int and -(2**31) <= error_code < 2**31:
+        packet["tool_error_rpc_code"] = error_code
+    hints = state.get("tool_error_hints")
+    allowed_hints = {"timeout", "permission", "missing_file", "missing_tool", "connection", "session", "sandbox", "process", "invalid_request", "resource_limit"}
+    if isinstance(hints, list) and len(hints) <= len(allowed_hints) and all(isinstance(hint, str) and hint in allowed_hints for hint in hints):
+        packet["tool_error_hints"] = list(hints)
+    allowed_terms = set((
+        "access permission authorization authentication disabled denied invalid missing required unavailable "
+        "failed failure error internal unexpected unknown timeout timed closed shutdown connection transport broken "
+        "socket pipe process spawn terminated exited file path module sandbox work settings limit blocked cancelled "
+        "refused reset configured support cannot could not bad rejected output input request response empty read "
+        "write resource retry javascript script syntax exception typeerror referenceerror node repl node_repl "
+        "tool function server mcp call execution execute running start initialized initialization thread turn session "
+        "context metadata no such directory enoent eacces eperm network host use operation invoking reported message"
+    ).split())
+    terms = state.get("tool_error_terms")
+    if isinstance(terms, list) and len(terms) <= len(allowed_terms) and all(isinstance(term, str) and term in allowed_terms for term in terms):
+        packet["tool_error_terms"] = list(terms)
     return packet
 
 
@@ -2736,6 +2919,13 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
                     # The result is recorded locally. Leave the author's
                     # original Chrome pages, not an extra preview tab.
                     keep_readback=False)
+                if stopped.get("cleanup_pending") is True:
+                    stopped = api.chrome_worker.wait_owned_cleanup(root, owned_worker_id,
+                        expected_book_id=binding["book_id"])
+                    if stopped.get("owned") is not True or stopped.get("owned_worker_id") != owned_worker_id:
+                        api.fail("platform_chrome_worker_cleanup_unconfirmed", "本次连接仍在清理或未确认退出，暂不能开始下一任务。")
+                if stopped.get("cleanup_pending") is True or stopped.get("cleanup_unconfirmed") is True:
+                    api.fail("platform_chrome_worker_cleanup_unconfirmed", "本次连接仍在清理或未确认退出，暂不能开始下一任务。")
                 if (stopped.get("owned") is True and stopped.get("owned_worker_id") == owned_worker_id and
                         stopped.get("error") in _SPECIFIC_WORKER_STOPS):
                     cause = stopped["error"]
@@ -2747,8 +2937,7 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
                 # always let polling reach a terminal state. Never retry writes.
                 if failure is None:
                     failure = _error_code(error)
-    # The draft result can finish while owned-worker cleanup remains pending.
-    # The controller keeps that connection unavailable until its stop completes.
+    # A completed inspection becomes actionable only after its owned worker exits.
     _finish_job(job_id, result, failure)
 
 
@@ -2830,6 +3019,10 @@ def workbench_start(root, plan_id, profile_id, *, expected_book_id, expected_pro
                "_expected_remote": json.loads(json.dumps(inspection["_expected_remote"])) if inspection else None}
         if inspection:
             inspection["_inspection_used"] = True
+        try:
+            job["audit_started_saved"] = _save_job_start_audit(job)
+        except Exception:
+            job["audit_started_saved"] = False
         _WORKBENCH_JOBS[job_id] = job
         worker = threading.Thread(target=_workbench_worker, args=(job_id, binding, timeout_ms, login_timeout_ms),
                                   name="story-platform-draft-" + job_id[:8], daemon=True)

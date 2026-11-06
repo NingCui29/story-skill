@@ -477,7 +477,7 @@ def _split(chapter, body, plan):
     return title, prepared_body, conversion
 
 
-def _source(book, chapter):
+def _source(book, chapter, *, require_review=True):
     row = book.db.execute("SELECT * FROM chapter_state WHERE chapter=?", (chapter,)).fetchone()
     if not row:
         api.fail("chapter_missing", "Only committed formal chapters can be prepared", chapter=chapter)
@@ -488,7 +488,8 @@ def _source(book, chapter):
     if api.digest(body) != head["sha"]:
         api.fail("state_corrupt", "Formal chapter hash mismatch", chapter=chapter)
     receipt = json.loads(head["receipt"])
-    _review(book, chapter, body, receipt)
+    if require_review:
+        _review(book, chapter, body, receipt)
     path = book.chapter_path(chapter)
     api.safe_path(book.root, path)
     artifact = book.db.execute("SELECT sha,written_sha FROM artifact_state WHERE path=?", (path,)).fetchone()
@@ -518,6 +519,8 @@ def _validated_manifest(row, book_id=None):
                     "book_kind", "source_revision", "chapters", "binding_status", "conversion_version"}
         if not required <= manifest.keys():
             raise ValueError("Missing publishing snapshot fields")
+        if manifest.get("source_policy", "reviewed") not in ("reviewed", "workbench_formal_draft"):
+            raise ValueError("Unsupported publishing source policy")
         for key in ("account_id", "remote_book_id"):
             value = manifest[key]
             if (not isinstance(value, str) or not value.strip() or value != value.strip() or len(value) > 200 or
@@ -625,6 +628,7 @@ def _packet(row, full=False, book_id=None):
               "scope": "offline_chapter_draft_material", "platform": manifest["platform"],
               "account_id": manifest["account_id"], "remote_book_id": manifest["remote_book_id"],
               "book_title": manifest["book_title"], "mode": manifest["mode"],
+              "source_policy": manifest.get("source_policy", "reviewed"),
               "source_revision": manifest["source_revision"],
               "chapters": [chapter["chapter"] for chapter in manifest["chapters"]],
               "total_chapters": len(manifest["chapters"]),
@@ -652,7 +656,7 @@ def _plan(db, plan_id):
         api.fail("publishing_corrupt", "Invalid publishing ledger record", id=plan_id, reason=str(error))
 
 
-def prepare(book, raw, expected, summary=False):
+def prepare(book, raw, expected, summary=False, *, workbench_formal_draft=False):
     _book_kind(book)
     request = _input(raw)
     api.integer(expected, "expected revision")
@@ -661,10 +665,12 @@ def prepare(book, raw, expected, summary=False):
         if expected != revision:
             api.fail("stale_revision", "Reload formal chapter state before preparing publication", expected=expected, actual=revision)
         _health(book)
-        chapters = [_source(book, chapter) for chapter in request["chapters"]]
+        chapters = [_source(book, chapter, require_review=not workbench_formal_draft) for chapter in request["chapters"]]
         manifest = {**request, "chapters": chapters, "book_id": book.meta("id"), "book_title": book.meta("title"),
                     "book_kind": book.meta("kind"), "source_revision": revision,
                     "binding_status": "user_declared_unverified", "conversion_version": 1}
+        if workbench_formal_draft:
+            manifest["source_policy"] = "workbench_formal_draft"
         fingerprint = _hash(manifest)
         with _ledger(book, write=True, create=True) as db:
             old = db.execute("SELECT * FROM plans WHERE fingerprint=? AND status='prepared'", (fingerprint,)).fetchone()
@@ -745,7 +751,7 @@ def _source_comparison(book, manifest):
         reasons.append({"code": error.code, "message": error.message, **error.details})
     for frozen in manifest["chapters"]:
         try:
-            current = _source(book, frozen["chapter"])
+            current = _source(book, frozen["chapter"], require_review=manifest.get("source_policy") != "workbench_formal_draft")
             fields = ("head_id", "body_sha", "review_receipt_sha", "chapter_path", "title", "body", "upload_sha256", "conversion_rule")
             changed = [field for field in fields if current[field] != frozen[field]]
             if changed:
