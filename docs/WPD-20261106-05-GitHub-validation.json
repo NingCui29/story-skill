@@ -1,0 +1,153 @@
+{
+  "schema": 1,
+  "runtime_files": 25,
+  "matches_installed_v17_bytes": true,
+  "matches_verified_compatibility_copy": true,
+  "files": [
+    {
+      "path": "skills/story-skill/scripts/story.py",
+      "sha256": "c427f4f6a08c767313c92a5d9c93a84d0f7185d9f5b7ee8648560e1d35b77b1c"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_chrome_bridge.mjs",
+      "sha256": "b023bf437088cb9a4cf9d8d12ca0a03fad8e58b86f13a409b3c5a1670107e5fc"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_chrome_worker.mjs",
+      "sha256": "d8815ae95907c969a73997b77385b6c88552e266a9a9f3d68c7bda318bf8ccfb"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_chrome_worker.py",
+      "sha256": "44e35ff8396c5e67968b41ea257540d053c68fe6b258dd48ca311bad9b86bf5a"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_history.py",
+      "sha256": "940cd1932e335ae71d8dbcdcb0b39aca3f3b05fb541a2b2c34de4c344179bb17"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_outline.py",
+      "sha256": "88a4f7937a35061c4a93ead949fe151d3f7b5806ba3997187bb6164dd9e1f032"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_browser.py",
+      "sha256": "cae120d2d91a3bd00bf2c1a56c6f4e10df71dec24a0868b8745abaf48479081f"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_chrome_bridge.py",
+      "sha256": "eb61df51d5631ede79dafa54330418cb680353db531a72cc616774cacd375a9c"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_platform_drafts.py",
+      "sha256": "fd53b19c74db11c17cfe1b06606d3b504781f05612d575c34095975887dda114"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_publish.py",
+      "sha256": "60bcd2be9cad1d869f1617207cb48add8fc00f3ddd7ea101c8d1e61650b4e500"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_punctuation.py",
+      "sha256": "c8d25d7f5b826de9043642556e760397ae376da307a4de46b8d7b693669b61ee"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_rank.py",
+      "sha256": "7c7ca0229857dd3f0066bc1b0fcaec4a262de63d04bf81859ed71ff0c61ec04a"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_rank_sources.py",
+      "sha256": "7d323fd5130d0f956641a58d929c542db95852a6ce603d3203fd93496525c1ab"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_reader_feedback.py",
+      "sha256": "a49566da493fb7a7f45c5e17a2dd771f5a179ba818e921b3176d2b681da30fcd"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_research.py",
+      "sha256": "4b9b9a040a7ba6f678419a70f9fb970960f5e6acc42d2a9e08f109d6105521b9"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_search.py",
+      "sha256": "c6e42f53da29da1bea44e2b141a05400352a6fd064e3e79c28e6ccbd4bd19ff6"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_storage.py",
+      "sha256": "f3b74767ee90ae34a0dd4390968ef0731b6c2128ccb609d42a707d11f902aeeb"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_task_worker.py",
+      "sha256": "a09971b7ca65033a0392b6e0278440425608d408fce734edd2c8fd3cd37be11f"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_tasks.py",
+      "sha256": "2efc7b656f8b183f43cba8571aaa9eddbcb839df083c680c9b6e5e8eb504cb3e"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_workbench.py",
+      "sha256": "6df33913bd41705cc2f9459de62b5f11475e3cba9f1941900d77bf99d7c9e180"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_workbench_archives.py",
+      "sha256": "bfde106f94cdbed502b9d713abbe5f2e75f1bbf5111748eab1f9b1008cf3cb10"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_workbench_books.py",
+      "sha256": "72cb4d9c6fe686d1b5e7cf692d638036a82106614f1761ac58e40df4f66d6a8d"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_workbuddy_browser.mjs",
+      "sha256": "e26b2edcd29dc6ae21e120ccfd5d92e3d400bd13ce92900dc4e5c92f7f29672b"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_workbuddy_worker.mjs",
+      "sha256": "53dc080e906641e03abcb32262fdc54c98a68f127ccaeed5a39cc29aafd0d560"
+    },
+    {
+      "path": "skills/story-skill/scripts/story_world.py",
+      "sha256": "235dc510e7ed31acbe6cc27a09c2e940a7d750757dc0932c65d38346600784f5"
+    }
+  ],
+  "client_version": "0.3.0",
+  "core_version": "0.6.29",
+  "official_release": false,
+  "real_platform_verified": false,
+  "incident": "WPD-20261106-05",
+  "date": "2026-11-06",
+  "branch": "codex/windows-v17-stall-fix",
+  "source_commit": "844c91012b69ff5c68eb3e0f56d176a0589cf8e7",
+  "committed_git_blobs_match_installed_v17_bytes": true,
+  "python_regression": {
+    "total": 261,
+    "passed": 256,
+    "skipped": 4,
+    "errors": 1,
+    "failed": 0,
+    "exit_code": 1,
+    "environment_blocked_test": "tests.test_workbench_platform_binding.PlatformBindingTests.test_profile_directory_symlink_and_leaf_link_are_not_followed",
+    "error": "WinError 1314 during symlink fixture creation; safety assertion not reached",
+    "local_log": "dist/github-v17-python-regression.log",
+    "sha256": "3088973569f7ceb3c98d0246895b4ea616a4ce144e5fd4540d8d3c4a31a4c6c4"
+  },
+  "node_regression": {
+    "total": 381,
+    "passed": 377,
+    "failed": 4,
+    "skipped": 0,
+    "exit_code": 1,
+    "environment_blocked_file": "tests/test_chrome_worker.mjs",
+    "environment_blocked_test_lines": [
+      265,
+      1342,
+      1459,
+      1970
+    ],
+    "error": "EPERM during symlink fixture creation; safety assertions not reached",
+    "local_log": "dist/github-v17-node-regression.log",
+    "sha256": "718aa0c8abd3d36e395b148cb777babdbc847595478c9a0d3c9e943e835086ea"
+  },
+  "source_forbidden_technologies_scan_passed": true,
+  "git_diff_check_passed": true,
+  "independent_scope_and_privacy_review": "no blocking findings",
+  "windows_rebuilt_during_github_sync": false,
+  "host_skill_packages_built_during_github_sync": false,
+  "mac_built_or_verified": false,
+  "all_regression_tests_passed": false
+}
