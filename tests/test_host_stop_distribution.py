@@ -22,6 +22,10 @@ import test_workbench as base
 
 story = base.story
 WORKER = 'story-skill/scripts/story_task_worker.py'
+NATIVE_WORKERS = {
+    'story-skill/scripts/story_workbuddy_browser.mjs',
+    'story-skill/scripts/story_workbuddy_worker.mjs',
+}
 # SHA-256 of the exact ordered tuple encoded as compact JSON. These names were
 # frozen before introducing the 0.6.29 worker; old versions must not gain it.
 FROZEN_LAYOUTS = {
@@ -31,7 +35,7 @@ FROZEN_LAYOUTS = {
 
 
 class HostStopDistributionTests(unittest.TestCase):
-    def test_old_layouts_stay_frozen_and_new_layout_only_adds_worker(self):
+    def test_old_layouts_stay_frozen_and_new_layout_adds_host_workers(self):
         for module, files in ((package, package.suite_files),
                               (installer, installer.suite_files),
                               (npm, npm.payload_files)):
@@ -41,8 +45,8 @@ class HostStopDistributionTests(unittest.TestCase):
                     self.assertEqual(len(manifest), count)
                     self.assertEqual(hashlib.sha256(json.dumps(manifest, separators=(',', ':')).encode()).hexdigest(), expected_sha)
                     self.assertNotIn(WORKER, manifest)
-                self.assertEqual(len(files('0.6.29')), 73)
-                self.assertEqual(set(files('0.6.29')) - set(files('0.6.28')), {WORKER})
+                self.assertEqual(len(files('0.6.29')), 75)
+                self.assertEqual(set(files('0.6.29')) - set(files('0.6.28')), {WORKER} | NATIVE_WORKERS)
                 self.assertFalse(set(files('0.6.28')) - set(files('0.6.29')))
                 self.assertEqual(module.SKILL_NAMES_V0629, module.SKILL_NAMES_V0628)
         self.assertEqual(package.SUITE_FILES_V0629, installer.SUITE_FILES_V0629)

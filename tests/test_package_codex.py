@@ -93,6 +93,24 @@ class CodexPluginPackageTests(unittest.TestCase):
         self.assertEqual((plugin_root / "skills/story-skill/scripts/story.py").read_bytes(),
                          self.source_entries["story-skill/scripts/story.py"])
 
+    def test_workbuddy_workers_are_in_the_codex_snapshot_and_required_before_staging(self):
+        entries, version = codex.plugin_entries()
+        payload = dict(entries)
+        self.assertEqual(version, self.version)
+        for filename in ("story_workbuddy_browser.mjs", "story_workbuddy_worker.mjs"):
+            relative = "story-skill/scripts/" + filename
+            with self.subTest(filename=filename):
+                self.assertEqual(payload["skills/" + relative], self.source_entries[relative])
+                target = self.source / relative
+                target.unlink()
+                try:
+                    with patch.object(codex.suite, "SOURCE", self.source):
+                        with self.assertRaisesRegex(ValueError, "reviewed file manifest"):
+                            codex.plugin_entries()
+                    self.assertFalse(self.output.exists())
+                finally:
+                    target.write_bytes(self.source_entries[relative])
+
     def test_crlf_root_license_matches_lf_payload_without_mutating_sources(self):
         license_raw = self.source_entries["story-skill/LICENSE"]
         self.assertNotIn(b"\r\n", license_raw)

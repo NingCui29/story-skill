@@ -865,7 +865,9 @@ class ControllerTests(unittest.TestCase):
     def test_bootstrap_transport_failure_suspends_new_launches_across_bindings(self):
         self.health_mode = "lease-only"
         self.start()
-        self.wait(lambda: self.state()["model_verified"])
+        # A real tool result cannot precede the turn that launched it.
+        self.wait(lambda: self.state()["model_verified"] and
+                  next(iter(self.controller._workers.values())).get("owned_turn"))
         self.processes[0].checkpoint({"done": True, "state": "failed", "phase": "cleanup", "processed": 0,
             "failure_phase": "browser_inventory", "error_name": "Error", "error_marker": "native_pipe_closed",
             "code": "platform_chrome_worker_browser_transport_closed"})

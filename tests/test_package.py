@@ -115,7 +115,7 @@ class PackageVersionTests(unittest.TestCase):
         self.assertEqual(package.suite_files("0.6.8"), package.SUITE_FILES_V065)
         self.assertEqual(len(package.SUITE_FILES_V069), 44)
         self.assertEqual(package.suite_files("0.6.9"), package.SUITE_FILES_V069)
-        self.assertEqual(len(package.SUITE_FILES), 73)
+        self.assertEqual(len(package.SUITE_FILES), 75)
         self.assertEqual(package.SUITE_FILES, package.SUITE_FILES_V0629)
         self.assertEqual(len(package.SUITE_FILES_V0621), 64)
         self.assertEqual(len(package.SUITE_FILES_V0622), 69)

@@ -551,7 +551,7 @@ class NpmSuiteTests(unittest.TestCase):
                                          ("0.6.24", npm.SUITE_FILES_V0624, 69),
                                          ("0.6.25", npm.SUITE_FILES_V0625, 69),
                                          ("0.6.26", npm.SUITE_FILES_V0626, 69),
-                                         ("0.6.27", npm.SUITE_FILES_V0627, 69), ("0.6.28", npm.SUITE_FILES_V0628, 72), ("0.6.29", npm.SUITE_FILES_V0629, 73)):
+                                         ("0.6.27", npm.SUITE_FILES_V0627, 69), ("0.6.28", npm.SUITE_FILES_V0628, 72), ("0.6.29", npm.SUITE_FILES_V0629, 75)):
             with self.subTest(version=version):
                 manifest, files = npm.wrapper_files(version)
                 self.assertEqual(manifest["version"], version)
@@ -694,7 +694,7 @@ class NpmSuiteTests(unittest.TestCase):
         self.assertEqual(npm.payload_files("0.6.8"), npm.SUITE_FILES_V065)
         self.assertEqual(len(npm.SUITE_FILES_V069), 44)
         self.assertEqual(npm.payload_files("0.6.9"), npm.SUITE_FILES_V069)
-        self.assertEqual(len(npm.SUITE_FILES), 73)
+        self.assertEqual(len(npm.SUITE_FILES), 75)
         self.assertEqual(npm.SUITE_FILES, npm.SUITE_FILES_V0629)
         self.assertEqual(len(npm.SUITE_FILES_V0621), 64)
         self.assertEqual(len(npm.SUITE_FILES_V0622), 69)

@@ -192,6 +192,8 @@ SUITE_FILES_V0628 = tuple(sorted((*SUITE_FILES_V0627,
 SKILL_NAMES_V0628 = SKILL_NAMES_V0627
 SUITE_FILES_V0629 = tuple(sorted((*SUITE_FILES_V0628,
     "story-skill/scripts/story_task_worker.py",
+    "story-skill/scripts/story_workbuddy_browser.mjs",
+    "story-skill/scripts/story_workbuddy_worker.mjs",
 )))
 SKILL_NAMES_V0629 = SKILL_NAMES_V0628
 
