@@ -52,11 +52,13 @@ class FixedWorker:
         if self.on_status:
             self.on_status()
         if self.failure:
-            return {"ready": False, "state": "failed", "error": self.failure, "owned": self.owned}
+            return {"ready": False, "state": "failed", "error": self.failure, "owned": self.owned,
+                    "owned_worker_id": "f" * 32 if self.owned else None}
         ready = self.ready.is_set()
         if ready:
             self.test.health_ready = True
         return {"ready": ready, "state": "ready" if ready else "connecting", "owned": self.owned,
+                "owned_worker_id": "f" * 32 if self.owned else None,
                 "worker_phase": self.worker_phase, "requested_model": "gpt-6.1-terra",
                 "resolved_model": "gpt-6.1-terra", "model_verified": True}
 
@@ -67,15 +69,17 @@ class FixedWorker:
             raise RuntimeError("Fake cleanup did not release")
         self.test.health_ready = False
         self.disconnected.set()
-        return {"ok": True, "ready": False, "state": "closed", "owned": self.owned}
+        return {"ok": True, "ready": False, "state": "closed", "owned": self.owned,
+                "owned_worker_id": "f" * 32 if self.owned else None}
 
 
 class FixedHost:
     execution_mode = "host_assisted_cua"
 
-    def __init__(self, test, root, binding, profile, callback=None, update_existing=False):
+    def __init__(self, test, root, binding, profile, callback=None, update_existing=False, connection_check=None):
         self.test, self.binding = test, binding
         self.update_existing = update_existing
+        self.connection_check = connection_check
 
     def __enter__(self):
         if not self.test.health_ready:
@@ -210,6 +214,70 @@ class PlatformDraftAutoConnectTests(unittest.TestCase):
         result = self.wait_job(self.start(preview, **options)["id"])
         self.assertEqual(result["state"], "inspection_ready", result)
         return result["id"]
+
+    def test_owned_connection_failure_is_visible_before_operation_timeout(self):
+        job_id = "a" * 32
+        binding = {"plan_id": self.plan["id"], "profile_id": self.profile_path.name,
+                   "book_id": self.book.meta("id"), "comparison_policy": "strict", "body_encoding": "verbatim"}
+        self.addCleanup(drafts._WORKBENCH_JOBS.pop, job_id, None)
+        with drafts._WORKBENCH_LOCK:
+            drafts._WORKBENCH_JOBS[job_id] = {"done": True, "connection_diagnostics": {}}
+        snapshot = {"owned": True, "owned_worker_id": "f" * 32, "state": "failed", "ready": False,
+                    "error": "platform_chrome_worker_turn_failed", "error_kind": "responseStreamDisconnected"}
+        check = drafts._owned_connection_check(job_id, self.root, binding, "f" * 32)
+        with patch.object(self.launcher, "status", return_value=snapshot) as status:
+            self.assert_code(snapshot["error"], check)
+            self.assert_code(snapshot["error"], check)
+        self.assertEqual(status.call_count, 1, "A known terminal failure stays failed during the polling interval")
+        diagnostic = drafts._WORKBENCH_JOBS[job_id]["connection_diagnostics"]
+        self.assertEqual(diagnostic["error_kind"], "responseStreamDisconnected")
+        self.assertEqual(drafts._WORKBENCH_JOBS[job_id]["stage"], "closing_chrome")
+        other = {**snapshot, "owned_worker_id": "e" * 32}
+        check = drafts._owned_connection_check(job_id, self.root, binding, "f" * 32)
+        with patch.object(self.launcher, "status", return_value=other):
+            self.assert_code("platform_chrome_worker_binding_mismatch", check)
+
+    def test_owned_connection_resuming_is_not_treated_as_terminal(self):
+        job_id = "a" * 32
+        binding = {"plan_id": self.plan["id"], "profile_id": self.profile_path.name,
+                   "book_id": self.book.meta("id"), "comparison_policy": "strict", "body_encoding": "verbatim"}
+        self.addCleanup(drafts._WORKBENCH_JOBS.pop, job_id, None)
+        with drafts._WORKBENCH_LOCK:
+            drafts._WORKBENCH_JOBS[job_id] = {"done": True, "connection_diagnostics": {}}
+        with patch.object(self.launcher, "status", return_value={"owned": True, "owned_worker_id": "f" * 32,
+                         "state": "resuming", "ready": False}) as status:
+            check = drafts._owned_connection_check(job_id, self.root, binding, "f" * 32)
+            check()
+            check()
+        self.assertEqual(status.call_count, 1, "Status reads are limited to one per second")
+
+    def test_inspection_failure_and_unconfirmed_cleanup_preserve_both_causes(self):
+        original_host, original_disconnect = self.host, self.launcher.disconnect
+        def interrupted(*args, **kwargs):
+            host = original_host(*args, **kwargs)
+            def find(chapter):
+                story.fail("platform_chrome_worker_health_expired", "Local test interruption")
+            host.find_drafts = find
+            return host
+        def closing(*args, **kwargs):
+            return {**original_disconnect(*args, **kwargs), "cleanup_unconfirmed": True,
+                    "worker_done_confirmed": False, "error": "platform_chrome_worker_turn_failed",
+                    "error_kind": "responseStreamDisconnected", "message": "PRIVATE provider data"}
+        with patch.object(self.host_factory, "side_effect", interrupted), \
+             patch.object(self.launcher, "disconnect", side_effect=closing):
+            job = self.wait_job(self.start(self.preview(inspect_only=True, body_encoding="plain_paragraphs_v1"),
+                                          inspect_only=True, body_encoding="plain_paragraphs_v1")["id"])
+        self.assertEqual(job["state"], "inspection_blocked", job)
+        self.assertEqual(job["error"], "platform_chrome_worker_cleanup_unconfirmed")
+        diagnostic = job["connection_diagnostics"]
+        self.assertEqual(diagnostic["reason"], "platform_chrome_worker_turn_failed")
+        self.assertEqual(diagnostic["error_kind"], "responseStreamDisconnected")
+        self.assertTrue(diagnostic["cleanup_unconfirmed"])
+        self.assertFalse(diagnostic["worker_done_confirmed"])
+        self.assertTrue(diagnostic["model_verified"])
+        self.assertFalse(diagnostic["ready"])
+        self.assertNotIn("PRIVATE", json.dumps(job))
+        self.assertFalse(any(op[0] in {"create", "update"} for op in self.operations))
 
     def test_no_blank_format_survives_automatic_connect_update_interruption_and_readonly_recovery(self):
         self.fixture.commit(text=self.fixture.texts[1] + "\n\n", replace_last=True)

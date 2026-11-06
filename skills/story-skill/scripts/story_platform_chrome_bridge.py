@@ -828,7 +828,8 @@ def _validate_result(operation, result, target, params):
 class HostAdapter:
     execution_mode = "host_assisted_cua"
 
-    def __init__(self, root, binding, profile, progress_callback=None, *, update_existing=False):
+    def __init__(self, root, binding, profile, progress_callback=None, *, update_existing=False,
+                 connection_check=None):
         if validate_profile(profile) != self.execution_mode:
             _fail("invalid_profile", "此配置未选择已有 Chrome 会话桥接。")
         api.platform_drafts._comparison_policy(binding.get("comparison_policy", "strict"), binding.get("target", {}).get("platform"))
@@ -838,6 +839,7 @@ class HostAdapter:
             api.fail("invalid_input", "update_existing must be a boolean")
         self.update_existing = update_existing
         self.progress = progress_callback
+        self.connection_check = connection_check
         self.session_id = None
         self.catalog_proof_id = None
 
@@ -854,6 +856,8 @@ class HostAdapter:
     def _request(self, operation, params):
         if self.session_id is None:
             _fail("worker_unavailable", "宿主执行端尚未连接。")
+        if self.connection_check is not None:
+            self.connection_check()
         request_id, nonce = uuid.uuid4().hex, secrets.token_urlsafe(32)
         params = dict(params)
         if self.catalog_proof_id is not None and operation != "inspect_catalog":
@@ -892,6 +896,12 @@ class HostAdapter:
                     return _validate_result(operation, response["result"], self.binding["target"], params)
                 session = _session(directory)
                 _lease(directory, session)
+            # An owned controller's terminal failure ends this wait without
+            # replaying the claimed operation. Check outside queue locks so
+            # the caller can read that controller's authenticated status.
+            # A validated response above remains authoritative when present.
+            if self.connection_check is not None:
+                self.connection_check()
             time.sleep(.1)
         _fail("request_timeout", "宿主操作未在期限内返回；写入结果按未知处理，不重新派发。")
 

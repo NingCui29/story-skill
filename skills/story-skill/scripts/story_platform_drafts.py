@@ -2751,7 +2751,7 @@ _CONNECTION_ERROR_MARKERS = frozenset({"none", "browser_unattached", "missing_tu
 def _connection_diagnostics(state):
     """Expose bounded connection facts, never provider prose or credentials.
 
-    These are startup observations, not evidence of platform identity or saved
+    These are connection observations, not evidence of platform identity or saved
     chapters. In particular model verification never establishes browser health.
     """
     packet = {"stage": "connecting_chrome"}
@@ -2763,6 +2763,9 @@ def _connection_diagnostics(state):
     packet["ready"] = state.get("ready") is True and state.get("owned") is True and packet["model_verified"]
     if state.get("retry_blocked") is True and not packet["ready"]:
         packet["retry_blocked"] = True
+    for key in ("cleanup_pending", "cleanup_unconfirmed", "worker_done_confirmed"):
+        if type(state.get(key)) is bool:
+            packet[key] = state[key]
     for key, allowed in (("reason", _CONNECTION_DIAGNOSTIC_REASONS), ("error_kind", _CONNECTION_ERROR_KINDS)):
         value = state.get("error" if key == "reason" else key)
         if isinstance(value, str) and value in allowed:
@@ -2808,6 +2811,49 @@ def _connection_diagnostics(state):
     if isinstance(terms, list) and len(terms) <= len(allowed_terms) and all(isinstance(term, str) and term in allowed_terms for term in terms):
         packet["tool_error_terms"] = list(terms)
     return packet
+
+
+def _update_connection_diagnostics(job_id, state):
+    diagnostic = _connection_diagnostics(state)
+    # Disconnect receipts may omit startup attestation. Preserve the last
+    # verified facts, but never preserve ready=True after a closing receipt.
+    model_fields = ("requested_model", "resolved_model", "model_verified")
+    if not any(key in state for key in model_fields):
+        for key in model_fields:
+            diagnostic.pop(key, None)
+    with _WORKBENCH_LOCK:
+        previous = _WORKBENCH_JOBS[job_id].get("connection_diagnostics", {})
+        _WORKBENCH_JOBS[job_id]["connection_diagnostics"] = {**previous, **diagnostic}
+
+
+def _owned_connection_check(job_id, root, binding, worker_id):
+    """Observe this job's controller only; never send, renew or retry an operation."""
+    last_checked = None
+    terminal_code = None
+
+    def check():
+        nonlocal last_checked, terminal_code
+        if terminal_code is not None:
+            api.fail(terminal_code, "本次浏览器执行连接已结束；保留结果待核对。")
+        now = time.monotonic()
+        if last_checked is not None and now - last_checked < 1:
+            return
+        state = api.chrome_worker.status(root, binding["plan_id"], binding["profile_id"],
+            expected_book_id=binding["book_id"], comparison_policy=binding["comparison_policy"],
+            body_encoding=binding["body_encoding"])
+        if state.get("owned") is not True or state.get("owned_worker_id") != worker_id:
+            terminal_code = "platform_chrome_worker_binding_mismatch"
+            api.fail(terminal_code, "无法确认本次请求所属执行端；保留结果待核对。")
+        last_checked = now
+        _update_connection_diagnostics(job_id, state)
+        if state.get("state") in {"failed", "closed", "stopped", "disconnected", "stopping"}:
+            _update_job(job_id, stage="closing_chrome")
+            code = state.get("error")
+            terminal_code = code if isinstance(code, str) and code in _CONNECTION_DIAGNOSTIC_REASONS else "platform_chrome_worker_unavailable"
+            api.fail(terminal_code,
+                     "本次浏览器执行连接已结束，停止等待；已派发结果仍须核对。")
+
+    return check
 
 
 def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
@@ -2883,9 +2929,12 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
             if current != binding:
                 api.fail("platform_draft_preview_changed", "连接期间正式稿或配置已变化，请重新预览。")
         callback = lambda event: _job_progress(job_id, event)
+        connection_check = (_owned_connection_check(job_id, root, binding, owned_worker_id)
+                            if connected_automatically and owned_worker_id is not None else None)
         with _workbench_book(root, binding["book_id"]) as book:
             if profile.get("execution_mode") == "host_assisted_cua":
                 context = api.platform_chrome_bridge.HostAdapter(root, _host_binding(binding, preview), profile, callback,
+                    **({"connection_check": connection_check} if connection_check is not None else {}),
                     **({"update_existing": True} if sync_drafts else {}))
             else:
                 native_profile = {key: value for key, value in profile.items() if key != "execution_mode"}
@@ -2922,16 +2971,17 @@ def _workbench_worker(job_id, binding, timeout_ms, login_timeout_ms):
                 if stopped.get("cleanup_pending") is True:
                     stopped = api.chrome_worker.wait_owned_cleanup(root, owned_worker_id,
                         expected_book_id=binding["book_id"])
-                    if stopped.get("owned") is not True or stopped.get("owned_worker_id") != owned_worker_id:
-                        api.fail("platform_chrome_worker_cleanup_unconfirmed", "本次连接仍在清理或未确认退出，暂不能开始下一任务。")
-                if stopped.get("cleanup_pending") is True or stopped.get("cleanup_unconfirmed") is True:
-                    api.fail("platform_chrome_worker_cleanup_unconfirmed", "本次连接仍在清理或未确认退出，暂不能开始下一任务。")
+                if stopped.get("owned") is not True or stopped.get("owned_worker_id") != owned_worker_id:
+                    api.fail("platform_chrome_worker_cleanup_unconfirmed", "本次执行端收尾归属未确认。")
+                _update_connection_diagnostics(job_id, stopped)
                 if (stopped.get("owned") is True and stopped.get("owned_worker_id") == owned_worker_id and
                         stopped.get("error") in _SPECIFIC_WORKER_STOPS):
                     cause = stopped["error"]
                     if failure in _CONNECTION_FALLBACKS:
                         failure = cause
                     result = _record_worker_stop(root, binding, result, cause)
+                if stopped.get("cleanup_pending") is True or stopped.get("cleanup_unconfirmed") is True:
+                    api.fail("platform_chrome_worker_cleanup_unconfirmed", "本次执行端收尾仍未确认，检查结果不可用于同步。")
             except Exception as error:
                 # Preserve the durable result, but expose cleanup failures and
                 # always let polling reach a terminal state. Never retry writes.
