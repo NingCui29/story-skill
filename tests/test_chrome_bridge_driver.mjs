@@ -99,18 +99,9 @@ class Locator {
   async isEnabled() { return this.node().enabled !== false; }
   async evaluate(fn,arg) {
     await this.tab.env.beforeLocatorEvaluate?.(this.tab,this.selector,fn,this);
-    if((this.selector==='#scroll'||this.selector==='html')&&typeof arg==='number'){
-      const key=this.selector==='html'?'html':'scroll';
-      const before=this.tab.scrollTop[key]||0;
-      const next=this.tab.env.stuckScroll?before:Math.max(0,Math.min(300,before+arg));
-      this.tab.scrollTop[key]=next;
-      this.tab.env.events.push(['domscroll',this.selector,arg]);
-      this.tab.onDomScroll?.(this.selector,arg);
-      return next!==before;
-    }
     const node=this.node();
     if(['.chapter','.state','.link','.chapter:visible'].includes(this.selector))this.tab.env.events.push(['fieldRead',this.selector]);
-    const result=node.dom?fn(node.dom(),arg):node.metrics?node.metrics():fn(this.dom(node),arg);
+    const result=node.dom?fn(node.dom(),arg):fn(this.dom(node),arg);
     await this.tab.env.afterLocatorEvaluate?.(this.tab,this.selector,fn);
     return result;
   }
@@ -205,7 +196,30 @@ class Tab {
     if(this.env.changeAccountAfterBodyText)this.env.account='different-account';
     if(this.env.pasteFailure)throw this.env.pasteFailure;
   }
-  async scroll(coords,direction,pages) { assert.ok(Array.isArray(coords) && coords.length===2);assert.ok(['up','down'].includes(direction));assert.ok(pages>=1);this.env.events.push(['scroll',coords]); }
+  scrollRect() {
+    return this.env.scrollRect?.(this) || {left:20, right:80, top:20, bottom:80};
+  }
+  scrollDOM(key) {
+    const tab=this;
+    const el={clientWidth:100, clientHeight:100, scrollHeight:400, scrollWidth:100,
+      get scrollTop() { return tab.scrollTop[key]; },
+      getBoundingClientRect:() => {const r=this.scrollRect();return {...r,width:r.right-r.left,height:r.bottom-r.top};}};
+    if (key==='html') el.ownerDocument={scrollingElement:el};
+    return el;
+  }
+  async scroll(coords,direction,pages) {
+    assert.equal(pages,1);
+    assert.ok(coords.length===2 && coords.every(v=>Number.isInteger(v)&&v>=0&&v<100));
+    const [x,y]=coords,r=this.scrollRect(),delta=direction==='down'?100:-100;
+    const inList=x>=r.left&&x<r.right&&y>=r.top&&y<r.bottom;
+    const canMove=delta>0?this.scrollTop.scroll<300:this.scrollTop.scroll>0;
+    const key=inList&&canMove?'scroll':'html';
+    this.env.events.push(['scroll',key,direction,pages,coords]);
+    if (this.env.scrollFailure) throw this.env.scrollFailure;
+    const before=this.scrollTop[key];
+    if (!this.env.stuckScroll) this.scrollTop[key]=Math.max(0,Math.min(300,before+delta));
+    this.onScroll?.(key,delta);
+  }
   async close() {
     this.env.closed.push(this.id);
     if(this.env.closeEditorFailure&&this.current.includes('/edit/'))return;
@@ -230,7 +244,7 @@ class Tab {
   }
   lookup(selector) {
     const env=this.env; const plain=text => [{text}];
-    if(selector==='html')return [{metrics:() => ({height:100,total:400,top:this.scrollTop.html,width:100})}];
+    if(selector==='html')return [{dom:() => this.scrollDOM('html')}];
     if(env.savedSelector&&selector===env.savedSelector)selector='#saved';
     if(this.current===ORIGIN+'/account') {
       if(selector==='#account'){env.accountReads=(env.accountReads||0)+1;return plain(this.guardAccount);}
@@ -286,7 +300,7 @@ class Tab {
       env.draftCountReads=(env.draftCountReads||0)+1;env.onDraftCountRead?.(env);
       return plain(env.draftCountText??('共'+this.rows().length+'篇草稿'));
     }
-    if(selector==='#scroll')return env.emptyDraftTableOmitted&&this.scope()==='drafts'&&!this.rows().length?[]:[{metrics:() => ({height:100,total:400,width:100,wide:100,top:this.scrollTop.scroll,x:50,y:50})}];
+    if(selector==='#scroll')return env.emptyDraftTableOmitted&&this.scope()==='drafts'&&!this.rows().length?[]:[{dom:() => this.scrollDOM('scroll')}];
     if(selector==='.virtual')return env.virtual?[{}]:[];
     if(selector==='.pagination')return env.pagination?[{}]:[];
     if(selector==='#sections')return [{click:() => {this.menu=!this.menu;}}];
@@ -683,7 +697,7 @@ test('Fanqie rejects pagination appearing or changing during a non-draft table s
         }
         return lookup(selector);
       };
-      tab.onDomScroll=()=>{tab.paginationChanged=true;};
+      tab.onScroll=()=>{tab.paginationChanged=true;};
       return tab;
     };
     const base=await verified(env,config);
@@ -1085,7 +1099,7 @@ test('complete existing-Chrome verify find create read flow uses native paragrap
   assert.deepEqual(env.events.filter(row=>row[0]==='pasteText').map(row=>row[2]),[body.replace(/\n+$/,'')]);
   assert.equal(env.events.filter(row=>row[0]==='press'&&row[2]==='Enter').length,2);
   assert.ok(!env.events.some(row=>row[0]==='pressSequentially'&&row[1]==='#body'));
-  assert.ok(env.events.some(row=>row[0]==='reload'));assert.ok(env.events.some(row=>row[0]==='domscroll'));
+  assert.ok(env.events.some(row=>row[0]==='reload'));assert.ok(env.events.some(row=>row[0]==='scroll'));
   await closeChromeBridgeSession(env.api,base.session_id);assert.ok(env.tabs.has('1'),'pre-existing user tab survives');
   assert.equal(env.tabs.size,2,'latest readback remains');
 });
@@ -1310,7 +1324,7 @@ test('observed empty Fanqie draft box with no table spinner or scroll container 
   const created=await executeChromeBridgeRequest(env.api,next(base,'create_draft',{chapter:12,title:'首篇草稿',body:'正式正文'}));
   assert.equal(created.ok,true,JSON.stringify(created));assert.equal(created.result,'99');
   assert.equal(env.creates,1);assert.equal(env.saves,1);
-  assert.ok(env.events.some(row=>row[0]==='domscroll'),'nonempty saved draft uses the original table completeness checks');
+  assert.ok(env.events.some(row=>row[0]==='scroll'),'nonempty saved draft uses the original table completeness checks');
 });
 test('empty Fanqie catalog rejects absent ambiguous malformed or nonzero count and contradictory rows',async()=>{
   const cases=[
@@ -2213,24 +2227,35 @@ test('allRows reads document metrics through a locator when host page evaluate r
   const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
   assert.equal(result.ok,true,JSON.stringify(result));
   assert.equal(result.result.length,1);assert.equal(result.result[0].remote_id,'11');
-  assert.ok(env.events.some(row=>row[0]==='domscroll'));
+  assert.ok(env.events.some(row=>row[0]==='scroll'));
   assert.equal(env.creates,0);assert.equal(env.saves,0);
 });
-test('allRows scrolls in bounded DOM steps and never issues a host AX scroll',async () => {
+test('allRows verifies both scroll extents using one-page gestures with getter-only DOM offsets',async () => {
   const env=environment({pageEvaluateNull:true});const base=await verified(env);
   const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
   assert.equal(result.ok,true,JSON.stringify(result));
-  assert.ok(!env.events.some(row=>row[0]==='scroll'),'host AX scroll can exceed the REPL cell budget');
-  const steps=env.events.filter(row=>row[0]==='domscroll');
-  assert.ok(steps.length>=2,'bounded scrolling needs several movements');
-  assert.ok(steps.every(([,selector,delta])=>['#scroll','html'].includes(selector)&&
-    Number.isInteger(delta)&&Math.abs(delta)<=100),'each step is one viewport-sized DOM movement');
-  let run=0,longest=0,previous=null;
-  for(const [,selector,delta] of steps){
-    const key=`${selector}:${delta>0?'down':'up'}`;
-    run=key===previous?run+1:1;previous=key;longest=Math.max(longest,run);
-  }
-  assert.ok(longest<64,`one edge traversal must stay bounded, saw ${longest}`);
+  const steps=env.events.filter(row=>row[0]==='scroll');
+  for (const key of ['scroll','html']) for (const direction of ['up','down'])
+    assert.ok(steps.some(([,target,movement,pages])=>target===key && movement===direction && pages===1));
+});
+test('allRows reveals an offscreen container and verifies its extent before scrolling the document',async () => {
+  const env=environment({scrollRect:tab=>{
+    const top=180-tab.scrollTop.html;
+    return {left:20,right:80,top,bottom:top+60};
+  }});
+  const base=await verified(env);
+  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
+  assert.equal(result.ok,true,JSON.stringify(result));
+  const steps=env.events.filter(row=>row[0]==='scroll');
+  assert.equal(steps[0][1],'html');assert.equal(steps[0][2],'down');
+  assert.ok(steps.some(([,key])=>key==='scroll'));
+});
+test('allRows propagates a rejected scroll without another gesture or any draft mutation',async () => {
+  const env=environment({scrollFailure:new Error('scroll denied')});const base=await verified(env);
+  const result=await executeChromeBridgeRequest(env.api,next(base,'find_drafts',{chapter:11}));
+  assert.equal(result.error,'platform_browser_operation_failed');
+  assert.equal(env.events.filter(row=>row[0]==='scroll').length,1);
+  assert.equal(env.creates,0);assert.equal(env.saves,0);
 });
 test('allRows fails quickly when the list cannot move instead of looping',async () => {
   const env=environment({stuckScroll:true});const base=await verified(env);

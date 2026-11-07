@@ -61,6 +61,17 @@ export function readDOMValue(el, attribute = null) {
   return el.getAttribute('contenteditable') === 'true' ? el.innerText : el.textContent;
 }
 
+export function readScrollContainer(el) {
+  const r = el.getBoundingClientRect();
+  return {height:el.clientHeight, total:el.scrollHeight, width:el.clientWidth, wide:el.scrollWidth,
+    top:el.scrollTop, left:r.left, right:r.left + r.width, yMin:r.top, yMax:r.top + r.height};
+}
+
+export function readDocumentScroll(el) {
+  const scroller = el.ownerDocument?.scrollingElement || el;
+  return {height:scroller.clientHeight, total:scroller.scrollHeight, top:scroller.scrollTop, width:el.clientWidth};
+}
+
 // CUA exposes locators, not ElementHandles. Resolve a supported host selector
 // to a read-only DOM path so a later callback can sample all editor fields in
 // one JS turn without adding page globals or reimplementing selector engines.
@@ -940,55 +951,56 @@ class Driver {
     }
     return true;
   }
-  async metrics(locator) {
-    return locator.evaluate(el => { const r = el.getBoundingClientRect(); return {
-      height: el.clientHeight, total: el.scrollHeight, width: el.clientWidth, wide: el.scrollWidth,
-      top: el.scrollTop, x: r.left + r.width / 2, y: r.top + r.height / 2}; });
-  }
+  async metrics(locator) { return locator.evaluate(readScrollContainer); }
   async documentMetrics(tab) {
-    // Qoder host page-level evaluate returns null; locator-level reads work.
-    // A page may scroll on body instead of html, so read its actual scroller.
-    return tab.playwright.locator('html').evaluate(el => {
-      const scroller = el.ownerDocument?.scrollingElement || el;
-      return {height: scroller.clientHeight, total: scroller.scrollHeight, top: scroller.scrollTop, width: el.clientWidth};
-    });
+    // Qoder supplies document metrics through the html locator.
+    return tab.playwright.locator('html').evaluate(readDocumentScroll);
   }
-  async scrollToEdge(locator, direction) {
-    // One host scroll action can consume the whole REPL cell budget. Move the
-    // observed scroll container in bounded viewport steps instead.
-    const sign = direction === 'down' ? 1 : -1;
+  async scrollToEdge(tab, container, direction, wholePage) {
     for (let step = 0; step < 512; step++) {
       this.check();
-      const metrics = await this.metrics(locator);
-      if (![metrics.height, metrics.total, metrics.top].every(Number.isFinite) ||
-          metrics.height <= 0 || metrics.total < metrics.height) fail('incomplete_list');
-      if (sign > 0 ? metrics.top + metrics.height >= metrics.total - 1 : metrics.top <= 1) return;
-      const delta = sign * Math.max(1, Math.floor(metrics.height * 0.9));
-      const moved = await locator.evaluate((el, amount) => {
-        const before = el.scrollTop;
-        el.scrollTop = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, before + amount));
-        return el.scrollTop !== before;
-      }, delta);
-      if (!moved) return;
-    }
-    fail('incomplete_list');
-  }
-  async scrollDocumentToEdge(tab, direction) {
-    const sign = direction === 'down' ? 1 : -1;
-    for (let step = 0; step < 512; step++) {
-      this.check();
-      const metrics = await this.documentMetrics(tab);
-      if (![metrics.height, metrics.total, metrics.top].every(Number.isFinite) ||
-          metrics.height <= 0 || metrics.total < metrics.height) fail('incomplete_list');
-      if (sign > 0 ? metrics.top + metrics.height >= metrics.total - 1 : metrics.top <= 1) return;
-      const delta = sign * Math.max(1, Math.floor(metrics.height * 0.9));
-      const moved = await tab.playwright.locator('html').evaluate((el, amount) => {
-        const scroller = el.ownerDocument?.scrollingElement || el;
-        const before = scroller.scrollTop;
-        scroller.scrollTop = Math.max(0, Math.min(scroller.scrollHeight - scroller.clientHeight, before + amount));
-        return scroller.scrollTop !== before;
-      }, delta);
-      if (!moved) return;
+      const list = await this.metrics(container);
+      const page = await this.documentMetrics(tab);
+      for (const m of [list, page]) {
+        if (![m?.height, m?.total, m?.top, m?.width].every(Number.isFinite) ||
+            m.height <= 0 || m.width <= 0 || m.total < m.height) fail('incomplete_list');
+      }
+      const atEdge = (m, dir) => dir === 'down' ? m.top + m.height >= m.total - 1 : m.top <= 1;
+      if (atEdge(wholePage ? page : list, direction)) return;
+      if (![list.left, list.right, list.yMin, list.yMax].every(Number.isFinite) ||
+          list.right <= list.left || list.yMax <= list.yMin || list.right <= 0 || list.left >= page.width)
+        fail('incomplete_list');
+      const offscreen = list.yMax <= 0 || list.yMin >= page.height;
+      // Reveal an offscreen list before directing a wheel event at it.
+      const movePage = wholePage || offscreen;
+      const movement = !wholePage && offscreen ? (list.yMax <= 0 ? 'up' : 'down') : direction;
+      const before = movePage ? page : list;
+      if (atEdge(before, movement)) fail('incomplete_list');
+      const left = Math.max(0, list.left), right = Math.min(page.width, list.right);
+      const top = Math.max(0, list.yMin), bottom = Math.min(page.height, list.yMax);
+      let x = (left + right) / 2, y = (top + bottom) / 2;
+      if (movePage) {
+        // Aim outside the nested scroller when possible. If it covers the
+        // viewport its verified edge can pass the wheel on to the document.
+        x = page.width / 2; y = page.height / 2;
+        if (top >= 2) y = Math.min(page.height, top) / 2;
+        else if (page.height - bottom >= 2) y = (page.height + Math.max(0, bottom)) / 2;
+        else if (left >= 2) x = left / 2;
+        else if (page.width - right >= 2) x = (page.width + right) / 2;
+      }
+      await tab.scroll([Math.floor(x), Math.floor(y)], movement, 1);
+      // A host wheel can finish before its effect becomes observable. Only
+      // reread the offset here; a failed or stationary scroll is never replayed.
+      for (let sample = 0; ; sample++) {
+        this.check();
+        const after = movePage ? await this.documentMetrics(tab) : await this.metrics(container);
+        if (!Number.isFinite(after?.top) || after.height !== before.height || after.total !== before.total)
+          fail('incomplete_list');
+        const delta = (after.top - before.top) * (movement === 'down' ? 1 : -1);
+        if (delta > 0) break;
+        if (delta < 0 || sample >= 3) fail('incomplete_list');
+        await pause();
+      }
     }
     fail('incomplete_list');
   }
@@ -1014,8 +1026,8 @@ class Driver {
       progress(this.api,{...this.scan,phase:'all_rows',edge:'before_scroll',direction:down?'down':'up',container_before:metrics,document_before:docMetrics,document_before_valid:documentBeforeValid});
       if (!documentBeforeValid) fail('incomplete_list');
       await this.action(tab, async () => {
-        await this.scrollToEdge(container, down ? 'down' : 'up');
-        await this.scrollDocumentToEdge(tab, down ? 'down' : 'up');
+        await this.scrollToEdge(tab, container, down ? 'down' : 'up', false);
+        await this.scrollToEdge(tab, container, down ? 'down' : 'up', true);
       });
       metrics = await this.metrics(container);
       const dimensionsEqual = JSON.stringify([metrics.height, metrics.total, metrics.width, metrics.wide]) === dimensions;

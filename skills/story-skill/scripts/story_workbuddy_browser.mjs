@@ -7,7 +7,7 @@ import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {readDOMValue,readDOMPath,readActionState,readRowFields,readParagraphs,
-  readPreviewParagraphs_v1} from './story_chrome_bridge.mjs';
+  readPreviewParagraphs_v1,readScrollContainer,readDocumentScroll} from './story_chrome_bridge.mjs';
 
 export const WORKBUDDY_CLI_VERSION='0.41.0';
 export const WORKBUDDY_CLI_HASHES=Object.freeze({
@@ -28,6 +28,7 @@ const READ_FUNCTIONS=new Set([readDOMValue,readDOMPath,readActionState,readRowFi
   el=>el.getAttribute('contenteditable'),
   el=>({tag:el.tagName,type:el.getAttribute('type')||'text',readOnly:el.readOnly===true,disabled:el.disabled===true}),
   el=>{const focused=el.ownerDocument?.activeElement;return !!focused&&(focused===el||el.contains(focused));},
+  readScrollContainer,readDocumentScroll,
   el=>{const r=el.getBoundingClientRect();return {height:el.clientHeight,total:el.scrollHeight,width:el.clientWidth,wide:el.scrollWidth,top:el.scrollTop,x:r.left+r.width/2,y:r.top+r.height/2};},
   ()=>{const el=document.scrollingElement;return {height:el.clientHeight,total:el.scrollHeight,top:el.scrollTop};},
   ()=>{const el=document.scrollingElement;return {height:el.clientHeight,total:el.scrollHeight,top:el.scrollTop,width:document.documentElement.clientWidth};},

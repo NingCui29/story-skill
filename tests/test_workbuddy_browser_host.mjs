@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
-import {readDOMValue,readDOMPath,readRowFields} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
+import {readDOMValue,readDOMPath,readRowFields,readScrollContainer,readDocumentScroll} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
 import {chromeDriverAPI} from '../skills/story-skill/scripts/story_chrome_worker.mjs';
 import {createWorkBuddyBrowserFacade,WORKBUDDY_CLI_VERSION} from '../skills/story-skill/scripts/story_workbuddy_browser.mjs';
 
@@ -195,6 +195,22 @@ test('only fixed read callbacks are accepted and complete values pass without tr
   const count=f.calls.length;
   assert.throws(()=>tab.playwright.locator('#title').evaluate(el=>{el.value='bad';return el.value;}),{code:'platform_chrome_worker_unsupported_sdk'});
   assert.equal(f.calls.length,count);assert.equal(f.title.value,full);
+});
+
+test('catalog scroll metrics use fixed reads and the shared driver sends a bounded native wheel',async()=>{
+  const f=fixture(),{browser,tab}=await open(f),list=f.add('#list');
+  const root=f.document.documentElement;
+  root.ownerDocument=f.document;
+  f.registry.set('html',[root]);
+  Object.defineProperty(list,'scrollTop',{get:()=>12});
+  assert.deepEqual({...await tab.playwright.locator('#list').evaluate(readScrollContainer)},
+    {height:30,total:30,width:200,wide:200,top:12,left:0,right:200,yMin:0,yMax:30});
+  assert.deepEqual({...await tab.playwright.locator('html').evaluate(readDocumentScroll)},
+    {height:800,total:1000,width:1200,top:0});
+  const driverTab=await chromeDriverAPI(browser,{target:TARGET}).getTab('TARGET1');
+  await driverTab.scroll([50,15],'down',1);
+  const events=f.calls.filter(c=>c.kind==='batch'&&c.args[0][0]==='mouse').map(c=>c.args[0]);
+  assert.deepEqual(events,[['mouse','move','50','15'],['mouse','wheel','800','0']]);
 });
 
 test('production account child has/text-is selector and empty-state text-is are supported exactly',async()=>{
