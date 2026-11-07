@@ -1029,7 +1029,7 @@ def _attribution_used(attributed, expected_remote):
         for value in expected_remote.values()))
 
 
-def _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, evidence_path):
+def _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, evidence_path, *, expected_sha256=None):
     """Read one private operator attestation of a failed allocation's remote ID.
 
     The attestation never proves the editor is blank; a live read-only
@@ -1038,6 +1038,8 @@ def _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, evide
     event, so it cannot be replayed against another attempt or journal state.
     """
     if evidence_path is None:
+        if expected_sha256 is not None:
+            api.fail("platform_draft_attribution_changed", "所选归属授权已经变化，请重新核对。")
         return None
     path = Path(evidence_path)
     if not path.is_absolute():
@@ -1070,9 +1072,12 @@ def _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, evide
             _hash(events[0]) != raw["sending_sha256"] or _hash(events[-1]) != raw["unknown_sha256"] or
             authorization["confirmed_at"] < _event_epoch(events[-1]["at"]) - 1):
         api.fail("platform_draft_attribution_stale", "归属授权的原始未完成记录已变化或早于授权时间。")
+    digest = _hash(raw)
+    if expected_sha256 is not None and digest != expected_sha256:
+        api.fail("platform_draft_attribution_changed", "所选归属授权已经变化，请重新核对。")
     return {"chapter": raw["chapter"], "attempt_id": raw["attempt_id"], "remote_id": raw["remote_id"],
             "sending_sha256": raw["sending_sha256"], "unknown_sha256": raw["unknown_sha256"],
-            "sha256": _hash(raw)}
+            "sha256": digest, "authorized_at": datetime.fromtimestamp(authorization["confirmed_at"], timezone.utc).isoformat()}
 
 
 def _empty_recovery_candidate(book, plan_id, manifest, fingerprint, journal, guard, chapter, *,
@@ -1381,7 +1386,8 @@ def _catalog_chapter(entries, chapter):
 
 
 def inspect_plan(book, plan_id, adapter, *, progress=None, stop_requested=None,
-                 comparison_policy="strict", body_encoding=PLATFORM_BODY_ENCODING, attribution_path=None):
+                 comparison_policy="strict", body_encoding=PLATFORM_BODY_ENCODING, attribution_path=None,
+                 expected_attribution_sha256=None):
     """Inspect the whole batch without journal writes, editor fills or saves."""
     require_platform_comparison_policy(comparison_policy)
     require_platform_body_encoding(body_encoding)
@@ -1394,7 +1400,8 @@ def inspect_plan(book, plan_id, adapter, *, progress=None, stop_requested=None,
     empty_recoveries = {}
     inspect_catalog = getattr(adapter, "inspect_catalog", None)
     with _target_lock(manifest) as guard, _journal(book, plan_id, manifest, fingerprint) as journal:
-        attributed = _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, attribution_path)
+        attributed = _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, attribution_path,
+                                             expected_sha256=expected_attribution_sha256)
         for item in frozen_items:
             if stop_requested and stop_requested():
                 stopped = True
@@ -1509,7 +1516,7 @@ def inspect_plan(book, plan_id, adapter, *, progress=None, stop_requested=None,
 
 def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False, progress=None,
              comparison_policy="strict", body_encoding="verbatim", sync_drafts=False,
-             expected_remote=None, stop_requested=None, attribution_path=None):
+             expected_remote=None, stop_requested=None, attribution_path=None, expected_attribution_sha256=None):
     """Execute only explicitly requested saves; injected adapters own browser I/O."""
     if type(sync_drafts) is not bool or type(reconcile_only) is not bool or (sync_drafts and reconcile_only):
         api.fail("invalid_input", "Choose one draft execution mode")
@@ -1542,7 +1549,8 @@ def run_plan(book, plan_id, adapter=None, *, execute=False, reconcile_only=False
         api.fail("platform_draft_adapter_required", "Execution requires a platform draft adapter")
     with _target_lock(manifest) as guard, _journal(book, plan_id, manifest, fingerprint, create=True) as journal:
         journal.recover()
-        attributed = _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, attribution_path)
+        attributed = _attributed_empty_draft(book, plan_id, manifest, fingerprint, journal, attribution_path,
+                                             expected_sha256=expected_attribution_sha256)
         if attributed is not None and not _attribution_used(attributed, expected_remote):
             api.fail("platform_draft_inspection_changed", "本次同步未绑定这份归属授权的检查结果，请重新检查差异。")
         target_verified = False
@@ -2949,6 +2957,12 @@ def _assistant_read(directory, request_id):
              (type(record["inspection_expires_epoch"]) not in (int, float) or not math.isfinite(record["inspection_expires_epoch"])))):
         api.fail("platform_draft_assistant_request_invalid", "助手任务记录不完整，已停止。")
     _assistant_host(record.get("execution_host", "codex"), record.get("native_model_authorized", False))
+    if ("attribution_id" in record or "attribution_sha256" in record) and (
+            binding["mode"] not in {"inspect_drafts", "sync_drafts"} or
+            not _retirement_hex(record.get("attribution_sha256")) or
+            not isinstance(record.get("attribution_path"), str) or not Path(record["attribution_path"]).is_absolute() or
+            record.get("attribution_id") != _workbench_attribution_id(record["book_root"], binding, record["attribution_sha256"])):
+        api.fail("platform_draft_assistant_request_invalid", "已选择的归属授权与助手任务绑定不一致。")
     if archived:
         record = {**record, "archived_never_started": True,
                   "archive_path": str(directory.path / ASSISTANT_ARCHIVE_DIRECTORY / (request_id + ".json"))}
@@ -3190,7 +3204,11 @@ def _assistant_packet(record, root, *, check_source=True):
               "inspection_id", "inspection_expires_at", "current_chapter", "assistant_context", "bridge_detached",
               "book_root", "origin_mismatch", "execution_active", "cleanup_pending", "cleanup_complete",
               "cleanup_status", "worker_done", "execution_retired_by_operator", "bridge_revoked",
-              "attribution_path", "archived_never_started", "archive_path")
+            "attribution_id", "archived_never_started", "archive_path")
+    # Trusted legacy direct-path callers retain their existing result. A workbench
+    # selection is represented only by its scoped ID outside the private record.
+    if not record.get("attribution_id"):
+        fields += ("attribution_path",)
     return {"ok": True, **{key: json.loads(json.dumps(record.get(key))) for key in fields}, **binding,
             "execution_host": record.get("execution_host", "codex"),
             "native_model_authorized": record.get("native_model_authorized", False),
@@ -3200,10 +3218,99 @@ def _assistant_packet(record, root, *, check_source=True):
             "handoff_prompt": _assistant_prompt(root, record["request_id"], binding["mode"], record.get("execution_host", "codex"), binding=binding) if record["state"] == "prepared" else None}
 
 
+def _workbench_attribution_id(root, binding, digest):
+    scope = {key: value for key, value in binding.items() if key != "mode"}
+    return _hash({"book_root": str(root), "binding": scope, "evidence_sha256": digest})
+
+
+def _workbench_attribution_candidates(root, binding):
+    """Only open paths named by local assistant history for this exact binding."""
+    if not api.safe_path(root, ASSISTANT_DIRECTORY).exists():
+        return []
+    paths = {}
+    with _assistant_directory(root) as tasks:
+        for record in _assistant_records(tasks):
+            path, mode = record.get("attribution_path"), record["binding"]["mode"]
+            if (record["book_root"] == str(root) and mode in {"inspect_drafts", "sync_drafts"} and
+                    record["binding"] == {**binding, "mode": mode} and
+                    isinstance(path, str) and Path(path).is_absolute() and isinstance(record.get("created_at"), str)):
+                try:
+                    created = datetime.fromisoformat(record["created_at"])
+                except ValueError:
+                    continue
+                if created.tzinfo is not None:
+                    result = record.get("result")
+                    digest = record.get("attribution_sha256") or (result.get("attribution_sha256") if isinstance(result, dict) else None)
+                    if digest is not None and not _retirement_hex(digest):
+                        continue
+                    history = paths.setdefault(path, {})
+                    stamp = created.astimezone(timezone.utc).isoformat()
+                    history[digest] = max(history.get(digest, ""), stamp)
+    if not paths:
+        return []
+    candidates = []
+    with _workbench_book(root, binding["book_id"]) as book, \
+            _checked_plan(book, binding["plan_id"], check_source=False) as (manifest, fingerprint, _):
+        if fingerprint != binding["manifest_sha256"] or _hash(_target(manifest)) != binding["target_sha256"]:
+            api.fail("platform_draft_source_changed", "批次或目标已变化，请重新准备。")
+        # Keep the assistant record lock out of the target operation lock: a running
+        # worker may hold the target while reporting progress to its assistant task.
+        with _target_lock(manifest) as guard, _journal(book, binding["plan_id"], manifest, fingerprint) as journal:
+            for path, history in sorted(paths.items()):
+                try:
+                    proof = _attributed_empty_draft(book, binding["plan_id"], manifest, fingerprint, journal, path)
+                except api.StoryError as error:
+                    if error.code not in {"platform_draft_attribution_invalid", "platform_draft_attribution_stale"}:
+                        raise
+                    continue
+                # Legacy tasks sometimes referenced only a path. Once an
+                # inspection or selection pinned content there, a replacement
+                # cannot borrow that historical reference as a new option.
+                pinned = set(history) - {None}
+                if pinned and proof["sha256"] not in pinned:
+                    continue
+                created = history[proof["sha256"]] if pinned else history[None]
+                candidate = _empty_recovery_candidate(book, binding["plan_id"], manifest, fingerprint, journal,
+                    guard, proof["chapter"], comparison_policy=binding["comparison_policy"],
+                    body_encoding=binding["body_encoding"], attributed=proof)
+                if candidate is not None:
+                    candidates.append({"attribution_id": _workbench_attribution_id(root, binding, proof["sha256"]),
+                        "chapter": proof["chapter"], "authorized_at": proof["authorized_at"], "source_created_at": created,
+                        "path": path, "sha256": proof["sha256"]})
+    return candidates
+
+
+def workbench_assistant_attributions(root, plan_id, profile_id, *, expected_book_id, expected_profile_sha256,
+                                    comparison_policy="strict", body_encoding=PLATFORM_BODY_ENCODING):
+    """List still-eligible prior authorizations without opening a platform or editor."""
+    if not isinstance(expected_book_id, str) or not expected_book_id:
+        api.fail("invalid_input", "请先在工作台选择作品和批次。")
+    require_platform_comparison_policy(comparison_policy)
+    require_platform_body_encoding(body_encoding)
+    try:
+        root, _, profile, binding = _preflight(root, plan_id, profile_id, expected_book_id,
+            comparison_policy=comparison_policy, body_encoding=body_encoding, inspect_only=True)
+    except api.StoryError as error:
+        if error.code == "platform_draft_profile_mismatch":
+            api.fail(error.code, "所选页面配置与当前批次的作品或平台不一致。")
+        raise
+    if not profile or profile.get("execution_mode") != "host_assisted_cua" or profile.get("platform") != "fanqie":
+        api.fail("platform_draft_assistant_unsupported", "仅番茄助手协助草稿配置可选择空草稿归属授权。")
+    if binding["profile_sha256"] != expected_profile_sha256:
+        api.fail("platform_draft_profile_changed", "页面配置已变化，请重新核对。")
+    options = {}
+    for item in _workbench_attribution_candidates(root, binding):
+        options[item["attribution_id"]] = {key: item[key] for key in
+            ("attribution_id", "chapter", "authorized_at", "source_created_at")}
+    return {"ok": True, "book_id": binding["book_id"], "plan_id": plan_id, "profile_id": profile_id,
+            "profile_sha256": binding["profile_sha256"], "options": sorted(options.values(),
+                key=lambda item: (item["chapter"], item["authorized_at"], item["attribution_id"]))}
+
+
 def workbench_assistant_prepare(root, plan_id, profile_id, *, expected_book_id, expected_profile_sha256,
                                 mode="inspect_drafts", comparison_policy="strict", body_encoding=PLATFORM_BODY_ENCODING,
                                 inspection_id=None, confirmed=False, execution_host="codex", native_model_authorized=False,
-                                attribution_path=None):
+                                attribution_path=None, attribution_id=None):
     """Prepare a bounded local handoff, without connecting or running any host."""
     _assistant_host(execution_host, native_model_authorized)
     if (not isinstance(mode, str) or mode not in _ASSISTANT_MODES or type(confirmed) is not bool or
@@ -3214,6 +3321,8 @@ def workbench_assistant_prepare(root, plan_id, profile_id, *, expected_book_id, 
             not isinstance(attribution_path, str) or not attribution_path or mode == "reconcile_only" or
             not Path(attribution_path).is_absolute()):
         api.fail("platform_draft_attribution_invalid", "归属授权只接受检查差异或已确认同步的私有绝对路径证据。")
+    if attribution_id is not None and (not _retirement_hex(attribution_id) or attribution_path is not None or mode == "reconcile_only"):
+        api.fail("platform_draft_attribution_invalid", "请选择当前批次中的有效归属授权。")
     if mode == "sync_drafts" and confirmed is not True:
         api.fail("platform_draft_assistant_confirmation_required", "请先查看本次检查结果，再明确确认同步。")
     if mode != "reconcile_only":
@@ -3225,6 +3334,26 @@ def workbench_assistant_prepare(root, plan_id, profile_id, *, expected_book_id, 
         api.fail("platform_draft_assistant_unsupported", "助手协助目前只支持番茄 Chrome 草稿配置。")
     if binding["profile_sha256"] != expected_profile_sha256:
         api.fail("platform_draft_profile_changed", "页面配置已变化，请重新核对。")
+    attribution_sha256 = None
+    if mode == "sync_drafts":
+        _assistant_id(inspection_id)
+        try:
+            with _assistant_directory(root) as tasks:
+                inspected = _assistant_read(tasks, inspection_id)
+        except FileNotFoundError:
+            api.fail("platform_draft_assistant_request_missing", "未找到本书的助手检查任务。")
+        if attribution_id is not None and attribution_id != inspected.get("attribution_id"):
+            api.fail("platform_draft_attribution_changed", "同步必须沿用刚完成检查中的归属授权。")
+        attribution_id = inspected.get("attribution_id")
+        if attribution_path is None:
+            attribution_path = inspected.get("attribution_path")
+    if attribution_id is not None:
+        selected = next((item for item in _workbench_attribution_candidates(root, binding)
+                         if item["attribution_id"] == attribution_id and
+                         (attribution_path is None or item["path"] == attribution_path)), None)
+        if selected is None:
+            api.fail("platform_draft_attribution_changed", "归属授权已变化、已使用或不属于当前批次，请重新读取已有授权。")
+        attribution_path, attribution_sha256 = selected["path"], selected["sha256"]
     with _assistant_directory(root, create=True) as directory:
         if any(not job["done"] and (job["_root"] == str(root) or job["_target_sha256"] == binding["target_sha256"])
                for job in _WORKBENCH_JOBS.values()) or any(
@@ -3236,7 +3365,7 @@ def workbench_assistant_prepare(root, plan_id, profile_id, *, expected_book_id, 
             if (active["state"] == "prepared" and active["binding"] == binding and active.get("inspection_id") == inspection_id
                     and active.get("execution_host", "codex") == execution_host
                     and active.get("native_model_authorized", False) == native_model_authorized
-                    and active.get("attribution_path") == attribution_path):
+                    and active.get("attribution_path") == attribution_path and active.get("attribution_id") == attribution_id):
                 return {**_assistant_packet(active, root), "reused": True}
             if _assistant_blocks_execution(active):
                 api.fail("platform_draft_busy", "本书已有助手任务或浏览器收尾尚未确认，请等待完成后再执行。")
@@ -3256,7 +3385,7 @@ def workbench_assistant_prepare(root, plan_id, profile_id, *, expected_book_id, 
                     not isinstance(inspection.get("expected_remote"), dict) or
                     _assistant_global_record("inspection", inspection["request_id"], inspection["binding_sha256"])):
                 api.fail("platform_draft_inspection_required", "需要本助手流程刚完成、目标一致且未使用的整批检查。")
-            if inspection.get("attribution_path") != attribution_path:
+            if inspection.get("attribution_path") != attribution_path or inspection.get("attribution_id") != attribution_id:
                 api.fail("platform_draft_attribution_changed", "本次同步必须沿用检查时使用的同一份归属授权。")
         now, request_id = time.time(), uuid.uuid4().hex
         stamp = api.platform_chrome_bridge._stamp
@@ -3270,6 +3399,8 @@ def workbench_assistant_prepare(root, plan_id, profile_id, *, expected_book_id, 
                   "verified_chapters": 0, "total_chapters": len(preview["results"]), "result": None,
                   "remote_accessed": False, "stop_requested": False, "inspection_id": inspection_id,
                   "attribution_path": attribution_path, "expected_remote": inspection.get("expected_remote") if inspection else None}
+        if attribution_id is not None:
+            record.update(attribution_id=attribution_id, attribution_sha256=attribution_sha256)
         if inspection:
             # Consume the inspection before publishing a write request. A crash
             # may require a fresh read-only check but cannot authorize two writes.
@@ -3904,6 +4035,8 @@ def assistant_run(root, request_id, *, expected_book_id=None, on_context=None):
                     inspection["book_root"] != str(root) or
                     inspection["state"] != "inspection_ready" or
                     inspection.get("attribution_path") != record.get("attribution_path") or
+                    inspection.get("attribution_id") != record.get("attribution_id") or
+                    inspection.get("attribution_sha256") != record.get("attribution_sha256") or
                     _assistant_effective(inspection, root).get("cleanup_complete") is not True or
                     inspection.get("inspection_used") != request_id or
                     inspection.get("inspection_expires_epoch", 0) <= time.time() or
@@ -3953,6 +4086,12 @@ def assistant_run(root, request_id, *, expected_book_id=None, on_context=None):
         _, preview, profile, current = _assistant_preflight(root, binding)
         if current != binding:
             api.fail("platform_draft_preview_changed", "任务认领后本地材料发生变化，未执行。")
+        if record.get("attribution_id") is not None:
+            # Recheck the pinned selection and one-use claim before opening a
+            # host; inspect_plan/run_plan also pin the digest under the target lock.
+            if not any(item["attribution_id"] == record["attribution_id"] and item["path"] == record["attribution_path"]
+                       for item in _workbench_attribution_candidates(root, binding)):
+                api.fail("platform_draft_attribution_changed", "所选归属授权已变化或已使用，请重新核对。")
         if stopped():
             api.fail("platform_draft_stop_requested", "助手任务已取消。")
         host_binding = _host_binding(binding, preview)
@@ -3970,13 +4109,15 @@ def assistant_run(root, request_id, *, expected_book_id=None, on_context=None):
                     if binding["mode"] == "inspect_drafts":
                         result = inspect_plan(book, binding["plan_id"], adapter, progress=progress, stop_requested=stopped,
                             comparison_policy=binding["comparison_policy"], body_encoding=binding["body_encoding"],
-                            attribution_path=record.get("attribution_path"))
+                            attribution_path=record.get("attribution_path"),
+                            expected_attribution_sha256=record.get("attribution_sha256"))
                     else:
                         result = run_plan(book, binding["plan_id"], adapter, execute=True,
                             reconcile_only=binding["mode"] == "reconcile_only", sync_drafts=binding["mode"] == "sync_drafts",
                             progress=progress, stop_requested=stopped, expected_remote=record.get("expected_remote"),
                             comparison_policy=binding["comparison_policy"], body_encoding=binding["body_encoding"],
-                            attribution_path=record.get("attribution_path"))
+                            attribution_path=record.get("attribution_path"),
+                            expected_attribution_sha256=record.get("attribution_sha256"))
             update(stage="cleanup_pending")
     except Exception as failure:
         error = _error_code(failure)

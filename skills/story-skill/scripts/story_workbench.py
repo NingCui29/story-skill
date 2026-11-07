@@ -44,8 +44,9 @@ def inject(core):
     # Capture the source set when the modules are loaded, rather than stamping
     # a running process with newer files when it later opens a workbench.
     paths = {Path(core.__file__)}
-    paths.add(Path(__file__).with_name('story_chrome_bridge.mjs'))
-    paths.add(Path(__file__).with_name('story_chrome_worker.mjs'))
+    for name in ('story_chrome_bridge.mjs', 'story_chrome_worker.mjs',
+                 'story_workbuddy_browser.mjs', 'story_workbuddy_worker.mjs'):
+        paths.add(Path(__file__).with_name(name))
     for value in vars(core).values():
         source = getattr(value, '__file__', None)
         if source and Path(source).name.startswith('story_') and Path(source).suffix == '.py':
@@ -4729,6 +4730,21 @@ def _platform_draft_rules(root, plan_id, profile_id, expected_profile_sha256, *,
                 'saved': save, 'remote_accessed': False, 'submission_performed': False}
 
 
+def _workbench_public_assistant_reply(result):
+    """Keep evidence paths private when returning current or historical assistant records."""
+    def public_task(task):
+        return {key: value for key, value in task.items() if key != 'attribution_path'}
+
+    reply = public_task(result)
+    for key in ('request', 'active_request'):
+        if isinstance(reply.get(key), dict):
+            reply[key] = public_task(reply[key])
+    for key in ('blockers', 'legacy_blockers'):
+        if isinstance(reply.get(key), list):
+            reply[key] = [public_task(task) for task in reply[key]]
+    return reply
+
+
 def _draft_cleanup_request(root, action, payload, *, expected_book_id, endpoint, origin, token,
                            completion_identity=None):
     """Shared authenticated route adapter; core owns every recovery proof."""
@@ -4970,7 +4986,16 @@ function platformDraftAssistantActive(task){return !!task&&(task.done===false||t
 function platformDraftBusy(panel){return panel.starting||panel.binding||panel.refreshingPlan||panel.formalLoading||panel.loadingCatalog||panel.rulesLoading||panel.rulesSaving||panel.blockersLoading||panel.blockersUncertain||panel.blockerPreparing||panel.assistantBlockers?.length||panel.assistantWorking||panel.assistantUncertain||panel.assistantForeignActive||platformDraftAssistantActive(panel.assistantTask)||panel.jobs.some(job=>!job.done);}
 function platformDraftObserveConnection(panel,detail){if(detail?.retry_blocked===true)panel.connectionRetryBlocked=true;}
 function platformDraftNeedsReadback(job){const rows=job?.result?.results||[],changes=job?.result?.changes||[];return !!(job&&(['unknown','sending'].includes(job.state)||rows.some(row=>['unknown','sending'].includes(row.state))||[job.error,...rows.map(row=>row.reason),...changes.map(row=>row.reason)].some(reason=>/unresolved|previous_attempt|request_timeout|read_timeout/.test(reason||''))));}
-function platformDraftAssistantInspectionBlocked(task){return platformDraftNeedsReadback(task)&&!(task.done===true&&task.cleanup_complete===true&&!platformDraftAssistantActive(task));}
+function platformDraftAssistantIsolatedReadonly(task){
+ return !!task&&['inspect_drafts','reconcile_only'].includes(task.mode)&&task.done===true&&
+  task.execution_active===false&&task.cleanup_pending===false&&task.execution_retired_by_operator===true&&
+  task.cleanup_status==='external_session_reset';
+}
+function platformDraftAssistantInspectionBlocked(task){
+ if(!platformDraftNeedsReadback(task))return false;
+ if(task.done===true&&task.cleanup_complete===true&&!platformDraftAssistantActive(task))return false;
+ return !platformDraftAssistantIsolatedReadonly(task);
+}
 function platformDraftShowConnectionHelp(panel){if(platformDraftAlive(panel)&&platformDraftHost(panel)==='codex'&&panel.connectionHelp){panel.connectionHelp.hidden=false;panel.connectionHelp.open=true;}}
 function platformDraftBlockedActions(panel,busy){
  if(platformDraftHost(panel)!=='codex'){if(panel.connectionHelp){panel.connectionHelp.hidden=true;panel.connectionHelp.open=false;}return;}
@@ -4988,10 +5013,69 @@ function platformDraftAssistantScope(panel){
  return platformDraftProfileMatches(profile,plan)&&profile?.sha256?{book_id:panel.bookId,plan_id:plan.id,profile_id:profile.id,profile_sha256:profile.sha256,execution_host:platformDraftHost(panel),target:{platform:plan.platform,account_id:plan.account_id,remote_book_id:plan.remote_book_id},chapters:[...plan.chapters],generation:panel.selectionGeneration||0,revision:panel.revision}:null;
 }
 function platformDraftAssistantScopeCurrent(panel,scope){const current=platformDraftAssistantScope(panel);return platformDraftAlive(panel)&&scope&&current&&JSON.stringify(current)===JSON.stringify(scope);}
+function platformDraftAttributionScope(panel){
+ const scope=platformDraftAssistantScope(panel);
+ if(!scope||scope.target.platform!=='fanqie'||panel.mode.value!=='sync_drafts'||panel.bindingDirty||panel.refreshRangeDirty||panel.formalError||panel.catalogError)return null;
+ if(panel.comparison.value!=='strict'||panel.encoding.value!==platformDraftRequiredEncoding)return null;
+ return {...scope,comparison_policy:panel.comparison.value,body_encoding:panel.encoding.value};
+}
+function platformDraftSelectedAttribution(panel){
+ const scope=platformDraftAttributionScope(panel);
+ if(!scope||panel.attributionKey!==JSON.stringify(scope))return null;
+ return panel.attributionOptions?.find(row=>row.attribution_id===panel.attributionChoice)||null;
+}
+function platformDraftAttributionRender(panel,busy){
+ if(!panel.attributionSelect)return;
+ const scope=platformDraftAttributionScope(panel),key=scope&&JSON.stringify(scope);
+ if(panel.attributionKey!==key){
+  panel.attributionKey=key;panel.attributionSequence=(panel.attributionSequence||0)+1;
+  panel.attributionChoice=null;panel.attributionOptions=[];panel.attributionLoading=false;panel.attributionExplicit=false;
+  const empty=platformDraftElement('option','不沿用已有授权');empty.value='';panel.attributionSelect.replaceChildren(empty);
+  panel.attributionNote.textContent=scope?'可读取为本批次登记的空稿归属授权。':'请先选定番茄批次、章节范围和页面配置。';
+ }
+ panel.attributionLoad.disabled=!!(busy||!scope||panel.attributionLoading);
+ panel.attributionSelect.disabled=!!(busy||!scope||panel.attributionLoading||!panel.attributionOptions?.length);
+}
+async function platformDraftAttributionLoad(panel){
+ const scope=platformDraftAttributionScope(panel);
+ if(!platformDraftAlive(panel)||!scope||platformDraftBusy(panel)||panel.attributionLoading)return;
+ const key=JSON.stringify(scope),sequence=++panel.attributionSequence;
+ const current=()=>platformDraftAlive(panel)&&panel.attributionSequence===sequence&&JSON.stringify(platformDraftAttributionScope(panel))===key;
+ panel.attributionLoading=true;panel.attributionChoice=null;panel.attributionExplicit=false;panel.attributionOptions=[];
+ const empty=platformDraftElement('option','不沿用已有授权');empty.value='';panel.attributionSelect.replaceChildren(empty);
+ panel.attributionNote.textContent='正在读取本批次已有的空稿归属授权…';platformDraftButtons(panel);
+ try{
+  const packet=await call('platform-drafts/assistant-attributions',{plan_id:scope.plan_id,profile_id:scope.profile_id,profile_sha256:scope.profile_sha256,comparison_policy:scope.comparison_policy,body_encoding:scope.body_encoding});
+  if(!current())return;
+  if(packet?.ok!==true||['book_id','plan_id','profile_id','profile_sha256'].some(field=>packet[field]!==scope[field])||!Array.isArray(packet.options))throw Error('授权列表的批次身份无法核对');
+  const seen=new Set();
+  for(const row of packet.options){
+   if(!row||Object.keys(row).sort().join(',')!=='attribution_id,authorized_at,chapter,source_created_at'||typeof row.attribution_id!=='string'||!/^[a-f0-9]{64}$/.test(row.attribution_id)||seen.has(row.attribution_id)||!scope.chapters.includes(row.chapter)||!Number.isFinite(Date.parse(row.authorized_at))||!Number.isFinite(Date.parse(row.source_created_at)))throw Error('授权列表包含无法核对的记录');
+   seen.add(row.attribution_id);
+  }
+  panel.attributionOptions=packet.options;
+  for(const row of packet.options){const option=platformDraftElement('option','第'+row.chapter+'章 · 授权时间 '+platformDraftStamp(row.authorized_at)+' · 原操作时间 '+platformDraftStamp(row.source_created_at));option.value=row.attribution_id;panel.attributionSelect.append(option);}
+  panel.attributionSelect.value='';panel.attributionNote.textContent=packet.options.length?'请选择本次检查要沿用的授权。':'本批次没有可沿用的空稿归属授权。';
+ }catch(error){if(current())panel.attributionNote.textContent='未能读取已有授权：'+error.message;}
+ finally{if(current()){panel.attributionLoading=false;platformDraftButtons(panel);}}
+}
+function platformDraftAttributionFields(panel){
+ const label=platformDraftElement('label','已有空稿归属授权');panel.attributionSelect=platformDraftElement('select',undefined,'platform-draft-attribution');panel.attributionSelect.setAttribute('aria-label','已有空稿归属授权');label.append(panel.attributionSelect);
+ panel.attributionLoad=platformDraftElement('button','读取本批次已有归属授权');panel.attributionLoad.type='button';panel.attributionLoad.onclick=()=>platformDraftAttributionLoad(panel);
+ panel.attributionNote=platformDraftElement('p');panel.attributionNote.setAttribute('role','status');
+ panel.attributionSelect.onchange=()=>{
+  if(panel.attributionSelect.disabled||panel.attributionKey!==JSON.stringify(platformDraftAttributionScope(panel)))return;
+  const row=panel.attributionOptions.find(option=>option.attribution_id===panel.attributionSelect.value);
+  panel.attributionChoice=row?.attribution_id||null;panel.attributionExplicit=true;
+  panel.attributionNote.textContent=row?'本次检查将核对第'+row.chapter+'章的原空稿归属、空值和内容。请准备助手只读检查。':'本次检查使用普通核对流程。';platformDraftButtons(panel);
+ };
+ panel.assistantArea.append(label,panel.attributionLoad,panel.attributionNote);
+}
 function platformDraftAssistantPacket(panel,packet,scope,previous=null){
  const hash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
  if(!packet||packet.ok!==true||typeof packet.request_id!=='string'||!packet.request_id||packet.execution_origin!=='assistant_session'||packet.model_verification!=='executor_runtime_required'||packet.execution_mode!=='host_assisted_cua'||!['inspect_drafts','sync_drafts','reconcile_only'].includes(packet.mode)||typeof packet.done!=='boolean'||['execution_active','cleanup_pending','cleanup_complete'].some(key=>typeof packet[key]!=='boolean')||packet.comparison_policy!=='strict'||packet.body_encoding!==platformDraftRequiredEncoding||!hash(packet.manifest_sha256)||!hash(packet.binding_sha256)||['book_id','plan_id','profile_id','profile_sha256'].some(key=>packet[key]!==scope[key])||['platform','account_id','remote_book_id'].some(key=>packet.target?.[key]!==scope.target[key])||packet.total_chapters!==scope.chapters.length)throw Error('助手任务的作品、批次或内容身份无法核对，请重新读取。');
  if(!Object.hasOwn(platformDraftHostNames,scope.execution_host)||platformDraftTaskHost(packet)!==scope.execution_host||(scope.execution_host!=='codex'&&(packet.native_model_authorized!==true||packet.model_policy!=='user_authorized_native')))throw Error('助手任务的执行工具或本次原生模型授权不一致，请使用所选工具重新检查。');
+ if((packet.attribution_id!=null&&!hash(packet.attribution_id))||(previous&&(previous.attribution_id||null)!==(packet.attribution_id||null)))throw Error('助手任务的归属授权身份无法核对。');
  if(previous&&(platformDraftTaskHost(previous)!==platformDraftTaskHost(packet)||['request_id','manifest_sha256','binding_sha256','mode','created_at'].some(key=>previous[key]!==packet[key])))throw Error('助手任务回执身份发生变化，保留原任务等待核对。');
  return packet;
 }
@@ -5010,16 +5094,18 @@ async function platformDraftAssistantReturn(panel){
 }
 function platformDraftAssistantCanSync(panel){
  const task=panel.assistantTask,counts=task?.result?.change_counts,expires=Date.parse(task?.inspection_expires_at);
+ if(panel.attributionExplicit&&(platformDraftSelectedAttribution(panel)?.attribution_id||null)!==(task?.attribution_id||null))return false;
  return !!(platformDraftHostReady(panel)&&platformDraftAssistantMatches(panel,task)&&task.mode==='inspect_drafts'&&task.done&&task.state==='inspection_ready'&&task.can_sync===true&&!platformDraftAssistantActive(task)&&task.cleanup_complete===true&&task.source_matches_current===true&&task.result?.can_execute===true&&task.result.source_matches_current!==false&&task.checked_chapters===task.total_chapters&&Number.isFinite(expires)&&expires>Date.now()&&!panel.bindingDirty&&!panel.formalError&&!panel.needsPreparation&&counts&&['create','update','unchanged','blocked'].every(key=>Number.isInteger(counts[key])&&counts[key]>=0)&&counts.blocked===0&&counts.create+counts.update>0&&counts.create+counts.update+counts.unchanged===task.total_chapters);
 }
 function platformDraftAssistantRender(panel){
  if(!panel.assistantArea)return;
  const task=panel.assistantTask,matched=platformDraftAssistantMatches(panel,task),busy=platformDraftBusy(panel),unknown=matched&&platformDraftNeedsReadback(task),scope=platformDraftAssistantScope(panel);
+ platformDraftAttributionRender(panel,busy);
  platformDraftHostRender(panel,busy);const hostReady=platformDraftHostReady(panel),hostLabel=platformDraftHostNames[platformDraftHost(panel)];
  const unavailable=panel.connectionRetryBlocked||(panel.preview?.can_start===false&&panel.preview?.can_connect!==true);
  if(unavailable)panel.assistantArea.open=true;
  panel.assistantReturn.hidden=!panel.assistantForeignActive;panel.assistantReturn.disabled=!!(panel.assistantWorking||panel.loadingCatalog);
- panel.assistantInspect.disabled=!!(busy||!hostReady||!scope||panel.bindingDirty||panel.formalError||panel.mode.value==='reconcile_only'||platformDraftAssistantInspectionBlocked(task));
+ panel.assistantInspect.disabled=!!(busy||panel.attributionLoading||!hostReady||!scope||panel.bindingDirty||panel.formalError||panel.mode.value==='reconcile_only'||platformDraftAssistantInspectionBlocked(task));
  panel.assistantReadback.disabled=!!(busy||!hostReady||!scope||panel.bindingDirty||panel.formalError);
  panel.assistantRefresh.disabled=!!(panel.assistantWorking||panel.loadingCatalog||!scope);
  panel.assistantCancel.hidden=!matched||(task.done&&!task.cleanup_pending);panel.assistantCancel.disabled=!!panel.assistantWorking||task?.stop_requested===true||task?.done===true;
@@ -5032,7 +5118,7 @@ function platformDraftAssistantRender(panel){
  panel.assistantProgress.textContent=label+' · '+hostLabel+' · '+(names[task.state]||'状态待核对')+' · '+(task.mode==='inspect_drafts'?(task.state==='inspection_ready'?'已完成差异检查 ':'已尝试检查 ')+(task.checked_chapters||0):'已完整回读 '+(task.verified_chapters||0))+' / '+task.total_chapters+' 章'+(historical?'；历史结果不计入本次进度。':'。');
  const counts=task.result?.change_counts;panel.assistantSummary.textContent=(historical?'历史目标：':'任务目标：')+(platformDraftNames[scope.target.platform]||'平台')+' · 账号 '+scope.target.account_id+' · 作品 '+scope.target.remote_book_id+' · '+platformDraftChapterRange(scope.chapters)+(counts?'；待新建 '+counts.create+'、待更新 '+counts.update+'、一致 '+counts.unchanged+'、阻断 '+counts.blocked:'')+'。'+(task.finished_at?'结束时间：'+task.finished_at+'。':'');
  for(const row of task.result?.changes||task.result?.results||[]){const text='第'+row.chapter+'章 · '+({create:'待新建',update:'待更新',unchanged:'一致',blocked:'须先处理',unknown:'结果未知',sending:'保存待核对',succeeded:'已回读'}[row.action||row.state]||'待核对')+(row.reason?' · '+platformDraftErrorCode(row.reason):'');panel.assistantResults.append(platformDraftElement('li',text));}
- if(task.cleanup_status==='external_session_reset')panel.assistantStateNote.textContent=(task.error?'原停止原因：'+platformDraftErrorCode(task.error)+'。':'')+'旧浏览器会话已按操作者的保存退出与内核重置记录隔离撤销；未将旧执行标为自动收尾成功，原任务结果保留。可准备新的只读检查，不能重放旧任务。';
+ if(platformDraftAssistantIsolatedReadonly(task))panel.assistantStateNote.textContent=(task.error?'原停止原因：'+platformDraftErrorCode(task.error)+'。':'')+'旧浏览器会话已按操作者的保存退出与内核重置记录隔离撤销；未将旧执行标为自动收尾成功，原任务结果保留。可准备新的只读检查，不能重放旧任务。';
  else if(task.cleanup_pending&&(task.done||task.stage==='cleanup_pending'||task.stop_requested))panel.assistantStateNote.textContent=(task.error?'停止原因：'+platformDraftErrorCode(task.error)+'。':'')+'任务结果与浏览器收尾分开确认：'+(task.done?'本次处理已结束，但':'正在停止或结束本次处理；')+'尚未确认执行端完成及浏览器收尾，暂不能开始新任务。请读取助手状态，保留原会话等待收尾。'+(unknown?'远端可能已保存；收尾确认后仍须先只读核对，不能重复发送。':'');
  else if(unknown)panel.assistantStateNote.textContent=platformDraftAssistantInspectionBlocked(task)?'远端可能已保存，执行端完成和浏览器收尾尚未确认；请先读取状态，不能重复发送。':'远端可能已保存；可以先“检查差异”只读核对，也可准备只读核对任务，不能重复发送。只有本次同一工具的完整检查通过，才能再确认同步。';
  else if(task.error)panel.assistantStateNote.textContent='停止原因：'+platformDraftErrorCode(task.error)+'。请读取最新状态后处理。';
@@ -5053,9 +5139,10 @@ async function platformDraftAssistantRefresh(panel){
 async function platformDraftAssistantPrepare(panel,mode,inspectionId=null){
  if(!platformDraftAlive(panel)||platformDraftBusy(panel)||!platformDraftHostReady(panel)||!platformDraftAssistantScope(panel))return;
  if(platformDraftHost(panel)!=='codex'&&panel.nativeInspectionPreparing)return;
- if(mode==='inspect_drafts'&&platformDraftAssistantInspectionBlocked(panel.assistantTask))return;
+ if(mode==='inspect_drafts'&&(panel.attributionLoading||platformDraftAssistantInspectionBlocked(panel.assistantTask)))return;
  if(mode==='sync_drafts'&&(!platformDraftAssistantCanSync(panel)||panel.assistantTask.request_id!==inspectionId))return;
- if(mode==='inspect_drafts'){
+ const attribution=mode==='inspect_drafts'?platformDraftSelectedAttribution(panel):null;
+ if(mode==='inspect_drafts'&&!attribution){
   if(platformDraftHost(panel)==='codex'){if(panel.mode.value==='reconcile_only'||!await platformDraftRefreshPlan(panel,false)||!platformDraftAlive(panel)||platformDraftBusy(panel))return;}
   else{if(panel.mode.value==='reconcile_only')return;const intent={host:platformDraftHost(panel),bookId:panel.bookId,revision:panel.revision,generation:panel.selectionGeneration||0};panel.nativeInspectionPreparing=intent;let prepared;
    try{prepared=await platformDraftRefreshPlan(panel,false);}finally{if(panel.nativeInspectionPreparing===intent)panel.nativeInspectionPreparing=null;}
@@ -5067,14 +5154,17 @@ async function platformDraftAssistantPrepare(panel,mode,inspectionId=null){
   if(platformDraftAssistantConflict(panel,latest,scope))return;
   if(latest.request){const sameHost=platformDraftTaskHost(latest.request)===scope.execution_host,previous=platformDraftAssistantPacket(panel,latest.request,sameHost?scope:{...scope,execution_host:platformDraftTaskHost(latest.request)});if(sameHost)panel.assistantTask=previous;else platformDraftAssistantRemember(panel,previous);if(platformDraftAssistantActive(previous)||(mode==='inspect_drafts'&&platformDraftAssistantInspectionBlocked(previous))||(mode==='sync_drafts'&&(!sameHost||previous.request_id!==inspectionId||!platformDraftAssistantCanSync(panel))))return;}
   else if(mode==='sync_drafts')throw Error('原检查任务已无法读取，未生成同步任务。');
-  submitted=true;const packet=await call('platform-drafts/assistant-prepare',{plan_id:scope.plan_id,profile_id:scope.profile_id,profile_sha256:scope.profile_sha256,execution_host:scope.execution_host,...(scope.execution_host==='codex'?{}:{native_model_authorized:true}),mode,comparison_policy:'strict',body_encoding:platformDraftRequiredEncoding,...(mode==='sync_drafts'?{inspection_id:inspectionId,confirmed:true}:{})});
-  if(sequence!==panel.assistantSequence||!platformDraftAssistantScopeCurrent(panel,scope))return;platformDraftAssistantPacket(panel,packet,scope);if(packet.mode!==mode)throw Error('助手任务类型无法确认。');panel.assistantTask=packet;panel.assistantCurrentId=packet.request_id;panel.assistantUncertain=false;panel.assistantMessage.textContent='已生成本地交接任务；尚未连接浏览器或执行。';
+  if(attribution&&platformDraftSelectedAttribution(panel)?.attribution_id!==attribution.attribution_id)throw Error('本批次选择的归属授权已变化，请重新读取。');
+  const expectedAttribution=mode==='sync_drafts'?panel.assistantTask?.attribution_id:attribution?.attribution_id;
+  submitted=true;const packet=await call('platform-drafts/assistant-prepare',{plan_id:scope.plan_id,profile_id:scope.profile_id,profile_sha256:scope.profile_sha256,execution_host:scope.execution_host,...(scope.execution_host==='codex'?{}:{native_model_authorized:true}),mode,comparison_policy:'strict',body_encoding:platformDraftRequiredEncoding,...(attribution?{attribution_id:attribution.attribution_id}:{}),...(mode==='sync_drafts'?{inspection_id:inspectionId,confirmed:true}:{})});
+  if(sequence!==panel.assistantSequence||!platformDraftAssistantScopeCurrent(panel,scope))return;platformDraftAssistantPacket(panel,packet,scope);if(packet.mode!==mode||(packet.attribution_id||null)!==(expectedAttribution||null))throw Error('助手任务类型或归属授权无法确认。');panel.assistantTask=packet;panel.assistantCurrentId=packet.request_id;panel.assistantUncertain=false;panel.assistantMessage.textContent='已生成本地交接任务；尚未连接浏览器或执行。';
  }catch(error){if(sequence===panel.assistantSequence&&platformDraftAssistantScopeCurrent(panel,scope)){if(submitted)panel.assistantUncertain=true;panel.assistantMessage.textContent=(submitted?'生成回执尚未确认，请先读取助手状态；不会重复生成。':'尚未生成助手任务：')+error.message;}}
  finally{if(platformDraftAlive(panel)&&sequence===panel.assistantSequence){panel.assistantWorking=false;platformDraftButtons(panel);}}
 }
 function platformDraftAssistantConfirm(panel){
  if(platformDraftBusy(panel)||!platformDraftAssistantCanSync(panel))return;const task=panel.assistantTask,scope=platformDraftAssistantScope(panel),counts=task.result.change_counts,{dialog,content}=editorDialog('确认生成助手同步任务');
  content.append(platformDraftElement('p','执行工具：'+platformDraftHostNames[scope.execution_host]+'。'+(platformDraftNames[scope.target.platform]||'平台')+' · 《'+(panel.plans.find(row=>row.id===scope.plan_id)?.book_title||currentBookInfo.title)+'》 · 账号 '+scope.target.account_id+' · 作品 '+scope.target.remote_book_id+' · '+platformDraftChapterRange(scope.chapters)),platformDraftElement('p','本次已检查 '+task.checked_chapters+' / '+task.total_chapters+' 章；将新建 '+counts.create+' 章，更新 '+counts.update+' 章。只保存草稿，不提交审核或发布。'));
+ if(task.attribution_id)content.append(platformDraftElement('p','同步将沿用本次只读检查核对过的空稿归属授权。'));
  const confirm=platformDraftElement('button','确认并生成同步任务');confirm.className='primary';content.append(confirm);confirm.onclick=async()=>{if(!dialog.open||!platformDraftAssistantScopeCurrent(panel,scope)||panel.assistantTask!==task||!platformDraftAssistantCanSync(panel)){confirm.disabled=true;return;}confirm.disabled=true;dialog.close();await platformDraftAssistantPrepare(panel,'sync_drafts',task.request_id);};
 }
 async function platformDraftAssistantCancel(panel){
@@ -5085,6 +5175,7 @@ async function platformDraftAssistantCancel(panel){
 }
 function platformDraftAssistantFields(panel,parent,settings){
  panel.assistantArea=platformDraftElement('details',undefined,'platform-draft-assistant');panel.assistantArea.append(platformDraftElement('summary','助手协助'),platformDraftElement('p','自行选择执行工具，本地准备交接说明，由所选工具执行并读取结果；不会自动切换工具。生成说明不代表已连接、已检查或已保存。'));
+ platformDraftAttributionFields(panel);
  panel.assistantHost=platformDraftElement('select',undefined,'platform-draft-assistant-host');panel.assistantHost.setAttribute('aria-label','草稿执行工具');for(const [id,label]of Object.entries(platformDraftHostNames)){const option=platformDraftElement('option',label);option.value=id;panel.assistantHost.append(option);}panel.assistantHost.value=platformDraftHost(panel);panel.assistantHost.onchange=()=>platformDraftHostChange(panel);const hostLabel=platformDraftElement('label','执行工具');hostLabel.append(panel.assistantHost);panel.assistantHostNote=platformDraftElement('p');panel.assistantHostNote.setAttribute('role','status');settings.append(hostLabel,panel.assistantHostNote);
  panel.assistantHistoryDetails=platformDraftElement('details');panel.assistantHistoryDetails.hidden=true;panel.assistantHistoryResults=platformDraftElement('ul');panel.assistantHistoryDetails.append(platformDraftElement('summary','其他工具与先前任务的历史结果'),panel.assistantHistoryResults);
  panel.assistantMessage=platformDraftElement('p',undefined,'platform-draft-assistant-message');panel.assistantMessage.setAttribute('role','status');panel.assistantStateNote=platformDraftElement('p');panel.assistantProgress=platformDraftElement('p');panel.assistantSummary=platformDraftElement('p');panel.assistantResults=platformDraftElement('ul');
@@ -5233,7 +5324,8 @@ function platformDraftPreviewReady(panel){
 }
 function platformDraftCanPrepare(panel){return !!(!panel.bindingDirty&&!panel.formalError&&!panel.catalogError&&panel.mode.value==='sync_drafts'&&platformDraftRuleScope(panel)?.platform==='fanqie'&&platformDraftRefreshRange(panel)&&panel.comparison.value==='strict'&&panel.encoding.value===platformDraftRequiredEncoding);}
 function platformDraftCanStart(panel){
- if(platformDraftHost(panel)!=='codex')return !!(!platformDraftBusy(panel)&&platformDraftHostReady(panel)&&platformDraftAssistantScope(panel)&&!panel.bindingDirty&&!panel.formalError&&(panel.mode.value==='reconcile_only'||!platformDraftAssistantInspectionBlocked(panel.assistantTask)));
+ if(panel.attributionLoading)return false;
+ if(platformDraftHost(panel)!=='codex'||platformDraftSelectedAttribution(panel))return !!(!platformDraftBusy(panel)&&platformDraftHostReady(panel)&&platformDraftAssistantScope(panel)&&!panel.bindingDirty&&!panel.formalError&&(panel.mode.value==='reconcile_only'||!platformDraftAssistantInspectionBlocked(panel.assistantTask)));
  if(platformDraftBusy(panel)||panel.connectionRetryBlocked)return false;
  if(panel.mode.value==='sync_drafts'&&platformDraftInspectionValid(panel))return (panel.inspection.result.change_counts.create+panel.inspection.result.change_counts.update)>0;
  return panel.mode.value==='sync_drafts'&&panel.needsPreparation?platformDraftCanPrepare(panel):platformDraftPreviewReady(panel);
@@ -5267,7 +5359,7 @@ function platformDraftButtons(panel){
  if(panel.generate){panel.generate.hidden=false;panel.generate.disabled=busy||!platformDraftCanPrepare(panel);panel.refreshStart.disabled=busy||readonly;panel.refreshEnd.disabled=busy||readonly;}
  if(panel.bindingSummary){const plan=panel.plans.find(row=>row.id===panel.plan.value);panel.bindingSummary.textContent=plan?(platformDraftNames[plan.platform]||'平台')+' · '+(plan.book_title||currentBookInfo.title)+' · 账号 '+plan.account_id:'首次使用：先绑定平台账号与作品';if(panel.bindDetails&&panel.bookId&&!panel.bindingInitialized){panel.bindDetails.open=!plan;panel.bindingInitialized=true;}else if(panel.bindDetails&&panel.bookId&&!plan)panel.bindDetails.open=true;}
  platformDraftAssistantRender(panel);
- if(platformDraftHost(panel)!=='codex'){
+ if(platformDraftHost(panel)!=='codex'||platformDraftSelectedAttribution(panel)){
   const label=platformDraftHostNames[platformDraftHost(panel)],sync=platformDraftAssistantCanSync(panel);panel.run.hidden=false;panel.run.disabled=!platformDraftCanStart(panel);panel.run.textContent=sync?'生成 '+label+' 同步任务':'交给 '+label+(readonly?'只读核对':'检查差异');panel.recheck.hidden=true;panel.recoveryAction.hidden=true;
   if(!busy)panel.nextHint.textContent=platformDraftHostReady(panel)?'点击“'+panel.run.textContent+'”生成本地交接说明，再复制给 '+label+' 执行；不会自动启动或切换工具。':'所选 '+label+' 的浏览器组件不可用，请查看“执行工具”下方的原因；未改用其他工具。';
  }
@@ -5408,7 +5500,7 @@ async function platformDraftCatalog(panel,selection=null){
 }
 async function platformDraftStart(panel){
  if(!platformDraftAlive(panel)||!platformDraftCanStart(panel))return;
- if(platformDraftHost(panel)!=='codex'){panel.assistantArea.open=true;return platformDraftAssistantCanSync(panel)?platformDraftAssistantConfirm(panel):platformDraftAssistantPrepare(panel,panel.mode.value==='reconcile_only'?'reconcile_only':'inspect_drafts');}
+ if(platformDraftHost(panel)!=='codex'||platformDraftSelectedAttribution(panel)){panel.assistantArea.open=true;return platformDraftAssistantCanSync(panel)?platformDraftAssistantConfirm(panel):platformDraftAssistantPrepare(panel,panel.mode.value==='reconcile_only'?'reconcile_only':'inspect_drafts');}
  const intent=JSON.stringify([panel.bookId,panel.plan.value,panel.profile.value,platformDraftHost(panel),panel.selectionGeneration]);
  if(!await platformDraftBlockersRefresh(panel)||!platformDraftAlive(panel)||intent!==JSON.stringify([panel.bookId,panel.plan.value,panel.profile.value,platformDraftHost(panel),panel.selectionGeneration])||!platformDraftCanStart(panel))return;
  const readonly=panel.mode.value==='reconcile_only',inspection=platformDraftInspectionValid(panel)?panel.inspection:null;
@@ -6667,21 +6759,33 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                         comparison_policy=payload.get('comparison_policy', 'strict'), body_encoding=encoding,
                         sync_drafts=payload.get('sync_drafts', False), inspect_only=payload.get('inspect_only', False),
                         inspection_id=payload.get('inspection_id'))
+                elif action == 'api/platform-drafts/assistant-attributions':
+                    if set(payload) != {'plan_id', 'profile_id', 'profile_sha256', 'comparison_policy', 'body_encoding'}:
+                        api.fail('invalid_input', '查询归属授权只接受本批次、页面配置和正文核对规则。')
+                    result = api.platform_drafts.workbench_assistant_attributions(
+                        root, payload['plan_id'], payload['profile_id'], expected_book_id=identity['book_id'],
+                        expected_profile_sha256=payload['profile_sha256'],
+                        comparison_policy=payload['comparison_policy'], body_encoding=payload['body_encoding'])
                 elif action == 'api/platform-drafts/assistant-prepare':
                     fields = {'plan_id', 'profile_id', 'profile_sha256', 'mode', 'comparison_policy', 'body_encoding'}
-                    optional = {'inspection_id', 'confirmed', 'execution_host', 'native_model_authorized'}
+                    optional = {'inspection_id', 'confirmed', 'execution_host', 'native_model_authorized', 'attribution_id'}
                     if not fields <= set(payload) or set(payload) - fields - optional:
                         api.fail('invalid_input', '助手任务仅接受当前批次、配置摘要、固定规则及明确同步确认。')
                     if 'confirmed' in payload and type(payload['confirmed']) is not bool:
                         api.fail('invalid_input', '同步确认必须为布尔值。')
                     if 'native_model_authorized' in payload and type(payload['native_model_authorized']) is not bool:
                         api.fail('invalid_input', '本次原生模型授权必须为布尔值。')
+                    if 'attribution_id' in payload and (not isinstance(payload['attribution_id'], str) or
+                            not re.fullmatch(r'[a-f0-9]{64}', payload['attribution_id']) or
+                            payload.get('mode') not in ('inspect_drafts', 'sync_drafts')):
+                        api.fail('invalid_input', '归属授权必须是本批次提供的候选标识。')
                     result = api.platform_drafts.workbench_assistant_prepare(root, payload.get('plan_id'), payload.get('profile_id'),
                         expected_book_id=identity['book_id'], expected_profile_sha256=payload.get('profile_sha256'),
                         mode=payload.get('mode'), comparison_policy=payload.get('comparison_policy'),
                         body_encoding=payload.get('body_encoding'), inspection_id=payload.get('inspection_id'),
                         confirmed=payload.get('confirmed', False), execution_host=payload.get('execution_host', 'codex'),
-                        native_model_authorized=payload.get('native_model_authorized', False))
+                        native_model_authorized=payload.get('native_model_authorized', False),
+                        **({'attribution_id': payload['attribution_id']} if 'attribution_id' in payload else {}))
                 elif action == 'api/platform-drafts/assistant-latest':
                     if set(payload) != {'plan_id', 'profile_id'}:
                         api.fail('invalid_input', '仅接受当前作品的批次和配置标识。')
@@ -6781,6 +6885,8 @@ def editor_server(root, limit=DEFAULT_LIMIT, library_books=None, material_roots=
                     result = _save_candidate(root, packet, payload.get('chapter'), payload.get('text'))
                 else:
                     return self.reply(404, b'{}')
+                if action.startswith('api/platform-drafts/assistant-'):
+                    result = _workbench_public_assistant_reply(result)
                 self.reply(200, json.dumps(result, ensure_ascii=False).encode())
             except api.StoryError as error:
                 self.reply(409, json.dumps({'ok': False, **identity, 'message': str(error), 'error': error.code, 'details': error.details}, ensure_ascii=False).encode())
@@ -7876,6 +7982,7 @@ def library_server(state_dir=None, port=8765, library_books=None):
                         result = _draft_cleanup_request(entry['root'], 'assistant-' + self.path.split('/api/book-draft-', 1)[1],
                             operation_payload, expected_book_id=entry['book_id'], token=token, origin=origin,
                             endpoint=origin + '/api/book-draft-reconcile-complete', completion_identity=completion_identity)
+                        result = _workbench_public_assistant_reply(result)
                         _library_entry(entry['root'], entry)
                     elif self.path in ('/api/trash-preview', '/api/backup-book', '/api/book-service', '/api/stop-book', '/api/confirm-book-unknown'):
                         key = payload.get('key')
