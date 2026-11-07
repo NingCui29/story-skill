@@ -62,8 +62,29 @@ class AssistantTaskTests(unittest.TestCase):
         self.assertIn("'C:/Author''s workspace/story.py'", command)
         self.assertIn("'C:/book''s workspace/$not_a_variable/`not_code`'", command)
         task = self.task()
-        expected_shell, prefix = self.tasks._handoff_command([sys.executable], windows=os.name == 'nt')
+        expected_shell, prefix = self.tasks._handoff_command([sys.executable, '-B', story.__file__, 'task-return'],
+                                                            windows=os.name == 'nt')
         self.assertIn('回填命令（' + expected_shell + '）：\n' + prefix, task['prompt'])
+
+    def test_legacy_handoff_protects_only_the_generated_command_on_read(self):
+        task = self.task()
+        task_id = task['id']
+        path = self.root / self.tasks.DIRECTORY / (task_id + '.json')
+        record = json.loads(path.read_text())
+        shell, current = self.tasks._handoff_command([sys.executable, '-B', story.__file__, 'task-return'],
+                                                      windows=os.name == 'nt')
+        _, legacy = self.tasks._handoff_command([sys.executable, story.__file__, 'task-return'],
+                                                windows=os.name == 'nt')
+        marker = '\n回填命令（' + shell + '）：\n'
+        old = record['prompt'].replace(marker + current, marker + legacy)
+        author_text = '保留作者引用的旧命令 ' + legacy + '\n'
+        for trailer, expected in ((old, task['prompt']), (old + '\n作者补充', old + '\n作者补充')):
+            with self.subTest(exact_trailer=trailer == old):
+                record['prompt'] = author_text + trailer
+                saved = json.dumps(record, ensure_ascii=False).encode()
+                path.write_bytes(saved)
+                self.assertEqual(self.tasks.get(self.root, task_id)['task']['prompt'], author_text + expected)
+                self.assertEqual(path.read_bytes(), saved)
 
     def test_empty_list_does_not_create_workflow_files(self):
         before = self.fixture.authoritative_state()

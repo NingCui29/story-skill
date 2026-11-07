@@ -1,7 +1,10 @@
 """Explicit assistant tasks use isolated books and a synthetic host only."""
 import json
+import os
 import shlex
 import shutil
+import sys
+from pathlib import Path
 from contextlib import contextmanager
 import threading
 import time
@@ -82,6 +85,18 @@ class AssistantTaskTests(unittest.TestCase):
         self.assertIn('gpt-6.1-terra', request['handoff_prompt'])
         self.assertIn(request['request_id'], request['handoff_prompt'])
         self.assertFalse(drafts.workbench_activity(self.root, expected_book_id=self.book.meta('id'))['busy'])
+
+    def test_generated_assistant_commands_protect_installed_runtime(self):
+        request = self.prepare()
+        request_id = request['request_id']
+        argv = [str(Path(sys.executable).absolute()), '-B', str(Path(drafts.__file__).with_name('story.py').resolve()),
+                'publish-draft-assist-run', '--book', str(self.root), '--request', request_id]
+        expected = drafts._assistant_command(argv, windows=os.name == 'nt')
+        self.assertEqual(request['handoff_prompt'].splitlines()[-1], expected)
+        for host in ('codex', 'qoder-cn', 'workbuddy'):
+            with self.subTest(host=host):
+                prompt = drafts._assistant_prompt(self.root, request_id, 'inspect_drafts', host)
+                self.assertEqual(prompt.splitlines()[-1], expected)
 
     def test_inspection_never_writes_and_explicit_confirmation_is_required(self):
         checked = self.checked()

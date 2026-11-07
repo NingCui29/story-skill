@@ -245,6 +245,7 @@ assert.equal(evaluate([{editable:true,text:'old'}]),'unknown');
         self.assertEqual(settings['CFBundleIconFile'], 'AppIcon')
         self.assertEqual(settings['LSMinimumSystemVersion'], '13.0')
         self.assertEqual(settings['NSAppTransportSecurity'], {'NSAllowsLocalNetworking': True})
+        self.assertIn('登记在“文稿”文件夹中的作品', settings['NSDocumentsFolderUsageDescription'])
 
 
 if __name__ == '__main__':

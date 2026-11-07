@@ -529,7 +529,7 @@ def _view(book, record, detail=True):
               'execution': record['execution'], 'applied': applied,
               'host_execution': api.task_worker.view(book, record) if detail and hasattr(api, 'task_worker') else None}
     if detail:
-        result.update(prompt=record['prompt'], input_sources=record['binding']['sources'],
+        result.update(prompt=_display_prompt(book, record), input_sources=record['binding']['sources'],
                       result=record.get('result'), output=output,
                       issues=(record.get('result') or {}).get('issues', []),
                       issue_statuses=record.get('issue_statuses', []),
@@ -543,6 +543,25 @@ def _handoff_command(arguments, windows):
         return 'Windows PowerShell', '& ' + ' '.join("'" + str(value).replace("'", "''") + "'"
                                                     for value in arguments)
     return 'POSIX shell', ' '.join(shlex.quote(str(value)) for value in arguments)
+
+
+def _return_instructions(root, task_id, *, legacy=False):
+    arguments = [sys.executable] if legacy else [sys.executable, '-B']
+    arguments.extend((api.__file__, 'task-return', '--book', root, '--task-id', task_id,
+                      '--version', 1, '--result-file', '.story/drafts/assistant-result-' + task_id + '.json'))
+    shell, command = _handoff_command(arguments, windows=os.name == 'nt')
+    return ('\n回填命令（' + shell + '）：\n' + command + '\n若任务版本变化，先 task-get --book <同一书根> --task-id '
+            + task_id + ' 核对当前版本；不要改写绑定值。')
+
+
+def _display_prompt(book, record):
+    # Only replace our exact legacy trailer for this root, task and interpreter.
+    # Preserve author-authored text and the historical record on disk.
+    prompt = record['prompt']
+    old = _return_instructions(book.root, record['id'], legacy=True)
+    if '\n\n助手任务回流：本任务不授权额外修改或正式采用。' in prompt and prompt.endswith(old):
+        return prompt[:-len(old)] + _return_instructions(book.root, record['id'])
+    return prompt
 
 
 def create(root, kind, prompt, sources, chapter=None, expected_book_id=None, expected_revision=None,
@@ -584,17 +603,12 @@ def create(root, kind, prompt, sources, chapter=None, expected_book_id=None, exp
                   'binding': binding, 'binding_sha256': api.digest(api.dumps(binding)),
                   'state': 'generated', 'created': _now(), 'updated': _now(),
                   'execution': {'source': 'none', 'status': 'unverified'}, 'result': None}
-        shell, command = _handoff_command((
-            sys.executable, api.__file__, 'task-return', '--book', book.root, '--task-id', task_id,
-            '--version', 1, '--result-file', '.story/drafts/assistant-result-' + task_id + '.json'),
-            windows=os.name == 'nt')
         record['prompt'] = (prompt + '\n\n助手任务回流：本任务不授权额外修改或正式采用。完成既定工作后，将下面 JSON 模板填为实际结果，'
             '保存到命令所示的书内结果文件，再执行回填命令。正文另存本书 .story/drafts/ 下候选，不放进回执。'
             '有候选时添加 output: {path: "书内候选相对路径", sha256: "实际文件SHA-256"}；'
             '审稿问题用 issues: [{id, severity: "blocker或advice", issue, evidence: [{chapter或path, sha256, quote, line}]}]，'
             '引文可连到前文正式章和当前候选；行号从1开始。没有完成的内容如实记录，不宣称真人反馈或平台状态。\n'
-            + json.dumps(_template(record), ensure_ascii=False, indent=2) + '\n回填命令（' + shell + '）：\n' + command +
-            '\n若任务版本变化，先 task-get --book <同一书根> --task-id ' + task_id + ' 核对当前版本；不要改写绑定值。')
+            + json.dumps(_template(record), ensure_ascii=False, indent=2) + _return_instructions(book.root, task_id))
         for ref in refs:
             _source_snapshot(book, ref)
         _save(book, record)

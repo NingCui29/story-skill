@@ -3124,7 +3124,7 @@ def _assistant_command(argv, *, windows=False):
 
 def _assistant_prompt(root, request_id, mode, execution_host="codex", *, binding=None):
     cli = str(Path(__file__).resolve().with_name("story.py"))
-    argv = [str(Path(sys.executable).absolute()), cli, "publish-draft-assist-run", "--book", str(root), "--request", request_id]
+    argv = [str(Path(sys.executable).absolute()), "-B", cli, "publish-draft-assist-run", "--book", str(root), "--request", request_id]
     command = _assistant_command(argv, windows=os.name == "nt")
     if execution_host == "workbuddy":
         setup = "本机需要已安装工作台支持的官方 agent-browser 与 Node 运行时；缺失时停止并显示具体原因。\n"
