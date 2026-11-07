@@ -76,6 +76,30 @@ assert.ok(p.assistantProgress.textContent.includes('已完成差异检查 30 / 3
 assert.equal(calls('start').length,0);assert.equal(calls('assistant-prepare').length,0);p.dialog.close();
 ''')
 
+    def test_local_preview_expiry_keeps_current_assistant_progress_visible(self):
+        self.js(self.fixture + r'''
+const chapters=Array.from({length:30},(_,i)=>i+1);
+plans=[plan('plan-1',{chapters})];
+handler=async(action,payload)=>{const reply=await localHandler(action,payload);
+ if(action.endsWith('/catalog')||action.endsWith('/formal-state'))return {...reply,formal_last:30,formal_count:30};
+ if(action.endsWith('/preview'))reply.preview.chapters=chapters.map(chapter=>({chapter,title:'章节'+chapter,body_characters:100}));
+ return reply;};
+await platformDraftOpen();const p=platformDraftPanel;
+timers.get(p.expiryTimer).fn();assert.equal(p.localStatus.hidden,false);assert.ok(p.status.textContent.includes('预览已过期'));
+assert.ok(p.progressLabel.textContent.includes('0 / 30'));
+await platformDraftPreview(p);await p.assistantInspect.onclick();
+records[0]=complete(last());records[0].result.change_counts={create:21,update:1,unchanged:8,blocked:0};
+records[0].result.changes=chapters.map(chapter=>({chapter,action:chapter<=8?'unchanged':chapter===9?'update':'create'}));
+await p.assistantRefresh.onclick();const expiry=timers.get(p.expiryTimer);expiry.fn();
+assert.equal(p.preview,null);assert.equal(p.localStatus.hidden,true);assert.equal(p.assistantArea.open,true);
+assert.ok(p.assistantProgress.textContent.includes('已完成差异检查 30 / 30 章'));
+assert.equal(p.assistantSync.disabled,false);assert.equal(calls('assistant-prepare').length,1);assert.equal(calls('start').length,0);
+p.job=job();platformDraftButtons(p);assert.equal(p.localStatus.hidden,false);p.job=null;
+p.refreshEnd.value='3';p.refreshEnd.oninput();assert.equal(p.localStatus.hidden,false);
+const status=p.status.textContent;expiry.fn();assert.equal(p.status.textContent,status);assert.equal(p.assistantSync.disabled,true);
+p.dialog.close();
+''')
+
     def test_allocated_empty_draft_recovery_reason_is_explicit_without_new_execution(self):
         self.js(self.fixture + r'''
 await platformDraftOpen();const p=platformDraftPanel;await p.assistantInspect.onclick();
