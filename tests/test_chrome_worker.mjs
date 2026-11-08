@@ -7,7 +7,7 @@ import os from 'node:os';
 import {execFile} from 'node:child_process';
 import {AsyncLocalStorage} from 'node:async_hooks';
 import {fileURLToPath} from 'node:url';
-import {ChromeWorker,chromeDriverAPI,readPrivateJSON,validateWorkerConfig,runChromeWorker} from '../skills/story-skill/scripts/story_chrome_worker.mjs';
+import {ChromeWorker,chromeDriverAPI,readPrivateJSON,validateWorkerConfig,runChromeWorker,runOwnedChromeWorkerSlice} from '../skills/story-skill/scripts/story_chrome_worker.mjs';
 import {executeChromeBridgeRequest,closeChromeBridgeSession} from '../skills/story-skill/scripts/story_chrome_bridge.mjs';
 
 const SCRIPTS=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../skills/story-skill/scripts');
@@ -2070,6 +2070,88 @@ test('an active claim longer than the idle budget stays busy across checkpoints 
     assert.equal(idle.done,true);assert.equal(idle.state,'idle_timeout');
     assert.equal(executions,1);assert.equal(f.responses.length,1);
   }finally{await f.cleanup();}
+});
+
+// Keep the public config, worker cache, SDK dispatcher and queue continuation real.
+// Replace only the external browser, CLI, driver and time used by this offline catalog.
+async function ownedCatalogFixture(t,readTime=1500){
+  const f=await fixture(),configPath=path.join(f.run,'config.json');
+  let now=Date.now(),owned;
+  const activity={reads:0,executions:0,afterRead:null};
+  t.after(async()=>{try{if(owned)await owned.stop();}finally{await f.cleanup();}});
+  t.mock.method(Date,'now',()=>now);
+  const initialize=ChromeWorker.prototype.initialize;
+  t.mock.method(ChromeWorker.prototype,'initialize',function(){
+    owned=this;this.sdkFactory=f.worker.sdkFactory;this.command=f.worker.command;this.driver=f.driver;
+    this.sleep=async ms=>{now+=ms;};
+    return initialize.call(this);
+  });
+  f.original.playwright.locator=()=>({count:async()=>{
+    activity.reads++;now+=readTime;await activity.afterRead?.();return 1;
+  }});
+  f.driver.executeChromeBridgeRequest=async(api,request)=>{
+    activity.executions++;
+    const tab=await api.getTab('original');
+    for(let page=0;page<7;page++)await tab.playwright.locator('synthetic').count();
+    return {schema:1,id:request.id,session_id:SESSION,binding_sha256:BINDING,nonce:request.nonce,ok:true,result:[]};
+  };
+  await privateJSON(configPath,f.config);
+  return {f,activity,advance:ms=>{now+=ms;},run:()=>runOwnedChromeWorkerSlice(configPath)};
+}
+
+test('owned Chrome slice reports ready promptly and carries one claimed catalog across bounded busy calls',async t=>{
+  const {f,activity,run}=await ownedCatalogFixture(t);
+  assert.equal((await run()).state,'ready');
+  assert.equal(f.events.filter(row=>row[0]==='cli'&&row[1]==='health'&&row.length===2).length,1);
+  const claim=await f.enqueue('inspect_catalog');
+  const first=await run();assert.equal(first.state,'busy');assert.equal(first.processed,0);
+  assert.equal(activity.reads,3,'one public call continues three busy checkpoints');
+  await sleep(5);assert.equal(activity.reads,3,'a parked catalog does no browser work after returning');
+  assert.equal((await run()).state,'busy');assert.equal(activity.reads,6);
+  const last=await run();assert.equal(last.state,'ready');assert.equal(last.processed,1);
+  assert.equal(activity.executions,1);assert.deepEqual(f.responses.map(row=>row.id),[claim.request_id]);
+});
+
+test('owned Chrome slice yields after one slow SDK call and preserves the original request deadline',async t=>{
+  const {f,activity,run,advance}=await ownedCatalogFixture(t,75000);
+  await f.enqueue('inspect_catalog');
+  assert.equal((await run()).state,'busy');assert.equal(activity.reads,1);
+  advance(300000);
+  const expired=await run();assert.equal(expired.done,true);assert.equal(expired.state,'failed');
+  assert.equal(activity.reads,1);assert.equal(activity.executions,1);assert.equal(f.responses.length,0);
+});
+
+test('owned Chrome slice refuses a running native worker and leaves its pending request to the native caller',async t=>{
+  const {f,activity}=await ownedCatalogFixture(t);
+  const session='story-wb-'+'a'.repeat(24),nativePath=path.join(f.run,'native.json');
+  await privateJSON(nativePath,{...f.config,execution_host:'workbuddy',native_model_authorized:true,
+    sdk_path:path.join(SCRIPTS,'story_workbuddy_browser.mjs'),workbuddy_cli_path:path.join(f.directory,'workbuddy'),
+    workbuddy_cli_sha256:'a'.repeat(64),workbuddy_session:session,workbuddy_state_directory:path.join(f.directory,session)});
+  f.agent.browsers.list=async()=>[{id:f.browser.browserId,family:'chromium',type:'cdp'}];
+  const options={sdkFactory:f.worker.sdkFactory};
+  const ready=await runChromeWorker(nativePath,options);assert.equal(ready.state,'ready',JSON.stringify(ready));
+  await f.enqueue('inspect_catalog');
+  const refusal=await runOwnedChromeWorkerSlice(nativePath);
+  assert.equal(refusal.done,true);assert.equal(refusal.code,'platform_chrome_worker_native_runtime_required');
+  assert.equal(f.requests.length,1);assert.equal(activity.reads,0);
+  assert.equal((await runChromeWorker(nativePath,options)).state,'busy');
+  assert.equal(activity.reads,1,'native caller still receives its original single checkpoint');
+});
+
+test('owned Chrome slice honors an instance stop while busy and leaves later work unclaimed',async t=>{
+  const {f,activity,run}=await ownedCatalogFixture(t);
+  const first=await f.enqueue('inspect_catalog');
+  const afterStop=await f.enqueue('create_draft');
+  activity.afterRead=async()=>{
+    if(activity.reads===1)await privateJSON(f.config.stop_path,{schema:1,worker_instance:INSTANCE,keep_readback:false});
+  };
+  let result;
+  for(let call=0;call<4;call++){result=await run();if(result.done)break;}
+  assert.equal(result.state,'stopped');assert.equal(result.done,true);assert.equal(activity.executions,1);
+  assert.deepEqual(f.responses.map(row=>row.id),[first.request_id]);
+  assert.deepEqual(f.requests.map(row=>row.request_id),[afterStop.request_id]);
+  const final=await readPrivateJSON(path.join(f.run,'worker-final.json'));
+  assert.equal(final.cleanup_complete,true);assert.equal(final.owned_tabs_remaining,0);
 });
 
 test('resume health refusal settles a parked request before cleanup without replay or a hanging stop',async()=>{

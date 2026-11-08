@@ -105,7 +105,7 @@ RESULT_CODES = frozenset("platform_chrome_worker_" + value for value in (
 DIAGNOSTIC_CODES = RESULT_CODES | frozenset("platform_chrome_worker_" + value for value in (
     "tool_failed", "tool_approval_required", "unexpected_tool", "host_context_missing", "debugger_unavailable", "module_unavailable",
     "disconnected", "invalid_message", "message_limit", "rpc_error", "rpc_timeout", "connect_timeout",
-    "health_expired", "exited", "turn_failed", "not_ready", "unsafe_runtime", "unsafe_stop", "invalid_context",
+    "health_expired", "exited", "turn_failed", "turn_ended_early", "not_ready", "unsafe_runtime", "unsafe_stop", "invalid_context",
     "thread_start_failed", "cleanup_unconfirmed", "model_unverified", "model_mismatch", "model_rerouted",
     "model_unavailable", "tool_not_started", "tool_discovery_failed", "connection_suspended"))
 DIAGNOSTIC_PHASES = frozenset({"created", "app_server_started", "rpc_sent", "rpc_completed", "rpc_timeout",
@@ -502,13 +502,47 @@ def _sandbox_policy(book_root, storage_root, context):
 
 
 def _worker_prompt(module_path, config_path):
-    first = ("var storyChromeWorkerModule = await import(" + json.dumps(Path(module_path).as_uri()) + ");\n"
-             "var storyChromeWorkerCheckpoint = await storyChromeWorkerModule.runChromeWorker(" +
-             json.dumps(str(config_path), ensure_ascii=False) + ");\nnodeRepl.write(" +
-             json.dumps(CHECKPOINT_PREFIX) + " + JSON.stringify(storyChromeWorkerCheckpoint));")
-    subsequent = ("var storyChromeWorkerCheckpoint = await storyChromeWorkerModule.runChromeWorker(" +
+    subsequent = ("var storyChromeWorkerCheckpoint = await storyChromeWorkerModule.runOwnedChromeWorkerSlice(" +
                   json.dumps(str(config_path), ensure_ascii=False) + ");\nnodeRepl.write(" +
                   json.dumps(CHECKPOINT_PREFIX) + " + JSON.stringify(storyChromeWorkerCheckpoint));")
+    first = ("var storyChromeWorkerModule = await import(" + json.dumps(Path(module_path).as_uri()) +
+             ");\n" + subsequent)
+    # Each nested tool call still receives its own official execution context.
+    # Only its authenticated result determines whether the loop makes another call.
+    wrapper = f"""const prefix = {json.dumps(CHECKPOINT_PREFIX)};
+let code = {json.dumps(first)};
+for (;;) {{
+  let result;
+  try {{ result = await tools.mcp__node_repl__js({{code, timeout_ms:240000}}); }}
+  catch {{ throw Error('platform_chrome_worker_tool_failed'); }}
+  const blocks = result?.content;
+  if (result?.isError || !Array.isArray(blocks) || blocks.length !== 1 ||
+      blocks[0]?.type !== 'text' || typeof blocks[0].text !== 'string' ||
+      blocks[0].text.length > 8192 || !blocks[0].text.startsWith(prefix))
+    throw Error('platform_chrome_worker_tool_failed');
+  let checkpoint;
+  try {{ checkpoint = JSON.parse(blocks[0].text.slice(prefix.length)); }}
+  catch {{ throw Error('platform_chrome_worker_tool_failed'); }}
+  const configFailure = checkpoint?.done === true && checkpoint.state === 'failed' && checkpoint.processed === 0 &&
+    checkpoint.failure_phase === 'config_validated' && (checkpoint.phase == null || checkpoint.phase === 'config_validated');
+  if (!Number.isSafeInteger(checkpoint?.processed) || checkpoint.processed < 0 || checkpoint.processed > 10000 ||
+      (!configFailure && !{json.dumps(sorted(WORKER_PHASES))}.includes(checkpoint.phase)))
+    throw Error('platform_chrome_worker_tool_failed');
+  const {{done, state, phase, processed}} = checkpoint;
+  if (done === true && ['stopped','idle_timeout','failed'].includes(state)) {{
+    if (phase !== 'cleanup' && !configFailure) throw Error('platform_chrome_worker_tool_failed');
+    const summary = {{done, state, phase, processed}};
+    if (configFailure) summary.failure_phase = 'config_validated';
+    if (state === 'failed' && typeof checkpoint.code === 'string' && /^platform_[a-z0-9_]{{1,100}}$/.test(checkpoint.code))
+      summary.code = checkpoint.code;
+    text(prefix + JSON.stringify(summary));
+    break;
+  }}
+  if (done !== false || !['ready','connecting','busy'].includes(state) ||
+      Object.keys(checkpoint).some(key => !['done','state','phase','processed'].includes(key)))
+    throw Error('platform_chrome_worker_tool_failed');
+  code = {json.dumps(subsequent)};
+}}"""
     return ("Run the explicitly requested local Chrome draft worker using only the public node_repl JavaScript MCP tool. "
         "This consumes the user's configured Codex quota. The controller has pinned and verified gpt-6.1-terra; "
         "do not change the model or reasoning effort, delegate, or fall back. "
@@ -537,9 +571,13 @@ def _worker_prompt(module_path, config_path):
         "Call the JavaScript tool with timeout_ms=240000. Checkpoints pause between completed SDK calls, "
         "awaiting in-flight browser calls and health checks before returning. A parked continuation never performs browser work "
         "between tool invocations; resume the same consumed request, never replay a remote write. "
-        "First call exactly:\n" + first +
-        "\nIf done is false, continue calling the same already-imported module with exactly this code:\n" + subsequent +
-        "\nRepeat checkpoints until done is true, then return only its stable state/error summary. "
+        "When functions/exec is available, make ONE invocation containing exactly this loop:\n"
+        "```javascript\n" + wrapper + "\n```\n"
+        "If that invocation yields a cell ID, call functions/wait for that same cell until it completes. "
+        "A yield only means the loop is still running. Never start a second loop. "
+        "If the host exposes only the direct node_repl/js tool, call it first with exactly:\n" + first +
+        "\nThen, while done is false, call it with exactly:\n" + subsequent +
+        "\nOnly a terminal tool checkpoint ends the task. Return its stable state/error summary. "
         "Do not reimport the module or reset the REPL. Never repeat an individual queue operation or reconstruct a failed write. "
         "If the tool fails, stop and report a stable failure; do not retry or use a fallback. "
         "The module controls the 120-second no-job idle exit and finally cleanup. Never print book content, account IDs, or tokens.")
@@ -1351,6 +1389,7 @@ class AppServerClient:
         self.last_checkpoint = None
         self.last_checkpoint_at = None
         self.last_checkpoint_epoch = None
+        self.last_checkpoint_turn = None
         self.diagnostic = diagnostic
         self._model_activity_seen = False
         self._sandbox_roots = None
@@ -1634,6 +1673,7 @@ class AppServerClient:
                         checkpoint = None
                     if checkpoint:
                         self.last_checkpoint = dict(checkpoint)
+                        self.last_checkpoint_turn = (self.thread_id, self.turn_id)
                         self.last_checkpoint_at = time.monotonic()
                         self.last_checkpoint_epoch = time.time()
                         if (checkpoint.get("phase") not in (None, "config_validated") or
@@ -2174,6 +2214,27 @@ class ChromeWorkerController:
         return bool(values and values[0] < values[1] <= time.time() and
                     (checkpoint_epoch is None or values[0] <= checkpoint_epoch < values[1]))
 
+    @staticmethod
+    def _turn_ended_early(entry):
+        """A normal model return cannot complete its still-busy owned worker."""
+        client = entry.get("client")
+        checkpoint = client.last_checkpoint if client else None
+        return bool(entry.get("state") == "ready" and not entry["stop"].is_set() and
+                    entry.get("model_verified") is True and entry.get("browser_id") and
+                    client and client.model_verified and not client.failure and not client.worker_error and
+                    client.worker_done is None and not client._started_tools and
+                    client.completed and client.completed.get("status") == "completed" and
+                    getattr(client, "last_checkpoint_turn", None) == (client.thread_id, client.turn_id) == entry.get("owned_turn") and
+                    isinstance(checkpoint, dict) and checkpoint.get("done") is False and
+                    checkpoint.get("state") == "busy" and checkpoint.get("phase") == "queue_operation")
+
+    @staticmethod
+    def _mark_turn_ended_early(entry):
+        code = "platform_chrome_worker_turn_ended_early"
+        entry.update(state="failed", error=code, worker_failure=code, keep_readback=False)
+        entry["stop"].set()
+        return ("connection_failed", {"code": code})
+
     def _refresh_connection(self, entry):
         """One transition shared by polling and the supervisor; caller holds _lock.
 
@@ -2191,6 +2252,8 @@ class ChromeWorkerController:
             entry["state"] = "stopping"
             entry["stop"].set()
             return None
+        if self._turn_ended_early(entry):
+            return self._mark_turn_ended_early(entry)
         status = self._owned_health_status(entry)
         now = time.monotonic()
         healthy = bool(status and status.get("ready") is True)
@@ -2216,6 +2279,10 @@ class ChromeWorkerController:
             entry.update(state="resuming", resume_deadline=client.last_checkpoint_at + RESUME_SECONDS,
                          resume_next_tool_sequence=client.tool_sequence + 1, resume_health_times=self._health_times(status))
             return ("resume_wait", {})
+        # Completion can arrive while the health read above is in progress.
+        # Recheck before a generic health failure hides this exact cause.
+        if self._turn_ended_early(entry):
+            return self._mark_turn_ended_early(entry)
         code = (client.worker_error if client and client.worker_error else
                 client.failure if client and client.failure else "platform_chrome_worker_health_expired")
         entry.update(state="failed", error=code, keep_readback=False)
@@ -2524,6 +2591,11 @@ class ChromeWorkerController:
                     # reconnect an exhausted/failed provider automatically.
                     if client.completed.get("status") != "completed":
                         raise WorkerError("platform_chrome_worker_turn_failed")
+                    with self._lock:
+                        early = self._turn_ended_early(entry)
+                        previous = entry.get("error") if entry["state"] == "failed" else None
+                    if early or previous:
+                        raise WorkerError("platform_chrome_worker_turn_ended_early" if early else previous)
                     if entry["state"] != "ready":
                         raise WorkerError("platform_chrome_worker_tool_not_started" if client.tool_sequence == 0
                                           else "platform_chrome_worker_not_ready")

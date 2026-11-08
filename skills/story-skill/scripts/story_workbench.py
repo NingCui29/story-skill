@@ -4995,8 +4995,9 @@ function platformDraftInspectionValid(panel,job=panel.inspection){
  return !!(platformDraftProfileMatches(profile,plan)&&job?.done&&job.state==='inspection_ready'&&job.result?.can_execute&&job.result.source_matches_current!==false&&job.book_id===panel.bookId&&job.plan_id===panel.plan.value&&job.profile_id===panel.profile.value&&job.profile_sha256===profile?.sha256&&age>=0&&age<600000&&!panel.bindingDirty&&!panel.formalError);
 }
 function platformDraftConnectionIssue(job){
- const code=job.error||job.connection_diagnostics?.reason||'';
+ const code=job.error==='platform_chrome_worker_cleanup_unconfirmed'&&job.connection_diagnostics?.reason==='platform_chrome_worker_turn_ended_early'?job.connection_diagnostics.reason:(job.error||job.connection_diagnostics?.reason||'');
  if(code==='platform_chrome_worker_host_access_denied')return {kind:'host',hint:'本次连接未获宿主授权。处理连接或授权问题后重新连接并检查差异；新连接仍须核验 GPT-6.1 Terra 和宿主授权。'};
+ if(code==='platform_chrome_worker_turn_ended_early')return {kind:'executor',hint:'执行回合在工作完成前提前结束。'+(job.error==='platform_chrome_worker_cleanup_unconfirmed'||job.connection_diagnostics?.cleanup_unconfirmed===true?'本次执行尚未确认完全退出。':'')+'请先核对本次执行记录和收尾状态，暂不重新同步。'};
  const model=['model_unverified','model_mismatch','model_rerouted','model_unavailable'];
  const executor=['tool_not_started','tool_discovery_failed','tool_approval_required','not_ready','tool_failed','unexpected_tool','runtime_unavailable','turn_metadata_missing','module_unavailable','turn_failed','codex_unavailable','sdk_unavailable','unsupported_sdk','rpc_error','rpc_timeout','thread_start_failed'];
  if(model.some(value=>code==='platform_chrome_worker_'+value))return {kind:'model',hint:'请确认 Codex 中 GPT-6.1 Terra 可用，并由助手核对工作台的模型配置；处理后再重新检查差异。'};
@@ -5011,9 +5012,10 @@ function platformDraftConnectionNote(job){
  const verified=detail.model_verified===true&&requested&&resolved;
  const reasons={modelNotFound:'指定模型不可用或未找到',usageLimitExceeded:'当前 Codex 账号达到用量上限',rateLimitExceeded:'模型服务限制了请求频率',unauthorized:'Codex 服务身份认证未通过',httpConnectionFailed:'模型服务连接失败',responseStreamConnectionFailed:'未能建立模型响应通道',responseStreamDisconnected:'模型响应通道中断',responseTooManyFailedAttempts:'模型响应多次未能完成',serverOverloaded:'模型服务当前繁忙',flexUnavailable:'当前模型服务容量不可用',badRequest:'模型服务未接受本次请求参数',internalServerError:'模型服务发生内部错误',contextWindowExceeded:'执行会话超出模型上下文限制',sessionBudgetExceeded:'执行会话达到预算上限',sandboxError:'执行会话的受限运行环境发生错误'};
  const reason=typeof detail.error_kind==='string'&&Object.hasOwn(reasons,detail.error_kind)?reasons[detail.error_kind]:null;
+ const early=detail.reason==='platform_chrome_worker_turn_ended_early'?'执行回合在工作完成前提前结束':null;
  const phases={config_validated:'核对执行配置',sdk_setup:'初始化浏览器组件',browser_inventory:'获取浏览器列表',waiting_for_chrome:'等待 Chrome 连接',browser_documentation:'核对浏览器能力',existing_tab_probe:'探测目标标签页',bridge_attach:'绑定执行会话',bridge_health:'核验浏览器健康',queue_wait:'等待检查请求',queue_operation:'执行检查请求',cleanup:'结束执行会话'};
  const phase=detail.ready===false&&typeof detail.failure_phase==='string'&&Object.hasOwn(phases,detail.failure_phase)?phases[detail.failure_phase]:null;
- return '执行模型：指定 '+(requested||'未确认')+'；会话回执 '+(resolved||'未确认')+'；'+(verified?'模型身份已核验':'模型身份尚未核验')+'。模型身份不代表浏览器连接已就绪。'+(reason?' 连接诊断：'+reason+'。':'')+(phase?' 停止阶段：'+phase+'。':'');
+ return '执行模型：指定 '+(requested||'未确认')+'；会话回执 '+(resolved||'未确认')+'；'+(verified?'模型身份已核验':'模型身份尚未核验')+'。模型身份不代表浏览器连接已就绪。'+(reason?' 连接诊断：'+reason+'。':'')+(early?' 执行诊断：'+early+'。'+(detail.cleanup_unconfirmed===true?'本次执行尚未确认完全退出。':''):'')+(phase?' 停止阶段：'+phase+'。':'');
 }
 function platformDraftConnectionErrorCode(code){return ({
  platform_chrome_worker_host_access_denied:'ChatGPT 宿主未授权本次执行会话使用本地浏览器',
@@ -5032,6 +5034,7 @@ function platformDraftConnectionErrorCode(code){return ({
  platform_chrome_worker_turn_metadata_missing:'浏览器执行工具缺少本次会话身份，已停止执行',
  platform_chrome_worker_module_unavailable:'浏览器执行组件未能加载，请核对工作台安装',
  platform_chrome_worker_turn_failed:'Codex 执行会话未正常完成，请核对会话错误与账号可用状态',
+ platform_chrome_worker_turn_ended_early:'Codex 执行回合在目录或章节操作尚未完成时提前结束，结果待核对',
  platform_chrome_worker_rpc_error:'Codex 执行通道返回错误，请核对工作台与 Codex 的连接',
  platform_chrome_worker_rpc_timeout:'Codex 执行通道未及时返回，请核对执行会话状态',
  platform_chrome_worker_browser_transport_closed:'官方浏览器通信通道在收到响应前断开，本次连接或操作结果尚未确认',

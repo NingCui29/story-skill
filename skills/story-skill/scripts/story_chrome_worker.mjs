@@ -1157,7 +1157,7 @@ export class ChromeWorker {
   }
 }
 
-export async function runChromeWorker(configPath, options = {}) {
+async function checkpointForConfig(configPath, options, codexOnly) {
   let worker;
   try {
     const config = validateWorkerConfig(await readPrivateJSON(configPath,65536));
@@ -1169,6 +1169,7 @@ export async function runChromeWorker(configPath, options = {}) {
     const signature = createHash('sha256').update(JSON.stringify(config)).digest('hex');
     const previous = WORKERS.get(configPath);
     if (previous) {
+      requireValue(!codexOnly || (previous.worker.config.execution_host ?? 'codex') === 'codex','platform_chrome_worker_native_runtime_required');
       worker = previous.worker;
       requireValue(previous.signature === signature,'platform_chrome_worker_config_changed');
       requireValue(previous.sdkFactory === options.sdkFactory,'platform_chrome_worker_config_changed');
@@ -1176,11 +1177,29 @@ export async function runChromeWorker(configPath, options = {}) {
       WORKERS.set(configPath,{signature,worker,sdkFactory:options.sdkFactory}); }
     return await worker.checkpoint();
   } catch (failure) {
-    worker ||= WORKERS.get(configPath)?.worker;
+    const previous = WORKERS.get(configPath)?.worker;
+    if (previous && (!codexOnly || (previous.config.execution_host ?? 'codex') === 'codex')) worker ||= previous;
     if (worker) { worker.recordFailure(failure); worker.stopRequested = true; if (worker.done) worker.state = 'failed'; return worker.checkpoint(); }
     return {done:true,state:'failed',processed:worker?.processed || 0,code:cleanError(failure),failure_phase:'config_validated',
       error_name:ERROR_NAMES.has(failure?.name) ? failure.name : 'Error',error_marker:errorMarker(failure)};
   }
+}
+
+export async function runChromeWorker(configPath, options = {}) {
+  return checkpointForConfig(configPath,options,false);
+}
+
+export async function runOwnedChromeWorkerSlice(configPath) {
+  // Keep the 20-second SDK boundaries. In the 240-second official tool call,
+  // start another busy checkpoint only in the first minute. An in-flight SDK
+  // call must settle on its own; abandoning it could leave a write uncertain.
+  const continueUntil = Date.now() + 60000;
+  let checkpoint;
+  for (let count = 0; count < 3; count++) {
+    checkpoint = await checkpointForConfig(configPath,{},true);
+    if (checkpoint.done || checkpoint.state !== 'busy' || Date.now() >= continueUntil) break;
+  }
+  return checkpoint;
 }
 
 export const runWorker = runChromeWorker;

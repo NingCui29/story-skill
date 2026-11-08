@@ -2693,7 +2693,7 @@ _SPECIFIC_WORKER_STOPS = frozenset({"platform_chrome_worker_target_tab_changed",
     "platform_chrome_worker_existing_tab_required", "platform_chrome_worker_origin_permission_required",
     "platform_chrome_worker_host_access_denied",
     "platform_chrome_worker_browser_unattached", "platform_chrome_worker_browser_changed",
-    "platform_chrome_worker_turn_failed", "platform_chrome_worker_runtime_unavailable",
+    "platform_chrome_worker_turn_failed", "platform_chrome_worker_turn_ended_early", "platform_chrome_worker_runtime_unavailable",
     "platform_chrome_worker_model_unverified", "platform_chrome_worker_model_mismatch",
     "platform_chrome_worker_model_rerouted", "platform_chrome_worker_model_unavailable",
     "platform_chrome_worker_browser_transport_closed"})
